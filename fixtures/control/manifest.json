@@ -1,0 +1,224 @@
+{
+ "claim_scope": "control-plane continuous output through a named stub engine; model-vs-RTL schedule equality and byte-identical stereo recordings; no DSP, fidelity, or hardware claim",
+ "comparator": "tools/compare_control_rtl.py",
+ "dut": "rtl/control/control_top.sv",
+ "files": {
+  "fixtures/control/ctl-burst-overload-v1/events.hex": "28b9f8c4f77a695488c33eb4084b39e1ccc5d32af35ef3959a554a4f05d8c963",
+  "fixtures/control/ctl-burst-overload-v1/model_out.bin": "7e7abfe92a6262a0f0d6389a86bfaa5119b289334514b1bb96c137c52fe83fce",
+  "fixtures/control/ctl-burst-overload-v1/model_trace.json": "7066216ac9b92533bc8648462bf666ad539b6f02f266738575f28399f1f9cafa",
+  "fixtures/control/ctl-burst-overload-v1/record.json": "d480ab706bbd8c3fa0c36cfd6fe73d4acb049858d00f78c065d848854594721e",
+  "fixtures/control/ctl-burst-overload-v1/rtl_out.bin": "7e7abfe92a6262a0f0d6389a86bfaa5119b289334514b1bb96c137c52fe83fce",
+  "fixtures/control/ctl-burst-overload-v1/rtl_trace.txt": "3a02060e101b5cde4fb8ccbd73763848c3863617bbf0bd89bf08e276903b2cbe",
+  "fixtures/control/ctl-burst-overload-v1/sim.log": "f99e39ca24947c4618db05d73ab58d0935a20c645c58497c1f33d9779c712003",
+  "fixtures/control/ctl-burst-overload-v1/tb.vvp": "d813121315f213726c8d7d5664981e6f179e787892bc6cd760c02d041bdd2a37",
+  "fixtures/control/ctl-burst-overload-v1/verdict.json": "8f2360b731fe73d9ec73e0988f2065d1e1455fdf8133e1a6b94798a4da10a256",
+  "fixtures/control/ctl-notes-steal-v1/events.hex": "9e4d159a192983bb87f589db6eca518991a9f8ed1d95e698e4c7cfd6146cec62",
+  "fixtures/control/ctl-notes-steal-v1/model_out.bin": "c7050d1949d80e87cc01c84280ab2c16408d22ab07f804537e63fa40055b26d3",
+  "fixtures/control/ctl-notes-steal-v1/model_trace.json": "bb4fc22ca15dbe417952ab07d1c4cea1a0d45486983235ad56ab4587607c0dbd",
+  "fixtures/control/ctl-notes-steal-v1/record.json": "f7f89d0d5b645c82a29bfc9e1ba5008eee22f4a3e1067aeb9cd725b00aaeeee9",
+  "fixtures/control/ctl-notes-steal-v1/rtl_out.bin": "c7050d1949d80e87cc01c84280ab2c16408d22ab07f804537e63fa40055b26d3",
+  "fixtures/control/ctl-notes-steal-v1/rtl_trace.txt": "6816ec14d2c276deab80b58331028b348e7cdd29360389e58218ef6709cc17db",
+  "fixtures/control/ctl-notes-steal-v1/sim.log": "1a933b3a964992de06e6b9d01dfd80d6dc20bc1cca7d95482b3d9e36f4a9eb0f",
+  "fixtures/control/ctl-notes-steal-v1/tb.vvp": "a265823637169e69faecf8fc2b630a488f68ff3bcfba2b8733399717831caae0",
+  "fixtures/control/ctl-notes-steal-v1/verdict.json": "9e887899624946ba72ce1dbef10132cf747e4a41e63ff38a1d14a5baac5a23f6",
+  "fixtures/control/ctl-patch-change-v1/events.hex": "02c8e166773d09d1bfb73410fc58ffca3d575934a29ce9d94f1396abf8161c2f",
+  "fixtures/control/ctl-patch-change-v1/model_out.bin": "f2226ad6d0e76edd55bdc47193124c4791e1dd02a8e1cf28bd681c5785d9b94c",
+  "fixtures/control/ctl-patch-change-v1/model_trace.json": "a2cf4ada9591527a8658ab1862394da18ea4d9aedd55876414d0c1c8a8f439d2",
+  "fixtures/control/ctl-patch-change-v1/record.json": "4ec9cd47e845ffab594a8ae93b68df172eb9dc3159dbf716abd32624ffda0306",
+  "fixtures/control/ctl-patch-change-v1/rtl_out.bin": "f2226ad6d0e76edd55bdc47193124c4791e1dd02a8e1cf28bd681c5785d9b94c",
+  "fixtures/control/ctl-patch-change-v1/rtl_trace.txt": "de983e954667ce853f20bfce4d3095b6fa3cc406552f0498afc6200bfbb8e839",
+  "fixtures/control/ctl-patch-change-v1/sim.log": "4a4607d65e679c91a2710547ccfa4a32aaa0aebd5765f04f703ec70480e275c3",
+  "fixtures/control/ctl-patch-change-v1/tb.vvp": "327097cfd7f10ce7ea86f425c2540c23ec38bfb585e74418e525d59fd3800ee7",
+  "fixtures/control/ctl-patch-change-v1/verdict.json": "e740bb497d179b8e6120e74619f1ee2f07afeb5e0e049555da0e8c02eb84e1e5",
+  "fixtures/control/ctl-queue-overflow-v1/events.hex": "9cbb0fc324f1ae2a4e3970b159f1d6993949006b6fb7dab9773296f41858d72b",
+  "fixtures/control/ctl-queue-overflow-v1/model_out.bin": "b29acb54db750dfb6ccc473e9d8d4c4cbf90fd46ddecb697ae0f2b2c537f4815",
+  "fixtures/control/ctl-queue-overflow-v1/model_trace.json": "9f22b244066265de4404e5528eb74e2c8bfb917d249b998e8c98b0c41fab7329",
+  "fixtures/control/ctl-queue-overflow-v1/record.json": "98a0c1f305a442c8fd5d4fe8dc095afb78cdbc22ff3734b9de33a7b171c55f62",
+  "fixtures/control/ctl-queue-overflow-v1/rtl_out.bin": "b29acb54db750dfb6ccc473e9d8d4c4cbf90fd46ddecb697ae0f2b2c537f4815",
+  "fixtures/control/ctl-queue-overflow-v1/rtl_trace.txt": "0f169f8d0f78d62456bb5d93f15f4205e3095642a52d66984597bc8d1b46649b",
+  "fixtures/control/ctl-queue-overflow-v1/sim.log": "ad3240345246e682a645ecfa5d4ae158647e6471a79061719db931a5ec9ed06f",
+  "fixtures/control/ctl-queue-overflow-v1/tb.vvp": "c6022c0dcccfc1548cfbec6efa6d40c4fbe64f6bcdd555d72a7596c8ac4689e4",
+  "fixtures/control/ctl-queue-overflow-v1/verdict.json": "e2c28b71195844cf40082d3346d7dacc5d71898ec69a241a86642cc432e87e4a",
+  "fixtures/control/sequences/ctl-burst-overload-v1.json": "f5ff375a905f0a4aa70a6b9a5c0c97a137bbf1f3cdcea96423ded10c21b61e65",
+  "fixtures/control/sequences/ctl-notes-steal-v1.json": "34de0300900aa84754029a545adff2afe69876adeec2a9a61d894076069e771c",
+  "fixtures/control/sequences/ctl-patch-change-v1.json": "eb6d479158ba28cf26ab2709596c12ed0e5f78ba59c832bbee0f52ed3f6a8d15",
+  "fixtures/control/sequences/ctl-queue-overflow-v1.json": "8e3764ab298cf55cf6052485a1f749dff6a55f898426d1e0fc5a0dd2bf1ea844",
+  "fixtures/control/sequences/generate_control_sequences.py": "71597ed06180e29c47c88bccc445346f4ae8ed06f00b6373fa14c8eccd466a28"
+ },
+ "issue": "SXT-021 (#14)",
+ "manifest_version": 1,
+ "records": [
+  {
+   "byte_identical_model_vs_rtl": true,
+   "checked": {
+    "decisions": 24,
+    "drops": 0,
+    "samples": 64160,
+    "snapshot_fields": 54135,
+    "snapshots": 2005
+   },
+   "claim_scope": "control plane + stub slot only; no DSP, fidelity, or hardware claim",
+   "declared_schedule_closure_192mhz": {
+    "budget_cycles_per_frame": 3200.0,
+    "closure": "within_budget",
+    "used_cycles_per_frame": 1776
+   },
+   "dut": "rtl/control/control_top.sv",
+   "id": "ctl-burst-overload-v1",
+   "mismatches": 0,
+   "model_engine": "counter_stub",
+   "overload": {
+    "closes_declared_schedule": false,
+    "declared_reserve_per_block": 8,
+    "detection": "explicit event_reserve_exceeded/queue_overflow statuses in model_trace.json; explicit X drop records in rtl_trace.txt",
+    "drops_total": 0,
+    "flushed_total": 0,
+    "max_latency_samples": 32,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 2,
+    "underruns": 0
+   },
+   "sequence_sha256": "f5ff375a905f0a4aa70a6b9a5c0c97a137bbf1f3cdcea96423ded10c21b61e65",
+   "summary": {
+    "blocks": 2005,
+    "decisions_total": 24,
+    "drops_total": 0,
+    "flushed_total": 0,
+    "max_latency_samples": 32,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 2,
+    "underruns": 0
+   },
+   "verdict": "PASS"
+  },
+  {
+   "byte_identical_model_vs_rtl": true,
+   "checked": {
+    "decisions": 22,
+    "drops": 0,
+    "samples": 57760,
+    "snapshot_fields": 48735,
+    "snapshots": 1805
+   },
+   "claim_scope": "control plane + stub slot only; no DSP, fidelity, or hardware claim",
+   "declared_schedule_closure_192mhz": {
+    "budget_cycles_per_frame": 3200.0,
+    "closure": "within_budget",
+    "used_cycles_per_frame": 1776
+   },
+   "dut": "rtl/control/control_top.sv",
+   "id": "ctl-notes-steal-v1",
+   "mismatches": 0,
+   "model_engine": "counter_stub",
+   "overload": {
+    "closes_declared_schedule": true,
+    "declared_reserve_per_block": 8,
+    "detection": "no overload",
+    "drops_total": 0,
+    "flushed_total": 0,
+    "max_latency_samples": 24,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 0,
+    "underruns": 0
+   },
+   "sequence_sha256": "34de0300900aa84754029a545adff2afe69876adeec2a9a61d894076069e771c",
+   "summary": {
+    "blocks": 1805,
+    "decisions_total": 22,
+    "drops_total": 0,
+    "flushed_total": 0,
+    "max_latency_samples": 24,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 0,
+    "underruns": 0
+   },
+   "verdict": "PASS"
+  },
+  {
+   "byte_identical_model_vs_rtl": true,
+   "checked": {
+    "decisions": 8,
+    "drops": 0,
+    "samples": 90240,
+    "snapshot_fields": 76140,
+    "snapshots": 2820
+   },
+   "claim_scope": "control plane + stub slot only; no DSP, fidelity, or hardware claim",
+   "declared_schedule_closure_192mhz": {
+    "budget_cycles_per_frame": 3200.0,
+    "closure": "within_budget",
+    "used_cycles_per_frame": 1776
+   },
+   "dut": "rtl/control/control_top.sv",
+   "id": "ctl-patch-change-v1",
+   "mismatches": 0,
+   "model_engine": "counter_stub",
+   "overload": {
+    "closes_declared_schedule": true,
+    "declared_reserve_per_block": 8,
+    "detection": "no overload",
+    "drops_total": 0,
+    "flushed_total": 1,
+    "max_latency_samples": 31,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 0,
+    "underruns": 0
+   },
+   "sequence_sha256": "eb6d479158ba28cf26ab2709596c12ed0e5f78ba59c832bbee0f52ed3f6a8d15",
+   "summary": {
+    "blocks": 2820,
+    "decisions_total": 8,
+    "drops_total": 0,
+    "flushed_total": 1,
+    "max_latency_samples": 31,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 0,
+    "underruns": 0
+   },
+   "verdict": "PASS"
+  },
+  {
+   "byte_identical_model_vs_rtl": true,
+   "checked": {
+    "decisions": 32,
+    "drops": 14,
+    "samples": 64160,
+    "snapshot_fields": 54135,
+    "snapshots": 2005
+   },
+   "claim_scope": "control plane + stub slot only; no DSP, fidelity, or hardware claim",
+   "declared_schedule_closure_192mhz": {
+    "budget_cycles_per_frame": 3200.0,
+    "closure": "within_budget",
+    "used_cycles_per_frame": 1776
+   },
+   "dut": "rtl/control/control_top.sv",
+   "id": "ctl-queue-overflow-v1",
+   "mismatches": 0,
+   "model_engine": "counter_stub",
+   "overload": {
+    "closes_declared_schedule": false,
+    "declared_reserve_per_block": 8,
+    "detection": "explicit event_reserve_exceeded/queue_overflow statuses in model_trace.json; explicit X drop records in rtl_trace.txt",
+    "drops_total": 14,
+    "flushed_total": 0,
+    "max_latency_samples": 32,
+    "queue_overflow_blocks": 1,
+    "reserve_exceeded_blocks": 2,
+    "underruns": 0
+   },
+   "sequence_sha256": "8e3764ab298cf55cf6052485a1f749dff6a55f898426d1e0fc5a0dd2bf1ea844",
+   "summary": {
+    "blocks": 2005,
+    "decisions_total": 32,
+    "drops_total": 14,
+    "flushed_total": 0,
+    "max_latency_samples": 32,
+    "queue_overflow_blocks": 1,
+    "reserve_exceeded_blocks": 2,
+    "underruns": 0
+   },
+   "verdict": "PASS"
+  }
+ ]
+}

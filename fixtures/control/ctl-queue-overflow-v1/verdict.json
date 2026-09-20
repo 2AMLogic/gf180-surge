@@ -1,0 +1,25 @@
+{
+  "sequence": "ctl-queue-overflow-v1",
+  "dut": "rtl/control/control_top.sv",
+  "verdict": "PASS",
+  "byte_identical_outputs": true,
+  "model_summary": {
+    "blocks": 2005,
+    "underruns": 0,
+    "drops_total": 14,
+    "flushed_total": 0,
+    "max_latency_samples": 32,
+    "reserve_exceeded_blocks": 2,
+    "queue_overflow_blocks": 1,
+    "decisions_total": 32
+  },
+  "checked": {
+    "snapshots": 2005,
+    "snapshot_fields": 54135,
+    "decisions": 32,
+    "drops": 14,
+    "samples": 64160
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

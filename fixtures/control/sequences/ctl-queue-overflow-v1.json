@@ -1,0 +1,292 @@
+{
+ "block_size": 32,
+ "blocks": 2005,
+ "coverage": [
+  "overload:queue_overflow",
+  "drops:explicit",
+  "bounded"
+ ],
+ "description": "NEGATIVE CONTROL (issue #14 acceptance): 30 coincident events exceed the declared reserve AND the 16-deep queue: events are dropped with explicit queue_overflow records (in-model and in-DUT), never silently. Bounded overload detection.",
+ "events": [
+  {
+   "p1": 36,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 37,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 38,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 39,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 40,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 41,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 42,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 43,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 44,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 45,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 46,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 47,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 48,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 49,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 50,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 51,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 52,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 53,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 54,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 55,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 56,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 57,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 58,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 59,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 60,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 61,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 62,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 63,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 64,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 65,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 36,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 37,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 38,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 39,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 40,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 41,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 42,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 43,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 44,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 45,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 46,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 47,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 48,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 49,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 50,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 51,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  }
+ ],
+ "id": "ctl-queue-overflow-v1",
+ "sample_rate": 48000,
+ "schema_version": 1,
+ "voice_pool": 8
+}

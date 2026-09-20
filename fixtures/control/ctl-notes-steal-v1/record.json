@@ -1,0 +1,43 @@
+{
+ "byte_identical_model_vs_rtl": true,
+ "checked": {
+  "decisions": 22,
+  "drops": 0,
+  "samples": 57760,
+  "snapshot_fields": 48735,
+  "snapshots": 1805
+ },
+ "claim_scope": "control plane + stub slot only; no DSP, fidelity, or hardware claim",
+ "declared_schedule_closure_192mhz": {
+  "budget_cycles_per_frame": 3200.0,
+  "closure": "within_budget",
+  "used_cycles_per_frame": 1776
+ },
+ "dut": "rtl/control/control_top.sv",
+ "id": "ctl-notes-steal-v1",
+ "mismatches": 0,
+ "model_engine": "counter_stub",
+ "overload": {
+  "closes_declared_schedule": true,
+  "declared_reserve_per_block": 8,
+  "detection": "no overload",
+  "drops_total": 0,
+  "flushed_total": 0,
+  "max_latency_samples": 24,
+  "queue_overflow_blocks": 0,
+  "reserve_exceeded_blocks": 0,
+  "underruns": 0
+ },
+ "sequence_sha256": "34de0300900aa84754029a545adff2afe69876adeec2a9a61d894076069e771c",
+ "summary": {
+  "blocks": 1805,
+  "decisions_total": 22,
+  "drops_total": 0,
+  "flushed_total": 0,
+  "max_latency_samples": 24,
+  "queue_overflow_blocks": 0,
+  "reserve_exceeded_blocks": 0,
+  "underruns": 0
+ },
+ "verdict": "PASS"
+}

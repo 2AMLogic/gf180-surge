@@ -1,0 +1,25 @@
+{
+  "sequence": "ctl-notes-steal-v1",
+  "dut": "rtl/control/control_top.sv",
+  "verdict": "PASS",
+  "byte_identical_outputs": true,
+  "model_summary": {
+    "blocks": 1805,
+    "underruns": 0,
+    "drops_total": 0,
+    "flushed_total": 0,
+    "max_latency_samples": 24,
+    "reserve_exceeded_blocks": 0,
+    "queue_overflow_blocks": 0,
+    "decisions_total": 22
+  },
+  "checked": {
+    "snapshots": 1805,
+    "snapshot_fields": 48735,
+    "decisions": 22,
+    "drops": 0,
+    "samples": 57760
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

@@ -1,0 +1,153 @@
+{
+ "block_size": 32,
+ "blocks": 1805,
+ "coverage": [
+  "poly:8",
+  "steal:oldest",
+  "cc:sustain+modwheel",
+  "pitch_bend",
+  "channel_pressure",
+  "tempo",
+  "latency:off-grid"
+ ],
+ "derived_from": "fixtures/sequences/seq-poly-8-v1.json (chord t=0)",
+ "description": "Eight simultaneous voices (seq-poly-8-v1 chord, SXT-012) then steals, sustain/modwheel CC, pitch bend, channel pressure, tempo; releases. Exercises allocation, oldest-active stealing, recorded control events, and quantize-up latency (events off the 32-sample grid).",
+ "events": [
+  {
+   "p1": 43,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 50,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 55,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 59,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 62,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 67,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 71,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 74,
+   "p2": 70,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 48,
+   "p2": 100,
+   "t": 28800,
+   "type": "note_on"
+  },
+  {
+   "p1": 64,
+   "p2": 127,
+   "t": 28800,
+   "type": "cc"
+  },
+  {
+   "p1": 10192,
+   "p2": 0,
+   "t": 30000,
+   "type": "pitch_bend"
+  },
+  {
+   "p1": 90,
+   "p2": 0,
+   "t": 32000,
+   "type": "channel_pressure"
+  },
+  {
+   "p1": 1,
+   "p2": 90,
+   "t": 40000,
+   "type": "cc"
+  },
+  {
+   "p1": 41248,
+   "p2": 7,
+   "t": 41000,
+   "type": "tempo"
+  },
+  {
+   "p1": 50,
+   "p2": 0,
+   "t": 44000,
+   "type": "note_off"
+  },
+  {
+   "p1": 50,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  },
+  {
+   "p1": 55,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  },
+  {
+   "p1": 59,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  },
+  {
+   "p1": 62,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  },
+  {
+   "p1": 67,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  },
+  {
+   "p1": 71,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  },
+  {
+   "p1": 74,
+   "p2": 0,
+   "t": 57600,
+   "type": "note_off"
+  }
+ ],
+ "id": "ctl-notes-steal-v1",
+ "sample_rate": 48000,
+ "schema_version": 1,
+ "voice_pool": 8
+}
