@@ -38,3 +38,7 @@ reports/*.rpt
 # Editors / OS
 .DS_Store
 *.swp
+
+# SXT-024 RTL run workdirs (regenerable via tools/run_reverb_rtl.py --keep;
+# evidence lives in reports/sxt-024/rtl-exactness.json with content hashes)
+reports/sxt-024/rtl/
