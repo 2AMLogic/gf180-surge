@@ -645,6 +645,14 @@ def slate_records(selected, stage):
     return out
 
 
+def repo_rel(path):
+    """Repo-relative display path (host-independent slates)."""
+    try:
+        return str(Path(path).resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def build_profile(pool, exclusions, anomalies, profile_name, graphs_path,
                   census_path):
     profile = PROFILES[profile_name]
@@ -681,9 +689,9 @@ def build_profile(pool, exclusions, anomalies, profile_name, graphs_path,
         "engine_pin": {"commit": (slate_sel[0]["cand"]["engine_pin"]
                                   if slate_sel else None)},
         "inputs": {
-            "graphs_jsonl": str(graphs_path),
+            "graphs_jsonl": repo_rel(graphs_path),
             "graphs_jsonl_sha256": sha256_file(graphs_path),
-            "census_per_preset_csv": str(census_path),
+            "census_per_preset_csv": repo_rel(census_path),
             "census_per_preset_csv_sha256": sha256_file(census_path),
         },
         "integrity": (

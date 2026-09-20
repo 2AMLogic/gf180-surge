@@ -12440,9 +12440,9 @@
     ]
   },
   "inputs": {
-    "census_per_preset_csv": "/Users/joseph/dev/gf180-surge-wt-013/corpus/census-v0.1/results/per-preset.csv",
+    "census_per_preset_csv": "corpus/census-v0.1/results/per-preset.csv",
     "census_per_preset_csv_sha256": "e2d0ba685afb055e35c19daf7c2727108fd776dea3daa8a24af5d7acc63f41b0",
-    "graphs_jsonl": "/Users/joseph/dev/gf180-surge-wt-013/corpus/normalized/graphs.jsonl",
+    "graphs_jsonl": "corpus/normalized/graphs.jsonl",
     "graphs_jsonl_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
   },
   "integrity": "every line cross-checked against the census per-preset.csv git blob SHA-1 and size at load time; mismatch refuses the run",

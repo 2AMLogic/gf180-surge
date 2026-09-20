@@ -1734,9 +1734,9 @@
     "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71"
   },
   "inputs": {
-    "census_per_preset_csv": "/Users/joseph/dev/gf180-surge-wt-013/corpus/census-v0.1/results/per-preset.csv",
+    "census_per_preset_csv": "corpus/census-v0.1/results/per-preset.csv",
     "census_per_preset_csv_sha256": "e2d0ba685afb055e35c19daf7c2727108fd776dea3daa8a24af5d7acc63f41b0",
-    "graphs_jsonl": "/Users/joseph/dev/gf180-surge-wt-013/corpus/normalized/graphs.jsonl",
+    "graphs_jsonl": "corpus/normalized/graphs.jsonl",
     "graphs_jsonl_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
   },
   "integrity": "every line cross-checked against the census per-preset.csv git blob SHA-1 and size at load time; mismatch refuses the run",
@@ -1826,7 +1826,7 @@
     }
   },
   "relation": {
-    "slate_sha256": "a334a6331f195c432944deaa9b3526e43d8038fcf772f24e5a26d7e19af457cc",
+    "slate_sha256": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
     "subset_of": "slate-256-balanced"
   },
   "schema_version": "sxt-013-candidate-slate/1.0.0",
