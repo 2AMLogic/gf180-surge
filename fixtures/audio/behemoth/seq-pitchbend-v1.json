@@ -1,0 +1,65 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no normalization, no time warping, no fades",
+  "dry": {
+    "blocks": 6150,
+    "bypass_method": "all 16 FX-slot type params set to fxt_off via setParamVal before settle; read-back verified Off; otherwise identical fresh-instance render",
+    "bytes": 393644,
+    "clipped_samples": 0,
+    "dry_fx_bypass_verified": true,
+    "frames": 196800,
+    "last_event_sample": 76800,
+    "peak_abs_float": 0.22579647600650787,
+    "settle_s": 0.25,
+    "sha256": "cb9d9c43b031b5ea8c62c5c9e96a1a8b9d43d71f900a25cc8bdf18eda034b0e9",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/behemoth/seq-pitchbend-v1-dry.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "behemoth__seq-pitchbend-v1",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "duration_s": 4.1,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-pitchbend-v1",
+    "path": "fixtures/sequences/seq-pitchbend-v1.json",
+    "sha256": "ca0934316c168e689ae338289a220027da0cac901f46d364ec842187aad1ad69"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9bab0e8bcd293ed01cd6420f343d8de0705aeffb",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "blocks": 6150,
+    "bytes": 393644,
+    "clipped_samples": 0,
+    "dry_fx_types_readback": null,
+    "frames": 196800,
+    "last_event_sample": 76800,
+    "peak_abs_float": 0.44405123591423035,
+    "settle_s": 0.25,
+    "sha256": "c6b952b5b2c5ccdaabb107bb5ad72fc53d5b04093b03178bdf426d3e349a1bde",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/behemoth/seq-pitchbend-v1-wet.wav"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no normalization, no time warping, no fades",
+  "dry": {
+    "blocks": 6150,
+    "bypass_method": "all 16 FX-slot type params set to fxt_off via setParamVal before settle; read-back verified Off; otherwise identical fresh-instance render",
+    "bytes": 393644,
+    "clipped_samples": 0,
+    "dry_fx_bypass_verified": true,
+    "frames": 196800,
+    "last_event_sample": 76800,
+    "peak_abs_float": 0.144219771027565,
+    "settle_s": 0.25,
+    "sha256": "347a746ed1353605fe502dcc9e20967a9bf9118f738707e8c77dc377903b5db5",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/koala2/seq-notes-repeated-v1-dry.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "koala2__seq-notes-repeated-v1",
+  "preset": {
+    "actual_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+    "census_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+    "path": "resources/data/patches_factory/Leads/Koala 2.fxp",
+    "slug": "koala2"
+  },
+  "render": {
+    "duration_s": 4.1,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-repeated-v1",
+    "path": "fixtures/sequences/seq-notes-repeated-v1.json",
+    "sha256": "ec610cb2a507875422df348e289766f0b1c8e378251e5ed83706d0d0a8b7db84"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9bab0e8bcd293ed01cd6420f343d8de0705aeffb",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "blocks": 6150,
+    "bytes": 393644,
+    "clipped_samples": 0,
+    "dry_fx_types_readback": null,
+    "frames": 196800,
+    "last_event_sample": 76800,
+    "peak_abs_float": 0.15964339673519135,
+    "settle_s": 0.25,
+    "sha256": "fec53329389c7b081734f2aa9c862d4de86fe5282432a7c514ab1d1224c7e8c8",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/koala2/seq-notes-repeated-v1-wet.wav"
+  }
+}

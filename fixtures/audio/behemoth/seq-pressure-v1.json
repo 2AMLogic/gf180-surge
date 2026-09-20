@@ -1,0 +1,65 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no normalization, no time warping, no fades",
+  "dry": {
+    "blocks": 5700,
+    "bypass_method": "all 16 FX-slot type params set to fxt_off via setParamVal before settle; read-back verified Off; otherwise identical fresh-instance render",
+    "bytes": 364844,
+    "clipped_samples": 0,
+    "dry_fx_bypass_verified": true,
+    "frames": 182400,
+    "last_event_sample": 62400,
+    "peak_abs_float": 0.14767709374427795,
+    "settle_s": 0.25,
+    "sha256": "509d04c716784a86d45fe3a1ecb9e504c763019f745ef10df58209c54f6c3683",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/behemoth/seq-pressure-v1-dry.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "behemoth__seq-pressure-v1",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "duration_s": 3.8,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-pressure-v1",
+    "path": "fixtures/sequences/seq-pressure-v1.json",
+    "sha256": "f32ff1251128d62d3c3cc4ed4a99c2cfc1d5e1d2e682cca6b4f914cbe14e66e9"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9bab0e8bcd293ed01cd6420f343d8de0705aeffb",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "blocks": 5700,
+    "bytes": 364844,
+    "clipped_samples": 0,
+    "dry_fx_types_readback": null,
+    "frames": 182400,
+    "last_event_sample": 62400,
+    "peak_abs_float": 0.3216320872306824,
+    "settle_s": 0.25,
+    "sha256": "abb2ea60edb03bf9ca3ef5d5d587e20509a5cd60b36df1d2e5b8cd2ca409411c",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/behemoth/seq-pressure-v1-wet.wav"
+  }
+}
