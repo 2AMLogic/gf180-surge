@@ -8,42 +8,50 @@ rounding rules below. STRUCTURE (not code) is cited from the pinned
 GPL-3.0-or-later sources; see README.md for the citation map and licensing.
 
 FROZEN FORMATS (see README.md "Frozen word lengths"):
-  s24   audio I/O                       Q1.23  (signed 24-bit)
-  s32   internal signal/storage words   Q1.31  (delay, predelay, out_tap, wet)
-  c31   unit-range coefficients         Q1.31  (delay_fb, damp, 1-damp, pan)
-  c30   +/-2-range coefficients         Q2.30  (mix, 1-mix, width_s)
-  c29   +/-4-range coefficients         Q3.29  (biquad a1,a2,b0,b1,b2)
-  reg80 biquad TDF2 state               Q-.60 in 80-bit signed (guard against
-                                        resonance x high peak-gain growth)
+  s24     audio I/O                       Q1.23 (signed 24-bit)
+  s32i    internal signal/storage words   Q4.28 in 32-bit containers
+          (sign + 3 integer headroom bits + 28 fraction bits; range +/-8).
+          HEADROOM IS LOAD-BEARING: the composite loop value fbw = ca*sum +
+          predelay reaches +/-3 and tap writes reach +/-4*max(delay_fb) at
+          coherent summation; the pinned engine carries these in float without
+          clipping. A format without integer headroom (e.g. Q1.31) saturates
+          the loop and is a DEFECT (measured: -7 dB error). I/O conversion:
+          in: s24 << 5 (exact); out: rnd5 then saturate to s24.
+  c31     unit-range coefficients         Q1.31 (delay_fb, damp, 1-damp, pan)
+  c30     +/-2-range coefficients         Q2.30 (mix, 1-mix, width_s)
+  c29     +/-4-range coefficients         Q3.29 (biquad a1,a2,b0,b1,b2)
+  reg80   biquad TDF2 state               Q-.57 in 80-bit signed
 
 FROZEN ROUNDING RULE:
   rnd_f(x)  = (x + (1 << (f-1))) >>> f   (round-half-up, floor-biased;
                                           arithmetic shift, matches SV >>>)
-  sat32(x)  = clamp(x, -2^31, 2^31-1)
-  Every multiply that feeds a stored word is rounded exactly once at f = the
-  destination fraction width. Intermediates are exact integers (Python int,
-  unbounded); the model asserts every RTL-representable value stays in its
-  frozen word width (assert_width=True, default on).
+  sat32(x)  = clamp(x, -2^31, 2^31-1);  output stage saturates to s24.
+  f = a_frac + b_frac - dst_frac for every multiply that feeds a stored word:
+  c31 x Q4.28 -> Q4.28 shifts 31; c30 x Q4.28 -> Q4.28 shifts 30; the biquad
+  c29 x Q4.28 -> 2^-57 accumulator shifts 29. Intermediates are exact integers
+  (Python int, unbounded); the model asserts every RTL-representable value
+  stays in its frozen word width (assert_width=True, default on).
 
 FROZEN OP ORDER per sample k (cites Reverb1.h processBlock):
   1. for t = 0..15:  dp = (delay_pos - (delay_time[t] >>> 8)) & 32767
-       new = delay[(dp << 4) + t]                          # s32 external read
+       new = delay[(dp << 4) + t]                          # s32i external read
        out_tap[t] = sat32(rnd31(damp*out_tap[t] + (1-damp)*new))
   2. fbsum = sum(out_tap)                                  # exact, 36-bit
      fbw = -(fbsum >>> 3) + predelay[(delay_pos - pdtime) & 32767]
                                                            # ca = -2/16 exact
   3. delay_pos = (delay_pos + 1) & 32767
-     predelay[delay_pos] = (inL32 + inR32) >>> 1           # 0.5*(L+R) exact-ish
+     predelay[delay_pos] = ((inL + inR) >>> 1) << 5        # 0.5*(L+R) exact
   4. wetL = sat32(sum_t rnd31(pan_L[t]*out_tap[t]));  wetR likewise
      for t = 0..15: delay[(delay_pos << 4) + t] =
                        sat32(rnd31(delay_fb[t] * (fbw + out_tap[t])))
   Per 32-sample block, after step 4 (block order cited from processBlock):
   5. locut HP (if active) -> band1 peak -> hicut LP2B (if active)
      TDF2 per channel: op = x*b0 + reg0; reg0' = x*b1 - a1*op + reg1;
-     reg1' = x*b2 - a2*op; y = sat32(rnd29(op))            # products at 2^-60
+     reg1' = x*b2 - a2*op; y = sat32(rnd29(op))            # products at 2^-57
   6. width: M = (L+R)>>>1; S = (L-R)>>>1; S = sat32(rnd30(S*width_s));
      L' = sat32(M+S); R' = sat32(M-S)
-  7. mix: out = sat32(rnd30((1-mix)*dry + mix*wet))
+  7. mix: out = sat32(rnd30((1-mix)*dry + mix*wet)); device output stage
+     converts s32i -> s24 via rnd5 + saturation (to_s24)
 
 External-memory traffic (exact, per output frame): 16 tap reads + 16 tap
 writes + 1 predelay read + 1 predelay write = 34 words/frame = 136 B/frame
@@ -61,8 +69,18 @@ MAX_REV_DLY = 1 << REV_BITS            # 32768
 BLOCK = 32
 TAP_WORDS = REV_TAPS * MAX_REV_DLY     # 524288 composite-tap words
 
-# word width of the external storage words (FROZEN; see README stability)
+# word width of the external storage words (FROZEN; see README stability).
+# Internal value format Q4.28: 28 fraction bits + 3 integer headroom bits and
+# sign, carried in 32-bit containers (range +/-8, LSB 2^-28). HEADROOM IS
+# LOAD-BEARING: the composite loop value fbw = ca*sum + predelay reaches +/-3
+# and tap writes reach +/-4*max(delay_fb) at coherent summation; the pinned
+# engine carries these in float without clipping. The 28 fraction bits keep
+# the quiet tail quantization 32x below the 24-bit audio LSB (the float
+# reference has relative precision; a pure 24-bit fixed grid measures ~48 dB
+# worse on long tails -- measured, see README).
 STORAGE_BITS = 32
+DST_FRAC = 28
+IO_SHIFT = 5  # s24 -> s32i: value * 2**28 = in24 << 5
 S32_MIN = -(1 << 31)
 S32_MAX = (1 << 31) - 1
 S24_MIN = -(1 << 23)
@@ -103,6 +121,7 @@ class Reverb1Fixed:
     def __init__(self, cp, assert_width=True):
         self.cp = cp
         self.assert_width = assert_width
+        self.trace = None  # optional dict of debug capture lists (off by default)
         # coefficient plane quantization (frozen formats)
         self.delay_time = list(cp["delay_time"])          # int, 256ths of sample
         self.delay_fb = [q31(v) for v in cp["delay_fb"]]  # c31
@@ -170,13 +189,14 @@ class Reverb1Fixed:
 
     # -- audio ---------------------------------------------------------------
     def _biquad(self, coeffs, fi, x, ch):
-        """TDF2 with c29 (Q3.29) coefficients and 2^-60-scale accumulators:
+        """TDF2 with c29 (Q3.29) coefficients and 2^-57-scale accumulators
+        (x Q4.28 * c29 = 2^57):
           op    = x*b0 + reg0
           reg0' = x*b1 + reg1 - rn29(a1*op)
           reg1' = x*b2 - rn29(a2*op)
           y     = sat32(rn29(op))
-        (products land at 2^(31+29)=2^60; coefficient products are re-rounded
-        to the 2^60 accumulator scale exactly once, f=29.)"""
+        (products land at 2^(28+29)=2^57; coefficient products are re-rounded
+        to the 2^57 accumulator scale exactly once, f=29.)"""
         b0, b1, b2, a1, a2 = coeffs
         reg0 = self.regs[fi][ch]
         reg1 = self.regs2[fi][ch]
@@ -201,7 +221,11 @@ class Reverb1Fixed:
         wet_l = [0] * BLOCK
         wet_r = [0] * BLOCK
         for k in range(BLOCK):
+            # 0. s24 inputs -> s32i (exact << IO_SHIFT)
+            in_l = block_l[k] << IO_SHIFT
+            in_r = block_r[k] << IO_SHIFT
             # 1. damped tap outputs (16 external reads)
+            #    (c31 x Q4.28 -> Q4.28: shift = 31 + 28 - 28 = 31)
             out_tap = self.out_tap
             for t in range(n):
                 dp = (self.delay_pos - (dt[t] >> 8)) & (MAX_REV_DLY - 1)
@@ -213,11 +237,11 @@ class Reverb1Fixed:
                 fbsum += out_tap[t]
             pd_read = self._rd(REV_TAPS * MAX_REV_DLY + ((self.delay_pos - self.pdtime) & (MAX_REV_DLY - 1)))
             fbw = -(fbsum >> 3) + pd_read
-            # 3. advance + predelay write
+            # 3. advance + predelay write (s24 -> s32i: << IO_SHIFT, exact;
+            #    0.5*(L+R) via the exact >>1 floor)
             self.delay_pos = (self.delay_pos + 1) & (MAX_REV_DLY - 1)
-            inl32 = block_l[k] << 8
-            inr32 = block_r[k] << 8
-            self._wr(REV_TAPS * MAX_REV_DLY + self.delay_pos, sat32((inl32 + inr32) >> 1))
+            self._wr(REV_TAPS * MAX_REV_DLY + self.delay_pos,
+                     sat32(((in_l + in_r) >> 1)))
             # 4. tap writes + pan sums (16 external writes)
             fl = fr = 0
             pan_l = self.pan_l
@@ -241,24 +265,38 @@ class Reverb1Fixed:
             wet_l = [self._biquad(self.hicut, 2, v, 0) for v in wet_l]
             wet_r = [self._biquad(self.hicut, 2, v, 1) for v in wet_r]
         # 6. width (SurgeFXConfig: widthIsLinear absent -> dB mode, side only)
+        #    encodeMS: M = 0.5*(l+r), S = 0.5*(l-r); S *= width_s; decode.
         ws = self.width_s
+        if getattr(self, "trace", None) is not None:
+            self.trace.setdefault("width_l_in", []).extend(wet_l)
+            self.trace.setdefault("width_r_in", []).extend(wet_r)
         for k in range(BLOCK):
             l, r = wet_l[k], wet_r[k]
-            m = (l + r) >> 1
-            s = sat32(rnd((l - r) * ws, 30))
-            wet_l[k] = sat32(m + s)
-            wet_r[k] = sat32(m - s)
-        # 7. mix fade (constant coefficient at converged lag)
+            mid = (l + r) >> 1
+            s = sat32(rnd(((l - r) >> 1) * ws, 30))
+            wet_l[k] = sat32(mid + s)
+            wet_r[k] = sat32(mid - s)
+        if getattr(self, "trace", None) is not None:
+            self.trace.setdefault("post_width_l", []).extend(wet_l)
+        # 7. mix fade (constant coefficient at converged lag); the dry term
+        # is widened to s32i first (c30 x Q4.28 -> Q4.28: shift 30)
         mix = self.mix
         mix_m1 = self.mix_m1
         out_l, out_r = [], []
         for k in range(BLOCK):
-            out_l.append(sat32(rnd(mix_m1 * block_l[k] + mix * wet_l[k], 30)))
-            out_r.append(sat32(rnd(mix_m1 * block_r[k] + mix * wet_r[k], 30)))
+            dry_l = block_l[k] << IO_SHIFT
+            dry_r = block_r[k] << IO_SHIFT
+            out_l.append(sat32(rnd(mix_m1 * dry_l + mix * wet_l[k], 30)))
+            out_r.append(sat32(rnd(mix_m1 * dry_r + mix * wet_r[k], 30)))
+        # NOTE: outputs are s32i (Q4.28) internal words. The pinned engine's
+        # FX output feeds the send-return sum in float WITHOUT clipping at
+        # +/-1.0; the s24 device clamp belongs to the final output stage
+        # (see to_s24), never to the FX block boundary.
         return out_l, out_r
 
     def to_s24(self, x):
-        return sat(rnd(x, 8), S24_MIN, S24_MAX)
+        """s32i (Q4.28) -> s24 device word: round at f=5 then saturate."""
+        return sat(rnd(x, IO_SHIFT), S24_MIN, S24_MAX)
 
     # -- checkpoints (RTL exactness contract) --------------------------------
     def checkpoint(self):

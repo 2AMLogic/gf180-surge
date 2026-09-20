@@ -1,0 +1,73 @@
+{
+  "audio_policy": "stereo int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades; SXT-012 reset/scheduling policies",
+  "bus": "wet",
+  "deactivated_flags_raw_fxp": {
+    "highcut": false,
+    "lowcut": false
+  },
+  "engine_patch_state": {
+    "fx_slot": 4,
+    "fx_type": 2,
+    "params": {
+      "damping": 0.7419639825820923,
+      "decaytime": 1.8794653415679932,
+      "freq1": -2.0250051021575928,
+      "gain1": 10.800025939941406,
+      "highcut": 27.20354461669922,
+      "lowcut": -46.16254806518555,
+      "mix": 1.0,
+      "predelay": -5.492857933044434,
+      "roomsize": 0.8776760101318359,
+      "shape": 3.0,
+      "width": 0.0
+    },
+    "return_level": 1.0,
+    "scene_send_level": [
+      0.7071430087089539,
+      0.0
+    ],
+    "volume": 0.0
+  },
+  "float_npy": null,
+  "issue": "SXT-024",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "blocks": 588000,
+    "clipped_samples": 0,
+    "frames": 588000,
+    "overrides_applied": {
+      "3": 1.8794653415679932
+    },
+    "peak_abs": [
+      0.2271084040403366,
+      0.20811867713928223
+    ],
+    "reload_block": null,
+    "tail_s": 12.0
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "sxt024-click-250ms-v1"
+  },
+  "sweep": {
+    "param": "fx4_p3 decaytime",
+    "requested": 1.879465
+  },
+  "tool": {
+    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
+    "script_sha256": "0f500a548c95357628b4889a312a259116edd5c4681eff4f1b91ea678f77f426"
+  },
+  "trace": "sweepmdecaym1_879465",
+  "wav": {
+    "bytes": 2352044,
+    "channels": 2,
+    "frames": 588000,
+    "sample_rate": 48000,
+    "sha256": "3d4e3a89c76874259066d9e682bae7542c0ac7ea25ae2760273c2a26b3098c38"
+  }
+}
