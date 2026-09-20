@@ -1,0 +1,199 @@
+{
+  "coverage": [
+    "tempo:change",
+    "repeated-notes"
+  ],
+  "description": "Tempo steps 120 -> 90 -> 150 BPM against evenly spaced repeated notes; exercises temposync'd LFO/FX clocks where the preset uses them.",
+  "events": [
+    {
+      "bpm": 120,
+      "t": 0,
+      "type": "tempo"
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 9600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 12000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 21600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 24000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 33600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 36000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 45600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "bpm": 90,
+      "t": 48000,
+      "type": "tempo"
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 48000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 60000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 69600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 72000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 81600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 84000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 93600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "bpm": 150,
+      "t": 96000,
+      "type": "tempo"
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 96000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 105600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 108000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 117600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 120000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 129600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 132000,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 141600,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-tempo-change-v1",
+  "notes": "surgepy exposes no transport-tempo setter (engine time_data is not bound); the surgepy renderer records tempo events but cannot apply them mid-render and renders at the pinned 120 BPM. Renderable only by a tempo-capable harness (documented limitation, SXT-012 evidence).",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": false
+}

@@ -1,0 +1,47 @@
+{
+  "coverage": [
+    "pitch-bend"
+  ],
+  "description": "Pitch bend to full up (+8191), full down (-8192), centered; bend range is the preset's own (Surge default 2 semitones).",
+  "events": [
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 4800,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "t": 19200,
+      "type": "pitch_bend",
+      "value": 8191
+    },
+    {
+      "channel": 0,
+      "t": 38400,
+      "type": "pitch_bend",
+      "value": -8192
+    },
+    {
+      "channel": 0,
+      "t": 57600,
+      "type": "pitch_bend",
+      "value": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 76800,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-pitchbend-v1",
+  "notes": "",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}

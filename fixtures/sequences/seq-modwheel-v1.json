@@ -1,0 +1,64 @@
+{
+  "coverage": [
+    "mod-wheel"
+  ],
+  "description": "Modulation wheel (CC1) staircase 0 -> 127 -> 0 under a held note.",
+  "events": [
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 4800,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "controller": 1,
+      "t": 9600,
+      "type": "cc",
+      "value": 32
+    },
+    {
+      "channel": 0,
+      "controller": 1,
+      "t": 14400,
+      "type": "cc",
+      "value": 64
+    },
+    {
+      "channel": 0,
+      "controller": 1,
+      "t": 19200,
+      "type": "cc",
+      "value": 96
+    },
+    {
+      "channel": 0,
+      "controller": 1,
+      "t": 24000,
+      "type": "cc",
+      "value": 127
+    },
+    {
+      "channel": 0,
+      "controller": 1,
+      "t": 33600,
+      "type": "cc",
+      "value": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 62400,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-modwheel-v1",
+  "notes": "",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}
