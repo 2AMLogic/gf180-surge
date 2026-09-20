@@ -110,3 +110,7 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
 3. Divergence from the source is recorded in the adopting PR.
 4. Any GPL/Surge-derived artifact requires a license decision record before
    merge (see `AGENTS.md`).
+
+Recorded decisions live in [`decision-records/`](../decision-records/);
+[0001](../decision-records/0001-oracle-automation-source.md) (oracle
+automation source policy, SXT-010) is the first.

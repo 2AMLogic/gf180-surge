@@ -1,0 +1,19 @@
+# Decision records
+
+Numbered, one-decision-per-file records in the style of
+`2AMLogic/gf180-parasynth` `spec/decision-records/` (Status / Context /
+Decision / Consequences). **What belongs here:** every visible license
+decision (anything GPL-, Surge-, or third-party-derived that touches this
+Apache-2.0 repository — `AGENTS.md` requires such a record before merge),
+every substrate adoption/rejection decision made under the reuse-audit
+process (`docs/REUSE-AUDIT.md`, governance issue
+[#25](https://github.com/2AMLogic/gf180-surge/issues/25)), and every visible
+contract revision. Survey evidence recommends; only a record here installs.
+Use the next unused number, never reuse or renumber; a superseded record
+stays and is marked in its Status line.
+
+## Index
+
+| Number | Title | Status | Date |
+|---|---|---|---|
+| [0001](0001-oracle-automation-source.md) | Oracle automation source policy (SXT-010) | ratified | 2026-09-19 |
