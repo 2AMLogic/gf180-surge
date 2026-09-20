@@ -150,22 +150,18 @@ def build_and_run(dut, run_dir):
                        stdout=log)
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--seq", required=True)
-    ap.add_argument("--run-dir", required=True)
-    ap.add_argument("--dut", default=DUT_DEFAULT)
-    ap.add_argument("--out", help="write verdict JSON here")
-    args = ap.parse_args()
+def run_comparison(seq, run_dir, dut=DUT_DEFAULT):
+    """Full model-vs-RTL comparison for one sequence dict.
 
-    with open(args.seq) as f:
-        seq = json.load(f)
-    os.makedirs(args.run_dir, exist_ok=True)
-
+    Re-renders the model independently (the committed model trace is never
+    trusted), builds and runs the RTL in `run_dir`, writes events.hex /
+    rtl_trace.txt / sim.log / verdict.json there, and returns the verdict.
+    """
+    os.makedirs(run_dir, exist_ok=True)
     trace, out, summary = render_sequence(seq, CounterStubEngine())
-    write_events_hex(seq, os.path.join(args.run_dir, "events.hex"))
-    build_and_run(os.path.abspath(args.dut), args.run_dir)
-    rtl = parse_tb(os.path.join(args.run_dir, "rtl_trace.txt"))
+    write_events_hex(seq, os.path.join(run_dir, "events.hex"))
+    build_and_run(os.path.abspath(dut), run_dir)
+    rtl = parse_tb(os.path.join(run_dir, "rtl_trace.txt"))
     checked, fails = compare(trace, out, rtl)
 
     # byte-identity of the assembled RTL recording vs the model recording
@@ -179,18 +175,31 @@ def main():
 
     verdict = {
         "sequence": seq.get("id"),
-        "dut": os.path.relpath(args.dut, REPO),
+        "dut": os.path.relpath(os.path.abspath(dut), REPO),
         "verdict": "PASS" if (not fails and byte_identical) else "FAIL",
         "byte_identical_outputs": byte_identical,
+        "model_summary": summary,
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
     }
+    with open(os.path.join(run_dir, "verdict.json"), "w") as f:
+        json.dump(verdict, f, indent=2)
+        f.write("\n")
+    return verdict
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seq", required=True)
+    ap.add_argument("--run-dir", required=True)
+    ap.add_argument("--dut", default=DUT_DEFAULT)
+    args = ap.parse_args()
+
+    with open(args.seq) as f:
+        seq = json.load(f)
+    verdict = run_comparison(seq, args.run_dir, args.dut)
     print(json.dumps(verdict, indent=2))
-    if args.out:
-        with open(args.out, "w") as f:
-            json.dump(verdict, f, indent=2)
-            f.write("\n")
     return 0 if verdict["verdict"] == "PASS" else 1
 
 

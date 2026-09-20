@@ -80,6 +80,10 @@ TYPE_NAMES = {
 }
 NAME_TO_TYPE = {v: k for k, v in TYPE_NAMES.items()}
 
+# "no voice slot touched" sentinel (shared encoding with the RTL E lines;
+# the RTL 5-bit slot field cannot hold negative values)
+SLOT_NONE = 31
+
 # Decision status codes (shared encoding with the RTL E lines)
 STATUS_ALLOC = 0            # note_on onto a free slot
 STATUS_STEAL = 1            # note_on stole the oldest active voice
@@ -219,15 +223,17 @@ class ControlModel:
                 if best is None or v.seq < best[0]:
                     best = (v.seq, i)
         if best is None:
-            return -1, STATUS_NO_VOICE
+            return SLOT_NONE, STATUS_NO_VOICE
         i = best[1]
         self.voices[i] = Voice()
         return i, STATUS_RELEASE
 
-    def dispatch(self, ev: Event) -> Decision:
-        applied_sample = sample_of_block(ev.target_block)
+    def dispatch(self, ev: Event, effective_block: int) -> Decision:
+        # effective at the first sample of the DISPATCHING block: equal to
+        # the quantized target normally, later under burst spill
+        applied_sample = sample_of_block(effective_block)
         d = Decision(seq=ev.seq, t=ev.t, type=ev.type, p1=ev.p1, p2=ev.p2,
-                     status=-1, slot=-1, steal=0, flushes=0,
+                     status=-1, slot=SLOT_NONE, steal=0, flushes=0,
                      applied_sample=applied_sample)
         if ev.type == EVENT_NOTE_ON:
             d.slot, d.status = self._alloc_free_or_steal(ev.p1)
@@ -256,37 +262,51 @@ class ControlModel:
 
     # ---------------------------------------------------------- block step
     def step_block(self, arrivals: List[Event]) -> Dict:
-        """One audio block: push arrivals -> dispatch -> snapshot -> render.
+        """One audio block: push arrivals at their exact samples -> dispatch
+        -> snapshot. (Render happens outside; the caller supplies the queue
+        state changes and the engine reads `snapshot_after`.)
 
-        `arrivals` are the events whose timestamp t lies in this block's
-        sample range (pushed in stream order, exactly as the RTL host does
-        per sample tick). Returns the block record for the trace.
+        Sample-faithful host model (matches the RTL per-sample pushes
+        exactly, including queue-overflow timing): an arrival whose t is
+        exactly the block boundary is pushed BEFORE the control pass; an
+        arrival later in the block is pushed where it arrives — after the
+        pass — and pends in the queue for its target block (it can never be
+        dispatched by this block: quantize-up guarantees target > b).
         """
         b = self.block
-        lo, hi = sample_of_block(b), sample_of_block(b + 1)
+        lo = sample_of_block(b)
         drops: List[Dict] = []
         statuses: List[str] = []
-        for ev in arrivals:
-            drop = self.queue.push(ev)
-            if drop is not None:
-                drops.append({"seq": drop.seq, "t": drop.t, "type": drop.type,
-                              "type_name": TYPE_NAMES[drop.type],
-                              "p1": drop.p1, "p2": drop.p2})
+
+        def _push_all(evs: List[Event]) -> None:
+            for ev in evs:
+                drop = self.queue.push(ev)
+                if drop is not None:
+                    drops.append({"seq": drop.seq, "t": drop.t,
+                                  "type": drop.type,
+                                  "type_name": TYPE_NAMES[drop.type],
+                                  "p1": drop.p1, "p2": drop.p2})
+
+        pre = [e for e in arrivals if e.t == lo]
+        post = [e for e in arrivals if e.t != lo]
+        _push_all(pre)
+
         if len(arrivals) > EV_RESERVE_PER_BLOCK:
             statuses.append("event_reserve_exceeded")
-        if drops:
-            statuses.append("queue_overflow")
 
         decisions: List[Decision] = []
         for _ in range(EV_RESERVE_PER_BLOCK):
             ev = self.queue.pop_eligible(b)
             if ev is None:
                 break
-            decisions.append(self.dispatch(ev))
+            decisions.append(self.dispatch(ev, b))
         spilled = sum(1 for e in self.queue.items if e.target_block <= b)
         if spilled:
             statuses.append("spill_pending")
 
+        # checkpoint = end of the control pass (the RTL registers its
+        # snapshot here; arrivals later in the block are queued after it
+        # and first appear in the next block's snapshot)
         snapshot = {
             "qcount": len(self.queue.items),
             "patch_id": self.patch_id,
@@ -294,6 +314,13 @@ class ControlModel:
             "voices": [{"slot": i, "active": v.active, "note": v.note,
                         "seq": v.seq} for i, v in enumerate(self.voices)],
         }
+
+        # arrivals later in the block land in the queue now (never applied
+        # by this block; may overflow here exactly as the RTL does)
+        _push_all(post)
+        if drops:
+            statuses.append("queue_overflow")
+
         self.block += 1
         return {"b": b, "pushes": len(arrivals), "drops": drops,
                 "statuses": statuses,
@@ -334,6 +361,8 @@ def render_sequence(seq: Dict, engine, voice_pool: int = N_VOICES) -> Tuple[Dict
             raise ValueError("timestamp out of 32-bit range")
         if quantize_block(t) >= blocks:
             raise ValueError("event t=%d lands beyond the rendered range" % t)
+        if quantize_block(t) >= MAX_BLOCKS:
+            raise ValueError("target block exceeds the 16-bit RTL field")
         if not (0 <= p1 <= 0xFFFF and 0 <= p2 <= 0xFFFF):
             raise ValueError("p1/p2 out of the 16-bit field")
         if name in ("note_on", "note_off") and p1 > 127:
@@ -348,7 +377,7 @@ def render_sequence(seq: Dict, engine, voice_pool: int = N_VOICES) -> Tuple[Dict
     model = ControlModel(voice_pool=voice_pool)
     by_block: Dict[int, List[Event]] = {}
     for ev in events:
-        by_block.setdefault(ev.target_block, []).append(ev)
+        by_block.setdefault(ev.t // BLOCK_SIZE, []).append(ev)
 
     out = bytearray()
     block_records = []

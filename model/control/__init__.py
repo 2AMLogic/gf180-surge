@@ -14,7 +14,7 @@ preset-quality claim; the engine slot is occupied by `engine_stub_counter.py`
 from .control_model import (  # noqa: F401
     BLOCK_SIZE, EV_RESERVE_PER_BLOCK, EVENT_NOTE_OFF, EVENT_NOTE_ON,
     EVENT_CC, EVENT_PITCH_BEND, EVENT_CHANNEL_PRESSURE, EVENT_PATCH_CHANGE,
-    EVENT_TEMPO, N_VOICES, QUEUE_DEPTH, ControlModel, Event,
+    EVENT_TEMPO, N_VOICES, NAME_TO_TYPE, QUEUE_DEPTH, ControlModel, Event,
     quantize_block, render_sequence, sample_of_block,
 )
 from .accounting import account_schedule, SCHED_CONSTANTS  # noqa: F401

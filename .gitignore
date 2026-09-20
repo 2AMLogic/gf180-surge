@@ -10,6 +10,7 @@ work/
 *.fst.h
 *.lxt
 *.wdb
+*.vvp
 
 # Python
 __pycache__/
