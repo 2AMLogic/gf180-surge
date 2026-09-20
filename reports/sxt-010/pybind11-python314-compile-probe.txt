@@ -1,0 +1,6 @@
+=== pinned pybind11 7c33cdc2 vs python3.14 headers (/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/include/python3.14) ===
+exit code: 0
+
+=== same pinned pybind11 vs python3.11 headers ===
+headers: /opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/include/python3.11
+exit code: 0 (compiles)
