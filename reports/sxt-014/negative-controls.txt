@@ -1,0 +1,49 @@
+# SXT-014 negative controls — recorded 2026-09-20T10:16:07Z
+
+All controls run against tools/ablate_fx.py + tools/ablation_delta.py at the commit below.
+
+## Control (b): metadata tamper must be REFUSED
+
+A copy of one preset's ablation tree is placed in a temp dir; the verifier must
+refuse tampered sidecars and tampered WAV content, and pass the pristine tree.
+
+### (b1) sidecar wav sha256 overwritten with zeros
+
+$ python3 - (rewrite /var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/tamper-ctl/behemoth/seq-notes-coverage-v1-original.json with wav.sha256 = 64 zeros)
+$ python3 tools/ablate_fx.py verify --root <temp>; echo exit=$?
+REFUSING: ablation tree integrity check failed:
+  ../../../../var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/tamper-ctl/behemoth/seq-notes-coverage-v1-original.json: wav sha256 mismatch (metadata tamper or corruption): /var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/tamper-ctl/behemoth/seq-notes-coverage-v1-original.wav
+  ../../../../var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/tamper-ctl/behemoth/seq-notes-coverage-v1-original.json: wav sha256 mismatch (metadata tamper or corruption): /Users/joseph/dev/gf180-surge-wt-014b/reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-original.wav
+exit=2
+
+### (b2) sidecar restored, WAV content flipped (one audio byte)
+
+$ python3 - (restore sidecar; data[200] ^= 0xFF in the temp copy wav)
+$ python3 tools/ablate_fx.py verify --root <temp>; echo exit=$?
+REFUSING: ablation tree integrity check failed:
+  ../../../../var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/tamper-ctl/behemoth/seq-notes-coverage-v1-original.json: wav sha256 mismatch (metadata tamper or corruption): /var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/tamper-ctl/behemoth/seq-notes-coverage-v1-original.wav
+exit=2
+
+### (b3) pristine tree must PASS
+
+$ python3 tools/ablate_fx.py verify
+verify OK: 61 sidecars, all hashes and pins consistent
+exit=0
+
+## Control (a): Off-slot bypass non-perturbation (bit-identity)
+
+Result table: see reports/sxt-014/ablation-summary.json rows kind=offslot-ctrl and
+reports/sxt-014/EVIDENCE.md. Summary: sub4 (all-Off preset) and behemoth (Reverb1
+active) bypass of already-Off slots 0/12 renders BIT-IDENTICAL to the original;
+koala2 (free-phase class) is not bit-identical by class, with variation inside the
+SXT-012 repeat-render bounds (diagnostic non-perturbation, not proof).
+
+## Control (c): wrong effect order (slot permutation) must be flagged by the comparator
+
+fuji: Delay(slot0,ains1) and Delay(slot4,send1) contents exchanged; the delta tool
+measures the permuted render against the original at
+reports/sxt-014/deltas/fuji/seq-notes-coverage-v1-permuted-swap00-with04.json
+(mean block-RMS delta 18.660 dB, verdict MEASURABLE-DIFFERENCE: DETECTED).
+Attribution caveat: param transfer through setParamVal is not bit-exact (recorded
+in the sidecar 'mutation' block), so the render differs through order + transfer
+epsilon together; order-only numeric attribution is left to the SXT-017 policy.

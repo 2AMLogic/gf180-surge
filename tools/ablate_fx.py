@@ -592,14 +592,23 @@ def cmd_verify(args):
             checked += 1
             def fail(msg):
                 failures.append(f"{os.path.relpath(path, REPO)}: {msg}")
+            # The WAV is checked wherever it actually sits: beside its sidecar
+            # (catches content tamper in a copied/checked-out subtree) and, when
+            # different, at the sidecar's repo-relative path as well.
+            wav_name = os.path.basename(sc["wav"]["path"])
+            candidates = [os.path.join(dirpath, wav_name)]
             wav_abs = os.path.join(REPO, sc["wav"]["path"])
-            if not os.path.exists(wav_abs):
+            if os.path.realpath(wav_abs) != os.path.realpath(candidates[0]):
+                candidates.append(wav_abs)
+            if not any(os.path.exists(c) for c in candidates):
                 fail("wav missing")
-            else:
-                if sha256_file(wav_abs) != sc["wav"]["sha256"]:
-                    fail("wav sha256 mismatch (metadata tamper or corruption)")
-                if os.path.getsize(wav_abs) != sc["wav"]["bytes"]:
-                    fail("wav byte length mismatch")
+            for wav in candidates:
+                if not os.path.exists(wav):
+                    continue
+                if sha256_file(wav) != sc["wav"]["sha256"]:
+                    fail(f"wav sha256 mismatch (metadata tamper or corruption): {wav}")
+                elif os.path.getsize(wav) != sc["wav"]["bytes"]:
+                    fail(f"wav byte length mismatch: {wav}")
             preset_rel = sc["preset"]["path"].replace("resources/data/patches_factory/", "")
             preset_abs = os.path.join(oc.data_home(), "patches_factory", preset_rel)
             if not os.path.exists(preset_abs):
