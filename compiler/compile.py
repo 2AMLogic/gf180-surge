@@ -619,9 +619,11 @@ def cmd_scan(args):
                        "rejected/unresolved = explicit machine-readable codes "
                        "(compiler/rejections.json); NOTHING is ever trimmed",
         "provenance": {
-            "graphs_file": args.graphs, "graphs_sha256": graphs_sha,
+            "graphs_file": getattr(args, "graphs_provenance", args.graphs),
+            "graphs_sha256": graphs_sha,
             "graphs_count": len(lines),
-            "bundle_file": args.bundle, "bundle_file_sha256": bundle_sha,
+            "bundle_file": getattr(args, "bundle_provenance", args.bundle),
+            "bundle_file_sha256": bundle_sha,
             "bundle_id": args.bundle_id, "bundle_status": status,
             "accounting_model_version": MODEL_VERSION,
             "rejection_catalog": "compiler/rejections.json",
@@ -747,6 +749,18 @@ def main(argv=None):
     bundle = Path(args.bundle)
     if not bundle.is_absolute():
         args.bundle = str(REPO / bundle)
+
+    def _rel(p):
+        # Provenance must be repo-relative: absolute host paths make the
+        # artifact byte-vary across checkouts and fail CI regeneration.
+        rp = Path(p).resolve()
+        try:
+            return str(rp.relative_to(REPO))
+        except ValueError:
+            return rp.name
+
+    args.graphs_provenance = _rel(args.graphs)
+    args.bundle_provenance = _rel(args.bundle)
     return args.func(args)
 
 
