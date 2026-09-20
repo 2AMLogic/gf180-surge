@@ -1,0 +1,22 @@
+{
+  "issue": "SXT-010",
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "sample_rate": 48000,
+  "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+  "census_source_lock": "corpus/census-v0.1/source-lock.json",
+  "entries_total": 3561,
+  "counts": {
+    "ok": 3561
+  },
+  "successes": 3561,
+  "failures_count": 0,
+  "failures": [],
+  "snare_tight": {
+    "path": "resources/data/patches_factory/Percussion/Snare Tight.fxp",
+    "native_verdict": "loads_natively",
+    "detail": "",
+    "note": "resolved by native loader behavior only; file not repaired"
+  },
+  "wall_seconds": 41.3,
+  "note": "Load coverage only: this report establishes that the pinned native loader accepted or rejected each file. It makes no audio-support, fidelity, or preset-quality claim."
+}

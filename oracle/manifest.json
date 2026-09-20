@@ -56,7 +56,7 @@
     "cmake_configure_command": "cmake -S . -B build-py311 -G Ninja -DCMAKE_BUILD_TYPE=Release -DSURGE_BUILD_PYTHON_BINDINGS=ON -DSURGE_BUILD_TESTRUNNER=ON -DPYBIND11_FINDPYTHON=OFF -DPYTHON_EXECUTABLE=<python3.11>",
     "python_interpreter": "/opt/homebrew/opt/python@3.11/bin/python3.11",
     "python_version": "3.11.16",
-    "python_binding_note": "surgepy built against homebrew python3.11 (numpy 1.26.4 present). python3.12/3.13 were rejected for lack of a numpy runtime. A standalone compile of a trivial pybind11 module using the pinned pybind11 (2.11.0-172-g7c33cdc2) against python3.14 headers also succeeded (transcript in reports/sxt-010/EVIDENCE.md); 3.11 was kept as the pinned evidence runtime for numpy-availability and environment-stability reasons, not because 3.14 compilation failed. PYBIND11_FINDPYTHON=OFF forces pybind11's classic FindPythonLibsNew, which strictly honors PYTHON_EXECUTABLE; the default new-style FindPython in this environment resolves a broken anaconda interpreter (/opt/homebrew/anaconda3, missing include dir) regardless of hints. Interpreter-resolution transcript in reports/sxt-010/EVIDENCE.md.",
+    "python_binding_note": "surgepy evidence runtime is homebrew python3.11 (numpy 1.26.4 present). python3.12/3.13 were rejected for lack of a numpy runtime. A full surgepy module build against python3.14 from the same pinned tree (build dir build-py314) also succeeded and imports with identical engine version and 48 kHz; the pinned pybind11 (2.11.0-172-g7c33cdc2) is therefore not the limiting factor here. 3.11 was kept as the pinned evidence runtime for numpy availability and single-runtime consistency, not because 3.14 failed. PYBIND11_FINDPYTHON=OFF forces pybind11's classic FindPythonLibsNew, which strictly honors PYTHON_EXECUTABLE; the default new-style FindPython in this environment resolves a broken anaconda interpreter (/opt/homebrew/anaconda3, missing include dir) regardless of Python_ROOT_DIR/Python_EXECUTABLE hints (transcript: reports/sxt-010/findpython-interpreter-resolution.txt).",
     "build_dir_used_for_evidence": "build-py311 (under the engine checkout)",
     "products": {
       "surgepy_module": "build-py311/src/surge-python/surgepy.cpython-311-darwin.so",
@@ -84,7 +84,7 @@
     "ninja": "1.11.1.git.kitware.jobserver-1",
     "git": "2.55.0",
     "python_runtime": "3.11.16 (numpy 1.26.4)",
-    "python_rejected": "3.12/3.13 (no numpy runtime); 3.14 not used for evidence (see python_binding_note)"
+    "python_alternatives_verified": "3.14.7: full surgepy build + import verified (build-py314), not used for evidence; 3.12/3.13: no numpy runtime installed"
   },
   "evidence_root": "reports/sxt-010/",
   "harness": {

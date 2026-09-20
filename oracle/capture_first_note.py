@@ -33,10 +33,9 @@ DURATION_S = 2.0
 
 
 def render_once(surgepy, preset_abs, block_size):
+    # createSurge() sets samplerate, tempo=120 and ppqPos=0 internally
+    # (src/surge-python/surgepy.cpp createSurge).
     s = surgepy.createSurge(float(SAMPLE_RATE))
-    s.setSamplerate(float(SAMPLE_RATE))
-    s.time_data.tempo = 120
-    s.time_data.ppqPos = 0
     ok = s.loadPatch(preset_abs)
     blocks = int(DURATION_S * SAMPLE_RATE / block_size)
     sample_count = blocks * block_size
@@ -56,6 +55,7 @@ def render_once(surgepy, preset_abs, block_size):
 
 def main():
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    oc.reexec_under_pinned_python(repo)
     out_dir = os.path.join(repo, "reports", "sxt-010", "first-capture")
     os.makedirs(out_dir, exist_ok=True)
 

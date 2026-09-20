@@ -18,6 +18,20 @@ DEFAULT_PYTHON_BUILD_DIR = "build-py311"
 CENSUS_DIR = os.path.join("corpus", "census-v0.1")
 
 
+def reexec_under_pinned_python(repo_root):
+    """Re-exec under the manifest-pinned interpreter if we are not on it.
+
+    The surgepy module is built for one CPython ABI (cpython-311 here); the
+    ambient `python3` may be anything (3.14, anaconda, ...), so enforce the
+    pinned runtime instead of failing with a confusing ABI error.
+    """
+    mp = os.path.join(repo_root, "oracle", "manifest.json")
+    with open(mp, "r", encoding="utf-8") as f:
+        pinned = json.load(f)["build"]["python_interpreter"]
+    if os.path.realpath(sys.executable) != os.path.realpath(pinned) and os.path.exists(pinned):
+        os.execv(pinned, [pinned, os.path.abspath(sys.argv[0])] + sys.argv[1:])
+
+
 def engine_dir():
     return os.environ.get("ORACLE_SURGE_DIR", DEFAULT_ENGINE_DIR)
 
@@ -31,13 +45,16 @@ def build_dir():
 
 
 def import_surgepy():
-    """Import the surgepy binding built from the pinned engine tree."""
-    bd = build_dir()
-    so_dir = os.path.join(bd, "src", "surge-python")
-    pkg_dir = os.path.join(engine_dir(), "src", "surge-python")
-    for p in (so_dir, pkg_dir):
-        if p not in sys.path:
-            sys.path.insert(0, p)
+    """Import the surgepy binding built from the pinned engine tree.
+
+    Import the built .so directly (as upstream surgepy tests do). The
+    src/surge-python/surgepy/ package wrapper is only for scikit-build wheels;
+    putting it on sys.path here would shadow the native module with an empty
+    namespace package.
+    """
+    so_dir = os.path.join(build_dir(), "src", "surge-python")
+    if so_dir not in sys.path:
+        sys.path.insert(0, so_dir)
     import surgepy  # noqa: PLC0415
 
     return surgepy

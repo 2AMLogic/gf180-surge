@@ -1,0 +1,64 @@
+=== NEGATIVE CONTROL A: manifest copy with wrong engine commit (deadbeef...) ===
+fetch-and-build: REFUSING: engine HEAD drift: manifest pins deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, checkout is at 58914e59c608ed4384ba6002e44c3465c58b2e71. Refusing to build against a different commit.
+exit code: 2
+
+=== NEGATIVE CONTROL B: manifest copy with flipped submodule SHA (libs/JUCE -> 0000...) ===
+fetch-and-build: REFUSING: submodule drift at libs/JUCE: pin 0000000000000000000000000000000000000000, checkout a8c7c714c7564b9248749e1e8cefcc5ef2b6f0cc
+fetch-and-build: ok  submodule libs/PEGTL @ 64af78c6a795
+fetch-and-build: ok  submodule libs/clap-juce-extensions @ 16e9d4ca7b1e
+fetch-and-build: ok  submodule libs/eurorack/eurorack @ 888298b0e3ec
+fetch-and-build: ok  submodule libs/fmt @ e424e3f2e607
+fetch-and-build: ok  submodule libs/luajitlib/LuaJIT @ 18b087cd2cd4
+fetch-and-build: ok  submodule libs/luajitlib/cmake @ b859bf0ffd1c
+fetch-and-build: ok  submodule libs/melatonin_inspector @ 9e91e4e3d6cc
+fetch-and-build: ok  submodule libs/oddsound-mts/MTS-ESP @ ec13f5749ea8
+fetch-and-build: ok  submodule libs/pffft @ d027f2a290ca
+fetch-and-build: ok  submodule libs/pybind11 @ 7c33cdc2d39c
+fetch-and-build: ok  submodule libs/r8brain-free-src @ b3f0753d90b3
+fetch-and-build: ok  submodule libs/simde @ 71fd833d9666
+fetch-and-build: ok  submodule libs/sst/sst-basic-blocks @ a32b8aec14d6
+fetch-and-build: ok  submodule libs/sst/sst-cmake @ 49008aacfe82
+fetch-and-build: ok  submodule libs/sst/sst-cpputils @ 52c4b749c0e1
+fetch-and-build: ok  submodule libs/sst/sst-effects @ adcac6950292
+fetch-and-build: ok  submodule libs/sst/sst-filters @ e92d93a92bea
+fetch-and-build: ok  submodule libs/sst/sst-plugininfra @ ebdaf5e93636
+fetch-and-build: ok  submodule libs/sst/sst-waveshapers @ dd12f31a5a90
+fetch-and-build: ok  submodule libs/tuning-library @ 5a18353a0444
+fetch-and-build: ok  submodule libs/zstd @ 92505deb29bc
+fetch-and-build: REFUSING: submodule verification failed; run 'git submodule update --init --recursive' in /Users/joseph/dev/surge-xt-oracle/surge only if you intend the pinned state.
+exit code: 2
+
+=== NEGATIVE CONTROL C: modified tracked file in engine tree ===
+fetch-and-build: REFUSING: engine tree has modified tracked files at /Users/joseph/dev/surge-xt-oracle/surge; a pinned oracle must build from a clean tree.
+exit code: 2
+(engine tree restored; post-restore verify:)
+fetch-and-build: ok  submodule libs/JUCE @ a8c7c714c756
+fetch-and-build: ok  submodule libs/PEGTL @ 64af78c6a795
+fetch-and-build: ok  submodule libs/clap-juce-extensions @ 16e9d4ca7b1e
+fetch-and-build: ok  submodule libs/eurorack/eurorack @ 888298b0e3ec
+fetch-and-build: ok  submodule libs/fmt @ e424e3f2e607
+fetch-and-build: ok  submodule libs/luajitlib/LuaJIT @ 18b087cd2cd4
+fetch-and-build: ok  submodule libs/luajitlib/cmake @ b859bf0ffd1c
+fetch-and-build: ok  submodule libs/melatonin_inspector @ 9e91e4e3d6cc
+fetch-and-build: ok  submodule libs/oddsound-mts/MTS-ESP @ ec13f5749ea8
+fetch-and-build: ok  submodule libs/pffft @ d027f2a290ca
+fetch-and-build: ok  submodule libs/pybind11 @ 7c33cdc2d39c
+fetch-and-build: ok  submodule libs/r8brain-free-src @ b3f0753d90b3
+fetch-and-build: ok  submodule libs/simde @ 71fd833d9666
+fetch-and-build: ok  submodule libs/sst/sst-basic-blocks @ a32b8aec14d6
+fetch-and-build: ok  submodule libs/sst/sst-cmake @ 49008aacfe82
+fetch-and-build: ok  submodule libs/sst/sst-cpputils @ 52c4b749c0e1
+fetch-and-build: ok  submodule libs/sst/sst-effects @ adcac6950292
+fetch-and-build: ok  submodule libs/sst/sst-filters @ e92d93a92bea
+fetch-and-build: ok  submodule libs/sst/sst-plugininfra @ ebdaf5e93636
+fetch-and-build: ok  submodule libs/sst/sst-waveshapers @ dd12f31a5a90
+fetch-and-build: ok  submodule libs/tuning-library @ 5a18353a0444
+fetch-and-build: ok  submodule libs/zstd @ 92505deb29bc
+fetch-and-build: ok  nested    libs/clap-juce-extensions/clap-libs/clap @ 29ffcc273be7
+fetch-and-build: ok  nested    libs/clap-juce-extensions/clap-libs/clap-helpers @ a61bcdf0ecc2
+fetch-and-build: ok  nested    libs/simde/test/munit @ da8f73412998
+fetch-and-build: ok  nested    libs/sst/sst-plugininfra/libs/filesystem/ghc-filesystem @ 614bbe87b804
+fetch-and-build: ok  nested    libs/sst/sst-plugininfra/libs/miniz @ 16413c213de3
+fetch-and-build: engine identity verified: 58914e59c608 with all pinned submodules
+fetch-and-build: verify-only requested; stopping before configure/build
+exit code: 0

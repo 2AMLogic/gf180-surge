@@ -38,6 +38,7 @@ def main():
     args = ap.parse_args()
 
     repo = os.path.abspath(args.repo_root)
+    oc.reexec_under_pinned_python(repo)
     out_dir = args.report_root or os.path.join(repo, REPORT_SUBDIR)
     os.makedirs(out_dir, exist_ok=True)
 
@@ -60,7 +61,6 @@ def main():
     surgepy = oc.import_surgepy()
     sr = 48000
     s = surgepy.createSurge(sr)
-    s.setSamplerate(sr)
     engine_commit = oracle_manifest["engine"]["commit"]
 
     csv_path = os.path.join(out_dir, "load-report.csv")
