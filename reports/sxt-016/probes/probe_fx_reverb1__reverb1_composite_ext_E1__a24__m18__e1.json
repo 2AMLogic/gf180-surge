@@ -1,0 +1,171 @@
+{
+ "assumptions": [
+  "A-DSP-1a: one 18x18->36 MAC, 1 pass/cycle; wider multiplies decompose into ceil(w/18)^2 sequential passes.",
+  "A-ALU-1: add/sub/compare/shift on <=32-bit two's-complement words cost 1 cycle at every candidate clock. NOT verified by timing analysis; at 480 MHz a 32-bit carry chain may need pipelining, which would raise add costs proportionally.",
+  "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it.",
+  "A-ALU-2: no division in any audio-rate path. Divisions in the source algorithms are replaced by multiply-by-precomputed-inverse with the inverse recomputed at coefficient rate (named per probe where used).",
+  "A-CLK: F in {48, 96, 192, 480} MHz are CANDIDATE clock hypotheses for the closure formula; none is verified achievable in gf180mcu (no synthesis run). The closure check is arithmetic on the formula in plan section 5 only.",
+  "A-EXT-1: external 16-bit asynchronous SRAM, ~24 cycles per 32-bit word sustained, ~30-cycle first-access latency, no burst.",
+  "Composite tap array and predelay line are external writable memory (>64 KiB policy, SXT-015); processing stays on-chip. Tap accesses are single-word, stride 64 B: no burst benefit (burst efficiency 1 word per 64 B bus burst on a 16-bit bus).",
+  "Latency tolerance is LOW: 33 of the accesses are consumed in the same frame (16 tap reads + predelay read feed the same sample's feedback write); the model charges full access latency per access.",
+  "Control-rate coefficient recompute (decay/size/shape change; delay_fb pow and preset tables) excluded from the per-frame count (rare path)."
+ ],
+ "buffer_traffic_classes": {
+  "bytes_per_s_at_48k": 6528000,
+  "composite_taps": {
+   "access_pattern": "scattered, stride 64 B",
+   "burst_efficiency": "1 word",
+   "words_per_frame": 32
+  },
+  "predelay_line": {
+   "access_pattern": "single word at (delay_pos) and sliding read",
+   "words_per_frame": 2
+  },
+  "sxt015_logical_words_per_frame": {
+   "reads": 17,
+   "reconciliation": "matches: 16 tap + 1 predelay each way",
+   "writes": 17
+  },
+  "total_bytes_per_frame": 136,
+  "total_words_per_frame": 34
+ },
+ "clock_hz_candidates": [
+  48000000,
+  96000000,
+  192000000,
+  480000000
+ ],
+ "closure_at_clocks": {
+  "48000000": {
+   "clock_hz": 48000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 3223,
+   "dsp_budget_cycles_per_frame": 800.0,
+   "gross_cycles_per_frame": 1000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "96000000": {
+   "clock_hz": 96000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 3223,
+   "dsp_budget_cycles_per_frame": 1600.0,
+   "gross_cycles_per_frame": 2000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "192000000": {
+   "clock_hz": 192000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 3223,
+   "dsp_budget_cycles_per_frame": 3200.0,
+   "gross_cycles_per_frame": 4000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "480000000": {
+   "clock_hz": 480000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 3223,
+   "dsp_budget_cycles_per_frame": 8000.0,
+   "gross_cycles_per_frame": 10000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  }
+ },
+ "cycles_per_frame": 3223,
+ "ext_bytes_per_frame": 136,
+ "fixed_point_stability_guard_band": {
+  "limit_cycle_note": "fixed-point recirculation needs a dither or decay-floor LSB to avoid dead/limit-cycle tails; NOT modeled numerically here (SXT-024 model work)",
+  "loop_model": "zero-latency composite loop (conservative upper bound; actual taps carry >=1 sample of line delay)",
+  "note": "guard band: keep the internal reverb word at 24+15 bits and |delay_fb|<1; the damping one-pole (damp in [0.01,0.99]) further attenuates and is part of the loop only through its |damp|<1 bound",
+  "power_iterations": 200,
+  "quantization_noise_amplification": 20408.163,
+  "recommended_internal_word_bits": 39,
+  "required_guard_bits": 15,
+  "rho_nonuniform_power_iteration": {
+   "decay_time_s_at_max": 6.0,
+   "rho_nonuniform_max": 0.999951,
+   "rho_uniform_sup": 1.0
+  },
+  "rho_uniform_sup": 1.0,
+  "uniform_damping_closed_form": "rho = q exactly (q*(1-2) on the all-ones eigenvector; q on the orthogonal complement); q<1 is the stability condition"
+ },
+ "has_phase_accumulator": false,
+ "kernel": "reverb1_composite_ext_E1",
+ "latency_bound_cycles_per_frame": 2652,
+ "memory_model": {
+  "external": {
+   "detail": "A-EXT-1: external 16-bit asynchronous SRAM, ~24 cycles per 32-bit word sustained, ~30-cycle first-access latency, no burst.",
+   "name": "E1"
+  },
+  "name": "onchip_1rw_sram+E1",
+  "onchip_sram": "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it."
+ },
+ "ops": {
+  "add_sub_cmp_by_width": {
+   "24": 107
+  },
+  "add_total": 107,
+  "ext_read_words": 0,
+  "ext_write_words": 0,
+  "lut_detail": [],
+  "lut_lookups": 0,
+  "mul_by_width": {
+   "24": 116
+  },
+  "mul_total": 116,
+  "shift": 0,
+  "sram_reads": 0,
+  "sram_writes": 0
+ },
+ "probe": "probe_fx_reverb1",
+ "sample_rate_hz": 48000,
+ "small_state_bits": {
+  "biquads": 288,
+  "delay_fb": 512,
+  "delay_pan_L": 512,
+  "delay_pan_R": 512,
+  "delay_pos": 15,
+  "out_tap": 384
+ },
+ "state_lines_bits": {
+  "composite_taps": 12582912,
+  "predelay": 786432
+ },
+ "state_ram_bits": 2223,
+ "state_ram_note": "state RAM bits are per declared instance scope (see record); logic op counts are separate from state RAM (issue #11 acceptance)",
+ "status": "ESTIMATE",
+ "structure_citations": [
+  "sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/Reverb1.h ::processBlock (16 composite taps, per-tap one-pole damping, fb = -2/16*sum + predelay read, per-tap feedback write delay[(delay_pos<<4)+t], pan sums, 3 wet biquads, width/mix)",
+  "sst-effects@adcac695 include/sst/effects/Reverb1.h:122-131 (revbits=15, rev_taps=16, delay[16*32768]+predelay[32768]; SXT-015 pin)",
+  "SXT-015 model/resources/fx_classes.py _PINNED_TX['reverb1'] = 17r+17w"
+ ],
+ "sxt015_replacement": {
+  "replaces": "cyc_fxreverb1_frame + reverb1 traffic confirmation",
+  "scope": "per Reverb1 instance per frame (stereo)",
+  "sxt015_value": 2600
+ },
+ "technology_note": "PDK-neutral relative estimates. 'Logic' is reported as normalized op counts (multiply/add/lut/shift) and cycles under a named sequential schedule; no gf180mcu synthesis, place-and-route, timing signoff, or layout has been run. State memory is reported in bits and kept separate from logic. gf180mcu cell/memory-macro feasibility at the candidate clocks is NOT verified.",
+ "word_lengths": {
+  "audio_bits": 24,
+  "coeff_bits": 32,
+  "multiplier": "M18"
+ }
+}

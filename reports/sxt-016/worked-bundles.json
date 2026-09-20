@@ -1,0 +1,1052 @@
+{
+ "bundles": [
+  {
+   "bundle": "july",
+   "closure_at_clocks": {
+    "48000000": {
+     "clock_hz": 48000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 16229.6,
+     "dsp_budget_cycles_per_frame": -198.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 1000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 8000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "96000000": {
+     "clock_hz": 96000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 16229.6,
+     "dsp_budget_cycles_per_frame": 602.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 2000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 16000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "192000000": {
+     "clock_hz": 192000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 16229.6,
+     "dsp_budget_cycles_per_frame": 2202.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 4000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 32000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "480000000": {
+     "clock_hz": 480000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 16229.6,
+     "dsp_budget_cycles_per_frame": 7002.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 10000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 80000000,
+     "transfer_cycles_per_frame": 8
+    }
+   },
+   "components": [
+    {
+     "component": "osc:Sine scene0 slot0 uni1",
+     "cycles_per_frame": 1260.8,
+     "instances": 16,
+     "source": "probe_osc/sine_poly_fastmath",
+     "state_ram_bits": 3584
+    },
+    {
+     "component": "osc:Wavetable scene0 slot1 uni1",
+     "cycles_per_frame": 4196.8,
+     "instances": 16,
+     "source": "probe_osc/wavetable_blit",
+     "state_ram_bits": 51232
+    },
+    {
+     "component": "filter:scene0 unit0 LP K35",
+     "cycles_per_frame": 2304.0,
+     "instances": 16,
+     "source": "probe_filter/k35_ladder_tanh_lut",
+     "state_ram_bits": 9344
+    },
+    {
+     "component": "filter:scene0 unit1 HP 24 dB",
+     "cycles_per_frame": 1280.0,
+     "instances": 16,
+     "source": "probe_filter/svf_tdf2_block_coeffs",
+     "state_ram_bits": 3072
+    },
+    {
+     "component": "waveshaper (active voices)",
+     "cycles_per_frame": 800,
+     "instances": 16,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_waveshaper_frame"
+    },
+    {
+     "component": "LFO instances",
+     "cycles_per_frame": 3060,
+     "instances": 102,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_lfo_frame"
+    },
+    {
+     "component": "envelope instances",
+     "cycles_per_frame": 640,
+     "instances": 32,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_env_frame"
+    },
+    {
+     "component": "modulation routing rows",
+     "cycles_per_frame": 270,
+     "instances": 18,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_modroute_frame"
+    },
+    {
+     "component": "fx:slot0 Phaser",
+     "cycles_per_frame": 800,
+     "ext_bytes_per_frame": 0,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxgeneric_frame",
+     "state_ram_bits": 65536
+    },
+    {
+     "component": "fx:slot2 Audio In (routing-inactive; state retained, not processed)",
+     "cycles_per_frame": 0,
+     "instances": 1,
+     "source": "SXT-015 routing model",
+     "state_ram_bits": 65536
+    },
+    {
+     "component": "fx:slot3 Delay (routing-inactive; state retained, not processed)",
+     "cycles_per_frame": 0,
+     "instances": 1,
+     "source": "SXT-015 routing model",
+     "state_ram_bits": 16777216
+    },
+    {
+     "component": "fx:slot6 Airwindows",
+     "cycles_per_frame": 800,
+     "ext_bytes_per_frame": 24,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxgeneric_frame",
+     "state_ram_bits": 8388608
+    },
+    {
+     "component": "scheduler (control + worst 8 events)",
+     "cycles_per_frame": 818,
+     "source": "probe_scheduler/event_queue_and_control"
+    }
+   ],
+   "ext_bytes_per_frame": 24,
+   "ext_bytes_per_s_at_48k": 1152000,
+   "flags": [
+    "filter_mapping_generic:HP 24 dB",
+    "placeholder_component:cyc_env_frame",
+    "placeholder_component:cyc_fxgeneric_frame(Airwindows)",
+    "placeholder_component:cyc_fxgeneric_frame(Phaser)",
+    "placeholder_component:cyc_lfo_frame",
+    "placeholder_component:cyc_modroute_frame",
+    "placeholder_component:cyc_waveshaper_frame",
+    "placeholder_component:lfo_state_bytes",
+    "placeholder_component:voice_base_state_bytes"
+   ],
+   "fx_instance_limit": 4,
+   "multiplier": "M18",
+   "placeholder_policy_note": "components flagged placeholder_component remain at SXT-015 placeholder-v0 values; totals are a mix of probe-replaced and placeholder components, so closure verdicts are UPPER-BOUNDED estimates, never measurements",
+   "preset_path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp",
+   "preset_sha": "315c0a1a27a671297f437026c021ce917f1e3875",
+   "scene_mode": "Single",
+   "state_ram_bits_total": 26097824,
+   "sxt015_rejections": [
+    "budget_overflow"
+   ],
+   "totals": {
+    "env_cycles_per_frame": 640,
+    "filter_cycles_per_frame": 3584.0,
+    "fx_cycles_per_frame": 1600,
+    "lfo_cycles_per_frame": 3060,
+    "modroute_cycles_per_frame": 270,
+    "osc_cycles_per_frame": 5457.6,
+    "scheduler_cycles_per_frame": 818,
+    "total_cycles_per_frame": 16229.6,
+    "waveshaper_cycles_per_frame": 800
+   },
+   "worst_case_voices": 16
+  },
+  {
+   "bundle": "july",
+   "closure_at_clocks": {
+    "48000000": {
+     "clock_hz": 48000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 11581.2,
+     "dsp_budget_cycles_per_frame": -198.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 1000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 8000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "96000000": {
+     "clock_hz": 96000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 11581.2,
+     "dsp_budget_cycles_per_frame": 602.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 2000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 16000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "192000000": {
+     "clock_hz": 192000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 11581.2,
+     "dsp_budget_cycles_per_frame": 2202.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 4000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 32000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "480000000": {
+     "clock_hz": 480000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 11581.2,
+     "dsp_budget_cycles_per_frame": 7002.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 10000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 80000000,
+     "transfer_cycles_per_frame": 8
+    }
+   },
+   "components": [
+    {
+     "component": "osc:Sine scene0 slot0 uni1",
+     "cycles_per_frame": 532.8,
+     "instances": 16,
+     "source": "probe_osc/sine_poly_fastmath",
+     "state_ram_bits": 3584
+    },
+    {
+     "component": "osc:Wavetable scene0 slot1 uni1",
+     "cycles_per_frame": 2238.4,
+     "instances": 16,
+     "source": "probe_osc/wavetable_blit",
+     "state_ram_bits": 51232
+    },
+    {
+     "component": "filter:scene0 unit0 LP K35",
+     "cycles_per_frame": 1152.0,
+     "instances": 16,
+     "source": "probe_filter/k35_ladder_tanh_lut",
+     "state_ram_bits": 9344
+    },
+    {
+     "component": "filter:scene0 unit1 HP 24 dB",
+     "cycles_per_frame": 512.0,
+     "instances": 16,
+     "source": "probe_filter/svf_tdf2_block_coeffs",
+     "state_ram_bits": 3072
+    },
+    {
+     "component": "waveshaper (active voices)",
+     "cycles_per_frame": 800,
+     "instances": 16,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_waveshaper_frame"
+    },
+    {
+     "component": "LFO instances",
+     "cycles_per_frame": 3060,
+     "instances": 102,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_lfo_frame"
+    },
+    {
+     "component": "envelope instances",
+     "cycles_per_frame": 640,
+     "instances": 32,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_env_frame"
+    },
+    {
+     "component": "modulation routing rows",
+     "cycles_per_frame": 270,
+     "instances": 18,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_modroute_frame"
+    },
+    {
+     "component": "fx:slot0 Phaser",
+     "cycles_per_frame": 800,
+     "ext_bytes_per_frame": 0,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxgeneric_frame",
+     "state_ram_bits": 65536
+    },
+    {
+     "component": "fx:slot2 Audio In (routing-inactive; state retained, not processed)",
+     "cycles_per_frame": 0,
+     "instances": 1,
+     "source": "SXT-015 routing model",
+     "state_ram_bits": 65536
+    },
+    {
+     "component": "fx:slot3 Delay (routing-inactive; state retained, not processed)",
+     "cycles_per_frame": 0,
+     "instances": 1,
+     "source": "SXT-015 routing model",
+     "state_ram_bits": 16777216
+    },
+    {
+     "component": "fx:slot6 Airwindows",
+     "cycles_per_frame": 800,
+     "ext_bytes_per_frame": 24,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxgeneric_frame",
+     "state_ram_bits": 8388608
+    },
+    {
+     "component": "scheduler (control + worst 8 events)",
+     "cycles_per_frame": 776,
+     "source": "probe_scheduler/event_queue_and_control"
+    }
+   ],
+   "ext_bytes_per_frame": 24,
+   "ext_bytes_per_s_at_48k": 1152000,
+   "flags": [
+    "filter_mapping_generic:HP 24 dB",
+    "placeholder_component:cyc_env_frame",
+    "placeholder_component:cyc_fxgeneric_frame(Airwindows)",
+    "placeholder_component:cyc_fxgeneric_frame(Phaser)",
+    "placeholder_component:cyc_lfo_frame",
+    "placeholder_component:cyc_modroute_frame",
+    "placeholder_component:cyc_waveshaper_frame",
+    "placeholder_component:lfo_state_bytes",
+    "placeholder_component:voice_base_state_bytes"
+   ],
+   "fx_instance_limit": 4,
+   "multiplier": "M32",
+   "placeholder_policy_note": "components flagged placeholder_component remain at SXT-015 placeholder-v0 values; totals are a mix of probe-replaced and placeholder components, so closure verdicts are UPPER-BOUNDED estimates, never measurements",
+   "preset_path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp",
+   "preset_sha": "315c0a1a27a671297f437026c021ce917f1e3875",
+   "scene_mode": "Single",
+   "state_ram_bits_total": 26097824,
+   "sxt015_rejections": [
+    "budget_overflow"
+   ],
+   "totals": {
+    "env_cycles_per_frame": 640,
+    "filter_cycles_per_frame": 1664.0,
+    "fx_cycles_per_frame": 1600,
+    "lfo_cycles_per_frame": 3060,
+    "modroute_cycles_per_frame": 270,
+    "osc_cycles_per_frame": 2771.2,
+    "scheduler_cycles_per_frame": 776,
+    "total_cycles_per_frame": 11581.2,
+    "waveshaper_cycles_per_frame": 800
+   },
+   "worst_case_voices": 16
+  },
+  {
+   "bundle": "supersaw",
+   "closure_at_clocks": {
+    "48000000": {
+     "clock_hz": 48000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 550845.2,
+     "dsp_budget_cycles_per_frame": -198.0,
+     "ext_bandwidth_fit": "EXCEEDS",
+     "gross_cycles_per_frame": 1000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 8000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "96000000": {
+     "clock_hz": 96000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 550845.2,
+     "dsp_budget_cycles_per_frame": 602.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 2000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 16000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "192000000": {
+     "clock_hz": 192000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 550845.2,
+     "dsp_budget_cycles_per_frame": 2202.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 4000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 32000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "480000000": {
+     "clock_hz": 480000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 550845.2,
+     "dsp_budget_cycles_per_frame": 7002.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 10000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 80000000,
+     "transfer_cycles_per_frame": 8
+    }
+   },
+   "components": [
+    {
+     "component": "osc:Classic scene0 slot0 uni16",
+     "cycles_per_frame": 90291.2,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene0 slot1 uni16",
+     "cycles_per_frame": 90291.2,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene0 slot2 uni16",
+     "cycles_per_frame": 90291.2,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene1 slot0 uni16",
+     "cycles_per_frame": 90291.2,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene1 slot1 uni16",
+     "cycles_per_frame": 90291.2,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene1 slot2 uni16",
+     "cycles_per_frame": 90291.2,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "LFO instances",
+     "cycles_per_frame": 3240,
+     "instances": 108,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_lfo_frame"
+    },
+    {
+     "component": "envelope instances",
+     "cycles_per_frame": 640,
+     "instances": 32,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_env_frame"
+    },
+    {
+     "component": "modulation routing rows",
+     "cycles_per_frame": 0,
+     "instances": 0,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_modroute_frame"
+    },
+    {
+     "component": "fx:slot0 Chorus",
+     "cycles_per_frame": 1200,
+     "ext_bytes_per_frame": 20,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxchorus_frame",
+     "state_ram_bits": 8388992
+    },
+    {
+     "component": "fx:slot6 Reverb 2",
+     "cycles_per_frame": 3200,
+     "ext_bytes_per_frame": 232,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxreverb2_frame",
+     "state_ram_bits": 116260864
+    },
+    {
+     "component": "scheduler (control + worst 8 events)",
+     "cycles_per_frame": 818,
+     "source": "probe_scheduler/event_queue_and_control"
+    }
+   ],
+   "ext_bytes_per_frame": 252,
+   "ext_bytes_per_s_at_48k": 12096000,
+   "flags": [
+    "placeholder_component:cyc_env_frame",
+    "placeholder_component:cyc_fxchorus_frame(Chorus)",
+    "placeholder_component:cyc_fxreverb2_frame(Reverb 2)",
+    "placeholder_component:cyc_lfo_frame",
+    "placeholder_component:cyc_modroute_frame",
+    "placeholder_component:lfo_state_bytes",
+    "placeholder_component:voice_base_state_bytes"
+   ],
+   "fx_instance_limit": 4,
+   "multiplier": "M18",
+   "placeholder_policy_note": "components flagged placeholder_component remain at SXT-015 placeholder-v0 values; totals are a mix of probe-replaced and placeholder components, so closure verdicts are UPPER-BOUNDED estimates, never measurements",
+   "preset_path": "resources/data/patches_3rdparty/Luna/Leads/96 Osc Supersaw.fxp",
+   "preset_sha": "feeaa7db6bf4c2ef08cd48e62f0b44fe0d11dda4",
+   "scene_mode": "Dual",
+   "state_ram_bits_total": 125778880,
+   "sxt015_rejections": [
+    "budget_overflow"
+   ],
+   "totals": {
+    "env_cycles_per_frame": 640,
+    "filter_cycles_per_frame": 0,
+    "fx_cycles_per_frame": 4400,
+    "lfo_cycles_per_frame": 3240,
+    "modroute_cycles_per_frame": 0,
+    "osc_cycles_per_frame": 541747.2,
+    "scheduler_cycles_per_frame": 818,
+    "total_cycles_per_frame": 550845.2,
+    "waveshaper_cycles_per_frame": 0
+   },
+   "worst_case_voices": 16
+  },
+  {
+   "bundle": "supersaw",
+   "closure_at_clocks": {
+    "48000000": {
+     "clock_hz": 48000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 279084.8,
+     "dsp_budget_cycles_per_frame": -198.0,
+     "ext_bandwidth_fit": "EXCEEDS",
+     "gross_cycles_per_frame": 1000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 8000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "96000000": {
+     "clock_hz": 96000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 279084.8,
+     "dsp_budget_cycles_per_frame": 602.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 2000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 16000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "192000000": {
+     "clock_hz": 192000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 279084.8,
+     "dsp_budget_cycles_per_frame": 2202.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 4000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 32000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "480000000": {
+     "clock_hz": 480000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 279084.8,
+     "dsp_budget_cycles_per_frame": 7002.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 10000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 80000000,
+     "transfer_cycles_per_frame": 8
+    }
+   },
+   "components": [
+    {
+     "component": "osc:Classic scene0 slot0 uni16",
+     "cycles_per_frame": 45004.8,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene0 slot1 uni16",
+     "cycles_per_frame": 45004.8,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene0 slot2 uni16",
+     "cycles_per_frame": 45004.8,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene1 slot0 uni16",
+     "cycles_per_frame": 45004.8,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene1 slot1 uni16",
+     "cycles_per_frame": 45004.8,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "osc:Classic scene1 slot2 uni16",
+     "cycles_per_frame": 45004.8,
+     "instances": 256,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 63840
+    },
+    {
+     "component": "LFO instances",
+     "cycles_per_frame": 3240,
+     "instances": 108,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_lfo_frame"
+    },
+    {
+     "component": "envelope instances",
+     "cycles_per_frame": 640,
+     "instances": 32,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_env_frame"
+    },
+    {
+     "component": "modulation routing rows",
+     "cycles_per_frame": 0,
+     "instances": 0,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_modroute_frame"
+    },
+    {
+     "component": "fx:slot0 Chorus",
+     "cycles_per_frame": 1200,
+     "ext_bytes_per_frame": 20,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxchorus_frame",
+     "state_ram_bits": 8388992
+    },
+    {
+     "component": "fx:slot6 Reverb 2",
+     "cycles_per_frame": 3200,
+     "ext_bytes_per_frame": 232,
+     "instances": 1,
+     "placeholder_component": true,
+     "source": "SXT-015 placeholder-v0 cyc_fxreverb2_frame",
+     "state_ram_bits": 116260864
+    },
+    {
+     "component": "scheduler (control + worst 8 events)",
+     "cycles_per_frame": 776,
+     "source": "probe_scheduler/event_queue_and_control"
+    }
+   ],
+   "ext_bytes_per_frame": 252,
+   "ext_bytes_per_s_at_48k": 12096000,
+   "flags": [
+    "placeholder_component:cyc_env_frame",
+    "placeholder_component:cyc_fxchorus_frame(Chorus)",
+    "placeholder_component:cyc_fxreverb2_frame(Reverb 2)",
+    "placeholder_component:cyc_lfo_frame",
+    "placeholder_component:cyc_modroute_frame",
+    "placeholder_component:lfo_state_bytes",
+    "placeholder_component:voice_base_state_bytes"
+   ],
+   "fx_instance_limit": 4,
+   "multiplier": "M32",
+   "placeholder_policy_note": "components flagged placeholder_component remain at SXT-015 placeholder-v0 values; totals are a mix of probe-replaced and placeholder components, so closure verdicts are UPPER-BOUNDED estimates, never measurements",
+   "preset_path": "resources/data/patches_3rdparty/Luna/Leads/96 Osc Supersaw.fxp",
+   "preset_sha": "feeaa7db6bf4c2ef08cd48e62f0b44fe0d11dda4",
+   "scene_mode": "Dual",
+   "state_ram_bits_total": 125778880,
+   "sxt015_rejections": [
+    "budget_overflow"
+   ],
+   "totals": {
+    "env_cycles_per_frame": 640,
+    "filter_cycles_per_frame": 0,
+    "fx_cycles_per_frame": 4400,
+    "lfo_cycles_per_frame": 3240,
+    "modroute_cycles_per_frame": 0,
+    "osc_cycles_per_frame": 270028.8,
+    "scheduler_cycles_per_frame": 776,
+    "total_cycles_per_frame": 279084.8,
+    "waveshaper_cycles_per_frame": 0
+   },
+   "worst_case_voices": 16
+  },
+  {
+   "bundle": "covered_worst_synth",
+   "closure_at_clocks": {
+    "48000000": {
+     "clock_hz": 48000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 282889.6,
+     "dsp_budget_cycles_per_frame": -198.0,
+     "ext_bandwidth_fit": "EXCEEDS",
+     "gross_cycles_per_frame": 1000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 8000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "96000000": {
+     "clock_hz": 96000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 282889.6,
+     "dsp_budget_cycles_per_frame": 602.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 2000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 16000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "192000000": {
+     "clock_hz": 192000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 282889.6,
+     "dsp_budget_cycles_per_frame": 2202.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 4000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 32000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "480000000": {
+     "clock_hz": 480000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 282889.6,
+     "dsp_budget_cycles_per_frame": 7002.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 10000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 80000000,
+     "transfer_cycles_per_frame": 8
+    }
+   },
+   "components": [
+    {
+     "component": "osc:Classic x3 slots uni16 (worst pitch corner)",
+     "cycles_per_frame": 270873.6,
+     "instances": 768,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 191520
+    },
+    {
+     "component": "filter:K35 x2 units",
+     "cycles_per_frame": 4608.0,
+     "instances": 32,
+     "source": "probe_filter/k35_ladder_tanh_lut",
+     "state_ram_bits": 18688
+    },
+    {
+     "component": "fx:Delay",
+     "cycles_per_frame": 1598,
+     "ext_bytes_per_frame": 16,
+     "instances": 1,
+     "source": "probe_fx_delay/delay_stereo_ext_E1",
+     "state_ram_bits": 1106
+    },
+    {
+     "component": "fx:Delay(2nd slot)",
+     "cycles_per_frame": 1598,
+     "ext_bytes_per_frame": 16,
+     "instances": 1,
+     "source": "probe_fx_delay/delay_stereo_ext_E1",
+     "state_ram_bits": 1106
+    },
+    {
+     "component": "fx:EQ",
+     "cycles_per_frame": 171,
+     "ext_bytes_per_frame": 0,
+     "instances": 1,
+     "source": "probe_fx_eq/eq3band_tdf2_block_coeffs",
+     "state_ram_bits": 768
+    },
+    {
+     "component": "fx:Reverb 1",
+     "cycles_per_frame": 3223,
+     "ext_bytes_per_frame": 136,
+     "instances": 1,
+     "source": "probe_fx_reverb1/reverb1_composite_ext_E1",
+     "state_ram_bits": 2223
+    },
+    {
+     "component": "scheduler (control + worst 8 events)",
+     "cycles_per_frame": 818,
+     "source": "probe_scheduler/event_queue_and_control"
+    }
+   ],
+   "description": "synthetic bundle, feature-complete for the probe-covered classes: 16 voices x (3 Classic slots x uni16), 2 K35 units/voice, FX = 2x Delay (separate states) + EQ + Reverb1, worst event burst; NO placeholder components",
+   "ext_bytes_per_frame": 168,
+   "ext_bytes_per_s_at_48k": 8064000,
+   "flags": [],
+   "multiplier": "M18",
+   "placeholder_policy_note": "no placeholder components: every cycle in this row comes from a validated SXT-016 probe record",
+   "preset_path": null,
+   "state_ram_bits_total": 215923,
+   "sxt015_rejections": [],
+   "totals": {
+    "env_cycles_per_frame": 0,
+    "filter_cycles_per_frame": 4608.0,
+    "fx_cycles_per_frame": 6590,
+    "lfo_cycles_per_frame": 0,
+    "modroute_cycles_per_frame": 0,
+    "osc_cycles_per_frame": 270873.6,
+    "scheduler_cycles_per_frame": 818,
+    "total_cycles_per_frame": 282889.6,
+    "waveshaper_cycles_per_frame": 0
+   }
+  },
+  {
+   "bundle": "covered_worst_synth",
+   "closure_at_clocks": {
+    "48000000": {
+     "clock_hz": 48000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 143862.4,
+     "dsp_budget_cycles_per_frame": -198.0,
+     "ext_bandwidth_fit": "EXCEEDS",
+     "gross_cycles_per_frame": 1000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 8000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "96000000": {
+     "clock_hz": 96000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 143862.4,
+     "dsp_budget_cycles_per_frame": 602.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 2000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 16000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "192000000": {
+     "clock_hz": 192000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 143862.4,
+     "dsp_budget_cycles_per_frame": 2202.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 4000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 32000000,
+     "transfer_cycles_per_frame": 8
+    },
+    "480000000": {
+     "clock_hz": 480000000,
+     "closure": "OVERFLOW",
+     "contention_cycles_per_frame": 990,
+     "control_cycles_per_frame": 0,
+     "cost_cycles_per_frame": 143862.4,
+     "dsp_budget_cycles_per_frame": 7002.0,
+     "ext_bandwidth_fit": "within",
+     "gross_cycles_per_frame": 10000.0,
+     "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+     "reserve_fraction": 0.2,
+     "sample_rate_hz": 48000,
+     "sustained_ext_bytes_per_s_E1": 80000000,
+     "transfer_cycles_per_frame": 8
+    }
+   },
+   "components": [
+    {
+     "component": "osc:Classic x3 slots uni16 (worst pitch corner)",
+     "cycles_per_frame": 135014.4,
+     "instances": 768,
+     "source": "probe_osc/classic_blit",
+     "state_ram_bits": 191520
+    },
+    {
+     "component": "filter:K35 x2 units",
+     "cycles_per_frame": 2304.0,
+     "instances": 32,
+     "source": "probe_filter/k35_ladder_tanh_lut",
+     "state_ram_bits": 18688
+    },
+    {
+     "component": "fx:Delay",
+     "cycles_per_frame": 1406,
+     "ext_bytes_per_frame": 16,
+     "instances": 1,
+     "source": "probe_fx_delay/delay_stereo_ext_E1",
+     "state_ram_bits": 1106
+    },
+    {
+     "component": "fx:Delay(2nd slot)",
+     "cycles_per_frame": 1406,
+     "ext_bytes_per_frame": 16,
+     "instances": 1,
+     "source": "probe_fx_delay/delay_stereo_ext_E1",
+     "state_ram_bits": 1106
+    },
+    {
+     "component": "fx:EQ",
+     "cycles_per_frame": 81,
+     "ext_bytes_per_frame": 0,
+     "instances": 1,
+     "source": "probe_fx_eq/eq3band_tdf2_block_coeffs",
+     "state_ram_bits": 768
+    },
+    {
+     "component": "fx:Reverb 1",
+     "cycles_per_frame": 2875,
+     "ext_bytes_per_frame": 136,
+     "instances": 1,
+     "source": "probe_fx_reverb1/reverb1_composite_ext_E1",
+     "state_ram_bits": 2223
+    },
+    {
+     "component": "scheduler (control + worst 8 events)",
+     "cycles_per_frame": 776,
+     "source": "probe_scheduler/event_queue_and_control"
+    }
+   ],
+   "description": "synthetic bundle, feature-complete for the probe-covered classes: 16 voices x (3 Classic slots x uni16), 2 K35 units/voice, FX = 2x Delay (separate states) + EQ + Reverb1, worst event burst; NO placeholder components",
+   "ext_bytes_per_frame": 168,
+   "ext_bytes_per_s_at_48k": 8064000,
+   "flags": [],
+   "multiplier": "M32",
+   "placeholder_policy_note": "no placeholder components: every cycle in this row comes from a validated SXT-016 probe record",
+   "preset_path": null,
+   "state_ram_bits_total": 215923,
+   "sxt015_rejections": [],
+   "totals": {
+    "env_cycles_per_frame": 0,
+    "filter_cycles_per_frame": 2304.0,
+    "fx_cycles_per_frame": 5768,
+    "lfo_cycles_per_frame": 0,
+    "modroute_cycles_per_frame": 0,
+    "osc_cycles_per_frame": 135014.4,
+    "scheduler_cycles_per_frame": 776,
+    "total_cycles_per_frame": 143862.4,
+    "waveshaper_cycles_per_frame": 0
+   }
+  }
+ ],
+ "clocks_hz": [
+  48000000,
+  96000000,
+  192000000,
+  480000000
+ ],
+ "issue": "SXT-016 (issue #11) worked bundles",
+ "memory_model": "external lines at E1 (conservative); see probe records for E2/E3",
+ "pareto_note": "alternatives kept uncombined: rows are bundles x multipliers; cycles, RAM bits, and external bytes are separate columns; no single score is computed",
+ "sample_rate_hz": 48000
+}
