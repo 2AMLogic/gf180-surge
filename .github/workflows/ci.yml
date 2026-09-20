@@ -47,3 +47,14 @@ jobs:
           else
             echo "NOT_RUN: no tests/ directory with test files in this tree; pytest was not executed (coverage: none — this is not a pass)."
           fi
+
+  dag-check:
+    name: backlog DAG + board freshness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate DAG and README board freshness
+        run: python3 tools/compile_backlog_dag.py --check

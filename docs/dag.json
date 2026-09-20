@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "board": {
+    "purpose": "Backlog claim-status bookkeeping only. This DAG is not capability, fidelity, or hardware evidence; coverage and agreement are reported separately by the underlying evidence records.",
+    "tool": "tools/compile_backlog_dag.py",
+    "readme_markers": {
+      "begin": "<!-- DAG:BEGIN -->",
+      "end": "<!-- DAG:END -->"
+    },
+    "status_vocabulary": [
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "NOT_RUN",
+      "PASS",
+      "FAIL",
+      "NO_VERDICT",
+      "STALE"
+    ],
+    "epic_aggregate_rule": "Epic status is derived from members, never claimed: any FAIL -> FAIL; else any STALE -> STALE; else all members PASS -> PASS; else any IN_PROGRESS -> IN_PROGRESS; else any BLOCKED with no merely-unrun member -> BLOCKED; else NOT_RUN. An epic PASS therefore requires every member to PASS with committed evidence.",
+    "sync_procedure": "Edit this file, run `python3 tools/compile_backlog_dag.py render`, commit docs/dag.json and README.md together. Issue-trailer edits are transcribed here by hand and must go through the same re-render; the dag-check CI job fails on stale blocks or stale evidence hashes, so drift is never silent."
+  },
+  "nodes": [
+    {
+      "id": 1,
+      "kind": "epic",
+      "title": "Epic: E1 — Reference, corpus, and product profile",
+      "planning-id": "E1",
+      "epic": "E1",
+      "members": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "depends_on": [],
+      "status": "NOT_RUN",
+      "note": "Aggregate group node; status derived from members, not an independent claim."
+    },
+    {
+      "id": 2,
+      "kind": "epic",
+      "title": "Epic: E2 — Verified core: first complete wet patch",
+      "planning-id": "E2",
+      "epic": "E2",
+      "members": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "depends_on": [
+        12
+      ],
+      "status": "NOT_RUN",
+      "note": "Aggregate group node; status derived from members, not an independent claim."
+    },
+    {
+      "id": 3,
+      "kind": "epic",
+      "title": "Epic: E3 — Coverage expansion and hardware qualification",
+      "planning-id": "E3",
+      "epic": "E3",
+      "members": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "depends_on": [
+        18
+      ],
+      "status": "NOT_RUN",
+      "note": "Aggregate group node; status derived from members, not an independent claim."
+    },
+    {
+      "id": 4,
+      "kind": "issue",
+      "title": "SXT-000: Preliminary static census (DONE)",
+      "planning-id": "SXT-000",
+      "epic": "E1",
+      "depends_on": [],
+      "status": "PASS",
+      "evidence": "corpus/census-v0.1/results/summary.json",
+      "note": "Static inventory and prioritization aid only — no audio-support claim (one parser failure retained).",
+      "evidence_sha256": "a10bc754c627c61ee835d74d040fb466909ecf41ceeef55cacb43bbc6b32d59e"
+    },
+    {
+      "id": 5,
+      "kind": "issue",
+      "title": "SXT-010: Build the native oracle",
+      "planning-id": "SXT-010",
+      "epic": "E1",
+      "depends_on": [
+        4
+      ],
+      "status": "PASS",
+      "evidence": "reports/sxt-010/EVIDENCE.md",
+      "note": "Native pinned-Surge oracle; PASS scope is exactly what its EVIDENCE.md records, nothing more.",
+      "evidence_sha256": "101f3cbcc4c41284b4e1390ec62df06bf0e1978f99b470df09ccd90c7500a5d9"
+    },
+    {
+      "id": 6,
+      "kind": "issue",
+      "title": "SXT-011: Export normalized patch graphs",
+      "planning-id": "SXT-011",
+      "epic": "E1",
+      "depends_on": [
+        5
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; depends on the SXT-010 oracle."
+    },
+    {
+      "id": 7,
+      "kind": "issue",
+      "title": "SXT-012: Create render fixtures",
+      "planning-id": "SXT-012",
+      "epic": "E1",
+      "depends_on": [
+        5
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; depends on the SXT-010 oracle."
+    },
+    {
+      "id": 8,
+      "kind": "issue",
+      "title": "SXT-013: Freeze favorite selection and fidelity policy",
+      "planning-id": "SXT-013",
+      "epic": "E1",
+      "depends_on": [
+        7
+      ],
+      "status": "BLOCKED",
+      "note": "Apparatus is automatable; the listening selection itself needs a human — blocked on listening."
+    },
+    {
+      "id": 9,
+      "kind": "issue",
+      "title": "SXT-014: Measure effects' contribution",
+      "planning-id": "SXT-014",
+      "epic": "E1",
+      "depends_on": [
+        6,
+        7
+      ],
+      "status": "BLOCKED",
+      "note": "Apparatus is automatable; the listening classification needs a human — blocked on listening."
+    },
+    {
+      "id": 10,
+      "kind": "issue",
+      "title": "SXT-015: Create resource accounting",
+      "planning-id": "SXT-015",
+      "epic": "E1",
+      "depends_on": [
+        6
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; depends on normalized patch graphs."
+    },
+    {
+      "id": 11,
+      "kind": "issue",
+      "title": "SXT-016: Run representative cost probes",
+      "planning-id": "SXT-016",
+      "epic": "E1",
+      "depends_on": [
+        10
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; depends on resource accounting."
+    },
+    {
+      "id": 12,
+      "kind": "issue",
+      "title": "SXT-017: Freeze profile v1",
+      "planning-id": "SXT-017",
+      "epic": "E1",
+      "depends_on": [
+        8,
+        9,
+        11
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; waits on #8/#9 listening work and #11 probes."
+    },
+    {
+      "id": 13,
+      "kind": "issue",
+      "title": "SXT-020: Compile patch images",
+      "planning-id": "SXT-020",
+      "epic": "E2",
+      "depends_on": [
+        6,
+        12
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs normalized graphs and profile v1."
+    },
+    {
+      "id": 14,
+      "kind": "issue",
+      "title": "SXT-021: Implement timed control and scheduling",
+      "planning-id": "SXT-021",
+      "epic": "E2",
+      "depends_on": [
+        12,
+        13
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs profile v1 and patch images."
+    },
+    {
+      "id": 15,
+      "kind": "issue",
+      "title": "SXT-022: Qualify a first dry voice slice",
+      "planning-id": "SXT-022",
+      "epic": "E2",
+      "depends_on": [
+        7,
+        12
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs fixtures and profile v1."
+    },
+    {
+      "id": 16,
+      "kind": "issue",
+      "title": "SXT-023: Implement Delay and EQ",
+      "planning-id": "SXT-023",
+      "epic": "E2",
+      "depends_on": [
+        7,
+        12
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs fixtures and profile v1."
+    },
+    {
+      "id": 17,
+      "kind": "issue",
+      "title": "SXT-024: Implement Reverb1",
+      "planning-id": "SXT-024",
+      "epic": "E2",
+      "depends_on": [
+        7,
+        12
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs fixtures and profile v1."
+    },
+    {
+      "id": 18,
+      "kind": "issue",
+      "title": "SXT-025: Pass one complete wet preset",
+      "planning-id": "SXT-025",
+      "epic": "E2",
+      "depends_on": [
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; integrates the E2 slice issues."
+    },
+    {
+      "id": 19,
+      "kind": "issue",
+      "title": "SXT-026: Add Wavetable asset and playback support",
+      "planning-id": "SXT-026",
+      "epic": "E2",
+      "depends_on": [
+        12,
+        13,
+        14
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs profile v1, patch images, timed control."
+    },
+    {
+      "id": 20,
+      "kind": "issue",
+      "title": "SXT-027: Generate remaining voice-feature leaf issues",
+      "planning-id": "SXT-027",
+      "epic": "E3",
+      "depends_on": [
+        12,
+        15
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; issue generator ordered by whole-preset recovery."
+    },
+    {
+      "id": 21,
+      "kind": "issue",
+      "title": "SXT-028: Expand effects by measured recovery",
+      "planning-id": "SXT-028",
+      "epic": "E3",
+      "depends_on": [
+        9,
+        12,
+        16,
+        17
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; issue generator ordered by measured effect recovery."
+    },
+    {
+      "id": 22,
+      "kind": "issue",
+      "title": "SXT-029: Run full qualification and publish coverage",
+      "planning-id": "SXT-029",
+      "epic": "E3",
+      "depends_on": [
+        18,
+        20,
+        21
+      ],
+      "status": "NOT_RUN",
+      "note": "Planned; needs all applicable generated leaves."
+    },
+    {
+      "id": 23,
+      "kind": "issue",
+      "title": "SXT-030: Qualify FPGA and external memory",
+      "planning-id": "SXT-030",
+      "epic": "E3",
+      "depends_on": [
+        18,
+        19
+      ],
+      "status": "BLOCKED",
+      "note": "Blocked: needs an FPGA board and external memory hardware."
+    },
+    {
+      "id": 24,
+      "kind": "issue",
+      "title": "SXT-031: Qualify the GF180 implementation",
+      "planning-id": "SXT-031",
+      "epic": "E3",
+      "depends_on": [
+        22,
+        23
+      ],
+      "status": "BLOCKED",
+      "note": "Blocked: needs gf180mcu flow access (synthesis/place-and-route tooling)."
+    },
+    {
+      "id": 25,
+      "kind": "issue",
+      "title": "SXT-019: Reuse substrate adoption decision",
+      "planning-id": "SXT-019",
+      "epic": null,
+      "depends_on": [],
+      "status": "NOT_RUN",
+      "note": "Governance decision pending; gates sibling-infrastructure adoption (docs/REUSE-AUDIT.md)."
+    },
+    {
+      "id": 29,
+      "kind": "issue",
+      "title": "SXT-018: Backlog DAG + evidence-derived status board (README marker block)",
+      "planning-id": "SXT-018",
+      "epic": null,
+      "depends_on": [],
+      "status": "IN_PROGRESS",
+      "note": "This board; in progress while the DAG tool, README block, and CI job land."
+    }
+  ]
+}
