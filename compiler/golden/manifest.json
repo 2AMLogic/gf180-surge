@@ -1,0 +1,259 @@
+{
+ "artifact": "sxt-020-golden",
+ "bundle_file": "contracts/profile-v1-bundle-DRAFT.json",
+ "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+ "bundle_id": "B4-broad",
+ "bundle_status": "DRAFT-NOT-FROZEN",
+ "cases": [
+  {
+   "case": "simple-classic",
+   "expected": {
+    "image_sha256": "0c7f4942c7e3240ce3f07265a02b4fa512563ddcec54e5457986a1a8f2e739ac",
+    "outcome": "compiled"
+   },
+   "note": "factory single scene, Classic oscillators, LP 12 dB, no FX (dry baseline)",
+   "source": {
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+   }
+  },
+  {
+   "case": "all-fx-off-baseline",
+   "expected": {
+    "image_sha256": "673b10eaa2584627c6ed1203c66c27984e9a21b43f001799692aa05b73f4089c",
+    "outcome": "compiled"
+   },
+   "note": "SXT-015 worked example (c): all-FX-off baseline, waveshaper + unison in the voice path",
+   "source": {
+    "census_blob_sha1": "4476029209d77064a7c2bf4f58fef78f7f2c10fc",
+    "path": "resources/data/patches_3rdparty/A.Liv/Basses/Amen Polska.fxp"
+   }
+  },
+  {
+   "case": "wavetable-asset",
+   "expected": {
+    "image_sha256": "3102114de8c24aca96b4df8983287915634f10b025bb4adade06c466dc26f4e8",
+    "outcome": "compiled"
+   },
+   "note": "wavetable-carrying (resolved asset, flash block)",
+   "source": {
+    "census_blob_sha1": "4f2443aa9e9eabe911d9bfee634f1aeb6e874976",
+    "path": "resources/data/patches_3rdparty/Argitoth/Drums/Kick.fxp"
+   }
+  },
+  {
+   "case": "dual-scene",
+   "expected": {
+    "image_sha256": "8533f6a449a69460478c7ecc6bbf79ac16040e51b8fde4c4d49e533585edcbfa",
+    "outcome": "compiled"
+   },
+   "note": "dual scene mode (two pool voices per note), FM2 oscillators, EQ",
+   "source": {
+    "census_blob_sha1": "a70693243974c3aecde87962639c915283d26868",
+    "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Keys/Accordion Lead.fxp"
+   }
+  },
+  {
+   "case": "four-fx-instance",
+   "expected": {
+    "image_sha256": "4f4b096a5d24368d0f45538c4d8403ff91a3cb2ce8a78c79c6c1a925e6e48abd",
+    "outcome": "compiled"
+   },
+   "note": "four enabled FX instances (EQ/Distortion/Delay/Reverb 1), insert+send roles, external delay+reverb state",
+   "source": {
+    "census_blob_sha1": "2379e0713eb2830a3c4acbe3a9442500ab960fd9",
+    "path": "resources/data/patches_3rdparty/Argitoth/FX/Monster Feedback.fxp"
+   }
+  },
+  {
+   "case": "split-scene",
+   "expected": {
+    "image_sha256": "ceef4dd19884494ea271cf3c65ac263418258a554ebc6e32a60972c942a0d732",
+    "outcome": "compiled"
+   },
+   "note": "split scene mode, THREE enabled Delay slots (three delay histories), FX Comb filter",
+   "source": {
+    "census_blob_sha1": "740b83ac9134609dd2ea86dad5b6549f68feb51a",
+    "path": "resources/data/patches_3rdparty/Bluelight/Splits/Bilbo 110 BPM.fxp"
+   }
+  },
+  {
+   "case": "send-fx",
+   "expected": {
+    "image_sha256": "825b80dc532ede790582fca04b5aa283913e7578b5c402fd95fe80b8befb696a",
+    "outcome": "compiled"
+   },
+   "note": "send-bus FX (Reverb 2 + Delay as sends with return levels), unison 3",
+   "source": {
+    "census_blob_sha1": "5d89df58693a9db34730cf2ea8a422484f7c6049",
+    "path": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp"
+   }
+  },
+  {
+   "case": "supersaw-96osc",
+   "expected": {
+    "image_sha256": "3735579fa4dc407b3aa4dd21ca9635db9d10fe3498041a8344425bf465a52456",
+    "outcome": "compiled"
+   },
+   "note": "SXT-015 worked example (b): dual scene, unison 16 on all six slots, Chorus + Reverb 2",
+   "source": {
+    "census_blob_sha1": "feeaa7db6bf4c2ef08cd48e62f0b44fe0d11dda4",
+    "path": "resources/data/patches_3rdparty/Luna/Leads/96 Osc Supersaw.fxp"
+   }
+  },
+  {
+   "case": "synthetic-airwindows-point",
+   "expected": {
+    "codes": [
+     "airwindows_algorithm_not_selected",
+     "effect_class_not_in_bundle"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "SYNTHETIC Airwindows-carrying graph ('Point', id 7): pins airwindows_algorithm_not_selected + effect_class_not_in_bundle (class binds first under B4); inputs/ line is committed",
+   "source": {
+    "census_blob_sha1": "synthetic-5fbdf64653144793",
+    "path": "synthetic/airwindows-point.fxp",
+    "synthetic": true
+   }
+  },
+  {
+   "case": "reject-osc-family",
+   "expected": {
+    "codes": [
+     "oscillator_family_not_in_bundle"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "Window oscillator outside the B4 allowlist",
+   "source": {
+    "census_blob_sha1": "85fe24af68654f66116dea410b47270674b74f18",
+    "path": "resources/data/patches_3rdparty/A.Liv/Basses/Sqweird.fxp"
+   }
+  },
+  {
+   "case": "reject-fx-class",
+   "expected": {
+    "codes": [
+     "effect_class_not_in_bundle"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "FX class outside the B4 tier set",
+   "source": {
+    "census_blob_sha1": "c80ae2e0ea64a843b98b1ad7b4859fc0d83d3c26",
+    "path": "resources/data/patches_3rdparty/A.Liv/Basses/Seek And Ye Shall Find.fxp"
+   }
+  },
+  {
+   "case": "reject-adapted-poly",
+   "expected": {
+    "codes": [
+     "polylimit_reduction_required"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "adapted-class: stored polylimit exceeds the pool; the compiler rejects original graphs",
+   "source": {
+    "census_blob_sha1": "66e32c437ea73c7338ad9b7e868c2114d67184d1",
+    "path": "resources/data/patches_3rdparty/Dan Maurer/Basses/Lucy Louise.fxp"
+   }
+  },
+  {
+   "case": "reject-audio-input",
+   "expected": {
+    "codes": [
+     "audio_input_dependency"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "depends on the external audio input path",
+   "source": {
+    "census_blob_sha1": "75e401e11bced492e615ba36a929fb27c3aa17ee",
+    "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Further 2.fxp"
+   }
+  },
+  {
+   "case": "reject-mseg-gap",
+   "expected": {
+    "codes": [
+     "mseg_or_formula_contents_not_exported"
+    ],
+    "outcome": "unresolved"
+   },
+   "note": "unresolved: MSEG/Formula LFO contents not exported (SXT-011 gap)",
+   "source": {
+    "census_blob_sha1": "e7720dc7e27f63c49ee4b5fbc66a519e6f47b12a",
+    "path": "resources/data/patches_3rdparty/A.Liv/Basses/Move Like A Bucket Truck.fxp"
+   }
+  },
+  {
+   "case": "reject-july",
+   "expected": {
+    "codes": [
+     "airwindows_algorithm_not_selected",
+     "effect_class_not_in_bundle",
+     "mseg_or_formula_contents_not_exported"
+    ],
+    "outcome": "unresolved"
+   },
+   "note": "SXT-015 worked example (a): multi-code unresolved (MSEG gap takes precedence over the feature codes)",
+   "source": {
+    "census_blob_sha1": "315c0a1a27a671297f437026c021ce917f1e3875",
+    "path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp"
+   }
+  },
+  {
+   "case": "reject-instance-overflow",
+   "expected": {
+    "codes": [
+     "effect_class_not_in_bundle",
+     "fx_instance_overflow",
+     "mseg_or_formula_contents_not_exported",
+     "oscillator_family_not_in_bundle",
+     "send_levels_not_exported"
+    ],
+    "outcome": "unresolved"
+   },
+   "note": "12 enabled FX instances (corpus max); codes carry every failing gate incl. an enabled send3/4 slot",
+   "source": {
+    "census_blob_sha1": "f547737e4f4bb797dd7cb009583dcdffc7eae424",
+    "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/XTease.fxp"
+   }
+  },
+  {
+   "case": "reject-asset-unresolved",
+   "expected": {
+    "codes": [
+     "asset_unresolved"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "compiler-stricter delta vs SXT-017: wavetable record with neither embedded bytes nor resolved file",
+   "source": {
+    "census_blob_sha1": "a23ec1b30cad4196a432d5dbe6bcfd62588b166d",
+    "path": "resources/data/patches_factory/FX/Aggero.fxp"
+   }
+  },
+  {
+   "case": "reject-send-levels",
+   "expected": {
+    "codes": [
+     "send_levels_not_exported"
+    ],
+    "outcome": "rejected"
+   },
+   "note": "compiler-stricter delta vs SXT-017: enabled FX in send slot 3 (send levels for buses 3/4 not exported)",
+   "source": {
+    "census_blob_sha1": "5cf02de086aa01e4de8a5cb96ca76b69bbbcd688",
+    "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp"
+   }
+  }
+ ],
+ "claim_scope": "golden images pin compiler behavior (determinism, losslessness, rejection codes) against the DRAFT bundle; they are NOT support, fidelity, or quality evidence",
+ "compiler_version": "sxt-020-compile/1.0.0",
+ "graphs": "corpus/normalized/graphs.jsonl",
+ "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+ "image_format": "sxt-020-patch-image/1.0.0",
+ "schema_version": "sxt-020-golden-manifest/1.0.0"
+}

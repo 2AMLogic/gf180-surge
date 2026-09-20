@@ -1,0 +1,30 @@
+{
+ "artifact": "sxt-020-rejection-record",
+ "codes": [
+  {
+   "class": "unsupported",
+   "code": "asset_unresolved",
+   "detail": {
+    "display_name": null,
+    "note": "wavetable record has neither embedded bytes nor a resolved file; the engine default-table fallback would be a silent substitution",
+    "osc": 1,
+    "scene": 0
+   }
+  }
+ ],
+ "compiler_version": "sxt-020-compile/1.0.0",
+ "note": "No image was emitted. The compiler never trims: every unsupported path is a visible, machine-readable rejection (issue #13).",
+ "outcome": "rejected",
+ "profile": {
+  "artifact": "profile-v1-DRAFT",
+  "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+  "bundle_id": "B4-broad",
+  "bundle_status": "DRAFT-NOT-FROZEN",
+  "claim_scope": "a rejection is a structural verdict against the DRAFT bundle, never a fidelity or quality judgment"
+ },
+ "source": {
+  "bank": "factory",
+  "census_blob_sha1": "a23ec1b30cad4196a432d5dbe6bcfd62588b166d",
+  "path": "resources/data/patches_factory/FX/Aggero.fxp"
+ }
+}

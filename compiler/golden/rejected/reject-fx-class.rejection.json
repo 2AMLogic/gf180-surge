@@ -1,0 +1,39 @@
+{
+ "artifact": "sxt-020-rejection-record",
+ "codes": [
+  {
+   "class": "unsupported",
+   "code": "effect_class_not_in_bundle",
+   "detail": {
+    "bundle": [
+     "Chorus",
+     "Conditioner",
+     "Delay",
+     "Distortion",
+     "EQ",
+     "Phaser",
+     "Reverb 1",
+     "Reverb 2"
+    ],
+    "effect_classes": [
+     "Bonsai"
+    ]
+   }
+  }
+ ],
+ "compiler_version": "sxt-020-compile/1.0.0",
+ "note": "No image was emitted. The compiler never trims: every unsupported path is a visible, machine-readable rejection (issue #13).",
+ "outcome": "rejected",
+ "profile": {
+  "artifact": "profile-v1-DRAFT",
+  "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+  "bundle_id": "B4-broad",
+  "bundle_status": "DRAFT-NOT-FROZEN",
+  "claim_scope": "a rejection is a structural verdict against the DRAFT bundle, never a fidelity or quality judgment"
+ },
+ "source": {
+  "bank": "contributor",
+  "census_blob_sha1": "c80ae2e0ea64a843b98b1ad7b4859fc0d83d3c26",
+  "path": "resources/data/patches_3rdparty/A.Liv/Basses/Seek And Ye Shall Find.fxp"
+ }
+}
