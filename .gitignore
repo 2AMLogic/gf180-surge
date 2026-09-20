@@ -32,6 +32,9 @@ asic/runs/
 *.lef.temp
 reports/*.rpt
 
+# Listening-session render cache (re-derivable audio; never committed)
+.listening-cache/
+
 # Editors / OS
 .DS_Store
 *.swp

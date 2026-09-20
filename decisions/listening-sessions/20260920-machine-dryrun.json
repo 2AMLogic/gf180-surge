@@ -1,0 +1,143 @@
+{
+  "acceptance_rule": "Ratings count toward favorites acceptance ONLY in mode=open (unblinded, level-correct, no per-clip normalization). Blind level-matched sessions are supplementary per the fidelity policy (contracts/fidelity-policy-DRAFT.md, listening procedure).",
+  "claim_scope": "A listening session records one listener's structured judgments on fixed audio. It is not a fidelity measurement, not a support claim, and not by itself a frozen selection. Dry-run sessions are machine exercises with placeholder ratings and are NOT human listening.",
+  "comparison": "dry",
+  "counts": {
+    "candidates": 3,
+    "counting_toward_acceptance": 0
+  },
+  "harness": {
+    "renderer": "fixtures/render_fixture.py (SXT-012, unmodified)",
+    "repo_commit": "1e04deeb7cd61306b14c54752eb0c00fbfac5525",
+    "tool": "tools/listening_session.py",
+    "tool_sha256": "29fd148ddbc2e41161b6ad4098601b4ba27961d6fe4360dedd21f8e9f73049f7"
+  },
+  "issue": "SXT-013",
+  "level_policy": "not applicable (machine dry-run; audio at native render levels)",
+  "mode": "dry-run",
+  "operator": "machine-dry-run (scripted; NOT human listening)",
+  "recorded_at_utc": "2026-09-20T09:31:51+00:00",
+  "records": [
+    {
+      "audio": {
+        "comparison": {
+          "kind": "dry",
+          "level_treatment": "native",
+          "path": "/Users/joseph/dev/gf180-surge-wt-013/.listening-cache/Doomsday/seq-notes-coverage-v1-dry.wav",
+          "sha256": "cc3eee05e9f96da14a63de3f3b4678878bea77f6df32808d4030aae43dec0e1a"
+        },
+        "rendered_this_session": false,
+        "wet": {
+          "kind": "wet",
+          "level_treatment": "native",
+          "path": "/Users/joseph/dev/gf180-surge-wt-013/.listening-cache/Doomsday/seq-notes-coverage-v1-wet.wav",
+          "sha256": "9e857addf6c63f5eed98e6d653259307e4bd2cdb322448d02b98be3241edd4ed"
+        }
+      },
+      "bank": "factory",
+      "blind": false,
+      "candidate_id": "resources/data/patches_factory/Basses/Doomsday.fxp",
+      "category": "basses",
+      "census_blob_sha1": "a8a3a395d52c1f0435ee2f948559ac2acf2e18dd",
+      "counts_toward_acceptance": false,
+      "is_placeholder": true,
+      "level_treatment": {
+        "method": "none_native_levels"
+      },
+      "path": "resources/data/patches_factory/Basses/Doomsday.fxp",
+      "ratings": {
+        "artifacts": null,
+        "confidence_1to5": null,
+        "fidelity_wet_vs_comparison_1to5": null,
+        "notes": "PLACEHOLDER: machine dry-run, no human listening occurred; ratings are deliberately absent",
+        "tail_ok": null,
+        "timbre_match_1to5": null
+      },
+      "sequence_id": "seq-notes-coverage-v1"
+    },
+    {
+      "audio": {
+        "comparison": {
+          "kind": "dry",
+          "level_treatment": "native",
+          "path": "/Users/joseph/dev/gf180-surge-wt-013/.listening-cache/Experiment/seq-notes-coverage-v1-dry.wav",
+          "sha256": "e274398d4d2252212e393ad64583daa13cc46bcb7634e24ec3dc3d46c2ef2656"
+        },
+        "rendered_this_session": false,
+        "wet": {
+          "kind": "wet",
+          "level_treatment": "native",
+          "path": "/Users/joseph/dev/gf180-surge-wt-013/.listening-cache/Experiment/seq-notes-coverage-v1-wet.wav",
+          "sha256": "81d3a01b52890dc41226b376406afd17f3efa761843f2ed4fdb5511ec618fc0b"
+        }
+      },
+      "bank": "factory",
+      "blind": false,
+      "candidate_id": "resources/data/patches_factory/Keys/Experiment.fxp",
+      "category": "keys",
+      "census_blob_sha1": "a56f19227fa1cd66ec0b814d90dbc20d456ea849",
+      "counts_toward_acceptance": false,
+      "is_placeholder": true,
+      "level_treatment": {
+        "method": "none_native_levels"
+      },
+      "path": "resources/data/patches_factory/Keys/Experiment.fxp",
+      "ratings": {
+        "artifacts": null,
+        "confidence_1to5": null,
+        "fidelity_wet_vs_comparison_1to5": null,
+        "notes": "PLACEHOLDER: machine dry-run, no human listening occurred; ratings are deliberately absent",
+        "tail_ok": null,
+        "timbre_match_1to5": null
+      },
+      "sequence_id": "seq-notes-coverage-v1"
+    },
+    {
+      "audio": {
+        "comparison": {
+          "kind": "dry",
+          "level_treatment": "native",
+          "path": "/Users/joseph/dev/gf180-surge-wt-013/.listening-cache/Mana_Quest/seq-notes-coverage-v1-dry.wav",
+          "sha256": "2a8692e6c987cb5bcfffe88a475ec869af6f19c6a054a149f28707ef1407d545"
+        },
+        "rendered_this_session": false,
+        "wet": {
+          "kind": "wet",
+          "level_treatment": "native",
+          "path": "/Users/joseph/dev/gf180-surge-wt-013/.listening-cache/Mana_Quest/seq-notes-coverage-v1-wet.wav",
+          "sha256": "5230beed38a82e2f077ce61632ec7d400ec4cecbceee7caba3f53ffa77d2a757"
+        }
+      },
+      "bank": "contributor",
+      "blind": false,
+      "candidate_id": "resources/data/patches_3rdparty/Altenberg/Pads/Mana Quest.fxp",
+      "category": "pads",
+      "census_blob_sha1": "68f61989568701dc525b4385d6b1c31870a71f9f",
+      "counts_toward_acceptance": false,
+      "is_placeholder": true,
+      "level_treatment": {
+        "method": "none_native_levels"
+      },
+      "path": "resources/data/patches_3rdparty/Altenberg/Pads/Mana Quest.fxp",
+      "ratings": {
+        "artifacts": null,
+        "confidence_1to5": null,
+        "fidelity_wet_vs_comparison_1to5": null,
+        "notes": "PLACEHOLDER: machine dry-run, no human listening occurred; ratings are deliberately absent",
+        "tail_ok": null,
+        "timbre_match_1to5": null
+      },
+      "sequence_id": "seq-notes-coverage-v1"
+    }
+  ],
+  "schema_version": "sxt-013-listening-session/1.0.0",
+  "sequence_id": "seq-notes-coverage-v1",
+  "session_id": "20260920-machine-dryrun",
+  "slate": {
+    "artifact": "pilot-32-balanced",
+    "path": "/Users/joseph/dev/gf180-surge-wt-013/reports/sxt-013/candidates/pilot-32-balanced.json",
+    "profile": "balanced",
+    "sha256": "7616710ddf624403dc6a1ee4748f2c2e450f98c13f8a949d39612989d3f435e6"
+  },
+  "status": "DRY_RUN_NOT_HUMAN_LISTENING"
+}

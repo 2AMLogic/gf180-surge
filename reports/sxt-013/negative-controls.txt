@@ -1,0 +1,30 @@
+SXT-013 apparatus negative controls — candidate builder (tools/select_candidates.py)
+Date: 2026-09-20 · Branch: loom/sxt-013-favorites-apparatus
+
+== NC1: determinism (same inputs -> byte-identical outputs) ==
+$ python3 tools/select_candidates.py --profile all --out-dir reports/sxt-013/candidates  # run 1
+$ python3 tools/select_candidates.py --profile all --out-dir $T/sxt013-nc/run2           # run 2
+$ diff -r reports/sxt-013/candidates <run2>  ->  all six artifacts identical
+Verified 2026-09-20: diff reports byte-identical for slate-256/pilot-32 x
+balanced/factory-lean/contributor-lean (6/6 files, no differences).
+
+== NC2: tamper — one preset census blob SHA flipped inside a /tmp copy of graphs.jsonl ==
+(graphs.jsonl line 101, resources/data/patches_3rdparty/Altenberg/Pads/Alone.fxp, sha -> 000…0)
+REFUSING: census-hash integrity check FAILED (2 violation(s)); refusing to build slates:
+  - graphs.jsonl:101: census blob mismatch for resources/data/patches_3rdparty/Altenberg/Pads/Alone.fxp: graphs sha '0000000000000000000000000000000000000000' != census '0aa09b38d05357f7249551bd2cedbe71dd11be80'
+  - 1 census paths have no graphs.jsonl line, first: resources/data/patches_3rdparty/Altenberg/Pads/Alone.fxp
+  [exit 2]
+
+== NC3: tamper — census per-preset.csv blob corrupted (row 2 -> deadbeef…) ==
+REFUSING: census-hash integrity check FAILED (2 violation(s)); refusing to build slates:
+  - graphs.jsonl:1: census blob mismatch for resources/data/patches_3rdparty/A.Liv/Basses/808er Than 808.fxp: graphs sha 'ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba' != census 'deadbeefbdc1c7884b3badbd3b26c6ec4ba0aba'
+  - 1 census paths have no graphs.jsonl line, first: resources/data/patches_3rdparty/A.Liv/Basses/808er Than 808.fxp
+  [exit 2]
+
+== NC4: tamper — one census entry dropped from graphs.jsonl (must never be silently skipped) ==
+$ grep -v '.../Altenberg/Pads/Alone.fxp' graphs.jsonl > graphs-short.jsonl
+REFUSING: census-hash integrity check FAILED (1 violation(s)); refusing to build slates:
+  - 1 census paths have no graphs.jsonl line, first: resources/data/patches_3rdparty/Altenberg/Pads/Alone.fxp
+  [exit 2]
+
+Every tampered run REFUSED (exit 2) with the offending entries named; no slate was written. Restored committed inputs reproduce NC1 byte-identically.
