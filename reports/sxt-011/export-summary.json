@@ -1,0 +1,34 @@
+{
+  "issue": "SXT-011",
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "engine_version": "1.4.HEAD.58914e59c",
+  "sample_rate": 48000,
+  "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+  "entries_total": 3561,
+  "counts": {
+    "normalized": 3561,
+    "analysis_failure": 0
+  },
+  "normalized_by_bank": {
+    "factory": 641,
+    "contributor": 2920
+  },
+  "failures_by_bank": {
+    "factory": 0,
+    "contributor": 0
+  },
+  "migration_event_kinds": {
+    "filter_remap": 301,
+    "polylimit_default": 890,
+    "sine_shape_remap": 109,
+    "ringmod_shape_remap": 2
+  },
+  "output": "/Users/joseph/dev/gf180-surge-wt-011/corpus/normalized/graphs.jsonl",
+  "output_bytes": 17843532,
+  "under_size_guard": true,
+  "determinism": "same corpus bytes + engine pin => byte-identical graphs.jsonl (no timestamps in per-preset lines)",
+  "wall_seconds": 49.5,
+  "generated_at": "2026-09-20T07:59:44Z",
+  "note": "Normalized-state export only: no audio-support, fidelity, or preset-quality claim. Raw .fxp ids are never exported as state."
+}
