@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  census-consistency:
+    name: census bookkeeping consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run census bookkeeping consistency check
+        run: python3 tools/check_census_consistency.py
+
+  python-compile:
+    name: python compile (stdlib only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Byte-compile repository python
+        run: python3 -m compileall -q tools corpus/census-v0.1
+
+  tests:
+    name: pytest (only when tests exist)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run tests if present
+        run: |
+          if [ -d tests ] && [ -n "$(find tests -type f \( -name 'test_*.py' -o -name '*_test.py' \))" ]; then
+            python3 -m pip install --quiet pytest
+            python3 -m pytest -q tests
+          else
+            echo "NOT_RUN: no tests/ directory with test files in this tree; pytest was not executed (coverage: none — this is not a pass)."
+          fi
