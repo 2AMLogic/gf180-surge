@@ -1,0 +1,277 @@
+{
+ "account": {
+  "anomalies": [
+   {
+    "code": "class_state_unverified",
+    "fx_class": "Phaser",
+    "note": "no long buffer verified: PhaserEffect (sst Phaser.h): per-stage allpass state only; exact state sizing ESTIMATE-REF deferred to SXT-028",
+    "slot": 0
+   },
+   {
+    "code": "class_state_unverified",
+    "fx_class": "Audio In",
+    "note": "no long buffer verified: AudioInputEffect: pass-through routing state; exact state sizing ESTIMATE-REF deferred to SXT-028",
+    "slot": 2
+   },
+   {
+    "code": "class_state_unverified",
+    "fx_class": "Airwindows",
+    "note": "ESTIMATE-REF: structure not pinned; conservative placeholder (unverified_fx_state_bytes); SXT-028 must replace per exact algorithm",
+    "slot": 6
+   },
+   {
+    "code": "class_traffic_unverified",
+    "fx_class": "Airwindows",
+    "note": "ESTIMATE-REF: structure not pinned; conservative placeholder (unverified_fx_state_bytes); SXT-028 must replace per exact algorithm",
+    "slot": 6
+   }
+  ],
+  "assets": {
+   "embedded_flash_bytes": 24588,
+   "flash_role": "assets only; flash is never writable delay/reverb storage (plan section 3)",
+   "resolved_records": 1,
+   "wavetable_osc_records": 1
+  },
+  "bank": "contributor",
+  "budget": {
+   "clock_hz": 480000000,
+   "closure": "OVERFLOW",
+   "cost_cycles_per_frame": {
+    "events": 320.0,
+    "fx": 1600.0,
+    "modulation": 270.0,
+    "total": 17890.0,
+    "voice": 15700.0
+   },
+   "dsp_budget_cycles_per_frame": 8000.0,
+   "gross_cycles_per_frame": 10000.0,
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "utilization_fraction": 1.789
+  },
+  "cost_profile": "placeholder-v0",
+  "events": {
+   "max_coincident_events": 8,
+   "peak_events_per_second": 13.333333,
+   "queue_depth": 16,
+   "source": "fixtures/sequences/ (SXT-012 library)",
+   "worst_case_events_per_frame": 8
+  },
+  "fx_instances": [
+   {
+    "class": "Phaser",
+    "cycles_per_frame": 800,
+    "enabled_by_fxd": true,
+    "ext_reads_per_frame": 0,
+    "ext_writes_per_frame": 0,
+    "external": false,
+    "flags": [
+     "class_state_unverified"
+    ],
+    "processes_this_frame": true,
+    "role": "ains1",
+    "routing_inactive": false,
+    "slot": 0,
+    "state_bytes": 8192,
+    "tier": "no_long_buffer"
+   },
+   {
+    "class": "Audio In",
+    "cycles_per_frame": 800,
+    "enabled_by_fxd": true,
+    "ext_reads_per_frame": 0,
+    "ext_writes_per_frame": 0,
+    "external": false,
+    "flags": [
+     "class_state_unverified"
+    ],
+    "processes_this_frame": false,
+    "role": "bins1",
+    "routing_inactive": true,
+    "slot": 2,
+    "state_bytes": 8192,
+    "tier": "no_long_buffer"
+   },
+   {
+    "class": "Delay",
+    "cycles_per_frame": 900,
+    "enabled_by_fxd": true,
+    "ext_reads_per_frame": 6,
+    "ext_writes_per_frame": 2,
+    "external": true,
+    "flags": [],
+    "param_derived": {
+     "allocated_samples_per_channel": 262144,
+     "derived_samples_l": 9138,
+     "derived_samples_r": 46015,
+     "note": "ESTIMATE-REF: samples = sr*2^(param+margin) per sst Delay.h setvars noteToPitch mapping; param index mapping and modulatable range need SXT-023 confirmation; allocated line is the engine constant regardless of set time",
+     "time_param_l": -3.393194,
+     "time_param_r": -1.060941
+    },
+    "processes_this_frame": false,
+    "role": "bins2",
+    "routing_inactive": true,
+    "slot": 3,
+    "state_bytes": 2097152,
+    "tier": "pinned"
+   },
+   {
+    "airwindows_algorithm": 54,
+    "class": "Airwindows",
+    "cycles_per_frame": 800,
+    "enabled_by_fxd": true,
+    "ext_reads_per_frame": 4,
+    "ext_writes_per_frame": 2,
+    "external": true,
+    "flags": [
+     "class_state_unverified",
+     "class_traffic_unverified"
+    ],
+    "processes_this_frame": true,
+    "role": "global1",
+    "routing_inactive": false,
+    "slot": 6,
+    "state_bytes": 1048576,
+    "tier": "unverified"
+   }
+  ],
+  "fx_summary": {
+   "configured_slots": 4,
+   "distinct_type_count": 4,
+   "enabled_instances": 4,
+   "fxb_section_bypass_id": 0,
+   "fxd_disable_mask": 0,
+   "note": "fxb is a loader-level control for every corpus entry (exporter reset policy, schema README rule 5); per-slot fxd is honored. Two slots of one type are two instances with separate state; type count is reported separately",
+   "processing_instances": 2,
+   "state_bytes_external_writable": 3145728,
+   "state_bytes_on_chip": 16384
+  },
+  "input_status": "normalized",
+  "limits": {
+   "fx_instances": 4,
+   "voice_pool": 32
+  },
+  "memory": {
+   "ext_traffic_bytes_per_frame": 24,
+   "ext_traffic_bytes_per_s": 1152000.0,
+   "external_threshold_bytes": 65536,
+   "external_writable_state_bytes": 3145728,
+   "flash_asset_bytes": 24588,
+   "note": "classification: writable class > external_threshold_bytes => external writable; flash counted as assets only",
+   "on_chip_state_bytes": 198144,
+   "word_bytes": 4
+  },
+  "model_version": "sxt-015-accounting/1.0.0",
+  "params_digest": "646942e9c3887ecb",
+  "path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp",
+  "rejections": [
+   {
+    "code": "budget_overflow",
+    "detail": {
+     "clock_hz": 480000000,
+     "cost_cycles_per_frame": 17890.0,
+     "dsp_budget_cycles_per_frame": 8000.0,
+     "reserve_fraction": 0.2
+    },
+    "note": "plan section 5 closure; cost profile is placeholder-v0 (no technology claim)"
+   }
+  ],
+  "scene": {
+   "active_scenes": [
+    0
+   ],
+   "scene_mode_id": 0,
+   "scene_mode_name": "Single"
+  },
+  "sha": "315c0a1a27a671297f437026c021ce917f1e3875",
+  "status": "rejected",
+  "voice": {
+   "active_scenes": [
+    0
+   ],
+   "envelope_instances": 32,
+   "lfo_instances_total": 102,
+   "note": "worst-case voice count is the voice pool bound; dual mode consumes two pool voices per note (plan section 3)",
+   "notes_held_worst_case": 16,
+   "polylimit": 16,
+   "scene_lfo_instances": 6,
+   "scene_mode_id": 0,
+   "scene_mode_name": "Single",
+   "scenes": [
+    {
+     "active_filter_units": 2,
+     "active_osc_slots": 2,
+     "filter_config_id": 7,
+     "filter_config_name": "Wide",
+     "filter_units": [
+      {
+       "active": true,
+       "slot": 0,
+       "type_id": 13,
+       "type_name": "LP K35"
+      },
+      {
+       "active": true,
+       "slot": 1,
+       "type_id": 5,
+       "type_name": "HP 24 dB"
+      }
+     ],
+     "mseg_or_formula_lfos": [],
+     "osc_slots": [
+      {
+       "active": true,
+       "modulated": true,
+       "muted": false,
+       "slot": 0,
+       "type_id": 1,
+       "type_name": "Sine",
+       "unison": 1,
+       "wavetable": false
+      },
+      {
+       "active": true,
+       "modulated": true,
+       "muted": false,
+       "slot": 1,
+       "type_id": 2,
+       "type_name": "Wavetable",
+       "unison": 1,
+       "wavetable": true
+      },
+      {
+       "active": false,
+       "modulated": false,
+       "muted": true,
+       "slot": 2,
+       "type_id": 1,
+       "type_name": "Sine",
+       "unison": 0,
+       "wavetable": false
+      }
+     ],
+     "scene": 0,
+     "scene_lfos": 6,
+     "unison_load_per_voice": 2,
+     "voice_lfos": 6,
+     "waveshaper_active": true,
+     "waveshaper_type": "Soft"
+    }
+   ],
+   "state_bytes_on_chip": 181760,
+   "unison_osc_instances_worst_case": 32,
+   "voice_lfo_instances": 96,
+   "voices_per_note": 1,
+   "worst_case_voices": 16
+  }
+ },
+ "example": "four_fx_instances",
+ "issue": "SXT-015",
+ "selection_rule": "first preset by (bank, path) with exactly 4 configured non-Off slots, all fxd-enabled; falls back to any exactly-4",
+ "source": {
+  "bank": "contributor",
+  "path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp",
+  "sha": "315c0a1a27a671297f437026c021ce917f1e3875",
+  "size_bytes": 61281
+ }
+}
