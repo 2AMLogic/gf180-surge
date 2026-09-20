@@ -1,10 +1,10 @@
 {
   "external_traffic": {
-    "bytes_per_sample": 4352.0,
-    "bytes_per_second_at_48k": 208896000.0,
+    "bytes_per_sample": 136.0,
+    "bytes_per_second_at_48k": 6528000.0,
     "reads_per_sample": 17.0,
     "transaction_log_basis": "model ext_reads/ext_writes counters (measured by running the frozen model)",
-    "words_per_sample_32bit": 1088.0,
+    "words_per_sample_32bit": 34.0,
     "writes_per_sample": 17.0
   },
   "external_writable_memory": {
@@ -47,11 +47,11 @@
   },
   "scope": "per Reverb1 instance, 48 kHz, frozen Q4.28/32-bit-word format",
   "sxt016_reconciliation": {
-    "agreement": false,
+    "agreement": true,
     "divergence_note": "SXT-016 state_bits priced 24-bit storage words (taps 12,582,912 b + predelay 786,432 b); the frozen Q4.28 word is 32-bit after the stability analysis, so capacity is 16,777,216 + 1,048,576 b (+33%); traffic is UNCHANGED at 34 x 32-bit words per sample (136 B) because the 16-bit external bus is accessed in 32-bit words in both models. Do NOT edit committed sxt-015/sxt-016 files; this record supersedes the capacity figure for Reverb 1.",
     "sxt015_logical_words_per_frame": "17r + 17w",
     "sxt016_bytes_per_frame": 136,
     "sxt016_probe_words_per_frame": 34,
-    "this_model_words_per_sample": 1088.0
+    "this_model_words_per_sample": 34.0
   }
 }

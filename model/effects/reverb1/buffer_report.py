@@ -16,7 +16,8 @@ import json
 import os
 import sys
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 
 import reverb1_fixed as rf  # noqa: E402
@@ -61,8 +62,10 @@ def main():
     reads_per_sample = m.ext_reads / rf.BLOCK
     writes_per_sample = m.ext_writes / rf.BLOCK
 
-    per_frame_words = (reads_per_sample + writes_per_sample) * rf.BLOCK
-    bytes_per_frame = per_frame_words * 4
+    # NOTE: "frame" in the SXT-015/016 accounting = one audio sample period
+    # (1/48 kHz); the model counters above are already per-sample.
+    per_sample_words = reads_per_sample + writes_per_sample
+    bytes_per_sample = per_sample_words * 4
     out = {
         "issue": "SXT-024",
         "scope": "per Reverb1 instance, 48 kHz, frozen Q4.28/32-bit-word format",
@@ -87,9 +90,9 @@ def main():
         "external_traffic": {
             "reads_per_sample": reads_per_sample,
             "writes_per_sample": writes_per_sample,
-            "words_per_sample_32bit": per_frame_words,
-            "bytes_per_sample": bytes_per_frame,
-            "bytes_per_second_at_48k": bytes_per_frame * SAMPLE_RATE,
+            "words_per_sample_32bit": per_sample_words,
+            "bytes_per_sample": bytes_per_sample,
+            "bytes_per_second_at_48k": bytes_per_sample * SAMPLE_RATE,
             "transaction_log_basis": "model ext_reads/ext_writes counters "
                                      "(measured by running the frozen model)",
         },
@@ -97,8 +100,8 @@ def main():
             "sxt015_logical_words_per_frame": "17r + 17w",
             "sxt016_probe_words_per_frame": 34,
             "sxt016_bytes_per_frame": 136,
-            "this_model_words_per_sample": per_frame_words,
-            "agreement": per_frame_words == 34,
+            "this_model_words_per_sample": per_sample_words,
+            "agreement": per_sample_words == 34,
             "divergence_note": "SXT-016 state_bits priced 24-bit storage words "
                                "(taps 12,582,912 b + predelay 786,432 b); the frozen "
                                "Q4.28 word is 32-bit after the stability analysis, so "
