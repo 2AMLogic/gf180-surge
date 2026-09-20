@@ -9,6 +9,6 @@
   "target_check": "fixed-point stability (headroom) or reference budget",
   "variant": "24-bit storage words (Q1.23): no integer headroom, audio-LSB state grid (the underfloor of the frozen Q4.28)",
   "verdict": "CONTROL-OK (reduced words FAIL stability/budget)",
-  "wet_max_abs": 3.144778929708991e-06,
-  "wet_rms_rel_db": -48.671823710443235
+  "wet_max_abs": 3.1221018161886605e-06,
+  "wet_rms_rel_db": -48.6501658444546
 }
