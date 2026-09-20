@@ -1,0 +1,367 @@
+{
+  "schema_version": "sxt-017-bundle-spec/1.0.0",
+  "artifact": "profile-v1-bundle-DRAFT",
+  "status": "DRAFT-NOT-FROZEN",
+  "bundles": [
+    {
+      "bundle_id": "B1-core-narrow",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": ["LP 12 dB", "LP 24 dB", "LP Legacy Ladder", "HP 12 dB", "HP 24 dB", "BP 12 dB", "BP 24 dB", "N 12 dB", "N 24 dB"],
+        "waveshaper_policy": "none",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1"],
+        "airwindows_policy": {"mode": "none", "selected_algorithm_ids": []},
+        "fx_instance_limit": 4,
+        "scene_modes": [0],
+        "voice_pool_limit": 8,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "B2-core-wet-plan3",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": ["LP 12 dB", "LP 24 dB", "LP Legacy Ladder", "HP 12 dB", "HP 24 dB", "BP 12 dB", "BP 24 dB", "N 12 dB", "N 24 dB"],
+        "waveshaper_policy": "none",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner"],
+        "airwindows_policy": {"mode": "none", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 8,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "B3-ext-voice-fx",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner"],
+        "airwindows_policy": {"mode": "none", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "B4-broad",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner", "Phaser", "Distortion", "Reverb 2"],
+        "airwindows_policy": {"mode": "selected", "selected_algorithm_ids": [49, 4, 46, 42, 24, 5, 30, 21, 35, 15, 41, 3]},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "R0-ceiling-reference",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise", "Modern", "Twist", "Alias", "String", "Window"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Airwindows", "Reverb 2", "Conditioner", "Chorus", "Distortion", "Phaser", "Flanger", "Freq Shift", "Graphic EQ", "Nimbus", "Rotary", "Resonator", "Combulator", "Waveshaper", "Tape", "Ensemble", "Ring Mod", "Spring Reverb", "Mid-Side Tool", "Treemonster", "Neuron", "Bonsai", "Exciter", "Convolution", "CHOW", "Vocoder"],
+        "airwindows_policy": {"mode": "all_observed", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B1-inst8",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": ["LP 12 dB", "LP 24 dB", "LP Legacy Ladder", "HP 12 dB", "HP 24 dB", "BP 12 dB", "BP 24 dB", "N 12 dB", "N 24 dB"],
+        "waveshaper_policy": "none",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1"],
+        "airwindows_policy": {"mode": "none", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0],
+        "voice_pool_limit": 8,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B2-pool16",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": ["LP 12 dB", "LP 24 dB", "LP Legacy Ladder", "HP 12 dB", "HP 24 dB", "BP 12 dB", "BP 24 dB", "N 12 dB", "N 24 dB"],
+        "waveshaper_policy": "none",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner"],
+        "airwindows_policy": {"mode": "none", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B3-pool8",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner"],
+        "airwindows_policy": {"mode": "none", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 8,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B4-inst4",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner", "Phaser", "Distortion", "Reverb 2"],
+        "airwindows_policy": {"mode": "selected", "selected_algorithm_ids": [49, 4, 46, 42, 24, 5, 30, 21, 35, 15, 41, 3]},
+        "fx_instance_limit": 4,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B4-aw-all",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner", "Phaser", "Distortion", "Reverb 2"],
+        "airwindows_policy": {"mode": "all_observed", "selected_algorithm_ids": []},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B4-fu-narrow",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": ["LP 12 dB", "LP 24 dB", "LP Legacy Ladder", "HP 12 dB", "HP 24 dB", "BP 12 dB", "BP 24 dB", "N 12 dB", "N 24 dB"],
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner", "Phaser", "Distortion", "Reverb 2"],
+        "airwindows_policy": {"mode": "selected", "selected_algorithm_ids": [49, 4, 46, 42, 24, 5, 30, 21, 35, 15, 41, 3]},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 16,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    },
+    {
+      "bundle_id": "VAR-B4-uni8",
+      "status": "DRAFT-NOT-FROZEN",
+      "spec": {
+        "oscillator_allowlist": ["Classic", "Sine", "Wavetable", "FM2", "FM3", "S&H Noise"],
+        "wavetable_assets": true,
+        "filter_type_allowlist": "all",
+        "waveshaper_policy": "all",
+        "fx_type_allowlist": ["Delay", "EQ", "Reverb 1", "Chorus", "Conditioner", "Phaser", "Distortion", "Reverb 2"],
+        "airwindows_policy": {"mode": "selected", "selected_algorithm_ids": [49, 4, 46, 42, 24, 5, 30, 21, 35, 15, 41, 3]},
+        "fx_instance_limit": 8,
+        "scene_modes": [0, 1, 2, 3],
+        "voice_pool_limit": 16,
+        "unison_cap": 8,
+        "poly_gate": "adapted_beyond_pool",
+        "sample_rate_hz": 48000,
+        "word_length_policy": "float32-model-placeholder-pending-sxt-016",
+        "budgets": {
+          "on_chip_ram_bytes": 4194304,
+          "external_writable_bytes": 67108864,
+          "external_bandwidth_bytes_per_s": 800000000,
+          "cycle_closure": "not_gated_pending_sxt_016"
+        },
+        "data_gap_policies": {
+          "mseg_formula_lfo_contents": "unresolved",
+          "slfo_definitions": "caveat_budget_risk",
+          "filter_subtypes": "engine_declared_set"
+        }
+      }
+    }
+  ]
+}
