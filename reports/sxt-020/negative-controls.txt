@@ -1,0 +1,56 @@
+SXT-020 negative controls (live) — issue #13 acceptance.
+Claim scope: compiler sensitivity/refusal behavior ONLY (rejection vs
+trimmed-image, checksum integrity, gate-targeted codes). No fidelity,
+support, quality, or hardware claim. Compiled against the DRAFT-NOT-FROZEN
+bundle B4-broad; allocations are SXT-015 placeholders [PENDING-SXT-016].
+==============================================================================
+
+Re-run with:
+  python3 compiler/verify.py controls          # all controls below
+  python3 compiler/verify.py golden            # 183-check golden suite
+  python3 compiler/verify.py image <file.bin>  # standalone image checks
+  python3 compiler/verify.py alloc <file.bin>  # allocation reconciliation
+
+NC1 (issue #13 acceptance: crafted unsupported graph) — take a compiled
+preset (Attacky.fxp, factory, B4-supported), enable nine existing FX slots
+(roles stay the engine's own, class = Phaser, which IS in B4's tier set):
+the graph now carries 9 enabled instances against B4's fx_instance_limit 8.
+The compiler must produce the SPECIFIC rejection and NEVER an image.
+  outcome=rejected codes=['fx_instance_overflow']
+  nc1/no-image-emitted PASS (container is None — no trimmed image exists)
+  nc1/rejection-cataloged PASS (every code is in compiler/rejections.json)
+
+NC2 (brief-example nuance, recorded honestly) — the task brief suggests
+"an FM3 oscillator" as an unsupported feature. Under the DRAFT B4-broad
+bundle FM3 is IN the oscillator allowlist, so the control pins BOTH sides:
+  nc2/fm3-compiles-under-B4 PASS (outcome=compiled, image emitted)
+  nc2/fm3-rejected-under-B2 PASS (outcome=rejected,
+      codes=['oscillator_family_not_in_bundle','polylimit_reduction_required'];
+      the polylimit code is expected — B2's pool is 8 and the base stores 16)
+  An actually-unsupported feature under B4 (NC1's 9th instance; also the
+  golden Modern/Window oscillator cases) demonstrates the rejection path.
+
+NC3 (issue #13 acceptance: corrupted checksum) — flip one bit of a valid
+image body byte, and truncate a valid image:
+  corruption-detected-body-byte PASS — "container checksum mismatch"
+  corruption-detected-truncated PASS — "length mismatch: file 11900,
+      header+body+digest 11903"
+  Both fail via compiler.compile.ImageError; verify.py exits non-zero.
+
+NC4 (rejection records never ship images) — for every golden rejection
+record, the corresponding .image.bin path must NOT exist:
+  nc4/no-image-for-<case> PASS for all 10 rejection cases.
+
+Golden suite (regression control) — recompiles all 18 manifest cases from
+the committed graphs (census blob SHA asserted) / committed synthetic lines:
+byte-identical images, JSON-pair identity, graph-losslessness (rebuilt
+graph hash == header.normalized_graph_sha256), allocation reconciliation
+against a fresh SXT-015 account + bundle budgets, rejection code sets.
+  PASS: 183 checks, 0 failed
+
+Determinism control — same inputs give byte-identical outputs:
+  cmp of two full corpus scans: IDENTICAL
+  cmp of repeated single-preset compiles: IDENTICAL (also golden-enforced)
+
+All controls are re-runnable from this repository with no engine tree
+(compiler works over committed graphs; SXT-015 model is committed code).
