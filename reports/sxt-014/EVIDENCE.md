@@ -123,7 +123,7 @@ BLOCKED-on-human.** No listening record exists in this repository; none is claim
 
 | Control | Design | Result |
 |---|---|---|
-| (a) Off-slot bypass ≡ original | Bypass an already-Off slot; compare SHA-256 vs the preset's own original. sub4 (all 16 Off) slots 0/12; behemoth (Reverb 1 active) slots 0/12 | **PASS** — all four BIT-IDENTICAL. koala2 (free-phase class) offslot: not bit-identical by class; max |Δ| 0.2747 ≤ SXT-012 repeat-render bound 0.3062 → diagnostic non-perturbation only |
+| (a) Off-slot bypass ≡ original | Bypass an already-Off slot; compare SHA-256 vs the preset's own original. sub4 (all 16 Off) slots 0/12; behemoth (Reverb 1 active) slots 0/12 | **PASS** — all four BIT-IDENTICAL. koala2 (free-phase class) offslot: not bit-identical by class; max |Δ| 0.2756 ≤ SXT-012 repeat-render bounds 0.2808–0.3062 → diagnostic non-perturbation only |
 | (b) Metadata tamper → refuse | Sidecar hash overwritten; WAV byte flipped (temp copies); pristine tree | **PASS** — both tampers REFUSED (exit 2), pristine tree verified (61 sidecars); transcript `negative-controls.txt` |
 | (c) Wrong-order render detected | Exchange contents of fuji's two Delay slots (ains1↔send1) | **PASS with caveat** — comparator flags at 18.481 dB; order-vs-transfer-epsilon attribution not separated numerically (sidecar records the transfer diffs); listening leg BLOCKED-on-human |
 | Per-render non-perturbation | After every mutation + settle, all non-mutated slots' type + 12 params + return level must read back bit-identically to the pristine post-load state | **PASS** — enforced in every one of the 61 renders (refuses otherwise) |

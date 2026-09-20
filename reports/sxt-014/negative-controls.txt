@@ -44,7 +44,7 @@ SXT-012 repeat-render bounds (diagnostic non-perturbation, not proof).
 fuji: Delay(slot0,ains1) and Delay(slot4,send1) contents exchanged; the delta tool
 measures the permuted render against the original at
 reports/sxt-014/deltas/fuji/seq-notes-coverage-v1-permuted-swap00-with04.json
-(mean block-RMS delta 18.660 dB, verdict MEASURABLE-DIFFERENCE: DETECTED).
+(mean block-RMS delta 18.481 dB, verdict MEASURABLE-DIFFERENCE: DETECTED).
 Attribution caveat: param transfer through setParamVal is not bit-exact (recorded
 in the sidecar 'mutation' block), so the render differs through order + transfer
 epsilon together; order-only numeric attribution is left to the SXT-017 policy.
