@@ -74,6 +74,15 @@ def main():
     ge = graphs_entry(PRESET_REL)
     g = ge["g"]
     preset_abs = os.path.join(oc.data_home(), PRESET_REL[len("resources/data/") :])
+    if not os.path.exists(preset_abs):
+        # Fail closed (exit 2 via Refuse), never a crash/traceback: machines
+        # without the external pinned oracle must get an explicit NOT_RUN, not
+        # an incidental error.
+        raise Refuse(
+            "pinned-engine preset not found at %s — set ORACLE_SURGE_DIR to "
+            "the pinned engine tree (see oracle/manifest.json); this tool "
+            "requires the external oracle" % preset_abs
+        )
 
     actual = git_blob_sha1(preset_abs)
     expected = census_blob(PRESET_REL)

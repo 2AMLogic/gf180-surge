@@ -93,6 +93,21 @@ def test_sinctable_symmetry_and_tap0_peak():
 
 
 def test_input_gates_refuse_modified_preset(tmp_path):
+    # The extractor needs the external pinned oracle (live engine read).
+    # On machines without it, this test cannot run: SKIP it (NOT_RUN) rather
+    # than failing — a test that did not run must never be reported as a pass.
+    sys.path.insert(0, os.path.join(REPO, "oracle"))
+    import oracle_common as oc
+
+    if not os.path.exists(
+        os.path.join(
+            oc.data_home(), "patches_factory/Basses/Attacky.fxp"
+        )
+    ):
+        import pytest
+
+        pytest.skip("external pinned oracle not available (ORACLE_SURGE_DIR)")
+
     inputs = os.path.join(REPO, "model", "voice", "attacky_inputs.json")
     with open(inputs) as f:
         d = json.load(f)
