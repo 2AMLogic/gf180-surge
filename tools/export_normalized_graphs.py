@@ -94,7 +94,8 @@ def read_fxp_raw(fxp_path):
     fields only (value is an integer literal); floats are not interpreted.
     """
     out = {"xml_ok": False, "revision": None, "ints": {}, "wt": {},
-           "embedded_wt_sizes": None}
+           "embedded_wt_sizes": None, "volume_streamed": None,
+           "fx_bypass_in_file": None}
     with open(fxp_path, "rb") as f:
         data = f.read()
     if len(data) >= 76 and data[:4] == b"CcnK" and data[60:64] == b"sub3":
@@ -127,6 +128,11 @@ def read_fxp_raw(fxp_path):
     for name in ("scenemode", "scene_active", "polylimit", "character",
                  "fx_bypass", "fx_disable"):
         ints[name] = raw_int(params_tag(root, name))
+    # Preset-streaming facts: load_xml DELETES the volume element for presets
+    # with revision<17, and DELETES fx_bypass for ALL presets, so those params
+    # are not part of the preset's streamed state for such files.
+    out["volume_streamed"] = params_tag(root, "volume") is not None
+    out["fx_bypass_in_file"] = params_tag(root, "fx_bypass") is not None
     for i in range(N_FX_SLOTS):
         ttag = params_tag(root, "fx%d_type" % (i + 1))
         ints["fx%d.type" % i] = raw_int(ttag)
@@ -694,6 +700,16 @@ def export_entry(idx, entry, ex, data_home):
         raw_err = "%s: %s" % (type(exc).__name__, exc)
 
     try:
+        # Declared reset policy: params the loader does not stream from a
+        # preset keep the engine's previous value, so the harness resets the
+        # known candidates (global volume; fx_bypass is stripped from every
+        # preset by load_xml; character/polylimit are absent from the oldest
+        # revisions) to the engine defaults before each load. This makes the
+        # export order-independent and reproducible on a fresh engine.
+        patch = ex.s.getPatch()
+        for pname in ("volume", "fx_bypass", "character", "polylimit"):
+            prm = patch[pname]
+            ex.s.setParamVal(prm, ex.s.getParamDef(prm))
         ex.s.allNotesOff()
         ok = bool(ex.s.loadPatch(fxp))
         if not ok:
@@ -744,6 +760,11 @@ def export_entry(idx, entry, ex, data_home):
     else:
         if ev:
             g["mi"] = ev
+        if raw.get("volume_streamed") is False:
+            # rev<17 presets do not contain a volume element: the exported
+            # value is the engine default under the reset policy, not preset
+            # content (see corpus/normalized/README.md).
+            missing.append("volume")
         if missing:
             g["rwm"] = sorted(missing)
         if uninterp:
@@ -805,6 +826,7 @@ def main():
     norm_by_bank = {"factory": 0, "contributor": 0}
     fails_by_bank = {"factory": 0, "contributor": 0}
     mig_kinds = {}
+    snare = None
     with open(out_path, mode, encoding="utf-8", newline="\n") as f:
         for i in range(args.start, end):
             line = export_entry(i, entries[i], ex, data_home)
@@ -815,6 +837,19 @@ def main():
                     mig_kinds[e["k"]] = mig_kinds.get(e["k"], 0) + 1
             else:
                 fails_by_bank[line["b"]] += 1
+            if line["p"].endswith("Percussion/Snare Tight.fxp"):
+                g = line.get("g") or {}
+                snare = {
+                    "path": line["p"],
+                    "status": line["st"],
+                    "native_verdict": ("normalized_natively" if line["st"] == "normalized"
+                                       else line.get("why", {}).get("reason")),
+                    "raw_note": g.get("raw_note"),
+                    "fx_on": [(f["r"], f["tn"]) for f in g.get("fx", []) if f.get("on")],
+                    "note": ("resolved by native loader behavior only; the raw XML "
+                             "sidecar stays unreadable and the waiver is recorded "
+                             "in g.raw_note"),
+                }
             f.write(json.dumps(line, sort_keys=True, separators=(",", ":"),
                                ensure_ascii=True, allow_nan=False) + "\n")
             f.flush()
@@ -834,6 +869,9 @@ def main():
         "normalized_by_bank": norm_by_bank,
         "failures_by_bank": fails_by_bank,
         "migration_event_kinds": mig_kinds,
+        "snare_tight": snare,
+        "spot_check": "reports/sxt-011/spot-check/ (script + transcript + summary)",
+        "negative_control": "reports/sxt-011/negative-control/ (script + transcript + summary)",
         "output": out_path,
         "output_bytes": size,
         "under_size_guard": size < 150 * 1024 * 1024,

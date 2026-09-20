@@ -1,0 +1,25 @@
+====================================================================================================
+SUBJECT: resources/data/patches_3rdparty/Rare Earth/Percussion/Kalimba Attempt.fxp
+stored revision: 13
+committed status: normalized ; live re-extraction matches committed: True
+RAW stored ids for sc0.fu1: (type=6, subtype=4) in the fut_14 id space; LIVE normalized: (type=23 'BP 24 dB', subtype=1 'Driven')
+UN-NORMALIZED interpretation (raw ids read as CURRENT ids): type 6 'BP 12 dB', subtype 4 'Clean (Legacy)' -> pair 'BP 12 dB/Clean (Legacy)'
+LAYER 1 live-equality check on un-normalized graph: DETECTED -> ['/mi: un-normalized=None vs live=[{\'f\': \'sc0.fu1\', \'k\': \'filter_remap\', \'raw\': [6, 4], \'n\': [23, 1], \'raw_meaning_pre15\': \'fut_14 id space (FilterConfiguration.h)\', \'note\': "revision<15 \'The Great Filter Remap\' (SurgePatch.cpp load_xml, issue #3006)"}, {\'f\': \'polylimit\', \'k\': \'polylimit_default\', \'raw\': 8, \'n\': 16, \'note\': \'revision<=15 && polylimit==8 -> DEFAULT_POLYLIMIT (SurgePatch.cpp)\'}]', "/rwm: un-normalized=None vs live=['fx1.type', 'fx10.type', 'fx11.type', 'fx12.type', 'fx13.type', 'fx14.type', 'fx15.type', 'fx2.type', 'fx3.type', 'fx5.type', 'fx6.type', 'fx7.type', 'fx8.type', 'fx9.type']", '/sc[0]/fu[1]/st: un-normalized=4 vs live=1', '/sc[0]/fu[1]/t: un-normalized=6 vs live=23']
+LAYER 1 on committed graph: clean
+committed g.mi contains: [{'f': 'sc0.fu1', 'k': 'filter_remap', 'raw': [6, 4], 'n': [23, 1], 'raw_meaning_pre15': 'fut_14 id space (FilterConfiguration.h)', 'note': "revision<15 'The Great Filter Remap' (SurgePatch.cpp load_xml, issue #3006)"}]
+LAYER 2 migration-consistency check on un-normalized graph (raw != live requires a recorded event): DETECTED -> ['un-normalized graph exports sc0.fu1 as (type=6, subtype=4) while live normalized is (23, 1) with NO migration event recorded']
+SCOPE NOTE: plain live-range validation of the un-normalized graph: no violations (raw ids happen to be inside current numeric ranges) (range checks alone are not the detection mechanism for these subjects; live-equality + migration-consistency are)
+====================================================================================================
+SUBJECT: resources/data/patches_3rdparty/Damon Armani/Pads/Funky Gate.fxp
+stored revision: 12
+committed status: normalized ; live re-extraction matches committed: True
+RAW stored id for sc0.osc2.param0: 7 ; LIVE normalized: 0 (display 'Wave 1 (TX 1)')
+UN-NORMALIZED interpretation: shape 7 ('Wave 8 (TX 8)')
+LAYER 1 live-equality check on un-normalized graph: DETECTED -> ["/mi: un-normalized=None vs live=[{'f': 'sc0.osc2.param0', 'k': 'sine_shape_remap', 'raw': 7, 'n': 0, 'note': 'revision<=27 Sine/ringmod waveform migration (SurgePatch.cpp load_xml); rev<=12 files additionally pass SineOscillator::handleStreamingMismatches wave_remap'}, {'f': 'polylimit', 'k': 'polylimit_default', 'raw': 8, 'n': 16, 'note': 'revision<=15 && polylimit==8 -> DEFAULT_POLYLIMIT (SurgePatch.cpp)'}]", "/rwm: un-normalized=None vs live=['fx1.type', 'fx10.type', 'fx11.type', 'fx12.type', 'fx13.type', 'fx14.type', 'fx15.type', 'fx2.type', 'fx3.type', 'fx4.type', 'fx5.type', 'fx6.type', 'fx7.type', 'fx8.type', 'fx9.type']", '/sc[0]/osc[2]/p[0]: un-normalized=7 vs live=0']
+LAYER 1 on committed graph: clean
+committed g.mi contains: [{'f': 'sc0.osc2.param0', 'k': 'sine_shape_remap', 'raw': 7, 'n': 0, 'note': 'revision<=27 Sine/ringmod waveform migration (SurgePatch.cpp load_xml); rev<=12 files additionally pass SineOscillator::handleStreamingMismatches wave_remap'}]
+LAYER 2 migration-consistency check on un-normalized graph (raw != live requires a recorded event): DETECTED -> ['un-normalized graph exports sc0.osc2.param0=7 while live normalized is 0 with NO migration event recorded']
+SCOPE NOTE: plain live-range validation of the un-normalized graph: no violations (raw ids happen to be inside current numeric ranges) (range checks alone are not the detection mechanism for these subjects; live-equality + migration-consistency are)
+====================================================================================================
+NEGATIVE CONTROL VERDICT: PASS - un-normalized variants are DETECTED by layers 1+2 and committed lines pass live-equality
+If the exporter ever emitted such state, the same two layers gate the entry to analysis_failure (schema_validation_failed); see tools/export_normalized_graphs.py export_entry().

@@ -1,0 +1,440 @@
+====================================================================================================
+PRESET: resources/data/patches_factory/Basses/Sub 4.fxp
+WHY:    factory, simple voice graph; continuity with the SXT-010 note capture
+FULL-GRAPH COMPARISON (canonical JSON): IDENTICAL
+scenemode display                  LIVE 'Single' | COMMITTED 'Single' | OK
+scenemode id                       LIVE 0 | COMMITTED 0 | OK
+fx_bypass display                  LIVE 'All FX' | COMMITTED 'All FX' | OK
+polylimit                          LIVE 16 | COMMITTED 16 | OK
+sc0 filterblock display            LIVE 'Serial 2' | COMMITTED 'Serial 2' | OK
+sc0.osc0 type                      LIVE 1 | COMMITTED 1 | OK
+sc0.osc0 type display              LIVE 'Sine' | COMMITTED 'Sine' | OK
+sc0.osc0 submode p[0]              LIVE 0 | COMMITTED 0 | OK
+sc0.osc0 submode display           LIVE 'Wave 1 (TX 1)' | (informational: committed schema stores the submode id only)
+sc0.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc1 type                      LIVE 1 | COMMITTED 1 | OK
+sc0.osc1 type display              LIVE 'Sine' | COMMITTED 'Sine' | OK
+sc0.osc1 submode p[0]              LIVE 0 | COMMITTED 0 | OK
+sc0.osc1 submode display           LIVE 'Wave 1 (TX 1)' | (informational: committed schema stores the submode id only)
+sc0.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc2 type                      LIVE 1 | COMMITTED 1 | OK
+sc0.osc2 type display              LIVE 'Sine' | COMMITTED 'Sine' | OK
+sc0.osc2 submode p[0]              LIVE 0 | COMMITTED 0 | OK
+sc0.osc2 submode display           LIVE 'Wave 1 (TX 1)' | (informational: committed schema stores the submode id only)
+sc0.osc2 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.fu0 type                       LIVE 1 | COMMITTED 1 | OK
+sc0.fu0 type display               LIVE 'LP 12 dB' | COMMITTED 'LP 12 dB' | OK
+sc0.fu0 subtype                    LIVE 1 | COMMITTED 1 | OK
+sc0.fu0 subtype display            LIVE 'Driven' | COMMITTED 'Driven' | OK
+sc0.fu1 type                       LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc0.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc0 wsunit type                    LIVE 0 | COMMITTED 0 | OK
+sc1 filterblock display            LIVE 'Serial 1' | COMMITTED 'Serial 1' | OK
+sc1.osc0 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc0 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc0 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc0 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc1 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc1 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc1 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc1 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc2 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc2 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc2 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc2 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc2 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.fu0 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu0 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1.fu1 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1 wsunit type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 0 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 0 role                     LIVE 'ains1' | COMMITTED 'ains1' | OK
+fx slot 1 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 1 role                     LIVE 'ains2' | COMMITTED 'ains2' | OK
+fx slot 2 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 2 role                     LIVE 'bins1' | COMMITTED 'bins1' | OK
+fx slot 3 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 3 role                     LIVE 'bins2' | COMMITTED 'bins2' | OK
+fx slot 4 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 4 role                     LIVE 'send1' | COMMITTED 'send1' | OK
+fx slot 5 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 5 role                     LIVE 'send2' | COMMITTED 'send2' | OK
+fx slot 6 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 6 role                     LIVE 'global1' | COMMITTED 'global1' | OK
+fx slot 7 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 7 role                     LIVE 'global2' | COMMITTED 'global2' | OK
+fx slot 8 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 8 role                     LIVE 'ains3' | COMMITTED 'ains3' | OK
+fx slot 9 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 9 role                     LIVE 'ains4' | COMMITTED 'ains4' | OK
+fx slot 10 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 10 role                    LIVE 'bins3' | COMMITTED 'bins3' | OK
+fx slot 11 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 11 role                    LIVE 'bins4' | COMMITTED 'bins4' | OK
+fx slot 12 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 12 role                    LIVE 'send3' | COMMITTED 'send3' | OK
+fx slot 13 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 13 role                    LIVE 'send4' | COMMITTED 'send4' | OK
+fx slot 14 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 14 role                    LIVE 'global3' | COMMITTED 'global3' | OK
+fx slot 15 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 15 role                    LIVE 'global4' | COMMITTED 'global4' | OK
+global route count                 LIVE 0 | COMMITTED 0 | OK
+VERDICT: PASS (full-graph IDENTICAL; 81 live getter checks OK, 0 mismatches)
+====================================================================================================
+PRESET: resources/data/patches_factory/Percussion/Drum One.fxp
+WHY:    factory, stored revision 4: Great Filter Remap era (fut_14 raw ids)
+FULL-GRAPH COMPARISON (canonical JSON): IDENTICAL
+scenemode display                  LIVE 'Single' | COMMITTED 'Single' | OK
+scenemode id                       LIVE 0 | COMMITTED 0 | OK
+fx_bypass display                  LIVE 'All FX' | COMMITTED 'All FX' | OK
+polylimit                          LIVE 16 | COMMITTED 16 | OK
+sc0 filterblock display            LIVE 'Serial 3' | COMMITTED 'Serial 3' | OK
+sc0.osc0 type                      LIVE 1 | COMMITTED 1 | OK
+sc0.osc0 type display              LIVE 'Sine' | COMMITTED 'Sine' | OK
+sc0.osc0 submode p[0]              LIVE 0 | COMMITTED 0 | OK
+sc0.osc0 submode display           LIVE 'Wave 1 (TX 1)' | (informational: committed schema stores the submode id only)
+sc0.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc1 type                      LIVE 0 | COMMITTED 0 | OK
+sc0.osc1 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc0.osc1 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc0.osc1 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc0.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc2 type                      LIVE 0 | COMMITTED 0 | OK
+sc0.osc2 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc0.osc2 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc0.osc2 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc0.osc2 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.fu0 type                       LIVE 8 | COMMITTED 8 | OK
+sc0.fu0 type display               LIVE 'FX Comb +' | COMMITTED 'FX Comb +' | OK
+sc0.fu0 subtype                    LIVE 1 | COMMITTED 1 | OK
+sc0.fu0 subtype display            LIVE '100% Wet' | COMMITTED '100% Wet' | OK
+sc0.fu1 type                       LIVE 6 | COMMITTED 6 | OK
+sc0.fu1 type display               LIVE 'BP 12 dB' | COMMITTED 'BP 12 dB' | OK
+sc0.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 subtype display            LIVE 'Standard' | COMMITTED 'Standard' | OK
+sc0 wsunit type                    LIVE 0 | COMMITTED 0 | OK
+sc1 filterblock display            LIVE 'Serial 1' | COMMITTED 'Serial 1' | OK
+sc1.osc0 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc0 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc0 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc0 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc1 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc1 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc1 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc1 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc2 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc2 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc2 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc2 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc2 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.fu0 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu0 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1.fu1 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1 wsunit type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 0 type                     LIVE 8 | COMMITTED 8 | OK
+fx slot 0 role                     LIVE 'ains1' | COMMITTED 'ains1' | OK
+fx slot 1 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 1 role                     LIVE 'ains2' | COMMITTED 'ains2' | OK
+fx slot 2 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 2 role                     LIVE 'bins1' | COMMITTED 'bins1' | OK
+fx slot 3 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 3 role                     LIVE 'bins2' | COMMITTED 'bins2' | OK
+fx slot 4 type                     LIVE 1 | COMMITTED 1 | OK
+fx slot 4 role                     LIVE 'send1' | COMMITTED 'send1' | OK
+fx slot 5 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 5 role                     LIVE 'send2' | COMMITTED 'send2' | OK
+fx slot 6 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 6 role                     LIVE 'global1' | COMMITTED 'global1' | OK
+fx slot 7 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 7 role                     LIVE 'global2' | COMMITTED 'global2' | OK
+fx slot 8 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 8 role                     LIVE 'ains3' | COMMITTED 'ains3' | OK
+fx slot 9 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 9 role                     LIVE 'ains4' | COMMITTED 'ains4' | OK
+fx slot 10 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 10 role                    LIVE 'bins3' | COMMITTED 'bins3' | OK
+fx slot 11 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 11 role                    LIVE 'bins4' | COMMITTED 'bins4' | OK
+fx slot 12 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 12 role                    LIVE 'send3' | COMMITTED 'send3' | OK
+fx slot 13 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 13 role                    LIVE 'send4' | COMMITTED 'send4' | OK
+fx slot 14 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 14 role                    LIVE 'global3' | COMMITTED 'global3' | OK
+fx slot 15 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 15 role                    LIVE 'global4' | COMMITTED 'global4' | OK
+global route count                 LIVE 0 | COMMITTED 0 | OK
+VERDICT: PASS (full-graph IDENTICAL; 81 live getter checks OK, 0 mismatches)
+====================================================================================================
+PRESET: resources/data/patches_factory/Tutorials/Formula Modulator/10 Example - Both Time And Space.fxp
+WHY:    factory, DUAL scene, FX-heavy (Flanger/2x Airwindows/Delay/Combulator), Formula LFO, mod routes
+FULL-GRAPH COMPARISON (canonical JSON): IDENTICAL
+scenemode display                  LIVE 'Dual' | COMMITTED 'Dual' | OK
+scenemode id                       LIVE 2 | COMMITTED 2 | OK
+fx_bypass display                  LIVE 'All FX' | COMMITTED 'All FX' | OK
+polylimit                          LIVE 16 | COMMITTED 16 | OK
+sc0 filterblock display            LIVE 'Wide' | COMMITTED 'Wide' | OK
+sc0.osc0 type                      LIVE 8 | COMMITTED 8 | OK
+sc0.osc0 type display              LIVE 'Modern' | COMMITTED 'Modern' | OK
+sc0.osc0 unison voices             LIVE 3 | COMMITTED 3 | OK
+sc0.osc1 type                      LIVE 8 | COMMITTED 8 | OK
+sc0.osc1 type display              LIVE 'Modern' | COMMITTED 'Modern' | OK
+sc0.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc2 type                      LIVE 10 | COMMITTED 10 | OK
+sc0.osc2 type display              LIVE 'Twist' | COMMITTED 'Twist' | OK
+sc0.fu0 type                       LIVE 12 | COMMITTED 12 | OK
+sc0.fu0 type display               LIVE 'LP OB-Xd 24 dB' | COMMITTED 'LP OB-Xd 24 dB' | OK
+sc0.fu0 subtype                    LIVE 4 | COMMITTED 4 | OK
+sc0.fu0 subtype display            LIVE '24 dB (Legacy)' | COMMITTED '24 dB (Legacy)' | OK
+sc0.fu1 type                       LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc0.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc0 wsunit type                    LIVE 41 | COMMITTED 41 | OK
+sc1 filterblock display            LIVE 'Wide' | COMMITTED 'Wide' | OK
+sc1.osc0 type                      LIVE 11 | COMMITTED 11 | OK
+sc1.osc0 type display              LIVE 'Alias' | COMMITTED 'Alias' | OK
+sc1.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc1 type                      LIVE 11 | COMMITTED 11 | OK
+sc1.osc1 type display              LIVE 'Alias' | COMMITTED 'Alias' | OK
+sc1.osc1 unison voices             LIVE 3 | COMMITTED 3 | OK
+sc1.osc2 type                      LIVE 10 | COMMITTED 10 | OK
+sc1.osc2 type display              LIVE 'Twist' | COMMITTED 'Twist' | OK
+sc1.fu0 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu0 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1.fu1 type                       LIVE 16 | COMMITTED 16 | OK
+sc1.fu1 type display               LIVE 'LP Cutoff Warp' | COMMITTED 'LP Cutoff Warp' | OK
+sc1.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 subtype display            LIVE '1 Stage tanh' | COMMITTED '1 Stage tanh' | OK
+sc1 wsunit type                    LIVE 41 | COMMITTED 41 | OK
+fx slot 0 type                     LIVE 12 | COMMITTED 12 | OK
+fx slot 0 role                     LIVE 'ains1' | COMMITTED 'ains1' | OK
+fx slot 1 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 1 role                     LIVE 'ains2' | COMMITTED 'ains2' | OK
+fx slot 2 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 2 role                     LIVE 'bins1' | COMMITTED 'bins1' | OK
+fx slot 3 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 3 role                     LIVE 'bins2' | COMMITTED 'bins2' | OK
+fx slot 4 type                     LIVE 14 | COMMITTED 14 | OK
+fx slot 4 role                     LIVE 'send1' | COMMITTED 'send1' | OK
+fx slot 4 airwindows id            LIVE 49 | COMMITTED 49 | OK
+fx slot 4 airwindows name          LIVE 'Galactic' | COMMITTED 'Galactic' | OK
+fx slot 5 type                     LIVE 1 | COMMITTED 1 | OK
+fx slot 5 role                     LIVE 'send2' | COMMITTED 'send2' | OK
+fx slot 6 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 6 role                     LIVE 'global1' | COMMITTED 'global1' | OK
+fx slot 7 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 7 role                     LIVE 'global2' | COMMITTED 'global2' | OK
+fx slot 8 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 8 role                     LIVE 'ains3' | COMMITTED 'ains3' | OK
+fx slot 9 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 9 role                     LIVE 'ains4' | COMMITTED 'ains4' | OK
+fx slot 10 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 10 role                    LIVE 'bins3' | COMMITTED 'bins3' | OK
+fx slot 11 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 11 role                    LIVE 'bins4' | COMMITTED 'bins4' | OK
+fx slot 12 type                    LIVE 21 | COMMITTED 21 | OK
+fx slot 12 role                    LIVE 'send3' | COMMITTED 'send3' | OK
+fx slot 13 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 13 role                    LIVE 'send4' | COMMITTED 'send4' | OK
+fx slot 14 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 14 role                    LIVE 'global3' | COMMITTED 'global3' | OK
+fx slot 15 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 15 role                    LIVE 'global4' | COMMITTED 'global4' | OK
+global route count                 LIVE 0 | COMMITTED 0 | OK
+VERDICT: PASS (full-graph IDENTICAL; 75 live getter checks OK, 0 mismatches)
+====================================================================================================
+PRESET: resources/data/patches_3rdparty/A.Liv/Basses/Amen Polska.fxp
+WHY:    contributor, embedded wavetable assets, Wavetable+Sine+FM2 oscs, 18 mod routes
+FULL-GRAPH COMPARISON (canonical JSON): IDENTICAL
+scenemode display                  LIVE 'Single' | COMMITTED 'Single' | OK
+scenemode id                       LIVE 0 | COMMITTED 0 | OK
+fx_bypass display                  LIVE 'All FX' | COMMITTED 'All FX' | OK
+polylimit                          LIVE 16 | COMMITTED 16 | OK
+sc0 filterblock display            LIVE 'Wide' | COMMITTED 'Wide' | OK
+sc0.osc0 type                      LIVE 1 | COMMITTED 1 | OK
+sc0.osc0 type display              LIVE 'Sine' | COMMITTED 'Sine' | OK
+sc0.osc0 submode p[0]              LIVE 0 | COMMITTED 0 | OK
+sc0.osc0 submode display           LIVE 'Wave 1 (TX 1)' | (informational: committed schema stores the submode id only)
+sc0.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc1 type                      LIVE 6 | COMMITTED 6 | OK
+sc0.osc1 type display              LIVE 'FM2' | COMMITTED 'FM2' | OK
+sc0.osc2 type                      LIVE 2 | COMMITTED 2 | OK
+sc0.osc2 type display              LIVE 'Wavetable' | COMMITTED 'Wavetable' | OK
+sc0.osc2 unison voices             LIVE 3 | COMMITTED 3 | OK
+sc0.fu0 type                       LIVE 2 | COMMITTED 2 | OK
+sc0.fu0 type display               LIVE 'LP 24 dB' | COMMITTED 'LP 24 dB' | OK
+sc0.fu0 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc0.fu0 subtype display            LIVE 'Standard' | COMMITTED 'Standard' | OK
+sc0.fu1 type                       LIVE 5 | COMMITTED 5 | OK
+sc0.fu1 type display               LIVE 'HP 24 dB' | COMMITTED 'HP 24 dB' | OK
+sc0.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 subtype display            LIVE 'Standard' | COMMITTED 'Standard' | OK
+sc0 wsunit type                    LIVE 3 | COMMITTED 3 | OK
+sc1 filterblock display            LIVE 'Wide' | COMMITTED 'Wide' | OK
+sc1.osc0 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc0 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc0 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc0 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc0 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc1 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc1 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc1 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc1 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.osc2 type                      LIVE 0 | COMMITTED 0 | OK
+sc1.osc2 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc1.osc2 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc1.osc2 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc1.osc2 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc1.fu0 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu0 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu0 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1.fu1 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1 wsunit type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 0 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 0 role                     LIVE 'ains1' | COMMITTED 'ains1' | OK
+fx slot 1 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 1 role                     LIVE 'ains2' | COMMITTED 'ains2' | OK
+fx slot 2 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 2 role                     LIVE 'bins1' | COMMITTED 'bins1' | OK
+fx slot 3 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 3 role                     LIVE 'bins2' | COMMITTED 'bins2' | OK
+fx slot 4 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 4 role                     LIVE 'send1' | COMMITTED 'send1' | OK
+fx slot 5 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 5 role                     LIVE 'send2' | COMMITTED 'send2' | OK
+fx slot 6 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 6 role                     LIVE 'global1' | COMMITTED 'global1' | OK
+fx slot 7 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 7 role                     LIVE 'global2' | COMMITTED 'global2' | OK
+fx slot 8 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 8 role                     LIVE 'ains3' | COMMITTED 'ains3' | OK
+fx slot 9 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 9 role                     LIVE 'ains4' | COMMITTED 'ains4' | OK
+fx slot 10 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 10 role                    LIVE 'bins3' | COMMITTED 'bins3' | OK
+fx slot 11 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 11 role                    LIVE 'bins4' | COMMITTED 'bins4' | OK
+fx slot 12 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 12 role                    LIVE 'send3' | COMMITTED 'send3' | OK
+fx slot 13 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 13 role                    LIVE 'send4' | COMMITTED 'send4' | OK
+fx slot 14 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 14 role                    LIVE 'global3' | COMMITTED 'global3' | OK
+fx slot 15 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 15 role                    LIVE 'global4' | COMMITTED 'global4' | OK
+global route count                 LIVE 0 | COMMITTED 0 | OK
+VERDICT: PASS (full-graph IDENTICAL; 78 live getter checks OK, 0 mismatches)
+====================================================================================================
+PRESET: resources/data/patches_3rdparty/Slowboat/Atmospheres/Harmonic Blast.fxp
+WHY:    contributor, 9 configured FX slots across insert/send/global incl. 2 Airwindows algorithms
+FULL-GRAPH COMPARISON (canonical JSON): IDENTICAL
+scenemode display                  LIVE 'Single' | COMMITTED 'Single' | OK
+scenemode id                       LIVE 0 | COMMITTED 0 | OK
+fx_bypass display                  LIVE 'All FX' | COMMITTED 'All FX' | OK
+polylimit                          LIVE 16 | COMMITTED 16 | OK
+sc0 filterblock display            LIVE 'Wide' | COMMITTED 'Wide' | OK
+sc0.osc0 type                      LIVE 6 | COMMITTED 6 | OK
+sc0.osc0 type display              LIVE 'FM2' | COMMITTED 'FM2' | OK
+sc0.osc1 type                      LIVE 0 | COMMITTED 0 | OK
+sc0.osc1 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc0.osc1 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc0.osc1 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc0.osc1 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.osc2 type                      LIVE 0 | COMMITTED 0 | OK
+sc0.osc2 type display              LIVE 'Classic' | COMMITTED 'Classic' | OK
+sc0.osc2 submode p[0]              LIVE 0 | COMMITTED 0.0 | OK
+sc0.osc2 submode display           LIVE '0.00 %' | (informational: committed schema stores the submode id only)
+sc0.osc2 unison voices             LIVE 1 | COMMITTED 1 | OK
+sc0.fu0 type                       LIVE 3 | COMMITTED 3 | OK
+sc0.fu0 type display               LIVE 'LP Legacy Ladder' | COMMITTED 'LP Legacy Ladder' | OK
+sc0.fu0 subtype                    LIVE 3 | COMMITTED 3 | OK
+sc0.fu0 subtype display            LIVE '24 dB' | COMMITTED '24 dB' | OK
+sc0.fu1 type                       LIVE 13 | COMMITTED 13 | OK
+sc0.fu1 type display               LIVE 'LP K35' | COMMITTED 'LP K35' | OK
+sc0.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc0.fu1 subtype display            LIVE 'No Saturation' | COMMITTED 'No Saturation' | OK
+sc0 wsunit type                    LIVE 4 | COMMITTED 4 | OK
+sc1 filterblock display            LIVE 'Wide' | COMMITTED 'Wide' | OK
+sc1.osc0 type                      LIVE 10 | COMMITTED 10 | OK
+sc1.osc0 type display              LIVE 'Twist' | COMMITTED 'Twist' | OK
+sc1.osc1 type                      LIVE 10 | COMMITTED 10 | OK
+sc1.osc1 type display              LIVE 'Twist' | COMMITTED 'Twist' | OK
+sc1.osc2 type                      LIVE 10 | COMMITTED 10 | OK
+sc1.osc2 type display              LIVE 'Twist' | COMMITTED 'Twist' | OK
+sc1.fu0 type                       LIVE 3 | COMMITTED 3 | OK
+sc1.fu0 type display               LIVE 'LP Legacy Ladder' | COMMITTED 'LP Legacy Ladder' | OK
+sc1.fu0 subtype                    LIVE 3 | COMMITTED 3 | OK
+sc1.fu0 subtype display            LIVE '24 dB' | COMMITTED '24 dB' | OK
+sc1.fu1 type                       LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 type display               LIVE 'Off' | COMMITTED 'Off' | OK
+sc1.fu1 subtype                    LIVE 0 | COMMITTED 0 | OK
+sc1.fu1 subtype display            LIVE 'None' | COMMITTED 'None' | OK
+sc1 wsunit type                    LIVE 4 | COMMITTED 4 | OK
+fx slot 0 type                     LIVE 9 | COMMITTED 9 | OK
+fx slot 0 role                     LIVE 'ains1' | COMMITTED 'ains1' | OK
+fx slot 1 type                     LIVE 21 | COMMITTED 21 | OK
+fx slot 1 role                     LIVE 'ains2' | COMMITTED 'ains2' | OK
+fx slot 2 type                     LIVE 9 | COMMITTED 9 | OK
+fx slot 2 role                     LIVE 'bins1' | COMMITTED 'bins1' | OK
+fx slot 3 type                     LIVE 21 | COMMITTED 21 | OK
+fx slot 3 role                     LIVE 'bins2' | COMMITTED 'bins2' | OK
+fx slot 4 type                     LIVE 1 | COMMITTED 1 | OK
+fx slot 4 role                     LIVE 'send1' | COMMITTED 'send1' | OK
+fx slot 5 type                     LIVE 11 | COMMITTED 11 | OK
+fx slot 5 role                     LIVE 'send2' | COMMITTED 'send2' | OK
+fx slot 6 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 6 role                     LIVE 'global1' | COMMITTED 'global1' | OK
+fx slot 7 type                     LIVE 14 | COMMITTED 14 | OK
+fx slot 7 role                     LIVE 'global2' | COMMITTED 'global2' | OK
+fx slot 7 airwindows id            LIVE 49 | COMMITTED 49 | OK
+fx slot 7 airwindows name          LIVE 'Galactic' | COMMITTED 'Galactic' | OK
+fx slot 8 type                     LIVE 0 | COMMITTED 0 | OK
+fx slot 8 role                     LIVE 'ains3' | COMMITTED 'ains3' | OK
+fx slot 9 type                     LIVE 14 | COMMITTED 14 | OK
+fx slot 9 role                     LIVE 'ains4' | COMMITTED 'ains4' | OK
+fx slot 9 airwindows id            LIVE 5 | COMMITTED 5 | OK
+fx slot 9 airwindows name          LIVE 'Mojo' | COMMITTED 'Mojo' | OK
+fx slot 10 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 10 role                    LIVE 'bins3' | COMMITTED 'bins3' | OK
+fx slot 11 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 11 role                    LIVE 'bins4' | COMMITTED 'bins4' | OK
+fx slot 12 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 12 role                    LIVE 'send3' | COMMITTED 'send3' | OK
+fx slot 13 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 13 role                    LIVE 'send4' | COMMITTED 'send4' | OK
+fx slot 14 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 14 role                    LIVE 'global3' | COMMITTED 'global3' | OK
+fx slot 15 type                    LIVE 0 | COMMITTED 0 | OK
+fx slot 15 role                    LIVE 'global4' | COMMITTED 'global4' | OK
+global route count                 LIVE 8 | COMMITTED 8 | OK
+global route[0]                    LIVE [26, 0, 0, 0, 'Send FX 1 Return', -1.0, -1.0] | COMMITTED [26, 0, 0, 0, 'Send FX 1 Return', -1.0, -1.0] | OK
+global route[1]                    LIVE [27, 0, 0, 1, 'Send FX 2 Return', -1.0, -1.0] | COMMITTED [27, 0, 0, 1, 'Send FX 2 Return', -1.0, -1.0] | OK
+global route[2]                    LIVE [28, 0, 0, 0, 'Send FX 1 Return', 1.0, 1.0] | COMMITTED [28, 0, 0, 0, 'Send FX 1 Return', 1.0, 1.0] | OK
+VERDICT: PASS (full-graph IDENTICAL; 80 live getter checks OK, 0 mismatches)
+====================================================================================================
+TOTAL: 5/5 PASS
