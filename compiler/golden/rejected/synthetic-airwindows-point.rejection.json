@@ -1,0 +1,49 @@
+{
+ "artifact": "sxt-020-rejection-record",
+ "codes": [
+  {
+   "class": "unsupported",
+   "code": "airwindows_algorithm_not_selected",
+   "detail": {
+    "algorithms": [
+     "7 (Point)"
+    ],
+    "mode": "selected"
+   }
+  },
+  {
+   "class": "unsupported",
+   "code": "effect_class_not_in_bundle",
+   "detail": {
+    "bundle": [
+     "Chorus",
+     "Conditioner",
+     "Delay",
+     "Distortion",
+     "EQ",
+     "Phaser",
+     "Reverb 1",
+     "Reverb 2"
+    ],
+    "effect_classes": [
+     "Airwindows"
+    ]
+   }
+  }
+ ],
+ "compiler_version": "sxt-020-compile/1.0.0",
+ "note": "No image was emitted. The compiler never trims: every unsupported path is a visible, machine-readable rejection (issue #13).",
+ "outcome": "rejected",
+ "profile": {
+  "artifact": "profile-v1-DRAFT",
+  "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+  "bundle_id": "B4-broad",
+  "bundle_status": "DRAFT-NOT-FROZEN",
+  "claim_scope": "a rejection is a structural verdict against the DRAFT bundle, never a fidelity or quality judgment"
+ },
+ "source": {
+  "bank": "factory",
+  "census_blob_sha1": "synthetic-5fbdf64653144793",
+  "path": "synthetic/airwindows-point.fxp"
+ }
+}

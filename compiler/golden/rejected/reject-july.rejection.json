@@ -1,0 +1,57 @@
+{
+ "artifact": "sxt-020-rejection-record",
+ "codes": [
+  {
+   "class": "unresolved",
+   "code": "mseg_or_formula_contents_not_exported",
+   "detail": {
+    "policy": "unresolved"
+   }
+  },
+  {
+   "class": "unsupported",
+   "code": "airwindows_algorithm_not_selected",
+   "detail": {
+    "algorithms": [
+     "54 (Chamber)"
+    ],
+    "mode": "selected"
+   }
+  },
+  {
+   "class": "unsupported",
+   "code": "effect_class_not_in_bundle",
+   "detail": {
+    "bundle": [
+     "Chorus",
+     "Conditioner",
+     "Delay",
+     "Distortion",
+     "EQ",
+     "Phaser",
+     "Reverb 1",
+     "Reverb 2"
+    ],
+    "effect_classes": [
+     "Airwindows",
+     "Audio In"
+    ]
+   }
+  }
+ ],
+ "compiler_version": "sxt-020-compile/1.0.0",
+ "note": "No image was emitted. The compiler never trims: every unsupported path is a visible, machine-readable rejection (issue #13).",
+ "outcome": "unresolved",
+ "profile": {
+  "artifact": "profile-v1-DRAFT",
+  "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+  "bundle_id": "B4-broad",
+  "bundle_status": "DRAFT-NOT-FROZEN",
+  "claim_scope": "a rejection is a structural verdict against the DRAFT bundle, never a fidelity or quality judgment"
+ },
+ "source": {
+  "bank": "contributor",
+  "census_blob_sha1": "315c0a1a27a671297f437026c021ce917f1e3875",
+  "path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp"
+ }
+}

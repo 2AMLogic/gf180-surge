@@ -1,0 +1,173 @@
+{
+  "schema_version": "sxt-020-rejection-catalog/1.0.0",
+  "artifact": "sxt-020-rejection-catalog",
+  "status": "DRAFT-NOT-FROZEN (compiled against profile-v1-DRAFT/B4-broad; not a frozen profile)",
+  "claim_scope": "Rejection codes are compiler outcomes over the original normalized graph: a code says only that this graph carries something the DRAFT bundle/image format cannot express completely. A rejection is NEVER a fidelity or quality judgment, and a compile is NEVER a support claim. Rejections never trim: the compiler emits either a complete image or a rejection record, never a reduced image.",
+  "rules": [
+    "Every emitted code must exist in this catalog (fail-closed: an uncataloged code aborts the compile).",
+    "One graph can carry several codes; outcome precedence: unresolved > rejected. There is no outcome that keeps part of a patch.",
+    "Adaptation-class codes (polylimit/unison reduction) reject the compile of the ORIGINAL graph; an adapted preset becomes compilable only through a future explicit adaptation path with its own visible record, never by silent edit at compile time.",
+    "Codes shared with SXT-017 keep the SXT-017 name and meaning so compile outcomes reconcile with reports/sxt-017/predictions/."
+  ],
+  "codes": [
+    {
+      "code": "loader_analysis_failure",
+      "class": "unresolved",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "The source census entry did not normalize (SXT-011 analysis_failure); there is no graph to compile.",
+      "gate": "input line st != 'normalized' or missing g"
+    },
+    {
+      "code": "scene_mode_unaccountable",
+      "class": "unresolved",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "Scene-mode id outside the engine-declared set {0,1,2,3}; the SXT-015 model refuses to account the structure.",
+      "gate": "accounting scene-mode check"
+    },
+    {
+      "code": "event_queue_overflow",
+      "class": "unresolved",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "The declared event-timing requirement exceeds the model event queue depth; image event-timing section could not be closed.",
+      "gate": "SXT-015 event profile vs event_queue_depth"
+    },
+    {
+      "code": "mseg_or_formula_contents_not_exported",
+      "class": "unresolved",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "The graph carries MSEG/Formula LFO records whose curve contents are not exported by surgepy (SXT-011 exposure gap). An image without the curves would be implicitly trimmed, so the graph cannot be compiled today.",
+      "gate": "SXT-011 data-gap policy mseg_formula_lfo_contents=unresolved"
+    },
+    {
+      "code": "audio_input_dependency",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An oscillator slot's normalized type is Audio Input: the patch depends on the external audio input path, which is outside the DRAFT bundle.",
+      "gate": "g.dep contains 'audio_input'"
+    },
+    {
+      "code": "scene_mode_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "The graph's scene mode is outside the bundle's declared scene_modes. (Dormant under B4-broad, which declares all scene modes; live under narrower bundles.)",
+      "gate": "g.sm in bundle spec scene_modes"
+    },
+    {
+      "code": "oscillator_family_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An active oscillator slot's engine family (display name) is outside the bundle's oscillator allowlist.",
+      "gate": "active osc slots vs bundle oscillator_allowlist"
+    },
+    {
+      "code": "oscillator_submode_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-020",
+      "meaning": "An active oscillator slot's submode (p[0]) is outside a bundle-declared submode allowlist. Dormant under the DRAFT bundle spec schema, which declares no per-family submode gate (filter_subtypes policy is engine_declared_set and the oscillator allowlist is family-level); the code exists so a future submode gate gets a distinct, stable code instead of overloading the family code. Adding the gate itself is a bundle-spec revision (visible contract revision).",
+      "gate": "reserved; not evaluable under schema sxt-017-bundle-spec/1.0.0"
+    },
+    {
+      "code": "wavetable_assets_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An active oscillator needs wavetable assets but the bundle declares wavetable_assets=false. (Dormant under B4-broad, which declares true.)",
+      "gate": "active wavetable osc slots vs bundle wavetable_assets"
+    },
+    {
+      "code": "filter_algorithm_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An active filter unit's type is outside the bundle's filter_type_allowlist. (Dormant under B4-broad, which declares 'all'.)",
+      "gate": "active filter units vs bundle filter_type_allowlist"
+    },
+    {
+      "code": "waveshaper_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "A scene carries an active waveshaper but the bundle's waveshaper_policy is 'none'. (Dormant under B4-broad, which declares 'all'.)",
+      "gate": "waveshaper_active scenes vs bundle waveshaper_policy"
+    },
+    {
+      "code": "effect_class_not_in_bundle",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An ENABLED FX instance's class is outside the bundle's fx_type_allowlist. Per-slot fxd-disabled slots hold state but gate nothing (SXT-015 rule).",
+      "gate": "enabled FX instances vs bundle fx_type_allowlist"
+    },
+    {
+      "code": "airwindows_algorithm_not_selected",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An ENABLED Airwindows instance selects an algorithm id outside the bundle's selected set (B4: top-12 by preset coverage).",
+      "gate": "enabled Airwindows p[0] vs bundle airwindows_policy"
+    },
+    {
+      "code": "fx_instance_overflow",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "More ENABLED FX instances than the bundle's fx_instance_limit. Two Delay slots are two instances; the limit is per instance, never per distinct type.",
+      "gate": "enabled instance count vs bundle fx_instance_limit"
+    },
+    {
+      "code": "polylimit_reduction_required",
+      "class": "adaptation",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "The stored polylimit exceeds the bundle's scene-voice pool; playing at full stored polyphony needs a disclosed polyphony reduction. The compiler rejects the original graph (adaptation is a separate explicit path).",
+      "gate": "g.poly vs bundle voice_pool_limit (poly_gate=adapted_beyond_pool)"
+    },
+    {
+      "code": "unison_reduction_required",
+      "class": "adaptation",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "An active oscillator's effective unison exceeds the bundle's unison cap; needs a disclosed unison reduction. (Dormant under B4-broad, whose cap equals MAX_UNISON=16.)",
+      "gate": "max effective unison vs bundle unison_cap"
+    },
+    {
+      "code": "on_chip_ram_exceeded",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "Modeled on-chip state exceeds the bundle's on-chip RAM budget. Basis: SXT-015 placeholder state model [PENDING-SXT-016].",
+      "gate": "allocations on_chip total vs bundle budgets.on_chip_ram_bytes"
+    },
+    {
+      "code": "external_writable_capacity_exceeded",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "Modeled external writable state exceeds the bundle's external writable budget. Long delay/reverb buffers live in external writable memory; flash is never a substitute.",
+      "gate": "allocations external total vs bundle budgets.external_writable_bytes"
+    },
+    {
+      "code": "external_bandwidth_exceeded",
+      "class": "unsupported",
+      "introduced": "sxt-017 (reused by sxt-020)",
+      "meaning": "Modeled external traffic at 48 kHz exceeds the bundle's bandwidth budget. Basis: SXT-015 placeholder bandwidth [PENDING-SXT-016].",
+      "gate": "allocations ext bytes/s vs bundle budgets.external_bandwidth_bytes_per_s"
+    },
+    {
+      "code": "asset_unresolved",
+      "class": "unsupported",
+      "introduced": "sxt-020",
+      "meaning": "A wavetable asset record has neither embedded bytes nor a resolved file (SXT-011 records the engine's default-table fallback). An image cannot reference the missing asset; emitting one would silently substitute the engine default for the preset's own table. SXT-020 compiler gate: stricter than the SXT-017 predictor, which has no image to emit.",
+      "gate": "g.wta records with neither emb>0 nor res"
+    },
+    {
+      "code": "send_levels_not_exported",
+      "class": "unsupported",
+      "introduced": "sxt-020",
+      "meaning": "An ENABLED FX instance occupies send slot 3 or 4 (roles send3/send4), but scene send levels for buses 3/4 are not exported by SXT-011 (the binding exposes send_level[0..1] only; buses 3/4 run at loader defaults). The image cannot express the complete send routing; emitting one would implicitly trim the patch. SXT-020 compiler gate: stricter than the SXT-017 predictor, which has no image to emit.",
+      "gate": "enabled FX slots with role send3/send4"
+    },
+    {
+      "code": "routing_form_unsupported",
+      "class": "unsupported",
+      "introduced": "sxt-020",
+      "meaning": "An FX slot carries a routing form the image format cannot express: a role string outside the engine's 16-role set, or a role/slot-index inconsistency. Never observed in the committed corpus; exists so malformed or future graphs fail closed instead of compiling into a wrong routing.",
+      "gate": "fx slot role in engine role set; role/slot-index consistency"
+    }
+  ],
+  "declared_non_gates": [
+    "Oscillator submodes (p[0] of every family), filter subtypes, and waveshaper algorithms are carried verbatim in the image and are NOT gated: the DRAFT bundle declares no submode/algorithm-level allowlists (filter_subtypes policy = engine_declared_set). Closing any of these is a visible bundle-spec revision (profile-v1-DRAFT section 8 trigger 6).",
+    "Cycle closure is NOT a gate: every cycle number is SXT-015 placeholder-v0 [PENDING-SXT-016]; cycles are published as image allocation columns only (bundle budgets.cycle_closure = not_gated_pending_sxt_016).",
+    "fx_bypass section state (fxb) and per-slot fxd disable bits are patch content carried in the image; a patch whose FX are bypassed is compiled as stored (the state is the patch), not rejected and not rewritten."
+  ]
+}

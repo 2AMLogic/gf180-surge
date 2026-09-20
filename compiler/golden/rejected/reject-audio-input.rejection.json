@@ -1,0 +1,24 @@
+{
+ "artifact": "sxt-020-rejection-record",
+ "codes": [
+  {
+   "class": "unsupported",
+   "code": "audio_input_dependency"
+  }
+ ],
+ "compiler_version": "sxt-020-compile/1.0.0",
+ "note": "No image was emitted. The compiler never trims: every unsupported path is a visible, machine-readable rejection (issue #13).",
+ "outcome": "rejected",
+ "profile": {
+  "artifact": "profile-v1-DRAFT",
+  "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+  "bundle_id": "B4-broad",
+  "bundle_status": "DRAFT-NOT-FROZEN",
+  "claim_scope": "a rejection is a structural verdict against the DRAFT bundle, never a fidelity or quality judgment"
+ },
+ "source": {
+  "bank": "contributor",
+  "census_blob_sha1": "75e401e11bced492e615ba36a929fb27c3aa17ee",
+  "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Further 2.fxp"
+ }
+}
