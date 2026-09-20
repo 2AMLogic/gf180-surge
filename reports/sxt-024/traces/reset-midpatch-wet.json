@@ -61,8 +61,8 @@
     "id": "seq-notes-coverage-v1"
   },
   "tool": {
-    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
-    "script_sha256": "ca9517eceb8d1b544c011983d10c2253b0e0018054efb3fabceaabf1f0d01e1e"
+    "repo_commit": "b3149e6297b833c6d9e392b5d203ceaaf413d321",
+    "script_sha256": "77929230c6270931b9de47edd0a007f1d67aacc9b207fdefdf4eacfe6ab42f68"
   },
   "trace": "reset-midpatch-wet",
   "wav": {

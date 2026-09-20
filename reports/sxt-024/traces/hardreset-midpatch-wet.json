@@ -53,7 +53,7 @@
     "tail_s": 12.0
   },
   "reset_control": {
-    "method": "setParamVal fx type 2->0->2 across one block; loadFx rebuilds the effect and clears the long buffers",
+    "method": "setParamVal fx type 2->0->2 across one block; deferred fx_reload -> loadFx rebuilds the effect and clears the long buffers",
     "type_toggle_at_sample": 48000
   },
   "schema_version": 1,
@@ -61,8 +61,8 @@
     "id": "seq-notes-coverage-v1"
   },
   "tool": {
-    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
-    "script_sha256": "a885d99f3c96ec7aeb132d16f6f1fdb0c8209442439823076ce94683699dfe96"
+    "repo_commit": "b3149e6297b833c6d9e392b5d203ceaaf413d321",
+    "script_sha256": "77929230c6270931b9de47edd0a007f1d67aacc9b207fdefdf4eacfe6ab42f68"
   },
   "trace": "hardreset-midpatch-wet",
   "wav": {

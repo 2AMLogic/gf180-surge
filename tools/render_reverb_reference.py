@@ -417,23 +417,34 @@ def cmd_sweep(args):
 
 
 def cmd_reset(args):
-    """Mid-render loadPatch(same preset): the patch-change/reset control."""
+    """Mid-render loadPatch(same preset): the patch-change/reset probe.
+
+    DRY-side note (fix over the first capture attempt): the host action is
+    applied ONLY to the wet instance. The dry render is a plain fx-off capture
+    of the same sequence -- the FX input bus -- because a host action that
+    reloads the patch also re-arms the FX slots in the fx-off instance, which
+    corrupts the dry bus (measured in the first attempt: post-reload the
+    fx-off bus carried reverb content).
+    """
     surgepy = import_surgepy()
     preset_abs = os.path.join(oc.data_home(), "patches_factory", PRESET_REL)
     seq = load_seq(SEQ_COV)
     reload_at = args.reload_at
     wet, state, info = capture_bus(surgepy, preset_abs, seq, False, args.tail,
                                    reload_at=reload_at)
-    dry, dstate, dinfo = capture_bus(surgepy, preset_abs, seq, True, args.tail,
-                                     reload_at=reload_at)
+    dry, dstate, dinfo = capture_bus(surgepy, preset_abs, seq, True, args.tail)
     sw = save_trace("reset-midpatch-wet", wet, state, info,
                     {"sequence": {"id": seq["id"]}, "bus": "wet",
                      "reset_control": {"reload_at_sample": reload_at,
-                                       "reload_method": "loadPatch(same preset) at "
-                                                        "containing block boundary"}},
+                                        "reload_method": "loadPatch(same preset) at "
+                                                         "containing block boundary"}},
                     float_npy=True)
     save_trace("reset-midpatch-dry", dry, dstate, dinfo,
                {"sequence": {"id": seq["id"]}, "bus": "dry",
+                "dry_capture_note": "fx-off instance WITHOUT the host action: the "
+                                    "action belongs to the FX bus; reloading the "
+                                    "patch in the fx-off instance re-arms its FX "
+                                    "slots and corrupts the input bus",
                 "reset_control": {"reload_at_sample": reload_at}},
                float_npy=True)
     print(json.dumps({"wet": sw["wav"]["sha256"][:16], "reload_block": info["reload_block"]},
@@ -443,23 +454,31 @@ def cmd_reset(args):
 
 def cmd_hardreset(args):
     """FX type toggle (reverb1 -> Off -> reverb1) mid-render: the engine's
-    explicit FX-rebuild path (loadFx clears the long buffers)."""
+    explicit FX-rebuild path (deferred fx_reload -> loadFx clears the long
+    buffers at the next block boundaries). DRY-side note (fix over the first
+    capture attempt): the toggle is applied ONLY to the wet instance; in the
+    fx-off instance it would RE-ENABLE the reverb (type 0 -> 2) and corrupt
+    the input bus. The comparison asserts the captured dry equals the plain
+    preset dry."""
     surgepy = import_surgepy()
     preset_abs = os.path.join(oc.data_home(), "patches_factory", PRESET_REL)
     seq = load_seq(SEQ_COV)
     wet, state, info = capture_bus(surgepy, preset_abs, seq, False, args.tail,
                                    hard_reset_at=args.reset_at)
-    dry, dstate, dinfo = capture_bus(surgepy, preset_abs, seq, True, args.tail,
-                                     hard_reset_at=args.reset_at)
+    dry, dstate, dinfo = capture_bus(surgepy, preset_abs, seq, True, args.tail)
     sw = save_trace("hardreset-midpatch-wet", wet, state, info,
                     {"sequence": {"id": seq["id"]}, "bus": "wet",
                      "reset_control": {"type_toggle_at_sample": args.reset_at,
-                                       "method": "setParamVal fx type 2->0->2 across one "
-                                                 "block; loadFx rebuilds the effect and "
-                                                 "clears the long buffers"}},
+                                        "method": "setParamVal fx type 2->0->2 across one "
+                                                  "block; deferred fx_reload -> loadFx "
+                                                  "rebuilds the effect and clears the "
+                                                  "long buffers"}},
                     float_npy=True)
     save_trace("hardreset-midpatch-dry", dry, dstate, dinfo,
                {"sequence": {"id": seq["id"]}, "bus": "dry",
+                "dry_capture_note": "fx-off instance WITHOUT the toggle: applying the "
+                                    "type toggle to the fx-off instance re-enables the "
+                                    "reverb (0->2) and corrupts the input bus",
                 "reset_control": {"type_toggle_at_sample": args.reset_at}},
                float_npy=True)
     print(json.dumps({"wet": sw["wav"]["sha256"][:16], "toggle_block": info["reload_block"]},

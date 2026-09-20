@@ -1,0 +1,80 @@
+{
+  "cases": [
+    {
+      "blocks": 256,
+      "case": "prs-256b-reset48",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": true,
+      "ext_mem_exact": true,
+      "ext_mem_words": 557056,
+      "note": "deterministic PRS input; state reset (host bulk clear + core reset) before block 48; full 557,056-word external-memory image compared",
+      "outputs_exact": true,
+      "rtl_measured_traffic": {
+        "per_frame_exact_34": false,
+        "reads": 139264,
+        "words_per_frame": 278528,
+        "writes": 139264
+      },
+      "txn_lines_model": 278529,
+      "txn_lines_rtl": 278529,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "f74affb0e3820a91d7a0501fd5280d5141cffeca166d467d70c69872c00e108f",
+        "rtl": "f74affb0e3820a91d7a0501fd5280d5141cffeca166d467d70c69872c00e108f"
+      }
+    },
+    {
+      "blocks": 512,
+      "case": "click-512b",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": true,
+      "ext_mem_exact": null,
+      "note": "first 512 blocks of the committed click-dry send input; memory image implied by the write log (initial state zero)",
+      "outputs_exact": true,
+      "rtl_measured_traffic": {
+        "per_frame_exact_34": false,
+        "reads": 278528,
+        "words_per_frame": 557056,
+        "writes": 278528
+      },
+      "txn_lines_model": 557056,
+      "txn_lines_rtl": 557056,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "b8f5c0ac2bac9eac99f3d315824984ae8517215e50ded5852ef52c0f76c49f84",
+        "rtl": "b8f5c0ac2bac9eac99f3d315824984ae8517215e50ded5852ef52c0f76c49f84"
+      }
+    }
+  ],
+  "claim": "RTL-vs-frozen-model EXACT",
+  "issue": "SXT-024",
+  "iverilog": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "mutant_control": {
+    "blocks": 256,
+    "case": "mutant-tap7-stale-write",
+    "checkpoints_exact": true,
+    "claim": "RTL-vs-frozen-model EXACT",
+    "exact": false,
+    "ext_mem_exact": null,
+    "injected_defect": "S_TAP_WR skips the tap-7 buffer write (silent stale-buffer stub)",
+    "outputs_exact": true,
+    "rtl_measured_traffic": {
+      "per_frame_exact_34": false,
+      "reads": 139264,
+      "words_per_frame": 270336,
+      "writes": 131072
+    },
+    "txn_lines_model": 278529,
+    "txn_lines_rtl": 270337,
+    "txn_log_exact": false,
+    "txn_log_sha256": {
+      "model": "f74affb0e3820a91d7a0501fd5280d5141cffeca166d467d70c69872c00e108f",
+      "rtl": "6e8bf8a8849402b18a89d338e57aaed0e81ad8d3965cd00872fd3a7cd5381c16"
+    },
+    "verdict": "CONTROL-OK (mutant FAILS the exactness comparison)"
+  },
+  "preset": "Basses/Behemoth.fxp (SXT-014 Reverb1 carrier)",
+  "status": "PASS"
+}

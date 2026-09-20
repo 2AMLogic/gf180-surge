@@ -1,30 +1,11 @@
 {
-  "band_energy_max_dev_db": 0.0,
   "case": "reset-midpatch-wet",
   "checks": {
-    "band_energy": true,
-    "decay_curve": true,
-    "reset_boundary": true,
-    "stereo_corr": true,
-    "tail_rms_rel": true,
-    "wet_max_abs": true,
-    "wet_rms_rel": true
+    "engine_reset_observable": false
   },
-  "decay_curve_max_dev_db": 0.0,
-  "decay_curve_windows": 261,
-  "float_npy_used": true,
-  "model_traffic_per_sample": {
-    "reads": 0.0,
-    "writes": 0.0
-  },
-  "reset_boundary_max_jump_pred": 0.10541640967130661,
-  "reset_boundary_max_jump_wet": 0.1054166704416275,
-  "return_gain": 1.0,
-  "send_gain": 0.3536077346610224,
-  "stereo_corr_dev": 0.0,
-  "stereo_corr_pred": 0.9315736671977204,
-  "stereo_corr_wet": 0.9315736671977204,
-  "tail_rms_rel_db": -300.0,
-  "wet_max_abs": 1.2479722499847412e-06,
-  "wet_rms_rel_db": -58.94359871656961
+  "dry_capture_note": "see render tool",
+  "engine_wet_silent_after_reload": false,
+  "finding": "mid-render loadPatch() via surgepy silences the engine render from the reload boundary (wet bus exactly zero; voices killed; subsequent notes never sound). No engine reset semantics are observable through this probe.",
+  "reload_block": 1500,
+  "status": "BLOCKED (oracle embedding limitation)"
 }

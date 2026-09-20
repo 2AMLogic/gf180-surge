@@ -5,19 +5,20 @@
     "highcut": false,
     "lowcut": false
   },
+  "dry_capture_note": "fx-off instance WITHOUT the toggle: applying the type toggle to the fx-off instance re-enables the reverb (0->2) and corrupts the input bus",
   "engine_patch_state": {
     "fx_slot": 4,
-    "fx_type": 2,
+    "fx_type": 0,
     "params": {
-      "damping": 0.20000000298023224,
-      "decaytime": 1.0,
+      "damping": 0.0,
+      "decaytime": 0.0,
       "freq1": 0.0,
       "gain1": 0.0,
-      "highcut": 70.0,
-      "lowcut": -24.0,
-      "mix": 0.5,
-      "predelay": -4.0,
-      "roomsize": 0.5,
+      "highcut": 0.0,
+      "lowcut": 0.0,
+      "mix": 0.0,
+      "predelay": 0.0,
+      "roomsize": 0.0,
       "shape": 0.0,
       "width": 0.0
     },
@@ -31,7 +32,7 @@
   "float_npy": {
     "bytes": 5836928,
     "format": "float32 [2][N], unclipped engine output",
-    "sha256": "194048108a68add6f99c2d19d040d7d68550706a7aefbabde2a277e142451903"
+    "sha256": "31f57b413868df363d173b3282b7110612a08e6800aa339d23ff66448a8ae1ef"
   },
   "issue": "SXT-024",
   "preset": {
@@ -46,10 +47,10 @@
     "frames": 729600,
     "overrides_applied": {},
     "peak_abs": [
-      0.625478982925415,
-      0.625478982925415
+      0.6156135201454163,
+      0.6156135201454163
     ],
-    "reload_block": 1500,
+    "reload_block": null,
     "tail_s": 12.0
   },
   "reset_control": {
@@ -60,8 +61,8 @@
     "id": "seq-notes-coverage-v1"
   },
   "tool": {
-    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
-    "script_sha256": "a885d99f3c96ec7aeb132d16f6f1fdb0c8209442439823076ce94683699dfe96"
+    "repo_commit": "b3149e6297b833c6d9e392b5d203ceaaf413d321",
+    "script_sha256": "77929230c6270931b9de47edd0a007f1d67aacc9b207fdefdf4eacfe6ab42f68"
   },
   "trace": "hardreset-midpatch-dry",
   "wav": {
@@ -69,6 +70,6 @@
     "channels": 2,
     "frames": 729600,
     "sample_rate": 48000,
-    "sha256": "5572640b3388ecf24c0cf9845033ad683329813c4155e2d14ef4d1a7b64eee5c"
+    "sha256": "4b5b1e10976009b1083843a0225981d351d0e3ea6d09953c735a948c25d7b1a4"
   }
 }
