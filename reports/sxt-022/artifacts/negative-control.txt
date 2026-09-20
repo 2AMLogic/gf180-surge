@@ -1,0 +1,39 @@
+SXT-022 negative control: mutated RTL must FAIL the exactness check
+date: 2026-09-20T14:21:19Z
+mutation: rtl/voice/voice_broken_mutant.sv = tb_voice.sv with the qmul
+  round-half-up bias (64'sd1 << 20) changed to (64'sd1 << 19) -- a single
+  deliberately mutated RTL constant (rounding corruption; active on every
+  multiply).
+
+\$ diff rtl/voice/tb_voice.sv rtl/voice/voice_broken_mutant.sv
+51c51
+<     r = (p + (64'sd1 << 20)) >>> 21;
+---
+>     r = (p + (64'sd1 << 19)) >>> 21;
+
+\$ python3 tools/compare_rtl_model.py --run-dir <repeated-v1 run> --tb rtl/voice/voice_broken_mutant.sv
+\$ python3 tools/compare_rtl_model.py --run-dir <repeated-v1 run> --tb rtl/voice/voice_broken_mutant.sv
+{
+  "tb": "voice_broken_mutant.sv",
+  "verdict": "FAIL",
+  "checked": {
+    "checkpoints": 1,
+    "fields": 27,
+    "oscout": 64,
+    "mono": 32
+  },
+  "mismatches": 98,
+  "first_failures": [
+    "block 0 sample 0: mono model=-2 rtl=-3",
+    "block 0 sample 1: mono model=-200 rtl=-201",
+    "block 0 sample 2: mono model=296 rtl=291",
+    "block 0 sample 3: mono model=29134 rtl=29129",
+    "block 0 sample 4: mono model=172715 rtl=172709",
+    "block 0 sample 5: mono model=433887 rtl=433882",
+    "block 0 sample 6: mono model=588745 rtl=588740",
+    "block 0 sample 7: mono model=566751 rtl=566749",
+    "block 0 sample 8: mono model=570851 rtl=570842",
+    "block 0 sample 10: mono model=572813 rtl=572808"
+  ]
+}
+exit code: 1

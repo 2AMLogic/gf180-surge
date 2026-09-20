@@ -61,32 +61,37 @@ def main():
     total_blocks = -(-total_samples // BLOCK_SIZE)
 
     master_amp = vm.db_to_linear(vm.qint(inp.master_db))
-    a_min_const = vm.qint_phase(-8.0)
-    eps01 = vm.qint_phase(0.01)
-    inst_att_aeg = 1 if (vm.qint_phase(inp.adsr["a"]) - a_min_const) < eps01 else 0
-    inst_att_feg = 1 if (vm.qint_phase(inp.fadsr["a"]) - a_min_const) < eps01 else 0
-
-    init_words = [
-        vm.qint_phase(inp.adsr["a"]), vm.qint_phase(inp.adsr["d"]),
-        vm.qint_phase(inp.adsr["r"]), vm.qint_phase(inp.adsr["s"]),
-        int(inp.adsr["a_s"]), int(inp.adsr["r_s"]),
-        vm.qint_phase(inp.fadsr["a"]), vm.qint_phase(inp.fadsr["d"]),
-        vm.qint_phase(inp.fadsr["r"]), vm.qint_phase(inp.fadsr["s"]),
-        int(inp.fadsr["a_s"]), int(inp.fadsr["r_s"]),
-        limit_or(qint_p(inp.shape), -1, 1), limit_or(qint_p(inp.pw1), 0.001, 0.999),
-        limit_or(qint_p(inp.pw2), 0.001, 0.999), limit_or(qint_p(inp.submix), 0.0, 1.0),
-        qint_p(max(0.0, inp.sync)),
-        0, 0, 0, 0, 0, 0,          # placeholder, replaced below (probe voice)
-        master_amp, total_blocks, last_t,
-        vm.qint(inp.envmod),
-        inst_att_aeg, inst_att_feg, a_min_const, eps01,
-    ]
+    a_min_const = vm.qint(-8.0)
+    eps01 = vm.qint(0.01)
+    inst_att_aeg = 1 if (vm.qint(inp.adsr["a"]) - a_min_const) < eps01 else 0
+    inst_att_feg = 1 if (vm.qint(inp.fadsr["a"]) - a_min_const) < eps01 else 0
     probe = vm.Voice(inp, 60, 100)
-    init_words[17] = probe.char_a1
-    init_words[18] = probe.char_b0
-    init_words[19] = probe.char_b1
-    init_words[20] = vm.amp_to_linear(vm.qint(inp.o1_level))
-    init_words[21] = probe.integrator_hpf
+
+    def envrate(p):
+        return vm.envelope_rate_linear_nowrap(vm.qint(p))
+
+    # INIT_ORDER (see tb_voice.sv cfg map)
+    init_words = [
+        envrate(inp.adsr["a"]), envrate(inp.adsr["d"]), envrate(inp.adsr["r"]),
+        vm.qint_phase(inp.adsr["s"]), int(inp.adsr["r_s"]),
+        envrate(inp.fadsr["a"]), envrate(inp.fadsr["d"]), envrate(inp.fadsr["r"]),
+        vm.qint_phase(inp.fadsr["s"]), int(inp.fadsr["r_s"]),
+        vm.limit_i(vm.qint(inp.shape), vm.qint(-1.0), vm.qint(1.0)),
+        vm.limit_i(vm.qint(inp.pw1), vm.qint(0.001), vm.qint(0.999)),
+        vm.limit_i(vm.qint(inp.pw2), vm.qint(0.001), vm.qint(0.999)),
+        vm.limit_i(vm.qint(inp.submix), 0, vm.ONE),
+        vm.qint(max(0.0, inp.sync)),
+        probe.char_a1, probe.char_b0, probe.char_b1,
+        vm.amp_to_linear(vm.qint(inp.o1_level)),
+        vm.db_to_linear(vm.qint(inp.vca_db)),                    # vca_gain
+        vm.amp_to_linear(vm.qint(inp.scene_volume)) >> 1,        # outl_word
+        master_amp, total_blocks,
+        vm.ntpi_tuningctr(0),                                    # t_const
+        vm.qdiv(vm.ONE, vm.ntpi_tuningctr(0)),                   # t_inv
+        vm.qint(0.05),                                           # lag rate
+        inst_att_aeg, inst_att_feg,
+        *vm.HALFBAND_B_Q, *vm.HALFBAND_A_Q,
+    ]
 
     voices = []
     events = list(seq["events"])
@@ -119,8 +124,6 @@ def main():
                 if e["channel"] == 0 and e["controller"] == 1:
                     inp.modwheel.set_target(e["value"])
             ei += 1
-        inp.modwheel.process_block()
-
         scene_l, scene_r = [0] * vm.BLOCK_SIZE_OS, [0] * vm.BLOCK_SIZE_OS
         alive = []
         for v in voices:
@@ -128,6 +131,9 @@ def main():
             if keep:
                 alive.append(v)
         voices = alive
+        # modsource step at the END of the control pass (declared): matches
+        # the engine's FAST_LINE smoothing order for this fixture set
+        inp.modwheel.process_block()
 
         # control words: header + one 32-word record per slot (post-block state)
         ctrl.extend([b, len(blk["create"]), inp.modwheel.value, master_amp])
@@ -172,7 +178,7 @@ def main():
         scene_l = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in scene_l]
         scene_r = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in scene_r]
         bl = halfband.process(scene_l)
-        br = halfband.process(scene_r)
+        br = bl   # mono bus: the R lane is identical (scene_r == scene_l)
         mono = []
         for k in range(bs):
             l = vm.qmul(bl[k], master_amp)

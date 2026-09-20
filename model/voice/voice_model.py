@@ -67,16 +67,16 @@ def sat(x):
 
 
 def qround(x, s):
-    """Round-half-up arithmetic shift by s (left shift when s < 0)."""
+    """Round-half-up arithmetic shift by s (left shift when s < 0), saturated."""
     if s <= 0:
         return sat(x << (-s))
-    return (x + (1 << (s - 1))) >> s
+    return sat((x + (1 << (s - 1))) >> s)
 
 
 def qmul(a, b, fa=FQ, fb=FQ, fq=FQ):
     s = fa + fb - fq
     if s > 0:
-        return (a * b + (1 << (s - 1))) >> s
+        return sat((a * b + (1 << (s - 1))) >> s)
     return sat(a * b << (-s))
 
 
@@ -336,7 +336,7 @@ class Modwheel:
         self.inv = qint(1.0 / (50.0 * (48000.0 / 44100.0)))
 
     def set_target(self, cc):
-        self.target = qdiv(cc, qint(127.0))
+        self.target = qint(cc / 127.0)
         self.startingpoint = self.value
 
     def process_block(self):
@@ -446,17 +446,19 @@ class HalfbandD2:
         for x_in in inp:
             xb, xa = x_in, x_in
             for j in range(6):
-                y = self.bx[j][2] + qmul(HALFBAND_B_Q[j], xb - self.by[j][2])
+                # engine shift: tx2<-tx1; tx1<-tx0; tx0<-x; ty2<-ty1; ty1<-ty0
+                # then y = tx2 + a*(tx0 - ty2): y[n] = x[n-2] + a*(x[n]-y[n-2])
+                y = self.bx[j][1] + qmul(HALFBAND_B_Q[j], xb - self.by[j][1])
                 self.bx[j] = [xb, self.bx[j][0], self.bx[j][1]]
                 self.by[j] = [y, self.by[j][0], self.by[j][1]]
                 xb = y
-                y = self.ax[j][2] + qmul(HALFBAND_A_Q[j], xa - self.ay[j][2])
+                y = self.ax[j][1] + qmul(HALFBAND_A_Q[j], xa - self.ay[j][1])
                 self.ax[j] = [xa, self.ax[j][0], self.ax[j][1]]
                 self.ay[j] = [y, self.ay[j][0], self.ay[j][1]]
                 xa = y
             chain_b.append(xb)
             chain_a.append(xa)
-        return [(chain_a[2 * n] + chain_b[2 * n + 1]) >> 1 for n in range(len(inp) // 2)]
+        return [qround(chain_a[2 * n] + chain_b[2 * n + 1], 1) for n in range(len(inp) // 2)]
 
 
 # -------------------------------------------------------------- voice model
