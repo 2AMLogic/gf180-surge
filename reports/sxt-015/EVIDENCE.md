@@ -18,7 +18,7 @@ exists so the closure machinery is executable and must be replaced by SXT-016.
 
 | # | Acceptance item (issue #10) | Status | Evidence |
 |---|---|---|---|
-| 1 | Per-instance effect state counted separately from shared arithmetic | **PASS** | Every configured slot yields its own instance entry with its own `state_bytes` (`accounting.py` FX section); `fx_summary.distinct_type_count` is reported beside instance counts. Corpus: 707/3,561 presets have enabled instances > distinct types (188 with two enabled Delays = two delay histories). Two Delay slots are never merged. |
+| 1 | Per-instance effect state counted separately from shared arithmetic | **PASS** | Every configured slot yields its own instance entry with its own `state_bytes` (`accounting.py` FX section); `fx_summary.distinct_type_count` is reported beside instance counts. Corpus: 707/3,561 presets have enabled instances > distinct types (188 with two or more enabled Delays — 173 exactly two — each slot its own delay history). Two Delay slots are never merged. |
 | 2 | External writable-memory traffic modeled separately from on-chip state; flash not accepted as delay/reverb storage | **PASS** | `memory` object: `external_writable_state_bytes`, `on_chip_state_bytes`, `flash_asset_bytes` are separate sums. Classification rule: writable class > 64 KiB => external writable (`external_threshold_bytes`, policy). `flash_writable = 0` is a declared policy param citing plan section 3; flash carries assets only (`assets.flash_role`). |
 | 3 | Worst-case complete-patch cost computable for any normalized graph within declared limits; overflow is an explicit rejection | **PASS** | `budget` object closes the plan-section-5 formula per graph (`gross = F/Fs`, reserve, cost = voice+fx+modulation+events). Overflow => `budget_overflow` rejection object, status `rejected` — never a silent squeeze. Corpus scan: 3,561/3,561 graphs accounted (0 analysis failures in the committed export; the fail-closed path itself is demonstrated by negative control 2). |
 | 4 | Instance limits distinct from supported-type counts | **PASS** | `fx_instance_limit` applies to **enabled instances** (slots), independent of the distinct-type count; a preset with Delay+Delay+Delay is 3 instances of 1 type. Candidate limits {4, 8} are declared policy, NOT frozen product limits (SXT-017 freezes). |
@@ -71,9 +71,10 @@ it byte-identically). Headlines:
   are deliberately >= the census slot fits because `fxd`-disabled slots do
   not process.
 - **Instance vs type:** 707 presets have more enabled instances than
-  distinct types (188 with two enabled Delays, 224 with duplicate
-  Airwindows algorithms, 170 with duplicate EQ) — type counts alone would
-  understate instance state.
+  distinct types (188 with two or more enabled Delay instances — 173 exactly
+  two; 224 with two or more enabled Airwindows instances, of which 44 repeat
+  the same algorithm id; 170 with two or more enabled EQ instances) — type
+  counts alone would understate instance state.
 - **External writable memory:** 2,987 presets carry external-class state;
   max single-preset external state 62.6 MB (multi-Reverb2/Delay cases);
   max modeled external traffic 48.4 MB/s (placeholder word width, 48 kHz).
