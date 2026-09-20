@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SXT-011 normalized patch graph (one JSONL line)",
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "description": "One compact single-line JSON object per census entry in corpus/normalized/graphs.jsonl. All state is NORMALIZED (post-migration) read from the pinned native engine via surgepy after SurgeSynthesizer::loadPatch at 48 kHz. Raw .fxp ids are never exported as state; they appear only in the raw_* fields of migration events. Deterministic: same corpus bytes + engine pin => byte-identical lines.",
+  "pin": {
+    "engine_repository": "surge-synthesizer/surge",
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate_hz": 48000,
+    "submodules": "oracle/manifest.json (SXT-010)"
+  },
+  "top_level": {
+    "p": {"type": "string", "description": "Census path, identical to corpus-manifest.json entries[].path (relative to the engine tree root)."},
+    "b": {"type": "string", "enum": ["factory", "contributor"], "description": "Bank derived from the census path."},
+    "sha": {"type": "string", "description": "Git blob SHA-1 of the .fxp, re-verified against the on-disk file at export time (mismatch aborts the run)."},
+    "sz": {"type": "integer", "description": "File size in bytes, re-verified at export time."},
+    "st": {"type": "string", "enum": ["normalized", "analysis_failure"], "description": "Per-entry status. Every census entry has exactly one line, so every entry has a status."},
+    "why": {"type": "object", "required_if": {"st": "analysis_failure"}, "description": "{phase: load|extract|validate|migration_compare, reason: load_false|exception|schema_validation_failed, detail}. Present on analysis_failure lines only."},
+    "rev": {"type": "integer", "description": "Stored patch revision streamed from the raw XML <patch revision=...> attribute (SurgePatch.cpp load_xml). Absent when the raw XML is unreadable."},
+    "pin": {"type": "object", "description": "{e: engine commit, sr: sample rate, sv: schema version}. Repeated per line so every line is independently verifiable."},
+    "g": {"type": "object", "required_if": {"st": "normalized"}, "description": "The normalized graph. Present on normalized lines only."}
+  },
+  "graph_g": {
+    "sm": {"type": "integer", "range": [0, 3], "description": "Scene mode id (surgepy.constants sm_single/sm_split/sm_dual/sm_chsplit; live param max 3)."},
+    "smn": {"type": "string", "description": "Engine display name of the scene mode (e.g. 'Single', 'Key Split')."},
+    "sa": {"type": "integer", "range": [0, 1], "description": "Active/selected scene index (0=A, 1=B)."},
+    "spl": {"type": "integer", "description": "Split point MIDI note (meaningful for split modes)."},
+    "poly": {"type": "integer", "description": "Polylimit (global). Loader default DEFAULT_POLYLIMIT=16 applies to files that do not store it."},
+    "ch": {"type": "integer", "range": [0, 2], "description": "Character id."},
+    "chn": {"type": "string", "description": "Engine display name of character."},
+    "fxb": {"type": "integer", "range": [0, 3], "description": "fx_bypass id: 0=All FX, 1=No Send FX, 2=No Send and Global FX, 3=All FX Off (fxb_all_fx..fxb_no_fx, SurgeStorage.h). Bypass state of the FX section."},
+    "fxbn": {"type": "string", "description": "Engine display name of fx_bypass."},
+    "fxd": {"type": "integer", "description": "fx_disable bitmask; bit (1<<slot) disables fx slot 'slot' individually (SurgeSynthesizer.cpp process: 'fx_disable.val.i & (1 << v)')."},
+    "vol": {"type": "number", "description": "Global volume (dB scale of the engine param)."},
+    "sc": {"type": "array", "items": 2, "description": "Per-scene state, index 0=scene A, 1=scene B. Both scenes are exported regardless of scene mode; inactive scenes carry loader defaults."},
+    "fx": {"type": "array", "items": 16, "description": "All 16 FX slots as exposed by the pinned engine (n_fx_slots=16)."},
+    "md": {"type": "object", "description": "Modulation routings: {g: global routes, s: [per-scene {s: scene-bus routes, v: voice-bus routes}]}."},
+    "wta": {"type": "array", "description": "Wavetable asset records for oscillators whose normalized type is wavetable/window. Absent when the preset uses none."},
+    "dep": {"type": "array", "description": "Dynamic dependency flags; 'audio_input' when any oscillator slot's normalized type is Audio Input (external signal dependency). Absent when empty."},
+    "mi": {"type": "array", "description": "Loader migration events: raw stored id vs normalized value differences (see below). Absent when none observed."},
+    "rwm": {"type": "array", "description": "raw_missing: migration-prone int fields absent from the raw XML (loader defaults applied). Absent when none."},
+    "rwu": {"type": "array", "description": "raw_uninterpretable: raw values present but outside any plausible id range for the field (e.g. old float bit-pattern storage under an int tag). Recorded, never compared, never dropped. Absent when none."},
+    "raw_note": {"type": "string", "description": "Present when the raw XML sidecar is unreadable (e.g. Percussion/Snare Tight.fxp): the normalized graph is complete and authoritative; the raw comparison is waived and the waiver is recorded here."}
+  },
+  "scene_sc[]": {
+    "po": {"type": "number", "description": "Scene pitch (semitones)."},
+    "oct": {"type": "integer", "description": "Scene octave."},
+    "pm": {"type": "integer", "range": [0, 5], "description": "Playmode id (pm_poly..pm_latch)."},
+    "pmn": {"type": "string", "description": "Engine display name of playmode."},
+    "pbrU": {"type": "integer", "description": "Pitch bend up range (semitones)."},
+    "pbrD": {"type": "integer", "description": "Pitch bend down range (semitones)."},
+    "ktR": {"type": "integer", "description": "Keytrack root note."},
+    "porta": {"type": "number", "description": "Portamento."},
+    "fbc": {"type": "integer", "range": [0, 7], "description": "Filter block configuration id (fc_serial1..fc_wide) - the filter TOPOLOGY."},
+    "fbcn": {"type": "string", "description": "Engine display name of the filter block configuration."},
+    "f2off": {"type": "integer", "description": "Filter 2 cutoff is offset from filter 1 (flag)."},
+    "f2lnk": {"type": "integer", "description": "Filter 2 resonance linked to filter 1 (flag)."},
+    "fb": {"type": "number", "description": "Filter feedback."},
+    "bal": {"type": "number", "description": "Filter balance."},
+    "lc": {"type": "number", "description": "Lowcut."},
+    "pfg": {"type": "number", "description": "Pre-filter gain."},
+    "vca": {"type": "number", "description": "VCA level."},
+    "vs": {"type": "number", "description": "VCA velocity sensitivity."},
+    "pan": {"type": "number", "description": "Scene pan."},
+    "wid": {"type": "number", "description": "Scene width."},
+    "send": {"type": "array", "items": 2, "description": "Scene send levels. The pinned engine exposes send_level[0..1] through surgepy; send buses 3/4 (slots S3/S4) exist in the engine but no factory .fxp stores levels for them and the binding does not expose them (documented gap; loader defaults apply)."},
+    "mix": {"type": "object", "description": "Mixer per path o1,o2,o3,ring_12,ring_23,noise: [level, mute, solo, route]. route: 0=Filter 1, 1=Both, 2=Filter 2 (engine display)."},
+    "fm": {"type": "object", "description": "{sw: FM routing id (fm_off..fm_2and3to1), dep: FM depth}."},
+    "osc": {"type": "array", "items": 3, "description": "Oscillator slots 1..3 (0-based here)."},
+    "fu": {"type": "array", "items": 2, "description": "Filter units 1..2 (0-based here)."},
+    "ws": {"type": "object", "description": "{t: waveshaper type id, tn: display name, dr: drive}. Waveshaper type ids exceed the surgepy.constants wst_* set (live max 42); names come from the engine."},
+    "lfo": {"type": "array", "items": 6, "description": "LFO 1..6 (scene LFOs; SLFOs are LFO 7..12 in the engine UI naming and appear here only insofar as the engine exposes them per scene - the pinned engine stores 6 scene + 6 scene-B LFOs as lfo[0..5] of each scene)."}
+  },
+  "osc_sc[].osc[]": {
+    "t": {"type": "integer", "range": [0, 11], "description": "Oscillator type id (ot_classic..ot_window constants cover 0..7; 8..11 are Modern/String/Twist/Alias; live param max 11)."},
+    "tn": {"type": "string", "description": "Engine display name of the type."},
+    "pit": {"type": "number", "description": "Pitch."},
+    "oct": {"type": "integer", "description": "Octave."},
+    "kt": {"type": "integer", "description": "Keytrack flag (keytracked/limit-relevant)."},
+    "rt": {"type": "integer", "description": "Retrigger flag."},
+    "p": {"type": "array", "items": 7, "description": "The 7 normalized oscillator params. p[0] is the SUBMODE selector for every family that has one (Classic 'Shape'/subtype, Sine 'Shape', wavetable 'Morph', ...). p[5]/p[6] are Unison Detune / Unison Voices for the families that have unison."},
+    "uni": {"type": "integer", "description": "Unison voice count (param whose engine name ends 'Unison Voices'). Absent for families without unison."},
+    "udet": {"type": "number", "description": "Unison detune. Absent for families without unison."},
+    "wt": {"type": "boolean", "description": "Present (true) when the normalized type is wavetable or window; a matching record exists in g.wta."}
+  },
+  "filterunit_sc[].fu[]": {
+    "t": {"type": "integer", "range": [0, 35], "description": "Filter type id (current sst-filters fut_ space; live param max 35)."},
+    "tn": {"type": "string", "description": "Engine display name of the filter type."},
+    "st": {"type": "integer", "range": [0, 15], "description": "Filter subtype id (clamped by the loader to fut_subcount[type]-1 at stream time, SurgePatch.cpp)."},
+    "stn": {"type": "string", "description": "Engine display name of the subtype."},
+    "cut": {"type": "number", "description": "Cutoff."},
+    "res": {"type": "number", "description": "Resonance."},
+    "em": {"type": "number", "description": "Filter EG (envmod) amount."},
+    "kt": {"type": "integer", "description": "Keytrack flag (keytracked/limit-relevant)."}
+  },
+  "fx_g.fx[]": {
+    "i": {"type": "integer", "range": [0, 15], "description": "Patch fx[] array index."},
+    "r": {"type": "string", "enum": ["ains1", "ains2", "bins1", "bins2", "send1", "send2", "global1", "global2", "ains3", "ains4", "bins3", "bins4", "send3", "send4", "global3", "global4"], "description": "Slot role: a*=scene A insert chain, b*=scene B insert chain, send*=send buses, global*=global chain. ROUTING/placement is the role plus the fixed engine processing order: A1->A4 then B1->B4 on the scene outputs, scene sum, send buses S1..S4 mixed to the main output with per-slot return_level, then G1->G4 on the summed output (SurgeSynthesizer.cpp process)."},
+    "t": {"type": "integer", "range": [0, 31], "description": "Effect type id (fxt_off=0; live param max 31; surgepy.constants fxt_* covers a subset)."},
+    "tn": {"type": "string", "description": "Engine display name of the effect type."},
+    "on": {"type": "integer", "enum": [0, 1], "description": "1 when the slot holds a non-Off effect; Off slots carry only i/r/t/tn/on."},
+    "p": {"type": "array", "items": 12, "description": "The 12 normalized FX params. Param NAMES are engine-defined per effect type at runtime (not stored in this schema); recover any name via getPatch().fx[i].p[j].getName()."},
+    "rl": {"type": "number", "description": "Return level (send/return placement gain; modulation of return levels appears in g.md)."},
+    "aw": {"type": "integer", "description": "Airwindows ONLY: exact algorithm id = p[0] (int)."},
+    "awn": {"type": "string", "description": "Airwindows ONLY: engine display name of that algorithm (e.g. 49 = 'Galactic')."}
+  },
+  "modroute_md": {
+    "row": {"type": "array", "items": 7, "description": "[source_id, source_scene, source_index, dest_synthside_id, dest_name, depth, normalized_depth]."},
+    "source_id": {"type": "integer", "description": "modsources enum id; validated against the live surgepy.constants ms_* set. Names: e.g. 7=ctrl1 (macro), 17=lfo1, 26=slfo4, 39=highest_key."},
+    "dest_synthside_id": {"type": "integer", "description": "RAW parameter id mapping: the synth-side id from SurgeSynthesizer::ID::getSynthSideId() of the destination Parameter as returned by getAllModRoutings(); for scene-bus routes the binding adds storage.getPatch().scene_start[sc] to the destination so the id is absolute across both scenes (surgepy.cpp getAllModRoutings). The name is recovered via getParameterName(id); it is stored in row[4] so consumers do not need the id map."},
+    "depth": {"type": "number", "description": "Raw modulation depth (engine units)."},
+    "normalized_depth": {"type": "number", "description": "getModDepth01()-normalized depth (surgepy binding computes it live)."},
+    "buses": {"description": "md.g: patch-level (global) routings incl. FX-parameter modulation; md.s[k].s: scene routings of scene k; md.s[k].v: voice routings of scene k."}
+  },
+  "assets_wta": {
+    "sc": {"type": "integer", "description": "Scene index."},
+    "osc": {"type": "integer", "description": "Oscillator index."},
+    "name": {"type": ["string", "null"], "description": "Wavetable display name as streamed from the raw XML <extraoscdata wavetable_display_name=...> (SurgePatch.cpp load_xml). null when absent: the engine then displays '(Patch Wavetable)' or '(Patch Sample)' (SurgePatch.cpp). PROVENANCE: this is a raw-side string (names are not migrated numerics); the engine's resolved table is what sounds."},
+    "emb": {"type": ["integer", "null"], "description": "Embedded wavetable byte size for this scene/osc from the .fxp chunk header (wtsize[scene][osc] at offset 68; census method). >0 means the table bytes are self-contained in the .fxp."},
+    "script": {"type": ["string", "null"], "description": "Wavetable script name when the osc uses a .wtscript (raw sidecar)."},
+    "res": {"type": "array", "description": "[[relative path under resources/data/wavetables, sha256], ...] for files whose stem matches the display name (engine wt_list names are file stems: SurgeStorage refreshPatchOrWTListAddDir). Empty/absent when unresolvable: embedded tables and unresolvable names keep the loader's own fallback behavior (default table), which is recorded here as absence of res, not guessed."}
+  },
+  "migration_event_mi": {
+    "f": {"type": "string", "description": "Field path, e.g. 'sc0.fu0', 'sc1.osc2.param0', 'fx4.p0', 'polylimit'."},
+    "k": {"type": "string", "enum": ["filter_remap", "sine_shape_remap", "ringmod_shape_remap", "polylimit_default", "character_default", "osc_type_diff", "fx_type_diff"], "description": "Event kind. *_diff kinds (osc/fx type) are NOT known migrations; they mark an unexplained raw-vs-normalized difference for investigation."},
+    "raw": {"description": "Raw stored value/pair (pre-migration id space)."},
+    "n": {"description": "Normalized value/pair (current id space) from the live engine."},
+    "note": {"type": "string", "description": "Citation of the pinned-source migration gate that explains the difference."},
+    "raw_meaning_pre15": {"type": "string", "description": "For filter_remap: raw ids < rev15 are fut_14 ids (FilterConfiguration.h), NOT current fut_ ids."}
+  },
+  "determinism": {
+    "rules": [
+      "Keys sorted; separators ',' ':'; ensure_ascii; allow_nan=false.",
+      "Floats rounded to 6 decimal places; int-valued params exported as ints.",
+      "Engine arrays iterated in fixed order; getAllModRoutings() sorts routes by (source,destination) in the binding.",
+      "Declared reset policy: before each load the exporter resets volume, fx_bypass, character and polylimit to engine defaults, because load_xml does not stream these from (all or old) presets; exported graph is therefore independent of load order and reproducible on a fresh engine.",
+      "No timestamps, wall-clock, or machine paths inside per-preset lines.",
+      "Same corpus bytes + same engine pin => byte-identical graphs.jsonl (verified by re-run + cmp)."
+    ]
+  },
+  "excluded_fields_note": "Envelope (ADSR) values, MSEG/Formula curve contents, step-sequencer grids, and FX-param display names are not part of schema rev 1.0.0. MSEG/Formula LFO records carry gap='modulator_contents_not_exposed_by_surgepy'. This is an explicit scope decision for SXT-011 (graph topology + routing + assets), not an extraction failure; revisit before SXT-012/SXT-015 if renders need them.",
+  "raw_field_provenance": {
+    "used_for": ["migration events (mi)", "raw missing (rwm)", "raw uninterpretable (rwu)", "wavetable display names (wta[].name)", "embedded wt sizes (wta[].emb)", "stored revision (rev)"],
+    "never_used_for": "producing or replacing any normalized value",
+    "int_encoding": "Only XML tags whose 'type' attribute is 0 (vt_int) or 1 (vt_bool) with an integer literal value are read (save_xml writes valtypes per Parameter.h: vt_int=0, vt_bool=1, vt_float=2)."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "issue": "SXT-011",
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "engine_version": "1.4.HEAD.58914e59c",
+  "sample_rate": 48000,
+  "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+  "entries_total": 3561,
+  "counts": {
+    "normalized": 3561,
+    "analysis_failure": 0
+  },
+  "normalized_by_bank": {
+    "factory": 641,
+    "contributor": 2920
+  },
+  "failures_by_bank": {
+    "factory": 0,
+    "contributor": 0
+  },
+  "migration_event_kinds": {
+    "filter_remap": 301,
+    "polylimit_default": 890,
+    "sine_shape_remap": 109,
+    "ringmod_shape_remap": 2
+  },
+  "snare_tight": {
+    "path": "resources/data/patches_factory/Percussion/Snare Tight.fxp",
+    "status": "normalized",
+    "native_verdict": "normalized_natively",
+    "raw_note": "raw_xml_unreadable: ParseError: reference to invalid character number: line 1, column 26580",
+    "fx_on": [
+      [
+        "ains1",
+        "Delay"
+      ],
+      [
+        "ains2",
+        "Conditioner"
+      ],
+      [
+        "send1",
+        "Reverb 1"
+      ]
+    ],
+    "note": "resolved by native loader behavior only; the raw XML sidecar stays unreadable and the waiver is recorded in g.raw_note"
+  },
+  "spot_check": "reports/sxt-011/spot-check/ (script + transcript + summary)",
+  "negative_control": "reports/sxt-011/negative-control/ (script + transcript + summary)",
+  "output": "/Users/joseph/dev/gf180-surge-wt-011/corpus/normalized/graphs.jsonl",
+  "output_bytes": 17841829,
+  "under_size_guard": true,
+  "determinism": "same corpus bytes + engine pin => byte-identical graphs.jsonl (no timestamps in per-preset lines)",
+  "wall_seconds": 76.1,
+  "generated_at": "2026-09-20T08:20:28Z",
+  "note": "Normalized-state export only: no audio-support, fidelity, or preset-quality claim. Raw .fxp ids are never exported as state."
+}

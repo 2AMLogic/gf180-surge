@@ -1,0 +1,14 @@
+{
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "subjects": {
+    "resources/data/patches_3rdparty/Rare Earth/Percussion/Kalimba Attempt.fxp": {
+      "committed_status": "normalized",
+      "committed_matches_live": true
+    },
+    "resources/data/patches_3rdparty/Damon Armani/Pads/Funky Gate.fxp": {
+      "committed_status": "normalized",
+      "committed_matches_live": true
+    }
+  },
+  "verdict": "PASS"
+}

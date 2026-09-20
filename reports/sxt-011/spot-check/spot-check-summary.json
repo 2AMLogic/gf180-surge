@@ -1,0 +1,39 @@
+{
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "engine_version": "1.4.HEAD.58914e59c",
+  "sample_rate": 48000,
+  "presets": {
+    "resources/data/patches_factory/Basses/Sub 4.fxp": {
+      "status": "PASS",
+      "live_checks_ok": 81,
+      "live_checks_mismatch": 0,
+      "full_graph_identical": true
+    },
+    "resources/data/patches_factory/Percussion/Drum One.fxp": {
+      "status": "PASS",
+      "live_checks_ok": 81,
+      "live_checks_mismatch": 0,
+      "full_graph_identical": true
+    },
+    "resources/data/patches_factory/Tutorials/Formula Modulator/10 Example - Both Time And Space.fxp": {
+      "status": "PASS",
+      "live_checks_ok": 75,
+      "live_checks_mismatch": 0,
+      "full_graph_identical": true
+    },
+    "resources/data/patches_3rdparty/A.Liv/Basses/Amen Polska.fxp": {
+      "status": "PASS",
+      "live_checks_ok": 78,
+      "live_checks_mismatch": 0,
+      "full_graph_identical": true
+    },
+    "resources/data/patches_3rdparty/Slowboat/Atmospheres/Harmonic Blast.fxp": {
+      "status": "PASS",
+      "live_checks_ok": 80,
+      "live_checks_mismatch": 0,
+      "full_graph_identical": true
+    }
+  },
+  "pass_count": 5,
+  "total": 5
+}
