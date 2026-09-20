@@ -138,7 +138,7 @@ recorded:
 ## 4. RTL-vs-frozen-model EXACT (iverilog)
 
 `rtl-exactness.json` (sha256
-`b6cba41c0a67fc01c929ab2307a93d15d249c518b7845c681102efc4c7374e95`),
+`4de2486e32f5a7d7bb14aaa402dd6b42b4a0f40a14196c44a1dfca29270bc367`),
 Icarus Verilog 13.0. The RTL implements the frozen schedule with an explicit
 external-memory port; the harness owns the 557,056-word writable memory and
 logs every transaction. Compared with exact integer equality:

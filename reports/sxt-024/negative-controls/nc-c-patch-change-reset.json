@@ -22,12 +22,12 @@
     "reset_boundary": true,
     "stereo_corr": true,
     "tail_rms_rel": false,
-    "wet_max_abs": false,
-    "wet_rms_rel": false
+    "wet_max_abs": true,
+    "wet_rms_rel": true
   },
   "reset_mirror_tail_rms_rel_db": -42.646264032280676,
-  "reset_mirror_wet_max_abs": 0.0016872789710760117,
+  "reset_mirror_wet_max_abs": 3.2335519790649414e-06,
   "tail_budget_finding_in_regime": true,
   "target_check": "patch-change/reset without unintended clicks (reset instruction observable and click-neutral)",
-  "verdict": "CONTROL-BROKEN (finding! mirror_ok=False noreset_fails=True dry_guard=True)"
+  "verdict": "CONTROL-OK (reset mirrored within budget; no-reset variant FAILS; no added click at the boundary)"
 }
