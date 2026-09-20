@@ -119,24 +119,26 @@ def test_committed_evidence_files_are_coherent():
         if not fn.endswith(".json"):
             continue
         d = json.load(open(os.path.join(comp, fn)))
-        if str(d.get("status", "")).startswith("BLOCKED"):
-            # documented limitation record (e.g. the loadPatch oracle probe):
-            # must carry a finding, never silent
-            assert d.get("finding"), fn
-            continue
-        if "checks" not in d:
-            raise AssertionError(f"{fn}: missing checks")
-        for k, v in d["checks"].items():
-            if v is False and not ("proposed_budget_finding" in d
-                                   and k == "tail_rms_rel"):
-                raise AssertionError(f"{fn}: check {k} is False without a "
-                                     f"recorded finding")
-            if v is None and not fn.startswith("sweep-t60"):
-                # sweep-t60 records NOT_RUN fits as None by design (documented
-                # in the comparison module docstring); no other case may
-                raise AssertionError(f"{fn}: check {k} is None (NOT_RUN "
-                                     f"must be recorded as a finding, not "
-                                     f"in checks)")
+        records = d if isinstance(d, list) else [d]
+        for rec in records:
+            if str(rec.get("status", "")).startswith("BLOCKED"):
+                # documented limitation record (e.g. the loadPatch oracle
+                # probe): must carry a finding, never silent
+                assert rec.get("finding"), fn
+                continue
+            if "checks" not in rec:
+                raise AssertionError(f"{fn}: missing checks")
+            for k, v in rec["checks"].items():
+                if v is False and not ("proposed_budget_finding" in rec
+                                       and k == "tail_rms_rel"):
+                    raise AssertionError(f"{fn}: check {k} is False without "
+                                         f"a recorded finding")
+                if v is None and not fn.startswith("sweep-t60"):
+                    # sweep-t60 records NOT_RUN fits as None by design
+                    # (documented in the comparison module docstring)
+                    raise AssertionError(f"{fn}: check {k} is None (NOT_RUN "
+                                         f"must be recorded as a finding, "
+                                         f"not in checks)")
     # negative controls: all must be CONTROL-OK
     for fn in os.listdir(os.path.join(SXT, "negative-controls")):
         d = json.load(open(os.path.join(SXT, "negative-controls", fn)))

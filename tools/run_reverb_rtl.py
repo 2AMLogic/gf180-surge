@@ -267,7 +267,7 @@ def compare_case(name, model_trace, model_txn, model_mem, workdir, want_mem):
         "reads": reads, "writes": writes,
         "words_per_frame": reads + writes,
         "reset_markers": xmarks,
-        "per_frame_exact_34": (reads + writes) == 34 * len(mod_T),
+        "per_frame_exact_34": (reads + writes) == 34 * len(mod_T) * rf.BLOCK,
     }
     if want_mem:
         mv = parse_mem(os.path.join(workdir, "out/sxt-024/rtl/mem_rtl.hex"),

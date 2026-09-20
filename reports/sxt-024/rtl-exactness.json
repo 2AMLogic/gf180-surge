@@ -11,8 +11,9 @@
       "note": "deterministic PRS input; state reset (host bulk clear + core reset) before block 48; full 557,056-word external-memory image compared",
       "outputs_exact": true,
       "rtl_measured_traffic": {
-        "per_frame_exact_34": false,
+        "per_frame_exact_34": true,
         "reads": 139264,
+        "reset_markers": 1,
         "words_per_frame": 278528,
         "writes": 139264
       },
@@ -34,8 +35,9 @@
       "note": "first 512 blocks of the committed click-dry send input; memory image implied by the write log (initial state zero)",
       "outputs_exact": true,
       "rtl_measured_traffic": {
-        "per_frame_exact_34": false,
+        "per_frame_exact_34": true,
         "reads": 278528,
+        "reset_markers": 0,
         "words_per_frame": 557056,
         "writes": 278528
       },
@@ -63,6 +65,7 @@
     "rtl_measured_traffic": {
       "per_frame_exact_34": false,
       "reads": 139264,
+      "reset_markers": 1,
       "words_per_frame": 270336,
       "writes": 131072
     },

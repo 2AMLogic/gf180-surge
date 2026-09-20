@@ -763,6 +763,7 @@
       "width": 0.0
     }
   },
+  "proposed_budget_finding": "tail_rms_rel FAILS the [PROPOSED] -50 dB budget in this factory-default parameter regime (-42.6 dB relative) while the ABSOLUTE tail error is -157 dBFS -- below the s24 device output LSB (-144 dBFS) and below any audible or output-representable level. The proposed budget was calibrated on the carrier preset's regime; a regime-aware floor rule is a bounded finding for the SXT-013 fidelity-policy freeze. Recorded honestly as a FAIL of the proposed budget, never silently relaxed.",
   "rebuild_transient_max_abs": 0.0016898736357688904,
   "rebuild_transient_note": "engine lipol coefficient smoothing at FX rebuild (control plane, outside the frozen model's converged-coefficient scope); a 32-block window is excluded from wet_max_abs and bounded by its own [PROPOSED] budget; the window length covers the measured one-pole convergence of the mix/width lags (error rho ~0.85 per block)",
   "rebuild_transient_window_blocks": 32,
