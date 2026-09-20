@@ -1,0 +1,65 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no normalization, no time warping, no fades",
+  "dry": {
+    "blocks": 6300,
+    "bypass_method": "all 16 FX-slot type params set to fxt_off via setParamVal before settle; read-back verified Off; otherwise identical fresh-instance render",
+    "bytes": 403244,
+    "clipped_samples": 0,
+    "dry_fx_bypass_verified": true,
+    "frames": 201600,
+    "last_event_sample": 81600,
+    "peak_abs_float": 0.14521516859531403,
+    "settle_s": 0.25,
+    "sha256": "b70ae0048e9c3bb91e858e7de3d436e7d3a7ad074b6577620cf36810c6655b26",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/koala2/seq-macro-sweep-v1-dry.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "koala2__seq-macro-sweep-v1",
+  "preset": {
+    "actual_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+    "census_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+    "path": "resources/data/patches_factory/Leads/Koala 2.fxp",
+    "slug": "koala2"
+  },
+  "render": {
+    "duration_s": 4.2,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-macro-sweep-v1",
+    "path": "fixtures/sequences/seq-macro-sweep-v1.json",
+    "sha256": "b0f6f5dc04139b375be37fe29fab4be7b3b40b24429806ba8656ba1776bc0a20"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9bab0e8bcd293ed01cd6420f343d8de0705aeffb",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "blocks": 6300,
+    "bytes": 403244,
+    "clipped_samples": 0,
+    "dry_fx_types_readback": null,
+    "frames": 201600,
+    "last_event_sample": 81600,
+    "peak_abs_float": 0.1434352695941925,
+    "settle_s": 0.25,
+    "sha256": "a3b0696d38911d5e94ad4fdbc32193c46bd9f8a78f00d3a4d9e9a9f120534e2b",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/koala2/seq-macro-sweep-v1-wet.wav"
+  }
+}

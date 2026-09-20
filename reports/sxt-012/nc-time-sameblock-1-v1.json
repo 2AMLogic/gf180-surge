@@ -1,0 +1,59 @@
+{
+  "coverage": [
+    "sustain-pedal",
+    "release:pedal"
+  ],
+  "derived_from": "seq-sustain-pedal-v1",
+  "description": "NEGATIVE CONTROL (not part of the library): variant A: note_on at t=1 (same ceil-block as t=2).",
+  "events": [
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 1,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "controller": 64,
+      "t": 4800,
+      "type": "cc",
+      "value": 127
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 14400,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 64,
+      "t": 28800,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 64,
+      "t": 38400,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "controller": 64,
+      "t": 57600,
+      "type": "cc",
+      "value": 0
+    }
+  ],
+  "id": "seq-nc-time-sameblock-1-v1",
+  "notes": "",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}

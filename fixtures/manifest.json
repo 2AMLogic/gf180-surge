@@ -1,0 +1,540 @@
+{
+  "claim_scope": "reference-vs-reference fixtures only; no fidelity, support, or quality claim is made by or for these fixtures",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixtures": [
+    {
+      "dry": {
+        "sha256": "45456d4f2b0845faed2557a9f076640bcdc5a8ac27bcc7a5de32f438c17a3c19",
+        "wav": "fixtures/audio/behemoth/seq-macro-sweep-v1-dry.wav"
+      },
+      "duration_s": 4.2,
+      "fixture_id": "behemoth__seq-macro-sweep-v1",
+      "frames": 201600,
+      "preset": "behemoth",
+      "sequence": "seq-macro-sweep-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-macro-sweep-v1.json",
+      "wet": {
+        "sha256": "8c0a8baac2a58229ba2b86eaa7c4bd02a921971847bcf289ad8ab4006642e88c",
+        "wav": "fixtures/audio/behemoth/seq-macro-sweep-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "0fe748d3d4c882dad878bd222707fc1e6ea90358a775f49659ffee6bc3bbbf92",
+        "wav": "fixtures/audio/behemoth/seq-modwheel-v1-dry.wav"
+      },
+      "duration_s": 3.8,
+      "fixture_id": "behemoth__seq-modwheel-v1",
+      "frames": 182400,
+      "preset": "behemoth",
+      "sequence": "seq-modwheel-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-modwheel-v1.json",
+      "wet": {
+        "sha256": "1b60e23156aa3b90eaf6e138c4021aae7d4cc3323edd8a47240155bbfdb9bf38",
+        "wav": "fixtures/audio/behemoth/seq-modwheel-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "73cc6f09d161c775d1f63ec4ec6df478e93aeca5e5869dcc47b144f9567a76f9",
+        "wav": "fixtures/audio/behemoth/seq-notes-coverage-v1-dry.wav"
+      },
+      "duration_s": 5.7,
+      "fixture_id": "behemoth__seq-notes-coverage-v1",
+      "frames": 273600,
+      "preset": "behemoth",
+      "sequence": "seq-notes-coverage-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-notes-coverage-v1.json",
+      "wet": {
+        "sha256": "bd9553387842197f29db1a4e1ff23caaf97a3fbf668f9767664843b1e4ee2a51",
+        "wav": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "6ff30257350bdbe823efb6d7d8432f838d6f352c450d7867396f3fafb44db51d",
+        "wav": "fixtures/audio/behemoth/seq-notes-holds-v1-dry.wav"
+      },
+      "duration_s": 6.2,
+      "fixture_id": "behemoth__seq-notes-holds-v1",
+      "frames": 297600,
+      "preset": "behemoth",
+      "sequence": "seq-notes-holds-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-notes-holds-v1.json",
+      "wet": {
+        "sha256": "907c0c599f941ddb98316231bebddbb3ac6078834ceca075818f1a12725cdf0c",
+        "wav": "fixtures/audio/behemoth/seq-notes-holds-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "97e2726d32a69cac509f57a937623e24b67e7e8a0be10d791170e97936e84906",
+        "wav": "fixtures/audio/behemoth/seq-notes-repeated-v1-dry.wav"
+      },
+      "duration_s": 4.1,
+      "fixture_id": "behemoth__seq-notes-repeated-v1",
+      "frames": 196800,
+      "preset": "behemoth",
+      "sequence": "seq-notes-repeated-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-notes-repeated-v1.json",
+      "wet": {
+        "sha256": "e19079366ec2374bb4723786d07022b7b502c1658e19983d2a4af6bb7c1cf155",
+        "wav": "fixtures/audio/behemoth/seq-notes-repeated-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "cb9d9c43b031b5ea8c62c5c9e96a1a8b9d43d71f900a25cc8bdf18eda034b0e9",
+        "wav": "fixtures/audio/behemoth/seq-pitchbend-v1-dry.wav"
+      },
+      "duration_s": 4.1,
+      "fixture_id": "behemoth__seq-pitchbend-v1",
+      "frames": 196800,
+      "preset": "behemoth",
+      "sequence": "seq-pitchbend-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-pitchbend-v1.json",
+      "wet": {
+        "sha256": "c6b952b5b2c5ccdaabb107bb5ad72fc53d5b04093b03178bdf426d3e349a1bde",
+        "wav": "fixtures/audio/behemoth/seq-pitchbend-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "4d690bb15a163b56321a10c19a1ab7ef52e2852a2bc7000389547bd4539ce6ea",
+        "wav": "fixtures/audio/behemoth/seq-poly-8-v1-dry.wav"
+      },
+      "duration_s": 3.7,
+      "fixture_id": "behemoth__seq-poly-8-v1",
+      "frames": 177600,
+      "preset": "behemoth",
+      "sequence": "seq-poly-8-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-poly-8-v1.json",
+      "wet": {
+        "sha256": "648ea6f328140644ffc14ffd9080cf18cdebdfb2dc38fe4376411e53bc2eac62",
+        "wav": "fixtures/audio/behemoth/seq-poly-8-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "509d04c716784a86d45fe3a1ecb9e504c763019f745ef10df58209c54f6c3683",
+        "wav": "fixtures/audio/behemoth/seq-pressure-v1-dry.wav"
+      },
+      "duration_s": 3.8,
+      "fixture_id": "behemoth__seq-pressure-v1",
+      "frames": 182400,
+      "preset": "behemoth",
+      "sequence": "seq-pressure-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-pressure-v1.json",
+      "wet": {
+        "sha256": "abb2ea60edb03bf9ca3ef5d5d587e20509a5cd60b36df1d2e5b8cd2ca409411c",
+        "wav": "fixtures/audio/behemoth/seq-pressure-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "6dc70f3553ffdc8b81aa82b8d026e996b53faad2a77f18869260b061d35b60aa",
+        "wav": "fixtures/audio/behemoth/seq-sustain-pedal-v1-dry.wav"
+      },
+      "duration_s": 3.3,
+      "fixture_id": "behemoth__seq-sustain-pedal-v1",
+      "frames": 158400,
+      "preset": "behemoth",
+      "sequence": "seq-sustain-pedal-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-sustain-pedal-v1.json",
+      "wet": {
+        "sha256": "ef9f3ee04bd86199fd4f58d711fd14aff3fab6adf21f2a8a723a930af746af18",
+        "wav": "fixtures/audio/behemoth/seq-sustain-pedal-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "78b5a0fb9107668d6cc3a5c9237f574befe040b7a89a0fc328785082bdfba7ed",
+        "wav": "fixtures/audio/behemoth/seq-tempo-change-v1-dry.wav"
+      },
+      "duration_s": 5.45,
+      "fixture_id": "behemoth__seq-tempo-change-v1",
+      "frames": 261600,
+      "preset": "behemoth",
+      "sequence": "seq-tempo-change-v1",
+      "sidecar": "fixtures/audio/behemoth/seq-tempo-change-v1.json",
+      "wet": {
+        "sha256": "398ec0601e84bc64619ffda7835c4e6e41cee1f28ab11890a2f947d247c7abb0",
+        "wav": "fixtures/audio/behemoth/seq-tempo-change-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "b70ae0048e9c3bb91e858e7de3d436e7d3a7ad074b6577620cf36810c6655b26",
+        "wav": "fixtures/audio/koala2/seq-macro-sweep-v1-dry.wav"
+      },
+      "duration_s": 4.2,
+      "fixture_id": "koala2__seq-macro-sweep-v1",
+      "frames": 201600,
+      "preset": "koala2",
+      "sequence": "seq-macro-sweep-v1",
+      "sidecar": "fixtures/audio/koala2/seq-macro-sweep-v1.json",
+      "wet": {
+        "sha256": "a3b0696d38911d5e94ad4fdbc32193c46bd9f8a78f00d3a4d9e9a9f120534e2b",
+        "wav": "fixtures/audio/koala2/seq-macro-sweep-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "7a13ab984694bf26ccb3560aa2e10da6cdcf742be3946bb55ac2760cf2abea76",
+        "wav": "fixtures/audio/koala2/seq-modwheel-v1-dry.wav"
+      },
+      "duration_s": 3.8,
+      "fixture_id": "koala2__seq-modwheel-v1",
+      "frames": 182400,
+      "preset": "koala2",
+      "sequence": "seq-modwheel-v1",
+      "sidecar": "fixtures/audio/koala2/seq-modwheel-v1.json",
+      "wet": {
+        "sha256": "461dc18cfa3679700a1bae2b0becff3f16fe438f396013a748785611c01068c3",
+        "wav": "fixtures/audio/koala2/seq-modwheel-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "ea5ee955d38b3b7863fd9a9a80e693bd472fd1503c360d28a14517fe115f4e7b",
+        "wav": "fixtures/audio/koala2/seq-notes-coverage-v1-dry.wav"
+      },
+      "duration_s": 5.7,
+      "fixture_id": "koala2__seq-notes-coverage-v1",
+      "frames": 273600,
+      "preset": "koala2",
+      "sequence": "seq-notes-coverage-v1",
+      "sidecar": "fixtures/audio/koala2/seq-notes-coverage-v1.json",
+      "wet": {
+        "sha256": "13ec352b2d0457ff5a43d8f8c7888c08c91f36a915ccc828139bbb294e63d7da",
+        "wav": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "76639b0a2705b65400f1ad99efb0fbac29f4a484b88292cfd4a0a11f96edeec7",
+        "wav": "fixtures/audio/koala2/seq-notes-holds-v1-dry.wav"
+      },
+      "duration_s": 6.2,
+      "fixture_id": "koala2__seq-notes-holds-v1",
+      "frames": 297600,
+      "preset": "koala2",
+      "sequence": "seq-notes-holds-v1",
+      "sidecar": "fixtures/audio/koala2/seq-notes-holds-v1.json",
+      "wet": {
+        "sha256": "ee0ec9e5f6db540a3a143b8b1afd4f52a6cd6271aa1a6d7827c1a04bdc043ffa",
+        "wav": "fixtures/audio/koala2/seq-notes-holds-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "347a746ed1353605fe502dcc9e20967a9bf9118f738707e8c77dc377903b5db5",
+        "wav": "fixtures/audio/koala2/seq-notes-repeated-v1-dry.wav"
+      },
+      "duration_s": 4.1,
+      "fixture_id": "koala2__seq-notes-repeated-v1",
+      "frames": 196800,
+      "preset": "koala2",
+      "sequence": "seq-notes-repeated-v1",
+      "sidecar": "fixtures/audio/koala2/seq-notes-repeated-v1.json",
+      "wet": {
+        "sha256": "fec53329389c7b081734f2aa9c862d4de86fe5282432a7c514ab1d1224c7e8c8",
+        "wav": "fixtures/audio/koala2/seq-notes-repeated-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "59bb52f8a339d30e96f1c3a8dcf435865b2e393a51e29532995fab71dc86b7be",
+        "wav": "fixtures/audio/koala2/seq-pitchbend-v1-dry.wav"
+      },
+      "duration_s": 4.1,
+      "fixture_id": "koala2__seq-pitchbend-v1",
+      "frames": 196800,
+      "preset": "koala2",
+      "sequence": "seq-pitchbend-v1",
+      "sidecar": "fixtures/audio/koala2/seq-pitchbend-v1.json",
+      "wet": {
+        "sha256": "044c9e256d8c0a0759bc95217863c9e7f193c019f3d063738d8949754962d42e",
+        "wav": "fixtures/audio/koala2/seq-pitchbend-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "5e523de6678c1bd9da43d81d46291ea844c4c8f068991447831734668baa01d8",
+        "wav": "fixtures/audio/koala2/seq-poly-8-v1-dry.wav"
+      },
+      "duration_s": 3.7,
+      "fixture_id": "koala2__seq-poly-8-v1",
+      "frames": 177600,
+      "preset": "koala2",
+      "sequence": "seq-poly-8-v1",
+      "sidecar": "fixtures/audio/koala2/seq-poly-8-v1.json",
+      "wet": {
+        "sha256": "b958d6f5157da4975cddb407afdb0b3ae88612b8598e57e0a96e844ab69d85c7",
+        "wav": "fixtures/audio/koala2/seq-poly-8-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "3e8372080c5f23877cb2270c2005dcc0b374b7019c8bce1331e83946052c51b4",
+        "wav": "fixtures/audio/koala2/seq-pressure-v1-dry.wav"
+      },
+      "duration_s": 3.8,
+      "fixture_id": "koala2__seq-pressure-v1",
+      "frames": 182400,
+      "preset": "koala2",
+      "sequence": "seq-pressure-v1",
+      "sidecar": "fixtures/audio/koala2/seq-pressure-v1.json",
+      "wet": {
+        "sha256": "c4df05c7de60fe7ba24c79da025bcd73280767c0a2d1b5c02a15dc177479ec76",
+        "wav": "fixtures/audio/koala2/seq-pressure-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "57eaa3b40f9bd14f48478bbfb13d337d42c50233332ed1f2307a44f3af4c8f64",
+        "wav": "fixtures/audio/koala2/seq-sustain-pedal-v1-dry.wav"
+      },
+      "duration_s": 3.3,
+      "fixture_id": "koala2__seq-sustain-pedal-v1",
+      "frames": 158400,
+      "preset": "koala2",
+      "sequence": "seq-sustain-pedal-v1",
+      "sidecar": "fixtures/audio/koala2/seq-sustain-pedal-v1.json",
+      "wet": {
+        "sha256": "d4bfb3029adbdc700cd2a8aeed54c817f6d237a6d348ac0cd50b6858fd23bdee",
+        "wav": "fixtures/audio/koala2/seq-sustain-pedal-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "200b8ab5859c0e7de485aadeefc5c8771a7b2fda62c9b9d6f85dcc58665a51b6",
+        "wav": "fixtures/audio/koala2/seq-tempo-change-v1-dry.wav"
+      },
+      "duration_s": 5.45,
+      "fixture_id": "koala2__seq-tempo-change-v1",
+      "frames": 261600,
+      "preset": "koala2",
+      "sequence": "seq-tempo-change-v1",
+      "sidecar": "fixtures/audio/koala2/seq-tempo-change-v1.json",
+      "wet": {
+        "sha256": "862dded5761094b2a27ffa9ac92334793866aad5b4ec801e895c253087b5f950",
+        "wav": "fixtures/audio/koala2/seq-tempo-change-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "c97e8784136457f4a9403caa4b65636a78ebcc730c8208066d32fcae16c1e4b0",
+        "wav": "fixtures/audio/sub4/seq-macro-sweep-v1-dry.wav"
+      },
+      "duration_s": 4.2,
+      "fixture_id": "sub4__seq-macro-sweep-v1",
+      "frames": 201600,
+      "preset": "sub4",
+      "sequence": "seq-macro-sweep-v1",
+      "sidecar": "fixtures/audio/sub4/seq-macro-sweep-v1.json",
+      "wet": {
+        "sha256": "c97e8784136457f4a9403caa4b65636a78ebcc730c8208066d32fcae16c1e4b0",
+        "wav": "fixtures/audio/sub4/seq-macro-sweep-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "bfa85a941c5f189716ddac92323a5f13d402614433314abb648a3beb0fa1f466",
+        "wav": "fixtures/audio/sub4/seq-modwheel-v1-dry.wav"
+      },
+      "duration_s": 3.8,
+      "fixture_id": "sub4__seq-modwheel-v1",
+      "frames": 182400,
+      "preset": "sub4",
+      "sequence": "seq-modwheel-v1",
+      "sidecar": "fixtures/audio/sub4/seq-modwheel-v1.json",
+      "wet": {
+        "sha256": "bfa85a941c5f189716ddac92323a5f13d402614433314abb648a3beb0fa1f466",
+        "wav": "fixtures/audio/sub4/seq-modwheel-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "e6d88742965237ccf5db7c9df1972ae9616b38eed21309511af492d8ffd94e83",
+        "wav": "fixtures/audio/sub4/seq-notes-coverage-v1-dry.wav"
+      },
+      "duration_s": 5.7,
+      "fixture_id": "sub4__seq-notes-coverage-v1",
+      "frames": 273600,
+      "preset": "sub4",
+      "sequence": "seq-notes-coverage-v1",
+      "sidecar": "fixtures/audio/sub4/seq-notes-coverage-v1.json",
+      "wet": {
+        "sha256": "e6d88742965237ccf5db7c9df1972ae9616b38eed21309511af492d8ffd94e83",
+        "wav": "fixtures/audio/sub4/seq-notes-coverage-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "46682f5d4cc596cf60f26a7f52850b0766aeccc01a870ac6535f780a975eb372",
+        "wav": "fixtures/audio/sub4/seq-notes-holds-v1-dry.wav"
+      },
+      "duration_s": 6.2,
+      "fixture_id": "sub4__seq-notes-holds-v1",
+      "frames": 297600,
+      "preset": "sub4",
+      "sequence": "seq-notes-holds-v1",
+      "sidecar": "fixtures/audio/sub4/seq-notes-holds-v1.json",
+      "wet": {
+        "sha256": "46682f5d4cc596cf60f26a7f52850b0766aeccc01a870ac6535f780a975eb372",
+        "wav": "fixtures/audio/sub4/seq-notes-holds-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "c6ffd2626a19d9c812263580aa1c7eaf378418f05ea11c66f0fc442f600bd568",
+        "wav": "fixtures/audio/sub4/seq-notes-repeated-v1-dry.wav"
+      },
+      "duration_s": 4.1,
+      "fixture_id": "sub4__seq-notes-repeated-v1",
+      "frames": 196800,
+      "preset": "sub4",
+      "sequence": "seq-notes-repeated-v1",
+      "sidecar": "fixtures/audio/sub4/seq-notes-repeated-v1.json",
+      "wet": {
+        "sha256": "c6ffd2626a19d9c812263580aa1c7eaf378418f05ea11c66f0fc442f600bd568",
+        "wav": "fixtures/audio/sub4/seq-notes-repeated-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "1ddbea9bd05163a5d7d6000c2e592d9b013b0e4e22adc734a91583afbd637fb0",
+        "wav": "fixtures/audio/sub4/seq-pitchbend-v1-dry.wav"
+      },
+      "duration_s": 4.1,
+      "fixture_id": "sub4__seq-pitchbend-v1",
+      "frames": 196800,
+      "preset": "sub4",
+      "sequence": "seq-pitchbend-v1",
+      "sidecar": "fixtures/audio/sub4/seq-pitchbend-v1.json",
+      "wet": {
+        "sha256": "1ddbea9bd05163a5d7d6000c2e592d9b013b0e4e22adc734a91583afbd637fb0",
+        "wav": "fixtures/audio/sub4/seq-pitchbend-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "2ff0be09d2439ee0c808662cf59c5482d35270f1e428069d1bd0c678f9911de7",
+        "wav": "fixtures/audio/sub4/seq-poly-8-v1-dry.wav"
+      },
+      "duration_s": 3.7,
+      "fixture_id": "sub4__seq-poly-8-v1",
+      "frames": 177600,
+      "preset": "sub4",
+      "sequence": "seq-poly-8-v1",
+      "sidecar": "fixtures/audio/sub4/seq-poly-8-v1.json",
+      "wet": {
+        "sha256": "2ff0be09d2439ee0c808662cf59c5482d35270f1e428069d1bd0c678f9911de7",
+        "wav": "fixtures/audio/sub4/seq-poly-8-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "d3534d20f9a765d53599ff0a87e0f2f887c10d519738eb21c65345ef6918b947",
+        "wav": "fixtures/audio/sub4/seq-pressure-v1-dry.wav"
+      },
+      "duration_s": 3.8,
+      "fixture_id": "sub4__seq-pressure-v1",
+      "frames": 182400,
+      "preset": "sub4",
+      "sequence": "seq-pressure-v1",
+      "sidecar": "fixtures/audio/sub4/seq-pressure-v1.json",
+      "wet": {
+        "sha256": "d3534d20f9a765d53599ff0a87e0f2f887c10d519738eb21c65345ef6918b947",
+        "wav": "fixtures/audio/sub4/seq-pressure-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096",
+        "wav": "fixtures/audio/sub4/seq-sustain-pedal-v1-dry.wav"
+      },
+      "duration_s": 3.3,
+      "fixture_id": "sub4__seq-sustain-pedal-v1",
+      "frames": 158400,
+      "preset": "sub4",
+      "sequence": "seq-sustain-pedal-v1",
+      "sidecar": "fixtures/audio/sub4/seq-sustain-pedal-v1.json",
+      "wet": {
+        "sha256": "bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096",
+        "wav": "fixtures/audio/sub4/seq-sustain-pedal-v1-wet.wav"
+      }
+    },
+    {
+      "dry": {
+        "sha256": "60a6da5bf4e13234ea59baa989198cce3c2a55a63f86a0ca031c6550f388e76a",
+        "wav": "fixtures/audio/sub4/seq-tempo-change-v1-dry.wav"
+      },
+      "duration_s": 5.45,
+      "fixture_id": "sub4__seq-tempo-change-v1",
+      "frames": 261600,
+      "preset": "sub4",
+      "sequence": "seq-tempo-change-v1",
+      "sidecar": "fixtures/audio/sub4/seq-tempo-change-v1.json",
+      "wet": {
+        "sha256": "60a6da5bf4e13234ea59baa989198cce3c2a55a63f86a0ca031c6550f388e76a",
+        "wav": "fixtures/audio/sub4/seq-tempo-change-v1-wet.wav"
+      }
+    }
+  ],
+  "generated_by": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9bab0e8bcd293ed01cd6420f343d8de0705aeffb",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe",
+    "tool": "fixtures/render_fixture.py"
+  },
+  "issue": "SXT-012",
+  "manifest_version": 1,
+  "policies": {
+    "audio": "mono (L+R)/2, 16-bit PCM, hard clip [-1,1] with clipped count recorded; raw renders - no normalization, no time warping, no fades",
+    "dry": "all 16 FX-slot types -> fxt_off via setParamVal before settle; read-back verified; wet renders remain the unmodified product reference",
+    "reset": "fresh instance per bus render; blob-verified patch load; controller reset (bend/CC64/CC1/CC11/pressure/allNotesOff); settle 0.25 s discarded before t=0",
+    "scheduling": "event t = integer samples @48 kHz, ceil-quantized to 32-sample block starts; same-block events in file order; sub-block timing not representable via surgepy process API",
+    "tail": "render = last event + tail_s (default 2.5 s), whole blocks; identical for wet and dry; long-tail presets will need larger per-sequence tails",
+    "tempo": "surgepy cannot set transport tempo; tempo events recorded, applied=0; renders at pinned 120 BPM"
+  },
+  "presets": {
+    "behemoth": {
+      "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+      "path": "resources/data/patches_factory/Basses/Behemoth.fxp"
+    },
+    "koala2": {
+      "census_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+      "path": "resources/data/patches_factory/Leads/Koala 2.fxp"
+    },
+    "sub4": {
+      "census_blob_sha1": "47d1db8a36d4ff57fa260b927a31f7fb199f755f",
+      "path": "resources/data/patches_factory/Basses/Sub 4.fxp"
+    }
+  },
+  "sequence_library": {
+    "seq-macro-sweep-v1": "b0f6f5dc04139b375be37fe29fab4be7b3b40b24429806ba8656ba1776bc0a20",
+    "seq-modwheel-v1": "d0f507efff5e9d76f7086707e18a08875aaeab96eb4a01ea0c974f5631872347",
+    "seq-notes-coverage-v1": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+    "seq-notes-holds-v1": "a43affacb6103324451d573b0cc3c48d5dee363a91c0533a171ebe99152bb1f4",
+    "seq-notes-repeated-v1": "ec610cb2a507875422df348e289766f0b1c8e378251e5ed83706d0d0a8b7db84",
+    "seq-pitchbend-v1": "ca0934316c168e689ae338289a220027da0cac901f46d364ec842187aad1ad69",
+    "seq-poly-8-v1": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+    "seq-pressure-v1": "f32ff1251128d62d3c3cc4ed4a99c2cfc1d5e1d2e682cca6b4f914cbe14e66e9",
+    "seq-sustain-pedal-v1": "c937ad54f58a7da37e79ed2fba69cf0d390bdc1645eee39000d6987228dd4aa8",
+    "seq-tempo-change-v1": "38c5811230ba0a4610d2e445ad741e66076b4caec980dc5d7869c68890fbe66a"
+  },
+  "totals": {
+    "audio_bytes": 25548240,
+    "fixture_count": 30,
+    "wav_count": 60
+  }
+}

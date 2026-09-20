@@ -1,0 +1,67 @@
+{
+  "coverage": [
+    "channel-pressure"
+  ],
+  "description": "Channel pressure (aftertouch) staircase 0 -> 127 -> 0 under a two-note chord; audible only where the preset routes aftertouch.",
+  "events": [
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 4800,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 64,
+      "t": 4800,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "t": 9600,
+      "type": "channel_pressure",
+      "value": 42
+    },
+    {
+      "channel": 0,
+      "t": 14400,
+      "type": "channel_pressure",
+      "value": 84
+    },
+    {
+      "channel": 0,
+      "t": 19200,
+      "type": "channel_pressure",
+      "value": 127
+    },
+    {
+      "channel": 0,
+      "t": 24000,
+      "type": "channel_pressure",
+      "value": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 62400,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 64,
+      "t": 62400,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-pressure-v1",
+  "notes": "Polyphonic pressure is not part of this sequence; the library ships channel pressure per the SXT-012 deliverable.",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}

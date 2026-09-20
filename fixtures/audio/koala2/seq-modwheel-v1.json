@@ -1,0 +1,65 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no normalization, no time warping, no fades",
+  "dry": {
+    "blocks": 5700,
+    "bypass_method": "all 16 FX-slot type params set to fxt_off via setParamVal before settle; read-back verified Off; otherwise identical fresh-instance render",
+    "bytes": 364844,
+    "clipped_samples": 0,
+    "dry_fx_bypass_verified": true,
+    "frames": 182400,
+    "last_event_sample": 62400,
+    "peak_abs_float": 0.13866391777992249,
+    "settle_s": 0.25,
+    "sha256": "7a13ab984694bf26ccb3560aa2e10da6cdcf742be3946bb55ac2760cf2abea76",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/koala2/seq-modwheel-v1-dry.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "koala2__seq-modwheel-v1",
+  "preset": {
+    "actual_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+    "census_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+    "path": "resources/data/patches_factory/Leads/Koala 2.fxp",
+    "slug": "koala2"
+  },
+  "render": {
+    "duration_s": 3.8,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-modwheel-v1",
+    "path": "fixtures/sequences/seq-modwheel-v1.json",
+    "sha256": "d0f507efff5e9d76f7086707e18a08875aaeab96eb4a01ea0c974f5631872347"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9bab0e8bcd293ed01cd6420f343d8de0705aeffb",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "blocks": 5700,
+    "bytes": 364844,
+    "clipped_samples": 0,
+    "dry_fx_types_readback": null,
+    "frames": 182400,
+    "last_event_sample": 62400,
+    "peak_abs_float": 0.15492069721221924,
+    "settle_s": 0.25,
+    "sha256": "461dc18cfa3679700a1bae2b0becff3f16fe438f396013a748785611c01068c3",
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0,
+    "wav": "fixtures/audio/koala2/seq-modwheel-v1-wet.wav"
+  }
+}

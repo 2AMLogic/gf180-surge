@@ -1,0 +1,148 @@
+{
+  "coverage": [
+    "register:low",
+    "register:mid",
+    "register:high",
+    "velocity:soft",
+    "velocity:medium",
+    "velocity:hard",
+    "hold:short",
+    "release:note-off"
+  ],
+  "description": "Low/mid/high registers x soft/medium/hard velocities; short holds (200 ms) with released notes and inter-note gaps for release tails.",
+  "events": [
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 30
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 9600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 18000,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 27600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 36000,
+      "type": "note_on",
+      "velocity": 120
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 45600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 54000,
+      "type": "note_on",
+      "velocity": 30
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 63600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 72000,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 81600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 90000,
+      "type": "note_on",
+      "velocity": 120
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 99600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 84,
+      "t": 108000,
+      "type": "note_on",
+      "velocity": 30
+    },
+    {
+      "channel": 0,
+      "note": 84,
+      "t": 117600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 84,
+      "t": 126000,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 84,
+      "t": 135600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 84,
+      "t": 144000,
+      "type": "note_on",
+      "velocity": 120
+    },
+    {
+      "channel": 0,
+      "note": 84,
+      "t": 153600,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-notes-coverage-v1",
+  "notes": "",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}

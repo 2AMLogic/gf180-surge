@@ -1,0 +1,90 @@
+{
+  "diagnostics": [
+    {
+      "interpretation": "unmodified varies + retrigger-forced bit-identical => variation attributable to free-running initial oscillator phase (wall-clock seeded engine RNG); any other outcome means additional variation sources exist and must be investigated before quantified budgets.",
+      "issue": "SXT-012",
+      "note": "retrigger-forced renders are a diagnostic adaptation only; committed fixtures always use unmodified patches.",
+      "preset": "Leads/Koala 2.fxp",
+      "preset_census_blob_sha1": "a4bdd34c211bcfbc3652389c0100e74e4263deb2",
+      "repeats": 3,
+      "retrigger_forced_diagnostic": {
+        "bit_identical": true,
+        "retrigger_forced": true,
+        "sha256": [
+          "7584173d695911c0bb0305911d1b5a01fc9d15124e1b0e7669f4fff4a1e399df",
+          "7584173d695911c0bb0305911d1b5a01fc9d15124e1b0e7669f4fff4a1e399df",
+          "7584173d695911c0bb0305911d1b5a01fc9d15124e1b0e7669f4fff4a1e399df"
+        ]
+      },
+      "schema_version": 1,
+      "unmodified": {
+        "bit_identical": false,
+        "first_divergence_sample": 25,
+        "max_abs_diff_render1_vs_2": 0.25660550594329834,
+        "peak_abs_float_render1": 0.15361376106739044,
+        "retrigger_forced": false,
+        "sha256": [
+          "eb14bf2a2026f5a5ec51b82bb47d52ed1c8be8915e3279a0a7c836f1f8b4cafb",
+          "ac3c86788bf5d44a4e15bd96d8b45b72911e8ff3c8b9c1caff1c3ff64b3ba672",
+          "6df9ab664bfd4da69665989581a8a424f3568dbaa94bddf6f37a98f7972a24d9"
+        ]
+      }
+    },
+    {
+      "interpretation": "unmodified varies + retrigger-forced bit-identical => variation attributable to free-running initial oscillator phase (wall-clock seeded engine RNG); any other outcome means additional variation sources exist and must be investigated before quantified budgets.",
+      "issue": "SXT-012",
+      "note": "retrigger-forced renders are a diagnostic adaptation only; committed fixtures always use unmodified patches.",
+      "preset": "Basses/Sub 4.fxp",
+      "preset_census_blob_sha1": "47d1db8a36d4ff57fa260b927a31f7fb199f755f",
+      "repeats": 3,
+      "retrigger_forced_diagnostic": {
+        "bit_identical": true,
+        "retrigger_forced": true,
+        "sha256": [
+          "d3543b6f527786a0691b0f84827aac2d4830303c9e9798361b583384e366963f",
+          "d3543b6f527786a0691b0f84827aac2d4830303c9e9798361b583384e366963f",
+          "d3543b6f527786a0691b0f84827aac2d4830303c9e9798361b583384e366963f"
+        ]
+      },
+      "schema_version": 1,
+      "unmodified": {
+        "bit_identical": true,
+        "retrigger_forced": false,
+        "sha256": [
+          "d3543b6f527786a0691b0f84827aac2d4830303c9e9798361b583384e366963f",
+          "d3543b6f527786a0691b0f84827aac2d4830303c9e9798361b583384e366963f",
+          "d3543b6f527786a0691b0f84827aac2d4830303c9e9798361b583384e366963f"
+        ]
+      }
+    },
+    {
+      "interpretation": "unmodified varies + retrigger-forced bit-identical => variation attributable to free-running initial oscillator phase (wall-clock seeded engine RNG); any other outcome means additional variation sources exist and must be investigated before quantified budgets.",
+      "issue": "SXT-012",
+      "note": "retrigger-forced renders are a diagnostic adaptation only; committed fixtures always use unmodified patches.",
+      "preset": "Basses/Behemoth.fxp",
+      "preset_census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+      "repeats": 3,
+      "retrigger_forced_diagnostic": {
+        "bit_identical": true,
+        "retrigger_forced": true,
+        "sha256": [
+          "00df86de81cef2490182c5017debfd11baf88958170f4c7570edcd6fb7c273ad",
+          "00df86de81cef2490182c5017debfd11baf88958170f4c7570edcd6fb7c273ad",
+          "00df86de81cef2490182c5017debfd11baf88958170f4c7570edcd6fb7c273ad"
+        ]
+      },
+      "schema_version": 1,
+      "unmodified": {
+        "bit_identical": true,
+        "retrigger_forced": false,
+        "sha256": [
+          "00df86de81cef2490182c5017debfd11baf88958170f4c7570edcd6fb7c273ad",
+          "00df86de81cef2490182c5017debfd11baf88958170f4c7570edcd6fb7c273ad",
+          "00df86de81cef2490182c5017debfd11baf88958170f4c7570edcd6fb7c273ad"
+        ]
+      }
+    }
+  ],
+  "issue": "SXT-012",
+  "schema_version": 1
+}

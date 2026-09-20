@@ -1,0 +1,127 @@
+{
+  "coverage": [
+    "polyphony:8"
+  ],
+  "description": "Declared fixture polyphony: eight simultaneous voices held for 1200 ms, then released together. Plan section 3 hypothesis is eight allocated scene voices; patches whose own polyphony limit is lower will silently voice fewer notes (recorded in metadata).",
+  "events": [
+    {
+      "channel": 0,
+      "note": 43,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 50,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 55,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 59,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 62,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 67,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 71,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 74,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 43,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 50,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 55,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 59,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 62,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 67,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 71,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 74,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-poly-8-v1",
+  "notes": "Fixture polyphony target is 8 simultaneous voices (plan section 3). Per-preset audible polyphony is bounded by the preset's own polyphony limit.",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}
