@@ -1,0 +1,90 @@
+{
+ "all_pass": true,
+ "controls": [
+  {
+   "control": "instance_limit_overflow_rejected",
+   "fixture_file": "/tmp/sxt-015-nc-fx5.jsonl",
+   "limit_4": {
+    "enabled_instances": 5,
+    "rejections": [
+     {
+      "code": "fx_instance_overflow",
+      "detail": {
+       "enabled_instances": 5,
+       "limit": 4,
+       "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ]
+      },
+      "note": "instance limit is distinct from supported-type counts (plan section 3); overflow is rejected, never squeezed"
+     }
+    ],
+    "status": "rejected"
+   },
+   "limit_8": {
+    "enabled_instances": 5,
+    "status": "fit"
+   },
+   "note": "same graph: rejected at limit 4, fits at limit 8 \u2014 the rejection is limit-driven and explicit",
+   "outcome": "PASS",
+   "targets": "graph exceeding declared instance limits must be REJECTED, not silently squeezed (issue #10 acceptance)"
+  },
+  {
+   "anomalies": [
+    {
+     "code": "input_analysis_failure",
+     "detail": {
+      "detail": "synthetic control",
+      "phase": "load",
+      "reason": "load_false"
+     }
+    }
+   ],
+   "control": "analysis_failure_fails_closed",
+   "costs_null": true,
+   "outcome": "PASS",
+   "status": "analysis_failure",
+   "targets": "an analysis_failure graph must fail closed (no default costs), never be accounted with guessed numbers"
+  },
+  {
+   "clock_hz_overridden": 1000000,
+   "closure": "OVERFLOW",
+   "control": "budget_overflow_explicit",
+   "note": "declared experiment: clock overridden to 1 MHz to force the overflow path; the same graph fits under the default placeholder clock only where the model says so",
+   "outcome": "PASS",
+   "rejections": [
+    {
+     "code": "budget_overflow",
+     "detail": {
+      "clock_hz": 1000000,
+      "cost_cycles_per_frame": 3275.0,
+      "dsp_budget_cycles_per_frame": 16.666667,
+      "reserve_fraction": 0.2
+     },
+     "note": "plan section 5 closure; cost profile is placeholder-v0 (no technology claim)"
+    }
+   ],
+   "targets": "complete-patch cost above budget(F, Fs, reserve) must be an explicit OVERFLOW rejection (issue #10 acceptance)"
+  },
+  {
+   "anomalies": [
+    {
+     "code": "unison_out_of_range",
+     "effective": 16,
+     "note": "clamped to MAX_UNISON (src/common/globals.h:64); raw value outside the engine-declared range",
+     "osc": 0,
+     "raw": 999,
+     "scene": 0
+    }
+   ],
+   "control": "unison_above_declared_max_flagged",
+   "outcome": "PASS",
+   "targets": "unison outside the engine-declared range must be an explicit clamped anomaly (engine constant MAX_UNISON), never silently trusted and never silently dropped"
+  }
+ ],
+ "issue": "SXT-015"
+}

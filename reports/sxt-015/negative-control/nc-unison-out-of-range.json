@@ -1,0 +1,15 @@
+{
+ "anomalies": [
+  {
+   "code": "unison_out_of_range",
+   "effective": 16,
+   "note": "clamped to MAX_UNISON (src/common/globals.h:64); raw value outside the engine-declared range",
+   "osc": 0,
+   "raw": 999,
+   "scene": 0
+  }
+ ],
+ "control": "unison_above_declared_max_flagged",
+ "outcome": "PASS",
+ "targets": "unison outside the engine-declared range must be an explicit clamped anomaly (engine constant MAX_UNISON), never silently trusted and never silently dropped"
+}

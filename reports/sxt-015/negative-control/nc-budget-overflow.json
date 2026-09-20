@@ -1,0 +1,20 @@
+{
+ "clock_hz_overridden": 1000000,
+ "closure": "OVERFLOW",
+ "control": "budget_overflow_explicit",
+ "note": "declared experiment: clock overridden to 1 MHz to force the overflow path; the same graph fits under the default placeholder clock only where the model says so",
+ "outcome": "PASS",
+ "rejections": [
+  {
+   "code": "budget_overflow",
+   "detail": {
+    "clock_hz": 1000000,
+    "cost_cycles_per_frame": 3275.0,
+    "dsp_budget_cycles_per_frame": 16.666667,
+    "reserve_fraction": 0.2
+   },
+   "note": "plan section 5 closure; cost profile is placeholder-v0 (no technology claim)"
+  }
+ ],
+ "targets": "complete-patch cost above budget(F, Fs, reserve) must be an explicit OVERFLOW rejection (issue #10 acceptance)"
+}

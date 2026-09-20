@@ -1,0 +1,32 @@
+{
+ "control": "instance_limit_overflow_rejected",
+ "fixture_file": "/tmp/sxt-015-nc-fx5.jsonl",
+ "limit_4": {
+  "enabled_instances": 5,
+  "rejections": [
+   {
+    "code": "fx_instance_overflow",
+    "detail": {
+     "enabled_instances": 5,
+     "limit": 4,
+     "slots": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ]
+    },
+    "note": "instance limit is distinct from supported-type counts (plan section 3); overflow is rejected, never squeezed"
+   }
+  ],
+  "status": "rejected"
+ },
+ "limit_8": {
+  "enabled_instances": 5,
+  "status": "fit"
+ },
+ "note": "same graph: rejected at limit 4, fits at limit 8 \u2014 the rejection is limit-driven and explicit",
+ "outcome": "PASS",
+ "targets": "graph exceeding declared instance limits must be REJECTED, not silently squeezed (issue #10 acceptance)"
+}

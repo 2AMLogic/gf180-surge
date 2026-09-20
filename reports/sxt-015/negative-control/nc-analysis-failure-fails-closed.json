@@ -1,0 +1,17 @@
+{
+ "anomalies": [
+  {
+   "code": "input_analysis_failure",
+   "detail": {
+    "detail": "synthetic control",
+    "phase": "load",
+    "reason": "load_false"
+   }
+  }
+ ],
+ "control": "analysis_failure_fails_closed",
+ "costs_null": true,
+ "outcome": "PASS",
+ "status": "analysis_failure",
+ "targets": "an analysis_failure graph must fail closed (no default costs), never be accounted with guessed numbers"
+}
