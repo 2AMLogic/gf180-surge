@@ -1,0 +1,176 @@
+{
+ "claim_scope": "arithmetic on candidate clocks under named assumptions (A-CLK); no gf180mcu synthesis, place-and-route, signoff, or hardware claim",
+ "closure_at_clocks": {
+  "192000000": {
+   "budget_cycles_per_frame": 3200.0,
+   "clock_hz": 192000000,
+   "closure": "within_budget",
+   "gross_cycles_per_frame": 4000.0,
+   "used_cycles_per_frame": {
+    "contention": 990,
+    "control": 72,
+    "events": 704,
+    "stub_slot": 2,
+    "total": 1776,
+    "transfer": 8
+   },
+   "utilization_fraction": 0.444,
+   "worst_events_per_block": 8
+  },
+  "48000000": {
+   "budget_cycles_per_frame": 800.0,
+   "clock_hz": 48000000,
+   "closure": "OVERFLOW",
+   "gross_cycles_per_frame": 1000.0,
+   "rejection": {
+    "code": "schedule_budget_overflow",
+    "detail": {
+     "budget_cycles_per_frame": 800.0,
+     "clock_hz": 48000000,
+     "used_cycles_per_frame": 1776,
+     "worst_events_per_block": 8
+    },
+    "note": "plan section 5 closure: explicit rejection, never silent (stop/escalate to SXT-017 as a profile violation if the stub cannot close)"
+   },
+   "used_cycles_per_frame": {
+    "contention": 990,
+    "control": 72,
+    "events": 704,
+    "stub_slot": 2,
+    "total": 1776,
+    "transfer": 8
+   },
+   "utilization_fraction": 1.776,
+   "worst_events_per_block": 8
+  },
+  "480000000": {
+   "budget_cycles_per_frame": 8000.0,
+   "clock_hz": 480000000,
+   "closure": "within_budget",
+   "gross_cycles_per_frame": 10000.0,
+   "used_cycles_per_frame": {
+    "contention": 990,
+    "control": 72,
+    "events": 704,
+    "stub_slot": 2,
+    "total": 1776,
+    "transfer": 8
+   },
+   "utilization_fraction": 0.1776,
+   "worst_events_per_block": 8
+  },
+  "96000000": {
+   "budget_cycles_per_frame": 1600.0,
+   "clock_hz": 96000000,
+   "closure": "OVERFLOW",
+   "gross_cycles_per_frame": 2000.0,
+   "rejection": {
+    "code": "schedule_budget_overflow",
+    "detail": {
+     "budget_cycles_per_frame": 1600.0,
+     "clock_hz": 96000000,
+     "used_cycles_per_frame": 1776,
+     "worst_events_per_block": 8
+    },
+    "note": "plan section 5 closure: explicit rejection, never silent (stop/escalate to SXT-017 as a profile violation if the stub cannot close)"
+   },
+   "used_cycles_per_frame": {
+    "contention": 990,
+    "control": 72,
+    "events": 704,
+    "stub_slot": 2,
+    "total": 1776,
+    "transfer": 8
+   },
+   "utilization_fraction": 0.888,
+   "worst_events_per_block": 8
+  }
+ },
+ "constants": {
+  "contention_cycles_per_frame": 990,
+  "control_cycles_per_frame": 72,
+  "cycles_per_event": 88,
+  "ev_reserve_per_block": 8,
+  "reserve_fraction": 0.2,
+  "sample_rate_hz": 48000,
+  "source": "reports/sxt-016/probes/probe_scheduler__event_queue_and_control__a24__m32__onchip.json + plan section 5; stub slot declared in SXT-021",
+  "stub_cycles_per_sample": 2,
+  "transfer_cycles_per_frame": 8,
+  "units": "cycles per 48 kHz sample period (F/Fs); block work charged conservatively at the probe row value"
+ },
+ "headline": {
+  "budget_cycles_per_sample_period_at_192mhz": 3200.0,
+  "closure_192mhz": "within_budget (utilization 0.444 of gross)",
+  "closure_480mhz": "within_budget",
+  "closure_48mhz": "OVERFLOW (explicit rejection: schedule_budget_overflow)",
+  "closure_96mhz": "OVERFLOW (explicit rejection: schedule_budget_overflow)",
+  "stop_escalate": "not triggered: the stub closes at 192/480 MHz; a real DSP slot (SXT-022+) must re-close",
+  "worst_case_used_cycles_per_sample_period": 1776
+ },
+ "issue": "SXT-021 (#14)",
+ "note": "stub slot cost (2 cyc/sample period) is a declared named placeholder; SXT-022+ replaces it with the real DSP slot and must re-run this closure. Reconciliation with the SXT-016 probe closure rows: same OVERFLOW/within_budget verdicts on all four candidate clocks (method note in model/control/accounting.py).",
+ "per_fixture": {
+  "ctl-burst-overload-v1": {
+   "declared_reserve_closure_192mhz": {
+    "budget": 3200.0,
+    "closure": "within_budget",
+    "used": 1776
+   },
+   "render_overload_status": {
+    "drops_total": 0,
+    "max_latency_samples": 32,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 2,
+    "underruns": 0,
+    "worst_case_schedule_closes_for_this_render": false
+   }
+  },
+  "ctl-notes-steal-v1": {
+   "declared_reserve_closure_192mhz": {
+    "budget": 3200.0,
+    "closure": "within_budget",
+    "used": 1776
+   },
+   "render_overload_status": {
+    "drops_total": 0,
+    "max_latency_samples": 24,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 0,
+    "underruns": 0,
+    "worst_case_schedule_closes_for_this_render": true
+   }
+  },
+  "ctl-patch-change-v1": {
+   "declared_reserve_closure_192mhz": {
+    "budget": 3200.0,
+    "closure": "within_budget",
+    "used": 1776
+   },
+   "render_overload_status": {
+    "drops_total": 0,
+    "max_latency_samples": 31,
+    "queue_overflow_blocks": 0,
+    "reserve_exceeded_blocks": 0,
+    "underruns": 0,
+    "worst_case_schedule_closes_for_this_render": true
+   }
+  },
+  "ctl-queue-overflow-v1": {
+   "declared_reserve_closure_192mhz": {
+    "budget": 3200.0,
+    "closure": "within_budget",
+    "used": 1776
+   },
+   "render_overload_status": {
+    "drops_total": 14,
+    "max_latency_samples": 32,
+    "queue_overflow_blocks": 1,
+    "reserve_exceeded_blocks": 2,
+    "underruns": 0,
+    "worst_case_schedule_closes_for_this_render": false
+   }
+  }
+ },
+ "status": "ESTIMATE (candidate-clock arithmetic under named assumptions)",
+ "worst_case_events_per_block": 8
+}
