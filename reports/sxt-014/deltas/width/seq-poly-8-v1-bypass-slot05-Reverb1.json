@@ -1,0 +1,67 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/width/seq-poly-8-v1-original.json",
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-original.wav",
+      "sha256": "2c97870a634379e7363a39a75f5f8a98e8c6a6be0a0572cc07ba940254a114d3"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": -1.492,
+      "1000-6000Hz": -0.159,
+      "150-1000Hz": 0.362,
+      "6000-24000Hz": -0.532
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.986523,
+      "max_abs_delta_db": 6.727,
+      "mean_abs_delta_db": 1.047
+    },
+    "max_abs_sample_diff": 0.676116943,
+    "mean_abs_sample_diff": 0.047539085,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": -0.359,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Basses/Width.fxp",
+    "slug": "width"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "path": "fixtures/sequences/seq-poly-8-v1.json",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "bypass-slot",
+    "label": "ablation variant: slot 5 (Reverb 1) bypassed; original-preset family",
+    "mutated_slots": [
+      5
+    ],
+    "sidecar": "reports/sxt-014/ablations/width/seq-poly-8-v1-bypass-slot05-Reverb1.json",
+    "slot": {
+      "index": 5,
+      "role": "send2",
+      "type_id": 2,
+      "type_name": "Reverb 1"
+    },
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-bypass-slot05-Reverb1.wav",
+      "sha256": "e519884243040201f883ac09925742f8fdd624f97930d9469daf8c255700cda5"
+    }
+  }
+}

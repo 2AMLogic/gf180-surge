@@ -1,0 +1,76 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-original.json",
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-original.wav",
+      "sha256": "8ad84c1d333567a1dc12c9b0af7fd12d3037b58de4a50eaa5854a7d6c68dd268"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": -2.09,
+      "1000-6000Hz": -0.064,
+      "150-1000Hz": 1.429,
+      "6000-24000Hz": -0.092
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.997157,
+      "max_abs_delta_db": 67.46,
+      "mean_abs_delta_db": 1.008
+    },
+    "max_abs_sample_diff": 0.275604248,
+    "mean_abs_sample_diff": 0.028184845,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": 0.465,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Leads/Koala 2.fxp",
+    "slug": "koala2"
+  },
+  "repeatability_note": {
+    "class": "free-phase",
+    "expect_bit_identity": false,
+    "reference": "reports/sxt-012/repeatability.json",
+    "wet_repeat_relative_max_diff": [
+      1.72701,
+      1.583799
+    ]
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "offslot-ctrl",
+    "label": "negative control: already-Off slot 0 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+    "mutated_slots": [
+      0
+    ],
+    "sidecar": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-offslot-ctrl-slot00.json",
+    "slot": {
+      "index": 0,
+      "role": "ains1",
+      "type_id": 0,
+      "type_name": "Off"
+    },
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-offslot-ctrl-slot00.wav",
+      "sha256": "a5a67057358f42e42d696defd94a95cf62b43c038ba4bee412135e3f21a65b2b"
+    }
+  }
+}

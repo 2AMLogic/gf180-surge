@@ -1,0 +1,58 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-original.json",
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-original.wav",
+      "sha256": "bd9553387842197f29db1a4e1ff23caaf97a3fbf668f9767664843b1e4ee2a51"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "bit_identical": true,
+    "near_zero_delta_candidate": false,
+    "verdict": "BIT-IDENTICAL"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "repeatability_note": {
+    "class": "bit-identical",
+    "expect_bit_identity": true,
+    "reference": "reports/sxt-012/repeatability.json",
+    "wet_repeat_relative_max_diff": null
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "offslot-ctrl",
+    "label": "negative control: already-Off slot 12 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+    "mutated_slots": [
+      12
+    ],
+    "sidecar": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-offslot-ctrl-slot12.json",
+    "slot": {
+      "index": 12,
+      "role": "send3",
+      "type_id": 0,
+      "type_name": "Off"
+    },
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-offslot-ctrl-slot12.wav",
+      "sha256": "bd9553387842197f29db1a4e1ff23caaf97a3fbf668f9767664843b1e4ee2a51"
+    }
+  }
+}

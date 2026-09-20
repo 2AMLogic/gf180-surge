@@ -1,0 +1,1296 @@
+{
+  "caveat": "NUMERIC DELTAS ARE DIAGNOSTIC ONLY - LABELS REQUIRE LISTENING (BLOCKED-ON-HUMAN). Near-zero-delta slots are flagged as candidates and left unresolved.",
+  "claim_scope": "reference-vs-reference ablation deltas of the pinned engine under the SXT-012 render policies. Diagnostic only: no essential/optional/unresolved labels, no preset-support claim, no fidelity claim, no musical-quality claim.",
+  "issue": "SXT-014",
+  "rows": [
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.884,
+        "1000-6000Hz": -0.966,
+        "150-1000Hz": -6.729,
+        "6000-24000Hz": -0.384
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/behemoth/seq-notes-coverage-v1-bypass-slot04-Reverb1.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Reverb 1) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.434967041,
+      "max_block_rms_delta_db": 101.836,
+      "mean_block_rms_delta_db": 34.196,
+      "near_zero_delta_candidate": false,
+      "preset": "behemoth",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -23.229,
+      "variant": "seq-notes-coverage-v1-bypass-slot04-Reverb1",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.884,
+        "1000-6000Hz": -0.966,
+        "150-1000Hz": -6.729,
+        "6000-24000Hz": -0.384
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/behemoth/seq-notes-coverage-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.434967041,
+      "max_block_rms_delta_db": 101.836,
+      "mean_block_rms_delta_db": 34.196,
+      "near_zero_delta_candidate": false,
+      "preset": "behemoth",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": -23.229,
+      "variant": "seq-notes-coverage-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": null,
+      "bit_identical": true,
+      "delta_json": "reports/sxt-014/deltas/behemoth/seq-notes-coverage-v1-offslot-ctrl-slot00.json",
+      "kind": "offslot-ctrl",
+      "label_tool_side": "negative control: already-Off slot 0 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+      "max_abs_sample_diff": null,
+      "max_block_rms_delta_db": null,
+      "mean_block_rms_delta_db": null,
+      "near_zero_delta_candidate": false,
+      "preset": "behemoth",
+      "repeatability_note": {
+        "class": "bit-identical",
+        "expect_bit_identity": true,
+        "reference": "reports/sxt-012/repeatability.json",
+        "wet_repeat_relative_max_diff": null
+      },
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 0,
+        "type_name": "Off"
+      },
+      "tail_rms_delta_db": null,
+      "variant": "seq-notes-coverage-v1-offslot-ctrl-slot00",
+      "verdict": "BIT-IDENTICAL"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": null,
+      "bit_identical": true,
+      "delta_json": "reports/sxt-014/deltas/behemoth/seq-notes-coverage-v1-offslot-ctrl-slot12.json",
+      "kind": "offslot-ctrl",
+      "label_tool_side": "negative control: already-Off slot 12 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+      "max_abs_sample_diff": null,
+      "max_block_rms_delta_db": null,
+      "mean_block_rms_delta_db": null,
+      "near_zero_delta_candidate": false,
+      "preset": "behemoth",
+      "repeatability_note": {
+        "class": "bit-identical",
+        "expect_bit_identity": true,
+        "reference": "reports/sxt-012/repeatability.json",
+        "wet_repeat_relative_max_diff": null
+      },
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 12,
+        "role": "send3",
+        "type_id": 0,
+        "type_name": "Off"
+      },
+      "tail_rms_delta_db": null,
+      "variant": "seq-notes-coverage-v1-offslot-ctrl-slot12",
+      "verdict": "BIT-IDENTICAL"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -5.661,
+        "1000-6000Hz": -2.976,
+        "150-1000Hz": -5.411,
+        "6000-24000Hz": -2.413
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/behemoth/seq-poly-8-v1-bypass-slot04-Reverb1.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Reverb 1) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.105621338,
+      "max_block_rms_delta_db": 100.226,
+      "mean_block_rms_delta_db": 47.868,
+      "near_zero_delta_candidate": false,
+      "preset": "behemoth",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -27.369,
+      "variant": "seq-poly-8-v1-bypass-slot04-Reverb1",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -5.661,
+        "1000-6000Hz": -2.976,
+        "150-1000Hz": -5.411,
+        "6000-24000Hz": -2.413
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/behemoth/seq-poly-8-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.105621338,
+      "max_block_rms_delta_db": 100.226,
+      "mean_block_rms_delta_db": 47.868,
+      "near_zero_delta_candidate": false,
+      "preset": "behemoth",
+      "sequence": "seq-poly-8-v1",
+      "slot": null,
+      "tail_rms_delta_db": -27.369,
+      "variant": "seq-poly-8-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": true,
+      "band_delta_db": {
+        "0-150Hz": 0.663,
+        "1000-6000Hz": 0.836,
+        "150-1000Hz": -0.027,
+        "6000-24000Hz": 0.933
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-subst-slot04-Reverb1-to-reverb2__ADAPTED.json",
+      "kind": "substituted",
+      "label_tool_side": "ADAPTED: slot 4 (Reverb 1) substituted with reverb2; generic substitution DISQUALIFIES original-preset support; excluded from coverage",
+      "max_abs_sample_diff": 0.386199951,
+      "max_block_rms_delta_db": 9.842,
+      "mean_block_rms_delta_db": 1.372,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -1.932,
+      "variant": "seq-notes-coverage-v1-subst-slot04-Reverb1-to-reverb2__ADAPTED",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.752,
+        "1000-6000Hz": -6.823,
+        "150-1000Hz": 1.605,
+        "6000-24000Hz": -1.218
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-bypass-slot00-EQ.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.342895508,
+      "max_block_rms_delta_db": 2.882,
+      "mean_block_rms_delta_db": 0.846,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 6,
+        "type_name": "EQ"
+      },
+      "tail_rms_delta_db": 1.031,
+      "variant": "seq-notes-coverage-v1-bypass-slot00-EQ",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 0.127,
+        "1000-6000Hz": 0.754,
+        "150-1000Hz": -0.367,
+        "6000-24000Hz": 0.773
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-bypass-slot04-Reverb1.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Reverb 1) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.448760986,
+      "max_block_rms_delta_db": 9.85,
+      "mean_block_rms_delta_db": 1.313,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -1.626,
+      "variant": "seq-notes-coverage-v1-bypass-slot04-Reverb1",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 0.431,
+        "1000-6000Hz": 0.824,
+        "150-1000Hz": -0.325,
+        "6000-24000Hz": 0.842
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-bypass-slot05-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 5 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.370025635,
+      "max_block_rms_delta_db": 11.778,
+      "mean_block_rms_delta_db": 1.147,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 5,
+        "role": "send2",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": -0.214,
+      "variant": "seq-notes-coverage-v1-bypass-slot05-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 3.669,
+        "1000-6000Hz": 5.68,
+        "150-1000Hz": 4.818,
+        "6000-24000Hz": 8.55
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-bypass-slot06-Conditioner.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 6 (Conditioner) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.791931152,
+      "max_block_rms_delta_db": 5.159,
+      "mean_block_rms_delta_db": 2.245,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 6,
+        "role": "global1",
+        "type_id": 8,
+        "type_name": "Conditioner"
+      },
+      "tail_rms_delta_db": 2.257,
+      "variant": "seq-notes-coverage-v1-bypass-slot06-Conditioner",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 2.899,
+        "1000-6000Hz": -1.361,
+        "150-1000Hz": 6.926,
+        "6000-24000Hz": 7.735
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.802185059,
+      "max_block_rms_delta_db": 101.489,
+      "mean_block_rms_delta_db": 36.194,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": -95.055,
+      "variant": "seq-notes-coverage-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 0.316,
+        "1000-6000Hz": -7.842,
+        "150-1000Hz": 0.517,
+        "6000-24000Hz": -0.246
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-poly-8-v1-bypass-slot00-EQ.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.219177246,
+      "max_block_rms_delta_db": 2.408,
+      "mean_block_rms_delta_db": 0.477,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 6,
+        "type_name": "EQ"
+      },
+      "tail_rms_delta_db": 0.541,
+      "variant": "seq-poly-8-v1-bypass-slot00-EQ",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.931,
+        "1000-6000Hz": -0.247,
+        "150-1000Hz": -1.723,
+        "6000-24000Hz": 0.375
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-poly-8-v1-bypass-slot04-Reverb1.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Reverb 1) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.250579834,
+      "max_block_rms_delta_db": 9.198,
+      "mean_block_rms_delta_db": 2.729,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -3.447,
+      "variant": "seq-poly-8-v1-bypass-slot04-Reverb1",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.02,
+        "1000-6000Hz": -0.114,
+        "150-1000Hz": -0.096,
+        "6000-24000Hz": 0.146
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-poly-8-v1-bypass-slot05-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 5 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.307250977,
+      "max_block_rms_delta_db": 1.932,
+      "mean_block_rms_delta_db": 0.396,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 5,
+        "role": "send2",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": 0.287,
+      "variant": "seq-poly-8-v1-bypass-slot05-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 2.939,
+        "1000-6000Hz": 5.129,
+        "150-1000Hz": 3.322,
+        "6000-24000Hz": 7.745
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-poly-8-v1-bypass-slot06-Conditioner.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 6 (Conditioner) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.368896484,
+      "max_block_rms_delta_db": 7.245,
+      "mean_block_rms_delta_db": 1.835,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 6,
+        "role": "global1",
+        "type_id": 8,
+        "type_name": "Conditioner"
+      },
+      "tail_rms_delta_db": 1.753,
+      "variant": "seq-poly-8-v1-bypass-slot06-Conditioner",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 2.316,
+        "1000-6000Hz": -3.28,
+        "150-1000Hz": 3.016,
+        "6000-24000Hz": 6.152
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/doomsday/seq-poly-8-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.48260498,
+      "max_block_rms_delta_db": 103.374,
+      "mean_block_rms_delta_db": 54.533,
+      "near_zero_delta_candidate": false,
+      "preset": "doomsday",
+      "sequence": "seq-poly-8-v1",
+      "slot": null,
+      "tail_rms_delta_db": -95.036,
+      "variant": "seq-poly-8-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -8.591,
+        "1000-6000Hz": 1.755,
+        "150-1000Hz": 4.377,
+        "6000-24000Hz": -8.26
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmcombo/seq-notes-coverage-v1-bypass-slot00-EQ.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.638244629,
+      "max_block_rms_delta_db": 76.741,
+      "mean_block_rms_delta_db": 2.273,
+      "near_zero_delta_candidate": false,
+      "preset": "fmcombo",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 6,
+        "type_name": "EQ"
+      },
+      "tail_rms_delta_db": 0.0,
+      "variant": "seq-notes-coverage-v1-bypass-slot00-EQ",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 4.778,
+        "1000-6000Hz": 0.757,
+        "150-1000Hz": 0.942,
+        "6000-24000Hz": 6.655
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmcombo/seq-notes-coverage-v1-bypass-slot01-Chorus.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 1 (Chorus) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.688354492,
+      "max_block_rms_delta_db": 74.846,
+      "mean_block_rms_delta_db": 2.083,
+      "near_zero_delta_candidate": false,
+      "preset": "fmcombo",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 1,
+        "role": "ains2",
+        "type_id": 9,
+        "type_name": "Chorus"
+      },
+      "tail_rms_delta_db": 0.0,
+      "variant": "seq-notes-coverage-v1-bypass-slot01-Chorus",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -4.661,
+        "1000-6000Hz": 2.26,
+        "150-1000Hz": 4.963,
+        "6000-24000Hz": -1.607
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmcombo/seq-notes-coverage-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.715484619,
+      "max_block_rms_delta_db": 73.985,
+      "mean_block_rms_delta_db": 1.377,
+      "near_zero_delta_candidate": false,
+      "preset": "fmcombo",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": 0.0,
+      "variant": "seq-notes-coverage-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -9.064,
+        "1000-6000Hz": -0.331,
+        "150-1000Hz": 8.601,
+        "6000-24000Hz": -8.013
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmcombo/seq-poly-8-v1-bypass-slot00-EQ.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.415740967,
+      "max_block_rms_delta_db": 77.856,
+      "mean_block_rms_delta_db": 2.599,
+      "near_zero_delta_candidate": false,
+      "preset": "fmcombo",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 6,
+        "type_name": "EQ"
+      },
+      "tail_rms_delta_db": 0.0,
+      "variant": "seq-poly-8-v1-bypass-slot00-EQ",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 5.943,
+        "1000-6000Hz": 1.942,
+        "150-1000Hz": -0.48,
+        "6000-24000Hz": 6.634
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmcombo/seq-poly-8-v1-bypass-slot01-Chorus.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 1 (Chorus) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.250701904,
+      "max_block_rms_delta_db": 74.846,
+      "mean_block_rms_delta_db": 1.288,
+      "near_zero_delta_candidate": false,
+      "preset": "fmcombo",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 1,
+        "role": "ains2",
+        "type_id": 9,
+        "type_name": "Chorus"
+      },
+      "tail_rms_delta_db": 0.0,
+      "variant": "seq-poly-8-v1-bypass-slot01-Chorus",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -2.815,
+        "1000-6000Hz": 1.462,
+        "150-1000Hz": 8.115,
+        "6000-24000Hz": -1.379
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmcombo/seq-poly-8-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.428497314,
+      "max_block_rms_delta_db": 72.091,
+      "mean_block_rms_delta_db": 1.678,
+      "near_zero_delta_candidate": false,
+      "preset": "fmcombo",
+      "sequence": "seq-poly-8-v1",
+      "slot": null,
+      "tail_rms_delta_db": 0.0,
+      "variant": "seq-poly-8-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -5.464,
+        "1000-6000Hz": -0.927,
+        "150-1000Hz": -0.594,
+        "6000-24000Hz": -2.669
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-notes-coverage-v1-bypass-slot00-Flanger.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (Flanger) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.262023926,
+      "max_block_rms_delta_db": 8.871,
+      "mean_block_rms_delta_db": 2.307,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 12,
+        "type_name": "Flanger"
+      },
+      "tail_rms_delta_db": -1.508,
+      "variant": "seq-notes-coverage-v1-bypass-slot00-Flanger",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 0.68,
+        "1000-6000Hz": 1.085,
+        "150-1000Hz": 1.58,
+        "6000-24000Hz": -1.546
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.339263916,
+      "max_block_rms_delta_db": 6.166,
+      "mean_block_rms_delta_db": 1.646,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": -0.132,
+      "variant": "seq-notes-coverage-v1-bypass-slot04-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -9.501,
+        "1000-6000Hz": -0.841,
+        "150-1000Hz": -1.897,
+        "6000-24000Hz": 0.193
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-notes-coverage-v1-bypass-slot05-Airwindows.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 5 (Airwindows / Galactic) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.406463623,
+      "max_block_rms_delta_db": 100.08,
+      "mean_block_rms_delta_db": 9.796,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "airwindows": {
+          "algorithm_id": 49,
+          "algorithm_name": "Galactic"
+        },
+        "index": 5,
+        "role": "send2",
+        "type_id": 14,
+        "type_name": "Airwindows"
+      },
+      "tail_rms_delta_db": -2.78,
+      "variant": "seq-notes-coverage-v1-bypass-slot05-Airwindows",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -1.831,
+        "1000-6000Hz": -3.122,
+        "150-1000Hz": -5.463,
+        "6000-24000Hz": -3.447
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-notes-coverage-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.346069336,
+      "max_block_rms_delta_db": 109.355,
+      "mean_block_rms_delta_db": 44.983,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": -102.889,
+      "variant": "seq-notes-coverage-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 0.291,
+        "1000-6000Hz": -3.497,
+        "150-1000Hz": -0.125,
+        "6000-24000Hz": -1.576
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-poly-8-v1-bypass-slot00-Flanger.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (Flanger) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.972747803,
+      "max_block_rms_delta_db": 3.208,
+      "mean_block_rms_delta_db": 0.951,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 12,
+        "type_name": "Flanger"
+      },
+      "tail_rms_delta_db": -0.334,
+      "variant": "seq-poly-8-v1-bypass-slot00-Flanger",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 5.097,
+        "1000-6000Hz": -1.281,
+        "150-1000Hz": 1.65,
+        "6000-24000Hz": -0.634
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-poly-8-v1-bypass-slot04-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.931091309,
+      "max_block_rms_delta_db": 4.135,
+      "mean_block_rms_delta_db": 1.265,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": 1.683,
+      "variant": "seq-poly-8-v1-bypass-slot04-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -7.104,
+        "1000-6000Hz": -1.398,
+        "150-1000Hz": -2.928,
+        "6000-24000Hz": 0.946
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-poly-8-v1-bypass-slot05-Airwindows.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 5 (Airwindows / Galactic) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.750823975,
+      "max_block_rms_delta_db": 30.85,
+      "mean_block_rms_delta_db": 10.093,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "airwindows": {
+          "algorithm_id": 49,
+          "algorithm_name": "Galactic"
+        },
+        "index": 5,
+        "role": "send2",
+        "type_id": 14,
+        "type_name": "Airwindows"
+      },
+      "tail_rms_delta_db": -7.402,
+      "variant": "seq-poly-8-v1-bypass-slot05-Airwindows",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -7.957,
+        "1000-6000Hz": -6.269,
+        "150-1000Hz": -4.462,
+        "6000-24000Hz": -1.809
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fmod09/seq-poly-8-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.831756592,
+      "max_block_rms_delta_db": 112.798,
+      "mean_block_rms_delta_db": 68.255,
+      "near_zero_delta_candidate": false,
+      "preset": "fmod09",
+      "sequence": "seq-poly-8-v1",
+      "slot": null,
+      "tail_rms_delta_db": -107.853,
+      "variant": "seq-poly-8-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -9.257,
+        "1000-6000Hz": 1.074,
+        "150-1000Hz": 0.386,
+        "6000-24000Hz": -4.323
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/fuji/seq-notes-coverage-v1-permuted-swap00-with04.json",
+      "kind": "permuted",
+      "label_tool_side": "negative control: same-type slots 0/4 (Delay) exchanged -- wrong arrangement; comparator must flag",
+      "max_abs_sample_diff": 0.763641357,
+      "max_block_rms_delta_db": 111.915,
+      "mean_block_rms_delta_db": 18.481,
+      "near_zero_delta_candidate": false,
+      "preset": "fuji",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": 12.139,
+      "variant": "seq-notes-coverage-v1-permuted-swap00-with04",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -2.611,
+        "1000-6000Hz": -0.304,
+        "150-1000Hz": 1.625,
+        "6000-24000Hz": 0.204
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/koala2/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.279724121,
+      "max_block_rms_delta_db": 102.253,
+      "mean_block_rms_delta_db": 25.509,
+      "near_zero_delta_candidate": false,
+      "preset": "koala2",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": -85.54,
+      "variant": "seq-notes-coverage-v1-bypass-slot04-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -4.805,
+        "1000-6000Hz": -0.01,
+        "150-1000Hz": 1.874,
+        "6000-24000Hz": 0.354
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/koala2/seq-notes-coverage-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.279541016,
+      "max_block_rms_delta_db": 102.253,
+      "mean_block_rms_delta_db": 22.872,
+      "near_zero_delta_candidate": false,
+      "preset": "koala2",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": -85.54,
+      "variant": "seq-notes-coverage-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -2.09,
+        "1000-6000Hz": -0.064,
+        "150-1000Hz": 1.429,
+        "6000-24000Hz": -0.092
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/koala2/seq-notes-coverage-v1-offslot-ctrl-slot00.json",
+      "kind": "offslot-ctrl",
+      "label_tool_side": "negative control: already-Off slot 0 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+      "max_abs_sample_diff": 0.275604248,
+      "max_block_rms_delta_db": 67.46,
+      "mean_block_rms_delta_db": 1.008,
+      "near_zero_delta_candidate": false,
+      "preset": "koala2",
+      "repeatability_note": {
+        "class": "free-phase",
+        "expect_bit_identity": false,
+        "reference": "reports/sxt-012/repeatability.json",
+        "wet_repeat_relative_max_diff": [
+          1.72701,
+          1.583799
+        ]
+      },
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 0,
+        "type_name": "Off"
+      },
+      "tail_rms_delta_db": 0.465,
+      "variant": "seq-notes-coverage-v1-offslot-ctrl-slot00",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -4.467,
+        "1000-6000Hz": -0.387,
+        "150-1000Hz": -0.372,
+        "6000-24000Hz": 0.12
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/koala2/seq-poly-8-v1-bypass-slot04-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.25567627,
+      "max_block_rms_delta_db": 103.259,
+      "mean_block_rms_delta_db": 30.673,
+      "near_zero_delta_candidate": false,
+      "preset": "koala2",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": -85.049,
+      "variant": "seq-poly-8-v1-bypass-slot04-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -2.383,
+        "1000-6000Hz": -1.657,
+        "150-1000Hz": -0.025,
+        "6000-24000Hz": -0.544
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/koala2/seq-poly-8-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 0.254943848,
+      "max_block_rms_delta_db": 103.259,
+      "mean_block_rms_delta_db": 30.889,
+      "near_zero_delta_candidate": false,
+      "preset": "koala2",
+      "sequence": "seq-poly-8-v1",
+      "slot": null,
+      "tail_rms_delta_db": -85.049,
+      "variant": "seq-poly-8-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": null,
+      "bit_identical": true,
+      "delta_json": "reports/sxt-014/deltas/sub4/seq-notes-coverage-v1-offslot-ctrl-slot00.json",
+      "kind": "offslot-ctrl",
+      "label_tool_side": "negative control: already-Off slot 0 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+      "max_abs_sample_diff": null,
+      "max_block_rms_delta_db": null,
+      "mean_block_rms_delta_db": null,
+      "near_zero_delta_candidate": false,
+      "preset": "sub4",
+      "repeatability_note": {
+        "class": "bit-identical",
+        "expect_bit_identity": true,
+        "reference": "reports/sxt-012/repeatability.json",
+        "wet_repeat_relative_max_diff": null
+      },
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 0,
+        "type_name": "Off"
+      },
+      "tail_rms_delta_db": null,
+      "variant": "seq-notes-coverage-v1-offslot-ctrl-slot00",
+      "verdict": "BIT-IDENTICAL"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": null,
+      "bit_identical": true,
+      "delta_json": "reports/sxt-014/deltas/sub4/seq-notes-coverage-v1-offslot-ctrl-slot12.json",
+      "kind": "offslot-ctrl",
+      "label_tool_side": "negative control: already-Off slot 12 bypassed; expected bit-identical to the original render in the bit-identical repeatability class",
+      "max_abs_sample_diff": null,
+      "max_block_rms_delta_db": null,
+      "mean_block_rms_delta_db": null,
+      "near_zero_delta_candidate": false,
+      "preset": "sub4",
+      "repeatability_note": {
+        "class": "bit-identical",
+        "expect_bit_identity": true,
+        "reference": "reports/sxt-012/repeatability.json",
+        "wet_repeat_relative_max_diff": null
+      },
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 12,
+        "role": "send3",
+        "type_id": 0,
+        "type_name": "Off"
+      },
+      "tail_rms_delta_db": null,
+      "variant": "seq-notes-coverage-v1-offslot-ctrl-slot12",
+      "verdict": "BIT-IDENTICAL"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 5.621,
+        "1000-6000Hz": 5.622,
+        "150-1000Hz": 7.586,
+        "6000-24000Hz": 4.237
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-notes-coverage-v1-bypass-slot00-EQ.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+      "max_abs_sample_diff": 1.636016846,
+      "max_block_rms_delta_db": 8.888,
+      "mean_block_rms_delta_db": 3.596,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 6,
+        "type_name": "EQ"
+      },
+      "tail_rms_delta_db": 3.543,
+      "variant": "seq-notes-coverage-v1-bypass-slot00-EQ",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.021,
+        "1000-6000Hz": 0.461,
+        "150-1000Hz": -0.597,
+        "6000-24000Hz": -0.561
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 1.123016357,
+      "max_block_rms_delta_db": 14.959,
+      "mean_block_rms_delta_db": 2.61,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": -3.158,
+      "variant": "seq-notes-coverage-v1-bypass-slot04-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -0.904,
+        "1000-6000Hz": 0.228,
+        "150-1000Hz": -0.275,
+        "6000-24000Hz": 0.284
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-notes-coverage-v1-bypass-slot05-Reverb1.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 5 (Reverb 1) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.971099854,
+      "max_block_rms_delta_db": 97.438,
+      "mean_block_rms_delta_db": 7.234,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": {
+        "index": 5,
+        "role": "send2",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -1.227,
+      "variant": "seq-notes-coverage-v1-bypass-slot05-Reverb1",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 5.377,
+        "1000-6000Hz": 4.382,
+        "150-1000Hz": 9.09,
+        "6000-24000Hz": 4.617
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-notes-coverage-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 1.587738037,
+      "max_block_rms_delta_db": 106.2,
+      "mean_block_rms_delta_db": 59.01,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-notes-coverage-v1",
+      "slot": null,
+      "tail_rms_delta_db": -98.497,
+      "variant": "seq-notes-coverage-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 9.178,
+        "1000-6000Hz": 4.167,
+        "150-1000Hz": 11.294,
+        "6000-24000Hz": 6.463
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-poly-8-v1-bypass-slot00-EQ.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+      "max_abs_sample_diff": 1.150238037,
+      "max_block_rms_delta_db": 7.123,
+      "mean_block_rms_delta_db": 5.112,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 0,
+        "role": "ains1",
+        "type_id": 6,
+        "type_name": "EQ"
+      },
+      "tail_rms_delta_db": 4.891,
+      "variant": "seq-poly-8-v1-bypass-slot00-EQ",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -4.148,
+        "1000-6000Hz": -0.646,
+        "150-1000Hz": 0.546,
+        "6000-24000Hz": -0.045
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-poly-8-v1-bypass-slot04-Delay.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.726196289,
+      "max_block_rms_delta_db": 15.24,
+      "mean_block_rms_delta_db": 4.114,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 4,
+        "role": "send1",
+        "type_id": 1,
+        "type_name": "Delay"
+      },
+      "tail_rms_delta_db": -3.731,
+      "variant": "seq-poly-8-v1-bypass-slot04-Delay",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": -1.492,
+        "1000-6000Hz": -0.159,
+        "150-1000Hz": 0.362,
+        "6000-24000Hz": -0.532
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-poly-8-v1-bypass-slot05-Reverb1.json",
+      "kind": "bypass-slot",
+      "label_tool_side": "ablation variant: slot 5 (Reverb 1) bypassed; original-preset family",
+      "max_abs_sample_diff": 0.676116943,
+      "max_block_rms_delta_db": 6.727,
+      "mean_block_rms_delta_db": 1.047,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-poly-8-v1",
+      "slot": {
+        "index": 5,
+        "role": "send2",
+        "type_id": 2,
+        "type_name": "Reverb 1"
+      },
+      "tail_rms_delta_db": -0.359,
+      "variant": "seq-poly-8-v1-bypass-slot05-Reverb1",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    },
+    {
+      "adapted": false,
+      "band_delta_db": {
+        "0-150Hz": 5.894,
+        "1000-6000Hz": 3.395,
+        "150-1000Hz": 11.899,
+        "6000-24000Hz": 8.193
+      },
+      "bit_identical": false,
+      "delta_json": "reports/sxt-014/deltas/width/seq-poly-8-v1-dry-allfxoff.json",
+      "kind": "dry-allfxoff",
+      "label_tool_side": "diagnostic dry bus: all 16 FX slots Off",
+      "max_abs_sample_diff": 1.352752686,
+      "max_block_rms_delta_db": 104.381,
+      "mean_block_rms_delta_db": 64.513,
+      "near_zero_delta_candidate": false,
+      "preset": "width",
+      "sequence": "seq-poly-8-v1",
+      "slot": null,
+      "tail_rms_delta_db": -94.956,
+      "variant": "seq-poly-8-v1-dry-allfxoff",
+      "verdict": "MEASURABLE-DIFFERENCE"
+    }
+  ],
+  "schema_version": 1,
+  "thresholds": {
+    "near_zero_band_delta_db": 0.5,
+    "near_zero_max_abs_sample_diff": 0.0001220703125,
+    "near_zero_mean_block_rms_delta_db": -60.0
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "totals": {
+    "bit_identical": 4,
+    "measurable": 43,
+    "near_zero_candidates": 0,
+    "pairs_compared": 47
+  }
+}

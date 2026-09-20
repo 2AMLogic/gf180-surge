@@ -1,0 +1,124 @@
+{
+  "ablation_id": "fuji/seq-notes-coverage-v1-permuted-swap00-with04",
+  "adapted": false,
+  "bypassed_slots": [],
+  "claim_scope": "reference-vs-reference ablation apparatus only: renders of the pinned engine under the SXT-012 policies with one FX slot bypassed/mutated. Numeric deltas are diagnostic; essential/optional/unresolved labels require listening records and are BLOCKED-on-human (issue #9).",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "issue": "SXT-014",
+  "kind": "permuted",
+  "label": "negative control: same-type slots 0/4 (Delay) exchanged -- wrong arrangement; comparator must flag",
+  "mutated_slots": [
+    0,
+    4
+  ],
+  "mutation": {
+    "interpretation_caveat": "the permuted render differs from the original through  BOTH the arrangement change and any param-transfer epsilon; numeric detection of the permutation is the control's claim, order-only attribution is not",
+    "method": "contents of slots 0 and 4 exchanged via setParamVal (type + 12 params + return level), read back and recorded",
+    "slots": [
+      0,
+      4
+    ],
+    "transfer_diff": {
+      "slot0": [
+        {
+          "intended": -1.415037989616394,
+          "param_index": 1,
+          "readback": -1.4150381088256836
+        },
+        {
+          "intended": -14.105345726013184,
+          "param_index": 4,
+          "readback": -14.105344772338867
+        },
+        {
+          "intended": 43.90177536010742,
+          "param_index": 5,
+          "readback": 43.90177917480469
+        },
+        {
+          "intended": -1.1794630289077759,
+          "param_index": 6,
+          "readback": -1.1794629096984863
+        },
+        {
+          "intended": 0.0,
+          "param_index": 9,
+          "readback": -2147483648.0
+        }
+      ],
+      "slot4": [
+        {
+          "intended": -15.792830467224121,
+          "param_index": 4,
+          "readback": -15.792832374572754
+        },
+        {
+          "intended": 39.85177230834961,
+          "param_index": 5,
+          "readback": 39.85177993774414
+        },
+        {
+          "intended": 0.5830389857292175,
+          "param_index": 6,
+          "readback": 0.5830388069152832
+        },
+        {
+          "intended": 0.0,
+          "param_index": 9,
+          "readback": -2147483648.0
+        }
+      ]
+    },
+    "transfer_exact": false
+  },
+  "non_perturbation_proof": {
+    "method": "post-settle exact readback of type + 12 params + return_level for every non-mutated slot vs the pristine post-load snapshot",
+    "other_slots_bit_unchanged": true,
+    "slots_checked": 14,
+    "values_checked": 196
+  },
+  "preset": {
+    "census_blob_sha1": "3e57d54b7661736a3502d5931eeafb82c778a612",
+    "file_sha256": "9affb246cebb44cddc9184a163f7ad8f54159b557c4d973858868ae3eb305fef",
+    "path": "resources/data/patches_factory/Leads/Fuji.fxp",
+    "slug": "fuji"
+  },
+  "render": {
+    "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+    "clipped_samples": 0,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "peak_abs_float": 0.6030373573303223,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0
+  },
+  "repeatability_class": null,
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "slot": null,
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "61a476db73a15948e09d8b37e593bee814ce52b4b125bd227e66db11415c6551"
+  },
+  "wav": {
+    "bytes": 547244,
+    "path": "reports/sxt-014/ablations/fuji/seq-notes-coverage-v1-permuted-swap00-with04.wav",
+    "sha256": "4084f66870eaea9d5681453d410e12dfbe6d6e6d0e0c5da88c2fcfa0d4fc5346"
+  }
+}

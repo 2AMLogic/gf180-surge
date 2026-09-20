@@ -1,0 +1,77 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-original.json",
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-original.wav",
+      "sha256": "8d1f27af820ba7ce5a815f5b8f65f7e094115703f894cc1b6df2a0bd34a75c22"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": -1.831,
+      "1000-6000Hz": -3.122,
+      "150-1000Hz": -5.463,
+      "6000-24000Hz": -3.447
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.662581,
+      "max_abs_delta_db": 109.355,
+      "mean_abs_delta_db": 44.983
+    },
+    "max_abs_sample_diff": 0.346069336,
+    "mean_abs_sample_diff": 0.034606819,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": -102.889,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
+    "slug": "fmod09"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "dry-allfxoff",
+    "label": "diagnostic dry bus: all 16 FX slots Off",
+    "mutated_slots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "sidecar": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-dry-allfxoff.json",
+    "slot": null,
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-dry-allfxoff.wav",
+      "sha256": "2028455d131cc39c652fa18cf3f35265c2b2d509a4fd9fb4a3d5e53285de558f"
+    }
+  }
+}

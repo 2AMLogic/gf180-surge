@@ -1,0 +1,67 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-original.json",
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-original.wav",
+      "sha256": "78ac76d0f164af632c2e78f8c8519f55ac5a28b140523b335f5d72081464e21a"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": -4.467,
+      "1000-6000Hz": -0.387,
+      "150-1000Hz": -0.372,
+      "6000-24000Hz": 0.12
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.98954,
+      "max_abs_delta_db": 103.259,
+      "mean_abs_delta_db": 30.673
+    },
+    "max_abs_sample_diff": 0.25567627,
+    "mean_abs_sample_diff": 0.03505052,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": -85.049,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Leads/Koala 2.fxp",
+    "slug": "koala2"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "path": "fixtures/sequences/seq-poly-8-v1.json",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "bypass-slot",
+    "label": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+    "mutated_slots": [
+      4
+    ],
+    "sidecar": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-bypass-slot04-Delay.json",
+    "slot": {
+      "index": 4,
+      "role": "send1",
+      "type_id": 1,
+      "type_name": "Delay"
+    },
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-bypass-slot04-Delay.wav",
+      "sha256": "7e45b9950c9f72f9423009ba809ff783fdd5ee23c924504df2a91c1b87907c8a"
+    }
+  }
+}

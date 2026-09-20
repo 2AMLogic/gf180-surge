@@ -1,0 +1,75 @@
+{
+  "ablation_id": "fmod09/seq-notes-coverage-v1-bypass-slot05-Airwindows",
+  "adapted": false,
+  "bypassed_slots": [
+    5
+  ],
+  "claim_scope": "reference-vs-reference ablation apparatus only: renders of the pinned engine under the SXT-012 policies with one FX slot bypassed/mutated. Numeric deltas are diagnostic; essential/optional/unresolved labels require listening records and are BLOCKED-on-human (issue #9).",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "issue": "SXT-014",
+  "kind": "bypass-slot",
+  "label": "ablation variant: slot 5 (Airwindows / Galactic) bypassed; original-preset family",
+  "mutated_slots": [
+    5
+  ],
+  "mutation": null,
+  "non_perturbation_proof": {
+    "method": "post-settle exact readback of type + 12 params + return_level for every non-mutated slot vs the pristine post-load snapshot",
+    "other_slots_bit_unchanged": true,
+    "slots_checked": 15,
+    "values_checked": 210
+  },
+  "preset": {
+    "census_blob_sha1": "76444c0758e7b117cc06598f1b66ed5b99960229",
+    "file_sha256": "b17512d985b2f45ce84547d09657bd9a875cc27235b88bdfa3525091d487234a",
+    "path": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
+    "slug": "fmod09"
+  },
+  "render": {
+    "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+    "clipped_samples": 0,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "peak_abs_float": 0.16712939739227295,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0
+  },
+  "repeatability_class": null,
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "slot": {
+    "airwindows": {
+      "algorithm_id": 49,
+      "algorithm_name": "Galactic"
+    },
+    "index": 5,
+    "role": "send2",
+    "type_id": 14,
+    "type_name": "Airwindows"
+  },
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "61a476db73a15948e09d8b37e593bee814ce52b4b125bd227e66db11415c6551"
+  },
+  "wav": {
+    "bytes": 547244,
+    "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-bypass-slot05-Airwindows.wav",
+    "sha256": "924f47a239114f98e09a79c7fcead27ab0d2a2e7202e2a53f5b51c5f15d503fd"
+  }
+}
