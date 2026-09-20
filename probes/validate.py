@@ -43,8 +43,6 @@ def validate_record(rec):
     for f in REQUIRED_FIELDS:
         if f not in rec:
             errors.append("missing required field: %s" % f)
-    if errors:
-        return False, errors
 
     # Clock must be an exact member of the declared candidate set.
     clocks = rec.get("clock_hz_candidates")
@@ -110,12 +108,15 @@ def validate_record(rec):
         errors.append("cycles_per_frame must be an integer count")
 
     # Per-clock closure must exist for every named candidate clock.
+    # (JSON serialization turns int dict keys into strings; compare on the
+    # string form so round-tripped records validate identically.)
     cl = rec.get("closure_at_clocks")
     if not isinstance(cl, dict):
         errors.append("closure_at_clocks must be a dict keyed by clock")
     else:
+        cl_keys = {str(k) for k in cl}
         for c in (clocks or []):
-            if c not in cl:
+            if str(c) not in cl_keys:
                 errors.append("closure_at_clocks missing %r" % (c,))
 
     # SXT-015 replacement bookkeeping must be explicit.

@@ -1,0 +1,59 @@
+{
+ "control": "nc-underspecified-record",
+ "exclusion_rule": "records failing validate_record never reach reports/sxt-016/probes/; SXT-017 must consume only validated records",
+ "expected": {
+  "error_classes": [
+   "missing required field: word_lengths",
+   "missing required field: memory_model",
+   "clock 70000000 is not a declared candidate",
+   "clock_hz_candidates must name the full candidate set",
+   "word_lengths must be a dict",
+   "memory_model must be a dict",
+   "assumptions must be a non-empty list",
+   "structure_citations must be a non-empty list",
+   "closure_at_clocks missing 70000000",
+   "sxt015_replacement.replaces must be stated"
+  ],
+  "ok": false,
+  "refused": true
+ },
+ "input_record": {
+  "assumptions": [],
+  "clock_hz_candidates": [
+   70000000
+  ],
+  "closure_at_clocks": {},
+  "cycles_per_frame": 1234,
+  "ext_bytes_per_frame": 0,
+  "kernel": "delay_stereo",
+  "ops": {
+   "mul_total": 100
+  },
+  "probe": "probe_fx_delay",
+  "sample_rate_hz": 48000,
+  "state_ram_bits": 0,
+  "status": "ESTIMATE",
+  "structure_citations": [],
+  "sxt015_replacement": {}
+ },
+ "pass": true,
+ "status": "PASS",
+ "targets_failure_mode": "a probe result with unstated clock/memory/word-length assumptions silently entering the SXT-016 evidence set",
+ "validate_record_result": {
+  "errors": [
+   "missing required field: word_lengths",
+   "missing required field: memory_model",
+   "clock 70000000 is not a declared candidate",
+   "clock_hz_candidates must name the full candidate set [48000000, 96000000, 192000000, 480000000]",
+   "word_lengths must be a dict",
+   "memory_model must be a dict",
+   "assumptions must be a non-empty list",
+   "structure_citations must be a non-empty list",
+   "closure_at_clocks missing 70000000",
+   "sxt015_replacement.replaces must be stated (param name or 'none')"
+  ],
+  "ok": false
+ },
+ "write_record_error": "REFUSED under-specified probe record (probe_fx_delay/delay_stereo): missing required field: word_lengths; missing required field: memory_model; clock 70000000 is not a declared candidate; clock_hz_candidates must name the full candidate set [48000000, 96000000, 192000000, 480000000]; word_lengths must be a dict; memory_model must be a dict; assumptions must be a non-empty list; structure_citations must be a non-empty list; closure_at_clocks missing 70000000; sxt015_replacement.replaces must be stated (param name or 'none')",
+ "write_record_refused": true
+}

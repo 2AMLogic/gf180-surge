@@ -1,0 +1,172 @@
+{
+ "assumptions": [
+  "A-DSP-1a: one 18x18->36 MAC, 1 pass/cycle; wider multiplies decompose into ceil(w/18)^2 sequential passes.",
+  "A-ALU-1: add/sub/compare/shift on <=32-bit two's-complement words cost 1 cycle at every candidate clock. NOT verified by timing analysis; at 480 MHz a 32-bit carry chain may need pipelining, which would raise add costs proportionally.",
+  "A-CLK: F in {48, 96, 192, 480} MHz are CANDIDATE clock hypotheses for the closure formula; none is verified achievable in gf180mcu (no synthesis run). The closure check is arithmetic on the formula in plan section 5 only.",
+  "A-CTL-1: audio output transfer service = 8 cycles/frame (stereo word push into the output FIFO; named, not measured).",
+  "A-CTL-2: contention allowance = worst-case external arbitration wait per frame, taken as 33 same-frame external accesses (Reverb1 worst, probe_fx_reverb1) x 30-cycle E1 latency; the closure formula subtracts it before DSP.",
+  "Voice pool scan 32 entries; event worst case = the fixture-derived coincident burst; per-event cost is a named candidate schedule (queue pop, 32-entry alloc search, 8 envelope/LFO trigger writes, 12 routing ops).",
+  "audio_bits=24 names the output FIFO word width; the control path itself is integer 32-bit."
+ ],
+ "clock_hz_candidates": [
+  48000000,
+  96000000,
+  192000000,
+  480000000
+ ],
+ "closure_at_clocks": {
+  "48000000": {
+   "clock_hz": 48000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 990,
+   "control_cycles_per_frame": 90,
+   "cost_cycles_per_frame": 818,
+   "dsp_budget_cycles_per_frame": -288.0,
+   "gross_cycles_per_frame": 1000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 8
+  },
+  "96000000": {
+   "clock_hz": 96000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 990,
+   "control_cycles_per_frame": 90,
+   "cost_cycles_per_frame": 818,
+   "dsp_budget_cycles_per_frame": 512.0,
+   "gross_cycles_per_frame": 2000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 8
+  },
+  "192000000": {
+   "clock_hz": 192000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 990,
+   "control_cycles_per_frame": 90,
+   "cost_cycles_per_frame": 818,
+   "dsp_budget_cycles_per_frame": 2112.0,
+   "gross_cycles_per_frame": 4000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 8
+  },
+  "480000000": {
+   "clock_hz": 480000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 990,
+   "control_cycles_per_frame": 90,
+   "cost_cycles_per_frame": 818,
+   "dsp_budget_cycles_per_frame": 6912.0,
+   "gross_cycles_per_frame": 10000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 8
+  }
+ },
+ "closure_scope_note": "closure here includes the control/transfer/contention subtractions; per-instance DSP records close against their own cost only (worked bundles combine)",
+ "contention_cycles_per_frame": 990,
+ "control_cycles_per_frame": 90,
+ "cycles_per_event": 91,
+ "cycles_per_frame": 818,
+ "event_stats_source": "fixtures/sequences/ re-derived (tick->frames per tempo segment)",
+ "ext_bytes_per_frame": 0,
+ "fixture_files": [
+  "seq-macro-sweep-v1.json",
+  "seq-modwheel-v1.json",
+  "seq-notes-coverage-v1.json",
+  "seq-notes-holds-v1.json",
+  "seq-notes-repeated-v1.json",
+  "seq-pitchbend-v1.json",
+  "seq-poly-8-v1.json",
+  "seq-pressure-v1.json",
+  "seq-sustain-pedal-v1.json",
+  "seq-tempo-change-v1.json"
+ ],
+ "has_phase_accumulator": false,
+ "kernel": "event_queue_and_control",
+ "max_coincident_events_per_frame": 8,
+ "max_events_per_second_window": 8,
+ "memory_model": {
+  "external": {
+   "detail": "control path does not touch external memory",
+   "name": "none"
+  },
+  "name": "onchip_1rw_sram",
+  "onchip_sram": "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it. (event queue and voice table on-chip)"
+ },
+ "ops": {
+  "per_event": {
+   "add_sub_cmp_by_width": {
+    "1": 33,
+    "32": 22,
+    "8": 32
+   },
+   "add_total": 87,
+   "ext_read_words": 0,
+   "ext_write_words": 0,
+   "lut_detail": [],
+   "lut_lookups": 0,
+   "mul_by_width": {
+    "32": 1
+   },
+   "mul_total": 1,
+   "shift": 0,
+   "sram_reads": 0,
+   "sram_writes": 0
+  },
+  "per_frame_control": {
+   "add_sub_cmp_by_width": {
+    "1": 32,
+    "16": 8,
+    "32": 26
+   },
+   "add_total": 66,
+   "ext_read_words": 0,
+   "ext_write_words": 0,
+   "lut_detail": [],
+   "lut_lookups": 0,
+   "mul_by_width": {
+    "32": 6
+   },
+   "mul_total": 6,
+   "shift": 0,
+   "sram_reads": 0,
+   "sram_writes": 0
+  }
+ },
+ "probe": "probe_scheduler",
+ "sample_rate_hz": 48000,
+ "state_ram_bits": 512,
+ "state_ram_note": "state RAM bits are per declared instance scope (see record); logic op counts are separate from state RAM (issue #11 acceptance)",
+ "status": "ESTIMATE",
+ "structure_citations": [
+  "surge@58914e59 src/common/SurgeSynthesizer.cpp (processControl: MIDI event drain and dispatch per block; voice allocation/stealing)",
+  "surge@58914e59 src/common/SurgeVoice.cpp (::calc_ctrldata: per-voice LFO + envelope + modrouting evaluation; allocation on note-on)",
+  "fixtures/sequences/*.json (SXT-012 library, committed)",
+  "SXT-015 model/resources/params.py (event_queue_depth=16; event model)"
+ ],
+ "sxt015_event_model_reconciliation": {
+  "match": true,
+  "rederived_max_coincident": 8,
+  "sxt015_max_coincident": 8,
+  "sxt015_peak_events_per_second": 13.333333
+ },
+ "sxt015_replacement": {
+  "replaces": "cyc_event_frame",
+  "scope": "per queued event (ev_cycles_per_event below); plus the control/transfer/contention split the plan-section-5 formula subtracts",
+  "sxt015_value": 40
+ },
+ "technology_note": "PDK-neutral relative estimates. 'Logic' is reported as normalized op counts (multiply/add/lut/shift) and cycles under a named sequential schedule; no gf180mcu synthesis, place-and-route, timing signoff, or layout has been run. State memory is reported in bits and kept separate from logic. gf180mcu cell/memory-macro feasibility at the candidate clocks is NOT verified.",
+ "total_events_across_fixtures": 123,
+ "transfer_cycles_per_frame": 8,
+ "word_lengths": {
+  "audio_bits": 24,
+  "control_word_bits": 32,
+  "multiplier": "M18"
+ }
+}

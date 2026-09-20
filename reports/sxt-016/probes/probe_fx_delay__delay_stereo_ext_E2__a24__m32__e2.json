@@ -1,0 +1,272 @@
+{
+ "assumptions": [
+  "A-DSP-1c: one 32x32->64 MAC, 1 pass/cycle; wider multiplies decompose into ceil(w/32)^2 sequential passes.",
+  "A-ALU-1: add/sub/compare/shift on <=32-bit two's-complement words cost 1 cycle at every candidate clock. NOT verified by timing analysis; at 480 MHz a 32-bit carry chain may need pipelining, which would raise add costs proportionally.",
+  "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it.",
+  "A-MEM-3: on-chip coefficient/waveform tables are synchronous ROM or SRAM, 1-cycle read, one lookup per cycle.",
+  "A-ALU-2: no division in any audio-rate path. Divisions in the source algorithms are replaced by multiply-by-precomputed-inverse with the inverse recomputed at coefficient rate (named per probe where used).",
+  "A-CLK: F in {48, 96, 192, 480} MHz are CANDIDATE clock hypotheses for the closure formula; none is verified achievable in gf180mcu (no synthesis run). The closure check is arithmetic on the formula in plan section 5 only.",
+  "A-EXT-2: external 16-bit synchronous SRAM, burst, 4 cycles per 32-bit word sustained, 10-cycle latency per re-seek.",
+  "A-EXT-BUF: sliding-window line cache. The 12-tap FIR read window moves ~1 word/sample, so an on-chip (SINC_TAPS+slack)-word window per channel is refilled by a sequential burst; sustained external traffic ~1 word/frame/channel, with a 12-word re-seek burst when the delay time jumps (tempo-sync change, LFO direction flip, param edit; assumed <=1 re-seek per 256 frames, worst case every frame reported separately). Without this cache the physical traffic is 24 words/frame (naive).",
+  "cycles_per_frame reported is the WORST case (re-seek burst every frame); sustained and naive variants are in traffic_models below.",
+  "Two Delay slots = two instances with two separate lines and two window caches (per-instance state is never shared; plan section 3)."
+ ],
+ "clock_hz_candidates": [
+  48000000,
+  96000000,
+  192000000,
+  480000000
+ ],
+ "closure_at_clocks": {
+  "48000000": {
+   "clock_hz": 48000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 336,
+   "dsp_budget_cycles_per_frame": 800.0,
+   "gross_cycles_per_frame": 1000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "96000000": {
+   "clock_hz": 96000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 336,
+   "dsp_budget_cycles_per_frame": 1600.0,
+   "gross_cycles_per_frame": 2000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "192000000": {
+   "clock_hz": 192000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 336,
+   "dsp_budget_cycles_per_frame": 3200.0,
+   "gross_cycles_per_frame": 4000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "480000000": {
+   "clock_hz": 480000000,
+   "closure": "within_budget",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 336,
+   "dsp_budget_cycles_per_frame": 8000.0,
+   "gross_cycles_per_frame": 10000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  }
+ },
+ "cycles_per_frame": 336,
+ "ext_bytes_per_frame": 16,
+ "has_phase_accumulator": false,
+ "kernel": "delay_stereo_ext_E2",
+ "latency_tolerance": {
+  "note": "tap reads are consumed in-frame; the window cache covers E2 latency only while the next window is prefetched during the previous frame. If external latency exceeds one frame of slack the pipeline stalls by the difference; at E2 first-access latency is 10 cycles vs 72 sustained-access cycles/frame modeled.",
+  "prefetch_guard": "delay time is block-ramped (timeL/timeR lag), so next-frame tap positions are predictable except at direction flips and tempo-sync changes",
+  "reads_same_frame": true,
+  "window_slack_frames": 0
+ },
+ "memory_model": {
+  "external": {
+   "detail": "A-EXT-2: external 16-bit synchronous SRAM, burst, 4 cycles per 32-bit word sustained, 10-cycle latency per re-seek.",
+   "name": "E2"
+  },
+  "name": "onchip_1rw_sram+window_cache+E2",
+  "onchip_sram": "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it.; per-channel sliding window cache of (FIRipol_N+4) words (A-EXT-BUF)"
+ },
+ "ops": {
+  "add_sub_cmp_by_width": {
+   "1": 4,
+   "24": 58,
+   "32": 4
+  },
+  "add_total": 66,
+  "ext_read_words": 0,
+  "ext_write_words": 0,
+  "lut_detail": [
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   },
+   {
+    "entries": 3072,
+    "table": "sinctable_1x"
+   }
+  ],
+  "lut_lookups": 24,
+  "mul_by_width": {
+   "24": 62,
+   "32": 2
+  },
+  "mul_total": 64,
+  "shift": 4,
+  "sram_reads": 0,
+  "sram_writes": 0
+ },
+ "probe": "probe_fx_delay",
+ "sample_rate_hz": 48000,
+ "state_ram_bits": 1106,
+ "state_ram_note": "state RAM bits are per declared instance scope (see record); logic op counts are separate from state RAM (issue #11 acceptance)",
+ "status": "ESTIMATE",
+ "structure_citations": [
+  "sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/Delay.h ::processBlock (per-channel 12-tap sinc read at (wpos - i_dtime - FIRipol_N/2) & mask; sinc index from FIRipol_M phases; block write of 32 samples/channel; crossfeed and feedback MACs; LP/HP biquads in the feedback loop; FIRipol_N-word wrap copy)",
+  "sst-effects@adcac695 include/sst/effects/Delay.h:200 (max_delay_length{1<<18}; SXT-015 pin)",
+  "surge@58914e59 src/common/SurgeStorage.h (FIRipol_M=256, FIRipol_N=12)",
+  "SXT-015 model/resources/fx_classes.py _PINNED_TX['delay'] = 6r+2w (logical transactions, reconciled in this record)"
+ ],
+ "sustained_external_bytes_per_s_at_48mhz": 48000000,
+ "sxt015_replacement": {
+  "replaces": "cyc_fxdelay_frame + ext traffic re-pin for delay",
+  "scope": "per stereo Delay instance per frame (external-line variant E2)",
+  "sxt015_value": 900
+ },
+ "technology_note": "PDK-neutral relative estimates. 'Logic' is reported as normalized op counts (multiply/add/lut/shift) and cycles under a named sequential schedule; no gf180mcu synthesis, place-and-route, timing signoff, or layout has been run. State memory is reported in bits and kept separate from logic. gf180mcu cell/memory-macro feasibility at the candidate clocks is NOT verified.",
+ "tempo_sync_note": "fractional taps: tempo-sync ratio rescales dtime (Delay.h setvars temposyncRatio); a tempo change moves the read window continuously -> covered by the streaming model; step changes are the worst case counted above",
+ "traffic_models": {
+  "naive": {
+   "cycles_per_frame": 406,
+   "ext_bytes_per_frame": 104,
+   "ext_bytes_per_s_at_48k": 4992000
+  },
+  "streaming": {
+   "cycles_per_frame": 230,
+   "ext_bytes_per_frame": 16,
+   "ext_bytes_per_s_at_48k": 768000
+  },
+  "worst": {
+   "cycles_per_frame": 336,
+   "ext_bytes_per_frame": 112,
+   "ext_bytes_per_s_at_48k": 5376000
+  }
+ },
+ "traffic_reconciliation": {
+  "note": "SXT-015 counted LOGICAL transactions (interpolated tap = 1 word); physical traffic depends on the named memory model. Delay line state stays per-instance (2 slots = 2 histories).",
+  "physical_naive_words_per_frame": {
+   "note": "12-tap FIR x 2 channels, no cache",
+   "reads": 24,
+   "writes": 2
+  },
+  "physical_streaming_words_per_frame": {
+   "note": "A-EXT-BUF sliding window; sustained",
+   "reads": 2,
+   "writes": 2
+  },
+  "physical_worst_words_per_frame": {
+   "note": "streaming + full 12-word re-seek burst per channel every frame",
+   "reads": 26,
+   "writes": 2
+  },
+  "sxt015_logical_words_per_frame": {
+   "reads": 6,
+   "writes": 2
+  }
+ },
+ "word_lengths": {
+  "audio_bits": 24,
+  "coeff_bits": 32,
+  "multiplier": "M32"
+ }
+}

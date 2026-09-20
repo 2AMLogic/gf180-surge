@@ -1,0 +1,254 @@
+{
+ "assumptions": [
+  "A-DSP-1c: one 32x32->64 MAC, 1 pass/cycle; wider multiplies decompose into ceil(w/32)^2 sequential passes.",
+  "A-ALU-1: add/sub/compare/shift on <=32-bit two's-complement words cost 1 cycle at every candidate clock. NOT verified by timing analysis; at 480 MHz a 32-bit carry chain may need pipelining, which would raise add costs proportionally.",
+  "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it.",
+  "A-MEM-3: on-chip coefficient/waveform tables are synchronous ROM or SRAM, 1-cycle read, one lookup per cycle.",
+  "A-ALU-2: no division in any audio-rate path. Divisions in the source algorithms are replaced by multiply-by-precomputed-inverse with the inverse recomputed at coefficient rate (named per probe where used).",
+  "A-SCHED-1: scalar single-lane schedule. The pinned engine uses SSE 4-wide unison/filter lanes; a 4-lane hardware datapath could reduce per-instance cycles for shared work. NOT modeled; scalar numbers are conservative for throughput, optimistic for area.",
+  "A-CLK: F in {48, 96, 192, 480} MHz are CANDIDATE clock hypotheses for the closure formula; none is verified achievable in gf180mcu (no synthesis run). The closure check is arithmetic on the formula in plan section 5 only.",
+  "Audio path 24-bit, coefficients 32-bit, sinc table 256 phases x 12 taps (FIRipol_M/FIRipol_N). Scalar single-lane schedule."
+ ],
+ "clock_hz_candidates": [
+  48000000,
+  96000000,
+  192000000,
+  480000000
+ ],
+ "closure_at_clocks": {
+  "48000000": {
+   "clock_hz": 48000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 8438400,
+   "dsp_budget_cycles_per_frame": 800.0,
+   "gross_cycles_per_frame": 1000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "96000000": {
+   "clock_hz": 96000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 8438400,
+   "dsp_budget_cycles_per_frame": 1600.0,
+   "gross_cycles_per_frame": 2000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "192000000": {
+   "clock_hz": 192000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 8438400,
+   "dsp_budget_cycles_per_frame": 3200.0,
+   "gross_cycles_per_frame": 4000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  },
+  "480000000": {
+   "clock_hz": 480000000,
+   "closure": "OVERFLOW",
+   "contention_cycles_per_frame": 0,
+   "control_cycles_per_frame": 0,
+   "cost_cycles_per_frame": 8438400,
+   "dsp_budget_cycles_per_frame": 8000.0,
+   "gross_cycles_per_frame": 10000.0,
+   "note": "plan section 5 formula; arithmetic on candidate clocks (A-CLK) and placeholder-free only where probes replace SXT-015 entries",
+   "reserve_fraction": 0.2,
+   "sample_rate_hz": 48000,
+   "transfer_cycles_per_frame": 0
+  }
+ },
+ "closure_scope_note": "per single unison-osc instance; complete-patch closure is worked_bundle's job",
+ "cycles_per_frame": 8438400,
+ "cycles_per_sample": 175.8,
+ "cycles_per_sample_by_pitch_corner": {
+  "C4 261.63 Hz": 52.0,
+  "C8 4186.01 Hz": 113.9,
+  "MIDI 120 8372.02 Hz (worst modeled)": 175.8
+ },
+ "ext_bytes_per_frame": 0,
+ "has_phase_accumulator": true,
+ "instance_scope": "one unison voice of one Classic oscillator slot (stereo out)",
+ "kernel": "classic_blit",
+ "memory_model": {
+  "external": {
+   "detail": "no external writable memory used",
+   "name": "none"
+  },
+  "name": "onchip_1rw_sram",
+  "onchip_sram": "A-MEM-1: on-chip state RAM is a single-port 1RW synchronous SRAM macro, 1-cycle read OR write, no dual-port; a same-macro read+write pair serializes (2 cycles). Dual-macro duplication (2x bits, read and write in one cycle) is named A-MEM-2 where a probe uses it."
+ },
+ "ops": {
+  "add_sub_cmp_by_width": {
+   "1": 1,
+   "2": 1,
+   "24": 46,
+   "32": 9
+  },
+  "add_total": 57,
+  "ext_read_words": 0,
+  "ext_write_words": 0,
+  "lut_detail": [
+   {
+    "entries": 512,
+    "table": "note_to_pitch"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   },
+   {
+    "entries": 6144,
+    "table": "sinctable_2x"
+   }
+  ],
+  "lut_lookups": 25,
+  "mul_by_width": {
+   "24": 46,
+   "32": 18
+  },
+  "mul_total": 64,
+  "shift": 4,
+  "sram_reads": 28,
+  "sram_writes": 25
+ },
+ "probe": "probe_osc",
+ "sample_rate_hz": 48000,
+ "state_bits_per_osc_slot_shared": {
+  "dcbuffer": 3360,
+  "oscbuffer_L": 3360,
+  "oscbuffer_R": 3360
+ },
+ "state_bits_per_unison_instance": {
+  "dc_uni": 24,
+  "drift_lfo_phase": 24,
+  "last_level": 24,
+  "oscstate_phase": 16,
+  "pwidth": 24,
+  "pwidth2": 24,
+  "rate": 24,
+  "state": 2,
+  "syncstate_phase": 16
+ },
+ "state_ram_bits": 10258,
+ "state_ram_note": "state RAM bits are per declared instance scope (see record); logic op counts are separate from state RAM (issue #11 acceptance)",
+ "status": "ESTIMATE",
+ "structure_citations": [
+  "surge@58914e59 src/common/dsp/oscillators/ClassicOscillator.cpp ::convolute (4-impulse state machine; 12-tap windowed-sinc FIR from sinctable into oscbuffer/dcbuffer)",
+  "surge@58914e59 src/common/dsp/oscillators/ClassicOscillator.cpp ::process_block (extraction: keytracked 1-pole HPF integrator_hpf, DC correction, character biquad charFilt, per OS sample)",
+  "surge@58914e59 src/common/globals.h (OSC_OVERSAMPLING=2, BLOCK_SIZE_OS=64, OB_LENGTH=128, MAX_UNISON=16)",
+  "surge@58914e59 src/common/SurgeStorage.h (FIRipol_M=256, FIRipol_N=12, FIRoffset=6)"
+ ],
+ "sxt015_replacement": {
+  "replaces": "cyc_osc_unison_voice_frame",
+  "scope": "per unison-osc instance per output sample, worst named pitch corner; complete-patch closure in reports/sxt-016/worked-bundles.json",
+  "sxt015_value": 200
+ },
+ "technology_note": "PDK-neutral relative estimates. 'Logic' is reported as normalized op counts (multiply/add/lut/shift) and cycles under a named sequential schedule; no gf180mcu synthesis, place-and-route, timing signoff, or layout has been run. State memory is reported in bits and kept separate from logic. gf180mcu cell/memory-macro feasibility at the candidate clocks is NOT verified.",
+ "word_lengths": {
+  "audio_bits": 24,
+  "coeff_bits": 32,
+  "multiplier": "M32",
+  "phase_bits": 16
+ },
+ "worst_pitch_corner": "MIDI 120 8372.02 Hz (worst modeled)"
+}
