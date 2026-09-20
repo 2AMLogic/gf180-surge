@@ -39,7 +39,7 @@
         12
       ],
       "depends_on": [],
-      "status": "NOT_RUN",
+      "status": "BLOCKED",
       "note": "Aggregate group node; status derived from members, not an independent claim."
     },
     {
@@ -184,8 +184,10 @@
       "depends_on": [
         10
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; depends on resource accounting."
+      "status": "PASS",
+      "note": "Landed PR #38. Kernel probes under named assumptions; scalar single-lane closure fails at all clocks (finding, not infeasibility); 11 ESTIMATE-REF items replaced.",
+      "evidence": "reports/sxt-016/EVIDENCE.md",
+      "evidence_sha256": "77d430f9996ca935ca2372e6dcff28911cade7c56fc99b41946d908a13486312"
     },
     {
       "id": 12,
@@ -198,8 +200,8 @@
         9,
         11
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; waits on #8/#9 listening work and #11 probes."
+      "status": "BLOCKED",
+      "note": "Bundle stage landed (PR #37): DRAFT B4-broad + per-preset predictions + sensitivity control. FREEZE blocked on human listening (SXT-013) + SXT-014 labels."
     },
     {
       "id": 13,
@@ -211,8 +213,10 @@
         6,
         12
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs normalized graphs and profile v1."
+      "status": "PASS",
+      "note": "Landed PR #39. Compiler v1: 3,561 graphs -> 1,683 compiled / 1,296 rejected / 582 unresolved; reconciles with SXT-017 within 2 named deltas; 22-code rejection catalog; repo-relative provenance fix applied in review.",
+      "evidence": "reports/sxt-020/EVIDENCE.md",
+      "evidence_sha256": "e2a99e7649250e64bf7136f15f07b2540bb5d6e97d01eaad0a496841b1f8a686"
     },
     {
       "id": 14,
@@ -237,8 +241,10 @@
         7,
         12
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs fixtures and profile v1."
+      "status": "PASS",
+      "note": "Landed PR #40. Attacky.fxp slice: RTL==model exact on 3 sequences (12,609 state fields); mutant control fails as designed; reference errors reported against [PROPOSED] budgets (1 pass, 2 pending-freeze).",
+      "evidence": "reports/sxt-022/EVIDENCE.md",
+      "evidence_sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
     },
     {
       "id": 16,
