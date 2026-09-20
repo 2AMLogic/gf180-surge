@@ -1,43 +1,9 @@
-# Build / toolchain artifacts
-out/
-build/
-work/
-*.o
-*.a
-*.so
-*.vcd
-*.fst
-*.fst.h
-*.lxt
-*.wdb
-*.vvp
-
-# Python
-__pycache__/
-*.pyc
-.venv/
-.pytest_cache/
-.ruff_cache/
-uv.lock
-
-# Node (if used by tooling)
-node_modules/
-
-# Synthesis / PDK flows
-asic/runs/
-*.def
-*.gds
-*.gds2
-*.oas
-*.spice
-*.lef.temp
-reports/*.rpt
-
-# Listening-session render cache (re-derivable audio; never committed)
-.listening-cache/
-
 # Editors / OS
 .DS_Store
 *.swp
 *.o
 a.out
+
+# SXT-024 RTL run workdirs (regenerable via tools/run_reverb_rtl.py --keep;
+# evidence lives in reports/sxt-024/rtl-exactness.json with content hashes)
+reports/sxt-024/rtl/
