@@ -41,6 +41,22 @@ Epics:
   effect leaves by measured recovery, full coverage publication, FPGA +
   external memory, gf180 qualification.
 
+Reuse: sibling 2AMLogic infrastructure (Parasynth, TorchSynth, DX7, klt) is
+adopted only through the survey in
+[docs/REUSE-AUDIT.md](docs/REUSE-AUDIT.md) and its adoption-decision issue
+(#25); sibling DSP is rejected — the only DSP oracle is the pinned Surge
+engine.
+
+## License
+
+This repository is Apache-2.0 (`LICENSE`), following the 2AMLogic canary
+convention. The pinned Surge reference, its bundled presets, and SST
+dependencies are GPL-3.0-or-later or carry their own terms; that material
+stays in the external pinned oracle. Copying Surge-derived code, tables, or
+assets into this repository requires a visible license decision record first.
+No distribution-license determination has been made for a future chip
+product.
+
 ## Ground rules
 
 Three judgments are kept separate throughout:

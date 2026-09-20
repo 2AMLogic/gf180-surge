@@ -38,11 +38,22 @@ host/controller/DAC/storage.
   path. Do not normalize each render independently, time-warp comparisons, or
   switch reference engines per patch. Bypass tests must retain the unmodified
   wet reference.
-- Licensing: Surge is GPL-3.0-or-later; its bundled presets and SST
-  dependencies carry their own terms. Record file/table-level provenance
-  before adopting any third-party code, table, or asset, and choose an
-  explicit compatible source policy rather than inheriting one through a
-  port. This project has not made a distribution-license determination.
+- Licensing: this repository follows the 2AMLogic Apache-2.0 convention
+  (`LICENSE`), while the pinned Surge reference, its bundled presets, and SST
+  dependencies are GPL-3.0-or-later or carry their own terms. Keep
+  GPL/Surge-derived material in the external pinned oracle; copying
+  Surge-derived code, tables, or assets into this repository requires a
+  visible license decision record before merge. Record file/table-level
+  provenance before adopting any third-party code, table, or asset, and
+  choose an explicit compatible source policy rather than inheriting one
+  through a port. This project has not made a distribution-license
+  determination.
+- Adopt sibling or third-party infrastructure only through the reuse-audit
+  process (`docs/REUSE-AUDIT.md` and its adoption-decision issue); adapt
+  interfaces and method, pin sources, and retain attribution. Sibling
+  evidence and tooling never transfer qualification to this instrument, and
+  sibling DSP is rejected on principle: the only DSP oracle is the pinned
+  Surge engine.
 - Do not claim FPGA or gf180mcu synthesis, place-and-route, signoff, or
   hardware playback, original-Surge fidelity, or preset quality without a
   committed evidence record that establishes exactly that claim. Source
