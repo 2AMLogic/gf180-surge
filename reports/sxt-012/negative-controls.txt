@@ -1,0 +1,127 @@
+=== SXT-012 negative controls — 2026-09-20T08:57:06Z ===
+Pinned oracle: surge@58914e59c608ed4384ba6002e44c3465c58b2e71, 48 kHz, block 32, fresh instance per render.
+Deterministic fixture under test: sub4__seq-sustain-pedal-v1
+Committed wet sha256: bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096
+Committed dry sha256: bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096 (Sub 4 has zero FX: wet == dry)
+
+--- NC0 characterization: velocity perturbation is inaudible on the pilot presets ---
+Scene vca_velsense read via surgepy: Sub 4 = 0.0, Koala 2 = 0.0, Behemoth = 0.0.
+Direct probe (vel 70 vs vel 127, identical harness): Sub 4 identical=True, Behemoth identical=True.
+=> velocity events are delivered by the fixtures but do not map to audio on the pilot
+   presets; an audible velocity control requires a velocity-routed preset (recorded as a
+   bounded finding for fixture expansion, not silently dropped).
+
+--- NC1: controller-value perturbation (pedal-down CC64 127 -> 0) -> expect DETECTABLE ---
+$ python3 fixtures/render_fixture.py render --preset-file 'Basses/Sub 4.fxp' --sequence reports/sxt-012/nc-cc64-zero-v1.json --out $TMP/cc64-zero
+{
+  "sequence": "seq-nc-cc64-zero-v1",
+  "preset": "Basses/Sub 4.fxp",
+  "wet": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/cc64-zero/seq-nc-cc64-zero-v1-wet.wav",
+  "dry": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/cc64-zero/seq-nc-cc64-zero-v1-dry.wav",
+  "wet_sha256": "6f091a7d2cb1688e05af95cc235f61523942af212300610956d8e34ef17f3333",
+  "dry_sha256": "6f091a7d2cb1688e05af95cc235f61523942af212300610956d8e34ef17f3333",
+  "frames": 158400
+}
+
+--- NC2: timing perturbation +1 sample from a block-aligned onset (note_on t=0 -> 1) -> expect DETECTABLE ---
+$ ... --sequence reports/sxt-012/nc-time-shift-plus1-v3.json --out $TMP/plus1
+{
+  "sequence": "seq-nc-time-shift-plus1-v3",
+  "preset": "Basses/Sub 4.fxp",
+  "wet": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/plus1/seq-nc-time-shift-plus1-v3-wet.wav",
+  "dry": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/plus1/seq-nc-time-shift-plus1-v3-dry.wav",
+  "wet_sha256": "ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3",
+  "dry_sha256": "ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3",
+  "frames": 158400
+}
+
+--- NC3: sub-block indistinguishability (note_on t=1 vs t=2 land in the same engine block) -> expect IDENTICAL ---
+$ ... --sequence reports/sxt-012/nc-time-sameblock-1-v1.json --out $TMP/sameblock-a
+{
+  "sequence": "seq-nc-time-sameblock-1-v1",
+  "preset": "Basses/Sub 4.fxp",
+  "wet": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/sameblock-a/seq-nc-time-sameblock-1-v1-wet.wav",
+  "dry": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/sameblock-a/seq-nc-time-sameblock-1-v1-dry.wav",
+  "wet_sha256": "ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3",
+  "dry_sha256": "ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3",
+  "frames": 158400
+}
+$ ... --sequence reports/sxt-012/nc-time-sameblock-2-v1.json --out $TMP/sameblock-b
+{
+  "sequence": "seq-nc-time-sameblock-2-v1",
+  "preset": "Basses/Sub 4.fxp",
+  "wet": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/sameblock-b/seq-nc-time-sameblock-2-v1-wet.wav",
+  "dry": "/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode/nc/sameblock-b/seq-nc-time-sameblock-2-v1-dry.wav",
+  "wet_sha256": "ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3",
+  "dry_sha256": "ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3",
+  "frames": 158400
+}
+
+--- hash comparison vs committed fixture ---
+
+--- hash comparison vs committed fixture (deterministic preset: any hash difference is audio) ---
+committed               bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096
+NC1  cc64 127->0        6f091a7d2cb1688e05af95cc235f61523942af212300610956d8e34ef17f3333   DIFFERENT -> detected
+NC2  note_on +1 sample  ea49fcea25fdc50100a05bc117b6e2646239651faa8dcc1ca9a63eda26414be3   DIFFERENT -> detected
+NC3  t=1 vs t=2         both ea49fcea... (identical to each other)                         same block -> indistinguishable
+
+Interpretation: the engine schedules events at 32-sample block starts. A +1-sample shift of
+a block-aligned onset IS detectable (crosses the boundary); two onsets inside the same block
+(t=1, t=2) render bit-identically — this is the documented scheduling-granularity ceiling,
+not a comparator failure. Controller-value perturbation is detected.
+
+--- NC4: metadata-hash tamper (sidecar wet sha256 zeroed) -> comparator must REFUSE ---
+$ python3 - <<tamper fixtures/audio/sub4/seq-sustain-pedal-v1.json ; python3 fixtures/verify_fixtures.py --fixture sub4__seq-sustain-pedal-v1
+tampered sidecar wet sha256 -> 0000000000000000...
+sub4__seq-sustain-pedal-v1: FAIL (10/11 checks)
+totals: fixtures=30 wavs=60 audio_bytes=25548240
+
+REFUSED — integrity failures:
+  - sub4__seq-sustain-pedal-v1: sidecar_agrees_wet_hash: sidecar=0000000000000000000000000000000000000000000000000000000000000000 manifest=bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096
+verify exit code: 2
+(sidecar restored from git)
+
+--- NC5: audio-byte tamper (one byte flipped in the wet wav) -> comparator must REFUSE ---
+flipped byte 1000 of fixtures/audio/sub4/seq-sustain-pedal-v1-wet.wav
+sub4__seq-sustain-pedal-v1: FAIL (10/11 checks)
+totals: fixtures=30 wavs=60 audio_bytes=25548240
+
+REFUSED — integrity failures:
+  - sub4__seq-sustain-pedal-v1: wet_sha256_matches: recorded=bf9bad26efd9feafe36bdba3d38e6a75c5d2312e46371186084c2e1aac59a096 actual=85a50f2a02e82cd3570f6fa423df872fc38e630344fa523f977e8170c5e3820c
+verify exit code: 2
+(wav restored from git)
+
+--- post-restore comparator pass (must be ALL PASS) ---
+behemoth__seq-macro-sweep-v1: PASS (11/11 checks)
+behemoth__seq-modwheel-v1: PASS (11/11 checks)
+behemoth__seq-notes-coverage-v1: PASS (11/11 checks)
+behemoth__seq-notes-holds-v1: PASS (11/11 checks)
+behemoth__seq-notes-repeated-v1: PASS (11/11 checks)
+behemoth__seq-pitchbend-v1: PASS (11/11 checks)
+behemoth__seq-poly-8-v1: PASS (11/11 checks)
+behemoth__seq-pressure-v1: PASS (11/11 checks)
+behemoth__seq-sustain-pedal-v1: PASS (11/11 checks)
+behemoth__seq-tempo-change-v1: PASS (11/11 checks)
+koala2__seq-macro-sweep-v1: PASS (11/11 checks)
+koala2__seq-modwheel-v1: PASS (11/11 checks)
+koala2__seq-notes-coverage-v1: PASS (11/11 checks)
+koala2__seq-notes-holds-v1: PASS (11/11 checks)
+koala2__seq-notes-repeated-v1: PASS (11/11 checks)
+koala2__seq-pitchbend-v1: PASS (11/11 checks)
+koala2__seq-poly-8-v1: PASS (11/11 checks)
+koala2__seq-pressure-v1: PASS (11/11 checks)
+koala2__seq-sustain-pedal-v1: PASS (11/11 checks)
+koala2__seq-tempo-change-v1: PASS (11/11 checks)
+sub4__seq-macro-sweep-v1: PASS (11/11 checks)
+sub4__seq-modwheel-v1: PASS (11/11 checks)
+sub4__seq-notes-coverage-v1: PASS (11/11 checks)
+sub4__seq-notes-holds-v1: PASS (11/11 checks)
+sub4__seq-notes-repeated-v1: PASS (11/11 checks)
+sub4__seq-pitchbend-v1: PASS (11/11 checks)
+sub4__seq-poly-8-v1: PASS (11/11 checks)
+sub4__seq-pressure-v1: PASS (11/11 checks)
+sub4__seq-sustain-pedal-v1: PASS (11/11 checks)
+sub4__seq-tempo-change-v1: PASS (11/11 checks)
+totals: fixtures=30 wavs=60 audio_bytes=25548240
+ALL CHECKS PASS
+verify exit code: 0
