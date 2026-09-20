@@ -200,12 +200,12 @@ def nc_c_reset_semantics():
     seq = json.load(open(cm.SEQ_COV))
     last_t = max(e["t"] for e in seq["events"] if e["type"] in ("note_on", "note_off"))
     t0 = last_t + 4800
-    (pl, pr), _ = run(True, model)
+    (pl, pr), _ = run(True, model_pre)
     # exclude the declared 2-block rebuild-transient window (engine lipol
     # smoothing; control plane) from the mirror's budget checks, mirroring
     # the compare tool
     w0 = (rb + 1) * 32
-    w1 = w0 + 2 * 32
+    w1 = w0 + cm.BUDGETS["rebuild_transient_blocks"] * 32
     rebuild_transient_max_abs = float(np.max(np.abs(pl[w0:w1] - wet[0][w0:w1])))
     pl[w0:w1] = wet[0][w0:w1]
     pr[w0:w1] = wet[1][w0:w1]
