@@ -1,0 +1,37 @@
+# Build / toolchain artifacts
+out/
+build/
+work/
+*.o
+*.a
+*.so
+*.vcd
+*.fst
+*.fst.h
+*.lxt
+*.wdb
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+uv.lock
+
+# Node (if used by tooling)
+node_modules/
+
+# Synthesis / PDK flows
+asic/runs/
+*.def
+*.gds
+*.gds2
+*.oas
+*.spice
+*.lef.temp
+reports/*.rpt
+
+# Editors / OS
+.DS_Store
+*.swp

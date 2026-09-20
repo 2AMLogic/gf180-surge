@@ -1,0 +1,97 @@
+{
+  "repository": "surge-synthesizer/surge",
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "commit_date": "2026-09-18T16:09:20Z",
+  "selection": "Pinned main-branch exploratory snapshot, not a claimed stable release",
+  "source_archive": "https://codeload.github.com/surge-synthesizer/surge/tar.gz/58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "submodules": [
+    {
+      "path": "libs/JUCE",
+      "commit": "a8c7c714c7564b9248749e1e8cefcc5ef2b6f0cc"
+    },
+    {
+      "path": "libs/PEGTL",
+      "commit": "64af78c6a7959cd5753ad165ec9f65591aa96f2d"
+    },
+    {
+      "path": "libs/clap-juce-extensions",
+      "commit": "16e9d4ca7b1e86c76e04584b2c08e85a764bcda8"
+    },
+    {
+      "path": "libs/eurorack/eurorack",
+      "commit": "888298b0e3ec5daabf96c5ab912ffc42825a2b4c"
+    },
+    {
+      "path": "libs/fmt",
+      "commit": "e424e3f2e607da02742f73db84873b8084fc714c"
+    },
+    {
+      "path": "libs/luajitlib/LuaJIT",
+      "commit": "18b087cd2cd4ddc4a79782bf155383a689d5093d"
+    },
+    {
+      "path": "libs/luajitlib/cmake",
+      "commit": "b859bf0ffd1ca447b09a6384c99846fcfe3e27b7"
+    },
+    {
+      "path": "libs/melatonin_inspector",
+      "commit": "9e91e4e3d6cc41688c8d2108ef7ed33c1a90dcc9"
+    },
+    {
+      "path": "libs/oddsound-mts/MTS-ESP",
+      "commit": "ec13f5749ea8c4ad45158477ce284082f3ce4e0d"
+    },
+    {
+      "path": "libs/pffft",
+      "commit": "d027f2a290ca0047d95513c2a20570d13557e381"
+    },
+    {
+      "path": "libs/pybind11",
+      "commit": "7c33cdc2d39c7b99a122579f53bc94c8eb3332ff"
+    },
+    {
+      "path": "libs/r8brain-free-src",
+      "commit": "b3f0753d90b3325b8ea8a08fd699e8e6db26e5b5"
+    },
+    {
+      "path": "libs/simde",
+      "commit": "71fd833d9666141edcd1d3c109a80e228303d8d7"
+    },
+    {
+      "path": "libs/sst/sst-basic-blocks",
+      "commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
+    },
+    {
+      "path": "libs/sst/sst-cmake",
+      "commit": "49008aacfe82507be59b08f25809cc271cdc0bf6"
+    },
+    {
+      "path": "libs/sst/sst-cpputils",
+      "commit": "52c4b749c0e155077ee1df79fee5d237bef7a1a8"
+    },
+    {
+      "path": "libs/sst/sst-effects",
+      "commit": "adcac6950292dacc529651093e7ece2d1c8c0d4b"
+    },
+    {
+      "path": "libs/sst/sst-filters",
+      "commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6"
+    },
+    {
+      "path": "libs/sst/sst-plugininfra",
+      "commit": "ebdaf5e936361994a30b0d51d2ff6cb750232d4b"
+    },
+    {
+      "path": "libs/sst/sst-waveshapers",
+      "commit": "dd12f31a5a9016c9895e52d1a00eee0e1eebe6ce"
+    },
+    {
+      "path": "libs/tuning-library",
+      "commit": "5a18353a0444caa068b648383cae37d156b97e1c"
+    },
+    {
+      "path": "libs/zstd",
+      "commit": "92505deb29bc17fe014ed918e67f15a84d70b230"
+    }
+  ]
+}

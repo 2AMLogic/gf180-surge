@@ -1,0 +1,348 @@
+{
+  "repository": "surge-synthesizer/surge",
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "scope": "Bundled .fxp in patches_factory and patches_3rdparty; test-data excluded",
+  "content_verified_against_git_blob_manifest": 3561,
+  "limitations": [
+    "Static stored-XML analysis; native Surge loader and migrations not executed.",
+    "Oscillator-family screens are necessary-feature screens, not working-preset coverage.",
+    "Screens use pinned voice branch conditions for stored scene/mute/solo/FM/ring values.",
+    "Inactive scenes are omitted in Single mode; both scenes included for Dual/Split.",
+    "No level-based pruning, modulation reachability, filter/waveshaper/FX qualification, audio rendering, or cost measurement.",
+    "FX counts are configured non-Off types, not audible or essential-effect counts.",
+    "Unresolved XML is retained in total denominators; not silently repaired or labeled corrupt."
+  ],
+  "groups": {
+    "factory": {
+      "manifest_presets": 641,
+      "parsed_presets": 640,
+      "unresolved_presets": 1,
+      "fxp_bytes": 24096384,
+      "stored_revision_counts": {
+        "4": 1,
+        "6": 1,
+        "9": 265,
+        "10": 127,
+        "15": 2,
+        "16": 5,
+        "20": 207,
+        "21": 5,
+        "22": 9,
+        "26": 2,
+        "28": 2,
+        "30": 14
+      },
+      "scene_modes": {
+        "Single": 604,
+        "Dual": 31,
+        "Key Split": 5
+      },
+      "conditional_oscillator_family_patch_counts": {
+        "Classic": 422,
+        "Wavetable": 188,
+        "Sine": 75,
+        "FM3": 20,
+        "Window": 18,
+        "FM2": 13,
+        "S&H Noise": 11,
+        "Modern": 7,
+        "Audio Input": 5,
+        "Twist": 3,
+        "String": 1,
+        "Alias": 1
+      },
+      "max_conditional_oscillators_per_scene_counts": {
+        "0": 12,
+        "1": 336,
+        "2": 213,
+        "3": 79
+      },
+      "stored_nonoff_fx_patch_count": 561,
+      "stored_nonoff_fx_slot_count_distribution": {
+        "0": 79,
+        "1": 191,
+        "2": 237,
+        "3": 107,
+        "4": 21,
+        "5": 4,
+        "6": 1
+      },
+      "stored_fx_type_patch_counts": {
+        "Delay": 431,
+        "Reverb1": 202,
+        "EQ": 188,
+        "Phaser": 54,
+        "Distortion": 46,
+        "Conditioner": 43,
+        "Chorus": 26,
+        "Rotary": 17,
+        "FrequencyShifter": 13,
+        "Flanger": 4,
+        "Airwindows": 3,
+        "Vocoder": 3,
+        "Combulator": 1,
+        "SpringReverb": 1,
+        "Reverb2": 1
+      },
+      "oscillator_family_screens": {
+        "classic_sine": {
+          "any_scene_mode": 387,
+          "single_scene_only": 367
+        },
+        "classic_sine_wavetable": {
+          "any_scene_mode": 569,
+          "single_scene_only": 541
+        },
+        "classic_sine_wavetable_sh_fm2_fm3": {
+          "any_scene_mode": 609,
+          "single_scene_only": 576
+        }
+      }
+    },
+    "contributor": {
+      "manifest_presets": 2920,
+      "parsed_presets": 2920,
+      "unresolved_presets": 0,
+      "fxp_bytes": 245250542,
+      "stored_revision_counts": {
+        "7": 18,
+        "9": 248,
+        "10": 48,
+        "11": 134,
+        "12": 162,
+        "13": 29,
+        "14": 4,
+        "15": 117,
+        "16": 136,
+        "17": 448,
+        "18": 7,
+        "19": 11,
+        "20": 750,
+        "21": 44,
+        "22": 107,
+        "23": 4,
+        "24": 216,
+        "28": 147,
+        "30": 290
+      },
+      "scene_modes": {
+        "Dual": 523,
+        "Single": 2357,
+        "Key Split": 40
+      },
+      "conditional_oscillator_family_patch_counts": {
+        "Classic": 1135,
+        "Wavetable": 1075,
+        "Sine": 786,
+        "FM2": 378,
+        "Modern": 271,
+        "Twist": 239,
+        "FM3": 201,
+        "S&H Noise": 147,
+        "Alias": 117,
+        "String": 109,
+        "Window": 102,
+        "Audio Input": 37
+      },
+      "max_conditional_oscillators_per_scene_counts": {
+        "0": 97,
+        "1": 726,
+        "2": 876,
+        "3": 1221
+      },
+      "stored_nonoff_fx_patch_count": 2659,
+      "stored_nonoff_fx_slot_count_distribution": {
+        "0": 261,
+        "1": 418,
+        "2": 641,
+        "3": 482,
+        "4": 376,
+        "5": 235,
+        "6": 265,
+        "7": 89,
+        "8": 103,
+        "9": 26,
+        "10": 10,
+        "11": 6,
+        "12": 3,
+        "13": 4,
+        "14": 1
+      },
+      "stored_fx_type_patch_counts": {
+        "Delay": 1348,
+        "Reverb1": 1165,
+        "EQ": 1037,
+        "Airwindows": 709,
+        "Reverb2": 707,
+        "Conditioner": 676,
+        "Chorus": 563,
+        "Distortion": 385,
+        "Flanger": 245,
+        "Phaser": 211,
+        "FrequencyShifter": 177,
+        "GraphicEQ": 150,
+        "Nimbus": 132,
+        "Rotary": 132,
+        "Resonator": 110,
+        "Combulator": 102,
+        "Waveshaper": 87,
+        "Tape": 52,
+        "Ensemble": 50,
+        "RingModulator": 40,
+        "SpringReverb": 30,
+        "MidSide": 23,
+        "Treemonster": 19,
+        "Neuron": 11,
+        "Bonsai": 8,
+        "Exciter": 7,
+        "AudioInput": 6,
+        "Convolution": 3,
+        "CHOW": 3
+      },
+      "oscillator_family_screens": {
+        "classic_sine": {
+          "any_scene_mode": 851,
+          "single_scene_only": 763
+        },
+        "classic_sine_wavetable": {
+          "any_scene_mode": 1619,
+          "single_scene_only": 1396
+        },
+        "classic_sine_wavetable_sh_fm2_fm3": {
+          "any_scene_mode": 2153,
+          "single_scene_only": 1779
+        }
+      }
+    },
+    "combined": {
+      "manifest_presets": 3561,
+      "parsed_presets": 3560,
+      "unresolved_presets": 1,
+      "fxp_bytes": 269346926,
+      "stored_revision_counts": {
+        "4": 1,
+        "6": 1,
+        "7": 18,
+        "9": 513,
+        "10": 175,
+        "11": 134,
+        "12": 162,
+        "13": 29,
+        "14": 4,
+        "15": 119,
+        "16": 141,
+        "17": 448,
+        "18": 7,
+        "19": 11,
+        "20": 957,
+        "21": 49,
+        "22": 116,
+        "23": 4,
+        "24": 216,
+        "26": 2,
+        "28": 149,
+        "30": 304
+      },
+      "scene_modes": {
+        "Dual": 554,
+        "Single": 2961,
+        "Key Split": 45
+      },
+      "conditional_oscillator_family_patch_counts": {
+        "Classic": 1557,
+        "Wavetable": 1263,
+        "Sine": 861,
+        "FM2": 391,
+        "Modern": 278,
+        "Twist": 242,
+        "FM3": 221,
+        "S&H Noise": 158,
+        "Window": 120,
+        "Alias": 118,
+        "String": 110,
+        "Audio Input": 42
+      },
+      "max_conditional_oscillators_per_scene_counts": {
+        "0": 109,
+        "1": 1062,
+        "2": 1089,
+        "3": 1300
+      },
+      "stored_nonoff_fx_patch_count": 3220,
+      "stored_nonoff_fx_slot_count_distribution": {
+        "0": 340,
+        "1": 609,
+        "2": 878,
+        "3": 589,
+        "4": 397,
+        "5": 239,
+        "6": 266,
+        "7": 89,
+        "8": 103,
+        "9": 26,
+        "10": 10,
+        "11": 6,
+        "12": 3,
+        "13": 4,
+        "14": 1
+      },
+      "stored_fx_type_patch_counts": {
+        "Delay": 1779,
+        "Reverb1": 1367,
+        "EQ": 1225,
+        "Conditioner": 719,
+        "Airwindows": 712,
+        "Reverb2": 708,
+        "Chorus": 589,
+        "Distortion": 431,
+        "Phaser": 265,
+        "Flanger": 249,
+        "FrequencyShifter": 190,
+        "GraphicEQ": 150,
+        "Rotary": 149,
+        "Nimbus": 132,
+        "Resonator": 110,
+        "Combulator": 103,
+        "Waveshaper": 87,
+        "Tape": 52,
+        "Ensemble": 50,
+        "RingModulator": 40,
+        "SpringReverb": 31,
+        "MidSide": 23,
+        "Treemonster": 19,
+        "Neuron": 11,
+        "Bonsai": 8,
+        "Exciter": 7,
+        "AudioInput": 6,
+        "Convolution": 3,
+        "CHOW": 3,
+        "Vocoder": 3
+      },
+      "oscillator_family_screens": {
+        "classic_sine": {
+          "any_scene_mode": 1238,
+          "single_scene_only": 1130
+        },
+        "classic_sine_wavetable": {
+          "any_scene_mode": 2188,
+          "single_scene_only": 1937
+        },
+        "classic_sine_wavetable_sh_fm2_fm3": {
+          "any_scene_mode": 2762,
+          "single_scene_only": 2355
+        }
+      }
+    }
+  },
+  "unresolved": [
+    {
+      "path": "resources/data/patches_factory/Percussion/Snare Tight.fxp",
+      "git_blob_sha1": "a34338e14bca1154aab77858bac75c528224f68e",
+      "size": 26893,
+      "bank": "factory",
+      "content_verified": true,
+      "status": "unresolved_by_static_parser",
+      "error": "ParseError: reference to invalid character number: line 1, column 26580"
+    }
+  ]
+}
