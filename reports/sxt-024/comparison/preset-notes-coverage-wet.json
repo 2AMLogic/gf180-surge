@@ -1,0 +1,27 @@
+{
+  "band_energy_max_dev_db": 3.0832793505908285e-05,
+  "case": "preset-notes-coverage-wet",
+  "checks": {
+    "band_energy": true,
+    "decay_curve": true,
+    "stereo_corr": true,
+    "tail_rms_rel": true,
+    "wet_max_abs": true,
+    "wet_rms_rel": true
+  },
+  "decay_curve_max_dev_db": 0.0023728100060367296,
+  "decay_curve_windows": 172,
+  "float_npy_used": true,
+  "model_traffic_per_sample": {
+    "reads": 17.0,
+    "writes": 17.0
+  },
+  "return_gain": 1.0,
+  "send_gain": 0.3536077346610224,
+  "stereo_corr_dev": 2.4430247791418225e-07,
+  "stereo_corr_pred": 0.8834857369520659,
+  "stereo_corr_wet": 0.8834859812545438,
+  "tail_rms_rel_db": -52.58712741608845,
+  "wet_max_abs": 1.6540288925170898e-06,
+  "wet_rms_rel_db": -55.04485815660022
+}

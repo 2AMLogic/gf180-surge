@@ -1,0 +1,24 @@
+{
+  "band_energy_max_dev_db": 0.19667111548695715,
+  "case": "nc-b-tail-truncation",
+  "checks": {
+    "band_energy": true,
+    "decay_curve": false,
+    "stereo_corr": true,
+    "tail_rms_rel": false,
+    "wet_max_abs": false,
+    "wet_rms_rel": false
+  },
+  "decay_curve_max_dev_db": 554.4557236911173,
+  "decay_curve_windows": 172,
+  "stereo_corr_dev": 0.003029001193858294,
+  "stereo_corr_pred": 0.8804569800606855,
+  "stereo_corr_wet": 0.8834859812545438,
+  "tail_rms_rel_db": -7.319245307681702,
+  "target_check": "tail_rms_rel / decay_curve (tail continuity)",
+  "truncation_note": "tail zeroed 1 s after input stop; the dropped tail is above the -100 dBFS floor for several seconds",
+  "truncation_sample": 206400,
+  "verdict": "CONTROL-OK (truncated tail FAILS tail continuity)",
+  "wet_max_abs": 0.013020878657698631,
+  "wet_rms_rel_db": -19.28783044093102
+}

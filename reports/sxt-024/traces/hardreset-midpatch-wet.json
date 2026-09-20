@@ -1,0 +1,75 @@
+{
+  "audio_policy": "stereo int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades; SXT-012 reset/scheduling policies",
+  "bus": "wet",
+  "deactivated_flags_raw_fxp": {
+    "highcut": false,
+    "lowcut": false
+  },
+  "engine_patch_state": {
+    "fx_slot": 4,
+    "fx_type": 2,
+    "params": {
+      "damping": 0.20000000298023224,
+      "decaytime": 1.0,
+      "freq1": 0.0,
+      "gain1": 0.0,
+      "highcut": 70.0,
+      "lowcut": -24.0,
+      "mix": 0.5,
+      "predelay": -4.0,
+      "roomsize": 0.5,
+      "shape": 0.0,
+      "width": 0.0
+    },
+    "return_level": 1.0,
+    "scene_send_level": [
+      0.7071430087089539,
+      0.0
+    ],
+    "volume": 0.0
+  },
+  "float_npy": {
+    "bytes": 5836928,
+    "format": "float32 [2][N], unclipped engine output",
+    "sha256": "2366aa24ecea64489e7b1b7883de9732876e052a10d284935a754ff1636d5acd"
+  },
+  "issue": "SXT-024",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "blocks": 729600,
+    "clipped_samples": 0,
+    "frames": 729600,
+    "overrides_applied": {},
+    "peak_abs": [
+      0.7943854928016663,
+      0.7435823678970337
+    ],
+    "reload_block": 1500,
+    "tail_s": 12.0
+  },
+  "reset_control": {
+    "method": "setParamVal fx type 2->0->2 across one block; loadFx rebuilds the effect and clears the long buffers",
+    "type_toggle_at_sample": 48000
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1"
+  },
+  "tool": {
+    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
+    "script_sha256": "a885d99f3c96ec7aeb132d16f6f1fdb0c8209442439823076ce94683699dfe96"
+  },
+  "trace": "hardreset-midpatch-wet",
+  "wav": {
+    "bytes": 2918444,
+    "channels": 2,
+    "frames": 729600,
+    "sample_rate": 48000,
+    "sha256": "9673a265a95f1cb5836232a859d78ac33835522a873c0ec8e4e250ddc57f0710"
+  }
+}
