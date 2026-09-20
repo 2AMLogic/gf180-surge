@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SXT-015 resource account (one normalized graph)",
+  "model_version": "sxt-015-accounting/1.0.0",
+  "description": "Result of model.resources.accounting.account_graph() over one corpus/normalized/graphs.jsonl line. Deterministic bookkeeping model only: NO technology/area/cycle measurement (SXT-016), NO profile freeze (SXT-017), NO fidelity or preset-quality claim, NO hardware claim. Cycle values use the named placeholder-v0 cost profile so the closure machinery is executable; every placeholder is listed in the parameter registry.",
+  "inputs": {
+    "graph_line": "one JSON object from corpus/normalized/graphs.jsonl (SXT-011 schema sxt-011-normalized-graph-schema/1.0.0; engine pin 58914e59c608ed4384ba6002e44c3465c58b2e71)",
+    "fx_instance_limit": "candidate limit applied to ENABLED instances (null = distribution mode); distinct from supported-type counts",
+    "event_profile": "{max_coincident_events, peak_events_per_second, source} derived from fixtures/sequences/",
+    "parameters": "model/resources/params.py registry; digest committed into every account as params_digest"
+  },
+  "status_enum": ["fit", "rejected", "analysis_failure"],
+  "top_level": {
+    "model_version": "string, semantic version of this accounting model",
+    "params_digest": "16-hex sha256 prefix of the parameter registry JSON used",
+    "cost_profile": "name of the cycle-cost profile (placeholder-v0; SXT-016 replaces)",
+    "path": "census path of the input graph",
+    "sha": "git blob SHA-1 of the source .fxp",
+    "bank": "factory | contributor",
+    "input_status": "normalized | analysis_failure (echoes the SXT-011 line status)",
+    "status": "fit | rejected | analysis_failure. analysis_failure FAILS CLOSED: every cost object below is null and no default cost is ever produced",
+    "limits": "{fx_instances, voice_pool} as applied",
+    "scene": "{scene_mode_id, scene_mode_name, active_scenes} (scene mode outside the pinned sm_single..sm_chsplit ids is unaccountable => analysis_failure)",
+    "voice": "voice account object (null on analysis_failure)",
+    "fx_instances": "per-instance list (null on analysis_failure)",
+    "fx_summary": "instance/type aggregate object",
+    "assets": "asset residency object",
+    "events": "event timing object",
+    "memory": "memory classification + transaction object",
+    "budget": "budget closure object (plan section 5)",
+    "anomalies": "explicit anomaly records (data gaps, clamps, exposure gaps); never silent",
+    "rejections": "explicit rejection objects; non-empty => status rejected"
+  },
+  "voice_object": {
+    "scene_mode_id": "0 single, 1 split, 2 dual, 3 chsplit (SurgeStorage.h:168-171); unknown ids are unaccountable",
+    "voices_per_note": "1, except dual mode = 2 (a layered note consumes two pool voices, plan section 3)",
+    "polylimit": "graph polylimit (loader default 16 applies when the file did not store it)",
+    "worst_case_voices": "min(polylimit, voice_pool_limit)",
+    "notes_held_worst_case": "worst_case_voices // voices_per_note",
+    "unison_osc_instances_worst_case": "worst_case_voices * max over active scenes of (sum of effective unison over ACTIVE osc slots)",
+    "voice_lfo_instances": "worst_case_voices * n_lfos_voice (6, engine constant)",
+    "scene_lfo_instances": "len(active_scenes) * n_lfos_scene (6 SLFOs; defs not exported by SXT-011 — flagged)",
+    "envelope_instances": "worst_case_voices * 2 (AEG, FilterEG)",
+    "state_bytes_on_chip": "placeholder-sized voice state (see params voice_*_bytes)",
+    "scenes[]": "per active scene: osc slots with {muted, modulated, active, unison, wavetable}; filter units; filter config; waveshaper; LFO counts; mseg/formula gaps"
+  },
+  "osc_slot_activity_rule": "an osc slot is active unless (mixer muted or level 0) AND not a modulation destination in the scene's md rows (destination names carry the engine scene prefix, e.g. 'A Osc 2 Pitch'). A muted oscillator that is modulated still processes (census voice-branch rule).",
+  "unison_rule": "effective unison = max(1, min(raw uni, MAX_UNISON=16)); out-of-range raw values produce an unison_out_of_range anomaly with the raw value; never silently trusted, never silently dropped",
+  "fx_instance_object": {
+    "slot": "fx[] index 0..15",
+    "role": "ains1..global4 (engine slot role; routing = role + fixed engine processing order)",
+    "class": "engine display name (fx[].tn)",
+    "tier": "pinned | no_long_buffer | unverified | unknown_engine_class",
+    "enabled_by_fxd": "fx_disable bit clear",
+    "processes_this_frame": "enabled AND route active (scene-B insert routes are inactive in Single scene mode)",
+    "routing_inactive": "true when a scene-B insert slot exists while scene B is inactive: state counted, per-frame cost/traffic NOT counted, anomaly recorded",
+    "state_bytes": "per-INSTANCE state (two Delay slots = two entries, each with its own bytes)",
+    "external": "state class above external_threshold_bytes => external writable memory",
+    "ext_reads_per_frame/ext_writes_per_frame": "words per output frame per instance (placeholder for non-pinned tiers)",
+    "cycles_per_frame": "placeholder-v0 cost",
+    "param_derived": "Delay/Floaty Delay only: sr*2^(param+margin) per channel, clamped to the allocated line; ESTIMATE-REF needs SXT-023 confirmation",
+    "flags": "class_state_unverified / class_traffic_unverified as applicable"
+  },
+  "memory_object": {
+    "external_writable_state_bytes": "sum of per-instance external state (FX long buffers)",
+    "on_chip_state_bytes": "voice state + on-chip FX state",
+    "flash_asset_bytes": "embedded wavetable bytes ONLY; flash is never writable delay/reverb storage (plan section 3)",
+    "ext_traffic_bytes_per_frame": "(reads+writes) * mem_word_bytes over instances that process this frame",
+    "ext_traffic_bytes_per_s": "ext_traffic_bytes_per_frame * 48000",
+    "external_threshold_bytes": "classification threshold (64 KiB)"
+  },
+  "budget_object": {
+    "formula": "gross = F/Fs; dsp_budget = gross * (1 - reserve); cost = voice + fx + modulation + events; closure = OVERFLOW when cost > dsp_budget",
+    "closure_enum": ["within_budget", "OVERFLOW"],
+    "note": "F and all per-unit cycle costs are placeholder-v0; an OVERFLOW here supports no technology claim"
+  },
+  "rejection_codes": {
+    "fx_instance_overflow": "enabled instances > fx_instance_limit (slots listed)",
+    "budget_overflow": "complete-patch cost above budget(F, Fs, reserve)",
+    "ext_bandwidth_overflow": "required external bandwidth above the named placeholder budget",
+    "event_queue_overflow": "fixture worst-case coincident events above queue_depth"
+  },
+  "anomaly_codes": {
+    "input_analysis_failure": "input line was an SXT-011 analysis_failure; costs are null (fail closed)",
+    "scene_mode_unaccountable": "scene mode id outside the pinned set; analysis_failure",
+    "unison_out_of_range": "raw unison outside 1..MAX_UNISON; clamped and recorded",
+    "mseg_or_formula_contents_not_exported": "SXT-011 exposure gap; LFO state counted, curve contents unaccounted",
+    "slfo_defs_not_exported": "scene LFO (SLFO) defs counted at the engine constant, not exported",
+    "audio_input_dependency": "preset depends on the external audio input path",
+    "class_state_unverified": "FX class state not yet pinned (no_long_buffer or unverified tier)",
+    "class_traffic_unverified": "FX class transactions not yet pinned",
+    "asset_bytes_unresolved": "wavetable asset with neither embedded size nor resolved file record; bytes NOT guessed"
+  },
+  "determinism": "same graph + same parameters => byte-identical result when dumped with sort_keys=True; floats rounded to 6 decimals; no timestamps or machine paths"
+}
