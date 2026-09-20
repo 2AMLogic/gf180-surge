@@ -55,10 +55,10 @@ Backlog DAG (generated; do not edit by hand):
 | Status | Nodes |
 |---|---|
 | READY | 0 |
-| IN PROGRESS | 1 |
+| IN PROGRESS | 0 |
 | BLOCKED | 4 |
-| NOT RUN | 19 |
-| PASS | 2 |
+| NOT RUN | 16 |
+| PASS | 6 |
 | FAIL | 0 |
 | NO VERDICT | 0 |
 | STALE | 0 |
@@ -77,11 +77,11 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | [#3](https://github.com/2AMLogic/gf180-surge/issues/3) | E3 | Epic: E3 — Coverage expansion and hardware qualification | NOT RUN | aggregate of members |
 | [#4](https://github.com/2AMLogic/gf180-surge/issues/4) | SXT-000 | SXT-000: Preliminary static census (DONE) | PASS | [`corpus/census-v0.1/results/summary.json`](corpus/census-v0.1/results/summary.json) |
 | [#5](https://github.com/2AMLogic/gf180-surge/issues/5) | SXT-010 | SXT-010: Build the native oracle | PASS | [`reports/sxt-010/EVIDENCE.md`](reports/sxt-010/EVIDENCE.md) |
-| [#6](https://github.com/2AMLogic/gf180-surge/issues/6) | SXT-011 | SXT-011: Export normalized patch graphs | NOT RUN | — |
-| [#7](https://github.com/2AMLogic/gf180-surge/issues/7) | SXT-012 | SXT-012: Create render fixtures | NOT RUN | — |
+| [#6](https://github.com/2AMLogic/gf180-surge/issues/6) | SXT-011 | SXT-011: Export normalized patch graphs | PASS | [`reports/sxt-011/EVIDENCE.md`](reports/sxt-011/EVIDENCE.md) |
+| [#7](https://github.com/2AMLogic/gf180-surge/issues/7) | SXT-012 | SXT-012: Create render fixtures | PASS | [`reports/sxt-012/EVIDENCE.md`](reports/sxt-012/EVIDENCE.md) |
 | [#8](https://github.com/2AMLogic/gf180-surge/issues/8) | SXT-013 | SXT-013: Freeze favorite selection and fidelity policy | BLOCKED | — |
 | [#9](https://github.com/2AMLogic/gf180-surge/issues/9) | SXT-014 | SXT-014: Measure effects' contribution | BLOCKED | — |
-| [#10](https://github.com/2AMLogic/gf180-surge/issues/10) | SXT-015 | SXT-015: Create resource accounting | NOT RUN | — |
+| [#10](https://github.com/2AMLogic/gf180-surge/issues/10) | SXT-015 | SXT-015: Create resource accounting | PASS | [`reports/sxt-015/EVIDENCE.md`](reports/sxt-015/EVIDENCE.md) |
 | [#11](https://github.com/2AMLogic/gf180-surge/issues/11) | SXT-016 | SXT-016: Run representative cost probes | NOT RUN | — |
 | [#12](https://github.com/2AMLogic/gf180-surge/issues/12) | SXT-017 | SXT-017: Freeze profile v1 | NOT RUN | — |
 | [#13](https://github.com/2AMLogic/gf180-surge/issues/13) | SXT-020 | SXT-020: Compile patch images | NOT RUN | — |
@@ -97,7 +97,7 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | [#23](https://github.com/2AMLogic/gf180-surge/issues/23) | SXT-030 | SXT-030: Qualify FPGA and external memory | BLOCKED | — |
 | [#24](https://github.com/2AMLogic/gf180-surge/issues/24) | SXT-031 | SXT-031: Qualify the GF180 implementation | BLOCKED | — |
 | [#25](https://github.com/2AMLogic/gf180-surge/issues/25) | SXT-019 | SXT-019: Reuse substrate adoption decision | NOT RUN | — |
-| [#29](https://github.com/2AMLogic/gf180-surge/issues/29) | SXT-018 | SXT-018: Backlog DAG + evidence-derived status board (README marker block) | IN PROGRESS | — |
+| [#29](https://github.com/2AMLogic/gf180-surge/issues/29) | SXT-018 | SXT-018: Backlog DAG + evidence-derived status board (README marker block) | PASS | [`reports/sxt-018/EVIDENCE.md`](reports/sxt-018/EVIDENCE.md) |
 
 </details>
 
@@ -110,11 +110,11 @@ graph TD
     n1["#1 Epic E1 · NOT_RUN"]
     n4["#4 SXT-000 · PASS"]
     n5["#5 SXT-010 · PASS"]
-    n6["#6 SXT-011 · NOT_RUN"]
-    n7["#7 SXT-012 · NOT_RUN"]
+    n6["#6 SXT-011 · PASS"]
+    n7["#7 SXT-012 · PASS"]
     n8["#8 SXT-013 · BLOCKED"]
     n9["#9 SXT-014 · BLOCKED"]
-    n10["#10 SXT-015 · NOT_RUN"]
+    n10["#10 SXT-015 · PASS"]
     n11["#11 SXT-016 · NOT_RUN"]
     n12["#12 SXT-017 · NOT_RUN"]
   end
@@ -138,7 +138,7 @@ graph TD
   end
   subgraph XC["Cross-cutting (no epic)"]
     n25["#25 SXT-019 · NOT_RUN"]
-    n29["#29 SXT-018 · IN_PROGRESS"]
+    n29["#29 SXT-018 · PASS"]
   end
   n4 --> n5
   n5 --> n6
@@ -192,10 +192,9 @@ graph TD
   classDef notrun fill:#5A6468,color:#fff
   classDef noverdict fill:#6B46C1,color:#fff
   classDef stale fill:#B7791F,color:#fff
-  class n29 inprogress
   class n8,n9,n23,n24 blocked
-  class n1,n2,n3,n6,n7,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n25 notrun
-  class n4,n5 pass
+  class n1,n2,n3,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n25 notrun
+  class n4,n5,n6,n7,n10,n29 pass
 ```
 
 </details>
