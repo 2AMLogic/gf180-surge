@@ -31,13 +31,13 @@ Completed:
 
 Epics:
 
-- **E1 — Reference, corpus, and product profile**: native pinned-Surge
+- **E1 — Reference, corpus, and product profile** (#1): native pinned-Surge
   oracle, normalized patch graphs, render fixtures, favorites and fidelity
   policy, effects contribution, resource accounting, profile freeze.
-- **E2 — Verified core: first complete wet patch**: patch-image
+- **E2 — Verified core: first complete wet patch** (#2): patch-image
   compiler, timed control, first dry voice, Delay/EQ, Reverb1, one complete
   wet preset, wavetable assets.
-- **E3 — Coverage expansion and hardware qualification**: voice and
+- **E3 — Coverage expansion and hardware qualification** (#3): voice and
   effect leaves by measured recovery, full coverage publication, FPGA +
   external memory, gf180 qualification.
 
