@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SXT-020 patch image header (container segment at offset 12)",
+  "schema_version": "sxt-020-patch-image-header/1.0.0",
+  "status": "DRAFT-NOT-FROZEN",
+  "description": "Identity + provenance segment of a patch image. Canonical JSON (sorted keys, separators ',' ':', ensure_ascii, allow_nan=false), UTF-8. The container checksum (SHA-256 hex over the whole preceding container) and header.body_sha256 (SHA-256 hex over the canonical body bytes) are the two corruption-detection layers; normalized_graph_sha256 pins the exact source graph. No timestamps or machine-dependent values anywhere.",
+  "fields": {
+    "format": {"type": "string", "const": "sxt-020-patch-image/1.0.0"},
+    "format_major": {"type": "integer", "const": 1},
+    "format_minor": {"type": "integer", "const": 0},
+    "compiler_version": {"type": "string", "description": "Compiler identity, e.g. sxt-020-compile/1.0.0."},
+    "body_sha256": {"type": "string", "description": "SHA-256 hex of the canonical body bytes (checksum layer 1)."},
+    "source": {
+      "type": "object",
+      "fields": {
+        "path": {"type": "string", "description": "Census path of the source .fxp (identical to corpus-manifest entries[].path)."},
+        "bank": {"type": "string", "enum": ["factory", "contributor"]},
+        "census_blob_sha1": {"type": "string", "description": "Git blob SHA-1 of the source .fxp, re-verified against graphs.jsonl by the golden suite."},
+        "size_bytes": {"type": ["integer", "null"], "description": "Source .fxp size in bytes when the graph line carries it."}
+      }
+    },
+    "pin": {
+      "type": "object",
+      "description": "Repeated per image so every image is independently checkable against the SXT-010/SXT-011 pin.",
+      "fields": {
+        "engine_commit": {"type": "string", "description": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 for the committed corpus."},
+        "sample_rate_hz": {"type": "integer", "const": 48000},
+        "graph_schema_version": {"type": "string", "description": "SXT-011 graph schema version (line pin.sv)."}
+      }
+    },
+    "normalized_graph_sha256": {"type": "string", "description": "SHA-256 hex over canonical_json(g) of the source graph. verify.py rebuilds g from the body's verbatim graph sections and requires an exact hash match (losslessness)."},
+    "profile": {
+      "type": "object",
+      "description": "The DRAFT profile the gates were evaluated against. Never frozen in format v1 images.",
+      "fields": {
+        "artifact": {"type": "string", "const": "profile-v1-DRAFT"},
+        "bundle_id": {"type": "string", "description": "e.g. B4-broad (the selected DRAFT bundle)."},
+        "bundle_status": {"type": "string", "const": "DRAFT-NOT-FROZEN"},
+        "bundle_file_sha256": {"type": "string", "description": "SHA-256 of the whole bundle spec file; pins the exact gate vocabulary."},
+        "bundle_spec": {"type": "object", "description": "The validated spec object for bundle_id (allowlists, limits, budgets, gap policies), embedded verbatim."},
+        "claim_scope": {"type": "string", "description": "Standing note: a compiled image is not a support, fidelity, or preset-quality claim."}
+      }
+    }
+  },
+  "checksum_layers": [
+    "container digest: SHA-256 hex over bytes [0, 12+header_len+body_len) — detects any corruption anywhere",
+    "header.body_sha256: SHA-256 hex over the canonical body bytes — the strong canonical-body hash",
+    "header.normalized_graph_sha256: SHA-256 hex over canonical_json(rebuilt graph) — lossless round-trip vs the SXT-011 source graph"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SXT-020 patch image body (container segment after the header)",
+  "schema_version": "sxt-020-patch-image-body/1.0.0",
+  "status": "DRAFT-NOT-FROZEN",
+  "description": "Patch content + compiler views of a patch image. Two top-level sections: 'graph' carries the verbatim normalized graph (every source field exactly once; rebuilding g from it must hash to header.normalized_graph_sha256) and 'derived' carries recomputable compiler views (SXT-015 model annotations, allocations, event timing, caveats). Canonical JSON bytes; header.body_sha256 covers this segment.",
+  "graph": {
+    "scalars": {
+      "type": "object",
+      "description": "Verbatim scalar fields of g (whichever the graph stores): sm (scene mode id), smn, sa (active scene), spl (split point), poly (polylimit), ch/chn (character), fxb/fxbn (FX section bypass), fxd (per-slot disable bitmask), vol."
+    },
+    "scenes": {"type": "array", "items": 2, "description": "g.sc verbatim: both scenes incl. scene B (state carried even when routing-inactive). Each scene: playmode (pm/pmn), pitch/octave/bend ranges/keytrack/porta, filter block config (fbc/fbcn, f2off/f2lnk, fb, bal, lc, pfg, vca, vs, pan, wid), send levels [2] (buses 3/4 are an SXT-011 exposure gap: not exported, loader defaults apply), mixer mix{} (per path [level, mute, solo, route]), FM routing fm{}, osc[] (3 slots: t/tn, p[0..6] where p[0] is the family SUBMODE, pit, oct, kt, rt, uni, udet, wt flag), fu[] (2 filter units: t/tn, st/stn, cut, res, em, kt), ws{} (waveshaper t/tn/dr), lfo[] (6 records; MSEG/Formula carry the gap marker verbatim)."},
+    "fx_slots": {"type": "array", "items": 16, "description": "g.fx verbatim: every slot with i, r (routing role: ains1..4, bins1..4, send1..4, global1..4), t/tn, on, p[0..12] (Airwindows p[0] IS the algorithm id, exported also as aw/awn), rl (return level). Off slots carry only the bare identity fields, exactly as the graph stores them."},
+    "modulation": {"type": "object", "description": "g.md verbatim: {g: global rows, s: [per-scene {s: scene-bus rows, v: voice-bus rows}]}; each row [source_id, source_scene, source_index, dest_synthside_id, dest_name, depth, normalized_depth]. Ids are stable within the recorded engine pin only; dest_name travels with every row so consumers never need an id map."},
+    "wavetable_assets": {"type": "array", "description": "g.wta verbatim when present: per record sc, osc, name (raw-side display name; provenance), emb (embedded byte size), script, res ([[path under resources/data/wavetables, sha256], ...] for resolved tables)."},
+    "dependencies": {"type": "array", "description": "g.dep verbatim ('audio_input' when any osc slot's normalized type is Audio Input)."},
+    "migration_events": {"type": "array", "description": "g.mi verbatim (loader migration events)."},
+    "raw_missing": {"type": "array", "description": "g.rwm verbatim."},
+    "raw_uninterpretable": {"type": "array", "description": "g.rwu verbatim."},
+    "raw_note": {"type": "string", "description": "g.raw_note verbatim (raw-sidecar waiver for Snare Tight.fxp)."}
+  },
+  "derived": {
+    "voice_graph": {"type": "object", "description": "SXT-015 derived voice view: scene mode, active scenes, voices_per_note (dual mode consumes two pool voices per note), polylimit, worst_case_voices = min(polylimit, bundle pool), per-scene osc slot activity/unison annotations (engine clamps unison to MAX_UNISON=16; raw out-of-range values annotated as unison_out_of_range, never rewritten), unison_load_per_voice, filter-unit and waveshaper activity, mseg_or_formula_lfos gap lists, LFO/envelope instance counts, voice_state_bytes_on_chip."},
+    "fx_section": {"type": "object", "description": "Per-slot derived view: phase (0 scene_A_insert, 1 scene_B_insert, 2 send_bus, 3 global_insert), order_in_phase, engine_order = phase*10 + order (engine-fixed processing rank: A1->A4, B1->B4, scene sum, S1..S4 sends with per-slot return level, G1->G4 globals), enabled_by_fxd (fxd bit), routing_active, processes_this_frame, state_tier, class_state_unverified, airwindows_algorithm_selected. Section level: bypass id/name, disable mask, enabled/processing/distinct-type counts. Per-instance discipline: two slots of one class are two instances with separate state, always; fxd-disabled slots hold state but neither process nor gate."},
+    "allocations": {
+      "type": "object",
+      "description": "Deterministic allocation from the SXT-015 model under the bundle voice-pool override. ALL numbers are placeholders [PENDING-SXT-016].",
+      "fields": {
+        "basis": {"type": "object", "description": "accounting_model_version, params_digest, cost_profile, note (aggregate voice-state block until SXT-016/023 pin per-voice layout)."},
+        "budgets": {"type": "object", "description": "Bundle candidate budgets: on_chip_ram_bytes (4 MiB), external_writable_bytes (64 MiB), external_bandwidth_bytes_per_s (800 MB/s), cycle_closure (not_gated_pending_sxt_016). Candidates, not claims."},
+        "voice": {"type": "object", "description": "worst-case voice/unison/LFO/envelope instance counts."},
+        "on_chip": {"type": "object", "description": "blocks (voice_state aggregate first, then per-instance fx blocks in slot order; each {name, kind, offset, size_bytes}), total_bytes."},
+        "external_writable": {"type": "object", "description": "per-instance external blocks in slot order (long delay/reverb buffers; classification: writable class > 64 KiB), total_bytes. Flash is NEVER a substitute for writable delay memory."},
+        "flash_assets": {"type": "object", "description": "one block per wavetable record with embedded bytes; assets only."},
+        "fx_instances": {"type": "array", "description": "per configured instance: slot, class, enabled/routing_active/processes_this_frame, region+offset+size, ext_reads/writes_per_frame, verification flags. Routing-inactive instances are allocated state and contribute no traffic."},
+        "bandwidth": {"type": "object", "description": "ext_traffic_bytes_per_frame and per_s at 48 kHz (processing instances only)."},
+        "cycles_placeholder_v0": {"type": "object", "description": "cost columns + closure status. NOT GATED: placeholder-v0 columns only [PENDING-SXT-016]."}
+      }
+    },
+    "event_timing": {"type": "object", "description": "Required event queue depth, worst-case events per frame, peak events/s, source (SXT-012 fixture profile)."},
+    "caveats": {"type": "array", "description": "SXT-015 accounting anomalies verbatim (unison_out_of_range, slfo_defs_not_exported, class_state_unverified flags, asset observations). Recorded observations; they never alter patch content."},
+    "losslessness": {"type": "object", "description": "normalized_graph_sha256 + the reconstruction rule verify.py applies (g = scalars + grouped sections; sha256(canonical_json(g)) must equal header.normalized_graph_sha256)."}
+  },
+  "determinism": {
+    "rules": [
+      "Canonical JSON: sorted keys, separators ',' ':', ensure_ascii, allow_nan=false.",
+      "No timestamps, wall-clock, random, or machine-dependent values.",
+      "Fixed orders: engine arrays in engine order, FX slots by index, allocation blocks voice-first then slot order, rejection codes predictor-order then compiler-gate order.",
+      "Floats carried as SXT-011 exported them (6-decimal rounding at source) or SXT-015 model _r6 rounding.",
+      "Same graph bytes + same bundle file + same compiler version => byte-identical image bytes."
+    ]
+  }
+}
