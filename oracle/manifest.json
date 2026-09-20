@@ -1,0 +1,97 @@
+{
+  "manifest_version": 1,
+  "issue": "SXT-010",
+  "purpose": "Complete machine-readable pin of the native Surge XT oracle: engine source, submodules, build toolchain, audio runtime, and harness semantics. The executable sound reference lives OUTSIDE this repository (GPL-3.0-or-later); this repository (Apache-2.0) stores only pins, scripts, and evidence.",
+  "engine": {
+    "repository": "surge-synthesizer/surge",
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "commit_subject": "Sort Floaty Delay after Delay",
+    "commit_date": "2026-09-18T16:09:20Z",
+    "archive_url": "https://codeload.github.com/surge-synthesizer/surge/tar.gz/58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "license": "GPL-3.0-or-later (kept external; no engine source, assets, or binaries are copied into this repository)",
+    "expected_checkout": {
+      "location_used_for_evidence": "/Users/joseph/dev/surge-xt-oracle/surge",
+      "override": "environment variable ORACLE_SURGE_DIR",
+      "rule": "any drift of engine HEAD, submodule SHA, or modified tracked files aborts fetch-and-build.sh"
+    }
+  },
+  "census_source_lock": "corpus/census-v0.1/source-lock.json",
+  "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+  "submodules": [
+    { "path": "libs/JUCE", "commit": "a8c7c714c7564b9248749e1e8cefcc5ef2b6f0cc" },
+    { "path": "libs/PEGTL", "commit": "64af78c6a7959cd5753ad165ec9f65591aa96f2d" },
+    { "path": "libs/clap-juce-extensions", "commit": "16e9d4ca7b1e86c76e04584b2c08e85a764bcda8" },
+    { "path": "libs/eurorack/eurorack", "commit": "888298b0e3ec5daabf96c5ab912ffc42825a2b4c" },
+    { "path": "libs/fmt", "commit": "e424e3f2e607da02742f73db84873b8084fc714c" },
+    { "path": "libs/luajitlib/LuaJIT", "commit": "18b087cd2cd4ddc4a79782bf155383a689d5093d" },
+    { "path": "libs/luajitlib/cmake", "commit": "b859bf0ffd1ca447b09a6384c99846fcfe3e27b7" },
+    { "path": "libs/melatonin_inspector", "commit": "9e91e4e3d6cc41688c8d2108ef7ed33c1a90dcc9" },
+    { "path": "libs/oddsound-mts/MTS-ESP", "commit": "ec13f5749ea8c4ad45158477ce284082f3ce4e0d" },
+    { "path": "libs/pffft", "commit": "d027f2a290ca0047d95513c2a20570d13557e381" },
+    { "path": "libs/pybind11", "commit": "7c33cdc2d39c7b99a122579f53bc94c8eb3332ff" },
+    { "path": "libs/r8brain-free-src", "commit": "b3f0753d90b3325b8ea8a08fd699e8e6db26e5b5" },
+    { "path": "libs/simde", "commit": "71fd833d9666141edcd1d3c109a80e228303d8d7" },
+    { "path": "libs/sst/sst-basic-blocks", "commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96" },
+    { "path": "libs/sst/sst-cmake", "commit": "49008aacfe82507be59b08f25809cc271cdc0bf6" },
+    { "path": "libs/sst/sst-cpputils", "commit": "52c4b749c0e155077ee1df79fee5d237bef7a1a8" },
+    { "path": "libs/sst/sst-effects", "commit": "adcac6950292dacc529651093e7ece2d1c8c0d4b" },
+    { "path": "libs/sst/sst-filters", "commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6" },
+    { "path": "libs/sst/sst-plugininfra", "commit": "ebdaf5e936361994a30b0d51d2ff6cb750232d4b" },
+    { "path": "libs/sst/sst-waveshapers", "commit": "dd12f31a5a9016c9895e52d1a00eee0e1eebe6ce" },
+    { "path": "libs/tuning-library", "commit": "5a18353a0444caa068b648383cae37d156b97e1c" },
+    { "path": "libs/zstd", "commit": "92505deb29bc17fe014ed918e67f15a84d70b230" }
+  ],
+  "nested_submodules_observed": [
+    { "path": "libs/clap-juce-extensions/clap-libs/clap", "commit": "29ffcc273be7c7c651f6c9953b99e69700e2387a" },
+    { "path": "libs/clap-juce-extensions/clap-libs/clap-helpers", "commit": "a61bcdf0ecc2c8db1e80bfe8bf9cb7e8d9fd2bbc" },
+    { "path": "libs/simde/test/munit", "commit": "da8f73412998e4f1adf1100dc187533a51af77fd" },
+    { "path": "libs/sst/sst-plugininfra/libs/filesystem/ghc-filesystem", "commit": "614bbe87b80435d87ab8791564370e0c1d13627d" },
+    { "path": "libs/sst/sst-plugininfra/libs/miniz", "commit": "16413c213de38e703d883006193734e8b1178d5d" }
+  ],
+  "build": {
+    "primary_target": "surgepy",
+    "secondary_target": "surge-testrunner",
+    "generator": "Ninja",
+    "build_type": "Release",
+    "cmake_configure_command": "cmake -S . -B build-py311 -G Ninja -DCMAKE_BUILD_TYPE=Release -DSURGE_BUILD_PYTHON_BINDINGS=ON -DSURGE_BUILD_TESTRUNNER=ON -DPYBIND11_FINDPYTHON=OFF -DPYTHON_EXECUTABLE=<python3.11>",
+    "python_interpreter": "/opt/homebrew/opt/python@3.11/bin/python3.11",
+    "python_version": "3.11.16",
+    "python_binding_note": "surgepy built against homebrew python3.11 (numpy 1.26.4 present). python3.12/3.13 were rejected for lack of a numpy runtime. A standalone compile of a trivial pybind11 module using the pinned pybind11 (2.11.0-172-g7c33cdc2) against python3.14 headers also succeeded (transcript in reports/sxt-010/EVIDENCE.md); 3.11 was kept as the pinned evidence runtime for numpy-availability and environment-stability reasons, not because 3.14 compilation failed. PYBIND11_FINDPYTHON=OFF forces pybind11's classic FindPythonLibsNew, which strictly honors PYTHON_EXECUTABLE; the default new-style FindPython in this environment resolves a broken anaconda interpreter (/opt/homebrew/anaconda3, missing include dir) regardless of hints. Interpreter-resolution transcript in reports/sxt-010/EVIDENCE.md.",
+    "build_dir_used_for_evidence": "build-py311 (under the engine checkout)",
+    "products": {
+      "surgepy_module": "build-py311/src/surge-python/surgepy.cpython-311-darwin.so",
+      "testrunner": "build-py311/src/surge-testrunner/surge-testrunner"
+    }
+  },
+  "runtime": {
+    "sample_rate_hz": 48000,
+    "block_size_samples": 32,
+    "block_size_note": "SURGE_COMPILE_BLOCK_SIZE default 32 (src/CMakeLists.txt); process scheduling is per-multiblock via surgepy.processMultiBlock",
+    "tempo_bpm": 120,
+    "ppq_pos": 0,
+    "data_home": "SURGE_DATA_HOME=<engine>/resources/data",
+    "data_home_note": "Engine env override read by SurgeStorage::getOverrideDataHome (src/common/SurgeStorage.cpp); pins all factory assets/wavetables to the pinned source tree, never to machine-global Surge installs",
+    "reset_policy": "Harness calls allNotesOff() before each patch load; loadPatch() unstreams the patch into a fresh patch object. No global engine state outside the loaded patch is modified by the harness.",
+    "tuning": "Engine default: standard 12-TET, no SCL/KBM override, default tuningApplicationMode. MTS-ESP client not connected.",
+    "mpe": false,
+    "randomness": "No seed override is applied; the pinned engine's own RNG initialization is part of the reference. The first-note capture measures render-to-render repeatability and reports it (bit-identical or max abs diff), it does not assume determinism."
+  },
+  "environment": {
+    "os": "macOS 26.5.1 (Build 25F80), arm64",
+    "xcode": "26.6 (Build 17F113)",
+    "clang": "Apple clang 21.0.0 (clang-2100.1.1.101), target arm64-apple-darwin25.5.0",
+    "cmake": "4.4.3",
+    "ninja": "1.11.1.git.kitware.jobserver-1",
+    "git": "2.55.0",
+    "python_runtime": "3.11.16 (numpy 1.26.4)",
+    "python_rejected": "3.12/3.13 (no numpy runtime); 3.14 not used for evidence (see python_binding_note)"
+  },
+  "evidence_root": "reports/sxt-010/",
+  "harness": {
+    "drift_gate": "oracle/fetch-and-build.sh",
+    "load_report": "oracle/run_load_report.py",
+    "capture": "oracle/capture_first_note.py",
+    "shared": "oracle/oracle_common.py"
+  },
+  "licensing_note": "Harness scripts in oracle/ are original to this repository (Apache-2.0, 2AMLogic convention). They import the external GPL engine at runtime and copy no Surge source, tables, assets, or presets into this repository. The WAV in reports/sxt-010/first-capture/ is this project's own render of a loaded preset, kept small (~2 s mono 16-bit), and is not a redistribution of upstream assets."
+}
