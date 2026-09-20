@@ -1,0 +1,67 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-original.json",
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-original.wav",
+      "sha256": "587a38115efb7157e8d50bd7a4b13e550077a2ca7bbf16159e1d474c5e2f9204"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": 5.943,
+      "1000-6000Hz": 1.942,
+      "150-1000Hz": -0.48,
+      "6000-24000Hz": 6.634
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.9277,
+      "max_abs_delta_db": 74.846,
+      "mean_abs_delta_db": 1.288
+    },
+    "max_abs_sample_diff": 0.250701904,
+    "mean_abs_sample_diff": 0.018294485,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": 0.0,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Basses/FM Combo.fxp",
+    "slug": "fmcombo"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "path": "fixtures/sequences/seq-poly-8-v1.json",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "bypass-slot",
+    "label": "ablation variant: slot 1 (Chorus) bypassed; original-preset family",
+    "mutated_slots": [
+      1
+    ],
+    "sidecar": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-bypass-slot01-Chorus.json",
+    "slot": {
+      "index": 1,
+      "role": "ains2",
+      "type_id": 9,
+      "type_name": "Chorus"
+    },
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-bypass-slot01-Chorus.wav",
+      "sha256": "232963da00529cb8bc8d3c8d9d7184da48ecd185c33d73b0cfd3d96d23ee4ba5"
+    }
+  }
+}

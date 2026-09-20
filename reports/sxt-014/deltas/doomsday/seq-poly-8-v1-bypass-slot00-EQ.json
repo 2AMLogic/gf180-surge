@@ -1,0 +1,67 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-original.json",
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-original.wav",
+      "sha256": "9c89bf46031d844d7d7c0f7f1d948dbf7ee70c1bc20285efc163f547e1af1e4d"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": 0.316,
+      "1000-6000Hz": -7.842,
+      "150-1000Hz": 0.517,
+      "6000-24000Hz": -0.246
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.99357,
+      "max_abs_delta_db": 2.408,
+      "mean_abs_delta_db": 0.477
+    },
+    "max_abs_sample_diff": 0.219177246,
+    "mean_abs_sample_diff": 0.021393938,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": 0.541,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Basses/Doomsday.fxp",
+    "slug": "doomsday"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "path": "fixtures/sequences/seq-poly-8-v1.json",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "bypass-slot",
+    "label": "ablation variant: slot 0 (EQ) bypassed; original-preset family",
+    "mutated_slots": [
+      0
+    ],
+    "sidecar": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-bypass-slot00-EQ.json",
+    "slot": {
+      "index": 0,
+      "role": "ains1",
+      "type_id": 6,
+      "type_name": "EQ"
+    },
+    "wav": {
+      "bytes": 355244,
+      "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-bypass-slot00-EQ.wav",
+      "sha256": "38efab6a36f52c72e9ddc79ef31cafbe0e247ae23adca8154d92e1219be76f9b"
+    }
+  }
+}

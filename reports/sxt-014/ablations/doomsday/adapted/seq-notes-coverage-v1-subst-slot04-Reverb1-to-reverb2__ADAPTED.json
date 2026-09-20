@@ -1,0 +1,94 @@
+{
+  "ablation_id": "doomsday/adapted/seq-notes-coverage-v1-subst-slot04-Reverb1-to-reverb2__ADAPTED",
+  "adapted": true,
+  "bypassed_slots": [],
+  "claim_scope": "reference-vs-reference ablation apparatus only: renders of the pinned engine under the SXT-012 policies with one FX slot bypassed/mutated. Numeric deltas are diagnostic; essential/optional/unresolved labels require listening records and are BLOCKED-on-human (issue #9).",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "issue": "SXT-014",
+  "kind": "substituted",
+  "label": "ADAPTED: slot 4 (Reverb 1) substituted with reverb2; generic substitution DISQUALIFIES original-preset support; excluded from coverage",
+  "mutated_slots": [
+    4
+  ],
+  "mutation": {
+    "method": "slot 4 type set to fxt_reverb2 (11) via setParamVal; params not copied (engine state after swap recorded)",
+    "slot": 4,
+    "slot_readback_after": {
+      "params": [
+        -4.213393211364746,
+        3.0,
+        0.41964098811149597,
+        1.4508910179138184,
+        0.3696430027484894,
+        -18.48752212524414,
+        29.362518310546875,
+        -1.8000030517578125,
+        51.16606140136719,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "return_level": 1.0,
+      "type": 2.0
+    },
+    "target_type": {
+      "constant": "fxt_reverb2",
+      "id": 11
+    }
+  },
+  "non_perturbation_proof": {
+    "method": "post-settle exact readback of type + 12 params + return_level for every non-mutated slot vs the pristine post-load snapshot",
+    "other_slots_bit_unchanged": true,
+    "slots_checked": 15,
+    "values_checked": 210
+  },
+  "preset": {
+    "census_blob_sha1": "a8a3a395d52c1f0435ee2f948559ac2acf2e18dd",
+    "file_sha256": "a366b356975892cb1e11098d8027449f2678fae747e3bcc5846511796a97da89",
+    "path": "resources/data/patches_factory/Basses/Doomsday.fxp",
+    "slug": "doomsday"
+  },
+  "render": {
+    "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+    "clipped_samples": 0,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "peak_abs_float": 0.3747793138027191,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0
+  },
+  "repeatability_class": null,
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "slot": {
+    "index": 4,
+    "role": "send1",
+    "type_id": 2,
+    "type_name": "Reverb 1"
+  },
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "61a476db73a15948e09d8b37e593bee814ce52b4b125bd227e66db11415c6551"
+  },
+  "wav": {
+    "bytes": 547244,
+    "path": "reports/sxt-014/ablations/doomsday/adapted/seq-notes-coverage-v1-subst-slot04-Reverb1-to-reverb2__ADAPTED.wav",
+    "sha256": "5f642f5498d8668729e3321e1b456eabc72d827e512a26fb365d958cb75fa156"
+  }
+}

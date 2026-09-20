@@ -1,0 +1,67 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-original.json",
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-original.wav",
+      "sha256": "b3702194e547cae5e2631e68f32eca085f94f44e8db44cedd08916ea9b185b4f"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": -0.021,
+      "1000-6000Hz": 0.461,
+      "150-1000Hz": -0.597,
+      "6000-24000Hz": -0.561
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.972181,
+      "max_abs_delta_db": 14.959,
+      "mean_abs_delta_db": 2.61
+    },
+    "max_abs_sample_diff": 1.123016357,
+    "mean_abs_sample_diff": 0.057394429,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": -3.158,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Basses/Width.fxp",
+    "slug": "width"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "bypass-slot",
+    "label": "ablation variant: slot 4 (Delay) bypassed; original-preset family",
+    "mutated_slots": [
+      4
+    ],
+    "sidecar": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+    "slot": {
+      "index": 4,
+      "role": "send1",
+      "type_id": 1,
+      "type_name": "Delay"
+    },
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-bypass-slot04-Delay.wav",
+      "sha256": "a93a904aec0a738dbe85e7413e5f66a0322101ce13b991574ddfd764de857ec3"
+    }
+  }
+}

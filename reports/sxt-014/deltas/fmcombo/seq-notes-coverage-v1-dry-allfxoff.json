@@ -1,0 +1,77 @@
+{
+  "anchor": {
+    "sidecar": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-original.json",
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-original.wav",
+      "sha256": "0fe6c07818f4ad30228fbccde3931796e4eb873a8f1ffbb666381c3cd3b779b2"
+    }
+  },
+  "caveat": "numeric deltas are DIAGNOSTIC ONLY; effect labels require listening records (BLOCKED-on-human); near-zero flags are heuristic candidates, left unresolved",
+  "issue": "SXT-014",
+  "metrics": {
+    "band_delta_db": {
+      "0-150Hz": -4.661,
+      "1000-6000Hz": 2.26,
+      "150-1000Hz": 4.963,
+      "6000-24000Hz": -1.607
+    },
+    "bit_identical": false,
+    "block_rms": {
+      "block_samples": 480,
+      "envelope_correlation": 0.844084,
+      "max_abs_delta_db": 73.985,
+      "mean_abs_delta_db": 1.377
+    },
+    "max_abs_sample_diff": 0.715484619,
+    "mean_abs_sample_diff": 0.051657698,
+    "near_zero_delta_candidate": false,
+    "tail_rms_delta_db": 0.0,
+    "verdict": "MEASURABLE-DIFFERENCE"
+  },
+  "preset": {
+    "path": "resources/data/patches_factory/Basses/FM Combo.fxp",
+    "slug": "fmcombo"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "fft_backend": "numpy+stdlib",
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "2f32d808a9fcaf42e5b0b3dde4f8f0824598e18acfe5e3ffbe61a9218bcdadb8"
+  },
+  "variant": {
+    "adapted": false,
+    "kind": "dry-allfxoff",
+    "label": "diagnostic dry bus: all 16 FX slots Off",
+    "mutated_slots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "sidecar": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-dry-allfxoff.json",
+    "slot": null,
+    "wav": {
+      "bytes": 547244,
+      "path": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-dry-allfxoff.wav",
+      "sha256": "96ff509ed269480f103f0a017c9a3dcb9c2ea6f6cd7be04e09497804c10fbabe"
+    }
+  }
+}

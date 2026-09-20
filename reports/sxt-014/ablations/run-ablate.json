@@ -1,0 +1,536 @@
+{
+  "issue": "SXT-014",
+  "renders": [
+    {
+      "ablation_id": "behemoth/seq-notes-coverage-v1-bypass-slot04-Reverb1",
+      "kind": "bypass-slot",
+      "sidecar": "behemoth/seq-notes-coverage-v1-bypass-slot04-Reverb1.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-bypass-slot04-Reverb1.wav",
+        "sha256": "73cc6f09d161c775d1f63ec4ec6df478e93aeca5e5869dcc47b144f9567a76f9"
+      }
+    },
+    {
+      "ablation_id": "behemoth/seq-notes-coverage-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "behemoth/seq-notes-coverage-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-dry-allfxoff.wav",
+        "sha256": "73cc6f09d161c775d1f63ec4ec6df478e93aeca5e5869dcc47b144f9567a76f9"
+      }
+    },
+    {
+      "ablation_id": "behemoth/seq-notes-coverage-v1-original",
+      "kind": "original",
+      "sidecar": "behemoth/seq-notes-coverage-v1-original.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/behemoth/seq-notes-coverage-v1-original.wav",
+        "sha256": "bd9553387842197f29db1a4e1ff23caaf97a3fbf668f9767664843b1e4ee2a51"
+      }
+    },
+    {
+      "ablation_id": "behemoth/seq-poly-8-v1-bypass-slot04-Reverb1",
+      "kind": "bypass-slot",
+      "sidecar": "behemoth/seq-poly-8-v1-bypass-slot04-Reverb1.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/behemoth/seq-poly-8-v1-bypass-slot04-Reverb1.wav",
+        "sha256": "4d690bb15a163b56321a10c19a1ab7ef52e2852a2bc7000389547bd4539ce6ea"
+      }
+    },
+    {
+      "ablation_id": "behemoth/seq-poly-8-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "behemoth/seq-poly-8-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/behemoth/seq-poly-8-v1-dry-allfxoff.wav",
+        "sha256": "4d690bb15a163b56321a10c19a1ab7ef52e2852a2bc7000389547bd4539ce6ea"
+      }
+    },
+    {
+      "ablation_id": "behemoth/seq-poly-8-v1-original",
+      "kind": "original",
+      "sidecar": "behemoth/seq-poly-8-v1-original.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/behemoth/seq-poly-8-v1-original.wav",
+        "sha256": "648ea6f328140644ffc14ffd9080cf18cdebdfb2dc38fe4376411e53bc2eac62"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-notes-coverage-v1-bypass-slot00-EQ",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-notes-coverage-v1-bypass-slot00-EQ.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-notes-coverage-v1-bypass-slot00-EQ.wav",
+        "sha256": "1c277ef048ba7934f5af354fcc328f5afd8a68302fdc9b745299a3791fd397d5"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-notes-coverage-v1-bypass-slot04-Reverb1",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-notes-coverage-v1-bypass-slot04-Reverb1.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-notes-coverage-v1-bypass-slot04-Reverb1.wav",
+        "sha256": "b22ad8f079e692edd4d7f48e409f9427026cb04951ff4cdb59727058b433fe9d"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-notes-coverage-v1-bypass-slot05-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-notes-coverage-v1-bypass-slot05-Delay.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-notes-coverage-v1-bypass-slot05-Delay.wav",
+        "sha256": "9fb09bc34a47710c85ca1d491c0c59152d4cc70b75707337f2fcc89317a47795"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-notes-coverage-v1-bypass-slot06-Conditioner",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-notes-coverage-v1-bypass-slot06-Conditioner.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-notes-coverage-v1-bypass-slot06-Conditioner.wav",
+        "sha256": "bdc88396c761cbf618408ac7912cf44d3e8ce41bdf09472725d3ecd9044a50be"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-notes-coverage-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "doomsday/seq-notes-coverage-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-notes-coverage-v1-dry-allfxoff.wav",
+        "sha256": "a1caf14e3b339641b79e6feefd3af3b9560d973564185abd0e04f44ca6263be4"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-notes-coverage-v1-original",
+      "kind": "original",
+      "sidecar": "doomsday/seq-notes-coverage-v1-original.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-notes-coverage-v1-original.wav",
+        "sha256": "0382f3dcc39db6ac8e8020dbdcfdce5e590cd212c4328f9fd42f688a042409a4"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-poly-8-v1-bypass-slot00-EQ",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-poly-8-v1-bypass-slot00-EQ.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-bypass-slot00-EQ.wav",
+        "sha256": "38efab6a36f52c72e9ddc79ef31cafbe0e247ae23adca8154d92e1219be76f9b"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-poly-8-v1-bypass-slot04-Reverb1",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-poly-8-v1-bypass-slot04-Reverb1.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-bypass-slot04-Reverb1.wav",
+        "sha256": "1f93e65a7b951ee5fd1158b86b950ed46f643838e54fb053256b3aca92aa4d02"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-poly-8-v1-bypass-slot05-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-poly-8-v1-bypass-slot05-Delay.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-bypass-slot05-Delay.wav",
+        "sha256": "e7b0b5167f306d9fea1413aa996e6013153df9356714375ac4ffdb107bfb26fd"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-poly-8-v1-bypass-slot06-Conditioner",
+      "kind": "bypass-slot",
+      "sidecar": "doomsday/seq-poly-8-v1-bypass-slot06-Conditioner.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-bypass-slot06-Conditioner.wav",
+        "sha256": "712bfedd0dc14f74ceae7d1386a52c33e3a9b7afb6b95846be1d4eb0d1a2754b"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-poly-8-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "doomsday/seq-poly-8-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-dry-allfxoff.wav",
+        "sha256": "de049c31f7b50a5cb3b413162a7e633477be419e182334eb01f36e602c3c8d0e"
+      }
+    },
+    {
+      "ablation_id": "doomsday/seq-poly-8-v1-original",
+      "kind": "original",
+      "sidecar": "doomsday/seq-poly-8-v1-original.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/doomsday/seq-poly-8-v1-original.wav",
+        "sha256": "9c89bf46031d844d7d7c0f7f1d948dbf7ee70c1bc20285efc163f547e1af1e4d"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-notes-coverage-v1-bypass-slot00-EQ",
+      "kind": "bypass-slot",
+      "sidecar": "fmcombo/seq-notes-coverage-v1-bypass-slot00-EQ.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-bypass-slot00-EQ.wav",
+        "sha256": "7777663c327fe81252a8d02897b2e008247bc508482ea67388e4ee5887e46738"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-notes-coverage-v1-bypass-slot01-Chorus",
+      "kind": "bypass-slot",
+      "sidecar": "fmcombo/seq-notes-coverage-v1-bypass-slot01-Chorus.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-bypass-slot01-Chorus.wav",
+        "sha256": "80ab3a73b245674f0f4c1ec12c1d4e21f3cd7cee88e7e8e6ef165c8833c30dc5"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-notes-coverage-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "fmcombo/seq-notes-coverage-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-dry-allfxoff.wav",
+        "sha256": "96ff509ed269480f103f0a017c9a3dcb9c2ea6f6cd7be04e09497804c10fbabe"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-notes-coverage-v1-original",
+      "kind": "original",
+      "sidecar": "fmcombo/seq-notes-coverage-v1-original.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-notes-coverage-v1-original.wav",
+        "sha256": "0fe6c07818f4ad30228fbccde3931796e4eb873a8f1ffbb666381c3cd3b779b2"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-poly-8-v1-bypass-slot00-EQ",
+      "kind": "bypass-slot",
+      "sidecar": "fmcombo/seq-poly-8-v1-bypass-slot00-EQ.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-bypass-slot00-EQ.wav",
+        "sha256": "0f928f9798093162bf44994ccc93baf3c5f5ae8740997c6bea9c3808ea4df134"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-poly-8-v1-bypass-slot01-Chorus",
+      "kind": "bypass-slot",
+      "sidecar": "fmcombo/seq-poly-8-v1-bypass-slot01-Chorus.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-bypass-slot01-Chorus.wav",
+        "sha256": "232963da00529cb8bc8d3c8d9d7184da48ecd185c33d73b0cfd3d96d23ee4ba5"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-poly-8-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "fmcombo/seq-poly-8-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-dry-allfxoff.wav",
+        "sha256": "1d063ab22a379439d780bf221834a5c0c237a345ae04d795de25a47daec7e3ce"
+      }
+    },
+    {
+      "ablation_id": "fmcombo/seq-poly-8-v1-original",
+      "kind": "original",
+      "sidecar": "fmcombo/seq-poly-8-v1-original.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmcombo/seq-poly-8-v1-original.wav",
+        "sha256": "587a38115efb7157e8d50bd7a4b13e550077a2ca7bbf16159e1d474c5e2f9204"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-notes-coverage-v1-bypass-slot00-Flanger",
+      "kind": "bypass-slot",
+      "sidecar": "fmod09/seq-notes-coverage-v1-bypass-slot00-Flanger.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-bypass-slot00-Flanger.wav",
+        "sha256": "a3e88bc2642b351adaa0e4f2dfeb0d1f457b6e3ceb56d45ec72d803debcc57c0"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-notes-coverage-v1-bypass-slot04-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "fmod09/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-bypass-slot04-Delay.wav",
+        "sha256": "b9ccb0c59a8b5c6dc0e163a7b5c584b9d2dbd0ead2adc866b59de5768f212bb2"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-notes-coverage-v1-bypass-slot05-Airwindows",
+      "kind": "bypass-slot",
+      "sidecar": "fmod09/seq-notes-coverage-v1-bypass-slot05-Airwindows.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-bypass-slot05-Airwindows.wav",
+        "sha256": "924f47a239114f98e09a79c7fcead27ab0d2a2e7202e2a53f5b51c5f15d503fd"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-notes-coverage-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "fmod09/seq-notes-coverage-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-dry-allfxoff.wav",
+        "sha256": "2028455d131cc39c652fa18cf3f35265c2b2d509a4fd9fb4a3d5e53285de558f"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-notes-coverage-v1-original",
+      "kind": "original",
+      "sidecar": "fmod09/seq-notes-coverage-v1-original.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-notes-coverage-v1-original.wav",
+        "sha256": "8d1f27af820ba7ce5a815f5b8f65f7e094115703f894cc1b6df2a0bd34a75c22"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-poly-8-v1-bypass-slot00-Flanger",
+      "kind": "bypass-slot",
+      "sidecar": "fmod09/seq-poly-8-v1-bypass-slot00-Flanger.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-poly-8-v1-bypass-slot00-Flanger.wav",
+        "sha256": "e935b4cdfebe258684961d84646f66d88e1e53a1c7d67ec07e23492d51c3e864"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-poly-8-v1-bypass-slot04-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "fmod09/seq-poly-8-v1-bypass-slot04-Delay.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-poly-8-v1-bypass-slot04-Delay.wav",
+        "sha256": "8d150cfc1c5fd66afe733785c1d4b497c07b9c6bb280ffeb2e3e5b3b7d2ea4da"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-poly-8-v1-bypass-slot05-Airwindows",
+      "kind": "bypass-slot",
+      "sidecar": "fmod09/seq-poly-8-v1-bypass-slot05-Airwindows.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-poly-8-v1-bypass-slot05-Airwindows.wav",
+        "sha256": "4ed9da22d9fc003fd75449ae479be668551465c19a21ca58c5d894b574ae2bee"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-poly-8-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "fmod09/seq-poly-8-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-poly-8-v1-dry-allfxoff.wav",
+        "sha256": "dc3b7ec2c7f26a0534a000c9efca0cabf090c45e5e467df51299ebe5f7a78bec"
+      }
+    },
+    {
+      "ablation_id": "fmod09/seq-poly-8-v1-original",
+      "kind": "original",
+      "sidecar": "fmod09/seq-poly-8-v1-original.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/fmod09/seq-poly-8-v1-original.wav",
+        "sha256": "bd3cea81ca7938c8a27c66187d2a1fab63ba95f2a29997e2c638f1ae8c1216e3"
+      }
+    },
+    {
+      "ablation_id": "koala2/seq-notes-coverage-v1-bypass-slot04-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "koala2/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-bypass-slot04-Delay.wav",
+        "sha256": "6bb34544844ae86bd234c5af443df61b907af87e96718b6ca4ecff9b332e1a41"
+      }
+    },
+    {
+      "ablation_id": "koala2/seq-notes-coverage-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "koala2/seq-notes-coverage-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-dry-allfxoff.wav",
+        "sha256": "d09558c0124e0d044ea4732599ce9be18db16230449827e0444eff25bc19a0a7"
+      }
+    },
+    {
+      "ablation_id": "koala2/seq-notes-coverage-v1-original",
+      "kind": "original",
+      "sidecar": "koala2/seq-notes-coverage-v1-original.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/koala2/seq-notes-coverage-v1-original.wav",
+        "sha256": "8ad84c1d333567a1dc12c9b0af7fd12d3037b58de4a50eaa5854a7d6c68dd268"
+      }
+    },
+    {
+      "ablation_id": "koala2/seq-poly-8-v1-bypass-slot04-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "koala2/seq-poly-8-v1-bypass-slot04-Delay.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-bypass-slot04-Delay.wav",
+        "sha256": "7e45b9950c9f72f9423009ba809ff783fdd5ee23c924504df2a91c1b87907c8a"
+      }
+    },
+    {
+      "ablation_id": "koala2/seq-poly-8-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "koala2/seq-poly-8-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-dry-allfxoff.wav",
+        "sha256": "b4c2e6e60171693e8f7cdc120b24ccd1c1da02e34d9a9326fffa0dbe93f984d3"
+      }
+    },
+    {
+      "ablation_id": "koala2/seq-poly-8-v1-original",
+      "kind": "original",
+      "sidecar": "koala2/seq-poly-8-v1-original.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/koala2/seq-poly-8-v1-original.wav",
+        "sha256": "78ac76d0f164af632c2e78f8c8519f55ac5a28b140523b335f5d72081464e21a"
+      }
+    },
+    {
+      "ablation_id": "width/seq-notes-coverage-v1-bypass-slot00-EQ",
+      "kind": "bypass-slot",
+      "sidecar": "width/seq-notes-coverage-v1-bypass-slot00-EQ.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-bypass-slot00-EQ.wav",
+        "sha256": "d8541142cb43d147a57954104ee80e959bf6b2160edd126043039e7a45d0d877"
+      }
+    },
+    {
+      "ablation_id": "width/seq-notes-coverage-v1-bypass-slot04-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "width/seq-notes-coverage-v1-bypass-slot04-Delay.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-bypass-slot04-Delay.wav",
+        "sha256": "a93a904aec0a738dbe85e7413e5f66a0322101ce13b991574ddfd764de857ec3"
+      }
+    },
+    {
+      "ablation_id": "width/seq-notes-coverage-v1-bypass-slot05-Reverb1",
+      "kind": "bypass-slot",
+      "sidecar": "width/seq-notes-coverage-v1-bypass-slot05-Reverb1.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-bypass-slot05-Reverb1.wav",
+        "sha256": "1eb643c193958c1ecdfd2c049ea50901c11c5e9eecd7488e5e744b165cdd66db"
+      }
+    },
+    {
+      "ablation_id": "width/seq-notes-coverage-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "width/seq-notes-coverage-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-dry-allfxoff.wav",
+        "sha256": "c62633823f804ca8006ebf4f9a537b49246bbd51054fac121d8eb39bde9d94cc"
+      }
+    },
+    {
+      "ablation_id": "width/seq-notes-coverage-v1-original",
+      "kind": "original",
+      "sidecar": "width/seq-notes-coverage-v1-original.json",
+      "wav": {
+        "bytes": 547244,
+        "path": "reports/sxt-014/ablations/width/seq-notes-coverage-v1-original.wav",
+        "sha256": "b3702194e547cae5e2631e68f32eca085f94f44e8db44cedd08916ea9b185b4f"
+      }
+    },
+    {
+      "ablation_id": "width/seq-poly-8-v1-bypass-slot00-EQ",
+      "kind": "bypass-slot",
+      "sidecar": "width/seq-poly-8-v1-bypass-slot00-EQ.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-bypass-slot00-EQ.wav",
+        "sha256": "6e620df93b9b365d8ef1964faf9e5afa1ecda1fa4354d1e427395a5d8c474577"
+      }
+    },
+    {
+      "ablation_id": "width/seq-poly-8-v1-bypass-slot04-Delay",
+      "kind": "bypass-slot",
+      "sidecar": "width/seq-poly-8-v1-bypass-slot04-Delay.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-bypass-slot04-Delay.wav",
+        "sha256": "b9af68e304d19fbd5d9813c21d8424433d378d3122724fbd31d18e3d8f7c9fff"
+      }
+    },
+    {
+      "ablation_id": "width/seq-poly-8-v1-bypass-slot05-Reverb1",
+      "kind": "bypass-slot",
+      "sidecar": "width/seq-poly-8-v1-bypass-slot05-Reverb1.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-bypass-slot05-Reverb1.wav",
+        "sha256": "e519884243040201f883ac09925742f8fdd624f97930d9469daf8c255700cda5"
+      }
+    },
+    {
+      "ablation_id": "width/seq-poly-8-v1-dry-allfxoff",
+      "kind": "dry-allfxoff",
+      "sidecar": "width/seq-poly-8-v1-dry-allfxoff.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-dry-allfxoff.wav",
+        "sha256": "b59cb91a06a7c893eff4c629d0d8e57f2509b926d66301ff6e3e56580cfe2cbc"
+      }
+    },
+    {
+      "ablation_id": "width/seq-poly-8-v1-original",
+      "kind": "original",
+      "sidecar": "width/seq-poly-8-v1-original.json",
+      "wav": {
+        "bytes": 355244,
+        "path": "reports/sxt-014/ablations/width/seq-poly-8-v1-original.wav",
+        "sha256": "2c97870a634379e7363a39a75f5f8a98e8c6a6be0a0572cc07ba940254a114d3"
+      }
+    }
+  ],
+  "run": "ablate",
+  "schema_version": 1,
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "61a476db73a15948e09d8b37e593bee814ce52b4b125bd227e66db11415c6551"
+  },
+  "totals": {
+    "renders": 52,
+    "wav_bytes": 23464688
+  }
+}

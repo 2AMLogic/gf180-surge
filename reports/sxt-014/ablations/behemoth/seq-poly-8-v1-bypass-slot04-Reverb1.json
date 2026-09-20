@@ -1,0 +1,71 @@
+{
+  "ablation_id": "behemoth/seq-poly-8-v1-bypass-slot04-Reverb1",
+  "adapted": false,
+  "bypassed_slots": [
+    4
+  ],
+  "claim_scope": "reference-vs-reference ablation apparatus only: renders of the pinned engine under the SXT-012 policies with one FX slot bypassed/mutated. Numeric deltas are diagnostic; essential/optional/unresolved labels require listening records and are BLOCKED-on-human (issue #9).",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "issue": "SXT-014",
+  "kind": "bypass-slot",
+  "label": "ablation variant: slot 4 (Reverb 1) bypassed; original-preset family",
+  "mutated_slots": [
+    4
+  ],
+  "mutation": null,
+  "non_perturbation_proof": {
+    "method": "post-settle exact readback of type + 12 params + return_level for every non-mutated slot vs the pristine post-load snapshot",
+    "other_slots_bit_unchanged": true,
+    "slots_checked": 15,
+    "values_checked": 210
+  },
+  "preset": {
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "file_sha256": "9ad87865022ba52c05f6048c38d541fd795d1c82d6986164422e487d321c8a4f",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+    "clipped_samples": 0,
+    "duration_s": 3.7,
+    "frames": 177600,
+    "peak_abs_float": 0.1264619529247284,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tempo_events_applied": 0,
+    "tempo_events_total": 0
+  },
+  "repeatability_class": null,
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "path": "fixtures/sequences/seq-poly-8-v1.json",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "slot": {
+    "index": 4,
+    "role": "send1",
+    "type_id": 2,
+    "type_name": "Reverb 1"
+  },
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "486aeb74b62bb566653875e89e9d0ac6a3894c45",
+    "script_sha256": "61a476db73a15948e09d8b37e593bee814ce52b4b125bd227e66db11415c6551"
+  },
+  "wav": {
+    "bytes": 355244,
+    "path": "reports/sxt-014/ablations/behemoth/seq-poly-8-v1-bypass-slot04-Reverb1.wav",
+    "sha256": "4d690bb15a163b56321a10c19a1ab7ef52e2852a2bc7000389547bd4539ce6ea"
+  }
+}

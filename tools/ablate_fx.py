@@ -165,12 +165,14 @@ def verify_preset_blob(preset_rel):
 
 
 def render_variant(surgepy, preset_abs, seq, out_dir, base_name,
-                   bypass_slots=(), mutate=None, kinds=None):
+                   bypass_slots=(), mutate=None, mutated_slots=(), kinds=None):
     """One render in a fresh instance under the SXT-012 policies.
 
     bypass_slots: slot indices whose "type" param is set to fxt_off before settle.
     mutate: optional callable(s, patch) applied after the bypass setters (used by
     the permuted/substituted controls); its readback is recorded, not assumed.
+    mutated_slots: all slot indices intentionally changed (bypass setters + mutate);
+    every other slot must read back bit-identically (non-perturbation proof).
     Returns the sidecar dict. Refuses to overwrite existing files.
     """
     import surgepy.constants as C
@@ -212,7 +214,7 @@ def render_variant(surgepy, preset_abs, seq, out_dir, base_name,
         for i in bypass_slots:
             if int(after[i][0]) != int(C.fxt_off):
                 raise Refuse(f"slot {i} did not read back Off")
-        others = [i for i in range(FX_SLOTS) if i not in set(bypass_slots)]
+        others = [i for i in range(FX_SLOTS) if i not in set(bypass_slots) | set(mutated_slots)]
         n_params = sum(1 + len(pristine[i][1]) + 1 for i in others)
         diff = [i for i in others if after[i] != pristine[i]]
         if diff:
@@ -260,6 +262,9 @@ def render_variant(surgepy, preset_abs, seq, out_dir, base_name,
         "label": kinds["label"],
         "adapted": kinds.get("adapted", False),
         "bypassed_slots": sorted(bypass_slots),
+        "mutated_slots": sorted(set(bypass_slots) | set(mutated_slots)),
+        "slot": kinds.get("slot"),
+        "repeatability_class": kinds.get("repeatability_class"),
         "mutation": mutation_record,
         "preset": kinds["preset"],
         "sequence": kinds["sequence"],
@@ -402,7 +407,7 @@ def cmd_offslot_control(args):
             kinds={"kind": "original",
                    "label": "reference: unmodified loaded patch (control anchor)", **common},
         ))
-    for i in args.slots:
+    for i in [int(x) for x in str(args.slots).split(",")]:
         if gtypes.get(i, {}).get("t") != 0:
             raise Refuse(f"slot {i} is not Off in the normalized graph: {preset_rel}")
         kind = "offslot-ctrl"
@@ -467,8 +472,9 @@ def cmd_permute(args):
     seq, seq_path, seq_sha = rf.load_sequence(args.sequence)
     common, preset_abs = kinds_common(slug, preset_rel, seq, seq_path, seq_sha)
     out_dir = os.path.join(args.out, slug)
-    a, b = args.slots
-    ta, tb = graph["g"]["fx"][a]["tn"], graph["g"]["fx"][b]["tn"]
+    a, b = [int(x) for x in str(args.slots).split(",")]
+    gslots = {s["i"]: s for s in graph["g"]["fx"]}
+    ta, tb = gslots[a]["tn"], gslots[b]["tn"]
     if ta != tb:
         raise Refuse(f"permutation control requires same-type slots; got {ta!r} vs {tb!r}")
     run_entries = []
@@ -481,7 +487,7 @@ def cmd_permute(args):
     run_entries.append(render_variant(
         surgepy, preset_abs, seq, out_dir,
         f"{seq['id']}-permuted-swap{a:02d}-with{b:02d}",
-        mutate=make_permutation(a, b),
+        mutate=make_permutation(a, b), mutated_slots=[a, b],
         kinds={"kind": "permuted",
                "label": f"negative control: same-type slots {a}/{b} ({ta}) exchanged -- "
                         f"wrong arrangement; comparator must flag", **common},
@@ -533,7 +539,7 @@ def cmd_substitute(args):
            f"-to-{target.replace('fxt_', '')}__ADAPTED"
     entry = render_variant(
         surgepy, preset_abs, seq, out_dir, base,
-        mutate=make_substitution(args.slot, target),
+        mutate=make_substitution(args.slot, target), mutated_slots=[args.slot],
         kinds={"kind": "substituted",
                "label": f"ADAPTED: slot {args.slot} ({meta['type_name']}) substituted with "
                         f"{target.replace('fxt_', '')}; generic substitution DISQUALIFIES "
