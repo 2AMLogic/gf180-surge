@@ -1,6 +1,7 @@
 # SXT-014 negative controls — recorded 2026-09-20T10:16:07Z
 
-All controls run against tools/ablate_fx.py + tools/ablation_delta.py at the commit below.
+All controls run against tools/ablate_fx.py + tools/ablation_delta.py; tool identity
+(commit + script SHA-256) is recorded in every sidecar and in ablation-summary.json.
 
 ## Control (b): metadata tamper must be REFUSED
 
