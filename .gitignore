@@ -38,3 +38,5 @@ reports/*.rpt
 # Editors / OS
 .DS_Store
 *.swp
+*.o
+a.out

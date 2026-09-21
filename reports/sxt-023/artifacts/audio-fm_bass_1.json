@@ -1,0 +1,54 @@
+{
+  "ref": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/sxt-023/artifacts/model__fm_bass_1__seq-notes-coverage-v1.f32.wav",
+  "preset": "fm_bass_1",
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 1861736.125,
+      "model_peak_lsb": 1861731.0,
+      "max_abs_diff_lsb": 7.75,
+      "rms_diff_lsb": 1.0433691745732971,
+      "rms_diff_dbfs": -120.04323823106213,
+      "rms_diff_at_shift0_lsb": 1.0433691745732971,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 1.0433691745732971,
+      "spectral_corr": 0.9999999989283176
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 1861736.125,
+      "model_peak_lsb": 1861731.0,
+      "max_abs_diff_lsb": 7.75,
+      "rms_diff_lsb": 1.0433691745732971,
+      "rms_diff_dbfs": -120.04323823106213,
+      "rms_diff_at_shift0_lsb": 1.0433691745732971,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 1.0433691745732971,
+      "spectral_corr": 0.9999999989283176
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 1861736.125,
+      "model_peak_lsb": 1861731.0,
+      "max_abs_diff_lsb": 7.75,
+      "rms_diff_lsb": 1.0433691745732971,
+      "rms_diff_dbfs": -120.04323823106213,
+      "rms_diff_at_shift0_lsb": 1.0433691745732971,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 1.0433691745732971,
+      "spectral_corr": 0.9999999989283176
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+}

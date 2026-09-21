@@ -1,0 +1,6 @@
+{
+  "slug": "fm_bass_1",
+  "blocks": 8790,
+  "per_block_input": "32 x Q10.21 L words then 32 x Q10.21 R words (8-hex each)",
+  "per_block_control": "FIRST word = master amplitude a_q (Q13.18); then instance order: scene-A insert models then send models; delay instance: fb,cf,mix,pan,ws lipol targets (5 x Q13.18), timeL/timeR lag targets (2 x Q24.43), lp coeffs x5, hp coeffs x5 (Q24.43), flags word (bit0 lp_on, bit1 hp_on, bit2 fb_sign, bits3+ clip_mode); eq instance: 3 bands x 5 coefficient targets (Q24.43), gain target, mix target (Q13.18); send entry: send gain, return gain (Q13.18); "
+}

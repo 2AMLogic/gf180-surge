@@ -1,0 +1,7 @@
+{
+ "bypass": "empty chain, A=1.0 (volume 0 dB); out = clip8(A*x) must equal x bit-for-bit",
+ "samples": 265920,
+ "mismatches": 0,
+ "bit_transparent": true,
+ "verdict": "PASS"
+}

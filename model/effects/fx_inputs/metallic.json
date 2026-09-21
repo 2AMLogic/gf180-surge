@@ -1,0 +1,122 @@
+{
+  "census_blob_sha1": "75383658c7c448f140a7e3c08ccd4e50a1ab0de0",
+  "chain": {
+    "ains": [
+      {
+        "params": {
+          "clipping_mode": 1,
+          "crossfeed_extend": false,
+          "crossfeed_f": 0.0,
+          "feedback_extend": false,
+          "feedback_f": 0.0,
+          "highcut_deactivated": false,
+          "highcut_f": 52.33927917480469,
+          "input_ch_f": 0.0,
+          "lowcut_deactivated": false,
+          "lowcut_f": 6.819680213928223,
+          "mix_f": 0.3428570032119751,
+          "mod_depth_extend": false,
+          "mod_depth_f": 0.33214300870895386,
+          "mod_rate_f": 0.5830389857292175,
+          "time_l_f": -8.0,
+          "time_r_deactivated": false,
+          "time_r_f": -8.0,
+          "ts_flags": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "ts_ratio": 1.0,
+          "ts_ratio_mod": 1.0,
+          "width_f": 10.800004005432129
+        },
+        "role": "ains1",
+        "slot": 0,
+        "type": "delay"
+      }
+    ],
+    "sends": [
+      {
+        "params": {
+          "clipping_mode": 1,
+          "crossfeed_extend": false,
+          "crossfeed_f": 0.0,
+          "feedback_extend": false,
+          "feedback_f": 0.7098209857940674,
+          "highcut_deactivated": false,
+          "highcut_f": 30.40176773071289,
+          "input_ch_f": 0.0,
+          "lowcut_deactivated": false,
+          "lowcut_f": -1.2803360223770142,
+          "mix_f": 1.0,
+          "mod_depth_extend": false,
+          "mod_depth_f": 0.3375000059604645,
+          "mod_rate_f": -1.1794630289077759,
+          "time_l_f": -1.0,
+          "time_r_deactivated": false,
+          "time_r_f": -1.0,
+          "ts_flags": [
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "ts_ratio": 1.0,
+          "ts_ratio_mod": 1.0,
+          "width_f": 5.657145977020264
+        },
+        "return_f": 1.0,
+        "role": "send1",
+        "send_gain_f": 0.3954330086708069,
+        "send_slot": 0,
+        "slot": 4,
+        "type": "delay"
+      }
+    ]
+  },
+  "drifts_asserted_zero": [
+    0.0
+  ],
+  "extraction": {
+    "deactivated_source": "raw fxp XML attribute + documented loader migrations (rev<=15 delay lowcut/highcut/timeR; rev<=15 eq gains); no surgepy getter",
+    "observable_flags": "temposync/extend/deform via surgepy getters, cross-checked against raw XML fail-closed",
+    "tempo_source": "raw <tempoOnSave v=..> applied by loadPatch (surgepy.cpp loadPatch -> time_data.tempo)"
+  },
+  "graphs_sha256_prefix": "75383658c7c448f1",
+  "path": "resources/data/patches_factory/Plucks/Metallic.fxp",
+  "rev": 9,
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.3954330086708069,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "metallic",
+  "tempo_bpm": 120.0,
+  "tempo_source": "engine default 120",
+  "volume_f": -2.025745391845703
+}

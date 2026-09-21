@@ -1,0 +1,23 @@
+{
+ "schema_version": 1,
+ "interface": "rtl/effects/delay/ext_mem_if.md",
+ "preset": "dexie (delay ains1, LFO-modulated 181.5-sample nominal delay)",
+ "frames_rendered": 8550,
+ "per_frame_per_instance": {
+  "line_reads": 24,
+  "line_writes": 64,
+  "total_accesses": 88,
+  "read_bytes": 96,
+  "write_bytes": 128,
+  "read_bursts": 2,
+  "write_bursts": 2,
+  "read_burst_len_words": 12,
+  "write_burst_len_words": 32
+ },
+ "measured_model_counters_at_last_checkpoint": {
+  "ext_reads": 6750720,
+  "ext_writes": 562560,
+  "note": "model-side counters; the RTL trace T fields er/ew carry the same semantics"
+ },
+ "two_instances_independence": "two configured Delay slots = two independent line pairs (RTL negative control (a) proves shared-line aliasing fails equality)"
+}

@@ -1,0 +1,24 @@
+{
+  "slug": "metallic",
+  "tb": "tb_fx_shared_line.sv",
+  "blocks_compared": 500,
+  "verdict": "FAIL",
+  "checked": {
+    "outputs": 26,
+    "checkpoints": 0,
+    "fields": 0
+  },
+  "mismatches": 26,
+  "first_failures": [
+    "block 240 out[0]: model=9 rtl=1",
+    "block 240 out[1]: model=173 rtl=11",
+    "block 240 out[2]: model=1029 rtl=63",
+    "block 240 out[3]: model=2750 rtl=170",
+    "block 240 out[4]: model=4376 rtl=271",
+    "block 240 out[5]: model=5766 rtl=356",
+    "block 240 out[6]: model=7382 rtl=456",
+    "block 240 out[7]: model=8811 rtl=545",
+    "block 240 out[8]: model=10301 rtl=637",
+    "block 240 out[9]: model=11752 rtl=726"
+  ]
+}
