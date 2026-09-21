@@ -117,28 +117,31 @@ HRFILTER_63 = [
 ]
 
 
-def build_mip_tables(source_words, wave_size, wave_count, built_levels):
-    """MipMapWT() float32->double cascade, quantized once per level.
+def _f32(x):
+    """Round to float32 exactly as the pinned engine's accumulation does."""
+    return struct.unpack("f", struct.pack("f", x))[0]
 
-    source_words: Q10.21 ints for level 0 (wave_count * wave_size).
-    Returns a flat list per level (same order as the RTL table memory).
-    """
+
+def build_mip_tables(source_words, wave_size, wave_count, built_levels):
+    """MipMapWT() cascade in EMULATED FLOAT32 (the engine accumulates in
+    float32: `acc += hrfilter[a] * prev[...]` with mul-then-add rounding);
+    quantized once to Q10.21 per level. source_words: Q10.21 ints for
+    level 0. Returns a flat list per level (RTL table memory order)."""
     levels = [list(source_words)]
     for lvl in range(1, built_levels):
         prev = levels[lvl - 1]
         psize = wave_size >> (lvl - 1)
         lsize = wave_size >> lvl
-        base = (lvl - 1) * 0  # frames are laid out per level, fixed stride
         prev_frames = [prev[f * psize:(f + 1) * psize] for f in range(wave_count)]
         out = []
-        # double-precision cascade on REAL table values (Q-words are
-        # converted first; the engine accumulates float32 — declared)
         for f in range(wave_count):
+            # real-valued frames as the engine's float32 table holds them
             fr = [w / float(ONE) for w in prev_frames[f]]
             for i in range(lsize):
                 acc = 0.0
                 for a in range(63):
-                    acc += HRFILTER_63[a] * fr[((i << 1) + a - 31) & (psize - 1)]
+                    acc = _f32(acc + _f32(HRFILTER_63[a] * fr[((i << 1) + a - 31)
+                                                              & (psize - 1)]))
                 out.append(vm.qint(acc))
         levels.append(out)
     return levels
@@ -188,7 +191,16 @@ class WavetableOsc:
             raise RuntimeError(
                 "unison %d outside 1..MAX_UNISON(%d): explicitly rejected"
                 % (inp.unison, MAX_UNISON))
-        self.pitch = min(148, key + 12 * inp.octave)
+        # SurgeVoice noteShiftFromPitchParam: kt=1 -> state.pitch (the note),
+        # kt=0 -> keytrack root 60 (note-independent); plus 12*(scene octave
+        # + osc octave) and the osc pitch param (ct_pitch_semi7bp
+        # extend_range: 12*val semitones)
+        base = float(key) if inp.keytrack else 60.0
+        self.pitch = min(148.0, base
+                         + 12.0 * (inp.scene_octave + inp.octave)
+                         + 12.0 * inp.pitch_param)
+        assert 24.0 <= self.pitch <= 148.0, \
+            "declared slice osc pitch range is [24, 148]"
         self.n_unison = inp.unison
         self.deform = inp.deform_mode  # "xt14_continuous" | "xt134_legacy"
         self.nointerp = 0 if inp.extend_range else 1
@@ -331,6 +343,12 @@ class WavetableOsc:
                 if a_sel < qint(thr) and self.wave_size >= min_ts:
                     mipmap = k
                     break
+            if os.environ.get("SXT026_NC_B_FORCE_MIP6"):
+                # NEGATIVE CONTROL NC-B hook (never set in production):
+                # force the deepest selectable mip regardless of pitch —
+                # a wrong mip/AA selection must fail the model-vs-reference
+                # budget check (transcript in reports/sxt-026/).
+                mipmap = 6
             st["mipmap"] = mipmap
             ofs = 0
             for i in range(mipmap):
@@ -405,7 +423,6 @@ class WavetableOsc:
     def process_block(self):
         """One 64-sample (over-sampled) oscillator block. Returns output."""
         pitch = self.pitch
-        assert 24 <= pitch <= 148, "declared slice pitch range is [24, 148]"
         pmi_d = max(1.0, 96000.0 * (1.0 / 8.175798915) * (2.0 ** (-pitch / 12.0)))
         pmi = vm.sat(int(math.floor(pmi_d * (1 << PMI_F) + 0.5)))
         pitchmult = vm.qdiv(1 << PMI_F, pmi, fa=PMI_F, fb=PMI_F)
@@ -576,6 +593,9 @@ class Inputs:
             d = json.load(f)
         self.preset_path = d["preset_path"]
         self.octave = int(d["octave"])
+        self.scene_octave = int(d.get("scene_octave", 0))
+        self.keytrack = bool(d.get("keytrack", True))
+        self.pitch_param = d.get("pitch_param", 0.0)
         self.unison = int(d["unison"])
         self.morph = d["morph"]
         self.skewv = d["skewv"]
@@ -654,7 +674,9 @@ class Slice:
         scene = [0] * BLOCK_SIZE_OS
         for k in range(BLOCK_SIZE_OS):
             x = vm.qmul(osout[k], self.lvl)
-            v = vm.qmul(x, start + vm.qround(d * (k + 1), 6))
+            # SetQFB: gain ramp (vca*aeg) x outl (scene output, megapan 0)
+            v = vm.qmul(vm.qmul(x, start + vm.qround(d * (k + 1), 6)),
+                        self.outl)
             scene[k] = v
         scene = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in scene]
         bl = self.halfband.process(scene)

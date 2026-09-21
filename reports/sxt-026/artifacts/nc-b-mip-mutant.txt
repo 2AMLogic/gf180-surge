@@ -1,0 +1,4 @@
+fixture: kick-wtfix / seq-wt-base-v1 (both runs identical inputs)
+correct model: spectral_corr 0.9268 rms -36.0 dBFS -> PASS (proposed corr >= 0.92, rms <= -30 dBFS)
+mutant(force-mip6): spectral_corr 0.8905 -> FAIL (below 0.92)
+-> wrong mip selection demonstrably fails the budget check; the correct model passes it

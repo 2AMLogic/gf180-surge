@@ -23,6 +23,10 @@
    1
   ],
   [
+   "keytrack",
+   1
+  ],
+  [
    "octave",
    0
   ]
@@ -31,15 +35,18 @@
  "engine_version": "1.4.HEAD.58914e59c",
  "extend_range": true,
  "formant": 0.0,
+ "keytrack": true,
  "master_db": 0.0,
  "morph": 0.0,
- "note": "declared fixture config, osc octave 0 (reaches wavetable mips 5/6 at the top of the MIDI range; the stored -3 octave caps the reachable osc pitch at 91)",
+ "note": "declared fixture config, keytrack ON + osc octave 0: the osc pitch follows the played note (note + 6.0037 st from the preset's own pitch param), reaching wavetable mips 5/6",
  "o2_level": 1.0,
  "octave": 0,
+ "pitch_param": 0.500311017036438,
  "preset_census_blob_sha1": "4f2443aa9e9eabe911d9bfee634f1aeb6e874976",
  "preset_path": "resources/data/patches_3rdparty/Argitoth/Drums/Kick.fxp",
  "retrigger": true,
  "saturate": 0.0,
+ "scene_octave": 0,
  "scene_volume": 1.0,
  "skewh": 0.0,
  "skewv": 0.0,

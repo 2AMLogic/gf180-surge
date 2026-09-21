@@ -1,0 +1,58 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "declared_overrides_applied": [
+  [
+   "mute_o1",
+   1
+  ],
+  [
+   "mute_noise",
+   1
+  ],
+  [
+   "fu1_off",
+   1
+  ],
+  [
+   "keytrack",
+   1
+  ],
+  [
+   "octave",
+   0
+  ]
+ ],
+ "engine": {
+  "commit": "1.4.HEAD.58914e59c",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "fx_note": "preset has all 16 FX slots Off (normalized graph): the wet render is FX-free by patch state; no substitution, no bypass",
+ "inputs": "model/oscillators/wavetable/inputs/kick-wtfix-kt.json",
+ "issue": "SXT-026",
+ "original_preset_render": false,
+ "preset_blob_sha1": "4f2443aa9e9eabe911d9bfee634f1aeb6e874976",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 3375,
+  "clipped_samples": 0,
+  "frames": 108000,
+  "peak_abs_float": 0.8956798911094666,
+  "repeat_hashes": [
+   "2b8890d28897283c54b255370b8f0facfa713c57ffc9b05ee4f8d5b4cb7c4b44",
+   "2b8890d28897283c54b255370b8f0facfa713c57ffc9b05ee4f8d5b4cb7c4b44",
+   "2b8890d28897283c54b255370b8f0facfa713c57ffc9b05ee4f8d5b4cb7c4b44"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-wt-pitch-extremes-hi-v1",
+  "path": "fixtures/sequences/seq-wt-pitch-extremes-hi-v1.json"
+ },
+ "wav": {
+  "path": "../../../../tmp/wt026-ref/kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1-ref.wav",
+  "sha256": "3c0ded711911971243bde332ad23b55af1f476e821ddb36d265793452aa41b93"
+ },
+ "wt_sha256": "f49a2381bc699b11136457f1f9f73150e73d612fa1290092d61bcdd6029b26a9"
+}

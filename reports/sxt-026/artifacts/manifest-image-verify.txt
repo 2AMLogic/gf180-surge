@@ -1,0 +1,4 @@
+$ compiler/compile.py compile --path .../Argitoth/Drums/Kick.fxp --asset-root <pinned tree> --out-dir /tmp/sxt026-ev
+{"assets_checked": 1, "failures": 0, "image": "Kick__4f2443aa.image.bin", "verdict": "PASS"}
+
+-> outcome=compiled; manifest embedded; identity verified end-to-end (assets_checked=1, failures=0)

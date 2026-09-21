@@ -1,0 +1,37 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "declared_overrides_applied": [],
+ "engine": {
+  "commit": "1.4.HEAD.58914e59c",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "fx_note": "preset has all 16 FX slots Off (normalized graph): the wet render is FX-free by patch state; no substitution, no bypass",
+ "inputs": "model/oscillators/wavetable/inputs/kick-original.json",
+ "issue": "SXT-026",
+ "original_preset_render": true,
+ "preset_blob_sha1": "4f2443aa9e9eabe911d9bfee634f1aeb6e874976",
+ "render": {
+  "bit_identical_repeats": false,
+  "blocks": 3750,
+  "clipped_samples": 0,
+  "frames": 120000,
+  "peak_abs_float": 0.4732489585876465,
+  "repeat_hashes": [
+   "527621b49c8bcd5072b050df6798e7ba82fcc28d9aa66bb7bc63908c915ec5a2",
+   "ad3474713c329ed8bef6709cb0669df644bc5515580fd80ca892a54e7a149a53",
+   "baeedbaf458d2a7732ad39b9921a08b841f29f0b5722847d4b6b3d3bd0a931a5"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-wt-base-v1",
+  "path": "fixtures/sequences/seq-wt-base-v1.json"
+ },
+ "wav": {
+  "path": "../../../../tmp/wt026-ref/kick-original__seq-wt-base-v1-ref.wav",
+  "sha256": "d51a413cdf8e931f9da656450dfbfad4b83007632fc63f8e933545664a3ad74d"
+ },
+ "wt_sha256": "f49a2381bc699b11136457f1f9f73150e73d612fa1290092d61bcdd6029b26a9"
+}

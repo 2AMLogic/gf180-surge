@@ -188,3 +188,61 @@ def test_no_wt_payload_committed_in_repo():
             except OSError:
                 pass
     assert hits == []
+
+
+# ---------------------------------------------------------------------------
+# frozen model (oracle-dependent: mip tables derive from the external tree)
+# ---------------------------------------------------------------------------
+
+@needs_oracle
+def test_model_unison_beyond_cap_explicitly_rejected():
+    sys.path.insert(0, os.path.join(REPO, "model", "oscillators",
+                                    "wavetable"))
+    import wt_model as wm
+
+    with open(os.path.join(REPO, "model/oscillators/wavetable/inputs/"
+                                 "kick-wtfix.json")) as f:
+        d = json.load(f)
+    d["unison"] = 17
+    p = os.path.join(tempfile.mkdtemp(), "u17.json")
+    json.dump(d, open(p, "w"))
+    inp = wm.Inputs(p)
+    with pytest.raises(RuntimeError) as ei:
+        wm.WavetableOsc(inp, 60)
+    assert "explicitly rejected" in str(ei.value)
+
+
+@needs_oracle
+def test_model_mip_selection_sweeps_with_pitch():
+    sys.path.insert(0, os.path.join(REPO, "model", "oscillators",
+                                    "wavetable"))
+    import wt_model as wm
+
+    inp = wm.Inputs(os.path.join(REPO, "model/oscillators/wavetable/inputs/"
+                                        "kick-wtfix-kt.json"))
+    assert inp.keytrack and inp.octave == 0
+    seen = []
+    for note in (24, 96, 120):
+        o = wm.WavetableOsc(inp, note)
+        o.process_block()
+        seen.append(o.voices[0]["mipmap"])
+    assert seen == [0, 5, 6]
+
+
+@needs_oracle
+def test_model_mip_level0_words_exact_for_int15_payload():
+    sys.path.insert(0, os.path.join(REPO, "model", "oscillators",
+                                    "wavetable"))
+    sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+    import wt_model as wm
+    import voice_model as vm
+
+    inp = wm.Inputs(os.path.join(REPO, "model/oscillators/wavetable/inputs/"
+                                        "kick-wtfix.json"))
+    data = open(os.path.join(ORACLE_DATA, TRIANGLE_REL), "rb").read()
+    words = inp.mip_tables[0]
+    off = 12
+    for w in words[:512]:
+        s, = struct.unpack("<h", data[off:off + 2])
+        off += 2
+        assert w == vm.sat(s << 7)
