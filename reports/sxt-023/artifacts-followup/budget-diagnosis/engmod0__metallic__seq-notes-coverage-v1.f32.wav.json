@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 budget-diagnosis engine probe (diagnostic, not a fixture of record)",
+  "slug": "metallic",
+  "preset": "resources/data/patches_factory/Plucks/Metallic.fxp",
+  "override": {
+    "param": "fx[].p[7] (delay mod depth)",
+    "value": 0.0,
+    "slots": [
+      0,
+      4
+    ],
+    "readback": [
+      0.0,
+      0.0
+    ]
+  },
+  "frames": 273600,
+  "peak_abs_float": 0.17925071716308594,
+  "determinism_gate": "3x bit-identical",
+  "render_sha256": "d65f990e9bdfead868a7d283826deee2f7cca93ddda5b421bc9059ca76fd2993",
+  "policies": "render_fx_fixtures.py (settle 240 blocks, block-quantized, tails)"
+}

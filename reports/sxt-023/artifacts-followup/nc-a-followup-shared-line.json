@@ -1,0 +1,25 @@
+{
+  "slug": "metallic",
+  "tb": "tb_fx_shared_line.sv",
+  "sim": "iverilog",
+  "blocks_compared": 500,
+  "verdict": "FAIL",
+  "checked": {
+    "outputs": 338,
+    "checkpoints": 4,
+    "fields": 128
+  },
+  "mismatches": 26,
+  "first_failures": [
+    "block 240 d0 hash: model=2603138 rtl=52887",
+    "block 240 d0 er: model=185088 rtl=370176",
+    "block 240 d0 ew: model=15424 rtl=30848",
+    "block 240 d1 hash: model=105774 rtl=0",
+    "block 240 d1 er: model=185088 rtl=0",
+    "block 240 d1 ew: model=15424 rtl=0",
+    "block 241 d0 hash: model=8412966 rtl=170921",
+    "block 241 d0 er: model=185856 rtl=371712",
+    "block 241 d0 ew: model=15488 rtl=30976",
+    "block 241 d1 hash: model=341842 rtl=0"
+  ]
+}

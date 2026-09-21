@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 delay budget diagnosis variant",
+  "slug": "metallic",
+  "variant": "f32table",
+  "mono": {
+    "max_abs_diff_lsb": 195634.09765625,
+    "rms_diff_lsb": 22206.52363178967,
+    "rms_diff_dbfs": -33.48238673955731,
+    "rms_diff_at_best_shift_lsb": 22206.52363178967,
+    "best_shift": 0,
+    "spectral_corr": 0.9752176392708728
+  },
+  "L": {
+    "max_abs_diff_lsb": 882929.875,
+    "rms_diff_lsb": 82112.2751202281,
+    "rms_diff_dbfs": -22.12383655597151,
+    "rms_diff_at_best_shift_lsb": 82112.2751202281,
+    "best_shift": 0,
+    "spectral_corr": 0.9262112454310082
+  },
+  "R": {
+    "max_abs_diff_lsb": 826027.6875,
+    "rms_diff_lsb": 82913.35800733347,
+    "rms_diff_dbfs": -22.039508175327573,
+    "rms_diff_at_best_shift_lsb": 82913.35800733347,
+    "best_shift": 0,
+    "spectral_corr": 0.9266317832984432
+  },
+  "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
+}

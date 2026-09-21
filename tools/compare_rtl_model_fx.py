@@ -27,6 +27,26 @@ ART = os.path.join(REPO, "reports", "sxt-023", "artifacts")
 SINC = os.path.join(REPO, "rtl", "effects", "sinc_q29.hex")
 IV = os.environ.get("IVERILOG", "/opt/homebrew/bin/iverilog")
 VVP = os.environ.get("VVP", "vvp")
+VLR = os.environ.get("VERILATOR", "verilator")
+
+
+def run_sim(sim, tb, vvp_path, workdir, plusargs):
+    """Compile+run the tb with iverilog/vvp (canonical) or Verilator."""
+    if sim == "iverilog":
+        subprocess.run([IV, "-g2012", "-o", vvp_path, tb,
+                        os.path.join(REPO, "rtl", "effects", "fx_line_ext.sv")],
+                       check=True)
+        subprocess.run([VVP, vvp_path] + plusargs, check=True,
+                       stdout=subprocess.DEVNULL)
+        return
+    os.makedirs(workdir, exist_ok=True)
+    subprocess.run([VLR, "--binary", "--timing", "-Wno-fatal",
+                    "--top-module", "tb_fx", tb,
+                    os.path.join(REPO, "rtl", "effects", "fx_line_ext.sv"),
+                    "-o", "simverilator", "--Mdir", os.path.join(workdir, "obj_dir")],
+                   check=True)
+    subprocess.run([os.path.join(workdir, "obj_dir", "simverilator")] + plusargs,
+                   check=True, stdout=subprocess.DEVNULL, cwd=workdir)
 
 PCONFIG = {"metallic": 1, "fm_bass_1": 2, "dexie": 3}
 
@@ -150,42 +170,46 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--slug", required=True)
     ap.add_argument("--tb", default=os.path.join(REPO, "rtl", "effects", "tb_fx.sv"))
+    ap.add_argument("--art-dir", default=ART,
+                    help="dir with model_trace_<slug>.json and rtl/<slug>_{in,ctrl}.hex")
+    ap.add_argument("--sim", choices=["iverilog", "verilator"], default="iverilog",
+                    help="iverilog is the canonical evidence simulator")
+    ap.add_argument("--rtl-trace", default="/tmp/tb_fx_trace.txt",
+                    help="where to write the raw tb trace (for sim-vs-sim diffing)")
     ap.add_argument("--max-blocks", type=int, default=0,
                     help="compare only the first N blocks (0 = all)")
     ap.add_argument("--out")
     args = ap.parse_args()
 
     slug = args.slug
-    trace_path = os.path.join(ART, f"model_trace_{slug}.json")
+    art = args.art_dir
+    trace_path = os.path.join(art, f"model_trace_{slug}.json")
     with open(trace_path) as f:
         model_trace = json.load(f)
     n_total = model_trace["n_blocks_total"]
     n_blocks = args.max_blocks if args.max_blocks else n_total
 
-    # compile
+    # compile + run
     vvp_path = "/tmp/tb_fx_compiled.vvp"
-    subprocess.run([IV, "-g2012", "-o", vvp_path, args.tb,
-                    os.path.join(REPO, "rtl", "effects", "fx_line_ext.sv")],
-                   check=True)
-    rtl_trace_path = "/tmp/tb_fx_trace.txt"
+    rtl_trace_path = args.rtl_trace
     sinc_path = SINC
     zeros_path = os.path.join(REPO, "rtl", "effects", "line_zeros.hex")
-    vvp_args = [VVP, vvp_path,
-                f"+PCONFIG={PCONFIG[slug]}",
+    plusargs = [f"+PCONFIG={PCONFIG[slug]}",
                 f"+NBLOCKS={n_blocks}",
                 f"+RENDER0={model_trace['settle_blocks']}",
                 f"+TRACE={rtl_trace_path}",
-                f"+INFILE={os.path.join(ART, 'rtl', slug + '_in.hex')}",
-                f"+CTRLFILE={os.path.join(ART, 'rtl', slug + '_ctrl.hex')}",
+                f"+INFILE={os.path.join(art, 'rtl', slug + '_in.hex')}",
+                f"+CTRLFILE={os.path.join(art, 'rtl', slug + '_ctrl.hex')}",
                 f"+SINC={sinc_path}",
                 f"+ZEROS={zeros_path}"]
-    subprocess.run(vvp_args, check=True, stdout=subprocess.DEVNULL)
+    run_sim(args.sim, args.tb, vvp_path, "/tmp/sxt023_verilator", plusargs)
 
     rtl = parse_tb_trace(rtl_trace_path)
     checked, fails = compare(slug, model_trace, rtl)
     summary = {
         "slug": slug,
         "tb": os.path.basename(args.tb),
+        "sim": args.sim,
         "blocks_compared": n_blocks,
         "verdict": "PASS" if not fails else "FAIL",
         "checked": checked,

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 budget-diagnosis engine probe (diagnostic, not a fixture of record)",
+  "slug": "dexie",
+  "preset": "resources/data/patches_3rdparty/John Valentine/Keys/Dexie Swirly E-Piano.fxp",
+  "override": {
+    "param": "fx[].p[7] (delay mod depth)",
+    "value": 0.0,
+    "slots": [
+      0
+    ],
+    "readback": [
+      0.0
+    ]
+  },
+  "frames": 273600,
+  "peak_abs_float": 0.13158276677131653,
+  "determinism_gate": "3x bit-identical",
+  "render_sha256": "b54c27e8b531267096cad54e719a5a95c4583975253a094c2b48acd403a65dc0",
+  "policies": "render_fx_fixtures.py (settle 240 blocks, block-quantized, tails)"
+}

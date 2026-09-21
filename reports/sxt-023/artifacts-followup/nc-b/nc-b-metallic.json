@@ -1,0 +1,54 @@
+{
+  "ref": "/Users/joseph/dev/gf180-surge-wt-016fix/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "/Users/joseph/dev/gf180-surge-wt-016fix/reports/sxt-023/artifacts-followup/nc-b/ncb__metallic__seq-notes-coverage-v1.f32.wav",
+  "preset": "metallic",
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 607661.625,
+      "model_peak_lsb": 351336.0,
+      "max_abs_diff_lsb": 544425.71875,
+      "rms_diff_lsb": 53855.57326834591,
+      "rms_diff_dbfs": -25.787385203183845,
+      "rms_diff_at_shift0_lsb": 53855.57326834591,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 53855.57326834591,
+      "spectral_corr": 0.896859410849816
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 647022.6875,
+      "model_peak_lsb": 351336.0,
+      "max_abs_diff_lsb": 554426.6875,
+      "rms_diff_lsb": 53864.26690551648,
+      "rms_diff_dbfs": -25.78598319640294,
+      "rms_diff_at_shift0_lsb": 53864.26690551648,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 53864.26690551648,
+      "spectral_corr": 0.8953672576534811
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 373772.65625,
+      "model_peak_lsb": 351336.0,
+      "max_abs_diff_lsb": 132177.26171875,
+      "rms_diff_lsb": 15381.732733291192,
+      "rms_diff_dbfs": -36.671893046374805,
+      "rms_diff_at_shift0_lsb": 15381.732733291192,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 15381.732733291192,
+      "spectral_corr": 0.975493532674659
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": false,
+    "spectral_corr": false
+  },
+  "verdict": "FAIL against proposed budgets"
+}
