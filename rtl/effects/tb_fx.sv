@@ -27,7 +27,11 @@ module tb_fx;
 
     // ---------------- constants (exact, from the frozen model) ----------
     localparam signed [63:0] LPT_r  = 64'sh000000346DC5C0;    // f32(0.0001) Q24.43
-    localparam signed [63:0] LPIT_r = 64'sh07FFCB923A40;       // (1 - f32(0.0001)) Q24.43
+    // engine lag pair is float32: lpinv = (float)(1.0f - 0.0001f) =
+    // 0.9998999834060669f -> Q24.43 = 0x7FFCB900000 (NOT the double 1-lp,
+    // 0x7FFCB923A40, which made the pair sum to exactly 2^43 and killed the
+    // engine's -64-ulp lag drift: dexie tlv/trv drift, +-5 LSB class)
+    localparam signed [63:0] LPIT_r = 64'sh0007FFCB900000;    // f32(1 - f32(0.0001)) Q24.43
     localparam signed [63:0] DLP_r  = 64'sh00000083126E979;    // 0.004 Q24.43
     localparam signed [63:0] DLPI_r = 64'sh07F7CED91687;       // (1 - 0.004) Q24.43
     localparam signed [31:0] SOFT_A = -32'sd310689;            // -4/27 Q10.21
@@ -53,23 +57,41 @@ module tb_fx;
     task line_access(input integer d, input integer c, input integer we,
                      input integer a, input integer wd);
         integer sel;
+        reg signed [63:0] w64, o64;
         begin
+            // sign-extend BOTH delta operands to 64 bits BEFORE the unsigned
+            // accumulate: mixing 32-bit signed words with a longint unsigned
+            // accumulator zero-extends them (LRM unsigned context) and
+            // inflates every negative write delta by 2^32
+            w64 = $signed({{32{wd[31]}}, wd});
             sel = d*2 + c;
             case (sel)
                 0: begin
-                    if (we) begin h0 = h0 + wd - $signed(line_mem0[a]); line_mem0[a] = wd[31:0]; wr0 = wr0 + 1; end
+                    if (we) begin
+                        o64 = $signed({{32{line_mem0[a][31]}}, line_mem0[a]});
+                        h0 = h0 + w64 - o64; line_mem0[a] = wd[31:0]; wr0 = wr0 + 1;
+                    end
                     else begin rd0 = rd0 + 1; last_read = $signed(line_mem0[a]); end
                 end
                 1: begin
-                    if (we) begin h1 = h1 + wd - $signed(line_mem1[a]); line_mem1[a] = wd[31:0]; wr1 = wr1 + 1; end
+                    if (we) begin
+                        o64 = $signed({{32{line_mem1[a][31]}}, line_mem1[a]});
+                        h1 = h1 + w64 - o64; line_mem1[a] = wd[31:0]; wr1 = wr1 + 1;
+                    end
                     else begin rd1 = rd1 + 1; last_read = $signed(line_mem1[a]); end
                 end
                 2: begin
-                    if (we) begin h2 = h2 + wd - $signed(line_mem2[a]); line_mem2[a] = wd[31:0]; wr2 = wr2 + 1; end
+                    if (we) begin
+                        o64 = $signed({{32{line_mem2[a][31]}}, line_mem2[a]});
+                        h2 = h2 + w64 - o64; line_mem2[a] = wd[31:0]; wr2 = wr2 + 1;
+                    end
                     else begin rd2 = rd2 + 1; last_read = $signed(line_mem2[a]); end
                 end
                 default: begin
-                    if (we) begin h3 = h3 + wd - $signed(line_mem3[a]); line_mem3[a] = wd[31:0]; wr3 = wr3 + 1; end
+                    if (we) begin
+                        o64 = $signed({{32{line_mem3[a][31]}}, line_mem3[a]});
+                        h3 = h3 + w64 - o64; line_mem3[a] = wd[31:0]; wr3 = wr3 + 1;
+                    end
                     else begin rd3 = rd3 + 1; last_read = $signed(line_mem3[a]); end
                 end
             endcase
@@ -400,8 +422,11 @@ module tb_fx;
     endfunction
 
     // ---------------- delay block datapath ----------------
+    integer oins_l [0:31];
+    integer oins_r [0:31];
     task delay_block(input integer inst);
-        integer kk, i_dt, i_dtr, ph, phr, base_l, base_r, w0, acc_l, acc_r, rd, tmp, tmp2;
+        integer kk, i_dt, i_dtr, ph, phr, base_l, base_r, w0, rd, tmp, tmp2;
+        longint signed acc_l, acc_r;
         begin
             for (kk = 0; kk < 32; kk = kk + 1) begin
                 d_tlv[inst] = qadd64(qmul_cc(d_tlv[inst], LPIT_r), qmul_cc(d_tlt[inst], LPT_r));
@@ -421,8 +446,10 @@ module tb_fx;
                     rd = last_read;
                     acc_r = acc_r + $signed(sinc[phr*12 + t_]) * $signed(rd);
                 end
-                tb_l[inst][kk] = sat32((acc_l + $signed(64'd1048576)) >>> 22);
-                tb_r[inst][kk] = sat32((acc_r + $signed(64'd1048576)) >>> 22);
+                // Q(21+29) accumulator -> Q10.21, round-half-up (half 2^28,
+                // shift 29 — was 2^20/22, a 128x tap-scale error)
+                tb_l[inst][kk] = sat32((acc_l + $signed(64'sd268435456)) >>> 29);
+                tb_r[inst][kk] = sat32((acc_r + $signed(64'sd268435456)) >>> 29);
             end
             if (d_fbsign[inst]) begin
                 for (kk = 0; kk < 32; kk = kk + 1) begin
@@ -459,8 +486,13 @@ module tb_fx;
             end
             d_ew[inst] = d_ew[inst] + 64;
             for (kk = 0; kk < 32; kk = kk + 1) begin
-                tmp = sat32($signed(tb_l[inst][kk] + tb_r[inst][kk]) >>> 1);
-                tmp2 = sat32($signed(tb_l[inst][kk] - tb_r[inst][kk]) >>> 1);
+                // mid/side halving is round-half-up (truncate toward zero):
+                // -(|d| >> 1), NOT arithmetic >>> 1 (floor) on negative sums —
+                // the floor form injected a -1 LSB bias on odd negative sums
+                tmp = $signed(tb_l[inst][kk]) + $signed(tb_r[inst][kk]);
+                tmp2 = $signed(tb_l[inst][kk]) - $signed(tb_r[inst][kk]);
+                tmp = (tmp >= 0) ? sat32(tmp >>> 1) : sat32(-((-tmp) >>> 1));
+                tmp2 = (tmp2 >= 0) ? sat32(tmp2 >>> 1) : sat32(-((-tmp2) >>> 1));
                 tmp2 = qmul_ga(lip_val(d_cur[inst][4], d_tgt[inst][4], kk), tmp2);
                 tb_l[inst][kk] = qadd32(tmp, tmp2);
                 tb_r[inst][kk] = qsub32(tmp, tmp2);
@@ -656,7 +688,12 @@ module tb_fx;
                 cur_inst = 0;
                 delay_block(0);
                 if (PCONFIG == 1) begin
+                    // save the insert output: the send block below overwrites
+                    // olw/orw, and the return adds rl * send-FX-output (was:
+                    // rl * send input -- a model-vs-tb wiring defect)
                     for (k = 0; k < 32; k = k + 1) begin
+                        oins_l[k] = olw[k];
+                        oins_r[k] = orw[k];
                         slw[k] = qmul_ga(d_sg[0], olw[k]);
                         srw[k] = qmul_ga(d_sg[0], orw[k]);
                     end
@@ -667,8 +704,8 @@ module tb_fx;
                     cur_inst = 1;
                     delay_block(1);
                     for (k = 0; k < 32; k = k + 1) begin
-                        olw[k] = qadd32(olw[k], qmul_ga(d_rl[0], ilw[k]));
-                        orw[k] = qadd32(orw[k], qmul_ga(d_rl[0], irw[k]));
+                        olw[k] = qadd32(oins_l[k], qmul_ga(d_rl[0], olw[k]));
+                        orw[k] = qadd32(oins_r[k], qmul_ga(d_rl[0], orw[k]));
                     end
                 end
             end
