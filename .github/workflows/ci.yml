@@ -42,7 +42,12 @@ jobs:
       - name: Run tests if present
         run: |
           if [ -d tests ] && [ -n "$(find tests -type f \( -name 'test_*.py' -o -name '*_test.py' \))" ]; then
-            python3 -m pip install --quiet pytest
+            # numpy is required: tests import model/effects/reverb1/coefficient_plane.py.
+            # A numpy-optional pure-Python fallback was attempted and rejected as
+            # infeasible bit-exact: numpy float32 power is not double-pow-then-round
+            # (~0.6% 1-ulp divergence), and np.float32 contagion (NEP 50) from
+            # _db_to_linear into _coeff_orfanidis double math changes rounding.
+            python3 -m pip install --quiet numpy pytest
             python3 -m pytest -q tests
           else
             echo "NOT_RUN: no tests/ directory with test files in this tree; pytest was not executed (coverage: none — this is not a pass)."

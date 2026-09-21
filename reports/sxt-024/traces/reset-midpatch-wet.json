@@ -1,0 +1,75 @@
+{
+  "audio_policy": "stereo int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades; SXT-012 reset/scheduling policies",
+  "bus": "wet",
+  "deactivated_flags_raw_fxp": {
+    "highcut": false,
+    "lowcut": false
+  },
+  "engine_patch_state": {
+    "fx_slot": 4,
+    "fx_type": 2,
+    "params": {
+      "damping": 0.7419639825820923,
+      "decaytime": 1.8794649839401245,
+      "freq1": -2.0250051021575928,
+      "gain1": 10.800025939941406,
+      "highcut": 27.20354461669922,
+      "lowcut": -46.16254806518555,
+      "mix": 1.0,
+      "predelay": -5.492857933044434,
+      "roomsize": 0.8776760101318359,
+      "shape": 3.0,
+      "width": 0.0
+    },
+    "return_level": 1.0,
+    "scene_send_level": [
+      0.7071430087089539,
+      0.0
+    ],
+    "volume": 0.0
+  },
+  "float_npy": {
+    "bytes": 5836928,
+    "format": "float32 [2][N], unclipped engine output",
+    "sha256": "bd464350c57ec109c16a126fed0b47ffef00492b3357be930590a139acb705d4"
+  },
+  "issue": "SXT-024",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "blocks": 729600,
+    "clipped_samples": 0,
+    "frames": 729600,
+    "overrides_applied": {},
+    "peak_abs": [
+      0.7943854928016663,
+      0.7435823678970337
+    ],
+    "reload_block": 1500,
+    "tail_s": 12.0
+  },
+  "reset_control": {
+    "reload_at_sample": 48000,
+    "reload_method": "loadPatch(same preset) at containing block boundary"
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1"
+  },
+  "tool": {
+    "repo_commit": "b3149e6297b833c6d9e392b5d203ceaaf413d321",
+    "script_sha256": "77929230c6270931b9de47edd0a007f1d67aacc9b207fdefdf4eacfe6ab42f68"
+  },
+  "trace": "reset-midpatch-wet",
+  "wav": {
+    "bytes": 2918444,
+    "channels": 2,
+    "frames": 729600,
+    "sample_rate": 48000,
+    "sha256": "1d2eff30d8dfec45b71e4392053f1124e01d0d50a594e4a71db222fdb91a15e4"
+  }
+}

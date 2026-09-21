@@ -1,0 +1,111 @@
+[
+  {
+    "checks": {
+      "t60_w_vs_pred": true,
+      "tail_level_tracking": true
+    },
+    "decay_param": 5.960464477539063e-08,
+    "nominal_t60_s": 1.0000000413147923,
+    "pred_t60_rel_err_vs_nominal": 0.17887839377162917,
+    "pred_t60_s": 1.1788784424767451,
+    "t60_pred_minus_wet_s": 0.010103825062873995,
+    "t60_w_vs_pred_rel": 0.008644801925310943,
+    "tail_level_tracking_max_dev_db": 3.947947591223013,
+    "tail_level_tracking_mean_dev_db": 0.4631915838008243,
+    "trace": "sweepmdecaym0",
+    "wet_t60_rel_err_vs_nominal": 0.1687745691261926,
+    "wet_t60_s": 1.1687746174138711
+  },
+  {
+    "checks": {
+      "t60_w_vs_pred": true,
+      "tail_level_tracking": true
+    },
+    "decay_param": 1.8794653415679932,
+    "nominal_t60_s": 3.679386780154585,
+    "pred_t60_rel_err_vs_nominal": 0.14857472859257975,
+    "pred_t60_s": 4.226050672403178,
+    "t60_pred_minus_wet_s": 0.008444510338285305,
+    "t60_w_vs_pred_rel": 0.0020022045714555214,
+    "tail_level_tracking_max_dev_db": 4.9578653749976525,
+    "tail_level_tracking_mean_dev_db": 0.6366629589181497,
+    "trace": "sweepmdecaym1_879465",
+    "wet_t60_rel_err_vs_nominal": 0.146279642252695,
+    "wet_t60_s": 4.217606162064893
+  },
+  {
+    "checks": {
+      "t60_w_vs_pred": true,
+      "tail_level_tracking": true
+    },
+    "decay_param": 3.0,
+    "nominal_t60_s": 8.0,
+    "pred_t60_rel_err_vs_nominal": 0.035004817568857316,
+    "pred_t60_s": 8.280038540550859,
+    "t60_pred_minus_wet_s": 0.009250637172815601,
+    "t60_w_vs_pred_rel": 0.0011184710913741795,
+    "tail_level_tracking_max_dev_db": 0.07375535261559207,
+    "tail_level_tracking_mean_dev_db": 0.01450720812052529,
+    "trace": "sweepmdecaym3",
+    "wet_t60_rel_err_vs_nominal": 0.033848487922255366,
+    "wet_t60_s": 8.270787903378043
+  },
+  {
+    "checks": {
+      "t60_w_vs_pred": null,
+      "tail_level_tracking": true
+    },
+    "decay_param": 4.5,
+    "nominal_t60_s": 22.627416997969522,
+    "pred_t60_s": null,
+    "t60_note": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+    "tail_level_tracking_max_dev_db": 0.0035038377512037755,
+    "tail_level_tracking_mean_dev_db": 0.0015126082704196566,
+    "trace": "sweepmdecaym4_5",
+    "wet_t60_s": null
+  },
+  {
+    "checks": {
+      "t60_w_vs_pred": null,
+      "tail_level_tracking": true
+    },
+    "decay_param": 6.0,
+    "nominal_t60_s": 64.0,
+    "pred_t60_s": null,
+    "t60_note": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+    "tail_level_tracking_max_dev_db": 0.0013101048199501975,
+    "tail_level_tracking_mean_dev_db": 0.0008947856715923571,
+    "trace": "sweepmdecaym6",
+    "wet_t60_s": null
+  },
+  {
+    "checks": {
+      "t60_w_vs_pred": null,
+      "tail_level_tracking": true
+    },
+    "decay_param": -2.0,
+    "nominal_t60_s": 0.25,
+    "pred_t60_rel_err_vs_nominal": 0.37527358693509383,
+    "pred_t60_s": 0.34381839673377346,
+    "t60_note": "t60 comparison NOT_RUN: nominal decay (2^decay) is shorter than the structure's own echo/loop delays; measured t60 is dominated by the composite geometry, not the feedback exponent (engine and model agree via tail_level_tracking)",
+    "tail_level_tracking_max_dev_db": 0.6692451476995416,
+    "tail_level_tracking_mean_dev_db": 0.39993026095661294,
+    "trace": "sweepmdecaymm2",
+    "wet_t60_rel_err_vs_nominal": 2.635119612635618,
+    "wet_t60_s": 0.9087799031589044
+  },
+  {
+    "checks": {
+      "t60_w_vs_pred": null,
+      "tail_level_tracking": null
+    },
+    "decay_param": -4.0,
+    "nominal_t60_s": 0.0625,
+    "pred_t60_s": null,
+    "t60_note": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+    "tail_level_tracking_max_dev_db": null,
+    "tail_level_tracking_mean_dev_db": null,
+    "trace": "sweepmdecaymm4",
+    "wet_t60_s": null
+  }
+]

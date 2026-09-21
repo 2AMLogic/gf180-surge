@@ -1,0 +1,73 @@
+{
+  "audio_policy": "stereo int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades; SXT-012 reset/scheduling policies",
+  "bus": "wet",
+  "deactivated_flags_raw_fxp": {
+    "highcut": false,
+    "lowcut": false
+  },
+  "engine_patch_state": {
+    "fx_slot": 4,
+    "fx_type": 2,
+    "params": {
+      "damping": 0.7419639825820923,
+      "decaytime": 1.8794649839401245,
+      "freq1": -2.0250051021575928,
+      "gain1": 10.800025939941406,
+      "highcut": 27.20354461669922,
+      "lowcut": -46.16254806518555,
+      "mix": 1.0,
+      "predelay": -5.492857933044434,
+      "roomsize": 0.8776760101318359,
+      "shape": 3.0,
+      "width": 0.0
+    },
+    "return_level": 1.0,
+    "scene_send_level": [
+      0.7071430087089539,
+      0.0
+    ],
+    "volume": 0.0
+  },
+  "float_npy": {
+    "bytes": 5836928,
+    "format": "float32 [2][N], unclipped engine output",
+    "sha256": "c3b890ff7d4d1c8528e2308ddaab3924c104be8639fc9e4fb01a71c114948439"
+  },
+  "issue": "SXT-024",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "blocks": 729600,
+    "clipped_samples": 0,
+    "frames": 729600,
+    "overrides_applied": {},
+    "peak_abs": [
+      0.7943854928016663,
+      0.7435823678970337
+    ],
+    "reload_block": null,
+    "tail_s": 12.0
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
+    "script_sha256": "a0e025f340d600e4e3bce3242c810b64854200d96b7b915c2db6b10932b3e987"
+  },
+  "trace": "preset-notes-coverage-wet",
+  "wav": {
+    "bytes": 2918444,
+    "channels": 2,
+    "frames": 729600,
+    "sample_rate": 48000,
+    "sha256": "ac8d3e335673b1d70bc6fa6fca69bf0887a6c97a61cf93edf36d99bc4179418e"
+  }
+}

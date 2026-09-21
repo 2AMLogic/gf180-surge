@@ -1,0 +1,27 @@
+{
+  "band_energy_max_dev_db": 18.82508022379184,
+  "case": "nc-a-generic-schroeder",
+  "checks": {
+    "band_energy": false,
+    "decay_curve": false,
+    "stereo_corr": false,
+    "tail_rms_rel": false,
+    "wet_max_abs": false,
+    "wet_rms_rel": false
+  },
+  "decay_curve_max_dev_db": 536.9880026422347,
+  "decay_curve_windows": 172,
+  "generic": "Schroeder 4-comb/2-allpass, t60 matched to 2^decay",
+  "return_gain": 1.0,
+  "send_gain": 0.35360774397850037,
+  "stereo_corr_dev": 0.11651401874598333,
+  "stereo_corr_pred": 1.0,
+  "stereo_corr_wet": 0.8834859812540167,
+  "tail_err_rms_dbfs": -45.76849168768891,
+  "tail_rms_rel_db": 0.0939040583694046,
+  "tail_wet_rms_dbfs": -45.95629980442772,
+  "target_check": "wet_rms_rel / decay_curve / stereo_corr (reference budget)",
+  "verdict": "CONTROL-OK (generic FAILS the reference budget)",
+  "wet_max_abs": 5.160834550857544,
+  "wet_rms_rel_db": 9.169046790041094
+}

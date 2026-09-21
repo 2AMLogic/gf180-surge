@@ -1,0 +1,73 @@
+{
+  "audio_policy": "stereo int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades; SXT-012 reset/scheduling policies",
+  "bus": "dry",
+  "deactivated_flags_raw_fxp": {
+    "highcut": false,
+    "lowcut": false
+  },
+  "engine_patch_state": {
+    "fx_slot": 4,
+    "fx_type": 0,
+    "params": {
+      "damping": 0.0,
+      "decaytime": 0.0,
+      "freq1": 0.0,
+      "gain1": 0.0,
+      "highcut": 0.0,
+      "lowcut": 0.0,
+      "mix": 0.0,
+      "predelay": 0.0,
+      "roomsize": 0.0,
+      "shape": 0.0,
+      "width": 0.0
+    },
+    "return_level": 1.0,
+    "scene_send_level": [
+      0.7071430087089539,
+      0.0
+    ],
+    "volume": 0.0
+  },
+  "float_npy": {
+    "bytes": 5836928,
+    "format": "float32 [2][N], unclipped engine output",
+    "sha256": "31f57b413868df363d173b3282b7110612a08e6800aa339d23ff66448a8ae1ef"
+  },
+  "issue": "SXT-024",
+  "preset": {
+    "actual_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "census_blob_sha1": "a824155d66d3600521f02cb784eae105fe50c320",
+    "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+    "slug": "behemoth"
+  },
+  "render": {
+    "blocks": 729600,
+    "clipped_samples": 0,
+    "frames": 729600,
+    "overrides_applied": {},
+    "peak_abs": [
+      0.6156135201454163,
+      0.6156135201454163
+    ],
+    "reload_block": null,
+    "tail_s": 12.0
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "repo_commit": "bf48c2497378fe47e6768405a45ffed4d85cbc12",
+    "script_sha256": "a0e025f340d600e4e3bce3242c810b64854200d96b7b915c2db6b10932b3e987"
+  },
+  "trace": "preset-notes-coverage-dry",
+  "wav": {
+    "bytes": 2918444,
+    "channels": 2,
+    "frames": 729600,
+    "sample_rate": 48000,
+    "sha256": "4b5b1e10976009b1083843a0225981d351d0e3ea6d09953c735a948c25d7b1a4"
+  }
+}

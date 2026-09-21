@@ -1,0 +1,57 @@
+{
+  "external_traffic": {
+    "bytes_per_sample": 136.0,
+    "bytes_per_second_at_48k": 6528000.0,
+    "reads_per_sample": 17.0,
+    "transaction_log_basis": "model ext_reads/ext_writes counters (measured by running the frozen model)",
+    "words_per_sample_32bit": 34.0,
+    "writes_per_sample": 17.0
+  },
+  "external_writable_memory": {
+    "classification_policy": "composite tap array + predelay line are external WRITABLE memory (>64 KiB policy, plan section 3 / SXT-015); flash is never writable delay memory; all processing in-chip",
+    "composite_taps": {
+      "bits": 16777216,
+      "bytes": 2097152,
+      "layout": "16 interleaved circular taps x 32768 samples; word = (pos<<4)+tap",
+      "words": 524288
+    },
+    "predelay_line": {
+      "bits": 1048576,
+      "bytes": 131072,
+      "words": 32768
+    },
+    "total_MiB": 2.125,
+    "total_bits": 17825792,
+    "total_bytes": 2228224
+  },
+  "issue": "SXT-024",
+  "multi_instance": {
+    "note": "per-instance state is never shared (AGENTS.md); two Reverb1 slots = two independent buffer sets",
+    "per_additional_instance_external_bytes": 2228224
+  },
+  "on_chip_small_state": {
+    "bits": 4031,
+    "breakdown": {
+      "biquad coeffs (3 filters x 5 x 2 ch-shared)": 480,
+      "biquad regs (3 x 2 ch x 2 regs x 80b)": 960,
+      "block/frame counters": 32,
+      "damp + damp_m1": 64,
+      "delay_fb[16]": 512,
+      "delay_pos": 15,
+      "delay_time[16]": 368,
+      "mix/width lags": 64,
+      "out_tap[16]": 512,
+      "pan_L[16] + pan_R[16]": 1024
+    },
+    "bytes": 503
+  },
+  "scope": "per Reverb1 instance, 48 kHz, frozen Q4.28/32-bit-word format",
+  "sxt016_reconciliation": {
+    "agreement": true,
+    "divergence_note": "SXT-016 state_bits priced 24-bit storage words (taps 12,582,912 b + predelay 786,432 b); the frozen Q4.28 word is 32-bit after the stability analysis, so capacity is 16,777,216 + 1,048,576 b (+33%); traffic is UNCHANGED at 34 x 32-bit words per sample (136 B) because the 16-bit external bus is accessed in 32-bit words in both models. Do NOT edit committed sxt-015/sxt-016 files; this record supersedes the capacity figure for Reverb 1.",
+    "sxt015_logical_words_per_frame": "17r + 17w",
+    "sxt016_bytes_per_frame": 136,
+    "sxt016_probe_words_per_frame": 34,
+    "this_model_words_per_sample": 34.0
+  }
+}

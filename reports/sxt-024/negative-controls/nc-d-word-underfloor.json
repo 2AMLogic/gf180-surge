@@ -1,0 +1,14 @@
+{
+  "budgets": {
+    "wet_max_abs": 0.001,
+    "wet_rms_rel_db": -50.0
+  },
+  "case": "nc-d-word-underfloor",
+  "peak_internal_state_q1_23_units": 0.06489622592926025,
+  "state_headroom_exceeded": false,
+  "target_check": "fixed-point stability (headroom) or reference budget",
+  "variant": "24-bit storage words (Q1.23): no integer headroom, audio-LSB state grid (the underfloor of the frozen Q4.28)",
+  "verdict": "CONTROL-OK (reduced words FAIL stability/budget)",
+  "wet_max_abs": 3.1221018161886605e-06,
+  "wet_rms_rel_db": -48.6501658444546
+}
