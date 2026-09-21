@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "artifact": "verilator-vs-iverilog equivalence, medium fixture (SXT-023 follow-up)",
+  "date": "2026-09-20",
+  "purpose": "Document Verilator 5.052 equivalence with the canonical iverilog run once, on a >=100k-sample fixture, so Verilator can be used for long-run iteration while iverilog remains the canonical evidence simulator.",
+  "fixture": {
+    "slug": "metallic",
+    "source": "reports/sxt-023/artifacts/model_trace_metallic.json.gz + rtl hex (committed, PR #44)",
+    "blocks": 3200,
+    "samples": 102400,
+    "settle_blocks": 240,
+    "render_blocks": 2960
+  },
+  "tb": "rtl/effects/tb_fx.sv (post follow-up fixes, commit series loom/sxt-023-delay-followup)",
+  "method": [
+    "python3 tools/compare_rtl_model_fx.py --slug metallic --art-dir <cut-to-3200-blocks copy of the committed model trace> --max-blocks 3200 --rtl-trace /tmp/medium_iverilog.txt --out /tmp/medium_iverilog.json",
+    "python3 tools/compare_rtl_model_fx.py --slug metallic --art-dir <same> --sim verilator --max-blocks 3200 --rtl-trace /tmp/medium_verilator.txt --out /tmp/medium_verilator.json",
+    "cmp /tmp/medium_iverilog.txt /tmp/medium_verilator.txt"
+  ],
+  "results": {
+    "iverilog": {
+      "simulator": "iverilog 12.0 (homebrew), vvp",
+      "verdict": "PASS",
+      "checked": {"outputs": 189440, "checkpoints": 98, "fields": 3136},
+      "mismatches": 0,
+      "wall_seconds": 536
+    },
+    "verilator": {
+      "simulator": "Verilator 5.052 2026-09-05 (--binary --timing)",
+      "verdict": "PASS",
+      "checked": {"outputs": 189440, "checkpoints": 98, "fields": 3136},
+      "mismatches": 0,
+      "wall_seconds": 82
+    },
+    "trace_equality": {
+      "method": "byte compare of the raw tb traces (O output lines + T checkpoint lines)",
+      "byte_identical": true,
+      "bytes": 1334493,
+      "sha256_iverilog": "25af2cf8b4617383b1cf3f09dcf826748dbcc04db17574459d0170eb95939c72",
+      "sha256_verilator": "25af2cf8b4617383b1cf3f09dcf826748dbcc04db17574459d0170eb95939c72"
+    }
+  },
+  "speedup": "6.5x wall including Verilator C++ compile; larger for sim-only long runs",
+  "claim_scope": "Simulator-vs-simulator equivalence of the behavioral tb on this fixture only; the canonical RTL-vs-model evidence remains the full-length iverilog run. No model-vs-engine or preset claim.",
+  "verdict": "PASS"
+}
