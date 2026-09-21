@@ -1,0 +1,67 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "8a3bf8a475945b49e870f7a55406ec52409b612515c1222c230829370d6a578a",
+      "8a3bf8a475945b49e870f7a55406ec52409b612515c1222c230829370d6a578a",
+      "8a3bf8a475945b49e870f7a55406ec52409b612515c1222c230829370d6a578a"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "948025c23e4b114798f46d53a041f2697b7d13f032eca192df423452971d4a61",
+      "948025c23e4b114798f46d53a041f2697b7d13f032eca192df423452971d4a61",
+      "948025c23e4b114798f46d53a041f2697b7d13f032eca192df423452971d4a61"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 2188844,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.1470051109790802,
+    "sha256": "e8e9e3da26a951adcdacb6b9ce1b70f3e8cf8fb6230a36c375fd107b2c6c44fb",
+    "wav": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "dexie__seq-notes-coverage-v1",
+  "issue": "SXT-023",
+  "preset": {
+    "census_blob_sha1": "1dafae1015ad5f455702eef36f44049670195125",
+    "graphs_sha256_prefix": "1dafae1015ad5f45",
+    "path": "resources/data/patches_3rdparty/John Valentine/Keys/Dexie Swirly E-Piano.fxp",
+    "slug": "dexie"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "policies_inherited": "fixtures/render_fixture.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "44c88b12251c54f8dce9f3b6a89bb8b946f81ca3",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 2188844,
+    "peak_abs_float": 0.16518427431583405,
+    "sha256": "7065d58d14f7e7fbe1fe0677a37dcaa25e38d7ac305dd6260faff00a722a20aa",
+    "wav": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}

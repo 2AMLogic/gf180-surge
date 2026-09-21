@@ -1,0 +1,67 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "b9715f2b38a63f166e2e852fe5607197b7029553909ca3d04d03e30188695602",
+      "b9715f2b38a63f166e2e852fe5607197b7029553909ca3d04d03e30188695602",
+      "b9715f2b38a63f166e2e852fe5607197b7029553909ca3d04d03e30188695602"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "05ef64aff22f1798224f77d423deba157d1c54aa21bca5dac7515195fdfb5ca2",
+      "05ef64aff22f1798224f77d423deba157d1c54aa21bca5dac7515195fdfb5ca2",
+      "05ef64aff22f1798224f77d423deba157d1c54aa21bca5dac7515195fdfb5ca2"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 2188844,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.6678255200386047,
+    "sha256": "38fa08f80d0ac33fa36187b0ad788ae7e4564e3f8ffddf3e23f86566e229e9e5",
+    "wav": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "fm_bass_1__seq-notes-coverage-v1",
+  "issue": "SXT-023",
+  "preset": {
+    "census_blob_sha1": "65020fc9f9aba15ca7884bf2080868778dbf3d3e",
+    "graphs_sha256_prefix": "65020fc9f9aba15c",
+    "path": "resources/data/patches_factory/Basses/FM Bass 1.fxp",
+    "slug": "fm_bass_1"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "policies_inherited": "fixtures/render_fixture.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "44c88b12251c54f8dce9f3b6a89bb8b946f81ca3",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 2188844,
+    "peak_abs_float": 0.8877449631690979,
+    "sha256": "189f127ba65d71059f0d413aad1cb2218737885d4338bc82856f0fd5dd6d1cd0",
+    "wav": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}

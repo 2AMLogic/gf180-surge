@@ -1,0 +1,57 @@
+{
+  "census_blob_sha1": "65020fc9f9aba15ca7884bf2080868778dbf3d3e",
+  "chain": {
+    "ains": [
+      {
+        "params": {
+          "bw1_f": 2.0,
+          "bw2_f": 2.0,
+          "bw3_f": 2.223215103149414,
+          "freq1_f": -31.301773071289062,
+          "freq2_f": 2.287506103515625,
+          "freq3_f": 38.08930206298828,
+          "gain1_deactivated": false,
+          "gain1_f": 2.8285748958587646,
+          "gain2_deactivated": false,
+          "gain2_f": -14.400009155273438,
+          "gain3_deactivated": false,
+          "gain3_f": 6.428574085235596,
+          "gain_f": 4.114287853240967,
+          "mix_f": 1.0
+        },
+        "role": "ains1",
+        "slot": 0,
+        "type": "eq"
+      }
+    ],
+    "sends": []
+  },
+  "drifts_asserted_zero": [
+    0.0
+  ],
+  "extraction": {
+    "deactivated_source": "raw fxp XML attribute + documented loader migrations (rev<=15 delay lowcut/highcut/timeR; rev<=15 eq gains); no surgepy getter",
+    "observable_flags": "temposync/extend/deform via surgepy getters, cross-checked against raw XML fail-closed",
+    "tempo_source": "raw <tempoOnSave v=..> applied by loadPatch (surgepy.cpp loadPatch -> time_data.tempo)"
+  },
+  "graphs_sha256_prefix": "65020fc9f9aba15c",
+  "path": "resources/data/patches_factory/Basses/FM Bass 1.fxp",
+  "rev": 20,
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "fm_bass_1",
+  "tempo_bpm": 120.0,
+  "tempo_source": "engine default 120",
+  "volume_f": 0.0
+}

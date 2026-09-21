@@ -1,0 +1,54 @@
+{
+  "ref": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/sxt-023/artifacts/model__dexie__seq-notes-coverage-v1.f32.wav",
+  "preset": "dexie",
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 334267.375,
+      "model_peak_lsb": 346924.0,
+      "max_abs_diff_lsb": 166555.546875,
+      "rms_diff_lsb": 18006.009494134712,
+      "rms_diff_dbfs": -35.30364876956114,
+      "rms_diff_at_shift0_lsb": 18006.009494134712,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 18006.009494134712,
+      "spectral_corr": 0.9780425891326552
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 346416.53125,
+      "model_peak_lsb": 317522.0,
+      "max_abs_diff_lsb": 175618.5703125,
+      "rms_diff_lsb": 18007.10935574435,
+      "rms_diff_dbfs": -35.30311822531135,
+      "rms_diff_at_shift0_lsb": 18007.10935574435,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 18007.10935574435,
+      "spectral_corr": 0.9777700561341403
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 264903.625,
+      "model_peak_lsb": 274895.5,
+      "max_abs_diff_lsb": 72737.65625,
+      "rms_diff_lsb": 6477.165686584091,
+      "rms_diff_dbfs": -44.18429813569616,
+      "rms_diff_at_shift0_lsb": 6477.165686584091,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 6477.165686584091,
+      "spectral_corr": 0.995224661564176
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": false,
+    "spectral_corr": true
+  },
+  "verdict": "FAIL against proposed budgets"
+}

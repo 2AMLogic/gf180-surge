@@ -1,0 +1,13 @@
+{
+  "slug": "fm_bass_1",
+  "tb": "tb_fx.sv",
+  "blocks_compared": 8790,
+  "verdict": "PASS",
+  "checked": {
+    "outputs": 547200,
+    "checkpoints": 136,
+    "fields": 4080
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

@@ -1,0 +1,24 @@
+{
+  "slug": "dexie",
+  "tb": "tb_fx.sv",
+  "blocks_compared": 8790,
+  "verdict": "FAIL",
+  "checked": {
+    "outputs": 338,
+    "checkpoints": 2,
+    "fields": 64
+  },
+  "mismatches": 26,
+  "first_failures": [
+    "block 240 d0 tlv: model=1841652508539678 rtl=1841807347156361",
+    "block 240 d0 trv: model=1351044409575384 rtl=1351174419905143",
+    "block 241 d0 tlv: model=1841383248886116 rtl=1841538569279881",
+    "block 241 d0 trv: model=1351312886361001 rtl=1351443197781623",
+    "block 244 out[30]: model=26439 rtl=26440",
+    "block 244 out[31]: model=25694 rtl=25697",
+    "block 244 out[62]: model=26439 rtl=26437",
+    "block 244 out[63]: model=25694 rtl=25689",
+    "block 245 out[0]: model=24942 rtl=24941",
+    "block 245 out[1]: model=24192 rtl=24193"
+  ]
+}

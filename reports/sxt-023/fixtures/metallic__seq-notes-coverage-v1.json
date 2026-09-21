@@ -1,0 +1,67 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "091193a6fce76f2b38ff86f7216a6170bc6e5a7fa5e953c569c2f1642fabd664",
+      "091193a6fce76f2b38ff86f7216a6170bc6e5a7fa5e953c569c2f1642fabd664",
+      "091193a6fce76f2b38ff86f7216a6170bc6e5a7fa5e953c569c2f1642fabd664"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "dcd2f21e7f4f3a8ef9447f31a9dd4597f1f1555da2f56930657063e9d25def2b",
+      "dcd2f21e7f4f3a8ef9447f31a9dd4597f1f1555da2f56930657063e9d25def2b",
+      "dcd2f21e7f4f3a8ef9447f31a9dd4597f1f1555da2f56930657063e9d25def2b"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 2188844,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.2549385130405426,
+    "sha256": "f2183ef0db0d0b0e22fac53a338a6d39e44ddace786fdc51d77b69614158d20b",
+    "wav": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "metallic__seq-notes-coverage-v1",
+  "issue": "SXT-023",
+  "preset": {
+    "census_blob_sha1": "75383658c7c448f140a7e3c08ccd4e50a1ab0de0",
+    "graphs_sha256_prefix": "75383658c7c448f1",
+    "path": "resources/data/patches_factory/Plucks/Metallic.fxp",
+    "slug": "metallic"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "policies_inherited": "fixtures/render_fixture.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "44c88b12251c54f8dce9f3b6a89bb8b946f81ca3",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 2188844,
+    "peak_abs_float": 0.3085244596004486,
+    "sha256": "3131dfca9a1cf625ad1a780d9396f3aeeaf6dec20debe3ac25e4228dcc10b397",
+    "wav": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}

@@ -1,0 +1,9 @@
+{
+ "corner": "max-feedback extended fb=+1.0 (fb gain 1.0), mix=1.0, clicks-in",
+ "samples": 96000,
+ "mismatches": 95680,
+ "max_diff": 3161396,
+ "model_max_out": 3161147,
+ "bounded": true,
+ "verdict": "FAIL"
+}
