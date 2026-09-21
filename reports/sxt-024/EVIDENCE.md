@@ -164,9 +164,11 @@ order), and — case A — the full final external-memory image:
 | **Total external writable** | **557,056** | **2,228,224 (2.125 MiB)** |
 
 - **External writable** (flash is never a substitute): the two long regions
-  above. **On-chip small state: 5,031 bits** (out_tap 512 b, biquad regs
-  960 b, coefficients 2,416 b, counters/positions ~1,143 b). **All processing
-  stays in-chip.**
+  above. **On-chip small state: 4,031 bits (503 B)** (out_tap 512 b, biquad
+  regs 960 b, coefficients 2,512 b [biquad 480 + delay_fb 512 + delay_time
+  368 + pan 1,024 + damp 64 + mix/width lags 64], delay_pos 15 b, block/frame
+  counters 32 b — per `buffer-requirement.json`). **All processing stays
+  in-chip.**
 - Traffic: **17 reads + 17 writes = 34 words = 136 B per frame** (6.528 MB/s
   per instance at 48 kHz), measured from the frozen model's transaction log
   and re-measured from the RTL harness (557,056 = 512·32·34).
