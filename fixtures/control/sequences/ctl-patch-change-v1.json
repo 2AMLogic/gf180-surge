@@ -1,0 +1,71 @@
+{
+ "block_size": 32,
+ "blocks": 2820,
+ "coverage": [
+  "patch_change:hard_switch",
+  "queue_flush",
+  "reset_determinism",
+  "latency:off-grid"
+ ],
+ "description": "Two patch changes under the declared v1 HARD-SWITCH semantics: a mid-notes switch clears all voices and flushes queued events (recorded); a boundary-aligned switch follows. Determinism of reset/patch-load state.",
+ "events": [
+  {
+   "p1": 60,
+   "p2": 80,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 64,
+   "p2": 80,
+   "t": 33,
+   "type": "note_on"
+  },
+  {
+   "p1": 11,
+   "p2": 70,
+   "t": 100,
+   "type": "cc"
+  },
+  {
+   "p1": 3,
+   "p2": 0,
+   "t": 5000,
+   "type": "patch_change"
+  },
+  {
+   "p1": 72,
+   "p2": 100,
+   "t": 5100,
+   "type": "note_on"
+  },
+  {
+   "p1": 72,
+   "p2": 0,
+   "t": 20000,
+   "type": "note_off"
+  },
+  {
+   "p1": 9,
+   "p2": 0,
+   "t": 64000,
+   "type": "patch_change"
+  },
+  {
+   "p1": 55,
+   "p2": 64,
+   "t": 64000,
+   "type": "note_on"
+  },
+  {
+   "p1": 55,
+   "p2": 0,
+   "t": 90000,
+   "type": "note_off"
+  }
+ ],
+ "id": "ctl-patch-change-v1",
+ "sample_rate": 48000,
+ "schema_version": 1,
+ "voice_pool": 8
+}

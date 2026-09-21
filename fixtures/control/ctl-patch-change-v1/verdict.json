@@ -1,0 +1,25 @@
+{
+  "sequence": "ctl-patch-change-v1",
+  "dut": "rtl/control/control_top.sv",
+  "verdict": "PASS",
+  "byte_identical_outputs": true,
+  "model_summary": {
+    "blocks": 2820,
+    "underruns": 0,
+    "drops_total": 0,
+    "flushed_total": 1,
+    "max_latency_samples": 31,
+    "reserve_exceeded_blocks": 0,
+    "queue_overflow_blocks": 0,
+    "decisions_total": 8
+  },
+  "checked": {
+    "snapshots": 2820,
+    "snapshot_fields": 76140,
+    "decisions": 8,
+    "drops": 0,
+    "samples": 90240
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

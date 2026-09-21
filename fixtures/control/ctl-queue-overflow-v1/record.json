@@ -1,0 +1,43 @@
+{
+ "byte_identical_model_vs_rtl": true,
+ "checked": {
+  "decisions": 32,
+  "drops": 14,
+  "samples": 64160,
+  "snapshot_fields": 54135,
+  "snapshots": 2005
+ },
+ "claim_scope": "control plane + stub slot only; no DSP, fidelity, or hardware claim",
+ "declared_schedule_closure_192mhz": {
+  "budget_cycles_per_frame": 3200.0,
+  "closure": "within_budget",
+  "used_cycles_per_frame": 1776
+ },
+ "dut": "rtl/control/control_top.sv",
+ "id": "ctl-queue-overflow-v1",
+ "mismatches": 0,
+ "model_engine": "counter_stub",
+ "overload": {
+  "closes_declared_schedule": false,
+  "declared_reserve_per_block": 8,
+  "detection": "explicit event_reserve_exceeded/queue_overflow statuses in model_trace.json; explicit X drop records in rtl_trace.txt",
+  "drops_total": 14,
+  "flushed_total": 0,
+  "max_latency_samples": 32,
+  "queue_overflow_blocks": 1,
+  "reserve_exceeded_blocks": 2,
+  "underruns": 0
+ },
+ "sequence_sha256": "8e3764ab298cf55cf6052485a1f749dff6a55f898426d1e0fc5a0dd2bf1ea844",
+ "summary": {
+  "blocks": 2005,
+  "decisions_total": 32,
+  "drops_total": 14,
+  "flushed_total": 0,
+  "max_latency_samples": 32,
+  "queue_overflow_blocks": 1,
+  "reserve_exceeded_blocks": 2,
+  "underruns": 0
+ },
+ "verdict": "PASS"
+}

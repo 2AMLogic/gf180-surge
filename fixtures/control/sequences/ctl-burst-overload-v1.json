@@ -1,0 +1,160 @@
+{
+ "block_size": 32,
+ "blocks": 2005,
+ "coverage": [
+  "overload:reserve_exceeded",
+  "spill:bounded",
+  "no_drops"
+ ],
+ "description": "NEGATIVE-CONTROL SUPPORT: 12 coincident note-ons at t=0 exceed the declared 8-events-per-block schedule reserve (12 <= 16 queue capacity, so nothing drops). The block is flagged event_reserve_exceeded, the surplus spills to the next block with grown (bounded) latency, and the render's worst-case schedule accounting does NOT close. Detected, bounded, never silent.",
+ "events": [
+  {
+   "p1": 36,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 37,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 38,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 39,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 40,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 41,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 42,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 43,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 44,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 45,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 46,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 47,
+   "p2": 100,
+   "t": 0,
+   "type": "note_on"
+  },
+  {
+   "p1": 36,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 37,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 38,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 39,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 40,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 41,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 42,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 43,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 44,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 45,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 46,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  },
+  {
+   "p1": 47,
+   "p2": 0,
+   "t": 64000,
+   "type": "note_off"
+  }
+ ],
+ "id": "ctl-burst-overload-v1",
+ "sample_rate": 48000,
+ "schema_version": 1,
+ "voice_pool": 8
+}
