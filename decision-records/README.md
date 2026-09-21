@@ -17,3 +17,5 @@ stays and is marked in its Status line.
 | Number | Title | Status | Date |
 |---|---|---|---|
 | [0001](0001-oracle-automation-source.md) | Oracle automation source policy (SXT-010) | ratified | 2026-09-19 |
+| [0002](0002-halfband-coefficients.md) | Halfband decimator coefficient constants (SXT-022) | ratified | 2026-09-20 |
+| [0003](0003-reverb1-delay-time-tables.md) | Reverb1 DELAY_TIME_TABLES constants (SXT-024) | PROPOSED — pending owner ratification | 2026-09-20 |
