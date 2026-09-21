@@ -1,4 +1,4 @@
-# Patch image format v1 — `sxt-020-patch-image/1.0.0` (DRAFT)
+# Patch image format v1 — `sxt-020-patch-image/1.1.0` (DRAFT)
 
 Issue: #13 (SXT-020) · Plan:
 `docs/surge-xt-chip-plan-v0.1-2026-09-20.md` §3 (host preset compiler row),
@@ -148,6 +148,7 @@ the image adds annotations, it never rewrites or drops patch content.
 | `allocations` | see §5 |
 | `event_timing` | required event queue depth, worst coincident events per frame, peak events/s, source (SXT-012 fixture profile) |
 | `caveats` | the SXT-015 accounting anomalies verbatim (unison out of range, SLFO/MSEG exposure notes, unverified-class flags) — recorded observations that never alter patch content |
+| `wavetable_asset_manifests` | **(SXT-026, format 1.1)** one manifest record per resolved `wavetable_assets` entry, emitted only when the compile is invoked with `--asset-root` (the external pinned tree's `resources/data`; the payload is read in place and never copied): identity (`path`, `sha256`, `bytes` — hashes only in-repo per `decision-records/0004`), dims (`wave_size`, `wave_count`, sample format, `dt`), mip/AA structure (engine mip construction levels, the oscillator's selectable levels 0..6 with the pinned `a = dt·pitchmult_inv` thresholds, required linear-frame + sinc impulse interpolation), and residency classification (read-only external flash asset; on-chip working set = the mip level in play). A hash mismatch between the external file and the graph's resolved record **aborts the compile** (`compiler/assets/wavetable.py`) |
 | `losslessness` | `normalized_graph_sha256` + the exact reconstruction rule used by `verify.py` |
 
 ## 5. Allocations (`derived.allocations`)
@@ -230,7 +231,12 @@ suite and demands regeneration, never silent acceptance.
 
 - **Patch** (`1.0.z`): compiler fixes that provably cannot change bytes.
 - **Minor** (`1.y`): additive body/derived fields; golden regeneration with
-  a visible diff; scan reconciliation re-run.
+  a visible diff; scan reconciliation re-run. **Applied: 1.0.0 → 1.1.0
+  (SXT-026, issue #19)** — additive optional derived section
+  `wavetable_asset_manifests`, emitted only under `--asset-root`; the golden
+  suite stays oracle-free (compiled without the flag), and a
+  manifest-carrying image is pinned as evidence in `reports/sxt-026/`
+  with its verification transcript.
 - **Major** (`2.0.0`): any header/container/layout change, any gate or
   outcome-class change, any catalog class change. Requires a format revision
   note, golden regeneration, and a scan re-run — the issue-#13

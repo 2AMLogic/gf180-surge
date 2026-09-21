@@ -7,8 +7,8 @@ commit; a gate-semantics change additionally requires a visible note in the
 scan reconciliation. No silent format drift.
 """
 
-COMPILER_VERSION = "sxt-020-compile/1.0.0"
-IMAGE_FORMAT_VERSION = "sxt-020-patch-image/1.0.0"
+COMPILER_VERSION = "sxt-020-compile/1.1.0"
+IMAGE_FORMAT_VERSION = "sxt-020-patch-image/1.1.0"
 IMAGE_FORMAT_MAJOR = 1
-IMAGE_FORMAT_MINOR = 0
+IMAGE_FORMAT_MINOR = 1
 CONTAINER_MAGIC = b"SXP1"
