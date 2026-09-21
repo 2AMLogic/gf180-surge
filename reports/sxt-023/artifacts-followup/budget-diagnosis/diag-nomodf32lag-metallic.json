@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 delay budget diagnosis variant",
+  "slug": "metallic",
+  "variant": "nomodf32lag",
+  "mono": {
+    "max_abs_diff_lsb": 12348.484375,
+    "rms_diff_lsb": 2193.5553609535327,
+    "rms_diff_dbfs": -53.589026273511,
+    "rms_diff_at_best_shift_lsb": 2193.5553609535327,
+    "best_shift": 0,
+    "spectral_corr": 0.9997689397190729
+  },
+  "L": {
+    "max_abs_diff_lsb": 29237.6640625,
+    "rms_diff_lsb": 4122.446528923688,
+    "rms_diff_dbfs": -48.108897640723995,
+    "rms_diff_at_best_shift_lsb": 4122.446528923688,
+    "best_shift": 0,
+    "spectral_corr": 0.999165085423274
+  },
+  "R": {
+    "max_abs_diff_lsb": 30022.609375,
+    "rms_diff_lsb": 3602.688873268266,
+    "rms_diff_dbfs": -49.279463100615864,
+    "rms_diff_at_best_shift_lsb": 3602.688873268266,
+    "best_shift": 0,
+    "spectral_corr": 0.9993044511244114
+  },
+  "ref": "reports/sxt-023/artifacts-followup/budget-diagnosis/engmod0__metallic__seq-notes-coverage-v1.f32.wav",
+  "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
+}

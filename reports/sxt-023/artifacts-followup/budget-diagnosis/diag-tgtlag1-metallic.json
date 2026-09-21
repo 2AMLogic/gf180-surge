@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 delay budget diagnosis variant",
+  "slug": "metallic",
+  "variant": "tgtlag1",
+  "mono": {
+    "max_abs_diff_lsb": 194554.59765625,
+    "rms_diff_lsb": 22203.521318361454,
+    "rms_diff_dbfs": -33.48356114787711,
+    "rms_diff_at_best_shift_lsb": 22203.521318361454,
+    "best_shift": 0,
+    "spectral_corr": 0.9751288385668442
+  },
+  "L": {
+    "max_abs_diff_lsb": 882917.875,
+    "rms_diff_lsb": 82157.53690739219,
+    "rms_diff_dbfs": -22.11905005389636,
+    "rms_diff_at_best_shift_lsb": 82157.53690739219,
+    "best_shift": 0,
+    "spectral_corr": 0.9258396073992149
+  },
+  "R": {
+    "max_abs_diff_lsb": 826319.6875,
+    "rms_diff_lsb": 82963.06794228629,
+    "rms_diff_dbfs": -22.034302191181613,
+    "rms_diff_at_best_shift_lsb": 82963.06794228629,
+    "best_shift": 0,
+    "spectral_corr": 0.926437236600576
+  },
+  "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
+}

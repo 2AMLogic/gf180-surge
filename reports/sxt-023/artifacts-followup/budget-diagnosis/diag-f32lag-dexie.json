@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 delay budget diagnosis variant",
+  "slug": "dexie",
+  "variant": "f32lag",
+  "mono": {
+    "max_abs_diff_lsb": 72734.15625,
+    "rms_diff_lsb": 6477.085678455263,
+    "rms_diff_dbfs": -44.184405427388675,
+    "rms_diff_at_best_shift_lsb": 6477.085678455263,
+    "best_shift": 0,
+    "spectral_corr": 0.9952245752771212
+  },
+  "L": {
+    "max_abs_diff_lsb": 166565.546875,
+    "rms_diff_lsb": 18005.933343111574,
+    "rms_diff_dbfs": -35.303685504007035,
+    "rms_diff_at_best_shift_lsb": 18005.933343111574,
+    "best_shift": 0,
+    "spectral_corr": 0.9780418744373911
+  },
+  "R": {
+    "max_abs_diff_lsb": 175572.5703125,
+    "rms_diff_lsb": 18007.09153807067,
+    "rms_diff_dbfs": -35.30312681982926,
+    "rms_diff_at_best_shift_lsb": 18007.09153807067,
+    "best_shift": 0,
+    "spectral_corr": 0.9777704693313017
+  },
+  "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
+}

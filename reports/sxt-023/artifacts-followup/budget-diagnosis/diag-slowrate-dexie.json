@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 delay budget diagnosis variant",
+  "slug": "dexie",
+  "variant": "slowrate",
+  "mono": {
+    "max_abs_diff_lsb": 65773.61328125,
+    "rms_diff_lsb": 6869.930669979445,
+    "rms_diff_dbfs": -43.67295118028877,
+    "rms_diff_at_best_shift_lsb": 6869.930669979445,
+    "best_shift": 0,
+    "spectral_corr": 0.9947140966782788
+  },
+  "L": {
+    "max_abs_diff_lsb": 194894.0,
+    "rms_diff_lsb": 18130.389216371845,
+    "rms_diff_dbfs": -35.243855716271206,
+    "rms_diff_at_best_shift_lsb": 18130.389216371845,
+    "best_shift": 0,
+    "spectral_corr": 0.9697888277410246
+  },
+  "R": {
+    "max_abs_diff_lsb": 205445.703125,
+    "rms_diff_lsb": 18098.673351292353,
+    "rms_diff_dbfs": -35.25906342824085,
+    "rms_diff_at_best_shift_lsb": 18098.673351292353,
+    "best_shift": 0,
+    "spectral_corr": 0.9674441026129743
+  },
+  "ref": "reports/sxt-023/artifacts-followup/budget-diagnosis/engprobe_d0.46500036120414734_r-6.0__dexie__seq-notes-coverage-v1.f32.wav",
+  "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
+}

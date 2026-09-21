@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "sxt-023 delay budget diagnosis variant",
+  "slug": "dexie",
+  "variant": "nomod",
+  "mono": {
+    "max_abs_diff_lsb": 41.28125,
+    "rms_diff_lsb": 3.465077068505508,
+    "rms_diff_dbfs": -109.61774029728849,
+    "rms_diff_at_best_shift_lsb": 3.465077068505508,
+    "best_shift": 0,
+    "spectral_corr": 0.9999999979982737
+  },
+  "L": {
+    "max_abs_diff_lsb": 3540.140625,
+    "rms_diff_lsb": 297.7384224268101,
+    "rms_diff_dbfs": -70.9353006071751,
+    "rms_diff_at_best_shift_lsb": 297.7384224268101,
+    "best_shift": 0,
+    "spectral_corr": 0.9999894066796277
+  },
+  "R": {
+    "max_abs_diff_lsb": 3613.421875,
+    "rms_diff_lsb": 303.26681892501244,
+    "rms_diff_dbfs": -70.77550034926223,
+    "rms_diff_at_best_shift_lsb": 303.26681892501244,
+    "best_shift": 0,
+    "spectral_corr": 0.9999890431393534
+  },
+  "ref": "reports/sxt-023/artifacts-followup/budget-diagnosis/engmod0__dexie__seq-notes-coverage-v1.f32.wav",
+  "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
+}
