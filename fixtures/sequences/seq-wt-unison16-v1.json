@@ -1,0 +1,40 @@
+{
+ "coverage": [
+  "unison:max-16",
+  "poly:2-overlap"
+ ],
+ "description": "short C4 + D4 for the MAX_UNISON=16 fixture (worst-case schedule; notes chosen so osc pitch = note - 36 stays in [24, 148])",
+ "events": [
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 0,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 72,
+   "t": 8000,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 24000,
+   "type": "note_off",
+   "velocity": 0
+  },
+  {
+   "channel": 0,
+   "note": 72,
+   "t": 24000,
+   "type": "note_off",
+   "velocity": 0
+  }
+ ],
+ "id": "seq-wt-unison16-v1",
+ "schema_version": 1,
+ "tail_s": 1.0
+}

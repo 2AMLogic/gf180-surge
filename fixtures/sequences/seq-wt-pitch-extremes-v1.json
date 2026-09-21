@@ -1,0 +1,55 @@
+{
+ "coverage": [
+  "pitch:extreme-low",
+  "pitch:extreme-high",
+  "wt:mip-sweep"
+ ],
+ "description": "MIDI 60 / 96 / 120 short holds: with the preset's stored osc octave (-3) this spans osc pitches 24..84 (wavetable mip 0..4)",
+ "events": [
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 0,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 12000,
+   "type": "note_off",
+   "velocity": 0
+  },
+  {
+   "channel": 0,
+   "note": 96,
+   "t": 24000,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 96,
+   "t": 36000,
+   "type": "note_off",
+   "velocity": 0
+  },
+  {
+   "channel": 0,
+   "note": 120,
+   "t": 48000,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 120,
+   "t": 60000,
+   "type": "note_off",
+   "velocity": 0
+  }
+ ],
+ "id": "seq-wt-pitch-extremes-v1",
+ "schema_version": 1,
+ "tail_s": 1.0
+}
