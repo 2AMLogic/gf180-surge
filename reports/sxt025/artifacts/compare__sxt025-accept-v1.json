@@ -84,7 +84,7 @@
     "status": "PASS"
   },
   "model_render_sha256": "fba8e2e31dc15857d177a28e163f02864c4a850a805831599f17b488c9de823c",
-  "overall": "PASS WITH RECORDED BUDGET FINDING (PENDING-FREEZE)",
+  "overall": "FAIL on one [PROPOSED] sub-budget (tail band-energy decay floor; bounded finding recorded for SXT-013; all other budgets PASS)",
   "placement_order_gain": {
     "gain_staging": {
       "a_q": 207645,
@@ -121,10 +121,12 @@
     "full_render": "PASS",
     "memory_traffic": "PASS",
     "placement_order_gain": "PASS",
-    "tail": "PASS_WITH_RECORDED_FINDING"
+    "tail": "FAIL_BAND_ENERGY_SUBBUDGET (finding recorded; all other tail budgets PASS)"
   },
   "tail": {
-    "band_energy_finding": "tail band 16000-22000Hz deviates 25.67 dB (band level -68.1 dBFS, model -42.4 dBFS): the Q4.28 fixed grid's absolute quantization noise exceeds the float32 reference's relative precision in the deepest tail (absolute full-tail error -67.1 dBFS). Recorded for the SXT-013 freeze per the SXT-024 (*) precedent; not tuned away.",
+    "band_energy_finding": "tail band 16000-22000Hz deviates 25.67 dB (band level -68.1 dBFS, model -42.4 dBFS). Characterization: in the final 3 s of the tail the reference's 16000-22000Hz band decays to -99.6 dBFS while the model floors at -45.6 dBFS -- the frozen Q4.28 round-half-up recirculation accumulates HF quantization noise the float32 reference does not have (the SXT-016 probe's predicted dither/decay-floor class; the frozen leaf has no decay-floor dither). Broadband tail and decay-curve budgets PASS; this sub-budget FAILS and is recorded for the SXT-013 word-length/dither decision, not tuned away.",
+    "band_energy_floor_model_dbfs": -45.57046894339946,
+    "band_energy_floor_ref_dbfs": -99.58766005303826,
     "band_energy_max_dev_db": 25.672774105759736,
     "band_energy_worst_band": "16000-22000",
     "decay_curve_max_dev_db": 0.0045928955078125,

@@ -77,13 +77,15 @@ def test_compare_artifacts(seq):
     assert c["statuses"]["event_timing"] == "PASS"
     assert c["statuses"]["placement_order_gain"] == "PASS"
     assert c["statuses"]["memory_traffic"] == "PASS"
-    assert c["statuses"]["tail"] in ("PASS", "PASS_WITH_RECORDED_FINDING")
-    assert c["overall"].startswith(("PASS", "PASS WITH"))
+    # the tail's band-energy sub-budget FAILS on a recorded bounded finding
+    # (fixed-grid HF decay floor); every other tail budget passes
+    assert c["statuses"]["tail"].startswith("FAIL_BAND_ENERGY_SUBBUDGET")
+    assert c["tail"]["band_energy_finding"]
+    assert c["tail"]["tail_rms_ok"] and c["tail"]["tail_continuity_ok"]
+    assert c["tail"]["decay_curve_ok"] and c["tail"]["stereo_corr_ok"]
     mono = c["full_render"]["channels"]["mono"]
     assert mono["best_shift"] == 0
     assert mono["spectral_corr"] >= 0.98
-    if c["statuses"]["tail"] == "PASS_WITH_RECORDED_FINDING":
-        assert c["tail"]["band_energy_finding"], "finding must be recorded"
 
 
 @pytest.mark.parametrize("seq", SEQUENCES)

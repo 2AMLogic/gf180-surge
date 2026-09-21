@@ -126,15 +126,25 @@ def tail_checks(ref_l, ref_r, mod_l, mod_r, tail_start):
         worst_key = max(dev, key=dev.get)
         out["band_energy_worst_band"] = worst_key
         if max(dev.values()) > BUDGETS["band_energy_db"]:
+            # quantify the model's decay floor: HF band level of the final 3 s
+            fl = 3 * 48000
+            floor_ref = band_energies(rtail[-fl:]).get(worst_key)
+            floor_mod = band_energies(mtail[-fl:]).get(worst_key)
+            out["band_energy_floor_ref_dbfs"] = floor_ref
+            out["band_energy_floor_model_dbfs"] = floor_mod
             out["band_energy_finding"] = (
                 f"tail band {worst_key}Hz deviates {dev[worst_key]:.2f} dB "
                 f"(band level {rb[worst_key]:.1f} dBFS, model "
-                f"{mb[worst_key]:.1f} dBFS): the Q4.28 fixed grid's "
-                f"absolute quantization noise exceeds the float32 "
-                f"reference's relative precision in the deepest tail "
-                f"(absolute full-tail error {out['tail_abs_err_dbfs']:.1f} "
-                f"dBFS). Recorded for the SXT-013 freeze per the SXT-024 "
-                f"(*) precedent; not tuned away.")
+                f"{mb[worst_key]:.1f} dBFS). Characterization: in the final "
+                f"3 s of the tail the reference's {worst_key}Hz band decays "
+                f"to {floor_ref:.1f} dBFS while the model floors at "
+                f"{floor_mod:.1f} dBFS -- the frozen Q4.28 round-half-up "
+                f"recirculation accumulates HF quantization noise the "
+                f"float32 reference does not have (the SXT-016 probe's "
+                f"predicted dither/decay-floor class; the frozen leaf has "
+                f"no decay-floor dither). Broadband tail and decay-curve "
+                f"budgets PASS; this sub-budget FAILS and is recorded for "
+                f"the SXT-013 word-length/dither decision, not tuned away.")
     out["stereo_corr_ref"] = stereo_corr(rtail, ref[tail_start:n]
                                          if False else ref_l[tail_start:n])
     cr = stereo_corr(ref_l[tail_start:n], ref_r[tail_start:n])
@@ -272,24 +282,28 @@ def main():
                and (t["decay_curve_ok"] is not False)
                and t["stereo_corr_ok"]
                and t.get("band_energy_finding") is None)
-    t_finding = (t["tail_rms_ok"] and t["tail_continuity_ok"]
-                 and (t["decay_curve_ok"] is not False)
-                 and t["stereo_corr_ok"]
-                 and t.get("band_energy_finding") is not None)
+    # a recorded band-energy finding IS a failure of the [PROPOSED] sub-budget
+    # (honest vocabulary); all other tail budgets passing is reported alongside
     parts = {
         "full_render": metrics["full_render"]["status"],
-        "tail": ("PASS" if t_clean else
-                 ("PASS_WITH_RECORDED_FINDING" if t_finding else "FAIL")),
+        "tail": "PASS" if t_clean else "FAIL",
         "event_timing": metrics["event_timing"]["status"],
         "placement_order_gain": metrics["placement_order_gain"]["status"],
         "memory_traffic": metrics["memory_traffic"]["status"],
     }
+    if parts["tail"] == "FAIL" and all(
+            v == "PASS" for k, v in parts.items() if k != "tail") and t.get(
+                "band_energy_finding"):
+        parts["tail"] = "FAIL_BAND_ENERGY_SUBBUDGET (finding recorded; all " \
+                        "other tail budgets PASS)"
     metrics["statuses"] = parts
     if all(v == "PASS" for v in parts.values()):
         metrics["overall"] = "PASS (PENDING-FREEZE)"
-    elif all(v in ("PASS", "PASS_WITH_RECORDED_FINDING")
-             for v in parts.values()):
-        metrics["overall"] = "PASS WITH RECORDED BUDGET FINDING (PENDING-FREEZE)"
+    elif (parts["tail"].startswith("FAIL_BAND_ENERGY_SUBBUDGET")
+          and all(v == "PASS" for k, v in parts.items() if k != "tail")):
+        metrics["overall"] = ("FAIL on one [PROPOSED] sub-budget (tail "
+                              "band-energy decay floor; bounded finding "
+                              "recorded for SXT-013; all other budgets PASS)")
     else:
         metrics["overall"] = "FAIL against proposed budgets"
     out_path = os.path.join(ARTIFACTS, f"compare__{seq_name}.json")
