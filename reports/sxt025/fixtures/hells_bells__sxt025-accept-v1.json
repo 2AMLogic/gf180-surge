@@ -1,0 +1,69 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "4441e1cac945bfd2db12f59ad43802c13c37e47886da9cf6830e4c11db32da99",
+      "4441e1cac945bfd2db12f59ad43802c13c37e47886da9cf6830e4c11db32da99",
+      "4441e1cac945bfd2db12f59ad43802c13c37e47886da9cf6830e4c11db32da99"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "4c63722328a9591a48b99869688a4882205874d74a43ccde80295ea37e7468cd",
+      "4c63722328a9591a48b99869688a4882205874d74a43ccde80295ea37e7468cd",
+      "4c63722328a9591a48b99869688a4882205874d74a43ccde80295ea37e7468cd"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 6720044,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.38400089740753174,
+    "sha256": "8399f13dfed5526bd5d1a55a7b01cbe156fd98d39155aba0707e7f1c9e791457",
+    "wav": "reports/sxt025/fixtures/hells_bells__sxt025-accept-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "hells_bells__sxt025-accept-v1",
+  "issue": "SXT-025",
+  "preset": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "graphs_sha256_prefix": null,
+    "note": "contributor bank preset; graph sha in model/integration/selection-scan.json",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "slug": "hells_bells"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 17.5,
+    "frames": 840000,
+    "policies_inherited": "fixtures/render_fixture.py (reset/scheduling/tail/dry-bypass)",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 12.0
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "sxt025-accept-v1",
+    "path": "model/integration/sequences/sxt025-accept-v1.json",
+    "sha256": "ed08fc0712e3454a870801f03779bf8c0474e759e03cd1c6d69305acbc1fac6b"
+  },
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "a26e803504caad9c133b2a3e0a67ef0e19c80996",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 6720044,
+    "peak_abs_float": 0.6215035319328308,
+    "sha256": "bbb4b14850dbf95dd1a55dbffec68b6375d0fdfc90d6d5a855ec414ee7a05241",
+    "wav": "reports/sxt025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav"
+  }
+}

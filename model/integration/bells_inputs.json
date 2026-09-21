@@ -1,0 +1,65 @@
+{
+  "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+  "compiled_image": "model/integration/preset/Hell_s_Bells__e499f78d.image.json",
+  "compiled_image_sha256": "bf21250e85ec52a713671e2067237215c7223996b817b4af88a23a66a708f7a6",
+  "drifts_asserted_zero": [
+    0.0
+  ],
+  "extraction": {
+    "deactivated_source": "raw fxp XML attribute (surgepy exposure gap; no getter); cross-checked by the fidelity budget",
+    "determinism_gate": "scene drift == 0, non-muted oscs retrigger on (SXT-012 bit-identical class); the fixture render adds the 3x fresh-instance bit-identity gate",
+    "params": "engine getters post-load (normalized, authoritative), cross-checked vs the compiled image at the SXT-011 6-decimal export rounding (fail-closed)"
+  },
+  "fx_instances": [
+    {
+      "caveat": "p11 (unused by Reverb1) carried verbatim from the image; deactivated flags from the raw .fxp XML attribute (surgepy exposure-gap bridge, cross-checked by the fidelity budget)",
+      "deactivated": {
+        "highcut": false,
+        "lowcut": false
+      },
+      "engine_order": 22,
+      "params": {
+        "damping": 0.47946399450302124,
+        "decaytime": 2.924107074737549,
+        "freq1": 14.850006103515625,
+        "gain1": -4.371426105499268,
+        "highcut": 39.337486267089844,
+        "lowcut": 3.1124799251556396,
+        "mix": 1.0,
+        "predelay": -5.188394069671631,
+        "roomsize": 0.5401769876480103,
+        "shape": 3.0,
+        "unused12": 0.0,
+        "width": 0.0
+      },
+      "return_f": 1.0,
+      "role": "send2",
+      "send_gain_f": 0.9348220229148865,
+      "send_slot": 1,
+      "slot": 5,
+      "type": "reverb1"
+    }
+  ],
+  "issue": "SXT-025 (#18)",
+  "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+  "rev_or_loader": "contributor rev 9 (census stored_revision)",
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.0,
+      0.9348220229148865
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "hells_bells",
+  "tempo_bpm": 120.0,
+  "tempo_source": "engine default 120",
+  "volume_f": -2.025745391845703,
+  "volume_image_scalar": 0.0,
+  "volume_note": "image scalar vol=0.0 is the pre-migration stored value; the loader's normalized master volume is -2.025745391845703 dB (authoritative; same loader-default class as SXT-023 metallic)"
+}

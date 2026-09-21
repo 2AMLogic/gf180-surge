@@ -1,0 +1,1121 @@
+{
+ "artifact": "sxt-020-patch-image",
+ "body": {
+  "derived": {
+   "allocations": {
+    "bandwidth": {
+     "ext_traffic_bytes_per_frame": 136,
+     "ext_traffic_bytes_per_s": 6528000.0
+    },
+    "basis": {
+     "accounting_model_version": "sxt-015-accounting/1.0.0",
+     "cost_profile": "placeholder-v0",
+     "note": "SXT-015 bookkeeping model; every state/cycle/bandwidth number is a named placeholder [PENDING-SXT-016]; voice state is one aggregate block until SXT-016/023 pin the per-voice layout",
+     "params_digest": "646942e9c3887ecb"
+    },
+    "budgets": {
+     "cycle_closure": "not_gated_pending_sxt_016",
+     "external_bandwidth_bytes_per_s": 800000000,
+     "external_writable_bytes": 67108864,
+     "on_chip_ram_bytes": 4194304
+    },
+    "cycles_placeholder_v0": {
+     "closure": "OVERFLOW",
+     "dsp_budget_cycles_per_frame": 8000.0,
+     "note": "NOT GATED: placeholder-v0 columns only [PENDING-SXT-016]",
+     "per_frame": {
+      "events": 320.0,
+      "fx": 2600.0,
+      "modulation": 105.0,
+      "total": 12325.0,
+      "voice": 9300.0
+     }
+    },
+    "external_writable": {
+     "blocks": [
+      {
+       "fx_class": "Reverb 1",
+       "kind": "fx_instance_state",
+       "name": "fx_slot_5",
+       "offset": 0,
+       "size_bytes": 2228224,
+       "slot": 5
+      }
+     ],
+     "total_bytes": 2228224
+    },
+    "flash_assets": {
+     "blocks": [],
+     "role": "assets only; flash is never writable delay/reverb storage (plan section 3)",
+     "total_bytes": 0
+    },
+    "fx_instances": [
+     {
+      "enabled_by_fxd": true,
+      "ext_reads_per_frame": 17,
+      "ext_writes_per_frame": 17,
+      "flags": [],
+      "fx_class": "Reverb 1",
+      "offset": 0,
+      "processes_this_frame": true,
+      "region": "external_writable",
+      "routing_active": true,
+      "size_bytes": 2228224,
+      "slot": 5
+     }
+    ],
+    "on_chip": {
+     "blocks": [
+      {
+       "kind": "voice_state_aggregate",
+       "name": "voice_state",
+       "offset": 0,
+       "size_bytes": 103936
+      }
+     ],
+     "total_bytes": 103936
+    },
+    "voice": {
+     "envelope_instances": 32,
+     "lfo_instances_total": 102,
+     "polylimit": 16,
+     "unison_osc_instances_worst_case": 16,
+     "voices_per_note": 1,
+     "worst_case_voices": 16
+    }
+   },
+   "caveats": [],
+   "caveats_note": "anomalies are recorded model observations (unison clamp, exposure gaps, unverified-class flags); they never alter patch content",
+   "event_timing": {
+    "max_coincident_events": 8,
+    "peak_events_per_second": 13.333333,
+    "queue_depth": 16,
+    "source": "fixtures/sequences/ (10 sequence fixtures, SXT-012)",
+    "worst_case_events_per_frame": 8
+   },
+   "fx_section": {
+    "disable_mask_fxd": 0,
+    "distinct_type_count": 1,
+    "enabled_instances": 1,
+    "note": "per-slot fxd-disabled instances hold state but neither process nor gate (SXT-015 rule); two slots of one class are two instances",
+    "processing_instances": 1,
+    "processing_order_note": "engine-fixed: A1->A4 inserts, B1->B4 inserts, scene sum, S1..S4 sends (per-slot return level), G1->G4 globals (SurgeSynthesizer::process)",
+    "section_bypass_id": 0,
+    "section_bypass_name": "All FX",
+    "slots": [
+     {
+      "configured": false,
+      "engine_order": 1,
+      "order_in_phase": 1,
+      "phase": 0,
+      "phase_name": "scene_A_insert",
+      "role": "ains1",
+      "slot": 0,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 2,
+      "order_in_phase": 2,
+      "phase": 0,
+      "phase_name": "scene_A_insert",
+      "role": "ains2",
+      "slot": 1,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 11,
+      "order_in_phase": 1,
+      "phase": 1,
+      "phase_name": "scene_B_insert",
+      "role": "bins1",
+      "slot": 2,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 12,
+      "order_in_phase": 2,
+      "phase": 1,
+      "phase_name": "scene_B_insert",
+      "role": "bins2",
+      "slot": 3,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 21,
+      "order_in_phase": 1,
+      "phase": 2,
+      "phase_name": "send_bus",
+      "role": "send1",
+      "slot": 4,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "airwindows_algorithm_selected": false,
+      "configured": true,
+      "enabled_by_fxd": true,
+      "engine_order": 22,
+      "order_in_phase": 2,
+      "phase": 2,
+      "phase_name": "send_bus",
+      "processes_this_frame": true,
+      "role": "send2",
+      "routing_active": true,
+      "slot": 5,
+      "state_class_unverified": false,
+      "state_tier": "pinned",
+      "type_id": 2,
+      "type_name": "Reverb 1"
+     },
+     {
+      "configured": false,
+      "engine_order": 31,
+      "order_in_phase": 1,
+      "phase": 3,
+      "phase_name": "global_insert",
+      "role": "global1",
+      "slot": 6,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 32,
+      "order_in_phase": 2,
+      "phase": 3,
+      "phase_name": "global_insert",
+      "role": "global2",
+      "slot": 7,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 3,
+      "order_in_phase": 3,
+      "phase": 0,
+      "phase_name": "scene_A_insert",
+      "role": "ains3",
+      "slot": 8,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 4,
+      "order_in_phase": 4,
+      "phase": 0,
+      "phase_name": "scene_A_insert",
+      "role": "ains4",
+      "slot": 9,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 13,
+      "order_in_phase": 3,
+      "phase": 1,
+      "phase_name": "scene_B_insert",
+      "role": "bins3",
+      "slot": 10,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 14,
+      "order_in_phase": 4,
+      "phase": 1,
+      "phase_name": "scene_B_insert",
+      "role": "bins4",
+      "slot": 11,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 23,
+      "order_in_phase": 3,
+      "phase": 2,
+      "phase_name": "send_bus",
+      "role": "send3",
+      "slot": 12,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 24,
+      "order_in_phase": 4,
+      "phase": 2,
+      "phase_name": "send_bus",
+      "role": "send4",
+      "slot": 13,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 33,
+      "order_in_phase": 3,
+      "phase": 3,
+      "phase_name": "global_insert",
+      "role": "global3",
+      "slot": 14,
+      "type_id": 0,
+      "type_name": "Off"
+     },
+     {
+      "configured": false,
+      "engine_order": 34,
+      "order_in_phase": 4,
+      "phase": 3,
+      "phase_name": "global_insert",
+      "role": "global4",
+      "slot": 15,
+      "type_id": 0,
+      "type_name": "Off"
+     }
+    ]
+   },
+   "losslessness": {
+    "normalized_graph_sha256": "081d6ea6ed299a6793313eb193c9b17d2353e1a4770f54b3e752e23d90cd549a",
+    "reconstruction_rule": "g = body.graph.scalars + {sc: scenes, fx: fx_slots, md: modulation, wta: wavetable_assets, dep: dependencies, mi: migration_events, rwm: raw_missing, rwu: raw_uninterpretable, raw_note}; sha256(canonical_json(g)) must equal header.normalized_graph_sha256"
+   },
+   "voice_graph": {
+    "active_scenes": [
+     0
+    ],
+    "envelope_instances": 32,
+    "lfo_instances_total": 102,
+    "note": "activity/unison annotations are the SXT-015 model's conservative derived view; the patch truth is body.graph",
+    "notes_held_worst_case": 16,
+    "polylimit": 16,
+    "scene_mode_id": 0,
+    "scene_mode_name": "Single",
+    "scenes": [
+     {
+      "active_filter_units": 1,
+      "active_in_mode": true,
+      "filter_config_id": 0,
+      "filter_config_name": "Serial 1",
+      "filter_units": [
+       {
+        "active": true,
+        "slot": 0,
+        "type_id": 2,
+        "type_name": "LP 24 dB"
+       },
+       {
+        "active": false,
+        "slot": 1,
+        "type_id": 0,
+        "type_name": "Off"
+       }
+      ],
+      "mseg_or_formula_lfos": [],
+      "osc_slots": [
+       {
+        "active": true,
+        "modulated": false,
+        "muted": false,
+        "slot": 0,
+        "type_id": 1,
+        "type_name": "Sine",
+        "unison": 1,
+        "wavetable": false
+       },
+       {
+        "active": false,
+        "modulated": false,
+        "muted": true,
+        "slot": 1,
+        "type_id": 1,
+        "type_name": "Sine",
+        "unison": 0,
+        "wavetable": false
+       },
+       {
+        "active": false,
+        "modulated": false,
+        "muted": true,
+        "slot": 2,
+        "type_id": 1,
+        "type_name": "Sine",
+        "unison": 0,
+        "wavetable": false
+       }
+      ],
+      "scene": 0,
+      "scene_lfos": 6,
+      "unison_load_per_voice": 1,
+      "voice_lfos": 6,
+      "waveshaper_active": false,
+      "waveshaper_type": "Off"
+     }
+    ],
+    "unison_osc_instances_worst_case": 16,
+    "voice_state_bytes_on_chip": 103936,
+    "voices_per_note": 1,
+    "worst_case_voices": 16
+   }
+  },
+  "graph": {
+   "fx_slots": [
+    {
+     "i": 0,
+     "on": 0,
+     "r": "ains1",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 1,
+     "on": 0,
+     "r": "ains2",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 2,
+     "on": 0,
+     "r": "bins1",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 3,
+     "on": 0,
+     "r": "bins2",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 4,
+     "on": 0,
+     "r": "send1",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 5,
+     "on": 1,
+     "p": [
+      -5.188394,
+      3,
+      0.540177,
+      2.924107,
+      0.479464,
+      3.11248,
+      14.850006,
+      -4.371426,
+      39.337486,
+      1.0,
+      0.0,
+      0
+     ],
+     "r": "send2",
+     "rl": 1.0,
+     "t": 2,
+     "tn": "Reverb 1"
+    },
+    {
+     "i": 6,
+     "on": 0,
+     "r": "global1",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 7,
+     "on": 0,
+     "r": "global2",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 8,
+     "on": 0,
+     "r": "ains3",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 9,
+     "on": 0,
+     "r": "ains4",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 10,
+     "on": 0,
+     "r": "bins3",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 11,
+     "on": 0,
+     "r": "bins4",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 12,
+     "on": 0,
+     "r": "send3",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 13,
+     "on": 0,
+     "r": "send4",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 14,
+     "on": 0,
+     "r": "global3",
+     "t": 0,
+     "tn": "Off"
+    },
+    {
+     "i": 15,
+     "on": 0,
+     "r": "global4",
+     "t": 0,
+     "tn": "Off"
+    }
+   ],
+   "migration_events": [
+    {
+     "f": "polylimit",
+     "k": "polylimit_default",
+     "n": 16,
+     "note": "revision<=15 && polylimit==8 -> DEFAULT_POLYLIMIT (SurgePatch.cpp)",
+     "raw": 8
+    }
+   ],
+   "modulation": {
+    "g": [],
+    "s": [
+     {
+      "s": [
+       [
+        6,
+        0,
+        0,
+        260,
+        "A FM Depth",
+        -48.0,
+        -0.666667
+       ]
+      ],
+      "v": [
+       [
+        1,
+        0,
+        0,
+        298,
+        "A VCA Gain",
+        -1e-06,
+        -0.0
+       ],
+       [
+        1,
+        0,
+        0,
+        308,
+        "A Filter 1 Cutoff",
+        25.312506,
+        0.194712
+       ],
+       [
+        1,
+        0,
+        0,
+        310,
+        "A Filter 1 FEG Mod Amount",
+        23.657139,
+        0.123214
+       ],
+       [
+        1,
+        0,
+        0,
+        314,
+        "A Filter 2 Cutoff",
+        42.862514,
+        0.329712
+       ],
+       [
+        1,
+        0,
+        0,
+        318,
+        "A Filter 2 FEG Mod Amount",
+        45.771442,
+        0.238393
+       ],
+       [
+        2,
+        0,
+        0,
+        308,
+        "A Filter 1 Cutoff",
+        4.387498,
+        0.03375
+       ]
+      ]
+     },
+     {
+      "s": [],
+      "v": []
+     }
+    ]
+   },
+   "raw_missing": [
+    "character",
+    "fx0.type",
+    "fx1.type",
+    "fx10.type",
+    "fx11.type",
+    "fx12.type",
+    "fx13.type",
+    "fx14.type",
+    "fx15.type",
+    "fx2.type",
+    "fx3.type",
+    "fx4.type",
+    "fx6.type",
+    "fx7.type",
+    "fx8.type",
+    "fx9.type"
+   ],
+   "scalars": {
+    "ch": 0,
+    "chn": "Warm",
+    "fxb": 0,
+    "fxbn": "All FX",
+    "fxd": 0,
+    "poly": 16,
+    "sa": 0,
+    "sm": 0,
+    "smn": "Single",
+    "spl": 60,
+    "vol": 0.0
+   },
+   "scenes": [
+    {
+     "bal": 0.0,
+     "f2lnk": 0,
+     "f2off": 0,
+     "fb": 0.0,
+     "fbc": 0,
+     "fbcn": "Serial 1",
+     "fm": {
+      "dep": 0.0,
+      "sw": 2
+     },
+     "fu": [
+      {
+       "cut": -22.987514,
+       "em": 12.342865,
+       "kt": 0.0,
+       "res": 0.0,
+       "st": 1,
+       "stn": "Driven",
+       "t": 2,
+       "tn": "LP 24 dB"
+      },
+      {
+       "cut": -54.037518,
+       "em": 23.657158,
+       "kt": 0.0,
+       "res": 0.120536,
+       "st": 0,
+       "stn": "None",
+       "t": 0,
+       "tn": "Off"
+      }
+     ],
+     "ktR": 60,
+     "lc": -72.0,
+     "lfo": [
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 10.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      }
+     ],
+     "mix": {
+      "noise": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "o1": [
+       1.0,
+       0,
+       0,
+       1
+      ],
+      "o2": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "o3": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "ring_12": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "ring_23": [
+       1.0,
+       1,
+       0,
+       1
+      ]
+     },
+     "oct": 2,
+     "osc": [
+      {
+       "kt": 1,
+       "oct": 0,
+       "p": [
+        0,
+        0.0,
+        0,
+        -60.0,
+        70.0,
+        0.15,
+        1
+       ],
+       "pit": 0.0,
+       "rt": 1,
+       "t": 1,
+       "tn": "Sine",
+       "udet": 0.15,
+       "uni": 1
+      },
+      {
+       "kt": 1,
+       "oct": -2,
+       "p": [
+        0,
+        0.0,
+        0,
+        -60.0,
+        70.0,
+        0.2,
+        1
+       ],
+       "pit": 0.0,
+       "rt": 1,
+       "t": 1,
+       "tn": "Sine",
+       "udet": 0.2,
+       "uni": 1
+      },
+      {
+       "kt": 1,
+       "oct": -2,
+       "p": [
+        0,
+        0.0,
+        0,
+        -60.0,
+        70.0,
+        0.2,
+        1
+       ],
+       "pit": 0.0,
+       "rt": 1,
+       "t": 1,
+       "tn": "Sine",
+       "udet": 0.2,
+       "uni": 1
+      }
+     ],
+     "pan": 0.0,
+     "pbrD": 2,
+     "pbrU": 2,
+     "pfg": 0.0,
+     "pm": 0,
+     "pmn": "Poly",
+     "po": 0.0,
+     "porta": -8.0,
+     "send": [
+      0.0,
+      0.934822
+     ],
+     "vca": 5.14286,
+     "vs": 0.0,
+     "wid": 1.0,
+     "ws": {
+      "dr": 0.0,
+      "t": 0,
+      "tn": "Off"
+     }
+    },
+    {
+     "bal": 0.0,
+     "f2lnk": 0,
+     "f2off": 0,
+     "fb": 0.0,
+     "fbc": 0,
+     "fbcn": "Serial 1",
+     "fm": {
+      "dep": -24.0,
+      "sw": 0
+     },
+     "fu": [
+      {
+       "cut": 3.0,
+       "em": 0.0,
+       "kt": 0.0,
+       "res": 0.0,
+       "st": 0,
+       "stn": "None",
+       "t": 0,
+       "tn": "Off"
+      },
+      {
+       "cut": 3.0,
+       "em": 0.0,
+       "kt": 0.0,
+       "res": 0.0,
+       "st": 0,
+       "stn": "None",
+       "t": 0,
+       "tn": "Off"
+      }
+     ],
+     "ktR": 60,
+     "lc": -72.0,
+     "lfo": [
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      },
+      {
+       "mag": 1.0,
+       "rate": 0.0,
+       "sh": 0,
+       "shn": "Sine",
+       "trg": 1,
+       "up": 0
+      }
+     ],
+     "mix": {
+      "noise": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "o1": [
+       1.0,
+       0,
+       0,
+       1
+      ],
+      "o2": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "o3": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "ring_12": [
+       1.0,
+       1,
+       0,
+       1
+      ],
+      "ring_23": [
+       1.0,
+       1,
+       0,
+       1
+      ]
+     },
+     "oct": 0,
+     "osc": [
+      {
+       "kt": 1,
+       "oct": 0,
+       "p": [
+        0.0,
+        0.5,
+        0.5,
+        0.0,
+        0.0,
+        0.2,
+        1
+       ],
+       "pit": 0.0,
+       "rt": 0,
+       "t": 0,
+       "tn": "Classic",
+       "udet": 0.2,
+       "uni": 1
+      },
+      {
+       "kt": 1,
+       "oct": 0,
+       "p": [
+        0.0,
+        0.5,
+        0.5,
+        0.0,
+        0.0,
+        0.2,
+        1
+       ],
+       "pit": 0.0,
+       "rt": 0,
+       "t": 0,
+       "tn": "Classic",
+       "udet": 0.2,
+       "uni": 1
+      },
+      {
+       "kt": 1,
+       "oct": 0,
+       "p": [
+        0.0,
+        0.5,
+        0.5,
+        0.0,
+        0.0,
+        0.2,
+        1
+       ],
+       "pit": 0.0,
+       "rt": 0,
+       "t": 0,
+       "tn": "Classic",
+       "udet": 0.2,
+       "uni": 1
+      }
+     ],
+     "pan": 0.0,
+     "pbrD": 2,
+     "pbrU": 2,
+     "pfg": 0.0,
+     "pm": 0,
+     "pmn": "Poly",
+     "po": 0.0,
+     "porta": -8.0,
+     "send": [
+      0.0,
+      0.0
+     ],
+     "vca": 0.0,
+     "vs": 0.0,
+     "wid": 1.0,
+     "ws": {
+      "dr": 0.0,
+      "t": 0,
+      "tn": "Off"
+     }
+    }
+   ]
+  }
+ },
+ "header": {
+  "body_sha256": "2a19560b4829ed82097383dfec039f303e29d395ddf1ec8a81e04d0504d0270a",
+  "compiler_version": "sxt-020-compile/1.0.0",
+  "format": "sxt-020-patch-image/1.0.0",
+  "format_major": 1,
+  "format_minor": 0,
+  "normalized_graph_sha256": "081d6ea6ed299a6793313eb193c9b17d2353e1a4770f54b3e752e23d90cd549a",
+  "pin": {
+   "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+   "graph_schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+   "sample_rate_hz": 48000
+  },
+  "profile": {
+   "artifact": "profile-v1-DRAFT",
+   "bundle_file_sha256": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+   "bundle_id": "B4-broad",
+   "bundle_spec": {
+    "airwindows_policy": {
+     "mode": "selected",
+     "selected_algorithm_ids": [
+      49,
+      4,
+      46,
+      42,
+      24,
+      5,
+      30,
+      21,
+      35,
+      15,
+      41,
+      3
+     ]
+    },
+    "budgets": {
+     "cycle_closure": "not_gated_pending_sxt_016",
+     "external_bandwidth_bytes_per_s": 800000000,
+     "external_writable_bytes": 67108864,
+     "on_chip_ram_bytes": 4194304
+    },
+    "data_gap_policies": {
+     "filter_subtypes": "engine_declared_set",
+     "mseg_formula_lfo_contents": "unresolved",
+     "slfo_definitions": "caveat_budget_risk"
+    },
+    "filter_type_allowlist": "all",
+    "fx_instance_limit": 8,
+    "fx_type_allowlist": [
+     "Delay",
+     "EQ",
+     "Reverb 1",
+     "Chorus",
+     "Conditioner",
+     "Phaser",
+     "Distortion",
+     "Reverb 2"
+    ],
+    "oscillator_allowlist": [
+     "Classic",
+     "Sine",
+     "Wavetable",
+     "FM2",
+     "FM3",
+     "S&H Noise"
+    ],
+    "poly_gate": "adapted_beyond_pool",
+    "sample_rate_hz": 48000,
+    "scene_modes": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unison_cap": 16,
+    "voice_pool_limit": 16,
+    "waveshaper_policy": "all",
+    "wavetable_assets": true,
+    "word_length_policy": "float32-model-placeholder-pending-sxt-016"
+   },
+   "bundle_status": "DRAFT-NOT-FROZEN",
+   "claim_scope": "compiled against a DRAFT-NOT-FROZEN bundle; a compiled image is not a support, fidelity, or preset-quality claim"
+  },
+  "source": {
+   "bank": "contributor",
+   "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+   "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+   "size_bytes": 23940
+  }
+ }
+}
