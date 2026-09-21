@@ -1,0 +1,25 @@
+{
+  "slug": "fm_bass_1",
+  "tb": "tb_fx_mutant.sv",
+  "sim": "iverilog",
+  "blocks_compared": 300,
+  "verdict": "FAIL",
+  "checked": {
+    "outputs": 128,
+    "checkpoints": 2,
+    "fields": 32
+  },
+  "mismatches": 26,
+  "first_failures": [
+    "block 240 eq0 lag0_0: model=-17485454028047 rtl=-17485454028542",
+    "block 240 eq0 lag0_1: model=8690140800648 rtl=8690140800834",
+    "block 240 eq0 lag0_2: model=8816612582507 rtl=8816612582583",
+    "block 240 eq0 lag0_3: model=-17485573916611 rtl=-17485573917042",
+    "block 240 eq0 lag0_4: model=8669741128913 rtl=8669741129084",
+    "block 240 eq0 lag1_0: model=-15779062937643 rtl=-15779062938050",
+    "block 240 eq0 lag1_1: model=7017031520969 rtl=7017031521092",
+    "block 240 eq0 lag1_3: model=-15739931881322 rtl=-15739931881550",
+    "block 240 eq0 lag1_4: model=7717232674249 rtl=7717232674339",
+    "block 240 eq0 lag2_0: model=-11801992252637 rtl=-11801992252819"
+  ]
+}
