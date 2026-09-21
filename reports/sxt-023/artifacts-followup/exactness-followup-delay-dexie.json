@@ -1,0 +1,14 @@
+{
+  "slug": "dexie",
+  "tb": "tb_fx.sv",
+  "sim": "iverilog",
+  "blocks_compared": 8790,
+  "verdict": "PASS",
+  "checked": {
+    "outputs": 547200,
+    "checkpoints": 136,
+    "fields": 4352
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

@@ -1,0 +1,14 @@
+{
+  "slug": "metallic",
+  "tb": "tb_fx.sv",
+  "sim": "iverilog",
+  "blocks_compared": 8790,
+  "verdict": "PASS",
+  "checked": {
+    "outputs": 547200,
+    "checkpoints": 272,
+    "fields": 8704
+  },
+  "mismatches": 0,
+  "first_failures": []
+}
