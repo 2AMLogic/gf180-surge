@@ -155,7 +155,7 @@ def main():
         f.write("\n")
 
     # --------------------------------------------------------- rtl stimulus
-    rtl_dir = os.path.join(args.out_dir, "rtl")
+    rtl_dir = os.path.join(args.out_dir, "rtl", seq_name)
     os.makedirs(rtl_dir, exist_ok=True)
     inst = next(i for i in run.instances if i.kind == "reverb1")
     with open(os.path.join(rtl_dir, "cfg.hex"), "w") as f:

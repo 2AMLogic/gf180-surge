@@ -3,17 +3,32 @@
  "control_rows": [
   {
    "b": 0,
-   "decisions": [],
+   "decisions": [
+    {
+     "applied_sample": 0,
+     "flushes": 0,
+     "latency_samples": 0,
+     "p1": 60,
+     "p2": 100,
+     "seq": 0,
+     "slot": 0,
+     "status": 0,
+     "steal": 0,
+     "t": 0,
+     "type": 0,
+     "type_name": "note_on"
+    }
+   ],
    "drops": [],
    "pushes": 1,
    "snapshot_after": {
-    "active_count": 0,
+    "active_count": 1,
     "patch_id": 0,
     "qcount": 0,
     "voices": [
      {
-      "active": false,
-      "note": 0,
+      "active": true,
+      "note": 60,
       "seq": 0,
       "slot": 0
      },
@@ -65,22 +80,7 @@
   },
   {
    "b": 1,
-   "decisions": [
-    {
-     "applied_sample": 32,
-     "flushes": 0,
-     "latency_samples": 32,
-     "p1": 60,
-     "p2": 100,
-     "seq": 0,
-     "slot": 0,
-     "status": 0,
-     "steal": 0,
-     "t": 0,
-     "type": 0,
-     "type_name": "note_on"
-    }
-   ],
+   "decisions": [],
    "drops": [],
    "pushes": 0,
    "snapshot_after": {
@@ -3738,17 +3738,32 @@
   },
   {
    "b": 60,
-   "decisions": [],
+   "decisions": [
+    {
+     "applied_sample": 1920,
+     "flushes": 0,
+     "latency_samples": 0,
+     "p1": 60,
+     "p2": 0,
+     "seq": 1,
+     "slot": 0,
+     "status": 2,
+     "steal": 0,
+     "t": 1920,
+     "type": 1,
+     "type_name": "note_off"
+    }
+   ],
    "drops": [],
    "pushes": 1,
    "snapshot_after": {
-    "active_count": 1,
+    "active_count": 0,
     "patch_id": 0,
     "qcount": 0,
     "voices": [
      {
-      "active": true,
-      "note": 60,
+      "active": false,
+      "note": 0,
       "seq": 0,
       "slot": 0
      },
@@ -3800,22 +3815,7 @@
   },
   {
    "b": 61,
-   "decisions": [
-    {
-     "applied_sample": 1952,
-     "flushes": 0,
-     "latency_samples": 32,
-     "p1": 60,
-     "p2": 0,
-     "seq": 1,
-     "slot": 0,
-     "status": 2,
-     "steal": 0,
-     "t": 1920,
-     "type": 1,
-     "type_name": "note_off"
-    }
-   ],
+   "decisions": [],
    "drops": [],
    "pushes": 0,
    "snapshot_after": {
@@ -5613,18 +5613,33 @@
   },
   {
    "b": 90,
-   "decisions": [],
+   "decisions": [
+    {
+     "applied_sample": 2880,
+     "flushes": 0,
+     "latency_samples": 0,
+     "p1": 69,
+     "p2": 80,
+     "seq": 2,
+     "slot": 0,
+     "status": 0,
+     "steal": 0,
+     "t": 2880,
+     "type": 0,
+     "type_name": "note_on"
+    }
+   ],
    "drops": [],
    "pushes": 1,
    "snapshot_after": {
-    "active_count": 0,
+    "active_count": 1,
     "patch_id": 0,
     "qcount": 0,
     "voices": [
      {
-      "active": false,
-      "note": 0,
-      "seq": 0,
+      "active": true,
+      "note": 69,
+      "seq": 1,
       "slot": 0
      },
      {
@@ -5675,22 +5690,7 @@
   },
   {
    "b": 91,
-   "decisions": [
-    {
-     "applied_sample": 2912,
-     "flushes": 0,
-     "latency_samples": 32,
-     "p1": 69,
-     "p2": 80,
-     "seq": 2,
-     "slot": 0,
-     "status": 0,
-     "steal": 0,
-     "t": 2880,
-     "type": 0,
-     "type_name": "note_on"
-    }
-   ],
+   "decisions": [],
    "drops": [],
    "pushes": 0,
    "snapshot_after": {
@@ -7488,18 +7488,33 @@
   },
   {
    "b": 120,
-   "decisions": [],
+   "decisions": [
+    {
+     "applied_sample": 3840,
+     "flushes": 0,
+     "latency_samples": 0,
+     "p1": 69,
+     "p2": 0,
+     "seq": 3,
+     "slot": 0,
+     "status": 2,
+     "steal": 0,
+     "t": 3840,
+     "type": 1,
+     "type_name": "note_off"
+    }
+   ],
    "drops": [],
    "pushes": 1,
    "snapshot_after": {
-    "active_count": 1,
+    "active_count": 0,
     "patch_id": 0,
     "qcount": 0,
     "voices": [
      {
-      "active": true,
-      "note": 69,
-      "seq": 1,
+      "active": false,
+      "note": 0,
+      "seq": 0,
       "slot": 0
      },
      {
@@ -7550,22 +7565,7 @@
   },
   {
    "b": 121,
-   "decisions": [
-    {
-     "applied_sample": 3872,
-     "flushes": 0,
-     "latency_samples": 32,
-     "p1": 69,
-     "p2": 0,
-     "seq": 3,
-     "slot": 0,
-     "status": 2,
-     "steal": 0,
-     "t": 3840,
-     "type": 1,
-     "type_name": "note_off"
-    }
-   ],
+   "decisions": [],
    "drops": [],
    "pushes": 0,
    "snapshot_after": {
@@ -240004,7 +240004,7 @@
  ],
  "event_timing": {
   "decisions_total": 4,
-  "max_event_latency_samples": 32,
+  "max_event_latency_samples": 0,
   "reserve_exceeded_blocks": 0,
   "reserve_per_block": 8,
   "worst_events_per_block": 1
@@ -240043,9 +240043,9 @@
  "sequence": "sxt025-smoke-v1",
  "tail": {
   "last_note_event_t": 3840,
-  "last_noteoff_applied_sample": 3872,
+  "last_noteoff_applied_sample": 3840,
   "reverb1_nominal_t60_s": 7.590037821839801,
-  "tail_frames": 119968,
+  "tail_frames": 120000,
   "tail_s": 2.5
  },
  "traffic_ledger": [

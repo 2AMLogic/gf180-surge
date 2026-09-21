@@ -328,42 +328,39 @@ class IntegrationRun:
         tail_s = float(seq.get("tail_s", 2.5))
         total_samples = last_t + int(tail_s * SR)
         total_blocks = -(-total_samples // BLOCK_SIZE)
-        n_total = SETTLE_BLOCKS + total_blocks
-        frames_padded = n_total * BLOCK_SIZE
 
+        # control plane on its OWN timeline: block 0 = the first post-settle
+        # block (the fixture harness's convention: events quantize UP from
+        # t=0 at the first rendered block). The FX chain runs a separate
+        # settle+body block index; record i of the control timeline is the
+        # schedule for FX block SETTLE_BLOCKS + i.
         control = ControlModel()
         by_block = {}
         for ev in events:
             by_block.setdefault(ev.t // BLOCK_SIZE, []).append(ev)
-
-        model_out = [[0.0] * (frames_padded) for _ in range(2)]
         control_rows = []
         max_latency = 0
         reserve_exceeded = 0
         worst_events_per_block = 0
         last_noteoff_applied = None
-        settle_shift = SETTLE_BLOCKS * BLOCK_SIZE
-        for b in range(n_total):
-            arrivals = by_block.get(b - SETTLE_BLOCKS, []) \
-                if b >= SETTLE_BLOCKS else []
-            rec = control.step_block(arrivals)
+        for cb in range(total_blocks):
+            rec = control.step_block(by_block.get(cb, []))
+            rec["b"] = cb
             for d in rec["decisions"]:
-                # bookkeeping shift: the fixture timeline starts after the
-                # settle (the ControlModel block counter keeps running; no
-                # model arithmetic is touched)
-                d["applied_sample"] -= settle_shift
-                d["latency_samples"] -= settle_shift
                 max_latency = max(max_latency, d["latency_samples"])
                 if d["type"] == 1:  # note_off
                     last_noteoff_applied = d["applied_sample"]
-            if arrivals:
+            if rec["pushes"]:
                 worst_events_per_block = max(worst_events_per_block,
-                                             len(arrivals))
+                                             rec["pushes"])
             if "event_reserve_exceeded" in rec["statuses"]:
                 reserve_exceeded += 1
-            if b >= SETTLE_BLOCKS:
-                rec["b"] = b - SETTLE_BLOCKS
-                control_rows.append(rec)
+            control_rows.append(rec)
+
+        n_total = SETTLE_BLOCKS + total_blocks
+        frames_padded = n_total * BLOCK_SIZE
+        model_out = [[0.0] * (frames_padded) for _ in range(2)]
+        for b in range(n_total):
             lo = (b - SETTLE_BLOCKS) * BLOCK_SIZE
             if b >= SETTLE_BLOCKS and lo < self.frames:
                 il = [int(self.dry_deamped[0][lo + k]) if lo + k < self.frames
