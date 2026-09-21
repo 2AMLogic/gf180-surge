@@ -1,0 +1,13 @@
+{
+  "budget": -46.0,
+  "control": "NC-C silent stub swapped into the integration slot (Reverb1 leaf -> all-zero block)",
+  "detected": true,
+  "rms_diff_dbfs_vs_fixture": -19.486166605393965,
+  "verdict": "CONTROL-OK (silent stub fails the output contract / fidelity budgets)",
+  "wet_activity_contract": {
+    "contract_min_rms": 0.0001,
+    "ok": false,
+    "peak_abs": 1.0728836059570312e-06,
+    "wet_minus_dry_rms": 1.2163073292712827e-07
+  }
+}

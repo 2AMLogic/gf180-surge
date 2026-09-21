@@ -136,6 +136,7 @@
     "tail_abs_err_dbfs": -65.98480987548828,
     "tail_budget": "relative <= -50.0 dB",
     "tail_continuity_ok": true,
+    "tail_continuity_windows_above_floor": 50,
     "tail_continuity_worst_margin_db": 10.932439022087117,
     "tail_frames": 120000,
     "tail_rms_ok": true,

@@ -348,7 +348,8 @@ def main():
                                   "CONTROL-BROKEN (mutant PASSED -- finding!)")
                 ok = ok and not kern_exact
             results["cases"].append(res)
-            print(f"{name}: {'PASS' if res.get('exact', not kern_exact) else 'FAIL'} "
+            status = res.get('exact') or res.get('verdict', '')
+            print(f"{name}: {status} "
                   f"ctlT={ctl_T_exact} ctlE={ctl_E_exact} kern={kern_exact} "
                   f"txn={txn_exact} underruns={underruns} "
                   f"worst_cycles={worst_c}")

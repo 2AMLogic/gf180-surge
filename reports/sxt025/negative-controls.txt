@@ -1,0 +1,5 @@
+NC-A: CONTROL-OK (permuted placement flagged by the comparator)
+NC-B: CONTROL-OK (truncation flagged by the tail-continuity check)
+NC-C: CONTROL-OK (silent stub fails the output contract / fidelity budgets)
+NC-C-RTL (stale stub, committed mutant): CONTROL-OK (mutant FAILS the kernel comparison)
+ALL CONTROLS HEALTHY

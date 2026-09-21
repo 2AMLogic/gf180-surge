@@ -1,0 +1,145 @@
+{
+  "claim": "model wet bus vs the SAME pinned-engine wet fixture; PENDING-FREEZE: budgets are proposals, not frozen policy",
+  "event_timing": {
+    "results": {
+      "max_latency_le_64": true,
+      "reserve_respected": true
+    },
+    "status": "PASS",
+    "values": {
+      "decisions_total": 24,
+      "max_event_latency_samples": 16,
+      "reserve_exceeded_blocks": 0,
+      "reserve_per_block": 8,
+      "worst_events_per_block": 4
+    }
+  },
+  "full_render": {
+    "channels": {
+      "L": {
+        "best_shift": 0,
+        "frames": 840000,
+        "max_abs_diff_lsb": 4.625,
+        "model_peak_lsb": 1076419.0,
+        "ref_peak_lsb": 1076423.0,
+        "rms_diff_at_best_shift_lsb": 0.6019486094202677,
+        "rms_diff_at_shift0_lsb": 0.6019486094202677,
+        "rms_diff_dbfs": -124.8208099553159,
+        "rms_diff_lsb": 0.6019486094202677,
+        "spectral_corr": 0.9999999998378385
+      },
+      "R": {
+        "best_shift": 0,
+        "frames": 840000,
+        "max_abs_diff_lsb": 4.9375,
+        "model_peak_lsb": 1303384.0,
+        "ref_peak_lsb": 1303387.375,
+        "rms_diff_at_best_shift_lsb": 0.6155487960081956,
+        "rms_diff_at_shift0_lsb": 0.6155487960081956,
+        "rms_diff_dbfs": -124.62674854194805,
+        "rms_diff_lsb": 0.6155487960081956,
+        "spectral_corr": 0.9999999998401096
+      },
+      "mono": {
+        "best_shift": 0,
+        "frames": 840000,
+        "max_abs_diff_lsb": 4.5,
+        "model_peak_lsb": 1186341.0,
+        "ref_peak_lsb": 1186344.0,
+        "rms_diff_at_best_shift_lsb": 0.5408880458550547,
+        "rms_diff_at_shift0_lsb": 0.5408880458550547,
+        "rms_diff_dbfs": -125.7498506011274,
+        "rms_diff_lsb": 0.5408880458550547,
+        "spectral_corr": 0.9999999998980862
+      }
+    },
+    "proposed_budgets": {
+      "max_abs_diff_lsb": 8192,
+      "rms_diff_dbfs": -46.0,
+      "spectral_corr_min": 0.98
+    },
+    "results": {
+      "max_abs_diff_lsb": true,
+      "rms_diff_dbfs": true,
+      "spectral_corr": true
+    },
+    "status": "PASS"
+  },
+  "issue": "SXT-025 (#18)",
+  "memory_traffic": {
+    "ledger": {
+      "5": {
+        "buffer_bytes": 2228224,
+        "buffer_words": 557056,
+        "bytes_per_output_frame": 136,
+        "reads": 14410560,
+        "words_per_output_frame": 34,
+        "writes": 14410560
+      }
+    },
+    "results": {
+      "slot5_bytes_per_frame_136": true,
+      "slot5_words_per_frame_34": true
+    },
+    "status": "PASS"
+  },
+  "model_render_sha256": "fba8e2e31dc15857d177a28e163f02864c4a850a805831599f17b488c9de823c",
+  "overall": "PASS WITH RECORDED BUDGET FINDING (PENDING-FREEZE)",
+  "placement_order_gain": {
+    "gain_staging": {
+      "a_q": 207645,
+      "instances": {
+        "slot5": {
+          "return_f": 1.0,
+          "return_q": 262144,
+          "send_gain_f": 0.9348220229148865,
+          "send_gain_q": 214154
+        }
+      },
+      "master_volume_db": -2.025745391845703,
+      "volume_note": "image scalar vol=0.0 is the pre-migration stored value; the loader's normalized master volume is -2.025745391845703 dB (authoritative; same loader-default class as SXT-023 metallic)"
+    },
+    "manifest": [
+      {
+        "engine_order": 22,
+        "kind": "reverb1",
+        "order_in_phase": 2,
+        "phase": "send_bus",
+        "role": "send2",
+        "slot": 5
+      }
+    ],
+    "results": {
+      "single_instance_engine_order_matches_image": true
+    },
+    "status": "PASS"
+  },
+  "reference_fixture_sha256": "bbb4b14850dbf95dd1a55dbffec68b6375d0fdfc90d6d5a855ec414ee7a05241",
+  "sequence": "sxt025-accept-v1",
+  "statuses": {
+    "event_timing": "PASS",
+    "full_render": "PASS",
+    "memory_traffic": "PASS",
+    "placement_order_gain": "PASS",
+    "tail": "PASS_WITH_RECORDED_FINDING"
+  },
+  "tail": {
+    "band_energy_finding": "tail band 16000-22000Hz deviates 25.67 dB (band level -68.1 dBFS, model -42.4 dBFS): the Q4.28 fixed grid's absolute quantization noise exceeds the float32 reference's relative precision in the deepest tail (absolute full-tail error -67.1 dBFS). Recorded for the SXT-013 freeze per the SXT-024 (*) precedent; not tuned away.",
+    "band_energy_max_dev_db": 25.672774105759736,
+    "band_energy_worst_band": "16000-22000",
+    "decay_curve_max_dev_db": 0.0045928955078125,
+    "decay_curve_ok": true,
+    "floor_guard_applies": false,
+    "stereo_corr_delta": 5.1212843965586785e-09,
+    "stereo_corr_ok": true,
+    "stereo_corr_ref": 0.9869850418287279,
+    "tail_abs_err_dbfs": -67.06190490722656,
+    "tail_budget": "relative <= -50.0 dB",
+    "tail_continuity_ok": true,
+    "tail_continuity_windows_above_floor": 203,
+    "tail_continuity_worst_margin_db": 8.824041805528736,
+    "tail_frames": 576000,
+    "tail_rms_ok": true,
+    "tail_rms_rel_db": -52.81914520263672
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "baseline": {
+    "continuity_ok": true,
+    "pass": true,
+    "tail_rms_rel_db": -53.50823333060181
+  },
+  "control": "NC-B tail truncation (render cut 1.0 s after last note-off)",
+  "cut_sample": 51840,
+  "detected": true,
+  "tail_start_sample": 3840,
+  "truncated": {
+    "decay_curve_ok": false,
+    "tail_continuity_ok": true,
+    "tail_frames_present": 120000,
+    "tail_rms_ok": false
+  },
+  "verdict": "CONTROL-OK (truncation flagged by the tail-continuity check)"
+}

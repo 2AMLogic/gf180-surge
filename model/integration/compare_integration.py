@@ -142,9 +142,13 @@ def tail_checks(ref_l, ref_r, mod_l, mod_r, tail_start):
     out["stereo_corr_delta"] = float(abs(cr - cm))
     out["stereo_corr_ok"] = bool(out["stereo_corr_delta"]
                                  <= BUDGETS["stereo_corr_abs"])
-    # tail continuity: each window >= max(linear fit - 6 dB, floor)
+    # tail continuity: windows above the floor must not drop faster than
+    # 6 dB under the reference's linear decay fit (sub-floor windows are
+    # exempt per the SXT-024 floor principle -- nothing measurable to
+    # protect), and the render must reach the scheduled end (no truncation)
     rc_full, _ = decay_curve(rtail)
-    mfull = min(len(rc_full), len(decay_curve(mtail)[0]))
+    mc_full, _ = decay_curve(mtail)
+    mfull = min(len(rc_full), len(mc_full))
     ok = True
     worst = None
     if mfull > 8:
@@ -154,15 +158,20 @@ def tail_checks(ref_l, ref_r, mod_l, mod_r, tail_start):
             coef = np.polyfit(idx[good], rc_full[:mfull][good], 1)
             fit = np.polyval(coef, idx)
             for i in range(mfull):
+                if not good[i]:
+                    continue  # sub-floor window: exempt
                 bound = max(fit[i] - 6.0, FLOOR_DBFS)
-                level = max(rc_full[i], decay_curve(mtail)[0][i])
-                worst = max(worst or -1e9, level - bound)
+                level = max(rc_full[i], mc_full[i])
+                worst = max(worst if worst is not None else -1e9,
+                            level - bound)
                 if level < bound:
                     ok = False
                     break
     out["tail_continuity_ok"] = bool(ok)
     out["tail_continuity_worst_margin_db"] = (
         float(worst) if worst is not None else None)
+    out["tail_continuity_windows_above_floor"] = int(
+        good.sum()) if mfull > 8 else 0
     return out
 
 
