@@ -294,6 +294,8 @@ def manifests_for_graph(graph, asset_root):
 # ---------------------------------------------------------------------------
 
 def _load_image(path):
+    if REPO not in sys.path:
+        sys.path.insert(0, REPO)
     from compiler import compile as C  # noqa: PLC0415 (import cycle guard)
 
     with open(path, "rb") as f:
