@@ -861,7 +861,9 @@ class Inputs:
         self.n_unison = int(self.osc1.get("uni", 1))
         self.spread = float(self.osc1.get("udet", 0.0))
         self.retrigger = bool(self.osc1.get("rt", 1))
-        self._draws = [qint(float(x)) for x in d.get("init_phase_draws", [])]
+        draws = d.get("init_phase_draws",
+                      d.get("unison_override", {}).get("init_phase_draws_declared", []))
+        self._draws = [qint(float(x)) for x in draws]
         self._draw_i = 0
         self.cutoff = n["fu0"]["cutoff"]
         self.reso = n["fu0"]["resonance"]
