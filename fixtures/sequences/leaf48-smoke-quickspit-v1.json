@@ -1,0 +1,46 @@
+{
+ "schema_version": 1,
+ "id": "leaf48-smoke-quickspit-v1",
+ "tail_s": 0.4,
+ "events": [
+  {
+   "type": "note_on",
+   "t": 0,
+   "note": 60,
+   "velocity": 100,
+   "channel": 0
+  },
+  {
+   "type": "note_off",
+   "t": 1200,
+   "note": 60,
+   "channel": 0
+  },
+  {
+   "type": "note_on",
+   "t": 1600,
+   "note": 60,
+   "velocity": 100,
+   "channel": 0
+  },
+  {
+   "type": "note_off",
+   "t": 2800,
+   "note": 60,
+   "channel": 0
+  },
+  {
+   "type": "note_on",
+   "t": 3000,
+   "note": 64,
+   "velocity": 80,
+   "channel": 0
+  },
+  {
+   "type": "note_off",
+   "t": 3400,
+   "note": 64,
+   "channel": 0
+  }
+ ]
+}

@@ -32,6 +32,7 @@ FQ = vm.FQ
 BLOCK_SIZE = vm.BLOCK_SIZE
 N_SLOTS = 8
 CHECKPOINT_EVERY = 64
+CTRL_WORDS_PER_SLOT = 40     # v2 stimulus: 32 x v1 + fvel/kt/omega1..3
 
 
 def write_hex(path, values, bits=32):
@@ -39,6 +40,28 @@ def write_hex(path, values, bits=32):
     with open(path, "w", encoding="utf-8") as f:
         for v in values:
             f.write(f"{int(v) & mask:08x}\n")
+
+
+def load_inputs(path):
+    """Schema-1 (SXT-022 v1) or schema-2 (SXT-026a v2) inputs + adapter."""
+    with open(path, encoding="utf-8") as f:
+        raw = json.load(f)
+    if raw.get("schema_version") == 2:
+        inp = vm.InputsV2(path)
+        inp.check_sequence_required = True
+        return inp, raw["preset"]["path"], True
+    inp = vm.Inputs(path, os.path.join(REPO, "corpus", "normalized", "graphs.jsonl"),
+                    PRESET_REL)
+    # v2-runner adapter for the frozen v1 class (all inert, v1-exact)
+    inp.osc_kind = "classic"
+    inp.fu_poles = 12
+    inp.mix1 = vm.ONE
+    inp.voice_routes = []
+    inp.scene_routes_fm = False
+    inp.fm_depth = 0
+    inp.sine_lowcut = inp.sine_highcut = 0.0
+    inp.osc_pitch_offsets = [12 * inp.octave, 0, 0]
+    return inp, PRESET_REL, False
 
 
 def main():
@@ -54,7 +77,9 @@ def main():
         seq_path = os.path.join(REPO, "fixtures", "sequences", seq_path + ".json")
     seq = vm.load_sequence(seq_path)
 
-    inp = vm.Inputs(args.inputs, args.graphs, PRESET_REL)
+    inp, preset_rel, is_v2 = load_inputs(args.inputs)
+    if is_v2:
+        inp.check_sequence(seq)
     notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
     last_t = max(e["t"] for e in notes) if notes else 0
     total_samples = last_t + int(seq.get("tail_s", 2.5) * vm.SR)
@@ -65,12 +90,14 @@ def main():
     eps01 = vm.qint(0.01)
     inst_att_aeg = 1 if (vm.qint(inp.adsr["a"]) - a_min_const) < eps01 else 0
     inst_att_feg = 1 if (vm.qint(inp.fadsr["a"]) - a_min_const) < eps01 else 0
-    probe = vm.Voice(inp, 60, 100)
+    probe = vm.VoiceV2(inp, 60, 100)
 
     def envrate(p):
         return vm.envelope_rate_linear_nowrap(vm.qint(p))
 
-    # INIT_ORDER (see tb_voice.sv cfg map)
+    # INIT_ORDER (see tb_voice.sv cfg map); words 0..39 are the frozen v1
+    # layout, 40..76 are the SXT-026a parameterization appendix.
+    sine = probe.kind == "sine"
     init_words = [
         envrate(inp.adsr["a"]), envrate(inp.adsr["d"]), envrate(inp.adsr["r"]),
         vm.qint_phase(inp.adsr["s"]), int(inp.adsr["r_s"]),
@@ -91,7 +118,24 @@ def main():
         vm.qint(0.05),                                           # lag rate
         inst_att_aeg, inst_att_feg,
         *vm.HALFBAND_B_Q, *vm.HALFBAND_A_Q,
+        # ---- SXT-026a appendix -------------------------------------------
+        1 if sine else 0,                                        # 40 osc_kind
+        probe.fu_poles,                                          # 41 fu_poles
+        probe.fm_depth,                                          # 42 fm_depth
+        getattr(inp, 'fm_mode', 0),                              # 43 fm_mode
+        inp.mix1,                                                # 44 mix1
+        inp.osc_pitch_offsets[0],                                # 45 pitch_off1
+        inp.osc_pitch_offsets[1],                                # 46 pitch_off2
+        inp.osc_pitch_offsets[2],                                # 47 pitch_off3
     ]
+    if sine:
+        for core in probe.sine:               # 47..51 hp, 52..56 lp (x3 oscs)
+            init_words += [core.hp.b0, core.hp.b1, core.hp.b2,
+                           core.hp.a1, core.hp.a2]
+            init_words += [core.lp.b0, core.lp.b1, core.lp.b2,
+                           core.lp.a1, core.lp.a2]
+    else:
+        init_words += [0] * 31
 
     voices = []
     events = list(seq["events"])
@@ -108,7 +152,7 @@ def main():
             e = events[ei]
             if e["type"] == "note_on":
                 slot = next(i for i in range(N_SLOTS) if all(v.slot != i for v in voices))
-                v = vm.Voice(inp, e["note"], e.get("velocity", 0))
+                v = vm.VoiceV2(inp, e["note"], e.get("velocity", 0))
                 v.slot = slot
                 voices.append(v)
                 blk["create"].append(slot)
@@ -135,12 +179,12 @@ def main():
         # the engine's FAST_LINE smoothing order for this fixture set
         inp.modwheel.process_block()
 
-        # control words: header + one 32-word record per slot (post-block state)
+        # control words: header + one CTRL_WORDS_PER_SLOT-word record per slot
         ctrl.extend([b, len(blk["create"]), inp.modwheel.value, master_amp])
         for slot in range(N_SLOTS):
             v = next((x for x in voices if x.slot == slot), None)
             if v is None:
-                ctrl.extend([0] * 32)
+                ctrl.extend([0] * CTRL_WORDS_PER_SLOT)
                 continue
             full = (b % CHECKPOINT_EVERY == 0) or (not v.gate) or (b < 2)
             flags = 1 | (2 if full else 0) | (4 if slot in blk["create"] else 0) \
@@ -155,6 +199,12 @@ def main():
                 v.aeg.phase, v.aeg.output, v.feg.phase, v.feg.output,
                 0,
             ])
+            # SXT-026a appendix (words 32..36)
+            if sine:
+                ctrl.extend([v.fvel, v.kt_word,
+                             v.sine_omega[0], v.sine_omega[1], v.sine_omega[2]])
+            else:
+                ctrl.extend([0, 0, 0, 0, 0])
             rec = {"slot": slot, "key": v.key, "gate": v.gate}
             if full:
                 rec["oscout_block"] = v.last_oscout
@@ -170,6 +220,8 @@ def main():
                     "osc_out": v.osc_out, "osc_out2": v.osc_out2,
                     "bufpos": v.bufpos,
                     "f_r0": v.f_r0, "f_r1": v.f_r1, "f_clip": v.f_clip,
+                    "f4_r0": getattr(v, "f4_r0", 0),
+                    "f4_r1": getattr(v, "f4_r1", 0),
                     "C_end": list(v.cmu.C),
                     "fbp_gain": v.fbp_gain, "fbp_outl": v.fbp_outl,
                 }
@@ -201,13 +253,14 @@ def main():
 
     with open(os.path.join(args.out_dir, "model_trace.json"), "w", encoding="utf-8") as f:
         json.dump({
-            "format": "sxt-022-voice-trace/1",
+            "format": "sxt-022-voice-trace/2",
             "sequence": seq["id"],
-            "preset": PRESET_REL,
+            "preset": preset_rel,
+            "voice_class": getattr(inp, "voice_class", "classic-lp12-v1"),
             "engine_pin": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71",
             "checkpoint_every": CHECKPOINT_EVERY,
-            "q_formats": {"samples": "Q4.27", "env_phase": "Q2.29",
-                          "pitchmult_inv": "Q13.18"},
+            "q_formats": {"samples": "Q10.21", "env_phase": "Q2.29",
+                          "pitchmult_inv": "Q13.18", "sine_phase": "Q3.28"},
             "slots": N_SLOTS,
             "init_words_order": [
                 "aeg_a", "aeg_d", "aeg_r", "aeg_s", "aeg_a_s", "aeg_r_s",
@@ -218,9 +271,15 @@ def main():
                 "master_amp", "total_blocks", "last_event_t",
                 "envmod_q",
                 "inst_att_aeg", "inst_att_feg", "a_min_const", "eps01_const",
+                "halfband B0..B5", "halfband A0..A5",
+                "sxt026a: osc_kind", "fu_poles", "fm_depth", "fm_mode", "mix1",
+                "pitch_off1", "pitch_off2", "pitch_off3",
+                "hp1 b0,b1,b2,a1,a2", "lp1 b0,b1,b2,a1,a2",
+                "hp2 b0,b1,b2,a1,a2", "lp2 b0,b1,b2,a1,a2",
+                "hp3 b0,b1,b2,a1,a2", "lp3 b0,b1,b2,a1,a2",
             ],
             "init": init_words,
-            "ctrl_words_per_slot": 32,
+            "ctrl_words_per_slot": CTRL_WORDS_PER_SLOT,
             "ctrl_slot_word_order": [
                 "flags(b0 active,b1 checkpoint,b2 created,b3 released)", "key", "gate",
                 "aeg_state", "feg_state",
@@ -230,6 +289,8 @@ def main():
                 "fbp_gain", "fbp_outl",
                 "aeg_phase", "aeg_output", "feg_phase", "feg_output",
                 "(reserved)",
+                "sxt026a: fvel", "kt_word", "sine_omega1_q28",
+                "sine_omega2_q28", "sine_omega3_q28",
             ],
             "blocks": blocks_json,
             "samples16": out_mono,

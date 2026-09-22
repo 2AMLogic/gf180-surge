@@ -32,7 +32,8 @@ T_FIELDS = ["b", "slot", "key", "gate",
             "oscstate", "osc_state", "last_level", "pwidth", "pwidth2",
             "dc_uni", "dc", "osc_out", "osc_out2", "bufpos",
             "f_r0", "f_r1", "f_clip",
-            "c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7"]
+            "c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7",
+            "f4_r0", "f4_r1"]          # SXT-026a: IIR24 second section
 
 
 def parse_tb(path):
@@ -94,6 +95,7 @@ def compare(model_trace, tb_trace):
                 "osc_out": a["osc_out"], "osc_out2": a["osc_out2"],
                 "bufpos": a["bufpos"],
                 "f_r0": a["f_r0"], "f_r1": a["f_r1"], "f_clip": a["f_clip"],
+                "f4_r0": a.get("f4_r0", 0), "f4_r1": a.get("f4_r1", 0),
                 "c0": a["C_end"][0], "c1": a["C_end"][1], "c2": a["C_end"][2],
                 "c3": a["C_end"][3], "c4": a["C_end"][4], "c5": a["C_end"][5],
                 "c6": a["C_end"][6], "c7": a["C_end"][7],
