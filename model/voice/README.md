@@ -205,14 +205,66 @@ released voice) plus every output sample.
 * Character filter supports Warm/Neutral only (preset is Warm).
 * Envelope digital mode only, `a_s = 1`, `d_s = 0` (preset values).
 
+## SXT-034 unison stack extension (frozen)
+
+Extension of this model to unison stacks >1 voice (leaf #68, SXT-034),
+cited from the pinned tree (read, not copied):
+
+* `ClassicOscillator.cpp init` — per-voice init loop; `n_unison = limit(p[uni], 1, MAX_UNISON)`
+  (engine clamps; the model REJECTS outside 1..16 — never a silent clamp),
+  retrigger-on → `oscstate[i] = syncstate[i] = 0`, retrigger-off →
+  `oscstate[i] = syncstate[i] = 0.5·rand_01()·ntpi(detune_i)` (wall-clock
+  random in the engine; the model consumes DECLARED draw words — SXT-012
+  quantified-variation class),
+* `ClassicOscillator.cpp prepare_unison` +
+  `sst-basic-blocks OscillatorDriftUnisonCharacter.h UnisonSetup` —
+  `out_attenuation = 1/sqrt(n)` (Q10.21, quantized once; = 1.0 exactly at
+  n=1), `detune_bias = 2/(n-1)` (n>1), `detune_offset = -1` (n>1),
+* `ClassicOscillator.cpp convolute/process_block` — per-voice detune
+  `detune_v = spread_ext·(bias·v + offset)` with `spread_ext = qint(12·f)`
+  (ct_oscspread; drift asserted 0, no detune modulation in the fixtures),
+  per-voice `t_v = ntpi_tuningctr(detune_v + l_sync)` and
+  `t_inv_v = qdiv(1, t_v)` are BLOCK-RATE constants (streamed in the
+  control plane; the engine recomputes them per call with `mech::rcp` —
+  declared deviation: exact division vs SSE rcp approximation),
+  voice-major fill loop `while oscstate_v < a_cov: convolute(v)` into the
+  SINGLE shared `ob`/`dcb` buffer pair (engine memsets one oscbuffer per
+  oscillator; unison adds impulse state machines, not buffers),
+* unison pan spread is INERT in this slice: the oscillator's `stereo` flag
+  is `is_wide = (fbc == fc_wide)` (SurgeVoice.cpp), not unison-driven; the
+  fixtures are serial-1. `panLaw` satisfies `(panL+panR)/2 == 1` per voice
+  (verified from UnisonSetup) — its mono cancellation is exact if a future
+  leaf widens the bus.
+
+Op order (per convolute, normative): unchanged SXT-022 order with
+`g = qmul(g, out_attenuation)` inserted after the impulse-height state
+machine and before the sinc accumulation; per-voice state replaces the
+scalars (oscstate/state/last_level/pwidth/pwidth2/dc_uni are per-voice; the
+impulse buffers, `mdc`, `osc_out`, `osc_out2`, hpf, filter chain and
+envelopes are per voice SLOT, unison-invariant).
+
+Declared max unison: **MAX_UNISON = 16** (SurgeStorage.h engine constant,
+profile-v1 cap). Beyond-cap unison raises and renders nothing (NC-3).
+
+Resource multiplication (honest): unison N multiplies the impulse state
+machines (6 words/voice) and the convolute activity (~N×, modulated by the
+per-voice detune rates); it does NOT multiply the impulse buffers (shared
+by engine design), the voice filter chain, mixer, or scene decimator.
+
 ## Files
 
 * `voice_model.py` — the frozen model (importable; see module docstring)
 * `run_model.py` — renders a fixture sequence, writes `model.wav`,
   `model_trace.json`, and the RTL stimulus (`rtl/*.hex`)
-* `extract_inputs.py` — fail-closed extraction of the normalized voice
-  inputs from the pinned engine (`attacky_inputs.json`)
-* `attacky_inputs.json` — committed extraction (census-blob verified)
+* `extract_inputs.py` / `attacky_inputs.json` — fail-closed extraction of
+  the normalized voice inputs from the pinned engine (SXT-022 base slice)
+* `extract_uni_inputs.py` / `attacky_uni*_inputs.json` — SXT-034: the same
+  extraction with the declared unison-voices override applied and read
+  back (test configuration on the census-verified carrier)
+* `render_uni_reference.py` — SXT-034: pinned-engine reference renders
+  under the declared override (SXT-012 render policies)
+* `sequences/sxt034-*.json` — leaf-local sequences (smoke; non-retrigger
+  draw mechanism fixture)
 
 ## Reproduce
 
