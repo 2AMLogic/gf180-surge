@@ -62,7 +62,9 @@ def load_sequence(ref):
     if os.path.sep not in ref:
         path = os.path.join(REPO, "fixtures", "sequences", ref + ".json")
     else:
-        path = ref if os.path.isabs(ref) else os.path.join(os.getcwd(), ref)
+        path = ref if os.path.isabs(ref) else os.path.join(REPO, ref)
+        if not path.endswith(".json"):
+            path += ".json"
     with open(path, encoding="utf-8") as f:
         seq = json.load(f)
     if seq.get("schema_version") != 1:
