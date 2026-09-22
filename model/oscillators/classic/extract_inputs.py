@@ -188,6 +188,7 @@ def main():
         "drift": d["drift"],
         "o_level": d["o_level"],
         "level_pfg": d["level_pfg"],
+        "pan": d["pan"],
         "scene_volume": d["scene_volume"],
         "vca_db": d["vca_db"],
         "vca_velsense": d["vca_velsense"],
