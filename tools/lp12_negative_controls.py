@@ -139,7 +139,7 @@ class LP24DrivenMaker:
         bb1 = b1 - qmul(a1, b0)
         bb2 = b2 - qmul(a2, b0)
         n = [ar, ai, vm.ONE, 0, bb1, vm.qdiv(qmul(bb1, ar) + bb2, ai), b0,
-             vm._clipscale(freq, fp.SUBTYPE_DRIVEN)]
+             fp._clipscale(freq, fp.SUBTYPE_DRIVEN)]
         if self.first:
             self.dC = [0] * 8
             self.C = list(n)
