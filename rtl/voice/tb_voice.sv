@@ -118,7 +118,7 @@ module tb_voice;
       q = floor_r(v * 2097152.0 + 0.5);
       if      (q > 32'sd2147483647)  qint_r = 32'sd2147483647;
       else if (q < -32'sd2147483648) qint_r = -32'sd2147483648;
-      else                           qint_r = signed'(q);
+      else                           qint_r = q;
     end
   endfunction
 
