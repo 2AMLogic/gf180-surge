@@ -56,6 +56,14 @@ module tb_voice;
   localparam int FIROFF   = 6;
   localparam int NSLOTS   = 8;
   localparam int CWORDS   = 40;      // ctrl words per slot (v2 stimulus)
+  // SXT-026a: stimulus-capacity bound (fail-closed). 32768 blocks of the
+  // 4+NSLOTS*CWORDS stride; the runner's stream length is checked against
+  // this at load time (see run()), so an undersized stream is a hard error
+  // instead of a silent out-of-bounds X read (canonical sxt025-accept-v1
+  // caught exactly that: 26250 blocks > the old 4200001-word array).
+  localparam int MAX_BLOCKS   = 32768;
+  localparam int BLOCK_STRIDE = 4 + NSLOTS * CWORDS;
+  localparam int MAX_CTRL_WORDS = MAX_BLOCKS * BLOCK_STRIDE;
 
   localparam logic signed [31:0] ONE      = 32'sd2097152;    // 1.0 Q10.21
   localparam logic signed [31:0] PH_ONE   = 32'sd536870912;  // 1.0 Q2.29
@@ -143,7 +151,7 @@ module tb_voice;
   //  9..16 C0..C7  17..24 dC0..dC7  25 fbp_gain 26 fbp_outl
   //  27 aeg_phase 28 aeg_out 29 feg_phase 30 feg_out  31 reserved
   //  32 fvel 33 kt_word  34..36 sine omega1..3 (Q3.28)  37..39 reserved
-  logic [31:0] ctrl_mem [0:4200000];
+  logic [31:0] ctrl_mem [0:MAX_CTRL_WORDS-1];
 
   // --------------------------------------------------------- per-slot state
   logic signed [31:0] ob    [NSLOTS][OB_LEN + FIRN];
@@ -214,15 +222,42 @@ module tb_voice;
     int total_blocks, ci;
     logic [31:0] master_amp;
     total_blocks = int'(cfg[22]);
+    if (total_blocks > MAX_BLOCKS)
+      $fatal(1, "stimulus %0d blocks exceeds tb capacity %0d",
+             total_blocks, MAX_BLOCKS);
+    // stream length check: the word after the last block's stride must be
+    // out of the loaded range only if the file was shorter, so instead we
+    // verify the stream carries exactly total_blocks strides (fail-closed:
+    // a short stream would otherwise read X and silently poison the bus).
+    begin : stream_len
+      integer expect_words, wi, tail_x;
+      expect_words = total_blocks * BLOCK_STRIDE;
+      tail_x = 0;
+      for (wi = expect_words; wi < MAX_CTRL_WORDS; wi = wi + 8)
+        if (ctrl_mem[wi] === 32'hxxxxxxxx) tail_x = tail_x + 1;
+      // every probe window must be X past the stream; any finite word past
+      // expect_words means a longer stream than total_blocks declares
+      if (tail_x != (MAX_CTRL_WORDS - expect_words + 7) / 8)
+        $fatal(1, "ctrl stream longer than total_blocks*stride");
+      if (ctrl_mem[expect_words-1] === 32'hxxxxxxxx)
+        $fatal(1, "ctrl stream shorter than total_blocks*stride (%0d)",
+               expect_words);
+    end
     ci = 0;
     for (b = 0; b < total_blocks; b++) begin
-      if (ctrl_mem[ci] !== 32'hxxxxxxxx && int'(ctrl_mem[ci]) != b)
+      if (ctrl_mem[ci] === 32'hxxxxxxxx)
+        $fatal(1, "ctrl stream exhausted at block %0d (ci=%0d)", b, ci);
+      if (int'(ctrl_mem[ci]) != b)
         $fatal(1, "ctrl desync at block %0d (got %0d)", b, ctrl_mem[ci]);
       master_amp = ctrl_mem[ci+3];
+      if (master_amp === 32'hxxxxxxxx)
+        $fatal(1, "X in ctrl header at block %0d", b);
       ci += 4;
       for (k = 0; k < BLOCK_OS; k++) scene_l[k] = 0;
       for (s = 0; s < NSLOTS; s++) begin
         for (i = 0; i < CWORDS; i++) cw[i] = ctrl_mem[ci + s*CWORDS + i];
+        if (cw[0] === 32'hxxxxxxxx)
+          $fatal(1, "X in ctrl slot %0d flags at block %0d", s, b);
         slot_ckpt[s] = cw[0][1];
         slot_key[s]  = cw[1];
         slot_gate[s] = cw[2];
