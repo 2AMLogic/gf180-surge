@@ -15,10 +15,12 @@ and/or wall-clock-seeded aw49 vibrato randomization - measured):
     per Airwindows slot, Galactic constructor fpd seeds, per-sample Galactic
     internal state incl. vibM) -> fixture npz + sidecar.
   * DSP-neutrality gate (DR-0005 adapted for nondeterministic fixtures): a
-    PROBE render (same fixture; scene drift and aw49 Modulation forced to 0
-    via setParamVal -> deterministic class) must be bit-identical taps-off
-    x2, then taps-ON vs taps-OFF bit-identical. The structural side is
-    pinned separately (sxt028a-tap single-commit diff, DR-0006).
+    PROBE render - a deterministic carrier (first candidate that passes a
+    2x bit-identical self-check) with an injected AW49 insert (Modulation
+    0 -> frozen vibrato) - must be bit-identical taps-off x2, then taps-ON
+    vs taps-OFF bit-identical. Structural side pinned separately
+    (sxt028a-tap single-commit diff, DR-0006). The probe is infrastructure
+    only: NOT a fixture, supports no preset claim.
   * cross-build check: the same probe on the pre-existing build-py311 tree
     (SXT-037 tap branch; FX-path DSP-identical per DR-0005) must be
     bit-identical to the patched build's taps-off probe (child process:
@@ -63,9 +65,14 @@ PRESETS = {
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 
+PROBE_CARRIERS = [
+    "resources/data/patches_factory/Basses/FM Bass 1.fxp",
+    "resources/data/patches_factory/Basses/Behemoth.fxp",
+]
+
 CROSSBUILD_SNIPPET = r"""
 import sys, os, hashlib
-repo, engine, seq_id, aw49_slot, tap_dir, out_dir = sys.argv[1:7]
+repo, seq_id, tap_dir, out_dir = sys.argv[1:5]
 sys.path.insert(0, repo)
 sys.path.insert(0, os.path.join(repo, "oracle"))
 sys.path.insert(0, os.path.join(repo, "fixtures"))
@@ -78,43 +85,67 @@ import render_fixture as rf
 import numpy as np
 import surgepy.constants as C
 seq, _, _ = rf.load_sequence(seq_id)
-probe_abs = os.path.join(oc.engine_dir(),
-                         "resources/data/patches_factory/Basses/FM Bass 1.fxp")
-s = surgepy.createSurge(48000.0)
-s.loadPatch(probe_abs)
-patch = s.getPatch()
-sm = int(s.getParamVal(patch["scenemode"]))
-sa = int(s.getParamVal(patch["scene_active"]))
-for v in ([sa] if sm == 0 else [0, 1]):
-    s.setParamVal(patch["scene"][v]["drift"], 0.0)
-types = [int(s.getParamVal(patch["fx"][i]["type"])) for i in range(16)]
-free = [i for i in range(4) if types[i] == 0]
-if not free:
-    raise SystemExit(3)
-slot = free[0]
-s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
-s.processMultiBlock(s.createMultiBlock(1))
-s.setParamVal(patch["fx"][slot]["p"][0], 49.0)
-s.processMultiBlock(s.createMultiBlock(1))
-s.setParamVal(patch["fx"][slot]["p"][3], 0.0)
-s.setParamVal(patch["fx"][slot]["p"][5], 1.0)
-s.pitchBend(0, 0); s.channelController(0, 64, 0)
-s.channelController(0, 1, 0); s.channelController(0, 11, 0)
-s.allNotesOff()
-bs = int(s.getBlockSize())
-sb = int(seq.get("settle_s", 0.25) * 48000) // bs
-s.processMultiBlock(s.createMultiBlock(sb))
-notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
-last_t = max(e["t"] for e in notes) if notes else 0
-total = -(-(last_t + int(float(seq.get("tail_s", 2.5)) * 48000)) // bs)
-buf = s.createMultiBlock(total)
-quant = lambda t: -(-t // bs)
-disp = 0; b = 0
-while b < total:
-    nxt = rf.dispatch(s, seq["events"][disp:], b, quant) + disp
-    seg = total if nxt >= len(seq["events"]) else max(quant(seq["events"][nxt]["t"]), b + 1)
-    s.processMultiBlock(buf, b, seg - b); b = seg; disp = nxt
-out = np.asarray(buf, dtype=np.float32).copy()
+
+
+def injected(probe_abs):
+    s = surgepy.createSurge(48000.0)
+    if not s.loadPatch(probe_abs):
+        raise SystemExit(2)
+    patch = s.getPatch()
+    sm = int(s.getParamVal(patch["scenemode"]))
+    sa = int(s.getParamVal(patch["scene_active"]))
+    for v in ([sa] if sm == 0 else [0, 1]):
+        s.setParamVal(patch["scene"][v]["drift"], 0.0)
+    types = [int(s.getParamVal(patch["fx"][i]["type"])) for i in range(16)]
+    free = [i for i in range(4) if types[i] == 0]
+    if not free:
+        raise SystemExit(3)
+    slot = free[0]
+    s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
+    s.processMultiBlock(s.createMultiBlock(1))
+    s.setParamVal(patch["fx"][slot]["p"][0], 49.0)
+    s.processMultiBlock(s.createMultiBlock(1))
+    s.setParamVal(patch["fx"][slot]["p"][3], 0.0)
+    s.setParamVal(patch["fx"][slot]["p"][5], 1.0)
+    return s
+
+
+def render_injected(probe_abs):
+    s = injected(probe_abs)
+    try:
+        s.pitchBend(0, 0); s.channelController(0, 64, 0)
+        s.channelController(0, 1, 0); s.channelController(0, 11, 0)
+        s.allNotesOff()
+        bs = int(s.getBlockSize())
+        sb = int(seq.get("settle_s", 0.25) * 48000) // bs
+        s.processMultiBlock(s.createMultiBlock(sb))
+        notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
+        last_t = max(e["t"] for e in notes) if notes else 0
+        total = -(-(last_t + int(float(seq.get("tail_s", 2.5)) * 48000)) // bs)
+        buf = s.createMultiBlock(total)
+        quant = lambda t: -(-t // bs)
+        disp = 0; b = 0
+        while b < total:
+            nxt = rf.dispatch(s, seq["events"][disp:], b, quant) + disp
+            seg = total if nxt >= len(seq["events"]) else max(quant(seq["events"][nxt]["t"]), b + 1)
+            s.processMultiBlock(buf, b, seg - b); b = seg; disp = nxt
+        return np.asarray(buf, dtype=np.float32).copy()
+    finally:
+        del s
+
+
+probe_abs = None
+for cand in ["resources/data/patches_factory/Basses/FM Bass 1.fxp",
+             "resources/data/patches_factory/Basses/Behemoth.fxp"]:
+    ca = os.path.join(oc.engine_dir(), cand)
+    if os.path.exists(ca) and hashlib.sha256(
+            np.ascontiguousarray(render_injected(ca)).tobytes()).hexdigest() == \
+            hashlib.sha256(np.ascontiguousarray(render_injected(ca)).tobytes()).hexdigest():
+        probe_abs = ca
+        break
+if probe_abs is None:
+    raise SystemExit(4)
+out = render_injected(probe_abs)
 print(hashlib.sha256(np.ascontiguousarray(out).tobytes()).hexdigest())
 """
 
@@ -156,7 +187,7 @@ def import_surgepy_from(so_dir):
     return surgepy
 
 
-def render_once(surgepy, preset_abs, seq, probe_patcher="unused"):
+def render_once(surgepy, preset_abs, seq):
     """One fresh-instance render under the SXT-012 policies (single render:
     the fixtures are conditioned-on-tap class - no 3x determinism gate)."""
     s = surgepy.createSurge(float(SR))
@@ -193,49 +224,39 @@ def render_once(surgepy, preset_abs, seq, probe_patcher="unused"):
         del s
 
 
-def _make_probe_deterministic(surgepy, s, aw49_slot_unused):
-    """Force the loaded patch into the deterministic class: zero all scene
-    drifts and all modroutings into drift are left alone (they scale a zero
-    param: the free-run randomization keys on the resolved drift value)."""
+def _probe_injected_instance(surgepy, probe_abs, seq):
+    """Fresh instance of the probe carrier + injected AW49 insert (algorithm
+    49, Modulation 0 -> frozen vibrato, no engine rand in the audio path)."""
+    import surgepy.constants as C
+    s = surgepy.createSurge(float(SR))
+    if not s.loadPatch(probe_abs):
+        raise Refuse("probe loadPatch failed")
     patch = s.getPatch()
     sm = int(s.getParamVal(patch["scenemode"]))
     sa = int(s.getParamVal(patch["scene_active"]))
     for v in ([sa] if sm == 0 else [0, 1]):
         s.setParamVal(patch["scene"][v]["drift"], 0.0)
+    types = [int(s.getParamVal(patch["fx"][i]["type"])) for i in range(16)]
+    free = [i for i in range(4) if types[i] == 0]
+    if not free:
+        raise Refuse("no free insert slot for the probe")
+    slot = free[0]
+    s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
+    s.processMultiBlock(s.createMultiBlock(1))   # deferred fx reload
+    s.setParamVal(patch["fx"][slot]["p"][0], 49.0)   # algorithm: Galactic
+    s.processMultiBlock(s.createMultiBlock(1))       # airwin construction
+    # params must be set AFTER the algorithm switch block (the switch
+    # streams the constructor defaults back onto the params)
+    s.setParamVal(patch["fx"][slot]["p"][3], 0.0)    # C (Modulation) = 0
+    s.setParamVal(patch["fx"][slot]["p"][5], 1.0)    # E (Mix) = wet
+    return s
 
 
-def probe_render(surgepy, preset_abs, seq, aw49_slot_unused):
-    """Deterministic-class probe that still exercises a RUNNING Airwindows-49
-    slot: a preset already proven 3x-bit-identical (FM Bass 1, SXT-023)
-    gets an injected Airwindows insert slot (algorithm 49, Modulation 0 ->
-    frozen vibrato, no engine rand in the audio path). The tap therefore
-    processes on every block and the render is bit-reproducible, which is
-    what the on/off neutrality comparison needs. This probe is
-    infrastructure-only: it is NOT a fixture and supports no preset claim.
-    """
-    import surgepy.constants as C
-    probe_abs = os.path.join(oc.engine_dir(),
-                             "resources/data/patches_factory/Basses/FM Bass 1.fxp")
-    s = surgepy.createSurge(float(SR))
+def _render_injected(surgepy, probe_abs, seq):
+    """Render an injected probe instance to its end under the SXT-012
+    policies; returns the stereo float32 buffer."""
+    s = _probe_injected_instance(surgepy, probe_abs, seq)
     try:
-        if not s.loadPatch(probe_abs):
-            raise Refuse("probe loadPatch failed")
-        patch = s.getPatch()
-        _make_probe_deterministic(surgepy, s, None)
-        types = [int(s.getParamVal(patch["fx"][i]["type"])) for i in range(16)]
-        free = [i for i in range(4) if types[i] == 0]
-        if not free:
-            raise Refuse("no free insert slot for the probe")
-        slot = free[0]
-        s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
-        s.processMultiBlock(s.createMultiBlock(1))   # deferred fx reload
-        s.setParamVal(patch["fx"][slot]["p"][0], 49.0)   # algorithm: Galactic
-        s.processMultiBlock(s.createMultiBlock(1))   # airwin construction
-        # params must be set AFTER the algorithm switch block (the switch
-        # streams the constructor defaults back onto the params)
-        s.setParamVal(patch["fx"][slot]["p"][3], 0.0)    # C (Modulation) = 0
-        s.setParamVal(patch["fx"][slot]["p"][5], 1.0)    # E (Mix) = wet
-        # render in place under the SXT-012 policies (same instance)
         s.pitchBend(0, 0)
         s.channelController(0, 64, 0)
         s.channelController(0, 1, 0)
@@ -261,6 +282,29 @@ def probe_render(surgepy, preset_abs, seq, aw49_slot_unused):
         return np.asarray(buf, dtype=np.float32).copy()
     finally:
         del s
+
+
+def probe_render(surgepy, preset_abs, seq, aw49_slot_unused):
+    """Deterministic carrier (first that passes the 2x self-check) with an
+    injected AW49 slot; used only for the on/off neutrality comparison."""
+    probe_abs = None
+    for cand in PROBE_CARRIERS:
+        cand_abs = os.path.join(oc.engine_dir(), cand)
+        if not os.path.exists(cand_abs):
+            continue
+        if _probe_deterministic(surgepy, cand_abs, seq):
+            probe_abs = cand_abs
+            break
+    if probe_abs is None:
+        raise Refuse("no deterministic probe carrier found for this sequence")
+    return _render_injected(surgepy, probe_abs, seq)
+
+
+def _probe_deterministic(surgepy, probe_abs, seq):
+    """Two injected renders must be bit-identical for this carrier."""
+    a = _render_injected(surgepy, probe_abs, seq)
+    b = _render_injected(surgepy, probe_abs, seq)
+    return sha256_buf(a) == sha256_buf(b)
 
 
 def parse_iostream(path):
@@ -326,23 +370,24 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     # neutrality probes (probe renders: dedicated tap dirs so the fixture
     # tap files stay exact)
     os.environ["SXT028A_TAP_DIR"] = tap_probe
-    probe_on = _probe(surgepy, abs_path, seq, aw49_slot)
+    probe_on = probe_render(surgepy, abs_path, seq, aw49_slot)
     os.environ["SXT028A_TAP_DIR"] = tap_off
-    probe_off = _probe(surgepy, abs_path, seq, aw49_slot)
-    probe_off2 = _probe(surgepy, abs_path, seq, aw49_slot)
+    probe_off = probe_render(surgepy, abs_path, seq, aw49_slot)
+    probe_off2 = probe_render(surgepy, abs_path, seq, aw49_slot)
     os.environ.pop("SXT028A_TAP_DIR", None)
     neutral_deterministic = sha256_buf(probe_off) == sha256_buf(probe_off2)
     neutral_gate = neutral_deterministic and sha256_buf(probe_on) == sha256_buf(probe_off)
 
-    # cross-build probe (baseline build, taps off; child process)
+    # cross-build probe (baseline build, taps off; child process because
+    # pybind11 allows one module registration per process)
     env = dict(os.environ)
     env["PYTHONPATH"] = os.path.join(BUILD_BASELINE, "src", "surge-python") + \
         ":" + env.get("PYTHONPATH", "")
     env["SXT028A_TAP_DIR"] = tap_off
     env["ORACLE_SURGE_DIR"] = oc.engine_dir()
     r = subprocess.run(
-        [sys.executable, "-c", CROSSBUILD_SNIPPET, REPO, abs_path, seq_id,
-         str(aw49_slot), tap_off, out_dir],
+        [sys.executable, "-c", CROSSBUILD_SNIPPET, REPO, seq_id, tap_off,
+         out_dir],
         env=env, capture_output=True, text=True, timeout=3600)
     cross_build = None
     if r.returncode == 0:
@@ -424,8 +469,8 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
         },
         "neutrality_gate": {
             "method": "DR-0005 adapted for nondeterministic fixtures: probe "
-                      "(scene drift=0 and aw49 C=0 via setParamVal) must be "
-                      "bit-identical taps-off x2, then taps-on == taps-off; "
+                      "carrier (2x bit-identical self-check) with an injected "
+                      "AW49 insert (Modulation 0); taps-on == taps-off; "
                       "structural side pinned by the sxt028a-tap "
                       "single-commit diff (DR-0006)",
             "probe_deterministic_taps_off_x2": neutral_deterministic,
@@ -451,10 +496,6 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     print(f"rendered {stem}: blocks={total_blocks} "
           f"neutrality(on==off)={neutral_gate} cross_build={cross_build}")
     return sidecar
-
-
-def _probe(surgepy, abs_path, seq, aw49_slot):
-    return probe_render(surgepy, abs_path, seq, aw49_slot)
 
 
 def main():
