@@ -340,12 +340,13 @@ class Galactic49Fixed:
     instance_kind = "aw-49"
 
     def __init__(self, ctrl, mem_base=0, assert_width=True, label="aw49",
-                 vib=None):
+                 vib=None, record=False):
         self.c = ctrl
         self.mem_base = mem_base
         self.assert_width = assert_width
         self.label = label
         self._vib_override = vib
+        self.hist = {"iir_a": [], "fb_AR": []} if record else None
         self.ext_reads = 0
         self.ext_writes = 0
         self.saturations = 0
@@ -597,6 +598,9 @@ class Galactic49Fixed:
                             FRAC_C31)
         else:
             ol, orr = self.iir_b["L"], self.iir_b["R"]
+        if self.hist is not None:
+            self.hist["iir_a"].append(self.iir_a["L"])
+            self.hist["fb_AR"].append(self.fb["AR"])
         return ol, orr
 
     # ------------------------------------------------------------ reporting
