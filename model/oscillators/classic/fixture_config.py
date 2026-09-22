@@ -32,8 +32,8 @@ CARRIERS = {
     # name: (preset path relative to resources/data/, modeled osc slot index)
     "edges": ("patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp", 1),
     "horn": ("patches_3rdparty/Emu/Plucks/Horn Ring Boops.fxp", 1),
-    "pluck": ("patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp", 1),
     "tentacles": ("patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp", 2),
+    "crush": ("patches_factory/Basses/Crush Bass.fxp", 0),
     # out-of-class negative control: a recovery-basis preset whose Classic
     # slots live only in scene B (split scene mode) — the extractor must
     # refuse it for fixture use (scene-B/voice-graph integration is #48)

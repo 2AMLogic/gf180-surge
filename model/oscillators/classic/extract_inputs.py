@@ -102,6 +102,16 @@ def main():
                      "committed normalized graph")
     if A["pm"] != 0:
         raise Refuse("not poly playmode")
+    # scene-A modulation routings must be provably inert under the declared
+    # fixture overrides (filter units off, waveshaper off, FM switch off);
+    # anything else (e.g. velocity -> AEG release, LFO chains, osc mod
+    # amounts) is outside the declared model boundary - refuse, never ignore
+    for r in g["md"]["s"][0].get("s", []):
+        dest = r[4] if len(r) > 4 else ""
+        if not any(k in dest for k in ("Filter", "Waveshaper")) and                 dest != "A FM Depth":
+            raise Refuse("scene-A modulation routing %r is outside the "
+                         "declared slice (destination not inert under the "
+                         "fixture overrides)" % dest)
     # pan/width: width is dead code under the fc_serial1 override (the
     # voice-level width branch only runs for fc_stereo/fc_wide); scene pan
     # is modeled through the mono pan law (megapanL+R)/2 = 1-0.25*pan^2
