@@ -1,0 +1,13 @@
+SXT-032 negative controls (all must demonstrably FAIL their check)
+date: 2026-09-22T09:43:01Z
+
+[cutoff-zeroed] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=20591 rms_dbfs=-23.5 spec=0.8992 -> FAIL against proposed budgets (expected FAIL)
+[reso-zeroed] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=7102 rms_dbfs=-31.7 spec=0.9841 -> FAIL against proposed budgets (expected FAIL)
+[source-swap] ref=reference-seq-modwheel-v1-lfo-fixture.wav max=21501 rms_dbfs=-22.6 spec=0.8332 -> FAIL against proposed budgets (expected FAIL)
+[free-running] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=22565 rms_dbfs=-22.2 spec=0.8686 -> FAIL against proposed budgets (expected FAIL)
+
+RTL mutant: rtl/voice/lfo_broken_mutant.sv = tb_lfo.sv with the
+  output round-half-up bias mutated: '32'sd1 <<< (F_WAVE - FQ - 1)' -> '32'sd1 <<< (F_WAVE - FQ - 2)'
+[rtl-mutant] verdict=FAIL mismatches=41 first=['block 90 slot 0 lfo 0 output: model=788303 rtl=788302']
+
+overall: ALL CONTROLS DEMONSTRABLY FAIL (expected)

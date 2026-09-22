@@ -1,0 +1,33 @@
+{
+  "cutoff-zeroed": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "metrics_file": "reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json"
+  },
+  "reso-zeroed": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "metrics_file": "reports/sxt-032/artifacts/audio-nc-reso-zeroed.json"
+  },
+  "source-swap": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "metrics_file": "reports/sxt-032/artifacts/audio-nc-source-swap.json"
+  },
+  "free-running": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "metrics_file": "reports/sxt-032/artifacts/audio-nc-free-running.json"
+  },
+  "rtl-mutant": {
+    "verdict": "FAIL",
+    "expected": "FAIL",
+    "control_ok": true,
+    "metrics_file": "reports/sxt-032/artifacts/exactness-mutant.json"
+  },
+  "overall_ok": true
+}

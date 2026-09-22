@@ -1,0 +1,23 @@
+{
+  "frames": 182400,
+  "ref_peak_lsb": 16714.0,
+  "model_peak_lsb": 14336.0,
+  "max_abs_diff_lsb": 15505.0,
+  "rms_diff_lsb": 759.6846362373585,
+  "rms_diff_dbfs": -32.69606675526709,
+  "rms_diff_at_shift0_lsb": 759.6846362373585,
+  "best_shift": 1,
+  "rms_diff_at_best_shift_lsb": 742.9056732719181,
+  "spectral_corr": 0.9876927559769592,
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "verdict": "FAIL against proposed budgets"
+}

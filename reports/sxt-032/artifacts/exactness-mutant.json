@@ -1,0 +1,22 @@
+{
+  "tb": "rtl/voice/lfo_broken_mutant.sv",
+  "verdict": "FAIL",
+  "checked": {
+    "lfo_checkpoints": 268,
+    "lfo_fields": 1340,
+    "route_sums": 258
+  },
+  "mismatches": 41,
+  "first_failures": [
+    "block 90 slot 0 lfo 0 output: model=788303 rtl=788302",
+    "block 90 slot 0 route_sum[0]: model=51239695 rtl=51239630",
+    "block 90 slot 0 route_sum[1]: model=394152 rtl=394151",
+    "block 92 slot 0 lfo 0 output: model=804522 rtl=804521",
+    "block 92 slot 0 route_sum[0]: model=52293930 rtl=52293865",
+    "block 94 slot 0 lfo 0 output: model=820682 rtl=820681",
+    "block 94 slot 0 route_sum[0]: model=53344330 rtl=53344265",
+    "block 99 slot 0 lfo 0 output: model=860827 rtl=860826",
+    "block 99 slot 0 route_sum[0]: model=55953755 rtl=55953690",
+    "block 99 slot 0 route_sum[1]: model=430414 rtl=430413"
+  ]
+}
