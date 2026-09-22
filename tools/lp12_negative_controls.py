@@ -195,7 +195,14 @@ def run_controls(artifact_dir, require_rtl=True, bundle_root=None):
         print(s)
         lines.append(s)
 
-    bundles = {c: os.path.join(art_root, "bundle-" + c)
+    def bundle_dir(case):
+        for cand in (os.path.join(art_root, "bundle-" + case),
+                     os.path.join(art_root, case)):
+            if os.path.isdir(cand):
+                return cand
+        raise FileNotFoundError(f"bundle for {case} under {art_root}")
+
+    bundles = {c: bundle_dir(c)
                for c in ("badnews", "rainy", "t9", "badnews-reso1")}
 
     # ---- NC-A wrong-subtype ------------------------------------------------
@@ -328,7 +335,7 @@ def run_controls(artifact_dir, require_rtl=True, bundle_root=None):
     # ---- NC-E RTL mutant -----------------------------------------------------
     if require_rtl:
         mutant = os.path.join(REPO, "rtl", "voice", "lp12_broken_mutant.sv")
-        run_dir = os.path.join(art_root, "bundle-badnews")
+        run_dir = os.path.join(art_root, "run-badnews")
         try:
             sys.path.insert(0, os.path.join(REPO, "tools"))
             import compare_rtl_model_lp12 as crm
