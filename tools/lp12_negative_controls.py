@@ -185,9 +185,9 @@ class LP24DrivenUnit:
 
 
 # --------------------------------------------------------------- NC driver
-def run_controls(artifact_dir, require_rtl=True):
+def run_controls(artifact_dir, require_rtl=True, bundle_root=None):
     os.makedirs(artifact_dir, exist_ok=True)
-    art_root = os.path.join(REPO, "reports", "sxt-037", "artifacts")
+    art_root = bundle_root or artifact_dir
     results = {}
     lines = ["SXT-037 negative-control transcript", "=" * 60]
 
@@ -373,8 +373,12 @@ def main():
     ap.add_argument("--artifact-dir", default=os.path.join(REPO, "reports", "sxt-037",
                                                            "artifacts"))
     ap.add_argument("--skip-rtl", action="store_true")
+    ap.add_argument("--bundle-root", default=None,
+                    help="directory containing the bundle-* case dirs "
+                         "(default: --artifact-dir)")
     args = ap.parse_args()
-    return run_controls(args.artifact_dir, require_rtl=not args.skip_rtl)
+    return run_controls(args.artifact_dir, require_rtl=not args.skip_rtl,
+                        bundle_root=args.bundle_root)
 
 
 if __name__ == "__main__":
