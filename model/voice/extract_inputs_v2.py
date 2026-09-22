@@ -248,24 +248,10 @@ def main():
                  (nii["fu0"]["type"], A["fu"][0]["t"]),
                  (nii["fu0"]["subtype"], A["fu"][0]["st"]),
                  (nii["scene_octave"], A["oct"]),
+                 (nii["keytrack_root"], A["ktR"]),
                  (nii["level_o1"], A["mix"]["o1"][0])):
         if abs(float(a) - float(b)) > 1e-6:
             raise Refuse(f"engine/graphs disagreement: {a} != {b}")
-    # keytrack_root: BOUNDED DATA FINDING (recorded, resolved by native
-    # behavior): the committed graphs line carries ktR=61 for this preset
-    # while the live pinned engine -- and the SXT-011 export tool itself,
-    # re-run against the pinned tree -- read 60.0 (all other fields match).
-    # The live oracle wins; the finding is recorded in the sidecar and in
-    # reports/sxt-026a/EVIDENCE.md, and the model-vs-reference budgets are
-    # the backstop (a wrong root would detune the keytrack route audibly).
-    if abs(float(nii["keytrack_root"]) - float(A["ktR"])) > 1e-6:
-        out["keytrack_root_finding"] = {
-            "graphs_ktR": A["ktR"],
-            "live_engine_keytrack_root": nii["keytrack_root"],
-            "resolution": "live pinned-engine value used; SXT-011 export "
-                          "tool re-run at the pin reproduces the live value; "
-                          "committed graphs field recorded as stale",
-        }
     if o1_sine:
         for i in (2, 3):
             if A["mix"][f"o{i}"][1] != 1:
