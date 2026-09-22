@@ -4,7 +4,8 @@ Branch: `loom/leaf-71-lp12` · Issue: #71 (SXT-037) · Date: 2026-09-22
 
 Engine (external, GPL-3.0-or-later):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, surgepy
-`1.4.sxt037-tap.5ec85c510` (patched oracle build; see DR-0005), 48 kHz,
+`1.4.sxt037-tap.ff8b4dba4` (patched oracle build; version string as reported
+by the engine in every committed `bundle-*/meta.json`; see DR-0005), 48 kHz,
 block size 32 / OS block 64 (`oracle/manifest.json`). LP 12 dB algorithm
 authority: pinned `sst-filters` `FilterCoefficientMaker_Impl.h`
 (`Coeff_SVF`, `Coeff_LP12`, `resoscale`, `Map2PoleResonance`, `clipscale`,

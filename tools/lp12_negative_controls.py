@@ -336,26 +336,35 @@ def run_controls(artifact_dir, require_rtl=True, bundle_root=None):
     if require_rtl:
         mutant = os.path.join(REPO, "rtl", "voice", "lp12_broken_mutant.sv")
         run_dir = os.path.join(art_root, "run-badnews")
-        try:
-            sys.path.insert(0, os.path.join(REPO, "tools"))
-            import compare_rtl_model_lp12 as crm
-
-            with open(os.path.join(run_dir, "model_trace.json")) as f:
-                mt = json.load(f)
-            trace_path = crm.build_and_run(mutant, run_dir)
-            checked, fails = crm.compare(mt, trace_path)
-            e_ok = bool(fails)
+        trace_in = os.path.join(run_dir, "model_trace.json")
+        if not os.path.exists(trace_in):
             results["NC-E-rtl-mutant"] = {
-                "targeted_check": "RTL-vs-model exactness FAILs for the mutated testbench",
-                "mismatches": len(fails), "checked": checked,
-                "outcome": "CONTROL-OK (exactness FAILs)" if e_ok else "CONTROL-BROKEN",
-            }
-            log(f"NC-E rtl mutant: mismatches={len(fails)} -> "
-                f"{'CONTROL-OK' if e_ok else 'CONTROL-BROKEN'}")
-        except FileNotFoundError as e:
-            results["NC-E-rtl-mutant"] = {"outcome": "NOT_RUN (iverilog unavailable)",
-                                          "error": str(e)}
-            log("NC-E rtl mutant: NOT_RUN (iverilog unavailable)")
+                "outcome": "NOT_RUN (precondition missing: %s; generate it "
+                           "with model/voice/filter_lp12/run_filter_leg.py)"
+                           % trace_in}
+            log("NC-E rtl mutant: NOT_RUN (missing model trace at %s)"
+                % trace_in)
+        else:
+            try:
+                sys.path.insert(0, os.path.join(REPO, "tools"))
+                import compare_rtl_model_lp12 as crm
+
+                with open(trace_in) as f:
+                    mt = json.load(f)
+                trace_path = crm.build_and_run(mutant, run_dir)
+                checked, fails = crm.compare(mt, trace_path)
+                e_ok = bool(fails)
+                results["NC-E-rtl-mutant"] = {
+                    "targeted_check": "RTL-vs-model exactness FAILs for the mutated testbench",
+                    "mismatches": len(fails), "checked": checked,
+                    "outcome": "CONTROL-OK (exactness FAILs)" if e_ok else "CONTROL-BROKEN",
+                }
+                log(f"NC-E rtl mutant: mismatches={len(fails)} -> "
+                    f"{'CONTROL-OK' if e_ok else 'CONTROL-BROKEN'}")
+            except FileNotFoundError as e:
+                results["NC-E-rtl-mutant"] = {"outcome": "NOT_RUN (iverilog unavailable)",
+                                              "error": str(e)}
+                log("NC-E rtl mutant: NOT_RUN (iverilog unavailable)")
     else:
         results["NC-E-rtl-mutant"] = {"outcome": "NOT_RUN (skipped by flag)"}
         log("NC-E rtl mutant: NOT_RUN (skipped)")

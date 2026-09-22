@@ -41,8 +41,12 @@ leaf's scope and preset-dependent).
 5. Record hashes (SHA-256):
    - patch script `~/oracle/sxt037_tap_patch.py` (final revision):
      `0712926beb62651e50f3e5ccd39cec0586e20244077f25b6427ff1ce0a5cfbad`
-   - generated header `src/common/sxt037_tap.h` (in the external tree):
-     recorded at evidence time in `reports/sxt-037/artifacts/`.
+   - generated header `src/common/sxt037_tap.h` (in the external tree): a
+     deterministic output of the pinned script revision; its content sha is
+     pinned on the oracle host next to the script. The resulting engine
+     build is pinned here by the version string the engine itself reports in
+     every committed `reports/sxt-037/artifacts/bundle-*/meta.json`:
+     `1.4.sxt037-tap.ff8b4dba4` (single commit on top of the engine pin).
 
 ## Outcome (evidence)
 
