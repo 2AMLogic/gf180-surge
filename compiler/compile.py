@@ -45,6 +45,7 @@ from compiler.reject import (  # noqa: E402
     OUTCOME_COMPILED, OUTCOME_REJECTED, OUTCOME_UNRESOLVED,
     engine_order, make_rejection, outcome_for, role_phase,
 )
+from compiler.assets.wavetable import AssetIdentityError  # noqa: E402
 from compiler.version import (  # noqa: E402
     COMPILER_VERSION, CONTAINER_MAGIC, IMAGE_FORMAT_MAJOR, IMAGE_FORMAT_MINOR,
     IMAGE_FORMAT_VERSION,
@@ -473,9 +474,17 @@ def rebuild_graph(body):
 # top-level compile
 # --------------------------------------------------------------------------
 
-def compile_line(line, spec, bundle_id, bundle_status, bundle_file_sha256):
+def compile_line(line, spec, bundle_id, bundle_status, bundle_file_sha256,
+                 asset_root=None):
     """One graph line -> ("compiled", image_obj, container_bytes)
-    or (outcome, record_obj, None)."""
+    or (outcome, record_obj, None).
+
+    asset_root (SXT-026, optional): external wavetable asset root
+    (resources/data of the pinned tree). When provided, every resolved
+    wavetable record gains a manifest record under
+    derived.wavetable_asset_manifests (identity hash + dims + mip/AA
+    structure + residency, hashes only in-repo). Identity mismatches abort
+    the compile (compiler/assets/wavetable.py; decision-records/0004)."""
     outcome, rejections = evaluate(line, spec)
     profile = {
         "artifact": "profile-v1-DRAFT", "bundle_id": bundle_id,
@@ -502,6 +511,14 @@ def compile_line(line, spec, bundle_id, bundle_status, bundle_file_sha256):
 
     acc = _account(line, spec)
     body = build_body(line, acc, spec)
+    if asset_root is not None:
+        # SXT-026: asset manifests are additive derived data (format 1.1).
+        # The manifest reads the .wt payload in place from the external root
+        # and aborts on any identity mismatch (never copies it).
+        from compiler.assets import wavetable as wt_assets  # noqa: PLC0415
+
+        body["derived"]["wavetable_asset_manifests"] = \
+            wt_assets.manifests_for_graph(line["g"], asset_root)
     body_bytes = canonical_json(body)
     header = build_header(line, spec, bundle_id, bundle_status,
                           bundle_file_sha256, sha256_hex(body_bytes))
@@ -570,7 +587,8 @@ def cmd_compile(args):
         raise Refuse("compile needs --path or --entry-json")
 
     outcome, obj, container = compile_line(by_path, spec, args.bundle_id,
-                                           status, bundle_sha)
+                                           status, bundle_sha,
+                                           asset_root=args.asset_root)
     written = _write_pair(args.out_dir, name, outcome, obj, container)
     codes = ""
     if outcome != OUTCOME_COMPILED:
@@ -733,6 +751,11 @@ def main(argv=None):
     c.add_argument("--path", help="census path of a graphs.jsonl entry")
     c.add_argument("--entry-json", help="full line JSON file (synthetic inputs)")
     c.add_argument("--name", help="output case name (entry-json mode)")
+    c.add_argument("--asset-root", default=None,
+                   help="SXT-026: external wavetable asset root "
+                        "(pinned tree resources/data); embeds "
+                        "derived.wavetable_asset_manifests into the image "
+                        "and aborts on asset identity mismatch")
     c.add_argument("--out-dir", required=True)
     c.set_defaults(func=cmd_compile)
 
@@ -773,3 +796,6 @@ if __name__ == "__main__":
     except ImageError as e:
         print("IMAGE ERROR: %s" % e, file=sys.stderr)
         sys.exit(3)
+    except AssetIdentityError as e:
+        print("ABORT: %s" % e, file=sys.stderr)
+        sys.exit(2)

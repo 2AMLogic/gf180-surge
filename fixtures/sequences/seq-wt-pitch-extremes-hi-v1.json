@@ -1,0 +1,70 @@
+{
+ "coverage": [
+  "pitch:extreme-high",
+  "wt:mip2",
+  "wt:mip5",
+  "wt:mip6"
+ ],
+ "description": "MIDI 24 / 60 / 96 / 120 with the declared octave-0 fixture: osc pitches 24..120; with keytrack this sweeps wavetable mip 0 (n24), mip 2 (n60: the mip-threshold negative-control window), mip 5 (n96) and mip 6 (n120)",
+ "events": [
+  {
+   "channel": 0,
+   "note": 24,
+   "t": 0,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 24,
+   "t": 12000,
+   "type": "note_off",
+   "velocity": 0
+  },
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 24000,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 36000,
+   "type": "note_off",
+   "velocity": 0
+  },
+  {
+   "channel": 0,
+   "note": 96,
+   "t": 48000,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 96,
+   "t": 60000,
+   "type": "note_off",
+   "velocity": 0
+  },
+  {
+   "channel": 0,
+   "note": 120,
+   "t": 72000,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 120,
+   "t": 84000,
+   "type": "note_off",
+   "velocity": 0
+  }
+ ],
+ "id": "seq-wt-pitch-extremes-hi-v1",
+ "schema_version": 1,
+ "tail_s": 1.0
+}

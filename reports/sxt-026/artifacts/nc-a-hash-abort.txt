@@ -1,0 +1,8 @@
+$ compile --asset-root <flipped Triangle.wt copy>
+exit=2
+stderr: ABORT: asset identity mismatch for wavetables/Basic/Triangle.wt: external file sha256 720c1548504e5d2a178405d96d5a9d133f7a083530d063198ba030bf5890aa53 != normalized-graph record f49a2381bc699b11136457f1f9f73150e73d612fa1290092d61bcdd6029b26a9 — ABORT (a substituted or corrupted wavetable must never enter an image)
+-> compile ABORTED (exit 2), NO image emitted
+$ compiler/assets/wavetable.py verify --image <manifest image> --asset-root <flipped copy>
+exit=2
+stderr: ABORT: HASH MISMATCH wavetables/Basic/Triangle.wt: external 720c1548504e5d2a178405d96d5a9d133f7a083530d063198ba030bf5890aa53 != image record f49a2381bc699b11136457f1f9f73150e73d612fa1290092d61bcdd6029b26a9
+-> end-to-end verify ABORTED (hash mismatch)

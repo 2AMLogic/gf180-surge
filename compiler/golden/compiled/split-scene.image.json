@@ -1338,10 +1338,10 @@
  },
  "header": {
   "body_sha256": "490f02e2e3a8432d5402f7a6dbdbb7db789868bf93eebd47dc0ce9c9dd9ed6cd",
-  "compiler_version": "sxt-020-compile/1.0.0",
-  "format": "sxt-020-patch-image/1.0.0",
+  "compiler_version": "sxt-020-compile/1.1.0",
+  "format": "sxt-020-patch-image/1.1.0",
   "format_major": 1,
-  "format_minor": 0,
+  "format_minor": 1,
   "normalized_graph_sha256": "7cf821a69c897ebd7143776905be1fa049edfdb2f8bfcfa0653e1929993ade61",
   "pin": {
    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",

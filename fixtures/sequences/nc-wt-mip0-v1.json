@@ -1,0 +1,25 @@
+{
+ "coverage": [
+  "negative-control:wt-wrong-mip"
+ ],
+ "description": "NC-B fixture: the base fixture configuration (osc pitch 30.0037, correct selection = wavetable mip 0). With the forced-deep-mip mutant (mip 6) the 16-entry table is played at the fundamental and the budget must FAIL while the correct model PASSes.",
+ "events": [
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 0,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 12000,
+   "type": "note_off",
+   "velocity": 0
+  }
+ ],
+ "id": "nc-wt-mip0-v1",
+ "schema_version": 1,
+ "tail_s": 0.6
+}

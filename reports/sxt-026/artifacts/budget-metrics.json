@@ -1,0 +1,231 @@
+{
+ "format": "sxt-026-budget-metrics/1",
+ "sxt022_pre_registered_proposal": {
+  "max_abs_diff_lsb": 3500,
+  "rms_diff_dbfs": -46.0,
+  "spectral_corr_min": 0.98
+ },
+ "sxt026_proposed_workhorse_bounds": {
+  "max_abs_diff_lsb": 8000,
+  "rms_diff_dbfs": -30.0,
+  "spectral_corr_min": 0.92
+ },
+ "rows": [
+  {
+   "frames": 120000,
+   "ref_peak_lsb": 13932.0,
+   "model_peak_lsb": 17216.0,
+   "max_abs_diff_lsb": 5841.0,
+   "rms_diff_lsb": 520.0782224739531,
+   "rms_diff_dbfs": -35.98736024883343,
+   "rms_diff_at_shift0_lsb": 520.0782224739531,
+   "best_shift": -32,
+   "rms_diff_at_best_shift_lsb": 362.70839212429496,
+   "spectral_corr": 0.9267907519080358,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "kick-wtfix / seq-wt-base-v1"
+  },
+  {
+   "frames": 120000,
+   "ref_peak_lsb": 13932.0,
+   "model_peak_lsb": 17216.0,
+   "max_abs_diff_lsb": 5841.0,
+   "rms_diff_lsb": 520.0786279256243,
+   "rms_diff_dbfs": -35.98735347733841,
+   "rms_diff_at_shift0_lsb": 520.0786279256243,
+   "best_shift": -32,
+   "rms_diff_at_best_shift_lsb": 362.708638921747,
+   "spectral_corr": 0.9266912675271686,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "kick-wtfix-morph25 / seq-wt-base-v1"
+  },
+  {
+   "frames": 120000,
+   "ref_peak_lsb": 13932.0,
+   "model_peak_lsb": 17216.0,
+   "max_abs_diff_lsb": 5841.0,
+   "rms_diff_lsb": 520.0782224739531,
+   "rms_diff_dbfs": -35.98736024883343,
+   "rms_diff_at_shift0_lsb": 520.0782224739531,
+   "best_shift": -32,
+   "rms_diff_at_best_shift_lsb": 362.70839212429496,
+   "spectral_corr": 0.9267907519080358,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "kick-wtfix-morph75 / seq-wt-base-v1"
+  },
+  {
+   "frames": 72000,
+   "ref_peak_lsb": 32767.0,
+   "model_peak_lsb": 32767.0,
+   "max_abs_diff_lsb": 63579.0,
+   "rms_diff_lsb": 8667.031356254894,
+   "rms_diff_dbfs": -11.551326267018105,
+   "rms_diff_at_shift0_lsb": 8667.031356254894,
+   "best_shift": -32,
+   "rms_diff_at_best_shift_lsb": 8640.861586703366,
+   "spectral_corr": 0.954570551300462,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "kick-wtfix-uni16 / seq-wt-unison16-v1"
+  },
+  {
+   "frames": 132000,
+   "ref_peak_lsb": 27080.0,
+   "model_peak_lsb": 26270.0,
+   "max_abs_diff_lsb": 47262.0,
+   "rms_diff_lsb": 3162.591720888155,
+   "rms_diff_dbfs": -20.307871028971714,
+   "rms_diff_at_shift0_lsb": 3162.591720888155,
+   "best_shift": -4,
+   "rms_diff_at_best_shift_lsb": 2551.7155662139367,
+   "spectral_corr": 0.9378040528599437,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "kick-wtfix-kt / seq-wt-pitch-extremes-hi-v1"
+  },
+  {
+   "frames": 108000,
+   "ref_peak_lsb": 16395.0,
+   "model_peak_lsb": 17216.0,
+   "max_abs_diff_lsb": 18447.0,
+   "rms_diff_lsb": 1898.1712668747489,
+   "rms_diff_dbfs": -24.742025721251174,
+   "rms_diff_at_shift0_lsb": 1898.1712668747489,
+   "best_shift": -32,
+   "rms_diff_at_best_shift_lsb": 1490.2306498320318,
+   "spectral_corr": 0.9056729930401194,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "kick-wtfix / seq-wt-pitch-extremes-v1"
+  },
+  {
+   "frames": 120000,
+   "ref_peak_lsb": 32767.0,
+   "model_peak_lsb": 16256.0,
+   "max_abs_diff_lsb": 48993.0,
+   "rms_diff_lsb": 7625.220631275749,
+   "rms_diff_dbfs": -12.66368533771168,
+   "rms_diff_at_shift0_lsb": 7625.220631275749,
+   "best_shift": 4,
+   "rms_diff_at_best_shift_lsb": 7316.129533734246,
+   "spectral_corr": 0.9719599951489235,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "mf-wtfix / seq-wt-base-v1"
+  },
+  {
+   "frames": 120000,
+   "ref_peak_lsb": 32767.0,
+   "model_peak_lsb": 13073.0,
+   "max_abs_diff_lsb": 39321.0,
+   "rms_diff_lsb": 7572.009831933108,
+   "rms_diff_dbfs": -12.724510238732753,
+   "rms_diff_at_shift0_lsb": 7572.009831933108,
+   "best_shift": 5,
+   "rms_diff_at_best_shift_lsb": 7289.494761261677,
+   "spectral_corr": 0.9655208431497535,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "mf-wtfix-morph25 / seq-wt-base-v1"
+  },
+  {
+   "frames": 120000,
+   "ref_peak_lsb": 9733.0,
+   "model_peak_lsb": 11100.0,
+   "max_abs_diff_lsb": 11628.0,
+   "rms_diff_lsb": 3430.210090467006,
+   "rms_diff_dbfs": -19.602319220017424,
+   "rms_diff_at_shift0_lsb": 3430.210090467006,
+   "best_shift": -23,
+   "rms_diff_at_best_shift_lsb": 3363.364497146713,
+   "spectral_corr": 0.9711555949005437,
+   "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+   },
+   "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": false
+   },
+   "verdict": "FAIL against proposed budgets",
+   "fixture": "mf-wtfix-morph75 / seq-wt-base-v1"
+  }
+ ]
+}

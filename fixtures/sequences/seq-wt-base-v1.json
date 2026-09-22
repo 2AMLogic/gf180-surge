@@ -1,0 +1,27 @@
+{
+ "coverage": [
+  "hold:long",
+  "release:note-off",
+  "wt:mip-mid"
+ ],
+ "description": "C4 hold (1 s) + release; the wavetable workhorse fixture",
+ "events": [
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 0,
+   "type": "note_on",
+   "velocity": 32
+  },
+  {
+   "channel": 0,
+   "note": 60,
+   "t": 48000,
+   "type": "note_off",
+   "velocity": 0
+  }
+ ],
+ "id": "seq-wt-base-v1",
+ "schema_version": 1,
+ "tail_s": 1.5
+}

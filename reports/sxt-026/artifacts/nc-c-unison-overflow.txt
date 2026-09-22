@@ -1,0 +1,4 @@
+$ run_model --inputs <unison=17>
+exit=1
+stderr: RuntimeError: unison 17 outside 1..MAX_UNISON(16): explicitly rejected
+-> explicit rejection, no clamp (the engine clamps; this product contract rejects)

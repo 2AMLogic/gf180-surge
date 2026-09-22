@@ -6,7 +6,7 @@
    "code": "audio_input_dependency"
   }
  ],
- "compiler_version": "sxt-020-compile/1.0.0",
+ "compiler_version": "sxt-020-compile/1.1.0",
  "note": "No image was emitted. The compiler never trims: every unsupported path is a visible, machine-readable rejection (issue #13).",
  "outcome": "rejected",
  "profile": {

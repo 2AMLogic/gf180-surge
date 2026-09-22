@@ -942,10 +942,10 @@
  },
  "header": {
   "body_sha256": "caf2a74dc0b85a251832730b0ad6f03555d37b126e15c550ebb281d3dcfda546",
-  "compiler_version": "sxt-020-compile/1.0.0",
-  "format": "sxt-020-patch-image/1.0.0",
+  "compiler_version": "sxt-020-compile/1.1.0",
+  "format": "sxt-020-patch-image/1.1.0",
   "format_major": 1,
-  "format_minor": 0,
+  "format_minor": 1,
   "normalized_graph_sha256": "5c50c815b07feec844739733dd5d2adc7b32f6b6fa2d1f3db26a8969090a4ff1",
   "pin": {
    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",

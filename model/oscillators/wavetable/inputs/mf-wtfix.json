@@ -1,0 +1,69 @@
+{
+ "adsr": {
+  "a": -8.0,
+  "a_s": 1.0,
+  "d": -8.0,
+  "d_s": 1.0,
+  "mode": 0.0,
+  "r": -8.0,
+  "r_s": 2.0,
+  "s": 1.0
+ },
+ "declared_overrides": [
+  [
+   "mute_o1",
+   1
+  ],
+  [
+   "mute_noise",
+   1
+  ],
+  [
+   "fu0_off",
+   1
+  ],
+  [
+   "fu1_off",
+   1
+  ],
+  [
+   "fx_off",
+   1
+  ],
+  [
+   "retrigger_on",
+   1
+  ],
+  [
+   "scene_volume",
+   0.6
+  ]
+ ],
+ "deform_mode": "xt14_continuous",
+ "engine_version": "1.4.HEAD.58914e59c",
+ "extend_range": true,
+ "formant": 0.0,
+ "keytrack": true,
+ "master_db": 0.0,
+ "morph": 0.0,
+ "note": "declared fixture config: WT osc only, filters + FX Off, retrigger forced on",
+ "o2_level": 0.925000011920929,
+ "octave": 0,
+ "pitch_param": 0.0,
+ "preset_census_blob_sha1": "2379e0713eb2830a3c4acbe3a9442500ab960fd9",
+ "preset_path": "resources/data/patches_3rdparty/Argitoth/FX/Monster Feedback.fxp",
+ "retrigger": true,
+ "saturate": 0.0,
+ "scene_octave": -1,
+ "scene_volume": 0.6000000238418579,
+ "skewh": 0.0,
+ "skewv": 0.0,
+ "unison": 1,
+ "unison_cap": 16,
+ "unison_detune": 0.20000000298023224,
+ "vca_db": 13.885723114013672,
+ "vca_velsense": 0.0,
+ "wt_name": "Banjo 1",
+ "wt_relpath": "wavetables/Sampled/Banjo 1.wt",
+ "wt_sha256": "d610b7ca6031721e17ca39cc5785963657d83a0cab676874182e317e9b77f61a"
+}

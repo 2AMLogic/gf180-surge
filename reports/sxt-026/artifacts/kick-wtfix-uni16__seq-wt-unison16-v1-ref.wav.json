@@ -1,0 +1,54 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "declared_overrides_applied": [
+  [
+   "mute_o1",
+   1
+  ],
+  [
+   "mute_noise",
+   1
+  ],
+  [
+   "fu1_off",
+   1
+  ],
+  [
+   "unison",
+   16
+  ]
+ ],
+ "engine": {
+  "commit": "1.4.HEAD.58914e59c",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "fx_note": "preset has all 16 FX slots Off (normalized graph): the wet render is FX-free by patch state; no substitution, no bypass",
+ "inputs": "model/oscillators/wavetable/inputs/kick-wtfix-uni16.json",
+ "issue": "SXT-026",
+ "original_preset_render": false,
+ "preset_blob_sha1": "4f2443aa9e9eabe911d9bfee634f1aeb6e874976",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 2250,
+  "clipped_samples": 2557,
+  "frames": 72000,
+  "peak_abs_float": 2.134526491165161,
+  "repeat_hashes": [
+   "87ac34977b0ebb5071e2128359e3133bb43c800b035d5a4fd155166a2760e6cd",
+   "87ac34977b0ebb5071e2128359e3133bb43c800b035d5a4fd155166a2760e6cd",
+   "87ac34977b0ebb5071e2128359e3133bb43c800b035d5a4fd155166a2760e6cd"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-wt-unison16-v1",
+  "path": "fixtures/sequences/seq-wt-unison16-v1.json"
+ },
+ "wav": {
+  "path": "../../../../tmp/wt026-ref/kick-wtfix-uni16__seq-wt-unison16-v1-ref.wav",
+  "sha256": "07b66903eafa09ebe9fd59a822027aa7fa4ed1a3aa4fccfd18424b0d8feb2dee"
+ },
+ "wt_sha256": "f49a2381bc699b11136457f1f9f73150e73d612fa1290092d61bcdd6029b26a9"
+}
