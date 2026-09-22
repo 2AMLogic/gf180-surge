@@ -223,7 +223,7 @@ def main():
         for r in voc:
             if r.getSource().getModSource() != C.ms_lfo1:
                 raise Refuse("unexpected non-LFO1 voice route")
-            raw_by_dest[r.getDest().name] = r.getDepth()
+            raw_by_dest[r.getDest().getName()] = r.getDepth()
         for entry in routes:
             dest_name = ("A Filter 1 Cutoff" if entry["dest"].endswith("cutoff")
                          else "A Filter 1 Resonance")
