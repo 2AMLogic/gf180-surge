@@ -369,7 +369,7 @@ def main():
         smoke = args.smoke
         overrides = None
         toggle_at = None
-        carrier = CARRIERS[case.split("-")[0]]
+        carrier = CARRIERS.get(case) or CARRIERS[case.split("-")[0]]
         out_dir = os.path.join(args.out_dir, case)
         os.makedirs(out_dir, exist_ok=True)
         if case.endswith("-reso1"):
