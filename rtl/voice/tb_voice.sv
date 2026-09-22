@@ -194,7 +194,9 @@ module tb_voice;
   logic signed [31:0] t_const, t_inv, g, tg, olddc, rate, term, hpf_start,
       hpf_d, hpf_v, acc, obv, last_oo, mdc, lvl, oa;
   logic signed [31:0] c [8];
-  logic signed [31:0] gain_start, outl_start, d_gain, d_outl, gainv, outlv,
+  logic signed [31:0] gain_start, outl_start, d_gain, d_outl, gainv, outlv;
+  logic signed [63:0] ramp_prod64;
+  logic signed [31:0]
       outv, xv, y, s1v, s2v;
   logic signed [31:0] s3v, s4v, y2v, dlv, xbv;
   logic signed [31:0] poles;
@@ -655,8 +657,15 @@ module tb_voice;
         f_clip[s] = maxs(32'sd209715, ONE - qmul(c[7], qmul(y, y)));
         xbv = sat32(qmul(dlv, ONE - 32'(cfg[44])) + qmul(y, 32'(cfg[44])));
       end
-      gainv = gain_start + ((d_gain * (k+1) + 32'sd32) >>> 6);
-      outlv = outl_start + ((d_outl * (k+1) + 32'sd32) >>> 6);
+      // SXT-035: the ramp products are evaluated at 64 bits -- the leaf's
+      // VCA-Gain route makes d_gain reach ~2^28, so d_gain*(k+1) overflows
+      // the 32-bit self-determined width the landed fixtures never hit
+      ramp_prod64 = d_gain;
+      ramp_prod64 = ramp_prod64 * (k+1);
+      gainv = gain_start + 32'((ramp_prod64 + 64'sd32) >>> 6);
+      ramp_prod64 = d_outl;
+      ramp_prod64 = ramp_prod64 * (k+1);
+      outlv = outl_start + 32'((ramp_prod64 + 64'sd32) >>> 6);
       outv = qmul(xbv, gainv);
       scene_l[k] = scene_l[k] + qmul(outv, outlv);
     end
@@ -670,6 +679,11 @@ module tb_voice;
     logic signed [31:0] chainb [BLOCK_OS];
     logic signed [31:0] chaina [BLOCK_OS];
     logic signed [31:0] bl, mm;
+    // SXT-035: the +-8 scene hard clip is applied BEFORE the decimator
+    // (engine order, model order -- README step 7). The landed schedule
+    // clamped after the halfband instead, which is equivalent only while
+    // the scene never saturates; the leaf's VCA-Gain fixture saturates it.
+    for (k = 0; k < BLOCK_OS; k++) scene_l[k] = clamp8(scene_l[k]);
     for (k = 0; k < BLOCK_OS; k++) begin
       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
       for (i = 0; i < 6; i++) begin
@@ -685,7 +699,7 @@ module tb_voice;
       chainb[k] = xb; chaina[k] = xa;
     end
     for (k = 0; k < BLOCK; k++) begin
-      bl = clamp8(qround1(chaina[2*k] + chainb[2*k+1]));
+      bl = qround1(chaina[2*k] + chainb[2*k+1]);
       mm = clamp8(qmul(bl, 32'(master_amp)));   // L == R on the mono bus
       mm = clamp1(mm);
       $fwrite(fd, "M %0d %0d\n", b, mm);

@@ -1,0 +1,42 @@
+{
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "fixture_routes": [
+    {
+      "depth_raw": 38.400001525878906,
+      "dest_id": 298,
+      "dest_name": "A VCA Gain",
+      "dest_param": "vca_level",
+      "modsource": "ms_modwheel",
+      "modsource_id": 6,
+      "normalized_depth": 0.4000000059604645,
+      "source": "runtime setModDepth01 (host modulation API); preset file untouched; synthetic declared fixture on the landed voice slice"
+    }
+  ],
+  "frozen_scope": "scene-modwheel route table {Filter 1 Cutoff (308), Filter 1 Resonance (309), VCA Gain (298)} on the landed SXT-022/SXT-026a voice class; FAST_LINE smoothing per the landed Modwheel (cited: ModulationSource.h ControllerModulationSourceVector, SurgeStorage.h:2063 default, SurgeSynthesizer.cpp channelController case 1)",
+  "issue": "SXT-035",
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "preset_modwheel_routes": [
+    {
+      "depth_raw": 34.425018,
+      "dest_id": 308,
+      "dest_name": "A Filter 1 Cutoff",
+      "source": "preset content (graphs.jsonl md, engine readback equal)"
+    },
+    {
+      "depth_raw": 0.383036,
+      "dest_id": 309,
+      "dest_name": "A Filter 1 Resonance",
+      "source": "preset content (graphs.jsonl md, engine readback equal)"
+    }
+  ],
+  "schema_version": 1
+}
