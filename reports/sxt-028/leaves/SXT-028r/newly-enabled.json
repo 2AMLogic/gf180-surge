@@ -1,0 +1,55 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Databroth/Pads/Shining Broth.fxp",
+   "sha": "41d411a3e5587853852a7190fd3e88cdaad3503c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Sequences/Starlane.fxp",
+   "sha": "e2517a5f7936ee30e4e42c0b5d723e38407ad853"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/Bread & Butter Synth Brass.fxp",
+   "sha": "1327ffab128bcf20ade6a0cc1dd7ef52d4a10709"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/Electro Steel Drum.fxp",
+   "sha": "03c758c6b7c8ecdf5673d926313dc6f1b7e5ab7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Plucks/Wooden Block Pluck.fxp",
+   "sha": "4be4e86c7c847c148316aaf14acbc87541fc6237"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/FX/Reverse Breath 1.fxp",
+   "sha": "29ccfb0561ad12081c64873d0fdcf51478b18176"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Basses/Rude Individual.fxp",
+   "sha": "e6088bb0bbff6b868e7213f34c88d9d4594e3f42"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Keys/Starchild.fxp",
+   "sha": "e81e19138e53c112dba4eddc84b9670cd7127eab"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028r",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Keys/Starchild.fxp",
+   "sha": "e81e19138e53c112dba4eddc84b9670cd7127eab"
+  }
+ ]
+}

@@ -1,0 +1,116 @@
+{
+ "ablation_carriers": null,
+ "acceptance": [
+  "Fixed-model/RTL equality: RTL matches the frozen fixed-point model exactly (integer equality at declared checkpoints; tools/compare_rtl_model_fx.py pattern). This is a separate claim from reference agreement.",
+  "Reference budgets [PROPOSED, not frozen]: model-vs-pinned-engine agreement within declared max/rms/corr budgets on the fixture presets; budgets freeze only via SXT-017 (#12).",
+  "Per-instance state: two concurrent instances of this routing form keep independent histories (dual-slot model-level fixture); RTL/model equality must hold per instance.",
+  "Tails: acceptance renders include the effect's own tail span; patch-change mid-tail and reset/panic behavior specified and tested; dropped-tail renders FAIL.",
+  "External-memory traffic: state residency + read/write traffic estimate from the frozen model via SXT-015 accounting [PENDING-SXT-016]; long buffers external-writable, never flash.",
+  "Negative controls live: each control below demonstrably fails the check it targets; a control that passes is a broken control."
+ ],
+ "carriers": {
+  "b4_scope_candidate_presets": 18,
+  "contributor": 18,
+  "factory": 0,
+  "top_presets": [
+   {
+    "bank": "contributor",
+    "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Trance.fxp",
+    "sha": "c277c51ec0094a57c5fc219b3763db3801d7869e"
+   },
+   {
+    "bank": "contributor",
+    "path": "resources/data/patches_3rdparty/Exquis MPE/Brass/Batbrass.fxp",
+    "sha": "e6b6f04bea58347fe3b999bc8ba19a0f7a36febf"
+   },
+   {
+    "bank": "contributor",
+    "path": "resources/data/patches_3rdparty/Exquis MPE/FX/Dystopia.fxp",
+    "sha": "f884c4d1c866fdb2c50ec8bf67cf8c5345156f7d"
+   }
+  ]
+ },
+ "claim_scope": "Issue text only: no model/RTL exists, no fidelity or support claim, no cost claim, no musical-quality claim. Ablation deltas are reference-vs-reference diagnostics (SXT-014).",
+ "deliverables": [
+  "model/effects/rf-rf-send34/ -- frozen fixed-point model + README (word lengths, state layout, per-instance state ownership) (model/effects/README.md pattern)",
+  "model/effects/fx_inputs/rf-rf-send34-*.json -- fail-closed input extraction (extract_fx_inputs.py pattern; census blob re-verified, graphs cross-check, drift asserted 0)",
+  "rtl/effects/rf-rf-send34/ -- RTL + iverilog testbench incl. the dual-instance and negative-control benches",
+  "reports/SXT-028l/ -- EVIDENCE.md: verification statuses PASS/FAIL/NOT_RUN/BLOCKED, budgets vs achieved, coverage separate from agreement, ext-mem estimate [PENDING-SXT-016]",
+  "tests/test_sxt028l.py -- generator-consistency + exactness harness guards (oracle-dependent tests skip NOT_RUN without oracle)"
+ ],
+ "dependencies": [
+  "#9 SXT-014 (done: numeric deltas; listening labels BLOCKED-on-human)",
+  "#12 SXT-017 profile freeze (budget freeze gate)",
+  "#16 SXT-023 Delay/EQ (per-effect acceptance pattern + the open delay-budget finding feeds SXT-017)",
+  "#17 SXT-024 Reverb 1 (done: per-effect acceptance pattern, DR-0003 constant-table pattern)",
+  "#18 SXT-025 (done: integration boundary + scheduling for multi-slot wet paths)"
+ ],
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "feature": {
+  "roles": [
+   "send3",
+   "send4"
+  ],
+  "routing_form": "rf-send34"
+ },
+ "fixtures_plan": [
+  "No SXT-014 ablation carrier exists for this algorithm: render new reference fixtures from the pinned oracle under SXT-012 policies (tools/render_fx_fixtures.py pattern), original + per-slot bypass + all-off dry, tails included.",
+  "Proposed additional fixture presets (B4-scope carriers, census-blob sha verified at render): resources/data/patches_3rdparty/Exquis MPE/Basses/Trance.fxp (contributor, blob c277c51ec009...); resources/data/patches_3rdparty/Exquis MPE/Brass/Batbrass.fxp (contributor, blob e6b6f04bea58...); resources/data/patches_3rdparty/Exquis MPE/FX/Dystopia.fxp (contributor, blob f884c4d1c866...)",
+  "Sequences: seq-notes-coverage-v1 + seq-poly-8-v1 (SXT-012 library, SHA-256-pinned; reports/sxt-014 run manifests).",
+  "Comparability caveat: free-phase presets have single-instance numeric deltas with a repeatability-class floor (reports/sxt-012/repeatability.json); bit-identical-class presets preferred for exactness claims.",
+  "Parameter corners: loader defaults, extremes of each named param, and the fixture preset's stored values; temposync cases pin loadPatch tempo (SXT-023 pattern)."
+ ],
+ "generated_by": "SXT-028 issue generator (tools/generate_effect_leaves.py)",
+ "inputs": {
+  "ablation": "reports/sxt-014/ablation-summary.json",
+  "bundle": "contracts/profile-v1-bundle-DRAFT.json#B4-broad (status DRAFT-NOT-FROZEN)",
+  "corpus": "corpus/normalized/graphs.jsonl"
+ },
+ "kind": "rf",
+ "leaf_id": "SXT-028l",
+ "negative_controls": [
+  "Wrong order: two same-class slots swapped (slot-content permutation, tools/ablate_fx.py permute pattern) must FAIL the order-sensitive equality/agreement check.",
+  "Shared state: a mutant that pools the two instances' histories into one (tb_fx_shared_line pattern) must FAIL the dual-instance equality check.",
+  "Generic substitute: any variant that swaps this algorithm for a convenient generic is labeled ADAPTED and must be refused/excluded from original-preset coverage (tools/ablate_fx.py substitute pattern); bypass tests retain the unmodified wet reference.",
+  "Dropped tail: truncating the render before the declared tail span must FAIL the tail check.",
+  "Stale stub: the RTL harness pins the frozen-model revision hash; a stale harness must refuse to report PASS."
+ ],
+ "newly_enabled": {
+  "artifact": "reports/sxt-028/leaves/SXT-028l/newly-enabled.json",
+  "b4_scope_candidate_count": 18,
+  "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+  "rule": "strict-FX-complete: every active FX class of the preset is landed/in-flight (Delay in-flight (SXT-023, #16; open delay-budget finding); EQ in-flight (SXT-023, #16); Reverb 1 landed (SXT-024, #17)) or this leaf's own feature; B4-scope candidate count is the upper bound. Presets needing sibling 028 leaves count toward neither until the last sibling lands.",
+  "strict_fx_complete_count": 0
+ },
+ "non_goals": [
+  "Implementing the leaf here; coverage publication (#22); any substitute/generic effect under a support claim"
+ ],
+ "ordering_basis": {
+  "carrier_basis": "B4-scope candidate preset count",
+  "carrier_count": 18,
+  "caveat": "no SXT-014 ablation carrier for this algorithm; ordered by corpus frequency; essentiality UNVERIFIED -- listening pending (#9)",
+  "measured": false
+ },
+ "parameter_mapping": {
+  "authority": "slot-index/role mapping pinned by SurgeStorage.h fxslot_* constants, cross-checked against graphs.jsonl role data (SXT-011); send leaves pin return_level and per-scene send_level semantics from SurgeSynthesizer::process()"
+ },
+ "pinned_sources": [
+  "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/SurgeSynthesizer.cpp -- process() (fxsendout buses, sendToIndex[fxslot_send1..4], per-scene send_level smoothing, fx return_level, fx_bypass gating), loadFx() (per-slot reload), reorderFx(), enqueueFXOff()",
+  "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/SurgeStorage.h -- fxslot_* slot index constants, n_send_slots, fxb_* bypass states",
+  "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/dsp/effects/SurgeSSTFXAdapter.h + SurgeEffect.h (instance construction/suspend per slot)"
+ ],
+ "recovery_order": 12,
+ "routing_roles_used_in_scope": [
+  "send3",
+  "send4"
+ ],
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "state_and_cost": {
+  "ext_mem_traffic_estimate": "[PENDING-SXT-016] estimate via SXT-015 accounting on the frozen model; no number invented here",
+  "long_buffers": "delay/reverb-class buffers live in external WRITABLE memory; processing stays on-chip; flash is not writable delay memory",
+  "per_instance_state": "every concurrent instance keeps independent histories; arithmetic may be shared only observably (plan section 4; AGENTS.md)"
+ },
+ "stop_escalate": "If the effect cannot be bounded in state/cost under the shared instance schedule, record the finding and route to SXT-017 (#12) before freezing budgets; do not weaken acceptance to pass.",
+ "sxt017_decision_required": null,
+ "title": "SXT-028l: Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
+}

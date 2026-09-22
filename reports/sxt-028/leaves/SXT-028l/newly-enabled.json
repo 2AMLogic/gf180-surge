@@ -1,0 +1,99 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Trance.fxp",
+   "sha": "c277c51ec0094a57c5fc219b3763db3801d7869e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Brass/Batbrass.fxp",
+   "sha": "e6b6f04bea58347fe3b999bc8ba19a0f7a36febf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/FX/Dystopia.fxp",
+   "sha": "f884c4d1c866fdb2c50ec8bf67cf8c5345156f7d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Magic Whistle.fxp",
+   "sha": "cf72bb90d9d1d7e67161f3cf90589bd374cb8b62"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Trident.fxp",
+   "sha": "9b2ed6983f135c233fe1767520818466a6726d58"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Acid.fxp",
+   "sha": "3c7d218a609240ac73bfcfcbda5e7913904b2458"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Saw.fxp",
+   "sha": "1862a9ee8527b266deafe5ee3c82dba8492e2a5d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Square.fxp",
+   "sha": "a8130d516c153caced3ecd2632bb940cb6484f13"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Triangle.fxp",
+   "sha": "0005423a30f2583fb855e23163780c9ce3f8e71f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Akoustik.fxp",
+   "sha": "c5668aac6ded2f9cbd85ccb6539d0f2b0863f122"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp",
+   "sha": "5cf02de086aa01e4de8a5cb96ca76b69bbbcd688"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Closer Still.fxp",
+   "sha": "b8a6123497a44169fe1e8ab43d12b5ec0cb3a289"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Other X-Fades 2.fxp",
+   "sha": "7445a35cf45e07922e9188471f521a1819f35d23"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Other X-Fades 3.fxp",
+   "sha": "45f0d98d0b0d1794fa9f79f918dcd662f227bc46"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Sineplicity.fxp",
+   "sha": "1943ac4ce9ab356aa178cc541deda3dc19ed1adc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Harpie.fxp",
+   "sha": "1a8b748d3b8bee8142e20ba7c8b0e6d47707c6f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Strings/Orchestral Harp For Runs.fxp",
+   "sha": "732c8ec8a85a0e3a81143209d079beb307f4e0f4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Not Another String Machine.fxp",
+   "sha": "c7a3ee9859bd880a36292ec74ce4689481497514"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028l",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": []
+}

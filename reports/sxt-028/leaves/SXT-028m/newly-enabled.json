@@ -1,0 +1,115 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Rounded.fxp",
+   "sha": "4403d52200f19737cdd9a355b4aeb474b81bb3e3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Drums/Snare 1.fxp",
+   "sha": "664ddc46620254a7b1005d2d19de10343c06745a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Drums/Snare 2.fxp",
+   "sha": "dc0f2554b78273b032c3f0dbe2c3904b25fa65a2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Guitars/Temple.fxp",
+   "sha": "3c8e6d56f4055a68a5a266ebb25f530c888f21cf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Pads/Unity.fxp",
+   "sha": "c3978e7ce1fbede44c06aa28db2d1473ae34f58a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Brass/Synth Trumpet.fxp",
+   "sha": "6c2adf00eee975d9c065a65dd538054159c47f25"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Fake Bell.fxp",
+   "sha": "590505598d5ba33c8bb91fec2d873ba9603b7c96"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/Funky Sine.fxp",
+   "sha": "984aa3971a9e83c7f4bbda48a58256ff9d9c004a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/String Machine 4.fxp",
+   "sha": "05b87a81d4e176303d2782cbea2a5c2c2dd20a7b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Woodwinds/Recorder.fxp",
+   "sha": "5c992964738b825808b403b9c16877c2060fe6b2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Mallet Finally! 1.fxp",
+   "sha": "9bc779230e1455414d33f8b8ab06334a6b9453a7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Mallet Finally! 2.fxp",
+   "sha": "6efaad0c3d308d9eb56ea48462b4bd51acd8a8e0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/But Clean The DC.fxp",
+   "sha": "245ce1499174ce54bc4e270c49d6a233b28aedcf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/I Can Kinda Be Chordish.fxp",
+   "sha": "d25d11477c53457290d1180bceac6863304ac55e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/Low Problems.fxp",
+   "sha": "edda7e9e60fa5348afc53c588269a8fe46c1ee64"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/Uuu-waaaa.fxp",
+   "sha": "1d537b804aa7aa22c546e046325d301e4e4e789a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Drums/Simple Snare.fxp",
+   "sha": "a9d4121752c881fa9d753cc97778be7dc1ad40b3"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028m",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Rounded.fxp",
+   "sha": "4403d52200f19737cdd9a355b4aeb474b81bb3e3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/Funky Sine.fxp",
+   "sha": "984aa3971a9e83c7f4bbda48a58256ff9d9c004a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Woodwinds/Recorder.fxp",
+   "sha": "5c992964738b825808b403b9c16877c2060fe6b2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/Uuu-waaaa.fxp",
+   "sha": "1d537b804aa7aa22c546e046325d301e4e4e789a"
+  }
+ ]
+}

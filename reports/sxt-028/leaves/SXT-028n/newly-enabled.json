@@ -1,0 +1,100 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Drums/Snare 1.fxp",
+   "sha": "664ddc46620254a7b1005d2d19de10343c06745a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Leads/Sine Lead.fxp",
+   "sha": "d4402c44dfbc42a7e66255077594fc2beff84820"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Black-Sided Sun/Polysynths/Early Electronic 3.fxp",
+   "sha": "19c8b6c0489d7b288bc520141da2200b11a490a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+   "sha": "321848282edf3b40d6f93ad950a8ae35660f3258"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Leads/Scratchy Detuner.fxp",
+   "sha": "d6ec0af16cc0e00c4458868cef9dcd5023908905"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Stoney Baloney.fxp",
+   "sha": "9747822088747722a6b67dca34e2687bbf58c387"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Clap - Noise Layer.fxp",
+   "sha": "b8b78f78a5284937d7c248cbeaf4e0b2d0bd1779"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Snare - Basic Drive.fxp",
+   "sha": "0f94601ab11d6ab2818f7e2f33d840ef0da2278c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/But Clean The DC.fxp",
+   "sha": "245ce1499174ce54bc4e270c49d6a233b28aedcf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Leads/Mystique Power.fxp",
+   "sha": "221da11d4e718bcd1acc02eab723ecbff8ee18be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Leads/Open Retro Lead.fxp",
+   "sha": "29b3913c749fc6ee6f5f31250bc4371833920ddb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Pads/Moving World.fxp",
+   "sha": "353a0e4c553aba6e7eb594e41e639037c059d6e9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Harmony Chords + Synth Top.fxp",
+   "sha": "41d1042246c169f9de6d4aa7afbd5268ee402f7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Harmony Chords.fxp",
+   "sha": "4e4eb59317b18142677cc76e1be3a374c7ad9e0a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Works As A Reesey String Motive.fxp",
+   "sha": "72887da1dd91adffa994e5eb88acd6e8ff04e3f3"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028n",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Black-Sided Sun/Polysynths/Early Electronic 3.fxp",
+   "sha": "19c8b6c0489d7b288bc520141da2200b11a490a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Leads/Mystique Power.fxp",
+   "sha": "221da11d4e718bcd1acc02eab723ecbff8ee18be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Works As A Reesey String Motive.fxp",
+   "sha": "72887da1dd91adffa994e5eb88acd6e8ff04e3f3"
+  }
+ ]
+}

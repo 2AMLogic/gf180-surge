@@ -1,0 +1,152 @@
+{
+ "backlog": [
+  "SXT-028m",
+  "SXT-028n",
+  "SXT-028o",
+  "SXT-028p",
+  "SXT-028q",
+  "SXT-028r",
+  "SXT-028s",
+  "SXT-028t",
+  "SXT-028u",
+  "SXT-028v"
+ ],
+ "branch": "loom/sxt-028-effects-leaves",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "filed": [
+  {
+   "b4_scope_candidate_presets": 81,
+   "issue_number": 53,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/53",
+   "leaf_id": "SXT-028a",
+   "measured_delta_db": 10.093,
+   "recovery_order": 1,
+   "strict_fx_complete_newly_enabled": 38,
+   "sxt017_decision_required": false,
+   "title": "SXT-028a: Airwindows algorithm leaf: Galactic (id 49)"
+  },
+  {
+   "b4_scope_candidate_presets": 365,
+   "issue_number": 54,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/54",
+   "leaf_id": "SXT-028b",
+   "measured_delta_db": 2.245,
+   "recovery_order": 2,
+   "strict_fx_complete_newly_enabled": 175,
+   "sxt017_decision_required": false,
+   "title": "SXT-028b: Conditioner effect leaf (gate/compressor/LFO)"
+  },
+  {
+   "b4_scope_candidate_presets": 331,
+   "issue_number": 55,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/55",
+   "leaf_id": "SXT-028c",
+   "measured_delta_db": 2.083,
+   "recovery_order": 3,
+   "strict_fx_complete_newly_enabled": 175,
+   "sxt017_decision_required": true,
+   "title": "SXT-028c: Chorus effect leaf (sst-effects Chorus, delay-line class)"
+  },
+  {
+   "b4_scope_candidate_presets": 445,
+   "issue_number": 56,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/56",
+   "leaf_id": "SXT-028d",
+   "measured_delta_db": null,
+   "recovery_order": 4,
+   "strict_fx_complete_newly_enabled": 60,
+   "sxt017_decision_required": false,
+   "title": "SXT-028d: Routing-form leaf: Global FX slot 2 (second concurrent global FX instance)"
+  },
+  {
+   "b4_scope_candidate_presets": 304,
+   "issue_number": 57,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/57",
+   "leaf_id": "SXT-028e",
+   "measured_delta_db": null,
+   "recovery_order": 5,
+   "strict_fx_complete_newly_enabled": 158,
+   "sxt017_decision_required": false,
+   "title": "SXT-028e: Distortion effect leaf (multiband + waveshaper drive)"
+  },
+  {
+   "b4_scope_candidate_presets": 232,
+   "issue_number": 58,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/58",
+   "leaf_id": "SXT-028f",
+   "measured_delta_db": null,
+   "recovery_order": 6,
+   "strict_fx_complete_newly_enabled": 101,
+   "sxt017_decision_required": true,
+   "title": "SXT-028f: Reverb 2 effect leaf (sst-effects tank reverb)"
+  },
+  {
+   "b4_scope_candidate_presets": 155,
+   "issue_number": 59,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/59",
+   "leaf_id": "SXT-028g",
+   "measured_delta_db": null,
+   "recovery_order": 7,
+   "strict_fx_complete_newly_enabled": 97,
+   "sxt017_decision_required": false,
+   "title": "SXT-028g: Phaser effect leaf (sst-effects Phaser)"
+  },
+  {
+   "b4_scope_candidate_presets": 131,
+   "issue_number": 60,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/60",
+   "leaf_id": "SXT-028h",
+   "measured_delta_db": null,
+   "recovery_order": 8,
+   "strict_fx_complete_newly_enabled": 16,
+   "sxt017_decision_required": false,
+   "title": "SXT-028h: Routing-form leaf: Scene-B insert FX bus, slots 1-2 (bins1/bins2)"
+  },
+  {
+   "b4_scope_candidate_presets": 55,
+   "issue_number": 61,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/61",
+   "leaf_id": "SXT-028i",
+   "measured_delta_db": null,
+   "recovery_order": 9,
+   "strict_fx_complete_newly_enabled": 4,
+   "sxt017_decision_required": false,
+   "title": "SXT-028i: Routing-form leaf: Scene-A insert FX slots 3-4 (ains3/ains4, extended rack half)"
+  },
+  {
+   "b4_scope_candidate_presets": 48,
+   "issue_number": 62,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/62",
+   "leaf_id": "SXT-028j",
+   "measured_delta_db": null,
+   "recovery_order": 10,
+   "strict_fx_complete_newly_enabled": 1,
+   "sxt017_decision_required": false,
+   "title": "SXT-028j: Routing-form leaf: Global FX slots 3-4 (global3/global4, extended rack half)"
+  },
+  {
+   "b4_scope_candidate_presets": 30,
+   "issue_number": 63,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/63",
+   "leaf_id": "SXT-028k",
+   "measured_delta_db": null,
+   "recovery_order": 11,
+   "strict_fx_complete_newly_enabled": 0,
+   "sxt017_decision_required": false,
+   "title": "SXT-028k: Airwindows algorithm leaf: Logical (id 4)"
+  },
+  {
+   "b4_scope_candidate_presets": 18,
+   "issue_number": 64,
+   "issue_url": "https://github.com/2AMLogic/gf180-surge/issues/64",
+   "leaf_id": "SXT-028l",
+   "measured_delta_db": null,
+   "recovery_order": 12,
+   "strict_fx_complete_newly_enabled": 0,
+   "sxt017_decision_required": false,
+   "title": "SXT-028l: Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
+  }
+ ],
+ "record": "filing record for SXT-028 generator run (issue #21); not generator output",
+ "schema_version": "sxt-028-effect-leaf/1.0.0"
+}

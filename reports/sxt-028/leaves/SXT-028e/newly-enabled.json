@@ -1,0 +1,2320 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+   "sha": "e688adfdcdee44073968942914733783163b0e8c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Argitoth/FX/Monster Feedback.fxp",
+   "sha": "2379e0713eb2830a3c4acbe3a9442500ab960fd9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Argitoth/Leads/Screaming Saw.fxp",
+   "sha": "c811a9aab5849303b252a0c36731e37685288072"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+   "sha": "099e88298ae11cc7a5335054c04f3caf7e1539dc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Bluelight/Keys/Treated Rhodes.fxp",
+   "sha": "6fe112ac9b06b13fad1dd1b2a3349b8bf9651413"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Basses/Acid Bassline 1.fxp",
+   "sha": "6d5c24960b23606f215dca7860a915a9679fc709"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Basses/Fancy.fxp",
+   "sha": "3ac3c39071b4675731d8d731363fb70cf1f6cce1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Basses/Housy.fxp",
+   "sha": "0bbe96e5eb13b18515370c4413d9f190e5830f33"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Brass/Synth Trumpet.fxp",
+   "sha": "6c2adf00eee975d9c065a65dd538054159c47f25"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Acoustic Snare.fxp",
+   "sha": "c840ab363c2e7238e3de499255d2909005aac825"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Classic 808 Cowbell.fxp",
+   "sha": "aa476698ed98f68158f94f5722c86e871554aaba"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Destroyed Kick.fxp",
+   "sha": "a9649d269d52f07738c9bfe9ff098567abaa8dd6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Nice Hat.fxp",
+   "sha": "4485e38a013022339363e0a164ed5e9678239a7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Old Kick.fxp",
+   "sha": "90f02312caa882abe7c1d76b8883ae0a51ed433b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Perc 11.fxp",
+   "sha": "62d7307d5efadf634cbe2009377e3b07035a88c0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Rickroll Tom.fxp",
+   "sha": "62a39254e0c576cb8eaf07e73f6e4ceb739ee1bd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Daisy.fxp",
+   "sha": "c36fc7626dfe072585dbffe9e73d5b2b0e05b3b4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Fake Bell.fxp",
+   "sha": "590505598d5ba33c8bb91fec2d873ba9603b7c96"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Noisy.fxp",
+   "sha": "21acbf0d79241bd3111b05cb84929ce200cd90ea"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/Destroyed 808.fxp",
+   "sha": "95ea90d8edcfd7de1ba2837c976eb009189d911f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/FMey 808.fxp",
+   "sha": "165e2aa0bc6077e257062fde85130376573e2e1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Pads/Utopia.fxp",
+   "sha": "12d56b80146d8bfa9bab79d3906bd7767fd1357a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Winds/Saxophone Emulation.fxp",
+   "sha": "6aa1f5ea1e276448e31226a4d9f61c1d466e8ad6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Arps/Cinematic RTM.fxp",
+   "sha": "96de6485042440ad2924c24233caaafa1a6f79c2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Arps/Lush Style.fxp",
+   "sha": "10ad571d5205e9eab5665fd04e524272e677e886"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Basses/BC Bass.fxp",
+   "sha": "22d3246804d5b65bcd0272c811597ca51d6b5cf0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Basses/Normal Bass.fxp",
+   "sha": "8a38d372414ded214868341deaa66723218ae4ed"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Basses/Side Bass N1.fxp",
+   "sha": "70f2c0e669030f998cc9897e70998999dab4c54c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Drums/Reverse Crash.fxp",
+   "sha": "de5c684d96d6090728dfe2ede0a3dbd73af1d65f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Plucks/Disto.fxp",
+   "sha": "2a1f1c956adc4db0c7ce33e8deb49e173f398692"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Plucks/Happy Snappy.fxp",
+   "sha": "49a124f407ebdbc6b07349d8239ac2bd963de44b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Plucks/Trance Pluck.fxp",
+   "sha": "1bb5209f0f1d306df05a109d6015cf1a99c73d08"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Basses/Lucy Louise.fxp",
+   "sha": "66e32c437ea73c7338ad9b7e868c2114d67184d1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Basses/Piglet.fxp",
+   "sha": "2973604458ccdb05944ddb563dc3701f49dc48b7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/FX/Airplane Fly-By.fxp",
+   "sha": "e9f0ac4211afd5956f844c3a644dd07efdf183b6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/FX/Flubber.fxp",
+   "sha": "68b4bb6d0d58784e90941d7cffc02a89fa46a9b4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/FX/Manic.fxp",
+   "sha": "e85ed07b4404bffba08c6cbe27feae1bebf1ec53"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Leads/Second Thoughts.fxp",
+   "sha": "d4372453feff4f7f97fe04eb1e1cd5c2e2f71d71"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Leads/Sharp Lead.fxp",
+   "sha": "92ec8921be306d56813b9a0c46e0822eead717cf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Plucks/Power Chord.fxp",
+   "sha": "016504f0e79c94146495b2fc3974a40b25dca6bb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Mumford's the Word.fxp",
+   "sha": "4ced4798e8c34016cf85831c8663a423a52cf92d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Pick Me Minor Arp.fxp",
+   "sha": "4163a84a949eebea80761575dc5f962d09003ced"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Pick Me.fxp",
+   "sha": "6e1f3ac8262621ceaa51fc8e13aab02057f50426"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Rhythm and Lead.fxp",
+   "sha": "c6d604f7622e0403a9b3fe0298864eed899a5836"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Syncing Ship.fxp",
+   "sha": "ab9f6b02d6f22541c8bf96c9b4b6ae7dd2ef8cff"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Tin Men.fxp",
+   "sha": "88c3884d93dfd1f22758661303046fa2bce24ccf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Amped Harmonica.fxp",
+   "sha": "359878408f07b53b30e32cc62a3bc0572b7bb68e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Flute 1.fxp",
+   "sha": "67d799a5e1033cbd8824fd0023d565cecde8a4be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Flute 2.fxp",
+   "sha": "65022fac22230cf11e475d7e92a759fc96face1f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Junkyard Dog.fxp",
+   "sha": "1e32f8da7f2fcdad27ad3b9b3a73cf27b233b14c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Oscar The Grouch.fxp",
+   "sha": "078fee7a0ff53f0128650f733b7ed655b7ca9d1f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Physical Therapy.fxp",
+   "sha": "ab38214d52d7f1191733281bb04ff40f0d03874f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Reed To Pipe Morph.fxp",
+   "sha": "a5b6ba3425f51e4ca70ca6d405af35eeb23c9bcd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Scratchy Throat.fxp",
+   "sha": "891bbcc55612e36ccd5a2e0972913f8c4272105e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Tenor Sax.fxp",
+   "sha": "e958fa80fdbe1b554290c0dccbcf726c8725ced7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Databroth/FX/Kick.fxp",
+   "sha": "275042a1efaf4fa6b7394e65a62b64030f80fc29"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Basses/Acidy FM Boy.fxp",
+   "sha": "c26d6c4b8e598a224d1df4c105dcdd185fe7c0c8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Basses/Beefy Boi.fxp",
+   "sha": "d0d59a909d24f6711cda27fa908c70884404c4a7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Basses/Soft Plucks.fxp",
+   "sha": "3cc5649e2dd6392d83ecd72712e9fc399219a245"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Hat Closed.fxp",
+   "sha": "88d46a52a54b0b7c2dc6071f16f8d230676575a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Hat Open.fxp",
+   "sha": "4d4f62e2b3b8bf265dd0615513c92414612e46f9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Hat Split.fxp",
+   "sha": "6167fabfb56bc93cd43617261a4ab4bafb54eeb9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Hat.fxp",
+   "sha": "65f7fc65ba28a16732c1461dc5d3f5b585883724"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Kick Room 1.fxp",
+   "sha": "234cfc45108ebb0d0357422e50091c55a61e32a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Kick Room 2.fxp",
+   "sha": "0436520a0509474f1e3051fcdd5c4d141623c3ae"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Mort Chippy Bits.fxp",
+   "sha": "44449f0512c138928712f927ec6bb5d431cf8d60"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Mort Kick Chippy.fxp",
+   "sha": "6b1ef7dd44b13411f211b23d732412deafa9c8ca"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Mort Kick.fxp",
+   "sha": "e355879b2ed56b7e58e01886e6ae8195b12c37cd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Mort Noisey Drum.fxp",
+   "sha": "5e620bed7bf43c6001fa155f1ba47013893a866d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Mort Snare.fxp",
+   "sha": "054b5228301468f6e867d77b4b89fe1a37a08867"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Snare Room 1.fxp",
+   "sha": "4fe19d120d11f2c60b182b60b9c2bc158f984bb0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Snare Room 2.fxp",
+   "sha": "2054a715336129c6cfd1f96603beaf462f93f368"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Clap.fxp",
+   "sha": "7214fe8ada88ebcf02c688bd130d4cdce7ded47f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Conga.fxp",
+   "sha": "17308086b68a183db5a55d8537ab72578195b321"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Cymbal.fxp",
+   "sha": "184970806fd7fb8685bbd631e24750144e2be56e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Kick 1.fxp",
+   "sha": "deb2bc0dd0380651571e87bb452b55d5f29cc6c6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Kick 2.fxp",
+   "sha": "ee3f1cd8c93be3f45cbd63ed7f5518a1558554a1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Snare.fxp",
+   "sha": "8c84162ffd5d349c354221f8e2a23c2caba1ecd2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T9 Snare.fxp",
+   "sha": "208ffebb752453d60da2901e2eb698ee5ab289ce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/FX/Sick In The Super Dome.fxp",
+   "sha": "288ebccbba4da1727a6a11fc34c25b23b302dca5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/FX/Signature Talker 1S.fxp",
+   "sha": "a609cc43994ed86d3f7ba6c3233fe56ba974a303"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/FX/Slapshot.fxp",
+   "sha": "0c0ec2b4aba206d68647cdef7fffa6208b159d58"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Keys/Trombone Harmonica.fxp",
+   "sha": "ec81acbe27c5afd3c8caee340c95452f813e5fea"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Pads/Fuzzy Speaks.fxp",
+   "sha": "e5f0609f6ea4208bb84963b70a81dc6715ea6187"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Plucks/Banjo Like.fxp",
+   "sha": "b3781dbaac852dd7b2b0b3039ea6dc693b550aac"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Plucks/Horn Ring Boops.fxp",
+   "sha": "7269891aba5c5edb4b156c0eec32cf8eabe37e1b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp",
+   "sha": "428ead7abd1c00c8ee7bf55dc53345858bee7bce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Sequences/Dancing Sine Boyz.fxp",
+   "sha": "0bd676ab17e320a3cd5aceb310dd07d792ee69a3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Sequences/Dirty Saws.fxp",
+   "sha": "030343e5bc441fb73da51d7a852a43beb8e0ec3b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/3x101.fxp",
+   "sha": "6ffb39c5d07e589a19f994b386e1abd3493aeab6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Trance.fxp",
+   "sha": "c277c51ec0094a57c5fc219b3763db3801d7869e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Brass/Batbrass.fxp",
+   "sha": "e6b6f04bea58347fe3b999bc8ba19a0f7a36febf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Sand Storm.fxp",
+   "sha": "2ba21470c23e49ca2bc12dd185159b1b539bbbb8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Trident.fxp",
+   "sha": "9b2ed6983f135c233fe1767520818466a6726d58"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Acid.fxp",
+   "sha": "3c7d218a609240ac73bfcfcbda5e7913904b2458"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Uneasynth.fxp",
+   "sha": "6aecea11a107c84683ed1540ecdba291e10d61df"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp",
+   "sha": "5cf02de086aa01e4de8a5cb96ca76b69bbbcd688"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Distorro.fxp",
+   "sha": "3bbfa73cd46ee8c6cb3a492a3d5c390e3c70a57e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Mid Band Diver.fxp",
+   "sha": "18e32ab11df80a19990d00fb3f078b76abc299e7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Phasing Warp.fxp",
+   "sha": "f8f408120d56f3d8acf6f4cafeddc074b445c89d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Squeezy Chaos.fxp",
+   "sha": "6e615d4ad84dfe49db9afcc56a1eaa77c6af97c8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/X0X Bassline.fxp",
+   "sha": "2639d091ae2f8abe93038e4cd9a7eb86e8aadeaa"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Leads/Frag 7th Syn.fxp",
+   "sha": "8ae57a1e5a295db3dc21518c21ce1d806e1fcbbc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Bloody Valentine.fxp",
+   "sha": "f369e296fa16ac71026dc63347e43db3ed94bd99"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Going Away.fxp",
+   "sha": "d1ce0c1652e4cc88b55b77384da862a8d4d4c714"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Nasal Cavern.fxp",
+   "sha": "46698be22e0c054e576a4292e4237178dcf4a3f6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/The Well.fxp",
+   "sha": "f3b4615285037ebdb941ee32efaff7c9710c70e0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Clockers 1.fxp",
+   "sha": "19fb89082bcc8a34ce5302f9cc7e523bba6b2ef0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Clockers 2.fxp",
+   "sha": "f6e1daacbe1b06c16d2a0d009fba5b6699688044"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Clockers 3.fxp",
+   "sha": "240fd4beabf1b5dc71a41b4b3f52cb24d8ae5bd1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Clockers 4.fxp",
+   "sha": "09d594295e2efa7115d1f3901f7eb7e6df79ea4d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Melodic Line 1.fxp",
+   "sha": "77ac084bf87f442253c5dded79e6e32f27b931ee"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Melodic Line 2.fxp",
+   "sha": "dbd53b5963acae4fd0178e03905d07d5c29fd3e7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Melodic Line 3.fxp",
+   "sha": "0f9b7fd3576d9ae90a6ae9ff33a39b5ec67eee68"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Leads/Melodic Line 4.fxp",
+   "sha": "9bdd7d1675096af0bf50d1db7f0fbc5cc456238a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Pads/Hangars 5.fxp",
+   "sha": "ebf2ef80251e3beef51801cf883769af51be9f2a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Keys/Palm Mute Pi.fxp",
+   "sha": "413677f5863268ae0bbfb02059cbf0f1ce2b7bc8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Sweet Bass Guitar.fxp",
+   "sha": "1b11a2d36d7d93f90b8055167fe0bee7c882e62a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Basses/The Flat Eric Fan Club Has Its Perks.fxp",
+   "sha": "1f6b7be61d01f5184373149f60c652d314a9b739"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Guitars/Mutant Lo-Fi Acoustic Guitar Workstation.fxp",
+   "sha": "714821ee0c7561bc1293bb422e2c4bd2f978b163"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Guitars/Mutant Lo-Fi Electric Guitar Workstation.fxp",
+   "sha": "0b281c70208d1771e27884b6e3728d06e51016a4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Leads/Hi, Vince Clarke!.fxp",
+   "sha": "47cd404f1bc764b4a1f48b1b3cedc66bc64864e2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Let's Make Drone Music!.fxp",
+   "sha": "2c20e0fc57f75734db5fe5abc9d6fdf4a1fdf50d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Percussion/Deep Cut Snare.fxp",
+   "sha": "d77534a7d94910cdbfecd980f212780b7e24cdce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kuniklo/FX/Radio Putty.fxp",
+   "sha": "5d6c10276244543c46f81a208bbac074209a0234"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kuniklo/Sequences/Dancer.fxp",
+   "sha": "2ded92be120e7c1eb0c14a31c17098968fab576f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kuniklo/Sequences/Netlon.fxp",
+   "sha": "c9ed038f431eb32fa246643166cc2a9c0664829f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kyurumi/FX/Audio Rating.fxp",
+   "sha": "1de4fd2bc55d8b7ef6ee8e1ff9608d43aa7b4877"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kyurumi/FX/Technological Sine.fxp",
+   "sha": "f1b2fa9ed3ddd3d296980f34fc2457b2062828cd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kyurumi/Keys/Winter Feelings.fxp",
+   "sha": "4e787b7fb478f46012b4f07636ee56ae8f305b2b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kyurumi/Leads/High Meta.fxp",
+   "sha": "138ce2cd5a166b45d2e3b04296e9bcdc019d08cd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kyurumi/Leads/Long Moments Lead.fxp",
+   "sha": "6b1008a6e3f98465c66dad13ea05b099188ac409"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Feedback Guitar.fxp",
+   "sha": "72f70d2dfd6eacf62e1c397414ae1a3696eab092"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/LP Bridge + Chorus.fxp",
+   "sha": "be52a433eb5cca4ee5fbb329a9be6040035565e9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/LP Bridge.fxp",
+   "sha": "f2be82bce4986cac130a64feb32aa1556260b211"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Overdriven Guitar + Wah.fxp",
+   "sha": "224833177f77cdddf5ec0cfc3d02370959272df2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Overdriven Guitar.fxp",
+   "sha": "976c586a5f5a96d37819b7d043b960413b6e3935"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Pedal Steel.fxp",
+   "sha": "166bc01221fee00cdbabc155142c42882989f4ac"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Shrill Distorted Guitar.fxp",
+   "sha": "d72c31ec6ac15d71dea4c4071c002533bb5a23de"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Stratus Overdriven.fxp",
+   "sha": "abaee1ff446349c06c3eba759798c0d4a0a448a2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Pads/Warm Pad.fxp",
+   "sha": "dad2d9f04faac4339d7df86b4e5faf3bf7f21228"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Winds/Harmonica Overdrive.fxp",
+   "sha": "280d7b262a413670990f959138db22bb04ee40ba"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Basses/Alias Notch Bass.fxp",
+   "sha": "b8601406460036e6b11d70dd00ae83cb952f85e1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Drums/Big Grimy Kick w Wobble.fxp",
+   "sha": "4a4dbd4cdb421dad946485c1d5a712a131aa4f64"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Drums/Big Kick w Wobble.fxp",
+   "sha": "2125b50486bf8817352babc23351ecef61f6d0c5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Drums/Big Kick.fxp",
+   "sha": "ed9b87e2c93eba3b19d560049a5d35ea2e29b4f2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Guitars/Awful FM Guitar.fxp",
+   "sha": "d71a9cfd39789ca43e9b72ca3e65dd40d10be8f2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Guitars/Synth Guitarish.fxp",
+   "sha": "1275d5db2396ce2fe5c0e27ea8422e7f20771541"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Vaguely Rhodesish.fxp",
+   "sha": "f375440b21fc709e573b78d274d910d14f5197f0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Paraphonic NL Bandpass Lead.fxp",
+   "sha": "e85783c6f5dd0025a4293213c69303447c092583"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/MPE/Paraphonic Cutoff Warp.fxp",
+   "sha": "c550fe5558c96f9ba6bf91ff9fde57f2b382c017"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Rhythms/Paraphonic NL Bandpass S&H.fxp",
+   "sha": "ebb0608d0d7b197c8ac251abb240b875e5d6b294"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Kick 2.fxp",
+   "sha": "94d87f1e0f69eb440e464154e78bff638333b74a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Arps/Demon Power.fxp",
+   "sha": "ce3cd9037a076fe48fa272aad18e98c2b673448e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Agressor.fxp",
+   "sha": "24c8e1867915f09de3999ceb1e29326e36b07b1f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Basted Lead.fxp",
+   "sha": "6fdd10c4c805095afeab27f323fad4bc11cdbdde"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Black Betty.fxp",
+   "sha": "1e0c5265812c5af220348d14d48a0df66ac4acbc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Chicago.fxp",
+   "sha": "66b13bc9a14cc287fa09bdbd8eec6b909e4e6aff"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/China Long.fxp",
+   "sha": "1c5ba7b6124dea65a2ee5797b3980f0449f43f8f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Crash Attack.fxp",
+   "sha": "6f6a066edebc5684811ac947d2db9a113e0870a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Crazy.fxp",
+   "sha": "bc8d7b6c8ee724576bbb10dfa1ff4121e70a6438"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Deep Stack.fxp",
+   "sha": "0e13b63b6de7f0aa7560203180c9a7da71179d28"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Dista Bass.fxp",
+   "sha": "27b8b5298d30ba6011049e98b0d1421c595a10fd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Dusty Road.fxp",
+   "sha": "f02f836bcd17711ae3574619838d7ad1de75167c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Dynamic Sawer.fxp",
+   "sha": "6af7f177c0da407e2a989ce95819cf7c03679757"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Electro Shock.fxp",
+   "sha": "09753c36091f5f128ff3a2971f555d5b8c4a85a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/FM Structure.fxp",
+   "sha": "aeffc604aea383202a24bdd49df173ad704b263c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Fidget.fxp",
+   "sha": "51b14aae5a67a622bb6360cdce9a1abf078bdd93"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Grizzly.fxp",
+   "sha": "6fb95b361e6fbca4cf3cba187241eb5a7b55fc5f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Hemera.fxp",
+   "sha": "376bec0b590683f590e0afb1a571a60b12d301c5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Hoover FM.fxp",
+   "sha": "73017d71b8985fcac8fcf624e9433502f9192475"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Juno Fire.fxp",
+   "sha": "6ba5f204b08c53ce6ee4be816c9e975c861ce77d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Key Station.fxp",
+   "sha": "4b1f68dc60a7eeeb65649a2a490385723f03ce77"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Morphine.fxp",
+   "sha": "c58c07cf24fe1fab9583488018647a9273f5a25c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Odionis.fxp",
+   "sha": "65ca2696efcb8be57ecdd69427e692294d06413f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Phantom.fxp",
+   "sha": "95c045be9fda00976c4776dedee3c65d42dc61c4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Plastic Dream.fxp",
+   "sha": "84a297e98c16796c53e7cf9d5f92d9e97b4b1254"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Poolpad.fxp",
+   "sha": "66a9b120be6307326d8939c848ee919f4e5140e2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Rubber Bass.fxp",
+   "sha": "a6eb038d730ffb0bbcea65230a674a3846ba4d46"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Scrambler.fxp",
+   "sha": "6486ae92fb4e65544b81be8efaf46f04f306f1c9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Serious Step.fxp",
+   "sha": "117e134cbe978883a1118958a5bd0e628b5f1380"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Shot Gun.fxp",
+   "sha": "e45e82294a31dd32cecabda13c7ef40a98ff3084"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Slide Note.fxp",
+   "sha": "25888a810e0d5e63339593a2e4b1bf56f34dc5f6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Sortier.fxp",
+   "sha": "04f8150c23b24ed3ff3bf9b4477d0258b01ec6ca"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Strange Frog.fxp",
+   "sha": "9cba547c965286fa742d1bd6181dee65ab3babce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Strekoza.fxp",
+   "sha": "de0f957ad6e795d734858afb6f73d7a103a76712"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Striply Saw.fxp",
+   "sha": "5dec25903260b495d059b8e12b60eed3fc305d28"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Strode Impulse.fxp",
+   "sha": "3908cd165ade97ae36feb34e282fd371b981e6be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Super Stap.fxp",
+   "sha": "7b736a316668e142b1d79301fb8c302d8726d0be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Wooden Alien.fxp",
+   "sha": "7d20c1d8202aaa9e3e313e2eea7000ec5a58eb1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/FX/Noise Crash 1.fxp",
+   "sha": "201d1257d74c44956898e1cf6c991e812e7fe107"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/FX/Noise Crash 2.fxp",
+   "sha": "74ba17a24c8d40e667597973b31dbe0a94315fda"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Angel Pluck.fxp",
+   "sha": "99dcbf10fb5bcef5236a6e44671c7f4eac919133"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Blue Whale Organ.fxp",
+   "sha": "01746df92f660e08d986e006d909748ac4569e35"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Brunto Chords.fxp",
+   "sha": "8782e54b72f5f695e7584fa52fee17d1542c0e1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Caspian Sea.fxp",
+   "sha": "bb46bf86ded5764f226dfc2cda1892c7db989a5d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/China Dream.fxp",
+   "sha": "e1aea32c87eb7ab6cd4227f980d01c7529d39f45"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Dream Plucks.fxp",
+   "sha": "81bf2342e870412ac67b94c71c375b5d583db84c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Electro Cricket.fxp",
+   "sha": "66e4aaa46986eec6d1962d932199980d3a47df8b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Marimba.fxp",
+   "sha": "781c4fbab71af921eebcea319913452065dbdb58"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Modern FM Bells.fxp",
+   "sha": "d53f61fd6e9b2d6e8b4ed914c47dd15dbb827eb6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Phone Drops.fxp",
+   "sha": "81eb887012990d386a89cf41685c8202a3285167"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp",
+   "sha": "27a0f93e15be0f62a16b3192883272fa3a81a3b8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/5th House.fxp",
+   "sha": "58474afedbaf8cde997d17e05f101c337a43e0ff"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Chicago Key.fxp",
+   "sha": "fef4edc808533c6d6bfe7cca7626673381286541"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Demon Here.fxp",
+   "sha": "eb9b9a4540e03ae8e378713ba72dffe274afcac7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Huge Saw.fxp",
+   "sha": "b2b8d9dad1d3c2e2fe776f809039f2dc6ceb416b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Modular.fxp",
+   "sha": "44511f3f02ced0b12dea8b652a76e682eee7ef78"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Some Lead.fxp",
+   "sha": "0242d9cc508a0286e3bd98d7526c4f0b3692e322"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Pads/Sorrowful.fxp",
+   "sha": "d35f156b3f97ef01905ac5451fff00d0cd3eb321"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Strings/Orchestral Trombone.fxp",
+   "sha": "e4ef28b34d72604593b4412fd37acc1f332e9f0d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Adrenaline.fxp",
+   "sha": "6b91d8b351d1e7e733f95f6cbb60d7ccdf1e3bfc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Dream Drops.fxp",
+   "sha": "9b1400931132774896fa19a9aee75863ea14700f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Forest Angels.fxp",
+   "sha": "1195903e63d347927862be0adbd11c853880697f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Moon Piano.fxp",
+   "sha": "3bdc8fa7c6323c281162a949de3df385f6f8942d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Morrowind.fxp",
+   "sha": "04c94784f07586e7762dae67971337b8a914b65d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Mystery Grotto.fxp",
+   "sha": "e4e2a9a263428f87da98501f8be3f4e422c6133a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Pushing Ocean.fxp",
+   "sha": "2c4ad526088046fd39e93b6e0a02d86662882a1f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Space Stranger.fxp",
+   "sha": "c5d1f7842f1513fde9bf6d9c1eca2d817c3c3188"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/Experimental.fxp",
+   "sha": "bcb2b2bf2a03acc6ce8ae9d71c0da4bd1ec1841d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/Industrial.fxp",
+   "sha": "0180c4707f919d15b17757b7be160860d2c9b5c5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/POP.fxp",
+   "sha": "8d5defd6965ec4955e9c74c51707980c73d23044"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/Phaser Modular.fxp",
+   "sha": "7c7e1d311aa2b0c6425a4c7b594109b73782ab16"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/Tone Reso.fxp",
+   "sha": "f45d6ae011cda13c851f6d8827b521f4852da498"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/FX/Tour.fxp",
+   "sha": "f5c8c8c500c0336bcbcdb5d38565654c05399324"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Keys/Destructive Piano.fxp",
+   "sha": "64f7832ea7483326f77803674c2b10c447ea4f5b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Percussion/Aliance.fxp",
+   "sha": "a70b32e4f603926a151853386c338d4c9da4b2f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Percussion/Metal Percussion.fxp",
+   "sha": "b2b0562e1f5538aac0c5680c40e6840a216d4321"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Basses/Abstract Wonder.fxp",
+   "sha": "1ee67abc57d7673e401e5ded97cd111e92a062eb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Bells/Bell Tower.fxp",
+   "sha": "7320817b43d1eecc9d2a9346922800269567f947"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Percussion/Kick Clean.fxp",
+   "sha": "8f1402e816071d93532e1026a5a6786178c18863"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Percussion/Thump Basses.fxp",
+   "sha": "09023a7b29bc78c0a21af6f6ce3492305eb767c0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Percussion/Thump Conga.fxp",
+   "sha": "60708bbb51d86a5bf31c0e31b2b5f72ea5dbfd7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Percussion/Thump Kick.fxp",
+   "sha": "2c3ffe7e5ccdd6b064594d2eca8c4c4bc626edda"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rare Earth/Plucks/Mixed Feelings.fxp",
+   "sha": "0dd93f36680fad88e7b7436643789b2a5f7007b1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Badass D'n'B Bass 2.fxp",
+   "sha": "a82863f6ff2471c218b5e5309f880923780de3cb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Click Bass.fxp",
+   "sha": "e1d06725ab0e3f0c04dfee9963693dcacdd3c30a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Evil From The Deep.fxp",
+   "sha": "ae0e8844cb5611abfed28b72a103b53db362666f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/FM Wob Bass.fxp",
+   "sha": "5a6ae7cd9f608fd059342a4e43b513d14d12b401"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/LC Bass.fxp",
+   "sha": "1208763236f93e8d994851d1c14fe3318358fe43"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Natural Bass.fxp",
+   "sha": "0c13dd1179c7e119ddb19ddac5a0b595607b6570"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Nu Skool Bass 1.fxp",
+   "sha": "e316d8ae89cb7947a0187052feadda5a79834d47"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Nu Skool Bass 2.fxp",
+   "sha": "038583ee55ffb361fb957e78b149d1f0d163834b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Useful Bass.fxp",
+   "sha": "fd3c988f13bd5df32a27ee7bba6ad6bec6fa602c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Chords/Old Skool Detroit Minor Stab.fxp",
+   "sha": "8fcbcc1447bc8ffb6b195d335342c70f4ea5cfa5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Rhythms/Sync Alarm!.fxp",
+   "sha": "b7b84a25632fd4464e8354db45c9739d7df26e83"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Basses/Sub Perc.fxp",
+   "sha": "e66ec8f73026285013c06ebca18531d70f243f80"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Snare 3.fxp",
+   "sha": "a4cf5cf7de360adfe02b9d7780dff601b386b77b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Leads/Some Analog.fxp",
+   "sha": "fae7f40fd9c4560ac8078707bada12d726e0947b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Leads/Turnout.fxp",
+   "sha": "bfc146275901f180552a60aab932594de1daf92c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Percussion/Another Perc Thing.fxp",
+   "sha": "0a1152223d80eb056f62f91d449022b546e4d734"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Stefan Singer/Basses/Evil Mono Bass.fxp",
+   "sha": "4fcb8727ad1ae704d78343c58809a2a38034ef89"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/But Clean The DC.fxp",
+   "sha": "245ce1499174ce54bc4e270c49d6a233b28aedcf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/Low Problems.fxp",
+   "sha": "edda7e9e60fa5348afc53c588269a8fe46c1ee64"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Keys/Picked Driven Synth.fxp",
+   "sha": "63a85b908d40f61cc3a9b8231fc77c281da0789f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Bottlefly.fxp",
+   "sha": "b933773ee9e1abd290f7640174fdb36f6d9c3e0d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Mute.fxp",
+   "sha": "27dd1871fc694bfb55d04a6b0a38d7569c680959"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Seesaw.fxp",
+   "sha": "1385c94efe0fbf124671bfa439f7a6d98796ef03"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Rhythms/Goose.fxp",
+   "sha": "78d8f55257441c6400dafa89a9b4635502855827"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Bass 2.fxp",
+   "sha": "e88ebe2d3b049c9937dd1fc65a886418dad132b4"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Bass 3.fxp",
+   "sha": "9c55b7c50bc3d48c5cb4f4e6adfd23c28b4f5ae0"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Deep End.fxp",
+   "sha": "68931b122ae25e0b06354177a99aa22a4f6e6559"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Dist Bass 2.fxp",
+   "sha": "b9a3f40ab521b24fd22d4ac5005fba82f6280e14"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Distorted FM.fxp",
+   "sha": "3e446af09ca3b88807d35d79a5a001087a18172b"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Distorted MW.fxp",
+   "sha": "c88158ac07b776f1997d05927f6fcc0b2c975343"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Evilous.fxp",
+   "sha": "f8375ecec419864677883c5fc1ab149d7d975f7c"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Rubber Bass.fxp",
+   "sha": "b9ad399f1075d7f8ed96b0312419f199e9d0b024"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Sub 3.fxp",
+   "sha": "4063076c2fc8957fcc6bb074bce840bb2c4ec047"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Aggero.fxp",
+   "sha": "a23ec1b30cad4196a432d5dbe6bcfd62588b166d"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Crackling.fxp",
+   "sha": "6156f9f71bc477ae626fc57db1c9fa13a6a5a961"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Evil Sucker Seq.fxp",
+   "sha": "022a4cb0a0ca1eaa3543e42eefdd765ffa5417b8"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Fireworks.fxp",
+   "sha": "2a799b6ca5f72d3d52c77c4ede61b601e24fd14a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Acidofil.fxp",
+   "sha": "ef2e5dbe702656240fcf579a98d1b849fd1cafcd"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Condom.fxp",
+   "sha": "d519033a88fe7d4df80163f61c3e9b0af08c413e"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Cray.fxp",
+   "sha": "45265da1787856b69d9afe4067e224656ee59f99"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/DNA Sequencer.fxp",
+   "sha": "477b24e9e41e0b0dc93fa061d6ef1a873a4a449a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Distortionworks.fxp",
+   "sha": "7d344e65d1e92aac501029fe086a96692392da4a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Duck and Cover.fxp",
+   "sha": "481994a6396b0f774b66e996487bac26a4048bad"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/FM Rock.fxp",
+   "sha": "3ebbe574e34264b4ac810e84ce8c62750ffec830"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Hippo.fxp",
+   "sha": "523be7881fd2bafd4b4dc0b07438983e8b595377"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Kilkenny.fxp",
+   "sha": "a40150c7869ec0299a153cd262db7ed89dfdd5d1"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Resofest 2.fxp",
+   "sha": "efbc36f8abca7dc7ae4099030e0280086e6c12e6"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Smoothness World Cup.fxp",
+   "sha": "300a6bb2bbe8504557a6b9b8196583f18bf3a9a0"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Squiggly.fxp",
+   "sha": "276c4ae88e346a564e8b8ada22e4e7358eb0006a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Synth Guitar 2.fxp",
+   "sha": "2b70151b85049b84806fef72781e6b44e3278f42"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Tok.fxp",
+   "sha": "b72ba8d3a59ff8f58c200e768657768926cc7e85"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/MPE/Lead With A Bell Attack.fxp",
+   "sha": "815443859cd9de6085882b672c34bcd0d8e5aec1"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/MPE/Pad Plink 'n' Move.fxp",
+   "sha": "0cde4539f179e73c5f4c893f7a13c9e095437875"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Formants MW.fxp",
+   "sha": "3c921c5d988c4ddbc9ed31432eadad4cb91ff986"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Pad 2 MW.fxp",
+   "sha": "4387955c1def221e39d6d2d4903a683ca4fcebc8"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Ringing.fxp",
+   "sha": "3555a8c7d0cfd954f7b468ebdb00f2b58cecb81c"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Smooth Dist.fxp",
+   "sha": "2c792219002db842c04110ad2c1137c26658d010"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Percussion/Synth Tom 2.fxp",
+   "sha": "9a7e7763d341c384e527d438f62e848c41ae01b1"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Percussion/Synth Tom 3.fxp",
+   "sha": "91c538942d81a634d3ed19eab60d652f79429e15"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Plucks/Ambient E-Guitar.fxp",
+   "sha": "eeebaa7707bd2a214c1ea0972032f1245112ae0f"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Plucks/Gliss Pluck Distorted.fxp",
+   "sha": "067bc39586c9f5ab3cd9e75cfb63ff6b04a10075"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Polysynths/Rusty.fxp",
+   "sha": "8af1ea9d91ef03f03447562753aa1606ffd86954"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Polysynths/Serious Distortion.fxp",
+   "sha": "30ea6560a6d07f5d0c8aa7bb20a0565242d36137"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Polysynths/Uni 2.fxp",
+   "sha": "6cac482e6881b09cf83ad5bb8a130375c7f54924"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/FM Seq.fxp",
+   "sha": "12a9b5aa0b33bc8a719e1ba9e5477ce6f703ff46"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/Hovercar Championship.fxp",
+   "sha": "95ffaeb3c2007cc6902a458748af6a00f4577054"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/Madness.fxp",
+   "sha": "8d3b56dca35b1e24ead16b2f03a93fdcfc827753"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/Phase 1.fxp",
+   "sha": "52f18c7c55c45e7314edf082f2c1384191712d92"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/Seq 1234.fxp",
+   "sha": "6c9c6b1ba06b03a7f1a1f999876ae2a2f6e37ddf"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028e",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Argitoth/FX/Monster Feedback.fxp",
+   "sha": "2379e0713eb2830a3c4acbe3a9442500ab960fd9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Argitoth/Leads/Screaming Saw.fxp",
+   "sha": "c811a9aab5849303b252a0c36731e37685288072"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+   "sha": "099e88298ae11cc7a5335054c04f3caf7e1539dc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Bluelight/Keys/Treated Rhodes.fxp",
+   "sha": "6fe112ac9b06b13fad1dd1b2a3349b8bf9651413"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Basses/Acid Bassline 1.fxp",
+   "sha": "6d5c24960b23606f215dca7860a915a9679fc709"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Basses/Fancy.fxp",
+   "sha": "3ac3c39071b4675731d8d731363fb70cf1f6cce1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Classic 808 Cowbell.fxp",
+   "sha": "aa476698ed98f68158f94f5722c86e871554aaba"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Old Kick.fxp",
+   "sha": "90f02312caa882abe7c1d76b8883ae0a51ed433b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Rickroll Tom.fxp",
+   "sha": "62a39254e0c576cb8eaf07e73f6e4ceb739ee1bd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/Destroyed 808.fxp",
+   "sha": "95ea90d8edcfd7de1ba2837c976eb009189d911f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/FMey 808.fxp",
+   "sha": "165e2aa0bc6077e257062fde85130376573e2e1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Winds/Saxophone Emulation.fxp",
+   "sha": "6aa1f5ea1e276448e31226a4d9f61c1d466e8ad6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Basses/BC Bass.fxp",
+   "sha": "22d3246804d5b65bcd0272c811597ca51d6b5cf0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Drums/Reverse Crash.fxp",
+   "sha": "de5c684d96d6090728dfe2ede0a3dbd73af1d65f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Plucks/Disto.fxp",
+   "sha": "2a1f1c956adc4db0c7ce33e8deb49e173f398692"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Damon Armani/Plucks/Happy Snappy.fxp",
+   "sha": "49a124f407ebdbc6b07349d8239ac2bd963de44b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Leads/Sharp Lead.fxp",
+   "sha": "92ec8921be306d56813b9a0c46e0822eead717cf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Oscar The Grouch.fxp",
+   "sha": "078fee7a0ff53f0128650f733b7ed655b7ca9d1f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Dan Maurer/Winds/Tenor Sax.fxp",
+   "sha": "e958fa80fdbe1b554290c0dccbcf726c8725ced7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Databroth/FX/Kick.fxp",
+   "sha": "275042a1efaf4fa6b7394e65a62b64030f80fc29"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Basses/Acidy FM Boy.fxp",
+   "sha": "c26d6c4b8e598a224d1df4c105dcdd185fe7c0c8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Basses/Beefy Boi.fxp",
+   "sha": "d0d59a909d24f6711cda27fa908c70884404c4a7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Basses/Soft Plucks.fxp",
+   "sha": "3cc5649e2dd6392d83ecd72712e9fc399219a245"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Kick Room 1.fxp",
+   "sha": "234cfc45108ebb0d0357422e50091c55a61e32a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Kick Room 2.fxp",
+   "sha": "0436520a0509474f1e3051fcdd5c4d141623c3ae"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Snare Room 1.fxp",
+   "sha": "4fe19d120d11f2c60b182b60b9c2bc158f984bb0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/Snare Room 2.fxp",
+   "sha": "2054a715336129c6cfd1f96603beaf462f93f368"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Drums/T8 Conga.fxp",
+   "sha": "17308086b68a183db5a55d8537ab72578195b321"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/FX/Sick In The Super Dome.fxp",
+   "sha": "288ebccbba4da1727a6a11fc34c25b23b302dca5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/FX/Signature Talker 1S.fxp",
+   "sha": "a609cc43994ed86d3f7ba6c3233fe56ba974a303"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp",
+   "sha": "428ead7abd1c00c8ee7bf55dc53345858bee7bce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Emu/Sequences/Dancing Sine Boyz.fxp",
+   "sha": "0bd676ab17e320a3cd5aceb310dd07d792ee69a3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Distorro.fxp",
+   "sha": "3bbfa73cd46ee8c6cb3a492a3d5c390e3c70a57e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Mid Band Diver.fxp",
+   "sha": "18e32ab11df80a19990d00fb3f078b76abc299e7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Phasing Warp.fxp",
+   "sha": "f8f408120d56f3d8acf6f4cafeddc074b445c89d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Giana Brotherz/Basses/Squeezy Chaos.fxp",
+   "sha": "6e615d4ad84dfe49db9afcc56a1eaa77c6af97c8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Nasal Cavern.fxp",
+   "sha": "46698be22e0c054e576a4292e4237178dcf4a3f6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Basses/The Flat Eric Fan Club Has Its Perks.fxp",
+   "sha": "1f6b7be61d01f5184373149f60c652d314a9b739"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kuniklo/Sequences/Dancer.fxp",
+   "sha": "2ded92be120e7c1eb0c14a31c17098968fab576f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kuniklo/Sequences/Netlon.fxp",
+   "sha": "c9ed038f431eb32fa246643166cc2a9c0664829f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Feedback Guitar.fxp",
+   "sha": "72f70d2dfd6eacf62e1c397414ae1a3696eab092"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Overdriven Guitar + Wah.fxp",
+   "sha": "224833177f77cdddf5ec0cfc3d02370959272df2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Overdriven Guitar.fxp",
+   "sha": "976c586a5f5a96d37819b7d043b960413b6e3935"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Shrill Distorted Guitar.fxp",
+   "sha": "d72c31ec6ac15d71dea4c4071c002533bb5a23de"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Stratus Overdriven.fxp",
+   "sha": "abaee1ff446349c06c3eba759798c0d4a0a448a2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Winds/Harmonica Overdrive.fxp",
+   "sha": "280d7b262a413670990f959138db22bb04ee40ba"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Drums/Big Grimy Kick w Wobble.fxp",
+   "sha": "4a4dbd4cdb421dad946485c1d5a712a131aa4f64"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Drums/Big Kick w Wobble.fxp",
+   "sha": "2125b50486bf8817352babc23351ecef61f6d0c5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Drums/Big Kick.fxp",
+   "sha": "ed9b87e2c93eba3b19d560049a5d35ea2e29b4f2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Guitars/Awful FM Guitar.fxp",
+   "sha": "d71a9cfd39789ca43e9b72ca3e65dd40d10be8f2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Paraphonic NL Bandpass Lead.fxp",
+   "sha": "e85783c6f5dd0025a4293213c69303447c092583"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/MPE/Paraphonic Cutoff Warp.fxp",
+   "sha": "c550fe5558c96f9ba6bf91ff9fde57f2b382c017"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Rhythms/Paraphonic NL Bandpass S&H.fxp",
+   "sha": "ebb0608d0d7b197c8ac251abb240b875e5d6b294"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Kick 2.fxp",
+   "sha": "94d87f1e0f69eb440e464154e78bff638333b74a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Arps/Demon Power.fxp",
+   "sha": "ce3cd9037a076fe48fa272aad18e98c2b673448e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Agressor.fxp",
+   "sha": "24c8e1867915f09de3999ceb1e29326e36b07b1f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/China Long.fxp",
+   "sha": "1c5ba7b6124dea65a2ee5797b3980f0449f43f8f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Crash Attack.fxp",
+   "sha": "6f6a066edebc5684811ac947d2db9a113e0870a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Crazy.fxp",
+   "sha": "bc8d7b6c8ee724576bbb10dfa1ff4121e70a6438"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Deep Stack.fxp",
+   "sha": "0e13b63b6de7f0aa7560203180c9a7da71179d28"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Dista Bass.fxp",
+   "sha": "27b8b5298d30ba6011049e98b0d1421c595a10fd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Dynamic Sawer.fxp",
+   "sha": "6af7f177c0da407e2a989ce95819cf7c03679757"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Electro Shock.fxp",
+   "sha": "09753c36091f5f128ff3a2971f555d5b8c4a85a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/FM Structure.fxp",
+   "sha": "aeffc604aea383202a24bdd49df173ad704b263c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Hemera.fxp",
+   "sha": "376bec0b590683f590e0afb1a571a60b12d301c5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Hoover FM.fxp",
+   "sha": "73017d71b8985fcac8fcf624e9433502f9192475"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Key Station.fxp",
+   "sha": "4b1f68dc60a7eeeb65649a2a490385723f03ce77"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Morphine.fxp",
+   "sha": "c58c07cf24fe1fab9583488018647a9273f5a25c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Odionis.fxp",
+   "sha": "65ca2696efcb8be57ecdd69427e692294d06413f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Phantom.fxp",
+   "sha": "95c045be9fda00976c4776dedee3c65d42dc61c4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Plastic Dream.fxp",
+   "sha": "84a297e98c16796c53e7cf9d5f92d9e97b4b1254"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Poolpad.fxp",
+   "sha": "66a9b120be6307326d8939c848ee919f4e5140e2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Scrambler.fxp",
+   "sha": "6486ae92fb4e65544b81be8efaf46f04f306f1c9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Serious Step.fxp",
+   "sha": "117e134cbe978883a1118958a5bd0e628b5f1380"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Shot Gun.fxp",
+   "sha": "e45e82294a31dd32cecabda13c7ef40a98ff3084"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Slide Note.fxp",
+   "sha": "25888a810e0d5e63339593a2e4b1bf56f34dc5f6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Sortier.fxp",
+   "sha": "04f8150c23b24ed3ff3bf9b4477d0258b01ec6ca"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Strekoza.fxp",
+   "sha": "de0f957ad6e795d734858afb6f73d7a103a76712"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Striply Saw.fxp",
+   "sha": "5dec25903260b495d059b8e12b60eed3fc305d28"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Strode Impulse.fxp",
+   "sha": "3908cd165ade97ae36feb34e282fd371b981e6be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Super Stap.fxp",
+   "sha": "7b736a316668e142b1d79301fb8c302d8726d0be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Basses/Wooden Alien.fxp",
+   "sha": "7d20c1d8202aaa9e3e313e2eea7000ec5a58eb1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Angel Pluck.fxp",
+   "sha": "99dcbf10fb5bcef5236a6e44671c7f4eac919133"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Blue Whale Organ.fxp",
+   "sha": "01746df92f660e08d986e006d909748ac4569e35"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Brunto Chords.fxp",
+   "sha": "8782e54b72f5f695e7584fa52fee17d1542c0e1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Caspian Sea.fxp",
+   "sha": "bb46bf86ded5764f226dfc2cda1892c7db989a5d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/China Dream.fxp",
+   "sha": "e1aea32c87eb7ab6cd4227f980d01c7529d39f45"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Dream Plucks.fxp",
+   "sha": "81bf2342e870412ac67b94c71c375b5d583db84c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Phone Drops.fxp",
+   "sha": "81eb887012990d386a89cf41685c8202a3285167"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp",
+   "sha": "27a0f93e15be0f62a16b3192883272fa3a81a3b8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/5th House.fxp",
+   "sha": "58474afedbaf8cde997d17e05f101c337a43e0ff"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Demon Here.fxp",
+   "sha": "eb9b9a4540e03ae8e378713ba72dffe274afcac7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Huge Saw.fxp",
+   "sha": "b2b8d9dad1d3c2e2fe776f809039f2dc6ceb416b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Modular.fxp",
+   "sha": "44511f3f02ced0b12dea8b652a76e682eee7ef78"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Leads/Some Lead.fxp",
+   "sha": "0242d9cc508a0286e3bd98d7526c4f0b3692e322"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Pads/Sorrowful.fxp",
+   "sha": "d35f156b3f97ef01905ac5451fff00d0cd3eb321"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Strings/Orchestral Trombone.fxp",
+   "sha": "e4ef28b34d72604593b4412fd37acc1f332e9f0d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Adrenaline.fxp",
+   "sha": "6b91d8b351d1e7e733f95f6cbb60d7ccdf1e3bfc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Mystery Grotto.fxp",
+   "sha": "e4e2a9a263428f87da98501f8be3f4e422c6133a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Nick Moritz/Synths/Space Stranger.fxp",
+   "sha": "c5d1f7842f1513fde9bf6d9c1eca2d817c3c3188"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/Experimental.fxp",
+   "sha": "bcb2b2bf2a03acc6ce8ae9d71c0da4bd1ec1841d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/POP.fxp",
+   "sha": "8d5defd6965ec4955e9c74c51707980c73d23044"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Basses/Tone Reso.fxp",
+   "sha": "f45d6ae011cda13c851f6d8827b521f4852da498"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/FX/Tour.fxp",
+   "sha": "f5c8c8c500c0336bcbcdb5d38565654c05399324"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Percussion/Aliance.fxp",
+   "sha": "a70b32e4f603926a151853386c338d4c9da4b2f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Psiome Send Sound/Percussion/Metal Percussion.fxp",
+   "sha": "b2b0562e1f5538aac0c5680c40e6840a216d4321"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Badass D'n'B Bass 2.fxp",
+   "sha": "a82863f6ff2471c218b5e5309f880923780de3cb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Click Bass.fxp",
+   "sha": "e1d06725ab0e3f0c04dfee9963693dcacdd3c30a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/FM Wob Bass.fxp",
+   "sha": "5a6ae7cd9f608fd059342a4e43b513d14d12b401"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/LC Bass.fxp",
+   "sha": "1208763236f93e8d994851d1c14fe3318358fe43"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Natural Bass.fxp",
+   "sha": "0c13dd1179c7e119ddb19ddac5a0b595607b6570"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Basses/Useful Bass.fxp",
+   "sha": "fd3c988f13bd5df32a27ee7bba6ad6bec6fa602c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Rozzer/Rhythms/Sync Alarm!.fxp",
+   "sha": "b7b84a25632fd4464e8354db45c9739d7df26e83"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Basses/Sub Perc.fxp",
+   "sha": "e66ec8f73026285013c06ebca18531d70f243f80"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Stefan Singer/Basses/Evil Mono Bass.fxp",
+   "sha": "4fcb8727ad1ae704d78343c58809a2a38034ef89"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Keys/Picked Driven Synth.fxp",
+   "sha": "63a85b908d40f61cc3a9b8231fc77c281da0789f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Bottlefly.fxp",
+   "sha": "b933773ee9e1abd290f7640174fdb36f6d9c3e0d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Mute.fxp",
+   "sha": "27dd1871fc694bfb55d04a6b0a38d7569c680959"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Seesaw.fxp",
+   "sha": "1385c94efe0fbf124671bfa439f7a6d98796ef03"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Zoozither/Rhythms/Goose.fxp",
+   "sha": "78d8f55257441c6400dafa89a9b4635502855827"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Bass 2.fxp",
+   "sha": "e88ebe2d3b049c9937dd1fc65a886418dad132b4"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Bass 3.fxp",
+   "sha": "9c55b7c50bc3d48c5cb4f4e6adfd23c28b4f5ae0"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Deep End.fxp",
+   "sha": "68931b122ae25e0b06354177a99aa22a4f6e6559"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Dist Bass 2.fxp",
+   "sha": "b9a3f40ab521b24fd22d4ac5005fba82f6280e14"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Distorted FM.fxp",
+   "sha": "3e446af09ca3b88807d35d79a5a001087a18172b"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Distorted MW.fxp",
+   "sha": "c88158ac07b776f1997d05927f6fcc0b2c975343"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Evilous.fxp",
+   "sha": "f8375ecec419864677883c5fc1ab149d7d975f7c"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Rubber Bass.fxp",
+   "sha": "b9ad399f1075d7f8ed96b0312419f199e9d0b024"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Basses/Sub 3.fxp",
+   "sha": "4063076c2fc8957fcc6bb074bce840bb2c4ec047"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Aggero.fxp",
+   "sha": "a23ec1b30cad4196a432d5dbe6bcfd62588b166d"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Crackling.fxp",
+   "sha": "6156f9f71bc477ae626fc57db1c9fa13a6a5a961"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Evil Sucker Seq.fxp",
+   "sha": "022a4cb0a0ca1eaa3543e42eefdd765ffa5417b8"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/FX/Fireworks.fxp",
+   "sha": "2a799b6ca5f72d3d52c77c4ede61b601e24fd14a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Acidofil.fxp",
+   "sha": "ef2e5dbe702656240fcf579a98d1b849fd1cafcd"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Condom.fxp",
+   "sha": "d519033a88fe7d4df80163f61c3e9b0af08c413e"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Cray.fxp",
+   "sha": "45265da1787856b69d9afe4067e224656ee59f99"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/DNA Sequencer.fxp",
+   "sha": "477b24e9e41e0b0dc93fa061d6ef1a873a4a449a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Duck and Cover.fxp",
+   "sha": "481994a6396b0f774b66e996487bac26a4048bad"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Hippo.fxp",
+   "sha": "523be7881fd2bafd4b4dc0b07438983e8b595377"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Resofest 2.fxp",
+   "sha": "efbc36f8abca7dc7ae4099030e0280086e6c12e6"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Smoothness World Cup.fxp",
+   "sha": "300a6bb2bbe8504557a6b9b8196583f18bf3a9a0"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Leads/Squiggly.fxp",
+   "sha": "276c4ae88e346a564e8b8ada22e4e7358eb0006a"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/MPE/Lead With A Bell Attack.fxp",
+   "sha": "815443859cd9de6085882b672c34bcd0d8e5aec1"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/MPE/Pad Plink 'n' Move.fxp",
+   "sha": "0cde4539f179e73c5f4c893f7a13c9e095437875"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Formants MW.fxp",
+   "sha": "3c921c5d988c4ddbc9ed31432eadad4cb91ff986"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Pad 2 MW.fxp",
+   "sha": "4387955c1def221e39d6d2d4903a683ca4fcebc8"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Ringing.fxp",
+   "sha": "3555a8c7d0cfd954f7b468ebdb00f2b58cecb81c"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Pads/Smooth Dist.fxp",
+   "sha": "2c792219002db842c04110ad2c1137c26658d010"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Percussion/Synth Tom 2.fxp",
+   "sha": "9a7e7763d341c384e527d438f62e848c41ae01b1"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Percussion/Synth Tom 3.fxp",
+   "sha": "91c538942d81a634d3ed19eab60d652f79429e15"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Plucks/Ambient E-Guitar.fxp",
+   "sha": "eeebaa7707bd2a214c1ea0972032f1245112ae0f"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Plucks/Gliss Pluck Distorted.fxp",
+   "sha": "067bc39586c9f5ab3cd9e75cfb63ff6b04a10075"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Polysynths/Rusty.fxp",
+   "sha": "8af1ea9d91ef03f03447562753aa1606ffd86954"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Polysynths/Serious Distortion.fxp",
+   "sha": "30ea6560a6d07f5d0c8aa7bb20a0565242d36137"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Polysynths/Uni 2.fxp",
+   "sha": "6cac482e6881b09cf83ad5bb8a130375c7f54924"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/FM Seq.fxp",
+   "sha": "12a9b5aa0b33bc8a719e1ba9e5477ce6f703ff46"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/Hovercar Championship.fxp",
+   "sha": "95ffaeb3c2007cc6902a458748af6a00f4577054"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Sequences/Seq 1234.fxp",
+   "sha": "6c9c6b1ba06b03a7f1a1f999876ae2a2f6e37ddf"
+  }
+ ]
+}

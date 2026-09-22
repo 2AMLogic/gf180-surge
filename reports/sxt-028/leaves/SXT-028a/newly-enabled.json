@@ -1,0 +1,605 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Guitars/Temple.fxp",
+   "sha": "3c8e6d56f4055a68a5a266ebb25f530c888f21cf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Leads/Sine Lead.fxp",
+   "sha": "d4402c44dfbc42a7e66255077594fc2beff84820"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Pads/Unity.fxp",
+   "sha": "c3978e7ce1fbede44c06aa28db2d1473ae34f58a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Woaaaa.fxp",
+   "sha": "836b72d637d73ed0ec95fa20c9baa1db9e5cfccf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Man Research.fxp",
+   "sha": "61a961cde1d5e2f4f05139a53a966f00d880839c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Closer Still.fxp",
+   "sha": "b8a6123497a44169fe1e8ab43d12b5ec0cb3a289"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Other X-Fades 2.fxp",
+   "sha": "7445a35cf45e07922e9188471f521a1819f35d23"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Sineplicity.fxp",
+   "sha": "1943ac4ce9ab356aa178cc541deda3dc19ed1adc"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Percussion/Bell Drum.fxp",
+   "sha": "59fa3d84485accff20970bb544223b6c27a3a3b9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Guitarp Slap Bass.fxp",
+   "sha": "b33509b73e02ce935904b33199bf19ff15af25c9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Slap Bass Guitar.fxp",
+   "sha": "3a0378642827fb930915741c08b0150d80e3776f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Sweet Bass Guitar.fxp",
+   "sha": "1b11a2d36d7d93f90b8055167fe0bee7c882e62a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/FX/Cavern Water Drips.fxp",
+   "sha": "42ba9b0b833a07652c2dbd60dafef1a3ad0fa446"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/FX/Fireworks - Bang And Fizzle.fxp",
+   "sha": "30bfb94b98358997aa25fead135d5968251e2d56"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Guitars/Nylon Acoustic Guitar.fxp",
+   "sha": "9220249d87eb24130da1eb93b120ac9132b7645c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Axel's Sharp Atmosphere.fxp",
+   "sha": "ef0316b878b98f4f729a3360b6985864df73547d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Harpsichord.fxp",
+   "sha": "a5c7db5684b138612b48ddfce573e1bf1032c440"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Claves (Sticks).fxp",
+   "sha": "4df8c3941fd4fbb929eddfed1eb0b54a7de955c4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Pop Clap.fxp",
+   "sha": "4543d4139b1945523a8d254c302079954b33a2fe"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Rainmaker.fxp",
+   "sha": "a9b81e08da7901c490e3496dcadf8af7085524a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Snare Tom 1.fxp",
+   "sha": "b80837ed57571f39dab8b646443c593c5d94e233"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Snare Tom 2.fxp",
+   "sha": "ad655861b5785272152b9f2374b19b9187c97b5b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Guitarp.fxp",
+   "sha": "d5b0f1cbb7ae555a371b0c2880a0fa007476f580"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Harpie.fxp",
+   "sha": "1a8b748d3b8bee8142e20ba7c8b0e6d47707c6f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Strings/Orchestral Harp For Runs.fxp",
+   "sha": "732c8ec8a85a0e3a81143209d079beb307f4e0f4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Winds/Folky High Pipe.fxp",
+   "sha": "12631d4d5d06241f12c7ddd6c145da383b600090"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Left Town Yesterday.fxp",
+   "sha": "96b10f5b92bb07d235eecaf6f2597cc944d588a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Pointillism.fxp",
+   "sha": "df16ad3fc295efad34e24365fe06bbbbbd196229"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/She Loves You, Answer the Phone.fxp",
+   "sha": "2a30ff06d71c9ba62cfd7f9f9bba9c8976454906"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Glass Voice 1.fxp",
+   "sha": "2694402225de5808df54436438ddd0030fc3b735"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Glass Voice 2.fxp",
+   "sha": "2988fbc05437cfcc100781c3d037833d583b3f2b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Glass Voice 3.fxp",
+   "sha": "c7d6dad109741fed64747a473f2760f6729d3279"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Bells/Twist Bell.fxp",
+   "sha": "bf6a856e852ddc3f9f6a068275e285d4a043d1a2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Brass/Wavetable Brass.fxp",
+   "sha": "61a013206b4cb5793ac9bce50f7c9a824242f5ce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Alien Search Drone.fxp",
+   "sha": "3a72c7c03c50b46097e2699591096f2bcdf53ecf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Ambience Noise.fxp",
+   "sha": "c0670bc1e1d9b126cbf32c58c8958491d7141e16"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Knives & Forks.fxp",
+   "sha": "7667279a62a557e1ccfcc3dc9bc09994df4801e9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Paranoid Mumbling.fxp",
+   "sha": "9afa66f84bf04edd972f6e80c14eb3a9495e8fc4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Guitars/Synth Guitarish.fxp",
+   "sha": "1275d5db2396ce2fe5c0e27ea8422e7f20771541"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Alias Glass Piano 1.fxp",
+   "sha": "7ff5c4b615ce31d98231887e40b5da7234c342a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Alias Glass Piano 2.fxp",
+   "sha": "809e46aacb0c74c0231c90b4d9926a5fee4dac62"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Alias Piano Pad.fxp",
+   "sha": "4417105dbc0597cbbdd854036d53fdaf32adf4ab"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/DCO Piano.fxp",
+   "sha": "e4e90cf1c026e1c2f704d25420dd6219f91a5c59"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/FM Piano Stack.fxp",
+   "sha": "768da860eb6b990731c7e3e1870ef9d5e0267bd2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Rave Keys.fxp",
+   "sha": "52c7bef8c148ceca4280493cee0d83f5e96011bd"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Ring Mod Saw Difference.fxp",
+   "sha": "c347f8cebeecd0ac392b1e8d537ac4816d93701c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Big Bright Bells.fxp",
+   "sha": "3804ef8e11661b01d275db85b01bb5bddf08f019"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Big Brightness.fxp",
+   "sha": "807b29f091f9731457e4db582a50353b85074dc8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Gameboy Alias.fxp",
+   "sha": "36c38315f645ae36b5185adb03d6a05d887a9aa9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Gameboy.fxp",
+   "sha": "1d07842328589c34d07a6eb36c56fafc80f2dff6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Genesis-y Lead.fxp",
+   "sha": "a1e692f42f85b7ab6747827252129f01005ffb36"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/The Insects.fxp",
+   "sha": "53e17c59e0a37ba2400134ad4dabf3a242fe8b93"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/MPE/Cinematic Glass.fxp",
+   "sha": "b6c657a8964cd4c85deec5191128bb62660c8c73"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Plucks/Acidic Feedback Plonk.fxp",
+   "sha": "b1d4fdf3958e7aedee9ecd3ef21c2a4a3ea25294"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Plucks/Feedback Plonk.fxp",
+   "sha": "00f718ff6053573291869aa2a42358709778b3c8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Rhythms/Modern Silk Allpass S&H.fxp",
+   "sha": "61f315133a746829604e7551de452660e434bd2e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Rhythms/Portal Vibes.fxp",
+   "sha": "44de058de2bbad605a3375d49aa7dac3f1f27ad3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Strings/Badly Sampled Game.fxp",
+   "sha": "aa4db407daeca8fd31fb668cdd845373a7643005"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Strings/Somewhat Rather Silky.fxp",
+   "sha": "25c54c41472c1424b19d533029bcb776766a6a9a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Strings/Synthier Strings.fxp",
+   "sha": "19dca3b3c7888e78321a98ed08fbc96f4efa0744"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Alias Ambience Piano.fxp",
+   "sha": "2941cd416b4dada6fbe8ac0149265bf74e497f82"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Alias Ambience.fxp",
+   "sha": "6e78940a1b4bc0821e4124fe62001e2f53b5bc10"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Basic DCO Polysynth.fxp",
+   "sha": "e26c0cc49de2e3352a88a0183ce119a2a5a2f9b7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Big Brightness Pad Release.fxp",
+   "sha": "c88422395f80e26d56a263d12d50ea4ea20fa268"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Poly Dreams.fxp",
+   "sha": "3e958009aa8ffc0769a59227424240ef6b56ec76"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/The Future Starts With You.fxp",
+   "sha": "b2511c4b2fad55fdbefcdab495c397c8ff0c5195"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Wavetable Warp.fxp",
+   "sha": "70cfdc804fae1e4ac1e52885a513671c9eaa77a9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Window Warp.fxp",
+   "sha": "863e5af545f178c901e57d098440acc0c79cba30"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Strings/String Illusion.fxp",
+   "sha": "1a014b11f860d2be4d7d3c0483dbd074dca17490"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Atmospheres/5th Harmonics.fxp",
+   "sha": "a3c19ca1952e2f17793eacc82c89f1d332d678fa"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Plucks/Anjunabeats 2007.fxp",
+   "sha": "3df8d9bc899f8a333c5f29b4d29d37e706c5cfe9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Plucks/Super Pluck.fxp",
+   "sha": "41f9fc6fec976164486d0835ade51ed168e722be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Winds/Another Flute.fxp",
+   "sha": "ca045cb4d77109f01828827b27166eac245faf4e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Brass/Multifaced Ensemble.fxp",
+   "sha": "49ccab8a43812e99b32b267d83c7dab043d0cf8b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Pads/Azure Sky.fxp",
+   "sha": "1760b55b2a385f35a37983f18897c444a6ff30c2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Pads/Crystals.fxp",
+   "sha": "ed4e3421165b4cf543ca2aadb11c85bcdc66fc1d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Pads/Dial Chip.fxp",
+   "sha": "7d4f5dad06bf45a3170196561fcd246702fdf962"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Sequences/Shroom Party.fxp",
+   "sha": "d088f162f6352d1bbdc554e1967b5208e8c437a9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Pads/Double Saw Pad+FX.fxp",
+   "sha": "1ccdc69e4a1a74add3433f47d527518ca307bd65"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Voices/Upper-ish Choir.fxp",
+   "sha": "b267c835a2a219606e0a51309ccb890eed206823"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Tutorials/Formula Modulator/03 The Init Function And State.fxp",
+   "sha": "7ac46fe666f84ac75ca36b8414dce86a25ac01a8"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028a",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Harpsichord.fxp",
+   "sha": "a5c7db5684b138612b48ddfce573e1bf1032c440"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Pop Clap.fxp",
+   "sha": "4543d4139b1945523a8d254c302079954b33a2fe"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Rainmaker.fxp",
+   "sha": "a9b81e08da7901c490e3496dcadf8af7085524a6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Guitarp.fxp",
+   "sha": "d5b0f1cbb7ae555a371b0c2880a0fa007476f580"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Pointillism.fxp",
+   "sha": "df16ad3fc295efad34e24365fe06bbbbbd196229"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/She Loves You, Answer the Phone.fxp",
+   "sha": "2a30ff06d71c9ba62cfd7f9f9bba9c8976454906"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Glass Voice 1.fxp",
+   "sha": "2694402225de5808df54436438ddd0030fc3b735"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Bells/Twist Bell.fxp",
+   "sha": "bf6a856e852ddc3f9f6a068275e285d4a043d1a2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Brass/Wavetable Brass.fxp",
+   "sha": "61a013206b4cb5793ac9bce50f7c9a824242f5ce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Alien Search Drone.fxp",
+   "sha": "3a72c7c03c50b46097e2699591096f2bcdf53ecf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Ambience Noise.fxp",
+   "sha": "c0670bc1e1d9b126cbf32c58c8958491d7141e16"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Knives & Forks.fxp",
+   "sha": "7667279a62a557e1ccfcc3dc9bc09994df4801e9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/FX/Paranoid Mumbling.fxp",
+   "sha": "9afa66f84bf04edd972f6e80c14eb3a9495e8fc4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Alias Glass Piano 1.fxp",
+   "sha": "7ff5c4b615ce31d98231887e40b5da7234c342a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Alias Glass Piano 2.fxp",
+   "sha": "809e46aacb0c74c0231c90b4d9926a5fee4dac62"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Alias Piano Pad.fxp",
+   "sha": "4417105dbc0597cbbdd854036d53fdaf32adf4ab"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Keys/Ring Mod Saw Difference.fxp",
+   "sha": "c347f8cebeecd0ac392b1e8d537ac4816d93701c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Gameboy Alias.fxp",
+   "sha": "36c38315f645ae36b5185adb03d6a05d887a9aa9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Gameboy.fxp",
+   "sha": "1d07842328589c34d07a6eb36c56fafc80f2dff6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/Genesis-y Lead.fxp",
+   "sha": "a1e692f42f85b7ab6747827252129f01005ffb36"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Leads/The Insects.fxp",
+   "sha": "53e17c59e0a37ba2400134ad4dabf3a242fe8b93"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Plucks/Acidic Feedback Plonk.fxp",
+   "sha": "b1d4fdf3958e7aedee9ecd3ef21c2a4a3ea25294"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Plucks/Feedback Plonk.fxp",
+   "sha": "00f718ff6053573291869aa2a42358709778b3c8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Rhythms/Modern Silk Allpass S&H.fxp",
+   "sha": "61f315133a746829604e7551de452660e434bd2e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Rhythms/Portal Vibes.fxp",
+   "sha": "44de058de2bbad605a3375d49aa7dac3f1f27ad3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Strings/Badly Sampled Game.fxp",
+   "sha": "aa4db407daeca8fd31fb668cdd845373a7643005"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Strings/Somewhat Rather Silky.fxp",
+   "sha": "25c54c41472c1424b19d533029bcb776766a6a9a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Strings/Synthier Strings.fxp",
+   "sha": "19dca3b3c7888e78321a98ed08fbc96f4efa0744"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Alias Ambience Piano.fxp",
+   "sha": "2941cd416b4dada6fbe8ac0149265bf74e497f82"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Alias Ambience.fxp",
+   "sha": "6e78940a1b4bc0821e4124fe62001e2f53b5bc10"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/Poly Dreams.fxp",
+   "sha": "3e958009aa8ffc0769a59227424240ef6b56ec76"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Synths/The Future Starts With You.fxp",
+   "sha": "b2511c4b2fad55fdbefcdab495c397c8ff0c5195"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Atmospheres/5th Harmonics.fxp",
+   "sha": "a3c19ca1952e2f17793eacc82c89f1d332d678fa"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Plucks/Anjunabeats 2007.fxp",
+   "sha": "3df8d9bc899f8a333c5f29b4d29d37e706c5cfe9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Plucks/Super Pluck.fxp",
+   "sha": "41f9fc6fec976164486d0835ade51ed168e722be"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Winds/Another Flute.fxp",
+   "sha": "ca045cb4d77109f01828827b27166eac245faf4e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Brass/Multifaced Ensemble.fxp",
+   "sha": "49ccab8a43812e99b32b267d83c7dab043d0cf8b"
+  },
+  {
+   "bank": "factory",
+   "path": "resources/data/patches_factory/Tutorials/Formula Modulator/03 The Init Function And State.fxp",
+   "sha": "7ac46fe666f84ac75ca36b8414dce86a25ac01a8"
+  }
+ ]
+}

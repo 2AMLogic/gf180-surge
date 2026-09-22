@@ -1,0 +1,255 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+   "sha": "676da8126b33e867fb2028701bf7be8ac63f2e72"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+   "sha": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+   "sha": "321848282edf3b40d6f93ad950a8ae35660f3258"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Glockarama.fxp",
+   "sha": "caaeca557bf140b4b27c4678dcb44b651e6bdd89"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Winds/Scottish.fxp",
+   "sha": "e3ecd16a6dd8f70d16996bb51408fbd38407e082"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Other X-Fades 2.fxp",
+   "sha": "7445a35cf45e07922e9188471f521a1819f35d23"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Other X-Fades 3.fxp",
+   "sha": "45f0d98d0b0d1794fa9f79f918dcd662f227bc46"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Splits/Bass Seq + Synth Pad.fxp",
+   "sha": "76818ffa7e28abc1aad8769c83b4803bf5f89282"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/FX/Fireworks - Bang And Fizzle.fxp",
+   "sha": "30bfb94b98358997aa25fead135d5968251e2d56"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/FX/Mission Control Space Radio.fxp",
+   "sha": "0d96c3447e067d489f762fa2482134180313d84e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Guitars/Nylon Acoustic Guitar.fxp",
+   "sha": "9220249d87eb24130da1eb93b120ac9132b7645c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Axel's Sharp Atmosphere.fxp",
+   "sha": "ef0316b878b98f4f729a3360b6985864df73547d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Leads/Synced Synth Solo Lead.fxp",
+   "sha": "5cd4920167bd79ff12baa6b102df4b95067d966f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Pop Clap.fxp",
+   "sha": "4543d4139b1945523a8d254c302079954b33a2fe"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Snare Tom 1.fxp",
+   "sha": "b80837ed57571f39dab8b646443c593c5d94e233"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Snare Tom 2.fxp",
+   "sha": "ad655861b5785272152b9f2374b19b9187c97b5b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Harpie.fxp",
+   "sha": "1a8b748d3b8bee8142e20ba7c8b0e6d47707c6f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Strings/Orchestral Harp For Runs.fxp",
+   "sha": "732c8ec8a85a0e3a81143209d079beb307f4e0f4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Basses/Moogaroo.fxp",
+   "sha": "7de0cb06340fbce7c6b32a419045e75e96d4cd14"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Bells/Bell Labs.fxp",
+   "sha": "e1850652a1a392719e7fdc4d00f26525c224dd85"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Guitars/Mutant Lo-Fi Acoustic Guitar Workstation.fxp",
+   "sha": "714821ee0c7561bc1293bb422e2c4bd2f978b163"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Guitars/Mutant Lo-Fi Electric Guitar Workstation.fxp",
+   "sha": "0b281c70208d1771e27884b6e3728d06e51016a4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Leads/Funk Feedback Lead.fxp",
+   "sha": "8aa88c0727335bf56cd12f9f66d442ab204a612b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Leads/Hi, Vince Clarke!.fxp",
+   "sha": "47cd404f1bc764b4a1f48b1b3cedc66bc64864e2"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Leads/The Fabulous Chippy FM West Coast Lead.fxp",
+   "sha": "991047d85c90a76bce2edf2ae5e7d1a56fb256eb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Inertia Pad Sounds Like Alien Seagulls.fxp",
+   "sha": "9e342f40a1bb4550a9f2eff6504c1a2059876602"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Let's Make Drone Music!.fxp",
+   "sha": "2c20e0fc57f75734db5fe5abc9d6fdf4a1fdf50d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Stoney Baloney.fxp",
+   "sha": "9747822088747722a6b67dca34e2687bbf58c387"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Sunrise Breakfast At The Digital Caf\u00e9.fxp",
+   "sha": "b364936509afa5c9b2858a57861a4aa2530a771e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Percussion/Deep Cut Snare.fxp",
+   "sha": "d77534a7d94910cdbfecd980f212780b7e24cdce"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Leads/Theremin.fxp",
+   "sha": "3da04c6e872712cc6afa2522d4a60b1c47cbff77"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Pads/Warm Pad.fxp",
+   "sha": "dad2d9f04faac4339d7df86b4e5faf3bf7f21228"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brassy Pad.fxp",
+   "sha": "8860c08af451cedf9c6384287136c0108cb5d7e3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Trombone Section.fxp",
+   "sha": "ac80931157f7d3ebf748e38f0cc9cda210e0fa29"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/FX/Eww Gross.fxp",
+   "sha": "ac7ae0b9e17d3025adb2ff25ac58b98804713e9a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/FX/Riser.fxp",
+   "sha": "dc28ae4eddcfd7b93b11e1dbaa39c5cee6f272e5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Guitars/Synth Koto Thing.fxp",
+   "sha": "3acdf91dcddf2af5e55da23e610bea81900fd703"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Keys/Totally Not Piano 2.fxp",
+   "sha": "05ff71ce6abc4a9c6dd082d49c690cb0ef3e8787"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Strings/Cello Section.fxp",
+   "sha": "a5567ec970f3621a26296a8382307857e15f047a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Woodwinds/Sax Solo.fxp",
+   "sha": "c971c85feeab025db956cca69bdb82f1ede58354"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Basses/Bass Bloom.fxp",
+   "sha": "33e2c4c499294ad3db5a4c5017e7c21c3594ce33"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Guitars/Guitarish.fxp",
+   "sha": "7ca784a040631e42a899ab0b20ff56725f5c93d4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Mallet Finally! 1.fxp",
+   "sha": "9bc779230e1455414d33f8b8ab06334a6b9453a7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Mallet Finally! 2.fxp",
+   "sha": "6efaad0c3d308d9eb56ea48462b4bd51acd8a8e0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Atmospheres/Tuned Resonance Harmonics.fxp",
+   "sha": "4b4f2273f72fbbc369f18d063e5c9b72a5f6feb1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Bells/Tuned Resonance Bell.fxp",
+   "sha": "51119f8029f6fb547575af10abca2d5a98dcb7d9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Keys/80s Running Up That Hill.fxp",
+   "sha": "8c7fedc754d2ae5cc7a1e00f0edf64c920e55823"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Pads/Tuned Resonances Soothing.fxp",
+   "sha": "eb752ef2042a1345bb3ca870bf58c20be12f269a"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028j",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/FX/Riser.fxp",
+   "sha": "dc28ae4eddcfd7b93b11e1dbaa39c5cee6f272e5"
+  }
+ ]
+}

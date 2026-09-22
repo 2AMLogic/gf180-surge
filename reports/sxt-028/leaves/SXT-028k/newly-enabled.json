@@ -1,0 +1,159 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Acoustic Snare.fxp",
+   "sha": "c840ab363c2e7238e3de499255d2909005aac825"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Ambiance/Dad.fxp",
+   "sha": "3ee118ab69ae2380cdf502c54709666a8c74ae0c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/3x101.fxp",
+   "sha": "6ffb39c5d07e589a19f994b386e1abd3493aeab6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+   "sha": "676da8126b33e867fb2028701bf7be8ac63f2e72"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Resurrection.fxp",
+   "sha": "e2ccab1d70342ce5d18d4bb0993825ff7f959728"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Sub.fxp",
+   "sha": "4a324fcc8d763dccea612068de291ca452fc6a45"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Trance.fxp",
+   "sha": "c277c51ec0094a57c5fc219b3763db3801d7869e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Brass/Batbrass.fxp",
+   "sha": "e6b6f04bea58347fe3b999bc8ba19a0f7a36febf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/FX/Dystopia.fxp",
+   "sha": "f884c4d1c866fdb2c50ec8bf67cf8c5345156f7d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+   "sha": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Sand Storm.fxp",
+   "sha": "2ba21470c23e49ca2bc12dd185159b1b539bbbb8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Trident.fxp",
+   "sha": "9b2ed6983f135c233fe1767520818466a6726d58"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Saw.fxp",
+   "sha": "1862a9ee8527b266deafe5ee3c82dba8492e2a5d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Square.fxp",
+   "sha": "a8130d516c153caced3ecd2632bb940cb6484f13"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Basic Triangle.fxp",
+   "sha": "0005423a30f2583fb855e23163780c9ce3f8e71f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+   "sha": "321848282edf3b40d6f93ad950a8ae35660f3258"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Man Research.fxp",
+   "sha": "61a961cde1d5e2f4f05139a53a966f00d880839c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Alone In The Jungle.fxp",
+   "sha": "13046bae9a516ffe7d79eaef519717aa7f6f7e01"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Glockarama.fxp",
+   "sha": "caaeca557bf140b4b27c4678dcb44b651e6bdd89"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Reindeer.fxp",
+   "sha": "4916ec1c49576f52edb96403ff657df3435012d9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Ring A Bell.fxp",
+   "sha": "62e2993083829952c6f95c03c636c1cceb7b1030"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Weird Church.fxp",
+   "sha": "f555386e3f0b0e0013a27f709f791982b9654094"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/XyloFoM.fxp",
+   "sha": "b4909d870a5d8e47aa234a8e8e12997573894465"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Sequences/Arpinsky.fxp",
+   "sha": "3b0b14bd07c73cbf22e9a656f37ee8bf7467e00e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Sequences/Laser Hats.fxp",
+   "sha": "d74cb6cff07f4429023164f79f6635e690a3ad5e"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Sequences/Outer Space.fxp",
+   "sha": "01a70211caf9bbffe5d41ece91edfa2650eebd00"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Akoustik.fxp",
+   "sha": "c5668aac6ded2f9cbd85ccb6539d0f2b0863f122"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Lost Cello.fxp",
+   "sha": "642c788d599c3e897e8e1d0c0afa20096c3c8025"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Winds/Scottish.fxp",
+   "sha": "e3ecd16a6dd8f70d16996bb51408fbd38407e082"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Atmospheres/Ocean Shimmer 1.fxp",
+   "sha": "d100106cf805a5c8bf3693dd63a37e0eba4fc39e"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028k",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": []
+}
