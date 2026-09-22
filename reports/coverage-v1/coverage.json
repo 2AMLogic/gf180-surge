@@ -158,7 +158,7 @@
   },
   "model/integration/selection-scan.json": {
    "role": "structural input (pinned)",
-   "sha256": "0701198985c1e6b0d995846337f50c9715290d19fa8946005f859270420f26b6"
+   "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
   },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
@@ -166,7 +166,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "e3412cebb9207919651403e3a6d2c463ea83a9d6c470dda04da0fd9bc8a366c8"
+   "sha256": "b53a61e3b406bc6f68f81fddae85352707729b068af311ad171c9c15888398a1"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -208,6 +208,10 @@
    "role": "evidence record for leaf osc:Wavetable",
    "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
   },
+  "reports/sxt-026a/EVIDENCE.md": {
+   "role": "evidence record for leaf voice:sine-fm-lp24-v2",
+   "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
+  },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",
    "sha256": "76e526549c1cca7cb6f070640c1a1b4e5ee5364be1992adf66305df917c8ebd2"
@@ -223,6 +227,14 @@
   "reports/sxt-028/leaves-filed.json": {
    "role": "structural input (pinned)",
    "sha256": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4"
+  },
+  "reports/sxt-032/EVIDENCE.md": {
+   "role": "evidence record for leaf mod:lfo",
+   "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
+  },
+  "reports/sxt-037/EVIDENCE.md": {
+   "role": "evidence record for leaf filter_type:LP 12 dB",
+   "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
   }
  },
  "issue": "SXT-029 (#22)",
@@ -446,6 +458,15 @@
    }
   },
   "leaves": {
+   "filter_type:LP 12 dB": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
    "fx:Chorus": {
     "evidence_state": "OK",
     "landed": false,
@@ -509,6 +530,15 @@
     "support_ready": false,
     "verification": {}
    },
+   "mod:lfo": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
    "osc:Classic": {
     "evidence_state": "OK",
     "landed": true,
@@ -528,6 +558,15 @@
     }
    },
    "voice:attacky-slice": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "voice:sine-fm-lp24-v2": {
     "evidence_state": "OK",
     "landed": true,
     "support_ready": false,
