@@ -29,7 +29,11 @@ def test_selection_record_pins_the_corpus():
     t = rec["tier_counts"]
     assert t["compiled"] == 1683
     assert t["tier3_declared_voice_gates"] == 1
-    assert t["tier4_landed_voice_model_with_fx"] == 0
+    # SXT-026a (#48) resolved finding F-1: the extended landed voice-model
+    # arithmetic now admits the unique Tier-3 survivor WITH its legal FX.
+    assert t["tier4_landed_voice_model_with_fx"] == 1
+    assert rec["finding"]["id"] == "F-1"
+    assert rec["finding"]["status"].startswith("RESOLVED")
     # the unique Tier-3 survivor is the selection, carrying only legal FX
     survivor = rec["tier3_survivors_with_legal_fx"][0]
     assert survivor["path"] == rec["selection"]["path"]
