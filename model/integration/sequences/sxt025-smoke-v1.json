@@ -1,0 +1,21 @@
+{
+  "coverage": [
+    "register:mid",
+    "velocity:medium",
+    "hold:short",
+    "release:note-off"
+  ],
+  "description": "SXT-025 FAST-MODE smoke: two 40 ms mid-register notes; the exercised body ends at sample 3,840 (<=4k-sample smoke rule); the 2.5 s tail keeps the Reverb1 wet path and tail processing exercised end to end.",
+  "events": [
+    {"channel": 0, "note": 60, "t": 0, "type": "note_on", "velocity": 100},
+    {"channel": 0, "note": 60, "t": 1920, "type": "note_off", "velocity": 0},
+    {"channel": 0, "note": 69, "t": 2880, "type": "note_on", "velocity": 80},
+    {"channel": 0, "note": 69, "t": 3840, "type": "note_off", "velocity": 0}
+  ],
+  "id": "sxt025-smoke-v1",
+  "notes": "Committed under model/integration/sequences (NOT the SXT-012 library): this sequence belongs to the SXT-025 integration record. Body (first note-on to last note-off) spans samples 0..3840, within the FAST-MODE 4k-sample smoke budget; tail_s extends the render span only.",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5
+}

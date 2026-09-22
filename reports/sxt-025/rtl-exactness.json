@@ -1,0 +1,63 @@
+{
+  "blocks": 1024,
+  "cases": [
+    {
+      "blocks": 1024,
+      "case": "integrated",
+      "control_decisions_exact": true,
+      "control_e_lines_rtl": 4,
+      "control_snapshots_exact": true,
+      "control_t_lines_rtl": 1024,
+      "exact": true,
+      "kernel_blocks_compared": 1024,
+      "kernel_checkpoints_outputs_exact": true,
+      "kernel_cycles": {
+        "blocks": 1024,
+        "per_block_budget_192mhz": 102400,
+        "total": 1377280,
+        "within_budget": true,
+        "worst_block": 1345
+      },
+      "traffic_exact_34_per_frame": true,
+      "txn_lines_rtl": 1114112,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "7d6359727a345037cef1804c2a17ef04a8d15a3bb9535f8d5078bcfdd3a765aa",
+        "rtl": "7d6359727a345037cef1804c2a17ef04a8d15a3bb9535f8d5078bcfdd3a765aa"
+      },
+      "underruns": 0,
+      "words_per_frame_measured": 34
+    },
+    {
+      "blocks": 1024,
+      "case": "mutant",
+      "control_decisions_exact": true,
+      "control_e_lines_rtl": 4,
+      "control_snapshots_exact": true,
+      "control_t_lines_rtl": 1024,
+      "kernel_blocks_compared": 1024,
+      "kernel_checkpoints_outputs_exact": false,
+      "kernel_cycles": {
+        "blocks": 1024,
+        "per_block_budget_192mhz": 102400,
+        "total": 1377280,
+        "within_budget": true,
+        "worst_block": 1345
+      },
+      "txn_lines_rtl": 1081344,
+      "txn_log_exact": false,
+      "txn_log_sha256": {
+        "model": "7d6359727a345037cef1804c2a17ef04a8d15a3bb9535f8d5078bcfdd3a765aa",
+        "rtl": "f29d435466c9d761356266a712608379f1d72df0bab49a142938352823af06c1"
+      },
+      "underruns": 0,
+      "verdict": "CONTROL-OK (mutant FAILS the kernel comparison)",
+      "words_per_frame_measured": 33
+    }
+  ],
+  "claim": "integrated RTL (control_top + reverb1_core, one sim, one clock, schedule-coupled) vs the frozen models EXACT; external-memory traffic reconciled; mutant control FAILS",
+  "issue": "SXT-025 (#18)",
+  "rtl_host_boundary": "voice stage + gain staging host-side (declared adaptation, finding F-1); in-chip: control plane + Reverb1 kernel + ext writable memory",
+  "sequence": "sxt025-smoke-v1",
+  "status": "PASS"
+}

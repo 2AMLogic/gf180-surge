@@ -1,0 +1,65 @@
+{
+  "claim_scope": "preset-selection rationale only; no fidelity, support, or quality claim. Selection is forced by fail-closed gates, not tuned.",
+  "finding": {
+    "id": "F-1",
+    "text": "No compiled corpus preset carrying EQ/Reverb1 FX is renderable by the landed SXT-022 voice-model arithmetic: the unique Tier-4 survivor (Attacky) carries no FX. The integrated path therefore uses the declared FX-leaf input boundary (the engine's own all-off dry bus of the same preset+sequence) for the voice stage, which makes the configuration ADAPTED -- it can never count as a supported preset. Routed as the blocked dependency (voice-slice extension); the wet-preset gate itself is not weakened."
+  },
+  "inputs": {
+    "compile_corpus_scan": "reports/sxt-020/compile-corpus-scan.json",
+    "compiler": "compiler/compile.py (SXT-020, unmodified)",
+    "graphs_jsonl_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
+  },
+  "issue": "SXT-025 (#18)",
+  "selection": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "compiled_image": "Hell_s_Bells__e499f78d.image.bin",
+    "compiled_image_sha256": "bf21250e85ec52a713671e2067237215c7223996b817b4af88a23a66a708f7a6",
+    "fx_composition": [
+      [
+        "send2",
+        "Reverb 1"
+      ]
+    ],
+    "fx_rationale": "Reverb1+EQ > Reverb1-only > EQ-only ranking: no Reverb1+EQ preset survives Tier 2 (or any near relaxation of the voice gates); the unique Tier-3 survivor carries exactly one Reverb 1 (send2), so Reverb1-only is the richest legal FX available.",
+    "normalized_graph_sha256": "e499f78df5664012717dd2961944502846e28cf7",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "voice": "Sine osc (uni 1, retrig on), LP 24 dB/Driven unit 1, unit 2 Off, Warm, Single/Poly -- INSIDE the Tier-3 declared structural gates but OUTSIDE the Tier-4 landed voice-model arithmetic (see README finding F-1)."
+  },
+  "tier3_survivors_with_legal_fx": [
+    {
+      "fx": [
+        [
+          "send2",
+          "Reverb 1"
+        ]
+      ],
+      "landed_voice_model_failures": [
+        "filter1_lp12_driven",
+        "modwheel_to_filter1_only",
+        "no_velocity_mod",
+        "osc1_classic",
+        "scene_width_zero"
+      ],
+      "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+    }
+  ],
+  "tier4_survivors_any_fx": [
+    {
+      "fx": [],
+      "path": "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
+    },
+    {
+      "fx": [],
+      "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+    }
+  ],
+  "tier_counts": {
+    "compiled": 1683,
+    "tier1_fx_legal": 186,
+    "tier2_scene_playmode": 122,
+    "tier3_declared_voice_gates": 1,
+    "tier4_landed_voice_model_any_fx": 2,
+    "tier4_landed_voice_model_with_fx": 0,
+    "total": 3561
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "budgets_violated": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "control": "NC-A placement/order permutation (send2 -> ains1)",
+  "degeneracy_note": "the preset stores ONE effect, so reordering degenerates to re-placing it across the engine's fixed phase boundary (send_bus -> insert); the comparator must flag it against the SAME fixture",
+  "detected": true,
+  "metrics": {
+    "best_shift": 0,
+    "max_abs_diff_lsb": 837047.9375,
+    "rms_diff_dbfs": -23.93722705257352,
+    "spectral_corr": 0.9487671622296786
+  },
+  "verdict": "CONTROL-OK (permuted placement flagged by the comparator)"
+}

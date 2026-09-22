@@ -1,0 +1,69 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "bca3425a17ac615017a4f8aeac22164da293220f618722667fed7edc51b229bf",
+      "bca3425a17ac615017a4f8aeac22164da293220f618722667fed7edc51b229bf",
+      "bca3425a17ac615017a4f8aeac22164da293220f618722667fed7edc51b229bf"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "dba8c271023d421b7c776c5049849ebd76563c55c2c043e38e351d515c7896b8",
+      "dba8c271023d421b7c776c5049849ebd76563c55c2c043e38e351d515c7896b8",
+      "dba8c271023d421b7c776c5049849ebd76563c55c2c043e38e351d515c7896b8"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 990764,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.22348140180110931,
+    "sha256": "32e6187da9e0a419097b771bdc64d50f230df4fd92e0f385a9059dfc02faf232",
+    "wav": "reports/sxt-025/fixtures/hells_bells__sxt025-smoke-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "hells_bells__sxt025-smoke-v1",
+  "issue": "SXT-025",
+  "preset": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "graphs_sha256_prefix": null,
+    "note": "contributor bank preset; graph sha in model/integration/selection-scan.json",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "slug": "hells_bells"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 2.58,
+    "frames": 123840,
+    "policies_inherited": "fixtures/render_fixture.py (reset/scheduling/tail/dry-bypass)",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "sxt025-smoke-v1",
+    "path": "model/integration/sequences/sxt025-smoke-v1.json",
+    "sha256": "35945e80cddbae7c3aea73c96e0831f186e1fa7909c4fd1addf8d763584b95a2"
+  },
+  "tool": {
+    "pinned_inputs_clean": false,
+    "repo_commit": "a26e803504caad9c133b2a3e0a67ef0e19c80996",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 990764,
+    "peak_abs_float": 0.3003014922142029,
+    "sha256": "9e1864200975f3d758ec7a9d17cc9f8c3b24ac173e693ecf9363e35347b175be",
+    "wav": "reports/sxt-025/fixtures/hells_bells__sxt025-smoke-v1-wet.f32.wav"
+  }
+}

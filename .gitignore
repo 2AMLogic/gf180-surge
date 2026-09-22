@@ -7,3 +7,4 @@ a.out
 # SXT-024 RTL run workdirs (regenerable via tools/run_reverb_rtl.py --keep;
 # evidence lives in reports/sxt-024/rtl-exactness.json with content hashes)
 reports/sxt-024/rtl/
+__pycache__/
