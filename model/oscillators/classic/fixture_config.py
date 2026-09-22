@@ -53,6 +53,7 @@ def carrier_overrides(slot):
         ("fu0_off", True), ("fu1_off", True), ("fx_off", True),
         ("ws_off", True), ("lc_off", True), ("fbc_serial1", True),
         ("fm_off", True), ("scenemode_single", True), ("retrigger_on", True),
+        ("drift_zero", True),
     ]
 
 
@@ -143,6 +144,9 @@ def apply_overrides(s, slot):
         elif key == "retrigger_on":
             s.setParamVal(sc["osc"][slot]["retrigger"], 1.0)
             applied["retrigger"] = 1.0
+        elif key == "drift_zero":
+            s.setParamVal(sc["drift"], 0.0)
+            applied["drift"] = 0.0
         else:
             raise Refuse("unknown override %r" % key)
     d = read_params(s, slot)
