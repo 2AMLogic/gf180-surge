@@ -39,10 +39,20 @@ leaf's scope and preset-dependent).
 4. The tap is **observation-only**: it changes no arithmetic, no branch,
    and no data path; it adds file writes on the oracle host only.
 5. Record hashes (SHA-256):
-   - patch script `~/oracle/sxt037_tap_patch.py`:
-     `295019c1568c6d8a9db9b1ceb20be3553196f25cc7b126136d5563cca50f4e1c`
+   - patch script `~/oracle/sxt037_tap_patch.py` (final revision):
+     `0712926beb62651e50f3e5ccd39cec0586e20244077f25b6427ff1ce0a5cfbad`
    - generated header `src/common/sxt037_tap.h` (in the external tree):
      recorded at evidence time in `reports/sxt-037/artifacts/`.
+
+## Outcome (evidence)
+
+- Same-host, same-toolchain neutrality: the patched build renders Attacky
+  `seq-notes-repeated-v1` dry **bit-identically** to a fresh unpatched-source
+  rebuild (both `e86f79af0a2a1afb…`); tapped-vs-untapped same-build renders
+  are bit-identical on the deterministic preset (`bundle-attacky-neutrality`).
+- Mac-vs-box render shas differ (`9966433b…` vs `e86f79af…`) — cross-platform
+  codegen variance of the pinned source, documented here to pre-empt
+  misreading it as a tap effect.
 
 ## Alternatives rejected
 
