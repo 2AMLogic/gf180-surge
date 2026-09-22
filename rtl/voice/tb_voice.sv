@@ -344,6 +344,8 @@ module tb_voice;
   endtask
 
   // ------------------------------------------------------------------ voice
+  // (if/else structure, no early return: keeps the harness runnable under
+  // iverilog 11, which does not implement `return` from tasks)
   task automatic process_slot;
     if (!cw[0][0]) begin
       active[s] = 0;
