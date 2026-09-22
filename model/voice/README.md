@@ -347,6 +347,20 @@ committed artifact hashes).
   provenance rule as the landed cutoff/reso routes; runtime fixture routes
   are engine readbacks (`getModDepth` raw + `getNormalizedDepth`) recorded in
   the committed sidecar.
+* RTL schedule notes (SXT-035 findings; `tb_voice.sv` corrected to the
+  frozen model order — landed fixtures bit-identical before/after):
+  (1) the per-sample gain/output ramp products are evaluated at 64 bits
+  (`d_gain·(k+1)` overflows the 32-bit self-determined width once the
+  VCA-Gain route drives `fbp_gain` to ~2^28); (2) the ±8 scene hard clip is
+  applied BEFORE the halfband decimator (v1 step 7), not after it — the two
+  placements are equivalent only while the scene bus never saturates, and
+  the landed fixtures never saturate. Both corrections mirror the frozen
+  model exactly; the model did not change.
+* Known landed inconsistency (recorded, not reconciled here):
+  `run_lfo_model.py` still emits 32-word slot records (pre-#48 layout)
+  while `tb_voice.sv` streams 40-word records; re-running the SXT-032
+  voice pairing requires regenerating its stimulus in the v2 layout
+  (SXT-032 owner).
 * Declared scope (unchanged omissions plus): per-scene modwheel instances
   beyond scene A, bipolar/LEGACY/SLOW_EXP/FAST_EXP smoothing modes,
   modwheel→LFO-amplitude / EG-times / osc pitch-volume-width / FX-send
