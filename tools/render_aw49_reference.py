@@ -326,8 +326,9 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
                      f"{settle_blocks + total_blocks}")
     fpds = parse_fpd(os.path.join(tap_on, "aw_fpd.bin"))
     galstate = parse_galstate(os.path.join(tap_on, "aw_galstate.bin"))
-    if len(galstate) != total_blocks * 32:
-        raise Refuse(f"galstate records {len(galstate)} != frames {total_blocks * 32}")
+    if len(galstate) != len(gal_in) * 32:
+        raise Refuse(f"galstate records {len(galstate)} != tapped frames "
+                     f"{len(gal_in) * 32}")
 
     stem = f"{slug}__{seq_id}"
     npz_path = os.path.join(out_dir, f"{stem}-aw49-taps.npz")
