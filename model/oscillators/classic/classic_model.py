@@ -410,7 +410,15 @@ class Slice:
         self.pfg = vm.db_to_linear(vm.qint(inp.level_pfg))
         vca_db_eff = inp.vca_db + inp.vca_vs * (1.0 - velocity / 127.0)
         self.vca = vm.db_to_linear(vm.qint(vca_db_eff))
-        self.outl = vm.amp_to_linear(vm.qint(inp.scene_volume)) >> 1
+        # mono pan law: under fc_serial1 the voice fans out L/R via
+        # megapanL/R(pan) (basic_dsp.h); on the (L+R)/2 evidence bus the pair
+        # sums to (megapanL+megapanR)/2 = 1 - 0.25*pan^2 exactly (real
+        # arithmetic). Modeled as one Q word folded into the outl gain —
+        # declared <=1-LSB rounding deviation vs the engine's split L/R path.
+        pan_f = max(-1.0, min(1.0, inp.pan))
+        mono_law = vm.qint(1.0 - 0.25 * pan_f * pan_f)
+        self.outl = vm.qmul(vm.amp_to_linear(vm.qint(inp.scene_volume)) >> 1,
+                            mono_law)
         self.gain = vm.qmul(self.vca, self.aeg.output)
         self.prev_gain = self.gain
         self.keep_playing = True
@@ -467,6 +475,7 @@ class Inputs:
         self.drift = d.get("drift", 0.0)
         self.o_level = d["o_level"]
         self.level_pfg = d.get("level_pfg", 0.0)
+        self.pan = d.get("pan", 0.0)
         self.scene_volume = d["scene_volume"]
         self.vca_db = d["vca_db"]
         self.vca_vs = d.get("vca_velsense", 0.0)

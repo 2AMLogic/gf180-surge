@@ -96,8 +96,9 @@ def main():
                      "committed normalized graph")
     if A["pm"] != 0:
         raise Refuse("not poly playmode")
-    if abs(A.get("pan", 0.0)) > 0 or abs(A.get("wid", 0.0)) > 0:
-        raise Refuse("pan/width non-zero: outside the declared mono slice")
+    # pan/width: width is dead code under the fc_serial1 override (the
+    # voice-level width branch only runs for fc_stereo/fc_wide); scene pan
+    # is modeled through the mono pan law (megapanL+R)/2 = 1-0.25*pan^2
 
     preset_abs = fc.preset_abs(oc, args.carrier)
     if not os.path.exists(preset_abs):
@@ -136,8 +137,8 @@ def main():
         raise Refuse("filter units did not read back Off")
     if abs(d["lowcut"] + 72.0) > 1e-6:
         raise Refuse("lowcut did not read back off")
-    if abs(d["pan"]) > 0 or abs(d["width"]) > 0:
-        raise Refuse("pan/width non-zero: outside the declared mono slice")
+    if abs(d["pan"]) > 1.0:
+        raise Refuse("pan outside [-1, 1]: outside the declared mono law")
     if int(d["adsr"]["mode"]) != 0:
         raise Refuse("amp env not in digital mode")
     if int(d["adsr"]["d_s"]) not in (0, 1):
