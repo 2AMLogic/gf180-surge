@@ -202,9 +202,10 @@ def main():
             # SXT-026a appendix (words 32..36)
             if sine:
                 ctrl.extend([v.fvel, v.kt_word,
-                             v.sine_omega[0], v.sine_omega[1], v.sine_omega[2]])
+                             v.sine_omega[0], v.sine_omega[1], v.sine_omega[2],
+                             0, 0, 0])            # 37..39 reserved
             else:
-                ctrl.extend([0, 0, 0, 0, 0])
+                ctrl.extend([0, 0, 0, 0, 0, 0, 0, 0])
             rec = {"slot": slot, "key": v.key, "gate": v.gate}
             if full:
                 rec["oscout_block"] = v.last_oscout
