@@ -178,4 +178,4 @@ if __name__ == "__main__":
         sys.exit(main())
     except Refuse as e:
         print(f"REFUSING: {e}", file=sys.stderr)
-        return 2 if False else sys.exit(2)
+        sys.exit(2)
