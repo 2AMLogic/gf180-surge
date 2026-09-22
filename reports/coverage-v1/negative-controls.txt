@@ -1,0 +1,27 @@
+SXT-029 negative controls — coverage pipeline (issue #22 acceptance)
+runner: tools/coverage_negative_controls.py; scratch root: /tmp/sxt029-negative-controls (recreated each run; published outputs never touched)
+controls are healthy when the PIPELINE fails as designed: a stale or missing leaf evidence must DOWNGRADE affected presets from supported to unresolved (never report them supported); a corpus entry without a coverage row must REFUSE fail-closed.
+
+NC-STALE-HASH: evidence hash pointed at a mismatching file
+    baseline supported            : 1681
+    affected (supported AND EQ)   : 453
+    after tamper supported        : 1228
+    downgraded supported->unresolved: 453 (all carry stale_leaf: reasons; fx:EQ evidence_state=STALE)
+    PASS: affected presets downgraded; none reported supported
+
+NC-STALE-MISSING: silent stub (evidence file absent)
+    baseline supported            : 1681
+    affected (supported AND EQ)   : 453
+    after tamper supported        : 1228
+    downgraded supported->unresolved: 453 (all carry stale_leaf: reasons; fx:EQ evidence_state=STALE)
+    PASS: affected presets downgraded; none reported supported
+
+NC-ROW-MISSING: corpus entry with no coverage row
+    REFUSED as required: REFUSE: 1 corpus entries have no coverage row (no compile-scan outcome), e.g. resources/data/patches_factory/Basses/Atta
+    PASS: fail-closed, no outputs written
+
+NC-SHA-DISAGREE: graphs blob sha disagrees with scan
+    REFUSED as required: REFUSE: sha disagreement for resources/data/patches_3rdparty/A.Liv/Basses/808er Than 808.fxp: scan ccf42b0e8bdc1c7884b3b
+    PASS: fail-closed, no outputs written
+
+RESULT: PASS — all controls healthy (each demonstrably fails the check it targets)
