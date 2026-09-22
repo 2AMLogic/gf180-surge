@@ -367,6 +367,8 @@ module tb_voice;
 
   task automatic init_voice;
     for (w = 0; w < OB_LEN + FIRN; w++) begin ob[s][w] = 0; dcb[s][w] = 0; end
+    l_shape[s]=32'(cfg[10]); l_pw[s]=32'(cfg[11]); l_pw2[s]=32'(cfg[12]);
+    l_sub[s]=32'(cfg[13]); l_sync[s]=32'(cfg[14]);
     // per-unison-voice init (ClassicOscillator.cpp init loop): retrigger on
     // -> oscstate=syncstate=0; non-retrigger -> the declared init draw word
     for (u = 0; u < MAXUNI; u++) begin
@@ -378,8 +380,6 @@ module tb_voice;
       dc_uni_u[s][u]     = 0;
     end
     dc_mdc[s]=0; osc_out[s]=0; osc_out2[s]=0; bufpos[s]=0;
-    l_shape[s]=32'(cfg[10]); l_pw[s]=32'(cfg[11]); l_pw2[s]=32'(cfg[12]);
-    l_sub[s]=32'(cfg[13]); l_sync[s]=32'(cfg[14]);
     hpf_prev[s]=cw[8];
     f_r0[s]=0; f_r1[s]=0; f_clip[s]=ONE;
     f4_r0[s]=0; f4_r1[s]=0;
