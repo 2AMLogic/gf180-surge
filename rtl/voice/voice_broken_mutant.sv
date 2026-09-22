@@ -1,6 +1,7 @@
-// SXT-022 RTL voice slice: audio-rate datapath + envelope state machines for
-// factory preset `Basses/Attacky.fxp`, implementing the SAME integer schedule
-// as the frozen fixed-point model (model/voice/voice_model.py).
+// SXT-022/SXT-034 RTL voice slice: audio-rate datapath + envelope state
+// machines for factory preset `Basses/Attacky.fxp` (uni=1 regression base)
+// extended with the unison stack (SXT-034), implementing the SAME integer
+// schedule as the frozen fixed-point model (model/voice/voice_model.py).
 //
 // SXT-026a (issue #48): the datapath is parameterized for the generalized
 // voice class -- Sine oscillator (legacy path, quadrature recurrence +
@@ -15,12 +16,23 @@
 // tools/compare_rtl_model.py). It is NOT synthesis-closed, NOT timing-closed,
 // and makes no gf180mcu FPGA/ASIC claim of any kind. The schedule is a
 // sequential operation stream; op counts are reported separately in
-// reports/sxt-022/EVIDENCE.md and reports/sxt-026a/ under the declared
-// 1-MAC cost model (the Sine FM branch's audio-rate division diverges from
-// A-ALU-2 by declaration; see model/voice/README.md).
+// reports/sxt-022/EVIDENCE.md, reports/sxt-026a/ and reports/SXT-034 under
+// the declared 1-MAC cost model (the Sine FM branch's audio-rate division
+// diverges from A-ALU-2 by declaration; see model/voice/README.md).
+//
+// Resource honesty (SXT-034): unison N = N per-voice impulse state machines
+// (oscstate/state/last_level/pwidth/pwidth2/dc_uni per voice) scheduled
+// against ONE shared impulse/DC buffer pair per voice slot -- the engine
+// accumulates every unison voice into a single oscbuffer/dcbuffer
+// (ClassicOscillator.cpp init memsets one buffer; convolute adds into it).
 //
 // Structure citations (read, not copied): surge@58914e59
-//   src/common/dsp/oscillators/ClassicOscillator.cpp (convolute/process_block)
+//   src/common/dsp/oscillators/ClassicOscillator.cpp (init/prepare_unison/
+//     process_block/convolute)
+//   src/common/dsp/oscillators/OscillatorCommonFunctions.h (prepare_unison)
+//   libs/sst/sst-basic-blocks OscillatorDriftUnisonCharacter.h (UnisonSetup:
+//     attenuation, detune bias/offset; pan law inert on the mono bus --
+//     osc stereo flag is is_wide = (fbc == fc_wide), SurgeVoice.cpp:1044)
 //   src/common/dsp/oscillators/SineOscillator.cpp (legacy path, applyFilter)
 //   sst/basic-blocks/dsp/QuadratureOscillators.h (SurgeQuadrOsc)
 //   sst/basic-blocks/dsp/FastMath.h (fastsin/fastcos/clampToPiRange)
@@ -34,9 +46,12 @@
 // Stimulus (declared control-plane boundary; emitted by model/voice/run_model.py):
 //   init.hex   one-time constants: envelope RATES (rate-table outputs), lag
 //              targets, character filter, vca/out/master gains, instant-attack
-//              flags, lag rate, the 12 halfband coefficients, and the
-//              SXT-026a appendix (osc_kind, fu_poles, fm_depth, fm_mode,
-//              mix1, pitch offsets, per-osc hp/lp biquad coefficients)
+//              flags, lag rate, the 12 halfband coefficients, the
+//              SXT-026a appendix (words 40..77: osc_kind, fu_poles, fm_depth,
+//              fm_mode, mix1, pitch offsets, per-osc hp/lp biquad coeffs),
+//              then the SXT-034 unison appendix (words 78+): uni count,
+//              out_attenuation, per-voice t/t_inv (detune table outputs) and
+//              init oscstate (non-retrigger draw path)
 //   ctrl.hex   per-block control words (coefficient plane: C/dC, gain/out
 //              targets, pitchmult/a_cov/hpf target, slot flags; appendix
 //              per slot: fvel, kt_word, sine omega1..3)
@@ -56,6 +71,7 @@ module tb_voice;
   localparam int FIROFF   = 6;
   localparam int NSLOTS   = 8;
   localparam int CWORDS   = 40;      // ctrl words per slot (v2 stimulus)
+  localparam int MAXUNI   = 16;
   // SXT-026a: stimulus-capacity bound (fail-closed). 32768 blocks of the
   // 4+NSLOTS*CWORDS stride; the runner's stream length is checked against
   // this at load time (see run()), so an undersized stream is a hard error
@@ -77,7 +93,7 @@ module tb_voice;
     logic signed [63:0] p, r;
     qmul_count++;
     p = a * b;
-    r = (p + (64'sd1 << 19)) >>> 21;  // BROKEN MUTANT: rounding corrupted
+    r = (p + (64'sd1 << 19)) >>> 21;
     if      (r > 64'sd2147483647)  qmul = 32'sd2147483647;
     else if (r < -64'sd2147483648) qmul = -32'sd2147483648;
     else                           qmul = r[31:0];
@@ -143,7 +159,10 @@ module tb_voice;
   // SXT-026a appendix:
   // 40 osc_kind(0 classic,1 sine) 41 fu_poles(12/24) 42 fm_depth 43 fm_mode
   // 44 mix1  45..47 pitch_off1..3 (info)  48..77 hp/lp biquad coeffs x3
-  logic [31:0] cfg [0:77];
+  // SXT-034 unison appendix:
+  // 78 uni_voices  79 uni_out_attenuation
+  // 80+3u t_u[u]  81+3u t_inv_u[u]  82+3u init_oscstate_u[u]   (u = 0..15)
+  logic [31:0] cfg [0:127];
   // ctrl block header: [b, ncreate, modwheel, master_amp]
   // ctrl slot record (40 words):
   //  0 flags(b0 active,b1 ckpt,b2 created,b3 released)  1 key  2 gate
@@ -160,10 +179,16 @@ module tb_voice;
   logic [31:0]  aeg_state [NSLOTS], aeg_idle [NSLOTS];
   logic signed [31:0] feg_phase [NSLOTS], feg_out_r [NSLOTS], feg_scale [NSLOTS];
   logic [31:0]  feg_state [NSLOTS], feg_idle [NSLOTS];
-  logic signed [31:0] oscstate [NSLOTS], last_level [NSLOTS], pwidth [NSLOTS],
-      pwidth2 [NSLOTS], dc_uni [NSLOTS], dc_mdc [NSLOTS], osc_out [NSLOTS],
+  // per-unison-voice impulse state machines (shared ob/dcb above)
+  logic signed [31:0] oscstate_u [NSLOTS][MAXUNI], last_level_u [NSLOTS][MAXUNI],
+      pwidth_u [NSLOTS][MAXUNI], pwidth2_u [NSLOTS][MAXUNI],
+      dc_uni_u [NSLOTS][MAXUNI], dc_mdc [NSLOTS], osc_out [NSLOTS],
       osc_out2 [NSLOTS];
-  logic [31:0]  osc_state [NSLOTS], bufpos [NSLOTS], hpf_prev [NSLOTS];
+  logic [31:0]  osc_state_u [NSLOTS][MAXUNI], bufpos [NSLOTS], hpf_prev [NSLOTS];
+  logic signed [31:0] t_u [MAXUNI], t_inv_u [MAXUNI];
+  logic signed [31:0] init_osc_u [MAXUNI];
+  logic signed [31:0] out_att;
+  int unsigned uni_n;
   logic signed [31:0] f_r0 [NSLOTS], f_r1 [NSLOTS], f_clip [NSLOTS];
   logic signed [31:0] f4_r0 [NSLOTS], f4_r1 [NSLOTS];
   logic signed [31:0] prev_gain [NSLOTS], prev_outl [NSLOTS];
@@ -188,13 +213,15 @@ module tb_voice;
   logic signed [31:0] cw [CWORDS];
 
   integer fd;
-  integer b, s, k, i, w, o;
+  integer b, s, k, i, w, o, u;
   logic [31:0] ipos, delay, m_idx, lipol, base;
   logic signed [63:0] prod64;
-  logic signed [31:0] t_const, t_inv, g, tg, olddc, rate, term, hpf_start,
+  logic signed [31:0] g, tg, olddc, rate, term, hpf_start,
       hpf_d, hpf_v, acc, obv, last_oo, mdc, lvl, oa;
   logic signed [31:0] c [8];
-  logic signed [31:0] gain_start, outl_start, d_gain, d_outl, gainv, outlv,
+  logic signed [31:0] gain_start, outl_start, d_gain, d_outl, gainv, outlv;
+  logic signed [63:0] ramp_prod64;
+  logic signed [31:0]
       outv, xv, y, s1v, s2v;
   logic signed [31:0] s3v, s4v, y2v, dlv, xbv;
   logic signed [31:0] poles;
@@ -206,15 +233,21 @@ module tb_voice;
     $readmemh("rtl/init.hex", cfg);
     $readmemh("rtl/ctrl.hex", ctrl_mem);
     fd = $fopen("tb_trace.txt", "w");
-    t_const = 32'(cfg[23]);
-    t_inv   = 32'(cfg[24]);
+    uni_n = int'(cfg[78]);
+    if (uni_n < 1 || uni_n > MAXUNI) $fatal(1, "uni count %0d outside 1..16", uni_n);
+    out_att = 32'(cfg[79]);
+    for (u = 0; u < MAXUNI; u++) begin
+      t_u[u]       = 32'(cfg[80 + 3*u]);
+      t_inv_u[u]   = 32'(cfg[81 + 3*u]);
+      init_osc_u[u]= 32'(cfg[82 + 3*u]);
+    end
     for (i = 0; i < 6; i++) begin
       hbx1_b[i]=0; hbx2_b[i]=0; hby1_b[i]=0; hby2_b[i]=0;
       hbx1_a[i]=0; hbx2_a[i]=0; hby1_a[i]=0; hby2_a[i]=0;
     end
     run();
     $fclose(fd);
-    $display("DONE qmuls=%0d blocks=%0d", qmul_count, cfg[22]);
+    $display("DONE qmuls=%0d blocks=%0d uni=%0d", qmul_count, cfg[22], uni_n);
     $finish;
   end
 
@@ -332,11 +365,19 @@ module tb_voice;
 
   task automatic init_voice;
     for (w = 0; w < OB_LEN + FIRN; w++) begin ob[s][w] = 0; dcb[s][w] = 0; end
-    oscstate[s]=0; osc_state[s]=0; last_level[s]=0;
-    dc_uni[s]=0; dc_mdc[s]=0; osc_out[s]=0; osc_out2[s]=0; bufpos[s]=0;
+    // per-unison-voice init (ClassicOscillator.cpp init loop): retrigger on
+    // -> oscstate=syncstate=0; non-retrigger -> the declared init draw word
+    for (u = 0; u < MAXUNI; u++) begin
+      oscstate_u[s][u]   = (u < uni_n) ? init_osc_u[u] : 0;
+      osc_state_u[s][u]  = 0;
+      last_level_u[s][u] = 0;
+      pwidth_u[s][u]     = clamp_q(l_pw[s]);
+      pwidth2_u[s][u]    = 0;
+      dc_uni_u[s][u]     = 0;
+    end
+    dc_mdc[s]=0; osc_out[s]=0; osc_out2[s]=0; bufpos[s]=0;
     l_shape[s]=32'(cfg[10]); l_pw[s]=32'(cfg[11]); l_pw2[s]=32'(cfg[12]);
     l_sub[s]=32'(cfg[13]); l_sync[s]=32'(cfg[14]);
-    pwidth[s]=clamp_q(l_pw[s]); pwidth2[s]=0;
     hpf_prev[s]=cw[8];
     f_r0[s]=0; f_r1[s]=0; f_clip[s]=ONE;
     f4_r0[s]=0; f4_r1[s]=0;
@@ -520,7 +561,7 @@ module tb_voice;
     end
   endtask
 
-  // -------------------------------------------------- classic osc (1 voice)
+  // ------------------------------------------- classic osc (unison stack)
   task automatic osc_block;
     logic signed [31:0] lag_rate;
     logic [31:0] a_cov, pmi;
@@ -535,9 +576,13 @@ module tb_voice;
     hpf_prev[s]= cw[8];
     pmi   = cw[5];
     a_cov = cw[7];
-    while ($signed(oscstate[s]) < $signed(a_cov)) convolute(pmi);
-    oscstate[s] = oscstate[s] - a_cov;
-    oa  = qmul(ONE, 32'(cw[6]));
+    // voice-major fill loop: each unison voice fills its own phase space to
+    // a_cov, accumulating into the SHARED impulse buffer
+    for (u = 0; u < uni_n; u++) begin
+      while ($signed(oscstate_u[s][u]) < $signed(a_cov)) convolute(pmi);
+      oscstate_u[s][u] = oscstate_u[s][u] - a_cov;
+    end
+    oa  = qmul(out_att, 32'(cw[6]));
     mdc = dc_mdc[s];
     for (k = 0; k < BLOCK_OS; k++) begin
       hpf_v = hpf_start + ((hpf_d * (k+1) + 32'sd32) >>> 6);
@@ -566,57 +611,58 @@ module tb_voice;
 
   task automatic convolute(input logic [31:0] pmi);
     logic signed [31:0] wf, sub, om1, pw, pw2v, term1, term2;
-    prod64 = $signed(oscstate[s]) * $signed({1'b0, pmi});
+    prod64 = $signed(oscstate_u[s][u]) * $signed({1'b0, pmi});
     ipos   = prod64 >>> (FQ + PMI_F - 24);
     delay  = ipos[29:24];
     m_idx  = ipos[23:16];
     lipol  = ipos[15:0];
     wf  = l_shape[s]; sub = l_sub[s]; om1 = ONE - sub;
-    if (osc_state[s] == 0) begin
-      pwidth[s]  = clamp_q(l_pw[s]);
-      pwidth2[s] = qmul(2*ONE, l_pw2[s]);
+    if (osc_state_u[s][u] == 0) begin
+      pwidth_u[s][u]  = clamp_q(l_pw[s]);
+      pwidth2_u[s][u] = qmul(2*ONE, l_pw2[s]);
     end
-    pw = pwidth[s]; pw2v = pwidth2[s];
-    case (osc_state[s])
+    pw = pwidth_u[s][u]; pw2v = pwidth2_u[s][u];
+    case (osc_state_u[s][u])
       0: begin
         term1 = (ONE + wf + 32'sd1) >>> 1;             // (1+wf)/2, round-half-up
         term2 = qmul(ONE - pw, -wf);
         tg = qmul(term1 + term2, om1) + qmul((sub + 32'sd1) >>> 1, 2*ONE - pw2v);
-        g = tg - last_level[s];
-        last_level[s] = tg;
-        last_level[s] = last_level[s] - qmul(qmul(pw, pw2v), qmul(ONE + wf, om1));
+        g = tg - last_level_u[s][u];
+        last_level_u[s][u] = tg;
+        last_level_u[s][u] = last_level_u[s][u] - qmul(qmul(pw, pw2v), qmul(ONE + wf, om1));
       end
       1: begin
         g = qmul(wf, om1) - sub;
-        last_level[s] = last_level[s] + g;
-        last_level[s] = last_level[s] - qmul(qmul(ONE - pw, 2*ONE - pw2v), qmul(ONE + wf, om1));
+        last_level_u[s][u] = last_level_u[s][u] + g;
+        last_level_u[s][u] = last_level_u[s][u] - qmul(qmul(ONE - pw, 2*ONE - pw2v), qmul(ONE + wf, om1));
       end
       2: begin
         g = ONE - sub;
-        last_level[s] = last_level[s] + g;
-        last_level[s] = last_level[s] - qmul(qmul(pw, 2*ONE - pw2v), qmul(ONE + wf, om1));
+        last_level_u[s][u] = last_level_u[s][u] + g;
+        last_level_u[s][u] = last_level_u[s][u] - qmul(qmul(pw, 2*ONE - pw2v), qmul(ONE + wf, om1));
       end
       default: begin
         g = qmul(wf, om1) + sub;
-        last_level[s] = last_level[s] + g;
-        last_level[s] = last_level[s] - qmul(qmul(ONE - pw, pw2v), qmul(ONE + wf, om1));
+        last_level_u[s][u] = last_level_u[s][u] + g;
+        last_level_u[s][u] = last_level_u[s][u] - qmul(qmul(ONE - pw, pw2v), qmul(ONE + wf, om1));
       end
     endcase
+    g = qmul(g, out_att);          // UnisonSetup attenuation (1/sqrt(n))
     base = bufpos[s] + delay;
     for (k = 0; k < FIRN; k++) begin
       term = 32'(sinc_main[m_idx*FIRN + k])
            + qmul(32'(lipol), 32'(sinc_deriv[m_idx*FIRN + k]));
       ob[s][base + k] = sat32(ob[s][base + k] + qmul(term, g));
     end
-    olddc = dc_uni[s];
-    dc_uni[s] = qmul(t_inv, qmul(ONE + wf, om1));
-    dcb[s][base + FIROFF] = sat32(dcb[s][base + FIROFF] + (dc_uni[s] - olddc));
-    if ((osc_state[s] & 1) != 0) rate = qmul(t_const, ONE - pw);
-    else                         rate = qmul(t_const, pw);
-    if (((osc_state[s] + 1) & 2) != 0) rate = qmul(rate, 2*ONE - pw2v);
-    else                               rate = qmul(rate, pw2v);
-    oscstate[s] = ($signed(oscstate[s] + rate) > 0) ? oscstate[s] + rate : 0;
-    osc_state[s] = (osc_state[s] + 1) & 3;
+    olddc = dc_uni_u[s][u];
+    dc_uni_u[s][u] = qmul(t_inv_u[u], qmul(ONE + wf, om1));
+    dcb[s][base + FIROFF] = sat32(dcb[s][base + FIROFF] + (dc_uni_u[s][u] - olddc));
+    if ((osc_state_u[s][u] & 1) != 0) rate = qmul(t_u[u], ONE - pw);
+    else                              rate = qmul(t_u[u], pw);
+    if (((osc_state_u[s][u] + 1) & 2) != 0) rate = qmul(rate, 2*ONE - pw2v);
+    else                                    rate = qmul(rate, pw2v);
+    oscstate_u[s][u] = ($signed(oscstate_u[s][u] + rate) > 0) ? oscstate_u[s][u] + rate : 0;
+    osc_state_u[s][u] = (osc_state_u[s][u] + 1) & 3;
   endtask
 
   // ----------------------------------------------- filter chain (serial 1)
@@ -655,8 +701,15 @@ module tb_voice;
         f_clip[s] = maxs(32'sd209715, ONE - qmul(c[7], qmul(y, y)));
         xbv = sat32(qmul(dlv, ONE - 32'(cfg[44])) + qmul(y, 32'(cfg[44])));
       end
-      gainv = gain_start + ((d_gain * (k+1) + 32'sd32) >>> 6);
-      outlv = outl_start + ((d_outl * (k+1) + 32'sd32) >>> 6);
+      // SXT-035: the ramp products are evaluated at 64 bits -- the leaf's
+      // VCA-Gain route makes d_gain reach ~2^28, so d_gain*(k+1) overflows
+      // the 32-bit self-determined width the landed fixtures never hit
+      ramp_prod64 = d_gain;
+      ramp_prod64 = ramp_prod64 * (k+1);
+      gainv = gain_start + 32'((ramp_prod64 + 64'sd32) >>> 6);
+      ramp_prod64 = d_outl;
+      ramp_prod64 = ramp_prod64 * (k+1);
+      outlv = outl_start + 32'((ramp_prod64 + 64'sd32) >>> 6);
       outv = qmul(xbv, gainv);
       scene_l[k] = scene_l[k] + qmul(outv, outlv);
     end
@@ -670,6 +723,11 @@ module tb_voice;
     logic signed [31:0] chainb [BLOCK_OS];
     logic signed [31:0] chaina [BLOCK_OS];
     logic signed [31:0] bl, mm;
+    // SXT-035: the +-8 scene hard clip is applied BEFORE the decimator
+    // (engine order, model order -- README step 7). The landed schedule
+    // clamped after the halfband instead, which is equivalent only while
+    // the scene never saturates; the leaf's VCA-Gain fixture saturates it.
+    for (k = 0; k < BLOCK_OS; k++) scene_l[k] = clamp8(scene_l[k]);
     for (k = 0; k < BLOCK_OS; k++) begin
       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
       for (i = 0; i < 6; i++) begin
@@ -685,7 +743,7 @@ module tb_voice;
       chainb[k] = xb; chaina[k] = xa;
     end
     for (k = 0; k < BLOCK; k++) begin
-      bl = clamp8(qround1(chaina[2*k] + chainb[2*k+1]));
+      bl = qround1(chaina[2*k] + chainb[2*k+1]);
       mm = clamp8(qmul(bl, 32'(master_amp)));   // L == R on the mono bus
       mm = clamp1(mm);
       $fwrite(fd, "M %0d %0d\n", b, mm);
@@ -696,17 +754,25 @@ module tb_voice;
     qround1 = (v + 32'sd1) >>> 1;
   endfunction
 
-  // checkpoint dump (mirrors model trace "after" fields + block C_end)
+  // checkpoint dump (mirrors model trace "after" fields + block C_end).
+  // Per-unison-voice impulse state follows as one U line per voice.
   task automatic dump_slot;
     $fwrite(fd, "T %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
       b, s, slot_key[s], slot_gate[s],
       aeg_state[s], aeg_phase[s], aeg_out_r[s],
       feg_state[s], feg_phase[s], feg_out_r[s],
-      oscstate[s], osc_state[s], last_level[s], pwidth[s], pwidth2[s],
-      dc_uni[s], dc_mdc[s], osc_out[s], osc_out2[s], bufpos[s],
+      oscstate_u[s][0], osc_state_u[s][0], last_level_u[s][0],
+      pwidth_u[s][0], pwidth2_u[s][0],
+      dc_uni_u[s][0], dc_mdc[s], osc_out[s], osc_out2[s], bufpos[s],
       f_r0[s], f_r1[s], f_clip[s],
       c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7],
       f4_r0[s], f4_r1[s]);
+    for (u = 0; u < uni_n; u++) begin
+      $fwrite(fd, "U %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
+        b, s, u,
+        oscstate_u[s][u], osc_state_u[s][u], last_level_u[s][u],
+        pwidth_u[s][u], pwidth2_u[s][u], dc_uni_u[s][u]);
+    end
     $fwrite(fd, "O %0d %0d", b, s);
     for (k = 0; k < BLOCK_OS; k++) $fwrite(fd, " %0d", osout[s][k]);
     $fwrite(fd, "\n");

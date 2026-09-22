@@ -97,8 +97,17 @@ def main():
     def envrate(p):
         return vm.envelope_rate_linear_nowrap(vm.qint(p))
 
+    # UNI block (see tb_voice.sv cfg map, words 78+): unison stack constants
+    # (per-voice detune tables precomputed in the model's control plane)
+    uni_n = max(1, int(inp.n_unison))
+    uni_words = [uni_n, probe.out_attenuation]
+    for u in probe.u:
+        uni_words += [u["t"], u["t_inv"], u["oscstate"]]
+    uni_words += [0] * (3 * 16 - 3 * len(probe.u))
+
     # INIT_ORDER (see tb_voice.sv cfg map); words 0..39 are the frozen v1
-    # layout, 40..76 are the SXT-026a parameterization appendix.
+    # layout, 40..77 the SXT-026a parameterization appendix, 78.. the SXT-034
+    # unison appendix.
     sine = probe.kind == "sine"
     init_words = [
         envrate(inp.adsr["a"]), envrate(inp.adsr["d"]), envrate(inp.adsr["r"]),
@@ -120,7 +129,7 @@ def main():
         vm.qint(0.05),                                           # lag rate
         inst_att_aeg, inst_att_feg,
         *vm.HALFBAND_B_Q, *vm.HALFBAND_A_Q,
-        # ---- SXT-026a appendix -------------------------------------------
+        # ---- SXT-026a appendix (words 40..47) -----------------------------
         1 if sine else 0,                                        # 40 osc_kind
         probe.fu_poles,                                          # 41 fu_poles
         probe.fm_depth,                                          # 42 fm_depth
@@ -131,13 +140,15 @@ def main():
         inp.osc_pitch_offsets[2],                                # 47 pitch_off3
     ]
     if sine:
-        for core in probe.sine:               # 47..51 hp, 52..56 lp (x3 oscs)
+        for core in probe.sine:               # 48..77 hp, lp coeffs (x3 oscs)
             init_words += [core.hp.b0, core.hp.b1, core.hp.b2,
                            core.hp.a1, core.hp.a2]
             init_words += [core.lp.b0, core.lp.b1, core.lp.b2,
                            core.lp.a1, core.lp.a2]
     else:
         init_words += [0] * 30
+    # ---- SXT-034 unison appendix (words 78..127) --------------------------
+    init_words += uni_words
 
     voices = []
     events = list(seq["events"])
@@ -227,6 +238,12 @@ def main():
                     "f4_r1": getattr(v, "f4_r1", 0),
                     "C_end": list(v.cmu.C),
                     "fbp_gain": v.fbp_gain, "fbp_outl": v.fbp_outl,
+                    # per-unison-voice impulse state (voice 0 mirrors the
+                    # legacy scalar fields above)
+                    "uni": [{"oscstate": x["oscstate"], "state": x["state"],
+                             "last_level": x["last_level"], "pwidth": x["pwidth"],
+                             "pwidth2": x["pwidth2"], "dc_uni": x["dc_uni"]}
+                            for x in v.u],
                 }
             blk["voices"].append(rec)
 
@@ -256,7 +273,8 @@ def main():
 
     with open(os.path.join(args.out_dir, "model_trace.json"), "w", encoding="utf-8") as f:
         json.dump({
-            "format": "sxt-022-voice-trace/2",
+            "format": "sxt-034-voice-trace/2 (extends sxt-022-voice-trace/2 "
+                      "with per-unison-voice state)",
             "sequence": seq["id"],
             "preset": preset_rel,
             "voice_class": getattr(inp, "voice_class", "classic-lp12-v1"),
@@ -265,6 +283,10 @@ def main():
             "q_formats": {"samples": "Q10.21", "env_phase": "Q2.29",
                           "pitchmult_inv": "Q13.18", "sine_phase": "Q3.28"},
             "slots": N_SLOTS,
+            "unison": {"voices": uni_n,
+                       "out_attenuation": probe.out_attenuation,
+                       "per_voice_detune": [u["detune"] for u in probe.u],
+                       "retrigger": bool(inp.retrigger)},
             "init_words_order": [
                 "aeg_a", "aeg_d", "aeg_r", "aeg_s", "aeg_a_s", "aeg_r_s",
                 "feg_a", "feg_d", "feg_r", "feg_s", "feg_a_s", "feg_r_s",
@@ -280,6 +302,8 @@ def main():
                 "hp1 b0,b1,b2,a1,a2", "lp1 b0,b1,b2,a1,a2",
                 "hp2 b0,b1,b2,a1,a2", "lp2 b0,b1,b2,a1,a2",
                 "hp3 b0,b1,b2,a1,a2", "lp3 b0,b1,b2,a1,a2",
+                "uni_voices", "uni_out_attenuation",
+                "uni_t[0..15]", "uni_t_inv[0..16)", "uni_init_oscstate[0..16)",
             ],
             "init": init_words,
             "ctrl_words_per_slot": CTRL_WORDS_PER_SLOT,

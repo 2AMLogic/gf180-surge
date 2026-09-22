@@ -21,7 +21,12 @@ Structure is cited from the pinned engine (read, not copied):
 surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
 
   SurgeVoice.cpp process_block/calc_ctrldata/SetQFB    gain staging + ramps
-  ClassicOscillator.cpp process_block/convolute        impulse engine
+  ClassicOscillator.cpp init/prepare_unison/process_block/convolute
+                                                       impulse engine +
+                                                       unison stack (SXT-034)
+  OscillatorCommonFunctions.h prepare_unison           unison setup
+  sst-basic-blocks OscillatorDriftUnisonCharacter.h    UnisonSetup (attenuation,
+                                                       detune bias/offset, pan law)
   SineOscillator.cpp process_block_legacy/applyFilter  Sine (legacy, FM 3>2>1)
   sst-basic-blocks QuadratureOscillators.h SurgeQuadrOsc  sine recurrence
   sst-basic-blocks FastMath.h fastsin/fastcos/clampToPiRange  FM sine math
@@ -67,6 +72,7 @@ OB_LENGTH = 128          # globals.h: BLOCK_SIZE_OS << 1
 FIRIPOL_M = 256          # SurgeStorage.h
 FIRIPOL_N = 12
 FIROFFSET = FIRIPOL_N >> 1
+MAX_UNISON = 16          # SurgeStorage.h (unison cap; profile-v1 cap too)
 
 FQ = 21                    # universal Q10.21 sample/coef word (32-bit)
 QMAX = (1 << 31) - 1
@@ -511,6 +517,18 @@ class Voice:
         self.f_r0 = 0
         self.f_r1 = 0
         self.f_clip = ONE
+        self._sync_uni_mirror()
+
+    def _sync_uni_mirror(self):
+        """Scalar mirrors of unison-voice 0 (trace/back-compat fields; the
+        per-voice dicts in self.u are the state of record)."""
+        u0 = self.u[0]
+        self.oscstate = u0["oscstate"]
+        self.osc_state = u0["state"]
+        self.last_level = u0["last_level"]
+        self.pwidth = u0["pwidth"]
+        self.pwidth2 = u0["pwidth2"]
+        self.dc_uni = u0["dc_uni"]
 
     # ----------------------------------------------------------- control ---
     def _gain_target(self):
@@ -536,6 +554,30 @@ class Voice:
     # --------------------------------------------------------------- osc ---
     def _osc_init(self):
         inp = self.inp
+        # --- unison stack (SXT-034) ---------------------------------------
+        # n_unison from the normalized osc state (override-readback-verified
+        # for the uni>1 fixtures). Engine: n_unison = limit(p[uni], 1,
+        # MAX_UNISON) (ClassicOscillator.cpp init) -- the engine silently
+        # clamps (SXT-015 flagged 58 corpus presets); this product contract
+        # REJECTS beyond-cap unison at load (never a silent clamp).
+        n = int(inp.n_unison)
+        if n < 1 or n > MAX_UNISON:
+            raise RuntimeError(
+                "unison %d outside 1..MAX_UNISON(%d): explicitly rejected "
+                "(no clamp)" % (n, MAX_UNISON))
+        self.uni_n = n
+        # prepare_unison -> UnisonSetup (OscillatorDriftUnisonCharacter.h):
+        #   attenuation = 1/sqrt(n); detuneBias = 1 (n==1) else 2/(n-1);
+        #   detuneOffset = 0 (n==1) else -1
+        self.out_attenuation = qint(1.0 / math.sqrt(n))
+        self.detune_bias = qint(1.0 if n == 1 else 2.0 / (n - 1))
+        self.detune_offset = 0 if n == 1 else -ONE
+        # per-voice detune (semitones, Q10.21): spread_ext * (bias*v + offset)
+        # with spread_ext = qint(12*f) (ct_oscspread); voice pan spread is
+        # inert on this slice's mono bus (osc stereo flag = is_wide =
+        # (fbc == fc_wide), SurgeVoice.cpp:1044; fbc = Serial 1 here).
+        spread_ext_q = qint(12.0 * inp.spread)
+
         self.pitch = min(148, self.key + 12 * inp.octave)
         self.osc_state = 0
         self.oscstate = 0
@@ -547,8 +589,8 @@ class Voice:
         self.bufpos = 0
         self.pwidth = 0
         self.pwidth2 = 0
-        self.ob = [0] * (OB_LENGTH + FIRIPOL_N)
-        self.dcb = [0] * (OB_LENGTH + FIRIPOL_N)
+        self.ob = [0] * (OB_LENGTH + FIRIPOL_N)     # shared impulse buffer
+        self.dcb = [0] * (OB_LENGTH + FIRIPOL_N)    # shared DC buffer
         # lag targets (constant params); instantize v = target (update_lagvals<true>)
         self.t_shape = limit_i(qint(inp.shape), qint(-1.0), qint(1.0))
         self.t_pw = limit_i(qint(inp.pw1), qint(0.001), qint(0.999))
@@ -560,7 +602,6 @@ class Voice:
         self.l_pw2 = self.t_pw2
         self.l_sub = self.t_sub
         self.l_sync = self.t_sync
-        self.pwidth = limit_i(self.l_pw, qint(0.001), qint(0.999))
         # integrator hpf: (1 - 2*20/48000)^2, and per-block target
         self.integrator_hpf = qint((1.0 - 40.0 / 48000.0) ** 2)
         self.hpf_target = self._hpf_calc()
@@ -575,7 +616,36 @@ class Voice:
             self.char_b0, self.char_b1, self.char_a1 = ONE, 0, 0
         else:
             raise RuntimeError("character Bright not in slice")
-        self.out_attenuation = ONE                # unison 1
+
+        # per-unison-voice state (ClassicOscillator.cpp init loop):
+        #   retrigger on -> oscstate[i] = syncstate[i] = 0; else
+        #   oscstate[i] = syncstate[i] = 0.5*rand_01()*ntpi(detune_i) with
+        #   detune_i = spread*(bias*i + offset) (the wall-clock-random draw
+        #   is a declared input word here; the engine's own draws are not
+        #   reproducible -- SXT-012 quantified-variation class).
+        # The impulse buffers (ob/dcb) are SHARED by all unison voices
+        # (single oscbuffer/dcbuffer in the engine); the impulse state
+        # machines are per-voice.
+        pw_init = limit_i(self.l_pw, qint(0.001), qint(0.999))
+        self.u = []
+        for v in range(n):
+            detune = 0
+            if n > 1:
+                detune = qmul(spread_ext_q,
+                              qmul(self.detune_bias, qint(float(v))) + self.detune_offset)
+            t = ntpi_tuningctr(detune + self.l_sync)   # l_sync instantized 0
+            t_inv = qdiv(ONE, t)
+            if inp.retrigger:
+                st = 0
+            else:
+                drand = inp.next_draw()
+                st = qmul(drand, t) >> 1               # 0.5*drand*ntpi(detune)
+            self.u.append({
+                "oscstate": st, "syncstate": st, "state": 0,
+                "last_level": 0, "pwidth": pw_init, "pwidth2": 0,
+                "dc_uni": 0, "detune": detune, "t": t, "t_inv": t_inv,
+            })
+        self._sync_uni_mirror()
 
     def _hpf_calc(self):
         pp = ntp_tuningctr(self.pitch_q())        # pitch + l_sync(=0)
@@ -610,9 +680,16 @@ class Voice:
         self.ctrl_pitchmult = pitchmult
         self.ctrl_a_cov = a_cov
         self.ctrl_hpf_target = hpf_new
-        while self.oscstate < a_cov:
-            self._convolute(pmi)
-        self.oscstate -= a_cov
+        # ClassicOscillator.cpp process_block: voice-major fill loop -- each
+        # unison voice fills its own phase space to a_cov into the SHARED
+        # impulse buffer (impulse count scales with the stack; the buffer
+        # does not).
+        for v in range(self.uni_n):
+            uv = self.u[v]
+            while uv["oscstate"] < a_cov:
+                self._convolute(v, pmi)
+            uv["oscstate"] -= a_cov
+        self._sync_uni_mirror()
 
         oa = qmul(self.out_attenuation, pitchmult)
         mdc = self.dc
@@ -642,47 +719,55 @@ class Voice:
                 self.dcb[OB_LENGTH + k] = 0
         return out
 
-    def _convolute(self, pmi):
+    def _convolute(self, v, pmi):
+        uv = self.u[v]
         wf = self.l_shape
         sub = self.l_sub
         # (unsigned int)(2^24 * oscstate * pitchmult_inv): truncate like the engine
-        ipos = (self.oscstate * pmi) >> (FQ + PMI_F - 24)
+        ipos = (uv["oscstate"] * pmi) >> (FQ + PMI_F - 24)
         ipos &= 0xFFFFFFFF
         delay = (ipos >> 24) & 0x3F
         m = ((ipos >> 16) & 0xFF) * (FIRIPOL_N << 1)
         lipol = ipos & 0xFFFF
 
-        t = ntpi_tuningctr(self.l_sync)           # detune = 0 (drift gate)
-        t_inv = qdiv(ONE, t)
+        # detune spread for this unison voice: t/t_inv are per-voice constants
+        # (drift asserted 0; sync inert at 0). Engine convolute recomputes
+        # t = ntpi_tuningctr(detune + sync) per call; the value is constant
+        # in this slice (no detune/sync modulation routed), so it is
+        # precomputed at init and declared in the control plane.
+        t = uv["t"]
+        t_inv = uv["t_inv"]
 
-        st = self.osc_state
+        st = uv["state"]
         one = ONE
         if st == 0:
-            self.pwidth = limit_i(self.l_pw, qint(0.001), qint(0.999))
-            self.pwidth2 = qmul(qint(2.0), self.l_pw2)
-        pw = self.pwidth
-        pw2 = self.pwidth2
+            uv["pwidth"] = limit_i(self.l_pw, qint(0.001), qint(0.999))
+            uv["pwidth2"] = qmul(qint(2.0), self.l_pw2)
+        pw = uv["pwidth"]
+        pw2 = uv["pwidth2"]
         om1 = one - sub                                      # (1-sub)
         if st == 0:
             # tg = ((1+wf)*0.5 + (1-pw)*(-wf))*(1-sub) + 0.5*sub*(2-pw2)
             tg = qmul(qround(one + wf, 1) + qmul(one - pw, -wf), om1)
             tg += qmul(qround(sub, 1), qint(2.0) - pw2)
-            g = tg - self.last_level
-            self.last_level = tg
-            self.last_level -= qmul(qmul(pw, pw2), qmul(one + wf, om1))
+            g = tg - uv["last_level"]
+            uv["last_level"] = tg
+            uv["last_level"] -= qmul(qmul(pw, pw2), qmul(one + wf, om1))
         elif st == 1:
             g = qmul(wf, om1) - sub
-            self.last_level += g
-            self.last_level -= qmul(qmul(one - pw, qint(2.0) - pw2), qmul(one + wf, om1))
+            uv["last_level"] += g
+            uv["last_level"] -= qmul(qmul(one - pw, qint(2.0) - pw2), qmul(one + wf, om1))
         elif st == 2:
             g = om1
-            self.last_level += g
-            self.last_level -= qmul(qmul(pw, qint(2.0) - pw2), qmul(one + wf, om1))
+            uv["last_level"] += g
+            uv["last_level"] -= qmul(qmul(pw, qint(2.0) - pw2), qmul(one + wf, om1))
         else:
             g = qmul(wf, om1) + sub
-            self.last_level += g
-            self.last_level -= qmul(qmul(one - pw, pw2), qmul(one + wf, om1))
-        # g *= out_attenuation (1) ; mono pan (1)
+            uv["last_level"] += g
+            uv["last_level"] -= qmul(qmul(one - pw, pw2), qmul(one + wf, om1))
+        # g *= out_attenuation (UnisonSetup attenuation = 1/sqrt(n));
+        # stereo pan inert on this slice's mono bus
+        g = qmul(g, self.out_attenuation)
 
         base = self.bufpos + delay
         m12 = m >> 1                     # separate tables: phase*FIRIPOL_N + k
@@ -690,10 +775,10 @@ class Voice:
             term = SINC_MAIN[m12 + k] + qmul(lipol, SINC_DERIV[m12 + k], fb=16)
             self.ob[base + k] = sat(self.ob[base + k] + qmul(term, g))
 
-        olddc = self.dc_uni
-        self.dc_uni = qmul(t_inv, qmul(one + wf, om1))
+        olddc = uv["dc_uni"]
+        uv["dc_uni"] = qmul(t_inv, qmul(one + wf, om1))
         self.dcb[base + FIROFFSET] = sat(self.dcb[base + FIROFFSET]
-                                         + (self.dc_uni - olddc))
+                                         + (uv["dc_uni"] - olddc))
 
         if st & 1:
             rate = qmul(t, one - pw)
@@ -703,8 +788,8 @@ class Voice:
             rate = qmul(rate, qint(2.0) - pw2)
         else:
             rate = qmul(rate, pw2)
-        self.oscstate = max(0, self.oscstate + rate)
-        self.osc_state = (st + 1) & 3
+        uv["oscstate"] = max(0, uv["oscstate"] + rate)
+        uv["state"] = (st + 1) & 3
 
     # --------------------------------------------------------- audio rate --
     def process_block(self, block_index, sceneout_l, sceneout_r, trace):
@@ -769,6 +854,15 @@ class Inputs:
         self.osc1 = g["osc1"]
         p = self.osc1["p"]
         self.shape, self.pw1, self.pw2, self.submix, self.sync = p[0], p[1], p[2], p[3], p[4]
+        # unison stack inputs (SXT-034): normalized osc uni/spread/retrigger,
+        # override-readback-verified for the uni>1 fixtures; declared
+        # init-phase draws for the non-retrigger path (engine rand_01 is
+        # wall-clock seeded and not reproducible -- SXT-012 class).
+        self.n_unison = int(self.osc1.get("uni", 1))
+        self.spread = float(self.osc1.get("udet", 0.0))
+        self.retrigger = bool(self.osc1.get("rt", 1))
+        self._draws = [qint(float(x)) for x in d.get("init_phase_draws", [])]
+        self._draw_i = 0
         self.cutoff = n["fu0"]["cutoff"]
         self.reso = n["fu0"]["resonance"]
         self.envmod = n["fu0"]["envmod"]
@@ -790,6 +884,18 @@ class Inputs:
         if not found:
             raise RuntimeError("preset not found in graphs.jsonl")
         self.modwheel = Modwheel()
+
+    def next_draw(self):
+        """Consume one declared init-phase draw (voice-creation order,
+        unison-voice order within a voice). Fail-closed: a fixture that needs
+        more draws than declared refuses rather than guessing."""
+        if self._draw_i >= len(self._draws):
+            raise RuntimeError(
+                "init_phase_draws exhausted: non-retrigger voice creation "
+                "needs a declared draw per unison voice")
+        v = self._draws[self._draw_i]
+        self._draw_i += 1
+        return v
 
 
 def load_sequence(path):
@@ -1391,6 +1497,16 @@ class InputsV2:
             self.sine_lowcut = self.sine_highcut = 0.0
             self.fm_depth = 0
             self.osc_pitch_offsets = [12 * int(o1["oct"]), 0, 0]
+
+        # SXT-034 unison inputs at the declared v2-class identity: the class
+        # gate above refuses uni != 1 / rt != 1, so Voice.__init__'s unison
+        # stack degenerates to the uni=1 identity (per-voice declared draws
+        # are a v1-class override mechanism, never present here).
+        self.n_unison = int(o1.get("uni", 1))
+        self.spread = float(o1.get("udet", 0.0))
+        self.retrigger = bool(o1.get("rt", 1))
+        self._draws = []
+        self._draw_i = 0
 
         # modulation routes (order = md arrays = engine application order)
         self.voice_routes = []

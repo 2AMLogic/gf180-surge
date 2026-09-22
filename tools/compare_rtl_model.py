@@ -35,6 +35,9 @@ T_FIELDS = ["b", "slot", "key", "gate",
             "c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7",
             "f4_r0", "f4_r1"]          # SXT-026a: IIR24 second section
 
+U_FIELDS = ["u_oscstate", "u_state", "u_last_level",
+            "u_pwidth", "u_pwidth2", "u_dc_uni"]
+
 
 def parse_tb(path):
     t = {}      # (block, slot) -> dict
@@ -49,6 +52,11 @@ def parse_tb(path):
                 vals = [int(x) for x in parts[1:]]
                 d = dict(zip(T_FIELDS, vals))
                 t[(d["b"], d["slot"])] = d
+            elif parts[0] == "U":
+                key = (int(parts[1]), int(parts[2]))
+                uv = dict(zip(U_FIELDS, [int(x) for x in parts[4:]]))
+                rec = t.setdefault(key, {})
+                rec.setdefault("uni", {})[int(parts[3])] = uv
             elif parts[0] == "O":
                 o[(int(parts[1]), int(parts[2]))] = [int(x) for x in parts[3:]]
             elif parts[0] == "M":
@@ -107,6 +115,26 @@ def compare(model_trace, tb_trace):
                 if got != want:
                     fails.append(f"block {b} slot {rec['slot']} {fld}: "
                                  f"model={want} rtl={got}")
+            # per-unison-voice impulse state (U lines); voice 0 also mirrors
+            # the legacy scalar fields above
+            uni_model = a.get("uni")
+            if uni_model is not None:
+                uni_rtl = d.get("uni", {})
+                for uv_idx, want_u in enumerate(uni_model):
+                    got_u = uni_rtl.get(uv_idx)
+                    if got_u is None:
+                        fails.append(f"block {b} slot {rec['slot']} uni{uv_idx}: "
+                                     "missing U line")
+                        continue
+                    for fld, want in want_u.items():
+                        checked["fields"] += 1
+                        got = got_u.get("u_" + fld)
+                        if got is None:
+                            got = got_u.get(fld)
+                        if got != want:
+                            fails.append(
+                                f"block {b} slot {rec['slot']} uni{uv_idx} "
+                                f"{fld}: model={want} rtl={got}")
             omodel = rec["oscout_block"]
             ortl = mo.get(key)
             if ortl is None or len(ortl) != len(omodel):
