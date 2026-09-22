@@ -95,9 +95,9 @@ slot = free[0]
 s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
 s.processMultiBlock(s.createMultiBlock(1))
 s.setParamVal(patch["fx"][slot]["p"][0], 49.0)
+s.processMultiBlock(s.createMultiBlock(1))
 s.setParamVal(patch["fx"][slot]["p"][3], 0.0)
 s.setParamVal(patch["fx"][slot]["p"][5], 1.0)
-s.processMultiBlock(s.createMultiBlock(1))
 s.pitchBend(0, 0); s.channelController(0, 64, 0)
 s.channelController(0, 1, 0); s.channelController(0, 11, 0)
 s.allNotesOff()
@@ -230,9 +230,11 @@ def probe_render(surgepy, preset_abs, seq, aw49_slot_unused):
         s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
         s.processMultiBlock(s.createMultiBlock(1))   # deferred fx reload
         s.setParamVal(patch["fx"][slot]["p"][0], 49.0)   # algorithm: Galactic
+        s.processMultiBlock(s.createMultiBlock(1))   # airwin construction
+        # params must be set AFTER the algorithm switch block (the switch
+        # streams the constructor defaults back onto the params)
         s.setParamVal(patch["fx"][slot]["p"][3], 0.0)    # C (Modulation) = 0
         s.setParamVal(patch["fx"][slot]["p"][5], 1.0)    # E (Mix) = wet
-        s.processMultiBlock(s.createMultiBlock(1))   # airwin construction
         # render in place under the SXT-012 policies (same instance)
         s.pitchBend(0, 0)
         s.channelController(0, 64, 0)
