@@ -652,7 +652,7 @@ module tb_voice;
 
   // checkpoint dump (mirrors model trace "after" fields + block C_end)
   task automatic dump_slot;
-    $fwrite(fd, "T %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
+    $fwrite(fd, "T %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
       b, s, slot_key[s], slot_gate[s],
       aeg_state[s], aeg_phase[s], aeg_out_r[s],
       feg_state[s], feg_phase[s], feg_out_r[s],
