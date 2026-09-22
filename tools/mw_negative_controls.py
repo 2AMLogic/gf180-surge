@@ -7,9 +7,12 @@ Controls (issue #69 acceptance + leaf review additions):
   C1 routing-zeroed, per destination class: model render with the modwheel->
      Filter-1-Cutoff depth forced to 0, a second with Resonance forced to 0,
      a third with VCA-Gain forced to 0; each must FAIL the reference-budget
-     check against the unmodified routed reference AND be worse than the
-     unmutated model's own error on the same sequence (the routed reference
-     is retained unmodified -- AGENTS.md bypass rule).
+     check against the unmodified routed reference AND degrade a metric with
+     headroom (rms or spectral correlation) relative to the unmutated
+     model's own error on the same sequence (the routed reference is
+     retained unmodified -- AGENTS.md bypass rule; max-abs saturates at the
+     int16 span on this intentionally-clipped fixture and cannot
+     discriminate -- recorded per control).
   C2 smoothing-bypass: model render with the landed FAST_LINE smoothing
      bypassed (value jumps to target); must FAIL the reference-budget check
      and exceed the model's own error.
@@ -142,20 +145,31 @@ def main():
             ok_all = False
             results[name] = {"control_ok": False, "why": "comparator failed"}
             return
+        # On this fixture the model-vs-reference max-abs error saturates at
+        # the int16 span (the routed reference is intentionally driven into
+        # hard clipping), so max-abs cannot discriminate. A control is
+        # "demonstrably beyond the model's own error" when it fails the
+        # budget check AND degrades ANY metric with headroom (rms increase
+        # or spectral-correlation drop) relative to the unmutated model.
         fails_budget = m["verdict"].startswith("FAIL")
-        worse = base and m["max_abs_diff_lsb"] > base["max_abs_diff_lsb"]
-        ok = bool(fails_budget and worse)
+        worse_max = bool(base and m["max_abs_diff_lsb"] > base["max_abs_diff_lsb"])
+        worse_rms = bool(base and m["rms_diff_lsb"] > base["rms_diff_lsb"])
+        worse_spec = bool(base and m["spectral_corr"] < base["spectral_corr"])
+        discrim = [w for w, n in ((worse_max, "max"), (worse_rms, "rms"),
+                                  (worse_spec, "spectral")) if w]
+        ok = bool(fails_budget and discrim)
         log(f"[{name}] max={m['max_abs_diff_lsb']:.0f} "
             f"rms={m['rms_diff_dbfs']:.1f}dBFS spec={m['spectral_corr']:.4f} "
-            f"-> {m['verdict']}; worse-than-model-error={worse} "
+            f"-> {m['verdict']}; beyond-model-error via={discrim or 'NONE'} "
             f"(expected FAIL and worse)")
         results[name] = {
             "verdict": m["verdict"], "expected": "FAIL",
             "control_ok": ok,
             "max_abs_diff_lsb": m["max_abs_diff_lsb"],
+            "rms_diff_lsb": m["rms_diff_lsb"],
             "rms_diff_dbfs": m["rms_diff_dbfs"],
             "spectral_corr": m["spectral_corr"],
-            "worse_than_model_error": bool(worse),
+            "beyond_model_error_via": discrim,
             "metrics_file": os.path.relpath(
                 os.path.join(args.artifacts, f"audio-nc-{name}.json"), REPO),
         }
