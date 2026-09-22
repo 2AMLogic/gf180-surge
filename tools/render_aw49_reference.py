@@ -276,14 +276,17 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
 
     tap_on = os.path.join(out_dir, f"tmp-{slug}-{seq_id}-on")
     tap_off = os.path.join(out_dir, f"tmp-{slug}-{seq_id}-off")
-    for d in (tap_on, tap_off):
+    tap_probe = os.path.join(out_dir, f"tmp-{slug}-{seq_id}-probe")
+    for d in (tap_on, tap_off, tap_probe):
         os.makedirs(d, exist_ok=True)
 
     # taps-ON fixture render
     os.environ["SXT028A_TAP_DIR"] = tap_on
     wet, total_blocks = render_once(surgepy, abs_path, seq)
 
-    # neutrality probes (probe ON in tap_on, probes OFF in tap_off)
+    # neutrality probes (probe renders: dedicated tap dirs so the fixture
+    # tap files stay exact)
+    os.environ["SXT028A_TAP_DIR"] = tap_probe
     probe_on = _probe(surgepy, abs_path, seq, aw49_slot)
     os.environ["SXT028A_TAP_DIR"] = tap_off
     probe_off = _probe(surgepy, abs_path, seq, aw49_slot)
@@ -396,7 +399,7 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     with open(sp, "w", encoding="utf-8") as f:
         json.dump(sidecar, f, indent=2, sort_keys=True)
         f.write("\n")
-    for d in (tap_on, tap_off):
+    for d in (tap_on, tap_off, tap_probe):
         for fn in os.listdir(d):
             os.unlink(os.path.join(d, fn))
         os.rmdir(d)
