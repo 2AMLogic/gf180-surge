@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "id": "leaf48-smoke-bells-v1",
- "tail_s": 0.3,
+ "tail_s": 0.028,
  "events": [
   {
    "type": "note_on",
@@ -12,33 +12,33 @@
   },
   {
    "type": "note_on",
-   "t": 700,
+   "t": 512,
    "note": 84,
    "velocity": 120,
    "channel": 0
   },
   {
    "type": "note_off",
-   "t": 1200,
+   "t": 1024,
    "note": 60,
    "channel": 0
   },
   {
    "type": "note_on",
-   "t": 1800,
+   "t": 1536,
    "note": 60,
    "velocity": 120,
    "channel": 0
   },
   {
    "type": "note_off",
-   "t": 2500,
+   "t": 2048,
    "note": 84,
    "channel": 0
   },
   {
    "type": "note_off",
-   "t": 3300,
+   "t": 2560,
    "note": 60,
    "channel": 0
   }

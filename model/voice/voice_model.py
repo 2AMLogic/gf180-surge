@@ -1448,10 +1448,9 @@ class InputsV2:
                         f"event type {e['type']} refused for Sine-class preset "
                         f"{self.preset_path}: FM depth must stay constant "
                         "(the modwheel targets FM Depth in this class)")
-        hi = max(self.pitch_voice + off for off in self.osc_pitch_offsets[:1])
         for e in seq["events"]:
             if e["type"] == "note_on":
-                p = e["note"] + self.osc_pitch_offsets[0]
+                p = e["note"] + 12 * self.scene_octave + self.osc_pitch_offsets[0]
                 if not (24 <= p <= 148):
                     raise Refuse(f"note {e['note']} renders pitch {p} "
                                  "outside declared [24,148]")
