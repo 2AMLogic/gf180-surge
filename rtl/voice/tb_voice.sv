@@ -319,6 +319,15 @@ module tb_voice;
   endtask
 
   // ------------------------------------------------ sine datapath (SXT-026a)
+  // floor semantics for the rational evaluation (Python //): trunc + fixup
+  function automatic signed [319:0] fdiv_floor(input signed [319:0] n,
+                                               input signed [319:0] d);
+    logic signed [319:0] q;
+    q = n / d;
+    if ((n < 0) && ((n % d) != 0)) q = q - 1;
+    fdiv_floor = q;
+  endfunction
+
   function automatic signed [31:0] fastsin_wide(input signed [31:0] x);
     logic signed [63:0] x2l;
     logic signed [319:0] gg, hh, nn;
@@ -333,7 +342,7 @@ module tb_voice;
     hh = x2l * hh + (328'sd277920720 << 112);
     hh = x2l * hh + (328'sd11511339840 << 168);
     sn2 = (nn >>> 7) + (hh >>> 1);                // round-half-up num/den
-    fastsin_wide = sat_wide(sn2 / hh);
+    fastsin_wide = sat_wide(fdiv_floor(sn2, hh));
   endfunction
 
   function automatic signed [31:0] fastcos_wide(input signed [31:0] x);
@@ -350,7 +359,7 @@ module tb_voice;
     hh = x2l * hh + (328'sd1154160 << 112);
     hh = x2l * hh + (328'sd39251520 << 168);
     sn2 = (nn << 21) + (hh >>> 1);
-    fastcos_wide = sat_wide(sn2 / hh);
+    fastcos_wide = sat_wide(fdiv_floor(sn2, hh));
   endfunction
 
   function automatic signed [31:0] sat_wide(input signed [319:0] v);
