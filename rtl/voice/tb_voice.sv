@@ -113,8 +113,8 @@ module tb_voice;
 
   // qint(v): Q10.21 round-half-up of a real (quantization-time only)
   function automatic signed [31:0] qint_r(input real v);
+    integer q;
     begin
-      integer q;
       q = floor_r(v * 2097152.0 + 0.5);
       if      (q > 32'sd2147483647)  qint_r = 32'sd2147483647;
       else if (q < -32'sd2147483648) qint_r = -32'sd2147483648;
