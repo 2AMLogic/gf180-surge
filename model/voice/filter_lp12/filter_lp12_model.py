@@ -338,6 +338,7 @@ class LP12Unit:
                 self.r1 = qmul(s2, self.r_clip)
                 c[7] = sat(c[7] + dc[7])
                 self.r_clip = max(qint(0.1), ONE - qmul(c[7], qmul(y, y)))
+                self.qmul_count += 11
             elif self.subtype == SUBTYPE_CLEAN:
                 f2 = qmul(c[3], x) - qmul(c[1], self.r1)      # Q2*x - K2*R1
                 c[1] = sat(c[1] + dc[1])                      # K2
@@ -355,6 +356,7 @@ class LP12Unit:
                 self.r1 = qmul(g1, self.r_clip)
                 c[7] = sat(c[7] + dc[7])
                 self.r_clip = max(qint(0.1), ONE - qmul(c[7], qmul(y, y)))
+                self.qmul_count += 15
             else:   # SUBTYPE_STANDARD (pinned SVFLP12Aquad)
                 c[0] = sat(c[0] + dc[0])                      # F1
                 c[1] = sat(c[1] + dc[1])                      # Q1
@@ -370,7 +372,6 @@ class LP12Unit:
                 self.r_clip = max(qint(0.1), ONE - qmul(c[2], qmul(band, band)))
                 c[3] = sat(c[3] + dc[3])                      # Gain
                 y = qmul(low2, c[3])
-            self.qmul_count += 8
             out.append(y)
             m = max(abs(y), abs(self.r0), abs(self.r1))
             if m > peak:
