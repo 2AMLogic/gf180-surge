@@ -2,26 +2,27 @@
 """SXT-028a reference fixtures: tapped slot-boundary renders of the AW-49
 (Galactic) carriers through the pinned engine on the oracle host.
 
-Runs ONLY where the DR-0006 instrumented build exists
-($ORACLE_BUILD_DIR_REL = build-py311-aw49 of the sxt028a-tap branch, next to
-the pinned checkout); fails closed (exit 3) elsewhere. All renders inherit
-the SXT-012/023 policies via fixtures/render_fixture.py (controller reset,
-0.25 s settle, block-quantized scheduling, tail).
+Runs ONLY where the DR-0006 instrumented build exists (ORACLE_BUILD_DIR_REL
+= build-py311-aw49 built from the sxt028a-tap branch next to the pinned
+checkout); fails closed (exit 3) elsewhere. Renders inherit the SXT-012/023
+policies via fixtures/render_fixture.py (controller reset, 0.25 s settle,
+block-quantized scheduling, tail).
 
-Per fixture (all are 'conditioned-on-tap' repeatability class: scene drift
-> 0 and/or the wall-clock-seeded aw49 vibrato randomization - measured):
+Per fixture (all 'conditioned-on-tap' repeatability class: scene drift > 0
+and/or wall-clock-seeded aw49 vibrato randomization - measured):
 
   * taps-ON render: wet WAV + binary taps (adapter-boundary in/out blocks
     per Airwindows slot, Galactic constructor fpd seeds, per-sample Galactic
     internal state incl. vibM) -> fixture npz + sidecar.
-  * DSP-neutrality gate (DR-0005, adapted for nondeterministic fixtures):
-    a PROBE render (same fixture, scene drift and aw49 Modulation forced to
-    0 via setParamVal -> deterministic class) must be bit-identical taps
-    OFF x2, then taps ON vs taps OFF must be bit-identical. The structural
-    side is pinned separately (sxt028a-tap single-commit diff hash, DR-0006).
-  * cross-build check: probe render of the pre-existing build-py311 tree
-    (SXT-037 tap branch; DSP-identical for the FX path per DR-0005) must be
-    bit-identical to the patched build's taps-off probe.
+  * DSP-neutrality gate (DR-0005 adapted for nondeterministic fixtures): a
+    PROBE render (same fixture; scene drift and aw49 Modulation forced to 0
+    via setParamVal -> deterministic class) must be bit-identical taps-off
+    x2, then taps-ON vs taps-OFF bit-identical. The structural side is
+    pinned separately (sxt028a-tap single-commit diff, DR-0006).
+  * cross-build check: the same probe on the pre-existing build-py311 tree
+    (SXT-037 tap branch; FX-path DSP-identical per DR-0005) must be
+    bit-identical to the patched build's taps-off probe (child process:
+    pybind11 allows one module registration per process).
 
 No complete-wet fixture claims: every carrier has unlanded sibling FX
 (extraction applicability record); the comparison is slot-boundary only.
@@ -34,6 +35,7 @@ import hashlib
 import json
 import os
 import struct
+import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,8 +51,8 @@ import numpy as np  # noqa: E402
 import render_fixture as rf  # noqa: E402
 
 SR = 48000
-FX_SLOTS = 16
-BUILD = os.path.join(oc.engine_dir(), os.environ.get("ORACLE_BUILD_DIR_REL", "build-py311-aw49"))
+BUILD = os.path.join(oc.engine_dir(),
+                     os.environ.get("ORACLE_BUILD_DIR_REL", "build-py311-aw49"))
 BUILD_BASELINE = os.path.join(oc.engine_dir(), "build-py311")
 TAP_LIB = os.path.join(BUILD, "src", "surge-python")
 
@@ -60,6 +62,72 @@ PRESETS = {
     "fmod09": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
+
+CROSSBUILD_SNIPPET = r"""
+import sys, os, hashlib
+repo, engine, seq_id, aw49_slot, tap_dir, out_dir = sys.argv[1:7]
+aw49_slot = int(aw49_slot)
+sys.path.insert(0, repo)
+sys.path.insert(0, os.path.join(repo, "oracle"))
+sys.path.insert(0, os.path.join(repo, "fixtures"))
+import oracle_common as oc
+oc.reexec_under_pinned_python(repo)
+surgepy = oc.import_surgepy()
+oc.apply_engine_env()
+os.environ["SXT028A_TAP_DIR"] = tap_dir
+import render_fixture as rf
+import numpy as np
+seq, _, _ = rf.load_sequence(seq_id)
+
+
+def render_once(surgepy, preset_abs, seq):
+    s2 = surgepy.createSurge(48000.0)
+    try:
+        if not s2.loadPatch(preset_abs):
+            raise SystemExit(2)
+        s2.pitchBend(0, 0); s2.channelController(0, 64, 0)
+        s2.channelController(0, 1, 0); s2.channelController(0, 11, 0)
+        s2.channelAftertouch(0, 0); s2.allNotesOff()
+        bs = int(s2.getBlockSize())
+        sb = int(seq.get("settle_s", 0.25) * 48000) // bs
+        s2.processMultiBlock(s2.createMultiBlock(sb))
+        notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
+        last_t = max(e["t"] for e in notes) if notes else 0
+        total = -(-(last_t + int(float(seq.get("tail_s", 2.5)) * 48000)) // bs)
+        buf = s2.createMultiBlock(total)
+        quant = lambda t: -(-t // bs)
+        disp = 0; b = 0
+        while b < total:
+            nxt = rf.dispatch(s2, seq["events"][disp:], b, quant) + disp
+            seg = total if nxt >= len(seq["events"]) else max(quant(seq["events"][nxt]["t"]), b + 1)
+            s2.processMultiBlock(buf, b, seg - b); b = seg; disp = nxt
+        return np.asarray(buf, dtype=np.float32).copy(), total
+    finally:
+        del s2
+
+
+s = surgepy.createSurge(48000.0)
+s.loadPatch(engine)
+patch = s.getPatch()
+sm = int(s.getParamVal(patch["scenemode"]))
+sa = int(s.getParamVal(patch["scene_active"]))
+for v in ([sa] if sm == 0 else [0, 1]):
+    s.setParamVal(patch["scene"][v]["drift"], 0.0)
+s.setParamVal(patch["fx"][aw49_slot]["p"][3], 0.0)
+del s
+
+# probe: forced-deterministic state via a fresh instance
+s3 = surgepy.createSurge(48000.0)
+s3.loadPatch(engine)
+patch = s3.getPatch()
+sm = int(s3.getParamVal(patch["scenemode"]))
+sa = int(s3.getParamVal(patch["scene_active"]))
+for v in ([sa] if sm == 0 else [0, 1]):
+    s3.setParamVal(patch["scene"][v]["drift"], 0.0)
+s3.setParamVal(patch["fx"][aw49_slot]["p"][3], 0.0)
+probe, _ = render_once(surgepy, engine, seq)
+print(hashlib.sha256(np.ascontiguousarray(probe).tobytes()).hexdigest())
+"""
 
 
 class Refuse(Exception):
@@ -90,24 +158,18 @@ def write_wav_stereo_f32(path, stereo):
 
 def import_surgepy_from(so_dir):
     so = so_dir
-    if not any(f.startswith("surgepy") and f.endswith(".so")
-               for f in os.listdir(so)):
-        so = os.path.join(so_dir, "src", "surge-python")
-    if not os.path.isdir(so):
-        raise Refuse(f"no surgepy build at {so}")
+    if not os.path.isdir(so) or not any(
+            f.startswith("surgepy") and f.endswith(".so") for f in os.listdir(so)):
+        raise Refuse(f"no surgepy build at {so_dir}")
     if so not in sys.path:
         sys.path.insert(0, so)
-    for mod in list(sys.modules):
-        if mod.startswith("surgepy"):
-            del sys.modules[mod]
     import surgepy  # noqa: PLC0415
     return surgepy
 
 
-def render_once(surgepy, preset_abs, seq, tap_dir):
-    """One fresh-instance render under the SXT-012 policies (no repeats:
-    the fixtures are conditioned-on-tap class, the determinism gate does
-    not apply). Tap dir enabled/disabled by the caller via env."""
+def render_once(surgepy, preset_abs, seq):
+    """One fresh-instance render under the SXT-012 policies (single render:
+    the fixtures are conditioned-on-tap class - no 3x determinism gate)."""
     s = surgepy.createSurge(float(SR))
     try:
         if not s.loadPatch(preset_abs):
@@ -142,10 +204,10 @@ def render_once(surgepy, preset_abs, seq, tap_dir):
         del s
 
 
-def probe_render(surgepy, preset_abs, seq, tap_dir, aw49_slot):
+def probe_render(surgepy, preset_abs, seq, aw49_slot):
     """Deterministic-class probe: scene drift and aw49 Modulation forced to
-    0 so the render is bit-reproducible (the neutrality gate needs a
-    deterministic carrier; the fixtures themselves are not)."""
+    0 so the render is bit-reproducible (required by the neutrality gate;
+    the fixtures themselves are NOT in that class)."""
     s = surgepy.createSurge(float(SR))
     try:
         if not s.loadPatch(preset_abs):
@@ -153,11 +215,11 @@ def probe_render(surgepy, preset_abs, seq, tap_dir, aw49_slot):
         patch = s.getPatch()
         sm = int(s.getParamVal(patch["scenemode"]))
         sa = int(s.getParamVal(patch["scene_active"]))
-        voicing = [sa] if sm == 0 else [0, 1]
-        for v in voicing:
+        for v in ([sa] if sm == 0 else [0, 1]):
             s.setParamVal(patch["scene"][v]["drift"], 0.0)
         s.setParamVal(patch["fx"][aw49_slot]["p"][3], 0.0)  # aw49 C (Modulation)
-        return render_once(surgepy, preset_abs, seq, tap_dir)
+        out, _ = render_once(surgepy, preset_abs, seq)
+        return out
     finally:
         del s
 
@@ -205,11 +267,8 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     fxin = json.load(open(os.path.join(REPO, "model", "effects", "fx_inputs",
                                        f"aw-49-{slug}.json")))
     blob = fxin["census_blob_sha1"]
-    actual = oc.git_blob_sha1(abs_path)
-    if actual != blob:
+    if oc.git_blob_sha1(abs_path) != blob:
         raise Refuse(f"census blob mismatch: {rel_path}")
-    if not fxin["applicability"]["complete_wet_render_possible"]:
-        pass  # expected: slot-boundary comparison only (recorded in sidecar)
     aw49_slot = fxin["aw49_slot"]
 
     surgepy = import_surgepy_from(TAP_LIB)
@@ -220,25 +279,37 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     for d in (tap_on, tap_off):
         os.makedirs(d, exist_ok=True)
 
-    # ---- taps-ON fixture render
+    # taps-ON fixture render
     os.environ["SXT028A_TAP_DIR"] = tap_on
-    wet, total_blocks = render_once(surgepy, abs_path, seq, tap_on)
-    os.environ.pop("SXT028A_TAP_DIR", None)
+    wet, total_blocks = render_once(surgepy, abs_path, seq)
 
-    # ---- taps-ON probe (deterministic class) + OFF probes -> neutrality
-    probe_on, _ = probe_render(surgepy, abs_path, seq, tap_on, aw49_slot)
-    probe_off, _ = probe_render(surgepy, abs_path, seq, tap_off, aw49_slot)
-    probe_off2, _ = probe_render(surgepy, abs_path, seq, tap_off, aw49_slot)
+    # neutrality probes (probe ON in tap_on, probes OFF in tap_off)
+    probe_on = _probe(surgepy, abs_path, seq, aw49_slot)
+    os.environ["SXT028A_TAP_DIR"] = tap_off
+    probe_off = _probe(surgepy, abs_path, seq, aw49_slot)
+    probe_off2 = _probe(surgepy, abs_path, seq, aw49_slot)
+    os.environ.pop("SXT028A_TAP_DIR", None)
     neutral_deterministic = sha256_buf(probe_off) == sha256_buf(probe_off2)
     neutral_gate = neutral_deterministic and sha256_buf(probe_on) == sha256_buf(probe_off)
 
-    # ---- cross-build check (baseline build, taps off)
-    surgepy_base = import_surgepy_from(BUILD_BASELINE)
-    probe_base, _ = probe_render(surgepy_base, abs_path, seq, tap_off, aw49_slot)
-    cross_build = sha256_buf(probe_base) == sha256_buf(probe_off)
-    del surgepy_base
+    # cross-build probe (baseline build, taps off; child process)
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.path.join(BUILD_BASELINE, "src", "surge-python") + \
+        ":" + env.get("PYTHONPATH", "")
+    env["SXT028A_TAP_DIR"] = tap_off
+    env["ORACLE_SURGE_DIR"] = oc.engine_dir()
+    r = subprocess.run(
+        [sys.executable, "-c", CROSSBUILD_SNIPPET, REPO, abs_path, seq_id,
+         str(aw49_slot), tap_off, out_dir],
+        env=env, capture_output=True, text=True, timeout=3600)
+    cross_build = None
+    if r.returncode == 0:
+        base_sha = r.stdout.strip().splitlines()[-1]
+        cross_build = base_sha == sha256_buf(probe_off)
+    else:
+        print("cross-build probe failed:", (r.stderr or "")[-400:])
 
-    # ---- parse taps
+    # parse taps
     recs = parse_iostream(os.path.join(tap_on, "aw_iostream.bin"))
     key = (aw49_slot, 49)
     if key not in recs:
@@ -253,12 +324,10 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     if len(galstate) != total_blocks * 32:
         raise Refuse(f"galstate records {len(galstate)} != frames {total_blocks * 32}")
 
-    # sibling AW slot records retained for completeness (not claimed)
-    sib = {f"{s}-{a}": len(v) for (s, a), v in recs.items() if (s, a) != key}
-
     stem = f"{slug}__{seq_id}"
+    npz_path = os.path.join(out_dir, f"{stem}-aw49-taps.npz")
     np.savez_compressed(
-        os.path.join(out_dir, f"{stem}-aw49-taps.npz"),
+        npz_path,
         gal_in=gal_in, gal_out=gal_out,
         vibM=np.asarray(galstate["vibM"], dtype="<f8"),
         oldfpd=np.asarray(galstate["oldfpd"], dtype="<f8"),
@@ -278,40 +347,44 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
         "leaf": "SXT-028a",
         "claim_scope": "tapped slot-boundary reference of the pinned engine; "
                        "no fidelity/support/quality claim; complete-wet "
-                       "renders refused (unlanded siblings)",
+                       "renders refused (unlanded sibling FX classes)",
+        "applicability_complete_wet_possible":
+            fxin["applicability"]["complete_wet_render_possible"],
         "preset": {"slug": slug, "path": rel_path, "census_blob_sha1": blob,
                    "aw49_slot": aw49_slot},
         "sequence": {"id": seq_id, "sha256": seq_sha},
         "render": {"sample_rate": SR, "block_size": 32,
-                   "blocks": int(total_blocks),
-                   "frames": int(total_blocks) * 32,
+                   "blocks": int(total_blocks), "frames": int(total_blocks) * 32,
                    "tail_s": seq.get("tail_s", 2.5),
                    "settle_s": seq.get("settle_s", 0.25),
                    "policies": "fixtures/render_fixture.py (reset/scheduling/"
                                "tail); single render - conditioned-on-tap "
-                               "repeatability class (no 3x gate; measured "
-                               "cross-instance spread in EVIDENCE.md)"},
+                               "repeatability class (no 3x gate; cross-instance "
+                               "spread measured in EVIDENCE.md)"},
         "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no "
                         "clip, no normalization, no fades",
         "taps": {
-            "record_layout": "aw_iostream.bin {tag,solt,algid,seq,n}+n*{inL,"
-                             "inR,outL,outR f32}; aw_fpd.bin {tag,fpdL,fpdR}; "
-                             "aw_galstate.bin 56B/sample",
-            "fpd_records": fpds,
-            "aw_slot_record_counts": {f"{s}-{a}": n for (s, a), n in sib.items()},
+            "record_layout": "aw_iostream.bin {tag=1,slot,algid,seq,n}+n*"
+                             "{inL,inR,outL,outR} f32; aw_fpd.bin {tag=2,"
+                             "fpdL,fpdR}; aw_galstate.bin 56B/sample",
+            "fpd_records": [list(x) for x in fpds],
+            "aw_slot_record_counts": {f"{s}-{a}": len(v)
+                                      for (s, a), v in recs.items()},
             "galactic_blocks": int(len(gal_in)),
-            "npz": f"{stem}-aw49-taps.npz",
-            "npz_sha256": sha256_file(os.path.join(out_dir, f"{stem}-aw49-taps.npz")),
+            "npz": os.path.relpath(npz_path, REPO),
+            "npz_sha256": sha256_file(npz_path),
         },
         "neutrality_gate": {
             "method": "DR-0005 adapted for nondeterministic fixtures: probe "
-                      "(drift=0, aw49 C=0 via setParamVal) deterministic x2 "
-                      "taps-off, then taps-on == taps-off; structural side "
-                      "pinned by the sxt028a-tap single-commit diff (DR-0006)",
+                      "(scene drift=0 and aw49 C=0 via setParamVal) must be "
+                      "bit-identical taps-off x2, then taps-on == taps-off; "
+                      "structural side pinned by the sxt028a-tap "
+                      "single-commit diff (DR-0006)",
             "probe_deterministic_taps_off_x2": neutral_deterministic,
             "probe_taps_on_eq_taps_off": neutral_gate,
             "cross_build_baseline_eq": cross_build,
-            "baseline_build": os.path.basename(BUILD_BASELINE),
+            "baseline_build": "build-py311 (sxt037-tap tree; FX-path "
+                              "DSP-identical per DR-0005)",
         },
         "wet": {"wav": os.path.relpath(wav_path, REPO),
                 "sha256": sha256_file(wav_path),
@@ -332,6 +405,10 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     return sidecar
 
 
+def _probe(surgepy, abs_path, seq, aw49_slot):
+    return probe_render(surgepy, abs_path, seq, aw49_slot)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-dir", default=os.path.join(REPO, "reports", "sxt-028a", "fixtures"))
@@ -339,9 +416,9 @@ def main():
     ap.add_argument("--seqs", help="comma-separated subset")
     args = ap.parse_args()
     if not os.path.isdir(TAP_LIB):
-        print(f"REFUSING: instrumented build not found at {TAP_LIB}; "
-              "this tool runs only on the oracle host with the sxt028a-tap "
-              "build (DR-0006)", file=sys.stderr)
+        print(f"REFUSING: instrumented build not found at {TAP_LIB}; this "
+              "tool runs only on the oracle host with the sxt028a-tap build "
+              "(DR-0006)", file=sys.stderr)
         return 3
     slugs = args.slugs.split(",") if args.slugs else sorted(PRESETS)
     seqs = args.seqs.split(",") if args.seqs else SEQUENCES
