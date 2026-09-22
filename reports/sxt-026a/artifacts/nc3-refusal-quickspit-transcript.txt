@@ -1,0 +1,3 @@
+# leaf48 applicability-refusal transcript (Quickspit: Mono playmode, arithmetic-overlap-only preset)
+$ python3.11 model/voice/extract_inputs_v2.py --preset-rel resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp
+REFUSING: not poly playmode
