@@ -71,6 +71,15 @@ def git_blob_sha1(path):
     return hashlib.sha1(hdr + data).hexdigest()
 
 
+def graphs_entry(rel):
+    with open(GRAPHS, encoding="utf-8") as f:
+        for line in f:
+            g = json.loads(line)
+            if g.get("p") == rel:
+                return g
+    raise Refuse(f"preset not in graphs.jsonl: {rel}")
+
+
 def graphs_modwheel_routes(rel):
     """The preset's own normalized modwheel routes (SXT-022 reuse)."""
     with open(GRAPHS, encoding="utf-8") as f:
@@ -117,7 +126,32 @@ def main():
         g = s.getPatch()
         sc = g["scene"][0]
 
-        # --- structural gates (SXT-022 slice) --------------------------------
+        # --- structural gates (SXT-022 slice; graph fields from the
+        # normalized export, live fields re-read from the loaded engine) ----
+        graphs_gates = graphs_entry(PRESET_REL)
+        A = graphs_gates["g"]["sc"][0]
+        if graphs_gates["st"] != "normalized":
+            raise Refuse("graphs entry not normalized")
+        if graphs_gates["g"]["sm"] != 0 or graphs_gates["g"]["sa"] != 0:
+            raise Refuse("not single-scene")
+        if any(f["t"] != 0 for f in graphs_gates["g"]["fx"]):
+            raise Refuse("preset has FX")
+        if A["pm"] != 0:
+            raise Refuse("not poly playmode")
+        if A["fbc"] != 0:
+            raise Refuse("filter config not serial1")
+        if A["ws"]["t"] != 0:
+            raise Refuse("waveshaper not off")
+        if A["lc"] != -72.0:
+            raise Refuse("lowcut not at off value")
+        active = [k for k in ("o1", "o2", "o3") if A["mix"][k][1] == 0]
+        if active != ["o1"]:
+            raise Refuse(f"active mixer paths {active} != ['o1']")
+        if A["osc"][0]["t"] != 0 or A["osc"][0]["uni"] != 1 \
+                or A["osc"][0]["rt"] != 1:
+            raise Refuse("osc1 not Classic/unison1/retrigger (graphs)")
+        if A["fu"][0]["t"] != 1 or A["fu"][1]["t"] != 0:
+            raise Refuse("filter units not LP12-active/2-off (graphs)")
         for slot in range(16):
             if int(s.getParamVal(g["fx"][slot]["type"])) != C.fxt_off:
                 raise Refuse(f"fx slot {slot} not Off")
@@ -130,9 +164,8 @@ def main():
         if abs(float(s.getParamVal(sc["lowcut"])) + 72.0) > 0:
             raise Refuse("lowcut not at off value")
         if int(s.getParamVal(sc["osc"][0]["type"])) != 0 \
-                or int(s.getParamVal(sc["osc"][0]["unison"])) != 1 \
                 or int(s.getParamVal(sc["osc"][0]["retrigger"])) != 1:
-            raise Refuse("osc1 not Classic/unison1/retrigger")
+            raise Refuse("osc1 not Classic/retrigger (live readback)")
         if abs(float(s.getParamVal(sc["drift"]))) > 0:
             raise Refuse("scene drift not 0 (determinism gate)")
 
