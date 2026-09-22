@@ -296,3 +296,61 @@ only; any other destination class is fail-closed.
 * `rtl/voice/tb_lfo.sv` — LFO control-plane RTL (exactness:
   `tools/compare_lfo_rtl_model.py`; the SXT-022 `tb_voice.sv` audio datapath
   is UNCHANGED and runs against the LFO-influenced streamed control words)
+
+---
+
+# SXT-035 frozen scene-modwheel route extension (`run_mw_model.py` + `tb_mw.sv`)
+
+Leaf #69 (SXT-035, mod behavior `modwheel`, pinned modsource id
+6 = `ms_modwheel`). This section generalizes the landed SXT-022 modwheel path
+(controller → FAST_LINE smoothing → route scaling → destinations); it does
+not fork it. Landed fixtures (SXT-022 v1, SXT-026a bells, SXT-032 LFO)
+render **bit-identically** after this extension (verified against the
+committed artifact hashes).
+
+## Pinned-source citations (read, not copied)
+
+* `src/common/ModulationSource.h` `ControllerModulationSourceVector`
+  (NDX=1): `set_target(f)` stores `target = f; startingpoint = value`;
+  `process_block` → `processSmoothing(FAST_LINE, …)`:
+  `sampf = samplerate/44100; da = (target − startingpoint)/(50·sampf)`;
+  `b = target − value`; `if |b| < |da|: value = target else value += da`.
+  `bipolar = false` → the modwheel output range is [0, 1].
+* `src/common/SurgeStorage.h:2063`: `smoothingMode = FAST_LINE` is the
+  storage default (the constructor argument for the scene modwheel).
+* `src/common/SurgeSynthesizer.cpp` `channelController` case 1:
+  `fval = value·(1/127)`; `set_target(fval)` on **every scene's**
+  `modsources[ms_modwheel]` (single-scene class ⇒ one instance).
+* `src/common/SurgeSynthesizer.cpp` `process`/`processControl`: the scene
+  modwheel `process_block()` runs once per engine block behind
+  `modsource_doprocess[ms_modwheel]` (always true for a routed modwheel).
+  The exact interleaving with voice control passes is not observable through
+  surgepy; the **declared order (unchanged from SXT-022)** is: controller
+  events dispatch → per-voice control passes read the CURRENT value → the
+  smoother steps at the end of the block.
+
+## Frozen model additions (word lengths unchanged)
+
+* The landed `Modwheel` class (Q10.21 `value`, `target`, `startingpoint`;
+  `inv = qint(1/(50·48000/44100))`; FAST_LINE step exactly as cited) is
+  reused unchanged — the smoothing algorithm exists exactly once.
+* Scene-modwheel route vocabulary (destination ids = normalized `md` ids):
+  **Filter 1 Cutoff (308), Filter 1 Resonance (309), VCA Gain (298)**, plus
+  the landed FM-Depth (260, Sine class, CC-refused). Route application per
+  control pass: `param += qint(depth) · value` (Q10.21 `qmul`, saturating
+  add), in `md`-array order, into the local parameter accumulator before
+  use; `mod_vca_db` accumulates velocity- and modwheel-sourced VCA terms in
+  the same accumulator (engine `applyModulationToLocalcopy` localcopy
+  semantics), consumed by `db_to_linear` in the gain target. Anything else
+  is refused at extraction (fail-closed).
+* Route-depth words are the normalized `md` raw depths (`qint(r[5])`), same
+  provenance rule as the landed cutoff/reso routes; runtime fixture routes
+  are engine readbacks (`getModDepth` raw + `getNormalizedDepth`) recorded in
+  the committed sidecar.
+* Declared scope (unchanged omissions plus): per-scene modwheel instances
+  beyond scene A, bipolar/LEGACY/SLOW_EXP/FAST_EXP smoothing modes,
+  modwheel→LFO-amplitude / EG-times / osc pitch-volume-width / FX-send
+  destinations (present on the leaf's carriers — refused, see
+  `reports/sxt-035/`), modwheel-as-a-mod-destination. Multi-scene smoothing
+  (one instance per scene, stepped per scene) is out of the single-scene
+  class.

@@ -56,6 +56,8 @@ def load_inputs(path):
     inp.osc_kind = "classic"
     inp.fu_poles = 12
     inp.mix1 = vm.ONE
+    inp.scene_octave = 0
+    inp.keytrack_root = 60
     inp.voice_routes = []
     inp.scene_routes_fm = False
     inp.fm_depth = 0

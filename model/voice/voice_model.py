@@ -842,7 +842,8 @@ VOICE_ROUTE_VOCAB = {
                    DEST_FU2_CUTOFF, DEST_FU2_RESO, DEST_FU2_FEGMOD},
 }
 SCENE_ROUTE_VOCAB = {
-    MODWHEEL_SRC: {DEST_FU1_CUTOFF, DEST_FU1_RESO, DEST_FM_DEPTH},
+    MODWHEEL_SRC: {DEST_FU1_CUTOFF, DEST_FU1_RESO, DEST_FM_DEPTH,
+                   DEST_VCA_GAIN},      # SXT-035: VCA Gain destination class
 }
 
 
@@ -1170,7 +1171,36 @@ class VoiceV2(Voice):
 
     def _calc_ctrldata(self):
         if self.kind == "classic":
-            super()._calc_ctrldata()
+            table = getattr(self.inp, "scene_routes_mw", None)
+            if not table:
+                super()._calc_ctrldata()
+                return
+            # SXT-035: table-driven scene-modwheel pass (cutoff/reso/vca, md
+            # order). Term values equal the landed scalar path term-for-term
+            # for presets whose routes are the scalar pair; the v1 path above
+            # remains the route-free fast path.
+            inp = self.inp
+            self.aeg.process_block()
+            self.feg.process_block()
+            mw = inp.modwheel.value
+            cut = qint(inp.cutoff)
+            reso = qint(inp.reso)
+            vca = qint(inp.vca_db)
+            for dst, depth in table:
+                d = qint(depth)
+                if dst == DEST_FU1_CUTOFF:
+                    cut = sat(cut + qmul(d, mw))
+                elif dst == DEST_FU1_RESO:
+                    reso = sat(reso + qmul(d, mw))
+                elif dst == DEST_VCA_GAIN:
+                    vca = sat(vca + qmul(d, mw))
+                else:
+                    raise Refuse(f"scene route {dst} outside declared class")
+            self.mod_vca_db = vca
+            self.cutoff_a = cut + qmul(qint(inp.envmod), self.feg.output)
+            self.reso_a = reso
+            if self.aeg.is_idle():
+                self.keep_playing = False
             return
         inp = self.inp
         self.aeg.process_block()
@@ -1179,12 +1209,18 @@ class VoiceV2(Voice):
         mw = inp.modwheel.value
         cut = self.mod_cutoff
         reso = self.mod_reso
+        vca = self.mod_vca_db
         for dst, depth in inp.scene_routes_mw:
             d = qint(depth)
             if dst == DEST_FU1_CUTOFF:
                 cut = sat(cut + qmul(d, mw))
             elif dst == DEST_FU1_RESO:
                 reso = sat(reso + qmul(d, mw))
+            elif dst == DEST_VCA_GAIN:               # SXT-035 destination class
+                vca = sat(vca + qmul(d, mw))
+            else:
+                raise Refuse(f"scene route {dst} outside declared class")
+        self.mod_vca_db = vca
         kt_semitones = qint(float(self.pitch_voice - inp.keytrack_root))
         self.cutoff_a = cut + qmul(qint(inp.fu_kta), kt_semitones) \
             + qmul(self.mod_envmod, self.feg.output)
@@ -1198,10 +1234,11 @@ class VoiceV2(Voice):
             self.keep_playing = False
 
     def _gain_target(self):
-        if self.kind == "sine":
-            g = db_to_linear(getattr(self, "mod_vca_db", qint(self.inp.vca_db)))
-            return qmul(g, self.aeg.output)
-        return super()._gain_target()
+        # SXT-035: mod_vca_db carries the accumulated velocity + modwheel VCA
+        # route terms (== qint(vca_db) when no VCA routes exist, so v1
+        # fixtures are word-identical)
+        g = db_to_linear(getattr(self, "mod_vca_db", qint(self.inp.vca_db)))
+        return qmul(g, self.aeg.output)
 
     # ---------------------------------------------------------------- osc
     def osc_process_block(self, block_index):
@@ -1379,6 +1416,8 @@ class InputsV2:
                 self.scene_routes_mw.append((dst, r[5]))
             elif dst == DEST_FU1_RESO:
                 self.mod_reso_depth = r[5]
+                self.scene_routes_mw.append((dst, r[5]))
+            elif dst == DEST_VCA_GAIN:           # SXT-035 destination class
                 self.scene_routes_mw.append((dst, r[5]))
 
     # ------------------------------------------------------------- gates
