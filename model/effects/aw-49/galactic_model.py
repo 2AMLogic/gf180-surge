@@ -84,6 +84,7 @@ Traffic: per output frame (48 kHz, cycleEnd=1) 28 reads + 26 writes =
 54 words = 216 B/frame/instance (10.368 MB/s); see buffer_report().
 """
 
+
 import hashlib
 import math
 import os
@@ -310,17 +311,41 @@ class VibratoStream:
 # Frozen fixed-point model
 # --------------------------------------------------------------------------
 
+class TappedVibratoStream(VibratoStream):
+    """Vibrato phase consumed from a captured control-plane trajectory.
+
+    The engine's vibM advance uses the adapter's LAGGED float parameter
+    (OnePoleLag ramping from 0 at load), so the early trajectory is NOT
+    derivable from static patch parameters. The frozen control-plane
+    boundary therefore consumes the per-sample vibM doubles captured by the
+    oracle tap (decision-records/0006); sin() is evaluated in-model on the
+    identical inputs (same platform libm on the oracle host).
+    """
+
+    def __init__(self, ctrl, vibM):
+        super().__init__(ctrl)
+        import numpy as np
+        self.traj = [float(v) for v in np.asarray(vibM).ravel()]
+        self.k = 0
+
+    def advance(self):
+        self.vibM = self.traj[self.k]
+        self.k += 1
+
+
 class Galactic49Fixed:
     """One Galactic instance (independent histories; two slots = two
     instances with separate memory regions behind mem_base)."""
 
     instance_kind = "aw-49"
 
-    def __init__(self, ctrl, mem_base=0, assert_width=True, label="aw49"):
+    def __init__(self, ctrl, mem_base=0, assert_width=True, label="aw49",
+                 vib=None):
         self.c = ctrl
         self.mem_base = mem_base
         self.assert_width = assert_width
         self.label = label
+        self._vib_override = vib
         self.ext_reads = 0
         self.ext_writes = 0
         self.saturations = 0
@@ -342,7 +367,8 @@ class Galactic49Fixed:
         self.iir_b = {"L": 0, "R": 0}
         self.fb = {"AL": 0, "BL": 0, "CL": 0, "DL": 0,
                    "AR": 0, "BR": 0, "CR": 0, "DR": 0}
-        self.vib = VibratoStream(self.c)
+        self.vib = self._vib_override if self._vib_override is not None \
+            else VibratoStream(self.c)
         self.ext_reads = 0
         self.ext_writes = 0
         self.saturations = 0
