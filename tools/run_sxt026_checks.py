@@ -192,9 +192,8 @@ def main():
     # ---- 5. budget metrics for every fixture ----
     rows = []
     for name, seq in FIXTURES:
-        ref = ("reports/sxt-026/artifacts/%s__%s-ref.wav" % (name, seq))
-        model = ("reports/sxt-026/artifacts/model-%s-%s.wav"
-                 % (name, seq))
+        ref = os.path.join(ART, "%s__%s-ref.wav" % (name, seq))
+        model = os.path.join(ART, "model-%s__%s.wav" % (name, seq))
         if not (os.path.exists(ref) and os.path.exists(model)):
             print("   (missing render for %s/%s — run the matrix first)"
                   % (name, seq))

@@ -71,6 +71,9 @@ def main():
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--rtl", action="store_true",
                     help="emit the RTL stimulus files")
+    ap.add_argument("--max-blocks", type=int, default=None,
+                    help="cap the render at N blocks (RTL exactness runs "
+                         "use short deterministic prefixes)")
     args = ap.parse_args()
 
     seq_path = args.sequence
@@ -86,6 +89,9 @@ def main():
     last_t = max(e["t"] for e in notes)
     total_samples = last_t + int(float(seq.get("tail_s", 1.5)) * vm.SR)
     total_blocks = -(-total_samples // BLOCK_SIZE)
+    if args.max_blocks:
+        total_blocks = min(total_blocks, args.max_blocks)
+        total_samples = total_blocks * BLOCK_SIZE
 
     voices = []
     events = list(seq["events"])
@@ -217,6 +223,10 @@ def main():
                           "pitchmult_inv": "Q13.18", "oscstate": "Q10.21/64"},
             "unison": inp.unison,
             "deform_mode": inp.deform_mode,
+            "n_tables": inp.wt["wave_count"],
+            "nointerp": 0 if inp.extend_range else 1,
+            "legacy": 1 if inp.deform_mode == "xt134_legacy" else 0,
+            "wave_size": inp.wt["wave_size"],
             "blocks": blocks_json,
             "samples16": out_mono,
         }, f)
@@ -242,6 +252,20 @@ def main():
 
     if args.rtl:
         osc0 = wm.WavetableOsc(inp, 60)
+        morph_scale = wm.qint((inp.wt["wave_count"] - 1
+                               + (0 if inp.extend_range else 1)) * 0.99999)
+        tempt_words = []
+        for v in range(16):
+            if v < inp.unison:
+                detune_v = 0
+                if inp.unison > 1:
+                    detune_v = vm.qmul(inp.udet_ext_q,
+                                       vm.qmul(osc0.detune_bias,
+                                               wm.qint(float(v)))
+                                       + osc0.detune_offset)
+                tempt_words.append(vm.ntpi_tuningctr(detune_v))
+            else:
+                tempt_words.append(vm.ntpi_tuningctr(0))
         init_words = [
             inp.wt["wave_size"], inp.wt["wave_count"],
             len(inp.mip_tables), inp.unison,
@@ -254,6 +278,8 @@ def main():
             osc0.tableipol, osc0.tableid,
             osc0.last_tableipol, osc0.last_tableid,
             wm.INTEGRATOR_HPF,
+            morph_scale, wm.TAYLORSCALE, osc0.dt,
+            *tempt_words,
         ]
         write_hex(os.path.join(rtl_dir, "init.hex"), init_words)
         write_hex(os.path.join(rtl_dir, "ctrl.hex"), ctrl)
