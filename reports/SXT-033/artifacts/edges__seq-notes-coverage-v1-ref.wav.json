@@ -1,0 +1,97 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "carrier": "edges",
+ "declared_overrides_applied": [
+  [
+   "mute_o1",
+   true
+  ],
+  [
+   "mute_o2",
+   false
+  ],
+  [
+   "mute_o3",
+   true
+  ],
+  [
+   "mute_noise",
+   true
+  ],
+  [
+   "mute_ring_12",
+   true
+  ],
+  [
+   "mute_ring_23",
+   true
+  ],
+  [
+   "fu0_off",
+   true
+  ],
+  [
+   "fu1_off",
+   true
+  ],
+  [
+   "fx_off",
+   true
+  ],
+  [
+   "ws_off",
+   true
+  ],
+  [
+   "lc_off",
+   true
+  ],
+  [
+   "fbc_serial1",
+   true
+  ],
+  [
+   "fm_off",
+   true
+  ],
+  [
+   "scenemode_single",
+   true
+  ],
+  [
+   "retrigger_on",
+   true
+  ]
+ ],
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "inputs": "model/oscillators/classic/inputs/edges.json",
+ "isolation_note": "declared fixture configuration (one Classic slot audible; other mixer paths, filter units, FX, waveshaper, lowcut, FM routing off; fbc serial1; scene mode Single; retrigger on) - a test configuration, never an adapted preset, never coverage",
+ "issue": "SXT-033",
+ "preset_blob_sha1": "099e88298ae11cc7a5335054c04f3caf7e1539dc",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 8550,
+  "clipped_samples": 0,
+  "frames": 273600,
+  "peak_abs_float": 0.01429925486445427,
+  "repeat_hashes": [
+   "e6b8f43c98940c8c829aa7a8630a9f4d1929711435058f115904c3d58fd5091f",
+   "e6b8f43c98940c8c829aa7a8630a9f4d1929711435058f115904c3d58fd5091f",
+   "e6b8f43c98940c8c829aa7a8630a9f4d1929711435058f115904c3d58fd5091f"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-notes-coverage-v1",
+  "path": "fixtures/sequences/seq-notes-coverage-v1.json"
+ },
+ "wav": {
+  "path": "refout/edges__seq-notes-coverage-v1-ref.wav",
+  "sha256": "a14f976e415995718b9203b5986f2b3ca395da6d8258cc02eaf632858027a738"
+ }
+}
