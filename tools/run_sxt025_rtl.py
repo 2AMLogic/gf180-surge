@@ -247,8 +247,7 @@ def main():
     n = min(args.blocks, len(bl))
     bl, br = bl[:n], br[:n]
 
-    base = tempfile.mkdtemp(prefix="sxt025-rtl-",
-                            dir="/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode")
+    base = tempfile.mkdtemp(prefix="sxt025-rtl-")
     results = {
         "issue": "SXT-025 (#18)",
         "claim": "integrated RTL (control_top + reverb1_core, one sim, one "
