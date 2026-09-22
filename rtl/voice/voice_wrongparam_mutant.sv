@@ -275,9 +275,7 @@ module tb_voice;
 
   // ------------------------------------------------------------------ voice
   task automatic process_slot;
-    if (!cw[0][0]) begin
-      active[s] = 0;
-    end else begin
+    if (!cw[0][0]) begin active[s] = 0; return; end
     if (cw[0][2]) init_voice();
     if (cw[0][3]) begin
       aeg_scale[s] = aeg_out_r[s]; aeg_phase[s] = PH_ONE; aeg_state[s] = S_RELEASE;
@@ -290,7 +288,6 @@ module tb_voice;
     filter_chain();
     if (slot_ckpt[s]) dump_slot();
     if (aeg_state[s] == S_IDLE && aeg_idle[s] > 0) active[s] = 0;
-    end
   endtask
 
   task automatic init_voice;
@@ -581,7 +578,7 @@ module tb_voice;
     d_outl = $signed(cw[26]) - outl_start;
     for (i = 0; i < 8; i++) c[i] = cw[9 + i];
     lvl = 32'(cfg[18]);
-    poles = 32'(cfg[41]);                     // SXT-026a: 12 or 24
+    poles = 32'sd12;                           // WRONG-PARAM MUTANT
     for (k = 0; k < BLOCK_OS; k++) begin
       for (i = 0; i < 8; i++) c[i] = sat32(c[i] + cw[17 + i]);
       dlv = qmul(osout[s][k], lvl);

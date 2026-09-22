@@ -135,7 +135,7 @@ def main():
             init_words += [core.lp.b0, core.lp.b1, core.lp.b2,
                            core.lp.a1, core.lp.a2]
     else:
-        init_words += [0] * 31
+        init_words += [0] * 30
 
     voices = []
     events = list(seq["events"])
