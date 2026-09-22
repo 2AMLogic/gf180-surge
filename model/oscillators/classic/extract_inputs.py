@@ -90,7 +90,13 @@ def main():
     A = ge["sc"][0]
     osc_graph = A["osc"][slot]
     # cheap structural gates from the committed graphs (authoritative for
-    # what the patch itself contains)
+    # what the patch itself contains); the applicability boundary is
+    # fail-closed: a preset whose Classic content sits outside the declared
+    # single-scene mono voice slice is refused, never adapted
+    if not any(o["t"] == 0 for o in A["osc"]):
+        raise Refuse("no Classic oscillator in scene A: preset requires "
+                     "scene-B or voice-graph integration (#48) - outside "
+                     "the SXT-033 declared scope")
     if osc_graph["t"] != 0:
         raise Refuse(f"modeled slot osc{slot + 1} is not Classic in the "
                      "committed normalized graph")

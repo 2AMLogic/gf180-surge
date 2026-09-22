@@ -34,6 +34,10 @@ CARRIERS = {
     "horn": ("patches_3rdparty/Emu/Plucks/Horn Ring Boops.fxp", 1),
     "pluck": ("patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp", 1),
     "tentacles": ("patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp", 2),
+    # out-of-class negative control: a recovery-basis preset whose Classic
+    # slots live only in scene B (split scene mode) — the extractor must
+    # refuse it for fixture use (scene-B/voice-graph integration is #48)
+    "house": ("patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp", 0),
 }
 
 

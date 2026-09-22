@@ -73,6 +73,7 @@ Arithmetic discipline (FROZEN, same rules as SXT-022/SXT-026):
 
 import json
 import math
+import os
 import struct
 
 from model.voice import voice_model as vm
@@ -97,6 +98,50 @@ SYNC_CEILING = 156         # (12 + 72 + 72) - pitch clamp in convolute
 def _f32(x):
     """Round a double to the nearest float32 value (quantization time only)."""
     return struct.unpack("f", struct.pack("f", x))[0]
+
+
+# --- pinned pitch-table lookups (SurgeStorage.cpp init_tables / note_to_*)
+#
+# NOTE (SXT-033 finding, routed to #12/#48): the landed SXT-022 helpers
+# `ntpi_tuningctr` / `vm.ntpi_ignoring_tuning` interpolate the fractional
+# semitone with 2^(idx/1000). The pinned construction is
+#     table_two_to_the_minus[i] = 2^(-i/12/1000)   (SurgeStorage.cpp:3176-80)
+#     note_to_pitch_inv_*: table_pitch_inv[e] * pow2v(minus table)
+# so the landed fractional term is 12000x steeper (and sign-flipped). The
+# error is INERT in the SXT-022 Attacky slice (its argument is identically 0,
+# pow2v == 1) but is LIVE in any detune or sync class. The frozen SXT-022
+# model is left untouched; the corrected pinned construction is used here.
+_TWO12 = [2.0 ** (-(i * 1.0 / 12.0 / 1000.0)) for i in range(1002)]
+_TWO12P = [2.0 ** (+(i * 1.0 / 12.0 / 1000.0)) for i in range(1002)]
+
+
+def ntpi_tuningctr(x):
+    """note_to_pitch_inv_tuningctr(x) at standard tuning (x Q10.21 -> Q10.21):
+    note_to_pitch_inv(x + 60) * 32, coarse table 2^(-n/12) with the fine
+    table_two_to_the_minus interpolation of the fractional semitone."""
+    xf = x / float(1 << FQ) + 316.0
+    xf = min(max(xf, 1e-4), 511.0 - 1e-4)
+    e = int(xf)
+    a = xf - e
+    pow2pos = a * 1000.0
+    idx = int(pow2pos)
+    frac = pow2pos - idx
+    pow2v = (1 - frac) * _TWO12[idx] + frac * _TWO12[idx + 1]
+    return vm.qint(vm.TUNING_PITCH / vm._dbl_pitch(e) * pow2v)
+
+
+def ntp_tuningctr(x):
+    """note_to_pitch_tuningctr(x) at standard tuning (x Q10.21 -> Q10.21):
+    note_to_pitch(x + 60) / 32 with the table_two_to_the interpolation."""
+    xf = x / float(1 << FQ) + 316.0
+    xf = min(max(xf, 0.0), 513.0)
+    e = int(xf)
+    a = xf - e
+    pow2pos = a * 1000.0
+    idx = int(pow2pos)
+    frac = pow2pos - idx
+    pow2v = (1 - frac) * _TWO12P[idx] + frac * _TWO12P[idx + 1]
+    return vm.qint(vm._dbl_pitch(e) * pow2v / vm.TUNING_PITCH)
 
 
 def limit_q(x, lo, hi):
@@ -194,9 +239,9 @@ class ClassicOsc:
                 inner = _f32(_f32(bias * float(v)) + -1.0)
                 detune_f = _f32(udet_f * inner)
             self.voice_detune.append(detune_f)
-            t = vm.ntpi_tuningctr(vm.qint(_f32(detune_f + sync_raw)))
+            t = ntpi_tuningctr(vm.qint(_f32(detune_f + sync_raw)))
             self.t_u.append(t)
-            self.t_sync_u.append(vm.qmul(vm.ntpi_tuningctr(vm.qint(detune_f)),
+            self.t_sync_u.append(vm.qmul(ntpi_tuningctr(vm.qint(detune_f)),
                                          vm.qint(2.0)))
             self.t_inv_u.append(vm.qdiv(ONE, t))
 
@@ -244,7 +289,7 @@ class ClassicOsc:
     def _hpf_target(self):
         """update_lagvals: pp = ntp_tuningctr(pitch + l_sync);
         invt = 4*min(1, 8.175798915*pp*sr_inv); hpf2 = min(integ, 0.995^invt)."""
-        pp = vm.ntp_tuningctr(vm.qint(float(self.pitch)) + self.l_sync)
+        pp = ntp_tuningctr(vm.qint(float(self.pitch)) + self.l_sync)
         invt = vm.qmul(vm.qint(4.0), min(ONE, vm.qmul(
             vm.qint(8.175798915), vm.qmul(pp, vm.qint(1.0 / 96000.0)))))
         return min(INTEGRATOR_HPF, vm.qint(HPF_CYCLE_LOSS ** (invt / float(ONE))))
@@ -469,7 +514,14 @@ class Inputs:
         self.udet = d["unison_detune"]
         self.extend_detune = bool(d.get("extend_detune", False))
         self.absolute_detune = bool(d.get("absolute_detune", False))
-        self.unison = int(d["unison"])
+        unison = int(d["unison"])
+        if os.environ.get("SXT033_NC_SUBMODE_CONFUSION"):
+            # NEGATIVE CONTROL (issue #67): drive the fixture with the landed
+            # SXT-022 Attacky-class arithmetic (unison 1, detune inert) — the
+            # model-vs-reference budget check must FAIL against the unison
+            # reference render. Never set for real runs.
+            unison = 1
+        self.unison = unison
         self.retrigger = bool(d["retrigger"])
         self.character = int(d["character"])
         self.drift = d.get("drift", 0.0)
