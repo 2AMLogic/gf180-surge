@@ -95,7 +95,9 @@ would fabricate precision. The prospective SXT-017 prediction columns
 ## Leaf ledger (what exists; filing is not progress)
 
 Landed leaves: `voice:attacky-slice` (SXT-022, scope = Attacky only; Quickspit
-is F-1 arithmetic overlap **without** fixture evidence), `fx:EQ` and
+is F-1 arithmetic overlap **without** fixture evidence), `mod:lfo` (SXT-032,
+scope = LFO1-6 modulator on the Attacky slice via a declared synthetic
+runtime-route fixture; supported delta 0), `fx:EQ` and
 `fx:Reverb1` (SXT-023/SXT-024 — leaf-verified, PENDING-FREEZE caveats
 recorded), `fx:Delay` (SXT-023 — landed, **FAIL**, routed #16→#12),
 `osc:Wavetable` (SXT-026 — landed, **PARTIAL**: deep-mip finding routed to the

@@ -1,0 +1,151 @@
+{
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.01b20d0b8"
+  },
+  "fixture_routes": [
+    {
+      "depth_raw": 65.0,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_cutoff",
+      "dest_name": "A Filter 1 Cutoff",
+      "dest_param": "cutoff",
+      "modsource": "ms_lfo1",
+      "modsource_id": 17,
+      "normalized_depth": 0.5
+    },
+    {
+      "depth_raw": 0.5,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_resonance",
+      "dest_name": "A Filter 1 Resonance",
+      "dest_param": "resonance",
+      "modsource": "ms_lfo1",
+      "modsource_id": 17,
+      "normalized_depth": 0.5
+    }
+  ],
+  "frozen_scope": {
+    "destination_classes": [
+      "A Filter 1 Cutoff",
+      "A Filter 1 Resonance"
+    ],
+    "gaps": [
+      "rate temposync / deactivated flags not observable via surgepy; frozen model implements non-temposync, non-deactivated paths",
+      "step-sequencer grids outside normalized schema rev 1.0.0",
+      "MSEG/Formula contents not exposed by surgepy",
+      "noise/snh shapes consume engine RNG (nondeterministic)",
+      "lt_envelope and type_3 deform bends need runtime sin"
+    ],
+    "trigmodes": [
+      "freerun(songpos=0)",
+      "keytrigger"
+    ],
+    "waveforms": "sine(deform=0), tri(deform=0), square, ramp(deform=0)"
+  },
+  "issue": "SXT-032",
+  "lfo_defs": [
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    }
+  ],
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "preset_modwheel_routes": {
+    "cutoff_depth": 34.425018,
+    "reso_depth": 0.383036
+  },
+  "schema_version": 1
+}

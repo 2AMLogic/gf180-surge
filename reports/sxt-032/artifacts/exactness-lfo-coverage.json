@@ -1,0 +1,11 @@
+{
+  "tb": "rtl/voice/tb_lfo.sv",
+  "verdict": "PASS",
+  "checked": {
+    "lfo_checkpoints": 3168,
+    "lfo_fields": 15840,
+    "route_sums": 3123
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

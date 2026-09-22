@@ -119,3 +119,76 @@ python3 tools/compare_rtl_model.py --run-dir /tmp/run
 python3 tools/compare_audio_reference.py \
     --ref fixtures/render-out/reference-dry.wav --model /tmp/run/model.wav
 ```
+
+---
+
+# SXT-032 frozen fixed-point LFO modulator slice (`lfo_model.py` + `tb_lfo.sv`)
+
+Leaf #66 (SXT-032, mod behavior `lfo`, modsource ids 17..22 = ms_lfo1..6).
+The LFO is a CONTROL-RATE modulator: one output value per 32-sample engine
+block, evaluated inside `SurgeVoice::calc_ctrldata` **before** the envelopes
+step (`lfo[0]` always; LFOs 2..6 iff routed — `prepareModsourceDoProcess`
+recomputes that gate from the live routings every block; empirically verified
+on the pinned oracle: a routed LFO2 processes with its own definition). Voice
+creation attacks all six instances and the constructor's `calc_ctrldata<true>`
+pass skips LFO-sourced routes (`applyModulationToLocalcopy<noLFOSources>`).
+
+## Frozen word lengths (SXT-032 additions)
+
+| Domain | Format | Notes |
+|---|---|---|
+| LFO phase, LFO-EG phase/levels | **Q2.29** | same envelope-phase family as SXT-022 |
+| waveform values (`io2`) | **Q4.27** | sine/tri/square/ramp internal domain |
+| wst_sine table | **Q10.21** | 1024 entries, float32-rounded construction |
+| routed modulation output | **Q10.21** | `env_val · magnf · io2` |
+
+## Frozen op order (one block, one instance)
+
+1. `phase += frate` (Q2.29; `frate = envelope_rate_linear_nowrap(-rate)`,
+   streamed control word); single wrap at 2^29 (frate < 1 declared).
+2. LFO-EG state machine `lfoeg_delay -> attack -> hold -> decay -> stuck`
+   (+ release on voice release, gated by `release < val_max(8)`), linear
+   segments against `sustain`; rates are streamed per-stage words.
+3. Waveform eval (frozen set): **sine** = wst_sine warp lookup at
+   `x = 2 − 4·phase` (`t = x·256 + 512`, trunc index, Q10.21 lerp; deform 0
+   makes bend3 the identity), **tri** = `−1 + 4·min(p, 1−p)`, **square** =
+   sign of `p − (0.5 + 0.5·deform)`, **ramp** = `1 − 2·p`. Everything else is
+   refused by the extractor (noise/snh = engine RNG; stepseq = grid outside
+   normalized schema rev 1.0.0; mseg/formula not exposed by surgepy;
+   lt_envelope; deform ≠ 0 on the type_3 shapes needs runtime sin).
+4. Unipolar fold `0.5 + 0.5·io2`; output `(env_val · magnf · io2)` with
+   `magnf = limit(magnitude, −3, 3)` (get_extended is the identity for
+   ct_lfoamplitude); round-half-up to Q10.21.
+5. Attack: EG-min flags (quantized-time facts, streamed like the SXT-022
+   instant-attack flags), trigger-mode phase restart
+   (keytrigger/freerun-at-songpos-0 both anchor at `start_phase`), then the
+   unconditional shape adjustment (tri bipolar `+0.25`, sine unipolar
+   `+0.75`).
+
+Route application (voice level, after the envelope step, per
+`applyModulationToLocalcopy`): `localcopy[dst] += depth · output` for the
+frozen destination classes **Filter 1 Cutoff** and **Filter 1 Resonance**
+only; any other destination class is fail-closed.
+
+## Declared scope omissions (SXT-032; recorded, never guessed)
+
+* rate `temposync` / `deactivated` flags are not observable through surgepy;
+  the frozen model implements the non-temposync, non-deactivated paths (at
+  the pinned 120 BPM the temposync rate formula agrees with the table path
+  up to the declared table-lerp deviation).
+* LFO-parameter destinations, pitch/volume/morph/keytrack/... destinations,
+  scene LFOs (ms_slfo1..6), step-seq grids, MSEG/Formula, noise/S&H, and
+  deform ≠ 0 bends are outside the slice (extractor refuses).
+* Double-precision rate/table evaluations quantize once (same declared
+  deviation as SXT-022); the engine's float32 phase accumulation vs the
+  fixed-point phase is part of the model-vs-reference budget.
+
+## Files (SXT-032)
+
+* `lfo_model.py` — frozen LFO model (importable)
+* `extract_lfo_inputs.py` — fail-closed extractor + fixture routes
+* `attacky_lfo_inputs.json` — committed extraction (census-blob verified)
+* `run_lfo_model.py` — runner (SXT-022 trace schema + LFO records + RTL hex)
+* `rtl/voice/tb_lfo.sv` — LFO control-plane RTL (exactness:
+  `tools/compare_lfo_rtl_model.py`; the SXT-022 `tb_voice.sv` audio datapath
+  is UNCHANGED and runs against the LFO-influenced streamed control words)

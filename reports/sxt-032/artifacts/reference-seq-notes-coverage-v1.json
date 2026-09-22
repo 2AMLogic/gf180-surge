@@ -1,0 +1,69 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+  "determinism": {
+    "bit_identical": true,
+    "repeats": 3,
+    "sha256": [
+      "7e7c4a6fb80b5378b595cd1b698908257a800704ce3fe98217725224b9203bb5",
+      "7e7c4a6fb80b5378b595cd1b698908257a800704ce3fe98217725224b9203bb5",
+      "7e7c4a6fb80b5378b595cd1b698908257a800704ce3fe98217725224b9203bb5"
+    ]
+  },
+  "engine": {
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "version_string": "1.4.sxt037-tap.01b20d0b8"
+  },
+  "fixture_id": "attacky-lfo__seq-notes-coverage-v1",
+  "fixture_modification": "two modulation routes added at runtime via setModDepth01 (host modulation API) after loadPatch; preset file untouched; synthetic declared fixture on the landed voice slice",
+  "issue": "SXT-032",
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "render": {
+    "blocks": 8550,
+    "clipped_samples": 0,
+    "frames": 273600,
+    "last_event_sample": 153600,
+    "peak_abs_float": 0.5306349992752075,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "routes": [
+    {
+      "depth_raw": 65.0,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_cutoff",
+      "dest_name": "A Filter 1 Cutoff",
+      "dest_param": "cutoff",
+      "modsource": "ms_lfo1",
+      "modsource_id": 17,
+      "normalized_depth": 0.5
+    },
+    {
+      "depth_raw": 0.5,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_resonance",
+      "dest_name": "A Filter 1 Resonance",
+      "dest_param": "resonance",
+      "modsource": "ms_lfo1",
+      "modsource_id": 17,
+      "normalized_depth": 0.5
+    }
+  ],
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "repo_commit": "51eb6feb40b388f549022005acccf4772db4341b",
+    "script_sha256": "a3f534a15c5847dbf82dfeae4d2a9cafa46719a17b30752754ba6f31cbf156f4"
+  },
+  "wav": "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1-lfo-fixture.wav",
+  "wav_sha256": "7f7b5b523d532cb6354927e6cdd6aa7dd453afdf2915e948b29b54a68401d856"
+}
