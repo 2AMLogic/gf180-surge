@@ -1,0 +1,12 @@
+SXT-028 generator negative controls (live, this run)
+Generator: SXT-028 issue generator (tools/generate_effect_leaves.py)
+essentiality UNVERIFIED -- listening pending (#9)
+
+NC1 zero-newly-enabled leaf refused: PASS
+  probe: Airwindows id 47 'Slew 1' (in corpus, out of B4 selection)
+  refusal: leaf refused: zero newly-enabled presets in B4 scope (feature {'airwindows_algorithm_id': 47, 'algorithm_name': 'Slew 1', 'header': 'Slew1.h'}) -- nothing to enable, not filed
+
+NC2 cross-type merged leaf ('Chorus+Delay') refused: PASS
+  refusal: cross-type merged leaf refused: features ['class', 'routing_form'] -- one algorithm (or routing form) per leaf (#21 acceptance)
+
+verdict: NC1=PASS NC2=PASS

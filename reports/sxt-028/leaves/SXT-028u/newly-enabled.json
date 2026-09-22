@@ -1,0 +1,60 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Ancient FM.fxp",
+   "sha": "9e796f283f2d4b2a69de6198878d57c34f6d86c3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Leads/Distorted Lead.fxp",
+   "sha": "c3591eee6b9039a050bfdfe36537857f0c3c4cf8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Kick Analog 3.fxp",
+   "sha": "badf08c883e35330ab7646a6f82595c39a843b06"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Basses/Analog Foundation.fxp",
+   "sha": "1c65a3a040592320120b52d0cf160968227f1338"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Basses/Vacuum.fxp",
+   "sha": "78cd3a563e5672d61b6933769ffe9a25f469c562"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Kick - Bold Sine.fxp",
+   "sha": "463280435e05d3524ab83a8e253a870f5c732a4f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Sequences/Shroom Party.fxp",
+   "sha": "d088f162f6352d1bbdc554e1967b5208e8c437a9"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028u",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Leads/Distorted Lead.fxp",
+   "sha": "c3591eee6b9039a050bfdfe36537857f0c3c4cf8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Kick Analog 3.fxp",
+   "sha": "badf08c883e35330ab7646a6f82595c39a843b06"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Basses/Vacuum.fxp",
+   "sha": "78cd3a563e5672d61b6933769ffe9a25f469c562"
+  }
+ ]
+}

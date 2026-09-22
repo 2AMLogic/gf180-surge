@@ -1,0 +1,44 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Glockarama.fxp",
+   "sha": "caaeca557bf140b4b27c4678dcb44b651e6bdd89"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Keys/Palm Mute Pi.fxp",
+   "sha": "413677f5863268ae0bbfb02059cbf0f1ce2b7bc8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/String Machine 4.fxp",
+   "sha": "05b87a81d4e176303d2782cbea2a5c2c2dd20a7b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Sequences/Chaoseq.fxp",
+   "sha": "aa1a54503917a4882882a9e021cbd91f02d2f815"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Luna/Basses/Alias Notch Bass.fxp",
+   "sha": "b8601406460036e6b11d70dd00ae83cb952f85e1"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Harmony Chords + Synth Top.fxp",
+   "sha": "41d1042246c169f9de6d4aa7afbd5268ee402f7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Harmony Chords.fxp",
+   "sha": "4e4eb59317b18142677cc76e1be3a374c7ad9e0a"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028s",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": []
+}

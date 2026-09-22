@@ -1,0 +1,207 @@
+{
+ "claim_scope": "Issue text only: no model/RTL exists, no fidelity or support claim, no cost claim, no musical-quality claim. Ablation deltas are reference-vs-reference diagnostics (SXT-014).",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "generated_by": "SXT-028 issue generator (tools/generate_effect_leaves.py)",
+ "leaves": [
+  {
+   "carriers_b4_scope": 81,
+   "filed_now": true,
+   "leaf_id": "SXT-028a",
+   "recovery_order": 1,
+   "spec": "reports/sxt-028/leaves/SXT-028a.json",
+   "strict_fx_complete": 38,
+   "title": "SXT-028a: Airwindows algorithm leaf: Galactic (id 49)"
+  },
+  {
+   "carriers_b4_scope": 365,
+   "filed_now": true,
+   "leaf_id": "SXT-028b",
+   "recovery_order": 2,
+   "spec": "reports/sxt-028/leaves/SXT-028b.json",
+   "strict_fx_complete": 175,
+   "title": "SXT-028b: Conditioner effect leaf (gate/compressor/LFO)"
+  },
+  {
+   "carriers_b4_scope": 331,
+   "filed_now": true,
+   "leaf_id": "SXT-028c",
+   "recovery_order": 3,
+   "spec": "reports/sxt-028/leaves/SXT-028c.json",
+   "strict_fx_complete": 175,
+   "title": "SXT-028c: Chorus effect leaf (sst-effects Chorus, delay-line class)"
+  },
+  {
+   "carriers_b4_scope": 445,
+   "filed_now": true,
+   "leaf_id": "SXT-028d",
+   "recovery_order": 4,
+   "spec": "reports/sxt-028/leaves/SXT-028d.json",
+   "strict_fx_complete": 60,
+   "title": "SXT-028d: Routing-form leaf: Global FX slot 2 (second concurrent global FX instance)"
+  },
+  {
+   "carriers_b4_scope": 304,
+   "filed_now": true,
+   "leaf_id": "SXT-028e",
+   "recovery_order": 5,
+   "spec": "reports/sxt-028/leaves/SXT-028e.json",
+   "strict_fx_complete": 158,
+   "title": "SXT-028e: Distortion effect leaf (multiband + waveshaper drive)"
+  },
+  {
+   "carriers_b4_scope": 232,
+   "filed_now": true,
+   "leaf_id": "SXT-028f",
+   "recovery_order": 6,
+   "spec": "reports/sxt-028/leaves/SXT-028f.json",
+   "strict_fx_complete": 101,
+   "title": "SXT-028f: Reverb 2 effect leaf (sst-effects tank reverb)"
+  },
+  {
+   "carriers_b4_scope": 155,
+   "filed_now": true,
+   "leaf_id": "SXT-028g",
+   "recovery_order": 7,
+   "spec": "reports/sxt-028/leaves/SXT-028g.json",
+   "strict_fx_complete": 97,
+   "title": "SXT-028g: Phaser effect leaf (sst-effects Phaser)"
+  },
+  {
+   "carriers_b4_scope": 131,
+   "filed_now": true,
+   "leaf_id": "SXT-028h",
+   "recovery_order": 8,
+   "spec": "reports/sxt-028/leaves/SXT-028h.json",
+   "strict_fx_complete": 16,
+   "title": "SXT-028h: Routing-form leaf: Scene-B insert FX bus, slots 1-2 (bins1/bins2)"
+  },
+  {
+   "carriers_b4_scope": 55,
+   "filed_now": true,
+   "leaf_id": "SXT-028i",
+   "recovery_order": 9,
+   "spec": "reports/sxt-028/leaves/SXT-028i.json",
+   "strict_fx_complete": 4,
+   "title": "SXT-028i: Routing-form leaf: Scene-A insert FX slots 3-4 (ains3/ains4, extended rack half)"
+  },
+  {
+   "carriers_b4_scope": 48,
+   "filed_now": true,
+   "leaf_id": "SXT-028j",
+   "recovery_order": 10,
+   "spec": "reports/sxt-028/leaves/SXT-028j.json",
+   "strict_fx_complete": 1,
+   "title": "SXT-028j: Routing-form leaf: Global FX slots 3-4 (global3/global4, extended rack half)"
+  },
+  {
+   "carriers_b4_scope": 30,
+   "filed_now": true,
+   "leaf_id": "SXT-028k",
+   "recovery_order": 11,
+   "spec": "reports/sxt-028/leaves/SXT-028k.json",
+   "strict_fx_complete": 0,
+   "title": "SXT-028k: Airwindows algorithm leaf: Logical (id 4)"
+  },
+  {
+   "carriers_b4_scope": 18,
+   "filed_now": true,
+   "leaf_id": "SXT-028l",
+   "recovery_order": 12,
+   "spec": "reports/sxt-028/leaves/SXT-028l.json",
+   "strict_fx_complete": 0,
+   "title": "SXT-028l: Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
+  },
+  {
+   "carriers_b4_scope": 17,
+   "filed_now": false,
+   "leaf_id": "SXT-028m",
+   "recovery_order": 13,
+   "spec": "reports/sxt-028/leaves/SXT-028m.json",
+   "strict_fx_complete": 4,
+   "title": "SXT-028m: Airwindows algorithm leaf: To Tape (id 42)"
+  },
+  {
+   "carriers_b4_scope": 15,
+   "filed_now": false,
+   "leaf_id": "SXT-028n",
+   "recovery_order": 14,
+   "spec": "reports/sxt-028/leaves/SXT-028n.json",
+   "strict_fx_complete": 3,
+   "title": "SXT-028n: Airwindows algorithm leaf: Capacitor (id 46)"
+  },
+  {
+   "carriers_b4_scope": 11,
+   "filed_now": false,
+   "leaf_id": "SXT-028o",
+   "recovery_order": 15,
+   "spec": "reports/sxt-028/leaves/SXT-028o.json",
+   "strict_fx_complete": 4,
+   "title": "SXT-028o: Airwindows algorithm leaf: Mojo (id 5)"
+  },
+  {
+   "carriers_b4_scope": 11,
+   "filed_now": false,
+   "leaf_id": "SXT-028p",
+   "recovery_order": 16,
+   "spec": "reports/sxt-028/leaves/SXT-028p.json",
+   "strict_fx_complete": 1,
+   "title": "SXT-028p: Airwindows algorithm leaf: NC-17 (id 35)"
+  },
+  {
+   "carriers_b4_scope": 10,
+   "filed_now": false,
+   "leaf_id": "SXT-028q",
+   "recovery_order": 17,
+   "spec": "reports/sxt-028/leaves/SXT-028q.json",
+   "strict_fx_complete": 1,
+   "title": "SXT-028q: Airwindows algorithm leaf: DeRez (id 15)"
+  },
+  {
+   "carriers_b4_scope": 8,
+   "filed_now": false,
+   "leaf_id": "SXT-028r",
+   "recovery_order": 18,
+   "spec": "reports/sxt-028/leaves/SXT-028r.json",
+   "strict_fx_complete": 1,
+   "title": "SXT-028r: Airwindows algorithm leaf: Bright Ambience (id 21)"
+  },
+  {
+   "carriers_b4_scope": 7,
+   "filed_now": false,
+   "leaf_id": "SXT-028s",
+   "recovery_order": 19,
+   "spec": "reports/sxt-028/leaves/SXT-028s.json",
+   "strict_fx_complete": 0,
+   "title": "SXT-028s: Airwindows algorithm leaf: Compresaturator (id 3)"
+  },
+  {
+   "carriers_b4_scope": 7,
+   "filed_now": false,
+   "leaf_id": "SXT-028t",
+   "recovery_order": 20,
+   "spec": "reports/sxt-028/leaves/SXT-028t.json",
+   "strict_fx_complete": 0,
+   "title": "SXT-028t: Airwindows algorithm leaf: Pocket Verbs (id 24)"
+  },
+  {
+   "carriers_b4_scope": 7,
+   "filed_now": false,
+   "leaf_id": "SXT-028u",
+   "recovery_order": 21,
+   "spec": "reports/sxt-028/leaves/SXT-028u.json",
+   "strict_fx_complete": 3,
+   "title": "SXT-028u: Airwindows algorithm leaf: Drive (id 30)"
+  },
+  {
+   "carriers_b4_scope": 7,
+   "filed_now": false,
+   "leaf_id": "SXT-028v",
+   "recovery_order": 22,
+   "spec": "reports/sxt-028/leaves/SXT-028v.json",
+   "strict_fx_complete": 2,
+   "title": "SXT-028v: Airwindows algorithm leaf: Iron Oxide (id 41)"
+  }
+ ],
+ "ordering": "measured SXT-014 delta desc first, then B4-scope carrier count desc; tie-break (kind, id)",
+ "schema_version": "sxt-028-effect-leaf/1.0.0"
+}

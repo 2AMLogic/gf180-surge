@@ -1,0 +1,65 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Ancient FM.fxp",
+   "sha": "9e796f283f2d4b2a69de6198878d57c34f6d86c3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Sub.fxp",
+   "sha": "4a324fcc8d763dccea612068de291ca452fc6a45"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+   "sha": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Man Research.fxp",
+   "sha": "61a961cde1d5e2f4f05139a53a966f00d880839c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Glockarama.fxp",
+   "sha": "caaeca557bf140b4b27c4678dcb44b651e6bdd89"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Weird Church.fxp",
+   "sha": "f555386e3f0b0e0013a27f709f791982b9654094"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Akoustik.fxp",
+   "sha": "c5668aac6ded2f9cbd85ccb6539d0f2b0863f122"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Leads/Raving In The Tropics.fxp",
+   "sha": "e558e098a04cce7595b94485f826c597f2c4756d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Mallet Finally! 2.fxp",
+   "sha": "6efaad0c3d308d9eb56ea48462b4bd51acd8a8e0"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Kick - Arcade.fxp",
+   "sha": "f9aea31b2ee11b6d0798997db3d2e0dad72b5d9c"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028q",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Kick - Arcade.fxp",
+   "sha": "f9aea31b2ee11b6d0798997db3d2e0dad72b5d9c"
+  }
+ ]
+}

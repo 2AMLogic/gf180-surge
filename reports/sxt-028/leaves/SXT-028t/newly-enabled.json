@@ -1,0 +1,44 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Harpie.fxp",
+   "sha": "1a8b748d3b8bee8142e20ba7c8b0e6d47707c6f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Strings/Orchestral Harp For Runs.fxp",
+   "sha": "732c8ec8a85a0e3a81143209d079beb307f4e0f4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/But Clean The DC.fxp",
+   "sha": "245ce1499174ce54bc4e270c49d6a233b28aedcf"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Basses/Low Problems.fxp",
+   "sha": "edda7e9e60fa5348afc53c588269a8fe46c1ee64"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Drums/Simple Snare.fxp",
+   "sha": "a9d4121752c881fa9d753cc97778be7dc1ad40b3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Harmony Chords + Synth Top.fxp",
+   "sha": "41d1042246c169f9de6d4aa7afbd5268ee402f7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Sequences/Harmony Chords.fxp",
+   "sha": "4e4eb59317b18142677cc76e1be3a374c7ad9e0a"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028t",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": []
+}

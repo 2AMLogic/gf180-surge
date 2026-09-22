@@ -1,0 +1,85 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Basses/Housy.fxp",
+   "sha": "0bbe96e5eb13b18515370c4413d9f190e5830f33"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Destroyed Kick.fxp",
+   "sha": "a9649d269d52f07738c9bfe9ff098567abaa8dd6"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Basses/Sub Talk.fxp",
+   "sha": "3913ec5be4df5bc830886c6b100a8ba1b7193126"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Kick Thumper.fxp",
+   "sha": "54a3d6c0dc50db3ed6788c2dfb2cd1aac315309f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Guitars/Shimmer Guitar.fxp",
+   "sha": "466c044755f9943eb476cd48ce500108c9d43b4d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Kalimba.fxp",
+   "sha": "9cc9b91b8811089223225c4ae430b5ca9aecfd21"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Sequences/Percussive Shuffle.fxp",
+   "sha": "6be1d540570e06812680ca6f7390c7e66150f6aa"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Sequences/Percy Pluck.fxp",
+   "sha": "4a60b6df91fe8015a80d7f2cc7b97a7ec39b71a7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Basses/Rude Individual.fxp",
+   "sha": "e6088bb0bbff6b868e7213f34c88d9d4594e3f42"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Kick - Bold Sine.fxp",
+   "sha": "463280435e05d3524ab83a8e253a870f5c732a4f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Drums/Simple Snare.fxp",
+   "sha": "a9d4121752c881fa9d753cc97778be7dc1ad40b3"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028o",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Basses/Sub Talk.fxp",
+   "sha": "3913ec5be4df5bc830886c6b100a8ba1b7193126"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Kick Thumper.fxp",
+   "sha": "54a3d6c0dc50db3ed6788c2dfb2cd1aac315309f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Guitars/Shimmer Guitar.fxp",
+   "sha": "466c044755f9943eb476cd48ce500108c9d43b4d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Mallets/Kalimba.fxp",
+   "sha": "9cc9b91b8811089223225c4ae430b5ca9aecfd21"
+  }
+ ]
+}

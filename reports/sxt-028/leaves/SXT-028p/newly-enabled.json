@@ -1,0 +1,70 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Brass/Soft 80s Brass.fxp",
+   "sha": "0e49064bf154612e90d2463bb2f6747e6d4d963d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Brass/Synth Trumpet.fxp",
+   "sha": "6c2adf00eee975d9c065a65dd538054159c47f25"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Acoustic Snare.fxp",
+   "sha": "c840ab363c2e7238e3de499255d2909005aac825"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Daisy.fxp",
+   "sha": "c36fc7626dfe072585dbffe9e73d5b2b0e05b3b4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Noisy.fxp",
+   "sha": "21acbf0d79241bd3111b05cb84929ce200cd90ea"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Basses/Analog Foundation.fxp",
+   "sha": "1c65a3a040592320120b52d0cf160968227f1338"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Clap - Noise Layer.fxp",
+   "sha": "b8b78f78a5284937d7c248cbeaf4e0b2d0bd1779"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Kick - Bold Sine.fxp",
+   "sha": "463280435e05d3524ab83a8e253a870f5c732a4f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/TNMG/Drums/Snare - Basic Drive.fxp",
+   "sha": "0f94601ab11d6ab2818f7e2f33d840ef0da2278c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Drums/Simple Snare.fxp",
+   "sha": "a9d4121752c881fa9d753cc97778be7dc1ad40b3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Xenofish/Sequences/Shroom Party.fxp",
+   "sha": "d088f162f6352d1bbdc554e1967b5208e8c437a9"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028p",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Brass/Soft 80s Brass.fxp",
+   "sha": "0e49064bf154612e90d2463bb2f6747e6d4d963d"
+  }
+ ]
+}

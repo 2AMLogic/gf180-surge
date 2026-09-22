@@ -1,0 +1,278 @@
+{
+ "allocation": [
+  {
+   "feature": {
+    "airwindows_algorithm_id": 49,
+    "algorithm_name": "Galactic",
+    "header": "Galactic.h"
+   },
+   "filed_now": true,
+   "kind": "aw",
+   "leaf_id": "SXT-028a",
+   "recovery_order": 1,
+   "title": "Airwindows algorithm leaf: Galactic (id 49)"
+  },
+  {
+   "feature": {
+    "class": "Conditioner"
+   },
+   "filed_now": true,
+   "kind": "type",
+   "leaf_id": "SXT-028b",
+   "recovery_order": 2,
+   "title": "Conditioner effect leaf (gate/compressor/LFO)"
+  },
+  {
+   "feature": {
+    "class": "Chorus"
+   },
+   "filed_now": true,
+   "kind": "type",
+   "leaf_id": "SXT-028c",
+   "recovery_order": 3,
+   "title": "Chorus effect leaf (sst-effects Chorus, delay-line class)"
+  },
+  {
+   "feature": {
+    "roles": [
+     "global2"
+    ],
+    "routing_form": "rf-global2"
+   },
+   "filed_now": true,
+   "kind": "rf",
+   "leaf_id": "SXT-028d",
+   "recovery_order": 4,
+   "title": "Routing-form leaf: Global FX slot 2 (second concurrent global FX instance)"
+  },
+  {
+   "feature": {
+    "class": "Distortion"
+   },
+   "filed_now": true,
+   "kind": "type",
+   "leaf_id": "SXT-028e",
+   "recovery_order": 5,
+   "title": "Distortion effect leaf (multiband + waveshaper drive)"
+  },
+  {
+   "feature": {
+    "class": "Reverb 2"
+   },
+   "filed_now": true,
+   "kind": "type",
+   "leaf_id": "SXT-028f",
+   "recovery_order": 6,
+   "title": "Reverb 2 effect leaf (sst-effects tank reverb)"
+  },
+  {
+   "feature": {
+    "class": "Phaser"
+   },
+   "filed_now": true,
+   "kind": "type",
+   "leaf_id": "SXT-028g",
+   "recovery_order": 7,
+   "title": "Phaser effect leaf (sst-effects Phaser)"
+  },
+  {
+   "feature": {
+    "roles": [
+     "bins1",
+     "bins2"
+    ],
+    "routing_form": "rf-bins12"
+   },
+   "filed_now": true,
+   "kind": "rf",
+   "leaf_id": "SXT-028h",
+   "recovery_order": 8,
+   "title": "Routing-form leaf: Scene-B insert FX bus, slots 1-2 (bins1/bins2)"
+  },
+  {
+   "feature": {
+    "roles": [
+     "ains3",
+     "ains4"
+    ],
+    "routing_form": "rf-ains34"
+   },
+   "filed_now": true,
+   "kind": "rf",
+   "leaf_id": "SXT-028i",
+   "recovery_order": 9,
+   "title": "Routing-form leaf: Scene-A insert FX slots 3-4 (ains3/ains4, extended rack half)"
+  },
+  {
+   "feature": {
+    "roles": [
+     "global3",
+     "global4"
+    ],
+    "routing_form": "rf-global34"
+   },
+   "filed_now": true,
+   "kind": "rf",
+   "leaf_id": "SXT-028j",
+   "recovery_order": 10,
+   "title": "Routing-form leaf: Global FX slots 3-4 (global3/global4, extended rack half)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 4,
+    "algorithm_name": "Logical",
+    "header": "Logical4.h"
+   },
+   "filed_now": true,
+   "kind": "aw",
+   "leaf_id": "SXT-028k",
+   "recovery_order": 11,
+   "title": "Airwindows algorithm leaf: Logical (id 4)"
+  },
+  {
+   "feature": {
+    "roles": [
+     "send3",
+     "send4"
+    ],
+    "routing_form": "rf-send34"
+   },
+   "filed_now": true,
+   "kind": "rf",
+   "leaf_id": "SXT-028l",
+   "recovery_order": 12,
+   "title": "Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 42,
+    "algorithm_name": "To Tape",
+    "header": "ToTape6.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028m",
+   "recovery_order": 13,
+   "title": "Airwindows algorithm leaf: To Tape (id 42)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 46,
+    "algorithm_name": "Capacitor",
+    "header": "Capacitor.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028n",
+   "recovery_order": 14,
+   "title": "Airwindows algorithm leaf: Capacitor (id 46)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 5,
+    "algorithm_name": "Mojo",
+    "header": "Mojo.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028o",
+   "recovery_order": 15,
+   "title": "Airwindows algorithm leaf: Mojo (id 5)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 35,
+    "algorithm_name": "NC-17",
+    "header": "NCSeventeen.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028p",
+   "recovery_order": 16,
+   "title": "Airwindows algorithm leaf: NC-17 (id 35)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 15,
+    "algorithm_name": "DeRez",
+    "header": "DeRez2.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028q",
+   "recovery_order": 17,
+   "title": "Airwindows algorithm leaf: DeRez (id 15)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 21,
+    "algorithm_name": "Bright Ambience",
+    "header": "BrightAmbience2.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028r",
+   "recovery_order": 18,
+   "title": "Airwindows algorithm leaf: Bright Ambience (id 21)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 3,
+    "algorithm_name": "Compresaturator",
+    "header": "Compresaturator.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028s",
+   "recovery_order": 19,
+   "title": "Airwindows algorithm leaf: Compresaturator (id 3)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 24,
+    "algorithm_name": "Pocket Verbs",
+    "header": "PocketVerbs.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028t",
+   "recovery_order": 20,
+   "title": "Airwindows algorithm leaf: Pocket Verbs (id 24)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 30,
+    "algorithm_name": "Drive",
+    "header": "Drive.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028u",
+   "recovery_order": 21,
+   "title": "Airwindows algorithm leaf: Drive (id 30)"
+  },
+  {
+   "feature": {
+    "airwindows_algorithm_id": 41,
+    "algorithm_name": "Iron Oxide",
+    "header": "IronOxide5.h"
+   },
+   "filed_now": false,
+   "kind": "aw",
+   "leaf_id": "SXT-028v",
+   "recovery_order": 22,
+   "title": "Airwindows algorithm leaf: Iron Oxide (id 41)"
+  }
+ ],
+ "convention": "parent planning id + letter suffix (SXT-026a precedent); SXT-027 leaves own 027a.. independently",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "generated_by": "SXT-028 issue generator (tools/generate_effect_leaves.py)",
+ "inputs_sha256": {
+  "contracts/profile-v1-bundle-DRAFT.json": "89a8229bdef729196ce9f40bbc682074c14124b5a6213134383285cb96266eda",
+  "corpus/normalized/graphs.jsonl": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "reports/sxt-014/ablation-summary.json": "9f46df8a78658ae046159cdc59e5d13eaf717b41692426f98c521001f4c66b9c"
+ },
+ "note": "filed issue numbers are recorded in leaves-filed.json (filing record, not generator output)",
+ "reserved_range": "SXT-028a..SXT-028z (this generator run)",
+ "schema_version": "sxt-028-effect-leaf/1.0.0"
+}

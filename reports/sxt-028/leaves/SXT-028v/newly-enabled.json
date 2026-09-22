@@ -1,0 +1,55 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Nice Hat.fxp",
+   "sha": "4485e38a013022339363e0a164ed5e9678239a7a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Keys/Daisy.fxp",
+   "sha": "c36fc7626dfe072585dbffe9e73d5b2b0e05b3b4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Pads/Sparkle Mountain.fxp",
+   "sha": "c74b9f7b515f334165ac0f2c88e928983ecbf206"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Let's Make Drone Music!.fxp",
+   "sha": "2c20e0fc57f75734db5fe5abc9d6fdf4a1fdf50d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Snare 1.fxp",
+   "sha": "14a9eeb9a6253849f68b9e3f02ecd38f21b6c2de"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Snare 3.fxp",
+   "sha": "a4cf5cf7de360adfe02b9d7780dff601b386b77b"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Vospi/Drums/Simple Snare.fxp",
+   "sha": "a9d4121752c881fa9d753cc97778be7dc1ad40b3"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028v",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Cybersoda/Pads/Sparkle Mountain.fxp",
+   "sha": "c74b9f7b515f334165ac0f2c88e928983ecbf206"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/Drums/Snare 1.fxp",
+   "sha": "14a9eeb9a6253849f68b9e3f02ecd38f21b6c2de"
+  }
+ ]
+}

@@ -1,0 +1,305 @@
+{
+ "b4_scope_candidates": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+   "sha": "676da8126b33e867fb2028701bf7be8ac63f2e72"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Resurrection.fxp",
+   "sha": "e2ccab1d70342ce5d18d4bb0993825ff7f959728"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+   "sha": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Sand Storm.fxp",
+   "sha": "2ba21470c23e49ca2bc12dd185159b1b539bbbb8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+   "sha": "321848282edf3b40d6f93ad950a8ae35660f3258"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Man Research.fxp",
+   "sha": "61a961cde1d5e2f4f05139a53a966f00d880839c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/XyloFoM.fxp",
+   "sha": "b4909d870a5d8e47aa234a8e8e12997573894465"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Akoustik.fxp",
+   "sha": "c5668aac6ded2f9cbd85ccb6539d0f2b0863f122"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Guitarp Slap Bass.fxp",
+   "sha": "b33509b73e02ce935904b33199bf19ff15af25c9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Slap Bass Guitar.fxp",
+   "sha": "3a0378642827fb930915741c08b0150d80e3776f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Sweet Bass Guitar.fxp",
+   "sha": "1b11a2d36d7d93f90b8055167fe0bee7c882e62a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/FX/Fireworks - Bang And Fizzle.fxp",
+   "sha": "30bfb94b98358997aa25fead135d5968251e2d56"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Guitars/Nylon Acoustic Guitar.fxp",
+   "sha": "9220249d87eb24130da1eb93b120ac9132b7645c"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Axel's Sharp Atmosphere.fxp",
+   "sha": "ef0316b878b98f4f729a3360b6985864df73547d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Harpsichord.fxp",
+   "sha": "a5c7db5684b138612b48ddfce573e1bf1032c440"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Percussion/Claves (Sticks).fxp",
+   "sha": "4df8c3941fd4fbb929eddfed1eb0b54a7de955c4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Guitarp.fxp",
+   "sha": "d5b0f1cbb7ae555a371b0c2880a0fa007476f580"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Plucks/Harpie.fxp",
+   "sha": "1a8b748d3b8bee8142e20ba7c8b0e6d47707c6f3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/John Valentine/Strings/Orchestral Harp For Runs.fxp",
+   "sha": "732c8ec8a85a0e3a81143209d079beb307f4e0f4"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Bells/Bell Labs.fxp",
+   "sha": "e1850652a1a392719e7fdc4d00f26525c224dd85"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Let's Make Drone Music!.fxp",
+   "sha": "2c20e0fc57f75734db5fe5abc9d6fdf4a1fdf50d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Pointillism.fxp",
+   "sha": "df16ad3fc295efad34e24365fe06bbbbbd196229"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/LP Bridge + Chorus.fxp",
+   "sha": "be52a433eb5cca4ee5fbb329a9be6040035565e9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/LP Bridge.fxp",
+   "sha": "f2be82bce4986cac130a64feb32aa1556260b211"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Guitars/Pedal Steel.fxp",
+   "sha": "166bc01221fee00cdbabc155142c42882989f4ac"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Plucks/Pluck And Sing.fxp",
+   "sha": "6d05adccb1559c819b8d7fe75c1fe740248ebe77"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Bass/Dubstep 1.fxp",
+   "sha": "d5b12062c1aa62aa51c1c1730583e5e5133b6595"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Bass/FM Bass B.fxp",
+   "sha": "d670d31939c92bfe33e9e8a74bf953b464d4d1de"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Bells/Synthy Bell 1.fxp",
+   "sha": "2a33a3bb793877ce93bfc0de35d9e8a99c533e4a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Bells/Synthy Bell 2.fxp",
+   "sha": "ae0dab8095e67366ec7d098c3d2508f8f37080e7"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brass Ensemble.fxp",
+   "sha": "c61dbef103a1c60e0e7d151cfecf1a2a4a483c7f"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brass Synth.fxp",
+   "sha": "45258c48c7423ddbc853e0280a42c28d0b626e52"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brassy Pad.fxp",
+   "sha": "8860c08af451cedf9c6384287136c0108cb5d7e3"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/French Horn.fxp",
+   "sha": "22bdf28bd91558177e865cd33586d102e640de2d"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/China Cymbal 1.fxp",
+   "sha": "f50ad8f4546ba5b05e4b4b16f4b637484841f414"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/China Cymbal 2.fxp",
+   "sha": "8047dc8fa8d9e6a4530ed35221392028211376da"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/Closed Hat.fxp",
+   "sha": "e917cc7d14b5133d2efec6d80e58cb2070eca179"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/Open Hat Trashy.fxp",
+   "sha": "64e50a81470afbf825d87c49ae1df73dceeeaf53"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/Open Hat.fxp",
+   "sha": "26cad48e6375c27fe12ac7997ae21e11c538f7bb"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/Realistic Closed Hat.fxp",
+   "sha": "1baae8e89cc81138cc73640e95487938330c12c9"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/Ride Bell.fxp",
+   "sha": "e2c7faf78af0c26f8d07901fa0000d22dac1e375"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Drums/Synthy Ride Cymbal.fxp",
+   "sha": "a97eb3229148fa625925983a616119e17343beaa"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/FX/Eww Gross.fxp",
+   "sha": "ac7ae0b9e17d3025adb2ff25ac58b98804713e9a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Keys/Totally Not Piano 2.fxp",
+   "sha": "05ff71ce6abc4a9c6dd082d49c690cb0ef3e8787"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Leads/Distorted Lead.fxp",
+   "sha": "c3591eee6b9039a050bfdfe36537857f0c3c4cf8"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Pads/Talking Pad.fxp",
+   "sha": "e4e82546c8349d422ba416e60f326aa4eca7e5ad"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Plucks/Supersaw Pluck.fxp",
+   "sha": "cfd2bf957257b760bdde9118468346a3362e32f5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Woodwinds/Sax Solo.fxp",
+   "sha": "c971c85feeab025db956cca69bdb82f1ede58354"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Woodwinds/Synth Sax 2.fxp",
+   "sha": "46a644ecabb78b6b2d188e8af33b721fd33b1417"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Hi-Hat Loose.fxp",
+   "sha": "59af82cf870bfb513665847e4febd973b67891a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Hi-Hat.fxp",
+   "sha": "c68ee7c19249cccb69174d537bb7f64e357a53c5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Kick 2.fxp",
+   "sha": "94d87f1e0f69eb440e464154e78bff638333b74a"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Strings/String Illusion.fxp",
+   "sha": "1a014b11f860d2be4d7d3c0483dbd074dca17490"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Slowboat/FX/Reverse Breath 1.fxp",
+   "sha": "29ccfb0561ad12081c64873d0fdcf51478b18176"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/qb/Atmospheres/Space Organ Buzz.fxp",
+   "sha": "ad147a10754301b28f89d4354c9c9839e923ca2f"
+  }
+ ],
+ "caveat": "FX-scope accounting only; voice stage, scheduling, and profile v1 freeze gate actual support. NOT a support claim.",
+ "essentiality": "essentiality UNVERIFIED -- listening pending (#9)",
+ "leaf_id": "SXT-028i",
+ "schema_version": "sxt-028-effect-leaf/1.0.0",
+ "strict_fx_complete": [
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Bass/FM Bass B.fxp",
+   "sha": "d670d31939c92bfe33e9e8a74bf953b464d4d1de"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brass Synth.fxp",
+   "sha": "45258c48c7423ddbc853e0280a42c28d0b626e52"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Hi-Hat Loose.fxp",
+   "sha": "59af82cf870bfb513665847e4febd973b67891a5"
+  },
+  {
+   "bank": "contributor",
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Hi-Hat.fxp",
+   "sha": "c68ee7c19249cccb69174d537bb7f64e357a53c5"
+  }
+ ]
+}
