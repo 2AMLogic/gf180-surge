@@ -111,6 +111,6 @@
   "per_instance_state": "every concurrent instance keeps independent histories; arithmetic may be shared only observably (plan section 4; AGENTS.md)"
  },
  "stop_escalate": "If the effect cannot be bounded in state/cost under the shared instance schedule, record the finding and route to SXT-017 (#12) before freezing budgets; do not weaken acceptance to pass.",
- "sxt017_decision_required": null,
+ "sxt017_decision_required": "Send buses 3/4 hit a documented SXT-011 data gap: no factory .fxp stores send_level for buses 3/4 and the surgepy binding does not expose them (corpus/normalized/schema.json). The loader-default send level semantics need an engine-behavior probe and an SXT-017 data-gap policy decision before fixture freezing.",
  "title": "SXT-028l: Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
 }

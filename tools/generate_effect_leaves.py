@@ -177,7 +177,7 @@ SXT017_MARKERS = {
         "to the Chorus delay time path too. SXT-017 DECISION REQUIRED before "
         "any Chorus reference budget freezes; coordinate with #16."
     ),
-    "rf:send34": (
+    "rf:rf-send34": (
         "Send buses 3/4 hit a documented SXT-011 data gap: no factory .fxp "
         "stores send_level for buses 3/4 and the surgepy binding does not "
         "expose them (corpus/normalized/schema.json). The loader-default "

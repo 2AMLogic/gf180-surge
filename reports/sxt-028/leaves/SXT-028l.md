@@ -19,6 +19,8 @@ No SXT-014 ablation carrier for this feature; ordered by B4-scope carrier freque
 - State: every concurrent instance keeps independent histories; arithmetic may be shared only observably (plan section 4; AGENTS.md). delay/reverb-class buffers live in external WRITABLE memory; processing stays on-chip; flash is not writable delay memory.
 - Ext-mem traffic estimate: [PENDING-SXT-016] estimate via SXT-015 accounting on the frozen model; no number invented here
 
+> **SXT-017 decision required (#12):** Send buses 3/4 hit a documented SXT-011 data gap: no factory .fxp stores send_level for buses 3/4 and the surgepy binding does not expose them (corpus/normalized/schema.json). The loader-default send level semantics need an engine-behavior probe and an SXT-017 data-gap policy decision before fixture freezing.
+
 ## Fixtures plan
 
 - No SXT-014 ablation carrier exists for this algorithm: render new reference fixtures from the pinned oracle under SXT-012 policies (tools/render_fx_fixtures.py pattern), original + per-slot bypass + all-off dry, tails included.

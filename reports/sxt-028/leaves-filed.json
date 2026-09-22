@@ -143,7 +143,7 @@
    "measured_delta_db": null,
    "recovery_order": 12,
    "strict_fx_complete_newly_enabled": 0,
-   "sxt017_decision_required": false,
+   "sxt017_decision_required": true,
    "title": "SXT-028l: Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
   }
  ],
