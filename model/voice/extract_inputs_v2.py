@@ -253,7 +253,7 @@ def main():
         if abs(float(a) - float(b)) > 1e-6:
             raise Refuse(f"engine/graphs disagreement: {a} != {b}")
     if o1_sine:
-        for i in (1, 2):
+        for i in (2, 3):
             if A["mix"][f"o{i}"][1] != 1:
                 raise Refuse(f"osc{i} must be muted for the FM-source class")
     if int(nii["polylimit"]) != int(g["poly"]):
