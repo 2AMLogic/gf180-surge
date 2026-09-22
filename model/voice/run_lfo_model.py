@@ -406,6 +406,12 @@ def main():
     write_hex(os.path.join(rtl_dir, "lfo_init.hex"), lfo_init)
     write_hex(os.path.join(rtl_dir, "lfo_ctrl.hex"), lfo_ctrl)
     write_hex(os.path.join(rtl_dir, "lfo_wssine.hex"), lm.WS_SINE)
+    # route table for tb_lfo.sv: [n_routes, (instance, dest 0=cutoff/1=reso,
+    # depth Q10.21) ...] — fixture-constant, identical for every voice
+    route_hex = [len(routes)]
+    for idx, dest, depth in routes:
+        route_hex.extend([idx, 0 if dest == "cutoff" else 1, depth])
+    write_hex(os.path.join(rtl_dir, "lfo_routes.hex"), route_hex)
 
     print(json.dumps({
         "sequence": seq["id"], "blocks": total_blocks,

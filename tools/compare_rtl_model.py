@@ -121,8 +121,10 @@ def compare(model_trace, tb_trace):
 
 
 def build_and_run(sv_file, workdir):
+    workdir = os.path.abspath(workdir)
     vvp = os.path.join(workdir, "tb_mut.vvp" if sv_file == MUTANT else "tb.vvp")
-    subprocess.run(["iverilog", "-g2012", "-o", vvp, sv_file], check=True)
+    subprocess.run(["iverilog", "-g2012", "-o", vvp, os.path.abspath(sv_file)],
+                   check=True)
     subprocess.run(["vvp", vvp], cwd=workdir, check=True,
                    stdout=subprocess.DEVNULL)
     return os.path.join(workdir, "tb_trace.txt")
