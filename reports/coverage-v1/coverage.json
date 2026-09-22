@@ -160,9 +160,13 @@
    "role": "structural input (pinned)",
    "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
   },
+  "reports/SXT-033/EVIDENCE.md": {
+   "role": "evidence record for leaf osc:Classic",
+   "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
+  },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "bd93ea287690c07a3a89c6225d586e448c15c6b9aebdc77b52cda3214fff471a"
+   "sha256": "b53a61e3b406bc6f68f81fddae85352707729b068af311ad171c9c15888398a1"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -532,6 +536,15 @@
     "support_ready": false,
     "verification": {
      "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "osc:Classic": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "PARTIAL",
      "rtl_vs_model": "PASS"
     }
    },

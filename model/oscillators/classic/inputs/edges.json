@@ -1,0 +1,110 @@
+{
+  "absolute_detune": false,
+  "adsr": {
+    "a": -8.0,
+    "a_s": 1.0,
+    "d": -2.9857139587402344,
+    "d_s": 1.0,
+    "mode": 0.0,
+    "r": -2.150001049041748,
+    "r_s": 2.0,
+    "s": 0.010714000090956688
+  },
+  "carrier": "edges",
+  "character": 0,
+  "declared_overrides": [
+    [
+      "mute_o1",
+      true
+    ],
+    [
+      "mute_o2",
+      false
+    ],
+    [
+      "mute_o3",
+      true
+    ],
+    [
+      "mute_noise",
+      true
+    ],
+    [
+      "mute_ring_12",
+      true
+    ],
+    [
+      "mute_ring_23",
+      true
+    ],
+    [
+      "fu0_off",
+      true
+    ],
+    [
+      "fu1_off",
+      true
+    ],
+    [
+      "fx_off",
+      true
+    ],
+    [
+      "ws_off",
+      true
+    ],
+    [
+      "lc_off",
+      true
+    ],
+    [
+      "fbc_serial1",
+      true
+    ],
+    [
+      "fm_off",
+      true
+    ],
+    [
+      "scenemode_single",
+      true
+    ],
+    [
+      "retrigger_on",
+      true
+    ]
+  ],
+  "drift": 0.0,
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "extend_detune": false,
+  "graphs_sha256_of_line_source": "corpus/normalized/graphs.jsonl",
+  "issue": "SXT-033",
+  "keytrack": true,
+  "level_pfg": 0.0,
+  "master_db": -2.025745391845703,
+  "o_level": 1.0,
+  "octave": 0,
+  "pan": -0.26249998807907104,
+  "pitch_param": 0.0,
+  "preset_census_blob_sha1": "099e88298ae11cc7a5335054c04f3caf7e1539dc",
+  "preset_path": "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+  "pw": 0.5,
+  "pw2": 0.5,
+  "retrigger": true,
+  "scene_octave": 0,
+  "scene_volume": 0.6571429967880249,
+  "schema_version": 1,
+  "shape": 0.0,
+  "slot": 1,
+  "submix": 0.0,
+  "sync": 0.0,
+  "unison": 1,
+  "unison_detune": 0.20000000298023224,
+  "vca_db": -13.371437072753906,
+  "vca_velsense": 0.0
+}

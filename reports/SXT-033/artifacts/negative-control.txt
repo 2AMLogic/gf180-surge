@@ -1,0 +1,37 @@
+SXT-033 negative controls (issue #67 acceptance) — committed transcript.
+All three controls demonstrably FAIL the check they target. Regenerate:
+  python3 tools/run_sxt033_checks.py   (oracle needed for part C only)
+
+=== Part A: single-constant RTL mutant (SXT-022 pattern) ==================
+classic_broken_mutant.sv = tb_classic.sv with the qmul round-half-up bias
+mutated by one shift (<<20 -> <<19). Run on the edges canonical run
+(seq-notes-repeated-v1, full 6150 blocks). Clean RTL: PASS (see
+exact-edges.json). Mutant: FAIL.
+  verdict=FAIL mismatches=95 checked={'checkpoints': 1, 'fields': 127, 'voices': 1, 'oscout': 64, 'mono': 32}
+  first_failure: block 0 sample 0: mono model=0 rtl=-1
+
+=== Part B: submode-confusion substitution (model side) ==================
+The fixture's unison slots driven by the landed SXT-022 Attacky-class
+arithmetic (SXT033_NC_SUBMODE_CONFUSION=1: unison forced to 1, detune
+inert) against the UNISON reference render. The reference-budget check
+must FAIL; the correct model's numbers are shown for discrimination.
+Both runs vs the same committed reference render (seq-notes-repeated-v1).
+  crush (unison 16)
+    correct model : verdict='FAIL' max=22759 rms=-23.3 dBFS corr=0.9944
+    substituted   : verdict='FAIL' max=33294 rms=-11.8 dBFS corr=0.9684  <- FAIL
+  horn  (unison 6)
+    correct model : verdict='FAIL' max=3801 rms=-34.7 dBFS corr=0.8035
+    substituted   : verdict='FAIL' max=7097 rms=-30.9 dBFS corr=0.7571  <- FAIL
+
+=== Part C: out-of-class preset refused (fail-closed extractor) ===========
+House Of Chords is one of the issue's recovery-basis presets; its Classic
+slots live only in scene B (split-scene graph). The extractor refuses it
+for fixture use (exit 2) — scene-B / voice-graph integration is #48:
+$ extract_inputs.py --carrier house
+exit=2
+
+Notes: budgets are [PROPOSED-TO-BE-FROZEN-AT-PILOT] placeholders
+(PENDING-FREEZE, #12); the correct unison-class models also miss some
+proposed bounds (see EVIDENCE.md budget table) — the control demonstrates
+that the SUBSTITUTED arithmetic fails the check it targets and is strictly
+worse than the declared-class model on the same fixture.

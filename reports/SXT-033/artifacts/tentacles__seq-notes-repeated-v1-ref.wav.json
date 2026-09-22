@@ -1,0 +1,97 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "carrier": "tentacles",
+ "declared_overrides_applied": [
+  [
+   "mute_o1",
+   true
+  ],
+  [
+   "mute_o2",
+   true
+  ],
+  [
+   "mute_o3",
+   false
+  ],
+  [
+   "mute_noise",
+   true
+  ],
+  [
+   "mute_ring_12",
+   true
+  ],
+  [
+   "mute_ring_23",
+   true
+  ],
+  [
+   "fu0_off",
+   true
+  ],
+  [
+   "fu1_off",
+   true
+  ],
+  [
+   "fx_off",
+   true
+  ],
+  [
+   "ws_off",
+   true
+  ],
+  [
+   "lc_off",
+   true
+  ],
+  [
+   "fbc_serial1",
+   true
+  ],
+  [
+   "fm_off",
+   true
+  ],
+  [
+   "scenemode_single",
+   true
+  ],
+  [
+   "retrigger_on",
+   true
+  ]
+ ],
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "inputs": "model/oscillators/classic/inputs/tentacles.json",
+ "isolation_note": "declared fixture configuration (one Classic slot audible; other mixer paths, filter units, FX, waveshaper, lowcut, FM routing off; fbc serial1; scene mode Single; retrigger on) - a test configuration, never an adapted preset, never coverage",
+ "issue": "SXT-033",
+ "preset_blob_sha1": "d811096971efa1da42be4c646bd786cc9dc6e4ea",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 6150,
+  "clipped_samples": 0,
+  "frames": 196800,
+  "peak_abs_float": 0.010908073745667934,
+  "repeat_hashes": [
+   "e14497092bc729bf518a75071718108d5e611f8c8dcd61705767afa02ddab608",
+   "e14497092bc729bf518a75071718108d5e611f8c8dcd61705767afa02ddab608",
+   "e14497092bc729bf518a75071718108d5e611f8c8dcd61705767afa02ddab608"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-notes-repeated-v1",
+  "path": "fixtures/sequences/seq-notes-repeated-v1.json"
+ },
+ "wav": {
+  "path": "refout/tentacles__seq-notes-repeated-v1-ref.wav",
+  "sha256": "2665f3deeeabc00c0779cf3cc8bd14821ae8cb60150d1e29ea9ae6d895e13612"
+ }
+}

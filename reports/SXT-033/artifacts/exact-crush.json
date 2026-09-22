@@ -1,0 +1,13 @@
+{
+  "tb": "rtl/oscillators/classic/tb_classic.sv",
+  "verdict": "PASS",
+  "checked": {
+    "checkpoints": 403,
+    "fields": 51181,
+    "voices": 6448,
+    "oscout": 25792,
+    "mono": 196800
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

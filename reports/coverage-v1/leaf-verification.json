@@ -202,6 +202,21 @@
     "rtl_vs_model": "PASS"
    }
   },
+  "osc:Classic": {
+   "evidence": [
+    {
+     "path": "reports/SXT-033/EVIDENCE.md",
+     "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
+    }
+   ],
+   "issue": 67,
+   "landed": true,
+   "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (4 canonical carriers + smoke config; single-constant mutant control FAILS; regenerated and re-verified at the branch tip); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): sub0/sync/sync+uni1 classes near the int16 render floor, detuned-unison class decorrelates (F-033-1, engine float32 phase pipeline, routed #12), uni16 misses the proposed max bound; zero presets promoted - all 94 recovery-basis presets need unlanded features beyond the Classic oscillator class; landed pinned pitch-helper finding F-033-2 (SXT-022 fractional-term construction, inert in the Attacky slice) routed to #48/#12 for a visible contract revision",
+   "verification": {
+    "model_vs_reference": "PARTIAL",
+    "rtl_vs_model": "PASS"
+   }
+  },
   "osc:Wavetable": {
    "evidence": [
     {
