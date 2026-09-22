@@ -46,6 +46,8 @@ module wavetable_core (
     input  wire signed [31:0] c_t_hskew,
     input  wire signed [31:0] c_t_clip,
     input  wire               c_checkpoint,  // emit trace lines this block
+    input  wire               c_newvoice,    // a fresh voice was created on
+                                             // this slot: reset slice state
     input  wire [31:0]        c_trace_wr,    // trace file descriptor
     input  wire [31:0]        c_block,       // block index (trace)
     input  wire [31:0]        c_slot,        // slot index (trace)
@@ -132,7 +134,7 @@ module wavetable_core (
     integer fill_words = 0;
     integer bursts = 0;
     integer stall_cycles = 0;
-    reg     frame_touched [0:6*16-1];
+    reg     frame_touched [0:8*16-1];     // (mip, table) tags: mip 0..7, tbl 0..15
 
     integer dbg = 0;
 
@@ -364,11 +366,42 @@ module wavetable_core (
     endtask
 
     // ------------------------------------------------------- block proc
+    // fresh-voice reset: a new Slice starts from the latched init values
+    // with all per-voice and buffer state zeroed (mirrors the model's
+    // Slice __init__; the frame cache is NOT cleared — it is persistent
+    // on-chip state, per the declared residency model)
+    task do_newvoice;
+        integer v3;
+        begin
+            l_shape = i_t_shape;
+            l_vskew = i_t_vskew;
+            l_hskew = i_t_hskew;
+            l_clip  = i_t_clip;
+            formant_last = i_formant_t;
+            hpf_prev = i_hpf0;
+            tableipol = i_tableipol0;
+            tableid = i_tableid0;
+            last_tableipol = i_last_tableipol0;
+            last_tableid = i_last_tableid0;
+            osc_out = 0;
+            bufpos = 0;
+            for (v3 = 0; v3 < OB_END; v3 = v3 + 1) osc[v3] = 0;
+            for (v3 = 0; v3 < 16; v3 = v3 + 1) begin
+                oscstate[v3] = 0;
+                wstate[v3] = 0;
+                last_level[v3] = 0;
+                mipmap[v3] = 0;
+                mipmap_ofs[v3] = 0;
+            end
+        end
+    endtask
+
     task do_block;
         integer v2, k2;
         reg signed [31:0] shape, shape_scaled, hpf, hpf_start, hpf_step;
         reg signed [31:0] max_tid;
         begin
+            if (c_newvoice) do_newvoice;
             // lag steps (vskew/hskew/clip BEFORE the morph update, as in
             // model process_block; the shape lag happens inside the morph
             // update, after the last_* copy)
@@ -506,7 +539,7 @@ module wavetable_core (
             mipmap[init_i] = 0;
             mipmap_ofs[init_i] = 0;
         end
-        for (init_i = 0; init_i < 6*16; init_i = init_i + 1)
+        for (init_i = 0; init_i < 8*16; init_i = init_i + 1)
             frame_touched[init_i] = 1'b0;
         formant_word = ONE;      // ntp_tuningctr(0) == 1.0 exactly
     end

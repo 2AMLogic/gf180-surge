@@ -1,0 +1,10 @@
+sustained uni16 (MAX_UNISON=16) + concurrent Reverb1 background bus traffic,
+2250 blocks (full fixture): verdict=PASS mismatches=0 checked={'voices': 18736, 'fields': 83141, 'oscout': 74944, 'shared': 1171}
+traffic_tb: {"core_reads_words": 1719562, "core_fill_words": 4096, "core_bursts": 256, "core_stall_cycles": 1719814, "reverb_words": 76500, "underrun_blocks": 0, "max_frame_bus_cost": 3052, "budget_cycles_per_frame": 32000}
+traffic_model totals: {"impulses": 859781, "ext_read_words": 1723658, "ext_read_bytes": 6894632}
+reverb_words=76500 = 34 words/frame x 2250 blocks (SXT-016 pattern: 16 composite-tap r/w pairs + predelay 1r/1w)
+underruns=0; max_frame_bus_cost=3052/32000 declared bus-slots
+physical external traffic = fills 4096 + reverb 76500 words = 35.82 words/frame -> 1.07 MB/s at the
+48 MHz A-CLK candidate (2 cycles/word, 7500 frames/s) - within the SXT-016 E1 floor (8 MB/s);
+the logical read demand (1719562 words) is served by the on-chip frame cache, not the external bus
+-> sustained playback with concurrent effects traffic: no underruns, external bandwidth within the SXT-016 E-model

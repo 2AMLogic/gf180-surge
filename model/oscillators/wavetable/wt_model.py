@@ -246,6 +246,7 @@ class WavetableOsc:
         self.osc = [0] * (OB_LENGTH + FIRIPOL_N)
         self.bufpos = 0
         self.osc_out = 0
+        self.frames_read = set()
         self.voices = []
         for v in range(n):
             self.voices.append({
@@ -394,6 +395,8 @@ class WavetableOsc:
             target = self.tableid + 1 - self.nointerp
         w0 = self._table_word(st["mipmap"], tid, st["state"])
         w1 = self._table_word(st["mipmap"], target, st["state"])
+        self.frames_read.add((st["mipmap"], tid))
+        self.frames_read.add((st["mipmap"], target))
         level = vm.qmul(w0, ONE - proc) + vm.qmul(w1, proc)
 
         # distort_level (skewV + saturate) — WavetableOscillator.cpp order
@@ -450,6 +453,7 @@ class WavetableOsc:
         a_cov = vm.qmul(BLOCK_SIZE_OS << FQ, pitchmult)
         self.ctrl["a_cov"] = a_cov
         self.block_impulses = 0
+        self.frames_read = set()
         for v in range(self.n_unison):
             while self.voices[v]["oscstate"] < a_cov:
                 self._convolute(v, pmi, pitchmult)

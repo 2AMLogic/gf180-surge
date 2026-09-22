@@ -29,7 +29,9 @@ sys.path.insert(0, REPO)
 ART = os.path.join(REPO, "reports", "sxt-026", "artifacts")
 PY = sys.executable
 
-DEFAULT_ORACLE = "/Users/joseph/dev/surge-xt-oracle/surge/resources/data"
+DEFAULT_ORACLE = os.environ.get(
+    "ORACLE_SURGE_DATA",
+    "/Users/joseph/dev/surge-xt-oracle/surge/resources/data")
 
 # SXT-026 [PROPOSED-TO-BE-FROZEN-AT-PILOT] budgets on the workhorse fixture
 # (kick-wtfix / seq-wt-base-v1): the pre-registered SXT-022 proposal
@@ -212,6 +214,78 @@ def main():
         f.write("\n")
     print("5. budget metrics for %d fixtures -> budget-metrics.json" %
           len(rows))
+
+    # ---- 6. RTL-vs-model exactness + RTL mip-mutant negative control ----
+    # (needs the model stimulus; regenerated to /tmp, never committed)
+    env = dict(os.environ)
+    kt_stim = "/tmp/sxt026-rtl-kt"
+    r = sh(["model/oscillators/wavetable/run_model.py", "--inputs",
+            "model/oscillators/wavetable/inputs/kick-wtfix-kt.json",
+            "--sequence", "seq-wt-pitch-extremes-hi-v1",
+            "--out-dir", kt_stim, "--rtl"], env=env)
+    assert r.returncode == 0, r.stderr
+    kt_blocks = len(json.load(open(os.path.join(
+        kt_stim, "model_trace.json")))["blocks"])
+    lines = []
+    for tag, extra, must in (("base", [], 0), ("mutant(mip-thr2)",
+                                               ["--mutant"], 1)):
+        out = os.path.join(kt_stim, "verdict-%s.json"
+                           % tag.split("(")[0])
+        r = sh(["tools/compare_wt_rtl_model.py", "--run-dir", kt_stim,
+                "--max-blocks", str(kt_blocks), "--out", out] + extra)
+        assert r.returncode == 0, r.stderr + r.stdout
+        d = json.load(open(out))
+        ok = (d["verdict"] == "FAIL") if must else (d["verdict"] == "PASS")
+        assert ok, json.dumps(d, indent=1)[:2000]
+        lines.append("RTL-vs-model %s: verdict=%s mismatches=%d "
+                     "checked=%s" % (tag, d["verdict"], d["mismatches"],
+                                     d["checked"]))
+    lines.append("-> iverilog RTL matches the frozen model with integer "
+                 "equality over the full %d-block pitch-extreme fixture "
+                 "(mips 0/2/5/6); the committed mip-threshold mutant "
+                 "FAILS the same comparison" % kt_blocks)
+    with open(os.path.join(ART, "rtl-exactness.txt"), "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print("6. RTL exactness (base PASS, mutant FAIL): PASS")
+
+    # ---- 7. sustained playback with concurrent Reverb1 traffic ----
+    uni_stim = "/tmp/sxt026-rtl-uni16"
+    r = sh(["model/oscillators/wavetable/run_model.py", "--inputs",
+            "model/oscillators/wavetable/inputs/kick-wtfix-uni16.json",
+            "--sequence", "seq-wt-unison16-v1", "--out-dir", uni_stim,
+            "--rtl"], env=env)
+    assert r.returncode == 0, r.stderr
+    uni_blocks = len(json.load(open(os.path.join(
+        uni_stim, "model_trace.json")))["blocks"])
+    out = os.path.join(uni_stim, "verdict-sustained.json")
+    r = sh(["tools/compare_wt_rtl_model.py", "--run-dir", uni_stim,
+            "--max-blocks", str(uni_blocks), "--reverb-bg", "--out", out])
+    assert r.returncode == 0, r.stderr + r.stdout
+    d = json.load(open(out))
+    tb = d["traffic_tb"]
+    assert tb["reverb_words"] == 34 * uni_blocks, json.dumps(tb, indent=1)
+    assert tb["underrun_blocks"] == 0, json.dumps(tb, indent=1)
+    # bandwidth within the SXT-016 E-model: physical external bytes/s at
+    # the lowest A-CLK candidate (48 MHz, 2 cycles/word, 7500 frames/s)
+    phys_words = tb["core_fill_words"] + tb["reverb_words"]
+    mbs_48 = phys_words * 4 * 7500 / 1e6 / uni_blocks
+    lines7 = ["sustained uni16 (max unison) + Reverb1 background, %d "
+              "blocks: reverb_words=%d (34/frame), underruns=%d, "
+              "max_frame_bus_cost=%d/32000" %
+              (uni_blocks, tb["reverb_words"], tb["underrun_blocks"],
+               tb["max_frame_bus_cost"]),
+              "physical external traffic = fills %d + reverb %d words "
+              "-> %.2f MB/s at the 48 MHz A-CLK candidate (2 cycles/"
+              "word) — within the SXT-016 E1 floor (8 MB/s); logical "
+              "read demand %d words is served by the on-chip frame "
+              "cache, not the external bus"
+              % (tb["core_fill_words"], tb["reverb_words"], mbs_48,
+                 tb["core_reads_words"]),
+              "-> sustained playback with concurrent effects traffic: no "
+              "underruns, external bandwidth within the SXT-016 E-model"]
+    with open(os.path.join(ART, "sustained-concurrent.txt"), "w") as f:
+        f.write("\n".join(lines7) + "\n")
+    print("7. sustained + concurrent Reverb1 (no underruns): PASS")
     return 0
 
 

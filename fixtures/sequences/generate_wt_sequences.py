@@ -51,12 +51,15 @@ SEQS = [
          note(48000, True, 120), note(60000, False, 120)],
         tail_s=1.0),
     seq("seq-wt-pitch-extremes-hi-v1",
-        "MIDI 24 / 96 / 120 with the declared octave-0 fixture: osc pitches "
-        "24..120, reaching wavetable mip 5 and mip 6",
-        ["pitch:extreme-high", "wt:mip5", "wt:mip6"],
+        "MIDI 24 / 60 / 96 / 120 with the declared octave-0 fixture: osc "
+        "pitches 24..120; with keytrack this sweeps wavetable mip 0 (n24), "
+        "mip 2 (n60: the mip-threshold negative-control window), mip 5 "
+        "(n96) and mip 6 (n120)",
+        ["pitch:extreme-high", "wt:mip2", "wt:mip5", "wt:mip6"],
         [note(0, True, 24), note(12000, False, 24),
-         note(24000, True, 96), note(36000, False, 96),
-         note(48000, True, 120), note(60000, False, 120)],
+         note(24000, True, 60), note(36000, False, 60),
+         note(48000, True, 96), note(60000, False, 96),
+         note(72000, True, 120), note(84000, False, 120)],
         tail_s=1.0),
     seq("seq-wt-unison16-v1",
         "short C4 + D4 for the MAX_UNISON=16 fixture (worst-case schedule; "

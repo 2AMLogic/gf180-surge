@@ -1,0 +1,8 @@
+fixture: kick-wtfix-kt / seq-wt-pitch-extremes-hi-v1 (4125 blocks, mips 0/2/5/6)
+RTL-vs-model base: verdict=PASS mismatches=0 checked={'voices': 2325, 'fields': 25575, 'oscout': 148800, 'shared': 2325}
+  traffic reconciliation: rtl reads+fills = 540606+2656 = 543262 == model ext_read_words 543262
+  underrun_blocks=0 max_frame_bus_cost=790/32000
+RTL mip-threshold mutant (-DWAVETABLE_MUTANT_MIP): verdict=FAIL mismatches=68 (first: block 768 slot 1 voice 0 field 1: model=176 rtl=352)
+-> iverilog RTL matches the frozen model with integer equality over the full
+pitch-extreme fixture (mips 0/2/5/6); the committed mip-threshold mutant FAILS
+the same comparison

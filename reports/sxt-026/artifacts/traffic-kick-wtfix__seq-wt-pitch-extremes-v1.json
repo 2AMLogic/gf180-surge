@@ -1,6 +1,6 @@
 {
  "format": "sxt-026-wavetable-traffic/1",
- "declared_model": "external asset reads = 2 words/impulse (morph frame pair) + on-demand active-mip frame fills (4-byte f32 words)",
+ "declared_model": "external asset reads = 2 words/impulse (morph frame pair: both tid and target frames) + on-demand frame fills of the frames actually read (4-byte f32 words, counted once per (mip, table) per slot; the frame cache persists across voices)",
  "blocks": [
   {
    "b": 0,
@@ -11,11 +11,11 @@
      "mips": [
       0
      ],
-     "frame_fills_words": 1024
+     "frame_fills_words": 2048
     }
    ],
    "impulses": 32,
-   "ext_read_words": 1088
+   "ext_read_words": 2112
   },
   {
    "b": 1,
@@ -11269,11 +11269,11 @@
      "mips": [
       0
      ],
-     "frame_fills_words": 1024
+     "frame_fills_words": 2048
     }
    ],
    "impulses": 63,
-   "ext_read_words": 1150
+   "ext_read_words": 2174
   },
   {
    "b": 751,
@@ -24127,11 +24127,11 @@
      "mips": [
       0
      ],
-     "frame_fills_words": 1024
+     "frame_fills_words": 0
     }
    ],
    "impulses": 63,
-   "ext_read_words": 1150
+   "ext_read_words": 126
   },
   {
    "b": 1501,
@@ -45530,7 +45530,7 @@
  ],
  "totals": {
   "impulses": 90138,
-  "ext_read_words": 183348,
-  "ext_read_bytes": 733392
+  "ext_read_words": 184372,
+  "ext_read_bytes": 737488
  }
 }

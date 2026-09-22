@@ -30,8 +30,9 @@ init.hex word order (32-bit words):
  16 tableipol_init 17 tableid_init 18 last_tableipol_init 19 last_tableid_init
  20 hpf_init
 
-ctrl.hex: per block a header [b, slotmask] then one 8-word record per
-non-empty slot (slot order 0..31): key, flags(b0 gate,b1 checkpoint,
+ctrl.hex: per block a header [b, slotmask] then one 7-word record per
+processed slot (slot order 0..31; released voices keep their bit for the
+release block): key, flags(b0 gate,b1 checkpoint,
 b2 created,b3 released), pmi(Q13.18), pitchmult(Q4.27), a_cov(Q4.27),
 hpf_start(Q10.21), hpf_d(Q10.21).
 """
@@ -94,6 +95,7 @@ def main():
         total_samples = total_blocks * BLOCK_SIZE
 
     voices = []
+    slot_caches = {}
     events = list(seq["events"])
     ei = 0
     out_mono = []
@@ -131,17 +133,18 @@ def main():
             for k in range(BLOCK_SIZE):
                 mono[k] += m[k]
             impulses = v.osc.block_impulses
-            # external asset reads: 2 words per impulse (frame pair) plus
-            # on-demand frame fills of the active mip (cache-cold touches)
+            # external asset reads: 2 words per impulse (morph frame pair) +
+            # on-demand frame fills of the frames actually touched (both
+            # pair members). The frame cache is PERSISTENT per slot/core
+            # (an on-chip cache survives voice replacement — a new note on
+            # a loaded table does not re-fetch it), so fills are counted
+            # once per (mip, table) per slot for the whole run
             fills = 0
-            for st in v.osc.voices:
-                keyf = (st["mipmap"], v.osc.tableid)
-                cache = getattr(v, "_fillcache", None)
-                if cache is None:
-                    cache = v._fillcache = set()
-                if keyf not in cache:
-                    cache.add(keyf)
-                    fills += v.osc.wave_size >> st["mipmap"]
+            cache = slot_caches.setdefault(v.slot, set())
+            for mip, tbl in sorted(v.osc.frames_read):
+                if (mip, tbl) not in cache:
+                    cache.add((mip, tbl))
+                    fills += v.osc.wave_size >> mip
             blk_traffic["slots"].append({
                 "slot": v.slot, "impulses": impulses,
                 "mips": sorted({st["mipmap"] for st in v.osc.voices}),
@@ -149,7 +152,11 @@ def main():
             })
             voices_full = (b % CHECKPOINT_EVERY == 0) or (not v.gate) or b < 2
             rec = {"slot": v.slot, "key": v.key, "gate": v.gate}
-            if voices_full:
+            if voices_full and keep:
+                # checkpoints are declared only for slots that CONTINUE:
+                # a released voice's final block is processed (its ctrl
+                # record and bus traffic are carried) but nothing later
+                # reads its state, so there is nothing to checkpoint
                 rec["oscout_block"] = osout
                 rec["after"] = {
                     "aeg": {"state": v.aeg.state, "phase": v.aeg.phase,
@@ -168,13 +175,16 @@ def main():
                     "hpf_prev": v.osc.hpf_prev,
                 }
             blk["voices"].append(rec)
+            # slotmask bit: the slot was PROCESSED this block (released
+            # voices process their final block; the ctrl stream must carry
+            # their 7-word record or the RTL stream desyncs)
+            slotmask |= (1 << v.slot)
             if keep:
                 alive.append(v)
-                slotmask |= (1 << v.slot)
             # rtl ctrl words for this slot (7-word record)
             if args.rtl:
                 osc = v.osc
-                slot_records.append([
+                slot_records.append((v.slot, [
                     v.key & 0xFF,
                     (1 if v.gate else 0) | (2 if voices_full else 0)
                     | (4 if v.slot in blk["create"] else 0)
@@ -182,7 +192,7 @@ def main():
                     osc.ctrl["pmi"], osc.ctrl["pitchmult"],
                     osc.ctrl["a_cov"],
                     osc.ctrl["hpf_start"], osc.ctrl["hpf_d"],
-                ])
+                ]))
         voices = alive
 
         mono = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in mono]
@@ -199,8 +209,13 @@ def main():
         traffic_blocks.append(blk_traffic)
 
         if args.rtl:
+            # records MUST be in slot-number order: the testbench walks
+            # the set bits s = 0..N and consumes one 7-word record per
+            # bit; creation order would pair the wrong record to a slot
+            # once a new voice reuses a lower slot than an older voice
+            slot_records.sort(key=lambda t: t[0])
             ctrl.extend([b, slotmask])
-            for rec in slot_records:
+            for _slot, rec in slot_records:
                 ctrl.extend(rec)
 
     os.makedirs(args.out_dir, exist_ok=True)
@@ -237,8 +252,11 @@ def main():
         json.dump({
             "format": "sxt-026-wavetable-traffic/1",
             "declared_model": "external asset reads = 2 words/impulse "
-                              "(morph frame pair) + on-demand active-mip "
-                              "frame fills (4-byte f32 words)",
+                              "(morph frame pair: both tid and target "
+                              "frames) + on-demand frame fills of the "
+                              "frames actually read (4-byte f32 words, "
+                              "counted once per (mip, table) per slot; "
+                              "the frame cache persists across voices)",
             "blocks": traffic_blocks,
             "totals": {
                 "impulses": sum(t["impulses"] for t in traffic_blocks),

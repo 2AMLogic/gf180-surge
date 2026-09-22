@@ -57,12 +57,14 @@ def to_signed32(x):
     return x - (1 << 32) if x >= (1 << 31) else x
 
 
-def compare(model_trace, rtl):
+def compare(model_trace, rtl, max_blocks=None):
     t, sh, o = rtl
     fails = []
     checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0}
     for blk in model_trace["blocks"]:
         b = blk["b"]
+        if max_blocks is not None and b >= max_blocks:
+            break
         for rec in blk["voices"]:
             if "after" not in rec:
                 continue
@@ -126,6 +128,10 @@ def main():
     ap.add_argument("--mutant", action="store_true",
                     help="build the committed mip-threshold mutant; "
                          "the comparison must FAIL")
+    ap.add_argument("--reverb-bg", action="store_true",
+                    help="enable the concurrent Reverb1 background bus "
+                         "traffic (SXT-016 pattern, 34 words/frame); the "
+                         "no-underrun gate applies to the combined load")
     ap.add_argument("--max-blocks", type=int, default=130)
     args = ap.parse_args()
 
@@ -135,13 +141,6 @@ def main():
     n_unison = model_trace["unison"]
     wave_size = model_trace.get("wave_size", 1024)
     vvp = os.path.join(args.run_dir, "tb_wt.vvp")
-    src = (os.path.join(RTLDIR, "tb_wavetable.sv")
-           + " " + os.path.join(RTLDIR, "wavetable_core.sv"))
-    build = ["iverilog", "-g2012", "-o", vvp, "-s", "tb_wavetable"]
-    if args.mutant:
-        build.append("-DWAVETABLE_MUTANT_MIP")
-    build += [src.replace(" ", " ")] if False else [src]
-    # (pass the two source files as separate arguments)
     build = ["iverilog", "-g2012", "-o", vvp, "-s", "tb_wavetable"]
     if args.mutant:
         build.append("-DWAVETABLE_MUTANT_MIP")
@@ -157,11 +156,15 @@ def main():
          "+CTRL=rtl/ctrl.hex", "+WT_TABLE=rtl/wt_table.hex",
          "+SINC_MAIN=rtl/sinc_main.hex", "+SINC_DERIV=rtl/sinc_deriv.hex",
          "+TRAFFIC=%s/tb_traffic.txt" % args.run_dir,
-         "+MUT=%d" % (1 if args.mutant else 0)],
+         "+MUT=%d" % (1 if args.mutant else 0),
+         "+REVERB_BG=%d" % (1 if args.reverb_bg else 0)],
         cwd=args.run_dir, capture_output=True, text=True, timeout=3600)
+    if run.returncode != 0:
+        fails.append("vvp exited rc=%d stderr=%s"
+                     % (run.returncode, run.stderr[-500:]))
 
     rtl = parse_traces(args.run_dir)
-    checked, fails = compare(model_trace, rtl)
+    checked, fails = compare(model_trace, rtl, args.max_blocks)
 
     # traffic reconciliation (counts from the core, dumped by the TB)
     traffic = {}
@@ -178,13 +181,30 @@ def main():
         with open(tp) as f:
             model_traffic = json.load(f)["totals"]
 
-    verdict = "PASS" if not fails else "FAIL"
+    # ---- traffic reconciliation (exact; any mismatch = FAIL) ----
+    traffic_fails = []
+    if model_traffic is not None:
+        reads = traffic.get("core_reads_words", 0)
+        fills = traffic.get("core_fill_words", 0)
+        want = model_traffic["ext_read_words"]
+        if reads + fills != want:
+            traffic_fails.append(
+                "ext words: rtl reads+fills %d+%d != model %d"
+                % (reads, fills, want))
+    # no-underrun gate: the sustained/concurrent check must hold
+    underruns = traffic.get("underrun_blocks", 0)
+    if underruns:
+        traffic_fails.append("%d underrun block(s)" % underruns)
+
+    verdict = "PASS" if not (fails or traffic_fails) else "FAIL"
     summary = {
         "verdict": verdict,
         "mutant": args.mutant,
+        "reverb_bg": bool(args.reverb_bg),
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "traffic_fails": traffic_fails,
         "traffic_tb": traffic,
         "traffic_model": model_traffic,
     }

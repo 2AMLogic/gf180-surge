@@ -14,12 +14,18 @@
 // Traffic accounting: ext_reads (logical word reads by the core), fill_words
 // (prefetched frame words on cache misses, aligned bursts of <=16 words),
 // stall_cycles (core-visible miss latency), reverb_words (background
-// Reverb1 bus words per the SXT-016 scattered pattern), against the
-// placeholder frame budget of 32000 cycles (32 samples @ 48 MHz, A-CLK
-// candidate; no achievable-clock claim).
+// Reverb1 bus traffic per the SXT-016 pattern: 34 scattered words/frame =
+// 16 composite-tap r/w pairs + predelay 1r/1w), against the DECLARED frame
+// budget of 32000 bus-slots (A-CLK 48 MHz candidate, 2 cycles/external
+// word, 7500 frames/s; a harness constant, NOT an achievable-clock claim
+// — clock closure stays with SXT-016/SXT-017). A frame UNDERRUNS when its
+// total bus cost (core words + core stall + reverb words) exceeds the
+// budget; underrun_blocks is dumped and the harness FAILs on any.
 //
 // The cores are exercised sequentially (behavioral time-multiplex; each
-// slot holds independent voice state), so external requests never collide.
+// slot holds independent voice state), so external requests never collide;
+// the Reverb1 master takes bus slots in the same frame, which is what the
+// underrun check accounts for.
 
 `timescale 1ns/1ps
 
@@ -49,6 +55,8 @@ module tb_wavetable;
     reg signed [31:0] c_pmi_2, c_a_cov_2, c_hpf_start_2, c_hpf_d_2;
     reg signed [31:0] c_pmi_3, c_a_cov_3, c_hpf_start_3, c_hpf_d_3;
     reg c_ckpt_0 = 0, c_ckpt_1 = 0, c_ckpt_2 = 0, c_ckpt_3 = 0;
+    reg c_newvoice_0 = 0, c_newvoice_1 = 0, c_newvoice_2 = 0,
+        c_newvoice_3 = 0;
     reg [31:0] tb_block = 0;
     integer fd0 = 0, fd1 = 0, fd2 = 0, fd3 = 0;
     wire [31:0] c_trace_wr_0 = fd0;
@@ -61,11 +69,20 @@ module tb_wavetable;
 
     // -------------------------------------------------- memory model
     reg [31:0] wt_mem  [0:131071];
-    reg        touched [0:6*16-1];     // (mip, frame) cache tags
+    reg        touched [0:8*16-1];     // (mip, frame) cache tags
     integer ext_reads = 0, fill_words = 0, bursts = 0;
     integer stall_total = 0, reverb_words = 0;
+    integer underrun_blocks = 0, max_frame_bus_cost = 0;
     integer bg_countdown = 0;
     integer frame_size_now, mip_now, tab_now, base_now, acc;
+    // Reverb1 background master (SXT-016 pattern): 34 scattered words per
+    // frame (16 composite-tap r/w pairs + predelay 1r/1w) over a 2^16-word
+    // external delay-memory image.
+    integer REVERB_WORDS_PER_FRAME = 34;
+    integer REVERB_ADDR_MASK        = (1 << 16) - 1;
+    reg [15:0] reverb_lfsr          = 16'hACE1;
+    integer reads_snap = 0, stall_snap = 0, ri;
+    integer frame_bus_cost;
 
     // combinational zero-latency response; miss latency is counted as
     // arithmetic stall cycles in the traffic model (declared)
@@ -86,6 +103,7 @@ module tb_wavetable;
         .c_t_shape(iw[10]), .c_t_vskew(iw[11]),
         .c_t_hskew(iw[12]), .c_t_clip(iw[13]),
         .c_checkpoint(c_ckpt_0),
+        .c_newvoice(c_newvoice_0),
         .c_trace_wr(c_trace_wr_0),
         .c_block(tb_block),
         .c_slot(0),
@@ -112,6 +130,7 @@ module tb_wavetable;
         .c_t_shape(iw[10]), .c_t_vskew(iw[11]),
         .c_t_hskew(iw[12]), .c_t_clip(iw[13]),
         .c_checkpoint(c_ckpt_1),
+        .c_newvoice(c_newvoice_1),
         .c_trace_wr(c_trace_wr_1),
         .c_block(tb_block),
         .c_slot(1),
@@ -138,6 +157,7 @@ module tb_wavetable;
         .c_t_shape(iw[10]), .c_t_vskew(iw[11]),
         .c_t_hskew(iw[12]), .c_t_clip(iw[13]),
         .c_checkpoint(c_ckpt_2),
+        .c_newvoice(c_newvoice_2),
         .c_trace_wr(c_trace_wr_2),
         .c_block(tb_block),
         .c_slot(2),
@@ -164,6 +184,7 @@ module tb_wavetable;
         .c_t_shape(iw[10]), .c_t_vskew(iw[11]),
         .c_t_hskew(iw[12]), .c_t_clip(iw[13]),
         .c_checkpoint(c_ckpt_3),
+        .c_newvoice(c_newvoice_3),
         .c_trace_wr(c_trace_wr_3),
         .c_block(tb_block),
         .c_slot(3),
@@ -197,11 +218,32 @@ module tb_wavetable;
 
     integer b, s, w, ptr, slotmask, flags, fd_traffic;
 
+    // watchdog scaled to the requested run length (long exactness /
+    // sustained runs legitimately exceed 3 ms of sim time)
     initial begin
-        #3_000_000;
-        $display("WATCHDOG: killed at 3 ms sim time");
+        wait(TOTAL_BLOCKS > 0);
+        #(TOTAL_BLOCKS * 400_000 + 4_000_000);
+        $display("WATCHDOG: killed at %0t (blocks=%0d)", $time,
+                 TOTAL_BLOCKS);
         $finish;
     end
+
+    // one Reverb1 background bus frame: 34 scattered words (17r + 17w,
+    // LFSR-driven addresses per the SXT-016 scattered composite-tap
+    // pattern) against the external delay-memory image
+    task do_reverb_frame;
+        integer k;
+        begin
+            for (k = 0; k < REVERB_WORDS_PER_FRAME; k = k + 1) begin
+                reverb_lfsr = {reverb_lfsr[14:0],
+                    reverb_lfsr[15] ^ reverb_lfsr[12] ^ reverb_lfsr[10]
+                                   ^ reverb_lfsr[8]};
+                acc = reverb_lfsr & REVERB_ADDR_MASK;
+                bg_countdown = bg_countdown + 1;
+            end
+            reverb_words = reverb_words + REVERB_WORDS_PER_FRAME;
+        end
+    endtask
 
     initial begin
         if (!$value$plusargs("BLOCKS=%d", TOTAL_BLOCKS)) ;
@@ -221,9 +263,9 @@ module tb_wavetable;
         if (!$value$plusargs("SINC_DERIV=%s", SINC_DERIV_F)) ;
         if (!$value$plusargs("TRAFFIC=%s", traffic_f)) ;
 
-        for (s = 0; s < 6*16; s = s + 1) touched[s] = 1'b0;
+        for (s = 0; s < 8*16; s = s + 1) touched[s] = 1'b0;
 
-        $display("DBG loading hex files");
+        if (DBG) $display("DBG loading hex files");
         $readmemh(init_f, init_mem);
         for (w = 0; w < 40; w = w + 1) iw[w] = init_mem[w];
         $readmemh(ctrl_f, ctrl_mem);
@@ -276,6 +318,7 @@ module tb_wavetable;
                             c_hpf_start_0 = ctrl_mem[ptr + 5];
                             c_hpf_d_0 = ctrl_mem[ptr + 6];
                             c_ckpt_0 = (flags & 2) != 0;
+                            c_newvoice_0 = (flags & 4) != 0;
                         end
                         1: begin
                             c_pmi_1 = ctrl_mem[ptr + 2];
@@ -283,6 +326,7 @@ module tb_wavetable;
                             c_hpf_start_1 = ctrl_mem[ptr + 5];
                             c_hpf_d_1 = ctrl_mem[ptr + 6];
                             c_ckpt_1 = (flags & 2) != 0;
+                            c_newvoice_1 = (flags & 4) != 0;
                         end
                         2: begin
                             c_pmi_2 = ctrl_mem[ptr + 2];
@@ -290,6 +334,7 @@ module tb_wavetable;
                             c_hpf_start_2 = ctrl_mem[ptr + 5];
                             c_hpf_d_2 = ctrl_mem[ptr + 6];
                             c_ckpt_2 = (flags & 2) != 0;
+                            c_newvoice_2 = (flags & 4) != 0;
                         end
                         3: begin
                             c_pmi_3 = ctrl_mem[ptr + 2];
@@ -297,13 +342,18 @@ module tb_wavetable;
                             c_hpf_start_3 = ctrl_mem[ptr + 5];
                             c_hpf_d_3 = ctrl_mem[ptr + 6];
                             c_ckpt_3 = (flags & 2) != 0;
+                            c_newvoice_3 = (flags & 4) != 0;
                         end
                     endcase
                     ptr = ptr + 7;
                 end
             end
-            $display("DBG block %0d start @%0t", b, $time);
+            if (DBG) $display("DBG block %0d start @%0t", b, $time);
             tb_block = b;
+            reads_snap = core0.reads_words + core1.reads_words
+                       + core2.reads_words + core3.reads_words;
+            stall_snap = core0.stall_cycles + core1.stall_cycles
+                       + core2.stall_cycles + core3.stall_cycles;
             if (slotmask & 1) begin
                 core0.do_block();
                 if (c_ckpt_0) core0.emit_trace;
@@ -320,15 +370,44 @@ module tb_wavetable;
                 core3.do_block();
                 if (c_ckpt_3) core3.emit_trace;
             end
-            $display("DBG block %0d done @%0t", b, $time);
+            if (REVERB_BG != 0) do_reverb_frame;
+            // no-underrun check: this frame's declared bus cost =
+            // core external words (cache hits and fills) + core-visible
+            // miss latency + Reverb1 words, against the declared budget
+            frame_bus_cost = (core0.reads_words + core1.reads_words
+                            + core2.reads_words + core3.reads_words
+                            - reads_snap)
+                           + (core0.stall_cycles + core1.stall_cycles
+                            + core2.stall_cycles + core3.stall_cycles
+                            - stall_snap)
+                           + (REVERB_BG != 0 ? REVERB_WORDS_PER_FRAME : 0);
+            if (frame_bus_cost > max_frame_bus_cost)
+                max_frame_bus_cost = frame_bus_cost;
+            if (frame_bus_cost > 32000) begin
+                underrun_blocks = underrun_blocks + 1;
+                $display("UNDERRUN: block %0d bus cost %0d > 32000",
+                         b, frame_bus_cost);
+            end
+            if (DBG) $display("DBG block %0d done @%0t", b, $time);
         end
 
         fd_traffic = $fopen(traffic_f, "w");
-        $fdisplay(fd_traffic, "core_reads_words %0d", core0.reads_words);
-        $fdisplay(fd_traffic, "core_fill_words %0d", core0.fill_words);
-        $fdisplay(fd_traffic, "core_bursts %0d", core0.bursts);
-        $fdisplay(fd_traffic, "core_stall_cycles %0d", core0.stall_cycles);
+        $fdisplay(fd_traffic, "core_reads_words %0d",
+                  core0.reads_words + core1.reads_words
+                  + core2.reads_words + core3.reads_words);
+        $fdisplay(fd_traffic, "core_fill_words %0d",
+                  core0.fill_words + core1.fill_words
+                  + core2.fill_words + core3.fill_words);
+        $fdisplay(fd_traffic, "core_bursts %0d",
+                  core0.bursts + core1.bursts + core2.bursts
+                  + core3.bursts);
+        $fdisplay(fd_traffic, "core_stall_cycles %0d",
+                  core0.stall_cycles + core1.stall_cycles
+                  + core2.stall_cycles + core3.stall_cycles);
         $fdisplay(fd_traffic, "reverb_words %0d", reverb_words);
+        $fdisplay(fd_traffic, "underrun_blocks %0d", underrun_blocks);
+        $fdisplay(fd_traffic, "max_frame_bus_cost %0d",
+                  max_frame_bus_cost);
         $fdisplay(fd_traffic, "budget_cycles_per_frame 32000");
         $fclose(fd_traffic);
         $display("TB done: blocks %0d ext_reads %0d fill_words %0d bursts %0d stall %0d reverb %0d",
