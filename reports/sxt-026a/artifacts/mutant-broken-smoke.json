@@ -1,0 +1,23 @@
+{
+  "tb": "voice_broken_mutant.sv",
+  "verdict": "FAIL",
+  "checked": {
+    "checkpoints": 1,
+    "fields": 29,
+    "oscout": 64,
+    "mono": 32
+  },
+  "mismatches": 96,
+  "first_failures": [
+    "block 0 sample 2: mono model=1 rtl=0",
+    "block 0 sample 3: mono model=2 rtl=1",
+    "block 0 sample 4: mono model=11 rtl=9",
+    "block 0 sample 5: mono model=40 rtl=39",
+    "block 0 sample 6: mono model=120 rtl=118",
+    "block 0 sample 7: mono model=291 rtl=290",
+    "block 0 sample 8: mono model=601 rtl=598",
+    "block 0 sample 9: mono model=1072 rtl=1070",
+    "block 0 sample 10: mono model=1712 rtl=1709",
+    "block 0 sample 11: mono model=2510 rtl=2508"
+  ]
+}

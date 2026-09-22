@@ -9,15 +9,27 @@ numbers only, no freeze claims).
 
 Word lengths and operation order are normative: `model/voice/README.md`.
 
+SXT-026a extension (issue #48): the voice class is generalized beyond the
+Attacky slice -- Sine oscillator (legacy path, incl. the fm_3to2to1 muted
+FM-source chain), LP 24 dB/Driven (IIR24CFC two-section coupled form),
+serial-1 Mix1 filter-balance blend, and velocity/keytrack modulation routes.
+The v1 (Classic/LP12) arithmetic is unchanged: class-v1 fixtures render
+bit-identically to the SXT-022 model. The extension is frozen in
+`model/voice/README.md` (sections "SXT-026a extension").
+
 Structure is cited from the pinned engine (read, not copied):
 surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
 
   SurgeVoice.cpp process_block/calc_ctrldata/SetQFB    gain staging + ramps
   ClassicOscillator.cpp process_block/convolute        impulse engine
+  SineOscillator.cpp process_block_legacy/applyFilter  Sine (legacy, FM 3>2>1)
+  sst-basic-blocks QuadratureOscillators.h SurgeQuadrOsc  sine recurrence
+  sst-basic-blocks FastMath.h fastsin/fastcos/clampToPiRange  FM sine math
+  sst-filters BiquadFilter.h coeff_HP/coeff_LP2B/TDF2  osc low/high cut
   QuadFilterChain.cpp ProcessFBQuad (fc_serial1)       per-OS-sample chain
-  sst-filters FilterCoefficientMaker_Impl.h            Coeff_LP12/ToCoupledForm/
-                                                       FromDirect (smooth=0.2)
-  sst-filters QuadFilterUnit_Impl.h IIR12CFCquad       2-pole coupled form
+  sst-filters FilterCoefficientMaker_Impl.h            Coeff_LP12/24 +
+                                                       ToCoupledForm/FromDirect
+  sst-filters QuadFilterUnit_Impl.h IIR12CFC/IIR24CFC  coupled forms
   ADSRModulationSource.h (digital mode)                envelopes
   ModulationSource.h ControllerModulationSourceVector  FAST_LINE modwheel
   sst-filters HalfRateFilter.h (M=6, steep)            scene decimator
@@ -26,15 +38,21 @@ surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
 
 Arithmetic discipline (FROZEN, enforced throughout):
   * every value is a Python int in two's-complement Q-format;
-  * Q4.27 universal sample/coef word; Q2.29 envelope phase;
-    Q12.20 pitchmult_inv; 16-bit sinc lipol fraction;
+  * Q10.21 universal sample/coef word; Q2.29 envelope phase;
+    Q13.18 pitchmult_inv; 16-bit sinc lipol fraction;
+    Q3.28 radian phase/omega words (SXT-026a Sine path);
   * products are exact then rounded back round-half-up:
         r = (a*b + (1 << (s-1))) >> s,  s = fa+fb-fq
     and saturated to the signed 32-bit range;
-  * divisions only at coefficient (block) rate via qdiv (round-half-up);
+  * divisions at coefficient (block) rate via qdiv (round-half-up);
+    DECLARED EXCEPTION (SXT-026a): the Sine FM path evaluates the pinned
+    fastsin/fastcos rational (an audio-rate division) with exact integer
+    arithmetic and ONE final round-half-up to Q10.21 -- diverges from cost
+    assumption A-ALU-2 and is recorded for SXT-016;
   * sinc sub-sample position truncates toward zero like the engine's
     (unsigned int) cast;
-  * no floating point at run time; no dict-iteration-order dependence.
+  * no floating point at run time (coefficient/quantization-time only);
+    no dict-iteration-order dependence.
 """
 
 import json
@@ -792,3 +810,647 @@ def write_wav16(path, samples, sample_rate):
         w.setsampwidth(2)
         w.setframerate(sample_rate)
         w.writeframes(bytes(frames))
+
+
+# ===========================================================================
+# SXT-026a extension (issue #48): generalized voice class, frozen below.
+# v1 behavior above is untouched; class-v1 fixtures render bit-identically.
+# ===========================================================================
+
+FQ28 = 28                                   # Sine phase/omega: Q3.28 radians
+PI_Q28 = 843314856                          # round(pi * 2^28)
+TWO_PI_Q28 = 1686629713                     # round(2*pi * 2^28)
+OSC_OVERSAMPLING = 2                        # globals.h OSC_OVERSAMPLING
+
+SINE_SHAPE_MAX = 0                          # frozen class: shape mode 0 only
+VELOCITY_SRC = 1                            # ms_velocity
+KEYTRACK_SRC = 2                            # ms_keytrack
+MODWHEEL_SRC = 6                            # ms_modwheel
+DEST_VCA_GAIN = 298                         # scene param ids (md rows)
+DEST_FU1_CUTOFF = 308
+DEST_FU1_RESO = 309
+DEST_FU1_FEGMOD = 310
+DEST_FU2_CUTOFF = 314
+DEST_FU2_RESO = 315
+DEST_FU2_FEGMOD = 318
+DEST_FM_DEPTH = 260
+VOICE_ROUTE_VOCAB = {
+    VELOCITY_SRC: {DEST_VCA_GAIN, DEST_FU1_CUTOFF, DEST_FU1_RESO,
+                   DEST_FU1_FEGMOD, DEST_FU2_CUTOFF, DEST_FU2_RESO,
+                   DEST_FU2_FEGMOD},
+    KEYTRACK_SRC: {DEST_FU1_CUTOFF, DEST_FU1_RESO, DEST_FU1_FEGMOD,
+                   DEST_FU2_CUTOFF, DEST_FU2_RESO, DEST_FU2_FEGMOD},
+}
+SCENE_ROUTE_VOCAB = {
+    MODWHEEL_SRC: {DEST_FU1_CUTOFF, DEST_FU1_RESO, DEST_FM_DEPTH},
+}
+
+
+class Refuse(Exception):
+    """Fail-closed applicability refusal (exit 2 at the runner boundary)."""
+
+
+def qint28(x):
+    """Quantize a double to Q3.28 radians, round-half-up (quantization time)."""
+    return sat(int(math.floor(x * (1 << FQ28) + 0.5)))
+
+
+def clamp_to_pi(p):
+    """sst FastMath.h clampToPiRange on the Q3.28 phase word (integer-exact).
+
+    Engine: y = x + pi; p = y - 2pi*(int)(y/(2pi)); if p<0 p += 2pi;
+    return p - pi.  For y >= 0 the (int) cast is floor; for y < 0 the
+    engine's p<0 fixup makes it floor again, so one floor division is
+    equivalent for every input.
+    """
+    y = p + PI_Q28
+    k = y // TWO_PI_Q28
+    return y - TWO_PI_Q28 * k - PI_Q28
+
+
+def _ratio_q_scaled(num, den, fnum, fden, fq=FQ):
+    """Round-half-up (num/2^fnum)/(den/2^fden) into Qfq (den > 0), saturated."""
+    assert den > 0
+    sh = fden - fnum + fq
+    n = num << sh if sh >= 0 else num >> (-sh)
+    half = den >> 1
+    if n >= 0:
+        return sat((n + half) // den)
+    return sat(-((-n + half) // den))
+
+
+def _pade_sin_parts(x_q28):
+    """Numerator/denominator ints of the pinned fastsin rational.
+
+    sst FastMath.h (JUCE Pade, valid -pi..pi):
+        num = -x * (-11511339840 + x^2*(1640635920 + x^2*(-52785432
+              + x^2*479249)))
+        den = 11511339840 + x^2*(277920720 + x^2*(3177720 + x^2*18361))
+    Exact integer evaluation; x at 2^28 -> num at 2^196, den at 2^168.
+    """
+    x = x_q28
+    x2 = x * x                                 # 2^56
+    g = 479249 * x2                            # (C3*x^2)  << 56
+    g = g - (52785432 << 56)                   # t2 << 56
+    g = x2 * g + (1640635920 << 112)           # t1 << 112
+    g = x2 * g - (11511339840 << 168)          # t0 << 168
+    num = -x * g                               # 2^196
+    h = 18361 * x2
+    h = h + (3177720 << 56)
+    h = x2 * h + (277920720 << 112)
+    h = x2 * h + (11511339840 << 168)          # 2^168
+    return num, h
+
+
+def _pade_cos_parts(x_q28):
+    """Numerator/denominator ints of the pinned fastcos rational (2^168)."""
+    x = x_q28
+    x2 = x * x
+    g = 14615 * x2
+    g = g - (1075032 << 56)
+    g = x2 * g + (18471600 << 112)
+    g = x2 * g - (39251520 << 168)
+    num = -g                                   # 2^168
+    h = 127 * x2
+    h = h + (16632 << 56)
+    h = x2 * h + (1154160 << 112)
+    h = x2 * h + (39251520 << 168)
+    return num, h
+
+
+def fastsin_ratio(x_q28):
+    """fastsin(x) -> Q10.21 (exact rational, ONE final round-half-up)."""
+    num, den = _pade_sin_parts(x_q28)
+    return _ratio_q_scaled(num, den, 196, 168)
+
+
+def fastcos_ratio(x_q28):
+    """fastcos(x) -> Q10.21 (exact rational, ONE final round-half-up)."""
+    num, den = _pade_cos_parts(x_q28)
+    return _ratio_q_scaled(num, den, 168, 168)
+
+
+def pitch_to_omega_q(pitch, samplerate=SR * OSC_OVERSAMPLING):
+    """OscillatorBase.h pitch_to_omega -> Q3.28 word.
+
+    omega = 2*pi*MIDI_0_FREQ*note_to_pitch(pitch)/samplerate; note_to_pitch
+    from the pinned construction formula (declared deviation: the engine
+    lerps a float32 table), quantized once.
+    """
+    freq = MIDI_0_FREQ * (2.0 ** (pitch / 12.0))
+    return qint28(2.0 * math.pi * freq / samplerate)
+
+
+def _calc_omega_q(scfreq, Q=0.707):
+    """sst-filters BiquadFilter calc_omega(scfreq)/OSC_OVERSAMPLING (double)."""
+    omega = 2.0 * math.pi * 440.0 * _dbl_pitch(256.0 + 12.0 * scfreq) / SR
+    return omega / OSC_OVERSAMPLING
+
+
+def biquad_hp_coeffs(scfreq, Q=0.707):
+    """coeff_HP(calc_omega(scfreq)/OSC_OVERSAMPLING, Q) -> Q10.21 words."""
+    omega = _calc_omega_q(scfreq)
+    if omega > math.pi:
+        return (qint(1.0), 0, 0, 0, 0)
+    cosi = math.cos(omega)
+    sinu = math.sin(omega)
+    alpha = sinu / (2.0 * Q)
+    a0 = 1.0 + alpha
+    return (qint(((1.0 + cosi) * 0.5) / a0), qint((-(1.0 + cosi)) / a0),
+            qint(((1.0 + cosi) * 0.5) / a0), qint((-2.0 * cosi) / a0),
+            qint((1.0 - alpha) / a0))
+
+
+def biquad_lp2b_coeffs(scfreq, Q=0.707):
+    """coeff_LP2B(calc_omega(scfreq)/OSC_OVERSAMPLING, Q) -> Q10.21 words."""
+    omega = _calc_omega_q(scfreq)
+    if omega > math.pi:
+        return (qint(1.0), 0, 0, 0, 0)
+    w_sq = omega * omega
+    den = (w_sq * w_sq) + (math.pi ** 4) + w_sq * (math.pi ** 2) * (1.0 / Q - 2.0)
+    G1 = min(1.0, math.sqrt((w_sq * w_sq) / den) * 0.5)
+    cosi = math.cos(omega)
+    sinu = math.sin(omega)
+    alpha = sinu / (2.0 * Q)
+    A = 2.0 * math.sqrt(G1) * math.sqrt(2.0 - G1)
+    a0 = 1.0 + alpha
+    return (qint(((1.0 - cosi + G1 * (1.0 + cosi) + A * sinu) * 0.5) / a0),
+            qint((1.0 - cosi - G1 * (1.0 + cosi)) / a0),
+            qint(((1.0 - cosi + G1 * (1.0 + cosi) - A * sinu) * 0.5) / a0),
+            qint((-2.0 * cosi) / a0),
+            qint((1.0 - alpha) / a0))
+
+
+class TDFBiquad:
+    """sst-filters BiquadFilter TDF2 (engine: double eval; model: Q10.21/qmul)."""
+
+    def __init__(self, coeffs):
+        self.b0, self.b1, self.b2, self.a1, self.a2 = coeffs
+        self.reg0 = 0
+        self.reg1 = 0
+
+    def process_block(self, data):
+        for k in range(len(data)):
+            x = data[k]
+            op = sat(qmul(self.b0, x) + self.reg0)
+            self.reg0 = sat(qmul(self.b1, x) - qmul(self.a1, op) + self.reg1)
+            self.reg1 = sat(qmul(self.b2, x) - qmul(self.a2, op))
+            data[k] = op
+
+
+class SineCore:
+    """SineOscillator (legacy path, FMmode 0), unison 1, retrigger, mono.
+
+    Non-FM blocks: SurgeQuadrOsc recurrence (set_rate per block: dr=cos, di=sin,
+    normalize (r,i); 4 products per sample).  FM blocks: Q3.28 phase
+    accumulator with the pinned clampToPiRange wrap and fastsin/fastcos
+    (mode 0 value = the sin component).  applyFilter = lowcut TDF biquad,
+    then highcut TDF biquad, then the shared CharacterFilter.
+    """
+
+    def __init__(self, char_coeffs, lowcut, highcut, character):
+        self.hp = TDFBiquad(biquad_hp_coeffs(lowcut / 12.0))
+        self.lp = TDFBiquad(biquad_lp2b_coeffs(highcut / 12.0))
+        self.char_a1, self.char_b0, self.char_b1 = char_coeffs
+        self.r = 0                                  # SurgeQuadrOsc ctor state
+        self.i = -ONE
+        self.dr = 0
+        self.di = 0
+        self.phase = 0                              # Q3.28 (retrigger: 0)
+
+    def set_rate(self, omega_q28):
+        """set_rate(w): dr=cos w, di=sin w; normalize (r,i).
+
+        Engine computes cos/sin in double, narrows to float32; the model
+        quantizes to Q10.21 once (declared deviation, same error class).
+        """
+        w = omega_q28 / float(1 << FQ28)
+        self.dr = qint(math.cos(w))
+        self.di = qint(math.sin(w))
+        rd = self.r / float(ONE)
+        idd = self.i / float(ONE)
+        n = 1.0 / math.sqrt(rd * rd + idd * idd)
+        self.r = qint(rd * n)
+        self.i = qint(idd * n)
+
+    def quad_step(self):
+        lr, li = self.r, self.i
+        self.r = sat(qmul(self.dr, lr) - qmul(self.di, li))
+        self.i = sat(qmul(self.dr, li) + qmul(self.di, lr))
+
+    def block(self, omega_q28, fm_depth, master):
+        """One 64-OS-sample block; master = FM source block (None: no FM)."""
+        out = []
+        if master is None:
+            self.set_rate(omega_q28)
+            for _ in range(BLOCK_SIZE_OS):
+                self.quad_step()
+                out.append(self.r)
+        else:
+            for _ in range(BLOCK_SIZE_OS):
+                fm = qmul(fm_depth, master[_])
+                self.phase = clamp_to_pi(self.phase + omega_q28
+                                         + (fm << (FQ28 - FQ)))
+                out.append(fastsin_ratio(self.phase))
+        self.hp.process_block(out)                  # applyFilter: lowcut,
+        self.lp.process_block(out)                  # then highcut
+        o1 = 0                                      # CharacterFilter (shared)
+        o2 = 0
+        for k in range(BLOCK_SIZE_OS):
+            last = o1
+            o1 = sat(qmul(o2, self.char_a1) + qmul(out[k], self.char_b0)
+                     + qmul(last, self.char_b1))
+            o2 = o1
+            out[k] = o1
+        return out
+
+
+class CoefMakerLP24(CoefMaker):
+    """FilterCoefficientMaker for fut_lp24 / st_Driven (IIR24CFC).
+
+    Same resoscale/boundFreq/clipscale/ToCoupledForm/FromDirect as the 2-pole
+    maker; the resonance map is Map4PoleResonance (clamps RESO, not t).
+    """
+
+    def make_coeffs(self, freq, reso):
+        gain = qint(1.0) - (qmul(qmul(reso, reso), qint(0.5)))   # resoscale(Driven)
+        freq = limit_i(freq, qint(-55.0), qint(75.0))            # boundFreq
+        sinu, cosi = note_to_omega(freq)
+        atten = ONE - qmul(max(0, freq - qint(58.0)), qint(0.05))
+        reso = qmul(reso, max(0, atten))
+        reso = limit_i(reso, qint(0.001), ONE)                   # clamp(reso)
+        q2inv = qint(1.0) - qmul(qint(1.05), reso)
+        alpha = qmul(sinu, q2inv)
+        lim = qint(math.sqrt(max(0.0, 1.0 - (cosi / float(ONE)) ** 2)) - 0.0001)
+        alpha = min(alpha, lim)
+        a0 = ONE + alpha
+        a0inv = qdiv(ONE, a0)
+        a1 = qmul(qint(-2.0), cosi)
+        a2 = ONE - alpha
+        b0h = (ONE - cosi) >> 1
+        b0 = qmul(b0h, gain)
+        b1 = qmul(ONE - cosi, gain)
+        b2 = b0
+        cs = qdiv(db_to_linear(qmul(freq, qint(0.55))), qint(64.0))   # clipscale
+        self._to_coupled_form(a0inv, a1, a2, b0, b1, b2, cs)
+
+
+class VoiceV2(Voice):
+    """Generalized voice (SXT-026a): Classic-or-Sine osc, LP12/LP24 Driven.
+
+    v1 exactness: with kind='classic', fu_poles=12, mix1=ONE and no v2 routes,
+    every frozen v1 operation is unchanged (mix1 blend degenerates to
+    qmul(y, ONE) + 0).  `inp` must be an InputsV2.
+    """
+
+    def __init__(self, inp, key, velocity):
+        self.kind = inp.osc_kind                 # 'classic' | 'sine'
+        self.fu_poles = inp.fu_poles             # 12 | 24
+        self.pitch_voice = key + 12 * inp.scene_octave
+        # modulator words (engine: fvel = vel/127 constant; keytrack set at
+        # ctor, refreshed after each control pass -- the declared 1-pass lag)
+        self.fvel = qint(velocity / 127.0)
+        self.kt_word = qint((self.pitch_voice - inp.keytrack_root) / 12.0)
+        super().__init__(inp, key, velocity)
+        self.f4_r0 = 0
+        self.f4_r1 = 0
+        if self.fu_poles == 24:
+            self.cmu = CoefMakerLP24()
+        self.fm_depth = inp.fm_depth
+        if self.kind == "sine":
+            self._sine_init()
+
+    def _sine_init(self):
+        inp = self.inp
+        self.sine_omega = []
+        self.sine = []
+        for i in range(3):
+            p = self.pitch_voice + inp.osc_pitch_offsets[i]
+            if not (24 <= p <= 148):
+                raise Refuse(f"osc{i + 1} pitch {p} outside declared [24,148]")
+            self.sine_omega.append(pitch_to_omega_q(p))
+            self.sine.append(SineCore(
+                (self.char_a1, self.char_b0, self.char_b1),
+                inp.sine_lowcut, inp.sine_highcut, inp.character))
+        self.osc_state = 0
+        self.oscstate = 0
+
+    def pitch_q(self):
+        if self.kind == "sine":
+            return qint(float(self.pitch_voice))
+        return super().pitch_q()
+
+    # ------------------------------------------------------------ control
+    def _apply_voice_routes(self):
+        """applyModulationToLocalcopy for the frozen route vocabulary."""
+        inp = self.inp
+        cut = qint(inp.cutoff)
+        reso = qint(inp.reso)
+        emod = qint(inp.envmod)
+        vg = qint(inp.vca_db)
+        for src, dst, depth in inp.voice_routes:
+            val = self.fvel if src == VELOCITY_SRC else self.kt_word
+            d = qint(depth)
+            if dst == DEST_FU1_CUTOFF:
+                cut = sat(cut + qmul(d, val))
+            elif dst == DEST_FU1_RESO:
+                reso = sat(reso + qmul(d, val))
+            elif dst == DEST_FU1_FEGMOD:
+                emod = sat(emod + qmul(d, val))
+            elif dst == DEST_VCA_GAIN:
+                vg = sat(vg + qmul(d, val))
+            # unit-2 destinations: inert (unit off), unmodeled per the gate
+        self.mod_cutoff = cut
+        self.mod_reso = reso
+        self.mod_envmod = emod
+        self.mod_vca_db = vg
+        # keytrack modsource refresh AFTER route application (declared lag;
+        # pitch is constant per voice, so the value equals the ctor value)
+        self.kt_word = qint((self.pitch_voice - inp.keytrack_root) / 12.0)
+
+    def _calc_ctrldata(self):
+        if self.kind == "classic":
+            super()._calc_ctrldata()
+            return
+        inp = self.inp
+        self.aeg.process_block()
+        self.feg.process_block()
+        self._apply_voice_routes()
+        mw = inp.modwheel.value
+        cut = self.mod_cutoff
+        reso = self.mod_reso
+        for dst, depth in inp.scene_routes_mw:
+            d = qint(depth)
+            if dst == DEST_FU1_CUTOFF:
+                cut = sat(cut + qmul(d, mw))
+            elif dst == DEST_FU1_RESO:
+                reso = sat(reso + qmul(d, mw))
+        kt_semitones = qint(float(self.pitch_voice - inp.keytrack_root))
+        self.cutoff_a = cut + qmul(qint(inp.fu_kta), kt_semitones) \
+            + qmul(self.mod_envmod, self.feg.output)
+        self.reso_a = reso
+        # v1 control-plane words are classic-path only; sine streams zeros
+        self.ctrl_pmi = 0
+        self.ctrl_pitchmult = 0
+        self.ctrl_a_cov = 0
+        self.ctrl_hpf_target = 0
+        if self.aeg.is_idle():
+            self.keep_playing = False
+
+    def _gain_target(self):
+        if self.kind == "sine":
+            g = db_to_linear(getattr(self, "mod_vca_db", qint(self.inp.vca_db)))
+            return qmul(g, self.aeg.output)
+        return super()._gain_target()
+
+    # ---------------------------------------------------------------- osc
+    def osc_process_block(self, block_index):
+        if self.kind == "classic":
+            return super().osc_process_block(block_index)
+        if self.inp.fm_mode == 2:
+            blk3 = self.sine[2].block(self.sine_omega[2], 0, None)
+            blk2 = self.sine[1].block(self.sine_omega[1], self.fm_depth, blk3)
+            blk1 = self.sine[0].block(self.sine_omega[0], self.fm_depth, blk2)
+        else:
+            # fm_switch 0: muted oscs 2/3 are not processed at all (engine
+            # process_block conditions); osc1 runs the quad recurrence
+            blk1 = self.sine[0].block(self.sine_omega[0], 0, None)
+        # osclevels[le_osc1] lag: level 1.0 constant (first-run snap) -> x1
+        self.last_oscout = list(blk1)
+        return blk1
+
+    # ----------------------------------------------------------- filter
+    def process_block(self, block_index, sceneout_l, sceneout_r, trace):
+        self._calc_ctrldata()
+        osc_out = self.osc_process_block(block_index)
+        self.cmu.make_coeffs(self.cutoff_a, self.reso_a)
+        self.ctrl_C = list(self.cmu.C)
+        self.ctrl_dC = list(self.cmu.dC)
+        self.last_oscout = list(osc_out)
+
+        lvl = amp_to_linear(qint(self.inp.o1_level))
+        gain_start = self.prev_gain
+        outl_start = self.prev_outl
+        self.fbp_gain = self._gain_target()
+        self.fbp_outl = self._ampl_target()
+        d_gain = self.fbp_gain - gain_start
+        d_outl = self.fbp_outl - outl_start
+
+        c = self.cmu.C
+        one = ONE
+        mix1 = self.inp.mix1
+        one_minus_mix1 = ONE - mix1
+        poles = self.fu_poles
+        f2_r0, f2_r1, f_clip = self.f_r0, self.f_r1, self.f_clip
+        f4_r0, f4_r1 = self.f4_r0, self.f4_r1
+        for k in range(BLOCK_SIZE_OS):
+            for i in range(N_COEF):
+                c[i] = sat(c[i] + self.cmu.dC[i])
+            dl = qmul(osc_out[k], lvl)
+            if poles == 12:
+                y = qmul(c[4], f2_r0) + qmul(c[6], dl) + qmul(c[5], f2_r1)
+                s1 = qmul(dl, c[2]) + qmul(c[0], f2_r0) - qmul(c[1], f2_r1)
+                s2 = qmul(c[1], f2_r0) + qmul(c[0], f2_r1)
+                f2_r0 = qmul(s1, f_clip)
+                f2_r1 = qmul(s2, f_clip)
+                f_clip = max(qint(0.1), one - qmul(c[7], qmul(y, y)))
+                yb = y
+            else:
+                # IIR24CFCquad: two coupled-form sections, shared C, one clip
+                y = qmul(c[4], f2_r0) + qmul(c[6], dl) + qmul(c[5], f2_r1)
+                s1 = qmul(dl, c[2]) + qmul(c[0], f2_r0) - qmul(c[1], f2_r1)
+                s2 = qmul(c[1], f2_r0) + qmul(c[0], f2_r1)
+                f2_r0 = qmul(s1, f_clip)
+                f2_r1 = qmul(s2, f_clip)
+                y2 = qmul(c[4], f4_r0) + qmul(c[6], y) + qmul(c[5], f4_r1)
+                s3 = qmul(y, c[2]) + qmul(c[0], f4_r0) - qmul(c[1], f4_r1)
+                s4 = qmul(c[1], f4_r0) + qmul(c[0], f4_r1)
+                f4_r0 = qmul(s3, f_clip)
+                f4_r1 = qmul(s4, f_clip)
+                f_clip = max(qint(0.1), one - qmul(c[7], qmul(y2, y2)))
+                yb = y2
+            # fc_serial1 Mix1 blend (ProcessFBQuad): x = in*(1-mix1) + FU1*mix1
+            xb = sat(qmul(dl, one_minus_mix1) + qmul(yb, mix1))
+            outv = qmul(xb, gain_start + qround(d_gain * (k + 1), 6))
+            ol = outl_start + qround(d_outl * (k + 1), 6)
+            sceneout_l[k] += qmul(outv, ol)
+            sceneout_r[k] += qmul(outv, ol)
+        self.f_r0, self.f_r1, self.f_clip = f2_r0, f2_r1, f_clip
+        self.f4_r0, self.f4_r1 = f4_r0, f4_r1
+        self.prev_gain = self.fbp_gain
+        self.prev_outl = self.fbp_outl
+
+        if trace is not None:
+            trace.checkpoint_voice(block_index, self)
+        return self.keep_playing
+
+
+class InputsV2:
+    """Schema-2 voice inputs (quickspit/bells sidecars) + applicability gate.
+
+    Fail-closed: any graph property outside the declared SXT-026a class
+    raises Refuse (the runner exits 2).  The class is frozen in
+    model/voice/README.md ("SXT-026a extension").
+    """
+
+    def __init__(self, inputs_path):
+        with open(inputs_path, encoding="utf-8") as f:
+            d = json.load(f)
+        if d.get("schema_version") != 2:
+            raise Refuse(f"{inputs_path}: expected schema_version 2")
+        n = d["not_in_graphs"]
+        g = d["graph_echo"]
+        self.preset_path = d["preset"]["path"]
+        self.voice_class = d["voice_class"]
+        self.scene_volume = n["scene_volume"]
+        self.vca_db = n["vca_level"]
+        self.master_db = n["master_volume"]
+        self.o1_level = n["level_o1"]
+        self.octave = int(g["osc1"]["oct"])
+        self.character = int(n["character"])
+        self.adsr = n["adsr"]
+        self.fadsr = n["fadsr"]
+        self.scene_octave = int(n.get("scene_octave", 0.0))
+        self.keytrack_root = int(n["keytrack_root"])
+        self.cutoff = n["fu0"]["cutoff"]
+        self.reso = n["fu0"]["resonance"]
+        self.envmod = n["fu0"]["envmod"]
+        self.fu_kta = n["fu0"]["keytrack"]
+        if int(n["fu0"]["type"]) not in (1, 2):
+            raise Refuse("filter unit 1 type not LP12/LP24")
+        self.fu_poles = {1: 12, 2: 24}[int(n["fu0"]["type"])]
+        self.mix1 = qint(min(1.0, 1.0 - g["bal"]))       # SetQFB FMix1
+        self.modwheel = Modwheel()
+        self._gate(n, g)
+
+        o1 = g["osc1"]
+        self.osc_kind = "classic" if o1["t"] == 0 else "sine"
+        if self.osc_kind == "sine":
+            self.sine_lowcut = o1["p"][3]
+            self.sine_highcut = o1["p"][4]
+            fm = g["fm"]
+            self.fm_mode = int(fm["sw"])         # 0: quad-only; 2: 3>2>1 chain
+            if fm["sw"] == 2:
+                self.fm_depth = db_to_linear(qint(fm["dep"]))
+            elif fm["sw"] == 0:
+                self.fm_depth = 0
+            else:
+                raise Refuse(f"fm_switch {fm['sw']} not in declared class {{0,2}}")
+            self._gate_sine_osc(g["osc2"], "osc2")
+            self._gate_sine_osc(g["osc3"], "osc3")
+            self.osc_pitch_offsets = [12 * int(o1["oct"]),
+                                      12 * int(g["osc2"]["oct"]),
+                                      12 * int(g["osc3"]["oct"])]
+            self.shape, self.pw1, self.pw2 = 0.0, 0.5, 0.5
+            self.submix, self.sync = 0.0, 0.0
+        else:
+            if g["fm"]["sw"] != 0:
+                raise Refuse("classic-kind fixture with FM routing: not in class")
+            if self.scene_octave != 0:
+                raise Refuse("classic-kind fixture with scene octave: not in class")
+            p = o1["p"]
+            self.shape, self.pw1, self.pw2 = p[0], p[1], p[2]
+            self.submix, self.sync = p[3], p[4]
+            self.sine_lowcut = self.sine_highcut = 0.0
+            self.fm_depth = 0
+            self.osc_pitch_offsets = [12 * int(o1["oct"]), 0, 0]
+
+        # modulation routes (order = md arrays = engine application order)
+        self.voice_routes = []
+        for r in g["md_scene_A"]["v"]:
+            src, dst = r[0], r[3]
+            if src not in VOICE_ROUTE_VOCAB or dst not in VOICE_ROUTE_VOCAB[src]:
+                raise Refuse(f"voice route {src}->{dst} outside declared class")
+            if dst in (DEST_FU2_CUTOFF, DEST_FU2_RESO, DEST_FU2_FEGMOD):
+                continue                         # unit 2 off: inert, unmodeled
+            self.voice_routes.append((src, dst, r[5]))
+        self.scene_routes_mw = []
+        self.scene_routes_fm = False
+        self.mod_cutoff_depth = 0.0
+        self.mod_reso_depth = 0.0
+        for r in g["md_scene_A"]["s"]:
+            src, dst = r[0], r[3]
+            if src not in SCENE_ROUTE_VOCAB or dst not in SCENE_ROUTE_VOCAB[src]:
+                raise Refuse(f"scene route {src}->{dst} outside declared class")
+            if dst == DEST_FM_DEPTH:
+                self.scene_routes_fm = True      # modwheel -> FM Depth
+            elif dst == DEST_FU1_CUTOFF:
+                self.mod_cutoff_depth = r[5]
+                self.scene_routes_mw.append((dst, r[5]))
+            elif dst == DEST_FU1_RESO:
+                self.mod_reso_depth = r[5]
+                self.scene_routes_mw.append((dst, r[5]))
+
+    # ------------------------------------------------------------- gates
+    def _gate(self, n, g):
+        if abs(n["scene_drift"]) > 0:
+            raise Refuse(f"scene drift {n['scene_drift']} != 0 (determinism gate)")
+        if abs(n["vca_velsense"]) > 0:
+            raise Refuse("vca_velsense != 0")
+        if abs(n["pan"]) > 0:
+            raise Refuse("scene pan != 0 (mono-bus class)")
+        if abs(n["level_pfg"]) > 0:
+            raise Refuse("pfg != 0")
+        if n["portamento"] != -8.0:
+            raise Refuse("portamento active")
+        if int(n["adsr"]["mode"]) != 0 or int(n["fadsr"]["mode"]) != 0:
+            raise Refuse("analog envelopes not in class")
+        if int(n["fadsr"]["d_s"]) != 0:
+            raise Refuse("filter env decay shape not in class")
+        if g.get("fbc") != 0:
+            raise Refuse("filter config not serial1")
+        if g.get("lc") != -72.0:
+            raise Refuse("lowcut not at off value")
+        if g.get("ws", {}).get("t", 0) != 0:
+            raise Refuse("waveshaper not off")
+        mix = g["mix"]
+        act = [k for k in ("o1", "o2", "o3", "noise", "ring_12", "ring_23")
+               if mix.get(k, [1, 1])[1] == 0]
+        if act != ["o1"]:
+            raise Refuse(f"active mixer paths {act} != ['o1']")
+        if g["fu1"]["t"] != 0:
+            raise Refuse("filter unit 2 not Off")
+        if self.fu_kta != 0.0:
+            raise Refuse("filter unit 1 keytrack param != 0")
+        if int(g["osc1"]["kt"]) != 1:
+            raise Refuse("osc1 keytrack not on")
+        if abs(g["osc1"]["pit"]) > 0:
+            raise Refuse("osc1 pitch offset != 0")
+        if g["osc1"]["uni"] != 1 or g["osc1"]["rt"] != 1:
+            raise Refuse("osc1 not unison-1/retrigger")
+        if self.character not in (0, 1):
+            raise Refuse("character Bright not in class")
+        if g["osc1"]["t"] == 1:
+            self._gate_sine_osc(g["osc1"], "osc1")
+        else:
+            if abs(g["osc1"]["p"][4]) > 0:
+                raise Refuse("classic sync param p[4] not 0")
+
+    def _gate_sine_osc(self, o, name):
+        if o["t"] != 1:
+            raise Refuse(f"{name} not Sine (the fm_3to2to1 chain requires Sine)")
+        if o["uni"] != 1 or o["rt"] != 1:
+            raise Refuse(f"{name} not unison-1/retrigger")
+        p = o["p"]
+        if int(p[0]) != SINE_SHAPE_MAX:
+            raise Refuse(f"{name} sine shape {p[0]} != 0 (frozen class)")
+        if int(p[2]) != 0:
+            raise Refuse(f"{name} sine FMmode {p[2]} != 0 (legacy path only)")
+        if not (-60.0 <= p[3] <= 70.0) or not (-60.0 <= p[4] <= 70.0):
+            raise Refuse(f"{name} lowcut/highcut outside param range")
+
+    # ------------------------------------------------------------ events
+    def check_sequence(self, seq):
+        if self.osc_kind == "sine":
+            for e in seq["events"]:
+                if e["type"] not in ("note_on", "note_off"):
+                    raise Refuse(
+                        f"event type {e['type']} refused for Sine-class preset "
+                        f"{self.preset_path}: FM depth must stay constant "
+                        "(the modwheel targets FM Depth in this class)")
+        for e in seq["events"]:
+            if e["type"] == "note_on":
+                p = e["note"] + 12 * self.scene_octave + self.osc_pitch_offsets[0]
+                if not (24 <= p <= 148):
+                    raise Refuse(f"note {e['note']} renders pitch {p} "
+                                 "outside declared [24,148]")

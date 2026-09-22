@@ -116,7 +116,8 @@
    },
    "voice_leaf_gate": {
     "": 1785,
-    "NOT_RUN": 1135
+    "NOT_RUN": 1134,
+    "NO_VERDICT": 1
    },
    "wavetable_leaf_gate": {
     "": 2392,
@@ -158,11 +159,11 @@
   },
   "model/integration/selection-scan.json": {
    "role": "structural input (pinned)",
-   "sha256": "0701198985c1e6b0d995846337f50c9715290d19fa8946005f859270420f26b6"
+   "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "7b106d078e1515c96449ed74ff5a1d12dd54c85d3595ee8dee96a3f15c453ba2"
+   "sha256": "a08578db00d53663dc9db7b1565ecf549c99194d82fd2afe573cf8df63613bb6"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -203,6 +204,10 @@
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
    "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
+  },
+  "reports/sxt-026a/EVIDENCE.md": {
+   "role": "evidence record for leaf voice:sine-fm-lp24-v2",
+   "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
   },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",
@@ -501,7 +506,7 @@
    },
    "fx:SXT-026a-voice-scope-extension": {
     "evidence_state": "OK",
-    "landed": false,
+    "landed": true,
     "support_ready": false,
     "verification": {}
    },
@@ -515,6 +520,15 @@
     }
    },
    "voice:attacky-slice": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "voice:sine-fm-lp24-v2": {
     "evidence_state": "OK",
     "landed": true,
     "support_ready": false,
@@ -560,9 +574,9 @@
  ],
  "per_bank": {
   "contributor": {
-   "adapted": 145,
+   "adapted": 144,
    "supported": 0,
-   "unresolved": 1700,
+   "unresolved": 1701,
    "unsupported": 1075
   },
   "factory": {
@@ -575,8 +589,7 @@
  "reconciliation": {
   "b4_prediction_x_headline": {
    "adapted-not-predicted|adapted": 164,
-   "supported|adapted": 1,
-   "supported|unresolved": 1682,
+   "supported|unresolved": 1683,
    "supported|unsupported": 2,
    "unresolved|unresolved": 582,
    "unsupported|unsupported": 1130
@@ -589,12 +602,6 @@
     "compile_codes": "send_levels_not_exported",
     "headline": "unsupported",
     "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp"
-   },
-   {
-    "b4_prediction": "supported",
-    "compile_codes": "",
-    "headline": "adapted",
-    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
    },
    {
     "b4_prediction": "supported",
@@ -620,9 +627,9 @@
  },
  "tool_version": "sxt-029-coverage/1.0.0",
  "totals": {
-  "adapted": 165,
+  "adapted": 164,
   "supported": 0,
-  "unresolved": 2264,
+  "unresolved": 2265,
   "unsupported": 1132
  }
 }

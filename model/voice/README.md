@@ -14,7 +14,110 @@ achieved numbers only.
   `graphs.jsonl` schema rev 1.0.0) + modulation routings from
   `corpus/normalized/graphs.jsonl`
 
-## Frozen word lengths
+## SXT-026a extension (issue #48) — generalized voice class, FROZEN
+
+The frozen class is extended (issue-body scope candidates: Sine oscillator,
+IIR24 coupled-form filter, velocity modulation routes, scene FM routing with
+muted FM sources, scene width at unison 1). The v1 (Classic/LP12) arithmetic
+below is unchanged; class-v1 fixtures render bit-identically. Schema-2 input
+sidecars (`*_inputs.json`, `extract_inputs_v2.py`) carry the parameterization;
+`InputsV2` enforces the class fail-closed (`Refuse` → exit 2).
+
+### Declared class bounds (fail-closed)
+
+* As v1: single scene A, poly playmode, serial-1, waveshaper/lowcut off,
+  o1-only mixer path, filter unit 2 Off, drift 0, portamento off, pan 0,
+  pfg 0, vca_velsense 0, character Warm/Neutral, digital envelopes
+  (`mode 0`, `d_s 0`; attack shape `a_s 1` or instant), osc1 keytrack on /
+  pitch offset 0 / unison 1 / retrigger on.
+* Filter unit 1: LP 12 dB **or LP 24 dB**, subtype Driven; `fu.keytrack` 0.
+* Osc 1 Classic (v1 paths; sync 0, scene octave 0) **or Sine** with
+  `sine_shape(mode) == 0`, `sine_FMmode == 0` (legacy path only), unison 1,
+  retrigger on; lowcut/highcut in [−60, 70] (modeled biquads); the legacy
+  path makes `sine_feedback` inert (never read) — any value accepted.
+* Sine + `fm_switch == 2` (`fm_3to2to1`): muted Sine oscs 2/3 run as the FM
+  source chain (osc2 FM'd by osc3, osc1 by osc2; `db_to_linear(fm_depth)`
+  depth). `fm_switch == 0`: oscs 2/3 are not processed at all (engine
+  process_block conditions) and osc1 runs the quadrature recurrence.
+  FM depth must be **constant for the fixture**: sequences carrying CC/controller
+  events are refused for Sine presets (the preset's modwheel scene route
+  targets FM Depth).
+* Modulation route vocabulary (order = md arrays): voice routes
+  velocity(1)/keytrack(2) → {fu1 cutoff 308, fu1 reso 309, fu1 feg-mod-amt
+  310, vca gain 298, fu2 314/315/318 (inert, unit off)}; scene routes
+  modwheel(6) → {fu1 cutoff/reso (v1), FM depth 260}. Anything else refuses.
+* Keytrack modsource output = `(state.pitch − keytrack_root)/12`, set at
+  voice creation and refreshed AFTER each control pass's route application
+  (declared 1-control-pass lag; constant per voice in this class).
+* Scene octave `oct`: `state.pitch = key + 12·oct`; per-osc pitch adds
+  `12·osc.octave`. Rendered pitches must lie in [24, 148].
+* Scene width is structurally inert in this class (serial-1: the width path
+  is only read for fc_stereo/fc_wide — SurgeVoice.cpp; A/B oracle probe
+  committed in `reports/sxt-026a/`).
+* Mono bus: L and R identical end-to-end (pan 0, width inert, serial-1
+  route filter sends oscs to L only).
+
+### Frozen Sine arithmetic (pinned: SineOscillator.cpp legacy path, FMmode 0)
+
+1. Non-FM block (quadrature): `set_rate(omega)` — `dr = cos w`, `di = sin w`
+   (double math, quantized once to Q10.21), then normalize `(r, i)`:
+   `n = 1/sqrt(r² + i²)` (double on the Q words), re-quantize; init state
+   `r = 0, i = −1` (retrigger). Per OS sample: `r' = dr·r − di·i`,
+   `i' = dr·i + di·r` (Q10.21 qmul round-half-up per product).
+   Value (mode 0) = `r`.
+2. FM block: phase accumulator **Q3.28 radians**, init 0 (retrigger); per OS
+   sample `phase += omega + qmul(fm_depth, master[k]) << (28−21)`, wrapped by
+   the pinned `clampToPiRange` (integer-exact: `y = phase + π_q28`,
+   `k = floor(y / 2π_q28)`, `phase = y − 2π_q28·k − π_q28`); value =
+   `fastsin(phase)` (mode 0). `fastsin/fastcos` are the pinned JUCE Pade
+   rationals evaluated in **exact integer arithmetic** (engine: float32 per
+   op) with ONE final round-half-up to Q10.21 — this introduces a
+   **declared audio-rate division**, diverging from cost assumption A-ALU-2
+   (recorded for SXT-016; the RTL implements it as a wide behavioral
+   divider).
+3. `omega = 2π·MIDI_0_FREQ·note_to_pitch(pitch)/96000` (table formula per
+   the declared deviation) quantized to Q3.28.
+4. `applyFilter` (per block, in place): lowcut `coeff_HP(ω/2, 0.707)` TDF2
+   biquad, then highcut `coeff_LP2B(ω/2, 0.707)` TDF2 biquad (coefficients
+   constant per preset, `calc_omega` table formula), then the shared
+   CharacterFilter (v1 component, per-osc state). FM sources are the
+   fully processed (post-filter, post-character) blocks.
+5. Output staging: pan 1/attenuation 1/playing-ramp 1 reduce to the identity;
+   mixer level lag is level 1.0 (first-run snap).
+
+### Frozen LP 24 dB/Driven arithmetic (pinned: Coeff_LP24, IIR24CFCquad)
+
+* Coefficient maker as v1 except `Map4PoleResonance(Driven)`:
+  `reso *= max(0, 1 − max(0, (f−58)·0.05))`, then `Q2inv = 1 − 1.05·clamp(reso, 0.001, 1)`
+  (clamps RESO, not `t`). Same `resoscale`, `boundFreq`, `clipscale`,
+  `ToCoupledForm`, `FromDirect` smoothing.
+* Per OS sample: two coupled-form sections sharing C[0..7] — section 1 over
+  `(f2_r0, f2_r1)` with input `x`, section 2 over `(f4_r0, f4_r1)` with
+  input `y`; ONE clipgain state `f_clip = max(0.1, 1 − C7·y2²)` applied to
+  all four registers; output `y2`.
+* Serial-1 Mix1 blend (fc_serial1 ProcessFBQuad): `x = in·(1−Mix1) + FU1(in)·Mix1`
+  with `Mix1 = min(1, 1 − bal)` (v1 presets: bal 0 ⇒ exact identity).
+  Mix2 = min(1, 1+bal) = 1 for bal ≥ 0; unit 2 off ⇒ B-path input 0.
+
+### Frozen parameterization boundary (model → RTL)
+
+* `init.hex` words 0–39: unchanged v1 layout. Appendix 40+: `osc_kind`,
+  `fu_poles`, `fm_depth`, `fm_mode`, `mix1`, `pitch_off1..3`, and per-osc
+  lowcut/highcut biquad coefficients (hp/lp × 3, b0 b1 b2 a1 a2).
+* `ctrl.hex` slot records grow 32 → 40 words: append `fvel`, `kt_word`,
+  `sine_omega1..3` (Q3.28). Classic voices stream zeros there.
+* Checkpoints: unchanged list + `f4_r0`, `f4_r1` (trace format 2).
+
+### Applicability / negative controls
+
+`InputsV2`/`run_model.py` REFUSE (exit 2) anything outside the class: e.g.
+Mono-playmode presets (Quickspit — arithmetic overlap only, never a fixture),
+other oscillator/filter types, out-of-vocabulary routes, CC events on Sine
+presets, out-of-range pitches. The wrong-parameterization RTL mutant
+(`rtl/voice/voice_wrongparam_mutant.sv`, forces `fu_poles` 12) must FAIL
+exactness on LP24 fixtures; the v1 qmul-bias mutant must still FAIL.
+
+## Frozen word lengths (v1)
 
 | Domain | Format | Notes |
 |---|---|---|
@@ -22,6 +125,7 @@ achieved numbers only.
 | envelope phase / sustain / rates | **Q2.29** (signed 32-bit) | rates are control-plane words computed from the pinned rate table |
 | `pitchmult_inv` | **Q13.18** | declared pitch range [24, 148] (asserted) |
 | sinc sub-sample fraction (`lipol`) | 16-bit integer | derivative table pre-scaled by 1/65536 |
+| Sine phase / omega (SXT-026a) | **Q3.28** (signed 32-bit, radians) | 2^-28 rad; drift ≤ 3e-3 rad over the longest fixture |
 
 Arithmetic rules (FROZEN):
 

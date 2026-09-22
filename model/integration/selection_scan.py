@@ -59,7 +59,16 @@ def sha256_file(path):
 
 
 def gates(g):
-    """Returns (declared_tier3_failures, model_tier4_failures, legal_fx_list)."""
+    """Returns (declared_tier3_failures, model_tier4_failures, legal_fx_list).
+
+    Tier 4 encodes the SXT-026a EXTENDED landed voice-model arithmetic
+    (issue #48): the SXT-022 v1 class (Classic/LP12) plus the Sine legacy
+    oscillator (shape 0, FMmode 0, unison 1), the fm_3to2to1 muted-source
+    chain, LP 24 dB/Driven, the serial-1 Mix1 blend, and the frozen
+    velocity/keytrack/modwheel route vocabulary.  Scene width is
+    structurally inert at serial-1 (SurgeVoice.cpp reads width only for
+    fc_stereo/fc_wide) and is no longer a tier-4 gate.
+    """
     gg = g["g"]
     f3, f4 = set(), set()
     if gg.get("sm") != 0:
@@ -93,20 +102,17 @@ def gates(g):
     if sc["fu"][1].get("t") != 0:
         f3.add("filter_unit2_off")
 
-    # Tier 4: landed voice-model arithmetic gates (Attacky-slice reach)
-    if o1.get("t") != 0:
-        f4.add("osc1_classic")
+    # ---- Tier 4: landed voice-model arithmetic (SXT-022 v1 + SXT-026a) ----
+    sine = o1.get("t") == 1
     if o1.get("kt") != 1:
         f4.add("osc1_keytrack")
     if o1.get("pit") != 0.0:
         f4.add("osc1_pitch_zero")
     fu0 = sc["fu"][0]
-    if not (fu0.get("t") == 1 and fu0.get("st") == 1):
-        f4.add("filter1_lp12_driven")
+    if not (fu0.get("t") in (1, 2) and fu0.get("st") == 1):
+        f4.add("filter1_lp12_lp24_driven")
     if fu0.get("kt") != 0.0:
         f4.add("filter1_keytrack_off")
-    if sc.get("wid") != 0.0:
-        f4.add("scene_width_zero")
     if sc.get("pan") != 0.0:
         f4.add("scene_pan_zero")
     if sc.get("pfg") != 0.0:
@@ -120,12 +126,44 @@ def gates(g):
     md = gg["md"]
     if md.get("g"):
         f4.add("no_global_mod")
+
+    VOICE_ROUTE_DESTS = {298, 308, 309, 310, 314, 315, 318}
     s0 = md["s"][0]
-    if s0.get("v"):
-        f4.add("no_velocity_mod")
+    for r in s0.get("v", []):
+        if r[0] not in (1, 2) or r[3] not in VOICE_ROUTE_DESTS:
+            f4.add("voice_route_vocabulary")
     for r in s0.get("s", []):
-        if r[0] != 6 or r[4] not in ("A Filter 1 Cutoff", "A Filter 1 Resonance"):
-            f4.add("modwheel_to_filter1_only")
+        if r[0] != 6 or r[3] not in (308, 309, 260):
+            f4.add("scene_route_vocabulary")
+
+    if sine:
+        p = o1["p"]
+        if int(p[0]) != 0:
+            f4.add("sine_shape_zero")
+        if int(p[2]) != 0:
+            f4.add("sine_fmmode_zero")
+        if not (-60.0 <= p[3] <= 70.0 and -60.0 <= p[4] <= 70.0):
+            f4.add("sine_lowcut_highcut_range")
+        fm = sc.get("fm", {})
+        if fm.get("sw") not in (0, 2):
+            f4.add("fm_switch_off_or_3to2to1")
+        elif fm.get("sw") == 2:
+            for oi in (1, 2):
+                o = sc["osc"][oi]
+                if o.get("t") != 1 or o.get("uni") != 1 or o.get("rt") != 1:
+                    f4.add("fm_source_sine_uni1_rt1")
+                po = o["p"]
+                if int(po[0]) != 0 or int(po[2]) != 0:
+                    f4.add("fm_source_shape_fmmode")
+                if not (-60.0 <= po[3] <= 70.0 and -60.0 <= po[4] <= 70.0):
+                    f4.add("fm_source_lowcut_highcut_range")
+    else:
+        if abs(o1["p"][4]) > 0:
+            f4.add("osc1_classic_sync_zero")
+        if abs(sc.get("oct", 0.0)) > 0:
+            f4.add("classic_scene_octave_zero")
+        if sc.get("fm", {}).get("sw") != 0:
+            f4.add("classic_fm_switch_off")
 
     fxt = []
     for x in gg["fx"]:
@@ -238,21 +276,24 @@ def main():
                             "Reverb1-only is the richest legal FX available.",
             "voice": "Sine osc (uni 1, retrig on), LP 24 dB/Driven unit 1, "
                      "unit 2 Off, Warm, Single/Poly -- INSIDE the Tier-3 "
-                     "declared structural gates but OUTSIDE the Tier-4 landed "
-                     "voice-model arithmetic (see README finding F-1).",
+                     "declared structural gates and, since SXT-026a (#48), "
+                     "INSIDE the extended Tier-4 landed voice-model "
+                     "arithmetic (Sine legacy path + fm_3to2to1 + LP24CFC).",
         },
         "finding": {
             "id": "F-1",
-            "text": "No compiled corpus preset carrying EQ/Reverb1 FX is "
-                    "renderable by the landed SXT-022 voice-model arithmetic: "
-                    "the unique Tier-4 survivor (Attacky) carries no FX. The "
-                    "integrated path therefore uses the declared FX-leaf "
-                    "input boundary (the engine's own all-off dry bus of the "
-                    "same preset+sequence) for the voice stage, which makes "
-                    "the configuration ADAPTED -- it can never count as a "
-                    "supported preset. Routed as the blocked dependency "
-                    "(voice-slice extension); the wet-preset gate itself is "
-                    "not weakened.",
+            "status": "RESOLVED (SXT-026a, issue #48)",
+            "text": "As raised by SXT-025 against the SXT-022 v1 arithmetic: "
+                    "no compiled corpus preset carrying EQ/Reverb1 FX was "
+                    "renderable by the landed voice model (unique Tier-4 "
+                    "survivor Attacky carries no FX), forcing the adapted "
+                    "dry-bus-substituted integration. RESOLVED by the "
+                    "SXT-026a parameterized voice class: the unique Tier-3 "
+                    "survivor (Hell's Bells) is now the unique Tier-4 "
+                    "survivor WITH FX (send2 Reverb 1), so the integrated "
+                    "path can use the ORIGINAL voice stage. Fidelity "
+                    "budgets and support status for that configuration are "
+                    "recorded in reports/sxt-026a/EVIDENCE.md, not here.",
         },
     }
     with open(OUT, "w", encoding="utf-8") as f:

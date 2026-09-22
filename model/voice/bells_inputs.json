@@ -1,0 +1,288 @@
+{
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "graph_echo": {
+    "bal": 0.0,
+    "ch": 0,
+    "chn": "Warm",
+    "fb": 0.0,
+    "fbc": 0,
+    "fm": {
+      "dep": 0.0,
+      "sw": 2
+    },
+    "fu0": {
+      "cut": -22.987514,
+      "em": 12.342865,
+      "kt": 0.0,
+      "res": 0.0,
+      "st": 1,
+      "stn": "Driven",
+      "t": 2,
+      "tn": "LP 24 dB"
+    },
+    "fu1": {
+      "cut": -54.037518,
+      "em": 23.657158,
+      "kt": 0.0,
+      "res": 0.120536,
+      "st": 0,
+      "stn": "None",
+      "t": 0,
+      "tn": "Off"
+    },
+    "ktR": 60,
+    "lc": -72.0,
+    "md_scene_A": {
+      "s": [
+        [
+          6,
+          0,
+          0,
+          260,
+          "A FM Depth",
+          -48.0,
+          -0.666667
+        ]
+      ],
+      "v": [
+        [
+          1,
+          0,
+          0,
+          298,
+          "A VCA Gain",
+          -1e-06,
+          -0.0
+        ],
+        [
+          1,
+          0,
+          0,
+          308,
+          "A Filter 1 Cutoff",
+          25.312506,
+          0.194712
+        ],
+        [
+          1,
+          0,
+          0,
+          310,
+          "A Filter 1 FEG Mod Amount",
+          23.657139,
+          0.123214
+        ],
+        [
+          1,
+          0,
+          0,
+          314,
+          "A Filter 2 Cutoff",
+          42.862514,
+          0.329712
+        ],
+        [
+          1,
+          0,
+          0,
+          318,
+          "A Filter 2 FEG Mod Amount",
+          45.771442,
+          0.238393
+        ],
+        [
+          2,
+          0,
+          0,
+          308,
+          "A Filter 1 Cutoff",
+          4.387498,
+          0.03375
+        ]
+      ]
+    },
+    "mix": {
+      "noise": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "o1": [
+        1.0,
+        0,
+        0,
+        1
+      ],
+      "o2": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "o3": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "ring_12": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "ring_23": [
+        1.0,
+        1,
+        0,
+        1
+      ]
+    },
+    "oct": 2,
+    "oct_": 2,
+    "osc1": {
+      "kt": 1,
+      "oct": 0,
+      "p": [
+        0,
+        0.0,
+        0,
+        -60.0,
+        70.0,
+        0.15,
+        1
+      ],
+      "pit": 0.0,
+      "rt": 1,
+      "t": 1,
+      "tn": "Sine",
+      "udet": 0.15,
+      "uni": 1
+    },
+    "osc2": {
+      "kt": 1,
+      "oct": -2,
+      "p": [
+        0,
+        0.0,
+        0,
+        -60.0,
+        70.0,
+        0.2,
+        1
+      ],
+      "pit": 0.0,
+      "rt": 1,
+      "t": 1,
+      "tn": "Sine",
+      "udet": 0.2,
+      "uni": 1
+    },
+    "osc3": {
+      "kt": 1,
+      "oct": -2,
+      "p": [
+        0,
+        0.0,
+        0,
+        -60.0,
+        70.0,
+        0.2,
+        1
+      ],
+      "pit": 0.0,
+      "rt": 1,
+      "t": 1,
+      "tn": "Sine",
+      "udet": 0.2,
+      "uni": 1
+    },
+    "pan": 0.0,
+    "pfg": 0.0,
+    "pm": 0,
+    "poly": 16,
+    "porta": -8.0,
+    "vca": 5.14286,
+    "vol": 0.0,
+    "vs": 0.0,
+    "wid": 1.0
+  },
+  "issue": "SXT-026a",
+  "not_in_graphs": {
+    "adsr": {
+      "a": -8.0,
+      "a_s": 1.0,
+      "d": 0.0,
+      "d_s": 0.0,
+      "mode": 0.0,
+      "r": 0.36250200867652893,
+      "r_s": 2.0,
+      "s": 1.0
+    },
+    "character": 0.0,
+    "fadsr": {
+      "a": -8.0,
+      "a_s": 0.0,
+      "d": -0.6767849922180176,
+      "d_s": 0.0,
+      "mode": 0.0,
+      "r": 0.1589300036430359,
+      "r_s": 0.0,
+      "s": 0.0
+    },
+    "fu0": {
+      "cutoff": -22.98751449584961,
+      "envmod": 12.342864990234375,
+      "keytrack": 0.0,
+      "resonance": 0.0,
+      "subtype": 1.0,
+      "type": 2.0
+    },
+    "keytrack_root": 60.0,
+    "level_o1": 1.0,
+    "level_pfg": 0.0,
+    "lfo1": {
+      "attack": -8.0,
+      "decay": 5.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0.0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1.0,
+      "unipolar": 0.0
+    },
+    "lowcut": -72.0,
+    "master_volume": -2.025745391845703,
+    "pan": 0.0,
+    "polylimit": 16.0,
+    "portamento": -8.0,
+    "scene_drift": 0.0,
+    "scene_octave": 2.0,
+    "scene_volume": 0.6919639706611633,
+    "send_levels": [
+      0.0,
+      0.9348220229148865
+    ],
+    "vca_level": 5.142859935760498,
+    "vca_velsense": 0.0,
+    "width": 1.0
+  },
+  "preset": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "graphs_sha256_of_line_source": "corpus/normalized/graphs.jsonl",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+  },
+  "schema_version": 2,
+  "voice_class": "sine-fm-lp24-v2"
+}

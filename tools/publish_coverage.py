@@ -85,7 +85,7 @@ STRUCTURAL_INPUTS = {
     "reports/sxt-027/leaf-backlog.json": "76e526549c1cca7cb6f070640c1a1b4e5ee5364be1992adf66305df917c8ebd2",
     "reports/sxt-028/leaves-filed.json": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4",
     "reports/sxt-028/leaf-backlog.json": "8881f83174694606dcb819b7378947c9c99f802f2db7aef534f03a4c608b2fa8",
-    SELECTION_SCAN: "0701198985c1e6b0d995846337f50c9715290d19fa8946005f859270420f26b6",
+    SELECTION_SCAN: "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f",
 }
 
 STATUS_VOCAB = ["PASS", "FAIL", "NOT_RUN", "BLOCKED", "NO_VERDICT", "STALE"]
@@ -393,10 +393,17 @@ def run(repo: Path, args) -> None:
             )
         elif "polylimit_reduction_required" in codes:
             reasons.add("also_requires_edit:polylimit_reduction_required")
-        if p == f1_path:
+        # SXT-026a (#48) resolved finding F-1: the adapted-by-substitution
+        # status holds only while the voice leaf does NOT fixture-verify the
+        # F-1 preset's original voice stage (fail-closed against the table).
+        if p == f1_path and p not in fixture_verified:
             adapted = True
             reasons.add(
                 "adapted_edit:sxt025_F1_voice_boundary(voice-stage-host-side;#48-blocks-original-voice)"
+            )
+        elif p == f1_path:
+            reasons.add(
+                "f1_resolved:SXT-026a-original-voice-stage(fixture-verified;#48)"
             )
 
         # voice leaf gate (leaf gates are reached only past the structural
@@ -421,7 +428,8 @@ def run(repo: Path, args) -> None:
                     v = vs["verification"]
                     if v.get("model_vs_reference") == "NO_VERDICT":
                         reasons.add(
-                            "voice_leaf_caveat:sxt022-model-vs-reference-mixed-vs-proposed(1-of-3-pass;freeze-#12)"
+                            "voice_leaf_caveat:model-vs-reference-NO_VERDICT"
+                            "-vs-proposed(ledger-note;freeze-#12)"
                         )
                     else:
                         reasons.add("voice_leaf_verification_incomplete")
@@ -432,7 +440,10 @@ def run(repo: Path, args) -> None:
                 )
             else:
                 voice_gate = "NOT_RUN"
-                reasons.add("voice_leaf_not_landed:SXT-026a(#48)+voice_leaves(#66-#77,backlog)")
+                reasons.add(
+                    "voice_leaf_scope_exceeded:outside-fixture-verified-set"
+                    "(SXT-026a;voice-family-leaves-#66-#77-backlog)"
+                )
 
         # fx leaves gate (in-bundle classes only; out-of-bundle classes on
         # rejected/unresolved rows are already carried by their scan codes

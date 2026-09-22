@@ -148,7 +148,7 @@ def test_comparator_detects_mismatch(tmp_path):
         }],
     }
     lines = [
-        "T 0 0 60 1 1 4 5 1 4 5 6 1 7 8 9 10 11 12 13 0 14 15 16 17 17 17 17 17 17 17 17",
+        "T 0 0 60 1 1 4 5 1 4 5 6 1 7 8 9 10 11 12 13 0 14 15 16 17 17 17 17 17 17 17 17 0 0",
         "O 0 0 1 2 3",
         "M 0 100", "M 0 -200", "M 0 300",
     ]
@@ -156,7 +156,7 @@ def test_comparator_detects_mismatch(tmp_path):
     with open(trace, "w") as f:
         f.write("\n".join(lines) + "\n")
     checked, fails = compare(model_trace, parse_tb(str(trace)))
-    assert not fails and checked["mono"] == 3 and checked["fields"] == 27
+    assert not fails and checked["mono"] == 3 and checked["fields"] == 29
 
     lines[3] = "M 0 101"                                # flip one LSB
     with open(trace, "w") as f:

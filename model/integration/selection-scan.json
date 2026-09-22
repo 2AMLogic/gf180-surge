@@ -1,69 +1,69 @@
 {
- "claim_scope": "preset-selection rationale only; no fidelity, support, or quality claim. Selection is forced by fail-closed gates, not tuned.",
- "finding": {
-  "id": "F-1",
-  "text": "No compiled corpus preset carrying EQ/Reverb1 FX is renderable by the landed SXT-022 voice-model arithmetic: the unique Tier-4 survivor (Attacky) carries no FX. The integrated path therefore uses the declared FX-leaf input boundary (the engine's own all-off dry bus of the same preset+sequence) for the voice stage, which makes the configuration ADAPTED -- it can never count as a supported preset. Routed as the blocked dependency (voice-slice extension); the wet-preset gate itself is not weakened."
- },
- "inputs": {
-  "compile_corpus_scan": "reports/sxt-020/compile-corpus-scan.json",
-  "compiler": "compiler/compile.py (SXT-020, unmodified)",
-  "graphs_jsonl_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
- },
- "issue": "SXT-025 (#18)",
- "provenance": {
-  "image_recompile_note": "image recompiled at format sxt-020-patch-image/1.1.0 (asset-manifest addition, SXT-026); selection unchanged; sha256 updated"
- },
- "selection": {
-  "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
-  "compiled_image": "Hell_s_Bells__e499f78d.image.bin",
-  "compiled_image_sha256": "68d22deacd744b9f400061a2ef7dc94da43775175f43d955f278cd73581fae8f",
-  "fx_composition": [
-   [
-    "send2",
-    "Reverb 1"
-   ]
-  ],
-  "fx_rationale": "Reverb1+EQ > Reverb1-only > EQ-only ranking: no Reverb1+EQ preset survives Tier 2 (or any near relaxation of the voice gates); the unique Tier-3 survivor carries exactly one Reverb 1 (send2), so Reverb1-only is the richest legal FX available.",
-  "image_format_version": "sxt-020-patch-image/1.1.0",
-  "normalized_graph_sha256": "e499f78df5664012717dd2961944502846e28cf7",
-  "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
-  "voice": "Sine osc (uni 1, retrig on), LP 24 dB/Driven unit 1, unit 2 Off, Warm, Single/Poly -- INSIDE the Tier-3 declared structural gates but OUTSIDE the Tier-4 landed voice-model arithmetic (see README finding F-1)."
- },
- "tier3_survivors_with_legal_fx": [
-  {
-   "fx": [
-    [
-     "send2",
-     "Reverb 1"
-    ]
-   ],
-   "landed_voice_model_failures": [
-    "filter1_lp12_driven",
-    "modwheel_to_filter1_only",
-    "no_velocity_mod",
-    "osc1_classic",
-    "scene_width_zero"
-   ],
-   "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
-  }
- ],
- "tier4_survivors_any_fx": [
-  {
-   "fx": [],
-   "path": "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
+  "claim_scope": "preset-selection rationale only; no fidelity, support, or quality claim. Selection is forced by fail-closed gates, not tuned.",
+  "finding": {
+    "id": "F-1",
+    "status": "RESOLVED (SXT-026a, issue #48)",
+    "text": "As raised by SXT-025 against the SXT-022 v1 arithmetic: no compiled corpus preset carrying EQ/Reverb1 FX was renderable by the landed voice model (unique Tier-4 survivor Attacky carries no FX), forcing the adapted dry-bus-substituted integration. RESOLVED by the SXT-026a parameterized voice class: the unique Tier-3 survivor (Hell's Bells) is now the unique Tier-4 survivor WITH FX (send2 Reverb 1), so the integrated path can use the ORIGINAL voice stage. Fidelity budgets and support status for that configuration are recorded in reports/sxt-026a/EVIDENCE.md, not here."
   },
-  {
-   "fx": [],
-   "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  "inputs": {
+    "compile_corpus_scan": "reports/sxt-020/compile-corpus-scan.json",
+    "compiler": "compiler/compile.py (SXT-020, unmodified)",
+    "graphs_jsonl_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
+  },
+  "issue": "SXT-025 (#18)",
+  "selection": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "compiled_image": "Hell_s_Bells__e499f78d.image.bin",
+    "compiled_image_sha256": "68d22deacd744b9f400061a2ef7dc94da43775175f43d955f278cd73581fae8f",
+    "fx_composition": [
+      [
+        "send2",
+        "Reverb 1"
+      ]
+    ],
+    "fx_rationale": "Reverb1+EQ > Reverb1-only > EQ-only ranking: no Reverb1+EQ preset survives Tier 2 (or any near relaxation of the voice gates); the unique Tier-3 survivor carries exactly one Reverb 1 (send2), so Reverb1-only is the richest legal FX available.",
+    "normalized_graph_sha256": "e499f78df5664012717dd2961944502846e28cf7",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "voice": "Sine osc (uni 1, retrig on), LP 24 dB/Driven unit 1, unit 2 Off, Warm, Single/Poly -- INSIDE the Tier-3 declared structural gates and, since SXT-026a (#48), INSIDE the extended Tier-4 landed voice-model arithmetic (Sine legacy path + fm_3to2to1 + LP24CFC)."
+  },
+  "tier3_survivors_with_legal_fx": [
+    {
+      "fx": [
+        [
+          "send2",
+          "Reverb 1"
+        ]
+      ],
+      "landed_voice_model_failures": [],
+      "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+    }
+  ],
+  "tier4_survivors_any_fx": [
+    {
+      "fx": [
+        [
+          "send2",
+          "Reverb 1"
+        ]
+      ],
+      "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+    },
+    {
+      "fx": [],
+      "path": "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
+    },
+    {
+      "fx": [],
+      "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+    }
+  ],
+  "tier_counts": {
+    "compiled": 1683,
+    "tier1_fx_legal": 186,
+    "tier2_scene_playmode": 122,
+    "tier3_declared_voice_gates": 1,
+    "tier4_landed_voice_model_any_fx": 3,
+    "tier4_landed_voice_model_with_fx": 1,
+    "total": 3561
   }
- ],
- "tier_counts": {
-  "compiled": 1683,
-  "tier1_fx_legal": 186,
-  "tier2_scene_playmode": 122,
-  "tier3_declared_voice_gates": 1,
-  "tier4_landed_voice_model_any_fx": 2,
-  "tier4_landed_voice_model_with_fx": 0,
-  "total": 3561
- }
 }
