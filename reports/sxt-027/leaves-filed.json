@@ -1,0 +1,207 @@
+{
+  "artifact": "sxt-027-voice-leaves-filed",
+  "backlog_note": "Remaining leaves (reports/sxt-027/leaf-backlog.json) are filed later in recovery order per the plan's allocation table; zero-basis leaves are explicitly deferred there, never silently dropped.",
+  "backlog_size": 60,
+  "claim_scope": "Filing record only. These are PLANNING issues, not implementations: no support, fidelity, preset-quality, cost-fit, or hardware claim is made or implied. Recovery counts are structural requirement attributions; essentiality UNVERIFIED (see essentiality caveat in the plan).",
+  "filed_under_issue": 20,
+  "first_class_f1_leaf": {
+    "issue": 48,
+    "leaf_key": "voice_slice_generalization",
+    "note": "Already filed before this run (SXT-025 finding F-1: the landed voice leaf covers only Attacky's exact arithmetic). The generator neither re-filed it nor allocated an SXT number for it; every filed leaf depends on it.",
+    "recovery_basis_count": 166,
+    "sxt": "SXT-026a"
+  },
+  "generator_run": {
+    "backlog_artifact": "reports/sxt-027/leaf-backlog.json",
+    "inputs": {
+      "compile_scan": "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6",
+      "graphs": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+      "prediction": "ec5b5ab2f14b82cd3946afeb873ddb4777fd5a96d7b8ca54c2d564d168b8e735",
+      "selection_scan": "2232d4ce4e23448aab8f7f3e66e19ddca813fe0cc23015eb75887192fbd3f6f5",
+      "slates": {
+        "slate-256-balanced.json": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
+        "slate-256-contributor-lean.json": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e",
+        "slate-256-factory-lean.json": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883"
+      }
+    },
+    "plan_artifact": "reports/sxt-027/leaf-plan.json"
+  },
+  "leaves": [
+    {
+      "corpus_b4_supported_count": 1223,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp"
+      ],
+      "issue": 66,
+      "leaf_key": "mod_behavior:lfo",
+      "newly_enabled_preset_hashes": 122,
+      "recovery_basis_count": 122,
+      "sxt": "032",
+      "title": "SXT-032: voice leaf \u2014 modulation behavior: lfo"
+    },
+    {
+      "corpus_b4_supported_count": 918,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+        "resources/data/patches_3rdparty/Emu/Plucks/Horn Ring Boops.fxp"
+      ],
+      "issue": 67,
+      "leaf_key": "osc_family:Classic",
+      "newly_enabled_preset_hashes": 94,
+      "recovery_basis_count": 94,
+      "sxt": "033",
+      "title": "SXT-033: voice leaf \u2014 oscillator family: Classic"
+    },
+    {
+      "corpus_b4_supported_count": 794,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp"
+      ],
+      "issue": 68,
+      "leaf_key": "voice_topology:unison_stack",
+      "newly_enabled_preset_hashes": 92,
+      "recovery_basis_count": 92,
+      "sxt": "034",
+      "title": "SXT-034: voice leaf \u2014 unison stack topology (>1 voice)"
+    },
+    {
+      "corpus_b4_supported_count": 821,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+        "resources/data/patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp",
+        "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp"
+      ],
+      "issue": 69,
+      "leaf_key": "mod_behavior:modwheel",
+      "newly_enabled_preset_hashes": 91,
+      "recovery_basis_count": 91,
+      "sxt": "035",
+      "title": "SXT-035: voice leaf \u2014 modulation behavior: modwheel"
+    },
+    {
+      "corpus_b4_supported_count": 757,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp"
+      ],
+      "issue": 70,
+      "leaf_key": "mod_behavior:velocity",
+      "newly_enabled_preset_hashes": 86,
+      "recovery_basis_count": 86,
+      "sxt": "036",
+      "title": "SXT-036: voice leaf \u2014 modulation behavior: velocity"
+    },
+    {
+      "corpus_b4_supported_count": 515,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+        "resources/data/patches_3rdparty/Emu/Drums/T9 Tom.fxp"
+      ],
+      "issue": 71,
+      "leaf_key": "filter_type:LP 12 dB",
+      "newly_enabled_preset_hashes": 70,
+      "recovery_basis_count": 70,
+      "sxt": "037",
+      "title": "SXT-037: voice leaf \u2014 filter algorithm: LP 12 dB"
+    },
+    {
+      "corpus_b4_supported_count": 459,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Plucks/Main Brass.fxp"
+      ],
+      "issue": 72,
+      "leaf_key": "filter_type:LP 24 dB",
+      "newly_enabled_preset_hashes": 49,
+      "recovery_basis_count": 49,
+      "sxt": "038",
+      "title": "SXT-038: voice leaf \u2014 filter algorithm: LP 24 dB"
+    },
+    {
+      "corpus_b4_supported_count": 393,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+        "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Disturbances.fxp"
+      ],
+      "issue": 73,
+      "leaf_key": "filter_type:LP Legacy Ladder",
+      "newly_enabled_preset_hashes": 45,
+      "recovery_basis_count": 45,
+      "sxt": "039",
+      "title": "SXT-039: voice leaf \u2014 filter algorithm: LP Legacy Ladder"
+    },
+    {
+      "corpus_b4_supported_count": 313,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+        "resources/data/patches_3rdparty/Emu/Drums/Mort Snare.fxp",
+        "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp"
+      ],
+      "issue": 74,
+      "leaf_key": "osc_family:Sine",
+      "newly_enabled_preset_hashes": 38,
+      "recovery_basis_count": 38,
+      "sxt": "040",
+      "title": "SXT-040: voice leaf \u2014 oscillator family: Sine"
+    },
+    {
+      "corpus_b4_supported_count": 287,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+        "resources/data/patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp"
+      ],
+      "issue": 75,
+      "leaf_key": "mod_behavior:slfo",
+      "newly_enabled_preset_hashes": 36,
+      "recovery_basis_count": 36,
+      "sxt": "041",
+      "title": "SXT-041: voice leaf \u2014 modulation behavior: slfo"
+    },
+    {
+      "corpus_b4_supported_count": 310,
+      "fixture_carriers": [
+        "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp",
+        "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Autumn 2.fxp",
+        "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Disturbances.fxp"
+      ],
+      "issue": 76,
+      "leaf_key": "mod_behavior:keytrack",
+      "newly_enabled_preset_hashes": 34,
+      "recovery_basis_count": 34,
+      "sxt": "042",
+      "title": "SXT-042: voice leaf \u2014 modulation behavior: keytrack"
+    },
+    {
+      "corpus_b4_supported_count": 159,
+      "fixture_carriers": [
+        "resources/data/patches_factory/Basses/Bass 2.fxp",
+        "resources/data/patches_factory/Basses/Bass 5.fxp",
+        "resources/data/patches_factory/Basses/Digibass.fxp"
+      ],
+      "issue": 77,
+      "leaf_key": "playmode:Mono (Single Trigger & Fingered Portamento)",
+      "newly_enabled_preset_hashes": 29,
+      "recovery_basis_count": 29,
+      "sxt": "043",
+      "title": "SXT-043: voice leaf \u2014 playmode submode: Mono (Single Trigger & Fingered Portamento)"
+    }
+  ],
+  "ledger_landed": {
+    "issue": 19,
+    "leaf_key": "osc_family:Wavetable",
+    "note": "Landed/closed before this run; excluded from candidacy.",
+    "sxt": "SXT-026"
+  },
+  "schema_version": "sxt-027-leaves-filed/1.0.0",
+  "tool_version": "sxt-027-leaf-gen/1.0.0"
+}
