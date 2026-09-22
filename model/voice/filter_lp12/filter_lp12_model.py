@@ -161,8 +161,12 @@ class LP12CoeffMaker:
 
     def make_coeffs(self, freq, reso):
         """makeCoeffs(freq, reso, fut_lp12, subtype); freq semitones rel A440."""
-        freq = limit_i(freq, qint(CUT_SCOPE_MIN), qint(CUT_SCOPE_MAX))
-        reso = limit_i(reso, qint(RESO_MIN), qint(RESO_MAX))
+        if not (qint(CUT_SCOPE_MIN) <= freq <= qint(CUT_SCOPE_MAX)):
+            raise Refuse(f"cutoff {freq / float(ONE):.3f} st outside the declared "
+                         f"scope [{CUT_SCOPE_MIN}, {CUT_SCOPE_MAX}]")
+        if not (qint(RESO_MIN) <= reso <= qint(RESO_MAX)):
+            raise Refuse(f"resonance {reso / float(ONE):.4f} outside the declared "
+                         f"scope [{RESO_MIN}, {RESO_MAX}]")
         if self.subtype == SUBTYPE_STANDARD:
             self._coeff_svf(freq / float(ONE), reso)
         else:

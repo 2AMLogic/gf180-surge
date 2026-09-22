@@ -38,7 +38,8 @@ import os
 import struct
 import sys
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -104,15 +105,14 @@ def group_streams(coeffs, records):
             raise Refuse(f"instance {key}: {len(a)} OS samples vs "
                          f"{len(c)} coefficient records ({len(c) * BLOCK_OS} expected)")
         seqs = [s for s, _, _ in a]
-        if seqs != sorted(seqs):
+        if any(b <= a_ for a_, b in zip(seqs, seqs[1:])):
             raise Refuse(f"instance {key}: unit-sample sequence not monotone")
         for r in c:
             if r.get("type") != fp.TYPE_LP12:
                 raise Refuse(f"instance {key}: non-LP12 type {r.get('type')} in bundle")
-        # per-block alignment: OS sample seq must equal record-block mapping
-        for i, (s, _, _) in enumerate(a):
-            if s != i:
-                raise Refuse(f"instance {key}: OS sequence gap at {i} (got {s})")
+        # OS-sample sequence numbers are a per-tag counter shared across
+        # lanes, so per-lane values are strictly monotone but not contiguous;
+        # record order defines block order within an instance.
     return inst, audio, coef
 
 
@@ -170,6 +170,8 @@ def run_instance(key, audio, coef, use_engine_coeffs=False):
             provider = _ExternalCoefProvider(eng_C, eng_dC)
         else:
             provider = cm
+        c_start = list(provider.C)
+        d_start = list(provider.dC)
         outs, peak, c_end = unit.process_block(block_in, provider)
         # the voice path reads the advanced kernel C back into the
         # coefficient maker after every block (SurgeVoice.cpp GetQFB:
@@ -184,8 +186,8 @@ def run_instance(key, audio, coef, use_engine_coeffs=False):
             "subtype": sub,
             "reset": bool(rec.get("first", False)),
             "cut_q": cut_q, "reso_q": reso_q,
-            "C_start": list(provider.C),
-            "dC": list(provider.dC),
+            "C_start": c_start,
+            "dC": d_start,
             "in": block_in,
             "out_model": outs,
             "out_engine_q": block_ref,
