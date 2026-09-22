@@ -79,7 +79,7 @@
       "depends_on": [
         18
       ],
-      "status": "NOT_RUN",
+      "status": "BLOCKED",
       "note": "Aggregate group node; status derived from members, not an independent claim."
     },
     {
@@ -146,7 +146,7 @@
         7
       ],
       "status": "BLOCKED",
-      "note": "Apparatus landed (PR #33): slates, listening harness, DRAFT policy. Freeze of 256-set + policy BLOCKED on human listening (operator checklist in issue)."
+      "note": "Apparatus landed (PR #33). Freeze of 256-set + policy BLOCKED on human listening (operator checklist on issue)."
     },
     {
       "id": 9,
@@ -159,7 +159,7 @@
         7
       ],
       "status": "BLOCKED",
-      "note": "Ablation apparatus landed (PR #35): 6-preset matrices + diagnostic deltas. essential/optional/unresolved labels BLOCKED on human listening."
+      "note": "Ablation apparatus landed (PR #35). essential/optional labels BLOCKED on human listening."
     },
     {
       "id": 10,
@@ -201,7 +201,7 @@
         11
       ],
       "status": "BLOCKED",
-      "note": "Bundle stage landed (PR #37): DRAFT B4-broad + per-preset predictions + sensitivity control. FREEZE blocked on human listening (SXT-013) + SXT-014 labels."
+      "note": "Bundle DRAFT landed (#37). FREEZE blocked on: human listening (#8/#9), SXT-014 labels, delay-budget decision (#16), wavetable deep-mip + tail findings."
     },
     {
       "id": 13,
@@ -256,8 +256,8 @@
         7,
         12
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs fixtures and profile v1."
+      "status": "BLOCKED",
+      "note": "EQ leaf landed+verified (#44); Delay RTL==model exact (#46) but model-vs-engine budget miss routed to SXT-017 (#12) — options in reports/sxt-023/delay-budget-diagnosis.md."
     },
     {
       "id": 17,
@@ -285,8 +285,8 @@
         16,
         17
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; integrates the E2 slice issues."
+      "status": "BLOCKED",
+      "note": "Integration path landed (#49): control+reverb1 RTL exact, 1,114,112 txns; preset Hell's Bells = adapted-not-supported (F-1: voice-slice generality -> #48); one HF tail sub-budget finding recorded."
     },
     {
       "id": 19,
@@ -299,8 +299,8 @@
         13,
         14
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs profile v1, patch images, timed control."
+      "status": "BLOCKED",
+      "note": "Landed (#52): RTL==model exact incl. concurrent-reverb traffic; deep-mip interpolation PARTIAL (bounded finding, engine float32 phase pipeline) — budgets pending #12/#8."
     },
     {
       "id": 20,
@@ -312,8 +312,10 @@
         12,
         15
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; issue generator ordered by whole-preset recovery."
+      "status": "PASS",
+      "note": "Landed (#78): generator + 12 leaves filed (#66-#77, SXT-032..043), 60-leaf backlog, 5 negative controls.",
+      "evidence": "reports/sxt-027/EVIDENCE.md",
+      "evidence_sha256": "87edfc54a6000871b3c75ba390237298eefbfe1a3dba80320e754dd8667b75d8"
     },
     {
       "id": 21,
@@ -327,8 +329,10 @@
         16,
         17
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; issue generator ordered by measured effect recovery."
+      "status": "PASS",
+      "note": "Landed (#65): generator + 12 leaves filed (#53-#64, SXT-028a-l), 10-leaf backlog, Chorus carries the SXT-017 decision marker.",
+      "evidence": "reports/sxt-028/EVIDENCE.md",
+      "evidence_sha256": "38209f0cae4ed6f795f3771435470e5414afda1d4d0670f753db039a5fa26360"
     },
     {
       "id": 22,
@@ -341,8 +345,10 @@
         20,
         21
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs all applicable generated leaves."
+      "status": "PASS",
+      "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls.",
+      "evidence": "reports/coverage-v1/README.md",
+      "evidence_sha256": "e100dc816e0b39492839217794f0c4c854e3cc62e7e8b805c0e4a17728a39a66"
     },
     {
       "id": 23,
@@ -377,8 +383,8 @@
       "planning-id": "SXT-019",
       "epic": null,
       "depends_on": [],
-      "status": "NOT_RUN",
-      "note": "Governance decision pending; gates sibling-infrastructure adoption (docs/REUSE-AUDIT.md)."
+      "status": "IN_PROGRESS",
+      "note": "Ongoing governance: records 0001-0004 landed; per-adoption records continue as leaves land."
     },
     {
       "id": 29,

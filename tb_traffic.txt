@@ -1,0 +1,6 @@
+core_reads_words 254
+core_fill_words 512
+core_bursts 32
+core_stall_cycles 380
+reverb_words 0
+budget_cycles_per_frame 32000

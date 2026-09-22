@@ -55,10 +55,10 @@ Backlog DAG (generated; do not edit by hand):
 | Status | Nodes |
 |---|---|
 | READY | 0 |
-| IN PROGRESS | 0 |
-| BLOCKED | 6 |
-| NOT RUN | 11 |
-| PASS | 9 |
+| IN PROGRESS | 1 |
+| BLOCKED | 10 |
+| NOT RUN | 3 |
+| PASS | 12 |
 | FAIL | 0 |
 | NO VERDICT | 0 |
 | STALE | 0 |
@@ -74,7 +74,7 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 |---|---|---|---|---|
 | [#1](https://github.com/2AMLogic/gf180-surge/issues/1) | E1 | Epic: E1 — Reference, corpus, and product profile | BLOCKED | aggregate of members |
 | [#2](https://github.com/2AMLogic/gf180-surge/issues/2) | E2 | Epic: E2 — Verified core: first complete wet patch | NOT RUN | aggregate of members |
-| [#3](https://github.com/2AMLogic/gf180-surge/issues/3) | E3 | Epic: E3 — Coverage expansion and hardware qualification | NOT RUN | aggregate of members |
+| [#3](https://github.com/2AMLogic/gf180-surge/issues/3) | E3 | Epic: E3 — Coverage expansion and hardware qualification | BLOCKED | aggregate of members |
 | [#4](https://github.com/2AMLogic/gf180-surge/issues/4) | SXT-000 | SXT-000: Preliminary static census (DONE) | PASS | [`corpus/census-v0.1/results/summary.json`](corpus/census-v0.1/results/summary.json) |
 | [#5](https://github.com/2AMLogic/gf180-surge/issues/5) | SXT-010 | SXT-010: Build the native oracle | PASS | [`reports/sxt-010/EVIDENCE.md`](reports/sxt-010/EVIDENCE.md) |
 | [#6](https://github.com/2AMLogic/gf180-surge/issues/6) | SXT-011 | SXT-011: Export normalized patch graphs | PASS | [`reports/sxt-011/EVIDENCE.md`](reports/sxt-011/EVIDENCE.md) |
@@ -87,16 +87,16 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | [#13](https://github.com/2AMLogic/gf180-surge/issues/13) | SXT-020 | SXT-020: Compile patch images | PASS | [`reports/sxt-020/EVIDENCE.md`](reports/sxt-020/EVIDENCE.md) |
 | [#14](https://github.com/2AMLogic/gf180-surge/issues/14) | SXT-021 | SXT-021: Implement timed control and scheduling | NOT RUN | — |
 | [#15](https://github.com/2AMLogic/gf180-surge/issues/15) | SXT-022 | SXT-022: Qualify a first dry voice slice | PASS | [`reports/sxt-022/EVIDENCE.md`](reports/sxt-022/EVIDENCE.md) |
-| [#16](https://github.com/2AMLogic/gf180-surge/issues/16) | SXT-023 | SXT-023: Implement Delay and EQ | NOT RUN | — |
+| [#16](https://github.com/2AMLogic/gf180-surge/issues/16) | SXT-023 | SXT-023: Implement Delay and EQ | BLOCKED | — |
 | [#17](https://github.com/2AMLogic/gf180-surge/issues/17) | SXT-024 | SXT-024: Implement Reverb1 | NOT RUN | — |
-| [#18](https://github.com/2AMLogic/gf180-surge/issues/18) | SXT-025 | SXT-025: Pass one complete wet preset | NOT RUN | — |
-| [#19](https://github.com/2AMLogic/gf180-surge/issues/19) | SXT-026 | SXT-026: Add Wavetable asset and playback support | NOT RUN | — |
-| [#20](https://github.com/2AMLogic/gf180-surge/issues/20) | SXT-027 | SXT-027: Generate remaining voice-feature leaf issues | NOT RUN | — |
-| [#21](https://github.com/2AMLogic/gf180-surge/issues/21) | SXT-028 | SXT-028: Expand effects by measured recovery | NOT RUN | — |
-| [#22](https://github.com/2AMLogic/gf180-surge/issues/22) | SXT-029 | SXT-029: Run full qualification and publish coverage | NOT RUN | — |
+| [#18](https://github.com/2AMLogic/gf180-surge/issues/18) | SXT-025 | SXT-025: Pass one complete wet preset | BLOCKED | — |
+| [#19](https://github.com/2AMLogic/gf180-surge/issues/19) | SXT-026 | SXT-026: Add Wavetable asset and playback support | BLOCKED | — |
+| [#20](https://github.com/2AMLogic/gf180-surge/issues/20) | SXT-027 | SXT-027: Generate remaining voice-feature leaf issues | PASS | [`reports/sxt-027/EVIDENCE.md`](reports/sxt-027/EVIDENCE.md) |
+| [#21](https://github.com/2AMLogic/gf180-surge/issues/21) | SXT-028 | SXT-028: Expand effects by measured recovery | PASS | [`reports/sxt-028/EVIDENCE.md`](reports/sxt-028/EVIDENCE.md) |
+| [#22](https://github.com/2AMLogic/gf180-surge/issues/22) | SXT-029 | SXT-029: Run full qualification and publish coverage | PASS | [`reports/coverage-v1/README.md`](reports/coverage-v1/README.md) |
 | [#23](https://github.com/2AMLogic/gf180-surge/issues/23) | SXT-030 | SXT-030: Qualify FPGA and external memory | BLOCKED | — |
 | [#24](https://github.com/2AMLogic/gf180-surge/issues/24) | SXT-031 | SXT-031: Qualify the GF180 implementation | BLOCKED | — |
-| [#25](https://github.com/2AMLogic/gf180-surge/issues/25) | SXT-019 | SXT-019: Reuse substrate adoption decision | NOT RUN | — |
+| [#25](https://github.com/2AMLogic/gf180-surge/issues/25) | SXT-019 | SXT-019: Reuse substrate adoption decision | IN PROGRESS | — |
 | [#29](https://github.com/2AMLogic/gf180-surge/issues/29) | SXT-018 | SXT-018: Backlog DAG + evidence-derived status board (README marker block) | PASS | [`reports/sxt-018/EVIDENCE.md`](reports/sxt-018/EVIDENCE.md) |
 
 </details>
@@ -123,21 +123,21 @@ graph TD
     n13["#13 SXT-020 · PASS"]
     n14["#14 SXT-021 · NOT_RUN"]
     n15["#15 SXT-022 · PASS"]
-    n16["#16 SXT-023 · NOT_RUN"]
+    n16["#16 SXT-023 · BLOCKED"]
     n17["#17 SXT-024 · NOT_RUN"]
-    n18["#18 SXT-025 · NOT_RUN"]
-    n19["#19 SXT-026 · NOT_RUN"]
+    n18["#18 SXT-025 · BLOCKED"]
+    n19["#19 SXT-026 · BLOCKED"]
   end
   subgraph E3["Epic E3 — Coverage expansion and hardware qualification"]
-    n3["#3 Epic E3 · NOT_RUN"]
-    n20["#20 SXT-027 · NOT_RUN"]
-    n21["#21 SXT-028 · NOT_RUN"]
-    n22["#22 SXT-029 · NOT_RUN"]
+    n3["#3 Epic E3 · BLOCKED"]
+    n20["#20 SXT-027 · PASS"]
+    n21["#21 SXT-028 · PASS"]
+    n22["#22 SXT-029 · PASS"]
     n23["#23 SXT-030 · BLOCKED"]
     n24["#24 SXT-031 · BLOCKED"]
   end
   subgraph XC["Cross-cutting (no epic)"]
-    n25["#25 SXT-019 · NOT_RUN"]
+    n25["#25 SXT-019 · IN_PROGRESS"]
     n29["#29 SXT-018 · PASS"]
   end
   n4 --> n5
@@ -192,9 +192,10 @@ graph TD
   classDef notrun fill:#5A6468,color:#fff
   classDef noverdict fill:#6B46C1,color:#fff
   classDef stale fill:#B7791F,color:#fff
-  class n1,n8,n9,n12,n23,n24 blocked
-  class n2,n3,n14,n16,n17,n18,n19,n20,n21,n22,n25 notrun
-  class n4,n5,n6,n7,n10,n11,n13,n15,n29 pass
+  class n25 inprogress
+  class n1,n3,n8,n9,n12,n16,n18,n19,n23,n24 blocked
+  class n2,n14,n17 notrun
+  class n4,n5,n6,n7,n10,n11,n13,n15,n20,n21,n22,n29 pass
 ```
 
 </details>
