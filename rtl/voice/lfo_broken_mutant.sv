@@ -264,8 +264,7 @@ module tb_lfo;
   task automatic process_slot(input integer evbase);
     if (!ctrl_mem_active(evbase)) begin
       active[s] = 0;
-      return;
-    end
+    end else begin
     // SurgeVoice ctor pass: attack all six, then the constructor's
     // calc_ctrldata<true> processes LFO1 + routed instances (routes skipped)
     for (i = 0; i < NLFO; i++) begin
@@ -308,6 +307,7 @@ module tb_lfo;
     end
     $fwrite(fd, "S %0d %0d %0d %0d\n", b, s, cut_sum, reso_sum);
     active[s] = 1;
+    end
   endtask
 
   function automatic logic ctrl_mem_active(input integer evbase);
