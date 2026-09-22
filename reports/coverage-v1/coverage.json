@@ -166,7 +166,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "b53a61e3b406bc6f68f81fddae85352707729b068af311ad171c9c15888398a1"
+   "sha256": "25afd506ac545cb1396b9d5631ceeaa21919e939a57ed241a12ef4bac0571cbf"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -231,6 +231,10 @@
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",
    "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
+  },
+  "reports/sxt-035/EVIDENCE.md": {
+   "role": "evidence record for leaf mod:modwheel",
+   "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",
@@ -531,6 +535,15 @@
     "verification": {}
    },
    "mod:lfo": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "mod:modwheel": {
     "evidence_state": "OK",
     "landed": true,
     "support_ready": false,

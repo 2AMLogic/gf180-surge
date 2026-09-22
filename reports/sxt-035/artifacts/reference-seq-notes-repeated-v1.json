@@ -1,0 +1,60 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+  "determinism": {
+    "bit_identical": true,
+    "repeats": 3,
+    "sha256": [
+      "fe383e581cb069b95206e79bc3ac4f57c28e1f4897203e4a16fdfa708bf46c0d",
+      "fe383e581cb069b95206e79bc3ac4f57c28e1f4897203e4a16fdfa708bf46c0d",
+      "fe383e581cb069b95206e79bc3ac4f57c28e1f4897203e4a16fdfa708bf46c0d"
+    ]
+  },
+  "engine": {
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "fixture_id": "attacky-mw__seq-notes-repeated-v1",
+  "fixture_modification": "one modulation route added at runtime via setModDepth01 (host modulation API) after loadPatch; preset file untouched; the preset's own modwheel routes (Filter 1 Cutoff/Resonance) remain active; synthetic declared fixture on the landed voice slice",
+  "issue": "SXT-035",
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "render": {
+    "blocks": 6150,
+    "clipped_samples": 0,
+    "frames": 196800,
+    "last_event_sample": 76800,
+    "peak_abs_float": 0.39013591408729553,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "routes": [
+    {
+      "depth01_readback": 0.4000000059604645,
+      "depth_raw": 38.400001525878906,
+      "dest_id": 298,
+      "dest_name": "A VCA Gain",
+      "dest_param": "vca_level",
+      "modsource": "ms_modwheel",
+      "modsource_id": 6,
+      "normalized_depth": 0.4000000059604645,
+      "source": "runtime setModDepth01 (host modulation API); preset file untouched; synthetic declared fixture on the landed voice slice"
+    }
+  ],
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-repeated-v1",
+    "path": "fixtures/sequences/seq-notes-repeated-v1.json",
+    "sha256": "ec610cb2a507875422df348e289766f0b1c8e378251e5ed83706d0d0a8b7db84"
+  },
+  "tool": {
+    "repo_commit": "67f5d613b3dd685bb97b73f48731ce59958749ae",
+    "script_sha256": "d6f54e5a2176265346f841c81fa8efb1e66f7f95f8d006ce8af657a5ceb935b3"
+  },
+  "wav": "run-out/ref/reference-seq-notes-repeated-v1-mw-fixture.wav",
+  "wav_sha256": "e86f79af0a2a1afb8a4b22b5db14437c6a25207f77a8c6d6a44be8e010296bd1"
+}

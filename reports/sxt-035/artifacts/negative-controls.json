@@ -1,0 +1,104 @@
+{
+  "baseline": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "informational",
+    "max_abs_diff_lsb": 65534.0,
+    "rms_diff_dbfs": -18.039873481617924,
+    "spectral_corr": 0.9869783137462054
+  },
+  "cutoff-zeroed": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "max_abs_diff_lsb": 65534.0,
+    "rms_diff_lsb": 6600.594080371684,
+    "rms_diff_dbfs": -13.917073111341779,
+    "spectral_corr": 0.9841621605750513,
+    "beyond_model_error_via": [
+      true,
+      true
+    ],
+    "metrics_file": "run-out/nc/audio-nc-cutoff-zeroed.json"
+  },
+  "reso-zeroed": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "max_abs_diff_lsb": 65534.0,
+    "rms_diff_lsb": 4139.694994747738,
+    "rms_diff_dbfs": -17.96936673750621,
+    "spectral_corr": 0.9858386375291527,
+    "beyond_model_error_via": [
+      true,
+      true
+    ],
+    "metrics_file": "run-out/nc/audio-nc-reso-zeroed.json"
+  },
+  "vca-zeroed": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "max_abs_diff_lsb": 38461.0,
+    "rms_diff_lsb": 8444.774664281334,
+    "rms_diff_dbfs": -11.77697231109918,
+    "spectral_corr": 0.8556442551910346,
+    "beyond_model_error_via": [
+      true,
+      true
+    ],
+    "metrics_file": "run-out/nc/audio-nc-vca-zeroed.json"
+  },
+  "smoothing-bypass": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "max_abs_diff_lsb": 65534.0,
+    "rms_diff_lsb": 3213.4058821834687,
+    "rms_diff_dbfs": -20.169421936206252,
+    "spectral_corr": 0.9844002107386555,
+    "beyond_model_error_via": [
+      true
+    ],
+    "metrics_file": "run-out/nc/audio-nc-smoothing-bypass.json"
+  },
+  "source-swap-lfo": {
+    "verdict": "FAIL against proposed budgets",
+    "expected": "FAIL",
+    "control_ok": true,
+    "max_abs_diff_lsb": 65534.0,
+    "rms_diff_lsb": 10211.567644047525,
+    "rms_diff_dbfs": -10.126885251422376,
+    "spectral_corr": 0.7282713442300327,
+    "beyond_model_error_via": [
+      true,
+      true
+    ],
+    "metrics_file": "run-out/nc/audio-nc-source-swap-lfo.json"
+  },
+  "out-of-class-route": {
+    "expected": "REFUSE (exit 2)",
+    "control_ok": true
+  },
+  "carrier-Rainy_Day_Dreamaway.fxp": {
+    "expected": "REFUSE (exit 2)",
+    "control_ok": true,
+    "refusal": "REFUSING: filter config not serial1"
+  },
+  "carrier-Pluck_2_Pad_Demon_Sad.fxp": {
+    "expected": "REFUSE (exit 2)",
+    "control_ok": true,
+    "refusal": "REFUSING: filter config not serial1"
+  },
+  "carrier-Alone.fxp": {
+    "expected": "REFUSE (exit 2)",
+    "control_ok": true,
+    "refusal": "REFUSING: active mixer paths ['o1', 'o2', 'o3'] != ['o1']"
+  },
+  "rtl-mutant": {
+    "verdict": "FAIL",
+    "expected": "FAIL",
+    "control_ok": true,
+    "metrics_file": "run-out/nc/exactness-mutant.json"
+  },
+  "overall_ok": true
+}

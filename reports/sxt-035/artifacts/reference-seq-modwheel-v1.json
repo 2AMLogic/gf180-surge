@@ -1,0 +1,60 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+  "determinism": {
+    "bit_identical": true,
+    "repeats": 3,
+    "sha256": [
+      "9c048aaba4546243e4e9a71869ba5401229a975f4b93b8ee1ecedb672a3c58de",
+      "9c048aaba4546243e4e9a71869ba5401229a975f4b93b8ee1ecedb672a3c58de",
+      "9c048aaba4546243e4e9a71869ba5401229a975f4b93b8ee1ecedb672a3c58de"
+    ]
+  },
+  "engine": {
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "fixture_id": "attacky-mw__seq-modwheel-v1",
+  "fixture_modification": "one modulation route added at runtime via setModDepth01 (host modulation API) after loadPatch; preset file untouched; the preset's own modwheel routes (Filter 1 Cutoff/Resonance) remain active; synthetic declared fixture on the landed voice slice",
+  "issue": "SXT-035",
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "render": {
+    "blocks": 5700,
+    "clipped_samples": 16398,
+    "frames": 182400,
+    "last_event_sample": 62400,
+    "peak_abs_float": 6.336825370788574,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "routes": [
+    {
+      "depth01_readback": 0.4000000059604645,
+      "depth_raw": 38.400001525878906,
+      "dest_id": 298,
+      "dest_name": "A VCA Gain",
+      "dest_param": "vca_level",
+      "modsource": "ms_modwheel",
+      "modsource_id": 6,
+      "normalized_depth": 0.4000000059604645,
+      "source": "runtime setModDepth01 (host modulation API); preset file untouched; synthetic declared fixture on the landed voice slice"
+    }
+  ],
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-modwheel-v1",
+    "path": "fixtures/sequences/seq-modwheel-v1.json",
+    "sha256": "d0f507efff5e9d76f7086707e18a08875aaeab96eb4a01ea0c974f5631872347"
+  },
+  "tool": {
+    "repo_commit": "67f5d613b3dd685bb97b73f48731ce59958749ae",
+    "script_sha256": "d6f54e5a2176265346f841c81fa8efb1e66f7f95f8d006ce8af657a5ceb935b3"
+  },
+  "wav": "run-out/ref/reference-seq-modwheel-v1-mw-fixture.wav",
+  "wav_sha256": "cdc6dd7b9915735b5cf05e74329cd19db0bd0f9a719f24f9b3d1e2e9693d2002"
+}

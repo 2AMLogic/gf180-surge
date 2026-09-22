@@ -1,0 +1,22 @@
+{
+  "tb": "rtl/voice/tb_mw_broken_mutant.sv",
+  "verdict": "FAIL",
+  "checked": {
+    "mw_values": 311,
+    "route_sum_checkpoints": 161,
+    "route_sums": 483
+  },
+  "mismatches": 41,
+  "first_failures": [
+    "block 300 mw_value: model=9710 rtl=19419",
+    "block 301 mw_value: model=19420 rtl=38838",
+    "block 301 slot 0 route_sum[0]: model=334267 rtl=668499",
+    "block 301 slot 0 route_sum[1]: model=3719 rtl=7438",
+    "block 301 slot 0 route_sum[2]: model=372864 rtl=745690",
+    "block 302 mw_value: model=29130 rtl=58257",
+    "block 302 slot 0 route_sum[0]: model=668534 rtl=1336999",
+    "block 302 slot 0 route_sum[1]: model=7439 rtl=14876",
+    "block 302 slot 0 route_sum[2]: model=745728 rtl=1491379",
+    "block 303 mw_value: model=38840 rtl=77676"
+  ]
+}

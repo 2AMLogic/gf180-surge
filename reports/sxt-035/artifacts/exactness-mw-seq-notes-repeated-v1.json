@@ -1,0 +1,11 @@
+{
+  "tb": "rtl/voice/tb_mw.sv",
+  "verdict": "PASS",
+  "checked": {
+    "mw_values": 6150,
+    "route_sum_checkpoints": 1936,
+    "route_sums": 5808
+  },
+  "mismatches": 0,
+  "first_failures": []
+}
