@@ -1,0 +1,66 @@
+{
+  "carrier": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "blob": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "rel": "resources/data/patches_factory/Basses/Attacky.fxp",
+    "subtype": 1,
+    "unit": 0
+  },
+  "case": "attacky-neutrality",
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "engine_deterministic_same_case": true,
+  "engine_state_readback": {
+    "fu": [
+      {
+        "cutoff": -14.325023651123047,
+        "envmod": 96.0,
+        "keytrack": 0.0,
+        "resonance": 0.0,
+        "subtype": 1.0,
+        "type": 1.0
+      },
+      {
+        "cutoff": 3.0,
+        "envmod": 0.0,
+        "keytrack": 0.0,
+        "resonance": 0.0,
+        "subtype": 0.0,
+        "type": 0.0
+      }
+    ]
+  },
+  "issue": "SXT-037",
+  "neutrality": {
+    "bit_identical": true,
+    "note": "bit_identical is decisive only when engine_deterministic_same_case is true; nondeterministic carriers are SXT-012 drift/retrigger-class presets. The decisive DSP-neutrality control runs on a deterministic preset (see meta case attacky-neutrality).",
+    "wav_sha_plain": "45bf8c9b9b464e5ba9274e20c050bcf10914b9fe29fb33f68494936c8000cd65",
+    "wav_sha_plain_repeat": "45bf8c9b9b464e5ba9274e20c050bcf10914b9fe29fb33f68494936c8000cd65",
+    "wav_sha_tapped": "45bf8c9b9b464e5ba9274e20c050bcf10914b9fe29fb33f68494936c8000cd65"
+  },
+  "neutrality_violated": false,
+  "overrides_applied": {},
+  "render": {
+    "frames": 196800,
+    "peak_abs": [
+      0.39013591408729553,
+      0.39013591408729553
+    ]
+  },
+  "schema_version": 1,
+  "sequence": {
+    "events": 16,
+    "id": "seq-notes-repeated-v1",
+    "smoke": false
+  },
+  "taps_enabled": true,
+  "tool": {
+    "repo_commit": "18d3249b1b77ca932715be64d3a7eb29081feb45",
+    "script_sha256": "0c4de8b2acbd8833991c34eced1a89465f401420ae56ddb8c762c9717d3e6f2b"
+  }
+}

@@ -372,6 +372,7 @@ class LP12Unit:
                 self.r_clip = max(qint(0.1), ONE - qmul(c[2], qmul(band, band)))
                 c[3] = sat(c[3] + dc[3])                      # Gain
                 y = qmul(low2, c[3])
+                self.qmul_count += 11
             out.append(y)
             m = max(abs(y), abs(self.r0), abs(self.r1))
             if m > peak:

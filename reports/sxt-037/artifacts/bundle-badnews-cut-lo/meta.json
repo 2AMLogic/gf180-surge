@@ -1,0 +1,68 @@
+{
+  "carrier": {
+    "actual_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+    "blob": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+    "census_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+    "rel": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+    "subtype": 1,
+    "unit": 0
+  },
+  "case": "badnews-cut-lo",
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "engine_deterministic_same_case": false,
+  "engine_state_readback": {
+    "fu": [
+      {
+        "cutoff": -60.0,
+        "envmod": 30.000022888183594,
+        "keytrack": 1.0,
+        "resonance": 0.0,
+        "subtype": 1.0,
+        "type": 1.0
+      },
+      {
+        "cutoff": 2.549968957901001,
+        "envmod": -95.14283752441406,
+        "keytrack": 1.0,
+        "resonance": 1.0,
+        "subtype": 0.0,
+        "type": 8.0
+      }
+    ]
+  },
+  "issue": "SXT-037",
+  "neutrality": {
+    "bit_identical": false,
+    "note": "bit_identical is decisive only when engine_deterministic_same_case is true; nondeterministic carriers are SXT-012 drift/retrigger-class presets. The decisive DSP-neutrality control runs on a deterministic preset (see meta case attacky-neutrality).",
+    "wav_sha_plain": "7cdebf2765f1c88d4e3d44e5cdb855839c6608174907843d2fdae2a504b016a7",
+    "wav_sha_plain_repeat": "062534c3b304a37a91e174596902530449a67f41a5562a833117c50d3f3c8f54",
+    "wav_sha_tapped": "b54e19e233f700785e2186a43733cf1eacd9acd1e0206923696b937199ce3816"
+  },
+  "neutrality_violated": false,
+  "overrides_applied": {
+    "fu0.cutoff": -60.0
+  },
+  "render": {
+    "frames": 196800,
+    "peak_abs": [
+      0.012068287469446659,
+      0.012068287469446659
+    ]
+  },
+  "schema_version": 1,
+  "sequence": {
+    "events": 16,
+    "id": "seq-notes-repeated-v1",
+    "smoke": false
+  },
+  "taps_enabled": true,
+  "tool": {
+    "repo_commit": "18d3249b1b77ca932715be64d3a7eb29081feb45",
+    "script_sha256": "0c4de8b2acbd8833991c34eced1a89465f401420ae56ddb8c762c9717d3e6f2b"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "carrier": {
+    "actual_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+    "blob": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+    "census_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+    "rel": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+    "subtype": 1,
+    "unit": 0
+  },
+  "case": "badnews-toggle",
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "engine_deterministic_same_case": false,
+  "engine_state_readback": {
+    "fu": [
+      {
+        "cutoff": -2.4000399112701416,
+        "envmod": 30.000022888183594,
+        "keytrack": 1.0,
+        "resonance": 0.0,
+        "subtype": 2.0,
+        "type": 1.0
+      },
+      {
+        "cutoff": 2.549968957901001,
+        "envmod": -95.14283752441406,
+        "keytrack": 1.0,
+        "resonance": 1.0,
+        "subtype": 0.0,
+        "type": 8.0
+      }
+    ]
+  },
+  "issue": "SXT-037",
+  "neutrality": {
+    "bit_identical": false,
+    "note": "bit_identical is decisive only when engine_deterministic_same_case is true; nondeterministic carriers are SXT-012 drift/retrigger-class presets. The decisive DSP-neutrality control runs on a deterministic preset (see meta case attacky-neutrality).",
+    "wav_sha_plain": "9f54b679dc02ffda58b57b80acdff9bb46afdcfb16d8e5a9a37a8ad8d8518f6f",
+    "wav_sha_plain_repeat": "3aca75cc02d494a95f29ca83b3b9b7045d31422f9960daaa9d37ecaa2ed72dd3",
+    "wav_sha_tapped": "405472a981af2e5e71b69ed81d546ffb78ac7d8fae8c668e480b3f71f14afe83"
+  },
+  "neutrality_violated": false,
+  "overrides_applied": {
+    "fu0.subtype@1600": 2.0
+  },
+  "render": {
+    "frames": 196800,
+    "peak_abs": [
+      0.011311529204249382,
+      0.011311529204249382
+    ]
+  },
+  "schema_version": 1,
+  "sequence": {
+    "events": 16,
+    "id": "seq-notes-repeated-v1",
+    "smoke": false
+  },
+  "taps_enabled": true,
+  "tool": {
+    "repo_commit": "18d3249b1b77ca932715be64d3a7eb29081feb45",
+    "script_sha256": "0c4de8b2acbd8833991c34eced1a89465f401420ae56ddb8c762c9717d3e6f2b"
+  }
+}

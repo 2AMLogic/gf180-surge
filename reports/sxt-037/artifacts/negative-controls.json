@@ -1,0 +1,65 @@
+{
+  "NC-A-wrong-subtype-badnews-Clean": {
+    "targeted_check": "L1+L2 reference budgets on a same-type/wrong-substitute path",
+    "l2": {
+      "max_abs_lsb": 121506,
+      "rms_lsb": 38442.28135274696
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-A-wrong-subtype-rainy-Clean": {
+    "targeted_check": "L1+L2 reference budgets on a same-type/wrong-substitute path",
+    "l2": {
+      "max_abs_lsb": 974296,
+      "rms_lsb": 183492.37567471078
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-A-wrong-subtype-t9-Driven": {
+    "targeted_check": "L1+L2 reference budgets on a same-type/wrong-substitute path",
+    "l2": {
+      "max_abs_lsb": 1872304,
+      "rms_lsb": 300497.8571232398
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-B-wrong-algorithm-lp24": {
+    "targeted_check": "L2 reference budget with a sibling filter algorithm substituted",
+    "l2": {
+      "max_abs_lsb": 124955,
+      "rms_lsb": 42564.45743283654
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-C-out-of-scope-refused": {
+    "targeted_check": "applicability boundary refuses out-of-scope parameters",
+    "refusals": {
+      "reso>1": "REFUSED",
+      "subtype=3": "REFUSED",
+      "subtype=9": "REFUSED"
+    },
+    "outcome": "CONTROL-OK (refused, exit-2 class)"
+  },
+  "NC-D-instability-detected": {
+    "targeted_check": "stability monitor flags an unstable control variant (clipgain disabled at the self-osc corner) while the frozen model stays bounded",
+    "clipgain_disabled_verdict": "UNSTABLE",
+    "clipgain_disabled_peak_lsb": 2147483648,
+    "frozen_model_verdict": "STABLE",
+    "frozen_model_peak_lsb": 16667761,
+    "outcome": "CONTROL-OK (detected, not silent)"
+  },
+  "NC-E-rtl-mutant": {
+    "targeted_check": "RTL-vs-model exactness FAILs for the mutated testbench",
+    "mismatches": 31,
+    "checked": {
+      "samples": 36,
+      "checkpoints": 0,
+      "fields": 0
+    },
+    "outcome": "CONTROL-OK (exactness FAILs)"
+  }
+}

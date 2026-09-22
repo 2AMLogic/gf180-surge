@@ -1,0 +1,11 @@
+SXT-037 negative-control transcript
+============================================================
+NC-A badnews as Clean: max|d|=121506 rms=38442.3 -> FAILS budgets (CONTROL-OK)
+NC-A rainy as Clean: max|d|=974296 rms=183492.4 -> FAILS budgets (CONTROL-OK)
+NC-A t9 as Driven: max|d|=1872304 rms=300497.9 -> FAILS budgets (CONTROL-OK)
+NC-B badnews as LP24/Driven: max|d|=124955 rms=42564.5 -> FAILS budgets (CONTROL-OK)
+NC-C out-of-scope: reso>1=REFUSED; subtype=3=REFUSED; subtype=9=REFUSED -> CONTROL-OK
+NC-D reso1 clipgain-disabled: verdict=UNSTABLE peak=2147483648; frozen: verdict=STABLE peak=16667761 -> CONTROL-OK
+NC-E rtl mutant: mismatches=31 -> CONTROL-OK
+============================================================
+ALL CONTROLS FAILED THEIR TARGETED CHECKS (or explicit NOT_RUN): YES
