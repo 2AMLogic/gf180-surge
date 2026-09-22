@@ -47,7 +47,6 @@ oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
 import render_fixture as rf  # noqa: E402
-import surgepy.constants as C  # noqa: E402
 
 SR = 48000
 FX_SLOTS = 16
