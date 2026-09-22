@@ -379,15 +379,22 @@ class LP12Unit:
 
 
 # --------------------------------------------------------- stability monitor
-def stability_verdict(peaks, growth_db_per_block=6.0, tail=16, floor=1 << 20):
+def stability_verdict(peaks, growth_db_per_block=6.0, tail=16, floor=1 << 20,
+                      sat_floor=1 << 30):
     """Post-hoc boundedness verdict over per-block state peaks (ints).
 
     Returns 'STABLE' when the peak envelope does not exhibit sustained
     exponential growth into the headroom floor; 'UNSTABLE' otherwise.
-    Detection is a recorded alarm, never a silent clamp.
+    Reaching the saturation neighborhood (>= sat_floor, the s32 bound) is
+    UNSTABLE by definition: unbounded growth that hit the word limit is a
+    recorded alarm, never a silent clamp.
     """
+    if not peaks:
+        return "STABLE"
+    if max(peaks) >= sat_floor:
+        return "UNSTABLE"
     if len(peaks) < tail:
-        return "STABLE" if max(peaks or [0]) < (1 << 31) else "UNSTABLE"
+        return "STABLE" if max(peaks) < (1 << 31) else "UNSTABLE"
     win = peaks[-tail:]
     if max(win) < floor:
         return "STABLE"
