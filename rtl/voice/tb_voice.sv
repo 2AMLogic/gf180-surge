@@ -162,7 +162,11 @@ module tb_voice;
   // SXT-034 unison appendix:
   // 78 uni_voices  79 uni_out_attenuation
   // 80+3u t_u[u]  81+3u t_inv_u[u]  82+3u init_oscstate_u[u]   (u = 0..15)
-  logic [31:0] cfg [0:127];
+  // 128 draw_set_count  129+16*set + u  draw table entry (init oscstate)
+  // ctrl slot record word 31 = draw_set_index for created voices
+  localparam int DRAWS_BASE = 129;
+  localparam int MAX_DRAWS_SETS = 64;
+  logic [31:0] cfg [0:DRAWS_BASE + 16*MAX_DRAWS_SETS - 1];
   // ctrl block header: [b, ncreate, modwheel, master_amp]
   // ctrl slot record (40 words):
   //  0 flags(b0 active,b1 ckpt,b2 created,b3 released)  1 key  2 gate
@@ -186,7 +190,7 @@ module tb_voice;
       osc_out2 [NSLOTS];
   logic [31:0]  osc_state_u [NSLOTS][MAXUNI], bufpos [NSLOTS], hpf_prev [NSLOTS];
   logic signed [31:0] t_u [MAXUNI], t_inv_u [MAXUNI];
-  logic signed [31:0] init_osc_u [MAXUNI];
+  int unsigned draw_set_count;
   logic signed [31:0] out_att;
   int unsigned uni_n;
   logic signed [31:0] f_r0 [NSLOTS], f_r1 [NSLOTS], f_clip [NSLOTS];
@@ -236,10 +240,13 @@ module tb_voice;
     uni_n = int'(cfg[78]);
     if (uni_n < 1 || uni_n > MAXUNI) $fatal(1, "uni count %0d outside 1..16", uni_n);
     out_att = 32'(cfg[79]);
+    draw_set_count = int'(cfg[128]);
+    if (draw_set_count < 1 || draw_set_count > MAX_DRAWS_SETS)
+      $fatal(1, "draw set count %0d outside 1..%0d", draw_set_count, MAX_DRAWS_SETS);
     for (u = 0; u < MAXUNI; u++) begin
       t_u[u]       = 32'(cfg[80 + 3*u]);
       t_inv_u[u]   = 32'(cfg[81 + 3*u]);
-      init_osc_u[u]= 32'(cfg[82 + 3*u]);
+    end
     end
     for (i = 0; i < 6; i++) begin
       hbx1_b[i]=0; hbx2_b[i]=0; hby1_b[i]=0; hby2_b[i]=0;
@@ -370,9 +377,13 @@ module tb_voice;
     l_shape[s]=32'(cfg[10]); l_pw[s]=32'(cfg[11]); l_pw2[s]=32'(cfg[12]);
     l_sub[s]=32'(cfg[13]); l_sync[s]=32'(cfg[14]);
     // per-unison-voice init (ClassicOscillator.cpp init loop): retrigger on
-    // -> oscstate=syncstate=0; non-retrigger -> the declared init draw word
+    // -> oscstate=syncstate=0; non-retrigger -> the declared init draw words
+    // for THIS voice creation (draw table set indexed by ctrl word 31)
+    if (int'(cw[31]) >= int'(draw_set_count))
+      $fatal(1, "draw set index %0d >= count %0d", int'(cw[31]), draw_set_count);
     for (u = 0; u < MAXUNI; u++) begin
-      oscstate_u[s][u]   = (u < uni_n) ? init_osc_u[u] : 0;
+      oscstate_u[s][u]   = (u < uni_n)
+                         ? 32'(cfg[DRAWS_BASE + 16*int'(cw[31]) + u]) : 0;
       osc_state_u[s][u]  = 0;
       last_level_u[s][u] = 0;
       pwidth_u[s][u]     = clamp_q(l_pw[s]);

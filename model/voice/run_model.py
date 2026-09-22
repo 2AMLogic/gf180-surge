@@ -155,6 +155,7 @@ def main():
     init_words += uni_words
 
     voices = []
+    draw_sets = []          # distinct per-creation init oscstate sets
     events = list(seq["events"])
     ei = 0
     bs = BLOCK_SIZE
@@ -162,6 +163,15 @@ def main():
     out_mono = []
     blocks_json = []
     ctrl = []
+
+    def draw_set_index_of(v):
+        key = tuple(v.init_oscstate_set)
+        if key not in draw_set_index_of.table:
+            draw_set_index_of.table[key] = len(draw_sets)
+            draw_sets.append(list(v.init_oscstate_set))
+        return draw_set_index_of.table[key]
+
+    draw_set_index_of.table = {}
 
     for b in range(total_blocks):
         blk = {"b": b, "create": [], "release": [], "voices": []}
@@ -171,6 +181,7 @@ def main():
                 slot = next(i for i in range(N_SLOTS) if all(v.slot != i for v in voices))
                 v = vm.VoiceV2(inp, e["note"], e.get("velocity", 0))
                 v.slot = slot
+                v.draw_set_index = draw_set_index_of(v)
                 voices.append(v)
                 blk["create"].append(slot)
             elif e["type"] == "note_off":
@@ -214,7 +225,7 @@ def main():
                 *v.ctrl_C, *v.ctrl_dC,
                 v.fbp_gain, v.fbp_outl,
                 v.aeg.phase, v.aeg.output, v.feg.phase, v.feg.output,
-                0,
+                v.draw_set_index,          # word 31: init-draw set index
             ])
             # SXT-026a appendix (words 32..36)
             if sine:
@@ -273,6 +284,12 @@ def main():
     rtl_dir = os.path.join(args.out_dir, "rtl")
     os.makedirs(rtl_dir, exist_ok=True)
 
+    # SXT-034 draw table (cfg words 128+, after the SXT-026a and unison
+    # appendices): n_sets, then each 16-word set. Only distinct sets are
+    # stored; ctrl word 31 indexes them at creation.
+    padded_sets = [s + [0] * (16 - len(s)) for s in draw_sets]
+    init_words += [len(padded_sets)] + [w for s in padded_sets for w in s]
+
     vm.write_wav16(os.path.join(args.out_dir, "model.wav"), out_mono, vm.SR)
 
     with open(os.path.join(args.out_dir, "model_trace.json"), "w", encoding="utf-8") as f:
@@ -308,6 +325,7 @@ def main():
                 "hp3 b0,b1,b2,a1,a2", "lp3 b0,b1,b2,a1,a2",
                 "uni_voices", "uni_out_attenuation",
                 "uni_t[0..15]", "uni_t_inv[0..16)", "uni_init_oscstate[0..16)",
+                "draw_set_count", "draw_table[set][0..15] (word 128+)",
             ],
             "init": init_words,
             "ctrl_words_per_slot": CTRL_WORDS_PER_SLOT,
@@ -319,7 +337,7 @@ def main():
                 "dC0", "dC1", "dC2", "dC3", "dC4", "dC5", "dC6", "dC7",
                 "fbp_gain", "fbp_outl",
                 "aeg_phase", "aeg_output", "feg_phase", "feg_output",
-                "(reserved)",
+                "draw_set_index",                  # word 31 (was reserved)
                 "sxt026a: fvel", "kt_word", "sine_omega1_q28",
                 "sine_omega2_q28", "sine_omega3_q28",
             ],

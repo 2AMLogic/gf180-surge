@@ -645,6 +645,10 @@ class Voice:
                 "last_level": 0, "pwidth": pw_init, "pwidth2": 0,
                 "dc_uni": 0, "detune": detune, "t": t, "t_inv": t_inv,
             })
+        # declared init-phase oscstate set consumed by THIS voice creation
+        # (control-plane word group for the RTL; see run_model draw table)
+        self.init_oscstate_set = [x["oscstate"] for x in self.u]
+        self.draw_set_index = 0
         self._sync_uni_mirror()
 
     def _hpf_calc(self):
