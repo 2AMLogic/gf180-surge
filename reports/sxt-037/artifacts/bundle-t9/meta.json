@@ -1,0 +1,66 @@
+{
+  "carrier": {
+    "actual_blob_sha1": "314e3cc7e46d76381a5073fecf41d8d715b70e8b",
+    "blob": "314e3cc7e46d76381a5073fecf41d8d715b70e8b",
+    "census_blob_sha1": "314e3cc7e46d76381a5073fecf41d8d715b70e8b",
+    "rel": "resources/data/patches_3rdparty/Emu/Drums/T9 Tom.fxp",
+    "subtype": 2,
+    "unit": 1
+  },
+  "case": "t9",
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "engine_deterministic_same_case": false,
+  "engine_state_readback": {
+    "fu": [
+      {
+        "cutoff": -33.354339599609375,
+        "envmod": 0.0,
+        "keytrack": 0.0,
+        "resonance": 0.35076698660850525,
+        "subtype": 0.0,
+        "type": 4.0
+      },
+      {
+        "cutoff": 47.61363220214844,
+        "envmod": 39.437103271484375,
+        "keytrack": 0.0,
+        "resonance": 0.0,
+        "subtype": 2.0,
+        "type": 1.0
+      }
+    ]
+  },
+  "issue": "SXT-037",
+  "neutrality": {
+    "bit_identical": false,
+    "note": "bit_identical is decisive only when engine_deterministic_same_case is true; nondeterministic carriers are SXT-012 drift/retrigger-class presets. The decisive DSP-neutrality control runs on a deterministic preset (see meta case attacky-neutrality).",
+    "wav_sha_plain": "063a050c350a98d61f1597cf403c9b217574e72b48168326e747a36ddcbc9374",
+    "wav_sha_plain_repeat": "708c5038a1e7c48a045d57aa98cecb6b4817e82a94adf3b768ddcdf2ac5c5ff1",
+    "wav_sha_tapped": "dd2a04390936c898ebb153bbb1e1f6f9d016c784a33be6dcafe99b3d25111f2b"
+  },
+  "neutrality_violated": false,
+  "overrides_applied": {},
+  "render": {
+    "frames": 196800,
+    "peak_abs": [
+      1.9517548084259033,
+      1.9517548084259033
+    ]
+  },
+  "schema_version": 1,
+  "sequence": {
+    "events": 16,
+    "id": "seq-notes-repeated-v1",
+    "smoke": false
+  },
+  "taps_enabled": true,
+  "tool": {
+    "repo_commit": "18d3249b1b77ca932715be64d3a7eb29081feb45",
+    "script_sha256": "0c4de8b2acbd8833991c34eced1a89465f401420ae56ddb8c762c9717d3e6f2b"
+  }
+}

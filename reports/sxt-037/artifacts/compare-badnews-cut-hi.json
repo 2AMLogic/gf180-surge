@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-037",
+  "case": "badnews-cut-hi",
+  "leg": "L2a-own-coeffs",
+  "carriers_subtypes": [
+    1
+  ],
+  "results": {
+    "unit1.lane0": {
+      "L1_coefficients": "FAIL",
+      "L2_audio": "FAIL",
+      "proposed": {
+        "l1_C_max_lsb": 16,
+        "l1_C_rms_lsb": 4,
+        "l2_max_abs_lsb": 4096,
+        "l2_rms_lsb": 256,
+        "l2_spectral_corr_min": 0.999
+      },
+      "engine_state_peak_lsb": 236992,
+      "model_state_peak_lsb": 236992,
+      "stability_model": "STABLE"
+    }
+  },
+  "verdict": "FAIL against proposed budgets"
+}

@@ -116,8 +116,7 @@
    },
    "voice_leaf_gate": {
     "": 1785,
-    "NOT_RUN": 1134,
-    "NO_VERDICT": 1
+    "NOT_RUN": 1135
    },
    "wavetable_leaf_gate": {
     "": 2392,
@@ -163,7 +162,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "a08578db00d53663dc9db7b1565ecf549c99194d82fd2afe573cf8df63613bb6"
+   "sha256": "bd93ea287690c07a3a89c6225d586e448c15c6b9aebdc77b52cda3214fff471a"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -224,6 +223,14 @@
   "reports/sxt-028/leaves-filed.json": {
    "role": "structural input (pinned)",
    "sha256": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4"
+  },
+  "reports/sxt-032/EVIDENCE.md": {
+   "role": "evidence record for leaf mod:lfo",
+   "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
+  },
+  "reports/sxt-037/EVIDENCE.md": {
+   "role": "evidence record for leaf filter_type:LP 12 dB",
+   "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
   }
  },
  "issue": "SXT-029 (#22)",
@@ -447,6 +454,15 @@
    }
   },
   "leaves": {
+   "filter_type:LP 12 dB": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
    "fx:Chorus": {
     "evidence_state": "OK",
     "landed": false,
@@ -506,9 +522,18 @@
    },
    "fx:SXT-026a-voice-scope-extension": {
     "evidence_state": "OK",
-    "landed": true,
+    "landed": false,
     "support_ready": false,
     "verification": {}
+   },
+   "mod:lfo": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
    },
    "osc:Wavetable": {
     "evidence_state": "OK",
@@ -574,9 +599,9 @@
  ],
  "per_bank": {
   "contributor": {
-   "adapted": 144,
+   "adapted": 145,
    "supported": 0,
-   "unresolved": 1701,
+   "unresolved": 1700,
    "unsupported": 1075
   },
   "factory": {
@@ -589,7 +614,8 @@
  "reconciliation": {
   "b4_prediction_x_headline": {
    "adapted-not-predicted|adapted": 164,
-   "supported|unresolved": 1683,
+   "supported|adapted": 1,
+   "supported|unresolved": 1682,
    "supported|unsupported": 2,
    "unresolved|unresolved": 582,
    "unsupported|unsupported": 1130
@@ -602,6 +628,12 @@
     "compile_codes": "send_levels_not_exported",
     "headline": "unsupported",
     "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp"
+   },
+   {
+    "b4_prediction": "supported",
+    "compile_codes": "",
+    "headline": "adapted",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
    },
    {
     "b4_prediction": "supported",
@@ -627,9 +659,9 @@
  },
  "tool_version": "sxt-029-coverage/1.0.0",
  "totals": {
-  "adapted": 164,
+  "adapted": 165,
   "supported": 0,
-  "unresolved": 2265,
+  "unresolved": 2264,
   "unsupported": 1132
  }
 }

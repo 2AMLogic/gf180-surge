@@ -1,0 +1,17 @@
+{
+  "coverage": [
+    "repeated-notes",
+    "release:note-off",
+    "filter:lp12-leaf-smoke"
+  ],
+  "description": "SXT-037 smoke fixture: two short notes (~0.4 s active) plus a 2.0 s tail, under the 4,000-sample FAST-MODE cap for the active window; used for the first patched-oracle bring-up before full renders.",
+  "schema_version": 1,
+  "id": "seq-lp12-smoke-v1",
+  "tail_s": 2.0,
+  "events": [
+    {"channel": 0, "note": 60, "t": 0, "type": "note_on", "velocity": 120},
+    {"channel": 0, "note": 60, "t": 4800, "type": "note_off", "velocity": 0},
+    {"channel": 0, "note": 64, "t": 9600, "type": "note_on", "velocity": 100},
+    {"channel": 0, "note": 64, "t": 19200, "type": "note_off", "velocity": 0}
+  ]
+}

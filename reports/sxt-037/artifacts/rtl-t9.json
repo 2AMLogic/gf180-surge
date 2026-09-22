@@ -1,0 +1,12 @@
+{
+  "tb": "tb_lp12.sv",
+  "leg": "L2a-own-coeffs",
+  "verdict": "PASS",
+  "checked": {
+    "samples": 217472,
+    "checkpoints": 3398,
+    "fields": 40776
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

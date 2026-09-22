@@ -84,6 +84,27 @@
   }
  },
  "leaves": {
+  "filter_type:LP 12 dB": {
+   "evidence": [
+    {
+     "path": "reports/sxt-037/EVIDENCE.md",
+     "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
+    }
+   ],
+   "fixture_verified_paths": [],
+   "issue": 71,
+   "landed": true,
+   "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); RTL-vs-model EXACT on 8 fixtures incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 517-802 LSB Q10.21, rms 87-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
+   "overlap_paths_not_fixture_verified": [
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+    "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+    "resources/data/patches_3rdparty/Emu/Drums/T9 Tom.fxp"
+   ],
+   "verification": {
+    "model_vs_reference": "NO_VERDICT",
+    "rtl_vs_model": "PASS"
+   }
+  },
   "fx:Chorus": {
    "issue": 55,
    "landed": false,
