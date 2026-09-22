@@ -372,16 +372,18 @@ class Galactic49Fixed:
             self.mem[addr - self.mem_base] = val
 
     # ---------------------------------------------------------------- core
-    def _read_line(self, line, counts_key, region):
-        """count++ (wrap at > delay) then the pinned read-back one full
-        period old: idx = count - ((count > delay) ? delay+1 : 0)."""
+    def _advance(self, line):
+        """count++ (wrap at > delay) - ONE increment per line pair per
+        sample: the pinned counters are shared across channels
+        ("all these ints are shared across channels, not duplicated")."""
         delay = self.c["delays"][line]
-        c = self.counts[counts_key] + 1
+        c = self.counts[line] + 1
         if c > delay:
             c = 0
-        self.counts[counts_key] = c
-        idx = c - ((delay + 1) if c > delay else 0)
-        return self._rd(region, idx)
+        self.counts[line] = c
+        # pinned read-back: idx = count - ((count > delay) ? delay+1 : 0);
+        # count never exceeds delay after the wrap, so idx == count
+        return c
 
     def process_block(self, in_l, in_r):
         """One 32-sample block of s32i words -> (out_l, out_r) s32i."""
@@ -455,14 +457,20 @@ class Galactic49Fixed:
                  sat32(x_r + rnd_sat32(self.fb["CL"] * regen, FRAC_C31)))
         self._wr("aLR", self.counts["L"],
                  sat32(x_r + rnd_sat32(self.fb["DL"] * regen, FRAC_C31)))
-        out_i_l = self._read_line("I", "I", "aIL")
-        out_j_l = self._read_line("J", "J", "aJL")
-        out_k_l = self._read_line("K", "K", "aKL")
-        out_l_l = self._read_line("L", "L", "aLL")
-        out_i_r = self._read_line("I", "I", "aIR")
-        out_j_r = self._read_line("J", "J", "aJR")
-        out_k_r = self._read_line("K", "K", "aKR")
-        out_l_r = self._read_line("L", "L", "aLR")
+        # one shared counter advance per line pair, then both channel reads
+        # at the same index (pinned order: L lines then R lines)
+        iI = self._advance("I")
+        iJ = self._advance("J")
+        iK = self._advance("K")
+        iL = self._advance("L")
+        out_i_l = self._rd("aIL", iI)
+        out_j_l = self._rd("aJL", iJ)
+        out_k_l = self._rd("aKL", iK)
+        out_l_l = self._rd("aLL", iL)
+        out_i_r = self._rd("aIR", iI)
+        out_j_r = self._rd("aJR", iJ)
+        out_k_r = self._rd("aKR", iK)
+        out_l_r = self._rd("aLR", iL)
 
         # stage-2 writes (exact Hadamard-row sums, saturated at store)
         self._wr("aAL", self.counts["A"],
@@ -481,14 +489,18 @@ class Galactic49Fixed:
                  sat32(out_k_r - (out_i_r + out_j_r + out_l_r)))
         self._wr("aDR", self.counts["D"],
                  sat32(out_l_r - (out_i_r + out_j_r + out_k_r)))
-        out_a_l = self._read_line("A", "A", "aAL")
-        out_b_l = self._read_line("B", "B", "aBL")
-        out_c_l = self._read_line("C", "C", "aCL")
-        out_d_l = self._read_line("D", "D", "aDL")
-        out_a_r = self._read_line("A", "A", "aAR")
-        out_b_r = self._read_line("B", "B", "aBR")
-        out_c_r = self._read_line("C", "C", "aCR")
-        out_d_r = self._read_line("D", "D", "aDR")
+        iA = self._advance("A")
+        iB = self._advance("B")
+        iC = self._advance("C")
+        iD = self._advance("D")
+        out_a_l = self._rd("aAL", iA)
+        out_b_l = self._rd("aBL", iB)
+        out_c_l = self._rd("aCL", iC)
+        out_d_l = self._rd("aDL", iD)
+        out_a_r = self._rd("aAR", iA)
+        out_b_r = self._rd("aBR", iB)
+        out_c_r = self._rd("aCR", iC)
+        out_d_r = self._rd("aDR", iD)
 
         # stage-3 writes + reads
         self._wr("aEL", self.counts["E"],
@@ -507,14 +519,18 @@ class Galactic49Fixed:
                  sat32(out_c_r - (out_a_r + out_b_r + out_d_r)))
         self._wr("aHR", self.counts["H"],
                  sat32(out_d_r - (out_a_r + out_b_r + out_c_r)))
-        out_e_l = self._read_line("E", "E", "aEL")
-        out_f_l = self._read_line("F", "F", "aFL")
-        out_g_l = self._read_line("G", "G", "aGL")
-        out_h_l = self._read_line("H", "H", "aHL")
-        out_e_r = self._read_line("E", "E", "aER")
-        out_f_r = self._read_line("F", "F", "aFR")
-        out_g_r = self._read_line("G", "G", "aGR")
-        out_h_r = self._read_line("H", "H", "aHR")
+        iE = self._advance("E")
+        iF = self._advance("F")
+        iG = self._advance("G")
+        iH = self._advance("H")
+        out_e_l = self._rd("aEL", iE)
+        out_f_l = self._rd("aFL", iF)
+        out_g_l = self._rd("aGL", iG)
+        out_h_l = self._rd("aHL", iH)
+        out_e_r = self._rd("aER", iE)
+        out_f_r = self._rd("aFR", iF)
+        out_g_r = self._rd("aGR", iG)
+        out_h_r = self._rd("aHR", iH)
 
         # feedback registers (never stored to memory)
         def _fb(k, v):
