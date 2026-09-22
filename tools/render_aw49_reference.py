@@ -66,7 +66,6 @@ SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 CROSSBUILD_SNIPPET = r"""
 import sys, os, hashlib
 repo, engine, seq_id, aw49_slot, tap_dir, out_dir = sys.argv[1:7]
-aw49_slot = int(aw49_slot)
 sys.path.insert(0, repo)
 sys.path.insert(0, os.path.join(repo, "oracle"))
 sys.path.insert(0, os.path.join(repo, "fixtures"))
@@ -77,56 +76,46 @@ oc.apply_engine_env()
 os.environ["SXT028A_TAP_DIR"] = tap_dir
 import render_fixture as rf
 import numpy as np
+import surgepy.constants as C
 seq, _, _ = rf.load_sequence(seq_id)
-
-
-def render_once(surgepy, preset_abs, seq):
-    s2 = surgepy.createSurge(48000.0)
-    try:
-        if not s2.loadPatch(preset_abs):
-            raise SystemExit(2)
-        s2.pitchBend(0, 0); s2.channelController(0, 64, 0)
-        s2.channelController(0, 1, 0); s2.channelController(0, 11, 0)
-        s2.channelAftertouch(0, 0); s2.allNotesOff()
-        bs = int(s2.getBlockSize())
-        sb = int(seq.get("settle_s", 0.25) * 48000) // bs
-        s2.processMultiBlock(s2.createMultiBlock(sb))
-        notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
-        last_t = max(e["t"] for e in notes) if notes else 0
-        total = -(-(last_t + int(float(seq.get("tail_s", 2.5)) * 48000)) // bs)
-        buf = s2.createMultiBlock(total)
-        quant = lambda t: -(-t // bs)
-        disp = 0; b = 0
-        while b < total:
-            nxt = rf.dispatch(s2, seq["events"][disp:], b, quant) + disp
-            seg = total if nxt >= len(seq["events"]) else max(quant(seq["events"][nxt]["t"]), b + 1)
-            s2.processMultiBlock(buf, b, seg - b); b = seg; disp = nxt
-        return np.asarray(buf, dtype=np.float32).copy(), total
-    finally:
-        del s2
-
-
+probe_abs = os.path.join(oc.engine_dir(),
+                         "resources/data/patches_factory/Basses/FM Bass 1.fxp")
 s = surgepy.createSurge(48000.0)
-s.loadPatch(engine)
+s.loadPatch(probe_abs)
 patch = s.getPatch()
 sm = int(s.getParamVal(patch["scenemode"]))
 sa = int(s.getParamVal(patch["scene_active"]))
 for v in ([sa] if sm == 0 else [0, 1]):
     s.setParamVal(patch["scene"][v]["drift"], 0.0)
-s.setParamVal(patch["fx"][aw49_slot]["p"][3], 0.0)
-del s
-
-# probe: forced-deterministic state via a fresh instance
-s3 = surgepy.createSurge(48000.0)
-s3.loadPatch(engine)
-patch = s3.getPatch()
-sm = int(s3.getParamVal(patch["scenemode"]))
-sa = int(s3.getParamVal(patch["scene_active"]))
-for v in ([sa] if sm == 0 else [0, 1]):
-    s3.setParamVal(patch["scene"][v]["drift"], 0.0)
-s3.setParamVal(patch["fx"][aw49_slot]["p"][3], 0.0)
-probe, _ = render_once(surgepy, engine, seq)
-print(hashlib.sha256(np.ascontiguousarray(probe).tobytes()).hexdigest())
+types = [int(s.getParamVal(patch["fx"][i]["type"])) for i in range(16)]
+free = [i for i in range(4) if types[i] == 0]
+if not free:
+    raise SystemExit(3)
+slot = free[0]
+s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
+s.processMultiBlock(s.createMultiBlock(1))
+s.setParamVal(patch["fx"][slot]["p"][0], 49.0)
+s.setParamVal(patch["fx"][slot]["p"][3], 0.0)
+s.setParamVal(patch["fx"][slot]["p"][5], 1.0)
+s.processMultiBlock(s.createMultiBlock(1))
+s.pitchBend(0, 0); s.channelController(0, 64, 0)
+s.channelController(0, 1, 0); s.channelController(0, 11, 0)
+s.allNotesOff()
+bs = int(s.getBlockSize())
+sb = int(seq.get("settle_s", 0.25) * 48000) // bs
+s.processMultiBlock(s.createMultiBlock(sb))
+notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
+last_t = max(e["t"] for e in notes) if notes else 0
+total = -(-(last_t + int(float(seq.get("tail_s", 2.5)) * 48000)) // bs)
+buf = s.createMultiBlock(total)
+quant = lambda t: -(-t // bs)
+disp = 0; b = 0
+while b < total:
+    nxt = rf.dispatch(s, seq["events"][disp:], b, quant) + disp
+    seg = total if nxt >= len(seq["events"]) else max(quant(seq["events"][nxt]["t"]), b + 1)
+    s.processMultiBlock(buf, b, seg - b); b = seg; disp = nxt
+out = np.asarray(buf, dtype=np.float32).copy()
+print(hashlib.sha256(np.ascontiguousarray(out).tobytes()).hexdigest())
 """
 
 
@@ -167,7 +156,7 @@ def import_surgepy_from(so_dir):
     return surgepy
 
 
-def render_once(surgepy, preset_abs, seq):
+def render_once(surgepy, preset_abs, seq, probe_patcher="unused"):
     """One fresh-instance render under the SXT-012 policies (single render:
     the fixtures are conditioned-on-tap class - no 3x determinism gate)."""
     s = surgepy.createSurge(float(SR))
@@ -204,22 +193,70 @@ def render_once(surgepy, preset_abs, seq):
         del s
 
 
-def probe_render(surgepy, preset_abs, seq, aw49_slot):
-    """Deterministic-class probe: scene drift and aw49 Modulation forced to
-    0 so the render is bit-reproducible (required by the neutrality gate;
-    the fixtures themselves are NOT in that class)."""
+def _make_probe_deterministic(surgepy, s, aw49_slot_unused):
+    """Force the loaded patch into the deterministic class: zero all scene
+    drifts and all modroutings into drift are left alone (they scale a zero
+    param: the free-run randomization keys on the resolved drift value)."""
+    patch = s.getPatch()
+    sm = int(s.getParamVal(patch["scenemode"]))
+    sa = int(s.getParamVal(patch["scene_active"]))
+    for v in ([sa] if sm == 0 else [0, 1]):
+        s.setParamVal(patch["scene"][v]["drift"], 0.0)
+
+
+def probe_render(surgepy, preset_abs, seq, aw49_slot_unused):
+    """Deterministic-class probe that still exercises a RUNNING Airwindows-49
+    slot: a preset already proven 3x-bit-identical (FM Bass 1, SXT-023)
+    gets an injected Airwindows insert slot (algorithm 49, Modulation 0 ->
+    frozen vibrato, no engine rand in the audio path). The tap therefore
+    processes on every block and the render is bit-reproducible, which is
+    what the on/off neutrality comparison needs. This probe is
+    infrastructure-only: it is NOT a fixture and supports no preset claim.
+    """
+    import surgepy.constants as C
+    probe_abs = os.path.join(oc.engine_dir(),
+                             "resources/data/patches_factory/Basses/FM Bass 1.fxp")
     s = surgepy.createSurge(float(SR))
     try:
-        if not s.loadPatch(preset_abs):
-            raise Refuse("loadPatch failed (probe)")
+        if not s.loadPatch(probe_abs):
+            raise Refuse("probe loadPatch failed")
         patch = s.getPatch()
-        sm = int(s.getParamVal(patch["scenemode"]))
-        sa = int(s.getParamVal(patch["scene_active"]))
-        for v in ([sa] if sm == 0 else [0, 1]):
-            s.setParamVal(patch["scene"][v]["drift"], 0.0)
-        s.setParamVal(patch["fx"][aw49_slot]["p"][3], 0.0)  # aw49 C (Modulation)
-        out, _ = render_once(surgepy, preset_abs, seq)
-        return out
+        _make_probe_deterministic(surgepy, s, None)
+        types = [int(s.getParamVal(patch["fx"][i]["type"])) for i in range(16)]
+        free = [i for i in range(4) if types[i] == 0]
+        if not free:
+            raise Refuse("no free insert slot for the probe")
+        slot = free[0]
+        s.setParamVal(patch["fx"][slot]["type"], float(C.fxt_airwindows))
+        s.processMultiBlock(s.createMultiBlock(1))   # deferred fx reload
+        s.setParamVal(patch["fx"][slot]["p"][0], 49.0)   # algorithm: Galactic
+        s.setParamVal(patch["fx"][slot]["p"][3], 0.0)    # C (Modulation) = 0
+        s.setParamVal(patch["fx"][slot]["p"][5], 1.0)    # E (Mix) = wet
+        s.processMultiBlock(s.createMultiBlock(1))   # airwin construction
+        # render in place under the SXT-012 policies (same instance)
+        s.pitchBend(0, 0)
+        s.channelController(0, 64, 0)
+        s.channelController(0, 1, 0)
+        s.channelController(0, 11, 0)
+        s.allNotesOff()
+        bs = int(s.getBlockSize())
+        settle_blocks = int(seq.get("settle_s", 0.25) * SR) // bs
+        s.processMultiBlock(s.createMultiBlock(settle_blocks))
+        notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
+        last_t = max(e["t"] for e in notes) if notes else 0
+        total_blocks = -(-(last_t + int(float(seq.get("tail_s", 2.5)) * SR)) // bs)
+        buf = s.createMultiBlock(total_blocks)
+        quant = lambda t: -(-t // bs)  # noqa: E731
+        dispatched = 0
+        b = 0
+        while b < total_blocks:
+            nxt = rf.dispatch(s, seq["events"][dispatched:], b, quant) + dispatched
+            seg = total_blocks if nxt >= len(seq["events"]) else \
+                max(quant(seq["events"][nxt]["t"]), b + 1)
+            s.processMultiBlock(buf, b, seg - b)
+            b = seg
+            dispatched = nxt
+        return np.asarray(buf, dtype=np.float32).copy()
     finally:
         del s
 
