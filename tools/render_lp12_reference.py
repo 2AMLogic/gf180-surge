@@ -214,17 +214,16 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
     os.environ["SXT037_TAP_DIR"] = out_dir
     s = fresh_instance(surgepy, preset_abs, fx_off=True)
     applied = {}
-    if overrides:
-        for (unit, key), val in overrides.items():
-            s.setParamVal(fu_param(s, unit, key), float(val))
-            applied[f"fu{unit}.{key}"] = float(val)
+    for (unit, key), val in (overrides or {}).items():
+        s.setParamVal(fu_param(s, unit, key), float(val))
+        applied[f"fu{unit}.{key}"] = float(val)
     settle(s)
     import surgepy.constants as C
 
     types = [int(s.getParamVal(s.getPatch()["fx"][i]["type"])) for i in range(FX_SLOTS)]
     if any(t != C.fxt_off for t in types):
         raise Refuse(f"FX types did not read back Off: {types}")
-    for (unit, key), val in overrides.items():
+    for (unit, key), val in (overrides or {}).items():
         applied[f"fu{unit}.{key}"] = float(s.getParamVal(fu_param(s, unit, key)))
 
     events = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
@@ -259,9 +258,8 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
 
     # neutrality leg: identical render with taps DISABLED (same build)
     s2 = fresh_instance(surgepy, preset_abs, fx_off=True)
-    if overrides:
-        for (unit, key), val in overrides.items():
-            s2.setParamVal(fu_param(s2, unit, key), float(val))
+    for (unit, key), val in (overrides or {}).items():
+        s2.setParamVal(fu_param(s2, unit, key), float(val))
     settle(s2)
     stereo2 = run_sequence(s2, seq, total_blocks)
     if toggle_at is not None:
