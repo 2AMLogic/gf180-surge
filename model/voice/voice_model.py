@@ -897,6 +897,10 @@ class Inputs:
         self._draw_i += 1
         return v
 
+    def reset_draws(self):
+        """Restart the declared draw list (runner probe discard)."""
+        self._draw_i = 0
+
 
 def load_sequence(path):
     with open(path, encoding="utf-8") as f:
@@ -1506,6 +1510,15 @@ class InputsV2:
         self.spread = float(o1.get("udet", 0.0))
         self.retrigger = bool(o1.get("rt", 1))
         self._draws = []
+        self._draw_i = 0
+
+    def next_draw(self):
+        """Consume one declared init-phase draw (SXT-034 interface parity
+        with the v1 Inputs class; the v2 class gates retrigger=on, so no
+        draw is ever consumed -- a call here is a contract bug, fail loud)."""
+        raise RuntimeError("InputsV2 carries no declared init-phase draws")
+
+    def reset_draws(self):
         self._draw_i = 0
 
         # modulation routes (order = md arrays = engine application order)

@@ -93,6 +93,10 @@ def main():
     inst_att_aeg = 1 if (vm.qint(inp.adsr["a"]) - a_min_const) < eps01 else 0
     inst_att_feg = 1 if (vm.qint(inp.fadsr["a"]) - a_min_const) < eps01 else 0
     probe = vm.VoiceV2(inp, 60, 100)
+    # the probe voice is discarded (character-filter/attenuation words only);
+    # reset the declared draw cursor so the rendered voices consume the
+    # committed init_phase_draws list from its start
+    inp.reset_draws()
 
     def envrate(p):
         return vm.envelope_rate_linear_nowrap(vm.qint(p))
