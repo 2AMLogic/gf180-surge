@@ -1,0 +1,41 @@
+{
+ "id": "sxt034-smoke-v1",
+ "schema_version": 1,
+ "sample_rate": 48000,
+ "description": "SXT-034 smoke: two notes, short tail (model/voice-local sequence, SXT-025 pattern)",
+ "coverage": [
+  "smoke"
+ ],
+ "events": [
+  {
+   "type": "note_on",
+   "t": 0,
+   "channel": 0,
+   "note": 60,
+   "velocity": 100
+  },
+  {
+   "type": "note_off",
+   "t": 4800,
+   "channel": 0,
+   "note": 60,
+   "velocity": 0
+  },
+  {
+   "type": "note_on",
+   "t": 9600,
+   "channel": 0,
+   "note": 64,
+   "velocity": 90
+  },
+  {
+   "type": "note_off",
+   "t": 14400,
+   "channel": 0,
+   "note": 64,
+   "velocity": 0
+  }
+ ],
+ "tail_s": 0.05,
+ "settle_s": 0.02
+}
