@@ -1,0 +1,179 @@
+{
+  "instance": "aw-49 (Airwindows Galactic, id 49)",
+  "sample_rate": 48000,
+  "cycle_end": 1,
+  "external_writable_memory": {
+    "words_total": 126354,
+    "bytes_total_32bit": 505416,
+    "regions": [
+      {
+        "region": "aIL",
+        "base": 0,
+        "words": 6480,
+        "bits": 207360
+      },
+      {
+        "region": "aJL",
+        "base": 6480,
+        "words": 3660,
+        "bits": 117120
+      },
+      {
+        "region": "aKL",
+        "base": 10140,
+        "words": 1720,
+        "bits": 55040
+      },
+      {
+        "region": "aLL",
+        "base": 11860,
+        "words": 680,
+        "bits": 21760
+      },
+      {
+        "region": "aAL",
+        "base": 12540,
+        "words": 9700,
+        "bits": 310400
+      },
+      {
+        "region": "aBL",
+        "base": 22240,
+        "words": 6000,
+        "bits": 192000
+      },
+      {
+        "region": "aCL",
+        "base": 28240,
+        "words": 2320,
+        "bits": 74240
+      },
+      {
+        "region": "aDL",
+        "base": 30560,
+        "words": 940,
+        "bits": 30080
+      },
+      {
+        "region": "aEL",
+        "base": 31500,
+        "words": 15220,
+        "bits": 487040
+      },
+      {
+        "region": "aFL",
+        "base": 46720,
+        "words": 8460,
+        "bits": 270720
+      },
+      {
+        "region": "aGL",
+        "base": 55180,
+        "words": 4540,
+        "bits": 145280
+      },
+      {
+        "region": "aHL",
+        "base": 59720,
+        "words": 3200,
+        "bits": 102400
+      },
+      {
+        "region": "aIR",
+        "base": 62920,
+        "words": 6480,
+        "bits": 207360
+      },
+      {
+        "region": "aJR",
+        "base": 69400,
+        "words": 3660,
+        "bits": 117120
+      },
+      {
+        "region": "aKR",
+        "base": 73060,
+        "words": 1720,
+        "bits": 55040
+      },
+      {
+        "region": "aLR",
+        "base": 74780,
+        "words": 680,
+        "bits": 21760
+      },
+      {
+        "region": "aAR",
+        "base": 75460,
+        "words": 9700,
+        "bits": 310400
+      },
+      {
+        "region": "aBR",
+        "base": 85160,
+        "words": 6000,
+        "bits": 192000
+      },
+      {
+        "region": "aCR",
+        "base": 91160,
+        "words": 2320,
+        "bits": 74240
+      },
+      {
+        "region": "aDR",
+        "base": 93480,
+        "words": 940,
+        "bits": 30080
+      },
+      {
+        "region": "aER",
+        "base": 94420,
+        "words": 15220,
+        "bits": 487040
+      },
+      {
+        "region": "aFR",
+        "base": 109640,
+        "words": 8460,
+        "bits": 270720
+      },
+      {
+        "region": "aGR",
+        "base": 118100,
+        "words": 4540,
+        "bits": 145280
+      },
+      {
+        "region": "aHR",
+        "base": 122640,
+        "words": 3200,
+        "bits": 102400
+      },
+      {
+        "region": "aML",
+        "base": 125840,
+        "words": 257,
+        "bits": 8224
+      },
+      {
+        "region": "aMR",
+        "base": 126097,
+        "words": 257,
+        "bits": 8224
+      }
+    ]
+  },
+  "external_traffic_per_frame": {
+    "reads": 28,
+    "writes": 26,
+    "words": 54,
+    "bytes": 216,
+    "MB_per_s_per_instance": 10.368
+  },
+  "notes": [
+    "vibrato phase (vibM/oldfpd from captured fpdL/fpdR) and the per-sample read positions are control plane: +4 words/sample on-chip control bandwidth, not external-memory traffic",
+    "flash is never a substitute: the whole region is writable state",
+    "two concurrent slots = two instances = two regions (never shared)"
+  ]
+}
