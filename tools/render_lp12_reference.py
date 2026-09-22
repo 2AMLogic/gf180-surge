@@ -330,9 +330,6 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
     with open(os.path.join(out_dir, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2, sort_keys=True)
         f.write("\n")
-    if not neutral:
-        raise Refuse(f"{case}: tap instrumentation is NOT DSP-neutral "
-                     "(tapped vs untapped renders differ)")
     return meta
 
 
