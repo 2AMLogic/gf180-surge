@@ -69,14 +69,31 @@ def main():
                     help="sequence id under model/integration/sequences")
     ap.add_argument("--out-dir", default=os.path.join(REPO, "reports", "sxt-025",
                                                       "artifacts"))
+    ap.add_argument("--voice-dry-wav", default=None,
+                    help="SXT-026a (#48): original voice stage -- feed the "
+                         "landed voice model's int16 mono render (L=R) as "
+                         "the dry bus instead of the engine dry bus (the "
+                         "SXT-025 finding-F-1 adapted path). Refuses a "
+                         "frame-count mismatch with the upstream fixture.")
     args = ap.parse_args()
     seq_name = args.sequence
     seq = json.load(open(os.path.join(SEQ_DIR, seq_name + ".json")))
     sidecar = json.load(open(os.path.join(
         FIXTURES, f"hells_bells__{seq_name}.json")))
-    dry, sr = read_wav_stereo_f32(os.path.join(
-        REPO, sidecar["dry"]["wav"]))
-    assert sr == 48000
+    if args.voice_dry_wav:
+        import wave
+
+        with open(args.voice_dry_wav, "rb") as f:
+            w = wave.open(f)
+            assert w.getnchannels() == 1 and w.getsampwidth() == 2 \
+                and w.getframerate() == 48000, "expected int16 mono 48k wav"
+            raw = w.readframes(w.getnframes())
+        mono = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768.0
+        dry = np.vstack([mono, mono])
+    else:
+        dry, sr = read_wav_stereo_f32(os.path.join(
+            REPO, sidecar["dry"]["wav"]))
+        assert sr == 48000
     frames = sidecar["render"]["frames"]
     assert dry.shape[1] == frames
 

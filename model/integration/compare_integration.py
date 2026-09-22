@@ -190,17 +190,25 @@ def main():
     ap.add_argument("--sequence", required=True)
     ap.add_argument("--tail-start-sample", type=int, default=None,
                     help="override the last-note-off sample (default: trace)")
+    ap.add_argument("--artifacts", default=ARTIFACTS,
+                    help="artifacts dir holding model__<seq>-wet.f32.wav + "
+                         "trace__<seq>.json (default: the landed SXT-025 "
+                         "artifacts; SXT-026a passes its own dir)")
+    ap.add_argument("--issue-label", default="SXT-025 (#18)",
+                    help="issue field recorded in the metrics JSON")
     args = ap.parse_args()
     seq_name = args.sequence
+    art = args.artifacts if os.path.isabs(args.artifacts) else \
+        os.path.join(REPO, args.artifacts)
 
     ref, _ = read_wav_stereo_f32(os.path.join(
         FIXTURES, f"hells_bells__{seq_name}-wet.f32.wav"))
     mod, _ = read_wav_stereo_f32(os.path.join(
-        ARTIFACTS, f"model__{seq_name}-wet.f32.wav"))
-    trace = json.load(open(os.path.join(ARTIFACTS, f"trace__{seq_name}.json")))
+        art, f"model__{seq_name}-wet.f32.wav"))
+    trace = json.load(open(os.path.join(art, f"trace__{seq_name}.json")))
 
     metrics = {
-        "issue": "SXT-025 (#18)",
+        "issue": args.issue_label,
         "sequence": seq_name,
         "claim": "model wet bus vs the SAME pinned-engine wet fixture; "
                  "PENDING-FREEZE: budgets are proposals, not frozen policy",
@@ -208,7 +216,7 @@ def main():
             os.path.join(FIXTURES, f"hells_bells__{seq_name}-wet.f32.wav"),
             "rb").read()).hexdigest(),
         "model_render_sha256": hashlib.sha256(open(
-            os.path.join(ARTIFACTS, f"model__{seq_name}-wet.f32.wav"),
+            os.path.join(art, f"model__{seq_name}-wet.f32.wav"),
             "rb").read()).hexdigest(),
     }
 
@@ -306,7 +314,7 @@ def main():
                               "recorded for SXT-013; all other budgets PASS)")
     else:
         metrics["overall"] = "FAIL against proposed budgets"
-    out_path = os.path.join(ARTIFACTS, f"compare__{seq_name}.json")
+    out_path = os.path.join(art, f"compare__{seq_name}.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, sort_keys=True)
         f.write("\n")
