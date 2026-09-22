@@ -29,14 +29,17 @@ init.hex word order (32-bit words):
   50 t_shape  51 t_pw  52 t_pw2  53 t_sub  54 t_sync  55 lag_rate
   56 char_a1  57 char_b0  58 char_b1
   59 hpf_init  60 integrator_hpf  61 total_blocks
+  62 aeg_a  63 aeg_d  64 aeg_r  65 aeg_s(Q2.29)  66 aeg_r_s
+  67 inst_att_aeg
+  68..73 halfband B0..B5  74..79 halfband A0..A5
 
 ctrl.hex: per block a 10-word header [b, slotmask, master_amp, 0..0], then
 one record per PROCESSED slot in slot order (released voices carry their
 final block's record so the stream stays aligned):
   0 key  1 flags(b0 gate, b1 checkpoint, b2 created, b3 released)
   2 pmi(Q13.18)  3 pitchmult(Q10.21)  4 a_cov(Q10.21)
-  5 hpf_start  6 hpf_d  7 gain_start  8 d_gain  9 outl
-  created only (b2): 10..57 t_u[16] ++ t_sync_u[16] ++ t_inv_u[16]
+  5 hpf_start  6 hpf_d  7 lvl  8 pfg  9 gain_start  10 d_gain  11 outl
+  created only (b2): 12..59 t_u[16] ++ t_sync_u[16] ++ t_inv_u[16]
 """
 
 import argparse
@@ -56,7 +59,7 @@ FQ = vm.FQ
 BLOCK_SIZE = vm.BLOCK_SIZE
 CHECKPOINT_EVERY = 64
 N_SLOTS = 8
-REC = 10
+REC = 12
 REC_NEW = REC + 48
 
 
@@ -172,7 +175,7 @@ def main():
                     | (8 if v.slot in blk["release"] else 0),
                     v.osc.ctrl_pmi, v.pitchmult, v.ctrl_a_cov,
                     v.ctrl_hpf_start, v.ctrl_hpf_d,
-                    v.ctrl_gain_start, v.ctrl_d_gain, v.outl,
+                    v.lvl, v.pfg, v.ctrl_gain_start, v.ctrl_d_gain, v.outl,
                 ]
                 if v.slot in blk["create"]:
                     words += (_pad16(v.osc.t_u) + _pad16(v.osc.t_sync_u)
@@ -227,11 +230,21 @@ def main():
 
     if args.rtl:
         o = probe.osc
+        a = inp.adsr
+        a_min_const = vm.qint(-8.0)
+        inst_att = 1 if (vm.qint(a["a"]) - a_min_const) < vm.qint(0.01) else 0
         init_words = ([o.n_unison, o.out_attenuation]
                       + _pad16(o.t_u) + _pad16(o.t_sync_u) + _pad16(o.t_inv_u)
                       + [o.t_shape, o.t_pw, o.t_pw2, o.t_sub, o.t_sync,
                          cm.LAG_RATE, o.char_a1, o.char_b0, o.char_b1,
-                         o.hpf_prev, cm.INTEGRATOR_HPF, total_blocks])
+                         o.hpf_prev, cm.INTEGRATOR_HPF, total_blocks,
+                         vm.envelope_rate_linear_nowrap(vm.qint(a["a"])),
+                         vm.envelope_rate_linear_nowrap(vm.qint(a["d"])),
+                         vm.envelope_rate_linear_nowrap(vm.qint(a["r"])),
+                         vm.qint_phase(a["s"]), int(a["r_s"]),
+                         inst_att,
+                         *vm.HALFBAND_B_Q, *vm.HALFBAND_A_Q,
+                         int(a["d_s"]), vm.qint(a["d"])])
         write_hex(os.path.join(rtl_dir, "init.hex"), init_words)
         write_hex(os.path.join(rtl_dir, "ctrl.hex"), ctrl)
         write_hex(os.path.join(rtl_dir, "sinc_main.hex"), vm.SINC_MAIN)
