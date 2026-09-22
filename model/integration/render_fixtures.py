@@ -12,7 +12,7 @@ DETERMINISM GATE (SXT-012 method, per the issue task): every bus is rendered
 3x in fresh instances and all three float buffers must be bit-identical
 (sha256); the gate refuses otherwise.
 
-Outputs under reports/sxt025/fixtures/:
+Outputs under reports/sxt-025/fixtures/:
   <slug>__<seq>-wet.f32.wav / -dry.f32.wav + sidecar JSON (hashes, engine
   identity, tool version).
 
@@ -37,7 +37,7 @@ import render_fixture as rf  # noqa: E402  (SXT-012 harness)
 import render_fx_fixtures as rfx  # noqa: E402  (SXT-023 stereo-f32 harness)
 
 SEQ_DIR = os.path.join(REPO, "model", "integration", "sequences")
-OUT_DIR = os.path.join(REPO, "reports", "sxt025", "fixtures")
+OUT_DIR = os.path.join(REPO, "reports", "sxt-025", "fixtures")
 REL_PATH = "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
 SLUG = "hells_bells"
 SEQUENCES = ["sxt025-smoke-v1", "sxt025-accept-v1"]

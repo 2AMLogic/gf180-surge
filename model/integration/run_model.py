@@ -36,7 +36,7 @@ from tools.run_reverb_rtl import (  # noqa: E402
 )
 from model.effects.reverb1 import reverb1_fixed as rf  # noqa: E402
 
-FIXTURES = os.path.join(REPO, "reports", "sxt025", "fixtures")
+FIXTURES = os.path.join(REPO, "reports", "sxt-025", "fixtures")
 SEQ_DIR = os.path.join(REPO, "model", "integration", "sequences")
 
 
@@ -67,7 +67,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sequence", required=True,
                     help="sequence id under model/integration/sequences")
-    ap.add_argument("--out-dir", default=os.path.join(REPO, "reports", "sxt025",
+    ap.add_argument("--out-dir", default=os.path.join(REPO, "reports", "sxt-025",
                                                       "artifacts"))
     args = ap.parse_args()
     seq_name = args.sequence

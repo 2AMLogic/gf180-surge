@@ -11,13 +11,13 @@
       "used_cycles_per_frame": {
         "contention": 990,
         "control": 72,
-        "events": 352,
+        "events": 88,
         "fx_kernels": 835,
         "transfer": 8
       },
-      "used_total": 2257,
-      "utilization_fraction": 0.56425,
-      "worst_events_per_block": 4
+      "used_total": 1993,
+      "utilization_fraction": 0.49825,
+      "worst_events_per_block": 1
     },
     "48000000": {
       "budget_cycles_per_frame": 800.0,
@@ -30,7 +30,7 @@
         "detail": {
           "budget": 800.0,
           "clock_hz": 48000000,
-          "used": 2257
+          "used": 1993
         },
         "note": "explicit rejection, never silent (plan section 5)"
       },
@@ -38,13 +38,13 @@
       "used_cycles_per_frame": {
         "contention": 990,
         "control": 72,
-        "events": 352,
+        "events": 88,
         "fx_kernels": 835,
         "transfer": 8
       },
-      "used_total": 2257,
-      "utilization_fraction": 2.257,
-      "worst_events_per_block": 4
+      "used_total": 1993,
+      "utilization_fraction": 1.993,
+      "worst_events_per_block": 1
     },
     "480000000": {
       "budget_cycles_per_frame": 8000.0,
@@ -56,13 +56,13 @@
       "used_cycles_per_frame": {
         "contention": 990,
         "control": 72,
-        "events": 352,
+        "events": 88,
         "fx_kernels": 835,
         "transfer": 8
       },
-      "used_total": 2257,
-      "utilization_fraction": 0.2257,
-      "worst_events_per_block": 4
+      "used_total": 1993,
+      "utilization_fraction": 0.1993,
+      "worst_events_per_block": 1
     },
     "96000000": {
       "budget_cycles_per_frame": 1600.0,
@@ -75,7 +75,7 @@
         "detail": {
           "budget": 1600.0,
           "clock_hz": 96000000,
-          "used": 2257
+          "used": 1993
         },
         "note": "explicit rejection, never silent (plan section 5)"
       },
@@ -83,13 +83,13 @@
       "used_cycles_per_frame": {
         "contention": 990,
         "control": 72,
-        "events": 352,
+        "events": 88,
         "fx_kernels": 835,
         "transfer": 8
       },
-      "used_total": 2257,
-      "utilization_fraction": 1.1285,
-      "worst_events_per_block": 4
+      "used_total": 1993,
+      "utilization_fraction": 0.9965,
+      "worst_events_per_block": 1
     }
   },
   "event_reserve_per_block": 8,
@@ -101,7 +101,7 @@
     },
     "kernel_probe": "reports/sxt-016/probes/probe_fx_reverb1__reverb1_composite_ext_E2__a24__m32__e2.json",
     "kernel_row_note": "835 cyc/sample-period INCLUDES ext-memory stall terms (latency-bound 612 of 835) per A-EXT-2 with full access latency charged",
-    "trace": "reports/sxt025/artifacts/trace__sxt025-accept-v1.json"
+    "trace": "reports/sxt-025/artifacts/trace__sxt025-smoke-v1.json"
   },
   "issue": "SXT-025 (#18)",
   "memory_stall_accounting": [
@@ -118,9 +118,9 @@
     }
   ],
   "render_span": {
-    "blocks_total": 26490,
-    "frames": 840000,
-    "tail_frames": 576000
+    "blocks_total": 4110,
+    "frames": 123840,
+    "tail_frames": 120000
   },
-  "worst_events_per_block_measured": 4
+  "worst_events_per_block_measured": 1
 }

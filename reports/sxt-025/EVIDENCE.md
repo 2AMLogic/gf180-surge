@@ -144,7 +144,7 @@ python3 model/integration/run_model.py --sequence sxt025-smoke-v1
 python3 model/integration/compare_integration.py --sequence sxt025-smoke-v1
 python3 model/integration/run_model.py --sequence sxt025-accept-v1
 python3 model/integration/compare_integration.py --sequence sxt025-accept-v1
-python3 model/integration/schedule_closure.py --trace reports/sxt025/artifacts/trace__sxt025-accept-v1.json
+python3 model/integration/schedule_closure.py --trace reports/sxt-025/artifacts/trace__sxt025-accept-v1.json
 python3 tools/run_sxt025_rtl.py --blocks 1024
 python3 model/integration/negative_controls.py --sequence sxt025-accept-v1
 python3 -m pytest tests/test_sxt025_integration.py
@@ -154,7 +154,7 @@ python3 -m pytest tests/test_sxt025_integration.py
 
 All files under `model/integration/`, `rtl/integration/`,
 `tools/run_sxt025_rtl.py`, `tests/test_sxt025_integration.py` and
-`reports/sxt025/` are original to this repository (Apache-2.0 per
+`reports/sxt-025/` are original to this repository (Apache-2.0 per
 `LICENSE`). The pinned GPL engine was imported at runtime only (fixture
 renders + engine-getter extraction); Reverb1 structure is cited, not copied
 (SXT-024 provenance carries). The committed WAVs are this project's own

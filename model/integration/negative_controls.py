@@ -20,7 +20,7 @@ NC-C  silent stub swapped into the integration slot: the Reverb1 leaf is
       output contract (the wet render must differ from the all-off dry bus
       by the send/return energy) and the fidelity budgets must fail.
       The RTL-side stale stub is the committed reverb1_broken_mutant.sv,
-      demonstrated in reports/sxt025/rtl-exactness.json (kernel comparison
+      demonstrated in reports/sxt-025/rtl-exactness.json (kernel comparison
       FAILS) -- referenced, not re-run here.
 
 Original to this repository (Apache-2.0).
@@ -49,9 +49,9 @@ from model.integration.extract_preset_inputs import (  # noqa: E402
 )
 from tools.compare_fx_reference import channel_metrics, PROPOSED  # noqa: E402
 
-FIXTURES = os.path.join(REPO, "reports", "sxt025", "fixtures")
-ARTIFACTS = os.path.join(REPO, "reports", "sxt025", "artifacts")
-NC_DIR = os.path.join(REPO, "reports", "sxt025", "negative-controls")
+FIXTURES = os.path.join(REPO, "reports", "sxt-025", "fixtures")
+ARTIFACTS = os.path.join(REPO, "reports", "sxt-025", "artifacts")
+NC_DIR = os.path.join(REPO, "reports", "sxt-025", "negative-controls")
 SEQ_DIR = os.path.join(REPO, "model", "integration", "sequences")
 
 
@@ -263,7 +263,7 @@ def main():
         ok = ok and r["detected"]
         print(f"{name}: {r['verdict']}")
 
-    rtl = json.load(open(os.path.join(REPO, "reports", "sxt025",
+    rtl = json.load(open(os.path.join(REPO, "reports", "sxt-025",
                                       "rtl-exactness.json")))
     mut = next((c for c in rtl["cases"] if c["case"] == "mutant"), None)
     if mut:
@@ -272,7 +272,7 @@ def main():
         ok = ok and (mut["verdict"].startswith("CONTROL-OK"))
 
     transcript.append(f"ALL CONTROLS {'HEALTHY' if ok else 'BROKEN'}")
-    with open(os.path.join(REPO, "reports", "sxt025",
+    with open(os.path.join(REPO, "reports", "sxt-025",
                            "negative-controls.txt"), "w",
               encoding="utf-8") as f:
         f.write("\n".join(transcript) + "\n")

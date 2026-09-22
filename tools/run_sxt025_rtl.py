@@ -36,8 +36,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 
-ART = os.path.join(REPO, "reports", "sxt025", "artifacts")
-OUT = os.path.join(REPO, "reports", "sxt025")
+ART = os.path.join(REPO, "reports", "sxt-025", "artifacts")
+OUT = os.path.join(REPO, "reports", "sxt-025")
 RTL = os.path.join(REPO, "rtl")
 
 

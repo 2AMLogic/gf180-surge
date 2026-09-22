@@ -2,7 +2,7 @@
 
 Issue: #18 (SXT-025) · Plan:
 `docs/surge-xt-chip-plan-v0.1-2026-09-20.md` §6 (SXT-025 row) · Evidence:
-[`reports/sxt025/EVIDENCE.md`](../../reports/sxt025/EVIDENCE.md)
+[`reports/sxt-025/EVIDENCE.md`](../../reports/sxt-025/EVIDENCE.md)
 
 **Claim discipline.** One preset running through the integrated path is a
 **diagnostic milestone, not a coverage claim** (plan §6). Nothing here is a
@@ -146,7 +146,7 @@ python3 model/integration/run_model.py --sequence sxt025-smoke-v1
 python3 model/integration/compare_integration.py --sequence sxt025-smoke-v1
 python3 model/integration/run_model.py --sequence sxt025-accept-v1       # full length
 python3 model/integration/compare_integration.py --sequence sxt025-accept-v1
-python3 model/integration/schedule_closure.py --trace reports/sxt025/artifacts/trace__sxt025-accept-v1.json
+python3 model/integration/schedule_closure.py --trace reports/sxt-025/artifacts/trace__sxt025-accept-v1.json
 python3 tools/run_sxt025_rtl.py --blocks 1024                # needs iverilog
 python3 model/integration/negative_controls.py --sequence sxt025-accept-v1
 ```

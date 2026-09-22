@@ -89,7 +89,7 @@ def main():
     ap.add_argument("--trace", required=True,
                     help="trace__<seq>.json from the integration run")
     ap.add_argument("--out", default=os.path.join(
-        REPO, "reports", "sxt025", "schedule-closure.json"))
+        REPO, "reports", "sxt-025", "schedule-closure.json"))
     args = ap.parse_args()
     trace = json.load(open(args.trace))
     worst_events = max(1, trace["event_timing"]["worst_events_per_block"])

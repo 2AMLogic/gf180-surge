@@ -13,7 +13,7 @@ IMAGE_BIN = os.path.join(REPO, "model", "integration", "preset",
 IMAGE_JSON = os.path.join(REPO, "model", "integration", "preset",
                           "Hell_s_Bells__e499f78d.image.json")
 INPUTS = os.path.join(REPO, "model", "integration", "bells_inputs.json")
-ART = os.path.join(REPO, "reports", "sxt025")
+ART = os.path.join(REPO, "reports", "sxt-025")
 SEQUENCES = ["sxt025-smoke-v1", "sxt025-accept-v1"]
 
 

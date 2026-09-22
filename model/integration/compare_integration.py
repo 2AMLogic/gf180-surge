@@ -46,8 +46,8 @@ from tools.compare_fx_reference import (  # noqa: E402
 )
 from tools.compare_reverb_model import BUDGETS  # noqa: E402
 
-FIXTURES = os.path.join(REPO, "reports", "sxt025", "fixtures")
-ARTIFACTS = os.path.join(REPO, "reports", "sxt025", "artifacts")
+FIXTURES = os.path.join(REPO, "reports", "sxt-025", "fixtures")
+ARTIFACTS = os.path.join(REPO, "reports", "sxt-025", "artifacts")
 SEQ_DIR = os.path.join(REPO, "model", "integration", "sequences")
 
 FLOOR_DBFS = BUDGETS["floor_dbfs"]

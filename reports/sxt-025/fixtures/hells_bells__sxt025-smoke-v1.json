@@ -4,24 +4,24 @@
   "determinism_gate": {
     "bit_identical": true,
     "dry_sha256_all": [
-      "4441e1cac945bfd2db12f59ad43802c13c37e47886da9cf6830e4c11db32da99",
-      "4441e1cac945bfd2db12f59ad43802c13c37e47886da9cf6830e4c11db32da99",
-      "4441e1cac945bfd2db12f59ad43802c13c37e47886da9cf6830e4c11db32da99"
+      "bca3425a17ac615017a4f8aeac22164da293220f618722667fed7edc51b229bf",
+      "bca3425a17ac615017a4f8aeac22164da293220f618722667fed7edc51b229bf",
+      "bca3425a17ac615017a4f8aeac22164da293220f618722667fed7edc51b229bf"
     ],
     "repeats": 3,
     "wet_sha256_all": [
-      "4c63722328a9591a48b99869688a4882205874d74a43ccde80295ea37e7468cd",
-      "4c63722328a9591a48b99869688a4882205874d74a43ccde80295ea37e7468cd",
-      "4c63722328a9591a48b99869688a4882205874d74a43ccde80295ea37e7468cd"
+      "dba8c271023d421b7c776c5049849ebd76563c55c2c043e38e351d515c7896b8",
+      "dba8c271023d421b7c776c5049849ebd76563c55c2c043e38e351d515c7896b8",
+      "dba8c271023d421b7c776c5049849ebd76563c55c2c043e38e351d515c7896b8"
     ]
   },
   "dry": {
     "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
-    "bytes": 6720044,
+    "bytes": 990764,
     "dry_fx_bypass_verified": true,
-    "peak_abs_float": 0.38400089740753174,
-    "sha256": "8399f13dfed5526bd5d1a55a7b01cbe156fd98d39155aba0707e7f1c9e791457",
-    "wav": "reports/sxt025/fixtures/hells_bells__sxt025-accept-v1-dry.f32.wav"
+    "peak_abs_float": 0.22348140180110931,
+    "sha256": "32e6187da9e0a419097b771bdc64d50f230df4fd92e0f385a9059dfc02faf232",
+    "wav": "reports/sxt-025/fixtures/hells_bells__sxt025-smoke-v1-dry.f32.wav"
   },
   "engine": {
     "block_size_samples": 32,
@@ -31,7 +31,7 @@
     "surgepy_module": "surgepy.cpython-311-darwin.so",
     "tempo_bpm": 120
   },
-  "fixture_id": "hells_bells__sxt025-accept-v1",
+  "fixture_id": "hells_bells__sxt025-smoke-v1",
   "issue": "SXT-025",
   "preset": {
     "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
@@ -42,18 +42,18 @@
   },
   "render": {
     "block_size": 32,
-    "duration_s": 17.5,
-    "frames": 840000,
+    "duration_s": 2.58,
+    "frames": 123840,
     "policies_inherited": "fixtures/render_fixture.py (reset/scheduling/tail/dry-bypass)",
     "sample_rate": 48000,
     "settle_s": 0.25,
-    "tail_s": 12.0
+    "tail_s": 2.5
   },
   "schema_version": 1,
   "sequence": {
-    "id": "sxt025-accept-v1",
-    "path": "model/integration/sequences/sxt025-accept-v1.json",
-    "sha256": "ed08fc0712e3454a870801f03779bf8c0474e759e03cd1c6d69305acbc1fac6b"
+    "id": "sxt025-smoke-v1",
+    "path": "model/integration/sequences/sxt025-smoke-v1.json",
+    "sha256": "35945e80cddbae7c3aea73c96e0831f186e1fa7909c4fd1addf8d763584b95a2"
   },
   "tool": {
     "pinned_inputs_clean": false,
@@ -61,9 +61,9 @@
     "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
   },
   "wet": {
-    "bytes": 6720044,
-    "peak_abs_float": 0.6215035319328308,
-    "sha256": "bbb4b14850dbf95dd1a55dbffec68b6375d0fdfc90d6d5a855ec414ee7a05241",
-    "wav": "reports/sxt025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav"
+    "bytes": 990764,
+    "peak_abs_float": 0.3003014922142029,
+    "sha256": "9e1864200975f3d758ec7a9d17cc9f8c3b24ac173e693ecf9363e35347b175be",
+    "wav": "reports/sxt-025/fixtures/hells_bells__sxt025-smoke-v1-wet.f32.wav"
   }
 }
