@@ -139,8 +139,9 @@ def main():
                     help="negative control: bind routes to the landed "
                          "modwheel source instead of the LFO")
     ap.add_argument("--free-running", action="store_true",
-                    help="negative control: skip the trigger-mode phase "
-                         "restart in LFO attack (free-running confusion)")
+                    help="negative control: derive the LFO phase from "
+                         "global elapsed time at attack instead of the "
+                         "per-voice keytrigger restart")
     args = ap.parse_args()
 
     if args.free_running:
@@ -243,6 +244,7 @@ def main():
     lfo_ctrl = []
 
     for b in range(total_blocks):
+        lm.BLOCK_CLOCK = b
         blk = {"b": b, "create": [], "release": [], "voices": []}
         while ei < len(events) and -(-events[ei]["t"] // bs) <= b:
             e = events[ei]

@@ -83,9 +83,13 @@ ENVTIME_MAX = 8.0
 PHASE_CLAMP_MAX = 1.0 - 1.0 / 360.0      # startPhaseClamped, basic shapes
 
 # Negative-control switch (tools/lfo_negative_controls.py): when True,
-# attack() skips the trigger-mode phase restart (free-running confusion
-# mutant). Never set in committed reference/model runs.
+# attack() derives the phase from global elapsed time (start_phase + t*rate)
+# instead of restarting per voice — the free-running/keytrigger confusion.
+# In poly mode every voice owns a fresh LFO instance, so the observable
+# keytrigger behavior is the per-voice phase restart; the mutant replaces it
+# with a t=0-anchored free-running phase. Never set in committed model runs.
 MUTANT_FREE_RUNNING = False
+BLOCK_CLOCK = 0                 # runner sets this to the block index per block
 
 
 def sat(x):
@@ -269,18 +273,21 @@ class Lfo:
                 if self.p.env["hold"] == qint_21(ENVTIME_MIN):
                     self.env_state = EG_DECAY
         if self.p.trigmode == LM_KEYTRIGGER:
-            phase = self.p.start_phase_q29
-            phase %= PH_ONE
-            if not MUTANT_FREE_RUNNING:
-                self.phase = phase
+            if MUTANT_FREE_RUNNING:
+                # CONTROL ONLY: free-running confusion — phase anchored at
+                # t=0 instead of the per-voice restart
+                self.phase = (self.p.start_phase_q29
+                              + BLOCK_CLOCK * self.p.rate_word) % PH_ONE
+                self.unwrapped = 0
+            else:
+                self.phase = self.p.start_phase_q29 % PH_ONE
                 self.unwrapped = 0
         elif self.p.trigmode == LM_FREERUN:
             # storage->songpos == 0 in the offline oracle renders (no
             # transport): totalPhase = startPhase + 0. Fail-closed on any
             # future harness that advances songpos.
-            if not MUTANT_FREE_RUNNING:
-                self.phase = self.p.start_phase_q29 % PH_ONE
-                self.unwrapped = 0
+            self.phase = self.p.start_phase_q29 % PH_ONE
+            self.unwrapped = 0
         else:
             raise RuntimeError("lm_random refused at extraction")
         if not MUTANT_FREE_RUNNING:
