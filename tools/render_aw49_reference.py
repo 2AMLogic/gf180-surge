@@ -320,8 +320,10 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
     series = recs[key]
     gal_in = np.stack([d[:, :2] for _, d in series])
     gal_out = np.stack([d[:, 2:4] for _, d in series])
-    if len(gal_in) != total_blocks:
-        raise Refuse(f"tap blocks {len(gal_in)} != render blocks {total_blocks}")
+    settle_blocks = int(seq.get("settle_s", 0.25) * SR) // 32
+    if len(gal_in) != settle_blocks + total_blocks:
+        raise Refuse(f"tap blocks {len(gal_in)} != settle+render "
+                     f"{settle_blocks + total_blocks}")
     fpds = parse_fpd(os.path.join(tap_on, "aw_fpd.bin"))
     galstate = parse_galstate(os.path.join(tap_on, "aw_galstate.bin"))
     if len(galstate) != total_blocks * 32:
@@ -357,7 +359,10 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
                    "aw49_slot": aw49_slot},
         "sequence": {"id": seq_id, "sha256": seq_sha},
         "render": {"sample_rate": SR, "block_size": 32,
-                   "blocks": int(total_blocks), "frames": int(total_blocks) * 32,
+                   "blocks": int(total_blocks),
+                   "settle_blocks": int(settle_blocks),
+                   "tapped_blocks": int(len(gal_in)),
+                   "frames": int(total_blocks) * 32,
                    "tail_s": seq.get("tail_s", 2.5),
                    "settle_s": seq.get("settle_s", 0.25),
                    "policies": "fixtures/render_fixture.py (reset/scheduling/"
