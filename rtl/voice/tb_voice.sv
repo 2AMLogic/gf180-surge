@@ -278,18 +278,18 @@ module tb_voice;
     if (!cw[0][0]) begin
       active[s] = 0;
     end else begin
-    if (cw[0][2]) init_voice();
-    if (cw[0][3]) begin
-      aeg_scale[s] = aeg_out_r[s]; aeg_phase[s] = PH_ONE; aeg_state[s] = S_RELEASE;
-      feg_scale[s] = feg_out_r[s]; feg_phase[s] = PH_ONE; feg_state[s] = S_RELEASE;
-    end
-    adsr_tick(1);
-    adsr_tick(0);
-    if (cfg[40] != 0) sine_osc_block();
-    else              osc_block();
-    filter_chain();
-    if (slot_ckpt[s]) dump_slot();
-    if (aeg_state[s] == S_IDLE && aeg_idle[s] > 0) active[s] = 0;
+      if (cw[0][2]) init_voice();
+      if (cw[0][3]) begin
+        aeg_scale[s] = aeg_out_r[s]; aeg_phase[s] = PH_ONE; aeg_state[s] = S_RELEASE;
+        feg_scale[s] = feg_out_r[s]; feg_phase[s] = PH_ONE; feg_state[s] = S_RELEASE;
+      end
+      adsr_tick(1);
+      adsr_tick(0);
+      if (cfg[40] != 0) sine_osc_block();
+      else              osc_block();
+      filter_chain();
+      if (slot_ckpt[s]) dump_slot();
+      if (aeg_state[s] == S_IDLE && aeg_idle[s] > 0) active[s] = 0;
     end
   endtask
 
