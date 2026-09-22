@@ -270,6 +270,7 @@ def write_rtl_stimulus(inst_res, out_dir, which=0):
     rtl_dir = os.path.join(out_dir, "rtl")
     os.makedirs(rtl_dir, exist_ok=True)
     res = inst_res[which]
+    assert res.get("stimulated", True), "stimulated instance mismatch"
     inp = []
     with open(os.path.join(rtl_dir, "init.hex"), "w", encoding="utf-8") as f:
         f.write(f"{res['blocks'] & MASK32:08x}\n")
@@ -306,12 +307,24 @@ def main():
             [v for blk in res["trace_blocks"] for v in blk["out_engine_q"]])
         res["leg"] = "L2b-engine-coeffs" if args.engine_coeffs else "L2a-own-coeffs"
         results.append(res)
+    which_default = 0
+    if results:
+        # stimulate the instance carrying the subtype transitions when any
+        primary = next((i for i, r in enumerate(results)
+                        if r["subtype_changes"] or len(r["subtypes"]) > 1), 0)
+        most_blocks = max(range(len(results)), key=lambda i: results[i]["blocks"])
+        which_default = primary if results[primary]["blocks"] >= (results[most_blocks]["blocks"] // 4) else most_blocks
+        results[which_default]["stimulated"] = True
+        for i, r in enumerate(results):
+            if i != which_default:
+                r["stimulated"] = False
 
     trace = {
         "format": "sxt-037-lp12-trace/1",
         "leg": results[0]["leg"] if results else None,
         "bundle": os.path.abspath(args.bundle),
         "meta": meta,
+        "stimulated_instance": which_default,
         "instances": [{k: v for k, v in r.items() if k != "trace_blocks"}
                       for r in results],
     }
@@ -319,7 +332,7 @@ def main():
         json.dump({**trace, "instances": [
             {**{k: v for k, v in r.items() if k != "trace_blocks"},
              "trace_blocks": r["trace_blocks"]} for r in results]}, f, indent=1)
-    n_in = write_rtl_stimulus(results, args.out_dir)
+    n_in = write_rtl_stimulus(results, args.out_dir, which_default)
     print(json.dumps({
         "instances": [{k: v for k, v in r.items()
                        if k in ("key", "blocks", "subtypes", "l1_C_max", "l1_C_rms",

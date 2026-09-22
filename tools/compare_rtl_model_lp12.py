@@ -40,34 +40,36 @@ def parse_tb(path):
     return y, t
 
 
-def compare(model_trace, tb):
+def compare(model_trace, tb, instance=0):
     fails = []
     checked = {"samples": 0, "checkpoints": 0, "fields": 0}
     y, t = parse_tb(tb) if isinstance(tb, str) else tb
-    for inst in model_trace["instances"]:
-        for blk in inst["trace_blocks"]:
-            b = blk["b"]
-            for k, want in enumerate(blk["out_model"]):
-                checked["samples"] += 1
-                got = y.get((b, k))
-                if got != want:
-                    fails.append(f"block {b} sample {k}: model={want} rtl={got}")
-                    if len(fails) > 30:
-                        return checked, fails
-            after = blk["after"]
-            got = t.get(b)
-            if got is None:
-                fails.append(f"block {b}: missing T line")
-                continue
-            want_fields = [blk["subtype"], after["r0"], after["r1"], after["r_clip"],
-                           *after["C_end"]]
-            checked["checkpoints"] += 1
-            for i, (w, g) in enumerate(zip(want_fields, got)):
-                checked["fields"] += 1
-                if w != g:
-                    fails.append(f"block {b} field {i}: model={w} rtl={g}")
-            if len(fails) > 30:
-                return checked, fails
+    inst = model_trace["instances"][instance]
+    if inst.get("stimulated", True) is False:
+        raise SystemExit("selected instance was not the one stimulated")
+    for blk in inst["trace_blocks"]:
+        b = blk["b"]
+        for k, want in enumerate(blk["out_model"]):
+            checked["samples"] += 1
+            got = y.get((b, k))
+            if got != want:
+                fails.append(f"block {b} sample {k}: model={want} rtl={got}")
+                if len(fails) > 30:
+                    return checked, fails
+        after = blk["after"]
+        got = t.get(b)
+        if got is None:
+            fails.append(f"block {b}: missing T line")
+            continue
+        want_fields = [blk["subtype"], after["r0"], after["r1"], after["r_clip"],
+                       *after["C_end"]]
+        checked["checkpoints"] += 1
+        for i, (w, g) in enumerate(zip(want_fields, got)):
+            checked["fields"] += 1
+            if w != g:
+                fails.append(f"block {b} field {i}: model={w} rtl={g}")
+        if len(fails) > 30:
+            return checked, fails
     return checked, fails
 
 
