@@ -88,10 +88,11 @@ def write_wav_stereo_f32(path, stereo):
         f.write(hdr + data)
 
 
-def import_surgepy_from(build_dir):
-    so = os.path.join(build_dir, "src", "surge-python")
-    if not os.path.isdir(so):
-        so = os.path.join(build_dir, "src")
+def import_surgepy_from(so_dir):
+    so = so_dir
+    if not any(f.startswith("surgepy") and f.endswith(".so")
+               for f in os.listdir(so)):
+        so = os.path.join(so_dir, "src", "surge-python")
     if not os.path.isdir(so):
         raise Refuse(f"no surgepy build at {so}")
     if so not in sys.path:
