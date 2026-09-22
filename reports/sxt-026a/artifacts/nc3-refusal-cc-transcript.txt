@@ -1,0 +1,3 @@
+# leaf48 applicability-refusal transcript (CC events vs Sine-class preset)
+$ python3 model/voice/run_model.py --inputs model/voice/bells_inputs.json --sequence seq-modwheel-v1
+REFUSED (outside declared SXT-026a class): event type cc refused for Sine-class preset resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp: FM depth must stay constant (the modwheel targets FM Depth in this class)
