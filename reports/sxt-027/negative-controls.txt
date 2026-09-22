@@ -1,0 +1,25 @@
+NC-G1 zero-recovery leaf emission
+  -> REFUSED: REFUSING: leaf 'filter_type:FX Allpass' enables zero presets (recovery basis and corpus B4-supported set both empty); per issue #20 such a leaf is not filed
+
+NC-G2a unknown leaf key (leaf_statics)
+  -> REFUSED: REFUSING: unknown leaf value 'BizarreOsc' for dimension 'osc_family'
+
+NC-G2b unknown leaf dimension (leaf_statics)
+  -> REFUSED: REFUSING: unknown leaf key 'bizarre_dim:thing' (not in the leaf catalog)
+
+NC-G2c unknown leaf value, filter (leaf_statics)
+  -> REFUSED: REFUSING: unknown leaf value 'Not A Filter' for dimension 'filter_type'
+
+NC-G2d unknown leaf dimension (leaf_title)
+  -> REFUSED: REFUSING: unknown leaf key 'bizarre_dim:thing' (not in the leaf catalog)
+
+NC-G3 unknown oscillator family via feature_keys()
+  -> REFUSED: REFUSING: unknown oscillator family 'BizarreOsc' (preset resources/data/patches_3rdparty/A.Liv/Basses/Amen Polska.fxp)
+
+NC-G4 unknown modsource id via feature_keys()
+  -> REFUSED: REFUSING: modsource id 99 outside the pinned enum map (preset resources/data/patches_3rdparty/A.Liv/Basses/Amen Polska.fxp)
+
+NC-G5 tampered graphs via full CLI
+  -> REFUSED (exit 2): REFUSING: graphs sha256 787b6b48125f90aaf3ba55de3c8f23fae020382ce5f34442d26fea88d7bc74a2 != pinned c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715 (this generator is bound to the committed SXT-011 export; a new census requires a new pinned manifest)
+
+ALL GENERATOR NEGATIVE CONTROLS REFUSED: YES
