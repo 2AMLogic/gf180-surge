@@ -1,0 +1,268 @@
+{
+ "claim_scope": "Machine-readable leaf/gate ledger consumed by tools/publish_coverage.py (SXT-029, issue #22). It records, per landed leaf, the verification verdicts of the committed evidence records (full sha256 pins; the tool re-hashes at run time and marks STALE on mismatch), and per unlanded leaf the filed issue (or backlog id) that must land first. Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, quality, or hardware claim; essentiality is UNVERIFIED pending listening (#8/#9). A leaf is support-ready only when rtl_vs_model AND model_vs_reference are both PASS AND the fidelity_freeze gate is PASS (issue #12).",
+ "schema_version": "sxt-029-leaf-verification/1.0.0",
+ "gates": {
+  "fidelity_freeze": {
+   "effect": "no model-vs-reference number is a fidelity verdict until budgets are frozen; supported promotion requires status PASS",
+   "evidence": [
+    {
+     "path": "reports/sxt-023/EVIDENCE.md",
+     "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+    },
+    {
+     "path": "reports/sxt-024/EVIDENCE.md",
+     "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+    }
+   ],
+   "owner": "#12 (SXT-017 profile/fidelity freeze; SXT-013 listening BLOCKED-on-human)",
+   "status": "BLOCKED"
+  },
+  "listening_labels": {
+   "effect": "essentiality UNVERIFIED; favorites-slate target assessment is NO_VERDICT; listening is kept separate from coverage and is never a support gate",
+   "evidence": [
+    {
+     "path": "reports/sxt-014/EVIDENCE.md",
+     "sha256": "b89c72321e86a47bd8d976626f3870927b3cb176f037a776b0febdf5d4d385f2"
+    }
+   ],
+   "owner": "#8/#9 (SXT-013/SXT-014 listening records; none exists in this repository)",
+   "status": "BLOCKED"
+  }
+ },
+ "leaves": {
+  "fx:Chorus": {
+   "issue": 55,
+   "landed": false,
+   "leaf_id": "SXT-028c",
+   "note": "unlanded; carries an explicit SXT-017 decision marker (shares LFO-modulated delay-line semantics of the open delay-budget finding; no Chorus budget may freeze before #12 decides)",
+   "requires_freeze_decision": "#12"
+  },
+  "fx:Conditioner": {
+   "issue": 54,
+   "landed": false,
+   "leaf_id": "SXT-028b"
+  },
+  "fx:Delay": {
+   "evidence": [
+    {
+     "path": "reports/sxt-023/EVIDENCE.md",
+     "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+    }
+   ],
+   "issue": 16,
+   "landed": true,
+   "note": "landed but NOT support-ready: RTL-vs-model exactness FAIL (open tb defect, ~0.9 correlation) and model-vs-reference FAIL against [PROPOSED] budgets (metallic 195,634 LSB max; dexie 72,738); the per-instance-state acceptance case (two Delay slots) PASSED model-side; budget/word-length decision routed #16->#12",
+   "verification": {
+    "model_vs_reference": "FAIL",
+    "rtl_vs_model": "FAIL"
+   }
+  },
+  "fx:Distortion": {
+   "issue": 57,
+   "landed": false,
+   "leaf_id": "SXT-028e"
+  },
+  "fx:EQ": {
+   "evidence": [
+    {
+     "path": "reports/sxt-023/EVIDENCE.md",
+     "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+    }
+   ],
+   "issue": 16,
+   "landed": true,
+   "note": "RTL-vs-model exact (0/547,200 samples, 0 checkpoint mismatches); model-vs-reference at the quantization floor (max 7.8 LSB, rms -120.0 dBFS, corr 1.000) vs [PROPOSED] budgets; parent issue #16 remains OPEN on the Delay slice only",
+   "verification": {
+    "model_vs_reference": "PASS",
+    "rtl_vs_model": "PASS"
+   }
+  },
+  "fx:Phaser": {
+   "issue": 59,
+   "landed": false,
+   "leaf_id": "SXT-028g"
+  },
+  "fx:Reverb1": {
+   "evidence": [
+    {
+     "path": "reports/sxt-024/EVIDENCE.md",
+     "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+    }
+   ],
+   "issue": 17,
+   "landed": true,
+   "note": "RTL-vs-model EXACT (outputs, checkpoints, transaction log, full 557,056-word memory image; broken-mutant control FAILS); model-vs-reference PASS vs [PROPOSED] budgets with one recorded bounded budget finding (hardreset tail relative sub-budget; absolute error -157 dBFS, below device LSB) - recorded for the #12 freeze, never silently absorbed",
+   "verification": {
+    "model_vs_reference": "PASS",
+    "rtl_vs_model": "PASS"
+   }
+  },
+  "fx:Reverb2": {
+   "issue": 58,
+   "landed": false,
+   "leaf_id": "SXT-028f",
+   "note": "unlanded; flags its tank state as the batch's largest external-memory candidate [PENDING-SXT-016]"
+  },
+  "fx:SXT-026a-voice-scope-extension": {
+   "issue": 48,
+   "landed": false,
+   "leaf_id": "SXT-026a",
+   "note": "first-class F-1 leaf: the landed voice arithmetic covers exactly Attacky (fixture-verified) and Quickspit (arithmetic overlap only, no fixture evidence); until it lands, no compiled corpus preset carrying FX can reach a supported status"
+  },
+  "osc:Wavetable": {
+   "evidence": [
+    {
+     "path": "reports/sxt-026/EVIDENCE.md",
+     "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
+    }
+   ],
+   "issue": 19,
+   "landed": true,
+   "note": "RTL-vs-model integer equality PASS (clean RTL; mip-threshold mutant FAILS); model-vs-reference PARTIAL: workhorse/morph PASS sxt-026-proposed bounds, deep-mip pitch extremes (mips 5/6) decorrelate (corr -0.19/-0.01; engine float32 phase pipeline, SXT-026 section 4 bounded finding), uni16/mf MISS the sxt-022 proposal - resolution owned by the #12 freeze, not absorbed",
+   "verification": {
+    "model_vs_reference": "PARTIAL",
+    "rtl_vs_model": "PASS"
+   }
+  },
+  "voice:attacky-slice": {
+   "evidence": [
+    {
+     "path": "reports/sxt-022/EVIDENCE.md",
+     "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+    }
+   ],
+   "fixture_verified_paths": [
+    "resources/data/patches_factory/Basses/Attacky.fxp"
+   ],
+   "issue": 15,
+   "landed": true,
+   "note": "single-preset dry voice slice (forced, not tuned: the only corpus preset inside the B4 voice gates in minimal form); RTL-vs-model EXACT over three sequences; model-vs-reference NO_VERDICT for support purposes: 1/3 sequences passes all [PROPOSED] bounds, 2/3 miss the proposed max/spectral bounds, and no budget is frozen (#12)",
+   "overlap_paths_not_fixture_verified": [
+    "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
+   ],
+   "verification": {
+    "model_vs_reference": "NO_VERDICT",
+    "rtl_vs_model": "PASS"
+   }
+  }
+ },
+ "routing_leaves": {
+  "ains3": {
+   "filed": true,
+   "issue": 61,
+   "leaf_id": "SXT-028i",
+   "landed": false
+  },
+  "ains4": {
+   "filed": true,
+   "issue": 61,
+   "leaf_id": "SXT-028i",
+   "landed": false
+  },
+  "bins1": {
+   "filed": true,
+   "issue": 60,
+   "leaf_id": "SXT-028h",
+   "landed": false
+  },
+  "bins2": {
+   "filed": true,
+   "issue": 60,
+   "leaf_id": "SXT-028h",
+   "landed": false
+  },
+  "global2": {
+   "filed": true,
+   "issue": 56,
+   "leaf_id": "SXT-028d",
+   "landed": false
+  },
+  "global3": {
+   "filed": true,
+   "issue": 62,
+   "leaf_id": "SXT-028j",
+   "landed": false
+  },
+  "global4": {
+   "filed": true,
+   "issue": 62,
+   "leaf_id": "SXT-028j",
+   "landed": false
+  },
+  "send3": {
+   "filed": true,
+   "issue": 64,
+   "leaf_id": "SXT-028l",
+   "landed": false
+  },
+  "send4": {
+   "filed": true,
+   "issue": 64,
+   "leaf_id": "SXT-028l",
+   "landed": false
+  }
+ },
+ "routing_roles_no_leaf_required": [
+  "ains1",
+  "ains2",
+  "global1",
+  "send1",
+  "send2"
+ ],
+ "airwindows_leaves": {
+  "3": {
+   "filed": false,
+   "leaf_id": "SXT-028s"
+  },
+  "4": {
+   "filed": true,
+   "issue": 63,
+   "leaf_id": "SXT-028k",
+   "landed": false
+  },
+  "5": {
+   "filed": false,
+   "leaf_id": "SXT-028o"
+  },
+  "15": {
+   "filed": false,
+   "leaf_id": "SXT-028q"
+  },
+  "21": {
+   "filed": false,
+   "leaf_id": "SXT-028r"
+  },
+  "24": {
+   "filed": false,
+   "leaf_id": "SXT-028t"
+  },
+  "30": {
+   "filed": false,
+   "leaf_id": "SXT-028u"
+  },
+  "35": {
+   "filed": false,
+   "leaf_id": "SXT-028p"
+  },
+  "41": {
+   "filed": false,
+   "leaf_id": "SXT-028v"
+  },
+  "42": {
+   "filed": false,
+   "leaf_id": "SXT-028m"
+  },
+  "46": {
+   "filed": false,
+   "leaf_id": "SXT-028n"
+  },
+  "49": {
+   "filed": true,
+   "issue": 53,
+   "leaf_id": "SXT-028a",
+   "landed": false
+  }
+ },
+ "airwindows_unfiled_reason_template": "no leaf filed for this algorithm (outside the SXT-028 generator's recovery-ordered set)",
+ "voice_leaf_key": "voice:attacky-slice"
+}

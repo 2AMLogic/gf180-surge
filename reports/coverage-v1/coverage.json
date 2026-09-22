@@ -1,0 +1,628 @@
+{
+ "agreement_evidence_links": [
+  {
+   "record": "reports/sxt-022/EVIDENCE.md",
+   "subject": "dry voice slice (Attacky): RTL-vs-model exact; audio vs reference mixed vs [PROPOSED]"
+  },
+  {
+   "record": "reports/sxt-023/EVIDENCE.md",
+   "subject": "EQ leaf verified; Delay leaf FAIL (RTL + reference) with per-instance-state PASS; decision routed #16->#12"
+  },
+  {
+   "record": "reports/sxt-024/EVIDENCE.md",
+   "subject": "Reverb1 leaf: RTL exact; reference within [PROPOSED] budgets (one bounded finding)"
+  },
+  {
+   "record": "reports/sxt-025/EVIDENCE.md",
+   "subject": "integrated wet path diagnostic milestone; adapted-only (F-1); never counted toward coverage"
+  },
+  {
+   "record": "reports/sxt-026/EVIDENCE.md",
+   "subject": "wavetable leaf: RTL exact; reference PARTIAL (deep-mip finding, section 4)"
+  }
+ ],
+ "agreement_separation_note": "no fidelity metric is copied into this artifact; agreement lives in the linked evidence records only",
+ "artifact": "sxt-029-coverage-v1",
+ "claim_scope": "Claim counts, not a completion percentage. Headline statuses are the conservative conjunction of committed evidence: prediction (SXT-017) is not qualification; compiled (SXT-020) is not support; a verified leaf is not a supported preset; nothing here is a fidelity, musical-quality, FPGA/gf180mcu, or hardware-playback claim. Coverage counts are reported separately from agreement (fidelity metrics live only in the linked evidence records) and from listening outcomes (none exist).",
+ "denominators": {
+  "corpus_total": 3561,
+  "favorites_slate": "256 per SXT-013 proposal slate (prospective only; no frozen favorites set exists)",
+  "per_bank": {
+   "contributor": 2920,
+   "factory": 641
+  }
+ },
+ "determinism": "same committed inputs produce byte-identical outputs (sorted keys, fixed column order, no clock)",
+ "favorites_slates": {
+  "slate-256-balanced": {
+   "favorites_target_assessment": {
+    "assessment": "NO_VERDICT",
+    "blocked_by": [
+     "#8/#9 listening labels (essentiality UNVERIFIED)",
+     "#12/SXT-017 fidelity freeze (budgets PENDING-FREEZE)",
+     "landed-leaf gaps (see leaf_ledger and per-row reasons)"
+    ],
+    "measured_supported": 0,
+    "note": "prospective proposal slates only; the frozen favorites set does not exist; NO_VERDICT is the only honest assessment and must never be read as PASS",
+    "policy": "#8 profile: >=205 of 256 supported"
+   },
+   "per_status": {
+    "adapted": 8,
+    "supported": 0,
+    "unresolved": 130,
+    "unsupported": 118
+   },
+   "prospective_only": true,
+   "size": 256
+  },
+  "slate-256-contributor-lean": {
+   "favorites_target_assessment": {
+    "assessment": "NO_VERDICT",
+    "blocked_by": [
+     "#8/#9 listening labels (essentiality UNVERIFIED)",
+     "#12/SXT-017 fidelity freeze (budgets PENDING-FREEZE)",
+     "landed-leaf gaps (see leaf_ledger and per-row reasons)"
+    ],
+    "measured_supported": 0,
+    "note": "prospective proposal slates only; the frozen favorites set does not exist; NO_VERDICT is the only honest assessment and must never be read as PASS",
+    "policy": "#8 profile: >=205 of 256 supported"
+   },
+   "per_status": {
+    "adapted": 6,
+    "supported": 0,
+    "unresolved": 134,
+    "unsupported": 116
+   },
+   "prospective_only": true,
+   "size": 256
+  },
+  "slate-256-factory-lean": {
+   "favorites_target_assessment": {
+    "assessment": "NO_VERDICT",
+    "blocked_by": [
+     "#8/#9 listening labels (essentiality UNVERIFIED)",
+     "#12/SXT-017 fidelity freeze (budgets PENDING-FREEZE)",
+     "landed-leaf gaps (see leaf_ledger and per-row reasons)"
+    ],
+    "measured_supported": 0,
+    "note": "prospective proposal slates only; the frozen favorites set does not exist; NO_VERDICT is the only honest assessment and must never be read as PASS",
+    "policy": "#8 profile: >=205 of 256 supported"
+   },
+   "per_status": {
+    "adapted": 7,
+    "supported": 0,
+    "unresolved": 169,
+    "unsupported": 80
+   },
+   "prospective_only": true,
+   "size": 256
+  }
+ },
+ "gate_columns_per_bank": {
+  "contributor": {
+   "fidelity_contract_gate": {
+    "": 1785,
+    "BLOCKED": 1135
+   },
+   "fx_leaves_gate": {
+    "": 1970,
+    "FAIL": 518,
+    "NOT_RUN": 284,
+    "PASS": 148
+   },
+   "routing_leaves_gate": {
+    "": 2680,
+    "NOT_RUN": 240
+   },
+   "voice_leaf_gate": {
+    "": 1785,
+    "NOT_RUN": 1135
+   },
+   "wavetable_leaf_gate": {
+    "": 2392,
+    "NOT_RUN": 528
+   }
+  },
+  "factory": {
+   "fidelity_contract_gate": {
+    "": 93,
+    "BLOCKED": 548
+   },
+   "fx_leaves_gate": {
+    "": 161,
+    "FAIL": 365,
+    "NOT_RUN": 53,
+    "PASS": 62
+   },
+   "routing_leaves_gate": {
+    "": 632,
+    "NOT_RUN": 9
+   },
+   "voice_leaf_gate": {
+    "": 93,
+    "NOT_RUN": 547,
+    "NO_VERDICT": 1
+   },
+   "wavetable_leaf_gate": {
+    "": 472,
+    "NOT_RUN": 169
+   }
+  }
+ },
+ "headline_rule": "supported = normalized AND compiled AND every required leaf verified AND fidelity-freeze PASS; adapted = disclosed-edit classes (SXT-017 polylimit policy, SXT-025 F-1) and never counted toward supported; unsupported = structural compile rejection; unresolved = named missing step(s) in reasons",
+ "input_integrity": "refuse-on-mismatch",
+ "inputs": {
+  "corpus/normalized/graphs.jsonl": {
+   "role": "structural input (pinned)",
+   "sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
+  },
+  "model/integration/selection-scan.json": {
+   "role": "structural input (pinned)",
+   "sha256": "0701198985c1e6b0d995846337f50c9715290d19fa8946005f859270420f26b6"
+  },
+  "reports/coverage-v1/leaf-verification.json": {
+   "role": "leaf/gate verification table",
+   "sha256": "7b106d078e1515c96449ed74ff5a1d12dd54c85d3595ee8dee96a3f15c453ba2"
+  },
+  "reports/sxt-013/candidates/slate-256-balanced.json": {
+   "role": "structural input (pinned)",
+   "sha256": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90"
+  },
+  "reports/sxt-013/candidates/slate-256-contributor-lean.json": {
+   "role": "structural input (pinned)",
+   "sha256": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e"
+  },
+  "reports/sxt-013/candidates/slate-256-factory-lean.json": {
+   "role": "structural input (pinned)",
+   "sha256": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883"
+  },
+  "reports/sxt-014/EVIDENCE.md": {
+   "role": "evidence record for gate listening_labels",
+   "sha256": "b89c72321e86a47bd8d976626f3870927b3cb176f037a776b0febdf5d4d385f2"
+  },
+  "reports/sxt-017/predictions/B4-broad.json": {
+   "role": "structural input (pinned)",
+   "sha256": "ec5b5ab2f14b82cd3946afeb873ddb4777fd5a96d7b8ca54c2d564d168b8e735"
+  },
+  "reports/sxt-020/compile-corpus-scan.json": {
+   "role": "structural input (pinned)",
+   "sha256": "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6"
+  },
+  "reports/sxt-022/EVIDENCE.md": {
+   "role": "evidence record for leaf voice:attacky-slice",
+   "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+  },
+  "reports/sxt-023/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:Delay",
+   "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+  },
+  "reports/sxt-024/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:Reverb1",
+   "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+  },
+  "reports/sxt-026/EVIDENCE.md": {
+   "role": "evidence record for leaf osc:Wavetable",
+   "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
+  },
+  "reports/sxt-027/leaf-backlog.json": {
+   "role": "structural input (pinned)",
+   "sha256": "76e526549c1cca7cb6f070640c1a1b4e5ee5364be1992adf66305df917c8ebd2"
+  },
+  "reports/sxt-027/leaves-filed.json": {
+   "role": "structural input (pinned)",
+   "sha256": "639b51de26efeb1e4d94a60a9c38dd56f58346c42a8fbf2d81b843bb4fb95c5f"
+  },
+  "reports/sxt-028/leaf-backlog.json": {
+   "role": "structural input (pinned)",
+   "sha256": "8881f83174694606dcb819b7378947c9c99f802f2db7aef534f03a4c608b2fa8"
+  },
+  "reports/sxt-028/leaves-filed.json": {
+   "role": "structural input (pinned)",
+   "sha256": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4"
+  }
+ },
+ "issue": "SXT-029 (#22)",
+ "leaf_ledger": {
+  "backlog_unfiled": {
+   "sxt-027": {
+    "count": 60,
+    "zero_basis_deferred": 29
+   },
+   "sxt-028": {
+    "count": 10
+   }
+  },
+  "filed_open_count": 24,
+  "filed_open_leaves": [
+   {
+    "issue": 66,
+    "leaf": "mod_behavior:lfo",
+    "recovery_basis_count": 122,
+    "source": "sxt-027",
+    "sxt": "032",
+    "title": "SXT-032: voice leaf \u2014 modulation behavior: lfo"
+   },
+   {
+    "issue": 67,
+    "leaf": "osc_family:Classic",
+    "recovery_basis_count": 94,
+    "source": "sxt-027",
+    "sxt": "033",
+    "title": "SXT-033: voice leaf \u2014 oscillator family: Classic"
+   },
+   {
+    "issue": 68,
+    "leaf": "voice_topology:unison_stack",
+    "recovery_basis_count": 92,
+    "source": "sxt-027",
+    "sxt": "034",
+    "title": "SXT-034: voice leaf \u2014 unison stack topology (>1 voice)"
+   },
+   {
+    "issue": 69,
+    "leaf": "mod_behavior:modwheel",
+    "recovery_basis_count": 91,
+    "source": "sxt-027",
+    "sxt": "035",
+    "title": "SXT-035: voice leaf \u2014 modulation behavior: modwheel"
+   },
+   {
+    "issue": 70,
+    "leaf": "mod_behavior:velocity",
+    "recovery_basis_count": 86,
+    "source": "sxt-027",
+    "sxt": "036",
+    "title": "SXT-036: voice leaf \u2014 modulation behavior: velocity"
+   },
+   {
+    "issue": 71,
+    "leaf": "filter_type:LP 12 dB",
+    "recovery_basis_count": 70,
+    "source": "sxt-027",
+    "sxt": "037",
+    "title": "SXT-037: voice leaf \u2014 filter algorithm: LP 12 dB"
+   },
+   {
+    "issue": 72,
+    "leaf": "filter_type:LP 24 dB",
+    "recovery_basis_count": 49,
+    "source": "sxt-027",
+    "sxt": "038",
+    "title": "SXT-038: voice leaf \u2014 filter algorithm: LP 24 dB"
+   },
+   {
+    "issue": 73,
+    "leaf": "filter_type:LP Legacy Ladder",
+    "recovery_basis_count": 45,
+    "source": "sxt-027",
+    "sxt": "039",
+    "title": "SXT-039: voice leaf \u2014 filter algorithm: LP Legacy Ladder"
+   },
+   {
+    "issue": 74,
+    "leaf": "osc_family:Sine",
+    "recovery_basis_count": 38,
+    "source": "sxt-027",
+    "sxt": "040",
+    "title": "SXT-040: voice leaf \u2014 oscillator family: Sine"
+   },
+   {
+    "issue": 75,
+    "leaf": "mod_behavior:slfo",
+    "recovery_basis_count": 36,
+    "source": "sxt-027",
+    "sxt": "041",
+    "title": "SXT-041: voice leaf \u2014 modulation behavior: slfo"
+   },
+   {
+    "issue": 76,
+    "leaf": "mod_behavior:keytrack",
+    "recovery_basis_count": 34,
+    "source": "sxt-027",
+    "sxt": "042",
+    "title": "SXT-042: voice leaf \u2014 modulation behavior: keytrack"
+   },
+   {
+    "issue": 77,
+    "leaf": "playmode:Mono (Single Trigger & Fingered Portamento)",
+    "recovery_basis_count": 29,
+    "source": "sxt-027",
+    "sxt": "043",
+    "title": "SXT-043: voice leaf \u2014 playmode submode: Mono (Single Trigger & Fingered Portamento)"
+   },
+   {
+    "issue": 53,
+    "leaf": "SXT-028a",
+    "recovery_basis_count": 81,
+    "source": "sxt-028",
+    "sxt": "028a",
+    "title": "SXT-028a: Airwindows algorithm leaf: Galactic (id 49)"
+   },
+   {
+    "issue": 54,
+    "leaf": "SXT-028b",
+    "recovery_basis_count": 365,
+    "source": "sxt-028",
+    "sxt": "028b",
+    "title": "SXT-028b: Conditioner effect leaf (gate/compressor/LFO)"
+   },
+   {
+    "issue": 55,
+    "leaf": "SXT-028c",
+    "recovery_basis_count": 331,
+    "source": "sxt-028",
+    "sxt": "028c",
+    "title": "SXT-028c: Chorus effect leaf (sst-effects Chorus, delay-line class)"
+   },
+   {
+    "issue": 56,
+    "leaf": "SXT-028d",
+    "recovery_basis_count": 445,
+    "source": "sxt-028",
+    "sxt": "028d",
+    "title": "SXT-028d: Routing-form leaf: Global FX slot 2 (second concurrent global FX instance)"
+   },
+   {
+    "issue": 57,
+    "leaf": "SXT-028e",
+    "recovery_basis_count": 304,
+    "source": "sxt-028",
+    "sxt": "028e",
+    "title": "SXT-028e: Distortion effect leaf (multiband + waveshaper drive)"
+   },
+   {
+    "issue": 58,
+    "leaf": "SXT-028f",
+    "recovery_basis_count": 232,
+    "source": "sxt-028",
+    "sxt": "028f",
+    "title": "SXT-028f: Reverb 2 effect leaf (sst-effects tank reverb)"
+   },
+   {
+    "issue": 59,
+    "leaf": "SXT-028g",
+    "recovery_basis_count": 155,
+    "source": "sxt-028",
+    "sxt": "028g",
+    "title": "SXT-028g: Phaser effect leaf (sst-effects Phaser)"
+   },
+   {
+    "issue": 60,
+    "leaf": "SXT-028h",
+    "recovery_basis_count": 131,
+    "source": "sxt-028",
+    "sxt": "028h",
+    "title": "SXT-028h: Routing-form leaf: Scene-B insert FX bus, slots 1-2 (bins1/bins2)"
+   },
+   {
+    "issue": 61,
+    "leaf": "SXT-028i",
+    "recovery_basis_count": 55,
+    "source": "sxt-028",
+    "sxt": "028i",
+    "title": "SXT-028i: Routing-form leaf: Scene-A insert FX slots 3-4 (ains3/ains4, extended rack half)"
+   },
+   {
+    "issue": 62,
+    "leaf": "SXT-028j",
+    "recovery_basis_count": 48,
+    "source": "sxt-028",
+    "sxt": "028j",
+    "title": "SXT-028j: Routing-form leaf: Global FX slots 3-4 (global3/global4, extended rack half)"
+   },
+   {
+    "issue": 63,
+    "leaf": "SXT-028k",
+    "recovery_basis_count": 30,
+    "source": "sxt-028",
+    "sxt": "028k",
+    "title": "SXT-028k: Airwindows algorithm leaf: Logical (id 4)"
+   },
+   {
+    "issue": 64,
+    "leaf": "SXT-028l",
+    "recovery_basis_count": 18,
+    "source": "sxt-028",
+    "sxt": "028l",
+    "title": "SXT-028l: Routing-form leaf: Send buses 3-4 (send3/send4, extended rack half)"
+   }
+  ],
+  "first_class_voice_scope_leaf": {
+   "issue": 48,
+   "leaf": "SXT-026a"
+  },
+  "gates": {
+   "fidelity_freeze": {
+    "evidence_state": "OK",
+    "status": "BLOCKED"
+   },
+   "listening_labels": {
+    "evidence_state": "OK",
+    "status": "BLOCKED"
+   }
+  },
+  "leaves": {
+   "fx:Chorus": {
+    "evidence_state": "OK",
+    "landed": false,
+    "support_ready": false,
+    "verification": {}
+   },
+   "fx:Conditioner": {
+    "evidence_state": "OK",
+    "landed": false,
+    "support_ready": false,
+    "verification": {}
+   },
+   "fx:Delay": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "FAIL",
+     "rtl_vs_model": "FAIL"
+    }
+   },
+   "fx:Distortion": {
+    "evidence_state": "OK",
+    "landed": false,
+    "support_ready": false,
+    "verification": {}
+   },
+   "fx:EQ": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": true,
+    "verification": {
+     "model_vs_reference": "PASS",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "fx:Phaser": {
+    "evidence_state": "OK",
+    "landed": false,
+    "support_ready": false,
+    "verification": {}
+   },
+   "fx:Reverb1": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": true,
+    "verification": {
+     "model_vs_reference": "PASS",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "fx:Reverb2": {
+    "evidence_state": "OK",
+    "landed": false,
+    "support_ready": false,
+    "verification": {}
+   },
+   "fx:SXT-026a-voice-scope-extension": {
+    "evidence_state": "OK",
+    "landed": false,
+    "support_ready": false,
+    "verification": {}
+   },
+   "osc:Wavetable": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "PARTIAL",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "voice:attacky-slice": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   }
+  },
+  "note": "filing a leaf issue is not progress on the claim ladder; only the leaves' own evidence records are"
+ },
+ "negative_controls": {
+  "contract": "a stale/silent leaf evidence must DOWNGRADE affected presets from supported to unresolved (never report them supported); any corpus entry without a coverage row must refuse the run fail-closed",
+  "runner": "tools/coverage_negative_controls.py",
+  "transcript": "reports/coverage-v1/negative-controls.txt"
+ },
+ "open_decisions": [
+  {
+   "blocks": "every supported promotion; all model-vs-reference verdicts are PENDING-FREEZE",
+   "decision": "#12/SXT-017 freeze profile v1 (fidelity budgets)",
+   "state": "OPEN"
+  },
+  {
+   "blocks": "every preset requiring an active Delay slot (SXT-023 A1/A2 FAIL; routing of Chorus budgets too, SXT-028c)",
+   "decision": "#16->#12 delay budget/exactness decision",
+   "state": "OPEN"
+  },
+  {
+   "blocks": "favorites-target assessment (NO_VERDICT); leaf ordering; never a support gate",
+   "decision": "#8/#9 listening labels (essentiality / recovery ordering)",
+   "state": "BLOCKED-on-human"
+  },
+  {
+   "blocks": "hardware playback claims; out of scope here (non-goal)",
+   "decision": "#23 (SXT-030) FPGA + external memory qualification",
+   "state": "OPEN"
+  },
+  {
+   "blocks": "silicon claims; out of scope here (non-goal)",
+   "decision": "#24 (SXT-031) gf180 implementation qualification",
+   "state": "OPEN"
+  }
+ ],
+ "per_bank": {
+  "contributor": {
+   "adapted": 145,
+   "supported": 0,
+   "unresolved": 1700,
+   "unsupported": 1075
+  },
+  "factory": {
+   "adapted": 20,
+   "supported": 0,
+   "unresolved": 564,
+   "unsupported": 57
+  }
+ },
+ "reconciliation": {
+  "b4_prediction_x_headline": {
+   "adapted-not-predicted|adapted": 164,
+   "supported|adapted": 1,
+   "supported|unresolved": 1682,
+   "supported|unsupported": 2,
+   "unresolved|unresolved": 582,
+   "unsupported|unsupported": 1130
+  },
+  "note": "two B4-predicted-supported presets are structurally rejected by the compile scan (send_levels_not_exported, asset_unresolved): prediction is not qualification, which is why predictions never feed the headline",
+  "polylimit_reconciliation": "164 presets are adapted by the pure polylimit-rejection class; this equals the SXT-017 B4 adapted-not-predicted count (164) and is a subset of the SXT-020 rejection codes (212 carry the code, 48 of those with additional blockers keep their harder headline)",
+  "prediction_vs_qualification_examples": [
+   {
+    "b4_prediction": "supported",
+    "compile_codes": "send_levels_not_exported",
+    "headline": "unsupported",
+    "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp"
+   },
+   {
+    "b4_prediction": "supported",
+    "compile_codes": "",
+    "headline": "adapted",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+   },
+   {
+    "b4_prediction": "supported",
+    "compile_codes": "asset_unresolved",
+    "headline": "unsupported",
+    "path": "resources/data/patches_factory/FX/Aggero.fxp"
+   }
+  ]
+ },
+ "schema_version": "sxt-029-coverage/1.0.0",
+ "status_vocabulary": [
+  "PASS",
+  "FAIL",
+  "NOT_RUN",
+  "BLOCKED",
+  "NO_VERDICT",
+  "STALE"
+ ],
+ "supported_set": {
+  "composition": [],
+  "count": 0,
+  "note": "empty today: the honest result. No compiled preset has a verified voice path (F-1: the only two in-slice presets carry no FX and only Attacky is fixture-verified), the Delay leaf is FAIL, wavetable is partial at deep mips, the fidelity freeze (#12) is open, and no listening record exists. 1,685 B4 'supported' predictions qualify nothing."
+ },
+ "tool_version": "sxt-029-coverage/1.0.0",
+ "totals": {
+  "adapted": 165,
+  "supported": 0,
+  "unresolved": 2264,
+  "unsupported": 1132
+ }
+}
