@@ -323,7 +323,8 @@ class TappedVibratoStream(VibratoStream):
     """
 
     def __init__(self, ctrl, vibM):
-        super().__init__(ctrl)
+        if ctrl is not None:
+            super().__init__(ctrl)
         import numpy as np
         self.traj = [float(v) for v in np.asarray(vibM).ravel()]
         self.k = 0
