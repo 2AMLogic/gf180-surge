@@ -163,7 +163,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "a341e3e23f2e4ad4333f6a24a46460808602ee23af30270ead3cbd25695bdafe"
+   "sha256": "a08578db00d53663dc9db7b1565ecf549c99194d82fd2afe573cf8df63613bb6"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -207,7 +207,7 @@
   },
   "reports/sxt-026a/EVIDENCE.md": {
    "role": "evidence record for leaf voice:sine-fm-lp24-v2",
-   "sha256": "77e8174a692d466017d70726f17c290d42c0c9cf57d7df6cfb5fbea5f5c84da2"
+   "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
   },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",

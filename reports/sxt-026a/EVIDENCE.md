@@ -205,14 +205,22 @@ now holds only while the voice leaf does not fixture-verify the F-1 preset
 
 ## 8. Artifacts (this directory) and reproducibility
 
-Committed: `exactness-canonical-bells.json`, `exactness-v1-attacky-smoke.json`,
-`audio-smoke-bells-dry.json`, `audio-canonical-bells-dry.json`,
-`model-smoke-bells-dry.wav`, `model-canonical-bells-dry.wav`,
-`reference-canonical-bells-dry.wav`, `mutant-broken-smoke.json`,
+Committed (in this PR): `exactness-canonical-bells.json`,
+`exactness-v1-attacky-smoke.json`, `audio-smoke-bells-dry.json`,
+`model-smoke-bells-dry.wav`, `mutant-broken-smoke.json`,
 `mutant-wrongparam-smoke.json`, `nc3-refusal-*-transcript.txt`,
-`probe-{fm,width}-inertness.json` (+ variant wavs),
-`canonical-chain-commit.txt`, `model__sxt025-accept-v1-wet.f32.wav`,
-`trace__sxt025-accept-v1.json`, `compare__sxt025-accept-v1.json`.
+`model__sxt025-accept-v1-wet.f32.wav`, `trace__sxt025-accept-v1.json`,
+`compare__sxt025-accept-v1.json`.
+
+Executed on the pinned remote oracle and retained there only (NOT committed
+in this PR; named where cited): `audio-canonical-bells-dry.json` (source of
+the §4 canonical dry budget numbers), `model-canonical-bells-dry.wav`
+(regenerable in-tree: `run_model.py --inputs model/voice/bells_inputs.json
+--sequence model/integration/sequences/sxt025-accept-v1.json` is
+deterministic; the model render was re-verified byte-identical at HEAD),
+`reference-canonical-bells-dry.wav` (oracle render),
+`probe-{fm,width}-inertness.json` (+ variant wavs; §6 records their
+verdicts), and `canonical-chain-commit.txt` (§3 box HEAD pin).
 Oracle-dependent steps were executed on the pinned remote oracle
 (`~/oracle/surge`, surgepy cpython-311) under `python3.11`; the box clone
 was reset to the committed branch HEAD before each recorded run. Local
