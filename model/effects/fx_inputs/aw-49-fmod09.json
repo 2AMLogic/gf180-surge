@@ -1,0 +1,144 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "rule": "complete-wet renders REFUSED unless every active class is landed and passing; tapped slot-boundary comparison is the reference leg (decision-records/0006)",
+    "slot_classes": [
+      {
+        "class": "unlanded:Flanger(12)",
+        "slot": 0
+      },
+      {
+        "class": "landed-failing:SXT-023-Delay(#16->#12)",
+        "slot": 4
+      },
+      {
+        "class": "this-leaf:SXT-028a",
+        "slot": 5
+      }
+    ],
+    "unlanded_slots": [
+      {
+        "cls": "unlanded:Flanger(12)",
+        "slot": 0
+      }
+    ]
+  },
+  "aw49_slot": 5,
+  "census_blob_sha1": "76444c0758e7b117cc06598f1b66ed5b99960229",
+  "chain": [
+    {
+      "aw": null,
+      "aw_name": null,
+      "params_f": [
+        0.0,
+        0.0,
+        -2.0,
+        0.75,
+        3.0,
+        60.0,
+        12.0,
+        0.25,
+        0.20000000298023224,
+        9.691642761230469,
+        1.0,
+        0.0
+      ],
+      "return_f": 1.0,
+      "role": "ains1",
+      "slot": 0,
+      "type": 12,
+      "type_name": "Flanger"
+    },
+    {
+      "aw": null,
+      "aw_name": null,
+      "params_f": [
+        -0.584962010383606,
+        -1.0,
+        0.31652000546455383,
+        0.41169700026512146,
+        -14.105345726013184,
+        48.289276123046875,
+        -1.1794630289077759,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        2.0565528869628906
+      ],
+      "return_f": 1.0,
+      "role": "send1",
+      "slot": 4,
+      "type": 1,
+      "type_name": "Delay"
+    },
+    {
+      "aw": 49,
+      "aw_name": "Galactic",
+      "galactic": {
+        "A_replace_f": 0.5,
+        "B_brightness_f": 0.5,
+        "C_modulation_f": 0.5,
+        "D_size_f": 1.0,
+        "E_mix_f": 1.0,
+        "active_scene": 0,
+        "scene_send_f": [
+          0.8293660283088684,
+          1.271347999572754
+        ]
+      },
+      "params_f": [
+        49.0,
+        0.5,
+        0.5,
+        0.5,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "return_f": 1.0,
+      "role": "send2",
+      "slot": 5,
+      "type": 14,
+      "type_name": "Airwindows"
+    }
+  ],
+  "drifts_recorded": [
+    0.08380699902772903
+  ],
+  "extraction": {
+    "drift_policy": "recorded, not gated: the leaf conditions the reference leg on oracle taps",
+    "modulation_check": "graphs md rows with FX destinations refuse (unmodeled, fail-closed)",
+    "params_source": "surgepy getParamVal post-load (normalized, authoritative), cross-checked against graphs.jsonl within 1.5e-6"
+  },
+  "graphs_sha256_prefix": "76444c0758e7b117",
+  "leaf": "SXT-028a",
+  "path": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
+  "repeatability_class": {
+    "bit_identical": false,
+    "reasons": [
+      "scene drift > 0: [0.08380699902772903]",
+      "aw49 C (Modulation) = 0.5 > 0: engine vibrato seed is wall-clock seeded"
+    ]
+  },
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.8293660283088684,
+      1.271347999572754
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "fmod09",
+  "volume_f": -5.303501129150391
+}
