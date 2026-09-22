@@ -113,12 +113,12 @@ module tb_voice;
 
   // qint(v): Q10.21 round-half-up of a real (quantization-time only)
   function automatic signed [31:0] qint_r(input real v);
+    integer q;
     begin
-      integer q;
       q = floor_r(v * 2097152.0 + 0.5);
       if      (q > 32'sd2147483647)  qint_r = 32'sd2147483647;
       else if (q < -32'sd2147483648) qint_r = -32'sd2147483648;
-      else                           qint_r = signed'(q);
+      else                           qint_r = q;
     end
   endfunction
 
@@ -162,9 +162,11 @@ module tb_voice;
   logic signed [31:0] l_shape [NSLOTS], l_pw [NSLOTS], l_pw2 [NSLOTS],
       l_sub [NSLOTS], l_sync [NSLOTS];
   logic signed [31:0] osout [NSLOTS][BLOCK_OS];
-  // SXT-026a sine state (per slot; three oscillator instances)
-  logic signed [31:0] sq_r [3], sq_i [3], sq_dr [3], sq_di [3], sq_phase [3];
-  logic signed [31:0] hp_r0 [3], hp_r1 [3], lp_r0 [3], lp_r1 [3];
+  // SXT-026a sine state (per slot x three oscillator instances)
+  logic signed [31:0] sq_r [NSLOTS][3], sq_i [NSLOTS][3], sq_dr [NSLOTS][3],
+      sq_di [NSLOTS][3], sq_phase [NSLOTS][3];
+  logic signed [31:0] hp_r0 [NSLOTS][3], hp_r1 [NSLOTS][3],
+      lp_r0 [NSLOTS][3], lp_r1 [NSLOTS][3];
   logic        active [NSLOTS];
   logic [31:0] slot_ckpt [NSLOTS], slot_key [NSLOTS], slot_gate [NSLOTS];
 
@@ -275,19 +277,22 @@ module tb_voice;
 
   // ------------------------------------------------------------------ voice
   task automatic process_slot;
-    if (!cw[0][0]) begin active[s] = 0; return; end
-    if (cw[0][2]) init_voice();
-    if (cw[0][3]) begin
-      aeg_scale[s] = aeg_out_r[s]; aeg_phase[s] = PH_ONE; aeg_state[s] = S_RELEASE;
-      feg_scale[s] = feg_out_r[s]; feg_phase[s] = PH_ONE; feg_state[s] = S_RELEASE;
+    if (!cw[0][0]) begin
+      active[s] = 0;
+    end else begin
+      if (cw[0][2]) init_voice();
+      if (cw[0][3]) begin
+        aeg_scale[s] = aeg_out_r[s]; aeg_phase[s] = PH_ONE; aeg_state[s] = S_RELEASE;
+        feg_scale[s] = feg_out_r[s]; feg_phase[s] = PH_ONE; feg_state[s] = S_RELEASE;
+      end
+      adsr_tick(1);
+      adsr_tick(0);
+      if (cfg[40] != 0) sine_osc_block();
+      else              osc_block();
+      filter_chain();
+      if (slot_ckpt[s]) dump_slot();
+      if (aeg_state[s] == S_IDLE && aeg_idle[s] > 0) active[s] = 0;
     end
-    adsr_tick(1);
-    adsr_tick(0);
-    if (cfg[40] != 0) sine_osc_block();
-    else              osc_block();
-    filter_chain();
-    if (slot_ckpt[s]) dump_slot();
-    if (aeg_state[s] == S_IDLE && aeg_idle[s] > 0) active[s] = 0;
   endtask
 
   task automatic init_voice;
@@ -301,8 +306,8 @@ module tb_voice;
     f_r0[s]=0; f_r1[s]=0; f_clip[s]=ONE;
     f4_r0[s]=0; f4_r1[s]=0;
     for (o = 0; o < 3; o++) begin
-      sq_r[o]=0; sq_i[o]=-ONE; sq_dr[o]=0; sq_di[o]=0; sq_phase[o]=0;
-      hp_r0[o]=0; hp_r1[o]=0; lp_r0[o]=0; lp_r1[o]=0;
+      sq_r[s][o]=0; sq_i[s][o]=-ONE; sq_dr[s][o]=0; sq_di[s][o]=0; sq_phase[s][o]=0;
+      hp_r0[s][o]=0; hp_r1[s][o]=0; lp_r0[s][o]=0; lp_r1[s][o]=0;
     end
     aeg_phase[s]=0; aeg_out_r[s]=0; aeg_idle[s]=0; aeg_scale[s]=ONE;
     feg_phase[s]=0; feg_out_r[s]=0; feg_idle[s]=0; feg_scale[s]=ONE;
@@ -316,6 +321,15 @@ module tb_voice;
   endtask
 
   // ------------------------------------------------ sine datapath (SXT-026a)
+  // floor semantics for the rational evaluation (Python //): trunc + fixup
+  function automatic signed [319:0] fdiv_floor(input signed [319:0] n,
+                                               input signed [319:0] d);
+    logic signed [319:0] q;
+    q = n / d;
+    if ((n < 0) && ((n % d) != 0)) q = q - 1;
+    fdiv_floor = q;
+  endfunction
+
   function automatic signed [31:0] fastsin_wide(input signed [31:0] x);
     logic signed [63:0] x2l;
     logic signed [319:0] gg, hh, nn;
@@ -330,7 +344,7 @@ module tb_voice;
     hh = x2l * hh + (328'sd277920720 << 112);
     hh = x2l * hh + (328'sd11511339840 << 168);
     sn2 = (nn >>> 7) + (hh >>> 1);                // round-half-up num/den
-    fastsin_wide = sat_wide(sn2 / hh);
+    fastsin_wide = sat_wide(fdiv_floor(sn2, hh));
   endfunction
 
   function automatic signed [31:0] fastcos_wide(input signed [31:0] x);
@@ -347,7 +361,7 @@ module tb_voice;
     hh = x2l * hh + (328'sd1154160 << 112);
     hh = x2l * hh + (328'sd39251520 << 168);
     sn2 = (nn << 21) + (hh >>> 1);
-    fastcos_wide = sat_wide(sn2 / hh);
+    fastcos_wide = sat_wide(fdiv_floor(sn2, hh));
   endfunction
 
   function automatic signed [31:0] sat_wide(input signed [319:0] v);
@@ -370,13 +384,13 @@ module tb_voice;
     real w, rd, idd, n;
     begin
       w = $itor(omega) / 268435456.0;            // 2^28
-      sq_dr[o] = qint_r($cos(w));
-      sq_di[o] = qint_r($sin(w));
-      rd = $itor(sq_r[o]) / 2097152.0;
-      idd = $itor(sq_i[o]) / 2097152.0;
+      sq_dr[s][o] = qint_r($cos(w));
+      sq_di[s][o] = qint_r($sin(w));
+      rd = $itor(sq_r[s][o]) / 2097152.0;
+      idd = $itor(sq_i[s][o]) / 2097152.0;
       n = 1.0 / $sqrt(rd*rd + idd*idd);
-      sq_r[o] = qint_r(rd * n);
-      sq_i[o] = qint_r(idd * n);
+      sq_r[s][o] = qint_r(rd * n);
+      sq_i[s][o] = qint_r(idd * n);
     end
   endtask
 
@@ -391,8 +405,8 @@ module tb_voice;
       b2 = 32'(cfg[48 + o*10 + base_idx + 2]);
       a1 = 32'(cfg[48 + o*10 + base_idx + 3]);
       a2 = 32'(cfg[48 + o*10 + base_idx + 4]);
-      r0 = which_hp ? hp_r0[o] : lp_r0[o];
-      r1 = which_hp ? hp_r1[o] : lp_r1[o];
+      r0 = which_hp ? hp_r0[s][o] : lp_r0[s][o];
+      r1 = which_hp ? hp_r1[s][o] : lp_r1[s][o];
       for (k = 0; k < BLOCK_OS; k++) begin
         xx = sblk[k];
         op = sat32(qmul(b0, xx) + r0);
@@ -400,8 +414,8 @@ module tb_voice;
         r1 = sat32(qmul(b2, xx) - qmul(a2, op));
         sblk[k] = op;
       end
-      if (which_hp) begin hp_r0[o] = r0; hp_r1[o] = r1; end
-      else          begin lp_r0[o] = r0; lp_r1[o] = r1; end
+      if (which_hp) begin hp_r0[s][o] = r0; hp_r1[s][o] = r1; end
+      else          begin lp_r0[s][o] = r0; lp_r1[s][o] = r1; end
     end
   endtask
 
@@ -431,18 +445,18 @@ module tb_voice;
         sine_set_rate(o, omega);
         for (k = 0; k < BLOCK_OS; k++) begin
           // SurgeQuadrOsc process(): r' = dr*r - di*i; i' = dr*i + di*r
-          g = sat32(qmul(sq_dr[o], sq_r[o]) - qmul(sq_di[o], sq_i[o]));
-          sq_i[o] = sat32(qmul(sq_dr[o], sq_i[o]) + qmul(sq_di[o], sq_r[o]));
-          sq_r[o] = g;
-          sblk[k] = sq_r[o];                    // mode 0: value = sin component
+          g = sat32(qmul(sq_dr[s][o], sq_r[s][o]) - qmul(sq_di[s][o], sq_i[s][o]));
+          sq_i[s][o] = sat32(qmul(sq_dr[s][o], sq_i[s][o]) + qmul(sq_di[s][o], sq_r[s][o]));
+          sq_r[s][o] = g;
+          sblk[k] = sq_r[s][o];                    // mode 0: value = sin component
         end
       end else begin
         for (k = 0; k < BLOCK_OS; k++) begin
           fmv = qmul(fmdepth, sblk[k]);         // sblk holds the FM source
-          ph64 = $signed(sq_phase[o]) + $signed(omega)
+          ph64 = $signed(sq_phase[s][o]) + $signed(omega)
                + ($signed(fmv) <<< (FQ28 - FQ));
-          sq_phase[o] = clamp_pi64(ph64);
-          sblk[k] = fastsin_wide(sq_phase[o]);  // mode 0: value = fastsin
+          sq_phase[s][o] = clamp_pi64(ph64);
+          sblk[k] = fastsin_wide(sq_phase[s][o]);  // mode 0: value = fastsin
         end
       end
       biquad_process(o, 1'b1);                  // applyFilter: lowcut,
@@ -649,7 +663,7 @@ module tb_voice;
 
   // checkpoint dump (mirrors model trace "after" fields + block C_end)
   task automatic dump_slot;
-    $fwrite(fd, "T %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
+    $fwrite(fd, "T %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d %0d\n",
       b, s, slot_key[s], slot_gate[s],
       aeg_state[s], aeg_phase[s], aeg_out_r[s],
       feg_state[s], feg_phase[s], feg_out_r[s],
