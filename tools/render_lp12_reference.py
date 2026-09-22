@@ -68,6 +68,13 @@ CARRIERS = {
         "blob": "314e3cc7e46d76381a5073fecf41d8d715b70e8b",
         "unit": 1, "subtype": 2,
     },
+    # deterministic control case (drift 0, retrigger on, SXT-022 class): the
+    # decisive tapped-vs-plain bit gate runs on this preset
+    "attacky-neutrality": {
+        "rel": "resources/data/patches_factory/Basses/Attacky.fxp",
+        "blob": "4675e423a7489b02f501f7763b4760f64ab035f9",
+        "unit": 0, "subtype": 1,
+    },
 }
 SMOKE_SEQ = "seq-lp12-smoke-v1"
 MAIN_SEQ = "seq-notes-repeated-v1"
@@ -256,24 +263,36 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
     wav_path = os.path.join(out_dir, "render.wav")
     write_wav_stereo16(wav_path, stereo)
 
-    # neutrality leg: identical render with taps DISABLED (same build)
-    s2 = fresh_instance(surgepy, preset_abs, fx_off=True)
-    for (unit, key), val in (overrides or {}).items():
-        s2.setParamVal(fu_param(s2, unit, key), float(val))
-    settle(s2)
-    stereo2 = run_sequence(s2, seq, total_blocks)
-    if toggle_at is not None:
-        rb = -(-int(toggle_at[0]) // bs)
-        pre2 = stereo2[:, :rb * bs]
-        s2.setParamVal(fu_param(s2, carrier["unit"], "subtype"), float(toggle_at[1]))
-        one2 = np.asarray(s2.createMultiBlock(1))
-        post2 = run_sequence(s2, seq, total_blocks - rb - 1, base_sample=(rb + 1) * bs)
-        stereo2 = np.concatenate([pre2, one2, post2], axis=1)
-    del s2
-    wav2_path = os.path.join(out_dir, "render-notapped.wav")
-    write_wav_stereo16(wav2_path, stereo2)
-    neutral = sha256_file(wav_path) == sha256_file(wav2_path)
-    os.remove(wav2_path)
+    # neutrality + determinism legs (same build, fresh instances):
+    #   plain1 == tapped            -> taps DSP-neutral for this case
+    #   plain1 != plain2            -> engine nondeterministic class on this
+    #                                  preset (drift/retrigger); the bit gate
+    #                                  is then decided on the deterministic
+    #                                  Attacky control case (see EVIDENCE)
+    shas = []
+    for i in range(2):
+        s2 = fresh_instance(surgepy, preset_abs, fx_off=True)
+        for (unit, key), val in (overrides or {}).items():
+            s2.setParamVal(fu_param(s2, unit, key), float(val))
+        settle(s2)
+        st2 = run_sequence(s2, seq, total_blocks)
+        if toggle_at is not None:
+            rb = -(-int(toggle_at[0]) // bs)
+            pre2 = st2[:, :rb * bs]
+            s2.setParamVal(fu_param(s2, carrier["unit"], "subtype"), float(toggle_at[1]))
+            one2 = np.asarray(s2.createMultiBlock(1))
+            post2 = run_sequence(s2, seq, total_blocks - rb - 1, base_sample=(rb + 1) * bs)
+            st2 = np.concatenate([pre2, one2, post2], axis=1)
+        del s2
+        wav2_path = os.path.join(out_dir, f"render-plain{i + 1}.wav")
+        write_wav_stereo16(wav2_path, st2)
+        shas.append(sha256_file(wav2_path))
+        os.remove(wav2_path)
+    engine_deterministic = shas[0] == shas[1]
+    neutral = (shas[0] == sha256_file(wav_path))
+    if engine_deterministic and not neutral:
+        raise Refuse(f"{case}: tap instrumentation is NOT DSP-neutral "
+                     "(tapped vs untapped renders differ on a deterministic case)")
 
     meta = {
         "schema_version": 1,
@@ -290,10 +309,18 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
         },
         "overrides_applied": applied,
         "taps_enabled": taps,
+        "engine_deterministic_same_case": engine_deterministic,
+        "neutrality_violated": bool(engine_deterministic and not neutral),
         "neutrality": {
             "wav_sha_tapped": sha256_file(wav_path),
-            "wav_sha_untapped_same_build": None if not neutral else sha256_file(wav_path),
+            "wav_sha_plain": shas[0],
+            "wav_sha_plain_repeat": shas[1],
             "bit_identical": neutral,
+            "note": "bit_identical is decisive only when "
+                    "engine_deterministic_same_case is true; nondeterministic "
+                    "carriers are SXT-012 drift/retrigger-class presets. The "
+                    "decisive DSP-neutrality control runs on a deterministic "
+                    "preset (see meta case attacky-neutrality).",
         },
         "render": {"frames": int(stereo.shape[1]), "peak_abs": [
             float(np.max(np.abs(stereo[ch]))) for ch in range(2)]},

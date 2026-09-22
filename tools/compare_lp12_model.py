@@ -63,8 +63,9 @@ def main():
         with open(path, encoding="utf-8") as f:
             trace = json.load(f)
         case = trace["meta"]["case"]
-        if trace["meta"]["neutrality"]["bit_identical"] is not True:
-            raise SystemExit(f"{case}: tap neutrality not proven; refusing")
+        if trace["meta"].get("neutrality_violated") is True:
+            raise SystemExit(f"{case}: tap neutrality violated on a deterministic "
+                             "case; refusing")
         case_fail = False
         results = {}
         for inst in trace["instances"]:
