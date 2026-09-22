@@ -200,8 +200,10 @@ reference renders), the RTL exactness pair (6, regenerates stimulus in
 the external pinned oracle for steps 1–5 reference re-checks; committed
 `*-ref.wav` renders were produced by `tools/render_wt_reference.py`
 (deterministic, 3 bit-identical repeats, sidecar JSONs committed).
-`python3 -m pytest tests/test_sxt026_wavetable.py` — 13 tests,
-deterministic, no oracle required.
+`python3 -m pytest tests/test_sxt026_wavetable.py` — 12 tests,
+deterministic; the 11 oracle-dependent tests skip (NOT_RUN, never pass)
+when the external pinned oracle is absent (e.g. CI); the in-repo payload
+guard always runs.
 
 Environment: 48 kHz; engine pin above; iverilog 11; python 3.11+.
 Executed against the pinned oracle tree (identical pin

@@ -40,6 +40,7 @@ def _triangle_bytes():
         return f.read()
 
 
+@needs_oracle
 def test_parse_header_facts():
     hd = wt.parse_wt(_triangle_bytes(), "Triangle.wt")
     assert (hd["wave_size"], hd["wave_count"]) == (1024, 16)
@@ -51,6 +52,7 @@ def test_parse_header_facts():
     assert hd["mipmap_built_levels"] == 10
 
 
+@needs_oracle
 def test_parse_rejects_bad_magic_and_truncation():
     data = _triangle_bytes()
     with pytest.raises(AssetIdentityError):
@@ -63,6 +65,7 @@ def test_parse_rejects_bad_magic_and_truncation():
         wt.parse_wt(bytes(bad), "x")
 
 
+@needs_oracle
 def test_mip_thresholds_match_pinned_engine():
     # WavetableOscillator::convolute: a < 2^-k * 1.8 and ts >= 2^(k+1)
     for k, thr, min_ts in wt.MIP_THRESHOLDS:
@@ -79,6 +82,7 @@ def test_mip_thresholds_match_pinned_engine():
     assert all(by_level[k]["serviceable"] for k in range(7))
 
 
+@needs_oracle
 def test_manifest_records_dims_mips_residency():
     hd = wt.parse_wt(_triangle_bytes(), "T")
     m = wt.build_manifest(hd, TRIANGLE_REL, TRIANGLE_SHA, 0, 1, "Triangle")
@@ -93,6 +97,7 @@ def test_manifest_records_dims_mips_residency():
     assert "payload_hex" not in json.dumps(m)
 
 
+@needs_oracle
 def test_hash_mismatch_aborts():
     hd = wt.parse_wt(_triangle_bytes(), "T")
     with pytest.raises(AssetIdentityError) as ei:
