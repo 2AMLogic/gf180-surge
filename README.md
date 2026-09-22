@@ -56,9 +56,9 @@ Backlog DAG (generated; do not edit by hand):
 |---|---|
 | READY | 0 |
 | IN PROGRESS | 1 |
-| BLOCKED | 10 |
-| NOT RUN | 3 |
-| PASS | 12 |
+| BLOCKED | 11 |
+| NOT RUN | 0 |
+| PASS | 14 |
 | FAIL | 0 |
 | NO VERDICT | 0 |
 | STALE | 0 |
@@ -73,7 +73,7 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | Node | Planning ID | Title | Status | Evidence |
 |---|---|---|---|---|
 | [#1](https://github.com/2AMLogic/gf180-surge/issues/1) | E1 | Epic: E1 — Reference, corpus, and product profile | BLOCKED | aggregate of members |
-| [#2](https://github.com/2AMLogic/gf180-surge/issues/2) | E2 | Epic: E2 — Verified core: first complete wet patch | NOT RUN | aggregate of members |
+| [#2](https://github.com/2AMLogic/gf180-surge/issues/2) | E2 | Epic: E2 — Verified core: first complete wet patch | BLOCKED | aggregate of members |
 | [#3](https://github.com/2AMLogic/gf180-surge/issues/3) | E3 | Epic: E3 — Coverage expansion and hardware qualification | BLOCKED | aggregate of members |
 | [#4](https://github.com/2AMLogic/gf180-surge/issues/4) | SXT-000 | SXT-000: Preliminary static census (DONE) | PASS | [`corpus/census-v0.1/results/summary.json`](corpus/census-v0.1/results/summary.json) |
 | [#5](https://github.com/2AMLogic/gf180-surge/issues/5) | SXT-010 | SXT-010: Build the native oracle | PASS | [`reports/sxt-010/EVIDENCE.md`](reports/sxt-010/EVIDENCE.md) |
@@ -85,10 +85,10 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | [#11](https://github.com/2AMLogic/gf180-surge/issues/11) | SXT-016 | SXT-016: Run representative cost probes | PASS | [`reports/sxt-016/EVIDENCE.md`](reports/sxt-016/EVIDENCE.md) |
 | [#12](https://github.com/2AMLogic/gf180-surge/issues/12) | SXT-017 | SXT-017: Freeze profile v1 | BLOCKED | — |
 | [#13](https://github.com/2AMLogic/gf180-surge/issues/13) | SXT-020 | SXT-020: Compile patch images | PASS | [`reports/sxt-020/EVIDENCE.md`](reports/sxt-020/EVIDENCE.md) |
-| [#14](https://github.com/2AMLogic/gf180-surge/issues/14) | SXT-021 | SXT-021: Implement timed control and scheduling | NOT RUN | — |
+| [#14](https://github.com/2AMLogic/gf180-surge/issues/14) | SXT-021 | SXT-021: Implement timed control and scheduling | PASS | [`reports/sxt-021/EVIDENCE.md`](reports/sxt-021/EVIDENCE.md) |
 | [#15](https://github.com/2AMLogic/gf180-surge/issues/15) | SXT-022 | SXT-022: Qualify a first dry voice slice | PASS | [`reports/sxt-022/EVIDENCE.md`](reports/sxt-022/EVIDENCE.md) |
 | [#16](https://github.com/2AMLogic/gf180-surge/issues/16) | SXT-023 | SXT-023: Implement Delay and EQ | BLOCKED | — |
-| [#17](https://github.com/2AMLogic/gf180-surge/issues/17) | SXT-024 | SXT-024: Implement Reverb1 | NOT RUN | — |
+| [#17](https://github.com/2AMLogic/gf180-surge/issues/17) | SXT-024 | SXT-024: Implement Reverb1 | PASS | [`reports/sxt-024/EVIDENCE.md`](reports/sxt-024/EVIDENCE.md) |
 | [#18](https://github.com/2AMLogic/gf180-surge/issues/18) | SXT-025 | SXT-025: Pass one complete wet preset | BLOCKED | — |
 | [#19](https://github.com/2AMLogic/gf180-surge/issues/19) | SXT-026 | SXT-026: Add Wavetable asset and playback support | BLOCKED | — |
 | [#20](https://github.com/2AMLogic/gf180-surge/issues/20) | SXT-027 | SXT-027: Generate remaining voice-feature leaf issues | PASS | [`reports/sxt-027/EVIDENCE.md`](reports/sxt-027/EVIDENCE.md) |
@@ -119,12 +119,12 @@ graph TD
     n12["#12 SXT-017 · BLOCKED"]
   end
   subgraph E2["Epic E2 — Verified core: first complete wet patch"]
-    n2["#2 Epic E2 · NOT_RUN"]
+    n2["#2 Epic E2 · BLOCKED"]
     n13["#13 SXT-020 · PASS"]
-    n14["#14 SXT-021 · NOT_RUN"]
+    n14["#14 SXT-021 · PASS"]
     n15["#15 SXT-022 · PASS"]
     n16["#16 SXT-023 · BLOCKED"]
-    n17["#17 SXT-024 · NOT_RUN"]
+    n17["#17 SXT-024 · PASS"]
     n18["#18 SXT-025 · BLOCKED"]
     n19["#19 SXT-026 · BLOCKED"]
   end
@@ -193,9 +193,8 @@ graph TD
   classDef noverdict fill:#6B46C1,color:#fff
   classDef stale fill:#B7791F,color:#fff
   class n25 inprogress
-  class n1,n3,n8,n9,n12,n16,n18,n19,n23,n24 blocked
-  class n2,n14,n17 notrun
-  class n4,n5,n6,n7,n10,n11,n13,n15,n20,n21,n22,n29 pass
+  class n1,n2,n3,n8,n9,n12,n16,n18,n19,n23,n24 blocked
+  class n4,n5,n6,n7,n10,n11,n13,n14,n15,n17,n20,n21,n22,n29 pass
 ```
 
 </details>

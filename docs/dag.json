@@ -60,7 +60,7 @@
       "depends_on": [
         12
       ],
-      "status": "NOT_RUN",
+      "status": "BLOCKED",
       "note": "Aggregate group node; status derived from members, not an independent claim."
     },
     {
@@ -228,8 +228,10 @@
         12,
         13
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs profile v1 and patch images."
+      "status": "PASS",
+      "note": "Landed (#42): control+schedule model/RTL exact, 4 fixtures byte-identical; worst case 1,776 cyc closes @192/480 MHz, explicit overflow @48/96; burst/stub/mutant controls.",
+      "evidence": "reports/sxt-021/EVIDENCE.md",
+      "evidence_sha256": "e2637c513dab58150b5a875eea8f44616c2cf8e10e83686133975771b6996617"
     },
     {
       "id": 15,
@@ -269,8 +271,10 @@
         7,
         12
       ],
-      "status": "NOT_RUN",
-      "note": "Planned; needs fixtures and profile v1."
+      "status": "PASS",
+      "note": "Landed (#43 + #45): Reverb1 RTL==model exact incl. 557,056-word memory image; reference within [PROPOSED]; 2.125 MiB/instance external; tail finding recorded; 4 controls OK.",
+      "evidence": "reports/sxt-024/EVIDENCE.md",
+      "evidence_sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
     },
     {
       "id": 18,
