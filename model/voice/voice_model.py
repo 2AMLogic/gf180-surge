@@ -1116,6 +1116,7 @@ class VoiceV2(Voice):
         self.f4_r1 = 0
         if self.fu_poles == 24:
             self.cmu = CoefMakerLP24()
+        self.fm_depth = inp.fm_depth
         if self.kind == "sine":
             self._sine_init()
 
@@ -1131,7 +1132,6 @@ class VoiceV2(Voice):
             self.sine.append(SineCore(
                 (self.char_a1, self.char_b0, self.char_b1),
                 inp.sine_lowcut, inp.sine_highcut, inp.character))
-        self.fm_depth = inp.fm_depth
         self.osc_state = 0
         self.oscstate = 0
 
