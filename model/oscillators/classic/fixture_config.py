@@ -143,7 +143,7 @@ def apply_overrides(s, slot):
             raise Refuse("unknown override %r" % key)
     d = read_params(s, slot)
     for k, v in applied.items():
-        got = d[k]
+        got = d["mutes"][k[5:]] if k.startswith("mute_") else d[k]
         if isinstance(v, list):
             if got != v:
                 raise Refuse("override readback failed: %s = %r" % (k, got))
