@@ -106,7 +106,7 @@ def main():
     # fixture overrides (filter units off, waveshaper off, FM switch off);
     # anything else (e.g. velocity -> AEG release, LFO chains, osc mod
     # amounts) is outside the declared model boundary - refuse, never ignore
-    for r in g["md"]["s"][0].get("s", []):
+    for r in ge["md"]["s"][0].get("s", []):
         dest = r[4] if len(r) > 4 else ""
         if not any(k in dest for k in ("Filter", "Waveshaper")) and                 dest != "A FM Depth":
             raise Refuse("scene-A modulation routing %r is outside the "
