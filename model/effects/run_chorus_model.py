@@ -14,12 +14,14 @@ The model then reproduces
 and the chain output is compared against the pinned engine's WET bus by
 tools/compare_chorus_reference.py.
 
-Reverb1 bridging (declared): the frozen Reverb1 model (SXT-024) uses an s24
-I/O boundary and Q4.28 internal words; the chain converts Q10.21 -> s24
-(exact <<2, saturating) at its input and Q4.28 -> Q10.21 (round-half-up
->>7) at its output. Each conversion is <= 4 LSB at the Q10.21 grid
-(~-132 dB class), declared as chain-glue error and absorbed by the
-[PROPOSED] budgets; the reverb1 model itself is unchanged.
+Reverb1 bridging (declared): the frozen Reverb1 model (SXT-024) uses s24
+device I/O words with Q4.28 internals; this chain feeds it at the Q10.21
+boundary: input Q10.21 -> Q4.28 is the exact <<7 (split <<2 + the model's
+internal <<5, unclamped — the engine never clips the FX chain at +-1), and
+the model's Q4.28 output returns via round-half-up >>7. Each conversion is
+<= 1/2 LSB at the Q10.21 grid (~-132 dB class), declared as chain-glue
+error and absorbed by the [PROPOSED] budgets; the reverb1 model itself is
+unchanged.
 
 Per-instance capture for the RTL: the model records, per block, the input
 words and output words of EVERY chorus instance at its chain boundary, plus
@@ -80,9 +82,12 @@ def amp_to_linear_fixed(f):
     return to_q(max(0.0, f) ** 3, G_FMT)
 
 
-def q21_to_s24(x):
-    """Q10.21 -> Q1.23: exact <<2 when in range, saturating otherwise."""
-    return min(S24_MAX, max(S24_MIN, x << 2))
+def q21_to_s32i_in(x):
+    """Q10.21 -> Reverb1Fixed input word: <<2 so that the model's internal
+    <<5 lands the value at Q4.28 exactly (total <<7). Unclamped: the engine
+    carries FX-chain floats without a +-1 clip; values beyond the s24 grid
+    stay exact on the Q4.28 grid (|x| <= 8 class)."""
+    return x << 2
 
 
 def q428_to_q21(x):
@@ -109,8 +114,8 @@ class Reverb1Adapter:
         self.m.reset()
 
     def process_block(self, in_l, in_r):
-        l24 = [q21_to_s24(x) for x in in_l]
-        r24 = [q21_to_s24(x) for x in in_r]
+        l24 = [q21_to_s32i_in(x) for x in in_l]
+        r24 = [q21_to_s32i_in(x) for x in in_r]
         ol, orr = self.m.process_block(l24, r24)   # s32i out (Q4.28)
         return ([q428_to_q21(x) for x in ol],
                 [q428_to_q21(x) for x in orr])
