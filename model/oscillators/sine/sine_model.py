@@ -404,6 +404,49 @@ class CharFilter:
             out[k] = pf
 
 
+class AdsrSine(cm.AdsrClassic):
+    """SXT-022 digital-mode ADSR extended with decay shape d_s = 2.
+
+    Pinned ADSRModulationSource.h case 2 (cube-root two-limits form):
+        sx = phase^(1/3)
+        l_lo = phase - 3*sx*sx*rate + 3*sx*rate*rate - rate*rate*rate
+        l_hi = phase + 3*sx*sx*rate + 3*sx*rate*rate + rate*rate*rate
+    (no case-1 sustain/rate gates - those are inside `case 1:` only).
+    Evaluated in double at the pinned op order like the SXT-026 sqrt path;
+    the engine evaluates float32 per op (declared deviation). The frozen
+    SXT-033 file is imported unchanged; the sqrt path (d_s = 1) is the
+    landed super form.
+    """
+
+    def __init__(self, prm, name):
+        if int(prm["d_s"]) not in (0, 1, 2):
+            raise RuntimeError(
+                f"{name}: decay shape {prm['d_s']} not in slice (0, 1 or 2)")
+        super().__init__({**prm, "d_s": 0}, name)
+        self.d_s = int(prm["d_s"])
+
+    def process_block(self):
+        if self.state == self.S_DECAY and self.d_s == 2:
+            FP = vm.F_PHASE
+            rate = vm.envelope_rate_linear_nowrap(self.d)
+            sx = int(math.floor((self.phase / float(1 << FP))
+                                ** (1.0 / 3.0) * (1 << FP) + 0.5))
+            q29 = dict(fa=FP, fb=FP, fq=FP)
+            three_sx = vm.qmul(vm.qint_phase(3.0), sx, **q29)
+            t = vm.qmul(three_sx, sx, **q29)          # 3*sx*sx
+            t = vm.qmul(t, rate, **q29)               # *rate
+            u = vm.qmul(three_sx, rate, **q29)        # 3*sx*rate
+            u = vm.qmul(u, rate, **q29)               # *rate
+            v = vm.qmul(vm.qmul(rate, rate, **q29), rate, **q29)
+            l_lo = self.phase - t + u - v
+            l_hi = self.phase + t + u + v
+            self.phase = vm.limit_i(self.s, l_lo, l_hi)
+            self.output = self.phase >> (FP - vm.FQ)
+        else:
+            super().process_block()
+        self.output = vm.limit_i(self.output, 0, ONE)
+
+
 class SineOsc:
     """SineOscillator slice: mono output (fbc serial-1), drift 0 (asserted),
     FM routing off (fixture override), per-unison-voice state over the
@@ -580,7 +623,7 @@ class Slice:
         self.key = key
         self.gate = True
         self.osc = SineOsc(inp, key)
-        self.aeg = cm.AdsrClassic(inp.adsr, "aeg")
+        self.aeg = AdsrSine(inp.adsr, "aeg")
         self.aeg.attack_from(0)
         self.lvl = vm.amp_to_linear(vm.qint(inp.o_level))
         self.pfg = vm.db_to_linear(vm.qint(inp.level_pfg))

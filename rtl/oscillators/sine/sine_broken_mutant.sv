@@ -90,6 +90,17 @@ module tb_sine;
     else         qdiv_rhu = -32'((-av + (bv >>> 1)) / bv);
   endfunction
 
+  function automatic signed [31:0] qmul29(input signed [31:0] a, input signed [31:0] b);
+    // Q2.29 x Q2.29 -> Q2.29, round-half-up (model envelope qmul form)
+    logic signed [63:0] p, r;
+    qmul_count++;
+    p = a * b;
+    r = (p + (64'sd1 << 28)) >>> 29;
+    if      (r > 64'sd2147483647)  qmul29 = 32'sd2147483647;
+    else if (r < -64'sd2147483648) qmul29 = -32'sd2147483648;
+    else                           qmul29 = r[31:0];
+  endfunction
+
   function automatic signed [31:0] clamp8(input signed [31:0] v); // +-8.0
     if      ($signed(v) >  32'sd16777216) clamp8 =  32'sd16777216;
     else if ($signed(v) < -32'sd16777216) clamp8 = -32'sd16777216;
@@ -216,7 +227,11 @@ module tb_sine;
     end else if (st == S_DECAY) begin
       if (cfg[54] == 0) begin
         l_lo = ph - rate_d; l_hi = ph + rate_d;
-      end else begin
+        if      ($signed(sus) < $signed(l_lo)) ph = l_lo;
+        else if ($signed(sus) > $signed(l_hi)) ph = l_hi;
+        else                                   ph = sus;
+        ov = ph >>> (F_PHASE - FQ);
+      end else if (cfg[54] == 1) begin
         // d_s == 1 (sqrt-domain decay), frozen SXT-026 form
         logic signed [63:0] prod64d;
         logic signed [31:0] sx, two_sx_rate, rr, rate_w;
@@ -235,11 +250,33 @@ module tb_sine;
           l_lo = 0;
         if ($signed(rate_w) > $signed(PH_ONE) && $signed(l_lo) > $signed(sus))
           l_lo = sus;
+        if      ($signed(sus) < $signed(l_lo)) ph = l_lo;
+        else if ($signed(sus) > $signed(l_hi)) ph = l_hi;
+        else                                   ph = sus;
+        ov = ph >>> (F_PHASE - FQ);
+      end else begin
+        // d_s == 2 (cube-root two-limits form; pinned ADSR case 2, SXT-040):
+        //   sx = phase^(1/3)
+        //   l_lo = ph - 3sx*sx*rate + 3sx*rate*rate - rate^3
+        //   l_hi = ph + 3sx*sx*rate + 3sx*rate*rate + rate^3
+        // (no case-1 sustain/rate gates - those are case 1 only)
+        logic signed [63:0] prod64d;
+        logic signed [31:0] sx, three_sx, t, uu, v, rate_w;
+        real phr;
+        rate_w = rate_d;
+        phr = $itor(ph) / 536870912.0;
+        sx = $rtoi($pow(phr, 0.3333333333333333) * 536870912.0 + 0.5);
+        three_sx = qmul29(32'sd1610612736, sx);   // 3.0 Q2.29 * sx
+        t  = qmul29(qmul29(three_sx, sx), rate_w);
+        uu = qmul29(qmul29(three_sx, rate_w), rate_w);
+        v  = qmul29(qmul29(rate_w, rate_w), rate_w);
+        l_lo = ph - t + uu - v;
+        l_hi = ph + t + uu + v;
+        if      ($signed(sus) < $signed(l_lo)) ph = l_lo;
+        else if ($signed(sus) > $signed(l_hi)) ph = l_hi;
+        else                                   ph = sus;
+        ov = ph >>> (F_PHASE - FQ);
       end
-      if      ($signed(sus) < $signed(l_lo)) ph = l_lo;
-      else if ($signed(sus) > $signed(l_hi)) ph = l_hi;
-      else                                   ph = sus;
-      ov = ph >>> (F_PHASE - FQ);
     end else if (st == S_RELEASE) begin
       ph = ph - rate_r;
       ov = ph >>> (F_PHASE - FQ);
@@ -429,8 +466,8 @@ module tb_sine;
         prod = qmul(s2x, c2x);
         v1 = (prod < 0) ? c2x : -c2x;
         v1 = sat32(64'(sw) + 64'(v1));
-        shape_out = (mode == 30) ? (($signed(sv) >= 0) ? v1 : 0)
-                                 : ((v1 < 0) ? -v1 : v1);
+        v1 = ($signed(sv) >= 0) ? v1 : 0;      // mode-30 gate (before abs!)
+        shape_out = (mode == 31) ? ((v1 < 0) ? -v1 : v1) : v1;
       end
       default: shape_out = 0;
     endcase
@@ -638,9 +675,11 @@ module tb_sine;
         end
         firstblock[s] = 0;
       end
+      for (k = 0; k < BLOCK_OS; k++) sblk[k] = osout[s][k];
       biquad_process(1'b1);                      // applyFilter: lowcut,
       biquad_process(1'b0);                      // then highcut
       char_filter();                             // CharacterFilter
+      for (k = 0; k < BLOCK_OS; k++) osout[s][k] = sblk[k];
     end
   endtask
 

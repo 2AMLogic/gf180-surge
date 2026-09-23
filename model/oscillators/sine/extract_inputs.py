@@ -232,7 +232,7 @@ def main():
         raise Refuse("pan outside [-1, 1]: outside the declared mono law")
     if int(d["adsr"]["mode"]) != 0:
         raise Refuse("amp env not in digital mode")
-    if int(d["adsr"]["d_s"]) not in (0, 1):
+    if int(d["adsr"]["d_s"]) not in (0, 1, 2):
         raise Refuse(f"amp env decay shape {d['adsr']['d_s']} not in slice")
     if not (1 <= d["unison"] <= 16):
         raise Refuse(f"unison {d['unison']} outside 1..16")
