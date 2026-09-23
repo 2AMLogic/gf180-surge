@@ -128,8 +128,9 @@ module tb_chorus;
     reg [31:0] initwords [0:5];
 
     integer b, k, j, j2, ii, t_, chk;
-    integer i_dt, ph, rp, base, vo, acc_l, acc_r, w0, rd, fbk;
+    integer i_dt, ph, rp, base, w0, rd, fbk;
     integer tmp, tmp2, ss;
+    longint signed vo, acc_l, acc_r;   // Q68 tap MAC: 32-bit wraps
 
     // ---------------- fixed-point helpers ----------------
     function automatic signed [31:0] sat32(input signed [63:0] v);
