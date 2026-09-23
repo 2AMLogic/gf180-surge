@@ -265,6 +265,7 @@ def main():
         "scene_octave": d["scene_octave"],
         "keytrack": d["keytrack"],
         "pitch_param": d["pitch_param"],
+        "pitch_extend": d["pitch_extend"],
         "retrigger": d["retrigger"],
         "shape": d["shape"],
         "fb": d["fb"],

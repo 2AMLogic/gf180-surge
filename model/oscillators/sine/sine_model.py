@@ -493,11 +493,15 @@ class SineOsc:
                                % (inp.fmmode,))
         self.legacy = (inp.fmmode == 0)
 
-        # SurgeVoice noteShiftFromPitchParam + scene/osc octaves (SXT-033
-        # convention); the sine osc has no pitchmult machine
+        # SurgeVoice noteShiftFromPitchParam + scene/osc octaves: the osc
+        # pitch param enters as f*(12 when its extend_range flag is set,
+        # else f) - the flag is engine-read at extraction (SXT-033 pinned
+        # the extended form only; its carriers all had pitch_param 0).
+        # The sine osc has no pitchmult machine, so pitch stays float.
         base = float(key) if inp.keytrack else 60.0
-        self.pitch = int(min(148.0, base + 12.0 * (inp.scene_octave + inp.octave)
-                             + 12.0 * inp.pitch_param))
+        pitch_off = inp.pitch_param * (12.0 if inp.pitch_extend else 1.0)
+        self.pitch = min(148.0, base + 12.0 * (inp.scene_octave + inp.octave)
+                         + pitch_off)
         if not 24 <= self.pitch <= 148:
             raise RuntimeError("declared slice osc pitch range is [24, 148]")
 
@@ -693,6 +697,7 @@ class Inputs:
         self.scene_octave = int(d.get("scene_octave", 0))
         self.keytrack = bool(d.get("keytrack", True))
         self.pitch_param = d.get("pitch_param", 0.0)
+        self.pitch_extend = bool(d.get("pitch_extend", False))
         shape = int(d["shape"])
         if os.environ.get("SXT040_NC_SHAPE_RAWVALUE"):
             # NEGATIVE CONTROL (issue #74): force the PRE-MIGRATION raw

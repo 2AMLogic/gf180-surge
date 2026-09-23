@@ -86,6 +86,7 @@ def read_params(s, slot):
         "scene_octave": int(s.getParamVal(sc["octave"])),
         "keytrack": bool(s.getParamVal(o["keytrack"])),
         "pitch_param": s.getParamVal(o["pitch"]),
+        "pitch_extend": bool(s.getExtend(o["pitch"])),
         "retrigger": bool(s.getParamVal(o["retrigger"])),
         "shape": int(p[0]),
         "fb": p[1],
