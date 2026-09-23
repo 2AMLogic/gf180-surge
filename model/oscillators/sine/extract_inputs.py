@@ -191,7 +191,7 @@ def main():
     raw_shape = osc_graph["p"][0]
     if not isinstance(raw_shape, int) or not 0 <= raw_shape <= 31:
         raise Refuse("normalized sine shape %r outside [0, 31]" % (raw_shape,))
-    routes = gate_scene_routes(graphs_full, slot)
+    routes = gate_routes(graphs_full, slot)
     scan_sequences()
 
     preset_abs = fc.preset_abs(oc, args.carrier)
