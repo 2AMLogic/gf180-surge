@@ -1518,15 +1518,6 @@ class InputsV2:
         self._draws = []
         self._draw_i = 0
 
-    def next_draw(self):
-        """Consume one declared init-phase draw (SXT-034 interface parity
-        with the v1 Inputs class; the v2 class gates retrigger=on, so no
-        draw is ever consumed -- a call here is a contract bug, fail loud)."""
-        raise RuntimeError("InputsV2 carries no declared init-phase draws")
-
-    def reset_draws(self):
-        self._draw_i = 0
-
         # modulation routes (order = md arrays = engine application order)
         self.voice_routes = []
         for r in g["md_scene_A"]["v"]:
@@ -1554,6 +1545,15 @@ class InputsV2:
                 self.scene_routes_mw.append((dst, r[5]))
             elif dst == DEST_VCA_GAIN:           # SXT-035 destination class
                 self.scene_routes_mw.append((dst, r[5]))
+
+    def next_draw(self):
+        """Consume one declared init-phase draw (SXT-034 interface parity
+        with the v1 Inputs class; the v2 class gates retrigger=on, so no
+        draw is ever consumed -- a call here is a contract bug, fail loud)."""
+        raise RuntimeError("InputsV2 carries no declared init-phase draws")
+
+    def reset_draws(self):
+        self._draw_i = 0
 
     # ------------------------------------------------------------- gates
     def _gate(self, n, g):
