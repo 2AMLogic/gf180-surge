@@ -247,7 +247,6 @@ module tb_voice;
       t_u[u]       = 32'(cfg[80 + 3*u]);
       t_inv_u[u]   = 32'(cfg[81 + 3*u]);
     end
-    end
     for (i = 0; i < 6; i++) begin
       hbx1_b[i]=0; hbx2_b[i]=0; hby1_b[i]=0; hby2_b[i]=0;
       hbx1_a[i]=0; hbx2_a[i]=0; hby1_a[i]=0; hby2_a[i]=0;
