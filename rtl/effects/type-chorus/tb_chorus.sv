@@ -30,7 +30,8 @@
 `timescale 1ns/1ps
 
 module tb_chorus;
-    integer NINST, N_BLOCKS, RENDER0, RESETAT;
+    integer NINST, N_BLOCKS, RENDER0, RESETAT, DEBUG;
+    integer DBG0, DBG1;
     integer fd, fin, fct;
     string trace_name, fin_name, fct_name, init_name, sinc_name, rev_name;
 
@@ -302,6 +303,8 @@ module tb_chorus;
         begin
             for (k = 0; k < 32; k = k + 1) begin
                 acc_l = 0; acc_r = 0;
+                if (DEBUG != 0 && inst == 0 && b >= DBG0 && b <= DBG1)
+                    $display("DBG tap b=%0d k=%0d", b, k);
                 for (j = 0; j < 4; j = j + 1) begin
                     tlv[inst][j] = qadd64(qmul_cc(tlv[inst][j], LPIT_r),
                                           qmul_cc(tlt[inst][j], LPT_r));
@@ -311,6 +314,9 @@ module tb_chorus;
                     if (tap_capture != 0 && k < 4) begin
                         xt[k][j][0] = i_dt; xt[k][j][1] = ph; xt[k][j][2] = rp;
                     end
+                    if (DEBUG != 0 && inst == 0 && b >= DBG0 && b <= DBG1)
+                        $display("DBG vt b=%0d k=%0d j=%0d i_dt %0d ph %0d rp %0d tlv %0d",
+                                 b, k, j, i_dt, ph, rp, tlv[inst][j]);
                     base = ph * 12;
                     vo = 0;
                     for (t_ = 0; t_ < 12; t_ = t_ + 1) begin
@@ -334,9 +340,14 @@ module tb_chorus;
             // mono fbblock: (wetL + wetR) -> feedback ramp -> hardclip -> += in
             for (k = 0; k < 32; k = k + 1) begin
                 fbk = qadd32(tb_l[k], tb_r[k]);
+                if (DEBUG != 0 && inst == 0 && b >= DBG0 && b <= DBG1)
+                    $display("DBG tb b=%0d k=%0d tb %0d fbg %0d",
+                             b, k, tb_l[k], lip_val(fb_cur[inst], fb_tgt[inst], k));
                 fbk = clipi(qmul_ga(lip_val(fb_cur[inst], fb_tgt[inst], k), fbk),
                             -HARD1, HARD1);
                 fbb[k] = qadd32(qadd32(fbk, ilw[inst][k]), irw[inst][k]);
+                if (DEBUG != 0 && inst == 0 && b >= DBG0 && b <= DBG1)
+                    $display("DBG fbb b=%0d k=%0d fbb %0d", b, k, fbb[k]);
             end
             for (k = 0; k < 32; k = k + 1) begin
                 w0 = (wpos[inst] + k) & LINE_MASK;
@@ -482,6 +493,9 @@ module tb_chorus;
         if (!$value$plusargs("NBLOCKS=%d", N_BLOCKS)) N_BLOCKS = 1;
         if (!$value$plusargs("RENDER0=%d", RENDER0)) RENDER0 = 240;
         if (!$value$plusargs("RESETAT=%d", RESETAT)) RESETAT = -1;
+        if (!$value$plusargs("DEBUG=%d", DEBUG)) DEBUG = 0;
+        if (!$value$plusargs("DBG0=%d", DBG0)) DBG0 = 0;
+        if (!$value$plusargs("DBG1=%d", DBG1)) DBG1 = -1;
         if (!$value$plusargs("TRACE=%s", trace_name)) trace_name = "tb_trace.txt";
         if (!$value$plusargs("INFILE=%s", fin_name)) fin_name = "in.hex";
         if (!$value$plusargs("CTRLFILE=%s", fct_name)) fct_name = "ctrl.hex";
