@@ -202,6 +202,24 @@
     "rtl_vs_model": "PASS"
    }
   },
+  "mod:modwheel": {
+   "evidence": [
+    {
+     "path": "reports/sxt-035/EVIDENCE.md",
+     "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
+    }
+   ],
+   "fixture_verified_paths": [
+    "resources/data/patches_factory/Basses/Attacky.fxp (SXT-035 synthetic modwheel fixture: preset modwheel routes + runtime ms_modwheel->A VCA Gain route via setModDepth01; not a corpus support claim)"
+   ],
+   "issue": 69,
+   "landed": true,
+   "note": "Modwheel modulator slice (ms_modwheel): landed FAST_LINE smoother reused unchanged; scene route table generalized to {Filter 1 Cutoff, Filter 1 Resonance, VCA Gain}; control-plane RTL EXACT (tools/compare_mw_rtl_model.py) and the corrected voice RTL exact on mw-influenced control words (two latent tb_voice deviations from the model order fixed: pre-decimator scene clip placement, 64-bit ramp products; landed fixtures bit-identical before/after); model-vs-reference PENDING-FREEZE (retrig within all proposed bounds; coverage misses max+spectral exactly as landed; the intentionally-saturated modwheel staircase misses max+RMS, recorded for the #12 freeze). Supported delta 0: carriers refuse extraction (non-serial-1 filters, active mixer paths, FX, out-of-class modwheel destinations); 91/91 recovery presets route modwheel, 1,406/3,561 corpus presets do.",
+   "verification": {
+    "model_vs_reference": "NO_VERDICT",
+    "rtl_vs_model": "PASS"
+   }
+  },
   "osc:Classic": {
    "evidence": [
     {
