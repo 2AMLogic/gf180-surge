@@ -1,0 +1,147 @@
+{
+  "absolute_detune": false,
+  "adsr": {
+    "a": -2.9959239959716797,
+    "a_s": 2.0,
+    "d": -4.929336071014404,
+    "d_s": 1.0,
+    "mode": 0.0,
+    "r": 2.486017942428589,
+    "r_s": 1.0,
+    "s": 0.6197980046272278
+  },
+  "carrier": "mystery4",
+  "character": 0,
+  "declared_overrides": [
+    [
+      "mute_o1",
+      false
+    ],
+    [
+      "mute_o2",
+      true
+    ],
+    [
+      "mute_o3",
+      true
+    ],
+    [
+      "mute_noise",
+      true
+    ],
+    [
+      "mute_ring_12",
+      true
+    ],
+    [
+      "mute_ring_23",
+      true
+    ],
+    [
+      "fu0_off",
+      true
+    ],
+    [
+      "fu1_off",
+      true
+    ],
+    [
+      "fx_off",
+      true
+    ],
+    [
+      "ws_off",
+      true
+    ],
+    [
+      "lc_off",
+      true
+    ],
+    [
+      "fbc_serial1",
+      true
+    ],
+    [
+      "fm_off",
+      true
+    ],
+    [
+      "scenemode_single",
+      true
+    ],
+    [
+      "retrigger_on",
+      true
+    ],
+    [
+      "drift_zero",
+      true
+    ]
+  ],
+  "drift": 0.0,
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "extend_detune": false,
+  "fb": 1.0,
+  "fb_extend": false,
+  "fmmode": 1,
+  "graphs_sha256_of_line_source": "corpus/normalized/graphs.jsonl",
+  "highcut": 70.0,
+  "issue": "SXT-040",
+  "keytrack": true,
+  "level_pfg": 1.0285799503326416,
+  "lowcut": -60.0,
+  "master_db": 0.0,
+  "o_level": 0.830357015132904,
+  "octave": -1,
+  "pan": 0.0,
+  "pitch_param": 1.0750559568405151,
+  "preset_census_blob_sha1": "42324f4fe796d636cbf55b4331c444e75fb93c7b",
+  "preset_path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Mystery 4.fxp",
+  "retrigger": true,
+  "scene_octave": -1,
+  "scene_routes_checked": [
+    [
+      6,
+      "A Osc 2 M2 Amount",
+      "inert/muted-osc"
+    ],
+    [
+      6,
+      "A Pre-Filter Gain",
+      "value-zero"
+    ],
+    [
+      6,
+      "A Filter 2 Cutoff",
+      "inert/off-path"
+    ],
+    [
+      6,
+      "A Amp EG Attack",
+      "value-zero"
+    ],
+    [
+      6,
+      "A Amp EG Decay",
+      "value-zero"
+    ],
+    [
+      6,
+      "A LFO 3 Amplitude",
+      "value-zero"
+    ]
+  ],
+  "scene_volume": 0.8907139897346497,
+  "schema_version": 1,
+  "shape": 0,
+  "slot": 0,
+  "unison": 2,
+  "unison_detune": 0.3005569875240326,
+  "vca_db": 11.142860412597656,
+  "vca_velsense": -12.634292602539062
+}

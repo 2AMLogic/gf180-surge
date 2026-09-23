@@ -61,10 +61,10 @@ REC_NEW = REC + 16
 #   25 char_a1  26 char_b0  27 char_b1(always 0)
 #   28..37 hp b0 b1 b2 a1 a2  38..47 lp b0 b1 b2 a1 a2
 #   48 aeg_a  49 aeg_d  50 aeg_r  51 aeg_s(Q2.29)  52 aeg_r_s
-#   53 inst_att_aeg  54 d_s  55 aeg_d_word
-#   56..61 halfband B0..B5  62..67 halfband A0..A5
-#   68 total_blocks
-INIT_LEN = 69
+#   53 inst_att_aeg  54 d_s  55 aeg_d_word  56 a_s
+#   57..62 halfband B0..B5  63..68 halfband A0..A5
+#   69 total_blocks
+INIT_LEN = 70
 
 
 def write_hex(path, values, bits=32):
@@ -271,11 +271,12 @@ def main():
         iw[53] = inst_att
         iw[54] = int(a["d_s"])
         iw[55] = vm.qint(a["d"])
+        iw[56] = int(a["a_s"])
         for i, w in enumerate(vm.HALFBAND_B_Q):
-            iw[56 + i] = w
+            iw[57 + i] = w
         for i, w in enumerate(vm.HALFBAND_A_Q):
-            iw[62 + i] = w
-        iw[68] = total_blocks
+            iw[63 + i] = w
+        iw[69] = total_blocks
         init_words = [iw.get(i, 0) for i in range(INIT_LEN)]
         assert len(init_words) == INIT_LEN, (len(init_words), INIT_LEN)
         write_hex(os.path.join(rtl_dir, "init.hex"), init_words)

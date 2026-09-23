@@ -405,28 +405,48 @@ class CharFilter:
 
 
 class AdsrSine(cm.AdsrClassic):
-    """SXT-022 digital-mode ADSR extended with decay shape d_s = 2.
+    """SXT-022 digital-mode ADSR extended with decay shape d_s = 2 and
+    attack shapes a_s in {0, 2} (the landed slice declares a_s = 1 only).
 
-    Pinned ADSRModulationSource.h case 2 (cube-root two-limits form):
+    Pinned ADSRModulationSource.h:
+      decay case 2 (cube-root two-limits form):
         sx = phase^(1/3)
         l_lo = phase - 3*sx*sx*rate + 3*sx*rate*rate - rate*rate*rate
         l_hi = phase + 3*sx*sx*rate + 3*sx*rate*rate + rate*rate*rate
-    (no case-1 sustain/rate gates - those are inside `case 1:` only).
+        (no case-1 sustain/rate gates - those are inside `case 1:` only)
+      attack case 0: output = sqrt(phase); case 2: output = phase*phase
     Evaluated in double at the pinned op order like the SXT-026 sqrt path;
     the engine evaluates float32 per op (declared deviation). The frozen
-    SXT-033 file is imported unchanged; the sqrt path (d_s = 1) is the
-    landed super form.
+    SXT-033 file is imported unchanged; the sqrt decay (d_s = 1) and the
+    linear attack (a_s = 1) are the landed super forms.
     """
 
     def __init__(self, prm, name):
         if int(prm["d_s"]) not in (0, 1, 2):
             raise RuntimeError(
                 f"{name}: decay shape {prm['d_s']} not in slice (0, 1 or 2)")
+        if int(prm["a_s"]) not in (0, 1, 2):
+            raise RuntimeError(
+                f"{name}: attack shape {prm['a_s']} not in slice (0, 1 or 2)")
         super().__init__({**prm, "d_s": 0}, name)
         self.d_s = int(prm["d_s"])
 
     def process_block(self):
-        if self.state == self.S_DECAY and self.d_s == 2:
+        if self.state == self.S_ATTACK and self.a_s in (0, 2):
+            # attack shapes 0/2 (pinned): sqrt(phase) / phase*phase; the
+            # landed vm.Adsr attack branch is a_s == 1 (linear) only
+            self.phase += vm.envelope_rate_linear_nowrap(self.a)
+            if self.phase >= (1 << vm.F_PHASE):
+                self.phase = 1 << vm.F_PHASE
+                self.state = self.S_DECAY
+                self.s_lvl = self.s
+            ph = self.phase >> (vm.F_PHASE - vm.FQ)
+            if self.a_s == 0:
+                self.output = int(math.floor(
+                    math.sqrt(ph / float(vm.ONE)) * vm.ONE + 0.5))
+            else:
+                self.output = vm.qmul(ph, ph)
+        elif self.state == self.S_DECAY and self.d_s == 2:
             FP = vm.F_PHASE
             rate = vm.envelope_rate_linear_nowrap(self.d)
             sx = int(math.floor((self.phase / float(1 << FP))

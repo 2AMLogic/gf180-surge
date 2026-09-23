@@ -121,7 +121,7 @@ module tb_sine;
   //   28..37 hp b0 b1 b2 a1 a2   38..47 lp b0 b1 b2 a1 a2
   //   48..55 aeg a/d/r rate words, sustain(Q2.29), r_s, inst_att, d_s, d
   //   56..61 halfband B0..B5  62..67 halfband A0..A5  68 total_blocks
-  logic [31:0] cfg [0:68];
+  logic [31:0] cfg [0:69];
   logic [31:0] ctrl_mem [0:4200000];
 
   // --------------------------------------------------------- per-slot state
@@ -184,7 +184,7 @@ module tb_sine;
   task automatic run;
     int total_blocks, ci;
     logic [31:0] master_amp, slotmask;
-    total_blocks = int'(cfg[68]);
+    total_blocks = int'(cfg[69]);
     ci = 0;
     for (b = 0; b < total_blocks; b++) begin
       if (ctrl_mem[ci] !== 32'hxxxxxxxx && int'(ctrl_mem[ci]) != b)
@@ -223,7 +223,17 @@ module tb_sine;
     if (st == S_ATTACK) begin
       ph = ph + rate_a;
       if ($signed(ph) >= $signed(PH_ONE)) begin ph = PH_ONE; st = S_DECAY; end
-      ov = ph >>> (F_PHASE - FQ);
+      if (cfg[56] == 0) begin
+        // attack shape 0 (pinned): output = sqrt(phase)
+        real phr0;
+        phr0 = $itor(ph >>> (F_PHASE - FQ)) / 2097152.0;
+        ov = 32'($rtoi($sqrt(phr0) * 2097152.0 + 0.5));
+      end else if (cfg[56] == 2) begin
+        // attack shape 2 (pinned): output = phase*phase (Q10.21 qmul)
+        ov = qmul(ph >>> (F_PHASE - FQ), ph >>> (F_PHASE - FQ));
+      end else begin
+        ov = ph >>> (F_PHASE - FQ);
+      end
     end else if (st == S_DECAY) begin
       if (cfg[54] == 0) begin
         l_lo = ph - rate_d; l_hi = ph + rate_d;
@@ -706,11 +716,11 @@ module tb_sine;
     for (k = 0; k < BLOCK_OS; k++) begin
       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
       for (i = 0; i < 6; i++) begin
-        yb = hbx2_b[i] + qmul(32'(cfg[56+i]), xb - hby2_b[i]);
+        yb = hbx2_b[i] + qmul(32'(cfg[57+i]), xb - hby2_b[i]);
         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
         xb = yb;
-        ya = hbx2_a[i] + qmul(32'(cfg[62+i]), xa - hby2_a[i]);
+        ya = hbx2_a[i] + qmul(32'(cfg[63+i]), xa - hby2_a[i]);
         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
         xa = ya;
