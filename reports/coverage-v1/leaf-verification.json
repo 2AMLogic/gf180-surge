@@ -1,380 +1,398 @@
 {
- "airwindows_leaves": {
-  "15": {
-   "filed": false,
-   "leaf_id": "SXT-028q"
-  },
-  "21": {
-   "filed": false,
-   "leaf_id": "SXT-028r"
-  },
-  "24": {
-   "filed": false,
-   "leaf_id": "SXT-028t"
-  },
-  "3": {
-   "filed": false,
-   "leaf_id": "SXT-028s"
-  },
-  "30": {
-   "filed": false,
-   "leaf_id": "SXT-028u"
-  },
-  "35": {
-   "filed": false,
-   "leaf_id": "SXT-028p"
-  },
-  "4": {
-   "filed": true,
-   "issue": 63,
-   "landed": false,
-   "leaf_id": "SXT-028k"
-  },
-  "41": {
-   "filed": false,
-   "leaf_id": "SXT-028v"
-  },
-  "42": {
-   "filed": false,
-   "leaf_id": "SXT-028m"
-  },
-  "46": {
-   "filed": false,
-   "leaf_id": "SXT-028n"
-  },
-  "49": {
-   "filed": true,
-   "issue": 53,
-   "landed": true,
-   "leaf_id": "SXT-028a"
-  },
-  "5": {
-   "filed": false,
-   "leaf_id": "SXT-028o"
-  }
- },
- "airwindows_unfiled_reason_template": "no leaf filed for this algorithm (outside the SXT-028 generator's recovery-ordered set)",
- "claim_scope": "Machine-readable leaf/gate ledger consumed by tools/publish_coverage.py (SXT-029, issue #22). It records, per landed leaf, the verification verdicts of the committed evidence records (full sha256 pins; the tool re-hashes at run time and marks STALE on mismatch), and per unlanded leaf the filed issue (or backlog id) that must land first. Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, quality, or hardware claim; essentiality is UNVERIFIED pending listening (#8/#9). A leaf is support-ready only when rtl_vs_model AND model_vs_reference are both PASS AND the fidelity_freeze gate is PASS (issue #12).",
- "gates": {
-  "fidelity_freeze": {
-   "effect": "no model-vs-reference number is a fidelity verdict until budgets are frozen; supported promotion requires status PASS",
-   "evidence": [
-    {
-     "path": "reports/sxt-023/EVIDENCE.md",
-     "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+  "airwindows_leaves": {
+    "15": {
+      "filed": false,
+      "leaf_id": "SXT-028q"
     },
-    {
-     "path": "reports/sxt-024/EVIDENCE.md",
-     "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
-    }
-   ],
-   "owner": "#12 (SXT-017 profile/fidelity freeze; SXT-013 listening BLOCKED-on-human)",
-   "status": "BLOCKED"
-  },
-  "listening_labels": {
-   "effect": "essentiality UNVERIFIED; favorites-slate target assessment is NO_VERDICT; listening is kept separate from coverage and is never a support gate",
-   "evidence": [
-    {
-     "path": "reports/sxt-014/EVIDENCE.md",
-     "sha256": "b89c72321e86a47bd8d976626f3870927b3cb176f037a776b0febdf5d4d385f2"
-    }
-   ],
-   "owner": "#8/#9 (SXT-013/SXT-014 listening records; none exists in this repository)",
-   "status": "BLOCKED"
-  }
- },
- "leaves": {
-  "filter_type:LP 12 dB": {
-   "evidence": [
-    {
-     "path": "reports/sxt-037/EVIDENCE.md",
-     "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
-    }
-   ],
-   "fixture_verified_paths": [],
-   "issue": 71,
-   "landed": true,
-   "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); RTL-vs-model EXACT on 8 fixtures incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 517-802 LSB Q10.21, rms 87-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
-   "overlap_paths_not_fixture_verified": [
-    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
-    "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
-    "resources/data/patches_3rdparty/Emu/Drums/T9 Tom.fxp"
-   ],
-   "verification": {
-    "model_vs_reference": "NO_VERDICT",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "fx:Chorus": {
-   "issue": 55,
-   "landed": false,
-   "leaf_id": "SXT-028c",
-   "note": "unlanded; carries an explicit SXT-017 decision marker (shares LFO-modulated delay-line semantics of the open delay-budget finding; no Chorus budget may freeze before #12 decides)",
-   "requires_freeze_decision": "#12"
-  },
-  "fx:Conditioner": {
-   "issue": 54,
-   "landed": false,
-   "leaf_id": "SXT-028b"
-  },
-  "fx:Delay": {
-   "evidence": [
-    {
-     "path": "reports/sxt-023/EVIDENCE.md",
-     "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
-    }
-   ],
-   "issue": 16,
-   "landed": true,
-   "note": "landed but NOT support-ready: RTL-vs-model exactness FAIL (open tb defect, ~0.9 correlation) and model-vs-reference FAIL against [PROPOSED] budgets (metallic 195,634 LSB max; dexie 72,738); the per-instance-state acceptance case (two Delay slots) PASSED model-side; budget/word-length decision routed #16->#12",
-   "verification": {
-    "model_vs_reference": "FAIL",
-    "rtl_vs_model": "FAIL"
-   }
-  },
-  "fx:Distortion": {
-   "issue": 57,
-   "landed": false,
-   "leaf_id": "SXT-028e"
-  },
-  "fx:EQ": {
-   "evidence": [
-    {
-     "path": "reports/sxt-023/EVIDENCE.md",
-     "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
-    }
-   ],
-   "issue": 16,
-   "landed": true,
-   "note": "RTL-vs-model exact (0/547,200 samples, 0 checkpoint mismatches); model-vs-reference at the quantization floor (max 7.8 LSB, rms -120.0 dBFS, corr 1.000) vs [PROPOSED] budgets; parent issue #16 remains OPEN on the Delay slice only",
-   "verification": {
-    "model_vs_reference": "PASS",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "fx:Phaser": {
-   "issue": 59,
-   "landed": false,
-   "leaf_id": "SXT-028g"
-  },
-  "fx:Reverb1": {
-   "evidence": [
-    {
-     "path": "reports/sxt-024/EVIDENCE.md",
-     "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
-    }
-   ],
-   "issue": 17,
-   "landed": true,
-   "note": "RTL-vs-model EXACT (outputs, checkpoints, transaction log, full 557,056-word memory image; broken-mutant control FAILS); model-vs-reference PASS vs [PROPOSED] budgets with one recorded bounded budget finding (hardreset tail relative sub-budget; absolute error -157 dBFS, below device LSB) - recorded for the #12 freeze, never silently absorbed",
-   "verification": {
-    "model_vs_reference": "PASS",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "fx:Reverb2": {
-   "issue": 58,
-   "landed": false,
-   "leaf_id": "SXT-028f",
-   "note": "unlanded; flags its tank state as the batch's largest external-memory candidate [PENDING-SXT-016]"
-  },
-  "fx:SXT-026a-voice-scope-extension": {
-   "issue": 48,
-   "landed": false,
-   "leaf_id": "SXT-026a",
-   "note": "first-class F-1 leaf: the landed voice arithmetic covers exactly Attacky (fixture-verified) and Quickspit (arithmetic overlap only, no fixture evidence); until it lands, no compiled corpus preset carrying FX can reach a supported status"
-  },
-  "mod:lfo": {
-   "evidence": [
-    {
-     "path": "reports/sxt-032/EVIDENCE.md",
-     "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
-    }
-   ],
-   "fixture_verified_paths": [
-    "resources/data/patches_factory/Basses/Attacky.fxp (SXT-032 synthetic LFO fixture: runtime LFO1->F1 Cutoff/Reso routes via setModDepth01; not a corpus support claim)"
-   ],
-   "issue": 66,
-   "landed": true,
-   "note": "LFO modulator slice (ms_lfo1..6): frozen fixed-point model, LFO control-plane RTL EXACT (tools/compare_lfo_rtl_model.py) and the frozen voice RTL exact on LFO-influenced control words; model-vs-reference PENDING-FREEZE (RMS+spectral within the [PROPOSED] bounds on all four fixtures, proposed max-abs bound missed on all four; recorded, not tuned). Supported delta 0: carriers are multi-scene/FX/non-Classic-osc and outside the landed voice arithmetic (#48 open); destination classes limited to Filter 1 Cutoff/Resonance.",
-   "verification": {
-    "model_vs_reference": "NO_VERDICT",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "mod:modwheel": {
-   "evidence": [
-    {
-     "path": "reports/sxt-035/EVIDENCE.md",
-     "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
-    }
-   ],
-   "fixture_verified_paths": [
-    "resources/data/patches_factory/Basses/Attacky.fxp (SXT-035 synthetic modwheel fixture: preset modwheel routes + runtime ms_modwheel->A VCA Gain route via setModDepth01; not a corpus support claim)"
-   ],
-   "issue": 69,
-   "landed": true,
-   "note": "Modwheel modulator slice (ms_modwheel): landed FAST_LINE smoother reused unchanged; scene route table generalized to {Filter 1 Cutoff, Filter 1 Resonance, VCA Gain}; control-plane RTL EXACT (tools/compare_mw_rtl_model.py) and the corrected voice RTL exact on mw-influenced control words (two latent tb_voice deviations from the model order fixed: pre-decimator scene clip placement, 64-bit ramp products; landed fixtures bit-identical before/after); model-vs-reference PENDING-FREEZE (retrig within all proposed bounds; coverage misses max+spectral exactly as landed; the intentionally-saturated modwheel staircase misses max+RMS, recorded for the #12 freeze). Supported delta 0: carriers refuse extraction (non-serial-1 filters, active mixer paths, FX, out-of-class modwheel destinations); 91/91 recovery presets route modwheel, 1,406/3,561 corpus presets do.",
-   "verification": {
-    "model_vs_reference": "NO_VERDICT",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "osc:Classic": {
-   "evidence": [
-    {
-     "path": "reports/SXT-033/EVIDENCE.md",
-     "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
-    }
-   ],
-   "issue": 67,
-   "landed": true,
-   "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (4 canonical carriers + smoke config; single-constant mutant control FAILS; regenerated and re-verified at the branch tip); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): sub0/sync/sync+uni1 classes near the int16 render floor, detuned-unison class decorrelates (F-033-1, engine float32 phase pipeline, routed #12), uni16 misses the proposed max bound; zero presets promoted - all 94 recovery-basis presets need unlanded features beyond the Classic oscillator class; landed pinned pitch-helper finding F-033-2 (SXT-022 fractional-term construction, inert in the Attacky slice) routed to #48/#12 for a visible contract revision",
-   "verification": {
-    "model_vs_reference": "PARTIAL",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "osc:Wavetable": {
-   "evidence": [
-    {
-     "path": "reports/sxt-026/EVIDENCE.md",
-     "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
-    }
-   ],
-   "issue": 19,
-   "landed": true,
-   "note": "RTL-vs-model integer equality PASS (clean RTL; mip-threshold mutant FAILS); model-vs-reference PARTIAL: workhorse/morph PASS sxt-026-proposed bounds, deep-mip pitch extremes (mips 5/6) decorrelate (corr -0.19/-0.01; engine float32 phase pipeline, SXT-026 section 4 bounded finding), uni16/mf MISS the sxt-022 proposal - resolution owned by the #12 freeze, not absorbed",
-   "verification": {
-    "model_vs_reference": "PARTIAL",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "voice:attacky-slice": {
-   "evidence": [
-    {
-     "path": "reports/sxt-022/EVIDENCE.md",
-     "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
-    }
-   ],
-   "fixture_verified_paths": [
-    "resources/data/patches_factory/Basses/Attacky.fxp"
-   ],
-   "issue": 15,
-   "landed": true,
-   "note": "single-preset dry voice slice (forced, not tuned: the only corpus preset inside the B4 voice gates in minimal form); RTL-vs-model EXACT over three sequences; model-vs-reference NO_VERDICT for support purposes: 1/3 sequences passes all [PROPOSED] bounds, 2/3 miss the proposed max/spectral bounds, and no budget is frozen (#12)",
-   "overlap_paths_not_fixture_verified": [
-    "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
-   ],
-   "verification": {
-    "model_vs_reference": "NO_VERDICT",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "voice:sine-fm-lp24-v2": {
-   "evidence": [
-    {
-     "path": "reports/sxt-022/EVIDENCE.md",
-     "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+    "21": {
+      "filed": false,
+      "leaf_id": "SXT-028r"
     },
-    {
-     "path": "reports/sxt-026a/EVIDENCE.md",
-     "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
+    "24": {
+      "filed": false,
+      "leaf_id": "SXT-028t"
+    },
+    "3": {
+      "filed": false,
+      "leaf_id": "SXT-028s"
+    },
+    "30": {
+      "filed": false,
+      "leaf_id": "SXT-028u"
+    },
+    "35": {
+      "filed": false,
+      "leaf_id": "SXT-028p"
+    },
+    "4": {
+      "filed": true,
+      "issue": 63,
+      "landed": false,
+      "leaf_id": "SXT-028k"
+    },
+    "41": {
+      "filed": false,
+      "leaf_id": "SXT-028v"
+    },
+    "42": {
+      "filed": false,
+      "leaf_id": "SXT-028m"
+    },
+    "46": {
+      "filed": false,
+      "leaf_id": "SXT-028n"
+    },
+    "49": {
+      "filed": true,
+      "issue": 53,
+      "landed": true,
+      "leaf_id": "SXT-028a"
+    },
+    "5": {
+      "filed": false,
+      "leaf_id": "SXT-028o"
     }
-   ],
-   "fixture_verified_paths": [
-    "resources/data/patches_factory/Basses/Attacky.fxp",
-    "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
-   ],
-   "issue": 48,
-   "landed": true,
-   "leaf_id": "SXT-026a",
-   "note": "parameterized voice class (Sine legacy + fm_3to2to1 + LP24CFC + velocity/keytrack vocabulary; v1 arithmetic unchanged, v1 renders byte-identical). RTL-vs-model EXACT (smoke + canonical sxt025-accept-v1). model_vs_reference NO_VERDICT: canonical dry and integrated wet both FAIL the [PROPOSED] budgets (findings F-48a/F-48b -> SXT-013/#12). Quickspit overlap row corrected: engine-refused mono playmode (NC3a transcript).",
-   "overlap_paths_not_fixture_verified": [],
-   "verification": {
-    "model_vs_reference": "NO_VERDICT",
-    "rtl_vs_model": "PASS"
-   }
   },
-  "fx:AW-49-Galactic": {
-   "evidence": [
-    {
-     "path": "reports/sxt-028a/EVIDENCE.md",
-     "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+  "airwindows_unfiled_reason_template": "no leaf filed for this algorithm (outside the SXT-028 generator's recovery-ordered set)",
+  "claim_scope": "Machine-readable leaf/gate ledger consumed by tools/publish_coverage.py (SXT-029, issue #22). It records, per landed leaf, the verification verdicts of the committed evidence records (full sha256 pins; the tool re-hashes at run time and marks STALE on mismatch), and per unlanded leaf the filed issue (or backlog id) that must land first. Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, quality, or hardware claim; essentiality is UNVERIFIED pending listening (#8/#9). A leaf is support-ready only when rtl_vs_model AND model_vs_reference are both PASS AND the fidelity_freeze gate is PASS (issue #12).",
+  "gates": {
+    "fidelity_freeze": {
+      "effect": "no model-vs-reference number is a fidelity verdict until budgets are frozen; supported promotion requires status PASS",
+      "evidence": [
+        {
+          "path": "reports/sxt-023/EVIDENCE.md",
+          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+        },
+        {
+          "path": "reports/sxt-024/EVIDENCE.md",
+          "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+        }
+      ],
+      "owner": "#12 (SXT-017 profile/fidelity freeze; SXT-013 listening BLOCKED-on-human)",
+      "status": "BLOCKED"
+    },
+    "listening_labels": {
+      "effect": "essentiality UNVERIFIED; favorites-slate target assessment is NO_VERDICT; listening is kept separate from coverage and is never a support gate",
+      "evidence": [
+        {
+          "path": "reports/sxt-014/EVIDENCE.md",
+          "sha256": "b89c72321e86a47bd8d976626f3870927b3cb176f037a776b0febdf5d4d385f2"
+        }
+      ],
+      "owner": "#8/#9 (SXT-013/SXT-014 listening records; none exists in this repository)",
+      "status": "BLOCKED"
     }
-   ],
-   "issue": 53,
-   "landed": true,
-   "note": "Airwindows algorithm leaf: Galactic (streamed id 49). RTL-vs-model EXACT (iverilog: outputs, checkpoints, transaction logs, memory images; PRS, real-fixture canonical, dual-instance per-instance equality, mid-stream reset; regen + shared-memory mutants FAIL = controls; frozen-revision pin refuses stale harnesses). Model-vs-reference at the tapped slot boundary (DR-0006) PASS vs [PROPOSED] budgets on 6 fixture legs (2 named presets x 2 sequences + factory SXT-014 carrier): max 1.1e-7..3.4e-6 (<=1e-3), rms_rel -84..-116 dB (<=-50), spectral corr >=0.999999998, zero saturations at the frozen Q6.25 word. Findings recorded: fixture carriers are conditioned-on-tap repeatability class (wall-clock-seeded aw49 vibrato + free-run voice drift; 3x gate cannot hold); Sine Lead REFUSED (LFO->FX-Mix modulation outside frozen scope); complete-wet renders refused for all carriers (unlanded sibling AW algorithms / landed-failing Delay); headroom widened Q4.28->Q6.25 before reference comparisons (fmod09 hot carrier measured 146 saturation events at Q4.28); saturating stores are load-bearing (stability-class note). Supported delta 0 by design: supported stays 0 unless the full path verifies (#48 voice, #12 freeze).",
-   "verification": {
-    "model_vs_reference": "PASS",
-    "rtl_vs_model": "PASS"
-   }
-  }
- },
- "routing_leaves": {
-  "ains3": {
-   "filed": true,
-   "issue": 61,
-   "landed": false,
-   "leaf_id": "SXT-028i"
   },
-  "ains4": {
-   "filed": true,
-   "issue": 61,
-   "landed": false,
-   "leaf_id": "SXT-028i"
+  "leaves": {
+    "filter_type:LP 12 dB": {
+      "evidence": [
+        {
+          "path": "reports/sxt-037/EVIDENCE.md",
+          "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
+        }
+      ],
+      "fixture_verified_paths": [],
+      "issue": 71,
+      "landed": true,
+      "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); RTL-vs-model EXACT on 8 fixtures incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 517-802 LSB Q10.21, rms 87-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
+      "overlap_paths_not_fixture_verified": [
+        "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+        "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+        "resources/data/patches_3rdparty/Emu/Drums/T9 Tom.fxp"
+      ],
+      "verification": {
+        "model_vs_reference": "NO_VERDICT",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "fx:Chorus": {
+      "issue": 55,
+      "landed": false,
+      "leaf_id": "SXT-028c",
+      "note": "unlanded; carries an explicit SXT-017 decision marker (shares LFO-modulated delay-line semantics of the open delay-budget finding; no Chorus budget may freeze before #12 decides)",
+      "requires_freeze_decision": "#12"
+    },
+    "fx:Conditioner": {
+      "issue": 54,
+      "landed": false,
+      "leaf_id": "SXT-028b"
+    },
+    "fx:Delay": {
+      "evidence": [
+        {
+          "path": "reports/sxt-023/EVIDENCE.md",
+          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+        }
+      ],
+      "issue": 16,
+      "landed": true,
+      "note": "landed but NOT support-ready: RTL-vs-model exactness FAIL (open tb defect, ~0.9 correlation) and model-vs-reference FAIL against [PROPOSED] budgets (metallic 195,634 LSB max; dexie 72,738); the per-instance-state acceptance case (two Delay slots) PASSED model-side; budget/word-length decision routed #16->#12",
+      "verification": {
+        "model_vs_reference": "FAIL",
+        "rtl_vs_model": "FAIL"
+      }
+    },
+    "fx:Distortion": {
+      "issue": 57,
+      "landed": false,
+      "leaf_id": "SXT-028e"
+    },
+    "fx:EQ": {
+      "evidence": [
+        {
+          "path": "reports/sxt-023/EVIDENCE.md",
+          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+        }
+      ],
+      "issue": 16,
+      "landed": true,
+      "note": "RTL-vs-model exact (0/547,200 samples, 0 checkpoint mismatches); model-vs-reference at the quantization floor (max 7.8 LSB, rms -120.0 dBFS, corr 1.000) vs [PROPOSED] budgets; parent issue #16 remains OPEN on the Delay slice only",
+      "verification": {
+        "model_vs_reference": "PASS",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "fx:Phaser": {
+      "issue": 59,
+      "landed": false,
+      "leaf_id": "SXT-028g"
+    },
+    "fx:Reverb1": {
+      "evidence": [
+        {
+          "path": "reports/sxt-024/EVIDENCE.md",
+          "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+        }
+      ],
+      "issue": 17,
+      "landed": true,
+      "note": "RTL-vs-model EXACT (outputs, checkpoints, transaction log, full 557,056-word memory image; broken-mutant control FAILS); model-vs-reference PASS vs [PROPOSED] budgets with one recorded bounded budget finding (hardreset tail relative sub-budget; absolute error -157 dBFS, below device LSB) - recorded for the #12 freeze, never silently absorbed",
+      "verification": {
+        "model_vs_reference": "PASS",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "fx:Reverb2": {
+      "issue": 58,
+      "landed": false,
+      "leaf_id": "SXT-028f",
+      "note": "unlanded; flags its tank state as the batch's largest external-memory candidate [PENDING-SXT-016]"
+    },
+    "fx:SXT-026a-voice-scope-extension": {
+      "issue": 48,
+      "landed": false,
+      "leaf_id": "SXT-026a",
+      "note": "first-class F-1 leaf: the landed voice arithmetic covers exactly Attacky (fixture-verified) and Quickspit (arithmetic overlap only, no fixture evidence); until it lands, no compiled corpus preset carrying FX can reach a supported status"
+    },
+    "mod:lfo": {
+      "evidence": [
+        {
+          "path": "reports/sxt-032/EVIDENCE.md",
+          "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
+        }
+      ],
+      "fixture_verified_paths": [
+        "resources/data/patches_factory/Basses/Attacky.fxp (SXT-032 synthetic LFO fixture: runtime LFO1->F1 Cutoff/Reso routes via setModDepth01; not a corpus support claim)"
+      ],
+      "issue": 66,
+      "landed": true,
+      "note": "LFO modulator slice (ms_lfo1..6): frozen fixed-point model, LFO control-plane RTL EXACT (tools/compare_lfo_rtl_model.py) and the frozen voice RTL exact on LFO-influenced control words; model-vs-reference PENDING-FREEZE (RMS+spectral within the [PROPOSED] bounds on all four fixtures, proposed max-abs bound missed on all four; recorded, not tuned). Supported delta 0: carriers are multi-scene/FX/non-Classic-osc and outside the landed voice arithmetic (#48 open); destination classes limited to Filter 1 Cutoff/Resonance.",
+      "verification": {
+        "model_vs_reference": "NO_VERDICT",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "mod:modwheel": {
+      "evidence": [
+        {
+          "path": "reports/sxt-035/EVIDENCE.md",
+          "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
+        }
+      ],
+      "fixture_verified_paths": [
+        "resources/data/patches_factory/Basses/Attacky.fxp (SXT-035 synthetic modwheel fixture: preset modwheel routes + runtime ms_modwheel->A VCA Gain route via setModDepth01; not a corpus support claim)"
+      ],
+      "issue": 69,
+      "landed": true,
+      "note": "Modwheel modulator slice (ms_modwheel): landed FAST_LINE smoother reused unchanged; scene route table generalized to {Filter 1 Cutoff, Filter 1 Resonance, VCA Gain}; control-plane RTL EXACT (tools/compare_mw_rtl_model.py) and the corrected voice RTL exact on mw-influenced control words (two latent tb_voice deviations from the model order fixed: pre-decimator scene clip placement, 64-bit ramp products; landed fixtures bit-identical before/after); model-vs-reference PENDING-FREEZE (retrig within all proposed bounds; coverage misses max+spectral exactly as landed; the intentionally-saturated modwheel staircase misses max+RMS, recorded for the #12 freeze). Supported delta 0: carriers refuse extraction (non-serial-1 filters, active mixer paths, FX, out-of-class modwheel destinations); 91/91 recovery presets route modwheel, 1,406/3,561 corpus presets do.",
+      "verification": {
+        "model_vs_reference": "NO_VERDICT",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "osc:Classic": {
+      "evidence": [
+        {
+          "path": "reports/SXT-033/EVIDENCE.md",
+          "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
+        }
+      ],
+      "issue": 67,
+      "landed": true,
+      "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (4 canonical carriers + smoke config; single-constant mutant control FAILS; regenerated and re-verified at the branch tip); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): sub0/sync/sync+uni1 classes near the int16 render floor, detuned-unison class decorrelates (F-033-1, engine float32 phase pipeline, routed #12), uni16 misses the proposed max bound; zero presets promoted - all 94 recovery-basis presets need unlanded features beyond the Classic oscillator class; landed pinned pitch-helper finding F-033-2 (SXT-022 fractional-term construction, inert in the Attacky slice) routed to #48/#12 for a visible contract revision",
+      "verification": {
+        "model_vs_reference": "PARTIAL",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "osc:Wavetable": {
+      "evidence": [
+        {
+          "path": "reports/sxt-026/EVIDENCE.md",
+          "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
+        }
+      ],
+      "issue": 19,
+      "landed": true,
+      "note": "RTL-vs-model integer equality PASS (clean RTL; mip-threshold mutant FAILS); model-vs-reference PARTIAL: workhorse/morph PASS sxt-026-proposed bounds, deep-mip pitch extremes (mips 5/6) decorrelate (corr -0.19/-0.01; engine float32 phase pipeline, SXT-026 section 4 bounded finding), uni16/mf MISS the sxt-022 proposal - resolution owned by the #12 freeze, not absorbed",
+      "verification": {
+        "model_vs_reference": "PARTIAL",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "voice:attacky-slice": {
+      "evidence": [
+        {
+          "path": "reports/sxt-022/EVIDENCE.md",
+          "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+        }
+      ],
+      "fixture_verified_paths": [
+        "resources/data/patches_factory/Basses/Attacky.fxp"
+      ],
+      "issue": 15,
+      "landed": true,
+      "note": "single-preset dry voice slice (forced, not tuned: the only corpus preset inside the B4 voice gates in minimal form); RTL-vs-model EXACT over three sequences; model-vs-reference NO_VERDICT for support purposes: 1/3 sequences passes all [PROPOSED] bounds, 2/3 miss the proposed max/spectral bounds, and no budget is frozen (#12)",
+      "overlap_paths_not_fixture_verified": [
+        "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
+      ],
+      "verification": {
+        "model_vs_reference": "NO_VERDICT",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "voice:sine-fm-lp24-v2": {
+      "evidence": [
+        {
+          "path": "reports/sxt-022/EVIDENCE.md",
+          "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+        },
+        {
+          "path": "reports/sxt-026a/EVIDENCE.md",
+          "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
+        }
+      ],
+      "fixture_verified_paths": [
+        "resources/data/patches_factory/Basses/Attacky.fxp",
+        "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+      ],
+      "issue": 48,
+      "landed": true,
+      "leaf_id": "SXT-026a",
+      "note": "parameterized voice class (Sine legacy + fm_3to2to1 + LP24CFC + velocity/keytrack vocabulary; v1 arithmetic unchanged, v1 renders byte-identical). RTL-vs-model EXACT (smoke + canonical sxt025-accept-v1). model_vs_reference NO_VERDICT: canonical dry and integrated wet both FAIL the [PROPOSED] budgets (findings F-48a/F-48b -> SXT-013/#12). Quickspit overlap row corrected: engine-refused mono playmode (NC3a transcript).",
+      "overlap_paths_not_fixture_verified": [],
+      "verification": {
+        "model_vs_reference": "NO_VERDICT",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "fx:AW-49-Galactic": {
+      "evidence": [
+        {
+          "path": "reports/sxt-028a/EVIDENCE.md",
+          "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+        }
+      ],
+      "issue": 53,
+      "landed": true,
+      "note": "Airwindows algorithm leaf: Galactic (streamed id 49). RTL-vs-model EXACT (iverilog: outputs, checkpoints, transaction logs, memory images; PRS, real-fixture canonical, dual-instance per-instance equality, mid-stream reset; regen + shared-memory mutants FAIL = controls; frozen-revision pin refuses stale harnesses). Model-vs-reference at the tapped slot boundary (DR-0006) PASS vs [PROPOSED] budgets on 6 fixture legs (2 named presets x 2 sequences + factory SXT-014 carrier): max 1.1e-7..3.4e-6 (<=1e-3), rms_rel -84..-116 dB (<=-50), spectral corr >=0.999999998, zero saturations at the frozen Q6.25 word. Findings recorded: fixture carriers are conditioned-on-tap repeatability class (wall-clock-seeded aw49 vibrato + free-run voice drift; 3x gate cannot hold); Sine Lead REFUSED (LFO->FX-Mix modulation outside frozen scope); complete-wet renders refused for all carriers (unlanded sibling AW algorithms / landed-failing Delay); headroom widened Q4.28->Q6.25 before reference comparisons (fmod09 hot carrier measured 146 saturation events at Q4.28); saturating stores are load-bearing (stability-class note). Supported delta 0 by design: supported stays 0 unless the full path verifies (#48 voice, #12 freeze).",
+      "verification": {
+        "model_vs_reference": "PASS",
+        "rtl_vs_model": "PASS"
+      }
+    },
+    "voice:unison-stack": {
+      "evidence": [
+        {
+          "path": "reports/SXT-034/EVIDENCE.md",
+          "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
+        }
+      ],
+      "fixture_verified_paths": [
+        "resources/data/patches_factory/Basses/Attacky.fxp"
+      ],
+      "issue": 68,
+      "landed": true,
+      "note": "unison stack topology >1 voice (declared max MAX_UNISON=16; beyond-cap explicitly rejected — the engine clamps, SXT-015 58 flagged presets): RTL-vs-model EXACT over six fixtures incl. uni16 and a non-retrigger init-draw mechanism fixture (no reference claim, quantified-variation class); model-vs-reference PARTIAL: uni=1 regression passes all [PROPOSED] bounds byte-identically, uni>1 passes rms everywhere but misses proposed max/spectral on 3/5 fixtures (bounded finding routed to the #12 freeze, not tuned). No real corpus preset is renderable inside the leaf topology (issue-named carriers Edges Rhythm / Bad News / King blocked: non-Classic osc families, FX, split scenes — recorded per carrier); fixtures are declared-override test configuration on the census-verified Attacky carrier, never an adapted preset; 0 presets supported by this leaf alone, recovery attribution requires the family/integration/effects leaves on top",
+      "verification": {
+        "model_vs_reference": "PARTIAL",
+        "rtl_vs_model": "PASS"
+      }
+    }
   },
-  "bins1": {
-   "filed": true,
-   "issue": 60,
-   "landed": false,
-   "leaf_id": "SXT-028h"
+  "routing_leaves": {
+    "ains3": {
+      "filed": true,
+      "issue": 61,
+      "landed": false,
+      "leaf_id": "SXT-028i"
+    },
+    "ains4": {
+      "filed": true,
+      "issue": 61,
+      "landed": false,
+      "leaf_id": "SXT-028i"
+    },
+    "bins1": {
+      "filed": true,
+      "issue": 60,
+      "landed": false,
+      "leaf_id": "SXT-028h"
+    },
+    "bins2": {
+      "filed": true,
+      "issue": 60,
+      "landed": false,
+      "leaf_id": "SXT-028h"
+    },
+    "global2": {
+      "filed": true,
+      "issue": 56,
+      "landed": false,
+      "leaf_id": "SXT-028d"
+    },
+    "global3": {
+      "filed": true,
+      "issue": 62,
+      "landed": false,
+      "leaf_id": "SXT-028j"
+    },
+    "global4": {
+      "filed": true,
+      "issue": 62,
+      "landed": false,
+      "leaf_id": "SXT-028j"
+    },
+    "send3": {
+      "filed": true,
+      "issue": 64,
+      "landed": false,
+      "leaf_id": "SXT-028l"
+    },
+    "send4": {
+      "filed": true,
+      "issue": 64,
+      "landed": false,
+      "leaf_id": "SXT-028l"
+    }
   },
-  "bins2": {
-   "filed": true,
-   "issue": 60,
-   "landed": false,
-   "leaf_id": "SXT-028h"
-  },
-  "global2": {
-   "filed": true,
-   "issue": 56,
-   "landed": false,
-   "leaf_id": "SXT-028d"
-  },
-  "global3": {
-   "filed": true,
-   "issue": 62,
-   "landed": false,
-   "leaf_id": "SXT-028j"
-  },
-  "global4": {
-   "filed": true,
-   "issue": 62,
-   "landed": false,
-   "leaf_id": "SXT-028j"
-  },
-  "send3": {
-   "filed": true,
-   "issue": 64,
-   "landed": false,
-   "leaf_id": "SXT-028l"
-  },
-  "send4": {
-   "filed": true,
-   "issue": 64,
-   "landed": false,
-   "leaf_id": "SXT-028l"
-  }
- },
- "routing_roles_no_leaf_required": [
-  "ains1",
-  "ains2",
-  "global1",
-  "send1",
-  "send2"
- ],
- "schema_version": "sxt-029-leaf-verification/1.0.0",
- "voice_leaf_key": "voice:attacky-slice"
+  "routing_roles_no_leaf_required": [
+    "ains1",
+    "ains2",
+    "global1",
+    "send1",
+    "send2"
+  ],
+  "schema_version": "sxt-029-leaf-verification/1.0.0",
+  "voice_leaf_key": "voice:attacky-slice"
 }

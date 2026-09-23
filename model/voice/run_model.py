@@ -93,12 +93,25 @@ def main():
     inst_att_aeg = 1 if (vm.qint(inp.adsr["a"]) - a_min_const) < eps01 else 0
     inst_att_feg = 1 if (vm.qint(inp.fadsr["a"]) - a_min_const) < eps01 else 0
     probe = vm.VoiceV2(inp, 60, 100)
+    # the probe voice is discarded (character-filter/attenuation words only);
+    # reset the declared draw cursor so the rendered voices consume the
+    # committed init_phase_draws list from its start
+    inp.reset_draws()
 
     def envrate(p):
         return vm.envelope_rate_linear_nowrap(vm.qint(p))
 
+    # UNI block (see tb_voice.sv cfg map, words 78+): unison stack constants
+    # (per-voice detune tables precomputed in the model's control plane)
+    uni_n = max(1, int(inp.n_unison))
+    uni_words = [uni_n, probe.out_attenuation]
+    for u in probe.u:
+        uni_words += [u["t"], u["t_inv"], u["oscstate"]]
+    uni_words += [0] * (3 * 16 - 3 * len(probe.u))
+
     # INIT_ORDER (see tb_voice.sv cfg map); words 0..39 are the frozen v1
-    # layout, 40..76 are the SXT-026a parameterization appendix.
+    # layout, 40..77 the SXT-026a parameterization appendix, 78.. the SXT-034
+    # unison appendix.
     sine = probe.kind == "sine"
     init_words = [
         envrate(inp.adsr["a"]), envrate(inp.adsr["d"]), envrate(inp.adsr["r"]),
@@ -120,7 +133,7 @@ def main():
         vm.qint(0.05),                                           # lag rate
         inst_att_aeg, inst_att_feg,
         *vm.HALFBAND_B_Q, *vm.HALFBAND_A_Q,
-        # ---- SXT-026a appendix -------------------------------------------
+        # ---- SXT-026a appendix (words 40..47) -----------------------------
         1 if sine else 0,                                        # 40 osc_kind
         probe.fu_poles,                                          # 41 fu_poles
         probe.fm_depth,                                          # 42 fm_depth
@@ -131,15 +144,18 @@ def main():
         inp.osc_pitch_offsets[2],                                # 47 pitch_off3
     ]
     if sine:
-        for core in probe.sine:               # 47..51 hp, 52..56 lp (x3 oscs)
+        for core in probe.sine:               # 48..77 hp, lp coeffs (x3 oscs)
             init_words += [core.hp.b0, core.hp.b1, core.hp.b2,
                            core.hp.a1, core.hp.a2]
             init_words += [core.lp.b0, core.lp.b1, core.lp.b2,
                            core.lp.a1, core.lp.a2]
     else:
         init_words += [0] * 30
+    # ---- SXT-034 unison appendix (words 78..127) --------------------------
+    init_words += uni_words
 
     voices = []
+    draw_sets = []          # distinct per-creation init oscstate sets
     events = list(seq["events"])
     ei = 0
     bs = BLOCK_SIZE
@@ -147,6 +163,15 @@ def main():
     out_mono = []
     blocks_json = []
     ctrl = []
+
+    def draw_set_index_of(v):
+        key = tuple(v.init_oscstate_set)
+        if key not in draw_set_index_of.table:
+            draw_set_index_of.table[key] = len(draw_sets)
+            draw_sets.append(list(v.init_oscstate_set))
+        return draw_set_index_of.table[key]
+
+    draw_set_index_of.table = {}
 
     for b in range(total_blocks):
         blk = {"b": b, "create": [], "release": [], "voices": []}
@@ -156,6 +181,7 @@ def main():
                 slot = next(i for i in range(N_SLOTS) if all(v.slot != i for v in voices))
                 v = vm.VoiceV2(inp, e["note"], e.get("velocity", 0))
                 v.slot = slot
+                v.draw_set_index = draw_set_index_of(v)
                 voices.append(v)
                 blk["create"].append(slot)
             elif e["type"] == "note_off":
@@ -199,7 +225,7 @@ def main():
                 *v.ctrl_C, *v.ctrl_dC,
                 v.fbp_gain, v.fbp_outl,
                 v.aeg.phase, v.aeg.output, v.feg.phase, v.feg.output,
-                0,
+                v.draw_set_index,          # word 31: init-draw set index
             ])
             # SXT-026a appendix (words 32..36)
             if sine:
@@ -227,6 +253,12 @@ def main():
                     "f4_r1": getattr(v, "f4_r1", 0),
                     "C_end": list(v.cmu.C),
                     "fbp_gain": v.fbp_gain, "fbp_outl": v.fbp_outl,
+                    # per-unison-voice impulse state (voice 0 mirrors the
+                    # legacy scalar fields above)
+                    "uni": [{"oscstate": x["oscstate"], "state": x["state"],
+                             "last_level": x["last_level"], "pwidth": x["pwidth"],
+                             "pwidth2": x["pwidth2"], "dc_uni": x["dc_uni"]}
+                            for x in v.u],
                 }
             blk["voices"].append(rec)
 
@@ -252,11 +284,18 @@ def main():
     rtl_dir = os.path.join(args.out_dir, "rtl")
     os.makedirs(rtl_dir, exist_ok=True)
 
+    # SXT-034 draw table (cfg words 128+, after the SXT-026a and unison
+    # appendices): n_sets, then each 16-word set. Only distinct sets are
+    # stored; ctrl word 31 indexes them at creation.
+    padded_sets = [s + [0] * (16 - len(s)) for s in draw_sets]
+    init_words += [len(padded_sets)] + [w for s in padded_sets for w in s]
+
     vm.write_wav16(os.path.join(args.out_dir, "model.wav"), out_mono, vm.SR)
 
     with open(os.path.join(args.out_dir, "model_trace.json"), "w", encoding="utf-8") as f:
         json.dump({
-            "format": "sxt-022-voice-trace/2",
+            "format": "sxt-034-voice-trace/2 (extends sxt-022-voice-trace/2 "
+                      "with per-unison-voice state)",
             "sequence": seq["id"],
             "preset": preset_rel,
             "voice_class": getattr(inp, "voice_class", "classic-lp12-v1"),
@@ -265,6 +304,10 @@ def main():
             "q_formats": {"samples": "Q10.21", "env_phase": "Q2.29",
                           "pitchmult_inv": "Q13.18", "sine_phase": "Q3.28"},
             "slots": N_SLOTS,
+            "unison": {"voices": uni_n,
+                       "out_attenuation": probe.out_attenuation,
+                       "per_voice_detune": [u["detune"] for u in probe.u],
+                       "retrigger": bool(inp.retrigger)},
             "init_words_order": [
                 "aeg_a", "aeg_d", "aeg_r", "aeg_s", "aeg_a_s", "aeg_r_s",
                 "feg_a", "feg_d", "feg_r", "feg_s", "feg_a_s", "feg_r_s",
@@ -280,6 +323,9 @@ def main():
                 "hp1 b0,b1,b2,a1,a2", "lp1 b0,b1,b2,a1,a2",
                 "hp2 b0,b1,b2,a1,a2", "lp2 b0,b1,b2,a1,a2",
                 "hp3 b0,b1,b2,a1,a2", "lp3 b0,b1,b2,a1,a2",
+                "uni_voices", "uni_out_attenuation",
+                "uni_t[0..15]", "uni_t_inv[0..16)", "uni_init_oscstate[0..16)",
+                "draw_set_count", "draw_table[set][0..15] (word 128+)",
             ],
             "init": init_words,
             "ctrl_words_per_slot": CTRL_WORDS_PER_SLOT,
@@ -291,7 +337,7 @@ def main():
                 "dC0", "dC1", "dC2", "dC3", "dC4", "dC5", "dC6", "dC7",
                 "fbp_gain", "fbp_outl",
                 "aeg_phase", "aeg_output", "feg_phase", "feg_output",
-                "(reserved)",
+                "draw_set_index",                  # word 31 (was reserved)
                 "sxt026a: fvel", "kt_word", "sine_omega1_q28",
                 "sine_omega2_q28", "sine_omega3_q28",
             ],

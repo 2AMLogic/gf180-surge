@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-034 (#68)",
+  "record": "issue-named carrier fixtures that the SXT-034 model slice cannot render, with the exact graph features outside the leaf's declared topology. Recorded per the leaf's stop/escalate clause: bounded finding, routed to the owning leaves / SXT-013 freeze. Nothing here is a fidelity or support verdict, and no carrier was substituted, adapted, or partially counted.",
+  "carriers": [
+    {
+      "preset": "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+      "census_blob_sha1": "099e88298ae11cc7a5335054c04f3caf7e1539dc",
+      "unison_state": {"osc1_uni": 5, "osc2_uni": 1, "osc3_uni": 1},
+      "blockers": [
+        "scene mode Split (sm=2), scene A only in slice (single-scene gate)",
+        "three mixer paths active (o1 at level 0, o2, o3); slice supports one active osc path",
+        "5 enabled FX slots (types 5/6/1); effects leaves own these (SXT-028)",
+        "filterblock_configuration fbc=5 (not serial-1)"
+      ]
+    },
+    {
+      "preset": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+      "census_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+      "unison_state": {"osc1_uni": 2, "osc2_uni": 1, "osc3_uni": 1},
+      "blockers": [
+        "osc1 family t=2 (Window) and osc2 t=2, osc3 t=1 (Wavetable); leaf implements the Classic family only",
+        "three mixer paths active; slice supports one active osc path",
+        "5 enabled FX slots (types 6/1); effects leaves own these (SXT-028)",
+        "filterblock_configuration fbc=4 (not serial-1)"
+      ]
+    },
+    {
+      "preset": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "census_blob_sha1": "5433dbe6c5623c07f0e59f4e8878e46a302ef874",
+      "unison_state": {"osc1_uni": 2, "osc2_uni": 1, "osc3_uni": 1},
+      "blockers": [
+        "osc1/osc2 family t=3 (FM); leaf implements the Classic family only",
+        "three mixer paths active (o1, o2 level 0 path, o3); slice supports one active osc path",
+        "4 enabled FX slots (types 2/1); effects leaves own these (SXT-028)",
+        "filter unit subtype st=3 and unit 2 st=1 active (slice: unit 2 off)"
+      ]
+    },
+    {
+      "preset": "resources/data/patches_3rdparty/Luna/Basses/Screamy Bass.fxp",
+      "census_blob_sha1": "80d67f6057b858e87769c70dc35b556b88efec1d",
+      "unison_state": {"osc1_uni": 2, "rt": 0},
+      "blockers": [
+        "filter unit 1 type t=13 (LP K35, subtype Moderate Saturation); slice implements LP12/Driven only (LP12 parameterization = #71)",
+        "stored retrigger off: quantified-variation class (wall-clock-seeded rand_01 at voice init; no bit-stable reference render possible)"
+      ],
+      "note": "the unique real corpus preset inside every other SXT-022 voice gate with Classic uni>1"
+    },
+    {
+      "preset": "resources/data/patches_3rdparty/Inigo Kennedy/Pads/Tonal.fxp",
+      "census_blob_sha1": "19293040d57a555f5db4cf6d9a128d20bfedfc68",
+      "unison_state": {"osc1_uni": 2, "rt": 0},
+      "blockers": [
+        "scene lowcut active (-34.26, not at off value); slice declares lowcut at off",
+        "filter unit 1 subtype st=0 (slice freezes st_Driven; LP12 subtype parameterization = #71)",
+        "stored retrigger off: quantified-variation class"
+      ]
+    },
+    {
+      "preset": "resources/data/patches_3rdparty/Bluelight/Basses/Bass 3.fxp",
+      "census_blob_sha1": "8a2e38364b30894e0fc94a523749ae488689660b",
+      "unison_state": {"osc1_uni": 2, "rt": 1},
+      "blockers": [
+        "waveshaper active (ws.t=1); slice declares waveshaper off",
+        "scene lowcut active (-45.9, not at off value)",
+        "filter unit 1 type t=3 subtype 3 (SVF family; not LP12)"
+      ]
+    }
+  ],
+  "corpus_search": "fail-closed scan of all 3,561 normalized graphs (graphs.jsonl sha256 c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715) for single-scene / poly / all-FX-off / serial-1 / one-active-osc / Classic osc1 with uni>=2 returns exactly 3 presets (Tonal, Screamy Bass, Bluelight/Basses/Bass 3); none is renderable inside the leaf's declared topology. There is NO real corpus preset inside the full SXT-022 voice gate set with unison>1: the unison mechanism is therefore budget-validated on the declared-override fixtures (SXT-012 declared-override pattern on the census-verified Attacky carrier), and the issue-named carriers are recorded here as not renderable rather than approximated.",
+  "recovery_attribution": "the 92 newly-enabled slate presets / 794 B4-predicted corpus presets are requirement attribution for unison>1 support across ALL oscillator families + effects; they are not claimed by this leaf. Full coverage requires the osc-family leaves, #71 filter parameterization, #48 integration and the SXT-028 effects leaves on top of this topology leaf."
+}

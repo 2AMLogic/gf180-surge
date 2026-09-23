@@ -93,7 +93,7 @@ module tb_voice;
     logic signed [63:0] p, r;
     qmul_count++;
     p = a * b;
-    r = (p + (64'sd1 << 19)) >>> 21;
+    r = (p + (64'sd1 << 20)) >>> 21;
     if      (r > 64'sd2147483647)  qmul = 32'sd2147483647;
     else if (r < -64'sd2147483648) qmul = -32'sd2147483648;
     else                           qmul = r[31:0];
@@ -590,7 +590,7 @@ module tb_voice;
     a_cov = cw[7];
     // voice-major fill loop: each unison voice fills its own phase space to
     // a_cov, accumulating into the SHARED impulse buffer
-    for (u = 0; u < uni_n; u++) begin
+    for (u = 0; u < 1; u++) begin
       while ($signed(oscstate_u[s][u]) < $signed(a_cov)) convolute(pmi);
       oscstate_u[s][u] = oscstate_u[s][u] - a_cov;
     end

@@ -1,0 +1,44 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no normalization, no time warping, no fades",
+  "bit_identical_across_repeats": true,
+  "declared_override": {
+    "determinism_class": "bit-identical expected (retrigger on)",
+    "kind": "test configuration on a real corpus carrier (SXT-012 declared-override pattern)",
+    "retrigger_forced_off": false,
+    "unison_voices": 2
+  },
+  "engine": {
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "fixture": "reference-seq-poly-8-v1-uni2",
+  "issue": "SXT-034",
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "render": {
+    "blocks": 5550,
+    "clipped_samples": 3032,
+    "frames": 177600,
+    "peak_abs_float": 2.9525303840637207,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start"
+  },
+  "render_sha256": [
+    "58ed8e622e8ff9c12f8c65ad3ea9d58e6f7ec7924ebf271247fcc0d609b0ce08",
+    "58ed8e622e8ff9c12f8c65ad3ea9d58e6f7ec7924ebf271247fcc0d609b0ce08",
+    "58ed8e622e8ff9c12f8c65ad3ea9d58e6f7ec7924ebf271247fcc0d609b0ce08"
+  ],
+  "repeats": 3,
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "path": "fixtures/sequences/seq-poly-8-v1.json",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "wav": "../../../../tmp/sxt034/ref/reference-seq-poly-8-v1-uni2.wav",
+  "wav_sha256": "e01ebf10bbcb02cb5bdf59a879290621b0dfe81a486bd1777c6869249d5c3596"
+}
