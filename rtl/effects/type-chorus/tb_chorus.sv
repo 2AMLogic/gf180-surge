@@ -324,6 +324,10 @@ module tb_chorus;
                         line_access(inst, 0, rp + t_, 0);   // UNMASKED (padding!)
                         rd = last_read;
                         vo = vo + $signed(sinc[base + t_]) * $signed(rd);
+                        if (DEBUG != 0 && inst == 0 && b == 20 && k == 22)
+                            $display("DBG tap11 b=%0d k=%0d j=%0d t=%0d addr %0d rd %0d sc %0d vo %0d",
+                                     b, k, j, t_, rp + t_, last_read,
+                                     $signed(sinc[base + t_]), vo);
                     end
                     acc_l = acc_l + pan_l(j) * vo;
                     acc_r = acc_r + pan_r(j) * vo;
