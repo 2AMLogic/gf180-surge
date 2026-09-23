@@ -46,8 +46,8 @@ Frozen scope (fail-closed)
 
 Frozen word formats (model/effects/reverb1/README.md conventions)
 ----------------------------------------------------------------
-* s32i  Q4.28 in 32-bit containers - audio, delay lines, filter/feedback
-  states (sign + 3 headroom integer bits; headroom is justified
+* s32i  Q6.25 in 32-bit containers - audio, delay lines, filter/feedback
+  states (sign + 5 headroom integer bits; headroom is justified
   empirically, see reports/sxt-028a/artifacts/headroom.json)
 * c31   Q1.31 - regen, lowpass, (1-lowpass), wet, (1-wet), vibrato
         interpolation fraction
@@ -102,7 +102,8 @@ BLOCK = 32
 
 S32_MIN = -(1 << 31)
 S32_MAX = (1 << 31) - 1
-FRAC_S32I = 28          # Q4.28
+FRAC_S32I = 25          # Q6.25 (headroom: measured internal peaks reach
+                         # beyond +/-8 at hot send gains, see README)
 FRAC_C31 = 31
 FRAC_C30 = 30
 
@@ -188,14 +189,14 @@ def to_c30(x):
 
 
 def f32_to_s32i(x):
-    """float32 -> Q4.28 (round-half-up); exact for |x| >= 2^-4, <= 1 LSB
+    """float32 -> Q6.25 (round-half-up); exact for |x| >= 2^-1, <= 1 LSB
     error below (declared input-boundary quantization)."""
     v = x * float(1 << FRAC_S32I)
     return sat32(int(v + 0.5) if v >= 0 else -int(-v + 0.5))
 
 
 def s32i_to_f32(v):
-    """Q4.28 -> float32, round-to-nearest-even (the engine's double->float
+    """Q6.25 -> float32, round-to-nearest-even (the engine's double->float
     output store)."""
     import numpy as np
     return float(np.float32(v * 2.0 ** -FRAC_S32I))
@@ -341,12 +342,14 @@ class Galactic49Fixed:
     instance_kind = "aw-49"
 
     def __init__(self, ctrl, mem_base=0, assert_width=True, label="aw49",
-                 vib=None, record=False):
+                 vib=None, record=False, wide=False):
         self.c = ctrl
         self.mem_base = mem_base
         self.assert_width = assert_width
         self.label = label
         self._vib_override = vib
+        self.wide = wide
+        self.peak_state = 0
         self.hist = {"iir_a": [], "fb_AR": []} if record else None
         self.ext_reads = 0
         self.ext_writes = 0
@@ -381,6 +384,14 @@ class Galactic49Fixed:
         self._ext_read_fn = read_fn
         self._ext_write_fn = write_fn
 
+    def _clip(self, v):
+        if self.wide:
+            a = v if v >= 0 else -v
+            if a > self.peak_state:
+                self.peak_state = a
+            return v
+        return sat32(v)
+
     def _rd(self, region, off):
         addr = self.mem_base + REGION_BASE[region] + off
         self.ext_reads += 1
@@ -391,7 +402,7 @@ class Galactic49Fixed:
     def _wr(self, region, off, val):
         if self.assert_width and not (S32_MIN <= val <= S32_MAX):
             self.saturations += 1
-        val = sat32(val)
+        val = self._clip(val)
         addr = self.mem_base + REGION_BASE[region] + off
         self.ext_writes += 1
         if self._ext_write_fn is not None:
@@ -432,12 +443,14 @@ class Galactic49Fixed:
         # aML/aMR writes, pinned order)
         self.vib.advance()
         baseL, fracL, baseR, fracR = self.vib.positions()
+        rs = (lambda v, f: v) if self.wide else rnd_sat32
+        cl = (lambda v: v) if self.wide else sat32
 
         # ---- vibrato predelay: aML/aMR writes (pinned order L then R)
         self._wr("aML", self.counts["M"],
-                 rnd_sat32(c["attenuate"] * in_l, FRAC_C30))
+                 rs(c["attenuate"] * in_l, FRAC_C30))
         self._wr("aMR", self.counts["M"],
-                 rnd_sat32(c["attenuate"] * in_r, FRAC_C30))
+                 rs(c["attenuate"] * in_r, FRAC_C30))
         cm = self.counts["M"] + 1
         if cm > DELAY_M:
             cm = 0
@@ -451,17 +464,17 @@ class Galactic49Fixed:
             a0 = self._rd(prefix, i0)
             a1 = self._rd(prefix, i1)
             w1 = (1 << FRAC_C31) - fracq
-            return rnd_sat32(a0 * w1 + a1 * fracq, FRAC_C31)
+            return rs(a0 * w1 + a1 * fracq, FRAC_C31)
 
         x_l = interp("aML", baseL, fracL)
         x_r = interp("aMR", baseR, fracR)
 
         # ---- input one-pole lowpass (iirA)
-        self.iir_a["L"] = y = rnd_sat32(
+        self.iir_a["L"] = y = rs(
             self.iir_a["L"] * c["lowpass_m1"] + x_l * c["lowpass"],
             FRAC_C31)
         x_l = y
-        self.iir_a["R"] = y = rnd_sat32(
+        self.iir_a["R"] = y = rs(
             self.iir_a["R"] * c["lowpass_m1"] + x_r * c["lowpass"],
             FRAC_C31)
         x_r = y
@@ -470,21 +483,21 @@ class Galactic49Fixed:
         regen = c["regen"]
         # stage-1 line writes (L lines first, pinned) + advance + reads
         self._wr("aIL", self.counts["I"],
-                 sat32(x_l + rnd_sat32(self.fb["AR"] * regen, FRAC_C31)))
+                 cl(x_l + rs(self.fb["AR"] * regen, FRAC_C31)))
         self._wr("aJL", self.counts["J"],
-                 sat32(x_l + rnd_sat32(self.fb["BR"] * regen, FRAC_C31)))
+                 cl(x_l + rs(self.fb["BR"] * regen, FRAC_C31)))
         self._wr("aKL", self.counts["K"],
-                 sat32(x_l + rnd_sat32(self.fb["CR"] * regen, FRAC_C31)))
+                 cl(x_l + rs(self.fb["CR"] * regen, FRAC_C31)))
         self._wr("aLL", self.counts["L"],
-                 sat32(x_l + rnd_sat32(self.fb["DR"] * regen, FRAC_C31)))
+                 cl(x_l + rs(self.fb["DR"] * regen, FRAC_C31)))
         self._wr("aIR", self.counts["I"],
-                 sat32(x_r + rnd_sat32(self.fb["AL"] * regen, FRAC_C31)))
+                 cl(x_r + rs(self.fb["AL"] * regen, FRAC_C31)))
         self._wr("aJR", self.counts["J"],
-                 sat32(x_r + rnd_sat32(self.fb["BL"] * regen, FRAC_C31)))
+                 cl(x_r + rs(self.fb["BL"] * regen, FRAC_C31)))
         self._wr("aKR", self.counts["K"],
-                 sat32(x_r + rnd_sat32(self.fb["CL"] * regen, FRAC_C31)))
+                 cl(x_r + rs(self.fb["CL"] * regen, FRAC_C31)))
         self._wr("aLR", self.counts["L"],
-                 sat32(x_r + rnd_sat32(self.fb["DL"] * regen, FRAC_C31)))
+                 cl(x_r + rs(self.fb["DL"] * regen, FRAC_C31)))
         # one shared counter advance per line pair, then both channel reads
         # at the same index (pinned order: L lines then R lines)
         iI = self._advance("I")
@@ -502,21 +515,21 @@ class Galactic49Fixed:
 
         # stage-2 writes (exact Hadamard-row sums, saturated at store)
         self._wr("aAL", self.counts["A"],
-                 sat32(out_i_l - (out_j_l + out_k_l + out_l_l)))
+                 cl(out_i_l - (out_j_l + out_k_l + out_l_l)))
         self._wr("aBL", self.counts["B"],
-                 sat32(out_j_l - (out_i_l + out_k_l + out_l_l)))
+                 cl(out_j_l - (out_i_l + out_k_l + out_l_l)))
         self._wr("aCL", self.counts["C"],
-                 sat32(out_k_l - (out_i_l + out_j_l + out_l_l)))
+                 cl(out_k_l - (out_i_l + out_j_l + out_l_l)))
         self._wr("aDL", self.counts["D"],
-                 sat32(out_l_l - (out_i_l + out_j_l + out_k_l)))
+                 cl(out_l_l - (out_i_l + out_j_l + out_k_l)))
         self._wr("aAR", self.counts["A"],
-                 sat32(out_i_r - (out_j_r + out_k_r + out_l_r)))
+                 cl(out_i_r - (out_j_r + out_k_r + out_l_r)))
         self._wr("aBR", self.counts["B"],
-                 sat32(out_j_r - (out_i_r + out_k_r + out_l_r)))
+                 cl(out_j_r - (out_i_r + out_k_r + out_l_r)))
         self._wr("aCR", self.counts["C"],
-                 sat32(out_k_r - (out_i_r + out_j_r + out_l_r)))
+                 cl(out_k_r - (out_i_r + out_j_r + out_l_r)))
         self._wr("aDR", self.counts["D"],
-                 sat32(out_l_r - (out_i_r + out_j_r + out_k_r)))
+                 cl(out_l_r - (out_i_r + out_j_r + out_k_r)))
         iA = self._advance("A")
         iB = self._advance("B")
         iC = self._advance("C")
@@ -532,21 +545,21 @@ class Galactic49Fixed:
 
         # stage-3 writes + reads
         self._wr("aEL", self.counts["E"],
-                 sat32(out_a_l - (out_b_l + out_c_l + out_d_l)))
+                 cl(out_a_l - (out_b_l + out_c_l + out_d_l)))
         self._wr("aFL", self.counts["F"],
-                 sat32(out_b_l - (out_a_l + out_c_l + out_d_l)))
+                 cl(out_b_l - (out_a_l + out_c_l + out_d_l)))
         self._wr("aGL", self.counts["G"],
-                 sat32(out_c_l - (out_a_l + out_b_l + out_d_l)))
+                 cl(out_c_l - (out_a_l + out_b_l + out_d_l)))
         self._wr("aHL", self.counts["H"],
-                 sat32(out_d_l - (out_a_l + out_b_l + out_c_l)))
+                 cl(out_d_l - (out_a_l + out_b_l + out_c_l)))
         self._wr("aER", self.counts["E"],
-                 sat32(out_a_r - (out_b_r + out_c_r + out_d_r)))
+                 cl(out_a_r - (out_b_r + out_c_r + out_d_r)))
         self._wr("aFR", self.counts["F"],
-                 sat32(out_b_r - (out_a_r + out_c_r + out_d_r)))
+                 cl(out_b_r - (out_a_r + out_c_r + out_d_r)))
         self._wr("aGR", self.counts["G"],
-                 sat32(out_c_r - (out_a_r + out_b_r + out_d_r)))
+                 cl(out_c_r - (out_a_r + out_b_r + out_d_r)))
         self._wr("aHR", self.counts["H"],
-                 sat32(out_d_r - (out_a_r + out_b_r + out_c_r)))
+                 cl(out_d_r - (out_a_r + out_b_r + out_c_r)))
         iE = self._advance("E")
         iF = self._advance("F")
         iG = self._advance("G")
@@ -564,7 +577,7 @@ class Galactic49Fixed:
         def _fb(k, v):
             if not (S32_MIN <= v <= S32_MAX):
                 self.saturations += 1
-            self.fb[k] = sat32(v)
+            self.fb[k] = self._clip(v)
 
         _fb("AL", out_e_l - (out_f_l + out_g_l + out_h_l))
         _fb("BL", out_f_l - (out_e_l + out_g_l + out_h_l))
@@ -584,18 +597,18 @@ class Galactic49Fixed:
         self.cycle = 0
 
         # ---- output one-pole lowpass (iirB)
-        self.iir_b["L"] = y = rnd_sat32(
+        self.iir_b["L"] = y = rs(
             self.iir_b["L"] * c["lowpass_m1"] + x_l * c["lowpass"],
             FRAC_C31)
-        self.iir_b["R"] = y = rnd_sat32(
+        self.iir_b["R"] = y = rs(
             self.iir_b["R"] * c["lowpass_m1"] + x_r * c["lowpass"],
             FRAC_C31)
 
         # ---- wet/dry mix (control-plane branch on the double wet)
         if c["wet_active"]:
-            ol = rnd_sat32(self.iir_b["L"] * c["wet"] + dry_l * c["wet_m1"],
+            ol = rs(self.iir_b["L"] * c["wet"] + dry_l * c["wet_m1"],
                            FRAC_C31)
-            orr = rnd_sat32(self.iir_b["R"] * c["wet"] + dry_r * c["wet_m1"],
+            orr = rs(self.iir_b["R"] * c["wet"] + dry_r * c["wet_m1"],
                             FRAC_C31)
         else:
             ol, orr = self.iir_b["L"], self.iir_b["R"]

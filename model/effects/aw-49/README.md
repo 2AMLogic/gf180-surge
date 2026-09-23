@@ -30,16 +30,19 @@ other rates refuse).
 
 | Format | Use | Definition |
 |---|---|---|
-| `s32i` | audio, all 26 delay lines, iirA/iirB + feedback states | **Q4.28 in 32-bit containers**: sign + 3 headroom bits (range ±8, LSB 2⁻²⁸) |
+| `s32i` | audio, all 26 delay lines, iirA/iirB + feedback states | **Q6.25 in 32-bit containers**: sign + 5 headroom bits (range ±32, LSB 2⁻²⁵) |
 | `c31` | regen, lowpass, (1−lowpass), wet, (1−wet), vibrato interp fraction | Q1.31 |
 | `c30` | attenuate (±1.333) | Q2.30 |
 | control | per-sample vibrato read base (int) + fraction (c31), per channel | streamed, see below |
 
-Headroom: Q4.28 = the reverb1 leaf's frozen container; the Hadamard row sums
-reach 4× line amplitude coherently and the loop is bounded
-(‖M‖ = 2 per stage, regen ≤ 0.125, loop norm ≤ 1); the empirical worst case
-over the fixture corner set peaks at 0.14 (5.8 guard bits vs peak), zero
-saturations (`headroom.json` evidence).
+Headroom: the Hadamard row sums reach 4× line amplitude coherently, the
+loop norm is ≤ 1 (‖M‖ = 2 per stage, regen ≤ 0.125), and the send gains of
+the real carriers scale the operating point above ±1: at the fmod09 carrier
+(send gain 2.055, hot 8-voice passage) the internal peaks exceed the ±8 of
+a Q4.28 word (146 saturation events measured), which is why the frozen word
+is Q6.25 (±32): zero saturations across the whole fixture set, quantization
+noise still ~100× below the [PROPOSED] model-vs-reference budgets
+(`headroom.json` evidence).
 
 Rounding: exact integer products, round-half-up `(x + 2^(f−1)) >>> f`,
 saturating stores (`sat32`); every coefficient multiply rounds ONCE to s32i
@@ -119,7 +122,7 @@ shared-instance schedule time-multiplexes them, never shares state.
    host (bit-identical there); cross-platform libm variance is out of
    frozen scope and the evidence renders happen on the oracle host.
 4. cycleEnd > 1 paths (88.2/96/176.4/192 kHz) refuse (fail-closed).
-5. float32→Q4.28 input quantization (exact for |x| ≥ 2⁻⁴, ≤ 1 LSB below).
+5. float32→Q6.25 input quantization (exact for |x| ≥ 2⁻¹, ≤ 1 LSB below).
 
 ## Files
 

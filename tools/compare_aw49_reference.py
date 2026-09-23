@@ -152,8 +152,8 @@ def run(slug, seq_id, fixtures_dir, out_json, onset_block=0):
         },
         "state_diagnostics": {
             "countM_agree": countM_agree,
-            "max_iirAL_delta_q4_28_lsb": iirA_d / (2.0 ** -28),
-            "max_fbAR_delta_q4_28_lsb": fbAR_d / (2.0 ** -28),
+            "max_iirAL_delta_q6_25_lsb": iirA_d / (2.0 ** -25),
+            "max_fbAR_delta_q6_25_lsb": fbAR_d / (2.0 ** -25),
         },
         "tail": {
             "declared_tail_s": tail_s,
