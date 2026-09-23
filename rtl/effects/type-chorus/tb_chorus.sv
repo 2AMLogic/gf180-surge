@@ -47,8 +47,22 @@ module tb_chorus;
     localparam signed [63:0] ONE43 = 64'sh0000080000000000;
 
     // frozen voicepan constants (init sqrt law, gainscale 1/sqrt(4), Q13.18)
-    localparam signed [31:0] PAN_L [0:3] = '{32'sd131072, 32'sd107020, 32'sd75674, 32'sd0};
-    localparam signed [31:0] PAN_R [0:3] = '{32'sd0, 32'sd75674, 32'sd107020, 32'sd131072};
+    function automatic signed [31:0] pan_l(input integer j);
+        case (j)
+            0: pan_l = 32'sd131072;
+            1: pan_l = 32'sd107020;
+            2: pan_l = 32'sd75674;
+            default: pan_l = 32'sd0;
+        endcase
+    endfunction
+    function automatic signed [31:0] pan_r(input integer j);
+        case (j)
+            0: pan_r = 32'sd0;
+            1: pan_r = 32'sd75674;
+            2: pan_r = 32'sd107020;
+            default: pan_r = 32'sd131072;
+        endcase
+    endfunction
 
     // ---------------- external mono lines (2 instances) ----------------
     reg [31:0] line_mem0 [0:LINE_LEN-1];
@@ -304,8 +318,8 @@ module tb_chorus;
                         rd = last_read;
                         vo = vo + $signed(sinc[base + t_]) * $signed(rd);
                     end
-                    acc_l = acc_l + $signed(PAN_L[j]) * vo;
-                    acc_r = acc_r + $signed(PAN_R[j]) * vo;
+                    acc_l = acc_l + pan_l(j) * vo;
+                    acc_r = acc_r + pan_r(j) * vo;
                 end
                 // Q68 accumulator -> Q10.21: shift 47, round-half-up
                 tb_l[k] = sat32((acc_l + $signed(64'sd70368744177664)) >>> 47);
