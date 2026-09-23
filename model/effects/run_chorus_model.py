@@ -271,7 +271,7 @@ def main():
         def capturing_pb(inl, inr, _m=m, _op=orig_pb):
             if _m._cap_in is None:
                 _m._cap_in = (list(inl), list(inr))
-            if _m._cap_taps is not None:
+            if _m._cap_taps:
                 _m._cap_tap_store = []
                 out = _op(inl, inr, tap_hook=make_tap_hook(_m._cap_tap_store))
             else:
