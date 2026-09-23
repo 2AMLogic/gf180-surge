@@ -13,16 +13,20 @@ reports/SXT-028c/EVIDENCE.md section 1):
   alienappears  Giana Brotherz/FX/Alien Appears.fxp
             (reverb1 global1 -> chorus global2; delay-free chain)
 
-Melon (eq ains1 + chorus send1) and Drone Bee (chorus global1 -> reverb1
-global2) passed the graphs-based determinism screen but FAILED the 3x
-render determinism gate empirically (engine-level nondeterminism the
-normalized graph does not expose; Drone Bee already in its all-off DRY
-bus); both are REFUSED and never committed - refusals recorded in
-EVIDENCE.md section 1.
+Refusal rows (attempted, REFUSED by the 3x render determinism gate, no
+fixture committed; refusals recorded to artifacts/render-refusals.txt):
+  melon     factory Polysynths/Melon.fxp   (eq ains1 + chorus send1)
+  dronebee  Dan Maurer/Pads/Drone Bee.fxp  (chorus global1 -> rev1 global2)
 
-The issue-named presets (Novuo, Ancient FM, Piercing) are REFUSED before
-render (extraction refusals; unlanded sibling classes / drift != 0) and are
-never rendered. Original tool, Apache-2.0.
+Both melon and dronebee passed the graphs-based determinism screen but
+FAILED the 3x render gate empirically (engine-level nondeterminism the
+normalized graph does not expose; dronebee already in its all-off DRY
+bus) - engine-level evidence that the static screen cannot replace the
+render gate.
+
+The issue-named presets (Novuo, Ancient FM, Piercing) are REFUSED at
+extraction (unlanded sibling classes / drift != 0) and are never
+attempted here. Original tool, Apache-2.0.
 """
 
 import argparse
@@ -45,6 +49,9 @@ PRESETS = {
     "fmcombo": "resources/data/patches_factory/Basses/FM Combo.fxp",
     "fmtwang2": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
     "alienappears": "resources/data/patches_3rdparty/Giana Brotherz/FX/Alien Appears.fxp",
+    # refusal rows: attempted by a full run, refused by the determinism gate
+    "melon": "resources/data/patches_factory/Polysynths/Melon.fxp",
+    "dronebee": "resources/data/patches_3rdparty/Dan Maurer/Pads/Drone Bee.fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 
@@ -132,14 +139,27 @@ def main():
                     default=os.path.join(REPO, "reports", "SXT-028c", "fixtures"))
     ap.add_argument("--presets", help="comma-separated subset")
     ap.add_argument("--seqs", help="comma-separated subset")
+    ap.add_argument("--refusals",
+                    default=os.path.join(REPO, "reports", "SXT-028c",
+                                         "artifacts", "render-refusals.txt"))
     args = ap.parse_args()
     surgepy = oc.import_surgepy()
     oc.apply_engine_env()
     slugs = args.presets.split(",") if args.presets else sorted(PRESETS)
     seqs = args.seqs.split(",") if args.seqs else SEQUENCES
+    refusals = []
     for slug in slugs:
         for seq_id in seqs:
-            render_fixture(surgepy, slug, PRESETS[slug], seq_id, args.out_dir)
+            try:
+                render_fixture(surgepy, slug, PRESETS[slug], seq_id, args.out_dir)
+            except rfx.Refuse as e:
+                msg = f"{slug}__{seq_id}: REFUSED: {e}"
+                refusals.append(msg)
+                print(msg, file=sys.stderr)
+    if refusals and args.presets is None and args.seqs is None:
+        os.makedirs(os.path.dirname(args.refusals), exist_ok=True)
+        with open(args.refusals, "w", encoding="utf-8") as f:
+            f.write("\n".join(refusals) + "\n")
     return 0
 
 
