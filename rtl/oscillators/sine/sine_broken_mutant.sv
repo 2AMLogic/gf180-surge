@@ -596,16 +596,17 @@ module tb_sine;
   // CharacterFilter over sblk (with the `starting` warm start)
   task automatic char_filter;
     begin
-      if (cfg[8] == 0) return;                   // doFilter false
-      if (!char_started[s]) begin
-        char_py[s] = sblk[0]; char_px[s] = sblk[0]; char_started[s] = 1;
-      end
-      for (k = 0; k < BLOCK_OS; k++) begin
-        g = sat32(qmul(32'(cfg[25]), char_py[s])
-                  + qmul(32'(cfg[26]), sblk[k])
-                  + qmul(32'(cfg[27]), char_px[s]));
-        char_py[s] = g; char_px[s] = sblk[k];
-        sblk[k] = g;
+      if (cfg[8] != 0) begin                     // doFilter false: skip
+        if (!char_started[s]) begin
+          char_py[s] = sblk[0]; char_px[s] = sblk[0]; char_started[s] = 1;
+        end
+        for (k = 0; k < BLOCK_OS; k++) begin
+          g = sat32(qmul(32'(cfg[25]), char_py[s])
+                    + qmul(32'(cfg[26]), sblk[k])
+                    + qmul(32'(cfg[27]), char_px[s]));
+          char_py[s] = g; char_px[s] = sblk[k];
+          sblk[k] = g;
+        end
       end
     end
   endtask
