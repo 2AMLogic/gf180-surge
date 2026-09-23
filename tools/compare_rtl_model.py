@@ -9,8 +9,9 @@ Compares, with INTEGER EQUALITY (any mismatch = FAIL):
   * every 48 kHz mono output sample of every block (M lines) against the
     model's mono_block.
 
-Also runs the committed negative control: rtl/voice/voice_broken_mutant.sv
-(a deliberately mutated copy of the testbench) must FAIL this comparison.
+Negative controls (run explicitly with --tb): rtl/voice/voice_broken_mutant.sv
+(rounding mutant) and rtl/voice/voice_uni_mutant.sv (unison-collapse mutant)
+must FAIL this comparison on a uni>=1 / uni>1 fixture respectively.
 
 Usage:
   python3 tools/compare_rtl_model.py --run-dir DIR [--mutant]
