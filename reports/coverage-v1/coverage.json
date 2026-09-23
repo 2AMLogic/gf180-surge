@@ -166,7 +166,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "25afd506ac545cb1396b9d5631ceeaa21919e939a57ed241a12ef4bac0571cbf"
+   "sha256": "a99fe2fe8ebcc07660fd0c828488c8a9f267b2992b8d2c920167c9d936bf93f6"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -228,13 +228,13 @@
    "role": "structural input (pinned)",
    "sha256": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4"
   },
+  "reports/sxt-028a/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:AW-49-Galactic",
+   "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+  },
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",
    "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
-  },
-  "reports/sxt-035/EVIDENCE.md": {
-   "role": "evidence record for leaf mod:modwheel",
-   "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",
@@ -471,6 +471,15 @@
      "rtl_vs_model": "PASS"
     }
    },
+   "fx:AW-49-Galactic": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": true,
+    "verification": {
+     "model_vs_reference": "PASS",
+     "rtl_vs_model": "PASS"
+    }
+   },
    "fx:Chorus": {
     "evidence_state": "OK",
     "landed": false,
@@ -535,15 +544,6 @@
     "verification": {}
    },
    "mod:lfo": {
-    "evidence_state": "OK",
-    "landed": true,
-    "support_ready": false,
-    "verification": {
-     "model_vs_reference": "NO_VERDICT",
-     "rtl_vs_model": "PASS"
-    }
-   },
-   "mod:modwheel": {
     "evidence_state": "OK",
     "landed": true,
     "support_ready": false,
