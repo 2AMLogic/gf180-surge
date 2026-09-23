@@ -105,6 +105,21 @@
     "rtl_vs_model": "PASS"
    }
   },
+  "fx:AW-49-Galactic": {
+   "evidence": [
+    {
+     "path": "reports/sxt-028a/EVIDENCE.md",
+     "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+    }
+   ],
+   "issue": 53,
+   "landed": true,
+   "note": "Airwindows algorithm leaf: Galactic (streamed id 49). RTL-vs-model EXACT (iverilog: outputs, checkpoints, transaction logs, memory images; PRS, real-fixture canonical, dual-instance per-instance equality, mid-stream reset; regen + shared-memory mutants FAIL = controls; frozen-revision pin refuses stale harnesses). Model-vs-reference at the tapped slot boundary (DR-0006) PASS vs [PROPOSED] budgets on 6 fixture legs (2 named presets x 2 sequences + factory SXT-014 carrier): max 1.1e-7..3.4e-6 (<=1e-3), rms_rel -84..-116 dB (<=-50), spectral corr >=0.999999998, zero saturations at the frozen Q6.25 word. Findings recorded: fixture carriers are conditioned-on-tap repeatability class (wall-clock-seeded aw49 vibrato + free-run voice drift; 3x gate cannot hold); Sine Lead REFUSED (LFO->FX-Mix modulation outside frozen scope); complete-wet renders refused for all carriers (unlanded sibling AW algorithms / landed-failing Delay); headroom widened Q4.28->Q6.25 before reference comparisons (fmod09 hot carrier measured 146 saturation events at Q4.28); saturating stores are load-bearing (stability-class note). Supported delta 0 by design: supported stays 0 unless the full path verifies (#48 voice, #12 freeze).",
+   "verification": {
+    "model_vs_reference": "PASS",
+    "rtl_vs_model": "PASS"
+   }
+  },
   "fx:Chorus": {
    "issue": 55,
    "landed": false,
@@ -235,6 +250,27 @@
     "rtl_vs_model": "PASS"
    }
   },
+  "osc:Sine": {
+   "evidence": [
+    {
+     "path": "reports/SXT-040/EVIDENCE.md",
+     "sha256": "3d15bb766fc7f49392520da23bbd245c64d39ee474e28f268ba38ce55487cff2"
+    }
+   ],
+   "fixture_verified_paths": [
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp (SXT-040 test configuration)",
+    "resources/data/patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp (SXT-040 test configuration)",
+    "resources/data/patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp (SXT-040 test configuration)"
+   ],
+   "issue": 74,
+   "landed": true,
+   "leaf_id": "SXT-040",
+   "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (3 canonical carriers + 2 smoke configs incl. legacy-unison-9; single-constant mutant control FAILS); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): max bound passed on all 6 rows, rms passed 4/6, spectral corr missed everywhere (badnews max 62-210 LSB / rms -62/-71 dBFS at the int16 quantization cap; popcorn2k rms -47/-49 with a saturating reference; tentacles modern uni4 det0.034 in the F-033-1 detuned-unison class); 35/38 recovery-basis sine presets REFUSED by the fail-closed gate (live velocity/keytrack/LFO routes into AEG/pan/pitch/feedback/volume/drift, mono playmodes, unison garbage) - recorded as requirement attribution, zero presets promoted; exposure gaps recorded (feedback deform_type, lowcut/highcut deactivated flags)",
+   "verification": {
+    "model_vs_reference": "PARTIAL",
+    "rtl_vs_model": "PASS"
+   }
+  },
   "osc:Wavetable": {
    "evidence": [
     {
@@ -293,21 +329,6 @@
    "overlap_paths_not_fixture_verified": [],
    "verification": {
     "model_vs_reference": "NO_VERDICT",
-    "rtl_vs_model": "PASS"
-   }
-  },
-  "fx:AW-49-Galactic": {
-   "evidence": [
-    {
-     "path": "reports/sxt-028a/EVIDENCE.md",
-     "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
-    }
-   ],
-   "issue": 53,
-   "landed": true,
-   "note": "Airwindows algorithm leaf: Galactic (streamed id 49). RTL-vs-model EXACT (iverilog: outputs, checkpoints, transaction logs, memory images; PRS, real-fixture canonical, dual-instance per-instance equality, mid-stream reset; regen + shared-memory mutants FAIL = controls; frozen-revision pin refuses stale harnesses). Model-vs-reference at the tapped slot boundary (DR-0006) PASS vs [PROPOSED] budgets on 6 fixture legs (2 named presets x 2 sequences + factory SXT-014 carrier): max 1.1e-7..3.4e-6 (<=1e-3), rms_rel -84..-116 dB (<=-50), spectral corr >=0.999999998, zero saturations at the frozen Q6.25 word. Findings recorded: fixture carriers are conditioned-on-tap repeatability class (wall-clock-seeded aw49 vibrato + free-run voice drift; 3x gate cannot hold); Sine Lead REFUSED (LFO->FX-Mix modulation outside frozen scope); complete-wet renders refused for all carriers (unlanded sibling AW algorithms / landed-failing Delay); headroom widened Q4.28->Q6.25 before reference comparisons (fmod09 hot carrier measured 146 saturation events at Q4.28); saturating stores are load-bearing (stability-class note). Supported delta 0 by design: supported stays 0 unless the full path verifies (#48 voice, #12 freeze).",
-   "verification": {
-    "model_vs_reference": "PASS",
     "rtl_vs_model": "PASS"
    }
   }
