@@ -50,7 +50,7 @@ from model.voice import voice_model as vm  # noqa: E402
 FQ = vm.FQ
 BLOCK_SIZE = vm.BLOCK_SIZE
 CHECKPOINT_EVERY = 64
-N_SLOTS = 8
+N_SLOTS = 16                   # DEFAULT_POLYLIMIT (SurgeStorage.h)
 REC = 7
 REC_NEW = REC + 16
 

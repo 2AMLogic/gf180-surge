@@ -43,7 +43,7 @@ module tb_sine;
   localparam int FQ28     = 28;
   localparam int BLOCK    = 32;
   localparam int BLOCK_OS = 64;
-  localparam int NSLOTS   = 8;
+  localparam int NSLOTS   = 16;
   localparam int MAXUNI   = 16;
   localparam int REC      = 7;
   localparam int REC_NEW  = REC + 16;
