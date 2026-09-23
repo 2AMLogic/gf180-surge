@@ -59,7 +59,12 @@ PRESETS = {
     "fmcombo": "resources/data/patches_factory/Basses/FM Combo.fxp",
     "fmtwang2": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
     "melon": "resources/data/patches_factory/Polysynths/Melon.fxp",
+    # screened but refused at render determinism or fx_disable (recorded):
+    "melon": "resources/data/patches_factory/Polysynths/Melon.fxp",
+    "dronebee": "resources/data/patches_3rdparty/Dan Maurer/Pads/Drone Bee.fxp",
     "scary": "resources/data/patches_3rdparty/Rozzer/FX/OOOOOoooooh Scary.....fxp",
+    # deterministic third carrier
+    "alienappears": "resources/data/patches_3rdparty/Giana Brotherz/FX/Alien Appears.fxp",
 }
 
 

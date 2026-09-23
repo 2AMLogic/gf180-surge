@@ -10,13 +10,15 @@ Carriers (deterministic full-chain-feasible chorus presets; see
 reports/SXT-028c/EVIDENCE.md section 1):
   fmcombo   factory Basses/FM Combo.fxp    (eq ains1 + chorus ains2)
   fmtwang2  Luna/MPE/FM Twang 2.fxp        (chorus-only ains1)
-  dronebee  Dan Maurer/Pads/Drone Bee.fxp  (chorus global1 -> reverb1 global2;
-            preset disables its unused scene-B eq slot; dual scene mode)
+  alienappears  Giana Brotherz/FX/Alien Appears.fxp
+            (reverb1 global1 -> chorus global2; delay-free chain)
 
-Melon (eq ains1 + chorus send1) passed the graphs-based determinism screen
-but FAILED the 3x render determinism gate empirically (engine-level
-nondeterminism the normalized graph does not expose); it is REFUSED and
-never committed — refusal recorded in EVIDENCE.md section 1.
+Melon (eq ains1 + chorus send1) and Drone Bee (chorus global1 -> reverb1
+global2) passed the graphs-based determinism screen but FAILED the 3x
+render determinism gate empirically (engine-level nondeterminism the
+normalized graph does not expose; Drone Bee already in its all-off DRY
+bus); both are REFUSED and never committed - refusals recorded in
+EVIDENCE.md section 1.
 
 The issue-named presets (Novuo, Ancient FM, Piercing) are REFUSED before
 render (extraction refusals; unlanded sibling classes / drift != 0) and are
@@ -42,7 +44,7 @@ import render_fx_fixtures as rfx  # noqa: E402  (SXT-023 policies inherited)
 PRESETS = {
     "fmcombo": "resources/data/patches_factory/Basses/FM Combo.fxp",
     "fmtwang2": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
-    "dronebee": "resources/data/patches_3rdparty/Dan Maurer/Pads/Drone Bee.fxp",
+    "alienappears": "resources/data/patches_3rdparty/Giana Brotherz/FX/Alien Appears.fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 
