@@ -52,14 +52,22 @@ class Refuse(Exception):
 
 
 def carrier_overrides(slot):
-    """Uniform isolation override set for the modeled slot index."""
+    """Uniform isolation override set for the modeled slot index.
+
+    route_slot=1 pins the modeled slot's output route to the A path of the
+    serial-1 filter block (route 1 is filtered to L by fc_serial1). Presets
+    may store route 2 (the post-F1 dry/B path, whose gain is the F2 mix
+    min(1, 1+filter_balance)) - e.g. Bad News stores route_o3 = 2 with
+    balance -0.684 (B gain 0.316); without this override the modeled voice
+    would enter the bus through parameter-dependent routing outside the
+    declared slice. Test configuration, verified by readback."""
     return [
         ("mute_o1", slot != 0), ("mute_o2", slot != 1), ("mute_o3", slot != 2),
         ("mute_noise", True), ("mute_ring_12", True), ("mute_ring_23", True),
         ("fu0_off", True), ("fu1_off", True), ("fx_off", True),
         ("ws_off", True), ("lc_off", True), ("fbc_serial1", True),
         ("fm_off", True), ("scenemode_single", True), ("retrigger_on", True),
-        ("drift_zero", True),
+        ("drift_zero", True), ("route_slot_1", True),
     ]
 
 
@@ -113,6 +121,7 @@ def read_params(s, slot):
                      for i in range(16)],
         "mutes": {k: s.getParamVal(sc["mute_" + k])
                   for k in ("o1", "o2", "o3", "noise", "ring_12", "ring_23")},
+        "route_slot": int(s.getParamVal(sc["route_o%d" % (slot + 1)])),
     }
 
 
@@ -159,11 +168,16 @@ def apply_overrides(s, slot):
         elif key == "drift_zero":
             s.setParamVal(sc["drift"], 0.0)
             applied["drift"] = 0.0
+        elif key == "route_slot_1":
+            s.setParamVal(sc["route_o%d" % (slot + 1)], 1.0)
+            applied["route_slot"] = 1
         else:
             raise Refuse("unknown override %r" % key)
     d = read_params(s, slot)
     for k, v in applied.items():
-        got = d["mutes"][k[5:]] if k.startswith("mute_") else d[k]
+        got = d["mutes"][k[5:]] if k.startswith("mute_") else d.get(k, d.get("route_slot"))
+        if k == "route_slot":
+            got = d["route_slot"]
         if isinstance(v, list):
             if got != v:
                 raise Refuse("override readback failed: %s = %r" % (k, got))
