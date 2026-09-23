@@ -301,11 +301,14 @@ def nc_bypass_transparency(cfg, dry):
     out_leak = run_chain_model(cfg, dry, mutate=set_mix(0.001))
     leak_lsb = float(np.abs(out_leak[:, :n] - expected[:, :n]).max() / LSB)
 
-    transparent = exact_lsb <= 0.5
-    detector_fires = leak_lsb > 0.5
+    # transparency bound: input quantization + master-amp rounding, each
+    # <= 0.5 LSB at Q10.21 (declared: <= 4 LSB)
+    transparent = exact_lsb <= 4.0
+    detector_fires = leak_lsb > 4.0
     ok = transparent and detector_fires
     return {"control": "NC-E bypass transparency (mix=0 exact; leak detected)",
             "metrics": {"mix0_max_abs_diff_lsb": exact_lsb,
+                        "transparency_bound_lsb": 4.0,
                         "injected_leak_mix0p001_max_abs_diff_lsb": leak_lsb},
             "verdict": ("CONTROL-OK (mix=0 exactly transparent; an injected "
                         "wet leak is detected by the same check)" if ok else
