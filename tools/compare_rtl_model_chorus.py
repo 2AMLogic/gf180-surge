@@ -200,14 +200,17 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd, settle):
     return exps, in_hex, ctrl_hex, init_hex
 
 
-def exp_from_trace(path, n_blocks, ninst):
-    """Per-instance expected records from a committed runner trace."""
+def exp_from_trace(path, n_blocks, ninst, settle=SETTLE):
+    """Per-instance expected records from a committed runner trace.
+
+    Render block k of the fixture corresponds to trace block settle+k (the
+    runner replays the fixture's settle phase before the render span)."""
     with gzip.open(path, "rt") as f:
         trace = json.load(f)
     blocks = {rec["b"]: rec for rec in trace["blocks"]}
     exps = []
     for b in range(n_blocks):
-        rec = blocks.get(b)
+        rec = blocks.get(settle + b)
         e = {"b": b, "O": {}, "X": {}, "T": {}}
         if rec is not None:
             for i, inst in enumerate(rec["instances"][:ninst]):
@@ -219,7 +222,7 @@ def exp_from_trace(path, n_blocks, ninst):
                         for trip in inst["taps"][k]:
                             flat += list(trip)
                     e["X"][i] = flat if flat else None
-                if b in trace["checkpoint_blocks"]:
+                if (settle + b) in trace["checkpoint_blocks"]:
                     e["T"][i] = _state_map_trace(inst)
         exps.append(e)
     return exps
@@ -380,9 +383,22 @@ def canonical_case(workdir, rev8, slug, seq, n_blocks, ninst, params):
     wd = os.path.join(workdir, f"canonical-{slug}-{n_blocks}")
     os.makedirs(wd, exist_ok=True)
     exp = exp_from_trace(os.path.join(ART, f"trace_{slug}__{seq}.json.gz"),
-                         n_blocks, ninst)
-    in_hex = os.path.join(ART, "rtl", f"{slug}__{seq}_in.hex")
-    ctrl_hex = os.path.join(ART, "rtl", f"{slug}__{seq}_ctrl.hex")
+                         n_blocks, ninst, settle=SETTLE)
+    # trim the runner stimulus to the render span (skip the settle blocks)
+    per_block_in = 64 * ninst
+    in_lines = open(os.path.join(ART, "rtl", f"{slug}__{seq}_in.hex")
+                    ).read().splitlines()
+    ctrl_lines = open(os.path.join(ART, "rtl", f"{slug}__{seq}_ctrl.hex")
+                      ).read().splitlines()
+    in_hex = os.path.join(wd, "in.hex")
+    ctrl_hex = os.path.join(wd, "ctrl.hex")
+    with open(in_hex, "w") as f:
+        f.write("\n".join(in_lines[SETTLE * per_block_in:
+                                        (SETTLE + n_blocks) * per_block_in]) + "\n")
+    per_block_ctrl = 17 * ninst
+    with open(ctrl_hex, "w") as f:
+        f.write("\n".join(ctrl_lines[SETTLE * per_block_ctrl:
+                                            (SETTLE + n_blocks) * per_block_ctrl]) + "\n")
     init_hex = os.path.join(wd, "init.hex")
     cfg = json.load(open(os.path.join(
         REPO, "model", "effects", "fx_inputs", f"type-chorus-{slug}.json")))
