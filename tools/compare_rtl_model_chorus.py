@@ -221,6 +221,15 @@ def exp_from_trace(path, n_blocks, ninst):
     return exps
 
 
+def _int_or_x(v):
+    """Mutant traces can carry 'x' (poisoned state): keep them as None so the
+    comparator reports a mismatch (the control must FAIL)."""
+    try:
+        return int(v)
+    except ValueError:
+        return None
+
+
 def parse_tb_trace(path):
     rev = None
     O, X, T = {}, {}, {}
@@ -232,13 +241,13 @@ def parse_tb_trace(path):
             if parts[0] == "R":
                 rev = parts[1]
             elif parts[0] == "O":
-                O[(int(parts[1]), int(parts[2]))] = [int(v) for v in parts[3:]]
+                O[(int(parts[1]), int(parts[2]))] = [_int_or_x(v) for v in parts[3:]]
             elif parts[0] == "X":
-                X[(int(parts[1]), int(parts[2]))] = [int(v) for v in parts[3:]]
+                X[(int(parts[1]), int(parts[2]))] = [_int_or_x(v) for v in parts[3:]]
             elif parts[0] == "T":
                 d = {}
                 for j in range(3, len(parts), 2):
-                    d[parts[j]] = int(parts[j + 1])
+                    d[parts[j]] = _int_or_x(parts[j + 1])
                 T[(int(parts[1]), int(parts[2]))] = d
     return rev, {"O": O, "X": X, "T": T}
 
