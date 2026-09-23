@@ -97,7 +97,7 @@ output sample.
 | popcorn2k (legacy, uni 1, poly overlap) | 6,499 | 617,405 | 6,499 | 415,936 | 196,800 | **PASS** |
 | smoke config (modern, shape 8, uni 4; 96 blocks) | 9 | 720 | 36 | 576 | 3,072 | **PASS** |
 | smoke config (legacy, shape 0, uni 9; 96 blocks) | 9 | 855 | 81 | 576 | 3,072 | **PASS** |
-| **total** | **7,323** | **689,505** | **8,631** | **468,672** | **1,003,872** | zero mismatches |
+| **total** | **7,323** | **689,505** | **8,631** | **468,672** | **596,544** | zero mismatches |
 
 The committed mutant (`sine_broken_mutant.sv`, qmul bias `<<20`→`<<19`)
 FAILS the same comparison on the badnews canonical run (97 mismatches from
