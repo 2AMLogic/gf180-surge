@@ -494,7 +494,10 @@ module tb_chorus;
         for (b = 0; b < 2; b = b + 1) begin
             wpos[b] = 0; lpon[b] = 0; hpon[b] = 0;
             fb_cur[b] = 0; mx_cur[b] = 0; ws_cur[b] = 0;
-            fb_tgt[b] = 0; mx_tgt[b] = 0; ws_tgt[b] = 0;
+            // constructor state + setvars(true): cur=0, tgt=init words
+            fb_tgt[b] = $signed(initwords[b*3 + 0]);
+            mx_tgt[b] = $signed(initwords[b*3 + 1]);
+            ws_tgt[b] = $signed(initwords[b*3 + 2]);
             first[b] = 1;
             er[b] = 0; ew[b] = 0;
             for (j = 0; j < 4; j = j + 1) begin

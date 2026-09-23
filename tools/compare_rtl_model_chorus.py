@@ -163,6 +163,7 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd):
             ir = [rs.randint(-(1 << 22), 1 << 22) for _ in range(BLOCK)]
             rec = {"b": b, "O": {}, "X": {}, "T": {}}
             prev = (il, ir)
+            rows = []
             for i, m in enumerate(models):
                 if reset_at is not None and b == reset_at:
                     m.initialize()
@@ -170,11 +171,13 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd):
                     fi.write(qhex(v, 32) + "\n")
                 for v in prev[1]:
                     fi.write(qhex(v, 32) + "\n")
-                for wv in ctrl_words(m):
-                    fc.write(qhex(wv, 32) + "\n")
                 out = m.process_block(prev[0], prev[1],
                                       tap_hook=_tap_hook(store := [])) \
                     if _want_taps(b, n_blocks) else m.process_block(prev[0], prev[1])
+                # control words AFTER process_block: they are the words the
+                # model's own control pass computed for this block
+                for wv in ctrl_words(m):
+                    rows.append(qhex(wv, 32))
                 if _want_taps(b, n_blocks):
                     flat = [v for k in store for trip in k for v in trip]
                     rec["X"][i] = flat if flat else None
@@ -182,6 +185,8 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd):
                 if _want_state(b, n_blocks):
                     rec["T"][i] = _state_map(m.st)
                 prev = out
+            for wtext in rows:
+                fc.write(wtext + "\n")
             exps.append(rec)
     with open(init_hex, "w") as f:
         for p in param_dicts:
