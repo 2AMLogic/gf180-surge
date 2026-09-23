@@ -107,8 +107,8 @@
    "fx_leaves_gate": {
     "": 1970,
     "FAIL": 518,
-    "NOT_RUN": 284,
-    "PASS": 148
+    "NOT_RUN": 246,
+    "PASS": 186
    },
    "routing_leaves_gate": {
     "": 2680,
@@ -131,8 +131,8 @@
    "fx_leaves_gate": {
     "": 161,
     "FAIL": 365,
-    "NOT_RUN": 53,
-    "PASS": 62
+    "NOT_RUN": 44,
+    "PASS": 71
    },
    "routing_leaves_gate": {
     "": 632,
@@ -166,7 +166,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "6096d1e43ff155810eff480e86156cde7cf6d8e52dfc04c459ec28b51fc91cdc"
+   "sha256": "ad81d3c0508662aa50757e3602d85279776a15607df76368a9a83567f1bf46a5"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -486,9 +486,12 @@
    },
    "fx:Chorus": {
     "evidence_state": "OK",
-    "landed": false,
-    "support_ready": false,
-    "verification": {}
+    "landed": true,
+    "support_ready": true,
+    "verification": {
+     "model_vs_reference": "PASS",
+     "rtl_vs_model": "PASS"
+    }
    },
    "fx:Conditioner": {
     "evidence_state": "OK",
