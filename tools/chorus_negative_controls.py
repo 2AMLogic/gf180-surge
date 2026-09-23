@@ -98,8 +98,8 @@ def run_chain_model(cfg, dry, mutate=None):
         if b >= SETTLE_BLOCKS:
             s = (b - SETTLE_BLOCKS) * BLOCK
             e = min(frames, s + BLOCK)
-            out[0, s:e] = ol[:e - s]
-            out[1, s:e] = orr[:e - s]
+            out[0, s:e] = [v / float(1 << 21) for v in ol[:e - s]]
+            out[1, s:e] = [v / float(1 << 21) for v in orr[:e - s]]
     return out
 
 
