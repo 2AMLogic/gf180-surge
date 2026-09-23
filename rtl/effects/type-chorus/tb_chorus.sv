@@ -130,7 +130,10 @@ module tb_chorus;
     integer b, k, j, j2, ii, t_, chk;
     integer i_dt, ph, rp, base, w0, rd, fbk;
     integer tmp, tmp2, ss;
-    longint signed vo, acc_l, acc_r;   // Q68 tap MAC: 32-bit wraps
+    // Q68 tap MAC: worst case 4 voices x 12 taps x |sinc|<2^29 x |line|<=2^31
+    // x pan 2^17 ~ 2^81 -> 96-bit signed accumulators (the frozen model
+    // accumulates exactly; Python bigints on the model side)
+    reg signed [95:0] vo, acc_l, acc_r;
 
     // ---------------- fixed-point helpers ----------------
     function automatic signed [31:0] sat32(input signed [63:0] v);
@@ -333,8 +336,8 @@ module tb_chorus;
                     acc_r = acc_r + pan_r(j) * vo;
                 end
                 // Q68 accumulator -> Q10.21: shift 47, round-half-up
-                tb_l[k] = sat32((acc_l + $signed(64'sd70368744177664)) >>> 47);
-                tb_r[k] = sat32((acc_r + $signed(64'sd70368744177664)) >>> 47);
+                tb_l[k] = sat32((acc_l + $signed(96'sd70368744177664)) >>> 47);
+                tb_r[k] = sat32((acc_r + $signed(96'sd70368744177664)) >>> 47);
             end
             if (lpon[inst] != 0)
                 for (k = 0; k < 32; k = k + 1)
