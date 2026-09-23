@@ -452,6 +452,13 @@ def main():
     results["cases"].append(judge("prs-reset48-128", exps_r, trace_r, 2, rev8,
                                   128, 2))
 
+    # --- canonical fixture cases (committed model traces as truth)
+    for slug, seq, nb, ninst in canonicals:
+        res = canonical_case(workdir, rev8, slug, seq, nb, ninst, None)
+        results["cases"].append(res)
+        print(res["case"], "exact" if res["exact"] else "FAIL",
+              res.get("checked", ""))
+
     # --- mutants (negative controls) on the dual-instance PRS stimulus
     for mname, mpath in make_mutants().items():
         wd = os.path.join(workdir, mname)
