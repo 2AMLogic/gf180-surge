@@ -398,7 +398,7 @@ def canonical_case(workdir, rev8, slug, seq, n_blocks, ninst, params):
         for e in entries[:ninst]:
             for wv in init_words(e["params"]):
                 f.write(qhex(wv, 32) + "\n")
-    trace = simulate_case(f"canonical-{slug}", wd, n_blocks, ninst,
+    trace = simulate_case(f"canonical-{slug}", wd, SETTLE + n_blocks, ninst,
                           in_hex, ctrl_hex, init_hex, rev8=rev8,
                           settle=SETTLE)
     return judge(f"canonical-{slug}-{n_blocks}b", exp, trace, ninst, rev8,
