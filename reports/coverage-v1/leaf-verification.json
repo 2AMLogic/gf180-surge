@@ -254,7 +254,7 @@
    "evidence": [
     {
      "path": "reports/SXT-040/EVIDENCE.md",
-     "sha256": "2f15256461e6816060f5a9d742490cc7763c745054da78a43d59f724067740ba"
+     "sha256": "90e61da0051f0bc934ffb3a096013acc39d8abd239a3e038fbd5a3cea6e81592"
     }
    ],
    "fixture_verified_paths": [

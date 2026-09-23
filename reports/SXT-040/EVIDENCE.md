@@ -236,13 +236,15 @@ python 3.11+ (model renders are pure integer Python; local dev used
 3.14). Reference-dependent budget checks are NOT pytest cases — a
 skipped/absent environment never reports a pass.
 
-**Post-freeze re-verification (this branch's tip).** After the freeze doc
-landed, the canonical exactness runs, the mutant control, the budget
-matrix and all negative controls were regenerated from the committed tree
-on the pinned reference box and checked against the committed copies: all
-three canonical RTL runs PASS with checkpoint/field counts identical to
-§2; the mutant FAILS identically (97 mismatches); the budget matrix
-reproduces the §3 numbers; all controls fail as required.
+**Re-verification at this branch's tip.** The canonical exactness runs,
+the mutant control, the budget matrix and all negative controls were
+regenerated on the pinned reference box from the exact code now committed
+(model/RTL/inputs are bit-identical to the run-time tree; only
+documentation changed since) and checked against the committed copies:
+all three canonical RTL runs PASS with checkpoint/field counts identical
+to §2; the mutant FAILS identically (97 mismatches, exit 1); the budget
+matrix reproduces the §3 numbers; all controls fail as required. The
+pytest suite (13 sine + 9 classic-regression cases) passes at the tip.
 
 ## 8. Licensing / provenance
 

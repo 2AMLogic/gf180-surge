@@ -166,11 +166,11 @@
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
-   "sha256": "2f15256461e6816060f5a9d742490cc7763c745054da78a43d59f724067740ba"
+   "sha256": "90e61da0051f0bc934ffb3a096013acc39d8abd239a3e038fbd5a3cea6e81592"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "5633094921b04b463946cbc7651910ca4decc9c0a38ad3aa8f094e86782ecb9c"
+   "sha256": "f4c55a428f0af847f470cbd60c213279c473d704833861f4ad0c83e527f03583"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
