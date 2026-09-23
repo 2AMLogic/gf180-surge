@@ -177,8 +177,12 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd, settle):
                     if _want_taps(b, n_blocks, settle) else m.process_block(prev[0], prev[1])
                 # control words AFTER process_block: they are the words the
                 # model's own control pass computed for this block
-                for wv in ctrl_words(m):
-                    rows.append(qhex(wv, 32))
+                # (fb/mix/ws + flags are 32-bit; lag targets + biquad
+                # coefficients are 64-bit)
+                cw = ctrl_words(m)
+                for idx, wv in enumerate(cw):
+                    bits = 32 if idx in (0, 1, 2, 13) else 64
+                    rows.append(qhex(wv, bits))
                 if _want_taps(b, n_blocks, settle):
                     flat = [v for k in store for trip in k for v in trip]
                     rec["X"][i] = flat if flat else None
