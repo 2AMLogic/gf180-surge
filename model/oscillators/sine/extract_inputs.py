@@ -98,19 +98,28 @@ def scan_sequences():
                              "never ignoring)" % (sid, e["type"]))
 
 
-def gate_scene_routes(graphs_full, slot):
-    """Fail-closed scene-A route gate. Allowed iff the destination is
-    provably inert under the declared fixture overrides (muted osc, off
-    filter units / waveshaper / FM routing), is a landed modeled class with
-    an identically-zero source value, or is carried by a value-zero source
-    into machinery that stays at its unmodulated value (+0.0 exactly)."""
+def gate_routes(graphs_full, slot):
+    """Fail-closed scene-A route gate (scene routes `s` AND voice routes
+    `v`; both live in md.s[0]). Allowed iff the destination is provably
+    inert under the declared fixture overrides (muted osc, off filter
+    units / waveshaper / FM routing), is a landed modeled class with an
+    identically-zero source value, or is carried by a value-zero source
+    into machinery that stays at its unmodulated value (+0.0 exactly).
+
+    Velocity (1) and keytrack (2) are NOT value-zero (notes sound at
+    velocity 100; keytrack outputs (pitch-root)/12), so their destinations
+    must be inert by override. LFO/scene-LFO sources are free-running and
+    likewise may only target muted/off paths."""
     modeled = "A Osc %d " % (slot + 1)
     value_zero_only = (
         "Amp EG", "Pre-Filter Gain", "VCA Gain", "LFO",
         "Highpass", "Low Cut", "Pan", "Pitch", "Volume",
     )
     checked = []
-    for r in graphs_full["g"]["md"]["s"][0].get("s", []):
+    md0 = graphs_full["g"]["md"]["s"][0]
+    rows = [(r, "scene") for r in md0.get("s", [])]
+    rows += [(r, "voice") for r in md0.get("v", [])]
+    for r, kind in rows:
         src = r[0]
         dest = r[4] if len(r) > 4 else ""
         if dest.startswith(("A Osc 1 ", "A Osc 2 ", "A Osc 3 ")):
@@ -122,21 +131,21 @@ def gate_scene_routes(graphs_full, slot):
                                  "outside the declared slice" % (dest, src))
                 checked.append((src, dest, "modeled-slot/value-zero"))
             else:
-                checked.append((src, dest, "inert/muted-osc"))
+                checked.append((src, dest, kind + "/muted-osc"))
             continue
         if any(k in dest for k in ("Filter 1", "Filter 2", "Filter EG",
                                    "Waveshaper", "Noise")):
-            checked.append((src, dest, "inert/off-path"))
+            checked.append((src, dest, kind + "/off-path"))
             continue
         if "FM Depth" in dest:
-            checked.append((src, dest, "inert/fm-off"))
+            checked.append((src, dest, kind + "/fm-off"))
             continue
         if any(k in dest for k in value_zero_only):
             if src not in VALUE_ZERO_SOURCES:
                 raise Refuse("scene-A routing %r (source %d) targets live "
                              "machinery and the source is free-running - "
                              "outside the declared slice" % (dest, src))
-            checked.append((src, dest, "value-zero"))
+            checked.append((src, dest, kind + "/value-zero"))
             continue
         raise Refuse("scene-A modulation routing %r (source %d) is outside "
                      "the declared slice (destination not provably inert)"

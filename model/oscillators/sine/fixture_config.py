@@ -35,15 +35,21 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
 
 CARRIERS = {
     # name: (preset path relative to resources/data/, modeled osc slot index)
-    "alone": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp", 0),
-    "tentacles": ("patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp", 0),
-    "mystery4": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Mystery 4.fxp", 0),
     "badnews": ("patches_3rdparty/Bluelight/Pads/Bad News.fxp", 2),
-    # out-of-class negative controls: recovery-basis presets whose scene-A
-    # playmode is mono / mono-single-trigger (SXT-043 scope) - the extractor
-    # must refuse them for fixture use
+    "tentacles": ("patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp", 0),
+    "popcorn2k": ("patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp", 0),
+    # out-of-class negative controls (recovery-basis presets the extractor
+    # must REFUSE for fixture use; see extract_inputs.py gates):
+    #   mortsnare - scene-A playmode mono (SXT-043 scope)
+    #   arp2      - playmode mono single-trigger; sine_shape_remap raw 1 -> 28
+    #   alone     - live voice routes into the modeled slot / pan
+    #               (keytrack->Osc1 Feedback, lfo3->Osc1 Pitch, lfo2->Pan,
+    #                velocity->Osc Drift)
+    #   mystery4  - live voice route velocity->Amp EG Attack
     "mortsnare": ("patches_3rdparty/Emu/Drums/Mort Snare.fxp", 1),
     "arp2": ("patches_3rdparty/Inigo Kennedy/Rhythms/Arp 2.fxp", 1),
+    "alone": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp", 0),
+    "mystery4": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Mystery 4.fxp", 0),
 }
 
 
