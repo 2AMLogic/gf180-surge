@@ -290,9 +290,10 @@ def nc_bypass_transparency(cfg, dry):
                 if e["type"] == "chorus":
                     e["params"]["mix_f"] = v
         return mutate
-    a_d = db_to_linear_d(cfg["volume_f"])
-    expected = dry / a_d
     n = dry.shape[1]
+    # with mix=0 the chain output is the dry bus itself (the master amplitude
+    # re-applies to the unchanged input)
+    expected = dry
 
     out0 = run_chain_model(cfg, dry, mutate=set_mix(0.0))
     exact_lsb = float(np.abs(out0[:, :n] - expected[:, :n]).max() / LSB)
