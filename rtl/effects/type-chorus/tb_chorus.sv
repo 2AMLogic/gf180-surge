@@ -344,9 +344,10 @@ module tb_chorus;
             end
             ew[inst] = ew[inst] + 32;
             if (wpos[inst] == 0) begin
+                // padding words = buffer[0..11] just written this block
+                // (model copies st.line[t]; no external read is issued)
                 for (t_ = 0; t_ < 12; t_ = t_ + 1) begin
-                    line_access(inst, 0, t_, 0);
-                    line_access(inst, 1, (1 << 18) + t_, last_read);
+                    line_access(inst, 1, (1 << 18) + t_, fbb[t_]);
                 end
                 ew[inst] = ew[inst] + 12;
             end

@@ -181,7 +181,7 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd, settle):
                 # coefficients are 64-bit)
                 cw = ctrl_words(m)
                 for idx, wv in enumerate(cw):
-                    bits = 32 if idx in (0, 1, 2, 13) else 64
+                    bits = 32 if idx in (0, 1, 2, 17) else 64
                     rows.append(qhex(wv, bits))
                 if _want_taps(b, n_blocks, settle):
                     flat = [v for k in store for trip in k for v in trip]
