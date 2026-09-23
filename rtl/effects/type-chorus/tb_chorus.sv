@@ -577,6 +577,11 @@ module tb_chorus;
                     $fwrite(fd, "\n");
                 end
             end
+            if (DEBUG != 0 && b == 0)
+                $display("DBG pad b=0 v0 %0d v1 %0d v2 %0d lin0 %0d %0d",
+                         $signed(line_mem0[262144]), $signed(line_mem0[262145]),
+                         $signed(line_mem0[262146]), $signed(line_mem0[0]),
+                         $signed(line_mem0[1]));
             if (chk != 0) emit_state(b);
         end
         $fwrite(fd, "ER %0d %0d %0d %0d %0d %0d\n", rd0, wr0, rd1, wr1, h0, h1);
