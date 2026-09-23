@@ -70,7 +70,9 @@ def run(slug, seq_id, fixtures_dir, out_json, onset_block=0):
     gal_out = npz["gal_out"]
     vib = gm.TappedVibratoStream(None, npz["vibM"])
 
-    g = fxin["chain"][0]["galactic"]
+    aw_entry = next(e for e in fxin["chain"]
+                    if e["type"] == 14 and e["aw"] == 49)
+    g = aw_entry["galactic"]
     params = {"a": g["A_replace_f"], "b": g["B_brightness_f"],
               "c": g["C_modulation_f"], "d": g["D_size_f"], "e": g["E_mix_f"]}
     ctrl = gm.build_control(params, {"fpdL": 0, "fpdR": 0})
