@@ -108,7 +108,7 @@ MIN_DT = BLOCK                      # i_dtime lower clamp
 MAX_DT = MAX_DELAY - FIRIPOL_N - 1  # i_dtime upper clamp
 VOICES = 4                          # Effect.cpp:86 ChorusEffect<4>
 HARD_CLIP = 1 << A_FRAC             # hardclip_block +-1.0 in Q10.21
-HALF_C = 1 << (C_FRAC - 1)          # 0.5 in Q24.43 (lfophase wrap)
+ONE_C = 1 << C_FRAC                 # 1.0 in Q24.43 (lfophase wrap: > 1 -> -= 1)
 ONE_G = 1 << G_FRAC
 HALF_A = 1 << (A_FRAC - 1)
 # tap MAC word: sinc(Q2.29) x line(Q10.21) = Q50, then x voicepan(Q13.18)
@@ -292,8 +292,8 @@ class ChorusModel:
 
         for j in range(VOICES):
             st.lfophase[j] = qadd(st.lfophase[j], rate_q, C_FMT)
-            if st.lfophase[j] > HALF_C:
-                st.lfophase[j] = qsub(st.lfophase[j], 1 << C_FRAC, C_FMT)
+            if st.lfophase[j] > ONE_C:
+                st.lfophase[j] = qsub(st.lfophase[j], ONE_C, C_FMT)
             # lfoout = (2*|2*phi-1| - 1) * depth, double at control rate
             a = 2.0 * (st.lfophase[j] / float(1 << C_FRAC)) - 1.0
             lfoout = (2.0 * abs(a) - 1.0) * p.depth_f
