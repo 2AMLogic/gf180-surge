@@ -211,7 +211,8 @@ def exp_from_trace(path, n_blocks, ninst, settle=SETTLE):
     exps = []
     for b in range(n_blocks):
         rec = blocks.get(settle + b)
-        e = {"b": b, "O": {}, "X": {}, "T": {}}
+        # absolute block number: the tb trace indexes blocks like the model run
+        e = {"b": settle + b, "O": {}, "X": {}, "T": {}}
         if rec is not None:
             for i, inst in enumerate(rec["instances"][:ninst]):
                 if "out" in inst:
