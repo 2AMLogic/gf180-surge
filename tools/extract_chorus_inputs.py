@@ -235,8 +235,12 @@ def extract(slug, rel_path, out_path):
             entry["return_f"] = rl
             entry["send_gain_f"] = scene_sends[0][idx]
             chain["sends"].append(entry)
-        elif role.startswith("global") or role.startswith("bins"):
-            entry["inactive_note"] = ("global/bins slot recorded for census; "
+        elif role.startswith("global"):
+            # global slots process on the main output in slot order
+            # (SurgeSynthesizer::process: G1..G4 after sends, before master)
+            chain.setdefault("globals", []).append(entry)
+        elif role.startswith("bins"):
+            entry["inactive_note"] = ("scene-B insert slot recorded for census; "
                                       "not processed by this leaf's chain model")
             chain.setdefault("inactive", []).append(entry)
         else:
