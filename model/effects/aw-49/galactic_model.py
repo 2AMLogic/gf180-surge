@@ -350,6 +350,7 @@ class Galactic49Fixed:
         self._vib_override = vib
         self.wide = wide
         self.peak_state = 0
+        self.log_ctrl = None  # list to append per-sample control words to
         self.hist = {"iir_a": [], "fb_AR": []} if record else None
         self.ext_reads = 0
         self.ext_writes = 0
@@ -443,6 +444,8 @@ class Galactic49Fixed:
         # aML/aMR writes, pinned order)
         self.vib.advance()
         baseL, fracL, baseR, fracR = self.vib.positions()
+        if self.log_ctrl is not None:
+            self.log_ctrl.append((baseL, fracL, baseR, fracR))
         rs = (lambda v, f: v) if self.wide else rnd_sat32
         cl = (lambda v: v) if self.wide else sat32
 
