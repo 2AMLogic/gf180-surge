@@ -1,0 +1,101 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "carrier": "alone",
+ "declared_overrides_applied": [
+  [
+   "mute_o1",
+   false
+  ],
+  [
+   "mute_o2",
+   true
+  ],
+  [
+   "mute_o3",
+   true
+  ],
+  [
+   "mute_noise",
+   true
+  ],
+  [
+   "mute_ring_12",
+   true
+  ],
+  [
+   "mute_ring_23",
+   true
+  ],
+  [
+   "fu0_off",
+   true
+  ],
+  [
+   "fu1_off",
+   true
+  ],
+  [
+   "fx_off",
+   true
+  ],
+  [
+   "ws_off",
+   true
+  ],
+  [
+   "lc_off",
+   true
+  ],
+  [
+   "fbc_serial1",
+   true
+  ],
+  [
+   "fm_off",
+   true
+  ],
+  [
+   "scenemode_single",
+   true
+  ],
+  [
+   "retrigger_on",
+   true
+  ],
+  [
+   "drift_zero",
+   true
+  ]
+ ],
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "inputs": "model/oscillators/sine/inputs/alone.json",
+ "isolation_note": "declared fixture configuration (one Sine slot audible; other mixer paths, filter units, FX, waveshaper, scene lowcut, FM routing off; fbc serial1; scene mode Single; retrigger on) - a test configuration, never an adapted preset, never coverage",
+ "issue": "SXT-040",
+ "preset_blob_sha1": "9b8b3d8d31426ea9c7d35ca1991e48378d9d5489",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 6150,
+  "clipped_samples": 262,
+  "frames": 196800,
+  "peak_abs_float": 1.076489806175232,
+  "repeat_hashes": [
+   "26d75103439f323f508832d0b24f66e196dd76d0519af5466378858dcd36d0bf",
+   "26d75103439f323f508832d0b24f66e196dd76d0519af5466378858dcd36d0bf",
+   "26d75103439f323f508832d0b24f66e196dd76d0519af5466378858dcd36d0bf"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-notes-repeated-v1",
+  "path": "fixtures/sequences/seq-notes-repeated-v1.json"
+ },
+ "wav": {
+  "path": "../../../../tmp/sxt040-ref/alone__seq-notes-repeated-v1-ref.wav",
+  "sha256": "2b4fa61eecc088882f17daf7c93ed7d01096df1dc148b8b87ad7d07c56b783f4"
+ }
+}
