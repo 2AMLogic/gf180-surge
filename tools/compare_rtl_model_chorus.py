@@ -384,21 +384,10 @@ def canonical_case(workdir, rev8, slug, seq, n_blocks, ninst, params):
     os.makedirs(wd, exist_ok=True)
     exp = exp_from_trace(os.path.join(ART, f"trace_{slug}__{seq}.json.gz"),
                          n_blocks, ninst, settle=SETTLE)
-    # trim the runner stimulus to the render span (skip the settle blocks)
-    per_block_in = 64 * ninst
-    in_lines = open(os.path.join(ART, "rtl", f"{slug}__{seq}_in.hex")
-                    ).read().splitlines()
-    ctrl_lines = open(os.path.join(ART, "rtl", f"{slug}__{seq}_ctrl.hex")
-                      ).read().splitlines()
-    in_hex = os.path.join(wd, "in.hex")
-    ctrl_hex = os.path.join(wd, "ctrl.hex")
-    with open(in_hex, "w") as f:
-        f.write("\n".join(in_lines[SETTLE * per_block_in:
-                                        (SETTLE + n_blocks) * per_block_in]) + "\n")
-    per_block_ctrl = 17 * ninst
-    with open(ctrl_hex, "w") as f:
-        f.write("\n".join(ctrl_lines[SETTLE * per_block_ctrl:
-                                            (SETTLE + n_blocks) * per_block_ctrl]) + "\n")
+    # full runner stimulus (settle included): the tb starts from the
+    # constructor state exactly like the model run did
+    in_hex = os.path.join(ART, "rtl", f"{slug}__{seq}_in.hex")
+    ctrl_hex = os.path.join(ART, "rtl", f"{slug}__{seq}_ctrl.hex")
     init_hex = os.path.join(wd, "init.hex")
     cfg = json.load(open(os.path.join(
         REPO, "model", "effects", "fx_inputs", f"type-chorus-{slug}.json")))
@@ -409,7 +398,8 @@ def canonical_case(workdir, rev8, slug, seq, n_blocks, ninst, params):
             for wv in init_words(e["params"]):
                 f.write(qhex(wv, 32) + "\n")
     trace = simulate_case(f"canonical-{slug}", wd, n_blocks, ninst,
-                          in_hex, ctrl_hex, init_hex, rev8=rev8, settle=0)
+                          in_hex, ctrl_hex, init_hex, rev8=rev8,
+                          settle=SETTLE)
     return judge(f"canonical-{slug}-{n_blocks}b", exp, trace, ninst, rev8,
                  n_blocks, ninst)
 
