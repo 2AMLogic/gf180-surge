@@ -76,6 +76,10 @@
     [
       "drift_zero",
       true
+    ],
+    [
+      "route_slot_1",
+      true
     ]
   ],
   "drift": 0.0,
@@ -99,6 +103,7 @@
   "o_level": 1.0,
   "octave": 1,
   "pan": 0.0,
+  "pitch_extend": false,
   "pitch_param": 0.0,
   "preset_census_blob_sha1": "d811096971efa1da42be4c646bd786cc9dc6e4ea",
   "preset_path": "resources/data/patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp",
@@ -108,7 +113,22 @@
     [
       6,
       "A FM Depth",
-      "inert/fm-off"
+      "scene/fm-off"
+    ],
+    [
+      17,
+      "A Filter 1 Cutoff",
+      "voice/off-path"
+    ],
+    [
+      17,
+      "A Filter 2 Cutoff",
+      "voice/off-path"
+    ],
+    [
+      18,
+      "A Filter 2 Cutoff",
+      "voice/off-path"
     ]
   ],
   "scene_volume": 0.8908990025520325,

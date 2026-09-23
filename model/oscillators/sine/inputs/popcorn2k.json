@@ -1,21 +1,21 @@
 {
   "absolute_detune": false,
   "adsr": {
-    "a": 1.610718011856079,
+    "a": -8.0,
     "a_s": 1.0,
-    "d": 0.9053590297698975,
-    "d_s": 0.0,
+    "d": -3.1946420669555664,
+    "d_s": 2.0,
     "mode": 0.0,
-    "r": -5.0,
+    "r": -0.8910689949989319,
     "r_s": 2.0,
-    "s": 0.5142859816551208
+    "s": 0.14821399748325348
   },
-  "carrier": "badnews",
-  "character": 0,
+  "carrier": "popcorn2k",
+  "character": 1,
   "declared_overrides": [
     [
       "mute_o1",
-      true
+      false
     ],
     [
       "mute_o2",
@@ -23,7 +23,7 @@
     ],
     [
       "mute_o3",
-      false
+      true
     ],
     [
       "mute_noise",
@@ -97,46 +97,31 @@
   "highcut": 70.0,
   "issue": "SXT-040",
   "keytrack": true,
-  "level_pfg": 32.05717468261719,
+  "level_pfg": 0.0,
   "lowcut": -60.0,
   "master_db": -2.025745391845703,
-  "o_level": 0.925000011920929,
-  "octave": 1,
+  "o_level": 1.0,
+  "octave": 0,
   "pan": 0.0,
   "pitch_extend": false,
   "pitch_param": 0.0,
-  "preset_census_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
-  "preset_path": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+  "preset_census_blob_sha1": "27a0f93e15be0f62a16b3192883272fa3a81a3b8",
+  "preset_path": "resources/data/patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp",
   "retrigger": true,
-  "scene_octave": -1,
+  "scene_octave": 1,
   "scene_routes_checked": [
     [
-      23,
-      "A Osc 1 Morph",
-      "scene/muted-osc"
-    ],
-    [
-      1,
-      "A Osc 2 Volume",
-      "voice/muted-osc"
-    ],
-    [
-      1,
-      "A Filter 1 Cutoff",
-      "voice/off-path"
-    ],
-    [
-      16,
-      "A Filter 2 FEG Mod Amount",
-      "voice/off-path"
+      17,
+      "A FM Depth",
+      "voice/fm-off"
     ]
   ],
-  "scene_volume": 0.6247320175170898,
+  "scene_volume": 0.8908990025520325,
   "schema_version": 1,
   "shape": 0,
-  "slot": 2,
+  "slot": 0,
   "unison": 1,
   "unison_detune": 0.20000000298023224,
-  "vca_db": -5.142859935760498,
-  "vca_velsense": 0.0
+  "vca_db": 12.85715103149414,
+  "vca_velsense": -6.428574085235596
 }
