@@ -1,0 +1,5 @@
+NC-A generic substitute: CONTROL-OK (generic substitute FAILS the reference budgets; adapted != supported)
+NC-B dropped tail: CONTROL-OK (truncated render FAILS the tail check)
+NC-C wrong order (A->B vs B->A serial permutation): CONTROL-OK (order-sensitive check flags the permutation)
+NC-D stale stub (frozen-revision pin): CONTROL-OK (stale trace revision REFUSED - the comparator cannot report PASS)
+NC-E conditioning sensitivity (no tapped vibM): CONTROL-OK (unconditioned model FAILS the budgets - the tapped control plane is load-bearing)

@@ -1,0 +1,11 @@
+{
+  "conclusion": "Q6.25 covers the committed fixture envelope (zero saturations); LSB 2^-25 stays ~100x below the [PROPOSED] model-vs-reference budgets",
+  "fixture": "temple__seq-notes-coverage-v1 (canonical, all 8925 tapped blocks)",
+  "frozen_word": "Q6.25 s32i (range +/-32)",
+  "leaf": "SXT-028a",
+  "peak_internal_state_q6_25": 1.656247615814209,
+  "q4_28_finding": "at the earlier Q4.28 frozen word the fmod09 hot carrier (send gain 2.055, 8-voice passage) measured 146 saturation events - the operating point exceeds +/-8 - which is why the frozen word was widened BEFORE the reference comparisons (visible contract revision, same commit)",
+  "q6_25_saturations_full_canonical": 0,
+  "schema_version": 1,
+  "stability_note": "the unclipped (wide, diagnostic) quantized loop diverges: the loop gain sits at ~1 and coefficient-rounding noise is integrated; the pinned float engine is bounded by its own arithmetic, and the frozen model's saturating stores play the equivalent role. Saturations under Q6.25: zero on every committed fixture (they exist only as a safety bound). Routed to SXT-013 as a stability-class note."
+}

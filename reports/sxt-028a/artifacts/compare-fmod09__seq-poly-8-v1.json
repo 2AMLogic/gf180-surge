@@ -1,0 +1,46 @@
+{
+  "achieved": {
+    "max_abs_diff": 3.3974647521972656e-06,
+    "ref_rms": 0.19048943501545743,
+    "rms_abs": 5.188703298083048e-07,
+    "rms_rel_db": -111.29624112499587,
+    "saturations": 0,
+    "spectral_corr": 0.9999999999982163
+  },
+  "blocks_compared": 5550,
+  "case": "fmod09__seq-poly-8-v1",
+  "checks": {
+    "max_abs_diff<=1e-3": true,
+    "rms_rel_db<=-50": true,
+    "spectral_corr>=0.98": true
+  },
+  "claim": "model-vs-pinned-engine at the AW-49 slot boundary (tapped; fpd/vibM-conditioned control plane per DR-0006)",
+  "leaf": "SXT-028a",
+  "model_frozen_revision": "1901510e97d84c02a1da374be6ce8eb2e7626df42bc8319cb6debf75cf7d7a87",
+  "preset": {
+    "aw49_slot": 5,
+    "census_blob_sha1": "76444c0758e7b117cc06598f1b66ed5b99960229",
+    "path": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
+    "slug": "fmod09"
+  },
+  "proposed_budgets": {
+    "max_abs_diff": 0.001,
+    "rms_rel_db": -50.0,
+    "spectral_corr_min": 0.98
+  },
+  "schema_version": 1,
+  "settle_blocks": 375,
+  "sidecar_sha256": "9c7a073f10bdd80c173f082c0bff34b74990923a7dbb31ed422007fd769f4e1d",
+  "state_diagnostics": {
+    "countM_agree": true,
+    "max_fbAR_delta_q6_25_lsb": 113734907.23189463,
+    "max_iirAL_delta_q6_25_lsb": 16306655.806669693
+  },
+  "tail": {
+    "declared_tail_s": 2.5,
+    "tail_blocks_rendered": 3750,
+    "tail_present": true,
+    "tail_rms": 0.18130484300570857
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+}

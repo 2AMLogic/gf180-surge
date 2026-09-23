@@ -55,7 +55,9 @@
     ],
     "galactic_blocks": 5925,
     "npz": "../../aw49-fixtures/unity__seq-poly-8-v1-aw49-taps.npz",
-    "npz_sha256": "11b48a6e349c9e216b11db55e81a74bba6d9e2d20bf19940f21fdf2a543608d6",
+    "npz_residence": "oracle host only (~/aw49-fixtures); sha256 pinned above",
+    "npz_sha256": "f8fa2e7760ddc2c7900d4a65ef64f7ca90fb99c44c029b3ef1d57f0a98318a47",
+    "npz_trimmed": "diagnostic state arrays truncated to the first 1024 blocks; vibM/countM/gal_in/gal_out full",
     "record_layout": "aw_iostream.bin {tag=1,slot,algid,seq,n}+n*{inL,inR,outL,outR} f32; aw_fpd.bin {tag=2,fpdL,fpdR}; aw_galstate.bin 56B/sample"
   },
   "wet": {

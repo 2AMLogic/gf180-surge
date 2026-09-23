@@ -55,7 +55,9 @@
     ],
     "galactic_blocks": 8925,
     "npz": "../../aw49-fixtures/temple__seq-notes-coverage-v1-aw49-taps.npz",
-    "npz_sha256": "0c3a0ba6277e05dcfc6fc6c1dfae4c4add0b6181636b0537bff62d3eb3b0e010",
+    "npz_residence": "repository (canonical fixture)",
+    "npz_sha256": "8607b1c9d25333f86e9f746f1a99aeae99aca79439ccb6b2d57650dd9f7358c1",
+    "npz_trimmed": "diagnostic state arrays truncated to the first 1024 blocks; vibM/countM/gal_in/gal_out full",
     "record_layout": "aw_iostream.bin {tag=1,slot,algid,seq,n}+n*{inL,inR,outL,outR} f32; aw_fpd.bin {tag=2,fpdL,fpdR}; aw_galstate.bin 56B/sample"
   },
   "wet": {
