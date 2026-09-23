@@ -25,6 +25,84 @@
         "model": "6dee98c6b6f765e1098ff83d640bb332dfe277f2a6509b63467a7e3dededb420",
         "rtl": "6dee98c6b6f765e1098ff83d640bb332dfe277f2a6509b63467a7e3dededb420"
       }
+    },
+    {
+      "blocks": 512,
+      "case": "canonical-temple-512b",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": true,
+      "ext_mem_exact": true,
+      "note": "first 512 tapped blocks of the temple fixture (real engine adapter input + tapped vibrato control plane); full memory image compared",
+      "outputs_exact": true,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 458752,
+        "words_per_frame": 1728,
+        "writes": 425984
+      },
+      "txn_lines_rtl": 884736,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "cbe9b206177d7a64ebf8166b7008c6a245cf1e1cce945b3886b385f870481501",
+        "rtl": "cbe9b206177d7a64ebf8166b7008c6a245cf1e1cce945b3886b385f870481501"
+      }
+    },
+    {
+      "blocks": 64,
+      "case": "dual-instance-64b",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": true,
+      "ext_mem_exact": null,
+      "note": "instances 0/1 alternate blocks; disjoint regions; per-instance equality enforced",
+      "outputs_exact": true,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 57344,
+        "words_per_frame": 1728,
+        "writes": 53248
+      },
+      "txn_lines_rtl": 110592,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "940b27beb6f16f8548e6ee3a5330569c5b56578607c23ab11d18695cfafdbac3",
+        "rtl": "940b27beb6f16f8548e6ee3a5330569c5b56578607c23ab11d18695cfafdbac3"
+      }
+    },
+    {
+      "blocks": 128,
+      "case": "prs-128b-reset48",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": true,
+      "ext_mem_exact": true,
+      "note": "host bulk clear + core reset before block 48",
+      "outputs_exact": true,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 114688,
+        "words_per_frame": 1728,
+        "writes": 106496
+      },
+      "txn_lines_rtl": 221185,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "222d81567deb0e39614ceab26895fdab91cbae9e59b4341d729998c12dc99001",
+        "rtl": "222d81567deb0e39614ceab26895fdab91cbae9e59b4341d729998c12dc99001"
+      }
     }
   ],
   "claim": "RTL-vs-frozen-model EXACT",
@@ -35,12 +113,12 @@
     {
       "blocks": 256,
       "case": "mutant-regen-halved",
-      "checkpoints_exact": true,
+      "checkpoints_exact": false,
       "claim": "RTL-vs-frozen-model EXACT",
       "exact": false,
       "ext_mem_exact": null,
       "injected_defect": "feedback regen coefficient halved in the RTL",
-      "outputs_exact": true,
+      "outputs_exact": false,
       "revision_pin": {
         "expected": 1453063955,
         "ok": true,
@@ -54,8 +132,8 @@
       "txn_lines_rtl": 442368,
       "txn_log_exact": false,
       "txn_log_sha256": {
-        "model": "0f14c981ea532a6552216d1b11e6b627ad5faa9d25fc0a1fabc11855b14e2d74",
-        "rtl": "b7ce85f66f8ad8cc043d8f384ff37f2d780b65982cb10b78175ec69de414c13c"
+        "model": "7b4f4a244395abd110a71fe159c2a6cb9091b8b1f07f02db433c16530c1bb9fa",
+        "rtl": "76f9b87d96013bc672816aa16410d49ec158de46e4387a63f1163851f8862669"
       },
       "verdict": "CONTROL-OK (mutant FAILS the exactness comparison)"
     },
@@ -81,8 +159,8 @@
       "txn_lines_rtl": 110592,
       "txn_log_exact": false,
       "txn_log_sha256": {
-        "model": "736dd9c650742722f773f44be91767da1bf6e58a00be8f3fc05f4b5e4bf6cfb6",
-        "rtl": "2b33730226fc776ee5b467b5b2400f7016340521e103a72790096fe7aec8385d"
+        "model": "6566ec5b88ea45d4df7d863e1c86a48ef67bffbd941011fbfc263b1164268630",
+        "rtl": "09091ffb84b07e06bb95f1d079e88171e737d146093e7376439bcd8fe6e7715f"
       },
       "verdict": "CONTROL-OK (mutant FAILS the dual-instance comparison)"
     }

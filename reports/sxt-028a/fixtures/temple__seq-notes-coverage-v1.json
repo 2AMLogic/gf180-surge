@@ -1,0 +1,66 @@
+{
+  "applicability_complete_wet_possible": false,
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "tapped slot-boundary reference of the pinned engine; no fidelity/support/quality claim; complete-wet renders refused (unlanded sibling FX classes)",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.sxt028a-tap.962503f3e",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "temple__seq-notes-coverage-v1",
+  "leaf": "SXT-028a",
+  "neutrality_gate": {
+    "baseline_build": "build-py311 (sxt037-tap tree; FX-path DSP-identical per DR-0005)",
+    "cross_build_baseline_eq": true,
+    "method": "DR-0005 adapted for nondeterministic fixtures: probe (scene drift=0 and aw49 C=0 via setParamVal) must be bit-identical taps-off x2, then taps-on == taps-off; structural side pinned by the sxt028a-tap single-commit diff (DR-0006)",
+    "probe_deterministic_taps_off_x2": true,
+    "probe_taps_on_eq_taps_off": true
+  },
+  "preset": {
+    "aw49_slot": 4,
+    "census_blob_sha1": "3c8e6d56f4055a68a5a266ebb25f530c888f21cf",
+    "path": "resources/data/patches_3rdparty/Altenberg/Guitars/Temple.fxp",
+    "slug": "temple"
+  },
+  "render": {
+    "block_size": 32,
+    "blocks": 8550,
+    "frames": 273600,
+    "policies": "fixtures/render_fixture.py (reset/scheduling/tail); single render - conditioned-on-tap repeatability class (no 3x gate; cross-instance spread measured in EVIDENCE.md)",
+    "sample_rate": 48000,
+    "settle_blocks": 375,
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tapped_blocks": 8925
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tap_build": "build-py311-aw49",
+  "taps": {
+    "aw_slot_record_counts": {
+      "4-49": 8925,
+      "7-42": 8925
+    },
+    "fpd_records": [
+      [
+        3743126674,
+        3929597467
+      ]
+    ],
+    "galactic_blocks": 8925,
+    "npz": "../../aw49-fixtures/temple__seq-notes-coverage-v1-aw49-taps.npz",
+    "npz_sha256": "0c3a0ba6277e05dcfc6fc6c1dfae4c4add0b6181636b0537bff62d3eb3b0e010",
+    "record_layout": "aw_iostream.bin {tag=1,slot,algid,seq,n}+n*{inL,inR,outL,outR} f32; aw_fpd.bin {tag=2,fpdL,fpdR}; aw_galstate.bin 56B/sample"
+  },
+  "wet": {
+    "peak_abs_float": 0.4967659115791321,
+    "sha256": "706d09ebf2a0a3468c150c6573f16a29ad6264826663733f01d7d3f6673d4d56",
+    "wav": "../../aw49-fixtures/temple__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}

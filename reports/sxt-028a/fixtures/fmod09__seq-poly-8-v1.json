@@ -1,0 +1,65 @@
+{
+  "applicability_complete_wet_possible": false,
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "tapped slot-boundary reference of the pinned engine; no fidelity/support/quality claim; complete-wet renders refused (unlanded sibling FX classes)",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.sxt028a-tap.962503f3e",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "fmod09__seq-poly-8-v1",
+  "leaf": "SXT-028a",
+  "neutrality_gate": {
+    "baseline_build": "build-py311 (sxt037-tap tree; FX-path DSP-identical per DR-0005)",
+    "cross_build_baseline_eq": true,
+    "method": "DR-0005 adapted for nondeterministic fixtures: probe carrier (2x bit-identical self-check) with an injected AW49 insert (Modulation 0); taps-on == taps-off; structural side pinned by the sxt028a-tap single-commit diff (DR-0006)",
+    "probe_deterministic_taps_off_x2": true,
+    "probe_taps_on_eq_taps_off": true
+  },
+  "preset": {
+    "aw49_slot": 5,
+    "census_blob_sha1": "76444c0758e7b117cc06598f1b66ed5b99960229",
+    "path": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
+    "slug": "fmod09"
+  },
+  "render": {
+    "block_size": 32,
+    "blocks": 5550,
+    "frames": 177600,
+    "policies": "fixtures/render_fixture.py (reset/scheduling/tail); single render - conditioned-on-tap repeatability class (no 3x gate; cross-instance spread measured in EVIDENCE.md)",
+    "sample_rate": 48000,
+    "settle_blocks": 375,
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tapped_blocks": 5925
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tap_build": "build-py311-aw49",
+  "taps": {
+    "aw_slot_record_counts": {
+      "5-49": 5925
+    },
+    "fpd_records": [
+      [
+        3428730831,
+        3693686200
+      ]
+    ],
+    "galactic_blocks": 5925,
+    "npz": "../../aw49-fixtures/fmod09__seq-poly-8-v1-aw49-taps.npz",
+    "npz_sha256": "436c3a6ad31eae77abc3d0dee0ffbf8c176a9a4f6002ccf50e6b49e2c403d3b7",
+    "record_layout": "aw_iostream.bin {tag=1,slot,algid,seq,n}+n*{inL,inR,outL,outR} f32; aw_fpd.bin {tag=2,fpdL,fpdR}; aw_galstate.bin 56B/sample"
+  },
+  "wet": {
+    "peak_abs_float": 0.8618046045303345,
+    "sha256": "15696785179ba06f09fd3bd9fb5f8210da50da5d110df013989909028e5ce2fe",
+    "wav": "../../aw49-fixtures/fmod09__seq-poly-8-v1-wet.f32.wav"
+  }
+}

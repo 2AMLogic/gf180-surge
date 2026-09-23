@@ -108,7 +108,9 @@ class CaseModel:
     def block(self, idx, in_l, in_r):
         m = self.model
         m.log_ctrl = []
+        start = len(self.log.lines)
         ol, orr = m.process_block(list(in_l), list(in_r))
+        self.block_txns = self.log.lines[start:]
         ck = m.checkpoint()
         line = [f"T {idx}", str(m.counts["M"])]
         for n in ("I", "J", "K", "L", "A", "B", "C", "D", "E", "F", "G", "H"):
@@ -256,12 +258,18 @@ def compare_case(name, model_trace, model_txn, model_mem, workdir, want_mem):
     return res
 
 
-def build_case_stimulus(workdir, ctrl, cases_models, reset_blocks=()):
-    """cases_models: list of CaseModel already run; writes cfg+blocks hex."""
+def build_case_stimulus(workdir, ctrl, cases_models, reset_blocks=(),
+                        ctrl1=None):
+    """cases_models: list of CaseModel already run; writes cfg+blocks hex.
+    ctrl1 (optional) writes a second coefficient plane (words 21..41) for
+    the dual-instance cases."""
     os.makedirs(os.path.join(workdir, "rtl/effects/aw-49/sim"), exist_ok=True)
     os.makedirs(os.path.join(workdir, "out/aw-49/rtl"), exist_ok=True)
+    words_cfg = coefficient_words(ctrl)
+    if ctrl1 is not None:
+        words_cfg += coefficient_words(ctrl1)[1:]
     write_hex_words(os.path.join(workdir, "rtl/effects/aw-49/sim/cfg.hex"),
-                    coefficient_words(ctrl))
+                    words_cfg)
     words = [sum(len(cm.stim) for cm in cases_models)]
     for cm in cases_models:
         for (hdr, stim) in cm.stim:
@@ -288,31 +296,44 @@ def main():
                             dir="/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode")
 
     def emit(case_name, ctrl, blocks, reset_before=(), want_mem=False,
-             core_src="galactic_core.sv", note=""):
+             core_src="galactic_core.sv", note="", ctrl1=None):
         """blocks: list of (instance, in_l, in_r); vib stream per instance
         supplied via ctrl binding in the closure."""
         cases_models = {0: CaseModel(ctrl0, vib=vib0, mem_base=0),
                         1: CaseModel(ctrl1, vib=vib1, mem_base=gm.EXT_WORDS)}
         trace = []
-        stim = []
+        model_txns = []
+        stim_words = [len(blocks)]   # chronological stimulus (file order =
+                                     # execution order)
         for bi, (inst, il, ir) in enumerate(blocks):
             cm = cases_models[inst]
             if bi in reset_before:
                 for c in cases_models.values():
                     c.model.reset()
                 cm.log.reset_marker()
+                model_txns.append("X RESET")
             hdr = (bi & 0xFFFF)
             if inst:
                 hdr |= 1 << 30
             if bi in reset_before:
                 hdr |= 1 << 31
             sw, _ = cm.block(bi, il, ir)
-            cm.stim.append((hdr, sw))
+            stim_words.append(hdr)
+            stim_words += sw
             trace.extend(cm.trace)
             cm.trace = []
+            model_txns.extend(cm.block_txns)
         wd = os.path.join(base, case_name.replace("/", "_"))
         trace = [f"R {int(gm.frozen_revision()[:8], 16)}\n"] + trace
-        build_case_stimulus(wd, ctrl, list(cases_models.values()))
+        os.makedirs(os.path.join(wd, "rtl/effects/aw-49/sim"), exist_ok=True)
+        os.makedirs(os.path.join(wd, "out/aw-49/rtl"), exist_ok=True)
+        words_cfg = coefficient_words(ctrl)
+        if ctrl1 is not None:
+            words_cfg += coefficient_words(ctrl1)[1:]
+        write_hex_words(os.path.join(wd, "rtl/effects/aw-49/sim/cfg.hex"),
+                        words_cfg)
+        write_hex_words(os.path.join(wd, "rtl/effects/aw-49/sim/blocks.hex"),
+                        stim_words)
         model_mem = None
         if want_mem:
             m = cases_models[0].model
@@ -321,8 +342,7 @@ def main():
         run_iverilog(wd, os.path.join(RTL_DIR, core_src),
                      os.path.join(RTL_DIR, "tb_galactic.sv"))
         res = compare_case(case_name, "".join(trace),
-                           sum((cm.log.lines for cm in cases_models.values()), []),
-                           model_mem, wd, want_mem)
+                           model_txns, model_mem, wd, want_mem)
         res["note"] = note
         return res
 
@@ -355,7 +375,8 @@ def main():
                  "e": 1.0}, {"fpdL": 0, "fpdR": 0})
             vib0 = tapped
             ctrl0 = ctrl_t
-            blocks = [(0, gal_in[b, :, 0], gal_in[b, :, 1])
+            blocks = [(0, [gm.f32_to_s32i(x) for x in gal_in[b, :, 0]],
+                       [gm.f32_to_s32i(x) for x in gal_in[b, :, 1]])
                       for b in range(512)]
             res = emit("canonical-temple-512b", ctrl_t, blocks, want_mem=True,
                        note="first 512 tapped blocks of the temple fixture "
@@ -373,7 +394,7 @@ def main():
                 blocks.append((b % 2,
                                (il if b % 2 == 0 else il2)[b*32:(b+1)*32],
                                (ir if b % 2 == 0 else ir2)[b*32:(b+1)*32]))
-            res = emit("dual-instance-64b", ctrl0, blocks,
+            res = emit("dual-instance-64b", ctrl0, blocks, ctrl1=ctrl1,
                        note="instances 0/1 alternate blocks; disjoint "
                             "regions; per-instance equality enforced")
             results["cases"].append(res)
