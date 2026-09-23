@@ -1,0 +1,102 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": true,
+    "delay_sibling_landed_fail": false,
+    "note": "complete-wet refused fail-closed when any active slot needs an unlanded class; refusal retained as evidence",
+    "unlanded_classes": []
+  },
+  "census_blob_sha1": "6febbaccecf81ffe4ba27debdba0290c40e5eb07",
+  "chain": {
+    "ains": [],
+    "globals": [
+      {
+        "params": {
+          "highcut_deactivated_raw": null,
+          "lowcut_deactivated_raw": null,
+          "params": {
+            "damping": 0.2839289903640747,
+            "decaytime": 1.4241080284118652,
+            "freq1": 13.237525939941406,
+            "gain1": -6.8571319580078125,
+            "highcut": 49.124977111816406,
+            "lowcut": -13.087516784667969,
+            "mix": 0.19910700619220734,
+            "predelay": -8.0,
+            "roomsize": 0.6232119798660278,
+            "shape": 2.0,
+            "width": 0.0
+          },
+          "return_f": 1.0
+        },
+        "role": "global1",
+        "slot": 6,
+        "type": "reverb1"
+      },
+      {
+        "params": {
+          "depth_f": 0.17142799496650696,
+          "feedback_f": 0.8660709857940674,
+          "highcut_deactivated": false,
+          "highcut_f": 21.112472534179688,
+          "lowcut_deactivated": false,
+          "lowcut_f": -42.112518310546875,
+          "mix_f": 0.19642800092697144,
+          "rate_f": 9.0,
+          "time_f": -3.0,
+          "ts_flags": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "ts_rate": false,
+          "ts_ratio": 1.0,
+          "ts_ratio_mod": 1.0,
+          "ts_time": false,
+          "width_f": 0.0
+        },
+        "role": "global2",
+        "slot": 7,
+        "type": "chorus"
+      }
+    ],
+    "sends": []
+  },
+  "chorus_slots": [
+    7
+  ],
+  "drifts_asserted_zero": [
+    0.0
+  ],
+  "extraction": {
+    "deactivated_source": "raw fxp XML attribute + documented loader migration (rev<=15 chorus lowcut/highcut); no surgepy getter",
+    "mod_routes": "graphs.jsonl md rows screened; any FX-destination route refuses extraction (fail-closed)",
+    "observable_flags": "temposync via surgepy getters, cross-checked against raw XML fail-closed",
+    "tempo_source": "raw <tempoOnSave v=..> applied by loadPatch (surgepy.cpp loadPatch -> time_data.tempo)"
+  },
+  "graphs_sha256_prefix": "6febbaccecf81ffe",
+  "leaf": "SXT-028c",
+  "path": "resources/data/patches_3rdparty/Giana Brotherz/FX/Alien Appears.fxp",
+  "rev": 9,
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "alienappears",
+  "tempo_bpm": 120.0,
+  "tempo_source": "engine default 120",
+  "volume_f": -2.025745391845703
+}
