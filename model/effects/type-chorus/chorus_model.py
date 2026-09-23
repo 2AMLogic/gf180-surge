@@ -374,12 +374,13 @@ class ChorusModel:
         self._control_init()
         self.initialized = True
 
-    def process_block(self, in_l, in_r, tap_hook=None):
+    def process_block(self, in_l, in_r, tap_hook=None, wet_hook=None):
         """One 32-sample block (ChorusEffect process). in/out Q10.21 lists.
 
         tap_hook(k, [(i_dtime, phase, rp) per voice]) is called per sample
-        when set (RTL tap-interpolation checkpoint capture; observation
-        only, no arithmetic effect).
+        when set (RTL tap-interpolation checkpoint capture). wet_hook(tb_l,
+        tb_r) is called once after the voice-sum loop and before the
+        lp/hp filters (observation only; neither hook affects arithmetic).
         """
         st = self.st
         if not self.initialized:
@@ -417,6 +418,9 @@ class ChorusModel:
                 tap_hook(k, taps)
             tb_l[k] = sat((acc_l + HALF_AC) >> SINC_SHIFT, A_FMT)
             tb_r[k] = sat((acc_r + HALF_AC) >> SINC_SHIFT, A_FMT)
+
+        if wet_hook is not None:
+            wet_hook(tb_l, tb_r)
 
         # highcut gate -> lp, then lowcut gate -> hp (process order)
         if ctrl["lp_on"]:
