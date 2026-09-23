@@ -126,7 +126,7 @@ module tb_chorus;
     reg [31:0] sinc [0:3083];
     reg [31:0] initwords [0:5];
 
-    integer b, k, j, j2, t_, chk;
+    integer b, k, j, j2, ii, t_, chk;
     integer i_dt, ph, rp, base, vo, acc_l, acc_r, w0, rd, fbk;
     integer tmp, tmp2, ss;
 
@@ -534,27 +534,27 @@ module tb_chorus;
                           (b == N_BLOCKS - 1) ||
                           ((b >= RENDER0) && (((b - RENDER0) % 16) == 0));
             // control words: NINST per block
-            for (j = 0; j < NINST; j = j + 1)
-                apply_ctrl(j, fct);
+            for (ii = 0; ii < NINST; ii = ii + 1)
+                apply_ctrl(ii, fct);
             // input words: NINST x (32 L then 32 R) per block
-            for (j = 0; j < NINST; j = j + 1) begin
+            for (ii = 0; ii < NINST; ii = ii + 1) begin
                 for (k = 0; k < 32; k = k + 1) begin
-                    rd64(fin, v64); ilw[j][k] = $signed(v64[31:0]);
+                    rd64(fin, v64); ilw[ii][k] = $signed(v64[31:0]);
                 end
                 for (k = 0; k < 32; k = k + 1) begin
-                    rd64(fin, v64); irw[j][k] = $signed(v64[31:0]);
+                    rd64(fin, v64); irw[ii][k] = $signed(v64[31:0]);
                 end
             end
-            for (j = 0; j < NINST; j = j + 1) begin
-                chorus_block(j);
+            for (ii = 0; ii < NINST; ii = ii + 1) begin
+                chorus_block(ii);
                 if (b >= RENDER0) begin
-                    $fwrite(fd, "O %0d %0d", b, j);
+                    $fwrite(fd, "O %0d %0d", b, ii);
                     for (k = 0; k < 32; k = k + 1) $fwrite(fd, " %0d", out_l[k]);
                     for (k = 0; k < 32; k = k + 1) $fwrite(fd, " %0d", out_r[k]);
                     $fwrite(fd, "\n");
                 end
                 if (tap_capture != 0) begin
-                    $fwrite(fd, "X %0d %0d", b, j);
+                    $fwrite(fd, "X %0d %0d", b, ii);
                     for (k = 0; k < 4; k = k + 1)
                         for (j2 = 0; j2 < 4; j2 = j2 + 1)
                             $fwrite(fd, " %0d %0d %0d", xt[k][j2][0], xt[k][j2][1], xt[k][j2][2]);
