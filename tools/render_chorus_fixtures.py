@@ -10,7 +10,13 @@ Carriers (deterministic full-chain-feasible chorus presets; see
 reports/SXT-028c/EVIDENCE.md section 1):
   fmcombo   factory Basses/FM Combo.fxp    (eq ains1 + chorus ains2)
   fmtwang2  Luna/MPE/FM Twang 2.fxp        (chorus-only ains1)
-  melon     factory Polysynths/Melon.fxp   (eq ains1 + chorus send1)
+  dronebee  Dan Maurer/Pads/Drone Bee.fxp  (chorus global1 -> reverb1 global2;
+            preset disables its unused scene-B eq slot; dual scene mode)
+
+Melon (eq ains1 + chorus send1) passed the graphs-based determinism screen
+but FAILED the 3x render determinism gate empirically (engine-level
+nondeterminism the normalized graph does not expose); it is REFUSED and
+never committed — refusal recorded in EVIDENCE.md section 1.
 
 The issue-named presets (Novuo, Ancient FM, Piercing) are REFUSED before
 render (extraction refusals; unlanded sibling classes / drift != 0) and are
@@ -36,8 +42,7 @@ import render_fx_fixtures as rfx  # noqa: E402  (SXT-023 policies inherited)
 PRESETS = {
     "fmcombo": "resources/data/patches_factory/Basses/FM Combo.fxp",
     "fmtwang2": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
-    "melon": "resources/data/patches_factory/Polysynths/Melon.fxp",
-    "scary": "resources/data/patches_3rdparty/Rozzer/FX/OOOOOoooooh Scary.....fxp",
+    "dronebee": "resources/data/patches_3rdparty/Dan Maurer/Pads/Drone Bee.fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 
