@@ -95,3 +95,25 @@ $ python3 tools/compare_rtl_model.py --run-dir <uni2-cov run> \
     --tb rtl/voice/voice_broken_mutant.sv
 verdict: FAIL, 98 mismatches (nc5-exactness.json)
 outcome: the SXT-022 control remains live on the unison-extended tb. PASS.
+
+==============================================================================
+POST-REBASE RERUN (merged state: branch rebased onto main 1800409, which
+landed SXT-026a/#86, SXT-033/#87, SXT-035/#89, SXT-028a/#90) — 2026-09-23
+==============================================================================
+All five controls re-executed on the merged model+RTL (pinned-oracle host):
+
+  NC-1 unison-collapsed .... FAIL against proposed budgets
+       (max 11,743 LSB | corr 0.955359… — identical to the record above
+        modulo float-ULP noise in the spectral metric, <=1e-15 rel)
+  NC-2 detune-zeroed ....... FAIL against proposed budgets
+       (max 12,717 LSB | corr 0.967577… — same ULP note)
+  NC-3 beyond-cap uni=17 ... exit 1, "unison 17 outside 1..MAX_UNISON(16):
+       explicitly rejected (no clamp)", no model.wav emitted
+  NC-4 voice-count mutant .. FAIL, 105 mismatches, first failure identical
+       ("block 0 sample 0: mono model=-4 rtl=-2"); fields/checkpoint +2 for
+       the merged T-line (SXT-026a f4_r0/f4_r1)
+  NC-5 rounding mutant ..... FAIL, 98 mismatches
+
+The mutants were regenerated from the composed testbench (post-rebase cfg
+layout: unison words 78..127, draw table 128+); the mutations are unchanged
+single-line deltas verified by diff.

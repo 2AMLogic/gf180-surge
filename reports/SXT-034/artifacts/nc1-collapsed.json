@@ -8,7 +8,7 @@
   "rms_diff_at_shift0_lsb": 1915.9373442354056,
   "best_shift": -6,
   "rms_diff_at_best_shift_lsb": 1897.9326831172918,
-  "spectral_corr": 0.9553593818050103,
+  "spectral_corr": 0.9553593818050101,
   "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,

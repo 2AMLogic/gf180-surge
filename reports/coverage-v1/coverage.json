@@ -166,11 +166,11 @@
   },
   "reports/SXT-034/EVIDENCE.md": {
    "role": "evidence record for leaf voice:unison-stack",
-   "sha256": "7e062e04e7a3afcdd7f205eeb41e1bc733af5e9b7a98cee3103a045586b0526f"
+   "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "8a9592db78b51e43b532b79182118a6934177153c61b8fa5d8fb16518a835bba"
+   "sha256": "c52030a824ef9be984327238ba3ac05fcf4aa05854ae033087419b9410ec26e6"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",

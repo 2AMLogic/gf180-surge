@@ -315,7 +315,7 @@
       "evidence": [
         {
           "path": "reports/SXT-034/EVIDENCE.md",
-          "sha256": "7e062e04e7a3afcdd7f205eeb41e1bc733af5e9b7a98cee3103a045586b0526f"
+          "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
         }
       ],
       "fixture_verified_paths": [

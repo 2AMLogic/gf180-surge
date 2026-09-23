@@ -248,3 +248,66 @@ numeric tables are the SXT-022 ones (provenance there) — no new third-party
 constants were adopted, so no new license decision record is required.
 Reference WAVs in `artifacts/` are this project's own renders under the
 declared test configuration, not redistributed upstream content.
+
+## 10. Post-rebase re-verification on the merged tree (2026-09-23)
+
+The branch was rebased onto main `1800409` — which landed SXT-026a/voice
+generality (#86), SXT-033/classic slice (#87), SXT-035/modwheel (#89) and
+SXT-028a/Galactic (#90) after this leaf's original rebase — and the merged
+model+RTL (a new frozen artifact) was re-evidenced end-to-end. The semantic
+overlap resolutions are freeze-doc decisions recorded in
+`model/voice/README.md` §"Composition with SXT-026a (voice generality) and
+SXT-033 (classic slice) on the merged model" (per-voice `t`/`t_inv` vs the
+SXT-033 sync machine = same freeze decision under the sync≠0 refusal;
+drift refused at 0 on all sides; the SXT-033 12000× pitch-helper finding is
+LIVE at uni>1, kept un-absorbed and co-routed to #12; the merged init-word
+map: v1 0..39, SXT-026a appendix 40..77, SXT-034 unison appendix 78..127,
+draw table 128+, ctrl word 31 = draw_set_index).
+
+All numbers below were regenerated on the pinned-oracle host against the
+MERGED tree (head `18f5c58` at rerun time); committed artifacts were
+replaced where counts changed and left untouched where identical:
+
+* **uni=1 byte-identity holds**: the merged model render of
+  `seq-notes-repeated-v1` is still sha256
+  `6a73bb9adeb81602b3d25829319a8d29839e1f8ec24705ae152bdb225b097f6d`
+  (identical to the SXT-022 artifact), re-verified after the final merge
+  fix. Mechanism unchanged: `out_attenuation = 1.0` exactly, detune 0,
+  inert fractional term.
+* **Six-fixture RTL==model exactness: PASS, 0 mismatches** on the merged
+  tb/model (`artifacts/exactness-*.json`, updated). Per-checkpoint state
+  fields increased by exactly +2 (the SXT-026a `f4_r0`/`f4_r1` T-line
+  fields) — e.g. uni1-regress 13,299 → 14,105 = 403 checkpoints × 2;
+  checkpoints/osc/mono counts unchanged.
+* **References unchanged**: all five retrigger reference renders re-rendered
+  bit-identically ×3 (`render_sha256` arrays equal to the committed record
+  — e.g. uni1 `fe383e58…`, uni2-cov `67623e48…`); the pinned engine is
+  untouched by the merge.
+* **Budget metrics reproduce exactly** (max_abs / corr / best_shift
+  identical to §4 on all five fixtures; rms equal to float precision).
+  uni1 passes all proposals; uni>1 misses stand as recorded — the §4
+  bounded finding is unchanged and now ALSO names the SXT-033 pitch-helper
+  finding as a candidate contributor (README composition §3).
+* **Negative controls NC-1..5 reproduce** (`artifacts/negative-control.txt`
+  post-rebase appendix): FAIL / FAIL / exit-1 / 105 / 98.
+* **Full pytest on the merged tree: 131 passed, 12 skipped, 0 failed**
+  (`ORACLE_SURGE_DIR` set; skips are main-inherited optional-oracle gates —
+  the one suite regression found during the rebase, an `InputsV2.__init__`
+  body accidentally nested under a helper method, was fixed in-commit and
+  is covered by the SXT-026a suite).
+* **Coverage rerun**: `publish_coverage.py` regenerates the committed
+  `per-preset.csv` + `coverage.json` byte-for-byte; headline statuses
+  unchanged; **0 presets supported** (supported_set count 0, note
+  unchanged).
+* **#67/SXT-033 evidence intact on the merged model**: `tools/run_sxt033_checks.py`
+  → **OVERALL PASS** (classic RTL-vs-model exactness PASS; rounding-style
+  mutant FAILs as required; submode-confusion NCs FAIL as required;
+  out-of-class extraction REFUSED; budget matrix regenerated from committed
+  renders agreeing with the committed JSONs to float-ULP noise ≤1e-15 in
+  `spectral_corr` — committed files left untouched).
+
+The merged-state claims remain exactly the two of §"Claim discipline": RTL
+matches the frozen unison model exactly; model-vs-reference numbers are
+recorded against [PROPOSED] budgets with bounded misses. No fidelity
+verdict, no preset-support claim, no synthesis/hardware claim is added by
+the rebase.

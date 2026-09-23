@@ -3,7 +3,7 @@
   "verdict": "FAIL",
   "checked": {
     "checkpoints": 1,
-    "fields": 39,
+    "fields": 41,
     "oscout": 64,
     "mono": 32
   },

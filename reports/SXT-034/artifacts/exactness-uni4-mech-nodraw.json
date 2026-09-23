@@ -3,7 +3,7 @@
   "verdict": "PASS",
   "checked": {
     "checkpoints": 104,
-    "fields": 5304,
+    "fields": 5512,
     "oscout": 6656,
     "mono": 28800
   },
