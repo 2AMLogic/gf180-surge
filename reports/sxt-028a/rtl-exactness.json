@@ -1,0 +1,91 @@
+{
+  "cases": [
+    {
+      "blocks": 128,
+      "case": "prs-128b-smoke",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": true,
+      "ext_mem_exact": true,
+      "note": "deterministic PRS input, synthetic vibrato control stream, full 2x EXT memory image compared",
+      "outputs_exact": true,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 114688,
+        "words_per_frame": 1728,
+        "writes": 106496
+      },
+      "txn_lines_rtl": 221184,
+      "txn_log_exact": true,
+      "txn_log_sha256": {
+        "model": "6dee98c6b6f765e1098ff83d640bb332dfe277f2a6509b63467a7e3dededb420",
+        "rtl": "6dee98c6b6f765e1098ff83d640bb332dfe277f2a6509b63467a7e3dededb420"
+      }
+    }
+  ],
+  "claim": "RTL-vs-frozen-model EXACT",
+  "issue": "SXT-028a",
+  "iverilog": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "model_frozen_revision": "569bff13caa7dad88d88cd185bfb024974b2fc3ec7566d5b7840dd828ca5c0cd",
+  "mutant_controls": [
+    {
+      "blocks": 256,
+      "case": "mutant-regen-halved",
+      "checkpoints_exact": true,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": false,
+      "ext_mem_exact": null,
+      "injected_defect": "feedback regen coefficient halved in the RTL",
+      "outputs_exact": true,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 229376,
+        "words_per_frame": 1728,
+        "writes": 212992
+      },
+      "txn_lines_rtl": 442368,
+      "txn_log_exact": false,
+      "txn_log_sha256": {
+        "model": "0f14c981ea532a6552216d1b11e6b627ad5faa9d25fc0a1fabc11855b14e2d74",
+        "rtl": "b7ce85f66f8ad8cc043d8f384ff37f2d780b65982cb10b78175ec69de414c13c"
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the exactness comparison)"
+    },
+    {
+      "blocks": 64,
+      "case": "mutant-shared-memory-dual",
+      "checkpoints_exact": false,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": false,
+      "ext_mem_exact": null,
+      "injected_defect": "mem_base dropped: both instances pool one delay-memory region (shared state)",
+      "outputs_exact": false,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 57344,
+        "words_per_frame": 1728,
+        "writes": 53248
+      },
+      "txn_lines_rtl": 110592,
+      "txn_log_exact": false,
+      "txn_log_sha256": {
+        "model": "736dd9c650742722f773f44be91767da1bf6e58a00be8f3fc05f4b5e4bf6cfb6",
+        "rtl": "2b33730226fc776ee5b467b5b2400f7016340521e103a72790096fe7aec8385d"
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the dual-instance comparison)"
+    }
+  ],
+  "status": "PASS"
+}

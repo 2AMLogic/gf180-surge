@@ -42,6 +42,8 @@ module galactic_core (
   localparam int W_A = 9700, W_B = 6000, W_C = 2320, W_D = 940;
   localparam int W_E = 15220, W_F = 8460, W_G = 4540, W_H = 3200;
   localparam int AM = 257;
+  // layout mirrors the model: all 12 L lines, all 12 R lines, then the two
+  // vibrato lines (aML, aMR) - instance-relative, model REGIONS table order
   localparam int unsigned R_I  = 0;
   localparam int unsigned R_J  = R_I + W_I;
   localparam int unsigned R_K  = R_J + W_J;
@@ -54,7 +56,19 @@ module galactic_core (
   localparam int unsigned R_F  = R_E + W_E;
   localparam int unsigned R_G  = R_F + W_F;
   localparam int unsigned R_H  = R_G + W_G;
-  localparam int unsigned R_ML = R_H + W_H;
+  localparam int unsigned R_IR = R_H + W_H;
+  localparam int unsigned R_JR = R_IR + W_I;
+  localparam int unsigned R_KR = R_JR + W_J;
+  localparam int unsigned R_LR = R_KR + W_K;
+  localparam int unsigned R_AR = R_LR + W_L;
+  localparam int unsigned R_BR = R_AR + W_A;
+  localparam int unsigned R_CR = R_BR + W_B;
+  localparam int unsigned R_DR = R_CR + W_C;
+  localparam int unsigned R_ER = R_DR + W_D;
+  localparam int unsigned R_FR = R_ER + W_E;
+  localparam int unsigned R_GR = R_FR + W_F;
+  localparam int unsigned R_HR = R_GR + W_G;
+  localparam int unsigned R_ML = R_HR + W_H;
   localparam int unsigned R_MR = R_ML + AM;
   function automatic int unsigned DELAYS(input int n);
     case (n)
@@ -131,11 +145,15 @@ module galactic_core (
     rndsat32 = sat32(r);
   endfunction
 
-  // vibrato read index: (countM + base [+1]) mod 257
+  // vibrato read index: the model advances countM BEFORE the reads, so the
+  // base pointer is the wrapped (countM + 1); reads are (cm + base [+1])
+  // with the pinned conditional 257 wrap.
   function automatic logic [31:0] vib_idx(input int which);
     logic [31:0] base;
-    if (which < 2) base = 32'(countM) + 32'(ctrl[4*k]);
-    else           base = 32'(countM) + 32'(ctrl[4*k + 2]);
+    logic [31:0] cm;
+    cm = (countM + 1 > 32'd256) ? 32'd0 : countM + 1;
+    if (which < 2) base = cm + 32'(ctrl[4*k]);
+    else           base = cm + 32'(ctrl[4*k + 2]);
     if (which == 1 || which == 3) base = base + 1;
     if (base > 32'd256) base = base - 32'd257;
     return base;
@@ -155,27 +173,29 @@ module galactic_core (
       6: begin x = v_r; fb = fb_cl; end
       7: begin x = v_r; fb = fb_dl; end
     endcase
-    return rndsat32(128'(x) + ((128'(fb) * cfg_regen + (128'sd1 <<< 30)) >>> 31), 25);
+    // pinned: inputSample + feedback*regen -- the product rounds to Q6.25,
+    // the sum only saturates (no second rounding)
+    return sat32(128'(x) + ((128'(fb) * cfg_regen + (128'sd1 <<< 30)) >>> 31));
   endfunction
 
   function automatic int unsigned s1_region(input logic [2:0] n);
     case (n)
       0: return R_I; 1: return R_J; 2: return R_K; 3: return R_L;
-      4: return R_I; 5: return R_J; 6: return R_K; 7: return R_L;
+      4: return R_IR; 5: return R_JR; 6: return R_KR; 7: return R_LR;
     endcase
     return 0;
   endfunction
   function automatic int unsigned s2_region(input logic [2:0] n);
     case (n)
       0: return R_A; 1: return R_B; 2: return R_C; 3: return R_D;
-      4: return R_A; 5: return R_B; 6: return R_C; 7: return R_D;
+      4: return R_AR; 5: return R_BR; 6: return R_CR; 7: return R_DR;
     endcase
     return 0;
   endfunction
   function automatic int unsigned s3_region(input logic [2:0] n);
     case (n)
       0: return R_E; 1: return R_F; 2: return R_G; 3: return R_H;
-      4: return R_E; 5: return R_F; 6: return R_G; 7: return R_H;
+      4: return R_ER; 5: return R_FR; 6: return R_GR; 7: return R_HR;
     endcase
     return 0;
   endfunction
@@ -194,7 +214,7 @@ module galactic_core (
         3: return sat32(128'(o_l_l) - (o_i_l + o_j_l + o_k_l));
       endcase
     end else begin
-      case (n)
+      case (n[1:0])
         0: return sat32(128'(o_i_r) - (o_j_r + o_k_r + o_l_r));
         1: return sat32(128'(o_j_r) - (o_i_r + o_k_r + o_l_r));
         2: return sat32(128'(o_k_r) - (o_i_r + o_j_r + o_l_r));
@@ -214,7 +234,7 @@ module galactic_core (
         3: return sat32(128'(o_d_l) - (o_a_l + o_b_l + o_c_l));
       endcase
     end else begin
-      case (n)
+      case (n[1:0])
         0: return sat32(128'(o_a_r) - (o_b_r + o_c_r + o_d_r));
         1: return sat32(128'(o_b_r) - (o_a_r + o_c_r + o_d_r));
         2: return sat32(128'(o_c_r) - (o_a_r + o_b_r + o_d_r));
@@ -317,23 +337,32 @@ module galactic_core (
           // four reads: aML[i0], aML[i0+1] -> v_l; aMR[j0], aMR[j0+1] -> v_r
           // one-rounding interpolation: rnd25(a0*w1 + a1*fracq)
           if (ln == 1) begin
-            v_l <= rndsat32(128'(vib_prev) * ((32'sd1 <<< 31) - ctrl[4*k + 1])
-                            + 128'(em_rdata) * ctrl[4*k + 1], 31);
+            // one-rounding interp: rnd25(a0*(2^31 - fracq) + a1*fracq);
+            // the 2^31 complement is computed in the 128-bit domain (it
+            // overflows signed-32 when fracq = 0)
+            v_l <= rndsat32(128'(vib_prev) * ((128'sd1 <<< 31) - 128'(ctrl[4*k + 1]))
+                            + 128'(em_rdata) * 128'(ctrl[4*k + 1]), 31);
           end
           if (ln == 3) begin
-            v_r <= rndsat32(128'(vib_prev) * ((32'sd1 <<< 31) - ctrl[4*k + 3])
-                            + 128'(em_rdata) * ctrl[4*k + 3], 31);
+            v_r <= rndsat32(128'(vib_prev) * ((128'sd1 <<< 31) - 128'(ctrl[4*k + 3]))
+                            + 128'(em_rdata) * 128'(ctrl[4*k + 3]), 31);
             ln <= 0; st <= S_IIRA;
           end else ln <= ln + 1;
           vib_prev <= em_rdata;
         end
 
         S_IIRA: begin
-          // input one-pole (both channels)
-          iir_a_l <= rndsat32(128'(iir_a_l) * cfg_lowpass_m1
-                              + 128'(v_l) * cfg_lowpass, 31);
-          iir_a_r <= rndsat32(128'(iir_a_r) * cfg_lowpass_m1
-                              + 128'(v_r) * cfg_lowpass, 31);
+          // input one-pole (both channels); the filtered value REPLACES the
+          // sample value (pinned: inputSample = iirAL after the filter)
+          begin
+            logic signed [31:0] tl, tr;
+            tl = rndsat32(128'(iir_a_l) * cfg_lowpass_m1
+                          + 128'(v_l) * cfg_lowpass, 31);
+            tr = rndsat32(128'(iir_a_r) * cfg_lowpass_m1
+                          + 128'(v_r) * cfg_lowpass, 31);
+            iir_a_l <= tl; iir_a_r <= tr;
+            v_l <= tl; v_r <= tr;
+          end
           st <= S_S1WR; ln <= 0;
         end
 
@@ -343,15 +372,14 @@ module galactic_core (
         end
 
         S_S1ADV: begin
-          // four shared counters advance one per cycle
+          // counters advance one per cycle; the read index is captured in
+          // the SAME cycle (post-advance value)
           counts[{2'b00, ln[1:0]}] <= advance(counts[{2'b00, ln[1:0]}],
-                                              32'(DELAYS({2'b00, ln[1:0]})));
+                                              32'(cfg_delay[{2'b00, ln[1:0]}]));
+          adv_idx[ln[1:0]] <= advance(counts[{2'b00, ln[1:0]}],
+                                      32'(cfg_delay[{2'b00, ln[1:0]}]));
           if (ln == 3) begin
             ln <= 0; st <= S_S1RD;
-            adv_idx[0] <= advance(counts[0], 32'(cfg_delay[0]));
-            adv_idx[1] <= advance(counts[1], 32'(cfg_delay[1]));
-            adv_idx[2] <= advance(counts[2], 32'(cfg_delay[2]));
-            adv_idx[3] <= advance(counts[3], 32'(cfg_delay[3]));
           end else ln <= ln + 1;
         end
 
@@ -377,13 +405,11 @@ module galactic_core (
 
         S_S2ADV: begin
           counts[{2'b01, ln[1:0]}] <= advance(counts[{2'b01, ln[1:0]}],
-                                              32'(DELAYS({2'b01, ln[1:0]})));
+                                              32'(cfg_delay[{2'b01, ln[1:0]}]));
+          adv_idx[ln[1:0]] <= advance(counts[{2'b01, ln[1:0]}],
+                                      32'(cfg_delay[{2'b01, ln[1:0]}]));
           if (ln == 3) begin
             ln <= 0; st <= S_S2RD;
-            adv_idx[0] <= advance(counts[4], 32'(cfg_delay[4]));
-            adv_idx[1] <= advance(counts[5], 32'(cfg_delay[5]));
-            adv_idx[2] <= advance(counts[6], 32'(cfg_delay[6]));
-            adv_idx[3] <= advance(counts[7], 32'(cfg_delay[7]));
           end else ln <= ln + 1;
         end
 
@@ -409,13 +435,11 @@ module galactic_core (
 
         S_S3ADV: begin
           counts[{2'b10, ln[1:0]}] <= advance(counts[{2'b10, ln[1:0]}],
-                                              32'(DELAYS({2'b10, ln[1:0]})));
+                                              32'(cfg_delay[{2'b10, ln[1:0]}]));
+          adv_idx[ln[1:0]] <= advance(counts[{2'b10, ln[1:0]}],
+                                      32'(cfg_delay[{2'b10, ln[1:0]}]));
           if (ln == 3) begin
             ln <= 0; st <= S_S3RD;
-            adv_idx[0] <= advance(counts[8],  32'(cfg_delay[8]));
-            adv_idx[1] <= advance(counts[9],  32'(cfg_delay[9]));
-            adv_idx[2] <= advance(counts[10], 32'(cfg_delay[10]));
-            adv_idx[3] <= advance(counts[11], 32'(cfg_delay[11]));
           end else ln <= ln + 1;
         end
 

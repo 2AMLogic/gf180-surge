@@ -58,12 +58,12 @@ class ExtLog:
         self.lines = []
 
     def read(self, addr):
-        v = self.model._ext(addr)
+        v = self.model.mem[addr - self.model.mem_base]
         self.lines.append(f"R {addr} {v}")
         return v
 
     def write(self, addr, val):
-        self.model._ext(addr, val)
+        self.model.mem[addr - self.model.mem_base] = val
         self.lines.append(f"W {addr} {val}")
 
     def reset_marker(self):
@@ -110,8 +110,7 @@ class CaseModel:
         m.log_ctrl = []
         ol, orr = m.process_block(list(in_l), list(in_r))
         ck = m.checkpoint()
-        line = [f"T {idx} {ck['counts']['M'] if 'M' in ck['counts'] else m.counts['M']}"]
-        line.append(str(ck["counts"]["M"]))
+        line = [f"T {idx}", str(m.counts["M"])]
         for n in ("I", "J", "K", "L", "A", "B", "C", "D", "E", "F", "G", "H"):
             line.append(str(ck["counts"][n]))
         line += [str(ck["iir_a"]["L"]), str(ck["iir_a"]["R"]),
@@ -398,17 +397,15 @@ def main():
         needle = "128'(fb) * cfg_regen"
         assert needle in src
         open(mut, "w").write(src.replace(needle, "128'(fb) * (cfg_regen >>> 1)"))
-        il, ir = prs_blocks(64)
-        blocks = [(0, il[b*32:(b+1)*32], ir[b*32:(b+1)*32]) for b in range(64)]
-        res = emit("mutant-regen-halved", ctrl0, blocks, core_src="galactic_core.sv") \
-            if False else None
-        # run mutant against the SAME model trace with the mutant core
+        il, ir = prs_blocks(256)   # long enough for the feedback loop to
+        # populate (earliest 3-stage path ~4470 samples at size 1.87), so the
+        # halved regen coefficient is actually exercised
         wd = os.path.join(base, "mutant-regen")
         cases_models = {0: CaseModel(ctrl0, vib=gm.VibratoStream(ctrl0), mem_base=0),
                         1: CaseModel(ctrl1, vib=gm.VibratoStream(ctrl1), mem_base=gm.EXT_WORDS)}
         trace = []
-        words = [64]
-        for b in range(64):
+        words = [256]
+        for b in range(256):
             sw, _ = cases_models[0].block(b, il[b*32:(b+1)*32], ir[b*32:(b+1)*32])
             trace.extend(cases_models[0].trace)
             cases_models[0].trace = []
@@ -431,6 +428,7 @@ def main():
         print(f"mutant-regen-halved: {mres['verdict']}")
 
         # ---- Mutant 2: shared memory (mem_base dropped -> pooled regions)
+        il2, ir2 = prs_blocks(64, seed=888, scale=(1 << 20))
         mut2 = os.path.join(base, "galactic_shared_mutant.sv")
         src = open(os.path.join(RTL_DIR, "galactic_core.sv")).read()
         assert "mem_base + " in src
