@@ -1,0 +1,67 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012/023 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+      "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+      "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "44c673ea0c5c1f5f503cc9805bff30f6589ed98d9e08084df50cda145648c7bb",
+      "44c673ea0c5c1f5f503cc9805bff30f6589ed98d9e08084df50cda145648c7bb",
+      "44c673ea0c5c1f5f503cc9805bff30f6589ed98d9e08084df50cda145648c7bb"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 1420844,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.32341471314430237,
+    "sha256": "5405297df3f01786073cffc5f16f64d0fe19240d66ca028908a56743c2462a6b",
+    "wav": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "fmcombo__seq-poly-8-v1",
+  "issue": "SXT-028c",
+  "preset": {
+    "census_blob_sha1": "b50a36498d699f8ec409b7a5623ff516954cd242",
+    "graphs_sha256_prefix": "b50a36498d699f8e",
+    "path": "resources/data/patches_factory/Basses/FM Combo.fxp",
+    "slug": "fmcombo"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 3.7,
+    "frames": 177600,
+    "policies_inherited": "fixtures/render_fixture.py via tools/render_fx_fixtures.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 1420844,
+    "peak_abs_float": 0.24589699506759644,
+    "sha256": "f1b6a0506c98444da021721f50adcac922120894e9b1ec67ee579d4269d77d83",
+    "wav": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1-wet.f32.wav"
+  }
+}

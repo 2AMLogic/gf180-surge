@@ -1,0 +1,6 @@
+NC-A generic substitute (nearest-sample, equal-pan): CONTROL-OK (generic substitute FAILS the reference budgets; adapted != supported)
+NC-B dropped tail (render truncated 1.5 s early): CONTROL-OK (truncated render FAILS the tail-region agreement check)
+NC-C wrong order (A->B vs B->A serial permutation): CONTROL-OK (order-sensitive check flags the permutation)
+NC-D stale stub (frozen-revision pin): CONTROL-OK (stale trace revision REFUSED - the comparator cannot report PASS)
+NC-E bypass transparency (mix=0 exact; leak detected): CONTROL-OK (mix=0 exactly transparent; an injected wet leak is detected by the same check)
+NC-F LFO-rate sensitivity (chorus rate doubled): CONTROL-OK (LFO-trajectory mutant FAILS the reference budgets - the LFO path is load-bearing)
