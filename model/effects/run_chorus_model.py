@@ -48,6 +48,8 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.join(REPO, "tools"))
+sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-chorus"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 
@@ -61,8 +63,8 @@ from model.effects.eq.eq_model import EqModel, EqParams  # noqa: E402
 from model.effects.reverb1 import coefficient_plane as rcp  # noqa: E402
 from model.effects.reverb1.reverb1_fixed import Reverb1Fixed  # noqa: E402
 from chorus_model import ChorusModel, ChorusParams  # noqa: E402
-from tools.render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
-from tools.run_fx_model import read_wav_stereo_f32  # noqa: E402
+from render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
+from run_fx_model import read_wav_stereo_f32  # noqa: E402 (model/effects on path)
 
 SETTLE_BLOCKS = 240
 HARDCLIP8 = 8 << FRAC[A_FMT]
