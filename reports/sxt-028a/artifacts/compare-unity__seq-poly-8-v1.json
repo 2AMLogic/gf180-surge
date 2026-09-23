@@ -1,0 +1,46 @@
+{
+  "achieved": {
+    "max_abs_diff": 1.5890691429376602e-07,
+    "ref_rms": 0.0034152865092143734,
+    "rms_abs": 3.75901793922464e-08,
+    "rms_rel_db": -99.16705488611429,
+    "saturations": 0,
+    "spectral_corr": 0.9999999998497515
+  },
+  "blocks_compared": 5550,
+  "case": "unity__seq-poly-8-v1",
+  "checks": {
+    "max_abs_diff<=1e-3": true,
+    "rms_rel_db<=-50": true,
+    "spectral_corr>=0.98": true
+  },
+  "claim": "model-vs-pinned-engine at the AW-49 slot boundary (tapped; fpd/vibM-conditioned control plane per DR-0006)",
+  "leaf": "SXT-028a",
+  "model_frozen_revision": "1901510e97d84c02a1da374be6ce8eb2e7626df42bc8319cb6debf75cf7d7a87",
+  "preset": {
+    "aw49_slot": 4,
+    "census_blob_sha1": "c3978e7ce1fbede44c06aa28db2d1473ae34f58a",
+    "path": "resources/data/patches_3rdparty/Altenberg/Pads/Unity.fxp",
+    "slug": "unity"
+  },
+  "proposed_budgets": {
+    "max_abs_diff": 0.001,
+    "rms_rel_db": -50.0,
+    "spectral_corr_min": 0.98
+  },
+  "schema_version": 1,
+  "settle_blocks": 375,
+  "sidecar_sha256": "0a3cf16ae288fea0a7f906c4710f0dba454f9ff7f81adf71bcd504c229be520d",
+  "state_diagnostics": {
+    "countM_agree": true,
+    "max_fbAR_delta_q6_25_lsb": 429038.65291377285,
+    "max_iirAL_delta_q6_25_lsb": 163007.9395517972
+  },
+  "tail": {
+    "declared_tail_s": 2.5,
+    "tail_blocks_rendered": 3750,
+    "tail_present": true,
+    "tail_rms": 0.0038395764421340424
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+}

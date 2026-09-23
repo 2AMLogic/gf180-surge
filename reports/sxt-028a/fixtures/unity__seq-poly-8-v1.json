@@ -1,0 +1,68 @@
+{
+  "applicability_complete_wet_possible": false,
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "tapped slot-boundary reference of the pinned engine; no fidelity/support/quality claim; complete-wet renders refused (unlanded sibling FX classes)",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.sxt028a-tap.962503f3e",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "unity__seq-poly-8-v1",
+  "leaf": "SXT-028a",
+  "neutrality_gate": {
+    "baseline_build": "build-py311 (sxt037-tap tree; FX-path DSP-identical per DR-0005)",
+    "cross_build_baseline_eq": true,
+    "method": "DR-0005 adapted for nondeterministic fixtures: probe carrier (2x bit-identical self-check) with an injected AW49 insert (Modulation 0); taps-on == taps-off; structural side pinned by the sxt028a-tap single-commit diff (DR-0006)",
+    "probe_deterministic_taps_off_x2": true,
+    "probe_taps_on_eq_taps_off": true
+  },
+  "preset": {
+    "aw49_slot": 4,
+    "census_blob_sha1": "c3978e7ce1fbede44c06aa28db2d1473ae34f58a",
+    "path": "resources/data/patches_3rdparty/Altenberg/Pads/Unity.fxp",
+    "slug": "unity"
+  },
+  "render": {
+    "block_size": 32,
+    "blocks": 5550,
+    "frames": 177600,
+    "policies": "fixtures/render_fixture.py (reset/scheduling/tail); single render - conditioned-on-tap repeatability class (no 3x gate; cross-instance spread measured in EVIDENCE.md)",
+    "sample_rate": 48000,
+    "settle_blocks": 375,
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tapped_blocks": 5925
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tap_build": "build-py311-aw49",
+  "taps": {
+    "aw_slot_record_counts": {
+      "4-49": 5925,
+      "7-42": 5925
+    },
+    "fpd_records": [
+      [
+        3205114241,
+        3512818800
+      ]
+    ],
+    "galactic_blocks": 5925,
+    "npz": "../../aw49-fixtures/unity__seq-poly-8-v1-aw49-taps.npz",
+    "npz_residence": "oracle host only (~/aw49-fixtures); sha256 pinned above",
+    "npz_sha256": "f8fa2e7760ddc2c7900d4a65ef64f7ca90fb99c44c029b3ef1d57f0a98318a47",
+    "npz_trimmed": "diagnostic state arrays truncated to the first 1024 blocks; vibM/countM/gal_in/gal_out full",
+    "record_layout": "aw_iostream.bin {tag=1,slot,algid,seq,n}+n*{inL,inR,outL,outR} f32; aw_fpd.bin {tag=2,fpdL,fpdR}; aw_galstate.bin 56B/sample"
+  },
+  "wet": {
+    "peak_abs_float": 0.2810143530368805,
+    "sha256": "8fd826f56f7ca01a4663f6ff9a43228cb32a2e153637794d3b87a35c3bb3e1ed",
+    "wav": "../../aw49-fixtures/unity__seq-poly-8-v1-wet.f32.wav"
+  }
+}

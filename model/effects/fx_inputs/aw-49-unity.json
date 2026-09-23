@@ -1,0 +1,117 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "rule": "complete-wet renders REFUSED unless every active class is landed and passing; tapped slot-boundary comparison is the reference leg (decision-records/0006)",
+    "slot_classes": [
+      {
+        "class": "this-leaf:SXT-028a",
+        "slot": 4
+      },
+      {
+        "class": "unlanded:Airwindows(aw42)",
+        "slot": 7
+      }
+    ],
+    "unlanded_slots": [
+      {
+        "cls": "unlanded:Airwindows(aw42)",
+        "slot": 7
+      }
+    ]
+  },
+  "aw49_slot": 4,
+  "census_blob_sha1": "c3978e7ce1fbede44c06aa28db2d1473ae34f58a",
+  "chain": [
+    {
+      "aw": 49,
+      "aw_name": "Galactic",
+      "galactic": {
+        "A_replace_f": 0.4884969890117645,
+        "B_brightness_f": 0.43098101019859314,
+        "C_modulation_f": 0.651183009147644,
+        "D_size_f": 1.0,
+        "E_mix_f": 1.0,
+        "active_scene": 0,
+        "scene_send_f": [
+          0.6599680185317993,
+          0.0
+        ]
+      },
+      "params_f": [
+        49.0,
+        0.4884969890117645,
+        0.43098101019859314,
+        0.651183009147644,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "return_f": 1.0,
+      "role": "send1",
+      "slot": 4,
+      "type": 14,
+      "type_name": "Airwindows"
+    },
+    {
+      "aw": 42,
+      "aw_name": "To Tape",
+      "params_f": [
+        42.0,
+        0.6511840224266052,
+        0.26172301173210144,
+        0.2847279906272888,
+        0.19106000661849976,
+        0.3081290125846863,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "return_f": 1.0,
+      "role": "global2",
+      "slot": 7,
+      "type": 14,
+      "type_name": "Airwindows"
+    }
+  ],
+  "drifts_recorded": [
+    0.20048199594020844
+  ],
+  "extraction": {
+    "drift_policy": "recorded, not gated: the leaf conditions the reference leg on oracle taps",
+    "modulation_check": "graphs md rows with FX destinations refuse (unmodeled, fail-closed)",
+    "params_source": "surgepy getParamVal post-load (normalized, authoritative), cross-checked against graphs.jsonl within 1.5e-6"
+  },
+  "graphs_sha256_prefix": "c3978e7ce1fbede4",
+  "leaf": "SXT-028a",
+  "path": "resources/data/patches_3rdparty/Altenberg/Pads/Unity.fxp",
+  "repeatability_class": {
+    "bit_identical": false,
+    "reasons": [
+      "scene drift > 0: [0.20048199594020844]",
+      "aw49 C (Modulation) = 0.651183009147644 > 0: engine vibrato seed is wall-clock seeded"
+    ]
+  },
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.6599680185317993,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "unity",
+  "volume_f": 0.0
+}

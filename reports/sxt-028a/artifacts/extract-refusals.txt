@@ -1,0 +1,1 @@
+REFUSED sine_lead: modulation into FX params (unmodeled, fail-closed): resources/data/patches_3rdparty/Altenberg/Leads/Sine Lead.fxp: ['FX G2 Mix', 'FX G1 Mix']

@@ -1,0 +1,46 @@
+{
+  "achieved": {
+    "max_abs_diff": 5.029141902923584e-07,
+    "ref_rms": 0.02007603130572505,
+    "rms_abs": 4.463218638800064e-08,
+    "rms_rel_db": -113.06059404345093,
+    "saturations": 0,
+    "spectral_corr": 0.999999999991623
+  },
+  "blocks_compared": 8550,
+  "case": "temple__seq-notes-coverage-v1",
+  "checks": {
+    "max_abs_diff<=1e-3": true,
+    "rms_rel_db<=-50": true,
+    "spectral_corr>=0.98": true
+  },
+  "claim": "model-vs-pinned-engine at the AW-49 slot boundary (tapped; fpd/vibM-conditioned control plane per DR-0006)",
+  "leaf": "SXT-028a",
+  "model_frozen_revision": "1901510e97d84c02a1da374be6ce8eb2e7626df42bc8319cb6debf75cf7d7a87",
+  "preset": {
+    "aw49_slot": 4,
+    "census_blob_sha1": "3c8e6d56f4055a68a5a266ebb25f530c888f21cf",
+    "path": "resources/data/patches_3rdparty/Altenberg/Guitars/Temple.fxp",
+    "slug": "temple"
+  },
+  "proposed_budgets": {
+    "max_abs_diff": 0.001,
+    "rms_rel_db": -50.0,
+    "spectral_corr_min": 0.98
+  },
+  "schema_version": 1,
+  "settle_blocks": 375,
+  "sidecar_sha256": "e0c1c28ab6a9de8b2108c9caee712dcd21629019d7b484fbb47144fc99591d1c",
+  "state_diagnostics": {
+    "countM_agree": true,
+    "max_fbAR_delta_q6_25_lsb": 12591827.38760457,
+    "max_iirAL_delta_q6_25_lsb": 4513539.787584013
+  },
+  "tail": {
+    "declared_tail_s": 2.5,
+    "tail_blocks_rendered": 3750,
+    "tail_present": true,
+    "tail_rms": 0.003205958245347014
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+}

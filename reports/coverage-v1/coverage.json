@@ -166,7 +166,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "25afd506ac545cb1396b9d5631ceeaa21919e939a57ed241a12ef4bac0571cbf"
+   "sha256": "6096d1e43ff155810eff480e86156cde7cf6d8e52dfc04c459ec28b51fc91cdc"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -227,6 +227,10 @@
   "reports/sxt-028/leaves-filed.json": {
    "role": "structural input (pinned)",
    "sha256": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4"
+  },
+  "reports/sxt-028a/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:AW-49-Galactic",
+   "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
   },
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",
@@ -468,6 +472,15 @@
     "support_ready": false,
     "verification": {
      "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "fx:AW-49-Galactic": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": true,
+    "verification": {
+     "model_vs_reference": "PASS",
      "rtl_vs_model": "PASS"
     }
    },

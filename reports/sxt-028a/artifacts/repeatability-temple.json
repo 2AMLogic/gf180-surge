@@ -1,0 +1,33 @@
+{
+  "class": "conditioned-on-tap (NOT bit-identical): scene drift is wall-clock-rand-seeded per voice AND the aw49 vibrato seed is srand(time)-drawn (SurgeSynthesizer.cpp ctor)",
+  "consequence": "the model-vs-reference leg conditions on the tapped input/vibrato of ONE render (DR-0006); cross-instance spread is a repeatability floor finding for SXT-013, never folded into the fidelity budgets",
+  "dry_bus_note": "the all-FX-off dry bus is ALSO non-identical across instances (drift randomization in the voice stage); the SXT-023-style 3x determinism gate cannot hold for these carriers - recorded, not gated",
+  "leaf": "SXT-028a",
+  "measurement": "oracle host, temple__seq-notes-coverage-v1 wet bus, 4 fresh engine instances (fresh createSurge per render), pairwise vs run0; SXT-012/023 policies",
+  "preset": "Altenberg/Guitars/Temple.fxp (drift 0.0794, aw49 C 0.3751)",
+  "reference_rms": 0.037,
+  "results": [
+    {
+      "identical": true,
+      "max_abs_diff": 0.0,
+      "rms_diff": 0.0,
+      "run": 0
+    },
+    {
+      "max_abs_diff": 0.2789,
+      "rms_diff": 0.02056,
+      "run": 1
+    },
+    {
+      "max_abs_diff": 0.2867,
+      "rms_diff": 0.02122,
+      "run": 2
+    },
+    {
+      "max_abs_diff": 0.2345,
+      "rms_diff": 0.02371,
+      "run": 3
+    }
+  ],
+  "schema_version": 1
+}

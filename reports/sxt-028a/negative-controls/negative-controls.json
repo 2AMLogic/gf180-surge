@@ -1,0 +1,64 @@
+{
+  "baseline_sanity": {
+    "max_abs_diff": 1.4435499906539917e-07,
+    "rms_rel_db": -110.46925797142352
+  },
+  "claim": "negative controls; each must fail the check it targets",
+  "controls": [
+    {
+      "budgets": {
+        "max_abs_diff": 0.001,
+        "rms_rel_db": -50.0,
+        "spectral_corr_min": 0.98
+      },
+      "control": "NC-A generic substitute",
+      "metrics": {
+        "max_abs_diff": 0.20771448966115713,
+        "rms_rel_db": 14.634810089217403
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (generic substitute FAILS the reference budgets; adapted != supported)"
+    },
+    {
+      "control": "NC-B dropped tail",
+      "metrics": {
+        "budget_rms_rel_db": -50.0,
+        "tail_rms_rel_db": 0.0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (truncated render FAILS the tail check)"
+    },
+    {
+      "control": "NC-C wrong order (A->B vs B->A serial permutation)",
+      "metrics": {
+        "blocks_different": 141,
+        "blocks_total": 400
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (order-sensitive check flags the permutation)"
+    },
+    {
+      "control": "NC-D stale stub (frozen-revision pin)",
+      "metrics": {
+        "comparator_exact": false,
+        "expected_revision": 1453063955,
+        "revision_pin_ok": false,
+        "trace_revision": 1453007294
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (stale trace revision REFUSED - the comparator cannot report PASS)"
+    },
+    {
+      "control": "NC-E conditioning sensitivity (no tapped vibM)",
+      "metrics": {
+        "max_abs_diff": 0.0722013246268034,
+        "rms_rel_db": 1.9441952287211042
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (unconditioned model FAILS the budgets - the tapped control plane is load-bearing)"
+    }
+  ],
+  "leaf": "SXT-028a",
+  "schema_version": 1,
+  "status": "PASS"
+}
