@@ -47,6 +47,9 @@ FX_TYPE_CHORUS = 9
 CHORUS_PARAMS = 8
 LANDED_CLASSES = {0, 1, 2, 6, 9}  # off, delay, reverb1, eq, chorus(this leaf)
 
+REV1_PARAM_IDS = ["predelay", "shape", "roomsize", "decaytime", "damping",
+                  "lowcut", "freq1", "gain1", "highcut", "mix", "width"]
+
 PRESETS = {
     # issue-named carriers (extract + applicability; refusals recorded)
     "novuo": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
@@ -56,6 +59,7 @@ PRESETS = {
     "fmcombo": "resources/data/patches_factory/Basses/FM Combo.fxp",
     "fmtwang2": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
     "melon": "resources/data/patches_factory/Polysynths/Melon.fxp",
+    "scary": "resources/data/patches_3rdparty/Rozzer/FX/OOOOOoooooh Scary.....fxp",
 }
 
 
@@ -103,6 +107,35 @@ def read_chorus(s, patch, slot, rev, xml_flags, tempo_bpm):
     d["ts_ratio"] = 120.0 / tempo_bpm if d["ts_time"] else 1.0
     d["ts_ratio_mod"] = tempo_bpm / 120.0 if d["ts_rate"] else 1.0
     return d
+
+
+def read_reverb1(s, patch, slot, rev, xml_flags):
+    """Reverb1 (SXT-024, landed) inputs: 11 params + deactivated flags.
+
+    The reverb1 coefficient plane (model/effects/reverb1/coefficient_plane.py)
+    is built from these at model run time. deactivated: raw XML attribute
+    (rev>=20 files stream it; absent -> None -> loader default deactivated)
+    with the rev<=15 ChorusEffect-class migration NOT applied here — Reverb1
+    has its own rev<=15 handling (sxt-024), recorded raw + rev and resolved
+    at coefficient-plane build time.
+    """
+    fxd = patch["fx"][slot]
+    params = {n: float(s.getParamVal(fxd["p"][i]))
+              for i, n in enumerate(REV1_PARAM_IDS)}
+    xf = lambda j: xml_flags.get(f"fx{slot+1}_p{j}", {})  # noqa: E731
+
+    def deactivated(j):
+        f = xf(j)
+        if f and not f["deactivated_absent"]:
+            return bool(f["deactivated"])
+        return None  # absent in raw XML: loader default (deactivatable -> on)
+
+    return {
+        "params": params,
+        "lowcut_deactivated_raw": deactivated(5),
+        "highcut_deactivated_raw": deactivated(8),
+        "return_f": float(s.getParamVal(fxd["return_level"])),
+    }
 
 
 def extract(slug, rel_path, out_path):
@@ -183,10 +216,9 @@ def extract(slug, rel_path, out_path):
             params = read_eq(s, patch, slot, rev, xml_flags)
             entry = {"slot": slot, "role": role, "type": "eq", "params": params}
         elif t in (2,):
-            # reverb1 (SXT-024): its frozen inputs are extracted by the
-            # reverb tooling; recorded here as class-present only
+            params = read_reverb1(s, patch, slot, rev, xml_flags)
             entry = {"slot": slot, "role": role, "type": "reverb1",
-                     "note": "inputs via model/effects/reverb1 tooling"}
+                     "params": params}
         else:
             raise Refuse(f"slot{slot} type {t} outside landed scope: {rel_path}")
         if role.startswith("ains"):

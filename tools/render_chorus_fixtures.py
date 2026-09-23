@@ -37,6 +37,7 @@ PRESETS = {
     "fmcombo": "resources/data/patches_factory/Basses/FM Combo.fxp",
     "fmtwang2": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
     "melon": "resources/data/patches_factory/Polysynths/Melon.fxp",
+    "scary": "resources/data/patches_3rdparty/Rozzer/FX/OOOOOoooooh Scary.....fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 
