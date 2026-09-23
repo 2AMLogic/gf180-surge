@@ -66,7 +66,7 @@ from chorus_model import ChorusModel, ChorusParams  # noqa: E402
 from render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
 from run_fx_model import read_wav_stereo_f32  # noqa: E402 (model/effects on path)
 
-SETTLE_BLOCKS = 240
+SETTLE_BLOCKS = 375   # int(0.25 s x 48 kHz) / 32 = 375 (the fixture harness settle)
 HARDCLIP8 = 8 << FRAC[A_FMT]
 S24_MIN, S24_MAX = -(1 << 23), (1 << 23) - 1
 
