@@ -97,14 +97,14 @@ def _tap_hook(store):
     return hook
 
 
-def _want_taps(b, n_blocks):
-    return (b in (SETTLE - 1, SETTLE, SETTLE + 1, n_blocks - 1)
-            or (b >= SETTLE and (b - SETTLE) % TAP_CHECK == 0))
+def _want_taps(b, n_blocks, settle):
+    return (b in (settle - 1, settle, settle + 1, n_blocks - 1)
+            or (b >= settle and (b - settle) % TAP_CHECK == 0))
 
 
-def _want_state(b, n_blocks):
-    return (b in (SETTLE - 1, SETTLE, SETTLE + 1, n_blocks - 1)
-            or (b >= SETTLE and (b - SETTLE) % 64 == 0))
+def _want_state(b, n_blocks, settle):
+    return (b in (settle - 1, settle, settle + 1, n_blocks - 1)
+            or (b >= settle and (b - settle) % 64 == 0))
 
 
 def _state_map(st):
@@ -145,7 +145,7 @@ def _state_map_trace(inst):
     return out
 
 
-def build_prs(n_blocks, param_dicts, reset_at, seed, wd):
+def build_prs(n_blocks, param_dicts, reset_at, seed, wd, settle):
     """Run the frozen model over PRS stimulus; write in/ctrl/init hex;
     return expected records."""
     os.makedirs(wd, exist_ok=True)
@@ -174,16 +174,16 @@ def build_prs(n_blocks, param_dicts, reset_at, seed, wd):
                     fi.write(qhex(v, 32) + "\n")
                 out = m.process_block(prev[0], prev[1],
                                       tap_hook=_tap_hook(store := [])) \
-                    if _want_taps(b, n_blocks) else m.process_block(prev[0], prev[1])
+                    if _want_taps(b, n_blocks, settle) else m.process_block(prev[0], prev[1])
                 # control words AFTER process_block: they are the words the
                 # model's own control pass computed for this block
                 for wv in ctrl_words(m):
                     rows.append(qhex(wv, 32))
-                if _want_taps(b, n_blocks):
+                if _want_taps(b, n_blocks, settle):
                     flat = [v for k in store for trip in k for v in trip]
                     rec["X"][i] = flat if flat else None
                 rec["O"][i] = list(out[0]) + list(out[1])
-                if _want_state(b, n_blocks):
+                if _want_state(b, n_blocks, settle):
                     rec["T"][i] = _state_map(m.st)
                 prev = out
             for wtext in rows:
@@ -313,11 +313,11 @@ def compare_case(exp, got, ninst):
 
 
 def simulate_case(name, workdir, n_blocks, ninst, in_hex, ctrl_hex, init_hex,
-                  reset_at=None, rev8="00000000"):
+                  reset_at=None, rev8="00000000", settle=SETTLE):
     wd = os.path.join(workdir, name)
     os.makedirs(wd, exist_ok=True)
     trace = os.path.join(wd, "tb_trace.txt")
-    plus = [f"+NINST={ninst}", f"+NBLOCKS={n_blocks}", f"+RENDER0={SETTLE}",
+    plus = [f"+NINST={ninst}", f"+NBLOCKS={n_blocks}", f"+RENDER0={settle}",
             f"+TRACE={trace}", f"+INFILE={in_hex}", f"+CTRLFILE={ctrl_hex}",
             f"+INITFILE={init_hex}", f"+SINC={SINC}", f"+ZEROS={ZEROS}",
             f"+REV={rev8}"]
@@ -432,17 +432,19 @@ def main():
 
     # --- PRS cases
     exps_d, in_d, ctrl_d, init_d = build_prs(
-        128, [SYNTH_A, SYNTH_B], None, 11, os.path.join(workdir, "prs-dual-128"))
+        128, [SYNTH_A, SYNTH_B], None, 11,
+        os.path.join(workdir, "prs-dual-128"), settle=0)
     trace_d = simulate_case("prs-dual-128", workdir, 128, 2,
-                            in_d, ctrl_d, init_d, rev8=rev8)
+                            in_d, ctrl_d, init_d, rev8=rev8, settle=0)
     results["cases"].append(judge("prs-dual-128", exps_d, trace_d, 2, rev8,
                                   128, 2))
 
     exps_r, in_r, ctrl_r, init_r = build_prs(
         128, [SYNTH_A, SYNTH_B], 48, 11,
-        os.path.join(workdir, "prs-reset48-128"))
+        os.path.join(workdir, "prs-reset48-128"), settle=0)
     trace_r = simulate_case("prs-reset48-128", workdir, 128, 2,
-                            in_r, ctrl_r, init_r, reset_at=48, rev8=rev8)
+                            in_r, ctrl_r, init_r, reset_at=48, rev8=rev8,
+                            settle=0)
     results["cases"].append(judge("prs-reset48-128", exps_r, trace_r, 2, rev8,
                                   128, 2))
 
