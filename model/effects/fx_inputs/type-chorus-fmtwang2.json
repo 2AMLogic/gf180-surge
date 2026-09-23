@@ -1,0 +1,78 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": true,
+    "delay_sibling_landed_fail": false,
+    "note": "complete-wet refused fail-closed when any active slot needs an unlanded class; refusal retained as evidence",
+    "unlanded_classes": []
+  },
+  "census_blob_sha1": "670e5237b866d3a1b35fc971d3d21c271b8825a2",
+  "chain": {
+    "ains": [
+      {
+        "params": {
+          "depth_f": 0.669642984867096,
+          "feedback_f": 0.5821430087089539,
+          "highcut_deactivated": false,
+          "highcut_f": 65.6624984741211,
+          "lowcut_deactivated": false,
+          "lowcut_f": -60.0,
+          "mix_f": 0.5,
+          "rate_f": -2.765139102935791,
+          "time_f": -6.214286804199219,
+          "ts_flags": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "ts_rate": false,
+          "ts_ratio": 1.0,
+          "ts_ratio_mod": 1.0,
+          "ts_time": false,
+          "width_f": 15.12856674194336
+        },
+        "role": "ains1",
+        "slot": 0,
+        "type": "chorus"
+      }
+    ],
+    "sends": []
+  },
+  "chorus_slots": [
+    0
+  ],
+  "drifts_asserted_zero": [
+    0.0
+  ],
+  "extraction": {
+    "deactivated_source": "raw fxp XML attribute + documented loader migration (rev<=15 chorus lowcut/highcut); no surgepy getter",
+    "mod_routes": "graphs.jsonl md rows screened; any FX-destination route refuses extraction (fail-closed)",
+    "observable_flags": "temposync via surgepy getters, cross-checked against raw XML fail-closed",
+    "tempo_source": "raw <tempoOnSave v=..> applied by loadPatch (surgepy.cpp loadPatch -> time_data.tempo)"
+  },
+  "graphs_sha256_prefix": "670e5237b866d3a1",
+  "leaf": "SXT-028c",
+  "path": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
+  "rev": 17,
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "fmtwang2",
+  "tempo_bpm": 120.0,
+  "tempo_source": "engine default 120",
+  "volume_f": -4.0
+}
