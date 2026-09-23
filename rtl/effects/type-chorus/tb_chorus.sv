@@ -521,6 +521,8 @@ module tb_chorus;
                 lp_lag[b][j] = 0; hp_lag[b][j] = 0;
                 lp_lagt[b][j] = 0; hp_lagt[b][j] = 0;
             end
+            lp_r0[b][0] = 0; lp_r1[b][0] = 0; lp_r0[b][1] = 0; lp_r1[b][1] = 0;
+            hp_r0[b][0] = 0; hp_r1[b][0] = 0; hp_r0[b][1] = 0; hp_r1[b][1] = 0;
         end
 
         for (b = 0; b < N_BLOCKS; b = b + 1) begin

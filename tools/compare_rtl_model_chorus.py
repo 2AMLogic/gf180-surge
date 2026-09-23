@@ -304,13 +304,14 @@ def compare_case(exp, got, ninst):
 
 
 def simulate_case(name, workdir, n_blocks, ninst, in_hex, ctrl_hex, init_hex,
-                  reset_at=None):
+                  reset_at=None, rev8="00000000"):
     wd = os.path.join(workdir, name)
     os.makedirs(wd, exist_ok=True)
     trace = os.path.join(wd, "tb_trace.txt")
     plus = [f"+NINST={ninst}", f"+NBLOCKS={n_blocks}", f"+RENDER0={SETTLE}",
             f"+TRACE={trace}", f"+INFILE={in_hex}", f"+CTRLFILE={ctrl_hex}",
-            f"+INITFILE={init_hex}", f"+SINC={SINC}", f"+ZEROS={ZEROS}"]
+            f"+INITFILE={init_hex}", f"+SINC={SINC}", f"+ZEROS={ZEROS}",
+            f"+REV={rev8}"]
     if reset_at is not None:
         plus.append(f"+RESETAT={reset_at}")
     run_sim(TB, plus, wd)
@@ -379,7 +380,7 @@ def canonical_case(workdir, rev8, slug, seq, n_blocks, ninst, params):
             for wv in init_words(e["params"]):
                 f.write(qhex(wv, 32) + "\n")
     trace = simulate_case(f"canonical-{slug}", wd, n_blocks, ninst,
-                          in_hex, ctrl_hex, init_hex)
+                          in_hex, ctrl_hex, init_hex, rev8=rev8)
     return judge(f"canonical-{slug}-{n_blocks}b", exp, trace, ninst, rev8,
                  n_blocks, ninst)
 
@@ -424,7 +425,7 @@ def main():
     exps_d, in_d, ctrl_d, init_d = build_prs(
         128, [SYNTH_A, SYNTH_B], None, 11, os.path.join(workdir, "prs-dual-128"))
     trace_d = simulate_case("prs-dual-128", workdir, 128, 2,
-                            in_d, ctrl_d, init_d)
+                            in_d, ctrl_d, init_d, rev8=rev8)
     results["cases"].append(judge("prs-dual-128", exps_d, trace_d, 2, rev8,
                                   128, 2))
 
@@ -432,7 +433,7 @@ def main():
         128, [SYNTH_A, SYNTH_B], 48, 11,
         os.path.join(workdir, "prs-reset48-128"))
     trace_r = simulate_case("prs-reset48-128", workdir, 128, 2,
-                            in_r, ctrl_r, init_r, reset_at=48)
+                            in_r, ctrl_r, init_r, reset_at=48, rev8=rev8)
     results["cases"].append(judge("prs-reset48-128", exps_r, trace_r, 2, rev8,
                                   128, 2))
 
