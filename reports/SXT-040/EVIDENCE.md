@@ -75,7 +75,7 @@ are evidence.
 |---|---|---|---|
 | 1 | Frozen fixed-point model with word lengths + op order documented | **PASS** | `model/oscillators/sine/README.md` (freeze doc: classes, Q formats, per-block op order for both behaviors, 11 declared deviations, migration finding); model `sine_model.py` shares the frozen SXT-022 Q discipline and imports the frozen SXT-033 AEG |
 | 2 | Model-vs-pinned-engine dry-render budgets on the carrier fixtures | **PASS/PENDING-FREEZE (achieved numbers recorded, not tuned)** | §3 matrix: 6 budget JSONs (3 carriers × coverage/repeated). No bound is frozen; misses are recorded as findings (§4), not widened |
-| 3 | RTL-vs-model exact at declared checkpoints | **PASS** | §2: three canonical integer-equality runs + two smoke configurations (incl. legacy-unison-9), 694,045 state fields, 462,400 osc samples, 1,024,704 mono samples, zero mismatches; `exact-*.json` |
+| 3 | RTL-vs-model exact at declared checkpoints | **PASS** | §2: three canonical integer-equality runs + two smoke configurations (incl. legacy-unison-9), 689,505 state fields, 468,672 osc samples, 596,544 mono samples, zero mismatches; `exact-*.json` |
 | 4 | Cycle/state costs recorded vs SXT-016 probes / SXT-015 accounting | **PASS (recorded; divergence note)** | §5: measured model-side qmul (MAC) counts per canonical render; probe rows are per-kernel planning numbers at declared assumptions (same recorded-divergence treatment as SXT-022/SXT-033) |
 | 5 | Negative controls must demonstrably fail | **PASS (all fail as designed)** | `negative-control.txt` + NC jsons: (a) single-constant RTL mutant FAILS exactness (97 mismatches from block 0); (b) wrong-family substitution (Classic arithmetic) FAILS the budget check on badnews; (c) shape-migration confusion (raw pre-migration shape) FAILS the budget check on tentacles; (d) four out-of-class presets REFUSED exit 2 (playmode × 2, live voice routes × 2) |
 
@@ -124,6 +124,26 @@ All six rows pass the proposed max bound; four pass the rms bound; no row
 passes the spectral-corr proposal. The corr misses are the two recorded
 classes below — no number was tuned.
 
+**Tool note (rms flag, found by PR #92 judge review).**
+`tools/compare_audio_reference.py` originally tested the rms residual with
+an inverted comparison (`>=` instead of `<=`; the residual is
+lower-is-better), so machine rms verdicts in JSONs generated before
+2026-09-24 are polarity-flipped. The flag was fixed in this commit and all
+eight SXT-040 budget/NC JSONs were regenerated with the corrected tool;
+the regenerated machine verdicts match the hand marks above on all six
+rows. Historical artifacts of other leaves generated with the inverted
+flag are outside this leaf's scope and are routed as a follow-up to the
+tool owner (SXT-022 lineage).
+
+**Row note (badnews / coverage, F-040-5).** The model WAV first committed
+for this row was a mis-copied artifact (byte-identical to the tentacles
+repeated render; see F-040-5), and the budget JSON regenerated from it
+faithfully measured the wrong bytes, contradicting this row. The
+full-length render was regenerated from the committed inputs in the fix
+commit; the measured numbers above are unchanged from the originally
+recorded row (210 / −61.7 / 0.9298) and are now machine-verified from the
+committed 273,600-frame artifact.
+
 ## 4. Bounded findings (recorded, not absorbed)
 
 **F-040-1 — recovery-slate applicability (carrier selection).** 35 of the
@@ -167,6 +187,27 @@ runs the biquads from param values (the engine skips them when
 deactivated) — at every carrier's values (−60/70) the pinned ω>π identity
 guards make both sides identical; a carrier with mid-range cut values
 would need the flag resolved first (recorded for the #12 freeze owner).
+
+**F-040-5 — committed-artifact integrity incident (badnews coverage model
+WAV); found by judge review of PR #92.** The WAV first committed as
+`artifacts/model-badnews-seq-notes-coverage-v1.wav` (commit `e40fd51`) is
+byte-identical to `artifacts/model-tentacles-seq-notes-repeated-v1.wav`
+(sha256 `3a74f9bd…`): a wrong-file mis-copy at artifact-collection time,
+196,800 frames against the 273,600-frame (8,550-block) coverage reference.
+The committed budget JSON for the row faithfully measured the wrong bytes
+(max 12,772 LSB / rms −19.35 dBFS / corr 0.245 — all three proposed bounds
+failing) and so contradicted the hand-recorded §3 row. Correction (this
+commit): the full-length render was regenerated from the committed inputs
+(`model/oscillators/sine/run_model.py`, `inputs/badnews.json` ×
+`seq-notes-coverage-v1`; 8,550 blocks / 273,600 frames), the WAV replaced,
+and the row re-measured with the corrected comparator: 210 LSB / −61.7
+dBFS / corr 0.9298 at shift 0 — reproducing the originally recorded §3 row
+exactly; the row passes the max and rms proposals and misses only the
+standing corr class (F-040-2). No number was tuned in either direction;
+the incident itself is the finding. Process gap recorded: the
+artifact-collection step had no render-from-source identity check, and the
+committed budget JSON had never been cross-checked against its row in this
+record; re-verification (§7) now regenerates from inputs and compares.
 
 **Environment note.** The shared box's primary oracle tree had drifted
 off-pin again (surgepy self-reported `1.4.sxt037-tap`); all extraction
@@ -223,36 +264,51 @@ not verified.
 ## 7. Reproducibility
 
 ```sh
-python3 tools/run_sxt040_checks.py            # steps 1-3 (oracle unused: all controls are model/graph-level)
+python3 tools/run_sxt040_checks.py            # steps 1-3 (committed control set is oracle-free: see note)
 python3 -m pytest tests/test_sxt040_sine.py
 ```
 
 Step 1 re-runs the three canonical RTL exactness runs + mutant control in
 a scratch root (stimulus hex never committed); step 2 regenerates the
-budget matrix from the committed reference renders (no oracle needed);
-step 3 the three negative controls (the refusals are committed-graphs
-level). Environment: 48 kHz; engine pin above; iverilog (13 tested);
-python 3.11+ (model renders are pure integer Python; local dev used
-3.14). Reference-dependent budget checks are NOT pytest cases — a
-skipped/absent environment never reports a pass.
+budget matrix from the committed reference renders; step 3 the three
+negative controls. Oracle note: the committed control set — including the
+four out-of-class refusals, which reject at the committed-graphs level
+before any engine is loaded — runs without the pinned oracle (re-verified
+at this fix's tip with no `ORACLE_SURGE_DIR` set: runner exit 0); the
+extractor itself is oracle-gated for any carrier that passes the gate
+(post-gate extraction loads the pinned engine). Environment: 48 kHz;
+engine pin above; iverilog (13 tested); python 3.11+ (model renders are
+pure integer Python; local dev used 3.14). Reference-dependent budget
+checks are NOT pytest cases — a skipped/absent environment never reports
+a pass.
 
-**Re-verification at this branch's tip.** The canonical exactness runs,
-the mutant control, the budget matrix and all negative controls were
-regenerated on the pinned reference box from the exact code now committed
-(model/RTL/inputs are bit-identical to the run-time tree; only
-documentation changed since) and checked against the committed copies:
-all three canonical RTL runs PASS with checkpoint/field counts identical
-to §2; the mutant FAILS identically (97 mismatches, exit 1); the budget
-matrix reproduces the §3 numbers; all controls fail as required. The
-pytest suite (13 sine + 9 classic-regression cases) passes at the tip.
+**Correction at this branch's tip (PR #92 judge review).** The originally
+recorded re-verification claimed the budget matrix "reproduces the §3
+numbers"; that was false for the badnews/coverage row: the committed model
+WAV for that row was a mis-copied artifact (F-040-5), and the machine row
+regenerated from it (max 12,772 / rms −19.35 / corr 0.245) contradicted
+the recorded row. In this fix commit the full-length render was
+regenerated from the committed inputs and replaces the wrong artifact, the
+comparator's inverted rms flag was fixed, and all eight budget/NC JSONs
+were regenerated. The regenerated matrix reproduces the §3 numbers on all
+six rows (badnews/coverage: 210 / −61.7 / 0.9298 at shift 0), machine
+verdicts now match the hand marks, and all controls fail as required. The
+pytest suite passes at the tip.
 
 ## 8. Licensing / provenance
 
 Everything under `model/oscillators/sine/`, `rtl/oscillators/sine/`,
 `tools/*sxt040*`, `tests/test_sxt040_sine.py` and `reports/SXT-040/` is
-original to this repository (Apache-2.0 per `LICENSE`). The pinned GPL
+original to this repository (Apache-2.0 per `LICENSE`), with one quoted
+exception now carrying a visible license decision record: the 20-entry
+sine wave_remap streaming-migration table transcribed in
+`model/oscillators/sine/README.md` is quoted as data from the pinned
+GPL-3.0-or-later `src/common/dsp/oscillators/SineOscillator.cpp`
+(`handleStreamingMismatches`, `streamingRevision <= 12` block) — see
+DR-0008 (`decision-records/0008-sine-wave-remap-table.md`, PROPOSED
+pending owner ratification). Apart from that table, the pinned GPL
 engine was imported at runtime only; structure facts are cited from the
-pinned tree, no source/tables/assets copied (the fastsin/fastcos Pade
+pinned tree, no other source/tables/assets copied (the fastsin/fastcos Pade
 rational is re-derived from the pinned construction formulas, SXT-026a
 discipline; the shape-mode arithmetic is re-derived from the pinned SSE
 formulas). Reference WAVs are this project's own renders of loaded

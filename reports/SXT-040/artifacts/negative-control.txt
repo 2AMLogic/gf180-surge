@@ -17,7 +17,7 @@ inputs; shape 0, pw 0.5, pw2 0.5, submix 0, sync 0, unison 1) against the
 Sine reference render (seq-notes-repeated-v1). The reference-budget check
 must FAIL; the correct Sine model's numbers are shown for discrimination
 (full-length rows from the committed budget matrix).
-  badnews (legacy, shape 0, uni 1), 512-block control render
+  badnews (legacy, shape 0, uni 1), 6,150-block (full-length) control render
     sine model    : max=62 rms=-71.0 dBFS corr=0.9456 (full budget row)
     classic subst : verdict='FAIL' max=2806 rms=-36.3 dBFS corr=0.8340  <- FAIL
 

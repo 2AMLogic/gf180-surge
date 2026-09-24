@@ -12,13 +12,16 @@ Steps:
         SXT-033 Classic arithmetic - the budget check must FAIL
      b. shape-migration confusion: the fixture rendered with the raw
         pre-migration shape value (sine_shape_remap) - must FAIL
-     c. out-of-class refusals (requires the external pinned oracle):
-        playmode refusals (mortsnare, arp2) and live-voice-route refusals
-        (alone, mystery4) must exit 2
+     c. out-of-class refusals: playmode refusals (mortsnare, arp2) and
+        live-voice-route refusals (alone, mystery4) must exit 2 (these
+        reject at the committed-graphs level; the extractor needs the
+        pinned oracle only for carriers that pass the gate)
 
 Working directory for the heavy runs is a scratch root (/tmp by default);
-stimulus hex files are never committed. Requires iverilog/vvp for step 1
-and the external pinned oracle (ORACLE_SURGE_DIR) for step 3c.
+stimulus hex files are never committed. Requires iverilog/vvp for step 1;
+the committed control set of steps 2-3 runs without the pinned oracle
+(ORACLE_SURGE_DIR is needed only when extracting a carrier that passes
+the gate).
 """
 
 import argparse

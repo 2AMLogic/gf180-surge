@@ -102,7 +102,7 @@ def main():
 
     proposed_results = {
         "max_abs_diff_lsb": metrics["max_abs_diff_lsb"] <= PROPOSED["max_abs_diff_lsb"],
-        "rms_diff_dbfs": metrics["rms_diff_dbfs"] >= PROPOSED["rms_diff_dbfs"],
+        "rms_diff_dbfs": metrics["rms_diff_dbfs"] <= PROPOSED["rms_diff_dbfs"],
         "spectral_corr": metrics["spectral_corr"] >= PROPOSED["spectral_corr_min"],
     }
     metrics["proposed_budgets"] = PROPOSED

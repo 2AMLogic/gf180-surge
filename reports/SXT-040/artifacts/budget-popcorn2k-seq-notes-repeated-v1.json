@@ -16,7 +16,7 @@
   },
   "proposed_budget_results": {
     "max_abs_diff_lsb": true,
-    "rms_diff_dbfs": false,
+    "rms_diff_dbfs": true,
     "spectral_corr": false
   },
   "verdict": "FAIL against proposed budgets"

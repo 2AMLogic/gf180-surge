@@ -30,7 +30,9 @@ in the committed normalized graphs
 | unison detune | p[5] | `ct_oscspread` [0, 1], `get_extended` = 12·f | 0 .. 0.77 |
 | unison voices | p[6] | `ct_osccount` [1, 16] | 1 .. 16 (+ garbage: engine clamps at osc init, gate refuses) |
 
-Pinned structure (read and cited, never copied):
+Pinned structure (read and cited, structure never copied; the one quoted
+data table — the wave_remap migration — carries license decision record
+DR-0008):
 surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 —
 
 * `SineOscillator.cpp/.h` — init / prepare_unison / process_block (the
@@ -195,6 +197,10 @@ The raw `.fxp` shape is pre-migration. At the pin, two migrations apply in
 order: (1) `SurgePatch::load_xml` rev≤27 remaps odd raw shapes 1..7 →
 28..31; (2) `SineOscillator::handleStreamingMismatches` at rev≤12 applies
 the 20-entry wave_remap {0,8,9,10,1,11,4,12,13,2,3,5,6,7,14,15,16,17,18,19}
+(quoted as data from the pinned GPL-3.0-or-later
+`src/common/dsp/oscillators/SineOscillator.cpp`, `streamingRevision <= 12`
+block; license decision record
+[DR-0008](../../../decision-records/0008-sine-wave-remap-table.md))
 with a range check that resets anything ≥ 20 to 0 (so a rev≤12 file stored
 as 7 → load_xml 31 → reset 0). Only the normalized (post-migration,
 post-load) value is used — the committed extractor verifies the live

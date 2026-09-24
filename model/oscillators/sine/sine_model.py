@@ -71,7 +71,7 @@ Arithmetic discipline (FROZEN, same rules as SXT-022/SXT-026/SXT-033):
 
 Everything outside the declared boundaries REFUSES fail-closed (absolute
 detune, drift != 0, unison outside 1..16, character Bright, analog
-envelopes, decay shapes outside d_s in {0,1}, pitch outside [24, 148],
+envelopes, decay shapes outside d_s in {0,1,2}, pitch outside [24, 148],
 shape outside [0, 31], behavior outside {0, 1}).
 """
 
