@@ -164,13 +164,17 @@
    "role": "evidence record for leaf osc:Classic",
    "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
   },
+  "reports/SXT-034/EVIDENCE.md": {
+   "role": "evidence record for leaf voice:unison-stack",
+   "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
+  },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
    "sha256": "90e61da0051f0bc934ffb3a096013acc39d8abd239a3e038fbd5a3cea6e81592"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "f4c55a428f0af847f470cbd60c213279c473d704833861f4ad0c83e527f03583"
+   "sha256": "435d91cb71b46d467ceaa2e3ba38a6b8eeb564bca6c2afba5f694ade450c0bf9"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -611,6 +615,15 @@
     "support_ready": false,
     "verification": {
      "model_vs_reference": "NO_VERDICT",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "voice:unison-stack": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "PARTIAL",
      "rtl_vs_model": "PASS"
     }
    }

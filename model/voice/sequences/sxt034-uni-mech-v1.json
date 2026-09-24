@@ -1,0 +1,42 @@
+{
+ "id": "sxt034-uni-mech-v1",
+ "schema_version": 1,
+ "sample_rate": 48000,
+ "description": "SXT-034 non-retrigger init-draw mechanism fixture: 2 note-ons x unison 4 = 8 declared draws; exactness-only (quantified-variation class, no reference claim)",
+ "coverage": [
+  "mechanism",
+  "nonretrigger-init-draws"
+ ],
+ "events": [
+  {
+   "type": "note_on",
+   "t": 0,
+   "channel": 0,
+   "note": 48,
+   "velocity": 100
+  },
+  {
+   "type": "note_off",
+   "t": 9600,
+   "channel": 0,
+   "note": 48,
+   "velocity": 0
+  },
+  {
+   "type": "note_on",
+   "t": 14400,
+   "channel": 0,
+   "note": 55,
+   "velocity": 100
+  },
+  {
+   "type": "note_off",
+   "t": 24000,
+   "channel": 0,
+   "note": 55,
+   "velocity": 0
+  }
+ ],
+ "tail_s": 0.1,
+ "settle_s": 0.02
+}

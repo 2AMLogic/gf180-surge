@@ -205,14 +205,134 @@ released voice) plus every output sample.
 * Character filter supports Warm/Neutral only (preset is Warm).
 * Envelope digital mode only, `a_s = 1`, `d_s = 0` (preset values).
 
+## SXT-034 unison stack extension (frozen)
+
+Extension of this model to unison stacks >1 voice (leaf #68, SXT-034),
+cited from the pinned tree (read, not copied):
+
+* `ClassicOscillator.cpp init` — per-voice init loop; `n_unison = limit(p[uni], 1, MAX_UNISON)`
+  (engine clamps; the model REJECTS outside 1..16 — never a silent clamp),
+  retrigger-on → `oscstate[i] = syncstate[i] = 0`, retrigger-off →
+  `oscstate[i] = syncstate[i] = 0.5·rand_01()·ntpi(detune_i)` (wall-clock
+  random in the engine; the model consumes DECLARED draw words — SXT-012
+  quantified-variation class),
+* `ClassicOscillator.cpp prepare_unison` +
+  `sst-basic-blocks OscillatorDriftUnisonCharacter.h UnisonSetup` —
+  `out_attenuation = 1/sqrt(n)` (Q10.21, quantized once; = 1.0 exactly at
+  n=1), `detune_bias = 2/(n-1)` (n>1), `detune_offset = -1` (n>1),
+* `ClassicOscillator.cpp convolute/process_block` — per-voice detune
+  `detune_v = spread_ext·(bias·v + offset)` with `spread_ext = qint(12·f)`
+  (ct_oscspread; drift asserted 0, no detune modulation in the fixtures),
+  per-voice `t_v = ntpi_tuningctr(detune_v + l_sync)` and
+  `t_inv_v = qdiv(1, t_v)` are BLOCK-RATE constants (streamed in the
+  control plane; the engine recomputes them per call with `mech::rcp` —
+  declared deviation: exact division vs SSE rcp approximation),
+  voice-major fill loop `while oscstate_v < a_cov: convolute(v)` into the
+  SINGLE shared `ob`/`dcb` buffer pair (engine memsets one oscbuffer per
+  oscillator; unison adds impulse state machines, not buffers),
+* unison pan spread is INERT in this slice: the oscillator's `stereo` flag
+  is `is_wide = (fbc == fc_wide)` (SurgeVoice.cpp), not unison-driven; the
+  fixtures are serial-1. `panLaw` satisfies `(panL+panR)/2 == 1` per voice
+  (verified from UnisonSetup) — its mono cancellation is exact if a future
+  leaf widens the bus.
+
+Op order (per convolute, normative): unchanged SXT-022 order with
+`g = qmul(g, out_attenuation)` inserted after the impulse-height state
+machine and before the sinc accumulation; per-voice state replaces the
+scalars (oscstate/state/last_level/pwidth/pwidth2/dc_uni are per-voice; the
+impulse buffers, `mdc`, `osc_out`, `osc_out2`, hpf, filter chain and
+envelopes are per voice SLOT, unison-invariant).
+
+Declared max unison: **MAX_UNISON = 16** (SurgeStorage.h engine constant,
+profile-v1 cap). Beyond-cap unison raises and renders nothing (NC-3).
+
+Resource multiplication (honest): unison N multiplies the impulse state
+machines (6 words/voice) and the convolute activity (~N×, modulated by the
+per-voice detune rates); it does NOT multiply the impulse buffers (shared
+by engine design), the voice filter chain, mixer, or scene decimator.
+
+### Composition with SXT-026a (voice generality) and SXT-033 (classic slice) on the merged model
+
+This section is the post-rebase freeze note (branch rebased onto the tree
+that landed SXT-026a via #86, SXT-033 via #87, SXT-035 via #89 and
+SXT-028a via #90); it states how the SXT-034 per-voice `t`/`t_inv`
+constants compose with the overlapping oscillator semantics those leaves
+froze. It is a documentation decision, not a git resolution.
+
+1. Per-voice `t`/`t_inv` vs the SXT-033 sync machine — the SAME freeze
+   decision. SXT-033's classic slice (`model/oscillators/classic/`) freezes
+   `t_u[u] = ntpi_tuningctr(detune_u + min(l_sync, 156 − pitch))` as
+   quantization-time constants per voice instance; SXT-034 freezes
+   `t_v = ntpi_tuningctr(detune_v + l_sync_init)` the same way. They agree
+   because the v1/v2 voice classes REFUSE sync ≠ 0 at load (SXT-026a gate:
+   "classic sync param p[4] not 0"), so `l_sync` instantizes and stays 0,
+   the lag machinery (`l_sync += 0.05·(t_sync − l_sync)`) is carried but
+   inert, and `min(l_sync, 156 − pitch)` degenerates to 0 in both. Neither
+   leaf models runtime sync modulation of `t`; a future leaf that lifts the
+   sync refusal must re-open BOTH freezes together (the per-voice constants
+   and the impulse-rate consumption are shared schedule).
+
+2. Drift — refused at 0 on all sides. #86's determinism gate refuses
+   scene drift ≠ 0; SXT-034 asserts drift 0 and takes detune only from the
+   static `ct_oscspread` path (no detune modulation routed); SXT-033 gates
+   its drift-LFO identically. No unison/drift interaction is modeled
+   anywhere on the merged tree.
+
+3. The SXT-033 pitch-helper finding — LIVE at uni>1, kept un-absorbed, and
+   now ALSO routed from this leaf. SXT-033 documented that the landed
+   SXT-022 helpers (`voice_model.ntpi_tuningctr` / `ntpi_ignoring_tuning`)
+   interpolate the fractional semitone with a term 12000× steeper and
+   sign-flipped vs the pinned `table_two_to_the_minus` construction
+   (`classic_model.py` carries the corrected helper; the finding was
+   "routed, not absorbed"). In the SXT-022 slice the flawed fractional term
+   is INERT (its argument is identically 0 → the term is exactly 1), and
+   the uni=1 regression is pinned byte-identical to the SXT-022 artifact
+   (sha `6a73bb9a…`) — which is why THIS model keeps the SXT-022 helper.
+   At uni>1 the argument `detune_v + l_sync` is NONZERO for every detuned
+   voice, so the flawed term is LIVE in this leaf's `t_v`/`t_inv_v`. This
+   leaf does not tune around it: the uni>1 max/spectral budget misses
+   (EVIDENCE §4) are reported WITH the flawed term in the model, and the
+   finding is routed to the SXT-013/#12 freeze together with SXT-033's
+   finding as a named candidate contributor. Resolution (adopting the
+   corrected helper into `voice_model.py`) belongs to the freeze owner;
+   it would break the uni=1 byte-identity pin at 0 LSB (the term is
+   exactly 1 at argument 0 — the artifact sha is unaffected) and change
+   uni>1 numbers only.
+
+4. Merged control-plane word map (normative; this is the resolved overlap
+   of the two appendices that both targeted word 40 on their branches):
+   init words 0..39 are the frozen v1 layout; 40..77 the SXT-026a
+   parameterization appendix (osc_kind, fu_poles, fm_depth, fm_mode, mix1,
+   pitch offsets, per-osc hp/lp biquads); 78..127 the SXT-034 unison
+   appendix (uni count 78, out_attenuation 79, per-voice
+   t/t_inv/init-oscstate at 80+3u); 128.. the per-creation init-draw table
+   (count at 128, sets at 129+16·set). Ctrl slot word 31 (v1 "reserved")
+   now carries `draw_set_index` for created voices; words 32..39 remain
+   the SXT-026a fvel/kt/sine-omega group.
+
+5. SXT-034 inside the SXT-026a classes. `InputsV2` carries the unison
+   inputs at their class identity — `n_unison = 1`, `spread = 0`,
+   `retrigger = on` (the #86 uni/rt gates refuse anything else; declared
+   draws are a v1-override mechanism and `InputsV2.next_draw` fails loud).
+   Classic-kind V2 voices therefore exercise the full per-voice machinery
+   at the uni=1 identity (bit-identical: `out_attenuation = 1.0` exactly,
+   detune 0); sine-kind voices have no unison path. Uni>1 fixtures remain
+   v1-class declared overrides as declared in §2 of the SXT-034 evidence.
+
 ## Files
 
 * `voice_model.py` — the frozen model (importable; see module docstring)
 * `run_model.py` — renders a fixture sequence, writes `model.wav`,
   `model_trace.json`, and the RTL stimulus (`rtl/*.hex`)
-* `extract_inputs.py` — fail-closed extraction of the normalized voice
-  inputs from the pinned engine (`attacky_inputs.json`)
-* `attacky_inputs.json` — committed extraction (census-blob verified)
+* `extract_inputs.py` / `attacky_inputs.json` — fail-closed extraction of
+  the normalized voice inputs from the pinned engine (SXT-022 base slice)
+* `extract_uni_inputs.py` / `attacky_uni*_inputs.json` — SXT-034: the same
+  extraction with the declared unison-voices override applied and read
+  back (test configuration on the census-verified carrier)
+* `render_uni_reference.py` — SXT-034: pinned-engine reference renders
+  under the declared override (SXT-012 render policies)
+* `sequences/sxt034-*.json` — leaf-local sequences (smoke; non-retrigger
+  draw mechanism fixture)
 
 ## Reproduce
 
