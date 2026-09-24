@@ -244,6 +244,27 @@
         "rtl_vs_model": "PASS"
       }
     },
+"osc:Sine": {
+   "evidence": [
+    {
+     "path": "reports/SXT-040/EVIDENCE.md",
+     "sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7"
+    }
+   ],
+   "fixture_verified_paths": [
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp (SXT-040 test configuration)",
+    "resources/data/patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp (SXT-040 test configuration)",
+    "resources/data/patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp (SXT-040 test configuration)"
+   ],
+   "issue": 74,
+   "landed": true,
+   "leaf_id": "SXT-040",
+   "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (3 canonical carriers + 2 smoke configs incl. legacy-unison-9; single-constant mutant control FAILS); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): max bound passed on all 6 rows, rms passed 4/6, spectral corr missed everywhere (badnews max 62-210 LSB / rms -62/-71 dBFS at the int16 quantization cap; popcorn2k rms -47/-49 with a saturating reference; tentacles modern uni4 det0.034 in the F-033-1 detuned-unison class); 35/38 recovery-basis sine presets REFUSED by the fail-closed gate (live velocity/keytrack/LFO routes into AEG/pan/pitch/feedback/volume/drift, mono playmodes, unison garbage) - recorded as requirement attribution, zero presets promoted; exposure gaps recorded (feedback deform_type, lowcut/highcut deactivated flags)",
+   "verification": {
+    "model_vs_reference": "PARTIAL",
+    "rtl_vs_model": "PASS"
+   }
+  },
     "osc:Wavetable": {
       "evidence": [
         {

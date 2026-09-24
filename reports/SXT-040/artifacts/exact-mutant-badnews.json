@@ -1,0 +1,24 @@
+{
+  "tb": "rtl/oscillators/sine/sine_broken_mutant.sv",
+  "verdict": "FAIL",
+  "checked": {
+    "checkpoints": 1,
+    "fields": 95,
+    "voices": 1,
+    "oscout": 64,
+    "mono": 32
+  },
+  "mismatches": 97,
+  "first_failures": [
+    "block 0 sample 2: mono model=1 rtl=0",
+    "block 0 sample 3: mono model=2 rtl=1",
+    "block 0 sample 4: mono model=6 rtl=5",
+    "block 0 sample 6: mono model=18 rtl=16",
+    "block 0 sample 7: mono model=25 rtl=24",
+    "block 0 sample 8: mono model=36 rtl=34",
+    "block 0 sample 10: mono model=60 rtl=58",
+    "block 0 sample 11: mono model=74 rtl=72",
+    "block 0 sample 12: mono model=90 rtl=88",
+    "block 0 sample 13: mono model=107 rtl=106"
+  ]
+}

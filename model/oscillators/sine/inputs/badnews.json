@@ -1,0 +1,142 @@
+{
+  "absolute_detune": false,
+  "adsr": {
+    "a": 1.610718011856079,
+    "a_s": 1.0,
+    "d": 0.9053590297698975,
+    "d_s": 0.0,
+    "mode": 0.0,
+    "r": -5.0,
+    "r_s": 2.0,
+    "s": 0.5142859816551208
+  },
+  "carrier": "badnews",
+  "character": 0,
+  "declared_overrides": [
+    [
+      "mute_o1",
+      true
+    ],
+    [
+      "mute_o2",
+      true
+    ],
+    [
+      "mute_o3",
+      false
+    ],
+    [
+      "mute_noise",
+      true
+    ],
+    [
+      "mute_ring_12",
+      true
+    ],
+    [
+      "mute_ring_23",
+      true
+    ],
+    [
+      "fu0_off",
+      true
+    ],
+    [
+      "fu1_off",
+      true
+    ],
+    [
+      "fx_off",
+      true
+    ],
+    [
+      "ws_off",
+      true
+    ],
+    [
+      "lc_off",
+      true
+    ],
+    [
+      "fbc_serial1",
+      true
+    ],
+    [
+      "fm_off",
+      true
+    ],
+    [
+      "scenemode_single",
+      true
+    ],
+    [
+      "retrigger_on",
+      true
+    ],
+    [
+      "drift_zero",
+      true
+    ],
+    [
+      "route_slot_1",
+      true
+    ]
+  ],
+  "drift": 0.0,
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "extend_detune": false,
+  "fb": 0.0,
+  "fb_extend": false,
+  "fmmode": 0,
+  "graphs_sha256_of_line_source": "corpus/normalized/graphs.jsonl",
+  "highcut": 70.0,
+  "issue": "SXT-040",
+  "keytrack": true,
+  "level_pfg": 32.05717468261719,
+  "lowcut": -60.0,
+  "master_db": -2.025745391845703,
+  "o_level": 0.925000011920929,
+  "octave": 1,
+  "pan": 0.0,
+  "pitch_extend": false,
+  "pitch_param": 0.0,
+  "preset_census_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+  "preset_path": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+  "retrigger": true,
+  "scene_octave": -1,
+  "scene_routes_checked": [
+    [
+      23,
+      "A Osc 1 Morph",
+      "scene/muted-osc"
+    ],
+    [
+      1,
+      "A Osc 2 Volume",
+      "voice/muted-osc"
+    ],
+    [
+      1,
+      "A Filter 1 Cutoff",
+      "voice/off-path"
+    ],
+    [
+      16,
+      "A Filter 2 FEG Mod Amount",
+      "voice/off-path"
+    ]
+  ],
+  "scene_volume": 0.6247320175170898,
+  "schema_version": 1,
+  "shape": 0,
+  "slot": 2,
+  "unison": 1,
+  "unison_detune": 0.20000000298023224,
+  "vca_db": -5.142859935760498,
+  "vca_velsense": 0.0
+}

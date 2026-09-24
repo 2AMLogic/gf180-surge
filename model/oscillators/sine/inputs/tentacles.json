@@ -1,0 +1,142 @@
+{
+  "absolute_detune": false,
+  "adsr": {
+    "a": -8.0,
+    "a_s": 1.0,
+    "d": -2.0,
+    "d_s": 1.0,
+    "mode": 0.0,
+    "r": -5.0,
+    "r_s": 2.0,
+    "s": 1.0
+  },
+  "carrier": "tentacles",
+  "character": 0,
+  "declared_overrides": [
+    [
+      "mute_o1",
+      false
+    ],
+    [
+      "mute_o2",
+      true
+    ],
+    [
+      "mute_o3",
+      true
+    ],
+    [
+      "mute_noise",
+      true
+    ],
+    [
+      "mute_ring_12",
+      true
+    ],
+    [
+      "mute_ring_23",
+      true
+    ],
+    [
+      "fu0_off",
+      true
+    ],
+    [
+      "fu1_off",
+      true
+    ],
+    [
+      "fx_off",
+      true
+    ],
+    [
+      "ws_off",
+      true
+    ],
+    [
+      "lc_off",
+      true
+    ],
+    [
+      "fbc_serial1",
+      true
+    ],
+    [
+      "fm_off",
+      true
+    ],
+    [
+      "scenemode_single",
+      true
+    ],
+    [
+      "retrigger_on",
+      true
+    ],
+    [
+      "drift_zero",
+      true
+    ],
+    [
+      "route_slot_1",
+      true
+    ]
+  ],
+  "drift": 0.0,
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "extend_detune": false,
+  "fb": 0.0,
+  "fb_extend": false,
+  "fmmode": 1,
+  "graphs_sha256_of_line_source": "corpus/normalized/graphs.jsonl",
+  "highcut": 70.0,
+  "issue": "SXT-040",
+  "keytrack": true,
+  "level_pfg": 0.0,
+  "lowcut": -60.0,
+  "master_db": -9.0,
+  "o_level": 1.0,
+  "octave": 1,
+  "pan": 0.0,
+  "pitch_extend": false,
+  "pitch_param": 0.0,
+  "preset_census_blob_sha1": "d811096971efa1da42be4c646bd786cc9dc6e4ea",
+  "preset_path": "resources/data/patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp",
+  "retrigger": true,
+  "scene_octave": -1,
+  "scene_routes_checked": [
+    [
+      6,
+      "A FM Depth",
+      "scene/fm-off"
+    ],
+    [
+      17,
+      "A Filter 1 Cutoff",
+      "voice/off-path"
+    ],
+    [
+      17,
+      "A Filter 2 Cutoff",
+      "voice/off-path"
+    ],
+    [
+      18,
+      "A Filter 2 Cutoff",
+      "voice/off-path"
+    ]
+  ],
+  "scene_volume": 0.8908990025520325,
+  "schema_version": 1,
+  "shape": 8,
+  "slot": 0,
+  "unison": 4,
+  "unison_detune": 0.033927999436855316,
+  "vca_db": 0.0,
+  "vca_velsense": 0.0
+}

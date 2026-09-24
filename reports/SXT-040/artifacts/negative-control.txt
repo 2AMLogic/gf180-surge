@@ -1,0 +1,50 @@
+SXT-040 negative controls (issue #74 acceptance) — committed transcript.
+All controls demonstrably FAIL the check they target (or REFUSE, exit 2).
+Regenerate: python3 tools/run_sxt040_checks.py [--steps 3]
+
+=== Part A: single-constant RTL mutant (SXT-022 pattern) ==================
+sine_broken_mutant.sv = tb_sine.sv with the qmul round-half-up bias mutated
+by one shift (<<20 -> <<19). Run on the badnews canonical run
+(seq-notes-repeated-v1, full 6150 blocks). Clean RTL: PASS (see
+exact-badnews.json). Mutant: FAIL.
+  verdict=FAIL mismatches=97
+  first_failure: block 0 sample 2: mono model=1 rtl=0
+
+=== Part B: wrong-family substitution (model side) ========================
+The badnews fixture's slot parameters driven by the landed SXT-033 Classic
+impulse-machine arithmetic (same gain staging / AEG / unison / pitch
+inputs; shape 0, pw 0.5, pw2 0.5, submix 0, sync 0, unison 1) against the
+Sine reference render (seq-notes-repeated-v1). The reference-budget check
+must FAIL; the correct Sine model's numbers are shown for discrimination
+(full-length rows from the committed budget matrix).
+  badnews (legacy, shape 0, uni 1), 6,150-block (full-length) control render
+    sine model    : max=62 rms=-71.0 dBFS corr=0.9456 (full budget row)
+    classic subst : verdict='FAIL' max=2806 rms=-36.3 dBFS corr=0.8340  <- FAIL
+
+=== Part C: shape-migration confusion (model side) =======================
+The tentacles fixture rendered with the RAW pre-migration shape value
+(env SXT040_NC_SHAPE_RAWVALUE=1; the sine_shape_remap confusion — the raw
+sidecar value is pre-migration and must never be used; slate example Arp 2:
+raw 1 -> normalized 28 via load_xml rev<=27). The budget check against the
+normalized-shape reference must FAIL.
+  tentacles (modern, shape 8, uni 4), seq-notes-coverage-v1, 512 blocks
+    normalized shape 8 (full row)  : corr 0.9381
+    forced raw value 1             : verdict='FAIL' max=7197 rms=-23.4 dBFS
+                                     corr=0.6251                    <- FAIL
+
+=== Part D: out-of-class presets refused (fail-closed extractor) ==========
+All four refuse at the committed-graphs level (exit 2):
+  mortsnare: REFUSING: scene-A playmode is 'mono' - voice management
+             outside the declared poly slice (SXT-043 scope)
+  arp2:      REFUSING: scene-A playmode is 'mono single trigger' ...
+             (also carries the sine_shape_remap raw 1 -> 28)
+  alone:     REFUSING: scene-A routing 'A Amp EG Attack' (source 1) targets
+             live machinery ... [also keytrack->Osc 1 Feedback,
+             lfo3->Osc 1 Pitch, lfo2->Pan, velocity->Osc Drift]
+  mystery4:  REFUSING: scene-A routing 'A Amp EG Attack' (source 1) ...
+
+Notes: budgets are [PROPOSED] placeholders (PENDING-FREEZE, #12); the
+committed carriers also miss some proposed bounds (see EVIDENCE.md budget
+matrix) — the substitution controls demonstrate that the WRONG arithmetic
+fails the check it targets and is strictly worse than the declared-class
+model on the same fixture.

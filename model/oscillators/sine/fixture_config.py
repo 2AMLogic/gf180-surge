@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""SXT-040 declared fixture configuration (shared by the extractor and the
+reference renderer).
+
+One implementation of: preset load, parameter read, and the DECLARED fixture
+overrides applied through the official surgepy parameter-change path
+(setParamVal), with mandatory readback verification. Structure and override
+set follow the landed SXT-033 Classic-family configuration
+(`model/oscillators/classic/fixture_config.py`); the modeled slot is a Sine
+oscillator (type 1) instead of Classic.
+
+The overrides exist to ISOLATE one Sine oscillator slot so the
+model-vs-reference budget checks exercise exactly the modeled arithmetic
+(the Sine family slice). They are test configurations, never adapted
+presets, and never count toward preset coverage. The un-modeled stages are:
+
+  * other mixer paths (other osc slots, noise, both ring modulators)
+  * both filter units (the modeled voice runs the filter-off direct path)
+  * all 16 FX slots, the waveshaper, the scene lowcut, the FM routing
+  * filter-block configuration pinned to fc_serial1 (the mono voice path:
+    SurgeVoice calls the oscillator with stereo = (fbc == fc_wide), and the
+    frozen model is mono)
+  * scene mode pinned to Single (scene-B integration is #48's scope)
+  * oscillator retrigger forced ON (deterministic start phase; the product
+    contract requires deterministic starts for evidence, as in SXT-026)
+
+Carriers are recovery-basis presets from the issue #74 list (or, for the
+negative control, a preset that must be REFUSED).
+"""
+
+import os
+
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__)))))
+
+CARRIERS = {
+    # name: (preset path relative to resources/data/, modeled osc slot index)
+    "badnews": ("patches_3rdparty/Bluelight/Pads/Bad News.fxp", 2),
+    "tentacles": ("patches_3rdparty/Lopyt/Soundscapes/Tentacles.fxp", 0),
+    "popcorn2k": ("patches_3rdparty/Nick Moritz/Keys/Popcorn 2K.fxp", 0),
+    # out-of-class negative controls (recovery-basis presets the extractor
+    # must REFUSE for fixture use; see extract_inputs.py gates):
+    #   mortsnare - scene-A playmode mono (SXT-043 scope)
+    #   arp2      - playmode mono single-trigger; sine_shape_remap raw 1 -> 28
+    #   alone     - live voice routes into the modeled slot / pan
+    #               (keytrack->Osc1 Feedback, lfo3->Osc1 Pitch, lfo2->Pan,
+    #                velocity->Osc Drift)
+    #   mystery4  - live voice route velocity->Amp EG Attack
+    "mortsnare": ("patches_3rdparty/Emu/Drums/Mort Snare.fxp", 1),
+    "arp2": ("patches_3rdparty/Inigo Kennedy/Rhythms/Arp 2.fxp", 1),
+    "alone": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp", 0),
+    "mystery4": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Mystery 4.fxp", 0),
+}
+
+
+class Refuse(Exception):
+    pass
+
+
+def carrier_overrides(slot):
+    """Uniform isolation override set for the modeled slot index.
+
+    route_slot=1 pins the modeled slot's output route to the A path of the
+    serial-1 filter block (route 1 is filtered to L by fc_serial1). Presets
+    may store route 2 (the post-F1 dry/B path, whose gain is the F2 mix
+    min(1, 1+filter_balance)) - e.g. Bad News stores route_o3 = 2 with
+    balance -0.684 (B gain 0.316); without this override the modeled voice
+    would enter the bus through parameter-dependent routing outside the
+    declared slice. Test configuration, verified by readback."""
+    return [
+        ("mute_o1", slot != 0), ("mute_o2", slot != 1), ("mute_o3", slot != 2),
+        ("mute_noise", True), ("mute_ring_12", True), ("mute_ring_23", True),
+        ("fu0_off", True), ("fu1_off", True), ("fx_off", True),
+        ("ws_off", True), ("lc_off", True), ("fbc_serial1", True),
+        ("fm_off", True), ("scenemode_single", True), ("retrigger_on", True),
+        ("drift_zero", True), ("route_slot_1", True),
+    ]
+
+
+def preset_abs(oc, carrier):
+    rel, _slot = CARRIERS[carrier]
+    return os.path.join(oc.engine_dir(), "resources", "data", rel)
+
+
+def read_params(s, slot):
+    sc = s.getPatch()["scene"][0]
+    o = sc["osc"][slot]
+    p = {k: s.getParamVal(o["p"][k]) for k in range(7)}
+    return {
+        "osc_type": int(s.getParamVal(o["type"])),
+        "octave": int(s.getParamVal(o["octave"])),
+        "scene_octave": int(s.getParamVal(sc["octave"])),
+        "keytrack": bool(s.getParamVal(o["keytrack"])),
+        "pitch_param": s.getParamVal(o["pitch"]),
+        "pitch_extend": bool(s.getExtend(o["pitch"])),
+        "retrigger": bool(s.getParamVal(o["retrigger"])),
+        "shape": int(p[0]),
+        "fb": p[1],
+        "fmmode": int(p[2]),
+        "lowcut": p[3],
+        "highcut": p[4],
+        "unison_detune": p[5],
+        "unison": int(p[6]),
+        "fb_extend": bool(s.getExtend(o["p"][1])),
+        "extend_detune": bool(s.getExtend(o["p"][5])),
+        "absolute_detune": bool(s.getAbsolute(o["p"][5])),
+        "drift": s.getParamVal(sc["drift"]),
+        "character": int(s.getParamVal(s.getPatch()["character"])),
+        "o_level": s.getParamVal(sc["level_o%d" % (slot + 1)]),
+        "level_pfg": s.getParamVal(sc["level_pfg"]),
+        "pan": s.getParamVal(sc["pan"]),
+        "width": s.getParamVal(sc["width"]),
+        "scene_volume": s.getParamVal(sc["volume"]),
+        "vca_db": s.getParamVal(sc["vca_level"]),
+        "vca_velsense": s.getParamVal(sc["vca_velsense"]),
+        "master_db": s.getParamVal(s.getPatch()["volume"]),
+        "adsr": {k: s.getParamVal(sc["adsr"][0][k])
+                 for k in ("a", "d", "s", "r", "a_s", "d_s", "r_s", "mode")},
+        "fu0_type": int(s.getParamVal(sc["filterunit"][0]["type"])),
+        "fu1_type": int(s.getParamVal(sc["filterunit"][1]["type"])),
+        "ws_type": int(s.getParamVal(sc["wsunit"]["type"])),
+        "filter_config": int(s.getParamVal(sc["filterblock_configuration"])),
+        "fm_switch": int(s.getParamVal(sc["fm_switch"])),
+        "lowcut_scene": s.getParamVal(sc["lowcut"]),
+        "scenemode": int(s.getParamVal(s.getPatch()["scenemode"])),
+        "polymode": int(s.getParamVal(sc["polymode"])),
+        "fx_types": [int(s.getParamVal(s.getPatch()["fx"][i]["type"]))
+                     for i in range(16)],
+        "mutes": {k: s.getParamVal(sc["mute_" + k])
+                  for k in ("o1", "o2", "o3", "noise", "ring_12", "ring_23")},
+        "route_slot": int(s.getParamVal(sc["route_o%d" % (slot + 1)])),
+    }
+
+
+def apply_overrides(s, slot):
+    """Apply the declared overrides and verify the readback (fail-closed)."""
+    sc = s.getPatch()["scene"][0]
+    applied = {}
+    for key, val in carrier_overrides(slot):
+        if key.startswith("mute_"):
+            s.setParamVal(sc[key], 1.0 if val else 0.0)
+            applied[key] = 1.0 if val else 0.0
+        elif key in ("fu0_off", "fu1_off"):
+            idx = 0 if key == "fu0_off" else 1
+            s.setParamVal(sc["filterunit"][idx]["type"], 0.0)
+            applied["fu%d_type" % idx] = 0
+        elif key == "fx_off":
+            import surgepy.constants as C
+
+            for i in range(16):
+                s.setParamVal(s.getPatch()["fx"][i]["type"], C.fxt_off)
+            # the loadFx swap happens at the next control pass (SXT-012
+            # dry-bypass): run one settle block before any readback
+            sbuf = s.createMultiBlock(1)
+            s.processMultiBlock(sbuf)
+            applied["fx_types"] = [0] * 16
+        elif key == "ws_off":
+            s.setParamVal(sc["wsunit"]["type"], 0.0)
+            applied["ws_type"] = 0
+        elif key == "lc_off":
+            s.setParamVal(sc["lowcut"], -72.0)
+            applied["lowcut_scene"] = -72.0
+        elif key == "fbc_serial1":
+            s.setParamVal(sc["filterblock_configuration"], 0.0)
+            applied["filter_config"] = 0
+        elif key == "fm_off":
+            s.setParamVal(sc["fm_switch"], 0.0)
+            applied["fm_switch"] = 0
+        elif key == "scenemode_single":
+            s.setParamVal(s.getPatch()["scenemode"], 0.0)
+            applied["scenemode"] = 0
+        elif key == "retrigger_on":
+            s.setParamVal(sc["osc"][slot]["retrigger"], 1.0)
+            applied["retrigger"] = 1.0
+        elif key == "drift_zero":
+            s.setParamVal(sc["drift"], 0.0)
+            applied["drift"] = 0.0
+        elif key == "route_slot_1":
+            s.setParamVal(sc["route_o%d" % (slot + 1)], 1.0)
+            applied["route_slot"] = 1
+        else:
+            raise Refuse("unknown override %r" % key)
+    d = read_params(s, slot)
+    for k, v in applied.items():
+        got = d["mutes"][k[5:]] if k.startswith("mute_") else d.get(k, d.get("route_slot"))
+        if k == "route_slot":
+            got = d["route_slot"]
+        if isinstance(v, list):
+            if got != v:
+                raise Refuse("override readback failed: %s = %r" % (k, got))
+        elif isinstance(v, float) and isinstance(got, bool):
+            if float(got) != v:
+                raise Refuse("override readback failed: %s = %r" % (k, got))
+        elif abs(float(got) - float(v)) > 1e-6:
+            raise Refuse("override readback failed: %s = %r (want %r)"
+                         % (k, got, v))
+    return d
+
+
+def build_instance(surgepy, oc, carrier):
+    """Fresh engine instance: loadPatch + overrides + readback. Returns s."""
+    s = surgepy.createSurge(48000.0)
+    _rel, slot = CARRIERS[carrier]
+    if not s.loadPatch(preset_abs(oc, carrier)):
+        raise Refuse("loadPatch failed: %s" % carrier)
+    apply_overrides(s, slot)
+    return s

@@ -1,0 +1,105 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "carrier": "popcorn2k",
+ "declared_overrides_applied": [
+  [
+   "mute_o1",
+   false
+  ],
+  [
+   "mute_o2",
+   true
+  ],
+  [
+   "mute_o3",
+   true
+  ],
+  [
+   "mute_noise",
+   true
+  ],
+  [
+   "mute_ring_12",
+   true
+  ],
+  [
+   "mute_ring_23",
+   true
+  ],
+  [
+   "fu0_off",
+   true
+  ],
+  [
+   "fu1_off",
+   true
+  ],
+  [
+   "fx_off",
+   true
+  ],
+  [
+   "ws_off",
+   true
+  ],
+  [
+   "lc_off",
+   true
+  ],
+  [
+   "fbc_serial1",
+   true
+  ],
+  [
+   "fm_off",
+   true
+  ],
+  [
+   "scenemode_single",
+   true
+  ],
+  [
+   "retrigger_on",
+   true
+  ],
+  [
+   "drift_zero",
+   true
+  ],
+  [
+   "route_slot_1",
+   true
+  ]
+ ],
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "inputs": "model/oscillators/sine/inputs/popcorn2k.json",
+ "isolation_note": "declared fixture configuration (one Sine slot audible; other mixer paths, filter units, FX, waveshaper, scene lowcut, FM routing off; fbc serial1; scene mode Single; retrigger on) - a test configuration, never an adapted preset, never coverage",
+ "issue": "SXT-040",
+ "preset_blob_sha1": "27a0f93e15be0f62a16b3192883272fa3a81a3b8",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 8550,
+  "clipped_samples": 182,
+  "frames": 273600,
+  "peak_abs_float": 1.1791315078735352,
+  "repeat_hashes": [
+   "7258f986046b355ebe2cf63dd76067cd4743413b36d7d977cce3f5331458d4e0",
+   "7258f986046b355ebe2cf63dd76067cd4743413b36d7d977cce3f5331458d4e0",
+   "7258f986046b355ebe2cf63dd76067cd4743413b36d7d977cce3f5331458d4e0"
+  ],
+  "repeats": 3,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-notes-coverage-v1",
+  "path": "fixtures/sequences/seq-notes-coverage-v1.json"
+ },
+ "wav": {
+  "path": "../../../../tmp/sxt040-ref/popcorn2k__seq-notes-coverage-v1-ref.wav",
+  "sha256": "b87b3b56fa600a2ec63257021ef5e2cd406221209998794a15b5105d67cde40f"
+ }
+}

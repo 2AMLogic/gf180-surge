@@ -1,0 +1,13 @@
+{
+  "tb": "rtl/oscillators/sine/tb_sine.sv",
+  "verdict": "PASS",
+  "checked": {
+    "checkpoints": 403,
+    "fields": 38285,
+    "voices": 403,
+    "oscout": 25792,
+    "mono": 196800
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

@@ -172,9 +172,13 @@
    "role": "evidence record for leaf voice:unison-stack",
    "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
   },
+  "reports/SXT-040/EVIDENCE.md": {
+   "role": "evidence record for leaf osc:Sine",
+   "sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7"
+  },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "56650c3ece05ceb50ac8bdd288a46370c27733a426b252b223f90018b661f84d"
+   "sha256": "385d64766ba2f6f3a66a4f693adddcf40fba30ed93e591bcf74cec53c9bacf54"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -577,6 +581,15 @@
     }
    },
    "osc:Classic": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "PARTIAL",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "osc:Sine": {
     "evidence_state": "OK",
     "landed": true,
     "support_ready": false,
