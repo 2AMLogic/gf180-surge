@@ -107,8 +107,8 @@
    "fx_leaves_gate": {
     "": 1970,
     "FAIL": 518,
-    "NOT_RUN": 284,
-    "PASS": 148
+    "NOT_RUN": 246,
+    "PASS": 186
    },
    "routing_leaves_gate": {
     "": 2680,
@@ -131,8 +131,8 @@
    "fx_leaves_gate": {
     "": 161,
     "FAIL": 365,
-    "NOT_RUN": 53,
-    "PASS": 62
+    "NOT_RUN": 44,
+    "PASS": 71
    },
    "routing_leaves_gate": {
     "": 632,
@@ -160,6 +160,10 @@
    "role": "structural input (pinned)",
    "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
   },
+  "reports/SXT-028c/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:Chorus",
+   "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+  },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
    "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
@@ -170,11 +174,11 @@
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
-   "sha256": "90e61da0051f0bc934ffb3a096013acc39d8abd239a3e038fbd5a3cea6e81592"
+   "sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "435d91cb71b46d467ceaa2e3ba38a6b8eeb564bca6c2afba5f694ade450c0bf9"
+   "sha256": "385d64766ba2f6f3a66a4f693adddcf40fba30ed93e591bcf74cec53c9bacf54"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -494,9 +498,12 @@
    },
    "fx:Chorus": {
     "evidence_state": "OK",
-    "landed": false,
-    "support_ready": false,
-    "verification": {}
+    "landed": true,
+    "support_ready": true,
+    "verification": {
+     "model_vs_reference": "PASS",
+     "rtl_vs_model": "PASS"
+    }
    },
    "fx:Conditioner": {
     "evidence_state": "OK",

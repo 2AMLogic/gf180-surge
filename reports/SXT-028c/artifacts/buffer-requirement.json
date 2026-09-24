@@ -1,0 +1,49 @@
+{
+  "external_traffic": {
+    "bytes_per_sample": 196.005859375,
+    "bytes_per_second_at_48k": 9408281.25,
+    "note": "reads = 4 voices x 12-tap sinc per sample (UNMASKED reads may cross into the 12 padding words, whose content the engine refreshes only when wpos == 0); writes = 1 mono word per sample + the 12-word padding copy once per 8192 blocks",
+    "reads_per_sample": 48.0,
+    "transaction_log_basis": "model ext_reads/ext_writes counters over 256 blocks (measured, frozen model)",
+    "words_per_sample_32bit": 49.00146484375,
+    "writes_per_sample": 1.00146484375
+  },
+  "external_writable_memory": {
+    "bytes_total": 1048624,
+    "classification_policy": "mono delay line (2^18 + 12 words) is external WRITABLE memory (>64 KiB policy, plan section 3); flash is never writable delay memory; all processing in-chip",
+    "mono_line": {
+      "bits": 8388992,
+      "bytes": 1048624,
+      "layout": "circular mono line; the 12 padding words line[2^18..2^18+11] are refreshed from line[0..11] when wpos == 0 (engine wrap-read semantics, reproduced exactly)",
+      "words": 262156
+    },
+    "total_MiB": 1.000046,
+    "words_total": 262156
+  },
+  "issue": "SXT-028c",
+  "leaf": "SXT-028c",
+  "multi_instance": {
+    "note": "per-instance state is never shared (AGENTS.md); two Chorus slots = two independent lines and regions",
+    "per_additional_instance_external_bytes": 1048624
+  },
+  "on_chip_small_state": {
+    "bits": 2272,
+    "breakdown": {
+      "biquads lp+hp (lags + TDF2 regs, Q24.43)": 1152,
+      "lfophase (4 x Q24.43, control-plane)": 256,
+      "lipol fb/mix/width (cur+tgt Q13.18)": 192,
+      "per-voice time lags (4 x v,tgt Q24.43)": 512,
+      "wpos + counters + line hash": 160
+    },
+    "bytes": 284,
+    "note": "the Q68 tap accumulator and 64-bit biquad products are combinational; voicepan constants are frozen ROM"
+  },
+  "schema_version": 1,
+  "scope": "per Chorus instance (ChorusEffect<4>), 48 kHz, frozen Q10.21/32-bit line words",
+  "sxt015_reconciliation": {
+    "agreement": true,
+    "note": "SXT-015 placeholder-class estimate for the Chorus (mono 1<<18-sample buffer, ChorusEffect.h) confirmed exactly by this leaf (plus the 12 padding words)",
+    "sxt015_chorus_state_bytes": 1048624,
+    "this_model_bytes": 1048624
+  }
+}

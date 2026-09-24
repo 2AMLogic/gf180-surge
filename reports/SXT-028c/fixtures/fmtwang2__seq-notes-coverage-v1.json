@@ -1,0 +1,67 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012/023 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "a58f6d0a93b4fa6e8920a5c7364fd7a541f2cbe05c47ea6be0e984b1f8b50415",
+      "a58f6d0a93b4fa6e8920a5c7364fd7a541f2cbe05c47ea6be0e984b1f8b50415",
+      "a58f6d0a93b4fa6e8920a5c7364fd7a541f2cbe05c47ea6be0e984b1f8b50415"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "e39b8ed93aa0a49fef3a9c6c7b52d588852a3d1308f0da7a76cfb567b5722868",
+      "e39b8ed93aa0a49fef3a9c6c7b52d588852a3d1308f0da7a76cfb567b5722868",
+      "e39b8ed93aa0a49fef3a9c6c7b52d588852a3d1308f0da7a76cfb567b5722868"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 2188844,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.13338446617126465,
+    "sha256": "12fbca1b65e3733aa9f8caab4d748a5d62efaa2fc69c161a17ea59081934cbe7",
+    "wav": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "fmtwang2__seq-notes-coverage-v1",
+  "issue": "SXT-028c",
+  "preset": {
+    "census_blob_sha1": "670e5237b866d3a1b35fc971d3d21c271b8825a2",
+    "graphs_sha256_prefix": "670e5237b866d3a1",
+    "path": "resources/data/patches_3rdparty/Luna/MPE/FM Twang 2.fxp",
+    "slug": "fmtwang2"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "policies_inherited": "fixtures/render_fixture.py via tools/render_fx_fixtures.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 2188844,
+    "peak_abs_float": 0.24536973237991333,
+    "sha256": "dea2a3350ba0a34ef3de88ac90c7a7572663620249ede962583d625f7b3fac8d",
+    "wav": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}
