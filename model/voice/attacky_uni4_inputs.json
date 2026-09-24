@@ -1,0 +1,198 @@
+{
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000,
+    "version_string": "1.4.sxt037-tap.ff8b4dba4"
+  },
+  "graph_echo": {
+    "bal": 0.0,
+    "ch": 0,
+    "chn": "Warm",
+    "fb": 0.0,
+    "fbc": 0,
+    "fu0": {
+      "cut": -14.325024,
+      "em": 96.0,
+      "kt": 0.0,
+      "res": 0.0,
+      "st": 1,
+      "stn": "Driven",
+      "t": 1,
+      "tn": "LP 12 dB"
+    },
+    "lc": -72.0,
+    "md_scene_A": {
+      "s": [
+        [
+          6,
+          0,
+          0,
+          308,
+          "A Filter 1 Cutoff",
+          34.425018,
+          0.264808
+        ],
+        [
+          6,
+          0,
+          0,
+          309,
+          "A Filter 1 Resonance",
+          0.383036,
+          0.383036
+        ]
+      ],
+      "v": []
+    },
+    "mix": {
+      "noise": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "o1": [
+        1.0,
+        0,
+        0,
+        1
+      ],
+      "o2": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "o3": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "ring_12": [
+        1.0,
+        1,
+        0,
+        1
+      ],
+      "ring_23": [
+        1.0,
+        1,
+        0,
+        1
+      ]
+    },
+    "oct": 0,
+    "osc1": {
+      "kt": 1,
+      "oct": -1,
+      "p": [
+        0.0,
+        0.140178,
+        0.329464,
+        1.0,
+        0.0,
+        0.2,
+        1
+      ],
+      "pit": 0.0,
+      "rt": 1,
+      "t": 0,
+      "tn": "Classic",
+      "udet": 0.2,
+      "uni": 4
+    },
+    "pan": 0.0,
+    "pfg": 0.0,
+    "pm": 0,
+    "poly": 16,
+    "porta": -8.0,
+    "vca": 3.600002,
+    "vol": 0.0,
+    "vs": 0.0,
+    "wid": 0.0
+  },
+  "issue": "SXT-034",
+  "not_in_graphs": {
+    "adsr": {
+      "a": -8.0,
+      "a_s": 1.0,
+      "d": 0.0,
+      "d_s": 0.0,
+      "mode": 0.0,
+      "r": -5.0,
+      "r_s": 2.0,
+      "s": 1.0
+    },
+    "character": 0.0,
+    "fadsr": {
+      "a": -8.0,
+      "a_s": 1.0,
+      "d": -4.85536003112793,
+      "d_s": 0.0,
+      "mode": 0.0,
+      "r": -2.0,
+      "r_s": 0.0,
+      "s": 0.0
+    },
+    "fbc": 0.0,
+    "fu0": {
+      "cutoff": -14.325023651123047,
+      "envmod": 96.0,
+      "keytrack": 0.0,
+      "resonance": 0.0,
+      "subtype": 1.0,
+      "type": 1.0
+    },
+    "keytrack_root": 60.0,
+    "level_o1": 1.0,
+    "level_pfg": 0.0,
+    "lfo1": {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0.0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1.0,
+      "unipolar": 0.0
+    },
+    "lowcut": -72.0,
+    "master_volume": -2.025745391845703,
+    "osc1_octave": -1.0,
+    "pan": 0.0,
+    "polylimit": 16.0,
+    "portamento": -8.0,
+    "scene_drift": 0.0,
+    "scene_volume": 0.9732139706611633,
+    "send_levels": [
+      0.0,
+      0.0
+    ],
+    "vca_level": 3.6000020503997803,
+    "vca_velsense": 0.0,
+    "width": 0.0
+  },
+  "preset": {
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "graphs_sha256_of_line_source": "corpus/normalized/graphs.jsonl",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "schema_version": 1,
+  "unison_override": {
+    "declared": true,
+    "init_phase_draws_declared": [],
+    "kind": "test configuration on a real corpus carrier (SXT-012 declared-override pattern); never an adapted preset, never a coverage claim",
+    "param": "scene A osc1 unison voices (osc p[6], ct_osccount), set via setParamVal before any audio",
+    "readback": 4,
+    "retrigger": true,
+    "spread_left_at_preset_value": 0.20000000298023224,
+    "value": 4
+  }
+}

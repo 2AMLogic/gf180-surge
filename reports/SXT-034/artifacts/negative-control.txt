@@ -1,0 +1,119 @@
+SXT-034 negative controls — each must demonstrably fail the check it targets
+date: 2026-09-22 (branch loom/leaf-68-unison)
+fixture under test: uni2-cov (Attacky.fxp, declared unison override 2,
+  seq-notes-coverage-v1; canonical unison fixture)
+true-model reference numbers on the same fixture (uni2-cov.json):
+  max_abs 22,767 LSB | rms -18.48 dBFS | spectral corr 0.9624
+  verdict vs [PROPOSED] SXT-022 budgets: FAIL on max + corr
+  (recorded bounded finding, see EVIDENCE.md section 4 — the true model
+  itself does not pass the proposed max/spectral bounds at uni>1; the
+  controls below are read against the same live check the issue requires)
+
+------------------------------------------------------------------------------
+NC-1 unison-collapsed model (stack forced to 1 voice) — issue-required control
+------------------------------------------------------------------------------
+mutation: model-side configuration mutant — the base unison-1 inputs
+  (model/voice/attacky_inputs.json, uni=1) run through the full unison
+  harness against the UNISON-2 reference render.
+
+$ python3 model/voice/run_model.py --inputs model/voice/attacky_inputs.json \
+    --sequence seq-notes-coverage-v1 --out-dir /tmp/sxt034/nc/nc1-run
+$ python3 tools/compare_audio_reference.py \
+    --ref reference-seq-notes-coverage-v1-uni2.wav \
+    --model nc1-run/model.wav --json nc1-collapsed.json
+verdict: "FAIL against proposed budgets"
+  max_abs 11,743 LSB | rms -24.66 dBFS | corr 0.9554
+differential vs the true uni2 model render (nc1-diff-vs-true.json):
+  max_abs 18,238 LSB | rms -18.82 dBFS | corr 0.9632
+outcome: the reference-budget check FAILS on the unison fixture when the
+  stack is collapsed — a unison-1 render cannot quietly stand in for a
+  unison fixture. PASS (control demonstrably fails).
+
+------------------------------------------------------------------------------
+NC-2 detune-zeroed model mutant (spread forced to 0)
+------------------------------------------------------------------------------
+mutation: model-side configuration mutant — uni=2 inputs with the stored
+  unison detune parameter zeroed (all voices at unison pitch; the stack
+  degenerates to a +3 dB gain with no detune beating).
+
+$ python3 model/voice/run_model.py --inputs uni2-detune-zeroed.json \
+    --sequence seq-notes-coverage-v1 --out-dir /tmp/sxt034/nc/nc2-run
+$ python3 tools/compare_audio_reference.py \
+    --ref reference-seq-notes-coverage-v1-uni2.wav \
+    --model nc2-run/model.wav --json nc2-detune-zeroed.json
+verdict: "FAIL against proposed budgets"
+  max_abs 12,717 LSB | rms -23.04 dBFS | corr 0.9676
+differential vs the true uni2 model render (nc2-diff-vs-true.json):
+  max_abs 20,883 LSB | rms -17.52 dBFS | corr 0.9711
+outcome: detune-spread arithmetic is load-bearing — zeroing it fails the
+  reference-budget check. PASS (control demonstrably fails).
+
+------------------------------------------------------------------------------
+NC-3 beyond-cap unison refusal (unison 17)
+------------------------------------------------------------------------------
+mutation: input mutant — uni=17 (one past MAX_UNISON=16). The engine
+  silently clamps to 16 (ClassicOscillator.cpp init; SXT-015 flagged 58
+  corpus presets); this product contract rejects at load.
+
+$ python3 model/voice/run_model.py --inputs uni17.json \
+    --sequence model/voice/sequences/sxt034-smoke-v1.json ...
+stderr (nc3-rejection-stderr.txt):
+  RuntimeError: unison 17 outside 1..MAX_UNISON(16): explicitly rejected
+  (no clamp)
+exit code: 1, no model.wav emitted
+outcome: beyond-cap unison is refused, never clamped or squeezed. PASS.
+
+------------------------------------------------------------------------------
+NC-4 RTL voice-count mutant (stack fill collapsed to voice 0)
+------------------------------------------------------------------------------
+mutation: rtl/voice/voice_uni_mutant.sv = tb_voice.sv with a single-line
+  mutation of the impulse fill loop (uni_n -> 1); voices 1..N-1 never
+  convolute and their impulse state freezes at the init draw.
+
+$ diff rtl/voice/tb_voice.sv rtl/voice/voice_uni_mutant.sv
+330c330
+<     for (u = 0; u < uni_n; u++) begin
+---
+>     for (u = 0; u < 1; u++) begin
+
+$ python3 tools/compare_rtl_model.py --run-dir <uni2-cov run> \
+    --tb rtl/voice/voice_uni_mutant.sv
+verdict: FAIL, 105 mismatches (nc4-exactness.json)
+  first failures: block 0 sample 0: mono model=-4 rtl=-2 ...
+outcome: the per-voice impulse machinery is exactness-checked — any
+  voice-count loss breaks integer equality immediately. PASS (control
+  demonstrably fails).
+
+------------------------------------------------------------------------------
+NC-5 legacy rounding mutant re-run on the unison fixture
+------------------------------------------------------------------------------
+mutation: rtl/voice/voice_broken_mutant.sv = tb_voice.sv with the qmul
+  round-half-up bias constant mutated (<<20 -> <<19), the committed
+  SXT-022 control, regenerated against the extended tb.
+
+$ python3 tools/compare_rtl_model.py --run-dir <uni2-cov run> \
+    --tb rtl/voice/voice_broken_mutant.sv
+verdict: FAIL, 98 mismatches (nc5-exactness.json)
+outcome: the SXT-022 control remains live on the unison-extended tb. PASS.
+
+==============================================================================
+POST-REBASE RERUN (merged state: branch rebased onto main 1800409, which
+landed SXT-026a/#86, SXT-033/#87, SXT-035/#89, SXT-028a/#90) — 2026-09-23
+==============================================================================
+All five controls re-executed on the merged model+RTL (pinned-oracle host):
+
+  NC-1 unison-collapsed .... FAIL against proposed budgets
+       (max 11,743 LSB | corr 0.955359… — identical to the record above
+        modulo float-ULP noise in the spectral metric, <=1e-15 rel)
+  NC-2 detune-zeroed ....... FAIL against proposed budgets
+       (max 12,717 LSB | corr 0.967577… — same ULP note)
+  NC-3 beyond-cap uni=17 ... exit 1, "unison 17 outside 1..MAX_UNISON(16):
+       explicitly rejected (no clamp)", no model.wav emitted
+  NC-4 voice-count mutant .. FAIL, 105 mismatches, first failure identical
+       ("block 0 sample 0: mono model=-4 rtl=-2"); fields/checkpoint +2 for
+       the merged T-line (SXT-026a f4_r0/f4_r1)
+  NC-5 rounding mutant ..... FAIL, 98 mismatches
+
+The mutants were regenerated from the composed testbench (post-rebase cfg
+layout: unison words 78..127, draw table 128+); the mutations are unchanged
+single-line deltas verified by diff.

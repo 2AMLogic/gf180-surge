@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/work/leaf88fix/model/voice/run_model.py", line 372, in <module>
+    sys.exit(main())
+  File "/home/ubuntu/work/leaf88fix/model/voice/run_model.py", line 95, in main
+    probe = vm.VoiceV2(inp, 60, 100)
+  File "/home/ubuntu/work/leaf88fix/model/voice/voice_model.py", line 1231, in __init__
+    super().__init__(inp, key, velocity)
+  File "/home/ubuntu/work/leaf88fix/model/voice/voice_model.py", line 514, in __init__
+    self._osc_init()
+  File "/home/ubuntu/work/leaf88fix/model/voice/voice_model.py", line 565, in _osc_init
+    raise RuntimeError(
+RuntimeError: unison 17 outside 1..MAX_UNISON(16): explicitly rejected (no clamp)
