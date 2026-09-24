@@ -106,11 +106,20 @@
       }
     },
     "fx:Chorus": {
+      "evidence": [
+        {
+          "path": "reports/SXT-028c/EVIDENCE.md",
+          "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+        }
+      ],
       "issue": 55,
-      "landed": false,
+      "landed": true,
       "leaf_id": "SXT-028c",
-      "note": "unlanded; carries an explicit SXT-017 decision marker (shares LFO-modulated delay-line semantics of the open delay-budget finding; no Chorus budget may freeze before #12 decides)",
-      "requires_freeze_decision": "#12"
+      "note": "RTL-vs-model EXACT (iverilog: PRS dual-instance disjoint regions, PRS mid-stream reset, 3 canonical fixture replays incl. the reverb1-bridged global-slot carrier; outputs, per-voice tap-interpolation checkpoints (i_dtime/sinc phase/read position), state checkpoints, transaction counters; wrong-interp/shared-memory/lag-ramp mutants FAIL = controls; frozen-revision pin refuses stale harnesses). Model-vs-reference vs [PROPOSED] budgets (max <= 8192 LSB, rms <= -46 dBFS, corr >= 0.98) PASS 6/6 fixture legs (3 carriers x 2 sequences): max 114-1230 LSB, rms -79.6..-106.0 dBFS, corr 1.0/0.999999 - PENDING-FREEZE, freeze gated on SXT-017 #12 and the shared delay-semantics finding #16 (chorus delay time = samplerate*n2p(12t)*(1+lfoout), same modulation class as Delay); achieved numbers sit at the quantization floor with the LFO active (input to the #16/#12 freeze, not a resolution). Per-instance state: disjoint external mono lines (2^18+12 words = 1048624 B each; SXT-015 estimate confirmed exactly); 49 words/sample traffic = 9.41 MB/s per instance at 48k. Negative controls: 6 model-side (generic substitute, dropped tail, wrong order, stale stub, bypass transparency+leak detector, LFO-rate mutant) + 3 RTL mutants all CONTROL-OK. Issue-named carriers refused fail-closed (Novuo/Ancient FM drift, Piercing unlanded conditioner); Melon/Drone Bee refused by the render determinism gate despite passing the static screen. Supported delta 0: voice leaf #48 unlanded, fidelity freeze #12 open, listening BLOCKED.",
+      "verification": {
+        "model_vs_reference": "PASS",
+        "rtl_vs_model": "PASS"
+      }
     },
     "fx:Conditioner": {
       "issue": 54,

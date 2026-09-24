@@ -1,0 +1,8 @@
+{
+  "slug": "fmtwang2",
+  "sequence": "seq-poly-8-v1",
+  "blocks": 5925,
+  "n_chorus_instances": 1,
+  "per_block_input": "per chorus instance in processing order: 32 x Q10.21 L words then 32 x Q10.21 R words (8-hex each) \u2014 the chorus-boundary replay input",
+  "per_block_control": "per chorus instance in processing order: fb/mix/width RAW lipol targets (3 x Q13.18), 4 x per-voice time-lag targets (Q24.43), lp coeffs x5 + hp coeffs x5 (Q24.43), flags (bit0 lp_on, bit1 hp_on)"
+}

@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028c",
+  "sim": "iverilog",
+  "sim_version": "Verilog",
+  "model_revision": "7deb47c855c8041bf24335d966300a5b8607fcc89d857e75ff974d86bd55994c",
+  "tb": "rtl/effects/type-chorus/tb_chorus.sv",
+  "cases": [
+    {
+      "case": "prs-dual-128",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7deb47c8",
+        "expected": "7deb47c8"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 20,
+        "checkpoints": 8,
+        "fields": 264
+      },
+      "mismatches": 0,
+      "first_failures": []
+    },
+    {
+      "case": "prs-reset48-128",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7deb47c8",
+        "expected": "7deb47c8"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 20,
+        "checkpoints": 8,
+        "fields": 264
+      },
+      "mismatches": 0,
+      "first_failures": []
+    },
+    {
+      "case": "canonical-fmcombo-512b",
+      "blocks": 512,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7deb47c8",
+        "expected": "7deb47c8"
+      },
+      "checked": {
+        "outputs": 32768,
+        "taps": 33,
+        "checkpoints": 9,
+        "fields": 297
+      },
+      "mismatches": 0,
+      "first_failures": []
+    },
+    {
+      "case": "canonical-fmtwang2-256b",
+      "blocks": 256,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7deb47c8",
+        "expected": "7deb47c8"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 17,
+        "checkpoints": 5,
+        "fields": 165
+      },
+      "mismatches": 0,
+      "first_failures": []
+    },
+    {
+      "case": "canonical-alienappears-256b",
+      "blocks": 256,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7deb47c8",
+        "expected": "7deb47c8"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 17,
+        "checkpoints": 5,
+        "fields": 165
+      },
+      "mismatches": 0,
+      "first_failures": []
+    }
+  ],
+  "mutant_controls": [
+    {
+      "case": "mutant-interp",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 256,
+      "checked": {
+        "outputs": 0,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "ok": true,
+      "first_failures": [
+        "b0 i0: missing O line",
+        "b0 i1: missing O line",
+        "b1 i0: missing O line",
+        "b1 i1: missing O line",
+        "b2 i0: missing O line"
+      ]
+    },
+    {
+      "case": "mutant-shared",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 256,
+      "checked": {
+        "outputs": 0,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "ok": true,
+      "first_failures": [
+        "b0 i0: missing O line",
+        "b0 i1: missing O line",
+        "b1 i0: missing O line",
+        "b1 i1: missing O line",
+        "b2 i0: missing O line"
+      ]
+    },
+    {
+      "case": "mutant-lagramp",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 256,
+      "checked": {
+        "outputs": 0,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "ok": true,
+      "first_failures": [
+        "b0 i0: missing O line",
+        "b0 i1: missing O line",
+        "b1 i0: missing O line",
+        "b1 i1: missing O line",
+        "b2 i0: missing O line"
+      ]
+    }
+  ],
+  "status": "PASS"
+}

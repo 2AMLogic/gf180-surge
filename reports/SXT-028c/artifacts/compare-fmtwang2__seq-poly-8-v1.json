@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028c",
+  "slug": "fmtwang2",
+  "sequence": "seq-poly-8-v1",
+  "ref": "reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1-wet.f32.wav",
+  "model": "reports/SXT-028c/artifacts/model__fmtwang2__seq-poly-8-v1.f32.wav",
+  "channels": {
+    "L": {
+      "frames": 177600,
+      "ref_peak_lsb": 1269435.5,
+      "model_peak_lsb": 1269442.0,
+      "max_abs_diff_lsb": 157.5625,
+      "rms_diff_lsb": 11.198931584903612,
+      "rms_diff_dbfs": -99.42846643524943,
+      "rms_diff_at_shift0_lsb": 11.198931584903612,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 11.198931584903612,
+      "spectral_corr": 0.9999999145853391
+    },
+    "R": {
+      "frames": 177600,
+      "ref_peak_lsb": 1356005.875,
+      "model_peak_lsb": 1356009.0,
+      "max_abs_diff_lsb": 246.875,
+      "rms_diff_lsb": 14.729562921670837,
+      "rms_diff_dbfs": -97.04820106604171,
+      "rms_diff_at_shift0_lsb": 14.729562921670837,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 14.729562921670837,
+      "spectral_corr": 0.9999998580090258
+    },
+    "mono": {
+      "frames": 177600,
+      "ref_peak_lsb": 1035625.375,
+      "model_peak_lsb": 1035629.0,
+      "max_abs_diff_lsb": 177.25,
+      "rms_diff_lsb": 11.004506613150198,
+      "rms_diff_dbfs": -99.58058675077608,
+      "rms_diff_at_shift0_lsb": 11.004506613150198,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 11.004506613150198,
+      "spectral_corr": 0.9999999110854106
+    },
+    "tail_mono": {
+      "tail_frames": 96000,
+      "tail_max_abs_diff_lsb": 1.4751590490341187,
+      "tail_rms_diff_lsb": 0.1625975994211019,
+      "tail_rms_rel_db": -12.581349179761139,
+      "tail_present": true
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "tail_check": {
+    "tail_present": true,
+    "tail_rms_rel_db": -12.581349179761139,
+    "ok": true
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+}

@@ -1,0 +1,82 @@
+{
+  "baseline_sanity": {
+    "max_abs_diff_lsb": 186.4375,
+    "rms_diff_dbfs": -101.42365172480368
+  },
+  "claim": "negative controls; each must fail the check it targets",
+  "controls": [
+    {
+      "budgets": {
+        "max_abs_diff_lsb": 8192,
+        "rms_diff_dbfs": -46.0,
+        "spectral_corr_min": 0.98
+      },
+      "control": "NC-A generic substitute (nearest-sample, equal-pan)",
+      "metrics": {
+        "max_abs_diff_lsb": 509477851984.8594,
+        "rms_diff_dbfs": 97.39251284356294
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (generic substitute FAILS the reference budgets; adapted != supported)"
+    },
+    {
+      "budgets": {
+        "max_abs_diff_lsb": 8192,
+        "rms_diff_dbfs": -46.0,
+        "spectral_corr_min": 0.98
+      },
+      "control": "NC-B dropped tail (render truncated 1.5 s early)",
+      "metrics": {
+        "max_abs_diff_lsb": 234560.50000000227,
+        "rms_diff_dbfs": -28.15664554592473
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (truncated render FAILS the tail-region agreement check)"
+    },
+    {
+      "control": "NC-C wrong order (A->B vs B->A serial permutation)",
+      "metrics": {
+        "blocks_different": 190,
+        "blocks_total": 200
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (order-sensitive check flags the permutation)"
+    },
+    {
+      "control": "NC-D stale stub (frozen-revision pin)",
+      "metrics": {
+        "expected": "7deb47c8",
+        "trace_revision": "7debf927"
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (stale trace revision REFUSED - the comparator cannot report PASS)"
+    },
+    {
+      "control": "NC-E bypass transparency (mix=0 exact; leak detected)",
+      "metrics": {
+        "injected_leak_mix0p001_max_abs_diff_lsb": 796.515625,
+        "mix0_max_abs_diff_lsb": 1.296875,
+        "transparency_bound_lsb": 4.0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mix=0 exactly transparent; an injected wet leak is detected by the same check)"
+    },
+    {
+      "budgets": {
+        "max_abs_diff_lsb": 8192,
+        "rms_diff_dbfs": -46.0,
+        "spectral_corr_min": 0.98
+      },
+      "control": "NC-F LFO-rate sensitivity (chorus rate doubled)",
+      "metrics": {
+        "max_abs_diff_lsb": 424564.625,
+        "rms_diff_dbfs": -22.346541844649654
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (LFO-trajectory mutant FAILS the reference budgets - the LFO path is load-bearing)"
+    }
+  ],
+  "leaf": "SXT-028c",
+  "schema_version": 1,
+  "status": "PASS"
+}

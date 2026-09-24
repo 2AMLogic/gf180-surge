@@ -1,0 +1,67 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "claim_scope": "reference-vs-reference wet/dry buses of the pinned engine under the SXT-012/023 policies; no fidelity/support/quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "dry_sha256_all": [
+      "7f42bc82743c8ae53478885174bd973a5b8b6bdf7af57e32ac240539c0c0cdf8",
+      "7f42bc82743c8ae53478885174bd973a5b8b6bdf7af57e32ac240539c0c0cdf8",
+      "7f42bc82743c8ae53478885174bd973a5b8b6bdf7af57e32ac240539c0c0cdf8"
+    ],
+    "repeats": 3,
+    "wet_sha256_all": [
+      "bb5a40759315561ee690ef15a722dd50fbdcdae019959bc0486e7ef84f96541f",
+      "bb5a40759315561ee690ef15a722dd50fbdcdae019959bc0486e7ef84f96541f",
+      "bb5a40759315561ee690ef15a722dd50fbdcdae019959bc0486e7ef84f96541f"
+    ]
+  },
+  "dry": {
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 1420844,
+    "dry_fx_bypass_verified": true,
+    "peak_abs_float": 0.9537849426269531,
+    "sha256": "f65caef6aa37e750012ed3808ce4a332ab01024efab33feba4753fedd94e4e84",
+    "wav": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "alienappears__seq-poly-8-v1",
+  "issue": "SXT-028c",
+  "preset": {
+    "census_blob_sha1": "6febbaccecf81ffe4ba27debdba0290c40e5eb07",
+    "graphs_sha256_prefix": "6febbaccecf81ffe",
+    "path": "resources/data/patches_3rdparty/Giana Brotherz/FX/Alien Appears.fxp",
+    "slug": "alienappears"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 3.7,
+    "frames": 177600,
+    "policies_inherited": "fixtures/render_fixture.py via tools/render_fx_fixtures.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+    "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+  },
+  "wet": {
+    "bytes": 1420844,
+    "peak_abs_float": 0.6475518941879272,
+    "sha256": "2c82f61625dc51633214e9c09dd0baf70869aced76d4ca0d9fad1d62a8d0d55e",
+    "wav": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1-wet.f32.wav"
+  }
+}

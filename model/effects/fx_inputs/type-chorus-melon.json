@@ -1,0 +1,103 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": true,
+    "delay_sibling_landed_fail": false,
+    "note": "complete-wet refused fail-closed when any active slot needs an unlanded class; refusal retained as evidence",
+    "unlanded_classes": []
+  },
+  "census_blob_sha1": "2b9fc0ef796c261187729065c316d36fe8e4892f",
+  "chain": {
+    "ains": [
+      {
+        "params": {
+          "bw1_f": 2.0,
+          "bw2_f": 2.0,
+          "bw3_f": 2.933037042617798,
+          "freq1_f": -33.326786041259766,
+          "freq2_f": 6.0,
+          "freq3_f": 41.46430969238281,
+          "gain1_deactivated": false,
+          "gain1_f": 7.714291095733643,
+          "gain2_deactivated": false,
+          "gain2_f": 0.0,
+          "gain3_deactivated": false,
+          "gain3_f": 9.771434783935547,
+          "gain_f": 0.0,
+          "mix_f": 1.0
+        },
+        "role": "ains1",
+        "slot": 0,
+        "type": "eq"
+      }
+    ],
+    "sends": [
+      {
+        "params": {
+          "depth_f": 0.5035709738731384,
+          "feedback_f": 0.0,
+          "highcut_deactivated": false,
+          "highcut_f": 56.212493896484375,
+          "lowcut_deactivated": false,
+          "lowcut_f": -11.137504577636719,
+          "mix_f": 1.0,
+          "rate_f": -0.43125098943710327,
+          "time_f": -6.385715961456299,
+          "ts_flags": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "ts_rate": false,
+          "ts_ratio": 1.0,
+          "ts_ratio_mod": 1.0,
+          "ts_time": false,
+          "width_f": 13.885723114013672
+        },
+        "return_f": 1.0,
+        "role": "send1",
+        "send_gain_f": 0.6930699944496155,
+        "send_slot": 0,
+        "slot": 4,
+        "type": "chorus"
+      }
+    ]
+  },
+  "chorus_slots": [
+    4
+  ],
+  "drifts_asserted_zero": [
+    0.0
+  ],
+  "extraction": {
+    "deactivated_source": "raw fxp XML attribute + documented loader migration (rev<=15 chorus lowcut/highcut); no surgepy getter",
+    "mod_routes": "graphs.jsonl md rows screened; any FX-destination route refuses extraction (fail-closed)",
+    "observable_flags": "temposync via surgepy getters, cross-checked against raw XML fail-closed",
+    "tempo_source": "raw <tempoOnSave v=..> applied by loadPatch (surgepy.cpp loadPatch -> time_data.tempo)"
+  },
+  "graphs_sha256_prefix": "2b9fc0ef796c2611",
+  "leaf": "SXT-028c",
+  "path": "resources/data/patches_factory/Polysynths/Melon.fxp",
+  "rev": 10,
+  "scene_active": 0,
+  "scene_mode": 0,
+  "scene_sends_f": [
+    [
+      0.6930699944496155,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "schema_version": 1,
+  "slug": "melon",
+  "tempo_bpm": 120.0,
+  "tempo_source": "engine default 120",
+  "volume_f": -2.025745391845703
+}
