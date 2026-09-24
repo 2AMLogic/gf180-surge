@@ -160,6 +160,10 @@
    "role": "structural input (pinned)",
    "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
   },
+  "reports/SXT-028c/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:Chorus",
+   "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+  },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
    "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
@@ -170,7 +174,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "8e7b5ffdf12d6d2ce416ea72c28b9dc5bd1296c00ff1cc3f32d22d2debf482d6"
+   "sha256": "56650c3ece05ceb50ac8bdd288a46370c27733a426b252b223f90018b661f84d"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",

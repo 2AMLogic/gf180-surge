@@ -176,7 +176,14 @@ oracle tap instrumentation (DR-0005/0006 method): branch `sxt028c-tap`
 DSP-neutrality shown by the tap-build render being **bit-identical** to the
 committed fixture (wet+dry sha256 match). The tap's per-voice
 `lfophase/time_v/target` trajectories also confirmed the control plane
-matches the engine to float32 print precision.
+matches the engine to float32 print precision. Reconciliation: the
+committed fixtures were themselves rendered on the earlier SXT-037 tap
+build identified in their sidecars (`engine_version_string`
+`1.4.sxt037-tap.ff8b4dba4`), so it is the recorded bit-identical wet+dry
+cross-check of `sxt028c-tap` against those committed fixtures that bounds
+the render-time build, not a fresh render on the `sxt028c-tap` build; the
+residual gap — a fresh re-render of the fixtures on the `sxt028c-tap`
+build — is recorded here as unverified.
 
 Mid-render patch-change/reset on the engine side remains **BLOCKED** by the
 known surgepy embedding limitation (host-thread `loadPatch`; documented in
