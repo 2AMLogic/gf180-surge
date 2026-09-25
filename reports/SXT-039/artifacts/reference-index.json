@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "leg": "L2-kernel (pinned sst-filters kernel, standalone build; NOT the full engine -- see reports/SXT-039/EVIDENCE.md)",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "submodule_pins": {
+    "sst-filters": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+    "sst-basic-blocks": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
+  },
+  "pinned_header_sha256": {
+    "sst-filters/include/sst/filters/FilterCoefficientMaker_Impl.h": "9a43b93a373e81de396ffff3b13afc6571a9d9a891d7b2613b98c3424cb56fd6",
+    "sst-filters/include/sst/filters/QuadFilterUnit_Impl.h": "4e26a895cbef6915aad69f2031f4ec2181ab29f8077b2e60b9bbec369e6338d5",
+    "sst-filters/include/sst/filters/FilterConfiguration.h": "6eeb8ee16b68f06edf8b6d2ac1ee5559c608aedc741b3532529b3f936a42b97c",
+    "sst-basic-blocks/include/sst/basic-blocks/dsp/Clippers.h": "33dda63defd35a97a7f944d3da106f922fe4b72f84fa533010ab283db06af7f4"
+  },
+  "harness": {
+    "source_sha256": "9a8a8bc7dc9dd763dcf32f97adb8a9903111c057367993f6f7af6877ca5b3466",
+    "compile_command": "g++ -O2 -std=c++20 -msse4.2 -DSIMDE_UNAVAILABLE -I /tmp/pin/sst-filters-e92d93a92beabde03fa4ab767b285fa21c6608d6/include -I /tmp/pin/sst-basic-blocks-a32b8aec14d661e415bb676bb2e2a0a4da4efc96/include -o <WORKDIR>/sxt039_lpmoog_harness <WORKDIR>/sxt039_lpmoog_harness.cpp",
+    "location": "external to the repository (DR-0009)"
+  },
+  "cases": {
+    "chords": {
+      "samples": 20480,
+      "peak_abs": 0.4399566054344177,
+      "ref_sha256": "6dd47e542636f686ce9058237c7fb9a81e868eec6dea1825c6b3e8971678d67d",
+      "coef_sha256": "647c56ba6c6fb085b930e8ceae37a0fb0977985ea159fe560fb071d964c44c03",
+      "stimulus_sha256": "10250a7aa28084d9430abd22fd4f5dac32e1db38ead1f5ef9132fe8188ca2f74",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+      "override": {}
+    },
+    "cut-hi": {
+      "samples": 12288,
+      "peak_abs": 0.5117228627204895,
+      "ref_sha256": "24482639b4d1c91d339d5340e3f58ef35a95ddc334d2fd7c24de4e4853640025",
+      "coef_sha256": "8090cd10074d15620e790f1ec52e35382da86684696a241cf21fc6b0d798b37f",
+      "stimulus_sha256": "362834d0e25f17be44de8c7bfd6c3775d95def208f9fd11ae4a5d28b94c8dd9c",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {
+        "cut": 96.0
+      }
+    },
+    "cut-lo": {
+      "samples": 12288,
+      "peak_abs": 0.0005463320412673056,
+      "ref_sha256": "7ca6f7961921188cb796733b2aba50f7cf02b872bcb5b010ab7ed5034156cf7c",
+      "coef_sha256": "ca4fd3243cb12eb33df8b0b7d64b13a5ee7323e4baa1ae72bdbdd5b4323ceae4",
+      "stimulus_sha256": "362834d0e25f17be44de8c7bfd6c3775d95def208f9fd11ae4a5d28b94c8dd9c",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {
+        "cut": -96.0
+      }
+    },
+    "disturb": {
+      "samples": 20480,
+      "peak_abs": 0.5293907523155212,
+      "ref_sha256": "e1ecc7eb8e84c21b1a1505efef0610c3754cddd9341aa0df78cb39453949204d",
+      "coef_sha256": "e9081496f7f509fbfcd84ea127d9d848d6f56faa4a5c622aa31092ab4a6c355a",
+      "stimulus_sha256": "4191b75c11494ab873289e33deeef7297f7232e0b47a22a2db0850b81aaeb3f5",
+      "subtypes": [
+        0
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Disturbances.fxp",
+      "override": {}
+    },
+    "hot": {
+      "samples": 12288,
+      "peak_abs": 5.539718151092529,
+      "ref_sha256": "026d68e47df585c8eafe4c2680b2acc33cdf5c6e54646da21c868a94111bbe4e",
+      "coef_sha256": "38ee5abc43de548756b38e576636ec360c440c0316d7b4537f3d3cba556a6075",
+      "stimulus_sha256": "46e0492bb279deb5112d3a5faed0b4a9690c7c8bcb8303aa2b26ec9e1b221329",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {}
+    },
+    "king-b1": {
+      "samples": 16384,
+      "peak_abs": 0.5245800614356995,
+      "ref_sha256": "fe0282818e8353fab1f506fc5119b1125f88d9aa0cc054065867aa7b0c8c07d2",
+      "coef_sha256": "4c40cba9a03dca4beb5a92ef9f02cadd87d4d904e2356d3c4939588e5bb3c269",
+      "stimulus_sha256": "186b671205cbb2e29364dc298b1e0e4f6d47b899e7bb7ac7c914d87586d35420",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {}
+    },
+    "king-b2": {
+      "samples": 16384,
+      "peak_abs": 1.809226155281067,
+      "ref_sha256": "0b3620a14e4bf3017d8abb449f94968135f0b5366d577ab1b365f8c40bccc853",
+      "coef_sha256": "258f34735f243793d37cd7c6abd7589a2739ed35509dac70f346f437a710deff",
+      "stimulus_sha256": "827a74c5ca1e4ce8712c69ad8622fdd854a6b4bce5ebe11f66bd15d963e65803",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {}
+    },
+    "reso1": {
+      "samples": 12288,
+      "peak_abs": 2.310563802719116,
+      "ref_sha256": "84932c59b52f22c2eda7ae6048858d1500c51a9f43107e8816912d728263d320",
+      "coef_sha256": "64c25237b9d0a170d4fdc6ccb6f8e9984c0d330748a7775b93f329052e250754",
+      "stimulus_sha256": "30e71ee74c0304aeeaa2b50ba6338c75de581ef7a970ccd9781c8a6b53a767ca",
+      "subtypes": [
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {
+        "reso": 1.0
+      }
+    },
+    "sub12db": {
+      "samples": 12288,
+      "peak_abs": 0.7493943572044373,
+      "ref_sha256": "e9f0bb0088c1cb16c1a02ea61b81b5810f02f8cb6f4fc3fcae57b02d49e83e39",
+      "coef_sha256": "2ad794c8cfeb10e79e2a06c6b15fa3fe1fb08742f125781970377812b7b52b92",
+      "stimulus_sha256": "362834d0e25f17be44de8c7bfd6c3775d95def208f9fd11ae4a5d28b94c8dd9c",
+      "subtypes": [
+        1
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {
+        "subtype": 1
+      }
+    },
+    "sub18db": {
+      "samples": 12288,
+      "peak_abs": 0.583946943283081,
+      "ref_sha256": "809d33f21a50a4dcd0d261c719fc2445a95366dbca3f8c49787d89aec8e26dbf",
+      "coef_sha256": "2ad794c8cfeb10e79e2a06c6b15fa3fe1fb08742f125781970377812b7b52b92",
+      "stimulus_sha256": "362834d0e25f17be44de8c7bfd6c3775d95def208f9fd11ae4a5d28b94c8dd9c",
+      "subtypes": [
+        2
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {
+        "subtype": 2
+      }
+    },
+    "toggle": {
+      "samples": 12288,
+      "peak_abs": 0.9724475145339966,
+      "ref_sha256": "d14ac14608c26860974679644a7fc47b20fc50bc2f6570a63f037a81fcb64bb4",
+      "coef_sha256": "5d3967b1c605f8179c46540eb4208e5588fd496320550d118eb0e654b6aba3e0",
+      "stimulus_sha256": "362834d0e25f17be44de8c7bfd6c3775d95def208f9fd11ae4a5d28b94c8dd9c",
+      "subtypes": [
+        0,
+        2,
+        3
+      ],
+      "fenv_source": "declared-trajectory",
+      "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+      "override": {}
+    }
+  }
+}

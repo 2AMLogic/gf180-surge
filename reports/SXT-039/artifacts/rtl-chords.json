@@ -1,0 +1,16 @@
+{
+  "issue": "SXT-039",
+  "tb": "tb_lpmoog.sv",
+  "case": "chords",
+  "subtypes": [
+    3
+  ],
+  "verdict": "PASS",
+  "checked": {
+    "samples": 20480,
+    "checkpoints": 320,
+    "fields": 4480
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "case": "disturb",
+  "leg": "L2-kernel (pinned sst-filters kernel, standalone build; the engine-integrated leg is NOT_RUN -- see reports/SXT-039/EVIDENCE.md)",
+  "carrier": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Disturbances.fxp",
+  "override": {},
+  "fenv_source": "declared-trajectory",
+  "subtypes": [
+    0
+  ],
+  "L1_coefficients_q229": {
+    "C": {
+      "max_abs": 38,
+      "rms": 4.782781617427248
+    },
+    "dC": {
+      "max_abs": 1,
+      "rms": 0.11692679333668567
+    }
+  },
+  "L1_registers_q1021_reported_not_budgeted": {
+    "max_abs": 35,
+    "rms": 7.8602242334427075
+  },
+  "L2_audio_q1021": {
+    "n": 20480,
+    "max_abs_lsb": 39,
+    "rms_lsb": 8.894539999172245,
+    "ref_peak_lsb": 1110213,
+    "rms_db_rel_ref_peak": -101.9256563176289,
+    "spectral_corr": 0.9974810797357121
+  },
+  "model_stability": "STABLE",
+  "model_state_peak_lsb": 1110212,
+  "proposed": {
+    "l1_C_max_lsb_q229": 4096,
+    "l1_C_rms_lsb_q229": 1024,
+    "l2_max_abs_lsb": 4096,
+    "l2_rms_lsb": 256,
+    "l2_spectral_corr_min": 0.999
+  },
+  "verdicts": {
+    "L1_coefficients": "PASS",
+    "L2_audio": "FAIL"
+  },
+  "verdict": "FAIL against proposed budgets"
+}

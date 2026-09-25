@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "case": "reso1",
+  "leg": "L2-kernel (pinned sst-filters kernel, standalone build; the engine-integrated leg is NOT_RUN -- see reports/SXT-039/EVIDENCE.md)",
+  "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+  "override": {
+    "reso": 1.0
+  },
+  "fenv_source": "declared-trajectory",
+  "subtypes": [
+    3
+  ],
+  "L1_coefficients_q229": {
+    "C": {
+      "max_abs": 282,
+      "rms": 112.45925187966232
+    },
+    "dC": {
+      "max_abs": 4,
+      "rms": 1.1177427961446824
+    }
+  },
+  "L1_registers_q1021_reported_not_budgeted": {
+    "max_abs": 943,
+    "rms": 191.2712270355023
+  },
+  "L2_audio_q1021": {
+    "n": 12288,
+    "max_abs_lsb": 394,
+    "rms_lsb": 106.88178127852676,
+    "ref_peak_lsb": 4845603,
+    "rms_db_rel_ref_peak": -93.12888292890071,
+    "spectral_corr": 0.999028773876725
+  },
+  "model_stability": "STABLE",
+  "model_state_peak_lsb": 12467994,
+  "proposed": {
+    "l1_C_max_lsb_q229": 4096,
+    "l1_C_rms_lsb_q229": 1024,
+    "l2_max_abs_lsb": 4096,
+    "l2_rms_lsb": 256,
+    "l2_spectral_corr_min": 0.999
+  },
+  "verdicts": {
+    "L1_coefficients": "PASS",
+    "L2_audio": "PASS"
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+}
