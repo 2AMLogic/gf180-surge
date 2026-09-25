@@ -174,7 +174,7 @@
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
-   "sha256": "557f3c259165f5245d3d7749bb0474212bd5924f077f06a729605c18f21ed62c"
+   "sha256": "d29ea28ec846aa4f3a22b883ada32296f9614b7812f20f17ebc405dd91ac8ee7"
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
@@ -182,7 +182,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "5d50cffcb23e7dcebe7954c4cfefb0415d2b98d28e99cff431619175454b5a2e"
+   "sha256": "12e1e4dceffb56ba7ae5f6f1b60ea0380b225b835bdf7df448e3021b9fcda115"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",

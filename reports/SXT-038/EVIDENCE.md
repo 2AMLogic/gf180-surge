@@ -142,7 +142,7 @@ every output sample and every declared checkpoint (end-of-block `R[0..4]`,
 | edges-cut-lo | 24,576 | 384 | 5,376 | **PASS** |
 | edges-toggle | 49,152 | 768 | 10,752 | **PASS** |
 | phase1-substd | 24,576 | 384 | 5,376 | **PASS** |
-| **total** | **921,600** | **14,400** | **201,600** | **0 mismatches** |
+| **total** | **893,952** | **13,968** | **195,552** | **0 mismatches** |
 
 Artifacts: `artifacts/rtl-*.json`.  All three subtypes, both clipgain
 register maps, the mid-render subtype toggle, both `boundFreq` clamp edges
@@ -309,7 +309,7 @@ failed as designed.  **14/14 CONTROL-OK.**
 
 **Establishes:** the LP 24 dB filter leaf itself — a frozen fixed-point model
 with documented word lengths and op order, RTL-vs-model **EXACT** over
-921,600 samples and 201,600 checkpoint fields across all three subtypes and
+893,952 samples and 195,552 checkpoint fields across all three subtypes and
 the reload path (§2); measured agreement with the pinned filter code at the
 filter-stage boundary with achieved numbers and two quantified findings
 (§3); bounded/STABLE behaviour at the resonance and clamp corners on both
