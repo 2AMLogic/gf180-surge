@@ -1,0 +1,8 @@
+wrong order (serial slot permutation A->B vs B->A): CONTROL-OK (fails the check it targets)
+shared state (two instances pooled into one history): CONTROL-OK (fails the check it targets)
+generic substitute (instantaneous limiter, labeled ADAPTED): CONTROL-OK (fails the check it targets)
+dropped tail (render truncated inside the declared tail span): CONTROL-OK (fails the check it targets)
+stale stub (trace revision != live frozen model): CONTROL-OK (fails the check it targets)
+dropped ringout (process() stops when input stops): CONTROL-OK (fails the check it targets)
+generic detector (windowed max instead of fixed leaf 126): CONTROL-OK (fails the check it targets)
+status: PASS

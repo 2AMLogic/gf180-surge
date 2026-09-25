@@ -1,0 +1,87 @@
+{
+  "claim": "negative controls; each must fail the check it targets",
+  "controls": [
+    {
+      "control": "wrong order (serial slot permutation A->B vs B->A)",
+      "metrics": {
+        "permuted_fails": true,
+        "unpermuted_passes": true
+      },
+      "ok": true,
+      "targets": "order-sensitive exactness",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    },
+    {
+      "control": "shared state (two instances pooled into one history)",
+      "metrics": {
+        "independent_instances_pass": true,
+        "instance_a_fails": true,
+        "instance_b_fails": true
+      },
+      "ok": true,
+      "targets": "dual-instance exactness",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    },
+    {
+      "control": "generic substitute (instantaneous limiter, labeled ADAPTED)",
+      "metrics": {
+        "frozen_model_admitted_by_gate": true,
+        "substitute_fails_exactness": true,
+        "substitute_refused_by_gate": true,
+        "unmodified_wet_reference_retained": true
+      },
+      "ok": true,
+      "targets": "original-preset coverage gate + exactness",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    },
+    {
+      "control": "dropped tail (render truncated inside the declared tail span)",
+      "metrics": {
+        "energy_in_dropped_region_q21sq": 668843207,
+        "full_blocks": 150,
+        "full_passes": true,
+        "lookahead_drain_nonzero": true,
+        "required_blocks": 140,
+        "tail_process_blocks": 99,
+        "truncated_blocks": 44,
+        "truncated_fails": true
+      },
+      "ok": true,
+      "targets": "tail coverage",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    },
+    {
+      "control": "stale stub (trace revision != live frozen model)",
+      "metrics": {
+        "identical_data_live_rev": "PASS",
+        "identical_data_stale_rev": "REFUSED (stale frozen-model revision)"
+      },
+      "ok": true,
+      "targets": "revision pin",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    },
+    {
+      "control": "dropped ringout (process() stops when input stops)",
+      "metrics": {
+        "mutant_fails": true
+      },
+      "ok": true,
+      "targets": "exactness over the tail",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    },
+    {
+      "control": "generic detector (windowed max instead of fixed leaf 126)",
+      "metrics": {
+        "mutant_fails": true
+      },
+      "ok": true,
+      "targets": "exactness",
+      "verdict": "CONTROL-OK (fails the check it targets)"
+    }
+  ],
+  "leaf": "SXT-028b",
+  "model_revision": "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+  "schema_version": 1,
+  "scope": "model-level, synthetic stimuli, oracle-independent; the RTL-level controls are in reports/SXT-028b/rtl-exactness.json",
+  "status": "PASS"
+}
