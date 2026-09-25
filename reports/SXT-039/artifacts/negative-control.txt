@@ -1,0 +1,13 @@
+SXT-039 negative-control transcript (LP Legacy Ladder, fut_lpmoog)
+reference: pinned sst-filters kernel, standalone build (DR-0009);
+           the engine-integrated leg is NOT_RUN (see EVIDENCE.md)
+========================================================================
+NC-A king-b1 forced to subtype 1 (12 dB): max|d|=492729 rms=90984.5 -> FAILS budgets (CONTROL-OK)
+NC-A disturb forced to subtype 3 (24 dB): max|d|=1231358 rms=405431.5 -> FAILS budgets (CONTROL-OK)
+NC-A chords forced to subtype 0 (6 dB): max|d|=159010 rms=11195.8 -> FAILS budgets (CONTROL-OK)
+NC-B king-b1 through the landed LP 12 dB/Driven biquad: max|d|=652808 rms=215045.6 -> FAILS budgets (CONTROL-OK)
+NC-B disturb through the landed LP 12 dB/Driven biquad: max|d|=865194 rms=329740.4 -> FAILS budgets (CONTROL-OK)
+NC-C out-of-scope: subtype=4=REFUSED; subtype=-1 (maker)=REFUSED; reso>1=REFUSED; cutoff out of span=REFUSED; subtype change w/o reset=REFUSED -> CONTROL-OK
+NC-D rtl mutant: clean mismatches=0 mutant mismatches=31 -> CONTROL-OK
+========================================================================
+ALL CONTROLS FAILED THEIR TARGETED CHECKS (or explicit NOT_RUN): YES

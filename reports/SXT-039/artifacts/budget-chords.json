@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "case": "chords",
+  "leg": "L2-kernel (pinned sst-filters kernel, standalone build; the engine-integrated leg is NOT_RUN -- see reports/SXT-039/EVIDENCE.md)",
+  "carrier": "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+  "override": {},
+  "fenv_source": "declared-trajectory",
+  "subtypes": [
+    3
+  ],
+  "L1_coefficients_q229": {
+    "C": {
+      "max_abs": 16,
+      "rms": 5.656854249492381
+    },
+    "dC": {
+      "max_abs": 0,
+      "rms": 0.0
+    }
+  },
+  "L1_registers_q1021_reported_not_budgeted": {
+    "max_abs": 2,
+    "rms": 0.6604922406811453
+  },
+  "L2_audio_q1021": {
+    "n": 20480,
+    "max_abs_lsb": 3,
+    "rms_lsb": 0.674992766164942,
+    "ref_peak_lsb": 922656,
+    "rms_db_rel_ref_peak": -122.71481383456837,
+    "spectral_corr": 0.9996281983126097
+  },
+  "model_stability": "STABLE",
+  "model_state_peak_lsb": 935293,
+  "proposed": {
+    "l1_C_max_lsb_q229": 4096,
+    "l1_C_rms_lsb_q229": 1024,
+    "l2_max_abs_lsb": 4096,
+    "l2_rms_lsb": 256,
+    "l2_spectral_corr_min": 0.999
+  },
+  "verdicts": {
+    "L1_coefficients": "PASS",
+    "L2_audio": "PASS"
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+}

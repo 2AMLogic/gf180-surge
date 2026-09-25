@@ -1,0 +1,74 @@
+{
+  "NC-A-wrong-subtype-king-b1-as-1": {
+    "targeted_check": "L2 reference budget with the wrong engine-declared subtype (wrong ladder tap)",
+    "l2": {
+      "n": 16384,
+      "max_abs_lsb": 492729,
+      "rms_lsb": 90984.48955205281
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-A-wrong-subtype-disturb-as-3": {
+    "targeted_check": "L2 reference budget with the wrong engine-declared subtype (wrong ladder tap)",
+    "l2": {
+      "n": 20480,
+      "max_abs_lsb": 1231358,
+      "rms_lsb": 405431.5155712266
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-A-wrong-subtype-chords-as-0": {
+    "targeted_check": "L2 reference budget with the wrong engine-declared subtype (wrong ladder tap)",
+    "l2": {
+      "n": 20480,
+      "max_abs_lsb": 159010,
+      "rms_lsb": 11195.767612670159
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-B-wrong-algorithm-lp12-driven-king-b1": {
+    "targeted_check": "L2 reference budget with the landed LP 12 dB / Driven biquad substituted for this algorithm",
+    "l2": {
+      "n": 16384,
+      "max_abs_lsb": 652808,
+      "rms_lsb": 215045.64108380367
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-B-wrong-algorithm-lp12-driven-disturb": {
+    "targeted_check": "L2 reference budget with the landed LP 12 dB / Driven biquad substituted for this algorithm",
+    "l2": {
+      "n": 20480,
+      "max_abs_lsb": 865194,
+      "rms_lsb": 329740.39952007984
+    },
+    "budget_fail": true,
+    "outcome": "CONTROL-OK (fails the check)"
+  },
+  "NC-C-out-of-scope-refused": {
+    "targeted_check": "applicability boundary refuses out-of-scope requests",
+    "refusals": {
+      "subtype=4": "REFUSED",
+      "subtype=-1 (maker)": "REFUSED",
+      "reso>1": "REFUSED",
+      "cutoff out of span": "REFUSED",
+      "subtype change w/o reset": "REFUSED"
+    },
+    "outcome": "CONTROL-OK (refused, exit-2 class)"
+  },
+  "NC-D-rtl-mutant": {
+    "targeted_check": "RTL-vs-model exactness FAILs for the mutated testbench while the clean testbench PASSes",
+    "clean_mismatches": 0,
+    "mutant_mismatches": 31,
+    "checked": {
+      "samples": 32,
+      "checkpoints": 0,
+      "fields": 0
+    },
+    "outcome": "CONTROL-OK (exactness FAILs)"
+  }
+}
