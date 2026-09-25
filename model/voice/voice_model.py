@@ -962,6 +962,38 @@ SCENE_ROUTE_VOCAB = {
                    DEST_VCA_GAIN},      # SXT-035: VCA Gain destination class
 }
 
+# ---------------------------------------------------------------------------
+# SXT-042 (issue #76): the keytrack modsource (ms_keytrack, pinned id 2),
+# frozen as its own leaf on top of the #48 plumbing.  No arithmetic changes:
+# the word below is the expression #48 already computed inline, given a name,
+# a declared destination class and a declared refresh point so the RTL slice
+# (rtl/voice/tb_kt.sv) can be held to it exactly.
+#
+# Pinned citations (read, never copied): src/common/ModulationSource.h
+# (`modsources` enum, ms_keytrack = 2), src/common/dsp/SurgeVoice.cpp
+# (`ctrl.keytrack`/`state.pitch` setup in the voice ctor, the
+# `applyModulationToLocalcopy` pass, and the modsource refresh at the END of
+# the per-voice control pass).
+# ---------------------------------------------------------------------------
+KEYTRACK_SEMITONES_PER_UNIT = 12        # engine divisor: one unit == one octave
+KEYTRACK_DEST_LIVE = (DEST_FU1_CUTOFF, DEST_FU1_RESO, DEST_FU1_FEGMOD)
+KEYTRACK_DEST_INERT = (DEST_FU2_CUTOFF, DEST_FU2_RESO, DEST_FU2_FEGMOD)
+KEYTRACK_SUM_ORDER = ("cutoff_sum", "reso_sum", "fegmod_sum")
+
+
+def keytrack_word(pitch_voice, keytrack_root):
+    """ms_keytrack output word, Q10.21 (SXT-042 frozen).
+
+    `(state.pitch - keytrack_root) / 12`, quantized round-half-up ONCE at
+    quantization time (the divisor is exact in the engine's double domain;
+    `pitch_voice` and `keytrack_root` are integers in this class, so the
+    quotient's fractional part is always 0, 1/3 or 2/3 and never a rounding
+    tie -- see README "SXT-042 keytrack modsource" for the integer-exact
+    RTL equivalent).
+    """
+    return qint((pitch_voice - keytrack_root)
+                / float(KEYTRACK_SEMITONES_PER_UNIT))
+
 
 class Refuse(Exception):
     """Fail-closed applicability refusal (exit 2 at the runner boundary)."""
@@ -1227,7 +1259,22 @@ class VoiceV2(Voice):
         # modulator words (engine: fvel = vel/127 constant; keytrack set at
         # ctor, refreshed after each control pass -- the declared 1-pass lag)
         self.fvel = qint(velocity / 127.0)
-        self.kt_word = qint((self.pitch_voice - inp.keytrack_root) / 12.0)
+        # SXT-042 correction (finding F-042-1): the engine initialises the
+        # keytrack modsource to ZERO in the voice constructor
+        # (SurgeVoice.cpp: `keytrackSource.set_output(0, 0.f);`, before the
+        # ctor's applyModulationToLocalcopy<true>() and calc_ctrldata<true>()),
+        # and only installs (state.pitch - keytrack_root)/12 at the END of a
+        # control pass.  The voice's FIRST control pass therefore applies
+        # keytrack = 0 -- unlike velocity, which the ctor initialises to
+        # state.fvel.  #48 documented the 1-control-pass lag but seeded the
+        # word with the pitch-derived value, which made the first block of
+        # every voice carry a keytrack term the engine does not apply.
+        self.kt_word = 0
+        # SXT-042 checkpoint words: per-destination sum of this voice's
+        # keytrack route terms for the current control pass (cutoff, reso,
+        # feg-mod), in KEYTRACK_SUM_ORDER.  Observation only -- recording
+        # them changes no arithmetic.
+        self.kt_route_sums = [0, 0, 0]
         super().__init__(inp, key, velocity)
         self.f4_r0 = 0
         self.f4_r1 = 0
@@ -1265,44 +1312,75 @@ class VoiceV2(Voice):
         reso = qint(inp.reso)
         emod = qint(inp.envmod)
         vg = qint(inp.vca_db)
+        kt_sums = [0, 0, 0]              # SXT-042 checkpoint words only
         for src, dst, depth in inp.voice_routes:
-            val = self.fvel if src == VELOCITY_SRC else self.kt_word
+            val = self.fvel if src == VELOCITY_SRC else self.keytrack_value()
             d = qint(depth)
+            term = qmul(d, val)
             if dst == DEST_FU1_CUTOFF:
-                cut = sat(cut + qmul(d, val))
+                cut = sat(cut + term)
+                if src == KEYTRACK_SRC:
+                    kt_sums[0] += term
             elif dst == DEST_FU1_RESO:
-                reso = sat(reso + qmul(d, val))
+                reso = sat(reso + term)
+                if src == KEYTRACK_SRC:
+                    kt_sums[1] += term
             elif dst == DEST_FU1_FEGMOD:
-                emod = sat(emod + qmul(d, val))
+                emod = sat(emod + term)
+                if src == KEYTRACK_SRC:
+                    kt_sums[2] += term
             elif dst == DEST_VCA_GAIN:
-                vg = sat(vg + qmul(d, val))
-            # unit-2 destinations: inert (unit off), unmodeled per the gate
+                vg = sat(vg + term)
+            elif dst in KEYTRACK_DEST_INERT:
+                pass       # unit-2 destinations: inert (unit off) per the gate
+            else:
+                # SXT-042: the route pass is fail-closed in its own right, not
+                # only at parse time -- an unrecognized destination must never
+                # be silently dropped here.
+                raise Refuse(
+                    f"voice route {src}->{dst} reached the route pass outside "
+                    "the declared destination class {298, 308, 309, 310} "
+                    "(+ inert unit-2 {314, 315, 318})")
         self.mod_cutoff = cut
         self.mod_reso = reso
         self.mod_envmod = emod
         self.mod_vca_db = vg
+        self.kt_route_sums = kt_sums
         # keytrack modsource refresh AFTER route application (declared lag;
         # pitch is constant per voice, so the value equals the ctor value)
-        self.kt_word = qint((self.pitch_voice - inp.keytrack_root) / 12.0)
+        self.kt_word = keytrack_word(self.pitch_voice, inp.keytrack_root)
+
+    def keytrack_value(self):
+        """The ms_keytrack word read by this control pass (SXT-042).
+
+        Split out from the route loop so the negative controls can mutate
+        the SOURCE without touching the route application, and so the RTL
+        slice has a named quantity to match.  Per-instance by construction:
+        every voice owns its own word.
+        """
+        return self.kt_word
 
     def _calc_ctrldata(self):
         if self.kind == "classic":
+            inp = self.inp
             table = getattr(self.inp, "scene_routes_mw", None)
-            if not table:
+            if not table and not getattr(inp, "voice_routes", None):
                 super()._calc_ctrldata()
                 return
-            # SXT-035: table-driven scene-modwheel pass (cutoff/reso/vca, md
-            # order). Term values equal the landed scalar path term-for-term
-            # for presets whose routes are the scalar pair; the v1 path above
-            # remains the route-free fast path.
-            inp = self.inp
+            # SXT-035 table-driven scene-modwheel pass (cutoff/reso/vca, md
+            # order) + SXT-042: the voice-route pass (velocity/keytrack) now
+            # runs on the classic kind too.  Before SXT-042 this branch read
+            # the raw parameters, so a classic-kind fixture carrying voice
+            # routes DROPPED them silently (finding F-042-2); no landed
+            # fixture had any, so every landed render is unchanged.
             self.aeg.process_block()
             self.feg.process_block()
+            self._apply_voice_routes()
             mw = inp.modwheel.value
-            cut = qint(inp.cutoff)
-            reso = qint(inp.reso)
-            vca = qint(inp.vca_db)
-            for dst, depth in table:
+            cut = self.mod_cutoff
+            reso = self.mod_reso
+            vca = self.mod_vca_db
+            for dst, depth in (table or []):
                 d = qint(depth)
                 if dst == DEST_FU1_CUTOFF:
                     cut = sat(cut + qmul(d, mw))
@@ -1313,7 +1391,7 @@ class VoiceV2(Voice):
                 else:
                     raise Refuse(f"scene route {dst} outside declared class")
             self.mod_vca_db = vca
-            self.cutoff_a = cut + qmul(qint(inp.envmod), self.feg.output)
+            self.cutoff_a = cut + qmul(self.mod_envmod, self.feg.output)
             self.reso_a = reso
             if self.aeg.is_idle():
                 self.keep_playing = False

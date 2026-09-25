@@ -1,0 +1,14 @@
+{
+  "tb": "rtl/voice/tb_kt.sv",
+  "sequence": "leaf48-smoke-bells-v1",
+  "control_mode": "normal",
+  "verdict": "PASS",
+  "checked": {
+    "voice_checkpoints": 302,
+    "fields": 2416
+  },
+  "rtl_qmuls": 1812,
+  "blocks": 122,
+  "mismatches": 0,
+  "first_failures": []
+}

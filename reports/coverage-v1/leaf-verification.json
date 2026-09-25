@@ -253,6 +253,25 @@
       "leaf_id": "SXT-026a",
       "note": "first-class F-1 leaf: the landed voice arithmetic covers exactly Attacky (fixture-verified) and Quickspit (arithmetic overlap only, no fixture evidence); until it lands, no compiled corpus preset carrying FX can reach a supported status"
     },
+    "mod:keytrack": {
+      "evidence": [
+        {
+          "path": "reports/SXT-042/EVIDENCE.md",
+          "sha256": "ebea67a3a75c1863ee17f47b9f153c1c0da3d5d5fbf50d934fad82605f9d01fd"
+        }
+      ],
+      "fixture_verified_paths": [
+        "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp (SXT-042 keytrack leaf: the carrier's own preset content carries the live ms_keytrack -> A Filter 1 Cutoff route; exactness fixture and the one reference-domain carrier -- not a corpus support claim)"
+      ],
+      "issue": 76,
+      "landed": true,
+      "leaf_id": "SXT-042",
+      "note": "Keytrack modsource slice (ms_keytrack, pinned id 2): frozen Q10.21 word (state.pitch - keytrack_root)/12 per voice instance with the engine-cited init/refresh order (ctor value 0, installed at the END of a control pass; F-042-1 corrects the #48 seeding) and an integer-exact RTL equivalent floor((n*2^20+3)/6); destination class {308 F1 Cutoff, 309 F1 Reso, 310 F1 FEG Mod} live, {314,315,318} accepted-inert, everything else refused fail-closed (incl. 298 VCA Gain, the commonest corpus keytrack destination). RTL-vs-model INTEGER EQUALITY PASS (tools/compare_kt_rtl_model.py + rtl/voice/tb_kt.sv: 26,250-block carrier + synthetic class-cover + 122-block smoke; 30,021/30,021/302 voice checkpoints, 240,168/240,168/2,416 fields, 0 mismatches; two RTL mutants -- rounding-bias and shared-word -- FAIL as required). model_vs_reference FAIL: on the one carrier with a committed pinned dry render the [PROPOSED] budgets are missed (max 16,721 vs 3,500; -27.855 vs -46 dBFS; spectral 0.9207 vs 0.98), which is the landed F-48a residual, and F-042-3 records that the check cannot discriminate a cutoff-route mutation on this carrier at all (the discriminating oracle A/B is NOT_RUN -- no pinned oracle on the build host) -> routed to SXT-013/#12. No new engine render was made: the reference is the committed sha-pinned SXT-025 dry fixture projected to mono int16. Supported delta 0: 802/3,561 corpus presets route keytrack, only 3 route it entirely inside this class and only 1 of those (the carrier SXT-026a already models) passes the voice-class screen; all three carriers named in #76 and all 34 recovery-basis presets are refused with named keytrack-specific reasons. No fidelity, preset-support, listening or hardware claim.",
+      "verification": {
+        "model_vs_reference": "FAIL",
+        "rtl_vs_model": "PASS"
+      }
+    },
     "mod:lfo": {
       "evidence": [
         {

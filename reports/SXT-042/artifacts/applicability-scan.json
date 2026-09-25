@@ -1,0 +1,1545 @@
+{
+  "carriers": [
+    {
+      "in_class": true,
+      "keytrack_routes": [
+        {
+          "depth_raw": 4.387498,
+          "dest": "A Filter 1 Cutoff",
+          "dest_id": 308
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+      "route_class_reasons": [],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Feedback",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": 0.591964,
+          "dest": "A Osc 1 Low Cut",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Width",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Feedback) outside {308,309,310}",
+        "keytrack->228 (A Osc 1 Low Cut) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Width) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 23->240 (A Osc 2 Sub Mix) outside the class",
+        "scene route 6->239 (A Osc 2 Width 2) outside the class",
+        "scene route 6->240 (A Osc 2 Sub Mix) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->237 (A Osc 2 Shape) outside the class",
+        "velocity->260 (A FM Depth) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Skew Vertical",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": 0.591964,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Feedback",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Autumn 2.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Skew Vertical) outside {308,309,310}",
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Feedback) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 6->239 (A Osc 2 Width 2) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}",
+        "voice route source 20 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Width",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Skew Vertical",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Disturbances.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Width) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Skew Vertical) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    }
+  ],
+  "claim": "graph-visible screen and UPPER BOUND on reach; not a support claim, not a fidelity claim -- the authoritative gate is InputsV2 on an engine-readback sidecar, and support additionally requires #12 and the wet path",
+  "graphs": "corpus/normalized/graphs.jsonl",
+  "issue": "SXT-042",
+  "keytrack_destination_histogram": [
+    [
+      "A VCA Gain",
+      144
+    ],
+    [
+      "A Filter 2 Cutoff",
+      111
+    ],
+    [
+      "A Filter 1 Cutoff",
+      106
+    ],
+    [
+      "A Amp EG Decay",
+      80
+    ],
+    [
+      "A Volume",
+      79
+    ],
+    [
+      "A Osc 3 Unison Detune",
+      74
+    ],
+    [
+      "A Pan",
+      63
+    ],
+    [
+      "A Osc 1 Formant",
+      52
+    ],
+    [
+      "A Pre-Filter Gain",
+      43
+    ],
+    [
+      "A Filter EG Decay",
+      39
+    ],
+    [
+      "A Filter 1 Resonance",
+      38
+    ],
+    [
+      "A Osc 1 Unison Detune",
+      36
+    ],
+    [
+      "A Waveshaper Drive",
+      32
+    ],
+    [
+      "A LFO 1 Amplitude",
+      32
+    ],
+    [
+      "A Osc 3 Skew Vertical",
+      28
+    ],
+    [
+      "A LFO 3 Amplitude",
+      27
+    ],
+    [
+      "A Osc 1 Skew Vertical",
+      27
+    ],
+    [
+      "A LFO 2 Amplitude",
+      26
+    ],
+    [
+      "A Osc 1 Pitch",
+      26
+    ],
+    [
+      "A Osc 3 Width 1",
+      25
+    ],
+    [
+      "A Osc 1 Feedback",
+      24
+    ],
+    [
+      "A Osc 1 Volume",
+      22
+    ],
+    [
+      "A Amp EG Release",
+      22
+    ],
+    [
+      "A Osc 2 Volume",
+      20
+    ],
+    [
+      "A LFO 3 Rate",
+      19
+    ],
+    [
+      "A LFO 1 Rate",
+      18
+    ],
+    [
+      "A Noise Color",
+      18
+    ],
+    [
+      "A Osc 1 M1 Amount",
+      18
+    ],
+    [
+      "A FM Depth",
+      18
+    ],
+    [
+      "A Osc 1 String 1 Decay",
+      18
+    ],
+    [
+      "A Osc 1 String 2 Decay",
+      18
+    ],
+    [
+      "A Feedback",
+      17
+    ],
+    [
+      "A Osc 1 Morph",
+      16
+    ],
+    [
+      "A Filter 2 Resonance",
+      16
+    ],
+    [
+      "A Osc 1 M3 Frequency",
+      15
+    ],
+    [
+      "A Osc 1 Low Cut",
+      13
+    ],
+    [
+      "A Osc 2 Unison Detune",
+      13
+    ],
+    [
+      "A Osc 3 Feedback",
+      13
+    ],
+    [
+      "A Osc 3 Volume",
+      12
+    ],
+    [
+      "A LFO 6 Amplitude",
+      11
+    ],
+    [
+      "A Amp EG Attack",
+      11
+    ],
+    [
+      "A Osc 2 Pitch",
+      11
+    ],
+    [
+      "A Noise Volume",
+      11
+    ],
+    [
+      "A LFO 2 Rate",
+      11
+    ],
+    [
+      "A LFO 2 Decay",
+      10
+    ],
+    [
+      "A LFO 6 Rate",
+      10
+    ],
+    [
+      "A Osc 1 Width",
+      10
+    ],
+    [
+      "A Osc 2 Formant",
+      10
+    ],
+    [
+      "A Osc 1 M2 Amount",
+      9
+    ],
+    [
+      "A LFO 1 Decay",
+      9
+    ],
+    [
+      "A Filter 1 FEG Mod Amount",
+      8
+    ],
+    [
+      "A Osc 3 Pitch",
+      8
+    ],
+    [
+      "A Osc 2 M3 Frequency",
+      8
+    ],
+    [
+      "A LFO 4 Rate",
+      7
+    ],
+    [
+      "A LFO 4 Phase",
+      7
+    ],
+    [
+      "A Filter Balance",
+      7
+    ],
+    [
+      "A Osc 1 Width 1",
+      7
+    ],
+    [
+      "A Osc 1 Stiffness",
+      7
+    ],
+    [
+      "A LFO 3 Phase",
+      6
+    ],
+    [
+      "A Osc 3 Width",
+      6
+    ],
+    [
+      "A Osc 3 M3 Frequency",
+      6
+    ],
+    [
+      "A Filter EG Sustain",
+      6
+    ],
+    [
+      "A Filter 2 Offset",
+      5
+    ],
+    [
+      "A Osc 1 Sub Mix",
+      5
+    ],
+    [
+      "A LFO 2 Attack",
+      5
+    ],
+    [
+      "A Amp EG Sustain",
+      5
+    ],
+    [
+      "A Osc 1 High Cut",
+      4
+    ],
+    [
+      "A LFO 5 Amplitude",
+      4
+    ],
+    [
+      "A Osc 2 M1 Amount",
+      4
+    ],
+    [
+      "A LFO 6 Decay",
+      4
+    ],
+    [
+      "A Osc 3 Formant",
+      4
+    ],
+    [
+      "A Osc 1 Decay Time",
+      4
+    ],
+    [
+      "A Osc 2 String 1 Decay",
+      4
+    ],
+    [
+      "A LFO 5 Rate",
+      4
+    ],
+    [
+      "A Filter EG Release",
+      4
+    ],
+    [
+      "A Osc 2 Morph",
+      4
+    ],
+    [
+      "A LFO 3 Deform",
+      4
+    ],
+    [
+      "A LFO 1 Deform",
+      3
+    ],
+    [
+      "A LFO 3 Decay",
+      3
+    ],
+    [
+      "A Osc 1 Skew Horizontal",
+      3
+    ],
+    [
+      "A Osc 2 String 2 Decay",
+      3
+    ],
+    [
+      "A LFO 5 Phase",
+      3
+    ],
+    [
+      "A LFO 2 Phase",
+      3
+    ],
+    [
+      "A Osc 2 Feedback",
+      2
+    ],
+    [
+      "A Osc 2 Exciter Level",
+      2
+    ],
+    [
+      "A Osc 1 M1 Ratio",
+      2
+    ],
+    [
+      "A Osc 1 M2 Ratio",
+      2
+    ],
+    [
+      "A Osc 3 M1 Ratio",
+      2
+    ],
+    [
+      "A Portamento",
+      2
+    ],
+    [
+      "A Osc Drift",
+      2
+    ],
+    [
+      "A Filter EG Attack",
+      2
+    ],
+    [
+      "A LFO 1 Attack",
+      2
+    ],
+    [
+      "A Osc 2 Stiffness",
+      2
+    ],
+    [
+      "A Osc 3 M1 Amount",
+      2
+    ],
+    [
+      "A Osc 3 M2 Amount",
+      2
+    ],
+    [
+      "A Osc 1 Sync",
+      2
+    ],
+    [
+      "A LFO 4 Amplitude",
+      2
+    ],
+    [
+      "A Osc 2 M2 Amount",
+      2
+    ],
+    [
+      "A Osc 1 Species",
+      2
+    ],
+    [
+      "A LFO 1 Release",
+      2
+    ],
+    [
+      "A Osc 3 Stiffness",
+      2
+    ],
+    [
+      "A LFO 5 Decay",
+      1
+    ],
+    [
+      "A Osc 1 M1/2 Phase",
+      1
+    ],
+    [
+      "A Osc 1 Sawtooth",
+      1
+    ],
+    [
+      "A Osc 1 Pulse",
+      1
+    ],
+    [
+      "A Osc 2 Sync",
+      1
+    ],
+    [
+      "A Osc 1 Exciter Level",
+      1
+    ],
+    [
+      "A Osc 3 Exciter Level",
+      1
+    ],
+    [
+      "A Filter 2 FEG Mod Amount",
+      1
+    ],
+    [
+      "A LFO 1 Phase",
+      1
+    ],
+    [
+      "A LFO 5 Attack",
+      1
+    ],
+    [
+      "A LFO 6 Deform",
+      1
+    ],
+    [
+      "A LFO 2 Deform",
+      1
+    ],
+    [
+      "A Osc 1 Type",
+      1
+    ],
+    [
+      "A Osc 1 Width 2",
+      1
+    ],
+    [
+      "A Osc 2 Width 1",
+      1
+    ],
+    [
+      "A Osc 2 Width 2",
+      1
+    ],
+    [
+      "A Osc 3 Type",
+      1
+    ],
+    [
+      "A Osc 1 Wrap",
+      1
+    ],
+    [
+      "A Osc 3 Low Cut",
+      1
+    ],
+    [
+      "A Osc 3 High Cut",
+      1
+    ],
+    [
+      "A Osc 2 Low Cut",
+      1
+    ],
+    [
+      "A Osc 2 High Cut",
+      1
+    ],
+    [
+      "A Osc 1 Ratio/Type",
+      1
+    ],
+    [
+      "A Osc 3 Morph",
+      1
+    ]
+  ],
+  "presets_routing_keytrack": 802,
+  "presets_scanned": 3561,
+  "recovery_basis_detail": [
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Feedback",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": 0.591964,
+          "dest": "A Osc 1 Low Cut",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Width",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Feedback) outside {308,309,310}",
+        "keytrack->228 (A Osc 1 Low Cut) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Width) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 23->240 (A Osc 2 Sub Mix) outside the class",
+        "scene route 6->239 (A Osc 2 Width 2) outside the class",
+        "scene route 6->240 (A Osc 2 Sub Mix) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->237 (A Osc 2 Shape) outside the class",
+        "velocity->260 (A FM Depth) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Skew Vertical",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": 0.591964,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Feedback",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Autumn 2.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Skew Vertical) outside {308,309,310}",
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Feedback) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 6->239 (A Osc 2 Width 2) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}",
+        "voice route source 20 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Width",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Skew Vertical",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Disturbances.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Width) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Skew Vertical) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Skew Vertical",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": 0.591964,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 Width 1",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 Unison Detune",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Fragile 4.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Skew Vertical) outside {308,309,310}",
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "keytrack->250 (A Osc 3 Width 1) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.034821,
+          "dest": "A Osc 1 Skew Vertical",
+          "dest_id": 226
+        },
+        {
+          "depth_raw": 0.591964,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": 7.714287,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Go Carefully.fxp",
+      "route_class_reasons": [
+        "keytrack->226 (A Osc 1 Skew Vertical) outside {308,309,310}",
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 6->239 (A Osc 2 Saturate) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.050893,
+          "dest": "A Osc 3 M1 Ratio",
+          "dest_id": 250
+        },
+        {
+          "depth_raw": -0.069643,
+          "dest": "A Osc 3 M3 Frequency",
+          "dest_id": 254
+        },
+        {
+          "depth_raw": -3.375,
+          "dest": "A Filter 2 Cutoff",
+          "dest_id": 314
+        }
+      ],
+      "path": "resources/data/patches_3rdparty/Inigo Kennedy/Atmospheres/Mystery 4.fxp",
+      "route_class_reasons": [
+        "keytrack->250 (A Osc 3 M1 Ratio) outside {308,309,310}",
+        "keytrack->254 (A Osc 3 M3 Frequency) outside {308,309,310}",
+        "scene route 6->239 (A Osc 2 M2 Amount) outside the class",
+        "scene route 6->295 (A Pre-Filter Gain) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "scene route 6->320 (A Amp EG Attack) outside the class",
+        "scene route 6->322 (A Amp EG Decay) outside the class",
+        "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->279 (A Osc 3 Volume) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.874286,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Basses/Bass 5.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 6->264 (A Volume) outside the class",
+        "scene route 6->300 (A Feedback) outside the class",
+        "scene route 6->314 (A Filter 2 Offset) outside the class",
+        "scene route 6->316 (A Filter 2 Resonance) outside the class",
+        "velocity->339 (A LFO 1 Amplitude) outside the class",
+        "velocity->346 (A LFO 1 Decay) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -3.6,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Basses/Behemoth.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "voice route source 16 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -3.085713,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Basses/Distorted FM.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 5->226 (A Osc 1 M1 Ratio) outside the class",
+        "velocity->225 (A Osc 1 M1 Amount) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -1.799999,
+          "dest": "A FM Depth",
+          "dest_id": 260
+        },
+        {
+          "depth_raw": -1.542858,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Basses/FM Bass 1.fxp",
+      "route_class_reasons": [
+        "keytrack->260 (A FM Depth) outside {308,309,310}",
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "velocity->260 (A FM Depth) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 0.2625,
+          "dest": "A Osc 1 Skew Horizontal",
+          "dest_id": 229
+        },
+        {
+          "depth_raw": 0.024107,
+          "dest": "A Osc 1 Unison Detune",
+          "dest_id": 230
+        }
+      ],
+      "path": "resources/data/patches_factory/Basses/Piano Bass.fxp",
+      "route_class_reasons": [
+        "keytrack->229 (A Osc 1 Skew Horizontal) outside {308,309,310}",
+        "keytrack->230 (A Osc 1 Unison Detune) outside {308,309,310}",
+        "scene route 6->228 (A Osc 1 Formant) outside the class",
+        "velocity->229 (A Osc 1 Skew Horizontal) outside the class"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -1.542857,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Basses/Static 2.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 0.166875,
+          "dest": "A Osc 1 Morph",
+          "dest_id": 225
+        },
+        {
+          "depth_raw": 0.15,
+          "dest": "A Osc 2 Morph",
+          "dest_id": 237
+        },
+        {
+          "depth_raw": 0.166875,
+          "dest": "A Osc 2 Morph",
+          "dest_id": 237
+        },
+        {
+          "depth_raw": 0.15,
+          "dest": "A Osc 3 Morph",
+          "dest_id": 249
+        }
+      ],
+      "path": "resources/data/patches_factory/Chords/Maj-Min Saw.fxp",
+      "route_class_reasons": [
+        "keytrack->225 (A Osc 1 Morph) outside {308,309,310}",
+        "keytrack->237 (A Osc 2 Morph) outside {308,309,310}",
+        "keytrack->249 (A Osc 3 Morph) outside {308,309,310}",
+        "scene route 6->236 (A Osc 2 Pitch) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -1.697143,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Keys/Soft Suitcase.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "velocity->295 (A Pre-Filter Gain) outside the class",
+        "velocity->316 (A Filter 2 Resonance) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "velocity->330 (A Filter EG Decay) outside the class",
+        "velocity->339 (A LFO 1 Amplitude) outside the class",
+        "voice route source 16 outside {velocity, keytrack}",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -9.321433,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        },
+        {
+          "depth_raw": -1.08,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Leads/Cell.fxp",
+      "route_class_reasons": [
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 23->229 (A Osc 1 Skew Horizontal) outside the class",
+        "scene route 4->221 (A Portamento) outside the class",
+        "scene route 4->339 (A LFO 1 Amplitude) outside the class",
+        "scene route 6->228 (A Osc 1 Formant) outside the class",
+        "scene route 7->365 (A LFO 3 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "velocity->328 (A Filter EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -2.571429,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Leads/Chatter.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 4->300 (A Feedback) outside the class",
+        "scene route 4->308 (A Filter 1 Cutoff) outside the class",
+        "scene route 6->300 (A Feedback) outside the class",
+        "velocity->352 (A LFO 2 Amplitude) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 2.7,
+          "dest": "A FM Depth",
+          "dest_id": 260
+        }
+      ],
+      "path": "resources/data/patches_factory/Leads/FM Rock.fxp",
+      "route_class_reasons": [
+        "keytrack->260 (A FM Depth) outside {308,309,310}",
+        "scene route 24->260 (A FM Depth) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -1.131429,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Leads/Later.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 5->308 (A Filter 1 Cutoff) outside the class",
+        "velocity->339 (A LFO 1 Amplitude) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [],
+      "path": "resources/data/patches_factory/Leads/Photon.fxp",
+      "route_class_reasons": [
+        "no keytrack voice route in scene A",
+        "scene B carries modulation routes (single-scene class)",
+        "scene route 4->308 (A Filter 1 Cutoff) outside the class",
+        "scene route 6->337 (A LFO 1 Rate) outside the class",
+        "scene route 6->339 (A LFO 1 Amplitude) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 0.230357,
+          "dest": "A Noise Color",
+          "dest_id": 262
+        }
+      ],
+      "path": "resources/data/patches_factory/Leads/Violini Solo.fxp",
+      "route_class_reasons": [
+        "keytrack->262 (A Noise Color) outside {308,309,310}",
+        "scene B carries modulation routes (single-scene class)",
+        "scene route 4->221 (A Portamento) outside the class",
+        "scene route 4->339 (A LFO 1 Amplitude) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "velocity->302 (A Filter Balance) outside the class",
+        "velocity->305 (A Waveshaper Drive) outside the class",
+        "velocity->316 (A Filter 2 Resonance) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "velocity->325 (A Amp EG Release) outside the class",
+        "velocity->352 (A LFO 2 Amplitude) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -5.142859,
+          "dest": "A Pre-Filter Gain",
+          "dest_id": 295
+        }
+      ],
+      "path": "resources/data/patches_factory/Pads/Communication.fxp",
+      "route_class_reasons": [
+        "keytrack->295 (A Pre-Filter Gain) outside {308,309,310}",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}",
+        "voice route source 20 outside {velocity, keytrack}",
+        "voice route source 21 outside {velocity, keytrack}",
+        "voice route source 22 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -12.053578,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        }
+      ],
+      "path": "resources/data/patches_factory/Pads/Robochoir 1.fxp",
+      "route_class_reasons": [
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "scene route 4->339 (A LFO 1 Amplitude) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -9.160718,
+          "dest": "A Osc 2 Formant",
+          "dest_id": 240
+        },
+        {
+          "depth_raw": -1.542857,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Pads/Robochoir 2.fxp",
+      "route_class_reasons": [
+        "keytrack->240 (A Osc 2 Formant) outside {308,309,310}",
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 23->237 (A Osc 2 Morph) outside the class",
+        "scene route 6->240 (A Osc 2 Formant) outside the class"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 0.75,
+          "dest": "A Osc 1 Pitch",
+          "dest_id": 224
+        }
+      ],
+      "path": "resources/data/patches_factory/Pads/Sprinkly.fxp",
+      "route_class_reasons": [
+        "keytrack->224 (A Osc 1 Pitch) outside {308,309,310}",
+        "scene route 5->224 (A Osc 1 Pitch) outside the class",
+        "voice route source 16 outside {velocity, keytrack}",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 0.080357,
+          "dest": "A Pan",
+          "dest_id": 265
+        }
+      ],
+      "path": "resources/data/patches_factory/Pads/Synth Choir MW O-Ah.fxp",
+      "route_class_reasons": [
+        "keytrack->265 (A Pan) outside {308,309,310}",
+        "scene route 7->308 (A Filter 1 Cutoff) outside the class",
+        "scene route 8->309 (A Filter 1 Resonance) outside the class",
+        "scene route 8->316 (A Filter 2 Resonance) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -2.057143,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Pads/Worried.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -12.696431,
+          "dest": "A Osc 1 Formant",
+          "dest_id": 228
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Bell 2.fxp",
+      "route_class_reasons": [
+        "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 0.139286,
+          "dest": "A Pan",
+          "dest_id": 265
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Diamonds.fxp",
+      "route_class_reasons": [
+        "keytrack->265 (A Pan) outside {308,309,310}",
+        "scene route 6->316 (A Filter 2 Resonance) outside the class",
+        "scene route 7->325 (A Amp EG Release) outside the class",
+        "scene route 7->330 (A Filter EG Decay) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -0.040179,
+          "dest": "A Osc 1 M1 Amount",
+          "dest_id": 225
+        },
+        {
+          "depth_raw": -0.029464,
+          "dest": "A Osc 1 M2 Amount",
+          "dest_id": 227
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Half FM.fxp",
+      "route_class_reasons": [
+        "keytrack->225 (A Osc 1 M1 Amount) outside {308,309,310}",
+        "keytrack->227 (A Osc 1 M2 Amount) outside {308,309,310}",
+        "scene route 6->267 (A Send FX 1 Level) outside the class",
+        "scene route 6->310 (A Filter 1 FEG Mod Amount) outside the class",
+        "scene route 6->325 (A Amp EG Release) outside the class",
+        "scene route 6->330 (A Filter EG Decay) outside the class",
+        "velocity->225 (A Osc 1 M1 Amount) outside the class",
+        "velocity->227 (A Osc 1 M2 Amount) outside the class",
+        "velocity->231 (A Osc 1 Feedback) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -3.085714,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Hasselhoff.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 6->337 (A LFO 1 Rate) outside the class",
+        "scene route 6->339 (A LFO 1 Amplitude) outside the class",
+        "velocity->225 (A Osc 1 Shape) outside the class",
+        "velocity->228 (A Osc 1 Sub Mix) outside the class",
+        "velocity->237 (A Osc 2 Correlation) outside the class",
+        "velocity->320 (A Amp EG Attack) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}",
+        "voice route source 20 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -2.057143,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Magical Guitar.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 10->308 (A Filter 1 Cutoff) outside the class",
+        "scene route 11->300 (A Feedback) outside the class",
+        "scene route 6->229 (A Osc 1 Skew Horizontal) outside the class",
+        "scene route 7->325 (A Amp EG Release) outside the class",
+        "scene route 7->333 (A Filter EG Release) outside the class",
+        "scene route 9->267 (A Send FX 1 Level) outside the class",
+        "velocity->225 (A Osc 1 Morph) outside the class",
+        "velocity->300 (A Feedback) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}",
+        "voice route source 19 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -2.057144,
+          "dest": "A VCA Gain",
+          "dest_id": 298
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Pinkerton Tinfurter.fxp",
+      "route_class_reasons": [
+        "keytrack->298 (A VCA Gain) outside {308,309,310}",
+        "scene route 23->225 (A Osc 1 Morph) outside the class",
+        "scene route 5->225 (A Osc 1 Morph) outside the class",
+        "scene route 6->229 (A Osc 1 Skew Horizontal) outside the class",
+        "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": -1.542857,
+          "dest": "A FM Depth",
+          "dest_id": 260
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Pol Pot.fxp",
+      "route_class_reasons": [
+        "keytrack->260 (A FM Depth) outside {308,309,310}",
+        "scene route 6->227 (A Osc 1 Saturate) outside the class",
+        "scene route 6->228 (A Osc 1 Formant) outside the class",
+        "scene route 6->229 (A Osc 1 Skew Horizontal) outside the class",
+        "scene route 6->267 (A Send FX 1 Level) outside the class",
+        "scene route 6->268 (A Send FX 2 Level) outside the class",
+        "scene route 6->310 (A Filter 1 FEG Mod Amount) outside the class",
+        "scene route 6->316 (A Filter 2 Resonance) outside the class",
+        "scene route 6->328 (A Filter EG Attack) outside the class",
+        "scene route 6->330 (A Filter EG Decay) outside the class",
+        "scene route 6->332 (A Filter EG Sustain) outside the class",
+        "velocity->260 (A FM Depth) outside the class",
+        "velocity->279 (A Osc 3 Volume) outside the class",
+        "voice route source 17 outside {velocity, keytrack}",
+        "voice route source 18 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    },
+    {
+      "in_class": false,
+      "keytrack_routes": [
+        {
+          "depth_raw": 1.931251,
+          "dest": "A Osc 3 Pitch",
+          "dest_id": 248
+        }
+      ],
+      "path": "resources/data/patches_factory/Plucks/Scrape Pluck.fxp",
+      "route_class_reasons": [
+        "keytrack->248 (A Osc 3 Pitch) outside {308,309,310}",
+        "scene route 23->230 (A Osc 1 Unison Detune) outside the class",
+        "scene route 24->237 (A Osc 2 Morph) outside the class",
+        "scene route 25->309 (A Filter 1 Resonance) outside the class",
+        "scene route 26->308 (A Filter 1 Cutoff) outside the class",
+        "voice route source 17 outside {velocity, keytrack}"
+      ],
+      "voice_class_reasons": []
+    }
+  ],
+  "recovery_basis_in_class": [],
+  "recovery_basis_in_class_count": 0,
+  "recovery_basis_total": 34,
+  "route_class_ok": [
+    "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "resources/data/patches_factory/FX/Crackling.fxp",
+    "resources/data/patches_factory/FX/Fireworks.fxp"
+  ],
+  "route_class_ok_count": 3,
+  "voice_class_ok": [
+    "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+  ],
+  "voice_class_ok_count": 1
+}

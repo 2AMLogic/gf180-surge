@@ -1,0 +1,29 @@
+SXT-042 keytrack control-plane costs (measured on the exact RTL schedule)
+Assumption A-DSP-1c (1 MAC/cycle); behavioral schedule, NOT cycle-accurate
+RTL, NOT synthesis-closed: no gf180mcu area/timing/power claim.
+
+fixture                                     blocks  voice-blocks      qmul  MAC/48kHz-sample
+leaf48-smoke-bells-v1 (preset routes)          122           302      1812            0.4641
+sxt025-accept-v1 (preset routes)             26250         30021    180126            0.2144
+sxt025-accept-v1 (synthetic class cover)     26250         30021    240168            0.2859
+
+Per running voice per block: one qmul per md route row (6 rows on the
+carrier: 5 velocity + 1 keytrack; 8 rows on the synthetic class-cover
+fixture), plus the keytrack word itself: ONE integer divide-by-6 of a
+shifted key difference, no multiply, no table.
+
+State: 1 x 32-bit keytrack word per voice instance (per-instance, never
+shared) + a fixture-constant route ROM of 3 words per route. No
+smoother, no history: the source is a pure function of key, scene
+octave and keytrack root, so a voice's word is written once at note-on
+(and re-derived at the end of each control pass, which is why the RTL
+can recompute it from the streamed key instead of storing it).
+
+Context (recorded, not reconciled): the SXT-022/SXT-034 voice datapath
+measures 37.7-41.3 MAC/sample on comparable fixtures, so the keytrack
+route pass is ~0.5% of the voice path on this carrier.
+
+SXT-016 divergence: SXT-016 has no per-modsource evaluation probe row
+(the leaf's cost note anticipated '[ESTIMATE] pending SXT-016
+refinement'); these are the first concrete keytrack numbers and are
+offered as the SXT-016 refinement input, not reconciled against it.

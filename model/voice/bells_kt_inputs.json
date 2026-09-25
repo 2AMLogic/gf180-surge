@@ -1,0 +1,90 @@
+{
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "readback": "NOT_RUN: no pinned oracle on this host; every value below comes from a committed, sha-checked record (census/graphs/#48 sidecar/SXT-025 fixture manifest)",
+    "sample_rate": 48000,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "frozen_scope": "ms_keytrack (pinned id 2) as a per-voice modulation source on the landed SXT-022/SXT-026a voice class: word = (state.pitch - keytrack_root)/12 in Q10.21, per voice instance, refreshed AFTER each control pass's route application (declared 1-control-pass lag); destination class {308 Filter 1 Cutoff, 309 Filter 1 Resonance, 310 Filter 1 FEG Mod Amount} live, {314, 315, 318} accepted-inert (unit 2 Off); every other destination and every other source refused fail-closed",
+  "issue": "SXT-042",
+  "keytrack_root": 60,
+  "keytrack_route_counts": {
+    "inert": 0,
+    "live": 1
+  },
+  "preset": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "graphs_sha": "e499f78df5664012717dd2961944502846e28cf7",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "reference_manifest": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1.json",
+    "reference_manifest_sha256": "c1f7bf3d747e3be9c09bcd167da718d5c5a71d64e27e45172009f120e9dd5304",
+    "v2_sidecar": "model/voice/bells_inputs.json",
+    "v2_sidecar_sha256": "80d6183b75cf92b0f732ab7ce0d78bfda5125668c4a35e272d9e23a78d94fcad"
+  },
+  "provenance_mode": "offline-committed-state",
+  "scene_octave": 2,
+  "schema_version": 1,
+  "voice_routes": [
+    {
+      "depth_normalized": -0.0,
+      "depth_raw": -1e-06,
+      "dest_id": 298,
+      "dest_name": "A VCA Gain",
+      "modeled": true,
+      "note": "modeled",
+      "source": "ms_velocity",
+      "source_id": 1
+    },
+    {
+      "depth_normalized": 0.194712,
+      "depth_raw": 25.312506,
+      "dest_id": 308,
+      "dest_name": "A Filter 1 Cutoff",
+      "modeled": true,
+      "note": "modeled",
+      "source": "ms_velocity",
+      "source_id": 1
+    },
+    {
+      "depth_normalized": 0.123214,
+      "depth_raw": 23.657139,
+      "dest_id": 310,
+      "dest_name": "A Filter 1 FEG Mod Amount",
+      "modeled": true,
+      "note": "modeled",
+      "source": "ms_velocity",
+      "source_id": 1
+    },
+    {
+      "depth_normalized": 0.329712,
+      "depth_raw": 42.862514,
+      "dest_id": 314,
+      "dest_name": "A Filter 2 Cutoff",
+      "modeled": false,
+      "note": "inert: filter unit 2 is Off in the declared class",
+      "source": "ms_velocity",
+      "source_id": 1
+    },
+    {
+      "depth_normalized": 0.238393,
+      "depth_raw": 45.771442,
+      "dest_id": 318,
+      "dest_name": "A Filter 2 FEG Mod Amount",
+      "modeled": false,
+      "note": "inert: filter unit 2 is Off in the declared class",
+      "source": "ms_velocity",
+      "source_id": 1
+    },
+    {
+      "depth_normalized": 0.03375,
+      "depth_raw": 4.387498,
+      "dest_id": 308,
+      "dest_name": "A Filter 1 Cutoff",
+      "modeled": true,
+      "note": "modeled",
+      "source": "ms_keytrack",
+      "source_id": 2
+    }
+  ]
+}

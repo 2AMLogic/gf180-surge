@@ -1,0 +1,14 @@
+{
+  "tb": "rtl/voice/tb_kt.sv",
+  "sequence": "sxt025-accept-v1",
+  "control_mode": "normal",
+  "verdict": "PASS",
+  "checked": {
+    "voice_checkpoints": 30021,
+    "fields": 240168
+  },
+  "rtl_qmuls": 240168,
+  "blocks": 26250,
+  "mismatches": 0,
+  "first_failures": []
+}
