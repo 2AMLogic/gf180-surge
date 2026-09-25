@@ -1,0 +1,57 @@
+issue #93 -- shared-comparator wet-path tail gate: checks
+run: 2026-09-25T04:11:04Z   repo HEAD: 63c855dd4d8a3b914ada7c7bce479b37e008a1a8
+tool: tools/compare_audio_reference.py
+claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-support,
+             or sound-quality claim follows from anything below.
+
+==========================================================================
+[2] wet-path tail-gate controls
+==========================================================================
+  control fixture A : fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav
+    sidecar         : fixtures/audio/koala2/seq-notes-coverage-v1.json
+    declared tail region: [153600, 273600) = last_event_sample 153600 + tail_s 2.5 x 48000 Hz
+  control fixture B : fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav
+    sidecar         : fixtures/audio/behemoth/seq-notes-coverage-v1.json
+    declared tail region: [153600, 273600) = last_event_sample 153600 + tail_s 2.5 x 48000 Hz
+  NOTE (claim scope): every control 'model' below is built FROM the reference render itself,
+        so the PASS control is a comparator self-test -- NOT a model-vs-reference
+        fidelity result, and not a claim about any model, RTL, preset, or sound.
+
+  full-tail-within-budget  expect PASS    got PASS    rc=0  OK
+      tail: covered=True ref_present=True model_present=True rel=-50.27 dB ok=True
+      budgets: max=True rms=True corr=True  (max 1 LSB, rms -98.66 dBFS, corr 0.9997)
+
+  drop-full-tail           expect FAIL    got FAIL    rc=1  OK
+      tail: covered=True ref_present=True model_present=False rel=0.00 dB ok=False
+      budgets: max=False rms=True corr=False  (max 3831 LSB, rms -48.39 dBFS, corr 0.9115)
+      FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)
+
+  tail-decays-too-fast     expect FAIL    got FAIL    rc=1  OK
+      tail: covered=True ref_present=True model_present=True rel=-10.22 dB ok=False
+      budgets: max=True rms=True corr=True  (max 415 LSB, rms -58.61 dBFS, corr 0.9896)
+      FAIL against proposed budgets (tail-region gate: tail residual -10.22 dB exceeds the proposed -20.00 dB relative budget)
+      all three global budgets PASS; the verdict is FAIL solely because of the tail gate
+
+  truncate-at-tail-start   expect FAIL    got FAIL    rc=1  OK
+      tail: covered=False ref_present=True model_present=False rel=n/a dB ok=False
+      budgets: max=True rms=True corr=True  (max 0 LSB, rms -inf dBFS, corr 1.0000)
+      FAIL against proposed budgets (tail-region gate: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail)
+      all three global budgets PASS; the verdict is FAIL solely because of the tail gate
+
+  undeclared-wet-path      expect REFUSE  got REFUSE  rc=2  OK
+      reference/model filename declares a wet bus but --path wet was not passed; a wet comparison must be tail-gated (issue #93). Re-run with --path wet --sidecar <fixture>.json.
+
+  no-sidecar               expect REFUSE  got REFUSE  rc=2  OK
+      --path wet requires a fixture sidecar declaring the tail region (note-off offset plus declared tail length); none was given and none was found next to /tmp/sxt-tail-gate-checks/no-sidecar/orphan-wet.wav. Do not guess a tail region -- record a bounded finding instead (issue #93 stop condition).
+
+  stale-sidecar            expect REFUSE  got REFUSE  rc=2  OK
+      sidecar declares 273600 frames but a-short-wet.wav holds 213600: the sidecar is STALE with respect to the reference render
+
+  drop-full-tail-second-preset expect FAIL    got FAIL    rc=1  OK
+      tail: covered=True ref_present=True model_present=False rel=0.00 dB ok=False
+      budgets: max=True rms=False corr=False  (max 2496 LSB, rms -41.68 dBFS, corr 0.7338)
+      FAIL against proposed budgets (budget: rms_diff_dbfs, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)
+
+  leg 2: PASS (8/8 controls behaved as required)
+
+leg 2 verdict: PASS

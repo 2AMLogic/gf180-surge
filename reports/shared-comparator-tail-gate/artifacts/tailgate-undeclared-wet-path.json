@@ -1,0 +1,4 @@
+{
+  "verdict": "NO_VERDICT (refused)",
+  "reason": "reference/model filename declares a wet bus but --path wet was not passed; a wet comparison must be tail-gated (issue #93). Re-run with --path wet --sidecar <fixture>.json."
+}
