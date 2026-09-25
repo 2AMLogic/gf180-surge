@@ -1,0 +1,87 @@
+{
+ "id": "sxt036-vel-overlap-v1",
+ "schema_version": 1,
+ "sample_rate": 48000,
+ "description": "SXT-036 per-instance velocity fixture: overlapping voices with distinct note-on velocities (10..127) and distinct release velocities (1..127); model/voice-local sequence (SXT-034 pattern)",
+ "coverage": [
+  "velocity:per-voice-distinct",
+  "release:release-velocity",
+  "overlap:polyphonic"
+ ],
+ "notes": "every sounding voice carries a different velocity and release velocity, so a shared (scene-wide) velocity/release-velocity register is observable",
+ "settle_s": 0.25,
+ "tail_s": 1.0,
+ "tempo_events_renderable": true,
+ "events": [
+  {
+   "type": "note_on",
+   "t": 0,
+   "channel": 0,
+   "note": 48,
+   "velocity": 25
+  },
+  {
+   "type": "note_on",
+   "t": 4800,
+   "channel": 0,
+   "note": 55,
+   "velocity": 100
+  },
+  {
+   "type": "note_on",
+   "t": 9600,
+   "channel": 0,
+   "note": 60,
+   "velocity": 64
+  },
+  {
+   "type": "note_off",
+   "t": 19200,
+   "channel": 0,
+   "note": 48,
+   "velocity": 20
+  },
+  {
+   "type": "note_off",
+   "t": 24000,
+   "channel": 0,
+   "note": 60,
+   "velocity": 127
+  },
+  {
+   "type": "note_off",
+   "t": 28800,
+   "channel": 0,
+   "note": 55,
+   "velocity": 64
+  },
+  {
+   "type": "note_on",
+   "t": 38400,
+   "channel": 0,
+   "note": 52,
+   "velocity": 10
+  },
+  {
+   "type": "note_on",
+   "t": 40800,
+   "channel": 0,
+   "note": 64,
+   "velocity": 127
+  },
+  {
+   "type": "note_off",
+   "t": 52800,
+   "channel": 0,
+   "note": 64,
+   "velocity": 1
+  },
+  {
+   "type": "note_off",
+   "t": 55200,
+   "channel": 0,
+   "note": 52,
+   "velocity": 110
+  }
+ ]
+}
