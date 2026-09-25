@@ -1,0 +1,92 @@
+{
+  "alloc_profiles": {
+    "engine": {
+      "allpass_len": 131072,
+      "bytes": 14532608,
+      "delay_len": 131072,
+      "predelay_len": 1536000,
+      "profile": "engine",
+      "words": 3633152
+    },
+    "harness": {
+      "allpass_len": 4096,
+      "bytes": 524288,
+      "delay_len": 16384,
+      "predelay_len": 16384,
+      "profile": "harness",
+      "words": 131072
+    },
+    "note": "the RTL bench runs the reduced harness profile so two instances fit the simulator; transaction COUNTS are identical and the model refuses a profile that would alias a live tap (ProfileRefusal)"
+  },
+  "external_traffic": {
+    "bytes_per_sample": 184.0,
+    "bytes_per_second_at_48k": 8832000.0,
+    "declared_from_structure": {
+      "reads": 29,
+      "writes": 17
+    },
+    "measured_matches_structure": true,
+    "note": "reads = 1 predelay + 12 allpass + 4 delays x (2 output taps + 2 interpolation reads); writes = 1 predelay + 12 allpass + 4 delay writes",
+    "reads_per_sample": 29.0,
+    "transaction_log_basis": "model ext_reads/ext_writes counters over 128 blocks (measured, frozen model)",
+    "words_per_sample_32bit": 46.0,
+    "writes_per_sample": 17.0
+  },
+  "external_writable_memory": {
+    "allpass_rings": {
+      "bytes": 6291456,
+      "count": 12,
+      "layout": "4 input + 4 tank blocks x 2; ring length is the configured _len, the allocation is the engine maximum",
+      "words_each": 131072
+    },
+    "bytes_total": 14532608,
+    "classification_policy": "every Reverb 2 buffer is external WRITABLE memory (> 64 KiB policy, plan section 3); flash is never writable delay memory; all processing stays in-chip",
+    "delay_rings": {
+      "bytes": 2097152,
+      "count": 4,
+      "layout": "power-of-two ring masked by DELAY_LEN_MASK; 2 output taps + 2 sub-sample interpolation reads",
+      "words_each": 131072
+    },
+    "predelay": {
+      "bytes": 6144000,
+      "layout": "circular ring, index wraps at PREDELAY_BUFFER_SIZE; read at k - pdt with pdt clamped to [1, 1151999]",
+      "words": 1536000
+    },
+    "total_MiB": 13.859375,
+    "words_total": 3633152
+  },
+  "fit_claim": "NONE. cyc_fxreverb2_frame is a placeholder [PENDING-SXT-016]; profile v1 is not frozen (#12, STOP/ESCALATE fired in PR #109). This report establishes state and traffic only.",
+  "issue": "SXT-028f",
+  "leaf": "SXT-028f",
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "multi_instance": {
+    "note": "per-instance state is never shared (AGENTS.md); two Reverb 2 slots = two independent tanks over two disjoint external regions",
+    "per_additional_instance_external_bytes": 14532608
+  },
+  "on_chip_small_state": {
+    "bits": 3712,
+    "breakdown": {
+      "LFO r/i/dr/di (Q24.43)": 256,
+      "configured lengths + tap times (12 + 4 + 8)": 768,
+      "eight one-pole registers (Q24.43)": 512,
+      "predelay tap + counters + region hashes": 320,
+      "ring indices (predelay + 12 allpass + 4 delay)": 544,
+      "six coefficient ramps (v/new_v/dv, Q24.43)": 1152,
+      "tank accumulator _state (Q10.21)": 32,
+      "widthS + mix lipol (cur+tgt, Q13.18)": 128
+    },
+    "bytes": 464,
+    "note": "the Q86/Q128 products of the coefficient multiplies are combinational; the tap gains are frozen ROM"
+  },
+  "schema_version": 1,
+  "scope": "per Reverb 2 instance (sst-effects Reverb2 tank reverb), 48 kHz, frozen Q10.21 32-bit buffer words",
+  "sxt015_reconciliation": {
+    "note": "state residency confirms the SXT-015 pinned entry exactly. The SXT-015 per-sample TRAFFIC entry for Reverb 2 (40 reads / 18 writes) is an over-estimate relative to the structure measured here (29 reads / 17 writes); this leaf records the finding and does NOT edit the shared SXT-015 table, which is SXT-015/016 scope. Over-estimating traffic is conservative for the budget, so no SXT-016/017 result is invalidated.",
+    "state_agreement": true,
+    "sxt015_reads_per_sample": 40,
+    "sxt015_state_bytes": 14532608,
+    "sxt015_writes_per_sample": 18,
+    "this_model_bytes": 14532608,
+    "traffic_agreement": false
+  }
+}

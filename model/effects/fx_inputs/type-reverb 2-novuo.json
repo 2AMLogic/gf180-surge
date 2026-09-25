@@ -1,0 +1,98 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "reasons": [
+      "modulation routes target FX parameters: FX G1 Frequency, FX G1 Gain",
+      "chain needs unlanded FX classes: Distortion",
+      "rev2_predelay temposync flag UNRESOLVED without the oracle host (not carried by the SXT-011 normalized graph; the .fxp bytes are external)",
+      "SXT-012 3x bit-identical determinism gate NOT_RUN (requires the oracle host)"
+    ],
+    "status": "BLOCKED (oracle host required)"
+  },
+  "census_blob_reverified": true,
+  "chain": [
+    {
+      "landed_model": true,
+      "landed_ref": "eq (SXT-023)",
+      "role": "bins1",
+      "slot": 2,
+      "type": 6,
+      "type_name": "EQ"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "chorus (SXT-028c)",
+      "role": "bins2",
+      "slot": 3,
+      "type": 9,
+      "type_name": "Chorus"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "reverb2 (SXT-028f, this leaf)",
+      "role": "send1",
+      "slot": 4,
+      "type": 11,
+      "type_name": "Reverb 2"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "delay (SXT-023)",
+      "role": "send2",
+      "slot": 5,
+      "type": 1,
+      "type_name": "Delay"
+    },
+    {
+      "landed_model": false,
+      "landed_ref": null,
+      "role": "global1",
+      "slot": 6,
+      "type": 5,
+      "type_name": "Distortion"
+    }
+  ],
+  "drift_asserted": null,
+  "fx_bypass": "All FX",
+  "fx_class": "Reverb 2",
+  "fx_disable": 0,
+  "instances": [
+    {
+      "params": {
+        "buildup_f": 0.640407,
+        "decay_time_f": 1.291881,
+        "diffusion_f": 0.452028,
+        "hf_damping_f": 0.255711,
+        "lf_damping_f": 0.554419,
+        "mix_f": 1.0,
+        "modulation_f": 0.383708,
+        "predelay_f": -7.245268,
+        "room_size_f": 0.087723,
+        "ts_predelay": null,
+        "ts_ratio_inv": null,
+        "width_f": 0.0
+      },
+      "return_level": 0.175561,
+      "role": "send1",
+      "slot": 4
+    }
+  ],
+  "leaf": "SXT-028f",
+  "param_order_ref": "sst-effects Reverb2.h:40-57 rev2_params; each value range-checked against Reverb2.h:152-197 paramAt",
+  "preset": {
+    "bank": "contributor",
+    "census_size": 227694,
+    "git_blob_sha1": "e688adfdcdee44073968942914733783163b0e8c",
+    "path": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+    "size": 227694
+  },
+  "scene_mode": "Dual",
+  "schema_version": 1,
+  "source": {
+    "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+    "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "normalized_graph": "corpus/normalized/graphs.jsonl (SXT-011)",
+    "patch_revision": 22,
+    "sample_rate_hz": 48000
+  }
+}

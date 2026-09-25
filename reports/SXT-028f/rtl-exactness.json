@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028f",
+  "sim": "iverilog",
+  "sim_version": "13.0 (stable) (v13_0)",
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "tb": "rtl/effects/type-reverb 2/tb_reverb2.sv",
+  "alloc_profile": {
+    "profile": "harness",
+    "allpass_len": 4096,
+    "delay_len": 16384,
+    "predelay_len": 16384,
+    "words": 131072,
+    "bytes": 524288
+  },
+  "cases": [
+    {
+      "case": "prs-dual-128",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "1a20c239",
+        "expected": "1a20c239"
+      },
+      "checked": {
+        "outputs": 16384,
+        "samples": 34,
+        "checkpoints": 20,
+        "fields": 1440
+      },
+      "mismatches": 0,
+      "note": "two instances, disjoint regions",
+      "first_failures": []
+    },
+    {
+      "case": "prs-reset48-128",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "1a20c239",
+        "expected": "1a20c239"
+      },
+      "checked": {
+        "outputs": 16384,
+        "samples": 34,
+        "checkpoints": 20,
+        "fields": 1440
+      },
+      "mismatches": 0,
+      "note": "bulk clear + constructor reset at block 48",
+      "first_failures": []
+    },
+    {
+      "case": "prs-corners-96",
+      "blocks": 96,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "1a20c239",
+        "expected": "1a20c239"
+      },
+      "checked": {
+        "outputs": 12288,
+        "samples": 26,
+        "checkpoints": 16,
+        "fields": 1152
+      },
+      "mismatches": 0,
+      "note": "parameter corners",
+      "first_failures": []
+    },
+    {
+      "case": "prs-sweep-256",
+      "blocks": 256,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "1a20c239",
+        "expected": "1a20c239"
+      },
+      "checked": {
+        "outputs": 32768,
+        "samples": 66,
+        "checkpoints": 36,
+        "fields": 2592
+      },
+      "mismatches": 0,
+      "note": "block-rate parameter sweep (ramp carrier)",
+      "first_failures": []
+    }
+  ],
+  "mutant_controls": [
+    {
+      "case": "mutant-shared",
+      "blocks": 256,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 4224,
+        "samples": 10,
+        "checkpoints": 8,
+        "fields": 543
+      },
+      "ok": true,
+      "live": true,
+      "liveness_predicate": "two instances always write both regions",
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i1 pdh: model=18446744073707475744 rtl=18446744073709381500",
+        "b1 i1 pdh: model=18446744073707533271 rtl=18446744073709017536",
+        "b16 i1 pdh: model=1185616 rtl=18446744073699539986",
+        "b32 i0: sample checkpoint mismatch",
+        "  first X diff flat[0]: model=0 rtl=-66180"
+      ]
+    },
+    {
+      "case": "mutant-lfdamp",
+      "blocks": 256,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 8320,
+        "samples": 18,
+        "checkpoints": 12,
+        "fields": 831
+      },
+      "ok": true,
+      "live": true,
+      "liveness_predicate": "LF-damping ramp increment must be non-zero",
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b1 i0 rv4: model=879609315328 rtl=919175233536",
+        "b1 i1 rv4: model=879609315328 rtl=919175233536",
+        "b16 i0 rv4: model=1419227561984 rtl=1447503069184",
+        "b16 i1 rv4: model=1419227561984 rtl=1447503069184",
+        "b32 i0 rv4: model=1671086473216 rtl=1670920142848"
+      ]
+    },
+    {
+      "case": "mutant-modtrunc",
+      "blocks": 256,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 22,
+      "checked": {
+        "outputs": 6208,
+        "samples": 13,
+        "checkpoints": 8,
+        "fields": 576
+      },
+      "ok": true,
+      "live": true,
+      "liveness_predicate": "modulation must have a non-zero fractional part",
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b8 i0: sample checkpoint mismatch",
+        "  first X diff flat[4]: model=-37122 rtl=-37123",
+        "b8 i1: sample checkpoint mismatch",
+        "  first X diff flat[4]: model=-37122 rtl=-37123",
+        "b16 i0: sample checkpoint mismatch"
+      ]
+    },
+    {
+      "case": "mutant-tapgain",
+      "blocks": 256,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 13646,
+        "samples": 28,
+        "checkpoints": 16,
+        "fields": 1152
+      },
+      "ok": true,
+      "live": true,
+      "liveness_predicate": "every output tap must read non-zero data",
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b94 i1 out[11]: model=88 rtl=89",
+        "b94 i1 out[13]: model=-10 rtl=-9",
+        "b96 i1 out[23]: model=145 rtl=146",
+        "b97 i1 out[19]: model=-9 rtl=-10",
+        "b98 i1 out[3]: model=-12 rtl=-13"
+      ]
+    },
+    {
+      "case": "control-stale-revision",
+      "ok": true,
+      "exact": false,
+      "rtl_trace": "deadbeef",
+      "live_revision": "1a20c239",
+      "verdict": "CONTROL-OK (a trace pinned to a different model revision is REFUSED: exact=false regardless of samples)"
+    }
+  ],
+  "mutant_carrier_exercise": {
+    "tap_read_max_abs_L": [
+      209334,
+      209334,
+      116871,
+      103976
+    ],
+    "tap_read_max_abs_R": [
+      209334,
+      119401,
+      209334,
+      209334
+    ],
+    "modulation_nonzero_samples": 65404,
+    "modulation_fractional_samples": 65160,
+    "ramp_dv_max_abs": [
+      571916288,
+      5001625600,
+      3463110656,
+      3463192576,
+      1236822016,
+      989522296832
+    ]
+  },
+  "status": "PASS"
+}
