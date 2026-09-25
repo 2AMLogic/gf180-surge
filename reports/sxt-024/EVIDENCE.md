@@ -135,6 +135,24 @@ recorded:
   jump matches to 2.5e-7 (**no click added beyond the engine's own buffer
   clear**: engine 0.10594, model 0.10594).
 
+**Change note (issue #100, 2026-09-25): additional `tail_gate` check;
+verdicts unchanged.** `tools/compare_reverb_model.py case` now also applies
+the shared wet-path tail gate (`checks.tail_gate`) over the trace
+sidecar's declared region `[render.frames − render.tail_s × sr, frames)`,
+on the mono sum and on L and R. It is added **alongside** the existing
+`tail_rms_rel` (own window, −50 "dB" budget), which is unchanged. It was
+re-run on this host with both the gated tool and the pre-#100 tool: gated
+output minus the new `tail_gate` block is byte-identical to the pre-#100
+output. click PASS (gate −110.1 dB), preset PASS (gate −106.0 dB),
+hardreset FAIL on `tail_rms_rel` exactly as recorded above (gate PASS,
+−88.3 dB). The committed `comparison/*.json` are **not rewritten** by #100.
+The gated re-runs are at
+`reports/stereo-comparator-tail-gate/artifacts/sxt024-rerun/`. Separately,
+the committed click/preset records do not reproduce bit-for-bit with the
+*pre-#100* tool on a NumPy 2 host (`send_gain` float32 cube, fields added
+after the record). That is a pre-existing finding, filed as #112, and it
+changes no verdict.
+
 ## 4. RTL-vs-frozen-model EXACT (iverilog)
 
 `rtl-exactness.json` (sha256

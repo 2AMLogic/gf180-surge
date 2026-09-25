@@ -1,11 +1,11 @@
 {
   "issue": 93,
-  "run_utc": "2026-09-25T04:11:04Z",
-  "repo_head": "63c855dd4d8a3b914ada7c7bce479b37e008a1a8",
+  "run_utc": "2026-09-25T09:42:05Z",
+  "repo_head": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
   "legs": {
     "dry_rerun_parity": {
       "status": "PASS",
-      "baseline_rev": "origin/main",
+      "baseline_rev": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
       "unexplained_committed_diffs": [],
       "cases": [
         {
@@ -14,10 +14,9 @@
           "model": "reports/SXT-033/artifacts/model-crush-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
           ]
         },
         {
@@ -26,10 +25,9 @@
           "model": "reports/SXT-033/artifacts/model-crush-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
           ]
         },
         {
@@ -49,10 +47,9 @@
           "model": "reports/SXT-033/artifacts/model-edges-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)"
           ]
         },
         {
@@ -61,10 +58,9 @@
           "model": "reports/SXT-033/artifacts/model-horn-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
           ]
         },
         {
@@ -95,10 +91,9 @@
           "model": "reports/SXT-033/artifacts/model-tentacles-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)"
           ]
         },
         {
@@ -134,10 +129,8 @@
           "model": "reports/SXT-040/artifacts/model-badnews-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-040/artifacts/budget-badnews-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
-          "committed_json_diff_classes": [
-            "ULP(spectral_corr)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "SXT-040",
@@ -145,10 +138,8 @@
           "model": "reports/SXT-040/artifacts/model-badnews-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-040/artifacts/budget-badnews-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
-          "committed_json_diff_classes": [
-            "ULP(spectral_corr)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "SXT-040",
@@ -156,10 +147,8 @@
           "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
-          "committed_json_diff_classes": [
-            "ULP(spectral_corr)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "SXT-040",
@@ -167,10 +156,8 @@
           "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
-          "committed_json_diff_classes": [
-            "ULP(spectral_corr)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "SXT-040",
@@ -178,10 +165,8 @@
           "model": "reports/SXT-040/artifacts/model-tentacles-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
-          "committed_json_diff_classes": [
-            "ULP(spectral_corr)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "SXT-040",
@@ -189,10 +174,17 @@
           "model": "reports/SXT-040/artifacts/model-tentacles-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
-          "committed_json_diff_classes": [
-            "ULP(spectral_corr)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "SXT-042",
+          "ref": "reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav",
+          "model": "reports/SXT-042/artifacts/model-sxt025-accept-v1-bells-dry.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "sxt-022",
@@ -200,10 +192,9 @@
           "model": "reports/sxt-022/artifacts/model-seq-modwheel-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-022/artifacts/audio-seq-modwheel-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
           ]
         },
         {
@@ -212,10 +203,9 @@
           "model": "reports/sxt-022/artifacts/model-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
           ]
         },
         {
@@ -224,10 +214,9 @@
           "model": "reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr); RMS-FLAG-#95(verdict follows the corrected rms flag)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); RMS-FLAG-#95(verdict follows the corrected rms flag)",
           "committed_json_diff_classes": [
             "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)",
             "RMS-FLAG-#95(verdict follows the corrected rms flag)"
           ]
         },
@@ -354,9 +343,10 @@
           "model": "reports/sxt-035/artifacts/model-seq-modwheel-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-035/artifacts/audio-seq-modwheel-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
           ]
         },
         {
@@ -365,9 +355,10 @@
           "model": "reports/sxt-035/artifacts/model-seq-notes-coverage-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
           ]
         },
         {
@@ -376,9 +367,10 @@
           "model": "reports/sxt-035/artifacts/model-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); RMS-FLAG-#95(verdict follows the corrected rms flag)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr); RMS-FLAG-#95(verdict follows the corrected rms flag)",
           "committed_json_diff_classes": [
             "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)",
             "RMS-FLAG-#95(verdict follows the corrected rms flag)"
           ]
         }

@@ -42,6 +42,18 @@ Checks (PROPOSED budgets, PENDING-FREEZE):
                     (32 blocks; engine lipol convergence, control plane,
                     excluded from the other budget windows)
 
+  tail_gate        (issue #100) the shared wet-path tail gate over the
+                    DECLARED tail region [frames - tail_s*sr, frames) read
+                    from the trace sidecar (`render.frames`, `render.tail_s`,
+                    `wav.sample_rate`): region covered by both renders,
+                    reference tail present, model tail present, tail residual
+                    RMS <= compare_audio_reference.PROPOSED_TAIL relative to
+                    the reference tail RMS, on the mono sum and on L and R.
+                    Added ALONGSIDE tail_rms_rel (which keeps its own
+                    sequence-derived window and stricter budget); a sidecar
+                    that does not declare the region makes the case REFUSE
+                    (NO_VERDICT, exit 2).
+
 Exit code 0 iff all checks PASS. Original to this repository (Apache-2.0).
 """
 
@@ -58,6 +70,13 @@ import numpy as np  # noqa: E402
 
 import coefficient_plane as cp  # noqa: E402
 import reverb1_fixed as rf  # noqa: E402
+
+sys.path.insert(0, os.path.join(REPO, "tools"))
+import compare_audio_reference as car  # noqa: E402
+
+COMPARISON = os.path.join(REPO, "reports", "sxt-024", "comparison")
+# Unit for the tail gate's *_lsb fields: the frozen model's s24 device LSB.
+TAIL_GATE_LSB = 2.0 ** -23
 
 TRACES = os.path.join(REPO, "reports", "sxt-024", "traces")
 SEQ_COV = os.path.join(REPO, "fixtures", "sequences", "seq-notes-coverage-v1.json")
@@ -245,6 +264,52 @@ def check_wet(name, wet, wet_pred, t0_tail, extra=None):
     return res
 
 
+def declared_trace_tail_region(side, sidecar_path, frames):
+    """Declared tail region from an SXT-024 trace sidecar (issue #100).
+
+    Trace sidecar shape: top-level `bus`, `render.frames`, `render.tail_s`,
+    `wav.sample_rate`. Raises car.TailRegionError when not declared or when
+    the declaration does not describe the loaded render.
+    """
+    render = side.get("render") if isinstance(side.get("render"), dict) else {}
+    wav = side.get("wav") if isinstance(side.get("wav"), dict) else {}
+    sr, tail_s, total = wav.get("sample_rate"), render.get("tail_s"), render.get("frames")
+    missing = [n for n, v in (("sample_rate", sr), ("tail_s", tail_s),
+                              ("frames", total)) if v is None]
+    if missing:
+        raise car.TailRegionError(
+            "trace sidecar %s does not declare %s: no tail region can be "
+            "defined from committed data (issue #100)"
+            % (sidecar_path, "/".join(missing)))
+    length_f = float(tail_s) * float(sr)
+    length = int(round(length_f))
+    if abs(length_f - length) > 1e-6 or length <= 0:
+        raise car.TailRegionError("declared tail_s=%r x sample_rate=%r is not a "
+                                  "positive integral frame count" % (tail_s, sr))
+    total = int(total)
+    if total != frames:
+        raise car.TailRegionError(
+            "trace sidecar %s declares %d frames but the loaded render holds %d "
+            "(STALE sidecar)" % (sidecar_path, total, frames))
+    if int(sr) != 48000:
+        raise car.TailRegionError("trace sidecar declares sample_rate %r" % sr)
+    offset = total - length
+    if offset < 0:
+        raise car.TailRegionError("declared tail exceeds the declared render")
+    return {
+        "sidecar": os.path.relpath(sidecar_path, REPO),
+        "bus": side.get("bus"),
+        "sample_rate": int(sr),
+        "tail_s": tail_s,
+        "declared_frames": total,
+        "declared_sha256": None,
+        "tail_offset": offset,
+        "tail_frames": length,
+        "tail_region_source": "declared render.frames - render.tail_s (trace "
+                              "sidecar declares no last_event_sample)",
+    }
+
+
 def read_bus(name):
     """Prefer the committed float32 npy (no WAV quantization); else int16 WAV."""
     fnpy = read_npy(os.path.join(TRACES, name + ".npy"))
@@ -255,8 +320,16 @@ def read_bus(name):
 
 def cmd_case(args):
     name = args.case
-    side = json.load(open(os.path.join(TRACES, name + ".json")))
+    out_dir = getattr(args, "out_dir", None) or COMPARISON
+    side_path = os.path.join(TRACES, name + ".json")
+    side = json.load(open(side_path))
     wet, float_used = read_bus(name)
+    region = None
+    if not name.startswith("reset"):
+        try:
+            region = declared_trace_tail_region(side, side_path, len(wet[0]))
+        except car.TailRegionError as e:
+            return car.refuse(str(e))
     model, c, st = build_model(side)
     send, ret = send_return_gains(st)
 
@@ -318,8 +391,8 @@ def cmd_case(args):
                                          "see render tool"),
             "checks": {"engine_reset_observable": False},
         }
-        with open(os.path.join(REPO, "reports", "sxt-024", "comparison", f"{name}.json"),
-                  "w") as f:
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, f"{name}.json"), "w") as f:
             json.dump(res, f, indent=2, sort_keys=True)
             f.write("\n")
         print(json.dumps(res, indent=2, sort_keys=True))
@@ -417,7 +490,20 @@ def cmd_case(args):
         res["checks"]["reset_boundary"] = (
             abs(res["reset_boundary_max_jump_wet"] - res["reset_boundary_max_jump_pred"])
             <= BUDGETS["wet_max_abs"])
-    out = os.path.join(REPO, "reports", "sxt-024", "comparison", f"{name}.json")
+    # issue #100: shared wet-path tail gate over the DECLARED tail region
+    tc, tc_lr, tail_ok, tail_reason = car.stereo_tail_gate(
+        np.vstack([wet[0], wet[1]]), np.vstack([pred_l, pred_r]), region,
+        TAIL_GATE_LSB)
+    res["tail_gate"] = {
+        "units": "s24 LSB (2^-23 of full scale)",
+        "proposed_tail_budget": dict(car.PROPOSED_TAIL),
+        "tail_check": tc,
+        "tail_check_lr": tc_lr,
+        "ok": tail_ok,
+        "reason": tail_reason,
+    }
+    res["checks"]["tail_gate"] = tail_ok
+    out = os.path.join(out_dir, f"{name}.json")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:
         json.dump(res, f, indent=2, sort_keys=True)
@@ -545,6 +631,9 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("case", help="compare one wet trace (preset*/click/reset*)")
     p.add_argument("--case", required=True)
+    p.add_argument("--out-dir", default=None,
+                   help="write the case JSON here (default: "
+                        "reports/sxt-024/comparison)")
     p.set_defaults(func=cmd_case)
     p = sub.add_parser("sweep", help="t60 vs decay-parameter sweep (wet and model)")
     p.set_defaults(func=cmd_sweep)

@@ -1,0 +1,13 @@
+issue #100 -- stereo comparator tail gate / metric findings: leg 3
+run: 2026-09-25T09:54:51Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+
+==========================================================================
+[3] rms_diff_dbfs under exact agreement (decision: clamp to RMS_DIFF_DBFS_FLOOR = -300.0)
+==========================================================================
+  shared-mono  exact-agreement rms_diff_dbfs=-300.0 strict-JSON=True verdict=PASS -> OK
+  chorus       exact-agreement rms_diff_dbfs=-300.0 strict-JSON=True verdict=PASS -> OK
+  fx           exact-agreement rms_diff_dbfs=-300.0 strict-JSON=True verdict=PASS -> OK
+  committed reports/**/*.json strict-parsed: 689 files, 0 rejected
+
+leg 3 verdict: PASS

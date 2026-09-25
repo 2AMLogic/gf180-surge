@@ -1,0 +1,31 @@
+issue #100 -- stereo comparator tail gate / metric findings: leg 5
+run: 2026-09-25T09:54:51Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+
+==========================================================================
+[5] sxt-023 (compare_fx_reference.py) and sxt-024 (compare_reverb_model.py) re-run under the gate
+==========================================================================
+  sxt-023 dexie      FAIL -> FAIL  (unchanged) | tail gate FAIL: mono -12.60 L -4.20 R -4.37 dB | ULP 5, unexplained 0
+      after: FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -12.60 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -4.20 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -4.37 dB exceeds the proposed -20.00 dB relative budget)
+  sxt-023 fm_bass_1  PASS -> PASS  (unchanged) | tail gate PASS: mono -92.40 L -92.40 R -92.40 dB | ULP 12, unexplained 0
+      after: PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)
+  sxt-023 metallic   FAIL -> FAIL  (unchanged) | tail gate FAIL: mono -8.10 L 0.42 R -0.49 dB | ULP 10, unexplained 0
+      after: FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; L: tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget)
+
+  sxt-024 click-wet                    committed PASS | pre-#100 tool here PASS | gated PASS (unchanged)
+      failing checks (gated): none
+      tail gate PASS over declared [12000, 300000): mono -110.08  L -109.75  R -109.91 dB (budget -20.0)
+      gated output minus tail_gate == pre-#100 tool output (same host): True
+      pre-existing drift, committed record vs pre-#100 tool on this host (NOT caused by #100): 7 value keys ['/band_energy_max_dev_db', '/decay_curve_max_dev_db', '/send_gain', '/stereo_corr_dev', '/stereo_corr_pred', '/tail_rms_rel_db', '/wet_rms_rel_db']; 2 fields the tool gained after the record was committed ['/tail_err_rms_dbfs', '/tail_wet_rms_dbfs']
+  sxt-024 preset-notes-coverage-wet    committed PASS | pre-#100 tool here PASS | gated PASS (unchanged)
+      failing checks (gated): none
+      tail gate PASS over declared [153600, 729600): mono -105.97  L -105.80  R -105.87 dB (budget -20.0)
+      gated output minus tail_gate == pre-#100 tool output (same host): True
+      pre-existing drift, committed record vs pre-#100 tool on this host (NOT caused by #100): 8 value keys ['/band_energy_max_dev_db', '/decay_curve_max_dev_db', '/send_gain', '/stereo_corr_dev', '/stereo_corr_pred', '/tail_rms_rel_db', '/wet_max_abs', '/wet_rms_rel_db']; 2 fields the tool gained after the record was committed ['/tail_err_rms_dbfs', '/tail_wet_rms_dbfs']
+  sxt-024 hardreset-midpatch-wet       committed FAIL | pre-#100 tool here FAIL | gated FAIL (unchanged)
+      failing checks (gated): tail_rms_rel
+      tail gate PASS over declared [153600, 729600): mono -88.35  L -88.29  R -87.88 dB (budget -20.0)
+      gated output minus tail_gate == pre-#100 tool output (same host): True
+      pre-existing drift, committed record vs pre-#100 tool on this host (NOT caused by #100): 0 value keys []; 0 fields the tool gained after the record was committed []
+
+leg 5 verdict: PASS

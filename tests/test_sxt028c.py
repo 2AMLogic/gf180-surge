@@ -147,7 +147,20 @@ def test_reference_comparisons_recorded_and_coherent():
         assert "PENDING-FREEZE" in d["verdict"], fn          # never frozen
         assert d["proposed_budget_results"]["max_abs_diff_lsb"] is True, fn
         assert d["proposed_budget_results"]["rms_diff_dbfs"] is True, fn
-        assert d["channels"]["tail_mono"]["tail_present"] is True, fn
+        # issue #100: declared-region tail gate (mono + L + R), not the old
+        # hard-coded 2.0 s reference-presence check
+        assert d["schema_version"] == 2, fn
+        assert d["tail_gate_ok"] is True, fn
+        tc = d["tail_check"]
+        sc = json.load(open(os.path.join(REPO, tc["tail_region_sidecar"])))
+        tail = int(round(sc["render"]["tail_s"] * sc["render"]["sample_rate"]))
+        assert tc["tail_frames"] == tail, fn
+        assert tc["tail_offset"] == sc["render"]["frames"] - tail, fn
+        for c in (tc, d["tail_check_lr"]["L"], d["tail_check_lr"]["R"]):
+            assert c["tail_region_covered"] and c["tail_present"], fn
+            assert c["model_tail_present"] and c["ok"], fn
+            assert c["tail_rms_rel_db"] <= d["proposed_tail_budget"][
+                "tail_rms_rel_db"], fn
 
 
 def test_extraction_records_fail_closed():

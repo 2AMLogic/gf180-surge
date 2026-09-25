@@ -1,0 +1,105 @@
+issue #100 -- stereo comparator tail gate / metric findings: leg 4
+run: 2026-09-25T09:54:51Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+
+==========================================================================
+[4] spectral_corr sensitivity sweep (characterization; metric NOT changed)
+==========================================================================
+  perturbation: deterministic ternary {-1,0,+1} x k native LSB (splitmix64 of the index);
+  'quiet' = 4096-frames whose reference RMS < 1 native LSB; 'loud' = all other frames.
+  columns: spectral_corr (budget >= 0.98) | rms_diff_dbfs (budget <= -46) | max_abs (LSB)
+           | candidate fs-floor(-100 dB) | candidate gated(ref frame >= -80 dBFS)
+
+  koala2 (int16 mono, shared metric): fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav
+    66 frames of 4096, 15 quiet (< 1 LSB RMS)
+    everywhere k=1      corr 0.9576 MISS | rms   -92.06 dBFS | max        1 | fs-floor 1.0000 | gated 0.9881
+    everywhere k=2      corr 0.9401 MISS | rms   -86.04 dBFS | max        2 | fs-floor 0.9999 | gated 0.9780
+    everywhere k=4      corr 0.9161 MISS | rms   -80.02 dBFS | max        4 | fs-floor 0.9996 | gated 0.9609
+    everywhere k=16     corr 0.8391 MISS | rms   -67.98 dBFS | max       16 | fs-floor 0.9834 | gated 0.8976
+    everywhere k=64     corr 0.6945 MISS | rms   -55.94 dBFS | max       64 | fs-floor 0.8772 | gated 0.7679
+    everywhere k=256    corr 0.4575 MISS | rms   -43.90 dBFS | max      256 | fs-floor 0.6267 | gated 0.5394
+    quiet-only k=1      corr 0.9484 MISS | rms   -98.55 dBFS | max        1 | fs-floor 1.0000 | gated 1.0000
+    quiet-only k=2      corr 0.9182 MISS | rms   -92.53 dBFS | max        2 | fs-floor 1.0000 | gated 1.0000
+    quiet-only k=4      corr 0.8768 MISS | rms   -86.51 dBFS | max        4 | fs-floor 1.0000 | gated 1.0000
+    quiet-only k=16     corr 0.7558 MISS | rms   -74.47 dBFS | max       16 | fs-floor 0.9926 | gated 1.0000
+    quiet-only k=64     corr 0.5888 MISS | rms   -62.42 dBFS | max       64 | fs-floor 0.9146 | gated 1.0000
+    quiet-only k=256    corr 0.3994 MISS | rms   -50.38 dBFS | max      256 | fs-floor 0.7295 | gated 1.0000
+    loud-only  k=1      corr 0.9930      | rms   -93.17 dBFS | max        1 | fs-floor 1.0000 | gated 0.9881
+    loud-only  k=2      corr 0.9857      | rms   -87.15 dBFS | max        2 | fs-floor 0.9999 | gated 0.9780
+    loud-only  k=4      corr 0.9735 MISS | rms   -81.13 dBFS | max        4 | fs-floor 0.9996 | gated 0.9609
+    loud-only  k=16     corr 0.9321 MISS | rms   -69.09 dBFS | max       16 | fs-floor 0.9875 | gated 0.8976
+    loud-only  k=64     corr 0.8694 MISS | rms   -57.04 dBFS | max       64 | fs-floor 0.8885 | gated 0.7679
+    loud-only  k=256    corr 0.8035 MISS | rms   -45.00 dBFS | max      256 | fs-floor 0.6763 | gated 0.5394
+    (fs-floor self-correlation 1.0000)
+
+  behemoth (int16 mono, shared metric): fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav
+    66 frames of 4096, 0 quiet (< 1 LSB RMS)
+    everywhere k=1      corr 0.9274 MISS | rms   -92.06 dBFS | max        1 | fs-floor 1.0000 | gated 0.9274
+    everywhere k=2      corr 0.8960 MISS | rms   -86.04 dBFS | max        2 | fs-floor 0.9999 | gated 0.8960
+    everywhere k=4      corr 0.8590 MISS | rms   -80.02 dBFS | max        4 | fs-floor 0.9997 | gated 0.8590
+    everywhere k=16     corr 0.7639 MISS | rms   -67.98 dBFS | max       16 | fs-floor 0.9511 | gated 0.7639
+    everywhere k=64     corr 0.6379 MISS | rms   -55.94 dBFS | max       64 | fs-floor 0.7902 | gated 0.6379
+    everywhere k=256    corr 0.4824 MISS | rms   -43.90 dBFS | max      256 | fs-floor 0.6125 | gated 0.4824
+    quiet-only: NOT_RUN (fixture has no quiet frames)
+    loud-only  k=1      corr 0.9274 MISS | rms   -92.06 dBFS | max        1 | fs-floor 1.0000 | gated 0.9274
+    loud-only  k=2      corr 0.8960 MISS | rms   -86.04 dBFS | max        2 | fs-floor 0.9999 | gated 0.8960
+    loud-only  k=4      corr 0.8590 MISS | rms   -80.02 dBFS | max        4 | fs-floor 0.9997 | gated 0.8590
+    loud-only  k=16     corr 0.7639 MISS | rms   -67.98 dBFS | max       16 | fs-floor 0.9511 | gated 0.7639
+    loud-only  k=64     corr 0.6379 MISS | rms   -55.94 dBFS | max       64 | fs-floor 0.7902 | gated 0.6379
+    loud-only  k=256    corr 0.4824 MISS | rms   -43.90 dBFS | max      256 | fs-floor 0.6125 | gated 0.4824
+    (fs-floor self-correlation 1.0000)
+
+  fmcombo notes (stereo f32, mono sum, stereo-tool metric): reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav
+    66 frames of 4096, 23 quiet (< 1 LSB RMS)
+    everywhere k=1      corr 1.0000      | rms  -128.19 dBFS | max        1 | fs-floor 1.0000 | gated 1.0000
+    everywhere k=16     corr 1.0000      | rms  -104.10 dBFS | max       16 | fs-floor 1.0000 | gated 1.0000
+    everywhere k=256    corr 1.0000      | rms   -80.02 dBFS | max      256 | fs-floor 0.9995 | gated 1.0000
+    everywhere k=1024   corr 0.9995      | rms   -67.98 dBFS | max     1024 | fs-floor 0.9595 | gated 0.9996
+    everywhere k=4096   corr 0.9934      | rms   -55.94 dBFS | max     4096 | fs-floor 0.7820 | gated 0.9954
+    everywhere k=16384  corr 0.9254 MISS | rms   -43.90 dBFS | max    16384 | fs-floor 0.5253 | gated 0.9490
+    everywhere k=65536  corr 0.5955 MISS | rms   -31.86 dBFS | max    65536 | fs-floor 0.2619 | gated 0.6822
+    quiet-only k=1      corr 1.0000      | rms  -132.81 dBFS | max        1 | fs-floor 1.0000 | gated 1.0000
+    quiet-only k=16     corr 1.0000      | rms  -108.73 dBFS | max       16 | fs-floor 1.0000 | gated 1.0000
+    quiet-only k=256    corr 1.0000      | rms   -84.64 dBFS | max      256 | fs-floor 1.0000 | gated 1.0000
+    quiet-only k=1024   corr 0.9996      | rms   -72.60 dBFS | max     1024 | fs-floor 0.9785 | gated 1.0000
+    quiet-only k=4096   corr 0.9940      | rms   -60.56 dBFS | max     4096 | fs-floor 0.7963 | gated 1.0000
+    quiet-only k=16384  corr 0.9253 MISS | rms   -48.52 dBFS | max    16384 | fs-floor 0.5226 | gated 1.0000
+    quiet-only k=65536  corr 0.5866 MISS | rms   -36.48 dBFS | max    65536 | fs-floor 0.3127 | gated 1.0000
+    loud-only  k=1      corr 1.0000      | rms  -130.02 dBFS | max        1 | fs-floor 1.0000 | gated 1.0000
+    loud-only  k=16     corr 1.0000      | rms  -105.94 dBFS | max       16 | fs-floor 1.0000 | gated 1.0000
+    loud-only  k=256    corr 1.0000      | rms   -81.86 dBFS | max      256 | fs-floor 0.9995 | gated 1.0000
+    loud-only  k=1024   corr 0.9995      | rms   -69.82 dBFS | max     1024 | fs-floor 0.9693 | gated 0.9996
+    loud-only  k=4096   corr 0.9925      | rms   -57.78 dBFS | max     4096 | fs-floor 0.7637 | gated 0.9954
+    loud-only  k=16384  corr 0.9101 MISS | rms   -45.74 dBFS | max    16384 | fs-floor 0.5007 | gated 0.9490
+    loud-only  k=65536  corr 0.5604 MISS | rms   -33.69 dBFS | max    65536 | fs-floor 0.3556 | gated 0.6822
+    (fs-floor self-correlation 1.0000)
+
+  alienappears notes (stereo f32, mono sum, stereo-tool metric): reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav
+    66 frames of 4096, 0 quiet (< 1 LSB RMS)
+    everywhere k=1      corr 1.0000      | rms  -128.19 dBFS | max        1 | fs-floor 1.0000 | gated 1.0000
+    everywhere k=16     corr 1.0000      | rms  -104.10 dBFS | max       16 | fs-floor 1.0000 | gated 1.0000
+    everywhere k=256    corr 0.9999      | rms   -80.02 dBFS | max      256 | fs-floor 0.9992 | gated 0.9999
+    everywhere k=1024   corr 0.9980      | rms   -67.98 dBFS | max     1024 | fs-floor 0.9300 | gated 0.9982
+    everywhere k=4096   corr 0.9730 MISS | rms   -55.94 dBFS | max     4096 | fs-floor 0.6520 | gated 0.9759
+    everywhere k=16384  corr 0.7350 MISS | rms   -43.90 dBFS | max    16384 | fs-floor 0.3232 | gated 0.7571
+    everywhere k=65536  corr 0.2487 MISS | rms   -31.86 dBFS | max    65536 | fs-floor 0.1022 | gated 0.2661
+    quiet-only: NOT_RUN (fixture has no quiet frames)
+    loud-only  k=1      corr 1.0000      | rms  -128.19 dBFS | max        1 | fs-floor 1.0000 | gated 1.0000
+    loud-only  k=16     corr 1.0000      | rms  -104.10 dBFS | max       16 | fs-floor 1.0000 | gated 1.0000
+    loud-only  k=256    corr 0.9999      | rms   -80.02 dBFS | max      256 | fs-floor 0.9992 | gated 0.9999
+    loud-only  k=1024   corr 0.9980      | rms   -67.98 dBFS | max     1024 | fs-floor 0.9300 | gated 0.9982
+    loud-only  k=4096   corr 0.9730 MISS | rms   -55.94 dBFS | max     4096 | fs-floor 0.6520 | gated 0.9759
+    loud-only  k=16384  corr 0.7350 MISS | rms   -43.90 dBFS | max    16384 | fs-floor 0.3232 | gated 0.7571
+    loud-only  k=65536  corr 0.2487 MISS | rms   -31.86 dBFS | max    65536 | fs-floor 0.1022 | gated 0.2661
+    (fs-floor self-correlation 1.0000)
+
+  committed verdicts decided by spectral_corr ALONE (max and rms budgets pass):
+    SXT-040 badnews x seq-notes-coverage-v1  corr 0.9298 (recomputed 0.9298) | rms -61.66 dBFS | max 210 | peak 3635 | fs-floor 0.9700 | gated 0.8110
+    SXT-040 badnews x seq-notes-repeated-v1  corr 0.9456 (recomputed 0.9456) | rms -71.04 dBFS | max 62 | peak 3635 | fs-floor 0.9752 | gated 0.8577
+    SXT-040 popcorn2k x seq-notes-coverage-v1 corr 0.9606 (recomputed 0.9606) | rms -47.45 dBFS | max 1789 | peak 32767 | fs-floor 0.9838 | gated 0.9295
+    SXT-040 popcorn2k x seq-notes-repeated-v1 corr 0.9789 (recomputed 0.9789) | rms -49.22 dBFS | max 888 | peak 32767 | fs-floor 0.9839 | gated 0.9558
+
+  The candidate columns are diagnostics for the pilot-freeze decision only; no committed
+  verdict is re-graded by them, and no budget is changed. Pilot-freeze input: #110.
+
+leg 4 verdict: PASS

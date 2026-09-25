@@ -1,0 +1,698 @@
+{
+  "status": "PASS",
+  "note": "characterization only",
+  "sweep": [
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 1,
+      "spectral_corr": 0.9575591984787817,
+      "rms_diff_dbfs": -92.06277056764492,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.9999756078835776,
+      "cand_gated": 0.9880950293169515
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 2,
+      "spectral_corr": 0.94011968157955,
+      "rms_diff_dbfs": -86.04217065436531,
+      "max_abs_diff_lsb": 2.0,
+      "cand_fs_floor": 0.9999043103311928,
+      "cand_gated": 0.978027861056474
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 4,
+      "spectral_corr": 0.9161165540580892,
+      "rms_diff_dbfs": -80.02157074108568,
+      "max_abs_diff_lsb": 4.0,
+      "cand_fs_floor": 0.9996190392634361,
+      "cand_gated": 0.9609299251274267
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 16,
+      "spectral_corr": 0.8390914692021123,
+      "rms_diff_dbfs": -67.98037091452643,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9834160651416219,
+      "cand_gated": 0.8976347370378824
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 64,
+      "spectral_corr": 0.6945100775313012,
+      "rms_diff_dbfs": -55.93917108796718,
+      "max_abs_diff_lsb": 64.0,
+      "cand_fs_floor": 0.8772030777528209,
+      "cand_gated": 0.7678880441706383
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 256,
+      "spectral_corr": 0.45745126295779914,
+      "rms_diff_dbfs": -43.89797126140793,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.6267003496146771,
+      "cand_gated": 0.5394036904902334
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "quiet-only",
+      "k_lsb": 1,
+      "spectral_corr": 0.9483860386899554,
+      "rms_diff_dbfs": -98.54792685580863,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 1.0,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "quiet-only",
+      "k_lsb": 2,
+      "spectral_corr": 0.9182216468841398,
+      "rms_diff_dbfs": -92.527326942529,
+      "max_abs_diff_lsb": 2.0,
+      "cand_fs_floor": 1.0,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "quiet-only",
+      "k_lsb": 4,
+      "spectral_corr": 0.8768221902550926,
+      "rms_diff_dbfs": -86.50672702924938,
+      "max_abs_diff_lsb": 4.0,
+      "cand_fs_floor": 0.9999996136806029,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "quiet-only",
+      "k_lsb": 16,
+      "spectral_corr": 0.7558377724651324,
+      "rms_diff_dbfs": -74.46552720269013,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9925873546521338,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "quiet-only",
+      "k_lsb": 64,
+      "spectral_corr": 0.5887775257446356,
+      "rms_diff_dbfs": -62.424327376130876,
+      "max_abs_diff_lsb": 64.0,
+      "cand_fs_floor": 0.9146483376301577,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "quiet-only",
+      "k_lsb": 256,
+      "spectral_corr": 0.3993833072509017,
+      "rms_diff_dbfs": -50.38312754957164,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.7294539897206047,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 1,
+      "spectral_corr": 0.993003084160996,
+      "rms_diff_dbfs": -93.16772876475021,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.9999756078835776,
+      "cand_gated": 0.9880950293169515
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 2,
+      "spectral_corr": 0.9857491995053697,
+      "rms_diff_dbfs": -87.14712885147058,
+      "max_abs_diff_lsb": 2.0,
+      "cand_fs_floor": 0.9999043103311928,
+      "cand_gated": 0.978027861056474
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 4,
+      "spectral_corr": 0.9735334794805766,
+      "rms_diff_dbfs": -81.12652893819096,
+      "max_abs_diff_lsb": 4.0,
+      "cand_fs_floor": 0.9996194063863986,
+      "cand_gated": 0.9609299251274267
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 16,
+      "spectral_corr": 0.9320675235038824,
+      "rms_diff_dbfs": -69.08532911163171,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9875413654992753,
+      "cand_gated": 0.8976347370378824
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 64,
+      "spectral_corr": 0.8693822978207119,
+      "rms_diff_dbfs": -57.04412928507246,
+      "max_abs_diff_lsb": 64.0,
+      "cand_fs_floor": 0.8884649063328456,
+      "cand_gated": 0.7678880441706383
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 256,
+      "spectral_corr": 0.8035270632039687,
+      "rms_diff_dbfs": -45.002929458513215,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.6763216850685637,
+      "cand_gated": 0.5394036904902334
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 1,
+      "spectral_corr": 0.9273892346041079,
+      "rms_diff_dbfs": -92.06277056764492,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.9999798182731762,
+      "cand_gated": 0.9273892346041079
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 2,
+      "spectral_corr": 0.8959807069197617,
+      "rms_diff_dbfs": -86.04217065436531,
+      "max_abs_diff_lsb": 2.0,
+      "cand_fs_floor": 0.9999211659167097,
+      "cand_gated": 0.8959807069197617
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 4,
+      "spectral_corr": 0.858950896769097,
+      "rms_diff_dbfs": -80.02157074108568,
+      "max_abs_diff_lsb": 4.0,
+      "cand_fs_floor": 0.9996727709941651,
+      "cand_gated": 0.858950896769097
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 16,
+      "spectral_corr": 0.763853345056523,
+      "rms_diff_dbfs": -67.98037091452643,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9511169222648328,
+      "cand_gated": 0.763853345056523
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 64,
+      "spectral_corr": 0.637922848913419,
+      "rms_diff_dbfs": -55.93917108796718,
+      "max_abs_diff_lsb": 64.0,
+      "cand_fs_floor": 0.7902035548837966,
+      "cand_gated": 0.637922848913419
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "everywhere",
+      "k_lsb": 256,
+      "spectral_corr": 0.4823977393061127,
+      "rms_diff_dbfs": -43.89797126140793,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.6125361357852501,
+      "cand_gated": 0.4823977393061127
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 1,
+      "spectral_corr": 0.9273892346041079,
+      "rms_diff_dbfs": -92.06277056764492,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.9999798182731762,
+      "cand_gated": 0.9273892346041079
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 2,
+      "spectral_corr": 0.8959807069197617,
+      "rms_diff_dbfs": -86.04217065436531,
+      "max_abs_diff_lsb": 2.0,
+      "cand_fs_floor": 0.9999211659167097,
+      "cand_gated": 0.8959807069197617
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 4,
+      "spectral_corr": 0.858950896769097,
+      "rms_diff_dbfs": -80.02157074108568,
+      "max_abs_diff_lsb": 4.0,
+      "cand_fs_floor": 0.9996727709941651,
+      "cand_gated": 0.858950896769097
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 16,
+      "spectral_corr": 0.763853345056523,
+      "rms_diff_dbfs": -67.98037091452643,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9511169222648328,
+      "cand_gated": 0.763853345056523
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 64,
+      "spectral_corr": 0.637922848913419,
+      "rms_diff_dbfs": -55.93917108796718,
+      "max_abs_diff_lsb": 64.0,
+      "cand_fs_floor": 0.7902035548837966,
+      "cand_gated": 0.637922848913419
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "where": "loud-only",
+      "k_lsb": 256,
+      "spectral_corr": 0.4823977393061127,
+      "rms_diff_dbfs": -43.89797126140793,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.6125361357852501,
+      "cand_gated": 0.4823977393061127
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 1,
+      "spectral_corr": 0.9999999992566623,
+      "rms_diff_dbfs": -128.18663512368306,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.999999992549115,
+      "cand_gated": 0.9999999995199186
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 16,
+      "spectral_corr": 0.9999998299259298,
+      "rms_diff_dbfs": -104.10423547056455,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9999981040437445,
+      "cand_gated": 0.9999998846804284
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 256,
+      "spectral_corr": 0.9999640903367158,
+      "rms_diff_dbfs": -80.02183581744605,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.9995291687003823,
+      "cand_gated": 0.9999745357496777
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 1024,
+      "spectral_corr": 0.9994966812986473,
+      "rms_diff_dbfs": -67.98063599088681,
+      "max_abs_diff_lsb": 1024.0,
+      "cand_fs_floor": 0.9595419639621636,
+      "cand_gated": 0.9996436082499548
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 4096,
+      "spectral_corr": 0.9933599811759677,
+      "rms_diff_dbfs": -55.93943616432756,
+      "max_abs_diff_lsb": 4096.0,
+      "cand_fs_floor": 0.7820191134838593,
+      "cand_gated": 0.9954212371074942
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 16384,
+      "spectral_corr": 0.9253976498320444,
+      "rms_diff_dbfs": -43.89823633776832,
+      "max_abs_diff_lsb": 16384.0,
+      "cand_fs_floor": 0.5253302305015108,
+      "cand_gated": 0.9489551519808521
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 65536,
+      "spectral_corr": 0.5955153480581001,
+      "rms_diff_dbfs": -31.857036511209067,
+      "max_abs_diff_lsb": 65536.0,
+      "cand_fs_floor": 0.2618647918478868,
+      "cand_gated": 0.6822376994453014
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 1,
+      "spectral_corr": 0.9999999996208118,
+      "rms_diff_dbfs": -132.8096643132016,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 1.0,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 16,
+      "spectral_corr": 0.9999999029429812,
+      "rms_diff_dbfs": -108.72726466008314,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 1.0,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 256,
+      "spectral_corr": 0.9999752384106521,
+      "rms_diff_dbfs": -84.64486500696464,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.9999989942546563,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 1024,
+      "spectral_corr": 0.9996082540757973,
+      "rms_diff_dbfs": -72.60366518040539,
+      "max_abs_diff_lsb": 1024.0,
+      "cand_fs_floor": 0.9785029231241805,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 4096,
+      "spectral_corr": 0.9940328441172664,
+      "rms_diff_dbfs": -60.562465353846136,
+      "max_abs_diff_lsb": 4096.0,
+      "cand_fs_floor": 0.7962723578653895,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 16384,
+      "spectral_corr": 0.9253117171717874,
+      "rms_diff_dbfs": -48.521265527286886,
+      "max_abs_diff_lsb": 16384.0,
+      "cand_fs_floor": 0.5225610233062012,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "quiet-only",
+      "k_lsb": 65536,
+      "spectral_corr": 0.5866122455570786,
+      "rms_diff_dbfs": -36.480065700727636,
+      "max_abs_diff_lsb": 65536.0,
+      "cand_fs_floor": 0.3127426151490477,
+      "cand_gated": 1.0
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 1,
+      "spectral_corr": 0.9999999994655862,
+      "rms_diff_dbfs": -130.02357959227538,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.999999992549115,
+      "cand_gated": 0.9999999995199186
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 16,
+      "spectral_corr": 0.9999998662856948,
+      "rms_diff_dbfs": -105.9411799391569,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9999981040437445,
+      "cand_gated": 0.9999998846804284
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 256,
+      "spectral_corr": 0.9999668448263864,
+      "rms_diff_dbfs": -81.8587802860384,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.9995301452197434,
+      "cand_gated": 0.9999745357496777
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 1024,
+      "spectral_corr": 0.9994888234376883,
+      "rms_diff_dbfs": -69.81758045947915,
+      "max_abs_diff_lsb": 1024.0,
+      "cand_fs_floor": 0.9693472801541653,
+      "cand_gated": 0.9996436082499548
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 4096,
+      "spectral_corr": 0.9925151470139758,
+      "rms_diff_dbfs": -57.776380632919896,
+      "max_abs_diff_lsb": 4096.0,
+      "cand_fs_floor": 0.7637334863883491,
+      "cand_gated": 0.9954212371074942
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 16384,
+      "spectral_corr": 0.9101040920463148,
+      "rms_diff_dbfs": -45.73518080636066,
+      "max_abs_diff_lsb": 16384.0,
+      "cand_fs_floor": 0.5007324043453597,
+      "cand_gated": 0.9489551519808521
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 65536,
+      "spectral_corr": 0.5604103431476333,
+      "rms_diff_dbfs": -33.69398097980141,
+      "max_abs_diff_lsb": 65536.0,
+      "cand_fs_floor": 0.35561323276523815,
+      "cand_gated": 0.6822376994453014
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 1,
+      "spectral_corr": 0.9999999969264388,
+      "rms_diff_dbfs": -128.18663512368306,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.9999999877770714,
+      "cand_gated": 0.9999999973556665
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 16,
+      "spectral_corr": 0.9999993019079132,
+      "rms_diff_dbfs": -104.10423547056455,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9999969184060854,
+      "cand_gated": 0.9999993784079722
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 256,
+      "spectral_corr": 0.9998575193475598,
+      "rms_diff_dbfs": -80.02183581744605,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.9992241978852011,
+      "cand_gated": 0.9998712653090516
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 1024,
+      "spectral_corr": 0.9980127995048265,
+      "rms_diff_dbfs": -67.98063599088681,
+      "max_abs_diff_lsb": 1024.0,
+      "cand_fs_floor": 0.9299544405993354,
+      "cand_gated": 0.998214323908265
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 4096,
+      "spectral_corr": 0.9729543820618038,
+      "rms_diff_dbfs": -55.93943616432756,
+      "max_abs_diff_lsb": 4096.0,
+      "cand_fs_floor": 0.6520476437219516,
+      "cand_gated": 0.9758808364548205
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 16384,
+      "spectral_corr": 0.7349566219414784,
+      "rms_diff_dbfs": -43.89823633776832,
+      "max_abs_diff_lsb": 16384.0,
+      "cand_fs_floor": 0.323189435182522,
+      "cand_gated": 0.75709310790566
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "everywhere",
+      "k_lsb": 65536,
+      "spectral_corr": 0.2486506020569207,
+      "rms_diff_dbfs": -31.857036511209067,
+      "max_abs_diff_lsb": 65536.0,
+      "cand_fs_floor": 0.10222170054403949,
+      "cand_gated": 0.26610999279916137
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 1,
+      "spectral_corr": 0.9999999969264388,
+      "rms_diff_dbfs": -128.18663512368306,
+      "max_abs_diff_lsb": 1.0,
+      "cand_fs_floor": 0.9999999877770714,
+      "cand_gated": 0.9999999973556665
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 16,
+      "spectral_corr": 0.9999993019079132,
+      "rms_diff_dbfs": -104.10423547056455,
+      "max_abs_diff_lsb": 16.0,
+      "cand_fs_floor": 0.9999969184060854,
+      "cand_gated": 0.9999993784079722
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 256,
+      "spectral_corr": 0.9998575193475598,
+      "rms_diff_dbfs": -80.02183581744605,
+      "max_abs_diff_lsb": 256.0,
+      "cand_fs_floor": 0.9992241978852011,
+      "cand_gated": 0.9998712653090516
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 1024,
+      "spectral_corr": 0.9980127995048265,
+      "rms_diff_dbfs": -67.98063599088681,
+      "max_abs_diff_lsb": 1024.0,
+      "cand_fs_floor": 0.9299544405993354,
+      "cand_gated": 0.998214323908265
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 4096,
+      "spectral_corr": 0.9729543820618038,
+      "rms_diff_dbfs": -55.93943616432756,
+      "max_abs_diff_lsb": 4096.0,
+      "cand_fs_floor": 0.6520476437219516,
+      "cand_gated": 0.9758808364548205
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 16384,
+      "spectral_corr": 0.7349566219414784,
+      "rms_diff_dbfs": -43.89823633776832,
+      "max_abs_diff_lsb": 16384.0,
+      "cand_fs_floor": 0.323189435182522,
+      "cand_gated": 0.75709310790566
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "where": "loud-only",
+      "k_lsb": 65536,
+      "spectral_corr": 0.2486506020569207,
+      "rms_diff_dbfs": -31.857036511209067,
+      "max_abs_diff_lsb": 65536.0,
+      "cand_fs_floor": 0.10222170054403949,
+      "cand_gated": 0.26610999279916137
+    }
+  ],
+  "spectral_only_verdicts": [
+    {
+      "case": "SXT-040 badnews x seq-notes-coverage-v1",
+      "committed_spectral_corr": 0.9297929240844511,
+      "recomputed_spectral_corr": 0.9297929240844511,
+      "rms_diff_dbfs": -61.657024497662,
+      "max_abs_diff_lsb": 210.0,
+      "ref_peak_lsb": 3635.0,
+      "cand_fs_floor": 0.9700099974168351,
+      "cand_gated": 0.8110132743135899
+    },
+    {
+      "case": "SXT-040 badnews x seq-notes-repeated-v1",
+      "committed_spectral_corr": 0.9455541329961745,
+      "recomputed_spectral_corr": 0.9455541329961745,
+      "rms_diff_dbfs": -71.04347718276257,
+      "max_abs_diff_lsb": 62.0,
+      "ref_peak_lsb": 3635.0,
+      "cand_fs_floor": 0.9752362276451777,
+      "cand_gated": 0.8576931289150186
+    },
+    {
+      "case": "SXT-040 popcorn2k x seq-notes-coverage-v1",
+      "committed_spectral_corr": 0.9605773554260402,
+      "recomputed_spectral_corr": 0.9605773554260402,
+      "rms_diff_dbfs": -47.45413750667032,
+      "max_abs_diff_lsb": 1789.0,
+      "ref_peak_lsb": 32767.0,
+      "cand_fs_floor": 0.9837924405272008,
+      "cand_gated": 0.9294746881187075
+    },
+    {
+      "case": "SXT-040 popcorn2k x seq-notes-repeated-v1",
+      "committed_spectral_corr": 0.9789395057342873,
+      "recomputed_spectral_corr": 0.9789395057342873,
+      "rms_diff_dbfs": -49.220003768545425,
+      "max_abs_diff_lsb": 888.0,
+      "ref_peak_lsb": 32767.0,
+      "cand_fs_floor": 0.983914622406474,
+      "cand_gated": 0.9557789384911675
+    }
+  ]
+}

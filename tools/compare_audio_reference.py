@@ -12,7 +12,9 @@ Policy (contracts/fidelity-policy-DRAFT.md):
 Metrics (on int16 LSB units):
   max_abs_diff        max |ref - model| over the render
   rms_diff            RMS of (ref - model)
-  rms_diff_dbfs       RMS difference relative to full scale (32767)
+  rms_diff_dbfs       RMS difference relative to full scale (32767),
+                      clamped to RMS_DIFF_DBFS_FLOOR (-300.0) so exact
+                      agreement is a finite, strict-JSON value (issue #100)
   best_shift          integer sample shift in [-32, 32] minimizing RMS diff
                       (the SXT-012 scheduling granularity bound); shift 0 is
                       reported separately because the model schedules events
@@ -85,6 +87,26 @@ PROPOSED_TAIL = {
                                     # region, relative to the reference tail
                                     # RMS (tail reproduced to <= 10% RMS)
 }
+
+# rms_diff_dbfs under exact agreement (issue #100 decision). 20*log10(0) is
+# -inf, which Python's json writes as the non-standard token `-Infinity` that
+# strict JSON parsers (jq, JSON.parse, serde_json) reject. The field is
+# therefore CLAMPED to this finite floor: a value equal to the floor means
+# "residual RMS at or below 1e-15 of full scale, including exact agreement".
+# The floor sits far below any representable nonzero residual of the committed
+# renders (one int16 LSB over 10^7 frames is ~ -160 dBFS), so no nonzero
+# residual is collapsed onto it, and every budget comparison (<= -46 dBFS)
+# grades identically to -inf. Shared by every comparator that emits the field
+# (compare_chorus_reference.py, compare_fx_reference.py).
+RMS_DIFF_DBFS_FLOOR = -300.0
+
+
+def rms_dbfs(rms, full_scale):
+    """20*log10(rms / full_scale), clamped to RMS_DIFF_DBFS_FLOOR (finite)."""
+    if not rms > 0:
+        return RMS_DIFF_DBFS_FLOOR
+    return max(float(20 * np.log10(rms / full_scale)), RMS_DIFF_DBFS_FLOOR)
+
 
 WET_NAME_MARKERS = ("-wet", "_wet", ".wet")
 DRY_NAME_MARKERS = ("-dry", "_dry", ".dry")
@@ -293,6 +315,54 @@ def tail_check(ref, mod, region, budget=PROPOSED_TAIL):
     return out
 
 
+def stereo_tail_gate(ref, mod, region, lsb, budget=PROPOSED_TAIL):
+    """Wet-path tail gate for STEREO buses (issue #100).
+
+    ref/mod: arrays shaped [2, N] at native float level; `lsb` converts to
+    the comparator's LSB unit so the reported `*_lsb` fields are true. The
+    same four legs as the mono gate (covered region, reference tail present,
+    model tail present, relative residual budget) are applied to the mono sum
+    (the returned `tail_check`, shape-identical to the mono tool's) AND to
+    each of L and R (`tail_check_lr`), because a stereo model can drop or
+    stub one channel's tail while the mono sum still carries energy. The
+    gate passes only when all three pass.
+    """
+    ref = np.asarray(ref, dtype=np.float64) / lsb
+    mod = np.asarray(mod, dtype=np.float64) / lsb
+    mono = tail_check(0.5 * (ref[0] + ref[1]), 0.5 * (mod[0] + mod[1]),
+                      region, budget)
+    lr = {name: tail_check(ref[i], mod[i], region, budget)
+          for name, i in (("L", 0), ("R", 1))}
+    ok = bool(mono["ok"] and lr["L"]["ok"] and lr["R"]["ok"])
+    reasons = ["%s: %s" % (name, c["reason"])
+               for name, c in (("mono", mono), ("L", lr["L"]), ("R", lr["R"]))
+               if not c["ok"]]
+    return mono, lr, ok, "; ".join(reasons)
+
+
+def validate_region_against_render(region, sr, frames, render_path):
+    """Refusal reason (str) when the declared region does not describe the
+    render it is applied to, else None. Mirrors the mono tool's checks."""
+    if region["sample_rate"] != sr:
+        return ("sidecar declares sample_rate %r but the reference render is "
+                "%r Hz" % (region["sample_rate"], sr))
+    if region["declared_frames"] != frames:
+        return ("sidecar declares %d frames but %s holds %d: the sidecar is "
+                "STALE with respect to the reference render"
+                % (region["declared_frames"], os.path.basename(render_path),
+                   frames))
+    declared_sha = region.get("declared_sha256")
+    if declared_sha:
+        actual = sha256_file(render_path)
+        if actual != declared_sha:
+            return ("sidecar declares %s sha256 %s... but %s hashes to %s...: "
+                    "the tail region would be read from metadata that does "
+                    "not describe this render"
+                    % (region["bus"], declared_sha[:16],
+                       os.path.basename(render_path), actual[:16]))
+    return None
+
+
 def refuse(reason, out_json=None):
     payload = {"verdict": "NO_VERDICT (refused)", "reason": reason}
     print(json.dumps(payload, indent=2))
@@ -397,7 +467,7 @@ def main():
         "model_peak_lsb": float(np.abs(mod).max()),
         "max_abs_diff_lsb": float(d.max()),
         "rms_diff_lsb": float(np.sqrt((d * d).mean())),
-        "rms_diff_dbfs": float(20 * np.log10(np.sqrt((d * d).mean()) / 32767.0)),
+        "rms_diff_dbfs": rms_dbfs(float(np.sqrt((d * d).mean())), 32767.0),
         "rms_diff_at_shift0_lsb": shifts[0],
         "best_shift": best_shift,
         "rms_diff_at_best_shift_lsb": shifts[best_shift],

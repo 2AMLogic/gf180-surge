@@ -8,7 +8,7 @@
   "rms_diff_at_shift0_lsb": 269.94689231597505,
   "best_shift": 0,
   "rms_diff_at_best_shift_lsb": 269.94689231597505,
-  "spectral_corr": 0.7337798323820331,
+  "spectral_corr": 0.7337798323820329,
   "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -20,7 +20,7 @@
     "spectral_corr": false
   },
   "path": "wet",
-  "fixture_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-93/fixtures/audio/behemoth/seq-notes-coverage-v1.json",
+  "fixture_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/fixtures/audio/behemoth/seq-notes-coverage-v1.json",
   "proposed_tail_budget": {
     "tail_rms_rel_db": -20.0
   },
@@ -28,7 +28,7 @@
     "tail_offset": 153600,
     "tail_frames": 120000,
     "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
-    "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-93/fixtures/audio/behemoth/seq-notes-coverage-v1.json",
+    "tail_region_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/fixtures/audio/behemoth/seq-notes-coverage-v1.json",
     "tail_budget": {
       "tail_rms_rel_db": -20.0
     },

@@ -4,7 +4,7 @@
   "slug": "alienappears",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "reports/SXT-028c/artifacts/model__alienappears__seq-notes-coverage-v1.f32.wav",
+  "model": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/alienappears/tail-decays-too-fast.f32.wav",
   "path": "wet",
   "fixture_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
   "channels": {
@@ -12,37 +12,37 @@
       "frames": 273600,
       "ref_peak_lsb": 117798.1953125,
       "model_peak_lsb": 117813.0,
-      "max_abs_diff_lsb": 530.4415588378906,
-      "rms_diff_lsb": 19.560457213444884,
-      "rms_diff_dbfs": -94.584418226954,
-      "rms_diff_at_shift0_lsb": 19.560457213444884,
+      "max_abs_diff_lsb": 12915.97265625,
+      "rms_diff_lsb": 1160.8517483017838,
+      "rms_diff_dbfs": -59.11646306988339,
+      "rms_diff_at_shift0_lsb": 1160.8517483017838,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 19.560457213444884,
-      "spectral_corr": 0.9999991820048015
+      "rms_diff_at_best_shift_lsb": 1160.8517483017838,
+      "spectral_corr": 0.9954931209366824
     },
     "R": {
       "frames": 273600,
       "ref_peak_lsb": 110607.71875,
       "model_peak_lsb": 110718.0,
-      "max_abs_diff_lsb": 530.4415588378906,
-      "rms_diff_lsb": 19.681888420780933,
-      "rms_diff_dbfs": -94.53066295748805,
-      "rms_diff_at_shift0_lsb": 19.681888420780933,
+      "max_abs_diff_lsb": 11206.689453125,
+      "rms_diff_lsb": 1145.9919360061003,
+      "rms_diff_dbfs": -59.22836703269236,
+      "rms_diff_at_shift0_lsb": 1145.9919360061003,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 19.681888420780933,
-      "spectral_corr": 0.9999991686154339
+      "rms_diff_at_best_shift_lsb": 1145.9919360061003,
+      "spectral_corr": 0.9953404511060121
     },
     "mono": {
       "frames": 273600,
       "ref_peak_lsb": 113130.5078125,
       "model_peak_lsb": 113144.5,
-      "max_abs_diff_lsb": 530.4415588378906,
-      "rms_diff_lsb": 19.55741135358265,
-      "rms_diff_dbfs": -94.58577085702507,
-      "rms_diff_at_shift0_lsb": 19.55741135358265,
+      "max_abs_diff_lsb": 10497.1923828125,
+      "rms_diff_lsb": 1095.223262135507,
+      "rms_diff_dbfs": -59.62194507604315,
+      "rms_diff_at_shift0_lsb": 1095.223262135507,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 19.55741135358265,
-      "spectral_corr": 0.9999991729212511
+      "rms_diff_at_best_shift_lsb": 1095.223262135507,
+      "spectral_corr": 0.9955160748007165
     }
   },
   "proposed_budgets": {
@@ -51,7 +51,7 @@
     "spectral_corr_min": 0.98
   },
   "proposed_budget_results": {
-    "max_abs_diff_lsb": true,
+    "max_abs_diff_lsb": false,
     "rms_diff_dbfs": true,
     "spectral_corr": true
   },
@@ -69,13 +69,13 @@
     "tail_region_covered": true,
     "tail_present": true,
     "model_tail_present": true,
-    "tail_max_abs_diff_lsb": 222.54541015625,
-    "tail_rms_diff_lsb": 9.397138941763066,
-    "tail_rms_rel_db": -53.838623488158234,
+    "tail_max_abs_diff_lsb": 10497.19140625,
+    "tail_rms_diff_lsb": 1653.513874373491,
+    "tail_rms_rel_db": -8.930379584546598,
     "tail_ref_rms_lsb": 4623.031180476421,
-    "tail_model_rms_lsb": 4623.003566000364,
-    "ok": true,
-    "reason": ""
+    "tail_model_rms_lsb": 3635.0815289360617,
+    "ok": false,
+    "reason": "tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget"
   },
   "tail_check_lr": {
     "L": {
@@ -89,13 +89,13 @@
       "tail_region_covered": true,
       "tail_present": true,
       "model_tail_present": true,
-      "tail_max_abs_diff_lsb": 222.8876953125,
-      "tail_rms_diff_lsb": 9.454146553895248,
-      "tail_rms_rel_db": -54.225418336803635,
+      "tail_max_abs_diff_lsb": 12915.97265625,
+      "tail_rms_diff_lsb": 1752.6243432631466,
+      "tail_rms_rel_db": -8.864088150335613,
       "tail_ref_rms_lsb": 4862.876577744629,
-      "tail_model_rms_lsb": 4862.863273618572,
-      "ok": true,
-      "reason": ""
+      "tail_model_rms_lsb": 3766.748464511993,
+      "ok": false,
+      "reason": "tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget"
     },
     "R": {
       "tail_offset": 153600,
@@ -108,15 +108,15 @@
       "tail_region_covered": true,
       "tail_present": true,
       "model_tail_present": true,
-      "tail_max_abs_diff_lsb": 222.203125,
-      "tail_rms_diff_lsb": 9.441534200490374,
-      "tail_rms_rel_db": -54.08913511737496,
+      "tail_max_abs_diff_lsb": 11206.689453125,
+      "tail_rms_diff_lsb": 1730.1804135034704,
+      "tail_rms_rel_db": -8.828158704552852,
       "tail_ref_rms_lsb": 4780.786247583044,
-      "tail_model_rms_lsb": 4780.740733943155,
-      "ok": true,
-      "reason": ""
+      "tail_model_rms_lsb": 3739.515116215671,
+      "ok": false,
+      "reason": "tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget"
     }
   },
-  "tail_gate_ok": true,
-  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+  "tail_gate_ok": false,
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget)"
 }

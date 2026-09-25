@@ -1,5 +1,5 @@
 issue #93 -- shared-comparator wet-path tail gate: checks
-run: 2026-09-25T04:11:04Z   repo HEAD: 63c855dd4d8a3b914ada7c7bce479b37e008a1a8
+run: 2026-09-25T09:42:05Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569
 tool: tools/compare_audio_reference.py
 claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-support,
              or sound-quality claim follows from anything below.
@@ -34,7 +34,7 @@ claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-suppo
 
   truncate-at-tail-start   expect FAIL    got FAIL    rc=1  OK
       tail: covered=False ref_present=True model_present=False rel=n/a dB ok=False
-      budgets: max=True rms=True corr=True  (max 0 LSB, rms -inf dBFS, corr 1.0000)
+      budgets: max=True rms=True corr=True  (max 0 LSB, rms -300.00 dBFS, corr 1.0000)
       FAIL against proposed budgets (tail-region gate: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail)
       all three global budgets PASS; the verdict is FAIL solely because of the tail gate
 

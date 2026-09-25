@@ -1,0 +1,133 @@
+issue #100 -- stereo comparator tail gate / metric findings: leg 2
+run: 2026-09-25T09:54:51Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+
+==========================================================================
+[2] stereo tail-gate controls (each must fail the check it targets)
+==========================================================================
+  NOTE (claim scope): baselines are the COMMITTED model renders; every other control
+        render is derived from them. Nothing here is a new fidelity, support, or sound claim.
+
+  fixture fmcombo x seq-notes-coverage-v1: declared tail region [153600, 273600) (render.frames 273600 - render.tail_s 2.5 x 48000)
+  fmcombo/baseline                   chorus required PASS       observed PASS       exit 0  CONTROL-OK
+      budgets max/rms/corr = True/True/True  (max 274.9 LSB, rms -98.42 dBFS, corr 1.000000)
+      tail gate PASS: covered=True model_present=True residual=-73.46 dB
+        L: model_present=True residual=-73.57 dB ok=True
+        R: model_present=True residual=-73.37 dB ok=True
+  fmcombo/drop-full-tail             chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, budget:rms_diff_dbfs, tail-gate
+      budgets max/rms/corr = False/False/True  (max 446912.4 LSB, rms -37.11 dBFS, corr 0.994379)
+      tail gate FAIL: covered=True model_present=False residual=0.00 dB
+        L: model_present=False residual=0.00 dB ok=False
+        R: model_present=False residual=0.00 dB ok=False
+      pre-#100 chorus tool on the same render: FAIL
+  fmcombo/tail-decays-too-fast       chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb
+      budgets max/rms/corr = False/True/True  (max 15308.8 LSB, rms -67.21 dBFS, corr 0.999997)
+      tail gate PASS: covered=True model_present=True residual=-30.11 dB
+        L: model_present=True residual=-30.08 dB ok=True
+        R: model_present=True residual=-30.20 dB ok=True
+      pre-#100 chorus tool on the same render: FAIL
+  fmcombo/drop-right-tail            chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, budget:rms_diff_dbfs, tail-gate
+      budgets max/rms/corr = False/False/True  (max 218522.5 LSB, rms -43.39 dBFS, corr 0.998184)
+      tail gate FAIL: covered=True model_present=True residual=-6.28 dB
+        L: model_present=True residual=-73.57 dB ok=True
+        R: model_present=False residual=0.00 dB ok=False
+      pre-#100 chorus tool on the same render: FAIL
+  fmcombo/truncate-at-tail-start     chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: tail-gate
+      budgets max/rms/corr = True/True/True  (max 274.9 LSB, rms -96.18 dBFS, corr 1.000000)
+      tail gate FAIL: covered=False model_present=False residual=n/a
+        L: model_present=False residual=n/a ok=False
+        R: model_present=False residual=n/a ok=False
+      pre-#100 chorus tool on the same render: PASS
+
+  fixture alienappears x seq-notes-coverage-v1: declared tail region [153600, 273600) (render.frames 273600 - render.tail_s 2.5 x 48000)
+  alienappears/baseline              chorus required PASS       observed PASS       exit 0  CONTROL-OK
+      budgets max/rms/corr = True/True/True  (max 530.4 LSB, rms -94.59 dBFS, corr 0.999999)
+      tail gate PASS: covered=True model_present=True residual=-53.84 dB
+        L: model_present=True residual=-54.23 dB ok=True
+        R: model_present=True residual=-54.09 dB ok=True
+  alienappears/drop-full-tail        chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, budget:spectral_corr, tail-gate
+      budgets max/rms/corr = False/True/False  (max 102860.4 LSB, rms -50.69 dBFS, corr 0.974620)
+      tail gate FAIL: covered=True model_present=False residual=0.00 dB
+        L: model_present=False residual=0.00 dB ok=False
+        R: model_present=False residual=0.00 dB ok=False
+      pre-#100 chorus tool on the same render: FAIL
+  alienappears/tail-decays-too-fast  chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, tail-gate
+      budgets max/rms/corr = False/True/True  (max 10497.2 LSB, rms -59.62 dBFS, corr 0.995516)
+      tail gate FAIL: covered=True model_present=True residual=-8.93 dB
+        L: model_present=True residual=-8.86 dB ok=False
+        R: model_present=True residual=-8.83 dB ok=False
+      pre-#100 chorus tool on the same render: FAIL
+  alienappears/drop-right-tail       chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, tail-gate
+      budgets max/rms/corr = False/True/True  (max 51662.9 LSB, rms -56.42 dBFS, corr 0.995123)
+      tail gate FAIL: covered=True model_present=True residual=-5.73 dB
+        L: model_present=True residual=-54.23 dB ok=True
+        R: model_present=False residual=0.00 dB ok=False
+      pre-#100 chorus tool on the same render: FAIL
+  alienappears/truncate-at-tail-start chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: tail-gate
+      budgets max/rms/corr = True/True/True  (max 530.4 LSB, rms -92.54 dBFS, corr 0.999999)
+      tail gate FAIL: covered=False model_present=False residual=n/a
+        L: model_present=False residual=n/a ok=False
+        R: model_present=False residual=n/a ok=False
+      pre-#100 chorus tool on the same render: PASS
+
+  KNOWN-GAP probes (NOT controls; outcome recorded, not asserted):
+    alienappears/zero-late-tail-from-30%       verdict FAIL | max 9172 LSB rms -66.35 dBFS corr 0.9982 | tail residual -15.67 dB gate FAIL
+    alienappears/zero-late-tail-from-40%       verdict PASS | max 4498 LSB rms -71.79 dBFS corr 0.9995 | tail residual -21.12 dB gate PASS   <-- KNOWN-GAP (#111): dropped late tail PASSES
+    alienappears/zero-late-tail-from-60%       verdict PASS | max 1102 LSB rms -83.76 dBFS corr 1.0000 | tail residual -33.40 dB gate PASS   <-- KNOWN-GAP (#111): dropped late tail PASSES
+
+  refusal/missing-sidecar            chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
+      reason: fixture sidecar not found: /tmp/sxt-stereo-tail-gate/leg2/refusals/missing-sidecar.json -- the wet-path tail region cannot be declared, and this tool does not guess one (issue #100)
+  refusal/undeclared-tail_s          chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
+      reason: sidecar /tmp/sxt-stereo-tail-gate/leg2/refusals/undeclared-tail_s.json does not declare tail_s for bus 'wet': a tail region cannot be defined from committed data, and this tool does not guess one (issue #93 stop condition)
+  refusal/stale-frames               chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
+      reason: sidecar declares 213600 frames but fmcombo__seq-notes-coverage-v1-wet.f32.wav holds 273600: the sidecar is STALE with respect to the reference render
+  refusal/sha256-mismatch            chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
+      reason: sidecar declares wet sha256 0000000000000000... but fmcombo__seq-notes-coverage-v1-wet.f32.wav hashes to 89d42e518eab60e2...: the tail region would be read from metadata that does not describe this render
+  refusal/missing-sidecar            fx     required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
+      reason: no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)
+
+  fixture sxt-023 fm_bass_1 (fx comparator): declared tail region [153600, 273600)
+  fm_bass_1/baseline                 fx     required PASS       observed PASS       exit 0  CONTROL-OK
+      budgets max/rms/corr = True/True/True  (max 7.8 LSB, rms -120.04 dBFS, corr 1.000000)
+      tail gate PASS: covered=True model_present=True residual=-92.40 dB
+        L: model_present=True residual=-92.40 dB ok=True
+        R: model_present=True residual=-92.40 dB ok=True
+  fm_bass_1/drop-full-tail           fx     required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, budget:rms_diff_dbfs, tail-gate
+      budgets max/rms/corr = False/False/True  (max 299083.2 LSB, rms -41.47 dBFS, corr 0.989159)
+      tail gate FAIL: covered=True model_present=False residual=0.00 dB
+        L: model_present=False residual=0.00 dB ok=False
+        R: model_present=False residual=0.00 dB ok=False
+  fm_bass_1/tail-decays-too-fast     fx     required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb
+      budgets max/rms/corr = False/True/True  (max 17830.0 LSB, rms -62.70 dBFS, corr 0.999963)
+      tail gate PASS: covered=True model_present=True residual=-21.23 dB
+        L: model_present=True residual=-21.23 dB ok=True
+        R: model_present=True residual=-21.23 dB ok=True
+  fm_bass_1/drop-right-tail          fx     required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, tail-gate
+      budgets max/rms/corr = False/True/True  (max 149541.7 LSB, rms -47.49 dBFS, corr 0.997046)
+      tail gate FAIL: covered=True model_present=True residual=-6.02 dB
+        L: model_present=True residual=-92.40 dB ok=True
+        R: model_present=False residual=0.00 dB ok=False
+  fm_bass_1/truncate-at-tail-start   fx     required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: tail-gate
+      budgets max/rms/corr = True/True/True  (max 7.8 LSB, rms -117.72 dBFS, corr 1.000000)
+      tail gate FAIL: covered=False model_present=False residual=n/a
+        L: model_present=False residual=n/a ok=False
+        R: model_present=False residual=n/a ok=False
+
+  result: 20/20 controls behaved as required
+  gate is load-bearing (all three budgets PASS, verdict FAILs on the tail gate alone): fmcombo/truncate-at-tail-start, alienappears/truncate-at-tail-start, fm_bass_1/truncate-at-tail-start
+  controls the PRE-#100 chorus gate let through as PASS: fmcombo/truncate-at-tail-start, alienappears/truncate-at-tail-start
+  KNOWN-GAP probes whose dropped late tail PASSES the full verdict: alienappears/zero-late-tail-from-40%, alienappears/zero-late-tail-from-60%
+
+leg 2 verdict: PASS

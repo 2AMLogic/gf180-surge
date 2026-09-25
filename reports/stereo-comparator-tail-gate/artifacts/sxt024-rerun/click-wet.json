@@ -1,0 +1,97 @@
+{
+  "band_energy_max_dev_db": 1.3922804384947085e-05,
+  "case": "click-wet",
+  "checks": {
+    "band_energy": true,
+    "decay_curve": true,
+    "stereo_corr": true,
+    "tail_gate": true,
+    "tail_rms_rel": true,
+    "wet_max_abs": true,
+    "wet_rms_rel": true
+  },
+  "decay_curve_max_dev_db": 0.0015222485126002994,
+  "decay_curve_windows": 222,
+  "float_npy_used": true,
+  "model_traffic_per_sample": {
+    "reads": 17.0,
+    "writes": 17.0
+  },
+  "return_gain": 1.0,
+  "send_gain": 0.35360774397850037,
+  "stereo_corr_dev": 2.988187559616051e-07,
+  "stereo_corr_pred": 0.916698715039521,
+  "stereo_corr_wet": 0.916699013858277,
+  "tail_err_rms_dbfs": -139.74448626848317,
+  "tail_gate": {
+    "ok": true,
+    "proposed_tail_budget": {
+      "tail_rms_rel_db": -20.0
+    },
+    "reason": "",
+    "tail_check": {
+      "model_tail_present": true,
+      "ok": true,
+      "reason": "",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_frames": 288000,
+      "tail_max_abs_diff_lsb": 5.28125,
+      "tail_model_rms_lsb": 263402.801857778,
+      "tail_offset": 12000,
+      "tail_present": true,
+      "tail_ref_rms_lsb": 263402.6165339447,
+      "tail_region_covered": true,
+      "tail_region_sidecar": "reports/sxt-024/traces/click-wet.json",
+      "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
+      "tail_rms_diff_lsb": 0.8248809030443494,
+      "tail_rms_rel_db": -110.08457670909925
+    },
+    "tail_check_lr": {
+      "L": {
+        "model_tail_present": true,
+        "ok": true,
+        "reason": "",
+        "tail_budget": {
+          "tail_rms_rel_db": -20.0
+        },
+        "tail_frames": 288000,
+        "tail_max_abs_diff_lsb": 4.9375,
+        "tail_model_rms_lsb": 268959.3264590627,
+        "tail_offset": 12000,
+        "tail_present": true,
+        "tail_ref_rms_lsb": 268959.0904366654,
+        "tail_region_covered": true,
+        "tail_region_sidecar": "reports/sxt-024/traces/click-wet.json",
+        "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
+        "tail_rms_diff_lsb": 0.8750323356874629,
+        "tail_rms_rel_db": -109.75324250591032
+      },
+      "R": {
+        "model_tail_present": true,
+        "ok": true,
+        "reason": "",
+        "tail_budget": {
+          "tail_rms_rel_db": -20.0
+        },
+        "tail_frames": 288000,
+        "tail_max_abs_diff_lsb": 5.65625,
+        "tail_model_rms_lsb": 272977.93100566376,
+        "tail_offset": 12000,
+        "tail_present": true,
+        "tail_ref_rms_lsb": 272977.7353123007,
+        "tail_region_covered": true,
+        "tail_region_sidecar": "reports/sxt-024/traces/click-wet.json",
+        "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
+        "tail_rms_diff_lsb": 0.8723721573695147,
+        "tail_rms_rel_db": -109.90850860500686
+      }
+    },
+    "units": "s24 LSB (2^-23 of full scale)"
+  },
+  "tail_rms_rel_db": -55.52979243283204,
+  "tail_wet_rms_dbfs": -28.6849014028191,
+  "wet_max_abs": 5.885958671569824e-07,
+  "wet_rms_rel_db": -55.768103417635615
+}
