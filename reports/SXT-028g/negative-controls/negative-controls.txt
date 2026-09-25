@@ -1,0 +1,13 @@
+NC-A generic substitute (single static allpass, no LFO)
+  CONTROL-OK (the generic substitute FAILS the declared agreement threshold and is refused from original-preset coverage as ADAPTED)
+NC-B dropped tail (render truncated to 1/8 of the declared getRingoutDecay span)
+  CONTROL-OK (the full render passes the declared tail check and the truncated render FAILS it)
+NC-C wrong order (A->B vs B->A slot-content permutation)
+  CONTROL-OK (the permutation FAILS the order-sensitive check and the unpermuted chain is bit-identical, so the detector is not always-firing)
+NC-D stale stub (frozen-revision pin)
+  CONTROL-OK (a trace whose outputs match but whose revision pin is stale is REFUSED, never PASS)
+NC-E bypass transparency (mix = 0 within the declared Q13.18 lipol floor; wet leak detected)
+  CONTROL-OK (mix = 0 is transparent within the declared floor and an injected wet leak is detected by the same check)
+NC-F LFO-depth sensitivity (modulation depth halved)
+  CONTROL-OK (the LFO-trajectory mutant FAILS the declared threshold while the null leg is bit-identical)
+status: PASS

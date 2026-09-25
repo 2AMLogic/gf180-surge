@@ -1,0 +1,18 @@
+SXT-028g fail-closed preset extraction (tools/extract_phaser_inputs.py)
+status: NOT_RUN
+
+No pinned-engine checkout and no importable surgepy exist in the environment
+this leaf was built in (measured: reports/SXT-028g/artifacts/oracle-status.json).
+The extractor was therefore never invoked, so there are no per-preset refusal
+rows yet and no preset-derived model/effects/fx_inputs/type-phaser-<slug>.json
+record. NOT_RUN is not a pass and is not a refusal of the carriers themselves.
+
+Carriers queued for extraction (B4-scope, named by issue #59; census blob
+SHA-1 from reports/sxt-028/leaves/SXT-028g/newly-enabled.json, re-verified by
+the extractor at run time):
+  reson   resources/data/patches_3rdparty/Argitoth/FX/Reson.fxp         ba7d2c45b8ed6befa3d31f282fa7faaacc1b679a
+  bass11  resources/data/patches_3rdparty/Bluelight/Basses/Bass 11.fxp  bebc1a6c8d1827ef5c1b0cad2a9a3491783ae476
+  bass17  resources/data/patches_3rdparty/Bluelight/Basses/Bass 17.fxp  7c8cd4d1060badee34ae0644d856bbd9f599853f
+
+Re-run on an oracle host:
+  python3 tools/extract_phaser_inputs.py

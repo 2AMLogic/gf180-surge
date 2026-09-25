@@ -1,0 +1,49 @@
+{
+  "basis": "Phaser.h getRingoutDecay (BLOCKS of 32 samples at 48 kHz)",
+  "leaf": "SXT-028g",
+  "rule": "an acceptance render must cover this many blocks AFTER the input goes silent; a shorter render FAILS the tail check (coverage leg) and a still-loud final block FAILS it (terminal-energy leg)",
+  "schema_version": 1,
+  "terminal_floor_lsb_q1021": 4,
+  "windows": {
+    "synth-a": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 3000,
+      "ringout_seconds": 2.0
+    },
+    "synth-b": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 3000,
+      "ringout_seconds": 2.0
+    },
+    "synth-c": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 1000,
+      "ringout_seconds": 0.6666666666666666
+    },
+    "synth-clamp-a": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 5000,
+      "ringout_seconds": 3.3333333333333335
+    },
+    "synth-clamp-b": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 5000,
+      "ringout_seconds": 3.3333333333333335
+    },
+    "synth-legacy-a": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 1000,
+      "ringout_seconds": 0.6666666666666666
+    },
+    "synth-legacy-b": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 5000,
+      "ringout_seconds": 3.3333333333333335
+    },
+    "synth-maxst": {
+      "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent",
+      "ringout_blocks": 1000,
+      "ringout_seconds": 0.6666666666666666
+    }
+  }
+}

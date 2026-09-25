@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028g",
+  "model_revision": "7726b5f8182c72a27ce9b06f90a8196077ff2ee5978d2e742d673683a4ee5cae",
+  "corner": "synth-a",
+  "anchor": "frozen model + declared agreement threshold (no pinned-engine reference is available in this environment; every reference-anchored leg is NOT_RUN)",
+  "declared_threshold_lsb": 8192,
+  "status": "PASS",
+  "controls": [
+    {
+      "control": "NC-A generic substitute (single static allpass, no LFO)",
+      "metrics": {
+        "max_abs_diff_lsb": 3991926,
+        "declared_threshold_lsb": 8192
+      },
+      "coverage_class": "ADAPTED",
+      "counts_toward_original_preset_coverage": false,
+      "reference_anchored_leg": {
+        "status": "NOT_RUN",
+        "reason": "no pinned-engine fixture in this environment; the substitute must also be re-scored against the wet reference budgets before any agreement statement"
+      },
+      "verdict": "CONTROL-OK (the generic substitute FAILS the declared agreement threshold and is refused from original-preset coverage as ADAPTED)",
+      "ok": true
+    },
+    {
+      "control": "NC-B dropped tail (render truncated to 1/8 of the declared getRingoutDecay span)",
+      "tail_window": {
+        "ringout_blocks": 3000,
+        "ringout_seconds": 2.0,
+        "basis": "Phaser.h getRingoutDecay (blocks), feedback-dependent"
+      },
+      "full_render": {
+        "ok": true,
+        "refused": false,
+        "declared_tail_blocks": 3000,
+        "render_tail_blocks": 3000,
+        "tail_region_covered": true,
+        "tail_present_at_onset": true,
+        "tail_decayed_by_end": true,
+        "onset_peak_lsb": 914103,
+        "terminal_peak_lsb": 0,
+        "terminal_floor_lsb": 4
+      },
+      "truncated_render": {
+        "ok": false,
+        "refused": false,
+        "declared_tail_blocks": 3000,
+        "render_tail_blocks": 375,
+        "tail_region_covered": false,
+        "tail_present_at_onset": true,
+        "tail_decayed_by_end": true,
+        "onset_peak_lsb": 914103,
+        "terminal_peak_lsb": 0,
+        "terminal_floor_lsb": 4
+      },
+      "reference_anchored_leg": {
+        "status": "NOT_RUN",
+        "reason": "the wet-path tail-region gate against the pinned engine (tools/compare_phaser_reference.py, issue #100) needs an oracle fixture sidecar"
+      },
+      "verdict": "CONTROL-OK (the full render passes the declared tail check and the truncated render FAILS it)",
+      "ok": true
+    },
+    {
+      "control": "NC-C wrong order (A->B vs B->A slot-content permutation)",
+      "metrics": {
+        "permuted_max_abs_diff_lsb": 113280,
+        "unpermuted_max_abs_diff_lsb": 0,
+        "declared_threshold_lsb": 8192
+      },
+      "reference_anchored_leg": {
+        "status": "NOT_RUN",
+        "reason": "order-sensitive agreement against the pinned engine needs an oracle fixture"
+      },
+      "verdict": "CONTROL-OK (the permutation FAILS the order-sensitive check and the unpermuted chain is bit-identical, so the detector is not always-firing)",
+      "ok": true
+    },
+    {
+      "control": "NC-D stale stub (frozen-revision pin)",
+      "metrics": {
+        "live_revision": "7726b5f8",
+        "trace_revision": "deadbeef",
+        "samples_matched": true
+      },
+      "verdict": "CONTROL-OK (a trace whose outputs match but whose revision pin is stale is REFUSED, never PASS)",
+      "ok": true
+    },
+    {
+      "control": "NC-E bypass transparency (mix = 0 within the declared Q13.18 lipol floor; wet leak detected)",
+      "metrics": {
+        "mix0_residual_lsb": 34,
+        "declared_bypass_bound_lsb": 512,
+        "injected_leak_mix0p05_lsb": 219310,
+        "mix_target_floor_q1318_lsb": 2,
+        "expected_mix_floor_q1318_lsb": 2
+      },
+      "note": "the residual is not zero because the pinned 0.25/0.75 lipol_sse recurrence STICKS at 2 LSB in Q13.18 under round-half-up (the engine's float ramp underflows to 0). Declared model deviation, bounded and measured here.",
+      "reference_anchored_leg": {
+        "status": "NOT_RUN",
+        "reason": "the bypass leg must also retain and re-grade the unmodified wet reference once an oracle fixture exists (AGENTS.md bypass rule)"
+      },
+      "verdict": "CONTROL-OK (mix = 0 is transparent within the declared floor and an injected wet leak is detected by the same check)",
+      "ok": true
+    },
+    {
+      "control": "NC-F LFO-depth sensitivity (modulation depth halved)",
+      "metrics": {
+        "mutant_max_abs_diff_lsb": 1742619,
+        "null_leg_max_abs_diff_lsb": 0,
+        "declared_threshold_lsb": 8192
+      },
+      "reference_anchored_leg": {
+        "status": "NOT_RUN",
+        "reason": "LFO-trajectory agreement against the pinned engine needs an oracle fixture"
+      },
+      "verdict": "CONTROL-OK (the LFO-trajectory mutant FAILS the declared threshold while the null leg is bit-identical)",
+      "ok": true
+    }
+  ]
+}

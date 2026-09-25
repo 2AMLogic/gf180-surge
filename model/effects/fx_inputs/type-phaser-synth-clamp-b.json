@@ -1,0 +1,45 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "note": "synthetic corner: there is no preset and no pinned-engine reference render, so no complete-wet claim is possible from this record (fail-closed).",
+    "unlanded_classes": []
+  },
+  "census_blob_sha1": null,
+  "chain": {
+    "ains": [
+      {
+        "params": {
+          "center_f": -0.2,
+          "feedback_f": -0.95,
+          "mix_f": 1.0,
+          "mod_depth_f": 1.0,
+          "mod_rate_deactivated": false,
+          "mod_rate_f": -2.0,
+          "mod_wave_i": 1,
+          "sharpness_f": 0.6,
+          "spread_f": 0.6,
+          "stages_i": 2,
+          "stereo_f": 0.8,
+          "tone_deactivated": true,
+          "tone_f": 0.0,
+          "width_f": 0.0
+        },
+        "role": "ains1",
+        "slot": 0,
+        "type": "phaser"
+      }
+    ],
+    "sends": []
+  },
+  "graphs_sha256_prefix": null,
+  "leaf": "SXT-028g",
+  "path": null,
+  "phaser_slots": [
+    0
+  ],
+  "schema_version": 1,
+  "slug": "synth-clamp-b",
+  "source": "synthetic-corner",
+  "volume_f": 0.0,
+  "warning": "SYNTHETIC parameter corner for the SXT-028g oracle-independent RTL-vs-model exactness harness. NOT a preset extraction, NOT census-verified, and carrying NO support, coverage or fidelity claim. Preset-derived inputs come only from tools/extract_phaser_inputs.py (fail-closed, census-blob verified, graphs cross-checked)."
+}

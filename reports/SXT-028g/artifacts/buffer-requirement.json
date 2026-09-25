@@ -1,0 +1,149 @@
+{
+  "cost_closure": {
+    "note": "no cycles-per-frame, schedule-fit or bundle-closure number is asserted by this leaf. SXT-015 accounting consumes the inventory above; SXT-016 decides fit; profile v1 is NOT frozen (SXT-017, issue #12). Nothing here may be read as a cost or fit claim.",
+    "status": "[PENDING-SXT-016]"
+  },
+  "external_traffic": {
+    "bytes_per_second_at_48k": 0.0,
+    "measured_per_corner": {
+      "synth-a": {
+        "clamp_engagements": 0,
+        "ext_reads_total": 0,
+        "ext_writes_total": 0,
+        "reads_per_sample": 0.0,
+        "stages": 4,
+        "writes_per_sample": 0.0
+      },
+      "synth-legacy-a": {
+        "clamp_engagements": 0,
+        "ext_reads_total": 0,
+        "ext_writes_total": 0,
+        "reads_per_sample": 0.0,
+        "stages": 1,
+        "writes_per_sample": 0.0
+      },
+      "synth-maxst": {
+        "clamp_engagements": 0,
+        "ext_reads_total": 0,
+        "ext_writes_total": 0,
+        "reads_per_sample": 0.0,
+        "stages": 16,
+        "writes_per_sample": 0.0
+      }
+    },
+    "note": "the Phaser is a cascade of biquad allpass sections with a one-sample recursive node; it owns NO delay line, so there is no audio-rate external-memory traffic at all. This is a structural property of the pinned algorithm (Phaser.h has no line buffer), confirmed here by the model's own transaction counters.",
+    "reads_per_sample": 0.0,
+    "transaction_log_basis": "frozen-model ext_reads/ext_writes counters over 128 blocks per corner (measured, not estimated)",
+    "words_per_sample_32bit": 0.0,
+    "writes_per_sample": 0.0
+  },
+  "external_writable_memory": {
+    "bytes_total": 0,
+    "classification_policy": "no buffer of this algorithm exceeds the external-residency threshold; all state is small on-chip state. Flash is never writable delay memory (plan section 3 / AGENTS.md) and no flash is used here.",
+    "words_total": 0
+  },
+  "leaf": "SXT-028g",
+  "model_revision": "7726b5f8182c72a27ce9b06f90a8196077ff2ee5978d2e742d673683a4ee5cae",
+  "multi_instance": {
+    "note": "per-instance state is never shared (AGENTS.md); two Phaser slots = two independent state sets. Arithmetic may be shared only observably.",
+    "per_additional_instance_bytes_worst_case": 3500,
+    "per_additional_instance_external_bytes": 0
+  },
+  "on_chip_state_exact": {
+    "basis": "exact word inventory of the frozen model (phaser_model.state_inventory), not an estimate",
+    "default_bytes": 1196,
+    "default_stage_count": 4,
+    "note": "the legacy branch (stages < 2) still ALLOCATES four biquad units because Phaser::setvars configures four, even though processBlock runs only stage 0 \u2014 the residency follows the allocation, as pinned.",
+    "per_stage_count": {
+      "1": {
+        "biquad_units": 4,
+        "bits": {
+          "apf_biquads": 3072,
+          "block_ramps": 128,
+          "counters": 32,
+          "lfo": 1024,
+          "recursive_node": 64,
+          "sample_lipols": 384,
+          "tone_biquads": 1792
+        },
+        "bits_total": 6496,
+        "bytes_total": 812,
+        "n_stages": 1
+      },
+      "16": {
+        "biquad_units": 32,
+        "bits": {
+          "apf_biquads": 24576,
+          "block_ramps": 128,
+          "counters": 32,
+          "lfo": 1024,
+          "recursive_node": 64,
+          "sample_lipols": 384,
+          "tone_biquads": 1792
+        },
+        "bits_total": 28000,
+        "bytes_total": 3500,
+        "n_stages": 16
+      },
+      "2": {
+        "biquad_units": 4,
+        "bits": {
+          "apf_biquads": 3072,
+          "block_ramps": 128,
+          "counters": 32,
+          "lfo": 1024,
+          "recursive_node": 64,
+          "sample_lipols": 384,
+          "tone_biquads": 1792
+        },
+        "bits_total": 6496,
+        "bytes_total": 812,
+        "n_stages": 2
+      },
+      "4": {
+        "biquad_units": 8,
+        "bits": {
+          "apf_biquads": 6144,
+          "block_ramps": 128,
+          "counters": 32,
+          "lfo": 1024,
+          "recursive_node": 64,
+          "sample_lipols": 384,
+          "tone_biquads": 1792
+        },
+        "bits_total": 9568,
+        "bytes_total": 1196,
+        "n_stages": 4
+      },
+      "8": {
+        "biquad_units": 16,
+        "bits": {
+          "apf_biquads": 12288,
+          "block_ramps": 128,
+          "counters": 32,
+          "lfo": 1024,
+          "recursive_node": 64,
+          "sample_lipols": 384,
+          "tone_biquads": 1792
+        },
+        "bits_total": 15712,
+        "bytes_total": 1964,
+        "n_stages": 8
+      }
+    },
+    "worst_case_bits": 28000,
+    "worst_case_bytes": 3500,
+    "worst_case_stage_count": 16
+  },
+  "schema_version": 1,
+  "scope": "per Phaser instance (sst-effects Phaser), 48 kHz, frozen Q10.21 audio words / Q24.43 coefficient words",
+  "sxt015_reconciliation": {
+    "exact_worst_case_state_bytes": 3500,
+    "placeholder_state_bytes": 8192,
+    "placeholder_was_conservative": true,
+    "status": "class_state_unverified RESOLVED for the Phaser class: tier and traffic confirmed, byte placeholder superseded by the exact inventory above.",
+    "sxt015_record": "reports/sxt-015/examples/example-a-four-fx-instances.json \u2014 Phaser slot 0: tier no_long_buffer, external false, ext_reads_per_frame 0, ext_writes_per_frame 0, state_bytes 8192, flag class_state_unverified ('exact state sizing ESTIMATE-REF deferred to SXT-028')",
+    "tier_confirmed": true,
+    "traffic_confirmed": true
+  }
+}
