@@ -202,9 +202,20 @@
       }
     },
     "fx:Distortion": {
+      "evidence": [
+        {
+          "path": "reports/SXT-028e/EVIDENCE.md",
+          "sha256": "2b9c920ada838238b86dc54adee63461eabf4f1e2daa1c6e3d5efd994f3811f4"
+        }
+      ],
       "issue": 57,
-      "landed": false,
-      "leaf_id": "SXT-028e"
+      "landed": true,
+      "leaf_id": "SXT-028e",
+      "note": "Distortion leaf, FX waveshaper models 0/1/2 only (soft/hard/asym, the lookup_waveshape branch = 447 of 475 active corpus slot instances); models 3..7 (the SSE GetQuadWaveshaper branch) are REFUSED fail-closed and routed to sibling leaf #121 (finding F-028e-2). RTL-vs-model EXACT (iverilog: dual-instance PRS with two parameter sets and two waveshaper models, mid-render core reset and a reset taken 96 blocks INTO the ringout tail = the engine suspend()==init() fx-rebuild path, three parameter corners incl. both high-cuts deactivated and extended drive/gain, and the full declared 1600-block ringout tail span; outputs, oversampled shaper-loop tap checkpoints, and state checkpoints covering the feedback registers, both lipol targets, both peak-EQ coefficient lags, all four TDF2 register pairs and all 144 halfband allpass state words per instance; pooled-state / band-order / halfband-branch-swap / waveshaper-rail / waveshaper-interpolation mutants all FAIL = controls; frozen-revision pin refuses stale harnesses). MODEL-VS-REFERENCE IS NOT_RUN: no pinned oracle was reachable in the implementation environment, so no fixture was rendered and no max/rms/corr number exists (finding F-028e-1); the oracle extraction of the carriers' deactivated/extend_range flags is BLOCKED and the committed fx_inputs records are marked INCOMPLETE-BLOCKED-ON-ORACLE, which DistortionParams refuses. Per-instance state: nothing shared; Distortion owns NO delay-line-class buffer, so external writable-memory residency and traffic are 0 B / 0 words per sample (measured), on-chip state 1544 B/instance, shared frozen ROM 12336 B; cost fit [PENDING-SXT-016]. Negative controls: 7 model-side (baseline float-twin sanity, generic substitute, dropped tail, wrong order, shared state, halfband phase, stale stub) + 6 RTL mutants all CONTROL-OK, plus one recorded KNOWN-GAP (a late tail truncation is invisible to the whole-region residual gate). Supported delta 0: reference leg NOT_RUN, voice leaf #48 unlanded, fidelity freeze #12 open, listening BLOCKED.",
+      "verification": {
+        "model_vs_reference": "NOT_RUN",
+        "rtl_vs_model": "PASS"
+      }
     },
     "fx:EQ": {
       "evidence": [

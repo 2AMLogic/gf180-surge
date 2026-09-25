@@ -1,0 +1,69 @@
+{
+  "census_blob_sha1": "c811a9aab5849303b252a0c36731e37685288072",
+  "chain": [
+    {
+      "routing": "ains1",
+      "slot_index": 0,
+      "type": "Distortion"
+    },
+    {
+      "routing": "send1",
+      "slot_index": 4,
+      "type": "Delay"
+    }
+  ],
+  "claim_scope": "data export only; no support, fidelity or musical-quality claim",
+  "complete_wet_render_possible": true,
+  "distortion_slots": [
+    {
+      "params": {
+        "drive_extend": null,
+        "drive_f": 24.0,
+        "feedback_f": 0.471429,
+        "gain_f": -19.157154,
+        "model_i": 0,
+        "posteq_bw_f": 1.0,
+        "posteq_freq_f": 3.0,
+        "posteq_gain_extend": null,
+        "posteq_gain_f": 0.0,
+        "posteq_highcut_deactivated": null,
+        "posteq_highcut_f": 56.887497,
+        "preeq_bw_f": 1.0,
+        "preeq_freq_f": 3.0,
+        "preeq_gain_extend": null,
+        "preeq_gain_f": 0.0,
+        "preeq_highcut_deactivated": null,
+        "preeq_highcut_f": 35.737518
+      },
+      "routing": "ains1",
+      "slot_index": 0
+    }
+  ],
+  "extraction_mode": "graphs",
+  "extraction_status": "INCOMPLETE-BLOCKED-ON-ORACLE",
+  "landed_classes_basis": {
+    "landed_fx_classes": [
+      "Chorus",
+      "Delay",
+      "Distortion",
+      "EQ",
+      "Reverb 1"
+    ],
+    "note": "derived at extraction time, not hand-listed; a class whose leaf is not marked landed in the committed table counts as unlanded even if its PR has merged",
+    "source": "reports/coverage-v1/leaf-verification.json (leaves[*].landed)"
+  },
+  "leaf": "SXT-028e",
+  "preset_path": "resources/data/patches_3rdparty/Argitoth/Leads/Screaming Saw.fxp",
+  "schema_version": 1,
+  "slug": "screamingsaw",
+  "source": "corpus/normalized/graphs.jsonl (SXT-011 pinned-loader normalized export; deterministic, engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71)",
+  "unlanded_classes_in_chain": [],
+  "unresolved_fields": [
+    "preeq_highcut_deactivated",
+    "posteq_highcut_deactivated",
+    "preeq_gain_extend",
+    "posteq_gain_extend",
+    "drive_extend"
+  ],
+  "why_incomplete": "graphs.jsonl carries the 12 normalized FX parameter values but not the per-parameter `deactivated` / `extend_range` flags. DistortionParams REFUSES a record with null fields, so this artifact cannot be used for a model run \u2014 it is a cross-check and extraction-status record only."
+}
