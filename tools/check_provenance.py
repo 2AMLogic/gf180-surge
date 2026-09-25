@@ -207,22 +207,27 @@ FOREIGN_LICENSE_BODY_RES = (
     (
         "gpl-body",
         "general public license",
-        re.compile(r"GNU (?:LESSER |AFFERO )?GENERAL PUBLIC LICENSE", re.IGNORECASE),
+        re.compile(r"GNU\s+(?:LESSER\s+|AFFERO\s+)?GENERAL\s+PUBLIC\s+LICENSE", re.IGNORECASE),
     ),
     (
         "fsf-body",
         "free software",
-        re.compile("This program is " + "free software", re.IGNORECASE),
+        re.compile(r"This\s+program\s+is\s+" + r"free\s+software", re.IGNORECASE),
     ),
     (
         "mit-body",
         "permission is hereby granted",
-        re.compile("Permission is hereby granted, " + "free of charge", re.IGNORECASE),
+        re.compile(
+            r"Permission\s+is\s+hereby\s+granted,\s+" + r"free\s+of\s+charge", re.IGNORECASE
+        ),
     ),
     (
         "bsd-body",
         "redistribution and use",
-        re.compile("Redistribution and use in source " + "and binary forms", re.IGNORECASE),
+        re.compile(
+            r"Redistribution\s+and\s+use\s+in\s+source\s+" + r"and\s+binary\s+forms",
+            re.IGNORECASE,
+        ),
     ),
     (
         # Prefilter deliberately just "mozilla": a case-insensitive regex
@@ -230,13 +235,17 @@ FOREIGN_LICENSE_BODY_RES = (
         # whole phrase.
         "mpl-body",
         "mozilla",
-        re.compile("MOZILLA " + "PUBLIC LICENSE", re.IGNORECASE),
+        re.compile(r"MOZILLA\s+" + r"PUBLIC\s+LICENSE", re.IGNORECASE),
     ),
 )
 
 # Assembled from fragments so this file does not itself contain a contiguous
-# SPDX tag (see the fixture note below).
-SPDX_RE = re.compile("SPDX-License" "-Identifier" + r":\s*([^\s*/#\"']+)")
+# SPDX tag (see the fixture note below). IGNORECASE: the prefilter above is a
+# lowercase substring check, so a lowercase "spdx-license-identifier:" tag
+# must not silently pass this regex — see PR #114 review, finding 2.
+SPDX_RE = re.compile(
+    "SPDX-License" "-Identifier" + r":\s*([^\s*/#\"']+)", re.IGNORECASE
+)
 OWN_SPDX = "apache-2.0"
 COPYRIGHT_PREFILTERS = ("copyright", "(c)", "©")
 
@@ -276,7 +285,7 @@ FOREIGN_SOURCE_EXTS = frozenset(
     }
 )
 
-RECORD_CITATION_RE = re.compile(r"(?:decision-records/|\bDR-?)(\d{4})")
+RECORD_CITATION_RE = re.compile(r"(?:decision-records/|\bDR-?)(\d{4})", re.IGNORECASE)
 RECORD_FILE_RE = re.compile(r"^(\d{4})-[A-Za-z0-9._-]+\.md$")
 INDEX_ROW_RE = re.compile(
     r"^\|\s*\[(\d{4})\]\(([^)]+)\)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|\s*$"
@@ -363,7 +372,12 @@ class Tree:
 
     def _excluded_by(self, rel):
         for prefix in self.exclusions:
-            if rel == prefix or rel.startswith(prefix):
+            if rel == prefix:
+                return prefix
+            # Path-boundary match only: an unslashed prefix like "corpus"
+            # must not also match "corpus-eval/…" (PR #114 review, nit 3).
+            boundary = prefix if prefix.endswith("/") else prefix + "/"
+            if rel.startswith(boundary):
                 return prefix
         return None
 
@@ -700,7 +714,14 @@ def _matcher(entry):
 def check_manifest(tree: Tree, manifest, records, rows):
     """Validate rows/exemptions and return (findings, coverage)."""
     findings = []
-    coverage = {}  # rel -> list of entry descriptions
+    # rel -> set of tripwire rule ids this file's row(s) cover. Scoped per
+    # rule, not blanket per-file: a row naming a file only suppresses the
+    # rule(s) implied by that file's own extension plus whatever the row's
+    # 'covers' field explicitly declares — never every rule the file happens
+    # to trip (see PR #114 review, finding 1: an unrelated row was silently
+    # laundering an appended, unmodified GPL license block past the
+    # non-exemptible foreign-license-text tripwire).
+    coverage = {}
     exemptions = {}  # rel -> {rule -> reason}
 
     for index, entry in enumerate(manifest.get("entries", []) or []):
@@ -772,9 +793,27 @@ def check_manifest(tree: Tree, manifest, records, rows):
                         f"{label}: decision_record {number!r} is not in the index",
                     )
                 )
+        covers_raw = entry.get("covers")
+        covers_declared = set()
+        if covers_raw is not None:
+            if not isinstance(covers_raw, list):
+                findings.append(
+                    Finding("manifest-schema", MANIFEST_REL, f"{label}: 'covers' must be a list")
+                )
+            else:
+                bad = [r for r in covers_raw if r not in TRIPWIRE_RULES]
+                if bad:
+                    findings.append(
+                        Finding(
+                            "manifest-schema",
+                            MANIFEST_REL,
+                            f"{label}: 'covers' rule(s) {bad} not in {sorted(TRIPWIRE_RULES)}",
+                        )
+                    )
+                covers_declared = {r for r in covers_raw if r in TRIPWIRE_RULES}
         for rel in hits:
-            coverage.setdefault(rel, []).append(
-                f"{entry.get('class')} / DR-{number or '????'}"
+            coverage.setdefault(rel, set()).update(
+                _extension_tripwire_rules(rel) | covers_declared
             )
             findings.extend(_corroborate(tree, rel, entry, number, label))
 
@@ -903,6 +942,43 @@ def _corroborate(tree: Tree, rel, entry, number, label):
 # --- tripwires ----------------------------------------------------------------
 
 
+def _extension_suffix(rel):
+    """The extension used for tripwire matching, `.gz` compression stripped.
+
+    Without this, renaming any upstream asset or foreign-source file with a
+    trailing `.gz` (`Bank Sine.wt.gz`, `copied_filter.cpp.gz`) drops it from
+    both extension tripwires with no actual compression required — see PR
+    #114 review, finding 3. The repository's own gzipped evidence traces
+    (`*.json.gz`, `*.hex.gz`) fall through to an extension that is in neither
+    set, so this does not newly flag them.
+    """
+    name = rel.rsplit("/", 1)[-1]
+    if name.lower().endswith(".gz"):
+        name = name[: -len(".gz")]
+    return "." + name.rsplit(".", 1)[-1].lower() if "." in name else ""
+
+
+def _extension_tripwire_rules(rel):
+    """Tripwire rule ids implied purely by `rel`'s own (de-gzipped) extension.
+
+    These are structural properties of the whole file — every byte of a `.wt`
+    file is upstream-asset content by virtue of being a `.wt` file — so a
+    provenance row naming this exact file safely covers them in full. This is
+    unlike the content-signal tripwires (`foreign-license-text`,
+    `self-declared-quotation`), which can appear anywhere in a file's text
+    independent of what the row's 'content' field describes, and therefore
+    require an explicit 'covers' declaration instead of blanket coverage
+    (see PR #114 review, finding 1).
+    """
+    suffix = _extension_suffix(rel)
+    rules = set()
+    if suffix in UPSTREAM_ASSET_EXTS:
+        rules.add("upstream-asset-extension")
+    if suffix in FOREIGN_SOURCE_EXTS:
+        rules.add("foreign-source-language")
+    return rules
+
+
 def tripwire_hits(tree: Tree, rel):
     """[(rule, evidence)] for content signals of third-party carriage.
 
@@ -912,7 +988,7 @@ def tripwire_hits(tree: Tree, rel):
     stops firing — `--negative-control` is what catches that mistake.
     """
     hits = []
-    suffix = "." + rel.rsplit(".", 1)[-1].lower() if "." in rel.rsplit("/", 1)[-1] else ""
+    suffix = _extension_suffix(rel)
     if suffix in UPSTREAM_ASSET_EXTS:
         hits.append(("upstream-asset-extension", f"extension {suffix}"))
     if suffix in FOREIGN_SOURCE_EXTS:
@@ -975,7 +1051,7 @@ def check_tripwires(tree: Tree, coverage, exemptions):
     for rel in tree.files:
         for rule, evidence in tripwire_hits(tree, rel):
             counts[rule] += 1
-            if rel in coverage:
+            if rule in coverage.get(rel, ()):
                 continue
             reason = exemptions.get(rel, {}).get(rule)
             if reason:
@@ -1136,6 +1212,7 @@ def build_skeleton(root: Path):
                         "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
                         "upstream_license": "GPL-3.0-or-later",
                         "decision_record": "0001",
+                        "covers": ["self-declared-quotation"],
                     }
                 ],
                 "exemptions": [],

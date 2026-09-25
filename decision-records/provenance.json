@@ -49,7 +49,10 @@
       "upstream": "surge src/common/dsp/Wavetable.cpp",
       "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
       "upstream_license": "GPL-3.0-or-later",
-      "decision_record": "0004"
+      "decision_record": "0004",
+      "covers": [
+        "self-declared-quotation"
+      ]
     },
     {
       "path": "compiler/assets/wavetable.py",
@@ -67,7 +70,11 @@
       "upstream": "surge libs/airwindows/src/GalacticProc.cpp + Galactic.h (Airwindows, 2016; upstream attribution restated in model/effects/aw-49/galactic_model.py)",
       "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
       "upstream_license": "GPL-3.0-or-later",
-      "decision_record": "0006"
+      "decision_record": "0006",
+      "covers": [
+        "foreign-license-text",
+        "self-declared-quotation"
+      ]
     },
     {
       "path": "model/oscillators/sine/README.md",
@@ -76,7 +83,10 @@
       "upstream": "surge src/common/dsp/oscillators/SineOscillator.cpp (handleStreamingMismatches)",
       "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
       "upstream_license": "GPL-3.0-or-later",
-      "decision_record": "0008"
+      "decision_record": "0008",
+      "covers": [
+        "self-declared-quotation"
+      ]
     },
     {
       "path": "oracle/sxt038/lp24_ref_harness.cpp",
