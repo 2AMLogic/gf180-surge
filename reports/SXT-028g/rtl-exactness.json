@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028g",
+  "claim": "RTL-vs-frozen-model integer equality ONLY (claim 1 of AGENTS.md); reference agreement and musical quality are separate claims and are NOT addressed by this record",
+  "sim": "iverilog",
+  "sim_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "model_revision": "7726b5f8182c72a27ce9b06f90a8196077ff2ee5978d2e742d673683a4ee5cae",
+  "tb": "rtl/effects/type-phaser/tb_phaser.sv",
+  "cases": [
+    {
+      "case": "prs-dual-128",
+      "blocks": 128,
+      "ninst": 2,
+      "note": "two instances, 4 and 8 stages, disjoint per-instance state",
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7726b5f8",
+        "expected": "7726b5f8"
+      },
+      "checked": {
+        "outputs": 16384,
+        "stage_points": 864,
+        "checkpoints": 18,
+        "fields": 594
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "clamp_engagements": 0
+    },
+    {
+      "case": "prs-clamp-96",
+      "blocks": 96,
+      "ninst": 2,
+      "note": "near-self-oscillation corner (|feedback| = 0.95, +-8 stimulus): the Phaser.h +-32 recursive-node clamp is a LIVE path here",
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7726b5f8",
+        "expected": "7726b5f8"
+      },
+      "checked": {
+        "outputs": 12288,
+        "stage_points": 336,
+        "checkpoints": 14,
+        "fields": 462
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "clamp_engagements": 27
+    },
+    {
+      "case": "prs-reset48-128",
+      "blocks": 128,
+      "ninst": 2,
+      "note": "panic / fx-rebuild reset before block 48",
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7726b5f8",
+        "expected": "7726b5f8"
+      },
+      "checked": {
+        "outputs": 16384,
+        "stage_points": 864,
+        "checkpoints": 18,
+        "fields": 594
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "clamp_engagements": 0
+    },
+    {
+      "case": "prs-patch64-160",
+      "blocks": 160,
+      "ninst": 2,
+      "note": "input silent from block 48; parameters change at block 64 while the tail is still ringing (tail continues, does not restart)",
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7726b5f8",
+        "expected": "7726b5f8"
+      },
+      "checked": {
+        "outputs": 20480,
+        "stage_points": 1056,
+        "checkpoints": 22,
+        "fields": 726
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "clamp_engagements": 0
+    },
+    {
+      "case": "prs-legacy-96",
+      "blocks": 96,
+      "ninst": 2,
+      "note": "legacy branch (stages=1), deactivated mod rate on instance 1",
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7726b5f8",
+        "expected": "7726b5f8"
+      },
+      "checked": {
+        "outputs": 12288,
+        "stage_points": 112,
+        "checkpoints": 14,
+        "fields": 462
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "clamp_engagements": 0
+    },
+    {
+      "case": "prs-maxstages-48",
+      "blocks": 48,
+      "ninst": 2,
+      "note": "Phaser.h max_stages = 16 (32 APF biquad units) alongside a tone-deactivated 4-stage instance",
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "7726b5f8",
+        "expected": "7726b5f8"
+      },
+      "checked": {
+        "outputs": 6144,
+        "stage_points": 640,
+        "checkpoints": 8,
+        "fields": 264
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "clamp_engagements": 0
+    }
+  ],
+  "mutant_controls": [
+    {
+      "case": "mutant-shared",
+      "blocks": 128,
+      "ninst": 2,
+      "coverage": {
+        "stimulus": "prs-dual-128",
+        "clamp_engagements_in_stimulus": 0
+      },
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 74,
+        "stage_points": 32,
+        "checkpoints": 1,
+        "fields": 33
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 dl: model=-920670 rtl=-659483",
+        "b0 i0 dr: model=424915 rtl=126715",
+        "b0 i0 lpr0: model=-797910360655 rtl=37971525969",
+        "b0 i0 lpr1: model=-139316971153 rtl=-334913087575",
+        "b0 i0 lpr0b: model=2680208638492 rtl=1823785990241"
+      ]
+    },
+    {
+      "case": "mutant-stageorder",
+      "blocks": 128,
+      "ninst": 2,
+      "coverage": {
+        "stimulus": "prs-dual-128",
+        "clamp_engagements_in_stimulus": 0
+      },
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 64,
+        "stage_points": 32,
+        "checkpoints": 1,
+        "fields": 23
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[3]: model=26262 rtl=26261",
+        "b0 i0 out[4]: model=-565812 rtl=-565813",
+        "b0 i0 out[6]: model=-480244 rtl=-480245",
+        "b0 i0 out[15]: model=432485 rtl=432484",
+        "b0 i0 out[17]: model=-692340 rtl=-692341"
+      ]
+    },
+    {
+      "case": "mutant-lagcoef",
+      "blocks": 128,
+      "ninst": 2,
+      "coverage": {
+        "stimulus": "prs-dual-128",
+        "clamp_engagements_in_stimulus": 0
+      },
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 21,
+        "stage_points": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[0]: model=89912 rtl=92028",
+        "b0 i0 out[1]: model=281291 rtl=294444",
+        "b0 i0 out[2]: model=345130 rtl=384962",
+        "b0 i0 out[3]: model=26262 rtl=90610",
+        "b0 i0 out[4]: model=-565812 rtl=-533803"
+      ]
+    },
+    {
+      "case": "mutant-noclamp",
+      "blocks": 96,
+      "ninst": 2,
+      "coverage": {
+        "stimulus": "prs-clamp-96",
+        "clamp_engagements_in_stimulus": 27
+      },
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 1113,
+        "stage_points": 48,
+        "checkpoints": 2,
+        "fields": 66
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b8 i1 out[4]: model=4758642 rtl=4611074",
+        "b8 i1 out[5]: model=17238121 rtl=17468401",
+        "b8 i1 out[6]: model=914161 rtl=752069",
+        "b8 i1 out[7]: model=-4423644 rtl=-4269648",
+        "b8 i1 out[8]: model=-27356363 rtl=-25117720"
+      ]
+    }
+  ],
+  "status": "PASS"
+}

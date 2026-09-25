@@ -1,0 +1,16 @@
+SXT-028g pinned-engine fixture renders (tools/render_phaser_fixtures.py)
+status: NOT_RUN
+
+No pinned-engine checkout and no importable surgepy exist in the environment
+this leaf was built in (measured: reports/SXT-028g/artifacts/oracle-status.json).
+No wet/dry fixture bus was rendered, so there are no per-carrier refusal rows
+yet. NOT_RUN is not a pass.
+
+Consequence: every model-vs-pinned-engine leg of this leaf is NOT_RUN. The
+RTL-vs-frozen-model exactness claim is unaffected and was run in full
+(reports/SXT-028g/rtl-exactness.json).
+
+Re-run on an oracle host:
+  python3 tools/render_phaser_fixtures.py
+  python3 model/effects/run_phaser_model.py --slug <slug> --seq <seq>
+  python3 tools/compare_phaser_reference.py --slug <slug> --seq <seq>
