@@ -1,0 +1,338 @@
+{
+  "cases": [
+    {
+      "blocks_compared": 200,
+      "case": "dual-lifecycle",
+      "checked": {
+        "blocks": 200,
+        "checkpoint_fields": 13600,
+        "output_samples": 25600
+      },
+      "coverage": {
+        "blocks_with_gain_reduction": 326,
+        "control_only_blocks": 42,
+        "fresh_respawns": 1,
+        "min_gain": 0.2245622158717424,
+        "min_gain_q43": 1975270140081,
+        "process_blocks": 358,
+        "suspends": 1
+      },
+      "expected_trace_sha256": "57bc31a2497901d00f7aa2bec31ae4f2a69399f05df1b90b49a5ebe65b5fa391",
+      "first_mismatches": [],
+      "mismatches": 0,
+      "ninst": 2,
+      "params": [
+        "doomsday-slot06",
+        "SYNTH_B"
+      ],
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "schedule": {
+        "events": {
+          "180": {
+            "inst0": "engine suspend (stopSound/panic) mid-tail",
+            "inst1": "fresh re-spawn (patch change) mid-tail"
+          }
+        },
+        "input_present_blocks": "0-39, 150-169"
+      },
+      "status": "PASS",
+      "tail_coverage": {
+        "last_input_present_block": 39,
+        "ok": true,
+        "required_blocks": 140
+      }
+    },
+    {
+      "blocks_compared": 48,
+      "case": "corners-loader-defaults+extreme-min",
+      "checked": {
+        "blocks": 48,
+        "checkpoint_fields": 3264,
+        "output_samples": 6144
+      },
+      "coverage": {
+        "blocks_with_gain_reduction": 41,
+        "control_only_blocks": 0,
+        "fresh_respawns": 0,
+        "min_gain": 0.9040192360879473,
+        "min_gain_q43": 7951837294495,
+        "process_blocks": 96,
+        "suspends": 0
+      },
+      "expected_trace_sha256": "4158d3e6659820c9ce7e5d8fe273fb3c889f85188c4feac51f8d9a6bae5bf9ef",
+      "first_mismatches": [],
+      "mismatches": 0,
+      "ninst": 2,
+      "params": [
+        "loader-defaults",
+        "extreme-min"
+      ],
+      "provenance": [
+        {
+          "source": "Parameter.cpp defaults + init_default_values"
+        },
+        {
+          "source": "Parameter.cpp val_min"
+        }
+      ],
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "status": "PASS"
+    },
+    {
+      "blocks_compared": 48,
+      "case": "corners-extreme-max+aoe-slot00",
+      "checked": {
+        "blocks": 48,
+        "checkpoint_fields": 3264,
+        "output_samples": 6144
+      },
+      "coverage": {
+        "blocks_with_gain_reduction": 37,
+        "control_only_blocks": 0,
+        "fresh_respawns": 0,
+        "min_gain": 0.5323293716405715,
+        "min_gain_q43": 4682418671404,
+        "process_blocks": 96,
+        "suspends": 0
+      },
+      "expected_trace_sha256": "108c447c473dc6f51a6d3357f6017551a961b717c7591d772472d523bf2309e0",
+      "first_mismatches": [],
+      "mismatches": 0,
+      "ninst": 2,
+      "params": [
+        "extreme-max",
+        "aoe-slot00"
+      ],
+      "provenance": [
+        {
+          "source": "Parameter.cpp val_max"
+        },
+        {
+          "active_chain": [
+            [
+              0,
+              "ains1",
+              "Conditioner"
+            ],
+            [
+              4,
+              "send1",
+              "Delay"
+            ]
+          ],
+          "census_blob_sha1": "427dedd36235aae88b1d1ffe6fa2f2f1e3adb128",
+          "deactivated_flags": "ASSUMED engine defaults (graphs.jsonl does not export them); claim-1 corner only",
+          "graphs_rev": 20,
+          "on": 1,
+          "path": "resources/data/patches_3rdparty/Altenberg/Leads/AOE.fxp",
+          "role": "ains1",
+          "slot": 0
+        }
+      ],
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "status": "PASS"
+    },
+    {
+      "blocks_compared": 48,
+      "case": "corners-computerlanguage1-slot00+piercing-slot07",
+      "checked": {
+        "blocks": 48,
+        "checkpoint_fields": 3264,
+        "output_samples": 6144
+      },
+      "coverage": {
+        "blocks_with_gain_reduction": 29,
+        "control_only_blocks": 0,
+        "fresh_respawns": 0,
+        "min_gain": 0.7753372777333425,
+        "min_gain_q43": 6819938818528,
+        "process_blocks": 96,
+        "suspends": 0
+      },
+      "expected_trace_sha256": "a4d8ee1d02aee1ec937d714e8a1c957ef10edc4c4b1933e508e9c3ab6bd27f26",
+      "first_mismatches": [],
+      "mismatches": 0,
+      "ninst": 2,
+      "params": [
+        "computerlanguage1-slot00",
+        "piercing-slot07"
+      ],
+      "provenance": [
+        {
+          "active_chain": [
+            [
+              0,
+              "ains1",
+              "Conditioner"
+            ]
+          ],
+          "census_blob_sha1": "fed86e4fda953f463fc98104b1a1fcff9b7c2e8c",
+          "deactivated_flags": "ASSUMED engine defaults (graphs.jsonl does not export them); claim-1 corner only",
+          "graphs_rev": 9,
+          "on": 1,
+          "path": "resources/data/patches_3rdparty/Argitoth/FX/Computer Language 1.fxp",
+          "role": "ains1",
+          "slot": 0
+        },
+        {
+          "active_chain": [
+            [
+              6,
+              "global1",
+              "Chorus"
+            ],
+            [
+              7,
+              "global2",
+              "Conditioner"
+            ]
+          ],
+          "census_blob_sha1": "d02d14ea299bf15a113c10c3b5aef6f98f40df55",
+          "deactivated_flags": "ASSUMED engine defaults (graphs.jsonl does not export them); claim-1 corner only",
+          "graphs_rev": 20,
+          "on": 1,
+          "path": "resources/data/patches_3rdparty/Altenberg/Basses/Piercing.fxp",
+          "role": "global2",
+          "slot": 7
+        }
+      ],
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "status": "PASS"
+    }
+  ],
+  "cases_status": "PASS",
+  "claim": "RTL == frozen model (claim 1) only; no reference-agreement claim",
+  "controls": [
+    {
+      "check_result": "FAIL",
+      "control": "mutant-shared",
+      "first_mismatches": [
+        "b1 i1 bufpos model=64 rtl=96",
+        "b1 i1 hash model=265740538288162 rtl=288773558256226",
+        "b2 i0 bufpos model=96 rtl=0"
+      ],
+      "mismatches": 14378,
+      "mutant_tb": "rtl/effects/type-conditioner/tb_conditioner_mutant_shared.sv",
+      "ok": true,
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "tail_coverage": {
+        "last_input_present_block": 39,
+        "ok": true,
+        "required_blocks": 140
+      },
+      "targets": "exactness",
+      "verdict": "CONTROL-OK (fails the check it targets: FAIL)"
+    },
+    {
+      "check_result": "FAIL",
+      "control": "mutant-nolimiter",
+      "first_mismatches": [
+        "b15 i1 out[31] model=1193102 rtl=1193381",
+        "b15 i1 out[63] model=129269 rtl=129299",
+        "b15 i1 gain model=8794032830327 rtl=8796093022208"
+      ],
+      "mismatches": 10685,
+      "mutant_tb": "rtl/effects/type-conditioner/tb_conditioner_mutant_nolimiter.sv",
+      "ok": true,
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "tail_coverage": {
+        "last_input_present_block": 39,
+        "ok": true,
+        "required_blocks": 140
+      },
+      "targets": "exactness",
+      "verdict": "CONTROL-OK (fails the check it targets: FAIL)"
+    },
+    {
+      "check_result": "FAIL",
+      "control": "permuted-slots",
+      "first_mismatches": [
+        "b0 i0 ampLb model=162189 rtl=327680",
+        "b0 i0 ampRb model=162189 rtl=212992",
+        "b0 i0 widb model=65536 rtl=39322"
+      ],
+      "mismatches": 27473,
+      "mutant_tb": null,
+      "ok": true,
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "tail_coverage": {
+        "last_input_present_block": 39,
+        "ok": true,
+        "required_blocks": 140
+      },
+      "targets": "order-sensitive exactness",
+      "verdict": "CONTROL-OK (fails the check it targets: FAIL)"
+    },
+    {
+      "check_result": "REFUSED (stale frozen-model revision)",
+      "control": "stale-stub",
+      "first_mismatches": [],
+      "mismatches": 0,
+      "mutant_tb": null,
+      "ok": true,
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": false,
+        "trace": "d7975392"
+      },
+      "tail_coverage": null,
+      "targets": "revision pin",
+      "verdict": "CONTROL-OK (fails the check it targets: REFUSED (stale frozen-model revision))"
+    },
+    {
+      "check_result": "FAIL (declared tail span not covered)",
+      "control": "dropped-tail",
+      "first_mismatches": [],
+      "mismatches": 0,
+      "mutant_tb": null,
+      "ok": true,
+      "revision_pin": {
+        "expected": "8dcd09c8",
+        "ok": true,
+        "trace": "8dcd09c8"
+      },
+      "tail_coverage": {
+        "last_input_present_block": 39,
+        "ok": false,
+        "required_blocks": 140
+      },
+      "targets": "tail coverage",
+      "verdict": "CONTROL-OK (fails the check it targets: FAIL (declared tail span not covered))"
+    }
+  ],
+  "controls_status": "PASS",
+  "leaf": "SXT-028b",
+  "model_revision": "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+  "schema_version": 1,
+  "simulator": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "status": "PASS",
+  "tb": "rtl/effects/type-conditioner/tb_conditioner.sv"
+}

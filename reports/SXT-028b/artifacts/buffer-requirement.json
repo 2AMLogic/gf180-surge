@@ -1,0 +1,52 @@
+{
+  "external_memory": {
+    "classification": "ON-CHIP",
+    "external_bytes": 0,
+    "external_threshold_bytes": 65536,
+    "external_traffic_bytes_per_sample": 0.0,
+    "flash_used_as_writable_state": false
+  },
+  "issue": "#54",
+  "leaf": "SXT-028b",
+  "model_revision": "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+  "multi_instance": {
+    "note": "two slots = two disjoint copies; never shared",
+    "per_additional_instance_bytes": 2444
+  },
+  "on_chip_state": {
+    "bits": 19551,
+    "breakdown_bits": {
+      "biquad hp (5 lag + 5 target + 2 TDF2 regs, mono, Q24.43)": 768,
+      "biquads band1+band2 (5 lag + 5 target + 4 TDF2 regs, Q24.43)": 1792,
+      "bufpos (7 b) + Effect ringout counter (24 b, control plane)": 31,
+      "envelope flamax, flamax2, gain + block attack/release (Q24.43)": 320,
+      "lipol ampL/ampR/width/postamp (cur + tgt, Q13.18)": 256,
+      "look-ahead ring delayed[2][128] (Q10.21)": 8192,
+      "squared-peak leaves lamax[0..127] (Q24.43)": 8192
+    },
+    "bytes": 2444,
+    "writable_line_bytes": 2048
+  },
+  "schema_version": 1,
+  "scope": "per Conditioner instance, 48 kHz, frozen word formats",
+  "state_memory_traffic": {
+    "basis": "model state_reads/state_writes counters over 64 processed blocks (measured)",
+    "note": "3 reads (delayed L/R at bufpos, fixed leaf 126) + 3 writes (delayed L/R, leaf at bufpos) per processed sample; process_only_control() blocks touch no ring state",
+    "reads_per_sample": 3.0,
+    "writes_per_sample": 3.0
+  },
+  "sxt015_reconciliation": {
+    "aggregate_profile_estimate": "PENDING-SXT-016",
+    "external_classification_agrees": true,
+    "justification_text_finding": "fx_classes says 'no delay line'; the pinned source has a 128-sample stereo look-ahead line (1 KiB). Classification unaffected; placeholder not replaced here.",
+    "measured_bytes": 2444,
+    "placeholder_conservative": true,
+    "sxt015_ext_reads_writes": [
+      0,
+      0
+    ],
+    "sxt015_external": false,
+    "sxt015_state_bytes": 8192,
+    "sxt015_tier": "no_long_buffer"
+  }
+}
