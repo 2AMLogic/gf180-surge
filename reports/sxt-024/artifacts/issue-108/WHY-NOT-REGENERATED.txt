@@ -1,0 +1,41 @@
+issue #108 -- why the committed sxt-024 records are NOT regenerated in this PR
+(evidence for the deferral; the fix itself belongs to #112)
+
+  python 3.12.3 / numpy 1.26.4 (this host)
+
+send_return_gains() computes  float(np.float32(scene_send_level)**3)
+  declared scene_send_level  : 0.7071430087089539
+  np.float32(x) ** 3         : 0.35360773466102247   <- reproduced on THIS host
+  float32-pinned cube        : 0.35360774397850037
+  float64 cube               : 0.3536077346610224
+
+committed send_gain, per record:
+  click-wet                    comparison         0.3536077346610224
+  preset-notes-coverage-wet    comparison         0.3536077346610224
+  hardreset-midpatch-wet       comparison         0.35360774397850037
+  nc-a-generic-schroeder       negative-controls  0.35360774397850037
+
+Three distinct values are in play across the committed records and this host:
+
+  0.3536077346610224    comparison/click-wet, comparison/preset-*   (float64 cube)
+  0.35360774397850037   comparison/hardreset-*, negative-controls/* (float32 cube)
+  0.35360773466102247   reproduced here (numpy 1.26.4)              (neither)
+
+So the committed sxt-024 records were written under at least two different
+NumPy regimes -- the split runs THROUGH comparison/, not between comparison/
+and negative-controls/ -- and a current host reproduces neither. That is a real
+reproducibility finding, and it is #112's finding to resolve: #112's first
+acceptance item is to make send_return_gains() explicit about its precision
+INDEPENDENT of the NumPy version. Regenerating the records here, before that
+decision, would bake this host's third value into committed evidence and
+force a second regeneration once #112 lands -- exactly the duplicate work the
+#108 curation note says to avoid.
+
+#112 scope note (extension, not a new defect claim): #112 names only
+comparison/click-wet.json and comparison/preset-notes-coverage-wet.json. The
+negative-control records carry the same field with the OTHER value, so
+negative-controls/*.json are in the same regeneration set.
+
+Verdicts do not move under any of the three values: on this host
+click PASS, preset PASS, hardreset FAIL (tail_rms_rel, already recorded),
+reset BLOCKED, and all four negative controls CONTROL-OK.

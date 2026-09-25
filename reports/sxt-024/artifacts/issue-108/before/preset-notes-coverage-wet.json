@@ -1,0 +1,97 @@
+{
+  "band_energy_max_dev_db": 3.0337602595409408e-05,
+  "case": "preset-notes-coverage-wet",
+  "checks": {
+    "band_energy": true,
+    "decay_curve": true,
+    "stereo_corr": true,
+    "tail_gate": true,
+    "tail_rms_rel": true,
+    "wet_max_abs": true,
+    "wet_rms_rel": true
+  },
+  "decay_curve_max_dev_db": 0.0021406801493242256,
+  "decay_curve_windows": 172,
+  "float_npy_used": true,
+  "model_traffic_per_sample": {
+    "reads": 17.0,
+    "writes": 17.0
+  },
+  "return_gain": 1.0,
+  "send_gain": 0.35360773466102247,
+  "stereo_corr_dev": 2.434773855863881e-07,
+  "stereo_corr_pred": 0.8834857377772514,
+  "stereo_corr_wet": 0.883485981254637,
+  "tail_err_rms_dbfs": -151.17016686354728,
+  "tail_gate": {
+    "ok": true,
+    "proposed_tail_budget": {
+      "tail_rms_rel_db": -20.0
+    },
+    "reason": "",
+    "tail_check": {
+      "model_tail_present": true,
+      "ok": true,
+      "reason": "",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_frames": 576000,
+      "tail_max_abs_diff_lsb": 2.53125,
+      "tail_model_rms_lsb": 47665.40197391092,
+      "tail_offset": 153600,
+      "tail_present": true,
+      "tail_ref_rms_lsb": 47665.3444065533,
+      "tail_region_covered": true,
+      "tail_region_sidecar": "reports/sxt-024/traces/preset-notes-coverage-wet.json",
+      "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
+      "tail_rms_diff_lsb": 0.23853325758948227,
+      "tail_rms_rel_db": -106.01307592199998
+    },
+    "tail_check_lr": {
+      "L": {
+        "model_tail_present": true,
+        "ok": true,
+        "reason": "",
+        "tail_budget": {
+          "tail_rms_rel_db": -20.0
+        },
+        "tail_frames": 576000,
+        "tail_max_abs_diff_lsb": 3.15625,
+        "tail_model_rms_lsb": 50263.48236171898,
+        "tail_offset": 153600,
+        "tail_present": true,
+        "tail_ref_rms_lsb": 50263.41022603415,
+        "tail_region_covered": true,
+        "tail_region_sidecar": "reports/sxt-024/traces/preset-notes-coverage-wet.json",
+        "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
+        "tail_rms_diff_lsb": 0.2566042797686399,
+        "tail_rms_rel_db": -105.8397611080463
+      },
+      "R": {
+        "model_tail_present": true,
+        "ok": true,
+        "reason": "",
+        "tail_budget": {
+          "tail_rms_rel_db": -20.0
+        },
+        "tail_frames": 576000,
+        "tail_max_abs_diff_lsb": 2.125,
+        "tail_model_rms_lsb": 48342.650096265366,
+        "tail_offset": 153600,
+        "tail_present": true,
+        "tail_ref_rms_lsb": 48342.59522426412,
+        "tail_region_covered": true,
+        "tail_region_sidecar": "reports/sxt-024/traces/preset-notes-coverage-wet.json",
+        "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
+        "tail_rms_diff_lsb": 0.24444828654843145,
+        "tail_rms_rel_db": -105.92285927854127
+      }
+    },
+    "units": "s24 LSB (2^-23 of full scale)"
+  },
+  "tail_rms_rel_db": -52.60693352955978,
+  "tail_wet_rms_dbfs": -45.95629980442772,
+  "wet_max_abs": 1.6689300537109375e-06,
+  "wet_rms_rel_db": -55.050036095542026
+}

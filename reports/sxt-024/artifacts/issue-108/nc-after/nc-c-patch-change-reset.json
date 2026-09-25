@@ -1,0 +1,33 @@
+{
+  "boundary_jump_pred": 0.10593852010788396,
+  "boundary_jump_wet": 0.10593877342762426,
+  "case": "nc-c-patch-change-reset",
+  "dry_bus_matches_preset_dry": true,
+  "engine_reset_path": "setParamVal fx type 2->0->2 (deferred fx_reload -> loadFx rebuild; long buffers cleared)",
+  "loadpatch_probe": "ORACLE EMBEDDING LIMITATION: mid-render loadPatch() silences the engine render; documented in comparison/reset-midpatch-wet.json; probe status: see comparison/reset-midpatch-wet.json (BLOCKED)",
+  "noreset_variant_checks": {
+    "band_energy": true,
+    "decay_curve": true,
+    "stereo_corr": true,
+    "tail_rms_rel": false,
+    "wet_max_abs": false,
+    "wet_rms_rel": false
+  },
+  "noreset_variant_tail_rms_rel_db": -20.06977478751658,
+  "noreset_variant_wet_max_abs": 0.31229859590530396,
+  "rebuild_transient_max_abs": 0.0016898736357688904,
+  "reset_mirror_checks": {
+    "band_energy": true,
+    "decay_curve": true,
+    "reset_boundary": true,
+    "stereo_corr": true,
+    "tail_rms_rel": false,
+    "wet_max_abs": true,
+    "wet_rms_rel": true
+  },
+  "reset_mirror_tail_rms_rel_db": -42.64693167212541,
+  "reset_mirror_wet_max_abs": 3.2335519790649414e-06,
+  "tail_budget_finding_in_regime": true,
+  "target_check": "patch-change/reset without unintended clicks (reset instruction observable and click-neutral)",
+  "verdict": "CONTROL-OK (reset mirrored within budget; no-reset variant FAILS; no added click at the boundary)"
+}

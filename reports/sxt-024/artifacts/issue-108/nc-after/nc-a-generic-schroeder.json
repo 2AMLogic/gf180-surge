@@ -1,0 +1,40 @@
+{
+  "band_energy_max_dev_db": 18.82507994646848,
+  "case": "nc-a-generic-schroeder",
+  "checks": {
+    "band_energy": false,
+    "decay_curve": false,
+    "stereo_corr": false,
+    "tail_rms_rel": false,
+    "wet_max_abs": false,
+    "wet_rms_rel": false
+  },
+  "decay_curve_max_dev_db": 536.9880026422347,
+  "decay_curve_windows": 172,
+  "generic": "Schroeder 4-comb/2-allpass, t60 matched to 2^decay",
+  "return_gain": 1.0,
+  "send_gain": 0.35360773466102247,
+  "stereo_corr_dev": 0.11651401874536305,
+  "stereo_corr_pred": 1.0,
+  "stereo_corr_wet": 0.883485981254637,
+  "tail_err_rms_dbfs": -45.768491746065024,
+  "tail_rms_rel_db": 0.09390402918134338,
+  "tail_wet_rms_dbfs": -45.95629980442772,
+  "tail_window": {
+    "guard_samples": 4800,
+    "last_event_sample": 153600,
+    "model_tail_present": true,
+    "tail_budget": {
+      "tail_rms_rel_db": -50.0
+    },
+    "tail_frames": 571200,
+    "tail_offset": 158400,
+    "tail_present": true,
+    "tail_region_sequence": "fixtures/sequences/seq-notes-coverage-v1.json",
+    "tail_region_source": "sequence fixtures/sequences/seq-notes-coverage-v1.json last note_on/note_off sample (153600) + 4800-sample (100 ms) guard"
+  },
+  "target_check": "wet_rms_rel / decay_curve / stereo_corr (reference budget)",
+  "verdict": "CONTROL-OK (generic FAILS the reference budget)",
+  "wet_max_abs": 5.160834550857544,
+  "wet_rms_rel_db": 9.169046669514183
+}

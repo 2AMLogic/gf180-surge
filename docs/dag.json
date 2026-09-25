@@ -275,7 +275,7 @@
       "status": "PASS",
       "note": "Landed (#43 + #45): Reverb1 RTL==model exact incl. 557,056-word memory image; reference within [PROPOSED]; 2.125 MiB/instance external; tail finding recorded; 4 controls OK.",
       "evidence": "reports/sxt-024/EVIDENCE.md",
-      "evidence_sha256": "1d65cc397edbd3a4ff0caf86ffb45971bdf8457ae675cc9edf38b6eda533e019"
+      "evidence_sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
     },
     {
       "id": 18,
