@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028f",
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "claim_scope": "model-vs-model only: the frozen model is the reference. No pinned-engine agreement, preset support or sound claim is made or implied.",
+  "alloc_profile": {
+    "profile": "harness",
+    "allpass_len": 4096,
+    "delay_len": 16384,
+    "predelay_len": 16384,
+    "words": 131072,
+    "bytes": 524288
+  },
+  "render": {
+    "burst_blocks": 48,
+    "tail_blocks": 224,
+    "block": 32,
+    "sample_rate": 48000,
+    "declared_tail_offset": 1536,
+    "declared_tail_frames": 7168
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192.0,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0
+  },
+  "baseline_self_agreement": {
+    "max_abs_diff_lsb": 0.0,
+    "rms_diff_dbfs": -200.0,
+    "spectral_corr": 1.0,
+    "budget_results": {
+      "max_abs_diff_lsb": true,
+      "rms_diff_dbfs": true,
+      "spectral_corr": true
+    },
+    "all_pass": true
+  },
+  "controls": [
+    {
+      "control": "NC-A generic substitute (ADAPTED)",
+      "ok": true,
+      "label": "ADAPTED -- excluded from original-preset coverage",
+      "metrics": {
+        "max_abs_diff_lsb": 592641.0,
+        "rms_diff_dbfs": -25.737933911698544,
+        "spectral_corr": 0.6081198110903903,
+        "budget_results": {
+          "max_abs_diff_lsb": false,
+          "rms_diff_dbfs": false,
+          "spectral_corr": false
+        },
+        "all_pass": false
+      },
+      "verdict": "CONTROL-OK (generic substitute FAILS the [PROPOSED] agreement budgets; ADAPTED != supported)"
+    },
+    {
+      "control": "NC-B dropped tail",
+      "ok": true,
+      "live": true,
+      "baseline_full_tail": {
+        "tail_offset": 1536,
+        "tail_frames": 7168,
+        "tail_region_covered": true,
+        "reference_tail_rms_dbfs": -36.200671402890556,
+        "model_tail_rms_dbfs": -36.200671402890556,
+        "tail_present": true,
+        "model_tail_present": true,
+        "tail_rms_rel_db": -200.0,
+        "ok": true
+      },
+      "truncated": {
+        "tail_offset": 1536,
+        "tail_frames": 7168,
+        "tail_region_covered": false,
+        "tail_present": false,
+        "model_tail_present": false,
+        "tail_rms_rel_db": null,
+        "ok": false
+      },
+      "zeroed": {
+        "tail_offset": 1536,
+        "tail_frames": 7168,
+        "tail_region_covered": true,
+        "reference_tail_rms_dbfs": -36.200671402890556,
+        "model_tail_rms_dbfs": -200.0,
+        "tail_present": true,
+        "model_tail_present": false,
+        "tail_rms_rel_db": 0.0,
+        "ok": false
+      },
+      "verdict": "CONTROL-OK (truncated and zeroed tails FAIL the declared-region tail gate that the full render passes)"
+    },
+    {
+      "control": "NC-C wrong order (slot-content permutation)",
+      "ok": true,
+      "bitwise_identical": false,
+      "metrics": {
+        "max_abs_diff_lsb": 23237.0,
+        "rms_diff_dbfs": -56.48412803332977,
+        "spectral_corr": 0.975942636034437,
+        "budget_results": {
+          "max_abs_diff_lsb": false,
+          "rms_diff_dbfs": true,
+          "spectral_corr": false
+        },
+        "all_pass": false
+      },
+      "verdict": "CONTROL-OK (the permuted chain is flagged: not bit-identical and outside the [PROPOSED] budgets)"
+    },
+    {
+      "control": "NC-D shared instead of per-instance state",
+      "ok": true,
+      "baseline_independent": true,
+      "mutant_changes_instance_a": true,
+      "verdict": "CONTROL-OK (pooling the two instances' external regions changes instance A's state and history: the dual-instance independence check FAILS)"
+    },
+    {
+      "control": "NC-E stale stub (frozen-revision pin)",
+      "ok": true,
+      "live_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+      "stale_revision": "0000000000000000000000000000000000000000000000000000000000000000",
+      "verdict": "CONTROL-OK (a record pinned to a revision that is not the live model's is REFUSED by the exactness harness and by tests/test_sxt028f.py)"
+    },
+    {
+      "control": "NC-F bypass transparency (mix = 0)",
+      "ok": true,
+      "bypass_max_abs_lsb": 0,
+      "injected_leak_max_abs_lsb": 1052,
+      "verdict": "CONTROL-OK (mix=0 is exactly transparent and an injected mix leak is detected)"
+    },
+    {
+      "control": "NC-G suspend must not clear the tank",
+      "ok": true,
+      "declared_suspend_preserves_state": true,
+      "clearing_mutant_detected": true,
+      "verdict": "CONTROL-OK (the declared suspend preserves the tank; a clearing mutant is flagged by the same check)"
+    }
+  ],
+  "status": "PASS"
+}

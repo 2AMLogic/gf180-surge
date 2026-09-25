@@ -1,0 +1,72 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "reasons": [
+      "rev2_predelay temposync flag UNRESOLVED without the oracle host (not carried by the SXT-011 normalized graph; the .fxp bytes are external)",
+      "SXT-012 3x bit-identical determinism gate NOT_RUN (requires the oracle host)"
+    ],
+    "status": "BLOCKED (oracle host required)"
+  },
+  "census_blob_reverified": true,
+  "chain": [
+    {
+      "landed_model": true,
+      "landed_ref": "eq (SXT-023)",
+      "role": "ains1",
+      "slot": 0,
+      "type": 6,
+      "type_name": "EQ"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "reverb2 (SXT-028f, this leaf)",
+      "role": "global1",
+      "slot": 6,
+      "type": 11,
+      "type_name": "Reverb 2"
+    }
+  ],
+  "drift_asserted": null,
+  "fx_bypass": "All FX",
+  "fx_class": "Reverb 2",
+  "fx_disable": 0,
+  "instances": [
+    {
+      "params": {
+        "buildup_f": 0.0,
+        "decay_time_f": -4.0,
+        "diffusion_f": 0.8,
+        "hf_damping_f": 1.0,
+        "lf_damping_f": 0.5,
+        "mix_f": 0.137143,
+        "modulation_f": 0.001786,
+        "predelay_f": -7.645001,
+        "room_size_f": -1.0,
+        "ts_predelay": null,
+        "ts_ratio_inv": null,
+        "width_f": 11.07428
+      },
+      "return_level": 1.0,
+      "role": "global1",
+      "slot": 6
+    }
+  ],
+  "leaf": "SXT-028f",
+  "param_order_ref": "sst-effects Reverb2.h:40-57 rev2_params; each value range-checked against Reverb2.h:152-197 paramAt",
+  "preset": {
+    "bank": "contributor",
+    "census_size": 99606,
+    "git_blob_sha1": "4f316a7f43eba60c40e9a7ca5de095a5775aeb21",
+    "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
+    "size": 99606
+  },
+  "scene_mode": "Dual",
+  "schema_version": 1,
+  "source": {
+    "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+    "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "normalized_graph": "corpus/normalized/graphs.jsonl (SXT-011)",
+    "patch_revision": 28,
+    "sample_rate_hz": 48000
+  }
+}
