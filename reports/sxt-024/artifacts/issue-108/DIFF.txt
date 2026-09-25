@@ -1,0 +1,152 @@
+issue #108 -- tools/compare_reverb_model.py tail-window change: before/after diff
+
+Host / runtime (the same host generated BOTH sides, so this diff isolates
+the code change and not an environment change):
+  python 3.12.3
+  numpy  1.26.4
+  backend: local (pure python/numpy; no SPICE, no oracle re-render)
+
+BEFORE = tools/compare_reverb_model.py at 2030deb (post-#113).
+AFTER  = the same tool with this PR applied.
+
+Exit codes (verdicts), before -> after:
+  click-wet                 0 -> 0   (PASS)
+  preset-notes-coverage-wet 0 -> 0   (PASS)
+  hardreset-midpatch-wet    1 -> 1   (FAIL on tail_rms_rel, as recorded)
+  reset-midpatch-wet        2 -> 2   (BLOCKED, oracle embedding limitation)
+  reverb_negative_controls  0 -> 0   (SUITE PASS, all four CONTROL-OK)
+
+==============================================================
+comparison records (tools/compare_reverb_model.py case)
+==============================================================
+
+--- click-wet
+--- before/click-wet.json
++++ after/click-wet.json
+@@ -92,6 +92,16 @@
+     },
+     "tail_rms_rel_db": -55.59062768396501,
+     "tail_wet_rms_dbfs": -28.684901402819097,
++    "tail_window": {
++        "model_tail_present": true,
++        "tail_budget": {
++            "tail_rms_rel_db": -50.0
++        },
++        "tail_frames": 295200,
++        "tail_offset": 4800,
++        "tail_present": true,
++        "tail_region_source": "declared fixed 4800-sample (100 ms) offset from the click render start (no sequence fixture: single 250 ms note from sample 0)"
++    },
+     "wet_max_abs": 5.811452865600586e-07,
+     "wet_rms_rel_db": -55.82392492611837
+ }
+
+--- preset-notes-coverage-wet
+--- before/preset-notes-coverage-wet.json
++++ after/preset-notes-coverage-wet.json
+@@ -92,6 +92,19 @@
+     },
+     "tail_rms_rel_db": -52.60693352955978,
+     "tail_wet_rms_dbfs": -45.95629980442772,
++    "tail_window": {
++        "guard_samples": 4800,
++        "last_event_sample": 153600,
++        "model_tail_present": true,
++        "tail_budget": {
++            "tail_rms_rel_db": -50.0
++        },
++        "tail_frames": 571200,
++        "tail_offset": 158400,
++        "tail_present": true,
++        "tail_region_sequence": "fixtures/sequences/seq-notes-coverage-v1.json",
++        "tail_region_source": "sequence fixtures/sequences/seq-notes-coverage-v1.json last note_on/note_off sample (153600) + 4800-sample (100 ms) guard"
++    },
+     "wet_max_abs": 1.6689300537109375e-06,
+     "wet_rms_rel_db": -55.050036095542026
+ }
+
+--- hardreset-midpatch-wet
+--- before/hardreset-midpatch-wet.json
++++ after/hardreset-midpatch-wet.json
+@@ -845,6 +845,19 @@
+     },
+     "tail_rms_rel_db": -42.64693167212541,
+     "tail_wet_rms_dbfs": -72.17770058720555,
++    "tail_window": {
++        "guard_samples": 4800,
++        "last_event_sample": 153600,
++        "model_tail_present": true,
++        "tail_budget": {
++            "tail_rms_rel_db": -50.0
++        },
++        "tail_frames": 571200,
++        "tail_offset": 158400,
++        "tail_present": true,
++        "tail_region_sequence": "fixtures/sequences/seq-notes-coverage-v1.json",
++        "tail_region_source": "sequence fixtures/sequences/seq-notes-coverage-v1.json last note_on/note_off sample (153600) + 4800-sample (100 ms) guard"
++    },
+     "wet_max_abs": 3.2335519790649414e-06,
+     "wet_rms_rel_db": -58.588838676020636
+ }
+
+--- reset-midpatch-wet
+
+==============================================================
+negative controls (tools/reverb_negative_controls.py)
+==============================================================
+
+--- nc-a-generic-schroeder
+--- nc-before/nc-a-generic-schroeder.json
++++ nc-after/nc-a-generic-schroeder.json
+@@ -20,6 +20,19 @@
+     "tail_err_rms_dbfs": -45.768491746065024,
+     "tail_rms_rel_db": 0.09390402918134338,
+     "tail_wet_rms_dbfs": -45.95629980442772,
++    "tail_window": {
++        "guard_samples": 4800,
++        "last_event_sample": 153600,
++        "model_tail_present": true,
++        "tail_budget": {
++            "tail_rms_rel_db": -50.0
++        },
++        "tail_frames": 571200,
++        "tail_offset": 158400,
++        "tail_present": true,
++        "tail_region_sequence": "fixtures/sequences/seq-notes-coverage-v1.json",
++        "tail_region_source": "sequence fixtures/sequences/seq-notes-coverage-v1.json last note_on/note_off sample (153600) + 4800-sample (100 ms) guard"
++    },
+     "target_check": "wet_rms_rel / decay_curve / stereo_corr (reference budget)",
+     "verdict": "CONTROL-OK (generic FAILS the reference budget)",
+     "wet_max_abs": 5.160834550857544,
+
+--- nc-b-tail-truncation
+--- nc-before/nc-b-tail-truncation.json
++++ nc-after/nc-b-tail-truncation.json
+@@ -17,6 +17,19 @@
+     "tail_err_rms_dbfs": -60.59479041981815,
+     "tail_rms_rel_db": -7.3192453076952155,
+     "tail_wet_rms_dbfs": -45.95629980442772,
++    "tail_window": {
++        "guard_samples": 4800,
++        "last_event_sample": 153600,
++        "model_tail_present": true,
++        "tail_budget": {
++            "tail_rms_rel_db": -50.0
++        },
++        "tail_frames": 571200,
++        "tail_offset": 158400,
++        "tail_present": true,
++        "tail_region_sequence": "fixtures/sequences/seq-notes-coverage-v1.json",
++        "tail_region_source": "sequence fixtures/sequences/seq-notes-coverage-v1.json last note_on/note_off sample (153600) + 4800-sample (100 ms) guard"
++    },
+     "target_check": "tail_rms_rel / decay_curve (tail continuity)",
+     "truncation_note": "tail zeroed 1 s after input stop; the dropped tail is above the -100 dBFS floor for several seconds",
+     "truncation_sample": 206400,
+
+--- nc-c-patch-change-reset
+
+--- nc-d-word-underfloor
+
+Every hunk above is an ADDITION of the transparency block `tail_window`.
+No existing field changed value, no `checks` entry was added, removed or
+flipped, and no exit code moved.

@@ -153,6 +153,104 @@ the committed click/preset records do not reproduce bit-for-bit with the
 after the record). That is a pre-existing finding, filed as #112, and it
 changes no verdict.
 
+### Tail-window decision (issue #108): KEEP the bespoke window, report it explicitly
+
+**Decision: the sequence-derived tail window stays.** `compare_reverb_model.py`
+does **not** move `tail_rms_rel` / `decay_curve` / `band_energy` /
+`stereo_corr` onto `compare_audio_reference.declared_tail_region()`. It now
+grades **two declared windows**, and keeps both:
+
+| Window | Used by | Source | click-wet | preset / hardreset |
+|---|---|---|---|---|
+| sequence-derived (bespoke) | `tail_rms_rel`, `decay_curve`, `band_energy`, `stereo_corr` | last declared `note_on`/`note_off` sample + 100 ms guard (`fixtures/sequences/seq-notes-coverage-v1.json`); click has no sequence fixture, so a declared fixed 100 ms offset from the render start | `[4800, 300000)` | `[158400, 729600)` |
+| sidecar-declared (shared, added by #100) | `tail_gate` (shared `car.tail_check`, mono + L + R) | `render.frames − render.tail_s × sr` from the trace sidecar | `[12000, 300000)` | `[153600, 729600)` |
+
+Rationale, in the order it decided the call:
+
+1. **The shared shape is already present.** #100/#113 added `checks.tail_gate`
+   — the literal `car.tail_check()` legs (region covered, reference tail
+   present, **model tail present**, relative residual) over the sidecar's
+   declared region, on the mono sum and on L and R. The field-shape parity the
+   issue asked about therefore already exists in this tool's output; the only
+   open question was the *bespoke* window, not the shared one.
+2. **The two windows are complementary, not nested, so neither subsumes the
+   other.** On `click-wet` the sequence-derived window starts **earlier**
+   (4800 vs 12000): replacing it would drop 7200 frames of the carrier's
+   fastest decay, the part where a wrong decay coefficient shows up first. On
+   `preset`/`hardreset` it starts **later** (158400 vs 153600), inside the
+   sidecar region. Swapping one for the other loses coverage either way, so
+   both are kept and **neither budget was touched** (bespoke −50 "dB" on a
+   10·log amplitude ratio, shared −20 dB on a 20·log RMS ratio — the unit
+   mismatch between the two families is #112's freeze note, not changed here).
+3. **The bespoke methodology is the stricter one on this fixture family.** Its
+   budget is −50 "dB" where the shared gate's is −20 dB, and the other checks
+   graded over the same window — `decay_curve`, `band_energy`, `stereo_corr`,
+   and (hardreset only) `reset_boundary` / `rebuild_transient` — have no
+   counterpart in `tail_check()` at all.
+
+**Two scope items were implemented rather than declined:**
+
+- **`NO_VERDICT` refusal path (was a crash).** The sequence-derived start is
+  now computed by `sequence_tail_start()`, which raises `car.TailRegionError`
+  — and so makes the case **REFUSE (`NO_VERDICT (refused)`, exit 2)** — when a
+  window cannot be established from committed declared data: sequence fixture
+  missing, no `note_on`/`note_off` declared (previously an unhandled
+  `ValueError` from `max()` on an empty generator), a non-integral event
+  index, or a start at/after the end of the loaded render (a **STALE**
+  sequence, which previously produced an empty slice and `nan`-shaped metrics
+  rather than a refusal). A refusal writes **no** comparison record, so it can
+  never overwrite committed evidence with a NO_VERDICT stub.
+  `tools/reverb_negative_controls.py` now derives its window from the same
+  function, so the controls and the comparator cannot drift apart.
+- **`model_tail_present` transparency field.** Each record now carries
+  `tail_window` = `{tail_offset, tail_frames, tail_region_source,
+  tail_region_sequence, last_event_sample, guard_samples, tail_present,
+  model_tail_present, tail_budget}` — `tail_present` / `model_tail_present`
+  named exactly as in `car.tail_check`. It is **deliberately not** an entry in
+  `checks`: presence is the *weaker* leg here, and the committed
+  `nc-b-tail-truncation` control proves it — that control keeps
+  `model_tail_present: true` (energy survives for 1 s past the window start)
+  while failing the graded `tail_rms_rel` at **−7.32 dB** against the −50 dB
+  budget. Promoting presence to a check would add a leg that the already-graded
+  residual subsumes.
+
+**Verdicts: unchanged.** Before/after on the same host (python 3.12.3, numpy
+1.26.4), full records and a line-level diff at
+`artifacts/issue-108/` (`before/`, `after/`, `nc-before/`, `nc-after/`,
+`DIFF.txt`): every hunk is an **addition** of the `tail_window` block; no
+existing field changed value, no `checks` entry was added, removed or flipped.
+Exit codes before → after: click `0 → 0` (PASS), preset `0 → 0` (PASS),
+hardreset `1 → 1` (FAIL on `tail_rms_rel`, the finding recorded above), reset
+`2 → 2` (BLOCKED), `reverb_negative_controls.py` `0 → 0` (SUITE PASS, all four
+**CONTROL-OK**; nc-b still `tail_rms_rel: false`, `decay_curve: false`).
+Comparator-behaviour scope only: this establishes reproducibility of the tool,
+never a preset-support or sound claim.
+
+**The committed `comparison/*.json` and `negative-controls/*.json` are NOT
+rewritten here, on purpose (coordination with #112).** A regeneration would add
+only the `tail_window` block from this change, but those records are already
+STALE against the tool for the reasons #112 records — and the drift is wider
+than #112 states:
+`send_gain` is committed as the **float64** cube in `comparison/click-wet.json`
+and `comparison/preset-notes-coverage-wet.json`, as the **float32** cube in
+`comparison/hardreset-midpatch-wet.json` and every
+`negative-controls/*.json`, and a current host (numpy 1.26.4) reproduces
+**neither** (`0.35360773466102247`). Measured evidence:
+`artifacts/issue-108/WHY-NOT-REGENERATED.txt`. Regenerating now would bake a
+third value into committed evidence and force a second regeneration once #112
+decides the precision, so regeneration is deferred to **#112**, which owns
+that decision — and its regeneration set is `comparison/*.json` **plus**
+`negative-controls/*.json`, not the two click/preset records alone. No verdict
+moves under any of the three `send_gain` values.
+
+**Not addressed here (bounded, out of this issue's scope).** When the analyzed
+tail is shorter than four 50 ms windows, `decay_curve_max_dev_db` is `None`
+and `checks.decay_curve` reports `false` — a NOT_RUN reported as a FAIL. It is
+conservative (never a false pass) and unreachable on the committed traces
+(≥ 571200-frame windows), so it was left alone rather than changed under a
+"no verdict may move" constraint. Related open work on tail-shape grading is
+#111.
+
 ## 4. RTL-vs-frozen-model EXACT (iverilog)
 
 `rtl-exactness.json` (sha256
@@ -218,6 +316,12 @@ order), and — case A — the full final external-memory image:
 - Engine reset semantics beyond the FX type-toggle path (the loadPatch probe
   is blocked by an oracle embedding limitation, documented in §3).
 - Reverb2 or any other effect (#21).
+- Field-for-field reproducibility of the committed `comparison/*.json` and
+  `negative-controls/*.json`: those records carry the verdicts recorded above,
+  but they are **STALE** with respect to the current tool (`send_gain`
+  precision drift across NumPy regimes and fields added after they were
+  written — #112; plus the additive `tail_window` block, §3's issue-#108
+  note). Regeneration belongs to #112, which owns the precision decision.
 
 ## 8. Reproduce
 
@@ -229,7 +333,12 @@ python3 tools/run_reverb_rtl.py            # needs iverilog; exactness + mutant
 python3 tools/reverb_negative_controls.py  # exits 0 iff all controls fail their checks
 python3 model/effects/reverb1/stability_analysis.py   # long (~40 min)
 python3 model/effects/reverb1/buffer_report.py
+python3 -m pytest -q tests/test_sxt024_reverb1.py tests/test_sxt024_tail_window.py
 ```
+
+`--out-dir <dir>` writes the case record somewhere other than
+`comparison/`; that is how the before/after pair in `artifacts/issue-108/`
+was produced without touching the committed records.
 
 ## 9. Provenance / licensing
 

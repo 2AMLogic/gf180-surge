@@ -54,6 +54,28 @@ Checks (PROPOSED budgets, PENDING-FREEZE):
                     that does not declare the region makes the case REFUSE
                     (NO_VERDICT, exit 2).
 
+Tail windows (issue #108 decision -- keep the bespoke window, report it
+explicitly). This tool grades TWO declared tail windows, neither inferred
+from silence:
+  * `tail_rms_rel` / `decay_curve` / `band_energy` / `stereo_corr` use the
+    SEQUENCE-DERIVED window [last declared note_on/note_off sample +
+    TAIL_GUARD_SAMPLES, end of render), reported as `tail_window` with its
+    provenance and explicit `tail_present` / `model_tail_present` legs
+    (shape parity with compare_audio_reference.tail_check, TRANSPARENCY only
+    -- see check_wet).
+  * `tail_gate` uses the sidecar's declared [frames - tail_s*sr, frames).
+The two windows are complementary, not nested: on click-wet the
+sequence-derived window starts EARLIER (4800 vs 12000) and on
+preset/hardreset it starts LATER (158400 vs 153600). Replacing the
+sequence-derived window with the sidecar region would lose the earlier part
+of the click decay; replacing the sidecar region would lose the shared gate's
+cross-comparator shape. Both are kept, and neither budget was changed.
+When the sequence-derived window cannot be established from committed
+declared data (sequence fixture missing, no note event declared, non-integral
+event index, or a start at/after the end of the loaded render -- a STALE
+sequence), the case REFUSES (NO_VERDICT, exit 2) instead of grading an
+undefined or empty window.
+
 Exit code 0 iff all checks PASS. Original to this repository (Apache-2.0).
 """
 
@@ -80,6 +102,15 @@ TAIL_GATE_LSB = 2.0 ** -23
 
 TRACES = os.path.join(REPO, "reports", "sxt-024", "traces")
 SEQ_COV = os.path.join(REPO, "fixtures", "sequences", "seq-notes-coverage-v1.json")
+# Guard between the last declared note event and the start of the analyzed
+# tail: 100 ms at 48 kHz. Declared constant, not tuned per case.
+TAIL_GUARD_SAMPLES = 4800
+# The click carrier has no sequence fixture (single 250 ms note from sample 0,
+# tools/render_reverb_reference.py). Its analyzed window is a DECLARED fixed
+# 100 ms offset from the render start -- deliberately wider than a
+# post-note-off window, so it covers the whole reverb decay of the carrier
+# including the excitation. Unchanged by issue #108 (it was 4800 before).
+CLICK_TAIL_START = TAIL_GUARD_SAMPLES
 
 BUDGETS = {
     # PROPOSED pending the SXT-013 fidelity-policy freeze (nothing here is
@@ -208,7 +239,77 @@ def run_model_on_dry(model, dry_l, dry_r, send, ret, reset_at_sample=None,
     return (wet_pred_l, wet_pred_r), (out_l, out_r)
 
 
-def check_wet(name, wet, wet_pred, t0_tail, extra=None):
+def tail_window(t0, frames, source, **provenance):
+    """Validate a DECLARED tail start against the loaded render; describe it.
+
+    Raises car.TailRegionError when the declared start leaves no tail inside
+    the render actually loaded, so the caller REFUSES (NO_VERDICT, exit 2)
+    instead of grading an empty or negative window (issue #108). Nothing here
+    is inferred from the signal: `source` names the declared data the start
+    came from.
+    """
+    t0 = int(t0)
+    frames = int(frames)
+    if t0 < 0:
+        raise car.TailRegionError(
+            "declared tail start %d is negative (%s)" % (t0, source))
+    if t0 >= frames:
+        raise car.TailRegionError(
+            "declared tail start %d is at or past the end of the loaded "
+            "%d-frame render (%s): no tail region remains, so this case "
+            "REFUSES rather than grading an empty window (issue #108)"
+            % (t0, frames, source))
+    win = {"tail_offset": t0, "tail_frames": frames - t0,
+           "tail_region_source": source}
+    win.update(provenance)
+    return win
+
+
+def sequence_tail_start(seq_path, frames, guard=TAIL_GUARD_SAMPLES):
+    """Sequence-derived tail start for this tool's bespoke tail window.
+
+    t0 = (last declared note_on/note_off sample in the committed sequence
+    fixture) + `guard`. DECLARED data only -- never silence-inferred, and
+    never guessed when the declaration is absent, malformed, or does not
+    describe the loaded render: those raise car.TailRegionError so the caller
+    refuses (NO_VERDICT, exit 2). Before issue #108 an events list with no
+    note event raised an unhandled ValueError from max() instead.
+
+    Returns (t0, window-provenance dict).
+    """
+    rel = os.path.relpath(seq_path, REPO)
+    if not os.path.exists(seq_path):
+        raise car.TailRegionError(
+            "sequence fixture %s is missing: the sequence-derived tail start "
+            "cannot be established from committed data (issue #108)" % rel)
+    with open(seq_path) as f:
+        seq = json.load(f)
+    if not isinstance(seq, dict) or not isinstance(seq.get("events"), list):
+        raise car.TailRegionError(
+            "sequence fixture %s declares no 'events' list: no tail start can "
+            "be derived from it (issue #108)" % rel)
+    ts = [e.get("t") for e in seq["events"]
+          if isinstance(e, dict) and e.get("type") in ("note_on", "note_off")]
+    if not ts:
+        raise car.TailRegionError(
+            "sequence fixture %s declares no note_on/note_off event: the tail "
+            "start (last note event + %d-sample guard) is undefined and this "
+            "tool does not guess one (issue #108 refusal path)" % (rel, guard))
+    for t in ts:
+        if isinstance(t, bool) or not isinstance(t, (int, float)) or t != int(t):
+            raise car.TailRegionError(
+                "sequence fixture %s declares a non-integral note-event sample "
+                "index %r: the tail start would be undefined" % (rel, t))
+    last_t = int(max(ts))
+    source = ("sequence %s last note_on/note_off sample (%d) + %d-sample "
+              "(%.0f ms) guard" % (rel, last_t, guard, guard / 48.0))
+    return last_t + int(guard), tail_window(
+        last_t + int(guard), frames, source,
+        tail_region_sequence=rel, last_event_sample=last_t,
+        guard_samples=int(guard))
+
+
+def check_wet(name, wet, wet_pred, t0_tail, extra=None, window=None):
     """Core wet comparison checks for one case. wet/wet_pred: (L,R)."""
     wl = wet[0]
     pl = wet_pred[0]
@@ -226,6 +327,26 @@ def check_wet(name, wet, wet_pred, t0_tail, extra=None):
     res["tail_wet_rms_dbfs"] = float(20 * np.log10(tail_wet_rms))
     res["tail_err_rms_dbfs"] = float(20 * np.log10(tail_err_rms))
     res["tail_rms_rel_db"] = float(10 * np.log10(tail_err_rms / tail_wet_rms + 1e-30))
+    # Tail-window transparency (issue #108). Shape parity with
+    # compare_audio_reference.tail_check's `tail_present` /
+    # `model_tail_present` legs, reported over THIS tool's sequence-derived
+    # window. Deliberately NOT a new entry in `checks`: the graded
+    # `tail_rms_rel` residual already subsumes presence (a fully silent model
+    # tail makes the residual equal to the reference tail RMS, i.e. 0 dB,
+    # which fails the -50 dB budget outright), and presence alone is the
+    # weaker leg -- the committed nc-b-tail-truncation control keeps
+    # `model_tail_present` true while failing `tail_rms_rel` at -7.32 dB. The
+    # fields make the window and its presence legs explicit without moving
+    # any budget or verdict.
+    res["tail_window"] = dict({"tail_region_source":
+                               "caller declared no window provenance"},
+                              **dict(window or {}))
+    res["tail_window"].update(tail_offset=int(t0_tail),
+                              tail_frames=int(len(wl) - t0_tail),
+                              tail_present=bool(np.max(np.abs(wtail)) > 0),
+                              model_tail_present=bool(np.max(np.abs(ptail)) > 0),
+                              tail_budget={"tail_rms_rel_db":
+                                           BUDGETS["tail_rms_rel_db"]})
     # decay curve over tail
     cw, tw = decay_curve(wtail)
     cpt, _ = decay_curve(et * 0 + ptail)
@@ -333,21 +454,31 @@ def cmd_case(args):
     model, c, st = build_model(side)
     send, ret = send_return_gains(st)
 
-    if name.startswith(("preset", "hardreset")):
+    if name.startswith("reset"):
+        # No tail window is derived: this case is BLOCKED by the oracle
+        # embedding limitation below before any tail is graded.
         dry, _ = read_bus(name.replace("wet", "dry"))
-        # tail start: last event of the sequence + small guard
-        seq = json.load(open(SEQ_COV))
-        last_t = max(e["t"] for e in seq["events"] if e["type"] in ("note_on", "note_off"))
-        t0 = last_t + 4800  # 100 ms after last event
-    elif name.startswith("reset"):
+        t0, win = None, None
+    elif name.startswith(("preset", "hardreset")):
         dry, _ = read_bus(name.replace("wet", "dry"))
-        seq = json.load(open(SEQ_COV))
-        last_t = max(e["t"] for e in seq["events"] if e["type"] in ("note_on", "note_off"))
-        t0 = last_t + 4800
+        # tail start: last declared note event of the sequence + guard.
+        # Refuses (NO_VERDICT) when that cannot be established (issue #108).
+        try:
+            t0, win = sequence_tail_start(SEQ_COV, len(wet[0]))
+        except car.TailRegionError as e:
+            return car.refuse(str(e))
     else:  # click
         dry, df = read_bus("click-dry")
         float_used = float_used and df
-        t0 = 4800
+        try:
+            t0 = CLICK_TAIL_START
+            win = tail_window(t0, len(wet[0]),
+                              "declared fixed %d-sample (%.0f ms) offset from "
+                              "the click render start (no sequence fixture: "
+                              "single 250 ms note from sample 0)"
+                              % (CLICK_TAIL_START, CLICK_TAIL_START / 48.0))
+        except car.TailRegionError as e:
+            return car.refuse(str(e))
 
     # Pinned loadFx semantics (setParamVal fx-type path): a type change marks
     # fx_reload and the effect is REBUILT at the next block boundary (long
@@ -430,7 +561,8 @@ def cmd_case(args):
                   "writes": model.ext_writes / len(dry[0])}}
     if pre_state_note is not None:
         extra["parameter_regimes"] = pre_state_note
-    res = check_wet(name, (wet[0], wet[1]), (pred_l, pred_r), t0, extra=extra)
+    res = check_wet(name, (wet[0], wet[1]), (pred_l, pred_r), t0, extra=extra,
+                    window=win)
     if name.startswith("hardreset"):
         # engine-side lipol coefficient smoothing at rebuild (control plane,
         # outside the frozen model's converged-coefficient scope): reported
@@ -444,7 +576,7 @@ def cmd_case(args):
         pl2, pr2 = pred_l.copy(), pred_r.copy()
         pl2[w0:w1] = wet[0][w0:w1]
         pr2[w0:w1] = wet[1][w0:w1]
-        res2 = check_wet(name, (wet[0], wet[1]), (pl2, pr2), t0)
+        res2 = check_wet(name, (wet[0], wet[1]), (pl2, pr2), t0, window=win)
         res.update({k: v for k, v in res2.items()
                     if k not in ("case", "checks")})
         res["checks"] = res2["checks"]

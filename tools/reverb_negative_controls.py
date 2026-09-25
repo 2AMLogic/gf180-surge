@@ -54,15 +54,18 @@ def build_case(case):
     dry, _ = cm.read_bus(case.replace("wet", "dry"))
     model, c, st = cm.build_model(side)
     send, ret = cm.send_return_gains(st)
-    seq = json.load(open(cm.SEQ_COV))
-    last_t = max(e["t"] for e in seq["events"] if e["type"] in ("note_on", "note_off"))
-    t0 = last_t + 4800
-    return model, c, st, wet, dry, send, ret, t0
+    # ONE definition of the sequence-derived tail window, shared with
+    # tools/compare_reverb_model.py (issue #108): the controls must grade the
+    # same window the comparator grades, and a sequence fixture that cannot
+    # define it raises car.TailRegionError here rather than an unhandled
+    # ValueError from max().
+    t0, win = cm.sequence_tail_start(cm.SEQ_COV, len(wet[0]))
+    return model, c, st, wet, dry, send, ret, t0, win
 
 
 def nc_a_generic():
     """Generic Schroeder network must FAIL the wet fidelity budget."""
-    model, c, st, wet, dry, send, ret, t0 = build_case("preset-notes-coverage-wet")
+    model, c, st, wet, dry, send, ret, t0, win = build_case("preset-notes-coverage-wet")
     n = len(dry[0])
     # drive the generic network with the same send signal; identical
     # send/return wiring; Schroeder comb lengths at 48 kHz, tuned t60 ~ 3.7 s
@@ -78,7 +81,8 @@ def nc_a_generic():
     wet_pred_r = np.float32(np.float32(dry[1]) + np.float32(out_l)).astype(np.float64)
     res = cm.check_wet("nc-a-generic-schroeder", (wet[0], wet[1]), (wet_pred_l, wet_pred_r), t0,
                        extra={"generic": "Schroeder 4-comb/2-allpass, t60 matched to 2^decay",
-                              "send_gain": send, "return_gain": ret})
+                              "send_gain": send, "return_gain": ret},
+                       window=win)
     res["target_check"] = "wet_rms_rel / decay_curve / stereo_corr (reference budget)"
     res["verdict"] = ("CONTROL-OK (generic FAILS the reference budget)"
                       if not all(res["checks"][k] for k in
@@ -89,13 +93,14 @@ def nc_a_generic():
 
 def nc_b_tail_truncation():
     """Model wet with the last 3 s of tail zeroed must FAIL tail continuity."""
-    model, c, st, wet, dry, send, ret, t0 = build_case("preset-notes-coverage-wet")
+    model, c, st, wet, dry, send, ret, t0, win = build_case("preset-notes-coverage-wet")
     n = len(dry[0])
     (pred_l, pred_r), _ = cm.run_model_on_dry(model, dry[0], dry[1], send, ret)
     cut = t0 + 48000  # 1 s into the tail: still above the measurement floor
     pred_l[cut:] = 0.0
     pred_r[cut:] = 0.0
     res = cm.check_wet("nc-b-tail-truncation", (wet[0], wet[1]), (pred_l, pred_r), t0,
+                       window=win,
                        extra={"truncation_sample": cut,
                               "truncation_note": "tail zeroed 1 s after input stop; the "
                                                  "dropped tail is above the -100 dBFS floor "
@@ -197,9 +202,7 @@ def nc_c_reset_semantics():
         return cm.run_model_on_dry(
             fresh_model, dry[0], dry[1], send, ret)
 
-    seq = json.load(open(cm.SEQ_COV))
-    last_t = max(e["t"] for e in seq["events"] if e["type"] in ("note_on", "note_off"))
-    t0 = last_t + 4800
+    t0, win = cm.sequence_tail_start(cm.SEQ_COV, len(wet[0]))
     (pl, pr), _ = run(True, model_pre)
     # exclude the declared 2-block rebuild-transient window (engine lipol
     # smoothing; control plane) from the mirror's budget checks, mirroring
@@ -209,10 +212,10 @@ def nc_c_reset_semantics():
     rebuild_transient_max_abs = float(np.max(np.abs(pl[w0:w1] - wet[0][w0:w1])))
     pl[w0:w1] = wet[0][w0:w1]
     pr[w0:w1] = wet[1][w0:w1]
-    ok = cm.check_wet("nc-c-reset-mirror", (wet[0], wet[1]), (pl, pr), t0)
+    ok = cm.check_wet("nc-c-reset-mirror", (wet[0], wet[1]), (pl, pr), t0, window=win)
     model2, _, _ = cm.build_model(side)
     (ql, qr), _ = run(False, model2)
-    bad = cm.check_wet("nc-c-noreset-variant", (wet[0], wet[1]), (ql, qr), t0)
+    bad = cm.check_wet("nc-c-noreset-variant", (wet[0], wet[1]), (ql, qr), t0, window=win)
     # boundary jump (across the Off block), engine vs reset mirror
     def _jump(x):
         seg = x[0][rb * 32 - 240: (rb + 1) * 32 + 240]
