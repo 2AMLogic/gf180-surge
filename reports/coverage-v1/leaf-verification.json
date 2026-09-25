@@ -105,6 +105,29 @@
         "rtl_vs_model": "PASS"
       }
     },
+    "filter_type:LP 24 dB": {
+      "evidence": [
+        {
+          "path": "reports/SXT-038/EVIDENCE.md",
+          "sha256": "594d1372c10987d07b7d350ff7e5db42716b8de024e94976c425cb7a9aa9b09b"
+        }
+      ],
+      "fixture_verified_paths": [],
+      "issue": 72,
+      "landed": true,
+      "note": "LP 24 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); RTL-vs-model EXACT on 11 fixtures (893,952 samples, 195,552 checkpoint fields, 0 mismatches) incl. the reso=1.0 self-oscillation corner, both boundFreq clamp edges, the third subtype at a live keytrack/env-mod control plane, and the mid-render subtype-toggle reload path. model_vs_reference is measured against the PINNED FILTER SUBMODULE at the filter-stage boundary (DR-0010), NOT against a full-engine preset render: no executable oracle was available in the implementation environment (finding F-038-1). 7/11 cases PASS the [PROPOSED] budgets (static-cutoff cases sit at the quantization floor, L2 max 1-52 LSB Q10.21); 4 recorded misses at rho~1 / moving coefficient planes with quantified attribution (F-038-2 coefficient-smoothing drift bounded by blockSize/2 = 32 LSB; F-038-5 kernel-state quantization at rho~1) - PENDING-FREEZE, no budget widened. Stability corners bounded+STABLE on both legs. Stage-level evidence only, so no preset is fixture-verified by this leaf.",
+      "overlap_paths_not_fixture_verified": [
+        "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+        "resources/data/patches_3rdparty/Damon Armani/Plucks/Main Brass.fxp",
+        "resources/data/patches_factory/Chords/Major 7 MkII.fxp",
+        "resources/data/patches_factory/Sequences/Phase 1.fxp"
+      ],
+      "verification": {
+        "model_vs_reference": "PARTIAL",
+        "rtl_vs_model": "PASS"
+      }
+    },
     "filter_type:LP Legacy Ladder": {
       "evidence": [
         {

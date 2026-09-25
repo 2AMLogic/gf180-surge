@@ -1,0 +1,28 @@
+SXT-038 (#72) LP 24 dB leaf — negative controls
+Each control MUST fail the check it targets; exit 0 only if all did.
+
+NC-A wrong subtype (reference-budget check must FAIL):
+  NC-A chords-std: true subtype 0 -> forced 1: budget FAIL (max 444409 LSB, rms 74439.005) => CONTROL-OK
+  NC-A edges: true subtype 1 -> forced 2: budget FAIL (max 180951 LSB, rms 54345.761) => CONTROL-OK
+  NC-A chords-clean: true subtype 2 -> forced 0: budget FAIL (max 642014 LSB, rms 28272.565) => CONTROL-OK
+
+NC-B wrong algorithm (reference-budget check must FAIL):
+  NC-B edges: LP 12 dB (landed SXT-037 model, subtype 1) substituted for LP 24 dB: budget FAIL (max 217485 LSB, rms 42800.265) => CONTROL-OK
+  NC-B phase1: LP 12 dB (landed SXT-037 model, subtype 1) substituted for LP 24 dB: budget FAIL (max 1862200 LSB, rms 716421.688) => CONTROL-OK
+
+NC-C applicability boundary (must REFUSE, never clamp):
+  NC-C subtype 3 (outside the engine-declared LP24 set): REFUSED: subtype 3 outside the declared LP24 set (0, 1, 2) => CONTROL-OK
+  NC-C kernel with subtype 3: REFUSED: subtype 3 outside the declared LP24 set (0, 1, 2) => CONTROL-OK
+  NC-C resonance 1.5 (> 1): REFUSED: resonance 1.5000 outside the declared scope [0.0, 1.0] => CONTROL-OK
+  NC-C resonance -0.25 (< 0): REFUSED: resonance -0.2500 outside the declared scope [0.0, 1.0] => CONTROL-OK
+  NC-C cutoff +300 st (beyond the declared parameter span): REFUSED: cutoff 300.000 st outside the declared scope [-240.0, 240.0] => CONTROL-OK
+  NC-C cutoff -300 st (beyond the declared parameter span): REFUSED: cutoff -300.000 st outside the declared scope [-240.0, 240.0] => CONTROL-OK
+  NC-C case with filter type 1 (fut_lp12): REFUSED: case edges: filter type 1 is not fut_lp24 (2) => CONTROL-OK
+
+NC-D RTL mutant (exactness harness must FAIL):
+  NC-D RTL mutant (rounding bias 2^19): exactness FAIL with 31 mismatches => CONTROL-OK
+
+NC-E control-plane tamper (runner must REFUSE):
+  NC-E tampered control word (block 17 cutoff +1 st): REFUSED: block 17: control words differ (1.637497008,0.773648024) vs (0.6374970078468323,0.7736480236053467) => CONTROL-OK
+
+RESULT: 14/14 controls failed their target check as designed — ALL CONTROLS OK

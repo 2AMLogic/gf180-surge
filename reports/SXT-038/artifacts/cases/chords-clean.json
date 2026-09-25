@@ -1,0 +1,35 @@
+{
+ "carrier": {
+  "census_blob_sha1": "ceaa96a85b3fdd3d9f026087c70d6fb2a6e76057",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "rel": "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+  "scene": 0,
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "unit": 0
+ },
+ "case": "chords-clean",
+ "filter": {
+  "cut": 70.0,
+  "em": 0.0,
+  "kt": 0.0,
+  "ktR": 60.0,
+  "res": 0.0,
+  "subtype": 2,
+  "subtype_name": "Clean",
+  "type": 2,
+  "type_name": "LP 24 dB"
+ },
+ "issue": "SXT-038",
+ "schema": "sxt-038-case/1",
+ "sequence": "seq-notes-coverage-v1",
+ "stimulus": {
+  "blocks": 1944,
+  "bundle": "reports/sxt-037/artifacts/bundle-rainy",
+  "lane": 0,
+  "note": "real engine voice-path signal captured at the filter-unit INPUT boundary by the SXT-037 oracle tap (DR-0005) and committed there; reused here as a declared stimulus, identical for both legs",
+  "sha256": "349fe4e2ebfb69ccc725e98efa0198dd7c2e44cb8215ebcbb39d819e0001f566",
+  "source": "sxt037-tap",
+  "tag": 0
+ }
+}

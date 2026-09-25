@@ -1,0 +1,68 @@
+{
+ "carrier": {
+  "census_blob_sha1": "099e88298ae11cc7a5335054c04f3caf7e1539dc",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "rel": "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+  "scene": 1,
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "unit": 0
+ },
+ "case": "edges-reso1",
+ "filter": {
+  "cut": 0.637497,
+  "em": 0.0,
+  "kt": 0.0,
+  "ktR": 60.0,
+  "res": 0.773648,
+  "subtype": 1,
+  "subtype_name": "Driven",
+  "type": 2,
+  "type_name": "LP 24 dB"
+ },
+ "issue": "SXT-038",
+ "overrides": {
+  "res": 1.0
+ },
+ "reference": {
+  "block_size_os": 64,
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "harness_source_sha256": "b2b9a201dc62748b5361f827e0a4488daf2b0568375586f2186048a52dd4e543",
+  "kind": "pinned-filter-submodule",
+  "note": "pinned filter code only; NOT a full-engine preset render",
+  "provider": "surge-lut",
+  "sample_rate_os": 96000,
+  "sst_basic_blocks_commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
+  "sst_filters_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6"
+ },
+ "run": {
+  "blocks": 384,
+  "cut_max": 0.6374970078468323,
+  "cut_min": 0.6374970078468323,
+  "peak_abs_in": 0.02779674530029297,
+  "peak_abs_out": 0.5180584788322449,
+  "resets": 9,
+  "samples": 24576,
+  "segments": 9,
+  "subtypes": [
+   1
+  ]
+ },
+ "schema_version": 1,
+ "sequence": "seq-notes-coverage-v1",
+ "sha256": {
+  "coeffs.jsonl": "16c7a46861057002c38fbf5211c0f129500b239b470058b174dd54f9efca2478",
+  "regs.bin": "88037ef8927a511ec6fb0973fb339689d2b0e7f791f2cd12f02afbef9588e91a",
+  "units.bin": "a293f3fcab102c0d174e6705600e5913e189fafd538e76b378613941f007b8e1"
+ },
+ "stimulus": {
+  "blocks": 384,
+  "bundle": "reports/sxt-037/artifacts/bundle-badnews",
+  "lane": 0,
+  "note": "real engine voice-path signal captured at the filter-unit INPUT boundary by the SXT-037 oracle tap (DR-0005) and committed there; reused here as a declared stimulus, identical for both legs",
+  "sha256": "0da960f1ffa3b4f4c62cbc8de226bb6ba19f0767a43456e1ca3e5e27cb5f7d52",
+  "source": "sxt037-tap",
+  "tag": 0
+ }
+}

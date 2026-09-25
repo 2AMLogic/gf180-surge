@@ -1,0 +1,66 @@
+{
+ "carrier": {
+  "census_blob_sha1": "ceaa96a85b3fdd3d9f026087c70d6fb2a6e76057",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "rel": "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+  "scene": 0,
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "unit": 0
+ },
+ "case": "chords-clean",
+ "filter": {
+  "cut": 70.0,
+  "em": 0.0,
+  "kt": 0.0,
+  "ktR": 60.0,
+  "res": 0.0,
+  "subtype": 2,
+  "subtype_name": "Clean",
+  "type": 2,
+  "type_name": "LP 24 dB"
+ },
+ "issue": "SXT-038",
+ "overrides": {},
+ "reference": {
+  "block_size_os": 64,
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "harness_source_sha256": "b2b9a201dc62748b5361f827e0a4488daf2b0568375586f2186048a52dd4e543",
+  "kind": "pinned-filter-submodule",
+  "note": "pinned filter code only; NOT a full-engine preset render",
+  "provider": "surge-lut",
+  "sample_rate_os": 96000,
+  "sst_basic_blocks_commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
+  "sst_filters_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6"
+ },
+ "run": {
+  "blocks": 1944,
+  "cut_max": 70.0,
+  "cut_min": 70.0,
+  "peak_abs_in": 0.6173219680786133,
+  "peak_abs_out": 0.6108445525169373,
+  "resets": 9,
+  "samples": 124416,
+  "segments": 9,
+  "subtypes": [
+   2
+  ]
+ },
+ "schema_version": 1,
+ "sequence": "seq-notes-coverage-v1",
+ "sha256": {
+  "coeffs.jsonl": "96be867ec1c2671b80a6f6095689ec931dc816ba53c15cbc5e5196f29c90cf64",
+  "regs.bin": "98d42df49396db1594b4727ebb830b8691d8e38f313f7023399def42730843c0",
+  "units.bin": "e403e59eb12d0e6958964f1bad19f96b631ed27b796f243ac014a5e99f4acf4f"
+ },
+ "stimulus": {
+  "blocks": 1944,
+  "bundle": "reports/sxt-037/artifacts/bundle-rainy",
+  "lane": 0,
+  "note": "real engine voice-path signal captured at the filter-unit INPUT boundary by the SXT-037 oracle tap (DR-0005) and committed there; reused here as a declared stimulus, identical for both legs",
+  "sha256": "349fe4e2ebfb69ccc725e98efa0198dd7c2e44cb8215ebcbb39d819e0001f566",
+  "source": "sxt037-tap",
+  "tag": 0
+ }
+}

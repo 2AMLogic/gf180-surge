@@ -1,0 +1,107 @@
+{
+  "issue": "SXT-038",
+  "all_controls_ok": true,
+  "controls": [
+    {
+      "control": "NC-A",
+      "case": "chords-std",
+      "true_subtype": 0,
+      "forced_subtype": 1,
+      "budget_verdict": "FAIL",
+      "max_abs_lsb": 444409,
+      "rms_lsb": 74439.005,
+      "control_ok": true
+    },
+    {
+      "control": "NC-A",
+      "case": "edges",
+      "true_subtype": 1,
+      "forced_subtype": 2,
+      "budget_verdict": "FAIL",
+      "max_abs_lsb": 180951,
+      "rms_lsb": 54345.761,
+      "control_ok": true
+    },
+    {
+      "control": "NC-A",
+      "case": "chords-clean",
+      "true_subtype": 2,
+      "forced_subtype": 0,
+      "budget_verdict": "FAIL",
+      "max_abs_lsb": 642014,
+      "rms_lsb": 28272.565,
+      "control_ok": true
+    },
+    {
+      "control": "NC-B",
+      "case": "edges",
+      "substituted": "fut_lp12",
+      "budget_verdict": "FAIL",
+      "max_abs_lsb": 217485,
+      "rms_lsb": 42800.265,
+      "control_ok": true
+    },
+    {
+      "control": "NC-B",
+      "case": "phase1",
+      "substituted": "fut_lp12",
+      "budget_verdict": "FAIL",
+      "max_abs_lsb": 1862200,
+      "rms_lsb": 716421.688,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "subtype 3 (outside the engine-declared LP24 set)",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "kernel with subtype 3",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "resonance 1.5 (> 1)",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "resonance -0.25 (< 0)",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "cutoff +300 st (beyond the declared parameter span)",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "cutoff -300 st (beyond the declared parameter span)",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-C",
+      "probe": "case file with a non-LP24 type",
+      "refused": true,
+      "control_ok": true
+    },
+    {
+      "control": "NC-D",
+      "verdict": "FAIL",
+      "mismatches": 31,
+      "control_ok": true
+    },
+    {
+      "control": "NC-E",
+      "refused": true,
+      "control_ok": true
+    }
+  ]
+}

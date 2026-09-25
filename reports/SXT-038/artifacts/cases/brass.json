@@ -1,0 +1,35 @@
+{
+ "carrier": {
+  "census_blob_sha1": "5377665368711db5785c98179ece7f9f3996392b",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "rel": "resources/data/patches_3rdparty/Damon Armani/Plucks/Main Brass.fxp",
+  "scene": 0,
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "unit": 0
+ },
+ "case": "brass",
+ "filter": {
+  "cut": 70.0,
+  "em": 0.0,
+  "kt": 0.0,
+  "ktR": 60.0,
+  "res": 0.0,
+  "subtype": 0,
+  "subtype_name": "Standard",
+  "type": 2,
+  "type_name": "LP 24 dB"
+ },
+ "issue": "SXT-038",
+ "schema": "sxt-038-case/1",
+ "sequence": "seq-notes-coverage-v1",
+ "stimulus": {
+  "blocks": 1944,
+  "bundle": "reports/sxt-037/artifacts/bundle-t9",
+  "lane": 0,
+  "note": "real engine voice-path signal captured at the filter-unit INPUT boundary by the SXT-037 oracle tap (DR-0005) and committed there; reused here as a declared stimulus, identical for both legs",
+  "sha256": "9a816de9efc10177a63132fdc0a2364a86298f63464d58d51f24e6c5bbd34493",
+  "source": "sxt037-tap",
+  "tag": 1
+ }
+}

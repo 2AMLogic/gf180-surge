@@ -1,0 +1,14 @@
+{
+  "tb": "tb_lp24.sv",
+  "case": "chords-clean",
+  "leg": "L2a-own-coeffs",
+  "verdict": "PASS",
+  "expected": "PASS",
+  "checked": {
+    "samples": 124416,
+    "checkpoints": 1944,
+    "fields": 27216
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

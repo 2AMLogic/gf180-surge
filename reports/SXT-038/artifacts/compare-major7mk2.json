@@ -1,0 +1,75 @@
+{
+  "case": "major7mk2",
+  "leg": "L2a-own-coeffs",
+  "subtypes": [
+    2
+  ],
+  "blocks": 1944,
+  "samples": 124416,
+  "budgets": {
+    "L1_C_max_abs_lsb": 16,
+    "L1_C_max_rel_lsb": 16,
+    "L2_max_abs_lsb": 4096,
+    "L2_rms_lsb": 256,
+    "spectral_corr_min": 0.999
+  },
+  "checks": {
+    "L1_C_max_abs_lsb": {
+      "achieved": 38,
+      "budget": 16,
+      "pass": false
+    },
+    "L1_C_max_rel_lsb": {
+      "achieved": 38.0,
+      "budget": 16,
+      "pass": false
+    },
+    "L2_max_abs_lsb": {
+      "achieved": 1194,
+      "budget": 4096,
+      "pass": true
+    },
+    "L2_rms_lsb": {
+      "achieved": 169.016,
+      "budget": 256,
+      "pass": true
+    },
+    "stability": {
+      "achieved": "STABLE",
+      "budget": "STABLE",
+      "pass": true
+    }
+  },
+  "spectral_corr": {
+    "achieved": 0.988803,
+    "budget": 0.999,
+    "pass": false,
+    "gating": false
+  },
+  "rms_db_rel_ref_peak": -74.79,
+  "ref_peak_lsb": 927389,
+  "model_state_peak_lsb": 10764330,
+  "reg_max_abs_lsb": 14454,
+  "qmul_per_sample": 28.0,
+  "verdict": "FAIL",
+  "verdict_including_spectral": "FAIL",
+  "status_note": "[PROPOSED] budgets, PENDING-FREEZE (SXT-013/#12). A FAIL is a recorded finding, not a fidelity verdict, and is never resolved by widening the budget.",
+  "reference": {
+    "block_size_os": 64,
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "harness_source_sha256": "b2b9a201dc62748b5361f827e0a4488daf2b0568375586f2186048a52dd4e543",
+    "kind": "pinned-filter-submodule",
+    "note": "pinned filter code only; NOT a full-engine preset render",
+    "provider": "surge-lut",
+    "sample_rate_os": 96000,
+    "sst_basic_blocks_commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
+    "sst_filters_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6"
+  },
+  "attribution_l2b": {
+    "max_abs_lsb": 899,
+    "rms_lsb": 97.677,
+    "rms_db_rel_ref_peak": -79.55,
+    "note": "model kernel driven by the PINNED coefficient plane: isolates kernel arithmetic from coefficient construction"
+  }
+}

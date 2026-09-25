@@ -1,0 +1,70 @@
+{
+ "carrier": {
+  "census_blob_sha1": "099e88298ae11cc7a5335054c04f3caf7e1539dc",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "rel": "resources/data/patches_3rdparty/Argitoth/Rhythms/Edges Rhythm.fxp",
+  "scene": 1,
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "unit": 0
+ },
+ "case": "edges-toggle",
+ "filter": {
+  "cut": 0.637497,
+  "em": 0.0,
+  "kt": 0.0,
+  "ktR": 60.0,
+  "res": 0.773648,
+  "subtype": 1,
+  "subtype_name": "Driven",
+  "type": 2,
+  "type_name": "LP 24 dB"
+ },
+ "issue": "SXT-038",
+ "overrides": {
+  "toggle_from_segment": 4,
+  "toggle_subtype": 2
+ },
+ "reference": {
+  "block_size_os": 64,
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "harness_source_sha256": "b2b9a201dc62748b5361f827e0a4488daf2b0568375586f2186048a52dd4e543",
+  "kind": "pinned-filter-submodule",
+  "note": "pinned filter code only; NOT a full-engine preset render",
+  "provider": "surge-lut",
+  "sample_rate_os": 96000,
+  "sst_basic_blocks_commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
+  "sst_filters_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6"
+ },
+ "run": {
+  "blocks": 768,
+  "cut_max": 0.6374970078468323,
+  "cut_min": 0.6374970078468323,
+  "peak_abs_in": 0.06600141525268555,
+  "peak_abs_out": 0.03971623256802559,
+  "resets": 9,
+  "samples": 49152,
+  "segments": 9,
+  "subtypes": [
+   1,
+   2
+  ]
+ },
+ "schema_version": 1,
+ "sequence": "seq-notes-coverage-v1",
+ "sha256": {
+  "coeffs.jsonl": "605b79a0fc10a48823a7738b5714c40e469ca2665857a74c6fd7e10e27218c10",
+  "regs.bin": "bfee34921450d446baa2ad7aa35b2bb4db641c1af1d630fb06e2c126df64939f",
+  "units.bin": "ed9e97cb6b247caba0bd246b83cf1b0bd72ff456d5b824c1d7089f1c6372467d"
+ },
+ "stimulus": {
+  "blocks": 768,
+  "bundle": "reports/sxt-037/artifacts/bundle-badnews",
+  "lane": 0,
+  "note": "real engine voice-path signal captured at the filter-unit INPUT boundary by the SXT-037 oracle tap (DR-0005) and committed there; reused here as a declared stimulus, identical for both legs",
+  "sha256": "0da960f1ffa3b4f4c62cbc8de226bb6ba19f0767a43456e1ca3e5e27cb5f7d52",
+  "source": "sxt037-tap",
+  "tag": 0
+ }
+}

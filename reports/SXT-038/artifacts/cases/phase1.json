@@ -1,0 +1,35 @@
+{
+ "carrier": {
+  "census_blob_sha1": "52f18c7c55c45e7314edf082f2c1384191712d92",
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "rel": "resources/data/patches_factory/Sequences/Phase 1.fxp",
+  "scene": 0,
+  "schema_version": "sxt-011-normalized-graph-schema/1.0.0",
+  "unit": 0
+ },
+ "case": "phase1",
+ "filter": {
+  "cut": 6.375,
+  "em": 27.771446,
+  "kt": 0.492857,
+  "ktR": 60.0,
+  "res": 1.0,
+  "subtype": 1,
+  "subtype_name": "Driven",
+  "type": 2,
+  "type_name": "LP 24 dB"
+ },
+ "issue": "SXT-038",
+ "schema": "sxt-038-case/1",
+ "sequence": "seq-notes-coverage-v1",
+ "stimulus": {
+  "blocks": 1944,
+  "bundle": "reports/sxt-037/artifacts/bundle-badnews",
+  "lane": 0,
+  "note": "real engine voice-path signal captured at the filter-unit INPUT boundary by the SXT-037 oracle tap (DR-0005) and committed there; reused here as a declared stimulus, identical for both legs",
+  "sha256": "0da960f1ffa3b4f4c62cbc8de226bb6ba19f0767a43456e1ca3e5e27cb5f7d52",
+  "source": "sxt037-tap",
+  "tag": 0
+ }
+}
