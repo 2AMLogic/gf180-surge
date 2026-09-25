@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028e",
+  "model_revision": "0ee06a48cbff15c2df1f19c08b1485ba5a247e6fa162ddf58b211afaca8c3d67",
+  "budget_class": "SXT-023 effect-slice [PROPOSED] (freeze gated on #12)",
+  "budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "grading_boundary": "model-vs-model (pinned-oracle leg NOT_RUN)",
+  "controls": [
+    {
+      "id": "NC-0",
+      "kind": "baseline-sanity",
+      "what": "independent float structural twin vs frozen fixed model",
+      "must": "PASS",
+      "verdict": "PASS",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 15.22644645604305,
+        "rms_diff_lsb": 5.73632528112405,
+        "rms_diff_dbfs": -105.23932286082216,
+        "spectral_corr": 0.9999999954022704
+      },
+      "ok": true,
+      "note": "establishes the check has resolving power; NOT a reference claim"
+    },
+    {
+      "id": "NC-A",
+      "kind": "generic-substitute",
+      "what": "single-rate tanh clip (no oversampling / halfband / EQ / feedback)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 1082421.291061972,
+        "rms_diff_lsb": 597528.49505854,
+        "rms_diff_dbfs": -4.884825848867495,
+        "spectral_corr": 0.8540460697030138
+      },
+      "ok": true,
+      "label": "ADAPTED \u2014 refused from original-preset coverage"
+    },
+    {
+      "id": "NC-C",
+      "kind": "wrong-order",
+      "what": "pre-EQ and post-EQ bands swapped around the shaper",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 247051.42033011676,
+        "rms_diff_lsb": 118841.93946241925,
+        "rms_diff_dbfs": -18.912603650864106,
+        "spectral_corr": 0.9733324107670269
+      },
+      "ok": true
+    },
+    {
+      "id": "NC-F",
+      "kind": "halfband-phase",
+      "what": "halfband A/B polyphase branches swapped in the reconstruction (bright/hot stimulus: 4.7 kHz + broadband noise, drive 45 dB)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 63653.269951301394,
+        "rms_diff_lsb": 30630.042714341547,
+        "rms_diff_dbfs": -30.689046216767654,
+        "spectral_corr": 0.9828794565692054
+      },
+      "ok": true,
+      "benign_stimulus_leg": {
+        "verdict": "PASS",
+        "metrics": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 2571.3988245141227,
+          "rms_diff_lsb": 562.5808967436111,
+          "rms_diff_dbfs": -65.40829864607579,
+          "spectral_corr": 0.999901190065928
+        },
+        "note": "196 Hz sine: the swap stays inside the [PROPOSED] budgets. Recorded as a sensitivity limit of the model-boundary check, not as an acceptable defect."
+      }
+    },
+    {
+      "id": "NC-D",
+      "kind": "shared-state",
+      "what": "two concurrent instances pooled onto one DistortionState",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "ok": true,
+      "metrics": {
+        "instance_a_exact": false,
+        "instance_b_exact": false,
+        "a": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 806997.0,
+          "rms_diff_lsb": 376382.0011628365,
+          "rms_diff_dbfs": -8.899421325565669,
+          "spectral_corr": 0.9598694846071596
+        },
+        "b": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 1466608.0,
+          "rms_diff_lsb": 579651.1365682819,
+          "rms_diff_dbfs": -5.148664430444971,
+          "spectral_corr": 0.8980238940265071
+        }
+      }
+    },
+    {
+      "id": "NC-B",
+      "kind": "dropped-tail",
+      "what": "render truncated 1 block into the declared 1600-block ringout span (inside the measured 1592-block live decay)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "ok": true,
+      "metrics": {
+        "declared_tail_blocks": 1600,
+        "declared_tail_seconds": 1.0666666666666667,
+        "ringout_end_fade_blocks": 320,
+        "measured_live_decay_blocks": 1592,
+        "measured_live_decay_ms": 1061.3333333333333,
+        "reference_tail_rms_lsb": 206141.54009885888,
+        "residual_rms_lsb": 201535.81537071939,
+        "tail_residual_rel_db": -0.19626559220424053,
+        "gate_rel_db": -20.0
+      }
+    },
+    {
+      "id": "KG-1",
+      "kind": "known-gap-probe",
+      "what": "late truncation (800 blocks into the ringout) is NOT detected by the whole-region residual gate",
+      "must": "n/a (probe, not a control)",
+      "verdict": "PASS (gap confirmed)",
+      "ok": true,
+      "metrics": {
+        "tail_residual_rel_db": -80.40348849881639,
+        "gate_rel_db": -20.0,
+        "signal_peak_lsb_at_truncation": 44.0,
+        "measured_live_decay_blocks": 1592,
+        "why": "the tail-region RMS is dominated by the early high-energy part of the decay, so removing the quiet remainder stays inside the gate",
+        "covered_instead_by": "reports/SXT-028e/rtl-exactness.json cases[ringout-tail-*] (integer equality over the whole declared span, fade included)"
+      }
+    },
+    {
+      "id": "NC-E",
+      "kind": "stale-stub",
+      "what": "harness pinned to a stale frozen-model revision",
+      "must": "FAIL (refuse to report PASS)",
+      "verdict": "REFUSED",
+      "ok": true,
+      "metrics": {
+        "model_revision": "0ee06a48cbff15c2df1f19c08b1485ba5a247e6fa162ddf58b211afaca8c3d67",
+        "stale_pin_checked_in_rtl_harness": "reports/SXT-028e/rtl-exactness.json mutant_controls[stale-revision-pin]"
+      }
+    }
+  ],
+  "status": "ALL-CONTROLS-OK"
+}
