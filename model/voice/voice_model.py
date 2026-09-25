@@ -263,7 +263,10 @@ def build_sinctable():
 SINC_MAIN, SINC_DERIV = build_sinctable()
 
 # Halfband (order 12, steep) coefficients: quoted scalar constants from the
-# pinned sst-filters HalfRateFilter.h; provenance in decision-records/DR-0001.
+# pinned sst-filters HalfRateFilter.h (GPL-3.0-or-later, submodule commit
+# e92d93a92beabde03fa4ab767b285fa21c6608d6 in oracle/manifest.json); licensing
+# decision: decision-records/0002-halfband-coefficients.md (DR-0001 is the
+# oracle automation source policy and does not cover these constants).
 HALFBAND_A = [0.036681502163648017, 0.2746317593794541, 0.56109896978791948,
               0.769741833862266, 0.8922608180038789, 0.962094548378084]
 HALFBAND_B = [0.13654762463195771, 0.42313861743656667, 0.6775400499741616,

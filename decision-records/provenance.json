@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "governance_issue": 25,
+  "audit_tool": "tools/check_provenance.py",
+  "notes": [
+    "Provenance rows for every in-repo file that carries third-party-derived content, or whose build/run boundary touches the pinned GPL-3.0-or-later trees. Required by AGENTS.md ('record file/table-level provenance before adopting any third-party code, table, or asset'; 'copying Surge-derived code, tables, or assets into this repository requires a visible license decision record before merge') and by docs/REUSE-AUDIT.md 'Adoption mechanics'. Governance issue #25 (SXT-019) owns this file.",
+    "A row is not a ratification. Most cited records are PROPOSED - pending owner ratification; the record's own Status line is authoritative and this project has made no distribution-license determination.",
+    "Rows describe repository content only. The pinned Surge engine, its presets, the SST submodules and the Airwindows sources stay OUTSIDE this repository; no row here authorizes copying them in.",
+    "tools/check_provenance.py enforces this file: stale rows, uncorroborated rows, blanket patterns, exemptions of non-exemptible rules, and unattributed carriage signals all fail. Run it (and --negative-control) before merging anything that adds third-party-derived content."
+  ],
+  "scan_floor": 1200,
+  "scope_exclusions": [
+    {
+      "prefix": ".loom/",
+      "reason": "Loom orchestration surfaces, installed and refreshed from rjwalters/loom by the periodic resync commit (see .loom/docs/repo-owned-files.md). Not product content; its provenance is the Loom install as a whole, not a per-file decision of this repository. DECLARED HOLE: third-party content placed under this prefix is not audited."
+    },
+    {
+      "prefix": ".claude/",
+      "reason": "Loom-installed Claude Code command/role surfaces, same resync ownership as .loom/. DECLARED HOLE: not audited."
+    },
+    {
+      "prefix": ".agents/",
+      "reason": "Loom-installed runtime-neutral agent surfaces, same resync ownership as .loom/. DECLARED HOLE: not audited."
+    }
+  ],
+  "entries": [
+    {
+      "path": "model/voice/voice_model.py",
+      "class": "quoted-constants",
+      "content": "HALFBAND_A / HALFBAND_B - the 12 opaque allpass coefficients of sst::filters::HalfRate::HalfRateFilter(M=6, steep), quoted as data (no construction formula exists in the pinned tree) and quantized to Q10.21 as HALFBAND_A_Q / HALFBAND_B_Q. No SST code copied.",
+      "upstream": "sst-filters libs/sst/sst-filters/include/sst/filters/HalfRateFilter.h",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later",
+      "decision_record": "0002"
+    },
+    {
+      "path": "model/effects/reverb1/coefficient_plane.py",
+      "class": "quoted-constants",
+      "content": "DELAY_TIME_TABLES - the 16x4 delay_time constants transcribed from Reverb1::loadpreset(). Structure re-implemented and cited; no SST code copied.",
+      "upstream": "sst-effects include/sst/effects/Reverb1.h",
+      "pinned_commit": "adcac6950292dacc529651093e7ece2d1c8c0d4b",
+      "upstream_license": "GPL-3.0-or-later",
+      "decision_record": "0003"
+    },
+    {
+      "path": "model/oscillators/wavetable/wt_model.py",
+      "class": "quoted-constants",
+      "content": "HRFILTER_63 - the 63-tap mip halfband cascade constants (hrfilter[63], Wavetable.cpp MipMapWT), quoted as data. Wavetable payloads themselves stay external (see the compiler row below).",
+      "upstream": "surge src/common/dsp/Wavetable.cpp",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later",
+      "decision_record": "0004"
+    },
+    {
+      "path": "compiler/assets/wavetable.py",
+      "class": "external-asset-identity",
+      "content": "Wavetable asset IDENTITY only - path, sha256, size, dims, mip/AA classification of .wt payloads resolved from the pinned tree. No payload bytes are stored in this repository; a compile-time hash mismatch aborts.",
+      "upstream": "surge resources/data/wavetables* (asset payloads, referenced by identity only)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later (payloads, distributed with the engine)",
+      "decision_record": "0004"
+    },
+    {
+      "path": "model/effects/aw-49/galactic_model.py",
+      "class": "quoted-constants",
+      "content": "The twelve Galactic delay-length multipliers - opaque designed integers with no construction formula in the pinned tree, quoted as data with file-level provenance. Every other coefficient is re-derived from cited formulas at run time; no Airwindows code copied.",
+      "upstream": "surge libs/airwindows/src/GalacticProc.cpp + Galactic.h (Airwindows, 2016; upstream attribution restated in model/effects/aw-49/galactic_model.py)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later",
+      "decision_record": "0006"
+    },
+    {
+      "path": "model/oscillators/sine/README.md",
+      "class": "quoted-constants",
+      "content": "The 20-entry wave_remap streaming-migration table, quoted as data in the freeze documentation. model/oscillators/sine/sine_model.py re-implements the migration's control flow (range check, reset, remap) and carries no copy of the table.",
+      "upstream": "surge src/common/dsp/oscillators/SineOscillator.cpp (handleStreamingMismatches)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later",
+      "decision_record": "0008"
+    },
+    {
+      "path": "oracle/sxt038/lp24_ref_harness.cpp",
+      "class": "api-client-harness",
+      "content": "Original work of this repository (Apache-2.0) that at BUILD time includes headers from the externally checked out, manifest-pinned sst-filters / sst-basic-blocks submodules. Contains no copied code, tables or assets; the resulting binary is a combined GPL work built into an external scratch directory, never committed and never distributed. Only its numeric output is committed.",
+      "upstream": "sst-filters + sst-basic-blocks headers (included at build time from an external checkout)",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later (the included headers)",
+      "decision_record": "0010"
+    },
+    {
+      "path": "oracle/sxt038/build_lp24_ref.sh",
+      "class": "api-client-harness",
+      "content": "Builds the SXT-038 harness above against the manifest-pinned external submodules in a scratch directory outside this repository. Carries no upstream code.",
+      "upstream": "sst-filters + sst-basic-blocks (external checkout, pinned in oracle/manifest.json)",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later (the built-against sources)",
+      "decision_record": "0010"
+    },
+    {
+      "path": "tools/render_lpmoog_reference.py",
+      "class": "api-client-harness",
+      "content": "Generates, builds and runs the SXT-039 pinned-kernel harness OUTSIDE this repository. The generated harness source is original work that includes pinned sst-filters / sst-basic-blocks headers; only the rendered reference data and the harness source's sha256 are committed.",
+      "upstream": "sst-filters + sst-basic-blocks headers (included at build time from an external checkout)",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later (the included headers)",
+      "decision_record": "0009"
+    },
+    {
+      "path": "tools/render_lp24_reference.py",
+      "class": "external-build-client",
+      "content": "Drives the externally built SXT-038 harness (pinned LP 24 dB coefficient maker and kernel) and records the rendered reference data. Carries no upstream code.",
+      "upstream": "sst-filters libs/sst/sst-filters (executed via the external harness build)",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later (the driven binary)",
+      "decision_record": "0010"
+    },
+    {
+      "path": "tools/render_lp12_reference.py",
+      "class": "external-build-client",
+      "content": "Runs only against the oracle tap instrumentation: an externally patched build of the pinned engine that writes read-only per-sample filter taps. The patch lives outside this repository; this file carries no upstream code.",
+      "upstream": "surge (externally patched build on the oracle host)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later (the patched build)",
+      "decision_record": "0005"
+    },
+    {
+      "path": "tools/render_aw49_reference.py",
+      "class": "external-build-client",
+      "content": "Runs only where the DR-0006 instrumented build of the pinned engine exists (tapped AW-49 slot-boundary renders). The instrumented build lives outside this repository; this file carries no upstream code.",
+      "upstream": "surge (externally instrumented build on the oracle host)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later (the instrumented build)",
+      "decision_record": "0006"
+    },
+    {
+      "path": "tools/extract_aw49_inputs.py",
+      "class": "external-build-client",
+      "content": "Fail-closed extraction of the AW-49 fixture inputs from the pinned engine's post-load normalized state through surgepy. Carries no upstream code or tables.",
+      "upstream": "surge via surgepy (external pinned build)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later (the imported engine)",
+      "decision_record": "0006"
+    }
+  ],
+  "exemptions": [
+    {
+      "pattern": "decision-records/*.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The decision records ARE the provenance documents. They quote upstream constants inside the record that authorizes them and state their own pin, license and status; requiring a provenance row for a record would be circular."
+    },
+    {
+      "path": "docs/REUSE-AUDIT.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The reuse survey discusses what may and may not be copied (including upstream's own vendoring) and adopts nothing itself: 'survey evidence recommends, it does not install'."
+    },
+    {
+      "pattern": "reports/**/*.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "Evidence records describe provenance decisions in prose ('quoted as data', 'QUOTED constants') while carrying no third-party content of their own; they are this project's own measurements. The non-exemptible rules (foreign license text, upstream asset extensions, foreign-language source) still apply to reports/, so a vendored file cannot hide there."
+    },
+    {
+      "pattern": "reports/**/*.json",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "Same as reports/**/*.md: machine-readable evidence metadata that restates the licensing/provenance line of the leaf it documents."
+    },
+    {
+      "path": "tools/generate_effect_leaves.py",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "States that the Airwindows headers are vendored in the UPSTREAM engine tree (not a submodule at the pinned commit). It describes upstream's layout for the leaf generator; no upstream content is carried here."
+    },
+    {
+      "path": "decision-records/provenance.json",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "This manifest describes what is quoted where; its rows necessarily use the quotation vocabulary. It carries no third-party content of its own. Note that the non-exemptible rules still apply to it: a copyright line or license body pasted into a row's prose fails the audit (it did, during this file's authoring, and the row was reworded rather than exempted)."
+    },
+    {
+      "path": "tools/check_provenance.py",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The audit implementation contains the vocabulary it detects plus the synthetic negative-control fixtures. Its license-body / copyright / citation fixtures are assembled from fragments at run time precisely so the NON-exemptible rules keep applying to this file too - no self-path special case exists in the tool."
+    },
+    {
+      "path": "tests/test_sxt019_provenance.py",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The audit's test suite, same reason as tools/check_provenance.py; it reuses that module's fragment-assembled fixtures rather than pasting signal text."
+    }
+  ]
+}

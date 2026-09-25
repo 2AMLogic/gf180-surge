@@ -20,6 +20,21 @@ jobs:
       - name: Run census bookkeeping consistency check
         run: python3 tools/check_census_consistency.py
 
+  provenance-audit:
+    name: provenance audit (SXT-019 / #25)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # The audit's own failure detection runs FIRST: if a rule has stopped
+      # firing, the tree-level PASS below would be meaningless.
+      - name: Negative control (every rule must fire on a deliberate violation)
+        run: python3 tools/check_provenance.py --negative-control
+      - name: Audit the tree for unattributed third-party-derived content
+        run: python3 tools/check_provenance.py
+
   python-compile:
     name: python compile (stdlib only)
     runs-on: ubuntu-latest
