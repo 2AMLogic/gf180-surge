@@ -1,0 +1,505 @@
+{
+  "issue": 93,
+  "run_utc": "2026-09-25T04:11:04Z",
+  "repo_head": "63c855dd4d8a3b914ada7c7bce479b37e008a1a8",
+  "legs": {
+    "dry_rerun_parity": {
+      "status": "PASS",
+      "baseline_rev": "origin/main",
+      "unexplained_committed_diffs": [],
+      "cases": [
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/crush__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-crush-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/crush__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-crush-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/edges__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-edges-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/edges__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-edges-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/horn__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-horn-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/horn__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-horn-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-horn-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/tentacles__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-tentacles-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)"
+          ]
+        },
+        {
+          "leaf": "SXT-033",
+          "ref": "reports/SXT-033/artifacts/tentacles__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-033/artifacts/model-tentacles-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-034",
+          "ref": "reports/SXT-034/artifacts/reference-seq-notes-coverage-v1-uni2.wav",
+          "model": "reports/SXT-034/artifacts/model-seq-notes-coverage-v1-uni2.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "SXT-034",
+          "ref": "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni1.wav",
+          "model": "reports/SXT-034/artifacts/model-seq-notes-repeated-v1-uni1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "SXT-034",
+          "ref": "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni4.wav",
+          "model": "reports/SXT-034/artifacts/model-seq-notes-repeated-v1-uni4.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "SXT-040",
+          "ref": "reports/SXT-040/artifacts/badnews__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-040/artifacts/model-badnews-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-040/artifacts/budget-badnews-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-040",
+          "ref": "reports/SXT-040/artifacts/badnews__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-040/artifacts/model-badnews-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-040/artifacts/budget-badnews-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-040",
+          "ref": "reports/SXT-040/artifacts/popcorn2k__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-040",
+          "ref": "reports/SXT-040/artifacts/popcorn2k__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-040",
+          "ref": "reports/SXT-040/artifacts/tentacles__seq-notes-coverage-v1-ref.wav",
+          "model": "reports/SXT-040/artifacts/model-tentacles-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "SXT-040",
+          "ref": "reports/SXT-040/artifacts/tentacles__seq-notes-repeated-v1-ref.wav",
+          "model": "reports/SXT-040/artifacts/model-tentacles-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "sxt-022",
+          "ref": "reports/sxt-022/artifacts/reference-seq-modwheel-v1-dry.wav",
+          "model": "reports/sxt-022/artifacts/model-seq-modwheel-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/sxt-022/artifacts/audio-seq-modwheel-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "sxt-022",
+          "ref": "reports/sxt-022/artifacts/reference-seq-notes-coverage-v1-dry.wav",
+          "model": "reports/sxt-022/artifacts/model-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)"
+          ]
+        },
+        {
+          "leaf": "sxt-022",
+          "ref": "reports/sxt-022/artifacts/reference-seq-notes-repeated-v1-dry.wav",
+          "model": "reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr); RMS-FLAG-#95(verdict follows the corrected rms flag)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "ULP(spectral_corr)",
+            "RMS-FLAG-#95(verdict follows the corrected rms flag)"
+          ]
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/kick-wtfix-morph25__seq-wt-base-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-kick-wtfix-morph25__seq-wt-base-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/kick-wtfix-morph75__seq-wt-base-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-kick-wtfix-morph75__seq-wt-base-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/kick-wtfix-uni16__seq-wt-unison16-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-kick-wtfix-uni16__seq-wt-unison16-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-base-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-kick-wtfix__seq-wt-base-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-pitch-extremes-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-kick-wtfix__seq-wt-pitch-extremes-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/mf-wtfix-morph25__seq-wt-base-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-mf-wtfix-morph25__seq-wt-base-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/mf-wtfix-morph75__seq-wt-base-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-mf-wtfix-morph75__seq-wt-base-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-026",
+          "ref": "reports/sxt-026/artifacts/mf-wtfix__seq-wt-base-v1-ref.wav",
+          "model": "reports/sxt-026/artifacts/model-mf-wtfix__seq-wt-base-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-032",
+          "ref": "reports/sxt-032/artifacts/reference-seq-modwheel-v1-lfo-fixture.wav",
+          "model": "reports/sxt-032/artifacts/model-seq-modwheel-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-032",
+          "ref": "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1-lfo-fixture.wav",
+          "model": "reports/sxt-032/artifacts/model-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-032",
+          "ref": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1-lfo-fixture.wav",
+          "model": "reports/sxt-032/artifacts/model-seq-notes-holds-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-032",
+          "ref": "reports/sxt-032/artifacts/reference-seq-notes-repeated-v1-lfo-fixture.wav",
+          "model": "reports/sxt-032/artifacts/model-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": null,
+          "committed_json_status": "NONE",
+          "committed_json_diff_classes": []
+        },
+        {
+          "leaf": "sxt-035",
+          "ref": "reports/sxt-035/artifacts/reference-seq-modwheel-v1-mw-fixture.wav",
+          "model": "reports/sxt-035/artifacts/model-seq-modwheel-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/sxt-035/artifacts/audio-seq-modwheel-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
+          ]
+        },
+        {
+          "leaf": "sxt-035",
+          "ref": "reports/sxt-035/artifacts/reference-seq-notes-coverage-v1-mw-fixture.wav",
+          "model": "reports/sxt-035/artifacts/model-seq-notes-coverage-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)"
+          ]
+        },
+        {
+          "leaf": "sxt-035",
+          "ref": "reports/sxt-035/artifacts/reference-seq-notes-repeated-v1-mw-fixture.wav",
+          "model": "reports/sxt-035/artifacts/model-seq-notes-repeated-v1.wav",
+          "baseline_vs_current": "BYTE-IDENTICAL",
+          "committed_json": "reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); RMS-FLAG-#95(verdict follows the corrected rms flag)",
+          "committed_json_diff_classes": [
+            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
+            "RMS-FLAG-#95(verdict follows the corrected rms flag)"
+          ]
+        }
+      ],
+      "not_run": [
+        {
+          "leaf": "sxt-026",
+          "render": "reports/sxt-026/artifacts/kick-original__seq-wt-base-v1-ref.wav",
+          "reason": "no committed model render"
+        },
+        {
+          "leaf": "sxt-026a",
+          "render": "reports/sxt-026a/artifacts/model-smoke-bells-dry.wav",
+          "reason": "no committed reference render"
+        }
+      ]
+    },
+    "wet_tail_controls": {
+      "status": "PASS",
+      "claim_scope": "comparator behaviour only; control models are derived from the reference render, so no model-vs-reference, RTL, preset-support or sound claim follows",
+      "controls": [
+        {
+          "control": "full-tail-within-budget",
+          "expect": "PASS",
+          "got": "PASS",
+          "returncode": 0,
+          "gate_only_required": false,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-full-tail-within-budget.json",
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)",
+          "as_required": true
+        },
+        {
+          "control": "drop-full-tail",
+          "expect": "FAIL",
+          "got": "FAIL",
+          "returncode": 1,
+          "gate_only_required": false,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "as_required": true
+        },
+        {
+          "control": "tail-decays-too-fast",
+          "expect": "FAIL",
+          "got": "FAIL",
+          "returncode": 1,
+          "gate_only_required": true,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json",
+          "verdict": "FAIL against proposed budgets (tail-region gate: tail residual -10.22 dB exceeds the proposed -20.00 dB relative budget)",
+          "as_required": true
+        },
+        {
+          "control": "truncate-at-tail-start",
+          "expect": "FAIL",
+          "got": "FAIL",
+          "returncode": 1,
+          "gate_only_required": true,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-truncate-at-tail-start.json",
+          "verdict": "FAIL against proposed budgets (tail-region gate: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail)",
+          "as_required": true
+        },
+        {
+          "control": "undeclared-wet-path",
+          "expect": "REFUSE",
+          "got": "REFUSE",
+          "returncode": 2,
+          "gate_only_required": false,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-undeclared-wet-path.json",
+          "verdict": "NO_VERDICT (refused)",
+          "as_required": true
+        },
+        {
+          "control": "no-sidecar",
+          "expect": "REFUSE",
+          "got": "REFUSE",
+          "returncode": 2,
+          "gate_only_required": false,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-no-sidecar.json",
+          "verdict": "NO_VERDICT (refused)",
+          "as_required": true
+        },
+        {
+          "control": "stale-sidecar",
+          "expect": "REFUSE",
+          "got": "REFUSE",
+          "returncode": 2,
+          "gate_only_required": false,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-stale-sidecar.json",
+          "verdict": "NO_VERDICT (refused)",
+          "as_required": true
+        },
+        {
+          "control": "drop-full-tail-second-preset",
+          "expect": "FAIL",
+          "got": "FAIL",
+          "returncode": 1,
+          "gate_only_required": false,
+          "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json",
+          "verdict": "FAIL against proposed budgets (budget: rms_diff_dbfs, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "as_required": true
+        }
+      ],
+      "fixtures": [
+        {
+          "reference": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+          "sidecar": "fixtures/audio/koala2/seq-notes-coverage-v1.json",
+          "declared_tail_region": {
+            "offset": 153600,
+            "frames": 120000
+          }
+        },
+        {
+          "reference": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+          "sidecar": "fixtures/audio/behemoth/seq-notes-coverage-v1.json",
+          "declared_tail_region": {
+            "offset": 153600,
+            "frames": 120000
+          }
+        }
+      ]
+    }
+  },
+  "overall": "PASS"
+}

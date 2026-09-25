@@ -1,0 +1,55 @@
+issue #93 -- shared-comparator wet-path tail gate: checks
+run: 2026-09-25T04:11:04Z   repo HEAD: 63c855dd4d8a3b914ada7c7bce479b37e008a1a8
+tool: tools/compare_audio_reference.py
+claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-support,
+             or sound-quality claim follows from anything below.
+
+==========================================================================
+[1] dry re-run parity: pre-change tool (origin/main) vs working tree
+==========================================================================
+  discovered 36 committed dry cases (mono int16, both renders committed)
+  SXT-033    crush__seq-notes-coverage-v1-ref.wav                 BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)
+  SXT-033    crush__seq-notes-repeated-v1-ref.wav                 BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)
+  SXT-033    edges__seq-notes-coverage-v1-ref.wav                 BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)
+  SXT-033    edges__seq-notes-repeated-v1-ref.wav                 BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True); ULP(spectral_corr)
+  SXT-033    horn__seq-notes-coverage-v1-ref.wav                  BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)
+  SXT-033    horn__seq-notes-repeated-v1-ref.wav                  BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)
+  SXT-033    tentacles__seq-notes-coverage-v1-ref.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True)
+  SXT-033    tentacles__seq-notes-repeated-v1-ref.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs False -> True); ULP(spectral_corr)
+  SXT-034    reference-seq-notes-coverage-v1-uni2.wav             BYTE-IDENTICAL | committed: NONE
+  SXT-034    reference-seq-notes-repeated-v1-uni1.wav             BYTE-IDENTICAL | committed: NONE
+  SXT-034    reference-seq-notes-repeated-v1-uni4.wav             BYTE-IDENTICAL | committed: NONE
+  SXT-040    badnews__seq-notes-coverage-v1-ref.wav               BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: ULP(spectral_corr)
+  SXT-040    badnews__seq-notes-repeated-v1-ref.wav               BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: ULP(spectral_corr)
+  SXT-040    popcorn2k__seq-notes-coverage-v1-ref.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: ULP(spectral_corr)
+  SXT-040    popcorn2k__seq-notes-repeated-v1-ref.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: ULP(spectral_corr)
+  SXT-040    tentacles__seq-notes-coverage-v1-ref.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: ULP(spectral_corr)
+  SXT-040    tentacles__seq-notes-repeated-v1-ref.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: ULP(spectral_corr)
+  sxt-022    reference-seq-modwheel-v1-dry.wav                    BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)
+  sxt-022    reference-seq-notes-coverage-v1-dry.wav              BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr)
+  sxt-022    reference-seq-notes-repeated-v1-dry.wav              BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr); RMS-FLAG-#95(verdict follows the corrected rms flag)
+  sxt-026    kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1-ref.wav   BYTE-IDENTICAL | committed: NONE
+  sxt-026    kick-wtfix-morph25__seq-wt-base-v1-ref.wav           BYTE-IDENTICAL | committed: NONE
+  sxt-026    kick-wtfix-morph75__seq-wt-base-v1-ref.wav           BYTE-IDENTICAL | committed: NONE
+  sxt-026    kick-wtfix-uni16__seq-wt-unison16-v1-ref.wav         BYTE-IDENTICAL | committed: NONE
+  sxt-026    kick-wtfix__seq-wt-base-v1-ref.wav                   BYTE-IDENTICAL | committed: NONE
+  sxt-026    kick-wtfix__seq-wt-pitch-extremes-v1-ref.wav         BYTE-IDENTICAL | committed: NONE
+  sxt-026    mf-wtfix-morph25__seq-wt-base-v1-ref.wav             BYTE-IDENTICAL | committed: NONE
+  sxt-026    mf-wtfix-morph75__seq-wt-base-v1-ref.wav             BYTE-IDENTICAL | committed: NONE
+  sxt-026    mf-wtfix__seq-wt-base-v1-ref.wav                     BYTE-IDENTICAL | committed: NONE
+  sxt-032    reference-seq-modwheel-v1-lfo-fixture.wav            BYTE-IDENTICAL | committed: NONE
+  sxt-032    reference-seq-notes-coverage-v1-lfo-fixture.wav      BYTE-IDENTICAL | committed: NONE
+  sxt-032    reference-seq-notes-holds-v1-lfo-fixture.wav         BYTE-IDENTICAL | committed: NONE
+  sxt-032    reference-seq-notes-repeated-v1-lfo-fixture.wav      BYTE-IDENTICAL | committed: NONE
+  sxt-035    reference-seq-modwheel-v1-mw-fixture.wav             BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)
+  sxt-035    reference-seq-notes-coverage-v1-mw-fixture.wav       BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)
+  sxt-035    reference-seq-notes-repeated-v1-mw-fixture.wav       BYTE-IDENTICAL | committed: DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); RMS-FLAG-#95(verdict follows the corrected rms flag)
+  sxt-026    kick-original__seq-wt-base-v1-ref.wav                NOT_RUN (no committed model render)
+  sxt-026a   model-smoke-bells-dry.wav                            NOT_RUN (no committed reference render)
+  leg 1: PASS (36/36 dry cases byte-identical vs the pre-change tool)
+  committed-JSON comparison (supplementary, NOT this change's gate): 0 match, 20 differ
+    all differences are ULP float ordering and/or the pre-2026-09-24 rms-flag lineage (#95);
+    unexplained committed differences: 0
+    no committed artifact of another leaf is rewritten by this change.
+
+leg 1 verdict: PASS

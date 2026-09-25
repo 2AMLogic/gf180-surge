@@ -1,0 +1,4 @@
+{
+  "verdict": "NO_VERDICT (refused)",
+  "reason": "sidecar declares 273600 frames but a-short-wet.wav holds 213600: the sidecar is STALE with respect to the reference render"
+}
