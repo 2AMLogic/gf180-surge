@@ -5,7 +5,7 @@
 # directory (never inside this repository) and compiles
 # oracle/sxt038/lp24_ref_harness.cpp against them.  The resulting binary is a
 # GPL-3.0-or-later combined work; it stays in that external directory and is
-# never committed or distributed (decision-records/0009).
+# never committed or distributed (decision-records/0010).
 #
 # Pins are read from oracle/manifest.json; any drift aborts (fail-closed).
 #

@@ -174,7 +174,7 @@
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
-   "sha256": "0476d176e69ab25069dc119d3a512c4c2eea2b358697c82772f042dc2be00e5c"
+   "sha256": "594d1372c10987d07b7d350ff7e5db42716b8de024e94976c425cb7a9aa9b09b"
   },
   "reports/SXT-039/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP Legacy Ladder",
@@ -186,7 +186,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "4df9b5917f6147d4049927c738946c5a88a99e3a83dead437c98f0e34f481603"
+   "sha256": "3bbd65295cdd19b8a452b87e6b14841be1b32c518b22520fe47587f8da172021"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",

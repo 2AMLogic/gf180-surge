@@ -5,7 +5,7 @@ The reference for this leaf is the manifest-pinned filter submodule
 `libs/sst/sst-filters@e92d93a9` (the code the pinned engine executes for a
 fut_lp24 unit), driven through the pinned per-block voice-path sequence by
 the external harness `oracle/sxt038/lp24_ref_harness.cpp`
-(decision-records/0009).  The harness binary is a GPL combined work built
+(decision-records/0010).  The harness binary is a GPL combined work built
 into an external directory; only its numeric output is committed.
 
 What this is, precisely (claim hygiene):

@@ -2,7 +2,7 @@
 """SXT-038 filter-leg runner: reference bundle -> frozen model -> metrics + RTL stimulus.
 
 A bundle is produced by `tools/render_lp24_reference.py` from the pinned
-filter submodule (decision-records/0009).  It contains
+filter submodule (decision-records/0010).  It contains
 
   coeffs.jsonl  one record per block: the control words the reference leg
                 consumed (cut, reso, subtype, reset/FirstRun) and the pinned

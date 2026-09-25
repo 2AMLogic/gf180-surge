@@ -356,8 +356,9 @@ asset is copied into this repository: engine structure and table
 binary is a GPL-3.0-or-later combined work built into an external directory
 (`~/.cache/sxt038-oracle` by default; the build script refuses a path inside
 the repository), never committed and never distributed.  Licensing decision:
-**decision-records/0009** (PROPOSED — pending owner ratification).  This
-repository has made no distribution-license determination.
+**decision-records/0010** (`0010-lp24-pinned-kernel-harness.md`; PROPOSED —
+pending owner ratification).  This repository has made no
+distribution-license determination.
 
 ## 9. Artifacts and reproduction
 

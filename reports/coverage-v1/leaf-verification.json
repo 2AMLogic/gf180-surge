@@ -109,7 +109,7 @@
       "evidence": [
         {
           "path": "reports/SXT-038/EVIDENCE.md",
-          "sha256": "0476d176e69ab25069dc119d3a512c4c2eea2b358697c82772f042dc2be00e5c"
+          "sha256": "594d1372c10987d07b7d350ff7e5db42716b8de024e94976c425cb7a9aa9b09b"
         }
       ],
       "fixture_verified_paths": [],
