@@ -1,0 +1,5 @@
+NC-A generic substitute (pass-through + fixed gain occupant): CONTROL-OK (generic substitute FAILS bit-exact reproduction of the declared per-instance state; excluded from any faithful-occupant claim)
+NC-B dropped tail (render truncated to 3/6 declared ring-out blocks): CONTROL-OK (truncated render FAILS the declared-tail-span coverage/checkpoint check)
+NC-C wrong order (global1/global2 coefficient-set permutation): CONTROL-OK (order-sensitive check flags the permutation)
+NC-D shared state (both slots pooled into one BiquadInstance): CONTROL-OK (pooled-state mutant FAILS the dual-instance-independence check)
+NC-E stale stub (frozen-revision pin): CONTROL-OK (stale trace revision REFUSED -- the comparator cannot report PASS)

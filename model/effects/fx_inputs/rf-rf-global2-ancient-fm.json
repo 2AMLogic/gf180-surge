@@ -1,0 +1,40 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "per-slot algorithm parameter extraction requires the pinned oracle (surgepy); this leaf's own routing/scheduling claims do not depend on it -- see oracle_extraction below",
+    "routing_metadata_verified": true
+  },
+  "dual_instance_concurrent": true,
+  "global1": {
+    "fx_disable_bit": false,
+    "occupied": true,
+    "type_id": 14,
+    "type_name": "Airwindows"
+  },
+  "global2": {
+    "fx_disable_bit": false,
+    "occupied": true,
+    "type_id": 9,
+    "type_name": "Chorus"
+  },
+  "leaf": "SXT-028d",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
+    "ok": false
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 0
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "9e796f283f2d4b2a69de6198878d57c34f6d86c3",
+    "graphs_blob_sha1_verified": "9e796f283f2d4b2a69de6198878d57c34f6d86c3",
+    "path": "resources/data/patches_3rdparty/Altenberg/Basses/Ancient FM.fxp",
+    "stored_revision": 20
+  },
+  "routing_form": "rf-global2",
+  "schema_version": 1
+}
