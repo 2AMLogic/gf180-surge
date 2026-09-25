@@ -1,4 +1,4 @@
-# DR-0009 — LP 24 dB pinned-kernel reference harness (SXT-038)
+# DR-0010 — LP 24 dB pinned-kernel reference harness (SXT-038)
 
 - **Status:** PROPOSED — pending owner ratification (leaf-scoped)
 - **Date:** 2026-09-25

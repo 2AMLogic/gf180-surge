@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "assumption": "1 MAC/cycle (A-DSP-1c); block-rate coefficient recompute amortised over 64 OS samples (one make_coeffs per block)",
+  "per_instance_state_bits": {
+    "ladder_registers": 160,
+    "coefficient_plane_C_dC": 512,
+    "coefficient_maker_tC (control plane)": 256,
+    "note": "R[0..3] are the four ladder stages, R[4] the previous R[3]; per-instance, never shared (AGENTS.md state rule)"
+  },
+  "per_os_sample_products": {
+    "coefficient_products": 6,
+    "softclip8_products": 3,
+    "total_qmul": 9,
+    "adds_saturating": 11,
+    "audio_rate_divisions": 0
+  },
+  "sxt016_probe_rows_for_context_not_reconciled": {
+    "probe_filter__svf_tdf2_block_coeffs__a24__m32__onchip": {
+      "cyc_filter_unit_frame": 1536000,
+      "state_bytes": 192
+    },
+    "probe_filter__k35_ladder_tanh_poly__a24__m32__onchip": {
+      "cyc_filter_unit_frame": 3840000,
+      "state_bytes": 584
+    },
+    "note": "planning rows at their own declared per-kernel assumptions (nearest structural analogues: the SVF row for a block-rate coefficient plane, the K35 ladder row for a 4-stage ladder with a nonlinearity).  No SXT-016 probe exists for fut_lpmoog; the divergence is RECORDED, not reconciled away, and an SXT-016-class probe is required before any profile freeze."
+  },
+  "cases": {
+    "chords": {
+      "blocks": 320,
+      "os_samples": 20480,
+      "qmul_total": 184320,
+      "qmul_per_os_sample": 9.0
+    },
+    "cut-hi": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    },
+    "cut-lo": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    },
+    "disturb": {
+      "blocks": 320,
+      "os_samples": 20480,
+      "qmul_total": 184320,
+      "qmul_per_os_sample": 9.0
+    },
+    "hot": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    },
+    "king-b1": {
+      "blocks": 256,
+      "os_samples": 16384,
+      "qmul_total": 147456,
+      "qmul_per_os_sample": 9.0
+    },
+    "king-b2": {
+      "blocks": 256,
+      "os_samples": 16384,
+      "qmul_total": 147456,
+      "qmul_per_os_sample": 9.0
+    },
+    "reso1": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    },
+    "sub12db": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    },
+    "sub18db": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    },
+    "toggle": {
+      "blocks": 192,
+      "os_samples": 12288,
+      "qmul_total": 110592,
+      "qmul_per_os_sample": 9.0
+    }
+  }
+}

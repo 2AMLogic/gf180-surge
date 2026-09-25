@@ -1,0 +1,16 @@
+{
+  "issue": "SXT-039",
+  "tb": "tb_lpmoog.sv",
+  "case": "reso1",
+  "subtypes": [
+    3
+  ],
+  "verdict": "PASS",
+  "checked": {
+    "samples": 12288,
+    "checkpoints": 192,
+    "fields": 2688
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "case": "sub18db",
+  "leg": "L2-kernel (pinned sst-filters kernel, standalone build; the engine-integrated leg is NOT_RUN -- see reports/SXT-039/EVIDENCE.md)",
+  "carrier": "resources/data/patches_3rdparty/Bluelight/Pads/King.fxp",
+  "override": {
+    "subtype": 2
+  },
+  "fenv_source": "declared-trajectory",
+  "subtypes": [
+    2
+  ],
+  "L1_coefficients_q229": {
+    "C": {
+      "max_abs": 282,
+      "rms": 82.59741723161405
+    },
+    "dC": {
+      "max_abs": 4,
+      "rms": 0.8686525724745576
+    }
+  },
+  "L1_registers_q1021_reported_not_budgeted": {
+    "max_abs": 11,
+    "rms": 2.021756661915573
+  },
+  "L2_audio_q1021": {
+    "n": 12288,
+    "max_abs_lsb": 12,
+    "rms_lsb": 1.8736105963264262,
+    "ref_peak_lsb": 1224626,
+    "rms_db_rel_ref_peak": -116.30648283551167,
+    "spectral_corr": 0.9927744867389694
+  },
+  "model_stability": "STABLE",
+  "model_state_peak_lsb": 2039373,
+  "proposed": {
+    "l1_C_max_lsb_q229": 4096,
+    "l1_C_rms_lsb_q229": 1024,
+    "l2_max_abs_lsb": 4096,
+    "l2_rms_lsb": 256,
+    "l2_spectral_corr_min": 0.999
+  },
+  "verdicts": {
+    "L1_coefficients": "PASS",
+    "L2_audio": "FAIL"
+  },
+  "verdict": "FAIL against proposed budgets"
+}

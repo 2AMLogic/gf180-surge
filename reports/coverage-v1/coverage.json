@@ -174,7 +174,11 @@
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
-   "sha256": "d29ea28ec846aa4f3a22b883ada32296f9614b7812f20f17ebc405dd91ac8ee7"
+   "sha256": "0476d176e69ab25069dc119d3a512c4c2eea2b358697c82772f042dc2be00e5c"
+  },
+  "reports/SXT-039/EVIDENCE.md": {
+   "role": "evidence record for leaf filter_type:LP Legacy Ladder",
+   "sha256": "30e9b21102a3fa1d266f072acca710b992c73bf4c24be6bcd456ff6c9e02e3ef"
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
@@ -182,7 +186,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "12e1e4dceffb56ba7ae5f6f1b60ea0380b225b835bdf7df448e3021b9fcda115"
+   "sha256": "4df9b5917f6147d4049927c738946c5a88a99e3a83dead437c98f0e34f481603"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -492,6 +496,15 @@
     }
    },
    "filter_type:LP 24 dB": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "PARTIAL",
+     "rtl_vs_model": "PASS"
+    }
+   },
+   "filter_type:LP Legacy Ladder": {
     "evidence_state": "OK",
     "landed": true,
     "support_ready": false,

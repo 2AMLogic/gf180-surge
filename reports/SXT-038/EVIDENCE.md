@@ -39,7 +39,7 @@ dependencies).  A full-engine preset render was therefore impossible.
 | Leg | Status |
 |---|---|
 | Full-engine preset render / oracle tap (SXT-037 DR-0005 class) | **NOT_RUN** — F-038-1 |
-| Pinned filter submodule at the filter-stage boundary (DR-0009) | **RUN** — §3 |
+| Pinned filter submodule at the filter-stage boundary (DR-0010) | **RUN** — §3 |
 | RTL vs frozen model | **RUN** — §2 |
 | Human listening | **NOT_RUN** (out of scope for this leaf) |
 
@@ -52,7 +52,7 @@ sequence (`MakeCoeffs` → `updateState` → 64 kernel calls →
 modulation state (filter EG, LFOs) are not executed.  Consequences:
 the control plane is a **declared fixture trajectory** (§1), and no statement
 here is a preset-fidelity statement.  Nothing about this gap is worked
-around: it is named in DR-0009, in every bundle `meta.json`
+around: it is named in DR-0010, in every bundle `meta.json`
 (`"kind": "pinned-filter-submodule"`, `"note": "…NOT a full-engine preset
 render"`), and in §7.  When an oracle host is available, the same committed
 case files and control planes drive a tap leg without changing the model or
@@ -216,7 +216,7 @@ verdict in either direction, and **no budget was widened**.
   declared criterion, but the per-sample budget is missed and is recorded,
   not tuned away.
 
-### Provider-independence leg (DR-0009 item 5)
+### Provider-independence leg (DR-0010 item 5)
 
 The same cases rendered against sst-filters' own `BasicTuningProvider`
 (`--provider exact`, zero input from this repository) instead of the
@@ -332,7 +332,7 @@ empty.  Coverage-ledger entry `filter_type:LP 24 dB`:
 
 | ID | Finding | Routed to |
 |---|---|---|
-| F-038-1 | No executable oracle in this environment; the reference is the pinned filter submodule, not the full engine | DR-0009; a tap leg when an oracle host is available |
+| F-038-1 | No executable oracle in this environment; the reference is the pinned filter submodule, not the full engine | DR-0010; a tap leg when an oracle host is available |
 | F-038-2 | Coefficient-smoothing drift is structurally bounded by blockSize/2 = 32 LSB in the Q10.21 universal word | SXT-013/#12 (budget form), SXT-016 (coefficient word length) |
 | F-038-3 | The landed SXT-037 LP12 model builds `Coeff_SVF`'s `F1` with sample rate 48 000, whereas the pin configures the coefficient maker with `dsamplerate_os` = 96 000 | #71 (sibling leaf) — **not changed here** |
 | F-038-4 | The landed SXT-037 LP12 model uses Surge's dB lookup table for `clipscale`, whereas sst-filters' `clipscale` calls its own exact `pow(10, 0.05·x)` | #71 (sibling leaf) — **not changed here** |

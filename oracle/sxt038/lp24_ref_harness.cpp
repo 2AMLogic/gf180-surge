@@ -11,7 +11,7 @@
  * built into an external scratch directory, never committed, and never
  * distributed.  Only its numeric OUTPUT (reference coefficient planes and
  * filter signals) is committed, exactly as engine render output already is.
- * Licensing decision: decision-records/0009-lp24-pinned-kernel-harness.md.
+ * Licensing decision: decision-records/0010-lp24-pinned-kernel-harness.md.
  *
  * What it does: runs the pinned LP 24 dB coefficient maker and the pinned
  * per-subtype kernel over a declared control plane and a declared input

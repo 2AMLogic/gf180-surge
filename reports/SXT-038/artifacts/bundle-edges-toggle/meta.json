@@ -29,7 +29,7 @@
   "block_size_os": 64,
   "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
-  "harness_source_sha256": "abf37d46f7d45d6f6c0cd80cac7830d5aa713f5e2ffdebccae53e2923dcf7e29",
+  "harness_source_sha256": "b2b9a201dc62748b5361f827e0a4488daf2b0568375586f2186048a52dd4e543",
   "kind": "pinned-filter-submodule",
   "note": "pinned filter code only; NOT a full-engine preset render",
   "provider": "surge-lut",

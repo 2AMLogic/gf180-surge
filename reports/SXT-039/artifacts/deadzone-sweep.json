@@ -1,0 +1,1016 @@
+{
+  "schema_version": 1,
+  "issue": "SXT-039",
+  "finding": "F-039-2 low-cutoff quantization dead zone (frozen Q10.21 register word)",
+  "drive": {
+    "hz": 220.0,
+    "amplitude": 0.5,
+    "blocks": 128,
+    "resonance": 0.0
+  },
+  "first_nonzero_output_cut_semi": {
+    "subtype_0_6dB": -120.0,
+    "subtype_3_24dB": -86.0
+  },
+  "engine_cutoff_param_span_semi": [
+    -60.0,
+    70.0
+  ],
+  "note": "cutoffA below the parameter span is reachable through the keytrack / env-mod path; the dead zone is recorded for the #12 freeze owner, never clamped away.",
+  "rows": [
+    {
+      "cut_semi": -120.0,
+      "subtype": 0,
+      "c1_q229": 15098,
+      "c1_float": 2.812221646308899e-05,
+      "model_peak_lsb": 4077
+    },
+    {
+      "cut_semi": -120.0,
+      "subtype": 3,
+      "c1_q229": 15098,
+      "c1_float": 2.812221646308899e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -118.0,
+      "subtype": 0,
+      "c1_q229": 16947,
+      "c1_float": 3.156624734401703e-05,
+      "model_peak_lsb": 4583
+    },
+    {
+      "cut_semi": -118.0,
+      "subtype": 3,
+      "c1_q229": 16947,
+      "c1_float": 3.156624734401703e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -116.0,
+      "subtype": 0,
+      "c1_q229": 19022,
+      "c1_float": 3.5431236028671265e-05,
+      "model_peak_lsb": 5142
+    },
+    {
+      "cut_semi": -116.0,
+      "subtype": 3,
+      "c1_q229": 19022,
+      "c1_float": 3.5431236028671265e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -114.0,
+      "subtype": 0,
+      "c1_q229": 21352,
+      "c1_float": 3.9771199226379395e-05,
+      "model_peak_lsb": 5768
+    },
+    {
+      "cut_semi": -114.0,
+      "subtype": 3,
+      "c1_q229": 21352,
+      "c1_float": 3.9771199226379395e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -112.0,
+      "subtype": 0,
+      "c1_q229": 23967,
+      "c1_float": 4.464201629161835e-05,
+      "model_peak_lsb": 6474
+    },
+    {
+      "cut_semi": -112.0,
+      "subtype": 3,
+      "c1_q229": 23967,
+      "c1_float": 4.464201629161835e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -110.0,
+      "subtype": 0,
+      "c1_q229": 26902,
+      "c1_float": 5.0108879804611206e-05,
+      "model_peak_lsb": 7255
+    },
+    {
+      "cut_semi": -110.0,
+      "subtype": 3,
+      "c1_q229": 26902,
+      "c1_float": 5.0108879804611206e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -108.0,
+      "subtype": 0,
+      "c1_q229": 30196,
+      "c1_float": 5.624443292617798e-05,
+      "model_peak_lsb": 8143
+    },
+    {
+      "cut_semi": -108.0,
+      "subtype": 3,
+      "c1_q229": 30196,
+      "c1_float": 5.624443292617798e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -106.0,
+      "subtype": 0,
+      "c1_q229": 33894,
+      "c1_float": 6.313249468803406e-05,
+      "model_peak_lsb": 9136
+    },
+    {
+      "cut_semi": -106.0,
+      "subtype": 3,
+      "c1_q229": 33894,
+      "c1_float": 6.313249468803406e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -104.0,
+      "subtype": 0,
+      "c1_q229": 38044,
+      "c1_float": 7.086247205734253e-05,
+      "model_peak_lsb": 10246
+    },
+    {
+      "cut_semi": -104.0,
+      "subtype": 3,
+      "c1_q229": 38044,
+      "c1_float": 7.086247205734253e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -102.0,
+      "subtype": 0,
+      "c1_q229": 42703,
+      "c1_float": 7.954053580760956e-05,
+      "model_peak_lsb": 11489
+    },
+    {
+      "cut_semi": -102.0,
+      "subtype": 3,
+      "c1_q229": 42703,
+      "c1_float": 7.954053580760956e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -100.0,
+      "subtype": 0,
+      "c1_q229": 47932,
+      "c1_float": 8.928030729293823e-05,
+      "model_peak_lsb": 12881
+    },
+    {
+      "cut_semi": -100.0,
+      "subtype": 3,
+      "c1_q229": 47932,
+      "c1_float": 8.928030729293823e-05,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -98.0,
+      "subtype": 0,
+      "c1_q229": 53802,
+      "c1_float": 0.00010021403431892395,
+      "model_peak_lsb": 14440
+    },
+    {
+      "cut_semi": -98.0,
+      "subtype": 3,
+      "c1_q229": 53802,
+      "c1_float": 0.00010021403431892395,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -96.0,
+      "subtype": 0,
+      "c1_q229": 60390,
+      "c1_float": 0.0001124851405620575,
+      "model_peak_lsb": 16184
+    },
+    {
+      "cut_semi": -96.0,
+      "subtype": 3,
+      "c1_q229": 60390,
+      "c1_float": 0.0001124851405620575,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -94.0,
+      "subtype": 0,
+      "c1_q229": 67785,
+      "c1_float": 0.00012625940144062042,
+      "model_peak_lsb": 18135
+    },
+    {
+      "cut_semi": -94.0,
+      "subtype": 3,
+      "c1_q229": 67785,
+      "c1_float": 0.00012625940144062042,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -92.0,
+      "subtype": 0,
+      "c1_q229": 76086,
+      "c1_float": 0.0001417212188243866,
+      "model_peak_lsb": 20328
+    },
+    {
+      "cut_semi": -92.0,
+      "subtype": 3,
+      "c1_q229": 76086,
+      "c1_float": 0.0001417212188243866,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -90.0,
+      "subtype": 0,
+      "c1_q229": 85403,
+      "c1_float": 0.00015907548367977142,
+      "model_peak_lsb": 22777
+    },
+    {
+      "cut_semi": -90.0,
+      "subtype": 3,
+      "c1_q229": 85403,
+      "c1_float": 0.00015907548367977142,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -88.0,
+      "subtype": 0,
+      "c1_q229": 95860,
+      "c1_float": 0.00017855316400527954,
+      "model_peak_lsb": 25516
+    },
+    {
+      "cut_semi": -88.0,
+      "subtype": 3,
+      "c1_q229": 95860,
+      "c1_float": 0.00017855316400527954,
+      "model_peak_lsb": 0
+    },
+    {
+      "cut_semi": -86.0,
+      "subtype": 0,
+      "c1_q229": 107598,
+      "c1_float": 0.00020041689276695251,
+      "model_peak_lsb": 28566
+    },
+    {
+      "cut_semi": -86.0,
+      "subtype": 3,
+      "c1_q229": 107598,
+      "c1_float": 0.00020041689276695251,
+      "model_peak_lsb": 587
+    },
+    {
+      "cut_semi": -84.0,
+      "subtype": 0,
+      "c1_q229": 120774,
+      "c1_float": 0.0002249591052532196,
+      "model_peak_lsb": 31980
+    },
+    {
+      "cut_semi": -84.0,
+      "subtype": 3,
+      "c1_q229": 120774,
+      "c1_float": 0.0002249591052532196,
+      "model_peak_lsb": 1769
+    },
+    {
+      "cut_semi": -82.0,
+      "subtype": 0,
+      "c1_q229": 135562,
+      "c1_float": 0.000252503901720047,
+      "model_peak_lsb": 35793
+    },
+    {
+      "cut_semi": -82.0,
+      "subtype": 3,
+      "c1_q229": 135562,
+      "c1_float": 0.000252503901720047,
+      "model_peak_lsb": 2679
+    },
+    {
+      "cut_semi": -80.0,
+      "subtype": 0,
+      "c1_q229": 152161,
+      "c1_float": 0.00028342194855213165,
+      "model_peak_lsb": 40042
+    },
+    {
+      "cut_semi": -80.0,
+      "subtype": 3,
+      "c1_q229": 152161,
+      "c1_float": 0.00028342194855213165,
+      "model_peak_lsb": 3474
+    },
+    {
+      "cut_semi": -78.0,
+      "subtype": 0,
+      "c1_q229": 170792,
+      "c1_float": 0.0003181248903274536,
+      "model_peak_lsb": 44789
+    },
+    {
+      "cut_semi": -78.0,
+      "subtype": 3,
+      "c1_q229": 170792,
+      "c1_float": 0.0003181248903274536,
+      "model_peak_lsb": 4634
+    },
+    {
+      "cut_semi": -76.0,
+      "subtype": 0,
+      "c1_q229": 191704,
+      "c1_float": 0.0003570765256881714,
+      "model_peak_lsb": 50058
+    },
+    {
+      "cut_semi": -76.0,
+      "subtype": 3,
+      "c1_q229": 191704,
+      "c1_float": 0.0003570765256881714,
+      "model_peak_lsb": 5509
+    },
+    {
+      "cut_semi": -74.0,
+      "subtype": 0,
+      "c1_q229": 215175,
+      "c1_float": 0.0004007946699857712,
+      "model_peak_lsb": 55940
+    },
+    {
+      "cut_semi": -74.0,
+      "subtype": 3,
+      "c1_q229": 215175,
+      "c1_float": 0.0004007946699857712,
+      "model_peak_lsb": 6161
+    },
+    {
+      "cut_semi": -72.0,
+      "subtype": 0,
+      "c1_q229": 241520,
+      "c1_float": 0.00044986605644226074,
+      "model_peak_lsb": 62464
+    },
+    {
+      "cut_semi": -72.0,
+      "subtype": 3,
+      "c1_q229": 241520,
+      "c1_float": 0.00044986605644226074,
+      "model_peak_lsb": 7244
+    },
+    {
+      "cut_semi": -70.0,
+      "subtype": 0,
+      "c1_q229": 271090,
+      "c1_float": 0.0005049444735050201,
+      "model_peak_lsb": 69715
+    },
+    {
+      "cut_semi": -70.0,
+      "subtype": 3,
+      "c1_q229": 271090,
+      "c1_float": 0.0005049444735050201,
+      "model_peak_lsb": 8028
+    },
+    {
+      "cut_semi": -68.0,
+      "subtype": 0,
+      "c1_q229": 304279,
+      "c1_float": 0.0005667638033628464,
+      "model_peak_lsb": 77759
+    },
+    {
+      "cut_semi": -68.0,
+      "subtype": 3,
+      "c1_q229": 304279,
+      "c1_float": 0.0005667638033628464,
+      "model_peak_lsb": 9169
+    },
+    {
+      "cut_semi": -66.0,
+      "subtype": 0,
+      "c1_q229": 341529,
+      "c1_float": 0.0006361473351716995,
+      "model_peak_lsb": 86657
+    },
+    {
+      "cut_semi": -66.0,
+      "subtype": 3,
+      "c1_q229": 341529,
+      "c1_float": 0.0006361473351716995,
+      "model_peak_lsb": 10382
+    },
+    {
+      "cut_semi": -64.0,
+      "subtype": 0,
+      "c1_q229": 383339,
+      "c1_float": 0.0007140245288610458,
+      "model_peak_lsb": 96508
+    },
+    {
+      "cut_semi": -64.0,
+      "subtype": 3,
+      "c1_q229": 383339,
+      "c1_float": 0.0007140245288610458,
+      "model_peak_lsb": 11700
+    },
+    {
+      "cut_semi": -62.0,
+      "subtype": 0,
+      "c1_q229": 430264,
+      "c1_float": 0.0008014291524887085,
+      "model_peak_lsb": 107374
+    },
+    {
+      "cut_semi": -62.0,
+      "subtype": 3,
+      "c1_q229": 430264,
+      "c1_float": 0.0008014291524887085,
+      "model_peak_lsb": 13054
+    },
+    {
+      "cut_semi": -60.0,
+      "subtype": 0,
+      "c1_q229": 482932,
+      "c1_float": 0.0008995309472084045,
+      "model_peak_lsb": 119347
+    },
+    {
+      "cut_semi": -60.0,
+      "subtype": 3,
+      "c1_q229": 482932,
+      "c1_float": 0.0008995309472084045,
+      "model_peak_lsb": 14708
+    },
+    {
+      "cut_semi": -58.0,
+      "subtype": 0,
+      "c1_q229": 542043,
+      "c1_float": 0.0010096337646245956,
+      "model_peak_lsb": 132507
+    },
+    {
+      "cut_semi": -58.0,
+      "subtype": 3,
+      "c1_q229": 542043,
+      "c1_float": 0.0010096337646245956,
+      "model_peak_lsb": 16428
+    },
+    {
+      "cut_semi": -56.0,
+      "subtype": 0,
+      "c1_q229": 608385,
+      "c1_float": 0.0011332053691148758,
+      "model_peak_lsb": 146950
+    },
+    {
+      "cut_semi": -56.0,
+      "subtype": 3,
+      "c1_q229": 608385,
+      "c1_float": 0.0011332053691148758,
+      "model_peak_lsb": 18551
+    },
+    {
+      "cut_semi": -54.0,
+      "subtype": 0,
+      "c1_q229": 682841,
+      "c1_float": 0.001271890476346016,
+      "model_peak_lsb": 162743
+    },
+    {
+      "cut_semi": -54.0,
+      "subtype": 3,
+      "c1_q229": 682841,
+      "c1_float": 0.001271890476346016,
+      "model_peak_lsb": 20864
+    },
+    {
+      "cut_semi": -52.0,
+      "subtype": 0,
+      "c1_q229": 766404,
+      "c1_float": 0.0014275386929512024,
+      "model_peak_lsb": 179977
+    },
+    {
+      "cut_semi": -52.0,
+      "subtype": 3,
+      "c1_q229": 766404,
+      "c1_float": 0.0014275386929512024,
+      "model_peak_lsb": 23378
+    },
+    {
+      "cut_semi": -50.0,
+      "subtype": 0,
+      "c1_q229": 860184,
+      "c1_float": 0.0016022175550460815,
+      "model_peak_lsb": 198704
+    },
+    {
+      "cut_semi": -50.0,
+      "subtype": 3,
+      "c1_q229": 860184,
+      "c1_float": 0.0016022175550460815,
+      "model_peak_lsb": 26436
+    },
+    {
+      "cut_semi": -48.0,
+      "subtype": 0,
+      "c1_q229": 965429,
+      "c1_float": 0.0017982516437768936,
+      "model_peak_lsb": 219003
+    },
+    {
+      "cut_semi": -48.0,
+      "subtype": 3,
+      "c1_q229": 965429,
+      "c1_float": 0.0017982516437768936,
+      "model_peak_lsb": 29513
+    },
+    {
+      "cut_semi": -46.0,
+      "subtype": 0,
+      "c1_q229": 1083538,
+      "c1_float": 0.0020182467997074127,
+      "model_peak_lsb": 240937
+    },
+    {
+      "cut_semi": -46.0,
+      "subtype": 3,
+      "c1_q229": 1083538,
+      "c1_float": 0.0020182467997074127,
+      "model_peak_lsb": 33401
+    },
+    {
+      "cut_semi": -44.0,
+      "subtype": 0,
+      "c1_q229": 1216080,
+      "c1_float": 0.0022651255130767822,
+      "model_peak_lsb": 264550
+    },
+    {
+      "cut_semi": -44.0,
+      "subtype": 3,
+      "c1_q229": 1216080,
+      "c1_float": 0.0022651255130767822,
+      "model_peak_lsb": 37809
+    },
+    {
+      "cut_semi": -42.0,
+      "subtype": 0,
+      "c1_q229": 1364814,
+      "c1_float": 0.0025421641767024994,
+      "model_peak_lsb": 289827
+    },
+    {
+      "cut_semi": -42.0,
+      "subtype": 3,
+      "c1_q229": 1364814,
+      "c1_float": 0.0025421641767024994,
+      "model_peak_lsb": 41723
+    },
+    {
+      "cut_semi": -40.0,
+      "subtype": 0,
+      "c1_q229": 1531714,
+      "c1_float": 0.002853039652109146,
+      "model_peak_lsb": 316774
+    },
+    {
+      "cut_semi": -40.0,
+      "subtype": 3,
+      "c1_q229": 1531714,
+      "c1_float": 0.002853039652109146,
+      "model_peak_lsb": 48086
+    },
+    {
+      "cut_semi": -38.0,
+      "subtype": 0,
+      "c1_q229": 1718990,
+      "c1_float": 0.003201868385076523,
+      "model_peak_lsb": 345366
+    },
+    {
+      "cut_semi": -38.0,
+      "subtype": 3,
+      "c1_q229": 1718990,
+      "c1_float": 0.003201868385076523,
+      "model_peak_lsb": 55489
+    },
+    {
+      "cut_semi": -36.0,
+      "subtype": 0,
+      "c1_q229": 1929122,
+      "c1_float": 0.0035932697355747223,
+      "model_peak_lsb": 375545
+    },
+    {
+      "cut_semi": -36.0,
+      "subtype": 3,
+      "c1_q229": 1929122,
+      "c1_float": 0.0035932697355747223,
+      "model_peak_lsb": 62724
+    },
+    {
+      "cut_semi": -34.0,
+      "subtype": 0,
+      "c1_q229": 2164890,
+      "c1_float": 0.004032421857118607,
+      "model_peak_lsb": 407199
+    },
+    {
+      "cut_semi": -34.0,
+      "subtype": 3,
+      "c1_q229": 2164890,
+      "c1_float": 0.004032421857118607,
+      "model_peak_lsb": 69175
+    },
+    {
+      "cut_semi": -32.0,
+      "subtype": 0,
+      "c1_q229": 2429406,
+      "c1_float": 0.004525121301412582,
+      "model_peak_lsb": 440187
+    },
+    {
+      "cut_semi": -32.0,
+      "subtype": 3,
+      "c1_q229": 2429406,
+      "c1_float": 0.004525121301412582,
+      "model_peak_lsb": 77338
+    },
+    {
+      "cut_semi": -30.0,
+      "subtype": 0,
+      "c1_q229": 2726159,
+      "c1_float": 0.005077866837382317,
+      "model_peak_lsb": 474360
+    },
+    {
+      "cut_semi": -30.0,
+      "subtype": 3,
+      "c1_q229": 2726159,
+      "c1_float": 0.005077866837382317,
+      "model_peak_lsb": 94910
+    },
+    {
+      "cut_semi": -28.0,
+      "subtype": 0,
+      "c1_q229": 3059057,
+      "c1_float": 0.005697937682271004,
+      "model_peak_lsb": 509505
+    },
+    {
+      "cut_semi": -28.0,
+      "subtype": 3,
+      "c1_q229": 3059057,
+      "c1_float": 0.005697937682271004,
+      "model_peak_lsb": 115893
+    },
+    {
+      "cut_semi": -26.0,
+      "subtype": 0,
+      "c1_q229": 3432476,
+      "c1_float": 0.0063934847712516785,
+      "model_peak_lsb": 545381
+    },
+    {
+      "cut_semi": -26.0,
+      "subtype": 3,
+      "c1_q229": 3432476,
+      "c1_float": 0.0063934847712516785,
+      "model_peak_lsb": 140523
+    },
+    {
+      "cut_semi": -24.0,
+      "subtype": 0,
+      "c1_q229": 3851313,
+      "c1_float": 0.007173629477620125,
+      "model_peak_lsb": 581723
+    },
+    {
+      "cut_semi": -24.0,
+      "subtype": 3,
+      "c1_q229": 3851313,
+      "c1_float": 0.007173629477620125,
+      "model_peak_lsb": 168973
+    },
+    {
+      "cut_semi": -22.0,
+      "subtype": 0,
+      "c1_q229": 4321050,
+      "c1_float": 0.008048582822084427,
+      "model_peak_lsb": 618221
+    },
+    {
+      "cut_semi": -22.0,
+      "subtype": 3,
+      "c1_q229": 4321050,
+      "c1_float": 0.008048582822084427,
+      "model_peak_lsb": 201347
+    },
+    {
+      "cut_semi": -20.0,
+      "subtype": 0,
+      "c1_q229": 4847818,
+      "c1_float": 0.00902976468205452,
+      "model_peak_lsb": 654559
+    },
+    {
+      "cut_semi": -20.0,
+      "subtype": 3,
+      "c1_q229": 4847818,
+      "c1_float": 0.00902976468205452,
+      "model_peak_lsb": 237635
+    },
+    {
+      "cut_semi": -18.0,
+      "subtype": 0,
+      "c1_q229": 5438475,
+      "c1_float": 0.010129949077963829,
+      "model_peak_lsb": 690410
+    },
+    {
+      "cut_semi": -18.0,
+      "subtype": 3,
+      "c1_q229": 5438475,
+      "c1_float": 0.010129949077963829,
+      "model_peak_lsb": 277692
+    },
+    {
+      "cut_semi": -16.0,
+      "subtype": 0,
+      "c1_q229": 6100684,
+      "c1_float": 0.011363409459590912,
+      "model_peak_lsb": 725444
+    },
+    {
+      "cut_semi": -16.0,
+      "subtype": 3,
+      "c1_q229": 6100684,
+      "c1_float": 0.011363409459590912,
+      "model_peak_lsb": 321217
+    },
+    {
+      "cut_semi": -14.0,
+      "subtype": 0,
+      "c1_q229": 6843006,
+      "c1_float": 0.012746091932058334,
+      "model_peak_lsb": 759342
+    },
+    {
+      "cut_semi": -14.0,
+      "subtype": 3,
+      "c1_q229": 6843006,
+      "c1_float": 0.012746091932058334,
+      "model_peak_lsb": 367770
+    },
+    {
+      "cut_semi": -12.0,
+      "subtype": 0,
+      "c1_q229": 7674998,
+      "c1_float": 0.014295797795057297,
+      "model_peak_lsb": 791797
+    },
+    {
+      "cut_semi": -12.0,
+      "subtype": 3,
+      "c1_q229": 7674998,
+      "c1_float": 0.014295797795057297,
+      "model_peak_lsb": 416798
+    },
+    {
+      "cut_semi": -10.0,
+      "subtype": 0,
+      "c1_q229": 8607321,
+      "c1_float": 0.01603238470852375,
+      "model_peak_lsb": 822521
+    },
+    {
+      "cut_semi": -10.0,
+      "subtype": 3,
+      "c1_q229": 8607321,
+      "c1_float": 0.01603238470852375,
+      "model_peak_lsb": 467598
+    },
+    {
+      "cut_semi": -8.0,
+      "subtype": 0,
+      "c1_q229": 9651862,
+      "c1_float": 0.017977993935346603,
+      "model_peak_lsb": 851278
+    },
+    {
+      "cut_semi": -8.0,
+      "subtype": 3,
+      "c1_q229": 9651862,
+      "c1_float": 0.017977993935346603,
+      "model_peak_lsb": 519377
+    },
+    {
+      "cut_semi": -6.0,
+      "subtype": 0,
+      "c1_q229": 10821859,
+      "c1_float": 0.020157283172011375,
+      "model_peak_lsb": 877890
+    },
+    {
+      "cut_semi": -6.0,
+      "subtype": 3,
+      "c1_q229": 10821859,
+      "c1_float": 0.020157283172011375,
+      "model_peak_lsb": 571314
+    },
+    {
+      "cut_semi": -4.0,
+      "subtype": 0,
+      "c1_q229": 12132044,
+      "c1_float": 0.022597692906856537,
+      "model_peak_lsb": 902229
+    },
+    {
+      "cut_semi": -4.0,
+      "subtype": 3,
+      "c1_q229": 12132044,
+      "c1_float": 0.022597692906856537,
+      "model_peak_lsb": 622559
+    },
+    {
+      "cut_semi": -2.0,
+      "subtype": 0,
+      "c1_q229": 13598791,
+      "c1_float": 0.025329722091555595,
+      "model_peak_lsb": 924198
+    },
+    {
+      "cut_semi": -2.0,
+      "subtype": 3,
+      "c1_q229": 13598791,
+      "c1_float": 0.025329722091555595,
+      "model_peak_lsb": 672285
+    },
+    {
+      "cut_semi": 0.0,
+      "subtype": 0,
+      "c1_q229": 15240275,
+      "c1_float": 0.028387224301695824,
+      "model_peak_lsb": 943788
+    },
+    {
+      "cut_semi": 0.0,
+      "subtype": 3,
+      "c1_q229": 15240275,
+      "c1_float": 0.028387224301695824,
+      "model_peak_lsb": 719745
+    },
+    {
+      "cut_semi": 2.0,
+      "subtype": 0,
+      "c1_q229": 17076646,
+      "c1_float": 0.031807731837034225,
+      "model_peak_lsb": 961032
+    },
+    {
+      "cut_semi": 2.0,
+      "subtype": 3,
+      "c1_q229": 17076646,
+      "c1_float": 0.031807731837034225,
+      "model_peak_lsb": 764308
+    },
+    {
+      "cut_semi": 4.0,
+      "subtype": 0,
+      "c1_q229": 19130202,
+      "c1_float": 0.03563277795910835,
+      "model_peak_lsb": 975995
+    },
+    {
+      "cut_semi": 4.0,
+      "subtype": 3,
+      "c1_q229": 19130202,
+      "c1_float": 0.03563277795910835,
+      "model_peak_lsb": 805442
+    },
+    {
+      "cut_semi": 6.0,
+      "subtype": 0,
+      "c1_q229": 21425579,
+      "c1_float": 0.03990825079381466,
+      "model_peak_lsb": 988838
+    },
+    {
+      "cut_semi": 6.0,
+      "subtype": 3,
+      "c1_q229": 21425579,
+      "c1_float": 0.03990825079381466,
+      "model_peak_lsb": 842788
+    },
+    {
+      "cut_semi": 8.0,
+      "subtype": 0,
+      "c1_q229": 23989932,
+      "c1_float": 0.04468473047018051,
+      "model_peak_lsb": 999694
+    },
+    {
+      "cut_semi": 8.0,
+      "subtype": 3,
+      "c1_q229": 23989932,
+      "c1_float": 0.04468473047018051,
+      "model_peak_lsb": 876143
+    },
+    {
+      "cut_semi": 10.0,
+      "subtype": 0,
+      "c1_q229": 26853128,
+      "c1_float": 0.05001784861087799,
+      "model_peak_lsb": 1008805
+    },
+    {
+      "cut_semi": 10.0,
+      "subtype": 3,
+      "c1_q229": 26853128,
+      "c1_float": 0.05001784861087799,
+      "model_peak_lsb": 905445
+    },
+    {
+      "cut_semi": 12.0,
+      "subtype": 0,
+      "c1_q229": 30047921,
+      "c1_float": 0.05596861429512501,
+      "model_peak_lsb": 1016352
+    },
+    {
+      "cut_semi": 12.0,
+      "subtype": 3,
+      "c1_q229": 30047921,
+      "c1_float": 0.05596861429512501,
+      "model_peak_lsb": 930760
+    },
+    {
+      "cut_semi": 14.0,
+      "subtype": 0,
+      "c1_q229": 33610122,
+      "c1_float": 0.06260373070836067,
+      "model_peak_lsb": 1022573
+    },
+    {
+      "cut_semi": 14.0,
+      "subtype": 3,
+      "c1_q229": 33610122,
+      "c1_float": 0.06260373070836067,
+      "model_peak_lsb": 952348
+    },
+    {
+      "cut_semi": 16.0,
+      "subtype": 0,
+      "c1_q229": 37578742,
+      "c1_float": 0.06999586150050163,
+      "model_peak_lsb": 1027629
+    },
+    {
+      "cut_semi": 16.0,
+      "subtype": 3,
+      "c1_q229": 37578742,
+      "c1_float": 0.06999586150050163,
+      "model_peak_lsb": 970470
+    },
+    {
+      "cut_semi": 18.0,
+      "subtype": 0,
+      "c1_q229": 41996101,
+      "c1_float": 0.07822383381426334,
+      "model_peak_lsb": 1031721
+    },
+    {
+      "cut_semi": 18.0,
+      "subtype": 3,
+      "c1_q229": 41996101,
+      "c1_float": 0.07822383381426334,
+      "model_peak_lsb": 985495
+    },
+    {
+      "cut_semi": 20.0,
+      "subtype": 0,
+      "c1_q229": 46907881,
+      "c1_float": 0.08737273700535297,
+      "model_peak_lsb": 1035033
+    },
+    {
+      "cut_semi": 20.0,
+      "subtype": 3,
+      "c1_q229": 46907881,
+      "c1_float": 0.08737273700535297,
+      "model_peak_lsb": 997822
+    }
+  ]
+}
