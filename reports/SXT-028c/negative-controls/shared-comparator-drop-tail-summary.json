@@ -1,0 +1,93 @@
+{
+  "baseline": {
+    "best_shift": 0,
+    "fixture_meta": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
+    "frames": 273600,
+    "max_abs_diff_lsb": 0.0,
+    "model_peak_lsb": 113130.5078125,
+    "proposed_budget_results": {
+      "max_abs_diff_lsb": true,
+      "rms_diff_dbfs": true,
+      "spectral_corr": true
+    },
+    "proposed_budgets": {
+      "max_abs_diff_lsb": 8192,
+      "rms_diff_dbfs": -46.0,
+      "spectral_corr_min": 0.98
+    },
+    "ref_peak_lsb": 113130.5078125,
+    "rms_diff_at_best_shift_lsb": 0.0,
+    "rms_diff_at_shift0_lsb": 0.0,
+    "rms_diff_dbfs": -Infinity,
+    "rms_diff_lsb": 0.0,
+    "spectral_corr": 1.0,
+    "tail_check": {
+      "ok": true,
+      "tail_frames_declared": 120000,
+      "tail_frames_model_available": 120000,
+      "tail_frames_ref_available": 120000,
+      "tail_length_s": 2.5,
+      "tail_max_abs_diff_lsb": 0.0,
+      "tail_offset_s": 3.2,
+      "tail_present": true,
+      "tail_rms_rel_db": -600.0
+    },
+    "tail_region": {
+      "length_s": 2.5,
+      "offset_s": 3.2,
+      "source": "fixture_meta:render.duration_s-render.tail_s"
+    },
+    "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+  },
+  "claim": "negative control: drop-tail truncation on an existing committed wet fixture must FAIL the shared comparator's verdict via the new tail-region gate",
+  "drop_s": 1.5,
+  "dropped_tail": {
+    "best_shift": 0,
+    "fixture_meta": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
+    "frames": 201600,
+    "max_abs_diff_lsb": 0.0,
+    "model_peak_lsb": 113130.5078125,
+    "proposed_budget_results": {
+      "max_abs_diff_lsb": true,
+      "rms_diff_dbfs": true,
+      "spectral_corr": true
+    },
+    "proposed_budgets": {
+      "max_abs_diff_lsb": 8192,
+      "rms_diff_dbfs": -46.0,
+      "spectral_corr_min": 0.98
+    },
+    "ref_peak_lsb": 113130.5078125,
+    "rms_diff_at_best_shift_lsb": 0.0,
+    "rms_diff_at_shift0_lsb": 0.0,
+    "rms_diff_dbfs": -Infinity,
+    "rms_diff_lsb": 0.0,
+    "spectral_corr": 1.0,
+    "tail_check": {
+      "ok": false,
+      "tail_frames_declared": 120000,
+      "tail_frames_model_available": 48000,
+      "tail_frames_ref_available": 120000,
+      "tail_length_s": 2.5,
+      "tail_max_abs_diff_lsb": 0.0,
+      "tail_offset_s": 3.2,
+      "tail_present": true,
+      "tail_rms_rel_db": -600.0
+    },
+    "tail_region": {
+      "length_s": 2.5,
+      "offset_s": 3.2,
+      "source": "fixture_meta:render.duration_s-render.tail_s"
+    },
+    "verdict": "FAIL against tail-region check"
+  },
+  "fixture": {
+    "fixture_meta": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
+    "ref_wav": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+    "sequence": "seq-notes-coverage-v1",
+    "slug": "alienappears"
+  },
+  "issue": 93,
+  "schema_version": 1,
+  "status": "PASS"
+}

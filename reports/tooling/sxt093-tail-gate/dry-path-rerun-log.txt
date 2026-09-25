@@ -1,0 +1,73 @@
+Issue #93 (SXT-028c follow-up): shared-comparator tail-region gate
+Dry-path regression re-run: tools/compare_audio_reference.py invoked
+with NO --fixture-meta (the default, unchanged code path) against
+every committed ref/model WAV pair this repo's 13 landed/PENDING
+leaf lines that use the shared comparator, BEFORE vs AFTER this
+issue's patch. Byte-identical JSON output required for every case;
+any difference would mean the wet-path tail gate leaked into the dry
+path (acceptance criterion #1/#4).
+
+Method: for families with a dedicated checks runner (SXT-033, and the
+direct budget-matrix invocation used by SXT-040's own runner), the
+runner was executed twice (pre-patch commit, then again after
+'git checkout' reverted the in-place regeneration and the patch was
+applied) and outputs diffed. For families with committed ref/model
+WAV pairs but no dedicated runner (sxt-022, sxt-032, sxt-035,
+SXT-034), tools/compare_audio_reference.py was invoked directly on
+each committed pair, pre- and post-patch, and outputs diffed.
+
+Pre-existing, UNRELATED finding (not fixed here, out of scope for
+#93, tracked by issue #95): reports/SXT-033/artifacts/budget-*.json
+and nc-submode-confusion-*.json already disagree with a fresh
+re-run of the UNMODIFIED (pre-#93) comparator -- PR #92 fixed an
+inverted rms_diff_dbfs polarity check in this tool and explicitly
+deferred regenerating other leaves' historical artifacts to a
+follow-up ('SXT-022 lineage'). That follow-up is issue #95, already
+filed and open; this PR does not touch it, and the diffs below are
+PRE-patch-vs-POST-patch (isolating #93's own effect), not
+committed-vs-regenerated (which would also show the #95 drift).
+
+=== SXT-033 (via tools/run_sxt033_checks.py, steps 1-4) ===
+budget-crush-seq-notes-coverage-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-crush-seq-notes-repeated-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-edges-seq-notes-coverage-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-edges-seq-notes-repeated-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-horn-seq-notes-coverage-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-horn-seq-notes-repeated-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-tentacles-seq-notes-coverage-v1.json: identical (pre-patch regen vs post-patch regen)
+budget-tentacles-seq-notes-repeated-v1.json: identical (pre-patch regen vs post-patch regen)
+nc-submode-confusion-crush.json: identical (pre-patch regen vs post-patch regen)
+nc-submode-confusion-horn.json: identical (pre-patch regen vs post-patch regen)
+
+=== SXT-040 (direct budget matrix on committed ref/model WAVs) ===
+budget-badnews-seq-notes-coverage-v1.json: identical (pre-patch vs post-patch)
+budget-badnews-seq-notes-repeated-v1.json: identical (pre-patch vs post-patch)
+budget-tentacles-seq-notes-coverage-v1.json: identical (pre-patch vs post-patch)
+budget-tentacles-seq-notes-repeated-v1.json: identical (pre-patch vs post-patch)
+budget-popcorn2k-seq-notes-coverage-v1.json: identical (pre-patch vs post-patch)
+budget-popcorn2k-seq-notes-repeated-v1.json: identical (pre-patch vs post-patch)
+
+=== sxt-022, sxt-032, sxt-035, SXT-034 (direct, committed ref/model WAVs) ===
+audio-seq-modwheel-v1.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-022/artifacts/reference-seq-modwheel-v1-dry.wav model=reports/sxt-022/artifacts/model-seq-modwheel-v1.wav]
+audio-seq-notes-coverage-v1.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-022/artifacts/reference-seq-notes-coverage-v1-dry.wav model=reports/sxt-022/artifacts/model-seq-notes-coverage-v1.wav]
+audio-seq-notes-repeated-v1.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-022/artifacts/reference-seq-notes-repeated-v1-dry.wav model=reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav]
+audio-coverage.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-032/artifacts/reference-seq-notes-coverage-v1-lfo-fixture.wav model=reports/sxt-032/artifacts/model-seq-notes-coverage-v1.wav]
+audio-holds.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-032/artifacts/reference-seq-notes-holds-v1-lfo-fixture.wav model=reports/sxt-032/artifacts/model-seq-notes-holds-v1.wav]
+audio-modwheel.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-032/artifacts/reference-seq-modwheel-v1-lfo-fixture.wav model=reports/sxt-032/artifacts/model-seq-modwheel-v1.wav]
+audio-repeated.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-032/artifacts/reference-seq-notes-repeated-v1-lfo-fixture.wav model=reports/sxt-032/artifacts/model-seq-notes-repeated-v1.wav]
+audio-seq-modwheel-v1.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-035/artifacts/reference-seq-modwheel-v1-mw-fixture.wav model=reports/sxt-035/artifacts/model-seq-modwheel-v1.wav]
+audio-seq-notes-coverage-v1.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-035/artifacts/reference-seq-notes-coverage-v1-mw-fixture.wav model=reports/sxt-035/artifacts/model-seq-notes-coverage-v1.wav]
+audio-seq-notes-repeated-v1.json: identical (pre-patch vs post-patch)  [ref=reports/sxt-035/artifacts/reference-seq-notes-repeated-v1-mw-fixture.wav model=reports/sxt-035/artifacts/model-seq-notes-repeated-v1.wav]
+uni2-cov.json: identical (pre-patch vs post-patch)  [ref=reports/SXT-034/artifacts/reference-seq-notes-coverage-v1-uni2.wav model=reports/SXT-034/artifacts/model-seq-notes-coverage-v1-uni2.wav]
+uni1-rep.json: identical (pre-patch vs post-patch)  [ref=reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni1.wav model=reports/SXT-034/artifacts/model-seq-notes-repeated-v1-uni1.wav]
+uni4-rep.json: identical (pre-patch vs post-patch)  [ref=reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni4.wav model=reports/SXT-034/artifacts/model-seq-notes-repeated-v1-uni4.wav]
+
+Total: 29 dry-path cases re-run pre-patch vs post-patch across all 7
+report families that call the shared comparator; 0 differences.
+
+Not independently re-verified in this pass (no ref WAV pair could be
+located by filename convention in the time available for this PR):
+reports/sxt-026a/artifacts/audio-smoke-bells-dry.json. Its dry
+behavior is still covered structurally (main_dry() is untouched code,
+byte-for-byte, from the pre-#93 tool -- see tools/compare_audio_reference.py
+main_dry()), but this specific file was not mechanically re-run.

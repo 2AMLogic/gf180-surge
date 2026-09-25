@@ -1,0 +1,5 @@
+fixture: alienappears/seq-notes-coverage-v1 (reports/SXT-028c/fixtures, committed); duration_s=5.7 tail_s=2.5
+NC-baseline (model = exact copy of the wet reference): CONTROL-OK (PASS, both budget and tail-region gate)
+NC-drop-tail (model truncated 1.5s before the declared tail span): CONTROL-OK (FAILS the verdict via the tail-region gate)
+  whole-render budget alone on the truncated model: PASSED TRIVIALLY (overlap is byte-identical to the reference) -- confirms the tail gate is load-bearing, not redundant with the existing budget check
+status: PASS

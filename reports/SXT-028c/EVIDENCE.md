@@ -246,6 +246,23 @@ sanity first (the unmutated chain passes; max 186 LSB), then all
 
 Plus the three RTL mutants of §4 (wrong interp / shared state / lag ramp).
 
+**Follow-up (#93, shared-comparator level).** NC-B above demonstrates the
+tail-truncation mismatch magnitude via a bespoke slice-only budget check in
+`tools/chorus_negative_controls.py`; it does not exercise a gate in the
+shared comparator itself. Issue #93 adds a tail-region gate to
+`tools/compare_audio_reference.py` (the tool the other 13 landed/PENDING
+leaf lines use, not this leaf's own `compare_chorus_reference.py`, whose
+`tail_check` predates and is unaffected by #93) and a companion control —
+`tools/shared_comparator_tail_negative_control.py` →
+`negative-controls/shared-comparator-drop-tail*` — that truncates this
+leaf's own committed `alienappears / seq-notes-coverage-v1` wet fixture and
+runs it through the shared comparator end-to-end: the whole-render budget
+alone PASSES TRIVIALLY (the truncated model is a byte-identical prefix of
+the reference, so the only compared samples are an exact match), and only
+the new tail-region gate catches the dropped tail. See #93's PR for the
+full re-run evidence across all seven report families that use the shared
+comparator.
+
 ## 6. External-memory traffic and state (SXT-015/016 conventions)
 
 `tools/chorus_buffer_report.py` → `artifacts/buffer-requirement.json`
