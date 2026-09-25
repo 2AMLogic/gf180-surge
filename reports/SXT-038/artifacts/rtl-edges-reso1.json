@@ -1,0 +1,14 @@
+{
+  "tb": "tb_lp24.sv",
+  "case": "edges-reso1",
+  "leg": "L2a-own-coeffs",
+  "verdict": "PASS",
+  "expected": "PASS",
+  "checked": {
+    "samples": 24576,
+    "checkpoints": 384,
+    "fields": 5376
+  },
+  "mismatches": 0,
+  "first_failures": []
+}

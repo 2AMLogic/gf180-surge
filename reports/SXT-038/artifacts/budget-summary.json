@@ -1,0 +1,159 @@
+{
+  "issue": "SXT-038",
+  "budgets": {
+    "L1_C_max_abs_lsb": 16,
+    "L1_C_max_rel_lsb": 16,
+    "L2_max_abs_lsb": 4096,
+    "L2_rms_lsb": 256,
+    "spectral_corr_min": 0.999
+  },
+  "cases": 11,
+  "pass": 7,
+  "fail": 4,
+  "table": [
+    {
+      "case": "brass",
+      "subtypes": [
+        0
+      ],
+      "L1_max": 0,
+      "L2_max": 3,
+      "L2_rms": 0.679,
+      "dB": -130.4,
+      "corr": 0.999559,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "chords-clean",
+      "subtypes": [
+        2
+      ],
+      "L1_max": 0,
+      "L2_max": 4,
+      "L2_rms": 0.925,
+      "dB": -122.83,
+      "corr": 0.996389,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "chords-std",
+      "subtypes": [
+        0
+      ],
+      "L1_max": 0,
+      "L2_max": 2,
+      "L2_rms": 0.685,
+      "dB": -125.54,
+      "corr": 0.999013,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "edges",
+      "subtypes": [
+        1
+      ],
+      "L1_max": 3,
+      "L2_max": 52,
+      "L2_rms": 6.889,
+      "dB": -89.71,
+      "corr": 0.976284,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "edges-cut-hi",
+      "subtypes": [
+        1
+      ],
+      "L1_max": 1,
+      "L2_max": 3,
+      "L2_rms": 0.727,
+      "dB": -91.88,
+      "corr": 0.999966,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "edges-cut-lo",
+      "subtypes": [
+        1
+      ],
+      "L1_max": 0,
+      "L2_max": 1,
+      "L2_rms": 0.407,
+      "dB": -69.99,
+      "corr": 0.995239,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "edges-reso1",
+      "subtypes": [
+        1
+      ],
+      "L1_max": 3,
+      "L2_max": 5086,
+      "L2_rms": 1489.423,
+      "dB": -57.26,
+      "corr": 0.999994,
+      "stability": "STABLE",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "edges-toggle",
+      "subtypes": [
+        1,
+        2
+      ],
+      "L1_max": 10,
+      "L2_max": 24,
+      "L2_rms": 4.085,
+      "dB": -86.19,
+      "corr": 0.988093,
+      "stability": "STABLE",
+      "verdict": "PASS"
+    },
+    {
+      "case": "major7mk2",
+      "subtypes": [
+        2
+      ],
+      "L1_max": 38,
+      "L2_max": 1194,
+      "L2_rms": 169.016,
+      "dB": -74.79,
+      "corr": 0.988803,
+      "stability": "STABLE",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "phase1",
+      "subtypes": [
+        1
+      ],
+      "L1_max": 34,
+      "L2_max": 14471,
+      "L2_rms": 2945.636,
+      "dB": -52.6,
+      "corr": 0.993546,
+      "stability": "STABLE",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "phase1-substd",
+      "subtypes": [
+        0
+      ],
+      "L1_max": 32,
+      "L2_max": 17242,
+      "L2_rms": 4005.952,
+      "dB": -50.34,
+      "corr": 0.999111,
+      "stability": "STABLE",
+      "verdict": "FAIL"
+    }
+  ]
+}
