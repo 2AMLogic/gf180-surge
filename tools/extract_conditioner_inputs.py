@@ -15,10 +15,11 @@ checked against surgepy readback after loadPatch (values must agree to the
 graphs 6-decimal rounding), drift == 0 asserted on every voicing scene,
 fx_bypass == all FX, fx_disable == 0, and ANY modulation route whose
 destination is this Conditioner slot refuses (parameter modulation into the
-leaf is outside the frozen scope). Unlike tools/extract_chorus_inputs.py,
-the modulation screen walks the real md structure ({g: [...], s: [{s, v}]},
-corpus/normalized/schema.json); the chorus screen iterates the dict's keys
-and never inspects a route (follow-up issue).
+leaf is outside the frozen scope). The modulation screen walks the real md
+structure ({g: [...], s: [{s, v}]}, corpus/normalized/schema.json); the
+chorus screen used to iterate the dict's keys and inspect no route at all
+(silent no-op), fixed under #116 as
+tools/extract_chorus_inputs.py::chorus_fx_destinations.
 
 `deactivated` flags come from the raw .fxp XML attribute (no surgepy
 getter), then ConditionerEffect::handleStreamingMismatches:
