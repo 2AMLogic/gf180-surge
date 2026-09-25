@@ -115,6 +115,25 @@ pilot freeze.
   and tail stereo vs reference, rendered with tails long enough for the
   preset's stored settings (per-sequence `tail_s` bumps in new sequence
   versions, never edits of committed renders).
+- **Tail region is declared, not inferred** (issue #93). The graded tail
+  region is `[last_event_sample, last_event_sample + tail_s × sample_rate)`
+  read from the fixture sidecar; silence inference is not a permitted source.
+  A wet comparison whose tail region cannot be read from committed fixture
+  data is NO_VERDICT (refused), never a pass.
+- **Tail-pass is part of the wet verdict, not an advisory display.** For a
+  wet-path comparison the verdict requires budget-pass **and** tail-pass:
+  the declared region is covered by both renders (a truncated model render
+  fails — see §5 rule 4), the reference tail carries energy, the model tail
+  carries energy, and the tail residual RMS is below the tail budget.
+  Implemented in `tools/compare_audio_reference.py` (`--path wet`, JSON
+  `tail_check`); evidence in `reports/shared-comparator-tail-gate/`. Dry
+  comparisons carry no tail gate (§3 rule 2).
+  Tail budget: **[PROPOSED-TO-BE-FROZEN-AT-PILOT]** —
+  `tail_rms_rel_db ≤ −20.0 dB`, i.e. the tail-region residual RMS at least
+  20 dB below the *reference tail* RMS. The criterion is relative on purpose:
+  a full-scale criterion goes vacuous as a tail decays, which is the loophole
+  a dropped or stubbed tail passes through. The value is unexercised against a
+  real model wet render and must be re-argued at first real use.
 - **Free-phase presets** (stored retrigger off; engine consumes `rand_01()`
   at voice start — SXT-012 escalation): raw waveform subtraction is NOT
   required and MUST NOT be the pass rule; onset-aligned envelope/level and
@@ -173,7 +192,13 @@ pilot freeze.
 3. Per-instance state violations (two Delay slots sharing one history) must
    be detected by a double-delay fixture.
 4. A silently dropped tail (render truncated before decay completes) must
-   fail §2.5 decay, not pass by truncated-window comparison.
+   fail §2.5 decay, not pass by truncated-window comparison. Live in the
+   shared comparator since issue #93: `drop-full-tail`,
+   `tail-decays-too-fast` and `truncate-at-tail-start` controls in
+   `reports/shared-comparator-tail-gate/artifacts/negative-controls.txt`,
+   the last two failing while all three §2 budgets still pass. Scope note:
+   the stereo float32 effect-slice comparators still gate on
+   reference-tail presence only.
 5. Level-matched normalization leaking into measurements must be detectable:
    measurement artifacts record input hashes; a normalized input must not
    verify against raw renders.

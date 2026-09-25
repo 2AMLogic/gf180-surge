@@ -1,0 +1,47 @@
+{
+  "frames": 273600,
+  "ref_peak_lsb": 5659.0,
+  "model_peak_lsb": 5659.0,
+  "max_abs_diff_lsb": 1.0,
+  "rms_diff_lsb": 0.3823595564509363,
+  "rms_diff_dbfs": -98.65929464003514,
+  "rms_diff_at_shift0_lsb": 0.3823595564509363,
+  "best_shift": 0,
+  "rms_diff_at_best_shift_lsb": 0.3823595564509363,
+  "spectral_corr": 0.9997199755965559,
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "path": "wet",
+  "fixture_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-93/fixtures/audio/koala2/seq-notes-coverage-v1.json",
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0
+  },
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-93/fixtures/audio/koala2/seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 1.0,
+    "tail_rms_diff_lsb": 0.5773502691896257,
+    "tail_rms_rel_db": -50.26681044130072,
+    "tail_ref_rms_lsb": 188.26946769634918,
+    "tail_model_rms_lsb": 188.2702920006234,
+    "ok": true,
+    "reason": ""
+  },
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)"
+}

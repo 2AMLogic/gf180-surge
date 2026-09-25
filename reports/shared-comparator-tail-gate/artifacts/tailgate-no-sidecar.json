@@ -1,0 +1,4 @@
+{
+  "verdict": "NO_VERDICT (refused)",
+  "reason": "--path wet requires a fixture sidecar declaring the tail region (note-off offset plus declared tail length); none was given and none was found next to /tmp/sxt-tail-gate-checks/no-sidecar/orphan-wet.wav. Do not guess a tail region -- record a bounded finding instead (issue #93 stop condition)."
+}
