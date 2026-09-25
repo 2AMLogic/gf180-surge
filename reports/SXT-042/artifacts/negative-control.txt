@@ -1,0 +1,50 @@
+SXT-042 negative controls (each must demonstrably FAIL its check)
+date: 2026-09-25T05:01:05Z
+carrier: Rozzer/Bells/Hell's Bells.fxp  sequence: sxt025-accept-v1
+reference (unmodified, committed pinned-engine dry render): reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav
+  sha256 afb3ad51739609ff43bc7372d6d0db6322532f3cc43bce1653834fb621e3fcc2
+
+[baseline] unmutated model-vs-reference: max=16721 rms=-27.86dBFS spec=0.9207 -> FAIL against proposed budgets
+  windowed rms: kt!=0 1915.4 LSB, kt==0 2719.4 LSB
+  (the carrier's own budget miss is the landed SXT-026a finding F-48a; a control is called DISCRIMINATING only if it also degrades a metric relative to THIS row)
+
+[cutoff-zeroed] max=16330 rms=-28.49dBFS spec=0.9250 wrms(kt!=0)=1728.7 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
+[reso-zeroed] render BIT-IDENTICAL to the baseline -> DEGENERATE, not counted as a control
+[fegmod-zeroed] render BIT-IDENTICAL to the baseline -> DEGENERATE, not counted as a control
+[shared-keytrack-word] max=17038 rms=-27.70dBFS spec=0.9207 wrms(kt!=0)=1963.5 -> FAIL against proposed budgets; control degrades=['max', 'rms', 'spectral', 'windowed_kt_rms']
+[source-swap-velocity] max=16455 rms=-28.25dBFS spec=0.9270 wrms(kt!=0)=1786.0 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
+[source-swap-modwheel] max=16330 rms=-28.49dBFS spec=0.9250 wrms(kt!=0)=1728.7 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
+  source-swap-modwheel render == cutoff-zeroed render: True
+[ignore-keytrack-root] max=20723 rms=-26.07dBFS spec=0.8775 wrms(kt!=0)=2429.4 -> FAIL against proposed budgets; control degrades=['max', 'rms', 'spectral', 'windowed_kt_rms']
+[probe-velocity-cutoff-zeroed] max=15300 rms=-29.33dBFS spec=0.8916 wrms(kt!=0)=1578.3 -> FAIL against proposed budgets; PROBE degrades=['spectral']
+
+[P5 lag-refresh-before] bit-identical to baseline: True (expected TRUE: pitch is constant per voice, so the declared 1-control-pass lag is unobservable in this class -- probe, not a control)
+
+[out-of-class-route] exit=2 refused=True msg=REFUSED (outside declared SXT-042 class): keytrack route -> 265 (unnamed) outside the declared SXT-042 destination class {308, 309, 310} (+ inert unit-2 {314, 315, 318})
+[carrier-refusal] Alone.fxp: refused=True
+    - keytrack->226 (A Osc 1 Feedback) outside {308,309,310}
+    - keytrack->228 (A Osc 1 Low Cut) outside {308,309,310}
+    - keytrack->250 (A Osc 3 Width) outside {308,309,310}
+[carrier-refusal] Autumn 2.fxp: refused=True
+    - keytrack->226 (A Osc 1 Skew Vertical) outside {308,309,310}
+    - keytrack->228 (A Osc 1 Formant) outside {308,309,310}
+    - keytrack->250 (A Osc 3 Feedback) outside {308,309,310}
+[carrier-refusal] Disturbances.fxp: refused=True
+    - keytrack->226 (A Osc 1 Width) outside {308,309,310}
+    - keytrack->250 (A Osc 3 Skew Vertical) outside {308,309,310}
+    - keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}
+
+[synthetic-reso-zeroed] render differs from the synthetic class-cover baseline: True (model-vs-model; no reference claim -- the pinned engine never rendered this configuration)
+[synthetic-fegmod-zeroed] render differs from the synthetic class-cover baseline: True (model-vs-model; no reference claim -- the pinned engine never rendered this configuration)
+
+[rtl-mutant-rounding] keytrack word rounding bias dropped (round-half-up -> truncate)
+  verdict=FAIL mismatches=50 first=['block 6750 slot 4 kt_word: model=3320491 rtl=3320490']
+[rtl-mutant-shared] one SHARED keytrack word (the first note's) instead of per-voice
+  verdict=FAIL mismatches=42 first=['block 1688 slot 3 kt_word: model=4194304 rtl=0']
+
+NON-DISCRIMINATING on this carrier (fail the budget check and provably change the render, but do not degrade any metric relative to the unmutated model -- recorded as a bounded finding, NOT counted as evidence of sensitivity):
+  - cutoff-zeroed
+  - source-swap-modwheel
+  - source-swap-velocity
+
+overall: ALL CONTROLS FAIL THEIR CHECK (expected)

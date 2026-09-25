@@ -1,0 +1,270 @@
+{
+  "baseline": {
+    "expected": "informational",
+    "max_abs_diff_lsb": 16721.0,
+    "model_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46",
+    "rms_diff_dbfs": -27.855086029921274,
+    "rms_diff_lsb": 1326.4240254946847,
+    "spectral_corr": 0.9207418655237404,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 1915.35724374861,
+      "kt_zero": 2719.375381089889
+    }
+  },
+  "carrier-Alone.fxp": {
+    "control_ok": true,
+    "expected": "REFUSE (outside the declared class)",
+    "reasons": [
+      "keytrack->226 (A Osc 1 Feedback) outside {308,309,310}",
+      "keytrack->228 (A Osc 1 Low Cut) outside {308,309,310}",
+      "keytrack->250 (A Osc 3 Width) outside {308,309,310}",
+      "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+      "scene route 23->240 (A Osc 2 Sub Mix) outside the class",
+      "scene route 6->239 (A Osc 2 Width 2) outside the class",
+      "scene route 6->240 (A Osc 2 Sub Mix) outside the class",
+      "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+      "scene route 6->320 (A Amp EG Attack) outside the class",
+      "scene route 6->322 (A Amp EG Decay) outside the class",
+      "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+      "velocity->237 (A Osc 2 Shape) outside the class",
+      "velocity->260 (A FM Depth) outside the class",
+      "velocity->320 (A Amp EG Attack) outside the class",
+      "voice route source 17 outside {velocity, keytrack}",
+      "voice route source 18 outside {velocity, keytrack}",
+      "voice route source 19 outside {velocity, keytrack}"
+    ]
+  },
+  "carrier-Autumn 2.fxp": {
+    "control_ok": true,
+    "expected": "REFUSE (outside the declared class)",
+    "reasons": [
+      "keytrack->226 (A Osc 1 Skew Vertical) outside {308,309,310}",
+      "keytrack->228 (A Osc 1 Formant) outside {308,309,310}",
+      "keytrack->250 (A Osc 3 Feedback) outside {308,309,310}",
+      "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+      "scene route 6->239 (A Osc 2 Width 2) outside the class",
+      "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+      "scene route 6->320 (A Amp EG Attack) outside the class",
+      "scene route 6->322 (A Amp EG Decay) outside the class",
+      "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+      "velocity->320 (A Amp EG Attack) outside the class",
+      "voice route source 17 outside {velocity, keytrack}",
+      "voice route source 18 outside {velocity, keytrack}",
+      "voice route source 19 outside {velocity, keytrack}",
+      "voice route source 20 outside {velocity, keytrack}"
+    ]
+  },
+  "carrier-Disturbances.fxp": {
+    "control_ok": true,
+    "expected": "REFUSE (outside the declared class)",
+    "reasons": [
+      "keytrack->226 (A Osc 1 Width) outside {308,309,310}",
+      "keytrack->250 (A Osc 3 Skew Vertical) outside {308,309,310}",
+      "keytrack->254 (A Osc 3 Unison Detune) outside {308,309,310}",
+      "scene route 6->314 (A Filter 2 Cutoff) outside the class",
+      "scene route 6->320 (A Amp EG Attack) outside the class",
+      "scene route 6->322 (A Amp EG Decay) outside the class",
+      "scene route 6->365 (A LFO 3 Amplitude) outside the class",
+      "velocity->320 (A Amp EG Attack) outside the class",
+      "voice route source 17 outside {velocity, keytrack}",
+      "voice route source 18 outside {velocity, keytrack}",
+      "voice route source 19 outside {velocity, keytrack}"
+    ]
+  },
+  "cutoff-zeroed": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "degraded_metrics": [],
+    "discriminating": false,
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 16330.0,
+    "model_sha256": "d7d43ad51b65b3957018f6369d86ca18dfd751582a90857603e5007de51a7c65",
+    "render_changed": true,
+    "rms_diff_dbfs": -28.48636339603338,
+    "rms_diff_lsb": 1233.4413718062701,
+    "spectral_corr": 0.9249752071828001,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 1728.7357909234504,
+      "kt_zero": 2719.375381089889
+    }
+  },
+  "fegmod-zeroed": {
+    "control_ok": true,
+    "counted_as_control": false,
+    "expected": "DEGENERATE (no route to mutate)",
+    "model_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46",
+    "note": "mutation is a no-op on this carrier",
+    "render_changed": false
+  },
+  "ignore-keytrack-root": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "degraded_metrics": [
+      "max",
+      "rms",
+      "spectral",
+      "windowed_kt_rms"
+    ],
+    "discriminating": true,
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 20723.0,
+    "model_sha256": "4459ddae2593af5735f5113bfef25a87cea72c3159a35151ce5fefe9809d7935",
+    "render_changed": true,
+    "rms_diff_dbfs": -26.07105218106925,
+    "rms_diff_lsb": 1628.8611763671545,
+    "spectral_corr": 0.8774971521882573,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 2429.3602996769046,
+      "kt_zero": 3023.2183117774784
+    }
+  },
+  "lag-refresh-before-probe": {
+    "bit_identical": true,
+    "counted_as_control": false,
+    "expected": "INERT (bit-identical)",
+    "probe_ok": true
+  },
+  "non_discriminating_on_this_carrier": [
+    "cutoff-zeroed",
+    "source-swap-modwheel",
+    "source-swap-velocity"
+  ],
+  "out-of-class-route": {
+    "control_ok": true,
+    "expected": "REFUSE (exit 2)",
+    "refusal": "REFUSED (outside declared SXT-042 class): keytrack route -> 265 (unnamed) outside the declared SXT-042 destination class {308, 309, 310} (+ inert unit-2 {314, 315, 318})"
+  },
+  "overall_ok": true,
+  "probe-velocity-cutoff-zeroed": {
+    "control_ok": true,
+    "counted_as_control": false,
+    "degraded_metrics": [
+      "spectral"
+    ],
+    "discriminating": true,
+    "expected": "PROBE",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 15300.0,
+    "model_sha256": "fcd1fddc2284f832411caa784ffdaf0a24a6977b2bc8d7ebdcf22de92a02779d",
+    "render_changed": true,
+    "rms_diff_dbfs": -29.330441241962358,
+    "rms_diff_lsb": 1119.2178270618706,
+    "spectral_corr": 0.8916193084396107,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 1578.3217215018697,
+      "kt_zero": 2433.719669015282
+    }
+  },
+  "reso-zeroed": {
+    "control_ok": true,
+    "counted_as_control": false,
+    "expected": "DEGENERATE (no route to mutate)",
+    "model_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46",
+    "note": "mutation is a no-op on this carrier",
+    "render_changed": false
+  },
+  "rtl-mutant-rounding": {
+    "control_ok": true,
+    "expected": "FAIL",
+    "metrics_file": "reports/SXT-042/artifacts/exactness-rtl-mutant-rounding.json",
+    "mutation": {
+      "from": "num = (64'sd1048576 * n) + 64'sd3;",
+      "to": "num = (64'sd1048576 * n) + 64'sd0;"
+    },
+    "run_dir": "../../../../../../../tmp/sxt042/run-synthetic",
+    "verdict": "FAIL"
+  },
+  "rtl-mutant-shared": {
+    "control_ok": true,
+    "expected": "FAIL",
+    "metrics_file": "reports/SXT-042/artifacts/exactness-rtl-mutant-shared.json",
+    "mutation": {
+      "from": "kt = kt_word_of(key + 12*oct - root);",
+      "to": "kt = kt_word_of(32'sd36 + 12*oct - root);"
+    },
+    "run_dir": "../../../../../../../tmp/sxt042/run-synthetic",
+    "verdict": "FAIL"
+  },
+  "shared-keytrack-word": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "degraded_metrics": [
+      "max",
+      "rms",
+      "spectral",
+      "windowed_kt_rms"
+    ],
+    "discriminating": true,
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 17038.0,
+    "model_sha256": "a10b8499894c7f5e852f5ef4ed00b702ffb1dccb0e7f555dd7ddb11190bd4e68",
+    "render_changed": true,
+    "rms_diff_dbfs": -27.696675212956446,
+    "rms_diff_lsb": 1350.836915573964,
+    "spectral_corr": 0.9207209145339963,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 1963.500778115421,
+      "kt_zero": 2719.375381089889
+    }
+  },
+  "source-swap-modwheel": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "degraded_metrics": [],
+    "discriminating": false,
+    "equals_cutoff_zeroed_render": true,
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 16330.0,
+    "model_sha256": "d7d43ad51b65b3957018f6369d86ca18dfd751582a90857603e5007de51a7c65",
+    "note": "the modwheel is identically 0 on this fixture (a Sine-class fixture admits no CC events), so this swap is arithmetically the zeroed control -- proved by the render sha equality; velocity carries the non-degenerate swap",
+    "render_changed": true,
+    "rms_diff_dbfs": -28.48636339603338,
+    "rms_diff_lsb": 1233.4413718062701,
+    "spectral_corr": 0.9249752071828001,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 1728.7357909234504,
+      "kt_zero": 2719.375381089889
+    }
+  },
+  "source-swap-velocity": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "degraded_metrics": [],
+    "discriminating": false,
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 16455.0,
+    "model_sha256": "e706f3e46cf1cd78942f922032b76066aaf8e302f44be1f49895f2e83732f952",
+    "render_changed": true,
+    "rms_diff_dbfs": -28.25063214384183,
+    "rms_diff_lsb": 1267.3748187390381,
+    "spectral_corr": 0.9270468453443563,
+    "verdict": "FAIL against proposed budgets",
+    "windowed_rms_lsb": {
+      "kt_nonzero": 1785.9804115648071,
+      "kt_zero": 2760.3718523691427
+    }
+  },
+  "synthetic-fegmod-zeroed": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "domain": "exactness/model-vs-model only",
+    "expected": "render must change"
+  },
+  "synthetic-reso-zeroed": {
+    "control_ok": true,
+    "counted_as_control": true,
+    "domain": "exactness/model-vs-model only",
+    "expected": "render must change"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "bus": "dry",
+  "claim": "mono int16 projection of a COMMITTED pinned-engine render; no new engine measurement was made by this tool",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-darwin.so",
+    "tempo_bpm": 120
+  },
+  "frames": 840000,
+  "issue": "SXT-042",
+  "mono_law": "0.5*(L+R) in float32, then int(clamp(x,-1,1)*32767)",
+  "out": "reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav",
+  "out_sha256": "afb3ad51739609ff43bc7372d6d0db6322532f3cc43bce1653834fb621e3fcc2",
+  "peak_abs_float": 0.38400089740753174,
+  "preset": {
+    "census_blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+    "graphs_sha256_prefix": null,
+    "note": "contributor bank preset; graph sha in model/integration/selection-scan.json",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "slug": "hells_bells"
+  },
+  "sequence": {
+    "id": "sxt025-accept-v1",
+    "path": "model/integration/sequences/sxt025-accept-v1.json",
+    "sha256": "ed08fc0712e3454a870801f03779bf8c0474e759e03cd1c6d69305acbc1fac6b"
+  },
+  "source_fixture": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1-dry.f32.wav",
+  "source_manifest": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1.json",
+  "source_sha256": "8399f13dfed5526bd5d1a55a7b01cbe156fd98d39155aba0707e7f1c9e791457"
+}

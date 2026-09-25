@@ -488,3 +488,103 @@ committed artifact hashes).
   `reports/sxt-035/`), modwheel-as-a-mod-destination. Multi-scene smoothing
   (one instance per scene, stepped per scene) is out of the single-scene
   class.
+
+# SXT-042 frozen keytrack modsource (`run_kt_model.py` + `tb_kt.sv`)
+
+Leaf #76 (SXT-042, mod behavior `keytrack`, pinned modsource id
+2 = `ms_keytrack`). This section generalizes and freezes the keytrack
+plumbing landed under SXT-026a (#48) as its own leaf with an exact RTL
+slice and live negative controls; it does not fork it. Landed fixtures
+(SXT-022 v1 ×3, SXT-026a bells smoke + canonical, SXT-035 modwheel ×3)
+render **bit-identically** after this extension (verified against the
+committed artifact hashes).
+
+## Pinned-source citations (read, not copied)
+
+* `src/common/ModulationSource.h`: `modsources` enum, `ms_keytrack = 2`.
+* `src/common/dsp/SurgeVoice.cpp`:
+  - voice ctor: `modsources[ms_keytrack] = &keytrackSource;` followed by
+    **`keytrackSource.set_output(0, 0.f);`** — the source starts at ZERO
+    (unlike `velocitySource.init(0, state.fvel)`, which starts at the real
+    value) — then `applyModulationToLocalcopy<true>()` and
+    `calc_ctrldata<true>(0,0)` both run with keytrack = 0;
+  - `calc_ctrldata`: `memcpy(localcopy, paramptr)` →
+    `applyModulationToLocalcopy()` (reads the value installed by the
+    PREVIOUS pass) → … → `state.pitch = state.pkey + state.scenepbpitch` →
+    `modsources[ms_keytrack]->set_output(0, (state.pitch −
+    (float)scene->keytrack_root.val.i) * (1.f/12.f))`.  This is the
+    declared 1-control-pass lag, and its initial value is 0;
+  - `applyModulationToLocalcopy`: `localcopy[dst].f += depth ·
+    source_output · (1 − muted)` over `scene->modulation_voice` in array
+    order (the normalized `md` order);
+  - `switch_toggled()` recomputes the same keytrack expression and
+    re-applies ONLY the keytrack rows into `localcopy` after the ctor's
+    `calc_ctrldata`; in this class keytrack routes reach filter parameters
+    only, which the ctor pass does not propagate, so the model's ctor pass
+    is unaffected (verified: render bit-identical).
+  - **Distinct quantity, do not conflate**: `float keytrack = state.pitch −
+    keytrack_root` (raw semitones) is the *filter keytrack parameter* path
+    (`localcopy[id_kta].f * keytrack`); the frozen class pins
+    `fu.keytrack == 0`, so it is inert here. The ms_keytrack MODSOURCE is
+    the same difference divided by 12.
+
+## Frozen model additions (word lengths unchanged)
+
+* **Keytrack word** (`voice_model.keytrack_word`): Q10.21,
+  `qint((pitch_voice − keytrack_root)/12)`, one round-half-up at
+  quantization time. `pitch_voice = key + 12·scene_octave` (portamento off,
+  bend 0, `scenepbpitch` reduces to the octave term in this class).
+  **Per voice instance**, never shared: one 32-bit word per voice.
+* **Initialisation and refresh**: the word is **0** for a voice's first
+  control pass and is refreshed to the pitch-derived value at the END of
+  every control pass, exactly as cited above. Because pitch is constant per
+  voice in this class, every later pass reads the same value, so inverting
+  the refresh point is bit-inert here — an inertness probe records that
+  (`reports/SXT-042/artifacts/negative-control.txt`), it is not a control.
+* **Integer-exact RTL equivalent** (`tb_kt.sv kt_word_of`): with
+  `n = pitch_voice − keytrack_root` an integer,
+  `kt = floor((n·2^20 + 3) / 6)` (floor toward −inf). This is exact because
+  `n·2^21/12` has fractional part 0, 1/3 or 2/3 and can never be a rounding
+  tie; the model and the RTL are held to integer equality on it.
+* **Destination class**: `{308 Filter 1 Cutoff, 309 Filter 1 Resonance,
+  310 Filter 1 FEG Mod Amount}` live, `{314, 315, 318}` accepted-inert
+  (filter unit 2 is Off in the class). Keytrack → `298 VCA Gain` is the most
+  common corpus keytrack destination but is **not** in the frozen class
+  (`VOICE_ROUTE_VOCAB[KEYTRACK_SRC]`), and everything else is refused.
+* **Route application**: `param = sat(param + qmul(qint(depth), value))` in
+  `md`-array order over the merged velocity+keytrack route list, into the
+  localcopy accumulators (`mod_cutoff`, `mod_reso`, `mod_envmod`,
+  `mod_vca_db`); `qmul` is Q10.21 round-half-up with int32 saturation.
+  Depth words are the normalized `md` raw depths (`qint(r[5])`).
+  `kt_route_sums` (cutoff/reso/feg-mod) are observation-only checkpoints.
+* **The route pass is fail-closed in its own right** (not only at parse
+  time): an unrecognised destination reaching `_apply_voice_routes` raises
+  `Refuse` instead of being dropped.
+* **F-042-2 (fixed here)**: the classic-kind branch of
+  `VoiceV2._calc_ctrldata` previously read the raw parameters and never ran
+  the voice-route pass, so a classic-kind fixture carrying velocity/keytrack
+  routes would have dropped them silently. Both kinds now run one route
+  pass. No landed fixture carried such a route, so every landed render is
+  unchanged (verified bit-identical).
+
+## Declared control-plane boundary (model → RTL, SXT-042 slice)
+
+* `kt_init.hex`: `[total_blocks, keytrack_root, scene_octave, cutoff_q,
+  reso_q, envmod_q, vca_q, n_routes]`.
+* `kt_routes.hex`: `(src_code, dest_code, depth_q21)` per route in `md`
+  order (`src` 0 = velocity, 1 = keytrack; `dest` 0..6 = fu1 cutoff / fu1
+  reso / fu1 feg-mod / vca gain / unit-2 ×3).
+* `kt_ctrl.hex`: per block `[b]` + per slot `[active, key, fvel_q21]`. The
+  RTL derives the keytrack word itself from `key`; it is not streamed.
+* Checkpoints (integer equality, every running voice, every block):
+  `kt_word`, the three `kt_route_sums`, and `mod_cutoff` / `mod_reso` /
+  `mod_envmod` / `mod_vca_db`.
+
+## Declared scope omissions (SXT-042; recorded, never guessed)
+
+Keytrack → VCA Gain / pan / volume / osc parameters / EG times / LFO
+amplitudes / FX (all present in the corpus — refused, see
+`reports/SXT-042/`), filter-unit-2 destinations as live paths, scene B,
+pitch-bend or portamento contributions to `state.pitch` (which would make
+the 1-control-pass lag observable), and MPE/tuning-dependent `octaveSize`.
+Keytrack as a modulation DESTINATION is not modeled.

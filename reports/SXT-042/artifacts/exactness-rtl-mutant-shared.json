@@ -1,0 +1,25 @@
+{
+  "tb": "rtl/voice/tb_kt_shared_mutant.sv",
+  "sequence": "sxt025-accept-v1",
+  "control_mode": "normal",
+  "verdict": "FAIL",
+  "checked": {
+    "voice_checkpoints": 3400,
+    "fields": 27200
+  },
+  "rtl_qmuls": 240168,
+  "blocks": 26250,
+  "mismatches": 42,
+  "first_failures": [
+    "block 1688 slot 3 kt_word: model=4194304 rtl=0",
+    "block 1688 slot 3 kt_cut_sum: model=18402500 rtl=0",
+    "block 1688 slot 3 kt_reso_sum: model=524288 rtl=0",
+    "block 1688 slot 3 kt_fegmod_sum: model=33554432 rtl=0",
+    "block 1688 slot 3 mod_cutoff: model=-546808 rtl=-18949308",
+    "block 1688 slot 3 mod_reso: model=524288 rtl=0",
+    "block 1688 slot 3 mod_envmod: model=86784843 rtl=53230411",
+    "block 1689 slot 3 kt_word: model=4194304 rtl=0",
+    "block 1689 slot 3 kt_cut_sum: model=18402500 rtl=0",
+    "block 1689 slot 3 kt_reso_sum: model=524288 rtl=0"
+  ]
+}

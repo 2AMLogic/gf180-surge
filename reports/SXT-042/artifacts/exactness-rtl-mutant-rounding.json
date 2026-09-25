@@ -1,0 +1,25 @@
+{
+  "tb": "rtl/voice/tb_kt_broken_mutant.sv",
+  "sequence": "sxt025-accept-v1",
+  "control_mode": "normal",
+  "verdict": "FAIL",
+  "checked": {
+    "voice_checkpoints": 15028,
+    "fields": 120224
+  },
+  "rtl_qmuls": 240168,
+  "blocks": 26250,
+  "mismatches": 50,
+  "first_failures": [
+    "block 6750 slot 4 kt_word: model=3320491 rtl=3320490",
+    "block 6750 slot 4 kt_cut_sum: model=14568647 rtl=14568643",
+    "block 6750 slot 4 kt_fegmod_sum: model=26563928 rtl=26563920",
+    "block 6750 slot 4 mod_cutoff: model=-4380661 rtl=-4380665",
+    "block 6750 slot 4 mod_envmod: model=79794339 rtl=79794331",
+    "block 6750 slot 5 kt_word: model=4893355 rtl=4893354",
+    "block 6750 slot 5 kt_cut_sum: model=21469585 rtl=21469580",
+    "block 6750 slot 5 kt_fegmod_sum: model=39146840 rtl=39146832",
+    "block 6750 slot 5 mod_cutoff: model=2520277 rtl=2520272",
+    "block 6750 slot 5 mod_envmod: model=92377251 rtl=92377243"
+  ]
+}

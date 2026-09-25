@@ -184,9 +184,13 @@
    "role": "evidence record for leaf osc:Sine",
    "sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7"
   },
+  "reports/SXT-042/EVIDENCE.md": {
+   "role": "evidence record for leaf mod:keytrack",
+   "sha256": "ebea67a3a75c1863ee17f47b9f153c1c0da3d5d5fbf50d934fad82605f9d01fd"
+  },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "3bbd65295cdd19b8a452b87e6b14841be1b32c518b22520fe47587f8da172021"
+   "sha256": "ba3ab660effa066e810f573af12fece446f80f9b5b4e1b1c69ae656ccc3dc552"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -587,6 +591,15 @@
     "landed": false,
     "support_ready": false,
     "verification": {}
+   },
+   "mod:keytrack": {
+    "evidence_state": "OK",
+    "landed": true,
+    "support_ready": false,
+    "verification": {
+     "model_vs_reference": "FAIL",
+     "rtl_vs_model": "PASS"
+    }
    },
    "mod:lfo": {
     "evidence_state": "OK",
