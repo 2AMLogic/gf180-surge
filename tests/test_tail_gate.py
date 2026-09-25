@@ -197,11 +197,14 @@ def test_tail_residual_budget_is_relative_to_the_reference_tail(tmp_path):
 
 def test_tail_check_shape_matches_the_chorus_tool():
     """The shared comparator's tail_check must carry the chorus tool's keys so
-    evidence records stay comparable across leaves."""
-    src = open(os.path.join(REPO, "tools",
-                            "compare_chorus_reference.py")).read()
-    for key in ("tail_present", "tail_rms_rel_db", '"ok"'):
-        assert key in src
+    evidence records stay comparable across leaves. Since issue #100 the
+    chorus tool emits the shared tail_check itself (committed artifacts)."""
+    art = os.path.join(REPO, "reports", "SXT-028c", "artifacts",
+                       "compare-fmcombo__seq-notes-coverage-v1.json")
+    tc = json.load(open(art))["tail_check"]
+    for key in ("tail_present", "tail_rms_rel_db", "ok", "model_tail_present",
+                "tail_region_covered"):
+        assert key in tc
     mod = open(TOOL).read()
     for key in ("tail_present", "tail_rms_rel_db", "model_tail_present",
                 "tail_region_covered"):

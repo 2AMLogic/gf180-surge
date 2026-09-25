@@ -1,0 +1,129 @@
+issue #100 -- stereo comparator tail gate / metric findings: leg 1
+run: 2026-09-25T09:54:51Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+
+==========================================================================
+[1] SXT-028c: six committed comparison cases re-run under the gated stereo comparator
+==========================================================================
+  before = committed artifact at b326bc00eaa81bbad74ee71c004f3ae86983f569 (pre-#100 record)
+  after  = tools/compare_chorus_reference.py (working tree)
+
+  compare-alienappears__seq-notes-coverage-v1.json
+    verdict before: PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    verdict after : PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    status        : PASS -> PASS  (unchanged)
+    declared tail region: [153600, 273600) from reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json
+    old tail window     : last 2.0 s (hard-coded) -> tail_rms_rel_db -54.90 (mono, reference-presence gate only)
+    gated tail legs     : covered=True ref_present=True model_present=True
+    tail residual (dB re ref tail RMS, budget -20.0): mono -53.84  L -54.23  R -54.09  -> gate PASS
+    key diff: SCHEMA=52, TAIL-WINDOW=1, VERDICT-TEXT=1
+      /channels/tail_mono/tail_frames              SCHEMA(removed)                    96000 -> None
+      /channels/tail_mono/tail_max_abs_diff_lsb    SCHEMA(removed)                    30.85791015625 -> None
+      /channels/tail_mono/tail_present             SCHEMA(removed)                    True -> None
+      /channels/tail_mono/tail_rms_diff_lsb        SCHEMA(removed)                    2.4499216260363896 -> None
+      /channels/tail_mono/tail_rms_rel_db          SCHEMA(removed)                    -54.89986600296855 -> None
+      /schema_version                              SCHEMA(version)                    1 -> 2
+      /tail_check/tail_rms_rel_db                  TAIL-WINDOW(declared region replaces hard-coded 2.0 s) -54.89986600296855 -> -53.838623488158234
+      /verdict                                     VERDICT-TEXT(status PASS unchanged) 'PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)' -> 'PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)'
+      SCHEMA(added): 46 keys under ['/fixture_sidecar', '/path', '/proposed_tail_budget', '/tail_check', '/tail_check_lr', '/tail_gate_ok']
+  compare-alienappears__seq-poly-8-v1.json
+    verdict before: PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    verdict after : PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    status        : PASS -> PASS  (unchanged)
+    declared tail region: [57600, 177600) from reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json
+    old tail window     : last 2.0 s (hard-coded) -> tail_rms_rel_db -59.83 (mono, reference-presence gate only)
+    gated tail legs     : covered=True ref_present=True model_present=True
+    tail residual (dB re ref tail RMS, budget -20.0): mono -60.25  L -60.36  R -60.37  -> gate PASS
+    key diff: SCHEMA=52, TAIL-WINDOW=1, ULP=1, VERDICT-TEXT=1
+      /channels/L/spectral_corr                    ULP                                0.9999997225888235 -> 0.9999997225888233
+      /channels/tail_mono/tail_frames              SCHEMA(removed)                    96000 -> None
+      /channels/tail_mono/tail_max_abs_diff_lsb    SCHEMA(removed)                    258.822265625 -> None
+      /channels/tail_mono/tail_present             SCHEMA(removed)                    True -> None
+      /channels/tail_mono/tail_rms_diff_lsb        SCHEMA(removed)                    25.83254637726235 -> None
+      /channels/tail_mono/tail_rms_rel_db          SCHEMA(removed)                    -59.829270648792566 -> None
+      /schema_version                              SCHEMA(version)                    1 -> 2
+      /tail_check/tail_rms_rel_db                  TAIL-WINDOW(declared region replaces hard-coded 2.0 s) -59.829270648792566 -> -60.2471192888784
+      /verdict                                     VERDICT-TEXT(status PASS unchanged) 'PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)' -> 'PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)'
+      SCHEMA(added): 46 keys under ['/fixture_sidecar', '/path', '/proposed_tail_budget', '/tail_check', '/tail_check_lr', '/tail_gate_ok']
+  compare-fmcombo__seq-notes-coverage-v1.json
+    verdict before: PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    verdict after : PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    status        : PASS -> PASS  (unchanged)
+    declared tail region: [153600, 273600) from reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json
+    old tail window     : last 2.0 s (hard-coded) -> tail_rms_rel_db 0.00 (mono, reference-presence gate only)
+    gated tail legs     : covered=True ref_present=True model_present=True
+    tail residual (dB re ref tail RMS, budget -20.0): mono -73.46  L -73.57  R -73.37  -> gate PASS
+    key diff: SCHEMA=52, TAIL-WINDOW=1, ULP=1, VERDICT-TEXT=1
+      /channels/R/spectral_corr                    ULP                                0.9999998979950933 -> 0.999999897995093
+      /channels/tail_mono/tail_frames              SCHEMA(removed)                    96000 -> None
+      /channels/tail_mono/tail_max_abs_diff_lsb    SCHEMA(removed)                    0.238865464925766 -> None
+      /channels/tail_mono/tail_present             SCHEMA(removed)                    True -> None
+      /channels/tail_mono/tail_rms_diff_lsb        SCHEMA(removed)                    0.025709605421956726 -> None
+      /channels/tail_mono/tail_rms_rel_db          SCHEMA(removed)                    0.0 -> None
+      /schema_version                              SCHEMA(version)                    1 -> 2
+      /tail_check/tail_rms_rel_db                  TAIL-WINDOW(declared region replaces hard-coded 2.0 s) 0.0 -> -73.45675738066619
+      /verdict                                     VERDICT-TEXT(status PASS unchanged) 'PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)' -> 'PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)'
+      SCHEMA(added): 46 keys under ['/fixture_sidecar', '/path', '/proposed_tail_budget', '/tail_check', '/tail_check_lr', '/tail_gate_ok']
+  compare-fmcombo__seq-poly-8-v1.json
+    verdict before: PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    verdict after : PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    status        : PASS -> PASS  (unchanged)
+    declared tail region: [57600, 177600) from reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1.json
+    old tail window     : last 2.0 s (hard-coded) -> tail_rms_rel_db 0.00 (mono, reference-presence gate only)
+    gated tail legs     : covered=True ref_present=True model_present=True
+    tail residual (dB re ref tail RMS, budget -20.0): mono -83.29  L -82.83  R -83.61  -> gate PASS
+    key diff: SCHEMA=52, TAIL-WINDOW=1, ULP=1, VERDICT-TEXT=1
+      /channels/L/spectral_corr                    ULP                                0.9999999677545485 -> 0.9999999677545487
+      /channels/tail_mono/tail_frames              SCHEMA(removed)                    96000 -> None
+      /channels/tail_mono/tail_max_abs_diff_lsb    SCHEMA(removed)                    0.38914501667022705 -> None
+      /channels/tail_mono/tail_present             SCHEMA(removed)                    True -> None
+      /channels/tail_mono/tail_rms_diff_lsb        SCHEMA(removed)                    0.04187948708977636 -> None
+      /channels/tail_mono/tail_rms_rel_db          SCHEMA(removed)                    0.0 -> None
+      /schema_version                              SCHEMA(version)                    1 -> 2
+      /tail_check/tail_rms_rel_db                  TAIL-WINDOW(declared region replaces hard-coded 2.0 s) 0.0 -> -83.28502551052938
+      /verdict                                     VERDICT-TEXT(status PASS unchanged) 'PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)' -> 'PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)'
+      SCHEMA(added): 46 keys under ['/fixture_sidecar', '/path', '/proposed_tail_budget', '/tail_check', '/tail_check_lr', '/tail_gate_ok']
+  compare-fmtwang2__seq-notes-coverage-v1.json
+    verdict before: PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    verdict after : PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    status        : PASS -> PASS  (unchanged)
+    declared tail region: [153600, 273600) from reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json
+    old tail window     : last 2.0 s (hard-coded) -> tail_rms_rel_db 1.30 (mono, reference-presence gate only)
+    gated tail legs     : covered=True ref_present=True model_present=True
+    tail residual (dB re ref tail RMS, budget -20.0): mono -70.48  L -67.55  R -70.79  -> gate PASS
+    key diff: SCHEMA=52, TAIL-WINDOW=1, ULP=2, VERDICT-TEXT=1
+      /channels/R/spectral_corr                    ULP                                0.9999996661217303 -> 0.9999996661217301
+      /channels/mono/spectral_corr                 ULP                                0.9999997742303957 -> 0.9999997742303959
+      /channels/tail_mono/tail_frames              SCHEMA(removed)                    96000 -> None
+      /channels/tail_mono/tail_max_abs_diff_lsb    SCHEMA(removed)                    1.4534245729446411 -> None
+      /channels/tail_mono/tail_present             SCHEMA(removed)                    True -> None
+      /channels/tail_mono/tail_rms_diff_lsb        SCHEMA(removed)                    0.11079253920528256 -> None
+      /channels/tail_mono/tail_rms_rel_db          SCHEMA(removed)                    1.3000462659163343 -> None
+      /schema_version                              SCHEMA(version)                    1 -> 2
+      /tail_check/tail_rms_rel_db                  TAIL-WINDOW(declared region replaces hard-coded 2.0 s) 1.3000462659163343 -> -70.47578094029693
+      /verdict                                     VERDICT-TEXT(status PASS unchanged) 'PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)' -> 'PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)'
+      SCHEMA(added): 46 keys under ['/fixture_sidecar', '/path', '/proposed_tail_budget', '/tail_check', '/tail_check_lr', '/tail_gate_ok']
+  compare-fmtwang2__seq-poly-8-v1.json
+    verdict before: PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    verdict after : PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)
+    status        : PASS -> PASS  (unchanged)
+    declared tail region: [57600, 177600) from reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1.json
+    old tail window     : last 2.0 s (hard-coded) -> tail_rms_rel_db -12.58 (mono, reference-presence gate only)
+    gated tail legs     : covered=True ref_present=True model_present=True
+    tail residual (dB re ref tail RMS, budget -20.0): mono -83.94  L -85.81  R -82.78  -> gate PASS
+    key diff: SCHEMA=52, TAIL-WINDOW=1, ULP=1, VERDICT-TEXT=1
+      /channels/R/spectral_corr                    ULP                                0.9999998580090258 -> 0.9999998580090257
+      /channels/tail_mono/tail_frames              SCHEMA(removed)                    96000 -> None
+      /channels/tail_mono/tail_max_abs_diff_lsb    SCHEMA(removed)                    1.4751590490341187 -> None
+      /channels/tail_mono/tail_present             SCHEMA(removed)                    True -> None
+      /channels/tail_mono/tail_rms_diff_lsb        SCHEMA(removed)                    0.1625975994211019 -> None
+      /channels/tail_mono/tail_rms_rel_db          SCHEMA(removed)                    -12.581349179761139 -> None
+      /schema_version                              SCHEMA(version)                    1 -> 2
+      /tail_check/tail_rms_rel_db                  TAIL-WINDOW(declared region replaces hard-coded 2.0 s) -12.581349179761139 -> -83.93595525777286
+      /verdict                                     VERDICT-TEXT(status PASS unchanged) 'PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)' -> 'PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)'
+      SCHEMA(added): 46 keys under ['/fixture_sidecar', '/path', '/proposed_tail_budget', '/tail_check', '/tail_check_lr', '/tail_gate_ok']
+
+  result: 6/6 re-run; 6/6 PASS under the gated tool; verdict status changes: 0; unexplained diffs: 0
+  committed artifacts regenerated: yes
+
+leg 1 verdict: PASS

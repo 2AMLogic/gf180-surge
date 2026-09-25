@@ -1,10 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "leaf": "SXT-028c",
   "slug": "fmtwang2",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1-wet.f32.wav",
   "model": "reports/SXT-028c/artifacts/model__fmtwang2__seq-notes-coverage-v1.f32.wav",
+  "path": "wet",
+  "fixture_sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json",
   "channels": {
     "L": {
       "frames": 273600,
@@ -28,7 +30,7 @@
       "rms_diff_at_shift0_lsb": 11.683831135372158,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 11.683831135372158,
-      "spectral_corr": 0.9999996661217303
+      "spectral_corr": 0.9999996661217301
     },
     "mono": {
       "frames": 273600,
@@ -40,14 +42,7 @@
       "rms_diff_at_shift0_lsb": 8.900559894655858,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 8.900559894655858,
-      "spectral_corr": 0.9999997742303957
-    },
-    "tail_mono": {
-      "tail_frames": 96000,
-      "tail_max_abs_diff_lsb": 1.4534245729446411,
-      "tail_rms_diff_lsb": 0.11079253920528256,
-      "tail_rms_rel_db": 1.3000462659163343,
-      "tail_present": true
+      "spectral_corr": 0.9999997742303959
     }
   },
   "proposed_budgets": {
@@ -60,10 +55,68 @@
     "rms_diff_dbfs": true,
     "spectral_corr": true
   },
-  "tail_check": {
-    "tail_present": true,
-    "tail_rms_rel_db": 1.3000462659163343,
-    "ok": true
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0
   },
-  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+    "tail_region_sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 120.193359375,
+    "tail_rms_diff_lsb": 3.3923602093503824,
+    "tail_rms_rel_db": -70.47578094029693,
+    "tail_ref_rms_lsb": 11331.594045709062,
+    "tail_model_rms_lsb": 11331.719596847382,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 180.69921875,
+      "tail_rms_diff_lsb": 4.359499611575688,
+      "tail_rms_rel_db": -67.55271891698264,
+      "tail_ref_rms_lsb": 10400.939954236026,
+      "tail_model_rms_lsb": 10400.95801734188,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 173.78125,
+      "tail_rms_diff_lsb": 4.590608159549432,
+      "tail_rms_rel_db": -70.78562226021342,
+      "tail_ref_rms_lsb": 15891.004011691744,
+      "tail_model_rms_lsb": 15891.296457152524,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
 }

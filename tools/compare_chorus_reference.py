@@ -17,9 +17,28 @@ path. No Chorus budget may freeze before #12 decides.
 
 Units: differences in Q10.21 LSB (1 LSB = 2^-21 ~ 4.77e-7).
 Metrics per channel (L, R) and mono sum: max_abs_diff_lsb, rms_diff_lsb,
-rms_diff_dbfs, best_shift ([-32, 32] scan), spectral_corr (Hann 4096), and
-a tail-region check (the render tail span must be present and compared;
-a dropped tail FAILS).
+rms_diff_dbfs (clamped to a finite floor under exact agreement, issue #100),
+best_shift ([-32, 32] scan), spectral_corr (Hann 4096).
+
+Wet-path tail gate (issue #100; same legs as the shared mono comparator's
+#93 gate, tools/compare_audio_reference.py)
+-------------------------------------------------------------------------
+The tail region is read from the fixture sidecar's DECLARED values
+(`render.frames`, `render.tail_s`, `render.sample_rate`; region
+[frames - tail_s*sr, frames)), never from a hard-coded window and never
+inferred from silence. The sidecar defaults to
+<fixtures-dir>/<slug>__<seq>.json; if it is missing, does not declare the
+region, or does not describe the reference render (sample rate, frame count,
+wet sha256), the tool REFUSES: verdict NO_VERDICT, exit 2, nothing graded.
+
+The verdict is PASS only when the three proposed budgets pass AND the tail
+gate passes on the mono sum and on each of L and R: declared region covered
+by both renders, reference tail carries energy, model tail carries energy,
+and tail residual RMS <= PROPOSED_TAIL["tail_rms_rel_db"] relative to the
+reference tail RMS. A zeroed, truncated, or far-too-fast model tail FAILS.
+
+Exit status: 0 = a graded verdict (PASS or FAIL; consumers read `verdict`,
+unchanged from the pre-#100 tool); 2 = refusal (NO_VERDICT).
 """
 
 import argparse
@@ -31,6 +50,11 @@ import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.join(REPO, "tools"))
+
+import compare_audio_reference as car  # noqa: E402
+
+PROPOSED_TAIL = car.PROPOSED_TAIL
 
 # [PROPOSED] budgets — identical values to the sxt-023 effect-slice family
 # (see tools/compare_fx_reference.py); PENDING-FREEZE via SXT-017 (#12),
@@ -103,7 +127,7 @@ def channel_metrics(ref, mod):
         "model_peak_lsb": float(np.abs(mod).max() / LSB),
         "max_abs_diff_lsb": float(d.max() / LSB),
         "rms_diff_lsb": rms / LSB,
-        "rms_diff_dbfs": float(20 * np.log10(rms / LSB / (1 << 20))),
+        "rms_diff_dbfs": car.rms_dbfs(rms / LSB, float(1 << 20)),
         "rms_diff_at_shift0_lsb": shifts[0] / LSB,
         "best_shift": best_shift,
         "rms_diff_at_best_shift_lsb": shifts[best_shift] / LSB,
@@ -111,24 +135,8 @@ def channel_metrics(ref, mod):
     }
 
 
-def tail_metrics(ref, mod, tail_s=2.0):
-    """Agreement over the declared tail window (last tail_s seconds)."""
-    n = min(len(ref), len(mod))
-    t = int(tail_s * 48000)
-    if t >= n:
-        t = n // 4
-    ref_t = ref[n - t:n].astype(np.float64)
-    mod_t = mod[n - t:n].astype(np.float64)
-    d = np.abs(ref_t - mod_t)
-    rms = float(np.sqrt((d * d).mean()))
-    ref_rms = float(np.sqrt((ref_t * ref_t).mean())) or 1e-30
-    return {
-        "tail_frames": t,
-        "tail_max_abs_diff_lsb": float(d.max() / LSB),
-        "tail_rms_diff_lsb": rms / LSB,
-        "tail_rms_rel_db": float(20 * np.log10(max(rms / ref_rms, 1e-30))),
-        "tail_present": bool(np.abs(ref_t).max() > 0),
-    }
+def refuse(reason, out_json=None):
+    return car.refuse(reason, out_json)
 
 
 def main():
@@ -139,30 +147,54 @@ def main():
                     default=os.path.join(REPO, "reports", "SXT-028c", "fixtures"))
     ap.add_argument("--art-dir",
                     default=os.path.join(REPO, "reports", "SXT-028c", "artifacts"))
+    ap.add_argument("--model",
+                    help="model wet render (default: "
+                         "<art-dir>/model__<slug>__<seq>.f32.wav)")
+    ap.add_argument("--sidecar",
+                    help="fixture sidecar declaring the tail region (default: "
+                         "<fixtures-dir>/<slug>__<seq>.json)")
     ap.add_argument("--json", help="write metrics JSON here")
     args = ap.parse_args()
 
-    ref, sr = read_wav_stereo_f32(os.path.join(
-        args.fixtures_dir, f"{args.slug}__{args.seq}-wet.f32.wav"))
-    mod, sr2 = read_wav_stereo_f32(os.path.join(
-        args.art_dir, f"model__{args.slug}__{args.seq}.f32.wav"))
+    ref_path = os.path.join(args.fixtures_dir,
+                            f"{args.slug}__{args.seq}-wet.f32.wav")
+    mod_path = args.model or os.path.join(
+        args.art_dir, f"model__{args.slug}__{args.seq}.f32.wav")
+    sidecar = args.sidecar or os.path.join(
+        args.fixtures_dir, f"{args.slug}__{args.seq}.json")
+
+    # The tail region must come from declared fixture metadata; refuse first.
+    if not os.path.exists(sidecar):
+        return refuse(
+            "fixture sidecar not found: %s -- the wet-path tail region cannot "
+            "be declared, and this tool does not guess one (issue #100)"
+            % sidecar, args.json)
+    try:
+        region = car.declared_tail_region(sidecar, "wet")
+    except car.TailRegionError as e:
+        return refuse(str(e), args.json)
+
+    ref, sr = read_wav_stereo_f32(ref_path)
+    mod, sr2 = read_wav_stereo_f32(mod_path)
     assert sr == sr2 == 48000, (sr, sr2)
+    why = car.validate_region_against_render(region, sr, ref.shape[1], ref_path)
+    if why:
+        return refuse(why, args.json)
 
     metrics = {
-        "schema_version": 1,
+        "schema_version": 2,
         "leaf": "SXT-028c",
         "slug": args.slug,
         "sequence": args.seq,
-        "ref": os.path.relpath(os.path.join(
-            args.fixtures_dir, f"{args.slug}__{args.seq}-wet.f32.wav"), REPO),
-        "model": os.path.relpath(os.path.join(
-            args.art_dir, f"model__{args.slug}__{args.seq}.f32.wav"), REPO),
+        "ref": os.path.relpath(ref_path, REPO),
+        "model": os.path.relpath(mod_path, REPO),
+        "path": "wet",
+        "fixture_sidecar": os.path.relpath(sidecar, REPO),
     }
     chs = {}
     for name, idx in (("L", 0), ("R", 1)):
         chs[name] = channel_metrics(ref[idx], mod[idx])
     chs["mono"] = channel_metrics(0.5 * (ref[0] + ref[1]), 0.5 * (mod[0] + mod[1]))
-    chs["tail_mono"] = tail_metrics(0.5 * (ref[0] + ref[1]), 0.5 * (mod[0] + mod[1]))
     metrics["channels"] = chs
 
     worst = chs["mono"]
@@ -173,17 +205,27 @@ def main():
     }
     metrics["proposed_budgets"] = PROPOSED
     metrics["proposed_budget_results"] = proposed_results
-    metrics["tail_check"] = {
-        "tail_present": chs["tail_mono"]["tail_present"],
-        "tail_rms_rel_db": chs["tail_mono"]["tail_rms_rel_db"],
-        "ok": chs["tail_mono"]["tail_present"],
-    }
-    ok = all(proposed_results.values())
-    metrics["verdict"] = (
-        "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; "
-        "freeze gated on SXT-017 #12 / shared delay-semantics #16)"
-        if ok and chs["tail_mono"]["tail_present"]
-        else "FAIL against proposed budgets")
+    metrics["proposed_tail_budget"] = dict(PROPOSED_TAIL)
+    tc, tc_lr, tail_ok, tail_reason = car.stereo_tail_gate(
+        ref, mod, dict(region, sidecar=os.path.relpath(sidecar, REPO)), LSB)
+    metrics["tail_check"] = tc
+    metrics["tail_check_lr"] = tc_lr
+    metrics["tail_gate_ok"] = tail_ok
+    budgets_ok = all(proposed_results.values())
+    if budgets_ok and tail_ok:
+        metrics["verdict"] = (
+            "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate "
+            "are proposals, not frozen policy; freeze gated on SXT-017 #12 / "
+            "shared delay-semantics #16)")
+    else:
+        parts = []
+        if not budgets_ok:
+            parts.append("budget: " + ", ".join(
+                sorted(k for k, v in proposed_results.items() if not v)))
+        if not tail_ok:
+            parts.append("tail-region gate: " + tail_reason)
+        metrics["verdict"] = ("FAIL against proposed budgets (%s)"
+                              % "; ".join(parts))
 
     print(json.dumps({
         "slug": args.slug, "seq": args.seq,
@@ -191,7 +233,8 @@ def main():
         "rms_diff_dbfs": worst["rms_diff_dbfs"],
         "spectral_corr": worst["spectral_corr"],
         "best_shift": worst["best_shift"],
-        "tail_rms_rel_db": chs["tail_mono"]["tail_rms_rel_db"],
+        "tail_rms_rel_db": tc["tail_rms_rel_db"],
+        "tail_gate_ok": tail_ok,
         "verdict": metrics["verdict"],
     }, indent=2))
     out = args.json or os.path.join(

@@ -1,0 +1,119 @@
+{
+  "ref": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/sxt-023/artifacts/model__metallic__seq-notes-coverage-v1.f32.wav",
+  "preset": "metallic",
+  "path": "wet",
+  "fixture_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 607661.625,
+      "model_peak_lsb": 571102.0,
+      "max_abs_diff_lsb": 882929.875,
+      "rms_diff_lsb": 82112.27486119227,
+      "rms_diff_dbfs": -22.12383658337249,
+      "rms_diff_at_shift0_lsb": 82112.27486119227,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 82112.27486119227,
+      "spectral_corr": 0.9262112461653684
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 647022.6875,
+      "model_peak_lsb": 618757.0,
+      "max_abs_diff_lsb": 826027.6875,
+      "rms_diff_lsb": 82913.35801059815,
+      "rms_diff_dbfs": -22.03950817498557,
+      "rms_diff_at_shift0_lsb": 82913.35801059815,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 82913.35801059815,
+      "spectral_corr": 0.9266317854573318
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 373772.65625,
+      "model_peak_lsb": 410505.0,
+      "max_abs_diff_lsb": 195634.09765625,
+      "rms_diff_lsb": 22206.523960747996,
+      "rms_diff_dbfs": -33.482386610888106,
+      "rms_diff_at_shift0_lsb": 22206.523960747996,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 22206.523960747996,
+      "spectral_corr": 0.9752176394639271
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": false,
+    "spectral_corr": false
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0
+  },
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+    "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 112088.880859375,
+    "tail_rms_diff_lsb": 6654.443309124145,
+    "tail_rms_rel_db": -8.100319721988349,
+    "tail_ref_rms_lsb": 16909.381231057556,
+    "tail_model_rms_lsb": 16697.92437608015,
+    "ok": false,
+    "reason": "tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget"
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 268571.0625,
+      "tail_rms_diff_lsb": 22874.408505525385,
+      "tail_rms_rel_db": 0.4187060829008924,
+      "tail_ref_rms_lsb": 21797.895619143244,
+      "tail_model_rms_lsb": 23547.1718623658,
+      "ok": false,
+      "reason": "tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget"
+    },
+    "R": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 263057.8910522461,
+      "tail_rms_diff_lsb": 23053.603579932314,
+      "tail_rms_rel_db": -0.48756641807384987,
+      "tail_ref_rms_lsb": 24384.684555008953,
+      "tail_model_rms_lsb": 22268.599305904005,
+      "ok": false,
+      "reason": "tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget"
+    }
+  },
+  "tail_gate_ok": false,
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; L: tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget)"
+}

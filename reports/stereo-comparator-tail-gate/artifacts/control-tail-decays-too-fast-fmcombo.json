@@ -4,7 +4,7 @@
   "slug": "fmcombo",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "reports/SXT-028c/artifacts/model__fmcombo__seq-notes-coverage-v1.f32.wav",
+  "model": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/fmcombo/tail-decays-too-fast.f32.wav",
   "path": "wet",
   "fixture_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
   "channels": {
@@ -12,37 +12,37 @@
       "frames": 273600,
       "ref_peak_lsb": 1328907.375,
       "model_peak_lsb": 1328914.0,
-      "max_abs_diff_lsb": 279.3203125,
-      "rms_diff_lsb": 12.861114129409419,
-      "rms_diff_dbfs": -98.2264264221392,
-      "rms_diff_at_shift0_lsb": 12.861114129409419,
+      "max_abs_diff_lsb": 15941.78125,
+      "rms_diff_lsb": 476.3171931113386,
+      "rms_diff_dbfs": -66.85407310445083,
+      "rms_diff_at_shift0_lsb": 476.3171931113386,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 12.861114129409419,
-      "spectral_corr": 0.9999998982578345
+      "rms_diff_at_best_shift_lsb": 476.3171931113386,
+      "spectral_corr": 0.9999969906757272
     },
     "R": {
       "frames": 273600,
       "ref_peak_lsb": 1338825.375,
       "model_peak_lsb": 1338831.0,
-      "max_abs_diff_lsb": 287.0,
-      "rms_diff_lsb": 12.466228762509534,
-      "rms_diff_dbfs": -98.49729642191073,
-      "rms_diff_at_shift0_lsb": 12.466228762509534,
+      "max_abs_diff_lsb": 14763.8125,
+      "rms_diff_lsb": 439.00315507380765,
+      "rms_diff_dbfs": -67.56264543586528,
+      "rms_diff_at_shift0_lsb": 439.00315507380765,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 12.466228762509534,
-      "spectral_corr": 0.999999897995093
+      "rms_diff_at_best_shift_lsb": 439.00315507380765,
+      "spectral_corr": 0.9999971161306493
     },
     "mono": {
       "frames": 273600,
       "ref_peak_lsb": 1333866.375,
       "model_peak_lsb": 1333872.5,
-      "max_abs_diff_lsb": 274.9375,
-      "rms_diff_lsb": 12.580017611955672,
-      "rms_diff_dbfs": -98.4183732832011,
-      "rms_diff_at_shift0_lsb": 12.580017611955672,
+      "max_abs_diff_lsb": 15308.84375,
+      "rms_diff_lsb": 457.02269297064765,
+      "rms_diff_dbfs": -67.21324296497247,
+      "rms_diff_at_shift0_lsb": 457.02269297064765,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 12.580017611955672,
-      "spectral_corr": 0.9999998986649515
+      "rms_diff_at_best_shift_lsb": 457.02269297064765,
+      "spectral_corr": 0.9999970561746049
     }
   },
   "proposed_budgets": {
@@ -51,7 +51,7 @@
     "spectral_corr_min": 0.98
   },
   "proposed_budget_results": {
-    "max_abs_diff_lsb": true,
+    "max_abs_diff_lsb": false,
     "rms_diff_dbfs": true,
     "spectral_corr": true
   },
@@ -69,11 +69,11 @@
     "tail_region_covered": true,
     "tail_present": true,
     "model_tail_present": true,
-    "tail_max_abs_diff_lsb": 269.68359375,
-    "tail_rms_diff_lsb": 4.692223746564294,
-    "tail_rms_rel_db": -73.45675738066619,
+    "tail_max_abs_diff_lsb": 15308.859375,
+    "tail_rms_diff_lsb": 689.8436625435772,
+    "tail_rms_rel_db": -30.10931806470341,
     "tail_ref_rms_lsb": 22091.061367849692,
-    "tail_model_rms_lsb": 22091.253110007845,
+    "tail_model_rms_lsb": 21478.680533533494,
     "ok": true,
     "reason": ""
   },
@@ -89,11 +89,11 @@
       "tail_region_covered": true,
       "tail_present": true,
       "model_tail_present": true,
-      "tail_max_abs_diff_lsb": 279.3203125,
-      "tail_rms_diff_lsb": 4.810759290377974,
-      "tail_rms_rel_db": -73.56841711633462,
+      "tail_max_abs_diff_lsb": 15941.78125,
+      "tail_rms_diff_lsb": 718.9770571121772,
+      "tail_rms_rel_db": -30.07838901949091,
       "tail_ref_rms_lsb": 22942.169445829462,
-      "tail_model_rms_lsb": 22942.520032920314,
+      "tail_model_rms_lsb": 22302.383287486016,
       "ok": true,
       "reason": ""
     },
@@ -108,15 +108,15 @@
       "tail_region_covered": true,
       "tail_present": true,
       "model_tail_present": true,
-      "tail_max_abs_diff_lsb": 260.046875,
-      "tail_rms_diff_lsb": 4.598220953168496,
-      "tail_rms_rel_db": -73.37386702493987,
+      "tail_max_abs_diff_lsb": 14763.8125,
+      "tail_rms_diff_lsb": 662.6288644269781,
+      "tail_rms_rel_db": -30.200256746349254,
       "tail_ref_rms_lsb": 21442.883563872227,
-      "tail_model_rms_lsb": 21442.913260184003,
+      "tail_model_rms_lsb": 20857.847338993124,
       "ok": true,
       "reason": ""
     }
   },
   "tail_gate_ok": true,
-  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
 }

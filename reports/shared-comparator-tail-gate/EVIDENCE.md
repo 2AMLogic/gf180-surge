@@ -169,7 +169,8 @@ Run: `python3 -m pytest tests/test_tail_gate.py -q` → `17 passed`.
 
 * **Covered:** the shared mono-int16 comparator. Its wet path is now gated and
   cannot be entered accidentally (the wet-filename tripwire refuses).
-* **Not covered (unchanged, by design):** `tools/compare_chorus_reference.py`
+* **Not covered (at #93; since done by #100, see
+  `reports/stereo-comparator-tail-gate/`):** `tools/compare_chorus_reference.py`
   keeps its own (weaker) `tail_check` — it gates on reference-tail presence
   only. Bringing the stereo float32 effect-slice comparators onto this stronger
   gate (model-side presence + relative residual + covered-region check) is
@@ -185,7 +186,15 @@ Run: `python3 -m pytest tests/test_tail_gate.py -q` → `17 passed`.
   committed SXT-012 wet fixtures), so the gate did not have to stay
   chorus-only. Sidecars that do *not* declare the extent are refused, not
   guessed.
-* **Known cosmetic artifact:** `tailgate-truncate-at-tail-start.json` (and any
+* **Resolved by issue #100 (2026-09-25):** `rms_diff_dbfs` is now clamped
+  to the finite floor `RMS_DIFF_DBFS_FLOOR = -300.0` under exact agreement
+  (all three emitters). The runner was re-run (`python3 tools/tail_gate_checks.py
+  --baseline-rev b326bc0…`): `tailgate-truncate-at-tail-start.json` now
+  records `-300.0` (was `-Infinity`), leg 2 stays 8/8, and leg 1 is now
+  **37/37** dry cases byte-identical vs the pre-#100 tool (one SXT-042 dry case
+  landed on main after #93). The other artifact diffs are run timestamps, host
+  paths, and last-ULP `spectral_corr` drift. The original text follows.
+* **Known cosmetic artifact (original #93 note):** `tailgate-truncate-at-tail-start.json` (and any
   bit-exact comparison) records `rms_diff_dbfs: -Infinity`, which Python's
   `json` reads back but strict JSON parsers reject. That is a pre-existing
   property of the metric under exact agreement; it was **not** "fixed" here

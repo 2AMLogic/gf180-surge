@@ -126,8 +126,20 @@ pilot freeze.
   fails — see §5 rule 4), the reference tail carries energy, the model tail
   carries energy, and the tail residual RMS is below the tail budget.
   Implemented in `tools/compare_audio_reference.py` (`--path wet`, JSON
-  `tail_check`); evidence in `reports/shared-comparator-tail-gate/`. Dry
+  `tail_check`); evidence in `reports/shared-comparator-tail-gate/`. Since
+  issue #100 the stereo float32 effect-slice comparators
+  (`compare_chorus_reference.py`, `compare_fx_reference.py`) apply the same
+  legs on the mono sum **and** on each of L and R (`tail_check`,
+  `tail_check_lr`), with the region read from the effect-slice sidecar's
+  `render.frames`/`render.tail_s` (region `[frames − tail, frames)`), and
+  `compare_reverb_model.py` carries the same gate as an additional
+  `tail_gate` check; evidence in `reports/stereo-comparator-tail-gate/`. Dry
   comparisons carry no tail gate (§3 rule 2).
+  **Known gap (#111):** the residual leg integrates over the whole region,
+  so it is dominated by the early tail; zeroing only the late part of a long
+  reverb tail can pass every budget and the gate. A tail-shape leg is
+  follow-up work; until it lands, a late-tail defect is not excluded by this
+  gate.
   Tail budget: **[PROPOSED-TO-BE-FROZEN-AT-PILOT]** —
   `tail_rms_rel_db ≤ −20.0 dB`, i.e. the tail-region residual RMS at least
   20 dB below the *reference tail* RMS. The criterion is relative on purpose:
@@ -196,9 +208,12 @@ pilot freeze.
    shared comparator since issue #93: `drop-full-tail`,
    `tail-decays-too-fast` and `truncate-at-tail-start` controls in
    `reports/shared-comparator-tail-gate/artifacts/negative-controls.txt`,
-   the last two failing while all three §2 budgets still pass. Scope note:
-   the stereo float32 effect-slice comparators still gate on
-   reference-tail presence only.
+   the last two failing while all three §2 budgets still pass. Since issue
+   #100 also live in the stereo float32 comparators (zeroed tail, fast
+   decay, one dropped channel tail, truncation at the region start) in
+   `reports/stereo-comparator-tail-gate/artifacts/negative-controls.txt`.
+   Late-tail truncation is a recorded KNOWN GAP of the current gate (#111),
+   not a passing control.
 5. Level-matched normalization leaking into measurements must be detectable:
    measurement artifacts record input hashes; a normalized input must not
    verify against raw renders.

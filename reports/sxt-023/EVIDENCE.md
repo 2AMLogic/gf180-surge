@@ -51,6 +51,23 @@ harness mutation. A candidate EQ+Delay preset with drift ≠ 0
 Max-feedback corner (fb gain 1.0, softclip loop): model bounded at 1.507
 max, no saturation — **stability evidence**.
 
+**Change note (issue #100, 2026-09-25): comparator gained a wet-path tail
+gate; verdicts unchanged.** `tools/compare_fx_reference.py` now also
+requires the shared tail-gate legs over the sidecar-declared region
+`[frames − render.tail_s × sr, frames)` = [153600, 273600), on the mono
+sum and on L and R, and refuses (NO_VERDICT) without a declared region. The
+three committed `artifacts/audio-*.json` above are the **pre-gate
+records and were not rewritten**. The gated re-runs are retained at
+`reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/` (transcript
+`…/sxt023-sxt024-rerun.txt`). EQ fm_bass_1 stays **PASS**, with a tail
+residual of −92.40 dB (mono/L/R). Delay metallic and dexie stay **FAIL**, and
+the gate adds a failing leg to each: metallic tail residual −8.10 dB mono
+(L +0.42 / R −0.49 dB), dexie −12.60 dB mono (L −4.20 / R −4.37 dB),
+against the −20 dB proposal. The per-channel tail is therefore not
+reproduced at all on those carriers, which is additional input to the open
+delay-budget finding (#16/#12), not a new verdict. The only other
+differences from the committed records are last-ULP values.
+
 ## Deviations / known error sources (declared)
 
 1. Engine float32 lag-state staircase (ulp 2^-9 sample at 24,000-sample

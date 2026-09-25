@@ -1,0 +1,848 @@
+{
+  "issue": 100,
+  "run_utc": "2026-09-25T09:54:51Z",
+  "repo_head": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+  "numpy": "2.4.1",
+  "legs": {
+    "sxt028c_rerun": {
+      "status": "PASS",
+      "pre_change_rev": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+      "cases": [
+        {
+          "case": "compare-alienappears__seq-notes-coverage-v1.json",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -53.838623488158234,
+            "L": -54.225418336803635,
+            "R": -54.08913511737496
+          },
+          "old_window_tail_rms_rel_db": -54.89986600296855,
+          "diff_counts": {
+            "SCHEMA": 52,
+            "TAIL-WINDOW": 1,
+            "VERDICT-TEXT": 1
+          },
+          "unexplained": 0,
+          "verdict_status_changed": false
+        },
+        {
+          "case": "compare-alienappears__seq-poly-8-v1.json",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -60.2471192888784,
+            "L": -60.35849399786032,
+            "R": -60.373241076601225
+          },
+          "old_window_tail_rms_rel_db": -59.829270648792566,
+          "diff_counts": {
+            "ULP": 1,
+            "SCHEMA": 52,
+            "TAIL-WINDOW": 1,
+            "VERDICT-TEXT": 1
+          },
+          "unexplained": 0,
+          "verdict_status_changed": false
+        },
+        {
+          "case": "compare-fmcombo__seq-notes-coverage-v1.json",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -73.45675738066619,
+            "L": -73.56841711633462,
+            "R": -73.37386702493987
+          },
+          "old_window_tail_rms_rel_db": 0.0,
+          "diff_counts": {
+            "ULP": 1,
+            "SCHEMA": 52,
+            "TAIL-WINDOW": 1,
+            "VERDICT-TEXT": 1
+          },
+          "unexplained": 0,
+          "verdict_status_changed": false
+        },
+        {
+          "case": "compare-fmcombo__seq-poly-8-v1.json",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -83.28502551052938,
+            "L": -82.83242888380516,
+            "R": -83.60671223291291
+          },
+          "old_window_tail_rms_rel_db": 0.0,
+          "diff_counts": {
+            "ULP": 1,
+            "SCHEMA": 52,
+            "TAIL-WINDOW": 1,
+            "VERDICT-TEXT": 1
+          },
+          "unexplained": 0,
+          "verdict_status_changed": false
+        },
+        {
+          "case": "compare-fmtwang2__seq-notes-coverage-v1.json",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -70.47578094029693,
+            "L": -67.55271891698264,
+            "R": -70.78562226021342
+          },
+          "old_window_tail_rms_rel_db": 1.3000462659163343,
+          "diff_counts": {
+            "ULP": 2,
+            "SCHEMA": 52,
+            "TAIL-WINDOW": 1,
+            "VERDICT-TEXT": 1
+          },
+          "unexplained": 0,
+          "verdict_status_changed": false
+        },
+        {
+          "case": "compare-fmtwang2__seq-poly-8-v1.json",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -83.93595525777286,
+            "L": -85.80517782361069,
+            "R": -82.78243270488913
+          },
+          "old_window_tail_rms_rel_db": -12.581349179761139,
+          "diff_counts": {
+            "ULP": 1,
+            "SCHEMA": 52,
+            "TAIL-WINDOW": 1,
+            "VERDICT-TEXT": 1
+          },
+          "unexplained": 0,
+          "verdict_status_changed": false
+        }
+      ]
+    },
+    "stereo_tail_controls": {
+      "status": "PASS",
+      "controls": [
+        {
+          "control": "fmcombo/baseline",
+          "tool": "chorus",
+          "required": "PASS",
+          "observed": "PASS",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "status": "PASS",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 274.9375,
+          "rms_diff_dbfs": -98.4183732832011,
+          "spectral_corr": 0.9999998986649515,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -73.45675738066619,
+          "model_tail_present": true,
+          "tail_region_covered": true
+        },
+        {
+          "control": "fmcombo/drop-full-tail",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; L: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 446912.375,
+          "rms_diff_dbfs": -37.10701209439903,
+          "spectral_corr": 0.9943794918762797,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": 0.0,
+          "model_tail_present": false,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "budget:rms_diff_dbfs",
+            "tail-gate"
+          ],
+          "pre100_tool_status": "FAIL"
+        },
+        {
+          "control": "fmcombo/tail-decays-too-fast",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 15308.84375,
+          "rms_diff_dbfs": -67.21324296497247,
+          "spectral_corr": 0.9999970561746049,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -30.10931806470341,
+          "model_tail_present": true,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb"
+          ],
+          "pre100_tool_status": "FAIL"
+        },
+        {
+          "control": "fmcombo/drop-right-tail",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -6.28 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 218522.46875,
+          "rms_diff_dbfs": -43.38631346938514,
+          "spectral_corr": 0.9981842850678174,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": -6.279311143595199,
+          "model_tail_present": true,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "budget:rms_diff_dbfs",
+            "tail-gate"
+          ],
+          "pre100_tool_status": "FAIL"
+        },
+        {
+          "control": "fmcombo/truncate-at-tail-start",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (tail-region gate: mono: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail; L: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail; R: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 274.9375,
+          "rms_diff_dbfs": -96.1845539430789,
+          "spectral_corr": 0.9999999217443128,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": null,
+          "model_tail_present": false,
+          "tail_region_covered": false,
+          "failed_by": [
+            "tail-gate"
+          ],
+          "pre100_tool_status": "PASS"
+        },
+        {
+          "control": "alienappears/baseline",
+          "tool": "chorus",
+          "required": "PASS",
+          "observed": "PASS",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "status": "PASS",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 530.4415588378906,
+          "rms_diff_dbfs": -94.58577085702507,
+          "spectral_corr": 0.9999991729212511,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -53.838623488158234,
+          "model_tail_present": true,
+          "tail_region_covered": true
+        },
+        {
+          "control": "alienappears/drop-full-tail",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: mono: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; L: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": false
+          },
+          "max_abs_diff_lsb": 102860.3984375,
+          "rms_diff_dbfs": -50.6926510299339,
+          "spectral_corr": 0.974620174181011,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": 0.0,
+          "model_tail_present": false,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "budget:spectral_corr",
+            "tail-gate"
+          ],
+          "pre100_tool_status": "FAIL"
+        },
+        {
+          "control": "alienappears/tail-decays-too-fast",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 10497.1923828125,
+          "rms_diff_dbfs": -59.62194507604315,
+          "spectral_corr": 0.9955160748007165,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": -8.930379584546598,
+          "model_tail_present": true,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "tail-gate"
+          ],
+          "pre100_tool_status": "FAIL"
+        },
+        {
+          "control": "alienappears/drop-right-tail",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -5.73 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 51662.8984375,
+          "rms_diff_dbfs": -56.42126791997724,
+          "spectral_corr": 0.9951227357110358,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": -5.729053279953071,
+          "model_tail_present": true,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "tail-gate"
+          ],
+          "pre100_tool_status": "FAIL"
+        },
+        {
+          "control": "alienappears/truncate-at-tail-start",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (tail-region gate: mono: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail; L: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail; R: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 530.4415588378906,
+          "rms_diff_dbfs": -92.54217653347001,
+          "spectral_corr": 0.9999992183449143,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": null,
+          "model_tail_present": false,
+          "tail_region_covered": false,
+          "failed_by": [
+            "tail-gate"
+          ],
+          "pre100_tool_status": "PASS"
+        },
+        {
+          "control": "refusal/missing-sidecar",
+          "tool": "chorus",
+          "required": "NO_VERDICT",
+          "observed": "NO_VERDICT",
+          "exit": 2,
+          "result": "CONTROL-OK",
+          "reason": "fixture sidecar not found: /tmp/sxt-stereo-tail-gate/leg2/refusals/missing-sidecar.json -- the wet-path tail region cannot be declared, and this tool does not guess one (issue #100)"
+        },
+        {
+          "control": "refusal/undeclared-tail_s",
+          "tool": "chorus",
+          "required": "NO_VERDICT",
+          "observed": "NO_VERDICT",
+          "exit": 2,
+          "result": "CONTROL-OK",
+          "reason": "sidecar /tmp/sxt-stereo-tail-gate/leg2/refusals/undeclared-tail_s.json does not declare tail_s for bus 'wet': a tail region cannot be defined from committed data, and this tool does not guess one (issue #93 stop condition)"
+        },
+        {
+          "control": "refusal/stale-frames",
+          "tool": "chorus",
+          "required": "NO_VERDICT",
+          "observed": "NO_VERDICT",
+          "exit": 2,
+          "result": "CONTROL-OK",
+          "reason": "sidecar declares 213600 frames but fmcombo__seq-notes-coverage-v1-wet.f32.wav holds 273600: the sidecar is STALE with respect to the reference render"
+        },
+        {
+          "control": "refusal/sha256-mismatch",
+          "tool": "chorus",
+          "required": "NO_VERDICT",
+          "observed": "NO_VERDICT",
+          "exit": 2,
+          "result": "CONTROL-OK",
+          "reason": "sidecar declares wet sha256 0000000000000000... but fmcombo__seq-notes-coverage-v1-wet.f32.wav hashes to 89d42e518eab60e2...: the tail region would be read from metadata that does not describe this render"
+        },
+        {
+          "control": "refusal/missing-sidecar",
+          "tool": "fx",
+          "required": "NO_VERDICT",
+          "observed": "NO_VERDICT",
+          "exit": 2,
+          "result": "CONTROL-OK",
+          "reason": "no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)"
+        },
+        {
+          "control": "fm_bass_1/baseline",
+          "tool": "fx",
+          "required": "PASS",
+          "observed": "PASS",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)",
+          "status": "PASS",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 7.75,
+          "rms_diff_dbfs": -120.04323823106213,
+          "spectral_corr": 0.9999999989283181,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -92.40078002709436,
+          "model_tail_present": true,
+          "tail_region_covered": true
+        },
+        {
+          "control": "fm_bass_1/drop-full-tail",
+          "tool": "fx",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; L: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 299083.15625,
+          "rms_diff_dbfs": -41.47327041791593,
+          "spectral_corr": 0.9891593797766984,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": 0.0,
+          "model_tail_present": false,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "budget:rms_diff_dbfs",
+            "tail-gate"
+          ]
+        },
+        {
+          "control": "fm_bass_1/tail-decays-too-fast",
+          "tool": "fx",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 17829.9921875,
+          "rms_diff_dbfs": -62.70009763008523,
+          "spectral_corr": 0.9999629296224155,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -21.22683482988933,
+          "model_tail_present": true,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb"
+          ]
+        },
+        {
+          "control": "fm_bass_1/drop-right-tail",
+          "tool": "fx",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -6.02 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 149541.65625,
+          "rms_diff_dbfs": -47.4938484684522,
+          "spectral_corr": 0.9970456805494846,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": -6.020578224135109,
+          "model_tail_present": true,
+          "tail_region_covered": true,
+          "failed_by": [
+            "budget:max_abs_diff_lsb",
+            "tail-gate"
+          ]
+        },
+        {
+          "control": "fm_bass_1/truncate-at-tail-start",
+          "tool": "fx",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "exit": 0,
+          "result": "CONTROL-OK",
+          "verdict": "FAIL against proposed budgets (tail-region gate: mono: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail; L: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail; R: declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 7.75,
+          "rms_diff_dbfs": -117.71957998672528,
+          "spectral_corr": 0.9999999989888663,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": null,
+          "model_tail_present": false,
+          "tail_region_covered": false,
+          "failed_by": [
+            "tail-gate"
+          ]
+        }
+      ],
+      "load_bearing_controls": [
+        "fmcombo/truncate-at-tail-start",
+        "alienappears/truncate-at-tail-start",
+        "fm_bass_1/truncate-at-tail-start"
+      ],
+      "passed_by_pre100_tool": [
+        "fmcombo/truncate-at-tail-start",
+        "alienappears/truncate-at-tail-start"
+      ],
+      "known_gap_probes": [
+        {
+          "probe": "alienappears/zero-late-tail-from-30%",
+          "zeroed_frames": [
+            189600,
+            273600
+          ],
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -15.67 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -15.92 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -15.79 dB exceeds the proposed -20.00 dB relative budget)",
+          "status": "FAIL",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 9172.0029296875,
+          "rms_diff_dbfs": -66.35444395568626,
+          "spectral_corr": 0.9982305390601888,
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": -15.667502878890776,
+          "model_tail_present": true,
+          "tail_region_covered": true
+        },
+        {
+          "probe": "alienappears/zero-late-tail-from-40%",
+          "zeroed_frames": [
+            201600,
+            273600
+          ],
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "status": "PASS",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 4497.892578125,
+          "rms_diff_dbfs": -71.78853281329373,
+          "spectral_corr": 0.9995210707837576,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -21.11626827930554,
+          "model_tail_present": true,
+          "tail_region_covered": true
+        },
+        {
+          "probe": "alienappears/zero-late-tail-from-60%",
+          "zeroed_frames": [
+            225600,
+            273600
+          ],
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "status": "PASS",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "max_abs_diff_lsb": 1102.02197265625,
+          "rms_diff_dbfs": -83.7598312982671,
+          "spectral_corr": 0.9999623780813175,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -33.40235993601354,
+          "model_tail_present": true,
+          "tail_region_covered": true
+        }
+      ],
+      "known_gap_probes_passing": [
+        "alienappears/zero-late-tail-from-40%",
+        "alienappears/zero-late-tail-from-60%"
+      ]
+    },
+    "rms_diff_dbfs_floor": {
+      "status": "PASS",
+      "floor": -300.0,
+      "emitters": [
+        {
+          "emitter": "shared-mono",
+          "rms_diff_dbfs": -300.0,
+          "strict_json": true,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)",
+          "ok": true
+        },
+        {
+          "emitter": "chorus",
+          "rms_diff_dbfs": -300.0,
+          "strict_json": true,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "ok": true
+        },
+        {
+          "emitter": "fx",
+          "rms_diff_dbfs": -300.0,
+          "strict_json": true,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)",
+          "ok": true
+        }
+      ],
+      "committed_json_files": 689,
+      "strict_rejects": []
+    },
+    "spectral_corr_sweep": {
+      "status": "PASS",
+      "note": "characterization only",
+      "spectral_only_verdicts": [
+        {
+          "case": "SXT-040 badnews x seq-notes-coverage-v1",
+          "committed_spectral_corr": 0.9297929240844511,
+          "recomputed_spectral_corr": 0.9297929240844511,
+          "rms_diff_dbfs": -61.657024497662,
+          "max_abs_diff_lsb": 210.0,
+          "ref_peak_lsb": 3635.0,
+          "cand_fs_floor": 0.9700099974168351,
+          "cand_gated": 0.8110132743135899
+        },
+        {
+          "case": "SXT-040 badnews x seq-notes-repeated-v1",
+          "committed_spectral_corr": 0.9455541329961745,
+          "recomputed_spectral_corr": 0.9455541329961745,
+          "rms_diff_dbfs": -71.04347718276257,
+          "max_abs_diff_lsb": 62.0,
+          "ref_peak_lsb": 3635.0,
+          "cand_fs_floor": 0.9752362276451777,
+          "cand_gated": 0.8576931289150186
+        },
+        {
+          "case": "SXT-040 popcorn2k x seq-notes-coverage-v1",
+          "committed_spectral_corr": 0.9605773554260402,
+          "recomputed_spectral_corr": 0.9605773554260402,
+          "rms_diff_dbfs": -47.45413750667032,
+          "max_abs_diff_lsb": 1789.0,
+          "ref_peak_lsb": 32767.0,
+          "cand_fs_floor": 0.9837924405272008,
+          "cand_gated": 0.9294746881187075
+        },
+        {
+          "case": "SXT-040 popcorn2k x seq-notes-repeated-v1",
+          "committed_spectral_corr": 0.9789395057342873,
+          "recomputed_spectral_corr": 0.9789395057342873,
+          "rms_diff_dbfs": -49.220003768545425,
+          "max_abs_diff_lsb": 888.0,
+          "ref_peak_lsb": 32767.0,
+          "cand_fs_floor": 0.983914622406474,
+          "cand_gated": 0.9557789384911675
+        }
+      ]
+    },
+    "other_stereo_comparators_rerun": {
+      "sxt023": [
+        {
+          "case": "dexie",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": {
+            "mono": -12.602276327261324,
+            "L": -4.197219095227142,
+            "R": -4.370942962146211
+          },
+          "verdict_status_changed": false,
+          "unexplained": 0
+        },
+        {
+          "case": "fm_bass_1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -92.40078002709436,
+            "L": -92.40078002709436,
+            "R": -92.40078002709436
+          },
+          "verdict_status_changed": false,
+          "unexplained": 0
+        },
+        {
+          "case": "metallic",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "tail_gate_ok": false,
+          "tail_rms_rel_db": {
+            "mono": -8.100319721988349,
+            "L": 0.4187060829008924,
+            "R": -0.48756641807384987
+          },
+          "verdict_status_changed": false,
+          "unexplained": 0
+        }
+      ],
+      "sxt024": [
+        {
+          "case": "click-wet",
+          "committed_pass": true,
+          "pre100_here_pass": true,
+          "gated_pass": true,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -110.08457670909925,
+            "L": -109.75324250591032,
+            "R": -109.90850860500686
+          },
+          "gate_only_addition": true,
+          "preexisting_drift_keys": [
+            "/band_energy_max_dev_db",
+            "/decay_curve_max_dev_db",
+            "/send_gain",
+            "/stereo_corr_dev",
+            "/stereo_corr_pred",
+            "/tail_rms_rel_db",
+            "/wet_rms_rel_db"
+          ],
+          "preexisting_missing_fields": [
+            "/tail_err_rms_dbfs",
+            "/tail_wet_rms_dbfs"
+          ],
+          "exit": {
+            "gated": 0,
+            "pre100": 0
+          }
+        },
+        {
+          "case": "preset-notes-coverage-wet",
+          "committed_pass": true,
+          "pre100_here_pass": true,
+          "gated_pass": true,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -105.96526838846346,
+            "L": -105.79794201800865,
+            "R": -105.87218771108199
+          },
+          "gate_only_addition": true,
+          "preexisting_drift_keys": [
+            "/band_energy_max_dev_db",
+            "/decay_curve_max_dev_db",
+            "/send_gain",
+            "/stereo_corr_dev",
+            "/stereo_corr_pred",
+            "/tail_rms_rel_db",
+            "/wet_max_abs",
+            "/wet_rms_rel_db"
+          ],
+          "preexisting_missing_fields": [
+            "/tail_err_rms_dbfs",
+            "/tail_wet_rms_dbfs"
+          ],
+          "exit": {
+            "gated": 0,
+            "pre100": 0
+          }
+        },
+        {
+          "case": "hardreset-midpatch-wet",
+          "committed_pass": false,
+          "pre100_here_pass": false,
+          "gated_pass": false,
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": {
+            "mono": -88.34649196543444,
+            "L": -88.28543581317089,
+            "R": -87.8780468643126
+          },
+          "gate_only_addition": true,
+          "preexisting_drift_keys": [],
+          "preexisting_missing_fields": [],
+          "exit": {
+            "gated": 1,
+            "pre100": 1
+          }
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "overall": "PASS"
+}

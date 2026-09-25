@@ -1,10 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "leaf": "SXT-028c",
   "slug": "alienappears",
   "sequence": "seq-poly-8-v1",
   "ref": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1-wet.f32.wav",
   "model": "reports/SXT-028c/artifacts/model__alienappears__seq-poly-8-v1.f32.wav",
+  "path": "wet",
+  "fixture_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
   "channels": {
     "L": {
       "frames": 177600,
@@ -16,7 +18,7 @@
       "rms_diff_at_shift0_lsb": 109.78139797595074,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 109.78139797595074,
-      "spectral_corr": 0.9999997225888235
+      "spectral_corr": 0.9999997225888233
     },
     "R": {
       "frames": 177600,
@@ -41,13 +43,6 @@
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 109.11680886178038,
       "spectral_corr": 0.9999997252690682
-    },
-    "tail_mono": {
-      "tail_frames": 96000,
-      "tail_max_abs_diff_lsb": 258.822265625,
-      "tail_rms_diff_lsb": 25.83254637726235,
-      "tail_rms_rel_db": -59.829270648792566,
-      "tail_present": true
     }
   },
   "proposed_budgets": {
@@ -60,10 +55,68 @@
     "rms_diff_dbfs": true,
     "spectral_corr": true
   },
-  "tail_check": {
-    "tail_present": true,
-    "tail_rms_rel_db": -59.829270648792566,
-    "ok": true
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0
   },
-  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+  "tail_check": {
+    "tail_offset": 57600,
+    "tail_frames": 120000,
+    "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+    "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 787.572265625,
+    "tail_rms_diff_lsb": 70.76546425776787,
+    "tail_rms_rel_db": -60.2471192888784,
+    "tail_ref_rms_lsb": 72807.70214189307,
+    "tail_model_rms_lsb": 72809.95661898164,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 862.765625,
+      "tail_rms_diff_lsb": 71.22029212020855,
+      "tail_rms_rel_db": -60.35849399786032,
+      "tail_ref_rms_lsb": 74221.28183786491,
+      "tail_model_rms_lsb": 74222.9293512412,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 825.015625,
+      "tail_rms_diff_lsb": 70.93127189936683,
+      "tail_rms_rel_db": -60.373241076601225,
+      "tail_ref_rms_lsb": 74045.69286246854,
+      "tail_model_rms_lsb": 74048.42814041885,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
 }

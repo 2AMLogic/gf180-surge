@@ -15,13 +15,33 @@ Metrics per channel (L, R) and mono sum:
   max_abs_diff_lsb, rms_diff_lsb, rms_diff_dbfs (re 2^-21 full scale),
   best_shift ([-32, 32] scan; scheduling granularity is 32 samples),
   spectral_corr (Hann 4096 log-magnitude correlation).
+rms_diff_dbfs is clamped to a finite floor under exact agreement (issue #100;
+compare_audio_reference.RMS_DIFF_DBFS_FLOOR) so the JSON stays strict.
+
+Wet-path tail gate (issue #100; same legs as the shared mono comparator's
+#93 gate): the tail region is read from the fixture sidecar's DECLARED values
+(`--sidecar`, auto-discovered as <seq>.json next to a `<seq>-wet.f32.wav`
+reference; region [frames - tail_s*sr, frames) from `render.*`). The verdict
+is PASS only when the proposed budgets pass AND the tail gate passes on the
+mono sum and on each of L and R (region covered by both renders, reference
+tail present, model tail present, tail residual RMS <= PROPOSED_TAIL relative
+to the reference tail RMS). With no usable sidecar the tool REFUSES:
+verdict NO_VERDICT, exit 2, nothing graded. A graded verdict (PASS or FAIL)
+exits 0 as before (consumers such as tools/run_ncb_nn_model.py read the
+`verdict` field).
 """
 
 import argparse
 import json
+import os
 import sys
 
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import compare_audio_reference as car  # noqa: E402
+
+PROPOSED_TAIL = car.PROPOSED_TAIL
 
 # [PROPOSED-TO-BE-FROZEN-AT-PILOT] budgets for the SXT-023 effect slice
 # (declared with the model; the delay line re-quantizes to Q10.21 and the
@@ -95,7 +115,7 @@ def channel_metrics(ref, mod):
         "model_peak_lsb": float(np.abs(mod).max() / LSB),
         "max_abs_diff_lsb": float(d.max() / LSB),
         "rms_diff_lsb": rms / LSB,
-        "rms_diff_dbfs": float(20 * np.log10(rms / LSB / (1 << 20))),
+        "rms_diff_dbfs": car.rms_dbfs(rms / LSB, float(1 << 20)),
         "rms_diff_at_shift0_lsb": shifts[0] / LSB,
         "best_shift": best_shift,
         "rms_diff_at_best_shift_lsb": shifts[best_shift] / LSB,
@@ -108,16 +128,40 @@ def main():
     ap.add_argument("--ref", required=True, help="engine wet stereo f32 WAV")
     ap.add_argument("--model", required=True, help="model wet stereo f32 WAV")
     ap.add_argument("--preset")
+    ap.add_argument("--sidecar",
+                    help="fixture sidecar declaring the tail region "
+                         "(auto-discovered next to --ref when it follows the "
+                         "committed <seq>-wet.f32.wav -> <seq>.json convention)")
     ap.add_argument("--json", help="write metrics JSON here")
     args = ap.parse_args()
+
+    if car.name_declares(args.ref, car.DRY_NAME_MARKERS):
+        return car.refuse(
+            "the reference filename declares a dry bus (%s); this tool grades "
+            "effect WET buses only" % os.path.basename(args.ref), args.json)
+    sidecar = args.sidecar or car.discover_sidecar(args.ref)
+    if not sidecar or not os.path.exists(sidecar):
+        return car.refuse(
+            "no fixture sidecar declaring the wet-path tail region was given "
+            "or found next to %s; this tool does not guess a tail region "
+            "(issue #100)" % args.ref, args.json)
+    try:
+        region = car.declared_tail_region(sidecar, "wet")
+    except car.TailRegionError as e:
+        return car.refuse(str(e), args.json)
 
     ref, sr = read_wav_stereo_f32(args.ref)
     mod, sr2 = read_wav_stereo_f32(args.model)
     assert sr == sr2 == 48000, (sr, sr2)
+    why = car.validate_region_against_render(region, sr, ref.shape[1], args.ref)
+    if why:
+        return car.refuse(why, args.json)
 
     metrics = {"ref": args.ref, "model": args.model}
     if args.preset:
         metrics["preset"] = args.preset
+    metrics["path"] = "wet"
+    metrics["fixture_sidecar"] = sidecar
     chs = {}
     for name, idx in (("L", 0), ("R", 1)):
         chs[name] = channel_metrics(ref[idx], mod[idx])
@@ -132,9 +176,25 @@ def main():
     }
     metrics["proposed_budgets"] = PROPOSED
     metrics["proposed_budget_results"] = proposed_results
-    metrics["verdict"] = ("PASS (PENDING-FREEZE: budgets are proposals, not "
-                          "frozen policy)" if all(proposed_results.values())
-                          else "FAIL against proposed budgets")
+    metrics["proposed_tail_budget"] = dict(PROPOSED_TAIL)
+    tc, tc_lr, tail_ok, tail_reason = car.stereo_tail_gate(ref, mod, region, LSB)
+    metrics["tail_check"] = tc
+    metrics["tail_check_lr"] = tc_lr
+    metrics["tail_gate_ok"] = tail_ok
+    budgets_ok = all(proposed_results.values())
+    if budgets_ok and tail_ok:
+        metrics["verdict"] = ("PASS (PENDING-FREEZE: budgets and the wet-path "
+                              "tail-region gate are proposals, not frozen "
+                              "policy)")
+    else:
+        parts = []
+        if not budgets_ok:
+            parts.append("budget: " + ", ".join(
+                sorted(k for k, v in proposed_results.items() if not v)))
+        if not tail_ok:
+            parts.append("tail-region gate: " + tail_reason)
+        metrics["verdict"] = ("FAIL against proposed budgets (%s)"
+                              % "; ".join(parts))
     print(json.dumps(metrics, indent=2))
     if args.json:
         with open(args.json, "w") as f:
