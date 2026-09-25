@@ -1,12 +1,14 @@
 # Product profile v1 — DRAFT bundle comparison + predictions (NOT FROZEN)
 
-Issue: #12 (SXT-017, **bundle stage only**) · Plan:
+Issue: #12 (SXT-017, **bundle stage + cost-closure stage**) · Plan:
 `docs/surge-xt-chip-plan-v0.1-2026-09-20.md` §2, §3, §5, §6 ·
 Spec: [`profile-v1-bundle-DRAFT.json`](profile-v1-bundle-DRAFT.json) ·
 Predictor: `tools/profile_predict.py` · Predictions:
-`reports/sxt-017/predictions/`
+`reports/sxt-017/predictions/` · Cost closure: `tools/profile_budget.py`,
+`reports/sxt-017/cost-closure.json` (§12) · Escalation:
+[`decision-records/0011`](../decision-records/0011-profile-v1-budget-escalation.md)
 
-## NOT FROZEN — pending SXT-013 listening, SXT-014 labels, SXT-016 numbers
+## NOT FROZEN — and issue #12's stop/escalate condition has FIRED (see §12)
 
 **Nothing in this document is a frozen product profile, a support claim, a
 fidelity claim, a preset-quality claim, or a hardware claim.** Freezing
@@ -15,17 +17,28 @@ requires, per issue #12's premise and plan §6:
 1. **SXT-013** (#8): a human listening selection of the favorites set and a
    frozen fidelity policy. Only proposal slates exist
    (`reports/sxt-013/candidates/`); **essentiality of every preset is
-   UNVERIFIED**. BLOCKED on human listening.
+   UNVERIFIED**. BLOCKED on human listening. *(Issue #8 is closed, but it
+   closed on the apparatus; the selection and the policy freeze are still
+   `BLOCKED-on-human-listening` in `reports/sxt-013/EVIDENCE.md`.)*
 2. **SXT-014** (#9): listening labels (essential / optional-by-adaptation /
    unresolved) for effect contribution. Only numeric ablation deltas exist
-   (`reports/sxt-014/`); labels are BLOCKED on human listening.
-3. **SXT-016** (#11): measured cost probes. **`reports/sxt-016/` does not
-   exist yet**; every cycle number below is SXT-015's `placeholder-v0` cost
-   profile and every such cell is marked **[PENDING-SXT-016]**.
+   (`reports/sxt-014/`); labels are BLOCKED on human listening. *(Same
+   caveat: #9 is closed on the apparatus, not on the labels.)*
+3. **SXT-016** (#11): cost probes. **LANDED** — `reports/sxt-016/` now holds
+   76 validated probe records, so §12 below evaluates the cost leg §1–§11
+   deliberately left open. `reports/sxt-016/EVIDENCE.md` carries its own
+   standing instruction to this document: *"do not freeze hard budgets from
+   these numbers alone."* Cells still marked **[PENDING-SXT-016]** in §1–§11
+   are the ones SXT-016 did *not* replace (LFO/envelope/modulation/
+   waveshaper cycles, Chorus/Phaser/Reverb 2/Airwindows, several state
+   constants); they are enumerated in §12.4.
 
-This document implements only the *bundle stage* of SXT-017: a versioned
-candidate-bundle comparison, per-preset predictions, and a selected DRAFT
-bundle with explicit contract-revision triggers.
+§1–§11 implement the *bundle stage* of SXT-017: a versioned candidate-bundle
+comparison, per-preset predictions, and a selected DRAFT bundle with explicit
+contract-revision triggers. §12 implements the *cost-closure stage* and
+records the resulting escalation. **Read §12 before using any selection in
+§5**: under the SXT-016 numbers, the §5 DRAFT pick (B4-broad) overflows
+conclusively at every candidate clock.
 
 Claim discipline (AGENTS.md): "supported" below means only **"the original
 normalized patch graph fits this DRAFT bundle's declared structural
@@ -342,10 +355,145 @@ was copied (docs/REUSE-AUDIT.md).
 ## 11. What this document does NOT establish
 
 - Any frozen profile, budget, or product decision (freeze BLOCKED: SXT-013
-  listening, SXT-014 labels, SXT-016 numbers).
+  listening, SXT-014 labels; and now also §12's escalation).
 - Any fidelity result, preset-quality judgment, or musical usefulness.
 - Any FPGA/gf180mcu synthesis, area, timing, power, or hardware playback
-  result; every cycle/RAM/bandwidth number is a placeholder-based column
-  [PENDING-SXT-016].
+  result; every cycle/RAM/bandwidth number in §1–§11 is a placeholder-based
+  column, and every number in §12 is an ESTIMATE under named assumptions.
 - Any claim that predicted-supported presets actually sound like the
   reference; that requires the frozen fidelity policy and renders.
+
+---
+
+## 12. Cost-closure stage — plan §5 budgets from the SXT-016 probes
+
+Tool: `tools/profile_budget.py` · Result:
+`reports/sxt-017/cost-closure.json` · Controls:
+`reports/sxt-017/negative-controls-budget.txt` · Escalation record:
+[`decision-records/0011`](../decision-records/0011-profile-v1-budget-escalation.md).
+
+### 12.1 Method and claim discipline
+
+For every candidate bundle, the worst case over its predicted-supported set
+is evaluated against plan §5's closure formula across the full grid of
+candidate clocks {48, 96, 192, 480} MHz × named memory implementations
+{E1, E2, E3} × multiplier schedules {M18, M32} — 24 configurations per
+bundle, 120 rows in total. **Every row names its clock, its memory
+implementation, its multiplier schedule, and its basis.** The basis is
+`ESTIMATE under named assumptions`, never a measurement: no gf180mcu
+synthesis, place-and-route, timing signoff, or hardware run stands behind
+any number here.
+
+Two totals are kept separate and never merged:
+
+| Total | Meaning | Direction |
+|---|---|---|
+| `probe_only_cycles_per_frame` | probe-priced components ALONE | strict **lower bound** (unpriced components cost ≥ 0) |
+| `mixed_cycles_per_frame` | probe-priced + `placeholder-v0` for the rest | directionally **unbounded** (a placeholder may be high or low) |
+
+That asymmetry sets the verdicts, and it is the point of the whole section:
+
+| Verdict | Meaning | Is it a conclusion? |
+|---|---|---|
+| `OVERFLOW_CONCLUSIVE` | the lower bound alone busts the budget | **yes** — pricing the rest can only make it worse |
+| `OVERFLOW_PLACEHOLDER_DEPENDENT` | only the mixed total busts it | no — a finding that depends on placeholders |
+| `NO_VERDICT_UNPRICED_COMPONENTS` | nothing overflows, but components are unpriced | no — and it may **not** be reported as a pass |
+| `within_budget` | every component of the worst-case patch is probe-priced and it closes | the only row shape that may carry a fit claim, and only as an estimate |
+
+A bundle is **admissible** if some configuration is `within_budget` or
+`NO_VERDICT`; it is **fit-claimable** only if some configuration is
+`within_budget`. Admissible-but-not-fit-claimable means "not ruled out by
+anything priced today" — never "it fits".
+
+### 12.2 Result at the cheapest grid corner (480 MHz, M32, E3)
+
+DSP budget there: gross 10,000 cyc/frame − 20% declared reserve − scheduler
+transfer (8) − contention (990) = **7,002 cyc/frame**.
+
+| Bundle | recovery corpus / balanced slate | worst probe-priced lower bound | worst mixed | verdict | parallel-lane floor | worst-case patch |
+|---|---|---:|---:|---|---:|---|
+| B1-core-narrow | 6 / 0 | 3,216 | 4,121 | NO_VERDICT | 1 | `Inigo Kennedy/FX/Edgy.fxp` |
+| B2-core-wet-plan3 (plan §3 shape) | 8 / 0 | 4,471 | 7,641 | overflow (placeholder-dependent) | 1 | `Slowboat/Keys/Aquatique.fxp` |
+| B3-ext-voice-fx | 1,272 / 53 | 137,607 | 141,412 | **OVERFLOW (conclusive)** | ≥20 | `Factory/Polysynths/Disturbing Resonance.fxp` |
+| **B4-broad** (§5 DRAFT pick) | 1,685 / 72 | 270,805 | 279,085 | **OVERFLOW (conclusive)** | ≥39 | `Luna/Leads/96 Osc Supersaw.fxp` |
+| R0-ceiling-reference (non-product) | 2,716 / 184 | 270,805 | 279,085 | **OVERFLOW (conclusive)** | ≥39 | `Luna/Leads/96 Osc Supersaw.fxp` |
+
+At M18/E1 the same worst cases cost 9,003 / 9,003 / 279,073 / 542,565 /
+542,565 cyc/frame (B4 lane floor ≥78). Full grid, per-row, in
+`reports/sxt-017/cost-closure.json`.
+
+Uncombined, as plan §5 requires: cycles, state RAM bits, and external bytes
+per frame are separate columns in the artifact; no single score exists.
+
+### 12.3 Findings
+
+1. **Not one of the 120 rows is `within_budget`.** No candidate bundle
+   carries a fit claim at any clock, memory implementation, or word length.
+2. **Every bundle with meaningful recovery overflows conclusively** — B3,
+   B4 and R0 in all 24 of their configurations, on probe-priced components
+   alone, independent of every placeholder.
+3. **The selected bundle under the declared rule is `B1-core-narrow`** (the
+   only admissible product candidate), and it recovers **6 of 3,561** corpus
+   entries and **0 of 256** on all three proposal slates against the
+   205/256 goal threshold. It is *not* fit-claimable.
+4. **The blocker is not the budget.** At a 1000× inflated budget the
+   selection moves to B4-broad but `fit_claim` is still false, because the
+   unpriced components remain unpriced. Only pricing work moves that.
+5. **48 MHz is arithmetically impossible before any DSP is scheduled**: the
+   gross budget (1,000 cyc/frame) minus the 20% reserve minus the
+   scheduler's transfer + contention allowance (8 + 990) is **negative**.
+   That is a property of the named E1 contention allowance, not of a bundle.
+6. The dominant cost is the pinned worst-pitch-corner BLIT Classic
+   oscillator × unison instances (SXT-016 finding 1); B4/R0's worst patch is
+   `96 Osc Supersaw.fxp` at 768 oscillator instances.
+
+### 12.4 Components SXT-016 did not price (still `placeholder-v0`)
+
+`cyc_waveshaper_frame`, `cyc_lfo_frame`, `cyc_env_frame`,
+`cyc_modroute_frame`, `cyc_fxchorus_frame`, `cyc_fxreverb2_frame`,
+`cyc_fxflanger_frame`, `cyc_fxgeneric_frame` (non-EQ classes),
+`voice_base_state_bytes`, `lfo_state_bytes`, `unverified_fx_state_bytes`,
+plus every oscillator family outside {Classic, Sine, Wavetable} (FM2, FM3,
+S&H Noise, Modern, Twist, Alias, String, Window), which are costed at **zero**
+in the lower bound and therefore make it strictly conservative. These are
+exactly why no `within_budget` row can exist yet; they belong to the
+SXT-023/024/026/028 leaves.
+
+### 12.5 Negative control (issue #12 acceptance item 5)
+
+`reports/sxt-017/negative-controls-budget.txt`, regenerated by
+`python3 tools/profile_budget_controls.py`:
+
+| Control | Targeted failure | Result |
+|---|---|---|
+| NC-B1 budget ladder ×1 / ×2 / ×21 / ×40 | a comparison insensitive to the budget it depends on | **PASS** — selection walks B1 → B2 → B3 → B4, four distinct picks |
+| NC-B2 `--budget-scale` without `--negative-control` | an inflated run produced by accident | **PASS** — exit 2 |
+| NC-B3 control run targeting `reports/sxt-017/` | a control artifact overwriting the profile result | **PASS** — exit 2 |
+| NC-B4 missing probe directory | scoring bundles with no cost basis at all | **PASS** — exit 2 |
+| NC-B5 budget ×1000 | (self-check) mistaking selection sensitivity for fit-claim sensitivity | **Recorded finding** — selection moves, `fit_claim` stays false |
+
+### 12.6 The 80%-goal statement, restated with the cost leg included
+
+§6's structural statement stands and is now strictly stronger. On the
+committed proposal slates, no bundle reached 205/256 *structurally*; with
+the cost leg, the only bundle that is not ruled out on cost reaches
+**0/256**. Per issue #12's stop/escalate clause this is escalated to the
+product owner in
+[`decision-records/0011`](../decision-records/0011-profile-v1-budget-escalation.md),
+with five quantified revision options (R-A raise parallelism/clock, R-B cut
+unison/polyphony, R-C cheaper oscillator kernels, R-D revise the goal, R-E
+defer the freeze and price the gaps). **None is taken here.** "Supported" is
+not redefined, the goal is not lowered, and adapted presets are not counted.
+
+### 12.7 Reproduce
+
+```sh
+python3 tools/profile_budget.py \
+  --slate reports/sxt-013/candidates/slate-256-balanced.json \
+  --slate reports/sxt-013/candidates/slate-256-factory-lean.json \
+  --slate reports/sxt-013/candidates/slate-256-contributor-lean.json \
+  --primary-slate slate-256-balanced \
+  --out reports/sxt-017/cost-closure.json
+python3 tools/profile_budget_controls.py       # negative controls
+python3 -m pytest -q tests/test_sxt017_budget.py
+```

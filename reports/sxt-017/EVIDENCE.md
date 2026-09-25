@@ -1,5 +1,14 @@
 # SXT-017 evidence record — DRAFT bundle comparison + predictions (issue #12, bundle stage)
 
+> **STAGE 2 ADDENDUM (2026-09-25, branch `feature/issue-12`).** SXT-016
+> (#11) has since landed, so the cost leg this record calls
+> `[PENDING-SXT-016]` has now been evaluated. **Read
+> [§8 Stage 2](#8-stage-2-addendum-2026-09-25--cost-closure-leg-sxt-016-has-landed)
+> at the bottom before using anything in §1–§7**: several statements below
+> ("`reports/sxt-016/` does not exist", "no measured basis exists") were true
+> on 2026-09-20 and are now STALE. Sections §1–§7 are preserved unedited as
+> the record of what the bundle stage established on its own.
+
 Branch: `loom/sxt-017-profile-draft` · Issue: #12 (SXT-017, **bundle stage
 only**) · Date: 2026-09-20
 
@@ -125,3 +134,84 @@ Inputs: `corpus/normalized/graphs.jsonl` (sha256
 `model/resources/` (SXT-015), `reports/sxt-013/candidates/slate-256-*.json`
 (proposals; integrity-checked per run). No oracle/engine build required —
 all inputs are committed data.
+
+---
+
+## 8. STAGE 2 ADDENDUM (2026-09-25) — cost-closure leg, SXT-016 has landed
+
+**Claim discipline (unchanged).** Every number in this addendum is an
+ESTIMATE under named assumptions (`probes/common.py` `TECH`); no gf180mcu
+synthesis, place-and-route, timing signoff, or hardware run stands behind
+any of it. Nothing is frozen. No fidelity, preset-support, preset-quality,
+or musical claim is made or advanced.
+
+Deliverables: `tools/profile_budget.py` (cost-closure gate),
+`tools/profile_budget_controls.py` (live controls),
+`reports/sxt-017/cost-closure.json` (120-row grid, per-bundle),
+`reports/sxt-017/negative-controls-budget.txt`,
+`tests/test_sxt017_budget.py` (20 tests),
+`contracts/profile-v1-DRAFT.md` §12,
+`decision-records/0011-profile-v1-budget-escalation.md`.
+
+### 8.1 What changed versus §1–§7
+
+| §1–§7 statement | Status on 2026-09-25 |
+|---|---|
+| "`reports/sxt-016/` **does not exist**" | **STALE** — 76 validated probe records + `worked-bundles.json` exist |
+| "No measured basis exists … therefore no fit claim is made" | **Still true, for a different reason** — an estimated basis now exists and is named per row, and it still yields **no** `within_budget` row anywhere in the grid |
+| "cycles gate nothing in this DRAFT" | Unchanged for `tools/profile_predict.py`; the cost gate lives in the separate stage-2 tool, so the bundle-stage artifacts stay byte-stable |
+| SXT-013 listening / SXT-014 labels blocked | **Unchanged** — #8 and #9 closed on their *apparatus*; the selection, the policy freeze, and the labels are still `BLOCKED-on-human` in their own evidence records |
+
+### 8.2 Issue-#12 acceptance mapping, stage 2
+
+| #12 acceptance item | Status | Evidence |
+|---|---|---|
+| Bundle comparison uses complete-preset recovery of the frozen favorites set; individual feature frequencies alone do not decide | **PASS as apparatus; BASIS STILL PROVISIONAL** | The cost gate ranks bundles on complete-preset recovery of the primary preferred-preset slate with corpus-wide recovery as tiebreak (`selection_rule` in the artifact); no feature frequency enters the rule. The *frozen favorites set still does not exist*, so the basis is a proposal slate stamped `essentiality: UNVERIFIED`, and the artifact says so in `goal_test.basis_note`. |
+| Every budget names clock, memory implementation, and measured/estimated basis (else it is not a fit claim) | **PASS** | Every one of the 120 grid rows carries `clock_hz`, `memory_implementation` + its `A-EXT-*` assumption text, `multiplier` + its `A-DSP-*` assumption text, and `basis` = "ESTIMATE under named assumptions … NOT a measurement". Test-enforced (`test_every_grid_row_names_clock_memory_and_basis`). Consistent with the "else" branch: because the basis is estimated and components remain unpriced, **no fit claim is made** — no row is `within_budget`. |
+| Predictions cover all 641 factory and 2,920 contributor entries, favorites highlighted separately | **PASS (inherited, cross-checked)** | Stage 2 consumes the bundle stage's per-preset statuses and its supported counts are asserted equal to the committed `predictions/*.json` totals per bundle and per slate (`test_supported_counts_agree_with_the_bundle_stage_artifacts`). Adapted presets remain excluded (`test_adapted_presets_are_absent_from_every_supported_count`). |
+| Any gap vs the 80% wet-preset goal is resolved by a visible contract revision recorded here, not by redefining "supported" | **GAP RECORDED + ESCALATED (visible); REVISION NOT TAKEN (owner decision)** | `goal_test`: 0/256 supported on the balanced slate vs a 205/256 threshold, `goal_met: false`, `stop_escalate: true`, reasons `["preferred_preset_goal_missed", "selected_bundle_carries_no_fit_claim"]`. Escalation with five quantified options in `decision-records/0011`. "Supported" was not redefined, the goal was not lowered, adapted was not counted, and no bundle was declared to fit. |
+| Negative control: re-running the comparison with a deliberately inflated budget must change the selected bundle; otherwise the comparison is not sensitive and must be fixed | **PASS** | NC-B1 ladder: budget ×1 → `B1-core-narrow`, ×2 → `B2-core-wet-plan3`, ×21 → `B3-ext-voice-fx`, ×40 → `B4-broad` — four distinct selections over the same inputs. Test-enforced (`test_inflated_budget_changes_the_selected_bundle`). Recorded companion finding NC-B5: inflation never produces a *fit claim*, because the blocker is unpriced components, not budget. |
+
+### 8.3 Headline result
+
+| Bundle | corpus / balanced slate | worst probe-priced lower bound (480 MHz, M32, E3) | verdict | lane floor |
+|---|---|---:|---|---:|
+| B1-core-narrow | 6 / 0 | 3,216 | NO_VERDICT | 1 |
+| B2-core-wet-plan3 | 8 / 0 | 4,471 | overflow (placeholder-dependent) | 1 |
+| B3-ext-voice-fx | 1,272 / 53 | 137,607 | **OVERFLOW (conclusive)** | ≥20 |
+| B4-broad | 1,685 / 72 | 270,805 | **OVERFLOW (conclusive)** | ≥39 |
+| R0-ceiling-reference | 2,716 / 184 | 270,805 | **OVERFLOW (conclusive)** | ≥39 |
+
+DSP budget at that corner: 7,002 cyc/frame. Selected bundle:
+`B1-core-narrow`, `fit_claim: false`, `stop_escalate: true`. Full analysis:
+`contracts/profile-v1-DRAFT.md` §12.
+
+### 8.4 What stage 2 does NOT establish
+
+- Any frozen profile, budget, or product decision — the freeze is escalated,
+  not made, and SXT-013 listening / SXT-014 labels remain blocked.
+- Any measured cost, area, timing, power, or gf180mcu feasibility result;
+  every number is an estimate under `A-CLK`/`A-DSP-*`/`A-EXT-*`/`A-SCHED-1`.
+- Any claim that a `NO_VERDICT` row would close if its components were
+  priced. `NO_VERDICT` is reported as NO_VERDICT, never as a pass.
+- Any lane schedule. `lanes_required_floor_*` assumes perfectly divisible
+  work and is a floor for decision-making, not a design.
+- Any statement about presets outside each bundle's predicted-supported set;
+  adapted and unsupported presets are not costed.
+
+### 8.5 Reproduce (stage 2)
+
+```sh
+python3 tools/profile_budget.py \
+  --slate reports/sxt-013/candidates/slate-256-balanced.json \
+  --slate reports/sxt-013/candidates/slate-256-factory-lean.json \
+  --slate reports/sxt-013/candidates/slate-256-contributor-lean.json \
+  --primary-slate slate-256-balanced \
+  --out reports/sxt-017/cost-closure.json     # byte-identical to the committed file
+python3 tools/profile_budget_controls.py      # rewrites negative-controls-budget.txt
+python3 -m pytest -q tests/test_sxt017_budget.py
+```
+
+Additional inputs beyond §7: `reports/sxt-016/probes/` (76 records, phase
+pin 32), `probes/` (SXT-016 package), `model/resources/accounting.py`. No
+oracle/engine build required.

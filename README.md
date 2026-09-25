@@ -83,7 +83,7 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | [#9](https://github.com/2AMLogic/gf180-surge/issues/9) | SXT-014 | SXT-014: Measure effects' contribution | BLOCKED | — |
 | [#10](https://github.com/2AMLogic/gf180-surge/issues/10) | SXT-015 | SXT-015: Create resource accounting | PASS | [`reports/sxt-015/EVIDENCE.md`](reports/sxt-015/EVIDENCE.md) |
 | [#11](https://github.com/2AMLogic/gf180-surge/issues/11) | SXT-016 | SXT-016: Run representative cost probes | PASS | [`reports/sxt-016/EVIDENCE.md`](reports/sxt-016/EVIDENCE.md) |
-| [#12](https://github.com/2AMLogic/gf180-surge/issues/12) | SXT-017 | SXT-017: Freeze profile v1 | BLOCKED | — |
+| [#12](https://github.com/2AMLogic/gf180-surge/issues/12) | SXT-017 | SXT-017: Freeze profile v1 | BLOCKED | [`reports/sxt-017/EVIDENCE.md`](reports/sxt-017/EVIDENCE.md) |
 | [#13](https://github.com/2AMLogic/gf180-surge/issues/13) | SXT-020 | SXT-020: Compile patch images | PASS | [`reports/sxt-020/EVIDENCE.md`](reports/sxt-020/EVIDENCE.md) |
 | [#14](https://github.com/2AMLogic/gf180-surge/issues/14) | SXT-021 | SXT-021: Implement timed control and scheduling | PASS | [`reports/sxt-021/EVIDENCE.md`](reports/sxt-021/EVIDENCE.md) |
 | [#15](https://github.com/2AMLogic/gf180-surge/issues/15) | SXT-022 | SXT-022: Qualify a first dry voice slice | PASS | [`reports/sxt-022/EVIDENCE.md`](reports/sxt-022/EVIDENCE.md) |

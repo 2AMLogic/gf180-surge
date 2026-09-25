@@ -201,7 +201,8 @@
         11
       ],
       "status": "BLOCKED",
-      "note": "Bundle DRAFT landed (#37). FREEZE blocked on: human listening (#8/#9), SXT-014 labels, delay-budget decision (#16), wavetable deep-mip + tail findings."
+      "note": "Bundle DRAFT landed (#37); cost-closure stage landed on the SXT-016 probes. STOP/ESCALATE FIRED: no candidate bundle is within_budget at any candidate clock/memory model/word length (B3/B4/R0 overflow conclusively on probe-priced components alone); selected bundle B1-core-narrow recovers 0/256 vs the 205/256 goal. Escalated to the product owner in decision-records/0011 with five quantified revision options; no revision taken. FREEZE remains blocked on: human listening (#8/#9), SXT-014 labels, unpriced components (SXT-023/024/026/028), delay-budget decision (#16).",
+      "evidence": "reports/sxt-017/EVIDENCE.md"
     },
     {
       "id": 13,

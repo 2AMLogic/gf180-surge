@@ -57,6 +57,23 @@ FX_KERNEL = {"Delay": "delay_stereo_ext_E1",
              "Floaty Delay": "delay_stereo_ext_E1",
              "EQ": "eq3band_tdf2_block_coeffs",
              "Reverb 1": "reverb1_composite_ext_E1"}
+
+
+def fx_kernel_map(e_model="E1"):
+    """Probe-kernel selection for the long-buffer FX classes under a NAMED
+    external-memory model (A-EXT-1/2/3 in probes/common.py TECH).
+
+    E1 is the default so every pre-existing caller keeps its exact prior
+    behaviour and byte-identical output; E2/E3 exist because SXT-017 must
+    compare memory implementations, not assume one (plan section 5: a fit
+    claim names its memory implementation)."""
+    if e_model not in TECH["external"]:
+        raise KeyError("unknown external memory model %r; known: %s"
+                       % (e_model, sorted(TECH["external"])))
+    return {"Delay": "delay_stereo_ext_" + e_model,
+            "Floaty Delay": "delay_stereo_ext_" + e_model,
+            "EQ": "eq3band_tdf2_block_coeffs",
+            "Reverb 1": "reverb1_composite_ext_" + e_model}
 PLACEHOLDER_FX_CYCLE_KEY = {
     "Phaser": "cyc_fxgeneric_frame",
     "Chorus": "cyc_fxchorus_frame",
@@ -114,7 +131,8 @@ def osc_state_bits(rec):
     return sum(pu.values()), sum(shared.values()), table
 
 
-def build_bundle(name, line, idx, mult, fx_instance_limit=4):
+def build_bundle(name, line, idx, mult, fx_instance_limit=4, e_model="E1"):
+    fx_kernels = fx_kernel_map(e_model)
     acc = account_graph(line, fx_instance_limit=fx_instance_limit)
     if acc["status"] == "analysis_failure":
         return {"bundle": name, "status": "analysis_failure"}
@@ -244,7 +262,7 @@ def build_bundle(name, line, idx, mult, fx_instance_limit=4):
             })
             fx_ram_bits += inst["state_bytes"] * 8
             continue
-        kernel = FX_KERNEL.get(inst["class"])
+        kernel = fx_kernels.get(inst["class"])
         if kernel is not None:
             rec = _rec(idx, "probe_fx_" + _fx_probe_name(inst["class"]),
                        kernel, mult)
@@ -314,11 +332,10 @@ def build_bundle(name, line, idx, mult, fx_instance_limit=4):
                      contention=contention)
         # scheduler control is already inside sched_cycles; transfer and
         # contention are subtracted from gross here
-        cl["sustained_ext_bytes_per_s_E1"] = \
-            ext_sustained_bytes_per_s(c, "E1")
+        sustained = ext_sustained_bytes_per_s(c, e_model)
+        cl["sustained_ext_bytes_per_s_" + e_model] = sustained
         cl["ext_bandwidth_fit"] = (
-            "within" if fx_ext_bytes * FS_HZ
-            <= cl["sustained_ext_bytes_per_s_E1"] else "EXCEEDS")
+            "within" if fx_ext_bytes * FS_HZ <= sustained else "EXCEEDS")
         closure_at[c] = cl
 
     return {

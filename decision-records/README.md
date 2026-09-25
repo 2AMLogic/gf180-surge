@@ -22,3 +22,4 @@ stays and is marked in its Status line.
 | [0008](0008-sine-wave-remap-table.md) | Sine wave_remap streaming-migration table (SXT-040) | PROPOSED — pending owner ratification | 2026-09-24 |
 | [0009](0009-pinned-kernel-reference-harness.md) | Pinned-kernel reference harness for the SXT-039 filter leaf | PROPOSED — pending owner ratification | 2026-09-25 |
 | [0010](0010-lp24-pinned-kernel-harness.md) | LP 24 dB pinned-kernel reference harness (SXT-038) | PROPOSED — pending owner ratification | 2026-09-25 |
+| [0011](0011-profile-v1-budget-escalation.md) | Profile v1 cannot be frozen at the plan-section-3 budgets (SXT-017) | ESCALATED — pending product-owner decision | 2026-09-25 |
