@@ -195,7 +195,7 @@ def test_fuzz_table_rederivation_record():
 
 # The engine expressions this repository must NOT carry a copy of. The
 # FuzzTable re-derivation is validated by INCLUDING the pinned header from an
-# external checkout, never by transcribing it here (DR-0013 clauses 3 and 5,
+# external checkout, never by transcribing it here (DR-0014 clauses 3 and 5,
 # EVIDENCE.md §13). This guard is live: re-introducing the transcription --
 # the exact defect that blocked PR #137 -- fails this test.
 FORBIDDEN_ENGINE_SOURCE_TOKENS = (

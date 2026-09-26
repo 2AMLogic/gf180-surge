@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "leaf": "SXT-028e-sse",
-  "model_revision": "dbf12b86b8c8a5d69678976d3c542ae65b97e42b810eec7d8c22091a623e0184",
+  "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
   "budget_class": "SXT-023 effect-slice [PROPOSED] (freeze gated on #12)",
   "budgets": {
     "max_abs_diff_lsb": 8192,
@@ -391,7 +391,7 @@
       "verdict": "REFUSED",
       "ok": true,
       "metrics": {
-        "model_revision": "dbf12b86b8c8a5d69678976d3c542ae65b97e42b810eec7d8c22091a623e0184",
+        "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
         "stale_pin_checked_in_rtl_harness": "reports/SXT-028e-sse/rtl-exactness.json mutant_controls[stale-revision-pin]"
       }
     }

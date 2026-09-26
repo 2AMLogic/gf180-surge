@@ -3,7 +3,7 @@
   "leaf": "SXT-028e-sse",
   "sim": "iverilog",
   "sim_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
-  "model_revision": "dbf12b86b8c8a5d69678976d3c542ae65b97e42b810eec7d8c22091a623e0184",
+  "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
   "tb": "rtl/effects/type-distortion-sse/tb_distortion_sse.sv",
   "ws_rom": "rtl/effects/type-distortion-sse/ws_sse_q29.hex",
   "cases": [
@@ -14,8 +14,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 16384,
@@ -38,8 +38,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -61,8 +61,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -84,8 +84,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 16384,
@@ -108,8 +108,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -131,8 +131,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -154,8 +154,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -177,8 +177,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -200,8 +200,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -223,8 +223,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -246,8 +246,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -269,8 +269,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -292,8 +292,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 3072,
@@ -315,8 +315,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 102336,
@@ -338,8 +338,8 @@
       "exact": true,
       "revision_pin": {
         "ok": true,
-        "rtl_trace": "dbf12b86",
-        "expected": "dbf12b86"
+        "rtl_trace": "aa1beacf",
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 32768,
@@ -581,7 +581,7 @@
       "revision_pin": {
         "ok": false,
         "rtl_trace": "deadbeef",
-        "expected": "dbf12b86"
+        "expected": "aa1beacf"
       },
       "checked": {
         "outputs": 16384,

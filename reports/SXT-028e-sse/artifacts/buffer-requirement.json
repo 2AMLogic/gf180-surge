@@ -2,7 +2,7 @@
   "schema_version": 1,
   "leaf": "SXT-028e-sse",
   "effect": "Distortion, SSE quad-waveshaper branch (FX models 3..7)",
-  "model_revision": "dbf12b86b8c8a5d69678976d3c542ae65b97e42b810eec7d8c22091a623e0184",
+  "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
   "blocks_measured": 64,
   "external_memory": {
     "per_instance_state_bytes": 0,
@@ -75,7 +75,7 @@
       "OJD",
       "ADAA_FULL_WAVE"
     ],
-    "note": "ROM is shared read-only across instances and is a build product of model/effects/type-distortion-sse/sse_tables.py (DR-0013 clause 2); the eleven designed shaper scalars are streamed to the RTL, not duplicated there (DR-0002 clause 1)."
+    "note": "ROM is shared read-only across instances and is a build product of model/effects/type-distortion-sse/sse_tables.py (DR-0014 clause 2); the eleven designed shaper scalars are streamed to the RTL, not duplicated there (DR-0002 clause 1)."
   },
   "compute": {
     "oversampling_factor": 4,

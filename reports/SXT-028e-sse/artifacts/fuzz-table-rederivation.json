@@ -3,7 +3,7 @@
   "leaf": "SXT-028e-sse",
   "what": "FuzzTable<1> (FX model 7, wst_fuzzsoft) 1025-entry LUT: re-derivation vs a build of the PINNED headers themselves, from an external checkout",
   "entries": 1025,
-  "decision_record": "decision-records/0013-distortion-sse-quad-waveshaper-constants.md clause 2",
+  "decision_record": "decision-records/0014-distortion-sse-quad-waveshaper-constants.md clause 2",
   "table_digest": "4dd3ed074f5f3fcd1c2b445ef659f2049d2bb5922d7a4d1a0f4f84e895445eec",
   "probe_kind": "external-header-build",
   "probe_source_committed": false,
