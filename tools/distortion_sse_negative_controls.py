@@ -37,6 +37,11 @@ shapers whose closed loop is genuinely chaotic (see F-028e-sse-4):
         is no further from the twin than the twin is from ITSELF under a
         one-LSB drive nudge. That is reported as a FINDING routed to
         SXT-017 (#12), never as a pass, and never by relaxing a budget.
+        SCOPE: for FX models 4 and 7 this leg is CHARACTERIZATION, not a
+        gate -- the metric provably cannot discriminate there, so NC-0b's
+        CONTROL-OK must not be read as "models 4 and 7 verified". The
+        falsifiable weight for those two sits in NC-0 (open loop) and in
+        the unconditional RTL-vs-frozen-model exactness leg.
 
 Controls
   NC-A substitute  "convenient generic" distortion (single-rate tanh clip)
@@ -554,7 +559,21 @@ def main():
         "id": "NC-0b", "kind": "baseline-sanity-closed-loop",
         "what": "independent float structural twin vs frozen fixed model "
                 "through the whole chain, one leg per reachable FX model",
-        "must": "PASS for FX models 3/5/6; CHARACTERIZE for 4 and 7",
+        "must": "PASS for FX models 3/5/6; CHARACTERIZE (NOT a gate) for 4 "
+                "and 7",
+        "gate_scope": {
+            "gated_models": [3, 5, 6],
+            "characterized_models": [4, 7],
+            "note": "For FX models 4 and 7 this leg is CHARACTERIZATION, not "
+                    "a pass/fail gate: the [PROPOSED] sample-domain metric "
+                    "cannot discriminate below the measured sensitivity "
+                    "floor (F-028e-sse-4), so the 'at or below the floor' "
+                    "clause cannot fail in a way that would indicate a "
+                    "defect. CONTROL-OK on NC-0b therefore must NOT be read "
+                    "as 'FX models 4 and 7 verified'. What does carry "
+                    "falsifiable weight for those two: NC-0's open-loop "
+                    "shaper probe, and the unconditional RTL-vs-frozen-model "
+                    "exactness leg (rtl-exactness.json)."},
         "verdict": "PASS" if budget_met else
                    "PARTIAL (models 4 and 7 do NOT meet the [PROPOSED] "
                    "sample-domain budgets -- finding F-028e-sse-4)",

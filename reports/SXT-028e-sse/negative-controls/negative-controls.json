@@ -83,7 +83,19 @@
       "id": "NC-0b",
       "kind": "baseline-sanity-closed-loop",
       "what": "independent float structural twin vs frozen fixed model through the whole chain, one leg per reachable FX model",
-      "must": "PASS for FX models 3/5/6; CHARACTERIZE for 4 and 7",
+      "must": "PASS for FX models 3/5/6; CHARACTERIZE (NOT a gate) for 4 and 7",
+      "gate_scope": {
+        "gated_models": [
+          3,
+          5,
+          6
+        ],
+        "characterized_models": [
+          4,
+          7
+        ],
+        "note": "For FX models 4 and 7 this leg is CHARACTERIZATION, not a pass/fail gate: the [PROPOSED] sample-domain metric cannot discriminate below the measured sensitivity floor (F-028e-sse-4), so the 'at or below the floor' clause cannot fail in a way that would indicate a defect. CONTROL-OK on NC-0b therefore must NOT be read as 'FX models 4 and 7 verified'. What does carry falsifiable weight for those two: NC-0's open-loop shaper probe, and the unconditional RTL-vs-frozen-model exactness leg (rtl-exactness.json)."
+      },
       "verdict": "PARTIAL (models 4 and 7 do NOT meet the [PROPOSED] sample-domain budgets -- finding F-028e-sse-4)",
       "ok": true,
       "proposed_budgets_met_for_all_models": false,

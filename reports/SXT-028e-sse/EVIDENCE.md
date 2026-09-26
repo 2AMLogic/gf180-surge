@@ -41,7 +41,7 @@ prove both a generic and the *sibling leaf's own shaper* are rejected.
 | DC-offset probe + `/64` drive interpolation + `skipDriveNorm` | **PASS** (checkpointed, and three controls that "correct" them FAIL) | §4, §5 |
 | Tails (declared 1600-block ringout span, incl. a mid-tail fx-rebuild reset) | **PASS** at the exactness boundary; one KNOWN-GAP recorded | §6 |
 | Quad-waveshaper state bounded (issue stop/escalate clause) | **PASS** — 8 × Q24.43 + 2 bits = 65 B/instance delta; 0 B external | §7, `artifacts/buffer-requirement.json` |
-| Constant inventory (DR-0012's reserved pass) | **DR-0014 PROPOSED**; the `FuzzTable<1>` re-derivation discharged BY BUILD (1025/1025 MATCH) | §8, `artifacts/fuzz-table-rederivation.json` |
+| Constant inventory (DR-0012's reserved pass) | **DR-0014 PROPOSED**; the `FuzzTable<1>` re-derivation discharged BY BUILD against the *external* pinned headers (1025/1025 MATCH) | §8, `artifacts/fuzz-table-rederivation.json` |
 | Negative controls live | **11/11 CONTROL-OK** model-side + **10/10** RTL-side | `negative-controls/`, `rtl-exactness.json` |
 | Oracle extraction of fixture inputs | **BLOCKED** (fail-closed refusal recorded) | §1 |
 | Newly-enabled presets supported | **0** (honest delta) | §9 |
@@ -320,6 +320,17 @@ per-instance (FAIL), NC-E stale revision pin (REFUSED), NC-F `/128` drive
 step (FAIL), NC-G `skipDriveNorm` removed (FAIL), NC-H DC-offset probe
 dropped (FAIL), plus the recorded KNOWN-GAP KG-1.
 
+**NC-0b is a gate for FX models 3/5/6 and CHARACTERIZATION for 4 and 7 —
+stated so it cannot be misread.** For models 4 and 7 the [PROPOSED]
+sample-domain metric provably cannot discriminate below the measured
+sensitivity floor (F-028e-sse-4), so that leg's "at or below the floor"
+clause cannot fail in a way that would indicate a defect. **`CONTROL-OK` on
+NC-0b therefore does not mean "FX models 4 and 7 verified."** What does
+carry falsifiable weight for those two models is NC-0's open-loop shaper
+probe (≤ 2.44 LSB Q10.21, §0) and the unconditional RTL-vs-frozen-model
+exactness leg (§4). The scope is machine-readable in
+`negative-controls/negative-controls.json` → NC-0b → `gate_scope`.
+
 **Two controls are deliberately graded on a DIGITAL bed, and the reason is
 itself a finding.** For FX models 3, 5, 6 and 7 the `1/dNow` pre-scale and
 the shaper's own leading `x · drive` cancel algebraically, so `dNow` — and
@@ -416,20 +427,38 @@ counters):
 * **6 structural powers of two** — not engine data; `localparam`s in the RTL.
 
 **The `FuzzTable<1>` re-derivation claim is discharged BY BUILD, not by
-assertion.** The one implementation-defined step is
-`std::uniform_real_distribution<float>`, which the pinned header does *not*
-pin (it only de-typedefs the LCG). `tools/check_fuzz_table_rederivation.py`
-writes a ~20-line C++ probe containing only the pinned header's own
-expression (to a temporary directory — **never** committed), compiles it,
-and compares all 1025 float32 bit patterns against the generator:
-**MATCH, 1025/1025, 0 mismatches** (g++ 13.3.0 / libstdc++;
-`artifacts/fuzz-table-rederivation.json`). **Limit, stated:** that validates
-libstdc++ only. The libc++ equivalence is derived by reading its
-`generate_canonical` and is recorded as **UNVERIFIED-BY-BUILD**; the pinned
-oracle host is arm64 macOS / libc++, so re-running the tool there is a named
-follow-up, not a completed leg. If the check ever reports MISMATCH, the row
-must be re-classified as quoted data by amending DR-0014 — it is a live
-guard on a licensing-relevant claim.
+assertion — against the pinned headers themselves, which stay outside this
+repository.** The one implementation-defined step is the standard library's
+uniform real-valued draw, which the pinned header does *not* pin (it only
+de-typedefs the LCG). `tools/check_fuzz_table_rederivation.py` resolves an
+**external** checkout of the pinned `sst-waveshapers` and
+`sst-basic-blocks` (`ORACLE_SURGE_DIR`, `--sst-include`, or
+`oracle/fetch-waveshaper-headers.sh`, which refuses to write inside this
+repository), refuses to proceed unless each checkout's HEAD equals the
+`oracle/manifest.json` pin, and compiles a ~15-line driver that is
+**original to this repository** — it `#include`s those headers and
+instantiates the library's own `LUTBase<1024, FuzzTable<1>>`. **No engine
+expression is transcribed into this tree**; it is included, so the check
+cannot be defeated by a transcription slip either. All 1025 float32 bit
+patterns are compared against the generator: **MATCH, 1025/1025, 0
+mismatches** (g++ 13.3.0 / libstdc++, pinned headers `dd12f31a…` /
+`a32b8aec…`; `artifacts/fuzz-table-rederivation.json`).
+
+**Status discipline:** without the external checkout the tool reports
+**NOT_RUN** (exit 77) and on any drift from the pins **BLOCKED** (exit 78) —
+neither is ever reported as a pass, and
+`tests/test_sxt028e_sse.py::test_rederivation_checker_reports_not_run_without_the_pinned_headers`
+asserts the NOT_RUN path live. A second live guard,
+`::test_rederivation_checker_carries_no_engine_source_text`, fails if any
+engine expression, constant or typedef is re-introduced into the tool.
+
+**Limit, stated:** the build validates libstdc++ only. The libc++
+equivalence is derived by reading its `generate_canonical` and is recorded
+as **UNVERIFIED-BY-BUILD**; the pinned oracle host is arm64 macOS / libc++,
+so re-running the tool there is a named follow-up (#135), not a completed
+leg. If the check ever reports MISMATCH, the row must be re-classified as
+quoted data by amending DR-0014 — it is a live guard on a
+licensing-relevant claim.
 
 ## 9. Newly-enabled presets (honest delta)
 
@@ -503,7 +532,14 @@ IVERILOG=iverilog python3 tools/compare_rtl_model_distortion_sse.py
 python3 tools/distortion_sse_negative_controls.py
 python3 tools/distortion_sse_buffer_report.py
 python3 tools/gen_distortion_sse_rom.py --check
+
+# the FuzzTable<1> build discharge (§8) needs the PINNED headers, which are
+# GPL-3.0-or-later and are deliberately NOT in this repository. Fetch them
+# externally, then run the check; without them it reports NOT_RUN.
+oracle/fetch-waveshaper-headers.sh          # writes to ${TMPDIR:-/tmp}/sxt-oracle
 python3 tools/check_fuzz_table_rederivation.py
+# (or, on a host with a full pinned engine checkout:)
+# ORACLE_SURGE_DIR=$HOME/oracle/surge python3 tools/check_fuzz_table_rederivation.py
 
 # anywhere (fail-closed extraction: graphs cross-check + oracle refusal)
 python3 tools/extract_distortion_sse_inputs.py --mode graphs
@@ -528,7 +564,16 @@ scalars are quoted as data under
 `decision-records/0014-distortion-sse-quad-waveshaper-constants.md`
 (PROPOSED), the successor DR-0012 reserved for this branch; the two table
 rows are re-derived from the pinned construction formulas and are not quoted
-data. The C++ probe used to discharge the `FuzzTable<1>` re-derivation
-transcribes GPL header expressions and is written to a temporary directory
-only — it is never committed. No distribution-license determination has been
-made for Surge-derived material.
+data.
+
+The `FuzzTable<1>` build discharge (§8) is the one place engine source is
+*executed*, and it executes it **where it lives**: the driver compiled by
+`tools/check_fuzz_table_rederivation.py` is original to this repository and
+only `#include`s the pinned headers from an **external** checkout, pinned by
+SHA to `oracle/manifest.json`. Nothing GPL-licensed is transcribed,
+embedded, or committed here, and
+`tests/test_sxt028e_sse.py::test_rederivation_checker_carries_no_engine_source_text`
+is a live guard on that. `oracle/fetch-waveshaper-headers.sh` refuses a
+destination inside the repository for the same reason. No
+distribution-license determination has been made for Surge-derived
+material.

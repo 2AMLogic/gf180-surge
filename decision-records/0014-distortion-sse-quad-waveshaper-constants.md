@@ -130,24 +130,44 @@ draw_k = u_k * (b - a) + a
    committed ROM matches the generator byte for byte, so it can never drift
    into being an independent copy of engine data.
 3. **The `FuzzTable<1>` re-derivation claim is discharged BY BUILD, not by
-   assertion.** `tools/check_fuzz_table_rederivation.py` writes a
-   ~20-line C++ probe containing only the pinned header's own expression
-   (to a temporary directory; **never** committed), compiles it, and
-   compares all 1025 float32 bit patterns against the Python generator's
-   pre-quantization values. Result at the time of this record: **MATCH,
-   1025/1025, 0 mismatches** (g++ 13.3.0 / libstdc++;
-   `reports/SXT-028e-sse/artifacts/fuzz-table-rederivation.json`). If that
-   check ever reports MISMATCH, clause 2 is false for that row and the row
-   must be re-classified as quoted data by amending this record — the check
-   is a live guard on a licensing-relevant claim.
+   assertion — and the build goes against the pinned headers themselves,
+   which stay OUTSIDE this repository.**
+   `tools/check_fuzz_table_rederivation.py` resolves an **external**
+   checkout of the pinned `libs/sst/sst-waveshapers` and
+   `libs/sst/sst-basic-blocks` (via `ORACLE_SURGE_DIR`, `--sst-include`, or
+   `oracle/fetch-waveshaper-headers.sh`, which refuses to write anywhere
+   inside this repository), refuses to proceed unless each checkout's HEAD
+   equals the SHA pinned in `oracle/manifest.json`, then compiles a
+   ~15-line driver that is **original to this repository**: it `#include`s
+   those headers and instantiates the library's own
+   `LUTBase<1024, FuzzTable<1>>`. No engine expression, constant or data is
+   transcribed into the tool — it is *included*, so the check is also
+   insensitive to transcription error. All 1025 float32 bit patterns are
+   compared against the Python generator's pre-quantization values. Result
+   at the time of this record: **MATCH, 1025/1025, 0 mismatches** (g++
+   13.3.0 / libstdc++, pinned headers at
+   `dd12f31a…` / `a32b8aec…`;
+   `reports/SXT-028e-sse/artifacts/fuzz-table-rederivation.json`). Absent
+   the external checkout the tool reports **NOT_RUN**, and on any drift from
+   the pins **BLOCKED** — never a silent pass. If the check ever reports
+   MISMATCH, clause 2 is false for that row and the row must be
+   re-classified as quoted data by amending this record — the check is a
+   live guard on a licensing-relevant claim.
 4. **(b) Structural scalars stay in the RTL.** The six power-of-two /
    LUT-size constants of class (b) are `localparam`s in
    `rtl/effects/type-distortion-sse/tb_distortion_sse.sv`. They are not
    engine data and streaming them would only obscure the inventory.
-5. **No Surge/SST code is copied.** Every shaper is re-implemented from the
-   pinned structure and cited in the model and RTL headers. The SIMD
-   formulation is *not* reproduced: `quad_shapers.py` DD-1 records that only
-   two of the four lanes carry signal and that all operations are lane-wise.
+5. **No Surge/SST code is copied — including into the verification tools.**
+   Every shaper is re-implemented from the pinned structure and cited in the
+   model and RTL headers. The SIMD formulation is *not* reproduced:
+   `quad_shapers.py` DD-1 records that only two of the four lanes carry
+   signal and that all operations are lane-wise. The one place that
+   *executes* engine source — the clause 3 build discharge — does so by
+   including the pinned headers from an external checkout, never by
+   transcribing them; `tests/test_sxt028e_sse.py::
+   test_rederivation_checker_carries_no_engine_source_text` is a live guard
+   that fails if any engine expression, constant or typedef is re-introduced
+   into `tools/check_fuzz_table_rederivation.py`.
 6. **`rcp_ps` is NOT adopted as a constant or as an algorithm.** The pinned
    `DIGI_SSE2` and `TANH` call the SSE reciprocal *estimate*, whose result
    is implementation-defined (and differs between x86 and simde-on-ARM,
@@ -172,6 +192,11 @@ draw_k = u_k * (b - a) + a
   `tools/check_fuzz_table_rederivation.py` on the pinned arm64 macOS /
   libc++ oracle host is a named follow-up; until then the libc++ equivalence
   is **UNVERIFIED-BY-BUILD**, derived by reading its `generate_canonical`.
+- The clause 3 discharge now depends on an **external** pinned checkout, so
+  it is host-conditional by construction: a host without it records
+  NOT_RUN. That is the intended trade — this repository stays free of
+  GPL-3.0-or-later source text, and the claim is never reported as passing
+  where it was not built.
 - If SXT-016/023 re-derives the word lengths (SXT-017 trigger 5), the
   quantization of the eleven quoted scalars changes only in
   `quad_shapers.py` and the generated init file; the quoted float32

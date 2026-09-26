@@ -5,7 +5,7 @@ grading boundary: model-vs-model; pinned-oracle leg NOT_RUN
 
 NC-0  baseline-sanity-open-loop    must=PASS                         verdict=PASS     -> CONTROL-OK
       each quad shaper, frozen fixed-point vs an INDEPENDENT float implementation of the same pinned kernel, open loop over a dense input x drive sweep (registers advancing)
-NC-0b baseline-sanity-closed-loop  must=PASS for FX models 3/5/6; CHARACTERIZE for 4 and 7 verdict=PARTIAL (models 4 and 7 do NOT meet the [PROPOSED] sample-domain budgets -- finding F-028e-sse-4) -> CONTROL-OK
+NC-0b baseline-sanity-closed-loop  must=PASS for FX models 3/5/6; CHARACTERIZE (NOT a gate) for 4 and 7 verdict=PARTIAL (models 4 and 7 do NOT meet the [PROPOSED] sample-domain budgets -- finding F-028e-sse-4) -> CONTROL-OK
       independent float structural twin vs frozen fixed model through the whole chain, one leg per reachable FX model
 NC-A  generic-substitute           must=FAIL                         verdict=FAIL     -> CONTROL-OK
       single-rate tanh clip (no oversampling / halfband / EQ / feedback / quad-waveshaper state)

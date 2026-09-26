@@ -164,8 +164,10 @@ Inventoried in
   `sse_tables.py`; the committed ROM is a build product and a test asserts
   it. The `FuzzTable<1>` re-derivation is discharged **by build**:
   `tools/check_fuzz_table_rederivation.py` compares all 1025 float32 bit
-  patterns against a compile of the pinned header's own expression
-  (MATCH, 1025/1025, libstdc++);
+  patterns against a compile of the pinned headers themselves, taken from an
+  **external** SHA-pinned checkout (MATCH, 1025/1025, libstdc++). No engine
+  source text is transcribed or committed here; absent that checkout the
+  tool reports NOT_RUN, never a pass;
 * **6 structural powers of two** — not engine data, `localparam`s in the RTL.
 
 ## Declared scope omissions (fail-closed)
@@ -185,6 +187,10 @@ IVERILOG=iverilog python3 tools/compare_rtl_model_distortion_sse.py
 python3 tools/distortion_sse_negative_controls.py
 python3 tools/distortion_sse_buffer_report.py
 python3 tools/gen_distortion_sse_rom.py --check
+
+# FuzzTable<1> build discharge: needs the pinned GPL-3.0-or-later headers,
+# which are kept OUTSIDE this repository (NOT_RUN without them)
+oracle/fetch-waveshaper-headers.sh
 python3 tools/check_fuzz_table_rederivation.py
 
 # fail-closed extraction (graphs cross-check; oracle mode refuses here)

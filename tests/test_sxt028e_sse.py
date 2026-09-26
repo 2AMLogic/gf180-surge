@@ -170,14 +170,81 @@ def test_fuzz_table_rederivation_record():
     """
     path = os.path.join(SXT, "artifacts", "fuzz-table-rederivation.json")
     rec = json.load(open(path))
-    if rec["status"] == "NOT_RUN":
-        pytest.skip("NOT_RUN: no C++ toolchain when the record was written")
+    if rec["status"] in ("NOT_RUN", "BLOCKED"):
+        pytest.skip(f"{rec['status']}: {rec.get('reason')}")
     assert rec["status"] == "MATCH", rec
     assert rec["mismatches"] == 0
     assert rec["entries"] == st.FUZZ_SIZE == rec["cpp_entries"]
     assert rec["table_digest"] == st.table_digest(), \
         "fuzz-table-rederivation.json is STALE against the generator"
     assert rec["probe_source_committed"] is False
+    # The build must have gone against the PINNED headers, at the pinned
+    # SHAs -- a build against some other revision would validate nothing.
+    assert rec["probe_kind"] == "external-header-build"
+    man = json.load(open(os.path.join(REPO, "oracle", "manifest.json")))
+    pins = {s["path"]: s["commit"] for s in man["submodules"]}
+    ext = rec["external_headers"]
+    for key, sub in (("sst-waveshapers", "libs/sst/sst-waveshapers"),
+                     ("sst-basic-blocks", "libs/sst/sst-basic-blocks")):
+        assert ext[key]["pinned_commit"] == pins[sub]
+        assert ext[key]["commit"] == pins[sub], \
+            f"{key} build was not against the pinned SHA"
+        assert not ext[key]["checkout"].startswith(REPO + os.sep), \
+            "the pinned GPL-3.0-or-later checkout must stay outside this repo"
+
+
+# The engine expressions this repository must NOT carry a copy of. The
+# FuzzTable re-derivation is validated by INCLUDING the pinned header from an
+# external checkout, never by transcribing it here (DR-0013 clauses 3 and 5,
+# EVIDENCE.md §13). This guard is live: re-introducing the transcription --
+# the exact defect that blocked PR #137 -- fails this test.
+FORBIDDEN_ENGINE_SOURCE_TOKENS = (
+    "linear_congruential_engine",   # the pinned LCG typedef
+    "uniform_real_distribution",    # the pinned draw
+    "48271", "2147483647", "2112",  # the pinned LCG/seed constants
+    "dx - 1.0", "1 - range",        # the LUTBase / FuzzTable expressions
+)
+
+
+def test_rederivation_checker_carries_no_engine_source_text():
+    """No GPL-3.0-or-later source text is committed in the checker."""
+    tool = os.path.join(REPO, "tools", "check_fuzz_table_rederivation.py")
+    src = open(tool).read()
+    for tok in FORBIDDEN_ENGINE_SOURCE_TOKENS:
+        assert tok not in src, \
+            (f"{tool} contains engine source text {tok!r}: the pinned "
+             "GPL-3.0-or-later expressions must be INCLUDED from an external "
+             "checkout, not transcribed into this Apache-2.0 repository")
+    # ... and specifically not inside the C++ the tool compiles.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_fuzzchk", tool)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    driver = mod.DRIVER_CPP
+    assert "#include <sst/waveshapers.h>" in driver, \
+        "the driver must build against the pinned header, not a copy of it"
+    for tok in FORBIDDEN_ENGINE_SOURCE_TOKENS:
+        assert tok not in driver
+
+
+def test_rederivation_checker_reports_not_run_without_the_pinned_headers(
+        tmp_path):
+    """Absent the external checkout the claim is NOT_RUN, never a pass."""
+    env = dict(os.environ)
+    env["SXT_ORACLE_HEADERS_DIR"] = str(tmp_path / "absent")
+    env.pop("ORACLE_SURGE_DIR", None)
+    out = tmp_path / "rec.json"
+    r = subprocess.run(
+        [sys.executable,
+         os.path.join(REPO, "tools", "check_fuzz_table_rederivation.py"),
+         "--out", str(out)],
+        capture_output=True, text=True, env=env)
+    if r.returncode == 77 and "no C++ toolchain" in r.stdout:
+        pytest.skip("no C++ toolchain on this host")
+    assert r.returncode == 77, r.stdout + r.stderr
+    rec = json.load(open(out))
+    assert rec["status"] == "NOT_RUN"
+    assert rec["mismatches"] is None
 
 
 # ------------------------------------------------------------- fail-closed
