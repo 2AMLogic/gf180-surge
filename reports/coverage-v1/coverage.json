@@ -264,7 +264,7 @@
   },
   "reports/SXT-034/EVIDENCE.md": {
    "role": "evidence record for leaf voice:unison-stack",
-   "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
+   "sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba"
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "cbdcef539f8363241313c903d4d52cbc6977c768fb75dc4cf8e8e20f6b1a705f"
+   "sha256": "2aa567ef3ef2bd8e1423a7104690b9c2296567619ade8fa711b3de73a068bb6f"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -312,7 +312,7 @@
   },
   "reports/sxt-022/EVIDENCE.md": {
    "role": "evidence record for leaf voice:attacky-slice",
-   "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+   "sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca"
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
@@ -356,7 +356,7 @@
   },
   "reports/sxt-035/EVIDENCE.md": {
    "role": "evidence record for leaf mod:modwheel",
-   "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
+   "sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972"
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",
