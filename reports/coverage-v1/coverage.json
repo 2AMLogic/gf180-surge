@@ -106,8 +106,8 @@
    },
    "fx_leaves_gate": {
     "": 1970,
-    "FAIL": 518,
-    "NOT_RUN": 246,
+    "FAIL": 624,
+    "NOT_RUN": 140,
     "PASS": 186
    },
    "routing_leaves_gate": {
@@ -130,8 +130,8 @@
    },
    "fx_leaves_gate": {
     "": 161,
-    "FAIL": 365,
-    "NOT_RUN": 44,
+    "FAIL": 379,
+    "NOT_RUN": 30,
     "PASS": 71
    },
    "routing_leaves_gate": {
@@ -162,7 +162,11 @@
   },
   "reports/SXT-028c/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Chorus",
-   "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+   "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
+  },
+  "reports/SXT-028e/EVIDENCE.md": {
+   "role": "evidence record for leaf fx:Distortion",
+   "sha256": "2b9c920ada838238b86dc54adee63461eabf4f1e2daa1c6e3d5efd994f3811f4"
   },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
@@ -190,7 +194,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "ba3ab660effa066e810f573af12fece446f80f9b5b4e1b1c69ae656ccc3dc552"
+   "sha256": "71f9fd544f9e4a725252854c89e04c6e3e4d45796627b9f2b76070f3470a4cf4"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -210,7 +214,7 @@
   },
   "reports/sxt-017/predictions/B4-broad.json": {
    "role": "structural input (pinned)",
-   "sha256": "ec5b5ab2f14b82cd3946afeb873ddb4777fd5a96d7b8ca54c2d564d168b8e735"
+   "sha256": "11d5c2710e079a6c3d364a8d0188066b3b726cfdca6f6d423614a4da2e74795f"
   },
   "reports/sxt-020/compile-corpus-scan.json": {
    "role": "structural input (pinned)",
@@ -222,11 +226,11 @@
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
-   "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+   "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
   },
   "reports/sxt-024/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Reverb1",
-   "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+   "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
@@ -246,7 +250,7 @@
   },
   "reports/sxt-028/leaf-backlog.json": {
    "role": "structural input (pinned)",
-   "sha256": "8881f83174694606dcb819b7378947c9c99f802f2db7aef534f03a4c608b2fa8"
+   "sha256": "d6120066b307f5b901dae5d0102836b1d3352681b6a06a6e2baf53a075a244dc"
   },
   "reports/sxt-028/leaves-filed.json": {
    "role": "structural input (pinned)",
@@ -552,9 +556,12 @@
    },
    "fx:Distortion": {
     "evidence_state": "OK",
-    "landed": false,
+    "landed": true,
     "support_ready": false,
-    "verification": {}
+    "verification": {
+     "model_vs_reference": "NOT_RUN",
+     "rtl_vs_model": "PASS"
+    }
    },
    "fx:EQ": {
     "evidence_state": "OK",

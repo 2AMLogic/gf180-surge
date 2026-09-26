@@ -164,6 +164,16 @@ must revise the pin in the same commit (visible contract revision).
 `--leaf-table` / `--control-allow-input-drift` exist for the controls only
 and are never valid for a published run.
 
+**That invariant is asserted, not just documented** (`#125`):
+`tests/test_sxt029_publication.py` re-derives every evidence pin in
+`leaf-verification.json`, republishes into a scratch directory and requires
+byte equality with the two committed artifacts, and re-runs the stale-pin
+downgrade control against the real table. A leaf whose evidence record is
+edited after publication must therefore revise its pin **and** republish in
+the same commit; the revision is recorded in
+`leaf-verification.json::evidence_pin_revisions` (which edit moved the file,
+and why no verification status moved with it).
+
 ## What would change these numbers
 
 Landing a leaf's evidence (#48, #53–#64, #66–#77, …), resolving the delay
