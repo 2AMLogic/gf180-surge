@@ -6,7 +6,6 @@ fail-closed parameter gates, the runner's negative-control switches, and the
 exactness comparator's mismatch detection — without requiring the oracle or
 iverilog.
 """
-import json
 import os
 import sys
 
@@ -15,7 +14,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 
 import lfo_model as lm  # noqa: E402
-from tools.compare_lfo_rtl_model import compare, parse_tb  # noqa: E402
+from tools.compare_lfo_rtl_model import compare  # noqa: E402
 
 
 def make_params(**over):

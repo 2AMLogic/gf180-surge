@@ -45,7 +45,6 @@ import json
 import math
 import os
 import random
-import struct
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

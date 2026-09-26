@@ -99,7 +99,6 @@ def empirical_worst_case():
         # 1 s full-scale-ish noise excitation, then silence; 140 s total
         excite_end = 48000
         env = []
-        win = 48000
         energy = 0.0
         for k in range(0, 140 * 48000, 32):
             blk = ((rng.integers(-(1 << 22), (1 << 22), size=32))

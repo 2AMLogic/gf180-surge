@@ -45,7 +45,7 @@ from model.effects.qmath import (  # noqa: E402
     FRAC, sat, qmul, qadd, qsub, to_q, clip,
 )
 from model.effects.delay.sinc_table import (  # noqa: E402
-    TABLE_Q, FIRIPOL_M, FIRIPOL_N, FIR_OFFSET, SINC_FMT,
+    FIRIPOL_M, FIRIPOL_N, FIR_OFFSET,
 )
 
 A_FMT = "Q10.21"      # audio words
@@ -508,7 +508,6 @@ class DelayModel:
     def process_block(self, in_l, in_r):
         """One 32-sample block (Delay.h processBlock). in/out: Q10.21 lists."""
         st = self.st
-        p = self.p
         if not self.initialized:
             self.initialize()
 
@@ -529,8 +528,6 @@ class DelayModel:
             vl, vr = st.time_l.v, st.time_r.v
             i_dt_l = clip(vl >> FRAC[C_FMT] if vl >= 0 else -((-vl) >> FRAC[C_FMT]), MIN_DT, MAX_DT)
             i_dt_r = clip(vr >> FRAC[C_FMT] if vr >= 0 else -((-vr) >> FRAC[C_FMT]), MIN_DT, MAX_DT)
-            rp_l = ((st.wpos - i_dt_l + k) - FIRIPOL_N) & LINE_MASK
-            rp_r = ((st.wpos - i_dt_r + k) - FIRIPOL_N) & LINE_MASK
             # sinc phase: (int)(FIRipol_M * (float(i_dtime+1) - time.v)) clamp
             def sinc_phase(i_dt, v):
                 diff = ((i_dt + 1) << FRAC[C_FMT]) - v

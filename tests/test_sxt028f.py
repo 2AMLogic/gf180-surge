@@ -14,7 +14,6 @@ do not run here and are NOT_RUN, never a pass: there is no committed
 compare-*.json and no test asserts one exists.
 """
 import json
-import math
 import os
 import random
 import sys

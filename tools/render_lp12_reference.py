@@ -103,9 +103,6 @@ def census_blob(rel):
 
 
 def git_blob_sha1(path):
-    import struct
-    import zlib
-
     data = open(path, "rb").read()
     hdr = b"blob %d\x00" % len(data)
     return hashlib.sha1(hdr + data).hexdigest()

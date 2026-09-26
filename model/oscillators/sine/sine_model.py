@@ -155,7 +155,6 @@ def _mode28_body(s, c):
     """mode<28> body: triangle on the quadrants (used directly and by 30)."""
     sw = ONE if s >= 0 else -ONE
     q24 = vm.qmul(s, c) < 0
-    pm = ONE if q24 else -ONE
     return _sat(sw + _sign_mul(c, 1 if q24 else -1))
 
 

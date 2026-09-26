@@ -62,7 +62,6 @@ Arithmetic discipline (FROZEN, enforced throughout):
 
 import json
 import math
-import os
 import struct
 
 SR = 48000

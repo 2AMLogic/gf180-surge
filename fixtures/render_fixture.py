@@ -434,7 +434,6 @@ def cmd_render(args):
     surgepy = import_surgepy()
     seq, seq_path, seq_sha = load_sequence(args.sequence)
     if args.preset_file:
-        preset_slug = os.path.splitext(os.path.basename(args.preset_file))[0].replace(" ", "_")
         preset_rel = args.preset_file
         preset_abs = args.preset_file if os.path.isabs(args.preset_file) else os.path.join(
             oc.data_home(), "patches_factory", preset_rel

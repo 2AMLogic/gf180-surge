@@ -133,7 +133,6 @@ def account_graph(
             "events": None, "memory": None, "budget": None,
         })
         return base
-    sm_name = SM_NAMES[sm]
     sa = g.get("sa", 0)
     active_scenes = [sa] if sm == 0 else [0, 1]
     voices_per_note = 2 if sm == 2 else 1

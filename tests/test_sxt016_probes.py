@@ -12,7 +12,7 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from probes import probe_fx_eq, probe_scheduler, validate
+from probes import probe_fx_eq, probe_scheduler
 from probes.emit import write_record
 from probes.probe_fx_reverb1 import stability_analysis
 from probes.validate import make_invalid_record, validate_record

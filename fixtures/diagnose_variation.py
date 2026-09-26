@@ -37,8 +37,6 @@ SR = 48000
 
 
 def render_probe(surgepy, preset_abs, force_retrigger):
-    import surgepy.constants as C
-
     s = surgepy.createSurge(float(SR))
     try:
         if not s.loadPatch(preset_abs):

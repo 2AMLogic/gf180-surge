@@ -50,16 +50,16 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 sys.path.insert(0, os.path.join(REPO, "model", "control"))
 
 from model.effects.qmath import (  # noqa: E402
-    FRAC, to_q, qmul, qadd, sat, clip,
+    FRAC, to_q, qmul, qadd, sat,
 )
 from model.effects.delay.delay_model import (  # noqa: E402
-    DelayModel, DelayParams, A_FMT, G_FMT, BLOCK, db_to_linear_d,
+    DelayModel, DelayParams, A_FMT, G_FMT, db_to_linear_d,
 )
 from model.effects.eq.eq_model import EqModel, EqParams  # noqa: E402
 from model.effects.reverb1 import coefficient_plane as cp  # noqa: E402
 from model.effects.reverb1 import reverb1_fixed as rf  # noqa: E402
 from model.control.control_model import (  # noqa: E402
-    ControlModel, Event, NAME_TO_TYPE, BLOCK_SIZE, EV_RESERVE_PER_BLOCK,
+    ControlModel, Event, NAME_TO_TYPE, BLOCK_SIZE,
 )
 
 SETTLE_BLOCKS = 240                      # the fixture harness's 0.25 s settle

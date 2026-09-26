@@ -119,7 +119,7 @@ def main():
             _pr = _p[_pn]
             ex.s.setParamVal(_pr, ex.s.getParamDef(_pr))
         ex.s.allNotesOff()
-        ok = ex.s.loadPatch(fxp)
+        ex.s.loadPatch(fxp)
         live = ex.extract(raw)
         ev, missing, uninterp = eng.migration_events(raw, live, ex)
         if ev:

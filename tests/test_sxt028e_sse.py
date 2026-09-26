@@ -32,7 +32,6 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion-sse")
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 
-import distortion_sse_model as dsm  # noqa: E402
 import quad_shapers as qs  # noqa: E402
 import sse_tables as st  # noqa: E402
 import distortion_model as dm  # noqa: E402

@@ -39,7 +39,6 @@ and refuses on any mismatch (metadata-tamper negative control).
 """
 
 import argparse
-import hashlib
 import json
 import os
 import subprocess
