@@ -1,0 +1,42 @@
+{
+  "leaf": "SXT-028j",
+  "legs": {
+    "extract-slot-params": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "tools/extract_rf_global34_inputs.py",
+      "what": "the LIVE surgepy leg of the carrier extraction: per-slot algorithm parameter values + the engine-side per-scene drift determinism gate (the census/graphs routing metadata itself needs no oracle and IS verified)"
+    },
+    "model-render": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "model/effects/rf-rf-global34/ over a fixture dry bus",
+      "what": "the frozen routing model driven by a real fixture bus with concrete occupant algorithms in global3/global4"
+    },
+    "reference-compare": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "tools/compare_fx_reference.py pattern",
+      "what": "model-vs-pinned-engine agreement against the [PROPOSED, not frozen] max/rms/corr budgets on the fixture presets"
+    },
+    "render": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "tools/render_fx_fixtures.py pattern",
+      "what": "NEW pinned-engine reference fixtures for this routing form under SXT-012 policies (original + per-slot bypass + all-off dry, tails included), for the carriers named in the issue's Fixtures plan"
+    }
+  },
+  "oracle_status": "UNAVAILABLE",
+  "probe": {
+    "engine_dir_present": false,
+    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "expected_checkout": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "surgepy_importable": false,
+    "surgepy_probe_stderr": [
+      "ModuleNotFoundError: No module named 'surgepy'"
+    ]
+  },
+  "rule": "AGENTS.md: a test that did not run must never be reported as a pass. Claim 2 (model-vs-pinned-engine agreement) is NOT_RUN for this leaf until every leg above is RUNNABLE and has actually been run.",
+  "schema_version": 1
+}
