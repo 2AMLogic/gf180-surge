@@ -38,7 +38,7 @@
   "sxt015_reconciliation": {
     "aggregate_profile_estimate": "PENDING-SXT-016",
     "external_classification_agrees": true,
-    "justification_text_finding": "fx_classes says 'no delay line'; the pinned source has a 128-sample stereo look-ahead line (1 KiB). Classification unaffected; placeholder not replaced here.",
+    "justification_text_finding": "fx_classes previously said 'no delay line'; the pinned source has a 128-sample stereo look-ahead line (1 KiB). Classification unaffected; the placeholder was replaced with this measurement by #133/#117.",
     "measured_bytes": 2444,
     "placeholder_conservative": true,
     "sxt015_ext_reads_writes": [
@@ -46,7 +46,7 @@
       0
     ],
     "sxt015_external": false,
-    "sxt015_state_bytes": 8192,
+    "sxt015_state_bytes": 2444,
     "sxt015_tier": "no_long_buffer"
   }
 }

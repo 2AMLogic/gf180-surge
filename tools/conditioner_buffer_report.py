@@ -17,14 +17,15 @@ writable state, not a delay/reverb-class buffer. Flash is never used as
 writable state. This is an accounting record from the frozen model, not a
 gf180mcu area/placement claim.
 
-Reconciliation with SXT-015 (model/resources/fx_classes.py): Conditioner is
+Reconciliation with SXT-015 (model/resources/fx_classes.py): Conditioner was
 carried as tier `no_long_buffer`, 8,192 B placeholder, external False, 0
-ext reads/writes, justified as "gain/lipol state, no delay line". The
-measured footprint is BELOW the placeholder (conservative placeholder
-holds) and the zero-external-traffic classification AGREES; the
-justification text is inaccurate in one respect (there IS a 128-sample
-look-ahead line, ~1 KiB, far under the threshold). The placeholder is not
-replaced here (that would move SXT-017 predictions; follow-up issue).
+ext reads/writes, justified as "gain/lipol state, no delay line" -- that
+justification text was inaccurate (there IS a 128-sample look-ahead line,
+~1 KiB, far under the threshold). #133/#117 replaced the placeholder with
+this leaf's measurement (2,444 B) and corrected the justification text;
+`sxt015_reconciliation` below now reads that live value, so this record's
+own `sxt015_state_bytes` field tracks the table rather than the retired
+placeholder.
 
 Original to this repository (Apache-2.0).
 """
@@ -102,9 +103,10 @@ def main():
             "placeholder_conservative": total_bytes <= spec["state_bytes"],
             "external_classification_agrees": spec["external"] is False
             and total_bytes <= thresh,
-            "justification_text_finding": "fx_classes says 'no delay line'; the "
-            "pinned source has a 128-sample stereo look-ahead line (1 KiB). "
-            "Classification unaffected; placeholder not replaced here.",
+            "justification_text_finding": "fx_classes previously said 'no delay "
+            "line'; the pinned source has a 128-sample stereo look-ahead line "
+            "(1 KiB). Classification unaffected; the placeholder was replaced "
+            "with this measurement by #133/#117.",
             "aggregate_profile_estimate": "PENDING-SXT-016"},
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
