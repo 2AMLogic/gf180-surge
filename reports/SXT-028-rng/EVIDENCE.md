@@ -258,6 +258,17 @@ NC-STALE-MISSING still fires. The suite is healthy again (5/5), including
 the two stale-downgrade controls. The underlying pin drift is reported
 separately and is not fixed here.
 
+Update (rebase onto `main` after #139 merged): the leaf-owner re-pin has
+since landed on `main` (SXT-029/#22, PR #139 — three drifted evidence
+records re-pinned and `coverage-v1` republished), so the drift described
+above no longer exists at this PR's base. The two published artifacts in
+this PR (`reports/coverage-v1/coverage.json`, `per-preset.csv`) were
+republished from that base by `tools/publish_coverage.py`, which is why
+their `evidence_state` fields now read `OK` where this branch previously
+recorded `STALE`. The drift-immune `counterfactual_table()` change stays:
+it makes the synthetic control world independent of pin freshness rather
+than dependent on it having been fixed.
+
 ## 8. Reproduce
 
 ```sh

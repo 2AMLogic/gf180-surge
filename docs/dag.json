@@ -353,7 +353,7 @@
       "status": "PASS",
       "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls.",
       "evidence": "reports/coverage-v1/README.md",
-      "evidence_sha256": "f17ab7df296ef365c3e2cf73b1d315815c0349dde4b7d63e51018f5eb1af6629"
+      "evidence_sha256": "a4ea9db50ae19410eaf46560f6c2cd386a8f87ea9a4b8a6598589ec254314557"
     },
     {
       "id": 23,

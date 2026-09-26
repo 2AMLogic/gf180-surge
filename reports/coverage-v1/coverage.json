@@ -188,13 +188,13 @@
   "contributor": {
    "fidelity_contract_gate": {
     "": 1785,
-    "STALE": 1135
+    "BLOCKED": 1135
    },
    "fx_leaves_gate": {
     "": 1970,
-    "FAIL": 26,
-    "NOT_RUN": 49,
-    "STALE": 875
+    "FAIL": 624,
+    "NOT_RUN": 140,
+    "PASS": 186
    },
    "routing_leaves_gate": {
     "": 2680,
@@ -212,13 +212,13 @@
   "factory": {
    "fidelity_contract_gate": {
     "": 93,
-    "STALE": 548
+    "BLOCKED": 548
    },
    "fx_leaves_gate": {
     "": 161,
-    "FAIL": 8,
-    "NOT_RUN": 11,
-    "STALE": 461
+    "FAIL": 379,
+    "NOT_RUN": 30,
+    "PASS": 71
    },
    "routing_leaves_gate": {
     "": 632,
@@ -252,7 +252,7 @@
   },
   "reports/SXT-028c/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Chorus",
-   "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+   "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
   },
   "reports/SXT-028e/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Distortion",
@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "fef53d4d656e8ea7af221428f9c0fa8dc8142e4802e4bc907bf43ead6fc0e3fd"
+   "sha256": "71f9fd544f9e4a725252854c89e04c6e3e4d45796627b9f2b76070f3470a4cf4"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -316,11 +316,11 @@
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
-   "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+   "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
   },
   "reports/sxt-024/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Reverb1",
-   "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+   "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
@@ -575,7 +575,7 @@
   },
   "gates": {
    "fidelity_freeze": {
-    "evidence_state": "STALE",
+    "evidence_state": "OK",
     "status": "BLOCKED"
    },
    "listening_labels": {
@@ -621,7 +621,7 @@
     }
    },
    "fx:Chorus": {
-    "evidence_state": "STALE",
+    "evidence_state": "OK",
     "landed": true,
     "support_ready": true,
     "verification": {
@@ -636,7 +636,7 @@
     "verification": {}
    },
    "fx:Delay": {
-    "evidence_state": "STALE",
+    "evidence_state": "OK",
     "landed": true,
     "support_ready": false,
     "verification": {
@@ -654,7 +654,7 @@
     }
    },
    "fx:EQ": {
-    "evidence_state": "STALE",
+    "evidence_state": "OK",
     "landed": true,
     "support_ready": true,
     "verification": {
@@ -669,7 +669,7 @@
     "verification": {}
    },
    "fx:Reverb1": {
-    "evidence_state": "STALE",
+    "evidence_state": "OK",
     "landed": true,
     "support_ready": true,
     "verification": {
