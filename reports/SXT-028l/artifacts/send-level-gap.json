@@ -1,0 +1,17 @@
+{
+  "blocking_issue": "#12 (SXT-017)",
+  "consequence": "this leaf consumes the per-scene send gains for buses 3/4 as CONTROL-PLANE STIMULUS and emits no corpus-derived value; reference-fixture freezing for this routing form is gated on the SXT-017 data-gap policy decision (#12). The RTL-vs-frozen-model exactness claim does not depend on the gap being closed.",
+  "engine_send_buses": 4,
+  "gap": "per-scene send levels for send buses 3/4 are not stored in any .fxp and are not exposed by surgepy",
+  "gap_holds_across_the_whole_corpus": true,
+  "leaf": "SXT-028l",
+  "levels_exposed_per_scene": 2,
+  "presets_scanned": 3561,
+  "reason": "SXT-011 exposure gap: the engine has 4 send buses but a .fxp stores only 2 per-scene send levels and surgepy exposes only send_level[0..1] (corpus/normalized/README.md 'Send levels 3/4'; corpus/normalized/schema.json scene.send). Buses 3/4 run at LOADER DEFAULTS for every corpus preset; no in-repo artifact carries a value, so none is emitted here. Resolving it needs an engine-behavior probe of the loader default plus an SXT-017 data-gap policy decision (#12) before reference fixtures for this routing form can be frozen.",
+  "scene_records_scanned": 7122,
+  "schema_version": 1,
+  "send_array_length_histogram": {
+    "2": 7122
+  },
+  "status": "BLOCKED (policy decision pending, #12) -- recorded, not worked around"
+}
