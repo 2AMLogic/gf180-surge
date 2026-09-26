@@ -1,0 +1,31 @@
+{
+  "leaf": "SXT-028h",
+  "issue": "#60",
+  "form": "rf-bins12",
+  "claim": "This leaf's OWN state/cost addition (the scene-B insert bus wiring, the bins1->bins2 schedule, the gating/lifecycle control state, plus its synthetic per-slot occupant kernel) -- NOT the ext-mem footprint of whichever concrete Surge FX algorithm actually occupies bins1/bins2 in a real preset, which is that algorithm leaf's own SXT-015/016 accounting.",
+  "external_writable_memory": {
+    "words_total": 0,
+    "note": "the synthetic occupant kernel (BiquadInstance) is register-only (on-chip); it touches no external buffer. A concrete tail-bearing occupant (Delay/Reverb1/Reverb2/Chorus/etc.) landed in bins1 or bins2 owns its own external-memory accounting separately, and its long buffers must live in external WRITABLE memory -- never flash (AGENTS.md)."
+  },
+  "external_traffic": {
+    "words_per_sample": 0,
+    "note": "no external-memory transactions originate from this leaf's own routing/scheduling/lifecycle logic or its synthetic occupant"
+  },
+  "on_chip_small_state": {
+    "per_instance_bits": {
+      "biquad TDF2 regs (reg0/reg1 x L,R, 80-bit)": 320,
+      "occupied flag": 1
+    },
+    "per_instance_bytes": 40,
+    "routing_control_registers_bits": {
+      "fx_bypass (2-bit)": 2,
+      "fx_disable (16-bit, engine layout; only bits 2/3 consumed)": 16,
+      "scene-B ring/live memory (sc_ring)": 1,
+      "occupancy history (prev_occ per slot, lifecycle edge detect)": 2
+    },
+    "note": "two instances (bins1, bins2) = 2 x 321 bits + 21 shared routing/lifecycle control bits = 663 bits on-chip total for this leaf's own contribution"
+  },
+  "ext_mem_traffic_estimate": "[PENDING-SXT-016] this leaf's own contribution is 0 words/sample (see external_traffic above); the AGGREGATE estimate for a concrete preset also depends on whichever algorithm leaf's occupant actually lands in bins1/bins2 (e.g. EQ+Chorus for Novuo.fxp, Reverb 2 for Shore.fxp), which is out of this leaf's scope -- no aggregate number is invented here",
+  "long_buffers_policy": "delay/reverb-class buffers live in external WRITABLE memory; processing stays on-chip; flash is not writable delay memory (AGENTS.md) -- not applicable to this leaf's own (register-only) contribution",
+  "scene_bus_note": "this leaf accounts for ONE scene's insert bus (scene B). The scene-A insert bus (rf-ains*), the send buses (rf-send*) and the global bus (rf-global*, landed as rf-rf-global2) each carry their own instances and their own accounting; nothing here is a per-patch total."
+}
