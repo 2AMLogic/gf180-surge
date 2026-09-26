@@ -450,7 +450,13 @@ module tb_classic;
       chainb[k] = xb; chaina[k] = xa;
     end
     for (k = 0; k < BLOCK; k++) begin
-      bl = clamp8(qround1(chaina[2*k] + chainb[2*k+1]));
+      // #123: B branch at the EVEN sample, A branch at the ODD sample --
+      // the ordering the pinned HalfRateFilter::process_block_D2 CODE
+      // computes (`set_coefficients` puts cA in lane 0; the reconstruction
+      // broadcasts lane 1 = B at sample 2k and adds lane 0 = A at 2k+1).
+      // Must stay in lockstep with model/voice/voice_model.py::HalfbandD2,
+      // which this testbench's model runner imports directly.
+      bl = clamp8(qround1(chainb[2*k] + chaina[2*k+1]));
       mm = clamp8(qmul(bl, 32'(master_amp)));   // L == R on the mono bus
       mm = clamp1(mm);
       $fwrite(fd, "M %0d %0d\n", b, mm);

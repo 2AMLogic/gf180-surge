@@ -1,0 +1,84 @@
+SXT-022 / #123 negative controls: each must FAIL the check it targets
+date: 2026-09-26T03:40:43Z
+base commit: c5987505491eacec89d05dd3441bc247538ec44f
+
+========================================================================
+NC-1  RTL branch-order mutant must FAIL RTL-vs-model integer equality
+========================================================================
+mutation: rtl/voice/voice_halfband_order_mutant.sv = tb_voice.sv with the
+  halfband D2 reconstruction reverted to the pre-#123 A-even/B-odd branch
+  assignment -- a single mutated line, nothing else.
+
+$ diff rtl/voice/tb_voice.sv rtl/voice/voice_halfband_order_mutant.sv
+0a1,4
+> // SXT-022 #123 NEGATIVE CONTROL MUTANT of tb_voice.sv: the halfband D2
+> // reconstruction branch order is reverted to the pre-#123 A-even/B-odd
+> // assignment (a SINGLE-LINE mutation) -- must FAIL RTL-vs-model exactness.
+> // Everything else is byte-identical to rtl/voice/tb_voice.sv.
+763c767
+<       bl = qround1(chainb[2*k] + chaina[2*k+1]);
+---
+>       bl = qround1(chaina[2*k] + chainb[2*k+1]);
+
+$ python3 tools/compare_rtl_model.py --run-dir <leaf48-smoke-bells-v1 run> \
+      --tb rtl/voice/voice_halfband_order_mutant.sv
+{
+  "tb": "voice_halfband_order_mutant.sv",
+  "verdict": "FAIL",
+  "checked": {
+    "checkpoints": 1,
+    "fields": 35,
+    "oscout": 64,
+    "mono": 47
+  },
+  "mismatches": 41,
+  "first_failures": [
+    "block 0 sample 2: mono model=0 rtl=1",
+    "block 0 sample 4: mono model=9 rtl=11",
+    "block 0 sample 5: mono model=36 rtl=40",
+    "block 0 sample 6: mono model=108 rtl=120",
+    "block 0 sample 7: mono model=275 rtl=291",
+    "block 0 sample 8: mono model=579 rtl=601",
+    "block 0 sample 9: mono model=1052 rtl=1072",
+    "block 0 sample 10: mono model=1690 rtl=1712",
+    "block 0 sample 11: mono model=2493 rtl=2510",
+    "block 0 sample 12: mono model=3444 rtl=3461"
+  ]
+}
+exit code: 1   (FAIL -- required)
+
+positive leg on the SAME run dir, unmutated tb_voice.sv:
+{
+  "tb": "tb_voice.sv",
+  "verdict": "PASS",
+  "checked": {
+    "checkpoints": 193,
+    "fields": 6755,
+    "oscout": 12352,
+    "mono": 3904
+  },
+  "mismatches": 0,
+  "first_failures": []
+}
+exit code: 0   (PASS, 0 mismatches)
+
+========================================================================
+NC-2  the pre-#123 model branch order must FAIL the stopband assertion
+========================================================================
+check under test (tests/test_halfband_d2_voice.py): rejection of a unit
+sine past the output Nyquist must be >= 80 dB, measured on the frozen
+Q10.21 class over 16384 input words after a 2048-word warm-up.
+
+  f (of input rate) | rejection a_even (pre-#123) | rejection b_even (pinned)
+  ------------------+----------------------------+--------------------------
+               0.05 |                       0.44 |                    -0.00
+               0.15 |                       4.62 |                    -0.00
+               0.20 |                      10.20 |                     0.00
+               0.25 |                       3.01 |                     3.01
+               0.30 |                       0.43 |                   102.82  <- stopband (>= 80 dB required)
+               0.45 |                      10.20 |                    98.69  <- stopband (>= 80 dB required)
+
+verdict: the pre-#123 ordering rejects 0.43 dB / 10.20 dB where >= 80 dB is
+required -- the control FAILS the assertion, as it must. It also sags the
+passband (4.62 dB of loss at f = 0.15 where the pinned ordering is flat),
+so the second control face fails too.

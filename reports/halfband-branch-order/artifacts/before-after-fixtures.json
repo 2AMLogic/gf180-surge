@@ -1,0 +1,483 @@
+{
+  "base_commit": "c5987505491eacec89d05dd3441bc247538ec44f",
+  "cases": [
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": -2,
+          "frames": 182400,
+          "max_abs_diff_lsb": 12677.0,
+          "model_peak_lsb": 13597.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 15333.0,
+          "rms_diff_at_best_shift_lsb": 786.4403465963528,
+          "rms_diff_dbfs": -32.2840220793313,
+          "rms_diff_lsb": 796.5913334532926,
+          "spectral_corr": 0.9783711365484129,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "b67244aaaa49627bb608653a1c3429b4bb3f61567a47c72eee3beac6179c3e94"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": -2,
+          "frames": 182400,
+          "max_abs_diff_lsb": 12686.0,
+          "model_peak_lsb": 13618.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 15333.0,
+          "rms_diff_at_best_shift_lsb": 786.8271360938585,
+          "rms_diff_dbfs": -32.28280880885792,
+          "rms_diff_lsb": 796.7026114326452,
+          "spectral_corr": 0.9801855780162642,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "acd0385013611bc1768b0b664d60bf82de157b772e67a2f7800c053df15a2919"
+      },
+      "case": "sxt022/seq-modwheel-v1",
+      "consumer_record": "reports/sxt-022/EVIDENCE.md",
+      "leaf": "SXT-022",
+      "model_render_moved": true,
+      "reference_render": "reports/sxt-022/artifacts/reference-seq-modwheel-v1-dry.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": -1,
+          "frames": 273600,
+          "max_abs_diff_lsb": 4760.0,
+          "model_peak_lsb": 10553.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 12781.0,
+          "rms_diff_at_best_shift_lsb": 1012.0924079462194,
+          "rms_diff_dbfs": -30.138120685015735,
+          "rms_diff_lsb": 1019.8367243992931,
+          "spectral_corr": 0.9753279200470077,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "09170e149916764478402713a05e52ddd77979badc538be893a593798fc0df1d"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": -1,
+          "frames": 273600,
+          "max_abs_diff_lsb": 4760.0,
+          "model_peak_lsb": 10934.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 12781.0,
+          "rms_diff_at_best_shift_lsb": 1012.4988621590348,
+          "rms_diff_dbfs": -30.138742591811543,
+          "rms_diff_lsb": 1019.7637070446317,
+          "spectral_corr": 0.979067414962698,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "20fb5f70639e289dffa4bb862c9f655baf1687a4bdb92ef18e7cd1dd7676d238"
+      },
+      "case": "sxt022/seq-notes-coverage-v1",
+      "consumer_record": "reports/sxt-022/EVIDENCE.md",
+      "leaf": "SXT-022",
+      "model_render_moved": true,
+      "reference_render": "reports/sxt-022/artifacts/reference-seq-notes-coverage-v1-dry.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": -4,
+          "frames": 196800,
+          "max_abs_diff_lsb": 2321.0,
+          "model_peak_lsb": 10553.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 12783.0,
+          "rms_diff_at_best_shift_lsb": 669.989273206605,
+          "rms_diff_dbfs": -33.32653669003605,
+          "rms_diff_lsb": 706.4962266296047,
+          "spectral_corr": 0.9874917143001558,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "6a73bb9adeb81602b3d25829319a8d29839e1f8ec24705ae152bdb225b097f6d"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": -4,
+          "frames": 196800,
+          "max_abs_diff_lsb": 2328.0,
+          "model_peak_lsb": 10934.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 12783.0,
+          "rms_diff_at_best_shift_lsb": 671.4024359469876,
+          "rms_diff_dbfs": -33.327486913153386,
+          "rms_diff_lsb": 706.4189412443444,
+          "spectral_corr": 0.9920737566278565,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50"
+      },
+      "case": "sxt022/seq-notes-repeated-v1",
+      "consumer_record": "reports/sxt-022/EVIDENCE.md",
+      "leaf": "SXT-022",
+      "model_render_moved": true,
+      "reference_render": "reports/sxt-022/artifacts/reference-seq-notes-repeated-v1-dry.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "case": "sxt026-wavetable/kick-wtfix",
+      "consumer_record": "reports/sxt-026/EVIDENCE.md",
+      "leaf": "SXT-026",
+      "reason": "the wavetable runner needs the pinned engine's external resources/data/wavetables asset root, which is not available on this host; the shared HalfbandD2 is on its output path (wt_model.py:666) so its render WILL move, but by how much was not measured here",
+      "reference_render": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-base-v1-ref.wav",
+      "status": "NOT_RUN"
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": 32,
+          "frames": 840000,
+          "max_abs_diff_lsb": 16721.0,
+          "model_peak_lsb": 11631.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 12582.0,
+          "rms_diff_at_best_shift_lsb": 1300.3129135467193,
+          "rms_diff_dbfs": -27.855086029921274,
+          "rms_diff_lsb": 1326.4240254946847,
+          "spectral_corr": 0.9207418655237404,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": 32,
+          "frames": 840000,
+          "max_abs_diff_lsb": 16740.0,
+          "model_peak_lsb": 11656.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 12582.0,
+          "rms_diff_at_best_shift_lsb": 1300.9822447585323,
+          "rms_diff_dbfs": -27.850580066550283,
+          "rms_diff_lsb": 1327.1123106194211,
+          "spectral_corr": 0.9212367046094617,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "e095d007ad0a070256d6b32c09bb43245ae8b058b564b0221e41be4d51570a04"
+      },
+      "case": "sxt026a/canonical-bells",
+      "consumer_record": "reports/sxt-026a/EVIDENCE.md",
+      "leaf": "SXT-026a",
+      "model_render_moved": true,
+      "reference_render": "reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "a_even": {
+        "model_render_sha256": "fcec380cec6ef7e96ebffe19a80589c79f3ab5369b53c18876151c2a8a61d2f4"
+      },
+      "b_even": {
+        "model_render_sha256": "2e357defbc8f32456e0046794604871e09333b5c234edc545de96946c3ab2ca9"
+      },
+      "case": "sxt026a/smoke-bells",
+      "consumer_record": "reports/sxt-026a/EVIDENCE.md",
+      "leaf": "SXT-026a",
+      "model_render_moved": true,
+      "reference_render": null,
+      "status": "MEASURED"
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 273600,
+          "max_abs_diff_lsb": 17998.0,
+          "model_peak_lsb": 14414.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 17387.0,
+          "rms_diff_at_best_shift_lsb": 1048.1288763140267,
+          "rms_diff_dbfs": -29.90043990058823,
+          "rms_diff_lsb": 1048.1288763140267,
+          "spectral_corr": 0.9836885563818921,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "7fd71d412f17d9038d03c1c2bb995f5060bf8df4fc45be2e71a0900449e07763"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 273600,
+          "max_abs_diff_lsb": 18030.0,
+          "model_peak_lsb": 14899.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 17387.0,
+          "rms_diff_at_best_shift_lsb": 1048.49186017074,
+          "rms_diff_dbfs": -29.897432358311796,
+          "rms_diff_lsb": 1048.49186017074,
+          "spectral_corr": 0.9884446215850763,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "93855e24d34d05741132e37ee6293240f3da71baec4a398e8ac5ab2c1f7d17a0"
+      },
+      "case": "sxt032-lfo/seq-notes-coverage-v1",
+      "consumer_record": "reports/sxt-032/EVIDENCE.md",
+      "leaf": "SXT-032",
+      "model_render_moved": true,
+      "reference_render": "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1-lfo-fixture.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 196800,
+          "max_abs_diff_lsb": 54.0,
+          "model_peak_lsb": 403.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 414.0,
+          "rms_diff_at_best_shift_lsb": 3.499985481967567,
+          "rms_diff_dbfs": -79.4274087650539,
+          "rms_diff_lsb": 3.499985481967567,
+          "spectral_corr": 0.9728003440161642,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "8bdf646cd38a0a7b6974f5121149776853e838cbe788314a0be40f9e65e186d0"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 196800,
+          "max_abs_diff_lsb": 33.0,
+          "model_peak_lsb": 409.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 414.0,
+          "rms_diff_at_best_shift_lsb": 3.411640165358325,
+          "rms_diff_dbfs": -79.64946924818987,
+          "rms_diff_lsb": 3.411640165358325,
+          "spectral_corr": 0.9830044321779813,
+          "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+        },
+        "model_render_sha256": "21c18b9fb06301392a31f9c30bcef2f3dafbd2e83365991f2902a03d5a771b8d"
+      },
+      "case": "sxt033-classic/edges",
+      "consumer_record": "reports/SXT-033/EVIDENCE.md",
+      "leaf": "SXT-033",
+      "model_render_moved": true,
+      "reference_render": "reports/SXT-033/artifacts/edges__seq-notes-repeated-v1-ref.wav",
+      "status": "MEASURED",
+      "verdict_moved": true
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": 1,
+          "frames": 182400,
+          "max_abs_diff_lsb": 65534.0,
+          "model_peak_lsb": 32767.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 32767.0,
+          "rms_diff_at_best_shift_lsb": 4106.031698403782,
+          "rms_diff_dbfs": -18.039873481617924,
+          "rms_diff_lsb": 4106.22749866929,
+          "spectral_corr": 0.9869783137462054,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "c753569c10934cae70e3e7909d9f78f9f9b71c68449e2735084d3e56c700fee4"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 182400,
+          "max_abs_diff_lsb": 65534.0,
+          "model_peak_lsb": 32767.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": true
+          },
+          "ref_peak_lsb": 32767.0,
+          "rms_diff_at_best_shift_lsb": 4106.679041308484,
+          "rms_diff_dbfs": -18.038918387458317,
+          "rms_diff_lsb": 4106.679041308484,
+          "spectral_corr": 0.9874579116733226,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "8067df964a75ab84c666a1644b29e62a1fe2b4d3f4dab949db21620ca77921d4"
+      },
+      "case": "sxt035-mw/seq-modwheel-v1",
+      "consumer_record": "reports/sxt-035/EVIDENCE.md",
+      "leaf": "SXT-035",
+      "model_render_moved": true,
+      "reference_render": "reports/sxt-035/artifacts/reference-seq-modwheel-v1-mw-fixture.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 196800,
+          "max_abs_diff_lsb": 62.0,
+          "model_peak_lsb": 3605.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 3635.0,
+          "rms_diff_at_best_shift_lsb": 9.188885120410287,
+          "rms_diff_dbfs": -71.04347718276257,
+          "rms_diff_lsb": 9.188885120410287,
+          "spectral_corr": 0.9455541329961749,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "50aee2ffae9c42c4bc1bc7da0b2a43ad5e913c16e8c31d253d8a720254991388"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": 0,
+          "frames": 196800,
+          "max_abs_diff_lsb": 62.0,
+          "model_peak_lsb": 3606.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 3635.0,
+          "rms_diff_at_best_shift_lsb": 9.142319291761819,
+          "rms_diff_dbfs": -71.08760592732756,
+          "rms_diff_lsb": 9.142319291761819,
+          "spectral_corr": 0.9471139375941888,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "c1df28aed662e26dc0b1b353d4d80a2f1c4758b56ff0fe0455240c3f5c8cd164"
+      },
+      "case": "sxt040-sine/badnews",
+      "consumer_record": "reports/SXT-040/EVIDENCE.md",
+      "leaf": "SXT-040",
+      "model_render_moved": true,
+      "reference_render": "reports/SXT-040/artifacts/badnews__seq-notes-repeated-v1-ref.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    },
+    {
+      "a_even": {
+        "audio": {
+          "best_shift": 32,
+          "frames": 840000,
+          "max_abs_diff_lsb": 16721.0,
+          "model_peak_lsb": 11631.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 12582.0,
+          "rms_diff_at_best_shift_lsb": 1300.3129135467193,
+          "rms_diff_dbfs": -27.855086029921274,
+          "rms_diff_lsb": 1326.4240254946847,
+          "spectral_corr": 0.9207418655237404,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46"
+      },
+      "b_even": {
+        "audio": {
+          "best_shift": 32,
+          "frames": 840000,
+          "max_abs_diff_lsb": 16740.0,
+          "model_peak_lsb": 11656.0,
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": false,
+            "spectral_corr": false
+          },
+          "ref_peak_lsb": 12582.0,
+          "rms_diff_at_best_shift_lsb": 1300.9822447585323,
+          "rms_diff_dbfs": -27.850580066550283,
+          "rms_diff_lsb": 1327.1123106194211,
+          "spectral_corr": 0.9212367046094617,
+          "verdict": "FAIL against proposed budgets"
+        },
+        "model_render_sha256": "e095d007ad0a070256d6b32c09bb43245ae8b058b564b0221e41be4d51570a04"
+      },
+      "case": "sxt042-kt/canonical-bells",
+      "consumer_record": "reports/SXT-042/EVIDENCE.md",
+      "leaf": "SXT-042",
+      "model_render_moved": true,
+      "reference_render": "reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav",
+      "status": "MEASURED",
+      "verdict_moved": false
+    }
+  ],
+  "claim": "model-vs-pinned-engine agreement NUMBERS for every consumer of the shared voice scene decimator under BOTH candidate branch assignments, measured against the already-committed reference fixtures before the code change (issue step 2 / stop-escalate)",
+  "comparator": "tools/compare_audio_reference.py at the base commit above",
+  "issue": "SXT-022 / #123",
+  "measured_utc": "2026-09-26T03:40:07Z",
+  "method": "both orderings were produced by monkeypatching HalfbandD2.process in-process and re-running each leaf's own committed runner; the a_even leg reproduces every committed model render BYTE-IDENTICALLY (and every committed budget JSON's numbers), which is what makes the b_even leg a like-for-like delta. NOTE: classic/sine/wavetable import the same source file under a second module name (`from model.voice import voice_model`), so both class objects must be patched; patching only one silently measures nothing.",
+  "not_claimed": [
+    "any fidelity verdict (SXT-022/SXT-026a budgets are PROPOSED, PENDING-FREEZE, owned by SXT-017/#12)",
+    "preset support",
+    "musical quality",
+    "any hardware/FPGA result"
+  ],
+  "orderings": {
+    "a_even": "out[n] = (A[2n] + B[2n+1]) * 0.5  -- the PRE-#123 model/RTL",
+    "b_even": "out[n] = (B[2n] + A[2n+1]) * 0.5  -- the pinned kernel (shipped)"
+  }
+}
