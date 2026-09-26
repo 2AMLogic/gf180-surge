@@ -215,3 +215,46 @@ python3 -m pytest -q tests/test_sxt017_budget.py
 Additional inputs beyond §7: `reports/sxt-016/probes/` (76 records, phase
 pin 32), `probes/` (SXT-016 package), `model/resources/accounting.py`. No
 oracle/engine build required.
+
+---
+
+## 9. ACCOUNTING-INPUT REVISION (2026-09-26) — SXT-028b Conditioner state, issue #117
+
+**What changed.** Nothing in this record's method, tooling, gates, or
+verdicts. One SXT-015 input moved: the `no_long_buffer` per-instance state
+of the **Conditioner** class went from the shared conservative placeholder
+of **8,192 B** to the **2,444 B** measured by the SXT-028b frozen model
+(`reports/SXT-028b/artifacts/buffer-requirement.json`,
+`on_chip_state.bytes`, model revision `8dcd09c8…`). Every other
+`no_long_buffer` class still carries the 8,192 B placeholder and its
+`class_state_unverified` flag.
+
+**Effect on the committed artifacts.** All five headline predictions and
+all seven variant summaries were regenerated with the §7 recipe. The whole
+diff is the `on_chip_state_bytes` column of the **720 presets whose graph
+carries at least one configured Conditioner slot** (707 with one instance,
+9 with two, 4 with three — counted over `corpus/normalized/graphs.jsonl`
+independently of the predictor); each instance drops the column by exactly
+5,748 B. A configured-but-`fxd`-disabled slot still holds state, so all 720
+move, not just the 672 whose Conditioner also processes. No other column,
+aggregate input, provenance field, or reason code changed.
+
+**Stop/escalate check (original issue's clause): NOT TRIGGERED.** Per-preset
+supported/adapted/unsupported/unresolved status is **identical** for all
+3,561 entries in every one of the 12 artifacts; `totals`, `per_bank`,
+`slate_coverage`, and every per-preset `reasons` list are unchanged. §5's
+headline numbers therefore stand as written, and nothing was routed to #12.
+Directionally this can only ever relax the `on_chip_ram_bytes` gate, never
+tighten it — a Conditioner preset gets cheaper, not dearer.
+
+**What this does NOT establish.** It is a state-accounting correction, not
+a measurement of this repository's hardware: the cycle column for
+Conditioner remains the shared `cyc_fxgeneric_frame` placeholder, no bundle
+gained a fit claim, no preset became supported, and the model-vs-pinned-Surge
+agreement leg of SXT-028b remains BLOCKED in its own record. Not
+regenerated here, and still stale on `main` for reasons predating this
+change: `reports/sxt-015/*` (SXT-012 sequence-fixture growth) and
+`reports/coverage-v1/*` (leaf-evidence hash drift). Re-running
+`tools/publish_coverage.py` with the two revised input pins produces output
+that differs from the pre-change run **only** in the two recorded input
+sha256 values — no coverage verdict moved.

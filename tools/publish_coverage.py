@@ -77,14 +77,17 @@ TABLE_DEFAULT = "reports/coverage-v1/leaf-verification.json"
 STRUCTURAL_INPUTS = {
     GRAPH_DEFAULT: "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
     SCAN_DEFAULT: "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6",
-    PREDICTION_DEFAULT: "ec5b5ab2f14b82cd3946afeb873ddb4777fd5a96d7b8ca54c2d564d168b8e735",
+    # revised by #117: SXT-015 Conditioner state_bytes 8192 -> 2444 (SXT-028b
+    # measurement) changes on_chip_state_bytes only; no preset status moved.
+    PREDICTION_DEFAULT: "11d5c2710e079a6c3d364a8d0188066b3b726cfdca6f6d423614a4da2e74795f",
     "reports/sxt-013/candidates/slate-256-balanced.json": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
     "reports/sxt-013/candidates/slate-256-contributor-lean.json": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e",
     "reports/sxt-013/candidates/slate-256-factory-lean.json": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883",
     "reports/sxt-027/leaves-filed.json": "639b51de26efeb1e4d94a60a9c38dd56f58346c42a8fbf2d81b843bb4fb95c5f",
     "reports/sxt-027/leaf-backlog.json": "76e526549c1cca7cb6f070640c1a1b4e5ee5364be1992adf66305df917c8ebd2",
     "reports/sxt-028/leaves-filed.json": "b6ade0fe36a0ed2b4eae7637b92f1492915c1f2350b0f07fccdf0c23e15ad6d4",
-    "reports/sxt-028/leaf-backlog.json": "8881f83174694606dcb819b7378947c9c99f802f2db7aef534f03a4c608b2fa8",
+    # revised by #117: SXT-028b leaf title corrected (no gate, no LFO).
+    "reports/sxt-028/leaf-backlog.json": "d6120066b307f5b901dae5d0102836b1d3352681b6a06a6e2baf53a075a244dc",
     SELECTION_SCAN: "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f",
 }
 
