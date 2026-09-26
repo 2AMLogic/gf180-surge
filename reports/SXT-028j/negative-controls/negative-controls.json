@@ -1,0 +1,237 @@
+{
+  "claim": "negative controls; each must fail the check it targets",
+  "controls": [
+    {
+      "control": "NC-A generic substitute (pass-through + fixed gain occupant in global4)",
+      "counts_toward_original_preset_coverage": false,
+      "coverage_label": "ADAPTED",
+      "legs": [
+        {
+          "detail": "the generic pass-through+gain substitute must not reproduce the declared occupant's output bit-exactly",
+          "leg": "output bit-exactness",
+          "metrics": {
+            "blocks_compared": 4,
+            "blocks_different": 4
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the substitute keeps no per-instance TDF2 history, so the dual-instance checkpoint must differ",
+          "leg": "per-instance state",
+          "metrics": {
+            "substitute_slot4_state_all_zero": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "per-instance-state faithfulness / original-preset coverage eligibility",
+      "verdict": "CONTROL-OK (generic substitute FAILS bit-exact reproduction of the declared per-instance occupant; labeled ADAPTED and refused from original-preset coverage)"
+    },
+    {
+      "control": "NC-B dropped tail (render truncated to 2/8 declared blocks)",
+      "legs": [
+        {
+          "detail": "a truncation control proves nothing unless the dropped region actually contains nonzero tail samples",
+          "leg": "declared tail span carries audio",
+          "metrics": {
+            "dropped_abs_energy": 2174983,
+            "dropped_blocks": 6,
+            "dropped_blocks_with_nonzero_output": 6
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the truncated render must fail the declared-tail-span coverage check",
+          "leg": "tail-span coverage check",
+          "metrics": {
+            "declared_blocks": 8,
+            "rendered_blocks": 2
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the truncated render's final per-instance state must not match the full render's",
+          "leg": "final per-instance checkpoint",
+          "metrics": {
+            "checkpoints_equal": false
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "declared tail-span coverage",
+      "verdict": "CONTROL-OK (truncated render FAILS the declared-tail-span coverage and checkpoint checks, and the dropped region demonstrably contained real audio)"
+    },
+    {
+      "control": "NC-C wrong order (global3/global4 slot-content permutation)",
+      "legs": [
+        {
+          "detail": "permuting the two slot occupants must change the bus output when the chain saturates in between",
+          "leg": "model permutation (saturating pair)",
+          "metrics": {
+            "checkpoints_differ": true,
+            "max_abs_diff": 159567573,
+            "samples_compared": 384,
+            "samples_different": 380
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "two LTI biquads in series COMMUTE in exact arithmetic, so a linear-pair permutation is detectable only through fixed-point rounding -- integer-exact equality still flags it, and the bound is recorded rather than hidden",
+          "leg": "model permutation (purely linear pair)",
+          "metrics": {
+            "max_abs_diff": 1,
+            "samples_compared": 512,
+            "samples_different": 79
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "rf_global34_mutants.sv -DNC_SWAP_ORDER evaluates global4 before global3; it must FAIL exact equality against the frozen model",
+          "leg": "live RTL order mutant",
+          "metrics": {
+            "case": "both-slots-all-fx",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SWAP_ORDER",
+            "first_failures": [
+              "block 0 out[41]: model=128070 rtl=128069",
+              "block 0 out[43]: model=-64132 rtl=-64133",
+              "block 0 out[44]: model=30058 rtl=30059"
+            ],
+            "mismatches": 65,
+            "samples_compared": 384
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "recorded_bound": {
+        "identical_content_permutation_is_an_identity": true,
+        "note": "permuting two slots whose occupant CONTENT is byte-identical cannot change the bus (identity map). The issue's 'two same-class slots swapped' control therefore has force only when the two same-class slots differ in their parameter values; the legs above use distinct occupants for exactly that reason."
+      },
+      "targets": "order-sensitive equality of the extended-rack series chain",
+      "verdict": "CONTROL-OK (the order-sensitive check flags the permutation; the linear-commutation bound is recorded)"
+    },
+    {
+      "control": "NC-D shared state (both extended-rack slots pooled into one history)",
+      "legs": [
+        {
+          "detail": "pooling both instances' histories must diverge from the correctly-isolated rack on the SAME per-block inputs",
+          "leg": "model pooled-history mutant (distinct occupants)",
+          "metrics": {
+            "blocks_compared": 6,
+            "blocks_different": 6
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the pooled mutant cannot reproduce two independent checkpoint halves",
+          "leg": "model dual-instance checkpoint",
+          "metrics": {
+            "isolated_slot3_equals_slot4": false,
+            "pooled_slot3_equals_slot4": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the real-corpus same-class shape (String Contrabass.fxp: Airwindows in both global3 and global4) must ALSO catch pooled state -- identical arithmetic is where pooling hides best",
+          "leg": "model pooled-history mutant (SAME-class occupants)",
+          "metrics": {
+            "blocks_compared": 6,
+            "blocks_different": 6,
+            "isolated_histories_differ": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "rf_global34_mutants.sv -DNC_SHARED_STATE pools both slots onto one register set; it must FAIL exact equality (output AND per-instance checkpoint) against the frozen model",
+          "leg": "live RTL shared-state mutant",
+          "metrics": {
+            "case": "both-slots-all-fx",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SHARED_STATE",
+            "first_failures": [
+              "block 0 out[0]: model=-36806 rtl=-17944",
+              "block 0 out[1]: model=-10114 rtl=-36556",
+              "block 0 out[2]: model=95620 rtl=82970"
+            ],
+            "mismatches": 205,
+            "samples_compared": 384
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the same live RTL pooling defect must ALSO fail on the same-class dual-occupant case, where both slots run identical coefficients",
+          "leg": "live RTL shared-state mutant (SAME-class case)",
+          "metrics": {
+            "case": "same-class-dual-occupants",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SHARED_STATE",
+            "first_failures": [
+              "block 0 out[0]: model=14375 rtl=202207",
+              "block 0 out[1]: model=-32285 rtl=-135084",
+              "block 0 out[2]: model=52925 rtl=101165"
+            ],
+            "mismatches": 251,
+            "samples_compared": 384
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "dual-instance (per-instance state) independence",
+      "verdict": "CONTROL-OK (pooled-state mutants FAIL the dual-instance-independence check, model-side and in live RTL, with distinct AND same-class occupants)"
+    },
+    {
+      "control": "NC-E stale stub (frozen-revision pin)",
+      "legs": [
+        {
+          "detail": "revision_pin_ok() must reject a stale pin and accept the live one",
+          "leg": "revision pin function",
+          "metrics": {
+            "live_revision_tail": "93378e5a0bbd23fc",
+            "stale_revision_tail": "93378e5a0bbd9d13"
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the comparator invoked with a stale pin must exit nonzero with status REFUSED instead of reporting PASS",
+          "leg": "live comparator refusal",
+          "metrics": {
+            "exit_code": 2,
+            "status_line_present": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "stale-harness refusal (never a false PASS)",
+      "verdict": "CONTROL-OK (a stale pin is REFUSED -- the comparator cannot report PASS)"
+    }
+  ],
+  "iverilog_available": true,
+  "leaf": "SXT-028j",
+  "legs_not_run": [],
+  "model_revision": "47d44bce92de29502689f9324420d07621455e3410eb8bcd93378e5a0bbd23fc",
+  "schema_version": 1,
+  "status": "PASS"
+}

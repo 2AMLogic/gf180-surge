@@ -1,0 +1,100 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "per-slot algorithm parameter extraction and any wet-audio render require the pinned oracle (surgepy); this leaf's own routing/scheduling claims do not depend on it -- see oracle_extraction below",
+    "routing_metadata_verified": true
+  },
+  "both_slots_disabled": true,
+  "carrier_source": "added by this leaf: both slots occupied AND both disabled by fx_disable bits 14|15",
+  "cross_check": {
+    "census_vs_graphs_drift_count": 0,
+    "fields_compared": [
+      "blob_sha1",
+      "fx_bypass",
+      "fx_disable",
+      "nonoff_fx_slot_count",
+      "nonoff_fx_type_set",
+      "scene_mode",
+      "stored_revision"
+    ],
+    "values": {
+      "blob_sha1": "1b9c6dce3575e888348d6a60bb88582b457d68a3",
+      "fx_bypass": 0,
+      "fx_disable": 49152,
+      "nonoff_fx_slot_count": 6,
+      "nonoff_fx_type_set": [
+        "Airwindows",
+        "EQ",
+        "Resonator",
+        "Reverb2"
+      ],
+      "scene_mode": "Single",
+      "stored_revision": 28
+    }
+  },
+  "dual_instance_concurrent": true,
+  "global3": {
+    "airwindows_sub_id": null,
+    "airwindows_sub_name": null,
+    "fx_disable_bit": true,
+    "occupied": true,
+    "return_level_consumed_by_global_path": false,
+    "return_level_stored": 1.0,
+    "type_id": 11,
+    "type_name": "Reverb 2"
+  },
+  "global4": {
+    "airwindows_sub_id": 49,
+    "airwindows_sub_name": "Galactic",
+    "fx_disable_bit": true,
+    "occupied": true,
+    "return_level_consumed_by_global_path": false,
+    "return_level_stored": 1.0,
+    "type_id": 14,
+    "type_name": "Airwindows"
+  },
+  "leaf": "SXT-028j",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
+    "ok": false
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 49152,
+    "global_stage_runs_in_this_mode": true
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "1b9c6dce3575e888348d6a60bb88582b457d68a3",
+    "census_status": "parsed_static_only",
+    "graphs_blob_sha1_verified": "1b9c6dce3575e888348d6a60bb88582b457d68a3",
+    "path": "resources/data/patches_3rdparty/John Valentine/Winds/Bassoon.fxp",
+    "stored_revision": 28
+  },
+  "roles": [
+    "global3",
+    "global4"
+  ],
+  "routing_form": "rf-global34",
+  "same_class_both_slots": false,
+  "schema_version": 1,
+  "slot_index_check": {
+    "source": "corpus/normalized/graphs.jsonl fx[].i / fx[].r (SXT-011 output; no live oracle needed)",
+    "verified_indices": {
+      "14": "global3",
+      "15": "global4",
+      "6": "global1",
+      "7": "global2"
+    }
+  },
+  "upstream_chain_context": {
+    "global1_occupied": true,
+    "global1_type_name": "Resonator",
+    "global2_occupied": true,
+    "global2_type_name": "EQ",
+    "note": "the master bus and the ring flag arriving at global3 are whatever the global1 -> global2 segment left; that segment is the landed sibling leaf model/effects/rf-rf-global2/ (SXT-028d) and is NOT re-claimed here",
+    "upstream_slots_active": 2
+  }
+}
