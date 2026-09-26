@@ -70,6 +70,11 @@ LEAF_LEDGER_INPUTS = [
 ]
 SELECTION_SCAN = "model/integration/selection-scan.json"
 TABLE_DEFAULT = "reports/coverage-v1/leaf-verification.json"
+# #122 / decision record 0013: the measured set of corpus presets carrying an
+# effect whose sound depends on an RNG stream that cannot be pinned under the
+# SXT-010 manifest. Published as a coverage REDUCTION: the denominators do
+# not move, the affected presets can never be reported supported.
+RNG_EXCLUSION_DEFAULT = "reports/SXT-028-rng/artifacts/coverage-impact.json"
 
 # Full sha256 pins of the structural inputs (no truncation). A mismatch
 # REFUSES the run. Legitimate data updates are visible contract revisions:
@@ -89,6 +94,8 @@ STRUCTURAL_INPUTS = {
     # revised by #117: SXT-028b leaf title corrected (no gate, no LFO).
     "reports/sxt-028/leaf-backlog.json": "d6120066b307f5b901dae5d0102836b1d3352681b6a06a6e2baf53a075a244dc",
     SELECTION_SCAN: "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f",
+    # added by #122 (decision record 0013): measured FX-RNG exclusion set.
+    RNG_EXCLUSION_DEFAULT: "c358b4764f2d789cdd663237639216cdf25849f54ef0b75a7c7eee3c44ed26aa",
 }
 
 STATUS_VOCAB = ["PASS", "FAIL", "NOT_RUN", "BLOCKED", "NO_VERDICT", "STALE"]
@@ -113,7 +120,8 @@ BANKS = ["contributor", "factory"]
 CSV_COLUMNS = [
     "bank", "path", "blob_sha1", "headline_status",
     "normalized", "compile_gate", "compile_codes",
-    "voice_leaf_gate", "fx_leaves_gate", "wavetable_leaf_gate",
+    "voice_leaf_gate", "fx_leaves_gate", "fx_rng_gate",
+    "wavetable_leaf_gate",
     "routing_leaves_gate", "fidelity_contract_gate", "essentiality_listening",
     "fx_required", "b4_prediction", "slates", "reasons",
 ]
@@ -192,6 +200,15 @@ def main() -> int:
                     help="skip structural input hash pins (negative-control "
                          "scenarios only; reconciliation checks stay live). "
                          "Never valid for a published run.")
+    ap.add_argument("--rng-exclusion", default=None,
+                    help="override the committed #122/DR-0013 FX-RNG "
+                         "exclusion artifact (negative-control scenarios "
+                         "only; published runs must use the committed "
+                         "default)")
+    ap.add_argument("--control-ignore-rng-exclusion", action="store_true",
+                    help="ignore the #122/DR-0013 FX-RNG exclusion gate "
+                         "(negative-control scenarios only, to show the gate "
+                         "is load-bearing). Never valid for a published run.")
     args = ap.parse_args()
     repo = Path(args.repo_root).resolve()
 
@@ -238,6 +255,30 @@ def run(repo: Path, args) -> None:
     sel = load_json(repo, SELECTION_SCAN)
     ledgers = {rel: load_json(repo, rel) for rel in LEAF_LEDGER_INPUTS}
 
+    # #122 / DR-0013: measured FX-RNG exclusion set. Fail-closed -- a missing
+    # or self-contradictory artifact REFUSES rather than silently gating
+    # nothing. --control-ignore-rng-exclusion disables the gate for negative
+    # controls only and is never valid for a published run.
+    rng_rel = args.rng_exclusion or RNG_EXCLUSION_DEFAULT
+    rng_path = Path(table_path_abs(repo, rng_rel))
+    if not rng_path.is_file():
+        raise Refuse(f"missing FX-RNG exclusion artifact: {rng_rel}")
+    rng_doc = json.loads(rng_path.read_text(encoding="utf-8"))
+    if rng_doc["corpus"]["denominator"] != len(graphs):
+        raise Refuse(
+            f"FX-RNG exclusion artifact counted "
+            f"{rng_doc['corpus']['denominator']} corpus entries, coverage "
+            f"sees {len(graphs)}"
+        )
+    rng_affected = {}
+    for rec in rng_doc["affected_presets"]:
+        rng_affected[rec["path"]] = sorted(
+            {c["fx_type_name"] for c in rec["classes"]})
+    if len(rng_affected) != rng_doc["corpus"]["affected_presets"]:
+        raise Refuse("FX-RNG exclusion artifact row count disagrees with its "
+                     "own total")
+    rng_gate_active = not args.control_ignore_rng_exclusion
+
     # ---- reconciliation (fail-closed) ---------------------------------
     by_path = {}
     for e in graphs:
@@ -245,6 +286,9 @@ def run(repo: Path, args) -> None:
         if p in by_path:
             raise Refuse(f"duplicate corpus path: {p}")
         by_path[p] = e
+    for p in sorted(rng_affected):
+        if p not in by_path:
+            raise Refuse(f"FX-RNG exclusion path not in corpus: {p}")
 
     outcomes = scan["outcomes"]
     outcome_by_path = {}
@@ -510,6 +554,24 @@ def run(repo: Path, args) -> None:
             else:
                 fx_gate = worst(fx_gate, "PASS")
 
+        # FX-RNG gate (#122 / DR-0013). An effect whose sound depends on an
+        # unpinnable RNG stream cannot have its ORIGINAL wet sound
+        # reproduced, so the preset can never be reported supported. The
+        # gate is BLOCKED, not FAIL: nothing was measured and found wrong --
+        # a product-owner decision is outstanding (#12).
+        rng_gate = ""
+        rng_classes = rng_affected.get(p)
+        if rng_classes and rng_gate_active:
+            rng_gate = "BLOCKED"
+            reasons.add(
+                "rng_stream_unpinnable:" + "+".join(rng_classes)
+                + "(DR-0013;#122->#12;coverage-reduction-published)"
+            )
+        elif rng_classes:
+            reasons.add(
+                "rng_gate_bypassed:negative-control-only(never-a-published-run)"
+            )
+
         # wavetable leaf gate
         wt_gate = ""
         if evaluate_leaves and g.get("wta"):
@@ -584,6 +646,7 @@ def run(repo: Path, args) -> None:
                 normalized == "PASS"
                 and voice_gate == "PASS"
                 and fx_gate in ("", "PASS")
+                and rng_gate == ""
                 and wt_gate in ("", "PASS")
                 and rt_gate in ("", "PASS")
                 and fid_gate == "PASS"
@@ -616,6 +679,7 @@ def run(repo: Path, args) -> None:
             "compile_codes": ";".join(codes),
             "voice_leaf_gate": voice_gate,
             "fx_leaves_gate": fx_gate,
+            "fx_rng_gate": rng_gate,
             "wavetable_leaf_gate": wt_gate,
             "routing_leaves_gate": rt_gate,
             "fidelity_contract_gate": fid_gate,
@@ -646,6 +710,8 @@ def run(repo: Path, args) -> None:
         input_pins=None if args.control_allow_input_drift else dict(STRUCTURAL_INPUTS),
         table_rel=table_rel,
         drift_allowed=args.control_allow_input_drift,
+        rng_affected=rng_affected, rng_doc=rng_doc,
+        rng_gate_active=rng_gate_active, rng_rel=rng_rel,
     )
     json_path = outdir / "coverage.json"
     with open(json_path, "w", newline="") as f:
@@ -662,7 +728,8 @@ def table_path_abs(repo: Path, table_rel: str) -> str:
 
 def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
                    leaf_states, gate_states, outcomes, by_path,
-                   input_pins, table_rel, drift_allowed):
+                   input_pins, table_rel, drift_allowed,
+                   rng_affected, rng_doc, rng_gate_active, rng_rel):
     totals = Counter(r["headline_status"] for r in rows)
     per_bank = {b: Counter(r["headline_status"] for r in rows if r["bank"] == b)
                 for b in BANKS}
@@ -783,6 +850,12 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
         {"decision": "#24 (SXT-031) gf180 implementation qualification",
          "state": "OPEN",
          "blocks": "silicon claims; out of scope here (non-goal)"},
+        {"decision": "#122 -> #12 FX-modulation RNG exclusion "
+                     "(decision record 0013)",
+         "state": "RECORDED-CONTRACT-REVISION (owner ratification pending)",
+         "blocks": f"{len(rng_affected)} corpus presets carrying an effect "
+                   "whose sound depends on an unpinnable RNG stream; they "
+                   "can never be reported supported while DR-0013 stands"},
     ]
 
     inputs_prov = {}
@@ -873,6 +946,37 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
             ),
         },
         "favorites_slates": slate_cov,
+        "fx_rng_exclusion": {
+            "issue": "#122",
+            "decision_record":
+                "decision-records/0013-fx-modulation-rng-stream.md",
+            "measurement": rng_rel,
+            "gate_active": rng_gate_active,
+            "gate_column": "fx_rng_gate",
+            "gate_value": "BLOCKED",
+            "rule": (
+                "A preset carrying an effect whose sound depends on an RNG "
+                "stream that cannot be pinned under the SXT-010 manifest can "
+                "never be reported supported: its ORIGINAL wet sound cannot "
+                "be reproduced or compared. This is a published coverage "
+                "REDUCTION -- the denominators below are unchanged and no "
+                "preset was removed from the corpus."
+            ),
+            "corpus_affected": len(rng_affected),
+            "corpus_denominator": len(rows),
+            "per_class": rng_doc["corpus"]["per_class"],
+            "scopes": rng_doc["scopes"],
+            "slates": {name: s["affected"]
+                       for name, s in sorted(rng_doc["slates"].items())},
+            "rows_affected_in_this_run": sum(
+                1 for r in rows if r["fx_rng_gate"] == "BLOCKED"),
+            "rows_that_would_be_supported_without_the_gate": (
+                "measured by tools/coverage_negative_controls.py "
+                "NC-RNG-EXCLUSION against the counterfactual verified world; "
+                "not derivable from this published run, in which nothing is "
+                "supported for independent reasons"
+            ),
+        },
         "leaf_ledger": leaf_ledger,
         "open_decisions": open_decisions,
         "reconciliation": {
