@@ -20,8 +20,10 @@ Usage:
 import argparse
 import json
 import os
-import subprocess
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _rtl_compile_common import compile_and_run  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_voice.sv")
@@ -151,16 +153,6 @@ def compare(model_trace, tb_trace):
     return checked, fails
 
 
-def build_and_run(sv_file, workdir):
-    workdir = os.path.abspath(workdir)
-    vvp = os.path.join(workdir, "tb_mut.vvp" if sv_file == MUTANT else "tb.vvp")
-    subprocess.run(["iverilog", "-g2012", "-o", vvp, os.path.abspath(sv_file)],
-                   check=True)
-    subprocess.run(["vvp", vvp], cwd=workdir, check=True,
-                   stdout=subprocess.DEVNULL)
-    return os.path.join(workdir, "tb_trace.txt")
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True,
@@ -172,7 +164,9 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json")) as f:
         model_trace = json.load(f)
 
-    trace_path = build_and_run(args.tb, args.run_dir)
+    trace_path = compile_and_run(
+        args.tb, args.run_dir, absolute=True,
+        out_name="tb_mut.vvp" if args.tb == MUTANT else "tb.vvp")
     rtl_trace = parse_tb(trace_path)
     checked, fails = compare(model_trace, rtl_trace)
     summary = {
