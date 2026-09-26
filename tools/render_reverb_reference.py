@@ -177,6 +177,7 @@ def fresh_instance(surgepy, preset_abs, fx_off=False):
 
 
 def settle(s, blocks=240):
+    bs = int(s.getBlockSize())
     buf = s.createMultiBlock(blocks)
     s.processMultiBlock(buf)
 
@@ -406,9 +407,9 @@ def cmd_sweep(args):
         wet, state, info = capture_bus(surgepy, preset_abs, seq, False, tail,
                                        overrides={3: val})
         name = f"sweep-decay-{v}".replace(".", "_").replace("-", "m")
-        save_trace(name, wet, state, info,
-                  {"sequence": {"id": seq["id"]}, "bus": "wet",
-                   "sweep": {"param": "fx4_p3 decaytime", "requested": val}})
+        side = save_trace(name, wet, state, info,
+                          {"sequence": {"id": seq["id"]}, "bus": "wet",
+                           "sweep": {"param": "fx4_p3 decaytime", "requested": val}})
         results.append({"trace": name, "requested": val,
                         "readback": info["overrides_applied"].get("3")})
     print(json.dumps(results, indent=2))

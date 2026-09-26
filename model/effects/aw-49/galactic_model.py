@@ -88,6 +88,7 @@ Traffic: per output frame (48 kHz, cycleEnd=1) 28 reads + 26 writes =
 import hashlib
 import math
 import os
+import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
@@ -426,6 +427,7 @@ class Galactic49Fixed:
 
     def process_block(self, in_l, in_r):
         """One 32-sample block of s32i words -> (out_l, out_r) s32i."""
+        c = self.c
         out_l = []
         out_r = []
         for k in range(BLOCK):
