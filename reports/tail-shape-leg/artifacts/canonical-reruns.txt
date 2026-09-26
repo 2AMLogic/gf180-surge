@@ -1,0 +1,11 @@
+issue #111 -- wet-path tail gate: tail-shape (decay-curve) leg: leg 0
+run: 2026-09-26T23:50:08Z   repo HEAD: 8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim; budgets are proposals.
+
+==========================================================================
+[0] canonical re-runs of the #93 and #100 check tools
+==========================================================================
+  tools/tail_gate_checks.py  exit 0  OVERALL: PASS
+  tools/stereo_tail_gate_checks.py exit 0  OVERALL: PASS
+
+leg 0 verdict: PASS

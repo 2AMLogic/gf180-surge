@@ -1,6 +1,7 @@
 issue #100 -- stereo comparator tail gate / metric findings: leg 2
-run: 2026-09-25T09:54:51Z   repo HEAD: b326bc00eaa81bbad74ee71c004f3ae86983f569   numpy 2.4.1
+run: 2026-09-26T23:50:41Z   repo HEAD: 8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e   numpy 2.4.1
 claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+amended by issue #111: tail gate now carries the tail-shape (decay-curve) leg; budget {"decay_curve_floor_dbfs": -100.0, "decay_curve_max_dev_db": 1.0, "decay_curve_window_s": 0.05, "tail_rms_rel_db": -20.0}
 
 ==========================================================================
 [2] stereo tail-gate controls (each must fail the check it targets)
@@ -22,11 +23,11 @@ claim scope: comparator behaviour only; no fidelity, support, or sound claim.
         R: model_present=False residual=0.00 dB ok=False
       pre-#100 chorus tool on the same render: FAIL
   fmcombo/tail-decays-too-fast       chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
-      failed by: budget:max_abs_diff_lsb
+      failed by: budget:max_abs_diff_lsb, tail-gate
       budgets max/rms/corr = False/True/True  (max 15308.8 LSB, rms -67.21 dBFS, corr 0.999997)
-      tail gate PASS: covered=True model_present=True residual=-30.11 dB
-        L: model_present=True residual=-30.08 dB ok=True
-        R: model_present=True residual=-30.20 dB ok=True
+      tail gate FAIL: covered=True model_present=True residual=-30.11 dB
+        L: model_present=True residual=-30.08 dB ok=False
+        R: model_present=True residual=-30.20 dB ok=False
       pre-#100 chorus tool on the same render: FAIL
   fmcombo/drop-right-tail            chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
       failed by: budget:max_abs_diff_lsb, budget:rms_diff_dbfs, tail-gate
@@ -78,21 +79,39 @@ claim scope: comparator behaviour only; no fidelity, support, or sound claim.
         R: model_present=False residual=n/a ok=False
       pre-#100 chorus tool on the same render: PASS
 
-  KNOWN-GAP probes (NOT controls; outcome recorded, not asserted):
-    alienappears/zero-late-tail-from-30%       verdict FAIL | max 9172 LSB rms -66.35 dBFS corr 0.9982 | tail residual -15.67 dB gate FAIL
-    alienappears/zero-late-tail-from-40%       verdict PASS | max 4498 LSB rms -71.79 dBFS corr 0.9995 | tail residual -21.12 dB gate PASS   <-- KNOWN-GAP (#111): dropped late tail PASSES
-    alienappears/zero-late-tail-from-60%       verdict PASS | max 1102 LSB rms -83.76 dBFS corr 1.0000 | tail residual -33.40 dB gate PASS   <-- KNOWN-GAP (#111): dropped late tail PASSES
+  late-tail truncation controls (formerly KNOWN-GAP probes; REQUIRED FAIL since #111):
+  alienappears/zero-late-tail-from-30% chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: budget:max_abs_diff_lsb, tail-gate
+      budgets max/rms/corr = False/True/True  (max 9172.0 LSB, rms -66.35 dBFS, corr 0.998231)
+      tail gate FAIL: covered=True model_present=True residual=-15.67 dB
+        L: model_present=True residual=-15.92 dB ok=False
+        R: model_present=True residual=-15.79 dB ok=False
+      tail legs (mono): residual FAIL, decay curve FAIL (max dev 242.26 dB)
+  alienappears/zero-late-tail-from-40% chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: tail-gate
+      budgets max/rms/corr = True/True/True  (max 4497.9 LSB, rms -71.79 dBFS, corr 0.999521)
+      tail gate FAIL: covered=True model_present=True residual=-21.12 dB
+        L: model_present=True residual=-21.40 dB ok=False
+        R: model_present=True residual=-21.37 dB ok=False
+      tail legs (mono): residual PASS, decay curve FAIL (max dev 238.12 dB)
+  alienappears/zero-late-tail-from-60% chorus required FAIL       observed FAIL       exit 0  CONTROL-OK
+      failed by: tail-gate
+      budgets max/rms/corr = True/True/True  (max 1102.0 LSB, rms -83.76 dBFS, corr 0.999962)
+      tail gate FAIL: covered=True model_present=True residual=-33.40 dB
+        L: model_present=True residual=-33.87 dB ok=False
+        R: model_present=True residual=-33.43 dB ok=False
+      tail legs (mono): residual PASS, decay curve FAIL (max dev 223.89 dB)
 
   refusal/missing-sidecar            chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
-      reason: fixture sidecar not found: /tmp/sxt-stereo-tail-gate/leg2/refusals/missing-sidecar.json -- the wet-path tail region cannot be declared, and this tool does not guess one (issue #100)
+      reason: fixture sidecar not found: /tmp/sxt-tail-shape-leg/t100/leg2/refusals/missing-sidecar.json -- the wet-path tail region cannot be declared, and this tool does not guess one (issue #100)
   refusal/undeclared-tail_s          chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
-      reason: sidecar /tmp/sxt-stereo-tail-gate/leg2/refusals/undeclared-tail_s.json does not declare tail_s for bus 'wet': a tail region cannot be defined from committed data, and this tool does not guess one (issue #93 stop condition)
+      reason: sidecar /tmp/sxt-tail-shape-leg/t100/leg2/refusals/undeclared-tail_s.json does not declare tail_s for bus 'wet': a tail region cannot be defined from committed data, and this tool does not guess one (issue #93 stop condition)
   refusal/stale-frames               chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
       reason: sidecar declares 213600 frames but fmcombo__seq-notes-coverage-v1-wet.f32.wav holds 273600: the sidecar is STALE with respect to the reference render
   refusal/sha256-mismatch            chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
       reason: sidecar declares wet sha256 0000000000000000... but fmcombo__seq-notes-coverage-v1-wet.f32.wav hashes to 89d42e518eab60e2...: the tail region would be read from metadata that does not describe this render
   refusal/missing-sidecar            fx     required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
-      reason: no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)
+      reason: no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)
 
   fixture sxt-023 fm_bass_1 (fx comparator): declared tail region [153600, 273600)
   fm_bass_1/baseline                 fx     required PASS       observed PASS       exit 0  CONTROL-OK
@@ -107,11 +126,11 @@ claim scope: comparator behaviour only; no fidelity, support, or sound claim.
         L: model_present=False residual=0.00 dB ok=False
         R: model_present=False residual=0.00 dB ok=False
   fm_bass_1/tail-decays-too-fast     fx     required FAIL       observed FAIL       exit 0  CONTROL-OK
-      failed by: budget:max_abs_diff_lsb
+      failed by: budget:max_abs_diff_lsb, tail-gate
       budgets max/rms/corr = False/True/True  (max 17830.0 LSB, rms -62.70 dBFS, corr 0.999963)
-      tail gate PASS: covered=True model_present=True residual=-21.23 dB
-        L: model_present=True residual=-21.23 dB ok=True
-        R: model_present=True residual=-21.23 dB ok=True
+      tail gate FAIL: covered=True model_present=True residual=-21.23 dB
+        L: model_present=True residual=-21.23 dB ok=False
+        R: model_present=True residual=-21.23 dB ok=False
   fm_bass_1/drop-right-tail          fx     required FAIL       observed FAIL       exit 0  CONTROL-OK
       failed by: budget:max_abs_diff_lsb, tail-gate
       budgets max/rms/corr = False/True/True  (max 149541.7 LSB, rms -47.49 dBFS, corr 0.997046)
@@ -125,9 +144,9 @@ claim scope: comparator behaviour only; no fidelity, support, or sound claim.
         L: model_present=False residual=n/a ok=False
         R: model_present=False residual=n/a ok=False
 
-  result: 20/20 controls behaved as required
-  gate is load-bearing (all three budgets PASS, verdict FAILs on the tail gate alone): fmcombo/truncate-at-tail-start, alienappears/truncate-at-tail-start, fm_bass_1/truncate-at-tail-start
+  result: 23/23 controls behaved as required
+  gate is load-bearing (all three budgets PASS, verdict FAILs on the tail gate alone): fmcombo/truncate-at-tail-start, alienappears/truncate-at-tail-start, alienappears/zero-late-tail-from-40%, alienappears/zero-late-tail-from-60%, fm_bass_1/truncate-at-tail-start
   controls the PRE-#100 chorus gate let through as PASS: fmcombo/truncate-at-tail-start, alienappears/truncate-at-tail-start
-  KNOWN-GAP probes whose dropped late tail PASSES the full verdict: alienappears/zero-late-tail-from-40%, alienappears/zero-late-tail-from-60%
+  late-tail truncation controls (#111) that do NOT fail the full verdict: none
 
 leg 2 verdict: PASS

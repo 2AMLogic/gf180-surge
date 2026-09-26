@@ -53,7 +53,10 @@
     "spectral_corr": false
   },
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
@@ -61,7 +64,10 @@
     "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
     "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
@@ -71,8 +77,30 @@
     "tail_rms_rel_db": -8.100319721988349,
     "tail_ref_rms_lsb": 16909.381231057556,
     "tail_model_rms_lsb": 16697.92437608015,
+    "tail_rms_rel_ok": false,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 48,
+      "ref_first_window_dbfs": -28.44618746023128,
+      "ref_last_graded_window_dbfs": -99.35581529001945,
+      "max_dev_db": 12.11656574208564,
+      "worst_window": {
+        "index": 30,
+        "start_frame_in_tail": 72000,
+        "ref_dbfs": -74.12466316941612,
+        "model_dbfs": -86.24122891150176
+      },
+      "windows_over_budget": 31,
+      "ok": false,
+      "reason": "tail decay curve deviates 12.12 dB (> 1.00 dB budget) in 31 of 48 graded windows (worst window 30: reference -74.1 dBFS, model -86.2 dBFS)"
+    },
+    "tail_decay_curve_ok": false,
     "ok": false,
-    "reason": "tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget"
+    "reason": "tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 12.12 dB (> 1.00 dB budget) in 31 of 48 graded windows (worst window 30: reference -74.1 dBFS, model -86.2 dBFS)"
   },
   "tail_check_lr": {
     "L": {
@@ -81,7 +109,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -91,8 +122,30 @@
       "tail_rms_rel_db": 0.4187060829008924,
       "tail_ref_rms_lsb": 21797.895619143244,
       "tail_model_rms_lsb": 23547.1718623658,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -26.320341262868578,
+        "ref_last_graded_window_dbfs": -86.61438190527456,
+        "max_dev_db": 13.96789761364289,
+        "worst_window": {
+          "index": 34,
+          "start_frame_in_tail": 81600,
+          "ref_dbfs": -87.395860267324,
+          "model_dbfs": -73.4279626536811
+        },
+        "windows_over_budget": 36,
+        "ok": false,
+        "reason": "tail decay curve deviates 13.97 dB (> 1.00 dB budget) in 36 of 50 graded windows (worst window 34: reference -87.4 dBFS, model -73.4 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
       "ok": false,
-      "reason": "tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 13.97 dB (> 1.00 dB budget) in 36 of 50 graded windows (worst window 34: reference -87.4 dBFS, model -73.4 dBFS)"
     },
     "R": {
       "tail_offset": 153600,
@@ -100,7 +153,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -110,10 +166,32 @@
       "tail_rms_rel_db": -0.48756641807384987,
       "tail_ref_rms_lsb": 24384.684555008953,
       "tail_model_rms_lsb": 22268.599305904005,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -25.96369674648838,
+        "ref_last_graded_window_dbfs": -87.38533091133536,
+        "max_dev_db": 8.86027070598464,
+        "worst_window": {
+          "index": 22,
+          "start_frame_in_tail": 52800,
+          "ref_dbfs": -57.091247926624895,
+          "model_dbfs": -65.95151863260953
+        },
+        "windows_over_budget": 33,
+        "ok": false,
+        "reason": "tail decay curve deviates 8.86 dB (> 1.00 dB budget) in 33 of 50 graded windows (worst window 22: reference -57.1 dBFS, model -66.0 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
       "ok": false,
-      "reason": "tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 8.86 dB (> 1.00 dB budget) in 33 of 50 graded windows (worst window 22: reference -57.1 dBFS, model -66.0 dBFS)"
     }
   },
   "tail_gate_ok": false,
-  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; L: tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget)"
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 12.12 dB (> 1.00 dB budget) in 31 of 48 graded windows (worst window 30: reference -74.1 dBFS, model -86.2 dBFS); L: tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 13.97 dB (> 1.00 dB budget) in 36 of 50 graded windows (worst window 34: reference -87.4 dBFS, model -73.4 dBFS); R: tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 8.86 dB (> 1.00 dB budget) in 33 of 50 graded windows (worst window 22: reference -57.1 dBFS, model -66.0 dBFS))"
 }

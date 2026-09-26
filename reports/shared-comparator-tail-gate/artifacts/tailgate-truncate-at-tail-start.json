@@ -20,17 +20,23 @@
     "spectral_corr": true
   },
   "path": "wet",
-  "fixture_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/fixtures/audio/koala2/seq-notes-coverage-v1.json",
+  "fixture_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/fixtures/audio/koala2/seq-notes-coverage-v1.json",
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
     "tail_frames": 120000,
     "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
-    "tail_region_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/fixtures/audio/koala2/seq-notes-coverage-v1.json",
+    "tail_region_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/fixtures/audio/koala2/seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": false,
     "tail_present": true,
@@ -40,6 +46,9 @@
     "tail_rms_rel_db": null,
     "tail_ref_rms_lsb": null,
     "tail_model_rms_lsb": null,
+    "tail_rms_rel_ok": false,
+    "tail_decay_curve": null,
+    "tail_decay_curve_ok": false,
     "ok": false,
     "reason": "declared tail region [153600, 273600) is not covered by the compared renders (ref 273600 frames, model 153600 frames); a truncated-window comparison cannot grade a tail"
   },

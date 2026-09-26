@@ -1,0 +1,63 @@
+issue #111 -- wet-path tail gate: tail-shape (decay-curve) leg: leg 1
+run: 2026-09-26T23:50:08Z   repo HEAD: 8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e   numpy 2.4.1
+claim scope: comparator behaviour only; no fidelity, support, or sound claim; budgets are proposals.
+
+==========================================================================
+[1] landed verdicts: committed record at 8ade1d184d1b vs re-run with the tail-shape leg
+==========================================================================
+  shape-leg budget: {"decay_curve_floor_dbfs": -100.0, "decay_curve_max_dev_db": 1.0, "decay_curve_window_s": 0.05, "tail_rms_rel_db": -20.0}
+
+  SXT-028c alienappears x seq-notes-coverage-v1        PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.01 dB over 50 windows ok  L dev 0.01 dB over 50 windows ok  R dev 0.01 dB over 50 windows ok
+  SXT-028c alienappears x seq-poly-8-v1                PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.00 dB over 50 windows ok  L dev 0.00 dB over 50 windows ok  R dev 0.00 dB over 50 windows ok
+  SXT-028c fmcombo x seq-notes-coverage-v1             PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.02 dB over 6 windows ok  L dev 0.01 dB over 6 windows ok  R dev 0.02 dB over 6 windows ok
+  SXT-028c fmcombo x seq-poly-8-v1                     PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.01 dB over 6 windows ok  L dev 0.01 dB over 6 windows ok  R dev 0.01 dB over 6 windows ok
+  SXT-028c fmtwang2 x seq-notes-coverage-v1            PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.09 dB over 7 windows ok  L dev 0.08 dB over 7 windows ok  R dev 0.10 dB over 7 windows ok
+  SXT-028c fmtwang2 x seq-poly-8-v1                    PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.10 dB over 9 windows ok  L dev 0.02 dB over 9 windows ok  R dev 0.21 dB over 9 windows ok
+
+  sxt-023 dexie                                        FAIL -> FAIL  (unchanged)
+      shape leg: mono dev 1.68 dB over 30 windows FAIL  L dev 2.32 dB over 31 windows FAIL  R dev 1.84 dB over 31 windows FAIL
+      leaf record (reports/sxt-023) status: FAIL
+  sxt-023 fm_bass_1                                    PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.00 dB over 4 windows ok  L dev 0.00 dB over 4 windows ok  R dev 0.00 dB over 4 windows ok
+      leaf record (reports/sxt-023) status: PASS
+  sxt-023 metallic                                     FAIL -> FAIL  (unchanged)
+      shape leg: mono dev 12.12 dB over 48 windows FAIL  L dev 13.97 dB over 50 windows FAIL  R dev 8.86 dB over 50 windows FAIL
+      leaf record (reports/sxt-023) status: FAIL
+
+  sxt-024 click-wet                                    PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.00 dB over 108 windows ok  L dev 0.00 dB over 108 windows ok  R dev 0.00 dB over 108 windows ok
+      failing checks after: none
+  sxt-024 preset-notes-coverage-wet                    PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.00 dB over 88 windows ok  L dev 0.00 dB over 89 windows ok  R dev 0.00 dB over 87 windows ok
+      failing checks after: none
+  sxt-024 hardreset-midpatch-wet                       FAIL -> FAIL  (unchanged)
+      shape leg: mono dev 0.00 dB over 35 windows ok  L dev 0.00 dB over 35 windows ok  R dev 0.00 dB over 35 windows ok
+      failing checks after: tail_rms_rel
+
+  #93 full-tail-within-budget                          PASS -> PASS  (unchanged)
+      shape leg: mono dev 0.79 dB over 23 windows ok
+  #93 drop-full-tail                                   FAIL -> FAIL  (unchanged)
+      shape leg: mono dev 268.94 dB over 23 windows FAIL
+  #93 tail-decays-too-fast                             FAIL -> FAIL  (unchanged)
+      shape leg: mono dev 220.71 dB over 23 windows FAIL
+  #93 truncate-at-tail-start                           FAIL -> FAIL  (unchanged)
+      shape leg: not graded (refused, or the declared region is not covered by the model render)
+  #93 undeclared-wet-path                              REFUSE -> REFUSE  (unchanged)
+      shape leg: not graded (refused, or the declared region is not covered by the model render)
+  #93 no-sidecar                                       REFUSE -> REFUSE  (unchanged)
+      shape leg: not graded (refused, or the declared region is not covered by the model render)
+  #93 stale-sidecar                                    REFUSE -> REFUSE  (unchanged)
+      shape leg: not graded (refused, or the declared region is not covered by the model render)
+  #93 drop-full-tail-second-preset                     FAIL -> FAIL  (unchanged)
+      shape leg: mono dev 270.79 dB over 50 windows FAIL
+  #93 dry byte-parity vs the pre-#111 tool: PASS
+
+  result: 20 landed cases re-run; verdict status changes: 0; tail-gate changes under an unchanged status: none
+
+leg 1 verdict: PASS

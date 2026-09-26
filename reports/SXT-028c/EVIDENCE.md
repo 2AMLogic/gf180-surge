@@ -200,9 +200,12 @@ single dropped channel tail, a far-too-fast decay, and a render truncated
 at the tail offset all FAIL the stereo verdict. The truncation control
 FAILs on the gate alone, and the pre-#100 tool PASSed it
 (`reports/stereo-comparator-tail-gate/artifacts/negative-controls.txt`).
-Known gap: a *late*-tail truncation of the alienappears reverb tail can
-still PASS (#111). That is recorded there as a KNOWN-GAP probe, not as a
-control. This change note makes no new fidelity, support, or sound claim.
+Known gap at #100: a *late*-tail truncation of the alienappears reverb tail
+could still PASS (#111). **Closed by #111:** the gate's tail-shape
+(decay-curve) leg makes those probes required-FAIL controls, and they FAIL.
+All six cases re-ran PASS → PASS under the new leg (worst per-window
+deviation 0.21 dB), and `artifacts/compare-*.json` were regenerated
+(`reports/tail-shape-leg/`). This change note makes no new fidelity, support, or sound claim.
 
 Artifacts: `artifacts/compare-<slug>__<seq>.json` (per-channel + mono
 metrics, declared-region `tail_check` + `tail_check_lr`, budgets, verdicts). Model wet buses:

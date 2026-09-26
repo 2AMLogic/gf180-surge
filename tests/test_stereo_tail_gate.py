@@ -198,6 +198,9 @@ def test_committed_evidence_summary_is_current():
     ctl = legs["stereo_tail_controls"]
     assert ctl["status"] == "PASS"
     assert all(c["result"] == "CONTROL-OK" for c in ctl["controls"])
+    # issue #111: the late-tail KNOWN-GAP probes are required-FAIL controls
+    assert len(ctl["late_tail_controls"]) == 3
+    assert ctl["late_tail_controls_not_failing"] == []
     assert legs["rms_diff_dbfs_floor"]["status"] == "PASS"
     other = legs["other_stereo_comparators_rerun"]
     assert other["status"] == "PASS"

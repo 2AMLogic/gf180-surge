@@ -1,11 +1,11 @@
 {
   "issue": 93,
-  "run_utc": "2026-09-25T09:42:05Z",
-  "repo_head": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+  "run_utc": "2026-09-26T23:50:08Z",
+  "repo_head": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
   "legs": {
     "dry_rerun_parity": {
       "status": "PASS",
-      "baseline_rev": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+      "baseline_rev": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
       "unexplained_committed_diffs": [],
       "cases": [
         {
@@ -214,11 +214,8 @@
           "model": "reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); RMS-FLAG-#95(verdict follows the corrected rms flag)",
-          "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "RMS-FLAG-#95(verdict follows the corrected rms flag)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "sxt-026",
@@ -367,11 +364,9 @@
           "model": "reports/sxt-035/artifacts/model-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr); RMS-FLAG-#95(verdict follows the corrected rms flag)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)",
-            "RMS-FLAG-#95(verdict follows the corrected rms flag)"
+            "ULP(spectral_corr)"
           ]
         }
       ],
@@ -409,7 +404,7 @@
           "returncode": 1,
           "gate_only_required": false,
           "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json",
-          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 268.94 dB (> 1.00 dB budget) in 23 of 23 graded windows (worst window 0: reference -31.1 dBFS, model -300.0 dBFS))",
           "as_required": true
         },
         {
@@ -419,7 +414,7 @@
           "returncode": 1,
           "gate_only_required": true,
           "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json",
-          "verdict": "FAIL against proposed budgets (tail-region gate: tail residual -10.22 dB exceeds the proposed -20.00 dB relative budget)",
+          "verdict": "FAIL against proposed budgets (tail-region gate: tail residual -10.22 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 220.71 dB (> 1.00 dB budget) in 22 of 23 graded windows (worst window 21: reference -79.3 dBFS, model -300.0 dBFS))",
           "as_required": true
         },
         {
@@ -469,7 +464,7 @@
           "returncode": 1,
           "gate_only_required": false,
           "json": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json",
-          "verdict": "FAIL against proposed budgets (budget: rms_diff_dbfs, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)",
+          "verdict": "FAIL against proposed budgets (budget: rms_diff_dbfs, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 270.79 dB (> 1.00 dB budget) in 50 of 50 graded windows (worst window 0: reference -29.2 dBFS, model -300.0 dBFS))",
           "as_required": true
         }
       ],
