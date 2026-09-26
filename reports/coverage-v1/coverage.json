@@ -98,17 +98,103 @@
    "size": 256
   }
  },
+ "fx_rng_exclusion": {
+  "corpus_affected": 100,
+  "corpus_denominator": 3561,
+  "decision_record": "decision-records/0013-fx-modulation-rng-stream.md",
+  "gate_active": true,
+  "gate_column": "fx_rng_gate",
+  "gate_value": "BLOCKED",
+  "issue": "#122",
+  "measurement": "reports/SXT-028-rng/artifacts/coverage-impact.json",
+  "per_class": {
+   "Combulator": {
+    "affected_presets": 20,
+    "affected_slots": 22,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Flanger": {
+    "affected_presets": 11,
+    "affected_slots": 11,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Neuron": {
+    "affected_presets": 0,
+    "affected_slots": 0,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Phaser": {
+    "affected_presets": 2,
+    "affected_slots": 2,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Spring Reverb": {
+    "affected_presets": 26,
+    "affected_slots": 26,
+    "rng_dependence": "unconditional",
+    "upper_bound": true
+   },
+   "Tape": {
+    "affected_presets": 45,
+    "affected_slots": 45,
+    "rng_dependence": "unconditional",
+    "upper_bound": true
+   },
+   "Vocoder": {
+    "affected_presets": 0,
+    "affected_slots": 0,
+    "rng_dependence": "none",
+    "upper_bound": false
+   }
+  },
+  "rows_affected_in_this_run": 100,
+  "rows_that_would_be_supported_without_the_gate": "measured by tools/coverage_negative_controls.py NC-RNG-EXCLUSION against the counterfactual verified world; not derivable from this published run, in which nothing is supported for independent reasons",
+  "rule": "A preset carrying an effect whose sound depends on an RNG stream that cannot be pinned under the SXT-010 manifest can never be reported supported: its ORIGINAL wet sound cannot be reproduced or compared. This is a published coverage REDUCTION -- the denominators below are unchanged and no preset was removed from the corpus.",
+  "scopes": {
+   "all_unpinnable_rng_classes": {
+    "affected_presets": 100,
+    "what": "every surveyed FX class whose sound depends on an unpinnable RNG stream, modulation or not"
+   },
+   "fx_modulation_rng_family": {
+    "affected_presets": 13,
+    "classes": [
+     "Phaser",
+     "Neuron",
+     "Flanger"
+    ],
+    "what": "every FX modulation shape driven by an RNG, including the Flanger's shared-generator path the issue asked the survey to find"
+   },
+   "issue_122_named_scope": {
+    "affected_of_corpus": "2/3561",
+    "affected_presets": 2,
+    "classes": [
+     "Neuron",
+     "Phaser"
+    ],
+    "what": "FXModControl mod_noise (5) / mod_snh (6) -- the waveforms SXT-028g refused"
+   }
+  },
+  "slates": {
+   "slate-256-balanced": 20,
+   "slate-256-contributor-lean": 24,
+   "slate-256-factory-lean": 15
+  }
+ },
  "gate_columns_per_bank": {
   "contributor": {
    "fidelity_contract_gate": {
     "": 1785,
-    "BLOCKED": 1135
+    "STALE": 1135
    },
    "fx_leaves_gate": {
     "": 1970,
-    "FAIL": 624,
-    "NOT_RUN": 140,
-    "PASS": 186
+    "FAIL": 26,
+    "NOT_RUN": 49,
+    "STALE": 875
    },
    "routing_leaves_gate": {
     "": 2680,
@@ -126,13 +212,13 @@
   "factory": {
    "fidelity_contract_gate": {
     "": 93,
-    "BLOCKED": 548
+    "STALE": 548
    },
    "fx_leaves_gate": {
     "": 161,
-    "FAIL": 379,
-    "NOT_RUN": 30,
-    "PASS": 71
+    "FAIL": 8,
+    "NOT_RUN": 11,
+    "STALE": 461
    },
    "routing_leaves_gate": {
     "": 632,
@@ -160,9 +246,13 @@
    "role": "structural input (pinned)",
    "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
   },
+  "reports/SXT-028-rng/artifacts/coverage-impact.json": {
+   "role": "structural input (pinned)",
+   "sha256": "c358b4764f2d789cdd663237639216cdf25849f54ef0b75a7c7eee3c44ed26aa"
+  },
   "reports/SXT-028c/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Chorus",
-   "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
+   "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
   },
   "reports/SXT-028e/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Distortion",
@@ -194,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "71f9fd544f9e4a725252854c89e04c6e3e4d45796627b9f2b76070f3470a4cf4"
+   "sha256": "fef53d4d656e8ea7af221428f9c0fa8dc8142e4802e4bc907bf43ead6fc0e3fd"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -226,11 +316,11 @@
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
-   "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
+   "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
   },
   "reports/sxt-024/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Reverb1",
-   "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+   "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
@@ -485,7 +575,7 @@
   },
   "gates": {
    "fidelity_freeze": {
-    "evidence_state": "OK",
+    "evidence_state": "STALE",
     "status": "BLOCKED"
    },
    "listening_labels": {
@@ -531,7 +621,7 @@
     }
    },
    "fx:Chorus": {
-    "evidence_state": "OK",
+    "evidence_state": "STALE",
     "landed": true,
     "support_ready": true,
     "verification": {
@@ -546,7 +636,7 @@
     "verification": {}
    },
    "fx:Delay": {
-    "evidence_state": "OK",
+    "evidence_state": "STALE",
     "landed": true,
     "support_ready": false,
     "verification": {
@@ -564,7 +654,7 @@
     }
    },
    "fx:EQ": {
-    "evidence_state": "OK",
+    "evidence_state": "STALE",
     "landed": true,
     "support_ready": true,
     "verification": {
@@ -579,7 +669,7 @@
     "verification": {}
    },
    "fx:Reverb1": {
-    "evidence_state": "OK",
+    "evidence_state": "STALE",
     "landed": true,
     "support_ready": true,
     "verification": {
@@ -713,6 +803,11 @@
    "blocks": "silicon claims; out of scope here (non-goal)",
    "decision": "#24 (SXT-031) gf180 implementation qualification",
    "state": "OPEN"
+  },
+  {
+   "blocks": "100 corpus presets carrying an effect whose sound depends on an unpinnable RNG stream; they can never be reported supported while DR-0013 stands",
+   "decision": "#122 -> #12 FX-modulation RNG exclusion (decision record 0013)",
+   "state": "RECORDED-CONTRACT-REVISION (owner ratification pending)"
   }
  ],
  "per_bank": {

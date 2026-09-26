@@ -1,0 +1,39 @@
+#122 negative controls — FX modulation RNG waveforms
+runner: tools/fx_rng_negative_controls.py; anchor: the FROZEN SXT-028g Phaser model and its declared agreement threshold; NOT the pinned engine (no oracle in this environment)
+frozen model revision: 7726b5f8182c72a27ce9b06f90a8196077ff2ee5978d2e742d673683a4ee5cae
+
+NC-R1 convenient deterministic substitute for the RNG waveforms
+    frozen_model_refuses_5_and_6: True
+    substitute_renders: True
+    differs_from_nearest_in_scope_shape: True
+    seed_choice_is_arbitrary: True
+    same_seed_reproduces_itself_detector_control: True
+    labelled_ADAPTED: True
+    coverage_gate_refuses_substitute: True
+    coverage_gate_accepts_frozen_detector_control: True
+    max_abs_diff_vs_nearest_in_scope_shape_lsb: 2332970
+    max_abs_diff_between_two_substitute_seeds_lsb: 2283206
+    declared_threshold_lsb: 8192
+    CONTROL-OK (the substitute renders, is materially different, depends on an arbitrary seed, is labelled ADAPTED and is refused from original-preset coverage)
+
+NC-R2 the fail-closed refusal is live and not always-firing
+    model_refuses_rng_waves: True
+    model_accepts_every_deterministic_wave: True
+    extractor_gate_agrees_with_model: True
+    rng_waves_outside_both_gates: True
+    CONTROL-OK (5/6 refused at both points, 0-4 accepted at both)
+
+NC-R3 silent exclusion (dropping affected presets from the denominator instead of publishing a reduction)
+    clean_corpus_accepted_detector_control: True
+    silent_drop_refused: True
+    refusal_names_the_denominator: True
+    no_artifact_written_on_refusal: True
+    CONTROL-OK (the silent drop is REFUSED and writes nothing; the untampered corpus is accepted)
+
+NC-R4 the characterisation's detector controls are live
+    at_least_two_detector_controls: True
+    all_detector_controls_ok: True
+    verdict_is_not_a_pass: True
+    CONTROL-OK (the fixed-seed comparators report IDENTICAL, so the FAIL legs are measurements)
+
+RESULT: PASS — all controls healthy (each demonstrably fails the check it targets)

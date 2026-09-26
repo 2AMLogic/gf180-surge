@@ -1,0 +1,94 @@
+{
+ "anchor": "the FROZEN SXT-028g Phaser model and its declared agreement threshold; NOT the pinned engine (no oracle in this environment)",
+ "claim_scope": "controls only; no fidelity, agreement, support or listening claim is made or implied.",
+ "controls": [
+  {
+   "control": "NC-R1 convenient deterministic substitute for the RNG waveforms",
+   "counts_toward_original_preset_coverage": false,
+   "coverage_class": "ADAPTED",
+   "legs": {
+    "coverage_gate_accepts_frozen_detector_control": true,
+    "coverage_gate_refuses_substitute": true,
+    "differs_from_nearest_in_scope_shape": true,
+    "frozen_model_refuses_5_and_6": true,
+    "labelled_ADAPTED": true,
+    "same_seed_reproduces_itself_detector_control": true,
+    "seed_choice_is_arbitrary": true,
+    "substitute_renders": true
+   },
+   "metrics": {
+    "declared_threshold_lsb": 8192,
+    "max_abs_diff_between_two_substitute_seeds_lsb": 2283206,
+    "max_abs_diff_vs_nearest_in_scope_shape_lsb": 2332970
+   },
+   "ok": true,
+   "reference_anchored_leg": {
+    "reason": "no pinned-engine fixture in this environment; the substitute must also be scored against the wet reference before any agreement statement. It cannot be: that is the finding.",
+    "status": "NOT_RUN"
+   },
+   "targets": "a model that replaces the unpinnable RNG shape with a convenient deterministic one must be ADAPTED and refused from original-preset coverage",
+   "verdict": "CONTROL-OK (the substitute renders, is materially different, depends on an arbitrary seed, is labelled ADAPTED and is refused from original-preset coverage)"
+  },
+  {
+   "control": "NC-R2 the fail-closed refusal is live and not always-firing",
+   "deterministic_waves": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "legs": {
+    "extractor_gate_agrees_with_model": true,
+    "model_accepts_every_deterministic_wave": true,
+    "model_refuses_rng_waves": true,
+    "rng_waves_outside_both_gates": true
+   },
+   "ok": true,
+   "targets": "one rule, two enforcement points (frozen model + extractor); a refusal that fired on everything would prove nothing",
+   "verdict": "CONTROL-OK (5/6 refused at both points, 0-4 accepted at both)"
+  },
+  {
+   "control": "NC-R3 silent exclusion (dropping affected presets from the denominator instead of publishing a reduction)",
+   "dropped_presets": 100,
+   "legs": {
+    "clean_corpus_accepted_detector_control": true,
+    "no_artifact_written_on_refusal": true,
+    "refusal_names_the_denominator": true,
+    "silent_drop_refused": true
+   },
+   "ok": true,
+   "refusal_stderr": "REFUSE: expected 3561 corpus entries, found 3461",
+   "targets": "the coverage-impact tool must fail closed when the corpus it is counting against has been shrunk",
+   "verdict": "CONTROL-OK (the silent drop is REFUSED and writes nothing; the untampered corpus is accepted)"
+  },
+  {
+   "control": "NC-R4 the characterisation's detector controls are live",
+   "detector_controls": [
+    {
+     "check": "DETECTOR CONTROL: two FIXED-seed constructions produce the same stream",
+     "status": "CONTROL-OK"
+    },
+    {
+     "check": "DETECTOR CONTROL: the same shared generator with ZERO prior draws produces the same stream",
+     "status": "CONTROL-OK"
+    }
+   ],
+   "leg_b_status": "FAIL",
+   "legs": {
+    "all_detector_controls_ok": true,
+    "at_least_two_detector_controls": true,
+    "verdict_is_not_a_pass": true
+   },
+   "ok": true,
+   "targets": "a 'not reproducible' verdict must not come from an always-firing comparator",
+   "verdict": "CONTROL-OK (the fixed-seed comparators report IDENTICAL, so the FAIL legs are measurements)"
+  }
+ ],
+ "decision_record": "decision-records/0013-fx-modulation-rng-stream.md",
+ "declared_threshold_lsb": 8192,
+ "issue": "#122",
+ "model_revision": "7726b5f8182c72a27ce9b06f90a8196077ff2ee5978d2e742d673683a4ee5cae",
+ "result": "PASS",
+ "schema_version": "sxt-028-rng-negative-controls/1.0.0"
+}

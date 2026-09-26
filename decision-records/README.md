@@ -24,3 +24,4 @@ stays and is marked in its Status line.
 | [0010](0010-lp24-pinned-kernel-harness.md) | LP 24 dB pinned-kernel reference harness (SXT-038) | PROPOSED — pending owner ratification | 2026-09-25 |
 | [0011](0011-profile-v1-budget-escalation.md) | Profile v1 cannot be frozen at the plan-section-3 budgets (SXT-017) | ESCALATED — pending product-owner decision | 2026-09-25 |
 | [0012](0012-distortion-halfband-and-waveshaper-tables.md) | Distortion halfband coefficients (order 6) and waveshaper table provenance (SXT-028e) | PROPOSED — pending owner ratification | 2026-09-25 |
+| [0013](0013-fx-modulation-rng-stream.md) | FX modulation RNG streams cannot be pinned: RNG-driven effect shapes excluded, coverage reduction published (#122 → SXT-017) | RECORDED CONTRACT REVISION — owner ratification pending | 2026-09-26 |

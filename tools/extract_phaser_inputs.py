@@ -22,7 +22,15 @@ tools/extract_chorus_inputs.py (SXT-028c) conventions:
     migrations of PhaserEffect::handleStreamingMismatches, cross-checked
     against the surgepy getters where observable,
   * mod_wave 5 (Noise) / 6 (Sample & Hold) -> Refuse: RNG-driven, outside
-    the frozen deterministic scope of the model (declared omission).
+    the frozen deterministic scope of the model. As of #122 this is no
+    longer only a leaf-local omission: the refusal's CONTRACT REASON is
+    recorded in decision-records/0013-fx-modulation-rng-stream.md, the
+    stream was measured unpinnable
+    (reports/SXT-028-rng/artifacts/rng-characterization.json), and the
+    coverage cost is published as a reduction
+    (reports/SXT-028-rng/artifacts/coverage-impact.json). DETERMINISTIC_WAVES
+    below is unchanged -- the gate is the same, its justification is now a
+    visible contract revision routed to SXT-017 (#12).
 
 Phaser (fxt_phaser = 3) parameters, sst-effects Phaser.h phaser_params:
   center(0) feedback(1) sharpness(2) mod_rate(3) mod_depth(4) stereo(5)
