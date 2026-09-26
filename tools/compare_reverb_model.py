@@ -485,7 +485,6 @@ def cmd_case(args):
     # buffers cleared). The model mirrors this for the hardreset case.
     reset_at = None
     fx_off_span = None
-    n = len(dry[0])
     if name.startswith("hardreset"):
         rb = side["render"]["reload_block"]
         reset_at = None                    # the fresh post-switch instance replaces reset

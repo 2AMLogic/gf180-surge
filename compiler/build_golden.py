@@ -102,8 +102,6 @@ def build():
     cases = []
 
     def emit(case, line, expect_outcome, expect_codes, note, synthetic=False):
-        name = C.case_name(line["p"], line.get("sha")) \
-            if not synthetic else case
         outcome, obj, container = C.compile_line(
             line, spec, BUNDLE_ID, status, bundle_sha)
         assert outcome == expect_outcome, \

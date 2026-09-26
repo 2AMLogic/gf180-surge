@@ -6,7 +6,6 @@ applicability-boundary refusals (fail-closed), the stability monitor, the
 RTL comparator's mismatch detection, and negative-control wiring that does
 not require the oracle or iverilog.
 """
-import json
 import math
 import os
 import sys

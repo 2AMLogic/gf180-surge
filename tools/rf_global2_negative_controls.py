@@ -26,7 +26,6 @@ Exits 0 iff every control fails the check it targets.
 Original to this repository (Apache-2.0).
 """
 
-import copy
 import json
 import os
 import random

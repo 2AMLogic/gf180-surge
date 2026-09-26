@@ -28,9 +28,8 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-chorus"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 
 from chorus_model import (  # noqa: E402
-    ChorusModel, ChorusParams, LINE_LEN, VOICES, FIRIPOL_N, BLOCK,
+    ChorusModel, ChorusParams, LINE_LEN, BLOCK,
 )
-from model.effects.qmath import to_q  # noqa: E402
 
 OUT = os.path.join(REPO, "reports", "SXT-028c", "artifacts",
                    "buffer-requirement.json")

@@ -16,7 +16,7 @@ coefficient interpolation variant as a candidate (NOT pinned behavior).
 No external memory (state below the 64 KiB threshold; stays on-chip).
 """
 from .common import (AUDIO_BITS_CANDIDATE, CLOCK_CANDIDATES_HZ, COEFF_BITS,
-                     FS_HZ, OpCounter, TECH, closure, op_cycles)
+                     OpCounter, TECH, closure, op_cycles)
 
 PROBE = "probe_fx_eq"
 

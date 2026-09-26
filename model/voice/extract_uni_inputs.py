@@ -94,7 +94,6 @@ def main():
             "requires the external oracle" % preset_abs)
 
     import hashlib
-    import zlib
     data = open(preset_abs, "rb").read()
     actual = hashlib.sha1(b"blob %d\x00" % len(data) + data).hexdigest()
     expected = census_blob(PRESET_REL)

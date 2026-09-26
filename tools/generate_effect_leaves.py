@@ -632,7 +632,6 @@ def dependencies_for(lf):
 def issue_body(spec, allocation_note):
     lf_rf = spec["kind"] == "rf"
     L = []
-    a = spec
     L.append(f"**Epic:** #3 (effects expansion) · **Plan:** "
              f"docs/surge-xt-chip-plan-v0.1-2026-09-20.md §6 (SXT-028 row) · "
              f"planning ID: {spec['leaf_id']} · raised by SXT-028 (#21)")
@@ -902,7 +901,7 @@ def run_self_test(out, presets, ablation, b4, letters):
     # scope and must be refused.
     nc1_ok = False
     try:
-        leaves = fresh_builder()
+        fresh_builder()
         bogus = {
             "kind": "aw", "fid": 47,
             "title": "Airwindows algorithm leaf: Slew 1 (id 47)",

@@ -29,7 +29,6 @@ import os
 import shutil
 import subprocess
 import sys
-import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lfo.sv")

@@ -43,7 +43,7 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-chorus"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 
 from run_chorus_model import (  # noqa: E402
-    build_models, run_chain, chorus_instances, read_wav_stereo_f32,
+    build_models, run_chain, read_wav_stereo_f32,
     db_to_linear_d, to_q, A_FMT, G_FMT, BLOCK, SETTLE_BLOCKS,
 )
 from chorus_model import ChorusModel, ChorusParams, model_revision  # noqa: E402
@@ -157,7 +157,6 @@ def nc_generic_substitute(cfg, dry, wet):
                 self.phase = [(p + self.rate / 48000.0) % 1.0 for p in self.phase]
                 fb = min(max(mono + 0.0 * wet, -1.0), 1.0)
                 buf[self.wpos] = fb
-                s = min(max(k, 0), BLOCK - 1)
                 out_l[k] = int(((1 - self.mix) * in_l[k]
                                 + self.mix * wet * (1 << 21)))
                 out_r[k] = int(((1 - self.mix) * in_r[k]
@@ -191,8 +190,7 @@ def nc_generic_substitute(cfg, dry, wet):
                                              "globals": [e]}})
             globals_.append(models[2][0])
 
-    from run_chorus_model import run_chain as rc, amp_to_linear_fixed
-    from model.effects.qmath import qmul, qadd
+    from run_chorus_model import run_chain as rc
     a_d = db_to_linear_d(cfg["volume_f"])
     a_q = to_q(a_d, G_FMT)
     frames = dry.shape[1]

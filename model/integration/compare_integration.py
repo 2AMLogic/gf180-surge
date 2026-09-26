@@ -31,7 +31,6 @@ Exit 0 iff all applicable checks PASS. Original (Apache-2.0).
 import argparse
 import hashlib
 import json
-import math
 import os
 import sys
 
@@ -42,7 +41,7 @@ sys.path.insert(0, os.path.join(REPO, "tools"))
 import numpy as np  # noqa: E402
 
 from tools.compare_fx_reference import (  # noqa: E402
-    read_wav_stereo_f32, channel_metrics, PROPOSED, LSB,
+    read_wav_stereo_f32, channel_metrics, PROPOSED,
 )
 from tools.compare_reverb_model import BUDGETS  # noqa: E402
 

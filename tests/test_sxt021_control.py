@@ -11,19 +11,18 @@ committed queue-depth mutant).
 import json
 import os
 import shutil
-import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from model.control import (  # noqa: E402
-    BLOCK_SIZE, ControlModel, Event, QUEUE_DEPTH, EV_RESERVE_PER_BLOCK,
+    BLOCK_SIZE, ControlModel, Event, EV_RESERVE_PER_BLOCK,
     NAME_TO_TYPE, quantize_block, render_sequence,
 )
 from model.control.engine_stub_counter import CounterStubEngine  # noqa: E402
 from model.control.engine_stub_silent import SilentStubEngine  # noqa: E402
 from model.control.accounting import account_schedule  # noqa: E402
-from tools.compare_control_rtl import run_comparison, parse_tb, compare  # noqa: E402
+from tools.compare_control_rtl import run_comparison  # noqa: E402
 from tools.control_negative_controls import output_check  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

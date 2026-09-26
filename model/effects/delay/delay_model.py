@@ -504,7 +504,6 @@ class DelayModel:
     def process_block(self, in_l, in_r):
         """One 32-sample block (Delay.h processBlock). in/out: Q10.21 lists."""
         st = self.st
-        p = self.p
         if not self.initialized:
             self.initialize()
 

@@ -38,7 +38,6 @@ Original to this repository (Apache-2.0).
 """
 
 import json
-import math
 import os
 import random
 import sys
@@ -53,7 +52,7 @@ from phaser_model import (  # noqa: E402
     PhaserModel, PhaserParams, BLOCK, A_FMT, C_FMT, G_FMT, MonoBiquad,
     coeff_apf, calc_omega_d, model_revision, ringout_blocks,
 )
-from model.effects.qmath import FRAC, to_q, qadd, qsub, qmul, clip  # noqa: E402
+from model.effects.qmath import FRAC, to_q, qadd, qsub, qmul  # noqa: E402
 from corners import CORNERS  # noqa: E402
 
 OUT = os.path.join(REPO, "reports", "SXT-028g", "negative-controls")

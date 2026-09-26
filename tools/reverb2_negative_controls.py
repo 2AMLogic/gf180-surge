@@ -50,9 +50,9 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-reverb 2"))
 
 from reverb2_model import (  # noqa: E402
     Reverb2Model, Reverb2Params, HARNESS_PROFILE, NUM_BLOCKS, BLOCK,
-    model_revision, _round_shift,
+    model_revision,
 )
-from model.effects.qmath import qadd, qsub, qmul, to_q, sat  # noqa: E402
+from model.effects.qmath import qadd, qsub, qmul  # noqa: E402
 
 A_FMT, G_FMT, C_FMT = "Q10.21", "Q13.18", "Q24.43"
 LSB = 2.0 ** -21

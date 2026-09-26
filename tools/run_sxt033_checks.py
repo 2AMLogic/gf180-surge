@@ -17,7 +17,6 @@ and the external pinned oracle (ORACLE_SURGE_DIR) for step 4.
 """
 
 import argparse
-import json
 import os
 import subprocess
 import sys
