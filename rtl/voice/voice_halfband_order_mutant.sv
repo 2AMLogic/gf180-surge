@@ -1,3 +1,7 @@
+// SXT-022 #123 NEGATIVE CONTROL MUTANT of tb_voice.sv: the halfband D2
+// reconstruction branch order is reverted to the pre-#123 A-even/B-odd
+// assignment (a SINGLE-LINE mutation) -- must FAIL RTL-vs-model exactness.
+// Everything else is byte-identical to rtl/voice/tb_voice.sv.
 // SXT-022/SXT-034 RTL voice slice: audio-rate datapath + envelope state
 // machines for factory preset `Basses/Attacky.fxp` (uni=1 regression base)
 // extended with the unison stack (SXT-034), implementing the SAME integer
@@ -760,7 +764,7 @@ module tb_voice;
       // computes (`set_coefficients` puts cA in lane 0; the reconstruction
       // broadcasts lane 1 = B at sample 2k and adds lane 0 = A at 2k+1).
       // Must stay in lockstep with model/voice/voice_model.py::HalfbandD2.
-      bl = qround1(chainb[2*k] + chaina[2*k+1]);
+      bl = qround1(chaina[2*k] + chainb[2*k+1]);
       mm = clamp8(qmul(bl, 32'(master_amp)));   // L == R on the mono bus
       mm = clamp1(mm);
       $fwrite(fd, "M %0d %0d\n", b, mm);

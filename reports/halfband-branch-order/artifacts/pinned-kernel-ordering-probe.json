@@ -1,0 +1,133 @@
+{
+  "candidate_orderings": {
+    "a_even": "out[n] = (A[2n] + B[2n+1]) * 0.5  (pinned header PROSE)",
+    "b_even": "out[n] = (B[2n] + A[2n+1]) * 0.5  (pinned header CODE)"
+  },
+  "cases": [
+    {
+      "a_even_err_re_input_fs": 0.0709147237376182,
+      "a_even_max_abs_err": 0.0709147237376182,
+      "b_even_err_re_input_fs": 2.3817919470037197e-07,
+      "b_even_max_abs_err": 2.3817919470037197e-07,
+      "case": "sine_f0.05",
+      "in_peak": 1.0,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 1.04974592
+    },
+    {
+      "a_even_err_re_input_fs": 0.48914463482045756,
+      "a_even_max_abs_err": 0.48914463482045756,
+      "b_even_err_re_input_fs": 4.469752475921851e-07,
+      "b_even_max_abs_err": 4.469752475921851e-07,
+      "case": "sine_f0.15",
+      "in_peak": 1.0,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 1.02140093
+    },
+    {
+      "a_even_err_re_input_fs": 0.5052932859814934,
+      "a_even_max_abs_err": 0.5052932859814934,
+      "b_even_err_re_input_fs": 1.675815251012125e-07,
+      "b_even_max_abs_err": 1.675815251012125e-07,
+      "case": "sine_f0.25",
+      "in_peak": 1.0,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 0.474625289
+    },
+    {
+      "a_even_err_re_input_fs": 1.0955150495982295,
+      "a_even_max_abs_err": 1.0418967525888205,
+      "b_even_err_re_input_fs": 4.800677350857604e-07,
+      "b_even_max_abs_err": 4.5657155909629987e-07,
+      "case": "sine_f0.30",
+      "in_peak": 0.95105654,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 0.156492651
+    },
+    {
+      "a_even_err_re_input_fs": 0.31771897996535114,
+      "a_even_max_abs_err": 0.31771897996535114,
+      "b_even_err_re_input_fs": 1.7617697108313936e-07,
+      "b_even_max_abs_err": 1.7617697108313936e-07,
+      "case": "sine_f0.45",
+      "in_peak": 1.0,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 0.0319391191
+    },
+    {
+      "a_even_err_re_input_fs": 0.825409692197801,
+      "a_even_max_abs_err": 0.8247331179050712,
+      "b_even_err_re_input_fs": 4.354648320607936e-07,
+      "b_even_max_abs_err": 4.351078889408555e-07,
+      "case": "lcg_seed_0x5eed",
+      "in_peak": 0.999180317,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 1.16764283
+    },
+    {
+      "a_even_err_re_input_fs": 0.2206692141730083,
+      "a_even_max_abs_err": 0.2206692141730083,
+      "b_even_err_re_input_fs": 9.587387331255748e-08,
+      "b_even_max_abs_err": 9.587387331255748e-08,
+      "case": "impulse",
+      "in_peak": 1.0,
+      "n_in": 256,
+      "n_out": 128,
+      "ref_peak": 0.35749346
+    }
+  ],
+  "claim": "which scalar reconstruction reproduces the PINNED HalfRateFilter(M=6, steep)::process_block_D2 kernel",
+  "issue": "SXT-022 / #123",
+  "match_tolerance_err_re_input_fs": 1e-05,
+  "matching_ordering": "b_even",
+  "not_claimed": [
+    "model-vs-Surge-engine fidelity",
+    "preset support",
+    "musical quality",
+    "any hardware result"
+  ],
+  "pinned_submodule": "libs/sst/sst-filters",
+  "response_rms_db": [
+    {
+      "a_even_rms_db": -3.44583971957386,
+      "b_even_rms_db": -3.009975227997616,
+      "f_of_input_rate": 0.05,
+      "input_rms_db": -3.0107795034382367
+    },
+    {
+      "a_even_rms_db": -7.62562062942254,
+      "b_even_rms_db": -3.0100192827180945,
+      "f_of_input_rate": 0.15,
+      "input_rms_db": -3.010483120967598
+    },
+    {
+      "a_even_rms_db": -6.0206011877328685,
+      "b_even_rms_db": -6.020599913284319,
+      "f_of_input_rate": 0.25,
+      "input_rms_db": -3.0102999566398116
+    },
+    {
+      "a_even_rms_db": -3.445391562047713,
+      "b_even_rms_db": -110.00026259275714,
+      "f_of_input_rate": 0.3,
+      "input_rms_db": -3.0105144099426147
+    },
+    {
+      "a_even_rms_db": -13.211062654028867,
+      "b_even_rms_db": -112.93997983409169,
+      "f_of_input_rate": 0.45,
+      "input_rms_db": -3.0107795034382367
+    }
+  ],
+  "verdict": "PASS",
+  "worst_err_re_input_fs": {
+    "a_even": 1.0955150495982295,
+    "b_even": 4.800677350857604e-07
+  }
+}

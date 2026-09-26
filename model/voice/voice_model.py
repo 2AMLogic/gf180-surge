@@ -450,13 +450,32 @@ class HalfbandD2:
     """HalfRateFilter(M=6, steep)::process_block_D2, scalar per channel.
 
     The SIMD lane structure of the engine resolves, per channel, to two
-    independent 6-stage allpass cascades (coefficient sets A and B). Per
-    stage and sample the engine's shift sequence evaluates
+    independent 6-stage allpass cascades: lane 0/2 carry coefficient set A,
+    lane 1/3 carry coefficient set B (`set_coefficients`:
+    `va[i] = set_ps(cB[i], cA[i], cB[i], cA[i])`, and `_mm_set_ps(e3,e2,e1,e0)`
+    puts its LAST argument in lane 0, so lane0 = cA). Per stage and sample
+    the engine's shift sequence evaluates
         y[n] = x[n-2] + a*(x[n] - y[n-2])
-    with states (x[n], x[n-1], x[n-2]) / (y[n], y[n-1], y[n-2]); the
-    decimated output is out[n] = (A[2n] + B[2n+1]) * 0.5 (n = 0..31).
+    with states (x[n], x[n-1], x[n-2]) / (y[n], y[n-1], y[n-2]), and the
+    reconstruction stage computes, for output index n,
+        out[n] = (B[2n] + A[2n+1]) * 0.5   (n = 0..31)
+    (`tL0 = broadcast(o[k][1])` = the B lane at the even sample, added to
+    `o[k+1][0]` = the A lane at the odd sample; this matches the original
+    `output = (filter_a.process(input) + oldout) * 0.5` comment the pinned
+    header preserves above that code, and the SXT-028e sibling
+    `model/effects/type-distortion/distortion_model.py::HalfbandD2`).
     (The engine test suite notes the decimator passes the passband at
     half amplitude; the voice path compensates via its amp *0.5.)
+
+    NOTE (#123): the pinned header's own PROSE comment above the
+    reconstruction loop asserts the opposite, `L[i] = A_L[2i] + B_L[2i+1]`,
+    and its author flags the confusion in-line ("which looks a lot to me
+    like I have a bit flip somewhere wrong in my comments"). The CODE is
+    authoritative; `tools/halfband_d2_ordering_probe.py` settles it by
+    executing the pinned kernel (evidence:
+    `reports/halfband-branch-order/`). The A-even ordering this
+    class carried before #123 destroys the decimator's stopband rejection
+    (-0.4 dB instead of -110 dB at 0.30 of the input rate).
     """
 
     def __init__(self):
@@ -482,7 +501,8 @@ class HalfbandD2:
                 xa = y
             chain_b.append(xb)
             chain_a.append(xa)
-        return [qround(chain_a[2 * n] + chain_b[2 * n + 1], 1) for n in range(len(inp) // 2)]
+        # B branch at the EVEN sample, A branch at the ODD sample (#123).
+        return [qround(chain_b[2 * n] + chain_a[2 * n + 1], 1) for n in range(len(inp) // 2)]
 
 
 # -------------------------------------------------------------- voice model
