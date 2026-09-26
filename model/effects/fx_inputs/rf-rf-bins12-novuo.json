@@ -1,0 +1,85 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "per-slot algorithm parameter extraction and any wet-audio render require the pinned oracle (surgepy); this leaf's own routing/scheduling claims do not depend on it -- see oracle_extraction below",
+    "routing_metadata_verified": true
+  },
+  "bins1": {
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_insert_path": false,
+    "return_level_stored": 0.175561,
+    "type_id": 6,
+    "type_name": "EQ"
+  },
+  "bins2": {
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_insert_path": false,
+    "return_level_stored": 0.175561,
+    "type_id": 9,
+    "type_name": "Chorus"
+  },
+  "cross_check": {
+    "census_vs_graphs_drift_count": 0,
+    "fields_compared": [
+      "blob_sha1",
+      "fx_bypass",
+      "fx_disable",
+      "nonoff_fx_slot_count",
+      "nonoff_fx_type_set",
+      "scene_mode",
+      "stored_revision"
+    ],
+    "values": {
+      "blob_sha1": "e688adfdcdee44073968942914733783163b0e8c",
+      "fx_bypass": 0,
+      "fx_disable": 0,
+      "nonoff_fx_slot_count": 5,
+      "nonoff_fx_type_set": [
+        "Chorus",
+        "Delay",
+        "Distortion",
+        "EQ",
+        "Reverb2"
+      ],
+      "scene_mode": "Dual",
+      "stored_revision": 22
+    }
+  },
+  "dual_instance_concurrent": true,
+  "leaf": "SXT-028h",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
+    "ok": false
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 0,
+    "insert_stage_runs_in_this_mode": true
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "e688adfdcdee44073968942914733783163b0e8c",
+    "census_status": "parsed_static_only",
+    "graphs_blob_sha1_verified": "e688adfdcdee44073968942914733783163b0e8c",
+    "path": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+    "stored_revision": 22
+  },
+  "roles": [
+    "bins1",
+    "bins2"
+  ],
+  "routing_form": "rf-bins12",
+  "scene_context": {
+    "census_required_scenes": "a;b",
+    "census_scene_mode": "Dual",
+    "note": "a Single-scene patch never instantiates scene B, so its bins slots are unreachable; all carriers named by this leaf are multi-scene",
+    "scene_b_instantiated": true,
+    "scene_mode_id": 2,
+    "scene_mode_name": "Dual"
+  },
+  "schema_version": 1
+}
