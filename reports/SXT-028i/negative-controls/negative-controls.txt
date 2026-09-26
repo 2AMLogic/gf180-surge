@@ -1,0 +1,19 @@
+NC-A generic substitute (pass-through + fixed gain occupant in ains4): CONTROL-OK (generic substitute FAILS bit-exact reproduction of the declared per-instance occupant; labeled ADAPTED and refused from original-preset coverage)
+    - output bit-exactness: CONTROL-OK
+    - per-instance state: CONTROL-OK
+NC-B dropped tail (render truncated to 2/8 declared blocks; plus a live RTL stage-skip-on-silence mutant): CONTROL-OK (truncated render FAILS the declared-tail-span coverage and checkpoint checks, the dropped region demonstrably contained real audio, and the live RTL tail-killing mutant FAILS the tail case)
+    - declared tail span carries audio: CONTROL-OK
+    - tail-span coverage check: CONTROL-OK
+    - final per-instance checkpoint: CONTROL-OK
+    - live RTL tail-killing mutant: CONTROL-OK
+NC-C wrong order (ains3/ains4 slot-content permutation): CONTROL-OK (the order-sensitive check flags the permutation; the linear-commutation bound is recorded)
+    - model permutation (saturating pair): CONTROL-OK
+    - model permutation (purely linear pair): CONTROL-OK
+    - live RTL order mutant: CONTROL-OK
+NC-D shared state (both insert slots pooled into one history): CONTROL-OK (pooled-state mutants FAIL the dual-instance-independence check, model-side and in live RTL)
+    - model pooled-history mutant: CONTROL-OK
+    - model dual-instance checkpoint: CONTROL-OK
+    - live RTL shared-state mutant: CONTROL-OK
+NC-E stale stub (frozen-revision pin): CONTROL-OK (a stale pin is REFUSED -- the comparator cannot report PASS)
+    - revision pin function: CONTROL-OK
+    - live comparator refusal: CONTROL-OK

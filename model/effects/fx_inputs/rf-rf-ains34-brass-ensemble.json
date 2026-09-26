@@ -1,0 +1,89 @@
+{
+  "ains3": {
+    "fx_disable_bit": true,
+    "occupied": true,
+    "return_level_consumed_by_insert_path": false,
+    "return_level_stored": 1.0,
+    "type_id": 11,
+    "type_name": "Reverb 2"
+  },
+  "ains4": {
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_insert_path": false,
+    "return_level_stored": 1.0,
+    "type_id": 6,
+    "type_name": "EQ"
+  },
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "per-slot algorithm parameter extraction and any wet-audio render require the pinned oracle (surgepy); this leaf's own routing/scheduling claims do not depend on it -- see oracle_extraction below",
+    "routing_metadata_verified": true
+  },
+  "carrier_source": "added by this leaf from its own B4-scope candidate list (reports/sxt-028/leaves/SXT-028i/newly-enabled.json): the three issue-named carriers each occupy only ONE of ains3/ains4, so none of them exercises the concurrent dual-instance or disabled-slot shape this leaf claims",
+  "cross_check": {
+    "census_vs_graphs_drift_count": 0,
+    "fields_compared": [
+      "blob_sha1",
+      "fx_bypass",
+      "fx_disable",
+      "nonoff_fx_slot_count",
+      "nonoff_fx_type_set",
+      "scene_mode",
+      "stored_revision"
+    ],
+    "values": {
+      "blob_sha1": "c61dbef103a1c60e0e7d151cfecf1a2a4a483c7f",
+      "fx_bypass": 0,
+      "fx_disable": 256,
+      "nonoff_fx_slot_count": 4,
+      "nonoff_fx_type_set": [
+        "EQ",
+        "Reverb2"
+      ],
+      "scene_mode": "Single",
+      "stored_revision": 24
+    }
+  },
+  "dual_instance_concurrent": true,
+  "extended_half_position": {
+    "ains1_occupied": true,
+    "ains2_occupied": true,
+    "note": "the ains1/ains2 BASE half of the same scene-A insert chain is upstream of this leaf and is a declared scope omission (a sibling rf-ains12-class leaf's scope); recorded here so the composition is visible, not modeled"
+  },
+  "leaf": "SXT-028i",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
+    "ok": false
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 256,
+    "insert_stage_runs_in_this_mode": true
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "c61dbef103a1c60e0e7d151cfecf1a2a4a483c7f",
+    "census_status": "parsed_static_only",
+    "graphs_blob_sha1_verified": "c61dbef103a1c60e0e7d151cfecf1a2a4a483c7f",
+    "leaf_b4_candidate_sha1_verified": "c61dbef103a1c60e0e7d151cfecf1a2a4a483c7f",
+    "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brass Ensemble.fxp",
+    "stored_revision": 24
+  },
+  "roles": [
+    "ains3",
+    "ains4"
+  ],
+  "routing_form": "rf-ains34",
+  "scene_context": {
+    "census_required_scenes": "a",
+    "census_scene_mode": "Single",
+    "note": "scene A is instantiated in EVERY scene mode (Single included), so a scene-A insert slot is reachable in every patch that loads -- unlike the scene-B insert bus (sibling leaf rf-rf-bins12), whose slots are unreachable in a Single-scene patch",
+    "scene_a_instantiated": true,
+    "scene_mode_id": 0,
+    "scene_mode_name": "Single"
+  },
+  "schema_version": 1
+}
