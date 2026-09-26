@@ -247,7 +247,7 @@
       "status": "PASS",
       "note": "Landed PR #40. Attacky.fxp slice: RTL==model exact on 3 sequences (12,609 state fields); mutant control fails as designed; reference errors reported against [PROPOSED] budgets (1 pass, 2 pending-freeze).",
       "evidence": "reports/sxt-022/EVIDENCE.md",
-      "evidence_sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+      "evidence_sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca"
     },
     {
       "id": 16,

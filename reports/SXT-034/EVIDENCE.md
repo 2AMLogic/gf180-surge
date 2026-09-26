@@ -99,29 +99,39 @@ blocks, plus the shared oscillator output block and every mono sample.
 
 Comparator `tools/compare_audio_reference.py` (dry policy, no
 normalization, no time-warping; shift-0 primary). Proposed bounds are the
-SXT-022 placeholders (max_abs ≤ 3500 LSB, rms ≥ −46 dBFS, corr ≥ 0.98):
+SXT-022 placeholders (max_abs ≤ 3500 LSB, rms diff ≤ −46 dBFS, corr ≥ 0.98).
+*Re-grade note (issue #97):* this section originally stated the rms bound
+as "≥ −46 dBFS" and graded every rms leg with that inverted comparison
+(fixed in PR #92, audited in issue #95, `reports/tooling-rms-polarity-audit/`),
+so uni1-regress read "PASS all three" and the uni>1 rows omitted their rms
+misses. The numeric metrics below are unchanged; only the grading moved —
+no fixture passes the rms proposal, and **no fixture passes all three
+proposals**:
 
 | fixture | max_abs LSB | rms dBFS | corr | best_shift | vs proposals |
 |---|---|---|---|---|---|
-| uni1-regress | 2,321 | −33.3 | 0.9874 | −4 | **PASS all three** (identical to the landed SXT-022 metrics) |
-| uni2-cov | 22,767 | −18.5 | 0.9624 | −27 | FAIL max, corr |
-| uni2-poly | 65,534 | −8.4 | 0.9548 | −1 | FAIL max, corr |
-| uni4-rep | 27,455 | −15.1 | 0.9822 | −25 | FAIL max |
-| uni16-smoke | 36,240 | −9.7 | 0.8678 | −17 | FAIL max, corr |
+| uni1-regress | 2,321 | −33.3 | 0.9874 | −4 | **FAIL rms** (max, corr PASS; −33.3 dBFS is louder than ≤ −46 dBFS; identical to the landed SXT-022 metrics and verdict) |
+| uni2-cov | 22,767 | −18.5 | 0.9624 | −27 | FAIL max, rms, corr |
+| uni2-poly | 65,534 | −8.4 | 0.9548 | −1 | FAIL max, rms, corr |
+| uni4-rep | 27,455 | −15.1 | 0.9822 | −25 | FAIL max, rms |
+| uni16-smoke | 36,240 | −9.7 | 0.8678 | −17 | FAIL max, rms, corr |
 
 (`artifacts/uni1-rep.json`, `uni2-cov.json`, `uni2-poly.json`,
 `uni4-rep.json`, `uni16-smoke.json`.)
 
 **Bounded finding (recorded, escalation routed):** the SXT-022 [PROPOSED]
-budgets were derived from the unison-1 slice and do not hold at uni>1. The
+budgets were derived from the unison-1 slice; the rms proposal already
+fails at uni=1 (the landed SXT-022 metrics, re-graded under issue #97), and
+the max/spectral proposals additionally do not hold at uni>1. The
 misses are the declared deviation classes compounding across N detuned
 voices — float32 phase-pipeline vs exact-integer `ipos` per voice
 (sub-sample impulse jitter at different detune rates → beat-phase
 differences the max metric cannot absorb), `mech::rcp` vs exact `qdiv` in
 each voice's DC path (now active: Attacky sub mix 0 → `dc_uni ≠ 0`), and
 fixed-word quantization — not a topology error (the uni1 regression is
-bit-identical, and RTL-vs-model is exact at every unison). rms passes all
-proposals at every unison; spectral corr passes at uni4. Per AGENTS.md and
+bit-identical, and RTL-vs-model is exact at every unison). rms fails the
+proposal at every unison, uni1 included (−8.4 to −33.3 dBFS vs ≤ −46 dBFS);
+spectral corr passes at uni1 and uni4; max passes only at uni1. Per AGENTS.md and
 the leaf's stop/escalate clause this is **not** resolved here by weakening
 or tuning: it is routed to the SXT-013/#12 freeze together with SXT-026's
 deep-mip finding — either the freeze sets unison-class budgets or
@@ -214,7 +224,9 @@ the check it targets:
 
 Honest caveat (also in the transcript): with the current [PROPOSED] budgets
 the reference-budget check itself is not yet discriminating at uni>1 — the
-true model also misses the max/corr proposals (§4 finding). The budget
+true model also misses the max/corr proposals (§4 finding), and — re-graded
+under issue #97 — the true model misses the rms proposal at every unison,
+uni1 included. The budget
 freeze (#12) must set unison-class budgets under which NC-1/NC-2 fail while
 the true model passes; until then the exactness controls (NC-3/4/5) are the
 hard gates and NC-1/NC-2 demonstrate the required "must FAIL" behavior of
@@ -285,7 +297,8 @@ replaced where counts changed and left untouched where identical:
   untouched by the merge.
 * **Budget metrics reproduce exactly** (max_abs / corr / best_shift
   identical to §4 on all five fixtures; rms equal to float precision).
-  uni1 passes all proposals; uni>1 misses stand as recorded — the §4
+  uni1 passes the max/corr proposals and fails rms (re-graded under
+  issue #97, metrics unchanged); uni>1 misses stand as recorded — the §4
   bounded finding is unchanged and now ALSO names the SXT-033 pitch-helper
   finding as a candidate contributor (README composition §3).
 * **Negative controls NC-1..5 reproduce** (`artifacts/negative-control.txt`

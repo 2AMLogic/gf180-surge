@@ -79,6 +79,30 @@
       "path": "reports/SXT-028c/EVIDENCE.md",
       "previous_sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598",
       "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade arithmetic was verified by Judge on PR #158). No verification status in this table was changed: both leaves pinning this record (voice:attacky-slice, voice:sine-fm-lp24-v2) stay rtl_vs_model PASS / model_vs_reference NO_VERDICT, because the corrected leg is graded against a [PROPOSED] (not frozen) budget and no frozen fidelity verdict exists until #12. Hash bookkeeping only; stale wording elsewhere in this ledger that still describes the old PASS state is routed to #157 and is not touched here.",
+      "issue": 97,
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS)",
+      "path": "reports/sxt-022/EVIDENCE.md",
+      "previous_sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8",
+      "sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: voice:unison-stack stays rtl_vs_model PASS / model_vs_reference PARTIAL; the corrected uni1-rep rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here.",
+      "issue": 97,
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS)",
+      "path": "reports/SXT-034/EVIDENCE.md",
+      "previous_sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602",
+      "sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT; the corrected seq-notes-repeated-v1 rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here.",
+      "issue": 97,
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS)",
+      "path": "reports/sxt-035/EVIDENCE.md",
+      "previous_sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8",
+      "sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972"
     }
   ],
   "gates": {
@@ -331,7 +355,7 @@
       "evidence": [
         {
           "path": "reports/sxt-035/EVIDENCE.md",
-          "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
+          "sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972"
         }
       ],
       "fixture_verified_paths": [
@@ -400,7 +424,7 @@
       "evidence": [
         {
           "path": "reports/sxt-022/EVIDENCE.md",
-          "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+          "sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca"
         }
       ],
       "fixture_verified_paths": [
@@ -421,7 +445,7 @@
       "evidence": [
         {
           "path": "reports/sxt-022/EVIDENCE.md",
-          "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+          "sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca"
         },
         {
           "path": "reports/sxt-026a/EVIDENCE.md",
@@ -446,7 +470,7 @@
       "evidence": [
         {
           "path": "reports/SXT-034/EVIDENCE.md",
-          "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
+          "sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba"
         }
       ],
       "fixture_verified_paths": [
