@@ -55,17 +55,43 @@
   },
   "airwindows_unfiled_reason_template": "no leaf filed for this algorithm (outside the SXT-028 generator's recovery-ordered set)",
   "claim_scope": "Machine-readable leaf/gate ledger consumed by tools/publish_coverage.py (SXT-029, issue #22). It records, per landed leaf, the verification verdicts of the committed evidence records (full sha256 pins; the tool re-hashes at run time and marks STALE on mismatch), and per unlanded leaf the filed issue (or backlog id) that must land first. Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, quality, or hardware claim; essentiality is UNVERIFIED pending listening (#8/#9). A leaf is support-ready only when rtl_vs_model AND model_vs_reference are both PASS AND the fidelity_freeze gate is PASS (issue #12).",
+  "evidence_pin_revisions": [
+    {
+      "decision": "RE-PIN (the record was legitimately edited after the last coverage publication; the file is correct and was not restored). No verification status in this table was changed: the record's own change note states the verdicts are unchanged - EQ fm_bass_1 stays PASS, Delay metallic/dexie stay FAIL, and the added wet-path tail-gate legs are recorded as further input to the open #16/#12 delay-budget finding, not as a new verdict.",
+      "issue": 125,
+      "moved_by": "48062e8 (#113, issue #100): wet-path tail gate on the stereo effect-slice comparators; added the 'Change note (issue #100)' block to the record",
+      "path": "reports/sxt-023/EVIDENCE.md",
+      "previous_sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7",
+      "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status changed: both change notes state 'Verdicts: unchanged' - click PASS, preset PASS, hardreset FAIL on tail_rms_rel exactly as already recorded, reset BLOCKED; the #108 work added the tail_window transparency block and a NO_VERDICT refusal path without moving an exit code.",
+      "issue": 125,
+      "moved_by": "48062e8 (#113, issue #100) then bbfb090 (#115, issue #108): wet-path tail gate, then the keep-the-bespoke-window decision plus its NO_VERDICT refusal and presence legs",
+      "path": "reports/sxt-024/EVIDENCE.md",
+      "previous_sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4",
+      "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status changed: the #100 re-grade records 'all six verdicts unchanged (PASS stays PASS)' under the stronger declared-region tail gate, and the #116 fix records that the corrected FX-destination screen leaves all four committed extraction inputs at 0 FX-destination routes, so no fixture, model run, or comparison in the record moved.",
+      "issue": 125,
+      "moved_by": "48062e8 (#113, issue #100) then d6f9ced (#131, issue #116): tail-gate re-grade, then the chorus extractor FX-modulation screen defect note",
+      "path": "reports/SXT-028c/EVIDENCE.md",
+      "previous_sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598",
+      "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
+    }
+  ],
   "gates": {
     "fidelity_freeze": {
       "effect": "no model-vs-reference number is a fidelity verdict until budgets are frozen; supported promotion requires status PASS",
       "evidence": [
         {
           "path": "reports/sxt-023/EVIDENCE.md",
-          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+          "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
         },
         {
           "path": "reports/sxt-024/EVIDENCE.md",
-          "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+          "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
         }
       ],
       "owner": "#12 (SXT-017 profile/fidelity freeze; SXT-013 listening BLOCKED-on-human)",
@@ -169,7 +195,7 @@
       "evidence": [
         {
           "path": "reports/SXT-028c/EVIDENCE.md",
-          "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+          "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
         }
       ],
       "issue": 55,
@@ -190,7 +216,7 @@
       "evidence": [
         {
           "path": "reports/sxt-023/EVIDENCE.md",
-          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+          "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
         }
       ],
       "issue": 16,
@@ -221,7 +247,7 @@
       "evidence": [
         {
           "path": "reports/sxt-023/EVIDENCE.md",
-          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+          "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
         }
       ],
       "issue": 16,
@@ -241,7 +267,7 @@
       "evidence": [
         {
           "path": "reports/sxt-024/EVIDENCE.md",
-          "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+          "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
         }
       ],
       "issue": 17,
