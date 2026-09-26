@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "issue": "SXT-037",
-  "case": "rainy",
+  "case": "t9",
   "leg": "L2a-own-coeffs",
   "carriers_subtypes": [
-    1
+    2
   ],
   "results": {
-    "unit1.lane0": {
+    "unit2.lane0": {
       "L1_coefficients": "FAIL",
       "L2_audio": "FAIL",
       "proposed": {
@@ -17,8 +17,8 @@
         "l2_rms_lsb": 256,
         "l2_spectral_corr_min": 0.999
       },
-      "engine_state_peak_lsb": 8012505,
-      "model_state_peak_lsb": 8012505,
+      "engine_state_peak_lsb": 8879424,
+      "model_state_peak_lsb": 8879424,
       "stability_model": "STABLE"
     }
   },

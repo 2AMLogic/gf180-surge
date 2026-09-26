@@ -18,8 +18,8 @@
         "l2_rms_lsb": 256,
         "l2_spectral_corr_min": 0.999
       },
-      "engine_state_peak_lsb": 5443049,
-      "model_state_peak_lsb": 5443049,
+      "engine_state_peak_lsb": 5443043,
+      "model_state_peak_lsb": 5443043,
       "stability_model": "STABLE"
     },
     "unit1.lane1": {

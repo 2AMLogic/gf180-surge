@@ -1,0 +1,370 @@
+{
+ "cases": {
+  "badnews": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 1944,
+    "instance": "unit1.lane0",
+    "l1_C_max": 725760,
+    "l1_C_max_per_role": [
+     67,
+     1759,
+     0,
+     0,
+     49,
+     725760,
+     33,
+     341
+    ],
+    "l1_C_rms": 79871.535,
+    "l1_dC_max": 1862,
+    "l1_dC_rms": 108.059,
+    "l1_first_run_only_max": 664225,
+    "subtypes": [
+     1
+    ]
+   }
+  ],
+  "badnews-cut-hi": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 1944,
+    "instance": "unit1.lane0",
+    "l1_C_max": 5895128,
+    "l1_C_max_per_role": [
+     264,
+     20099,
+     0,
+     0,
+     383,
+     5895128,
+     137,
+     4801
+    ],
+    "l1_C_rms": 786499.898,
+    "l1_dC_max": 27518,
+    "l1_dC_rms": 725.334,
+    "l1_first_run_only_max": 4801,
+    "subtypes": [
+     1
+    ]
+   }
+  ],
+  "badnews-cut-lo": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 1944,
+    "instance": "unit1.lane0",
+    "l1_C_max": 4999,
+    "l1_C_max_per_role": [
+     256,
+     447,
+     0,
+     0,
+     31,
+     4999,
+     16,
+     34
+    ],
+    "l1_C_rms": 485.345,
+    "l1_dC_max": 9,
+    "l1_dC_rms": 0.677,
+    "l1_first_run_only_max": 4999,
+    "subtypes": [
+     1
+    ]
+   }
+  ],
+  "badnews-reso1": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 1944,
+    "instance": "unit1.lane0",
+    "l1_C_max": 341,
+    "l1_C_max_per_role": [
+     46,
+     119,
+     0,
+     0,
+     45,
+     70,
+     34,
+     341
+    ],
+    "l1_C_rms": 40.96,
+    "l1_dC_max": 1,
+    "l1_dC_rms": 0.319,
+    "l1_first_run_only_max": 341,
+    "subtypes": [
+     1
+    ]
+   }
+  ],
+  "badnews-toggle": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 2040,
+    "instance": "unit1.lane0",
+    "l1_C_max": 725760,
+    "l1_C_max_per_role": [
+     648,
+     10451,
+     4066,
+     5672,
+     1641,
+     725760,
+     217,
+     341
+    ],
+    "l1_C_rms": 67512.928,
+    "l1_dC_max": 1862,
+    "l1_dC_rms": 91.396,
+    "l1_first_run_only_max": 664225,
+    "subtypes": [
+     1,
+     2
+    ]
+   },
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 96,
+    "instance": "unit1.lane1",
+    "l1_C_max": 10451,
+    "l1_C_max_per_role": [
+     648,
+     10451,
+     4066,
+     5672,
+     1641,
+     629,
+     217,
+     0
+    ],
+    "l1_C_rms": 3573.088,
+    "l1_dC_max": 33,
+    "l1_dC_rms": 11.134,
+    "l1_first_run_only_max": 5,
+    "subtypes": [
+     2
+    ]
+   },
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 48,
+    "instance": "unit1.lane2",
+    "l1_C_max": 130,
+    "l1_C_max_per_role": [
+     48,
+     37,
+     130,
+     32,
+     105,
+     54,
+     36,
+     0
+    ],
+    "l1_C_rms": 42.205,
+    "l1_dC_max": 1,
+    "l1_dC_rms": 0.454,
+    "l1_first_run_only_max": 5,
+    "subtypes": [
+     2
+    ]
+   },
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 48,
+    "instance": "unit1.lane3",
+    "l1_C_max": 130,
+    "l1_C_max_per_role": [
+     48,
+     37,
+     130,
+     32,
+     105,
+     54,
+     36,
+     0
+    ],
+    "l1_C_rms": 42.205,
+    "l1_dC_max": 1,
+    "l1_dC_rms": 0.454,
+    "l1_first_run_only_max": 5,
+    "subtypes": [
+     2
+    ]
+   }
+  ],
+  "rainy": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 1944,
+    "instance": "unit1.lane0",
+    "l1_C_max": 24057,
+    "l1_C_max_per_role": [
+     122,
+     1531,
+     0,
+     0,
+     320,
+     24057,
+     138,
+     1720
+    ],
+    "l1_C_rms": 2491.744,
+    "l1_dC_max": 61,
+    "l1_dC_rms": 4.091,
+    "l1_first_run_only_max": 24057,
+    "subtypes": [
+     1
+    ]
+   }
+  ],
+  "t9": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 3398,
+    "instance": "unit2.lane0",
+    "l1_C_max": 511,
+    "l1_C_max_per_role": [
+     321,
+     511,
+     338,
+     256,
+     175,
+     225,
+     138,
+     0
+    ],
+    "l1_C_rms": 130.834,
+    "l1_dC_max": 5,
+    "l1_dC_rms": 0.307,
+    "l1_first_run_only_max": 1,
+    "subtypes": [
+     2
+    ]
+   }
+  ],
+  "t9-substd": [
+   {
+    "L1_verdict": "FAIL",
+    "blocks": 3398,
+    "instance": "unit2.lane0",
+    "l1_C_max": 38,
+    "l1_C_max_per_role": [
+     35,
+     38,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "l1_C_rms": 13.25,
+    "l1_dC_max": 1,
+    "l1_dC_rms": 0.161,
+    "l1_first_run_only_max": 0,
+    "subtypes": [
+     0
+    ]
+   }
+  ]
+ },
+ "engine_plane_discrimination": {
+  "badnews": {
+   "F-038-4 C7 dB-table": {
+    "max_abs": 0.00016257224457445762,
+    "median_abs": 2.29253777683687e-05,
+    "records": 1944
+   },
+   "F-038-4 C7 exact-pow": {
+    "max_abs": 4.04843978202285e-08,
+    "median_abs": 5.452976951925148e-09,
+    "records": 1944
+   }
+  },
+  "badnews-cut-hi": {
+   "F-038-4 C7 dB-table": {
+    "max_abs": 0.002699741792849153,
+    "median_abs": 0.0011532332822612457,
+    "records": 1944
+   },
+   "F-038-4 C7 exact-pow": {
+    "max_abs": 1.367439529165182e-06,
+    "median_abs": 3.861978046248993e-07,
+    "records": 1944
+   }
+  },
+  "badnews-cut-lo": {
+   "F-038-4 C7 dB-table": {
+    "max_abs": 4.331365925204847e-06,
+    "median_abs": 5.853721764826616e-07,
+    "records": 1944
+   },
+   "F-038-4 C7 exact-pow": {
+    "max_abs": 1.1121926123125458e-09,
+    "median_abs": 3.6053978596031766e-11,
+    "records": 1944
+   }
+  },
+  "badnews-reso1": {
+   "F-038-4 C7 dB-table": {
+    "max_abs": 0.00016257224457445762,
+    "median_abs": 2.29253777683687e-05,
+    "records": 1944
+   },
+   "F-038-4 C7 exact-pow": {
+    "max_abs": 4.04843978202285e-08,
+    "median_abs": 5.452976951925148e-09,
+    "records": 1944
+   }
+  },
+  "badnews-toggle": {
+   "F-038-4 C7 dB-table": {
+    "max_abs": 0.00016257224457445762,
+    "median_abs": 2.5249990639478193e-05,
+    "records": 1248
+   },
+   "F-038-4 C7 exact-pow": {
+    "max_abs": 4.04843978202285e-08,
+    "median_abs": 5.452976951925148e-09,
+    "records": 1248
+   }
+  },
+  "rainy": {
+   "F-038-4 C7 dB-table": {
+    "max_abs": 0.0009724472915327853,
+    "median_abs": 0.00015096731764775717,
+    "records": 1944
+   },
+   "F-038-4 C7 exact-pow": {
+    "max_abs": 2.6384135443091594e-07,
+    "median_abs": 2.551954401963652e-08,
+    "records": 1944
+   }
+  },
+  "t9": {},
+  "t9-substd": {
+   "F-038-3 C0 sr=48000": {
+    "max_abs": 0.32495602258407935,
+    "median_abs": 0.2219724257141056,
+    "records": 3167
+   },
+   "F-038-3 C0 sr=96000": {
+    "max_abs": 3.5776094303718864e-07,
+    "median_abs": 2.4687281760527036e-07,
+    "records": 3167
+   }
+  }
+ },
+ "issue": "#102 (SXT-037 follow-up, F-038-3/F-038-4)",
+ "label": "after-f038-3",
+ "leg": "L1 coefficient plane (zero-input drive; audio-independent)",
+ "model_file": "pre-#102 model + F-038-3 correction only (CM_SAMPLE_RATE 96000; clipscale still on the dB table)",
+ "proposed": {
+  "l1_C_max_lsb": 16,
+  "l1_C_rms_lsb": 4
+ },
+ "schema_version": 1
+}

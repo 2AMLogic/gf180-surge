@@ -40,6 +40,13 @@ Block-rate coefficient generation is this leaf's DSP and stays IN the model:
 `resoscale`, `Map2PoleResonance`, `clipscale`, `boundFreq`,
 `ToCoupledForm` / `ToNormalizedLattice`) plus `FromDirect` smoothing
 (`tC += 0.2*(N - tC)`; `dC = (tC - C)/64`; FirstRun: `C = tC = N`, `dC = 0`).
+The coefficient maker runs at the rate the pinned `SurgeVoice::sampleRateReset()`
+configures, `(dsamplerate_os, BLOCK_SIZE_OS)` = (96000, 64), so `Coeff_SVF`'s
+`F1 = 2·sin(π·min(0.11, f·0.5/96000))`; and the Driven `clipscale` is
+`(1/64)·pow(10, 0.05·(0.55·freq))` — sst-filters' own exact `db_to_linear`,
+not Surge's interpolated dB table. Both were corrected by #102 (findings
+F-038-3 / F-038-4) after the engine's own tapped coefficient plane confirmed
+them; see `reports/sxt-037/EVIDENCE.md` §3a.
 The per-block *inputs* `(cutoff_a, reso_a)` for the reference legs are the
 engine's own values, captured by the oracle tap instrumentation
 (decision-records/0005) — the same declared control-plane boundary class as
