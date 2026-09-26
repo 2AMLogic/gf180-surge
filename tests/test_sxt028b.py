@@ -242,6 +242,12 @@ def test_buffer_requirement_record():
     assert d["on_chip_state"]["writable_line_bytes"] == 2048
     r = d["sxt015_reconciliation"]
     assert r["placeholder_conservative"] and r["external_classification_agrees"]
+    # The embedded sxt015_state_bytes is re-derived live from fx_class_spec on
+    # every regeneration (tools/conditioner_buffer_report.py); it must track
+    # the table, not a frozen number, or the committed artifact silently goes
+    # stale the next time the table changes (issue #134).
+    from model.resources.fx_classes import fx_class_spec
+    assert r["sxt015_state_bytes"] == fx_class_spec("Conditioner")["state_bytes"]
 
 
 def test_negative_controls_record():
