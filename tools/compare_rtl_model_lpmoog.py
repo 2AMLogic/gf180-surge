@@ -19,8 +19,10 @@ Usage:
 import argparse
 import json
 import os
-import subprocess
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _rtl_compile_common import compile_and_run  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lpmoog.sv")
@@ -73,10 +75,15 @@ def compare(model_trace, tb):
 
 
 def build_and_run(sv_file, workdir):
-    vvp = os.path.join(workdir, os.path.basename(sv_file).replace(".sv", ".vvp"))
-    subprocess.run(["iverilog", "-g2012", "-o", vvp, sv_file], check=True)
-    subprocess.run(["vvp", vvp], cwd=workdir, check=True, stdout=subprocess.DEVNULL)
-    return os.path.join(workdir, "tb_trace.txt")
+    """Compile + run the LP Legacy Ladder testbench via the shared helper.
+
+    Kept as this module's public entry point: tools/run_sxt039_checks.py,
+    tools/lpmoog_negative_controls.py and tests/test_sxt039_lpmoog.py all
+    drive the RTL through `crm.build_and_run(...)`.
+    """
+    return compile_and_run(
+        sv_file, workdir,
+        out_name=os.path.basename(sv_file).replace(".sv", ".vvp"))
 
 
 def main():
