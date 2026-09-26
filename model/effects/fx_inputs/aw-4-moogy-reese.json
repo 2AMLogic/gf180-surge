@@ -1,0 +1,153 @@
+{
+ "airwindows_name": "Logical",
+ "airwindows_streamed_id": 4,
+ "applicability_rule": "complete-wet renders are REFUSED unless every active FX class in the chain is landed and passing AND no modulation route reaches any FX parameter in the chain; this leaf's own evidence is slot-boundary only",
+ "carrier_role": "ADDED from this leaf's own B4 list: the only corpus preset carrying TWO concurrent Logical slots (ains2 and global1), i.e. the dual-instance acceptance case on a real preset rather than a synthetic pair",
+ "census_blob_sha1": "3e570bbd749fe9ecaf8a800030c21d839f9a1a48",
+ "chain": [
+  {
+   "class_key": "Distortion",
+   "routing": "ains1",
+   "slot_index": 0,
+   "type": 5,
+   "type_name": "Distortion"
+  },
+  {
+   "airwindows_streamed_id": 4,
+   "class_key": "AW-4-Logical",
+   "routing": "ains2",
+   "slot_index": 1,
+   "type": 14,
+   "type_name": "Airwindows"
+  },
+  {
+   "class_key": "Waveshaper",
+   "routing": "send1",
+   "slot_index": 4,
+   "type": 25,
+   "type_name": "Waveshaper"
+  },
+  {
+   "airwindows_streamed_id": 4,
+   "class_key": "AW-4-Logical",
+   "routing": "global1",
+   "slot_index": 6,
+   "type": 14,
+   "type_name": "Airwindows"
+  },
+  {
+   "class_key": "Conditioner",
+   "routing": "global2",
+   "slot_index": 7,
+   "type": 8,
+   "type_name": "Conditioner"
+  },
+  {
+   "class_key": "Chorus",
+   "routing": "ains3",
+   "slot_index": 8,
+   "type": 9,
+   "type_name": "Chorus"
+  },
+  {
+   "class_key": "EQ",
+   "routing": "ains4",
+   "slot_index": 9,
+   "type": 6,
+   "type_name": "EQ"
+  }
+ ],
+ "claim_scope": "data export only; no support, fidelity or musical-quality claim",
+ "complete_wet_render_possible": false,
+ "concurrent_logical_instances": 2,
+ "extraction_mode": "graphs",
+ "extraction_status": "COMPLETE-FOR-MODEL-PENDING-ORACLE-CROSSCHECK",
+ "fx_parameter_modulation": {
+  "on_other_fx_slots": [
+   "FX A1 Drive",
+   "FX A3 Mix",
+   "FX A4 Gain",
+   "FX S1 Drive"
+  ],
+  "on_this_leafs_slots": [],
+  "policy": "TWO levels, both live. (1) a route into THIS leaf's own Logical slot parameters REFUSES the record - the frozen model has no representation for a moving FX parameter. (2) a route into any OTHER FX slot is RECORDED and independently sets complete_wet_render_possible false, because the complete wet sound of the preset then depends on a slot nothing here models. Level 2 is deliberately weaker than the sibling aw-49 extractor's blanket 'any FX route refuses' rule; the strict verdict is recorded above so a reviewer can see exactly what the stricter rule would have done, and nothing that the strict rule blocks is claimed here - this leaf's evidence is slot-boundary only in every case.",
+  "strict_any_fx_route_screen": "REFUSED"
+ },
+ "landed_classes_basis": {
+  "landed_fx_classes": [
+   "AW-49-Galactic",
+   "Chorus",
+   "Delay",
+   "Distortion",
+   "EQ",
+   "Reverb1"
+  ],
+  "note": "derived at extraction time, not hand-listed; a class whose leaf is not marked landed in the committed table counts as unlanded even if its PR has merged",
+  "source": "reports/coverage-v1/leaf-verification.json (leaves[*].landed)"
+ },
+ "leaf": "SXT-028k",
+ "logical_slots": [
+  {
+   "derived": {
+    "attackspeed": 1.1523769604450587,
+    "inputgain": 4.508146154922131,
+    "n_active_stages": 2,
+    "outputgain": 2.740437853256012,
+    "ratio_fraction": 0.9025183608280587,
+    "ratioselector": 1,
+    "wet": 1.0
+   },
+   "params": {
+    "A_threshold": 0.173001,
+    "B_ratio": 0.703544,
+    "C_attack": 0.866333,
+    "D_makeup": 0.71891,
+    "E_mix": 1.0
+   },
+   "routing": "ains2",
+   "slot_index": 1,
+   "tail_window_blocks": 189,
+   "tail_window_samples": 6040
+  },
+  {
+   "derived": {
+    "attackspeed": 7.153850196089489,
+    "inputgain": 1.0,
+    "n_active_stages": 2,
+    "outputgain": 1.0,
+    "ratio_fraction": 0.19517021174245563,
+    "ratioselector": 1,
+    "wet": 1.0
+   },
+   "params": {
+    "A_threshold": 0.5,
+    "B_ratio": 0.504564,
+    "C_attack": 0.098164,
+    "D_makeup": 0.5,
+    "E_mix": 1.0
+   },
+   "routing": "global1",
+   "slot_index": 6,
+   "tail_window_blocks": 31,
+   "tail_window_samples": 973
+  }
+ ],
+ "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+ "preset_path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Moogy Reese.fxp",
+ "schema_version": 1,
+ "screens": {
+  "algorithm_identity": "p[0] == 4 on every slot recorded here",
+  "census_blob_reverified": true,
+  "census_vs_graphs_sha_drift": 0,
+  "fx_parameter_modulation_on_other_slots": 4,
+  "fx_parameter_modulation_on_own_slots": 0,
+  "unmappable_fx_modulation_destinations": 0
+ },
+ "slug": "moogy-reese",
+ "source": "corpus/normalized/graphs.jsonl (SXT-011 pinned-loader normalized export; engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71)",
+ "unlanded_classes_in_chain": [
+  "Conditioner",
+  "Waveshaper"
+ ],
+ "why_status": "graphs.jsonl carries all five Logical parameters as plain normalized floats and Logical has no deactivated / extend_range companion flags, so the frozen model accepts this record as-is. The AUTHORITATIVE surgepy post-load readback and its cross-check are still BLOCKED on an oracle host; no reference-agreement number may be derived from this file."
+}

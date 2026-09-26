@@ -1,0 +1,1067 @@
+{
+  "cases": [
+    {
+      "blocks": 24,
+      "case": "sel0-dad",
+      "checked": {
+        "checkpoint_fields": 3840,
+        "outputs": 1536
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          8,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 24,
+      "planes": {
+        "instance0": "dad",
+        "instance1": "dad"
+      },
+      "ratioselector": {
+        "instance0": 0,
+        "instance1": 0
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 3072,
+        "tap_age3": 8
+      },
+      "why": "ratioselector 0: one active stage, the commonest carrier shape (global1 Ambiance/Dad.fxp)"
+    },
+    {
+      "blocks": 24,
+      "case": "sel1-snare",
+      "checked": {
+        "checkpoint_fields": 3840,
+        "outputs": 1536
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          16,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 24,
+      "planes": {
+        "instance0": "acoustic-snare",
+        "instance1": "acoustic-snare"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 6144,
+        "tap_age3": 16
+      },
+      "why": "ratioselector 1: two active stages, the crossfade straddles A and B (Cybersoda Acoustic Snare.fxp)"
+    },
+    {
+      "blocks": 20,
+      "case": "sel1-edge-3x101",
+      "checked": {
+        "checkpoint_fields": 3200,
+        "outputs": 1280
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          16,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 20,
+      "planes": {
+        "instance0": "3x101",
+        "instance1": "3x101"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 5120,
+        "tap_age3": 16
+      },
+      "why": "ratio fraction 0.000243 -- immediately above the selector boundary (Exquis MPE 3x101.fxp)"
+    },
+    {
+      "blocks": 24,
+      "case": "sel2-bass",
+      "checked": {
+        "checkpoint_fields": 3840,
+        "outputs": 1536
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          24,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 24,
+      "planes": {
+        "instance0": "bass-guitar-5",
+        "instance1": "bass-guitar-5"
+      },
+      "ratioselector": {
+        "instance0": 2,
+        "instance1": 2
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 9216,
+        "tap_age3": 24
+      },
+      "why": "ratioselector 2: all three stages active, exercises the stage-C quirk Q2 path (Slowboat Bass Guitar 5)"
+    },
+    {
+      "blocks": 24,
+      "case": "sel2-hot",
+      "checked": {
+        "checkpoint_fields": 3840,
+        "outputs": 1536
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          24,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 24,
+      "planes": {
+        "instance0": "bass-guitar-5",
+        "instance1": "bass-guitar-5"
+      },
+      "ratioselector": {
+        "instance0": 2,
+        "instance1": 2
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 9216,
+        "tap_age3": 24
+      },
+      "why": "hot input, all three stages: drives the +-36 hard clip and the sag clamp"
+    },
+    {
+      "blocks": 36,
+      "case": "wrap-1024",
+      "checked": {
+        "checkpoint_fields": 5760,
+        "outputs": 2304
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          24,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 36,
+      "planes": {
+        "instance0": "acoustic-snare",
+        "instance1": "acoustic-snare"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 9216,
+        "tap_age3": 24
+      },
+      "why": "1152 samples: crosses the 500-sample gcount period twice, so the quirk-Q1 3-sample taps are live"
+    },
+    {
+      "blocks": 40,
+      "case": "tail-silence",
+      "checked": {
+        "checkpoint_fields": 6400,
+        "outputs": 2560
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          24,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 8,
+      "planes": {
+        "instance0": "acoustic-snare",
+        "instance1": "acoustic-snare"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 10240,
+        "tap_age3": 24
+      },
+      "why": "burst then silence for the declared tail span: the gain-recovery tail is the tail this effect has"
+    },
+    {
+      "blocks": 24,
+      "case": "dc-asym",
+      "checked": {
+        "checkpoint_fields": 3840,
+        "outputs": 1536
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          16,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 24,
+      "planes": {
+        "instance0": "acoustic-snare",
+        "instance1": "acoustic-snare"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 6144,
+        "tap_age3": 16
+      },
+      "why": "sustained positive DC offset: drives one polarity's target toward its 1e-6 floor, the c96 range case"
+    },
+    {
+      "blocks": 16,
+      "case": "defaults",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          8,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "defaults",
+        "instance1": "defaults"
+      },
+      "ratioselector": {
+        "instance0": 0,
+        "instance1": 0
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 2048,
+        "tap_age3": 8
+      },
+      "why": "the Logical4 constructor defaults"
+    },
+    {
+      "blocks": 16,
+      "case": "halfmix",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          16,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "halfmix",
+        "instance1": "halfmix"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 4096,
+        "tap_age3": 16
+      },
+      "why": "E_mix = 0.5: the wet/dry branch is live"
+    },
+    {
+      "blocks": 16,
+      "case": "extreme-lo",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          8,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "extreme-lo",
+        "instance1": "extreme-lo"
+      },
+      "ratioselector": {
+        "instance0": 0,
+        "instance1": 0
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 2048,
+        "tap_age3": 8
+      },
+      "why": "every named parameter at 0.0 (inputgain 10, outputgain 0.1, ratio 0, mix 0 -- dry-only path)"
+    },
+    {
+      "blocks": 16,
+      "case": "extreme-hi",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          24,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "extreme-hi",
+        "instance1": "extreme-hi"
+      },
+      "ratioselector": {
+        "instance0": 2,
+        "instance1": 2
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 6144,
+        "tap_age3": 24
+      },
+      "why": "every named parameter at 1.0 (inputgain 0.1, outputgain 10, ratio clamped to 2.99999)"
+    },
+    {
+      "blocks": 16,
+      "case": "clip-corner",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          511,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          483,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          16,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "clip-corner",
+        "instance1": "clip-corner"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 511,
+        "divisions": 4096,
+        "tap_age3": 16
+      },
+      "why": "hot input into inputgain 10: the +-36 hard clip is engaged (asserted non-zero, so the clip is a live path and not dead code)"
+    },
+    {
+      "blocks": 16,
+      "case": "sagclamp-corner",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          34,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          8,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "defaults",
+        "instance1": "defaults"
+      },
+      "ratioselector": {
+        "instance0": 0,
+        "instance1": 0
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 2048,
+        "tap_age3": 8
+      },
+      "why": "|x| ~ 30 drives the sag accumulator past 1.0, so the `clamp` branch (control > 1) is engaged"
+    },
+    {
+      "blocks": 83,
+      "case": "tail-resume",
+      "checked": {
+        "checkpoint_fields": 13280,
+        "outputs": 5312
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          48,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "acoustic-snare",
+        "instance1": "acoustic-snare"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 21248,
+        "tap_age3": 48
+      },
+      "why": "burst, then the DECLARED tail span of silence, then a second burst: the gain-recovery tail is only observable in the second burst, so this is the case the dropped-tail control has to fail"
+    },
+    {
+      "blocks": 24,
+      "case": "dual-moogy",
+      "checked": {
+        "checkpoint_fields": 3840,
+        "outputs": 1536
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          8,
+          8
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 24,
+      "planes": {
+        "instance0": "moogy-reese-ains2",
+        "instance1": "moogy-reese-global1"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 6144,
+        "tap_age3": 16
+      },
+      "why": "the two Logical slots Moogy Reese.fxp actually carries (ains2 and global1) as two concurrent instances with different planes, interleaved block by block; every checkpoint dumps both"
+    },
+    {
+      "blocks": 16,
+      "case": "reset-mid",
+      "checked": {
+        "checkpoint_fields": 2560,
+        "outputs": 1024
+      },
+      "exact": true,
+      "first_mismatch": null,
+      "mismatches": {
+        "checkpoint_fields": 0,
+        "outputs": 0
+      },
+      "model_side": {
+        "clip_hits": [
+          0,
+          0
+        ],
+        "recip_saturations": [
+          0,
+          0
+        ],
+        "sag_clamp_hits": [
+          0,
+          0
+        ],
+        "saturations": [
+          0,
+          0
+        ],
+        "tap_age3_hits": [
+          8,
+          0
+        ]
+      },
+      "mutant": null,
+      "nonzero_output_blocks": 16,
+      "planes": {
+        "instance0": "acoustic-snare",
+        "instance1": "acoustic-snare"
+      },
+      "ratioselector": {
+        "instance0": 1,
+        "instance1": 1
+      },
+      "revision_pin": {
+        "echoed": 943918787,
+        "expected": 943918787,
+        "ok": true
+      },
+      "rtl_counters": {
+        "clips": 0,
+        "divisions": 2048,
+        "tap_age3": 8
+      },
+      "why": "panic/reset mid-tail: the constructor state must be restored exactly on both sides"
+    }
+  ],
+  "claim": "RTL matches the frozen fixed-point model EXACTLY (integer equality). NOT a reference-fidelity claim, NOT a musical-quality claim, NOT a synthesis or timing claim.",
+  "issue": 63,
+  "leaf": "SXT-028k",
+  "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+  "mutant_controls": [
+    {
+      "case": "wrap-1024",
+      "control": "NC_FIX_Q1",
+      "declared_blind_spot": {
+        "case": "defaults",
+        "detected_here": true,
+        "why": "512 samples only just crosses one wrap; kept as the short-run reference for the >= 1000-sample case"
+      },
+      "defect": "pinned quirk Q1 'fixed' away",
+      "exact": false,
+      "mismatches": {
+        "checkpoint_fields": 1091,
+        "outputs": 1304
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: the injected defect FAILS the exactness check it targets"
+    },
+    {
+      "case": "sel2-bass",
+      "control": "NC_FIX_Q2",
+      "declared_blind_spot": {
+        "case": "sel0-dad",
+        "detected_here": false,
+        "why": "stage C inactive: the quirk path never runs"
+      },
+      "defect": "pinned quirk Q2 'fixed' away",
+      "exact": false,
+      "mismatches": {
+        "checkpoint_fields": 616,
+        "outputs": 1535
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: the injected defect FAILS the exactness check it targets"
+    },
+    {
+      "case": "dual-moogy",
+      "control": "NC_SHARED_STATE",
+      "defect": "shared instead of per-instance state",
+      "exact": false,
+      "mismatches": {
+        "checkpoint_fields": 2426,
+        "outputs": 1472
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: the injected defect FAILS the exactness check it targets"
+    },
+    {
+      "case": "sel2-bass",
+      "control": "NC_SWAP_STAGES",
+      "declared_blind_spot": {
+        "case": "sel0-dad",
+        "detected_here": false,
+        "why": "one active stage: a permutation of a single-element cascade is a no-op, so this case CANNOT detect the defect"
+      },
+      "defect": "wrong stage order (same-class permutation)",
+      "exact": false,
+      "mismatches": {
+        "checkpoint_fields": 1846,
+        "outputs": 1536
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: the injected defect FAILS the exactness check it targets"
+    },
+    {
+      "case": "tail-resume",
+      "control": "NC_TAIL_KILL",
+      "declared_blind_spot": {
+        "case": "sel1-snare",
+        "detected_here": false,
+        "why": "no silent block: the silence branch is never taken, so this case CANNOT detect the defect"
+      },
+      "defect": "dropped tail",
+      "exact": false,
+      "mismatches": {
+        "checkpoint_fields": 3439,
+        "outputs": 512
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: the injected defect FAILS the exactness check it targets"
+    }
+  ],
+  "simulator": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "stale_pin_control": {
+    "ok": true,
+    "status": "REFUSED-STALE",
+    "verdict": "CONTROL-OK: a harness pinned to the wrong frozen-model revision is REFUSED, not passed"
+  },
+  "status": "PASS",
+  "tables_digest": "33d6ce4a9ed12dd0723bcfbb1e6701b61ee0fd5eb9f8569cf9aa84a444b52944"
+}

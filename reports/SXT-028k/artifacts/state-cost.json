@@ -1,0 +1,82 @@
+{
+  "arithmetic_cost_finding": {
+    "status": "RECORDED",
+    "text": "each active stage needs two 128/64 reciprocal evaluations per sample per channel (calcpos/calcneg = 1/target^2). At ratioselector 2 that is 12 reciprocals per frame per instance plus the table-interpolated sin/1-cos pair per stage per channel. Routed to SXT-017 (#12) as a cost input; NOT a fit or infeasibility claim"
+  },
+  "cost_closure": {
+    "note": "state residency and (zero) external traffic are reported from the frozen model; the fit verdict against a profile budget is SXT-016/SXT-017 work and is NOT claimed here",
+    "status": "[PENDING-SXT-016]"
+  },
+  "external_traffic": {
+    "bytes_per_s_per_instance": 0,
+    "reads_per_frame": 0,
+    "writes_per_frame": 0
+  },
+  "external_writable_memory": {
+    "bytes_total": 0,
+    "regions": [],
+    "why": "the pinned dL/bL/cL[1000] arrays are allocation, not reachable state: only taps of age 2 and 3 are ever read (quirk Q1), so a 4-word ring per line is bit-exact (proved in tests/test_sxt028k.py)"
+  },
+  "flash_note": "no delay/reverb-class buffer exists in this algorithm; flash is not involved and could not substitute for writable state if it were",
+  "instance": "aw-4 (Airwindows Logical, streamed id 4)",
+  "leaf": "SXT-028k",
+  "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+  "on_chip_state_exact": {
+    "bits_total": 6538,
+    "bytes_total": 818,
+    "fields": [
+      {
+        "bits": 9,
+        "bits_each": 9,
+        "count": 1,
+        "field": "gcount"
+      },
+      {
+        "bits": 1,
+        "bits_each": 1,
+        "count": 1,
+        "field": "fp_flip"
+      },
+      {
+        "bits": 2304,
+        "bits_each": 96,
+        "count": 24,
+        "field": "control{A,B}{pos,neg} (c96)"
+      },
+      {
+        "bits": 768,
+        "bits_each": 64,
+        "count": 12,
+        "field": "target{pos,neg} (t64)"
+      },
+      {
+        "bits": 576,
+        "bits_each": 48,
+        "count": 12,
+        "field": "avg/nvg (a48)"
+      },
+      {
+        "bits": 576,
+        "bits_each": 96,
+        "count": 6,
+        "field": "sag control accumulators (s96)"
+      },
+      {
+        "bits": 2304,
+        "bits_each": 96,
+        "count": 24,
+        "field": "sag line rings (c96)"
+      }
+    ]
+  },
+  "rom_shared": {
+    "bits": 53196,
+    "bytes": 6650,
+    "note": "read-only, shared by every concurrent instance; never a substitute for writable state",
+    "tables": [
+      "sin_q31 (806 x 33b)",
+      "omc_q31 (806 x 33b)"
+    ]
+  },
+  "sample_rate": 48000
+}
