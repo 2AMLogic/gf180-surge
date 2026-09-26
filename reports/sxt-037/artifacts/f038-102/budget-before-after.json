@@ -1,0 +1,336 @@
+{
+ "L2a": {
+  "after_f038_3": {
+   "badnews-reso1/unit1.lane0": {
+    "l1_C_max": 341,
+    "l1_C_rms": 40.96,
+    "l2a_max_abs_lsb": 1684636,
+    "l2a_rms_db_rel_engine_peak": -7.98,
+    "l2a_rms_lsb": 407812.51,
+    "model_state_peak_lsb": 68478654,
+    "spectral_corr": 0.9875,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "badnews-toggle/unit1.lane0": {
+    "l1_C_max": 725760,
+    "l1_C_rms": 67512.928,
+    "l2a_max_abs_lsb": 802,
+    "l2a_rms_db_rel_engine_peak": -56.56,
+    "l2a_rms_lsb": 187.242,
+    "model_state_peak_lsb": 5443043,
+    "spectral_corr": 0.9408,
+    "stimulated": true,
+    "subtypes": [
+     1,
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane1": {
+    "l1_C_max": 10451,
+    "l1_C_rms": 3573.088,
+    "l2a_max_abs_lsb": 471,
+    "l2a_rms_db_rel_engine_peak": -20.19,
+    "l2a_rms_lsb": 50.778,
+    "model_state_peak_lsb": 4316,
+    "spectral_corr": 0.5807,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane2": {
+    "l1_C_max": 130,
+    "l1_C_rms": 42.205,
+    "l2a_max_abs_lsb": 3,
+    "l2a_rms_db_rel_engine_peak": -56.21,
+    "l2a_rms_lsb": 0.803,
+    "model_state_peak_lsb": 4048,
+    "spectral_corr": 1.0,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane3": {
+    "l1_C_max": 130,
+    "l1_C_rms": 42.205,
+    "l2a_max_abs_lsb": 3,
+    "l2a_rms_db_rel_engine_peak": -55.47,
+    "l2a_rms_lsb": 0.874,
+    "model_state_peak_lsb": 4048,
+    "spectral_corr": 1.0,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews/unit1.lane0": {
+    "l1_C_max": 725760,
+    "l1_C_rms": 79871.535,
+    "l2a_max_abs_lsb": 799,
+    "l2a_rms_db_rel_engine_peak": -53.37,
+    "l2a_rms_lsb": 269.216,
+    "model_state_peak_lsb": 5174757,
+    "spectral_corr": 0.9514,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "rainy/unit1.lane0": {
+    "l1_C_max": 24057,
+    "l1_C_rms": 2491.744,
+    "l2a_max_abs_lsb": 626,
+    "l2a_rms_db_rel_engine_peak": -81.07,
+    "l2a_rms_lsb": 87.226,
+    "model_state_peak_lsb": 8011345,
+    "spectral_corr": 0.9944,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "t9/unit2.lane0": {
+    "l1_C_max": 511,
+    "l1_C_rms": 130.834,
+    "l2a_max_abs_lsb": 517,
+    "l2a_rms_db_rel_engine_peak": -81.64,
+    "l2a_rms_lsb": 161.492,
+    "model_state_peak_lsb": 8879424,
+    "spectral_corr": 0.996,
+    "stimulated": true,
+    "subtypes": [
+     2
+    ]
+   }
+  },
+  "after_f038_3_and_4": {
+   "badnews-reso1/unit1.lane0": {
+    "l1_C_max": 119,
+    "l1_C_rms": 21.933,
+    "l2a_max_abs_lsb": 1685053,
+    "l2a_rms_db_rel_engine_peak": -7.98,
+    "l2a_rms_lsb": 407930.998,
+    "model_state_peak_lsb": 68497858,
+    "spectral_corr": 0.9876,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "badnews-toggle/unit1.lane0": {
+    "l1_C_max": 725760,
+    "l1_C_rms": 67512.922,
+    "l2a_max_abs_lsb": 802,
+    "l2a_rms_db_rel_engine_peak": -56.56,
+    "l2a_rms_lsb": 187.224,
+    "model_state_peak_lsb": 5443049,
+    "spectral_corr": 0.9408,
+    "stimulated": true,
+    "subtypes": [
+     1,
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane1": {
+    "l1_C_max": 10451,
+    "l1_C_rms": 3573.088,
+    "l2a_max_abs_lsb": 471,
+    "l2a_rms_db_rel_engine_peak": -20.19,
+    "l2a_rms_lsb": 50.778,
+    "model_state_peak_lsb": 4316,
+    "spectral_corr": 0.5807,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane2": {
+    "l1_C_max": 130,
+    "l1_C_rms": 42.205,
+    "l2a_max_abs_lsb": 3,
+    "l2a_rms_db_rel_engine_peak": -56.21,
+    "l2a_rms_lsb": 0.803,
+    "model_state_peak_lsb": 4048,
+    "spectral_corr": 1.0,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane3": {
+    "l1_C_max": 130,
+    "l1_C_rms": 42.205,
+    "l2a_max_abs_lsb": 3,
+    "l2a_rms_db_rel_engine_peak": -55.47,
+    "l2a_rms_lsb": 0.874,
+    "model_state_peak_lsb": 4048,
+    "spectral_corr": 1.0,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews/unit1.lane0": {
+    "l1_C_max": 725760,
+    "l1_C_rms": 79871.527,
+    "l2a_max_abs_lsb": 799,
+    "l2a_rms_db_rel_engine_peak": -53.38,
+    "l2a_rms_lsb": 269.188,
+    "model_state_peak_lsb": 5174758,
+    "spectral_corr": 0.9515,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "rainy/unit1.lane0": {
+    "l1_C_max": 24057,
+    "l1_C_rms": 2486.279,
+    "l2a_max_abs_lsb": 414,
+    "l2a_rms_db_rel_engine_peak": -83.36,
+    "l2a_rms_lsb": 66.977,
+    "model_state_peak_lsb": 8012505,
+    "spectral_corr": 0.9944,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "t9/unit2.lane0": {
+    "l1_C_max": 511,
+    "l1_C_rms": 130.834,
+    "l2a_max_abs_lsb": 517,
+    "l2a_rms_db_rel_engine_peak": -81.64,
+    "l2a_rms_lsb": 161.492,
+    "model_state_peak_lsb": 8879424,
+    "spectral_corr": 0.996,
+    "stimulated": true,
+    "subtypes": [
+     2
+    ]
+   }
+  },
+  "before": {
+   "badnews-reso1/unit1.lane0": {
+    "l1_C_max": 341,
+    "l1_C_rms": 40.96,
+    "l2a_max_abs_lsb": 1684636,
+    "l2a_rms_db_rel_engine_peak": -7.98,
+    "l2a_rms_lsb": 407812.51,
+    "model_state_peak_lsb": 68478654,
+    "spectral_corr": 0.9875,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "badnews-toggle/unit1.lane0": {
+    "l1_C_max": 725760,
+    "l1_C_rms": 67512.928,
+    "l2a_max_abs_lsb": 802,
+    "l2a_rms_db_rel_engine_peak": -56.56,
+    "l2a_rms_lsb": 187.242,
+    "model_state_peak_lsb": 5443043,
+    "spectral_corr": 0.9408,
+    "stimulated": true,
+    "subtypes": [
+     1,
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane1": {
+    "l1_C_max": 10451,
+    "l1_C_rms": 3573.088,
+    "l2a_max_abs_lsb": 471,
+    "l2a_rms_db_rel_engine_peak": -20.19,
+    "l2a_rms_lsb": 50.778,
+    "model_state_peak_lsb": 4316,
+    "spectral_corr": 0.5807,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane2": {
+    "l1_C_max": 130,
+    "l1_C_rms": 42.205,
+    "l2a_max_abs_lsb": 3,
+    "l2a_rms_db_rel_engine_peak": -56.21,
+    "l2a_rms_lsb": 0.803,
+    "model_state_peak_lsb": 4048,
+    "spectral_corr": 1.0,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews-toggle/unit1.lane3": {
+    "l1_C_max": 130,
+    "l1_C_rms": 42.205,
+    "l2a_max_abs_lsb": 3,
+    "l2a_rms_db_rel_engine_peak": -55.47,
+    "l2a_rms_lsb": 0.874,
+    "model_state_peak_lsb": 4048,
+    "spectral_corr": 1.0,
+    "stimulated": false,
+    "subtypes": [
+     2
+    ]
+   },
+   "badnews/unit1.lane0": {
+    "l1_C_max": 725760,
+    "l1_C_rms": 79871.535,
+    "l2a_max_abs_lsb": 799,
+    "l2a_rms_db_rel_engine_peak": -53.37,
+    "l2a_rms_lsb": 269.216,
+    "model_state_peak_lsb": 5174757,
+    "spectral_corr": 0.9514,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "rainy/unit1.lane0": {
+    "l1_C_max": 24057,
+    "l1_C_rms": 2491.744,
+    "l2a_max_abs_lsb": 626,
+    "l2a_rms_db_rel_engine_peak": -81.07,
+    "l2a_rms_lsb": 87.226,
+    "model_state_peak_lsb": 8011345,
+    "spectral_corr": 0.9944,
+    "stimulated": true,
+    "subtypes": [
+     1
+    ]
+   },
+   "t9/unit2.lane0": {
+    "l1_C_max": 511,
+    "l1_C_rms": 130.834,
+    "l2a_max_abs_lsb": 517,
+    "l2a_rms_db_rel_engine_peak": -81.64,
+    "l2a_rms_lsb": 161.492,
+    "model_state_peak_lsb": 8879424,
+    "spectral_corr": 0.996,
+    "stimulated": true,
+    "subtypes": [
+     2
+    ]
+   }
+  }
+ },
+ "before_model": "model/voice/filter_lp12/filter_lp12_model.py @ c6508f2b474e9c8aeb688370b4414e888c1eb447",
+ "issue": "#102 (SXT-037 follow-up; findings F-038-3, F-038-4 from reports/SXT-038/EVIDENCE.md)",
+ "note": "L2a rows exist only for the five bundles whose audio taps (units.bin) are committed; badnews-cut-hi, badnews-cut-lo, t9-substd carry coeffs.jsonl only, so their L2a legs are NOT_RUN here (their L1 rows are in l1-*.json).",
+ "proposed_budgets": {
+  "l1_C_max_lsb": 16,
+  "l1_C_rms_lsb": 4,
+  "l2_max_abs_lsb": 4096,
+  "l2_rms_lsb": 256,
+  "l2_spectral_corr_min": 0.999
+ },
+ "schema_version": 1
+}

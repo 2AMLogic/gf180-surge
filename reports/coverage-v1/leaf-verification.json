@@ -114,13 +114,13 @@
       "evidence": [
         {
           "path": "reports/sxt-037/EVIDENCE.md",
-          "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
+          "sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff"
         }
       ],
       "fixture_verified_paths": [],
       "issue": 71,
       "landed": true,
-      "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); RTL-vs-model EXACT on 8 fixtures incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 517-802 LSB Q10.21, rms 87-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
+      "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); amended by #102: findings F-038-3 (Coeff_SVF F1 at the pinned coefficient-maker rate dsamplerate_os=96000, not 48000) and F-038-4 (Driven clipscale on sst-filters' exact pow(10,0.05x), not the Surge dB table) CORRECTED in the model after the engine's own tapped coefficient plane confirmed both (Standard F1 L1 935,362 -> 38 LSB; Driven clipgain role 341-4,801 -> <=33 LSB); RTL-vs-model EXACT re-run on all 8 fixtures (3 coeff-only bundles with substituted input) incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 414-802 LSB Q10.21, rms 67-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; post-#102 L2a for badnews-cut-hi/cut-lo/t9-substd STALE/NOT_RUN pending an oracle-host re-render; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
       "overlap_paths_not_fixture_verified": [
         "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
         "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",

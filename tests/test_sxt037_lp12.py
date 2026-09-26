@@ -80,9 +80,26 @@ def test_standard_svf_coeffs_and_gain_decrease_with_reso():
     cm2.make_coeffs(vm.qint(0.0), vm.qint(1.0))
     g_hireso = cm2.C[3]
     assert g_hireso < g_loreso                     # 1 - 0.65*sqrt(reso)
-    # F1 = 2 sin(pi * min(0.11, 440/96000)) at 0 st
-    f1 = 2 * math.sin(math.pi * min(0.11, 440.0 / 96000.0))
+    # F1 = 2 sin(pi * min(0.11, f * 0.5 / 96000)) at 0 st: the coefficient
+    # maker runs at dsamplerate_os = 96000 (SurgeVoice::sampleRateReset();
+    # F-038-3 / #102 -- the pre-#102 model used 48000, i.e. 440/96000 here)
+    f1 = 2 * math.sin(math.pi * min(0.11, 440.0 * 0.5 / 96000.0))
     assert abs(cm.C[0] / Q - f1) < 1e-6
+    assert abs(cm.C[0] / Q - 2 * math.sin(math.pi * 440.0 / 96000.0)) > 1e-3
+
+
+def test_driven_clipscale_is_exact_pow_not_db_table():
+    # sst-filters clipscale calls its own db_to_linear = pow(10, 0.05 x)
+    # (F-038-4 / #102), not Surge's interpolated dB table.  At 37.5 st the
+    # dB argument (20.625 dB) sits mid-way between table entries, where
+    # the table's linear interpolation error is largest.
+    freq = 37.5
+    cm = fp.LP12CoeffMaker(fp.SUBTYPE_DRIVEN)
+    cm.make_coeffs(vm.qint(freq), 0)
+    exact = vm.qint((1 / 64.0) * 10 ** (0.05 * freq * 0.55))
+    table = vm.qdiv(vm.db_to_linear(vm.qint(freq * 0.55)), vm.qint(64.0))
+    assert abs(cm.C[7] - exact) <= 1
+    assert abs(cm.C[7] - table) > 100
 
 
 def test_bound_freq_clamp_is_frozen():
