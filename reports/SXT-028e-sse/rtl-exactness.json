@@ -1,0 +1,602 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028e-sse",
+  "sim": "iverilog",
+  "sim_version": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "model_revision": "dbf12b86b8c8a5d69678976d3c542ae65b97e42b810eec7d8c22091a623e0184",
+  "tb": "rtl/effects/type-distortion-sse/tb_distortion_sse.sv",
+  "ws_rom": "rtl/effects/type-distortion-sse/ws_sse_q29.hex",
+  "cases": [
+    {
+      "case": "prs-dual-128",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 34,
+        "checkpoints": 18,
+        "fields": 3384
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0,
+        0
+      ],
+      "note": "two instances, models 7 and 6, independent state",
+      "first_failures": []
+    },
+    {
+      "case": "digital-reset24-48",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "model 4: skipDriveNorm + the /64 drive interpolation, reset mid-render so the drive ramp restarts",
+      "first_failures": []
+    },
+    {
+      "case": "sine-48",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "model 3: the round-to-nearest SSE table index convention",
+      "first_failures": []
+    },
+    {
+      "case": "prs-reset64-128",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 34,
+        "checkpoints": 18,
+        "fields": 3384
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0,
+        0
+      ],
+      "note": "core reset mid-render",
+      "first_failures": []
+    },
+    {
+      "case": "model-3-sine",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "FX model 3 SINUS_SSE2<false>: table gather with the round-to-nearest SSE index and DO_FOLD == false edge clip",
+      "first_failures": []
+    },
+    {
+      "case": "model-4-digital",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "FX model 4 DIGI_SSE2: skipDriveNorm, the internal rcp(drive) and the staircase quantizer",
+      "first_failures": []
+    },
+    {
+      "case": "model-5-ojd",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "FX model 5 OJD: all five disjoint breakpoint branches, negative feedback",
+      "first_failures": []
+    },
+    {
+      "case": "model-6-fwrectify",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "FX model 6 ADAA_FULL_WAVE: the two ADAA registers and the `init` first-sample mask",
+      "first_failures": []
+    },
+    {
+      "case": "model-7-fuzzsoft",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "FX model 7 TableEval<FuzzTable<1>,1024,TANH>: TANH Q40.23 rational, the 1025-word LUT and dcBlock",
+      "first_failures": []
+    },
+    {
+      "case": "corners-deact-both",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "both high-cuts deactivated (LP stages bypassed), drive 24 dB, feedback -0.9",
+      "first_failures": []
+    },
+    {
+      "case": "corners-extend-hot",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "extended drive and both extended EQ gains, one high-cut deactivated, zero feedback",
+      "first_failures": []
+    },
+    {
+      "case": "corners-lowdrive-sat",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        6144
+      ],
+      "note": "DD-4 corner: extended drive -120 dB quantizes to ZERO in the Q13.18 ramp word, so the 1/dNow pre-scale takes the saturated-reciprocal path",
+      "first_failures": []
+    },
+    {
+      "case": "corners-digital-hifb",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 3072,
+        "taps": 7,
+        "checkpoints": 4,
+        "fields": 752
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "model 4 with feedback 0.95 \u2014 the loop gain the `skipDriveNorm` exception exists to protect",
+      "first_failures": []
+    },
+    {
+      "case": "ringout-tail-1663",
+      "blocks": 1663,
+      "ninst": 1,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 102336,
+        "taps": 202,
+        "checkpoints": 102,
+        "fields": 19176
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0
+      ],
+      "note": "declared tail span (1600-block ringout, model 7)",
+      "first_failures": []
+    },
+    {
+      "case": "reset-mid-tail-160-320",
+      "blocks": 320,
+      "ninst": 2,
+      "exact": true,
+      "revision_pin": {
+        "ok": true,
+        "rtl_trace": "dbf12b86",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 32768,
+        "taps": 68,
+        "checkpoints": 36,
+        "fields": 6768
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": [
+        0,
+        0
+      ],
+      "note": "fx-rebuild/panic reset 96 blocks into the ringout tail",
+      "first_failures": []
+    }
+  ],
+  "mutant_controls": [
+    {
+      "case": "mutant-wsshared",
+      "bed": "dual",
+      "targets": "per-instance QuadWaveshaperState pooled onto instance 0",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 81,
+        "taps": 1,
+        "checkpoints": 1,
+        "fields": 188
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 wsR00: model=-1613598307747 rtl=-8796093022208",
+        "b0 i0 wsR01: model=218969694110 rtl=8796093022208",
+        "b0 i0 wsR10: model=-1610669802063 rtl=-4398046511104",
+        "b0 i0 wsR11: model=225107721308 rtl=4398046511104",
+        "b0 i1 out[0]: model=649 rtl=453"
+      ]
+    },
+    {
+      "case": "mutant-nodcoffset",
+      "bed": "dual",
+      "targets": "the zero-input DC-offset subtraction dropped",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 21,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[0]: model=8 rtl=9",
+        "b0 i0 out[1]: model=460 rtl=484",
+        "b0 i0 out[2]: model=4658 rtl=4551",
+        "b0 i0 out[3]: model=16918 rtl=16396",
+        "b0 i0 out[4]: model=32740 rtl=32948"
+      ]
+    },
+    {
+      "case": "mutant-dcprobe-live",
+      "bed": "dual",
+      "targets": "DC probe run on the LIVE wsState instead of a throw-away",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 64,
+        "taps": 1,
+        "checkpoints": 1,
+        "fields": 1
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[13]: model=33629 rtl=33628",
+        "b0 i0 out[15]: model=2280 rtl=2281",
+        "b0 i0 out[16]: model=8017 rtl=8018",
+        "b0 i0 out[17]: model=18720 rtl=18722",
+        "b0 i0 out[18]: model=9423 rtl=9425"
+      ]
+    },
+    {
+      "case": "mutant-order",
+      "bed": "dual",
+      "targets": "band1/band2 swapped (post-EQ applied pre-shaper)",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 21,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[0]: model=8 rtl=3",
+        "b0 i0 out[1]: model=460 rtl=330",
+        "b0 i0 out[2]: model=4658 rtl=3707",
+        "b0 i0 out[3]: model=16918 rtl=14079",
+        "b0 i0 out[4]: model=32740 rtl=28720"
+      ]
+    },
+    {
+      "case": "mutant-dcblockfac",
+      "bed": "dual",
+      "targets": "dcBlock pole 0.9999 replaced by 1.0",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 23,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[1]: model=460 rtl=461",
+        "b0 i0 out[3]: model=16918 rtl=16923",
+        "b0 i0 out[4]: model=32740 rtl=32754",
+        "b0 i0 out[5]: model=43043 rtl=43064",
+        "b0 i0 out[6]: model=43142 rtl=43169"
+      ]
+    },
+    {
+      "case": "mutant-adaainit",
+      "bed": "dual",
+      "targets": "ADAA `init` first-sample mask forced false",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 85,
+        "taps": 1,
+        "checkpoints": 1,
+        "fields": 188
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i1 out[0]: model=649 rtl=417",
+        "b0 i1 out[1]: model=15460 rtl=12052",
+        "b0 i1 out[2]: model=66763 rtl=59465",
+        "b0 i1 out[3]: model=101441 rtl=100281",
+        "b0 i1 out[4]: model=88931 rtl=90846"
+      ]
+    },
+    {
+      "case": "mutant-drivestep128",
+      "bed": "digital",
+      "targets": "dD = (dE - dS)/128 instead of the pinned /64",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 22,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[1]: model=206 rtl=202",
+        "b0 i0 out[2]: model=1128 rtl=1092",
+        "b0 i0 out[3]: model=-224 rtl=-447",
+        "b0 i0 out[4]: model=-10208 rtl=-10812",
+        "b0 i0 out[5]: model=-21263 rtl=-22049"
+      ]
+    },
+    {
+      "case": "mutant-diginorm",
+      "bed": "digital",
+      "targets": "`skipDriveNorm` removed: DIGITAL double-divided by drive",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 23,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[2]: model=1128 rtl=1152",
+        "b0 i0 out[3]: model=-224 rtl=351",
+        "b0 i0 out[4]: model=-10208 rtl=-6842",
+        "b0 i0 out[5]: model=-21263 rtl=-13955",
+        "b0 i0 out[6]: model=-18498 rtl=-12058"
+      ]
+    },
+    {
+      "case": "mutant-cvttrunc",
+      "bed": "sine",
+      "targets": "SSE round-to-nearest-even int conversion replaced by truncation (the lookup_waveshape convention)",
+      "blocks": 48,
+      "ninst": 1,
+      "exact": false,
+      "mismatches": 21,
+      "checked": {
+        "outputs": 50,
+        "taps": 0,
+        "checkpoints": 0,
+        "fields": 0
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (mutant FAILS the exactness check)",
+      "first_failures": [
+        "b0 i0 out[5]: model=-21409 rtl=-21408",
+        "b0 i0 out[10]: model=-4418 rtl=-4417",
+        "b0 i0 out[11]: model=-49233 rtl=-49232",
+        "b0 i0 out[12]: model=-72672 rtl=-72671",
+        "b0 i0 out[13]: model=-68987 rtl=-68986"
+      ]
+    },
+    {
+      "case": "stale-revision-pin",
+      "blocks": 128,
+      "ninst": 2,
+      "exact": false,
+      "revision_pin": {
+        "ok": false,
+        "rtl_trace": "deadbeef",
+        "expected": "dbf12b86"
+      },
+      "checked": {
+        "outputs": 16384,
+        "taps": 34,
+        "checkpoints": 18,
+        "fields": 3384
+      },
+      "mismatches": 0,
+      "model_side_saturation_events": null,
+      "note": "harness pinned to a stale model revision",
+      "first_failures": [],
+      "ok": true,
+      "targets": "a stale/stub frozen-model revision reported as PASS",
+      "verdict": "CONTROL-OK (stale revision pin REFUSES to report PASS)"
+    }
+  ],
+  "status": "PASS"
+}

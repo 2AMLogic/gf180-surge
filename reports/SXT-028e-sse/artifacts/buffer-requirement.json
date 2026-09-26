@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028e-sse",
+  "effect": "Distortion, SSE quad-waveshaper branch (FX models 3..7)",
+  "model_revision": "dbf12b86b8c8a5d69678976d3c542ae65b97e42b810eec7d8c22091a623e0184",
+  "blocks_measured": 64,
+  "external_memory": {
+    "per_instance_state_bytes": 0,
+    "reads_per_sample": 0.0,
+    "writes_per_sample": 0.0,
+    "bytes_per_second_at_48k": 0.0,
+    "delay_line_class_buffers": 0,
+    "note": "The SSE branch adds no external-memory residency or traffic: `QuadWaveshaperState` is 4 SIMD registers, not a delay line. The rule 'long buffers external-WRITABLE, never flash' stays vacuously satisfied."
+  },
+  "on_chip_state": {
+    "q24_43_words": 198,
+    "q10_21_or_q13_18_words": 6,
+    "init_mask_bits": 2,
+    "bytes_per_instance": 1609,
+    "halfband_words_each": 72,
+    "sxt028e_chain_q24_43_words": 190,
+    "sse_branch_delta_q24_43_words": 8,
+    "sse_branch_delta_bytes": 65,
+    "breakdown": {
+      "peak_eq_biquads": "2 x (5 lag + 5 target + 4 TDF2) Q24.43",
+      "oversampled_lp_biquads": "2 x (5 coeff + 4 TDF2) Q24.43",
+      "halfband_decimators": "2 x (2 ch x 2 branch x 3 stages x 6 taps) Q24.43",
+      "feedback_registers": "2 x Q10.21 (DistortionEffect::L / R)",
+      "gain_ramps": "2 x (cur, target) Q13.18",
+      "quad_waveshaper_registers": "4 registers x 2 modelled lanes Q24.43 (sst::waveshapers::n_waveshaper_registers)",
+      "quad_waveshaper_init_mask": "2 bits (one per modelled lane)"
+    }
+  },
+  "quad_waveshaper_state": {
+    "n_waveshaper_registers": 4,
+    "modelled_lanes": 2,
+    "lanes_declared_out_of_scope": 2,
+    "registers_actually_touched_by_reachable_shapers": [
+      0,
+      1
+    ],
+    "per_model_register_use": {
+      "3": [],
+      "4": [],
+      "5": [],
+      "6": [
+        0,
+        1
+      ],
+      "7": [
+        0,
+        1
+      ]
+    },
+    "per_model_reads_init_mask": {
+      "3": false,
+      "4": false,
+      "5": false,
+      "6": true,
+      "7": false
+    },
+    "bounded": true,
+    "bound_statement": "The per-instance quad-waveshaper state is BOUNDED and small: 8 Q24.43 words + a 2-bit mask = 65 B per instance, independent of block size, sample rate and FX model. Only registers 0 and 1 are touched by any of the five reachable shapers, so a shared instance schedule needs 2 registers x 2 lanes of live context per Distortion slot. The issue's stop/escalate condition (state/cost cannot be bounded) is therefore NOT triggered."
+  },
+  "frozen_rom": {
+    "waveshaper_rows": 2,
+    "sine_row_words": 1024,
+    "fuzz_row_words": 1025,
+    "total_words": 2049,
+    "bytes": 8196,
+    "shared": true,
+    "waveshaper_table_digest": "4dd3ed074f5f3fcd1c2b445ef659f2049d2bb5922d7a4d1a0f4f84e895445eec",
+    "shapers_needing_no_table": [
+      "DIGI_SSE2",
+      "OJD",
+      "ADAA_FULL_WAVE"
+    ],
+    "note": "ROM is shared read-only across instances and is a build product of model/effects/type-distortion-sse/sse_tables.py (DR-0013 clause 2); the eleven designed shaper scalars are streamed to the RTL, not duplicated there (DR-0002 clause 1)."
+  },
+  "compute": {
+    "oversampling_factor": 4,
+    "shaper_evaluations_per_sample_per_channel": 4,
+    "reciprocals_per_oversample": {
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 1,
+      "7": 1
+    },
+    "reciprocal_note": "one 1/dNow pre-scale per oversampled step for models 3/5/6/7 (skipped for 4), plus one shaper-internal reciprocal for 4 (rcp(drive)), 6 (rcp(dx)) and 7 (rcp(tanh denominator)). The engine uses the SSE rcp_ps ESTIMATE; the frozen model uses an exact reciprocal (quad_shapers.py DD-2).",
+    "dc_offset_probes_per_block_per_instance": 1,
+    "oversampled_biquad_samples_per_block": 256,
+    "halfband_allpass_stages_per_block": 2304
+  },
+  "declared_range_saturation": {
+    "what": "quad_shapers.py DD-4: the Q24.43 drive-normalized shaper input saturates for drive below ~1.2e-4",
+    "events_per_model_over_measured_render": {
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0
+    },
+    "note": "measured, not assumed; zero here means the committed render never reached the declared saturation corner. The dedicated corner case `corners-lowdrive-sat` in rtl-exactness.json does reach it, and the RTL still matches the model exactly."
+  },
+  "cost_fit_verdict": "[PENDING-SXT-016]",
+  "claim_scope": "measured demand only; no cost, area, timing, power, synthesis or fit claim is made here"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028e-sse",
+  "what": "FuzzTable<1> (FX model 7, wst_fuzzsoft) 1025-entry LUT: re-derivation vs a build of the pinned header's own expression",
+  "entries": 1025,
+  "decision_record": "decision-records/0013-distortion-sse-quad-waveshaper-constants.md clause 2",
+  "table_digest": "4dd3ed074f5f3fcd1c2b445ef659f2049d2bb5922d7a4d1a0f4f84e895445eec",
+  "status": "MATCH",
+  "toolchain": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "stdlib_validated": "libstdc++ (host toolchain)",
+  "libcxx_equivalence": "UNVERIFIED-BY-BUILD (derived by reading libc++'s generate_canonical; see sse_tables.py). The pinned oracle host is arm64 macOS / libc++ \u2014 re-running this tool there is a named follow-up.",
+  "cpp_entries": 1025,
+  "mismatches": 0,
+  "first_mismatch_index": null,
+  "probe_source_committed": false,
+  "probe_source_note": "the C++ probe transcribes GPL-3.0-or-later header expressions and is written to a temporary directory only; it is never committed here"
+}
