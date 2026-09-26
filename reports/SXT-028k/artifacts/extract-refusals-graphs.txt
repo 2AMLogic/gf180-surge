@@ -1,0 +1,8 @@
+SXT-028k extraction transcript - mode=graphs
+engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
+written: 5  refused: 0
+WROTE 3x101 -> model/effects/fx_inputs/aw-4-3x101.json
+WROTE acoustic-snare -> model/effects/fx_inputs/aw-4-acoustic-snare.json
+WROTE bass-guitar-5 -> model/effects/fx_inputs/aw-4-bass-guitar-5.json
+WROTE dad -> model/effects/fx_inputs/aw-4-dad.json
+WROTE moogy-reese -> model/effects/fx_inputs/aw-4-moogy-reese.json

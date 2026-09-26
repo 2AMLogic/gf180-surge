@@ -15,6 +15,10 @@ rtl/effects/type-distortion/tb_distortion_*.sv
 # via tools/compare_rtl_model_distortion_sse.py, verdicts in
 # reports/SXT-028e-sse/rtl-exactness.json)
 rtl/effects/type-distortion-sse/tb_distortion_sse_*.sv
+# SXT-028k RTL run workdirs (stimulus/config hex, compiled sim, traces;
+# regenerable via tools/compare_rtl_model_aw4.py, verdicts in
+# reports/SXT-028k/rtl-exactness.json with the frozen-model revision pinned)
+out/aw-4/
 # Python bytecode
 __pycache__/
 *.pyc

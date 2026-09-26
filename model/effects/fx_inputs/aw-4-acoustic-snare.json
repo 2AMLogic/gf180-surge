@@ -1,0 +1,105 @@
+{
+ "airwindows_name": "Logical",
+ "airwindows_streamed_id": 4,
+ "applicability_rule": "complete-wet renders are REFUSED unless every active FX class in the chain is landed and passing AND no modulation route reaches any FX parameter in the chain; this leaf's own evidence is slot-boundary only",
+ "carrier_role": "issue-named carrier; ratioselector 1 (two stages)",
+ "census_blob_sha1": "c840ab363c2e7238e3de499255d2909005aac825",
+ "chain": [
+  {
+   "airwindows_streamed_id": 4,
+   "class_key": "AW-4-Logical",
+   "routing": "ains2",
+   "slot_index": 1,
+   "type": 14,
+   "type_name": "Airwindows"
+  },
+  {
+   "class_key": "Reverb2",
+   "routing": "send1",
+   "slot_index": 4,
+   "type": 11,
+   "type_name": "Reverb 2"
+  },
+  {
+   "class_key": "Distortion",
+   "routing": "global1",
+   "slot_index": 6,
+   "type": 5,
+   "type_name": "Distortion"
+  },
+  {
+   "airwindows_streamed_id": 35,
+   "class_key": "AW-35-unknown",
+   "routing": "global2",
+   "slot_index": 7,
+   "type": 14,
+   "type_name": "Airwindows"
+  }
+ ],
+ "claim_scope": "data export only; no support, fidelity or musical-quality claim",
+ "complete_wet_render_possible": false,
+ "concurrent_logical_instances": 1,
+ "extraction_mode": "graphs",
+ "extraction_status": "COMPLETE-FOR-MODEL-PENDING-ORACLE-CROSSCHECK",
+ "fx_parameter_modulation": {
+  "on_other_fx_slots": [],
+  "on_this_leafs_slots": [],
+  "policy": "TWO levels, both live. (1) a route into THIS leaf's own Logical slot parameters REFUSES the record - the frozen model has no representation for a moving FX parameter. (2) a route into any OTHER FX slot is RECORDED and independently sets complete_wet_render_possible false, because the complete wet sound of the preset then depends on a slot nothing here models. Level 2 is deliberately weaker than the sibling aw-49 extractor's blanket 'any FX route refuses' rule; the strict verdict is recorded above so a reviewer can see exactly what the stricter rule would have done, and nothing that the strict rule blocks is claimed here - this leaf's evidence is slot-boundary only in every case.",
+  "strict_any_fx_route_screen": "CLEAN"
+ },
+ "landed_classes_basis": {
+  "landed_fx_classes": [
+   "AW-49-Galactic",
+   "Chorus",
+   "Delay",
+   "Distortion",
+   "EQ",
+   "Reverb1"
+  ],
+  "note": "derived at extraction time, not hand-listed; a class whose leaf is not marked landed in the committed table counts as unlanded even if its PR has merged",
+  "source": "reports/coverage-v1/leaf-verification.json (leaves[*].landed)"
+ },
+ "leaf": "SXT-028k",
+ "logical_slots": [
+  {
+   "derived": {
+    "attackspeed": 3.2902785635514316,
+    "inputgain": 3.235936498237826,
+    "n_active_stages": 2,
+    "outputgain": 2.7632872854966206,
+    "ratio_fraction": 0.7242160479707795,
+    "ratioselector": 1,
+    "wet": 1.0
+   },
+   "params": {
+    "A_threshold": 0.245,
+    "B_ratio": 0.654286,
+    "C_attack": 0.288449,
+    "D_makeup": 0.720713,
+    "E_mix": 1.0
+   },
+   "routing": "ains2",
+   "slot_index": 1,
+   "tail_window_blocks": 67,
+   "tail_window_samples": 2116
+  }
+ ],
+ "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+ "preset_path": "resources/data/patches_3rdparty/Cybersoda/Drums/Acoustic Snare.fxp",
+ "schema_version": 1,
+ "screens": {
+  "algorithm_identity": "p[0] == 4 on every slot recorded here",
+  "census_blob_reverified": true,
+  "census_vs_graphs_sha_drift": 0,
+  "fx_parameter_modulation_on_other_slots": 0,
+  "fx_parameter_modulation_on_own_slots": 0,
+  "unmappable_fx_modulation_destinations": 0
+ },
+ "slug": "acoustic-snare",
+ "source": "corpus/normalized/graphs.jsonl (SXT-011 pinned-loader normalized export; engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71)",
+ "unlanded_classes_in_chain": [
+  "AW-35-unknown",
+  "Reverb2"
+ ],
+ "why_status": "graphs.jsonl carries all five Logical parameters as plain normalized floats and Logical has no deactivated / extend_range companion flags, so the frozen model accepts this record as-is. The AUTHORITATIVE surgepy post-load readback and its cross-check are still BLOCKED on an oracle host; no reference-agreement number may be derived from this file."
+}
