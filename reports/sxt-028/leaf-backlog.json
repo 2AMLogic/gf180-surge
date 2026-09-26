@@ -19,7 +19,7 @@
    "recovery_order": 2,
    "spec": "reports/sxt-028/leaves/SXT-028b.json",
    "strict_fx_complete": 175,
-   "title": "SXT-028b: Conditioner effect leaf (gate/compressor/LFO)"
+   "title": "SXT-028b: Conditioner effect leaf (EQ/M-S width/look-ahead limiter)"
   },
   {
    "carriers_b4_scope": 331,

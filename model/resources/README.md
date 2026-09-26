@@ -86,6 +86,18 @@ Engine facts read (not copied) from the pinned tree: `MAX_UNISON=16` and
 - FX classes without a verified structure are counted at a conservative
   placeholder and flagged (`class_state_unverified`); they can never silently
   look cheap.
+- A `no_long_buffer` class is promoted out of that placeholder only by its own
+  SXT-028 leaf, via `_NO_LONG_BUFFER_MEASURED` in `fx_classes.py`: the entry
+  carries the measured per-instance bytes, the artifact field they were read
+  from, and the frozen model revision they were measured against
+  (`fx_class_spec(...)["pinned_reference"]`), and the class drops
+  `class_state_unverified`. Promoted so far: **Conditioner**, 2,444 B from
+  SXT-028b (`reports/SXT-028b/artifacts/buffer-requirement.json`,
+  `on_chip_state.bytes`); drift between the two is a test failure
+  (`tests/test_sxt015_fx_classes.py`). Every other class in the tier keeps the
+  8,192 B placeholder. Promotion changes **state accounting only** — the
+  per-frame cycle figure stays the shared `cyc_fxgeneric_frame` placeholder,
+  and nothing here is a fidelity, RTL, or hardware claim.
 
 ## Reproduce
 

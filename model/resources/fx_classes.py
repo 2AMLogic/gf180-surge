@@ -7,7 +7,12 @@ SXT-011 graphs (`fx[].tn`). Three verification tiers:
                   sources (facts read from the GPL tree; no code copied);
   no_long_buffer  verified by structure to hold no writable buffer above the
                   external threshold; exact state sizing is deferred to the
-                  SXT-028 leaf issues (small placeholder, on-chip);
+                  SXT-028 leaf issues (small placeholder, on-chip). A class
+                  whose leaf has landed is promoted in place via
+                  `_NO_LONG_BUFFER_MEASURED`: it keeps the tier and the
+                  zero external traffic, but carries the leaf's measured
+                  per-instance byte count instead of the placeholder and
+                  drops the `class_state_unverified` flag;
   unverified      structure not yet pinned: conservative 1 MiB placeholder,
                   flagged `class_state_unverified`, so an unknown class can
                   never silently look cheap.
@@ -86,7 +91,10 @@ _NO_LONG_BUFFER = {
     # tn -> one-line structural justification (file read in the pinned tree)
     "EQ": "ParametricEQ3BandEffect: 3 biquads, no delay line",
     "Graphic EQ": "GraphicEQ11BandEffect: biquad bank, no delay line",
-    "Conditioner": "ConditionerEffect: gain/lipol state, no delay line",
+    "Conditioner": "ConditionerEffect: 128-sample stereo look-ahead line "
+    "delayed[2][128] (2,048 B) + 128 squared-peak leaves lamax[0..127] + "
+    "limiter envelope, 3 lagged biquads and 4 lipols; the only writable "
+    "line is the look-ahead ring and it is far below the external threshold",
     "Ring Mod": "RingModulatorEffect: gain/osc state, no delay line",
     "Mid-Side Tool": "MSToolEffect: matrix/eq state, no delay line",
     "Waveshaper": "WaveShaperEffect: waveshaper registers, no delay line",
@@ -98,6 +106,27 @@ _NO_LONG_BUFFER = {
     "Audio In": "AudioInputEffect: pass-through routing state",
     "Ensemble": "BBDEnsembleEffect.h:98-101: 16 BBDDelayLine<128..1024> stage "
     "lines (~7.7k floats total) + BBD nonlin state",
+}
+
+# Shared conservative placeholder for every `no_long_buffer` class whose exact
+# per-instance state has not been measured by its SXT-028 leaf yet.
+_NO_LONG_BUFFER_PLACEHOLDER_BYTES = 8192
+
+# tn -> measured per-instance on-chip state, promoted out of the shared
+# placeholder above by a landed SXT-028 leaf. Only classes listed here deviate
+# from `_NO_LONG_BUFFER_PLACEHOLDER_BYTES`; every other `no_long_buffer` class
+# keeps the placeholder and stays flagged `class_state_unverified`. Each entry
+# names the artifact the number was read from and pins the frozen model
+# revision it was measured against, so drift is detectable (SXT-015 test).
+_NO_LONG_BUFFER_MEASURED = {
+    "Conditioner": {
+        "leaf": "SXT-028b",
+        "artifact": "reports/SXT-028b/artifacts/buffer-requirement.json",
+        "field": "on_chip_state.bytes",
+        "state_bytes": 2444,
+        "model_revision":
+            "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+    },
 }
 
 _PINNED_CYCLE_KEY = {
@@ -149,13 +178,33 @@ def fx_class_spec(tn: str) -> Dict:
                 "cycle_key": _PINNED_CYCLE_KEY[key],
                 "flags": [], "ref": _PINNED_REFS[key]}
     elif tn in _NO_LONG_BUFFER:
-        sb = 8192
+        measured = _NO_LONG_BUFFER_MEASURED.get(tn)
+        if measured is None:
+            sb = _NO_LONG_BUFFER_PLACEHOLDER_BYTES
+            flags = ["class_state_unverified"]
+            ref = ("no long buffer verified: " + _NO_LONG_BUFFER[tn] +
+                   "; exact state sizing ESTIMATE-REF deferred to SXT-028")
+            pinned_reference = None
+        else:
+            sb = measured["state_bytes"]
+            flags = []
+            pinned_reference = {
+                "leaf": measured["leaf"],
+                "artifact": measured["artifact"],
+                "field": measured["field"],
+                "model_revision": measured["model_revision"],
+            }
+            ref = ("no long buffer verified: " + _NO_LONG_BUFFER[tn] +
+                   "; state measured by %s (%s %s = %d B), frozen model "
+                   "revision %s" % (measured["leaf"], measured["artifact"],
+                                    measured["field"], sb,
+                                    measured["model_revision"]))
         spec = {"class": tn, "tier": "no_long_buffer", "state_bytes": sb,
                 "external": sb > thresh, "ext_reads": 0, "ext_writes": 0,
                 "cycle_key": "cyc_fxgeneric_frame",
-                "flags": ["class_state_unverified"],
-                "ref": "no long buffer verified: " + _NO_LONG_BUFFER[tn] +
-                "; exact state sizing ESTIMATE-REF deferred to SXT-028"}
+                "flags": flags,
+                "pinned_reference": pinned_reference,
+                "ref": ref}
     elif tn in _UNVERIFIED:
         sb = REG.unverified_fx_state_bytes
         spec = {"class": tn, "tier": "unverified", "state_bytes": sb,
@@ -174,6 +223,7 @@ def fx_class_spec(tn: str) -> Dict:
                 "flags": ["fx_class_unverified", "unknown_engine_class"],
                 "ref": "ESTIMATE-REF: display name not in the SXT-015 class "
                 "table; counted at the conservative placeholder and flagged"}
+    spec.setdefault("pinned_reference", None)
     spec["ext_bytes_per_frame"] = (spec["ext_reads"] + spec["ext_writes"]) * word
     _SPEC_CACHE[tn] = spec
     return spec
