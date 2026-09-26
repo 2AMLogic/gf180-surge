@@ -1,0 +1,25 @@
+NC-A generic substitute (pass-through + fixed gain occupant on send bus 4): CONTROL-OK (generic substitute FAILS bit-exact reproduction of the declared per-instance occupant; labeled ADAPTED and refused from original-preset coverage)
+    - main-bus output bit-exactness: CONTROL-OK
+    - per-instance state: CONTROL-OK
+NC-B dropped tail (render truncated to 2/8 declared blocks; plus a live RTL stage-skip-on-silence mutant): CONTROL-OK (truncated render FAILS the declared-tail-span coverage and checkpoint checks, the dropped region demonstrably contained real audio, and the live RTL tail-killing mutant FAILS the tail case)
+    - declared tail span carries audio: CONTROL-OK
+    - tail-span coverage check: CONTROL-OK
+    - final per-instance checkpoint: CONTROL-OK
+    - live RTL tail-killing mutant: CONTROL-OK
+NC-C wrong order (send3/send4 slot-content permutation): CONTROL-OK (the order-sensitive check flags the permutation; the identity bound and the checkpoint-only identical-coefficient case are recorded)
+    - model permutation (distinct occupants, distinct gain planes): CONTROL-OK
+    - model permutation (SAME FX class, different parameter values): CONTROL-OK
+    - live RTL occupant-permutation mutant: CONTROL-OK
+    - live RTL occupant-permutation mutant (identical-coefficient case): CONTROL-OK
+NC-D shared state (both send buses pooled into one history): CONTROL-OK (pooled-state mutants FAIL the dual-instance-independence check, model-side and in live RTL, with distinct AND same-class occupants)
+    - model pooled-history mutant (distinct occupants): CONTROL-OK
+    - model dual-instance checkpoint: CONTROL-OK
+    - model pooled-history mutant (SAME-class occupants): CONTROL-OK
+    - live RTL shared-state mutant: CONTROL-OK
+    - live RTL shared-state mutant (SAME-class case): CONTROL-OK
+NC-E stale stub (frozen-revision pin): CONTROL-OK (a stale pin is REFUSED -- the comparator cannot report PASS)
+    - revision pin function: CONTROL-OK
+    - live comparator refusal: CONTROL-OK
+NC-F gain placement (send/return gains applied in the wrong places) [ADDITIONAL -- not one of the five controls issue #64 names]: CONTROL-OK (misplaced routing gains FAIL exact equality, model-side and in live RTL)
+    - model gain-placement swap (send bus 3): CONTROL-OK
+    - live RTL gain-placement mutant: CONTROL-OK

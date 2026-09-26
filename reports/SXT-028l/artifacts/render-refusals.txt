@@ -1,0 +1,30 @@
+SXT-028l pinned-engine fixture renders (tools/render_fx_fixtures.py pattern)
+status: NOT_RUN
+
+The issue's Fixtures plan calls for NEW reference fixtures: no SXT-014
+ablation carrier exists for this routing form, so original + per-slot bypass
++ all-off dry buses (tails included) would have to be rendered from the
+pinned engine under SXT-012 policies.
+
+TWO independent gates apply to this leaf, and both are open:
+  1. the pinned oracle build (surgepy) -- see below;
+  2. the SXT-011 send-level exposure gap for buses 3/4, which needs an
+     SXT-017 data-gap policy decision (#12) before ANY fixture for this
+     routing form can be frozen, oracle or no oracle
+     (reports/SXT-028l/artifacts/send-level-gap.json).
+
+No pinned-engine checkout and no importable surgepy exist in the environment
+this leaf was built in (measured: reports/SXT-028l/artifacts/oracle-status.json).
+No wet/dry fixture bus was rendered, so there are no per-carrier refusal rows
+yet. NOT_RUN is not a pass.
+
+Consequence: every model-vs-pinned-engine leg of this leaf is NOT_RUN. The
+RTL-vs-frozen-model exactness claim is unaffected and was run in full
+(reports/SXT-028l/rtl-exactness.json), as were all the negative controls
+(reports/SXT-028l/negative-controls/negative-controls.json).
+
+Re-run on an oracle host:
+  python3 tools/rf_send34_oracle_status.py       # flips the oracle half
+  python3 tools/extract_rf_send34_inputs.py      # live per-slot params
+  # then, ONLY after #12 decides the send-level data-gap policy, render the
+  # fixtures and run the reference comparison

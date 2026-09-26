@@ -1,0 +1,137 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "per-slot algorithm parameter extraction and any wet-audio render require the pinned oracle (surgepy); additionally, fixture freezing for THIS routing form is gated on the SXT-017 send-level data-gap decision (#12). This leaf's own routing/scheduling claims depend on neither -- see oracle_extraction and send_level_gap",
+    "routing_metadata_verified": true
+  },
+  "base_half_context": {
+    "base_half_slots_active": 1,
+    "note": "send1/send2 are the BASE half of the same send rack. They are not upstream of this leaf (the buses are parallel) -- they are co-tenants of the same main bus, so their returns are part of this leaf's `main_l`/`main_r` stimulus. A sibling rf-send12-class leaf's scope; no such leaf exists in this repository yet.",
+    "send1_occupied": false,
+    "send1_type_name": "Off",
+    "send2_occupied": true,
+    "send2_type_name": "Distortion"
+  },
+  "both_slots_disabled": false,
+  "carrier_source": "issue-named B4-scope carrier",
+  "cross_check": {
+    "census_vs_graphs_drift_count": 0,
+    "engine_display_names_context": [
+      "Airwindows",
+      "Chorus",
+      "Conditioner",
+      "Delay",
+      "Distortion"
+    ],
+    "fields_compared": [
+      "blob_sha1",
+      "fx_bypass",
+      "fx_disable",
+      "nonoff_fx_slot_count",
+      "nonoff_fx_type_set",
+      "scene_mode",
+      "stored_revision"
+    ],
+    "fx_type_name_authority": "corpus/census-v0.1/census.py FX table, applied to the graph's stored type ids (content comparison, not spelling)",
+    "values": {
+      "blob_sha1": "c277c51ec0094a57c5fc219b3763db3801d7869e",
+      "fx_bypass": 0,
+      "fx_disable": 0,
+      "nonoff_fx_slot_count": 6,
+      "nonoff_fx_type_set": [
+        "Airwindows",
+        "Chorus",
+        "Conditioner",
+        "Delay",
+        "Distortion"
+      ],
+      "scene_mode": "Single",
+      "stored_revision": 30
+    }
+  },
+  "dual_instance_concurrent": false,
+  "leaf": "SXT-028l",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
+    "ok": false
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 0,
+    "send_stage_runs_in_this_mode": true
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "c277c51ec0094a57c5fc219b3763db3801d7869e",
+    "census_status": "parsed_static_only",
+    "graphs_blob_sha1_verified": "c277c51ec0094a57c5fc219b3763db3801d7869e",
+    "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Trance.fxp",
+    "stored_revision": 30
+  },
+  "roles": [
+    "send3",
+    "send4"
+  ],
+  "routing_form": "rf-send34",
+  "same_class_both_buses": false,
+  "scene_context": {
+    "note": "each send bus sums BOTH scenes' post-insert outputs through that scene's own send level; in Single scene mode the engine never instantiates scene B, so only scene A feeds the buses",
+    "scene_b_instantiated": false,
+    "scene_mode": "Single",
+    "scene_mode_id": 0
+  },
+  "schema_version": 1,
+  "send3": {
+    "airwindows_sub_id": null,
+    "airwindows_sub_name": null,
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_send_path": true,
+    "return_level_stored": 1.0,
+    "return_muted": false,
+    "type_id": 9,
+    "type_name": "Chorus"
+  },
+  "send4": {
+    "airwindows_sub_id": null,
+    "airwindows_sub_name": null,
+    "fx_disable_bit": false,
+    "occupied": false,
+    "return_level_consumed_by_send_path": true,
+    "return_level_stored": null,
+    "return_muted": null,
+    "type_id": 0,
+    "type_name": "Off"
+  },
+  "send_level_gap": {
+    "blocking_issue": "#12 (SXT-017 data-gap policy decision)",
+    "consumed_by_this_leaf_as": "control-plane stimulus only (model/effects/rf-rf-send34: send_gain_a / send_gain_b); never derived from a corpus record",
+    "exposed_bus_indices": [
+      1,
+      2
+    ],
+    "exposed_levels_per_scene": [
+      [
+        1.5874,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "reason": "SXT-011 exposure gap: the engine has 4 send buses but a .fxp stores only 2 per-scene send levels and surgepy exposes only send_level[0..1] (corpus/normalized/README.md 'Send levels 3/4'; corpus/normalized/schema.json scene.send). Buses 3/4 run at LOADER DEFAULTS for every corpus preset; no in-repo artifact carries a value, so none is emitted here. Resolving it needs an engine-behavior probe of the loader default plus an SXT-017 data-gap policy decision (#12) before reference fixtures for this routing form can be frozen.",
+    "send3_send4_levels_stored": null
+  },
+  "slot_index_check": {
+    "source": "corpus/normalized/graphs.jsonl fx[].i / fx[].r (SXT-011 output; no live oracle needed)",
+    "verified_indices": {
+      "12": "send3",
+      "13": "send4",
+      "4": "send1",
+      "5": "send2"
+    }
+  }
+}
