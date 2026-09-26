@@ -40,6 +40,11 @@ from model.effects.qmath import FRAC  # noqa: E402
 
 SXT = os.path.join(REPO, "reports", "SXT-028e")
 RTLDIR = os.path.join(REPO, "rtl", "effects", "type-distortion")
+# The sibling SSE-branch leaf (SXT-028e-sse, #121) writes its extraction
+# records into the SAME directory with a name that shares this leaf's
+# prefix. Filtering on "type-distortion-" alone would sweep them in, so the
+# prefix screen is explicit rather than incidental.
+SSE_SIBLING_PREFIX = "type-distortion-sse-"
 
 SYNTH = dict(preeq_gain_f=6.0, preeq_freq_f=3.0, preeq_bw_f=0.3,
              preeq_highcut_f=70.0, drive_f=6.0, feedback_f=0.635445,
@@ -149,8 +154,9 @@ def test_committed_fx_inputs_are_blocked_on_oracle():
     found = 0
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
     for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-"):
-            continue
+        if not name.startswith("type-distortion-") or \
+                name.startswith(SSE_SIBLING_PREFIX):
+            continue     # SXT-028e-sse (#121) owns its own records
         found += 1
         rec = json.load(open(os.path.join(d, name)))
         assert rec["extraction_status"] == "INCOMPLETE-BLOCKED-ON-ORACLE"
@@ -191,8 +197,9 @@ def test_landed_class_basis_is_derived_from_the_committed_table():
 
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
     for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-"):
-            continue
+        if not name.startswith("type-distortion-") or \
+                name.startswith(SSE_SIBLING_PREFIX):
+            continue     # SXT-028e-sse (#121) owns its own records
         rec = json.load(open(os.path.join(d, name)))
         basis = rec["landed_classes_basis"]
         assert basis["landed_fx_classes"] == expect, \
@@ -210,8 +217,9 @@ def test_census_blob_shas_match_manifest():
     by_path = {e["path"]: e["git_blob_sha1"] for e in man["entries"]}
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
     for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-"):
-            continue
+        if not name.startswith("type-distortion-") or \
+                name.startswith(SSE_SIBLING_PREFIX):
+            continue     # SXT-028e-sse (#121) owns its own records
         rec = json.load(open(os.path.join(d, name)))
         assert by_path[rec["preset_path"]] == rec["census_blob_sha1"]
 

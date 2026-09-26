@@ -1,0 +1,35 @@
+SXT-028e-sse negative controls — ALL-CONTROLS-OK
+model revision aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743
+budgets (PROPOSED, not frozen): {'max_abs_diff_lsb': 8192, 'rms_diff_dbfs': -46.0, 'spectral_corr_min': 0.98}
+grading boundary: model-vs-model; pinned-oracle leg NOT_RUN
+
+NC-0  baseline-sanity-open-loop    must=PASS                         verdict=PASS     -> CONTROL-OK
+      each quad shaper, frozen fixed-point vs an INDEPENDENT float implementation of the same pinned kernel, open loop over a dense input x drive sweep (registers advancing)
+NC-0b baseline-sanity-closed-loop  must=PASS for FX models 3/5/6; CHARACTERIZE (NOT a gate) for 4 and 7 verdict=PARTIAL (models 4 and 7 do NOT meet the [PROPOSED] sample-domain budgets -- finding F-028e-sse-4) -> CONTROL-OK
+      independent float structural twin vs frozen fixed model through the whole chain, one leg per reachable FX model
+NC-A  generic-substitute           must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      single-rate tanh clip (no oversampling / halfband / EQ / feedback / quad-waveshaper state)
+      max 1615575.3 LSB  rms -1.72 dBFS  corr 0.841392
+NC-A2 cross-leaf-substitute        must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      the SXT-028e (#57) lookup_waveshape table shaper (wst_soft) substituted for GetQuadWaveshaper, with the rest of the chain untouched
+      max 600995.7 LSB  rms -11.10 dBFS  corr 0.985248
+NC-C  wrong-order                  must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      pre-EQ and post-EQ bands swapped around the shaper
+      max 357748.8 LSB  rms -16.07 dBFS  corr 0.963955
+NC-F  drive-interpolation-step     must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      dD = (dE - dS)/128 instead of the pinned /(BLOCK_SIZE * dist_OS_bits) = /64
+      max 80094.7 LSB  rms -41.51 dBFS  corr 0.997367
+NC-G  digital-drive-normalization  must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      `skipDriveNorm` removed: wst_digital receives the 1/dNow pre-scale as well, so the signal is divided by drive twice and the feedback loop gain becomes |fb|/drive
+      max 2039414.5 LSB  rms 1.53 dBFS  corr 0.914164
+NC-H  dc-offset-probe              must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      the zero-input DC-offset probe dropped (dcOffset forced 0)
+      max 346706.0 LSB  rms -14.67 dBFS  corr 0.970223
+NC-D  shared-state                 must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      two concurrent instances pooled onto ONE QuadWaveshaperState (chain state left per-instance, so the control isolates exactly the state this leaf adds)
+NC-B  dropped-tail                 must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      render truncated 1 block into the declared 1600-block ringout span (inside the measured 1593-block live decay)
+KG-1  known-gap-probe              must=n/a (probe, not a control)   verdict=PASS (gap confirmed) -> CONTROL-OK
+      late truncation (800 blocks into the ringout) is NOT detected by the whole-region residual gate
+NC-E  stale-stub                   must=FAIL (refuse to report PASS) verdict=REFUSED  -> CONTROL-OK
+      harness pinned to a stale frozen-model revision

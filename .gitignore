@@ -11,6 +11,10 @@ reports/sxt-024/rtl/
 # tools/compare_rtl_model_distortion.py, verdicts in
 # reports/SXT-028e/rtl-exactness.json)
 rtl/effects/type-distortion/tb_distortion_*.sv
+# SXT-028e-sse generated mutant testbenches (negative controls; regenerable
+# via tools/compare_rtl_model_distortion_sse.py, verdicts in
+# reports/SXT-028e-sse/rtl-exactness.json)
+rtl/effects/type-distortion-sse/tb_distortion_sse_*.sv
 # Python bytecode
 __pycache__/
 *.pyc

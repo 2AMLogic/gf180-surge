@@ -25,3 +25,4 @@ stays and is marked in its Status line.
 | [0011](0011-profile-v1-budget-escalation.md) | Profile v1 cannot be frozen at the plan-section-3 budgets (SXT-017) | ESCALATED — pending product-owner decision | 2026-09-25 |
 | [0012](0012-distortion-halfband-and-waveshaper-tables.md) | Distortion halfband coefficients (order 6) and waveshaper table provenance (SXT-028e) | PROPOSED — pending owner ratification | 2026-09-25 |
 | [0013](0013-fx-modulation-rng-stream.md) | FX modulation RNG streams cannot be pinned: RNG-driven effect shapes excluded, coverage reduction published (#122 → SXT-017) | RECORDED CONTRACT REVISION — owner ratification pending | 2026-09-26 |
+| [0014](0014-distortion-sse-quad-waveshaper-constants.md) | Distortion SSE quad-waveshaper constant inventory (SXT-028e-sse) | PROPOSED — pending owner ratification | 2026-09-26 |
