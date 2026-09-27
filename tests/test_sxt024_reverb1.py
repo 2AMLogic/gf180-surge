@@ -111,6 +111,90 @@ def test_ext_memory_hook_addresses_within_region():
                [a for _, a in seen])
 
 
+def _comparator():
+    sys.path.insert(0, os.path.join(REPO, "tools"))
+    import compare_reverb_model as cm  # noqa: E402
+    return cm
+
+
+# --- issue #112: send/return gain precision is PINNED, not NumPy-dependent ---
+#
+# The committed sxt-024 records were written under two different NumPy
+# regimes and carried two different `send_gain` values for one declared
+# level, while a current host reproduced a third. The cube is now written as
+# explicit float32 multiplies; these tests pin that definition AND tie the
+# committed evidence to it, so the drift cannot silently return.
+
+# Declared scene_send_level of the pinned carrier preset (read from the
+# committed trace sidecar by the tests below; repeated here only as the
+# expected value of the float32 cube).
+PINNED_SEND_GAIN_F32 = 0.35360774397850037
+
+
+def test_send_return_gains_pins_float32_precision():
+    import numpy as np
+    cm = _comparator()
+    side = json.load(open(os.path.join(
+        SXT, "traces", "preset-notes-coverage-wet.json")))
+    st = side["engine_patch_state"]
+    x = st["scene_send_level"][0]
+    send, ret = cm.send_return_gains(st)
+    # 1. the exact pinned value, independent of the installed NumPy version
+    assert send == PINNED_SEND_GAIN_F32, (x, send)
+    assert send == cm.amp_to_linear_f32(x)
+    # 2. the returned Python float carries EXACTLY a float32 value
+    assert float(np.float32(send)) == send
+    assert float(np.float32(ret)) == ret
+    # 3. the three float32 multiplies of the pinned C++ expression, in order
+    v = np.float32(x)
+    assert send == float(np.float32(np.float32(v * v) * v))
+
+
+def test_float64_cube_is_a_live_negative_control_for_the_pin():
+    """The control the pin exists to catch: a float64 cube is DISTINGUISHABLE.
+
+    If send_return_gains() ever reverts to float64 arithmetic (or to the
+    version-dependent `np.float32(x) ** 3`, which is float64 under NumPy
+    1.x), the assertions above fail -- this test proves they can, by showing
+    the float64 value differs from the pinned one on this host.
+    """
+    cm = _comparator()
+    side = json.load(open(os.path.join(
+        SXT, "traces", "preset-notes-coverage-wet.json")))
+    x = side["engine_patch_state"]["scene_send_level"][0]
+    f64 = float(x) ** 3
+    assert f64 != cm.amp_to_linear_f32(x)          # the control fires
+    assert abs(f64 - PINNED_SEND_GAIN_F32) > 0.0   # and is not a no-op
+
+
+def test_committed_records_carry_the_pinned_send_gain():
+    """Fail-closed: committed evidence must agree with the pinned arithmetic.
+
+    One declared level, one value, in every record that reports it -- the
+    condition that was violated before #112 (two committed values, plus a
+    third on a current host).
+    """
+    cm = _comparator()
+    cases = {
+        "comparison/click-wet.json": "click-wet",
+        "comparison/preset-notes-coverage-wet.json": "preset-notes-coverage-wet",
+        "comparison/hardreset-midpatch-wet.json": "hardreset-midpatch-wet",
+        # nc-a is built from the carrier preset's trace (see
+        # tools/reverb_negative_controls.py nc_a_generic)
+        "negative-controls/nc-a-generic-schroeder.json": "preset-notes-coverage-wet",
+    }
+    seen = set()
+    for rel, trace in cases.items():
+        rec = json.load(open(os.path.join(SXT, *rel.split("/"))))
+        st = json.load(open(os.path.join(
+            SXT, "traces", trace + ".json")))["engine_patch_state"]
+        send, ret = cm.send_return_gains(st)
+        assert rec["send_gain"] == send, rel
+        assert rec["return_gain"] == ret, rel
+        seen.add(rec["send_gain"])
+    assert seen == {PINNED_SEND_GAIN_F32}, seen
+
+
 def test_committed_evidence_files_are_coherent():
     # comparison records: every committed case's checks all true (or the
     # case carries an explicit status/finding)

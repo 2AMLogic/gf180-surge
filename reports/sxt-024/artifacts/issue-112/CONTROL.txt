@@ -1,0 +1,20 @@
+issue #112 -- live negative control for the precision pin
+
+Revert send_return_gains() to each rejected arithmetic and re-run the
+two new pinning tests. A control that cannot fail proves nothing, so
+both must FAIL under both rejected definitions and pass under the pin.
+
+  python 3.12.3 / numpy 1.26.4
+
+  with pre-#112 float(np.float32(x) ** 3)  [float64 under numpy 1.x]:
+    control fires: test_send_return_gains_pins_float32_precision FAILS as required
+    control fires: test_committed_records_carry_the_pinned_send_gain FAILS as required
+
+  with explicit float64 cube  float(x) ** 3:
+    control fires: test_send_return_gains_pins_float32_precision FAILS as required
+    control fires: test_committed_records_carry_the_pinned_send_gain FAILS as required
+
+  with the pinned float32 cube: both tests PASS
+
+Full suite on this host:
+  python3 -m pytest -q tests/test_sxt024_reverb1.py tests/test_sxt024_tail_window.py  ->  29 passed

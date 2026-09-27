@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "2aa567ef3ef2bd8e1423a7104690b9c2296567619ade8fa711b3de73a068bb6f"
+   "sha256": "79d1f9ad77d89da530135924b1f14ed08dc1f78192decf576d431060dfe2b76d"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -320,7 +320,7 @@
   },
   "reports/sxt-024/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Reverb1",
-   "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+   "sha256": "21d0a0ea3aa6d4d8d2f2ff4b449d8ece1be0d2c28030e8b0e052514f1d7913d9"
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",

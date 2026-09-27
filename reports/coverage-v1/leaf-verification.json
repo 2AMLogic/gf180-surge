@@ -65,12 +65,12 @@
       "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
     },
     {
-      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status changed: both change notes state 'Verdicts: unchanged' - click PASS, preset PASS, hardreset FAIL on tail_rms_rel exactly as already recorded, reset BLOCKED; the #108 work added the tail_window transparency block and a NO_VERDICT refusal path without moving an exit code.",
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status changed: every change note in the record states 'Verdicts: unchanged' - click PASS, preset PASS, hardreset FAIL on tail_rms_rel exactly as already recorded, reset BLOCKED, sweep PASS, all four negative controls CONTROL-OK; #108 added the tail_window transparency block and a NO_VERDICT refusal path, and #112 pinned the send_gain arithmetic to an explicit float32 cube and regenerated every comparison/ and negative-controls/ record once, without moving an exit code. The only checks change is the ADDITION of tail_gate (from #100) to records that predated it.",
       "issue": 125,
-      "moved_by": "48062e8 (#113, issue #100) then bbfb090 (#115, issue #108): wet-path tail gate, then the keep-the-bespoke-window decision plus its NO_VERDICT refusal and presence legs",
+      "moved_by": "48062e8 (#113, issue #100), then bbfb090 (#115, issue #108), then issue #112 (this re-pin): wet-path tail gate; the keep-the-bespoke-window decision plus its NO_VERDICT refusal and presence legs; then the float32 send_gain precision pin, the one-time regeneration of the committed comparison/ and negative-controls/ records, and the residual host/NumPy reduction-order finding. Pin chain: d148a444 -> 6e208e34 (#100/#108) -> this sha (#112).",
       "path": "reports/sxt-024/EVIDENCE.md",
-      "previous_sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4",
-      "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+      "previous_sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0",
+      "sha256": "21d0a0ea3aa6d4d8d2f2ff4b449d8ece1be0d2c28030e8b0e052514f1d7913d9"
     },
     {
       "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status changed: the #100 re-grade records 'all six verdicts unchanged (PASS stays PASS)' under the stronger declared-region tail gate, and the #116 fix records that the corrected FX-destination screen leaves all four committed extraction inputs at 0 FX-destination routes, so no fixture, model run, or comparison in the record moved.",
@@ -115,7 +115,7 @@
         },
         {
           "path": "reports/sxt-024/EVIDENCE.md",
-          "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+          "sha256": "21d0a0ea3aa6d4d8d2f2ff4b449d8ece1be0d2c28030e8b0e052514f1d7913d9"
         }
       ],
       "owner": "#12 (SXT-017 profile/fidelity freeze; SXT-013 listening BLOCKED-on-human)",
@@ -291,7 +291,7 @@
       "evidence": [
         {
           "path": "reports/sxt-024/EVIDENCE.md",
-          "sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+          "sha256": "21d0a0ea3aa6d4d8d2f2ff4b449d8ece1be0d2c28030e8b0e052514f1d7913d9"
         }
       ],
       "issue": 17,
