@@ -95,6 +95,43 @@ pilot freeze.
   (the reference's character is the target, including where it aliases).
 - Wavetable presets: interpolation/morph behavior at pitch extremes and
   during morph modulation. Budgets: **[PROPOSED-TO-BE-FROZEN-AT-PILOT]**.
+- **`spectral_corr` definition (visible contract revision, issue #110;
+  input to the SXT-017 freeze #12).** One definition, identical in every
+  comparator that grades the `spectral_corr` budget
+  (`tools/compare_audio_reference.py`, `compare_chorus_reference.py`,
+  `compare_fx_reference.py`, and the tools that import their metrics):
+  | Element | Declared value |
+  |---|---|
+  | Frames | non-overlapping 4096-sample frames, trailing partial frame dropped; Hann window `w` |
+  | Unit | full-scale-referenced magnitude `m = \|rfft(frame·w)\| / (FS · Σw / 2)`, with the bus's declared full scale FS (int16 bus 32767 LSB; float32 bus 1.0), so the value does not depend on the tool's native unit |
+  | Floor | `ln(max(m, 10^(−100/20)))`: **−100 dBFS per bin** |
+  | Gating | **none** (frame gating by reference energy was evaluated in #100 and does not fix the empty-bin case; it is not part of the definition) |
+  | Statistic | Pearson correlation over all (frame, bin) pairs; all-floor spectra give 1.0 if identical, else 0.0; renders shorter than one frame give 1.0 iff equal |
+  | Budget | `spectral_corr ≥ 0.98` **[PROPOSED-TO-BE-FROZEN-AT-PILOT]** (unchanged value) |
+
+  It replaces the pre-#110 native-unit `log1p(|X|)`, whose log knee sat at
+  one int16 LSB in the shared comparator and at full scale in the float
+  tools, so the same name and budget measured different things about 50 dB
+  apart (`reports/stereo-comparator-tail-gate/` §6). The −100 dBFS floor was
+  declared in #100 before any verdict was re-graded with it. It sits 10 dB
+  below the weakest sinusoid the int16 bus can carry (1 LSB peak, −90.3 dBFS)
+  and about 35 dB above int16 quantization noise per Hann bin. The floor
+  value is itself a **[PROPOSED-TO-BE-FROZEN-AT-PILOT]** budget. Consequence
+  that the freeze must weigh: with the floor in full-scale units, a broadband
+  residual starts to miss 0.98 at about −68 dBFS in **every** tool. That is
+  more lenient than before on the int16 comparator (which missed at −92 dBFS)
+  and stricter than before on the float comparators (which missed at
+  −44 to −56 dBFS). Every committed artifact the change re-grades is
+  regenerated or explicitly listed as STALE, and every verdict flip is named
+  in `reports/spectral-corr-fs-floor/` (regrade ledger and floor-sensitivity
+  table). Re-grade under this definition: SXT-040 popcorn2k x2 and SXT-033
+  edges x2 go FAIL → PASS; SXT-040 badnews x2 stay FAIL. The SXT-035 C2
+  `smoothing-bypass` negative control stops being live (#163) because its only
+  discriminator was a 0.0026 margin on the retired metric. No leaf
+  verification status changes. Per-leaf tools that carry their own `spectral_corr` copy (aw-49,
+  Distortion/Reverb 2 negative controls, the L2 filter legs with their 0.999
+  budget) are **not** migrated by #110. They are listed there as not-yet-
+  migrated metric instances and must not be compared with this definition.
 
 ### 2.4 Filter / feedback stability
 

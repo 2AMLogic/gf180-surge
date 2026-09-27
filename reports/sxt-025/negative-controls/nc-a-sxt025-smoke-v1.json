@@ -16,7 +16,7 @@
     "best_shift": 0,
     "max_abs_diff_lsb": 468674.46875,
     "rms_diff_dbfs": -24.49767573914254,
-    "spectral_corr": 0.9301007519360114
+    "spectral_corr": 0.9470468344401687
   },
   "verdict": "CONTROL-OK (permuted placement flagged by the comparator)"
 }

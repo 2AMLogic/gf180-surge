@@ -1,14 +1,14 @@
 SXT-035 negative controls (all must demonstrably FAIL their check)
-date: 2026-09-22T23:35:05Z
-reference (unmodified routed fixture): run-out/ref/reference-seq-modwheel-v1-mw-fixture.wav
+date: 2026-09-26T23:21:19Z
+reference (unmodified routed fixture): reports/sxt-035/artifacts/reference-seq-modwheel-v1-mw-fixture.wav
 
-[baseline] unmutated model-vs-reference: max=65534 rms=-18.0dBFS spec=0.9870 -> FAIL against proposed budgets
+[baseline] unmutated model-vs-reference: max=65534 rms=-18.0dBFS spec=0.9710 -> FAIL against proposed budgets
 
-[cutoff-zeroed] max=65534 rms=-13.9dBFS spec=0.9842 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
-[reso-zeroed] max=65534 rms=-18.0dBFS spec=0.9858 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
-[vca-zeroed] max=38461 rms=-11.8dBFS spec=0.8556 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
-[smoothing-bypass] max=65534 rms=-20.2dBFS spec=0.9844 -> FAIL against proposed budgets; beyond-model-error via=[True] (expected FAIL and worse)
-[source-swap-lfo] max=65534 rms=-10.1dBFS spec=0.7283 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
+[cutoff-zeroed] max=65534 rms=-13.9dBFS spec=0.9542 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
+[reso-zeroed] max=65534 rms=-18.0dBFS spec=0.9687 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
+[vca-zeroed] max=38478 rms=-11.8dBFS spec=0.6705 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
+[smoothing-bypass] max=65534 rms=-20.2dBFS spec=0.9741 -> FAIL against proposed budgets; beyond-model-error via=NONE (expected FAIL and worse)
+[source-swap-lfo] max=65534 rms=-10.1dBFS spec=0.4530 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
 
 [out-of-class-route] exit=2 refused=True msg=REFUSED (outside declared SXT-035 class): scene route modwheel->303 (unknown) outside the declared SXT-035 destination class {308, 309, 298}
 [carrier-Rainy_Day_Dreamaway.fxp] extractor exit=2 refused=True msg=REFUSING: filter config not serial1
@@ -19,4 +19,4 @@ RTL mutant: rtl/voice/tb_mw_broken_mutant.sv = tb_mw.sv with the
   FAST_LINE da rounding mutated: 'da    = qmul_sh(tp_sp, INV, FQ);' -> 'da    = qmul_sh(tp_sp, INV, FQ-1);'
 [rtl-mutant] verdict=FAIL mismatches=41 first=['block 300 mw_value: model=9710 rtl=19419']
 
-overall: ALL CONTROLS DEMONSTRABLY FAIL (expected)
+overall: CONTROL FAILURE (a control did not fail as required)

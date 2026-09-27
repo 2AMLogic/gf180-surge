@@ -19,8 +19,10 @@ Metrics (on int16 LSB units):
                       (the SXT-012 scheduling granularity bound); shift 0 is
                       reported separately because the model schedules events
                       identically to the render harness
-  spectral_corr       correlation of log-magnitude spectra over the whole
-                      render (Hann-windowed, averaged per 4096-sample frame)
+  spectral_corr       correlation of full-scale-referenced, floored
+                      log-magnitude spectra over the whole render (Hann 4096
+                      frames; floor -100 dBFS per bin; the shared definition
+                      of issue #110, see SPECTRAL_CORR_* below)
 
 Wet-path tail gate (issue #93; policy draft section 2.5 and section 5 rule 4)
 ----------------------------------------------------------------------------
@@ -157,8 +159,86 @@ def read_wav(path):
     return a.astype(np.float64), sr
 
 
-def spectral_corr(a, b, frame=4096):
+# ---------------------------------------------------------------------------
+# spectral_corr definition (issue #110; a visible revision of the
+# [PROPOSED-TO-BE-FROZEN-AT-PILOT] contract, recorded in
+# contracts/fidelity-policy-DRAFT.md section 2.3 as input to the SXT-017
+# freeze #12). ONE definition, shared by every comparator that grades the
+# `spectral_corr` budget (this tool, compare_chorus_reference.py,
+# compare_fx_reference.py and the tools that import their channel_metrics):
+#
+#   frames     non-overlapping 4096-sample frames (trailing partial frame
+#              dropped), Hann window w = np.hanning(4096)
+#   magnitude  m = |rfft(frame * w)| / (FS * sum(w) / 2), i.e. referenced to
+#              the bus's DECLARED full scale FS (int16 bus: 32767 LSB; float32
+#              bus: 1.0), so a full-scale sinusoid on a bin centre reads 1.0
+#              (0 dBFS) in every unit system
+#   floor      L = ln(max(m, 10 ** (SPECTRAL_CORR_FLOOR_DB / 20))), with
+#              SPECTRAL_CORR_FLOOR_DB = -100 dBFS per bin
+#   gating     none (every frame and every bin contributes)
+#   statistic  Pearson correlation of L_ref and L_model over all
+#              (frame, bin) pairs; zero-variance (all-floor) spectra give 1.0
+#              when both floored spectra are identical and 0.0 otherwise;
+#              renders shorter than one frame give 1.0 iff allclose.
+#
+# It replaces the pre-#110 native-unit `log1p(|X|)`, whose log knee sat at one
+# int16 LSB here and at full scale in the float tools (~50 dB apart for the
+# same name and the same 0.98 budget; reports/stereo-comparator-tail-gate/
+# section 6). Why -100 dBFS per bin: it is 10 dB below the weakest sinusoid
+# the int16 bus can carry (1 LSB peak = -90.3 dBFS), so every component the
+# coarsest bus represents is graded, and ~35 dB above the int16 quantization
+# noise per Hann bin (~-135 dBFS), so requantization alone cannot move the
+# metric. The value was declared in #100 before any case was re-graded with
+# it; it was NOT tuned to a case (the floor-sensitivity table in
+# reports/spectral-corr-fs-floor/ shows how the re-graded verdicts move for
+# neighbouring floors). The floor and the 0.98 budget are both
+# [PROPOSED-TO-BE-FROZEN-AT-PILOT].
+SPECTRAL_CORR_FRAME = 4096
+SPECTRAL_CORR_FLOOR_DB = -100.0
+SPECTRAL_CORR_DEFINITION = "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), " \
+                           "floor -100 dBFS/bin, no gating; issue #110)"
+FULL_SCALE_INT16 = 32767.0
+FULL_SCALE_F32 = 1.0
+
+
+def _fs_log_spectrum(x, full_scale, frame, floor_db):
+    w = np.hanning(frame)
+    n = len(x) // frame * frame
+    mag = np.abs(np.fft.rfft(np.asarray(x[:n], dtype=np.float64)
+                             .reshape(-1, frame) * w, axis=1))
+    mag /= full_scale * w.sum() / 2.0
+    return np.log(np.maximum(mag, 10.0 ** (floor_db / 20.0))).ravel()
+
+
+def spectral_corr(a, b, *, full_scale, frame=SPECTRAL_CORR_FRAME,
+                  floor_db=SPECTRAL_CORR_FLOOR_DB):
+    """spectral_corr under the shared definition above (issue #110).
+
+    `full_scale` is REQUIRED and is the bus's declared full scale in the
+    caller's native unit (FULL_SCALE_INT16 or FULL_SCALE_F32); it is what makes
+    the metric unit-invariant, so there is deliberately no default."""
+    if not full_scale > 0:
+        raise ValueError("spectral_corr: full_scale must be > 0")
     n = min(len(a), len(b))
+    if n < frame:
+        return 1.0 if np.allclose(a[:n], b[:n]) else 0.0
+    ra = _fs_log_spectrum(a[:n], full_scale, frame, floor_db)
+    rb = _fs_log_spectrum(b[:n], full_scale, frame, floor_db)
+    ra = ra - ra.mean()
+    rb = rb - rb.mean()
+    d = np.sqrt((ra * ra).sum() * (rb * rb).sum())
+    if d > 0:
+        return float((ra * rb).sum() / d)
+    return 1.0 if np.array_equal(ra, rb) else 0.0
+
+
+def spectral_corr_legacy_log1p(a, b, frame=4096):
+    """The pre-#110 native-unit definition, retained ONLY so the regrade
+    record (tools/regrade_spectral_corr.py) can prove it recomputes the
+    committed pre-#110 values from the same renders. Never used to grade."""
+    n = min(len(a), len(b))
+    if n < frame:
+        return 1.0 if np.allclose(a[:n], b[:n]) else 0.0
     ra = np.log1p(np.abs(np.fft.rfft(a[: n // frame * frame].reshape(-1, frame)
                                       * np.hanning(frame), axis=1))).ravel()
     rb = np.log1p(np.abs(np.fft.rfft(b[: n // frame * frame].reshape(-1, frame)
@@ -592,7 +672,8 @@ def main():
         "rms_diff_at_shift0_lsb": shifts[0],
         "best_shift": best_shift,
         "rms_diff_at_best_shift_lsb": shifts[best_shift],
-        "spectral_corr": spectral_corr(ref, mod),
+        "spectral_corr": spectral_corr(ref, mod, full_scale=FULL_SCALE_INT16),
+        "spectral_corr_definition": SPECTRAL_CORR_DEFINITION,
     }
 
     proposed_results = {

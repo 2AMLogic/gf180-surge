@@ -3,77 +3,75 @@
     "verdict": "FAIL against proposed budgets",
     "expected": "informational",
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_dbfs": -18.039873481617924,
-    "spectral_corr": 0.9869783137462054
+    "rms_diff_dbfs": -18.038918387458317,
+    "spectral_corr": 0.970959074770404
   },
   "cutoff-zeroed": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
     "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 6600.594080371684,
-    "rms_diff_dbfs": -13.917073111341779,
-    "spectral_corr": 0.9841621605750513,
+    "rms_diff_lsb": 6600.747306786425,
+    "rms_diff_dbfs": -13.916871479145609,
+    "spectral_corr": 0.954174570527245,
     "beyond_model_error_via": [
       true,
       true
     ],
-    "metrics_file": "run-out/nc/audio-nc-cutoff-zeroed.json"
+    "metrics_file": "reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json"
   },
   "reso-zeroed": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
     "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 4139.694994747738,
-    "rms_diff_dbfs": -17.96936673750621,
-    "spectral_corr": 0.9858386375291527,
+    "rms_diff_lsb": 4140.893318372829,
+    "rms_diff_dbfs": -17.966852784043652,
+    "spectral_corr": 0.968702572789794,
     "beyond_model_error_via": [
       true,
       true
     ],
-    "metrics_file": "run-out/nc/audio-nc-reso-zeroed.json"
+    "metrics_file": "reports/sxt-035/artifacts/audio-nc-reso-zeroed.json"
   },
   "vca-zeroed": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
     "control_ok": true,
-    "max_abs_diff_lsb": 38461.0,
-    "rms_diff_lsb": 8444.774664281334,
-    "rms_diff_dbfs": -11.77697231109918,
-    "spectral_corr": 0.8556442551910346,
+    "max_abs_diff_lsb": 38478.0,
+    "rms_diff_lsb": 8444.570970056258,
+    "rms_diff_dbfs": -11.777181823722977,
+    "spectral_corr": 0.6705498501921455,
     "beyond_model_error_via": [
       true,
       true
     ],
-    "metrics_file": "run-out/nc/audio-nc-vca-zeroed.json"
+    "metrics_file": "reports/sxt-035/artifacts/audio-nc-vca-zeroed.json"
   },
   "smoothing-bypass": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
-    "control_ok": true,
+    "control_ok": false,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 3213.4058821834687,
-    "rms_diff_dbfs": -20.169421936206252,
-    "spectral_corr": 0.9844002107386555,
-    "beyond_model_error_via": [
-      true
-    ],
-    "metrics_file": "run-out/nc/audio-nc-smoothing-bypass.json"
+    "rms_diff_lsb": 3213.65349953038,
+    "rms_diff_dbfs": -20.168752648178533,
+    "spectral_corr": 0.9741411759510864,
+    "beyond_model_error_via": [],
+    "metrics_file": "reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json"
   },
   "source-swap-lfo": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
     "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 10211.567644047525,
-    "rms_diff_dbfs": -10.126885251422376,
-    "spectral_corr": 0.7282713442300327,
+    "rms_diff_lsb": 10211.852919789126,
+    "rms_diff_dbfs": -10.126642601215925,
+    "spectral_corr": 0.4529885686916976,
     "beyond_model_error_via": [
       true,
       true
     ],
-    "metrics_file": "run-out/nc/audio-nc-source-swap-lfo.json"
+    "metrics_file": "reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json"
   },
   "out-of-class-route": {
     "expected": "REFUSE (exit 2)",
@@ -98,7 +96,7 @@
     "verdict": "FAIL",
     "expected": "FAIL",
     "control_ok": true,
-    "metrics_file": "run-out/nc/exactness-mutant.json"
+    "metrics_file": "reports/sxt-035/artifacts/exactness-mutant.json"
   },
-  "overall_ok": true
+  "overall_ok": false
 }

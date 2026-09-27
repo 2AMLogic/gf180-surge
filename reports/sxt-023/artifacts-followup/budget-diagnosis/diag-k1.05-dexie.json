@@ -9,7 +9,7 @@
     "rms_diff_dbfs": -44.21386399722196,
     "rms_diff_at_best_shift_lsb": 6455.1555721171335,
     "best_shift": 0,
-    "spectral_corr": 0.9951479561910995
+    "spectral_corr": 0.9925488970428733
   },
   "L": {
     "max_abs_diff_lsb": 176224.890625,
@@ -17,7 +17,7 @@
     "rms_diff_dbfs": -35.33925827656271,
     "rms_diff_at_best_shift_lsb": 17932.341440537686,
     "best_shift": 0,
-    "spectral_corr": 0.977428698204584
+    "spectral_corr": 0.9785602167542652
   },
   "R": {
     "max_abs_diff_lsb": 182324.76171875,
@@ -25,7 +25,7 @@
     "rms_diff_dbfs": -35.3393007339595,
     "rms_diff_at_best_shift_lsb": 17932.253785880894,
     "best_shift": 0,
-    "spectral_corr": 0.9773159992780068
+    "spectral_corr": 0.9786539769072441
   },
   "ref": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
   "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"

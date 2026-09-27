@@ -26,7 +26,7 @@
         "rms_diff_at_shift0_lsb": 162916.18169882116,
         "rms_diff_dbfs": -16.172713807969384,
         "rms_diff_lsb": 162916.18169882116,
-        "spectral_corr": 0.781003161997966
+        "spectral_corr": 0.913757255071842
       },
       "R": {
         "best_shift": 30,
@@ -38,7 +38,7 @@
         "rms_diff_at_shift0_lsb": 165618.10873827932,
         "rms_diff_dbfs": -16.029841846671,
         "rms_diff_lsb": 165618.10873827932,
-        "spectral_corr": 0.7819223736311814
+        "spectral_corr": 0.914472224892265
       },
       "mono": {
         "best_shift": 30,
@@ -50,7 +50,7 @@
         "rms_diff_at_shift0_lsb": 160608.78563822765,
         "rms_diff_dbfs": -16.29661229731944,
         "rms_diff_lsb": 160608.78563822765,
-        "spectral_corr": 0.7800191903475415
+        "spectral_corr": 0.9137358293014911
       }
     },
     "proposed_budgets": {

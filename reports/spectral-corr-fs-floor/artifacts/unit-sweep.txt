@@ -1,0 +1,47 @@
+issue #110 -- shared full-scale log-floor spectral_corr: leg 1
+run: 2026-09-27T01:38:52Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0   numpy 2.4.1
+definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
+
+==========================================================================
+[1] unit invariance / sensitivity sweep (legacy log1p vs adopted fs-log-floor)
+==========================================================================
+  perturbation: deterministic ternary {-1,0,+1} x k native LSB everywhere (the #100 pattern)
+  native LSB: int16 = 1/32767 FS; f32 = 2^-21 (Q10.21)
+
+  koala2 (int16): fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav
+    k=1      residual   -92.06 dBFS | legacy 0.9576 MISS | adopted 1.0000 
+    k=4      residual   -80.02 dBFS | legacy 0.9161 MISS | adopted 0.9996 
+    k=16     residual   -67.98 dBFS | legacy 0.8391 MISS | adopted 0.9834 
+    k=64     residual   -55.94 dBFS | legacy 0.6945 MISS | adopted 0.8772 MISS
+    k=256    residual   -43.90 dBFS | legacy 0.4575 MISS | adopted 0.6267 MISS
+
+  behemoth (int16): fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav
+    k=1      residual   -92.06 dBFS | legacy 0.9274 MISS | adopted 1.0000 
+    k=4      residual   -80.02 dBFS | legacy 0.8590 MISS | adopted 0.9997 
+    k=16     residual   -67.98 dBFS | legacy 0.7639 MISS | adopted 0.9511 MISS
+    k=64     residual   -55.94 dBFS | legacy 0.6379 MISS | adopted 0.7902 MISS
+    k=256    residual   -43.90 dBFS | legacy 0.4824 MISS | adopted 0.6125 MISS
+
+  fmcombo notes (f32 mono sum): reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav
+    k=16     residual  -104.10 dBFS | legacy 1.0000      | adopted 1.0000 
+    k=256    residual   -80.02 dBFS | legacy 1.0000      | adopted 0.9995 
+    k=1024   residual   -67.98 dBFS | legacy 0.9995      | adopted 0.9595 MISS
+    k=4096   residual   -55.94 dBFS | legacy 0.9934      | adopted 0.7820 MISS
+    k=16384  residual   -43.90 dBFS | legacy 0.9254 MISS | adopted 0.5253 MISS
+    k=65536  residual   -31.86 dBFS | legacy 0.5955 MISS | adopted 0.2619 MISS
+
+  alienappears notes (f32 mono sum): reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav
+    k=16     residual  -104.10 dBFS | legacy 1.0000      | adopted 1.0000 
+    k=256    residual   -80.02 dBFS | legacy 0.9999      | adopted 0.9992 
+    k=1024   residual   -67.98 dBFS | legacy 0.9980      | adopted 0.9300 MISS
+    k=4096   residual   -55.94 dBFS | legacy 0.9730 MISS | adopted 0.6520 MISS
+    k=16384  residual   -43.90 dBFS | legacy 0.7350 MISS | adopted 0.3232 MISS
+    k=65536  residual   -31.86 dBFS | legacy 0.2487 MISS | adopted 0.1022 MISS
+
+  unit invariance, behemoth +-1 LSB expressed on both buses:
+    adopted: int16 0.999980 | float 0.999980 -> EQUAL
+    legacy : int16 0.927389 | float 0.999999 (unit-bound; the #110 finding)
+  frame gating alone (legacy metric, ref frame >= -80 dBFS) on behemoth +-1 LSB: 0.9274 (< 0.98: gating does not fix the empty-bin case)
+
+leg 1 verdict: PASS

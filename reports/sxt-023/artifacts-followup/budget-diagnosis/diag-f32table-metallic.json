@@ -9,7 +9,7 @@
     "rms_diff_dbfs": -33.48238673955731,
     "rms_diff_at_best_shift_lsb": 22206.52363178967,
     "best_shift": 0,
-    "spectral_corr": 0.9752176392708728
+    "spectral_corr": 0.970988586900409
   },
   "L": {
     "max_abs_diff_lsb": 882929.875,
@@ -17,7 +17,7 @@
     "rms_diff_dbfs": -22.12383655597151,
     "rms_diff_at_best_shift_lsb": 82112.2751202281,
     "best_shift": 0,
-    "spectral_corr": 0.9262112454310082
+    "spectral_corr": 0.9403276814563699
   },
   "R": {
     "max_abs_diff_lsb": 826027.6875,
@@ -25,7 +25,7 @@
     "rms_diff_dbfs": -22.039508175327573,
     "rms_diff_at_best_shift_lsb": 82913.35800733347,
     "best_shift": 0,
-    "spectral_corr": 0.9266317832984432
+    "spectral_corr": 0.9405774252585467
   },
   "render_regenerable_via": "python3 tools/diagnose_delay_budget.py --slug <slug> --variant <variant> [--ref <engine-probe wav>]"
 }

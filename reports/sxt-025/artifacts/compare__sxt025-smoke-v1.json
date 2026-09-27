@@ -26,7 +26,7 @@
         "rms_diff_at_shift0_lsb": 0.586835100259909,
         "rms_diff_dbfs": -125.04167661911053,
         "rms_diff_lsb": 0.586835100259909,
-        "spectral_corr": 0.9999999998594291
+        "spectral_corr": 0.9999999981013192
       },
       "R": {
         "best_shift": 0,
@@ -38,7 +38,7 @@
         "rms_diff_at_shift0_lsb": 0.6037500924584867,
         "rms_diff_dbfs": -124.79485406024102,
         "rms_diff_lsb": 0.6037500924584867,
-        "spectral_corr": 0.9999999998606666
+        "spectral_corr": 0.9999999980854134
       },
       "mono": {
         "best_shift": 0,
@@ -50,7 +50,7 @@
         "rms_diff_at_shift0_lsb": 0.5270760466842692,
         "rms_diff_dbfs": -125.9745326682606,
         "rms_diff_lsb": 0.5270760466842692,
-        "spectral_corr": 0.9999999999058489
+        "spectral_corr": 0.9999999985510315
       }
     },
     "proposed_budgets": {
@@ -139,7 +139,7 @@
     "tail_budget": "relative <= -50.0 dB",
     "tail_continuity_ok": true,
     "tail_continuity_windows_above_floor": 50,
-    "tail_continuity_worst_margin_db": 10.932439022087117,
+    "tail_continuity_worst_margin_db": 10.932439022087113,
     "tail_frames": 120000,
     "tail_rms_ok": true,
     "tail_rms_rel_db": -53.50823211669922

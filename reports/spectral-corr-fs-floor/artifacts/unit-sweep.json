@@ -1,0 +1,166 @@
+{
+  "status": "PASS",
+  "sweep": [
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 1,
+      "rms_diff_dbfs": -92.06277056764492,
+      "legacy_native_log1p": 0.9575591984787817,
+      "adopted": 0.9999756078835776
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 4,
+      "rms_diff_dbfs": -80.02157074108568,
+      "legacy_native_log1p": 0.9161165540580892,
+      "adopted": 0.9996190392634361
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 16,
+      "rms_diff_dbfs": -67.98037091452643,
+      "legacy_native_log1p": 0.8390914692021123,
+      "adopted": 0.9834160651416219
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 64,
+      "rms_diff_dbfs": -55.93917108796718,
+      "legacy_native_log1p": 0.6945100775313012,
+      "adopted": 0.8772030777528209
+    },
+    {
+      "fixture": "fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 256,
+      "rms_diff_dbfs": -43.89797126140793,
+      "legacy_native_log1p": 0.45745126295779914,
+      "adopted": 0.6267003496146771
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 1,
+      "rms_diff_dbfs": -92.06277056764492,
+      "legacy_native_log1p": 0.9273892346041079,
+      "adopted": 0.9999798182731762
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 4,
+      "rms_diff_dbfs": -80.02157074108568,
+      "legacy_native_log1p": 0.858950896769097,
+      "adopted": 0.9996727709941651
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 16,
+      "rms_diff_dbfs": -67.98037091452643,
+      "legacy_native_log1p": 0.763853345056523,
+      "adopted": 0.9511169222648328
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 64,
+      "rms_diff_dbfs": -55.93917108796718,
+      "legacy_native_log1p": 0.637922848913419,
+      "adopted": 0.7902035548837966
+    },
+    {
+      "fixture": "fixtures/audio/behemoth/seq-notes-coverage-v1-wet.wav",
+      "k_lsb": 256,
+      "rms_diff_dbfs": -43.89797126140793,
+      "legacy_native_log1p": 0.4823977393061127,
+      "adopted": 0.6125361357852501
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 16,
+      "rms_diff_dbfs": -104.10423547056455,
+      "legacy_native_log1p": 0.9999998299259298,
+      "adopted": 0.9999981040437445
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 256,
+      "rms_diff_dbfs": -80.02183581744605,
+      "legacy_native_log1p": 0.9999640903367158,
+      "adopted": 0.9995291687003823
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 1024,
+      "rms_diff_dbfs": -67.98063599088681,
+      "legacy_native_log1p": 0.9994966812986473,
+      "adopted": 0.9595419639621636
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 4096,
+      "rms_diff_dbfs": -55.93943616432756,
+      "legacy_native_log1p": 0.9933599811759677,
+      "adopted": 0.7820191134838593
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 16384,
+      "rms_diff_dbfs": -43.89823633776832,
+      "legacy_native_log1p": 0.9253976498320444,
+      "adopted": 0.5253302305015108
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 65536,
+      "rms_diff_dbfs": -31.857036511209067,
+      "legacy_native_log1p": 0.5955153480581001,
+      "adopted": 0.2618647918478868
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 16,
+      "rms_diff_dbfs": -104.10423547056455,
+      "legacy_native_log1p": 0.9999993019079132,
+      "adopted": 0.9999969184060854
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 256,
+      "rms_diff_dbfs": -80.02183581744605,
+      "legacy_native_log1p": 0.9998575193475598,
+      "adopted": 0.9992241978852011
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 1024,
+      "rms_diff_dbfs": -67.98063599088681,
+      "legacy_native_log1p": 0.9980127995048265,
+      "adopted": 0.9299544405993354
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 4096,
+      "rms_diff_dbfs": -55.93943616432756,
+      "legacy_native_log1p": 0.9729543820618038,
+      "adopted": 0.6520476437219516
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 16384,
+      "rms_diff_dbfs": -43.89823633776832,
+      "legacy_native_log1p": 0.7349566219414784,
+      "adopted": 0.323189435182522
+    },
+    {
+      "fixture": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "k_lsb": 65536,
+      "rms_diff_dbfs": -31.857036511209067,
+      "legacy_native_log1p": 0.2486506020569207,
+      "adopted": 0.10222170054403949
+    }
+  ],
+  "unit_invariance": {
+    "adopted_int16": 0.9999798182731762,
+    "adopted_float": 0.9999798182731762,
+    "legacy_int16": 0.9273892346041079,
+    "legacy_float": 0.9999987045349771
+  },
+  "frame_gating_alone_behemoth_1lsb": 0.9273892346041079
+}
