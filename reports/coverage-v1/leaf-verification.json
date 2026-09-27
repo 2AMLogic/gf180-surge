@@ -97,12 +97,20 @@
       "sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba"
     },
     {
-      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT; the corrected seq-notes-repeated-v1 rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here. Issue #163 re-pin (this sha): the record was legitimately edited again after the last publication; the file is correct and was not restored. No verification status in this table moved -- mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT, and acceptance row 5 stays PASS (every control still FAILs its check, overall_ok true). Hash bookkeeping only.",
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT; the corrected seq-notes-repeated-v1 rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here. Issue #163 re-pin: the record was legitimately edited again after the last publication; the file is correct and was not restored. No verification status in this table moved -- mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT, and acceptance row 5 stays PASS (every control still FAILs its check, overall_ok true). Hash bookkeeping only. Issue #175 re-pin (this sha): row 3's numbers did not move; the re-pin only adds the #175 re-run note (runner-fix root cause + regenerated `exactness-voice-*.json`) to row 3's prose. Hash bookkeeping only.",
       "issue": 97,
-      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS); then issue #163 (this re-pin): SXT-035 negative control C2 (smoothing-bypass) gained a control-plane discriminator -- blocks-to-converge of the smoothed modwheel word, 0 for the mutant vs 54 for the unmutated model -- so it no longer rests on the 0.0026 whole-render spectral_corr margin that #110/#166 would retire; artifacts/negative-control{,s}.{txt,json}, audio-nc-*.json and exactness-mutant.json were regenerated at that PR's HEAD (metric drift and the RMS-polarity re-grade are explained in the record's Change note; no verdict moved) and the rest of artifacts/ is unchanged and marked STALE. Pin chain: 4a371bfe -> 9415ca9a (#97) -> this sha (#163).",
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS); then issue #163 (this re-pin): SXT-035 negative control C2 (smoothing-bypass) gained a control-plane discriminator -- blocks-to-converge of the smoothed modwheel word, 0 for the mutant vs 54 for the unmutated model -- so it no longer rests on the 0.0026 whole-render spectral_corr margin that #110/#166 would retire; artifacts/negative-control{,s}.{txt,json}, audio-nc-*.json and exactness-mutant.json were regenerated at that PR's HEAD (metric drift and the RMS-polarity re-grade are explained in the record's Change note; no verdict moved) and the rest of artifacts/ is unchanged and marked STALE. Then issue #175 (this re-pin): `model/voice/run_mw_model.py`'s stimulus writer did not emit the SXT-034 unison appendix (`init.hex` words 78..127) or draw table (128+) and hardcoded `ctrl.hex` word 31 (draw-set index) to 0, so the voice-datapath pairing (`tb_voice.sv`, post-SXT-034 merge) fataled at time 0 and could not be re-run at HEAD (confirmed by replaying the pre-#175 runner against current `tb_voice.sv`: same fatal). #175 fixed the runner to emit `run_model.py`'s reference layout (`tb_voice.sv` and the frozen model NOT modified), re-ran all three SXT-035 sequences, and recorded identical checkpoint/field/oscout/mono counts to this row's prior numbers (which happened to already be post-SXT-034 values, even though the runner itself could not reproduce them at HEAD); `model.wav` renders are byte-identical before/after the runner fix (sha256-verified) and `rtl/voice/voice_broken_mutant.sv` FAILs on the regenerated coverage run dir. Pin chain: 4a371bfe -> 9415ca9a (#97) -> bdfb8ac9 (#163) -> this sha (#175).",
       "path": "reports/sxt-035/EVIDENCE.md",
-      "previous_sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972",
-      "sha256": "bdfb8ac9672730a005c539bcbd03d76599515f9bd8044507a26744cf50e4c8a6"
+      "previous_sha256": "bdfb8ac9672730a005c539bcbd03d76599515f9bd8044507a26744cf50e4c8a6",
+      "sha256": "4eec4b2036f071622934a4e320010fc9d9005ffafbe52e0c6931f58164285278"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status in this table was changed: mod:lfo stays rtl_vs_model PASS / model_vs_reference NO_VERDICT. The row 3 acceptance numbers themselves did not move; this re-pin only adds the #175 re-run note and the runner-fix root-cause explanation to row 3's prose.",
+      "issue": 175,
+      "moved_by": "issue #175: `model/voice/run_lfo_model.py`'s stimulus writer did not emit the SXT-034 unison appendix (`init.hex` words 78..127) or draw table (128+) and hardcoded `ctrl.hex` word 31 (draw-set index) to 0, so the voice-datapath pairing (`tb_voice.sv`, post-SXT-034 merge) fataled at time 0 and could not be re-run at HEAD (found by #145). #175 fixed the runner to emit `run_model.py`'s reference layout (`tb_voice.sv` and the frozen model NOT modified), re-ran all four SXT-032 sequences, and recorded identical checkpoint/field/oscout/mono counts to this row's prior (STALE, 2026-09-22) numbers; `model.wav` renders are byte-identical before/after the runner fix (sha256-verified) and `rtl/voice/voice_broken_mutant.sv` FAILs on the regenerated coverage run dir.",
+      "path": "reports/sxt-032/EVIDENCE.md",
+      "previous_sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c",
+      "sha256": "0e8c38e9cb48bb05accb25906d746cc1ac366157eb4e15ee6b2eeb7dde9e23df"
     }
   ],
   "gates": {
@@ -337,7 +345,7 @@
       "evidence": [
         {
           "path": "reports/sxt-032/EVIDENCE.md",
-          "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
+          "sha256": "0e8c38e9cb48bb05accb25906d746cc1ac366157eb4e15ee6b2eeb7dde9e23df"
         }
       ],
       "fixture_verified_paths": [
@@ -355,7 +363,7 @@
       "evidence": [
         {
           "path": "reports/sxt-035/EVIDENCE.md",
-          "sha256": "bdfb8ac9672730a005c539bcbd03d76599515f9bd8044507a26744cf50e4c8a6"
+          "sha256": "4eec4b2036f071622934a4e320010fc9d9005ffafbe52e0c6931f58164285278"
         }
       ],
       "fixture_verified_paths": [
