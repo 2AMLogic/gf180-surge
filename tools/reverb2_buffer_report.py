@@ -14,6 +14,17 @@ allocation profile:
 
   * traffic per sample: 29 reads (1 predelay + 12 allpass + 4 delays x 4)
     and 17 writes (1 predelay + 12 allpass + 4 delays x 1) = 46 words.
+    Only the recirculation read of `delay::process` is 2-point sub-sample
+    interpolated; the two output taps t1/t2 are plain single reads.
+
+The `sxt015_reconciliation` block is phrased from the LIVE SXT-015 table
+values (never hard-coded), and names the DIRECTION of any traffic
+disagreement, because the direction is what decides whether a disagreement
+is safe: an SXT-015 over-estimate is conservative for a budget, an
+under-estimate makes every downstream bandwidth result optimistic. When the
+table declares an over-estimate deliberate (`_RETAINED_OVER_ESTIMATE_TX`),
+the block records it as a hold with its unblocking condition instead of as a
+stale row (finding F-028f-2 / issue #127).
 
 All processing stays on-chip; the long buffers are external WRITABLE
 memory and flash is never writable delay memory (plan section 3 /
@@ -42,11 +53,98 @@ from reverb2_model import (  # noqa: E402
     MAX_ALLPASS_LEN, MAX_DELAY_LEN, PREDELAY_BUFFER_SIZE, NUM_ALLPASSES,
     NUM_BLOCKS, BLOCK, per_sample_transactions, model_revision,
 )
-from model.resources.fx_classes import fx_class_spec  # noqa: E402
+from model.resources.fx_classes import (  # noqa: E402
+    fx_class_spec, retained_over_estimate,
+)
 
 PARAMS = dict(predelay_f=-4.0, room_size_f=0.0, decay_time_f=0.75,
               diffusion_f=1.0, buildup_f=1.0, modulation_f=0.5,
               lf_damping_f=0.2, hf_damping_f=0.2, width_f=0.0, mix_f=1.0)
+
+
+def _reconciliation(sxt015, declared, state_bytes):
+    """Reconcile against SXT-015 using the LIVE table values.
+
+    The wording is derived, never hard-coded: a hard-coded sentence survives
+    a table edit and then misdescribes it. Three distinguishable cases, and
+    the direction matters because only one of them is safe:
+
+      agree            the row is the measured structure;
+      over-estimate    conservative for a budget, so no SXT-016/017 result is
+                       made optimistic by it -- and, when the table declares
+                       the over-estimate DELIBERATE, it is a recorded hold
+                       rather than a stale row;
+      under-estimate   makes every downstream bandwidth result optimistic.
+                       Never silent: it is called out as a STOP.
+    """
+    held = retained_over_estimate("reverb2")
+    t015 = (sxt015["ext_reads"], sxt015["ext_writes"])
+    tmod = (declared["reads"], declared["writes"])
+
+    if sxt015["state_bytes"] == state_bytes:
+        note = ("state residency confirms the SXT-015 pinned entry exactly "
+                "(%d B per instance). " % state_bytes)
+    else:
+        note = ("STATE DISAGREEMENT: SXT-015 carries %d B per instance, this "
+                "model measures %d B; reconcile before any SXT-016/017 use. "
+                % (sxt015["state_bytes"], state_bytes))
+
+    if t015 == tmod:
+        note += ("The SXT-015 per-sample TRAFFIC entry (%d reads / %d writes) "
+                 "equals the structure measured here." % t015)
+    elif t015 >= tmod:
+        note += ("The SXT-015 per-sample TRAFFIC entry (%d reads / %d writes) "
+                 "is an OVER-estimate of the structure measured here (%d "
+                 "reads / %d writes), which is conservative for a budget: no "
+                 "SXT-016/017 result is made optimistic by it. " % (t015 + tmod))
+        if held and held["measured"] == {"ext_reads": tmod[0],
+                                        "ext_writes": tmod[1]} \
+                and held["retained"] == {"ext_reads": t015[0],
+                                         "ext_writes": t015[1]}:
+            note += ("The over-estimate is DELIBERATE and recorded: "
+                     "model/resources/fx_classes.py "
+                     "_RETAINED_OVER_ESTIMATE_TX['reverb2'] holds the row at "
+                     "the larger figure pending %s (finding %s; see %s). This "
+                     "leaf does not edit the shared table."
+                     % (held["unblocks_on"], held["finding"], held["record"]))
+        else:
+            note += ("The table does NOT declare this over-estimate as "
+                     "deliberate, so it reads as a stale row rather than a "
+                     "recorded hold: reconcile it or record the reason where "
+                     "a reader of the table will see it.")
+    else:
+        note += ("The SXT-015 per-sample TRAFFIC entry (%d reads / %d writes) "
+                 "is an UNDER-estimate of the structure measured here (%d "
+                 "reads / %d writes). An under-estimate makes every "
+                 "SXT-016/017 bandwidth result optimistic: STOP and reconcile "
+                 "before any further use." % (t015 + tmod))
+
+    rec = {
+        "sxt015_state_bytes": sxt015["state_bytes"],
+        "this_model_bytes": state_bytes,
+        "state_agreement": sxt015["state_bytes"] == state_bytes,
+        "sxt015_reads_per_sample": sxt015["ext_reads"],
+        "sxt015_writes_per_sample": sxt015["ext_writes"],
+        "traffic_agreement": t015 == tmod,
+        "traffic_direction": ("agrees" if t015 == tmod else
+                              "sxt015_over_estimates" if t015 >= tmod else
+                              "sxt015_under_estimates"),
+        "traffic_over_estimate_is_deliberate": bool(
+            held and t015 != tmod
+            and held["retained"] == {"ext_reads": t015[0],
+                                     "ext_writes": t015[1]}
+            and held["measured"] == {"ext_reads": tmod[0],
+                                     "ext_writes": tmod[1]}),
+        "note": note,
+    }
+    if rec["traffic_over_estimate_is_deliberate"]:
+        rec["traffic_retention_record"] = {
+            "finding": held["finding"],
+            "unblocks_on": held["unblocks_on"],
+            "record": held["record"],
+            "reason": held["reason"],
+        }
+    return rec
 
 
 def main():
@@ -159,24 +257,7 @@ def main():
                      "identical and the model refuses a profile that would "
                      "alias a live tap (ProfileRefusal)"),
         },
-        "sxt015_reconciliation": {
-            "sxt015_state_bytes": sxt015["state_bytes"],
-            "this_model_bytes": state_bytes,
-            "state_agreement": sxt015["state_bytes"] == state_bytes,
-            "sxt015_reads_per_sample": sxt015["ext_reads"],
-            "sxt015_writes_per_sample": sxt015["ext_writes"],
-            "traffic_agreement": (sxt015["ext_reads"] == declared["reads"]
-                                  and sxt015["ext_writes"]
-                                  == declared["writes"]),
-            "note": ("state residency confirms the SXT-015 pinned entry "
-                     "exactly. The SXT-015 per-sample TRAFFIC entry for "
-                     "Reverb 2 (40 reads / 18 writes) is an over-estimate "
-                     "relative to the structure measured here (29 reads / 17 "
-                     "writes); this leaf records the finding and does NOT "
-                     "edit the shared SXT-015 table, which is SXT-015/016 "
-                     "scope. Over-estimating traffic is conservative for the "
-                     "budget, so no SXT-016/017 result is invalidated."),
-        },
+        "sxt015_reconciliation": _reconciliation(sxt015, declared, state_bytes),
         "fit_claim": ("NONE. cyc_fxreverb2_frame is a placeholder "
                       "[PENDING-SXT-016]; profile v1 is not frozen (#12, "
                       "STOP/ESCALATE fired in PR #109). This report "
