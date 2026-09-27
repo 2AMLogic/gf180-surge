@@ -193,8 +193,7 @@ def plane_from_cfg_hex(path):
 
 def model_expected(bl, br, cfg_path):
     sys.path.insert(0, os.path.join(REPO, "tools"))
-    from tools.run_reverb_rtl import (ExtLog, format_trace_block,
-                                      parse_txn_text, parse_trace_text)
+    from tools.run_reverb_rtl import ExtLog, format_trace_block
 
     import reverb1_fixed as rf
 

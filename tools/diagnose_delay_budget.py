@@ -139,7 +139,6 @@ class LfoScale(dm.DelayModel):
     def _control(self, init):
         ctrl = super()._control(init)
         k = to_q(self.KAPPA, "Q24.43")
-        dl = qmath.qsub(ctrl["time_l_tgt"], to_q(dm.FIR_OFFSET, "Q24.43"), "Q24.43") if False else None
         # time_l_tgt = q(base_l) + lfoval - off ; rebuild from parts:
         base_l = ctrl["time_l_tgt"] - self.st.lfoval + to_q(dm.FIR_OFFSET, "Q24.43")
         base_r = ctrl["time_r_tgt"] + self.st.lfoval + to_q(dm.FIR_OFFSET, "Q24.43")
@@ -159,7 +158,6 @@ def make_delay(variant, params):
     if variant == "slowrate":
         m = ModRateOverride(dm.DelayParams(params), rate=MOD_RATE_OVERRIDE)
     if variant.startswith("k"):
-        import model.effects.qmath as q
         LfoScale.KAPPA = float(variant[1:])
         cls = LfoScale
     m = cls(p)

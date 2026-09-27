@@ -1,0 +1,58 @@
+issue #112 -- send_gain precision decision + residual-drift probe
+
+host / runtime
+  python  : 3.12.3
+  numpy   : 1.26.4
+  platform: Linux-7.0.0-1012-aws-x86_64-with-glibc2.39
+
+declared engine_patch_state (preset-notes-coverage-wet sidecar)
+  scene_send_level[0] = 0.7071430087089539
+  return_level        = 1.0
+
+amp_to_linear(x) = x*x*x -- the three candidate arithmetics for x = 0.7071430087089539
+  A  float32 cube, explicit  np.float32(np.float32(np.float32(v*v)*v))
+       = 0.35360774397850037   <- PINNED by this change (amp_to_linear_f32)
+  B  float64 cube (CPython)  float(x) ** 3
+       = 0.3536077346610224
+  C  the previous expression  float(np.float32(x) ** 3)   [NumPy-version dependent]
+       = 0.35360773466102247   (dtype here: float64, numpy 1.26.4)
+
+  Decision: A. The engine holds the level and the resulting gain in C++
+  `float` and the tool already emulates the float32 send multiply
+  (np.float32(dry*send)), so float32 is the intended precision; it is now
+  written as three explicit float32 multiplies in the order of the pinned
+  C++ expression, so the value does not depend on the installed NumPy.
+  A also equals the value already committed in
+  comparison/hardreset-midpatch-wet.json and
+  negative-controls/nc-a-generic-schroeder.json, so the pin moves those
+  records' send_gain field by exactly zero.
+
+  Round-trip proof that A is a float32 value carried in a Python float:
+    float(np.float32(send)) == send -> True
+  return_level cube (all three agree, exactly representable): 1.0
+
+committed send_gain per record, BEFORE this change
+  comparison/click-wet.json                      0.3536077346610224
+  comparison/preset-notes-coverage-wet.json      0.3536077346610224
+  comparison/hardreset-midpatch-wet.json         0.35360774397850037
+  negative-controls/nc-a-generic-schroeder.json  0.35360774397850037
+
+RESIDUAL DRIFT that the pin does NOT remove (measured, model-free)
+  `stereo_corr_wet` is np.corrcoef over the ENGINE wet trace alone -- no
+  model output, no send_gain, no coefficient plane enter it. Recomputing it
+  here from the committed .npy trace over the same declared window:
+    click-wet                  committed 0.91669901385827568
+                               this host 0.91669901385828079  (delta 5.11e-15, relative 5.6e-15)
+    preset-notes-coverage-wet  committed 0.88348598125454381
+                               this host 0.88348598125463695  (delta 9.31e-14, relative 1.1e-13)
+
+  So a small difference (relative ~1e-14, far above one ulp but consistent
+  with a different summation order accumulated over ~3e5-1e6 samples)
+  remains between the committed records and this host in quantities that
+  depend only on the committed trace and NumPy's own reductions -- i.e. a
+  host/NumPy-build difference, not an arithmetic definition this tool can
+  pin. It is reported, not hidden: the
+  regenerated records are exactly reproducible on THIS declared
+  environment, and the `send_gain` definition is now host-independent.
+  No check or verdict moves under it (see DIFF.txt).
+

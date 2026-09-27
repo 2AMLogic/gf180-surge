@@ -1,0 +1,139 @@
+tail-shape-leg floor probe (issue #160) -- SXT-017 pilot-freeze input
+repo HEAD 9a3aefdeaa70   numpy 2.4.2   2026-09-27T14:23:46Z
+shipped budget (unmodified): {"decay_curve_floor_dbfs": -100.0, "decay_curve_max_dev_db": 1.0, "decay_curve_window_s": 0.05, "tail_rms_rel_db": -20.0}
+claim scope: comparator behaviour only; no fidelity, RTL, support or sound claim; no budget frozen.
+
+==========================================================================
+[1] bus quantization table vs the declared decay-curve floor
+==========================================================================
+  declared floor           : -100.0 dBFS
+  declared max deviation   : 1.00 dB
+
+  mono int16 (compare_audio_reference.py --path wet)             1 LSB RMS    -90.3 dBFS   floor is    -9.7 dB relative to it
+  stereo Q10.21 (compare_chorus_reference.py, compare_fx_reference.py) 1 LSB RMS   -126.4 dBFS   floor is   +26.4 dB relative to it
+  stereo Q9.23 (compare_reverb_model.py tail_gate)               1 LSB RMS   -138.5 dBFS   floor is   +38.5 dB relative to it
+
+  int16 bus, a +-1 LSB model difference alone (e = 1 LSB RMS) exceeds the 1.00 dB
+  budget for reference window levels below:
+    incoherent  (power addition)     :  -84.4 dBFS (r = 1.97 LSB)
+    coherent    (amplitude addition) :  -72.0 dBFS (r = 8.20 LSB)
+
+  => on the int16 bus the graded band [-100.0, -72.0] dBFS is quantization-dominated;
+     the declared floor sits 9.7 dB BELOW one int16 LSB RMS, i.e. inside it.
+  leg 1: PASS (F1's numbers reproduce: int16 1 LSB RMS -90.3 dBFS; float/s24 floors >= 26 dB above their LSB; the int16 floor is below its LSB)
+
+==========================================================================
+[2] where the 0.79 dB comes from: #93 full-tail-within-budget window anatomy
+==========================================================================
+  fixture koala2 seq-notes-coverage-v1, declared tail region [153600, 273600), 2400-frame windows
+  verdict PASS (budgets all pass=True, residual leg PASS, shape leg PASS)
+  graded windows 23 of 50; worst deviation 0.79 dB against the 1.00 dB budget
+
+  graded windows, ordered by reference level (lowest first):
+    window ref dBFS     model dBFS   |dev| dB   dB above 1 LSB RMS
+    17     -85.1        -84.3        0.79       5.3
+    16     -82.5        -82.1        0.46       7.8
+    22     -81.9        -81.5        0.39       8.4
+    18     -79.9        -79.6        0.25       10.4
+    21     -79.3        -79.1        0.23       11.0
+    20     -79.1        -78.9        0.21       11.2
+    19     -77.9        -77.8        0.16       12.4
+    15     -70.5        -70.5        0.03       19.8
+    10     -64.8        -64.8        0.01       25.5
+    14     -59.4        -59.4        0.00       30.9
+    13     -59.3        -59.3        0.00       31.0
+    8      -59.1        -59.1        0.00       31.2
+    12     -58.1        -58.1        0.00       32.2
+    9      -58.1        -58.1        0.00       32.2
+    11     -57.9        -57.9        0.00       32.4
+    7      -42.3        -42.3        0.00       48.1
+    6      -39.7        -39.7        0.00       50.6
+    2      -39.6        -39.6        0.00       50.7
+    1      -39.5        -39.5        0.00       50.8
+    5      -39.4        -39.4        0.00       50.9
+    3      -38.4        -38.4        0.00       51.9
+    4      -36.7        -36.7        0.00       53.6
+    0      -31.1        -31.1        0.00       59.2
+
+  windows deviating by more than a quarter of the budget (0.25 dB): 17, 16, 22, 18
+  the highest-level such window sits at -79.9 dBFS = 10.4 dB above 1 int16 LSB RMS
+  leg 2: PASS (F1 reproduces: control PASSes, worst graded deviation 0.79 dB, and every window above a quarter of the budget lies below the coherent band edge)
+
+==========================================================================
+[3] counterfactual floor sweep over the landed int16 mono controls
+==========================================================================
+  Each control is re-graded through compare_audio_reference.main() with ONLY
+  decay_curve_floor_dbfs patched in-process. Required statuses are the landed ones
+  (reports/shared-comparator-tail-gate/, reports/tail-shape-leg/).
+
+  floor -100.0 dBFS -- declared today (PROPOSED_TAIL['decay_curve_floor_dbfs'])
+    koala2/#93 full-tail-within-budget     required PASS observed PASS       | shape leg PASS (23 graded windows, worst dev 0.79 dB) | as landed
+    koala2/#93 drop-full-tail              required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 268.94 dB) | as landed
+    koala2/#93 tail-decays-too-fast        required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 220.71 dB) | as landed
+    koala2/#111 zero-late-tail-from-44%    required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 218.11 dB) | as landed
+    behemoth/#111 baseline (self)          required PASS observed PASS       | shape leg PASS (50 graded windows, worst dev 0.00 dB) | as landed
+    behemoth/#111 zero-late-tail-from-40%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 256.56 dB) | as landed
+    behemoth/#111 zero-late-tail-from-60%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 250.04 dB) | as landed
+    behemoth/#111 zero-late-tail-from-95%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 232.19 dB) | as landed
+    => every landed control behaves as recorded
+
+  floor -95.0 dBFS -- midway between the declared floor and 1 int16 LSB RMS
+    koala2/#93 full-tail-within-budget     required PASS observed PASS       | shape leg PASS (23 graded windows, worst dev 0.79 dB) | as landed
+    koala2/#93 drop-full-tail              required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 268.94 dB) | as landed
+    koala2/#93 tail-decays-too-fast        required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 220.71 dB) | as landed
+    koala2/#111 zero-late-tail-from-44%    required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 218.11 dB) | as landed
+    behemoth/#111 baseline (self)          required PASS observed PASS       | shape leg PASS (50 graded windows, worst dev 0.00 dB) | as landed
+    behemoth/#111 zero-late-tail-from-40%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 256.56 dB) | as landed
+    behemoth/#111 zero-late-tail-from-60%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 250.04 dB) | as landed
+    behemoth/#111 zero-late-tail-from-95%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 232.19 dB) | as landed
+    => every landed control behaves as recorded
+
+  floor -90.3 dBFS -- 1 int16 LSB RMS
+    koala2/#93 full-tail-within-budget     required PASS observed PASS       | shape leg PASS (23 graded windows, worst dev 0.79 dB) | as landed
+    koala2/#93 drop-full-tail              required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 268.94 dB) | as landed
+    koala2/#93 tail-decays-too-fast        required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 220.71 dB) | as landed
+    koala2/#111 zero-late-tail-from-44%    required FAIL observed FAIL       | shape leg FAIL (23 graded windows, worst dev 218.11 dB) | as landed
+    behemoth/#111 baseline (self)          required PASS observed PASS       | shape leg PASS (50 graded windows, worst dev 0.00 dB) | as landed
+    behemoth/#111 zero-late-tail-from-40%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 256.56 dB) | as landed
+    behemoth/#111 zero-late-tail-from-60%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 250.04 dB) | as landed
+    behemoth/#111 zero-late-tail-from-95%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 232.19 dB) | as landed
+    => every landed control behaves as recorded
+
+  floor -84.4 dBFS -- incoherent +-1 LSB band edge (leg 1)
+    koala2/#93 full-tail-within-budget     required PASS observed PASS       | shape leg PASS (22 graded windows, worst dev 0.46 dB) | as landed
+    koala2/#93 drop-full-tail              required FAIL observed FAIL       | shape leg FAIL (22 graded windows, worst dev 268.94 dB) | as landed
+    koala2/#93 tail-decays-too-fast        required FAIL observed FAIL       | shape leg FAIL (22 graded windows, worst dev 220.71 dB) | as landed
+    koala2/#111 zero-late-tail-from-44%    required FAIL observed FAIL       | shape leg FAIL (22 graded windows, worst dev 218.11 dB) | as landed
+    behemoth/#111 baseline (self)          required PASS observed PASS       | shape leg PASS (50 graded windows, worst dev 0.00 dB) | as landed
+    behemoth/#111 zero-late-tail-from-40%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 256.56 dB) | as landed
+    behemoth/#111 zero-late-tail-from-60%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 250.04 dB) | as landed
+    behemoth/#111 zero-late-tail-from-95%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 232.19 dB) | as landed
+    => every landed control behaves as recorded
+
+  floor -80.0 dBFS -- 10 dB above 1 int16 LSB RMS
+    koala2/#93 full-tail-within-budget     required PASS observed PASS       | shape leg PASS (20 graded windows, worst dev 0.25 dB) | as landed
+    koala2/#93 drop-full-tail              required FAIL observed FAIL       | shape leg FAIL (20 graded windows, worst dev 268.94 dB) | as landed
+    koala2/#93 tail-decays-too-fast        required FAIL observed FAIL       | shape leg FAIL (20 graded windows, worst dev 220.71 dB) | as landed
+    koala2/#111 zero-late-tail-from-44%    required FAIL observed PASS       | shape leg PASS (20 graded windows, worst dev 0.00 dB) | FLIPPED vs the landed record
+    behemoth/#111 baseline (self)          required PASS observed PASS       | shape leg PASS (50 graded windows, worst dev 0.00 dB) | as landed
+    behemoth/#111 zero-late-tail-from-40%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 256.56 dB) | as landed
+    behemoth/#111 zero-late-tail-from-60%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 250.04 dB) | as landed
+    behemoth/#111 zero-late-tail-from-95%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 232.19 dB) | as landed
+    => FLIPS: koala2/#111 zero-late-tail-from-44%
+
+  floor -72.0 dBFS -- coherent worst-case +-1 LSB band edge (leg 1)
+    koala2/#93 full-tail-within-budget     required PASS observed PASS       | shape leg PASS (16 graded windows, worst dev 0.03 dB) | as landed
+    koala2/#93 drop-full-tail              required FAIL observed FAIL       | shape leg FAIL (16 graded windows, worst dev 268.94 dB) | as landed
+    koala2/#93 tail-decays-too-fast        required FAIL observed FAIL       | shape leg FAIL (16 graded windows, worst dev 16.41 dB) | as landed
+    koala2/#111 zero-late-tail-from-44%    required FAIL observed PASS       | shape leg PASS (16 graded windows, worst dev 0.00 dB) | FLIPPED vs the landed record
+    behemoth/#111 baseline (self)          required PASS observed PASS       | shape leg PASS (50 graded windows, worst dev 0.00 dB) | as landed
+    behemoth/#111 zero-late-tail-from-40%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 256.56 dB) | as landed
+    behemoth/#111 zero-late-tail-from-60%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 250.04 dB) | as landed
+    behemoth/#111 zero-late-tail-from-95%  required FAIL observed FAIL       | shape leg FAIL (50 graded windows, worst dev 232.19 dB) | as landed
+    => FLIPS: koala2/#111 zero-late-tail-from-44%
+
+  declared floor (-100.0 dBFS): 8/8 controls as landed
+  raised candidate floors that flip a landed control: -80.0, -72.0
+  leg 3: PASS
+
+OVERALL: PASS

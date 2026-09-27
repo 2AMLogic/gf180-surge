@@ -1,14 +1,14 @@
 {
   "frames": 273600,
   "ref_peak_lsb": 473.0,
-  "model_peak_lsb": 466.0,
-  "max_abs_diff_lsb": 239.0,
-  "rms_diff_lsb": 28.47779599558368,
-  "rms_diff_dbfs": -61.218606131399476,
-  "rms_diff_at_shift0_lsb": 28.47779599558368,
+  "model_peak_lsb": 477.0,
+  "max_abs_diff_lsb": 242.0,
+  "rms_diff_lsb": 24.1877043941679,
+  "rms_diff_dbfs": -62.636840576600235,
+  "rms_diff_at_shift0_lsb": 24.1877043941679,
   "best_shift": 0,
-  "rms_diff_at_best_shift_lsb": 28.47779599558368,
-  "spectral_corr": 0.9667740753990466,
+  "rms_diff_at_best_shift_lsb": 24.1877043941679,
+  "spectral_corr": 0.9802121891513782,
   "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -16,8 +16,8 @@
   },
   "proposed_budget_results": {
     "max_abs_diff_lsb": true,
-    "rms_diff_dbfs": false,
-    "spectral_corr": false
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
   },
-  "verdict": "FAIL against proposed budgets"
+  "verdict": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
 }

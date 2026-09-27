@@ -1,0 +1,6 @@
+# #102 NC-B re-run (tools/lp24_negative_controls.py nc_b, SXT-038 artifacts);
+# restricted to the probe whose reference streams are committed (edges).
+LP12 model: model/voice/filter_lp12/filter_lp12_model.py at this PR
+  NC-B edges: LP 12 dB (landed SXT-037 model, subtype 1) substituted for LP 24 dB: budget FAIL (max 217487 LSB, rms 42802.283) => CONTROL-OK
+phase1 probe: BLOCKED (bundle-phase1 streams not committed; regenerating them needs the SXT-038 x86-64 SSE harness, unavailable on this arm64 host)
+[{"control": "NC-B", "case": "edges", "substituted": "fut_lp12", "budget_verdict": "FAIL", "max_abs_lsb": 217487, "rms_lsb": 42802.283, "control_ok": true}]

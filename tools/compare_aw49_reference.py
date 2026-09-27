@@ -128,7 +128,6 @@ def run(slug, seq_id, fixtures_dir, out_json, onset_block=0):
     # note-off (dropped tails FAIL; control in aw49_negative_controls.py)
     tail_s = float(sidecar["render"]["tail_s"])
     tail_blocks = int(tail_s * 48000) // 32
-    tail_frames = tail_blocks * 32
     tail_energy = float(np.sqrt((gal_out[-tail_blocks:].astype(np.float64) ** 2).mean()))
     tail_present = tail_blocks >= 32 and tail_energy > 0
 

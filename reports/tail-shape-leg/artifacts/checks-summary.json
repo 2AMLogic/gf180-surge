@@ -1,0 +1,782 @@
+{
+  "issue": 111,
+  "run_utc": "2026-09-26T23:50:08Z",
+  "repo_head": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
+  "pre_change_rev": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
+  "numpy": "2.4.1",
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "legs": {
+    "canonical_reruns": {
+      "tail_gate_checks": {
+        "exit": 0,
+        "overall": "OVERALL: PASS"
+      },
+      "stereo_tail_gate_checks": {
+        "exit": 0,
+        "overall": "OVERALL: PASS"
+      },
+      "status": "PASS"
+    },
+    "landed_verdict_rerun": {
+      "status": "PASS",
+      "pre_change_rev": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
+      "cases": [
+        {
+          "case": "SXT-028c alienappears x seq-notes-coverage-v1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.011708224407684042,
+              "graded_windows": 50,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.010281665749715785,
+              "graded_windows": 50,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.01307919999828755,
+              "graded_windows": 50,
+              "ok": true
+            }
+          }
+        },
+        {
+          "case": "SXT-028c alienappears x seq-poly-8-v1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.00217439364859473,
+              "graded_windows": 50,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.0020743713750377424,
+              "graded_windows": 50,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.0023469139219827184,
+              "graded_windows": 50,
+              "ok": true
+            }
+          }
+        },
+        {
+          "case": "SXT-028c fmcombo x seq-notes-coverage-v1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.01520551072266585,
+              "graded_windows": 6,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.014476996956517496,
+              "graded_windows": 6,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.015953610108638827,
+              "graded_windows": 6,
+              "ok": true
+            }
+          }
+        },
+        {
+          "case": "SXT-028c fmcombo x seq-poly-8-v1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.011553646423294595,
+              "graded_windows": 6,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.011720936669178172,
+              "graded_windows": 6,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.011387076827702458,
+              "graded_windows": 6,
+              "ok": true
+            }
+          }
+        },
+        {
+          "case": "SXT-028c fmtwang2 x seq-notes-coverage-v1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.08705442126428409,
+              "graded_windows": 7,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.08357356186955656,
+              "graded_windows": 7,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.09791822403978756,
+              "graded_windows": 7,
+              "ok": true
+            }
+          }
+        },
+        {
+          "case": "SXT-028c fmtwang2 x seq-poly-8-v1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.09743020128053104,
+              "graded_windows": 9,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.016895081631915332,
+              "graded_windows": 9,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.2087315243069412,
+              "graded_windows": 9,
+              "ok": true
+            }
+          }
+        },
+        {
+          "case": "sxt-023 dexie",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": false,
+          "tail_gate_after": false,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 1.6803109085699433,
+              "graded_windows": 30,
+              "ok": false
+            },
+            "L": {
+              "max_dev_db": 2.321118735269735,
+              "graded_windows": 31,
+              "ok": false
+            },
+            "R": {
+              "max_dev_db": 1.8399730150858318,
+              "graded_windows": 31,
+              "ok": false
+            }
+          },
+          "leaf_record_status": "FAIL",
+          "verdict_after": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -12.60 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 1.68 dB (> 1.00 dB budget) in 5 of 30 graded windows (worst window 7: reference -47.8 dBFS, model -46.1 dBFS); L: tail residual -4.20 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 2.32 dB (> 1.00 dB budget) in 8 of 31 graded windows (worst window 28: reference -95.6 dBFS, model -93.3 dBFS); R: tail residual -4.37 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 1.84 dB (> 1.00 dB budget) in 14 of 31 graded windows (worst window 21: reference -78.9 dBFS, model -80.7 dBFS))"
+        },
+        {
+          "case": "sxt-023 fm_bass_1",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.000130087232790288,
+              "graded_windows": 4,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.000130087232790288,
+              "graded_windows": 4,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.000130087232790288,
+              "graded_windows": 4,
+              "ok": true
+            }
+          },
+          "leaf_record_status": "PASS",
+          "verdict_after": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)"
+        },
+        {
+          "case": "sxt-023 metallic",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": false,
+          "tail_gate_after": false,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 12.11656574208564,
+              "graded_windows": 48,
+              "ok": false
+            },
+            "L": {
+              "max_dev_db": 13.96789761364289,
+              "graded_windows": 50,
+              "ok": false
+            },
+            "R": {
+              "max_dev_db": 8.86027070598464,
+              "graded_windows": 50,
+              "ok": false
+            }
+          },
+          "leaf_record_status": "FAIL",
+          "verdict_after": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 12.12 dB (> 1.00 dB budget) in 31 of 48 graded windows (worst window 30: reference -74.1 dBFS, model -86.2 dBFS); L: tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 13.97 dB (> 1.00 dB budget) in 36 of 50 graded windows (worst window 34: reference -87.4 dBFS, model -73.4 dBFS); R: tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 8.86 dB (> 1.00 dB budget) in 33 of 50 graded windows (worst window 22: reference -57.1 dBFS, model -66.0 dBFS))"
+        },
+        {
+          "case": "sxt-024 click-wet",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.0011653253559558152,
+              "graded_windows": 108,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.0015222485126002994,
+              "graded_windows": 108,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.0008956548872731673,
+              "graded_windows": 108,
+              "ok": true
+            }
+          },
+          "failing_checks_after": []
+        },
+        {
+          "case": "sxt-024 preset-notes-coverage-wet",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.0020116244841972275,
+              "graded_windows": 88,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.002068327918578916,
+              "graded_windows": 89,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.0017804170507815797,
+              "graded_windows": 87,
+              "ok": true
+            }
+          },
+          "failing_checks_after": []
+        },
+        {
+          "case": "sxt-024 hardreset-midpatch-wet",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.00030919479921465154,
+              "graded_windows": 35,
+              "ok": true
+            },
+            "L": {
+              "max_dev_db": 0.0003248892084570798,
+              "graded_windows": 35,
+              "ok": true
+            },
+            "R": {
+              "max_dev_db": 0.00034299706845786204,
+              "graded_windows": 35,
+              "ok": true
+            }
+          },
+          "failing_checks_after": [
+            "tail_rms_rel"
+          ]
+        },
+        {
+          "case": "#93 full-tail-within-budget",
+          "status_before": "PASS",
+          "status_after": "PASS",
+          "verdict_status_changed": false,
+          "tail_gate_before": true,
+          "tail_gate_after": true,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 0.7872191815509666,
+              "graded_windows": 23,
+              "ok": true
+            }
+          },
+          "required": "PASS",
+          "as_required": true
+        },
+        {
+          "case": "#93 drop-full-tail",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": false,
+          "tail_gate_after": false,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 268.93524673295786,
+              "graded_windows": 23,
+              "ok": false
+            }
+          },
+          "required": "FAIL",
+          "as_required": true
+        },
+        {
+          "case": "#93 tail-decays-too-fast",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": false,
+          "tail_gate_after": false,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 220.71260075582796,
+              "graded_windows": 23,
+              "ok": false
+            }
+          },
+          "required": "FAIL",
+          "as_required": true
+        },
+        {
+          "case": "#93 truncate-at-tail-start",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": false,
+          "tail_gate_after": false,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": null,
+              "graded_windows": null,
+              "ok": null
+            }
+          },
+          "required": "FAIL",
+          "as_required": true
+        },
+        {
+          "case": "#93 undeclared-wet-path",
+          "status_before": "REFUSE",
+          "status_after": "REFUSE",
+          "verdict_status_changed": false,
+          "tail_gate_before": null,
+          "tail_gate_after": null,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": null,
+              "graded_windows": null,
+              "ok": null
+            }
+          },
+          "required": "REFUSE",
+          "as_required": true
+        },
+        {
+          "case": "#93 no-sidecar",
+          "status_before": "REFUSE",
+          "status_after": "REFUSE",
+          "verdict_status_changed": false,
+          "tail_gate_before": null,
+          "tail_gate_after": null,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": null,
+              "graded_windows": null,
+              "ok": null
+            }
+          },
+          "required": "REFUSE",
+          "as_required": true
+        },
+        {
+          "case": "#93 stale-sidecar",
+          "status_before": "REFUSE",
+          "status_after": "REFUSE",
+          "verdict_status_changed": false,
+          "tail_gate_before": null,
+          "tail_gate_after": null,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": null,
+              "graded_windows": null,
+              "ok": null
+            }
+          },
+          "required": "REFUSE",
+          "as_required": true
+        },
+        {
+          "case": "#93 drop-full-tail-second-preset",
+          "status_before": "FAIL",
+          "status_after": "FAIL",
+          "verdict_status_changed": false,
+          "tail_gate_before": false,
+          "tail_gate_after": false,
+          "tail_gate_changed": false,
+          "shape_leg": {
+            "mono": {
+              "max_dev_db": 270.7888882502219,
+              "graded_windows": 50,
+              "ok": false
+            }
+          },
+          "required": "FAIL",
+          "as_required": true
+        }
+      ],
+      "verdict_status_changes": 0,
+      "tail_gate_changes_status_unchanged": [],
+      "dry_parity_93": "PASS"
+    },
+    "late_tail_controls": {
+      "status": "PASS",
+      "controls": [
+        {
+          "control": "stereo/baseline",
+          "tool": "chorus",
+          "required": "PASS",
+          "observed": "PASS",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 0.011708224407684042,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -53.838623488158234,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": true
+        },
+        {
+          "control": "stereo/zero-late-tail-from-30%",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "FAIL",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": false,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 242.25628000429325,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -15.667502878890776,
+          "tail_rms_rel_ok": false,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "stereo/zero-late-tail-from-40%",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 238.1186239755183,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -21.11626827930554,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "stereo/zero-late-tail-from-60%",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 223.89151047625822,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -33.40235993601354,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "stereo/zero-late-tail-from-80%",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 212.41803299935333,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -44.48572669144635,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "stereo/zero-late-tail-from-90%",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 207.87859574910553,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -49.10475493560404,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "stereo/late-tail-decays-too-fast",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 63.88265354670007,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -26.717664249142807,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "stereo/right-channel-late-tail-drop",
+          "tool": "chorus",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 6.766529666786681,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -39.04976473384717,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "mono/behemoth/baseline",
+          "tool": "shared",
+          "required": "PASS",
+          "observed": "PASS",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 0.0,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -600.0,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": true
+        },
+        {
+          "control": "mono/behemoth/zero-late-tail-from-40%",
+          "tool": "shared",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "FAIL",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": false
+          },
+          "tail_decay_curve_max_dev_db": 256.5565943322685,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -14.40572099936691,
+          "tail_rms_rel_ok": false,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "mono/behemoth/zero-late-tail-from-60%",
+          "tool": "shared",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "FAIL",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": false
+          },
+          "tail_decay_curve_max_dev_db": 250.03757700903014,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -22.513192045631172,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "mono/behemoth/zero-late-tail-from-95%",
+          "tool": "shared",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 232.19470387811816,
+          "tail_decay_curve_graded_windows": 50,
+          "tail_rms_rel_db": -43.294067957619546,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "mono/koala2/zero-late-tail-from-44%",
+          "tool": "shared",
+          "required": "FAIL",
+          "observed": "FAIL",
+          "pre111_tool_status": "PASS",
+          "result": "CONTROL-OK",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 218.11397753143908,
+          "tail_decay_curve_graded_windows": 23,
+          "tail_rms_rel_db": -53.99801993001493,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": false
+        },
+        {
+          "control": "mono/koala2/zero-late-tail-from-46%",
+          "tool": "shared",
+          "required": "(none)",
+          "observed": "PASS",
+          "pre111_tool_status": "PASS",
+          "result": "CHARACTERIZATION",
+          "budgets": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "tail_decay_curve_max_dev_db": 0.0,
+          "tail_decay_curve_graded_windows": 23,
+          "tail_rms_rel_db": -72.30801026785997,
+          "tail_rms_rel_ok": true,
+          "tail_decay_curve_ok": true,
+          "note": "reference level of the zeroed span is -114.4 dBFS, below the declared -100.0 dBFS floor: the shape leg does not see it by construction (not a control)",
+          "zeroed_span_ref_dbfs": -114.44508359481955
+        }
+      ],
+      "newly_failing_vs_pre111": [
+        "stereo/zero-late-tail-from-40%",
+        "stereo/zero-late-tail-from-60%",
+        "stereo/zero-late-tail-from-80%",
+        "stereo/zero-late-tail-from-90%",
+        "stereo/late-tail-decays-too-fast",
+        "stereo/right-channel-late-tail-drop",
+        "mono/behemoth/zero-late-tail-from-95%",
+        "mono/koala2/zero-late-tail-from-44%"
+      ],
+      "shape_leg_load_bearing": [
+        "stereo/zero-late-tail-from-40%",
+        "stereo/zero-late-tail-from-60%",
+        "stereo/zero-late-tail-from-80%",
+        "stereo/zero-late-tail-from-90%",
+        "stereo/late-tail-decays-too-fast",
+        "stereo/right-channel-late-tail-drop",
+        "mono/behemoth/zero-late-tail-from-95%",
+        "mono/koala2/zero-late-tail-from-44%"
+      ]
+    }
+  },
+  "overall": "PASS"
+}

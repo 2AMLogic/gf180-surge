@@ -31,7 +31,6 @@ allocation numbers are placeholders [PENDING-SXT-016]).
 import argparse
 import hashlib
 import json
-import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -42,11 +41,11 @@ if str(REPO) not in sys.path:
 
 from compiler import compile as C  # noqa: E402
 from compiler.reject import (  # noqa: E402
-    OUTCOME_COMPILED, catalog_codes, outcome_for,
+    OUTCOME_COMPILED, catalog_codes,
 )
 from compiler.version import COMPILER_VERSION, IMAGE_FORMAT_VERSION  # noqa: E402
 from tools.profile_predict import (  # noqa: E402
-    Refuse, load_bundle_file, load_graphs, predict_line, validate_spec,
+    Refuse, load_bundle_file, load_graphs, validate_spec,
 )
 
 GOLDEN_DIR = Path(__file__).resolve().parent / "golden"
@@ -220,7 +219,7 @@ def golden_suite(golden_dir=GOLDEN_DIR):
               "generation; regenerate goldens")
         ok = False
 
-    with tempfile.TemporaryDirectory(prefix="sxt020-golden-") as td:
+    with tempfile.TemporaryDirectory(prefix="sxt020-golden-"):
         for case in manifest["cases"]:
             name = case["case"]
             line, why = _source_line(case, by_path, golden_dir)
@@ -383,7 +382,7 @@ def main(argv=None):
     p_g.add_argument("--golden-dir", default=str(GOLDEN_DIR))
     p_a = sub.add_parser("alloc", help="verify allocations of one image")
     p_a.add_argument("file")
-    p_n = sub.add_parser("controls", help="run the negative controls")
+    sub.add_parser("controls", help="run the negative controls")
     args = ap.parse_args(argv)
 
     if args.cmd == "image":

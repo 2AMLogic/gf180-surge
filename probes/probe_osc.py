@@ -43,8 +43,7 @@ no synthesis has been run (see TECH in probes/common.py).
 from .common import (AUDIO_BITS_CANDIDATE, BLOCK_SIZE, BLOCK_SIZE_OS,
                      CLOCK_CANDIDATES_HZ, COEFF_BITS, FS_HZ, OpCounter,
                      OSC_OVERSAMPLING, PHASE_BITS_CANDIDATES,
-                     SINC_TABLE_PHASES, SINC_TAPS, TECH, closure, op_cycles,
-                     sram_pair_note)
+                     SINC_TABLE_PHASES, SINC_TAPS, TECH, closure, op_cycles)
 
 PROBE = "probe_osc"
 FIR_OPS = dict(lut=2 * SINC_TAPS, mul=2 * SINC_TAPS, add=2 * SINC_TAPS)

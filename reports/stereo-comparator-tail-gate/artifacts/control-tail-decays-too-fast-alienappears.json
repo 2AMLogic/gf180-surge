@@ -4,7 +4,7 @@
   "slug": "alienappears",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/alienappears/tail-decays-too-fast.f32.wav",
+  "model": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/alienappears/tail-decays-too-fast.f32.wav",
   "path": "wet",
   "fixture_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
   "channels": {
@@ -56,7 +56,10 @@
     "spectral_corr": true
   },
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
@@ -64,7 +67,10 @@
     "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
     "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
@@ -74,8 +80,30 @@
     "tail_rms_rel_db": -8.930379584546598,
     "tail_ref_rms_lsb": 4623.031180476421,
     "tail_model_rms_lsb": 3635.0815289360617,
+    "tail_rms_rel_ok": false,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 50,
+      "ref_first_window_dbfs": -40.0919566322201,
+      "ref_last_graded_window_dbfs": -96.72722788265723,
+      "max_dev_db": 53.66691734128604,
+      "worst_window": {
+        "index": 49,
+        "start_frame_in_tail": 117600,
+        "ref_dbfs": -96.72722788265723,
+        "model_dbfs": -150.39414522394327
+      },
+      "windows_over_budget": 49,
+      "ok": false,
+      "reason": "tail decay curve deviates 53.67 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -96.7 dBFS, model -150.4 dBFS)"
+    },
+    "tail_decay_curve_ok": false,
     "ok": false,
-    "reason": "tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget"
+    "reason": "tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 53.67 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -96.7 dBFS, model -150.4 dBFS)"
   },
   "tail_check_lr": {
     "L": {
@@ -84,7 +112,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -94,8 +125,30 @@
       "tail_rms_rel_db": -8.864088150335613,
       "tail_ref_rms_lsb": 4862.876577744629,
       "tail_model_rms_lsb": 3766.748464511993,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -40.183930144886936,
+        "ref_last_graded_window_dbfs": -97.04464915943022,
+        "max_dev_db": 53.691526446011935,
+        "worst_window": {
+          "index": 49,
+          "start_frame_in_tail": 117600,
+          "ref_dbfs": -97.04464915943022,
+          "model_dbfs": -150.73617560544216
+        },
+        "windows_over_budget": 49,
+        "ok": false,
+        "reason": "tail decay curve deviates 53.69 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -97.0 dBFS, model -150.7 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
       "ok": false,
-      "reason": "tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 53.69 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -97.0 dBFS, model -150.7 dBFS)"
     },
     "R": {
       "tail_offset": 153600,
@@ -103,7 +156,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -113,10 +169,32 @@
       "tail_rms_rel_db": -8.828158704552852,
       "tail_ref_rms_lsb": 4780.786247583044,
       "tail_model_rms_lsb": 3739.515116215671,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -39.80133478579284,
+        "ref_last_graded_window_dbfs": -96.22942217248946,
+        "max_dev_db": 53.638937151573984,
+        "worst_window": {
+          "index": 49,
+          "start_frame_in_tail": 117600,
+          "ref_dbfs": -96.22942217248946,
+          "model_dbfs": -149.86835932406345
+        },
+        "windows_over_budget": 49,
+        "ok": false,
+        "reason": "tail decay curve deviates 53.64 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -96.2 dBFS, model -149.9 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
       "ok": false,
-      "reason": "tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 53.64 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -96.2 dBFS, model -149.9 dBFS)"
     }
   },
   "tail_gate_ok": false,
-  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget)"
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -8.93 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 53.67 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -96.7 dBFS, model -150.4 dBFS); L: tail residual -8.86 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 53.69 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -97.0 dBFS, model -150.7 dBFS); R: tail residual -8.83 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 53.64 dB (> 1.00 dB budget) in 49 of 50 graded windows (worst window 49: reference -96.2 dBFS, model -149.9 dBFS))"
 }

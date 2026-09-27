@@ -58,9 +58,6 @@ def graphs_entry(rel):
 
 
 def git_blob_sha1(path):
-    import struct
-    import zlib
-
     data = open(path, "rb").read()
     hdr = b"blob %d\x00" % len(data)
     return hashlib.sha1(hdr + data).hexdigest()
@@ -116,7 +113,6 @@ def main():
     # --- live engine read ----------------------------------------------------
     surgepy = oc.import_surgepy()
     oc.apply_engine_env()
-    import surgepy.constants as C
 
     s = surgepy.createSurge(48000.0)
     if not s.loadPatch(preset_abs):

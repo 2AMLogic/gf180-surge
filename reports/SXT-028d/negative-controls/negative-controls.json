@@ -1,0 +1,57 @@
+{
+  "claim": "negative controls; each must fail the check it targets",
+  "controls": [
+    {
+      "control": "NC-A generic substitute (pass-through + fixed gain occupant)",
+      "metrics": {
+        "blocks_compared": 4,
+        "blocks_different": 4
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (generic substitute FAILS bit-exact reproduction of the declared per-instance state; excluded from any faithful-occupant claim)"
+    },
+    {
+      "control": "NC-B dropped tail (render truncated to 3/6 declared ring-out blocks)",
+      "metrics": {
+        "covers_declared_span": false,
+        "declared_blocks": 6,
+        "final_checkpoint_matches_full_render": false,
+        "rendered_blocks": 3
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (truncated render FAILS the declared-tail-span coverage/checkpoint check)"
+    },
+    {
+      "control": "NC-C wrong order (global1/global2 coefficient-set permutation)",
+      "metrics": {
+        "blocks_different": 8,
+        "blocks_total": 8,
+        "checkpoints_differ": true
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (order-sensitive check flags the permutation)"
+    },
+    {
+      "control": "NC-D shared state (both slots pooled into one BiquadInstance)",
+      "metrics": {
+        "blocks_different": 6,
+        "blocks_total": 6
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (pooled-state mutant FAILS the dual-instance-independence check)"
+    },
+    {
+      "control": "NC-E stale stub (frozen-revision pin)",
+      "metrics": {
+        "expected": "d8ac909c",
+        "trace_revision": "d8ac2e73"
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK (stale trace revision REFUSED -- the comparator cannot report PASS)"
+    }
+  ],
+  "leaf": "SXT-028d",
+  "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+  "schema_version": 1,
+  "status": "PASS"
+}

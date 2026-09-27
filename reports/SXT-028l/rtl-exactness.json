@@ -1,0 +1,340 @@
+{
+  "asserted_model_revision": null,
+  "cases": [
+    {
+      "blocks": 6,
+      "case": "both-buses-all-fx",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bypass-no-sends-skips-stage",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bypass-scene-fx-only-skips-stage",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bypass-no-fx-skips-stage",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bus3-disabled-bit12",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bus4-disabled-bit13",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "both-buses-disabled-corpus-mask",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bus4-unoccupied-send3-only",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bus3-unoccupied-send4-only",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "same-class-dual-occupants",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "dual_instance": {
+        "distinct_gain_planes": true,
+        "final_histories_differ": true,
+        "identical_coefficients_in_both_buses": true
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "scene-b-inactive-single-mode",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "zero-return-level-both-buses",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "sendused-false-passthrough",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "sendused3-goes-false-mid-run",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384,
+        "wet": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "tail-span-silent-scenes",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512,
+        "wet": 1024
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      },
+      "tail": {
+        "blocks_with_nonzero_wet_output": 8,
+        "declared_tail_span_blocks": 6,
+        "signal_blocks": 2
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "bus3-reload-mid-tail",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512,
+        "wet": 1024
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "bus4-off-mid-tail",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512,
+        "wet": 1024
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "panic-reset-mid-tail",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512,
+        "wet": 1024
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 4,
+      "case": "saturating-full-scale",
+      "checked": {
+        "checkpoints": 4,
+        "outputs": 256,
+        "wet": 512
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 12,
+      "case": "random-control-stream",
+      "checked": {
+        "checkpoints": 12,
+        "outputs": 768,
+        "wet": 1536
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+        "ok": true
+      }
+    }
+  ],
+  "leaf": "SXT-028l",
+  "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+  "schema_version": 1,
+  "sim": "iverilog",
+  "status": "PASS"
+}

@@ -3,21 +3,21 @@
   "verdict": "FAIL",
   "checked": {
     "checkpoints": 1,
-    "fields": 29,
+    "fields": 35,
     "oscout": 64,
     "mono": 36
   },
   "mismatches": 41,
   "first_failures": [
     "block 0 sample 0: mono model=0 rtl=1",
-    "block 0 sample 1: mono model=0 rtl=14",
-    "block 0 sample 2: mono model=1 rtl=123",
-    "block 0 sample 3: mono model=2 rtl=637",
-    "block 0 sample 4: mono model=11 rtl=2212",
-    "block 0 sample 5: mono model=40 rtl=5695",
-    "block 0 sample 6: mono model=120 rtl=11507",
-    "block 0 sample 7: mono model=291 rtl=18627",
-    "block 0 sample 8: mono model=601 rtl=24721",
-    "block 0 sample 9: mono model=1072 rtl=28681"
+    "block 0 sample 1: mono model=0 rtl=6",
+    "block 0 sample 2: mono model=0 rtl=82",
+    "block 0 sample 3: mono model=2 rtl=511",
+    "block 0 sample 4: mono model=9 rtl=1966",
+    "block 0 sample 5: mono model=36 rtl=5368",
+    "block 0 sample 6: mono model=108 rtl=11292",
+    "block 0 sample 7: mono model=275 rtl=18785",
+    "block 0 sample 8: mono model=579 rtl=25093",
+    "block 0 sample 9: mono model=1052 rtl=28741"
   ]
 }

@@ -1,0 +1,28 @@
+SXT-028g fail-closed preset extraction (tools/extract_phaser_inputs.py)
+status: NOT_RUN
+
+No pinned-engine checkout and no importable surgepy exist in the environment
+this leaf was built in (measured: reports/SXT-028g/artifacts/oracle-status.json).
+The extractor was therefore never invoked, so there are no per-preset refusal
+rows yet and no preset-derived model/effects/fx_inputs/type-phaser-<slug>.json
+record. NOT_RUN is not a pass and is not a refusal of the carriers themselves.
+
+Carriers queued for extraction (B4-scope, re-selected by #140 from the
+generator's own candidate list in
+reports/sxt-028/leaves/SXT-028g/newly-enabled.json; census blob SHA-1 as
+recorded there, re-verified by the extractor at run time):
+  phasey   resources/data/patches_factory/Polysynths/Phasey.fxp  59e24827a94cba709975a3ec5de9965137b4177d
+  squelch  resources/data/patches_factory/Leads/Squelch.fxp      03d1d38ceaf69bc3d964982e5ccbf65bdbff278d
+  sticky   resources/data/patches_factory/MPE/Sticky.fxp         e785e1c51e8d8ceac364e78921593ac4fe33e6f7
+
+Carriers first queued for this leaf (issue #59) and now OMITTED -- all three
+are refused by the repaired extractor. The verdicts below are oracle-
+independent (re-derived from corpus/normalized/graphs.jsonl and pinned by
+tests/test_extract_phaser_inputs.py), NOT results of an extraction run:
+  reson   resources/data/patches_3rdparty/Argitoth/FX/Reson.fxp         REFUSE: modulation into FX A1 Left, FX A1 Right
+  bass11  resources/data/patches_3rdparty/Bluelight/Basses/Bass 11.fxp  REFUSE: modulation into FX A2 Mix
+  bass17  resources/data/patches_3rdparty/Bluelight/Basses/Bass 17.fxp  REFUSE: active Conditioner (fx type 8) in global1, outside this leaf's chain ladder
+Cause and scope: reports/SXT-028g/EVIDENCE.md sections 6a and 8.
+
+Re-run on an oracle host:
+  python3 tools/extract_phaser_inputs.py

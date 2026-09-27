@@ -43,7 +43,6 @@ def sha256_buf(a):
 
 
 def render_probe(surgepy, slug, rel_path, depth_override, rate_override=None):
-    import surgepy.constants as C
     seq, seq_path, seq_sha = rf.load_sequence(SEQ)
     abs_path = os.path.join(oc.engine_dir(), rel_path)
     bufs, infos = [], []

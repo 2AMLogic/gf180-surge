@@ -1,0 +1,6 @@
+SXT-028e-sse extraction transcript — mode=graphs
+engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
+written: 3  refused/no-carrier: 2
+
+REFUSED awfulfmguitar (resources/data/patches_3rdparty/Luna/Guitars/Awful FM Guitar.fxp): awfulfmguitar: fx_disable = 1 (non-zero)
+NO-CARRIER model 7 (wst_fuzzsoft, TableEval<FuzzTable<1>, 1024, TANH>): zero active Distortion slots in corpus/normalized/graphs.jsonl use this FX model. The algorithm is implemented and exercised by synthetic corners; no fixture record exists and none is invented.

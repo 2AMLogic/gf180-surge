@@ -21,7 +21,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
 from model.effects.run_fx_model import (  # noqa: E402
-    SETTLE_BLOCKS, run_chain, amp_to_linear_fixed, read_wav_stereo_f32,
+    SETTLE_BLOCKS, run_chain, read_wav_stereo_f32,
     db_to_linear_d,
 )
 from model.effects.qmath import to_q, FRAC  # noqa: E402

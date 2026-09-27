@@ -79,13 +79,15 @@ plane; the transient is *measured* in the reset case, see §3); block size 32.
 ## 3. Model vs pinned reference — [PROPOSED] budgets, achieved numbers
 
 All tolerances are **PENDING-FREEZE** proposals (SXT-013 owns the fidelity
-policy). Achieved, `comparison/*.json`:
+policy). Achieved, `comparison/*.json` (records regenerated under python
+3.12.3 / numpy 1.26.4 with the pinned float32 `send_gain` — see "Precision pin
+and record regeneration (issue #112)" in this section; verdicts unchanged):
 
 | Case | wet_max_abs | wet_rms_rel | tail_rms_rel | decay curve | bands | stereo corr | Verdict |
 |---|---|---|---|---|---|---|---|
-| preset-notes-coverage-wet (product case) | 1.65e-6 (≤1e-3) | −55.0 dB (≤−50) | −52.6 dB | 0.0024 dB | 3.1e-5 dB | 2.4e-7 (≤0.02) | **PASS** |
+| preset-notes-coverage-wet (product case) | 1.67e-6 (≤1e-3) | −55.0 dB (≤−50) | −52.6 dB | 0.0027 dB | 3.1e-5 dB | 2.5e-7 (≤0.02) | **PASS** |
 | click-wet (impulse/decay carrier) | 5.9e-7 | −55.8 dB | −55.6 dB | 0.0014 dB | 1.4e-5 dB | 3.0e-7 | **PASS** |
-| hardreset-midpatch-wet (type-toggle reset) | 3.2e-6 | −58.6 dB | −42.6 dB * | 0.0003 dB | 0.0044 dB | 5.8e-8 | **PASS with one recorded budget finding (*)** |
+| hardreset-midpatch-wet (type-toggle reset) | 3.2e-6 | −58.6 dB | −42.6 dB * | 0.0003 dB | 0.0050 dB | 6.2e-8 | **PASS with one recorded budget finding (*)** |
 | sweep decay −4…6 (t60 vs 2^decay, diagnostic) | — | — | tail level tracking mean ≤0.64 dB, max ≤4.96 dB | — | — | — | **PASS** (t60 fits NOT_RUN where the tail is below the −100 dBFS floor; tracking carries the agreement) |
 
 **(*) Bounded finding for the freeze.** In the factory-default parameter
@@ -151,7 +153,9 @@ The gated re-runs are at
 the committed click/preset records do not reproduce bit-for-bit with the
 *pre-#100* tool on a NumPy 2 host (`send_gain` float32 cube, fields added
 after the record). That is a pre-existing finding, filed as #112, and it
-changes no verdict.
+changes no verdict. **#112 has since landed** — the `send_gain` arithmetic is
+pinned and every record in `comparison/` and `negative-controls/` was
+regenerated; see "Precision pin and record regeneration (issue #112)" below.
 
 ### Tail-window decision (issue #108): KEEP the bespoke window, report it explicitly
 
@@ -241,7 +245,8 @@ third value into committed evidence and force a second regeneration once #112
 decides the precision, so regeneration is deferred to **#112**, which owns
 that decision — and its regeneration set is `comparison/*.json` **plus**
 `negative-controls/*.json`, not the two click/preset records alone. No verdict
-moves under any of the three `send_gain` values.
+moves under any of the three `send_gain` values. (**Resolved**: #112 has since
+pinned the arithmetic and regenerated that whole set once — next subsection.)
 
 **Not addressed here (bounded, out of this issue's scope).** When the analyzed
 tail is shorter than four 50 ms windows, `decay_curve_max_dev_db` is `None`
@@ -250,6 +255,120 @@ conservative (never a false pass) and unreachable on the committed traces
 (≥ 571200-frame windows), so it was left alone rather than changed under a
 "no verdict may move" constraint. Related open work on tail-shape grading is
 #111.
+
+### Precision pin and record regeneration (issue #112): decided float32; verdicts unchanged
+
+**Decision: the `amp_to_linear` cube is float32, written explicitly.**
+`tools/compare_reverb_model.py` gained `amp_to_linear_f32()`, which evaluates
+the pinned `DSPUtils.h` expression `x*x*x` as **three explicit float32
+multiplies in that order** and returns the float32 result in a Python float;
+`send_return_gains()` now calls it. The previous expression
+`float(np.float32(x) ** 3)` was **NumPy-version dependent**: float32 under
+NEP 50 (NumPy ≥ 2), float64 under NumPy 1.x scalar promotion — and, as a
+float64, differing from CPython's own `x ** 3` in the last bits (numpy `power`
+vs CPython `pow`). float32 is the engine's own precision (the level and the
+gain are C++ `float`, and this tool already emulates the float32 send multiply
+as `np.float32(dry*send)`), so this pins the arithmetic the reference path
+model declares rather than changing it.
+
+| `send_gain` for the declared `scene_send_level` 0.7071430087089539 | arithmetic | status |
+|---|---|---|
+| `0.35360774397850037` | float32 cube (explicit) | **pinned**; was already the committed value in `comparison/hardreset-midpatch-wet.json` and `negative-controls/nc-a-generic-schroeder.json` |
+| `0.3536077346610224` | float64 cube (CPython `**`) | was committed in `comparison/click-wet.json` and `comparison/preset-notes-coverage-wet.json` |
+| `0.35360773466102247` | `np.float32(x) ** 3` under numpy 1.26.4 | reproduced by the pre-#112 tool on this host; in no `comparison/` or `negative-controls/` record — it appears only in the #108/#112 artifact transcripts |
+
+**Every record in `comparison/` and `negative-controls/` was regenerated
+once** (the wider set #108's deferral note identified, not just the two
+click/preset records): `click-wet`, `preset-notes-coverage-wet`,
+`hardreset-midpatch-wet`, `reset-midpatch-wet` (byte-identical — the BLOCKED
+record carries no gain field or graded metric), `sweep-t60`, and all four
+`nc-*`. Before/after records, a field-level diff, the precision probe and the
+live control are at `artifacts/issue-112/` (`before/`, `after/`,
+`pre-fix-host/`, `DIFF.txt`, `PRECISION-PROBE.txt`, `CONTROL.txt`,
+`TAIL-SHAPE-LEG.txt`).
+
+**Record shape: post-#111.** The regeneration was run **twice** — once on this
+branch's base, then once more on the tree merged with `main` — because `main`
+gained #111's *windowed decay-curve tail-shape leg* in between, which adds
+`tail_rms_rel_ok`, `tail_decay_curve` and `tail_decay_curve_ok` to
+`car.stereo_tail_gate`'s `tail_check` / `tail_check_lr` and therefore to the
+`tail_gate` block these records copy verbatim. Regenerating only against the
+pre-#111 tool would have recreated the exact defect #112 closes ("fields added
+to the tool after those records were committed"), so the committed records
+carry the **post-#111** `tail_gate` shape: #100's four tail-gate legs **plus**
+#111's tail-shape leg. The second run added 66 `tail_gate` fields to each of
+the three graded comparison records, changed **no** value and **no** exit
+code, and returned `reset-midpatch-wet`, `sweep-t60` and all four `nc-*`
+byte-identical. Every added `tail_decay_curve` leg **passes** its declared
+1.0 dB-per-50 ms-window budget with `windows_over_budget: 0`: worst
+`max_dev_db` in the set is 0.00268 dB (preset, `tail_check_lr.L`; 373× of
+margin), and the mono legs are 0.00104 dB (click, 108/120 graded windows),
+0.00175 dB (preset, 88/240) and 0.00031 dB (hardreset, 35/240). Coverage is
+reported as graded/total rather than folded into the pass; the ungraded
+windows are those whose reference level is under the declared −100 dBFS
+floor. Full measurement: `artifacts/issue-112/TAIL-SHAPE-LEG.txt`. #111's
+`tail_rms_rel_ok` is true on all nine legs, and that does **not** retire this
+leaf's bounded finding — it is the shared tail gate's own budget, not
+sxt-024's top-level `checks.tail_rms_rel`, which stays **false** on
+`hardreset-midpatch-wet`.
+
+**Verdicts: unchanged** (python 3.12.3, numpy 1.26.4). Exit codes before →
+after: click `0 → 0` (PASS), preset `0 → 0` (PASS), hardreset `1 → 1` (FAIL
+on `tail_rms_rel`, the bounded budget finding recorded above, text intact),
+reset `2 → 2` (BLOCKED), `sweep` `0 → 0`, `reverb_negative_controls.py`
+`0 → 0` (all four **CONTROL-OK**). The **only** `checks` change anywhere is
+the *addition* of `tail_gate: true` to the three graded comparison records —
+they predated #100. No `checks` entry was removed and none flipped. The
+tightest margin in the whole set is NC-D's `wet_rms_rel` −48.657 dB against
+the −50 dB budget it **must** fail (1.343 dB of margin, moved 0.0064 dB, a
+ratio of 209); next is preset `tail_rms_rel` −52.605 dB (2.605 dB margin,
+0.0178 dB move).
+
+Other field changes are (a) the additive fields the records predated —
+`tail_gate` (#100, extended by #111's tail-shape leg), `tail_window` (#108),
+and `tail_err_rms_dbfs` / `tail_wet_rms_dbfs` (the tail floor-guard,
+`efd4c59`) — and (b) last-bits moves of the metrics.
+
+**Residual reproducibility finding (bounded, reported not hidden).** The pin
+removes the *arithmetic-definition* drift; it does not make the records
+byte-reproducible on an arbitrary host. `stereo_corr_wet` is
+`np.corrcoef` over the **engine wet trace alone** — no model output, no
+`send_gain`, no coefficient plane — and this host computes it 5.1e-15
+(click) / 9.3e-14 (preset) away from the committed value, i.e. a NumPy
+reduction-order difference accumulated over 3·10⁵–10⁶ samples, measured in
+`artifacts/issue-112/PRECISION-PROBE.txt`. That is also why the hardreset and
+negative-control records moved slightly even though their `send_gain` field is
+identical before and after. What is claimed after #112: the `send_gain`
+definition is host-independent, and the committed records are reproducible on
+the **declared** environment. Byte-identical reproduction across NumPy builds
+is **not** claimed for the float64 analysis reductions.
+
+**Unit-convention note carried forward to the SXT-013/SXT-017 freeze (no
+change made).** This tool's `wet_rms_rel_db` / `tail_rms_rel_db` are
+`10·log10(rms_err / rms_wet)` — a 10·log of an **amplitude** ratio, as its own
+docstring declares — so its −50 "dB" budget is a 1e-5 amplitude ratio (−100 dB
+in 20·log terms). The other comparators' `*_rel_db` fields (including the
+`tail_gate` block in these same records) are `20·log10` of an RMS ratio. Both
+are internally consistent and neither was changed here; the mismatch is a
+naming/freeze item for the fidelity-policy freeze, deliberately not a silent
+rescaling of a committed budget.
+
+**Regression tests + live control.** `tests/test_sxt024_reverb1.py` pins the
+exact float32 value, asserts the returned Python float carries exactly a
+float32 value, and asserts **every committed record that reports `send_gain`
+carries that one value** (the condition violated before #112: two committed
+values plus a third on a current host). That last test **discovers** its
+record set by globbing `comparison/*.json` + `negative-controls/*.json` rather
+than naming records, so a record added later cannot escape it, and a record
+reporting `send_gain` whose trace cannot be resolved fails the test instead of
+being skipped. Three live controls, all measured
+(`artifacts/issue-112/CONTROL.txt`): reverting `send_return_gains()` to the
+pre-#112 expression, and to the explicit float64 cube, each makes the pinning
+tests **fail** (then pass again under the pin); and planting one extra record
+carrying the rejected float64 value makes the fail-closed test **fail**, where
+the earlier hardcoded-record version of that same test **passed** — the escape
+the glob closes. Scope: comparator reproducibility only; no budget,
+RTL-exactness, preset-support or sound claim is affected.
 
 ## 4. RTL-vs-frozen-model EXACT (iverilog)
 
@@ -316,12 +435,23 @@ order), and — case A — the full final external-memory image:
 - Engine reset semantics beyond the FX type-toggle path (the loadPatch probe
   is blocked by an oracle embedding limitation, documented in §3).
 - Reverb2 or any other effect (#21).
-- Field-for-field reproducibility of the committed `comparison/*.json` and
-  `negative-controls/*.json`: those records carry the verdicts recorded above,
-  but they are **STALE** with respect to the current tool (`send_gain`
-  precision drift across NumPy regimes and fields added after they were
-  written — #112; plus the additive `tail_window` block, §3's issue-#108
-  note). Regeneration belongs to #112, which owns the precision decision.
+- Byte-identical reproducibility of the committed `comparison/*.json` and
+  `negative-controls/*.json` on an **arbitrary** host. #112 pinned the
+  `send_gain` arithmetic and regenerated every record against the tool as it
+  stands on `main` *including* #111's windowed decay-curve tail-shape leg, so
+  they are no longer STALE with respect to the tool in either respect —
+  precision or field shape (their `tail_gate` block now carries #100's
+  tail-gate legs plus #111's tail-shape leg, all passing; §3's issue-#112 note
+  and `artifacts/issue-112/TAIL-SHAPE-LEG.txt`). What remains unproved is
+  cross-build bit-identity: a residual NumPy reduction-order difference is
+  present in the float64 analysis metrics (measured on the model-free
+  `stereo_corr_wet`: relative ~1e-13). The records are reproducible on the
+  declared environment; bit-identity of those reductions across NumPy builds
+  is not claimed. **Nor is #111's tail-shape leg itself re-verified here** —
+  that leg's own negative controls live in
+  `reports/tail-shape-leg/EVIDENCE.md`; what is established here is only that
+  its fields are present in these nine records and pass with the recorded
+  margins.
 
 ## 8. Reproduce
 
@@ -338,7 +468,15 @@ python3 -m pytest -q tests/test_sxt024_reverb1.py tests/test_sxt024_tail_window.
 
 `--out-dir <dir>` writes the case record somewhere other than
 `comparison/`; that is how the before/after pair in `artifacts/issue-108/`
-was produced without touching the committed records.
+and the `pre-fix-host/` leg of `artifacts/issue-112/` were produced without
+touching the committed records. The committed records in `comparison/` and
+`negative-controls/` were last regenerated by the commands above under
+python 3.12.3 / numpy 1.26.4 (issue #112), on the tree merged with the `main`
+that carries #111's tail-shape leg; `artifacts/issue-112/DIFF.txt` records
+that run's before/after diff and its unchanged verdicts, and
+`artifacts/issue-112/TAIL-SHAPE-LEG.txt` records the post-#111 re-run
+separately (66 additive `tail_gate` fields per graded record, zero value
+changes, zero exit-code changes).
 
 ## 9. Provenance / licensing
 

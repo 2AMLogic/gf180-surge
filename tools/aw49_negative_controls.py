@@ -22,7 +22,6 @@ Exits 0 iff every control fails the check it targets.
 Original to this repository (Apache-2.0).
 """
 
-import hashlib
 import json
 import math
 import os
@@ -199,7 +198,6 @@ def nc_wrong_order(ctrl):
 def nc_stale_stub():
     """NC-D: a trace whose frozen-revision word does not match the model file
     must be REFUSED by the real comparator (exact=False, never PASS)."""
-    ctrl = temple_ctrl()
     rev = int(gm.frozen_revision()[:8], 16)
     stale_rev = rev ^ 0xDEAD
     model_trace = f"R {stale_rev}\nT 0 1\nO 0 0\n"

@@ -227,11 +227,10 @@ def main():
     # compile the chosen preset with the committed compiler (byte-deterministic)
     outdir = "/tmp/sxt025-selection"
     os.makedirs(outdir, exist_ok=True)
-    r = subprocess.run(
+    subprocess.run(
         [sys.executable, COMPILER, "compile", "--path", CHOSEN,
          "--out-dir", outdir], capture_output=True, text=True, check=True)
     img_bin = [f for f in os.listdir(outdir) if f.endswith(".image.bin")][0]
-    img_json = json.load(open(os.path.join(outdir, img_bin.replace(".bin", ".json"))))
     graph_line = None
     with open(GRAPHS, encoding="utf-8") as f:
         for line in f:

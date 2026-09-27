@@ -94,7 +94,6 @@ def nc_a_generic():
 def nc_b_tail_truncation():
     """Model wet with the last 3 s of tail zeroed must FAIL tail continuity."""
     model, c, st, wet, dry, send, ret, t0, win = build_case("preset-notes-coverage-wet")
-    n = len(dry[0])
     (pred_l, pred_r), _ = cm.run_model_on_dry(model, dry[0], dry[1], send, ret)
     cut = t0 + 48000  # 1 s into the tail: still above the measurement floor
     pred_l[cut:] = 0.0

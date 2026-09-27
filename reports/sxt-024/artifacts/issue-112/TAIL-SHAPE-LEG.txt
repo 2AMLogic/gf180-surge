@@ -1,0 +1,137 @@
+issue #112 -- second regeneration on the merged tree: #111's tail-shape leg
+does not move a verdict either
+
+WHY THIS FILE EXISTS
+========================================================================
+
+This PR is the designated one-time regeneration of the sxt-024
+`comparison/*.json` and `negative-controls/*.json` records (#100 deferred it,
+#108 deferred it, and #111 states outright that "the sxt-023 and sxt-024 leaf
+records themselves are not rewritten"). Defect (2) of issue #112 is "fields
+added to the tool after those records were committed" -- so a regeneration
+that is itself missing fields the tool on `main` writes would recreate the
+very defect it is closing.
+
+Between this branch's base (8ade1d1) and `main` (f59d8ba), `main` gained
+2f086e1 (#111, "windowed decay-curve tail-shape leg"), which added
+`tail_rms_rel_ok`, `tail_decay_curve` and `tail_decay_curve_ok` to
+`tail_check` / `tail_check_lr` in the shared/stereo wet-path tail gate.
+`tools/compare_reverb_model.py` writes `car.stereo_tail_gate`'s return
+verbatim into `res["tail_gate"]`, so the sxt-024 records inherit those fields
+without any change to this tool.
+
+The records were therefore regenerated a SECOND time, on the merged tree, and
+this file records that run. `after/` in this artifact directory is the result
+of the second run and is byte-identical to what is committed in
+`reports/sxt-024/comparison/` and `reports/sxt-024/negative-controls/`.
+
+WHAT THE SECOND RUN CHANGED
+========================================================================
+
+Environment: python 3.12.3, numpy 1.26.4 (the same declared environment as
+the first run). Commands: exactly those listed in DIFF.txt.
+
+  record                                          fields added  values changed  exit
+  comparison/click-wet.json                            +66            0         0 (unchanged)
+  comparison/preset-notes-coverage-wet.json            +66            0         0 (unchanged)
+  comparison/hardreset-midpatch-wet.json               +66            0         1 (unchanged)
+  comparison/reset-midpatch-wet.json                     0            0         2 (unchanged)
+  comparison/sweep-t60.json                              0            0         0 (unchanged)
+  negative-controls/nc-a-generic-schroeder.json          0            0         0 (unchanged)
+  negative-controls/nc-b-tail-truncation.json            0            0         0 (unchanged)
+  negative-controls/nc-c-patch-change-reset.json         0            0         0 (unchanged)
+  negative-controls/nc-d-word-underfloor.json            0            0         0 (unchanged)
+
+The six records with 0/0 came back BYTE-IDENTICAL to the first run's output.
+For the three graded comparison records the diff is purely ADDITIVE: 66 new
+fields each, all under `tail_gate`, no field removed, and not one existing
+value moved -- so nothing in the first run's DIFF.txt CHANGED lines, its
+margin table, or its PRECISION-PROBE.txt findings is affected.
+
+The 66 added fields per record are, on each of the three tail-check legs
+(`tail_check`, `tail_check_lr.L`, `tail_check_lr.R`): `tail_rms_rel_ok`,
+`tail_decay_curve_ok`, the 16 leaf fields of the new `tail_decay_curve` block
+and the three new `tail_budget.decay_curve_*` declarations -- 21 per leg,
+63 in all -- plus the same three `decay_curve_*` declarations echoed once in
+`proposed_tail_budget`. (3 x 21 + 3 = 66.)
+
+THE ADDED tail_decay_curve LEGS ALL PASS THEIR DECLARED BUDGET
+========================================================================
+
+Budget (declared by #111, not chosen here): `decay_curve_max_dev_db` = 1.0 dB
+per 50 ms window (`window_frames` 2400 at 48 kHz), grading only windows whose
+reference level is above `decay_curve_floor_dbfs` = -100.0 dBFS. The floor is
+the declared budget value, never inferred from silence.
+
+  record / leg                          max_dev_db  budget  graded/total  over budget  ok
+  click-wet            tail_check        0.0010355   1.0      108/120          0       true
+  click-wet            tail_check_lr.L   0.0014348   1.0      108/120          0       true
+  click-wet            tail_check_lr.R   0.0007507   1.0      108/120          0       true
+  preset-notes-cov-wet tail_check        0.0017487   1.0       88/240          0       true
+  preset-notes-cov-wet tail_check_lr.L   0.0026800   1.0       89/240          0       true
+  preset-notes-cov-wet tail_check_lr.R   0.0015274   1.0       87/240          0       true
+  hardreset-midpatch   tail_check        0.0003142   1.0       35/240          0       true
+  hardreset-midpatch   tail_check_lr.L   0.0003369   1.0       35/240          0       true
+  hardreset-midpatch   tail_check_lr.R   0.0003214   1.0       35/240          0       true
+
+Worst leg in the whole set: preset `tail_check_lr.L` at 0.00268 dB against a
+1.0 dB budget -- a factor of 373 of margin. `windows_over_budget` is 0 on
+every leg, and every `tail_decay_curve_ok` / `tail_decay_curve.ok` is true.
+
+The ungraded windows are the ones whose REFERENCE level sits under the
+-100 dBFS floor (the deep tail); coverage is reported here as
+graded/total rather than folded into the pass, per the repository rule that
+coverage is reported separately from agreement. Nothing is claimed about the
+sub-floor windows.
+
+`tail_rms_rel_ok` -- the other field #111 added -- is true on all three legs
+of all three records. Do NOT read that as retiring this leaf's recorded
+budget finding: that `tail_rms_rel_ok` belongs to the shared TAIL GATE's own
+tail budget, and is a different check from sxt-024's own top-level
+`checks.tail_rms_rel`, which remains **false** on
+`hardreset-midpatch-wet.json` (-42.646 dB against the -50 dB budget). The
+bounded finding in EVIDENCE.md section 3 stands unchanged, and
+`hardreset-midpatch-wet` still exits 1.
+
+VERDICTS AND CHECKS
+========================================================================
+
+`checks` maps are identical to the first run's -- same keys, same values:
+
+  click-wet             7 checks, all true                      exit 0  PASS
+  preset-notes-cov-wet  7 checks, all true                      exit 0  PASS
+  hardreset-midpatch    10 checks, tail_rms_rel false (recorded
+                        bounded finding), tail_gate true        exit 1  FAIL
+  reset-midpatch        (no graded metric; oracle limitation)   exit 2  BLOCKED
+  sweep-t60             as recorded                             exit 0
+  reverb_negative_controls.py: all four CONTROL-OK              exit 0
+
+No check key was added or removed by #111's leg, none flipped, and no
+`tail_decay_curve*` failure exists anywhere in this set.
+
+pytest on the merged + regenerated tree: 702 passed, 15 skipped.
+
+STOP/ESCALATE CONDITION: DID NOT FIRE
+========================================================================
+
+Issue #112's stop condition is "a verdict moves". Checked against BOTH tools,
+not assumed:
+
+  * against the pre-#111 tool (branch base 8ade1d1) -- DIFF.txt;
+  * against the merged tool carrying #111 (main f59d8ba) -- this file.
+
+Under both, every exit code and every graded check is what the pre-#112
+records recorded, with the single documented exception that `tail_gate: true`
+was ADDED to the three graded records (they predated #100).
+
+SCOPE (unchanged)
+========================================================================
+
+Comparator record reproducibility only. Nothing in this file is a
+model-vs-reference budget change, an RTL-exactness claim, a preset-support
+claim, or a sound claim. #111's tail-shape leg is not re-verified here; its
+own evidence record (`reports/tail-shape-leg/EVIDENCE.md`) owns that leg's
+negative controls. What is established here is narrower and exactly what
+"verdicts unchanged" needs: on these nine sxt-024 records, the leg's added
+fields carry passing values with the margins tabulated above and move no
+verdict.

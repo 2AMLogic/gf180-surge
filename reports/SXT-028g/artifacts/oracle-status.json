@@ -1,0 +1,42 @@
+{
+  "leaf": "SXT-028g",
+  "legs": {
+    "extract": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "tools/extract_phaser_inputs.py",
+      "what": "fail-closed preset extraction (census-blob verified, graphs cross-checked) -> model/effects/fx_inputs/type-phaser-<slug>.json"
+    },
+    "model-render": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "model/effects/run_phaser_model.py",
+      "what": "frozen chain model over the fixture dry bus -> model wet render"
+    },
+    "reference-compare": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "tools/compare_phaser_reference.py",
+      "what": "model-vs-pinned-engine agreement against [PROPOSED, not frozen] budgets + the issue-#100 wet tail gate"
+    },
+    "render": {
+      "reason": "no pinned-engine checkout / surgepy in this environment; the leg was not run and must never be reported as a pass",
+      "status": "NOT_RUN",
+      "tool": "tools/render_phaser_fixtures.py",
+      "what": "pinned-engine wet/dry fixture buses under SXT-012/023 policies, tails included -> reports/SXT-028g/fixtures/"
+    }
+  },
+  "oracle_status": "UNAVAILABLE",
+  "probe": {
+    "engine_dir_present": false,
+    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "expected_checkout": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "surgepy_importable": false,
+    "surgepy_probe_stderr": [
+      "ModuleNotFoundError: No module named 'surgepy'"
+    ]
+  },
+  "rule": "AGENTS.md: a test that did not run must never be reported as a pass. Claim 2 (model-vs-pinned-engine agreement) is NOT_RUN for this leaf until every leg above is RUNNABLE and has actually been run.",
+  "schema_version": 1
+}

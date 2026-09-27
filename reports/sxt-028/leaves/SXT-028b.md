@@ -4,14 +4,14 @@
 
 ## Outcome
 
-One algorithm per leaf: Conditioner effect leaf (gate/compressor/LFO). Preserves per-instance state and tails under the shared instance schedule; no monolithic FX port.
+One algorithm per leaf: Conditioner effect leaf (EQ/M-S width/look-ahead limiter). Preserves per-instance state and tails under the shared instance schedule; no monolithic FX port.
 
 ## Recovery ordering (diagnostic)
 Ordered by measured SXT-014 ablation delta: max mean block-RMS Δ 2.245 dB (diagnostic only). Provenance: reports/sxt-014/deltas/doomsday/seq-notes-coverage-v1-bypass-slot06-Conditioner.json; reports/sxt-014/deltas/doomsday/seq-poly-8-v1-bypass-slot06-Conditioner.json.
 
 ## Scope and pinned sources
 
-- surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/dsp/effects/ConditionerEffect.{h,cpp} (ConditionerEffect: process_block; gate/comp envelope lag objects; shared LFO)
+- surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/dsp/effects/ConditionerEffect.{h,cpp} (ConditionerEffect::process: bass/treble peaking EQ, M/S side high-pass and width, balance/threshold pregain, 128-sample look-ahead limiter, output gain; no gate and no LFO)
 - Parameter mapping: pinned sources + surgepy readback at load, cross-checked against graphs.jsonl (SXT-011).
 - Routing roles exercised by this leaf's B4-scope carriers: ains1, ains2, ains3, ains4, bins1, bins2, global1, global2, global3, global4, send1, send2, send3, send4
 - State: every concurrent instance keeps independent histories; arithmetic may be shared only observably (plan section 4; AGENTS.md). delay/reverb-class buffers live in external WRITABLE memory; processing stays on-chip; flash is not writable delay memory.

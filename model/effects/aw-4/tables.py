@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""SXT-028k (#63): frozen sin / one-minus-cos tables for the Airwindows
+"Logical" (streamed algorithm id 4) Power-Sag stage.
+
+The pinned algorithm evaluates, per sample per channel per active stage,
+
+    bridgerectifier = min(|x|, 1.57079633)
+    bridgerectifier = (thickness > 0) ? sin(bridgerectifier)
+                                      : 1 - cos(bridgerectifier)
+
+(`libs/airwindows/src/Logical4Proc.cpp` at
+`surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`; read and
+cited, never copied). Neither libm call is available on-chip, so the frozen
+model replaces both with a **declared, frozen** lookup: a uniformly sampled
+table on the a48 audio grid plus one linear interpolation.
+
+Provenance
+----------
+These tables are DERIVED here from the mathematical functions `sin` and
+`1 - cos`, not transcribed from the pinned tree: `tables.py` is the whole
+construction formula and regenerating it from this file reproduces every
+word. They are therefore NOT in the DR-0003 "opaque designed constant"
+class. Only the *domain clamp* `1.57079633` is quoted from the pinned
+source (decision-records/0015).
+
+Table geometry (frozen)
+-----------------------
+* argument u in [0, BR_MAX], BR_MAX = 1.57079633 (the pinned clamp, which is
+  pi/2 + 3.2e-9 — the pinned literal, not pi/2);
+* index step 2^-9 = 1/512 on the a48 grid: `idx = u_a48 >> (F_A - 9)`, i.e.
+  the table is sampled at u = i/512;
+* the largest reachable index is floor(BR_MAX * 512) = 804, so the table
+  needs entries 0..805 (806 words) for the interpolation's upper neighbour;
+* entries are Q1.31 (`round-half-away-from-zero` of f(i/512) * 2^31); both
+  functions map [0, BR_MAX] -> [0, 1], so 1.0 is representable only as
+  2^31 and the words are stored in 33-bit-capable containers (the model
+  keeps Python ints, the RTL a 33-bit ROM word).
+
+Interpolation (frozen, identical in model and RTL)
+--------------------------------------------------
+    i    = u_a48 >> 26                      (F_A = 35, 35 - 9 = 26)
+    frac = u_a48 & (2^26 - 1)               (Q0.26)
+    y    = T[i] + rnd((T[i+1] - T[i]) * frac, 26)          (Q1.31)
+
+Worst-case interpolation error vs. the true function is
+(1/512)^2 / 8 = 4.77e-7 (-126 dBFS), a DECLARED model-vs-pinned-engine
+contributor (reports/SXT-028k/EVIDENCE.md). It is NOT a model-vs-RTL
+contributor: both sides evaluate the same table with the same arithmetic,
+so the exactness claim is unaffected.
+
+Original to this repository (Apache-2.0).
+"""
+
+import hashlib
+import math
+import os
+import sys
+
+F_A = 35                      # a48 fraction bits (audio word)
+TBL_SHIFT = 9                 # index step 2^-TBL_SHIFT
+FRAC_BITS = F_A - TBL_SHIFT   # 26
+Q31 = 31
+
+# Quoted from the pinned source (decision-records/0015): the bridge
+# rectifier's domain clamp. NOT pi/2 — the pinned literal is 1.57079633.
+BR_MAX = 1.57079633
+
+MAX_INDEX = int(math.floor(BR_MAX * (1 << TBL_SHIFT)))   # 804
+TABLE_WORDS = MAX_INDEX + 2                              # 806 (need i+1)
+
+
+def _q31(x):
+    """Round-half-away-from-zero to Q1.31 (the frozen quantizer)."""
+    v = x * float(1 << Q31)
+    return int(v + 0.5) if v >= 0 else -int(-v + 0.5)
+
+
+def build_sin():
+    return [_q31(math.sin(i / float(1 << TBL_SHIFT))) for i in range(TABLE_WORDS)]
+
+
+def build_omc():
+    return [_q31(1.0 - math.cos(i / float(1 << TBL_SHIFT)))
+            for i in range(TABLE_WORDS)]
+
+
+SIN_Q31 = build_sin()
+OMC_Q31 = build_omc()
+
+
+def lookup(table, u_a48):
+    """Frozen table evaluation: u_a48 is a non-negative a48 word already
+    clamped to <= BR_MAX. Returns Q1.31."""
+    if u_a48 < 0:
+        raise ValueError("table domain is non-negative")
+    i = u_a48 >> FRAC_BITS
+    if i + 1 >= len(table):
+        raise ValueError(
+            "table index %d out of frozen domain (caller must clamp to "
+            "BR_MAX first)" % i)
+    frac = u_a48 & ((1 << FRAC_BITS) - 1)
+    d = table[i + 1] - table[i]
+    # round-half-up, arithmetic (floor) shift — the qmath.py convention
+    return table[i] + ((d * frac + (1 << (FRAC_BITS - 1))) >> FRAC_BITS)
+
+
+def tables_digest():
+    """SHA-256 over both frozen tables (word order, little-endian 64-bit
+    two's complement). Pinned by the RTL harness and the evidence records."""
+    h = hashlib.sha256()
+    for t in (SIN_Q31, OMC_Q31):
+        for v in t:
+            h.update((v & 0xFFFFFFFFFFFFFFFF).to_bytes(8, "little"))
+    return h.hexdigest()
+
+
+def write_hex(directory):
+    """Emit the two ROM images consumed by rtl/effects/aw-4/*.sv.
+
+    Each word is 33 bits (1.0 == 2^31 must be representable), written as 9
+    hex nibbles so $readmemh loads them into a 36-bit ROM word without
+    truncation.
+    """
+    written = []
+    for name, tbl in (("sin_q31.hex", SIN_Q31), ("omc_q31.hex", OMC_Q31)):
+        path = os.path.join(directory, name)
+        with open(path, "w") as f:
+            f.write("// generated by model/effects/aw-4/tables.py - "
+                    "do not edit by hand\n")
+            f.write("// %d words, Q1.31, step 2^-9, domain [0, 1.57079633]\n"
+                    % len(tbl))
+            for v in tbl:
+                f.write("%09x\n" % (v & 0xFFFFFFFFF))
+        written.append(path)
+    return written
+
+
+def _selftest():
+    """Bounds the frozen interpolation error against the true functions."""
+    worst = {"sin": 0.0, "omc": 0.0}
+    steps = 4096
+    for k in range(steps + 1):
+        u = BR_MAX * k / steps
+        ua = int(u * (1 << F_A) + 0.5)
+        if ua >> FRAC_BITS >= MAX_INDEX + 1:
+            ua = (MAX_INDEX + 1 << FRAC_BITS) - 1
+        s = lookup(SIN_Q31, ua) / float(1 << Q31)
+        o = lookup(OMC_Q31, ua) / float(1 << Q31)
+        uu = ua / float(1 << F_A)
+        worst["sin"] = max(worst["sin"], abs(s - math.sin(uu)))
+        worst["omc"] = max(worst["omc"], abs(o - (1.0 - math.cos(uu))))
+    return worst
+
+
+if __name__ == "__main__":
+    here = os.path.dirname(os.path.abspath(__file__))
+    repo = os.path.dirname(os.path.dirname(os.path.dirname(here)))
+    if "--write-hex" in sys.argv:
+        out = os.path.join(repo, "rtl", "effects", "aw-4")
+        os.makedirs(out, exist_ok=True)
+        for p in write_hex(out):
+            print("wrote", p)
+    print("words=%d max_index=%d digest=%s" %
+          (TABLE_WORDS, MAX_INDEX, tables_digest()))
+    print("interp error bound:", _selftest())

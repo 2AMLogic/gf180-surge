@@ -1,0 +1,11 @@
+{
+  "case": "reset-midpatch-wet",
+  "checks": {
+    "engine_reset_observable": false
+  },
+  "dry_capture_note": "see render tool",
+  "engine_wet_silent_after_reload": false,
+  "finding": "mid-render loadPatch() via surgepy silences the engine render from the reload boundary (wet bus exactly zero; voices killed; subsequent notes never sound). No engine reset semantics are observable through this probe.",
+  "reload_block": 1500,
+  "status": "BLOCKED (oracle embedding limitation)"
+}

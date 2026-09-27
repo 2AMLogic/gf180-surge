@@ -173,7 +173,7 @@
       "status": "PASS",
       "note": "Landed PR #34. Per-instance FX/voice accounting, external-memory split, corpus scan (2,912 fit 4-instance), fail-closed controls.",
       "evidence": "reports/sxt-015/EVIDENCE.md",
-      "evidence_sha256": "125cb74e60c33f2c66835ba187e543c3c3f3d4a7d323c5b6f5fe65f93ac90ec1"
+      "evidence_sha256": "eb7b7881a2bf58808bc49fa75e41858b8ef4124f6ff2842a313432c1c2f95261"
     },
     {
       "id": 11,
@@ -247,7 +247,7 @@
       "status": "PASS",
       "note": "Landed PR #40. Attacky.fxp slice: RTL==model exact on 3 sequences (12,609 state fields); mutant control fails as designed; reference errors reported against [PROPOSED] budgets (1 pass, 2 pending-freeze).",
       "evidence": "reports/sxt-022/EVIDENCE.md",
-      "evidence_sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+      "evidence_sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
     },
     {
       "id": 16,
@@ -275,7 +275,7 @@
       "status": "PASS",
       "note": "Landed (#43 + #45): Reverb1 RTL==model exact incl. 557,056-word memory image; reference within [PROPOSED]; 2.125 MiB/instance external; tail finding recorded; 4 controls OK.",
       "evidence": "reports/sxt-024/EVIDENCE.md",
-      "evidence_sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0"
+      "evidence_sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
     },
     {
       "id": 18,
@@ -353,7 +353,7 @@
       "status": "PASS",
       "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls.",
       "evidence": "reports/coverage-v1/README.md",
-      "evidence_sha256": "9893629fb581fc3b6f3b291685243fd382347ae489c26cbdc14a946437f355b9"
+      "evidence_sha256": "a4ea9db50ae19410eaf46560f6c2cd386a8f87ea9a4b8a6598589ec254314557"
     },
     {
       "id": 23,

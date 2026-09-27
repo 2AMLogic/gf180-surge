@@ -25,7 +25,6 @@ upstream content). Original tool, Apache-2.0.
 import argparse
 import hashlib
 import json
-import math
 import os
 import struct
 import sys

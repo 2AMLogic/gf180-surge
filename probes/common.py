@@ -20,7 +20,7 @@ analyses that need real math (reverb loop spectral radius) run a FIXED
 number of iterations and round to 6 decimals. No timestamps, no floats in
 cycle counts. Re-running a probe over the same inputs is byte-identical.
 """
-from math import ceil, log2
+from math import ceil
 
 # ---------------------------------------------------------------------------
 # Rates (SXT-015 pins; plan section 3 working hypothesis)

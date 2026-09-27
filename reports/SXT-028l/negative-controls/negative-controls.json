@@ -1,0 +1,333 @@
+{
+  "claim": "negative controls; each must fail the check it targets",
+  "controls": [
+    {
+      "control": "NC-A generic substitute (pass-through + fixed gain occupant on send bus 4)",
+      "counts_toward_original_preset_coverage": false,
+      "coverage_label": "ADAPTED",
+      "legs": [
+        {
+          "detail": "the generic pass-through+gain substitute must not reproduce the declared occupant's returned signal bit-exactly",
+          "leg": "main-bus output bit-exactness",
+          "metrics": {
+            "blocks_compared": 4,
+            "blocks_different": 4
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the substitute keeps no per-instance TDF2 history, so the dual-instance checkpoint must differ",
+          "leg": "per-instance state",
+          "metrics": {
+            "substitute_send4_state_all_zero": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "per-instance-state faithfulness / original-preset coverage eligibility",
+      "verdict": "CONTROL-OK (generic substitute FAILS bit-exact reproduction of the declared per-instance occupant; labeled ADAPTED and refused from original-preset coverage)"
+    },
+    {
+      "control": "NC-B dropped tail (render truncated to 2/8 declared blocks; plus a live RTL stage-skip-on-silence mutant)",
+      "legs": [
+        {
+          "detail": "a truncation control proves nothing unless the dropped region actually contains nonzero tail samples on the send buses themselves (the MAIN bus stays live through the tail on purpose, so only the wet taps prove it)",
+          "leg": "declared tail span carries audio",
+          "metrics": {
+            "dropped_abs_energy": 3750850,
+            "dropped_blocks": 6,
+            "dropped_blocks_with_nonzero_wet": 6
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the truncated render must fail the declared-tail-span coverage check",
+          "leg": "tail-span coverage check",
+          "metrics": {
+            "declared_blocks": 8,
+            "rendered_blocks": 2
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the truncated render's final per-instance state must not match the full render's",
+          "leg": "final per-instance checkpoint",
+          "metrics": {
+            "checkpoints_equal": false
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "rf_send34_mutants.sv -DNC_TAIL_KILL skips both send buses whenever the incoming scene buses are silent, dropping the occupants' arithmetic tails and freezing their state; it must FAIL exact equality on the declared tail case -- and is NOT caught by the non-silent baseline case, which is what makes the tail case load-bearing",
+          "leg": "live RTL tail-killing mutant",
+          "metrics": {
+            "case": "tail-span-silent-scenes",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 8,
+            "defect": "NC_TAIL_KILL",
+            "first_failures": [
+              "block 2 main[0]: model=2440 rtl=-22813",
+              "block 2 main[1]: model=275731 rtl=246146",
+              "block 2 main[2]: model=-425790 rtl=-458138"
+            ],
+            "main_bus_samples_compared": 512,
+            "mismatches": 1157,
+            "undetected_by_case": "both-buses-all-fx",
+            "undetected_case_mismatches": 0,
+            "undetected_case_samples_compared": 384,
+            "wet_samples_compared": 1024
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "declared tail-span coverage",
+      "verdict": "CONTROL-OK (truncated render FAILS the declared-tail-span coverage and checkpoint checks, the dropped region demonstrably contained real audio, and the live RTL tail-killing mutant FAILS the tail case)"
+    },
+    {
+      "control": "NC-C wrong order (send3/send4 slot-content permutation)",
+      "legs": [
+        {
+          "detail": "swapping which occupant sits on which send bus must change the main bus: each bus keeps its own per-scene send gains and its own return gain",
+          "leg": "model permutation (distinct occupants, distinct gain planes)",
+          "metrics": {
+            "checkpoints_differ": true,
+            "max_abs_diff": 321969,
+            "samples_compared": 384,
+            "samples_different": 384
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the issue's own wording is 'two same-class slots swapped': the real-corpus same-class shape (Strynth.fxp: Nimbus in BOTH send3 and send4) still carries different parameter values per slot, and permuting those two occupants must change the main bus",
+          "leg": "model permutation (SAME FX class, different parameter values)",
+          "metrics": {
+            "max_abs_diff": 755,
+            "samples_compared": 384,
+            "samples_different": 382
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "rf_send34_mutants.sv -DNC_SWAP_ORDER processes bus 3 with send4's instance and bus 4 with send3's; it must FAIL exact equality against the frozen model",
+          "leg": "live RTL occupant-permutation mutant",
+          "metrics": {
+            "case": "both-buses-all-fx",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SWAP_ORDER",
+            "first_failures": [
+              "block 0 main[0]: model=-602220 rtl=-559903",
+              "block 0 main[1]: model=287352 rtl=110294",
+              "block 0 main[2]: model=-233622 rtl=-82827"
+            ],
+            "main_bus_samples_compared": 384,
+            "mismatches": 1158,
+            "wet_samples_compared": 768
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "with byte-identical occupant coefficients the permutation degenerates to a RELABELING of the two register sets: the main bus and the wet taps are unchanged and ONLY the per-instance checkpoint catches it. Recorded rather than presented as a stronger control than it is -- and it is exactly why this leaf's exactness check compares per-instance checkpoints and not only audio",
+          "leg": "live RTL occupant-permutation mutant (identical-coefficient case)",
+          "metrics": {
+            "case": "same-class-dual-occupants",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SWAP_ORDER",
+            "first_failures": [
+              "block 0 checkpoint: model=(52621761879477, -12453077703611, -15290117799479, 4486587862541, 8502327128937, 30931499096288, -463010166421, -5249176355310) rtl=(8502327128937, 30931499096288, -463010166421, -5249176355310, 52621761879477, -12453077703611, -15290117799479, 4486587862541)",
+              "block 1 checkpoint: model=(-17314057946768, 23314131501296, 11828907375337, -7578382073196, 25957583476319, 28788029823617, -5324237875710, -9822762039871) rtl=(25957583476319, 28788029823617, -5324237875710, -9822762039871, -17314057946768, 23314131501296, 11828907375337, -7578382073196)",
+              "block 2 checkpoint: model=(-5865673080530, -12997691480738, -1985375816594, -371610585709, 32648576762878, -48479180946003, -19477456844621, 25844963159237) rtl=(32648576762878, -48479180946003, -19477456844621, 25844963159237, -5865673080530, -12997691480738, -1985375816594, -371610585709)"
+            ],
+            "main_bus_samples_compared": 384,
+            "mismatches": 6,
+            "wet_samples_compared": 768
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "recorded_bound": {
+        "byte_identical_occupants_are_caught_only_by_the_checkpoint": "with byte-identical occupant coefficients the permutation is a pure RELABELING of the two register sets: the main bus and the wet taps are unchanged and only the per-instance checkpoint differs (demonstrated by the live RTL identical-coefficient leg below, which produces checkpoint mismatches and zero audio mismatches). The model cannot express that relabeling at all, which is why this leg exists only in RTL.",
+        "identical_content_and_identical_gains_is_an_identity": true,
+        "note": "this is a PARALLEL routing form: the return mix uses ONE wide accumulator with ONE rounding and ONE saturation, so the order in which the two returns are summed cannot change the result -- a deliberate, declared design choice (frozen model docstring). The observable permutation axis is therefore slot-content-vs-bus-gain, and a permutation of two buses whose occupant content AND gain plane are both identical is the identity map. Stated so the control's strength is never overstated.",
+        "return_summation_is_order_independent_by_construction": true
+      },
+      "targets": "order-sensitive equality of the parallel send rack",
+      "verdict": "CONTROL-OK (the order-sensitive check flags the permutation; the identity bound and the checkpoint-only identical-coefficient case are recorded)"
+    },
+    {
+      "control": "NC-D shared state (both send buses pooled into one history)",
+      "legs": [
+        {
+          "detail": "pooling both instances' histories must diverge from the correctly-isolated rack on the SAME per-block inputs",
+          "leg": "model pooled-history mutant (distinct occupants)",
+          "metrics": {
+            "blocks_compared": 6,
+            "blocks_different": 6
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the pooled mutant cannot reproduce two independent checkpoint halves",
+          "leg": "model dual-instance checkpoint",
+          "metrics": {
+            "isolated_send3_equals_send4": false,
+            "pooled_send3_equals_send4": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the real-corpus same-class shape (Strynth.fxp: Nimbus in both send3 and send4) must ALSO catch pooled state -- identical arithmetic is where pooling hides best",
+          "leg": "model pooled-history mutant (SAME-class occupants)",
+          "metrics": {
+            "blocks_compared": 6,
+            "blocks_different": 6,
+            "isolated_histories_differ": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "rf_send34_mutants.sv -DNC_SHARED_STATE pools both send buses onto one register set; it must FAIL exact equality (main bus, wet taps AND per-instance checkpoint) against the frozen model",
+          "leg": "live RTL shared-state mutant",
+          "metrics": {
+            "case": "both-buses-all-fx",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SHARED_STATE",
+            "first_failures": [
+              "block 0 main[0]: model=-602220 rtl=-598143",
+              "block 0 main[1]: model=287352 rtl=284081",
+              "block 0 main[2]: model=-233622 rtl=-235500"
+            ],
+            "main_bus_samples_compared": 384,
+            "mismatches": 561,
+            "wet_samples_compared": 768
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the same live RTL pooling defect must ALSO fail on the same-class dual-occupant case, where both buses run identical coefficients",
+          "leg": "live RTL shared-state mutant (SAME-class case)",
+          "metrics": {
+            "case": "same-class-dual-occupants",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_SHARED_STATE",
+            "first_failures": [
+              "block 0 main[0]: model=345073 rtl=378693",
+              "block 0 main[1]: model=517519 rtl=499345",
+              "block 0 main[2]: model=-32639 rtl=-24061"
+            ],
+            "main_bus_samples_compared": 384,
+            "mismatches": 619,
+            "wet_samples_compared": 768
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "dual-instance (per-instance state) independence",
+      "verdict": "CONTROL-OK (pooled-state mutants FAIL the dual-instance-independence check, model-side and in live RTL, with distinct AND same-class occupants)"
+    },
+    {
+      "control": "NC-E stale stub (frozen-revision pin)",
+      "legs": [
+        {
+          "detail": "revision_pin_ok() must reject a stale pin and accept the live one",
+          "leg": "revision pin function",
+          "metrics": {
+            "live_revision_tail": "42f97ca647431a23",
+            "stale_revision_tail": "42f97ca64743a4cc"
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "the comparator invoked with a stale pin must exit nonzero with status REFUSED instead of reporting PASS",
+          "leg": "live comparator refusal",
+          "metrics": {
+            "exit_code": 2,
+            "status_line_present": true
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "stale-harness refusal (never a false PASS)",
+      "verdict": "CONTROL-OK (a stale pin is REFUSED -- the comparator cannot report PASS)"
+    },
+    {
+      "control": "NC-F gain placement (send/return gains applied in the wrong places) [ADDITIONAL -- not one of the five controls issue #64 names]",
+      "legs": [
+        {
+          "detail": "swapping bus 3's scene-A send gain with its return gain must change the main bus",
+          "leg": "model gain-placement swap (send bus 3)",
+          "metrics": {
+            "max_abs_diff": 27390,
+            "return_gain": 1073741824,
+            "samples_compared": 384,
+            "samples_different": 384,
+            "send_gain_a": 549755814
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        },
+        {
+          "detail": "rf_send34_mutants.sv -DNC_GAIN_SWAP applies the return gain when FORMING each bus and the scene-A send gain when RETURNING it; it must FAIL exact equality against the frozen model",
+          "leg": "live RTL gain-placement mutant",
+          "metrics": {
+            "case": "both-buses-all-fx",
+            "checkpoint_mismatches": 6,
+            "checkpoints_compared": 6,
+            "defect": "NC_GAIN_SWAP",
+            "first_failures": [
+              "block 0 main[0]: model=-602220 rtl=-591109",
+              "block 0 main[1]: model=287352 rtl=303799",
+              "block 0 main[2]: model=-233622 rtl=-227398"
+            ],
+            "main_bus_samples_compared": 384,
+            "mismatches": 1158,
+            "wet_samples_compared": 768
+          },
+          "ok": true,
+          "status": "CONTROL-OK"
+        }
+      ],
+      "ok": true,
+      "targets": "the send form's own routing-gain plane",
+      "verdict": "CONTROL-OK (misplaced routing gains FAIL exact equality, model-side and in live RTL)"
+    }
+  ],
+  "iverilog_available": true,
+  "leaf": "SXT-028l",
+  "legs_not_run": [],
+  "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+  "required_controls": [
+    "NC-A",
+    "NC-B",
+    "NC-C",
+    "NC-D",
+    "NC-E"
+  ],
+  "schema_version": 1,
+  "status": "PASS"
+}

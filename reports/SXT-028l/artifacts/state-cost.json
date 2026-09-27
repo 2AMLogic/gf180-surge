@@ -1,0 +1,51 @@
+{
+  "basis": "derived from the frozen model's declared word widths (rf_send34_model.R_BITS / C_BITS / G_BITS and the RTL's register declarations), not hand-counted",
+  "claim": "This leaf's OWN state/cost addition (the routing / scheduling / lifecycle logic, its per-bus send+return gain plane, and its synthetic per-slot occupant kernel) -- NOT the ext-mem footprint of whichever concrete Surge FX algorithm actually occupies send3/send4 in a real preset, which is that algorithm leaf's own SXT-015/016 accounting.",
+  "cost_closure": {
+    "note": "no cycles-per-frame, schedule-fit or bundle-closure number is asserted by this leaf. SXT-015 accounting consumes the inventory above; SXT-016 decides fit; profile v1 is NOT frozen (SXT-017, issue #12).",
+    "status": "[PENDING-SXT-016]"
+  },
+  "ext_mem_traffic_estimate": "[PENDING-SXT-016] this leaf's own contribution is 0 words/sample (see external_traffic above); the AGGREGATE estimate for a concrete preset also depends on whichever algorithm leaf's occupant actually lands in send3/send4 -- and the corpus really does put long-buffer classes there (Reverb 2, Nimbus, Spring Reverb, Delay) -- which is out of this leaf's scope; no aggregate number is invented here",
+  "external_traffic": {
+    "note": "no external-memory transactions originate from this leaf's own routing/scheduling/lifecycle logic, its gain plane or its synthetic occupant; the frozen model's per-slot ext_reads/ext_writes counters stay at 0 (asserted by tests/test_sxt028l.py).",
+    "words_per_sample": 0
+  },
+  "external_writable_memory": {
+    "note": "the synthetic occupant kernel (BiquadInstance) is register-only (on-chip); it owns no delay line and touches no external buffer. The send buses themselves are per-block scratch, not history. A concrete tail-bearing occupant (Reverb 2 / Nimbus / Spring Reverb / Delay are all real corpus occupants of these two buses) landed in this slot owns its own external-memory accounting separately.",
+    "words_total": 0
+  },
+  "form": "rf-send34",
+  "issue": "#64",
+  "leaf": "SXT-028l",
+  "long_buffers_policy": "delay/reverb-class buffers live in external WRITABLE memory; processing stays on-chip; flash is not writable delay memory (AGENTS.md). Not applicable to this leaf's own (register-only) contribution, but it IS the live question for the concrete occupants the corpus puts on these buses -- routed to SXT-015/016, not answered here.",
+  "model_revision": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23",
+  "on_chip_small_state": {
+    "full_bits_total": 1186,
+    "full_bytes_total": 149,
+    "full_note": "additionally counts the per-slot coefficient configuration registers, the per-bus gain plane and the block FSM, which the RTL really instantiates.",
+    "gain_plane_note": "NEW in this routing form: the series insert/global leaves have no gain plane at all. Three Q1.30 words per bus (scene-A send, scene-B send, return). Bus state, not occupant state -- a loadFx() does not disturb it.",
+    "gain_plane_total_bits": 192,
+    "instances": 2,
+    "per_bus_gain_plane_bits": 96,
+    "per_instance": {
+      "coefficient_register_bits": 160,
+      "history_plus_occupancy_bits": 321,
+      "occupancy_bits": 1,
+      "tdf2_history_bits": 320
+    },
+    "shared_fsm_bits": {
+      "FSM state": 3,
+      "run_b3/run_b4 gate latches": 2,
+      "sample counter k": 6
+    },
+    "shared_routing_control_bits": {
+      "fx_bypass (2-bit mode)": 2,
+      "fx_disable (16-bit, engine layout; only bits 12/13 consumed)": 16,
+      "per-bus ring memory (send_ring[2] / ring3, ring4)": 2,
+      "scene_b_active (scene B instantiated at all)": 1
+    },
+    "sibling_comparable_bits_total": 663,
+    "sibling_comparable_note": "histories + occupancy + routing-control bits only -- the same accounting the landed sibling routing leaves (rf-rf-global2: 661 bits, rf-rf-bins12: 663 bits, rf-rf-global34: 661 bits) used, so the routing forms are directly comparable. This form's gain plane (+192 bits) is reported SEPARATELY rather than folded into that number, because it has no counterpart in the series forms."
+  },
+  "schema_version": 1
+}

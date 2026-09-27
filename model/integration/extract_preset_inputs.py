@@ -22,7 +22,6 @@ image (SXT-020). Extraction rules follow model/effects/extract_fx_inputs.py
 Original to this repository (Apache-2.0); imports the GPL engine at runtime
 only.
 """
-import argparse
 import json
 import os
 import re

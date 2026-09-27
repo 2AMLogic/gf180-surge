@@ -1,0 +1,39 @@
+issue #112 -- live negative control for the precision pin
+
+Revert send_return_gains() to each rejected arithmetic and re-run the
+two new pinning tests. A control that cannot fail proves nothing, so
+both must FAIL under both rejected definitions and pass under the pin.
+
+  python 3.12.3 / numpy 1.26.4
+
+  with pre-#112 float(np.float32(x) ** 3)  [float64 under numpy 1.x]:
+    control fires: test_send_return_gains_pins_float32_precision FAILS as required
+    control fires: test_committed_records_carry_the_pinned_send_gain FAILS as required
+
+  with explicit float64 cube  float(x) ** 3:
+    control fires: test_send_return_gains_pins_float32_precision FAILS as required
+    control fires: test_committed_records_carry_the_pinned_send_gain FAILS as required
+
+  with the pinned float32 cube: both tests PASS
+
+Re-run unchanged on the tree merged with main (f59d8ba, which carries #111's
+tail-shape leg) and after test_committed_records_carry_the_pinned_send_gain
+was changed from a hardcoded 4-record dict to a glob over comparison/*.json +
+negative-controls/*.json: both controls above still fire, both tests still
+pass under the pin.
+
+Third control -- the glob's own reason to exist (a FUTURE record must not be
+able to escape the check). Planted one extra record,
+comparison/zz-control-new-record.json, carrying the rejected float64
+send_gain 0.3536077346610224:
+    control fires: test_committed_records_carry_the_pinned_send_gain FAILS
+    removed the planted record: the test PASSES again
+The pre-nit version of the test, whose `cases` dict named four records
+explicitly, passed with that same record planted -- which is the escape this
+change closes.
+
+Full suite on this host:
+  python3 -m pytest -q tests/test_sxt024_reverb1.py tests/test_sxt024_tail_window.py  ->  29 passed
+  python3 -m pytest -q tests  ->  702 passed, 15 skipped
+    (on the merged tree; 686 passed, 15 skipped before the merge -- the 16
+     new tests come from main, not from this change)

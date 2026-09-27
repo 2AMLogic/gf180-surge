@@ -68,6 +68,41 @@ PRESETS = {
 }
 
 
+def chorus_fx_destinations(graphs):
+    """Modulation routes whose destination is an FX parameter (fail-closed).
+
+    `graphs["g"]["md"]` is a DICT of modulation buses --
+    `{g: [...], s: [{s: [...], v: [...]}]}` (corpus/normalized/schema.json) --
+    not a flat list of routes, so iterating it directly yields the keys
+    "g"/"s" and inspects no route at all. Walk `md.g` plus each scene's `s`
+    (scene) and `v` (voice) buses, exactly as
+    tools/extract_aw49_inputs.py::md_fx_destinations and
+    tools/extract_conditioner_inputs.py::md_routes do.
+
+    Route rows are `[src, ..., dest_id, dest_name, depth, ...]`
+    (corpus/normalized/README.md); FX destinations carry names starting with
+    "FX" (e.g. "FX B1 Mix"). Rows with no destination-name field are skipped
+    rather than raising (same `len(r) > 4` guard as the aw49 screen).
+
+    Pure: reads only the committed graphs line, so the screen is exercisable
+    without surgepy / the oracle host (tests/test_extract_chorus_inputs.py).
+    """
+    hits = []
+
+    def scan(rows):
+        for r in rows:
+            name = r[4] if len(r) > 4 else ""
+            if isinstance(name, str) and name.startswith("FX"):
+                hits.append(name)
+
+    md = graphs["g"].get("md") or {}
+    scan(md.get("g", []))
+    for sc in md.get("s", []):
+        scan(sc.get("s", []))
+        scan(sc.get("v", []))
+    return hits
+
+
 def read_chorus(s, patch, slot, rev, xml_flags, tempo_bpm):
     fxd = patch["fx"][slot]
 
@@ -155,9 +190,10 @@ def extract(slug, rel_path, out_path):
         raise Refuse(f"fx_bypass != fxb_all_fx: {rel_path}")
     if graphs["g"]["fxd"] != 0:
         raise Refuse(f"fx_disable nonzero: {rel_path}")
-    for m in graphs["g"].get("md", []):
-        if len(m) > 4 and "FX" in str(m[4]):
-            raise Refuse(f"modulation route into FX parameter ({m[4]}): {rel_path}")
+    fx_mod = chorus_fx_destinations(graphs)
+    if fx_mod:
+        raise Refuse(f"modulation route into FX parameter ({fx_mod[:4]}): "
+                     f"{rel_path}")
 
     rev, tempo, xml_flags = raw_xml_flags(rel_path)
 
@@ -278,8 +314,9 @@ def extract(slug, rel_path, out_path):
                             "(surgepy.cpp loadPatch -> time_data.tempo)",
             "observable_flags": "temposync via surgepy getters, cross-checked "
                                 "against raw XML fail-closed",
-            "mod_routes": "graphs.jsonl md rows screened; any FX-destination "
-                          "route refuses extraction (fail-closed)",
+            "mod_routes": "graphs.jsonl md.g + md.s[*].s + md.s[*].v rows "
+                          "screened; any FX-destination route refuses "
+                          "extraction (fail-closed)",
         },
     }
     os.makedirs(os.path.dirname(out_path), exist_ok=True)

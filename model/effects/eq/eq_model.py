@@ -32,7 +32,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from model.effects.qmath import FRAC, sat, qadd, qsub, qmul, to_q, clip  # noqa: E402
+from model.effects.qmath import FRAC, qadd, qsub, qmul, to_q, clip  # noqa: E402
 from model.effects.delay.delay_model import (  # noqa: E402
     Biquad, Lipol, db_to_linear_d, note_to_pitch_ignoring_tuning_d,
     A_FMT, G_FMT, C_FMT, BLOCK,

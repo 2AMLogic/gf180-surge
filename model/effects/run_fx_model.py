@@ -27,7 +27,6 @@ Outputs (under --out-dir):
 
 import argparse
 import json
-import math
 import os
 import struct
 import sys
@@ -37,7 +36,7 @@ sys.path.insert(0, REPO)
 
 import numpy as np  # noqa: E402
 
-from model.effects.qmath import to_q, sat, qmul, qadd, FRAC, clip  # noqa: E402
+from model.effects.qmath import to_q, qmul, qadd, FRAC, clip  # noqa: E402
 from model.effects.delay.delay_model import (  # noqa: E402
     DelayModel, DelayParams, A_FMT, G_FMT, BLOCK,
 )

@@ -56,7 +56,10 @@
     "spectral_corr": true
   },
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
@@ -64,7 +67,10 @@
     "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
     "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
@@ -74,6 +80,28 @@
     "tail_rms_rel_db": -53.838623488158234,
     "tail_ref_rms_lsb": 4623.031180476421,
     "tail_model_rms_lsb": 4623.003566000364,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 50,
+      "ref_first_window_dbfs": -40.0919566322201,
+      "ref_last_graded_window_dbfs": -96.72722788265723,
+      "max_dev_db": 0.011708224407684042,
+      "worst_window": {
+        "index": 47,
+        "start_frame_in_tail": 112800,
+        "ref_dbfs": -94.02977553131278,
+        "model_dbfs": -94.04148375572046
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
     "ok": true,
     "reason": ""
   },
@@ -84,7 +112,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -94,6 +125,28 @@
       "tail_rms_rel_db": -54.225418336803635,
       "tail_ref_rms_lsb": 4862.876577744629,
       "tail_model_rms_lsb": 4862.863273618572,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -40.183930144886936,
+        "ref_last_graded_window_dbfs": -97.04464915943022,
+        "max_dev_db": 0.010281665749715785,
+        "worst_window": {
+          "index": 47,
+          "start_frame_in_tail": 112800,
+          "ref_dbfs": -93.83125472837875,
+          "model_dbfs": -93.84153639412847
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
       "ok": true,
       "reason": ""
     },
@@ -103,7 +156,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -113,6 +169,28 @@
       "tail_rms_rel_db": -54.08913511737496,
       "tail_ref_rms_lsb": 4780.786247583044,
       "tail_model_rms_lsb": 4780.740733943155,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -39.80133478579284,
+        "ref_last_graded_window_dbfs": -96.22942217248946,
+        "max_dev_db": 0.01307919999828755,
+        "worst_window": {
+          "index": 47,
+          "start_frame_in_tail": 112800,
+          "ref_dbfs": -94.09692617538761,
+          "model_dbfs": -94.1100053753859
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
       "ok": true,
       "reason": ""
     }

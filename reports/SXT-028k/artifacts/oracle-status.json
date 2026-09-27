@@ -1,0 +1,29 @@
+{
+  "expected_checkout": {
+    "location_used_for_evidence": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "override": "environment variable ORACLE_SURGE_DIR",
+    "rule": "any drift of engine HEAD, submodule SHA, or modified tracked files aborts fetch-and-build.sh"
+  },
+  "leaf": "SXT-028k",
+  "legs": {
+    "fixture_renders_sxt012": {
+      "status": "NOT_RUN",
+      "why": "needs the oracle host"
+    },
+    "model_vs_pinned_engine_agreement": {
+      "status": "NOT_RUN",
+      "why": "no reference render exists, so no max/rms/corr number exists"
+    },
+    "oracle_parameter_readback": {
+      "status": "BLOCKED",
+      "why": "tools/extract_aw4_inputs.py --mode oracle refuses; transcript in artifacts/extract-refusals-oracle.txt"
+    },
+    "reference_repeatability_3x_gate": {
+      "status": "NOT_RUN",
+      "why": "no renders to repeat"
+    }
+  },
+  "oracle_status": "UNAVAILABLE",
+  "probe": "ORACLE_SURGE_DIR unset and no built surgepy reachable in the implementation environment",
+  "rule": "a leg that did not run is never reported as a pass (AGENTS.md)"
+}

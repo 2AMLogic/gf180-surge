@@ -1,0 +1,25 @@
+SXT-028e negative controls — ALL-CONTROLS-OK
+model revision 0ee06a48cbff15c2df1f19c08b1485ba5a247e6fa162ddf58b211afaca8c3d67
+budgets (PROPOSED, not frozen): {'max_abs_diff_lsb': 8192, 'rms_diff_dbfs': -46.0, 'spectral_corr_min': 0.98}
+grading boundary: model-vs-model; pinned-oracle leg NOT_RUN
+
+NC-0  baseline-sanity      must=PASS                         verdict=PASS     -> CONTROL-OK
+      independent float structural twin vs frozen fixed model
+      max 15.2 LSB  rms -105.24 dBFS  corr 1.000000
+NC-A  generic-substitute   must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      single-rate tanh clip (no oversampling / halfband / EQ / feedback)
+      max 1082421.3 LSB  rms -4.88 dBFS  corr 0.854046
+NC-C  wrong-order          must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      pre-EQ and post-EQ bands swapped around the shaper
+      max 247051.4 LSB  rms -18.91 dBFS  corr 0.973332
+NC-F  halfband-phase       must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      halfband A/B polyphase branches swapped in the reconstruction (bright/hot stimulus: 4.7 kHz + broadband noise, drive 45 dB)
+      max 63653.3 LSB  rms -30.69 dBFS  corr 0.982879
+NC-D  shared-state         must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      two concurrent instances pooled onto one DistortionState
+NC-B  dropped-tail         must=FAIL                         verdict=FAIL     -> CONTROL-OK
+      render truncated 1 block into the declared 1600-block ringout span (inside the measured 1592-block live decay)
+KG-1  known-gap-probe      must=n/a (probe, not a control)   verdict=PASS (gap confirmed) -> CONTROL-OK
+      late truncation (800 blocks into the ringout) is NOT detected by the whole-region residual gate
+NC-E  stale-stub           must=FAIL (refuse to report PASS) verdict=REFUSED  -> CONTROL-OK
+      harness pinned to a stale frozen-model revision

@@ -24,4 +24,13 @@ NC-SHA-DISAGREE: graphs blob sha disagrees with scan
     REFUSED as required: REFUSE: sha disagreement for resources/data/patches_3rdparty/A.Liv/Basses/808er Than 808.fxp: scan ccf42b0e8bdc1c7884b3b
     PASS: fail-closed, no outputs written
 
+NC-RNG-EXCLUSION: FX-RNG exclusion gate (#122/DR-0013)
+    baseline supported                  : 1681
+    synthetic exclusions added          : 5
+    after gate supported                : 1676
+    downgraded supported->unresolved    : 5 (all carry fx_rng_gate=BLOCKED and an rng_stream_unpinnable: reason)
+    with --control-ignore-rng-exclusion : 1681 (exactly the baseline -- the RNG gate, and nothing else, caused the downgrade)
+    denominator unchanged               : 3561 (reduction published, nothing dropped)
+    PASS: affected presets downgraded; gate proven load-bearing; denominator preserved
+
 RESULT: PASS — all controls healthy (each demonstrably fails the check it targets)

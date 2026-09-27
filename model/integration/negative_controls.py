@@ -42,7 +42,7 @@ from model.integration.integration_model import (  # noqa: E402
 )
 from model.integration.run_model import read_wav_stereo_f32  # noqa: E402
 from model.integration.compare_integration import (  # noqa: E402
-    tail_checks, dbfs,
+    tail_checks,
 )
 from model.integration.extract_preset_inputs import (  # noqa: E402
     IMAGE_JSON, OUT_PATH as INPUTS_JSON,
@@ -153,8 +153,6 @@ def nc_a(sequence):
 
 def nc_b(sequence):
     seq_name = sequence
-    sidecar = json.load(open(os.path.join(
-        FIXTURES, f"hells_bells__{seq_name}.json")))
     ref, _ = read_wav_stereo_f32(os.path.join(
         FIXTURES, f"hells_bells__{seq_name}-wet.f32.wav"))
     model, _ = read_wav_stereo_f32(os.path.join(

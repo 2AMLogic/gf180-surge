@@ -21,7 +21,7 @@
     "targeted_check": "L1+L2 reference budgets on a same-type/wrong-substitute path",
     "l2": {
       "max_abs_lsb": 1872304,
-      "rms_lsb": 300497.8571232398
+      "rms_lsb": 300421.6904427946
     },
     "budget_fail": true,
     "outcome": "CONTROL-OK (fails the check)"
@@ -49,17 +49,10 @@
     "clipgain_disabled_verdict": "UNSTABLE",
     "clipgain_disabled_peak_lsb": 2147483648,
     "frozen_model_verdict": "STABLE",
-    "frozen_model_peak_lsb": 16667761,
+    "frozen_model_peak_lsb": 16677049,
     "outcome": "CONTROL-OK (detected, not silent)"
   },
   "NC-E-rtl-mutant": {
-    "targeted_check": "RTL-vs-model exactness FAILs for the mutated testbench",
-    "mismatches": 31,
-    "checked": {
-      "samples": 36,
-      "checkpoints": 0,
-      "fields": 0
-    },
-    "outcome": "CONTROL-OK (exactness FAILs)"
+    "outcome": "NOT_RUN (precondition missing: /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-102/reports/sxt-037/artifacts/run-badnews/model_trace.json; generate it with model/voice/filter_lp12/run_filter_leg.py)"
   }
 }

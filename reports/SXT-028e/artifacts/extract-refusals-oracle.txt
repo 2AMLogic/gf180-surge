@@ -1,0 +1,7 @@
+SXT-028e extraction transcript — mode=oracle
+engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
+written: 0  refused: 3
+
+REFUSED monsterfeedback (resources/data/patches_3rdparty/Argitoth/FX/Monster Feedback.fxp): oracle mode requires a built surgepy at ORACLE_SURGE_DIR (oracle/manifest.json expected_checkout). No oracle is reachable in this environment, so the oracle extraction is BLOCKED and this tool refuses rather than inventing the missing flags. Reproduce on an oracle host: ORACLE_SURGE_DIR=... python3.11 tools/extract_distortion_inputs.py --mode oracle
+REFUSED novuo (resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp): oracle mode requires a built surgepy at ORACLE_SURGE_DIR (oracle/manifest.json expected_checkout). No oracle is reachable in this environment, so the oracle extraction is BLOCKED and this tool refuses rather than inventing the missing flags. Reproduce on an oracle host: ORACLE_SURGE_DIR=... python3.11 tools/extract_distortion_inputs.py --mode oracle
+REFUSED screamingsaw (resources/data/patches_3rdparty/Argitoth/Leads/Screaming Saw.fxp): oracle mode requires a built surgepy at ORACLE_SURGE_DIR (oracle/manifest.json expected_checkout). No oracle is reachable in this environment, so the oracle extraction is BLOCKED and this tool refuses rather than inventing the missing flags. Reproduce on an oracle host: ORACLE_SURGE_DIR=... python3.11 tools/extract_distortion_inputs.py --mode oracle

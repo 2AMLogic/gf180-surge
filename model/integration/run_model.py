@@ -32,7 +32,7 @@ from model.integration.extract_preset_inputs import (  # noqa: E402
 )
 from tools.render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
 from tools.run_reverb_rtl import (  # noqa: E402
-    coefficient_words, gen_blocks, run_model_case, ExtLog,
+    coefficient_words, gen_blocks,
 )
 from model.effects.reverb1 import reverb1_fixed as rf  # noqa: E402
 

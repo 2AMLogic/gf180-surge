@@ -101,7 +101,7 @@
   "authority": "pinned sources + surgepy readback at load, cross-checked against graphs.jsonl (SXT-011)"
  },
  "pinned_sources": [
-  "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/dsp/effects/ConditionerEffect.{h,cpp} (ConditionerEffect: process_block; gate/comp envelope lag objects; shared LFO)"
+  "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71: src/common/dsp/effects/ConditionerEffect.{h,cpp} (ConditionerEffect::process: bass/treble peaking EQ, M/S side high-pass and width, balance/threshold pregain, 128-sample look-ahead limiter, output gain; no gate and no LFO)"
  ],
  "recovery_order": 2,
  "routing_roles_used_in_scope": [
@@ -128,5 +128,5 @@
  },
  "stop_escalate": "If the effect cannot be bounded in state/cost under the shared instance schedule, record the finding and route to SXT-017 (#12) before freezing budgets; do not weaken acceptance to pass.",
  "sxt017_decision_required": null,
- "title": "SXT-028b: Conditioner effect leaf (gate/compressor/LFO)"
+ "title": "SXT-028b: Conditioner effect leaf (EQ/M-S width/look-ahead limiter)"
 }

@@ -10,9 +10,7 @@ tools/render_chorus_fixtures.py / tools/extract_chorus_inputs.py; here we
 only check the committed evidence records for coherence. A missing
 iverilog/oracle makes those legs NOT_RUN, never a pass.
 """
-import gzip
 import json
-import math
 import os
 import random
 import sys
@@ -23,7 +21,6 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-chorus"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 
-import chorus_model as cm  # noqa: E402
 from chorus_model import (  # noqa: E402
     ChorusModel, ChorusParams, LINE_LEN, VOICES, VOICE_PAN, LP_TIME,
     LPINV_TIME, BLOCK, MAX_DELAY, FIRIPOL_N, model_revision,
@@ -159,6 +156,9 @@ def test_reference_comparisons_recorded_and_coherent():
         for c in (tc, d["tail_check_lr"]["L"], d["tail_check_lr"]["R"]):
             assert c["tail_region_covered"] and c["tail_present"], fn
             assert c["model_tail_present"] and c["ok"], fn
+            # issue #111: tail-shape (decay-curve) leg graded and passing
+            assert c["tail_decay_curve_ok"] is True, fn
+            assert c["tail_decay_curve"]["graded_windows"] > 0, fn
             assert c["tail_rms_rel_db"] <= d["proposed_tail_budget"][
                 "tail_rms_rel_db"], fn
 

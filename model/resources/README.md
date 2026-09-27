@@ -86,6 +86,36 @@ Engine facts read (not copied) from the pinned tree: `MAX_UNISON=16` and
 - FX classes without a verified structure are counted at a conservative
   placeholder and flagged (`class_state_unverified`); they can never silently
   look cheap.
+- A `no_long_buffer` class is promoted out of that placeholder only by its own
+  SXT-028 leaf, via `_NO_LONG_BUFFER_MEASURED` in `fx_classes.py`: the entry
+  carries the measured per-instance bytes, the artifact field they were read
+  from, and the frozen model revision they were measured against
+  (`fx_class_spec(...)["pinned_reference"]`), and the class drops
+  `class_state_unverified`. Promoted so far: **Conditioner**, 2,444 B from
+  SXT-028b (`reports/SXT-028b/artifacts/buffer-requirement.json`,
+  `on_chip_state.bytes`); drift between the two is a test failure
+  (`tests/test_sxt015_fx_classes.py`). Every other class in the tier keeps the
+  8,192 B placeholder. Promotion changes **state accounting only** — the
+  per-frame cycle figure stays the shared `cyc_fxgeneric_frame` placeholder,
+  and nothing here is a fidelity, RTL, or hardware claim.
+- A `pinned` **traffic** row is likewise re-derived from the leaf that can
+  measure it, never hand-patched — but correcting a traffic row *downward*
+  **relaxes a bandwidth budget**, so it is not a free improvement: it can turn
+  a previously-failing `ext_bandwidth_fit` column into a passing one. Where
+  that lands inside a record already escalated to an operator decision, the
+  correction is **held, not banked**, and the hold is declared in
+  `_RETAINED_OVER_ESTIMATE_TX` (`retained_over_estimate(<class key>)`) with the
+  measured figure, the leaf artifact it came from, the numeric cost of the
+  correction, and what retires the hold. Held so far: **Reverb 2**, kept at
+  40 reads / 18 writes against SXT-028f's measured and structurally-derived
+  29 / 17 (finding F-028f-2, issue #127) — see
+  `reports/sxt-017/EVIDENCE.md` §10 for the full before/after and why it waits
+  on #12. A retained row must be **conservative componentwise** (never an
+  under-estimate) and must be *declared*: an undeclared disagreement is a stale
+  row, and `tests/test_sxt015_fx_classes.py` fails on one. Those tests also
+  prove the row is *consumed* — flipping it by a known delta must move the
+  accounting output by exactly the predicted amount, so a decorative table
+  cannot pass.
 
 ## Reproduce
 

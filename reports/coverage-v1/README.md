@@ -68,6 +68,20 @@ STALE. **NOT_RUN is never counted as a pass.** The empty cell means the gate
 was not reached (a structural status preceded it) or is vacuous (no FX
 required); it is never a pass either.
 
+**`fx_rng_gate`** (added by #122, decision record
+`decision-records/0013-fx-modulation-rng-stream.md`) reads **BLOCKED** on
+every preset carrying a required effect instance whose sound depends on an
+RNG stream that cannot be pinned under the SXT-010 manifest — measured in
+`reports/SXT-028-rng/artifacts/coverage-impact.json` and pinned by sha256
+like every other structural input. Such a preset can never be reported
+`supported`: its **original** wet sound cannot be reproduced or compared, and
+substituting a convenient deterministic shape would make it *adapted*, which
+by plan §2 never counts. This is a published coverage **reduction**, not a
+deduction — the denominators below are unchanged, nothing was removed from
+the corpus, and the affected count appears in `coverage.json` →
+`fx_rng_exclusion` with its per-class and per-slate breakdown. The gate is
+proven load-bearing by `NC-RNG-EXCLUSION` in `negative-controls.txt`.
+
 Coverage (the counts above) is reported **separately** from agreement and from
 listening: no fidelity metric is copied into these artifacts. Agreement
 evidence lives only in the linked records — `reports/sxt-022/EVIDENCE.md` (dry
@@ -163,6 +177,16 @@ full sha256 differs from the pin refuses the run; legitimate data updates
 must revise the pin in the same commit (visible contract revision).
 `--leaf-table` / `--control-allow-input-drift` exist for the controls only
 and are never valid for a published run.
+
+**That invariant is asserted, not just documented** (`#125`):
+`tests/test_sxt029_publication.py` re-derives every evidence pin in
+`leaf-verification.json`, republishes into a scratch directory and requires
+byte equality with the two committed artifacts, and re-runs the stale-pin
+downgrade control against the real table. A leaf whose evidence record is
+edited after publication must therefore revise its pin **and** republish in
+the same commit; the revision is recorded in
+`leaf-verification.json::evidence_pin_revisions` (which edit moved the file,
+and why no verification status moved with it).
 
 ## What would change these numbers
 

@@ -41,7 +41,7 @@ Fixed-point stability guard-band analysis (pure math, deterministic):
 from .common import (AUDIO_BITS_CANDIDATE, CLOCK_CANDIDATES_HZ, COEFF_BITS,
                      FS_HZ, MEM_WORD_BYTES, OpCounter,
                      TECH, closure, ext_access_cycles,
-                     ext_sustained_bytes_per_s, op_cycles)
+                     op_cycles)
 
 PROBE = "probe_fx_reverb1"
 REVBITS = 15

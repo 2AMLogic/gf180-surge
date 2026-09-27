@@ -1,0 +1,30 @@
+{
+ "rainy": {
+  "verdict": "FAIL",
+  "checked": {
+   "samples": 470,
+   "checkpoints": 7,
+   "fields": 84
+  },
+  "mismatches_reported": 31,
+  "first": [
+   "block 0 field 11: model=1265512 rtl=1267113",
+   "block 1 field 11: model=1258472 rtl=1260201",
+   "block 2 field 11: model=1246056 rtl=1247721"
+  ]
+ },
+ "badnews-reso1": {
+  "verdict": "FAIL",
+  "checked": {
+   "samples": 992,
+   "checkpoints": 15,
+   "fields": 180
+  },
+  "mismatches_reported": 31,
+  "first": [
+   "block 0 field 11: model=216030 rtl=216371",
+   "block 1 field 11: model=215198 rtl=215539",
+   "block 2 field 11: model=213726 rtl=214003"
+  ]
+ }
+}

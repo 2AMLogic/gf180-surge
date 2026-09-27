@@ -69,7 +69,6 @@ def graphs_modwheel_routes(rel):
 
 def git_blob_sha1(path):
     import hashlib
-    import zlib
 
     data = open(path, "rb").read()
     hdr = b"blob %d\x00" % len(data)

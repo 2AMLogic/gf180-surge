@@ -1,0 +1,170 @@
+{
+  "claim_scope": "MODEL-VS-MODEL only. The frozen model is the reference in every comparison here. These controls show the checks are live; they establish nothing about agreement with the pinned Surge engine (NOT_RUN) and nothing about musical quality.",
+  "controls": [
+    {
+      "bit_identical": false,
+      "control": "NC-A wrong order (two same-class Logical slots swapped)",
+      "metrics": {
+        "corr": 0.9960059775472202,
+        "max_abs": 0.24338647577678785,
+        "ref_rms": 0.4390351162898329,
+        "rms": 0.12455262371730828,
+        "rms_dbfs": -18.092942391221115,
+        "samples": 1024
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: the permuted chain is not bit-identical and is outside the [PROPOSED] agreement thresholds"
+    },
+    {
+      "control": "NC-B shared instead of per-instance state",
+      "instance_a_output_changed": true,
+      "instance_a_state_changed": true,
+      "metrics": {
+        "corr": 0.9883554392340247,
+        "max_abs": 0.2938102358020842,
+        "ref_rms": 0.6585280843996957,
+        "rms": 0.16073032413628777,
+        "rms_dbfs": -15.878043589479791,
+        "samples": 384
+      },
+      "ok": true,
+      "verdict": "CONTROL-OK: pooling the two slots' histories changes instance A's output AND its state digest"
+    },
+    {
+      "control": "NC-C generic substitute (generic peak compressor in place of the pinned Logical algorithm)",
+      "counts_toward_original_preset_coverage": false,
+      "label": "ADAPTED",
+      "metrics": {
+        "corr": 0.9962727691942395,
+        "max_abs": 0.4600977349683397,
+        "ref_rms": 0.6291048365790048,
+        "rms": 0.11119495786319548,
+        "rms_dbfs": -19.078298107927804,
+        "samples": 1024
+      },
+      "ok": true,
+      "reference_anchored_leg": {
+        "status": "NOT_RUN",
+        "why": "the leg that would compare the substitute against the PINNED ENGINE needs an oracle host; the model-vs-model leg above is what ran"
+      },
+      "refused_from_coverage": true,
+      "verdict": "CONTROL-OK: the substitute is labelled ADAPTED, is refused from original-preset coverage, and FAILS the [PROPOSED] agreement thresholds"
+    },
+    {
+      "control": "NC-D dropped tail (render truncated before the declared gain-recovery span, then resumed)",
+      "declared_tail_blocks": 67,
+      "declared_tail_samples": 2116,
+      "metrics": {
+        "corr": 0.9996071686804215,
+        "max_abs": 0.1341841825924348,
+        "ref_rms": 0.654371478147756,
+        "rms": 0.075092925827305,
+        "rms_dbfs": -22.488019480655275,
+        "samples": 512
+      },
+      "note": "a compressor emits silence INTO silence, so the tail is a state tail; an amplitude-only ringout gate would read 'no tail' and pass a dropped-tail render. That is exactly why the check is anchored on the RESUMED burst.",
+      "ok": true,
+      "outside_budget": true,
+      "verdict": "CONTROL-OK: dropping the declared tail span changes the resumed burst"
+    },
+    {
+      "control": "NC-E stale stub / silent stub",
+      "legs": [
+        {
+          "leg": "silent stub",
+          "metrics": {
+            "corr": 0.0,
+            "max_abs": 1.0761365660000592,
+            "ref_rms": 0.7084588509340071,
+            "rms": 0.7084588509340071,
+            "rms_dbfs": -2.9937073919232726,
+            "samples": 512
+          },
+          "ok": true,
+          "verdict": "CONTROL-OK: an all-zero stub FAILS the thresholds (the check is not vacuous)"
+        },
+        {
+          "comparator_status": [
+            "REFUSED-STALE"
+          ],
+          "leg": "stale revision pin",
+          "ok": true,
+          "verdict": "CONTROL-OK: the comparator REFUSES a harness pinned to a stale frozen-model revision instead of reporting PASS"
+        },
+        {
+          "leg": "revision word tracks the source",
+          "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+          "ok": true,
+          "verdict": "CONTROL-OK: model_revision() hashes the frozen model AND the frozen tables, so editing either invalidates every committed pin"
+        }
+      ],
+      "ok": true,
+      "verdict": "CONTROL-OK"
+    },
+    {
+      "bypass_bit_exact_dry": true,
+      "control": "NC-F bypass transparency (E_mix = 0) + injected mix leak",
+      "note": "the unmodified WET reference is retained: this control compares the bypassed render against the dry input, it never replaces the wet reference (AGENTS.md).",
+      "ok": true,
+      "one_lsb_leak_detected": true,
+      "verdict": "CONTROL-OK: E_mix = 0 is bit-exact dry AND a 1-LSB wet leak is detected, so the bypass check is live"
+    },
+    {
+      "control": "NC-G pinned-quirk 'fixes'",
+      "known_gap": {
+        "legs_inside_the_proposed_budgets": [
+          "Q1 sag-mirror tap age 'fixed' to a constant 2",
+          "Q2 stage-C right-channel target 'fixed'"
+        ],
+        "text": "these quirk 'fixes' change the output but stay INSIDE the [PROPOSED] SXT-023 effect-slice budgets, so a reference-agreement check at those thresholds would NOT discriminate them. Only the exactness leg (bit equality against the frozen model) catches them. Recorded as finding F-028k-3 and routed to SXT-017 (#12) as an input to the budget freeze; NOT a reason to widen or narrow any budget here."
+      },
+      "legs": [
+        {
+          "budget_would_discriminate": false,
+          "changed": true,
+          "detected_by": "bit-inequality (the EXACTNESS leg)",
+          "leg": "Q1 sag-mirror tap age 'fixed' to a constant 2",
+          "metrics": {
+            "corr": 0.9999999780186808,
+            "max_abs": 0.0011333170405123383,
+            "ref_rms": 0.4655897924701592,
+            "rms": 9.864241021908625e-05,
+            "rms_dbfs": -80.11872649546847,
+            "samples": 2560
+          },
+          "ok": true,
+          "verdict": "CONTROL-OK: the quirk is load-bearing"
+        },
+        {
+          "budget_would_discriminate": false,
+          "changed": true,
+          "detected_by": "bit-inequality (the EXACTNESS leg)",
+          "leg": "Q2 stage-C right-channel target 'fixed'",
+          "metrics": {
+            "corr": 0.9999575380528519,
+            "max_abs": 0.003801959101110697,
+            "ref_rms": 0.08055102406380624,
+            "rms": 0.0010432862440224587,
+            "rms_dbfs": -59.631930377126665,
+            "samples": 1024
+          },
+          "ok": true,
+          "verdict": "CONTROL-OK: the quirk is load-bearing"
+        }
+      ],
+      "ok": true,
+      "verdict": "CONTROL-OK"
+    }
+  ],
+  "issue": 63,
+  "leaf": "SXT-028k",
+  "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+  "status": "PASS",
+  "thresholds": {
+    "corr": 0.98,
+    "max_abs_linear": 0.00390625,
+    "max_abs_note": "8192 LSB at Q10.21 expressed in linear units",
+    "rms_dbfs": -46.0,
+    "source": "[PROPOSED] SXT-023 effect-slice budgets, used here ONLY as a substitution detector; not frozen (#12)"
+  }
+}

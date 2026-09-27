@@ -107,7 +107,6 @@ def main():
         t = inst.get("traffic")
         if not t:
             continue
-        words = t["reads"] + t["writes"]
         mem.append({
             "slot": inst["slot"],
             "kind": inst["kind"],

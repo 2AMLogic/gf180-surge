@@ -1,0 +1,48 @@
+{
+  "basis": "derived from the frozen model's declared word widths (rf_global34_model.R_BITS / C_BITS and the RTL's register declarations), not hand-counted",
+  "claim": "This leaf's OWN state/cost addition (the routing / scheduling / lifecycle logic plus its synthetic per-slot occupant kernel) -- NOT the ext-mem footprint of whichever concrete Surge FX algorithm actually occupies global3/global4 in a real preset, which is that algorithm leaf's own SXT-015/016 accounting.",
+  "cost_closure": {
+    "note": "no cycles-per-frame, schedule-fit or bundle-closure number is asserted by this leaf. SXT-015 accounting consumes the inventory above; SXT-016 decides fit; profile v1 is NOT frozen (SXT-017, issue #12).",
+    "status": "[PENDING-SXT-016]"
+  },
+  "ext_mem_traffic_estimate": "[PENDING-SXT-016] this leaf's own contribution is 0 words/sample (see external_traffic above); the AGGREGATE estimate for a concrete preset also depends on whichever algorithm leaf's occupant actually lands in global3/global4, which is out of this leaf's scope -- no aggregate number is invented here",
+  "external_traffic": {
+    "note": "no external-memory transactions originate from this leaf's own routing/scheduling/lifecycle logic or its synthetic occupant; the frozen model's per-slot ext_reads/ext_writes counters stay at 0 (asserted by tests/test_sxt028j.py).",
+    "words_per_sample": 0
+  },
+  "external_writable_memory": {
+    "note": "the synthetic occupant kernel (BiquadInstance) is register-only (on-chip); it owns no delay line and touches no external buffer. A concrete tail-bearing occupant (Delay/Reverb1/Reverb2/Chorus/etc.) landed in this slot owns its own external-memory accounting separately.",
+    "words_total": 0
+  },
+  "form": "rf-global34",
+  "issue": "#62",
+  "leaf": "SXT-028j",
+  "long_buffers_policy": "delay/reverb-class buffers live in external WRITABLE memory; processing stays on-chip; flash is not writable delay memory (AGENTS.md) -- not applicable to this leaf's own (register-only) contribution",
+  "model_revision": "47d44bce92de29502689f9324420d07621455e3410eb8bcd93378e5a0bbd23fc",
+  "on_chip_small_state": {
+    "full_bits_total": 993,
+    "full_bytes_total": 125,
+    "full_note": "additionally counts the per-slot coefficient configuration registers and the block FSM, which the RTL really instantiates.",
+    "instances": 2,
+    "per_instance": {
+      "coefficient_register_bits": 160,
+      "history_plus_occupancy_bits": 321,
+      "occupancy_bits": 1,
+      "tdf2_history_bits": 320
+    },
+    "shared_fsm_bits": {
+      "FSM state": 3,
+      "glob_cur": 1,
+      "run_s3/run_s4 gate latches": 2,
+      "sample counter k": 6
+    },
+    "shared_routing_control_bits": {
+      "fx_bypass (2-bit mode)": 2,
+      "fx_disable (16-bit, engine layout; only bits 14/15 consumed)": 16,
+      "ring memory (glob_ring / glob_out)": 1
+    },
+    "sibling_comparable_bits_total": 661,
+    "sibling_comparable_note": "histories + occupancy + routing-control bits only -- the same accounting the landed sibling routing leaves (rf-rf-global2: 661 bits, rf-rf-bins12: 663 bits) used, so the three routing forms are directly comparable."
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028e",
+  "effect": "Distortion (DistortionEffect)",
+  "model_revision": "0ee06a48cbff15c2df1f19c08b1485ba5a247e6fa162ddf58b211afaca8c3d67",
+  "blocks_measured": 64,
+  "external_memory": {
+    "per_instance_state_bytes": 0,
+    "reads_per_sample": 0.0,
+    "writes_per_sample": 0.0,
+    "bytes_per_second_at_48k": 0.0,
+    "delay_line_class_buffers": 0,
+    "note": "Distortion has no delay-line-class buffer: there is no external-memory residency or traffic at all. The rule 'long buffers external-WRITABLE, never flash' is vacuously satisfied \u2014 nothing long exists to place."
+  },
+  "on_chip_state": {
+    "q24_43_words": 190,
+    "q10_21_or_q13_18_words": 6,
+    "bytes_per_instance": 1544,
+    "halfband_words_each": 72,
+    "breakdown": {
+      "peak_eq_biquads": "2 x (5 lag + 5 target + 4 TDF2) Q24.43",
+      "oversampled_lp_biquads": "2 x (5 coeff + 4 TDF2) Q24.43",
+      "halfband_decimators": "2 x (2 ch x 2 branch x 3 stages x 6 taps) Q24.43",
+      "feedback_registers": "2 x Q10.21 (DistortionEffect::L / R)",
+      "gain_ramps": "2 x (cur, target) Q13.18"
+    }
+  },
+  "frozen_rom": {
+    "waveshaper_rows": 3,
+    "waveshaper_words": 3072,
+    "halfband_coefficient_words": 12,
+    "total_words": 3084,
+    "bytes": 12336,
+    "shared": true,
+    "waveshaper_table_digest": "8887452198cd366289a24f4c06cd19039124537c573a4f812c91045440bfab5d",
+    "note": "ROM is shared read-only across instances; the halfband coefficients are streamed to the RTL (DR-0002 clause 1)."
+  },
+  "compute": {
+    "oversampling_factor": 4,
+    "shaper_evaluations_per_sample_per_channel": 4,
+    "oversampled_biquad_samples_per_block": 256,
+    "halfband_allpass_stages_per_block": 2304
+  },
+  "cost_fit_verdict": "[PENDING-SXT-016]",
+  "claim_scope": "measured demand only; no cost, area, timing, power, synthesis or fit claim is made here"
+}

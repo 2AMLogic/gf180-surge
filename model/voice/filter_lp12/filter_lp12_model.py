@@ -81,6 +81,9 @@ CUT_SCOPE_MIN, CUT_SCOPE_MAX = -240.0, 240.0
 N_COEF = 8             # n_cm_coeffs
 COEF_SMOOTH = qint(0.2)                    # FilterCoefficientMaker smooth
 BLOCK_SIZE_OS = vm.BLOCK_SIZE_OS           # 64 OS samples per engine block
+# FilterCoefficientMaker sample rate: pinned SurgeVoice::sampleRateReset()
+# calls setSampleRateAndBlockSize(dsamplerate_os, BLOCK_SIZE_OS) = (96000, 64)
+CM_SAMPLE_RATE = 96000.0
 
 # register-state init: the per-voice FBP is zeroed on voice creation and on
 # type/subtype change (SurgeVoice.cpp memset paths); R[2] (clipgain state)
@@ -130,9 +133,17 @@ def _map2pole_resonance(reso, freq, subtype):
 
 
 def _clipscale(freq, subtype):
-    """pinned clipscale(): clipgain coefficient, Q10.21."""
+    """pinned clipscale(): clipgain coefficient, Q10.21.
+
+    Driven: (1/64) * db_to_linear(freq * 0.55), where sst-filters'
+    clipscale calls its OWN db_to_linear, i.e. exact pow(10, 0.05 x) -- not
+    Surge's interpolated dB table (F-038-4 / #102; the landed SXT-037 model
+    used the table here).  Evaluated in double and quantized once (the
+    module's declared coefficient-construction discipline).
+    """
     if subtype == SUBTYPE_DRIVEN:
-        return qdiv(vm.db_to_linear(qmul(freq, qint(0.55))), qint(64.0))
+        f = freq / float(ONE)
+        return qint((1.0 / 64.0) * 10.0 ** (0.05 * (f * 0.55)))
     if subtype == SUBTYPE_CLEAN:
         return qdiv(ONE, qint(1024.0))
     return 0
@@ -176,7 +187,11 @@ class LP12CoeffMaker:
     def _coeff_svf(self, freq_semi, reso):
         import math
         f = 440.0 * _note_to_pitch_d(freq_semi)
-        f1 = 2.0 * math.sin(math.pi * min(0.11, f * (0.5 / 48000.0)))
+        # sampleRateInv is the coefficient maker's configured rate: the
+        # pinned SurgeVoice::sampleRateReset() sets (dsamplerate_os,
+        # BLOCK_SIZE_OS) = (96000, 64), so F1 = 2 sin(pi min(0.11, f*0.5/96000))
+        # (F-038-3 / #102; the landed SXT-037 model used 48000 here).
+        f1 = 2.0 * math.sin(math.pi * min(0.11, f * (0.5 / CM_SAMPLE_RATE)))
         reso_d = max(0.0, min(1.0, reso / float(ONE))) ** 0.5
         overshoot = 0.15
         q1 = 2.0 - reso_d * (2.0 + overshoot) + f1 * f1 * overshoot * 0.9

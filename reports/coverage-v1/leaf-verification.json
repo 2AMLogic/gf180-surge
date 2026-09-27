@@ -55,17 +55,115 @@
   },
   "airwindows_unfiled_reason_template": "no leaf filed for this algorithm (outside the SXT-028 generator's recovery-ordered set)",
   "claim_scope": "Machine-readable leaf/gate ledger consumed by tools/publish_coverage.py (SXT-029, issue #22). It records, per landed leaf, the verification verdicts of the committed evidence records (full sha256 pins; the tool re-hashes at run time and marks STALE on mismatch), and per unlanded leaf the filed issue (or backlog id) that must land first. Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, quality, or hardware claim; essentiality is UNVERIFIED pending listening (#8/#9). A leaf is support-ready only when rtl_vs_model AND model_vs_reference are both PASS AND the fidelity_freeze gate is PASS (issue #12).",
+  "evidence_pin_revisions": [
+    {
+      "decision": "RE-PIN (the record was legitimately edited after the last coverage publication; the file is correct and was not restored). No verification status in this table was changed: the record's own change note states the verdicts are unchanged - EQ fm_bass_1 stays PASS, Delay metallic/dexie stay FAIL, and the added wet-path tail-gate legs are recorded as further input to the open #16/#12 delay-budget finding, not as a new verdict.",
+      "issue": 125,
+      "moved_by": "48062e8 (#113, issue #100): wet-path tail gate on the stereo effect-slice comparators; added the 'Change note (issue #100)' block to the record",
+      "path": "reports/sxt-023/EVIDENCE.md",
+      "previous_sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7",
+      "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status changed: every change note in the record states 'Verdicts: unchanged' - click PASS, preset PASS, hardreset FAIL on tail_rms_rel exactly as already recorded, reset BLOCKED, sweep PASS, all four negative controls CONTROL-OK; #108 added the tail_window transparency block and a NO_VERDICT refusal path, and #112 pinned the send_gain arithmetic to an explicit float32 cube and regenerated every comparison/ and negative-controls/ record once, without moving an exit code. The only checks change is the ADDITION of tail_gate (from #100) to records that predated it. #112's regeneration was re-run on the tree merged with the main carrying #111's windowed decay-curve tail-shape leg, so the committed records carry the post-#111 tail_gate shape; that re-run added 66 additive tail_gate fields per graded record, changed no value and no exit code, and every added tail_decay_curve leg passes its declared 1.0 dB budget (worst 0.00268 dB) - measured in reports/sxt-024/artifacts/issue-112/TAIL-SHAPE-LEG.txt.",
+      "issue": 125,
+      "moved_by": "48062e8 (#113, issue #100), then bbfb090 (#115, issue #108), then issue #112 (this re-pin): wet-path tail gate; the keep-the-bespoke-window decision plus its NO_VERDICT refusal and presence legs; then the float32 send_gain precision pin, the one-time regeneration of the committed comparison/ and negative-controls/ records (re-run against the post-#111 tool so the records are not STALE in field shape either), and the residual host/NumPy reduction-order finding. Pin chain: d148a444 -> 6e208e34 (#100/#108) -> this sha (#112).",
+      "path": "reports/sxt-024/EVIDENCE.md",
+      "previous_sha256": "6e208e3406db36b267b4689ebbd9d936517d14058c3a1025c0a48bebcf7fb5e0",
+      "sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). Pin history: 7a64271e... -> a7997cc8... (issue #125) -> d50f1da6... (issue #111). No verification status changed: the #100 re-grade records 'all six verdicts unchanged (PASS stays PASS)' under the stronger declared-region tail gate; the #116 fix records that the corrected FX-destination screen leaves all four committed extraction inputs at 0 FX-destination routes; and the #111 change note records that all six cases re-ran PASS -> PASS under the added tail-shape (decay-curve) leg, so no fixture, model run, or verdict in the record moved.",
+      "issue": 111,
+      "moved_by": "48062e8 (#113, issue #100) then d6f9ced (#131, issue #116) then 2f086e1 (PR #161, issue #111): tail-gate re-grade, then the chorus extractor FX-modulation screen defect note, then the #111 change note closing the late-tail-truncation known gap via the tail-shape leg",
+      "path": "reports/SXT-028c/EVIDENCE.md",
+      "previous_sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c",
+      "sha256": "d50f1da6ddda08bdbb7ce414a97a7d2693a263d21328b41dde0e9976f2361369"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade arithmetic was verified by Judge on PR #158). No verification status in this table was changed: both leaves pinning this record (voice:attacky-slice, voice:sine-fm-lp24-v2) stay rtl_vs_model PASS / model_vs_reference NO_VERDICT, because the corrected leg is graded against a [PROPOSED] (not frozen) budget and no frozen fidelity verdict exists until #12. Hash bookkeeping only; stale wording elsewhere in this ledger that still describes the old PASS state is routed to #157 and is not touched here. Issue #145 re-pin (this sha): RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS); then issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/). Pin chain: ... -> 13509fe3 -> c4747399 (#145).",
+      "path": "reports/sxt-022/EVIDENCE.md",
+      "previous_sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca",
+      "sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: voice:unison-stack stays rtl_vs_model PASS / model_vs_reference PARTIAL; the corrected uni1-rep rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here. Issue #145 re-pin (this sha): RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS); then issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/). Pin chain: ... -> 6c6655ff -> eaafb218 (#145).",
+      "path": "reports/SXT-034/EVIDENCE.md",
+      "previous_sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba",
+      "sha256": "eaafb2186ef7a8808c2a0d2e6eca2e5306b3d962aee3077770d643d6c597d0f2"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT; the corrected seq-notes-repeated-v1 rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here. Issue #163 re-pin: the record was legitimately edited again after the last publication; the file is correct and was not restored. No verification status in this table moved -- mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT, and acceptance row 5 stays PASS (every control still FAILs its check, overall_ok true). Hash bookkeeping only. Issue #175 re-pin (this sha): row 3's numbers did not move; the re-pin only adds the #175 re-run note (runner-fix root cause + regenerated `exactness-voice-*.json`) to row 3's prose. Hash bookkeeping only. Issue #145 re-pin (this sha): RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS); then issue #163 (this re-pin): SXT-035 negative control C2 (smoothing-bypass) gained a control-plane discriminator -- blocks-to-converge of the smoothed modwheel word, 0 for the mutant vs 54 for the unmutated model -- so it no longer rests on the 0.0026 whole-render spectral_corr margin that #110/#166 would retire; artifacts/negative-control{,s}.{txt,json}, audio-nc-*.json and exactness-mutant.json were regenerated at that PR's HEAD (metric drift and the RMS-polarity re-grade are explained in the record's Change note; no verdict moved) and the rest of artifacts/ is unchanged and marked STALE. Then issue #175 (this re-pin): `model/voice/run_mw_model.py`'s stimulus writer did not emit the SXT-034 unison appendix (`init.hex` words 78..127) or draw table (128+) and hardcoded `ctrl.hex` word 31 (draw-set index) to 0, so the voice-datapath pairing (`tb_voice.sv`, post-SXT-034 merge) fataled at time 0 and could not be re-run at HEAD (confirmed by replaying the pre-#175 runner against current `tb_voice.sv`: same fatal). #175 fixed the runner to emit `run_model.py`'s reference layout (`tb_voice.sv` and the frozen model NOT modified), re-ran all three SXT-035 sequences, and recorded identical checkpoint/field/oscout/mono counts to this row's prior numbers (which happened to already be post-SXT-034 values, even though the runner itself could not reproduce them at HEAD); `model.wav` renders are byte-identical before/after the runner fix (sha256-verified) and `rtl/voice/voice_broken_mutant.sv` FAILs on the regenerated coverage run dir. Pin chain: 4a371bfe -> 9415ca9a (#97) -> bdfb8ac9 (#163) -> this sha (#175).; then issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/). Pin chain: ... -> 4eec4b20 -> 0ec97140 (#145).",
+      "path": "reports/sxt-035/EVIDENCE.md",
+      "previous_sha256": "4eec4b2036f071622934a4e320010fc9d9005ffafbe52e0c6931f58164285278",
+      "sha256": "0ec971409bf3e58f1f9a9c575362b7a44aca5a5325694e5611eb32b438952045"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored). No verification status in this table was changed: mod:lfo stays rtl_vs_model PASS / model_vs_reference NO_VERDICT. The row 3 acceptance numbers themselves did not move; this re-pin only adds the #175 re-run note and the runner-fix root-cause explanation to row 3's prose. Issue #145 re-pin (this sha): RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "issue #175: `model/voice/run_lfo_model.py`'s stimulus writer did not emit the SXT-034 unison appendix (`init.hex` words 78..127) or draw table (128+) and hardcoded `ctrl.hex` word 31 (draw-set index) to 0, so the voice-datapath pairing (`tb_voice.sv`, post-SXT-034 merge) fataled at time 0 and could not be re-run at HEAD (found by #145). #175 fixed the runner to emit `run_model.py`'s reference layout (`tb_voice.sv` and the frozen model NOT modified), re-ran all four SXT-032 sequences, and recorded identical checkpoint/field/oscout/mono counts to this row's prior (STALE, 2026-09-22) numbers; `model.wav` renders are byte-identical before/after the runner fix (sha256-verified) and `rtl/voice/voice_broken_mutant.sv` FAILs on the regenerated coverage run dir.; then issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/). Pin chain: ... -> 0e8c38e9 -> 41a1fe58 (#145).",
+      "path": "reports/sxt-032/EVIDENCE.md",
+      "previous_sha256": "0e8c38e9cb48bb05accb25906d746cc1ac366157eb4e15ee6b2eeb7dde9e23df",
+      "sha256": "41a1fe58e9ac4268049ee6a3b4f487ee749ae9a4a4f6b451c9c437eaf768f6d0"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). Budget-row verdicts moved and are stated explicitly in the record: edges/repeated, tentacles/coverage and tentacles/repeated FAIL -> PASS (PENDING-FREEZE) against [PROPOSED] budgets; new finding F-033-4 (committed horn/coverage render not source-reproducible). The leaf-level status in this table does NOT move: osc:Classic stays rtl_vs_model PASS / model_vs_reference PARTIAL (horn and crush still fail). No support claim.",
+      "issue": 145,
+      "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
+      "path": "reports/SXT-033/EVIDENCE.md",
+      "previous_sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d",
+      "sha256": "df348ec97daee38f6b56efc4ebdd617800567f8eeff6f4bfcec6303820045bd8"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). One budget-row verdict moved and is stated explicitly: popcorn2k/repeated FAIL -> PASS (PENDING-FREEZE) by a 2e-5 spectral margin. The leaf-level status does NOT move: osc:Sine stays rtl_vs_model PASS / model_vs_reference PARTIAL. No support claim.",
+      "issue": 145,
+      "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
+      "path": "reports/SXT-040/EVIDENCE.md",
+      "previous_sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7",
+      "sha256": "a423d64af3cff18de9b338d53ecbf521044014100d494314f2a143937da9e3f6"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
+      "path": "reports/SXT-042/EVIDENCE.md",
+      "previous_sha256": "ebea67a3a75c1863ee17f47b9f153c1c0da3d5d5fbf50d934fad82605f9d01fd",
+      "sha256": "13d19adc29eb00985e91a4a92eab464af21a3d39e370c1d18c76f4557e17a5cb"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
+      "path": "reports/sxt-026/EVIDENCE.md",
+      "previous_sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3",
+      "sha256": "fbb9a8f4a4b50cc88a6ed3c434042b8fbdb291cd81143b8b5d5b4fd805253b02"
+    },
+    {
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
+      "issue": 145,
+      "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
+      "path": "reports/sxt-026a/EVIDENCE.md",
+      "previous_sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389",
+      "sha256": "80f113b19c88f1c795aa1090c0422efd05ef9d3ea9051b8fd1e511c3c4618a1e"
+    }
+  ],
   "gates": {
     "fidelity_freeze": {
       "effect": "no model-vs-reference number is a fidelity verdict until budgets are frozen; supported promotion requires status PASS",
       "evidence": [
         {
           "path": "reports/sxt-023/EVIDENCE.md",
-          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+          "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
         },
         {
           "path": "reports/sxt-024/EVIDENCE.md",
-          "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+          "sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
         }
       ],
       "owner": "#12 (SXT-017 profile/fidelity freeze; SXT-013 listening BLOCKED-on-human)",
@@ -88,13 +186,13 @@
       "evidence": [
         {
           "path": "reports/sxt-037/EVIDENCE.md",
-          "sha256": "12291cf965e5e7faf6a21c3f39e4f54d18a87f8876be1e735a7607a8451642c3"
+          "sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff"
         }
       ],
       "fixture_verified_paths": [],
       "issue": 71,
       "landed": true,
-      "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); RTL-vs-model EXACT on 8 fixtures incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 517-802 LSB Q10.21, rms 87-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
+      "note": "LP 12 dB filter leaf, all three engine subtypes (Standard/Driven/Clean); amended by #102: findings F-038-3 (Coeff_SVF F1 at the pinned coefficient-maker rate dsamplerate_os=96000, not 48000) and F-038-4 (Driven clipscale on sst-filters' exact pow(10,0.05x), not the Surge dB table) CORRECTED in the model after the engine's own tapped coefficient plane confirmed both (Standard F1 L1 935,362 -> 38 LSB; Driven clipgain role 341-4,801 -> <=33 LSB); RTL-vs-model EXACT re-run on all 8 fixtures (3 coeff-only bundles with substituted input) incl. reso=1 self-osc corner, boundFreq clamp edges, Standard-subtype corner and the mid-render subtype-toggle reload path; model-vs-reference measured at the filter-stage boundary (oracle tap instrumentation, DR-0005; DSP-neutrality proven bit-identical): max/rms budgets PASS on the primary carriers (max 414-802 LSB Q10.21, rms 67-269), two recorded budget findings (L1 absolute-LSB scaling, stage-level spectral-correlation metric) and corner per-sample misses recorded for SXT-013 - PENDING-FREEZE; post-#102 L2a for badnews-cut-hi/cut-lo/t9-substd STALE/NOT_RUN pending an oracle-host re-render; stability corners bounded+STABLE both legs; stage-level evidence only, so no preset is fixture-verified by this leaf",
       "overlap_paths_not_fixture_verified": [
         "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
         "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
@@ -169,7 +267,7 @@
       "evidence": [
         {
           "path": "reports/SXT-028c/EVIDENCE.md",
-          "sha256": "7a64271ee76335eb6d281182f8a48304f1f1490ccfcecc1f9e68d0d0dbf70598"
+          "sha256": "d50f1da6ddda08bdbb7ce414a97a7d2693a263d21328b41dde0e9976f2361369"
         }
       ],
       "issue": 55,
@@ -190,7 +288,7 @@
       "evidence": [
         {
           "path": "reports/sxt-023/EVIDENCE.md",
-          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+          "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
         }
       ],
       "issue": 16,
@@ -202,15 +300,26 @@
       }
     },
     "fx:Distortion": {
+      "evidence": [
+        {
+          "path": "reports/SXT-028e/EVIDENCE.md",
+          "sha256": "2b9c920ada838238b86dc54adee63461eabf4f1e2daa1c6e3d5efd994f3811f4"
+        }
+      ],
       "issue": 57,
-      "landed": false,
-      "leaf_id": "SXT-028e"
+      "landed": true,
+      "leaf_id": "SXT-028e",
+      "note": "Distortion leaf, FX waveshaper models 0/1/2 only (soft/hard/asym, the lookup_waveshape branch = 447 of 475 active corpus slot instances); models 3..7 (the SSE GetQuadWaveshaper branch) are REFUSED fail-closed and routed to sibling leaf #121 (finding F-028e-2). RTL-vs-model EXACT (iverilog: dual-instance PRS with two parameter sets and two waveshaper models, mid-render core reset and a reset taken 96 blocks INTO the ringout tail = the engine suspend()==init() fx-rebuild path, three parameter corners incl. both high-cuts deactivated and extended drive/gain, and the full declared 1600-block ringout tail span; outputs, oversampled shaper-loop tap checkpoints, and state checkpoints covering the feedback registers, both lipol targets, both peak-EQ coefficient lags, all four TDF2 register pairs and all 144 halfband allpass state words per instance; pooled-state / band-order / halfband-branch-swap / waveshaper-rail / waveshaper-interpolation mutants all FAIL = controls; frozen-revision pin refuses stale harnesses). MODEL-VS-REFERENCE IS NOT_RUN: no pinned oracle was reachable in the implementation environment, so no fixture was rendered and no max/rms/corr number exists (finding F-028e-1); the oracle extraction of the carriers' deactivated/extend_range flags is BLOCKED and the committed fx_inputs records are marked INCOMPLETE-BLOCKED-ON-ORACLE, which DistortionParams refuses. Per-instance state: nothing shared; Distortion owns NO delay-line-class buffer, so external writable-memory residency and traffic are 0 B / 0 words per sample (measured), on-chip state 1544 B/instance, shared frozen ROM 12336 B; cost fit [PENDING-SXT-016]. Negative controls: 7 model-side (baseline float-twin sanity, generic substitute, dropped tail, wrong order, shared state, halfband phase, stale stub) + 6 RTL mutants all CONTROL-OK, plus one recorded KNOWN-GAP (a late tail truncation is invisible to the whole-region residual gate). Supported delta 0: reference leg NOT_RUN, voice leaf #48 unlanded, fidelity freeze #12 open, listening BLOCKED.",
+      "verification": {
+        "model_vs_reference": "NOT_RUN",
+        "rtl_vs_model": "PASS"
+      }
     },
     "fx:EQ": {
       "evidence": [
         {
           "path": "reports/sxt-023/EVIDENCE.md",
-          "sha256": "cadf031ad410597ae9290ed01ad3032ea2d5168a1b2e34f10d92c51fdf046cb7"
+          "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
         }
       ],
       "issue": 16,
@@ -230,7 +339,7 @@
       "evidence": [
         {
           "path": "reports/sxt-024/EVIDENCE.md",
-          "sha256": "d148a444be039e44dd73be876c4093b44dd8ec27f4059fef522bf8c6fad8f0c4"
+          "sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
         }
       ],
       "issue": 17,
@@ -257,7 +366,7 @@
       "evidence": [
         {
           "path": "reports/SXT-042/EVIDENCE.md",
-          "sha256": "ebea67a3a75c1863ee17f47b9f153c1c0da3d5d5fbf50d934fad82605f9d01fd"
+          "sha256": "13d19adc29eb00985e91a4a92eab464af21a3d39e370c1d18c76f4557e17a5cb"
         }
       ],
       "fixture_verified_paths": [
@@ -266,7 +375,7 @@
       "issue": 76,
       "landed": true,
       "leaf_id": "SXT-042",
-      "note": "Keytrack modsource slice (ms_keytrack, pinned id 2): frozen Q10.21 word (state.pitch - keytrack_root)/12 per voice instance with the engine-cited init/refresh order (ctor value 0, installed at the END of a control pass; F-042-1 corrects the #48 seeding) and an integer-exact RTL equivalent floor((n*2^20+3)/6); destination class {308 F1 Cutoff, 309 F1 Reso, 310 F1 FEG Mod} live, {314,315,318} accepted-inert, everything else refused fail-closed (incl. 298 VCA Gain, the commonest corpus keytrack destination). RTL-vs-model INTEGER EQUALITY PASS (tools/compare_kt_rtl_model.py + rtl/voice/tb_kt.sv: 26,250-block carrier + synthetic class-cover + 122-block smoke; 30,021/30,021/302 voice checkpoints, 240,168/240,168/2,416 fields, 0 mismatches; two RTL mutants -- rounding-bias and shared-word -- FAIL as required). model_vs_reference FAIL: on the one carrier with a committed pinned dry render the [PROPOSED] budgets are missed (max 16,721 vs 3,500; -27.855 vs -46 dBFS; spectral 0.9207 vs 0.98), which is the landed F-48a residual, and F-042-3 records that the check cannot discriminate a cutoff-route mutation on this carrier at all (the discriminating oracle A/B is NOT_RUN -- no pinned oracle on the build host) -> routed to SXT-013/#12. No new engine render was made: the reference is the committed sha-pinned SXT-025 dry fixture projected to mono int16. Supported delta 0: 802/3,561 corpus presets route keytrack, only 3 route it entirely inside this class and only 1 of those (the carrier SXT-026a already models) passes the voice-class screen; all three carriers named in #76 and all 34 recovery-basis presets are refused with named keytrack-specific reasons. No fidelity, preset-support, listening or hardware claim.",
+      "note": "Keytrack modsource slice (ms_keytrack, pinned id 2): frozen Q10.21 word (state.pitch - keytrack_root)/12 per voice instance with the engine-cited init/refresh order (ctor value 0, installed at the END of a control pass; F-042-1 corrects the #48 seeding) and an integer-exact RTL equivalent floor((n*2^20+3)/6); destination class {308 F1 Cutoff, 309 F1 Reso, 310 F1 FEG Mod} live, {314,315,318} accepted-inert, everything else refused fail-closed (incl. 298 VCA Gain, the commonest corpus keytrack destination). RTL-vs-model INTEGER EQUALITY PASS (tools/compare_kt_rtl_model.py + rtl/voice/tb_kt.sv: 26,250-block carrier + synthetic class-cover + 122-block smoke; 30,021/30,021/302 voice checkpoints, 240,168/240,168/2,416 fields, 0 mismatches; two RTL mutants -- rounding-bias and shared-word -- FAIL as required). model_vs_reference FAIL: on the one carrier with a committed pinned dry render the [PROPOSED] budgets are missed (max 16,740 vs 3,500; -27.851 vs -46 dBFS; spectral 0.9212 vs 0.98 -- after the #123 decimator fix, republished by #145; pre-#123 16,721 / -27.855 / 0.9207), which is the landed F-48a residual, and F-042-3 records that the check cannot discriminate a cutoff-route mutation on this carrier at all (the discriminating oracle A/B is NOT_RUN -- no pinned oracle on the build host) -> routed to SXT-013/#12. No new engine render was made: the reference is the committed sha-pinned SXT-025 dry fixture projected to mono int16. Supported delta 0: 802/3,561 corpus presets route keytrack, only 3 route it entirely inside this class and only 1 of those (the carrier SXT-026a already models) passes the voice-class screen; all three carriers named in #76 and all 34 recovery-basis presets are refused with named keytrack-specific reasons. No fidelity, preset-support, listening or hardware claim.",
       "verification": {
         "model_vs_reference": "FAIL",
         "rtl_vs_model": "PASS"
@@ -276,7 +385,7 @@
       "evidence": [
         {
           "path": "reports/sxt-032/EVIDENCE.md",
-          "sha256": "0617d5fcc9b58e645aa42d4d108861991ca78fd3e956ba106968f64f62120b9c"
+          "sha256": "41a1fe58e9ac4268049ee6a3b4f487ee749ae9a4a4f6b451c9c437eaf768f6d0"
         }
       ],
       "fixture_verified_paths": [
@@ -284,7 +393,7 @@
       ],
       "issue": 66,
       "landed": true,
-      "note": "LFO modulator slice (ms_lfo1..6): frozen fixed-point model, LFO control-plane RTL EXACT (tools/compare_lfo_rtl_model.py) and the frozen voice RTL exact on LFO-influenced control words; model-vs-reference PENDING-FREEZE (RMS+spectral within the [PROPOSED] bounds on all four fixtures, proposed max-abs bound missed on all four; recorded, not tuned). Supported delta 0: carriers are multi-scene/FX/non-Classic-osc and outside the landed voice arithmetic (#48 open); destination classes limited to Filter 1 Cutoff/Resonance.",
+      "note": "LFO modulator slice (ms_lfo1..6): frozen fixed-point model, LFO control-plane RTL EXACT (tools/compare_lfo_rtl_model.py) and the frozen voice RTL exact on LFO-influenced control words; model-vs-reference PENDING-FREEZE, re-graded per the #95 rms-polarity audit (this leaf's own reports/sxt-032/ rows are rms_flag_flipped:true; not one of #97's three re-graded EVIDENCE files, corrected here for the ledger only): spectral is within the [PROPOSED] bound on all four fixtures, but both the rms and the proposed max-abs bounds are missed on all four (rms -29.9..-32.8 dBFS vs <=-46 dBFS; max 5,626-18,030 LSB vs <=3,500; numbers after the #123 decimator fix, republished by #145, no verdict moved) - previously misreported as an RMS+spectral pass under the inverted rms_diff_dbfs>=budget comparator; recorded, not tuned. Supported delta 0: carriers are multi-scene/FX/non-Classic-osc and outside the landed voice arithmetic (#48 open); destination classes limited to Filter 1 Cutoff/Resonance.",
       "verification": {
         "model_vs_reference": "NO_VERDICT",
         "rtl_vs_model": "PASS"
@@ -294,7 +403,7 @@
       "evidence": [
         {
           "path": "reports/sxt-035/EVIDENCE.md",
-          "sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8"
+          "sha256": "0ec971409bf3e58f1f9a9c575362b7a44aca5a5325694e5611eb32b438952045"
         }
       ],
       "fixture_verified_paths": [
@@ -302,7 +411,7 @@
       ],
       "issue": 69,
       "landed": true,
-      "note": "Modwheel modulator slice (ms_modwheel): landed FAST_LINE smoother reused unchanged; scene route table generalized to {Filter 1 Cutoff, Filter 1 Resonance, VCA Gain}; control-plane RTL EXACT (tools/compare_mw_rtl_model.py) and the corrected voice RTL exact on mw-influenced control words (two latent tb_voice deviations from the model order fixed: pre-decimator scene clip placement, 64-bit ramp products; landed fixtures bit-identical before/after); model-vs-reference PENDING-FREEZE (retrig within all proposed bounds; coverage misses max+spectral exactly as landed; the intentionally-saturated modwheel staircase misses max+RMS, recorded for the #12 freeze). Supported delta 0: carriers refuse extraction (non-serial-1 filters, active mixer paths, FX, out-of-class modwheel destinations); 91/91 recovery presets route modwheel, 1,406/3,561 corpus presets do.",
+      "note": "Modwheel modulator slice (ms_modwheel): landed FAST_LINE smoother reused unchanged; scene route table generalized to {Filter 1 Cutoff, Filter 1 Resonance, VCA Gain}; control-plane RTL EXACT (tools/compare_mw_rtl_model.py) and the corrected voice RTL exact on mw-influenced control words (two latent tb_voice deviations from the model order fixed: pre-decimator scene clip placement, 64-bit ramp products; landed fixtures bit-identical before/after); model-vs-reference PENDING-FREEZE, re-graded per #97 (corrected rms_diff_dbfs<=budget polarity, #95 audit): retrig fails only the rms bound (max 2,328 LSB and spectral 0.9921 pass after the #123 decimator fix, republished by #145; -33.3 dBFS misses the <=-46 dBFS proposal); coverage misses max+spectral+rms (all three, not just max+spectral); the intentionally-saturated modwheel staircase misses max+RMS (spectral still passes), recorded for the #12 freeze. Supported delta 0: carriers refuse extraction (non-serial-1 filters, active mixer paths, FX, out-of-class modwheel destinations); 91/91 recovery presets route modwheel, 1,406/3,561 corpus presets do.",
       "verification": {
         "model_vs_reference": "NO_VERDICT",
         "rtl_vs_model": "PASS"
@@ -312,12 +421,12 @@
       "evidence": [
         {
           "path": "reports/SXT-033/EVIDENCE.md",
-          "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
+          "sha256": "df348ec97daee38f6b56efc4ebdd617800567f8eeff6f4bfcec6303820045bd8"
         }
       ],
       "issue": 67,
       "landed": true,
-      "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (4 canonical carriers + smoke config; single-constant mutant control FAILS; regenerated and re-verified at the branch tip); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): sub0/sync/sync+uni1 classes near the int16 render floor, detuned-unison class decorrelates (F-033-1, engine float32 phase pipeline, routed #12), uni16 misses the proposed max bound; zero presets promoted - all 94 recovery-basis presets need unlanded features beyond the Classic oscillator class; landed pinned pitch-helper finding F-033-2 (SXT-022 fractional-term construction, inert in the Attacky slice) routed to #48/#12 for a visible contract revision",
+      "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (4 canonical carriers + smoke config; single-constant mutant control FAILS; regenerated and re-verified at the branch tip); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12; 3/8 budget rows -- edges/repeated, tentacles/coverage, tentacles/repeated -- moved FAIL -> PASS (PENDING-FREEZE) after the #123 decimator fix, republished by #145): sub0/sync/sync+uni1 classes near the int16 render floor, detuned-unison class decorrelates (F-033-1, engine float32 phase pipeline, routed #12), uni16 misses the proposed max bound; zero presets promoted - all 94 recovery-basis presets need unlanded features beyond the Classic oscillator class; landed pinned pitch-helper finding F-033-2 (SXT-022 fractional-term construction, inert in the Attacky slice) routed to #48/#12 for a visible contract revision",
       "verification": {
         "model_vs_reference": "PARTIAL",
         "rtl_vs_model": "PASS"
@@ -327,7 +436,7 @@
       "evidence": [
         {
           "path": "reports/SXT-040/EVIDENCE.md",
-          "sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7"
+          "sha256": "a423d64af3cff18de9b338d53ecbf521044014100d494314f2a143937da9e3f6"
         }
       ],
       "fixture_verified_paths": [
@@ -338,7 +447,7 @@
       "issue": 74,
       "landed": true,
       "leaf_id": "SXT-040",
-      "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (3 canonical carriers + 2 smoke configs incl. legacy-unison-9; single-constant mutant control FAILS); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): max bound passed on all 6 rows, rms passed 4/6, spectral corr missed everywhere (badnews max 62-210 LSB / rms -62/-71 dBFS at the int16 quantization cap; popcorn2k rms -47/-49 with a saturating reference; tentacles modern uni4 det0.034 in the F-033-1 detuned-unison class); 35/38 recovery-basis sine presets REFUSED by the fail-closed gate (live velocity/keytrack/LFO routes into AEG/pan/pitch/feedback/volume/drift, mono playmodes, unison garbage) - recorded as requirement attribution, zero presets promoted; exposure gaps recorded (feedback deform_type, lowcut/highcut deactivated flags)",
+      "note": "landed but NOT support-ready: RTL-vs-model integer-equality PASS (3 canonical carriers + 2 smoke configs incl. legacy-unison-9; single-constant mutant control FAILS); model-vs-reference PARTIAL vs [PROPOSED] budgets (PENDING-FREEZE #12): max bound passed on all 6 rows, rms passed 4/6, spectral corr missed on 5/6 (popcorn2k/repeated passes all three at corr 0.98002 after the #123 decimator fix -- FAIL -> PASS (PENDING-FREEZE) by a 2e-5 margin, republished by #145; badnews max 62-210 LSB / rms -62/-71 dBFS at the int16 quantization cap; popcorn2k rms -47/-49 with a saturating reference; tentacles modern uni4 det0.034 in the F-033-1 detuned-unison class); 35/38 recovery-basis sine presets REFUSED by the fail-closed gate (live velocity/keytrack/LFO routes into AEG/pan/pitch/feedback/volume/drift, mono playmodes, unison garbage) - recorded as requirement attribution, zero presets promoted; exposure gaps recorded (feedback deform_type, lowcut/highcut deactivated flags)",
       "verification": {
         "model_vs_reference": "PARTIAL",
         "rtl_vs_model": "PASS"
@@ -348,12 +457,12 @@
       "evidence": [
         {
           "path": "reports/sxt-026/EVIDENCE.md",
-          "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
+          "sha256": "fbb9a8f4a4b50cc88a6ed3c434042b8fbdb291cd81143b8b5d5b4fd805253b02"
         }
       ],
       "issue": 19,
       "landed": true,
-      "note": "RTL-vs-model integer equality PASS (clean RTL; mip-threshold mutant FAILS); model-vs-reference PARTIAL: workhorse/morph PASS sxt-026-proposed bounds, deep-mip pitch extremes (mips 5/6) decorrelate (corr -0.19/-0.01; engine float32 phase pipeline, SXT-026 section 4 bounded finding), uni16/mf MISS the sxt-022 proposal - resolution owned by the #12 freeze, not absorbed",
+      "note": "RTL-vs-model integer equality PASS (clean RTL; mip-threshold mutant FAILS; scope = the oscillator output -- the post-oscillator path incl. the scene decimator has no RTL, and the model decimates per voice slice, #176); model-vs-reference PARTIAL (republished by #145 after the #123 decimator fix, no verdict moved): workhorse/morph PASS sxt-026-proposed bounds, deep-mip pitch extremes (mips 5/6) decorrelate (corr -0.19/-0.01; engine float32 phase pipeline, SXT-026 section 4 bounded finding), uni16/mf MISS the sxt-022 proposal - resolution owned by the #12 freeze, not absorbed",
       "verification": {
         "model_vs_reference": "PARTIAL",
         "rtl_vs_model": "PASS"
@@ -363,7 +472,7 @@
       "evidence": [
         {
           "path": "reports/sxt-022/EVIDENCE.md",
-          "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+          "sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
         }
       ],
       "fixture_verified_paths": [
@@ -371,7 +480,7 @@
       ],
       "issue": 15,
       "landed": true,
-      "note": "single-preset dry voice slice (forced, not tuned: the only corpus preset inside the B4 voice gates in minimal form); RTL-vs-model EXACT over three sequences; model-vs-reference NO_VERDICT for support purposes: 1/3 sequences passes all [PROPOSED] bounds, 2/3 miss the proposed max/spectral bounds, and no budget is frozen (#12)",
+      "note": "single-preset dry voice slice (forced, not tuned: the only corpus preset inside the B4 voice gates in minimal form); RTL-vs-model EXACT over three sequences; model-vs-reference NO_VERDICT for support purposes: 0/3 sequences pass all [PROPOSED] bounds (rms leg re-graded per #97, corrected rms_diff_dbfs<=budget polarity, #95 audit) - seq-notes-repeated-v1 fails only rms (max 2,328 LSB and spectral 0.9921 pass; -33.3 dBFS misses the <=-46 dBFS proposal), coverage misses all three (max, rms, spectral), modwheel misses max and rms (its spectral leg 0.9802 passes after the #123 decimator fix; 0.9784 before); numbers republished by #145, no overall verdict moved; no budget is frozen (#12)",
       "overlap_paths_not_fixture_verified": [
         "resources/data/patches_3rdparty/Zoozither/Leads/Quickspit.fxp"
       ],
@@ -384,11 +493,11 @@
       "evidence": [
         {
           "path": "reports/sxt-022/EVIDENCE.md",
-          "sha256": "d0ef88b79d0efcf5dcef465e43883363124eaf2065124ce7d4c70dc93ae5f3c8"
+          "sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
         },
         {
           "path": "reports/sxt-026a/EVIDENCE.md",
-          "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
+          "sha256": "80f113b19c88f1c795aa1090c0422efd05ef9d3ea9051b8fd1e511c3c4618a1e"
         }
       ],
       "fixture_verified_paths": [
@@ -409,7 +518,7 @@
       "evidence": [
         {
           "path": "reports/SXT-034/EVIDENCE.md",
-          "sha256": "b03e924fbcd1c3400140e5a318302249367c0e102a4b4cd02a36fa806df3b602"
+          "sha256": "eaafb2186ef7a8808c2a0d2e6eca2e5306b3d962aee3077770d643d6c597d0f2"
         }
       ],
       "fixture_verified_paths": [
@@ -417,7 +526,7 @@
       ],
       "issue": 68,
       "landed": true,
-      "note": "unison stack topology >1 voice (declared max MAX_UNISON=16; beyond-cap explicitly rejected \u2014 the engine clamps, SXT-015 58 flagged presets): RTL-vs-model EXACT over six fixtures incl. uni16 and a non-retrigger init-draw mechanism fixture (no reference claim, quantified-variation class); model-vs-reference PARTIAL: uni=1 regression passes all [PROPOSED] bounds byte-identically, uni>1 passes rms everywhere but misses proposed max/spectral on 3/5 fixtures (bounded finding routed to the #12 freeze, not tuned). No real corpus preset is renderable inside the leaf topology (issue-named carriers Edges Rhythm / Bad News / King blocked: non-Classic osc families, FX, split scenes \u2014 recorded per carrier); fixtures are declared-override test configuration on the census-verified Attacky carrier, never an adapted preset; 0 presets supported by this leaf alone, recovery attribution requires the family/integration/effects leaves on top",
+      "note": "unison stack topology >1 voice (declared max MAX_UNISON=16; beyond-cap explicitly rejected — the engine clamps, SXT-015 58 flagged presets): RTL-vs-model EXACT over six fixtures incl. uni16 and a non-retrigger init-draw mechanism fixture (no reference claim, quantified-variation class); model-vs-reference PARTIAL, re-graded per #97 (corrected rms_diff_dbfs<=budget polarity, #95 audit): no fixture passes all three [PROPOSED] bounds - rms fails at every unison, uni1 included (-8.4 to -33.3 dBFS vs <=-46 dBFS); uni1-regress fails only rms (max, spectral corr PASS); uni2/uni4/uni16 additionally miss max at all four, and spectral corr at 3/4 (uni4-rep is the one uni>1 fixture that still passes spectral) (bounded finding routed to the #12 freeze, not tuned; uni1/uni2-cov/uni4 re-measured after the #123 decimator fix by #145, no verdict moved; uni2-poly/uni16-smoke numbers are STALE pre-#123 values whose references are not committed). No real corpus preset is renderable inside the leaf topology (issue-named carriers Edges Rhythm / Bad News / King blocked: non-Classic osc families, FX, split scenes — recorded per carrier); fixtures are declared-override test configuration on the census-verified Attacky carrier, never an adapted preset; 0 presets supported by this leaf alone, recovery attribution requires the family/integration/effects leaves on top",
       "verification": {
         "model_vs_reference": "PARTIAL",
         "rtl_vs_model": "PASS"

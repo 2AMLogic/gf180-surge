@@ -1,0 +1,24 @@
+SXT-028k model-side negative controls (model-vs-model)
+model_revision 38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0
+
+NC-A wrong order (two same-class Logical slots swapped)                  OK
+    CONTROL-OK: the permuted chain is not bit-identical and is outside the [PROPOSED] agreement thresholds
+NC-B shared instead of per-instance state                                OK
+    CONTROL-OK: pooling the two slots' histories changes instance A's output AND its state digest
+NC-C generic substitute (generic peak compressor in place of the pinned Logical algorithm) OK
+    CONTROL-OK: the substitute is labelled ADAPTED, is refused from original-preset coverage, and FAILS the [PROPOSED] agreement thresholds
+NC-D dropped tail (render truncated before the declared gain-recovery span, then resumed) OK
+    CONTROL-OK: dropping the declared tail span changes the resumed burst
+NC-E stale stub / silent stub                                            OK
+    CONTROL-OK
+      - silent stub                              CONTROL-OK: an all-zero stub FAILS the thresholds (the check is not vacuous)
+      - stale revision pin                       CONTROL-OK: the comparator REFUSES a harness pinned to a stale frozen-model revision instead of reporting PASS
+      - revision word tracks the source          CONTROL-OK: model_revision() hashes the frozen model AND the frozen tables, so editing either invalidates every committed pin
+NC-F bypass transparency (E_mix = 0) + injected mix leak                 OK
+    CONTROL-OK: E_mix = 0 is bit-exact dry AND a 1-LSB wet leak is detected, so the bypass check is live
+NC-G pinned-quirk 'fixes'                                                OK
+    CONTROL-OK
+      - Q1 sag-mirror tap age 'fixed' to a constant 2 CONTROL-OK: the quirk is load-bearing
+      - Q2 stage-C right-channel target 'fixed'  CONTROL-OK: the quirk is load-bearing
+
+status: PASS

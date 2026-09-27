@@ -1,0 +1,400 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028e-sse",
+  "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
+  "budget_class": "SXT-023 effect-slice [PROPOSED] (freeze gated on #12)",
+  "budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "grading_boundary": "model-vs-model (pinned-oracle leg NOT_RUN)",
+  "drive_interpolation_divisor": 64,
+  "beds": {
+    "primary": "FX model 5 (wst_ojd)",
+    "register_owning": "FX model 6 (wst_fwrectify)",
+    "digital": "FX model 4 (wst_digital)",
+    "chaotic": "FX model 7 (wst_fuzzsoft)"
+  },
+  "controls": [
+    {
+      "id": "NC-0",
+      "kind": "baseline-sanity-open-loop",
+      "what": "each quad shaper, frozen fixed-point vs an INDEPENDENT float implementation of the same pinned kernel, open loop over a dense input x drive sweep (registers advancing)",
+      "must": "PASS",
+      "verdict": "PASS",
+      "ok": true,
+      "tolerance_lsb_q10_21": 4.0,
+      "per_model": {
+        "3": {
+          "samples": 20000,
+          "max_abs_diff": 7.926367895372266e-13,
+          "max_abs_diff_lsb_q10_21": 1.6622798284515738e-06,
+          "rms_abs_diff_lsb_q10_21": 4.3741212203095706e-07,
+          "tolerance_lsb_q10_21": 4.0,
+          "model": 3,
+          "shaper": "SINUS_SSE2<false>",
+          "within_tolerance": true
+        },
+        "4": {
+          "samples": 20000,
+          "max_abs_diff": 0.0,
+          "max_abs_diff_lsb_q10_21": 0.0,
+          "rms_abs_diff_lsb_q10_21": 0.0,
+          "tolerance_lsb_q10_21": 4.0,
+          "model": 4,
+          "shaper": "DIGI_SSE2",
+          "within_tolerance": true
+        },
+        "5": {
+          "samples": 20000,
+          "max_abs_diff": 7.450589922797235e-09,
+          "max_abs_diff_lsb_q10_21": 0.015625019557774067,
+          "rms_abs_diff_lsb_q10_21": 0.0024933397638959845,
+          "tolerance_lsb_q10_21": 4.0,
+          "model": 5,
+          "shaper": "OJD",
+          "within_tolerance": true
+        },
+        "6": {
+          "samples": 20000,
+          "max_abs_diff": 2.7061497487324004e-10,
+          "max_abs_diff_lsb_q10_21": 0.0005675207357853651,
+          "rms_abs_diff_lsb_q10_21": 6.522629865277054e-06,
+          "tolerance_lsb_q10_21": 4.0,
+          "model": 6,
+          "shaper": "ADAA_FULL_WAVE",
+          "within_tolerance": true
+        },
+        "7": {
+          "samples": 20000,
+          "max_abs_diff": 1.163831024997286e-06,
+          "max_abs_diff_lsb_q10_21": 2.4407305617351085,
+          "rms_abs_diff_lsb_q10_21": 0.9042965729672889,
+          "tolerance_lsb_q10_21": 4.0,
+          "model": 7,
+          "shaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+          "within_tolerance": true
+        }
+      },
+      "note": "establishes the check has resolving power on exactly what this leaf adds; NOT a reference claim -- the pinned-oracle leg is NOT_RUN (F-028e-sse-3)"
+    },
+    {
+      "id": "NC-0b",
+      "kind": "baseline-sanity-closed-loop",
+      "what": "independent float structural twin vs frozen fixed model through the whole chain, one leg per reachable FX model",
+      "must": "PASS for FX models 3/5/6; CHARACTERIZE (NOT a gate) for 4 and 7",
+      "gate_scope": {
+        "gated_models": [
+          3,
+          5,
+          6
+        ],
+        "characterized_models": [
+          4,
+          7
+        ],
+        "note": "For FX models 4 and 7 this leg is CHARACTERIZATION, not a pass/fail gate: the [PROPOSED] sample-domain metric cannot discriminate below the measured sensitivity floor (F-028e-sse-4), so the 'at or below the floor' clause cannot fail in a way that would indicate a defect. CONTROL-OK on NC-0b therefore must NOT be read as 'FX models 4 and 7 verified'. What does carry falsifiable weight for those two: NC-0's open-loop shaper probe, and the unconditional RTL-vs-frozen-model exactness leg (rtl-exactness.json)."
+      },
+      "verdict": "PARTIAL (models 4 and 7 do NOT meet the [PROPOSED] sample-domain budgets -- finding F-028e-sse-4)",
+      "ok": true,
+      "proposed_budgets_met_for_all_models": false,
+      "per_model_legs": {
+        "3": {
+          "verdict_vs_proposed_budgets": "PASS",
+          "metrics": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 17.385320452274755,
+            "rms_diff_lsb": 6.660541417644578,
+            "rms_diff_dbfs": -103.94180760068961,
+            "spectral_corr": 0.999999999018907
+          },
+          "sensitivity_floor": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 6.011455703643151,
+            "rms_diff_lsb": 2.471869659792819,
+            "rms_diff_dbfs": -112.55148692694237,
+            "spectral_corr": 0.9999999999915974
+          },
+          "at_or_below_sensitivity_floor": false,
+          "status": "PASS"
+        },
+        "4": {
+          "verdict_vs_proposed_budgets": "FAIL",
+          "metrics": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 8674.738889200846,
+            "rms_diff_lsb": 240.59921778543475,
+            "rms_diff_dbfs": -72.78611404425425,
+            "spectral_corr": 0.9999009280164387
+          },
+          "sensitivity_floor": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 8678.739314626087,
+            "rms_diff_lsb": 240.71126320852827,
+            "rms_diff_dbfs": -72.78207002595234,
+            "spectral_corr": 0.9999009626221015
+          },
+          "at_or_below_sensitivity_floor": true,
+          "status": "AT-SENSITIVITY-FLOOR (budget NOT met; finding F-028e-sse-4)"
+        },
+        "5": {
+          "verdict_vs_proposed_budgets": "PASS",
+          "metrics": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 17.885044363327324,
+            "rms_diff_lsb": 6.5874032984970485,
+            "rms_diff_dbfs": -104.03771320702444,
+            "spectral_corr": 0.9999999990483833
+          },
+          "sensitivity_floor": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 6.205398443387821,
+            "rms_diff_lsb": 2.5278965658685597,
+            "rms_diff_dbfs": -112.35681226730584,
+            "spectral_corr": 0.9999999999840675
+          },
+          "at_or_below_sensitivity_floor": false,
+          "status": "PASS"
+        },
+        "6": {
+          "verdict_vs_proposed_budgets": "PASS",
+          "metrics": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 18.734989568358287,
+            "rms_diff_lsb": 5.458326526118861,
+            "rms_diff_dbfs": -105.67080801909108,
+            "spectral_corr": 0.9999999888693607
+          },
+          "sensitivity_floor": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 6.558665037155151,
+            "rms_diff_lsb": 2.0504262431917377,
+            "rms_diff_dbfs": -114.17511523156129,
+            "spectral_corr": 0.9999999999812034
+          },
+          "at_or_below_sensitivity_floor": false,
+          "status": "PASS"
+        },
+        "7": {
+          "verdict_vs_proposed_budgets": "FAIL",
+          "metrics": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 138080.7808895787,
+            "rms_diff_lsb": 28868.72662547362,
+            "rms_diff_dbfs": -31.20344570659714,
+            "spectral_corr": 0.9820829072300142
+          },
+          "sensitivity_floor": {
+            "frames": 6144,
+            "max_abs_diff_lsb": 122757.37943597563,
+            "rms_diff_lsb": 27879.089175988636,
+            "rms_diff_dbfs": -31.506426644866238,
+            "spectral_corr": 0.9818485241542926
+          },
+          "at_or_below_sensitivity_floor": true,
+          "status": "AT-SENSITIVITY-FLOOR (budget NOT met; finding F-028e-sse-4)"
+        }
+      },
+      "finding": {
+        "id": "F-028e-sse-4",
+        "routed_to": "#12 (SXT-017 budget freeze)",
+        "statement": "FX models 4 (wst_digital, a hard staircase quantizer) and 7 (wst_fuzzsoft, a pseudo-random LUT) sit inside the Distortion feedback loop, so an arbitrarily small arithmetic difference can flip a quantizer/LUT decision and produce a full-step output change. Measured: the frozen model is no further from the independent float twin than that twin is from ITSELF under a one-Q13.18-LSB nudge of dNow -- a difference the frozen drive word cannot even represent. The SXT-023 sample-domain [PROPOSED] budgets are therefore not an attainable instrument for these two models; choosing the right one is SXT-017's decision, not this leaf's. NO BUDGET IS RELAXED HERE and no leg is reported as a pass that did not pass.",
+        "open_loop_evidence": "NC-0 shows the shaper translation itself agrees with the independent float implementation within 4 LSB Q10.21 open loop, so the closed-loop divergence is not a translation error."
+      }
+    },
+    {
+      "id": "NC-A",
+      "kind": "generic-substitute",
+      "what": "single-rate tanh clip (no oversampling / halfband / EQ / feedback / quad-waveshaper state)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 1615575.291061972,
+        "rms_diff_lsb": 859839.6261314212,
+        "rms_diff_dbfs": -1.7236491472591255,
+        "spectral_corr": 0.8413915000420594
+      },
+      "ok": true,
+      "label": "ADAPTED \u2014 refused from original-preset coverage"
+    },
+    {
+      "id": "NC-A2",
+      "kind": "cross-leaf-substitute",
+      "what": "the SXT-028e (#57) lookup_waveshape table shaper (wst_soft) substituted for GetQuadWaveshaper, with the rest of the chain untouched",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 600995.6572333863,
+        "rms_diff_lsb": 292011.7316967465,
+        "rms_diff_dbfs": -11.103992270267135,
+        "spectral_corr": 0.985247548688557
+      },
+      "ok": true,
+      "label": "ADAPTED \u2014 'models 3..7 are just other waveshapes' is the shortcut this leaf exists to refuse; the frozen model REFUSES indices 0..2 and #57 REFUSES 3..7"
+    },
+    {
+      "id": "NC-C",
+      "kind": "wrong-order",
+      "what": "pre-EQ and post-EQ bands swapped around the shaper",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 357748.77069384325,
+        "rms_diff_lsb": 164760.5784430192,
+        "rms_diff_dbfs": -16.07493210534669,
+        "spectral_corr": 0.9639549963773385
+      },
+      "ok": true
+    },
+    {
+      "id": "NC-F",
+      "kind": "drive-interpolation-step",
+      "what": "dD = (dE - dS)/128 instead of the pinned /(BLOCK_SIZE * dist_OS_bits) = /64",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 80094.65138545819,
+        "rms_diff_lsb": 8811.250521781642,
+        "rms_diff_dbfs": -41.511247279715775,
+        "spectral_corr": 0.9973674967863988
+      },
+      "ok": true,
+      "graded_on": "FX model 4 (wst_digital)",
+      "benign_model_leg": {
+        "model": 7,
+        "verdict": "FAIL",
+        "metrics": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 129277.0597446831,
+          "rms_diff_lsb": 30723.291563934374,
+          "rms_diff_dbfs": -30.66264341895308,
+          "spectral_corr": 0.9865929556347491
+        },
+        "note": "for models 3/5/6/7 the 1/dNow pre-scale and the shaper's leading x*drive cancel, so dNow is NOT observable and the /128 variant is indistinguishable. Recorded as a REACHABILITY property of the defect, not as evidence that /128 is acceptable \u2014 the RTL exactness check rejects it unconditionally (rtl-exactness.json mutant_controls[mutant-drivestep128], graded on the digital bed)."
+      }
+    },
+    {
+      "id": "NC-G",
+      "kind": "digital-drive-normalization",
+      "what": "`skipDriveNorm` removed: wst_digital receives the 1/dNow pre-scale as well, so the signal is divided by drive twice and the feedback loop gain becomes |fb|/drive",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 2039414.5212885465,
+        "rms_diff_lsb": 1251024.1462149231,
+        "rms_diff_dbfs": 1.5333155776236085,
+        "spectral_corr": 0.9141641145513281
+      },
+      "ok": true,
+      "graded_on": "FX model 4 (wst_digital)"
+    },
+    {
+      "id": "NC-H",
+      "kind": "dc-offset-probe",
+      "what": "the zero-input DC-offset probe dropped (dcOffset forced 0)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "metrics": {
+        "frames": 6144,
+        "max_abs_diff_lsb": 346706.03812680487,
+        "rms_diff_lsb": 193674.58011750446,
+        "rms_diff_dbfs": -14.670545803626442,
+        "spectral_corr": 0.9702230836819126
+      },
+      "ok": true,
+      "graded_on": "FX model 4 (wst_digital)",
+      "model7_leg": {
+        "verdict": "FAIL",
+        "metrics": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 167410.37558451178,
+          "rms_diff_lsb": 45277.910139432024,
+          "rms_diff_dbfs": -27.294270801218907,
+          "spectral_corr": 0.9835726003549287
+        },
+        "note": "wst_fuzzsoft also has a non-zero zero-input offset (its fuzz table is non-zero at x = 0)"
+      }
+    },
+    {
+      "id": "NC-D",
+      "kind": "shared-state",
+      "what": "two concurrent instances pooled onto ONE QuadWaveshaperState (chain state left per-instance, so the control isolates exactly the state this leaf adds)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "ok": true,
+      "metrics": {
+        "instance_a_exact": false,
+        "instance_b_exact": false,
+        "a": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 212525.0,
+          "rms_diff_lsb": 18702.930585103273,
+          "rms_diff_dbfs": -34.973805025535725,
+          "spectral_corr": 0.9869484700248796
+        },
+        "b": {
+          "frames": 6144,
+          "max_abs_diff_lsb": 1437051.0,
+          "rms_diff_lsb": 915620.5521147893,
+          "rms_diff_dbfs": -1.1776876189659107,
+          "spectral_corr": 0.807657505516778
+        }
+      }
+    },
+    {
+      "id": "NC-B",
+      "kind": "dropped-tail",
+      "what": "render truncated 1 block into the declared 1600-block ringout span (inside the measured 1593-block live decay)",
+      "must": "FAIL",
+      "verdict": "FAIL",
+      "ok": true,
+      "metrics": {
+        "declared_tail_blocks": 1600,
+        "declared_tail_seconds": 1.0666666666666667,
+        "ringout_end_fade_blocks": 320,
+        "measured_live_decay_blocks": 1593,
+        "measured_live_decay_ms": 1062.0,
+        "reference_tail_rms_lsb": 229086.22235351973,
+        "residual_rms_lsb": 223431.03900090614,
+        "tail_residual_rel_db": -0.21710931320241958,
+        "gate_rel_db": -20.0
+      }
+    },
+    {
+      "id": "KG-1",
+      "kind": "known-gap-probe",
+      "what": "late truncation (800 blocks into the ringout) is NOT detected by the whole-region residual gate",
+      "must": "n/a (probe, not a control)",
+      "verdict": "PASS (gap confirmed)",
+      "ok": true,
+      "metrics": {
+        "tail_residual_rel_db": -77.73865579428137,
+        "gate_rel_db": -20.0,
+        "signal_peak_lsb_at_truncation": 49.0,
+        "measured_live_decay_blocks": 1593,
+        "why": "the tail-region RMS is dominated by the early high-energy part of the decay, so removing the quiet remainder stays inside the gate",
+        "covered_instead_by": "reports/SXT-028e-sse/rtl-exactness.json cases[ringout-tail-*] (integer equality over the whole declared span, fade included)",
+        "same_gap_as": "reports/SXT-028e KG-1 (#57) and reports/stereo-comparator-tail-gate (#111)"
+      }
+    },
+    {
+      "id": "NC-E",
+      "kind": "stale-stub",
+      "what": "harness pinned to a stale frozen-model revision",
+      "must": "FAIL (refuse to report PASS)",
+      "verdict": "REFUSED",
+      "ok": true,
+      "metrics": {
+        "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
+        "stale_pin_checked_in_rtl_harness": "reports/SXT-028e-sse/rtl-exactness.json mutant_controls[stale-revision-pin]"
+      }
+    }
+  ],
+  "status": "ALL-CONTROLS-OK"
+}

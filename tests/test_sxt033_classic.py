@@ -99,8 +99,6 @@ def test_pinned_ntpi_tuningctr_fractional_term():
 def test_sync_rate_uses_clamped_semitones(tmp_path):
     # sync = min(l_sync, 156 - pitch): the impulse rate word must reflect the
     # clamp for high pitches and the raw value otherwise
-    d = json.loads(open(os.path.join(
-        CLASSIC, "inputs", "tentacles.json")).read())
     o = cm.ClassicOsc(cm.Inputs(os.path.join(
         CLASSIC, "inputs", "tentacles.json")), 60)
     assert abs(o.t_u[0] / float(1 << 21)

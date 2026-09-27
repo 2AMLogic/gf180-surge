@@ -1,13 +1,17 @@
 SXT-040 negative controls (issue #74 acceptance) — committed transcript.
 All controls demonstrably FAIL the check they target (or REFUSE, exit 2).
 Regenerate: python3 tools/run_sxt040_checks.py [--steps 3]
+Numbers below re-measured at the issue #145 HEAD, after the #123 halfband
+branch-order fix (run_sxt040_checks.py steps 1-3 re-run end to end, exit 0);
+the as-first-published value follows each in [pre-#123: ...]. No control's
+verdict moved.
 
 === Part A: single-constant RTL mutant (SXT-022 pattern) ==================
 sine_broken_mutant.sv = tb_sine.sv with the qmul round-half-up bias mutated
 by one shift (<<20 -> <<19). Run on the badnews canonical run
 (seq-notes-repeated-v1, full 6150 blocks). Clean RTL: PASS (see
 exact-badnews.json). Mutant: FAIL.
-  verdict=FAIL mismatches=97
+  verdict=FAIL mismatches=98   [pre-#123: 97]
   first_failure: block 0 sample 2: mono model=1 rtl=0
 
 === Part B: wrong-family substitution (model side) ========================
@@ -18,8 +22,10 @@ Sine reference render (seq-notes-repeated-v1). The reference-budget check
 must FAIL; the correct Sine model's numbers are shown for discrimination
 (full-length rows from the committed budget matrix).
   badnews (legacy, shape 0, uni 1), 6,150-block (full-length) control render
-    sine model    : max=62 rms=-71.0 dBFS corr=0.9456 (full budget row)
-    classic subst : verdict='FAIL' max=2806 rms=-36.3 dBFS corr=0.8340  <- FAIL
+    sine model    : max=62 rms=-71.1 dBFS corr=0.9471 (full budget row)
+                    [pre-#123: 62 / -71.0 / 0.9456]
+    classic subst : verdict='FAIL' max=2805 rms=-36.3 dBFS corr=0.8283  <- FAIL
+                    [pre-#123: 2806 / -36.3 / 0.8340]
 
 === Part C: shape-migration confusion (model side) =======================
 The tentacles fixture rendered with the RAW pre-migration shape value
@@ -28,9 +34,10 @@ sidecar value is pre-migration and must never be used; slate example Arp 2:
 raw 1 -> normalized 28 via load_xml rev<=27). The budget check against the
 normalized-shape reference must FAIL.
   tentacles (modern, shape 8, uni 4), seq-notes-coverage-v1, 512 blocks
-    normalized shape 8 (full row)  : corr 0.9381
-    forced raw value 1             : verdict='FAIL' max=7197 rms=-23.4 dBFS
-                                     corr=0.6251                    <- FAIL
+    normalized shape 8 (full row)  : corr 0.9444   [pre-#123: 0.9381]
+    forced raw value 1             : verdict='FAIL' max=7198 rms=-23.4 dBFS
+                                     corr=0.6253                    <- FAIL
+                                     [pre-#123: 7197 / -23.4 / 0.6251]
 
 === Part D: out-of-class presets refused (fail-closed extractor) ==========
 All four refuse at the committed-graphs level (exit 2):

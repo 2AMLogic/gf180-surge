@@ -10,9 +10,11 @@ verdict is reported as PASS/FAIL per check with achieved numbers.
 Reference path model (documented in reports/sxt-024/EVIDENCE.md):
     wet = dry + return_gain * reverb1(send_gain * dry)
 with send_gain = amp_to_linear(send_level)^3 = send^3 (float32, per the
-pinned DSPUtils.h amp_to_linear) and return_gain likewise; the preset's only
-active FX is Reverb 1 in send slot S1 (verified from the normalized graph),
-volume = 0 dB (amp 1.0 exactly), no hardclip engaged at these levels.
+pinned DSPUtils.h amp_to_linear -- pinned explicitly in amp_to_linear_f32(),
+NumPy-version independent since issue #112) and return_gain likewise; the
+preset's only active FX is Reverb 1 in send slot S1 (verified from the
+normalized graph), volume = 0 dB (amp 1.0 exactly), no hardclip engaged at
+these levels.
 
 Model input quantization: the engine's FX input is float32; the frozen model
 consumes s24. The quantization step (2^-24 relative) is part of the measured
@@ -182,10 +184,38 @@ def build_model(side):
     return rf.Reverb1Fixed(c), c, st
 
 
+def amp_to_linear_f32(x):
+    """Pinned DSPUtils.h `amp_to_linear(x) = x*x*x`, evaluated in float32.
+
+    The precision is PINNED EXPLICITLY here and does not depend on the NumPy
+    version (issue #112). The engine holds the normalized level and the
+    resulting gain in C++ `float`, so three float32 multiplies -- each rounded
+    to float32, in the order the pinned C++ expression evaluates them -- are
+    the intended arithmetic, and that is what this computes. The return value
+    is a Python float carrying exactly that float32 value (so
+    `np.float32(amp_to_linear_f32(x)) == amp_to_linear_f32(x)`).
+
+    Why not `np.float32(x) ** 3` (what this tool used before #112): its dtype
+    is NumPy-version dependent. Under NEP 50 (NumPy >= 2) it stays float32;
+    under NumPy 1.x scalar promotion it returns a float64 whose value also
+    differs in the last bits from CPython's own float64 `x ** 3` (numpy's
+    `power` vs CPython's `pow`). The committed sxt-024 records were written
+    across those regimes and disagreed in the last bits as a result -- three
+    distinct `send_gain` values for one declared level, and the old expression
+    reproduced none of them portably. See reports/sxt-024/EVIDENCE.md, #112.
+    """
+    v = np.float32(x)
+    return float(np.float32(np.float32(v * v) * v))
+
+
 def send_return_gains(st):
-    """amp_to_linear(x) = x*x*x in float32 (pinned DSPUtils.h)."""
-    send = float(np.float32(st["scene_send_level"][0]) ** 3)  # scene A -> send bus 1
-    ret = float(np.float32(st["return_level"]) ** 3)
+    """amp_to_linear(x) = x*x*x in float32 (pinned DSPUtils.h).
+
+    Precision is pinned by amp_to_linear_f32() and is independent of the
+    installed NumPy version (issue #112).
+    """
+    send = amp_to_linear_f32(st["scene_send_level"][0])  # scene A -> send bus 1
+    ret = amp_to_linear_f32(st["return_level"])
     return send, ret
 
 
@@ -485,7 +515,6 @@ def cmd_case(args):
     # buffers cleared). The model mirrors this for the hardreset case.
     reset_at = None
     fx_off_span = None
-    n = len(dry[0])
     if name.startswith("hardreset"):
         rb = side["render"]["reload_block"]
         reset_at = None                    # the fresh post-switch instance replaces reset

@@ -39,7 +39,9 @@ refactor, the uni-1 model render of `seq-notes-repeated-v1` is
 byte-identical to the committed SXT-022 artifact
 (`reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav`, sha256
 `6a73bb9adeb81602b3d25829319a8d29839e1f8ec24705ae152bdb225b097f6d`), and
-re-verified after every later model change. The uni=1 path multiplies by
+re-verified after every later model change. (Since the #123 halfband fix both
+renders are `9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50` — see the #145 change note in
+§4; the byte-identity itself still holds and was re-checked by #145.) The uni=1 path multiplies by
 `out_attenuation = 1.0` exactly (bit-identity mechanism).
 
 ## 2. Fixtures (declared-override pattern; no real corpus uni>1 preset exists)
@@ -99,29 +101,70 @@ blocks, plus the shared oscillator output block and every mono sample.
 
 Comparator `tools/compare_audio_reference.py` (dry policy, no
 normalization, no time-warping; shift-0 primary). Proposed bounds are the
-SXT-022 placeholders (max_abs ≤ 3500 LSB, rms ≥ −46 dBFS, corr ≥ 0.98):
+SXT-022 placeholders (max_abs ≤ 3500 LSB, rms diff ≤ −46 dBFS, corr ≥ 0.98).
+*Re-grade note (issue #97):* this section originally stated the rms bound
+as "≥ −46 dBFS" and graded every rms leg with that inverted comparison
+(fixed in PR #92, audited in issue #95, `reports/tooling-rms-polarity-audit/`),
+so uni1-regress read "PASS all three" and the uni>1 rows omitted their rms
+misses. That re-grade left the numeric metrics unchanged; only the grading
+moved — no fixture passes the rms proposal, and **no fixture passes all three
+proposals**. *Republication note (issue #145):* the uni1/uni2-cov/uni4 rows
+below are the numbers of the model re-rendered after the #123 halfband fix;
+the uni2-poly/uni16-smoke rows are the pre-#123 numbers and are **STALE**
+(their reference renders were never committed, so they cannot be re-measured
+on the #145 host — see the change note after this table):
 
 | fixture | max_abs LSB | rms dBFS | corr | best_shift | vs proposals |
 |---|---|---|---|---|---|
-| uni1-regress | 2,321 | −33.3 | 0.9874 | −4 | **PASS all three** (identical to the landed SXT-022 metrics) |
-| uni2-cov | 22,767 | −18.5 | 0.9624 | −27 | FAIL max, corr |
-| uni2-poly | 65,534 | −8.4 | 0.9548 | −1 | FAIL max, corr |
-| uni4-rep | 27,455 | −15.1 | 0.9822 | −25 | FAIL max |
-| uni16-smoke | 36,240 | −9.7 | 0.8678 | −17 | FAIL max, corr |
+| uni1-regress | 2,328 | −33.3 | 0.9921 | −4 | **FAIL rms** (max, corr PASS; −33.3 dBFS is louder than ≤ −46 dBFS; identical to the landed SXT-022 metrics and verdict) |
+| uni2-cov | 21,876 | −18.5 | 0.9644 | −26 | FAIL max, rms, corr |
+| uni2-poly (**STALE**, pre-#123) | 65,534 | −8.4 | 0.9548 | −1 | FAIL max, rms, corr |
+| uni4-rep | 27,455 | −15.1 | 0.9841 | −25 | FAIL max, rms |
+| uni16-smoke (**STALE**, pre-#123) | 36,240 | −9.7 | 0.8678 | −17 | FAIL max, rms, corr |
 
 (`artifacts/uni1-rep.json`, `uni2-cov.json`, `uni2-poly.json`,
 `uni4-rep.json`, `uni16-smoke.json`.)
 
+
+**Change note (issue #145, 2026-09-27): republished after the #123 halfband
+branch-order fix.** The shared scene decimator is on every render here.
+#145 re-rendered uni1-regress, uni2-cov and uni4-rep at HEAD, re-ran the
+comparator against the same committed (pinned-oracle-host) references, and
+replaced `model-*-uni{1,2,4}.wav` and `uni1-rep.json` / `uni2-cov.json` /
+`uni4-rep.json`; all six `exactness-*.json` were re-run (PASS, 0 mismatches,
+counts identical to §3) and NC-1/2/4/5 were regenerated (§8). Attribution:
+the pre-#123 ordering (`tools/halfband_legacy_render.py`) re-renders the
+committed uni1/uni2/uni4 WAVs **byte-identically**. Record:
+`reports/halfband-republication/`.
+
+| fixture | max_abs LSB | rms dBFS | corr | overall |
+|---|---|---|---|---|
+| uni1-regress | 2,321 → 2,328 | −33.327 → −33.328 | 0.9874 → 0.9921 | FAIL → FAIL |
+| uni2-cov | 22,767 → 21,876 | −18.479 → −18.481 | 0.9624 → 0.9644 | FAIL → FAIL |
+| uni4-rep | 27,455 → 27,455 | −15.102 → −15.103 | 0.9822 → 0.9841 | FAIL → FAIL |
+| uni2-poly | **STALE / NOT_RUN** | | | reference `seq-poly-8-v1` uni2 render not committed (sidecar only) |
+| uni16-smoke | **STALE / NOT_RUN** | | | reference `sxt034-smoke-v1` uni16 render not committed (sidecar only) |
+
+The uni2-cov/uni4 JSONs also carry the corrected RMS-leg polarity (PR #92 /
+#95: `rms_diff_dbfs` `true → false`) — the comparator correction this
+section's #97 note already graded in prose, not a #123 effect. No verdict
+moved. `uni2-poly.json` and `uni16-smoke.json` are left as committed and are
+STALE: re-measuring them needs the pinned oracle to re-render (or commit)
+those two references, which the #145 host cannot do.
+
 **Bounded finding (recorded, escalation routed):** the SXT-022 [PROPOSED]
-budgets were derived from the unison-1 slice and do not hold at uni>1. The
+budgets were derived from the unison-1 slice; the rms proposal already
+fails at uni=1 (the landed SXT-022 metrics, re-graded under issue #97), and
+the max/spectral proposals additionally do not hold at uni>1. The
 misses are the declared deviation classes compounding across N detuned
 voices — float32 phase-pipeline vs exact-integer `ipos` per voice
 (sub-sample impulse jitter at different detune rates → beat-phase
 differences the max metric cannot absorb), `mech::rcp` vs exact `qdiv` in
 each voice's DC path (now active: Attacky sub mix 0 → `dc_uni ≠ 0`), and
 fixed-word quantization — not a topology error (the uni1 regression is
-bit-identical, and RTL-vs-model is exact at every unison). rms passes all
-proposals at every unison; spectral corr passes at uni4. Per AGENTS.md and
+bit-identical, and RTL-vs-model is exact at every unison). rms fails the
+proposal at every unison, uni1 included (−8.4 to −33.3 dBFS vs ≤ −46 dBFS);
+spectral corr passes at uni1 and uni4; max passes only at uni1. Per AGENTS.md and
 the leaf's stop/escalate clause this is **not** resolved here by weakening
 or tuning: it is routed to the SXT-013/#12 freeze together with SXT-026's
 deep-mip finding — either the freeze sets unison-class budgets or
@@ -206,19 +249,28 @@ the check it targets:
 
 | control | mutation | targeted check | outcome |
 |---|---|---|---|
-| NC-1 unison-collapsed (issue-required) | model config: stack forced to 1 voice vs the uni2 reference | reference-budget | **FAIL** (max 11,743 / corr 0.9554); differential vs true model max 18,238 LSB |
-| NC-2 detune-zeroed | model config: spread forced 0 | reference-budget | **FAIL** (max 12,717 / corr 0.9676); differential vs true model max 20,883 LSB |
+| NC-1 unison-collapsed (issue-required) | model config: stack forced to 1 voice vs the uni2 reference | reference-budget | **FAIL** (max 11,742 / corr 0.9626 at the #145 HEAD; was 11,743 / 0.9554); differential vs true model max 18,238 LSB |
+| NC-2 detune-zeroed | model config: spread forced 0 | reference-budget | **FAIL** (max 12,887 / corr 0.9686 at the #145 HEAD; was 12,717 / 0.9676); differential vs true model max 20,884 LSB |
 | NC-3 beyond-limit | uni=17 input | load-time cap | **exit 1**, "unison 17 outside 1..MAX_UNISON(16): explicitly rejected (no clamp)", no render |
 | NC-4 voice-count mutant | `voice_uni_mutant.sv`: fill loop `uni_n`→1 (single line) | RTL-vs-model exactness | **FAIL**, 105 mismatches from block 0 |
-| NC-5 rounding (legacy) | `voice_broken_mutant.sv` qmul bias <<20→<<19 | RTL-vs-model exactness | **FAIL**, 98 mismatches |
+| NC-5 rounding (legacy) | `voice_broken_mutant.sv` qmul bias <<20→<<19 | RTL-vs-model exactness | **FAIL**, 99 mismatches at the #145 HEAD (98 before #123) |
 
 Honest caveat (also in the transcript): with the current [PROPOSED] budgets
 the reference-budget check itself is not yet discriminating at uni>1 — the
-true model also misses the max/corr proposals (§4 finding). The budget
+true model also misses the max/corr proposals (§4 finding), and — re-graded
+under issue #97 — the true model misses the rms proposal at every unison,
+uni1 included. The budget
 freeze (#12) must set unison-class budgets under which NC-1/NC-2 fail while
 the true model passes; until then the exactness controls (NC-3/4/5) are the
 hard gates and NC-1/NC-2 demonstrate the required "must FAIL" behavior of
-the live check.
+the live check. *#145 measurement:* after the #123 decimator fix NC-1's
+collapsed render is **closer** to the uni2 reference than the true uni2
+model on the max (11,742 vs 21,876 LSB) and RMS (−24.7 vs −18.5 dBFS) legs
+and only 0.0018 worse on spectral corr (0.9626 vs 0.9644; the pre-#123 gap
+was 0.0070). NC-1's reference-budget "FAIL" therefore carries no
+discrimination at all on this fixture today — only its differential against
+the true model (18,238 LSB) and the exactness controls do. Recorded, not
+tuned; the discrimination question stays with #12.
 
 ## 9. What remains unproved
 
@@ -285,7 +337,8 @@ replaced where counts changed and left untouched where identical:
   untouched by the merge.
 * **Budget metrics reproduce exactly** (max_abs / corr / best_shift
   identical to §4 on all five fixtures; rms equal to float precision).
-  uni1 passes all proposals; uni>1 misses stand as recorded — the §4
+  uni1 passes the max/corr proposals and fails rms (re-graded under
+  issue #97, metrics unchanged); uni>1 misses stand as recorded — the §4
   bounded finding is unchanged and now ALSO names the SXT-033 pitch-helper
   finding as a candidate contributor (README composition §3).
 * **Negative controls NC-1..5 reproduce** (`artifacts/negative-control.txt`

@@ -323,7 +323,6 @@ def test_inputs_are_census_pinned_and_retriggered():
         assert 0 <= d["shape"] <= 31, name
         # every committed carrier input must carry the route override and
         # read back route_slot == 1 (the serial-1 A path)
-        overrides = dict(d["declared_overrides"])
         assert ("route_slot_1", True) in [(k, v) for k, v in
                                           d["declared_overrides"]], name
 

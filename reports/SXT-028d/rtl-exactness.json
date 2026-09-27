@@ -1,0 +1,159 @@
+{
+  "cases": [
+    {
+      "blocks": 6,
+      "case": "both-slots-all-fx",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "both-slots-no-sends",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bypass-scene-fx-only-skips-block",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bypass-no-fx-skips-block",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "slot1-disabled-bit6",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "slot2-disabled-bit7",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "slot1-unoccupied-single-instance",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "glob-never-true-passthrough",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "glob-goes-false-mid-run",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "mid-run-state-reset",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "revision_pin": {
+        "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+        "ok": true
+      }
+    }
+  ],
+  "leaf": "SXT-028d",
+  "model_revision": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5",
+  "schema_version": 1,
+  "sim": "iverilog",
+  "status": "PASS"
+}

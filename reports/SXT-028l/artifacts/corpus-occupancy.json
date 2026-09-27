@@ -1,0 +1,17 @@
+{
+  "both_buses_occupied": 25,
+  "both_buses_occupied_same_fx_class": 7,
+  "claim_scope": "COVERAGE accounting only -- an inventory of which corpus presets exercise this routing form's shapes. NOT a support claim and NOT an agreement number.",
+  "fx_disable_bit12_set": 8,
+  "fx_disable_bit13_set": 4,
+  "fx_disable_both_bits_set": 1,
+  "leaf": "SXT-028l",
+  "non_all_fx_bypass_with_a_send34_occupant": 0,
+  "non_single_scene_mode_with_a_send34_occupant": 28,
+  "occupied_bus_with_return_level_zero": 3,
+  "presets_scanned": 3561,
+  "schema_version": 1,
+  "send3_occupied": 78,
+  "send4_occupied": 29,
+  "source": "corpus/normalized/graphs.jsonl (SXT-011 output)"
+}

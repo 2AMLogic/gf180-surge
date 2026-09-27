@@ -1,0 +1,100 @@
+{
+  "alloc_profiles": {
+    "engine": {
+      "allpass_len": 131072,
+      "bytes": 14532608,
+      "delay_len": 131072,
+      "predelay_len": 1536000,
+      "profile": "engine",
+      "words": 3633152
+    },
+    "harness": {
+      "allpass_len": 4096,
+      "bytes": 524288,
+      "delay_len": 16384,
+      "predelay_len": 16384,
+      "profile": "harness",
+      "words": 131072
+    },
+    "note": "the RTL bench runs the reduced harness profile so two instances fit the simulator; transaction COUNTS are identical and the model refuses a profile that would alias a live tap (ProfileRefusal)"
+  },
+  "external_traffic": {
+    "bytes_per_sample": 184.0,
+    "bytes_per_second_at_48k": 8832000.0,
+    "declared_from_structure": {
+      "reads": 29,
+      "writes": 17
+    },
+    "measured_matches_structure": true,
+    "note": "reads = 1 predelay + 12 allpass + 4 delays x (2 output taps + 2 interpolation reads); writes = 1 predelay + 12 allpass + 4 delay writes",
+    "reads_per_sample": 29.0,
+    "transaction_log_basis": "model ext_reads/ext_writes counters over 128 blocks (measured, frozen model)",
+    "words_per_sample_32bit": 46.0,
+    "writes_per_sample": 17.0
+  },
+  "external_writable_memory": {
+    "allpass_rings": {
+      "bytes": 6291456,
+      "count": 12,
+      "layout": "4 input + 4 tank blocks x 2; ring length is the configured _len, the allocation is the engine maximum",
+      "words_each": 131072
+    },
+    "bytes_total": 14532608,
+    "classification_policy": "every Reverb 2 buffer is external WRITABLE memory (> 64 KiB policy, plan section 3); flash is never writable delay memory; all processing stays in-chip",
+    "delay_rings": {
+      "bytes": 2097152,
+      "count": 4,
+      "layout": "power-of-two ring masked by DELAY_LEN_MASK; 2 output taps + 2 sub-sample interpolation reads",
+      "words_each": 131072
+    },
+    "predelay": {
+      "bytes": 6144000,
+      "layout": "circular ring, index wraps at PREDELAY_BUFFER_SIZE; read at k - pdt with pdt clamped to [1, 1151999]",
+      "words": 1536000
+    },
+    "total_MiB": 13.859375,
+    "words_total": 3633152
+  },
+  "fit_claim": "NONE. cyc_fxreverb2_frame is a placeholder [PENDING-SXT-016]; profile v1 is not frozen (#12, STOP/ESCALATE fired in PR #109). This report establishes state and traffic only.",
+  "issue": "SXT-028f",
+  "leaf": "SXT-028f",
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "multi_instance": {
+    "note": "per-instance state is never shared (AGENTS.md); two Reverb 2 slots = two independent tanks over two disjoint external regions",
+    "per_additional_instance_external_bytes": 14532608
+  },
+  "on_chip_small_state": {
+    "bits": 3712,
+    "breakdown": {
+      "LFO r/i/dr/di (Q24.43)": 256,
+      "configured lengths + tap times (12 + 4 + 8)": 768,
+      "eight one-pole registers (Q24.43)": 512,
+      "predelay tap + counters + region hashes": 320,
+      "ring indices (predelay + 12 allpass + 4 delay)": 544,
+      "six coefficient ramps (v/new_v/dv, Q24.43)": 1152,
+      "tank accumulator _state (Q10.21)": 32,
+      "widthS + mix lipol (cur+tgt, Q13.18)": 128
+    },
+    "bytes": 464,
+    "note": "the Q86/Q128 products of the coefficient multiplies are combinational; the tap gains are frozen ROM"
+  },
+  "schema_version": 1,
+  "scope": "per Reverb 2 instance (sst-effects Reverb2 tank reverb), 48 kHz, frozen Q10.21 32-bit buffer words",
+  "sxt015_reconciliation": {
+    "note": "state residency confirms the SXT-015 pinned entry exactly (14532608 B per instance). The SXT-015 per-sample TRAFFIC entry (40 reads / 18 writes) is an OVER-estimate of the structure measured here (29 reads / 17 writes), which is conservative for a budget: no SXT-016/017 result is made optimistic by it. The over-estimate is DELIBERATE and recorded: model/resources/fx_classes.py _RETAINED_OVER_ESTIMATE_TX['reverb2'] holds the row at the larger figure pending #12 (SXT-017 profile v1 freeze, operator decision) (finding F-028f-2 (issue #127); see reports/sxt-017/EVIDENCE.md \u00a710). This leaf does not edit the shared table.",
+    "state_agreement": true,
+    "sxt015_reads_per_sample": 40,
+    "sxt015_state_bytes": 14532608,
+    "sxt015_writes_per_sample": 18,
+    "this_model_bytes": 14532608,
+    "traffic_agreement": false,
+    "traffic_direction": "sxt015_over_estimates",
+    "traffic_over_estimate_is_deliberate": true,
+    "traffic_retention_record": {
+      "finding": "F-028f-2 (issue #127)",
+      "reason": "the retired 40/18 row counted the two plain delay output taps as 2-point interpolated reads; only the recirculation read is interpolated in the pinned delay::process, so the structure is 29 reads / 17 writes. Correcting it is the right end state, but re-deriving reports/sxt-017/cost-closure.json with 29/17 moves 4 of its 120 grid cells' ext_bandwidth_fit column from EXCEEDS to within (B4-broad and R0-ceiling-reference at 192 MHz / M18+M32 / E1: worst 696 -> 552 B/frame, required 33,408,000 -> 26,496,000 B/s against an E1 sustained 32,000,000 B/s). That is a previously-failing check reading pass inside the artifact that #12's escalated profile-v1 freeze decides, which is exactly what issue #127's stop/escalate clause says not to bank. Held here at the conservative figure until #12 decides; no SXT-015/016/017 artifact is derived from 29/17 yet.",
+      "record": "reports/sxt-017/EVIDENCE.md \u00a710",
+      "unblocks_on": "#12 (SXT-017 profile v1 freeze, operator decision)"
+    }
+  }
+}

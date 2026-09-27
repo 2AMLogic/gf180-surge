@@ -1,0 +1,62 @@
+{
+  "decades": 5.0,
+  "definition": "Logical emits silence into silence, so it has no amplitude ringout. The declared tail is the GAIN RECOVERY span: `decades / min(remainder[0..sel])` samples, i.e. 5 natural time constants of the slowest ACTIVE control bank. An amplitude-only ringout gate would read 'no tail' here and would pass a dropped-tail render -- see NC-D.",
+  "leaf": "SXT-028k",
+  "model_revision": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0",
+  "windows": {
+    "3x101:slot6": {
+      "ratioselector": 1,
+      "remainders_active": [
+        0.0022719803203506326,
+        0.0023794781104439482
+      ],
+      "tail_window_blocks": 69,
+      "tail_window_samples": 2201
+    },
+    "acoustic-snare:slot1": {
+      "ratioselector": 1,
+      "remainders_active": [
+        0.0023639417624655703,
+        0.002475790669385296
+      ],
+      "tail_window_blocks": 67,
+      "tail_window_samples": 2116
+    },
+    "bass-guitar-5:slot6": {
+      "ratioselector": 2,
+      "remainders_active": [
+        0.007184625,
+        0.007524562499999999,
+        0.007873687499999999
+      ],
+      "tail_window_blocks": 22,
+      "tail_window_samples": 696
+    },
+    "dad:slot6": {
+      "ratioselector": 0,
+      "remainders_active": [
+        0.004351922149683234
+      ],
+      "tail_window_blocks": 36,
+      "tail_window_samples": 1149
+    },
+    "moogy-reese:slot1": {
+      "ratioselector": 1,
+      "remainders_active": [
+        0.0008279396319437578,
+        0.0008671132462428871
+      ],
+      "tail_window_blocks": 189,
+      "tail_window_samples": 6040
+    },
+    "moogy-reese:slot6": {
+      "ratioselector": 1,
+      "remainders_active": [
+        0.005139773096507944,
+        0.00538295929161126
+      ],
+      "tail_window_blocks": 31,
+      "tail_window_samples": 973
+    }
+  }
+}

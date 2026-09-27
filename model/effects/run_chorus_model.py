@@ -44,7 +44,6 @@ Outputs (under --out-dir):
 import argparse
 import gzip
 import json
-import math
 import os
 import sys
 
@@ -57,7 +56,7 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "reverb1"))
 
 import numpy as np  # noqa: E402
 
-from model.effects.qmath import to_q, sat, qmul, qadd, FRAC, clip  # noqa: E402
+from model.effects.qmath import to_q, sat, qmul, qadd, FRAC  # noqa: E402
 from model.effects.delay.delay_model import (  # noqa: E402
     DelayModel, DelayParams, db_to_linear_d, A_FMT, G_FMT, BLOCK,
 )

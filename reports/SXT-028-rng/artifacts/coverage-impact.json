@@ -1,0 +1,1657 @@
+{
+ "affected_presets": [
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c80ae2e0ea64a843b98b1ad7b4859fc0d83d3c26",
+   "classes": [
+    {
+     "fx_type_name": "Phaser",
+     "generator": "fxmodcontrol_owned_rng",
+     "role": "ains1",
+     "slot": 0,
+     "why": "ph_mod_wave = 5"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Basses/Seek And Ye Shall Find.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "0742bdae8da8430220051945fed05aaa06793d04",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains4",
+     "slot": 9,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Keys/I See I Saw.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "9389571a9b93948e94d8f1a3cdad9d0da60f6cc1",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global3",
+     "slot": 14,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Keys/March.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c5576fe0f154f3ed484634da3e0e945e63f1f46e",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    },
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global3",
+     "slot": 14,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Keys/November.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c3082002e7c37f60f9552782eeb90b09fd80861d",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "bins4",
+     "slot": 11,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Leads/Let Life Give Limes.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "263de528a26f764cc80bc3ef963750eeece862a8",
+   "classes": [
+    {
+     "fx_type_name": "Phaser",
+     "generator": "fxmodcontrol_owned_rng",
+     "role": "bins3",
+     "slot": 10,
+     "why": "ph_mod_wave = 5"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Plucks/Cute 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "1cb2a7ae6111b99172948027ab65b649130bda27",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "bins3",
+     "slot": 10,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Plucks/Cute 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "37d7be69370c7aa9a275056a685adba767196d80",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send2",
+     "slot": 5,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Plucks/Cute 3.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "402c3cca76e8668e419e22bf1410c8403408be07",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/A.Liv/Plucks/Taped Plucks.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "d420acd5935a45d92051d484944622ca8152e5ca",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Boog.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "ea28a4663d1bfc792f9334d3583e76f987cbf261",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Digivex.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "bdc490f4fd5c19e4c1f2001b6e8255c8fa409af4",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Basses/Rampage.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c5328b36870adf62e7724346bb6c00be01ac7924",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Pads/Journey.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "a6e83e96d554485a019dae31213ee230afd2961a",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Pads/Keep Waiting.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "61eb0c9692b0e7d91834c68f60052ff9ff2ad52b",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global2",
+     "slot": 7,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Sequences/Slow Mono.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "3b8450c45e5f565735912a1c9315f1ca7c86585e",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Altenberg/Synths/VHS.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "6a357d6e6d998a1634e52b87e5a6d2484314e74e",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Black-Sided Sun/Pads/Early Electronic 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "9e9b74411dae582b4deebc2314d58e82f556502d",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "global1",
+     "slot": 6,
+     "why": "combulator_noise_mix = 0.03 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Black-Sided Sun/Textures/Stumblah.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "17769cd40f65b93f2fec10ca155f7236331c7571",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Boomy Kick.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "03009a3edded2c610667aa06ebe7658de6ff89b4",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains2",
+     "slot": 1,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Cybersoda/FX/Tape Stop.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "cc3e7ad5dd66087f5fee6266bd956519ab8f036e",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Cybersoda/Leads/Snails.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "03b3b176eede6c6f8f058d3c2ac41c19c00d9357",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Databroth/Pads/Hollow Code.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "93ce2a20aabcd1d5081ba4516b5a900f55025604",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Precision Bass.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "8b8a1fc91109fd700e6956f6cec00ef64f6c6857",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.296429 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Risible.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "71a04510fd93c4d05cd3a6215510af29fc4022d4",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains1",
+     "slot": 0,
+     "why": "combulator_noise_mix = 0.721428 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Brass/Swumpet.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "5cc3175acee1fc7efdff3da9d87a732ed8f1d1a1",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Glass Of Speech.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "31cc6d9bed622c61e009f101f8cf245c9735cd62",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Quirkey.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "6ce43534c45c6f19db3e6dc42b8a0a1b5801707b",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/F-Lead.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "46091c50d8b5a91c192d1c0efc7124d7970cf132",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Cold Arrival.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "e5c374c1fc6c7c290ed6b40aecf155fc47464174",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    },
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.296429 (> 0)"
+    },
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "send2",
+     "slot": 5,
+     "why": "combulator_noise_mix = 0.296429 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Deep Abyss.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "bef37697e9e31da1a8bed87cf05d60e22897ab58",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains4",
+     "slot": 9,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Long Story Long.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "9f84b3e79f38051a159fa1a8a8c112d473a3dcb7",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Plucks/Bongo Rub.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "b211bc853f9d616d81840c22e41535976e8d5bd8",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Sequences/My Big Jersey.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "add261399b0b2575a56fc737b6029b6fe714697e",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Cello From Beyond.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "8d05fa36946ee39356d87cf2fa51d0960022d579",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains4",
+     "slot": 9,
+     "why": "combulator_noise_mix = 1.0 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Ficelle.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "29051486c7c9b9310296d107e3f8de11ce91fee0",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Gib's Solid Guitar.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "2b8d14b5e0d708321afd1bd8f352435b288fe953",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains3",
+     "slot": 8,
+     "why": "combulator_noise_mix = 1.0 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Winds/Fil Flute Recorder.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "34987cc14a97af5bd859c015ba8acf76783f9467",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "send2",
+     "slot": 5,
+     "why": "combulator_noise_mix = 0.296429 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Exquis MPE/Winds/Shakuhachi.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "f87cf66888897b903b099e8dedbd82c4fcbc5864",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Basses/Play Low.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "6b44298a5823304d6cca7def6a4d9d0209b56670",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "send1",
+     "slot": 4,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Basses/ResamplEmu.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "cb86d688a4420593283c07bf0b9aecb4b4667116",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global2",
+     "slot": 7,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Keys/Iso-Keys.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "547be860f847a6030b2631403649f29f72d88073",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains1",
+     "slot": 0,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Plucks/Porta Mod.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "d52281b8886dd6d60b9276058821f24f1fbd7cf5",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains1",
+     "slot": 0,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Sequences/Still Motions.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "a8b106a81d37b72aa58f684a2becf105037258c3",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Hauntology.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "73ebcb2cc9b28475f6fad4447e0ab0350a91e5c0",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "30e760cc31d102dea4fe8bbc62a87b0c3dbe2bd0",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "f547737e4f4bb797dd7cb009583dcdffc7eae424",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains2",
+     "slot": 1,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/XTease.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "a55c8109f6d3087290bc3a4d5a3cef24f0046dec",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains4",
+     "slot": 9,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/John Valentine/Basses/Distorted Power Bass Guitar.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "4fcb2d4f70b9ec1b43977c55d246ff7bcb05eeef",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains4",
+     "slot": 9,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/John Valentine/Keys/Amethyst Empathy.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "fa7a493ed0a39133b86c144d63ace5bea57dfb39",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/Cracks In The Sky.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "6e5c5d995b801d28f007dbc2dfa5821792c992f2",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "global2",
+     "slot": 7,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/It's $25 But You Gotta Haul It.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "e4484f0c247aaa1fc4b13d48c35e34c306408449",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "global2",
+     "slot": 7,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/Symphonies Under My Fingertips.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "3bc966b843b984163a5fe0adf802ae9fb13557c5",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "global2",
+     "slot": 7,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/The Housewives of Lofi.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "05b419ff8de6fdb7c3d996de841f24aa1ff42169",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Love Theme From Skinimax.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "4b6d4ca5b1256440adffa4f6fe3cf02a06fb57b6",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains1",
+     "slot": 0,
+     "why": "combulator_noise_mix = 0.066429 (> 0)"
+    },
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "bins2",
+     "slot": 3,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/Too Huge For School.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "1b4a2f13e8ab8c04c8e5820e69fd79617bdd52db",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains2",
+     "slot": 1,
+     "why": "class always constructs an RNG-seeded processor"
+    },
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global3",
+     "slot": 14,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Pads/What We Need Is Northern Leadership.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "997798f3140ac77fcaee9bd28d733554fcbcc4f2",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kinsey Dulcet/Sequences/Holy Emoji.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "4e47869521a51c2b6ec350371f728e583c139847",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kyurumi/Leads/Normal Lead.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "93fd65df3bc75a2357fe4e7b17e2f9fc1ec52f1f",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "send2",
+     "slot": 5,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Kyurumi/Leads/Road To Ascend.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "e156c79d77beef2869fc479b3700d89896bffe4a",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global2",
+     "slot": 7,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Keys/Soft Tine Piano.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "3ef7ace39ae6aec11395b5184b62d19e18bddbd8",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains1",
+     "slot": 0,
+     "why": "combulator_noise_mix = 0.174838 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/LinnStrument MPE/Strings/Bowed String.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "dbdf5b2568407c87f48fa69752f7dc53e312ce3d",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Analog Synth Brass 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "506669d3f8f1ff4a940af50eb1e9c2b1cedbcc5e",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Analog Synth Brass 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "b27a7a87b2246febeb35f3117e9a5866b518426b",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Brass/Synthy Brass.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "5a7ee414d9635614ef42ac5d6f92e4a814344112",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Leads/Vintage Lead.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "b07bd2e0f251ba08d36bf4bd083ac76c5c2c1df8",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Organs/Nighttime Air.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c85b287645675b3d794bb840016b6fa637fc0d8c",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains2",
+     "slot": 1,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Pads/Choir Pad.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "46bf31473c06fbc2c05f83a3d99ee775f249c42d",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Plucks/Lo-Fi Pluck.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "fa427acbcb3f4285e244b02e02e9b8877dacc375",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Strings/Mellotron Violins.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "73170a8b34c598ad3466583413b3f80f974b98d8",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Strings/Synth Strings.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "41308f7b3de1a8be0b77f81d3e7fca0cf02cd4db",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Lopyt/Voices/Lo-Fi Synth Voice.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "674a5a317b1cb9abb89b1872abad7ed7e3d6ebd4",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Digital Atmosphere.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "5fa91a8117cfd67f532a054da47b664bf1e3e8a0",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Luna/Basses/Chonky Analog Bass 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c9605372fca0a3c17278e7577fe0fdc3a39c98b3",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "ains1",
+     "slot": 0,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Luna/Basses/Chonky Analog Bass 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "baecbf70c39d53562e6b6aafc85fbddd613b1b26",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Luna/Brass/Brassy Sync.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "fef0d37d8f08095dfb2c657915d2720e782f2a8b",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Luna/Sequences/10K Modular.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "57ab2c9b460f8841396a4f4f9722000af15ad18d",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.5125 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Brush.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "532a8f9d103da0fdcbbad1ad911d84e1fe871056",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "global1",
+     "slot": 6,
+     "why": "combulator_noise_mix = 0.900715 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Cymbals Edge.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "eb9948f62ebb49b2245c433bcbef7b3a5cac8a39",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "global1",
+     "slot": 6,
+     "why": "combulator_noise_mix = 0.100893 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Ride Heavy.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "4c46b0d38a6f7ee93e29bc6e3df15528ab090c83",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.574107 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Snare Circus.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "9ba0ed775dd65dd71c2e3f27bdeae6278d64b542",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.096608 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Snare Dry.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "6022b7f9e8d8ae9820b0df2c9ea81f30a50e8540",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.574107 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Snare Pure.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "4aa91c156cd803d63cc7b6f234b3158956e4e7e1",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.425001 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Snare.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "e91783b62812050844b92b0cbf424d799cb3c51c",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "global1",
+     "slot": 6,
+     "why": "combulator_noise_mix = 0.842858 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Splash 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "d9aea3f35b2f50e83987878895c2cbfaa256981d",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "global1",
+     "slot": 6,
+     "why": "combulator_noise_mix = 0.842858 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Malfunction/Drums/Splash 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "119e40d6a491ec9bfda1417dcc277895f90c5d0a",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "combulator_noise_mix = 0.024107 (> 0)"
+    },
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "bins2",
+     "slot": 3,
+     "why": "combulator_noise_mix = 0.01875 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Slowboat/Winds/Flutily.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "b9ec8a94f0d75f00a5835704a468ed58996bbfee",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains2",
+     "slot": 1,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/TNMG/Pads/Aero.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "57d6f79528b4d8761ed46192d9c6dccec7394b22",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "send2",
+     "slot": 5,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/TNMG/Pads/Cryo Chamber.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "771651eeff5364093e1e056c76705e5853a3a02c",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains1",
+     "slot": 0,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/TNMG/Plucks/Dream State.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "09e1153fa1c9d56a2cd4f765a005abcd78dd4b05",
+   "classes": [
+    {
+     "fx_type_name": "Tape",
+     "generator": "chowdsp_random_device",
+     "role": "bins1",
+     "slot": 2,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Digitally Analog.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "6eb1804c1cdb56a085cd079d50688e526c0b1d6e",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Atmospheres/Bubbles & Organ 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "f52cb20bca66c930daadc8fc9947082c75ccac07",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 1.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "69e9ec4153d116a9bc315a02f3d571cafbd2c9b1",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 2.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "c52aef71804647be3062a1eb021e2f84eb9e41a5",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Atmospheres/Sweep Noisy Glitter.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "5215679593637184846603b24ca373d3def194ec",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Keys/Soft Space Keys.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "083d5a8561365f696117b69fc69f3644c4c269f1",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "global1",
+     "slot": 6,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Pads/Living Pad.fxp"
+  },
+  {
+   "bank": "contributor",
+   "census_blob_sha1": "582c13179dcb2bdb00332525a1e92740437b4238",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "ains3",
+     "slot": 8,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_3rdparty/qb/Voices/Soft Ambient Choir.fxp"
+  },
+  {
+   "bank": "factory",
+   "census_blob_sha1": "f8350b8fbd1810356ef644ae0546aeb30abbf950",
+   "classes": [
+    {
+     "fx_type_name": "Combulator",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "send3",
+     "slot": 12,
+     "why": "combulator_noise_mix = 0.082024 (> 0)"
+    }
+   ],
+   "path": "resources/data/patches_factory/Tutorials/Formula Modulator/10 Example - Both Time And Space.fxp"
+  },
+  {
+   "bank": "factory",
+   "census_blob_sha1": "6878b291d0fab5c41a808036714497dd9dd2b629",
+   "classes": [
+    {
+     "fx_type_name": "Spring Reverb",
+     "generator": "chowdsp_random_device",
+     "role": "send1",
+     "slot": 4,
+     "why": "class always constructs an RNG-seeded processor"
+    }
+   ],
+   "path": "resources/data/patches_factory/Tutorials/Formula Modulator/11 Example - Reich - Piano Phase.fxp"
+  },
+  {
+   "bank": "factory",
+   "census_blob_sha1": "7fb0e317a93bdfc46cb58c05abfe3b9624c6e154",
+   "classes": [
+    {
+     "fx_type_name": "Flanger",
+     "generator": "surgestorage_shared_rngGen",
+     "role": "ains3",
+     "slot": 8,
+     "why": "fl_wave = 3"
+    }
+   ],
+   "path": "resources/data/patches_factory/Tutorials/Formula Modulator/13 Duophony.fxp"
+  }
+ ],
+ "claim_scope": "Counts only. This record establishes no support claim for any preset, affected or not: the corpus is a prioritisation inventory (AGENTS.md), and nothing here renders, compares or listens. It bounds how much original-preset coverage the decision in DR-0013 costs -- an upper bound where a class's audibility conditionality was NOT_RUN.",
+ "corpus": {
+  "affected_fraction": 0.028082,
+  "affected_presets": 100,
+  "affected_presets_including_disabled_slots": 115,
+  "denominator": 3561,
+  "per_class": {
+   "Combulator": {
+    "affected_presets": 20,
+    "affected_slots": 22,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Flanger": {
+    "affected_presets": 11,
+    "affected_slots": 11,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Neuron": {
+    "affected_presets": 0,
+    "affected_slots": 0,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Phaser": {
+    "affected_presets": 2,
+    "affected_slots": 2,
+    "rng_dependence": "parameter_conditional",
+    "upper_bound": false
+   },
+   "Spring Reverb": {
+    "affected_presets": 26,
+    "affected_slots": 26,
+    "rng_dependence": "unconditional",
+    "upper_bound": true
+   },
+   "Tape": {
+    "affected_presets": 45,
+    "affected_slots": 45,
+    "rng_dependence": "unconditional",
+    "upper_bound": true
+   },
+   "Vocoder": {
+    "affected_presets": 0,
+    "affected_slots": 0,
+    "rng_dependence": "none",
+    "upper_bound": false
+   }
+  }
+ },
+ "counting_rule": "An effect instance counts only when its slot is ON and NOT in the patch's fx_disable mask -- the same notion of a REQUIRED effect instance tools/publish_coverage.py applies, because a disabled slot does not process and so carries no RNG dependence. `affected_presets_including_disabled_slots` is reported alongside so the narrower number is visibly a choice.",
+ "decision_record": "decision-records/0013-fx-modulation-rng-stream.md",
+ "inputs": {
+  "corpus/normalized/graphs.jsonl": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "reports/SXT-028-rng/artifacts/rng-characterization.json": "01d98bdab52e057983568ca6bb565981db1aa8c2be97b85153aa4634cbe8df7d",
+  "reports/sxt-013/candidates/slate-256-balanced.json": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
+  "reports/sxt-013/candidates/slate-256-contributor-lean.json": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e",
+  "reports/sxt-013/candidates/slate-256-factory-lean.json": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883"
+ },
+ "issue": "#122",
+ "not_surveyed": [
+  {
+   "fx_type_id": 14,
+   "fx_type_name": "Airwindows",
+   "reason": "the Airwindows algorithms live outside the surge source tree scanned here (src/common/dsp/effects/airwindows/ holds only the host shim). Airwindows determinism is the business of the per-algorithm SXT-028 leaves (aw-49 landed); this issue makes no statement about it.",
+   "status": "NOT_RUN"
+  },
+  {
+   "fx_type_id": 22,
+   "fx_type_name": "Nimbus",
+   "reason": "eurorack/clouds is a pinned submodule not scanned here.",
+   "status": "NOT_RUN"
+  },
+  {
+   "fx_type_id": null,
+   "fx_type_name": "Floaty Delay",
+   "reason": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/FloatyDelay.h:77,174-176 owns a `basic_blocks::dsp::RNG rng` driving two SimpleLFO SMOOTH_NOISE modulators UNCONDITIONALLY, so the whole class is RNG-driven. It is absent from corpus/census-v0.1 (the corpus predates it) and therefore contributes 0 affected presets today; it is recorded so a future leaf does not rediscover it.",
+   "status": "FINDING"
+  }
+ ],
+ "publication_rule": "This is a published coverage REDUCTION, not a deduction. The corpus denominator stays 3,561 and every slate denominator stays 256. Affected presets are reported not-supported with a named reason; they are never removed from a denominator and never re-labelled 'out of scope'.",
+ "routes_to": "SXT-017 (#12)",
+ "schema_version": "sxt-028-rng-coverage-impact/1.0.0",
+ "scopes": {
+  "all_unpinnable_rng_classes": {
+   "affected_presets": 100,
+   "what": "every surveyed FX class whose sound depends on an unpinnable RNG stream, modulation or not"
+  },
+  "fx_modulation_rng_family": {
+   "affected_presets": 13,
+   "classes": [
+    "Phaser",
+    "Neuron",
+    "Flanger"
+   ],
+   "what": "every FX modulation shape driven by an RNG, including the Flanger's shared-generator path the issue asked the survey to find"
+  },
+  "issue_122_named_scope": {
+   "affected_of_corpus": "2/3561",
+   "affected_presets": 2,
+   "classes": [
+    "Neuron",
+    "Phaser"
+   ],
+   "what": "FXModControl mod_noise (5) / mod_snh (6) -- the waveforms SXT-028g refused"
+  }
+ },
+ "slates": {
+  "slate-256-balanced": {
+   "affected": 20,
+   "affected_by_class": {
+    "Combulator": 1,
+    "Flanger": 1,
+    "Phaser": 0,
+    "Spring Reverb": 7,
+    "Tape": 12
+   },
+   "affected_paths": [
+    "resources/data/patches_3rdparty/A.Liv/Keys/March.fxp",
+    "resources/data/patches_3rdparty/A.Liv/Keys/November.fxp",
+    "resources/data/patches_3rdparty/A.Liv/Leads/Let Life Give Limes.fxp",
+    "resources/data/patches_3rdparty/A.Liv/Plucks/Cute 2.fxp",
+    "resources/data/patches_3rdparty/Altenberg/Sequences/Slow Mono.fxp",
+    "resources/data/patches_3rdparty/Black-Sided Sun/Pads/Early Electronic 1.fxp",
+    "resources/data/patches_3rdparty/Cybersoda/Drums/Boomy Kick.fxp",
+    "resources/data/patches_3rdparty/Exquis MPE/Basses/Precision Bass.fxp",
+    "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/XTease.fxp",
+    "resources/data/patches_3rdparty/John Valentine/Basses/Distorted Power Bass Guitar.fxp",
+    "resources/data/patches_3rdparty/John Valentine/Keys/Amethyst Empathy.fxp",
+    "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/Symphonies Under My Fingertips.fxp",
+    "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Digital Atmosphere.fxp",
+    "resources/data/patches_3rdparty/Luna/Basses/Chonky Analog Bass 1.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Splash 1.fxp",
+    "resources/data/patches_3rdparty/TNMG/Plucks/Dream State.fxp",
+    "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Digitally Analog.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 1.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 2.fxp",
+    "resources/data/patches_3rdparty/qb/Pads/Living Pad.fxp"
+   ],
+   "denominator": 256,
+   "slate_file": "reports/sxt-013/candidates/slate-256-balanced.json"
+  },
+  "slate-256-contributor-lean": {
+   "affected": 24,
+   "affected_by_class": {
+    "Combulator": 6,
+    "Flanger": 3,
+    "Phaser": 0,
+    "Spring Reverb": 5,
+    "Tape": 10
+   },
+   "affected_paths": [
+    "resources/data/patches_3rdparty/A.Liv/Keys/March.fxp",
+    "resources/data/patches_3rdparty/A.Liv/Leads/Let Life Give Limes.fxp",
+    "resources/data/patches_3rdparty/A.Liv/Plucks/Cute 2.fxp",
+    "resources/data/patches_3rdparty/Altenberg/Pads/Keep Waiting.fxp",
+    "resources/data/patches_3rdparty/Black-Sided Sun/Pads/Early Electronic 1.fxp",
+    "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Hauntology.fxp",
+    "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/XTease.fxp",
+    "resources/data/patches_3rdparty/John Valentine/Keys/Amethyst Empathy.fxp",
+    "resources/data/patches_3rdparty/Kyurumi/Leads/Normal Lead.fxp",
+    "resources/data/patches_3rdparty/Kyurumi/Leads/Road To Ascend.fxp",
+    "resources/data/patches_3rdparty/Lopyt/Plucks/Lo-Fi Pluck.fxp",
+    "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Digital Atmosphere.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Brush.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Snare Circus.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Snare Dry.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Snare Pure.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Splash 1.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Splash 2.fxp",
+    "resources/data/patches_3rdparty/TNMG/Plucks/Dream State.fxp",
+    "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Digitally Analog.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 1.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 2.fxp",
+    "resources/data/patches_3rdparty/qb/Keys/Soft Space Keys.fxp",
+    "resources/data/patches_3rdparty/qb/Pads/Living Pad.fxp"
+   ],
+   "denominator": 256,
+   "slate_file": "reports/sxt-013/candidates/slate-256-contributor-lean.json"
+  },
+  "slate-256-factory-lean": {
+   "affected": 15,
+   "affected_by_class": {
+    "Combulator": 1,
+    "Flanger": 2,
+    "Phaser": 0,
+    "Spring Reverb": 6,
+    "Tape": 6
+   },
+   "affected_paths": [
+    "resources/data/patches_3rdparty/A.Liv/Keys/March.fxp",
+    "resources/data/patches_3rdparty/A.Liv/Leads/Let Life Give Limes.fxp",
+    "resources/data/patches_3rdparty/Black-Sided Sun/Pads/Early Electronic 1.fxp",
+    "resources/data/patches_3rdparty/Exquis MPE/Leads/F-Lead.fxp",
+    "resources/data/patches_3rdparty/John Valentine/Basses/Distorted Power Bass Guitar.fxp",
+    "resources/data/patches_3rdparty/Kinsey Dulcet/Keys/Symphonies Under My Fingertips.fxp",
+    "resources/data/patches_3rdparty/Luna/Atmospheres/Alias Digital Atmosphere.fxp",
+    "resources/data/patches_3rdparty/Malfunction/Drums/Splash 1.fxp",
+    "resources/data/patches_3rdparty/TNMG/Pads/Aero.fxp",
+    "resources/data/patches_3rdparty/TNMG/Plucks/Dream State.fxp",
+    "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Digitally Analog.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Bubbles & Organ 2.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 1.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Shimmering & Space Choir 2.fxp",
+    "resources/data/patches_3rdparty/qb/Atmospheres/Sweep Noisy Glitter.fxp"
+   ],
+   "denominator": 256,
+   "slate_file": "reports/sxt-013/candidates/slate-256-factory-lean.json"
+  }
+ }
+}

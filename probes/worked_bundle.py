@@ -176,8 +176,6 @@ def build_bundle(name, line, idx, mult, fx_instance_limit=4, e_model="E1"):
     # --- filter units (probe-covered; mapping flagged) ---
     filt_cycles = 0
     filt_ram = 0
-    max_fu = max((s["active_filter_units"] for s in voice["scenes"]),
-                 default=0)
     for scene_si in voice["scenes"]:
         for fu in scene_si["filter_units"]:
             if not fu["active"]:
@@ -306,7 +304,6 @@ def build_bundle(name, line, idx, mult, fx_instance_limit=4, e_model="E1"):
     # --- scheduler (probe-covered) ---
     sched = _rec(idx, "probe_scheduler", "event_queue_and_control", mult)
     sched_cycles = sched["cycles_per_frame"]
-    control = sched["control_cycles_per_frame"]
     transfer = sched["transfer_cycles_per_frame"]
     contention = sched["contention_cycles_per_frame"]
     events_n = sched["max_coincident_events_per_frame"]

@@ -1,0 +1,441 @@
+{
+ "claim_scope": "This record characterises an RNG. It establishes no preset support, no coverage claim, no fidelity claim, no listening claim, and no hardware claim. It does not re-open SXT-028g (#59): that leaf's fail-closed refusal is correct either way.",
+ "decision_record": "decision-records/0013-fx-modulation-rng-stream.md",
+ "engine_pin": {
+  "manifest": "oracle/manifest.json",
+  "sst_basic_blocks": "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
+  "sst_effects": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b",
+  "surge": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+ },
+ "finding": {
+  "obstruction_severity": "O1 alone is sufficient and is MEASURED (leg B). O2 is MEASURED. O3 is cited, not measured. O4 is a policy fact of the manifest.",
+  "obstructions": [
+   "O1 SEED: both FX-reachable generators are seeded from the wall clock at construction and the pinned engine exposes no reseed call site reachable from a patch load, so the seed is not a function of the patch or of the manifest.",
+   "O2 DRAW ORDER: SurgeStorage::rngGen is shared by every storage->rand_* consumer on the audio thread, so a consumer's stream position depends on the rest of the engine's draw history, not only on its own state.",
+   "O3 DISTRIBUTION MAPPING: std::uniform_real_distribution has no standard-specified algorithm, so even a pinned seed and a pinned draw order do not pin the produced floats across standard libraries (leg C, NOT_RUN as a measurement, cited normatively).",
+   "O4 SCOPE: pinning any of the above would require PATCHING the pinned engine. oracle/manifest.json states that the pinned engine's own RNG initialization IS part of the reference; a patched engine is a different reference and cannot settle a fidelity claim about this one."
+  ],
+  "stream_is_pinnable": false
+ },
+ "fx_survey": [
+  {
+   "citation": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/Phaser.h -- `FXModControl<FXConfig::blockSize> modLFO` (default RandomBehavior = rnd_dual_stereo); parameter type ct_fxlfowave_extended, surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/Parameter.cpp",
+   "fx_type_id": 3,
+   "fx_type_name": "Phaser",
+   "generator": "fxmodcontrol_owned_rng",
+   "in_sxt028_bundle": true,
+   "leaf": "SXT-028g (#59) -- refuses waves 5/6 fail-closed",
+   "rng_dependence": "parameter_conditional",
+   "selector": {
+    "param": "ph_mod_wave",
+    "param_index": 10,
+    "rng_values": [
+     5,
+     6
+    ],
+    "value_labels": {
+     "5": "Noise",
+     "6": "Sample & Hold"
+    }
+   }
+  },
+  {
+   "citation": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/Flanger.h:377 -- `lfosandhtarget[c][i] = this->storageRand01() - 1.f;` in the `flw_sng`/`flw_snh` branch; parameter type ct_fxlfowave, surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/Parameter.cpp",
+   "fx_type_id": 12,
+   "fx_type_name": "Flanger",
+   "generator": "surgestorage_shared_rngGen",
+   "in_sxt028_bundle": false,
+   "leaf": "not filed; this survey is its input",
+   "note": "The Flanger does NOT use FXModControl. It draws from the SHARED SurgeStorage generator, so its stream position depends on every other consumer's draw count in the same engine instance (leg B `shared_draw_order`).",
+   "rng_dependence": "parameter_conditional",
+   "selector": {
+    "param": "fl_wave",
+    "param_index": 1,
+    "rng_values": [
+     3,
+     4
+    ],
+    "value_labels": {
+     "3": "Noise (flw_sng, Sample & Glide)",
+     "4": "Sample & Hold (flw_snh)"
+    }
+   }
+  },
+  {
+   "citation": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/chowdsp/NeuronEffect.cpp:130,142,146 -- `int mwave = *pd_int[neuron_lfo_wave];` passed straight into `modLFO.processStartOfBlock`, with `Surge::ModControl` = FXModControl<BLOCK_SIZE, rnd_single> (surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/ModControl.h)",
+   "fx_type_id": 15,
+   "fx_type_name": "Neuron",
+   "generator": "fxmodcontrol_owned_rng",
+   "in_sxt028_bundle": false,
+   "leaf": "not filed; this survey is its input",
+   "note": "Neuron's parameter type is ct_fxlfowave (max 5) but its value is forwarded UNREMAPPED to the FXModControl enum, so the stored value 5 selects mod_noise while the UI labels it 'Square'. The RNG reach is therefore value 5 only; value 6 is unreachable (out of parameter range). Recorded as an observation about the pin, not a defect report.",
+   "rng_dependence": "parameter_conditional",
+   "selector": {
+    "param": "neuron_lfo_wave",
+    "param_index": 7,
+    "rng_values": [
+     5
+    ],
+    "value_labels": {
+     "5": "FXModControl mod_noise"
+    }
+   }
+  },
+  {
+   "citation": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/CombulatorEffect.cpp:270 -- `correlated_noise_o2mk2_supplied_value(..., storage->rand_pm1())` scaled by `noisemix.v`",
+   "fx_type_id": 21,
+   "fx_type_name": "Combulator",
+   "generator": "surgestorage_shared_rngGen",
+   "in_sxt028_bundle": false,
+   "leaf": "not filed; this survey is its input",
+   "rng_dependence": "parameter_conditional",
+   "selector": {
+    "param": "combulator_noise_mix",
+    "param_index": 0,
+    "rng_when": "value > 0"
+   }
+  },
+  {
+   "audibility_conditionality": {
+    "detail": "the degrade/chew RNG contributions are scaled by the depth/amount/variance parameters, so some parameter settings may null them out. That analysis was NOT run; the count therefore treats every Tape slot as affected (fail-closed upper bound).",
+    "status": "NOT_RUN"
+   },
+   "citation": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/chowdsp/tape/DegradeNoise.h:37, DegradeProcessor.cpp:29, ChewProcessor.cpp:30",
+   "fx_type_id": 23,
+   "fx_type_name": "Tape",
+   "generator": "chowdsp_random_device",
+   "in_sxt028_bundle": false,
+   "leaf": "not filed; this survey is its input",
+   "rng_dependence": "unconditional",
+   "selector": {
+    "rng_when": "always (class constructs random_device seeded generators)"
+   }
+  },
+  {
+   "audibility_conditionality": {
+    "detail": "same fail-closed treatment as Tape.",
+    "status": "NOT_RUN"
+   },
+   "citation": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/chowdsp/spring_reverb/SpringReverbProc.cpp:39",
+   "fx_type_id": 27,
+   "fx_type_name": "Spring Reverb",
+   "generator": "chowdsp_random_device",
+   "in_sxt028_bundle": false,
+   "leaf": "not filed; this survey is its input",
+   "rng_dependence": "unconditional",
+   "selector": {
+    "rng_when": "always (class constructs random_device seeded generators)"
+   }
+  },
+  {
+   "citation": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/VocoderEffect.cpp:237-240 -- the only `storage->rand_pm1()` calls in this class are inside a COMMENTED-OUT block and are not compiled.",
+   "fx_type_id": 10,
+   "fx_type_name": "Vocoder",
+   "generator": null,
+   "in_sxt028_bundle": false,
+   "leaf": "n/a",
+   "rng_dependence": "none",
+   "selector": null
+  }
+ ],
+ "generators": {
+  "chowdsp_random_device": {
+   "declared_at": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/chowdsp/tape/DegradeNoise.h, DegradeProcessor.cpp, ChewProcessor.cpp; chowdsp/spring_reverb/SpringReverbProc.cpp",
+   "reseed_api_reachable_from_a_patch": false,
+   "reseed_note": "strictly less pinnable than the clock-seeded generators: random_device is permitted to be a true entropy source.",
+   "scope": "per processor object",
+   "seed_source": "std::random_device (non-deterministic by design)",
+   "seeded_at": "each constructor: `std::random_device rd; std::minstd_rand(rd())`",
+   "type": "std::minstd_rand seeded from std::random_device"
+  },
+  "fxmodcontrol_owned_rng": {
+   "consumed_by_waveforms": {
+    "5": "mod_noise",
+    "6": "mod_snh"
+   },
+   "declared_at": "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96 include/sst/basic-blocks/modulators/FXModControl.h -- public member `rng`, default-constructed",
+   "reseed_api_reachable_from_a_patch": false,
+   "reseed_note": "RNG exposes reseed(uint32_t)/reseedWithClock(), and FXModControl::rng is public, but NO call site in the pinned engine reseeds it: a patch cannot determine the seed (verified by leg A symbol scan `reseed_call_sites`).",
+   "scope": "PER FXModControl INSTANCE (one generator per effect instance that owns an FXModControl member)",
+   "seed_source": "wall clock at construction",
+   "seeded_at": "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96 include/sst/basic-blocks/dsp/RNG.h -- RNG::RNG() : g(std::chrono::system_clock::now().time_since_epoch().count())",
+   "type": "sst::basic_blocks::dsp::RNG (std::minstd_rand)"
+  },
+  "surgestorage_shared_rngGen": {
+   "declared_at": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/SurgeStorage.h -- member `rngGen`",
+   "reached_from_fx_via": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/dsp/effects/SurgeSSTFXAdapter.h `rand01(GlobalStorage*) -> s->rand_01()`, surfaced to effects as surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/EffectCore.h `storageRand01()`",
+   "reseed_api_reachable_from_a_patch": false,
+   "reseed_note": "the only reseed entry point, `seed_rand`, is COMMENTED OUT in the pinned SurgeStorage.h; there is no public reseed API at the pin.",
+   "scope": "ONE GENERATOR PER SurgeStorage (shared by every consumer on the audio thread: the sst-effects Flanger, Combulator, and anything else calling storage->rand_*)",
+   "seed_source": "wall clock at construction",
+   "seeded_at": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 src/common/SurgeStorage.h -- RNGGen::RNGGen() : g(std::chrono::system_clock::now().time_since_epoch().count())",
+   "type": "SurgeStorage::RNGGen (std::minstd_rand)"
+  }
+ },
+ "issue": "#122",
+ "legs": {
+  "distribution_portability": {
+   "leg": "C. distribution portability across standard libraries",
+   "normative_basis": "[rand.dist.uni.real] specifies the DISTRIBUTION of std::uniform_real_distribution, not the algorithm or the number of engine draws it consumes. Two conforming standard libraries may therefore map the same minstd_rand stream to different floats. `std::minstd_rand` itself IS exactly specified, so the ENGINE is portable and the MAPPING is not.",
+   "reason": "only one C++ standard library is installed on this host, and provisioning another is out of this issue's scope. The manifest pins Apple clang / libc++ (oracle/manifest.json environment.clang); no libc++ build was produced here, so no cross-library comparison was made. NOT_RUN is not a pass and not a failure.",
+   "single_datapoint": {
+    "claim_scope": "one host, one standard library; establishes nothing about the pinned macOS/libc++ runtime.",
+    "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "seed": 20260926,
+    "standard_library": "GCC 13.3.0",
+    "uniform_real_distribution_float_pm1_first4": "-0.788823545,0.272486806,-0.680610061,-0.152403712"
+   },
+   "status": "NOT_RUN"
+  },
+  "seed_reproducibility": {
+   "checks": [
+    {
+     "check": "two constructions of a clock-seeded generator 5 ms apart produce the SAME stream",
+     "expected_for_a_pinnable_stream": true,
+     "means": "FAIL => the seed is a function of wall-clock time at construction, so two loads of the same patch do not share a stream.",
+     "observed": false,
+     "status": "FAIL"
+    },
+    {
+     "check": "two constructions back to back (no delay) produce the same stream",
+     "expected_for_a_pinnable_stream": true,
+     "means": "informational: shows whether the clock even resolves two adjacent constructions apart.",
+     "observed": false,
+     "status": "FAIL"
+    },
+    {
+     "check": "DETECTOR CONTROL: two FIXED-seed constructions produce the same stream",
+     "expected_for_a_pinnable_stream": true,
+     "means": "the comparator can report IDENTICAL, so a FAIL above is a measurement and not an always-firing detector.",
+     "observed": true,
+     "status": "CONTROL-OK"
+    },
+    {
+     "check": "a SHARED generator hands the same stream to a consumer that draws after 3 prior draws by another consumer",
+     "expected_for_a_pinnable_stream": true,
+     "means": "FAIL => pinning the seed alone does not pin the stream for SurgeStorage::rngGen; the engine-wide draw ORDER would have to be pinned too.",
+     "observed": false,
+     "status": "FAIL"
+    },
+    {
+     "check": "DETECTOR CONTROL: the same shared generator with ZERO prior draws produces the same stream",
+     "expected_for_a_pinnable_stream": true,
+     "means": "same role as L1c for the draw-order comparator.",
+     "observed": true,
+     "status": "CONTROL-OK"
+    }
+   ],
+   "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+   "leg": "B. seed reproducibility (executable probe)",
+   "probe_provenance": "tools/fx_rng_characterize.py REPRO_PROBE -- original to this repository; it exercises C++ standard-library constructs, it does not reproduce or link any Surge or sst code.",
+   "question": "Is the FX-modulation RNG stream reproducible across two loads of the same patch under the SXT-010 manifest (no seed override applied)?",
+   "raw": {
+    "L1a_back_to_back_identical": "0",
+    "L1b_5ms_apart_identical": "0",
+    "L1c_fixed_seed_identical": "1",
+    "L2a_draw_order_shifted_identical": "0",
+    "L2b_draw_order_unshifted_identical": "1",
+    "L3_uniform_pm1_first4": "-0.788823545,0.272486806,-0.680610061,-0.152403712",
+    "clock_period_den": "1000000000",
+    "clock_period_num": "1",
+    "clock_tick_units": "57"
+   },
+   "status": "FAIL",
+   "verdict": "NOT REPRODUCIBLE"
+  },
+  "source_inventory": {
+   "counts": {
+    "mismatched": 0,
+    "not_run": 0,
+    "total": 20,
+    "verified": 20
+   },
+   "files": [
+    {
+     "actual_sha256": "d1a3b2a03b9e7adc6b8888006bfa16db04a373adf5e6249fecb41f0f0a45739c",
+     "expected_sha256": "d1a3b2a03b9e7adc6b8888006bfa16db04a373adf5e6249fecb41f0f0a45739c",
+     "path": "include/sst/basic-blocks/dsp/RNG.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
+    },
+    {
+     "actual_sha256": "58a7e6a6d15acd969718f29743e4161ff1566b3bfd1d0b53ee53d2a25b56e8e3",
+     "expected_sha256": "58a7e6a6d15acd969718f29743e4161ff1566b3bfd1d0b53ee53d2a25b56e8e3",
+     "path": "include/sst/basic-blocks/modulators/FXModControl.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
+    },
+    {
+     "actual_sha256": "7776a609844e10c65077023fac6d118294639eb7a526b6ca29e5e70f8a345592",
+     "expected_sha256": "7776a609844e10c65077023fac6d118294639eb7a526b6ca29e5e70f8a345592",
+     "path": "include/sst/basic-blocks/modulators/SimpleLFO.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
+    },
+    {
+     "actual_sha256": "ca13ace153f404647b7426343a8b0a01749fcdde4ae934e0a2b79527ca27be59",
+     "expected_sha256": "ca13ace153f404647b7426343a8b0a01749fcdde4ae934e0a2b79527ca27be59",
+     "path": "include/sst/effects/Phaser.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b"
+    },
+    {
+     "actual_sha256": "8f75b987403bc8ee95e59c0d785ddf717168cbe7acd2e39872eec4fa8e0836c0",
+     "expected_sha256": "8f75b987403bc8ee95e59c0d785ddf717168cbe7acd2e39872eec4fa8e0836c0",
+     "path": "include/sst/effects/Flanger.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b"
+    },
+    {
+     "actual_sha256": "0a637388c249c1a1895b6a78445d47134a6b2e20b1733a16865635984ece71d7",
+     "expected_sha256": "0a637388c249c1a1895b6a78445d47134a6b2e20b1733a16865635984ece71d7",
+     "path": "include/sst/effects/EffectCore.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b"
+    },
+    {
+     "actual_sha256": "8ff2ea22f464238dc77d56c999f66dda08247415f867a9eae6c89a252be2e0cc",
+     "expected_sha256": "8ff2ea22f464238dc77d56c999f66dda08247415f867a9eae6c89a252be2e0cc",
+     "path": "include/sst/effects/FloatyDelay.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b"
+    },
+    {
+     "actual_sha256": "ab74e4df318e75922591c10dcfabc67fee1a3a956f92f042cc62294f2c6cb7b5",
+     "expected_sha256": "ab74e4df318e75922591c10dcfabc67fee1a3a956f92f042cc62294f2c6cb7b5",
+     "path": "src/common/SurgeStorage.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "6e4659ddb44327e7a8ea64179398ab563a45cdcca70e5506771374b97d9a05f4",
+     "expected_sha256": "6e4659ddb44327e7a8ea64179398ab563a45cdcca70e5506771374b97d9a05f4",
+     "path": "src/common/dsp/effects/SurgeSSTFXAdapter.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "97992bc220e03f352afbde2daa9d3e1aef309d5c8b4731ad2eeee50387efae93",
+     "expected_sha256": "97992bc220e03f352afbde2daa9d3e1aef309d5c8b4731ad2eeee50387efae93",
+     "path": "src/common/dsp/effects/ModControl.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "209b37601875e219e80091ea4c469b3b22faa935f5aaff82cdbb48e0b128af52",
+     "expected_sha256": "209b37601875e219e80091ea4c469b3b22faa935f5aaff82cdbb48e0b128af52",
+     "path": "src/common/dsp/effects/chowdsp/NeuronEffect.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "b99655fb3a217f37e288c03f8b46f81d1390e50329d7ccb9ac8245cb63ffb137",
+     "expected_sha256": "b99655fb3a217f37e288c03f8b46f81d1390e50329d7ccb9ac8245cb63ffb137",
+     "path": "src/common/dsp/effects/CombulatorEffect.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "128773eabd057a9887abb968ca52959cd9ce70a232ed4c0cec4f90023669e1e5",
+     "expected_sha256": "128773eabd057a9887abb968ca52959cd9ce70a232ed4c0cec4f90023669e1e5",
+     "path": "src/common/dsp/effects/VocoderEffect.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "fd3baeeea76a277aa07a192f9530bad9961c6d91df4ddb4359b986433fee98f7",
+     "expected_sha256": "fd3baeeea76a277aa07a192f9530bad9961c6d91df4ddb4359b986433fee98f7",
+     "path": "src/common/Parameter.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "4c9de276be5901696e62392421a701a8d86ee0d23dc2ec713465268416dd6047",
+     "expected_sha256": "4c9de276be5901696e62392421a701a8d86ee0d23dc2ec713465268416dd6047",
+     "path": "src/common/dsp/effects/FlangerEffect.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "f05cd075db28b4ddac142a641e7835d42a2cd3661a8e32117bd2704e4f979cfc",
+     "expected_sha256": "f05cd075db28b4ddac142a641e7835d42a2cd3661a8e32117bd2704e4f979cfc",
+     "path": "src/common/dsp/effects/PhaserEffect.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "18db6628b232a1de5a95c0195af8aeadd49cf7bb3aa2af811299bb894f51f35e",
+     "expected_sha256": "18db6628b232a1de5a95c0195af8aeadd49cf7bb3aa2af811299bb894f51f35e",
+     "path": "src/common/dsp/effects/chowdsp/tape/DegradeNoise.h",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "d3d475c42aea5acd0b57377da4dfd195eeb79591c36fde3769c3a62cb80073d4",
+     "expected_sha256": "d3d475c42aea5acd0b57377da4dfd195eeb79591c36fde3769c3a62cb80073d4",
+     "path": "src/common/dsp/effects/chowdsp/tape/DegradeProcessor.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "19a81aeed65d44afe5747f6bbffe1657eab702e7be77b30527e924e42cf48509",
+     "expected_sha256": "19a81aeed65d44afe5747f6bbffe1657eab702e7be77b30527e924e42cf48509",
+     "path": "src/common/dsp/effects/chowdsp/tape/ChewProcessor.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    },
+    {
+     "actual_sha256": "56c0884af55f87fc5ac937aa7565ae0115c1fcb4c1d552cfdf92e98d2e0b03ad",
+     "expected_sha256": "56c0884af55f87fc5ac937aa7565ae0115c1fcb4c1d552cfdf92e98d2e0b03ad",
+     "path": "src/common/dsp/effects/chowdsp/spring_reverb/SpringReverbProc.cpp",
+     "status": "VERIFIED",
+     "tree": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71"
+    }
+   ],
+   "leg": "A. source inventory + citation verification",
+   "note": "sha256 pins the cited content at the pinned commit; no third-party source is copied into this repository.",
+   "reseed_call_sites": {
+    "call_sites": [],
+    "scanned_files": 603,
+    "scanned_note": "the claim covers exactly the tree supplied on the command line; supply the engine's src/ subtree at the pin to reproduce it.",
+    "scanned_root": "/tmp/surge",
+    "status": "MEASURED",
+    "verdict": "no reseed call site reachable from a patch load"
+   },
+   "roots_supplied": {
+    "sst_basic_blocks": "/tmp/sbb",
+    "sst_effects": "/tmp/sfx",
+    "surge": "/tmp/surge"
+   },
+   "status": "PASS"
+  }
+ },
+ "not_surveyed": [
+  {
+   "fx_type_id": 14,
+   "fx_type_name": "Airwindows",
+   "reason": "the Airwindows algorithms live outside the surge source tree scanned here (src/common/dsp/effects/airwindows/ holds only the host shim). Airwindows determinism is the business of the per-algorithm SXT-028 leaves (aw-49 landed); this issue makes no statement about it.",
+   "status": "NOT_RUN"
+  },
+  {
+   "fx_type_id": 22,
+   "fx_type_name": "Nimbus",
+   "reason": "eurorack/clouds is a pinned submodule not scanned here.",
+   "status": "NOT_RUN"
+  },
+  {
+   "fx_type_id": null,
+   "fx_type_name": "Floaty Delay",
+   "reason": "surge-synthesizer/sst-effects@adcac6950292dacc529651093e7ece2d1c8c0d4b include/sst/effects/FloatyDelay.h:77,174-176 owns a `basic_blocks::dsp::RNG rng` driving two SimpleLFO SMOOTH_NOISE modulators UNCONDITIONALLY, so the whole class is RNG-driven. It is absent from corpus/census-v0.1 (the corpus predates it) and therefore contributes 0 affected presets today; it is recorded so a future leaf does not rediscover it.",
+   "status": "FINDING"
+  }
+ ],
+ "question": "Can the pinned engine's FX-modulation RNG stream be pinned well enough for a frozen fixed-point model and an exact RTL to reproduce it?",
+ "raised_by": "SXT-028g (#59)",
+ "reproduce": [
+  "python3 tools/fx_rng_characterize.py --sst-basic-blocks <sst-basic-blocks checkout at the pin> --sst-effects <sst-effects checkout at the pin> --surge <surge checkout at the pin>",
+  "(the source-verification leg records NOT_RUN without them; the executable probe needs only a C++17 compiler)"
+ ],
+ "routes_to": "SXT-017 (#12)",
+ "schema_version": "sxt-028-rng-characterization/1.0.0"
+}

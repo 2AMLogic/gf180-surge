@@ -299,6 +299,19 @@ def main():
         return vm.envelope_rate_linear_nowrap(vm.qint(p))
 
     probe = MwVoice(inp, 60, 100)
+    # the probe voice is discarded (character-filter/attenuation words only);
+    # reset the declared draw cursor so the rendered voices consume the
+    # committed init_phase_draws list from its start (matches run_model.py)
+    inp.reset_draws()
+
+    # UNI block (see tb_voice.sv cfg map, words 78+): unison stack constants
+    # (per-voice detune tables precomputed in the model's control plane)
+    uni_n = max(1, int(inp.n_unison))
+    uni_words = [uni_n, probe.out_attenuation]
+    for u in probe.u:
+        uni_words += [u["t"], u["t_inv"], u["oscstate"]]
+    uni_words += [0] * (3 * 16 - 3 * len(probe.u))
+
     init_words = [
         envrate(inp.adsr["a"]), envrate(inp.adsr["d"]), envrate(inp.adsr["r"]),
         vm.qint_phase(inp.adsr["s"]), int(inp.adsr["r_s"]),
@@ -324,6 +337,8 @@ def main():
         inp.osc_pitch_offsets[0], inp.osc_pitch_offsets[1],
         inp.osc_pitch_offsets[2],
     ] + [0] * 30
+    # ---- SXT-034 unison appendix (words 78..127) --------------------------
+    init_words += uni_words
 
     # mw init + route words for tb_mw.sv
     mw_init = [total_blocks, vm.Modwheel().inv]
@@ -332,6 +347,7 @@ def main():
         mw_routes.extend([DEST_CODE[dst], vm.qint(depth)])
 
     voices = []
+    draw_sets = []          # distinct per-creation init oscstate sets
     events = list(seq["events"])
     ei = 0
     bs = BLOCK_SIZE
@@ -340,6 +356,15 @@ def main():
     blocks_json = []
     ctrl = []
     mw_ctrl = []
+
+    def draw_set_index_of(v):
+        key = tuple(v.init_oscstate_set)
+        if key not in draw_set_index_of.table:
+            draw_set_index_of.table[key] = len(draw_sets)
+            draw_sets.append(list(v.init_oscstate_set))
+        return draw_set_index_of.table[key]
+
+    draw_set_index_of.table = {}
 
     for b in range(total_blocks):
         blk = {"b": b, "create": [], "release": [], "voices": []}
@@ -352,6 +377,7 @@ def main():
                             if all(v.slot != i for v in voices))
                 v = MwVoice(inp, e["note"], e.get("velocity", 0))
                 v.slot = slot
+                v.draw_set_index = draw_set_index_of(v)
                 voices.append(v)
                 blk["create"].append(slot)
             elif e["type"] == "note_off":
@@ -404,7 +430,7 @@ def main():
                 *v.ctrl_C, *v.ctrl_dC,
                 v.fbp_gain, v.fbp_outl,
                 v.aeg.phase, v.aeg.output, v.feg.phase, v.feg.output,
-                0,
+                v.draw_set_index,          # word 31: init-draw set index
                 0, 0, 0, 0, 0, 0, 0, 0,       # SXT-026a appendix (classic)
             ])
             rec = {"slot": slot, "key": v.key, "gate": v.gate,
@@ -451,6 +477,12 @@ def main():
     os.makedirs(args.out_dir, exist_ok=True)
     rtl_dir = os.path.join(args.out_dir, "rtl")
     os.makedirs(rtl_dir, exist_ok=True)
+
+    # SXT-034 draw table (cfg words 128+, after the SXT-026a and unison
+    # appendices): n_sets, then each 16-word set. Only distinct sets are
+    # stored; ctrl word 31 indexes them at creation.
+    padded_sets = [s + [0] * (16 - len(s)) for s in draw_sets]
+    init_words += [len(padded_sets)] + [w for s in padded_sets for w in s]
 
     vm.write_wav16(os.path.join(args.out_dir, "model.wav"), out_mono, vm.SR)
 

@@ -60,7 +60,6 @@ writes + 1 predelay read + 1 predelay write = 34 words/frame = 136 B/frame
 Original to this repository (Apache-2.0). No Surge source, tables, or assets
 are copied; algorithm structure is cited from the pinned external tree.
 """
-import json
 
 REV_TAPS = 16
 REV_TAP_BITS = 4

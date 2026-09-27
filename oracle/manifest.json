@@ -74,7 +74,21 @@
     "reset_policy": "Harness calls allNotesOff() before each patch load; loadPatch() unstreams the patch into a fresh patch object. No global engine state outside the loaded patch is modified by the harness.",
     "tuning": "Engine default: standard 12-TET, no SCL/KBM override, default tuningApplicationMode. MTS-ESP client not connected.",
     "mpe": false,
-    "randomness": "No seed override is applied; the pinned engine's own RNG initialization is part of the reference. The first-note capture measures render-to-render repeatability and reports it (bit-identical or max abs diff), it does not assume determinism."
+    "randomness": "No seed override is applied; the pinned engine's own RNG initialization is part of the reference. The first-note capture measures render-to-render repeatability and reports it (bit-identical or max abs diff), it does not assume determinism.",
+    "fx_modulation_randomness": {
+      "issue": "#122",
+      "decision_record": "decision-records/0013-fx-modulation-rng-stream.md",
+      "evidence": "reports/SXT-028-rng/EVIDENCE.md",
+      "characterization": "reports/SXT-028-rng/artifacts/rng-characterization.json",
+      "status": "MEASURED NOT REPRODUCIBLE",
+      "generators": {
+        "FXModControl::rng": "sst-basic-blocks dsp::RNG (std::minstd_rand), ONE PER FXModControl INSTANCE, seeded from std::chrono::system_clock at construction; drives mod_wave 5 (Noise) and 6 (Sample & Hold). Consumers at the pin: sst-effects Phaser, Surge Neuron (via Surge::ModControl).",
+        "SurgeStorage::rngGen": "std::minstd_rand, ONE PER SurgeStorage (shared by every storage->rand_* consumer on the audio thread), seeded from std::chrono::system_clock at construction; reached from FX through SurgeSSTFXAdapter.h rand01 -> EffectCore storageRand01(). Consumers at the pin: sst-effects Flanger (waves 3/4), Surge Combulator (noise mix > 0).",
+        "chowdsp std::random_device": "per-processor generators in Tape and Spring Reverb; strictly less pinnable than the clock-seeded generators."
+      },
+      "finding": "No reseed call site reachable from a patch load exists in the pinned engine (SurgeStorage::seed_rand is commented out), so the seed is a function of wall-clock time and not of the patch or of this manifest. Two loads of the same patch therefore do not share an FX-modulation RNG stream. Pinning one would require PATCHING the pinned engine, and this manifest states that the pinned engine's own RNG initialization IS part of the reference -- a patched engine is a different reference.",
+      "consequence": "Model and RTL leaves REFUSE the RNG-driven FX modulation shapes fail-closed rather than substituting a convenient deterministic shape; the preset-coverage cost is published as a reduction (reports/SXT-028-rng/artifacts/coverage-impact.json) and routed to SXT-017 (#12). This manifest field records the characterization; it does not change any pin and applies no seed override."
+    }
   },
   "environment": {
     "os": "macOS 26.5.1 (Build 25F80), arm64",

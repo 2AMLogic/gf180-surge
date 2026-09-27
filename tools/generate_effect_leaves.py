@@ -116,9 +116,10 @@ SST_TYPES = {
                  f"{SST_EFFECTS_PIN}/include/sst/effects/EffectCore.h",
                  f"{ENGINE_PIN}: src/common/dsp/effects/SurgeSSTFXAdapter.h"],
     "Conditioner": [f"{ENGINE_PIN}: src/common/dsp/effects/"
-                    "ConditionerEffect.{h,cpp} (ConditionerEffect: "
-                    "process_block; gate/comp envelope lag objects; shared "
-                    "LFO)"],
+                    "ConditionerEffect.{h,cpp} (ConditionerEffect::process: "
+                    "bass/treble peaking EQ, M/S side high-pass and width, "
+                    "balance/threshold pregain, 128-sample look-ahead "
+                    "limiter, output gain; no gate and no LFO)"],
     "Distortion": [f"{ENGINE_PIN}: src/common/dsp/effects/"
                    "DistortionEffect.{h,cpp} (DistortionEffect::process; "
                    "band/state-variable stages; WS drive tables via "
@@ -148,7 +149,7 @@ AW_SOURCES_TMPL = [
 ]
 TYPE_LEAF_TITLES = {
     "Chorus": "Chorus effect leaf (sst-effects Chorus, delay-line class)",
-    "Conditioner": "Conditioner effect leaf (gate/compressor/LFO)",
+    "Conditioner": "Conditioner effect leaf (EQ/M-S width/look-ahead limiter)",
     "Phaser": "Phaser effect leaf (sst-effects Phaser)",
     "Distortion": "Distortion effect leaf (multiband + waveshaper drive)",
     "Reverb 2": "Reverb 2 effect leaf (sst-effects tank reverb)",
@@ -631,7 +632,6 @@ def dependencies_for(lf):
 def issue_body(spec, allocation_note):
     lf_rf = spec["kind"] == "rf"
     L = []
-    a = spec
     L.append(f"**Epic:** #3 (effects expansion) · **Plan:** "
              f"docs/surge-xt-chip-plan-v0.1-2026-09-20.md §6 (SXT-028 row) · "
              f"planning ID: {spec['leaf_id']} · raised by SXT-028 (#21)")
@@ -901,7 +901,7 @@ def run_self_test(out, presets, ablation, b4, letters):
     # scope and must be refused.
     nc1_ok = False
     try:
-        leaves = fresh_builder()
+        fresh_builder()
         bogus = {
             "kind": "aw", "fid": 47,
             "title": "Airwindows algorithm leaf: Slew 1 (id 47)",

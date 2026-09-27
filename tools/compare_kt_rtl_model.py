@@ -23,8 +23,10 @@ Usage:
 import argparse
 import json
 import os
-import subprocess
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _rtl_compile_common import compile_and_run  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_kt.sv")
@@ -75,21 +77,6 @@ def compare(model_trace, rtl_rows):
     return checked, fails
 
 
-def build_and_run(sv_file, workdir, out_name="tb_kt"):
-    workdir = os.path.abspath(workdir)
-    vvp = os.path.join(workdir, f"{out_name}.vvp")
-    subprocess.run(["iverilog", "-g2012", "-o", vvp, os.path.abspath(sv_file)],
-                   check=True, cwd=workdir,
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    r = subprocess.run(["vvp", vvp], cwd=workdir, check=True,
-                       capture_output=True, text=True)
-    qmuls = None
-    for line in r.stdout.splitlines():
-        if line.startswith("DONE kt-qmuls="):
-            qmuls = int(line.split("=")[1])
-    return os.path.join(workdir, "tb_kt_trace.txt"), qmuls
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True,
@@ -101,7 +88,10 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json")) as f:
         model_trace = json.load(f)
 
-    trace_path, qmuls = build_and_run(args.tb, args.run_dir)
+    trace_path, qmuls = compile_and_run(
+        args.tb, args.run_dir, out_name="tb_kt.vvp", absolute=True,
+        compile_in_workdir=True, quiet_compile=True,
+        done_prefix="DONE kt-qmuls=", trace_name="tb_kt_trace.txt")
     checked, fails = compare(model_trace, parse_tb(trace_path))
     summary = {
         "tb": os.path.relpath(args.tb, REPO),

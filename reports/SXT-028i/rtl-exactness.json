@@ -1,0 +1,303 @@
+{
+  "asserted_model_revision": null,
+  "cases": [
+    {
+      "blocks": 6,
+      "case": "both-slots-all-fx",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "both-slots-no-sends",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "both-slots-scene-fx-only",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "bypass-no-fx-skips-block",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "ains3-disabled-bit8",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "ains4-disabled-bit9",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "both-disabled-bits8and9",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "other-slot-disable-bits-do-not-gate",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "ains4-unoccupied-ains3-only",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "ains3-unoccupied-ains4-only",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "scene-not-live-passthrough",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 6,
+      "case": "scene-live-goes-false-mid-run",
+      "checked": {
+        "checkpoints": 6,
+        "outputs": 384
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 6,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "tail-span-silent-input",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 8,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      },
+      "tail": {
+        "blocks_with_nonzero_output": 8,
+        "declared_tail_span_blocks": 6,
+        "signal_blocks": 2
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "slot3-reload-mid-tail",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 4,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "slot4-off-mid-tail",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 8,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 8,
+      "case": "panic-reset-mid-tail",
+      "checked": {
+        "checkpoints": 8,
+        "outputs": 512
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 4,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 4,
+      "case": "saturating-full-scale",
+      "checked": {
+        "checkpoints": 4,
+        "outputs": 256
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 4,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    },
+    {
+      "blocks": 12,
+      "case": "random-control-stream",
+      "checked": {
+        "checkpoints": 12,
+        "outputs": 768
+      },
+      "exact": true,
+      "first_failures": [],
+      "mismatches": 0,
+      "nonzero_output_blocks": 12,
+      "revision_pin": {
+        "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+        "ok": true
+      }
+    }
+  ],
+  "leaf": "SXT-028i",
+  "model_revision": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0",
+  "schema_version": 1,
+  "sim": "iverilog",
+  "status": "PASS"
+}

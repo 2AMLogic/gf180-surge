@@ -7,7 +7,12 @@ SXT-011 graphs (`fx[].tn`). Three verification tiers:
                   sources (facts read from the GPL tree; no code copied);
   no_long_buffer  verified by structure to hold no writable buffer above the
                   external threshold; exact state sizing is deferred to the
-                  SXT-028 leaf issues (small placeholder, on-chip);
+                  SXT-028 leaf issues (small placeholder, on-chip). A class
+                  whose leaf has landed is promoted in place via
+                  `_NO_LONG_BUFFER_MEASURED`: it keeps the tier and the
+                  zero external traffic, but carries the leaf's measured
+                  per-instance byte count instead of the placeholder and
+                  drops the `class_state_unverified` flag;
   unverified      structure not yet pinned: conservative 1 MiB placeholder,
                   flagged `class_state_unverified`, so an unknown class can
                   never silently look cheap.
@@ -19,6 +24,60 @@ a state-sharing excuse (plan section 3).
 from typing import Dict
 
 from .params import REG
+
+# --- deliberately retained over-estimates -------------------------------------
+# A `pinned` traffic row is RE-DERIVED from the SXT-028 leaf that measures it,
+# never hand-patched, the same way `_NO_LONG_BUFFER_MEASURED` promotes a state
+# row. One row is currently held at a figure its landed leaf has already
+# superseded, and it is held ON PURPOSE, not by oversight. Every entry here must
+# be conservative (retained >= measured, componentwise) and must name what
+# unblocks it; `tests/test_sxt015_fx_classes.py` enforces both, ties the entry
+# to the leaf's committed artifact, and fails if the row and this record drift.
+#
+# Correcting a traffic row DOWNWARD relaxes a bandwidth budget, so a correction
+# is not a free improvement: it can turn a previously-failing `ext_bandwidth_fit`
+# column into a passing one. Where that lands inside a record already escalated
+# to an operator decision, the correction waits for that decision instead of
+# being banked by whoever noticed it (issue #127 stop/escalate clause).
+_RETAINED_OVER_ESTIMATE_TX = {
+    "reverb2": {
+        # what the table carries (an over-estimate, therefore conservative)
+        "retained": {"ext_reads": 40, "ext_writes": 18},
+        # what the landed leaf measures and derives structurally
+        "measured": {"ext_reads": 29, "ext_writes": 17},
+        "leaf": "SXT-028f",
+        "artifact": "reports/SXT-028f/artifacts/buffer-requirement.json",
+        "field": "external_traffic.declared_from_structure",
+        "finding": "F-028f-2 (issue #127)",
+        "reason":
+            "the retired 40/18 row counted the two plain delay output taps as "
+            "2-point interpolated reads; only the recirculation read is "
+            "interpolated in the pinned delay::process, so the structure is "
+            "29 reads / 17 writes. Correcting it is the right end state, but "
+            "re-deriving reports/sxt-017/cost-closure.json with 29/17 moves 4 "
+            "of its 120 grid cells' ext_bandwidth_fit column from EXCEEDS to "
+            "within (B4-broad and R0-ceiling-reference at 192 MHz / M18+M32 / "
+            "E1: worst 696 -> 552 B/frame, required 33,408,000 -> 26,496,000 "
+            "B/s against an E1 sustained 32,000,000 B/s). That is a "
+            "previously-failing check reading pass inside the artifact that "
+            "#12's escalated profile-v1 freeze decides, which is exactly what "
+            "issue #127's stop/escalate clause says not to bank. Held here at "
+            "the conservative figure until #12 decides; no SXT-015/016/017 "
+            "artifact is derived from 29/17 yet.",
+        "unblocks_on": "#12 (SXT-017 profile v1 freeze, operator decision)",
+        "record": "reports/sxt-017/EVIDENCE.md §10",
+    },
+}
+
+
+def retained_over_estimate(class_key: str):
+    """The retention record for a pinned class key, or None.
+
+    Callers that report a traffic figure should say so when one exists: the
+    number is deliberately larger than the measured structure.
+    """
+    return _RETAINED_OVER_ESTIMATE_TX.get(class_key)
+
 
 # --- per-sample (per output frame) memory transactions, per stereo instance ----
 # All values are words per output frame; every non-pinned entry is a named
@@ -32,9 +91,17 @@ _PINNED_TX = {
     # Reverb1.h processBlock: 16 composite tap reads + predelay 1r/1w +
     # per-tap feedback writes (rev_taps=16 interleaved slots).
     "reverb1": {"ext_reads": 17, "ext_writes": 17},
-    # Reverb2.h: predelay 1r/1w, 4 input allpasses (1r+1w each), 8 block
-    # allpasses (1r+1w each), 4 delays (2 taps x subsample interp + 1 write).
-    "reverb2": {"ext_reads": 40, "ext_writes": 18},
+    # Reverb2.h structure, per sample per instance: predelay 1r/1w; 4 input +
+    # 8 block allpasses, 1r+1w each (allpass::process); 4 delays, 4r+1w each
+    # (delay::process -- 2 PLAIN output taps t1/t2 plus 2 reads for the one
+    # 2-point sub-sample interpolated recirculation read). That is
+    #   reads  = 1 + 12 + 4 x 4 = 29        writes = 1 + 12 + 4 x 1 = 17
+    # as SXT-028f measures with the frozen model's own ext_read/ext_write
+    # counters. This row is NOT 29/17: it is DELIBERATELY HELD at the retired
+    # 40/18 over-estimate -- see `_RETAINED_OVER_ESTIMATE_TX["reverb2"]` above
+    # for why, what unblocks it (#12), and reports/sxt-017/EVIDENCE.md §10 for
+    # the measured before/after of correcting it.
+    "reverb2": dict(_RETAINED_OVER_ESTIMATE_TX["reverb2"]["retained"]),
     # ChorusEffectImpl.h: mono shared buffer 1 write, 4 interpolated voice reads.
     "chorus": {"ext_reads": 4, "ext_writes": 1},
     # Flanger.h InterpDelay: per channel 1 write + 2-point interp read.
@@ -86,7 +153,10 @@ _NO_LONG_BUFFER = {
     # tn -> one-line structural justification (file read in the pinned tree)
     "EQ": "ParametricEQ3BandEffect: 3 biquads, no delay line",
     "Graphic EQ": "GraphicEQ11BandEffect: biquad bank, no delay line",
-    "Conditioner": "ConditionerEffect: gain/lipol state, no delay line",
+    "Conditioner": "ConditionerEffect: 128-sample stereo look-ahead line "
+    "delayed[2][128] (2,048 B) + 128 squared-peak leaves lamax[0..127] + "
+    "limiter envelope, 3 lagged biquads and 4 lipols; the only writable "
+    "line is the look-ahead ring and it is far below the external threshold",
     "Ring Mod": "RingModulatorEffect: gain/osc state, no delay line",
     "Mid-Side Tool": "MSToolEffect: matrix/eq state, no delay line",
     "Waveshaper": "WaveShaperEffect: waveshaper registers, no delay line",
@@ -98,6 +168,27 @@ _NO_LONG_BUFFER = {
     "Audio In": "AudioInputEffect: pass-through routing state",
     "Ensemble": "BBDEnsembleEffect.h:98-101: 16 BBDDelayLine<128..1024> stage "
     "lines (~7.7k floats total) + BBD nonlin state",
+}
+
+# Shared conservative placeholder for every `no_long_buffer` class whose exact
+# per-instance state has not been measured by its SXT-028 leaf yet.
+_NO_LONG_BUFFER_PLACEHOLDER_BYTES = 8192
+
+# tn -> measured per-instance on-chip state, promoted out of the shared
+# placeholder above by a landed SXT-028 leaf. Only classes listed here deviate
+# from `_NO_LONG_BUFFER_PLACEHOLDER_BYTES`; every other `no_long_buffer` class
+# keeps the placeholder and stays flagged `class_state_unverified`. Each entry
+# names the artifact the number was read from and pins the frozen model
+# revision it was measured against, so drift is detectable (SXT-015 test).
+_NO_LONG_BUFFER_MEASURED = {
+    "Conditioner": {
+        "leaf": "SXT-028b",
+        "artifact": "reports/SXT-028b/artifacts/buffer-requirement.json",
+        "field": "on_chip_state.bytes",
+        "state_bytes": 2444,
+        "model_revision":
+            "1d2300436062b1b7c1e8f34a121e6dcf61194ceb2ba35dc189573e4278fbcc15",
+    },
 }
 
 _PINNED_CYCLE_KEY = {
@@ -149,13 +240,33 @@ def fx_class_spec(tn: str) -> Dict:
                 "cycle_key": _PINNED_CYCLE_KEY[key],
                 "flags": [], "ref": _PINNED_REFS[key]}
     elif tn in _NO_LONG_BUFFER:
-        sb = 8192
+        measured = _NO_LONG_BUFFER_MEASURED.get(tn)
+        if measured is None:
+            sb = _NO_LONG_BUFFER_PLACEHOLDER_BYTES
+            flags = ["class_state_unverified"]
+            ref = ("no long buffer verified: " + _NO_LONG_BUFFER[tn] +
+                   "; exact state sizing ESTIMATE-REF deferred to SXT-028")
+            pinned_reference = None
+        else:
+            sb = measured["state_bytes"]
+            flags = []
+            pinned_reference = {
+                "leaf": measured["leaf"],
+                "artifact": measured["artifact"],
+                "field": measured["field"],
+                "model_revision": measured["model_revision"],
+            }
+            ref = ("no long buffer verified: " + _NO_LONG_BUFFER[tn] +
+                   "; state measured by %s (%s %s = %d B), frozen model "
+                   "revision %s" % (measured["leaf"], measured["artifact"],
+                                    measured["field"], sb,
+                                    measured["model_revision"]))
         spec = {"class": tn, "tier": "no_long_buffer", "state_bytes": sb,
                 "external": sb > thresh, "ext_reads": 0, "ext_writes": 0,
                 "cycle_key": "cyc_fxgeneric_frame",
-                "flags": ["class_state_unverified"],
-                "ref": "no long buffer verified: " + _NO_LONG_BUFFER[tn] +
-                "; exact state sizing ESTIMATE-REF deferred to SXT-028"}
+                "flags": flags,
+                "pinned_reference": pinned_reference,
+                "ref": ref}
     elif tn in _UNVERIFIED:
         sb = REG.unverified_fx_state_bytes
         spec = {"class": tn, "tier": "unverified", "state_bytes": sb,
@@ -174,6 +285,7 @@ def fx_class_spec(tn: str) -> Dict:
                 "flags": ["fx_class_unverified", "unknown_engine_class"],
                 "ref": "ESTIMATE-REF: display name not in the SXT-015 class "
                 "table; counted at the conservative placeholder and flagged"}
+    spec.setdefault("pinned_reference", None)
     spec["ext_bytes_per_frame"] = (spec["ext_reads"] + spec["ext_writes"]) * word
     _SPEC_CACHE[tn] = spec
     return spec

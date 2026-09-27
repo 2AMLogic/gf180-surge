@@ -25,12 +25,13 @@ Usage:
 import argparse
 import json
 import os
-import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from _rtl_compile_common import compile_and_run  # noqa: E402
 from model.control import render_sequence  # noqa: E402
 from model.control.engine_stub_counter import CounterStubEngine  # noqa: E402
 
@@ -141,15 +142,6 @@ def compare(model_trace, model_out, rtl):
     return checked, fails
 
 
-def build_and_run(dut, run_dir):
-    vvp = os.path.join(run_dir, "tb.vvp")
-    subprocess.run(["iverilog", "-g2012", "-o", vvp, TB, dut], check=True,
-                   cwd=run_dir)
-    with open(os.path.join(run_dir, "sim.log"), "w") as log:
-        subprocess.run(["vvp", "tb.vvp"], cwd=run_dir, check=True,
-                       stdout=log)
-
-
 def run_comparison(seq, run_dir, dut=DUT_DEFAULT):
     """Full model-vs-RTL comparison for one sequence dict.
 
@@ -160,7 +152,14 @@ def run_comparison(seq, run_dir, dut=DUT_DEFAULT):
     os.makedirs(run_dir, exist_ok=True)
     trace, out, summary = render_sequence(seq, CounterStubEngine())
     write_events_hex(seq, os.path.join(run_dir, "events.hex"))
-    build_and_run(os.path.abspath(dut), run_dir)
+    # TB first, then the DUT, exactly as the hand-rolled step did; the
+    # simulation is launched by name from inside run_dir with its stdout
+    # captured to sim.log, and writes rtl_trace.txt there itself.
+    compile_and_run(TB, run_dir, out_name="tb.vvp",
+                    extra_sources=(os.path.abspath(dut),),
+                    compile_in_workdir=True, run_by_name=True,
+                    stdout_path=os.path.join(run_dir, "sim.log"),
+                    trace_name=None)
     rtl = parse_tb(os.path.join(run_dir, "rtl_trace.txt"))
     checked, fails = compare(trace, out, rtl)
 

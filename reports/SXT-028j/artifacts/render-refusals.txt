@@ -1,0 +1,22 @@
+SXT-028j pinned-engine fixture renders (tools/render_fx_fixtures.py pattern)
+status: NOT_RUN
+
+The issue's Fixtures plan calls for NEW reference fixtures: no SXT-014
+ablation carrier exists for this routing form, so original + per-slot bypass
++ all-off dry buses (tails included) would have to be rendered from the
+pinned engine under SXT-012 policies.
+
+No pinned-engine checkout and no importable surgepy exist in the environment
+this leaf was built in (measured: reports/SXT-028j/artifacts/oracle-status.json).
+No wet/dry fixture bus was rendered, so there are no per-carrier refusal rows
+yet. NOT_RUN is not a pass.
+
+Consequence: every model-vs-pinned-engine leg of this leaf is NOT_RUN. The
+RTL-vs-frozen-model exactness claim is unaffected and was run in full
+(reports/SXT-028j/rtl-exactness.json), as were all five negative controls
+(reports/SXT-028j/negative-controls/negative-controls.json).
+
+Re-run on an oracle host:
+  python3 tools/rf_global34_oracle_status.py       # flips this record
+  python3 tools/extract_rf_global34_inputs.py      # live per-slot params
+  # then render the fixtures and run the reference comparison

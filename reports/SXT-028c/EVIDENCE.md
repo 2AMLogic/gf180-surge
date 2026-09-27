@@ -87,6 +87,21 @@ Refusals retained as evidence (never silently dropped):
 * **Static screen ≠ render gate:** Melon/Drone Bee demonstrate that the
   graphs-level determinism screen cannot replace the render gate. Recorded
   for SXT-012/SXT-013 methodology.
+* **Screen defect found after landing, fixed under #116:** the extractor's
+  FX-destination modulation screen iterated the graphs `md` **dict's** keys
+  ("g"/"s") instead of its route lists, so it inspected no route at all — a
+  silent no-op during this leaf's extraction run. Fixed as
+  `tools/extract_chorus_inputs.py::chorus_fx_destinations` (walks `md.g` +
+  `md.s[*].s` + `md.s[*].v`), with `tests/test_extract_chorus_inputs.py` as
+  the regression guard (positive control: `808er Than 808.fxp` → `FX B1 Mix`;
+  failure control: the old loop misses it). Re-checked with the corrected
+  walk, all four committed chorus extraction inputs (fmcombo, fmtwang2,
+  alienappears, melon) carry **0** FX-destination routes, so no fixture,
+  model run, or comparison in this record changes. The FX-route clause of the
+  331-candidate screen above is therefore established only for those four;
+  for the remaining candidates it was not actually evaluated, and the
+  screen's other clauses (drift, retrigger, fx_bypass, fx_disable) are
+  unaffected.
 * Every wet fixture carries a committed all-off DRY bus (3× bit-identical,
   FX-type read-back verified Off) — the comparison drives the model with
   the dry bus and compares against the wet bus; the bypass tests retain
@@ -185,9 +200,12 @@ single dropped channel tail, a far-too-fast decay, and a render truncated
 at the tail offset all FAIL the stereo verdict. The truncation control
 FAILs on the gate alone, and the pre-#100 tool PASSed it
 (`reports/stereo-comparator-tail-gate/artifacts/negative-controls.txt`).
-Known gap: a *late*-tail truncation of the alienappears reverb tail can
-still PASS (#111). That is recorded there as a KNOWN-GAP probe, not as a
-control. This change note makes no new fidelity, support, or sound claim.
+Known gap at #100: a *late*-tail truncation of the alienappears reverb tail
+could still PASS (#111). **Closed by #111:** the gate's tail-shape
+(decay-curve) leg makes those probes required-FAIL controls, and they FAIL.
+All six cases re-ran PASS → PASS under the new leg (worst per-window
+deviation 0.21 dB), and `artifacts/compare-*.json` were regenerated
+(`reports/tail-shape-leg/`). This change note makes no new fidelity, support, or sound claim.
 
 Artifacts: `artifacts/compare-<slug>__<seq>.json` (per-channel + mono
 metrics, declared-region `tail_check` + `tail_check_lr`, budgets, verdicts). Model wet buses:

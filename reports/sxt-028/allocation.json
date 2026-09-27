@@ -20,7 +20,7 @@
    "kind": "type",
    "leaf_id": "SXT-028b",
    "recovery_order": 2,
-   "title": "Conditioner effect leaf (gate/compressor/LFO)"
+   "title": "Conditioner effect leaf (EQ/M-S width/look-ahead limiter)"
   },
   {
    "feature": {
