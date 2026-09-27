@@ -281,15 +281,67 @@ python3 model/effects/run_phaser_model.py --slug <slug> --seq <seq>
 python3 tools/compare_phaser_reference.py --slug <slug> --seq <seq>
 ```
 
-Carriers queued (B4-scope, named by issue #59; census blob SHA-1 from
-`reports/sxt-028/leaves/SXT-028g/newly-enabled.json`, re-verified by the
-extractor at run time): `Argitoth/FX/Reson.fxp` (`ba7d2c45b8ed…`),
-`Bluelight/Basses/Bass 11.fxp` (`bebc1a6c8d18…`),
-`Bluelight/Basses/Bass 17.fxp` (`7c8cd4d1060b…`), each over
-`seq-notes-coverage-v1` and `seq-poly-8-v1`.
+### 6a. Carriers queued — per-carrier verdict (corrected by #140)
 
-**Parameter corners in the meantime.** The oracle-independent legs are driven
-by eight synthetic parameter corners
+The three carriers first named for this leaf (issue #59) were chosen **before
+the extractor's FX-modulation screen actually walked the modulation buses**:
+the landed screen iterated the `md` dict's keys and inspected no route at all
+(a silent no-op, repaired in #132/PR #141). This section previously listed all
+three as "carriers queued" with no verdict. Re-derived from
+`corpus/normalized/graphs.jsonl` against the repaired screen, **all three are
+refused**, so all three were dropped and the queue was re-selected:
+
+| carrier | census path (blob) | oracle-independent verdict |
+|---|---|---|
+| `reson` | `Argitoth/FX/Reson.fxp` (`ba7d2c45b8ed…`) | **REFUSE** — modulation into `FX A1 Left`, `FX A1 Right` |
+| `bass11` | `Bluelight/Basses/Bass 11.fxp` (`bebc1a6c8d18…`) | **REFUSE** — modulation into `FX A2 Mix` |
+| `bass17` | `Bluelight/Basses/Bass 17.fxp` (`7c8cd4d1060b…`) | passes the FX-modulation screen, but **REFUSE** — active Conditioner (fx type 8) in `global1`, outside this leaf's chain ladder |
+
+`bass17`'s refusal was found while re-verifying the other two (#140): the
+issue that raised this correction expected it to be the one usable carrier.
+It is not — `extract()` builds chain entries only for Delay, Reverb 1, Phaser
+and EQ and refuses any other active slot ("outside landed scope"). Assuming a
+previously-listed carrier is clean is exactly what the stop/escalate condition
+forbids; both refusal causes are recorded in §8 and pinned by
+`tests/test_extract_phaser_inputs.py::test_screen_verdict_on_the_dropped_carriers_is_pinned`.
+
+**Re-selected queue** (drawn from the same generator candidate list,
+`reports/sxt-028/leaves/SXT-028g/newly-enabled.json` →
+`b4_scope_candidates`; census blob SHA-1 as recorded there, re-verified by the
+extractor against the engine checkout at run time), each over
+`seq-notes-coverage-v1` and `seq-poly-8-v1`:
+
+| carrier | census path (blob) | chain / rev |
+|---|---|---|
+| `phasey` | `patches_factory/Polysynths/Phasey.fxp` (`59e24827a94c…`) | Phaser `ains1` + Delay `send1`, rev 9 (legacy migrations) |
+| `squelch` | `patches_factory/Leads/Squelch.fxp` (`03d1d38ceaf6…`) | Phaser `ains1` only, rev 20 (no migration) |
+| `sticky` | `patches_factory/MPE/Sticky.fxp` (`e785e1c51e8d…`) | Phaser `ains1` + Reverb 1 `send2`, rev 16 |
+
+**How they were selected, and what that does and does not establish.** The
+generator's 155 B4-scope candidates were screened with the extractor's own
+pure function `extract_phaser_inputs.phaser_fx_destinations` over
+`corpus/normalized/graphs.jsonl` at this commit — no new screening logic, no
+oracle. Counts re-derived at implementation time (`main`, 2026-09-27; the
+census CSV has 265 rows mentioning "phaser", a superset that includes non-B4
+and non-active slots): **155 candidates → 116 carry no FX-destination
+modulation route → 70 of those also pass every remaining *oracle-independent*
+gate** of `extract()` (census blob matches the generator's record, normalized
+status, `fx_bypass`/`fx_disable` zero, a Phaser slot present, every active
+slot in the chain ladder, every active slot role in scope). The three above
+were taken from those 70 for coverage spread (rev 9 / 16 / 20, so the
+`rev<=13`/`rev<=15`/`rev<=17` loader migrations and the no-migration path are
+all exercised; `ains` and `send` roles; Phaser alone, with Delay, and with
+Reverb 1).
+
+**Queued is not extracted and is not a pass.** The remaining gates — mod_wave
+(RNG waveforms refuse, §8), drift zero, retrigger-on, stages in range,
+temposync raw-XML cross-check, and re-verification of the census blob against
+the engine checkout — are oracle-dependent and **NOT_RUN**. Claim 2 is
+unchanged by this re-selection, and §7 coverage is unchanged at 0 presets.
+
+### 6b. Parameter corners in the meantime
+
+The oracle-independent legs are driven by eight synthetic parameter corners
 (`model/effects/type-phaser/corners.py` → `model/effects/fx_inputs/type-phaser-synth-*.json`)
 covering the default (4), minimum-legacy (1), 2, 8 and maximum (16) stage
 counts, all five deterministic LFO waveforms, tone active and deactivated,
@@ -329,6 +381,46 @@ written.
   stream cannot be pinned): filed as **#122**.
 * Parameter modulation **into** phaser parameters: fail-closed; the extractor
   refuses any preset with an FX-destination modulation route.
+* **`reson` and `bass11` are REFUSED on that route, and are omitted carriers.**
+  With the FX-modulation screen repaired (#132/PR #141), two of the three
+  carriers first queued for this leaf route modulation into FX parameters and
+  are refused fail-closed at extraction:
+  `resources/data/patches_3rdparty/Argitoth/FX/Reson.fxp`
+  (blob `ba7d2c45b8ed…`) into `FX A1 Left` and `FX A1 Right`, and
+  `resources/data/patches_3rdparty/Bluelight/Basses/Bass 11.fxp`
+  (blob `bebc1a6c8d18…`) into `FX A2 Mix`. **This is a bounded finding.**
+  Modulation into an FX parameter is outside the frozen static-control-plane
+  scope of this extractor — the model reads FX parameters as block constants,
+  so extracting such a preset would silently freeze a moving control and
+  present it as the preset's sound. Nothing landed is invalidated: no phaser
+  preset has ever been extracted (all eight committed inputs are synthetic
+  corners, §6b) and claim 2 is NOT_RUN, so no evidence here passed through the
+  defective screen. The verdicts are re-derived from
+  `corpus/normalized/graphs.jsonl`, not transcribed, and pinned by
+  `tests/test_extract_phaser_inputs.py::test_screen_verdict_on_the_dropped_carriers_is_pinned`
+  with the pre-fix loop kept as a live failure control (it caught neither).
+  Supporting these presets needs a moving-FX-parameter control plane in the
+  model — a separate contract question, not a repair to this leaf.
+* **`bass17` is REFUSED on an unlanded sibling FX class, and is an omitted
+  carrier.** `resources/data/patches_3rdparty/Bluelight/Basses/Bass 17.fxp`
+  (blob `7c8cd4d1060b…`) carries no FX-destination modulation route — it
+  passes the screen — but its `global1` slot is an active **Conditioner**
+  (fx type 8), and `extract()` builds chain entries only for Delay, Reverb 1,
+  Phaser and EQ; any other active slot refuses with "outside landed scope".
+  **This is a bounded finding**, of the same kind as the complete-wet refusal
+  recorded in every input file's `applicability` block: the leaf declines to
+  render a partial chain rather than dropping or substituting a sibling
+  effect, which would make the preset ADAPTED (AGENTS.md). It blocks only this
+  carrier. Landing the Conditioner class for this chain (the class itself has
+  its own extractor, `tools/extract_conditioner_inputs.py`) would re-admit it;
+  nothing here is weakened to let it through.
+* **Carrier re-selection, not a coverage change (#140).** The three omissions
+  above left the queue empty, so it was re-selected from the same generator
+  candidate list to three carriers that pass every oracle-independent gate
+  (`phasey`, `squelch`, `sticky` — §6a, with the search and its counts). The
+  search is oracle-independent and reproducible at this commit; the queue is a
+  list of carriers to extract **when an oracle host exists**, and queuing them
+  moves no claim: claim 2 stays NOT_RUN and §7 coverage stays 0 presets.
 * The runtime `n_stages` change path (`init_stages` allocating new biquads
   mid-render): `n_stages` is block-constant in the frozen scope;
   `set_params()` refuses a stage-count change.
@@ -374,5 +466,5 @@ python3 -m pytest tests/test_sxt028g.py -q
 | `artifacts/buffer-requirement.json` | measured traffic, exact state inventory, SXT-015 reconciliation, `[PENDING-SXT-016]` closure |
 | `artifacts/tail-window.json` | declared `getRingoutDecay` span per corner + the terminal-energy floor |
 | `artifacts/oracle-status.json` | measured oracle probe; per-leg NOT_RUN record |
-| `artifacts/extract-refusals.txt` | extraction NOT_RUN record + queued carriers and their census blobs |
+| `artifacts/extract-refusals.txt` | extraction NOT_RUN record + queued carriers and their census blobs + the three omitted carriers and their oracle-independent refusal causes (§6a, §8) |
 | `artifacts/render-refusals.txt` | fixture-render NOT_RUN record + the re-run recipe |

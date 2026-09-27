@@ -12,13 +12,18 @@ tails on wet and dry, a 3x bit-identical determinism gate, and a DRY bus
 made by setting all 16 FX-slot types to Off with read-back verification. One
 mechanism per behaviour: no fixture policy is re-invented here.
 
-Carriers: the B4-scope Phaser carriers named by issue #59, with the census
-blob SHA-1 recorded by the SXT-028 generator
-(reports/sxt-028/leaves/SXT-028g/newly-enabled.json) and re-verified at
-render time:
-  reson   Argitoth/FX/Reson.fxp             (blob ba7d2c45b8ed...)
-  bass11  Bluelight/Basses/Bass 11.fxp      (blob bebc1a6c8d18...)
-  bass17  Bluelight/Basses/Bass 17.fxp      (blob 7c8cd4d1060b...)
+Carriers: B4-scope Phaser carriers from the SXT-028 generator's own candidate
+list (reports/sxt-028/leaves/SXT-028g/newly-enabled.json), with the census
+blob SHA-1 it recorded, re-verified at render time. Re-selected by #140 after
+the repaired FX-modulation screen (#132/#141) refused the three originally
+queued carriers -- see tools/extract_phaser_inputs.py::PRESETS and
+reports/SXT-028g/EVIDENCE.md sections 6 and 8:
+  phasey   patches_factory/Polysynths/Phasey.fxp  (blob 59e24827a94c...)
+  squelch  patches_factory/Leads/Squelch.fxp      (blob 03d1d38ceaf6...)
+  sticky   patches_factory/MPE/Sticky.fxp         (blob e785e1c51e8d...)
+
+This list is kept identical to the extractor's by
+tests/test_extract_phaser_inputs.py::test_renderer_queues_the_same_carriers_as_the_extractor.
 
 Any carrier that fails the determinism gate, needs an unlanded sibling FX
 class, or uses an RNG-driven Phaser LFO waveform (Noise / Sample & Hold,
@@ -56,9 +61,9 @@ import render_fx_fixtures as rfx  # noqa: E402  (SXT-023 policies inherited)
 from phaser_model import ringout_blocks  # noqa: E402
 
 PRESETS = {
-    "reson": "resources/data/patches_3rdparty/Argitoth/FX/Reson.fxp",
-    "bass11": "resources/data/patches_3rdparty/Bluelight/Basses/Bass 11.fxp",
-    "bass17": "resources/data/patches_3rdparty/Bluelight/Basses/Bass 17.fxp",
+    "phasey": "resources/data/patches_factory/Polysynths/Phasey.fxp",
+    "squelch": "resources/data/patches_factory/Leads/Squelch.fxp",
+    "sticky": "resources/data/patches_factory/MPE/Sticky.fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1", "seq-poly-8-v1"]
 FX_TYPE_PHASER = 3
