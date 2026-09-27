@@ -32,6 +32,7 @@ from reverb2_model import (  # noqa: E402
     TAP_GAIN_L, TAP_GAIN_R, ms_to_samples, model_revision,
     per_sample_transactions,
 )
+from model.resources.fx_classes import retained_over_estimate  # noqa: E402
 
 SXT = os.path.join(REPO, "reports", "SXT-028f")
 INPUTS = os.path.join(REPO, "model", "effects", "fx_inputs")
@@ -272,12 +273,36 @@ def test_buffer_requirement_record():
     assert tr["measured_matches_structure"] is True
     assert abs(tr["words_per_sample_32bit"] - 46.0) < 1e-9
     assert tr["reads_per_sample"] == 29.0 and tr["writes_per_sample"] == 17.0
-    # SXT-015 state is confirmed; the traffic row is an over-estimate and
-    # the discrepancy must stay VISIBLE, not be quietly reconciled
+    # SXT-015 state is confirmed exactly. The traffic row still disagrees --
+    # but it is no longer an UNEXPLAINED disagreement: issue #127 dispositioned
+    # finding F-028f-2 as a DELIBERATE conservative hold on the shared table
+    # (`_RETAINED_OVER_ESTIMATE_TX`), pending #12. This asserts the disposition,
+    # not merely the disagreement, so the record cannot slide back into a stale
+    # row and cannot flip to an under-estimate unnoticed.
     rec = br["sxt015_reconciliation"]
     assert rec["state_agreement"] is True
-    assert rec["traffic_agreement"] is False
-    assert rec["sxt015_reads_per_sample"] > tr["reads_per_sample"]
+    assert rec["traffic_direction"] in ("agrees", "sxt015_over_estimates"), (
+        "SXT-015 now UNDER-estimates Reverb 2 traffic: every downstream "
+        "bandwidth result would read optimistic. STOP and reconcile.")
+    if rec["traffic_agreement"]:
+        # the #12 decision landed and the row was corrected: nothing to hold
+        assert rec["sxt015_reads_per_sample"] == tr["reads_per_sample"]
+        assert rec["sxt015_writes_per_sample"] == tr["writes_per_sample"]
+        assert rec["traffic_over_estimate_is_deliberate"] is False
+        assert retained_over_estimate("reverb2") is None, (
+            "the row agrees with the measurement, so the retention record "
+            "must be retired with it")
+    else:
+        assert rec["sxt015_reads_per_sample"] > tr["reads_per_sample"]
+        assert rec["traffic_over_estimate_is_deliberate"] is True, (
+            "an SXT-015 traffic over-estimate must be a RECORDED hold, not a "
+            "stale row: declare it in _RETAINED_OVER_ESTIMATE_TX or correct it")
+        held = rec["traffic_retention_record"]
+        assert held["finding"] == "F-028f-2 (issue #127)"
+        assert "#12" in held["unblocks_on"]
+        # the hold names the cost it is holding back, in numbers
+        assert "ext_bandwidth_fit" in held["reason"]
+        assert "EXCEEDS" in held["reason"] and "within" in held["reason"]
     assert "NONE" in br["fit_claim"]
 
 
