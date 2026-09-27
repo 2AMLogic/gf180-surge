@@ -147,6 +147,11 @@ def main():
     build += [os.path.join(RTLDIR, "tb_wavetable.sv"),
               os.path.join(RTLDIR, "wavetable_core.sv")]
     subprocess.run(build, check=True, cwd=args.run_dir)
+    # Simulator-level failures are collected separately and then MERGED into
+    # the comparison's own fail list, so a dead simulator reports its own
+    # reason (its stderr) in the verdict instead of being lost or raising.
+    fails = []
+    sim_fails = []
     run = subprocess.run(
         ["vvp", vvp, "+BLOCKS=%d" % args.max_blocks, "+N_UNISON=%d" % n_unison,
          "+WAVE_SIZE=%d" % wave_size, "+N_TABLES=%d" % model_trace["n_tables"],
@@ -160,11 +165,13 @@ def main():
          "+REVERB_BG=%d" % (1 if args.reverb_bg else 0)],
         cwd=args.run_dir, capture_output=True, text=True, timeout=3600)
     if run.returncode != 0:
-        fails.append("vvp exited rc=%d stderr=%s"
-                     % (run.returncode, run.stderr[-500:]))
+        sim_fails.append("vvp exited rc=%d stderr=%s"
+                         % (run.returncode, run.stderr[-500:]))
+    fails += sim_fails
 
     rtl = parse_traces(args.run_dir)
-    checked, fails = compare(model_trace, rtl, args.max_blocks)
+    checked, cmp_fails = compare(model_trace, rtl, args.max_blocks)
+    fails += cmp_fails
 
     # traffic reconciliation (counts from the core, dumped by the TB)
     traffic = {}
@@ -204,6 +211,7 @@ def main():
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim_fails,
         "traffic_fails": traffic_fails,
         "traffic_tb": traffic,
         "traffic_model": model_traffic,
@@ -214,7 +222,10 @@ def main():
             json.dump(summary, f, indent=1)
             f.write("\n")
     if args.mutant:
-        return 0 if fails else 1
+        # The mutant must fail the COMPARISON. A simulator that never ran
+        # demonstrates nothing about the mutant, so a simulator-level failure
+        # is NOT_RUN for this control and must exit non-zero.
+        return 0 if cmp_fails and not sim_fails else 1
     return 0 if not fails else 1
 
 
