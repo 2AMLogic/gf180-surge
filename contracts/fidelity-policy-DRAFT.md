@@ -135,17 +135,32 @@ pilot freeze.
   `compare_reverb_model.py` carries the same gate as an additional
   `tail_gate` check; evidence in `reports/stereo-comparator-tail-gate/`. Dry
   comparisons carry no tail gate (§3 rule 2).
-  **Known gap (#111):** the residual leg integrates over the whole region,
-  so it is dominated by the early tail; zeroing only the late part of a long
-  reverb tail can pass every budget and the gate. A tail-shape leg is
-  follow-up work; until it lands, a late-tail defect is not excluded by this
-  gate.
+  **Tail-shape leg (issue #111).** The residual leg integrates over the
+  whole region, so it is dominated by the early tail; zeroing only the late
+  part of a long reverb tail passed every budget and the residual leg. Tail
+  pass therefore also requires the windowed decay curve to agree: in every
+  `decay_curve_window_s` window of the declared region whose *reference*
+  level is at or above the **declared** floor `decay_curve_floor_dbfs`, the
+  model window level (dBFS) is within `decay_curve_max_dev_db` of the
+  reference (two-sided). A reference tail with no window at or above the
+  floor cannot be shape-graded and fails closed. Applied in the same places
+  as the residual leg (mono tool; mono sum, L and R in the stereo gate;
+  `tail_check.tail_decay_curve`). Evidence in `reports/tail-shape-leg/`.
+  By construction a late-tail defect whose reference level is below the
+  declared floor is not seen by this leg.
   Tail budget: **[PROPOSED-TO-BE-FROZEN-AT-PILOT]** —
   `tail_rms_rel_db ≤ −20.0 dB`, i.e. the tail-region residual RMS at least
   20 dB below the *reference tail* RMS. The criterion is relative on purpose:
   a full-scale criterion goes vacuous as a tail decays, which is the loophole
   a dropped or stubbed tail passes through. The value is unexercised against a
   real model wet render and must be re-argued at first real use.
+  Tail-shape budget (issue #111): **[PROPOSED-TO-BE-FROZEN-AT-PILOT]** —
+  `decay_curve_window_s = 0.05` (50 ms, the sxt-024 window),
+  `decay_curve_floor_dbfs = −100.0` (a declared constant in full-scale units,
+  identical for int16 and float buses, never inferred from silence), and
+  `decay_curve_max_dev_db = 1.0` (the sxt-024 `decay_curve` value, just
+  above the 0.92 dB level deviation a window meeting the −20 dB relative
+  residual budget can show). The freeze is gated on SXT-017 (#12, #16).
 - **Free-phase presets** (stored retrigger off; engine consumes `rand_01()`
   at voice start — SXT-012 escalation): raw waveform subtraction is NOT
   required and MUST NOT be the pass rule; onset-aligned envelope/level and
@@ -212,8 +227,13 @@ pilot freeze.
    #100 also live in the stereo float32 comparators (zeroed tail, fast
    decay, one dropped channel tail, truncation at the region start) in
    `reports/stereo-comparator-tail-gate/artifacts/negative-controls.txt`.
-   Late-tail truncation is a recorded KNOWN GAP of the current gate (#111),
-   not a passing control.
+   Since issue #111 late-tail truncation (tail zeroed from 30/40/60% of the
+   declared region, formerly a recorded KNOWN GAP) and late-tail fast decay
+   are required-FAIL controls. The 40/60/80/90% truncations, the late fast
+   decay and a one-channel late drop fail on the tail-shape leg alone, while
+   the §2 budgets and the residual leg still pass; the 30% truncation
+   already failed those
+   (`reports/tail-shape-leg/artifacts/late-tail-controls.txt`).
 5. Level-matched normalization leaking into measurements must be detectable:
    measurement artifacts record input hashes; a normalized input must not
    verify against raw renders.

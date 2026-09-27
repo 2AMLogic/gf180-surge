@@ -20,17 +20,23 @@
     "spectral_corr": false
   },
   "path": "wet",
-  "fixture_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/fixtures/audio/koala2/seq-notes-coverage-v1.json",
+  "fixture_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/fixtures/audio/koala2/seq-notes-coverage-v1.json",
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
     "tail_frames": 120000,
     "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
-    "tail_region_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-100/fixtures/audio/koala2/seq-notes-coverage-v1.json",
+    "tail_region_sidecar": "/Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/fixtures/audio/koala2/seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
@@ -40,8 +46,30 @@
     "tail_rms_rel_db": 0.0,
     "tail_ref_rms_lsb": 188.26946769634918,
     "tail_model_rms_lsb": 0.0,
+    "tail_rms_rel_ok": false,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 23,
+      "ref_first_window_dbfs": -31.064753267042136,
+      "ref_last_graded_window_dbfs": -81.88602246856092,
+      "max_dev_db": 268.93524673295786,
+      "worst_window": {
+        "index": 0,
+        "start_frame_in_tail": 0,
+        "ref_dbfs": -31.064753267042136,
+        "model_dbfs": -300.0
+      },
+      "windows_over_budget": 23,
+      "ok": false,
+      "reason": "tail decay curve deviates 268.94 dB (> 1.00 dB budget) in 23 of 23 graded windows (worst window 0: reference -31.1 dBFS, model -300.0 dBFS)"
+    },
+    "tail_decay_curve_ok": false,
     "ok": false,
-    "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget"
+    "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 268.94 dB (> 1.00 dB budget) in 23 of 23 graded windows (worst window 0: reference -31.1 dBFS, model -300.0 dBFS)"
   },
-  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)"
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 268.94 dB (> 1.00 dB budget) in 23 of 23 graded windows (worst window 0: reference -31.1 dBFS, model -300.0 dBFS))"
 }

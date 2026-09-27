@@ -4,7 +4,7 @@
   "slug": "fmcombo",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/fmcombo/drop-full-tail.f32.wav",
+  "model": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/fmcombo/drop-full-tail.f32.wav",
   "path": "wet",
   "fixture_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
   "channels": {
@@ -56,7 +56,10 @@
     "spectral_corr": true
   },
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
@@ -64,7 +67,10 @@
     "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
     "tail_region_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
@@ -74,8 +80,30 @@
     "tail_rms_rel_db": 0.0,
     "tail_ref_rms_lsb": 22091.061367849692,
     "tail_model_rms_lsb": 0.0,
+    "tail_rms_rel_ok": false,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 6,
+      "ref_first_window_dbfs": -22.559524318406137,
+      "ref_last_graded_window_dbfs": -95.84245222815461,
+      "max_dev_db": 277.44047568159385,
+      "worst_window": {
+        "index": 0,
+        "start_frame_in_tail": 0,
+        "ref_dbfs": -22.559524318406137,
+        "model_dbfs": -300.0
+      },
+      "windows_over_budget": 6,
+      "ok": false,
+      "reason": "tail decay curve deviates 277.44 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.6 dBFS, model -300.0 dBFS)"
+    },
+    "tail_decay_curve_ok": false,
     "ok": false,
-    "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget"
+    "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 277.44 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.6 dBFS, model -300.0 dBFS)"
   },
   "tail_check_lr": {
     "L": {
@@ -84,7 +112,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -94,8 +125,30 @@
       "tail_rms_rel_db": 0.0,
       "tail_ref_rms_lsb": 22942.169445829462,
       "tail_model_rms_lsb": 0.0,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 6,
+        "ref_first_window_dbfs": -22.2310959616619,
+        "ref_last_graded_window_dbfs": -95.8423459300129,
+        "max_dev_db": 277.7689040383381,
+        "worst_window": {
+          "index": 0,
+          "start_frame_in_tail": 0,
+          "ref_dbfs": -22.2310959616619,
+          "model_dbfs": -300.0
+        },
+        "windows_over_budget": 6,
+        "ok": false,
+        "reason": "tail decay curve deviates 277.77 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.2 dBFS, model -300.0 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
       "ok": false,
-      "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 277.77 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.2 dBFS, model -300.0 dBFS)"
     },
     "R": {
       "tail_offset": 153600,
@@ -103,7 +156,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -113,10 +169,32 @@
       "tail_rms_rel_db": 0.0,
       "tail_ref_rms_lsb": 21442.883563872227,
       "tail_model_rms_lsb": 0.0,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 6,
+        "ref_first_window_dbfs": -22.818251669278574,
+        "ref_last_graded_window_dbfs": -95.8425585274076,
+        "max_dev_db": 277.1817483307214,
+        "worst_window": {
+          "index": 0,
+          "start_frame_in_tail": 0,
+          "ref_dbfs": -22.818251669278574,
+          "model_dbfs": -300.0
+        },
+        "windows_over_budget": 6,
+        "ok": false,
+        "reason": "tail decay curve deviates 277.18 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.8 dBFS, model -300.0 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
       "ok": false,
-      "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 277.18 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.8 dBFS, model -300.0 dBFS)"
     }
   },
   "tail_gate_ok": false,
-  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; L: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget)"
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 277.44 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.6 dBFS, model -300.0 dBFS); L: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 277.77 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.2 dBFS, model -300.0 dBFS); R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 277.18 dB (> 1.00 dB budget) in 6 of 6 graded windows (worst window 0: reference -22.8 dBFS, model -300.0 dBFS))"
 }
