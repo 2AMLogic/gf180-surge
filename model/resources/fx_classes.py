@@ -125,7 +125,7 @@ _NO_LONG_BUFFER_MEASURED = {
         "field": "on_chip_state.bytes",
         "state_bytes": 2444,
         "model_revision":
-            "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+            "1d2300436062b1b7c1e8f34a121e6dcf61194ceb2ba35dc189573e4278fbcc15",
     },
 }
 

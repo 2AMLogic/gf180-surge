@@ -21,8 +21,11 @@ re-spawn (patch change) mid-tail are all inside the exactness check.
 
 A case PASSes only if: every compared field is equal, the trace carries the
 live frozen-model revision (stale -> REFUSED), and -- for cases that declare
-a tail -- the compared blocks cover the declared tail span
-(conditioner_model.tail_coverage_check).
+a tail -- the compared blocks cover the declared tail span. The gated span is
+DERIVED from the case's own block-level present schedule, not a hand-picked
+constant (conditioner_model.gated_tail_segments / tail_coverage_check;
+issue #119), so an edit that shortens the schedule's first ring-out changes
+the required span, and the check, accordingly.
 
 Negative controls (each must FAIL the check it targets; a passing control
 is a broken control):
@@ -55,7 +58,7 @@ sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-conditioner"))
 
 from conditioner_model import (  # noqa: E402
-    ConditionerModel, ConditionerParams, model_revision, tail_coverage_check,
+    ConditionerModel, ConditionerParams, model_revision, gated_tail_segments,
     BLOCK, CTRL_WORDS, FLAG_CONTROL_ONLY,
 )
 from conditioner_corners import all_corners  # noqa: E402
@@ -221,7 +224,15 @@ def run_sim(tb_source, wd, ninst, n_blocks, in_hex, ctrl_hex, rev8):
     return trace
 
 
-def judge(case, exps, trace, ninst, n_blocks, rev8, last_present=None):
+def judge(case, exps, trace, ninst, n_blocks, rev8, present=None):
+    """`present` (issue #119): the case's full block-level input-present
+    schedule, NOT a hand-picked block number. The tail gate is derived from
+    it via conditioner_model.gated_tail_segments -- the first present
+    segment whose declared ring-out span is both uninterrupted (no later
+    resume before it completes) and actually covered by the n_blocks
+    compared here gates the case; a schedule edit that shortens that
+    segment's tail changes `required_blocks`/`gated_tail_segment_end`
+    automatically and, if it is no longer covered, fails the case."""
     rev, checked, fails = compare(exps, trace, ninst, n_blocks)
     pin_ok = rev == rev8
     res = {"case": case, "ninst": ninst, "blocks_compared": n_blocks,
@@ -229,10 +240,15 @@ def judge(case, exps, trace, ninst, n_blocks, rev8, last_present=None):
            "first_mismatches": fails[:6],
            "revision_pin": {"ok": pin_ok, "trace": rev, "expected": rev8}}
     tail_ok = True
-    if last_present is not None:
-        tail_ok, required = tail_coverage_check(n_blocks, last_present)
-        res["tail_coverage"] = {"ok": tail_ok, "required_blocks": required,
-                                "last_input_present_block": last_present}
+    if present is not None:
+        segments = gated_tail_segments(present, n_blocks)
+        gate = segments[0] if segments else None
+        tail_ok = bool(gate and gate["covered"])
+        res["tail_coverage"] = {
+            "ok": tail_ok,
+            "required_blocks": gate["required_blocks"] if gate else None,
+            "gated_tail_segment_end": gate["segment_end"] if gate else None,
+            "segments": segments}
     if not pin_ok:
         res["status"] = "REFUSED (stale frozen-model revision)"
     elif fails:
@@ -270,9 +286,25 @@ def mutants():
 
 
 def lifecycle_schedule():
+    """The dual-instance lifecycle schedule (tails, resume, suspend, fresh).
+
+    The declared tail gate is NOT returned as a constant here (issue #119):
+    it is derived from `present` itself by gated_tail_segments() at the
+    call site, so an edit to this schedule is reflected automatically. The
+    first present run (blocks 0-39) is followed by silence long enough to
+    cover its full declared ring-out (99 process() blocks + the
+    control-only transition, ending block 139) before input resumes at
+    block 150 -- gated_tail_segments() certifies that run. The second
+    present run (150-169) resumes, then is interrupted mid-ring-out by the
+    suspend/fresh events at block 180 and the schedule ends at block 199,
+    well short of that run's own required span (block 269); its tail is
+    exercised (RTL vs model is still checked exactly for every one of those
+    blocks) but not claimed to be covered end-to-end -- see
+    reports/SXT-028b/EVIDENCE.md #4.
+    """
     present = [True] * 40 + [False] * 110 + [True] * 20 + [False] * 30
     events = {180: {0: "suspend", 1: "fresh"}}
-    return present, events, 39
+    return present, events
 
 
 def main():
@@ -293,13 +325,13 @@ def main():
            "model_revision": rev_full, "cases": [], "controls": []}
 
     # ---- case 1: dual-instance lifecycle (tails, resume, suspend, fresh)
-    present, events, last_present = lifecycle_schedule()
+    present, events = lifecycle_schedule()
     pl = [corners["doomsday-slot06"][0], SYNTH_B]
     exps, in_hex, ctrl_hex, crecs, cov, h = build_case(
         "dual-lifecycle", pl, present, events, 1, os.path.join(wd, "life"))
     n = len(present)
     tr = run_sim(TB, os.path.join(wd, "life"), 2, n, in_hex, ctrl_hex, rev8)
-    r = judge("dual-lifecycle", exps, tr, 2, n, rev8, last_present)
+    r = judge("dual-lifecycle", exps, tr, 2, n, rev8, present)
     r.update(params=["doomsday-slot06", "SYNTH_B"], coverage=cov,
              expected_trace_sha256=h,
              schedule={"input_present_blocks": "0-39, 150-169",
@@ -309,7 +341,7 @@ def main():
                                           "change) mid-tail"}}})
     out["cases"].append(r)
     print(r["case"], r["status"], r["checked"], cov)
-    life = (exps, in_hex, ctrl_hex, crecs, n, last_present)
+    life = (exps, in_hex, ctrl_hex, crecs, n, present)
 
     # ---- cases 2-4: parameter corners (2 instances each)
     pairs = [("loader-defaults", "extreme-min"), ("extreme-max", "aoe-slot00"),
@@ -330,11 +362,11 @@ def main():
             stale_src = (exps_c, ih, ch, cwd)
 
     # ---- negative controls ------------------------------------------------
-    exps, in_hex, ctrl_hex, crecs, n, last_present = life
+    exps, in_hex, ctrl_hex, crecs, n, present = life
     for mname, mpath in mutants().items():
         mwd = os.path.join(wd, mname)
         tr = run_sim(mpath, mwd, 2, n, in_hex, ctrl_hex, rev8)
-        rm = judge(mname, exps, tr, 2, n, rev8, last_present)
+        rm = judge(mname, exps, tr, 2, n, rev8, present)
         out["controls"].append(_control(mname, rm, "exactness",
                                         os.path.relpath(mpath, REPO)))
 
@@ -344,7 +376,7 @@ def main():
     write_ctrl(pctrl, crecs, permute=True)
     tr = run_sim(TB, pwd, 2, n, in_hex, pctrl, rev8)
     out["controls"].append(_control(
-        "permuted-slots", judge("permuted-slots", exps, tr, 2, n, rev8, last_present),
+        "permuted-slots", judge("permuted-slots", exps, tr, 2, n, rev8, present),
         "order-sensitive exactness", None))
 
     exps_c, ih, ch, cwd = stale_src
@@ -354,9 +386,10 @@ def main():
         "stale-stub", judge("stale-stub", exps_c, tr, 2, len(cpresent), rev8),
         "revision pin", None))
 
-    short = tail_coverage_check(0, last_present)[1] - 20
+    gate = gated_tail_segments(present, n)[0]
+    short = gate["required_blocks"] - 20
     tr = run_sim(TB, os.path.join(wd, "dropped"), 2, short, in_hex, ctrl_hex, rev8)
-    rd = judge("dropped-tail", exps, tr, 2, short, rev8, last_present)
+    rd = judge("dropped-tail", exps, tr, 2, short, rev8, present)
     out["controls"].append(_control("dropped-tail", rd, "tail coverage", None))
 
     cases_ok = all(c["status"] == "PASS" for c in out["cases"])

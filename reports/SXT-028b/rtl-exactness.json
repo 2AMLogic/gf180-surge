@@ -26,9 +26,9 @@
         "SYNTH_B"
       ],
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "schedule": {
         "events": {
@@ -41,9 +41,25 @@
       },
       "status": "PASS",
       "tail_coverage": {
-        "last_input_present_block": 39,
+        "gated_tail_segment_end": 39,
         "ok": true,
-        "required_blocks": 140
+        "required_blocks": 140,
+        "segments": [
+          {
+            "covered": true,
+            "required_blocks": 140,
+            "segment_end": 39,
+            "segment_start": 0,
+            "uninterrupted": true
+          },
+          {
+            "covered": false,
+            "required_blocks": 270,
+            "segment_end": 169,
+            "segment_start": 150,
+            "uninterrupted": true
+          }
+        ]
       }
     },
     {
@@ -80,9 +96,9 @@
         }
       ],
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "status": "PASS"
     },
@@ -138,9 +154,9 @@
         }
       ],
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "status": "PASS"
     },
@@ -209,9 +225,9 @@
         }
       ],
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "status": "PASS"
     }
@@ -231,14 +247,30 @@
       "mutant_tb": "rtl/effects/type-conditioner/tb_conditioner_mutant_shared.sv",
       "ok": true,
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "tail_coverage": {
-        "last_input_present_block": 39,
+        "gated_tail_segment_end": 39,
         "ok": true,
-        "required_blocks": 140
+        "required_blocks": 140,
+        "segments": [
+          {
+            "covered": true,
+            "required_blocks": 140,
+            "segment_end": 39,
+            "segment_start": 0,
+            "uninterrupted": true
+          },
+          {
+            "covered": false,
+            "required_blocks": 270,
+            "segment_end": 169,
+            "segment_start": 150,
+            "uninterrupted": true
+          }
+        ]
       },
       "targets": "exactness",
       "verdict": "CONTROL-OK (fails the check it targets: FAIL)"
@@ -255,14 +287,30 @@
       "mutant_tb": "rtl/effects/type-conditioner/tb_conditioner_mutant_nolimiter.sv",
       "ok": true,
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "tail_coverage": {
-        "last_input_present_block": 39,
+        "gated_tail_segment_end": 39,
         "ok": true,
-        "required_blocks": 140
+        "required_blocks": 140,
+        "segments": [
+          {
+            "covered": true,
+            "required_blocks": 140,
+            "segment_end": 39,
+            "segment_start": 0,
+            "uninterrupted": true
+          },
+          {
+            "covered": false,
+            "required_blocks": 270,
+            "segment_end": 169,
+            "segment_start": 150,
+            "uninterrupted": true
+          }
+        ]
       },
       "targets": "exactness",
       "verdict": "CONTROL-OK (fails the check it targets: FAIL)"
@@ -279,14 +327,30 @@
       "mutant_tb": null,
       "ok": true,
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "tail_coverage": {
-        "last_input_present_block": 39,
+        "gated_tail_segment_end": 39,
         "ok": true,
-        "required_blocks": 140
+        "required_blocks": 140,
+        "segments": [
+          {
+            "covered": true,
+            "required_blocks": 140,
+            "segment_end": 39,
+            "segment_start": 0,
+            "uninterrupted": true
+          },
+          {
+            "covered": false,
+            "required_blocks": 270,
+            "segment_end": 169,
+            "segment_start": 150,
+            "uninterrupted": true
+          }
+        ]
       },
       "targets": "order-sensitive exactness",
       "verdict": "CONTROL-OK (fails the check it targets: FAIL)"
@@ -299,9 +363,9 @@
       "mutant_tb": null,
       "ok": true,
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": false,
-        "trace": "d7975392"
+        "trace": "47795a19"
       },
       "tail_coverage": null,
       "targets": "revision pin",
@@ -315,14 +379,30 @@
       "mutant_tb": null,
       "ok": true,
       "revision_pin": {
-        "expected": "8dcd09c8",
+        "expected": "1d230043",
         "ok": true,
-        "trace": "8dcd09c8"
+        "trace": "1d230043"
       },
       "tail_coverage": {
-        "last_input_present_block": 39,
+        "gated_tail_segment_end": 39,
         "ok": false,
-        "required_blocks": 140
+        "required_blocks": 140,
+        "segments": [
+          {
+            "covered": false,
+            "required_blocks": 140,
+            "segment_end": 39,
+            "segment_start": 0,
+            "uninterrupted": true
+          },
+          {
+            "covered": false,
+            "required_blocks": 270,
+            "segment_end": 169,
+            "segment_start": 150,
+            "uninterrupted": true
+          }
+        ]
       },
       "targets": "tail coverage",
       "verdict": "CONTROL-OK (fails the check it targets: FAIL (declared tail span not covered))"
@@ -330,7 +410,7 @@
   ],
   "controls_status": "PASS",
   "leaf": "SXT-028b",
-  "model_revision": "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+  "model_revision": "1d2300436062b1b7c1e8f34a121e6dcf61194ceb2ba35dc189573e4278fbcc15",
   "schema_version": 1,
   "simulator": "Icarus Verilog version 13.0 (stable) (v13_0)",
   "status": "PASS",
