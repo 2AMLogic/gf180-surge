@@ -5,6 +5,14 @@
 // integer-exact trace (T/S/O lines) compared by
 // tools/compare_wt_rtl_model.py.
 //
+// DECLARED SCOPE (issue #176, README deviation 8): the traces emitted here
+// stop at the 2x-rate (96 kHz) oscillator output block (O lines) and the
+// declared per-voice/shared state (T/S lines). This testbench carries NO
+// decimator and NO 48 kHz output stage, so nothing here compares the model
+// trace's 48 kHz mono_block samples, and the harness PASS is oscillator-
+// scoped, not a 48 kHz-output claim. The per-scene decimator lives on the
+// SXT-022 voice leaf (rtl/voice/tb_voice.sv).
+//
 // Plusargs:
 //   +BLOCKS=n  +TRACE=file  +INIT=file  +CTRL=file  +WT_TABLE=file
 //   +SINC_MAIN=file  +SINC_DERIV=file  +WAVE_SIZE=n  +N_TABLES=n

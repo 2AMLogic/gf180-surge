@@ -644,7 +644,27 @@ class Inputs:
 class Slice:
     """Voice slice: WT osc -> o2 level -> AEG gain -> scene out -> halfband
     -> master (mono). Sine osc muted, filter units Off, noise/ring muted by
-    the declared fixture configuration (see extract_inputs.py)."""
+    the declared fixture configuration (see extract_inputs.py).
+
+    DECLARED DEVIATION (deviation 7, README "Declared deviations"): the
+    decimator (`HalfbandD2`) and the master stage sit INSIDE this per-voice
+    slice, where the pinned engine runs them ONCE PER SCENE on the summed
+    `sceneout` (`SurgeSynthesizer::halfbandA/B`, `process_block_D2`), the way
+    `model/voice/run_model.py` and `rtl/voice/tb_voice.sv` do. The filter is
+    linear, so the two differ only by fixed-point rounding, by where the +/-8
+    clip falls, and by state lifetime (a slice's filter state and its ring-out
+    die with the voice; the engine's scene filter keeps ringing). Measured on
+    all nine committed fixtures by `tools/measure_wt_decimation_stage.py`
+    (`reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json`,
+    EVIDENCE section 2a). NOT silently absorbed: moving the stage is an
+    SXT-017 contract revision, routed to its own issue (#180).
+
+    `scene_block()` / `decimate_scene()` split `process_block()` at exactly
+    that stage boundary so the measurement can drive both topologies from this
+    frozen model's own arithmetic instead of re-implementing it. The split is
+    STRUCTURAL ONLY -- `process_block()` performs the identical operations in
+    the identical order, and all nine fixtures render byte-identically across
+    it (`tests/test_wt_decimation_stage.py`)."""
 
     def __init__(self, inp, key, velocity):
         self.inp = inp
@@ -666,7 +686,10 @@ class Slice:
         self.halfband = vm.HalfbandD2()
         self.keep_playing = True
 
-    def process_block(self, b):
+    def scene_block(self, b):
+        """This slice's 96 kHz scene contribution, BEFORE the +/-8 clip and
+        the decimator. Advances the slice's state exactly once; returns
+        (scene_os, osout, keep_playing)."""
         self.aeg.process_block()
         if self.aeg.is_idle():
             self.keep_playing = False
@@ -682,6 +705,13 @@ class Slice:
             v = vm.qmul(vm.qmul(x, start + vm.qround(d * (k + 1), 6)),
                         self.outl)
             scene[k] = v
+        return scene, osout, self.keep_playing
+
+    def decimate_scene(self, scene):
+        """+/-8 clip -> this slice's own HalfbandD2 -> master -> clips.
+
+        The per-slice placement of this stage is declared deviation 7 (see the
+        class docstring); the arithmetic is unchanged and frozen."""
         scene = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in scene]
         bl = self.halfband.process(scene)
         mono = []
@@ -690,8 +720,13 @@ class Slice:
             l = vm.limit_i(l, vm.qint(-8.0), vm.qint(8.0))
             m = vm.limit_i(l, -ONE, ONE)
             mono.append(m)          # Q10.21; int16 conversion happens once
-        self.lastmono = mono        # in the runner (single conversion)
-        return mono, osout, self.keep_playing
+        return mono                 # in the runner (single conversion)
+
+    def process_block(self, b):
+        scene, osout, keep = self.scene_block(b)
+        mono = self.decimate_scene(scene)
+        self.lastmono = mono
+        return mono, osout, keep
 
 
 def write_wav16(path, samples):

@@ -3,6 +3,17 @@
 // RTL-vs-model agreement must be EXACT (integer equality at every declared
 // checkpoint; tools/compare_wt_rtl_model.py).
 //
+// DECLARED SCOPE (issue #176, README deviation 8): this core ends at the
+// 2x-rate (96 kHz) oscillator output block. It implements NO post-oscillator
+// stage — no o2 level, no VCA x AEG gain ramp, no scene out, no +/-8 clip, no
+// halfband/decimator under any name, no master stage — so there is NO RTL
+// counterpart here for the model's wt_model.Slice tail, and the exactness
+// claim this core supports is NOT a claim about the 48 kHz output. The 48 kHz
+// scene path (including the per-scene HalfbandD2 decimator) has RTL coverage
+// on the SXT-022 voice leaf, rtl/voice/tb_voice.sv, against that leaf's own
+// model. Extending coverage to this leaf's 48 kHz output is an SXT-017
+// contract question, tracked in its own issue (#180).
+//
 // Structure is cited from the pinned engine (read, never copied):
 // surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
 //   src/common/dsp/oscillators/WavetableOscillator.cpp
