@@ -374,7 +374,10 @@ normalized graph uses the engine's live display name (`Freq Shift`,
 `Ring Mod`). A name-vs-name comparison would refuse on **spelling** for two of
 the six carriers. The cross-check therefore maps the graph's stored type
 **ids** through the census's own committed `FX` table and compares in that one
-naming authority — a strictly *content*-level comparison, with no invented
+naming authority (since issue #154 this lives in
+`tools/_census_graphs_common.py` and is shared by all four routing-form
+extractors; this leaf's records are byte-unchanged by that move) — a strictly
+*content*-level comparison, with no invented
 alias list; the engine display names are recorded alongside as context
 (`cross_check.engine_display_names_context`). A genuinely different FX in a
 slot still refuses (asserted).
