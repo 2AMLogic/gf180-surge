@@ -158,19 +158,40 @@ error_head_moved() {
   exit 3
 }
 
-# #5579: detect a head-SHA-mismatch response from either forge's merge API.
-# Distinct from the existing "Base branch was modified" matcher below (that
-# one means the PR's BASE fell behind and a rebase-and-retry is correct;
-# this one means the PR's OWN head moved, so retrying would either fail again
-# or silently merge a different diff than the one that was approved). String
-# provenance is documented on forge_merge_pr in lib/forge-helpers.sh —
-# GitHub REST and Gitea are verified against each forge's own source/spec; the
-# GitHub GraphQL (auto-merge) string, from the retired server-side arm (#8427),
-# is best-effort and kept only so an operator-armed merge's error still
-# classifies.
-_is_head_mismatch_response() {
-  echo "$1" | grep -Eiq 'Head branch was modified\.|head out of date|expectedHeadOid'
-}
+# Which route a FAILED merge's forge error TEXT sends the retry loop below down
+# (#8191 slice). Prints one of: merge-in-progress (HTTP 405), head-mismatch
+# (#5579 — the PR's OWN head moved past the SHA we gated on, so retrying would
+# either fail again or silently merge a diff Judge never approved),
+# base-modified (the PR's BASE fell behind; rebase-and-retry is correct), other
+# (stop). String provenance stays documented on forge_merge_pr in
+# lib/forge-helpers.sh — GitHub REST and Gitea verified against each forge's own
+# source/spec, the GitHub GraphQL `expectedHeadOid` spelling best-effort from the
+# retired server-side arm (#8427).
+#
+# This replaces three separate `grep` matchers in three separate `if` blocks
+# whose relative ORDER was the entire safety property: a head-mismatch reaching
+# the base-modified arm answers a moved head with forge_update_branch and another
+# merge attempt. Nothing asserted that order except an `awk` scan over THIS
+# FILE's source text looking for which `grep` appeared first. It is now one
+# ordered `match` in loom-daemon/src/merge_pr/response.rs, pinned by a
+# differential against the frozen retired ladder
+# (loom-daemon/tests/merge_pr_response_differential.rs) and by the precedence
+# unit tests beside the module. Asymmetric case-sensitivity is preserved
+# verbatim: the head-mismatch alternation was `grep -Ei`, its two siblings bare
+# `grep -q`.
+#
+# Returns 3 when no route could be OBTAINED — which the caller must never
+# collapse into the `other` route. Fails CLOSED there, deliberately: the routes
+# are not interchangeable, so an unresolvable binary leaves only "guess a route"
+# or "refuse and say which happened", and only the second is distinguishable
+# from a merge verdict afterwards. It cannot stop a healthy merge — a merge that
+# SUCCEEDS never reaches this function; only one that already failed does.
+#
+# `printf '%s'`, not the retired `echo "$1"`: bash's `echo` silently swallows an
+# argument that is exactly -n/-e/-E, and the response is arbitrary forge bytes.
+# The differential's corpus includes those three inputs, so that substitution is
+# checked to change no answer rather than assumed equivalent.
+_classify_merge_response() { local _k; _k="$(printf '%s' "$1" | "${LOOM_DAEMON_BIN:-loom-daemon}" merge-pr classify-response 2>/dev/null)" || _k=""; [[ "$_k" == "LOOM-MERGE-RESPONSE "* ]] || return 3; printf '%s' "${_k#LOOM-MERGE-RESPONSE }"; }
 
 # #8164: record that THIS script pushed to the head branch, via
 # forge_update_branch() ("Base branch was modified" retry). Deliberately does
@@ -1382,74 +1403,54 @@ info "Branch: $PR_BRANCH"
 # forge type elsewhere. Every step is best-effort and must never fail the merge.
 
 # Reset a single referenced issue's labels if — verified fresh at merge time —
-# it is still open and still carries loom:building. Idempotent: a no-op when the
-# issue is already closed, already lacks loom:building (e.g. re-claimed by a
-# second builder), or is actually a PR.
+# it is still open and still carries loom:building (reopening it first when
+# this very merge auto-closed it through a stray closing keyword, #4569).
+# Idempotent: a no-op when the issue is already closed, already lacks
+# loom:building (e.g. re-claimed by a second builder), or is actually a PR.
+#
+# The decision — which of those cases this is, and the log text for each — is
+# `loom-daemon merge-pr partial-reset` (Rust, loom-daemon/src/merge_pr/
+# partial_reset.rs — #8191 slice), fed the fresh issue body on stdin. It prints
+# the steps in order: `INFO`/`WARNING<TAB>text` to replay, `REOPEN`, `SWAP`.
+# Only the mutations and their audit comments stay here. The fresh read uses
+# plain `gh api` (uncached; not $GH, which may be gh-cached) so a stale cached
+# view cannot mask a re-claim. Best-effort like the rest of this pass: a daemon
+# that cannot plan (missing, or predating the verb) is a warning naming the
+# manual swap, never a guessed mutation. The plan is read on fd 3 so no forge
+# call below can consume it from stdin.
 _reset_one_partial_issue() {
-  local issue_num="$1"
-  local issue_json issue_state issue_labels reopened=false
-
-  # Fresh (uncached) read so we see the label state AS OF the merge, not as of
-  # PR creation. Plain `gh api` is uncached; use it directly (not $GH, which may
-  # be gh-cached) to avoid a stale cached view masking a fresh re-claim.
+  local issue_num="$1" issue_json reopened=false out rc=0 level text flags=()
   issue_json="$(gh api "repos/$REPO_NWO/issues/$issue_num" 2>/dev/null || echo '{}')"
-
-  # The GitHub issues endpoint also returns PRs (a PR is an issue with a
-  # .pull_request member). Never mutate a PR that slipped through the regex.
-  if [[ "$(echo "$issue_json" | jq -r 'has("pull_request")')" == "true" ]]; then
-    return 0
-  fi
-
-  issue_state="$(echo "$issue_json" | jq -r '.state // ""')"
-  if [[ "$issue_state" != "open" ]]; then
-    # #4569: a partial-increment issue that was OPEN pre-merge and is closed now
-    # was closed BY this merge. If the pre-merge guard recorded a closing
-    # reference to it from this very PR (a stray `close #N` in prose, or a
-    # Development-sidebar link), that close contradicts the PR's own declared
-    # `Part of` / `Contributes to` intent — revert it, then fall through to the
-    # normal label swap so the issue re-enters the ready queue.
-    if _partial_ref_is_conflicted "$issue_num"; then
-      warning "Partial-increment reset: issue #$issue_num was auto-closed by PR #$PR_NUMBER's merge despite its non-closing \`Part of\`/\`Contributes to\` reference (a closing reference to #$issue_num was detected pre-merge) — reopening (#4569)"
-      # forge_gh_reopen_issue_rl_safe (#4856): falls back to a REST PATCH
-      # (state=open) when `gh issue reopen`'s GraphQL mutation is rate-limited.
-      if forge_gh_reopen_issue_rl_safe "$REPO_NWO" "$issue_num" 2>/dev/null; then
-        success "Issue #$issue_num reopened (premature auto-close reverted)"
-        reopened=true
-        _post_premature_close_comment "$issue_num"
-      else
-        warning "Could not reopen issue #$issue_num after its premature auto-close — reopen manually: gh issue reopen $issue_num --repo $REPO_NWO"
-        return 0
-      fi
-    elif _partial_ref_was_open_before_merge "$issue_num"; then
-      # Open before the merge, closed after it, but this PR carries no closing
-      # reference we can attribute it to. Could be a deliberate close by a human
-      # or another agent in the same window, so do NOT revert it — just make the
-      # coincidence loud enough to investigate.
-      warning "Partial-increment reset: issue #$issue_num was open before PR #$PR_NUMBER merged and is now closed (state='${issue_state:-unknown}'), but no closing reference to it was detected on this PR — NOT reopening automatically (it may be a deliberate close). If this was a premature auto-close, reopen it with: gh issue reopen $issue_num --repo $REPO_NWO"
-      return 0
-    else
-      info "Partial-increment reset: issue #$issue_num is not open (state='${issue_state:-unknown}') — skipping"
-      return 0
-    fi
-  fi
-
-  issue_labels="$(echo "$issue_json" | jq -r '.labels[]?.name' 2>/dev/null || true)"
-  if ! printf '%s\n' "$issue_labels" | grep -qx 'loom:building'; then
-    info "Partial-increment reset: issue #$issue_num is not loom:building — skipping (idempotent)"
-    return 0
-  fi
-
-  info "Partial-increment reset: PR #$PR_NUMBER merged as a partial slice of #$issue_num; returning it to the ready queue"
-  # forge_gh_swap_label_rl_safe (#4856): falls back to REST (DELETE the old
-  # label, POST the new one) when `gh issue edit`'s GraphQL mutation is
-  # rate-limited, rather than silently dropping the label swap.
-  if forge_gh_swap_label_rl_safe "$REPO_NWO" "$issue_num" "loom:building" "loom:issue" 2>/dev/null; then
-    success "Issue #$issue_num: loom:building -> loom:issue (partial increment; issue remains open)"
-    local ts comment reopen_note=""
-    ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-    [[ "$reopened" == "true" ]] && reopen_note="
+  ! _partial_ref_is_conflicted "$issue_num" || flags+=(--conflicted)
+  ! _partial_ref_was_open_before_merge "$issue_num" || flags+=(--open-before-merge)
+  out="$(printf '%s\n' "$issue_json" | "${LOOM_DAEMON_BIN:-loom-daemon}" merge-pr partial-reset --issue "$issue_num" --pr "$PR_NUMBER" --repo "$REPO_NWO" ${flags[@]+"${flags[@]}"} 2>/dev/null)" || rc=$?
+  if [[ $rc -ne 0 ]]; then warning "Partial-increment reset for issue #$issue_num did not run — '${LOOM_DAEMON_BIN:-loom-daemon} merge-pr partial-reset' exited $rc (a loom-daemon predating #8191's slice has no such verb). Advisory only — the merge already happened and #$issue_num was left untouched; if it is still open and loom:building, return it to the ready queue by hand: gh issue edit $issue_num --repo $REPO_NWO --remove-label loom:building --add-label loom:issue $(! declare -F _mp_daemon_roll_hint >/dev/null || _mp_daemon_roll_hint merge-pr "$(command -v "${LOOM_DAEMON_BIN:-loom-daemon}" 2>/dev/null || true)")"; return 0; fi
+  while IFS=$'\t' read -r -u 3 level text; do
+    case "$level" in
+      INFO) info "$text" ;;
+      WARNING) warning "$text" ;;
+      REOPEN)
+        # forge_gh_reopen_issue_rl_safe (#4856): falls back to a REST PATCH
+        # (state=open) when `gh issue reopen`'s GraphQL mutation is rate-limited.
+        if forge_gh_reopen_issue_rl_safe "$REPO_NWO" "$issue_num" 2>/dev/null; then
+          success "Issue #$issue_num reopened (premature auto-close reverted)"
+          reopened=true
+          _post_premature_close_comment "$issue_num"
+        else
+          warning "Could not reopen issue #$issue_num after its premature auto-close — reopen manually: gh issue reopen $issue_num --repo $REPO_NWO"
+          return 0
+        fi ;;
+      SWAP)
+        # forge_gh_swap_label_rl_safe (#4856): falls back to REST (DELETE the old
+        # label, POST the new one) when `gh issue edit`'s GraphQL mutation is
+        # rate-limited, rather than silently dropping the label swap.
+        if forge_gh_swap_label_rl_safe "$REPO_NWO" "$issue_num" "loom:building" "loom:issue" 2>/dev/null; then
+          success "Issue #$issue_num: loom:building -> loom:issue (partial increment; issue remains open)"
+          local ts comment reopen_note=""
+          ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          [[ "$reopened" == "true" ]] && reopen_note="
 - **Reopened** this issue (GitHub had auto-closed it from a stray closing keyword in PR #$PR_NUMBER's body or one of its commit messages — see #4569)"
-    comment="## Partial Increment Merged
+          comment="## Partial Increment Merged
 
 PR #$PR_NUMBER merged with a non-closing \`Part of\` / \`Contributes to\` reference, so this issue remains **open** for further work.
 
@@ -1461,13 +1462,16 @@ This issue is now available for the next increment (a subsequent \`/loom:sweep\`
 
 ---
 *Reset by merge-pr.sh (#3667) at $ts*"
-    # forge_gh_comment_rl_safe (#4856): falls back to the REST comments
-    # endpoint on a GraphQL rate-limit rejection.
-    forge_gh_comment_rl_safe "$REPO_NWO" "$issue_num" "$comment" 2>/dev/null || \
-      warning "Could not post partial-increment comment on issue #$issue_num (label swap still applied)"
-  else
-    warning "Could not reset labels on issue #$issue_num (partial increment) — may need manual 'gh issue edit'"
-  fi
+          # forge_gh_comment_rl_safe (#4856): falls back to the REST comments
+          # endpoint on a GraphQL rate-limit rejection.
+          forge_gh_comment_rl_safe "$REPO_NWO" "$issue_num" "$comment" 2>/dev/null || \
+            warning "Could not post partial-increment comment on issue #$issue_num (label swap still applied)"
+        else
+          warning "Could not reset labels on issue #$issue_num (partial increment) — may need manual 'gh issue edit'"
+        fi
+        ;;
+    esac
+  done 3<<< "$out"
 }
 
 # Audit trail for a reverted premature auto-close (#4569). Posted right after
@@ -1567,33 +1571,28 @@ _reset_partial_increment_labels() {
 # present. Idempotent: a no-op when the issue isn't actually closed (a
 # transient PR-close-target false positive, or #4569 reopened it above),
 # already lacks the label, or is actually a PR.
+#
+# The decision — which of those cases this is — is `loom-daemon merge-pr
+# closed-building` (Rust, loom-daemon/src/merge_pr/closed_building.rs — #8191
+# slice), fed the fresh issue body on stdin. It prints exactly one line:
+# `STRIP`, or `SKIP<TAB><reason>` which this pass deliberately discards (the
+# retired function's skips were silent and stdout stays byte-identical). Only
+# the mutation stays here. The fresh read uses plain `gh api` (uncached; not
+# $GH, which may be gh-cached) so a stale cached view cannot mask a fresh
+# re-claim — the same freshness discipline _reset_one_partial_issue keeps.
+# Best-effort like the rest of this pass: a daemon that cannot decide, or that
+# answers with anything but the two known lines, is a warning naming the manual
+# removal, never a guessed mutation. Silence is NOT read as `SKIP`.
 _strip_one_closed_issue_building_label() {
-  local issue_num="$1"
-  local issue_json issue_state issue_labels
+  local issue_num="$1" issue_json out rc=0
 
-  # Fresh (uncached) read, mirroring _reset_one_partial_issue's freshness
-  # discipline: we need the label/state AS OF right now, not as of PR
-  # creation or the GraphQL closingIssuesReferences snapshot.
   issue_json="$(gh api "repos/$REPO_NWO/issues/$issue_num" 2>/dev/null || echo '{}')"
-
-  # A PR is also an "issue" on this endpoint (has a .pull_request member).
-  if [[ "$(echo "$issue_json" | jq -r 'has("pull_request")')" == "true" ]]; then
+  out="$(printf '%s\n' "$issue_json" | "${LOOM_DAEMON_BIN:-loom-daemon}" merge-pr closed-building 2>/dev/null)" || rc=$?
+  if [[ $rc -ne 0 || ( "$out" != "STRIP" && "$out" != "SKIP"$'\t'* ) ]]; then
+    warning "Closed-issue loom:building cleanup for issue #$issue_num did not run — '${LOOM_DAEMON_BIN:-loom-daemon} merge-pr closed-building' exited $rc and printed '${out//$'\n'/ }' rather than STRIP or SKIP (a loom-daemon predating #8191's slice has no such verb). Advisory only — the merge already happened and #$issue_num was left untouched; if it is closed and still loom:building, drop the stale claim by hand: gh issue edit $issue_num --repo $REPO_NWO --remove-label loom:building $(! declare -F _mp_daemon_roll_hint >/dev/null || _mp_daemon_roll_hint merge-pr "$(command -v "${LOOM_DAEMON_BIN:-loom-daemon}" 2>/dev/null || true)")"
     return 0
   fi
-
-  issue_state="$(echo "$issue_json" | jq -r '.state // ""')"
-  if [[ "$issue_state" != "closed" ]]; then
-    # Not (or no longer) closed — either a #4569 revert just reopened it, the
-    # forge's close hadn't landed yet when we read it, or it was never
-    # actually closed. Leave the label; a later merge or the standalone
-    # cleanup script will catch it once it genuinely closes.
-    return 0
-  fi
-
-  issue_labels="$(echo "$issue_json" | jq -r '.labels[]?.name' 2>/dev/null || true)"
-  if ! printf '%s\n' "$issue_labels" | grep -qx 'loom:building'; then
-    return 0
-  fi
+  [[ "$out" == "STRIP" ]] || return 0
 
   if forge_gh_remove_label_rl_safe "$REPO_NWO" "$issue_num" "loom:building" 2>/dev/null; then
     success "Issue #$issue_num: removed stale loom:building label (closed by this merge, #6199)"
@@ -2305,9 +2304,17 @@ for MERGE_ATTEMPT in $(seq 1 $MAX_MERGE_RETRIES); do
     break
   fi
 
+  # Classify the response ONCE, before any of the three routes below (#8191
+  # slice). Placed after the merged-despite-error recheck above deliberately: that
+  # one is a forge round-trip rather than a string test, and a PR that merged
+  # underneath us has no route to choose. A helper failure here is reported as a
+  # HELPER failure — never folded into the terminal "other" route, which would
+  # make "could not classify" indistinguishable from "no marker matched".
+  MERGE_RESPONSE_KIND="$(_classify_merge_response "$MERGE_RESPONSE")" || error "Merge blocked: PR #$PR_NUMBER's merge-response classifier could not run — '${LOOM_DAEMON_BIN:-loom-daemon} merge-pr classify-response' returned no LOOM-MERGE-RESPONSE verdict (missing binary, or one predating the subcommand). The routes it chooses between are not interchangeable: one retries after syncing the base, and one must NEVER retry a head that moved past the approved SHA (#5579). An unobtainable classification therefore refuses rather than guesses. This is a helper failure, NOT a merge verdict — nothing about this PR was rejected. The forge reported: $MERGE_RESPONSE. $(_mp_daemon_roll_hint merge-pr "$(command -v "${LOOM_DAEMON_BIN:-loom-daemon}" 2>/dev/null || true)")"
+
   # Check for "Merge already in progress" (HTTP 405)
   # This happens when auto-merge triggers at the same time as our merge attempt
-  if echo "$MERGE_RESPONSE" | grep -q "Merge already in progress"; then
+  if [[ "$MERGE_RESPONSE_KIND" == "merge-in-progress" ]]; then
     info "Merge already in progress (HTTP 405), waiting for completion..."
     sleep 5
     RECHECK_JSON=$(forge_get_pr_nocache "$REPO_NWO" "$PR_NUMBER" "$GH" 2>/dev/null || echo '{}')
@@ -2328,16 +2335,19 @@ for MERGE_ATTEMPT in $(seq 1 $MAX_MERGE_RETRIES); do
   # NOT retry-and-merge: retrying would either fail again (session still
   # pushing) or silently squash a different diff than the one Judge approved.
   # Exit 3 so the caller (Champion) re-queues instead of treating this as a
-  # failure. See error_head_moved()/_is_head_mismatch_response() above.
+  # failure. See error_head_moved()/_classify_merge_response() above.
   # Since #8164, via _head_moved_or_resync(): a mismatch caused by this run's
   # own base-sync earns exactly one re-read-and-retry; anything else is the
   # same exit-3 re-queue as before.
-  if _is_head_mismatch_response "$MERGE_RESPONSE"; then
+  # This arm MUST precede the base-modified arm below; since #8191 that
+  # precedence lives in the classifier's own ordered match, not in the order of
+  # these two `if`s, so a reorder here cannot change which route is taken.
+  if [[ "$MERGE_RESPONSE_KIND" == "head-mismatch" ]]; then
     _head_moved_or_resync "$MERGE_RESPONSE" && continue
   fi
 
   # Check for stale branch error (base branch was modified)
-  if echo "$MERGE_RESPONSE" | grep -q "Base branch was modified"; then
+  if [[ "$MERGE_RESPONSE_KIND" == "base-modified" ]]; then
     if [[ $MERGE_ATTEMPT -lt $MAX_MERGE_RETRIES ]]; then
       info "Branch is behind base branch, updating... (attempt $MERGE_ATTEMPT/$MAX_MERGE_RETRIES)"
 

@@ -86,6 +86,13 @@ Precedence is **env > config > default**, the same rule every other
 | `queueCapacity` | `LOOM_OBSERVABILITY_QUEUE_CAPACITY` | 2000 |
 | `exporter` | `LOOM_OBSERVABILITY_EXPORTER` | `"https"` (or `"otlp"`, §3) |
 | `exporters` | — (config only) | unset ⇒ `exporter` / `"https"` (§3) |
+| `claudeCodeTelemetry` | `LOOM_CLAUDE_CODE_TELEMETRY_*` | off — a nested, separately-resolved block (#9215) |
+
+`claudeCodeTelemetry` is the one sub-block that configures **someone else's**
+exporter: the OTel environment a spawned worker's own Claude Code session needs
+to emit LLM-vs-tool sub-spans into the sweep's trace. Default off, four keys,
+its own precedence chain, and no effect on anything above — the full reference
+is [tracing](tracing.md) → "Worker-native sub-spans".
 
 **`endpoint` resolution order is env > `.loom-local/local.json` > the committed
 `.loom/config.json`** (`config_resolver.rs`/`config-resolver.sh`), so — like
@@ -424,6 +431,14 @@ It fires when `starved{state="ready"}` stays above 0 on a host for 15 min.
 Import it with `POST /api/v1/rules` or paste its query into a new ClickHouse
 alert. The rule's shape has not yet been tested against a live SigNoz. Standing queries are in
 `defaults/observability/signoz/queue-dwell.sql`.
+
+**Subscription quota utilization (#9005).** The per-account `tokens.snapshot`
+gauges carry both Claude limit windows: `loom.tokens.usage_fraction` (5-hour)
+and `loom.tokens.usage_fraction_weekly` (rolling 7-day, from the
+`.ranking.weekly.json` sidecar `tokens check --ranking` writes). Providers with
+no utilization source emit neither — absent, not `0`. Standing queries for
+per-account utilization, idle headroom at weekly reset, and last week's used
+capacity per provider are in `defaults/observability/signoz/quota-utilization.sql`.
 Completed-sweep phase durations are covered by the cycle-time rollup.
 
 **Dispatch refusals, turnaround and stage dwell (#8907, #8929).** Typed
