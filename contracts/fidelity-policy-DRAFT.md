@@ -161,6 +161,37 @@ pilot freeze.
   `decay_curve_max_dev_db = 1.0` (the sxt-024 `decay_curve` value, just
   above the 0.92 dB level deviation a window meeting the −20 dB relative
   residual budget can show). The freeze is gated on SXT-017 (#12, #16).
+  **The floor stays one declared constant for every bus, and the int16
+  quantization-dominated band is declared with it (issue #160, decision
+  [`decision-records/0016`](../decision-records/0016-int16-tail-shape-leg-floor.md)).**
+  One int16 LSB RMS is −90.3 dBFS, i.e. the declared floor sits 9.7 dB
+  *below* it, so on the mono int16 wet bus
+  (`tools/compare_audio_reference.py --path wet`, full scale 32767) a ±1 LSB
+  model difference alone can spend the whole deviation budget: below
+  −84.4 dBFS if it adds in power, below −72.0 dBFS in the coherent worst
+  case. The band **[−100.0, −72.0] dBFS on the int16 bus is therefore
+  quantization-dominated** and is part of this declared budget, not a
+  discovered property. The float32 (Q10.21) and s24 (Q9.23) wet buses are
+  unaffected: their LSB is 26.4 dB and 38.5 dB below the floor.
+  Consequences, all recorded rather than inferred:
+  (a) a level deviation inside that band on an int16 comparison is not
+  evidence about tail shape — in particular the #93
+  `full-tail-within-budget` control's 0.79 dB (of 1.0 dB) is quantization and
+  MUST NOT be cited as tail-shape headroom;
+  (b) an int16 shape-leg FAIL whose over-budget windows all lie inside the
+  band still **FAILs** (the leg fails closed; it is never re-graded to a
+  pass), and is recorded as a bounded finding routed to SXT-017 (#12) naming
+  the windows and their levels;
+  (c) the floor and `decay_curve_max_dev_db` MUST NOT be raised to move such
+  a case — measured: any int16 floor at or above −80.0 dBFS ungrades the only
+  window through which the landed #111 control
+  `mono/koala2/zero-late-tail-from-44%` fails, flipping it FAIL → PASS, while
+  the quantization-affected windows of that same fixture reach −79.9 dBFS, so
+  no floor is both clear of the ±1 LSB regime and still sensitive to that
+  control. The remedies that remain open are fixture- or bus-side (a wet int16
+  fixture whose declared tail stays clear of the band, or grading the int16
+  wet path on a higher-resolution bus), not budget-side. Evidence:
+  `reports/pilot-freeze-tail-shape-floor/`.
 - **Free-phase presets** (stored retrigger off; engine consumes `rand_01()`
   at voice start — SXT-012 escalation): raw waveform subtraction is NOT
   required and MUST NOT be the pass rule; onset-aligned envelope/level and

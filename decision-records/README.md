@@ -27,3 +27,4 @@ stays and is marked in its Status line.
 | [0013](0013-fx-modulation-rng-stream.md) | FX modulation RNG streams cannot be pinned: RNG-driven effect shapes excluded, coverage reduction published (#122 → SXT-017) | RECORDED CONTRACT REVISION — owner ratification pending | 2026-09-26 |
 | [0014](0014-distortion-sse-quad-waveshaper-constants.md) | Distortion SSE quad-waveshaper constant inventory (SXT-028e-sse) | PROPOSED — pending owner ratification | 2026-09-26 |
 | [0015](0015-airwindows-logical-quoted-constants.md) | Airwindows "Logical" (id 4) quoted constants, and the MIT licence of the vendored `libs/airwindows` subtree (SXT-028k) | PROPOSED — pending owner ratification | 2026-09-26 |
+| [0016](0016-int16-tail-shape-leg-floor.md) | Tail-shape leg keeps one declared floor (−100.0 dBFS) for every bus; the int16 quantization-dominated regime is documented, not floored away (#160 → SXT-017) | RECORDED — pilot-freeze input, owner ratification pending | 2026-09-27 |

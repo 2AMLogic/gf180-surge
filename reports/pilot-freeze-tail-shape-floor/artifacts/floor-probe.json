@@ -1,0 +1,869 @@
+{
+  "head": "9a3aefdeaa702bc8e5feea6dbd1d3cd3507b5624",
+  "legs": {
+    "1": {
+      "buses": [
+        {
+          "bus": "mono int16 (compare_audio_reference.py --path wet)",
+          "floor_above_one_lsb_db": -9.691266377166016,
+          "full_scale_in_lsb": 32767.0,
+          "lsb_unit": "1 LSB = 1 int16 count",
+          "one_lsb_rms_dbfs": -90.30873362283398
+        },
+        {
+          "bus": "stereo Q10.21 (compare_chorus_reference.py, compare_fx_reference.py)",
+          "floor_above_one_lsb_db": 26.432598178872112,
+          "full_scale_in_lsb": 2097152.0,
+          "lsb_unit": "1 LSB = 2^-21",
+          "one_lsb_rms_dbfs": -126.43259817887211
+        },
+        {
+          "bus": "stereo Q9.23 (compare_reverb_model.py tail_gate)",
+          "floor_above_one_lsb_db": 38.47379800543135,
+          "full_scale_in_lsb": 8388608.0,
+          "lsb_unit": "1 LSB = 2^-23",
+          "one_lsb_rms_dbfs": -138.47379800543135
+        }
+      ],
+      "declared_floor_dbfs": -100.0,
+      "declared_max_dev_db": 1.0,
+      "int16_band_edge_coherent_dbfs": -72.03724400606791,
+      "int16_band_edge_incoherent_dbfs": -84.44048037903283,
+      "status": "PASS"
+    },
+    "2": {
+      "floor_dbfs": -100.0,
+      "graded_window_rows": [
+        {
+          "db_above_one_lsb_rms": 5.250988204044788,
+          "dev_db": 0.7872191815509666,
+          "model_dbfs": -84.27052623723823,
+          "ref_dbfs": -85.0577454187892,
+          "window": 17
+        },
+        {
+          "db_above_one_lsb_rms": 7.7685245867101855,
+          "dev_db": 0.45833108146904067,
+          "model_dbfs": -82.08187795465476,
+          "ref_dbfs": -82.5402090361238,
+          "window": 16
+        },
+        {
+          "db_above_one_lsb_rms": 8.42271115427306,
+          "dev_db": 0.3923241865545606,
+          "model_dbfs": -81.49369828200636,
+          "ref_dbfs": -81.88602246856092,
+          "window": 22
+        },
+        {
+          "db_above_one_lsb_rms": 10.436896768168111,
+          "dev_db": 0.2545404017438102,
+          "model_dbfs": -79.61729645292206,
+          "ref_dbfs": -79.87183685466587,
+          "window": 18
+        },
+        {
+          "db_above_one_lsb_rms": 11.021334378661933,
+          "dev_db": 0.226016754757822,
+          "model_dbfs": -79.06138248941423,
+          "ref_dbfs": -79.28739924417205,
+          "window": 21
+        },
+        {
+          "db_above_one_lsb_rms": 11.173127339919347,
+          "dev_db": 0.21318850583024584,
+          "model_dbfs": -78.92241777708439,
+          "ref_dbfs": -79.13560628291464,
+          "window": 20
+        },
+        {
+          "db_above_one_lsb_rms": 12.368520360780366,
+          "dev_db": 0.1646577279251744,
+          "model_dbfs": -77.77555553412844,
+          "ref_dbfs": -77.94021326205362,
+          "window": 19
+        },
+        {
+          "db_above_one_lsb_rms": 19.78585623787542,
+          "dev_db": 0.030838907798667492,
+          "model_dbfs": -70.4920384771599,
+          "ref_dbfs": -70.52287738495856,
+          "window": 15
+        },
+        {
+          "db_above_one_lsb_rms": 25.473413225125555,
+          "dev_db": 0.008878419026771667,
+          "model_dbfs": -64.82644197868166,
+          "ref_dbfs": -64.83532039770843,
+          "window": 10
+        },
+        {
+          "db_above_one_lsb_rms": 30.873382634570447,
+          "dev_db": 0.0023701662199044904,
+          "model_dbfs": -59.43298082204363,
+          "ref_dbfs": -59.43535098826354,
+          "window": 14
+        },
+        {
+          "db_above_one_lsb_rms": 31.015040610404235,
+          "dev_db": 0.002294123581421559,
+          "model_dbfs": -59.29139888884833,
+          "ref_dbfs": -59.29369301242975,
+          "window": 13
+        },
+        {
+          "db_above_one_lsb_rms": 31.23758295718605,
+          "dev_db": 0.00219315915349938,
+          "model_dbfs": -59.068957506494435,
+          "ref_dbfs": -59.071150665647934,
+          "window": 8
+        },
+        {
+          "db_above_one_lsb_rms": 32.17360547570967,
+          "dev_db": 0.0017373240439439996,
+          "model_dbfs": -58.13339082308037,
+          "ref_dbfs": -58.13512814712431,
+          "window": 12
+        },
+        {
+          "db_above_one_lsb_rms": 32.18115952881117,
+          "dev_db": 0.0017233586722582572,
+          "model_dbfs": -58.125850735350554,
+          "ref_dbfs": -58.12757409402281,
+          "window": 9
+        },
+        {
+          "db_above_one_lsb_rms": 32.43820314649899,
+          "dev_db": 0.0015975109118144815,
+          "model_dbfs": -57.86893296542318,
+          "ref_dbfs": -57.87053047633499,
+          "window": 11
+        },
+        {
+          "db_above_one_lsb_rms": 48.05826312618753,
+          "dev_db": 4.9463598926990926e-05,
+          "model_dbfs": -42.25042103304752,
+          "ref_dbfs": -42.25047049664645,
+          "window": 7
+        },
+        {
+          "db_above_one_lsb_rms": 50.56261706826862,
+          "dev_db": 2.629332765025083e-05,
+          "model_dbfs": -39.74609026123771,
+          "ref_dbfs": -39.74611655456536,
+          "window": 6
+        },
+        {
+          "db_above_one_lsb_rms": 50.662721944055825,
+          "dev_db": 2.6004890450792573e-05,
+          "model_dbfs": -39.64598567388771,
+          "ref_dbfs": -39.64601167877816,
+          "window": 2
+        },
+        {
+          "db_above_one_lsb_rms": 50.821651277836004,
+          "dev_db": 3.5763538008382056e-05,
+          "model_dbfs": -39.48704658145997,
+          "ref_dbfs": -39.48708234499798,
+          "window": 1
+        },
+        {
+          "db_above_one_lsb_rms": 50.85938558044481,
+          "dev_db": 2.8505870972139746e-05,
+          "model_dbfs": -39.4493195365182,
+          "ref_dbfs": -39.449348042389175,
+          "window": 5
+        },
+        {
+          "db_above_one_lsb_rms": 51.92032576718082,
+          "dev_db": 1.9141209065764997e-05,
+          "model_dbfs": -38.3883887144441,
+          "ref_dbfs": -38.38840785565316,
+          "window": 3
+        },
+        {
+          "db_above_one_lsb_rms": 53.618575581845384,
+          "dev_db": 3.098928658573641e-06,
+          "model_dbfs": -36.69015494205994,
+          "ref_dbfs": -36.6901580409886,
+          "window": 4
+        },
+        {
+          "db_above_one_lsb_rms": 59.24398035579185,
+          "dev_db": 3.1012564569721235e-06,
+          "model_dbfs": -31.064756368298593,
+          "ref_dbfs": -31.064753267042136,
+          "window": 0
+        }
+      ],
+      "graded_windows": 23,
+      "highest_such_window_ref_dbfs": -79.87183685466587,
+      "status": "PASS",
+      "total_windows": 50,
+      "verdict": "PASS",
+      "window_frames": 2400,
+      "windows_over_quarter_budget": [
+        17,
+        16,
+        22,
+        18
+      ],
+      "worst_graded_dev_db": 0.7872191815509666,
+      "worst_graded_window": 17
+    },
+    "3": {
+      "flips_by_floor": {
+        "-100.0": [],
+        "-72.0": [
+          "koala2/#111 zero-late-tail-from-44%"
+        ],
+        "-80.0": [
+          "koala2/#111 zero-late-tail-from-44%"
+        ],
+        "-84.4": [],
+        "-90.3": [],
+        "-95.0": []
+      },
+      "raised_floors_that_flip_a_landed_control": [
+        "-80.0",
+        "-72.0"
+      ],
+      "rows": [
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 full-tail-within-budget",
+          "floor_dbfs": -100.0,
+          "graded_windows": 23,
+          "max_dev_db": 0.7872191815509666,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "koala2/#93 drop-full-tail",
+          "floor_dbfs": -100.0,
+          "graded_windows": 23,
+          "max_dev_db": 268.93524673295786,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 tail-decays-too-fast",
+          "floor_dbfs": -100.0,
+          "graded_windows": 23,
+          "max_dev_db": 220.71260075582796,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#111 zero-late-tail-from-44%",
+          "floor_dbfs": -100.0,
+          "graded_windows": 23,
+          "max_dev_db": 218.11397753143908,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 baseline (self)",
+          "floor_dbfs": -100.0,
+          "graded_windows": 50,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-40%",
+          "floor_dbfs": -100.0,
+          "graded_windows": 50,
+          "max_dev_db": 256.5565943322685,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-60%",
+          "floor_dbfs": -100.0,
+          "graded_windows": 50,
+          "max_dev_db": 250.03757700903014,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 zero-late-tail-from-95%",
+          "floor_dbfs": -100.0,
+          "graded_windows": 50,
+          "max_dev_db": 232.19470387811816,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 full-tail-within-budget",
+          "floor_dbfs": -95.0,
+          "graded_windows": 23,
+          "max_dev_db": 0.7872191815509666,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "koala2/#93 drop-full-tail",
+          "floor_dbfs": -95.0,
+          "graded_windows": 23,
+          "max_dev_db": 268.93524673295786,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 tail-decays-too-fast",
+          "floor_dbfs": -95.0,
+          "graded_windows": 23,
+          "max_dev_db": 220.71260075582796,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#111 zero-late-tail-from-44%",
+          "floor_dbfs": -95.0,
+          "graded_windows": 23,
+          "max_dev_db": 218.11397753143908,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 baseline (self)",
+          "floor_dbfs": -95.0,
+          "graded_windows": 50,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-40%",
+          "floor_dbfs": -95.0,
+          "graded_windows": 50,
+          "max_dev_db": 256.5565943322685,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-60%",
+          "floor_dbfs": -95.0,
+          "graded_windows": 50,
+          "max_dev_db": 250.03757700903014,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 zero-late-tail-from-95%",
+          "floor_dbfs": -95.0,
+          "graded_windows": 50,
+          "max_dev_db": 232.19470387811816,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 full-tail-within-budget",
+          "floor_dbfs": -90.3,
+          "graded_windows": 23,
+          "max_dev_db": 0.7872191815509666,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "koala2/#93 drop-full-tail",
+          "floor_dbfs": -90.3,
+          "graded_windows": 23,
+          "max_dev_db": 268.93524673295786,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 tail-decays-too-fast",
+          "floor_dbfs": -90.3,
+          "graded_windows": 23,
+          "max_dev_db": 220.71260075582796,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#111 zero-late-tail-from-44%",
+          "floor_dbfs": -90.3,
+          "graded_windows": 23,
+          "max_dev_db": 218.11397753143908,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 baseline (self)",
+          "floor_dbfs": -90.3,
+          "graded_windows": 50,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-40%",
+          "floor_dbfs": -90.3,
+          "graded_windows": 50,
+          "max_dev_db": 256.5565943322685,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-60%",
+          "floor_dbfs": -90.3,
+          "graded_windows": 50,
+          "max_dev_db": 250.03757700903014,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 zero-late-tail-from-95%",
+          "floor_dbfs": -90.3,
+          "graded_windows": 50,
+          "max_dev_db": 232.19470387811816,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 full-tail-within-budget",
+          "floor_dbfs": -84.4,
+          "graded_windows": 22,
+          "max_dev_db": 0.45833108146904067,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "koala2/#93 drop-full-tail",
+          "floor_dbfs": -84.4,
+          "graded_windows": 22,
+          "max_dev_db": 268.93524673295786,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 tail-decays-too-fast",
+          "floor_dbfs": -84.4,
+          "graded_windows": 22,
+          "max_dev_db": 220.71260075582796,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#111 zero-late-tail-from-44%",
+          "floor_dbfs": -84.4,
+          "graded_windows": 22,
+          "max_dev_db": 218.11397753143908,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 baseline (self)",
+          "floor_dbfs": -84.4,
+          "graded_windows": 50,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-40%",
+          "floor_dbfs": -84.4,
+          "graded_windows": 50,
+          "max_dev_db": 256.5565943322685,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-60%",
+          "floor_dbfs": -84.4,
+          "graded_windows": 50,
+          "max_dev_db": 250.03757700903014,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 zero-late-tail-from-95%",
+          "floor_dbfs": -84.4,
+          "graded_windows": 50,
+          "max_dev_db": 232.19470387811816,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 full-tail-within-budget",
+          "floor_dbfs": -80.0,
+          "graded_windows": 20,
+          "max_dev_db": 0.2545404017438102,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "koala2/#93 drop-full-tail",
+          "floor_dbfs": -80.0,
+          "graded_windows": 20,
+          "max_dev_db": 268.93524673295786,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 tail-decays-too-fast",
+          "floor_dbfs": -80.0,
+          "graded_windows": 20,
+          "max_dev_db": 220.71260075582796,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": false,
+          "budgets_all_ok": true,
+          "control": "koala2/#111 zero-late-tail-from-44%",
+          "floor_dbfs": -80.0,
+          "graded_windows": 20,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "FAIL",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 baseline (self)",
+          "floor_dbfs": -80.0,
+          "graded_windows": 50,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-40%",
+          "floor_dbfs": -80.0,
+          "graded_windows": 50,
+          "max_dev_db": 256.5565943322685,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-60%",
+          "floor_dbfs": -80.0,
+          "graded_windows": 50,
+          "max_dev_db": 250.03757700903014,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 zero-late-tail-from-95%",
+          "floor_dbfs": -80.0,
+          "graded_windows": 50,
+          "max_dev_db": 232.19470387811816,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 full-tail-within-budget",
+          "floor_dbfs": -72.0,
+          "graded_windows": 16,
+          "max_dev_db": 0.030838907798667492,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "koala2/#93 drop-full-tail",
+          "floor_dbfs": -72.0,
+          "graded_windows": 16,
+          "max_dev_db": 268.93524673295786,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "koala2/#93 tail-decays-too-fast",
+          "floor_dbfs": -72.0,
+          "graded_windows": 16,
+          "max_dev_db": 16.406274601078408,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": false,
+          "budgets_all_ok": true,
+          "control": "koala2/#111 zero-late-tail-from-44%",
+          "floor_dbfs": -72.0,
+          "graded_windows": 16,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "FAIL",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 baseline (self)",
+          "floor_dbfs": -72.0,
+          "graded_windows": 50,
+          "max_dev_db": 0.0,
+          "observed": "PASS",
+          "required": "PASS",
+          "tail_decay_curve_ok": true,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-40%",
+          "floor_dbfs": -72.0,
+          "graded_windows": 50,
+          "max_dev_db": 256.5565943322685,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": false,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": false,
+          "control": "behemoth/#111 zero-late-tail-from-60%",
+          "floor_dbfs": -72.0,
+          "graded_windows": 50,
+          "max_dev_db": 250.03757700903014,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        },
+        {
+          "as_required": true,
+          "budgets_all_ok": true,
+          "control": "behemoth/#111 zero-late-tail-from-95%",
+          "floor_dbfs": -72.0,
+          "graded_windows": 50,
+          "max_dev_db": 232.19470387811816,
+          "observed": "FAIL",
+          "required": "FAIL",
+          "tail_decay_curve_ok": false,
+          "tail_rms_rel_ok": true,
+          "total_windows": 50
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "numpy": "2.4.2",
+  "overall": "PASS",
+  "shipped_proposed_tail": {
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0,
+    "decay_curve_window_s": 0.05,
+    "tail_rms_rel_db": -20.0
+  },
+  "timestamp": "2026-09-27T14:23:46Z"
+}
