@@ -26,6 +26,9 @@
   "tail_gate": {
     "ok": true,
     "proposed_tail_budget": {
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0,
+      "decay_curve_window_s": 0.05,
       "tail_rms_rel_db": -20.0
     },
     "reason": "",
@@ -34,8 +37,32 @@
       "ok": true,
       "reason": "",
       "tail_budget": {
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0,
+        "decay_curve_window_s": 0.05,
         "tail_rms_rel_db": -20.0
       },
+      "tail_decay_curve": {
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "graded_windows": 88,
+        "max_dev_budget_db": 1.0,
+        "max_dev_db": 0.0017486532846646696,
+        "ok": true,
+        "reason": "",
+        "ref_first_window_dbfs": -29.207814905348627,
+        "ref_last_graded_window_dbfs": -99.93102843125337,
+        "total_windows": 240,
+        "window_frames": 2400,
+        "windows_over_budget": 0,
+        "worst_window": {
+          "index": 87,
+          "model_dbfs": -99.93277708453803,
+          "ref_dbfs": -99.93102843125337,
+          "start_frame_in_tail": 208800
+        }
+      },
+      "tail_decay_curve_ok": true,
       "tail_frames": 576000,
       "tail_max_abs_diff_lsb": 2.46875,
       "tail_model_rms_lsb": 47665.40378020402,
@@ -46,7 +73,8 @@
       "tail_region_sidecar": "reports/sxt-024/traces/preset-notes-coverage-wet.json",
       "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
       "tail_rms_diff_lsb": 0.2387348866257957,
-      "tail_rms_rel_db": -106.00573695465985
+      "tail_rms_rel_db": -106.00573695465985,
+      "tail_rms_rel_ok": true
     },
     "tail_check_lr": {
       "L": {
@@ -54,8 +82,32 @@
         "ok": true,
         "reason": "",
         "tail_budget": {
+          "decay_curve_floor_dbfs": -100.0,
+          "decay_curve_max_dev_db": 1.0,
+          "decay_curve_window_s": 0.05,
           "tail_rms_rel_db": -20.0
         },
+        "tail_decay_curve": {
+          "floor_dbfs": -100.0,
+          "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+          "graded_windows": 89,
+          "max_dev_budget_db": 1.0,
+          "max_dev_db": 0.0026800023248085836,
+          "ok": true,
+          "reason": "",
+          "ref_first_window_dbfs": -28.112344743315862,
+          "ref_last_graded_window_dbfs": -99.56536084546056,
+          "total_windows": 240,
+          "window_frames": 2400,
+          "windows_over_budget": 0,
+          "worst_window": {
+            "index": 88,
+            "model_dbfs": -99.56804084778537,
+            "ref_dbfs": -99.56536084546056,
+            "start_frame_in_tail": 211200
+          }
+        },
+        "tail_decay_curve_ok": true,
         "tail_frames": 576000,
         "tail_max_abs_diff_lsb": 3.09375,
         "tail_model_rms_lsb": 50263.48428838684,
@@ -66,15 +118,40 @@
         "tail_region_sidecar": "reports/sxt-024/traces/preset-notes-coverage-wet.json",
         "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
         "tail_rms_diff_lsb": 0.25692718535069686,
-        "tail_rms_rel_db": -105.82883783339068
+        "tail_rms_rel_db": -105.82883783339068,
+        "tail_rms_rel_ok": true
       },
       "R": {
         "model_tail_present": true,
         "ok": true,
         "reason": "",
         "tail_budget": {
+          "decay_curve_floor_dbfs": -100.0,
+          "decay_curve_max_dev_db": 1.0,
+          "decay_curve_window_s": 0.05,
           "tail_rms_rel_db": -20.0
         },
+        "tail_decay_curve": {
+          "floor_dbfs": -100.0,
+          "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+          "graded_windows": 87,
+          "max_dev_budget_db": 1.0,
+          "max_dev_db": 0.0015273646915119343,
+          "ok": true,
+          "reason": "",
+          "ref_first_window_dbfs": -29.763480379413522,
+          "ref_last_graded_window_dbfs": -97.45342365880084,
+          "total_windows": 240,
+          "window_frames": 2400,
+          "windows_over_budget": 0,
+          "worst_window": {
+            "index": 86,
+            "model_dbfs": -97.45495102349236,
+            "ref_dbfs": -97.45342365880084,
+            "start_frame_in_tail": 206400
+          }
+        },
+        "tail_decay_curve_ok": true,
         "tail_frames": 576000,
         "tail_max_abs_diff_lsb": 2.09375,
         "tail_model_rms_lsb": 48342.6519289598,
@@ -85,7 +162,8 @@
         "tail_region_sidecar": "reports/sxt-024/traces/preset-notes-coverage-wet.json",
         "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
         "tail_rms_diff_lsb": 0.24452877748263901,
-        "tail_rms_rel_db": -105.91999969501829
+        "tail_rms_rel_db": -105.91999969501829,
+        "tail_rms_rel_ok": true
       }
     },
     "units": "s24 LSB (2^-23 of full scale)"

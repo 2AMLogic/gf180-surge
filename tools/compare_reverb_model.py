@@ -12,9 +12,9 @@ Reference path model (documented in reports/sxt-024/EVIDENCE.md):
 with send_gain = amp_to_linear(send_level)^3 = send^3 (float32, per the
 pinned DSPUtils.h amp_to_linear -- pinned explicitly in amp_to_linear_f32(),
 NumPy-version independent since issue #112) and return_gain likewise; the
-preset's only
-active FX is Reverb 1 in send slot S1 (verified from the normalized graph),
-volume = 0 dB (amp 1.0 exactly), no hardclip engaged at these levels.
+preset's only active FX is Reverb 1 in send slot S1 (verified from the
+normalized graph), volume = 0 dB (amp 1.0 exactly), no hardclip engaged at
+these levels.
 
 Model input quantization: the engine's FX input is float32; the frozen model
 consumes s24. The quantization step (2^-24 relative) is part of the measured

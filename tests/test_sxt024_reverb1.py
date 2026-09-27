@@ -8,6 +8,7 @@ missing or self-inconsistent evidence file fails). The RTL exactness suite
 itself requires iverilog and runs via tools/run_reverb_rtl.py; here we only
 check its committed evidence record for coherence.
 """
+import glob
 import json
 import os
 import sys
@@ -112,7 +113,9 @@ def test_ext_memory_hook_addresses_within_region():
 
 
 def _comparator():
-    sys.path.insert(0, os.path.join(REPO, "tools"))
+    tools = os.path.join(REPO, "tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
     import compare_reverb_model as cm  # noqa: E402
     return cm
 
@@ -163,8 +166,15 @@ def test_float64_cube_is_a_live_negative_control_for_the_pin():
         SXT, "traces", "preset-notes-coverage-wet.json")))
     x = side["engine_patch_state"]["scene_send_level"][0]
     f64 = float(x) ** 3
-    assert f64 != cm.amp_to_linear_f32(x)          # the control fires
-    assert abs(f64 - PINNED_SEND_GAIN_F32) > 0.0   # and is not a no-op
+    assert f64 != cm.amp_to_linear_f32(x)   # the control fires
+
+
+# A record's `case` normally names its own trace sidecar. The negative
+# controls are synthesized from a carrier preset's trace instead, so their
+# trace is named here explicitly (see tools/reverb_negative_controls.py).
+_TRACE_FOR_CASE = {
+    "nc-a-generic-schroeder": "preset-notes-coverage-wet",
+}
 
 
 def test_committed_records_carry_the_pinned_send_gain():
@@ -173,25 +183,36 @@ def test_committed_records_carry_the_pinned_send_gain():
     One declared level, one value, in every record that reports it -- the
     condition that was violated before #112 (two committed values, plus a
     third on a current host).
+
+    The record set is DISCOVERED by globbing comparison/ and
+    negative-controls/, not hardcoded, so a record added later that reports
+    `send_gain` is graded too instead of escaping this check. A new record
+    whose trace cannot be resolved fails here rather than being skipped.
     """
     cm = _comparator()
-    cases = {
-        "comparison/click-wet.json": "click-wet",
-        "comparison/preset-notes-coverage-wet.json": "preset-notes-coverage-wet",
-        "comparison/hardreset-midpatch-wet.json": "hardreset-midpatch-wet",
-        # nc-a is built from the carrier preset's trace (see
-        # tools/reverb_negative_controls.py nc_a_generic)
-        "negative-controls/nc-a-generic-schroeder.json": "preset-notes-coverage-wet",
-    }
-    seen = set()
-    for rel, trace in cases.items():
-        rec = json.load(open(os.path.join(SXT, *rel.split("/"))))
-        st = json.load(open(os.path.join(
-            SXT, "traces", trace + ".json")))["engine_patch_state"]
+    paths = sorted(glob.glob(os.path.join(SXT, "comparison", "*.json"))
+                   + glob.glob(os.path.join(SXT, "negative-controls", "*.json")))
+    assert paths, "no committed sxt-024 records found"
+    graded, seen = [], set()
+    for path in paths:
+        rec = json.load(open(path))
+        if not isinstance(rec, dict) or "send_gain" not in rec:
+            continue
+        rel = os.path.relpath(path, SXT)
+        case = rec.get("case")
+        trace = _TRACE_FOR_CASE.get(case, case)
+        side = os.path.join(SXT, "traces", str(trace) + ".json")
+        assert os.path.exists(side), (rel, case, "unresolved trace: add it to "
+                                                 "_TRACE_FOR_CASE")
+        st = json.load(open(side))["engine_patch_state"]
         send, ret = cm.send_return_gains(st)
         assert rec["send_gain"] == send, rel
         assert rec["return_gain"] == ret, rel
+        graded.append(rel)
         seen.add(rec["send_gain"])
+    # the four records that report send_gain today; a regression that stopped
+    # writing the field would otherwise make this test vacuously pass
+    assert len(graded) >= 4, graded
     assert seen == {PINNED_SEND_GAIN_F32}, seen
 
 

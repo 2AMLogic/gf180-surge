@@ -284,7 +284,33 @@ click/preset records): `click-wet`, `preset-notes-coverage-wet`,
 record carries no gain field or graded metric), `sweep-t60`, and all four
 `nc-*`. Before/after records, a field-level diff, the precision probe and the
 live control are at `artifacts/issue-112/` (`before/`, `after/`,
-`pre-fix-host/`, `DIFF.txt`, `PRECISION-PROBE.txt`, `CONTROL.txt`).
+`pre-fix-host/`, `DIFF.txt`, `PRECISION-PROBE.txt`, `CONTROL.txt`,
+`TAIL-SHAPE-LEG.txt`).
+
+**Record shape: post-#111.** The regeneration was run **twice** — once on this
+branch's base, then once more on the tree merged with `main` — because `main`
+gained #111's *windowed decay-curve tail-shape leg* in between, which adds
+`tail_rms_rel_ok`, `tail_decay_curve` and `tail_decay_curve_ok` to
+`car.stereo_tail_gate`'s `tail_check` / `tail_check_lr` and therefore to the
+`tail_gate` block these records copy verbatim. Regenerating only against the
+pre-#111 tool would have recreated the exact defect #112 closes ("fields added
+to the tool after those records were committed"), so the committed records
+carry the **post-#111** `tail_gate` shape: #100's four tail-gate legs **plus**
+#111's tail-shape leg. The second run added 66 `tail_gate` fields to each of
+the three graded comparison records, changed **no** value and **no** exit
+code, and returned `reset-midpatch-wet`, `sweep-t60` and all four `nc-*`
+byte-identical. Every added `tail_decay_curve` leg **passes** its declared
+1.0 dB-per-50 ms-window budget with `windows_over_budget: 0`: worst
+`max_dev_db` in the set is 0.00268 dB (preset, `tail_check_lr.L`; 373× of
+margin), and the mono legs are 0.00104 dB (click, 108/120 graded windows),
+0.00175 dB (preset, 88/240) and 0.00031 dB (hardreset, 35/240). Coverage is
+reported as graded/total rather than folded into the pass; the ungraded
+windows are those whose reference level is under the declared −100 dBFS
+floor. Full measurement: `artifacts/issue-112/TAIL-SHAPE-LEG.txt`. #111's
+`tail_rms_rel_ok` is true on all nine legs, and that does **not** retire this
+leaf's bounded finding — it is the shared tail gate's own budget, not
+sxt-024's top-level `checks.tail_rms_rel`, which stays **false** on
+`hardreset-midpatch-wet`.
 
 **Verdicts: unchanged** (python 3.12.3, numpy 1.26.4). Exit codes before →
 after: click `0 → 0` (PASS), preset `0 → 0` (PASS), hardreset `1 → 1` (FAIL
@@ -299,9 +325,9 @@ ratio of 209); next is preset `tail_rms_rel` −52.605 dB (2.605 dB margin,
 0.0178 dB move).
 
 Other field changes are (a) the additive fields the records predated —
-`tail_gate` (#100), `tail_window` (#108), and `tail_err_rms_dbfs` /
-`tail_wet_rms_dbfs` (the tail floor-guard, `efd4c59`) — and (b) last-bits
-moves of the metrics.
+`tail_gate` (#100, extended by #111's tail-shape leg), `tail_window` (#108),
+and `tail_err_rms_dbfs` / `tail_wet_rms_dbfs` (the tail floor-guard,
+`efd4c59`) — and (b) last-bits moves of the metrics.
 
 **Residual reproducibility finding (bounded, reported not hidden).** The pin
 removes the *arithmetic-definition* drift; it does not make the records
@@ -331,12 +357,18 @@ rescaling of a committed budget.
 exact float32 value, asserts the returned Python float carries exactly a
 float32 value, and asserts **every committed record that reports `send_gain`
 carries that one value** (the condition violated before #112: two committed
-values plus a third on a current host). The live control reverts
-`send_return_gains()` to each rejected arithmetic — the pre-#112 expression
-and the explicit float64 cube — and both tests **fail** in both cases, then
-pass again under the pin (`artifacts/issue-112/CONTROL.txt`). Scope:
-comparator reproducibility only; no budget, RTL-exactness, preset-support or
-sound claim is affected.
+values plus a third on a current host). That last test **discovers** its
+record set by globbing `comparison/*.json` + `negative-controls/*.json` rather
+than naming records, so a record added later cannot escape it, and a record
+reporting `send_gain` whose trace cannot be resolved fails the test instead of
+being skipped. Three live controls, all measured
+(`artifacts/issue-112/CONTROL.txt`): reverting `send_return_gains()` to the
+pre-#112 expression, and to the explicit float64 cube, each makes the pinning
+tests **fail** (then pass again under the pin); and planting one extra record
+carrying the rejected float64 value makes the fail-closed test **fail**, where
+the earlier hardcoded-record version of that same test **passed** — the escape
+the glob closes. Scope: comparator reproducibility only; no budget,
+RTL-exactness, preset-support or sound claim is affected.
 
 ## 4. RTL-vs-frozen-model EXACT (iverilog)
 
@@ -405,12 +437,21 @@ order), and — case A — the full final external-memory image:
 - Reverb2 or any other effect (#21).
 - Byte-identical reproducibility of the committed `comparison/*.json` and
   `negative-controls/*.json` on an **arbitrary** host. #112 pinned the
-  `send_gain` arithmetic and regenerated every record, so they are no longer
-  STALE with respect to the tool — but a residual NumPy reduction-order
-  difference remains in the float64 analysis metrics (measured on the
-  model-free `stereo_corr_wet`: relative ~1e-13; §3's issue-#112 note). The
-  records are reproducible on the declared environment; cross-build
-  bit-identity of those reductions is not claimed.
+  `send_gain` arithmetic and regenerated every record against the tool as it
+  stands on `main` *including* #111's windowed decay-curve tail-shape leg, so
+  they are no longer STALE with respect to the tool in either respect —
+  precision or field shape (their `tail_gate` block now carries #100's
+  tail-gate legs plus #111's tail-shape leg, all passing; §3's issue-#112 note
+  and `artifacts/issue-112/TAIL-SHAPE-LEG.txt`). What remains unproved is
+  cross-build bit-identity: a residual NumPy reduction-order difference is
+  present in the float64 analysis metrics (measured on the model-free
+  `stereo_corr_wet`: relative ~1e-13). The records are reproducible on the
+  declared environment; bit-identity of those reductions across NumPy builds
+  is not claimed. **Nor is #111's tail-shape leg itself re-verified here** —
+  that leg's own negative controls live in
+  `reports/tail-shape-leg/EVIDENCE.md`; what is established here is only that
+  its fields are present in these nine records and pass with the recorded
+  margins.
 
 ## 8. Reproduce
 
@@ -430,8 +471,12 @@ python3 -m pytest -q tests/test_sxt024_reverb1.py tests/test_sxt024_tail_window.
 and the `pre-fix-host/` leg of `artifacts/issue-112/` were produced without
 touching the committed records. The committed records in `comparison/` and
 `negative-controls/` were last regenerated by the commands above under
-python 3.12.3 / numpy 1.26.4 (issue #112); `artifacts/issue-112/DIFF.txt`
-records that run's before/after diff and its unchanged verdicts.
+python 3.12.3 / numpy 1.26.4 (issue #112), on the tree merged with the `main`
+that carries #111's tail-shape leg; `artifacts/issue-112/DIFF.txt` records
+that run's before/after diff and its unchanged verdicts, and
+`artifacts/issue-112/TAIL-SHAPE-LEG.txt` records the post-#111 re-run
+separately (66 additive `tail_gate` fields per graded record, zero value
+changes, zero exit-code changes).
 
 ## 9. Provenance / licensing
 

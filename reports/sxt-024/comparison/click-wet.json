@@ -26,6 +26,9 @@
   "tail_gate": {
     "ok": true,
     "proposed_tail_budget": {
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0,
+      "decay_curve_window_s": 0.05,
       "tail_rms_rel_db": -20.0
     },
     "reason": "",
@@ -34,8 +37,32 @@
       "ok": true,
       "reason": "",
       "tail_budget": {
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0,
+        "decay_curve_window_s": 0.05,
         "tail_rms_rel_db": -20.0
       },
+      "tail_decay_curve": {
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "graded_windows": 108,
+        "max_dev_budget_db": 1.0,
+        "max_dev_db": 0.0010354565335575217,
+        "ok": true,
+        "reason": "",
+        "ref_first_window_dbfs": -19.706075706723208,
+        "ref_last_graded_window_dbfs": -98.52555654433664,
+        "total_windows": 120,
+        "window_frames": 2400,
+        "windows_over_budget": 0,
+        "worst_window": {
+          "index": 106,
+          "model_dbfs": -96.10072638037491,
+          "ref_dbfs": -96.09969092384135,
+          "start_frame_in_tail": 254400
+        }
+      },
+      "tail_decay_curve_ok": true,
       "tail_frames": 288000,
       "tail_max_abs_diff_lsb": 5.265625,
       "tail_model_rms_lsb": 263402.7913929128,
@@ -46,7 +73,8 @@
       "tail_region_sidecar": "reports/sxt-024/traces/click-wet.json",
       "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
       "tail_rms_diff_lsb": 0.8169334345842827,
-      "tail_rms_rel_db": -110.16866827968511
+      "tail_rms_rel_db": -110.16866827968511,
+      "tail_rms_rel_ok": true
     },
     "tail_check_lr": {
       "L": {
@@ -54,8 +82,32 @@
         "ok": true,
         "reason": "",
         "tail_budget": {
+          "decay_curve_floor_dbfs": -100.0,
+          "decay_curve_max_dev_db": 1.0,
+          "decay_curve_window_s": 0.05,
           "tail_rms_rel_db": -20.0
         },
+        "tail_decay_curve": {
+          "floor_dbfs": -100.0,
+          "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+          "graded_windows": 108,
+          "max_dev_budget_db": 1.0,
+          "max_dev_db": 0.0014347855259586595,
+          "ok": true,
+          "reason": "",
+          "ref_first_window_dbfs": -19.49642633840116,
+          "ref_last_graded_window_dbfs": -99.05207088197189,
+          "total_windows": 120,
+          "window_frames": 2400,
+          "windows_over_budget": 0,
+          "worst_window": {
+            "index": 106,
+            "model_dbfs": -96.67519604943891,
+            "ref_dbfs": -96.67376126391295,
+            "start_frame_in_tail": 254400
+          }
+        },
+        "tail_decay_curve_ok": true,
         "tail_frames": 288000,
         "tail_max_abs_diff_lsb": 4.9375,
         "tail_model_rms_lsb": 268959.3164193387,
@@ -66,15 +118,40 @@
         "tail_region_sidecar": "reports/sxt-024/traces/click-wet.json",
         "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
         "tail_rms_diff_lsb": 0.8680091371349704,
-        "tail_rms_rel_db": -109.82323861170082
+        "tail_rms_rel_db": -109.82323861170082,
+        "tail_rms_rel_ok": true
       },
       "R": {
         "model_tail_present": true,
         "ok": true,
         "reason": "",
         "tail_budget": {
+          "decay_curve_floor_dbfs": -100.0,
+          "decay_curve_max_dev_db": 1.0,
+          "decay_curve_window_s": 0.05,
           "tail_rms_rel_db": -20.0
         },
+        "tail_decay_curve": {
+          "floor_dbfs": -100.0,
+          "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+          "graded_windows": 108,
+          "max_dev_budget_db": 1.0,
+          "max_dev_db": 0.000750711747485866,
+          "ok": true,
+          "reason": "",
+          "ref_first_window_dbfs": -19.75949349203894,
+          "ref_last_graded_window_dbfs": -97.89597171580178,
+          "total_windows": 120,
+          "window_frames": 2400,
+          "windows_over_budget": 0,
+          "worst_window": {
+            "index": 106,
+            "model_dbfs": -95.50581934429263,
+            "ref_dbfs": -95.50506863254515,
+            "start_frame_in_tail": 254400
+          }
+        },
+        "tail_decay_curve_ok": true,
         "tail_frames": 288000,
         "tail_max_abs_diff_lsb": 5.625,
         "tail_model_rms_lsb": 272977.91984901717,
@@ -85,7 +162,8 @@
         "tail_region_sidecar": "reports/sxt-024/traces/click-wet.json",
         "tail_region_source": "declared render.frames - render.tail_s (trace sidecar declares no last_event_sample)",
         "tail_rms_diff_lsb": 0.8635349962777596,
-        "tail_rms_rel_db": -109.99694567251342
+        "tail_rms_rel_db": -109.99694567251342,
+        "tail_rms_rel_ok": true
       }
     },
     "units": "s24 LSB (2^-23 of full scale)"
