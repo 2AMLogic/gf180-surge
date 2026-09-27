@@ -163,6 +163,35 @@ coverage-promotion claim in this repository currently depends on this
 specific row, but the affected leaves' A2/acceptance-item-2 language must be
 corrected in place).
 
+## Status update (dated, 2026-09-27, issue #157)
+
+This report and the table immediately above are a **point-in-time record**
+taken before issue #97 landed (commit `4e7bf63`, "Re-grade
+seq-notes-repeated-v1 rms leg to FAIL in SXT-022/034/035 evidence (#97)").
+That commit re-graded exactly the three rows named in the STOP table above —
+`reports/sxt-022/EVIDENCE.md`, `reports/SXT-034/EVIDENCE.md`, and
+`reports/sxt-035/EVIDENCE.md` (and their three JSON rows' `verdict`/
+`proposed_budget_results.rms_diff_dbfs` fields; the underlying numeric
+metrics were left untouched) — to state `FAIL against proposed budgets` on
+the rms leg, matching the corrected `rms_diff_dbfs <= budget` polarity.
+**Re-running `tools/audit_rms_polarity.py` against the current tree no
+longer reports a verdict flip for those three rows** (`leaves_with_verdict_flip`
+would be empty); this committed `audit-report.json` is intentionally left
+unregenerated so the historical STOP finding above stays legible, rather than
+silently disappearing. Issue #157 (this note) additionally re-grades the
+`reports/coverage-v1/leaf-verification.json` ledger prose that depended on
+the pre-fix reading of these rows and of the general rms-flag-flip class
+recorded above (`voice:attacky-slice`, `voice:unison-stack`, `mod:modwheel`,
+`mod:lfo`); no supported-preset count changed. The 46 flag-only (non-verdict)
+flips recorded above — including all `reports/sxt-032/` (mod:lfo) rows and
+the `reports/sxt-026/`, `reports/SXT-033/`, `reports/sxt-026a/` rows — remain
+unregraded in their own EVIDENCE.md files as of this note; `mod:lfo`'s ledger
+note is corrected here because its rms leg is asserted as a pass in the
+ledger, but `reports/sxt-032/EVIDENCE.md` itself still carries the pre-fix
+"RMS and spectral bounds PASS on all four sequences" prose and is left to
+follow-up issue #177 (same class as #97, scoped only to the sxt-032 EVIDENCE
+file) rather than corrected in this ledger-only issue.
+
 ## What remains unproved
 
 This audit establishes only that the recorded `rms_diff_dbfs` flags and, in
