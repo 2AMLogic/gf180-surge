@@ -162,11 +162,17 @@ output sample and every checkpoint field with integer equality:
 - a position-weighted hash over the ring and leaves
 
 It also enforces the frozen-model revision pin and, where a case declares
-one, tail coverage.
+one, tail coverage. **Tail coverage is derived from the case's own
+block-level input-present schedule** (`conditioner_model.gated_tail_segments`,
+issue #119), not a hand-picked block number: the harness gates the first
+present run whose declared ring-out span is both uninterrupted (no later
+resume before it completes) and within the blocks actually compared, so a
+schedule edit that shortens that run's tail changes the required span --
+and the verdict -- automatically instead of leaving a stale constant behind.
 
 | Case | Instances / params | Blocks | Result |
 |---|---|---|---|
-| dual-lifecycle | Doomsday stored values + SYNTH_B (all stages on, HP 12 st, off-centre balance) | 200 | PASS: input present 0–39 and 150–169; tail `process()` blocks 40–138; control-only 139–149 (both instances); resume at 150 after control-only; block 180 **suspend (panic) on inst0, fresh re-spawn (patch change) on inst1, both mid-tail**; tail coverage 200 ≥ 140 required |
+| dual-lifecycle | Doomsday stored values + SYNTH_B (all stages on, HP 12 st, off-centre balance) | 200 | PASS: input present 0–39 and 150–169; tail `process()` blocks 40–138; control-only 139–149 (both instances); resume at 150 after control-only; block 180 **suspend (panic) on inst0, fresh re-spawn (patch change) on inst1, both mid-tail**; tail gate derived from the schedule, `gated_tail_segment_end`=39, required 140 ≤ 200 blocks compared. The second present run's own ring-out (150–169 → required span through block 269) is recorded but **NOT** claimed covered: the schedule ends at block 199, short of that span, and `rtl-exactness.json`'s `tail_coverage.segments` records it `covered: false` |
 | corners-0 | loader defaults + all-min | 48 | PASS |
 | corners-1 | all-max (HP at +70 st, ω > π) + AOE | 48 | PASS |
 | corners-2 | Computer Language 1 + Piercing | 48 | PASS |
@@ -201,7 +207,7 @@ control passes the same check, so no check is vacuous.
 |---|---|---|---|
 | NC-1 | serial A→B vs B→A (permute pattern) | order-sensitive exactness | FAIL (unpermuted passes) |
 | NC-2 | two instances pooled into one state | dual-instance exactness | FAIL for both instances (independent instances pass) |
-| NC-3 | generic instantaneous limiter, labeled ADAPTED | original-preset coverage gate + exactness | REFUSED by the gate and fails exactness; the frozen model is admitted; the wet reference is retained byte-identical |
+| NC-3 | generic instantaneous limiter, labeled ADAPTED | `coverage_gate()`, a LOCAL predicate in `tools/conditioner_negative_controls.py` shaped like the plan section 2 fidelity rule (**not** `tools/publish_coverage.py`, the corpus-wide admission pipeline -- NC-3 never calls it and touches no `reports/coverage-v1/` file), + exactness | refused by that local predicate and fails exactness; the frozen model is admitted by the same local predicate; the wet reference is retained byte-identical. The Chorus-style reference-budget failure (`tools/chorus_negative_controls.py` NC-A) is not added here: the oracle leg is BLOCKED (§3) |
 | NC-4 | render truncated 4 blocks into the tail | tail coverage | FAIL (44 < 140 blocks); the full render passes; the look-ahead drain is non-zero |
 | NC-5 | trace with a stale revision word | revision pin | REFUSED, although the data are identical (the live revision passes) |
 | NC-6 | scheduler that stops `process()` when input stops | exactness over the tail | FAIL |
