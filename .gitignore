@@ -22,6 +22,8 @@ out/aw-4/
 # Python bytecode
 __pycache__/
 *.pyc
+# Repo Skills guard-hook logs (machine-local; carry absolute paths)
+.claude/skills/repo/logs/
 # >>> loom-managed (do not edit) >>>
 # Loom runtime state (don't commit these)
 .loom-in-use
