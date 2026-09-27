@@ -190,7 +190,58 @@ note is corrected here because its rms leg is asserted as a pass in the
 ledger, but `reports/sxt-032/EVIDENCE.md` itself still carries the pre-fix
 "RMS and spectral bounds PASS on all four sequences" prose and is left to
 follow-up issue #177 (same class as #97, scoped only to the sxt-032 EVIDENCE
-file) rather than corrected in this ledger-only issue.
+file) rather than corrected in this ledger-only issue. **[That last sentence
+is superseded — see the #177 status update immediately below; the sxt-032
+prose was re-graded by #145 before #177 was worked.]**
+
+## Status update (dated, 2026-09-27, issue #177)
+
+The `reports/sxt-032/EVIDENCE.md` prose re-grade routed to #177 by the #157
+note above **had already landed** by the time #177 was worked. Commit
+`94a90e0` ("#145: republish leaf artifacts invalidated by the #123 halfband
+branch-order fix", PR #184) re-graded that record's acceptance row 2 from
+"PASS/PENDING-FREEZE (mixed, honestly reported) | RMS and spectral bounds
+PASS on all four sequences" to "FAIL vs [PROPOSED] budgets on all four
+sequences", stating the rms leg as **FAIL on all four fixtures** (−32.8 /
+−29.9 / −31.6 / −32.6 dBFS for repeated / coverage / holds / modwheel vs the
+≤ −46 dBFS proposal) and attributing the rms-leg correction to the same
+PR #92 / issue #95 polarity fix cited here; row 5's negative-control caveat
+and the record's `#145` change-note table were re-graded with it. Because
+#145 landed the polarity re-grade together with the #123 decimator
+republication, the re-graded row carries the post-#123 numbers, not the
+pre-#123 values #177's issue body quoted; the two corrections are separated
+in that record's own change note.
+
+Issue #177 therefore **verified rather than re-edited**. Checks performed on
+the tree at `9a3aefd`:
+
+* **Prose vs committed data (the issue's failure control).** Row 2's four rms
+  values match `reports/sxt-032/artifacts/audio-{repeated,coverage,holds,
+  modwheel}.json` `rms_diff_dbfs` (−32.803 / −29.897 / −31.557 / −32.646),
+  every one of those files records
+  `proposed_budget_results.rms_diff_dbfs: false` and
+  `verdict: "FAIL against proposed budgets"`, and no rms pass is claimed
+  anywhere in the record. The max-abs leg fails under both polarities, so no
+  overall verdict moved.
+* **Evidence pin.** `reports/coverage-v1/leaf-verification.json`'s `mod:lfo`
+  evidence pin and `coverage.json`'s `inputs` entry both already hold the
+  current `reports/sxt-032/EVIDENCE.md` digest `41a1fe58…` (re-pinned by
+  #145's `evidence_pin_revisions` entry). `tools/publish_coverage.py`
+  reproduces `coverage.json` byte-identically with no drift override, and
+  `tools/coverage_negative_controls.py` reports `RESULT: PASS` (all five
+  controls demonstrably fail the check they target).
+* **No count or budget moved.** `mod:lfo`'s supported delta is 0 before and
+  after, and the published headline `totals.supported` is unchanged. The
+  bounds involved are `[PROPOSED-TO-BE-FROZEN-AT-PILOT]` placeholders owned by
+  #12, so nothing frozen was touched and #177's stop/escalate condition
+  (a supported-preset count or frozen-budget change) was not reached.
+
+Still unregraded in their own EVIDENCE.md files, and outside #177's scope: the
+flag-only flips in `reports/sxt-026/`, `reports/SXT-033/` and
+`reports/sxt-026a/`. #157 re-graded only the four ledger notes it names
+(`voice:attacky-slice`, `voice:unison-stack`, `mod:modwheel`, `mod:lfo`), so
+those three leaves' own EVIDENCE records remain as-landed and no open issue
+currently tracks them.
 
 ## What remains unproved
 
