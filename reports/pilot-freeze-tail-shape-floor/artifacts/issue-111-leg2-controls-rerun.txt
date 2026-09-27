@@ -1,0 +1,70 @@
+Issue #160 failure control: the #111 late-tail negative controls re-run at the
+DECLARED floor (decay_curve_floor_dbfs = -100.0, decay_curve_max_dev_db = 1.0).
+
+Command : python3 tools/tail_shape_leg_checks.py --legs 2 --scratch-root /tmp/sxt-160-leg2
+Repo    : 2AMLogic/gf180-surge @ 9a3aefdeaa70 (worktree; the only uncommitted
+          changes at run time were this issue's new files)
+Runtime : Python 3.14.7, numpy 2.4.2, 2026-09-27
+Purpose : #160 decides to keep the declared floor unchanged, so no landed verdict
+          needed re-running. This run is the issue's FAILURE CONTROL only: the
+          #111 late-tail controls must still FAIL under the decided floor.
+
+Result  : 13/13 controls behaved as required, including the three the issue names
+          (mono/koala2/zero-late-tail-from-44%, stereo/zero-late-tail-from-40%,
+          stereo/zero-late-tail-from-60%) -- all FAIL, as landed.
+
+READ THE LAST LINE CAREFULLY. The tool's trailing "OVERALL: FAIL" reflects legs 0
+and 1 being NOT_RUN in this invocation (--legs 2), not a control failure: the
+tool's overall status is the AND over all three legs and a leg that did not run is
+never reported as a pass. Legs 0 and 1 (canonical re-runs and the landed-verdict
+re-grade) were deliberately skipped because they regenerate committed #111/#100
+artifacts, and #160 changes no constant that could move them. Leg 0's partial
+overwrite of reports/tail-shape-leg/artifacts/{checks-summary.json,
+late-tail-controls.txt} during this run was restored with `git checkout --` before
+committing; those committed #111 artifacts are byte-identical to main.
+
+--------------------------------------------------------------------------------
+==========================================================================
+[2] late-tail controls (each must fail the check it targets)
+==========================================================================
+  NOTE (claim scope): stereo baseline is the COMMITTED model render; mono baseline is the reference
+        itself (tool self-test). Nothing here is a fidelity, support, or sound claim.
+  stereo fixture alienappears x seq-notes-coverage-v1: declared tail region [153600, 273600)
+  stereo/baseline                          chorus required PASS observed PASS | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-53.84 dB) | shape leg PASS (worst dev 0.01 dB, 50 graded windows)
+  stereo/zero-late-tail-from-30%           chorus required FAIL observed FAIL | pre-#111 tool FAIL | CONTROL-OK
+      budgets all pass=False | residual leg FAIL (-15.67 dB) | shape leg FAIL (worst dev 242.26 dB, 50 graded windows)
+  stereo/zero-late-tail-from-40%           chorus required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-21.12 dB) | shape leg FAIL (worst dev 238.12 dB, 50 graded windows)
+  stereo/zero-late-tail-from-60%           chorus required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-33.40 dB) | shape leg FAIL (worst dev 223.89 dB, 50 graded windows)
+  stereo/zero-late-tail-from-80%           chorus required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-44.49 dB) | shape leg FAIL (worst dev 212.42 dB, 50 graded windows)
+  stereo/zero-late-tail-from-90%           chorus required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-49.10 dB) | shape leg FAIL (worst dev 207.88 dB, 50 graded windows)
+  stereo/late-tail-decays-too-fast         chorus required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-26.72 dB) | shape leg FAIL (worst dev 63.88 dB, 50 graded windows)
+  stereo/right-channel-late-tail-drop      chorus required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-39.05 dB) | shape leg FAIL (worst dev 6.77 dB, 50 graded windows)
+
+  mono fixture behemoth (SXT-012 wet, int16): declared tail region [153600, 273600)
+  mono/behemoth/baseline                   shared required PASS observed PASS | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-600.00 dB) | shape leg PASS (worst dev 0.00 dB, 50 graded windows)
+  mono/behemoth/zero-late-tail-from-40%    shared required FAIL observed FAIL | pre-#111 tool FAIL | CONTROL-OK
+      budgets all pass=False | residual leg FAIL (-14.41 dB) | shape leg FAIL (worst dev 256.56 dB, 50 graded windows)
+  mono/behemoth/zero-late-tail-from-60%    shared required FAIL observed FAIL | pre-#111 tool FAIL | CONTROL-OK
+      budgets all pass=False | residual leg PASS (-22.51 dB) | shape leg FAIL (worst dev 250.04 dB, 50 graded windows)
+  mono/behemoth/zero-late-tail-from-95%    shared required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-43.29 dB) | shape leg FAIL (worst dev 232.19 dB, 50 graded windows)
+
+  mono fixture koala2 (SXT-012 wet, int16): declared tail region [153600, 273600)
+  mono/koala2/zero-late-tail-from-44%      shared required FAIL observed FAIL | pre-#111 tool PASS | CONTROL-OK
+      budgets all pass=True | residual leg PASS (-54.00 dB) | shape leg FAIL (worst dev 218.11 dB, 23 graded windows)
+  mono/koala2/zero-late-tail-from-46%      shared required --   observed PASS | pre-#111 tool PASS | CHARACTERIZATION
+      budgets all pass=True | residual leg PASS (-72.31 dB) | shape leg PASS (worst dev 0.00 dB, 23 graded windows)
+      reference level of the zeroed span is -114.4 dBFS, below the declared -100.0 dBFS floor: the shape leg does not see it by construction (not a control)
+
+  result: 13/13 controls behaved as required
+  controls the PRE-#111 gate let through as PASS and the shape leg now FAILS: stereo/zero-late-tail-from-40%, stereo/zero-late-tail-from-60%, stereo/zero-late-tail-from-80%, stereo/zero-late-tail-from-90%, stereo/late-tail-decays-too-fast, stereo/right-channel-late-tail-drop, mono/behemoth/zero-late-tail-from-95%, mono/koala2/zero-late-tail-from-44%
+  shape leg is load-bearing (budgets and residual leg PASS, verdict FAILs on the shape leg alone): stereo/zero-late-tail-from-40%, stereo/zero-late-tail-from-60%, stereo/zero-late-tail-from-80%, stereo/zero-late-tail-from-90%, stereo/late-tail-decays-too-fast, stereo/right-channel-late-tail-drop, mono/behemoth/zero-late-tail-from-95%, mono/koala2/zero-late-tail-from-44%
+OVERALL: FAIL
