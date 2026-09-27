@@ -173,7 +173,7 @@
       "status": "PASS",
       "note": "Landed PR #34. Per-instance FX/voice accounting, external-memory split, corpus scan (2,912 fit 4-instance), fail-closed controls.",
       "evidence": "reports/sxt-015/EVIDENCE.md",
-      "evidence_sha256": "125cb74e60c33f2c66835ba187e543c3c3f3d4a7d323c5b6f5fe65f93ac90ec1"
+      "evidence_sha256": "eb7b7881a2bf58808bc49fa75e41858b8ef4124f6ff2842a313432c1c2f95261"
     },
     {
       "id": 11,

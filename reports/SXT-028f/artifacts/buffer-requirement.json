@@ -81,12 +81,20 @@
   "schema_version": 1,
   "scope": "per Reverb 2 instance (sst-effects Reverb2 tank reverb), 48 kHz, frozen Q10.21 32-bit buffer words",
   "sxt015_reconciliation": {
-    "note": "state residency confirms the SXT-015 pinned entry exactly. The SXT-015 per-sample TRAFFIC entry for Reverb 2 (40 reads / 18 writes) is an over-estimate relative to the structure measured here (29 reads / 17 writes); this leaf records the finding and does NOT edit the shared SXT-015 table, which is SXT-015/016 scope. Over-estimating traffic is conservative for the budget, so no SXT-016/017 result is invalidated.",
+    "note": "state residency confirms the SXT-015 pinned entry exactly (14532608 B per instance). The SXT-015 per-sample TRAFFIC entry (40 reads / 18 writes) is an OVER-estimate of the structure measured here (29 reads / 17 writes), which is conservative for a budget: no SXT-016/017 result is made optimistic by it. The over-estimate is DELIBERATE and recorded: model/resources/fx_classes.py _RETAINED_OVER_ESTIMATE_TX['reverb2'] holds the row at the larger figure pending #12 (SXT-017 profile v1 freeze, operator decision) (finding F-028f-2 (issue #127); see reports/sxt-017/EVIDENCE.md \u00a710). This leaf does not edit the shared table.",
     "state_agreement": true,
     "sxt015_reads_per_sample": 40,
     "sxt015_state_bytes": 14532608,
     "sxt015_writes_per_sample": 18,
     "this_model_bytes": 14532608,
-    "traffic_agreement": false
+    "traffic_agreement": false,
+    "traffic_direction": "sxt015_over_estimates",
+    "traffic_over_estimate_is_deliberate": true,
+    "traffic_retention_record": {
+      "finding": "F-028f-2 (issue #127)",
+      "reason": "the retired 40/18 row counted the two plain delay output taps as 2-point interpolated reads; only the recirculation read is interpolated in the pinned delay::process, so the structure is 29 reads / 17 writes. Correcting it is the right end state, but re-deriving reports/sxt-017/cost-closure.json with 29/17 moves 4 of its 120 grid cells' ext_bandwidth_fit column from EXCEEDS to within (B4-broad and R0-ceiling-reference at 192 MHz / M18+M32 / E1: worst 696 -> 552 B/frame, required 33,408,000 -> 26,496,000 B/s against an E1 sustained 32,000,000 B/s). That is a previously-failing check reading pass inside the artifact that #12's escalated profile-v1 freeze decides, which is exactly what issue #127's stop/escalate clause says not to bank. Held here at the conservative figure until #12 decides; no SXT-015/016/017 artifact is derived from 29/17 yet.",
+      "record": "reports/sxt-017/EVIDENCE.md \u00a710",
+      "unblocks_on": "#12 (SXT-017 profile v1 freeze, operator decision)"
+    }
   }
 }
