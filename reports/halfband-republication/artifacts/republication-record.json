@@ -475,7 +475,7 @@
    },
    "budget_json": "reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json",
    "case": "horn/seq-notes-coverage-v1",
-   "finding": "F-033-3: the committed pre-#145 render is NOT reproducible from source (legacy ordering at HEAD and the landing commit e6ea298 both render 21272035...); source-reproducible pre-#123 metrics: 4295 LSB / -39.954 dBFS / 0.7469 / shift 0 (FAIL)",
+   "finding": "F-033-4: the committed pre-#145 render is NOT reproducible from source (legacy ordering at HEAD and the landing commit e6ea298 both render 21272035...); source-reproducible pre-#123 metrics: 4295 LSB / -39.954 dBFS / 0.7469 / shift 0 (FAIL)",
    "head_model_sha256": "1edb01556ff5f566919fae2448f467539d6d7339f8f42f619143ed4efdf6742b",
    "head_render_current_comparator": {
     "best_shift": 0,

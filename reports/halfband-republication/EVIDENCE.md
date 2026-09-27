@@ -26,7 +26,7 @@ This record advances exactly three things:
    `tests/test_halfband_republication.py`, 28 cases).
 2. **Attribution**: each pre-#145 committed render is reproduced from the
    committed tree with the pre-#123 decimator ordering, so the recorded
-   before -> after delta is the #123 fix alone (one exception, F-033-3, §3).
+   before -> after delta is the #123 fix alone (one exception, F-033-4, §3).
 3. **RTL == frozen model, exact**, re-run at HEAD on every leaf whose RTL
    pairing can run (§4), and the disposition of the two open RTL questions
    (§5).
@@ -76,7 +76,7 @@ leaf's own proposed bounds where it declares them (SXT-026).
 | SXT-032 | coverage / repeated / holds / modwheel | 17,998 / 5,062 / 15,506 / 15,505 → 18,030 / 5,626 / 16,070 / 16,069 | 0.9837 / 0.9928 / 0.9834 / 0.9877 → 0.9884 / 0.9972 / 0.9874 / 0.9915 | FAIL → FAIL (all four) |
 | SXT-033 | edges / coverage | 90 → 83 | 0.9635 → 0.9744 | FAIL → FAIL |
 | SXT-033 | **edges / repeated** | 54 → 33 | 0.9728 → 0.9830 | **FAIL → PASS (PENDING-FREEZE)** |
-| SXT-033 | horn / coverage | 10,189 → 4,298 (see F-033-3) | 0.7018 → 0.7535 | FAIL → FAIL |
+| SXT-033 | horn / coverage | 10,189 → 4,298 (see F-033-4) | 0.7018 → 0.7535 | FAIL → FAIL |
 | SXT-033 | horn / repeated | 3,801 → 3,634 | 0.8035 → 0.8086 | FAIL → FAIL |
 | SXT-033 | **tentacles / coverage** | 239 → 242 | 0.9668 → 0.9802 | **FAIL → PASS (PENDING-FREEZE)** |
 | SXT-033 | **tentacles / repeated** | 77 → 47 | 0.9723 → 0.9888 | **FAIL → PASS (PENDING-FREEZE)** |
@@ -90,7 +90,7 @@ leaf's own proposed bounds where it declares them (SXT-026).
 | SXT-040 | **popcorn2k repeated** | 888 → 906 | 0.9789 → 0.98002 | **FAIL → PASS (PENDING-FREEZE)** |
 | SXT-026 | 9 wavetable rows (kick/mf, base/morph/uni16/pitch-extremes) | see `reports/sxt-026/EVIDENCE.md` change note | kick base 0.9268 → 0.9234; mf base 0.9720 → 0.9756 | no verdict moved (SXT-026 bounds and sxt-022 proposal) |
 
-**Verdict movements (stated explicitly, per the issue's acceptance):** five
+**Verdict movements (stated explicitly, per the issue's acceptance):** four
 budget rows moved **FAIL → PASS (PENDING-FREEZE)** — SXT-033 edges/repeated
 (the F-123-2 row #123 predicted), SXT-033 tentacles/coverage and
 tentacles/repeated (first recorded here), and SXT-040 popcorn2k/repeated
@@ -119,8 +119,8 @@ narrowed from 0.0068 to 0.0026–0.0034.
   which, SXT-026a and SXT-042 canonical bells, are the same render) plus the
   SXT-026a integrated wet render `278de788…` — is reproduced
   **byte-identically** by the pre-#123 ordering at HEAD, **except one**
-  (F-033-3 below). Those deltas are the #123 fix alone.
-* **F-033-3 (new, bounded):** the committed pre-#145
+  (F-033-4 below). Those deltas are the #123 fix alone.
+* **F-033-4 (new, bounded):** the committed pre-#145
   `reports/SXT-033/artifacts/model-horn-seq-notes-coverage-v1.wav`
   (`c3f5b1c0…`) is reproduced neither by the legacy ordering at HEAD nor by
   the committed tree at that leaf's landing commit `e6ea298` (both give
@@ -211,7 +211,7 @@ could be produced; only already-committed references were used.
 
 | Item | Status | Gap |
 |---|---|---|
-| `reports/sxt-026a/artifacts/audio-smoke-bells-dry.json` | **RETIRED (deleted)** | reference for `leaf48-smoke-bells-v1` never committed; metric degenerate by construction (3,904 frames < one 4,096 spectral frame). Smoke evidence stays RTL exactness + mutants. |
+| `reports/sxt-026a/artifacts/audio-smoke-bells-dry.json` | **RETIRED (deleted)** | reference for `leaf48-smoke-bells-v1` never committed; metric degenerate by construction (3,904 frames < one 4,096 spectral frame). Smoke evidence stays RTL exactness + mutants. `reports/tooling-rms-polarity-audit/artifacts/audit-report.json` still lists this path; that is a point-in-time audit of the pre-#145 tree and is deliberately left unedited, so the path no longer resolves. |
 | SXT-026a canonical dry numbers 16,960 / −27.87 / 0.9205 | **STALE / NOT_RUN** | box-retained oracle render never committed; the canonical model is re-measured against the committed SXT-042 projection of the same pinned fixture instead (§2). |
 | SXT-034 uni2-poly, uni16-smoke budget JSONs | **STALE / NOT_RUN** | `seq-poly-8-v1` uni2 and `sxt034-smoke-v1` uni16 references not committed. |
 | SXT-032 / SXT-035 voice-datapath exactness | BLOCKED here → **resolved by #175** (PASS at HEAD) | runner stimulus format; fixed and re-run in #175, not by this issue. |

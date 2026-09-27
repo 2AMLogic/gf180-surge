@@ -113,12 +113,12 @@
       "sha256": "41a1fe58e9ac4268049ee6a3b4f487ee749ae9a4a4f6b451c9c437eaf768f6d0"
     },
     {
-      "decision": "RE-PIN (legitimately edited; file correct, not restored). Budget-row verdicts moved and are stated explicitly in the record: edges/repeated, tentacles/coverage and tentacles/repeated FAIL -> PASS (PENDING-FREEZE) against [PROPOSED] budgets; new finding F-033-3 (committed horn/coverage render not source-reproducible). The leaf-level status in this table does NOT move: osc:Classic stays rtl_vs_model PASS / model_vs_reference PARTIAL (horn and crush still fail). No support claim.",
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). Budget-row verdicts moved and are stated explicitly in the record: edges/repeated, tentacles/coverage and tentacles/repeated FAIL -> PASS (PENDING-FREEZE) against [PROPOSED] budgets; new finding F-033-4 (committed horn/coverage render not source-reproducible). The leaf-level status in this table does NOT move: osc:Classic stays rtl_vs_model PASS / model_vs_reference PARTIAL (horn and crush still fail). No support claim.",
       "issue": 145,
       "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
       "path": "reports/SXT-033/EVIDENCE.md",
       "previous_sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d",
-      "sha256": "284a604c6aae100b25065f9653b34e8c29c79e6c6ed3c428f4575d12159ce79a"
+      "sha256": "df348ec97daee38f6b56efc4ebdd617800567f8eeff6f4bfcec6303820045bd8"
     },
     {
       "decision": "RE-PIN (legitimately edited; file correct, not restored). One budget-row verdict moved and is stated explicitly: popcorn2k/repeated FAIL -> PASS (PENDING-FREEZE) by a 2e-5 spectral margin. The leaf-level status does NOT move: osc:Sine stays rtl_vs_model PASS / model_vs_reference PARTIAL. No support claim.",
@@ -126,7 +126,7 @@
       "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
       "path": "reports/SXT-040/EVIDENCE.md",
       "previous_sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7",
-      "sha256": "f0e0703c744824a12655e8b1bdf48826c60db5c0b77e4d02b8ea03aa5b150fe5"
+      "sha256": "a423d64af3cff18de9b338d53ecbf521044014100d494314f2a143937da9e3f6"
     },
     {
       "decision": "RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
@@ -421,7 +421,7 @@
       "evidence": [
         {
           "path": "reports/SXT-033/EVIDENCE.md",
-          "sha256": "284a604c6aae100b25065f9653b34e8c29c79e6c6ed3c428f4575d12159ce79a"
+          "sha256": "df348ec97daee38f6b56efc4ebdd617800567f8eeff6f4bfcec6303820045bd8"
         }
       ],
       "issue": 67,
@@ -436,7 +436,7 @@
       "evidence": [
         {
           "path": "reports/SXT-040/EVIDENCE.md",
-          "sha256": "f0e0703c744824a12655e8b1bdf48826c60db5c0b77e4d02b8ea03aa5b150fe5"
+          "sha256": "a423d64af3cff18de9b338d53ecbf521044014100d494314f2a143937da9e3f6"
         }
       ],
       "fixture_verified_paths": [

@@ -119,7 +119,7 @@ nothing is frozen. Reference renders are committed with sidecars
 | tentacles / coverage | 3,458 | −26.4 | 0.9444 | 0 | 11,383 | 0 | ✓/✗/✗ |
 | tentacles / repeated | 3,165 | −27.9 | 0.9773 | 0 | 11,394 | 0 | ✓/✗/✗ |
 | popcorn2k / coverage | 1,789 | −47.2 | 0.9666 | 0 | 32,767 | 1,817 | ✓/✓/✗ |
-| popcorn2k / repeated | 906 | −49.1 | 0.9800 | 0 | 32,767 | 886 | ✓/✓/**✓** |
+| popcorn2k / repeated | 906 | −49.1 | 0.98002 | 0 | 32,767 | 886 | ✓/✓/**✓** |
 
 All six rows pass the proposed max bound; four pass the rms bound; one row
 (popcorn2k / repeated) passes the spectral-corr proposal, and therefore all

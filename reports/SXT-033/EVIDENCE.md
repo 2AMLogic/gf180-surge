@@ -135,7 +135,7 @@ placeholder bounds: nothing here is a fidelity verdict, a support claim, or
 a listening claim, and the leaf-level `model_vs_reference` stays PARTIAL
 (horn and crush still fail). The tentacles/coverage margin is 0.0002.
 
-**Finding F-033-3 (#145): the committed horn / coverage render was not
+**Finding F-033-4 (#145): the committed horn / coverage render was not
 reproducible from source.** The pre-#145 `model-horn-seq-notes-coverage-v1.wav`
 (sha256 `c3f5b1c0…`) is reproduced neither by the legacy (pre-#123)
 ordering at HEAD nor by the committed tree at this leaf's own landing
@@ -333,6 +333,6 @@ iverilog 13, `ORACLE_SURGE_DIR` = the local checkout at the manifest pin
   same fixture (crush 22,460 / 0.9961; horn 3,634 / 0.8086).
 * Out-of-class refusal (House Of Chords): REFUSED, exit 2.
 * Budget matrix: regenerated from the re-rendered models (§3; 3 rows moved
-  FAIL → PASS; F-033-3 recorded). Full record:
+  FAIL → PASS; F-033-4 recorded). Full record:
   `reports/halfband-republication/`.
 
