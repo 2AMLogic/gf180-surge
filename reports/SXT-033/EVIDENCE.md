@@ -53,10 +53,10 @@ configurations, never adapted presets, never coverage.
 | # | Acceptance item | Status | Evidence |
 |---|---|---|---|
 | 1 | Frozen fixed-point model, word lengths + op order documented | **PASS** | `model/oscillators/classic/README.md` (freeze doc: classes, Q formats, per-convolute op order, declared deviations, fail-closed refusals); model `classic_model.py` shares the frozen SXT-022 tables/Q discipline by import |
-| 2 | Model-vs-pinned-engine dry-render budgets on the carrier fixtures | **PASS/PENDING-FREEZE (achieved numbers recorded, not tuned)** | §3 matrix: 10 budget JSONs (4 carriers × coverage/repeated). No bound is frozen; misses are recorded as findings (§4), not widened |
+| 2 | Model-vs-pinned-engine dry-render budgets on the carrier fixtures | **PASS/PENDING-FREEZE (achieved numbers recorded, not tuned)** | §3 matrix: 8 budget JSONs (4 carriers × coverage/repeated; plus the 2 submode-confusion NC JSONs), republished by #145 after the #123 decimator fix — 3 rows now `PASS (PENDING-FREEZE)` (edges/repeated, tentacles/coverage, tentacles/repeated; each was FAIL), 5 FAIL; see §3. No bound is frozen; misses are recorded as findings (§4), not widened |
 | 3 | RTL-vs-model exact at declared checkpoints | **PASS** | §2: five canonical integer-equality runs (4 carriers + smoke config), 687,451 state fields, 346,432 osc samples, 790,272 mono samples, zero mismatches; `exact-*.json` |
 | 4 | Cycle/state costs recorded vs SXT-016 probes / SXT-015 accounting | **PASS (recorded; divergence note)** | §5: measured model-side qmul (MAC) counts of the frozen schedule with the iverilog tb counter as cross-check, re-measured at the branch tip during the post-freeze re-verification; reconciled against `probe_osc__classic_blit__ph24__a24__m32__onchip` exactly as SXT-022 did (probe = osc kernel alone at declared assumptions; this measurement = integrated mono slice). Planning numbers, not technology claims |
-| 5 | Negative controls must demonstrably fail | **PASS (all three fail as designed)** | `negative-control.txt`: (a) single-constant RTL mutant FAILS exactness (95 mismatches from block 0); (b) submode-confusion substitution (Attacky-class arithmetic, unison forced 1) FAILS the reference-budget check on both unison carriers, strictly worse than the declared-class model; (c) out-of-class preset (House Of Chords — Classic only in scene B) REFUSED by the fail-closed extractor, exit 2 |
+| 5 | Negative controls must demonstrably fail | **PASS (all three fail as designed)** | `negative-control.txt`: (a) single-constant RTL mutant FAILS exactness (93 mismatches from block 0 at the #145 HEAD; 95 before the #123 decimator fix); (b) submode-confusion substitution (Attacky-class arithmetic, unison forced 1) FAILS the reference-budget check on both unison carriers, strictly worse than the declared-class model; (c) out-of-class preset (House Of Chords — Classic only in scene B) REFUSED by the fail-closed extractor, exit 2 |
 
 ## 2. RTL-vs-frozen-model exactness (integer equality)
 
@@ -81,8 +81,9 @@ every 48 kHz output sample.
 | **total** | **5,413** | **687,451** | **20,820** | **346,432** | **790,272** | zero mismatches |
 
 The committed mutant (`classic_broken_mutant.sv`, qmul bias `<<20`→`<<19`)
-FAILS the same comparison on the edges canonical run (95 mismatches from
-block 0, `exact-mutant-edges.json`) while the clean RTL passes — the
+FAILS the same comparison on the edges canonical run (93 mismatches from
+block 0 at the #145 HEAD; 95 before the #123 decimator fix;
+`exact-mutant-edges.json`) while the clean RTL passes — the
 rounding constant is live in every fixture.
 
 ## 3. Model-vs-reference budgets (PENDING-FREEZE, measured)
@@ -95,21 +96,68 @@ nothing is frozen. Reference renders are committed with sidecars
 
 | Fixture | max LSB | rms dBFS | corr | shift | ref peak LSB | ref clipped |
 |---|---|---|---|---|---|---|
-| edges / coverage | 90 | −74.7 | 0.9635 | 0 | 468 | 0 |
-| edges / repeated | 54 | −79.4 | 0.9728 | 0 | 414 | 0 |
-| horn / coverage | 10,189 | −32.9 | 0.7018 | −23 | 9,093 | 0 |
-| horn / repeated | 3,801 | −34.7 | 0.8035 | −1 | 9,608 | 0 |
-| tentacles / coverage | 239 | −61.2 | 0.9668 | 0 | 473 | 0 |
-| tentacles / repeated | 77 | −66.1 | 0.9723 | 0 | 357 | 0 |
-| crush / coverage | 65,534 | −12.9 | 0.9876 | −1 | 32,767 | 17,637 |
-| crush / repeated | 22,759 | −23.3 | 0.9944 | −2 | 32,767 | 17,637 |
+| edges / coverage | 83 | −74.8 | 0.9744 | 0 | 468 | 0 |
+| edges / repeated | 33 | −79.6 | 0.9830 | 0 | 414 | 0 |
+| horn / coverage | 4,298 | −40.0 | 0.7535 | 0 | 9,093 | 0 |
+| horn / repeated | 3,634 | −34.7 | 0.8086 | −1 | 9,608 | 0 |
+| tentacles / coverage | 242 | −62.6 | 0.9802 | 0 | 473 | 0 |
+| tentacles / repeated | 47 | −70.7 | 0.9888 | 0 | 357 | 0 |
+| crush / coverage | 65,534 | −12.9 | 0.9895 | 0 | 32,767 | 17,637 |
+| crush / repeated | 22,460 | −23.3 | 0.9961 | −2 | 32,767 | 17,637 |
+
+**Republication (issue #145, 2026-09-27) — three verdicts moved, FAIL →
+PASS.** The table above is the model re-rendered after the #123 halfband
+branch-order fix, measured with the current shared comparator (whose RMS
+leg is the corrected `≤` polarity, PR #92). The rows as first published
+here were: edges 90 / −74.7 / 0.9635 and 54 / −79.4 / 0.9728; horn 10,189 /
+−32.9 / 0.7018 (shift −23) and 3,801 / −34.7 / 0.8035; tentacles 239 /
+−61.2 / 0.9668 and 77 / −66.1 / 0.9723; crush 65,534 / −12.9 / 0.9876 and
+22,759 / −23.3 / 0.9944. Every row was `FAIL against proposed budgets`.
+Under the corrected comparator three rows now pass all three [PROPOSED]
+bounds and read `PASS (PENDING-FREEZE)`:
+
+| row | spectral corr before → after | overall before → after |
+|---|---|---|
+| edges / repeated | 0.9728 → 0.9830 | **FAIL → PASS** |
+| tentacles / coverage | 0.9668 → 0.9802 | **FAIL → PASS** |
+| tentacles / repeated | 0.9723 → 0.9888 | **FAIL → PASS** |
+
+Each flip is carried by the spectral-corr leg crossing 0.98 and is
+attributable to the #123 fix alone: the same comparator on the pre-#123
+render (re-derived byte-identically from the committed tree with
+`tools/halfband_legacy_render.py`) grades all three rows FAIL on spectral
+corr with max and rms already passing. The rms legs of edges/tentacles pass
+because of the comparator's polarity correction (reporting artifact (1)
+below, now fixed), not because of #123. #123 measured only the edges /
+repeated flip (`reports/halfband-branch-order/` F-123-2); the two tentacles
+flips are first recorded here. These are PENDING-FREEZE budget rows against
+placeholder bounds: nothing here is a fidelity verdict, a support claim, or
+a listening claim, and the leaf-level `model_vs_reference` stays PARTIAL
+(horn and crush still fail). The tentacles/coverage margin is 0.0002.
+
+**Finding F-033-3 (#145): the committed horn / coverage render was not
+reproducible from source.** The pre-#145 `model-horn-seq-notes-coverage-v1.wav`
+(sha256 `c3f5b1c0…`) is reproduced neither by the legacy (pre-#123)
+ordering at HEAD nor by the committed tree at this leaf's own landing
+commit `e6ea298` (both give `21272035…`, deterministic across re-runs; max
+8,622 LSB different over 73,869 samples from sample 4). Its committed
+budget row (10,189 / −32.9 / 0.7018 at shift −23) measured bytes that the
+committed inputs and model do not produce. The source-reproducible pre-#123
+render measures 4,295 / −39.95 / 0.7469 at shift 0; the #123 delta on this
+row is therefore 4,295 → 4,298 / 0.7469 → 0.7535, not the table's 10,189 →
+4,298. Same class as F-040-5 (an artifact-collection step without a
+render-from-source identity check); the verdict is FAIL either way. #145
+replaces the artifact with a render from the committed tree, and
+`tests/test_halfband_republication.py` now re-derives every budget JSON
+from its committed render.
 
 Two reporting artifacts of the shared comparator/policy, recorded rather
-than tuned around: (1) the comparator evaluates the rms proposal as a floor
+than tuned around: (1) the comparator evaluated the rms proposal as a floor
 (`rms ≥ −46`), so quieter-is-better residuals more than 46 dB down (edges,
-tentacles) print as proposal misses — under the proposal's stated intent
+tentacles) printed as proposal misses — under the proposal's stated intent
 ("residual RMS at least this far below FS") those rows PASS; numbers are
-reported unmodified. (2) edges/tentacles reference renders peak at
+reported unmodified. *(#145: fixed in PR #92; the republished JSONs grade
+these rms legs PASS.)* (2) edges/tentacles reference renders peak at
 ≈350–470 LSB (≈1.3% FS): at native int16 levels the ±1 LSB render
 quantization dominates the log-spectral correlation, which caps corr ≈
 0.96–0.97 regardless of the (excellent) sample agreement.
@@ -117,7 +165,7 @@ quantization dominates the log-spectral correlation, which caps corr ≈
 ## 4. Bounded findings (recorded, not absorbed)
 
 **F-033-1 — detuned-unison agreement class.** With per-voice detune active
-(horn uni6, corr 0.70–0.80) the model and the engine decorrelate faster
+(horn uni6, corr 0.75–0.81 after #123; 0.70–0.80 as first published) the model and the engine decorrelate faster
 than the sub-only/sync classes. Discriminating experiments: with spread 0
 the six-voice render matches the one-voice render identically (corr 0.9302
 both, machinery exact); the divergence grows within a note and resets on
@@ -268,3 +316,23 @@ follows the landed SXT-022/SXT-026 leaf patterns.
   declared refusals, none exercised.
 * Any gf180mcu/FPGA synthesis, place-and-route, timing, power, area, or
   hardware playback result.
+
+## 10. #145 re-verification after the #123 halfband branch-order fix (2026-09-27)
+
+`tools/run_sxt033_checks.py --steps 1,3,4` re-run at the #145 HEAD (macOS,
+iverilog 13, `ORACLE_SURGE_DIR` = the local checkout at the manifest pin
+`58914e59c…`): **OVERALL PASS**.
+
+* RTL-vs-model exactness: edges / horn / tentacles / crush **PASS**, 0
+  mismatches, counts identical to §2 (`exact-*.json` unchanged).
+* Mutant control `classic_broken_mutant.sv`: **FAIL** as required, 93
+  mismatches from block 0 (95 before #123; `exact-mutant-edges.json`).
+* Submode-confusion controls: **FAIL** as required — crush 33,465 LSB /
+  corr 0.9720 (was 33,294 / 0.9684) and horn 7,199 / 0.7635 (was 7,097 /
+  0.7571); each is still worse on max and corr than the true model on the
+  same fixture (crush 22,460 / 0.9961; horn 3,634 / 0.8086).
+* Out-of-class refusal (House Of Chords): REFUSED, exit 2.
+* Budget matrix: regenerated from the re-rendered models (§3; 3 rows moved
+  FAIL → PASS; F-033-3 recorded). Full record:
+  `reports/halfband-republication/`.
+

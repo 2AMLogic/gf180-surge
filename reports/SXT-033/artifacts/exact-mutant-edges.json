@@ -8,17 +8,17 @@
     "oscout": 64,
     "mono": 32
   },
-  "mismatches": 95,
+  "mismatches": 93,
   "first_failures": [
-    "block 0 sample 0: mono model=0 rtl=-1",
-    "block 0 sample 1: mono model=-10 rtl=-11",
-    "block 0 sample 3: mono model=1532 rtl=1531",
-    "block 0 sample 4: mono model=7658 rtl=7657",
-    "block 0 sample 5: mono model=17119 rtl=17116",
-    "block 0 sample 6: mono model=22514 rtl=22512",
-    "block 0 sample 7: mono model=22924 rtl=22923",
-    "block 0 sample 8: mono model=23228 rtl=23227",
-    "block 0 sample 9: mono model=23345 rtl=23344",
-    "block 0 sample 10: mono model=22773 rtl=22771"
+    "block 0 sample 0: mono model=1 rtl=0",
+    "block 0 sample 1: mono model=-6 rtl=-7",
+    "block 0 sample 2: mono model=-30 rtl=-31",
+    "block 0 sample 3: mono model=894 rtl=892",
+    "block 0 sample 4: mono model=6827 rtl=6826",
+    "block 0 sample 5: mono model=17997 rtl=17996",
+    "block 0 sample 6: mono model=23430 rtl=23426",
+    "block 0 sample 7: mono model=22405 rtl=22404",
+    "block 0 sample 8: mono model=23640 rtl=23638",
+    "block 0 sample 9: mono model=23217 rtl=23216"
   ]
 }
