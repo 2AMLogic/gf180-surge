@@ -476,11 +476,11 @@ committed artifact hashes).
   placements are equivalent only while the scene bus never saturates, and
   the landed fixtures never saturate. Both corrections mirror the frozen
   model exactly; the model did not change.
-* Known landed inconsistency (recorded, not reconciled here):
-  `run_lfo_model.py` still emits 32-word slot records (pre-#48 layout)
-  while `tb_voice.sv` streams 40-word records; re-running the SXT-032
-  voice pairing requires regenerating its stimulus in the v2 layout
-  (SXT-032 owner).
+* Formerly-recorded landed inconsistency (resolved by #175): `run_lfo_model.py`
+  and `run_mw_model.py` used to emit slot records / `init.hex` short of the
+  layout `tb_voice.sv` streams; both runners now emit the full SXT-034
+  unison appendix + draw table (`run_model.py`'s reference layout), so the
+  voice-datapath pairing is re-runnable at HEAD for both leaves.
 * Declared scope (unchanged omissions plus): per-scene modwheel instances
   beyond scene A, bipolar/LEGACY/SLOW_EXP/FAST_EXP smoothing modes,
   modwheel→LFO-amplitude / EG-times / osc pitch-volume-width / FX-send

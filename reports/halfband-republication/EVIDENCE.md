@@ -160,12 +160,15 @@ canonical runs); SXT-042 canonical, synthetic, smoke (`tb_kt.sv`); SXT-033
 (`tools/run_sxt026_checks.py` steps 6–7, recorded in
 `reports/sxt-026/EVIDENCE.md`). All mutants **FAIL** as required.
 
-**BLOCKED (not a #123 effect, not re-run):** the SXT-032 and SXT-035
-*voice-datapath* pairing. `run_lfo_model.py` / `run_mw_model.py` still emit
-the pre-SXT-034 stimulus layout while `tb_voice.sv` requires the SXT-034
-unison appendix (`FATAL: uni count 0 outside 1..16`). Their
-`exactness-voice-*.json` are as-landed and **STALE**; routed to
-[#175](https://github.com/2AMLogic/gf180-surge/issues/175).
+**BLOCKED at measurement time, since resolved by #175:** the SXT-032 and
+SXT-035 *voice-datapath* pairing could not run when these measurements were
+taken — `run_lfo_model.py` / `run_mw_model.py` emitted the pre-SXT-034
+stimulus layout while `tb_voice.sv` requires the SXT-034 unison appendix
+(`FATAL: uni count 0 outside 1..16`); not a #123 effect. #145 routed it to
+[#175](https://github.com/2AMLogic/gf180-surge/issues/175), which fixed both
+runners and re-ran the pairing at HEAD (PASS, 0 mismatches) on a tree that
+already contained #123; this branch merges that result. Those runs are
+#175's evidence and are not re-counted here.
 
 ## 5. The two RTL questions the issue asks to be answered in writing
 
@@ -211,9 +214,9 @@ could be produced; only already-committed references were used.
 | `reports/sxt-026a/artifacts/audio-smoke-bells-dry.json` | **RETIRED (deleted)** | reference for `leaf48-smoke-bells-v1` never committed; metric degenerate by construction (3,904 frames < one 4,096 spectral frame). Smoke evidence stays RTL exactness + mutants. |
 | SXT-026a canonical dry numbers 16,960 / −27.87 / 0.9205 | **STALE / NOT_RUN** | box-retained oracle render never committed; the canonical model is re-measured against the committed SXT-042 projection of the same pinned fixture instead (§2). |
 | SXT-034 uni2-poly, uni16-smoke budget JSONs | **STALE / NOT_RUN** | `seq-poly-8-v1` uni2 and `sxt034-smoke-v1` uni16 references not committed. |
-| SXT-032 / SXT-035 voice-datapath exactness | **BLOCKED** | runner stimulus format (#175). |
+| SXT-032 / SXT-035 voice-datapath exactness | BLOCKED here → **resolved by #175** (PASS at HEAD) | runner stimulus format; fixed and re-run in #175, not by this issue. |
 | SXT-026 per-segment decomposition and §4 experiments | **STALE** | pre-#123 numbers, not re-measured. |
-| SXT-035 `costs.txt` voice qmul counts | **STALE** | come from the blocked pairing. |
+| SXT-035 `costs.txt` voice qmul counts | **STALE** | not re-run here (no count is expected to move; stated, not measured). |
 
 ## 7. Reproduce
 
