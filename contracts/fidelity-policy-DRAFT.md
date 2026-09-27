@@ -188,10 +188,39 @@ pilot freeze.
   `mono/koala2/zero-late-tail-from-44%` fails, flipping it FAIL → PASS, while
   the quantization-affected windows of that same fixture reach −79.9 dBFS, so
   no floor is both clear of the ±1 LSB regime and still sensitive to that
-  control. The remedies that remain open are fixture- or bus-side (a wet int16
-  fixture whose declared tail stays clear of the band, or grading the int16
-  wet path on a higher-resolution bus), not budget-side. Evidence:
-  `reports/pilot-freeze-tail-shape-floor/`.
+  control. The remedies are fixture- or bus-side (a wet int16 fixture whose
+  declared tail stays clear of the band, or grading the int16 wet path on a
+  higher-resolution bus), never budget-side; the fixture-side one is now taken
+  — see (d). Evidence: `reports/pilot-freeze-tail-shape-floor/`.
+  (d) **The int16 wet shape leg is READ on a designated eligible fixture**
+  (issue #187, decision
+  [`decision-records/0017`](../decision-records/0017-int16-wet-tail-shape-grading-fixture.md)).
+  A committed int16 wet fixture is **eligible to carry the shape leg** when,
+  over its declared tail region, (1) every window is graded at the declared
+  floor (`graded == total`, so the leg has no coverage gap) and (2) the lowest
+  graded window loses at most **10 % of `decay_curve_max_dev_db`** to a
+  worst-case coherent ±1 LSB model difference — `20·log10(1 + 1/r_LSB) ≤
+  0.10 dB`, i.e. a lowest graded window at or above **−51.6 dBFS** for the
+  values above (20.5 dB above the band's upper edge, 38.7 dB above one int16
+  LSB RMS). Both clauses select a *fixture* and recompute from the declared
+  budget; neither is a grading budget and no verdict is derived from them.
+  Measured: **7 of the 30** committed int16 wet fixtures are eligible, all
+  Behemoth sequences, so **no new render was required**; the designated one is
+  `fixtures/audio/behemoth/seq-notes-holds-v1-wet.wav` (50/50 windows graded,
+  lowest graded window −46.7 dBFS, worst-case ±1 LSB spend 0.06 dB = 5.7 % of
+  the budget), and the #111 mono late-tail controls re-derived on it — including
+  a single-window control that replaces the one whose only defect window sat
+  inside the band — all still FAIL, every over-budget window above the band.
+  Being outside the band is **not** the same as having quantization headroom:
+  `behemoth/seq-notes-coverage-v1` has 0 windows in the band yet would lose
+  74 % of the budget to ±1 LSB in its lowest graded window, and is therefore
+  not eligible. This clause changes **no** value above, **no** committed
+  render, and **no** landed verdict: a comparison on an *ineligible* fixture is
+  still graded and still fails closed, and an over-budget window inside the
+  band there is still dispositioned by (b). What it forbids is reading a
+  shape-leg result as evidence *about tail shape* on a fixture whose graded
+  region has no quantization headroom. Evidence:
+  `reports/int16-wet-shape-fixture/`.
 - **Free-phase presets** (stored retrigger off; engine consumes `rand_01()`
   at voice start — SXT-012 escalation): raw waveform subtraction is NOT
   required and MUST NOT be the pass rule; onset-aligned envelope/level and
