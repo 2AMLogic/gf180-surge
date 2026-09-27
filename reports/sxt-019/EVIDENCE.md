@@ -6,11 +6,15 @@ standing governance hub) · survey `docs/REUSE-AUDIT.md` · records
 
 This record covers **only** the bookkeeping/enforcement increment landed by
 this PR. It establishes nothing about DSP, RTL, fidelity, preset support, or
-sound. It does **not** ratify any decision record: 9 of the 11 records on disk
-are `PROPOSED`/`ESCALATED` pending owner action, and this project still has no
-distribution-license determination (`AGENTS.md`).
+sound. It does **not** ratify any decision record: 13 of the 16 records on disk
+are `PROPOSED`/`ESCALATED`/`RECORDED` pending owner action, and this project
+still has no distribution-license determination (`AGENTS.md`).
 
-Tree audited: this PR's branch. Runtime: Python 3.12.3 (stdlib only), Linux.
+Tree audited: this PR's branch at head `e6b5923a` (level with `origin/main`
+`c6508f2`; the §1/§4/§5 outputs were re-run on that head and again with this
+record's own count update applied — identical results). Runtime for the
+re-run: Python 3.14.7 (stdlib only), Darwin. The first-commit run (`d3e47ed`,
+§2/§3 history) used Python 3.12.3 on Linux.
 
 ## 0. What moved
 
@@ -18,7 +22,7 @@ Tree audited: this PR's branch. Runtime: Python 3.12.3 (stdlib only), Linux.
 |---|---|---|
 | 4. "an audit pass (script or checklist in review) flags any vendored file without a provenance row; demonstrate it once on a deliberately unattributed file" | no script, no manifest — enforcement was review habit only | `tools/check_provenance.py` + `decision-records/provenance.json` + CI job `provenance-audit`; demonstrated in §3 below |
 | 1–3 (per-issue adoption records, license/pin recorded in the adopting PR, GPL boundary enforced) | enforced by review only | still review-owned, now with machine checks behind them: a row is required at adoption time, must cite an existing indexed record, and must be corroborated by the file itself |
-| `decision-records/README.md` index completeness | 11 records on disk, 7 rows (0004–0007 missing) | 11 rows; drift is now a CI failure (`index-missing-row`, `index-status-mismatch`, `index-date-mismatch`) |
+| `decision-records/README.md` index completeness | 11 records on disk, 7 rows (0004–0007 missing) | 11 rows at the first commit; 16 rows / 16 records at the audited head (0012–0016 landed on `main` with their own index rows after the first commit); drift is now a CI failure (`index-missing-row`, `index-status-mismatch`, `index-date-mismatch`) |
 
 Re-verified counts on the branch point (the curator's pass said "8 records on
 disk, 0004–0007 missing"; that was stale — 0009/0010/0011 landed 2026-09-25):
@@ -30,29 +34,36 @@ exactly 0004, 0005, 0006, 0007.
 ```
 $ python3 tools/check_provenance.py
 provenance audit of <worktree>
-coverage: 1633 files scanned, 707 excluded by declared scope exclusions,
-  11 decision records, 13 provenance rows covering 13 files, 8 exemptions
-  excluded: .agents/ (41 files)
-  excluded: .claude/ (91 files)
-  excluded: .loom/ (575 files)
-tripwire hits (declared + undeclared): foreign-license-text=2,
-  foreign-source-language=1, self-declared-quotation=31,
+coverage: 2000 files scanned, 728 excluded by declared scope exclusions,
+  16 decision records, 20 provenance rows covering 20 files, 8 exemptions
+  excluded: .agents/ (42 files)
+  excluded: .claude/ (92 files)
+  excluded: .loom/ (594 files)
+tripwire hits (declared + undeclared): foreign-license-text=4,
+  foreign-source-language=2, self-declared-quotation=41,
   upstream-asset-extension=0
 
 PASS: every carriage signal is answered by a provenance row or a declared
 exemption, and the decision-record bookkeeping is self-consistent.
 ```
 
-Coverage is reported separately from agreement: 1633 files scanned (this
-branch, all new files staged), 707 **excluded** by the three declared scope
-exclusions (`.loom/`, `.claude/`, `.agents/` — Loom-installed surfaces owned by
-the upstream resync, recorded in the manifest as declared holes and printed on
+Exit 0; `--json` reports `"verdict": "PASS"` with 0 findings.
+
+Coverage is reported separately from agreement: 2000 files scanned (the
+committed tree, enumerated by `git ls-files`: 2728 tracked = 2000 scanned +
+728 excluded), 728 **excluded** by the three declared scope exclusions
+(`.loom/`, `.claude/`, `.agents/` — Loom-installed surfaces owned by the
+upstream resync, recorded in the manifest as declared holes and printed on
 every run).
 
-The two declared `foreign-license-text` hits are the upstream attribution line
-in `model/effects/aw-49/galactic_model.py` (row → DR-0006) and nothing else;
-the single `foreign-source-language` hit is
-`oracle/sxt038/lp24_ref_harness.cpp` (row → DR-0010).
+The four declared `foreign-license-text` hits are the upstream attribution
+lines in `model/effects/aw-49/galactic_model.py` (row → DR-0006) and
+`model/effects/aw-4/logical4_model.py` (row → DR-0015), plus the two
+`attribution-statement` rows restating the `libs/airwindows` MIT attribution
+(`decision-records/0015-airwindows-logical-quoted-constants.md` and
+`reports/SXT-028k/EVIDENCE.md`, both → DR-0015), and nothing else. The two
+`foreign-source-language` hits are `oracle/sxt038/lp24_ref_harness.cpp`
+(row → DR-0010) and `oracle/sxt022/halfband_d2_probe.cpp` (row → DR-0009).
 
 ## 2. First-run findings on the unmodified tree (the audit found real drift)
 
@@ -145,7 +156,7 @@ so a rule added later cannot ship untested. CI runs the negative control
 
 ```
 $ python3 -m pytest -q tests/test_sxt019_provenance.py
-14 passed
+16 passed
 ```
 
 Covers: the committed tree audits clean; the CLI's JSON verdict and exit
@@ -155,12 +166,15 @@ control; every rule has a control; and synthetic-tree controls for an
 unattributed GPL header, an unattributed `.wt` payload, an unattributed
 `.cpp`, an unattributed self-declared quotation, a row pointing at the wrong
 file, a blanket pattern, an attempt to exempt a non-exemptible rule, and a
-partial scan.
+partial scan; plus (added in `f8715ff`) the `RECORDED` status keyword is
+accepted while an unknown keyword still fails, and an `attribution-statement`
+row answers only the tripwires it lists.
 
-Audit wall time on this tree: ~2.8 s (a naive first implementation took 47 s;
-the scan now sniffs binaries before decoding and gates every regex behind a
-lowercase substring prefilter — the negative control is what keeps that
-optimization honest).
+Audit wall time: ~2.8 s on the first-commit tree (Linux); on the audited head
+the re-run measured ~2.6 s user CPU, 12–19 s real on a loaded Darwin host (a
+naive first implementation took 47 s; the scan now sniffs binaries before
+decoding and gates every regex behind a lowercase substring prefilter — the
+negative control is what keeps that optimization honest).
 
 ## 6. Reproducibility
 
@@ -182,12 +196,13 @@ No engine tree, no network, no oracle host required.
   content under a declared scope exclusion (`.loom/`, `.claude/`, `.agents/`)
   is **not** detected. NOT_RUN for similarity matching against upstream trees:
   no such check exists here.
-- **Not a ratification.** Records 0003–0004, 0006–0010 are PROPOSED and 0011
-  is ESCALATED; the audit checks that a row cites a record, never that the
+- **Not a ratification.** Records 0003–0004, 0006–0010, 0012, 0014 and 0015
+  are PROPOSED, 0011 is ESCALATED, and 0013 and 0016 are RECORDED with owner
+  ratification pending; the audit checks that a row cites a record, never that the
   owner agreed with it. The distribution-license determination remains open.
 - **No DSP, fidelity, RTL-exactness, preset-support or sound claim** is
   touched by this work.
-- The 13 provenance rows are this increment's inventory of known carriers,
+- The 20 provenance rows are this increment's inventory of known carriers,
   derived from the existing records and the tripwire scan. A carrier that
   predates the records and leaves no signal would be missing from it; adding
   one is an ordinary follow-up, not a contradiction of this record.
