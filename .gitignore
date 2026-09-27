@@ -27,6 +27,7 @@ __pycache__/
 .loom-in-use
 .loom-checkpoint
 .loom-managed
+.loom-cargo-target-dir
 .no-changes-needed
 .snapshots/
 .loom/.daemon.pid
@@ -55,6 +56,7 @@ __pycache__/
 .loom/sweep-checkpoint/
 .loom/sweep-run/
 .loom/state/ci-telemetry/
+.loom/state/fleet-captain/
 .loom/concierge/
 .loom/stats/
 .loom/diagnostics/
@@ -67,6 +69,8 @@ __pycache__/
 .loom/claude-config/
 .loom/native-tools/
 .loom/tokens/
+.loom/tokens.*/
+.loom/tokens-*/
 .loom/accounts.env
 .loom/api-keys/
 .loom/account-health.json
