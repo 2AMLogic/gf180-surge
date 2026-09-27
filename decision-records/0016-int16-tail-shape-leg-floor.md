@@ -5,7 +5,19 @@
   comparator constant moved). **Owner ratification pending** at the SXT-017
   freeze ([#12](https://github.com/2AMLogic/gf180-surge/issues/12)); the
   budget itself remains **[PROPOSED-TO-BE-FROZEN-AT-PILOT]**. Supersedes
-  nothing.
+  nothing. **AMENDED 2026-09-27 by
+  [`0017`](0017-int16-wet-tail-shape-grading-fixture.md) (#187)**, which
+  disposes of option **F-E** below — recorded here as NOT_RUN — by taking its
+  **fixture-side** arm and rejecting its bus-side arm on measurement: the int16
+  wet shape leg is graded on a *designated* committed fixture whose whole
+  declared tail region is clear of the quantization band
+  (`fixtures/audio/behemoth/seq-notes-holds-v1-wet.wav`; measured: no new
+  render was required, 7 of the 30 committed int16 wet fixtures already
+  qualify). Nothing in *this* record changes: every value, option table row,
+  and consequence below still stands, the band and its disposition rule stay in
+  force for ineligible fixtures, and the live control of §"Consequences"
+  (a raised floor disables `mono/koala2/zero-late-tail-from-44%`) is retained
+  and still fires.
 - **Date:** 2026-09-27
 - **Issue:** [#160](https://github.com/2AMLogic/gf180-surge/issues/160)
 - **Raised by:** the tail-shape leg of the wet-path tail gate,
