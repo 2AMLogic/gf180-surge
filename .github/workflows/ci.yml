@@ -22,7 +22,7 @@ jobs:
 
   provenance-audit:
     name: provenance audit (SXT-019 / #25)
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
