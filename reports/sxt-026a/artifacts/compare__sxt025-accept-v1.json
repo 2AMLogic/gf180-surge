@@ -19,38 +19,38 @@
       "L": {
         "best_shift": 30,
         "frames": 840000,
-        "max_abs_diff_lsb": 1766587.375,
-        "model_peak_lsb": 1180708.0,
+        "max_abs_diff_lsb": 1767789.375,
+        "model_peak_lsb": 1182358.0,
         "ref_peak_lsb": 1076423.0,
-        "rms_diff_at_best_shift_lsb": 156593.74628752912,
-        "rms_diff_at_shift0_lsb": 162916.18169882116,
-        "rms_diff_dbfs": -16.172713807969384,
-        "rms_diff_lsb": 162916.18169882116,
-        "spectral_corr": 0.781003161997966
+        "rms_diff_at_best_shift_lsb": 156701.30217877973,
+        "rms_diff_at_shift0_lsb": 163028.48917574543,
+        "rms_diff_dbfs": -16.166728188470955,
+        "rms_diff_lsb": 163028.48917574543,
+        "spectral_corr": 0.7808584520119917
       },
       "R": {
         "best_shift": 30,
         "frames": 840000,
-        "max_abs_diff_lsb": 1728891.375,
-        "model_peak_lsb": 1128189.0,
+        "max_abs_diff_lsb": 1730171.375,
+        "model_peak_lsb": 1129831.0,
         "ref_peak_lsb": 1303387.375,
-        "rms_diff_at_best_shift_lsb": 159791.58655183687,
-        "rms_diff_at_shift0_lsb": 165618.10873827932,
-        "rms_diff_dbfs": -16.029841846671,
-        "rms_diff_lsb": 165618.10873827932,
-        "spectral_corr": 0.7819223736311814
+        "rms_diff_at_best_shift_lsb": 159902.04613139824,
+        "rms_diff_at_shift0_lsb": 165732.85827748713,
+        "rms_diff_dbfs": -16.02382585774905,
+        "rms_diff_lsb": 165732.85827748713,
+        "spectral_corr": 0.7817711307942015
       },
       "mono": {
         "best_shift": 30,
         "frames": 840000,
-        "max_abs_diff_lsb": 1747739.375,
-        "model_peak_lsb": 1154448.5,
+        "max_abs_diff_lsb": 1748980.375,
+        "model_peak_lsb": 1156094.5,
         "ref_peak_lsb": 1186344.0,
-        "rms_diff_at_best_shift_lsb": 154628.73686167537,
-        "rms_diff_at_shift0_lsb": 160608.78563822765,
-        "rms_diff_dbfs": -16.29661229731944,
-        "rms_diff_lsb": 160608.78563822765,
-        "spectral_corr": 0.7800191903475415
+        "rms_diff_at_best_shift_lsb": 154732.364018925,
+        "rms_diff_at_shift0_lsb": 160717.04611999227,
+        "rms_diff_dbfs": -16.290759430606506,
+        "rms_diff_lsb": 160717.04611999227,
+        "spectral_corr": 0.7798729847951672
       }
     },
     "proposed_budgets": {
@@ -83,7 +83,7 @@
     },
     "status": "PASS"
   },
-  "model_render_sha256": "278de78866ef137a84bb080a5004a0cfd9110be13861329c5aecb8b453657b70",
+  "model_render_sha256": "3b674e86050b6a7513030bc94f924ebdba650a4cf53dd615fdb985e4554abf58",
   "overall": "FAIL against proposed budgets",
   "placement_order_gain": {
     "gain_staging": {
@@ -124,24 +124,24 @@
     "tail": "FAIL"
   },
   "tail": {
-    "band_energy_finding": "tail band 16000-22000Hz deviates 27.72 dB (band level -68.1 dBFS, model -40.3 dBFS). Characterization: in the final 3 s of the tail the reference's 16000-22000Hz band decays to -99.6 dBFS while the model floors at -45.7 dBFS -- the frozen Q4.28 round-half-up recirculation accumulates HF quantization noise the float32 reference does not have (the SXT-016 probe's predicted dither/decay-floor class; the frozen leaf has no decay-floor dither). Broadband tail and decay-curve budgets PASS; this sub-budget FAILS and is recorded for the SXT-013 word-length/dither decision, not tuned away.",
-    "band_energy_floor_model_dbfs": -45.66973071844565,
-    "band_energy_floor_ref_dbfs": -99.58766005303826,
-    "band_energy_max_dev_db": 27.72257468736408,
+    "band_energy_finding": "tail band 16000-22000Hz deviates 27.75 dB (band level -68.1 dBFS, model -40.3 dBFS). Characterization: in the final 3 s of the tail the reference's 16000-22000Hz band decays to -99.6 dBFS while the model floors at -45.7 dBFS -- the frozen Q4.28 round-half-up recirculation accumulates HF quantization noise the float32 reference does not have (the SXT-016 probe's predicted dither/decay-floor class; the frozen leaf has no decay-floor dither). Broadband tail and decay-curve budgets PASS; this sub-budget FAILS and is recorded for the SXT-013 word-length/dither decision, not tuned away.",
+    "band_energy_floor_model_dbfs": -45.653179554361586,
+    "band_energy_floor_ref_dbfs": -99.58766005305357,
+    "band_energy_max_dev_db": 27.75224805013771,
     "band_energy_worst_band": "16000-22000",
-    "decay_curve_max_dev_db": 5.704860687255859,
+    "decay_curve_max_dev_db": 5.691352844238281,
     "decay_curve_ok": false,
     "floor_guard_applies": false,
-    "stereo_corr_delta": 0.054579142242353385,
+    "stereo_corr_delta": 0.05461333687825465,
     "stereo_corr_ok": false,
-    "stereo_corr_ref": 0.9869850418287279,
-    "tail_abs_err_dbfs": -13.179755210876465,
+    "stereo_corr_ref": 0.986985041828721,
+    "tail_abs_err_dbfs": -13.176889445422944,
     "tail_budget": "relative <= -50.0 dB",
     "tail_continuity_ok": true,
     "tail_continuity_windows_above_floor": 203,
-    "tail_continuity_worst_margin_db": 8.824041805528736,
+    "tail_continuity_worst_margin_db": 8.82404180552875,
     "tail_frames": 576000,
     "tail_rms_ok": false,
-    "tail_rms_rel_db": 1.0629997253417969
+    "tail_rms_rel_db": 1.0658655235481462
   }
 }

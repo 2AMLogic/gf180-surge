@@ -1,15 +1,15 @@
 {
   "baseline": {
     "expected": "informational",
-    "max_abs_diff_lsb": 16721.0,
-    "model_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46",
-    "rms_diff_dbfs": -27.855086029921274,
-    "rms_diff_lsb": 1326.4240254946847,
-    "spectral_corr": 0.9207418655237404,
+    "max_abs_diff_lsb": 16740.0,
+    "model_sha256": "e095d007ad0a070256d6b32c09bb43245ae8b058b564b0221e41be4d51570a04",
+    "rms_diff_dbfs": -27.850580066550283,
+    "rms_diff_lsb": 1327.1123106194211,
+    "spectral_corr": 0.9212367046094617,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 1915.35724374861,
-      "kt_zero": 2719.375381089889
+      "kt_nonzero": 1916.5779351099552,
+      "kt_zero": 2719.916539027949
     }
   },
   "carrier-Alone.fxp": {
@@ -79,23 +79,23 @@
     "discriminating": false,
     "expected": "FAIL",
     "fails_reference_budget": true,
-    "max_abs_diff_lsb": 16330.0,
-    "model_sha256": "d7d43ad51b65b3957018f6369d86ca18dfd751582a90857603e5007de51a7c65",
+    "max_abs_diff_lsb": 16336.0,
+    "model_sha256": "7879924181c7bf145a101e344351cc0bf164fb9db493ccd535d74ebb63370f51",
     "render_changed": true,
-    "rms_diff_dbfs": -28.48636339603338,
-    "rms_diff_lsb": 1233.4413718062701,
-    "spectral_corr": 0.9249752071828001,
+    "rms_diff_dbfs": -28.484180509350278,
+    "rms_diff_lsb": 1233.751391989855,
+    "spectral_corr": 0.9259000500106875,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 1728.7357909234504,
-      "kt_zero": 2719.375381089889
+      "kt_nonzero": 1729.2114269738304,
+      "kt_zero": 2719.916539027949
     }
   },
   "fegmod-zeroed": {
     "control_ok": true,
     "counted_as_control": false,
     "expected": "DEGENERATE (no route to mutate)",
-    "model_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46",
+    "model_sha256": "e095d007ad0a070256d6b32c09bb43245ae8b058b564b0221e41be4d51570a04",
     "note": "mutation is a no-op on this carrier",
     "render_changed": false
   },
@@ -111,16 +111,16 @@
     "discriminating": true,
     "expected": "FAIL",
     "fails_reference_budget": true,
-    "max_abs_diff_lsb": 20723.0,
-    "model_sha256": "4459ddae2593af5735f5113bfef25a87cea72c3159a35151ce5fefe9809d7935",
+    "max_abs_diff_lsb": 20797.0,
+    "model_sha256": "35b24226292f628d85d21c08d075886b88b88b235ddb98e026af2e21fa1cb295",
     "render_changed": true,
-    "rms_diff_dbfs": -26.07105218106925,
-    "rms_diff_lsb": 1628.8611763671545,
-    "spectral_corr": 0.8774971521882573,
+    "rms_diff_dbfs": -26.040518217040894,
+    "rms_diff_lsb": 1634.5972739037502,
+    "spectral_corr": 0.8742957579533996,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 2429.3602996769046,
-      "kt_zero": 3023.2183117774784
+      "kt_nonzero": 2439.087065524903,
+      "kt_zero": 3028.7330455739825
     }
   },
   "lag-refresh-before-probe": {
@@ -149,23 +149,23 @@
     "discriminating": true,
     "expected": "PROBE",
     "fails_reference_budget": true,
-    "max_abs_diff_lsb": 15300.0,
-    "model_sha256": "fcd1fddc2284f832411caa784ffdaf0a24a6977b2bc8d7ebdcf22de92a02779d",
+    "max_abs_diff_lsb": 15304.0,
+    "model_sha256": "2c0c9ad51865197b068c70cdb7fcb5a02a95909643c91d463da6d893ecb41d16",
     "render_changed": true,
-    "rms_diff_dbfs": -29.330441241962358,
-    "rms_diff_lsb": 1119.2178270618706,
-    "spectral_corr": 0.8916193084396107,
+    "rms_diff_dbfs": -29.32985998312307,
+    "rms_diff_lsb": 1119.2927275096324,
+    "spectral_corr": 0.892602501992357,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 1578.3217215018697,
-      "kt_zero": 2433.719669015282
+      "kt_nonzero": 1578.4544949439764,
+      "kt_zero": 2433.7866779065816
     }
   },
   "reso-zeroed": {
     "control_ok": true,
     "counted_as_control": false,
     "expected": "DEGENERATE (no route to mutate)",
-    "model_sha256": "3d4f3fd44e64c4e61c93598372d7c501ba8831bbc31e0ce880a5216df5c68b46",
+    "model_sha256": "e095d007ad0a070256d6b32c09bb43245ae8b058b564b0221e41be4d51570a04",
     "note": "mutation is a no-op on this carrier",
     "render_changed": false
   },
@@ -203,16 +203,16 @@
     "discriminating": true,
     "expected": "FAIL",
     "fails_reference_budget": true,
-    "max_abs_diff_lsb": 17038.0,
-    "model_sha256": "a10b8499894c7f5e852f5ef4ed00b702ffb1dccb0e7f555dd7ddb11190bd4e68",
+    "max_abs_diff_lsb": 17074.0,
+    "model_sha256": "bede855738c030d6e5c566a7e92b2533bba7b34aaad953fa140cb8ea9a3a5bb0",
     "render_changed": true,
-    "rms_diff_dbfs": -27.696675212956446,
-    "rms_diff_lsb": 1350.836915573964,
-    "spectral_corr": 0.9207209145339963,
+    "rms_diff_dbfs": -27.691560262234685,
+    "rms_diff_lsb": 1351.6326313115521,
+    "spectral_corr": 0.9212225892067946,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 1963.500778115421,
-      "kt_zero": 2719.375381089889
+      "kt_nonzero": 1964.927136781551,
+      "kt_zero": 2719.916539027949
     }
   },
   "source-swap-modwheel": {
@@ -223,17 +223,17 @@
     "equals_cutoff_zeroed_render": true,
     "expected": "FAIL",
     "fails_reference_budget": true,
-    "max_abs_diff_lsb": 16330.0,
-    "model_sha256": "d7d43ad51b65b3957018f6369d86ca18dfd751582a90857603e5007de51a7c65",
+    "max_abs_diff_lsb": 16336.0,
+    "model_sha256": "7879924181c7bf145a101e344351cc0bf164fb9db493ccd535d74ebb63370f51",
     "note": "the modwheel is identically 0 on this fixture (a Sine-class fixture admits no CC events), so this swap is arithmetically the zeroed control -- proved by the render sha equality; velocity carries the non-degenerate swap",
     "render_changed": true,
-    "rms_diff_dbfs": -28.48636339603338,
-    "rms_diff_lsb": 1233.4413718062701,
-    "spectral_corr": 0.9249752071828001,
+    "rms_diff_dbfs": -28.484180509350278,
+    "rms_diff_lsb": 1233.751391989855,
+    "spectral_corr": 0.9259000500106875,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 1728.7357909234504,
-      "kt_zero": 2719.375381089889
+      "kt_nonzero": 1729.2114269738304,
+      "kt_zero": 2719.916539027949
     }
   },
   "source-swap-velocity": {
@@ -243,16 +243,16 @@
     "discriminating": false,
     "expected": "FAIL",
     "fails_reference_budget": true,
-    "max_abs_diff_lsb": 16455.0,
-    "model_sha256": "e706f3e46cf1cd78942f922032b76066aaf8e302f44be1f49895f2e83732f952",
+    "max_abs_diff_lsb": 16461.0,
+    "model_sha256": "d29f0764cfa234d69ec67de6b2e577445868726df8ac40b3753d6d1dff76a252",
     "render_changed": true,
-    "rms_diff_dbfs": -28.25063214384183,
-    "rms_diff_lsb": 1267.3748187390381,
-    "spectral_corr": 0.9270468453443563,
+    "rms_diff_dbfs": -28.24767021596674,
+    "rms_diff_lsb": 1267.807073013139,
+    "spectral_corr": 0.9276044075508479,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
-      "kt_nonzero": 1785.9804115648071,
-      "kt_zero": 2760.3718523691427
+      "kt_nonzero": 1786.6511197824068,
+      "kt_zero": 2761.096389446557
     }
   },
   "synthetic-fegmod-zeroed": {

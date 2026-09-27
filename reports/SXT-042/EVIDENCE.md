@@ -116,7 +116,8 @@ settle) → mono int16 by the two documented steps of
 landed SXT-026a §4 canonical dry comparison reported max|Δ| 16,960 LSB,
 RMS Δ −27.87 dBFS, spectral corr 0.9205 against an oracle render that was
 **never committed**. The projection reproduces 16,721 / −27.855 / 0.9207
-with the model at this branch. The model side is proved drift-free (the
+with the model at this branch (16,740 / −27.851 / 0.9212 after the #123
+decimator fix, §5a). The model side is proved drift-free (the
 bells smoke render is byte-identical to the committed SXT-026a artifact),
 so the residual ~1.4 % on max|Δ| is unattributed between (a) model drift on
 paths the 122-block smoke does not reach and (b) a harness difference
@@ -128,7 +129,7 @@ between the SXT-025 fixture renderer and `render_leaf48_reference.py`.
 | # | Acceptance item | Status | Evidence |
 |---|---|---|---|
 | 1 | Frozen fixed-point model with word lengths + op order (`model/voice/` conventions) | **PASS** | `model/voice/README.md` §"SXT-042 frozen keytrack modsource": Q10.21 word, engine-cited init/refresh order, destination class, md-order saturating route application, integer-exact RTL equivalent, declared omissions. Implementation in `voice_model.py`; landed renders bit-identical (§1). |
-| 2 | Model-vs-pinned-engine dry-render budgets on the carrier fixtures (PENDING-FREEZE; achieved numbers recorded, not tuned) | **DONE — budgets FAILED (bounded findings F-042-3/F-48a → SXT-013/#12)**; the issue's three named carriers: **NOT_RUN / refused** | `artifacts/audio-nc-baseline.json`: max|Δ| **16,721 LSB** (budget 3,500), RMS Δ **−27.855 dBFS** (budget −46), spectral corr **0.9207** (budget 0.98), best_shift 32 → FAIL. Windowed: RMS 1,915.4 LSB over the kt≠0 note windows, 2,719.4 over the kt=0 windows. The three carriers named in the issue body are refused by the applicability scan for keytrack-specific reasons (§6), so no budget number exists for them (NOT_RUN, not a pass). |
+| 2 | Model-vs-pinned-engine dry-render budgets on the carrier fixtures (PENDING-FREEZE; achieved numbers recorded, not tuned) | **DONE — budgets FAILED (bounded findings F-042-3/F-48a → SXT-013/#12)**; the issue's three named carriers: **NOT_RUN / refused** | `artifacts/audio-nc-baseline.json`: max|Δ| **16,740 LSB** (budget 3,500), RMS Δ **−27.851 dBFS** (budget −46), spectral corr **0.9212** (budget 0.98), best_shift 32 → FAIL. Windowed: RMS 1,916.6 LSB over the kt≠0 note windows, 2,719.9 over the kt=0 windows. *(Republished by #145 after the #123 decimator fix; as first published: 16,721 / −27.855 / 0.9207, windowed 1,915.4 / 2,719.4 — see §5a.)* The three carriers named in the issue body are refused by the applicability scan for keytrack-specific reasons (§6), so no budget number exists for them (NOT_RUN, not a pass). |
 | 3 | RTL-vs-model exact at declared checkpoints (integer equality) | **PASS (0 mismatches)** | `tools/compare_kt_rtl_model.py` + `rtl/voice/tb_kt.sv`: `sxt025-accept-v1` 26,250 blocks / **30,021 voice checkpoints / 240,168 fields / 0 mismatches**; synthetic class-cover fixture (all three live destinations) same counts, 0 mismatches; `leaf48-smoke-bells-v1` 122 blocks / 302 / 2,416 / 0. Checkpoints per running voice per block: `kt_word`, the three per-destination keytrack route sums, and `mod_cutoff`/`mod_reso`/`mod_envmod`/`mod_vca_db` after the full pass. |
 | 4 | Cycle/state costs vs SXT-016 probes and SXT-015 | **PASS (recorded; divergence named)** | `artifacts/costs.txt`: 180,126 qmul / 840,000 samples = **0.214 MAC per 48 kHz sample** (one qmul per md route row per running voice-block; 0.286 on the 8-row synthetic fixture) — ~0.5 % of the 37.7–41.3 MAC/sample voice datapath. The keytrack word itself costs one integer divide-by-6 of a shifted key difference: no multiply, no table. State: 1×32-bit word per voice + a 3-word-per-route constant ROM; no history. **Divergence**: SXT-016 has no per-modsource evaluation probe row (the leaf's own cost note said `[ESTIMATE] pending SXT-016 refinement`); these are offered as refinement input, not reconciled. |
 | 5 | **Negative control (must demonstrably fail)**: routing-zeroed (per destination class) and source-swap (modwheel in place of this source), both FAILing the reference-budget check; committed transcript | **PASS on the letter, with an explicit honesty qualifier** | `artifacts/negative-control.txt`, `negative-controls.json`. Both required controls **FAIL** the reference-budget check and **provably change the render**; three of the counted controls do **not** degrade any metric relative to the unmutated model on this carrier and are labelled **NON-DISCRIMINATING** in the transcript and JSON rather than counted as evidence of sensitivity (F-042-3). Two controls are discriminating, two RTL mutants fail integer equality, two destinations' controls are provably degenerate on this preset and are carried in the exactness domain instead. Full table in §5. |
@@ -136,19 +137,20 @@ between the SXT-025 fixture renderer and `render_leaf48_reference.py`.
 ## 5. Negative controls (transcript: `artifacts/negative-control.txt`)
 
 Reference retained unmodified; only the model is mutated (AGENTS.md bypass
-rule). Baseline row: max 16,721 / RMS −27.86 dBFS / spec 0.9207 / windowed
-kt≠0 RMS 1,915.4.
+rule). Baseline row: max 16,740 / RMS −27.85 dBFS / spec 0.9212 / windowed
+kt≠0 RMS 1,916.6. Every row below was regenerated at the #145 HEAD (after
+the #123 decimator fix); the as-first-published numbers are in §5a.
 
 | Control | Result | Verdict |
 |---|---|---|
-| **C1 routing-zeroed → F1 Cutoff** (depth→0) | max 16,330 / RMS −28.49 / spec 0.9250 / wRMS 1,728.7 → FAILs the budget check, render provably changed, **degrades nothing** | FAIL (required) but **NON-DISCRIMINATING** — recorded, not counted as sensitivity |
+| **C1 routing-zeroed → F1 Cutoff** (depth→0) | max 16,336 / RMS −28.48 / spec 0.9259 / wRMS 1,729.2 → FAILs the budget check, render provably changed, **degrades nothing** | FAIL (required) but **NON-DISCRIMINATING** — recorded, not counted as sensitivity |
 | C1 routing-zeroed → F1 Reso / F1 FEG-Mod | render **bit-identical** (the preset carries no such route) | **DEGENERATE — explicitly not counted**; carried by C8 instead |
-| **C2 shared-instead-of-per-instance** (one global keytrack word rewritten at every note-on) | max 17,038 / RMS −27.70 / spec 0.92074 / wRMS 1,963.5 — **degrades max, RMS, spectral and the windowed kt metric** | **FAIL + DISCRIMINATING** (the AGENTS.md per-instance control) |
-| **C3 source-swap → velocity** | max 16,455 / RMS −28.25 / spec 0.9270 / wRMS 1,786.0 | FAIL, **NON-DISCRIMINATING** |
+| **C2 shared-instead-of-per-instance** (one global keytrack word rewritten at every note-on) | max 17,074 / RMS −27.69 / spec 0.92122 / wRMS 1,964.9 — **degrades max, RMS, spectral and the windowed kt metric** | **FAIL + DISCRIMINATING** (the AGENTS.md per-instance control) |
+| **C3 source-swap → velocity** | max 16,461 / RMS −28.25 / spec 0.9276 / wRMS 1,786.7 | FAIL, **NON-DISCRIMINATING** |
 | **C3 source-swap → modwheel** (the swap the issue names) | byte-identical to the C1 zeroed render (**proved by sha equality**): a Sine-class fixture admits no CC event, so the modwheel is identically 0 | FAIL, **degenerate-to-zeroed**, disclosed |
-| **C4 keytrack-root dropped** (`pitch/12`) | max 20,723 / RMS −26.07 / spec 0.8775 / wRMS 2,429.4 — degrades every metric | **FAIL + DISCRIMINATING** |
+| **C4 keytrack-root dropped** (`pitch/12`) | max 20,797 / RMS −26.04 / spec 0.8743 / wRMS 2,439.1 — degrades every metric | **FAIL + DISCRIMINATING** |
 | P5 lag probe (refresh before the pass) | **bit-identical** (expected: pitch is constant per voice, so the declared lag is unobservable in this class) | PROBE, passes as inert; not a control |
-| P6 control-validity probe (zero the **velocity** route into the same destination, 5.8× the keytrack depth) | max 15,300 / RMS −29.33 / spec 0.8916 / wRMS 1,578.3 | PROBE — see F-042-3 |
+| P6 control-validity probe (zero the **velocity** route into the same destination, 5.8× the keytrack depth) | max 15,304 / RMS −29.33 / spec 0.8926 / wRMS 1,578.5 | PROBE — see F-042-3 |
 | C7 out-of-class refusal: keytrack → 'A Pan' (265) | runner exit **2**, destination named | PASS |
 | C7 carrier refusals (Alone, Autumn 2, Disturbances) | all refused with keytrack-specific reasons (§6) | PASS |
 | C8 exactness-domain controls on the synthetic class-cover fixture (zero reso / zero feg-mod) | both **change the render** (model-vs-model only; no reference claim) | PASS |
@@ -159,10 +161,13 @@ kt≠0 RMS 1,915.4.
 
 Removing the keytrack→cutoff route makes the model **closer** to the pinned
 render — in every kt≠0 note window, not only in aggregate (per-window RMS
-deltas −195.5, −139.6, −142.9, −224.6, −337.3, −113.1 LSB; kt=0 windows
+deltas −195.5, −139.6, −142.9, −224.6, −337.3, −113.1 LSB as first
+measured before the #123 decimator fix — the per-window split was not
+re-derived by #145; the aggregate kt≠0 windowed RMS still drops, 1,916.6 →
+1,729.2 LSB, at HEAD; kt=0 windows
 unchanged to the LSB, as they must be). The control-validity probe P6 shows
 the same thing for the **velocity** route into the same destination, whose
-depth is 5.8× larger (max 15,300, RMS −29.33). So the effect is **not
+depth is 5.8× larger (max 15,304, RMS −29.33 at the #145 HEAD). So the effect is **not
 keytrack-specific**: on this carrier the landed SXT-026a residual (F-48a:
 transient quantization error at bell attacks, RMS ≈ 1,326 LSB against a
 12,582 LSB reference peak) is larger than the audio effect of the entire
@@ -177,6 +182,39 @@ modulation API and compare the engine Δ to the model Δ. That requires an
 oracle host — **NOT_RUN** here, filed as a follow-up and routed to
 SXT-013/#12. Nothing was tuned to make a number look better, and no control
 was reclassified to make the leaf pass.
+
+### 5a. Change note (issue #145, 2026-09-27): republished after the #123 halfband branch-order fix
+
+The canonical render passes through the shared scene decimator, so #145
+re-rendered it at HEAD (`model-sxt025-accept-v1-bells-dry.wav`, sha256
+`3d4f3fd4…` → `e095d007…`) and re-ran `tools/kt_negative_controls.py` end to
+end (exit 0, `overall: ALL CONTROLS FAIL THEIR CHECK`), regenerating every
+`audio-nc-*.json`, `negative-control.txt` and `negative-controls.json`.
+Attribution: the pre-#123 committed render `3d4f3fd4…` is exactly the
+`a_even` render #123 measured, so the deltas are the #123 fix alone
+(`reports/halfband-republication/`). Before → after:
+
+| row | max LSB | RMS dBFS | spectral | wRMS kt≠0 | verdict / label |
+|---|---|---|---|---|---|
+| baseline | 16,721 → 16,740 | −27.855 → −27.851 | 0.9207 → 0.9212 | 1,915.4 → 1,916.6 | FAIL → FAIL |
+| C1 cutoff-zeroed | 16,330 → 16,336 | −28.49 → −28.48 | 0.9250 → 0.9259 | 1,728.7 → 1,729.2 | FAIL, NON-DISCRIMINATING (unchanged) |
+| C2 shared word | 17,038 → 17,074 | −27.70 → −27.69 | 0.92072 → 0.92122 | 1,963.5 → 1,964.9 | FAIL + DISCRIMINATING (unchanged) |
+| C3 source-swap velocity | 16,455 → 16,461 | −28.25 → −28.25 | 0.9270 → 0.9276 | 1,786.0 → 1,786.7 | FAIL, NON-DISCRIMINATING (unchanged) |
+| C3 source-swap modwheel | = C1 (sha-equal, before and after) | | | | degenerate-to-zeroed (unchanged) |
+| C4 root dropped | 20,723 → 20,797 | −26.07 → −26.04 | 0.8775 → 0.8743 | 2,429.4 → 2,439.1 | FAIL + DISCRIMINATING (unchanged) |
+| P6 velocity probe | 15,300 → 15,304 | −29.33 → −29.33 | 0.8916 → 0.8926 | 1,578.3 → 1,578.5 | PROBE (unchanged) |
+
+No verdict and no DISCRIMINATING / NON-DISCRIMINATING / DEGENERATE label
+moved. C2's spectral degradation relative to the baseline is now 0.00001
+(0.92122 vs 0.92124); it is still counted as degrading spectral because the
+tool's rule is strict inequality, but that leg is knife-edge and C2's
+discrimination rests on max, RMS and the windowed keytrack metric. The RTL
+exactness JSONs (`exactness-kt-*.json`) and the two RTL mutants are
+unaffected by the decimator (keytrack control plane only) and were re-run
+unchanged: 0 mismatches clean; 50 and 42 mismatches for the mutants.
+F-042-4's cross-validation in §3 compares against the landed SXT-026a numbers
+as first published; the SXT-026a record now carries the same #145 HEAD
+numbers (16,740 / −27.851 / 0.9212).
 
 ## 6. Applicability boundary and coverage delta (measured)
 

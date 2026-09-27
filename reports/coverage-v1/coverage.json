@@ -260,11 +260,11 @@
   },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
-   "sha256": "7c64532f8797b2de1e389e4f90862708a75b6ef3513459a3213d6d1d77f82f6d"
+   "sha256": "df348ec97daee38f6b56efc4ebdd617800567f8eeff6f4bfcec6303820045bd8"
   },
   "reports/SXT-034/EVIDENCE.md": {
    "role": "evidence record for leaf voice:unison-stack",
-   "sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba"
+   "sha256": "eaafb2186ef7a8808c2a0d2e6eca2e5306b3d962aee3077770d643d6c597d0f2"
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
@@ -276,15 +276,15 @@
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
-   "sha256": "9bcee10df9ad434cc7f35d0ade50a9f6d194108f6374fc3704dc16591ed4f8a7"
+   "sha256": "a423d64af3cff18de9b338d53ecbf521044014100d494314f2a143937da9e3f6"
   },
   "reports/SXT-042/EVIDENCE.md": {
    "role": "evidence record for leaf mod:keytrack",
-   "sha256": "ebea67a3a75c1863ee17f47b9f153c1c0da3d5d5fbf50d934fad82605f9d01fd"
+   "sha256": "13d19adc29eb00985e91a4a92eab464af21a3d39e370c1d18c76f4557e17a5cb"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "e783f4bd10ef99ac08461baffabf4d92c674bb17676a878211b552bb3c8f623d"
+   "sha256": "47f37bff1e0a1f68350be9a0dd271ad12a857268bff0b3fb8f17556597f9fc91"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -312,7 +312,7 @@
   },
   "reports/sxt-022/EVIDENCE.md": {
    "role": "evidence record for leaf voice:attacky-slice",
-   "sha256": "13509fe3fb88f1d1bc4e3778ac2991ba10739a5e6d63e69aa6e910086c3cbfca"
+   "sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
@@ -324,11 +324,11 @@
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
-   "sha256": "958ab1affd1fcc5ce5b46d909921d003b4c3b23b9c1f8e1566d0c68444599af3"
+   "sha256": "fbb9a8f4a4b50cc88a6ed3c434042b8fbdb291cd81143b8b5d5b4fd805253b02"
   },
   "reports/sxt-026a/EVIDENCE.md": {
    "role": "evidence record for leaf voice:sine-fm-lp24-v2",
-   "sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389"
+   "sha256": "80f113b19c88f1c795aa1090c0422efd05ef9d3ea9051b8fd1e511c3c4618a1e"
   },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",
@@ -352,11 +352,11 @@
   },
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",
-   "sha256": "0e8c38e9cb48bb05accb25906d746cc1ac366157eb4e15ee6b2eeb7dde9e23df"
+   "sha256": "41a1fe58e9ac4268049ee6a3b4f487ee749ae9a4a4f6b451c9c437eaf768f6d0"
   },
   "reports/sxt-035/EVIDENCE.md": {
    "role": "evidence record for leaf mod:modwheel",
-   "sha256": "4eec4b2036f071622934a4e320010fc9d9005ffafbe52e0c6931f58164285278"
+   "sha256": "0ec971409bf3e58f1f9a9c575362b7a44aca5a5325694e5611eb32b438952045"
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",

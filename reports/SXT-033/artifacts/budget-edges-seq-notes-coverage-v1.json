@@ -1,14 +1,14 @@
 {
   "frames": 273600,
   "ref_peak_lsb": 468.0,
-  "model_peak_lsb": 389.0,
-  "max_abs_diff_lsb": 90.0,
-  "rms_diff_lsb": 6.008317212913625,
-  "rms_diff_dbfs": -74.73367655375978,
-  "rms_diff_at_shift0_lsb": 6.008317212913625,
+  "model_peak_lsb": 398.0,
+  "max_abs_diff_lsb": 83.0,
+  "rms_diff_lsb": 5.932594387752347,
+  "rms_diff_dbfs": -74.84384049118582,
+  "rms_diff_at_shift0_lsb": 5.932594387752347,
   "best_shift": 0,
-  "rms_diff_at_best_shift_lsb": 6.008317212913625,
-  "spectral_corr": 0.9635314339572595,
+  "rms_diff_at_best_shift_lsb": 5.932594387752347,
+  "spectral_corr": 0.9744227953033333,
   "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -16,7 +16,7 @@
   },
   "proposed_budget_results": {
     "max_abs_diff_lsb": true,
-    "rms_diff_dbfs": false,
+    "rms_diff_dbfs": true,
     "spectral_corr": false
   },
   "verdict": "FAIL against proposed budgets"
