@@ -201,3 +201,50 @@ def test_partial_scan_is_not_a_pass(tmp_path):
     root = _skeleton(tmp_path)
     cp._patch_manifest(root, lambda d: d.update(scan_floor=10_000))
     assert "scan-underflow" in _rules_fired(root)
+
+
+def _set_record_status(root, record_status, index_status):
+    record = root / "decision-records" / "0001-example.md"
+    record.write_text(
+        cp.SKELETON_RECORD.replace("**Status**: ratified", f"**Status**: {record_status}"),
+        encoding="utf-8",
+    )
+    index = root / "decision-records" / "README.md"
+    index.write_text(
+        cp.SKELETON_INDEX.replace("| ratified |", f"| {index_status} |"), encoding="utf-8"
+    )
+
+
+def test_recorded_status_is_accepted_and_unknown_status_still_fails(tmp_path):
+    """DR-0013 / DR-0016 use "RECORDED ..."; accepting it must not open the vocabulary."""
+    root = _skeleton(tmp_path)
+    _set_record_status(
+        root,
+        "RECORDED CONTRACT REVISION — owner ratification pending",
+        "RECORDED CONTRACT REVISION — owner ratification pending",
+    )
+    assert "record-status-unrecognized" not in _rules_fired(root)
+    _set_record_status(root, "vibes — decided by feel", "vibes — decided by feel")
+    assert "record-status-unrecognized" in _rules_fired(root)
+
+
+def test_attribution_statement_row_covers_nothing_implicitly(tmp_path):
+    """An 'attribution-statement' row only answers the tripwires it lists in
+    'covers'; a row without 'covers' must not launder a pasted license body."""
+    root = _skeleton(tmp_path)
+    cp._write(root, "docs/attribution.md", cp.FIXTURE_GPL_BODY + "pin 58914e59\n")
+    row = {
+        "path": "docs/attribution.md",
+        "class": "attribution-statement",
+        "content": "synthetic attribution prose",
+        "upstream": "synthetic upstream",
+        "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "upstream_license": "MIT",
+        "decision_record": "0001",
+    }
+    cp._patch_manifest(root, lambda d: d["entries"].append(dict(row)))
+    fired = _rules_fired(root)
+    assert "foreign-license-text" in fired
+    assert "manifest-unknown-class" not in fired
+    cp._patch_manifest(root, lambda d: d["entries"][-1].update({"covers": ["foreign-license-text"]}))
+    assert "foreign-license-text" not in _rules_fired(root)

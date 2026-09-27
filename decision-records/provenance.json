@@ -150,6 +150,85 @@
       "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
       "upstream_license": "GPL-3.0-or-later (the imported engine)",
       "decision_record": "0006"
+    },
+    {
+      "path": "model/effects/type-distortion/distortion_model.py",
+      "class": "quoted-constants",
+      "content": "HB_A_SOFT / HB_B_SOFT / HB_A_STEEP / HB_B_STEEP - the twelve order-6 halfband allpass coefficients of HalfRateFilter load_coefficients(), quoted as data (no construction formula in the pinned tree) and quantized for the Distortion leaf. Waveshaper tables are re-derived from construction formulas in ws_tables.py, not quoted. No SST code copied.",
+      "upstream": "sst-filters libs/sst/sst-filters/include/sst/filters/HalfRateFilter.h",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later",
+      "decision_record": "0012",
+      "covers": [
+        "self-declared-quotation"
+      ]
+    },
+    {
+      "path": "model/effects/aw-4/logical4_model.py",
+      "class": "quoted-constants",
+      "content": "The handful of opaque designed literals of Airwindows Logical (streamed id 4) - speed constants, intensity, powerSag, sag depth, rectifier clamp, clip, leak, clamp floors, line geometry, ratio clamp, golden-ratio fpOld - quoted as data; every other coefficient is re-derived at run time. The module docstring restates the upstream MIT attribution. No Airwindows or Surge code copied.",
+      "upstream": "surge libs/airwindows/src/Logical4Proc.cpp + Logical4.{h,cpp} (Airwindows subtree vendored in the pinned engine tree; the cited Surge AirWindowsEffect adapter structure is GPL-3.0-or-later)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "MIT (libs/airwindows/LICENSE, per DR-0015); the Surge adapter around it is GPL-3.0-or-later",
+      "decision_record": "0015",
+      "covers": [
+        "foreign-license-text",
+        "self-declared-quotation"
+      ]
+    },
+    {
+      "path": "model/effects/aw-4/tables.py",
+      "class": "quoted-constants",
+      "content": "Only the bridge-rectifier domain clamp literal is quoted from the pinned source; the sin / 1-cos lookup tables themselves are derived here from the mathematical functions, not transcribed.",
+      "upstream": "surge libs/airwindows/src/Logical4Proc.cpp + Logical4.{h,cpp} (Airwindows subtree vendored in the pinned engine tree; the cited Surge AirWindowsEffect adapter structure is GPL-3.0-or-later)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "MIT (libs/airwindows/LICENSE, per DR-0015); the Surge adapter around it is GPL-3.0-or-later",
+      "decision_record": "0015",
+      "covers": [
+        "self-declared-quotation"
+      ]
+    },
+    {
+      "path": "decision-records/0015-airwindows-logical-quoted-constants.md",
+      "class": "attribution-statement",
+      "content": "The record that authorizes the Logical constants restates the libs/airwindows subtree's own MIT attribution in order to correct DR-0006's license description. It carries no copied license body or upstream code.",
+      "upstream": "surge libs/airwindows/LICENSE (attribution restated, not copied)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "MIT (libs/airwindows/LICENSE, per DR-0015); the Surge adapter around it is GPL-3.0-or-later",
+      "decision_record": "0015",
+      "covers": [
+        "foreign-license-text"
+      ]
+    },
+    {
+      "path": "reports/SXT-028k/EVIDENCE.md",
+      "class": "attribution-statement",
+      "content": "The SXT-028k evidence record restates the libs/airwindows MIT attribution (finding F-028k-5). It carries no copied license body or upstream code.",
+      "upstream": "surge libs/airwindows/LICENSE (attribution restated, not copied)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "MIT (libs/airwindows/LICENSE, per DR-0015); the Surge adapter around it is GPL-3.0-or-later",
+      "decision_record": "0015",
+      "covers": [
+        "foreign-license-text"
+      ]
+    },
+    {
+      "path": "oracle/sxt022/halfband_d2_probe.cpp",
+      "class": "api-client-harness",
+      "content": "Original work of this repository (Apache-2.0) that at BUILD time includes the externally checked out, manifest-pinned sst-filters HalfRateFilter header to execute process_block_D2 and settle its branch assignment. Contains no copied code, tables or assets; the binary is a combined GPL work built in an external scratch directory, never committed or distributed. Only its numeric output is committed.",
+      "upstream": "sst-filters headers (included at build time from an external checkout)",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later (the included headers)",
+      "decision_record": "0009"
+    },
+    {
+      "path": "oracle/sxt022/build_halfband_probe.sh",
+      "class": "api-client-harness",
+      "content": "Builds the SXT-022 halfband probe above against the manifest-pinned external sst-filters submodule in a scratch directory outside this repository. Carries no upstream code.",
+      "upstream": "sst-filters (external checkout, pinned in oracle/manifest.json)",
+      "pinned_commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+      "upstream_license": "GPL-3.0-or-later (the built-against sources)",
+      "decision_record": "0009"
     }
   ],
   "exemptions": [

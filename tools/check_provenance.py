@@ -103,6 +103,11 @@ KNOWN_CLASSES = {
     "external-build-client": "drives an externally built upstream binary",
     # a file copied from a third party (pinned, attributed, license recorded)
     "vendored-copy": "file copied from a third-party source",
+    # our own prose that restates an upstream copyright/license attribution
+    # (e.g. the libs/airwindows MIT notice, restated by DR-0015) while
+    # carrying no third-party code, table or asset. Covers nothing implicitly:
+    # the row must list the tripwire in 'covers' and cite its record.
+    "attribution-statement": "restates an upstream attribution, carries no upstream content",
 }
 
 # --- rule ids -----------------------------------------------------------------
@@ -161,6 +166,10 @@ STATUS_VOCABULARY = (
     "accepted",
     "proposed",
     "escalated",
+    # "RECORDED" / "RECORDED CONTRACT REVISION": a decision in force at its
+    # enforcement point with owner ratification still pending (DR-0013,
+    # DR-0016). Distinct from "ratified"; never read as a ratification.
+    "recorded",
     "superseded",
     "withdrawn",
     "rejected",
