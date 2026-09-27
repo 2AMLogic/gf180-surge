@@ -1,0 +1,180 @@
+issue #182 — tools/compare_wt_rtl_model.py simulator-failure reporting path
+base: 9a3aefd (origin/main) · branch: feature/issue-182 · date: 2026-09-27
+host: loom worker (Linux), iverilog/vvp 11 present, external pinned asset
+tree ABSENT (ORACLE_SURGE_DATA unset; /Users/joseph/... not on this host)
+
+SCOPE OF THIS TRANSCRIPT. These are controls on the harness's *reporting*
+path. Nothing here is evidence about the RTL, the frozen model, or their
+agreement: the model trace is a hand-written 1-block/1-slot/1-voice fixture
+and the simulator is stubbed in controls 1/2/3/5. The RTL-vs-model exactness
+claim continues to rest on reports/sxt-026/artifacts/rtl-exactness.txt, which
+this change does not regenerate (see section 4 below).
+
+
+1. STATIC CHECK (acceptance item 3)
+-----------------------------------
+$ python3 -m pyflakes tools/compare_wt_rtl_model.py          # BEFORE
+tools/compare_wt_rtl_model.py:163:9: undefined name 'fails'
+rc=1
+
+$ python3 -m pyflakes tools/compare_wt_rtl_model.py          # AFTER
+rc=0
+(no output; pyflakes 3.4.0 / Python 3.12.3)
+
+
+2. FAILURE CONTROL — deliberately broken simulator invocation
+-------------------------------------------------------------
+Setup (/tmp/wt182-control, never committed):
+  * run/model_trace.json — synthetic 1-block fixture (one slot, one unison
+    voice, one 3-sample oscout block).
+  * stubbin/vvp — first on PATH; writes the trace an AGREEING simulator
+    would have written, then exits 3 with a reason on stderr. Writing an
+    agreeing trace is the point: the comparison itself then finds nothing,
+    so ONLY a harness that keeps the simulator-level failure can reach FAIL.
+    (`iverilog` is NOT stubbed — the real compile of
+    rtl/oscillators/wavetable/{tb_wavetable,wavetable_core}.sv runs and
+    produces run/tb_wt.vvp, 289343 bytes.)
+
+CONTROL 1 — pre-fix harness (git show HEAD:tools/compare_wt_rtl_model.py):
+
+  $ PATH=/tmp/wt182-control/stubbin:$PATH python3 \
+      /tmp/wt182-control/prefix/tools/compare_wt_rtl_model.py \
+      --run-dir /tmp/wt182-control/run --max-blocks 1 --out .../verdict-prefix.json
+  Traceback (most recent call last):
+    File ".../compare_wt_rtl_model.py", line 222, in <module>
+      sys.exit(main())
+               ^^^^^^
+    File ".../compare_wt_rtl_model.py", line 163, in main
+      fails.append("vvp exited rc=%d stderr=%s"
+      ^^^^^
+  UnboundLocalError: cannot access local variable 'fails' where it is not
+  associated with a value
+  rc=1
+  -> no verdict JSON written; the simulator's reason is not recorded anywhere.
+
+CONTROL 2 — fixed harness, identical broken simulator:
+
+  $ PATH=/tmp/wt182-control/stubbin:$PATH python3 \
+      tools/compare_wt_rtl_model.py --run-dir /tmp/wt182-control/run \
+      --max-blocks 1 --out .../verdict-fixed.json
+  {
+   "verdict": "FAIL",
+   "mutant": false,
+   "reverb_bg": false,
+   "checked": {"voices": 1, "fields": 11, "oscout": 3, "shared": 1},
+   "mismatches": 1,
+   "first_failures": [
+    "vvp exited rc=3 stderr=vvp: /tmp/wt182-control/run/tb_wt.vvp: cannot open
+  rtl/init.hex: No such file or directory\nvvp: aborting simulation after 0
+  blocks\n"
+   ],
+   "sim_fails": [
+    "vvp exited rc=3 stderr=vvp: /tmp/wt182-control/run/tb_wt.vvp: cannot open
+  rtl/init.hex: No such file or directory\nvvp: aborting simulation after 0
+  blocks\n"
+   ],
+   "traffic_fails": [],
+   "traffic_tb": {},
+   "traffic_model": null
+  }
+  rc=1
+  -> verdict FAIL, exit non-zero, and the simulator's own stderr is present in
+     first_failures even though the comparison found zero mismatches. This is
+     the control the issue requires; a run that merely exits non-zero (control
+     1) does not demonstrate it.
+
+CONTROL 3 — fixed harness, --mutant, identical broken simulator:
+
+  $ PATH=/tmp/wt182-control/stubbin:$PATH python3 \
+      tools/compare_wt_rtl_model.py --run-dir /tmp/wt182-control/run \
+      --max-blocks 1 --mutant --out .../verdict-mutant.json
+  verdict=FAIL sim_fails=1 mismatches=1
+  rc=1
+  -> the NC-B RTL mutant control is NOT satisfied by a dead simulator. The
+     --mutant invocation exits 0 only when the COMPARISON failed
+     (cmp_fails non-empty) and the simulator ran (sim_fails empty), so a
+     not-run mutant leg can never be reported as a passing negative control.
+
+
+3. REGRESSION CONTROL — the PASS path is unchanged
+--------------------------------------------------
+Same fixture, healthy stub simulator (stubbin-ok/vvp: agreeing trace, exit 0).
+
+CONTROL 5  (fixed):   verdict=PASS mismatches=0 sim_fails=[] first_failures=[]
+                      checked={'voices': 1, 'fields': 11, 'oscout': 3,
+                               'shared': 1}   rc=0
+CONTROL 5b (pre-fix): verdict=PASS mismatches=0
+                      checked={'voices': 1, 'fields': 11, 'oscout': 3,
+                               'shared': 1}   rc=0
+
+  $ python3 -c "<diff the two verdict JSONs>"
+  added keys: ['sim_fails']
+  removed keys: []
+  changed values: {}
+  -> the two summaries are identical apart from the new (empty) sim_fails key.
+
+
+4. THE COMMITTED-PASS RE-RUN IS NOT_RUN (NOT a pass)
+----------------------------------------------------
+The issue's regression leg ("re-run the harness against an existing
+committed-PASS case and confirm the verdict is unchanged") targets
+reports/sxt-026/artifacts/rtl-exactness.txt (fixture kick-wtfix-kt /
+seq-wt-pitch-extremes-hi-v1, 4125 blocks). It could NOT be executed here:
+
+  $ python3 model/oscillators/wavetable/run_model.py --inputs \
+      model/oscillators/wavetable/inputs/kick-wtfix-kt.json --sequence \
+      seq-wt-pitch-extremes-hi-v1 --out-dir /tmp/wt182-kt --rtl
+  FileNotFoundError: [Errno 2] No such file or directory:
+  '/Users/joseph/dev/surge-xt-oracle/surge/resources/data/wavetables/Basic/
+  Triangle.wt'
+
+The stimulus (rtl/wt_table.hex) is derived at run time from the external
+pinned asset tree, which is never committed (decision-records/0004) and is not
+present on this host. Status for that leg: NOT_RUN. It is NOT reported as a
+pass and no committed artifact was regenerated by this change.
+
+What CAN be established about the committed transcripts without re-running
+them, from the pre-fix control code itself:
+
+  * Pre-fix, `main()` reached ANY printed verdict only when
+    `run.returncode == 0` — a non-zero return raised UnboundLocalError before
+    the summary was built (control 1). Every committed transcript therefore
+    records a run whose simulator exited 0, i.e. a run on which the new
+    `sim_fails` list is empty.
+  * With `sim_fails` empty, `fails == cmp_fails`, which is exactly the
+    pre-fix binding; `verdict`, `mismatches`, `first_failures` and both exit
+    paths (base and --mutant) are then bit-identical to pre-fix behavior.
+  * Consequently the issue's stop/escalate condition ("a committed PASS was
+    resting on a discarded failure") cannot have been triggered by this
+    change: no committed transcript can have hidden a simulator failure,
+    because the pre-fix code could not have printed a verdict at all if the
+    simulator had failed.
+
+This is an argument about the reachable paths of the pre-fix code, not a
+re-execution of the fixture. Re-running the SXT-026 exactness leg on a host
+with the pinned asset tree remains outstanding and is unaffected by this fix.
+
+
+5. BOUNDED FINDING (out of scope here; filed separately)
+--------------------------------------------------------
+The issue suggested "absent rtl/init.hex" as the broken-simulator mechanism.
+Empirically that does NOT exercise the returncode branch under Icarus 11:
+
+CONTROL 4 — fixed harness with the REAL vvp and no rtl/*.hex present:
+
+  harness rc=1
+  verdict=FAIL sim_fails=[] mismatches=3
+  first_failures[0]=block 0 slot 0 voice 0: missing T line
+
+  $ vvp tb_wt.vvp +INIT=rtl/init.hex ...        # probed directly
+  vvp rc=0
+  stdout: ERROR: .../tb_wavetable.sv:269: $readmemh: Unable to open
+          rtl/init.hex for reading.            (and 4 more, one per memory)
+  stderr: <empty>
+
+Icarus reports a `$readmemh` open failure on STDOUT and still exits 0, and the
+harness discards vvp's stdout (`capture_output=True`, stderr-only on failure).
+The run still fails closed — it FAILs on missing/mismatched trace lines — but
+the *reason* ("the stimulus never loaded") is dropped, which is the same class
+of reporting gap as #182 by a different mechanism. Left unfixed here to keep
+this change to the defect #182 names; filed as its own issue.
