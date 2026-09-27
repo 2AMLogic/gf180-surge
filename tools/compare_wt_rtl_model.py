@@ -1,6 +1,21 @@
 #!/usr/bin/env python3
 """SXT-026 RTL-vs-model exactness harness (issue #19).
 
+DECLARED SCOPE BOUNDARY (issue #176). This harness compares the model and the
+RTL **up to and including the 2x-rate (96 kHz) oscillator output block**. It
+does NOT read the model trace's 48 kHz `mono_block` samples, because
+`rtl/oscillators/wavetable/` implements no post-oscillator stage: the model's
+`wt_model.Slice` tail (o2 level, VCA x AEG gain ramp, scene out, +/-8 clip,
+`HalfbandD2` decimation, master, clips) has no RTL counterpart in this leaf.
+A PASS here therefore establishes `rtl_vs_model: PASS` for the oscillator and
+its declared external-traffic accounting ONLY -- never for the 48 kHz output.
+The emitted summary carries this boundary in its `scope` field so every
+transcript states it. The 48 kHz scene path IS covered by RTL on the SXT-022
+voice leaf (`rtl/voice/tb_voice.sv`), against that leaf's own model; extending
+coverage to this leaf's 48 kHz output is an SXT-017 contract question (#180),
+not a gap this harness may paper over. Measurement of the per-slice vs per-scene
+difference: `reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json`.
+
 Compares, with INTEGER EQUALITY (any mismatch = FAIL):
   * per-voice impulse-engine state at every declared checkpoint
     (oscstate, table state, last_level, mipmap),
@@ -25,6 +40,23 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RTLDIR = os.path.join(REPO, "rtl", "oscillators", "wavetable")
+
+# Machine-readable restatement of the module docstring's scope boundary
+# (issue #176): every emitted transcript carries it, so a PASS can never be
+# read as covering the 48 kHz output.
+SCOPE = {
+    "covers": ("model-vs-RTL integer equality up to and including the 2x-rate "
+               "(96 kHz) oscillator output block, plus the declared "
+               "external-asset traffic accounting"),
+    "does_not_cover": ("the 48 kHz output: the model's post-oscillator stage "
+                       "(o2 level, VCA x AEG gain ramp, scene out, +/-8 clip, "
+                       "HalfbandD2 decimation, master, clips) has NO RTL "
+                       "counterpart in rtl/oscillators/wavetable/, so the "
+                       "model trace's mono_block samples are not compared"),
+    "declared_in": ("model/oscillators/wavetable/README.md (declared "
+                    "deviations 7-8), reports/sxt-026/EVIDENCE.md section 2"),
+    "issue": 176,
+}
 
 
 def parse_traces(run_dir, slots=4):
@@ -199,6 +231,7 @@ def main():
     verdict = "PASS" if not (fails or traffic_fails) else "FAIL"
     summary = {
         "verdict": verdict,
+        "scope": SCOPE,
         "mutant": args.mutant,
         "reverb_bg": bool(args.reverb_bg),
         "checked": checked,

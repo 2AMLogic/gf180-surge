@@ -83,6 +83,45 @@ FIRIPOL_N overlap copy at wrap.
 5. `envelope_rate` / `note_to_pitch` tables evaluated from pinned
    construction formulas in double, quantized once (SXT-022 rule).
 6. ADSR sqrt (d_s = 1) evaluated in double at the pinned formula.
+7. **The decimator and the master stage are PER VOICE SLICE, not per scene**
+   (issue #176). `Slice` instantiates one `voice_model.HalfbandD2` and applies
+   the master gain and its clips inside the slice; `run_model.py` sums the
+   already-decimated slices. The pinned engine decimates ONCE PER SCENE on the
+   summed `sceneout` (`SurgeSynthesizer::halfbandA/B` ->
+   `HalfRateFilter::process_block_D2`), which is what the SXT-022 voice leaf
+   models (`model/voice/run_model.py`) and implements
+   (`rtl/voice/tb_voice.sv`). The filter is linear, so the two differ only by
+   fixed-point rounding, by where the ±8 `sceneout` clip falls, and by state
+   lifetime (a slice's filter state and its ring-out die with the voice; the
+   engine's scene filter keeps ringing). **Measured, not assumed**, on all
+   nine committed fixtures: worst case 1 int16 LSB / −112.1 dBFS residual RMS,
+   worst pre-int16 residual 38 Q10.21 LSB (one int16 LSB = 64 Q10.21 LSB) —
+   `tools/measure_wt_decimation_stage.py`,
+   `reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json`,
+   EVIDENCE section 2a. This deviation is DECLARED, not absorbed: moving the
+   stage to a per-scene placement shared with the voice leaf is an SXT-017
+   visible contract revision (#12), tracked separately in #180.
+
+Structural note for deviation 7: `Slice.scene_block()` and
+`Slice.decimate_scene()` split `process_block()` at exactly that stage
+boundary so the measurement can drive both topologies from this model's own
+arithmetic. The split is structural only — all nine fixtures render
+byte-identically across it (`tests/test_wt_decimation_stage.py`).
+
+## RTL coverage boundary (declared, issue #176)
+
+8. **`rtl/oscillators/wavetable/` implements the oscillator only.** It carries
+   no halfband/decimator and no 48 kHz output stage under any name, and
+   `tools/compare_wt_rtl_model.py` does not read the model trace's 48 kHz
+   `mono_block` samples. The leaf's `rtl_vs_model: PASS` is therefore scoped to
+   the 2x-rate (96 kHz) oscillator output block, the declared per-voice
+   checkpoints, and the external-traffic accounting — it is **not** a claim
+   about the 48 kHz render. The comparator emits this boundary in its `scope`
+   field on every run, and the ledger note for `osc:Wavetable` states it.
+   The 48 kHz scene path has RTL coverage on the SXT-022 voice leaf
+   (`rtl/voice/tb_voice.sv`) against that leaf's own model; driving this
+   oscillator's output through that path is the option-(a) work routed to its
+   own SXT-017 issue, #180.
 
 ## Unison cap — explicit rejection
 
