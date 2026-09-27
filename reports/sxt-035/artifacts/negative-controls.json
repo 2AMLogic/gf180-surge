@@ -3,77 +3,240 @@
     "verdict": "FAIL against proposed budgets",
     "expected": "informational",
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_dbfs": -18.039873481617924,
-    "spectral_corr": 0.9869783137462054
+    "rms_diff_dbfs": -18.038918387458317,
+    "spectral_corr": 0.9874579116733226,
+    "mw_ramp": {
+      "metric": "blocks-to-converge of the smoothed modwheel word after each CC dispatch (model_trace.json mw_value)",
+      "declared_ramp_blocks": 54.422005968599976,
+      "threshold_blocks": 27,
+      "min_ramp_blocks": 54,
+      "max_ramp_blocks": 54,
+      "margin_blocks": -27,
+      "discriminator_trips": false,
+      "per_dispatch": [
+        {
+          "block": 300,
+          "cc": 32,
+          "target_q21": 528416,
+          "ramp_blocks": 54
+        },
+        {
+          "block": 450,
+          "cc": 64,
+          "target_q21": 1056833,
+          "ramp_blocks": 54
+        },
+        {
+          "block": 600,
+          "cc": 96,
+          "target_q21": 1585249,
+          "ramp_blocks": 54
+        },
+        {
+          "block": 750,
+          "cc": 127,
+          "target_q21": 2097152,
+          "ramp_blocks": 54
+        },
+        {
+          "block": 1050,
+          "cc": 0,
+          "target_q21": 0,
+          "ramp_blocks": 54
+        }
+      ]
+    },
+    "transition_window_rms": {
+      "note": "recorded only -- NOT a discriminator (see docstring)",
+      "window_blocks_after_each_cc": 55,
+      "rms_lsb": 15561.333918646358,
+      "per_window": [
+        {
+          "block": 300,
+          "cc": 32,
+          "rms_lsb": 6693.322610666137,
+          "ref_saturated_frac": 0.0
+        },
+        {
+          "block": 450,
+          "cc": 64,
+          "rms_lsb": 6867.531210505907,
+          "ref_saturated_frac": 0.5585227272727272
+        },
+        {
+          "block": 600,
+          "cc": 96,
+          "rms_lsb": 9121.199919754876,
+          "ref_saturated_frac": 0.7982954545454546
+        },
+        {
+          "block": 750,
+          "cc": 127,
+          "rms_lsb": 2821.0793086882704,
+          "ref_saturated_frac": 0.9636363636363636
+        },
+        {
+          "block": 1050,
+          "cc": 0,
+          "rms_lsb": 32057.093406893513,
+          "ref_saturated_frac": 0.13125
+        }
+      ]
+    }
   },
   "cutoff-zeroed": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
-    "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 6600.594080371684,
-    "rms_diff_dbfs": -13.917073111341779,
-    "spectral_corr": 0.9841621605750513,
+    "rms_diff_lsb": 6600.747306786425,
+    "rms_diff_dbfs": -13.916871479145609,
+    "spectral_corr": 0.9844211159424442,
+    "metrics_file": "run-out/nc/audio-nc-cutoff-zeroed.json",
+    "control_ok": true,
     "beyond_model_error_via": [
-      true,
-      true
+      "rms",
+      "spectral"
     ],
-    "metrics_file": "run-out/nc/audio-nc-cutoff-zeroed.json"
+    "control_ok_without_spectral_leg": true
   },
   "reso-zeroed": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
-    "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 4139.694994747738,
-    "rms_diff_dbfs": -17.96936673750621,
-    "spectral_corr": 0.9858386375291527,
+    "rms_diff_lsb": 4140.893318372829,
+    "rms_diff_dbfs": -17.966852784043652,
+    "spectral_corr": 0.986402830630958,
+    "metrics_file": "run-out/nc/audio-nc-reso-zeroed.json",
+    "control_ok": true,
     "beyond_model_error_via": [
-      true,
-      true
+      "rms",
+      "spectral"
     ],
-    "metrics_file": "run-out/nc/audio-nc-reso-zeroed.json"
+    "control_ok_without_spectral_leg": true
   },
   "vca-zeroed": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
+    "max_abs_diff_lsb": 38478.0,
+    "rms_diff_lsb": 8444.570970056258,
+    "rms_diff_dbfs": -11.777181823722977,
+    "spectral_corr": 0.8615236223435704,
+    "metrics_file": "run-out/nc/audio-nc-vca-zeroed.json",
     "control_ok": true,
-    "max_abs_diff_lsb": 38461.0,
-    "rms_diff_lsb": 8444.774664281334,
-    "rms_diff_dbfs": -11.77697231109918,
-    "spectral_corr": 0.8556442551910346,
     "beyond_model_error_via": [
-      true,
-      true
+      "rms",
+      "spectral"
     ],
-    "metrics_file": "run-out/nc/audio-nc-vca-zeroed.json"
+    "control_ok_without_spectral_leg": true
   },
   "smoothing-bypass": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
-    "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 3213.4058821834687,
-    "rms_diff_dbfs": -20.169421936206252,
-    "spectral_corr": 0.9844002107386555,
+    "rms_diff_lsb": 3213.65349953038,
+    "rms_diff_dbfs": -20.168752648178533,
+    "spectral_corr": 0.9850202124210111,
+    "metrics_file": "run-out/nc/audio-nc-smoothing-bypass.json",
+    "mw_ramp": {
+      "metric": "blocks-to-converge of the smoothed modwheel word after each CC dispatch (model_trace.json mw_value)",
+      "declared_ramp_blocks": 54.422005968599976,
+      "threshold_blocks": 27,
+      "min_ramp_blocks": 0,
+      "max_ramp_blocks": 0,
+      "margin_blocks": 27,
+      "discriminator_trips": true,
+      "per_dispatch": [
+        {
+          "block": 300,
+          "cc": 32,
+          "target_q21": 528416,
+          "ramp_blocks": 0
+        },
+        {
+          "block": 450,
+          "cc": 64,
+          "target_q21": 1056833,
+          "ramp_blocks": 0
+        },
+        {
+          "block": 600,
+          "cc": 96,
+          "target_q21": 1585249,
+          "ramp_blocks": 0
+        },
+        {
+          "block": 750,
+          "cc": 127,
+          "target_q21": 2097152,
+          "ramp_blocks": 0
+        },
+        {
+          "block": 1050,
+          "cc": 0,
+          "target_q21": 0,
+          "ramp_blocks": 0
+        }
+      ]
+    },
+    "transition_window_rms": {
+      "note": "recorded only -- NOT a discriminator (see docstring)",
+      "window_blocks_after_each_cc": 55,
+      "rms_lsb": 10354.89682447721,
+      "per_window": [
+        {
+          "block": 300,
+          "cc": 32,
+          "rms_lsb": 6504.519386768012,
+          "ref_saturated_frac": 0.0
+        },
+        {
+          "block": 450,
+          "cc": 64,
+          "rms_lsb": 9755.913954960391,
+          "ref_saturated_frac": 0.5585227272727272
+        },
+        {
+          "block": 600,
+          "cc": 96,
+          "rms_lsb": 9213.161827189257,
+          "ref_saturated_frac": 0.7982954545454546
+        },
+        {
+          "block": 750,
+          "cc": 127,
+          "rms_lsb": 3921.4886259875852,
+          "ref_saturated_frac": 0.9636363636363636
+        },
+        {
+          "block": 1050,
+          "cc": 0,
+          "rms_lsb": 17273.459056618678,
+          "ref_saturated_frac": 0.13125
+        }
+      ],
+      "worse_than_baseline": false
+    },
+    "control_ok": true,
     "beyond_model_error_via": [
-      true
+      "spectral",
+      "mw-ramp"
     ],
-    "metrics_file": "run-out/nc/audio-nc-smoothing-bypass.json"
+    "control_ok_without_spectral_leg": true
   },
   "source-swap-lfo": {
     "verdict": "FAIL against proposed budgets",
     "expected": "FAIL",
-    "control_ok": true,
     "max_abs_diff_lsb": 65534.0,
-    "rms_diff_lsb": 10211.567644047525,
-    "rms_diff_dbfs": -10.126885251422376,
-    "spectral_corr": 0.7282713442300327,
+    "rms_diff_lsb": 10211.852919789126,
+    "rms_diff_dbfs": -10.126642601215925,
+    "spectral_corr": 0.7295344070606425,
+    "metrics_file": "run-out/nc/audio-nc-source-swap-lfo.json",
+    "control_ok": true,
     "beyond_model_error_via": [
-      true,
-      true
+      "rms",
+      "spectral"
     ],
-    "metrics_file": "run-out/nc/audio-nc-source-swap-lfo.json"
+    "control_ok_without_spectral_leg": true
   },
   "out-of-class-route": {
     "expected": "REFUSE (exit 2)",

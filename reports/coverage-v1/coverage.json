@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "dda1d0eeb7b00ef2311b154cd29d8527653c4c1264b3e66edafa712cb23907f6"
+   "sha256": "1dae94a9c7ac76a239ea75fa47382822494f6016b047a0b613f782ab94200df7"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -356,7 +356,7 @@
   },
   "reports/sxt-035/EVIDENCE.md": {
    "role": "evidence record for leaf mod:modwheel",
-   "sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972"
+   "sha256": "bdfb8ac9672730a005c539bcbd03d76599515f9bd8044507a26744cf50e4c8a6"
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",

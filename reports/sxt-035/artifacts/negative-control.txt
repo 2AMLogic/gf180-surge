@@ -1,14 +1,18 @@
 SXT-035 negative controls (all must demonstrably FAIL their check)
-date: 2026-09-22T23:35:05Z
-reference (unmodified routed fixture): run-out/ref/reference-seq-modwheel-v1-mw-fixture.wav
+date: 2026-09-27T05:41:04Z
+reference (unmodified routed fixture): reports/sxt-035/artifacts/reference-seq-modwheel-v1-mw-fixture.wav
 
-[baseline] unmutated model-vs-reference: max=65534 rms=-18.0dBFS spec=0.9870 -> FAIL against proposed budgets
+[baseline] unmutated model-vs-reference: max=65534 rms=-18.0dBFS spec=0.9875 -> FAIL against proposed budgets
+[baseline] mw-ramp failure control: min ramp=54 blocks over 5 CC dispatches (declared FAST_LINE ramp 54.42 blocks, trips below 27) -> trips=False (expected False on the unmutated model)
+[baseline] transition-window rms (recorded, not a discriminator): 15561.3 LSB over 5 windows
 
-[cutoff-zeroed] max=65534 rms=-13.9dBFS spec=0.9842 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
-[reso-zeroed] max=65534 rms=-18.0dBFS spec=0.9858 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
-[vca-zeroed] max=38461 rms=-11.8dBFS spec=0.8556 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
-[smoothing-bypass] max=65534 rms=-20.2dBFS spec=0.9844 -> FAIL against proposed budgets; beyond-model-error via=[True] (expected FAIL and worse)
-[source-swap-lfo] max=65534 rms=-10.1dBFS spec=0.7283 -> FAIL against proposed budgets; beyond-model-error via=[True, True] (expected FAIL and worse)
+[cutoff-zeroed] max=65534 rms=-13.9dBFS spec=0.9844 -> FAIL against proposed budgets; beyond-model-error via=['rms', 'spectral'] (expected FAIL and worse); without the spectral leg -> True
+[reso-zeroed] max=65534 rms=-18.0dBFS spec=0.9864 -> FAIL against proposed budgets; beyond-model-error via=['rms', 'spectral'] (expected FAIL and worse); without the spectral leg -> True
+[vca-zeroed] max=38478 rms=-11.8dBFS spec=0.8615 -> FAIL against proposed budgets; beyond-model-error via=['rms', 'spectral'] (expected FAIL and worse); without the spectral leg -> True
+[smoothing-bypass] transition-window rms (recorded, not a discriminator): 10354.9 LSB vs baseline 15561.3 LSB -> worse=False
+[smoothing-bypass] mw-ramp: min ramp=0 blocks over 5 CC dispatches (declared 54.42, trips below 27) -> trips=True, margin=27 blocks
+[smoothing-bypass] max=65534 rms=-20.2dBFS spec=0.9850 -> FAIL against proposed budgets; beyond-model-error via=['spectral', 'mw-ramp'] (expected FAIL and worse); without the spectral leg -> True
+[source-swap-lfo] max=65534 rms=-10.1dBFS spec=0.7295 -> FAIL against proposed budgets; beyond-model-error via=['rms', 'spectral'] (expected FAIL and worse); without the spectral leg -> True
 
 [out-of-class-route] exit=2 refused=True msg=REFUSED (outside declared SXT-035 class): scene route modwheel->303 (unknown) outside the declared SXT-035 destination class {308, 309, 298}
 [carrier-Rainy_Day_Dreamaway.fxp] extractor exit=2 refused=True msg=REFUSING: filter config not serial1

@@ -3,12 +3,12 @@
   "ref_peak_lsb": 32767.0,
   "model_peak_lsb": 32767.0,
   "max_abs_diff_lsb": 65534.0,
-  "rms_diff_lsb": 3213.4058821834687,
-  "rms_diff_dbfs": -20.169421936206252,
-  "rms_diff_at_shift0_lsb": 3213.4058821834687,
+  "rms_diff_lsb": 3213.65349953038,
+  "rms_diff_dbfs": -20.168752648178533,
+  "rms_diff_at_shift0_lsb": 3213.65349953038,
   "best_shift": 1,
-  "rms_diff_at_best_shift_lsb": 3194.1263487385354,
-  "spectral_corr": 0.9844002107386555,
+  "rms_diff_at_best_shift_lsb": 3195.4029155657167,
+  "spectral_corr": 0.9850202124210111,
   "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -16,7 +16,7 @@
   },
   "proposed_budget_results": {
     "max_abs_diff_lsb": false,
-    "rms_diff_dbfs": true,
+    "rms_diff_dbfs": false,
     "spectral_corr": true
   },
   "verdict": "FAIL against proposed budgets"

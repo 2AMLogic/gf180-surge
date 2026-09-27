@@ -97,12 +97,12 @@
       "sha256": "6c6655ff669e0959a26920cc6a59b104d10332a42c9916ee13297a33d6a479ba"
     },
     {
-      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT; the corrected seq-notes-repeated-v1 rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here.",
+      "decision": "RE-PIN (legitimately edited after the last coverage publication; file correct, not restored; the re-grade was verified by Judge on PR #158). No verification status in this table was changed: mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT; the corrected seq-notes-repeated-v1 rms leg is graded against a [PROPOSED] budget and moves no frozen verdict. Hash bookkeeping only; stale ledger wording is routed to #157 and is not touched here. Issue #163 re-pin (this sha): the record was legitimately edited again after the last publication; the file is correct and was not restored. No verification status in this table moved -- mod:modwheel stays rtl_vs_model PASS / model_vs_reference NO_VERDICT, and acceptance row 5 stays PASS (every control still FAILs its check, overall_ok true). Hash bookkeeping only.",
       "issue": 97,
-      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS)",
+      "moved_by": "c695939 (PR #158, issue #97): re-graded the seq-notes-repeated-v1 rms_diff_dbfs leg against the [PROPOSED] budget from PASS to FAIL (-33.33 dBFS measured vs -46.0 dBFS budget); max_abs and spectral_corr legs unchanged (PASS); then issue #163 (this re-pin): SXT-035 negative control C2 (smoothing-bypass) gained a control-plane discriminator -- blocks-to-converge of the smoothed modwheel word, 0 for the mutant vs 54 for the unmutated model -- so it no longer rests on the 0.0026 whole-render spectral_corr margin that #110/#166 would retire; artifacts/negative-control{,s}.{txt,json}, audio-nc-*.json and exactness-mutant.json were regenerated at that PR's HEAD (metric drift and the RMS-polarity re-grade are explained in the record's Change note; no verdict moved) and the rest of artifacts/ is unchanged and marked STALE. Pin chain: 4a371bfe -> 9415ca9a (#97) -> this sha (#163).",
       "path": "reports/sxt-035/EVIDENCE.md",
-      "previous_sha256": "4a371bfe4eb01bfac9494f334d558062a7a6190f0a43ea0b370e931d9394f3b8",
-      "sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972"
+      "previous_sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972",
+      "sha256": "bdfb8ac9672730a005c539bcbd03d76599515f9bd8044507a26744cf50e4c8a6"
     }
   ],
   "gates": {
@@ -355,7 +355,7 @@
       "evidence": [
         {
           "path": "reports/sxt-035/EVIDENCE.md",
-          "sha256": "9415ca9a666a3e874a379bbe905217a269426b49d7909c7292951cdc51f22972"
+          "sha256": "bdfb8ac9672730a005c539bcbd03d76599515f9bd8044507a26744cf50e4c8a6"
         }
       ],
       "fixture_verified_paths": [
@@ -478,7 +478,7 @@
       ],
       "issue": 68,
       "landed": true,
-      "note": "unison stack topology >1 voice (declared max MAX_UNISON=16; beyond-cap explicitly rejected \u2014 the engine clamps, SXT-015 58 flagged presets): RTL-vs-model EXACT over six fixtures incl. uni16 and a non-retrigger init-draw mechanism fixture (no reference claim, quantified-variation class); model-vs-reference PARTIAL: uni=1 regression passes all [PROPOSED] bounds byte-identically, uni>1 passes rms everywhere but misses proposed max/spectral on 3/5 fixtures (bounded finding routed to the #12 freeze, not tuned). No real corpus preset is renderable inside the leaf topology (issue-named carriers Edges Rhythm / Bad News / King blocked: non-Classic osc families, FX, split scenes \u2014 recorded per carrier); fixtures are declared-override test configuration on the census-verified Attacky carrier, never an adapted preset; 0 presets supported by this leaf alone, recovery attribution requires the family/integration/effects leaves on top",
+      "note": "unison stack topology >1 voice (declared max MAX_UNISON=16; beyond-cap explicitly rejected — the engine clamps, SXT-015 58 flagged presets): RTL-vs-model EXACT over six fixtures incl. uni16 and a non-retrigger init-draw mechanism fixture (no reference claim, quantified-variation class); model-vs-reference PARTIAL: uni=1 regression passes all [PROPOSED] bounds byte-identically, uni>1 passes rms everywhere but misses proposed max/spectral on 3/5 fixtures (bounded finding routed to the #12 freeze, not tuned). No real corpus preset is renderable inside the leaf topology (issue-named carriers Edges Rhythm / Bad News / King blocked: non-Classic osc families, FX, split scenes — recorded per carrier); fixtures are declared-override test configuration on the census-verified Attacky carrier, never an adapted preset; 0 presets supported by this leaf alone, recovery attribution requires the family/integration/effects leaves on top",
       "verification": {
         "model_vs_reference": "PARTIAL",
         "rtl_vs_model": "PASS"
