@@ -116,7 +116,7 @@ verdict structure, its own notion of a trace, and would need its own
 false-positive control before a matcher may touch its FAIL criterion.
 
 **Decision: this PR is scoped to `tools/compare_wt_rtl_model.py` only** (the
-file #188 names), and the shared helper is filed as its own issue with the
+file #188 names), and the shared helper is filed as **#193** with the
 enumeration above. Changing 11 harnesses' FAIL criteria in a reporting fix,
 without a per-harness healthy-run baseline, is precisely the risk #188's own
 guardrail warns about.
@@ -129,8 +129,8 @@ words in the file for the requested range [0:262143]` — a length warning, not
 an open failure, and one a healthy run is *expected* to emit (`ctrl_mem` is
 declared `[0:262143]`). Matching it would flip genuinely passing runs to FAIL,
 and the baseline needed to decide the question (which warnings a healthy
-pinned-tree run emits) needs the external asset tree, absent here. Filed as its
-own issue rather than guessed at; see §8 of the transcript.
+pinned-tree run emits) needs the external asset tree, absent here. Filed as
+**#194** rather than guessed at; see §8 of the transcript.
 
 ## Artifacts
 

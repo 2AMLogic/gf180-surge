@@ -250,10 +250,10 @@ expected to emit: `ctrl_mem` alone is declared [0:262143] while real ctrl.hex
 holds a few words per block. Matching it would flip genuinely passing runs to
 FAIL, so it is deliberately NOT matched, and the pre-fix-quality baseline
 needed to decide the question (what warnings a healthy pinned-tree run emits)
-requires the external asset tree: NOT measurable here. Filed as its own issue
+requires the external asset tree: NOT measurable here. Filed as issue #194
 rather than guessed at.
 
 The shared helper tools/_rtl_compile_common.py::compile_and_run (check=True
 throughout) has the same blind spot and is imported by 11 harnesses, none of
-them this one; enumerated and filed separately — see EVIDENCE.md §"Scope
+them this one; enumerated and filed as issue #193 — see EVIDENCE.md §"Scope
 decision".
