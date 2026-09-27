@@ -77,8 +77,11 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
+
+import _census_graphs_common as cgc  # noqa: E402
 
 # SurgeStorage.h fxslot_positions (re-derivable from
 # tools/export_normalized_graphs.py FX_ROLES / corpus/normalized/graphs.jsonl)
@@ -176,80 +179,24 @@ def slot_entry(graph, slot_role):
     raise Refuse(f"no {slot_role} entry in graphs.jsonl fx list")
 
 
-def norm_type_name(name):
-    """Normalize an FX type name for set comparison (spaces only)."""
-    return "".join(str(name).split())
-
-
-CENSUS_FX_TABLE = None
-
-
+# The census-vs-graphs zero-drift comparison lives in ONE place for all the
+# routing-form extractors (tools/_census_graphs_common.py, issue #154): the
+# graph's stored FX type IDS are named through the census parser's own
+# committed FX table, so the check compares CONTENT rather than the two
+# artifacts' differing spellings ("FrequencyShifter" vs "Freq Shift"). These
+# thin wrappers keep this module's local `Refuse` as the refusal type.
 def census_fx_table():
-    """The census parser's own static FX-type table (`corpus/census-v0.1/
-    census.py` `FX`), indexed by stored type id.
+    return cgc.census_fx_table()
 
-    Why this exists. The census CSV names an FX by that table
-    ("FrequencyShifter", "RingModulator"); the normalized graph names the
-    same slot by the ENGINE's live display name ("Freq Shift", "Ring Mod").
-    Those spellings genuinely differ for several FX types, so a name-vs-name
-    comparison would refuse on SPELLING rather than on content. Comparing the
-    graph's stored type IDS mapped through the census's OWN committed table
-    against the census CSV's names keeps the cross-check an exact,
-    fail-closed comparison of CONTENT (which FX is in which slot), with a
-    single in-repo naming authority and no invented alias list. The engine
-    display names are still recorded alongside, as context.
-    """
-    global CENSUS_FX_TABLE
-    if CENSUS_FX_TABLE is None:
-        import importlib.util  # noqa: PLC0415
-        path = os.path.join(REPO, "corpus", "census-v0.1", "census.py")
-        spec = importlib.util.spec_from_file_location("sxt028l_census", path)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        CENSUS_FX_TABLE = list(mod.FX)
-    return CENSUS_FX_TABLE
+
+def norm_type_name(name):
+    return cgc.norm_type_name(name)
 
 
 def cross_check(row, graph):
     """Zero-drift assertion between the two committed artifacts. Returns the
     per-field comparison record; raises Refuse on ANY disagreement."""
-    g = graph["g"]
-    on_slots = [fx for fx in g["fx"] if fx.get("on", 0)]
-    table = census_fx_table()
-    census_types = {norm_type_name(t)
-                    for t in row["stored_nonoff_fx_types"].split(";") if t}
-    # the graph's stored type IDS, named through the census's OWN table --
-    # a content comparison, not a spelling one (see census_fx_table())
-    graph_types = set()
-    for fx in on_slots:
-        tid = fx.get("t")
-        if not isinstance(tid, int) or not 0 <= tid < len(table):
-            raise Refuse(f"graphs.jsonl fx type id {tid!r} outside the "
-                         f"census FX table (0..{len(table) - 1})")
-        graph_types.add(norm_type_name(table[tid]))
-    checks = {
-        "blob_sha1": (row["git_blob_sha1"], graph.get("sha")),
-        "stored_revision": (int(row["stored_revision"]), graph.get("rev")),
-        "scene_mode": (row["scene_mode"], g.get("smn")),
-        "fx_bypass": (int(row["stored_fx_bypass"]), g.get("fxb")),
-        "fx_disable": (int(row["stored_fx_disable"]), g.get("fxd")),
-        "nonoff_fx_slot_count": (int(row["stored_nonoff_fx_slot_count"]),
-                                 len(on_slots)),
-        "nonoff_fx_type_set": (sorted(census_types), sorted(graph_types)),
-    }
-    disagreements = [k for k, (a, b) in checks.items() if a != b]
-    if disagreements:
-        detail = "; ".join(f"{k}: census={checks[k][0]!r} graphs={checks[k][1]!r}"
-                           for k in disagreements)
-        raise Refuse(f"census-vs-graphs drift on {disagreements}: {detail}")
-    return {"fields_compared": sorted(checks),
-            "census_vs_graphs_drift_count": 0,
-            "values": {k: checks[k][0] for k in checks},
-            "fx_type_name_authority":
-                "corpus/census-v0.1/census.py FX table, applied to the "
-                "graph's stored type ids (content comparison, not spelling)",
-            "engine_display_names_context":
-                sorted({fx.get("tn") for fx in on_slots})}
+    return cgc.cross_check(row, graph, refuse=Refuse)
 
 
 def role_index_check(graph):

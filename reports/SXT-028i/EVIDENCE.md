@@ -270,6 +270,22 @@ disagreement is a refusal, not a silently preferred source
 and requires the refusal; a second test requires the refusal of a
 perfectly-clean preset that is simply outside this leaf's B4 scope).
 
+*FX-type comparison note (issue #154).* The census CSV names an FX through the
+census parser's own static table (`FrequencyShifter`, `RingModulator`) while
+the normalized graph uses the engine's live display name (`Freq Shift`,
+`Ring Mod`). A name-vs-name comparison refuses on **spelling** for those
+types. The cross-check therefore maps the graph's stored type **ids** through
+the census's own committed `FX` table and compares in that one naming
+authority (`tools/_census_graphs_common.py`, shared by all four routing-form
+extractors) — a strictly *content*-level comparison, with no invented alias
+list; the engine display names are recorded alongside as context
+(`cross_check.engine_display_names_context`). None of this leaf's carriers
+uses a divergent-spelling type, so **no verdict in the table below moved** —
+the regenerated records differ from the previous ones only by the two added
+context fields. `test_cross_check_compares_fx_type_content_not_spelling` pins
+the divergent pairs as clean; `test_extraction_refuses_injected_drift` pins
+that a genuinely different — or unmappable — FX type id still refuses.
+
 | Preset | ains3 | ains4 | `fx_bypass` | `fx_disable` | Scene mode | Dual-instance concurrent? | Carrier source |
 |---|---|---|---|---|---|---|---|
 | `Exquis MPE/Basses/Jigsaw.fxp` | Off | Phaser (on) | All FX | 0 | Single | no (single-instance) | named by issue |

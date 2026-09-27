@@ -277,6 +277,22 @@ disagreement is a refusal, not a silently preferred source
 census drift, a blob-sha mismatch and a corrupted slot-index table, and
 requires a refusal for each).
 
+*FX-type comparison note (issue #154).* The census CSV names an FX through the
+census parser's own static table (`FrequencyShifter`, `RingModulator`) while
+the normalized graph uses the engine's live display name (`Freq Shift`,
+`Ring Mod`). A name-vs-name comparison refuses on **spelling** for those
+types. The cross-check therefore maps the graph's stored type **ids** through
+the census's own committed `FX` table and compares in that one naming
+authority (`tools/_census_graphs_common.py`, shared by all four routing-form
+extractors) — a strictly *content*-level comparison, with no invented alias
+list; the engine display names are recorded alongside as context
+(`cross_check.engine_display_names_context`). None of this leaf's carriers
+uses a divergent-spelling type, so **no verdict in the table below moved** —
+the regenerated records differ from the previous ones only by the two added
+context fields. `test_cross_check_compares_fx_type_content_not_spelling` pins
+the divergent pairs as clean; `test_extraction_refuses_injected_drift` pins
+that a genuinely different — or unmappable — FX type id still refuses.
+
 | Preset | Source | global3 | global4 | `fx_bypass` | `fx_disable` | Upstream global1/2 active | Dual-instance? |
 |---|---|---|---|---|---|---|---|
 | `Exquis MPE/Basses/Jigsaw.fxp` | issue-named | Conditioner (on) | Off | All FX | 0 | 2 | no |
