@@ -252,7 +252,7 @@
   },
   "reports/SXT-028c/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Chorus",
-   "sha256": "a7997cc83b5a7f888e9b79ffe76b9078da5fb6e36491aa8a0d9ab2126741ad7c"
+   "sha256": "d50f1da6ddda08bdbb7ce414a97a7d2693a263d21328b41dde0e9976f2361369"
   },
   "reports/SXT-028e/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Distortion",
@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "79d1f9ad77d89da530135924b1f14ed08dc1f78192decf576d431060dfe2b76d"
+   "sha256": "bb6017966fc1038d7abfbd7711f6131522d647eefa28aac54bf6e030d7d5102a"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",

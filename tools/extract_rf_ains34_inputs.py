@@ -57,8 +57,11 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
+
+import _census_graphs_common as cgc  # noqa: E402
 
 # SurgeStorage.h fxslot_positions (re-derivable from
 # tools/export_normalized_graphs.py FX_ROLES / corpus/normalized/graphs.jsonl)
@@ -147,39 +150,27 @@ def slot_entry(graph, slot_role):
     raise Refuse(f"no {slot_role} entry in graphs.jsonl fx list")
 
 
+# The census-vs-graphs zero-drift comparison lives in ONE place for all the
+# routing-form extractors (tools/_census_graphs_common.py, issue #154): the
+# graph's stored FX type IDS are named through the census parser's own
+# committed FX table, so the check compares CONTENT rather than the two
+# artifacts' differing spellings. The previous local helper stripped spaces
+# only, which resolves "Reverb 2" -> "Reverb2" but NOT "Freq Shift" ->
+# "FrequencyShifter" or "Ring Mod" -> "RingModulator", and therefore refused
+# on SPELLING for content-identical slots. These thin wrappers keep this
+# module's local `Refuse` as the refusal type.
+def census_fx_table():
+    return cgc.census_fx_table()
+
+
 def norm_type_name(name):
-    """Census writes FX type names without spaces ("Reverb2"); the normalized
-    graph uses the engine's display name ("Reverb 2"). Compare on the
-    space-stripped form so the cross-check is about CONTENT, not spelling."""
-    return "".join(str(name).split())
+    return cgc.norm_type_name(name)
 
 
 def cross_check(row, graph):
     """Zero-drift assertion between the two committed artifacts. Returns the
     per-field comparison record; raises Refuse on ANY disagreement."""
-    g = graph["g"]
-    on_slots = [fx for fx in g["fx"] if fx.get("on", 0)]
-    census_types = {norm_type_name(t)
-                    for t in row["stored_nonoff_fx_types"].split(";") if t}
-    graph_types = {norm_type_name(fx.get("tn")) for fx in on_slots}
-    checks = {
-        "blob_sha1": (row["git_blob_sha1"], graph.get("sha")),
-        "stored_revision": (int(row["stored_revision"]), graph.get("rev")),
-        "scene_mode": (row["scene_mode"], g.get("smn")),
-        "fx_bypass": (int(row["stored_fx_bypass"]), g.get("fxb")),
-        "fx_disable": (int(row["stored_fx_disable"]), g.get("fxd")),
-        "nonoff_fx_slot_count": (int(row["stored_nonoff_fx_slot_count"]),
-                                 len(on_slots)),
-        "nonoff_fx_type_set": (sorted(census_types), sorted(graph_types)),
-    }
-    disagreements = [k for k, (a, b) in checks.items() if a != b]
-    if disagreements:
-        detail = "; ".join(f"{k}: census={checks[k][0]!r} graphs={checks[k][1]!r}"
-                           for k in disagreements)
-        raise Refuse(f"census-vs-graphs drift on {disagreements}: {detail}")
-    return {"fields_compared": sorted(checks),
-            "census_vs_graphs_drift_count": 0,
-            "values": {k: checks[k][0] for k in checks}}
+    return cgc.cross_check(row, graph, refuse=Refuse)
 
 
 def try_live_oracle_extraction(rel_path):

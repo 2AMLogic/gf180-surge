@@ -156,6 +156,9 @@ def test_reference_comparisons_recorded_and_coherent():
         for c in (tc, d["tail_check_lr"]["L"], d["tail_check_lr"]["R"]):
             assert c["tail_region_covered"] and c["tail_present"], fn
             assert c["model_tail_present"] and c["ok"], fn
+            # issue #111: tail-shape (decay-curve) leg graded and passing
+            assert c["tail_decay_curve_ok"] is True, fn
+            assert c["tail_decay_curve"]["graded_windows"] > 0, fn
             assert c["tail_rms_rel_db"] <= d["proposed_tail_budget"][
                 "tail_rms_rel_db"], fn
 

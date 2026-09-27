@@ -23,6 +23,13 @@
   "carrier_source": "issue #61 Fixtures plan (named B4-scope carrier)",
   "cross_check": {
     "census_vs_graphs_drift_count": 0,
+    "engine_display_names_context": [
+      "Airwindows",
+      "Chorus",
+      "Conditioner",
+      "EQ",
+      "Reverb 2"
+    ],
     "fields_compared": [
       "blob_sha1",
       "fx_bypass",
@@ -32,6 +39,7 @@
       "scene_mode",
       "stored_revision"
     ],
+    "fx_type_name_authority": "corpus/census-v0.1/census.py FX table, applied to the graph's stored type ids (content comparison, not spelling)",
     "values": {
       "blob_sha1": "e2ccab1d70342ce5d18d4bb0993825ff7f959728",
       "fx_bypass": 0,

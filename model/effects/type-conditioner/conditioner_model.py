@@ -504,6 +504,55 @@ def tail_coverage_check(n_blocks_compared, last_present_block):
     return n_blocks_compared >= required, required
 
 
+def present_segments(present):
+    """Contiguous runs of True ("input present") in a block-level present
+    schedule, as inclusive (start, end) block-index pairs, in schedule
+    order. Pure function of the schedule -- no hand-picked constants."""
+    segs = []
+    start = None
+    for i, p in enumerate(present):
+        if p and start is None:
+            start = i
+        elif not p and start is not None:
+            segs.append((start, i - 1))
+            start = None
+    if start is not None:
+        segs.append((start, len(present) - 1))
+    return segs
+
+
+def gated_tail_segments(present, n_blocks_compared):
+    """Per-segment tail-coverage status, derived from the schedule itself
+    (issue #119: a hand-picked 'last input-present block' does not track a
+    schedule edit).
+
+    For every contiguous input-present run in `present`, reports the
+    required span (tail_coverage_check on that run's last present block)
+    and whether that span is actually certified by this comparison:
+
+    - `uninterrupted`: no later input-present run resumes before the
+      required span completes. A resume before completion truncates the
+      ring-out by design (new input restarts it); that is not a coverage
+      failure of THIS run's tail, it is simply a tail this comparison never
+      claims to cover in full, so it is reported but not gated.
+    - `covered`: the compared blocks (`n_blocks_compared`) reach the
+      required span AND the run is uninterrupted.
+
+    Returns a list of dicts (one per present segment, schedule order); an
+    empty `present` schedule (no True at all) returns [].
+    """
+    segs = present_segments(present)
+    out = []
+    for idx, (start, end) in enumerate(segs):
+        covered_span, required = tail_coverage_check(n_blocks_compared, end)
+        next_start = segs[idx + 1][0] if idx + 1 < len(segs) else None
+        uninterrupted = next_start is None or next_start >= required
+        out.append({"segment_start": start, "segment_end": end,
+                    "required_blocks": required, "uninterrupted": uninterrupted,
+                    "covered": covered_span and uninterrupted})
+    return out
+
+
 def model_revision():
     """sha256 of this file (frozen-revision pin for traces/harnesses)."""
     with open(os.path.abspath(__file__), "rb") as f:

@@ -27,6 +27,10 @@ Legs
                               declared region                   -> FAIL
       drop-right-tail         R channel's declared tail zeroed  -> FAIL
       truncate-at-tail-start  model render ends at the tail offset -> FAIL
+      zero-late-tail-from-N%  alienappears tail zeroed from 30/40/60% of the
+                              declared region (issue #111: formerly
+                              KNOWN-GAP probes that PASSED; the tail-shape
+                              leg makes them required FAIL) -> FAIL
       refusals                missing sidecar / undeclared tail_s / stale
                               frames / sha256 mismatch          -> NO_VERDICT
     The pre-#100 chorus tool (materialized from PRE_CHANGE_REV) is run on the
@@ -490,12 +494,12 @@ def leg2(lines, scratch):
                     f.write("\n")
         emit(lines)
 
-    # ---- KNOWN GAP probe (recorded, not asserted as a control) -------------
+    # ---- late-tail truncation (formerly the #111 KNOWN-GAP probes) ---------
     # The relative-RMS tail leg integrates over the WHOLE declared region, so
-    # it is dominated by the early (loud) tail. Zeroing only the late part of
-    # a long reverb tail can pass every budget AND the gate. This probe keeps
-    # that visible; it is a documented gap (follow-up #111), never counted as
-    # a control and never reported as evidence that the gate catches it.
+    # it is dominated by the early (loud) tail: zeroing only the late part of
+    # a long reverb tail passed every budget AND the pre-#111 gate. Issue
+    # #111 added the tail-shape (decay-curve) leg; these probes are now
+    # REQUIRED-FAIL controls. A control that does not fail is not evidence.
     gaps = []
     slug, seq = "alienappears", "seq-notes-coverage-v1"
     sidecar = os.path.join(SXT028C, "fixtures", "%s__%s.json" % (slug, seq))
@@ -505,8 +509,8 @@ def leg2(lines, scratch):
                                  "model__%s__%s.f32.wav" % (slug, seq)))
     d = os.path.join(scratch, "leg2", "gap")
     os.makedirs(d, exist_ok=True)
-    emit(lines, "  KNOWN-GAP probes (NOT controls; outcome recorded, not "
-                "asserted):")
+    emit(lines, "  late-tail truncation controls (formerly KNOWN-GAP probes; "
+                "REQUIRED FAIL since #111):")
     for frac in (0.3, 0.4, 0.6):
         m = base.copy()
         s0 = off + int(length * frac)
@@ -516,19 +520,22 @@ def leg2(lines, scratch):
         out = p + ".json"
         r = run([CHORUS, "--slug", slug, "--seq", seq, "--model", p,
                  "--json", out])
-        j = json.load(open(out))
-        row = {"probe": "%s/zero-late-tail-from-%d%%" % (slug, int(frac * 100)),
-               "zeroed_frames": [s0, off + length]}
-        row.update(_summarize(j))
+        j = json.load(open(out)) if os.path.exists(out) else {}
+        name = "%s/zero-late-tail-from-%d%%" % (slug, int(frac * 100))
+        tc = j.get("tail_check") or {}
+        row = expect(name, "chorus", r, j, "FAIL",
+                     {"zeroed_frames": [s0, off + length],
+                      "tail_rms_rel_ok": tc.get("tail_rms_rel_ok"),
+                      "tail_decay_curve_ok": tc.get("tail_decay_curve_ok"),
+                      "tail_decay_curve_max_dev_db":
+                          (tc.get("tail_decay_curve") or {}).get("max_dev_db")})
         gaps.append(row)
-        emit(lines, "    %-42s verdict %-4s | max %.0f LSB rms %.2f dBFS corr "
-                    "%.4f | tail residual %.2f dB gate %s%s"
-             % (row["probe"], row["status"], row["max_abs_diff_lsb"],
-                row["rms_diff_dbfs"], row["spectral_corr"],
-                row["tail_rms_rel_db"],
-                "PASS" if row["tail_gate_ok"] else "FAIL",
-                "   <-- KNOWN-GAP (#111): dropped late tail PASSES"
-                if row["status"] == "PASS" else ""))
+        emit(lines, "      tail legs (mono): residual %s, decay curve %s "
+                    "(max dev %s dB)"
+             % ("PASS" if row["tail_rms_rel_ok"] else "FAIL",
+                "PASS" if row["tail_decay_curve_ok"] else "FAIL",
+                "n/a" if row["tail_decay_curve_max_dev_db"] is None
+                else "%.2f" % row["tail_decay_curve_max_dev_db"]))
     emit(lines)
 
     # ---- refusals (chorus comparator; fmcombo notes) -----------------------
@@ -605,14 +612,14 @@ def leg2(lines, scratch):
                 if r.get("pre100_tool_status") == "PASS"]
     emit(lines, "  controls the PRE-#100 chorus gate let through as PASS: %s"
          % (", ".join(old_pass) or "none"))
-    gap_pass = [g["probe"] for g in gaps if g["status"] == "PASS"]
-    emit(lines, "  KNOWN-GAP probes whose dropped late tail PASSES the full "
-                "verdict: %s" % (", ".join(gap_pass) or "none"))
+    gap_pass = [g["control"] for g in gaps if g["observed"] != "FAIL"]
+    emit(lines, "  late-tail truncation controls (#111) that do NOT fail the "
+                "full verdict: %s" % (", ".join(gap_pass) or "none"))
     return ok, {"status": "PASS" if ok else "FAIL", "controls": rows,
                 "load_bearing_controls": load_bearing,
                 "passed_by_pre100_tool": old_pass,
-                "known_gap_probes": gaps,
-                "known_gap_probes_passing": gap_pass}
+                "late_tail_controls": [g["control"] for g in gaps],
+                "late_tail_controls_not_failing": gap_pass}
 
 
 # ---------------------------------------------------------------- leg 3 --
@@ -971,11 +978,20 @@ def leg5(lines, scratch):
         pre = json.load(open(os.path.join(pre_dir, "%s.json" % c)))
         gated = strict_loads(open(os.path.join(d, "%s.json" % c)).read())
         g = gated["tail_gate"]
-        gated_wo = {k: v for k, v in gated.items() if k != "tail_gate"}
+        # Keys the gated tool legitimately adds over the pre-#100 tool:
+        # `tail_gate` (#100) and `tail_window` (#108: transparency fields for
+        # the bespoke window, NOT an entry in `checks` and not a verdict
+        # input). #108 landed after this record was first committed, so
+        # without the second exclusion this assertion went stale on main
+        # (found and attributed while re-running under #111). Every excluded
+        # key is recorded; anything else that differs still fails the leg.
+        excluded = [k for k in ("tail_gate", "tail_window") if k in gated]
+        gated_wo = {k: v for k, v in gated.items() if k not in excluded}
         gated_wo["checks"] = {k: v for k, v in gated["checks"].items()
                               if k != "tail_gate"}
-        # (a) the gate adds ONLY tail_gate: gated minus the gate == pre-#100
-        #     tool on the same host, byte-for-byte after key removal
+        # (a) the gate adds ONLY tail_gate: gated minus the gate (and the
+        #     #108 transparency block) == pre-#100 tool on the same host,
+        #     byte-for-byte after key removal
         same_as_pre = (json.dumps(gated_wo, sort_keys=True)
                        == json.dumps(pre, sort_keys=True))
         # (b) pre-#100 tool on this host vs the committed record (pre-existing
@@ -1006,8 +1022,8 @@ def leg5(lines, scratch):
                 g["tail_check_lr"]["L"]["tail_rms_rel_db"],
                 g["tail_check_lr"]["R"]["tail_rms_rel_db"],
                 car.PROPOSED_TAIL["tail_rms_rel_db"]))
-        emit(lines, "      gated output minus tail_gate == pre-#100 tool output "
-                    "(same host): %s" % same_as_pre)
+        emit(lines, "      gated output minus %s == pre-#100 tool output "
+                    "(same host): %s" % ("/".join(excluded), same_as_pre))
         emit(lines, "      pre-existing drift, committed record vs pre-#100 "
                     "tool on this host (NOT caused by #100): %d value keys %s; "
                     "%d fields the tool gained after the record was committed "
@@ -1020,6 +1036,7 @@ def leg5(lines, scratch):
                                 "L": g["tail_check_lr"]["L"]["tail_rms_rel_db"],
                                 "R": g["tail_check_lr"]["R"]["tail_rms_rel_db"]},
             "gate_only_addition": same_as_pre,
+            "excluded_keys_for_gate_only_comparison": excluded,
             "preexisting_drift_keys": drift_keys,
             "preexisting_missing_fields": added_keys,
             "exit": {"gated": rcs[(c, "gated")], "pre100": rcs[(c, "pre100")]}})
@@ -1048,7 +1065,11 @@ def main():
     head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
                           text=True, cwd=REPO).stdout.strip()
     summary = {"issue": 100, "run_utc": stamp, "repo_head": head,
-               "numpy": np.__version__, "legs": {}}
+               "numpy": np.__version__,
+               # issue #111: tail-shape leg added to the shared gate; the
+               # late-tail KNOWN-GAP probes are required-FAIL controls since
+               "amended_by_issue": 111,
+               "proposed_tail_budget": dict(car.PROPOSED_TAIL), "legs": {}}
     names = {1: ("sxt028c_rerun", "sxt028c-rerun.txt", leg1),
              2: ("stereo_tail_controls", "negative-controls.txt", leg2),
              3: ("rms_diff_dbfs_floor", "rms-floor.txt", leg3),
@@ -1067,7 +1088,11 @@ def main():
                  "run: %s   repo HEAD: %s   numpy %s" % (stamp, head,
                                                         np.__version__),
                  "claim scope: comparator behaviour only; no fidelity, "
-                 "support, or sound claim.", ""]
+                 "support, or sound claim.",
+                 "amended by issue #111: tail gate now carries the tail-shape "
+                 "(decay-curve) leg; budget %s" % json.dumps(car.PROPOSED_TAIL,
+                                                              sort_keys=True),
+                 ""]
         if leg == 1:
             good, rep = fn(lines, scratch, args.write_artifacts)
         else:

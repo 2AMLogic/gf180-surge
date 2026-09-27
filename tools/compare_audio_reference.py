@@ -36,9 +36,14 @@ read verbatim from the sidecar -- never inferred from silence. Tail-pass
 requires all of: the declared region is fully covered by both renders, the
 reference tail region carries energy, the model tail region carries energy, and
 the residual RMS inside the region is at least PROPOSED_TAIL["tail_rms_rel_db"]
-below the reference tail RMS. A truncated model render, a zeroed tail, or a
-decayed-tail truncation therefore FAILS the verdict instead of passing on a
-truncated-window comparison.
+below the reference tail RMS, and (issue #111) the tail SHAPE agrees: the
+per-window (PROPOSED_TAIL["decay_curve_window_s"]) RMS level of the model is
+within PROPOSED_TAIL["decay_curve_max_dev_db"] of the reference in every
+window whose reference level is at or above the DECLARED floor
+PROPOSED_TAIL["decay_curve_floor_dbfs"]. A truncated model render, a zeroed
+tail, a decayed-tail truncation, or a LATE-tail truncation/fast decay (which
+the whole-region residual cannot see: the early tail dominates it) therefore
+FAILS the verdict instead of passing on a truncated-window comparison.
 
 Dry comparisons are unaffected (AGENTS.md dry rule): `--path dry` is the
 default, no gate is applied, and the emitted JSON/stdout is byte-identical to
@@ -82,11 +87,39 @@ PROPOSED = {
 # criterion is RELATIVE to the reference tail RMS on purpose: a full-scale
 # criterion goes vacuous as a tail decays, which is exactly the loophole a
 # dropped or stubbed tail would pass through.
+#
+# Tail-SHAPE leg (issue #111). The residual leg integrates over the whole
+# declared region, which the loud early tail dominates, so zeroing only the
+# LATE part of a long tail passed it. The decay-curve leg compares per-window
+# RMS levels (dBFS) of model and reference across the declared region, in the
+# spirit of the sxt-024 `decay_curve` check:
+#   * windows of `decay_curve_window_s` (50 ms; sxt-024 window precedent),
+#     starting at the declared tail offset; a final partial window is graded;
+#   * only windows whose REFERENCE level is >= `decay_curve_floor_dbfs` are
+#     graded. The floor is a DECLARED budget in full-scale units (identical
+#     meaning for int16 and float buses), never inferred from the render's own
+#     silence or noise floor. A reference tail with no window at/above the
+#     floor cannot be shape-graded and FAILS closed;
+#   * every graded window must satisfy |model_db - ref_db| <=
+#     `decay_curve_max_dev_db` (two-sided: a model tail that stops early or
+#     fails to decay both fail). 1.0 dB is the sxt-024 decay_curve value and
+#     sits just above the 0.92 dB level deviation that a window whose residual
+#     met the -20 dB relative budget above can show (20*log10(1 - 10^-1)).
+# A late-tail defect whose reference level is below the declared floor is not
+# seen by this leg by construction; that limit is recorded in
+# reports/tail-shape-leg/EVIDENCE.md, not hidden.
 PROPOSED_TAIL = {
     "tail_rms_rel_db": -20.0,       # residual RMS inside the declared tail
                                     # region, relative to the reference tail
                                     # RMS (tail reproduced to <= 10% RMS)
+    "decay_curve_window_s": 0.05,   # tail-shape window length (issue #111)
+    "decay_curve_floor_dbfs": -100.0,  # declared grading floor, dBFS
+    "decay_curve_max_dev_db": 1.0,  # max per-window level deviation, dB
 }
+
+# Full scale of the mono int16 comparator in LSB units (same value the
+# `rms_diff_dbfs` metric uses).
+INT16_FULL_SCALE = 32767.0
 
 # rms_diff_dbfs under exact agreement (issue #100 decision). 20*log10(0) is
 # -inf, which Python's json writes as the non-standard token `-Infinity` that
@@ -243,12 +276,84 @@ def declared_tail_region(sidecar_path, bus):
     }
 
 
-def tail_check(ref, mod, region, budget=PROPOSED_TAIL):
+def tail_decay_curve(rt, mt, sample_rate, full_scale, budget=PROPOSED_TAIL):
+    """Tail-shape leg (issue #111): windowed decay-curve comparison.
+
+    rt/mt: the reference/model samples of the DECLARED tail region, in the
+    caller's LSB unit; `full_scale` is full scale in that same unit, so the
+    declared floor is applied in dBFS. Window levels use `rms_dbfs` (a silent
+    window is RMS_DIFF_DBFS_FLOOR, i.e. far below any graded reference level,
+    so a zeroed model window always fails). Returns the leg's record; `ok` is
+    False when any graded window deviates by more than the budget, or when no
+    reference window reaches the declared floor (the leg cannot grade the
+    tail shape, and a leg that graded nothing is never reported as a pass).
+    """
+    win = int(round(float(budget["decay_curve_window_s"]) * sample_rate))
+    floor = float(budget["decay_curve_floor_dbfs"])
+    max_dev = float(budget["decay_curve_max_dev_db"])
+    n = min(len(rt), len(mt))
+    ref_db, mod_db = [], []
+    for s in range(0, n, win):
+        r = rt[s:s + win]
+        m = mt[s:s + win]
+        ref_db.append(rms_dbfs(float(np.sqrt((r * r).mean())), full_scale))
+        mod_db.append(rms_dbfs(float(np.sqrt((m * m).mean())), full_scale))
+    ref_db = np.array(ref_db)
+    mod_db = np.array(mod_db)
+    graded = ref_db >= floor
+    out = {
+        "window_frames": win,
+        "floor_dbfs": floor,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_"
+                        "dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": max_dev,
+        "total_windows": int(len(ref_db)),
+        "graded_windows": int(graded.sum()),
+        "ref_first_window_dbfs": (float(ref_db[0]) if len(ref_db) else None),
+        "ref_last_graded_window_dbfs": (float(ref_db[graded][-1])
+                                        if graded.any() else None),
+    }
+    if not graded.any():
+        out.update({"max_dev_db": None, "worst_window": None,
+                    "windows_over_budget": 0, "ok": False,
+                    "reason": ("no reference tail window reaches the declared "
+                               "decay-curve floor %.1f dBFS; the tail shape "
+                               "cannot be graded" % floor)})
+        return out
+    dev = np.abs(mod_db - ref_db)
+    idx = np.flatnonzero(graded)
+    worst = int(idx[np.argmax(dev[graded])])
+    over = int((dev[graded] > max_dev).sum())
+    out.update({
+        "max_dev_db": float(dev[worst]),
+        "worst_window": {"index": worst, "start_frame_in_tail": worst * win,
+                         "ref_dbfs": float(ref_db[worst]),
+                         "model_dbfs": float(mod_db[worst])},
+        "windows_over_budget": over,
+        "ok": over == 0,
+        "reason": ("" if over == 0 else
+                   "tail decay curve deviates %.2f dB (> %.2f dB budget) in "
+                   "%d of %d graded windows (worst window %d: reference "
+                   "%.1f dBFS, model %.1f dBFS)"
+                   % (float(dev[worst]), max_dev, over, int(graded.sum()),
+                      worst, float(ref_db[worst]), float(mod_db[worst]))),
+    })
+    return out
+
+
+def tail_check(ref, mod, region, budget=PROPOSED_TAIL,
+               full_scale=INT16_FULL_SCALE):
     """Tail-region agreement over the DECLARED region.
 
     Shape-compatible with tools/compare_chorus_reference.py's `tail_check`
     (`tail_present`, `tail_rms_rel_db`, `ok`) plus the explicit region
     provenance and the model-side presence leg the chorus tool lacks.
+
+    Since issue #111 it also carries the tail-SHAPE leg (`tail_decay_curve`,
+    see `tail_decay_curve`), and the per-leg results `tail_rms_rel_ok` /
+    `tail_decay_curve_ok` so a record shows which leg decided. `full_scale`
+    is full scale in the caller's LSB unit (int16: 32767; the stereo gate
+    passes 1/lsb).
     """
     off = region["tail_offset"]
     length = region["tail_frames"]
@@ -272,6 +377,9 @@ def tail_check(ref, mod, region, budget=PROPOSED_TAIL):
             "tail_rms_rel_db": None,
             "tail_ref_rms_lsb": None,
             "tail_model_rms_lsb": None,
+            "tail_rms_rel_ok": False,
+            "tail_decay_curve": None,
+            "tail_decay_curve_ok": False,
             "ok": False,
             "reason": ("declared tail region [%d, %d) is not covered by the "
                        "compared renders (ref %d frames, model %d frames); a "
@@ -296,11 +404,18 @@ def tail_check(ref, mod, region, budget=PROPOSED_TAIL):
                        "cannot support a wet-tail comparison)")
     if not model_present:
         reasons.append("model tail region is silent (dropped or stubbed tail)")
+    rel_ok = rel_db is not None and rel_db <= budget["tail_rms_rel_db"]
     if rel_db is None:
         reasons.append("tail residual undefined (reference tail RMS is 0)")
-    elif rel_db > budget["tail_rms_rel_db"]:
+    elif not rel_ok:
         reasons.append("tail residual %.2f dB exceeds the proposed %.2f dB "
                        "relative budget" % (rel_db, budget["tail_rms_rel_db"]))
+    # tail-shape leg (issue #111): the residual above is dominated by the
+    # early tail; this leg grades every declared-region window down to the
+    # declared floor, so a late-tail truncation or late fast decay fails.
+    dc = tail_decay_curve(rt, mt, region["sample_rate"], full_scale, budget)
+    if not dc["ok"]:
+        reasons.append(dc["reason"])
     out.update({
         "tail_present": present,
         "model_tail_present": model_present,
@@ -309,6 +424,9 @@ def tail_check(ref, mod, region, budget=PROPOSED_TAIL):
         "tail_rms_rel_db": rel_db,
         "tail_ref_rms_lsb": ref_rms,
         "tail_model_rms_lsb": mod_rms,
+        "tail_rms_rel_ok": bool(rel_ok),
+        "tail_decay_curve": dc,
+        "tail_decay_curve_ok": bool(dc["ok"]),
         "ok": not reasons,
         "reason": "; ".join(reasons),
     })
@@ -325,13 +443,16 @@ def stereo_tail_gate(ref, mod, region, lsb, budget=PROPOSED_TAIL):
     (the returned `tail_check`, shape-identical to the mono tool's) AND to
     each of L and R (`tail_check_lr`), because a stereo model can drop or
     stub one channel's tail while the mono sum still carries energy. The
-    gate passes only when all three pass.
+    gate passes only when all three pass. Since issue #111 each of the three
+    also carries the tail-shape (decay-curve) leg; native full scale is 1.0,
+    i.e. 1/lsb in the LSB unit.
     """
     ref = np.asarray(ref, dtype=np.float64) / lsb
     mod = np.asarray(mod, dtype=np.float64) / lsb
+    fs = 1.0 / lsb
     mono = tail_check(0.5 * (ref[0] + ref[1]), 0.5 * (mod[0] + mod[1]),
-                      region, budget)
-    lr = {name: tail_check(ref[i], mod[i], region, budget)
+                      region, budget, full_scale=fs)
+    lr = {name: tail_check(ref[i], mod[i], region, budget, full_scale=fs)
           for name, i in (("L", 0), ("R", 1))}
     ok = bool(mono["ok"] and lr["L"]["ok"] and lr["R"]["ok"])
     reasons = ["%s: %s" % (name, c["reason"])
@@ -490,7 +611,8 @@ def main():
                               else "FAIL against proposed budgets")
         rc = 0
     else:
-        tc = tail_check(ref_full, mod_full, region)
+        tc = tail_check(ref_full, mod_full, region,
+                        full_scale=INT16_FULL_SCALE)
         metrics["path"] = "wet"
         metrics["fixture_sidecar"] = region["sidecar"]
         metrics["proposed_tail_budget"] = dict(PROPOSED_TAIL)

@@ -34,6 +34,16 @@ SXT = os.path.join(REPO, "reports", "SXT-028h")
 FX_INPUTS = os.path.join(REPO, "model", "effects", "fx_inputs")
 CARRIER_SLUGS = ("novuo", "acoordion-basses", "shore")
 
+# Corpus presets whose FX set includes types the two committed artifacts SPELL
+# differently (census "FrequencyShifter"/"RingModulator" vs engine display
+# "Freq Shift"/"Ring Mod"). Not carriers of this leaf -- they are the inputs
+# to the issue #154 spelling-vs-content regression test below.
+SPELLING_DIVERGENT_PRESETS = (
+    "resources/data/patches_3rdparty/Kinsey Dulcet/Percussion/"
+    "Closeout Sale @ Electro Percussion Warehouse.fxp",
+    "resources/data/patches_3rdparty/Slowboat/FX/Random Bass FX.fxp",
+)
+
 COEFFS_A = (rm.to_q(0.4, 29, 32), rm.to_q(-0.15, 29, 32), rm.to_q(0.08, 29, 32),
             rm.to_q(0.25, 29, 32), rm.to_q(-0.12, 29, 32))
 COEFFS_B = (rm.to_q(0.2, 29, 32), rm.to_q(0.3, 29, 32), rm.to_q(-0.1, 29, 32),
@@ -344,9 +354,71 @@ def test_extraction_refuses_injected_drift():
     with pytest.raises(ex.Refuse):
         ex.cross_check(bad2, graph)
 
+    # a DIFFERENT FX in an occupied slot is CONTENT drift, not a spelling
+    # difference, and must still refuse (issue #154: the type-set comparison
+    # is now id-based, so this is the control that it did not go soft)
+    table = ex.census_fx_table()
+    bad_graph_type = copy.deepcopy(graph)
+    on_slots = [fx for fx in bad_graph_type["g"]["fx"] if fx.get("on", 0)]
+    present = {fx["t"] for fx in on_slots}
+    on_slots[0]["t"] = next(i for i in range(1, len(table))
+                            if i not in present)
+    with pytest.raises(ex.Refuse):
+        ex.cross_check(row, bad_graph_type)
+
+    # an FX type id the census table cannot name is a REFUSAL too, never a
+    # silently dropped slot
+    unmappable = copy.deepcopy(graph)
+    for fx in unmappable["g"]["fx"]:
+        if fx.get("on", 0):
+            fx["t"] = len(table)
+            break
+    with pytest.raises(ex.Refuse):
+        ex.cross_check(row, unmappable)
+
     with pytest.raises(ex.Refuse):
         ex.extract_one({"slug": "x", "path": carrier["path"],
                         "declared_sha1": "0" * 40})
+
+
+def test_cross_check_compares_fx_type_content_not_spelling():
+    """Issue #154 regression: the census CSV and the normalized graph spell
+    several FX types differently -- the census uses its own parser table
+    ("FrequencyShifter", "RingModulator"), the graph carries the ENGINE's
+    live display name ("Freq Shift", "Ring Mod") -- while naming the SAME
+    stored type id. The cross-check must agree on content and must not refuse
+    on spelling. The old space-strip-only NAME comparison is exercised inline
+    as the live control: it must still disagree on these presets, otherwise
+    this test would no longer be testing the hazard."""
+    import extract_rf_bins12_inputs as ex
+    table = ex.census_fx_table()
+    assert table[7] == "FrequencyShifter" and table[13] == "RingModulator"
+
+    saw_freq_shift = saw_ring_mod = False
+    for rel in SPELLING_DIVERGENT_PRESETS:
+        row = ex.census_row(rel)
+        graph = ex.graphs_entry(rel)
+        on_slots = [fx for fx in graph["g"]["fx"] if fx.get("on", 0)]
+        display = {fx.get("tn") for fx in on_slots}
+        ids = {fx.get("t") for fx in on_slots}
+        saw_freq_shift |= 7 in ids and "Freq Shift" in display
+        saw_ring_mod |= 13 in ids and "Ring Mod" in display
+
+        census_names = sorted({"".join(t.split())
+                               for t in row["stored_nonoff_fx_types"].split(";")
+                               if t})
+        old_graph_names = sorted({"".join(str(fx.get("tn")).split())
+                                  for fx in on_slots})
+        assert census_names != old_graph_names, (
+            f"{rel} no longer exercises the spelling divergence this "
+            f"regression test targets")
+
+        rec = ex.cross_check(row, graph)     # must NOT refuse
+        assert rec["census_vs_graphs_drift_count"] == 0
+        assert rec["values"]["nonoff_fx_type_set"] == census_names
+        assert rec["engine_display_names_context"] == sorted(display)
+    assert saw_freq_shift, "FrequencyShifter/Freq Shift pair not exercised"
+    assert saw_ring_mod, "RingModulator/Ring Mod pair not exercised"
 
 
 def test_leaf_spec_declares_this_routing_form():
