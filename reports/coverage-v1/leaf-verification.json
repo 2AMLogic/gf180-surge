@@ -145,12 +145,12 @@
       "sha256": "3f70d09d9ab6b2b56278c39dc7d93d541644a99fa336468d8746b9d413b49984"
     },
     {
-      "decision": "RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved; the numbers graded against [PROPOSED] budgets moved and every movement is stated in the record's #145 change note. Hash bookkeeping only.",
-      "issue": 145,
-      "moved_by": "issue #145: republished every artifact invalidated by the #123 halfband branch-order fix -- model renders re-rendered at HEAD, budget JSONs re-derived with the shared comparator against the already-committed references, RTL-vs-model exactness and negative controls re-run, and a dated #145 change note added stating every before -> after number and every verdict movement (reports/halfband-republication/)",
+      "decision": "RE-PIN (legitimately edited; file correct, not restored). No verification status in this table moved and no rms_diff_dbfs value, budget, or preset-support count changed; two rms-leg PROSE residuals from before the #92/#95 comparator-polarity fix were corrected (a stale \"(passes the committed comparator's RMS row)\" claim in section 4 that read as a PASS under the pre-fix `>=` polarity but is a MISS under the corrected `<=` polarity -- the row's overall FAIL verdict is unchanged because max_abs and spectral corr already missed independently -- and a section-9 disclosure that had described the two audio comparators as still disagreeing in RMS-row direction, which was true only before #92/#95 and is now stale, since both `tools/compare_audio_reference.py` and `model/integration/compare_integration.py` use the corrected `rms_diff_dbfs <= budget` polarity). Pin chain: ebd46730eead (pre-#145) -> 80f113b19c88 (#145) -> this sha (#189).",
+      "issue": 189,
+      "moved_by": "issue #189: re-graded the two remaining rms-leg polarity residuals in reports/sxt-026a/EVIDENCE.md left over from before the #92/#95 comparator-polarity fix (found by an exhaustive rms-leg grep of the full file, not just the row the one-time reports/tooling-rms-polarity-audit/artifacts/audit-report.json snapshot had flagged, which was already resolved: audio-smoke-bells-dry.json was retired/deleted by #145)",
       "path": "reports/sxt-026a/EVIDENCE.md",
-      "previous_sha256": "ebd46730eead3b015957ad884788604f1fe84863b0eb934200ecc9f3ea140389",
-      "sha256": "80f113b19c88f1c795aa1090c0422efd05ef9d3ea9051b8fd1e511c3c4618a1e"
+      "previous_sha256": "80f113b19c88f1c795aa1090c0422efd05ef9d3ea9051b8fd1e511c3c4618a1e",
+      "sha256": "a0417971fb1d359ebe1eb5ae02403df44d4ce58f33f0a1ba7926a7e0600aaea8"
     }
   ],
   "gates": {
@@ -497,7 +497,7 @@
         },
         {
           "path": "reports/sxt-026a/EVIDENCE.md",
-          "sha256": "80f113b19c88f1c795aa1090c0422efd05ef9d3ea9051b8fd1e511c3c4618a1e"
+          "sha256": "a0417971fb1d359ebe1eb5ae02403df44d4ce58f33f0a1ba7926a7e0600aaea8"
         }
       ],
       "fixture_verified_paths": [
