@@ -1,7 +1,27 @@
 F-176-2 / issue #181 -- REQUIRED FAILURE CONTROL transcript
-tools/measure_halfband_limit_cycle.py :: ZeroedAtBlockBoundary
-generated: 2026-09-28T02:03:49Z (UTC)
+
+GENERATED, DO NOT EDIT BY HAND:
+  python3 tools/measure_halfband_limit_cycle.py --failure-control \
+      reports/halfband-limit-cycle/artifacts/failure-control.txt
+
+generated: 2026-09-28T10:08:50Z (UTC)
+base commit: ae8ef1e83e01782088e18cf9932fffe5045df101
+sweep artifact vs that commit at generation time: clean
 python: 3.12.3
+
+=== BEGIN DERIVED BODY -- re-derived byte-for-byte by tests/test_halfband_limit_cycle.py ===
+DERIVED FROM
+  tools/measure_halfband_limit_cycle.py :: ZeroedAtBlockBoundary
+  reports/halfband-limit-cycle/artifacts/zero-input-limit-cycle-sweep.json
+    sha256 c7593ae4b189601931d350364441eb122edc29d17f77b322eafd3c7fd08558ea
+
+  Every line below is a pure function of those two inputs -- the
+  control class's own source text and the committed sweep
+  artifact -- and tests/test_halfband_limit_cycle.py re-derives
+  all of it byte-for-byte. Editing ZeroedAtBlockBoundary, or
+  moving a case count / non-zero count / settled peak, fails CI
+  here rather than leaving this transcript describing a
+  measurement that no longer exists.
 
 WHAT THE CONTROL TARGETS
   The sweep claims to measure the decimator's OWN persistent state.
@@ -17,40 +37,81 @@ WHAT THE CONTROL TARGETS
 
 THE CONTROL, VERBATIM (tools/measure_halfband_limit_cycle.py)
   class ZeroedAtBlockBoundary(vm.HalfbandD2):
-    """FAILURE CONTROL: the frozen recursion with its state zeroed at every
-    block boundary. A measurement that still reports a non-zero settled
-    amplitude under this control is not observing the filter's own state."""
+      """FAILURE CONTROL: the frozen recursion with its state zeroed at every
+      block boundary. A measurement that still reports a non-zero settled
+      amplitude under this control is not observing the filter's own state."""
 
-    def process(self, inp):
-        self.__init__()
-        return vm.HalfbandD2.process(self, inp)
+      def process(self, inp):
+          self.__init__()
+          return vm.HalfbandD2.process(self, inp)
+
+  Requirement, as the committed artifact itself states it:
+    control:
+      decimator state zeroed at every block boundary
+      (ZeroedAtBlockBoundary)
+    requirement:
+      every case must settle to exactly 0 under the control, and the
+      uncontrolled sweep must contain at least one non-zero settled
+      amplitude for the control to be observing anything
 
 CASES: 315 (the full declared sweep)
+  sweep.cases rows present         315
+  sweep.summary.cases              315
+  failure_control.control_cases    315
+  the three agree: True
 
   leg                       cases  non-zero settled  worst settled peak
   uncontrolled (HalfbandD2)   315               306  36 Q10.21 LSB
   control (state zeroed)      315                 0  0 Q10.21 LSB
 
+  The uncontrolled row is RECOUNTED from sweep.cases, not read
+  off the summary:
+    non-zero  recount 306   summary 306   failure_control 306
+    worst     recount 36    summary 36
+    all agree: True
+  The control row's worst settled peak is DERIVED, not restated:
+  failure_control() calls a case an offender when it is not
+  MEASURED or its settled peak is not exactly 0, so 0 offenders
+  over 315 control cases entails every one of them settled to
+  exactly 0.
+
   requirement: control non-zero == 0            -> PASS (0)
   requirement: uncontrolled non-zero  > 0       -> PASS (306)
-  CONTROL VERDICT: PASS
+  CONTROL VERDICT: PASS  (re-derived from the two requirements)
+  the artifact's own failure_control.verdict says PASS -> agrees
 
 PER-CASE SPOT CHECK (first 12 cases, uncontrolled vs control)
-  case                                    swept    control
-  impulse a=+4.76837158e-07                   0          0
-  impulse a=-4.76837158e-07                   0          0
-  impulse a=+0.0001                           7          0
-  impulse a=-0.0001                           7          0
-  impulse a=+0.001                           13          0
-  impulse a=-0.001                           13          0
-  impulse a=+0.01                            26          0
-  impulse a=-0.01                            26          0
-  impulse a=+0.1                             26          0
-  impulse a=-0.1                             26          0
-  impulse a=+0.25                            26          0
-  impulse a=-0.25                            26          0
+  case                          swept    control
+  impulse a=+4.76837158e-07         0          0
+  impulse a=-4.76837158e-07         0          0
+  impulse a=+0.0001                 7          0
+  impulse a=-0.0001                 7          0
+  impulse a=+0.001                 13          0
+  impulse a=-0.001                 13          0
+  impulse a=+0.01                  26          0
+  impulse a=-0.01                  26          0
+  impulse a=+0.1                   26          0
+  impulse a=-0.1                   26          0
+  impulse a=+0.25                  26          0
+  impulse a=-0.25                  26          0
+
+  The swept column is each case's own settled_peak_q21 in
+  sweep.cases. The control column is 0 for every case by the
+  zero-offenders derivation above, which is what the committed
+  artifact records about the control leg; the artifact does not
+  carry per-case control rows, so no per-case control number is
+  invented here. tests/test_halfband_limit_cycle.py re-measures
+  these 12 cases against ZeroedAtBlockBoundary live and requires
+  this column to match.
 
 CONTROL IS LIVE AGAINST MUTATED INPUT (the control must be able to FAIL)
+  Each row feeds a mutated input pair to this tool's own
+  failure_control() verdict function while this body is derived.
+  The control legs below are SYNTHETIC probe inputs, not
+  measurements. The unmutated pair must PASS and every mutant
+  must FAIL: a check that cannot fail is not a check.
+
+  unmutated (artifact sweep + an all-zero control leg)  -> PASS
   uncontrolled sweep forced all-zero (nothing observed) -> FAIL
   control leg forced to ring at 7 LSB                   -> FAIL
   control leg forced NO_VERDICT (never a pass)          -> FAIL

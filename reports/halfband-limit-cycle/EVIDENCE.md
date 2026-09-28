@@ -251,7 +251,9 @@ than the filter's own persistent state.
 
 The control is two-sided on purpose: it also fails closed when the
 *uncontrolled* sweep finds nothing non-zero, because a control that drives
-zero to zero demonstrates nothing. Transcript: `artifacts/failure-control.txt`.
+zero to zero demonstrates nothing. Transcript: `artifacts/failure-control.txt`
+— **generated**, not hand-written, with its derived body re-derived
+byte-for-byte by the tests (§8).
 
 ## 5. Is it the recursion or the quantizer? — float64 contrast
 
@@ -347,6 +349,29 @@ i.e. the cross-dialect equivalence this record declines to assert. That failure
 mode is now a test failure, not a silent one: adding, removing or editing a
 spliced copy without regenerating the transcript fails CI.
 
+`artifacts/failure-control.txt` is **generated** the same way
+(`tools/measure_halfband_limit_cycle.py --failure-control`), and everything
+below its `=== BEGIN DERIVED BODY ===` marker is re-derived byte-for-byte by
+`tests/test_halfband_limit_cycle.py`
+(`test_failure_control_transcript_body_is_reproducible_byte_for_byte`,
+`test_failure_control_transcript_quotes_the_live_control_class`,
+`test_failure_control_transcript_records_the_artifact_it_derives_from`,
+`test_failure_control_transcript_spot_check_matches_a_live_control_run`,
+`test_failure_control_transcript_mutant_probes_are_live`, with a live
+staleness control in
+`test_failure_control_transcript_staleness_check_demonstrably_fails`). That
+body is a pure function of two inputs — `ZeroedAtBlockBoundary`'s own source
+text, lifted out of the module rather than transcribed, and the committed
+sweep artifact (recorded by sha256) — so editing the control class, or moving
+a case count / non-zero count / settled peak, fails CI instead of leaving the
+transcript describing a measurement that changed. The hand-written version was
+**accurate** when it was written; what it lacked was anything that would make
+it stop being accurate loudly. Its "CONTROL IS LIVE AGAINST MUTATED INPUT"
+rows are now verdicts computed from the harness's own `failure_control()`
+while the body is derived, not hand-typed, and its per-case control column is
+re-measured live against `ZeroedAtBlockBoundary` by the test. Nothing the
+control measures, and no measured number, changed.
+
 ## 9. Reproduce
 
 ```bash
@@ -361,6 +386,12 @@ python3 tools/measure_halfband_limit_cycle.py --rtl --out /tmp/hblc.json
 # (this is the committed artifact; ~31 min, most of it the sine leaf's tb)
 python3 tools/measure_halfband_limit_cycle.py --rtl --leaves --leaf-rtl \
     --out reports/halfband-limit-cycle/artifacts/zero-input-limit-cycle-sweep.json
+
+# the two generated transcripts (no sweep, no iverilog, seconds)
+python3 tools/measure_halfband_limit_cycle.py --provenance \
+    reports/halfband-limit-cycle/artifacts/rtl-splice-provenance.txt
+python3 tools/measure_halfband_limit_cycle.py --failure-control \
+    reports/halfband-limit-cycle/artifacts/failure-control.txt
 
 python3 -m pytest tests/test_halfband_limit_cycle.py -q
 ```

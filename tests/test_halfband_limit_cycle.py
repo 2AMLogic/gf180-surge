@@ -373,10 +373,140 @@ def test_declaration_routes_the_arithmetic_change_to_the_contract_owner():
         assert "contract revision" in f, os.path.relpath(path, REPO)
 
 
-def test_failure_control_transcript_is_committed():
+# ------------------------------ the failure-control transcript is derived
+#
+# EVIDENCE section 4 points a reviewer at artifacts/failure-control.txt as the
+# transcript of the control #181 requires, so what that file says is a
+# committed CLAIM, not documentation. Hand-written, it quoted the control class
+# body, the case/non-zero/worst-peak numbers and a per-case spot check with
+# nothing re-deriving any of them -- the same structural exposure that let the
+# hand-written splice provenance go stale when #180 added a fourth RTL copy.
+# These tests re-derive it instead.
+
+REGENERATE_CONTROL = ("regenerate it: python3 "
+                      "tools/measure_halfband_limit_cycle.py "
+                      "--failure-control " + M.FAILURE_CONTROL_REL)
+
+
+def failure_control_body_as_committed():
+    text = read(CONTROL_TRANSCRIPT)
+    assert M.FAILURE_CONTROL_BODY_MARKER in text, \
+        "%s predates the generated transcript format; %s" \
+        % (M.FAILURE_CONTROL_REL, REGENERATE_CONTROL)
+    return text.split(M.FAILURE_CONTROL_BODY_MARKER, 1)[1].lstrip("\n")
+
+
+def test_failure_control_transcript_is_committed_and_names_the_control():
+    """The original two-substring guard, kept: the transcript must still be
+    the transcript of THIS control and must still carry its verdict."""
     f = read(CONTROL_TRANSCRIPT)
     assert "ZeroedAtBlockBoundary" in f
     assert "PASS" in f
+    assert "CONTROL VERDICT: PASS" in f
+
+
+def test_failure_control_transcript_body_is_reproducible_byte_for_byte():
+    """Everything below the header is a pure function of
+    `ZeroedAtBlockBoundary`'s source text plus the committed sweep artifact, so
+    it is re-derived here. An edit to the control class, or a moved case count
+    / non-zero count / settled peak, fails without a regenerated transcript."""
+    assert failure_control_body_as_committed() == M.failure_control_body(), \
+        REGENERATE_CONTROL
+
+
+def test_failure_control_transcript_quotes_the_live_control_class():
+    """The 'THE CONTROL, VERBATIM' block must be the class that actually runs,
+    lifted out of the module -- not a transcription of it."""
+    body = failure_control_body_as_committed()
+    src = M.control_source()
+    assert "class ZeroedAtBlockBoundary(vm.HalfbandD2):" in src
+    assert M._reindent(src, "  ").rstrip("\n") in body, REGENERATE_CONTROL
+    # and it is the class the sweep legs are actually run with
+    assert M.ZeroedAtBlockBoundary.__module__ == M.__name__
+    assert issubclass(M.ZeroedAtBlockBoundary, vm.HalfbandD2)
+
+
+def test_failure_control_transcript_records_the_artifact_it_derives_from():
+    """The sha256 of the sweep artifact is the reviewer's compare handle: it
+    must be of the JSON actually committed now, so regenerating the sweep
+    without regenerating this transcript fails here."""
+    body = failure_control_body_as_committed()
+    assert "    sha256 %s" % M._sha_file(ARTIFACT) in body, \
+        REGENERATE_CONTROL
+    a = artifact()
+    assert "CASES: %d (the full declared sweep)" % len(a["sweep"]["cases"]) \
+        in body, REGENERATE_CONTROL
+
+
+def test_failure_control_transcript_spot_check_matches_a_live_control_run():
+    """The spot check's control column is derived from the artifact's own
+    zero-offenders record. Re-measure those same cases against the committed
+    control class live and require the column to be what the filter actually
+    does -- so the derivation is checked against the model, not just against
+    itself."""
+    a = artifact()
+    body = failure_control_body_as_committed()
+    rows = a["sweep"]["cases"][:M.SPOT_CHECK_CASES]
+    by_case = {c["case"]: c for c in
+               M.declared_cases(a["method"]["drive_input_samples"])}
+    live = M.run_sweep([by_case[r["case"]] for r in rows],
+                       cls=M.ZeroedAtBlockBoundary)
+    assert all(r["status"] == "MEASURED" for r in live)
+    assert all(r["settled_peak_q21"] == 0 for r in live), \
+        [r["case"] for r in live if r["settled_peak_q21"]]
+    width = max([len("case")] + [len(r["case"]) for r in rows])
+    for committed, measured in zip(rows, live):
+        assert "  %-*s  %8s  %9s" % (width, committed["case"],
+                                     committed["settled_peak_q21"],
+                                     measured["settled_peak_q21"]) in body, \
+            "%s: transcript row disagrees with a live control run; %s" \
+            % (committed["case"], REGENERATE_CONTROL)
+
+
+def test_failure_control_transcript_staleness_check_demonstrably_fails():
+    """Live negative control for the re-derivation above. Both mutations the
+    issue names must change the derived body: editing `ZeroedAtBlockBoundary`'s
+    source (here, its docstring), and perturbing one spot-check case's settled
+    peak. A check that cannot fail is not a check."""
+    committed = failure_control_body_as_committed()
+    assert M.failure_control_body() == committed          # baseline
+
+    # (i) the control class's own body is mutated, transcript is not
+    mutated_src = M.control_source().replace(
+        "FAILURE CONTROL:", "FAILURE CONTROL (mutant):")
+    assert mutated_src != M.control_source()
+    assert M.failure_control_body(control_src=mutated_src) != committed
+
+    # (ii) one spot-check case's settled peak moves, transcript is not
+    a = artifact()
+    assert M.SPOT_CHECK_CASES > 0
+    row = a["sweep"]["cases"][M.SPOT_CHECK_CASES - 1]
+    row["settled_peak_q21"] = row["settled_peak_q21"] + 1
+    assert M.failure_control_body(art=a) != committed
+
+    # (iii) and the headline numbers are load-bearing too: a changed case count
+    b = artifact()
+    b["sweep"]["cases"] = b["sweep"]["cases"][:-1]
+    assert M.failure_control_body(art=b) != committed
+
+
+def test_failure_control_transcript_mutant_probes_are_live():
+    """The transcript's 'CONTROL IS LIVE AGAINST MUTATED INPUT' rows are
+    verdicts computed from the harness's own `failure_control()` while the body
+    is derived, not hand-typed. A `failure_control()` that could no longer FAIL
+    would change them; assert they are what the function really returns."""
+    a = artifact()
+    probes = M._mutant_probes(a["sweep"]["cases"])
+    assert [want for _d, _g, want in probes] == ["PASS", "FAIL", "FAIL",
+                                                 "FAIL"]
+    for desc, got, want in probes:
+        assert got == want, desc
+    body = failure_control_body_as_committed()
+    width = max(len(d) for d, _g, _w in probes)
+    for desc, got, _want in probes:
+        assert "  %-*s -> %s" % (width, desc, got) in body, \
+            "%s; %s" % (desc, REGENERATE_CONTROL)
+    assert "*** EXPECTED" not in body
 
 
 # --------------------------------- the splice-provenance transcript is live
