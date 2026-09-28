@@ -8263,14 +8263,43 @@
  },
  "rtl_leg": {
   "claim": "claim (1) ONLY -- the RTL matches the frozen fixed-point model exactly. Nothing here is a model-vs-reference or a listening claim.",
-  "method": "each RTL copy's own decimate_and_output cascade loop, reconstruction assignment and qmul/clamp8/qround1 functions are spliced VERBATIM into a generated probe (only the cfg coefficient window and leading whitespace are substituted), run under iverilog on every declared case, and compared to the model sample-for-sample over the whole run INCLUDING the settled region",
-  "pass_requires": "for every copy: zero mismatches inside the settled region, zero settled-peak disagreements, and zero mismatches anywhere that are not explained by that leaf's own +/-8 reconstruction clip (a leaf stage, not part of the shared decimator); plus the cascade text being identical across the three copies",
+  "method": "each RTL copy's own decimate_and_output cascade loop, reconstruction assignment and arithmetic helper functions are spliced VERBATIM into a generated probe (only the coefficient window and leading whitespace are substituted), run under iverilog on every declared case, and compared to the model sample-for-sample over the whole run INCLUDING the settled region",
+  "pass_requires": "for every copy: zero mismatches inside the settled region, zero settled-peak disagreements, and zero mismatches anywhere that are not explained by that leaf's own +/-8 clip (a leaf stage, not part of the shared decimator); plus the cascade text being identical within each dialect",
   "cases": 315,
-  "cascade_text_identical_across_copies": true,
+  "copies_checked": 4,
+  "cascade_text_groups": [
+   {
+    "cascade_sha256": "c0936778bedbbdc31ab26a64c64e62648c2cb70cd530583af0371ce36c52d4ff",
+    "files": [
+     "rtl/voice/tb_voice.sv",
+     "rtl/oscillators/classic/tb_classic.sv",
+     "rtl/oscillators/sine/tb_sine.sv"
+    ]
+   },
+   {
+    "cascade_sha256": "5e67f342539da06bae1f994fbb74a2356190863f25051ae197f782208d368796",
+    "files": [
+     "rtl/oscillators/wavetable/tb_wavetable.sv"
+    ]
+   }
+  ],
+  "cascade_text_identical_within_each_dialect": true,
+  "dialects": {
+   "cfg32": [
+    "rtl/oscillators/classic/tb_classic.sv",
+    "rtl/oscillators/sine/tb_sine.sv",
+    "rtl/voice/tb_voice.sv"
+   ],
+   "iw64": [
+    "rtl/oscillators/wavetable/tb_wavetable.sv"
+   ]
+  },
+  "dialect_note": "the #180 wavetable per-scene stage (rtl/oscillators/wavetable/tb_wavetable.sv) is a different dialect -- 64-bit allpass state, iw[] coefficients, its own q21/qround_s/clamp8_64 -- so its cascade TEXT is deliberately not compared against the three 32-bit cfg[] copies; what is compared is its OUTPUT against the same frozen model",
   "verdict": "PASS",
   "copies": [
    {
     "file": "rtl/voice/tb_voice.sv",
+    "dialect": "cfg32",
     "cfg_bases": [
      28,
      34
@@ -8288,6 +8317,7 @@
    },
    {
     "file": "rtl/oscillators/classic/tb_classic.sv",
+    "dialect": "cfg32",
     "cfg_bases": [
      68,
      74
@@ -8305,6 +8335,7 @@
    },
    {
     "file": "rtl/oscillators/sine/tb_sine.sv",
+    "dialect": "cfg32",
     "cfg_bases": [
      57,
      63
@@ -8316,6 +8347,24 @@
     "settled_region_mismatching_samples": 0,
     "mismatching_samples": 3675,
     "mismatches_explained_by_leaf_pm8_clip": 3675,
+    "unexplained_mismatching_samples": 0,
+    "first_unexplained_mismatch_index": null,
+    "settled_peak_disagreements": []
+   },
+   {
+    "file": "rtl/oscillators/wavetable/tb_wavetable.sv",
+    "dialect": "iw64",
+    "cfg_bases": [
+     43,
+     49
+    ],
+    "reconstruction_verbatim": "bl = qround_s(chain_b[2*hk] + chain_a[2*hk+1], 1);",
+    "verdict": "PASS",
+    "out_samples_compared": 577760,
+    "settled_region_samples_compared": 90720,
+    "settled_region_mismatching_samples": 0,
+    "mismatching_samples": 0,
+    "mismatches_explained_by_leaf_pm8_clip": 0,
     "unexplained_mismatching_samples": 0,
     "first_unexplained_mismatch_index": null,
     "settled_peak_disagreements": []
@@ -8351,6 +8400,7 @@
    "committed_comparator_summary": {
     "tb": "tb_voice.sv",
     "verdict": "PASS",
+    "comparison": "PASS",
     "checked": {
      "checkpoints": 403,
      "fields": 14105,
@@ -8358,7 +8408,9 @@
      "mono": 196800
     },
     "mismatches": 0,
-    "first_failures": []
+    "first_failures": [],
+    "sim_fails": [],
+    "sim_stdout_tail": ""
    },
    "committed_comparator_mono_samples_compared": 196800,
    "render_mono_samples": 196800
@@ -8444,6 +8496,16 @@
    },
    "committed_comparator_mono_samples_compared": 196800,
    "render_mono_samples": 196800
+  },
+  {
+   "leaf": "osc:Wavetable (SXT-026, per-scene stage since #180)",
+   "status": "NOT_RUN",
+   "runner": "model/oscillators/wavetable/run_model.py --inputs model/oscillators/wavetable/inputs/mf-wtfix.json --sequence seq-notes-repeated-v1 --rtl",
+   "rtl": "rtl/oscillators/wavetable/tb_wavetable.sv",
+   "needs": "the external pinned wavetable asset root (resources/data/wavetables/...); see decision-records/0004",
+   "returncode": 1,
+   "stderr": "(wt_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-181/model/oscillators/wavetable/wt_model.py\", line 166, in wavetable_from_file\n    data = open(path, \"rb\").read()\n           ^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/joseph/dev/surge-xt-oracle/surge/resources/data/wavetables/Sampled/Banjo 1.wt'\n",
+   "ring_out_inside_committed_comparator_window": null
   }
  ]
 }
