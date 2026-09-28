@@ -10,6 +10,25 @@ This establishes claim (1) only — RTL matches the frozen fixed-point model.
 It says NOTHING about agreement with the pinned engine (claim 2,
 `tools/compare_lp24_model.py`) and nothing about musical quality (claim 3).
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193).  tb_lp24.sv `$readmemh`s three files (init.hex, ctrl.hex, in.hex)
+from `rtl/` under the run dir.  Measured on this leaf's own testbench with
+real Icarus 13.0 (issue #209 evidence): with `rtl/in.hex` absent, Icarus
+prints
+
+  ERROR: .../rtl/voice/tb_lp24.sv:79: $readmemh: Unable to open rtl/in.hex
+         for reading.
+
+on the simulation's STDOUT and `vvp` still **exits 0**, after which the
+testbench writes a complete-looking trace from a memory that was never
+loaded.  `check=True` alone cannot see that.  Two consequences this harness
+now handles: the run reports `comparison: NOT_RUN` with the file named,
+never a wall of sample mismatches; and because a simulator-level failure
+also produces `verdict: FAIL`, it must NEVER be allowed to satisfy
+`--expect fail` -- a negative control whose stimulus never loaded is a
+BROKEN control, not a passing one -- so a non-empty `sim_fails` forces a
+non-zero exit whatever `--expect` says.
+
 Usage:
   python3 tools/compare_rtl_model_lp24.py --run-dir DIR [--tb PATH] [--out JSON]
 """
@@ -25,6 +44,11 @@ from _rtl_compile_common import compile_and_run  # noqa: E402
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lp24.sv")
 MUTANT = os.path.join(REPO, "rtl", "voice", "lp24_broken_mutant.sv")
+
+# The hex stimulus tb_lp24.sv `$readmemh`s, relative to the run dir (issue
+# #193's pre-flight check axis).  Single source of truth so the check can
+# never drift from what the testbench actually reads.
+STIMULUS_RELPATHS = ("rtl/init.hex", "rtl/ctrl.hex", "rtl/in.hex")
 
 
 def parse_tb(path):
@@ -84,25 +108,43 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json"), encoding="utf-8") as f:
         model_trace = json.load(f)
 
-    trace_path = compile_and_run(args.tb, args.run_dir,
-                                 out_name=os.path.basename(args.tb) + ".vvp")
-    checked, fails = compare(model_trace, trace_path)
+    sim = compile_and_run(args.tb, args.run_dir,
+                          out_name=os.path.basename(args.tb) + ".vvp",
+                          stimulus_files=STIMULUS_RELPATHS,
+                          report_sim_fails=True)
+
+    checked = {"samples": 0, "checkpoints": 0, "fields": 0}
+    fails = list(sim.sim_fails)
+    comparison = "NOT_RUN"
+    if not sim.sim_fails:
+        checked, cmp_fails = compare(model_trace, sim.trace)
+        fails += cmp_fails
+        comparison = "FAIL" if cmp_fails else "PASS"
+
     verdict = "PASS" if not fails else "FAIL"
     summary = {
         "tb": os.path.basename(args.tb),
         "case": model_trace.get("case"),
         "leg": model_trace.get("leg"),
         "verdict": verdict,
+        "comparison": comparison,
         "expected": args.expect.upper(),
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim.sim_fails,
+        "sim_stdout_tail": sim.stdout_tail,
     }
     print(json.dumps(summary, indent=2))
     if args.out:
         with open(args.out, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)
             f.write("\n")
+    # A simulator-level failure is never an "expected" outcome, not even
+    # under `--expect fail`: it means the comparison this control depends on
+    # NEVER RAN (issue #193). Fail closed before consulting --expect.
+    if sim.sim_fails:
+        return 1
     return 0 if verdict == args.expect.upper() else 1
 
 

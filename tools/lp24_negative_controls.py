@@ -171,11 +171,24 @@ def nc_d(lines, runs_dir):
            "--expect", "fail"]
     p = subprocess.run(cmd, capture_output=True, text=True)
     summary = json.loads(p.stdout[p.stdout.index("{"):]) if "{" in p.stdout else {}
-    ok = summary.get("verdict") == "FAIL"
+    # Issue #193: `verdict: FAIL` alone does NOT establish that the mutant was
+    # caught -- a stimulus file that never loaded also yields FAIL, with the
+    # comparison NEVER RUN. This control is only OK when the comparison
+    # itself ran and disagreed.
+    sim_fails = summary.get("sim_fails") or []
+    ok = summary.get("verdict") == "FAIL" and summary.get("comparison") == "FAIL"
+    reason = ""
+    if sim_fails:
+        reason = (" [simulator-level failure, comparison NOT_RUN: %s]"
+                  % sim_fails[0])
     lines.append(f"  NC-D RTL mutant (rounding bias 2^19): exactness "
-                 f"{summary.get('verdict')} with {summary.get('mismatches')} mismatches "
+                 f"{summary.get('verdict')} (comparison "
+                 f"{summary.get('comparison')}) with "
+                 f"{summary.get('mismatches')} mismatches{reason} "
                  f"=> {'CONTROL-OK' if ok else 'CONTROL-BROKEN'}")
     return [{"control": "NC-D", "verdict": summary.get("verdict"),
+             "comparison": summary.get("comparison"),
+             "sim_fails": sim_fails,
              "mismatches": summary.get("mismatches"), "control_ok": ok}]
 
 
