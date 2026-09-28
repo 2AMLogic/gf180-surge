@@ -200,6 +200,24 @@ The two probe scripts hard-code this worktree path and a
 retained as the exact scripts that produced
 `artifacts/stimulus-load-control.txt`, not as a maintained tool.
 
+**Amendment (issue #216, 2026-09-28).** PART 1 case D's *pre-migration* line
+originally read `rc=1 verdict=FAIL (<- the hazard this fixes)`. That verdict
+was never produced by that run: case D keeps `rtl/init.hex`, so `n_blocks`
+reads as 1, `tb_lp24.sv` writes `Y` lines valued `x`, and the pre-migration
+harness dies parsing them (`ValueError: invalid literal for int() with base
+10: 'x'`) without writing `--out` at all. `probe-reporting-controls.py`'s
+`harness()` helper did not unlink `--out` before invoking the subprocess, so
+it read back the *previous* (post-migration) case-D run's `verdict.json` — a
+**STALE** read reported as a verdict. The correct status for that run is
+**NO_VERDICT**. The helper now removes `--out` first (matching
+`probe-expect-fail-hazard.py`, which already did), and the transcript line
+reports `NO_VERDICT` with the parse error that caused it. Re-running the
+corrected `probe-reporting-controls.py` reproduces every other PART 1 line
+byte-for-byte, so no other case (A, B, C, the per-leaf `[pre-migration]`
+known-good control, or case D's post-migration line) was a stale read. The
+`--expect fail` hazard itself is measured only in PART 2, which is unchanged
+and re-reproduced identically; no claim in this record moves.
+
 ## What remains unproved
 
 - The other **5** real importers of `_rtl_compile_common.compile_and_run` still

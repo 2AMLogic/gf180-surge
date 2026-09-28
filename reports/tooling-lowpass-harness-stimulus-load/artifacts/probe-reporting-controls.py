@@ -85,6 +85,12 @@ HARNESS = {"lp12": "compare_rtl_model_lp12.py",
 
 def harness(leaf, d, tools_dir, extra=()):
     out = os.path.join(d, "verdict.json")
+    # Remove --out BEFORE invoking, so a run that dies without writing a
+    # summary reads back as "no verdict" instead of silently inheriting the
+    # previous run's file from this same run dir (issue #216; the sibling
+    # probe-expect-fail-hazard.py already unlinks for the same reason).
+    if os.path.exists(out):
+        os.remove(out)
     cmd = [sys.executable, os.path.join(tools_dir, HARNESS[leaf]),
            "--run-dir", d, "--tb",
            os.path.join(WT, "rtl", "voice", "tb_%s.sv" % leaf),
@@ -195,11 +201,20 @@ def main():
                   "verdict=%s comparison=%s" % (rc_d, sum_d["verdict"],
                                                 sum_d["comparison"]))
             assert rc_d != 0, "a sim failure must never satisfy --expect fail"
-            old_rc_d, old_sum_d, _ = harness(leaf, d, tools_old,
-                                             extra=("--expect", "fail"))
-            print("      pre-migration, same case: rc=%s verdict=%s "
-                  "(<- the hazard this fixes)"
-                  % (old_rc_d, old_sum_d and old_sum_d.get("verdict")))
+            old_rc_d, old_sum_d, old_err_d = harness(leaf, d, tools_old,
+                                                     extra=("--expect", "fail"))
+            # With rtl/init.hex still PRESENT, n_blocks reads as 1 and the
+            # testbench writes Y lines valued x, which the pre-migration
+            # harness dies parsing -- it produces NO verdict at all here, so
+            # this case does NOT demonstrate the --expect fail hazard (PART 2
+            # does, with rtl/init.hex removed).  See issue #216.
+            if old_sum_d is None:
+                verdict_d = "NO_VERDICT (%s)" % (
+                    old_err_d.strip().splitlines() or ["no stderr"])[-1]
+            else:
+                verdict_d = old_sum_d.get("verdict")
+            print("      pre-migration, same case: rc=%s verdict=%s"
+                  % (old_rc_d, verdict_d))
             os.rename(removed + ".away", removed)
     print("=" * 72)
     print("ALL REAL-TOOLCHAIN REPORTING CONTROLS OK")

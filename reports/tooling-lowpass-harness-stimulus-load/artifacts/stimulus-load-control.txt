@@ -36,7 +36,7 @@ LEAF lp24
       live simulator with the file removed: vvp rc=0, matcher-hits=1
         ERROR: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:79: $readmemh: Unable to open rtl/in.hex for reading.
   [D lp24 --expect fail + missing stimulus] rc=1 verdict=FAIL comparison=NOT_RUN
-      pre-migration, same case: rc=1 verdict=FAIL (<- the hazard this fixes)
+      pre-migration, same case: rc=1 verdict=NO_VERDICT (ValueError: invalid literal for int() with base 10: 'x')
 ========================================================================
 LEAF lpmoog
   healthy vvp rc=0  matcher-hits=0  (false-positive control)
@@ -57,6 +57,11 @@ LEAF lpmoog
 ALL REAL-TOOLCHAIN REPORTING CONTROLS OK
 
 ### PART 2 — lp24 --expect fail hazard, pre- vs post-migration
+###          (<- the hazard this fixes: the PRE-/POST-migration pair below is
+###           the only measurement of it. PART 1 case D above keeps
+###           rtl/init.hex, so its pre-migration run produces NO verdict at
+###           all and demonstrates nothing about --expect fail. Amended per
+###           issue #216; PART 2's own measurement is unchanged.)
 $ python3 sxt209_expect.py
 live sim with rtl/init.hex missing: vvp rc=0
     ERROR: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:77: $readmemh: Unable to open rtl/init.hex for reading.
