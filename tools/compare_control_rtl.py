@@ -17,6 +17,16 @@ Also used for the committed negative control: with
 --dut rtl/control/control_broken_mutant.sv (one changed queue-depth
 constant) the comparison must FAIL.
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193). tb_control.sv `$readmemh`s a single `events.hex` (written by
+`write_events_hex` just before the simulator runs); Icarus reports a missing
+or unreadable one on the simulation's STDOUT while still exiting 0
+(measured on this leaf's own testbench, issue #193 evidence). This harness
+recognizes that (plus a failed/timed-out compile or run) via
+`_rtl_compile_common`'s `report_sim_fails=True` mode and reports it as a
+`sim_fails` entry naming the file, with `comparison: NOT_RUN`, instead of
+parsing a stale/empty `rtl_trace.txt` as a comparison disagreement.
+
 Usage:
   python3 tools/compare_control_rtl.py --seq fixtures/control/sequences/ID.json \
       --run-dir DIR [--dut rtl/control/control_top.sv] [--out verdict.json]
@@ -37,6 +47,10 @@ from model.control.engine_stub_counter import CounterStubEngine  # noqa: E402
 
 TB = os.path.join(REPO, "rtl", "control", "tb_control.sv")
 DUT_DEFAULT = os.path.join(REPO, "rtl", "control", "control_top.sv")
+
+# The single hex stimulus tb_control.sv `$readmemh`s, relative to the run
+# dir (issue #193's pre-flight check axis).
+STIMULUS_RELPATHS = ("events.hex",)
 
 
 def write_events_hex(seq, path):
@@ -155,32 +169,47 @@ def run_comparison(seq, run_dir, dut=DUT_DEFAULT):
     # TB first, then the DUT, exactly as the hand-rolled step did; the
     # simulation is launched by name from inside run_dir with its stdout
     # captured to sim.log, and writes rtl_trace.txt there itself.
-    compile_and_run(TB, run_dir, out_name="tb.vvp",
-                    extra_sources=(os.path.abspath(dut),),
-                    compile_in_workdir=True, run_by_name=True,
-                    stdout_path=os.path.join(run_dir, "sim.log"),
-                    trace_name=None)
-    rtl = parse_tb(os.path.join(run_dir, "rtl_trace.txt"))
-    checked, fails = compare(trace, out, rtl)
+    sim = compile_and_run(TB, run_dir, out_name="tb.vvp",
+                          extra_sources=(os.path.abspath(dut),),
+                          compile_in_workdir=True, run_by_name=True,
+                          stdout_path=os.path.join(run_dir, "sim.log"),
+                          trace_name=None,
+                          stimulus_files=STIMULUS_RELPATHS,
+                          report_sim_fails=True)
 
-    # byte-identity of the assembled RTL recording vs the model recording
-    rtl_bytes = bytearray()
-    for rec in trace["blocks"]:
-        b = rec["b"]
-        for i in range(32):
-            l, r = rtl["m"][(b, i)]
-            rtl_bytes += l.to_bytes(2, "little") + r.to_bytes(2, "little")
-    byte_identical = bytes(rtl_bytes) == out
+    checked = {"snapshots": 0, "snapshot_fields": 0, "decisions": 0,
+              "drops": 0, "samples": 0}
+    fails = list(sim.sim_fails)
+    byte_identical = False
+    comparison = "NOT_RUN"
+    if not sim.sim_fails:
+        rtl = parse_tb(os.path.join(run_dir, "rtl_trace.txt"))
+        checked, cmp_fails = compare(trace, out, rtl)
+        fails += cmp_fails
+
+        # byte-identity of the assembled RTL recording vs the model
+        # recording
+        rtl_bytes = bytearray()
+        for rec in trace["blocks"]:
+            b = rec["b"]
+            for i in range(32):
+                l, r = rtl["m"][(b, i)]
+                rtl_bytes += l.to_bytes(2, "little") + r.to_bytes(2, "little")
+        byte_identical = bytes(rtl_bytes) == out
+        comparison = "FAIL" if (cmp_fails or not byte_identical) else "PASS"
 
     verdict = {
         "sequence": seq.get("id"),
         "dut": os.path.relpath(os.path.abspath(dut), REPO),
         "verdict": "PASS" if (not fails and byte_identical) else "FAIL",
+        "comparison": comparison,
         "byte_identical_outputs": byte_identical,
         "model_summary": summary,
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim.sim_fails,
+        "sim_stdout_tail": sim.stdout_tail,
     }
     with open(os.path.join(run_dir, "verdict.json"), "w") as f:
         json.dump(verdict, f, indent=2)

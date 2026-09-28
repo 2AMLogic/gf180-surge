@@ -42,13 +42,15 @@ no clock, no randomness, fixed column order). Python 3 standard library only.
 
 import argparse
 import csv
-import hashlib
 import json
 import sys
 from collections import Counter
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 TOOL_VERSION = "sxt-029-coverage/1.0.0"
 SCHEMA_VERSION = "sxt-029-coverage/1.0.0"
@@ -131,14 +133,6 @@ class Refuse(Exception):
     pass
 
 
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def load_json(repo: Path, rel: str):
     path = repo / rel
     if not path.is_file():
@@ -151,7 +145,7 @@ def check_pin(repo: Path, rel: str, expected: str) -> None:
     path = repo / rel
     if not path.is_file():
         raise Refuse(f"missing required input: {rel}")
-    actual = sha256_file(path)
+    actual = oc.sha256_file(path)
     if actual != expected:
         raise Refuse(
             f"input integrity mismatch for {rel}: expected sha256 {expected}, "
@@ -179,7 +173,7 @@ def evidence_state(repo: Path, evidence: list) -> tuple:
         path = repo / item["path"]
         if not path.is_file():
             return "STALE", f"missing evidence file {item['path']}"
-        actual = sha256_file(path)
+        actual = oc.sha256_file(path)
         if actual != item["sha256"]:
             return "STALE", (
                 f"evidence hash mismatch for {item['path']}: expected "
@@ -864,7 +858,7 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
             inputs_prov[rel] = {"role": "structural input (pinned)", "sha256": pin}
     inputs_prov[table_rel if Path(table_rel).is_absolute() else table_rel] = {
         "role": "leaf/gate verification table",
-        "sha256": sha256_file(Path(table_rel) if Path(table_rel).is_absolute() else repo / table_rel),
+        "sha256": oc.sha256_file(Path(table_rel) if Path(table_rel).is_absolute() else repo / table_rel),
     }
     for lid, lf in sorted(table["leaves"].items()):
         for item in lf.get("evidence", []):

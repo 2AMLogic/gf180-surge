@@ -42,7 +42,6 @@ Original to this repository (Apache-2.0); Python standard library only.
 """
 
 import argparse
-import hashlib
 import json
 import os
 import platform
@@ -53,6 +52,10 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 OUT_DEFAULT = "reports/SXT-028-rng/artifacts/rng-characterization.json"
 
 SBB = "surge-synthesizer/sst-basic-blocks@a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
@@ -389,14 +392,6 @@ int main() {
 """
 
 
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def leg_a_sources(roots: dict) -> dict:
     """Verify the cited files against read-only pinned checkouts."""
     files = []
@@ -415,7 +410,7 @@ def leg_a_sources(roots: dict) -> dict:
                 rec["detail"] = f"absent from supplied checkout: {p}"
                 not_run += 1
             else:
-                actual = sha256_file(p)
+                actual = oc.sha256_file(p)
                 rec["actual_sha256"] = actual
                 if actual == expected:
                     rec["status"] = "VERIFIED"

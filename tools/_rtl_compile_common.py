@@ -21,13 +21,104 @@ makes no verdict: claim (1) — "the RTL matches the frozen fixed-point model
 exactly" — is still decided entirely by each harness's own `parse_tb`/
 `compare` logic, which this module does not touch.
 
+ISSUE #193 (the #188 blind spot, shared): by default (`report_sim_fails`
+unset), this function still runs both subprocess steps with `check=True` --
+a failing *compile*, or a `vvp` invocation that exits non-zero, raises
+CalledProcessError, same as before this issue. That default still cannot see
+one specific failure shape: Icarus reports a `$readmemh` stimulus-open
+failure on the simulation's STDOUT and still **exits 0** (measured on Icarus
+11, 12.0 and 13.0 -- issue #188's Finding, reproduced here for `tb_voice.sv`
+and `tb_control.sv` in issue #193's evidence). A caller relying on `check=True`
+alone never sees that: the run "succeeds", the (empty or partial) trace file
+is parsed, and the harness's own comparison reports what looks like a wall of
+RTL-vs-model mismatches -- when the true failure was the stimulus never
+loading at all.
+
+`report_sim_fails=True` is the opt-in fix: instead of raising, every one of
+the four mechanisms #188/#193 enumerate is caught and returned as a
+`SimResult.sim_fails` string naming the reason, so the *caller* can report a
+simulator-level failure (and skip its own comparison, keeping
+`comparison: NOT_RUN`) instead of ever printing "the RTL disagreed with the
+model" when the truth is "the stimulus never loaded". The four mechanisms:
+
+  1. a declared input (`stimulus_files`, relative to `workdir`) missing
+     before the simulator is invoked at all -- cheaper and more direct than
+     pattern-matching simulator output, and it names the exact file. It does
+     not *replace* mechanism 2 below -- a file can be present and still
+     unreadable, and iverilog resolves the paths itself.
+  2. `$readmemh: Unable to open ...` on the simulation's STDOUT while `vvp`
+     exits 0 -- the mechanism above. Matched NARROWLY (both the `$readmem`
+     token and `Unable to open`), never on a bare `ERROR:` prefix, so a
+     testbench's own runtime diagnostics cannot trip it (issue #188's
+     false-positive guardrail; a matcher that turns a genuinely passing
+     exactness run into a FAIL is worse than the lost reason it recovers).
+     This measurement does NOT transfer between testbenches automatically --
+     every call site that turns `report_sim_fails` on must independently
+     confirm its own healthy-run stdout carries no such line before relying
+     on this mechanism (issue #193's per-harness evidence does this for each
+     harness it touches).
+  3. a non-zero `vvp` exit.
+  4. `iverilog` failing to compile (CalledProcessError) or `vvp` exceeding
+     `timeout` (TimeoutExpired) -- caught, so the caller can still write a
+     verdict with a reason instead of dying by traceback with no verdict at
+     all.
+
 Original to this repository (Apache-2.0).
 """
 
+import collections
 import os
 import subprocess
 
-__all__ = ["compile_and_run"]
+__all__ = ["compile_and_run", "scan_stdout_for_load_failures", "SimResult"]
+
+
+# The result shape returned ONLY when `report_sim_fails=True`. Deliberately a
+# single fixed shape regardless of which capture/run axis (`direct_exec`,
+# `run_by_name`, `stdout_path`, `done_prefix`, ...) the call site set, so a
+# caller opting into failure reporting does not also have to track which of
+# `compile_and_run`'s several legacy return shapes applies to its own axes.
+#
+#   trace        os.path.join(workdir, trace_name), or None (trace_name is
+#                None, or a simulator-level failure means nothing trustworthy
+#                was produced)
+#   value        int(...) of the last `done_prefix`-prefixed stdout line, or
+#                None (no done_prefix given, or a simulator-level failure)
+#   stdout       the simulation's full captured stdout ("" if it never ran)
+#   sim_fails    list[str]; empty means every mechanism above was clean
+#   stdout_tail  last 2000 chars of stdout, populated only when sim_fails is
+#                non-empty (mirrors compare_wt_rtl_model.py's
+#                `sim_stdout_tail` convention exactly)
+SimResult = collections.namedtuple(
+    "SimResult", ["trace", "value", "stdout", "sim_fails", "stdout_tail"])
+
+
+def _as_text(stream):
+    """subprocess streams: str, bytes or None (TimeoutExpired) -> str."""
+    if stream is None:
+        return ""
+    if isinstance(stream, bytes):
+        return stream.decode("utf-8", "replace")
+    return stream
+
+
+def scan_stdout_for_load_failures(stdout, limit=10):
+    """Stimulus-load failures Icarus reports on STDOUT while exiting 0.
+
+    Matched NARROWLY, on both the `$readmem` token and `Unable to open`,
+    deliberately NOT on a bare `ERROR:` prefix -- copied from
+    `compare_wt_rtl_model.py`'s measured matcher (issue #188). Reporting a run
+    that did not fail as failed would be a worse defect than the lost reason
+    this matcher exists to recover, so this stays narrow rather than greedy.
+    """
+    hits = []
+    for line in _as_text(stdout).splitlines():
+        line = line.strip()
+        if "$readmem" in line and "Unable to open" in line:
+            hits.append(line)
+            if len(hits) >= limit:
+                break
+    return hits
 
 
 def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
@@ -35,7 +126,8 @@ def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
                     quiet_compile=False, direct_exec=False, run_by_name=False,
                     suppress_stdout=True, stdout_path=None,
                     capture_output=False, done_prefix=None,
-                    trace_name="tb_trace.txt"):
+                    trace_name="tb_trace.txt",
+                    stimulus_files=(), report_sim_fails=False, timeout=None):
     """Compile `sv_file` with iverilog and run the result in `workdir`.
 
     Positional:
@@ -58,14 +150,33 @@ def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
       done_prefix   capture stdout and return int(…) of the last line starting
                     with this prefix (e.g. "DONE kt-qmuls="), or None
 
-    Return:
+    Failure-reporting axes (issue #193; opt-in, ignored unless
+    `report_sim_fails=True`):
+      stimulus_files   paths (relative to `workdir`) the testbench
+                       `$readmemh`s; checked to exist BEFORE iverilog runs
+                       at all (mechanism 1)
+      report_sim_fails when True, return a `SimResult` instead of raising or
+                       returning one of the legacy shapes below: every
+                       recognized simulator-level failure becomes a
+                       `SimResult.sim_fails` entry (mechanisms 1-4 in the
+                       module docstring)
+      timeout          seconds before the vvp run is killed when
+                       `report_sim_fails=True` (None = no timeout, matching
+                       the unbounded default `subprocess.run` already had)
+
+    Return, when `report_sim_fails` is NOT given (default, unchanged):
       (trace, value)  when `done_prefix` is given (value may be None)
       (trace, stdout) when `capture_output` is given
       None            when `trace_name` is None
       trace           otherwise, i.e. os.path.join(workdir, trace_name)
 
-    `check=True` throughout: a failing compile or simulation raises
-    CalledProcessError rather than producing a silently empty trace.
+      `check=True` throughout: a failing compile or simulation raises
+      CalledProcessError rather than producing a silently empty trace.
+
+    Return, when `report_sim_fails=True`:
+      a `SimResult` namedtuple (trace, value, stdout, sim_fails, stdout_tail).
+      Never raises `CalledProcessError`/`OSError`/`TimeoutExpired` on a
+      simulator-level failure; every one becomes a `sim_fails` entry instead.
     """
     if absolute:
         workdir = os.path.abspath(workdir)
@@ -73,6 +184,16 @@ def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
         extra_sources = [os.path.abspath(s) for s in extra_sources]
 
     vvp = os.path.join(workdir, out_name)
+
+    if report_sim_fails:
+        return _compile_and_run_reporting(
+            sv_file, workdir, vvp, extra_sources=extra_sources,
+            compile_in_workdir=compile_in_workdir,
+            quiet_compile=quiet_compile, direct_exec=direct_exec,
+            out_name=out_name, run_by_name=run_by_name,
+            stdout_path=stdout_path, done_prefix=done_prefix,
+            trace_name=trace_name, stimulus_files=stimulus_files,
+            timeout=timeout)
 
     compile_kwargs = {}
     if compile_in_workdir:
@@ -110,3 +231,98 @@ def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
     if capture_output:
         return trace, result.stdout
     return trace
+
+
+def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
+                               compile_in_workdir, quiet_compile,
+                               direct_exec, out_name, run_by_name,
+                               stdout_path, done_prefix, trace_name,
+                               stimulus_files, timeout):
+    """`report_sim_fails=True` path: never raises; always returns SimResult.
+
+    Mirrors `compare_wt_rtl_model.py`'s `compile_and_run_sim` (issue #188),
+    generalized to this module's compile/run axes.
+    """
+    sim_fails = []
+
+    # ---- mechanism 1: declared inputs, checked BEFORE the simulator runs --
+    missing = [rel for rel in stimulus_files
+              if not os.path.exists(os.path.join(workdir, rel))]
+    if missing:
+        for rel in missing:
+            sim_fails.append(
+                "missing declared input: %s (absent from the run dir; the "
+                "testbench $readmemh's this stimulus and Icarus reports an "
+                "open failure on stdout while still exiting 0, so this is "
+                "asserted before the simulator is invoked)" % rel)
+        return SimResult(None, None, "", sim_fails, "")
+
+    compile_kwargs = {}
+    if compile_in_workdir:
+        compile_kwargs["cwd"] = workdir
+    if quiet_compile:
+        compile_kwargs["stdout"] = subprocess.DEVNULL
+        compile_kwargs["stderr"] = subprocess.DEVNULL
+    # ---- mechanism 4a: a failed/unrunnable compile is a recorded reason,
+    # not a traceback that leaves the caller with no verdict at all.
+    try:
+        subprocess.run(["iverilog", "-g2012", "-o", vvp, sv_file,
+                        *extra_sources], check=True, **compile_kwargs)
+    except subprocess.CalledProcessError as exc:
+        # The compile's streams are inherited by default (visible live)
+        # unless quiet_compile sent them to DEVNULL; either way exc.stderr is
+        # None here (never captured), so say so rather than printing an
+        # empty field that reads like "no reason given".
+        detail = (_as_text(exc.stderr)[-500:]
+                  or "(compiler diagnostics went to this harness's own "
+                     "stdout/stderr; the compile step is not captured)")
+        sim_fails.append("iverilog compile failed rc=%s: %s"
+                         % (exc.returncode, detail))
+        return SimResult(None, None, "", sim_fails, "")
+    except OSError as exc:
+        sim_fails.append("iverilog could not be executed: %s" % exc)
+        return SimResult(None, None, "", sim_fails, "")
+
+    image = out_name if run_by_name else vvp
+    cmd = [image] if direct_exec else ["vvp", image]
+
+    # Stdout is ALWAYS captured here (regardless of suppress_stdout /
+    # capture_output) so mechanism 2 can scan it; `stdout_path` is honored
+    # afterward as a side-effect write, same content it would have received.
+    try:
+        result = subprocess.run(cmd, cwd=workdir, capture_output=True,
+                                text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        stdout_tail = _as_text(exc.stdout)[-2000:]
+        sim_fails.append(
+            "vvp exceeded the %gs timeout and was killed (the simulation "
+            "never completed, so no trace it left can be trusted) stdout=%s"
+            % (timeout, stdout_tail[-500:]))
+        return SimResult(None, None, stdout_tail, sim_fails, stdout_tail)
+    except OSError as exc:
+        sim_fails.append("vvp could not be executed: %s" % exc)
+        return SimResult(None, None, "", sim_fails, "")
+
+    if stdout_path is not None:
+        with open(stdout_path, "w") as log:
+            log.write(result.stdout)
+
+    # ---- mechanism 3: non-zero exit ----
+    if result.returncode != 0:
+        sim_fails.append("vvp exited rc=%d stderr=%s"
+                         % (result.returncode, _as_text(result.stderr)[-500:]))
+    # ---- mechanism 2: $readmemh open failure on STDOUT, with rc=0 ----
+    for line in scan_stdout_for_load_failures(result.stdout):
+        sim_fails.append("vvp rc=%d but a stimulus file never loaded: %s"
+                         % (result.returncode, line))
+
+    stdout_tail = _as_text(result.stdout)[-2000:] if sim_fails else ""
+
+    trace = None if trace_name is None else os.path.join(workdir, trace_name)
+    value = None
+    if done_prefix is not None:
+        for line in result.stdout.splitlines():
+            if line.startswith(done_prefix):
+                value = int(line.split("=")[1])
+
+    return SimResult(trace, value, result.stdout, sim_fails, stdout_tail)

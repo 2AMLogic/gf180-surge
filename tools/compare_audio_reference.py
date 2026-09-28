@@ -65,13 +65,17 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import sys
 import wave
 
 import numpy as np
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 # [PROPOSED-TO-BE-FROZEN-AT-PILOT] budget placeholders (SXT-022 proposal,
 # derived from the SXT-012 free-phase escalation: raw subtraction is not
@@ -166,14 +170,6 @@ def spectral_corr(a, b, frame=4096):
     ra -= ra.mean(); rb -= rb.mean()
     d = np.sqrt((ra * ra).sum() * (rb * rb).sum())
     return float((ra * rb).sum() / d) if d > 0 else 0.0
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def name_declares(path, markers):
@@ -474,7 +470,7 @@ def validate_region_against_render(region, sr, frames, render_path):
                    frames))
     declared_sha = region.get("declared_sha256")
     if declared_sha:
-        actual = sha256_file(render_path)
+        actual = oc.sha256_file(render_path)
         if actual != declared_sha:
             return ("sidecar declares %s sha256 %s... but %s hashes to %s...: "
                     "the tail region would be read from metadata that does "
@@ -557,7 +553,7 @@ def main():
                    len(ref)), args.json)
         declared_sha = region.get("declared_sha256")
         if declared_sha:
-            actual = sha256_file(args.ref)
+            actual = oc.sha256_file(args.ref)
             if actual != declared_sha:
                 return refuse(
                     "sidecar declares %s sha256 %s... but %s hashes to %s...: "

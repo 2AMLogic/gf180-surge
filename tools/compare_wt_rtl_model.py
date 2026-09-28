@@ -397,14 +397,35 @@ def main():
             "an open failure on stdout while still exiting 0, so this is "
             "asserted before the simulator is invoked)" % rel)
 
+    # The existence check above is deliberately only that: a declared input
+    # that is PRESENT but malformed (not valid JSON) or unopenable (mode 000,
+    # a directory, an I/O error) used to raise straight out of main() here --
+    # traceback, no verdict JSON, no recorded reason (#197). It is recorded the
+    # same way every other simulator-level failure is, and the simulator is not
+    # invoked on a trace that never parsed.
     if not sim_fails:
-        with open(os.path.join(args.run_dir, "model_trace.json")) as f:
-            model_trace = json.load(f)
-        sim_fails, sim_stdout_tail = compile_and_run_sim(
-            args.run_dir, model_trace, mutant=args.mutant,
-            mutant_scene=args.mutant_scene,
-            reverb_bg=args.reverb_bg, max_blocks=args.max_blocks,
-            timeout=args.timeout)
+        try:
+            with open(os.path.join(args.run_dir, "model_trace.json")) as f:
+                model_trace = json.load(f)
+        # OSError covers the open (mode 000, a directory, an I/O error);
+        # ValueError covers the decode, and is used rather than
+        # json.JSONDecodeError alone because UnicodeDecodeError -- raised by a
+        # non-UTF-8/binary file before the JSON parser ever sees it -- is a
+        # sibling ValueError subclass, not a JSONDecodeError.
+        except (OSError, ValueError) as exc:
+            model_trace = None
+            sim_fails.append(
+                "declared input present but unreadable: model_trace.json "
+                "(%s: %s; the existence pre-flight above cannot tell a "
+                "malformed or unopenable trace from a usable one, so this is "
+                "asserted before the simulator is invoked)"
+                % (type(exc).__name__, exc))
+        else:
+            sim_fails, sim_stdout_tail = compile_and_run_sim(
+                args.run_dir, model_trace, mutant=args.mutant,
+                mutant_scene=args.mutant_scene,
+                reverb_bg=args.reverb_bg, max_blocks=args.max_blocks,
+                timeout=args.timeout)
 
     fails += sim_fails
 

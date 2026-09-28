@@ -30,13 +30,16 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import sys
 from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 CORPUS = REPO / "corpus/normalized/graphs.jsonl"
 ABLATION = REPO / "reports/sxt-014/ablation-summary.json"
 BUNDLE = REPO / "contracts/profile-v1-bundle-DRAFT.json"
@@ -200,12 +203,6 @@ LEAF_KIND_RANK = {"type": 0, "aw": 1, "rf": 2}
 
 class LeafRefusal(Exception):
     """Generator refuses to emit a leaf (negative control or bad input)."""
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    h.update(Path(path).read_bytes())
-    return h.hexdigest()
 
 
 def load_corpus():
@@ -778,9 +775,9 @@ def main():
     backlog = [lf for lf in leaves if lf["order"] > args.filed]
 
     inputs_fp = {
-        "corpus/normalized/graphs.jsonl": sha256_file(CORPUS),
-        "reports/sxt-014/ablation-summary.json": sha256_file(ABLATION),
-        "contracts/profile-v1-bundle-DRAFT.json": sha256_file(BUNDLE),
+        "corpus/normalized/graphs.jsonl": oc.sha256_file(CORPUS),
+        "reports/sxt-014/ablation-summary.json": oc.sha256_file(ABLATION),
+        "contracts/profile-v1-bundle-DRAFT.json": oc.sha256_file(BUNDLE),
     }
 
     out = args.out_dir

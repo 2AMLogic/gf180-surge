@@ -69,7 +69,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import subprocess
@@ -81,7 +80,9 @@ import numpy as np
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "wavetable"))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
+import oracle_common as oc  # noqa: E402
 import voice_model as vm  # noqa: E402
 import wt_model as wm  # noqa: E402
 
@@ -132,15 +133,7 @@ def sha256_of_i16(samples, tmpdir):
     is additionally gated against run_model.py by verify_runner)."""
     p = os.path.join(tmpdir, "leg.wav")
     wm.write_wav16(p, samples)
-    return sha256_file(p)
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    return oc.sha256_file(p)
 
 
 class LegacyPerSliceStage:
@@ -361,7 +354,7 @@ def verify_runner(inputs_path, seq, b_i16, tmpdir):
     mine = os.path.join(tmpdir, "leg_b.wav")
     wm.write_wav16(mine, b_i16)
     ref = os.path.join(out_dir, "model.wav")
-    got, want = sha256_file(mine), sha256_file(ref)
+    got, want = oc.sha256_file(mine), oc.sha256_file(ref)
     if got != want:
         raise RuntimeError(
             "ABORT: leg B is not the frozen model's render "
