@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""SXT-026 RTL-vs-model harness reporting controls (#182 #188 #194 #197 #205).
+"""SXT-026 RTL-vs-model harness reporting controls (#182 #188 #194 #197 #205
+#218).
 
 `tools/compare_wt_rtl_model.py` must report a SIMULATOR-level failure as its
 own FAIL verdict, naming the reason, instead of raising on an unbound `fails`
@@ -26,6 +27,14 @@ missing `totals` / `totals.ext_read_words` raised out of `main()` and discarded
 the otherwise-complete RTL-vs-model result together with the verdict JSON.
 They are recorded in `traffic_fails` (never `sim_fails`: the simulator DID run
 and the comparison DID happen, so `comparison` must not read NOT_RUN)  (#205)
+
+and, on the same reporting path, the agreement between the recorded verdict and
+the PROCESS EXIT STATUS: `verdict` was computed from `fails or traffic_fails`
+but the return from `fails` alone, so a run whose only failures were traffic
+ones wrote `"verdict": "FAIL"` and exited 0 -- reading as success to any caller
+that tests `$?`. The ordinary return is now derived from `verdict` itself; the
+two `--mutant*` returns stay comparison-only (exit 0 == the mutant was caught),
+so a mutant run failing only on traffic is still refused          (#218)
 
 plus the false-positive controls that matter more than any of them: a healthy
 run whose stdout carries the testbench's own benign diagnostics (including the
@@ -215,6 +224,22 @@ GOOD_TB_TRAFFIC = ("core_reads_words 2\n"
 GOOD_MODEL_TRAFFIC = {"format": "sxt-026-wavetable-traffic/1",
                       "totals": {"impulses": 1, "ext_read_words": 2,
                                  "frame_fills_words": 0}}
+
+# The same dump, WELL FORMED but failing one or both of the two reconciliation
+# checks against GOOD_MODEL_TRAFFIC (which declares `ext_read_words: 2`). Each
+# shape isolates one reason so no single path can be the one left unguarded:
+# the reconciliation mismatch alone reconciles nothing but underruns cleanly,
+# and the no-underrun gate alone reconciles exactly while reporting a starved
+# block. Nothing else about the run fails -- the trace still AGREES -- so these
+# are the "traffic-only FAIL" runs (#218).
+TRAFFIC_FAIL_TB = {
+    "reconciliation mismatch alone":
+        "core_reads_words 3\ncore_fill_words 0\nunderrun_blocks 0\n",
+    "no-underrun gate alone":
+        "core_reads_words 2\ncore_fill_words 0\nunderrun_blocks 1\n",
+    "both reasons":
+        "core_reads_words 3\ncore_fill_words 0\nunderrun_blocks 1\n",
+}
 
 
 def _write_traffic(run_dir, tb=GOOD_TB_TRAFFIC, model=GOOD_MODEL_TRAFFIC):
@@ -880,15 +905,14 @@ def _assert_traffic_read_failure(d, filename):
     offending file is named, and the comparison result computed BEFORE this
     read survived into the summary.
 
-    Deliberately NOT asserted: the process exit status. `main()` returns
-    `0 if not fails else 1`, and `traffic_fails` has never fed `fails` -- so a
-    FAIL verdict whose only reason is a traffic failure exits 0 today, for the
-    pre-existing reconciliation entries (`ext words:`, `underrun block(s)`)
-    just as much as for these new ones. That mismatch between verdict and exit
-    status is a separate defect, measured and filed as #218; asserting the
-    current value here would have to be rewritten when it is fixed, and
-    asserting the fixed value would fail now. The verdict JSON -- which is what
-    #205 is about getting written at all -- is asserted instead.
+    Deliberately NOT asserted here: the process exit status. These controls are
+    about the verdict JSON getting written at all, and a control that only
+    observed a non-zero exit would not discriminate -- the pre-#205 traceback
+    exited non-zero too, with nothing written. The separate requirement that the
+    exit status AGREE with `verdict` for a traffic-only FAIL (#218, which was
+    open when #205 landed and is why this paragraph once recorded exit 0 as the
+    expected value) is asserted by the `#218` controls at the end of this file,
+    across all three traffic-fail shapes including this parse-failure one.
     """
     assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
     # The simulator ran and the comparison ran: this is NOT a NOT_RUN.
@@ -1077,15 +1101,13 @@ def test_traffic_disagreement_is_still_reported_as_a_traffic_fail(tmp_path,
     `underrun_blocks` count must still fail the no-underrun gate. This is what
     stops the #205 guard from being implemented as "skip the reconciliation".
 
-    As above, the exit status is not asserted: these two entries are exactly
-    the pre-existing `traffic_fails` reasons that already verdict FAIL while
-    exiting 0 (#218).
+    The exit status these two entries must now also produce is asserted by the
+    `#218` controls at the end of this file; this test stays a statement about
+    the reported reasons.
     """
     mod = _load_harness()
     run_dir = _write_run_dir(tmp_path)
-    _write_traffic(run_dir,
-                   tb="core_reads_words 3\ncore_fill_words 0\n"
-                      "underrun_blocks 1\n")
+    _write_traffic(run_dir, tb=TRAFFIC_FAIL_TB["both reasons"])
     _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
 
     _, d = _run_harness(mod, monkeypatch, run_dir)
@@ -1163,3 +1185,204 @@ def test_traffic_read_helpers_report_rather_than_raise(tmp_path):
     # subclass: accepting it would let `true` reconcile against 1 word.
     assert totals is None, totals
     assert len(fails) == 1 and "traffic.json" in fails[0], fails
+
+
+# --------------------------------------------------------------------------
+# issue #218 controls: the PROCESS EXIT STATUS must agree with the `verdict`
+# field for every summary the harness writes. `main()` computed the verdict from
+# `fails or traffic_fails` but the return from `fails` alone, and `traffic_fails`
+# never feeds `fails` -- so a run whose only failures were traffic ones wrote
+# `"verdict": "FAIL"` and exited 0. That is the mirror image of #182/#188/#197/
+# #205: there the reason was lost while the exit status was honest; here the
+# reason is recorded and the exit status lies, which is worse for any caller
+# following the ordinary convention that exit 0 means the check passed.
+#
+# The `--mutant*` returns are deliberately NOT verdict-derived and are left
+# alone: exit 0 there means "the mutant was caught", a statement about the
+# COMPARISON. A mutant run failing only on traffic has demonstrated nothing
+# about the mutant, so it must still exit non-zero.
+# --------------------------------------------------------------------------
+
+
+# Every well-formed-but-failing shape above, plus the present-but-unparseable
+# shape from the #205 controls: all three reasons land in `traffic_fails` and
+# all three used to exit 0. Parametrizing over them is what stops the fix from
+# being "make the reconciliation mismatch exit non-zero" and leaving one of the
+# other two paths unguarded.
+TRAFFIC_ONLY_FAIL_TB = dict(
+    TRAFFIC_FAIL_TB,
+    **{"unparseable dump": MALFORMED_TB_TRAFFIC["missing token"]})
+
+
+@pytest.mark.parametrize("shape", sorted(TRAFFIC_ONLY_FAIL_TB))
+def test_traffic_only_fail_exits_non_zero(shape, tmp_path, monkeypatch):
+    """FAILURE CONTROL (#218): comparison AGREES, only traffic fails => rc!=0.
+
+    The stubbed simulator exits 0 and writes a MATCHING trace, so `sim_fails`
+    and `cmp_fails` are both empty and `traffic_fails` is the run's only reason
+    to fail -- exactly the summary the pre-fix code wrote as
+    `"verdict": "FAIL"` while returning 0.
+
+    The named reason must survive alongside the corrected status: a "fix" that
+    merged `traffic_fails` into `fails` and so inflated `mismatches` /
+    `first_failures` (turning a traffic failure into a reported RTL-vs-model
+    disagreement) would be the #188 misreport again, so `mismatches == 0` and
+    `first_failures == []` are asserted too.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir, tb=TRAFFIC_ONLY_FAIL_TB[shape])
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    assert rc != 0, (shape, rc, json.dumps(d, indent=1))
+    # ... and the reason is still recorded, as a TRAFFIC failure specifically.
+    assert d["traffic_fails"], json.dumps(d, indent=1)
+    assert d["sim_fails"] == [], d["sim_fails"]
+    assert d["comparison"] == "FAIL", json.dumps(d, indent=1)
+    # The comparison itself agreed, and is not restated as a disagreement.
+    assert d["mismatches"] == 0, json.dumps(d, indent=1)
+    assert d["first_failures"] == [], d["first_failures"]
+    assert d["checked"]["fields"] > 0 and d["checked"]["oscout"] > 0, d
+
+
+def test_traffic_only_fail_names_the_reason_it_exits_non_zero_for(tmp_path,
+                                                                 monkeypatch):
+    """Each reconciliation reason, alone, is the one that carries the status.
+
+    Runs the two well-formed shapes individually and asserts the exact message
+    each produces, so the parametrized control above cannot be satisfied by a
+    harness that reports some other traffic reason than the one installed.
+    """
+    mod = _load_harness()
+    expected = {
+        "reconciliation mismatch alone":
+            ("ext words: rtl reads+fills 3+0 != model 2", "underrun"),
+        "no-underrun gate alone": ("1 underrun block(s)", "ext words"),
+    }
+    for shape, (must, must_not) in sorted(expected.items()):
+        sub = tmp_path / shape.replace(" ", "-")
+        sub.mkdir()
+        run_dir = _write_run_dir(sub)
+        _write_traffic(run_dir, tb=TRAFFIC_FAIL_TB[shape])
+        _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+        rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+        assert rc != 0, (shape, rc)
+        assert d["verdict"] == "FAIL", (shape, json.dumps(d, indent=1))
+        joined = "\n".join(d["traffic_fails"])
+        assert must in joined, (shape, joined)
+        assert must_not not in joined, (shape, joined)
+
+
+def test_clean_run_still_exits_zero_with_a_pass_verdict(tmp_path, monkeypatch):
+    """FALSE-POSITIVE control (#218): a healthy run must not start failing.
+
+    A complete run dir, an agreeing trace, and a well-formed reconciling
+    traffic pair: `verdict` PASS, `traffic_fails` empty, rc 0. Deriving the
+    status from `verdict` must not turn any PASS into a non-zero exit -- that
+    would break step 6/7 of `tools/run_sxt026_checks.py`, both of which assert
+    `returncode == 0` on a run they also assert verdicts PASS.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir)
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert rc == 0, (rc, json.dumps(d, indent=1))
+    assert d["traffic_fails"] == [], d["traffic_fails"]
+
+
+def test_verdict_and_exit_status_agree_across_every_shape(tmp_path,
+                                                          monkeypatch):
+    """The general statement the parametrized controls are instances of.
+
+    For an ORDINARY (non-mutant) run, `rc == 0` iff `verdict == "PASS"`, over
+    one case per failure family the harness recognizes: clean, a simulator-level
+    failure, a comparison disagreement, and a traffic-only failure. Asserting
+    the biconditional rather than each status separately is what catches a
+    future fail list that is added to `verdict` and forgotten in the return.
+    """
+    mod = _load_harness()
+    cases = {
+        # (sim_rc, trace, tb dump)  ->  expected verdict
+        "clean": ((0, MATCHING_TRACE, GOOD_TB_TRAFFIC), "PASS"),
+        "no traffic inputs": ((0, MATCHING_TRACE, None), "PASS"),
+        "simulator failure": ((4, MATCHING_TRACE, GOOD_TB_TRAFFIC), "FAIL"),
+        "comparison disagreement":
+            ((0, MISMATCHING_TRACE, GOOD_TB_TRAFFIC), "FAIL"),
+        "traffic only": ((0, MATCHING_TRACE, TRAFFIC_FAIL_TB["both reasons"]),
+                         "FAIL"),
+    }
+    for name, ((sim_rc, trace, tb), want) in sorted(cases.items()):
+        sub = tmp_path / name.replace(" ", "-")
+        sub.mkdir()
+        run_dir = _write_run_dir(sub)
+        if tb is not None:
+            _write_traffic(run_dir, tb=tb)
+        _stub_simulator(mod, monkeypatch, run_dir, sim_rc, trace)
+
+        rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+        assert d["verdict"] == want, (name, json.dumps(d, indent=1))
+        assert (rc == 0) == (d["verdict"] == "PASS"), \
+            (name, rc, json.dumps(d, indent=1))
+
+
+def test_mutant_traffic_only_failure_is_not_a_caught_mutant(tmp_path,
+                                                            monkeypatch):
+    """FALSE-POSITIVE control (#218): the mutant return stays comparison-only.
+
+    A `--mutant` run whose comparison AGREES and whose only failure is traffic
+    must exit non-zero: the mutant was NOT demonstrated to be caught. Making
+    the ordinary return verdict-derived must not leak into this path, where a
+    traffic failure would otherwise be able to satisfy the negative control and
+    credit an undetected mutant. This already held pre-fix and must keep
+    holding: it is the leg the fix could most easily have broken.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir, tb=TRAFFIC_FAIL_TB["both reasons"])
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir, extra=("--mutant",))
+
+    assert rc != 0, (rc, json.dumps(d, indent=1))
+    assert d["mutant"] is True, json.dumps(d, indent=1)
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    # The FAIL is a traffic one, NOT the comparison disagreement the mutant
+    # control requires -- which is precisely why it may not be credited.
+    assert d["traffic_fails"], d["traffic_fails"]
+    assert d["sim_fails"] == [], d["sim_fails"]
+    assert d["mismatches"] == 0, json.dumps(d, indent=1)
+
+
+def test_mutant_caught_by_the_comparison_still_exits_zero(tmp_path,
+                                                          monkeypatch):
+    """The positive leg that gives the control above its meaning.
+
+    A `--mutant` run with a genuine comparison disagreement still exits 0 --
+    the mutant was caught -- even though its `verdict` reads FAIL. This
+    deliberate inversion is why the fix derives only the ORDINARY return from
+    `verdict`; a blanket `0 if verdict == "PASS"` would break the negative
+    control that step 6 of `tools/run_sxt026_checks.py` asserts `returncode
+    == 0` on.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir)
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MISMATCHING_TRACE)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir, extra=("--mutant",))
+
+    assert rc == 0, (rc, json.dumps(d, indent=1))
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    assert d["mismatches"] > 0, json.dumps(d, indent=1)
+    assert d["traffic_fails"] == [], d["traffic_fails"]

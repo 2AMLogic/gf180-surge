@@ -95,6 +95,17 @@ reconciliation could not be performed. Before that guard existed, a truncated
 dump or a malformed declaration exited by traceback at this point and discarded
 the already-computed RTL-vs-model result together with the verdict JSON.
 
+EXIT STATUS (#218). For an ordinary run the process exit status is derived from
+the `verdict` field itself: 0 iff `verdict == "PASS"`. It used to be recomputed
+from `fails` alone, which omits `traffic_fails`, so a run whose only failures
+were traffic ones wrote `"verdict": "FAIL"` and exited 0 -- reading as success
+to any caller that tests `$?`. The two `--mutant*` runs are deliberately
+INVERTED and are a statement about the COMPARISON, not about `verdict`: exit 0
+means "the mutant was caught" (`cmp_fails` non-empty with no `sim_fails`, and
+for `--mutant-scene` a mismatch on the 48 kHz leg specifically). A mutant run
+that fails only on traffic has demonstrated nothing about the mutant, so it
+exits non-zero even though its `verdict` reads FAIL.
+
 Usage:
   python3 tools/compare_wt_rtl_model.py --run-dir DIR [--tb TB] [--out JSON]
 """
@@ -743,7 +754,15 @@ def main():
             mono_fails = [f for f in cmp_fails if "mono48" in f]
             return 0 if mono_fails and not sim_fails else 1
         return 0 if cmp_fails and not sim_fails else 1
-    return 0 if not fails else 1
+    # The exit status is derived from `verdict` itself, not recomputed from a
+    # subset of the fail lists. It used to read `not fails`, which omits
+    # `traffic_fails` -- so a run whose ONLY failures were traffic ones (the
+    # reconciliation mismatch or the no-underrun gate) wrote "verdict": "FAIL"
+    # and still exited 0, reading as success to any caller that follows the
+    # ordinary convention of testing the exit status (#218). Deriving the
+    # status from the field that was already printed keeps the two from
+    # drifting apart again if a further fail list is added.
+    return 0 if verdict == "PASS" else 1
 
 
 if __name__ == "__main__":
