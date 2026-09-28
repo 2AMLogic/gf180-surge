@@ -52,7 +52,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import subprocess
@@ -64,7 +63,9 @@ import numpy as np
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "wavetable"))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
+import oracle_common as oc  # noqa: E402
 import voice_model as vm  # noqa: E402
 import wt_model as wm  # noqa: E402
 
@@ -108,14 +109,6 @@ def to_int16(m):
     """run_model.py's single Q10.21 -> int16 conversion (round toward zero)."""
     m = vm.limit_i(m, -wm.ONE, wm.ONE)
     return (m * 32767) >> FQ if m >= 0 else -((-m * 32767) >> FQ)
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def render_both(inputs_path, seq_path, max_blocks=None):
@@ -300,7 +293,7 @@ def verify_runner(inputs_path, seq, a_i16, tmpdir):
     mine = os.path.join(tmpdir, "leg_a.wav")
     wm.write_wav16(mine, a_i16)
     ref = os.path.join(out_dir, "model.wav")
-    got, want = sha256_file(mine), sha256_file(ref)
+    got, want = oc.sha256_file(mine), oc.sha256_file(ref)
     if got != want:
         raise RuntimeError(
             "ABORT: leg A is not the committed frozen model's render "
