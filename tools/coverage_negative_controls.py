@@ -36,7 +36,6 @@ reports/coverage-v1/negative-controls.txt.
 
 import argparse
 import csv
-import hashlib
 import json
 import shutil
 import subprocess
@@ -44,6 +43,10 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 TOOL = REPO / "tools" / "publish_coverage.py"
 NC_ROOT = Path("/tmp/sxt029-negative-controls")
 
@@ -69,14 +72,6 @@ COPY_PATHS = [
     "reports/coverage-v1/leaf-verification.json",
     "reports/SXT-028-rng/artifacts/coverage-impact.json",
 ]
-
-
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def run_tool(root: Path, outdir: Path, leaf_table: Path = None,
@@ -120,7 +115,7 @@ def counterfactual_table(dest: Path) -> Path:
         for item in block.get("evidence") or []:
             p = REPO / item["path"]
             if p.is_file():
-                item["sha256"] = sha256_file(p)
+                item["sha256"] = oc.sha256_file(p)
 
     for section in ("leaves", "gates", "routing_leaves", "airwindows_leaves"):
         for block in table.get(section, {}).values():
@@ -184,7 +179,7 @@ def control_stale_hash(transcript) -> None:
     assert r.returncode == 0, r.stderr
     table = json.loads(cf.read_text(encoding="utf-8"))
     # point the EQ leaf's evidence hash at a *different committed file*
-    mismatch = sha256_file(REPO / "reports/sxt-024/EVIDENCE.md")
+    mismatch = oc.sha256_file(REPO / "reports/sxt-024/EVIDENCE.md")
     table["leaves"]["fx:EQ"]["evidence"][0]["sha256"] = mismatch
     cf2 = NC_ROOT / "stale-hash" / "counterfactual-stale.json"
     cf2.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
