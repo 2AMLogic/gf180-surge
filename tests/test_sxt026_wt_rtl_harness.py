@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SXT-026 RTL-vs-model harness reporting controls (issues #182, #188, #194, #197).
+"""SXT-026 RTL-vs-model harness reporting controls (#182 #188 #194 #197 #205).
 
 `tools/compare_wt_rtl_model.py` must report a SIMULATOR-level failure as its
 own FAIL verdict, naming the reason, instead of raising on an unbound `fails`
@@ -17,6 +17,15 @@ mismatches (#188). The five mechanisms controlled here:
   * `CalledProcessError` from iverilog / `TimeoutExpired` from vvp     (#188)
   * a stimulus file that opens but is TRUNCATED -- fewer words than the model
     declared in `rtl/stimulus_index.json`                               (#194)
+
+and, on the reporting path AFTER the comparison has already been computed, the
+two optional TRAFFIC inputs -- `tb_traffic.txt` and `traffic.json` -- which are
+existence-gated but were not parse-guarded: a truncated dump, a
+stray-whitespace line, a non-integer count, a non-UTF-8 file, a declaration
+missing `totals` / `totals.ext_read_words` raised out of `main()` and discarded
+the otherwise-complete RTL-vs-model result together with the verdict JSON.
+They are recorded in `traffic_fails` (never `sim_fails`: the simulator DID run
+and the comparison DID happen, so `comparison` must not read NOT_RUN)  (#205)
 
 plus the false-positive controls that matter more than any of them: a healthy
 run whose stdout carries the testbench's own benign diagnostics (including the
@@ -186,6 +195,51 @@ def _write_run_dir(tmp_path, stimulus_index=True, words=None):
             json.dump({"format": "sxt026-wt-stimulus-index/1",
                        "files": dict(FIXTURE_WORDS)}, f)
     return run_dir
+
+
+# A well-formed traffic pair, the two OPTIONAL inputs the harness reads after
+# the comparison has already been computed (#205). The dump is the testbench's
+# own `$fdisplay(fd_traffic, "<name> %0d", ...)` shape (two whitespace-
+# separated tokens per line), transcribed from `tb_wavetable.sv`'s final block;
+# the declaration is `run_model.py`'s `traffic.json`. The numbers are chosen so
+# the reconciliation RECONCILES: core_reads_words + core_fill_words ==
+# totals.ext_read_words.
+GOOD_TB_TRAFFIC = ("core_reads_words 2\n"
+                   "core_fill_words 0\n"
+                   "core_bursts 1\n"
+                   "core_stall_cycles 0\n"
+                   "reverb_words 0\n"
+                   "underrun_blocks 0\n"
+                   "max_frame_bus_cost 34\n"
+                   "budget_cycles_per_frame 32000\n")
+GOOD_MODEL_TRAFFIC = {"format": "sxt-026-wavetable-traffic/1",
+                      "totals": {"impulses": 1, "ext_read_words": 2,
+                                 "frame_fills_words": 0}}
+
+
+def _write_traffic(run_dir, tb=GOOD_TB_TRAFFIC, model=GOOD_MODEL_TRAFFIC):
+    """Write the two optional traffic inputs into a run dir.
+
+    `tb` is written verbatim so a control can install a malformed dump;
+    `model` is written verbatim when it is a `str`/`bytes` and as JSON
+    otherwise. `None` omits that file entirely (which is what
+    `_write_run_dir` leaves behind, and is NOT a failure: the reconciliation
+    simply makes no claim).
+    """
+    if tb is not None:
+        with open(os.path.join(run_dir, "tb_traffic.txt"), "w") as f:
+            f.write(tb)
+    if model is not None:
+        path = os.path.join(run_dir, "traffic.json")
+        if isinstance(model, bytes):
+            with open(path, "wb") as f:
+                f.write(model)
+        elif isinstance(model, str):
+            with open(path, "w") as f:
+                f.write(model)
+        else:
+            with open(path, "w") as f:
+                json.dump(model, f)
 
 
 def _stub_simulator(mod, monkeypatch, run_dir, sim_rc, trace_text,
@@ -804,3 +858,308 @@ def test_length_check_is_content_based_not_layout_based(tmp_path):
     assert fails == [], fails
     assert report["status"] == "NOT_RUN", report
     assert "NOT a pass" in report["reason"], report
+
+
+# --------------------------------------------------------------------------
+# issue #205 controls: the two TRAFFIC inputs are existence-gated but were not
+# parse-guarded, and they are read AFTER the comparison has been computed -- so
+# a truncated `tb_traffic.txt` or a malformed `traffic.json` raised out of
+# main() and discarded an otherwise-complete RTL-vs-model result along with the
+# verdict JSON. Each must instead become a named `traffic_fails` entry.
+#
+# `traffic_fails` (not `sim_fails`) is the correct list: the simulator DID run
+# here and the comparison DID happen, so `comparison` must not be NOT_RUN.
+# --------------------------------------------------------------------------
+
+
+def _assert_traffic_read_failure(d, filename):
+    """Shared shape for a present-but-unparseable traffic input (#205).
+
+    The three things that were lost to the traceback are all asserted: a
+    verdict JSON exists at all (the caller only gets here by reading it), the
+    offending file is named, and the comparison result computed BEFORE this
+    read survived into the summary.
+
+    Deliberately NOT asserted: the process exit status. `main()` returns
+    `0 if not fails else 1`, and `traffic_fails` has never fed `fails` -- so a
+    FAIL verdict whose only reason is a traffic failure exits 0 today, for the
+    pre-existing reconciliation entries (`ext words:`, `underrun block(s)`)
+    just as much as for these new ones. That mismatch between verdict and exit
+    status is a separate defect, measured and filed as #218; asserting the
+    current value here would have to be rewritten when it is fixed, and
+    asserting the fixed value would fail now. The verdict JSON -- which is what
+    #205 is about getting written at all -- is asserted instead.
+    """
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    # The simulator ran and the comparison ran: this is NOT a NOT_RUN.
+    assert d["sim_fails"] == [], d["sim_fails"]
+    assert d["comparison"] == "FAIL", json.dumps(d, indent=1)
+    # The already-computed comparison result is still reported, and it agreed.
+    assert d["checked"]["fields"] > 0 and d["checked"]["oscout"] > 0, d
+    assert d["mismatches"] == 0, json.dumps(d, indent=1)
+    assert d["first_failures"] == [], d["first_failures"]
+    # Exactly one named reason, and it is the read -- not a derived traffic
+    # mismatch computed from counts that never parsed.
+    assert len(d["traffic_fails"]) == 1, d["traffic_fails"]
+    msg = d["traffic_fails"][0]
+    assert filename in msg, msg
+    assert "ext words" not in msg, msg
+    assert "underrun" not in msg, msg
+    return msg
+
+
+MALFORMED_TB_TRAFFIC = {
+    "missing token": "core_reads_words 2\ncore_fill_words\n",
+    "extra token": "core_reads_words 2 3\n",
+    "non-integer count": "core_reads_words 2\nunderrun_blocks none\n",
+    "whitespace-only line": "core_reads_words 2\n   \nunderrun_blocks 0\n",
+    "truncated last line": "core_reads_words 2\ncore_fi",
+}
+
+
+@pytest.mark.parametrize("shape", sorted(MALFORMED_TB_TRAFFIC))
+def test_malformed_tb_traffic_is_named_without_raising(shape, tmp_path,
+                                                      monkeypatch):
+    """POSITIVE control 1 (#205): a present but unparseable `tb_traffic.txt`.
+
+    Pre-fix, the `k, v = line.split()` / `int(v)` pair raised `ValueError`
+    straight out of `main()` -- after the comparison had already been computed
+    and agreed. No verdict JSON was written, the offending file was named
+    nowhere, and the RTL-vs-model outcome for the run was lost. A control that
+    only observed a non-zero exit would not discriminate: the pre-fix code
+    already exited non-zero, by traceback.
+
+    All five shapes are walked because the guard must be about the dump's
+    parse, not about one token layout.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir, tb=MALFORMED_TB_TRAFFIC[shape])
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    _, d = _run_harness(mod, monkeypatch, run_dir)
+
+    msg = _assert_traffic_read_failure(d, "tb_traffic.txt")
+    assert "traffic.json" not in msg, msg
+    # The simulator really was reached, so this cannot be mistaken for the
+    # pre-simulator #197 path.
+    assert calls == ["iverilog", "vvp"], calls
+    # Partial counts are not reported as if they were the run's traffic.
+    assert d["traffic_tb"] == {}, d["traffic_tb"]
+
+
+def test_undecodable_tb_traffic_is_named_without_raising(tmp_path,
+                                                        monkeypatch):
+    """Same read, a `UnicodeDecodeError` rather than a `ValueError` from split.
+
+    A non-UTF-8 dump raises from the decode before any line is seen.
+    `UnicodeDecodeError` is a sibling `ValueError` subclass, so this pins the
+    guard's `ValueError` arm the same way the #197 control does for
+    `model_trace.json`.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir, tb=None)
+    with open(os.path.join(run_dir, "tb_traffic.txt"), "wb") as f:
+        f.write(b"core_reads_words \xff\xfe 2\n")
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+    _, d = _run_harness(mod, monkeypatch, run_dir)
+
+    msg = _assert_traffic_read_failure(d, "tb_traffic.txt")
+    assert "UnicodeDecodeError" in msg, msg
+
+
+def test_unopenable_tb_traffic_is_named_without_raising(tmp_path, monkeypatch):
+    """PRESENT but unopenable (mode 000) takes the same path.
+
+    Distinct from the malformed cases: the exception comes from `open()`
+    (`PermissionError`, an `OSError`), which a guard catching only
+    `ValueError` would still let escape.
+    """
+    if os.geteuid() == 0:
+        pytest.skip("mode 000 is not enforced for root")
+
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir)
+    tb_path = os.path.join(run_dir, "tb_traffic.txt")
+    os.chmod(tb_path, 0o000)
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+    try:
+        _, d = _run_harness(mod, monkeypatch, run_dir)
+    finally:
+        os.chmod(tb_path, 0o644)
+
+    msg = _assert_traffic_read_failure(d, "tb_traffic.txt")
+    assert "PermissionError" in msg, msg
+
+
+MALFORMED_MODEL_TRAFFIC = {
+    "not json": ("not json", "JSONDecodeError"),
+    "truncated json": ('{"totals": {"ext_read_words": 2', "JSONDecodeError"),
+    "not utf-8": (b"\xff\xfe\x00{", "UnicodeDecodeError"),
+    "no totals key": ({"format": "sxt-026-wavetable-traffic/1"}, "KeyError"),
+    "totals not an object": ({"totals": 2}, "TypeError"),
+    "no ext_read_words": ({"totals": {"impulses": 1}}, "KeyError"),
+    "ext_read_words not an int": ({"totals": {"ext_read_words": "2"}},
+                                  "ValueError"),
+}
+
+
+@pytest.mark.parametrize("shape", sorted(MALFORMED_MODEL_TRAFFIC))
+def test_malformed_traffic_json_is_named_without_raising(shape, tmp_path,
+                                                        monkeypatch):
+    """POSITIVE control 2 (#205): a present but unusable `traffic.json`.
+
+    Pre-fix, `json.load(f)["totals"]` raised `JSONDecodeError`/`KeyError` out
+    of `main()` at the same point, with the same loss. The
+    `ext_read_words`-shaped cases are part of the SAME read: guarding only
+    `["totals"]` would move the traceback six lines down into
+    `model_traffic["ext_read_words"]` and lose the verdict just as completely,
+    so both are guarded at the read and both are controlled here.
+    """
+    mod = _load_harness()
+    doc, exc_name = MALFORMED_MODEL_TRAFFIC[shape]
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir, model=doc)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    _, d = _run_harness(mod, monkeypatch, run_dir)
+
+    msg = _assert_traffic_read_failure(d, "traffic.json")
+    assert exc_name in msg, (shape, msg)
+    assert calls == ["iverilog", "vvp"], calls
+    assert d["traffic_model"] is None, d["traffic_model"]
+
+
+def test_well_formed_traffic_still_reconciles_and_passes(tmp_path,
+                                                        monkeypatch):
+    """FALSE-POSITIVE control (#205), the leg that makes the two above mean
+    something.
+
+    A well-formed `tb_traffic.txt` + `traffic.json` pair must still parse,
+    still reconcile, and still verdict PASS with `traffic_fails == []`. A guard
+    that reported every traffic input as unparseable, or that skipped the
+    reconciliation altogether, would satisfy both positive controls and be
+    worse than the bug.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert d["comparison"] == "PASS", json.dumps(d, indent=1)
+    assert d["sim_fails"] == [], d["sim_fails"]
+    assert d["traffic_fails"] == [], d["traffic_fails"]
+    # Both sides really were read (not silently treated as absent).
+    assert d["traffic_tb"]["core_reads_words"] == 2, d["traffic_tb"]
+    assert d["traffic_tb"]["underrun_blocks"] == 0, d["traffic_tb"]
+    assert d["traffic_model"]["ext_read_words"] == 2, d["traffic_model"]
+    assert calls == ["iverilog", "vvp"], calls
+    assert d["checked"]["fields"] > 0 and d["checked"]["oscout"] > 0
+
+
+def test_traffic_disagreement_is_still_reported_as_a_traffic_fail(tmp_path,
+                                                                 monkeypatch):
+    """Second false-positive control: the reconciliation itself still bites.
+
+    Well-formed inputs that DISAGREE (the dump counts 3 ext words, the model
+    declared 2) must still produce the `ext words:` entry, and an
+    `underrun_blocks` count must still fail the no-underrun gate. This is what
+    stops the #205 guard from being implemented as "skip the reconciliation".
+
+    As above, the exit status is not asserted: these two entries are exactly
+    the pre-existing `traffic_fails` reasons that already verdict FAIL while
+    exiting 0 (#218).
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    _write_traffic(run_dir,
+                   tb="core_reads_words 3\ncore_fill_words 0\n"
+                      "underrun_blocks 1\n")
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+    _, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    assert d["comparison"] == "FAIL", json.dumps(d, indent=1)
+    assert d["sim_fails"] == [], d["sim_fails"]
+    joined = "\n".join(d["traffic_fails"])
+    assert "ext words: rtl reads+fills 3+0 != model 2" in joined, joined
+    assert "1 underrun block(s)" in joined, joined
+
+
+def test_absent_traffic_inputs_are_not_a_failure(tmp_path, monkeypatch):
+    """Third false-positive control: both files are OPTIONAL.
+
+    The fixture's run dir carries neither traffic input (a run dir from
+    tooling that did not dump them). The guard must not turn absence into a
+    named failure -- the existence gate stays, and no traffic claim is made.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    assert not os.path.exists(os.path.join(run_dir, "tb_traffic.txt"))
+    assert not os.path.exists(os.path.join(run_dir, "traffic.json"))
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert d["traffic_fails"] == [], d["traffic_fails"]
+    assert d["traffic_tb"] == {}, d["traffic_tb"]
+    assert d["traffic_model"] is None, d["traffic_model"]
+
+
+def test_traffic_read_helpers_report_rather_than_raise(tmp_path):
+    """Unit control on the two helpers themselves.
+
+    Both return `(value, fails)` and never raise: the malformed cases return
+    an empty/None value with exactly one named reason, and the well-formed
+    cases return the parsed value with no reason at all.
+    """
+    mod = _load_harness()
+    tb_path = os.path.join(str(tmp_path), "tb_traffic.txt")
+    model_path = os.path.join(str(tmp_path), "traffic.json")
+
+    with open(tb_path, "w") as f:
+        f.write(GOOD_TB_TRAFFIC)
+    counts, fails = mod.read_tb_traffic(tb_path)
+    assert fails == [], fails
+    assert counts["core_reads_words"] == 2 and counts["underrun_blocks"] == 0
+
+    with open(tb_path, "w") as f:
+        f.write("core_reads_words 2\nunderrun_blocks\n")
+    counts, fails = mod.read_tb_traffic(tb_path)
+    assert counts == {}, counts
+    assert len(fails) == 1 and "tb_traffic.txt" in fails[0], fails
+    assert "line 2" in fails[0], fails
+
+    # A file that does not exist at all still reports rather than raising,
+    # even though main() reaches the helper only behind an existence gate.
+    counts, fails = mod.read_tb_traffic(
+        os.path.join(str(tmp_path), "nope.txt"))
+    assert counts == {} and len(fails) == 1, fails
+
+    with open(model_path, "w") as f:
+        json.dump(GOOD_MODEL_TRAFFIC, f)
+    totals, fails = mod.read_model_traffic(model_path)
+    assert fails == [], fails
+    assert totals["ext_read_words"] == 2, totals
+
+    with open(model_path, "w") as f:
+        json.dump({"totals": {"ext_read_words": True}}, f)
+    totals, fails = mod.read_model_traffic(model_path)
+    # A bool is not an acceptable word count even though bool is an int
+    # subclass: accepting it would let `true` reconcile against 1 word.
+    assert totals is None, totals
+    assert len(fails) == 1 and "traffic.json" in fails[0], fails
