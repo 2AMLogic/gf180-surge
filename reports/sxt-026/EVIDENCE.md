@@ -183,6 +183,22 @@ the same comparison (first divergence at the mip-2 window's first
 checkpoint, block 768), and the scene-decimator mutant **FAILS** it on the
 48 kHz leg from block 0 (section 6).
 
+**Stimulus-length status in the transcript (issue #203).** The comparator's
+verdict JSON has carried a `stimulus_lengths` field since #194 — every
+`rtl/*.hex` stimulus file's hex-word count checked against the count the
+model itself declared when it wrote the stimulus
+(`rtl/stimulus_index.json`), catching a file that opens and loads but is
+TRUNCATED (fewer words than declared), which Icarus's own
+`$readmemh`/`Not enough words` diagnostic cannot distinguish from a healthy
+run's benign over-sized-memory warning. That field used to be computed and
+then discarded when `rtl-exactness.txt` and `sustained-concurrent.txt` were
+written — a reader of the committed transcript alone could not tell a
+complete-stimulus PASS from an unverified one. Both writers now render a
+`<tag> stimulus_lengths: PASS|FAIL|NOT_RUN` line per run (FAIL additionally
+names the disagreeing file with its declared and measured word counts;
+NOT_RUN states the harness's own reason rather than omitting the field), so
+that status is now visible in the committed artifact itself.
+
 The 48 kHz leg is compared on **every** block, not only checkpoint blocks and
 not only blocks with a live voice: the scene filter persists across voice
 death, so its post-death ring-out is compared too. `run_sxt026_checks.py`

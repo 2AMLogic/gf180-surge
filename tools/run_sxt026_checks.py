@@ -21,6 +21,27 @@ Reproduces every committed artifact in reports/sxt-026/artifacts/:
 
 Fail-closed: any check failure exits non-zero. Oracle-dependent checks are
 skipped (exit 0, marked SKIP) when the pinned tree is absent.
+
+STIMULUS-LENGTH REPORTING (issue #203). Steps 6 and 7 each call
+`tools/compare_wt_rtl_model.py`, whose verdict JSON carries a
+`stimulus_lengths` field (#194): whether every `rtl/*.hex` stimulus file's
+word count matched the model's own declaration in `rtl/stimulus_index.json`,
+so a truncated-but-openable stimulus file is distinguished from a complete
+one. Before this issue that field was computed and then discarded -- the
+committed transcripts (`rtl-exactness.txt`, `sustained-concurrent.txt`) were
+built from a hand-picked subset of the verdict (`verdict`, `mismatches`,
+`checked`) that did not include it, so a reader of the committed artifact
+alone could not tell a complete-stimulus PASS from an unverified one.
+
+`stimulus_lengths_lines()` below is the one place that renders that field
+into transcript lines, called once per `compare_wt_rtl_model.py` invocation
+in both steps so the two writers cannot drift apart. Explicit decision (the
+issue's Outcome checklist, second item): a `stimulus_lengths: NOT_RUN`
+verdict still gets a transcript -- the run itself may be a genuine PASS/FAIL
+on the comparison the harness DID perform -- but the line it writes states
+NOT_RUN and the field's own `reason` outright, rather than omitting the
+field. A line that is silently absent reads as "fine"; this format never
+allows that reading.
 """
 
 import argparse
@@ -69,6 +90,40 @@ def sh(cmd, **kw):
 def compare(ref, model):
     r = sh(["tools/compare_audio_reference.py", "--ref", ref, "--model", model])
     return json.loads(r.stdout)
+
+
+def stimulus_lengths_lines(tag, stimulus_lengths):
+    """Render one `compare_wt_rtl_model.py` verdict's `stimulus_lengths`
+    field into transcript lines (issue #203).
+
+    Always emits at least one line naming `tag` and the status
+    (PASS/FAIL/NOT_RUN) explicitly -- never nothing, so a run whose stimulus
+    length was never checked can never be mistaken for one that checked out.
+    FAIL additionally names every file that disagreed, with both the
+    declared and the measured word count, so the file responsible for a
+    truncated-but-openable stimulus is visible in the committed transcript
+    itself and not only in the uncommitted verdict JSON.
+    """
+    status = stimulus_lengths["status"]
+    words = stimulus_lengths.get("words", {})
+    lines = ["%s stimulus_lengths: %s" % (tag, status)]
+    if status == "PASS":
+        lines[0] += (" (%d/%d stimulus files match the model's declared "
+                     "length)" % (len(words), len(words)))
+    else:
+        # FAIL or NOT_RUN: state the harness's own reason verbatim rather
+        # than let the bare status stand alone.
+        reason = stimulus_lengths.get("reason", "")
+        if reason:
+            lines.append("  %s stimulus_lengths reason: %s" % (tag, reason))
+    if status == "FAIL":
+        for rel in sorted(words):
+            declared, actual = words[rel]["declared"], words[rel]["actual"]
+            if declared != actual:
+                lines.append(
+                    "  %s stimulus_lengths mismatch: %s declared=%s "
+                    "actual=%s" % (tag, rel, declared, actual))
+    return lines
 
 
 def main():
@@ -263,6 +318,7 @@ def main():
         lines.append("RTL-vs-model %s: verdict=%s mismatches=%d "
                      "checked=%s" % (tag, d["verdict"], d["mismatches"],
                                      d["checked"]))
+        lines.extend(stimulus_lengths_lines(tag, d["stimulus_lengths"]))
     lines.append("48 kHz failure control: the scene-decimator mutant's first "
                  "48 kHz mismatches are %s"
                  % (scene_mutant_mono_fails[:3],))
@@ -316,7 +372,9 @@ def main():
               "RTL-vs-model on this run: verdict=%s mismatches=%d checked=%s "
               "(the 48 kHz per-scene stage is compared here too, under the "
               "concurrent background load)"
-              % (d["verdict"], d["mismatches"], d["checked"]),
+              % (d["verdict"], d["mismatches"], d["checked"])]
+    lines7.extend(stimulus_lengths_lines("sustained", d["stimulus_lengths"]))
+    lines7 += [
               # EVIDENCE section 5's residency/traffic row quotes these two
               # totals, so the artifact that reproduces it must carry them
               "traffic_tb: %s" % json.dumps(tb),
