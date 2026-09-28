@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""SXT-026 RTL-vs-model harness reporting controls (issues #182, #188).
+"""SXT-026 RTL-vs-model harness reporting controls (issues #182, #188, #197).
 
 `tools/compare_wt_rtl_model.py` must report a SIMULATOR-level failure as its
 own FAIL verdict, naming the reason, instead of raising on an unbound `fails`
 (#182), instead of discarding that message when the comparison's own fail list
 is merged in (#182), and instead of presenting it as a wall of comparison
-mismatches (#188). The four mechanisms controlled here:
+mismatches (#188). The five mechanisms controlled here:
 
   * a declared input (`model_trace.json`, `rtl/*.hex`) missing before the
     simulator is invoked at all                                        (#188)
+  * a `model_trace.json` that is PRESENT but unreadable -- malformed JSON,
+    mode 000, non-UTF-8 bytes -- which the existence-only pre-flight above
+    cannot distinguish from a usable one                                (#197)
   * `$readmemh: Unable to open ...` on vvp's STDOUT while vvp exits 0  (#188)
   * a non-zero vvp exit                                          (#182/#190)
   * `CalledProcessError` from iverilog / `TimeoutExpired` from vvp     (#188)
@@ -31,6 +34,8 @@ import os
 import subprocess
 import sys
 import types
+
+import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HARNESS = os.path.join(REPO, "tools", "compare_wt_rtl_model.py")
@@ -455,3 +460,115 @@ def test_missing_model_trace_is_named_without_raising(tmp_path, monkeypatch):
     assert d["comparison"] == "NOT_RUN"
     assert "model_trace.json" in d["sim_fails"][0], d["sim_fails"]
     assert calls == [], calls
+
+
+def _assert_unreadable_model_trace_verdict(rc, d, calls):
+    """Shared shape for the present-but-unreadable `model_trace.json` cases.
+
+    Every one of these is a SIMULATOR-level failure, never a comparison
+    result: the model side of the comparison never parsed, so there is nothing
+    to compare against and the simulator must not be invoked at all.
+    """
+    assert rc != 0
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    assert d["comparison"] == "NOT_RUN", json.dumps(d, indent=1)
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    assert "model_trace.json" in d["sim_fails"][0], d["sim_fails"]
+    assert d["checked"]["fields"] == 0, d["checked"]
+    assert calls == [], calls
+
+
+def test_malformed_model_trace_is_named_without_raising(tmp_path, monkeypatch):
+    """PRESENT but not valid JSON is a named failure, not a traceback (#197).
+
+    `missing_inputs()` asserts existence only, so a `model_trace.json` that
+    exists and is unparseable reached an unguarded `json.load` in `main()`:
+    `json.JSONDecodeError` propagated out, the process exited by traceback,
+    and no verdict JSON was written at all -- the same lost-reason failure
+    #182/#188 fixed for the simulator-level paths.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        f.write("not json")
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    _assert_unreadable_model_trace_verdict(rc, d, calls)
+    assert "JSONDecodeError" in d["sim_fails"][0], d["sim_fails"]
+
+
+def test_unopenable_model_trace_is_named_without_raising(tmp_path, monkeypatch):
+    """PRESENT but unopenable (mode 000) takes the same path (#197).
+
+    Distinct from the malformed case: the exception is raised by `open()`
+    (`PermissionError`, an `OSError`) before the JSON parser is reached, so a
+    guard that caught only `json.JSONDecodeError` would still exit by
+    traceback with no verdict JSON here.
+    """
+    if os.geteuid() == 0:
+        # root bypasses the mode bits, so the control cannot demonstrate the
+        # failure it targets -- report that rather than passing vacuously.
+        pytest.skip("mode 000 is not enforced for root")
+
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    trace_path = os.path.join(run_dir, "model_trace.json")
+    os.chmod(trace_path, 0o000)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+    try:
+        rc, d = _run_harness(mod, monkeypatch, run_dir)
+    finally:
+        os.chmod(trace_path, 0o644)
+
+    _assert_unreadable_model_trace_verdict(rc, d, calls)
+    assert "PermissionError" in d["sim_fails"][0], d["sim_fails"]
+
+
+def test_undecodable_model_trace_is_named_without_raising(tmp_path,
+                                                         monkeypatch):
+    """PRESENT but not UTF-8 text takes the same path (#197).
+
+    Third distinct exception on the same read: a truncated/binary trace raises
+    `UnicodeDecodeError` from the decode, which is a sibling `ValueError`
+    subclass rather than a `json.JSONDecodeError` -- so this pins the guard's
+    `ValueError` arm as load-bearing.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "wb") as f:
+        f.write(b"\xff\xfe\x00{")
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    _assert_unreadable_model_trace_verdict(rc, d, calls)
+    assert "UnicodeDecodeError" in d["sim_fails"][0], d["sim_fails"]
+
+
+def test_a_readable_model_trace_still_reaches_the_simulator(tmp_path,
+                                                           monkeypatch):
+    """FALSE-POSITIVE control for the #197 guard.
+
+    The guard must not swallow a healthy run: a well-formed `model_trace.json`
+    must still parse, still invoke the simulator, and still verdict PASS. A
+    guard that reported every trace as unreadable would satisfy the three
+    controls above and be useless.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert d["comparison"] == "PASS"
+    assert d["sim_fails"] == []
+    assert calls == ["iverilog", "vvp"], calls
+    assert d["checked"]["fields"] > 0
