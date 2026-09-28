@@ -83,57 +83,93 @@ FIRIPOL_N overlap copy at wrap.
 5. `envelope_rate` / `note_to_pitch` tables evaluated from pinned
    construction formulas in double, quantized once (SXT-022 rule).
 6. ADSR sqrt (d_s = 1) evaluated in double at the pinned formula.
-7. **The decimator and the master stage are PER VOICE SLICE, not per scene**
-   (issue #176). `Slice` instantiates one `voice_model.HalfbandD2` and applies
-   the master gain and its clips inside the slice; `run_model.py` sums the
-   already-decimated slices. The pinned engine decimates ONCE PER SCENE on the
-   summed `sceneout` (`SurgeSynthesizer::halfbandA/B` ->
-   `HalfRateFilter::process_block_D2`), which is what the SXT-022 voice leaf
-   models (`model/voice/run_model.py`) and implements
-   (`rtl/voice/tb_voice.sv`). The filter is linear, so the two differ only by
-   fixed-point rounding, by where the ±8 `sceneout` clip falls, and by state
-   lifetime (a slice's filter state and its ring-out die with the voice; the
-   engine's scene filter keeps ringing). **Measured, not assumed**, on all
-   nine committed fixtures: worst case 1 int16 LSB / −112.1 dBFS residual RMS,
-   worst pre-int16 residual 38 Q10.21 LSB (one int16 LSB = 64 Q10.21 LSB) —
-   `tools/measure_wt_decimation_stage.py`,
+7. **RETIRED as a deviation by the #180 contract revision — the decimator and
+   the master stage are now PER SCENE, the pinned engine's placement.**
+   `SceneDecimator` holds ONE `voice_model.HalfbandD2` and the master stage
+   for the whole scene and persists across voice death; `Slice` ends at its
+   unclipped 96 kHz `sceneout` contribution and `run_model.py` sums those,
+   clips once, and drives the one scene stage — the same statement order
+   `model/voice/run_model.py` uses for the SXT-022 voice leaf and
+   `rtl/voice/tb_voice.sv` implements
+   (`SurgeSynthesizer::halfbandA/B` -> `HalfRateFilter::process_block_D2`).
+   **This is a change of placement only; no word length, Q format, rounding
+   rule or coefficient moved** — see
+   `decision-records/0018-wavetable-scene-decimation-placement.md`
+   (issue #180, SXT-017 / #12).
+
+   What the retired per-slice placement was worth, measured on all nine
+   committed fixtures before the move (`tools/measure_wt_decimation_stage.py`,
    `reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json`,
-   EVIDENCE section 2a. This deviation is DECLARED, not absorbed: moving the
-   stage to a per-scene placement shared with the voice leaf is an SXT-017
-   visible contract revision (#12), tracked separately in #180.
+   EVIDENCE section 2a): worst case 1 int16 LSB / −112.1 dBFS residual RMS,
+   worst pre-int16 residual 38 Q10.21 LSB (one int16 LSB = 64 Q10.21 LSB).
+   The actual re-freeze moved three of the nine committed renders by ≤ 1
+   int16 LSB and **no** budget verdict (EVIDENCE section 3 change note).
+   **Nothing here is a fidelity claim**: the case for the move was RTL
+   coverage of the 48 kHz output and topological agreement with the engine,
+   never a measurable fidelity improvement.
 
-Structural note for deviation 7: `Slice.scene_block()` and
-`Slice.decimate_scene()` split `process_block()` at exactly that stage
-boundary so the measurement can drive both topologies from this model's own
-arithmetic. The split is structural only — all nine fixtures render
-byte-identically across it (`tests/test_wt_decimation_stage.py`).
+   What remains a deviation in this area is item 1 (fixed Q10.21 vs the
+   engine's float32 scene arithmetic), which is unchanged by the move and is
+   the EVIDENCE section 4 finding's territory, not this item's.
 
-Limit-cycle note for deviation 7 (F-176-2, issue #181, **DECLARED** — SXT-017
-option (a)): the shared `voice_model.HalfbandD2` this deviation instantiates
-does not settle to zero on zero input. It holds a permanent output-Nyquist
-(period-2) cycle bounded by **36 Q10.21 LSB = 0.5625 int16 LSB ≈ −95.3 dBFS**
-over a declared 315-case input sweep (`reports/halfband-limit-cycle/`,
-`model/voice/README.md` §"DECLARED word-length consequence"). That bound still
-sits below one int16 LSB, so the deviation-7 residual numbers above are
-unchanged. On **this** leaf the per-slice placement means each slice's filter
-state dies with its voice, so the per-slice leg reaches exactly 0 after voice
-death while the per-scene leg (leg B) does not — the state-lifetime difference
-already named above, now with the shared class's own bound attached to it.
+Structural note for deviation 7: `Slice.scene_block()` is the slice's block
+entry and returns the unclipped 96 kHz scene contribution;
+`SceneDecimator.process_block()` is the scene tail. `Slice.process_block()`
+and `Slice.decimate_scene()` no longer exist — the retired per-slice topology
+is kept only as `measure_wt_decimation_stage.LegacyPerSliceStage`, so the
+measured delta above stays re-derivable, and the tool's fail-closed
+byte-identity gate now guards the per-scene leg against `run_model.py`.
 
-## RTL coverage boundary (declared, issue #176)
+**Zero-input limit cycle of the shared decimator (F-176-2, issue #181,
+DECLARED — SXT-017 option (a)).** The `voice_model.HalfbandD2` that
+`SceneDecimator` now holds does not settle to zero on zero input: it holds a
+permanent output-Nyquist (period-2) cycle bounded by **36 Q10.21 LSB = 0.5625
+int16 LSB ≈ −95.3 dBFS** over a declared 315-case input sweep
+(`reports/halfband-limit-cycle/`, `model/voice/README.md` §"DECLARED
+word-length consequence"). That bound is below one int16 LSB, so the placement
+deltas recorded above are unaffected by it. **The #180 move makes this leaf
+subject to the property where the retired per-slice topology largely was not**:
+per-slice state died with each voice, so that leg reached exactly 0 after voice
+death, while the per-scene stage keeps ringing — which is precisely the
+state-lifetime difference #176 named and #180 adopted on purpose, because it is
+what the pinned engine does. The ring-out is now inside this leaf's own
+RTL-vs-model compared window (item 8 below), so the cycle is *checked* here
+rather than merely declared. Changing the decimator's arithmetic so zero input
+decays to zero would be a further SXT-017 / #12 contract revision and is **not**
+done in #181.
 
-8. **`rtl/oscillators/wavetable/` implements the oscillator only.** It carries
-   no halfband/decimator and no 48 kHz output stage under any name, and
-   `tools/compare_wt_rtl_model.py` does not read the model trace's 48 kHz
-   `mono_block` samples. The leaf's `rtl_vs_model: PASS` is therefore scoped to
-   the 2x-rate (96 kHz) oscillator output block, the declared per-voice
-   checkpoints, and the external-traffic accounting — it is **not** a claim
-   about the 48 kHz render. The comparator emits this boundary in its `scope`
-   field on every run, and the ledger note for `osc:Wavetable` states it.
-   The 48 kHz scene path has RTL coverage on the SXT-022 voice leaf
-   (`rtl/voice/tb_voice.sv`) against that leaf's own model; driving this
-   oscillator's output through that path is the option-(a) work routed to its
-   own SXT-017 issue, #180.
+## RTL coverage (issue #180; the issue-#176 boundary is retired)
+
+8. **`rtl/oscillators/wavetable/` covers the oscillator AND the 48 kHz
+   output.** The per-scene stage (per-slot o2 level and VCA × AEG gain ramp,
+   scene out, one ±8 clip, one `HalfbandD2` persisting across voice death,
+   master, ±8 and ±1 clips) lives in `tb_wavetable.sv` — a scene is a shared
+   resource, so it sits one level above the per-slot `wavetable_core.sv`,
+   exactly as in `rtl/voice/tb_voice.sv` — and emits an `M` trace line per
+   48 kHz sample. `tools/compare_wt_rtl_model.py` reads the model trace's
+   `mono_block` and compares every one of those samples at integer equality,
+   on every block including blocks with no live voice (the scene filter's
+   post-voice-death ring-out is compared too). The leaf's `rtl_vs_model: PASS`
+   therefore covers the 48 kHz output; the comparator emits the landed scope
+   in its `scope` field on every run, and the ledger note for `osc:Wavetable`
+   states it.
+
+   **The coverage claim is only as good as its control**, so it carries one:
+   `-DWT_SCENE_MUTANT_HB_ORDER` mutates a single line of the scene decimator's
+   reconstruction (the pre-#123 A-even/B-odd branch order that
+   `rtl/voice/voice_halfband_order_mutant.sv` isolates on the voice leaf) and
+   MUST FAIL the comparison **on the 48 kHz leg specifically** — a run whose
+   only failures were elsewhere is refused by the harness.
+   `tools/run_sxt026_checks.py` step 6 runs the clean build and both mutants
+   every time and records the transcript in
+   `reports/sxt-026/artifacts/rtl-exactness.txt`.
+
+   Before #180 this leaf's RTL had no 48 kHz stage at all and the comparator
+   did not read `mono_block`, so the PASS was oscillator-scoped (the original
+   wording of this deviation, issue #176). What the PASS still does **not**
+   establish is unchanged: it is claim (1) only — the RTL matches the frozen
+   fixed-point model exactly — and says nothing about model-vs-pinned-engine
+   fidelity (claim 2, [PROPOSED]/PARTIAL) or how it sounds (claim 3).
 
 ## Unison cap — explicit rejection
 

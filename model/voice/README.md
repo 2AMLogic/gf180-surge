@@ -184,11 +184,16 @@ Consequences that follow, and only these:
   the same silence, so the dead band is the quantizer. Whether the *pinned*
   float32 kernel settles to zero is **NOT_RUN** — it needs the external oracle
   host and is not assumed.
-* **RTL reproduces it exactly** (claim (1)), and the ring-out region is inside
-  the committed compared window of every leaf whose RTL contains the
-  decimator. `rtl/oscillators/wavetable/` contains none at all (declared
-  oscillator-only RTL boundary, #176), so for that leaf there is nothing to
-  compare there and no RTL claim is made.
+* **RTL reproduces it exactly** (claim (1)). All **four** committed RTL copies
+  of the cascade — `rtl/voice/tb_voice.sv`,
+  `rtl/oscillators/classic/tb_classic.sv`, `rtl/oscillators/sine/tb_sine.sv`
+  and, since the #180 contract revision moved that leaf's decimator to a
+  per-scene stage, `rtl/oscillators/wavetable/tb_wavetable.sv` — were spliced
+  verbatim and matched the model over the settled region with 0 mismatches. The
+  ring-out region is inside the committed compared window of the voice, Classic
+  and Sine leaves (measured by re-running their own comparators); the wavetable
+  leaf's comparator now compares every 48 kHz sample too, but that leg is
+  **NOT_RUN** here — its model render needs the external pinned asset root.
 * **A musically silent scene is not numerically silent.** Any future hardware
   idle-noise, idle-power or output-stage-gain claim must carry this forward: a
   permanent 24 kHz tone at −95 dBFS is inaudible in an int16 render and can

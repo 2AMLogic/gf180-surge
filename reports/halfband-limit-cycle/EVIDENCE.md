@@ -38,7 +38,7 @@ This record advances exactly two claims and no others:
    settled amplitude of `HalfbandD2` over a declared input range (§2), with a
    live failure control (§4).
 2. **RTL == frozen model, exact (integer equality)**, over that same sweep
-   including the settled region, for all three RTL copies of the decimator
+   including the settled region, for all **four** RTL copies of the decimator
    (§3).
 
 It establishes **no** model-vs-reference (fidelity) verdict, **no**
@@ -127,44 +127,65 @@ acceptance condition.
 
 ## 3. Do the RTL copies reproduce it exactly? — **CHECKED, PASS** (claim (1))
 
+**There are four copies, not the three #181's body names.** The
+[#180](https://github.com/2AMLogic/gf180-surge/issues/180) contract revision
+(`decision-records/0018-wavetable-scene-decimation-placement.md`) landed while
+this measurement was being made: it moved the wavetable leaf's decimator to a
+per-scene stage and implemented it in
+`rtl/oscillators/wavetable/tb_wavetable.sv`. That file is checked here too, and
+the harness's copy list is asserted against a **scan of `rtl/`** rather than a
+hand-maintained list, so the next copy cannot be silently left out
+(`tests/test_halfband_limit_cycle.py::rtl_files_containing_the_cascade`; the
+leaves' declared single-mutation `*mutant*.sv` controls are excluded on purpose
+— they must disagree).
+
 Re-typing the cascade into a hand-written probe would only check the re-typing.
 Instead each RTL copy's own `decimate_and_output` **cascade loop**,
-**reconstruction assignment** and **`qmul`/`clamp8`/`qround1` functions** are
-extracted **verbatim** from the `.sv` file and spliced into a generated probe;
-the only substitutions are that file's `cfg` coefficient window (→ `HB_B[i]` /
-`HB_A[i]`) and leading whitespace. Every one of the 315 declared cases is run
-through each probe under `iverilog -g2012`, followed by exactly the silence the
-model needed to reach its cycle **plus 8 further blocks**, so the compared
-window provably contains the settled region and not merely the decay. Compared
-sample-for-sample, integer equality:
+**reconstruction assignment** and **arithmetic helper functions** are extracted
+**verbatim** from the `.sv` file and spliced into a generated probe; the only
+substitutions are that file's coefficient window (→ `HB_B[·]` / `HB_A[·]`) and
+leading whitespace. Every one of the 315 declared cases is run through each
+probe under `iverilog -g2012`, followed by exactly the silence the model needed
+to reach its cycle **plus 8 further blocks**, so the compared window provably
+contains the settled region and not merely the decay. Compared sample-for-sample,
+integer equality:
 
-| RTL copy | `cfg` window | out samples compared | settled-region samples compared | settled-region mismatches | settled-peak disagreements | unexplained mismatches | verdict |
-|---|---|---|---|---|---|---|---|
-| `rtl/voice/tb_voice.sv` | 28 / 34 | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
-| `rtl/oscillators/classic/tb_classic.sv` | 68 / 74 | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
-| `rtl/oscillators/sine/tb_sine.sv` | 57 / 63 | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
+| RTL copy | dialect | coefficient window | out samples | settled-region samples | settled-region mismatches | settled-peak disagreements | unexplained mismatches | verdict |
+|---|---|---|---|---|---|---|---|---|
+| `rtl/voice/tb_voice.sv` | `cfg32` | `cfg[28+i]` / `cfg[34+i]` | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
+| `rtl/oscillators/classic/tb_classic.sv` | `cfg32` | `cfg[68+i]` / `cfg[74+i]` | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
+| `rtl/oscillators/sine/tb_sine.sv` | `cfg32` | `cfg[57+i]` / `cfg[63+i]` | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
+| `rtl/oscillators/wavetable/tb_wavetable.sv` (#180) | `iw64` | `iw[43+hi]` / `iw[49+hi]` | 577,760 | 90,720 | **0** | **0** | **0** | **PASS** |
 
-The three copies' cascade text is **identical** after coefficient-window
-normalization (`cascade_text_identical_across_copies: true`), so the decimator
-itself is one implementation written out three times.
+The three `cfg32` copies' cascade text is **identical** after coefficient-window
+normalization, so that decimator is one implementation written out three times.
+The wavetable copy is a **different dialect** — 64-bit allpass state, `iw[]`
+coefficients, Verilog-2001 loop style, its own `q21`/`qround_s`/`clamp8_64`, and
+the ±8 clip *inside* its cascade loop rather than upstream of it. Its cascade
+**text** is therefore deliberately **not** compared against the other three
+(that would be a false equivalence); what is compared is its **output** against
+the same frozen model, which is the claim that matters. The artifact records the
+text groups by sha256 and the per-dialect verdict rather than one
+"identical everywhere" boolean.
 
-Their reconstruction lines are **not** identical, and the difference is
-reported rather than normalized away:
+The reconstruction lines are **not** identical, and the difference is reported
+rather than normalized away:
 
 | copy | reconstruction, verbatim |
 |---|---|
 | `tb_voice.sv` | `bl = qround1(chainb[2*k] + chaina[2*k+1]);` |
 | `tb_classic.sv` | `bl = clamp8(qround1(chainb[2*k] + chaina[2*k+1]));` |
 | `tb_sine.sv` | `bl = clamp8((chainb[2*k] + chaina[2*k+1] + 32'sd1) >>> 1);` |
+| `tb_wavetable.sv` | `bl = qround_s(chain_b[2*hk] + chain_a[2*hk+1], 1);` |
 
-The shared model class contains no ±8 clip at that point (the voice leaf
-applies the equivalent clip to `scene_l` upstream instead), so on the loudest
-sweep cases the two oscillator copies clip where the model does not: 3,675 of
-577,760 samples on each, **all** of them satisfying "model word outside ±8 and
-RTL word exactly at the clip", i.e. explained by that leaf's own clip stage and
-not by decimator arithmetic. **0 unexplained mismatches, and 0 mismatches of
-any kind inside the settled region on all three copies** — the settled
-amplitude is byte-identical between model and every RTL copy.
+The shared model class contains no ±8 clip at that point (the voice and
+wavetable leaves apply the equivalent clip upstream of the decimator instead),
+so on the loudest sweep cases the two oscillator copies clip where the model
+does not: 3,675 of 577,760 samples on each, **all** of them satisfying "model
+word outside ±8 and RTL word exactly at the clip", i.e. explained by that leaf's
+own clip stage and not by decimator arithmetic. **0 unexplained mismatches, and
+0 mismatches of any kind inside the settled region on all four copies** — the
+settled amplitude is byte-identical between model and every RTL copy.
 
 ### Is the ring-out inside each leaf's own committed compared window?
 
@@ -178,7 +199,7 @@ inferring it from the sweep and not by reading the comparator's source:
 | voice (SXT-022 / 026a / 034) | `seq-notes-repeated-v1` | 3,703 (118,496 samples) | **yes** — 196,800 mono samples compared = every sample of all 6,150 blocks | ±1 Q10.21 LSB, held for all 3,703 | `compare_rtl_model.py` **PASS** (0) |
 | osc:Classic (SXT-033) | `horn / seq-notes-repeated-v1` | 3,519 (112,608 samples) | **yes** — 196,800 mono samples compared = every sample of all 6,150 blocks | ±2 Q10.21 LSB, held for all 3,519 | `compare_classic_rtl_model.py` **PASS** (0) |
 | osc:Sine (SXT-040) | `tentacles / seq-notes-repeated-v1` | 3,702 (118,464 samples) | **yes** — 196,800 mono samples compared = every sample of all 6,150 blocks | **exactly 0** | `compare_sine_rtl_model.py` **PASS** (0) |
-| osc:Wavetable (SXT-026) | — | — | **NO — the ring-out region has no RTL counterpart at all** | — | `compare_wt_rtl_model.py` reads no `mono_block`; **NOT_RUN** here (needs the external pinned wavetable asset root) |
+| osc:Wavetable (SXT-026, per-scene since #180) | `mf-wtfix / seq-notes-repeated-v1` | — | **NOT_RUN — not answered here** | — | `compare_wt_rtl_model.py`: the model render needs the **external** pinned wavetable asset root, absent on this host |
 
 Two of those rows need stating plainly:
 
@@ -187,15 +208,21 @@ Two of those rows need stating plainly:
   exemption for `tb_sine.sv`'s decimator — the same file's spliced cascade
   reproduces the 36-LSB cycle exactly in §3. Absence at one fixture's output is
   a fixture property.
-* **SXT-026 (wavetable) is the one leaf where the region is outside the RTL
-  comparison, and for a reason that predates this issue**:
-  `rtl/oscillators/wavetable/` implements the oscillator only and carries no
-  decimator or 48 kHz output stage (declared RTL coverage boundary, #176;
-  `compare_wt_rtl_model.py` does not read `mono_block` at all). So for that leaf
-  there is nothing to compare in the ring-out region, and this record makes no
-  RTL claim there. Its model-side per-slice placement also means each slice's
-  filter state dies with its voice, which is why #176's leg A reached exactly 0
-  after voice death while its per-scene leg B did not.
+* **SXT-026 (wavetable) is `NOT_RUN` — neither a pass nor an exemption.** #180
+  changed the answer for this leaf mid-measurement. *Before* it, the leaf's RTL
+  carried no decimator or 48 kHz stage and `compare_wt_rtl_model.py` did not
+  read `mono_block` at all, so the ring-out region genuinely sat outside its
+  compared window (the declared #176 boundary). *After* it, the per-scene stage
+  is in `tb_wavetable.sv` and the comparator compares every 48 kHz `mono_block`
+  sample on every block **including blocks with no live voice**, so the region is
+  inside the window by construction of the comparator. This record does not
+  convert that into a measured verdict: the model render needed to drive it
+  requires the external pinned wavetable asset root (`decision-records/0004`),
+  which this host does not have, so the leg is reported `NOT_RUN` with its
+  reason. #180's own record states its measured base PASS (0 mismatches, 132,000
+  48 kHz samples) from a host that had the asset. What this record *does*
+  establish for that file is §3: its spliced cascade reproduces the settled
+  amplitude exactly on all 315 declared cases.
 
 The post-death mono peaks (1 and 2 Q10.21 LSB) are **smaller** than the 36-LSB
 bound because they are measured after the master-amplitude stage, downstream of
@@ -308,7 +335,7 @@ are recorded so a reviewer can regenerate and compare.
 python3 tools/measure_halfband_limit_cycle.py \
     --out /tmp/hblc.json
 
-# + the verbatim-spliced RTL leg for all three copies (needs iverilog, ~3 min)
+# + the verbatim-spliced RTL leg for all four copies (needs iverilog, ~4 min)
 python3 tools/measure_halfband_limit_cycle.py --rtl --out /tmp/hblc.json
 
 # + the in-situ leaf legs and each leaf's own committed comparator

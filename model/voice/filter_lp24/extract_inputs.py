@@ -24,13 +24,15 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 # Declared in issue #72 (data lineage) and in corpus/normalized/README.md.
@@ -85,16 +87,8 @@ class Refuse(Exception):
     pass
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def load_graphs():
-    got = sha256_file(GRAPHS)
+    got = oc.sha256_file(GRAPHS)
     if got != GRAPHS_SHA256:
         raise Refuse(f"graphs.jsonl sha256 {got} != declared {GRAPHS_SHA256}")
     by_blob = {}

@@ -1,21 +1,31 @@
 #!/usr/bin/env python3
-"""SXT-026 RTL-vs-model harness reporting controls (issues #182, #188).
+"""SXT-026 RTL-vs-model harness reporting controls (issues #182, #188, #194, #197).
 
 `tools/compare_wt_rtl_model.py` must report a SIMULATOR-level failure as its
 own FAIL verdict, naming the reason, instead of raising on an unbound `fails`
 (#182), instead of discarding that message when the comparison's own fail list
 is merged in (#182), and instead of presenting it as a wall of comparison
-mismatches (#188). The four mechanisms controlled here:
+mismatches (#188). The five mechanisms controlled here:
 
   * a declared input (`model_trace.json`, `rtl/*.hex`) missing before the
     simulator is invoked at all                                        (#188)
+  * a `model_trace.json` that is PRESENT but unreadable -- malformed JSON,
+    mode 000, non-UTF-8 bytes -- which the existence-only pre-flight above
+    cannot distinguish from a usable one                                (#197)
   * `$readmemh: Unable to open ...` on vvp's STDOUT while vvp exits 0  (#188)
   * a non-zero vvp exit                                          (#182/#190)
   * `CalledProcessError` from iverilog / `TimeoutExpired` from vvp     (#188)
+  * a stimulus file that opens but is TRUNCATED -- fewer words than the model
+    declared in `rtl/stimulus_index.json`                               (#194)
 
-plus the two false-positive controls that matter more than any of them: a
-healthy run whose stdout carries the testbench's own benign diagnostics must
-still verdict PASS, and a genuine comparison disagreement must still be
+plus the false-positive controls that matter more than any of them: a healthy
+run whose stdout carries the testbench's own benign diagnostics (including the
+five `$readmemh(...): Not enough words` WARNINGs a PASSING pinned-tree run
+really does emit, transcribed from the measurement in
+`reports/tooling-wt-harness-stimulus-load/artifacts/` ->
+`healthy-run-warning-baseline.txt`) must still verdict PASS; a complete run
+dir must still verdict PASS with
+`sim_fails == []`; and a genuine comparison disagreement must still be
 reported as one.
 
 Scope of these controls: the harness's reporting path ONLY. The simulator is
@@ -31,6 +41,8 @@ import os
 import subprocess
 import sys
 import types
+
+import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HARNESS = os.path.join(REPO, "tools", "compare_wt_rtl_model.py")
@@ -50,26 +62,41 @@ READMEMH_STDOUT = "".join(
                        (281, "rtl/sinc_main.hex"),
                        (288, "rtl/sinc_deriv.hex")))
 
-# What a run whose stimulus DID load prints on stdout: the testbench's own
-# diagnostics (DBG / WARNING / "TB done" / $finish) plus Icarus's own
-# `$readmemh(...): Not enough words` WARNING -- the last of these transcribed
-# from a real Icarus 13.0 run and included deliberately, because it contains
-# the `$readmemh` token and so pins the matcher's conjunction (`$readmem` AND
-# `Unable to open`) as load-bearing. It is a WARNING about file *length*, not
-# an open failure: `ctrl_mem` alone is declared [0:262143], so a real run is
-# expected to emit it, and matching it would flip a genuinely passing
-# exactness run to FAIL -- the one outcome worse than the lost reason #188
-# exists to fix.
+# MEASURED (#194 checkbox 1): the `$readmemh(...): Not enough words` WARNINGs
+# a GENUINELY PASSING pinned-tree exactness run emits, one per $readmemh call
+# site, transcribed verbatim from the artifact
+# `healthy-run-warning-baseline.txt` under
+# `reports/tooling-wt-harness-stimulus-load/artifacts/`
+# (Icarus 13.0, kick-wtfix-kt / seq-wt-pitch-extremes-hi-v1, 4125 blocks,
+# verdict PASS). ALL FIVE memories warn on a healthy run, because the
+# testbench declares them far larger than any real stimulus. That measurement
+# is why truncation is detected by a CONTENT check and not by a matcher on
+# this text: there is no subset of these lines a healthy run does not emit.
+NOT_ENOUGH_WORDS = tuple(
+    "WARNING: %s/rtl/oscillators/wavetable/tb_wavetable.sv:%d: "
+    "$readmemh(%s): Not enough words in the file for the requested "
+    "range [0:%d].\n" % (REPO, line, path, top)
+    for line, path, top in ((277, "rtl/init.hex", 63),
+                            (279, "rtl/ctrl.hex", 262143),
+                            (280, "rtl/wt_table.hex", 131071),
+                            (281, "rtl/sinc_main.hex", 6143),
+                            (288, "rtl/sinc_deriv.hex", 6143)))
+
+# What a run whose stimulus DID load prints on stdout: those five WARNINGs
+# plus the testbench's own diagnostics (DBG / WARNING / "TB done" / $finish).
+# The WARNINGs are included deliberately, because they contain the `$readmemh`
+# token and so pin the matcher's conjunction (`$readmem` AND `Unable to open`)
+# as load-bearing. They are WARNINGs about file *length*, not open failures,
+# and matching them would flip a genuinely passing exactness run to FAIL --
+# the one outcome worse than the lost reason #188 exists to fix.
 HEALTHY_STDOUT = (
-    "DBG loading hex files\n"
-    "WARNING: %s/rtl/oscillators/wavetable/tb_wavetable.sv:279: "
-    "$readmemh(rtl/ctrl.hex): Not enough words in the file for the "
-    "requested range [0:262143].\n"
+    "".join(NOT_ENOUGH_WORDS)
+    + "DBG SEL a=4250132 mip=0\n"
     "WARNING: ctrl block index 0 != 1\n"
     "DBG block 0 done @2000\n"
     "TB done: blocks 1 ext_reads 2 fill_words 0 bursts 1 stall 0 reverb 0\n"
     "%s/rtl/oscillators/wavetable/tb_wavetable.sv:424: $finish called at "
-    "73500 (1ps)\n" % (REPO, REPO))
+    "73500 (1ps)\n" % REPO)
 
 # One declared checkpoint, one slot, one unison voice. Model-side state is
 # written in the harness's own convention: per-voice and shared 32-bit fields
@@ -114,13 +141,28 @@ def _load_harness():
 # harness to name it.
 STIMULUS_RELPATHS = [rel for _, rel in _load_harness().STIMULUS]
 
+# Word counts the fixture writes per stimulus file. Small and distinct, so a
+# truncation control can shorten exactly one file and the message must name
+# that file rather than "a stimulus file".
+FIXTURE_WORDS = dict(zip(STIMULUS_RELPATHS, (4, 3, 8, 6, 6)))
 
-def _write_run_dir(tmp_path):
-    """A complete run dir: the model trace plus all five hex stimulus files.
 
-    The stimulus files are empty on purpose -- the harness's pre-simulator
-    check (#188) asserts their EXISTENCE, and the simulator that would read
-    their contents is stubbed in every control here.
+def _write_hex(path, n_words):
+    """n_words of 32-bit hex, one per line -- run_model.write_hex's format."""
+    with open(path, "w") as f:
+        for w in range(n_words):
+            f.write("%08x\n" % w)
+
+
+def _write_run_dir(tmp_path, stimulus_index=True, words=None):
+    """A complete run dir: model trace, five hex files, the stimulus index.
+
+    The stimulus files carry real (if short) content, and
+    `rtl/stimulus_index.json` declares each file's length exactly the way
+    `run_model.py --rtl` does -- that declaration is what makes a TRUNCATED
+    file detectable (#194). `stimulus_index=False` reproduces a run dir from
+    tooling older than #194, for which the length check must report NOT_RUN
+    instead of failing closed.
     """
     run_dir = str(tmp_path)
     trace = {
@@ -136,8 +178,13 @@ def _write_run_dir(tmp_path):
     with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
         json.dump(trace, f)
     os.makedirs(os.path.join(run_dir, "rtl"), exist_ok=True)
+    words = dict(FIXTURE_WORDS if words is None else words)
     for rel in STIMULUS_RELPATHS:
-        open(os.path.join(run_dir, rel), "w").close()
+        _write_hex(os.path.join(run_dir, rel), words[rel])
+    if stimulus_index:
+        with open(os.path.join(run_dir, "rtl/stimulus_index.json"), "w") as f:
+            json.dump({"format": "sxt026-wt-stimulus-index/1",
+                       "files": dict(FIXTURE_WORDS)}, f)
     return run_dir
 
 
@@ -344,15 +391,19 @@ def test_readmemh_open_failure_on_stdout_with_rc_zero_is_a_sim_failure(
 
 
 def test_healthy_stdout_diagnostics_do_not_flip_a_pass(tmp_path, monkeypatch):
-    """FALSE-POSITIVE control (the one that matters most, issue #188).
+    """FALSE-POSITIVE control (the one that matters most, issues #188/#194).
 
     A healthy run's stdout carries the testbench's own DBG / WARNING /
-    "TB done" diagnostics. The stdout matcher must not read any of them as a
-    stimulus-load failure: reporting a run that did not fail as failed is
+    "TB done" diagnostics AND -- measured, #194 -- one Icarus
+    `$readmemh(...): Not enough words` WARNING per memory. Neither may be read
+    as a stimulus-load failure: reporting a run that did not fail as failed is
     worse than the lost reason this change exists to recover.
     """
     mod = _load_harness()
     run_dir = _write_run_dir(tmp_path)
+    # The stdout fed in really does carry all five measured WARNINGs.
+    for warn in NOT_ENOUGH_WORDS:
+        assert warn in HEALTHY_STDOUT
     _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE,
                     sim_stdout=HEALTHY_STDOUT)
 
@@ -455,3 +506,301 @@ def test_missing_model_trace_is_named_without_raising(tmp_path, monkeypatch):
     assert d["comparison"] == "NOT_RUN"
     assert "model_trace.json" in d["sim_fails"][0], d["sim_fails"]
     assert calls == [], calls
+
+
+def _assert_unreadable_model_trace_verdict(rc, d, calls):
+    """Shared shape for the present-but-unreadable `model_trace.json` cases.
+
+    Every one of these is a SIMULATOR-level failure, never a comparison
+    result: the model side of the comparison never parsed, so there is nothing
+    to compare against and the simulator must not be invoked at all.
+    """
+    assert rc != 0
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    assert d["comparison"] == "NOT_RUN", json.dumps(d, indent=1)
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    assert "model_trace.json" in d["sim_fails"][0], d["sim_fails"]
+    assert d["checked"]["fields"] == 0, d["checked"]
+    assert calls == [], calls
+
+
+def test_malformed_model_trace_is_named_without_raising(tmp_path, monkeypatch):
+    """PRESENT but not valid JSON is a named failure, not a traceback (#197).
+
+    `missing_inputs()` asserts existence only, so a `model_trace.json` that
+    exists and is unparseable reached an unguarded `json.load` in `main()`:
+    `json.JSONDecodeError` propagated out, the process exited by traceback,
+    and no verdict JSON was written at all -- the same lost-reason failure
+    #182/#188 fixed for the simulator-level paths.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        f.write("not json")
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    _assert_unreadable_model_trace_verdict(rc, d, calls)
+    assert "JSONDecodeError" in d["sim_fails"][0], d["sim_fails"]
+
+
+def test_unopenable_model_trace_is_named_without_raising(tmp_path, monkeypatch):
+    """PRESENT but unopenable (mode 000) takes the same path (#197).
+
+    Distinct from the malformed case: the exception is raised by `open()`
+    (`PermissionError`, an `OSError`) before the JSON parser is reached, so a
+    guard that caught only `json.JSONDecodeError` would still exit by
+    traceback with no verdict JSON here.
+    """
+    if os.geteuid() == 0:
+        # root bypasses the mode bits, so the control cannot demonstrate the
+        # failure it targets -- report that rather than passing vacuously.
+        pytest.skip("mode 000 is not enforced for root")
+
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    trace_path = os.path.join(run_dir, "model_trace.json")
+    os.chmod(trace_path, 0o000)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+    try:
+        rc, d = _run_harness(mod, monkeypatch, run_dir)
+    finally:
+        os.chmod(trace_path, 0o644)
+
+    _assert_unreadable_model_trace_verdict(rc, d, calls)
+    assert "PermissionError" in d["sim_fails"][0], d["sim_fails"]
+
+
+def test_undecodable_model_trace_is_named_without_raising(tmp_path,
+                                                         monkeypatch):
+    """PRESENT but not UTF-8 text takes the same path (#197).
+
+    Third distinct exception on the same read: a truncated/binary trace raises
+    `UnicodeDecodeError` from the decode, which is a sibling `ValueError`
+    subclass rather than a `json.JSONDecodeError` -- so this pins the guard's
+    `ValueError` arm as load-bearing.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "wb") as f:
+        f.write(b"\xff\xfe\x00{")
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    _assert_unreadable_model_trace_verdict(rc, d, calls)
+    assert "UnicodeDecodeError" in d["sim_fails"][0], d["sim_fails"]
+
+
+def test_a_readable_model_trace_still_reaches_the_simulator(tmp_path,
+                                                           monkeypatch):
+    """FALSE-POSITIVE control for the #197 guard.
+
+    The guard must not swallow a healthy run: a well-formed `model_trace.json`
+    must still parse, still invoke the simulator, and still verdict PASS. A
+    guard that reported every trace as unreadable would satisfy the three
+    controls above and be useless.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert d["comparison"] == "PASS"
+    assert d["sim_fails"] == []
+    assert calls == ["iverilog", "vvp"], calls
+    assert d["checked"]["fields"] > 0
+
+
+# --------------------------------------------------------------------------
+# issue #194 controls: a stimulus file that OPENS but is TRUNCATED, and the
+# known-good control that makes the first one trustworthy.
+# --------------------------------------------------------------------------
+
+
+def test_truncated_stimulus_file_is_named_and_not_a_model_disagreement(
+        tmp_path, monkeypatch):
+    """POSITIVE control (#194 failure control): drop half of wt_table.hex.
+
+    Pre-fix, this run dir reached the simulator, produced whatever a
+    half-loaded wavetable produces, and was reported as a MODEL
+    DISAGREEMENT -- the file's name appearing nowhere in the summary. The
+    stubbed simulator here still writes a *matching* trace, so only a harness
+    that detects the truncation before the run can reach a FAIL at all.
+    """
+    mod = _load_harness()
+    short = dict(FIXTURE_WORDS)
+    short["rtl/wt_table.hex"] //= 2          # 8 words declared, 4 written
+    run_dir = _write_run_dir(tmp_path, words=short)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc != 0
+    assert d["verdict"] == "FAIL", json.dumps(d, indent=1)
+    assert d["comparison"] == "NOT_RUN", json.dumps(d, indent=1)
+    # The verdict names THAT file, and only that file.
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    msg = d["sim_fails"][0]
+    assert "rtl/wt_table.hex" in msg, msg
+    assert "TRUNCATED" in msg, msg
+    assert "4 hex words" in msg and "declared 8" in msg, msg
+    for rel in STIMULUS_RELPATHS:
+        if rel != "rtl/wt_table.hex":
+            assert rel not in msg, (rel, msg)
+    # ... and it is NOT reported as a model/RTL disagreement.
+    assert d["mismatches"] == 1, json.dumps(d, indent=1)
+    assert d["checked"]["fields"] == 0, d["checked"]
+    assert "model=" not in "\n".join(d["first_failures"])
+    # The simulator is never invoked on stimulus known to be incomplete.
+    assert calls == [], calls
+    # The length report states the disagreement per file, with both counts.
+    sl = d["stimulus_lengths"]
+    assert sl["status"] == "FAIL", sl
+    assert sl["words"]["rtl/wt_table.hex"] == {"declared": 8, "actual": 4}, sl
+    assert sl["words"]["rtl/ctrl.hex"] == {"declared": 3, "actual": 3}, sl
+
+
+def test_complete_stimulus_still_passes_with_no_sim_fails(tmp_path,
+                                                          monkeypatch):
+    """NEGATIVE (known-good) control -- the leg that makes the first one mean
+    something (#194 failure control, second half).
+
+    The SAME fixture, untouched: every stimulus file matches the length the
+    model declared, so the verdict is PASS with `sim_fails == []` and the
+    length check reports PASS rather than merely "nothing detected".
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path)
+    calls = []
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT, calls=calls)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert d["comparison"] == "PASS", json.dumps(d, indent=1)
+    assert d["sim_fails"] == [], d["sim_fails"]
+    assert d["stimulus_lengths"]["status"] == "PASS", d["stimulus_lengths"]
+    for rel in STIMULUS_RELPATHS:
+        entry = d["stimulus_lengths"]["words"][rel]
+        assert entry["declared"] == entry["actual"] == FIXTURE_WORDS[rel]
+    # The simulator DID run, and the comparison really was performed.
+    assert calls == ["iverilog", "vvp"], calls
+    assert d["checked"]["fields"] > 0 and d["checked"]["oscout"] > 0
+
+
+def test_every_stimulus_file_is_named_when_it_is_the_truncated_one(
+        tmp_path, monkeypatch):
+    """The failure names whichever file is short -- not a generic message.
+
+    A message that named a fixed file (or none) would pass the wt_table leg
+    above by accident; this walks all five call sites.
+    """
+    mod = _load_harness()
+    for target in STIMULUS_RELPATHS:
+        short = dict(FIXTURE_WORDS)
+        short[target] -= 1
+        sub = tmp_path / target.replace("/", "_")
+        sub.mkdir()
+        run_dir = _write_run_dir(sub, words=short)
+        _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE)
+
+        rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+        assert rc != 0, target
+        assert d["verdict"] == "FAIL", (target, json.dumps(d, indent=1))
+        assert len(d["sim_fails"]) == 1, (target, d["sim_fails"])
+        assert target in d["sim_fails"][0], (target, d["sim_fails"])
+
+
+def test_run_dir_without_a_stimulus_index_reports_not_run_not_failure(
+        tmp_path, monkeypatch):
+    """A run dir from tooling older than #194 must not be flipped to FAIL.
+
+    No `rtl/stimulus_index.json` means the model declared no lengths, so no
+    truncation claim can be made. That is reported as NOT_RUN in the summary
+    -- visible, and never as a pass -- while the verdict itself is unchanged.
+    """
+    mod = _load_harness()
+    run_dir = _write_run_dir(tmp_path, stimulus_index=False)
+    _stub_simulator(mod, monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT)
+
+    rc, d = _run_harness(mod, monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)
+    assert d["sim_fails"] == []
+    sl = d["stimulus_lengths"]
+    assert sl["status"] == "NOT_RUN", sl
+    assert "stimulus_index.json" in sl["reason"], sl
+    assert "NOT a pass" in sl["reason"], sl
+    # Coverage is still reported per file: measured, declared nothing.
+    for rel in STIMULUS_RELPATHS:
+        assert sl["words"][rel]["declared"] is None, sl
+        assert sl["words"][rel]["actual"] == FIXTURE_WORDS[rel], sl
+
+
+def test_length_check_is_content_based_not_layout_based(tmp_path):
+    """Unit control on the counter and the check itself.
+
+    The count follows `$readmemh` semantics (whitespace-separated words,
+    `//` comments and `@address` directives excluded), not line count, so a
+    file that is complete but formatted differently is not a false positive
+    -- and a partial index reports NOT_RUN for exactly the files it omits.
+    """
+    mod = _load_harness()
+    run_dir = str(tmp_path)
+    os.makedirs(os.path.join(run_dir, "rtl"))
+    path = os.path.join(run_dir, "rtl/init.hex")
+    with open(path, "w") as f:
+        f.write("// generated\n@0000\n0000000a 0000000b\n\n0000000c\n")
+    assert mod.count_hex_words(path) == 3
+
+    for rel in STIMULUS_RELPATHS[1:]:
+        _write_hex(os.path.join(run_dir, rel), FIXTURE_WORDS[rel])
+
+    # Complete, with an index declaring init.hex's 3 content words: PASS.
+    declared = dict(FIXTURE_WORDS, **{"rtl/init.hex": 3})
+    with open(os.path.join(run_dir, "rtl/stimulus_index.json"), "w") as f:
+        json.dump({"files": declared}, f)
+    report, fails = mod.check_stimulus_lengths(run_dir)
+    assert fails == [], fails
+    assert report["status"] == "PASS", report
+
+    # An index that declares only some files: NOT_RUN, naming the gap.
+    with open(os.path.join(run_dir, "rtl/stimulus_index.json"), "w") as f:
+        json.dump({"files": {"rtl/init.hex": 3}}, f)
+    report, fails = mod.check_stimulus_lengths(run_dir)
+    assert fails == [], fails
+    assert report["status"] == "NOT_RUN", report
+    assert "rtl/ctrl.hex" in report["reason"], report
+
+    # A file LONGER than declared is a mismatch too (a stale file mixed into
+    # the run dir), reported as such rather than as truncation.
+    with open(os.path.join(run_dir, "rtl/stimulus_index.json"), "w") as f:
+        json.dump({"files": dict(declared, **{"rtl/ctrl.hex": 2})}, f)
+    report, fails = mod.check_stimulus_lengths(run_dir)
+    assert report["status"] == "FAIL", report
+    assert len(fails) == 1, fails
+    assert "LONGER THAN DECLARED" in fails[0], fails
+    assert "rtl/ctrl.hex" in fails[0], fails
+
+    # An unreadable index is NOT_RUN, not a failure.
+    with open(os.path.join(run_dir, "rtl/stimulus_index.json"), "w") as f:
+        f.write("{not json")
+    report, fails = mod.check_stimulus_lengths(run_dir)
+    assert fails == [], fails
+    assert report["status"] == "NOT_RUN", report
+    assert "NOT a pass" in report["reason"], report

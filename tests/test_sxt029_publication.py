@@ -14,7 +14,6 @@ establishes any leaf's RTL-vs-model or model-vs-reference verdict, and nothing
 here is a preset-support, fidelity, or sound claim.
 """
 import csv
-import hashlib
 import json
 import os
 import subprocess
@@ -23,17 +22,13 @@ import sys
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 COV = os.path.join(REPO, "reports", "coverage-v1")
 TABLE = os.path.join(COV, "leaf-verification.json")
 TOOL = os.path.join(REPO, "tools", "publish_coverage.py")
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def load_table():
@@ -86,7 +81,7 @@ def test_every_evidence_pin_matches_its_file():
         if not os.path.exists(path):
             stale.append(f"{section}[{key}] {rel}: MISSING")
             continue
-        got = sha256_file(path)
+        got = oc.sha256_file(path)
         if got != pin:
             stale.append(
                 f"{section}[{key}] {rel}: table says {pin}, file hashes {got}")
@@ -127,7 +122,7 @@ def test_committed_artifacts_are_republishable(tmp_path):
     for name in ("coverage.json", "per-preset.csv"):
         fresh = os.path.join(outdir, name)
         committed = os.path.join(COV, name)
-        assert sha256_file(fresh) == sha256_file(committed), (
+        assert oc.sha256_file(fresh) == oc.sha256_file(committed), (
             f"reports/coverage-v1/{name} is not reproducible from the "
             "committed inputs; re-run `python3 tools/publish_coverage.py` and "
             "commit the result (no --control-allow-input-drift, no "

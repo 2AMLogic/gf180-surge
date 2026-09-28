@@ -1,0 +1,70 @@
+$ iverilog -V | head -1
+Icarus Verilog version 13.0 (stable) (v13_0)
+
+### PART 1 — per-leaf healthy/missing measurement + pre/post known-good control
+$ python3 sxt209_verify.py
+========================================================================
+LEAF lp12
+  healthy vvp rc=0  matcher-hits=0  (false-positive control)
+  healthy stdout:
+      WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp12.sv:71: $readmemh(rtl/ctrl.hex): Not enough words in the file for the requested range [0:8000000].
+      WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp12.sv:72: $readmemh(rtl/in.hex): Not enough words in the file for the requested range [0:8000000].
+      DONE qmuls=768 blocks=1 inputs=64
+      /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp12.sv:148: $finish called at 0 (1ps)
+  [pre-migration] rc=0 verdict=PASS mismatches=0 checked={'samples': 64, 'checkpoints': 1, 'fields': 12}
+  [A complete+agree] rc=0 verdict=PASS comparison=PASS sim_fails=[]
+      known-good control: pre/post summaries identical on verdict/checked/mismatches/first_failures
+  [B complete+mutated] rc=1 verdict=FAIL comparison=FAIL mismatches=1 sim_fails=[] first=['block 0 sample 7: model=2570 rtl=2569']
+  [C missing rtl/in.hex] rc=1 verdict=FAIL comparison=NOT_RUN checked={'samples': 0, 'checkpoints': 0, 'fields': 0}
+      sim_fails[0]: missing declared input: rtl/in.hex (absent from the run dir; the testbench $readmemh's this stimulus and Icarus reports an open failure on stdout while still exiting 0, so this is asserted before the simulator is invoked)
+      live simulator with the file removed: vvp rc=0, matcher-hits=1
+        ERROR: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp12.sv:72: $readmemh: Unable to open rtl/in.hex for reading.
+========================================================================
+LEAF lp24
+  healthy vvp rc=0  matcher-hits=0  (false-positive control)
+  healthy stdout:
+      WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:78: $readmemh(rtl/ctrl.hex): Not enough words in the file for the requested range [0:8000000].
+      WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:79: $readmemh(rtl/in.hex): Not enough words in the file for the requested range [0:8000000].
+      DONE qmuls=1216 blocks=1 inputs=64
+      /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:182: $finish called at 0 (1ps)
+  [pre-migration] rc=0 verdict=PASS mismatches=0 checked={'samples': 64, 'checkpoints': 1, 'fields': 14}
+  [A complete+agree] rc=0 verdict=PASS comparison=PASS sim_fails=[]
+      known-good control: pre/post summaries identical on verdict/checked/mismatches/first_failures
+  [B complete+mutated] rc=1 verdict=FAIL comparison=FAIL mismatches=1 sim_fails=[] first=['block 0 sample 7: model=4 rtl=3']
+  [C missing rtl/in.hex] rc=1 verdict=FAIL comparison=NOT_RUN checked={'samples': 0, 'checkpoints': 0, 'fields': 0}
+      sim_fails[0]: missing declared input: rtl/in.hex (absent from the run dir; the testbench $readmemh's this stimulus and Icarus reports an open failure on stdout while still exiting 0, so this is asserted before the simulator is invoked)
+      live simulator with the file removed: vvp rc=0, matcher-hits=1
+        ERROR: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:79: $readmemh: Unable to open rtl/in.hex for reading.
+  [D lp24 --expect fail + missing stimulus] rc=1 verdict=FAIL comparison=NOT_RUN
+      pre-migration, same case: rc=1 verdict=FAIL (<- the hazard this fixes)
+========================================================================
+LEAF lpmoog
+  healthy vvp rc=0  matcher-hits=0  (false-positive control)
+  healthy stdout:
+      WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lpmoog.sv:109: $readmemh(rtl/ctrl.hex): Not enough words in the file for the requested range [0:8000000].
+      WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lpmoog.sv:110: $readmemh(rtl/in.hex): Not enough words in the file for the requested range [0:8000000].
+      DONE qmuls=576 blocks=1 inputs=64
+      /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lpmoog.sv:147: $finish called at 0 (1ps)
+  [pre-migration] rc=0 verdict=PASS mismatches=0 checked={'samples': 64, 'checkpoints': 1, 'fields': 14}
+  [A complete+agree] rc=0 verdict=PASS comparison=PASS sim_fails=[]
+      known-good control: pre/post summaries identical on verdict/checked/mismatches/first_failures
+  [B complete+mutated] rc=1 verdict=FAIL comparison=FAIL mismatches=1 sim_fails=[] first=['block 0 sample 7: model=1 rtl=0']
+  [C missing rtl/in.hex] rc=1 verdict=FAIL comparison=NOT_RUN checked={'samples': 0, 'checkpoints': 0, 'fields': 0}
+      sim_fails[0]: missing declared input: rtl/in.hex (absent from the run dir; the testbench $readmemh's this stimulus and Icarus reports an open failure on stdout while still exiting 0, so this is asserted before the simulator is invoked)
+      live simulator with the file removed: vvp rc=0, matcher-hits=1
+        ERROR: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lpmoog.sv:110: $readmemh: Unable to open rtl/in.hex for reading.
+========================================================================
+ALL REAL-TOOLCHAIN REPORTING CONTROLS OK
+
+### PART 2 — lp24 --expect fail hazard, pre- vs post-migration
+$ python3 sxt209_expect.py
+live sim with rtl/init.hex missing: vvp rc=0
+    ERROR: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:77: $readmemh: Unable to open rtl/init.hex for reading.
+    WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:78: $readmemh(rtl/ctrl.hex): Not enough words in the file for the requested range [0:8000000].
+    WARNING: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:79: $readmemh(rtl/in.hex): Not enough words in the file for the requested range [0:8000000].
+    DONE qmuls=0 blocks=0 inputs=0
+    /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-209/rtl/voice/tb_lp24.sv:182: $finish called at 0 (1ps)
+    trace lines written: 0
+PRE-migration (origin/main)    rc=0 verdict=FAIL comparison=None sim_fails=None
+     ^^ rc=0 under --expect fail: the stimulus-load failure was ACCEPTED as a passing negative control
+POST-migration (this branch)   rc=1 verdict=FAIL comparison=NOT_RUN sim_fails=["missing declared input: rtl/init.hex (absent from the run dir; the testbench $readmemh's this stimulus and Icarus reports an open failure on stdout while still exiting 0, so this is asserted before the simulator is invoked)"]

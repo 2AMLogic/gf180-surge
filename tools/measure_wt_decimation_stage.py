@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
-"""SXT-026 (#176): measure per-slice vs per-scene decimation, model-vs-model.
+"""SXT-026 (#176, re-run for #180): per-slice vs per-scene decimation.
 
-WHAT THIS IS. The frozen SXT-026 wavetable model instantiates one
-`voice_model.HalfbandD2` per voice slice (`wt_model.Slice`) and sums the
-already-decimated slices in `model/oscillators/wavetable/run_model.py`. The
-pinned engine runs the decimator ONCE PER SCENE on the summed `sceneout`
-(`SurgeSynthesizer::halfbandA/B` -> `HalfRateFilter::process_block_D2`), which
-is what the SXT-022 voice leaf models (`model/voice/run_model.py`) and
-implements (`rtl/voice/tb_voice.sv`). The filter is linear, so the two
-topologies differ only by
+WHAT THIS IS. A model-vs-model measurement of the two possible placements of
+the 96 kHz -> 48 kHz decimator and the master stage in the SXT-026 wavetable
+leaf:
+
+  * PER SLICE -- one `voice_model.HalfbandD2` inside each `wt_model.Slice`,
+    slices summed after decimation. This is what the frozen model did BEFORE
+    the #180 contract revision (declared deviation 7 of #176).
+  * PER SCENE -- the summed unclipped 96 kHz `sceneout`, one +/-8 clip, ONE
+    `HalfbandD2` for the scene persisting across voice death, then master and
+    clips. This is the pinned engine's placement
+    (`SurgeSynthesizer::halfbandA/B` -> `HalfRateFilter::process_block_D2`),
+    what `model/voice/run_model.py` models and `rtl/voice/tb_voice.sv`
+    implements, and -- since the #180 SXT-017 contract revision
+    (`decision-records/0018-wavetable-scene-decimation-placement.md`) -- what
+    the frozen SXT-026 model does too.
+
+The filter is linear, so the two topologies differ only by
 
   * fixed-point rounding (one rounding of a sum vs a sum of roundings),
   * where the +/-8 `sceneout` clip falls (per slice vs once on the sum),
@@ -16,13 +25,21 @@ topologies differ only by
   * STATE LIFETIME: a slice's filter state -- and its ring-out -- is discarded
     when the voice dies, where the engine's scene filter keeps ringing.
 
-This tool measures that difference on the nine committed SXT-026 fixtures.
+WHICH LEG IS FROZEN CHANGED WITH #180, THE NUMBERS DID NOT. |legA - legB| is
+symmetric, so re-running this tool after the revision reproduces the #176
+numbers exactly; that reproduction is the check that the landed topology is the
+one that was measured before the decision was taken. What moved is which leg is
+gated against `run_model.py`:
 
-WHAT THIS IS NOT. Both legs are the frozen model; no reference render is read
+  before #180: leg A (per slice) was the frozen model; leg B was the proposal.
+  since  #180: leg B (per scene) is the frozen model; leg A is a LEGACY
+               re-implementation of the retired placement, kept here so the
+               delta stays re-measurable -- the same device
+               `tools/halfband_legacy_render.py` uses for #123 attribution.
+
+WHAT THIS IS NOT. Both legs are model arithmetic; no reference render is read
 and no pinned engine is executed. Nothing here is a fidelity, preset-support,
-RTL-vs-model, or musical-quality claim, and no budget is graded. It is a
-model-vs-model delta, recorded for the SXT-017 / #12 decision about where the
-stage belongs.
+RTL-vs-model, or musical-quality claim, and no budget is graded.
 
 HOW THE TWO LEGS STAY COMPARABLE. Both legs are driven from ONE render: the
 oscillator / AEG / scene-gain stage upstream of the decimator is identical in
@@ -31,14 +48,14 @@ fed to both legs. Voice creation and voice death therefore happen at exactly
 the same blocks in both legs, and every measured difference is attributable to
 the decimation stage alone.
 
-  leg A (per slice, = the committed frozen model):
-      Slice.decimate_scene(scene)  per slice, then sum -> +/-8 clip -> +/-1
-      clip -> int16                                    [run_model.py:198-202]
-  leg B (per scene, = pinned engine / voice-leaf topology):
-      sum(scene) -> +/-8 clip -> ONE scene HalfbandD2 -> master -> +/-8 clip
-      -> +/-1 clip -> int16                     [model/voice/run_model.py:265-279]
+  leg A (per slice, LEGACY -- retired by #180):
+      `LegacyPerSliceStage` per slice, then sum -> +/-8 clip -> +/-1
+      clip -> int16                     [pre-#180 run_model.py:198-202]
+  leg B (per scene, = the frozen model and the pinned engine's placement):
+      `wt_model.SceneDecimator` on the summed unclipped 96 kHz scene
+                                              [run_model.py, #180 onward]
 
-Leg A is verified byte-identical to `run_model.py`'s own render of the same
+Leg B is verified byte-identical to `run_model.py`'s own render of the same
 case (fail-closed, `--verify-runner`, on by default), so the recorded numbers
 cannot come from a drifted re-implementation of the frozen leg.
 
@@ -52,7 +69,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import subprocess
@@ -64,7 +80,9 @@ import numpy as np
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "wavetable"))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
+import oracle_common as oc  # noqa: E402
 import voice_model as vm  # noqa: E402
 import wt_model as wm  # noqa: E402
 
@@ -110,12 +128,43 @@ def to_int16(m):
     return (m * 32767) >> FQ if m >= 0 else -((-m * 32767) >> FQ)
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+def sha256_of_i16(samples, tmpdir):
+    """sha256 of a leg's WAV render (recorded for both legs; the FROZEN leg's
+    is additionally gated against run_model.py by verify_runner)."""
+    p = os.path.join(tmpdir, "leg.wav")
+    wm.write_wav16(p, samples)
+    return oc.sha256_file(p)
+
+
+class LegacyPerSliceStage:
+    """The PRE-#180 per-slice decimator + master stage, verbatim.
+
+    Reproduces `wt_model.Slice.decimate_scene()` as it stood before the #180
+    SXT-017 contract revision moved the stage out to `SceneDecimator`: one
+    `HalfbandD2` per voice slice, the +/-8 clip applied to that slice's own
+    contribution, and the master gain and its clips inside the slice. One
+    instance per slice, created and discarded with the slice, so its filter
+    state dies with the voice exactly as the retired placement's did.
+
+    It is a LEGACY re-implementation, kept only so the retired placement stays
+    measurable (`tools/halfband_legacy_render.py` does the same for the
+    pre-#123 halfband ordering). It is not the frozen model and must never be
+    presented as one.
+    """
+
+    def __init__(self, inp):
+        self.master = vm.db_to_linear(vm.qint(inp.master_db))
+        self.halfband = vm.HalfbandD2()
+
+    def process_block(self, scene):
+        scene = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in scene]
+        bl = self.halfband.process(scene)
+        mono = []
+        for k in range(BLOCK_SIZE):
+            l = vm.qmul(bl[k], self.master)
+            l = vm.limit_i(l, vm.qint(-8.0), vm.qint(8.0))
+            mono.append(vm.limit_i(l, -wm.ONE, wm.ONE))
+        return mono
 
 
 def render_both(inputs_path, seq_path, max_blocks=None):
@@ -132,8 +181,8 @@ def render_both(inputs_path, seq_path, max_blocks=None):
     if max_blocks:
         total_blocks = min(total_blocks, max_blocks)
 
-    master = vm.db_to_linear(vm.qint(inp.master_db))
-    scene_halfband = vm.HalfbandD2()        # ONE per scene (leg B)
+    scene_stage = wm.SceneDecimator(inp)    # ONE per scene (leg B, frozen)
+    legacy_stages = {}                      # id(slice) -> LegacyPerSliceStage
 
     voices = []
     events = list(seq["events"])
@@ -153,6 +202,10 @@ def render_both(inputs_path, seq_path, max_blocks=None):
                             if all(v.slot != i for v in voices))
                 v = wm.Slice(inp, e["note"], e.get("velocity", 100))
                 v.slot = slot
+                # the legacy per-slice stage is created WITH the slice and
+                # discarded with it: that is the state-lifetime half of the
+                # difference being measured
+                legacy_stages[id(v)] = LegacyPerSliceStage(inp)
                 voices.append(v)
                 created.append(slot)
             elif e["type"] == "note_off":
@@ -170,8 +223,8 @@ def render_both(inputs_path, seq_path, max_blocks=None):
         for v in voices:
             # ONE shared upstream pass: identical in both topologies
             scene, _osout, keep = v.scene_block(b)
-            # leg A: the frozen model's own per-slice stage
-            mono = v.decimate_scene(scene)
+            # leg A: the retired per-slice stage
+            mono = legacy_stages[id(v)].process_block(scene)
             for k in range(BLOCK_SIZE):
                 mono_a[k] += mono[k]
             # leg B: accumulate the UNCLIPPED per-slice scene contribution
@@ -182,27 +235,23 @@ def render_both(inputs_path, seq_path, max_blocks=None):
             else:
                 death_blocks.append(b)
                 last_death_block = b
+                legacy_stages.pop(id(v), None)   # the slice's filter dies too
         voices = alive
 
-        # leg A tail: run_model.py:198-202 (sum -> +/-8 clip -> +/-1 -> int16)
+        # leg A tail: pre-#180 run_model.py:198-202
+        # (sum -> +/-8 clip -> +/-1 -> int16)
         mono_a = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in mono_a]
         for k in range(BLOCK_SIZE):
             a_q21.append(vm.limit_i(mono_a[k], -wm.ONE, wm.ONE))
             a_i16.append(to_int16(mono_a[k]))
 
-        # leg B tail: the voice leaf's scene stage
-        # (model/voice/run_model.py:265-279). NOTE the scene decimator runs on
-        # EVERY block, including blocks with no live voice -- that ring-out is
-        # the state-lifetime half of the difference.
-        scene_sum = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0))
-                     for x in scene_sum]
-        bl = scene_halfband.process(scene_sum)
-        for k in range(BLOCK_SIZE):
-            l = vm.qmul(bl[k], master)
-            l = vm.limit_i(l, vm.qint(-8.0), vm.qint(8.0))
-            m = vm.limit_i(l, -wm.ONE, wm.ONE)
+        # leg B tail: the frozen per-scene stage (`wt_model.SceneDecimator`,
+        # the same statement order as model/voice/run_model.py:265-279). NOTE
+        # it runs on EVERY block, including blocks with no live voice -- that
+        # ring-out is the state-lifetime half of the difference.
+        for m in scene_stage.process_block(scene_sum):
             b_q21.append(m)
-            b_i16.append(to_int16(l))
+            b_i16.append(to_int16(m))
 
     return {
         "blocks": total_blocks,
@@ -289,22 +338,27 @@ def failure_control(cases):
     }
 
 
-def verify_runner(inputs_path, seq, a_i16, tmpdir):
-    """Fail-closed: leg A must be byte-identical to run_model.py's render."""
+def verify_runner(inputs_path, seq, b_i16, tmpdir):
+    """Fail-closed: leg B must be byte-identical to run_model.py's render.
+
+    Leg B is the frozen model since the #180 contract revision; before it the
+    gate guarded leg A. The gate always guards whichever leg claims to BE the
+    frozen model, so the recorded numbers can never come from a drifted
+    re-implementation of it."""
     out_dir = os.path.join(tmpdir, "runner")
     cmd = [sys.executable, RUNNER, "--inputs", inputs_path,
            "--sequence", seq, "--out-dir", out_dir]
     p = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True)
     if p.returncode != 0:
         raise RuntimeError("run_model.py refused: %s" % p.stderr[-2000:])
-    mine = os.path.join(tmpdir, "leg_a.wav")
-    wm.write_wav16(mine, a_i16)
+    mine = os.path.join(tmpdir, "leg_b.wav")
+    wm.write_wav16(mine, b_i16)
     ref = os.path.join(out_dir, "model.wav")
-    got, want = sha256_file(mine), sha256_file(ref)
+    got, want = oc.sha256_file(mine), oc.sha256_file(ref)
     if got != want:
         raise RuntimeError(
-            "ABORT: leg A is not the committed frozen model's render "
-            "(%s: leg A %s != run_model.py %s)" % (seq, got, want))
+            "ABORT: leg B is not the frozen model's render "
+            "(%s: leg B %s != run_model.py %s)" % (seq, got, want))
     return want
 
 
@@ -335,12 +389,13 @@ def main():
         m = metrics_for(r)
         entry = {"inputs": os.path.relpath(inputs_path, REPO),
                  "sequence": seq, "case": "%s / %s" % (name, seq)}
+        entry["leg_a_render_sha256"] = sha256_of_i16(r["a_i16"], tmpdir)
         if args.no_verify_runner:
-            entry["leg_a_runner_equality"] = "NOT_RUN (--no-verify-runner)"
+            entry["frozen_leg_runner_equality"] = "NOT_RUN (--no-verify-runner)"
         else:
-            entry["leg_a_runner_equality"] = "PASS (byte-identical)"
-            entry["leg_a_render_sha256"] = verify_runner(
-                inputs_path, seq, r["a_i16"], tmpdir)
+            entry["frozen_leg_runner_equality"] = "PASS (byte-identical)"
+            entry["leg_b_render_sha256"] = verify_runner(
+                inputs_path, seq, r["b_i16"], tmpdir)
         entry.update(m)
         out_cases.append(entry)
         if args.wav_dir:
@@ -360,8 +415,19 @@ def main():
     control_ok = control["verdict"] == "PASS"
 
     doc = {
-        "format": "sxt-026-decimation-stage-measurement/1",
+        # /2: the frozen leg swapped from A (per slice) to B (per scene) with
+        # the #180 SXT-017 contract revision; the metrics are unchanged and
+        # re-run to the same numbers, and both legs now carry a render sha256.
+        "format": "sxt-026-decimation-stage-measurement/2",
         "issue": 176,
+        "reissue": 180,
+        "frozen_leg": ("b (per scene) -- since the #180 contract revision "
+                       "(decision-records/0018-wavetable-scene-decimation-"
+                       "placement.md). Before it, leg a (per slice) was the "
+                       "frozen model and leg b was the proposal. |a-b| is "
+                       "symmetric, so these numbers are the #176 numbers "
+                       "re-run after the move: that reproduction is the check "
+                       "that the landed topology is the measured one."),
         "leaf": "SXT-026 osc:Wavetable (#19)",
         "generated_by": "tools/measure_wt_decimation_stage.py",
         "engine_pin": ("surge-synthesizer/surge@"
@@ -382,21 +448,26 @@ def main():
                             "reruns produce identical numbers"),
         },
         "claim_scope": (
-            "MODEL-vs-MODEL ONLY. Both legs are the frozen SXT-026 wavetable "
-            "model; no reference render is read and no pinned engine is "
-            "executed. This establishes no fidelity, preset-support, "
-            "RTL-vs-model, or musical-quality claim, and grades no budget."),
-        "leg_a": ("per-slice decimation: one voice_model.HalfbandD2 per "
-                  "wt_model.Slice, slices summed after decimation "
-                  "(model/oscillators/wavetable/run_model.py) -- the frozen "
-                  "model as committed"),
+            "MODEL-vs-MODEL ONLY. Both legs are SXT-026 wavetable model "
+            "arithmetic (leg b is the frozen model, leg a a legacy "
+            "re-implementation of the retired placement); no reference render "
+            "is read and no pinned engine is executed. This establishes no "
+            "fidelity, preset-support, RTL-vs-model, or musical-quality "
+            "claim, and grades no budget."),
+        "leg_a": ("per-slice decimation: one voice_model.HalfbandD2 per voice "
+                  "slice, slices summed after decimation -- the RETIRED "
+                  "placement (pre-#180 wt_model.Slice.decimate_scene), kept "
+                  "here as the LEGACY re-implementation "
+                  "measure_wt_decimation_stage.LegacyPerSliceStage so the "
+                  "delta stays re-measurable. Not the frozen model."),
         "leg_b": ("per-scene decimation: unclipped per-slice scene "
                   "contributions summed at 96 kHz, one +/-8 clip, ONE "
                   "HalfbandD2 for the whole scene (persisting across voice "
                   "death), then master and clips -- the pinned engine's "
                   "SurgeSynthesizer::halfbandA/B placement, as modelled by "
-                  "model/voice/run_model.py and implemented by "
-                  "rtl/voice/tb_voice.sv"),
+                  "model/voice/run_model.py, implemented by "
+                  "rtl/voice/tb_voice.sv, and -- since #180 -- by "
+                  "wt_model.SceneDecimator: THE FROZEN MODEL."),
         "shared_upstream": (
             "both legs consume ONE Slice.scene_block() pass per block, so "
             "voice creation/death blocks are identical and every difference "

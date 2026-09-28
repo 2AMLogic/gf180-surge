@@ -70,6 +70,30 @@ def read(path):
         return f.read()
 
 
+def rtl_files_containing_the_cascade():
+    """Every rtl/ file that actually carries the shared decimator's cascade.
+
+    Derived by scanning the tree, NOT from the harness's own list, so a new RTL
+    copy (as #180's per-scene wavetable stage was) fails this module instead of
+    being silently left out of the exactness check.
+
+    `*mutant*.sv` files are excluded on purpose: they are each leaf's declared
+    single-mutation negative controls, which MUST disagree with the model. They
+    are not copies under test, and asserting exactness on them would invert the
+    control.
+    """
+    found = []
+    for root, _dirs, names in os.walk(os.path.join(REPO, "rtl")):
+        for n in names:
+            if not n.endswith(".sv") or "mutant" in n:
+                continue
+            p = os.path.join(root, n)
+            t = read(p)
+            if "task automatic decimate_and_output" in t and "hby2_b" in t:
+                found.append(os.path.relpath(p, REPO))
+    return found
+
+
 def flat(path):
     return " ".join(read(path).split())
 
@@ -259,9 +283,13 @@ def test_committed_artifact_records_the_rtl_check_as_exact():
     assert "rtl_leg" in a, "the committed artifact has no RTL leg"
     leg = a["rtl_leg"]
     assert leg["verdict"] == "PASS"
-    assert leg["cascade_text_identical_across_copies"] is True
+    assert leg["cascade_text_identical_within_each_dialect"] is True
     files = {c["file"] for c in leg["copies"]}
-    assert files == set(M.RTL_COPIES)
+    assert files == {s["file"] for s in M.RTL_COPIES}
+    # #180 added a FOURTH copy (the wavetable per-scene stage); the harness must
+    # keep covering every .sv file that actually contains the cascade, not the
+    # three #181's body happened to name.
+    assert files == set(rtl_files_containing_the_cascade()), sorted(files)
     for c in leg["copies"]:
         assert c["verdict"] == "PASS", c["file"]
         assert c["settled_region_samples_compared"] > 0, c["file"]
@@ -282,6 +310,10 @@ def test_committed_artifact_records_each_leafs_ring_out_window():
     for row in a["leaf_legs"]:
         assert row["status"] in ("MEASURED", "NOT_RUN"), row
         if row["status"] != "MEASURED":
+            # a leg that could not run answers nothing -- it must say what it
+            # needed, and must NOT carry a window answer
+            assert row.get("needs") or row.get("stderr"), row["leaf"]
+            assert row["ring_out_inside_committed_comparator_window"] is None
             continue
         leaf = row["leaf"]
         assert row["blocks_after_last_voice_death"] > 0, leaf
@@ -354,8 +386,10 @@ def test_rtl_copies_reproduce_the_settled_amplitude_exactly():
     cases = small_sweep_cases()
     sweep = M.run_sweep(cases)
     leg = M.rtl_leg(cases, sweep, "/tmp/hblc-test-rtl")
-    assert leg["cascade_text_identical_across_copies"] is True, \
-        "the three RTL copies' cascade text has diverged"
+    assert leg["cascade_text_identical_within_each_dialect"] is True, \
+        "an RTL copy's cascade text has diverged from its dialect's siblings"
+    assert {c["file"] for c in leg["copies"]} \
+        == set(rtl_files_containing_the_cascade())
     for c in leg["copies"]:
         assert c["settled_region_samples_compared"] > 0, c["file"]
         assert c["settled_region_mismatching_samples"] == 0, c["file"]

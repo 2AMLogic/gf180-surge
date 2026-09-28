@@ -51,6 +51,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "tools"))
+sys.path.insert(0, str(REPO_ROOT / "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 DEFAULT_CENSUS_CSV = REPO_ROOT / "corpus" / "census-v0.1" / "results" / "per-preset.csv"
 DEFAULT_SESSIONS_DIR = REPO_ROOT / "decisions" / "listening-sessions"
@@ -77,14 +80,6 @@ CLAIM_SCOPE = (
 
 class Refuse(Exception):
     pass
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def git_blob_sha1(path):
@@ -271,7 +266,7 @@ def stim_record(kind, path, level_treatment):
     return {
         "kind": kind,
         "path": str(path),
-        "sha256": sha256_file(path),
+        "sha256": oc.sha256_file(path),
         "level_treatment": level_treatment,
     }
 
@@ -490,13 +485,13 @@ def run_session(args):
         "slate": {
             "artifact": slate["artifact"],
             "path": str(Path(args.slate).resolve()),
-            "sha256": sha256_file(args.slate),
+            "sha256": oc.sha256_file(args.slate),
             "profile": (slate.get("profile") or {}).get("name"),
         },
         "comparison": compare_label,
         "harness": {
             "tool": "tools/listening_session.py",
-            "tool_sha256": sha256_file(Path(__file__).resolve()),
+            "tool_sha256": oc.sha256_file(Path(__file__).resolve()),
             "repo_commit": subprocess.run(
                 ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT,
                 capture_output=True, text=True).stdout.strip(),

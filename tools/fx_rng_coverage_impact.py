@@ -30,13 +30,15 @@ Original to this repository (Apache-2.0); Python standard library only.
 """
 
 import argparse
-import hashlib
 import json
 import sys
 from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 GRAPHS = "corpus/normalized/graphs.jsonl"
 CHARACTERIZATION = "reports/SXT-028-rng/artifacts/rng-characterization.json"
@@ -52,14 +54,6 @@ CORPUS_TOTAL = 3561
 
 class Refuse(Exception):
     pass
-
-
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def slot_is_affected(entry: dict, fx: dict) -> tuple:
@@ -200,9 +194,9 @@ def run(repo: Path, out_rel: str) -> int:
             "never re-labelled 'out of scope'."
         ),
         "inputs": {
-            GRAPHS: sha256_file(graphs_path),
-            CHARACTERIZATION: sha256_file(ch_path),
-            **{rel: sha256_file(repo / rel) for rel in SLATES},
+            GRAPHS: oc.sha256_file(graphs_path),
+            CHARACTERIZATION: oc.sha256_file(ch_path),
+            **{rel: oc.sha256_file(repo / rel) for rel in SLATES},
         },
         "counting_rule": (
             "An effect instance counts only when its slot is ON and NOT in "

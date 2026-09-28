@@ -1,7 +1,12 @@
-# Tooling record — `compare_wt_rtl_model.py` stimulus-load reporting (issue #188)
+# Tooling record — `compare_wt_rtl_model.py` stimulus-load reporting (issues #188, #194)
 
 Branch: `feature/issue-188` · Issue: #188 (tooling; the remainder #182/#190
 deliberately scoped out) · Base: `577eea9` · Date: 2026-09-27
+
+Extended 2026-09-28 on branch `feature/issue-194` (base `8d44463`) with the
+truncated-stimulus mechanism #188 deliberately left as a bounded finding —
+see **"Truncated stimulus (issue #194)"** below. The #188 sections are left
+exactly as they were written; nothing in them is re-graded.
 
 **Claim discipline.** This record is about a *harness reporting path* and
 nothing else. It makes **no** RTL-exactness, model-vs-reference, coverage, or
@@ -132,11 +137,96 @@ and the baseline needed to decide the question (which warnings a healthy
 pinned-tree run emits) needs the external asset tree, absent here. Filed as
 **#194** rather than guessed at; see §8 of the transcript.
 
+> **Resolved 2026-09-28 (#194)** — the baseline was measured on a host that
+> does have the pinned tree, and it confirms this section's reasoning was
+> right to refuse a matcher: **all five** memories emit the warning on a
+> genuinely PASSING run. The detection mechanism is therefore a content-level
+> pre-flight check, not a matcher. See the section below.
+
+## Truncated stimulus (issue #194)
+
+Date: 2026-09-28 · Branch: `feature/issue-194` · Base: `8d44463` ·
+Transcript: `artifacts/healthy-run-warning-baseline.txt` ·
+Pinned asset tree: **present** on the executing host
+(`ORACLE_SURGE_DATA=/home/ubuntu/scratch/sxt026-oracle/resources/data`;
+both wavetable assets hash-match the fixtures' declared `wt_sha256`, and the
+tree's `wavetables/` subset is enough for steps 6-7 of
+`tools/run_sxt026_checks.py` but **not** for its oracle-render steps 1-5,
+which stay NOT_RUN).
+
+### The measurement the issue is gated on (§1 of the transcript)
+
+A genuinely PASSING exactness run (`kick-wtfix-kt` /
+`seq-wt-pitch-extremes-hi-v1`, 4125 blocks, `verdict=PASS comparison=PASS
+mismatches=0`, Icarus 13.0) emits **one `$readmemh(<file>): Not enough words
+in the file for the requested range [...]` WARNING per call site — all five of
+them**:
+
+| call site | memory | TB declares | file holds | warns on a PASSING run? |
+|---|---|---|---|---|
+| `tb_wavetable.sv:277` | `init_mem` | 64 | 40 | YES |
+| `:279` | `ctrl_mem` | 262144 | 34878 | YES |
+| `:280` | `wt_mem` | 131072 | 32736 | YES |
+| `:281` | `sinc_tmp` (main) | 6144 | 3084 | YES |
+| `:288` | `sinc_tmp` (deriv) | 6144 | 3072 | YES |
+
+No subset of that text distinguishes a healthy run from a truncated one, at
+any threshold: the warning fires in the healthy case for the *same* reason as
+in the truncated case (the testbench's memory declarations are far larger than
+any real stimulus). **Decision recorded: a stdout matcher is rejected, not
+deferred.**
+
+### The mechanism
+
+A **content-level pre-flight check** (mechanism 5), beside the existence check
+#188 added and before the simulator is invoked: each stimulus file's actual
+hex-word count against the count the **model side** declares in the new
+`rtl/stimulus_index.json`, which `model/oscillators/wavetable/run_model.py
+--rtl` now writes beside the files it generates (word counts returned by
+`write_hex`). The model knows each file's length by construction; the
+testbench cannot supply it. A mismatch is a `sim_fails` entry naming that file
+with both counts, and sets `comparison: NOT_RUN` like every other
+simulator-level mechanism. The stimulus bytes are unchanged — the index is
+purely additive (md5-verified, transcript §4).
+
+A run dir with no usable index (tooling older than #194) is reported as
+`stimulus_lengths.status: NOT_RUN` with the reason, **never** as a pass and
+never as a failure: failing it closed would flip healthy runs to FAIL, the
+exact outcome this issue forbids. Coverage is reported separately from
+agreement — `stimulus_lengths.words` carries the measured and declared count
+for every file either way.
+
+### Verification
+
+| Check | Status | Where |
+|---|---|---|
+| **Healthy-run baseline measured** on the live pinned tree, per memory | PASS | §1 (all 5 memories warn on a `verdict=PASS` 4125-block run) |
+| Failure control: truncate exactly one file ⇒ `sim_fails` names `rtl/wt_table.hex` with both counts, `comparison: NOT_RUN`, simulator never invoked | PASS | §3 (half-file, 16368/32736) and §3 (32-word, 32704/32736) |
+| **Known-good control**: the same untouched run dir still verdicts PASS with `sim_fails == []` and `stimulus_lengths: PASS`, identical `checked` counters to the pre-fix baseline | PASS | §4 |
+| Pre-fix behavior on the same truncated dirs (the defect) | reproduced | §2 — half-file: `ValueError: invalid literal for int()` in `parse_traces`, **no verdict JSON**; 32-word: **verdict PASS**, file named nowhere |
+| Regression: RTL mip-mutant negative control still fails the COMPARISON (not NOT_RUN) | PASS | §4 (`mismatches=68`, harness rc=0) |
+| Automated controls | PASS | `tests/test_sxt026_wt_rtl_harness.py` — 16 controls; **5 fail against the pre-fix harness**, the 11 pre-existing #182/#188 controls still pass (§5) |
+| Full repository suite | PASS | `python3 -m pytest -q tests` — 799 passed, 17 skipped |
+| Re-grade of `reports/sxt-026/artifacts/rtl-exactness.txt` | **NOT_RUN** | §6 — not regenerated by this change; §1/§4's run is fresh evidence about the harness, not a new exactness claim |
+
+### Bounded finding, not fixed here
+
+The 32-word control (§2b) shows a truncated stimulus file could produce a
+**passing** exactness transcript under the pre-fix harness, and that a pre-#194
+verdict records no stimulus length at all — so the *format* of a committed
+pre-#194 PASS transcript cannot by itself rule that out. This does **not**
+show that `reports/sxt-026/artifacts/rtl-exactness.txt` was so produced: the
+run regenerated from the pinned tree here has complete stimulus and PASSES.
+The remaining narrow gap — `rtl-exactness.txt` carries only the fields step 6
+of `tools/run_sxt026_checks.py` writes, not the new `stimulus_lengths` status —
+is filed as its own issue rather than fixed in this change.
+
 ## Artifacts
 
 | File | Content |
 |---|---|
 | `artifacts/stimulus-load-control.txt` | the real-toolchain before/after controls (missing file, unreadable file, healthy load), the two exception controls, the version measurement, the automated-suite result including its 10/11 failure against the pre-fix harness, the NOT_RUN record for the committed fixture, and the truncation finding |
+| `artifacts/healthy-run-warning-baseline.txt` | #194: the pinned-asset-tree usability check, the per-memory healthy-run `$readmemh` warning inventory from a PASSING 4125-block run, the two pre-fix truncation reproductions (traceback / false PASS), the fixed-harness positive control, the known-good PASS re-run, the mutant re-run, and the automated-suite result including its 5/16 failure against the pre-fix harness |
 
 The scratch run directory (`/tmp/wt188-control`: synthetic `model_trace.json`,
 empty hex stimulus, compiled `tb_wt.vvp`) and the pre-fix harness copy

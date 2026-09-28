@@ -32,10 +32,14 @@ tool exit non-zero.
 WHAT THIS IS NOT. This is a property of the frozen fixed-point model, measured
 on the frozen model. No reference render is read, no pinned engine is executed,
 no budget is graded, and nothing here is a fidelity, preset-support or
-musical-quality claim. The pinned float kernel has no limit cycle at all (see
-`reports/halfband-branch-order/` and `tools/halfband_d2_ordering_probe.py`);
-that difference is a word-length consequence of the Q10.21 freeze, and the
-size of it is exactly what is measured here.
+musical-quality claim. In particular NO claim is made about whether the PINNED
+float32 kernel has a dead band of its own: that needs the external oracle host
+and is reported NOT_RUN. What the `contrast` leg below does show is that the
+SAME recursion with the SAME quoted coefficients in float64 decays away, i.e.
+the dead band measured here is a word-length consequence of the Q10.21 freeze
+rather than a property of the recursion. (The existing pinned-kernel harness in
+`reports/halfband-branch-order/` measured branch ORDERING, not zero-input
+settling; it is not evidence about this.)
 
 DECLARED INPUT RANGE. Every consumer of the shared decimator clips its input
 to +/-8.0 (the engine's `sceneout` hard clip) immediately before the decimator
@@ -60,19 +64,27 @@ LEGS
             oracle host (`oracle/sxt022/build_halfband_probe.sh`), and when
             that is unavailable the pinned-kernel comparison is NOT_RUN, not
             assumed.
-  rtl       (--rtl) the three RTL copies of the decimator
+  rtl       (--rtl) EVERY RTL copy of the decimator is checked, not assumed,
+            to reproduce the same settled amplitude. There are FOUR
             (`rtl/voice/tb_voice.sv`, `rtl/oscillators/classic/tb_classic.sv`,
-            `rtl/oscillators/sine/tb_sine.sv`) are checked, not assumed, to
-            reproduce the same settled amplitude: their cascade text is
-            extracted VERBATIM, compared across the three files, spliced into a
-            generated probe testbench together with tb_voice.sv's own verbatim
-            `qmul`/`qround1`, run under iverilog, and compared to the model
+            `rtl/oscillators/sine/tb_sine.sv`, and -- since the #180 contract
+            revision moved the wavetable decimator to a per-scene stage --
+            `rtl/oscillators/wavetable/tb_wavetable.sv`, which is a different
+            dialect). Each copy's cascade loop, reconstruction assignment and
+            arithmetic helpers are extracted VERBATIM, spliced into a generated
+            probe, run under iverilog, and compared to the model
             sample-for-sample over the whole run INCLUDING the settled tail.
-  leaves    (--leaves) in situ: for each affected leaf, whether the region
-            after the last voice dies is inside the leaf's committed
-            RTL-vs-model compared window, and whether a live limit cycle is
-            present there. `--leaf-rtl` additionally runs each leaf's own
-            committed comparator (needs iverilog; ~30 s per leaf).
+            tests/test_halfband_limit_cycle.py asserts this list against a scan
+            of rtl/, so a fifth copy cannot be silently left out.
+  leaves    (--leaves) in situ: for each affected leaf, whether a live limit
+            cycle is present at that leaf's own 48 kHz output after its last
+            voice dies. `--leaf-rtl` additionally runs each leaf's OWN
+            committed comparator (needs iverilog) and answers the
+            "is the ring-out inside the compared window?" question from that
+            comparator's reported mono-sample count rather than by assumption.
+            A leaf whose runner cannot run here (the wavetable leaf needs the
+            external pinned asset root) is reported NOT_RUN with its reason and
+            carries no window answer -- never an implied pass.
 
 Usage:
   python3 tools/measure_halfband_limit_cycle.py \\
@@ -452,15 +464,71 @@ def failure_control(sweep_rows, control_rows):
 # assumed, to reproduce the same settled amplitude. Re-typing the cascade into
 # a hand-written probe would check the re-typing, so instead the cascade text
 # is lifted VERBATIM out of each RTL copy's own `decimate_and_output` task and
-# spliced into a generated probe together with that file's own `qmul`,
-# `qround1`/inline round and `clamp8`. The single substitution is the
-# coefficient window each file reads out of its own `cfg` array.
+# spliced into a generated probe together with that file's own multiply, clip
+# and round functions. The single substitution is the coefficient window each
+# file reads out of its own control-word array.
+#
+# There are FOUR copies, not the three #181's body names: the #180 contract
+# revision (decision-records/0018) moved the wavetable leaf's decimator to a
+# per-scene stage and implemented it in rtl/oscillators/wavetable/
+# tb_wavetable.sv. That copy is a different dialect -- 64-bit allpass state,
+# `iw[]` coefficients, Verilog-2001 loop style, its own q21/qround_s/clamp8_64
+# -- so each copy carries a spec naming the patterns to lift and which probe
+# scaffold to splice them into. The spliced TEXT is still verbatim; only the
+# declarations around it are generated.
 
 RTL_COPIES = [
-    "rtl/voice/tb_voice.sv",
-    "rtl/oscillators/classic/tb_classic.sv",
-    "rtl/oscillators/sine/tb_sine.sv",
+    {
+        "file": "rtl/voice/tb_voice.sv",
+        "dialect": "cfg32",
+        "loop_re": r"^[ \t]*for \(k = 0; k < BLOCK_OS; k\+\+\) begin$",
+        "coeff_re": r"32'\(cfg\[(\d+)\+i\]\)",
+        "coeff_fmt": "32'(cfg[%d+i])",
+        "recon_re": r"^[ \t]*bl = .*;$",
+        "funcs": ("qmul", "clamp8", "qround1"),
+        "required_funcs": ("qmul",),
+    },
+    {
+        "file": "rtl/oscillators/classic/tb_classic.sv",
+        "dialect": "cfg32",
+        "loop_re": r"^[ \t]*for \(k = 0; k < BLOCK_OS; k\+\+\) begin$",
+        "coeff_re": r"32'\(cfg\[(\d+)\+i\]\)",
+        "coeff_fmt": "32'(cfg[%d+i])",
+        "recon_re": r"^[ \t]*bl = .*;$",
+        "funcs": ("qmul", "clamp8", "qround1"),
+        "required_funcs": ("qmul", "clamp8"),
+    },
+    {
+        "file": "rtl/oscillators/sine/tb_sine.sv",
+        "dialect": "cfg32",
+        "loop_re": r"^[ \t]*for \(k = 0; k < BLOCK_OS; k\+\+\) begin$",
+        "coeff_re": r"32'\(cfg\[(\d+)\+i\]\)",
+        "coeff_fmt": "32'(cfg[%d+i])",
+        "recon_re": r"^[ \t]*bl = .*;$",
+        "funcs": ("qmul", "clamp8", "qround1"),
+        "required_funcs": ("qmul", "clamp8"),
+    },
+    {
+        # #180 / decision-records/0018: the wavetable leaf's per-scene stage.
+        "file": "rtl/oscillators/wavetable/tb_wavetable.sv",
+        "dialect": "iw64",
+        "loop_re": r"^[ \t]*for \(hk = 0; hk < BLOCK_OS; hk = hk \+ 1\) begin$",
+        "coeff_re": r"iw\[(\d+) \+ hi\]",
+        "coeff_fmt": "iw[%d + hi]",
+        # the file's reconstruction sits inside a `ifdef WT_SCENE_MUTANT_HB_ORDER
+        # / `else pair; lift the NON-mutant branch (chain_b at the even sample),
+        # which is what the committed build compiles.
+        "recon_re": r"^[ \t]*bl = qround_s\(chain_b\[2\*hk\].*;$",
+        "funcs": ("q21", "qround_s", "clamp8_64"),
+        "required_funcs": ("q21", "qround_s", "clamp8_64"),
+        "localparams": ("Q_EIGHT",),
+    },
 ]
+
+
+def _sha(text):
+    import hashlib
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def _balanced_block(text, start):
@@ -478,16 +546,16 @@ def _balanced_block(text, start):
             return text[start:text.index("\n", i) + 1]
 
 
-def extract_decimator(rel):
-    """Extract one RTL copy's decimator text verbatim.
+def extract_decimator(spec):
+    """Extract one RTL copy's decimator text verbatim, per its own spec.
 
-    Returns a dict with the verbatim cascade loop (the outer
-    `for (k = 0; k < BLOCK_OS; k++) begin … end` that feeds `scene_l` through
-    both 6-stage allpass chains into `chainb`/`chaina`), the verbatim
-    reconstruction assignment (`bl = …;`), and a normalized cascade in which
-    the file's own `cfg` coefficient window is replaced by `HB_B[i]`/`HB_A[i]`
-    so the three copies can be compared as text.
+    Returns a dict with the verbatim cascade loop (the outer per-input-sample
+    loop that feeds the scene block through both 6-stage allpass chains), the
+    verbatim reconstruction assignment, and a normalized cascade in which the
+    file's own coefficient window is replaced by `HB_B[·]`/`HB_A[·]` so copies
+    within one dialect can be compared as text.
     """
+    rel = spec["file"]
     path = os.path.join(REPO, rel)
     text = open(path, encoding="utf-8").read()
     if "task automatic decimate_and_output" not in text:
@@ -495,48 +563,63 @@ def extract_decimator(rel):
     task = text.split("task automatic decimate_and_output", 1)[1]
     task = task[:task.index("endtask")]
 
-    m = re.search(r"^[ \t]*for \(k = 0; k < BLOCK_OS; k\+\+\) begin$", task,
-                  re.M)
+    m = re.search(spec["loop_re"], task, re.M)
     if not m:
         raise SystemExit("%s: no BLOCK_OS cascade loop" % rel)
     cascade = _balanced_block(task, m.start())
-    if "i < 6" not in cascade:
+    if not re.search(r"(i|hi) (<|=) ?[^;]*6", cascade):
         raise SystemExit("%s: cascade loop has no 6-stage chain" % rel)
 
-    bases = sorted({int(x) for x in re.findall(r"cfg\[(\d+)\+i\]", cascade)})
+    bases = sorted({int(x) for x in re.findall(spec["coeff_re"], cascade)})
     if len(bases) != 2 or bases[1] - bases[0] != 6:
         raise SystemExit("%s: unexpected coefficient window %r" % (rel, bases))
-    norm = cascade.replace("32'(cfg[%d+i])" % bases[0], "HB_B[i]", 1)
-    norm = norm.replace("32'(cfg[%d+i])" % bases[1], "HB_A[i]", 1)
-    if "cfg[" in norm:
-        raise SystemExit("%s: cfg reference left in normalized cascade" % rel)
+    idx = "hi" if spec["dialect"] == "iw64" else "i"
+    norm = cascade.replace(spec["coeff_fmt"] % bases[0], "HB_B[%s]" % idx, 1)
+    norm = norm.replace(spec["coeff_fmt"] % bases[1], "HB_A[%s]" % idx, 1)
+    if re.search(spec["coeff_re"], norm):
+        raise SystemExit("%s: coefficient reference left in normalized cascade"
+                         % rel)
 
-    r = re.search(r"^[ \t]*bl = .*;$", task, re.M)
+    r = re.search(spec["recon_re"], task, re.M)
     if not r:
         raise SystemExit("%s: no reconstruction assignment" % rel)
     recon = r.group(0)
 
     funcs = {}
-    for name in ("qmul", "clamp8", "qround1"):
+    for name in spec["funcs"]:
         f = re.search(r"^[ \t]*function automatic [^\n]*\b%s\b\(.*?^[ \t]*"
                       r"endfunction\n" % re.escape(name), text, re.M | re.S)
         if f:
             funcs[name] = f.group(0)
-    if "qmul" not in funcs or "clamp8" not in funcs:
-        raise SystemExit("%s: qmul/clamp8 not found" % rel)
-    return {"file": rel, "cascade_verbatim": cascade,
-            "cascade_normalized": norm, "cfg_bases": bases,
-            "reconstruction_verbatim": recon, "functions": funcs}
+    missing = [n for n in spec["required_funcs"] if n not in funcs]
+    if missing:
+        raise SystemExit("%s: %s not found" % (rel, "/".join(missing)))
+
+    localparams = {}
+    for name in spec.get("localparams", ()):
+        lp = re.search(r"^[ \t]*localparam [^\n;]*\b%s\b[^\n;]*;"
+                       % re.escape(name), text, re.M)
+        if not lp:
+            raise SystemExit("%s: localparam %s not found" % (rel, name))
+        localparams[name] = lp.group(0)
+
+    return {"file": rel, "dialect": spec["dialect"],
+            "cascade_verbatim": cascade, "cascade_normalized": norm,
+            "cfg_bases": bases, "reconstruction_verbatim": recon,
+            "functions": funcs, "func_order": list(spec["funcs"]),
+            "localparams": localparams}
 
 
-PROBE_TEMPLATE = """// GENERATED by tools/measure_halfband_limit_cycle.py (issue #181) --
+PROBE_BANNER = """// GENERATED by tools/measure_halfband_limit_cycle.py (issue #181) --
 // DO NOT EDIT and DO NOT COMMIT. The cascade loop, the reconstruction
-// assignment and the qmul/clamp8/qround1 functions below are spliced VERBATIM
+// assignment and the arithmetic helper functions below are spliced VERBATIM
 // out of %(src)s, so this probe exercises that file's own arithmetic text
-// rather than a re-typing of it. The only substitution is the coefficient
-// window (`32'(cfg[%(b0)d+i])` -> `HB_B[i]`, `32'(cfg[%(b1)d+i])` -> `HB_A[i]`),
-// and leading whitespace on the spliced lines.
-module tb_halfband_limit_cycle;
+// rather than a re-typing of it. The only substitutions are the coefficient
+// window (`%(c0)s` -> `HB_B[%(idx)s]`, `%(c1)s` -> `HB_A[%(idx)s]`) and
+// leading whitespace on the spliced lines.
+"""
+
+PROBE_TEMPLATE = PROBE_BANNER + """module tb_halfband_limit_cycle;
   localparam int BLOCK_OS = 64;
   localparam int BLOCK    = 32;
   localparam logic signed [31:0] ONE = 32'sd2097152;
@@ -596,6 +679,72 @@ endmodule
 """
 
 
+# Second scaffold, for the #180 wavetable per-scene stage: 64-bit allpass
+# state, Verilog-2001 loop style, `hi`/`hk` indices, `scene_os`/`chain_b`/
+# `chain_a`, BLOCK_48, and that file's own q21/qround_s/clamp8_64 (the ±8 clip
+# is INSIDE its cascade loop rather than upstream of it, which the spliced text
+# carries along unchanged).
+PROBE_TEMPLATE_IW64 = PROBE_BANNER + """module tb_halfband_limit_cycle;
+  localparam integer BLOCK_OS = 64;
+  localparam integer BLOCK_48 = 32;
+%(localparams)s
+
+%(functions)s
+
+  reg signed [31:0] HB_B [0:5];
+  reg signed [31:0] HB_A [0:5];
+  reg signed [63:0] hbx1_b [0:5], hbx2_b [0:5], hby1_b [0:5], hby2_b [0:5];
+  reg signed [63:0] hbx1_a [0:5], hbx2_a [0:5], hby1_a [0:5], hby2_a [0:5];
+  reg signed [63:0] scene_os [0:BLOCK_OS-1];
+  reg signed [63:0] chain_b [0:BLOCK_OS-1];
+  reg signed [63:0] chain_a [0:BLOCK_OS-1];
+  reg signed [63:0] xb, xa, yb, ya;
+  reg signed [31:0] bl;
+  integer hi, hk, blk, fin, fout, rc, nblocks, v;
+
+  initial begin
+    HB_B[0] = 32'sd%(b_0)d; HB_B[1] = 32'sd%(b_1)d; HB_B[2] = 32'sd%(b_2)d;
+    HB_B[3] = 32'sd%(b_3)d; HB_B[4] = 32'sd%(b_4)d; HB_B[5] = 32'sd%(b_5)d;
+    HB_A[0] = 32'sd%(a_0)d; HB_A[1] = 32'sd%(a_1)d; HB_A[2] = 32'sd%(a_2)d;
+    HB_A[3] = 32'sd%(a_3)d; HB_A[4] = 32'sd%(a_4)d; HB_A[5] = 32'sd%(a_5)d;
+    for (hi = 0; hi < 6; hi = hi + 1) begin
+      hbx1_b[hi] = 0; hbx2_b[hi] = 0; hby1_b[hi] = 0; hby2_b[hi] = 0;
+      hbx1_a[hi] = 0; hbx2_a[hi] = 0; hby1_a[hi] = 0; hby2_a[hi] = 0;
+    end
+    fin  = $fopen("hb_stim.txt", "r");
+    fout = $fopen("%(out)s", "w");
+    if (fin == 0 || fout == 0) begin $display("FATAL fopen"); $finish; end
+    rc = $fscanf(fin, "%%d", nblocks);
+    for (blk = 0; blk < nblocks; blk = blk + 1) begin
+      // harness (NOT spliced RTL): each declared case starts from the reset
+      // state, exactly as the model's per-case HalfbandD2() does.
+      rc = $fscanf(fin, "%%d", v);
+      if (v != 0) begin
+        for (hi = 0; hi < 6; hi = hi + 1) begin
+          hbx1_b[hi] = 0; hbx2_b[hi] = 0; hby1_b[hi] = 0; hby2_b[hi] = 0;
+          hbx1_a[hi] = 0; hbx2_a[hi] = 0; hby1_a[hi] = 0; hby2_a[hi] = 0;
+        end
+      end
+      for (hk = 0; hk < BLOCK_OS; hk = hk + 1) begin
+        rc = $fscanf(fin, "%%d", v);
+        scene_os[hk] = v;
+      end
+%(cascade)s
+      for (hk = 0; hk < BLOCK_48; hk = hk + 1) begin
+%(recon)s
+        $fwrite(fout, "%%0d\\n", bl);
+      end
+    end
+    $fclose(fin); $fclose(fout);
+    $display("DONE blocks=%%0d", nblocks);
+    $finish;
+  end
+endmodule
+"""
+
+TEMPLATES = {"cfg32": PROBE_TEMPLATE, "iw64": PROBE_TEMPLATE_IW64}
+
+
 def _reindent(text, pad):
     """Re-indent a spliced block; only leading whitespace changes."""
     lines = text.rstrip("\n").split("\n")
@@ -610,11 +759,17 @@ def build_probe(copy, workdir, tag):
     for i in range(6):
         coeff["b_%d" % i] = vm.HALFBAND_B_Q[i]
         coeff["a_%d" % i] = vm.HALFBAND_A_Q[i]
-    order = [n for n in ("qmul", "clamp8", "qround1") if n in copy["functions"]]
-    sv = PROBE_TEMPLATE % dict(
+    spec = next(s for s in RTL_COPIES if s["file"] == copy["file"])
+    order = [n for n in copy["func_order"] if n in copy["functions"]]
+    idx = "hi" if copy["dialect"] == "iw64" else "i"
+    sv = TEMPLATES[copy["dialect"]] % dict(
         coeff,
         src=copy["file"],
+        idx=idx,
+        c0=spec["coeff_fmt"] % copy["cfg_bases"][0],
+        c1=spec["coeff_fmt"] % copy["cfg_bases"][1],
         b0=copy["cfg_bases"][0], b1=copy["cfg_bases"][1],
+        localparams="\n".join(copy["localparams"].values()),
         functions="\n".join(copy["functions"][n] for n in order),
         cascade=_reindent(copy["cascade_normalized"], "      "),
         recon=_reindent(copy["reconstruction_verbatim"], "        "),
@@ -666,8 +821,16 @@ def rtl_leg(cases, sweep_rows, workdir, tail_blocks=8):
     contains the settled region rather than only the decay.
     """
     os.makedirs(workdir, exist_ok=True)
-    copies = [extract_decimator(rel) for rel in RTL_COPIES]
-    norms = {c["cascade_normalized"] for c in copies}
+    copies = [extract_decimator(spec) for spec in RTL_COPIES]
+    # Cascade text is comparable within a dialect, not across them: the #180
+    # wavetable stage is 64-bit with its own helper names, so a single
+    # "identical everywhere" boolean would be a false claim. Group instead.
+    groups = {}
+    for c in copies:
+        groups.setdefault(c["cascade_normalized"], []).append(c["file"])
+    by_dialect = {}
+    for c in copies:
+        by_dialect.setdefault(c["dialect"], set()).add(c["cascade_normalized"])
 
     plan, model_stream, stim = _model_stream_and_plan(cases, sweep_rows,
                                                       tail_blocks)
@@ -719,6 +882,7 @@ def rtl_leg(cases, sweep_rows, workdir, tail_blocks=8):
         ok = not unexplained and not settled_mism and not peak_disagree
         per_copy.append({
             "file": copy["file"],
+            "dialect": copy["dialect"],
             "cfg_bases": copy["cfg_bases"],
             "reconstruction_verbatim": copy["reconstruction_verbatim"].strip(),
             "verdict": "PASS" if ok else "FAIL",
@@ -738,22 +902,36 @@ def rtl_leg(cases, sweep_rows, workdir, tail_blocks=8):
                  "model exactly. Nothing here is a model-vs-reference or a "
                  "listening claim.",
         "method": "each RTL copy's own decimate_and_output cascade loop, "
-                  "reconstruction assignment and qmul/clamp8/qround1 "
-                  "functions are spliced VERBATIM into a generated probe "
-                  "(only the cfg coefficient window and leading whitespace "
-                  "are substituted), run under iverilog on every declared "
-                  "case, and compared to the model sample-for-sample over the "
-                  "whole run INCLUDING the settled region",
+                  "reconstruction assignment and arithmetic helper functions "
+                  "are spliced VERBATIM into a generated probe (only the "
+                  "coefficient window and leading whitespace are substituted), "
+                  "run under iverilog on every declared case, and compared to "
+                  "the model sample-for-sample over the whole run INCLUDING "
+                  "the settled region",
         "pass_requires": "for every copy: zero mismatches inside the settled "
                          "region, zero settled-peak disagreements, and zero "
                          "mismatches anywhere that are not explained by that "
-                         "leaf's own +/-8 reconstruction clip (a leaf stage, "
-                         "not part of the shared decimator); plus the cascade "
-                         "text being identical across the three copies",
+                         "leaf's own +/-8 clip (a leaf stage, not part of the "
+                         "shared decimator); plus the cascade text being "
+                         "identical within each dialect",
         "cases": len(plan),
-        "cascade_text_identical_across_copies": len(norms) == 1,
+        "copies_checked": len(copies),
+        "cascade_text_groups": [{"cascade_sha256": _sha(k), "files": v}
+                                for k, v in groups.items()],
+        "cascade_text_identical_within_each_dialect":
+            all(len(v) == 1 for v in by_dialect.values()),
+        "dialects": {k: sorted(c["file"] for c in copies if c["dialect"] == k)
+                     for k in sorted({c["dialect"] for c in copies})},
+        "dialect_note": "the #180 wavetable per-scene stage "
+                        "(rtl/oscillators/wavetable/tb_wavetable.sv) is a "
+                        "different dialect -- 64-bit allpass state, iw[] "
+                        "coefficients, its own q21/qround_s/clamp8_64 -- so "
+                        "its cascade TEXT is deliberately not compared against "
+                        "the three 32-bit cfg[] copies; what is compared is its "
+                        "OUTPUT against the same frozen model",
         "verdict": ("PASS" if all(c["verdict"] == "PASS" for c in per_copy)
-                    and len(norms) == 1 else "FAIL"),
+                    and all(len(v) == 1 for v in by_dialect.values())
+                    else "FAIL"),
         "copies": per_copy,
     }
 
@@ -779,6 +957,20 @@ LEAF_LEGS = [
                 "--sequence", "seq-notes-repeated-v1", "--rtl"],
      "rtl": "rtl/oscillators/sine/tb_sine.sv",
      "comparator": ["tools/compare_sine_rtl_model.py"]},
+    # #180 / decision-records/0018 moved this leaf's decimator to a per-scene
+    # stage and extended its RTL to the 48 kHz output, so it belongs here now.
+    # Its model runner needs the EXTERNAL pinned wavetable asset root, so on a
+    # host without it this leg reads NOT_RUN -- deliberately present and
+    # unresolved rather than silently omitted.
+    {"leaf": "osc:Wavetable (SXT-026, per-scene stage since #180)",
+     "runner": ["model/oscillators/wavetable/run_model.py",
+                "--inputs", "model/oscillators/wavetable/inputs/mf-wtfix.json",
+                "--sequence", "seq-notes-repeated-v1", "--rtl"],
+     "rtl": "rtl/oscillators/wavetable/tb_wavetable.sv",
+     "comparator": ["tools/compare_wt_rtl_model.py"],
+     "mono_key": "mono48",
+     "needs": "the external pinned wavetable asset root "
+              "(resources/data/wavetables/...); see decision-records/0004"},
 ]
 
 
@@ -788,9 +980,15 @@ def leaf_legs(workroot, run_rtl=False):
         out = os.path.join(workroot, re.sub(r"\W+", "-", spec["leaf"])[:40])
         cmd = [sys.executable] + spec["runner"] + ["--out-dir", out]
         r = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True)
-        if r.returncode != 0:
+        trace_path = os.path.join(out, "model_trace.json")
+        if r.returncode != 0 or not os.path.isfile(trace_path):
             rows.append({"leaf": spec["leaf"], "status": "NOT_RUN",
-                         "stderr": r.stderr[-400:]})
+                         "runner": " ".join(spec["runner"]),
+                         "rtl": spec["rtl"],
+                         "needs": spec.get("needs"),
+                         "returncode": r.returncode,
+                         "stderr": (r.stderr or r.stdout)[-400:],
+                         "ring_out_inside_committed_comparator_window": None})
             continue
         with open(os.path.join(out, "model_trace.json"), encoding="utf-8") as f:
             trace = json.load(f)
@@ -841,7 +1039,8 @@ def leaf_legs(workroot, run_rtl=False):
             # Does that comparator's compared window actually reach the
             # ring-out region? It does iff it compared one 48 kHz mono sample
             # for every block of the render, including the post-death blocks.
-            mono = (summary.get("checked") or {}).get("mono")
+            mono = (summary.get("checked") or {}).get(
+                spec.get("mono_key", "mono"))
             if summary.get("verdict") in ("PASS", "FAIL") and mono is not None:
                 row["committed_comparator_mono_samples_compared"] = mono
                 row["render_mono_samples"] = len(blocks) * BLOCK
