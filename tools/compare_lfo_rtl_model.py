@@ -11,6 +11,24 @@ Compares, with INTEGER EQUALITY (any mismatch = FAIL):
 Mirrors tools/compare_rtl_model.py (same verdict JSON schema, same exit-code
 convention) for the SXT-032 control-plane testbench rtl/voice/tb_lfo.sv.
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193). tb_lfo.sv `$readmemh`s five files (init.hex, lfo_init.hex,
+lfo_routes.hex, lfo_wssine.hex, lfo_ctrl.hex) from `rtl/` under the run
+dir. Measured on this leaf's own testbench with real Icarus 13.0 (issue
+#207 evidence): with `rtl/lfo_ctrl.hex` absent, Icarus prints
+
+  ERROR: .../rtl/voice/tb_lfo.sv:92: $readmemh: Unable to open
+         rtl/lfo_ctrl.hex for reading.
+
+on the simulation's STDOUT and `vvp` still **exits 0**, `$finish`-ing
+normally after writing a trace built from a control memory that never
+loaded -- this is the exact #188/#193 blind spot, reproduced directly on
+this leaf (unlike kt/mw, this leaf's testbench does not FATAL on the empty
+memory, so `check=True` alone genuinely cannot see the failure).
+`_rtl_compile_common`'s `report_sim_fails=True` mode names the file and
+sets `comparison: NOT_RUN` instead of letting the run be parsed as a wall
+of RTL-vs-model mismatches.
+
 Usage:
   python3 tools/compare_lfo_rtl_model.py --run-dir DIR [--tb rtl/voice/tb_lfo.sv]
 """
@@ -25,6 +43,13 @@ from _rtl_compile_common import compile_and_run  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lfo.sv")
+
+# The hex stimulus tb_lfo.sv `$readmemh`s, relative to the run dir (issue
+# #193's pre-flight check axis; single source of truth so the check can
+# never drift from what the testbench actually reads).
+STIMULUS_RELPATHS = ("rtl/init.hex", "rtl/lfo_init.hex",
+                    "rtl/lfo_routes.hex", "rtl/lfo_wssine.hex",
+                    "rtl/lfo_ctrl.hex")
 
 L_FIELDS = ["b", "slot", "index", "phase", "env_state", "env_phase",
             "env_val", "output"]
@@ -98,17 +123,29 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json")) as f:
         model_trace = json.load(f)
 
-    trace_path = compile_and_run(
+    sim = compile_and_run(
         args.tb, args.run_dir, out_name="tb_lfo.vvp", absolute=True,
-        compile_in_workdir=True, trace_name="tb_lfo_trace.txt")
-    rtl_trace = parse_tb(trace_path)
-    checked, fails = compare(model_trace, rtl_trace)
+        compile_in_workdir=True, trace_name="tb_lfo_trace.txt",
+        stimulus_files=STIMULUS_RELPATHS, report_sim_fails=True)
+
+    checked = {"lfo_checkpoints": 0, "lfo_fields": 0, "route_sums": 0}
+    fails = list(sim.sim_fails)
+    comparison = "NOT_RUN"
+    if not sim.sim_fails:
+        rtl_trace = parse_tb(sim.trace)
+        checked, cmp_fails = compare(model_trace, rtl_trace)
+        fails += cmp_fails
+        comparison = "FAIL" if cmp_fails else "PASS"
+
     summary = {
         "tb": os.path.relpath(args.tb, REPO),
         "verdict": "PASS" if not fails else "FAIL",
+        "comparison": comparison,
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim.sim_fails,
+        "sim_stdout_tail": sim.stdout_tail,
     }
     print(json.dumps(summary, indent=2))
     if args.out:
