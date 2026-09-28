@@ -120,6 +120,24 @@ is kept only as `measure_wt_decimation_stage.LegacyPerSliceStage`, so the
 measured delta above stays re-derivable, and the tool's fail-closed
 byte-identity gate now guards the per-scene leg against `run_model.py`.
 
+**Zero-input limit cycle of the shared decimator (F-176-2, issue #181,
+DECLARED — SXT-017 option (a)).** The `voice_model.HalfbandD2` that
+`SceneDecimator` now holds does not settle to zero on zero input: it holds a
+permanent output-Nyquist (period-2) cycle bounded by **36 Q10.21 LSB = 0.5625
+int16 LSB ≈ −95.3 dBFS** over a declared 315-case input sweep
+(`reports/halfband-limit-cycle/`, `model/voice/README.md` §"DECLARED
+word-length consequence"). That bound is below one int16 LSB, so the placement
+deltas recorded above are unaffected by it. **The #180 move makes this leaf
+subject to the property where the retired per-slice topology largely was not**:
+per-slice state died with each voice, so that leg reached exactly 0 after voice
+death, while the per-scene stage keeps ringing — which is precisely the
+state-lifetime difference #176 named and #180 adopted on purpose, because it is
+what the pinned engine does. The ring-out is now inside this leaf's own
+RTL-vs-model compared window (item 8 below), so the cycle is *checked* here
+rather than merely declared. Changing the decimator's arithmetic so zero input
+decays to zero would be a further SXT-017 / #12 contract revision and is **not**
+done in #181.
+
 ## RTL coverage (issue #180; the issue-#176 boundary is retired)
 
 8. **`rtl/oscillators/wavetable/` covers the oscillator AND the 48 kHz

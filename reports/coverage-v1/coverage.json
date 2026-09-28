@@ -260,7 +260,7 @@
   },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
-   "sha256": "df348ec97daee38f6b56efc4ebdd617800567f8eeff6f4bfcec6303820045bd8"
+   "sha256": "2ead31b40e533c781f015745de99dfc9b37dffd0517a16ec2a2fc5b64922b020"
   },
   "reports/SXT-034/EVIDENCE.md": {
    "role": "evidence record for leaf voice:unison-stack",
@@ -276,7 +276,7 @@
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
-   "sha256": "a423d64af3cff18de9b338d53ecbf521044014100d494314f2a143937da9e3f6"
+   "sha256": "78dec80810cfb1924c6496f2fcd15a10d4f6b28ab9b6d2dcdc987551fb228bff"
   },
   "reports/SXT-042/EVIDENCE.md": {
    "role": "evidence record for leaf mod:keytrack",
@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "8a61788bf34754f27db1b9db619513e0dbc6403be1fa3f00e8aef6dd478cd81c"
+   "sha256": "a1ec1bf5a93d08005da5c77820b65ca90f6ff2648adada2fc925ddb2ac9d185b"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -312,7 +312,7 @@
   },
   "reports/sxt-022/EVIDENCE.md": {
    "role": "evidence record for leaf voice:attacky-slice",
-   "sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
+   "sha256": "6af4fc7bcdb356b8ff810999fbc28051428cad90efb3a0ce3e032d9fc3ac9707"
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
@@ -324,11 +324,11 @@
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
-   "sha256": "6ec85b66aaff1f4100128962f722ba851a9c949ca025432086b9ad80a4ffc923"
+   "sha256": "8a9aa766e9840546f7b0e09f6c67ecabe070e8fffc9222642eab4260451f1ede"
   },
   "reports/sxt-026a/EVIDENCE.md": {
    "role": "evidence record for leaf voice:sine-fm-lp24-v2",
-   "sha256": "a0417971fb1d359ebe1eb5ae02403df44d4ce58f33f0a1ba7926a7e0600aaea8"
+   "sha256": "efd2a0295c51166b2891272e4cb0179381c2f81069621265d7211e9073259269"
   },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",

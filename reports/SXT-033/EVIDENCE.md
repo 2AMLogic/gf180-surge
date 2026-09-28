@@ -202,6 +202,27 @@ overrides — filter/waveshaper parameters, FM depth with the FM switch off —
 are accepted), and `inputs/pluck.json` was removed. Its earlier numbers are
 not used as evidence. All other carriers have zero out-of-slice routes.
 
+**F-033-4 — the scene decimator does not settle to zero on silence (F-176-2,
+issue [#181](https://github.com/2AMLogic/gf180-surge/issues/181); DECLARED, not
+absorbed).** `run_model.py` and `tb_classic.sv` both carry the shared
+`voice_model.HalfbandD2`, whose round-half-up dead band leaves it in a
+permanent output-Nyquist (period-2) cycle on silence instead of the zero state.
+Declared bound over a 315-case input sweep (amplitudes 1 Q10.21 LSB → the ±8
+`sceneout` clip; frequencies 0.002 → 0.5 of the 96 kHz input rate, whole
+stopband included; impulse/DC/sine/square/two-tone/seeded noise, each followed
+by silence, each settled amplitude obtained exactly by zero-input state
+recurrence, not from a finite tail): **36 Q10.21 LSB = 0.5625 int16 LSB ≈
+−95.3 dBFS**, below one int16 LSB. In situ on `horn / seq-notes-repeated-v1`:
+±2 Q10.21 LSB held for all 3,519 blocks (112,608 output samples) after the last
+voice dies; that region is **inside** `tools/compare_classic_rtl_model.py`'s
+compared window and `tb_classic.sv` matches it exactly, so §2's exactness
+verdict is unaffected and so is every §3 budget number (the cycle cannot reach
+the int16 render on its own). Disposition is SXT-017 option (a) — declare —
+recorded in `model/voice/README.md` and `README.md` here; changing the
+decimator's arithmetic is a contract revision owned by
+[#12](https://github.com/2AMLogic/gf180-surge/issues/12). Evidence:
+`reports/halfband-limit-cycle/EVIDENCE.md`.
+
 **Environment note.** The shared remote box's pinned oracle tree was moved
 off-pin and its surgepy binary truncated by concurrent work mid-session;
 the pinned commit `58914e59c` was rebuilt in a separate worktree

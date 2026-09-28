@@ -1,0 +1,187 @@
+F-176-2 / issue #181 -- verbatim-RTL splice provenance
+
+GENERATED, DO NOT EDIT BY HAND:
+  python3 tools/measure_halfband_limit_cycle.py --provenance \
+      reports/halfband-limit-cycle/artifacts/rtl-splice-provenance.txt
+
+generated: 2026-09-28T05:01:38Z (UTC)
+base commit: cf82b14f0ac5978375e7857cab834a4b43509566
+spliced .sv files vs that commit at generation time: clean (none of the 4 files is modified)
+iverilog on the generating host: Icarus Verilog version 13.0 (stable) (v13_0)
+
+=== BEGIN DERIVED BODY -- re-derived byte-for-byte by tests/test_halfband_limit_cycle.py ===
+RTL COPIES COVERED: 4
+  rtl/voice/tb_voice.sv                      dialect cfg32   sha256 c2170201e398023c3024a7d07b49f7738b0388e5cd06b1fc6345984c9363c0b6
+  rtl/oscillators/classic/tb_classic.sv      dialect cfg32   sha256 554d55b23045974fa5fa78e8e48d75d661fe88ef3e9833f56661a17f73e1fd6c
+  rtl/oscillators/sine/tb_sine.sv            dialect cfg32   sha256 6f917d536e8443689bcb7fca74be80ef14d9bc08db5accca7e33c74be912b985
+  rtl/oscillators/wavetable/tb_wavetable.sv  dialect iw64    sha256 0b56f18f2e65f320b1d3da8b60d3eee085dd8a36f65cb3b1451f9f84a9dea18b
+
+  This list is RTL_COPIES in tools/measure_halfband_limit_cycle.py.
+  tests/test_halfband_limit_cycle.py asserts it against a SCAN of
+  rtl/ for the cascade's own state names, and re-derives every
+  line below from the committed .sv text, so an added copy or an
+  edited one fails CI here rather than leaving this transcript
+  describing a tree that no longer exists.
+
+WHY A SPLICE AND NOT A HAND-WRITTEN PROBE
+  Re-typing the decimator into a probe would check the re-typing.
+  The cascade loop, the reconstruction assignment and the
+  arithmetic helper functions below are lifted VERBATIM out of
+  each committed .sv file; the ONLY substitutions are that file's
+  own coefficient window (-> HB_B[i]/HB_A[i]) and leading
+  whitespace. If a copy's arithmetic text changes, the splice
+  changes with it -- there is no second transcription to drift.
+  The per-file and per-probe sha256s recorded here are the
+  reviewer's regenerate-and-compare handle.
+
+==========================================================================
+SOURCE            rtl/voice/tb_voice.sv
+  dialect         cfg32
+  source sha256   c2170201e398023c3024a7d07b49f7738b0388e5cd06b1fc6345984c9363c0b6
+  coeff window    B = 32'(cfg[28+i]), A = 32'(cfg[34+i])
+  probe sha256    4d19547f1e4583c926a7802da9dc741271d90616b5524998e60b3d344756e37f
+  functions spliced: qmul, clamp8, qround1
+
+  CASCADE LOOP, VERBATIM:
+  |     for (k = 0; k < BLOCK_OS; k++) begin
+  |       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
+  |       for (i = 0; i < 6; i++) begin
+  |         yb = hbx2_b[i] + qmul(32'(cfg[28+i]), xb - hby2_b[i]);
+  |         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
+  |         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
+  |         xb = yb;
+  |         ya = hbx2_a[i] + qmul(32'(cfg[34+i]), xa - hby2_a[i]);
+  |         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
+  |         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
+  |         xa = ya;
+  |       end
+  |       chainb[k] = xb; chaina[k] = xa;
+  |     end
+
+  RECONSTRUCTION, VERBATIM:
+  |       bl = qround1(chainb[2*k] + chaina[2*k+1]);
+
+==========================================================================
+SOURCE            rtl/oscillators/classic/tb_classic.sv
+  dialect         cfg32
+  source sha256   554d55b23045974fa5fa78e8e48d75d661fe88ef3e9833f56661a17f73e1fd6c
+  coeff window    B = 32'(cfg[68+i]), A = 32'(cfg[74+i])
+  probe sha256    69797a1c9d4cf1ba8383de36e95905620700bd7585dea57fb9526fbb82d8cdda
+  functions spliced: qmul, clamp8, qround1
+
+  CASCADE LOOP, VERBATIM:
+  |     for (k = 0; k < BLOCK_OS; k++) begin
+  |       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
+  |       for (i = 0; i < 6; i++) begin
+  |         yb = hbx2_b[i] + qmul(32'(cfg[68+i]), xb - hby2_b[i]);
+  |         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
+  |         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
+  |         xb = yb;
+  |         ya = hbx2_a[i] + qmul(32'(cfg[74+i]), xa - hby2_a[i]);
+  |         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
+  |         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
+  |         xa = ya;
+  |       end
+  |       chainb[k] = xb; chaina[k] = xa;
+  |     end
+
+  RECONSTRUCTION, VERBATIM:
+  |       bl = clamp8(qround1(chainb[2*k] + chaina[2*k+1]));
+
+==========================================================================
+SOURCE            rtl/oscillators/sine/tb_sine.sv
+  dialect         cfg32
+  source sha256   6f917d536e8443689bcb7fca74be80ef14d9bc08db5accca7e33c74be912b985
+  coeff window    B = 32'(cfg[57+i]), A = 32'(cfg[63+i])
+  probe sha256    77583bd00e49649797bcd631514065fe0f15873a55a14a01fa487ebbc495ed8e
+  functions spliced: qmul, clamp8
+
+  CASCADE LOOP, VERBATIM:
+  |     for (k = 0; k < BLOCK_OS; k++) begin
+  |       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
+  |       for (i = 0; i < 6; i++) begin
+  |         yb = hbx2_b[i] + qmul(32'(cfg[57+i]), xb - hby2_b[i]);
+  |         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
+  |         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
+  |         xb = yb;
+  |         ya = hbx2_a[i] + qmul(32'(cfg[63+i]), xa - hby2_a[i]);
+  |         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
+  |         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
+  |         xa = ya;
+  |       end
+  |       chainb[k] = xb; chaina[k] = xa;
+  |     end
+
+  RECONSTRUCTION, VERBATIM:
+  |       bl = clamp8((chainb[2*k] + chaina[2*k+1] + 32'sd1) >>> 1);
+
+==========================================================================
+SOURCE            rtl/oscillators/wavetable/tb_wavetable.sv
+  dialect         iw64
+  source sha256   0b56f18f2e65f320b1d3da8b60d3eee085dd8a36f65cb3b1451f9f84a9dea18b
+  coeff window    B = iw[43 + hi], A = iw[49 + hi]
+  probe sha256    42612cab20532961b0416f80cfcd3af7eae6c564109b2e7ca37d4b3c1e784374
+  functions spliced: q21, qround_s, clamp8_64
+
+  CASCADE LOOP, VERBATIM:
+  |             for (hk = 0; hk < BLOCK_OS; hk = hk + 1) begin
+  |                 xb = clamp8_64(scene_os[hk]);
+  |                 xa = xb;                 // mono bus: the R lane is identical
+  |                 for (hi = 0; hi < 6; hi = hi + 1) begin
+  |                     yb = hbx2_b[hi] + q21(iw[43 + hi], xb - hby2_b[hi]);
+  |                     hbx2_b[hi] = hbx1_b[hi]; hbx1_b[hi] = xb;
+  |                     hby2_b[hi] = hby1_b[hi]; hby1_b[hi] = yb;
+  |                     xb = yb;
+  |                     ya = hbx2_a[hi] + q21(iw[49 + hi], xa - hby2_a[hi]);
+  |                     hbx2_a[hi] = hbx1_a[hi]; hbx1_a[hi] = xa;
+  |                     hby2_a[hi] = hby1_a[hi]; hby1_a[hi] = ya;
+  |                     xa = ya;
+  |                 end
+  |                 chain_b[hk] = xb; chain_a[hk] = xa;
+  |             end
+
+  RECONSTRUCTION, VERBATIM:
+  |                 bl = qround_s(chain_b[2*hk] + chain_a[2*hk+1], 1);
+
+==========================================================================
+CASCADE TEXT IDENTICAL WITHIN EACH DIALECT (after
+coefficient-window normalization): True
+  dialect cfg32  three copies, one cascade text:
+      rtl/voice/tb_voice.sv
+      rtl/oscillators/classic/tb_classic.sv
+      rtl/oscillators/sine/tb_sine.sv
+  dialect iw64   one copy, one cascade text:
+      rtl/oscillators/wavetable/tb_wavetable.sv
+
+NOT CLAIMED HERE: that the cascade text is identical ACROSS
+dialects, and NOT that all 4 copies share one text. They do not
+(see the two groups below), and asserting otherwise would be a
+false equivalence -- EVIDENCE.md section 3 deliberately avoids it
+too. What IS compared across every copy is its OUTPUT against the
+same frozen model; see the rtl_leg block of
+artifacts/zero-input-limit-cycle-sweep.json.
+
+NORMALIZED CASCADE TEXT GROUPS (sha256 of the normalized text):
+  group of 3  c0936778bedbbdc31ab26a64c64e62648c2cb70cd530583af0371ce36c52d4ff
+      rtl/voice/tb_voice.sv
+      rtl/oscillators/classic/tb_classic.sv
+      rtl/oscillators/sine/tb_sine.sv
+  group of 1  5e67f342539da06bae1f994fbb74a2356190863f25051ae197f782208d368796
+      rtl/oscillators/wavetable/tb_wavetable.sv
+
+RECONSTRUCTION TEXT IS *NOT* IDENTICAL -- reported, not
+normalized away:
+  rtl/voice/tb_voice.sv                      bl = qround1(chainb[2*k] + chaina[2*k+1]);
+  rtl/oscillators/classic/tb_classic.sv      bl = clamp8(qround1(chainb[2*k] + chaina[2*k+1]));
+  rtl/oscillators/sine/tb_sine.sv            bl = clamp8((chainb[2*k] + chaina[2*k+1] + 32'sd1) >>> 1);
+  rtl/oscillators/wavetable/tb_wavetable.sv  bl = qround_s(chain_b[2*hk] + chain_a[2*hk+1], 1);
+
+The two cfg32 oscillator copies wrap the reconstruction in their
+own +-8 clip, which the SHARED model class does not contain (the
+voice and wavetable leaves clip upstream of the decimator
+instead). The comparison therefore classifies each mismatch and
+requires ZERO unexplained ones.
+
+NOT ESTABLISHED HERE: anything beyond claim (1) (RTL == frozen
+model, exact). No fidelity, preset-support, musical-quality,
+synthesis or hardware claim is made by this splice.
