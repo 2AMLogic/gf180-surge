@@ -159,6 +159,14 @@ The authoritative before → after table lives in
 | no row of §3 changes verdict | **no verdict moved**, and no `max_abs LSB` value moved at all. |
 | the workhorse spectral leg (0.9234 vs the 0.92 bound, margin 0.0034) is the one to watch | unchanged to five decimal places (0.92344 → 0.92344; the delta is in the 14th significant digit). The six byte-identical rows' `spectral_corr` still differs in the last 1–2 digits — that is last-ulp recomputation noise from a different host/NumPy than the #145 run, not a topology effect, and §3's note says so rather than hiding it. |
 
+Re-running `tools/measure_wt_decimation_stage.py` after the move reproduces
+the pre-decision numbers **exactly** — every metric field on all nine cases,
+the summary, and the failure control are identical to what #176 committed —
+and the two legs' render hashes straddle the revision: leg A (legacy
+per-slice) still renders to the nine pre-#180 committed sha256s, leg B (the
+frozen model) to the nine post-#180 ones. The topology that landed is the
+topology that was measured.
+
 RTL side, from `reports/sxt-026/artifacts/rtl-exactness.txt` (iverilog, full
 4125-block `kick-wtfix-kt / pitch-extremes-hi` fixture):
 

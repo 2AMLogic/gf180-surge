@@ -265,12 +265,22 @@ def test_frozen_model_has_one_scene_stage_not_a_per_slice_one():
         "Slice.process_block() is back: the retired per-slice placement"
     assert hasattr(wm.Slice, "scene_block")
 
-    src = read(os.path.join(REPO, "model", "oscillators", "wavetable",
-                            "wt_model.py"))
-    slice_src = src.split("class Slice:")[1].split("class SceneDecimator:")[0]
-    assert "HalfbandD2" not in slice_src, \
+    # Structural on CODE, not prose: the class docstring legitimately
+    # DISCUSSES the stage it no longer owns, so parse the class body and
+    # drop its docstring and comments before looking for the stage.
+    import ast
+    path = os.path.join(REPO, "model", "oscillators", "wavetable",
+                        "wt_model.py")
+    tree = ast.parse(read(path))
+    cls = next(n for n in ast.walk(tree)
+               if isinstance(n, ast.ClassDef) and n.name == "Slice")
+    body = list(cls.body)
+    if ast.get_docstring(cls) is not None:
+        body = body[1:]
+    slice_code = "\n".join(ast.dump(n) for n in body)
+    assert "HalfbandD2" not in slice_code, \
         "a per-voice-slice HalfbandD2 is back in wt_model.Slice"
-    assert "master" not in slice_src, \
+    assert "master" not in slice_code, \
         "the master stage is back inside wt_model.Slice"
 
     # ... and the runner must drive exactly one of them for the whole render

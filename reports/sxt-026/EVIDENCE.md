@@ -204,6 +204,19 @@ model + fixed stimulus; no time dependence).
 > fail-closed byte-identity gate now guards the per-scene leg against
 > `run_model.py`. What actually moved when the revision landed is in section
 > 3's #180 change note.
+>
+> **Re-run after the move, the measurement reproduces exactly** (`|a − b|` is
+> symmetric, so it must — and that it does is the check that the topology
+> which landed is the topology that was measured before the decision was
+> taken). All nine cases: every metric field, the summary, and the failure
+> control are **identical** to the numbers #176 committed. Stronger still, the
+> two legs' render hashes now straddle the revision: **leg A still renders to
+> the nine pre-#180 committed `model-*.wav` sha256s, and leg B renders to the
+> nine post-#180 ones** — so the legacy leg is a faithful re-implementation of
+> the retired placement, and the three renders that moved in section 3 moved
+> for exactly this reason and no other. Artifact format bumped to
+> `sxt-026-decimation-stage-measurement/2` (both legs now carry a render
+> sha256; `frozen_leg_runner_equality` replaces `leg_a_runner_equality`).
 
 **Declared deviation, measured, not absorbed.** The frozen model instantiates
 one `voice_model.HalfbandD2` **per voice slice** (`wt_model.Slice`) and
