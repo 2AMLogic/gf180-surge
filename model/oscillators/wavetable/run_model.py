@@ -14,6 +14,11 @@ Outputs (under --out-dir):
                       the external pinned tree — never committed; see
                       decision-records/0004)
   rtl/table_index.json  mip-level offsets/lengths into wt_table.hex
+  rtl/stimulus_index.json  words written per stimulus file (the model's own
+                      declaration of each file's length; read by
+                      tools/compare_wt_rtl_model.py to detect a TRUNCATED
+                      stimulus file, which the testbench's oversized memory
+                      declarations make undetectable from simulator output)
 
 Declared control-plane boundary: pitchmult_inv / a_cov / hpf ramp endpoints
 (coef-rate words), the sinc ROM, and the derived mip tables are streamed to
@@ -57,10 +62,22 @@ N_SLOTS = 4
 
 
 def write_hex(path, values, bits=32):
+    """Write one 32-bit hex word per line; return the number of words written.
+
+    The return value is the model side's own declaration of how long each
+    stimulus file is, collected into `rtl/stimulus_index.json` (issue #194).
+    The testbench cannot supply it: its memories are declared generously
+    (`ctrl_mem[0:262143]`, `wt_mem[0:131071]`) and a healthy run never fills
+    them, so Icarus's `$readmemh(...): Not enough words` WARNING fires for
+    every memory on a PASSING run and says nothing about truncation.
+    """
     mask = (1 << bits) - 1
+    n = 0
     with open(path, "w", encoding="utf-8") as f:
         for v in values:
             f.write(f"{int(v) & mask:08x}\n")
+            n += 1
+    return n
 
 
 def main():
@@ -299,10 +316,13 @@ def main():
             morph_scale, wm.TAYLORSCALE, osc0.dt,
             *tempt_words,
         ]
-        write_hex(os.path.join(rtl_dir, "init.hex"), init_words)
-        write_hex(os.path.join(rtl_dir, "ctrl.hex"), ctrl)
-        write_hex(os.path.join(rtl_dir, "sinc_main.hex"), vm.SINC_MAIN)
-        write_hex(os.path.join(rtl_dir, "sinc_deriv.hex"), vm.SINC_DERIV)
+        declared = {}
+        for name, words in (("init.hex", init_words),
+                            ("ctrl.hex", ctrl),
+                            ("sinc_main.hex", vm.SINC_MAIN),
+                            ("sinc_deriv.hex", vm.SINC_DERIV)):
+            declared["rtl/" + name] = write_hex(
+                os.path.join(rtl_dir, name), words)
         tbl = []
         index = []
         off = 0
@@ -311,12 +331,25 @@ def main():
             index.append({"level": lvl, "offset": off,
                           "words": len(words)})
             off += len(words)
-        write_hex(os.path.join(rtl_dir, "wt_table.hex"), tbl)
+        declared["rtl/wt_table.hex"] = write_hex(
+            os.path.join(rtl_dir, "wt_table.hex"), tbl)
         with open(os.path.join(rtl_dir, "table_index.json"), "w",
                   encoding="utf-8") as f:
             json.dump({"stride_note": "frame-major per level: "
                                       "table*(size>>level) + idx",
                        "levels": index}, f, indent=1)
+            f.write("\n")
+        # The declared length of every stimulus file, written LAST so a
+        # run interrupted mid-stimulus leaves no index claiming files that
+        # were never finished (issue #194). tools/compare_wt_rtl_model.py
+        # reads this to detect a TRUNCATED stimulus file before it invokes
+        # the simulator; without it that check reports NOT_RUN.
+        with open(os.path.join(rtl_dir, "stimulus_index.json"), "w",
+                  encoding="utf-8") as f:
+            json.dump({"format": "sxt026-wt-stimulus-index/1",
+                       "note": "words written per stimulus file by this "
+                               "run; NOT the testbench's array sizes",
+                       "files": declared}, f, indent=1)
             f.write("\n")
 
     print(json.dumps({

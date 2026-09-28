@@ -28,12 +28,12 @@ Compares, with INTEGER EQUALITY (any mismatch = FAIL):
 Also verifies the RTL negative-control mutant (NC-B RTL: -DWAVETABLE_MUTANT_MIP)
 FAILS the same comparison (--mutant).
 
-SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #182, #188).
-A run that never produced trustworthy traces must say so. Four mechanisms are
-recognized and recorded in the summary's `sim_fails` list, and every one of
-them sets `comparison: NOT_RUN` (the comparison and the traffic reconciliation
-are skipped entirely) so a transcript can never read "the RTL disagreed with
-the model" when the truth is "the stimulus never loaded":
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #182, #188,
+#194). A run that never produced trustworthy traces must say so. Five
+mechanisms are recognized and recorded in the summary's `sim_fails` list, and
+every one of them sets `comparison: NOT_RUN` (the comparison and the traffic
+reconciliation are skipped entirely) so a transcript can never read "the RTL
+disagreed with the model" when the truth is "the stimulus never loaded":
 
   1. a declared input missing before the simulator is invoked at all
      (`model_trace.json` plus the five `rtl/*.hex` files of STIMULUS). This is
@@ -52,6 +52,23 @@ the model" when the truth is "the stimulus never loaded":
      --timeout (TimeoutExpired) -- caught, so the harness still writes a
      verdict with a reason instead of dying by traceback with no verdict at
      all.
+  5. a declared stimulus file that IS present and opens, but is TRUNCATED --
+     fewer hex words than the model wrote (#194). This is a CONTENT check
+     against the model side's own declaration (`rtl/stimulus_index.json`,
+     written by `run_model.py --rtl` beside the files), NOT a matcher on the
+     simulator's output, and the measurement that forced that choice is
+     recorded in `reports/tooling-wt-harness-stimulus-load/`: a genuinely
+     PASSING pinned-tree run emits `$readmemh(<file>): Not enough words in
+     the file for the requested range [...]` for ALL FIVE memories, because
+     the testbench declares them generously (`ctrl_mem[0:262143]`,
+     `wt_mem[0:131071]`, `init_mem[0:63]`, sinc `[0:6143]`) and a real run
+     never fills them. No stdout matcher on that warning can discriminate a
+     truncated file from a healthy one; a content check can, and it names the
+     file. When the run dir carries no `rtl/stimulus_index.json` (a run dir
+     produced by tooling older than #194), this check is reported as NOT_RUN
+     in the summary's `stimulus_lengths` field rather than failing closed --
+     reporting a healthy run as failed is the one outcome worse than the lost
+     reason (#188), and NOT_RUN is never a pass.
 
 The verdict vocabulary is unchanged (PASS/FAIL): every one of these fails
 closed as FAIL, with `comparison: NOT_RUN` carrying the distinction between
@@ -102,11 +119,117 @@ STIMULUS = (
 # comparison plus the stimulus above.
 REQUIRED_INPUTS = ("model_trace.json",) + tuple(rel for _, rel in STIMULUS)
 
+# The model side's own declaration of how long each stimulus file is, written
+# next to the files by `run_model.py --rtl`. Deliberately NOT in
+# REQUIRED_INPUTS: its absence is reported as NOT_RUN coverage (see mechanism
+# 5 in the module docstring), never as a failure.
+STIMULUS_INDEX = "rtl/stimulus_index.json"
+
 
 def missing_inputs(run_dir):
     """Declared inputs absent from `run_dir`, in declaration order."""
     return [rel for rel in REQUIRED_INPUTS
             if not os.path.exists(os.path.join(run_dir, rel))]
+
+
+def count_hex_words(path):
+    """Hex words in a `$readmemh` file, counted the way Icarus loads them.
+
+    `run_model.write_hex` emits one 8-digit word per line, but the count is
+    tokenized rather than line-counted so a hand-edited file (trailing blank
+    lines, several words per line, an `@address` directive, a `//` comment)
+    is counted by content and not by layout. Only tokens that would become
+    memory words are counted.
+    """
+    n = 0
+    with open(path) as f:
+        for line in f:
+            for tok in line.split("//")[0].split():
+                if not tok.startswith("@"):
+                    n += 1
+    return n
+
+
+def check_stimulus_lengths(run_dir):
+    """Every stimulus file's word count vs the model's declared length.
+
+    Mechanism 5 (#194): a file that opens but is SHORT. Returns
+    `(report, fails)`; `report` always states coverage explicitly, so a run
+    whose lengths were never checked can never read as one whose lengths
+    checked out:
+
+      status PASS    every STIMULUS file was declared and matches
+      status FAIL    at least one file disagrees with its declaration
+      status NOT_RUN no usable `rtl/stimulus_index.json`, or it declares only
+                     some of the files -- no length claim is made for the
+                     undeclared ones (`declared: null` in `words`)
+
+    Agreement is reported separately from coverage: `words` carries the
+    measured and declared count for every file either way.
+    """
+    report = {"status": "NOT_RUN", "declared_by": STIMULUS_INDEX,
+              "reason": "", "words": {}}
+    idx_path = os.path.join(run_dir, STIMULUS_INDEX)
+    declared = {}
+    if not os.path.exists(idx_path):
+        report["reason"] = (
+            "%s is absent from the run dir, so no stimulus length was "
+            "declared by the model side and no truncation claim is made "
+            "(a run dir produced by tooling older than issue #194); this "
+            "is NOT a pass" % STIMULUS_INDEX)
+    else:
+        try:
+            with open(idx_path) as f:
+                declared = json.load(f)["files"]
+            if not isinstance(declared, dict):
+                raise ValueError("'files' is not an object")
+        except (ValueError, KeyError, TypeError, OSError) as exc:
+            declared = {}
+            report["reason"] = (
+                "%s could not be read as a stimulus index (%s), so no "
+                "truncation claim is made; this is NOT a pass"
+                % (STIMULUS_INDEX, exc))
+
+    fails = []
+    undeclared = []
+    for _, rel in STIMULUS:
+        want = declared.get(rel)
+        try:
+            got = count_hex_words(os.path.join(run_dir, rel))
+        except OSError as exc:
+            got = None
+            fails.append("stimulus file %s could not be read: %s"
+                         % (rel, exc))
+        report["words"][rel] = {"declared": want, "actual": got}
+        if want is None:
+            undeclared.append(rel)
+            continue
+        if got is None or got == want:
+            continue
+        how = "TRUNCATED" if got < want else "LONGER THAN DECLARED"
+        fails.append(
+            "%s stimulus file: %s holds %d hex words but the model declared "
+            "%d in %s. The file opened, so $readmemh loaded what was there "
+            "and Icarus's `Not enough words in the file for the requested "
+            "range` WARNING cannot report it -- a PASSING run emits that "
+            "warning for every memory, because the testbench declares them "
+            "far larger than any real stimulus (#194)."
+            % (how, rel, got, want, STIMULUS_INDEX))
+
+    if fails:
+        report["status"] = "FAIL"
+    elif undeclared:
+        if not report["reason"]:
+            report["reason"] = (
+                "%s declares no length for %s, so no truncation claim is "
+                "made for %s; this is NOT a pass"
+                % (STIMULUS_INDEX, ", ".join(undeclared),
+                   "them" if len(undeclared) > 1 else "it"))
+    else:
+        report["status"] = "PASS"
+        report["reason"] = ("all %d stimulus files match the length the "
+                            "model declared" % len(STIMULUS))
+    return report, fails
 
 
 def scan_stdout_for_load_failures(stdout, limit=10):
@@ -344,6 +467,17 @@ def main():
     # traceback, no verdict JSON, no recorded reason (#197). It is recorded the
     # same way every other simulator-level failure is, and the simulator is not
     # invoked on a trace that never parsed.
+
+    # ---- mechanism 5: stimulus CONTENT (length) vs the model's own
+    # declaration, also before the simulator runs. Only meaningful once the
+    # files are known to exist, so it follows mechanism 1.
+    stimulus_lengths = {"status": "NOT_RUN", "declared_by": STIMULUS_INDEX,
+                        "reason": "not reached: a declared input was missing",
+                        "words": {}}
+    if not sim_fails:
+        stimulus_lengths, short_fails = check_stimulus_lengths(args.run_dir)
+        sim_fails += short_fails
+
     if not sim_fails:
         try:
             with open(os.path.join(args.run_dir, "model_trace.json")) as f:
@@ -424,6 +558,7 @@ def main():
         "first_failures": fails[:10],
         "sim_fails": sim_fails,
         "sim_stdout_tail": sim_stdout_tail,
+        "stimulus_lengths": stimulus_lengths,
         "traffic_fails": traffic_fails,
         "traffic_tb": traffic,
         "traffic_model": model_traffic,
