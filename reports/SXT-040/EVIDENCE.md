@@ -234,6 +234,30 @@ artifact-collection step had no render-from-source identity check, and the
 committed budget JSON had never been cross-checked against its row in this
 record; re-verification (§7) now regenerates from inputs and compares.
 
+**F-040-6 — the scene decimator does not settle to zero on silence (F-176-2,
+issue [#181](https://github.com/2AMLogic/gf180-surge/issues/181); DECLARED, not
+absorbed).** `run_model.py` and `tb_sine.sv` both carry the shared
+`voice_model.HalfbandD2`, whose round-half-up dead band leaves it in a
+permanent output-Nyquist (period-2) cycle on silence instead of the zero state.
+Declared bound over a 315-case input sweep (amplitudes 1 Q10.21 LSB → the ±8
+`sceneout` clip; frequencies 0.002 → 0.5 of the 96 kHz input rate, whole
+stopband included; impulse/DC/sine/square/two-tone/seeded noise, each followed
+by silence, each settled amplitude obtained exactly by zero-input state
+recurrence, not from a finite tail): **36 Q10.21 LSB = 0.5625 int16 LSB ≈
+−95.3 dBFS**, below one int16 LSB, so it cannot reach an int16 render on its own
+and no §3 budget number here is affected. `tb_sine.sv` reproduces the settled
+region **exactly** on that sweep, so §2's exactness verdict is unaffected.
+**Read this leaf's in-situ result carefully:** on `tentacles /
+seq-notes-repeated-v1` the post-death mono output is exactly **0** for all
+3,702 blocks (118,464 samples) after the last voice death — the only one of the
+three measured leaves where it is. That is this fixture's master gain
+quantizing the cycle away, **not** an exemption for this leaf's decimator; the
+cycle is present in the decimator's own state either way. Disposition is
+SXT-017 option (a) — declare — recorded in `model/voice/README.md` and
+`README.md` here; changing the arithmetic is a contract revision owned by
+[#12](https://github.com/2AMLogic/gf180-surge/issues/12). Evidence:
+`reports/halfband-limit-cycle/EVIDENCE.md`.
+
 **Environment note.** The shared box's primary oracle tree had drifted
 off-pin again (surgepy self-reported `1.4.sxt037-tap`); all extraction
 and rendering used the pinned rebuild `~/oracle/surge-pin` (commit

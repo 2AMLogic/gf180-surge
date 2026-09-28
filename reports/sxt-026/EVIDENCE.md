@@ -217,6 +217,21 @@ per-scene decimator and to every RTL copy of it (which reproduce it exactly,
 since RTL == model). It is **not** caused by the per-slice/per-scene question
 and is not fixed here; it is filed as issue #181 rather than absorbed.
 
+**F-176-2 disposition (resolved by #181, 2026-09-28): option (a) — DECLARED.**
+The ±26 LSB above was one impulse case, not a bound. #181 measured the settled
+amplitude across a declared 315-case input sweep (amplitudes from 1 Q10.21 LSB
+to the ±8 `sceneout` clip; frequencies 0.002 → 0.5 of the 96 kHz decimator
+input rate, whole stopband included; impulse/DC/sine/square/two-tone/seeded
+noise, each followed by silence, each settled amplitude obtained **exactly** by
+zero-input state recurrence rather than from a finite tail) and states the worst
+case as **36 Q10.21 LSB = 0.5625 int16 LSB ≈ −95.3 dBFS** — still below one
+int16 LSB, so the escalation clause did not fire and this record's conclusions
+are unchanged. The property is now declared in `model/voice/README.md`
+(§"DECLARED word-length consequence") and in each affected leaf's own record,
+so it no longer lives only here. Full evidence, per-case amplitudes, the
+verbatim-RTL check and the failure control:
+`reports/halfband-limit-cycle/EVIDENCE.md`.
+
 **Disposition (SXT-017 visible-contract rule): option (b).** The per-slice
 decimation and the oscillator-only RTL boundary are declared as explicit,
 bounded deviations (README deviations 7–8, section 2 above, and the

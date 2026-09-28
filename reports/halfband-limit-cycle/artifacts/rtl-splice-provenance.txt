@@ -1,0 +1,113 @@
+F-176-2 / issue #181 -- verbatim-RTL splice provenance
+tools/measure_halfband_limit_cycle.py --rtl
+generated: 2026-09-28T02:10:00Z (UTC)
+base commit: 8d444638dced55c44997c852dd2889e0c0ed6799 (plus this
+  change's own working tree; none of the three .sv files is modified by it --
+  their sha256s are recorded per-copy below)
+iverilog: Icarus Verilog version 13.0 (stable) (v13_0)
+
+WHY A SPLICE AND NOT A HAND-WRITTEN PROBE
+  Re-typing the decimator into a probe would check the re-typing.  The
+  cascade loop, the reconstruction assignment and the qmul/clamp8/
+  qround1 functions below are lifted VERBATIM out of each committed
+  .sv file; the ONLY substitutions are that file's own cfg coefficient
+  window (-> HB_B[i]/HB_A[i]) and leading whitespace.  If a copy's
+  arithmetic text changes, the splice changes with it -- there is no
+  second transcription to drift.
+
+==========================================================================
+SOURCE            rtl/voice/tb_voice.sv
+  sha256          c2170201e398023c3024a7d07b49f7738b0388e5cd06b1fc6345984c9363c0b6
+  cfg window      B = cfg[28+i], A = cfg[34+i]
+  generated probe sha256 d53f9489c614df27d75fa65b1e7d5f3bd4d8bc495f1e54f8c3cee2194bafb162
+  functions spliced: clamp8, qmul, qround1
+
+  CASCADE LOOP, VERBATIM:
+  |     for (k = 0; k < BLOCK_OS; k++) begin
+  |       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
+  |       for (i = 0; i < 6; i++) begin
+  |         yb = hbx2_b[i] + qmul(32'(cfg[28+i]), xb - hby2_b[i]);
+  |         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
+  |         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
+  |         xb = yb;
+  |         ya = hbx2_a[i] + qmul(32'(cfg[34+i]), xa - hby2_a[i]);
+  |         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
+  |         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
+  |         xa = ya;
+  |       end
+  |       chainb[k] = xb; chaina[k] = xa;
+  |     end
+
+  RECONSTRUCTION, VERBATIM:
+  | bl = qround1(chainb[2*k] + chaina[2*k+1]);
+
+==========================================================================
+SOURCE            rtl/oscillators/classic/tb_classic.sv
+  sha256          554d55b23045974fa5fa78e8e48d75d661fe88ef3e9833f56661a17f73e1fd6c
+  cfg window      B = cfg[68+i], A = cfg[74+i]
+  generated probe sha256 ef9a8d3f92ac961d61cc95169b3e8b3ed78be30903f30a30762230d094c4a5cb
+  functions spliced: clamp8, qmul, qround1
+
+  CASCADE LOOP, VERBATIM:
+  |     for (k = 0; k < BLOCK_OS; k++) begin
+  |       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
+  |       for (i = 0; i < 6; i++) begin
+  |         yb = hbx2_b[i] + qmul(32'(cfg[68+i]), xb - hby2_b[i]);
+  |         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
+  |         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
+  |         xb = yb;
+  |         ya = hbx2_a[i] + qmul(32'(cfg[74+i]), xa - hby2_a[i]);
+  |         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
+  |         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
+  |         xa = ya;
+  |       end
+  |       chainb[k] = xb; chaina[k] = xa;
+  |     end
+
+  RECONSTRUCTION, VERBATIM:
+  | bl = clamp8(qround1(chainb[2*k] + chaina[2*k+1]));
+
+==========================================================================
+SOURCE            rtl/oscillators/sine/tb_sine.sv
+  sha256          6f917d536e8443689bcb7fca74be80ef14d9bc08db5accca7e33c74be912b985
+  cfg window      B = cfg[57+i], A = cfg[63+i]
+  generated probe sha256 0cf87aee24f04443e0595f6174a1dac22c889d3e9a0fae06f343542874a48bac
+  functions spliced: clamp8, qmul
+
+  CASCADE LOOP, VERBATIM:
+  |     for (k = 0; k < BLOCK_OS; k++) begin
+  |       xb = scene_l[k]; xa = scene_l[k];   // mono bus: the R lane is identical
+  |       for (i = 0; i < 6; i++) begin
+  |         yb = hbx2_b[i] + qmul(32'(cfg[57+i]), xb - hby2_b[i]);
+  |         hbx2_b[i] = hbx1_b[i]; hbx1_b[i] = xb;
+  |         hby2_b[i] = hby1_b[i]; hby1_b[i] = yb;
+  |         xb = yb;
+  |         ya = hbx2_a[i] + qmul(32'(cfg[63+i]), xa - hby2_a[i]);
+  |         hbx2_a[i] = hbx1_a[i]; hbx1_a[i] = xa;
+  |         hby2_a[i] = hby1_a[i]; hby1_a[i] = ya;
+  |         xa = ya;
+  |       end
+  |       chainb[k] = xb; chaina[k] = xa;
+  |     end
+
+  RECONSTRUCTION, VERBATIM:
+  | bl = clamp8((chainb[2*k] + chaina[2*k+1] + 32'sd1) >>> 1);
+
+==========================================================================
+CASCADE TEXT IDENTICAL ACROSS COPIES (after cfg-window normalization): True
+  group of 3: rtl/voice/tb_voice.sv, rtl/oscillators/classic/tb_classic.sv, rtl/oscillators/sine/tb_sine.sv
+
+RECONSTRUCTION TEXT IS *NOT* IDENTICAL -- reported, not normalized away:
+  rtl/voice/tb_voice.sv                    bl = qround1(chainb[2*k] + chaina[2*k+1]);
+  rtl/oscillators/classic/tb_classic.sv    bl = clamp8(qround1(chainb[2*k] + chaina[2*k+1]));
+  rtl/oscillators/sine/tb_sine.sv          bl = clamp8((chainb[2*k] + chaina[2*k+1] + 32'sd1) >>> 1);
+
+The two oscillator copies wrap the reconstruction in their own +-8 clip,
+which the SHARED model class does not contain (the voice leaf clips
+scene_l upstream of the decimator instead).  The comparison therefore
+classifies each mismatch and requires ZERO unexplained ones; see the
+rtl_leg block of artifacts/zero-input-limit-cycle-sweep.json.
+
+NOT ESTABLISHED HERE: anything beyond claim (1) (RTL == frozen model,
+exact).  No fidelity, preset-support, musical-quality, synthesis or
+hardware claim is made by this splice.

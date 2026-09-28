@@ -108,6 +108,18 @@ boundary so the measurement can drive both topologies from this model's own
 arithmetic. The split is structural only — all nine fixtures render
 byte-identically across it (`tests/test_wt_decimation_stage.py`).
 
+Limit-cycle note for deviation 7 (F-176-2, issue #181, **DECLARED** — SXT-017
+option (a)): the shared `voice_model.HalfbandD2` this deviation instantiates
+does not settle to zero on zero input. It holds a permanent output-Nyquist
+(period-2) cycle bounded by **36 Q10.21 LSB = 0.5625 int16 LSB ≈ −95.3 dBFS**
+over a declared 315-case input sweep (`reports/halfband-limit-cycle/`,
+`model/voice/README.md` §"DECLARED word-length consequence"). That bound still
+sits below one int16 LSB, so the deviation-7 residual numbers above are
+unchanged. On **this** leaf the per-slice placement means each slice's filter
+state dies with its voice, so the per-slice leg reaches exactly 0 after voice
+death while the per-scene leg (leg B) does not — the state-lifetime difference
+already named above, now with the shared class's own bound attached to it.
+
 ## RTL coverage boundary (declared, issue #176)
 
 8. **`rtl/oscillators/wavetable/` implements the oscillator only.** It carries

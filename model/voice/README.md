@@ -144,6 +144,63 @@ Arithmetic rules (FROZEN):
    float32 tables; agreement is within one float32 ulp and is part of the
    model-vs-reference budget).
 
+### DECLARED word-length consequence: the scene decimator does not settle to zero (F-176-2, issue #181)
+
+`HalfbandD2` — the shared Q10.21 scene decimator (step 7 below) used by every
+consumer of this model — **has a zero-input dead band and therefore does not
+return to the zero state after its input goes silent.** Rule 2's round-half-up
+`qmul` gives the allpass recursion `y[n] = x[n-2] + a·(x[n] − y[n-2])` a
+fixed point at a non-zero state, so after the last voice dies the decimator
+holds a *permanent* alternating-sign (output-Nyquist, period-2) output instead
+of decaying to 0. This is **declared as a property of the frozen model**
+(SXT-017 option (a)), not a defect to be silently fixed: changing it is a
+contract revision owned by SXT-017 / [#12](https://github.com/2AMLogic/gf180-surge/issues/12).
+
+Declared bound, measured over a declared input sweep (315 cases: impulse, DC,
+sine, square, two-tone and seeded noise, amplitudes from 1 Q10.21 LSB to the
+±8.0 `sceneout` clip that every consumer applies upstream, frequencies from
+0.002 to 0.5 of the 96 kHz decimator input rate including the whole stopband;
+each case followed by silence, each settled amplitude obtained **exactly** by
+zero-input state recurrence rather than by observing a finite tail):
+
+| quantity | value |
+|---|---|
+| **worst settled peak** | **36 Q10.21 LSB** = 0.5625 int16 LSB ≈ **−95.3 dBFS** |
+| period of every non-zero cycle | 2 output samples (24 kHz, the output Nyquist) |
+| cases with a non-zero cycle | 306 / 315 (9 settle to exactly 0) |
+| largest lead-in before the cycle is entered | 2,304 input samples (36 blocks) |
+| worst case above one int16 LSB? | **no** (one int16 LSB = 64 Q10.21 LSB) |
+
+Consequences that follow, and only these:
+
+* **It cannot reach an int16 render at any master gain ≤ 1.77.** 36 Q10.21 LSB
+  is 0.5625 int16 LSB, so `int(clip(x,−1,1)·32767)` truncates it to 0 unless
+  the master amplitude exceeds 64/36 ≈ 1.78. Measured in situ after the last
+  voice dies: **±1** Q10.21 LSB on `seq-notes-repeated-v1` (voice leaf), **±2**
+  on `horn / seq-notes-repeated-v1` (Classic), **0** on `tentacles /
+  seq-notes-repeated-v1` (Sine).
+* **It is not a defect of the recursion.** The same recursion with the same
+  quoted coefficients in float64 decays to 1.8e-322 (float64 subnormals) over
+  the same silence, so the dead band is the quantizer. Whether the *pinned*
+  float32 kernel settles to zero is **NOT_RUN** — it needs the external oracle
+  host and is not assumed.
+* **RTL reproduces it exactly** (claim (1)), and the ring-out region is inside
+  the committed compared window of every leaf whose RTL contains the
+  decimator. `rtl/oscillators/wavetable/` contains none at all (declared
+  oscillator-only RTL boundary, #176), so for that leaf there is nothing to
+  compare there and no RTL claim is made.
+* **A musically silent scene is not numerically silent.** Any future hardware
+  idle-noise, idle-power or output-stage-gain claim must carry this forward: a
+  permanent 24 kHz tone at −95 dBFS is inaudible in an int16 render and can
+  still be a real measurement after an output stage's own gain.
+
+Evidence, per-case amplitudes, the RTL check and the failure control:
+`reports/halfband-limit-cycle/EVIDENCE.md`
+(`tools/measure_halfband_limit_cycle.py`). **Not** covered by that bound:
+`model/effects/type-distortion*/`'s own `HalfbandD2` is a different class
+(`HalfRateFilter(M=3)`, Q24.43 state, oversampling rather than scene
+decimation) and is unmeasured.
+
 ## Frozen block schedule (one 32-sample engine block)
 
 1. **Dispatch**: events with `ceil(t/32) <= b` fire now. `note_on` creates a
@@ -182,6 +239,8 @@ Arithmetic rules (FROZEN):
    master amplitude (converged after settle), hard clip ±8, mono
    `(L+R)/2` with L == R, int16 conversion
    `int(clip(x, -1, 1) * 32767)` (truncation toward zero).
+   The halfband D2 stage does **not** settle to zero on zero input — see the
+   declared ≤ 36 Q10.21 LSB zero-input limit cycle above (F-176-2, #181).
 
 ## Declared control-plane boundary (model → RTL)
 
