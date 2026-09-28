@@ -268,8 +268,17 @@ def measure_case(xs, cls=vm.HalfbandD2, max_silence_blocks=MAX_SILENCE_BLOCKS):
                                             and cyc[0] != 0),
                 "settled_peak_q21": peak,
                 "settled_peak_int16_lsb": peak / float(INT16_LSB_Q21),
-                "settled_peak_dbfs": (-math.inf if peak == 0 else
+                # JSON `null`, never -Infinity: the repository forbids
+                # non-standard JSON tokens in committed report artifacts
+                # (tests/test_stereo_tail_gate.py). A dBFS-of-exact-silence is
+                # an unrepresentable value, not a missing measurement --
+                # `settled_peak_q21 == 0` says which of the two this is.
+                "settled_peak_dbfs": (None if peak == 0 else
                                       20.0 * math.log10(peak / float(vm.ONE))),
+                "settled_peak_dbfs_is_null_because":
+                    "the cycle is exactly zero (silence has no dBFS); "
+                    "settled_peak_q21 == 0 distinguishes this from NO_VERDICT"
+                    if peak == 0 else None,
             }
         seen[st] = len(outs)
         outs.append(hb.process([0] * BLOCK_OS))
@@ -282,6 +291,7 @@ def measure_case(xs, cls=vm.HalfbandD2, max_silence_blocks=MAX_SILENCE_BLOCKS):
             "nyquist_alternating": None,
             "settled_peak_q21": None, "settled_peak_int16_lsb": None,
             "settled_peak_dbfs": None,
+            "settled_peak_dbfs_is_null_because": "NO_VERDICT",
             "note": "no state recurrence within --max-silence-blocks; NOT zero"}
 
 
@@ -313,10 +323,12 @@ def summarize(rows):
         "worst_settled_peak_q21": worst,
         "worst_settled_peak_int16_lsb": (None if worst is None
                                         else worst / float(INT16_LSB_Q21)),
+        # `null` (never -Infinity) both when nothing resolved and when every
+        # case settled to exact zero; the two are told apart by
+        # `cases_unresolved` / `worst_settled_peak_q21`.
         "worst_settled_peak_dbfs": (
-            None if worst is None else
-            (-math.inf if worst == 0
-             else round(20.0 * math.log10(worst / float(vm.ONE)), 2))),
+            None if not worst else
+            round(20.0 * math.log10(worst / float(vm.ONE)), 2)),
         "worst_cases": worst_cases[:8],
         "worst_case_count": len(worst_cases),
         "int16_lsb_in_q21": INT16_LSB_Q21,

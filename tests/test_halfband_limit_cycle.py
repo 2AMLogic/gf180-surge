@@ -220,6 +220,22 @@ def test_committed_artifact_is_internally_coherent():
         == "NOT_RUN"
 
 
+def test_committed_artifact_is_strict_json_with_no_infinity_tokens():
+    """The repo forbids non-standard JSON tokens in committed report artifacts
+    (tests/test_stereo_tail_gate.py scans reports/**/*.json). A dBFS of exact
+    silence must be `null` with a stated reason, not `-Infinity`."""
+    def reject(tok):
+        raise AssertionError("non-standard JSON token %r in %s"
+                             % (tok, os.path.relpath(ARTIFACT, REPO)))
+    with open(ARTIFACT, encoding="utf-8") as f:
+        a = json.load(f, parse_constant=reject)
+    zero = [r for r in a["sweep"]["cases"] if r["settled_peak_q21"] == 0]
+    assert zero, "no exact-zero case left to check the null-dBFS path"
+    for r in zero:
+        assert r["settled_peak_dbfs"] is None, r["case"]
+        assert r["settled_peak_dbfs_is_null_because"], r["case"]
+
+
 def test_committed_artifact_worst_case_reproduces_on_the_committed_class():
     """Re-derive the headline bound from the committed class, case by case, for
     every case the artifact records as a worst case."""
