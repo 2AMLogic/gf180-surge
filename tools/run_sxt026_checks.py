@@ -11,7 +11,13 @@ Reproduces every committed artifact in reports/sxt-026/artifacts/:
      the workhorse fixture while the correct model passes;
   4. NC-C: unison beyond MAX_UNISON -> explicit rejection (no clamp);
   5. model-vs-reference budget metrics for every fixture (requires the
-     oracle for reference renders; renders are reused if present).
+     oracle for reference renders; renders are reused if present);
+  6. RTL-vs-model exactness on the full pitch-extreme fixture, INCLUDING the
+     48 kHz per-scene stage (#180), plus both RTL negative controls: the
+     mip-threshold mutant and the single-line scene-decimator mutant, which
+     must fail on the 48 kHz leg specifically;
+  7. sustained uni16 playback with concurrent Reverb1 background traffic
+     (no underruns, 48 kHz exactness still PASS under that load).
 
 Fail-closed: any check failure exits non-zero. Oracle-dependent checks are
 skipped (exit 0, marked SKIP) when the pinned tree is absent.
@@ -227,23 +233,46 @@ def main():
     kt_blocks = len(json.load(open(os.path.join(
         kt_stim, "model_trace.json")))["blocks"])
     lines = []
-    for tag, extra, must in (("base", [], 0), ("mutant(mip-thr2)",
-                                               ["--mutant"], 1)):
-        out = os.path.join(kt_stim, "verdict-%s.json"
-                           % tag.split("(")[0])
+    scene_mutant_mono_fails = None
+    for tag, verdict_name, extra, must in (
+            ("base", "verdict-base.json", [], 0),
+            ("mutant(mip-thr2)", "verdict-mutant.json", ["--mutant"], 1),
+            ("mutant(scene-halfband-order)", "verdict-mutant-scene.json",
+             ["--mutant-scene"], 1)):
+        out = os.path.join(kt_stim, verdict_name)
         r = sh(["tools/compare_wt_rtl_model.py", "--run-dir", kt_stim,
                 "--max-blocks", str(kt_blocks), "--out", out] + extra)
         assert r.returncode == 0, r.stderr + r.stdout
         d = json.load(open(out))
         ok = (d["verdict"] == "FAIL") if must else (d["verdict"] == "PASS")
         assert ok, json.dumps(d, indent=1)[:2000]
+        if "scene" in tag:
+            # #180 failure control: the SCENE mutant must fail ON THE 48 kHz
+            # LEG, not merely somewhere. A scene mutation that only broke an
+            # oscillator checkpoint would prove nothing about 48 kHz coverage.
+            scene_mutant_mono_fails = [f for f in d["first_failures"]
+                                       if "mono48" in f]
+            assert scene_mutant_mono_fails, json.dumps(d, indent=1)[:2000]
+        else:
+            # the base run must actually have compared 48 kHz samples: a
+            # PASS with mono48 == 0 would be the uncovered stage all over
+            # again (#180 acceptance)
+            if not must:
+                assert d["checked"]["mono48"] == kt_blocks * 32, \
+                    json.dumps(d["checked"], indent=1)
         lines.append("RTL-vs-model %s: verdict=%s mismatches=%d "
                      "checked=%s" % (tag, d["verdict"], d["mismatches"],
                                      d["checked"]))
+    lines.append("48 kHz failure control: the scene-decimator mutant's first "
+                 "48 kHz mismatches are %s"
+                 % (scene_mutant_mono_fails[:3],))
     lines.append("-> iverilog RTL matches the frozen model with integer "
                  "equality over the full %d-block pitch-extreme fixture "
-                 "(mips 0/2/5/6); the committed mip-threshold mutant "
-                 "FAILS the same comparison" % kt_blocks)
+                 "(mips 0/2/5/6), INCLUDING every 48 kHz mono_block sample "
+                 "of the per-scene stage (%d samples); the committed "
+                 "mip-threshold mutant and the single-line scene-decimator "
+                 "mutant both FAIL the same comparison, the latter on the "
+                 "48 kHz leg" % (kt_blocks, kt_blocks * 32))
     with open(os.path.join(ART, "rtl-exactness.txt"), "w") as f:
         f.write("\n".join(lines) + "\n")
     print("6. RTL exactness (base PASS, mutant FAIL): PASS")
@@ -265,6 +294,9 @@ def main():
     tb = d["traffic_tb"]
     assert tb["reverb_words"] == 34 * uni_blocks, json.dumps(tb, indent=1)
     assert tb["underrun_blocks"] == 0, json.dumps(tb, indent=1)
+    assert d["verdict"] == "PASS", json.dumps(d, indent=1)[:2000]
+    assert d["checked"]["mono48"] == uni_blocks * 32, \
+        json.dumps(d["checked"], indent=1)
     # bandwidth within the SXT-016 E-model: physical external bytes/s at
     # the lowest A-CLK candidate (48 MHz, 2 cycles/word, 7500 frames/s)
     phys_words = tb["core_fill_words"] + tb["reverb_words"]
@@ -281,6 +313,14 @@ def main():
               "cache, not the external bus"
               % (tb["core_fill_words"], tb["reverb_words"], mbs_48,
                  tb["core_reads_words"]),
+              "RTL-vs-model on this run: verdict=%s mismatches=%d checked=%s "
+              "(the 48 kHz per-scene stage is compared here too, under the "
+              "concurrent background load)"
+              % (d["verdict"], d["mismatches"], d["checked"]),
+              # EVIDENCE section 5's residency/traffic row quotes these two
+              # totals, so the artifact that reproduces it must carry them
+              "traffic_tb: %s" % json.dumps(tb),
+              "traffic_model totals: %s" % json.dumps(d["traffic_model"]),
               "-> sustained playback with concurrent effects traffic: no "
               "underruns, external bandwidth within the SXT-016 E-model"]
     with open(os.path.join(ART, "sustained-concurrent.txt"), "w") as f:

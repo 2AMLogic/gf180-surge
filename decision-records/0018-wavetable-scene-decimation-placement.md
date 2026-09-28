@@ -145,13 +145,39 @@ magnitude below what would close it.
 
 ## Confirmation
 
-**PENDING at the time this record is committed** — deliberately. This record
-is committed BEFORE the model change (see "Why this record exists at all"), so
-the confirmation numbers cannot exist yet. They are filled in by a later commit
-of the same PR, from the actual re-render, and the authoritative before → after
-table lives in `reports/sxt-026/EVIDENCE.md` §3's change note. If any budget
-verdict had moved, item 6 above would have fired and this PR would have stopped
-rather than filling this section in.
+This section was committed **PENDING**, deliberately — the record precedes the
+model change (see "Why this record exists at all"), so the numbers could not
+exist yet. Filled in below from the actual re-render, later in the same PR.
+The authoritative before → after table lives in
+`reports/sxt-026/EVIDENCE.md` §3's `(issue #180, 2026-09-28)` change note.
+
+**CONFIRMED, 2026-09-28. The prediction held; item 6 did not fire.**
+
+| What was predicted | What happened |
+|---|---|
+| all nine renders may move by at most 1 int16 LSB | **three moved, six byte-identical**; each of the three by exactly **1** int16 LSB peak — `kick-wtfix-uni16 / unison16` on 473 of 72,000 frames, `kick-wtfix-kt / pitch-extremes-hi` on 144 of 132,000, `kick-wtfix / pitch-extremes` on 84 of 108,000. These are the three fixtures §2a identified as carrying overlapping voices, at exactly the per-case frame counts it recorded: the re-freeze **reproduced** the measurement rather than discovering anything new. |
+| no row of §3 changes verdict | **no verdict moved**, and no `max_abs LSB` value moved at all. |
+| the workhorse spectral leg (0.9234 vs the 0.92 bound, margin 0.0034) is the one to watch | unchanged to five decimal places (0.92344 → 0.92344; the delta is in the 14th significant digit). The six byte-identical rows' `spectral_corr` still differs in the last 1–2 digits — that is last-ulp recomputation noise from a different host/NumPy than the #145 run, not a topology effect, and §3's note says so rather than hiding it. |
+
+RTL side, from `reports/sxt-026/artifacts/rtl-exactness.txt` (iverilog, full
+4125-block `kick-wtfix-kt / pitch-extremes-hi` fixture):
+
+- clean build → `verdict=PASS mismatches=0`, `checked={'voices': 2325,
+  'fields': 25575, 'oscout': 148800, 'shared': 2325, 'mono48': 132000}` — the
+  48 kHz leg is real and complete (`blocks × 32`, asserted by
+  `run_sxt026_checks.py`, not merely reported);
+- `-DWAVETABLE_MUTANT_MIP` → `verdict=FAIL` (unchanged control);
+- **`-DWT_SCENE_MUTANT_HB_ORDER` → `verdict=FAIL`, first 48 kHz mismatches at
+  block 0: `mono48[2] model=-4 rtl=-6`, `mono48[3] model=-15 rtl=35`,
+  `mono48[4] model=548 rtl=911`** — item 4's requirement met: the mutant fails
+  *on the 48 kHz leg*, so the coverage claim is refutable and was not.
+- sustained uni16 + concurrent Reverb1 background traffic → 48 kHz comparison
+  still `PASS` under load, `underrun_blocks=0`
+  (`artifacts/sustained-concurrent.txt`).
+
+Owner ratification of the freeze consequence remains routed to SXT-017
+([#12](https://github.com/2AMLogic/gf180-surge/issues/12)); nothing above
+grades a budget or moves a gate.
 
 ## Options the owner must choose between (item 6 above is what landed)
 
