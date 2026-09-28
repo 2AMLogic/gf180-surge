@@ -11,6 +11,20 @@ Compares, with INTEGER EQUALITY (any mismatch = FAIL):
   * every 48 kHz mono output sample of every block (M lines) against the
     model's mono_block.
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193, #201). tb_sine.sv `$readmemh`s two files (init.hex, ctrl.hex) into
+`rtl/` under the run dir; Icarus reports a missing one on the simulation's
+STDOUT while still exiting 0 (measured on this leaf's own testbench, issue
+#208 evidence -- the same mechanism issue #188 fixed for the wavetable
+harness's shared helper and #193/PR #202 fixed for compare_rtl_model.py /
+compare_control_rtl.py). `_rtl_compile_common`'s `report_sim_fails=True`
+mode recognizes that (plus a failed/timed-out compile or run) and reports it
+as a `sim_fails` entry naming the file, setting `comparison: NOT_RUN`,
+instead of letting a stimulus-load failure be parsed as a wall of
+RTL-vs-model mismatches. This also covers the `--trace` reuse path, which
+skips the simulator entirely and so always reports `comparison` from the
+comparison itself (`sim_fails` is always empty there).
+
 Usage:
   python3 tools/compare_sine_rtl_model.py --run-dir DIR \
       [--tb rtl/oscillators/sine/tb_sine.sv] [--out JSON]
@@ -28,6 +42,11 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "oscillators", "sine", "tb_sine.sv")
 MUTANT = os.path.join(REPO, "rtl", "oscillators", "sine",
                       "sine_broken_mutant.sv")
+
+# The hex stimulus tb_sine.sv `$readmemh`s, relative to the run dir (issue
+# #193/#208's pre-flight check axis; single source of truth so the check
+# can never drift from what the testbench actually reads).
+STIMULUS_RELPATHS = ("rtl/init.hex", "rtl/ctrl.hex")
 
 MAXUNI = 16
 LEGACY_U_FIELDS = ["quad_r", "quad_i", "quad_dr", "quad_di", "pramp"]
@@ -168,19 +187,43 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json")) as f:
         model_trace = json.load(f)
 
+    checked = {"checkpoints": 0, "fields": 0, "voices": 0, "oscout": 0,
+              "mono": 0}
+    sim_fails = []
+    sim_stdout_tail = ""
+    comparison = "NOT_RUN"
+    fails = []
+
     if args.trace:
-        trace_path = args.trace
+        # Reusing an existing trace never invokes the simulator, so there is
+        # nothing for `report_sim_fails` to observe -- comparison proceeds
+        # directly (issue #208).
+        rtl_trace = parse_tb(args.trace)
+        checked, fails = compare(model_trace, rtl_trace)
+        comparison = "FAIL" if fails else "PASS"
     else:
-        trace_path = compile_and_run(args.tb, args.run_dir, out_name="tb.vvp",
-                                     direct_exec=True, suppress_stdout=False)
-    rtl_trace = parse_tb(trace_path)
-    checked, fails = compare(model_trace, rtl_trace)
+        sim = compile_and_run(args.tb, args.run_dir, out_name="tb.vvp",
+                              direct_exec=True, suppress_stdout=False,
+                              stimulus_files=STIMULUS_RELPATHS,
+                              report_sim_fails=True)
+        sim_fails = sim.sim_fails
+        sim_stdout_tail = sim.stdout_tail
+        fails = list(sim_fails)
+        if not sim_fails:
+            rtl_trace = parse_tb(sim.trace)
+            checked, cmp_fails = compare(model_trace, rtl_trace)
+            fails += cmp_fails
+            comparison = "FAIL" if cmp_fails else "PASS"
+
     summary = {
         "tb": os.path.relpath(args.tb, REPO),
         "verdict": "PASS" if not fails else "FAIL",
+        "comparison": comparison,
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim_fails,
+        "sim_stdout_tail": sim_stdout_tail,
     }
     print(json.dumps(summary, indent=2))
     if args.out:
