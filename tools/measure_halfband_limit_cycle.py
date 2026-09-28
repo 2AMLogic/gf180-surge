@@ -86,6 +86,14 @@ LEGS
             no iverilog and runs no sweep; its derived body is re-derived
             byte-for-byte by the tests, so the transcript cannot go stale the
             way the hand-written one did when #180 added the fourth copy.
+  failure-control
+            (--failure-control [PATH]) regenerate the REQUIRED failure-control
+            transcript (see FAILURE_CONTROL_REL) and exit. Runs no sweep: its
+            derived body is a pure function of `ZeroedAtBlockBoundary`'s own
+            source text plus the committed sweep artifact, and is likewise
+            re-derived byte-for-byte by the tests, so editing the control class
+            or moving a measured number fails CI instead of leaving a
+            hand-written transcript standing over a measurement that changed.
   leaves    (--leaves) in situ: for each affected leaf, whether a live limit
             cycle is present at that leaf's own 48 kHz output after its last
             voice dies. `--leaf-rtl` additionally runs each leaf's OWN
@@ -105,6 +113,7 @@ Original to this repository (Apache-2.0).
 """
 
 import argparse
+import inspect
 import json
 import math
 import os
@@ -112,6 +121,7 @@ import random
 import re
 import subprocess
 import sys
+import textwrap
 import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1016,6 +1026,307 @@ def provenance_text(copies=None):
     return "\n".join(H) + "\n" + provenance_body(copies)
 
 
+# ------------------------------------------ failure-control transcript ---
+#
+# `reports/halfband-limit-cycle/artifacts/failure-control.txt` used to be
+# assembled by hand too. Its content was accurate, but it carried
+# machine-checkable claims that nothing re-derived: the `ZeroedAtBlockBoundary`
+# class body quoted verbatim, the case/non-zero/worst-peak numbers, and a
+# per-case spot check. That is the same structural exposure that let the
+# hand-written splice provenance above go stale and end up asserting something
+# untrue, so this transcript is now GENERATED the same way: a host/timestamp
+# header plus a derived body that is a pure function of this tool's own source
+# text plus the committed sweep artifact, re-derived byte-for-byte by
+# tests/test_halfband_limit_cycle.py.
+
+FAILURE_CONTROL_REL = ("reports/halfband-limit-cycle/artifacts/"
+                       "failure-control.txt")
+SWEEP_ARTIFACT_REL = ("reports/halfband-limit-cycle/artifacts/"
+                      "zero-input-limit-cycle-sweep.json")
+
+# Everything BELOW this marker is a pure function of `ZeroedAtBlockBoundary`'s
+# source text plus the committed sweep artifact; everything above it records
+# the host and commit the transcript was generated on.
+FAILURE_CONTROL_BODY_MARKER = (
+    "=== BEGIN DERIVED BODY -- re-derived byte-for-byte by "
+    "tests/test_halfband_limit_cycle.py ===")
+
+# How many leading sweep cases the per-case spot check quotes. The spot check
+# is a readability aid on top of the whole-sweep counts above it, not a
+# separate claim; the artifact carries every case.
+SPOT_CHECK_CASES = 12
+
+
+def load_sweep_artifact(path=None):
+    """The committed sweep artifact -- the transcript's measured input."""
+    with open(path or os.path.join(REPO, SWEEP_ARTIFACT_REL),
+              encoding="utf-8") as f:
+        return json.load(f)
+
+
+def control_source():
+    """`ZeroedAtBlockBoundary`'s own source text, lifted out of this file.
+
+    Quoting the class by reading it back from the module is what makes the
+    transcript's "THE CONTROL, VERBATIM" section a derivation rather than a
+    transcription: editing the class (its docstring included) changes this
+    string, the derived body, and therefore CI.
+    """
+    return inspect.getsource(ZeroedAtBlockBoundary)
+
+
+def _control_leg_worst_q21(fc):
+    """The control leg's worst settled peak, DERIVED from the artifact's own
+    `failure_control` block rather than restated.
+
+    `failure_control()` counts a case as an offender when it is not MEASURED
+    or its settled peak is not exactly 0, so zero offenders over
+    `control_cases` cases entails that every control case settled to exactly
+    0. Returns None when that does not hold -- in which case the transcript
+    must print that it cannot derive the number, never a guess.
+    """
+    if fc["control_cases_nonzero"] == 0 and not fc["control_offenders"]:
+        return 0
+    return None
+
+
+def _mutant_probes(sweep_rows):
+    """Live probes of this tool's own `failure_control()` verdict function.
+
+    Each row is a (description, verdict, required verdict) triple computed
+    while the body is being derived, so a `failure_control()` that stopped
+    being able to FAIL would change this transcript and fail the test, instead
+    of leaving a hand-typed "-> FAIL" standing over a control that cannot fail.
+
+    The control legs here are SYNTHETIC probe inputs, not measurements: the
+    committed artifact records the control leg's per-case verdict only in
+    aggregate. They are labelled as such in the transcript.
+    """
+    clean = [{"case": r["case"], "status": "MEASURED", "settled_peak_q21": 0}
+             for r in sweep_rows]
+    return [
+        ("unmutated (artifact sweep + an all-zero control leg)",
+         failure_control(sweep_rows, clean)["verdict"], "PASS"),
+        ("uncontrolled sweep forced all-zero (nothing observed)",
+         failure_control([dict(r, settled_peak_q21=0) for r in sweep_rows],
+                         clean)["verdict"], "FAIL"),
+        ("control leg forced to ring at 7 LSB",
+         failure_control(sweep_rows,
+                         [dict(r, settled_peak_q21=7)
+                          for r in clean])["verdict"], "FAIL"),
+        ("control leg forced NO_VERDICT (never a pass)",
+         failure_control(sweep_rows,
+                         [dict(r, status="NO_VERDICT", settled_peak_q21=None)
+                          for r in clean])["verdict"], "FAIL"),
+    ]
+
+
+def _peak_cell(v):
+    return "NO_VERDICT" if v is None else str(v)
+
+
+def _wrap(text, pad, width=74):
+    """Wrap one of the harness's own declared strings into the transcript."""
+    return textwrap.wrap(text, width=width, initial_indent=pad,
+                         subsequent_indent=pad) or [pad.rstrip()]
+
+
+def failure_control_body(art=None, control_src=None):
+    """The derived part of the failure-control transcript.
+
+    A pure function of `ZeroedAtBlockBoundary`'s source text and the committed
+    sweep artifact: no timestamp, no commit, no host. That is what lets
+    tests/test_halfband_limit_cycle.py re-derive it exactly, so mutating the
+    control class or moving a measured number fails CI instead of leaving this
+    transcript describing a measurement that no longer exists.
+
+    `art` / `control_src` are injectable for the tests' live staleness control.
+    """
+    if art is None:
+        art = load_sweep_artifact()
+    if control_src is None:
+        control_src = control_source()
+    fc = art["failure_control"]
+    s = art["sweep"]["summary"]
+    rows = art["sweep"]["cases"]
+
+    # recounted from the per-case rows, not read off the summary: this is the
+    # whole point of deriving the transcript rather than restating it
+    live = sum(1 for r in rows
+               if r["status"] == "MEASURED" and r["settled_peak_q21"] > 0)
+    worst = max((r["settled_peak_q21"] for r in rows
+                 if r["status"] == "MEASURED"), default=None)
+    ctrl_worst = _control_leg_worst_q21(fc)
+    ok_control = fc["control_cases_nonzero"] == 0 and not fc["control_offenders"]
+    ok_live = fc["uncontrolled_nonzero_cases"] > 0
+    verdict = "PASS" if (ok_control and ok_live) else "FAIL"
+
+    L = []
+    L.append("DERIVED FROM")
+    L.append("  tools/measure_halfband_limit_cycle.py :: ZeroedAtBlockBoundary")
+    L.append("  %s" % SWEEP_ARTIFACT_REL)
+    L.append("    sha256 %s"
+             % _sha_file(os.path.join(REPO, SWEEP_ARTIFACT_REL)))
+    L.append("")
+    L.append("  Every line below is a pure function of those two inputs -- the")
+    L.append("  control class's own source text and the committed sweep")
+    L.append("  artifact -- and tests/test_halfband_limit_cycle.py re-derives")
+    L.append("  all of it byte-for-byte. Editing ZeroedAtBlockBoundary, or")
+    L.append("  moving a case count / non-zero count / settled peak, fails CI")
+    L.append("  here rather than leaving this transcript describing a")
+    L.append("  measurement that no longer exists.")
+    L.append("")
+    L.append("WHAT THE CONTROL TARGETS")
+    L.append("  The sweep claims to measure the decimator's OWN persistent "
+             "state.")
+    L.append("  If the measured 'settled amplitude' were an artifact of the "
+             "harness")
+    L.append("  (the stimulus, the block loop, the state-recurrence "
+             "bookkeeping)")
+    L.append("  rather than of the filter, then removing the filter's state")
+    L.append("  persistence would NOT change it.  The control therefore zeroes")
+    L.append("  bx/by/ax/ay at every %d-sample block boundary and REQUIRES "
+             "every" % BLOCK_OS)
+    L.append("  measured settled amplitude to become exactly 0.  It is "
+             "two-sided:")
+    L.append("  it also FAILS when the uncontrolled sweep contains no non-zero")
+    L.append("  settled amplitude at all, because driving zero to zero shows")
+    L.append("  nothing.")
+    L.append("")
+    L.append("THE CONTROL, VERBATIM (tools/measure_halfband_limit_cycle.py)")
+    L.append(_reindent(control_src, "  ").rstrip("\n"))
+    L.append("")
+    L.append("  Requirement, as the committed artifact itself states it:")
+    L.append("    control:")
+    L += _wrap(fc["control"], "      ")
+    L.append("    requirement:")
+    L += _wrap(fc["requirement"], "      ")
+    L.append("")
+    L.append("CASES: %d (the full declared sweep)" % len(rows))
+    L.append("  sweep.cases rows present         %d" % len(rows))
+    L.append("  sweep.summary.cases              %d" % s["cases"])
+    L.append("  failure_control.control_cases    %d" % fc["control_cases"])
+    L.append("  the three agree: %s"
+             % (len(rows) == s["cases"] == fc["control_cases"]))
+    L.append("")
+    L.append("  %-25s %5s  %16s  %s"
+             % ("leg", "cases", "non-zero settled", "worst settled peak"))
+    L.append("  %-25s %5d  %16d  %s Q10.21 LSB"
+             % ("uncontrolled (HalfbandD2)", len(rows), live,
+                _peak_cell(worst)))
+    L.append("  %-25s %5d  %16d  %s"
+             % ("control (state zeroed)", fc["control_cases"],
+                fc["control_cases_nonzero"],
+                "%d Q10.21 LSB" % ctrl_worst if ctrl_worst is not None
+                else "NOT DERIVABLE from the committed failure_control block"))
+    L.append("")
+    L.append("  The uncontrolled row is RECOUNTED from sweep.cases, not read")
+    L.append("  off the summary:")
+    L.append("    non-zero  recount %d   summary %d   failure_control %d"
+             % (live, s["cases_with_nonzero_limit_cycle"],
+                fc["uncontrolled_nonzero_cases"]))
+    L.append("    worst     recount %s   summary %s"
+             % (_peak_cell(worst), _peak_cell(s["worst_settled_peak_q21"])))
+    L.append("    all agree: %s"
+             % (live == s["cases_with_nonzero_limit_cycle"]
+                == fc["uncontrolled_nonzero_cases"]
+                and worst == s["worst_settled_peak_q21"]))
+    L.append("  The control row's worst settled peak is DERIVED, not restated:")
+    L.append("  failure_control() calls a case an offender when it is not")
+    L.append("  MEASURED or its settled peak is not exactly 0, so %d offenders"
+             % fc["control_cases_nonzero"])
+    L.append("  over %d control cases entails every one of them settled to"
+             % fc["control_cases"])
+    L.append("  exactly 0.")
+    L.append("")
+    L.append("  requirement: control non-zero == 0            -> %s (%d)"
+             % ("PASS" if ok_control else "FAIL",
+                fc["control_cases_nonzero"]))
+    L.append("  requirement: uncontrolled non-zero  > 0       -> %s (%d)"
+             % ("PASS" if ok_live else "FAIL",
+                fc["uncontrolled_nonzero_cases"]))
+    L.append("  CONTROL VERDICT: %s  (re-derived from the two requirements)"
+             % verdict)
+    L.append("  the artifact's own failure_control.verdict says %s -> %s"
+             % (fc["verdict"],
+                "agrees" if fc["verdict"] == verdict else "DISAGREES"))
+    L.append("")
+    spot = rows[:SPOT_CHECK_CASES]
+    width = max([len("case")] + [len(r["case"]) for r in spot])
+    L.append("PER-CASE SPOT CHECK (first %d cases, uncontrolled vs control)"
+             % len(spot))
+    L.append("  %-*s  %8s  %9s" % (width, "case", "swept", "control"))
+    for r in spot:
+        L.append("  %-*s  %8s  %9s"
+                 % (width, r["case"], _peak_cell(r["settled_peak_q21"]),
+                    "0" if ctrl_worst == 0 else "NOT DERIVABLE"))
+    L.append("")
+    L.append("  The swept column is each case's own settled_peak_q21 in")
+    L.append("  sweep.cases. The control column is 0 for every case by the")
+    L.append("  zero-offenders derivation above, which is what the committed")
+    L.append("  artifact records about the control leg; the artifact does not")
+    L.append("  carry per-case control rows, so no per-case control number is")
+    L.append("  invented here. tests/test_halfband_limit_cycle.py re-measures")
+    L.append("  these %d cases against ZeroedAtBlockBoundary live and requires"
+             % len(spot))
+    L.append("  this column to match.")
+    L.append("")
+    L.append("CONTROL IS LIVE AGAINST MUTATED INPUT (the control must be able "
+             "to FAIL)")
+    L.append("  Each row feeds a mutated input pair to this tool's own")
+    L.append("  failure_control() verdict function while this body is derived.")
+    L.append("  The control legs below are SYNTHETIC probe inputs, not")
+    L.append("  measurements. The unmutated pair must PASS and every mutant")
+    L.append("  must FAIL: a check that cannot fail is not a check.")
+    L.append("")
+    probes = _mutant_probes(rows)
+    pw = max(len(d) for d, _v, _e in probes)
+    for desc, got, want in probes:
+        L.append("  %-*s -> %s%s" % (pw, desc, got,
+                                     "" if got == want
+                                     else "  *** EXPECTED %s ***" % want))
+    L.append("")
+    L.append("NOT ESTABLISHED BY THIS TRANSCRIPT: any fidelity, "
+             "preset-support,")
+    L.append("musical-quality, synthesis or hardware claim.  This is a control "
+             "on a")
+    L.append("measurement of the frozen model, and nothing else.")
+    return "\n".join(L) + "\n"
+
+
+def failure_control_text(art=None):
+    """The full transcript: host/commit header + the derived body."""
+
+    def git(*a):
+        try:
+            return subprocess.run(("git",) + a, cwd=REPO, check=True,
+                                  capture_output=True,
+                                  text=True).stdout.strip()
+        except Exception:
+            return ""
+
+    head = git("rev-parse", "HEAD") or "UNKNOWN (not a git checkout)"
+    dirty = git("status", "--porcelain", "--", SWEEP_ARTIFACT_REL)
+
+    H = []
+    H.append("F-176-2 / issue #181 -- REQUIRED FAILURE CONTROL transcript")
+    H.append("")
+    H.append("GENERATED, DO NOT EDIT BY HAND:")
+    H.append("  python3 tools/measure_halfband_limit_cycle.py "
+             "--failure-control \\")
+    H.append("      %s" % FAILURE_CONTROL_REL)
+    H.append("")
+    H.append("generated: %s (UTC)"
+             % time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+    H.append("base commit: %s" % head)
+    H.append("sweep artifact vs that commit at generation time: %s"
+             % ("clean" if not dirty else "MODIFIED"))
+    H.append("python: %s" % ".".join(str(x) for x in sys.version_info[:3]))
+    H.append("")
+    H.append(FAILURE_CONTROL_BODY_MARKER)
+    return "\n".join(H) + "\n" + failure_control_body(art)
+
+
 def _model_stream_and_plan(cases, sweep_rows, tail_blocks):
     """-> (plan, model output stream, [(reset_flag, [64 samples]), …])."""
     plan, stream, stim = [], [], []
@@ -1311,7 +1622,26 @@ def main():
                          "no sweep: the body is a pure function of the "
                          "committed .sv text. Canonical destination: "
                          + PROVENANCE_REL)
+    ap.add_argument("--failure-control", nargs="?", const="-", metavar="PATH",
+                    help="(re)generate the REQUIRED failure-control transcript "
+                         "and exit; PATH defaults to stdout. Runs no sweep: "
+                         "the body is a pure function of "
+                         "ZeroedAtBlockBoundary's source text plus the "
+                         "committed sweep artifact (" + SWEEP_ARTIFACT_REL
+                         + "). Canonical destination: " + FAILURE_CONTROL_REL)
     args = ap.parse_args()
+
+    if args.failure_control:
+        text = failure_control_text()
+        if args.failure_control == "-":
+            sys.stdout.write(text)
+        else:
+            path = os.path.abspath(args.failure_control)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
+            print("wrote %s" % os.path.relpath(path, REPO))
+        return 0
 
     if args.provenance:
         text = provenance_text()
