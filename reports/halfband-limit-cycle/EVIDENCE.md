@@ -133,11 +133,16 @@ acceptance condition.
 this measurement was being made: it moved the wavetable leaf's decimator to a
 per-scene stage and implemented it in
 `rtl/oscillators/wavetable/tb_wavetable.sv`. That file is checked here too, and
-the harness's copy list is asserted against a **scan of `rtl/`** rather than a
-hand-maintained list, so the next copy cannot be silently left out
+the harness's copy list is asserted against a **scan of `rtl/`** rather than
+being trusted as a hand-maintained list
 (`tests/test_halfband_limit_cycle.py::rtl_files_containing_the_cascade`; the
 leaves' declared single-mutation `*mutant*.sv` controls are excluded on purpose
-— they must disagree).
+— they must disagree). The scan keys on a `decimate_and_output` task carrying
+the cascade's own state words, so a next copy written in that shape cannot be
+silently left out; a copy that renamed those words could still evade it. The
+scan is a guard against forgetting, **not** a proof of completeness, and the
+same list also drives `artifacts/rtl-splice-provenance.txt` (§8), so a copy
+count that changes without the transcript being regenerated fails CI.
 
 Re-typing the cascade into a hand-written probe would only check the re-typing.
 Instead each RTL copy's own `decimate_and_output` **cascade loop**,
@@ -297,9 +302,9 @@ be a real measurement on hardware after an output stage's own gain.
 
 **Does, precisely enough to be falsified:** 36 Q10.21 LSB is 0.5625 int16 LSB,
 so `int(clip(x, −1, 1)·32767)` truncates the cycle to 0 unless the master
-amplitude exceeds 64/36 ≈ **1.78**. That is the whole of the "cannot reach an
-int16 render" statement — a bound with a stated crossing point, not a claim
-that the cycle is harmless in general.
+amplitude reaches 64/36 = 16/9 ≈ **1.7778**. That is the whole of the "cannot
+reach an int16 render" statement — a bound with a stated crossing point, not a
+claim that the cycle is harmless in general.
 
 **Does not:**
 
@@ -320,13 +325,27 @@ that the cycle is harmless in general.
 |---|---|
 | `artifacts/zero-input-limit-cycle-sweep.json` | the whole measurement: per-case settled amplitudes for all 315 cases, the summary and stated worst case, the failure-control block, the float contrast, the spliced-RTL leg per copy, the in-situ leaf legs with each leaf's committed-comparator summary |
 | `artifacts/failure-control.txt` | §4's transcript, including the control class verbatim and three mutated-input checks showing the control can FAIL |
-| `artifacts/rtl-splice-provenance.txt` | §3's splice: each `.sv` file's sha256, its `cfg` window, the verbatim cascade and reconstruction text, the generated probe's sha256, and the cross-copy text comparison |
+| `artifacts/rtl-splice-provenance.txt` | §3's splice, for **all four** copies: each `.sv` file's sha256, its coefficient window, the verbatim cascade and reconstruction text, the generated probe's sha256, and the per-dialect / per-group text comparison (never one "identical everywhere" boolean) |
 
 The generated probe testbenches are **deliberately not committed** (their banner
-says so): they are derived files whose content is fully determined by the three
+says so): they are derived files whose content is fully determined by the four
 `.sv` sources plus the tool, and committing them would create a second copy of
 the decimator's text that could drift from the one being checked. Their sha256s
 are recorded so a reviewer can regenerate and compare.
+
+`artifacts/rtl-splice-provenance.txt` is itself **generated**
+(`tools/measure_halfband_limit_cycle.py --provenance`), and everything below its
+`=== BEGIN DERIVED BODY ===` marker is re-derived byte-for-byte by
+`tests/test_halfband_limit_cycle.py`
+(`test_splice_provenance_declares_exactly_the_rtl_copies_under_test`,
+`test_splice_provenance_body_is_reproducible_byte_for_byte`,
+`test_splice_provenance_makes_no_cross_dialect_identity_claim`, with a live
+synthetic-fifth-copy control). The hand-written version of this transcript went
+stale the moment #180's fourth copy landed — it still said "three `.sv` files"
+and still closed with a single "cascade text identical across copies: True",
+i.e. the cross-dialect equivalence this record declines to assert. That failure
+mode is now a test failure, not a silent one: adding, removing or editing a
+spliced copy without regenerating the transcript fails CI.
 
 ## 9. Reproduce
 

@@ -173,9 +173,10 @@ zero-input state recurrence rather than by observing a finite tail):
 
 Consequences that follow, and only these:
 
-* **It cannot reach an int16 render at any master gain ≤ 1.77.** 36 Q10.21 LSB
-  is 0.5625 int16 LSB, so `int(clip(x,−1,1)·32767)` truncates it to 0 unless
-  the master amplitude exceeds 64/36 ≈ 1.78. Measured in situ after the last
+* **It cannot reach an int16 render at any master gain below 64/36 = 16/9 ≈
+  1.7778.** 36 Q10.21 LSB is 0.5625 int16 LSB, so `int(clip(x,−1,1)·32767)`
+  truncates it to 0 unless the master amplitude reaches that crossing point
+  (one int16 LSB is 64 Q10.21 LSB). Measured in situ after the last
   voice dies: **±1** Q10.21 LSB on `seq-notes-repeated-v1` (voice leaf), **±2**
   on `horn / seq-notes-repeated-v1` (Classic), **0** on `tentacles /
   seq-notes-repeated-v1` (Sine).

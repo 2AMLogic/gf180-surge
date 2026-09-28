@@ -75,7 +75,17 @@ LEGS
             probe, run under iverilog, and compared to the model
             sample-for-sample over the whole run INCLUDING the settled tail.
             tests/test_halfband_limit_cycle.py asserts this list against a scan
-            of rtl/, so a fifth copy cannot be silently left out.
+            of rtl/ for the cascade's own state names (`hby2_b`) inside a
+            `decimate_and_output` task, so a fifth copy written in that shape
+            cannot be silently left out. A copy that renamed those state words
+            would evade the scan -- the scan is a guard against forgetting, not
+            a proof of completeness.
+  provenance
+            (--provenance [PATH]) regenerate the splice-provenance transcript
+            (see PROVENANCE_REL) for every copy in RTL_COPIES and exit. Needs
+            no iverilog and runs no sweep; its derived body is re-derived
+            byte-for-byte by the tests, so the transcript cannot go stale the
+            way the hand-written one did when #180 added the fourth copy.
   leaves    (--leaves) in situ: for each affected leaf, whether a live limit
             cycle is present at that leaf's own 48 kHz output after its last
             voice dies. `--leaf-rtl` additionally runs each leaf's OWN
@@ -102,6 +112,7 @@ import random
 import re
 import subprocess
 import sys
+import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
@@ -531,6 +542,14 @@ def _sha(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def _sha_file(path):
+    """sha256 of the file's BYTES -- i.e. what `sha256sum <path>` prints, so a
+    reviewer can compare the provenance transcript without reading this tool."""
+    import hashlib
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
 def _balanced_block(text, start):
     """Return text[start:end] covering one begin…end balanced region."""
     depth = 0
@@ -604,6 +623,9 @@ def extract_decimator(spec):
         localparams[name] = lp.group(0)
 
     return {"file": rel, "dialect": spec["dialect"],
+            "source_sha256": _sha_file(path),
+            "coeff_window": "B = %s, A = %s" % (spec["coeff_fmt"] % bases[0],
+                                                spec["coeff_fmt"] % bases[1]),
             "cascade_verbatim": cascade, "cascade_normalized": norm,
             "cfg_bases": bases, "reconstruction_verbatim": recon,
             "functions": funcs, "func_order": list(spec["funcs"]),
@@ -754,7 +776,16 @@ def _reindent(text, pad):
                      for x in lines) + "\n"
 
 
-def build_probe(copy, workdir, tag):
+def probe_tag(rel):
+    """The workdir tag for one copy's probe. A pure function of its path, so
+    `render_probe()` below is reproducible without running anything."""
+    return re.sub(r"\W+", "_", rel)
+
+
+def render_probe(copy, tag=None):
+    """The probe testbench text for one copy, as a pure function of that copy's
+    extracted text plus the frozen coefficients. Nothing host-dependent goes in,
+    so its sha256 is a stable provenance record a reviewer can recompute."""
     coeff = {}
     for i in range(6):
         coeff["b_%d" % i] = vm.HALFBAND_B_Q[i]
@@ -762,7 +793,7 @@ def build_probe(copy, workdir, tag):
     spec = next(s for s in RTL_COPIES if s["file"] == copy["file"])
     order = [n for n in copy["func_order"] if n in copy["functions"]]
     idx = "hi" if copy["dialect"] == "iw64" else "i"
-    sv = TEMPLATES[copy["dialect"]] % dict(
+    return TEMPLATES[copy["dialect"]] % dict(
         coeff,
         src=copy["file"],
         idx=idx,
@@ -773,12 +804,216 @@ def build_probe(copy, workdir, tag):
         functions="\n".join(copy["functions"][n] for n in order),
         cascade=_reindent(copy["cascade_normalized"], "      "),
         recon=_reindent(copy["reconstruction_verbatim"], "        "),
-        out="hb_out_%s.txt" % tag)
+        out="hb_out_%s.txt" % (tag if tag is not None
+                               else probe_tag(copy["file"])))
+
+
+def build_probe(copy, workdir, tag):
+    sv = render_probe(copy, tag)
     os.makedirs(workdir, exist_ok=True)
     path = os.path.join(workdir, "tb_hb_lc_%s.sv" % tag)
     with open(path, "w", encoding="utf-8") as f:
         f.write(sv)
     return path
+
+
+# ----------------------------------------------------- splice provenance ---
+#
+# `reports/halfband-limit-cycle/artifacts/rtl-splice-provenance.txt` used to be
+# assembled by hand, and it went stale the moment #180 added a fourth copy: it
+# still described three files and still closed with a single "cascade text
+# identical across copies: True", which is a FALSE cross-dialect equivalence
+# claim. Committed evidence that states something untrue is worse than no
+# artifact, so the transcript is now GENERATED here and its derived body is
+# re-derived byte-for-byte by tests/test_halfband_limit_cycle.py.
+
+PROVENANCE_REL = ("reports/halfband-limit-cycle/artifacts/"
+                  "rtl-splice-provenance.txt")
+
+# Everything BELOW this marker in the transcript is a pure function of
+# RTL_COPIES plus the committed .sv text; everything above it records the host
+# and commit the transcript was generated on and is therefore not re-derivable.
+PROVENANCE_BODY_MARKER = (
+    "=== BEGIN DERIVED BODY -- re-derived byte-for-byte by "
+    "tests/test_halfband_limit_cycle.py ===")
+
+_COUNT_WORDS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
+                6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
+
+
+def _count_word(n):
+    return _COUNT_WORDS.get(n, str(n))
+
+
+def _quote_verbatim(text):
+    """Quote a spliced block as `  | <line>` rows, byte-for-byte."""
+    out = []
+    for line in text.rstrip("\n").split("\n"):
+        out.append("  | " + line if line.strip() else "  |")
+    return out
+
+
+def unquote_verbatim(lines):
+    """Inverse of `_quote_verbatim` (used by the test to re-derive)."""
+    return "\n".join(x[4:] if x.startswith("  | ") else "" for x in lines)
+
+
+def provenance_body(copies=None):
+    """The derived part of the splice-provenance transcript.
+
+    A pure function of RTL_COPIES and the committed `.sv` text: no timestamp,
+    no commit, no tool version. That is what lets the test re-derive it exactly
+    and so fail CI on a fifth copy (or on any edit to the four) instead of
+    letting the transcript rot silently, which is what happened when #180's
+    `rtl/oscillators/wavetable/tb_wavetable.sv` landed.
+    """
+    if copies is None:
+        copies = [extract_decimator(spec) for spec in RTL_COPIES]
+    n = len(copies)
+    width = max(len(c["file"]) for c in copies)
+
+    groups = {}
+    for c in copies:
+        groups.setdefault(c["cascade_normalized"], []).append(c["file"])
+    by_dialect = {}
+    for c in copies:
+        by_dialect.setdefault(c["dialect"], []).append(c)
+
+    L = []
+    L.append("RTL COPIES COVERED: %d" % n)
+    for c in copies:
+        L.append("  %-*s  dialect %-6s  sha256 %s"
+                 % (width, c["file"], c["dialect"], c["source_sha256"]))
+    L.append("")
+    L.append("  This list is RTL_COPIES in tools/measure_halfband_limit_cycle.py.")
+    L.append("  tests/test_halfband_limit_cycle.py asserts it against a SCAN of")
+    L.append("  rtl/ for the cascade's own state names, and re-derives every")
+    L.append("  line below from the committed .sv text, so an added copy or an")
+    L.append("  edited one fails CI here rather than leaving this transcript")
+    L.append("  describing a tree that no longer exists.")
+    L.append("")
+    L.append("WHY A SPLICE AND NOT A HAND-WRITTEN PROBE")
+    L.append("  Re-typing the decimator into a probe would check the re-typing.")
+    L.append("  The cascade loop, the reconstruction assignment and the")
+    L.append("  arithmetic helper functions below are lifted VERBATIM out of")
+    L.append("  each committed .sv file; the ONLY substitutions are that file's")
+    L.append("  own coefficient window (-> HB_B[i]/HB_A[i]) and leading")
+    L.append("  whitespace. If a copy's arithmetic text changes, the splice")
+    L.append("  changes with it -- there is no second transcription to drift.")
+    L.append("  The per-file and per-probe sha256s recorded here are the")
+    L.append("  reviewer's regenerate-and-compare handle.")
+
+    for c in copies:
+        L.append("")
+        L.append("=" * 74)
+        L.append("SOURCE            %s" % c["file"])
+        L.append("  dialect         %s" % c["dialect"])
+        L.append("  source sha256   %s" % c["source_sha256"])
+        L.append("  coeff window    %s" % c["coeff_window"])
+        L.append("  probe sha256    %s" % _sha(render_probe(c)))
+        L.append("  functions spliced: %s"
+                 % ", ".join(fn for fn in c["func_order"]
+                             if fn in c["functions"]))
+        L.append("")
+        L.append("  CASCADE LOOP, VERBATIM:")
+        L += _quote_verbatim(c["cascade_verbatim"])
+        L.append("")
+        L.append("  RECONSTRUCTION, VERBATIM:")
+        L += _quote_verbatim(c["reconstruction_verbatim"])
+
+    L.append("")
+    L.append("=" * 74)
+    L.append("CASCADE TEXT IDENTICAL WITHIN EACH DIALECT (after")
+    L.append("coefficient-window normalization): %s"
+             % all(len({x["cascade_normalized"] for x in v}) == 1
+                   for v in by_dialect.values()))
+    for d in sorted(by_dialect):
+        v = by_dialect[d]
+        L.append("  dialect %-6s %s cop%s, %s cascade text%s:"
+                 % (d, _count_word(len(v)), "y" if len(v) == 1 else "ies",
+                    _count_word(len({x["cascade_normalized"] for x in v})),
+                    "" if len({x["cascade_normalized"] for x in v}) == 1
+                    else "s"))
+        for x in v:
+            L.append("      %s" % x["file"])
+    L.append("")
+    L.append("NOT CLAIMED HERE: that the cascade text is identical ACROSS")
+    L.append("dialects, and NOT that all %d copies share one text. They do not"
+             % n)
+    L.append("(see the %s group%s below), and asserting otherwise would be a"
+             % (_count_word(len(groups)), "" if len(groups) == 1 else "s"))
+    L.append("false equivalence -- EVIDENCE.md section 3 deliberately avoids it")
+    L.append("too. What IS compared across every copy is its OUTPUT against the")
+    L.append("same frozen model; see the rtl_leg block of")
+    L.append("artifacts/zero-input-limit-cycle-sweep.json.")
+    L.append("")
+    L.append("NORMALIZED CASCADE TEXT GROUPS (sha256 of the normalized text):")
+    for k, v in groups.items():
+        L.append("  group of %d  %s" % (len(v), _sha(k)))
+        for f in v:
+            L.append("      %s" % f)
+    L.append("")
+    L.append("RECONSTRUCTION TEXT IS *NOT* IDENTICAL -- reported, not")
+    L.append("normalized away:")
+    for c in copies:
+        L.append("  %-*s  %s" % (width, c["file"],
+                                 c["reconstruction_verbatim"].strip()))
+    L.append("")
+    L.append("The two cfg32 oscillator copies wrap the reconstruction in their")
+    L.append("own +-8 clip, which the SHARED model class does not contain (the")
+    L.append("voice and wavetable leaves clip upstream of the decimator")
+    L.append("instead). The comparison therefore classifies each mismatch and")
+    L.append("requires ZERO unexplained ones.")
+    L.append("")
+    L.append("NOT ESTABLISHED HERE: anything beyond claim (1) (RTL == frozen")
+    L.append("model, exact). No fidelity, preset-support, musical-quality,")
+    L.append("synthesis or hardware claim is made by this splice.")
+    return "\n".join(L) + "\n"
+
+
+def provenance_text(copies=None):
+    """The full transcript: host/commit header + the derived body."""
+    if copies is None:
+        copies = [extract_decimator(spec) for spec in RTL_COPIES]
+    files = [c["file"] for c in copies]
+
+    def git(*a):
+        try:
+            return subprocess.run(("git",) + a, cwd=REPO, check=True,
+                                  capture_output=True,
+                                  text=True).stdout.strip()
+        except Exception:
+            return ""
+
+    head = git("rev-parse", "HEAD") or "UNKNOWN (not a git checkout)"
+    dirty = git("status", "--porcelain", "--", *files)
+    try:
+        iv = subprocess.run(["iverilog", "-V"], capture_output=True,
+                            text=True).stdout.splitlines()[0].strip()
+    except Exception:
+        iv = "NOT_RUN -- iverilog not available on the generating host"
+
+    H = []
+    H.append("F-176-2 / issue #181 -- verbatim-RTL splice provenance")
+    H.append("")
+    H.append("GENERATED, DO NOT EDIT BY HAND:")
+    H.append("  python3 tools/measure_halfband_limit_cycle.py --provenance \\")
+    H.append("      %s" % PROVENANCE_REL)
+    H.append("")
+    H.append("generated: %s (UTC)"
+             % time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+    H.append("base commit: %s" % head)
+    H.append("spliced .sv files vs that commit at generation time: %s"
+             % ("clean (none of the %s modified)" % (
+                 "%d files is" % len(files) if len(files) != 1
+                 else "one file is")
+                if not dirty else
+                "MODIFIED -- " + ", ".join(sorted(
+                    x.split()[-1] for x in dirty.splitlines()))))
+    H.append("iverilog on the generating host: %s" % iv)
+    H.append("")
+    H.append(PROVENANCE_BODY_MARKER)
+    return "\n".join(H) + "\n" + provenance_body(copies)
 
 
 def _model_stream_and_plan(cases, sweep_rows, tail_blocks):
@@ -843,7 +1078,7 @@ def rtl_leg(cases, sweep_rows, workdir, tail_blocks=8):
 
     per_copy = []
     for copy in copies:
-        tag = re.sub(r"\W+", "_", copy["file"])
+        tag = probe_tag(copy["file"])
         probe = build_probe(copy, workdir, tag)
         compile_and_run(probe, workdir, out_name="tb_hb_lc_%s.vvp" % tag,
                         absolute=True, compile_in_workdir=True,
@@ -864,11 +1099,11 @@ def rtl_leg(cases, sweep_rows, workdir, tail_blocks=8):
         # decimator instead). A mismatch is "explained by that leaf clip" only
         # when the model's unclamped word is outside +/-8 and the RTL word is
         # exactly the clip -- anything else is an arithmetic disagreement.
-        clip_explained = [i for i in mism
+        clip_explained = {i for i in mism
                           if abs(model_stream[i]) > CLIP8
                           and rtl[i] == (CLIP8 if model_stream[i] > 0
-                                         else -CLIP8)]
-        unexplained = [i for i in mism if i not in set(clip_explained)]
+                                         else -CLIP8)}
+        unexplained = [i for i in mism if i not in clip_explained]
         peak_disagree, settled, settled_mism = [], 0, 0
         for p in plan:
             hi = p["first_out"] + p["blocks"] * BLOCK
@@ -1069,7 +1304,27 @@ def main():
     ap.add_argument("--leaf-rtl", action="store_true",
                     help="also run each leaf's committed comparator (slow)")
     ap.add_argument("--workdir", default="/tmp/halfband-limit-cycle")
+    ap.add_argument("--provenance", nargs="?", const="-", metavar="PATH",
+                    help="(re)generate the verbatim-RTL splice provenance "
+                         "transcript for every copy in RTL_COPIES and exit; "
+                         "PATH defaults to stdout. Needs no iverilog and runs "
+                         "no sweep: the body is a pure function of the "
+                         "committed .sv text. Canonical destination: "
+                         + PROVENANCE_REL)
     args = ap.parse_args()
+
+    if args.provenance:
+        text = provenance_text()
+        if args.provenance == "-":
+            sys.stdout.write(text)
+        else:
+            path = os.path.abspath(args.provenance)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
+            print("wrote %s (%d RTL copies)"
+                  % (os.path.relpath(path, REPO), len(RTL_COPIES)))
+        return 0
 
     cases = declared_cases(args.drive_blocks * BLOCK_OS)
     sweep = run_sweep(cases, max_silence_blocks=args.max_silence_blocks)

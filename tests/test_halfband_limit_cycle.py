@@ -27,6 +27,7 @@ claim (1) only (RTL == frozen model, exact) and is skipped without iverilog.
 """
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -44,6 +45,8 @@ ARTIFACT = os.path.join(REPO, "reports", "halfband-limit-cycle", "artifacts",
                         "zero-input-limit-cycle-sweep.json")
 CONTROL_TRANSCRIPT = os.path.join(REPO, "reports", "halfband-limit-cycle",
                                   "artifacts", "failure-control.txt")
+PROVENANCE = os.path.join(REPO, "reports", "halfband-limit-cycle", "artifacts",
+                          "rtl-splice-provenance.txt")
 
 # Every place the declaration must be readable from, per the third acceptance
 # box of #181 ("where a reader of the affected leaves will see it").
@@ -374,6 +377,125 @@ def test_failure_control_transcript_is_committed():
     f = read(CONTROL_TRANSCRIPT)
     assert "ZeroedAtBlockBoundary" in f
     assert "PASS" in f
+
+
+# --------------------------------- the splice-provenance transcript is live
+#
+# EVIDENCE section 8 points a reviewer at artifacts/rtl-splice-provenance.txt
+# as the regenerate-and-compare handle for the §3 splice, so what that file
+# says is a committed CLAIM, not documentation. Hand-maintained, it went stale
+# the moment #180 added a fourth RTL copy: it still described three files and
+# still closed with one "cascade text identical across copies: True", which is
+# a false cross-dialect equivalence. These tests re-derive it instead.
+
+REGENERATE = ("regenerate it: python3 tools/measure_halfband_limit_cycle.py "
+              "--provenance " + M.PROVENANCE_REL)
+
+
+def provenance_body_as_committed():
+    text = read(PROVENANCE)
+    assert M.PROVENANCE_BODY_MARKER in text, \
+        "%s predates the generated transcript format; %s" % (M.PROVENANCE_REL,
+                                                             REGENERATE)
+    return text.split(M.PROVENANCE_BODY_MARKER, 1)[1].lstrip("\n")
+
+
+def provenance_declared_copies(body):
+    """The copy list the committed transcript itself declares.
+
+    Parsed out of the transcript's own text, not taken from the harness, so a
+    disagreement between the two is what this module reports.
+    """
+    head = re.search(r"^RTL COPIES COVERED: (\d+)$", body, re.M)
+    assert head, "no 'RTL COPIES COVERED: <n>' line in %s" % M.PROVENANCE_REL
+    listed = re.findall(
+        r"^  (\S+)  +dialect (\S+) +sha256 ([0-9a-f]{64})$", body, re.M)
+    sourced = re.findall(r"^SOURCE {12}(\S+)$", body, re.M)
+    return int(head.group(1)), listed, sourced
+
+
+def test_splice_provenance_declares_exactly_the_rtl_copies_under_test():
+    """The mechanical staleness check. A fifth RTL copy (or a removed one)
+    must fail HERE, at the transcript, instead of leaving committed evidence
+    that describes a tree which no longer exists -- which is exactly what
+    #180's fourth copy did to the hand-written version of this file."""
+    body = provenance_body_as_committed()
+    n, listed, sourced = provenance_declared_copies(body)
+    harness = [s["file"] for s in M.RTL_COPIES]
+
+    assert n == len(harness), \
+        "transcript declares %d RTL copies, RTL_COPIES has %d; %s" \
+        % (n, len(harness), REGENERATE)
+    assert [f for f, _d, _s in listed] == harness, \
+        "transcript's copy list %r != RTL_COPIES %r; %s" \
+        % ([f for f, _d, _s in listed], harness, REGENERATE)
+    assert sourced == harness, \
+        "transcript has SOURCE blocks for %r, RTL_COPIES is %r; %s" \
+        % (sourced, harness, REGENERATE)
+    # and the harness list is itself pinned to a scan of rtl/, so this chain
+    # ends at the tree rather than at a hand-maintained list
+    assert set(harness) == set(rtl_files_containing_the_cascade()), \
+        sorted(harness)
+
+    # the recorded sha256s are the reviewer's compare handle: they must be of
+    # the .sv text actually committed now, and of the probe this tool builds
+    # from it now
+    copies = [M.extract_decimator(s) for s in M.RTL_COPIES]
+    by_file = {c["file"]: c for c in copies}
+    for f, dialect, sha in listed:
+        assert dialect == by_file[f]["dialect"], f
+        assert sha == by_file[f]["source_sha256"], \
+            "%s changed since the transcript was written; %s" % (f, REGENERATE)
+    for c in copies:
+        assert "  probe sha256    %s" % M._sha(M.render_probe(c)) in body, \
+            "probe sha256 for %s is stale; %s" % (c["file"], REGENERATE)
+
+
+def test_splice_provenance_body_is_reproducible_byte_for_byte():
+    """Everything below the header is a pure function of RTL_COPIES plus the
+    committed .sv text, so it can be re-derived here. Any edit to a spliced
+    cascade, reconstruction or coefficient window that is not accompanied by a
+    regenerated transcript fails."""
+    assert provenance_body_as_committed() == M.provenance_body(), REGENERATE
+
+
+def test_splice_provenance_makes_no_cross_dialect_identity_claim():
+    """The stale version closed with 'CASCADE TEXT IDENTICAL ACROSS COPIES ...
+    True / group of 3', which asserts an equivalence EVIDENCE section 3
+    deliberately declines to assert. The transcript must group instead."""
+    body = provenance_body_as_committed()
+    flat_body = " ".join(body.split())
+    assert "IDENTICAL ACROSS COPIES" not in flat_body
+    assert "NOT CLAIMED HERE: that the cascade text is identical ACROSS " \
+           "dialects" in flat_body
+    assert "IDENTICAL WITHIN EACH DIALECT" in flat_body
+
+    copies = [M.extract_decimator(s) for s in M.RTL_COPIES]
+    groups = {}
+    for c in copies:
+        groups.setdefault(c["cascade_normalized"], []).append(c["file"])
+    # more than one text group exists, so a single "identical" boolean would be
+    # false; each group must be reported with its real size
+    assert len(groups) > 1, \
+        "all copies now share one cascade text: the grouping wording in %s " \
+        "should be revisited deliberately, not left as-is" % M.PROVENANCE_REL
+    for k, v in groups.items():
+        assert "  group of %d  %s" % (len(v), M._sha(k)) in body, REGENERATE
+    assert "group of %d" % len(copies) not in body
+
+
+def test_splice_provenance_staleness_check_demonstrably_fails():
+    """Live negative control for the two checks above: if the harness gained a
+    copy without the transcript being regenerated, the derived body must differ
+    and the declared count must stop matching. A check that cannot fail is not
+    a check."""
+    copies = [M.extract_decimator(s) for s in M.RTL_COPIES]
+    fifth = M.provenance_body(copies + [dict(copies[0])])   # synthetic 5th
+    assert fifth != provenance_body_as_committed()
+    n, _listed, _sourced = provenance_declared_copies(fifth)
+    assert n == len(copies) + 1
+    # and the same control the other way round: dropping a copy also differs
+    assert M.provenance_body(copies[:-1]) != provenance_body_as_committed()
 
 
 # --------------------------------------------------------- claim (1), gated
