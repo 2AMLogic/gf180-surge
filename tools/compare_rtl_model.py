@@ -13,6 +13,17 @@ Negative controls (run explicitly with --tb): rtl/voice/voice_broken_mutant.sv
 (rounding mutant) and rtl/voice/voice_uni_mutant.sv (unison-collapse mutant)
 must FAIL this comparison on a uni>=1 / uni>1 fixture respectively.
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193). tb_voice.sv `$readmemh`s five files (sinc_main.hex, sinc_deriv.hex,
+init.hex, ctrl.hex) into `rtl/` under the run dir; Icarus reports a missing
+one on the simulation's STDOUT while still exiting 0 (measured on this
+leaf's own testbench, issue #193 evidence -- the same mechanism issue #188
+fixed for the wavetable harness's shared helper). `_rtl_compile_common`'s
+`report_sim_fails=True` mode recognizes that (plus a failed/timed-out
+compile or run) and reports it as a `sim_fails` entry naming the file,
+setting `comparison: NOT_RUN`, instead of letting a stimulus-load failure be
+parsed as a wall of RTL-vs-model mismatches.
+
 Usage:
   python3 tools/compare_rtl_model.py --run-dir DIR [--mutant]
 """
@@ -28,6 +39,12 @@ from _rtl_compile_common import compile_and_run  # noqa: E402
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_voice.sv")
 MUTANT = os.path.join(REPO, "rtl", "voice", "voice_broken_mutant.sv")
+
+# The hex stimulus tb_voice.sv `$readmemh`s, relative to the run dir (issue
+# #193's pre-flight check axis; single source of truth so the check can
+# never drift from what the testbench actually reads).
+STIMULUS_RELPATHS = ("rtl/sinc_main.hex", "rtl/sinc_deriv.hex",
+                    "rtl/init.hex", "rtl/ctrl.hex")
 
 T_FIELDS = ["b", "slot", "key", "gate",
             "aeg_state", "aeg_phase", "aeg_out",
@@ -164,17 +181,29 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json")) as f:
         model_trace = json.load(f)
 
-    trace_path = compile_and_run(
+    sim = compile_and_run(
         args.tb, args.run_dir, absolute=True,
-        out_name="tb_mut.vvp" if args.tb == MUTANT else "tb.vvp")
-    rtl_trace = parse_tb(trace_path)
-    checked, fails = compare(model_trace, rtl_trace)
+        out_name="tb_mut.vvp" if args.tb == MUTANT else "tb.vvp",
+        stimulus_files=STIMULUS_RELPATHS, report_sim_fails=True)
+
+    checked = {"checkpoints": 0, "fields": 0, "oscout": 0, "mono": 0}
+    fails = list(sim.sim_fails)
+    comparison = "NOT_RUN"
+    if not sim.sim_fails:
+        rtl_trace = parse_tb(sim.trace)
+        checked, cmp_fails = compare(model_trace, rtl_trace)
+        fails += cmp_fails
+        comparison = "FAIL" if cmp_fails else "PASS"
+
     summary = {
         "tb": os.path.basename(args.tb),
         "verdict": "PASS" if not fails else "FAIL",
+        "comparison": comparison,
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim.sim_fails,
+        "sim_stdout_tail": sim.stdout_tail,
     }
     print(json.dumps(summary, indent=2))
     if args.out:
