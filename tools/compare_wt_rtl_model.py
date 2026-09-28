@@ -84,6 +84,17 @@ The verdict vocabulary is unchanged (PASS/FAIL): every one of these fails
 closed as FAIL, with `comparison: NOT_RUN` carrying the distinction between
 "the comparison ran and disagreed" and "the comparison never ran".
 
+The two TRAFFIC inputs -- `tb_traffic.txt` (dumped by the testbench) and
+`traffic.json` (the model's own declaration) -- are read AFTER the comparison
+has been computed, and are optional: absent, the reconciliation simply makes no
+claim. Present but unparseable, they are recorded in `traffic_fails` naming the
+file and the reason (#205), never raised. That list already fails the verdict
+closed without setting `comparison: NOT_RUN`, which is the accurate report
+here: the simulator did run, the comparison did happen, and only the traffic
+reconciliation could not be performed. Before that guard existed, a truncated
+dump or a malformed declaration exited by traceback at this point and discarded
+the already-computed RTL-vs-model result together with the verdict JSON.
+
 Usage:
   python3 tools/compare_wt_rtl_model.py --run-dir DIR [--tb TB] [--out JSON]
 """
@@ -248,6 +259,86 @@ def check_stimulus_lengths(run_dir):
         report["reason"] = ("all %d stimulus files match the length the "
                             "model declared" % len(STIMULUS))
     return report, fails
+
+
+TB_TRAFFIC = "tb_traffic.txt"
+MODEL_TRAFFIC = "traffic.json"
+
+
+def read_tb_traffic(path):
+    """The testbench's traffic dump as `{name: count}`, or a named reason.
+
+    Returns `(counts, fails)`. The dump is the testbench's own
+    `$fdisplay(fd_traffic, "<name> %0d", ...)` output: exactly two
+    whitespace-separated tokens per line, the second an integer.
+
+    A file that EXISTS but does not parse -- a run killed mid-`$fclose` so the
+    last line is truncated, a line carrying stray whitespace, a non-integer
+    count, a non-UTF-8 file, an unopenable one -- used to raise straight out of
+    `main()` here (`ValueError` from the two-token unpack or from `int()`),
+    *after* the RTL-vs-model comparison had already been computed: traceback,
+    no verdict JSON, and the comparison result for that run discarded (#205).
+    It is returned as a named failure instead, and the caller records it in
+    `traffic_fails` -- which fails the verdict closed without claiming (as
+    `sim_fails` would) that the simulator never ran.
+
+    Fails closed on every line: a line that is blank-but-for-whitespace is
+    reported rather than skipped. No dump a passing run produces can be
+    affected, because such a line raised before this guard existed and so was
+    never part of a PASS.
+    """
+    counts = {}
+    try:
+        with open(path) as f:
+            for lineno, line in enumerate(f, 1):
+                fields = line.split()
+                if len(fields) != 2:
+                    raise ValueError(
+                        "line %d is not '<name> <count>': %r" % (lineno, line))
+                counts[fields[0]] = int(fields[1])
+    # OSError covers the open (mode 000, a directory, an I/O error); ValueError
+    # covers the line shape, the int() conversion, and -- as a sibling
+    # ValueError subclass raised by the decode before any line is seen --
+    # UnicodeDecodeError on a binary/truncated dump.
+    except (OSError, ValueError) as exc:
+        return {}, ["traffic dump present but unparseable: %s (%s: %s; the "
+                    "existence check cannot tell a truncated or malformed "
+                    "dump from a usable one, so the traffic reconciliation is "
+                    "not performed -- this is NOT a pass, and it does not "
+                    "mean the simulator failed to run)"
+                    % (TB_TRAFFIC, type(exc).__name__, exc)]
+    return counts, []
+
+
+def read_model_traffic(path):
+    """The model's declared traffic `totals`, or a named reason.
+
+    Returns `(totals, fails)`. `totals` is only returned when it carries the
+    one field the reconciliation reads, `ext_read_words`, as an integer --
+    otherwise the same read would raise a `KeyError`/`TypeError` a few lines
+    later and lose the verdict exactly the way the unguarded `json.load(...)
+    ["totals"]` did (#205). Both are the same read of the same file, so both
+    are guarded here rather than leaving half of it to traceback.
+    """
+    try:
+        with open(path) as f:
+            totals = json.load(f)["totals"]
+        want = totals["ext_read_words"]
+        if isinstance(want, bool) or not isinstance(want, int):
+            raise ValueError("'totals.ext_read_words' is not an integer: %r"
+                             % (want,))
+    # OSError: the open. ValueError: the JSON decode, a non-UTF-8 file
+    # (UnicodeDecodeError), and the type assertion above. KeyError/TypeError:
+    # a document that parsed but is not shaped like a traffic report (no
+    # `totals`, `totals` not an object, no `ext_read_words`).
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        return None, ["model traffic declaration present but unusable: %s "
+                      "(%s: %s; the existence check cannot tell a malformed "
+                      "declaration from a usable one, so the traffic "
+                      "reconciliation is not performed -- this is NOT a pass, "
+                      "and it does not mean the simulator failed to run)"
+                      % (MODEL_TRAFFIC, type(exc).__name__, exc)]
+    return totals, []
 
 
 def scan_stdout_for_load_failures(stdout, limit=10):
@@ -575,32 +666,42 @@ def main():
         checked, cmp_fails = compare(model_trace, rtl, args.max_blocks)
         fails += cmp_fails
 
-        # traffic reconciliation (counts from the core, dumped by the TB)
-        tp = os.path.join(args.run_dir, "tb_traffic.txt")
+        # traffic reconciliation (counts from the core, dumped by the TB).
+        # Both reads are existence-gated AND parse-guarded: a file that is
+        # present but malformed is recorded as a named `traffic_fails` entry,
+        # never raised. This point is reached only AFTER the comparison above
+        # has been computed, so a traceback here used to discard an otherwise
+        # complete RTL-vs-model result along with the verdict JSON (#205).
+        tb_fails, model_fails = [], []
+        tp = os.path.join(args.run_dir, TB_TRAFFIC)
         if os.path.exists(tp):
-            with open(tp) as f:
-                for line in f:
-                    k, v = line.split()
-                    traffic[k] = int(v)
+            traffic, tb_fails = read_tb_traffic(tp)
 
-        tp = os.path.join(args.run_dir, "traffic.json")
+        tp = os.path.join(args.run_dir, MODEL_TRAFFIC)
         if os.path.exists(tp):
-            with open(tp) as f:
-                model_traffic = json.load(f)["totals"]
+            model_traffic, model_fails = read_model_traffic(tp)
+
+        traffic_fails += tb_fails + model_fails
 
         # ---- traffic reconciliation (exact; any mismatch = FAIL) ----
-        if model_traffic is not None:
-            reads = traffic.get("core_reads_words", 0)
-            fills = traffic.get("core_fill_words", 0)
-            want = model_traffic["ext_read_words"]
-            if reads + fills != want:
-                traffic_fails.append(
-                    "ext words: rtl reads+fills %d+%d != model %d"
-                    % (reads, fills, want))
-        # no-underrun gate: the sustained/concurrent check must hold
-        underruns = traffic.get("underrun_blocks", 0)
-        if underruns:
-            traffic_fails.append("%d underrun block(s)" % underruns)
+        # Skipped when either side failed to parse: reconciling against counts
+        # that are absent because a file was unreadable would report a derived
+        # "rtl reads+fills 0+0 != model N" mismatch (and a "no underruns"
+        # reading taken from an empty dict) on top of the real reason, which is
+        # the same misreport #188 removed from the comparison path.
+        if not (tb_fails or model_fails):
+            if model_traffic is not None:
+                reads = traffic.get("core_reads_words", 0)
+                fills = traffic.get("core_fill_words", 0)
+                want = model_traffic["ext_read_words"]
+                if reads + fills != want:
+                    traffic_fails.append(
+                        "ext words: rtl reads+fills %d+%d != model %d"
+                        % (reads, fills, want))
+            # no-underrun gate: the sustained/concurrent check must hold
+            underruns = traffic.get("underrun_blocks", 0)
+            if underruns:
+                traffic_fails.append("%d underrun block(s)" % underruns)
 
     verdict = "PASS" if not (fails or traffic_fails) else "FAIL"
     if sim_fails:
