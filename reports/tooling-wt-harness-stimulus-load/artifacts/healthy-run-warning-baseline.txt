@@ -251,20 +251,34 @@ has not displaced the committed negative control.
 
 5. AUTOMATED CONTROLS
 ----------------------
+Re-measured 2026-09-28 at 49a26ea (issue #215). This file gains controls with
+every harness fix, so the totals here are stamped, not frozen: 15 controls
+predated #194, #194 added the 5 named below (20 when #194 landed), and 27 more
+have arrived since with #205, #218 and later work.
+
   $ python3 -m pytest -q tests/test_sxt026_wt_rtl_harness.py
-  16 passed
+  47 passed
 
 Against the pre-fix harness (same test file, HARNESS pointed at
-/tmp/wt194-prefix/tools/compare_wt_rtl_model.py), 5 of the 16 FAIL and the 11
-pre-existing #182/#188 controls still pass — so the new controls discriminate
-and none of the old ones was weakened:
+/tmp/wt194-prefix/tools/compare_wt_rtl_model.py -- the harness as of 369ea7e,
+i.e. fe9f247^), the 5 #194 controls FAIL and the 15 controls that predated
+#194 still pass -- so the new controls discriminate and none of the old ones
+was weakened:
 
   FAIL  test_truncated_stimulus_file_is_named_and_not_a_model_disagreement
   FAIL  test_every_stimulus_file_is_named_when_it_is_the_truncated_one
   FAIL  test_complete_stimulus_still_passes_with_no_sim_fails
   FAIL  test_run_dir_without_a_stimulus_index_reports_not_run_not_failure
   FAIL  test_length_check_is_content_based_not_layout_based
-  PASS  (the other 11, unchanged)
+  PASS  (the other 15 of the 20 controls that existed when #194 landed,
+         unchanged -- checked by name against the 15 collected at 369ea7e)
+
+Running the file as it stands today (all 47 controls) against that same
+pre-fix harness copy reports 26 failed / 21 passed. That is NOT a "5 of 47"
+figure: the 21 extra failures are the #205 traffic-parse and #218
+exit-status controls, which postdate the pre-fix snapshot as well, so they
+discriminate against their own fixes rather than #194's. The #194 leg of this
+comparison is the 5-of-20 figure above.
 
 Note that test_complete_stimulus_still_passes_with_no_sim_fails fails against
 the pre-fix harness only because the summary has no stimulus_lengths field to
