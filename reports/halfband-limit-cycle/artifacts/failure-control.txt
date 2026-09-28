@@ -4,8 +4,8 @@ GENERATED, DO NOT EDIT BY HAND:
   python3 tools/measure_halfband_limit_cycle.py --failure-control \
       reports/halfband-limit-cycle/artifacts/failure-control.txt
 
-generated: 2026-09-28T10:01:47Z (UTC)
-base commit: e82a3e0509a76b5a10541c5680eb856e19402cc0
+generated: 2026-09-28T10:08:50Z (UTC)
+base commit: ae8ef1e83e01782088e18cf9932fffe5045df101
 sweep artifact vs that commit at generation time: clean
 python: 3.12.3
 
@@ -67,7 +67,7 @@ CASES: 315 (the full declared sweep)
   The uncontrolled row is RECOUNTED from sweep.cases, not read
   off the summary:
     non-zero  recount 306   summary 306   failure_control 306
-    worst     recount 36   summary 36
+    worst     recount 36    summary 36
     all agree: True
   The control row's worst settled peak is DERIVED, not restated:
   failure_control() calls a case an offender when it is not

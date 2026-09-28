@@ -1157,7 +1157,8 @@ def failure_control_body(art=None, control_src=None):
     worst = max((r["settled_peak_q21"] for r in rows
                  if r["status"] == "MEASURED"), default=None)
     ctrl_worst = _control_leg_worst_q21(fc)
-    ok_control = fc["control_cases_nonzero"] == 0 and not fc["control_offenders"]
+    ok_control = (fc["control_cases_nonzero"] == 0
+                  and not fc["control_offenders"])
     ok_live = fc["uncontrolled_nonzero_cases"] > 0
     verdict = "PASS" if (ok_control and ok_live) else "FAIL"
 
@@ -1222,10 +1223,10 @@ def failure_control_body(art=None, control_src=None):
     L.append("")
     L.append("  The uncontrolled row is RECOUNTED from sweep.cases, not read")
     L.append("  off the summary:")
-    L.append("    non-zero  recount %d   summary %d   failure_control %d"
+    L.append("    non-zero  recount %-5d summary %-5d failure_control %d"
              % (live, s["cases_with_nonzero_limit_cycle"],
                 fc["uncontrolled_nonzero_cases"]))
-    L.append("    worst     recount %s   summary %s"
+    L.append("    worst     recount %-5s summary %s"
              % (_peak_cell(worst), _peak_cell(s["worst_settled_peak_q21"])))
     L.append("    all agree: %s"
              % (live == s["cases_with_nonzero_limit_cycle"]
