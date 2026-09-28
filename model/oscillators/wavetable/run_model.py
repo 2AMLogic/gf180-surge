@@ -20,12 +20,15 @@ Outputs (under --out-dir):
                       stimulus file, which the testbench's oversized memory
                       declarations make undetectable from simulator output)
 
-Declared control-plane boundary: pitchmult_inv / a_cov / hpf ramp endpoints
-(coef-rate words), the sinc ROM, and the derived mip tables are streamed to
-the RTL. The RTL reproduces the morph lag, tableid/tableipol stepping, mip
-selection, the full impulse loop (per unison voice), and the hpf output
-stage, and must match the model trace EXACTLY at every declared checkpoint
-(integer equality; enforced by tools/compare_wt_rtl_model.py).
+Declared control-plane boundary: pitchmult_inv / a_cov / hpf ramp endpoints /
+VCA x AEG gain-ramp endpoints (coef-rate words), the sinc ROM, and the derived
+mip tables are streamed to the RTL. The RTL reproduces the morph lag,
+tableid/tableipol stepping, mip selection, the full impulse loop (per unison
+voice), the hpf output stage, AND the per-scene 48 kHz stage (o2 level, gain
+ramp, scene out, +/-8 clip, HalfbandD2, master, clips), and must match the
+model trace EXACTLY at every declared checkpoint and on every 48 kHz
+`mono_block` sample (integer equality; enforced by
+tools/compare_wt_rtl_model.py).
 
 init.hex word order (32-bit words):
   0 wave_size   1 n_tables   2 built_levels   3 n_unison   4 nointerp
@@ -33,13 +36,21 @@ init.hex word order (32-bit words):
   6 out_attenuation  7 detune_bias  8 detune_offset  9 udet_ext (Q10.21)
  10 t_shape 11 t_vskew 12 t_hskew 13 t_clip 14 formant_t 15 lag_rate
  16 tableipol_init 17 tableid_init 18 last_tableipol_init 19 last_tableid_init
- 20 hpf_init
+ 20 hpf_init 21 morph_scale 22 taylorscale 23 dt
+ 24..39 tempt[0..15]
+ --- scene stage (SXT-017 revision #180, decision-records/0018) ---
+ 40 lvl (o2 level, Q10.21)  41 outl (scene out, Q10.21)
+ 42 master (Q10.21)  43..48 halfband B0..B5  49..54 halfband A0..A5
 
-ctrl.hex: per block a header [b, slotmask] then one 7-word record per
+ctrl.hex: per block a header [b, slotmask] then one 9-word record per
 processed slot (slot order 0..31; released voices keep their bit for the
 release block): key, flags(b0 gate,b1 checkpoint,
 b2 created,b3 released), pmi(Q13.18), pitchmult(Q4.27), a_cov(Q4.27),
-hpf_start(Q10.21), hpf_d(Q10.21).
+hpf_start(Q10.21), hpf_d(Q10.21), gain_start(Q10.21), gain_d(Q10.21).
+The last two are the VCA x AEG gain-ramp endpoints of the scene stage --
+the same coef-rate control-plane class as the hpf ramp endpoints; the record
+grew from 7 to 9 words with the #180 contract revision, so any consumer of
+the old layout must be REGENERATED, never re-interpreted.
 """
 
 import argparse
@@ -57,6 +68,7 @@ import voice_model as vm  # noqa: E402
 
 FQ = vm.FQ
 BLOCK_SIZE = vm.BLOCK_SIZE
+BLOCK_SIZE_OS = vm.BLOCK_SIZE_OS
 CHECKPOINT_EVERY = 64
 N_SLOTS = 4
 
@@ -112,6 +124,10 @@ def main():
         total_samples = total_blocks * BLOCK_SIZE
 
     voices = []
+    # ONE per-scene decimator + master stage for the whole render: it
+    # persists across voice death, exactly as the engine's scene filter does
+    # (SXT-017 revision #180, decision-records/0018)
+    scene_stage = wm.SceneDecimator(inp)
     slot_caches = {}
     events = list(seq["events"])
     ei = 0
@@ -141,14 +157,17 @@ def main():
             ei += 1
 
         alive = []
-        mono = [0] * BLOCK_SIZE
+        # unclipped 96 kHz scene accumulator (the engine's `sceneout`): the
+        # +/-8 clip, the decimator and the master stage all run ONCE on this
+        # sum, after every slice has contributed
+        scene_sum = [0] * BLOCK_SIZE_OS
         blk_traffic = {"b": b, "slots": []}
         slotmask = 0
         slot_records = []
         for v in voices:
-            m, osout, keep = v.process_block(b)
-            for k in range(BLOCK_SIZE):
-                mono[k] += m[k]
+            scene, osout, keep = v.scene_block(b)
+            for k in range(BLOCK_SIZE_OS):
+                scene_sum[k] += scene[k]
             impulses = v.osc.block_impulses
             # external asset reads: 2 words per impulse (morph frame pair) +
             # on-demand frame fills of the frames actually touched (both
@@ -209,12 +228,15 @@ def main():
                     osc.ctrl["pmi"], osc.ctrl["pitchmult"],
                     osc.ctrl["a_cov"],
                     osc.ctrl["hpf_start"], osc.ctrl["hpf_d"],
+                    v.ctrl_gain_start, v.ctrl_gain_d,
                 ]))
         voices = alive
 
-        mono = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in mono]
+        # the per-scene stage runs on EVERY block, including blocks with no
+        # live voice: the filter keeps ringing after the last voice dies
+        mono = scene_stage.process_block(scene_sum)
         for k in range(BLOCK_SIZE):
-            m = vm.limit_i(mono[k], -wm.ONE, wm.ONE)
+            m = mono[k]
             s = (m * 32767) >> FQ if m >= 0 else -((-m * 32767) >> FQ)
             out_mono.append(s)
         blk["mono_block"] = mono
@@ -245,7 +267,15 @@ def main():
     with open(os.path.join(args.out_dir, "model_trace.json"), "w",
               encoding="utf-8") as f:
         json.dump({
-            "format": "sxt-026-wavetable-trace/1",
+            # /2: the decimator/master stage moved from the voice slice to
+            # ONE per-scene stage, so `mono_block` is now the FINAL
+            # +/-1-clipped 48 kHz Q10.21 mono (it used to be the +/-8-clipped
+            # sum of per-slice decimations). SXT-017 revision #180,
+            # decision-records/0018. The per-slot ctrl record is 9 words.
+            "format": "sxt-026-wavetable-trace/2",
+            "mono_block": ("final 48 kHz Q10.21 mono after the per-scene "
+                           "+/-8 clip, HalfbandD2, master, +/-8 and +/-1 "
+                           "clips; int16 conversion happens once from it"),
             "sequence": seq["id"],
             "inputs": os.path.relpath(args.inputs, REPO),
             "engine_pin": ("surge-synthesizer/surge@"
@@ -315,6 +345,12 @@ def main():
             wm.INTEGRATOR_HPF,
             morph_scale, wm.TAYLORSCALE, osc0.dt,
             *tempt_words,
+            # --- per-scene 48 kHz stage (words 40..54) ---
+            vm.amp_to_linear(wm.qint(inp.o2_level)),          # 40 lvl
+            vm.amp_to_linear(wm.qint(inp.scene_volume)) >> 1,  # 41 outl
+            vm.db_to_linear(wm.qint(inp.master_db)),          # 42 master
+            *vm.HALFBAND_B_Q,                                 # 43..48
+            *vm.HALFBAND_A_Q,                                 # 49..54
         ]
         declared = {}
         for name, words in (("init.hex", init_words),

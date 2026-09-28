@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 """SXT-026 RTL-vs-model exactness harness (issue #19).
 
-DECLARED SCOPE BOUNDARY (issue #176). This harness compares the model and the
-RTL **up to and including the 2x-rate (96 kHz) oscillator output block**. It
-does NOT read the model trace's 48 kHz `mono_block` samples, because
-`rtl/oscillators/wavetable/` implements no post-oscillator stage: the model's
-`wt_model.Slice` tail (o2 level, VCA x AEG gain ramp, scene out, +/-8 clip,
-`HalfbandD2` decimation, master, clips) has no RTL counterpart in this leaf.
-A PASS here therefore establishes `rtl_vs_model: PASS` for the oscillator and
-its declared external-traffic accounting ONLY -- never for the 48 kHz output.
-The emitted summary carries this boundary in its `scope` field so every
-transcript states it. The 48 kHz scene path IS covered by RTL on the SXT-022
-voice leaf (`rtl/voice/tb_voice.sv`), against that leaf's own model; extending
-coverage to this leaf's 48 kHz output is an SXT-017 contract question (#180),
-not a gap this harness may paper over. Measurement of the per-slice vs per-scene
-difference: `reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json`.
+DECLARED SCOPE (issue #180, SXT-017 contract revision
+`decision-records/0018-wavetable-scene-decimation-placement.md`). This harness
+compares the model and the RTL from the oscillator through the **48 kHz
+output**: the model trace's `mono_block` samples are read and compared against
+the testbench's `M` trace lines at integer equality. Before #180 the leaf had
+no 48 kHz RTL stage at all and this harness did not read `mono_block`, so the
+PASS was oscillator-scoped (declared deviation 8 of #176); that boundary is
+gone, and the emitted summary carries the landed scope in its `scope` field so
+every transcript states what it covers.
+
+The 48 kHz stage is a per-SCENE resource and lives in `tb_wavetable.sv`, not in
+the per-slot `wavetable_core.sv` -- the same split `rtl/voice/tb_voice.sv` uses
+on the SXT-022 voice leaf.
 
 Compares, with INTEGER EQUALITY (any mismatch = FAIL):
   * per-voice impulse-engine state at every declared checkpoint
@@ -22,11 +21,22 @@ Compares, with INTEGER EQUALITY (any mismatch = FAIL):
   * morph machinery state (tableid, tableipol, last_tableipol, l_shape),
   * the hpf/output stage (osc_out, bufpos, hpf_prev),
   * every 64-sample oscillator output block,
+  * every 32-sample 48 kHz `mono_block` (the per-scene o2 level / VCA x AEG
+    gain ramp / scene out / +/-8 clip / HalfbandD2 / master / clips stage),
+    on EVERY block including blocks with no live voice -- the scene filter
+    keeps ringing after the last voice dies, and that ring-out is compared,
   * external-asset traffic: core reads_words vs the model's declared
     2-words-per-impulse accounting, fill_words vs frame-fills.
 
-Also verifies the RTL negative-control mutant (NC-B RTL: -DWAVETABLE_MUTANT_MIP)
-FAILS the same comparison (--mutant).
+Two RTL negative-control mutants must FAIL the same comparison:
+  * `--mutant`             NC-B RTL, -DWAVETABLE_MUTANT_MIP (mip thresholds),
+  * `--mutant-scene`       #180 failure control, -DWT_SCENE_MUTANT_HB_ORDER:
+                           a SINGLE-LINE mutation of the scene decimator's
+                           reconstruction branch order (the pre-#123
+                           A-even/B-odd order). A 48 kHz comparison that
+                           passes against a mutated decimator does not cover
+                           the stage, so this control is what makes the 48 kHz
+                           coverage claim meaningful.
 
 SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #182, #188,
 #194). A run that never produced trustworthy traces must say so. Five
@@ -87,21 +97,29 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RTLDIR = os.path.join(REPO, "rtl", "oscillators", "wavetable")
 
-# Machine-readable restatement of the module docstring's scope boundary
-# (issue #176): every emitted transcript carries it, so a PASS can never be
-# read as covering the 48 kHz output.
+# Machine-readable restatement of the module docstring's scope (issue #180):
+# every emitted transcript carries it, so what a PASS covers is never inferred.
 SCOPE = {
-    "covers": ("model-vs-RTL integer equality up to and including the 2x-rate "
-               "(96 kHz) oscillator output block, plus the declared "
-               "external-asset traffic accounting"),
-    "does_not_cover": ("the 48 kHz output: the model's post-oscillator stage "
-                       "(o2 level, VCA x AEG gain ramp, scene out, +/-8 clip, "
-                       "HalfbandD2 decimation, master, clips) has NO RTL "
-                       "counterpart in rtl/oscillators/wavetable/, so the "
-                       "model trace's mono_block samples are not compared"),
+    "covers": ("model-vs-RTL integer equality from the oscillator through the "
+               "48 kHz output: the 2x-rate (96 kHz) oscillator output block, "
+               "the declared per-voice/shared checkpoints, EVERY 48 kHz "
+               "mono_block sample of the per-scene stage (o2 level, "
+               "VCA x AEG gain ramp, scene out, +/-8 clip, HalfbandD2, "
+               "master, clips) including the post-voice-death ring-out, and "
+               "the declared external-asset traffic accounting"),
+    "does_not_cover": ("anything downstream of this leaf's scene bus (effects, "
+                       "the int16 file conversion, hardware playback), and "
+                       "NOTHING about model-vs-pinned-engine fidelity: that is "
+                       "a separate claim under [PROPOSED] budgets "
+                       "(reports/sxt-026/EVIDENCE.md section 3)"),
     "declared_in": ("model/oscillators/wavetable/README.md (declared "
-                    "deviations 7-8), reports/sxt-026/EVIDENCE.md section 2"),
-    "issue": 176,
+                    "deviations 7-8), reports/sxt-026/EVIDENCE.md section 2, "
+                    "decision-records/0018-wavetable-scene-decimation-"
+                    "placement.md"),
+    "issue": 180,
+    "superseded_boundary": ("before #180 this harness did not read mono_block "
+                            "and the leaf's RTL had no 48 kHz stage, so the "
+                            "PASS was oscillator-scoped (deviation 8 of #176)"),
 }
 
 # The hex stimulus the testbench $readmemh's, as (plusarg, path relative to the
@@ -263,8 +281,13 @@ def _as_text(stream):
 
 
 def parse_traces(run_dir, slots=4):
-    """Parse tb_trace.s<k> files: T (per-voice), S (shared), O (oscout)."""
-    t, sh, o = {}, {}, {}
+    """Parse the testbench traces.
+
+    tb_trace.s<k>: T (per-voice), S (shared), O (96 kHz oscout) -- per slot.
+    tb_trace.mono: M (48 kHz scene output) -- per SCENE, one file, because the
+    stage is a scene resource and not a per-slot one.
+    """
+    t, sh, o, mono = {}, {}, {}, {}
     for s in range(slots):
         p = os.path.join(run_dir, "tb_trace.s%d" % s)
         if not os.path.exists(p):
@@ -284,7 +307,14 @@ def parse_traces(run_dir, slots=4):
                     b, slot = int(parts[1]), int(parts[2])
                     o.setdefault((b, slot), []).extend(
                         int(x) for x in parts[3:])
-    return t, sh, o
+    p = os.path.join(run_dir, "tb_trace.mono")
+    if os.path.exists(p):
+        with open(p) as f:
+            for line in f:
+                parts = line.split()
+                if parts and parts[0] == "M":
+                    mono.setdefault(int(parts[1]), []).append(int(parts[2]))
+    return t, sh, o, mono
 
 
 def to_signed32(x):
@@ -293,13 +323,34 @@ def to_signed32(x):
 
 
 def compare(model_trace, rtl, max_blocks=None):
-    t, sh, o = rtl
+    t, sh, o, mono = rtl
     fails = []
-    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0}
+    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0, "mono48": 0}
     for blk in model_trace["blocks"]:
         b = blk["b"]
         if max_blocks is not None and b >= max_blocks:
             break
+        # ---- 48 kHz output (the per-scene stage; issue #180) ----
+        # Compared on EVERY block, not only checkpoint blocks and not only
+        # blocks with a live voice: the scene filter's post-death ring-out is
+        # part of the stage and must match too.
+        wm_mono = blk.get("mono_block")
+        if wm_mono is not None:
+            got_mono = mono.get(b)
+            if got_mono is None or len(got_mono) != len(wm_mono):
+                fails.append(
+                    "block %d: missing/short M line (48 kHz mono_block: "
+                    "model %d samples, rtl %s)"
+                    % (b, len(wm_mono),
+                       "absent" if got_mono is None else len(got_mono)))
+            else:
+                for k, (wv, gv) in enumerate(zip(wm_mono, got_mono)):
+                    checked["mono48"] += 1
+                    if to_signed32(wv) != gv:
+                        fails.append("block %d mono48[%d]: model=%d rtl=%d"
+                                     % (b, k, wv, gv))
+            if len(fails) > 30:
+                return checked, fails
         for rec in blk["voices"]:
             if "after" not in rec:
                 continue
@@ -355,8 +406,8 @@ def compare(model_trace, rtl, max_blocks=None):
     return checked, fails
 
 
-def compile_and_run_sim(run_dir, model_trace, *, mutant, reverb_bg,
-                        max_blocks, timeout):
+def compile_and_run_sim(run_dir, model_trace, *, mutant, mutant_scene,
+                        reverb_bg, max_blocks, timeout):
     """Compile the testbench and run it; return (sim_fails, stdout_tail).
 
     Recognizes mechanisms 2-4 of the module docstring. Never raises on a
@@ -369,6 +420,8 @@ def compile_and_run_sim(run_dir, model_trace, *, mutant, reverb_bg,
     build = ["iverilog", "-g2012", "-o", vvp, "-s", "tb_wavetable"]
     if mutant:
         build.append("-DWAVETABLE_MUTANT_MIP")
+    if mutant_scene:
+        build.append("-DWT_SCENE_MUTANT_HB_ORDER")
     build += [os.path.join(RTLDIR, "tb_wavetable.sv"),
               os.path.join(RTLDIR, "wavetable_core.sv")]
     # ---- mechanism 4a: a failed/unrunnable compile is a recorded reason,
@@ -395,7 +448,7 @@ def compile_and_run_sim(run_dir, model_trace, *, mutant, reverb_bg,
            "+LEGACY=%d" % model_trace["legacy"],
            "+TRACE=%s/tb_trace" % run_dir,
            "+TRAFFIC=%s/tb_traffic.txt" % run_dir,
-           "+MUT=%d" % (1 if mutant else 0),
+           "+MUT=%d" % (1 if (mutant or mutant_scene) else 0),
            "+REVERB_BG=%d" % (1 if reverb_bg else 0)]
     cmd += ["+%s=%s" % (plusarg, rel) for plusarg, rel in STIMULUS]
     # ---- mechanism 4b: a timeout kill is a recorded reason too ----
@@ -430,8 +483,13 @@ def main():
                     help="run dir with model_trace.json + rtl/ stimulus")
     ap.add_argument("--out", help="write verdict JSON here")
     ap.add_argument("--mutant", action="store_true",
-                    help="build the committed mip-threshold mutant; "
-                         "the comparison must FAIL")
+                    help="build the committed mip-threshold mutant "
+                         "(NC-B RTL); the comparison must FAIL")
+    ap.add_argument("--mutant-scene", action="store_true",
+                    help="build the committed scene-decimator mutant "
+                         "(-DWT_SCENE_MUTANT_HB_ORDER: the pre-#123 "
+                         "A-even/B-odd reconstruction order, one line); the "
+                         "48 kHz comparison must FAIL (#180 failure control)")
     ap.add_argument("--reverb-bg", action="store_true",
                     help="enable the concurrent Reverb1 background bus "
                          "traffic (SXT-016 pattern, 34 words/frame); the "
@@ -449,7 +507,8 @@ def main():
     fails = []
     sim_fails = []
     cmp_fails = []
-    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0}
+    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0,
+               "mono48": 0}
     sim_stdout_tail = ""
     model_trace = None
 
@@ -498,6 +557,7 @@ def main():
         else:
             sim_fails, sim_stdout_tail = compile_and_run_sim(
                 args.run_dir, model_trace, mutant=args.mutant,
+                mutant_scene=args.mutant_scene,
                 reverb_bg=args.reverb_bg, max_blocks=args.max_blocks,
                 timeout=args.timeout)
 
@@ -552,6 +612,7 @@ def main():
         "comparison": comparison,
         "scope": SCOPE,
         "mutant": args.mutant,
+        "mutant_scene": args.mutant_scene,
         "reverb_bg": bool(args.reverb_bg),
         "checked": checked,
         "mismatches": len(fails),
@@ -568,10 +629,18 @@ def main():
         with open(args.out, "w") as f:
             json.dump(summary, f, indent=1)
             f.write("\n")
-    if args.mutant:
+    if args.mutant or args.mutant_scene:
         # The mutant must fail the COMPARISON. A simulator that never ran
         # demonstrates nothing about the mutant, so a simulator-level failure
         # is NOT_RUN for this control and must exit non-zero.
+        if args.mutant_scene:
+            # ... and the SCENE mutant must fail it ON THE 48 kHz LEG. A scene
+            # mutant that only broke an oscillator checkpoint would prove
+            # nothing about the 48 kHz coverage this control exists to
+            # establish, so a run whose only failures are elsewhere is
+            # refused (#180 failure control).
+            mono_fails = [f for f in cmp_fails if "mono48" in f]
+            return 0 if mono_fails and not sim_fails else 1
         return 0 if cmp_fails and not sim_fails else 1
     return 0 if not fails else 1
 

@@ -284,7 +284,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "8e1789919311cd517e759cedc65e8028715cf3985f456a1e5cf804fe5dd0211e"
+   "sha256": "8a61788bf34754f27db1b9db619513e0dbc6403be1fa3f00e8aef6dd478cd81c"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -324,7 +324,7 @@
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
-   "sha256": "3f70d09d9ab6b2b56278c39dc7d93d541644a99fa336468d8746b9d413b49984"
+   "sha256": "6ec85b66aaff1f4100128962f722ba851a9c949ca025432086b9ad80a4ffc923"
   },
   "reports/sxt-026a/EVIDENCE.md": {
    "role": "evidence record for leaf voice:sine-fm-lp24-v2",
