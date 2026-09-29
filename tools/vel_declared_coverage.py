@@ -21,6 +21,13 @@ sequence actually exercises and on which frozen destinations a nonzero route
 term is observed, so a green exactness verdict on a stimulus that never
 moves a source cannot be mistaken for coverage of that source.
 
+The declared set is monophonic, so it cannot discriminate the per-instance-state
+rule (recorded coverage gap). That limitation is SURVEYED rather than asserted:
+`seq-poly-8-v1`, the only polyphonic note fixture committed in
+`fixtures/sequences/`, is rendered and measured with the same trace-derived
+criterion, so the report can state whether ANY committed shared fixture could
+close the gap instead of only the three named ones.
+
 Fail-closed: a named sequence missing from `fixtures/sequences/` is a refusal
 (exit 2), never a silent fallback to the leaf-local sequence directory.
 
@@ -52,6 +59,14 @@ SEQ_DIR = os.path.join(REPO, "fixtures", "sequences")
 # the sequences named by issue #70 (SXT-036), in issue order
 DECLARED = ["seq-notes-coverage-v1", "seq-notes-repeated-v1",
             "seq-notes-holds-v1"]
+
+# NOT one of the sequences named by #70. The declared set is monophonic, so the
+# per-instance-state controls cannot fire on it (recorded coverage gap). This is
+# the only polyphonic NOTE fixture committed in fixtures/sequences/, i.e. the
+# only committed candidate that could close that gap without a leaf-local
+# stimulus, so it is measured (not assumed) with the same trace-derived
+# criterion the controls use.
+POLY_CANDIDATE = "seq-poly-8-v1"
 
 DEST_ORDER = ["cutoff", "reso", "fegmod", "vca"]
 
@@ -180,6 +195,49 @@ def main():
         shutil.rmtree(run_dir, ignore_errors=True)
         log("")
 
+    # --- survey: can ANY committed fixture discriminate per-instance state? --
+    survey = {}
+    cand_path = declared_path(POLY_CANDIDATE)
+    cand_dir = os.path.join(work, POLY_CANDIDATE)
+    rc, out, err = sh([sys.executable, RUNNER, "--sequence", cand_path,
+                       "--out-dir", cand_dir])
+    if rc != 0:
+        log(f"[survey {POLY_CANDIDATE}] model runner exit {rc}: {err[-200:]}")
+        survey = {"model_runner_exit": rc}
+        ok = False
+    else:
+        cov = trace_coverage(os.path.join(cand_dir, "model_trace.json"))
+        rc_v, jv = exactness(CMP_VEL, cand_dir)
+        log(f"[survey {POLY_CANDIDATE}] NOT named by #70; measured because it "
+            f"is the only polyphonic note fixture in fixtures/sequences/")
+        log(f"    tb_vel.sv control plane: {jv['verdict']} "
+            f"mismatches={jv['mismatches']} checked={jv.get('checked')}")
+        log(f"    max concurrent voices={cov['max_concurrent_voices']}; "
+            f"distinct vel_q={cov['distinct_vel_q']}; nonzero relvel_q="
+            f"{cov['nonzero_relvel_q']}; blocks with >=2 concurrently-live "
+            f"voices carrying DISTINCT source words="
+            f"{cov['concurrent_distinct_source_word_blocks']}")
+        discriminates = cov["concurrent_distinct_source_word_blocks"] > 0
+        log("    -> " + ("this fixture DOES discriminate per-instance state"
+                         if discriminates else
+                         "eight voices, but every one carries the same "
+                         "velocity (and the same release velocity), so a "
+                         "scene-wide shared register is still behaviourally "
+                         "identical here: it does NOT discriminate "
+                         "per-instance state either"))
+        if jv["verdict"] != "PASS":
+            ok = False
+        survey = {"sequence_path": os.path.relpath(cand_path, REPO),
+                  "named_by_issue_70": False,
+                  "control_plane": jv, "coverage": cov,
+                  "datapath": {"verdict": "NOT_RUN",
+                               "reason": "not a sequence named by #70; run "
+                                         "here only as the per-instance-state "
+                                         "discrimination survey"},
+                  "discriminates_per_instance_state": discriminates}
+        shutil.rmtree(cand_dir, ignore_errors=True)
+    log("")
+
     # --- coverage roll-up, reported separately from the agreement verdicts ---
     all_vel = sorted({w for e in per_seq.values()
                       for w in e.get("coverage", {}).get("distinct_vel_q", [])})
@@ -210,15 +268,23 @@ def main():
             gaps.append(f"no nonzero route term ever observed on "
                         f"destination '{d}'")
     if concurrent == 0:
-        gaps.append("every declared sequence is monophonic (no block ever "
-                    "has two concurrently-live voices with distinct source "
-                    "words), so the PER-INSTANCE-STATE rule is NOT "
-                    "discriminated by the declared set: a scene-wide shared "
-                    "{vel, relvel} register would pass these runs. That "
-                    "control fires only on an overlapping stimulus (the "
-                    "leaf-local 'sxt036-vel-overlap-v1'); "
-                    "tools/vel_negative_controls.py reports it NOT_RUN on "
-                    "these sequences rather than passing it")
+        gap = ("every declared sequence is monophonic (no block ever "
+               "has two concurrently-live voices with distinct source "
+               "words), so the PER-INSTANCE-STATE rule is NOT "
+               "discriminated by the declared set: a scene-wide shared "
+               "{vel, relvel} register would pass these runs. That "
+               "control fires only on an overlapping stimulus (the "
+               "leaf-local 'sxt036-vel-overlap-v1'); "
+               "tools/vel_negative_controls.py reports it NOT_RUN on "
+               "these sequences rather than passing it")
+        if survey.get("discriminates_per_instance_state") is False:
+            gap += (f". Surveyed beyond the declared set: {POLY_CANDIDATE}, "
+                    "the only polyphonic note fixture committed in "
+                    "fixtures/sequences/, holds eight voices at ONE velocity "
+                    "and one release velocity, so it does not discriminate "
+                    "either - no committed shared fixture closes this gap, "
+                    "which is why the leaf-local stimulus exists")
+        gaps.append(gap)
     for g in gaps:
         log(f"  COVERAGE GAP: {g}")
     if not gaps:
@@ -247,6 +313,7 @@ def main():
                        "voice_blocks_with_nonzero_route_sum": dest_cov,
                        "concurrent_distinct_source_word_blocks": concurrent,
                        "gaps": gaps},
+                   "per_instance_state_survey": survey,
                    "sequences": per_seq}, f, indent=2)
         f.write("\n")
     shutil.rmtree(work, ignore_errors=True)

@@ -16,12 +16,17 @@ Claim established: RTL == frozen model, exactly (claim 1). Model-vs-pinned-engin
     coverage: 9300 blocks, 4392 voice-block records; max concurrent voices=1; distinct vel_q=[1155911]; nonzero relvel_q=[1651301]
     voice-blocks with a nonzero route term per destination: {'cutoff': 4392, 'reso': 4392, 'fegmod': 4392, 'vca': 4392}
 
+[survey seq-poly-8-v1] NOT named by #70; measured because it is the only polyphonic note fixture in fixtures/sequences/
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 14784, 'source_words': 29568, 'route_sums': 59136}
+    max concurrent voices=8; distinct vel_q=[1155911]; nonzero relvel_q=[]; blocks with >=2 concurrently-live voices carrying DISTINCT source words=0
+    -> eight voices, but every one carries the same velocity (and the same release velocity), so a scene-wide shared register is still behaviourally identical here: it does NOT discriminate per-instance state either
+
 Coverage roll-up over the declared set (NOT an agreement claim):
   ms_velocity source words exercised:         [495390, 1155911, 1981561]
   ms_releasevelocity nonzero words exercised: [1651301]
   voice-blocks with a nonzero route term:     {'cutoff': 9468, 'reso': 9468, 'fegmod': 9468, 'vca': 9468}
   blocks with >=2 concurrently-live voices carrying distinct source words: 0
-  COVERAGE GAP: every declared sequence is monophonic (no block ever has two concurrently-live voices with distinct source words), so the PER-INSTANCE-STATE rule is NOT discriminated by the declared set: a scene-wide shared {vel, relvel} register would pass these runs. That control fires only on an overlapping stimulus (the leaf-local 'sxt036-vel-overlap-v1'); tools/vel_negative_controls.py reports it NOT_RUN on these sequences rather than passing it
+  COVERAGE GAP: every declared sequence is monophonic (no block ever has two concurrently-live voices with distinct source words), so the PER-INSTANCE-STATE rule is NOT discriminated by the declared set: a scene-wide shared {vel, relvel} register would pass these runs. That control fires only on an overlapping stimulus (the leaf-local 'sxt036-vel-overlap-v1'); tools/vel_negative_controls.py reports it NOT_RUN on these sequences rather than passing it. Surveyed beyond the declared set: seq-poly-8-v1, the only polyphonic note fixture committed in fixtures/sequences/, holds eight voices at ONE velocity and one release velocity, so it does not discriminate either - no committed shared fixture closes this gap, which is why the leaf-local stimulus exists
 
 Not established here: model-vs-pinned-engine dry-render budgets (item 2) and the reference-budget negative controls (item 5) remain NOT_RUN - pinned oracle unavailable on dispatch host (#96).
 AGREEMENT (RTL == frozen model, integer equality): PASS

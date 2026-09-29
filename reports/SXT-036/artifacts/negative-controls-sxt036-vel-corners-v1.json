@@ -1,0 +1,363 @@
+{
+  "overall": "PASS",
+  "sequence": "sxt036-vel-corners-v1",
+  "controls_not_run": [],
+  "reference_budget_controls": "NOT_RUN",
+  "results": {
+    "positive": {
+      "tb": "rtl/voice/tb_vel.sv",
+      "sequence": "sxt036-vel-corners-v1",
+      "control_mode": "normal",
+      "verdict": "PASS",
+      "checked": {
+        "voice_block_checkpoints": 2088,
+        "source_words": 4176,
+        "route_sums": 8352
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "rtl_done_line": "DONE vel-qmuls=12528"
+    },
+    "stimulus_precondition": {
+      "concurrent_distinct_source_word_blocks": 498,
+      "per_instance_state_controls_testable": true
+    },
+    "zero-vel-cutoff": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 1 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 2 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 3 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 4 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 5 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 6 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 7 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 8 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 9 slot 0 route_sum[0]: model=0 rtl=396312"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 10500,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-vel-reso": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 1 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 2 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 3 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 4 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 5 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 6 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 7 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 8 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 9 slot 0 route_sum[1]: model=0 rtl=4128"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 2409,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-vel-fegmod": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 1 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 2 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 3 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 4 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 5 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 6 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 7 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 8 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 9 slot 0 route_sum[2]: model=0 rtl=4954"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 18,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-vel-vca": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 1 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 2 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 3 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 4 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 5 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 6 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 7 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 8 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 9 slot 0 route_sum[3]: model=0 rtl=-198156"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 22327,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-relvel-cutoff": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 1296,
+          "source_words": 2592,
+          "route_sums": 5184
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 300 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 301 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 302 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 303 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 304 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 305 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 306 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 307 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 308 slot 0 route_sum[0]: model=396312 rtl=25562136",
+          "block 309 slot 0 route_sum[0]: model=396312 rtl=25562136"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 4756,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-relvel-vca": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 1296,
+          "source_words": 2592,
+          "route_sums": 5184
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 300 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 301 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 302 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 303 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 304 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 305 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 306 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 307 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 308 slot 0 route_sum[3]: model=-198156 rtl=12384756",
+          "block 309 slot 0 route_sum[3]: model=-198156 rtl=12384756"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 5066,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "source-swap-mw": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "source_swap_mw",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 11,
+          "source_words": 22,
+          "route_sums": 44
+        },
+        "mismatches": 44,
+        "first_failures": [
+          "block 0 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 0 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 0 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 0 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 1 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 1 slot 0 route_sum[1]: model=0 rtl=4128",
+          "block 1 slot 0 route_sum[2]: model=0 rtl=4954",
+          "block 1 slot 0 route_sum[3]: model=0 rtl=-198156",
+          "block 2 slot 0 route_sum[0]: model=0 rtl=396312",
+          "block 2 slot 0 route_sum[1]: model=0 rtl=4128"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 19134,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "shared-state": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "shared_state",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 72,
+          "source_words": 144,
+          "route_sums": 288
+        },
+        "mismatches": 44,
+        "first_failures": [
+          "block 50 slot 0 route_sum[0]: model=50331648 rtl=396312",
+          "block 50 slot 0 route_sum[1]: model=524288 rtl=4128",
+          "block 50 slot 0 route_sum[2]: model=629146 rtl=4954",
+          "block 50 slot 0 route_sum[3]: model=-25165824 rtl=-198156",
+          "block 51 slot 0 route_sum[0]: model=50331648 rtl=396312",
+          "block 51 slot 0 route_sum[1]: model=524288 rtl=4128",
+          "block 51 slot 0 route_sum[2]: model=629146 rtl=4954",
+          "block 51 slot 0 route_sum[3]: model=-25165824 rtl=-198156",
+          "block 52 slot 0 route_sum[0]: model=50331648 rtl=396312",
+          "block 52 slot 0 route_sum[1]: model=524288 rtl=4128"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "model_max_abs_delta_lsb": 13555,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "rtl-shared-slot": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_shared_slot_mutant.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 68,
+          "source_words": 136,
+          "route_sums": 272
+        },
+        "mismatches": 45,
+        "first_failures": [
+          "block 50 slot 0 vel_q: model=16513 rtl=2097152",
+          "block 50 slot 0 route_sum[0]: model=396312 rtl=50331648",
+          "block 50 slot 0 route_sum[1]: model=4128 rtl=524288",
+          "block 50 slot 0 route_sum[2]: model=4954 rtl=629146",
+          "block 50 slot 0 route_sum[3]: model=-198156 rtl=-25165824",
+          "block 51 slot 0 vel_q: model=16513 rtl=2097152",
+          "block 51 slot 0 route_sum[0]: model=396312 rtl=50331648",
+          "block 51 slot 0 route_sum[1]: model=4128 rtl=524288",
+          "block 51 slot 0 route_sum[2]: model=4954 rtl=629146",
+          "block 51 slot 0 route_sum[3]: model=-198156 rtl=-25165824"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "fails_as_required": true
+    },
+    "rtl-round-trunc": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_round_trunc_mutant.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 1 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 2 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 3 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 4 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 5 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 6 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 7 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 8 slot 0 route_sum[2]: model=4954 rtl=4953",
+          "block 9 slot 0 route_sum[2]: model=4954 rtl=4953"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "fails_as_required": true
+    },
+    "rtl-rom-floor": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_rom_floor_mutant.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 356,
+          "source_words": 712,
+          "route_sums": 1424
+        },
+        "mismatches": 42,
+        "first_failures": [
+          "block 150 slot 3 vel_q: model=1056833 rtl=1056832",
+          "block 150 slot 3 route_sum[0]: model=25363992 rtl=25363968",
+          "block 150 slot 3 route_sum[3]: model=-12681996 rtl=-12681984",
+          "block 151 slot 3 vel_q: model=1056833 rtl=1056832",
+          "block 151 slot 3 route_sum[0]: model=25363992 rtl=25363968",
+          "block 151 slot 3 route_sum[3]: model=-12681996 rtl=-12681984",
+          "block 152 slot 3 vel_q: model=1056833 rtl=1056832",
+          "block 152 slot 3 route_sum[0]: model=25363992 rtl=25363968",
+          "block 152 slot 3 route_sum[3]: model=-12681996 rtl=-12681984",
+          "block 153 slot 3 vel_q: model=1056833 rtl=1056832"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "fails_as_required": true
+    },
+    "invariance": {
+      "landed": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
+      "stripped": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
+      "equal": true
+    },
+    "refuse-out-of-class": {
+      "exit": 2,
+      "refused": true
+    },
+    "refuse-zero-route": {
+      "exit": 2,
+      "refused": true
+    }
+  }
+}

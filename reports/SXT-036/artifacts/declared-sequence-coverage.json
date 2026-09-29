@@ -19,8 +19,94 @@
     },
     "concurrent_distinct_source_word_blocks": 0,
     "gaps": [
-      "every declared sequence is monophonic (no block ever has two concurrently-live voices with distinct source words), so the PER-INSTANCE-STATE rule is NOT discriminated by the declared set: a scene-wide shared {vel, relvel} register would pass these runs. That control fires only on an overlapping stimulus (the leaf-local 'sxt036-vel-overlap-v1'); tools/vel_negative_controls.py reports it NOT_RUN on these sequences rather than passing it"
+      "every declared sequence is monophonic (no block ever has two concurrently-live voices with distinct source words), so the PER-INSTANCE-STATE rule is NOT discriminated by the declared set: a scene-wide shared {vel, relvel} register would pass these runs. That control fires only on an overlapping stimulus (the leaf-local 'sxt036-vel-overlap-v1'); tools/vel_negative_controls.py reports it NOT_RUN on these sequences rather than passing it. Surveyed beyond the declared set: seq-poly-8-v1, the only polyphonic note fixture committed in fixtures/sequences/, holds eight voices at ONE velocity and one release velocity, so it does not discriminate either - no committed shared fixture closes this gap, which is why the leaf-local stimulus exists"
     ]
+  },
+  "per_instance_state_survey": {
+    "sequence_path": "fixtures/sequences/seq-poly-8-v1.json",
+    "named_by_issue_70": false,
+    "control_plane": {
+      "tb": "rtl/voice/tb_vel.sv",
+      "sequence": "seq-poly-8-v1",
+      "control_mode": "normal",
+      "verdict": "PASS",
+      "checked": {
+        "voice_block_checkpoints": 14784,
+        "source_words": 29568,
+        "route_sums": 59136
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "rtl_done_line": "DONE vel-qmuls=88704"
+    },
+    "coverage": {
+      "blocks": 5550,
+      "voice_block_records": 14784,
+      "max_concurrent_voices": 8,
+      "concurrent_distinct_source_word_blocks": 0,
+      "distinct_vel_q": [
+        1155911
+      ],
+      "distinct_relvel_q": [
+        0
+      ],
+      "nonzero_relvel_q": [],
+      "voice_blocks_with_nonzero_route_sum": {
+        "cutoff": 14784,
+        "reso": 14784,
+        "fegmod": 14784,
+        "vca": 14784
+      },
+      "routes": [
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A Filter 1 Cutoff",
+          "dest_id": 308,
+          "depth_raw": 24.0
+        },
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A Filter 1 Resonance",
+          "dest_id": 309,
+          "depth_raw": 0.25
+        },
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A Filter 1 FEG Mod Amount",
+          "dest_id": 310,
+          "depth_raw": 0.3
+        },
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A VCA Gain",
+          "dest_id": 298,
+          "depth_raw": -12.0
+        },
+        {
+          "source": "ms_releasevelocity",
+          "source_id": 30,
+          "dest": "A Filter 1 Cutoff",
+          "dest_id": 308,
+          "depth_raw": 12.0
+        },
+        {
+          "source": "ms_releasevelocity",
+          "source_id": 30,
+          "dest": "A VCA Gain",
+          "dest_id": 298,
+          "depth_raw": 6.0
+        }
+      ]
+    },
+    "datapath": {
+      "verdict": "NOT_RUN",
+      "reason": "not a sequence named by #70; run here only as the per-instance-state discrimination survey"
+    },
+    "discriminates_per_instance_state": false
   },
   "sequences": {
     "seq-notes-coverage-v1": {

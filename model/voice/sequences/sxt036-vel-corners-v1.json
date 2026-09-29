@@ -1,0 +1,102 @@
+{
+ "id": "sxt036-vel-corners-v1",
+ "schema_version": 1,
+ "sample_rate": 48000,
+ "description": "SXT-036 parameter-corner stimulus: the MIDI source corners of ms_velocity / ms_releasevelocity (1, 63, 64, 126, 127 on note-on; 0, 1, 63, 126, 127 on note-off) carried by overlapping voices, so the per-instance-state rule also holds at the corners; note 72 carries velocity 127 AND release velocity 127, the only combination that drives BOTH source words to full scale in one voice (the worst-case per-destination route-sum corner); model/voice-local sequence (SXT-034 pattern)",
+ "coverage": [
+  "velocity:source-word-corners",
+  "release:release-velocity-corners",
+  "overlap:polyphonic",
+  "corner:odd-and-even-source-words"
+ ],
+ "notes": "Note-on velocity 0 is deliberately ABSENT: in MIDI a note-on with velocity 0 is a note-off, and whether the pinned engine ever constructs a voice with fvel == 0 is an engine-behaviour question that needs the oracle (#96/#232). The vel_q = 0 word is still exercised, through the release-velocity register, which the pinned engine itself initializes to 0 at voice construction (SurgeVoice ctor: releaseVelocitySource.set_output(0, 0)). Velocities 1/63/126 give ODD Q10.21 source words (16513 / 1040319 / 2080639) and 127 gives the exact word 2^21; the odd words are what make a depth of exactly 0.5 an exact round-half-up tie in the qmul.",
+ "settle_s": 0.25,
+ "tail_s": 0.4,
+ "tempo_events_renderable": true,
+ "events": [
+  {
+   "type": "note_on",
+   "t": 0,
+   "channel": 0,
+   "note": 48,
+   "velocity": 1
+  },
+  {
+   "type": "note_on",
+   "t": 1600,
+   "channel": 0,
+   "note": 60,
+   "velocity": 127
+  },
+  {
+   "type": "note_on",
+   "t": 3200,
+   "channel": 0,
+   "note": 55,
+   "velocity": 63
+  },
+  {
+   "type": "note_on",
+   "t": 4800,
+   "channel": 0,
+   "note": 67,
+   "velocity": 64
+  },
+  {
+   "type": "note_on",
+   "t": 6400,
+   "channel": 0,
+   "note": 52,
+   "velocity": 126
+  },
+  {
+   "type": "note_on",
+   "t": 8000,
+   "channel": 0,
+   "note": 72,
+   "velocity": 127
+  },
+  {
+   "type": "note_off",
+   "t": 9600,
+   "channel": 0,
+   "note": 48,
+   "velocity": 127
+  },
+  {
+   "type": "note_off",
+   "t": 11200,
+   "channel": 0,
+   "note": 60,
+   "velocity": 0
+  },
+  {
+   "type": "note_off",
+   "t": 12800,
+   "channel": 0,
+   "note": 55,
+   "velocity": 1
+  },
+  {
+   "type": "note_off",
+   "t": 14400,
+   "channel": 0,
+   "note": 67,
+   "velocity": 126
+  },
+  {
+   "type": "note_off",
+   "t": 16000,
+   "channel": 0,
+   "note": 52,
+   "velocity": 63
+  },
+  {
+   "type": "note_off",
+   "t": 17600,
+   "channel": 0,
+   "note": 72,
+   "velocity": 127
+  }
+ ]
+}
