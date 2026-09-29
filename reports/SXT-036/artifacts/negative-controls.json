@@ -1,5 +1,7 @@
 {
   "overall": "PASS",
+  "sequence": "sxt036-vel-overlap-v1",
+  "controls_not_run": [],
   "reference_budget_controls": "NOT_RUN",
   "results": {
     "positive": {
@@ -15,6 +17,10 @@
       "mismatches": 0,
       "first_failures": [],
       "rtl_done_line": "DONE vel-qmuls=17640"
+    },
+    "stimulus_precondition": {
+      "concurrent_distinct_source_word_blocks": 1071,
+      "per_instance_state_controls_testable": true
     },
     "zero-vel-cutoff": {
       "exactness": {

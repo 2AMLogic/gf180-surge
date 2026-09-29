@@ -26,7 +26,28 @@ Controls:
           --zero-route of a route that does not exist exits 2.
 Positive control: the unmutated RTL vs the unmodified model trace PASSES.
 
+`--sequence` runs the whole control set on a different stimulus. Use it to
+show that the exactness check is falsifiable on the sequences NAMED BY ISSUE
+#70 as well (`tools/vel_declared_coverage.py` runs the positive direction
+there): a PASS on a new stimulus means nothing unless a mutant on the SAME
+stimulus demonstrably FAILS. Artifacts are written under a sequence-specific
+suffix for any non-default sequence, so the default-sequence transcript is
+never overwritten.
+
+A control whose STIMULUS PRECONDITION is unmet is reported NOT_RUN with the
+reason named -- never as a pass, never as "control broken". The only such
+precondition here: the per-instance-state controls (E3 shared-state, E-rtl
+shared-slot) require a stimulus with two or more concurrently-live voices
+carrying distinct source words; on a monophonic stimulus a shared register is
+behaviourally identical to per-voice registers and the control cannot fire.
+
+Exit codes: 0 = every control fired as required; 3 = every applicable control
+fired but at least one is NOT_RUN on an unmet, named precondition; 1 = a
+control that should have fired did not; 2 = argparse/usage.
+
 Usage: python3 tools/vel_negative_controls.py --artifacts DIR
+       python3 tools/vel_negative_controls.py --artifacts DIR \
+           --sequence seq-notes-holds-v1
 """
 import argparse
 import hashlib
@@ -74,11 +95,17 @@ def sha(p):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--artifacts", required=True)
+    ap.add_argument("--sequence", default=SEQ,
+                    help=f"stimulus for every control (default {SEQ}); "
+                         "a non-default value suffixes the artifact names")
     args = ap.parse_args()
     art = os.path.abspath(args.artifacts)
     os.makedirs(art, exist_ok=True)
+    seq = args.sequence
+    suffix = "" if seq == SEQ else "-" + seq
     work = tempfile.mkdtemp(prefix="sxt036-nc-")
     lines, results, ok_all = [], {}, True
+    not_run = []
 
     def log(s=""):
         lines.append(s)
@@ -102,10 +129,11 @@ def main():
     log("SXT-036 oracle-independent negative controls "
         "(exactness + model discrimination; reference-budget controls are "
         "NOT_RUN, #96)")
-    log(f"sequence: {SEQ}")
+    log(f"sequence: {seq}" + ("" if seq == SEQ else "  (non-default: the "
+        "control set re-run on a sequence named by issue #70)"))
     log("")
 
-    rc, base, err = model("baseline", SEQ, [])
+    rc, base, err = model("baseline", seq, [])
     assert rc == 0, err
     rc, j = exactness(base)
     log(f"[positive control] unmutated RTL vs unmutated model: "
@@ -115,6 +143,37 @@ def main():
         ok_all = False
     base_trace = json.load(open(os.path.join(base, "model_trace.json")))
     base_s16 = base_trace["samples16"]
+
+    # ---- stimulus precondition for the PER-INSTANCE-STATE controls --------
+    # A scene-wide (shared) {vel, relvel} register is behaviourally identical
+    # to per-voice registers unless the stimulus has, in some block, two or
+    # more concurrently-live voices whose source words are NOT all equal. On
+    # a monophonic stimulus the shared-state / shared-slot controls therefore
+    # CANNOT fire; that is an unmet stimulus precondition, not a working
+    # control and not a passing one. Such a control is reported NOT_RUN with
+    # its reason named (never PASS -- AGENTS.md: a test that did not run must
+    # never be reported as a pass) and the run exits 3.
+    concurrent_blocks = sum(
+        1 for blk in base_trace["blocks"]
+        if len(blk["voices"]) > 1
+        and len({tuple(r["vel_words"]) for r in blk["voices"]}) > 1)
+    per_instance_testable = concurrent_blocks > 0
+    log(f"[stimulus precondition] blocks with >=2 concurrently-live voices "
+        f"carrying distinct (vel_q, relvel_q) words: {concurrent_blocks} -> "
+        f"per-instance-state controls "
+        f"{'TESTABLE' if per_instance_testable else 'NOT TESTABLE on this stimulus'}")
+    results["stimulus_precondition"] = {
+        "concurrent_distinct_source_word_blocks": concurrent_blocks,
+        "per_instance_state_controls_testable": per_instance_testable,
+    }
+
+    def skip_per_instance(name):
+        """Record a per-instance-state control as NOT_RUN (precondition)."""
+        reason = (f"stimulus '{seq}' never has two concurrently-live voices "
+                  "with distinct source words, so a shared register is "
+                  "behaviourally identical to per-voice registers")
+        log(f"[{name}] NOT_RUN - {reason}")
+        not_run.append({"control": name, "reason": reason})
 
     def fail_expected(name, j, rc):
         nonlocal ok_all
@@ -133,7 +192,12 @@ def main():
     mutants += [("E2 source-swap-mw", "source-swap-mw", ["--source-swap-mw"]),
                 ("E3 shared-state", "shared-state", ["--shared-state"])]
     for title, tag, extra in mutants:
-        rc, d, err = model(tag, SEQ, extra)
+        if tag == "shared-state" and not per_instance_testable:
+            skip_per_instance("E3 shared-state")
+            results[tag] = {"status": "NOT_RUN",
+                            "reason": "stimulus precondition unmet"}
+            continue
+        rc, d, err = model(tag, seq, extra)
         if rc != 0:
             log(f"[{title}] model runner exit {rc}: {err[-200:]}")
             ok_all = False
@@ -158,12 +222,20 @@ def main():
     # E4-E6: RTL mutants against the unmodified model trace
     src = open(TB, encoding="utf-8").read()
     for name, subs in MUTANTS.items():
+        if name == "shared-slot" and not per_instance_testable:
+            skip_per_instance("E-rtl shared-slot mutant")
+            results["rtl-" + name] = {"status": "NOT_RUN",
+                                      "reason": "stimulus precondition unmet"}
+            continue
         m = src
         for needle, rep in subs:
             if m.count(needle) < 1:
                 log(f"[E-rtl {name}] mutation anchor missing: {needle!r}")
                 ok_all = False
             m = m.replace(needle, rep)
+        # the RTL mutants are a function of tb_vel.sv alone, not of the
+        # stimulus, so they are NOT suffixed: a non-default sequence rewrites
+        # byte-identical files rather than committing duplicates
         mp = os.path.join(art, f"tb_vel_{name.replace('-', '_')}_mutant.sv")
         open(mp, "w", encoding="utf-8").write(m)
         rc, j = exactness(base, tb=mp)
@@ -200,7 +272,7 @@ def main():
                           ["--out-of-class-route"]),
                          ("zero-route of a nonexistent route",
                           ["--zero-route", "relvel:fegmod"])]:
-        rc, d, err = model("refuse", SEQ, extra)
+        rc, d, err = model("refuse", seq, extra)
         good = rc == 2
         log(f"[R1 refusal] {title}: exit {rc} "
             f"({err.strip().splitlines()[-1][:110] if err.strip() else ''}) -> "
@@ -214,16 +286,41 @@ def main():
         "- pinned oracle unavailable on dispatch host (#96). The E1/E2 rows "
         "above test the RTL-vs-model exactness check, NOT the reference-"
         "budget check.")
-    log(f"OVERALL (oracle-independent controls): "
-        f"{'PASS (every control failed/held as required)' if ok_all else 'FAIL'}")
-    open(os.path.join(art, "negative-control.txt"), "w").write("\n".join(lines) + "\n")
-    with open(os.path.join(art, "negative-controls.json"), "w") as f:
-        json.dump({"overall": "PASS" if ok_all else "FAIL",
+    if not_run:
+        log("")
+        log(f"{len(not_run)} control(s) NOT_RUN on this stimulus (never "
+            "reported as a pass):")
+        for nr in not_run:
+            log(f"  - {nr['control']}: {nr['reason']}")
+        log("  These controls DO fire on a stimulus that overlaps voices "
+            f"with distinct source words (the leaf-local '{SEQ}'); see "
+            "negative-control.txt.")
+    if not ok_all:
+        verdict = "FAIL"
+    elif not_run:
+        verdict = (f"PASS for every control that ran; {len(not_run)} NOT_RUN "
+                   "(stimulus precondition unmet) - NOT a full control pass "
+                   "on this stimulus")
+    else:
+        verdict = "PASS (every control failed/held as required)"
+    log(f"OVERALL (oracle-independent controls): {verdict}")
+    open(os.path.join(art, f"negative-control{suffix}.txt"),
+         "w").write("\n".join(lines) + "\n")
+    with open(os.path.join(art, f"negative-controls{suffix}.json"), "w") as f:
+        json.dump({"overall": ("FAIL" if not ok_all else
+                               "PASS_WITH_NOT_RUN" if not_run else "PASS"),
+                   "sequence": seq,
+                   "controls_not_run": not_run,
                    "reference_budget_controls": "NOT_RUN",
                    "results": results}, f, indent=2)
         f.write("\n")
     shutil.rmtree(work, ignore_errors=True)
-    return 0 if ok_all else 1
+    # 0 = every control fired as required; 3 = all applicable controls fired
+    # but at least one is NOT_RUN on an unmet, named stimulus precondition;
+    # 1 = a control that should have fired did not.
+    if not ok_all:
+        return 1
+    return 3 if not_run else 0
 
 
 if __name__ == "__main__":

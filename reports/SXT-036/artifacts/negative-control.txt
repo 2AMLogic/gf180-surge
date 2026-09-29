@@ -2,6 +2,7 @@ SXT-036 oracle-independent negative controls (exactness + model discrimination; 
 sequence: sxt036-vel-overlap-v1
 
 [positive control] unmutated RTL vs unmutated model: PASS mismatches=0 checked={'voice_block_checkpoints': 2940, 'source_words': 5880, 'route_sums': 11760}
+[stimulus precondition] blocks with >=2 concurrently-live voices carrying distinct (vel_q, relvel_q) words: 1071 -> per-instance-state controls TESTABLE
 [E1 zero-route vel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[0]: model=0 rtl=9907800'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=5715 LSB -> observable
 [E1 zero-route vel:reso] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[1]: model=0 rtl=103206'] -> FAILS as required
