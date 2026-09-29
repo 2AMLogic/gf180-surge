@@ -1,0 +1,35 @@
+SXT-036 oracle-independent negative controls (exactness + model discrimination; reference-budget controls are NOT_RUN, #96)
+sequence: seq-notes-holds-v1  (non-default: the control set re-run on a sequence named by issue #70)
+
+[positive control] unmutated RTL vs unmutated model: PASS mismatches=0 checked={'voice_block_checkpoints': 4392, 'source_words': 8784, 'route_sums': 17568}
+[stimulus precondition] blocks with >=2 concurrently-live voices carrying distinct (vel_q, relvel_q) words: 0 -> per-instance-state controls NOT TESTABLE on this stimulus
+[E1 zero-route vel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[0]: model=0 rtl=27741864'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=3830 LSB -> observable
+[E1 zero-route vel:reso] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[1]: model=0 rtl=288978'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=939 LSB -> observable
+[E1 zero-route vel:fegmod] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[2]: model=0 rtl=346774'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=14 LSB -> observable
+[E1 zero-route vel:vca] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[3]: model=0 rtl=-13870932'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=6805 LSB -> observable
+[E1 zero-route relvel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 5550 slot 0 route_sum[0]: model=27741864 rtl=47557476'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=2237 LSB -> observable
+[E1 zero-route relvel:vca] exactness verdict=FAIL mismatches=41 first=['block 5550 slot 0 route_sum[3]: model=-13870932 rtl=-3963126'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=2505 LSB -> observable
+[E2 source-swap-mw] exactness verdict=FAIL mismatches=44 first=['block 0 slot 0 route_sum[0]: model=0 rtl=27741864'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=6398 LSB -> observable
+[E3 shared-state] NOT_RUN - stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
+[E-rtl shared-slot mutant] NOT_RUN - stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
+[E-rtl round-trunc mutant] exactness verdict=FAIL mismatches=42 first=['block 0 slot 0 route_sum[1]: model=288978 rtl=288977'] -> FAILS as required
+[E-rtl rom-floor mutant] exactness verdict=FAIL mismatches=44 first=['block 0 slot 0 vel_q: model=1155911 rtl=1155910'] -> FAILS as required
+[positive control, re-run after mutants] PASS mismatches=0
+[M2 invariance] seq-notes-repeated-v1: landed run_model.py wav sha256 9b7e7f90f46ae71c.. vs --strip-vel-routes 9b7e7f90f46ae71c.. -> IDENTICAL
+[R1 refusal] out-of-class route (velocity -> 'A Highpass' 303): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->303 outside the declared SXT-036 destinatio) -> REFUSED as required
+[R1 refusal] zero-route of a nonexistent route: exit 2 (REFUSED (outside declared SXT-036 class): --zero-route relvel:fegmod: no such route in the table) -> REFUSED as required
+
+Reference-budget negative controls (acceptance item 5: routing-zeroed and source-swap vs pinned-engine render): NOT_RUN - pinned oracle unavailable on dispatch host (#96). The E1/E2 rows above test the RTL-vs-model exactness check, NOT the reference-budget check.
+
+2 control(s) NOT_RUN on this stimulus (never reported as a pass):
+  - E3 shared-state: stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
+  - E-rtl shared-slot mutant: stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
+  These controls DO fire on a stimulus that overlaps voices with distinct source words (the leaf-local 'sxt036-vel-overlap-v1'); see negative-control.txt.
+OVERALL (oracle-independent controls): PASS for every control that ran; 2 NOT_RUN (stimulus precondition unmet) - NOT a full control pass on this stimulus

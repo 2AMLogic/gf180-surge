@@ -691,3 +691,15 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
    on the landed Attacky class; they are NOT engine readbacks (no oracle on
    the authoring host, #96) and must be re-extracted or confirmed on an
    oracle host (#232) before any reference-budget number is produced.
+   `model/voice/audit_vel_carriers.py` records, from `graphs.jsonl` + the
+   census alone, why the fixture substitutes Attacky for the carriers named by
+   #70: none of those carriers has an `ms_releasevelocity` route at all, and
+   only `Bad News.fxp` has a velocity route inside the frozen destination
+   class. Attacky itself has none, hence declared routes.
+6. Stimuli: `tools/vel_declared_coverage.py` runs the three
+   `fixtures/sequences/seq-notes-*` sequences named by #70 through this model
+   and both exactness harnesses. They are monophonic, so they do NOT
+   discriminate rule 4 (per-instance state) — `tools/vel_negative_controls.py`
+   reports those two controls `NOT_RUN` on such a stimulus rather than passing
+   them, and the overlapping leaf-local `sxt036-vel-overlap-v1` sequence stays
+   the per-instance-state carrier.
