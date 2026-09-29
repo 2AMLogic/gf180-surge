@@ -4,14 +4,14 @@ GENERATED, DO NOT EDIT BY HAND:
   python3 tools/measure_halfband_limit_cycle.py --provenance \
       reports/halfband-limit-cycle/artifacts/rtl-splice-provenance.txt
 
-generated: 2026-09-28T05:01:38Z (UTC)
-base commit: cf82b14f0ac5978375e7857cab834a4b43509566
+generated: 2026-09-29T17:29:19Z (UTC)
+base commit: 3bd6fcbc3572635546b53e428b563c155536fb02
 spliced .sv files vs that commit at generation time: clean (none of the 4 files is modified)
 iverilog on the generating host: Icarus Verilog version 13.0 (stable) (v13_0)
 
 === BEGIN DERIVED BODY -- re-derived byte-for-byte by tests/test_halfband_limit_cycle.py ===
 RTL COPIES COVERED: 4
-  rtl/voice/tb_voice.sv                      dialect cfg32   sha256 c2170201e398023c3024a7d07b49f7738b0388e5cd06b1fc6345984c9363c0b6
+  rtl/voice/tb_voice.sv                      dialect cfg32   sha256 4895bb87e294d1c3aeaef62b21104b1ebfa2fb20e2ae6c6c2f95f37a24b9d6d6
   rtl/oscillators/classic/tb_classic.sv      dialect cfg32   sha256 554d55b23045974fa5fa78e8e48d75d661fe88ef3e9833f56661a17f73e1fd6c
   rtl/oscillators/sine/tb_sine.sv            dialect cfg32   sha256 6f917d536e8443689bcb7fca74be80ef14d9bc08db5accca7e33c74be912b985
   rtl/oscillators/wavetable/tb_wavetable.sv  dialect iw64    sha256 0b56f18f2e65f320b1d3da8b60d3eee085dd8a36f65cb3b1451f9f84a9dea18b
@@ -37,7 +37,7 @@ WHY A SPLICE AND NOT A HAND-WRITTEN PROBE
 ==========================================================================
 SOURCE            rtl/voice/tb_voice.sv
   dialect         cfg32
-  source sha256   c2170201e398023c3024a7d07b49f7738b0388e5cd06b1fc6345984c9363c0b6
+  source sha256   4895bb87e294d1c3aeaef62b21104b1ebfa2fb20e2ae6c6c2f95f37a24b9d6d6
   coeff window    B = 32'(cfg[28+i]), A = 32'(cfg[34+i])
   probe sha256    4d19547f1e4583c926a7802da9dc741271d90616b5524998e60b3d344756e37f
   functions spliced: qmul, clamp8, qround1
