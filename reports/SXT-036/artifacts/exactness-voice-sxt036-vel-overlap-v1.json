@@ -1,6 +1,7 @@
 {
   "tb": "tb_voice.sv",
   "verdict": "PASS",
+  "comparison": "PASS",
   "checked": {
     "checkpoints": 279,
     "fields": 9765,
@@ -8,5 +9,7 @@
     "mono": 103200
   },
   "mismatches": 0,
-  "first_failures": []
+  "first_failures": [],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
 }

@@ -21,7 +21,7 @@ copied; the model and RTL are original (Apache-2.0).
 |---|---|---|---|
 | 1 | Frozen fixed-point model, word lengths + op order | **PASS** (documented + implemented) | `model/voice/run_vel_model.py`; freeze section "SXT-036 velocity / release-velocity route extension" in `model/voice/README.md`. Q10.21 words, `vel_q=(midi*2^22+127)//254`, route order, destination class {308,309,310,298}, per-instance state. Scope: classic voice class on the declared Attacky carrier only (see Boundaries). |
 | 2 | Model-vs-pinned-engine dry-render budgets on carrier fixtures | **NOT_RUN** | pinned oracle unavailable on dispatch host (#96). No numbers estimated or tuned. |
-| 3 | RTL-vs-model exact at declared checkpoints (integer equality) | **PASS** | `artifacts/exactness-vel-sxt036-vel-overlap-v1.json`: 2,940 voice-block checkpoints, 5,880 source words, 11,760 route sums, 0 mismatches (`tb_vel.sv`). `artifacts/exactness-voice-sxt036-vel-overlap-v1.json`: unchanged-datapath `tb_voice.sv` on the same run: 279 checkpoints / 9,765 fields / 17,856 oscout / 103,200 mono samples, 0 mismatches. Landed regression (SXT-022 seq-notes-repeated-v1, run_model.py stimulus): 403 / 14,105 / 25,792 / 196,800, 0 mismatches (`exactness-voice-landed-regression-*.json`); landed model wav is sha256-identical to `--strip-vel-routes` output (`6a73bb9a...`). |
+| 3 | RTL-vs-model exact at declared checkpoints (integer equality) | **PASS** | `artifacts/exactness-vel-sxt036-vel-overlap-v1.json`: 2,940 voice-block checkpoints, 5,880 source words, 11,760 route sums, 0 mismatches (`tb_vel.sv`). `artifacts/exactness-voice-sxt036-vel-overlap-v1.json`: unchanged-datapath `tb_voice.sv` on the same run: 279 checkpoints / 9,765 fields / 17,856 oscout / 103,200 mono samples, 0 mismatches. Landed regression (SXT-022 seq-notes-repeated-v1, run_model.py stimulus): 403 / 14,105 / 25,792 / 196,800, 0 mismatches (`exactness-voice-landed-regression-*.json`); landed model wav is sha256-identical to `--strip-vel-routes` output (`9b7e7f90...`; was `6a73bb9a...` before main's halfband D2 fix #146, republished in `reports/halfband-republication/`). |
 | 4 | Cycle/state costs vs SXT-016 probes / SXT-015 | **PASS (recorded, divergence noted)** | `artifacts/costs.txt`: 6 qmul per running-voice block (0.171 MAC/sample control plane), 512 state bits for the per-slot source registers; SXT-016 scheduler probe has no per-source row (88 cycles/event, 512 state bits = different quantity). Not reconciled. |
 | 5 | Negative controls fail the reference-budget check (routing-zeroed per destination class; source-swap modwheel) | **NOT_RUN** | Requires the pinned-engine render (#96). What did run is a different check, below. |
 
@@ -35,7 +35,7 @@ copied; the model and RTL are original (Apache-2.0).
   velocity/release velocity), E3 shared (scene-wide) velocity register: a
   mutated model trace against the unmodified RTL **FAILS** integer equality
   (41–44 mismatches each), and each mutated model render differs from the
-  unmutated one (15 to 15,308 LSB max abs) so the routes are observable.
+  unmutated one (16 to 15,309 LSB max abs) so the routes are observable.
 * E-rtl mutants (`artifacts/tb_vel_*_mutant.sv`): shared-slot register,
   round→truncate in qmul, velocity ROM floor instead of round: each **FAILS**
   against the unmodified model (41/45/44 mismatches).
@@ -53,8 +53,9 @@ python3 tools/compare_vel_rtl_model.py --run-dir RUN
 python3 tools/compare_rtl_model.py --run-dir RUN
 python3 tools/vel_negative_controls.py --artifacts reports/SXT-036/artifacts
 ```
-Run-dir sha256 (baseline): model.wav `11b6d081...4e624`, model_trace.json
-`4dee6405...acb341`.
+Run-dir sha256 (baseline): model.wav `14b04618...a5b18`, model_trace.json
+`e2a11ee5...9fe53` (after rebase onto main incl. the halfband D2 fix #146;
+pre-rebase baseline was `11b6d081...4e624` / `4dee6405...acb341`).
 
 ## Boundaries and what remains unproved
 

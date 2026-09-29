@@ -42,7 +42,7 @@
         ],
         "rtl_done_line": "DONE vel-qmuls=17640"
       },
-      "model_max_abs_delta_lsb": 5713,
+      "model_max_abs_delta_lsb": 5715,
       "fails_as_required": true,
       "model_differs": true
     },
@@ -102,7 +102,7 @@
         ],
         "rtl_done_line": "DONE vel-qmuls=17640"
       },
-      "model_max_abs_delta_lsb": 15,
+      "model_max_abs_delta_lsb": 16,
       "fails_as_required": true,
       "model_differs": true
     },
@@ -132,7 +132,7 @@
         ],
         "rtl_done_line": "DONE vel-qmuls=17640"
       },
-      "model_max_abs_delta_lsb": 15308,
+      "model_max_abs_delta_lsb": 15309,
       "fails_as_required": true,
       "model_differs": true
     },
@@ -162,7 +162,7 @@
         ],
         "rtl_done_line": "DONE vel-qmuls=17640"
       },
-      "model_max_abs_delta_lsb": 3112,
+      "model_max_abs_delta_lsb": 3115,
       "fails_as_required": true,
       "model_differs": true
     },
@@ -222,7 +222,7 @@
         ],
         "rtl_done_line": "DONE vel-qmuls=17640"
       },
-      "model_max_abs_delta_lsb": 12037,
+      "model_max_abs_delta_lsb": 12038,
       "fails_as_required": true,
       "model_differs": true
     },
@@ -252,7 +252,7 @@
         ],
         "rtl_done_line": "DONE vel-qmuls=17640"
       },
-      "model_max_abs_delta_lsb": 7781,
+      "model_max_abs_delta_lsb": 7784,
       "fails_as_required": true,
       "model_differs": true
     },
@@ -341,8 +341,8 @@
       "fails_as_required": true
     },
     "invariance": {
-      "landed": "6a73bb9adeb81602b3d25829319a8d29839e1f8ec24705ae152bdb225b097f6d",
-      "stripped": "6a73bb9adeb81602b3d25829319a8d29839e1f8ec24705ae152bdb225b097f6d",
+      "landed": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
+      "stripped": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
       "equal": true
     },
     "refuse-out-of-class": {

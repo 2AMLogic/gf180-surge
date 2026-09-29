@@ -3,26 +3,26 @@ sequence: sxt036-vel-overlap-v1
 
 [positive control] unmutated RTL vs unmutated model: PASS mismatches=0 checked={'voice_block_checkpoints': 2940, 'source_words': 5880, 'route_sums': 11760}
 [E1 zero-route vel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[0]: model=0 rtl=9907800'] -> FAILS as required
-    M1 model render differs from unmutated: max|delta|=5713 LSB -> observable
+    M1 model render differs from unmutated: max|delta|=5715 LSB -> observable
 [E1 zero-route vel:reso] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[1]: model=0 rtl=103206'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=1431 LSB -> observable
 [E1 zero-route vel:fegmod] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[2]: model=0 rtl=123848'] -> FAILS as required
-    M1 model render differs from unmutated: max|delta|=15 LSB -> observable
+    M1 model render differs from unmutated: max|delta|=16 LSB -> observable
 [E1 zero-route vel:vca] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[3]: model=0 rtl=-4953900'] -> FAILS as required
-    M1 model render differs from unmutated: max|delta|=15308 LSB -> observable
+    M1 model render differs from unmutated: max|delta|=15309 LSB -> observable
 [E1 zero-route relvel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 600 slot 0 route_sum[0]: model=9907800 rtl=13870920'] -> FAILS as required
-    M1 model render differs from unmutated: max|delta|=3112 LSB -> observable
+    M1 model render differs from unmutated: max|delta|=3115 LSB -> observable
 [E1 zero-route relvel:vca] exactness verdict=FAIL mismatches=41 first=['block 600 slot 0 route_sum[3]: model=-4953900 rtl=-2972340'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=4509 LSB -> observable
 [E2 source-swap-mw] exactness verdict=FAIL mismatches=44 first=['block 0 slot 0 route_sum[0]: model=0 rtl=9907800'] -> FAILS as required
-    M1 model render differs from unmutated: max|delta|=12037 LSB -> observable
+    M1 model render differs from unmutated: max|delta|=12038 LSB -> observable
 [E3 shared-state] exactness verdict=FAIL mismatches=44 first=['block 150 slot 0 route_sum[0]: model=39631224 rtl=9907800'] -> FAILS as required
-    M1 model render differs from unmutated: max|delta|=7781 LSB -> observable
+    M1 model render differs from unmutated: max|delta|=7784 LSB -> observable
 [E-rtl shared-slot mutant] exactness verdict=FAIL mismatches=45 first=['block 150 slot 0 vel_q: model=412825 rtl=1651301'] -> FAILS as required
 [E-rtl round-trunc mutant] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[2]: model=123848 rtl=123847'] -> FAILS as required
 [E-rtl rom-floor mutant] exactness verdict=FAIL mismatches=44 first=['block 150 slot 1 vel_q: model=1651301 rtl=1651300'] -> FAILS as required
 [positive control, re-run after mutants] PASS mismatches=0
-[M2 invariance] seq-notes-repeated-v1: landed run_model.py wav sha256 6a73bb9adeb81602.. vs --strip-vel-routes 6a73bb9adeb81602.. -> IDENTICAL
+[M2 invariance] seq-notes-repeated-v1: landed run_model.py wav sha256 9b7e7f90f46ae71c.. vs --strip-vel-routes 9b7e7f90f46ae71c.. -> IDENTICAL
 [R1 refusal] out-of-class route (velocity -> 'A Highpass' 303): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->303 outside the declared SXT-036 destinatio) -> REFUSED as required
 [R1 refusal] zero-route of a nonexistent route: exit 2 (REFUSED (outside declared SXT-036 class): --zero-route relvel:fegmod: no such route in the table) -> REFUSED as required
 
