@@ -29,6 +29,14 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_vel.sv")
 
 
+def _int(x):
+    # an unresolved RTL value (x/z) can never equal a model word
+    try:
+        return int(x)
+    except ValueError:
+        return None
+
+
 def parse_tb(path):
     s = {}   # (block, slot) -> [cut, reso, emod, vca]
     v = {}   # (block, slot) -> [vel_q, relvel_q]
@@ -38,9 +46,9 @@ def parse_tb(path):
             if not p:
                 continue
             if p[0] == "S":
-                s[(int(p[1]), int(p[2]))] = [int(x) for x in p[3:7]]
+                s[(int(p[1]), int(p[2]))] = [_int(x) for x in p[3:7]]
             elif p[0] == "V":
-                v[(int(p[1]), int(p[2]))] = [int(x) for x in p[3:5]]
+                v[(int(p[1]), int(p[2]))] = [_int(x) for x in p[3:5]]
     return s, v
 
 

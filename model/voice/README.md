@@ -653,3 +653,41 @@ amplitudes / FX (all present in the corpus — refused, see
 pitch-bend or portamento contributions to `state.pitch` (which would make
 the 1-control-pass lag observable), and MPE/tuning-dependent `octaveSize`.
 Keytrack as a modulation DESTINATION is not modeled.
+
+# SXT-036 velocity / release-velocity route extension (frozen; #70)
+
+Model: `model/voice/run_vel_model.py` (`VelVoice` over `VoiceV2`); RTL
+control-plane schedule: `rtl/voice/tb_vel.sv`; exactness harness:
+`tools/compare_vel_rtl_model.py` (+ `tools/compare_rtl_model.py` on the
+unchanged datapath); evidence `reports/SXT-036/EVIDENCE.md`.
+
+Pinned facts (surge@58914e59c608ed4384ba6002e44c3465c58b2e71, cited, not
+copied): `SurgeVoice.cpp` ctor sets `state.fvel = velocity/127`,
+`velocitySource.init(0, fvel)`, `releaseVelocitySource.set_output(0, 0)`;
+`SurgeVoice::release()` sets the release-velocity source to
+`releasevelocity/127`; `applyModulationToLocalcopy` does
+`localcopy[dst] += depth * source` after scene modulation. Modsource ids:
+`ms_velocity` = 1, `ms_releasevelocity` = 30.
+
+Word lengths and op order (all Q10.21, 32-bit, saturating adds):
+
+1. `vel_q = qint(midi/127) = (midi*2^22 + 127) // 254` (round-half-up,
+   exact integer form; asserted equal to the float quantizer for 0..127).
+   Latched at voice construction; `relvel_q` = 0 at construction, set to
+   `vel_q(release_midi)` on release (same block's control pass reads it).
+2. Per control pass, per voice: scene modwheel routes first (landed SXT-035
+   table), then voice routes in `md` order: `term = qmul(qint(depth), src)`
+   (Q10.21 `qmul`, round-half-up, saturating); `param = sat(param + term)`.
+   The per-destination sums of terms are the RTL checkpoint words.
+3. Destination class (frozen): Filter 1 Cutoff 308, Filter 1 Resonance 309,
+   Filter 1 FEG Mod Amount 310, VCA Gain 298 (`mod_vca_db`, shared with the
+   modwheel VCA term). Anything else is refused (exit 2).
+4. Per-instance state: one `{vel_q, relvel_q}` pair per voice slot; never
+   shared across voices or scenes. VCA-Gain velocity terms make the
+   constructor gain anchor (`SetQFB(0,0)`) per-voice; it is streamed in
+   `tb_voice.sv` slot word 37 under flags bit 4 (legacy stimuli never set
+   bit 4: landed fixtures unchanged).
+5. Fixture: `attacky_vel_inputs.json` holds DECLARED synthetic route depths
+   on the landed Attacky class; they are NOT engine readbacks (no oracle on
+   the authoring host, #96) and must be re-extracted or confirmed on an
+   oracle host (#232) before any reference-budget number is produced.

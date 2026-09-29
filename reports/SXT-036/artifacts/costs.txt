@@ -1,0 +1,11 @@
+SXT-036 cost accounting (measured on the exact iverilog behavioral schedules; NO technology claim)
+sequence sxt036-vel-overlap-v1, 3225 blocks x 32 samples (48 kHz)
+tb_vel.sv   (velocity/release-velocity control plane)  DONE vel-qmuls=17640
+tb_voice.sv (frozen voice datapath, same run dir)      DONE qmuls=6744672
+vel control plane : 17640 / 3225 blocks = 5.47 qmul/block = 0.171 MAC per 48 kHz sample
+                    (6 qmul per running-voice block = one per route; 2940 voice-blocks)
+                    per-event work: 1 ROM/constant-divide read (0 qmul) per note-on and per note-off
+voice datapath    : 6744672 / 3225 / 32 = 65.36 MAC per 48 kHz sample (overlapping voices; not comparable to single-voice 37.7-39.8 of SXT-022)
+state (control)   : 8 slots x {vel_q, relvel_q} x 32 b = 512 bits; route ROM 1 + 3x6 = 19 words (fixture-constant); velocity ROM 128 x 32 b = 4096 bits if tabulated
+SXT-016 probe_scheduler__event_queue_and_control__a24__m32__onchip.json: cycles_per_event=88, state_ram_bits=512
+DIVERGENCE (recorded, not reconciled): the probe's 512 state_ram_bits is the scheduler's event-queue state and is only numerically equal to this leaf's per-slot source registers (8 x 2 x 32 b); it is a different quantity. The probe's 88 cycles/event has no per-source-evaluation row; this leaf's 6 qmul per voice-block is the first concrete per-route evaluation count (SXT-016 refinement input). Word length here is 32 b (Q10.21) vs probe a24. Cycle counts are not derived (behavioral schedule, 1 MAC/cycle assumption only).
