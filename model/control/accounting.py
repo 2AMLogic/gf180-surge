@@ -108,18 +108,3 @@ def account_schedule(worst_events_per_block: int = EV_RESERVE_PER_BLOCK,
                     "violation if the stub cannot close)",
         }
     return row
-
-
-def closure_table(worst_events_per_block: int = EV_RESERVE_PER_BLOCK
-                  ) -> Dict:
-    return {
-        "constants": SCHED_CONSTANTS,
-        "worst_case_events_per_block": worst_events_per_block,
-        "closure_at_clocks": {
-            str(f): account_schedule(worst_events_per_block, f)
-            for f in CLOCK_CANDIDATES_HZ
-        },
-        "claim_scope": "arithmetic on candidate clocks under named "
-                       "assumptions (A-CLK); no gf180mcu synthesis, "
-                       "place-and-route, signoff, or hardware claim",
-    }
