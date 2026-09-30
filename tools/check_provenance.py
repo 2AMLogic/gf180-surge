@@ -29,7 +29,9 @@ The audit has four groups of checks:
   4. **Undeclared-carrier tripwires** — content signals that a file carries
      third-party material. A tripwire hit must be answered by a provenance
      row (or, for the one exemptible rule, by an explicit exemption with a
-     reason). The tripwires are deliberately high-precision:
+     reason — optionally scoped to named *occurrences* of the quotation
+     vocabulary in one file, so a later foreign quotation elsewhere in the
+     same file still fails). The tripwires are deliberately high-precision:
        * `foreign-license-text`        — foreign license body, non-Apache
                                          SPDX tag, or foreign copyright line
        * `upstream-asset-extension`    — Surge/third-party asset or opaque
@@ -207,6 +209,26 @@ QUOTATION_MARKER_RES = (
     ),
     ("vendored", "vendor", re.compile(r"\bvendored?\b", re.IGNORECASE)),
 )
+
+
+def quotation_marker_matches(text):
+    """Every quotation-marker occurrence in `text` as [(name, match)], in order.
+
+    `tripwire_hits` stops at the first marker (one hit per file is enough to
+    raise the rule); an occurrence-scoped exemption needs all of them, so that
+    a file whose one named occurrence is exempt still fails on any other.
+    """
+    low = text.lower()
+    found = []
+    for name, prefilter, regex in QUOTATION_MARKER_RES:
+        if prefilter in low:
+            found.extend((name, match) for match in regex.finditer(text))
+    return sorted(found, key=lambda item: item[1].start())
+
+
+def occurrence_regex(literal):
+    """Whitespace-insensitive matcher for an exemption's named occurrence."""
+    return re.compile(r"\s+".join(re.escape(part) for part in literal.split()))
 
 # The license-body patterns are split across string fragments on purpose: a
 # contiguous license phrase in this file would make the audit flag its own
@@ -862,6 +884,36 @@ def check_manifest(tree: Tree, manifest, records, rows):
                     "provenance row instead",
                 )
             )
+        # Optional 'occurrences': the exemption then covers only the named
+        # quotation-marker occurrences in ONE exact file, never the whole
+        # file — any other marker in that file (a real foreign quotation added
+        # later, even with the same wording) still fails. Required to be an
+        # exact path: an occurrence list on a glob would be a blanket.
+        occurrences = item.get("occurrences")
+        if occurrences is not None:
+            if (
+                not isinstance(occurrences, list)
+                or not occurrences
+                or not all(isinstance(o, str) and o.strip() for o in occurrences)
+            ):
+                findings.append(
+                    Finding(
+                        "exemption-field-missing",
+                        MANIFEST_REL,
+                        f"{label}: 'occurrences' must be a non-empty list of "
+                        "non-empty strings",
+                    )
+                )
+                continue
+            if not item.get("path"):
+                findings.append(
+                    Finding(
+                        "exemption-bad-pattern",
+                        MANIFEST_REL,
+                        f"{label}: 'occurrences' requires an exact 'path', not a pattern",
+                    )
+                )
+                continue
         kind, target, matches = _matcher(item)
         if kind == "pattern":
             problem = pattern_problem(target)
@@ -881,9 +933,45 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 )
             )
         for rel in hits:
+            spans = None
+            if occurrences is not None:
+                spans = []
+                text = tree.text(rel) or ""
+                markers = quotation_marker_matches(text)
+                for occurrence in occurrences:
+                    located = [
+                        (m.start(), m.end())
+                        for m in occurrence_regex(occurrence).finditer(text)
+                    ]
+                    live = [
+                        (start, end)
+                        for start, end in located
+                        if any(start <= mk.start() and mk.end() <= end for _, mk in markers)
+                    ]
+                    if not live:
+                        findings.append(
+                            Finding(
+                                "exemption-stale",
+                                MANIFEST_REL,
+                                f"{label}: occurrence {occurrence!r} "
+                                + (
+                                    "contains no quotation marker"
+                                    if located
+                                    else "no longer appears"
+                                )
+                                + f" in {rel} (stale exemption — fix or remove it)",
+                            )
+                        )
+                    spans.extend(live)
             for rule in rules:
                 if rule in EXEMPTIBLE_RULES:
-                    exemptions.setdefault(rel, {})[rule] = reason
+                    current = exemptions.setdefault(rel, {}).get(rule)
+                    if current is not None and current["spans"] is None:
+                        continue  # an unscoped exemption already covers the file
+                    if spans is None or current is None:
+                        exemptions[rel][rule] = {"reason": reason, "spans": spans}
+                    else:
+                        current["spans"].extend(spans)
 
     for index, item in enumerate(manifest.get("scope_exclusions", []) or []):
         label = f"scope_exclusions[{index}]"
@@ -1062,9 +1150,26 @@ def check_tripwires(tree: Tree, coverage, exemptions):
             counts[rule] += 1
             if rule in coverage.get(rel, ()):
                 continue
-            reason = exemptions.get(rel, {}).get(rule)
-            if reason:
+            exemption = exemptions.get(rel, {}).get(rule)
+            if exemption and exemption["spans"] is None:
                 continue
+            if exemption:
+                # Occurrence-scoped: exempt only markers inside a named span.
+                outside = [
+                    (name, match)
+                    for name, match in quotation_marker_matches(tree.text(rel) or "")
+                    if not any(
+                        start <= match.start() and match.end() <= end
+                        for start, end in exemption["spans"]
+                    )
+                ]
+                if not outside:
+                    continue
+                name, match = outside[0]
+                evidence = (
+                    f"{name}: {_snippet(tree.text(rel), match)} (outside the "
+                    "occurrence(s) its exemption names)"
+                )
             findings.append(
                 Finding(
                     rule,
@@ -1257,6 +1362,39 @@ FIXTURE_TRANSCRIBED = (
     + "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71.\n"
     + '"""\n\nT = [4, 5, 6]\n'
 )
+
+
+# An in-repo document that cites the pinned upstream AND says it carries a
+# verbatim copy of this project's OWN model (the model/oscillators/classic
+# README shape that landed with #181). Plus a genuinely foreign quotation, in
+# the SAME marker wording, that an occurrence-scoped exemption must not hide.
+FIXTURE_OWN_COPY_DOC = (
+    "Pinned structure (read and cited, never copied): "
+    + "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71.\n\n"
+    + "`run_model.py` instantiates the shared `voice_model.HalfbandD2`, and\n"
+    + "`tb_own.sv` carries a\nverbatim copy of it.\n"
+)
+FIXTURE_OWN_COPY_OCCURRENCE = "`tb_own.sv` carries a verbatim copy of it"
+FIXTURE_FOREIGN_COPY_LINE = (
+    "\nThe table below is copied verbatim from the pinned upstream wavetable.\n"
+)
+
+
+def _scoped_exemption(root: Path, occurrences, path="docs/own_copy.md"):
+    item = {
+        "rules": ["self-declared-quotation"],
+        "occurrences": occurrences,
+        "reason": "synthetic: the named occurrence copies this project's own model",
+    }
+    item["path" if "*" not in path else "pattern"] = path
+    # Naming the occurrence puts the marker wording into the manifest itself,
+    # so the skeleton exempts the manifest exactly as the real repository does.
+    manifest_exemption = {
+        "path": MANIFEST_REL,
+        "rules": ["self-declared-quotation"],
+        "reason": "synthetic: the manifest quotes the occurrence it exempts",
+    }
+    _patch_manifest(root, lambda d: d["exemptions"].extend([manifest_exemption, item]))
 
 
 def _patch_manifest(root: Path, mutate):
@@ -1507,6 +1645,71 @@ def _controls():
     return controls
 
 
+def _scoped_exemption_controls():
+    """[(label, expected rule or None, description, mutator)].
+
+    The occurrence-scoped exemption is a weakening of the one exemptible rule,
+    so it gets its own controls: the case it exists for must pass (a positive
+    control — otherwise it is dead), and each way it could launder real
+    carriage must still fail.
+    """
+    own = FIXTURE_OWN_COPY_DOC
+    occ = [FIXTURE_OWN_COPY_OCCURRENCE]
+    return [
+        (
+            "scoped-exemption/own-copy-passes",
+            None,
+            "a file whose only quotation marker is the named own-model occurrence",
+            lambda root: (_write(root, "docs/own_copy.md", own), _scoped_exemption(root, occ)),
+        ),
+        (
+            "scoped-exemption/foreign-copy-still-fails",
+            "self-declared-quotation",
+            "the same exempted file plus a foreign 'copied verbatim' line",
+            lambda root: (
+                _write(root, "docs/own_copy.md", own + FIXTURE_FOREIGN_COPY_LINE),
+                _scoped_exemption(root, occ),
+            ),
+        ),
+        (
+            "scoped-exemption/other-marker-still-fails",
+            "self-declared-quotation",
+            "the same exempted file plus a foreign 'transcribed from' table",
+            lambda root: (
+                _write(root, "docs/own_copy.md", own + FIXTURE_TRANSCRIBED),
+                _scoped_exemption(root, occ),
+            ),
+        ),
+        (
+            "scoped-exemption/occurrence-gone",
+            "exemption-stale",
+            "a named occurrence that no longer appears in the file",
+            lambda root: (
+                _write(root, "docs/own_copy.md", own),
+                _scoped_exemption(root, occ + ["a sentence that is not there"]),
+            ),
+        ),
+        (
+            "scoped-exemption/occurrence-without-marker",
+            "exemption-stale",
+            "a named occurrence that contains no quotation marker",
+            lambda root: (
+                _write(root, "docs/own_copy.md", own),
+                _scoped_exemption(root, occ + ["instantiates the shared"]),
+            ),
+        ),
+        (
+            "scoped-exemption/on-a-pattern",
+            "exemption-bad-pattern",
+            "occurrences attached to a glob instead of one exact path",
+            lambda root: (
+                _write(root, "docs/own_copy.md", own),
+                _scoped_exemption(root, occ, path="docs/*.md"),
+            ),
+        ),
+    ]
+
+
 def run_negative_control(verbose=True):
     """Every rule must fire on a deliberate violation. Returns exit code."""
     controls = _controls()
@@ -1554,6 +1757,30 @@ def run_negative_control(verbose=True):
                     )
                 )
 
+        scoped = _scoped_exemption_controls()
+        for index, (label, expected, description, mutate) in enumerate(scoped):
+            case = Path(tmp) / f"scoped-{index}"
+            case.mkdir()
+            build_skeleton(case)
+            mutate(case)
+            findings, _ = audit(case)
+            found = ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing"
+            if expected is None:
+                passed = not findings
+                detail = f"{description} -> " + ("audits clean" if passed else f"found {found}")
+            else:
+                # A tripwire must fire on the exempted file itself, not on the
+                # manifest; a manifest rule fires on the manifest.
+                where = "docs/own_copy.md" if expected in TRIPWIRE_RULES else MANIFEST_REL
+                passed = any(f.rule == expected and f.path == where for f in findings)
+                detail = f"{description} -> " + (
+                    f"{expected} fired on {where}"
+                    if passed
+                    else f"{expected} did NOT fire on {where} (found {found})"
+                )
+            ok = ok and passed
+            results.append((label, "PASS" if passed else "FAIL", detail))
+
     if verbose:
         print("negative control: one deliberate violation per rule\n")
         for name, verdict, detail in results:
@@ -1568,7 +1795,9 @@ def run_negative_control(verbose=True):
         if ok and not missing:
             print(
                 f"PASS: all {len(controls)} rules fired on their deliberate "
-                "violation, and the clean control tree produced no findings."
+                "violation, the clean control tree produced no findings, and "
+                f"all {len(_scoped_exemption_controls())} occurrence-scoped "
+                "exemption controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")

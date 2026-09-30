@@ -13,7 +13,9 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     synthetic tree IS flagged: a GPL header, an upstream asset payload, a
     foreign-language source file, and a self-declared quotation,
   - the manifest cannot be weakened silently: blanket patterns, stale rows,
-    stale exemptions and exemptions of non-exemptible rules all fail.
+    stale exemptions and exemptions of non-exemptible rules all fail,
+  - an occurrence-scoped exemption covers only its named occurrences: a
+    foreign quotation added elsewhere in the same file still fails.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -248,3 +250,73 @@ def test_attribution_statement_row_covers_nothing_implicitly(tmp_path):
     assert "manifest-unknown-class" not in fired
     cp._patch_manifest(root, lambda d: d["entries"][-1].update({"covers": ["foreign-license-text"]}))
     assert "foreign-license-text" not in _rules_fired(root)
+
+
+# --- occurrence-scoped exemptions (#181 self-copy false positive) -------------
+
+
+def _own_copy_tree(tmp_path, text, occurrences, path="docs/own_copy.md"):
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    root = _skeleton(tmp_path)
+    cp._write(root, "docs/own_copy.md", text)
+    cp._scoped_exemption(root, occurrences, path=path)
+    return root
+
+
+def _fired_on(root, rel):
+    findings, _ = cp.audit(root)
+    return {f.rule for f in findings if f.path == rel}
+
+
+def test_scoped_exemption_covers_only_the_named_occurrence(tmp_path):
+    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    clean = _own_copy_tree(tmp_path / "a", cp.FIXTURE_OWN_COPY_DOC, occ)
+    assert not cp.audit(clean)[0]
+    # A real foreign copy in the SAME file, in the SAME marker wording, fails.
+    foreign = _own_copy_tree(
+        tmp_path / "b", cp.FIXTURE_OWN_COPY_DOC + cp.FIXTURE_FOREIGN_COPY_LINE, occ
+    )
+    assert "self-declared-quotation" in _fired_on(foreign, "docs/own_copy.md")
+
+
+def test_scoped_exemption_goes_stale_and_cannot_be_a_blanket(tmp_path):
+    gone = _own_copy_tree(
+        tmp_path / "a", cp.FIXTURE_OWN_COPY_DOC, ["a sentence that is not there"]
+    )
+    assert "exemption-stale" in _rules_fired(gone)
+    glob = _own_copy_tree(
+        tmp_path / "b", cp.FIXTURE_OWN_COPY_DOC, [cp.FIXTURE_OWN_COPY_OCCURRENCE],
+        path="docs/*.md",
+    )
+    assert "exemption-bad-pattern" in _rules_fired(glob)
+
+
+def test_classic_readme_exemption_does_not_launder_a_foreign_copy(tmp_path):
+    """The committed exemption for model/oscillators/classic/README.md is
+    occurrence-scoped: the README as committed passes, and the same README
+    with a foreign 'copied verbatim' line appended fails."""
+    rel = "model/oscillators/classic/README.md"
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    [entry] = [e for e in manifest["exemptions"] if e.get("path") == rel]
+    assert entry.get("occurrences"), "the #181 exemption must stay occurrence-scoped"
+    readme = (REPO / rel).read_text(encoding="utf-8")
+    for label, text, expect_fail in (
+        ("as-committed", readme, False),
+        ("with-foreign-copy", readme + cp.FIXTURE_FOREIGN_COPY_LINE, True),
+    ):
+        (tmp_path / label).mkdir()
+        root = _skeleton(tmp_path / label)
+        cp._write(root, rel, text)
+        cp._patch_manifest(root, lambda d: d["exemptions"].append(dict(entry)))
+        # the synthetic manifest now quotes the occurrence, as the real one does
+        cp._patch_manifest(
+            root,
+            lambda d: d["exemptions"].append(
+                {
+                    "path": cp.MANIFEST_REL,
+                    "rules": ["self-declared-quotation"],
+                    "reason": "synthetic: manifest quotes the occurrence",
+                }
+            ),
+        )
+        assert ("self-declared-quotation" in _fired_on(root, rel)) is expect_fail, label

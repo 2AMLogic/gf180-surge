@@ -6,7 +6,7 @@
     "Provenance rows for every in-repo file that carries third-party-derived content, or whose build/run boundary touches the pinned GPL-3.0-or-later trees. Required by AGENTS.md ('record file/table-level provenance before adopting any third-party code, table, or asset'; 'copying Surge-derived code, tables, or assets into this repository requires a visible license decision record before merge') and by docs/REUSE-AUDIT.md 'Adoption mechanics'. Governance issue #25 (SXT-019) owns this file.",
     "A row is not a ratification. Most cited records are PROPOSED - pending owner ratification; the record's own Status line is authoritative and this project has made no distribution-license determination.",
     "Rows describe repository content only. The pinned Surge engine, its presets, the SST submodules and the Airwindows sources stay OUTSIDE this repository; no row here authorizes copying them in.",
-    "tools/check_provenance.py enforces this file: stale rows, uncorroborated rows, blanket patterns, exemptions of non-exemptible rules, and unattributed carriage signals all fail. Run it (and --negative-control) before merging anything that adds third-party-derived content."
+    "tools/check_provenance.py enforces this file: stale rows, uncorroborated rows, blanket patterns, exemptions of non-exemptible rules, and unattributed carriage signals all fail. An exemption may carry 'occurrences' (exact path only): it then covers only those named quotation-marker occurrences in that file, and any other marker in the same file still fails. Prefer that over a whole-file exemption for ordinary documents. Run it (and --negative-control) before merging anything that adds third-party-derived content."
   ],
   "scan_floor": 1200,
   "scope_exclusions": [
@@ -287,6 +287,16 @@
         "self-declared-quotation"
       ],
       "reason": "The audit's test suite, same reason as tools/check_provenance.py; it reuses that module's fragment-assembled fixtures rather than pasting signal text."
+    },
+    {
+      "path": "model/oscillators/classic/README.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "`tb_classic.sv` carries a verbatim copy of it"
+      ],
+      "reason": "Self-copy, not third-party carriage (landed with #181). The named sentence says rtl/oscillators/classic/tb_classic.sv carries a verbatim copy of this repository's own model/voice/voice_model.py::HalfbandD2 - the project-authored D2 allpass arithmetic. The sst-filters coefficients that DR-0002 answers (on the voice_model.py row) are not literals in that testbench: they arrive as config words 68..79. The README cites the pinned Surge commit only as structure 'read and cited, never copied'. Scoped to that one occurrence: any other quotation marker added to this README, including a second 'verbatim copy', still fails."
     }
   ]
 }

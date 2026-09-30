@@ -6,15 +6,16 @@ standing governance hub) · survey `docs/REUSE-AUDIT.md` · records
 
 This record covers **only** the bookkeeping/enforcement increment landed by
 this PR. It establishes nothing about DSP, RTL, fidelity, preset support, or
-sound. It does **not** ratify any decision record: 13 of the 16 records on disk
+sound. It does **not** ratify any decision record: 15 of the 18 records on disk
 are `PROPOSED`/`ESCALATED`/`RECORDED` pending owner action, and this project
 still has no distribution-license determination (`AGENTS.md`).
 
-Tree audited: this PR's branch at head `e6b5923a` (level with `origin/main`
-`c6508f2`; the §1/§4/§5 outputs were re-run on that head and again with this
-record's own count update applied — identical results). Runtime for the
-re-run: Python 3.14.7 (stdlib only), Darwin. The first-commit run (`d3e47ed`,
-§2/§3 history) used Python 3.12.3 on Linux.
+Tree audited: this PR's branch after merging `origin/main` `ce8c285` (merge
+`e40669f`) plus the occurrence-scoped exemption commit that carries this
+update; §1/§4/§5 were re-run on that tree. Runtime for the re-run: Python
+3.14.7 (stdlib only), Darwin. The first-commit run (`d3e47ed`, §2/§3 history)
+used Python 3.12.3 on Linux. The previous re-run (head `e6b5923a`, 16 records,
+2000 files) is superseded by the numbers below.
 
 ## 0. What moved
 
@@ -22,7 +23,7 @@ re-run: Python 3.14.7 (stdlib only), Darwin. The first-commit run (`d3e47ed`,
 |---|---|---|
 | 4. "an audit pass (script or checklist in review) flags any vendored file without a provenance row; demonstrate it once on a deliberately unattributed file" | no script, no manifest — enforcement was review habit only | `tools/check_provenance.py` + `decision-records/provenance.json` + CI job `provenance-audit`; demonstrated in §3 below |
 | 1–3 (per-issue adoption records, license/pin recorded in the adopting PR, GPL boundary enforced) | enforced by review only | still review-owned, now with machine checks behind them: a row is required at adoption time, must cite an existing indexed record, and must be corroborated by the file itself |
-| `decision-records/README.md` index completeness | 11 records on disk, 7 rows (0004–0007 missing) | 11 rows at the first commit; 16 rows / 16 records at the audited head (0012–0016 landed on `main` with their own index rows after the first commit); drift is now a CI failure (`index-missing-row`, `index-status-mismatch`, `index-date-mismatch`) |
+| `decision-records/README.md` index completeness | 11 records on disk, 7 rows (0004–0007 missing) | 11 rows at the first commit; 18 rows / 18 records at the audited head (0012–0018 landed on `main` with their own index rows after the first commit); drift is now a CI failure (`index-missing-row`, `index-status-mismatch`, `index-date-mismatch`) |
 
 Re-verified counts on the branch point (the curator's pass said "8 records on
 disk, 0004–0007 missing"; that was stale — 0009/0010/0011 landed 2026-09-25):
@@ -34,13 +35,13 @@ exactly 0004, 0005, 0006, 0007.
 ```
 $ python3 tools/check_provenance.py
 provenance audit of <worktree>
-coverage: 2000 files scanned, 728 excluded by declared scope exclusions,
-  16 decision records, 20 provenance rows covering 20 files, 8 exemptions
+coverage: 2098 files scanned, 753 excluded by declared scope exclusions,
+  18 decision records, 20 provenance rows covering 20 files, 9 exemptions
   excluded: .agents/ (42 files)
-  excluded: .claude/ (92 files)
-  excluded: .loom/ (594 files)
+  excluded: .claude/ (94 files)
+  excluded: .loom/ (617 files)
 tripwire hits (declared + undeclared): foreign-license-text=4,
-  foreign-source-language=2, self-declared-quotation=41,
+  foreign-source-language=2, self-declared-quotation=42,
   upstream-asset-extension=0
 
 PASS: every carriage signal is answered by a provenance row or a declared
@@ -49,9 +50,9 @@ exemption, and the decision-record bookkeeping is self-consistent.
 
 Exit 0; `--json` reports `"verdict": "PASS"` with 0 findings.
 
-Coverage is reported separately from agreement: 2000 files scanned (the
-committed tree, enumerated by `git ls-files`: 2728 tracked = 2000 scanned +
-728 excluded), 728 **excluded** by the three declared scope exclusions
+Coverage is reported separately from agreement: 2098 files scanned (the
+committed tree, enumerated by `git ls-files`: 2851 tracked = 2098 scanned +
+753 excluded), 753 **excluded** by the three declared scope exclusions
 (`.loom/`, `.claude/`, `.agents/` — Loom-installed surfaces owned by the
 upstream resync, recorded in the manifest as declared holes and printed on
 every run).
@@ -64,6 +65,22 @@ lines in `model/effects/aw-49/galactic_model.py` (row → DR-0006) and
 `reports/SXT-028k/EVIDENCE.md`, both → DR-0015), and nothing else. The two
 `foreign-source-language` hits are `oracle/sxt038/lp24_ref_harness.cpp`
 (row → DR-0010) and `oracle/sxt022/halfband_d2_probe.cpp` (row → DR-0009).
+
+**The one new exemption (9th) is occurrence-scoped.** Merging `main` brought
+in `model/oscillators/classic/README.md` (#181), which cites the pinned Surge
+commit ("read and cited, never copied") and says `tb_classic.sv` "carries a
+verbatim copy" of this repository's **own** `voice_model.HalfbandD2`. That is a
+self-copy, not third-party carriage: the testbench re-states the
+project-authored D2 allpass arithmetic, and the DR-0002 coefficients reach it
+as config words 68..79, not as literals. Without an answer the merged tree
+FAILED with that one `self-declared-quotation` finding. It is answered by a
+new, narrower exemption form: an exact `path` plus an `occurrences` list naming
+the one sentence. Any other quotation marker in that README, including a
+second "verbatim copy" in the same wording, still fails. Checked on the real
+tree: appending "…is copied verbatim from the pinned upstream engine." to the
+README made the audit FAIL (exit 1) on exactly that line, "outside the
+occurrence(s) its exemption names". The line was then removed and was not
+committed. The eight earlier exemptions are unchanged and remain whole-file.
 
 ## 2. First-run findings on the unmodified tree (the audit found real drift)
 
@@ -116,17 +133,27 @@ strings are reproducible from §6 by re-running the injection.
 After removal the tree returns to PASS (exit 0) and `git status` is clean of
 the probe: the control files are deliberately **not committed**.
 
-## 4. The audit's own failure detection — PASS (29/29 rules)
+## 4. The audit's own failure detection — PASS (29/29 rules + 6 scoped-exemption controls)
 
 The false-negative failure mode (a rule that silently stops firing while CI
 stays green) is itself tested:
 
 ```
 $ python3 tools/check_provenance.py --negative-control
-… one deliberate violation per rule, 29 rules + a clean-tree control …
-PASS: all 29 rules fired on their deliberate violation, and the clean control
-tree produced no findings.
+… one deliberate violation per rule, 29 rules + a clean-tree control,
+  then 6 occurrence-scoped exemption controls …
+PASS: all 29 rules fired on their deliberate violation, the clean control tree
+produced no findings, and all 6 occurrence-scoped exemption controls behaved.
 ```
+
+The six scoped-exemption controls are one positive control (the named own-copy
+occurrence audits clean, so the exemption is not dead) and five that must still
+fail: a foreign "copied verbatim" line and a foreign "transcribed from" table
+in the same exempted file (`self-declared-quotation`, required to fire on that
+file, not on the manifest); a named occurrence that no longer appears, and one
+that contains no quotation marker (`exemption-stale`); and `occurrences` on a
+glob (`exemption-bad-pattern`). A mutant that ignores the scoping (treats every
+exemption as whole-file) makes `--negative-control` exit 2.
 
 **The audit applies to itself.** Staging the new files made the audit flag its
 own source and test suite (a license body, an SPDX tag, a `0099` record
@@ -156,7 +183,7 @@ so a rule added later cannot ship untested. CI runs the negative control
 
 ```
 $ python3 -m pytest -q tests/test_sxt019_provenance.py
-16 passed
+19 passed
 ```
 
 Covers: the committed tree audits clean; the CLI's JSON verdict and exit
@@ -168,10 +195,14 @@ unattributed GPL header, an unattributed `.wt` payload, an unattributed
 file, a blanket pattern, an attempt to exempt a non-exemptible rule, and a
 partial scan; plus (added in `f8715ff`) the `RECORDED` status keyword is
 accepted while an unknown keyword still fails, and an `attribution-statement`
-row answers only the tripwires it lists.
+row answers only the tripwires it lists; plus (added with the #181 merge) an
+occurrence-scoped exemption covers only its named occurrence, goes stale when
+the occurrence leaves, cannot sit on a glob, and the committed
+`model/oscillators/classic/README.md` exemption does not launder a foreign copy
+appended to that README.
 
 Audit wall time: ~2.8 s on the first-commit tree (Linux); on the audited head
-the re-run measured ~2.6 s user CPU, 12–19 s real on a loaded Darwin host (a
+the re-run measured ~1.5 s user CPU, ~1.6 s real on Darwin (a
 naive first implementation took 47 s; the scan now sniffs binaries before
 decoding and gates every regex behind a lowercase substring prefilter — the
 negative control is what keeps that optimization honest).
@@ -197,8 +228,8 @@ No engine tree, no network, no oracle host required.
   is **not** detected. NOT_RUN for similarity matching against upstream trees:
   no such check exists here.
 - **Not a ratification.** Records 0003–0004, 0006–0010, 0012, 0014 and 0015
-  are PROPOSED, 0011 is ESCALATED, and 0013 and 0016 are RECORDED with owner
-  ratification pending; the audit checks that a row cites a record, never that the
+  are PROPOSED, 0011 is ESCALATED, and 0013, 0016, 0017 and 0018 are RECORDED
+  with owner ratification pending; the audit checks that a row cites a record, never that the
   owner agreed with it. The distribution-license determination remains open.
 - **No DSP, fidelity, RTL-exactness, preset-support or sound claim** is
   touched by this work.
