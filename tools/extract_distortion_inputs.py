@@ -42,6 +42,8 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
+from refusal import Refuse  # noqa: E402
+
 FX_TYPE_DISTORTION = 3
 FX_TYPE_NAME = "Distortion"
 DIST_PARAM_NAMES = ["preeq_gain_f", "preeq_freq_f", "preeq_bw_f",
@@ -105,10 +107,6 @@ def landed_classes():
         if leaves.get(key, {}).get("landed") is True:
             out.add(tn)
     return out
-
-
-class Refuse(Exception):
-    """A fail-closed refusal: recorded as evidence, never silently dropped."""
 
 
 def census_sha(path):

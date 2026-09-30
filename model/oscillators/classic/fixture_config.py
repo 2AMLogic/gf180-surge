@@ -24,9 +24,14 @@ presets, and never count toward preset coverage. The un-modeled stages are:
 """
 
 import os
+import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
 
 CARRIERS = {
     # name: (preset path relative to resources/data/, modeled osc slot index)
@@ -39,10 +44,6 @@ CARRIERS = {
     # refuse it for fixture use (scene-B/voice-graph integration is #48)
     "house": ("patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp", 0),
 }
-
-
-class Refuse(Exception):
-    pass
 
 
 def carrier_overrides(slot):

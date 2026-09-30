@@ -51,6 +51,7 @@ oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
 import render_fixture as rf  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 SR = 48000
 BUILD = os.path.join(oc.engine_dir(),
@@ -148,10 +149,6 @@ if probe_abs is None:
 out = render_injected(probe_abs)
 print(hashlib.sha256(np.ascontiguousarray(out).tobytes()).hexdigest())
 """
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_file(p):

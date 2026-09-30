@@ -100,6 +100,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 
 from _rtl_compile_common import compile_and_run            # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 RUNNER = os.path.join(REPO, "model", "voice", "run_vel_model.py")
 CMP = os.path.join(REPO, "tools", "compare_vel_rtl_model.py")
@@ -179,10 +180,6 @@ READING_MAC = ("A-DSP-1c read as 'the 32x32->64 multiply, its rounding add and "
 READING_ALU = ("every op a separate cycle, with the 64-bit rounding add and "
                "the two 64-bit saturation compares costing 2 cycles each on a "
                "32-bit ALU (A-ALU-1 covers <=32-bit words only)")
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256(path):

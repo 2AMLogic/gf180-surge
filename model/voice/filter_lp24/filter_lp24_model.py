@@ -63,8 +63,11 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))))
 
 import voice_model as vm  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 ONE = vm.ONE
 FQ = vm.FQ
@@ -105,10 +108,6 @@ SR_OS = 96000.0                             # dsamplerate_os (CM sample rate)
 R_INIT = [0] * N_REG
 
 CLIP_FLOOR = qint(0.1)                      # pinned max(0.1, ...) clipgain floor
-
-
-class Refuse(Exception):
-    """Applicability boundary: out-of-scope request, refused (fail-closed)."""
 
 
 def sadd(*terms):

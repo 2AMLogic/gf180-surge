@@ -31,8 +31,10 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
+sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 # Declared in issue #72 (data lineage) and in corpus/normalized/README.md.
@@ -81,10 +83,6 @@ CORNERS = [
      "same carrier parameters through the Standard (SVF) kernel: the third "
      "subtype at a live keytrack/env-mod control plane"),
 ]
-
-
-class Refuse(Exception):
-    pass
 
 
 def load_graphs():

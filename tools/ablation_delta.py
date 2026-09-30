@@ -36,6 +36,11 @@ import sys
 import wave
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
+
 ABLATIONS = os.path.join(REPO, "reports", "sxt-014", "ablations")
 DELTAS = os.path.join(REPO, "reports", "sxt-014", "deltas")
 SUMMARY = os.path.join(REPO, "reports", "sxt-014", "ablation-summary.json")
@@ -50,10 +55,6 @@ NEAR_ZERO_RMS_DELTA_DB = -60.0
 NEAR_ZERO_BAND_DELTA_DB = 0.5
 SR = 48000
 TAIL_S = 2.0
-
-
-class Refuse(Exception):
-    pass
 
 
 def backend():

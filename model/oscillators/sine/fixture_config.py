@@ -29,9 +29,14 @@ negative control, a preset that must be REFUSED).
 """
 
 import os
+import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
 
 CARRIERS = {
     # name: (preset path relative to resources/data/, modeled osc slot index)
@@ -51,10 +56,6 @@ CARRIERS = {
     "alone": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Alone.fxp", 0),
     "mystery4": ("patches_3rdparty/Inigo Kennedy/Atmospheres/Mystery 4.fxp", 0),
 }
-
-
-class Refuse(Exception):
-    pass
 
 
 def carrier_overrides(slot):

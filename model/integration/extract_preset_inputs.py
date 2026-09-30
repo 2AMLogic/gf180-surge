@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -44,10 +45,6 @@ REVERB1_TYPE = 2
 REVERB1_PARAMS = 12
 PARAM_NAMES = ["predelay", "shape", "roomsize", "decaytime", "damping",
                "lowcut", "freq1", "gain1", "highcut", "mix", "width", "unused12"]
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel_path):

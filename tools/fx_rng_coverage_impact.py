@@ -37,8 +37,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "oracle"))
+sys.path.insert(0, str(REPO))
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 GRAPHS = "corpus/normalized/graphs.jsonl"
 CHARACTERIZATION = "reports/SXT-028-rng/artifacts/rng-characterization.json"
@@ -50,10 +52,6 @@ SLATES = [
 OUT_DEFAULT = "reports/SXT-028-rng/artifacts/coverage-impact.json"
 
 CORPUS_TOTAL = 3561
-
-
-class Refuse(Exception):
-    pass
 
 
 def slot_is_affected(entry: dict, fx: dict) -> tuple:

@@ -33,16 +33,14 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "voice", "filter_lp24"))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
+sys.path.insert(0, REPO)
 
 import case_plan as cp  # noqa: E402
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 CASES_DIR = os.path.join(REPO, "reports", "SXT-038", "artifacts", "cases")
 BUILD = os.path.join(REPO, "oracle", "sxt038", "build_lp24_ref.sh")
-
-
-class Refuse(Exception):
-    pass
 
 
 def build_harness():

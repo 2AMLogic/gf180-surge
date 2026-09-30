@@ -81,8 +81,10 @@ import tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, os.path.join(REPO, "tools"))
+sys.path.insert(0, REPO)
 import voice_model as vm                      # noqa: E402
 import vel_negative_controls as vnc           # noqa: E402  (mutation anchors)
+from refusal import Refuse  # noqa: E402
 
 RUNNER = os.path.join(REPO, "model", "voice", "run_vel_model.py")
 CMP_VEL = os.path.join(REPO, "tools", "compare_vel_rtl_model.py")
@@ -127,10 +129,6 @@ module tb_vel_rom;
   end
 endmodule
 """
-
-
-class Refuse(Exception):
-    pass
 
 
 def sh(cmd, cwd=None):

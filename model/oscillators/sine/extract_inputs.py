@@ -37,6 +37,7 @@ sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "sine"))
 
 import oracle_common as oc  # noqa: E402
 import fixture_config as fc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -55,10 +56,6 @@ DECLARED_SEQUENCES = ("seq-notes-coverage-v1", "seq-notes-repeated-v1",
 # NOT in this set and may only target muted/off paths.
 VALUE_ZERO_SOURCES = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 29, 30, 35,
                       36, 37}
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel):

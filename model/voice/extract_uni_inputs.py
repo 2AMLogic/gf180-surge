@@ -33,6 +33,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -44,10 +45,6 @@ GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 # (model input words, Q10.21-quantized once; engine rand_01() is
 # wall-clock seeded and not reproducible -- SXT-012 variation class).
 DECLARED_DRAWS = [0.10, 0.35, 0.60, 0.85, 0.20, 0.45, 0.70, 0.95]
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel):

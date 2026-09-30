@@ -66,8 +66,11 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))))
 
 import voice_model as vm  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 ONE = vm.ONE
 FQ = vm.FQ
@@ -131,10 +134,6 @@ SOFTCLIP8_T_FRAC = 31
 # re-zeroed on a type/subtype change (SurgeVoice.cpp memset + CM.Reset()), so
 # all five ladder registers start at 0.
 N_REG = 5
-
-
-class Refuse(Exception):
-    """Applicability boundary: out-of-scope request, refused (fail-closed)."""
 
 
 # ------------------------------------------------------- engine table body

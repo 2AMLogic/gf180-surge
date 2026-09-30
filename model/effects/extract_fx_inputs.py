@@ -34,6 +34,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -41,10 +42,6 @@ FX_TYPE_DELAY = 1
 FX_TYPE_EQ = 6
 DELAY_PARAMS = 12
 EQ_PARAMS = 12
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_entry(rel_path):

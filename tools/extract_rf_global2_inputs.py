@@ -37,6 +37,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
+from refusal import Refuse  # noqa: E402
+
 FXSLOT_GLOBAL1, FXSLOT_GLOBAL2 = 6, 7
 
 CARRIERS = [
@@ -57,10 +59,6 @@ GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 OUT_DIR = os.path.join(REPO, "model", "effects", "fx_inputs")
 REFUSALS = os.path.join(REPO, "reports", "SXT-028d", "artifacts",
                         "extract-refusals.txt")
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_row(rel_path):

@@ -50,6 +50,7 @@ if str(REPO) not in sys.path:
 
 from model.resources.accounting import MODEL_VERSION, account_graph  # noqa: E402
 from model.resources.params import REG  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 TOOL_VERSION = "sxt-017-predict/1.0.0"
 BUNDLE_SPEC_SCHEMA = "sxt-017-bundle-spec/1.0.0"
@@ -92,10 +93,6 @@ VALID_GAP_POLICIES = {
     "filter_subtypes": ("engine_declared_set",),
 }
 VALID_CYCLE_CLOSURE = ("not_gated_pending_sxt_016",)
-
-
-class Refuse(Exception):
-    """Fail-closed refusal: bad spec, tampered input, unknown key."""
 
 
 def _r6(x):

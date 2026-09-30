@@ -52,8 +52,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(REPO_ROOT / "oracle"))
+sys.path.insert(0, str(REPO_ROOT))
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 DEFAULT_CENSUS_CSV = REPO_ROOT / "corpus" / "census-v0.1" / "results" / "per-preset.csv"
 DEFAULT_SESSIONS_DIR = REPO_ROOT / "decisions" / "listening-sessions"
@@ -76,10 +78,6 @@ CLAIM_SCOPE = (
     "fixed audio. It is not a fidelity measurement, not a support claim, and "
     "not by itself a frozen selection. Dry-run sessions are machine "
     "exercises with placeholder ratings and are NOT human listening.")
-
-
-class Refuse(Exception):
-    pass
 
 
 def git_blob_sha1(path):

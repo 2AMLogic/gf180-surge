@@ -48,8 +48,11 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))))
 
 import voice_model as vm  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 ONE = vm.ONE
 FQ = vm.FQ
@@ -89,10 +92,6 @@ CM_SAMPLE_RATE = 96000.0
 # type/subtype change (SurgeVoice.cpp memset paths); R[2] (clipgain state)
 # therefore starts at 0, which seeds no state on the first OS sample.
 R_CLIP_INIT = 0
-
-
-class Refuse(Exception):
-    """Applicability boundary: out-of-scope request, refused (fail-closed)."""
 
 
 # ------------------------------------------------------- coefficient maker

@@ -64,6 +64,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from model.resources.accounting import MODEL_VERSION, account_graph  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 TOOL_VERSION = "sxt-027-leaf-gen/1.0.0"
 PLAN_SCHEMA = "sxt-027-leaf-plan/1.0.0"
@@ -418,10 +419,6 @@ NEG_CONTROL_PATTERN = (
     "reports/sxt-022/artifacts/negative-control.txt and "
     "tools/reverb_negative_controls.py"
 )
-
-
-class Refuse(Exception):
-    """Fail-closed refusal: bad input, unknown feature, zero-recovery leaf."""
 
 
 def _sha256_file(path):

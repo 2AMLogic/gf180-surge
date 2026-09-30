@@ -39,8 +39,10 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.insert(0, REPO)
 
 import voice_model as vm  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 BLOCK_OS = 64                 # BLOCK_SIZE_OS
 BLOCK_RATE = 48000.0 / 32.0   # 1500 engine blocks per second
@@ -54,10 +56,6 @@ FEG_DEFAULT = {
     "release_s": 0.150,
     "note_off_frac": 0.7,
 }
-
-
-class Refuse(Exception):
-    """Fail-closed: a case that cannot be honoured exactly is refused."""
 
 
 def f32(x):

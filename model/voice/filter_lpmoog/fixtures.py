@@ -48,9 +48,14 @@ import json
 import math
 import os
 import struct
+import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
 
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 BUNDLE_ROOT = os.path.join(REPO, "reports", "sxt-037", "artifacts")
@@ -59,10 +64,6 @@ SEQ_DIR = os.path.join(REPO, "fixtures", "sequences")
 BLOCK_SIZE = 32            # engine block (48 kHz samples)
 BLOCK_SIZE_OS = 64         # OS samples per block
 FUT_LPMOOG = 3
-
-
-class Refuse(Exception):
-    """Fail-closed fixture boundary."""
 
 
 def f32(x):
