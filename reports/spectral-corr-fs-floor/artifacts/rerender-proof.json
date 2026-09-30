@@ -13,38 +13,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          2806.0,
-          2805.0
-        ],
-        [
-          "/model_peak_lsb",
-          1866.0,
-          1920.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          500.81360731416754,
-          501.17865602450087
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          501.6431285837418,
-          502.0075912035756
-        ],
-        [
-          "/rms_diff_dbfs",
-          -36.30083626810589,
-          -36.294527933603035
-        ],
-        [
-          "/rms_diff_lsb",
-          501.6431285837418,
-          502.0075912035756
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/SXT-040/artifacts/nc-shape-migration.json",
@@ -58,33 +27,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          7197.0,
-          7198.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          2220.8602769877984,
-          2220.868123664848
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          2225.669536357723,
-          2225.6774932215603
-        ],
-        [
-          "/rms_diff_dbfs",
-          -23.359519993304737,
-          -23.359488940933083
-        ],
-        [
-          "/rms_diff_lsb",
-          2225.669536357723,
-          2225.6774932215603
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-crush.json",
@@ -98,43 +41,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          33294.0,
-          33465.0
-        ],
-        [
-          "/model_peak_lsb",
-          14360.0,
-          14574.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          8393.573014126005,
-          8394.776870045116
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          8427.599152573846,
-          8428.722963053868
-        ],
-        [
-          "/rms_diff_dbfs",
-          -11.794656206953915,
-          -11.79349803095905
-        ],
-        [
-          "/rms_diff_lsb",
-          8427.599152573846,
-          8428.722963053868
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-horn.json",
@@ -148,43 +55,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          7097.0,
-          7199.0
-        ],
-        [
-          "/model_peak_lsb",
-          2899.0,
-          3332.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          929.2197127240602,
-          929.4589309912702
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          930.2854694881854,
-          930.5213356132701
-        ],
-        [
-          "/rms_diff_dbfs",
-          -30.936408871121554,
-          -30.934206915349254
-        ],
-        [
-          "/rms_diff_lsb",
-          930.2854694881854,
-          930.5213356132701
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json",
@@ -198,38 +69,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          20591.0,
-          20592.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1506.2261165509485,
-          1506.9894444641402
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          2183.8695378940715,
-          2183.892252927871
-        ],
-        [
-          "/rms_diff_dbfs",
-          -23.524199812738985,
-          -23.52410946885754
-        ],
-        [
-          "/rms_diff_lsb",
-          2183.8695378940715,
-          2183.892252927871
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-032/artifacts/audio-nc-reso-zeroed.json",
@@ -243,43 +83,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          7102.0,
-          7027.0
-        ],
-        [
-          "/model_peak_lsb",
-          10594.0,
-          10773.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          837.056950372774,
-          837.4638670057875
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          855.7817161378321,
-          855.219779789316
-        ],
-        [
-          "/rms_diff_dbfs",
-          -31.6614735527963,
-          -31.667178886536725
-        ],
-        [
-          "/rms_diff_lsb",
-          855.7817161378321,
-          855.219779789316
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-032/artifacts/audio-nc-source-swap.json",
@@ -293,43 +97,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          21501.0,
-          21502.0
-        ],
-        [
-          "/model_peak_lsb",
-          14833.0,
-          14834.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          2389.56140206554,
-          2390.6244560235446
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          2423.0462874519894,
-          2423.898463760521
-        ],
-        [
-          "/rms_diff_dbfs",
-          -22.621499411953675,
-          -22.61844515413797
-        ],
-        [
-          "/rms_diff_lsb",
-          2423.0462874519894,
-          2423.898463760521
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-032/artifacts/audio-nc-free-running.json",
@@ -343,38 +111,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/model_peak_lsb",
-          13816.0,
-          14698.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          2537.2696781600425,
-          2538.112601742881
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          2537.2696781600425,
-          2538.112601742881
-        ],
-        [
-          "/rms_diff_dbfs",
-          -22.22140103431235,
-          -22.21851591517161
-        ],
-        [
-          "/rms_diff_lsb",
-          2537.2696781600425,
-          2538.112601742881
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-035/artifacts/audio-nc-baseline.json",
@@ -389,38 +126,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/best_shift",
-          1,
-          0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          4106.031698403782,
-          4106.679041308484
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          4106.22749866929,
-          4106.679041308484
-        ],
-        [
-          "/rms_diff_dbfs",
-          -18.039873481617924,
-          -18.038918387458317
-        ],
-        [
-          "/rms_diff_lsb",
-          4106.22749866929,
-          4106.679041308484
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json",
@@ -435,33 +141,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          4308.488237359747,
-          4308.467522643563
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          6600.594080371684,
-          6600.747306786425
-        ],
-        [
-          "/rms_diff_dbfs",
-          -13.917073111341779,
-          -13.916871479145609
-        ],
-        [
-          "/rms_diff_lsb",
-          6600.594080371684,
-          6600.747306786425
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-035/artifacts/audio-nc-reso-zeroed.json",
@@ -476,33 +156,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          4139.400556978363,
-          4140.137523347477
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          4139.694994747738,
-          4140.893318372829
-        ],
-        [
-          "/rms_diff_dbfs",
-          -17.96936673750621,
-          -17.966852784043652
-        ],
-        [
-          "/rms_diff_lsb",
-          4139.694994747738,
-          4140.893318372829
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-035/artifacts/audio-nc-vca-zeroed.json",
@@ -516,43 +170,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/max_abs_diff_lsb",
-          38461.0,
-          38478.0
-        ],
-        [
-          "/model_peak_lsb",
-          13597.0,
-          13618.0
-        ],
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          8444.774664281334,
-          8444.570970056258
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          8444.774664281334,
-          8444.570970056258
-        ],
-        [
-          "/rms_diff_dbfs",
-          -11.77697231109918,
-          -11.777181823722977
-        ],
-        [
-          "/rms_diff_lsb",
-          8444.774664281334,
-          8444.570970056258
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json",
@@ -567,33 +185,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          3194.1263487385354,
-          3195.4029155657167
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          3213.4058821834687,
-          3213.65349953038
-        ],
-        [
-          "/rms_diff_dbfs",
-          -20.169421936206252,
-          -20.168752648178533
-        ],
-        [
-          "/rms_diff_lsb",
-          3213.4058821834687,
-          3213.65349953038
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json",
@@ -607,33 +199,7 @@
         "unexplained": [],
         "runner_added_recomputed_equal": []
       },
-      "rerender_drift_vs_committed_under_pre110_tool": [
-        [
-          "/proposed_budget_results/rms_diff_dbfs",
-          true,
-          false
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          10208.915259779218,
-          10209.259584872538
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          10211.567644047525,
-          10211.852919789126
-        ],
-        [
-          "/rms_diff_dbfs",
-          -10.126885251422376,
-          -10.126642601215925
-        ],
-        [
-          "/rms_diff_lsb",
-          10211.567644047525,
-          10211.852919789126
-        ]
-      ]
+      "rerender_drift_vs_committed_under_pre110_tool": []
     },
     {
       "artifact": "reports/SXT-042/artifacts/audio-nc-baseline.json",
@@ -652,43 +218,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          16721.0,
-          16740.0
-        ],
-        [
-          "/model_peak_lsb",
-          11631.0,
-          11656.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1300.3129135467193,
-          1300.9822447585323
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1326.4240254946847,
-          1327.1123106194211
-        ],
-        [
-          "/rms_diff_dbfs",
-          -27.855086029921274,
-          -27.850580066550283
-        ],
-        [
-          "/rms_diff_lsb",
-          1326.4240254946847,
-          1327.1123106194211
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          1915.35724374861,
+          1916.5779351099552,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          2719.375381089889,
+          2719.916539027949,
           "<absent>"
         ]
       ]
@@ -710,43 +246,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          16330.0,
-          16336.0
-        ],
-        [
-          "/model_peak_lsb",
-          8930.0,
-          8936.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1214.0625493985258,
-          1214.3493892681693
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1233.4413718062701,
-          1233.751391989855
-        ],
-        [
-          "/rms_diff_dbfs",
-          -28.48636339603338,
-          -28.484180509350278
-        ],
-        [
-          "/rms_diff_lsb",
-          1233.4413718062701,
-          1233.751391989855
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          1728.7357909234504,
+          1729.2114269738304,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          2719.375381089889,
+          2719.916539027949,
           "<absent>"
         ]
       ]
@@ -768,43 +274,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          20723.0,
-          20797.0
-        ],
-        [
-          "/model_peak_lsb",
-          14241.0,
-          14396.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1614.97412383017,
-          1620.7537296861346
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1628.8611763671545,
-          1634.5972739037502
-        ],
-        [
-          "/rms_diff_dbfs",
-          -26.07105218106925,
-          -26.040518217040894
-        ],
-        [
-          "/rms_diff_lsb",
-          1628.8611763671545,
-          1634.5972739037502
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          2429.3602996769046,
+          2439.087065524903,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          3023.2183117774784,
+          3028.7330455739825,
           "<absent>"
         ]
       ]
@@ -826,43 +302,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          15300.0,
-          15304.0
-        ],
-        [
-          "/model_peak_lsb",
-          8174.0,
-          8180.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1113.7013930208304,
-          1113.7654816524448
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1119.2178270618706,
-          1119.2927275096324
-        ],
-        [
-          "/rms_diff_dbfs",
-          -29.330441241962358,
-          -29.32985998312307
-        ],
-        [
-          "/rms_diff_lsb",
-          1119.2178270618706,
-          1119.2927275096324
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          1578.3217215018697,
+          1578.4544949439764,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          2433.719669015282,
+          2433.7866779065816,
           "<absent>"
         ]
       ]
@@ -884,43 +330,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          17038.0,
-          17074.0
-        ],
-        [
-          "/model_peak_lsb",
-          13117.0,
-          13145.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1328.6747946224982,
-          1329.4531153169294
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1350.836915573964,
-          1351.6326313115521
-        ],
-        [
-          "/rms_diff_dbfs",
-          -27.696675212956446,
-          -27.691560262234685
-        ],
-        [
-          "/rms_diff_lsb",
-          1350.836915573964,
-          1351.6326313115521
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          1963.500778115421,
+          1964.927136781551,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          2719.375381089889,
+          2719.916539027949,
           "<absent>"
         ]
       ]
@@ -942,43 +358,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          16330.0,
-          16336.0
-        ],
-        [
-          "/model_peak_lsb",
-          8930.0,
-          8936.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1214.0625493985258,
-          1214.3493892681693
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1233.4413718062701,
-          1233.751391989855
-        ],
-        [
-          "/rms_diff_dbfs",
-          -28.48636339603338,
-          -28.484180509350278
-        ],
-        [
-          "/rms_diff_lsb",
-          1233.4413718062701,
-          1233.751391989855
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          1728.7357909234504,
+          1729.2114269738304,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          2719.375381089889,
+          2719.916539027949,
           "<absent>"
         ]
       ]
@@ -1000,43 +386,13 @@
       },
       "rerender_drift_vs_committed_under_pre110_tool": [
         [
-          "/max_abs_diff_lsb",
-          16455.0,
-          16461.0
-        ],
-        [
-          "/model_peak_lsb",
-          9798.0,
-          9815.0
-        ],
-        [
-          "/rms_diff_at_best_shift_lsb",
-          1244.8900263712123,
-          1245.29923830895
-        ],
-        [
-          "/rms_diff_at_shift0_lsb",
-          1267.3748187390381,
-          1267.807073013139
-        ],
-        [
-          "/rms_diff_dbfs",
-          -28.25063214384183,
-          -28.24767021596674
-        ],
-        [
-          "/rms_diff_lsb",
-          1267.3748187390381,
-          1267.807073013139
-        ],
-        [
           "/windowed_rms_lsb/kt_nonzero",
-          1785.9804115648071,
+          1786.6511197824068,
           "<absent>"
         ],
         [
           "/windowed_rms_lsb/kt_zero",
-          2760.3718523691427,
+          2761.096389446557,
           "<absent>"
         ]
       ]

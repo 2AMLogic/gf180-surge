@@ -1,8 +1,15 @@
 {
   "issue": 100,
-  "run_utc": "2026-09-25T09:54:51Z",
-  "repo_head": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+  "run_utc": "2026-09-26T23:50:41Z",
+  "repo_head": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
   "numpy": "2.4.1",
+  "amended_by_issue": 111,
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
   "legs": {
     "sxt028c_rerun": {
       "status": "PASS",
@@ -20,7 +27,7 @@
           },
           "old_window_tail_rms_rel_db": -54.89986600296855,
           "diff_counts": {
-            "SCHEMA": 52,
+            "SCHEMA": 118,
             "TAIL-WINDOW": 1,
             "VERDICT-TEXT": 1
           },
@@ -40,7 +47,7 @@
           "old_window_tail_rms_rel_db": -59.829270648792566,
           "diff_counts": {
             "ULP": 1,
-            "SCHEMA": 52,
+            "SCHEMA": 118,
             "TAIL-WINDOW": 1,
             "VERDICT-TEXT": 1
           },
@@ -60,7 +67,7 @@
           "old_window_tail_rms_rel_db": 0.0,
           "diff_counts": {
             "ULP": 1,
-            "SCHEMA": 52,
+            "SCHEMA": 118,
             "TAIL-WINDOW": 1,
             "VERDICT-TEXT": 1
           },
@@ -80,7 +87,7 @@
           "old_window_tail_rms_rel_db": 0.0,
           "diff_counts": {
             "ULP": 1,
-            "SCHEMA": 52,
+            "SCHEMA": 118,
             "TAIL-WINDOW": 1,
             "VERDICT-TEXT": 1
           },
@@ -100,7 +107,7 @@
           "old_window_tail_rms_rel_db": 1.3000462659163343,
           "diff_counts": {
             "ULP": 2,
-            "SCHEMA": 52,
+            "SCHEMA": 118,
             "TAIL-WINDOW": 1,
             "VERDICT-TEXT": 1
           },
@@ -120,7 +127,7 @@
           "old_window_tail_rms_rel_db": -12.581349179761139,
           "diff_counts": {
             "ULP": 1,
-            "SCHEMA": 52,
+            "SCHEMA": 118,
             "TAIL-WINDOW": 1,
             "VERDICT-TEXT": 1
           },
@@ -533,7 +540,7 @@
           "observed": "NO_VERDICT",
           "exit": 2,
           "result": "CONTROL-OK",
-          "reason": "no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-110/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)"
+          "reason": "no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)"
         },
         {
           "control": "fm_bass_1/baseline",
@@ -706,7 +713,7 @@
           "ok": true
         }
       ],
-      "committed_json_files": 689,
+      "committed_json_files": 780,
       "strict_rejects": []
     },
     "spectral_corr_sweep": {
@@ -810,6 +817,10 @@
             "R": -109.90850860500686
           },
           "gate_only_addition": true,
+          "excluded_keys_for_gate_only_comparison": [
+            "tail_gate",
+            "tail_window"
+          ],
           "preexisting_drift_keys": [
             "/band_energy_max_dev_db",
             "/decay_curve_max_dev_db",
@@ -840,6 +851,10 @@
             "R": -105.87218771108199
           },
           "gate_only_addition": true,
+          "excluded_keys_for_gate_only_comparison": [
+            "tail_gate",
+            "tail_window"
+          ],
           "preexisting_drift_keys": [
             "/band_energy_max_dev_db",
             "/decay_curve_max_dev_db",
@@ -871,6 +886,10 @@
             "R": -87.8780468643126
           },
           "gate_only_addition": true,
+          "excluded_keys_for_gate_only_comparison": [
+            "tail_gate",
+            "tail_window"
+          ],
           "preexisting_drift_keys": [],
           "preexisting_missing_fields": [],
           "exit": {
@@ -886,8 +905,8 @@
   "partial_reruns": [
     {
       "issue": 110,
-      "run_utc": "2026-09-27T01:38:52Z",
-      "repo_head": "abcba146dd313be3c9b6c57aa578891a3bbe70a0",
+      "run_utc": "2026-09-30T04:08:42Z",
+      "repo_head": "173931890e490a7ed4eddf339bf72bb21af0d264",
       "legs_rerun": [
         "stereo_tail_controls"
       ],

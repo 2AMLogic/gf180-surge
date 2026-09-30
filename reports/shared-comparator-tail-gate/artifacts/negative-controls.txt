@@ -1,5 +1,5 @@
 issue #93 -- shared-comparator wet-path tail gate: checks
-run: 2026-09-27T01:38:52Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264
 tool: tools/compare_audio_reference.py
 re-run: leg 2 only, by issue #110 (spectral_corr definition change); leg 1 is carried
 claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-support,

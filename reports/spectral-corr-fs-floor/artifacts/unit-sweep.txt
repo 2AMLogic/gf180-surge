@@ -1,5 +1,5 @@
 issue #110 -- shared full-scale log-floor spectral_corr: leg 1
-run: 2026-09-27T01:38:52Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0   numpy 2.4.1
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
 definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
 claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
 

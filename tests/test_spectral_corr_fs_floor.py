@@ -171,6 +171,38 @@ def _recorded_base():
         return json.load(f)["base_rev"]
 
 
+@pytest.mark.parametrize("rel,leg", sorted(TAIL_GATE_SUMMARIES.items()))
+def test_tail_gate_summary_carries_main_at_the_recorded_base(rel, leg):
+    """Every carried leg and top-level field of both committed tail-gate
+    summaries equals main's record at the base the #110 run recorded; only
+    the re-run leg, partial_reruns, and overall may differ."""
+    base = _git_show(_recorded_base(), rel)
+    if base is None:
+        pytest.skip("recorded base rev not in this clone (shallow checkout)")
+    with open(os.path.join(REPO, rel)) as f:
+        committed = json.load(f)
+    assert chk.carried_mismatches(committed, base, (leg,)) == []
+    assert any(n.get("issue") == 110 for n in committed["partial_reruns"])
+
+
+@pytest.mark.parametrize("rel,leg", sorted(TAIL_GATE_SUMMARIES.items()))
+def test_carried_check_fails_a_merge_onto_a_stale_base(rel, leg):
+    """Live negative control: the summary the pre-fix _merge_summary wrote --
+    the same re-run leg merged onto the pinned pre-#111 record -- must FAIL
+    the carried check against main's base. (It silently reverted #111's
+    legs and header fields; this is the check that would have caught it.)"""
+    base = _git_show(_recorded_base(), rel)
+    stale = _git_show(STALE_PRE_111_REV, rel)
+    if base is None or stale is None:
+        pytest.skip("base or pre-#111 rev not in this clone")
+    with open(os.path.join(REPO, rel)) as f:
+        committed = json.load(f)
+    stale_merge = chk.merge_summary_record(stale, "#x", leg,
+                                           committed["legs"][leg], "t", "h",
+                                           "leg 2")
+    assert chk.carried_mismatches(stale_merge, base, (leg,)) != []
+
+
 def test_carried_mismatches_names_the_drifted_keys():
     base = {"issue": 100, "run_utc": "a", "amended_by_issue": 111,
             "legs": {"a": {"status": "PASS"}, "b": {"status": "PASS"}},

@@ -1,7 +1,8 @@
 issue #100 -- stereo comparator tail gate / metric findings: leg 2
-run: 2026-09-27T01:38:52Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0   numpy 2.4.1
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
 re-run by issue #110 (spectral_corr definition change); legs 1, 3, 4, 5 are carried
 claim scope: comparator behaviour only; no fidelity, support, or sound claim.
+amended by issue #111: tail gate now carries the tail-shape (decay-curve) leg; budget {"decay_curve_floor_dbfs": -100.0, "decay_curve_max_dev_db": 1.0, "decay_curve_window_s": 0.05, "tail_rms_rel_db": -20.0}
 
 ==========================================================================
 [2] stereo tail-gate controls (each must fail the check it targets)
@@ -111,7 +112,7 @@ claim scope: comparator behaviour only; no fidelity, support, or sound claim.
   refusal/sha256-mismatch            chorus required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
       reason: sidecar declares wet sha256 0000000000000000... but fmcombo__seq-notes-coverage-v1-wet.f32.wav hashes to 89d42e518eab60e2...: the tail region would be read from metadata that does not describe this render
   refusal/missing-sidecar            fx     required NO_VERDICT observed NO_VERDICT exit 2  CONTROL-OK
-      reason: no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-110/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)
+      reason: no fixture sidecar declaring the wet-path tail region was given or found next to /Users/rwalters/GitHub/gf180-surge/.loom/worktrees/issue-111/reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav; this tool does not guess a tail region (issue #100)
 
   fixture sxt-023 fm_bass_1 (fx comparator): declared tail region [153600, 273600)
   fm_bass_1/baseline                 fx     required PASS       observed PASS       exit 0  CONTROL-OK

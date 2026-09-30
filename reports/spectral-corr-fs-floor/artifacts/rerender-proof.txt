@@ -1,33 +1,33 @@
 issue #110 -- shared full-scale log-floor spectral_corr: leg 4
-run: 2026-09-27T01:38:52Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0   numpy 2.4.1
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
 definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
 claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
 
 ==========================================================================
 [4] re-render proof: pre-#110 comparator on the SAME re-rendered control model
 ==========================================================================
-  renders root: /tmp/sxt110
-  reports/SXT-040/artifacts/nc-classic-substitution.json     only #110 fields differ; re-render drift vs committed (pre-#110 tool): 6 keys e.g. /max_abs_diff_lsb
-  reports/SXT-040/artifacts/nc-shape-migration.json          only #110 fields differ; re-render drift vs committed (pre-#110 tool): 5 keys e.g. /max_abs_diff_lsb
-  reports/SXT-033/artifacts/nc-submode-confusion-crush.json  only #110 fields differ; re-render drift vs committed (pre-#110 tool): 7 keys e.g. /max_abs_diff_lsb
-  reports/SXT-033/artifacts/nc-submode-confusion-horn.json   only #110 fields differ; re-render drift vs committed (pre-#110 tool): 7 keys e.g. /max_abs_diff_lsb
-  reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ; re-render drift vs committed (pre-#110 tool): 6 keys e.g. /max_abs_diff_lsb
-  reports/sxt-032/artifacts/audio-nc-reso-zeroed.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 7 keys e.g. /max_abs_diff_lsb
-  reports/sxt-032/artifacts/audio-nc-source-swap.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 7 keys e.g. /max_abs_diff_lsb
-  reports/sxt-032/artifacts/audio-nc-free-running.json       only #110 fields differ; re-render drift vs committed (pre-#110 tool): 6 keys e.g. /model_peak_lsb
-  reports/sxt-035/artifacts/audio-nc-baseline.json           only #110 fields differ; re-render drift vs committed (pre-#110 tool): 6 keys e.g. /best_shift
-  reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ; re-render drift vs committed (pre-#110 tool): 5 keys e.g. /proposed_budget_results/rms_diff_dbfs
-  reports/sxt-035/artifacts/audio-nc-reso-zeroed.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 5 keys e.g. /proposed_budget_results/rms_diff_dbfs
-  reports/sxt-035/artifacts/audio-nc-vca-zeroed.json         only #110 fields differ; re-render drift vs committed (pre-#110 tool): 7 keys e.g. /max_abs_diff_lsb
-  reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json   only #110 fields differ; re-render drift vs committed (pre-#110 tool): 5 keys e.g. /proposed_budget_results/rms_diff_dbfs
-  reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json    only #110 fields differ; re-render drift vs committed (pre-#110 tool): 5 keys e.g. /proposed_budget_results/rms_diff_dbfs
-  reports/SXT-042/artifacts/audio-nc-baseline.json           only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
-  reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
-  ports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
-  T-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
-  ports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
-  ports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
-  ports/SXT-042/artifacts/audio-nc-source-swap-velocity.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 8 keys e.g. /max_abs_diff_lsb
+  renders root: <scratch>/sxt110
+  reports/SXT-040/artifacts/nc-classic-substitution.json     only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-040/artifacts/nc-shape-migration.json          only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-033/artifacts/nc-submode-confusion-crush.json  only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-033/artifacts/nc-submode-confusion-horn.json   only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-reso-zeroed.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-source-swap.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-free-running.json       only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-baseline.json           only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-reso-zeroed.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-vca-zeroed.json         only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json   only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json    only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-042/artifacts/audio-nc-baseline.json           only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  T-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-source-swap-velocity.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
   SXT-035 C2 smoothing-bypass discriminator (control must be WORSE than the unmutated baseline on rms or spectral):
     rms_diff_lsb: baseline 4106.7, control 3213.7 -> control NOT worse
     spectral legacy       baseline 0.9875, control 0.9850 -> control worse

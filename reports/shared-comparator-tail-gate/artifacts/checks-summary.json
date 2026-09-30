@@ -1,11 +1,11 @@
 {
   "issue": 93,
-  "run_utc": "2026-09-25T09:42:05Z",
-  "repo_head": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+  "run_utc": "2026-09-26T23:50:08Z",
+  "repo_head": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
   "legs": {
     "dry_rerun_parity": {
       "status": "PASS",
-      "baseline_rev": "b326bc00eaa81bbad74ee71c004f3ae86983f569",
+      "baseline_rev": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
       "unexplained_committed_diffs": [],
       "cases": [
         {
@@ -214,11 +214,8 @@
           "model": "reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); RMS-FLAG-#95(verdict follows the corrected rms flag)",
-          "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "RMS-FLAG-#95(verdict follows the corrected rms flag)"
-          ]
+          "committed_json_status": "MATCHES-COMMITTED",
+          "committed_json_diff_classes": []
         },
         {
           "leaf": "sxt-026",
@@ -367,11 +364,9 @@
           "model": "reports/sxt-035/artifacts/model-seq-notes-repeated-v1.wav",
           "baseline_vs_current": "BYTE-IDENTICAL",
           "committed_json": "reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json",
-          "committed_json_status": "DIFFERS-FROM-COMMITTED: RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False); ULP(spectral_corr); RMS-FLAG-#95(verdict follows the corrected rms flag)",
+          "committed_json_status": "DIFFERS-FROM-COMMITTED: ULP(spectral_corr)",
           "committed_json_diff_classes": [
-            "RMS-FLAG-#95(proposed_budget_results.rms_diff_dbfs True -> False)",
-            "ULP(spectral_corr)",
-            "RMS-FLAG-#95(verdict follows the corrected rms flag)"
+            "ULP(spectral_corr)"
           ]
         }
       ],
@@ -497,8 +492,8 @@
   "partial_reruns": [
     {
       "issue": 110,
-      "run_utc": "2026-09-27T01:38:52Z",
-      "repo_head": "abcba146dd313be3c9b6c57aa578891a3bbe70a0",
+      "run_utc": "2026-09-30T04:08:42Z",
+      "repo_head": "173931890e490a7ed4eddf339bf72bb21af0d264",
       "legs_rerun": [
         "wet_tail_controls"
       ],

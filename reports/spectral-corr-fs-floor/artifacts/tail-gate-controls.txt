@@ -1,5 +1,5 @@
 issue #110 -- shared full-scale log-floor spectral_corr: leg 5
-run: 2026-09-27T01:38:52Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0   numpy 2.4.1
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
 definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
 claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
 
@@ -16,6 +16,7 @@ claim scope: metric/comparator behaviour only; no fidelity, support, RTL or soun
     stale-sidecar                  expect REFUSE got REFUSE OK
     drop-full-tail-second-preset   expect FAIL   got FAIL   OK
   #100 leg 2 (stereo tail-gate controls): PASS
+  carried from main's records at base baba823b266e: #93 summary byte-identical; #100 summary byte-identical
     fmcombo/baseline                         required PASS       observed PASS       CONTROL-OK
     fmcombo/drop-full-tail                   required FAIL       observed FAIL       CONTROL-OK
     fmcombo/tail-decays-too-fast             required FAIL       observed FAIL       CONTROL-OK

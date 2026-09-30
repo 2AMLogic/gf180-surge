@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "pre_110_rev": "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e",
+  "base_rev": "baba823b266ef6740aa360cda07d8b4967b02fe4",
   "cases": [
     {
       "leaf": "SXT-033",
@@ -12,8 +12,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9875605107647563,
-      "adopted_spectral_corr": 0.9664575420657724,
+      "legacy_spectral_corr": 0.9895294211226552,
+      "adopted_spectral_corr": 0.9795578866159448,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -23,13 +23,12 @@
       "ref": "reports/SXT-033/artifacts/crush__seq-notes-repeated-v1-ref.wav",
       "model": "reports/SXT-033/artifacts/model-crush-seq-notes-repeated-v1.wav",
       "owned_diffs": [
-        "/proposed_budget_results/spectral_corr",
         "/spectral_corr",
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9944093054093479,
-      "adopted_spectral_corr": 0.9720294219842991,
+      "legacy_spectral_corr": 0.996072621439653,
+      "adopted_spectral_corr": 0.9828101497588241,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -45,8 +44,8 @@
         "/verdict"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9635314339572595,
-      "adopted_spectral_corr": 0.9940355600148388,
+      "legacy_spectral_corr": 0.9744227953033333,
+      "adopted_spectral_corr": 0.9989760733145877,
       "verdict_before": "FAIL",
       "verdict_after": "PASS",
       "ok": true
@@ -56,15 +55,13 @@
       "ref": "reports/SXT-033/artifacts/edges__seq-notes-repeated-v1-ref.wav",
       "model": "reports/SXT-033/artifacts/model-edges-seq-notes-repeated-v1.wav",
       "owned_diffs": [
-        "/proposed_budget_results/spectral_corr",
         "/spectral_corr",
-        "/spectral_corr_definition",
-        "/verdict"
+        "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9728003440161637,
-      "adopted_spectral_corr": 0.9946254043715405,
-      "verdict_before": "FAIL",
+      "legacy_spectral_corr": 0.9830044321779814,
+      "adopted_spectral_corr": 0.9993986068356864,
+      "verdict_before": "PASS",
       "verdict_after": "PASS",
       "ok": true
     },
@@ -77,8 +74,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.7018403927713815,
-      "adopted_spectral_corr": 0.6408370558260853,
+      "legacy_spectral_corr": 0.7534505518975164,
+      "adopted_spectral_corr": 0.8422433285924609,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -92,8 +89,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.8034961968706706,
-      "adopted_spectral_corr": 0.8073997762546175,
+      "legacy_spectral_corr": 0.8086309065256551,
+      "adopted_spectral_corr": 0.8330659434167054,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -107,10 +104,10 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9667740753990466,
-      "adopted_spectral_corr": 0.9672118054836942,
-      "verdict_before": "FAIL",
-      "verdict_after": "FAIL",
+      "legacy_spectral_corr": 0.9802121891513782,
+      "adopted_spectral_corr": 0.9952705975754197,
+      "verdict_before": "PASS",
+      "verdict_after": "PASS",
       "ok": true
     },
     {
@@ -122,10 +119,10 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9723101444091415,
-      "adopted_spectral_corr": 0.9688347084682642,
-      "verdict_before": "FAIL",
-      "verdict_after": "FAIL",
+      "legacy_spectral_corr": 0.9888108925666398,
+      "adopted_spectral_corr": 0.9970490733295704,
+      "verdict_before": "PASS",
+      "verdict_after": "PASS",
       "ok": true
     },
     {
@@ -137,8 +134,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9624035602325415,
-      "adopted_spectral_corr": 0.9269391587492181,
+      "legacy_spectral_corr": 0.9643616545807963,
+      "adopted_spectral_corr": 0.9359768921775162,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -152,8 +149,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9874415500946538,
-      "adopted_spectral_corr": 0.9845617280161029,
+      "legacy_spectral_corr": 0.9920851447593002,
+      "adopted_spectral_corr": 0.998839814688084,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -168,8 +165,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9822456348187423,
-      "adopted_spectral_corr": 0.9536257769698709,
+      "legacy_spectral_corr": 0.9840901794675873,
+      "adopted_spectral_corr": 0.9631054982338696,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -183,8 +180,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9297929240844511,
-      "adopted_spectral_corr": 0.9700099974168351,
+      "legacy_spectral_corr": 0.9306053841293582,
+      "adopted_spectral_corr": 0.9700127903010176,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -198,8 +195,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9455541329961745,
-      "adopted_spectral_corr": 0.9752362276451777,
+      "legacy_spectral_corr": 0.9471139375941886,
+      "adopted_spectral_corr": 0.9752255790533861,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -215,8 +212,8 @@
         "/verdict"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9605773554260402,
-      "adopted_spectral_corr": 0.9837924405272008,
+      "legacy_spectral_corr": 0.9665832799372938,
+      "adopted_spectral_corr": 0.990825356358914,
       "verdict_before": "FAIL",
       "verdict_after": "PASS",
       "ok": true
@@ -226,15 +223,13 @@
       "ref": "reports/SXT-040/artifacts/popcorn2k__seq-notes-repeated-v1-ref.wav",
       "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-repeated-v1.wav",
       "owned_diffs": [
-        "/proposed_budget_results/spectral_corr",
         "/spectral_corr",
-        "/spectral_corr_definition",
-        "/verdict"
+        "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9789395057342873,
-      "adopted_spectral_corr": 0.983914622406474,
-      "verdict_before": "FAIL",
+      "legacy_spectral_corr": 0.9800197200726508,
+      "adopted_spectral_corr": 0.9836301098168843,
+      "verdict_before": "PASS",
       "verdict_after": "PASS",
       "ok": true
     },
@@ -248,8 +243,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9380804790750481,
-      "adopted_spectral_corr": 0.9844618896762953,
+      "legacy_spectral_corr": 0.9444411345365575,
+      "adopted_spectral_corr": 0.9867132851291923,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -264,8 +259,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.973101616666979,
-      "adopted_spectral_corr": 0.991822593985246,
+      "legacy_spectral_corr": 0.977328063720294,
+      "adopted_spectral_corr": 0.9892028303265433,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -279,8 +274,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9207418655237403,
-      "adopted_spectral_corr": 0.7849163404581093,
+      "legacy_spectral_corr": 0.9212367046094617,
+      "adopted_spectral_corr": 0.7847668163685115,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -290,13 +285,12 @@
       "ref": "reports/sxt-022/artifacts/reference-seq-modwheel-v1-dry.wav",
       "model": "reports/sxt-022/artifacts/model-seq-modwheel-v1.wav",
       "owned_diffs": [
-        "/proposed_budget_results/spectral_corr",
         "/spectral_corr",
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9783711365484161,
-      "adopted_spectral_corr": 0.9892040034493648,
+      "legacy_spectral_corr": 0.980185578016267,
+      "adopted_spectral_corr": 0.9913506336218479,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -311,8 +305,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9753279200470075,
-      "adopted_spectral_corr": 0.9846850399116267,
+      "legacy_spectral_corr": 0.979067414962698,
+      "adopted_spectral_corr": 0.998463047759134,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -326,8 +320,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9874917143001551,
-      "adopted_spectral_corr": 0.9845629264606223,
+      "legacy_spectral_corr": 0.9920737566278564,
+      "adopted_spectral_corr": 0.9988402578753665,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -341,8 +335,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9378040528599437,
-      "adopted_spectral_corr": 0.8586194492410197,
+      "legacy_spectral_corr": 0.9381037550402577,
+      "adopted_spectral_corr": 0.8498154794009908,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -356,8 +350,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9266912675271686,
-      "adopted_spectral_corr": 0.9530521556665974,
+      "legacy_spectral_corr": 0.922558774199446,
+      "adopted_spectral_corr": 0.9523129317076342,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -371,8 +365,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9267907519080358,
-      "adopted_spectral_corr": 0.953057546443701,
+      "legacy_spectral_corr": 0.9234419021399706,
+      "adopted_spectral_corr": 0.9523318799228803,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -386,8 +380,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.954570551300462,
-      "adopted_spectral_corr": 0.8958697898295516,
+      "legacy_spectral_corr": 0.9575967223340144,
+      "adopted_spectral_corr": 0.8956481813049025,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -401,8 +395,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9267907519080358,
-      "adopted_spectral_corr": 0.953057546443701,
+      "legacy_spectral_corr": 0.9234419021399706,
+      "adopted_spectral_corr": 0.9523318799228803,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -416,8 +410,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9056729930401194,
-      "adopted_spectral_corr": 0.9157321827636337,
+      "legacy_spectral_corr": 0.9092110108499516,
+      "adopted_spectral_corr": 0.9156558324996035,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -431,8 +425,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9655208431497535,
-      "adopted_spectral_corr": 0.8948807876829745,
+      "legacy_spectral_corr": 0.9687487861068226,
+      "adopted_spectral_corr": 0.9056153600196133,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -446,8 +440,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9711555949005437,
-      "adopted_spectral_corr": 0.9021381277566449,
+      "legacy_spectral_corr": 0.9704886498945159,
+      "adopted_spectral_corr": 0.8808801405195944,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -461,8 +455,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9719599951489235,
-      "adopted_spectral_corr": 0.9029770563266578,
+      "legacy_spectral_corr": 0.9755512597793251,
+      "adopted_spectral_corr": 0.9169167861318831,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -476,8 +470,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9876927559769583,
-      "adopted_spectral_corr": 0.9808558970688226,
+      "legacy_spectral_corr": 0.9914964131921044,
+      "adopted_spectral_corr": 0.993285595585784,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -491,8 +485,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.983688556381892,
-      "adopted_spectral_corr": 0.9880085423068575,
+      "legacy_spectral_corr": 0.9884446215850758,
+      "adopted_spectral_corr": 0.9981459982673252,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -506,8 +500,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9833674287428823,
-      "adopted_spectral_corr": 0.9903732331902065,
+      "legacy_spectral_corr": 0.9874378026804184,
+      "adopted_spectral_corr": 0.9978196681985922,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -521,8 +515,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9927824947150026,
-      "adopted_spectral_corr": 0.9879036681946355,
+      "legacy_spectral_corr": 0.9971927936912464,
+      "adopted_spectral_corr": 0.9989079083560051,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -537,8 +531,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9869783137462056,
-      "adopted_spectral_corr": 0.9708939082741458,
+      "legacy_spectral_corr": 0.9874579116733234,
+      "adopted_spectral_corr": 0.970959074770404,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -553,8 +547,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9753669216580454,
-      "adopted_spectral_corr": 0.9846853327781974,
+      "legacy_spectral_corr": 0.9791296734702285,
+      "adopted_spectral_corr": 0.9984631680236014,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true
@@ -568,8 +562,8 @@
         "/spectral_corr_definition"
       ],
       "unexplained": [],
-      "legacy_spectral_corr": 0.9874415500946538,
-      "adopted_spectral_corr": 0.9845617280161029,
+      "legacy_spectral_corr": 0.9920851447593002,
+      "adopted_spectral_corr": 0.998839814688084,
       "verdict_before": "FAIL",
       "verdict_after": "FAIL",
       "ok": true

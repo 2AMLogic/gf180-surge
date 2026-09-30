@@ -1,226 +1,168 @@
-Issue #110 regrade ledger: committed artifacts at pre-#110 8ade1d184d1b vs working tree
+Issue #110 regrade ledger: committed artifacts at base baba823b266e (main as this branch last merged it) vs working tree
 definition: tools/compare_audio_reference.py SPECTRAL_CORR_* (fs-log-floor-v2, -100 dBFS/bin)
 
-REGENERATED (106 artifacts)
-  reports/SXT-028c/artifacts/compare-alienappears__seq-notes-coverage-v1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+REGENERATED (102 artifacts)
+  reports/SXT-028c/artifacts/compare-alienappears__seq-notes-coverage-v1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            0.999999 -> 0.999993
       SPECTRAL      /channels/R/spectral_corr                            0.999999 -> 0.999994
       SPECTRAL      /channels/mono/spectral_corr                         0.999999 -> 0.999993
-  reports/SXT-028c/artifacts/compare-alienappears__seq-poly-8-v1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+  reports/SXT-028c/artifacts/compare-alienappears__seq-poly-8-v1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            1.000000 -> 1.000000
       SPECTRAL      /channels/R/spectral_corr                            1.000000 -> 0.999999
       SPECTRAL      /channels/mono/spectral_corr                         1.000000 -> 0.999999
-  reports/SXT-028c/artifacts/compare-fmcombo__seq-notes-coverage-v1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+  reports/SXT-028c/artifacts/compare-fmcombo__seq-notes-coverage-v1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            1.000000 -> 0.999997
       SPECTRAL      /channels/R/spectral_corr                            1.000000 -> 0.999997
       SPECTRAL      /channels/mono/spectral_corr                         1.000000 -> 0.999997
-  reports/SXT-028c/artifacts/compare-fmcombo__seq-poly-8-v1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+  reports/SXT-028c/artifacts/compare-fmcombo__seq-poly-8-v1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            1.000000 -> 0.999998
       SPECTRAL      /channels/R/spectral_corr                            1.000000 -> 0.999998
       SPECTRAL      /channels/mono/spectral_corr                         1.000000 -> 0.999998
-  reports/SXT-028c/artifacts/compare-fmtwang2__seq-notes-coverage-v1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+  reports/SXT-028c/artifacts/compare-fmtwang2__seq-notes-coverage-v1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            1.000000 -> 0.999996
       SPECTRAL      /channels/R/spectral_corr                            1.000000 -> 0.999996
       SPECTRAL      /channels/mono/spectral_corr                         1.000000 -> 0.999997
-  reports/SXT-028c/artifacts/compare-fmtwang2__seq-poly-8-v1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+  reports/SXT-028c/artifacts/compare-fmtwang2__seq-poly-8-v1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            1.000000 -> 0.999999
       SPECTRAL      /channels/R/spectral_corr                            1.000000 -> 0.999998
       SPECTRAL      /channels/mono/spectral_corr                         1.000000 -> 0.999999
-  reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+  reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.987561 -> 0.966458
-  reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.994409 -> 0.972029
-  reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1, VERDICT=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               False -> True
+      SPECTRAL      /spectral_corr                                       0.989529 -> 0.979558
+  reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.996073 -> 0.982810
+  reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1, VERDICT=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.963531 -> 0.994036
+      SPECTRAL      /spectral_corr                                       0.974423 -> 0.998976
       VERDICT       /verdict                                             FAIL against proposed budgets -> PASS (PENDING-FREEZE: budgets are proposals, not
-  reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1, VERDICT=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               False -> True
-      BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.972800 -> 0.994625
-      VERDICT       /verdict                                             FAIL against proposed budgets -> PASS (PENDING-FREEZE: budgets are proposals, not
-  reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.701840 -> 0.640837
-  reports/SXT-033/artifacts/budget-horn-seq-notes-repeated-v1.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.803496 -> 0.807400
-  reports/SXT-033/artifacts/budget-tentacles-seq-notes-coverage-v1.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               False -> True
-      SPECTRAL      /spectral_corr                                       0.966774 -> 0.967212
-  reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               False -> True
-      SPECTRAL      /spectral_corr                                       0.972310 -> 0.968835
-  reports/SXT-033/artifacts/nc-submode-confusion-crush.json   [DEFINITION=1, RE-RENDER=6, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.968414 -> 0.859752
-  reports/SXT-033/artifacts/nc-submode-confusion-horn.json   [DEFINITION=1, RE-RENDER=6, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.757092 -> 0.620225
-  reports/SXT-034/artifacts/nc1-collapsed.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.955359 -> 0.896874
-  reports/SXT-034/artifacts/nc1-diff-vs-true.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.963159 -> 0.892955
+  reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.983004 -> 0.999399
+  reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.753451 -> 0.842243
+  reports/SXT-033/artifacts/budget-horn-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.808631 -> 0.833066
+  reports/SXT-033/artifacts/budget-tentacles-seq-notes-coverage-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.980212 -> 0.995271
+  reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.988811 -> 0.997049
+  reports/SXT-033/artifacts/nc-submode-confusion-crush.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.971967 -> 0.859752
+  reports/SXT-033/artifacts/nc-submode-confusion-horn.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.763456 -> 0.620225
+  reports/SXT-034/artifacts/nc1-collapsed.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.962580 -> 0.924949
+  reports/SXT-034/artifacts/nc1-diff-vs-true.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.967815 -> 0.906131
   reports/SXT-034/artifacts/uni1-rep.json   [DEFINITION=1, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.987442 -> 0.984562
-  reports/SXT-034/artifacts/uni2-cov.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.962404 -> 0.926939
-  reports/SXT-034/artifacts/uni4-rep.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /spectral_corr                                       0.992085 -> 0.998840
+  reports/SXT-034/artifacts/uni2-cov.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.964362 -> 0.935977
+  reports/SXT-034/artifacts/uni4-rep.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.982246 -> 0.953626
+      SPECTRAL      /spectral_corr                                       0.984090 -> 0.963105
   reports/SXT-040/artifacts/budget-badnews-seq-notes-coverage-v1.json   [DEFINITION=1, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.929793 -> 0.970010
+      SPECTRAL      /spectral_corr                                       0.930605 -> 0.970013
   reports/SXT-040/artifacts/budget-badnews-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.945554 -> 0.975236
+      SPECTRAL      /spectral_corr                                       0.947114 -> 0.975226
   reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1, VERDICT=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.960577 -> 0.983792
+      SPECTRAL      /spectral_corr                                       0.966583 -> 0.990825
       VERDICT       /verdict                                             FAIL against proposed budgets -> PASS (PENDING-FREEZE: budgets are proposals, not
-  reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1, VERDICT=1]
-      BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.978940 -> 0.983915
-      VERDICT       /verdict                                             FAIL against proposed budgets -> PASS (PENDING-FREEZE: budgets are proposals, not
+  reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.980020 -> 0.983630
   reports/SXT-040/artifacts/budget-tentacles-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.938080 -> 0.984462
+      SPECTRAL      /spectral_corr                                       0.944441 -> 0.986713
   reports/SXT-040/artifacts/budget-tentacles-seq-notes-repeated-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.973102 -> 0.991823
-  reports/SXT-040/artifacts/nc-classic-substitution.json   [DEFINITION=1, RE-RENDER=6, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.833988 -> 0.329578
-  reports/SXT-040/artifacts/nc-shape-migration.json   [DEFINITION=1, RE-RENDER=5, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.625072 -> 0.672309
-  reports/SXT-042/artifacts/audio-nc-baseline.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.920742 -> 0.784767
-  reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.924975 -> 0.796296
-  reports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.877497 -> 0.596679
-  reports/SXT-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.891619 -> 0.727204
-  reports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.920721 -> 0.784170
-  reports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.924975 -> 0.796296
-  reports/SXT-042/artifacts/audio-nc-source-swap-velocity.json   [DEFINITION=1, RE-RENDER=8, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.927047 -> 0.799934
-  reports/SXT-042/artifacts/negative-controls.json   [HOST-PATH=2, RE-RENDER=44, SPECTRAL=7]
-      SPECTRAL      /baseline/spectral_corr                              0.920742 -> 0.784767
-      SPECTRAL      /cutoff-zeroed/spectral_corr                         0.924975 -> 0.796296
-      SPECTRAL      /ignore-keytrack-root/spectral_corr                  0.877497 -> 0.596679
-      SPECTRAL      /probe-velocity-cutoff-zeroed/spectral_corr          0.891619 -> 0.727204
-      SPECTRAL      /shared-keytrack-word/spectral_corr                  0.920721 -> 0.784170
-      SPECTRAL      /source-swap-modwheel/spectral_corr                  0.924975 -> 0.796296
-      SPECTRAL      /source-swap-velocity/spectral_corr                  0.927047 -> 0.799934
-  reports/coverage-v1/coverage.json   [REBASE=2]
-  reports/coverage-v1/leaf-verification.json   [REBASE=6]
-  reports/shared-comparator-tail-gate/artifacts/checks-summary.json   [RUN-METADATA=5, VERDICT=3]
-      VERDICT       trols/controls[drop-full-tail-second-preset]/verdict FAIL against proposed budgets (budget: rms_diff_ -> FAIL against proposed budgets (budget: rms_diff_
-      VERDICT       s/wet_tail_controls/controls[drop-full-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-      VERDICT       tail_controls/controls[tail-decays-too-fast]/verdict FAIL against proposed budgets (tail-region gate: -> FAIL against proposed budgets (tail-region gate:
-  reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json   [DEFINITION=1, HOST-PATH=2, REBASE=1, SCHEMA-#111=24, SPECTRAL=1, VERDICT=1]
+      SPECTRAL      /spectral_corr                                       0.977328 -> 0.989203
+  reports/SXT-040/artifacts/nc-classic-substitution.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.828280 -> 0.329578
+  reports/SXT-040/artifacts/nc-shape-migration.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.625290 -> 0.672309
+  reports/SXT-042/artifacts/audio-nc-baseline.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.921237 -> 0.784767
+  reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.925900 -> 0.796296
+  reports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.874296 -> 0.596679
+  reports/SXT-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.892603 -> 0.727204
+  reports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.921223 -> 0.784170
+  reports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.925900 -> 0.796296
+  reports/SXT-042/artifacts/audio-nc-source-swap-velocity.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.927604 -> 0.799934
+  reports/SXT-042/artifacts/negative-controls.json   [SPECTRAL=7]
+      SPECTRAL      /baseline/spectral_corr                              0.921237 -> 0.784767
+      SPECTRAL      /cutoff-zeroed/spectral_corr                         0.925900 -> 0.796296
+      SPECTRAL      /ignore-keytrack-root/spectral_corr                  0.874296 -> 0.596679
+      SPECTRAL      /probe-velocity-cutoff-zeroed/spectral_corr          0.892603 -> 0.727204
+      SPECTRAL      /shared-keytrack-word/spectral_corr                  0.921223 -> 0.784170
+      SPECTRAL      /source-swap-modwheel/spectral_corr                  0.925900 -> 0.796296
+      SPECTRAL      /source-swap-velocity/spectral_corr                  0.927604 -> 0.799934
+  reports/shared-comparator-tail-gate/artifacts/checks-summary.json   [RUN-METADATA=5]
+  reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json   [DEFINITION=1, SPECTRAL=1]
       SPECTRAL      /spectral_corr                                       0.733780 -> 0.922606
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: rms_diff_ -> FAIL against proposed budgets (budget: rms_diff_
-  reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json   [DEFINITION=1, HOST-PATH=2, REBASE=1, SCHEMA-#111=24, SPECTRAL=1, VERDICT=1]
+  reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json   [DEFINITION=1, SPECTRAL=1]
       SPECTRAL      /spectral_corr                                       0.911543 -> 0.974735
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-  reports/shared-comparator-tail-gate/artifacts/tailgate-full-tail-within-budget.json   [DEFINITION=1, HOST-PATH=2, SCHEMA-#111=24, SPECTRAL=1]
+  reports/shared-comparator-tail-gate/artifacts/tailgate-full-tail-within-budget.json   [DEFINITION=1, SPECTRAL=1]
       SPECTRAL      /spectral_corr                                       0.999720 -> 0.999960
-  reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json   [DEFINITION=1, HOST-PATH=2, REBASE=1, SCHEMA-#111=24, SPECTRAL=1, VERDICT=1]
+  reports/shared-comparator-tail-gate/artifacts/tailgate-no-sidecar.json   [HOST-PATH=1]
+  reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json   [DEFINITION=1, SPECTRAL=1]
       SPECTRAL      /spectral_corr                                       0.989560 -> 0.997734
-      VERDICT       /verdict                                             FAIL against proposed budgets (tail-region gate: -> FAIL against proposed budgets (tail-region gate:
-  reports/shared-comparator-tail-gate/artifacts/tailgate-truncate-at-tail-start.json   [DEFINITION=1, HOST-PATH=2, SCHEMA-#111=9]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json   [HOST-PATH=1, REBASE=43, RUN-METADATA=5, SCHEMA-#111=75, SPECTRAL=21, VERDICT=15]
+  reports/shared-comparator-tail-gate/artifacts/tailgate-truncate-at-tail-start.json   [DEFINITION=1]
+  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json   [HOST-PATH=2, RUN-METADATA=5, SPECTRAL=18]
       SPECTRAL      ntrols/controls[alienappears/baseline]/spectral_corr 0.999999 -> 0.999993
       SPECTRAL      /controls[alienappears/drop-full-tail]/spectral_corr 0.974620 -> 0.937784
-      VERDICT       ntrols/controls[alienappears/drop-full-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      controls[alienappears/drop-right-tail]/spectral_corr 0.995123 -> 0.989468
-      VERDICT       trols/controls[alienappears/drop-right-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      ols[alienappears/tail-decays-too-fast]/spectral_corr 0.995516 -> 0.986568
-      VERDICT       /controls[alienappears/tail-decays-too-fast]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      s[alienappears/truncate-at-tail-start]/spectral_corr 0.999999 -> 0.999993
+      SPECTRAL      [alienappears/zero-late-tail-from-30%]/spectral_corr 0.998231 -> 0.991600
+      SPECTRAL      [alienappears/zero-late-tail-from-40%]/spectral_corr 0.999521 -> 0.995700
+      SPECTRAL      [alienappears/zero-late-tail-from-60%]/spectral_corr 0.999962 -> 0.999352
       SPECTRAL      _controls/controls[fm_bass_1/baseline]/spectral_corr 1.000000 -> 1.000000
       SPECTRAL      ols/controls[fm_bass_1/drop-full-tail]/spectral_corr 0.989159 -> 0.982881
-      VERDICT       _controls/controls[fm_bass_1/drop-full-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      ls/controls[fm_bass_1/drop-right-tail]/spectral_corr 0.997046 -> 0.992878
-      VERDICT       controls/controls[fm_bass_1/drop-right-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      ntrols[fm_bass_1/tail-decays-too-fast]/spectral_corr 0.999963 -> 0.999925
-      VERDICT       ols/controls[fm_bass_1/tail-decays-too-fast]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      rols[fm_bass_1/truncate-at-tail-start]/spectral_corr 1.000000 -> 1.000000
       SPECTRAL      il_controls/controls[fmcombo/baseline]/spectral_corr 1.000000 -> 0.999997
       SPECTRAL      trols/controls[fmcombo/drop-full-tail]/spectral_corr 0.994379 -> 0.984929
-      VERDICT       il_controls/controls[fmcombo/drop-full-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      rols/controls[fmcombo/drop-right-tail]/spectral_corr 0.998184 -> 0.992621
-      VERDICT       l_controls/controls[fmcombo/drop-right-tail]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      controls[fmcombo/tail-decays-too-fast]/spectral_corr 0.999997 -> 0.999992
-      VERDICT       trols/controls[fmcombo/tail-decays-too-fast]/verdict FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
       SPECTRAL      ntrols[fmcombo/truncate-at-tail-start]/spectral_corr 1.000000 -> 0.999997
-      SPECTRAL      l_controls/known_gap_probes[0]/budgets/spectral_corr True -> <absent>
-      SPECTRAL      ereo_tail_controls/known_gap_probes[0]/spectral_corr 0.998231 -> <absent>
-      VERDICT       legs/stereo_tail_controls/known_gap_probes[0]/status FAIL -> <absent>
-      VERDICT       egs/stereo_tail_controls/known_gap_probes[0]/verdict FAIL against proposed budgets (budget: max_abs_d -> <absent>
-      SPECTRAL      l_controls/known_gap_probes[1]/budgets/spectral_corr True -> <absent>
-      SPECTRAL      ereo_tail_controls/known_gap_probes[1]/spectral_corr 0.999521 -> <absent>
-      VERDICT       legs/stereo_tail_controls/known_gap_probes[1]/status PASS -> <absent>
-      VERDICT       egs/stereo_tail_controls/known_gap_probes[1]/verdict PASS (PENDING-FREEZE: budgets and the wet-path t -> <absent>
-      SPECTRAL      l_controls/known_gap_probes[2]/budgets/spectral_corr True -> <absent>
-      SPECTRAL      ereo_tail_controls/known_gap_probes[2]/spectral_corr 0.999962 -> <absent>
-      VERDICT       legs/stereo_tail_controls/known_gap_probes[2]/status PASS -> <absent>
-      VERDICT       egs/stereo_tail_controls/known_gap_probes[2]/verdict PASS (PENDING-FREEZE: budgets and the wet-path t -> <absent>
-  reports/stereo-comparator-tail-gate/artifacts/control-drop-full-tail-fmcombo.json   [DEFINITION=1, REBASE=3, SCHEMA-#111=66, SPECTRAL=3, VERDICT=1]
+  reports/stereo-comparator-tail-gate/artifacts/control-drop-full-tail-fmcombo.json   [DEFINITION=1, HOST-PATH=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            0.994215 -> 0.985174
       SPECTRAL      /channels/R/spectral_corr                            0.994239 -> 0.984387
       SPECTRAL      /channels/mono/spectral_corr                         0.994379 -> 0.984929
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-alienappears.json   [DEFINITION=1, REBASE=3, SCHEMA-#111=66, SPECTRAL=3, VERDICT=1]
+  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-alienappears.json   [DEFINITION=1, HOST-PATH=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            0.995493 -> 0.986584
       SPECTRAL      /channels/R/spectral_corr                            0.995340 -> 0.986652
       SPECTRAL      /channels/mono/spectral_corr                         0.995516 -> 0.986568
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json   [DEFINITION=1, REBASE=4, SCHEMA-#111=66, SPECTRAL=3, VERDICT=4]
+  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json   [DEFINITION=1, HOST-PATH=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            0.999997 -> 0.999992
       SPECTRAL      /channels/R/spectral_corr                            0.999997 -> 0.999992
       SPECTRAL      /channels/mono/spectral_corr                         0.999997 -> 0.999992
-      VERDICT       /tail_check/ok                                       True -> False
-      VERDICT       /tail_check_lr/L/ok                                  True -> False
-      VERDICT       /tail_check_lr/R/ok                                  True -> False
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-dexie.json   [DEFINITION=1, REBASE=3, SCHEMA-#111=66, SPECTRAL=3, VERDICT=1]
+  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-dexie.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            0.978043 -> 0.979030
       SPECTRAL      /channels/R/spectral_corr                            0.977770 -> 0.979111
       SPECTRAL      /channels/mono/spectral_corr                         0.995225 -> 0.992834
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-fm_bass_1.json   [DEFINITION=1, SCHEMA-#111=66, SPECTRAL=3]
+  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-fm_bass_1.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            1.000000 -> 1.000000
       SPECTRAL      /channels/R/spectral_corr                            1.000000 -> 1.000000
       SPECTRAL      /channels/mono/spectral_corr                         1.000000 -> 1.000000
-  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-metallic.json   [DEFINITION=1, REBASE=3, SCHEMA-#111=66, SPECTRAL=3, VERDICT=1]
+  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-metallic.json   [DEFINITION=1, SPECTRAL=3]
       SPECTRAL      /channels/L/spectral_corr                            0.926211 -> 0.940328
       SPECTRAL      /channels/R/spectral_corr                            0.926632 -> 0.940577
       SPECTRAL      /channels/mono/spectral_corr                         0.975218 -> 0.970989
-      VERDICT       /verdict                                             FAIL against proposed budgets (budget: max_abs_d -> FAIL against proposed budgets (budget: max_abs_d
-  reports/stereo-comparator-tail-gate/artifacts/sxt024-rerun/click-wet.json   [REBASE=6, SCHEMA-#111=66]
-  reports/stereo-comparator-tail-gate/artifacts/sxt024-rerun/hardreset-midpatch-wet.json   [REBASE=9, SCHEMA-#111=66]
-  reports/stereo-comparator-tail-gate/artifacts/sxt024-rerun/preset-notes-coverage-wet.json   [REBASE=9, SCHEMA-#111=66]
-  reports/sxt-022/artifacts/audio-seq-modwheel-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+  reports/sxt-022/artifacts/audio-seq-modwheel-v1.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.980186 -> 0.991351
+  reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.978371 -> 0.989204
-  reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.975328 -> 0.984685
+      SPECTRAL      /spectral_corr                                       0.979067 -> 0.998463
   reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.987492 -> 0.984563
+      SPECTRAL      /spectral_corr                                       0.992074 -> 0.998840
   reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-dexie.json   [SPECTRAL=3]
       SPECTRAL      /L/spectral_corr                                     0.978043 -> 0.979030
       SPECTRAL      /R/spectral_corr                                     0.977770 -> 0.979111
@@ -297,12 +239,12 @@ REGENERATED (106 artifacts)
       SPECTRAL      /L/spectral_corr                                     0.925840 -> 0.940042
       SPECTRAL      /R/spectral_corr                                     0.926437 -> 0.940433
       SPECTRAL      /mono/spectral_corr                                  0.975129 -> 0.970909
-  reports/sxt-023/artifacts-followup/nc-b/nc-b-dexie.json   [DEFINITION=1, SCHEMA-#100=51, SPECTRAL=3, ULP=7, VERDICT=1]
+  reports/sxt-023/artifacts-followup/nc-b/nc-b-dexie.json   [DEFINITION=1, HOST-PATH=2, SCHEMA-#100=49, SPECTRAL=3, ULP=7, VERDICT=1]
       SPECTRAL      /channels/L/spectral_corr                            0.975531 -> 0.963631
       SPECTRAL      /channels/R/spectral_corr                            0.974873 -> 0.962952
       SPECTRAL      /channels/mono/spectral_corr                         0.996009 -> 0.988418
       VERDICT       /verdict                                             FAIL against proposed budgets -> FAIL against proposed budgets (budget: max_abs_d
-  reports/sxt-023/artifacts-followup/nc-b/nc-b-metallic.json   [DEFINITION=1, SCHEMA-#100=51, SPECTRAL=3, ULP=7, VERDICT=1]
+  reports/sxt-023/artifacts-followup/nc-b/nc-b-metallic.json   [DEFINITION=1, HOST-PATH=2, SCHEMA-#100=49, SPECTRAL=3, ULP=7, VERDICT=1]
       SPECTRAL      /channels/L/spectral_corr                            0.896859 -> 0.898245
       SPECTRAL      /channels/R/spectral_corr                            0.895367 -> 0.897990
       SPECTRAL      /channels/mono/spectral_corr                         0.975494 -> 0.959376
@@ -334,119 +276,80 @@ REGENERATED (106 artifacts)
       SPECTRAL      /metrics/spectral_corr                               0.948767 -> 0.970615
   reports/sxt-025/negative-controls/nc-a-sxt025-smoke-v1.json   [SPECTRAL=1]
       SPECTRAL      /metrics/spectral_corr                               0.930101 -> 0.947047
-  reports/sxt-026/artifacts/budget-metrics.json   [DEFINITION=9, RMS-FLAG-#95=9, SPECTRAL=9]
-      RMS-FLAG-#95  /rows[0]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[0]/spectral_corr                               0.926791 -> 0.953058
-      RMS-FLAG-#95  /rows[1]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[1]/spectral_corr                               0.926691 -> 0.953052
-      RMS-FLAG-#95  /rows[2]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[2]/spectral_corr                               0.926791 -> 0.953058
-      RMS-FLAG-#95  /rows[3]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[3]/spectral_corr                               0.954571 -> 0.895870
-      RMS-FLAG-#95  /rows[4]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[4]/spectral_corr                               0.937804 -> 0.858619
-      RMS-FLAG-#95  /rows[5]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[5]/spectral_corr                               0.905673 -> 0.915732
-      RMS-FLAG-#95  /rows[6]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[6]/spectral_corr                               0.971960 -> 0.902977
-      RMS-FLAG-#95  /rows[7]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[7]/spectral_corr                               0.965521 -> 0.894881
-      RMS-FLAG-#95  /rows[8]/proposed_budget_results/rms_diff_dbfs       True -> False
-      SPECTRAL      /rows[8]/spectral_corr                               0.971156 -> 0.902138
+  reports/sxt-026/artifacts/budget-metrics.json   [DEFINITION=9, SPECTRAL=9]
+      SPECTRAL      /rows[0]/spectral_corr                               0.923442 -> 0.952332
+      SPECTRAL      /rows[1]/spectral_corr                               0.922559 -> 0.952313
+      SPECTRAL      /rows[2]/spectral_corr                               0.923442 -> 0.952332
+      SPECTRAL      /rows[3]/spectral_corr                               0.957597 -> 0.895648
+      SPECTRAL      /rows[4]/spectral_corr                               0.938104 -> 0.849815
+      SPECTRAL      /rows[5]/spectral_corr                               0.909211 -> 0.915656
+      SPECTRAL      /rows[6]/spectral_corr                               0.975551 -> 0.916917
+      SPECTRAL      /rows[7]/spectral_corr                               0.968749 -> 0.905615
+      SPECTRAL      /rows[8]/spectral_corr                               0.970489 -> 0.880880
   reports/sxt-026a/artifacts/compare__sxt025-accept-v1.json   [SPECTRAL=3]
-      SPECTRAL      /full_render/channels/L/spectral_corr                0.781003 -> 0.913757
-      SPECTRAL      /full_render/channels/R/spectral_corr                0.781922 -> 0.914472
-      SPECTRAL      /full_render/channels/mono/spectral_corr             0.780019 -> 0.913736
-  reports/sxt-032/artifacts/audio-coverage.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.983689 -> 0.988009
-  reports/sxt-032/artifacts/audio-holds.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.983367 -> 0.990373
-  reports/sxt-032/artifacts/audio-modwheel.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.987693 -> 0.980856
-  reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json   [DEFINITION=1, RE-RENDER=5, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.899196 -> 0.805347
-  reports/sxt-032/artifacts/audio-nc-free-running.json   [DEFINITION=1, RE-RENDER=5, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.868649 -> 0.731109
-  reports/sxt-032/artifacts/audio-nc-reso-zeroed.json   [DEFINITION=1, RE-RENDER=6, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.984123 -> 0.981100
-  reports/sxt-032/artifacts/audio-nc-source-swap.json   [DEFINITION=1, RE-RENDER=6, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.833230 -> 0.661747
-  reports/sxt-032/artifacts/audio-repeated.json   [DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.992782 -> 0.987904
-  reports/sxt-035/artifacts/audio-nc-baseline.json   [BUDGET-#110=1, DEFINITION=1, RE-RENDER=5, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /full_render/channels/L/spectral_corr                0.780858 -> 0.913287
+      SPECTRAL      /full_render/channels/R/spectral_corr                0.781771 -> 0.913987
+      SPECTRAL      /full_render/channels/mono/spectral_corr             0.779873 -> 0.913255
+  reports/sxt-032/artifacts/audio-coverage.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.988445 -> 0.998146
+  reports/sxt-032/artifacts/audio-holds.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.987438 -> 0.997820
+  reports/sxt-032/artifacts/audio-modwheel.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.991496 -> 0.993286
+  reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.898269 -> 0.805347
+  reports/sxt-032/artifacts/audio-nc-free-running.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.865777 -> 0.731109
+  reports/sxt-032/artifacts/audio-nc-reso-zeroed.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.990686 -> 0.981100
+  reports/sxt-032/artifacts/audio-nc-source-swap.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.832814 -> 0.661747
+  reports/sxt-032/artifacts/audio-repeated.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.997193 -> 0.998908
+  reports/sxt-035/artifacts/audio-nc-baseline.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.986978 -> 0.970959
-  reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json   [BUDGET-#110=1, DEFINITION=1, RE-RENDER=4, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /spectral_corr                                       0.987458 -> 0.970959
+  reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.984162 -> 0.954175
-  reports/sxt-035/artifacts/audio-nc-reso-zeroed.json   [BUDGET-#110=1, DEFINITION=1, RE-RENDER=4, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /spectral_corr                                       0.984421 -> 0.954175
+  reports/sxt-035/artifacts/audio-nc-reso-zeroed.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.985839 -> 0.968703
-  reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json   [BUDGET-#110=1, DEFINITION=1, RE-RENDER=4, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /spectral_corr                                       0.986403 -> 0.968703
+  reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.984400 -> 0.974141
-  reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json   [DEFINITION=1, RE-RENDER=4, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.728271 -> 0.452989
-  reports/sxt-035/artifacts/audio-nc-vca-zeroed.json   [DEFINITION=1, RE-RENDER=6, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
-      SPECTRAL      /spectral_corr                                       0.855644 -> 0.670550
-  reports/sxt-035/artifacts/audio-seq-modwheel-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /spectral_corr                                       0.985020 -> 0.974141
+  reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.729534 -> 0.452989
+  reports/sxt-035/artifacts/audio-nc-vca-zeroed.json   [DEFINITION=1, SPECTRAL=1]
+      SPECTRAL      /spectral_corr                                       0.861524 -> 0.670550
+  reports/sxt-035/artifacts/audio-seq-modwheel-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               True -> False
-      SPECTRAL      /spectral_corr                                       0.986978 -> 0.970894
-  reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, RMS-FLAG-#95=1, SPECTRAL=1]
-      RMS-FLAG-#95  /proposed_budget_results/rms_diff_dbfs               True -> False
+      SPECTRAL      /spectral_corr                                       0.987458 -> 0.970959
+  reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json   [BUDGET-#110=1, DEFINITION=1, SPECTRAL=1]
       BUDGET-#110   /proposed_budget_results/spectral_corr               False -> True
-      SPECTRAL      /spectral_corr                                       0.975367 -> 0.984685
+      SPECTRAL      /spectral_corr                                       0.979130 -> 0.998463
   reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json   [DEFINITION=1, SPECTRAL=1]
-      SPECTRAL      /spectral_corr                                       0.987442 -> 0.984562
-  reports/sxt-035/artifacts/negative-controls.json   [RE-RENDER=18, SPECTRAL=6, VERDICT=3]
-      SPECTRAL      /baseline/spectral_corr                              0.986978 -> 0.970959
-      SPECTRAL      /cutoff-zeroed/spectral_corr                         0.984162 -> 0.954175
-      VERDICT       /overall_ok                                          True -> False
-      SPECTRAL      /reso-zeroed/spectral_corr                           0.985839 -> 0.968703
-      VERDICT       /smoothing-bypass/beyond_model_error_via[0]          True -> <absent>
-      VERDICT       /smoothing-bypass/control_ok                         True -> False
-      SPECTRAL      /smoothing-bypass/spectral_corr                      0.984400 -> 0.974141
-      SPECTRAL      /source-swap-lfo/spectral_corr                       0.728271 -> 0.452989
-      SPECTRAL      /vca-zeroed/spectral_corr                            0.855644 -> 0.670550
+      SPECTRAL      /spectral_corr                                       0.992085 -> 0.998840
+  reports/sxt-035/artifacts/negative-controls.json   [SPECTRAL=6, VERDICT=2]
+      SPECTRAL      /baseline/spectral_corr                              0.987458 -> 0.970959
+      SPECTRAL      /cutoff-zeroed/spectral_corr                         0.984421 -> 0.954175
+      SPECTRAL      /reso-zeroed/spectral_corr                           0.986403 -> 0.968703
+      VERDICT       /smoothing-bypass/beyond_model_error_via[0]          spectral -> mw-ramp
+      VERDICT       /smoothing-bypass/beyond_model_error_via[1]          mw-ramp -> <absent>
+      SPECTRAL      /smoothing-bypass/spectral_corr                      0.985020 -> 0.974141
+      SPECTRAL      /source-swap-lfo/spectral_corr                       0.729534 -> 0.452989
+      SPECTRAL      /vca-zeroed/spectral_corr                            0.861524 -> 0.670550
 
-VERDICT / CONTROL-STATUS FLIPS (15)
-  reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json /verdict: FAIL -> PASS   [cause: #110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL, even with the #95-corrected rms flag)]
-  reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json /verdict: FAIL -> PASS   [cause: #110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL, even with the #95-corrected rms flag)]
+VERDICT / CONTROL-STATUS FLIPS (2)
+  reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json /verdict: FAIL -> PASS   [cause: #110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)]
   reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json /verdict: FAIL -> PASS   [cause: #110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)]
-  reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json /verdict: FAIL -> PASS   [cause: #110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json /legs/stereo_tail_controls/known_gap_probes[0]/status: FAIL -> <absent>   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json /legs/stereo_tail_controls/known_gap_probes[0]/verdict: FAIL -> <absent>   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json /legs/stereo_tail_controls/known_gap_probes[1]/status: PASS -> <absent>   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json /legs/stereo_tail_controls/known_gap_probes[1]/verdict: PASS -> <absent>   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json /legs/stereo_tail_controls/known_gap_probes[2]/status: PASS -> <absent>   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json /legs/stereo_tail_controls/known_gap_probes[2]/verdict: PASS -> <absent>   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json /tail_check/ok: True -> False   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json /tail_check_lr/L/ok: True -> False   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json /tail_check_lr/R/ok: True -> False   [cause: #111 tail-shape leg + pre-existing main history (rebase-parent-rev)]
-  reports/sxt-035/artifacts/negative-controls.json /overall_ok: True -> False   [cause: #110 spectral_corr + control re-render]
-  reports/sxt-035/artifacts/negative-controls.json /smoothing-bypass/control_ok: True -> False   [cause: #110 spectral_corr + control re-render]
 
 CARRY spectral_corr BUT NOT REGENERATED (28)
   reports/SXT-028e-sse/negative-controls/negative-controls.json -- NOT-MIGRATED: distortion-SSE negative controls keep their own log1p spectral_corr
   reports/SXT-028e/negative-controls/negative-controls.json -- NOT-MIGRATED: distortion_negative_controls.py keeps its own log1p spectral_corr (frame 1024, Q10.21 LSB)
   reports/SXT-028f/negative-controls/negative-controls.json -- NOT-MIGRATED: reverb2_negative_controls.py keeps its own log1p spectral_corr (integer LSB)
-  reports/SXT-034/artifacts/nc2-detune-zeroed.json -- STALE: NC-2 mutant inputs were not committed; a re-construction does not reproduce the committed render (see EVIDENCE.md)
-  reports/SXT-034/artifacts/nc2-diff-vs-true.json -- STALE: NC-2 mutant inputs were not committed; a re-construction does not reproduce the committed render (see EVIDENCE.md)
+  reports/SXT-034/artifacts/nc2-detune-zeroed.json -- STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)
+  reports/SXT-034/artifacts/nc2-diff-vs-true.json -- STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)
   reports/SXT-034/artifacts/uni16-smoke.json -- STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host
   reports/SXT-034/artifacts/uni2-poly.json -- STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host
   reports/SXT-039/artifacts/budget-chords.json -- NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family
@@ -461,8 +364,8 @@ CARRY spectral_corr BUT NOT REGENERATED (28)
   reports/SXT-039/artifacts/budget-sub18db.json -- NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family
   reports/SXT-039/artifacts/budget-toggle.json -- NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family
   reports/halfband-branch-order/artifacts/before-after-fixtures.json -- HISTORICAL: #146 before/after measurement (no committed producing tool; the b_even renders are not committed); values are pre-#110 by construction and are not a current verdict
+  reports/halfband-republication/artifacts/republication-record.json -- HISTORICAL: #145 before/after republication record (legacy-metric spectral values quoted as the measurements #145 made; not a current verdict)
   reports/stereo-comparator-tail-gate/artifacts/spectral-corr-sweep.json -- HISTORICAL: #100 leg 4 characterization of the LEGACY metric (the runner now calls spectral_corr_legacy_log1p explicitly)
-  reports/sxt-026a/artifacts/audio-smoke-bells-dry.json -- UNCHANGED-BY-DEFINITION: 3904 frames < one 4096 frame; both definitions give 0.0 for unequal sub-frame renders (reference not committed)
   reports/sxt-028a/artifacts/compare-fmod09__seq-notes-coverage-v1.json -- NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)
   reports/sxt-028a/artifacts/compare-fmod09__seq-poly-8-v1.json -- NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)
   reports/sxt-028a/artifacts/compare-temple__seq-notes-coverage-v1.json -- NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)
