@@ -255,8 +255,14 @@ class ParamRegistry:
     def override(self, name, value):
         """Deterministic, scoped parameter override (context manager).
 
-        Used by negative controls and experiments ONLY; every account that
-        used an override must record it (params_digest changes accordingly).
+        Used by negative controls and experiments ONLY. `to_json()` (the sole
+        input to `accounting.params_digest()`) iterates the module-level
+        `PARAMS` list, not this instance's `_p` dict, so an override made
+        here does NOT move `params_digest()` -- the digest is deliberately
+        override-blind (issue #248). Every account computed under an
+        override must therefore record the override explicitly in its OWN
+        output (a field the override affects, or the overridden value
+        itself) -- never rely on the digest to reveal it.
         """
         import contextlib
 
