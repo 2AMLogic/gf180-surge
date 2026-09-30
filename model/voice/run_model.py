@@ -359,14 +359,6 @@ def main():
     return 0
 
 
-def qint_p(x):
-    return vm.qint(x)
-
-
-def limit_or(x, lo, hi):
-    return vm.limit_i(x, vm.qint(lo), vm.qint(hi))
-
-
 if __name__ == "__main__":
     try:
         sys.exit(main())

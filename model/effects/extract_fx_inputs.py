@@ -101,25 +101,6 @@ def raw_xml_flags(rel_path):
     return rev, tempo, flags
 
 
-def resolved_deactivated(param_flags, ctrltype_deactivatable, rev, kind):
-    """Apply the documented deactivated migrations (fail-closed)."""
-    if ctrltype_deactivatable:
-        if param_flags["deactivated_absent"]:
-            raw = True  # Parameter ctor: deactivatable params default on
-        else:
-            raw = param_flags["deactivated"]
-    else:
-        raw = False
-        if not param_flags["deactivated_absent"] and param_flags["deactivated"]:
-            raise Refuse(f"deactivated on non-deactivatable {kind}")
-    if kind == "delay":
-        if rev <= 15:
-            # DelayEffect::handleStreamingMismatches: lowcut/highcut/timeR
-            raw = {"time_r": False, "lowcut": False, "highcut": False}.get(
-                None, raw) if False else raw
-    return raw
-
-
 def read_delay(s, patch, slot, rev, xml_flags, tempo_bpm):
     fxd = patch["fx"][slot]
 
