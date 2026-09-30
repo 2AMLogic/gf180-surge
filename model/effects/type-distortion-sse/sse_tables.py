@@ -94,10 +94,6 @@ def _f32(x):
     return struct.unpack("f", struct.pack("f", x))[0]
 
 
-def _u32_of_f32(x):
-    return struct.unpack("I", struct.pack("f", _f32(x)))[0]
-
-
 # ---------------------------------------------------------------------------
 # wst_sine row (WaveshaperTables.h)
 # ---------------------------------------------------------------------------

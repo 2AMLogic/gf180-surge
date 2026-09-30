@@ -2,7 +2,7 @@
   "schema_version": 1,
   "leaf": "SXT-028e-sse",
   "effect": "Distortion, SSE quad-waveshaper branch (FX models 3..7)",
-  "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
+  "model_revision": "b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b",
   "blocks_measured": 64,
   "external_memory": {
     "per_instance_state_bytes": 0,

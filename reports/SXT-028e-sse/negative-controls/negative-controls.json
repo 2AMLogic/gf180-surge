@@ -1,7 +1,32 @@
 {
   "schema_version": 1,
   "leaf": "SXT-028e-sse",
-  "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
+  "model_revision": "b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b",
+  "environment": {
+    "reproducibility": "metric fields are exact under THIS environment only; verdicts, budgets, statuses and control outcomes are NOT environment-dependent and were byte-identical across every environment measured in #243",
+    "python": "3.14.7",
+    "python_implementation": "CPython",
+    "numpy": "2.5.3",
+    "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.41",
+    "machine": "aarch64",
+    "stimulus_digest": "ed759d673249a5bf1f6384026a40347781c17af31aab7327ce165f4a0189b306",
+    "stimulus_beds": [
+      {
+        "n_blocks": 96,
+        "seed": 17
+      },
+      {
+        "n_blocks": 96,
+        "seed": 41
+      },
+      {
+        "n_blocks": 96,
+        "seed": 53
+      }
+    ],
+    "stimulus_digest_note": "sha256 over the three 96-block stimulus beds every graded control renders on (float64 little-endian, bed order). Fingerprints the harness INPUT, which is libm-dependent: stimulus() calls libm sin at phases where libm is not correctly rounded, so a different libm yields a different digest and ULP-class input drift -- amplified to percent level on the chaotic FX-model-7 legs (F-028e-sse-4). A DIFFERING digest explains a max/rms metric diff; a MATCHING digest means the max/rms fields must reproduce byte-for-byte.",
+    "spectral_corr_note": "spectral_corr is computed with numpy (rfft + sum reductions), so its last 1-2 bits follow the numpy build's reduction order and can move by up to 2.3e-16 relative even when the compared signals are bit-identical and the stimulus digest matches. That residue is bounded by the recorded numpy version above, not by the stimulus digest. max_abs_diff_lsb and rms_diff_* are pure-Python and carry no such residue."
+  },
   "budget_class": "SXT-023 effect-slice [PROPOSED] (freeze gated on #12)",
   "budgets": {
     "max_abs_diff_lsb": 8192,
@@ -107,7 +132,7 @@
             "max_abs_diff_lsb": 17.385320452274755,
             "rms_diff_lsb": 6.660541417644578,
             "rms_diff_dbfs": -103.94180760068961,
-            "spectral_corr": 0.999999999018907
+            "spectral_corr": 0.9999999990189072
           },
           "sensitivity_floor": {
             "frames": 6144,
@@ -133,7 +158,7 @@
             "max_abs_diff_lsb": 8678.739314626087,
             "rms_diff_lsb": 240.71126320852827,
             "rms_diff_dbfs": -72.78207002595234,
-            "spectral_corr": 0.9999009626221015
+            "spectral_corr": 0.9999009626221016
           },
           "at_or_below_sensitivity_floor": true,
           "status": "AT-SENSITIVITY-FLOOR (budget NOT met; finding F-028e-sse-4)"
@@ -164,14 +189,14 @@
             "max_abs_diff_lsb": 18.734989568358287,
             "rms_diff_lsb": 5.458326526118861,
             "rms_diff_dbfs": -105.67080801909108,
-            "spectral_corr": 0.9999999888693607
+            "spectral_corr": 0.9999999888693604
           },
           "sensitivity_floor": {
             "frames": 6144,
             "max_abs_diff_lsb": 6.558665037155151,
             "rms_diff_lsb": 2.0504262431917377,
             "rms_diff_dbfs": -114.17511523156129,
-            "spectral_corr": 0.9999999999812034
+            "spectral_corr": 0.9999999999812031
           },
           "at_or_below_sensitivity_floor": false,
           "status": "PASS"
@@ -183,7 +208,7 @@
             "max_abs_diff_lsb": 138080.7808895787,
             "rms_diff_lsb": 28868.72662547362,
             "rms_diff_dbfs": -31.20344570659714,
-            "spectral_corr": 0.9820829072300142
+            "spectral_corr": 0.9820829072300143
           },
           "sensitivity_floor": {
             "frames": 6144,
@@ -214,7 +239,7 @@
         "max_abs_diff_lsb": 1615575.291061972,
         "rms_diff_lsb": 859839.6261314212,
         "rms_diff_dbfs": -1.7236491472591255,
-        "spectral_corr": 0.8413915000420594
+        "spectral_corr": 0.8413915000420593
       },
       "ok": true,
       "label": "ADAPTED \u2014 refused from original-preset coverage"
@@ -230,7 +255,7 @@
         "max_abs_diff_lsb": 600995.6572333863,
         "rms_diff_lsb": 292011.7316967465,
         "rms_diff_dbfs": -11.103992270267135,
-        "spectral_corr": 0.985247548688557
+        "spectral_corr": 0.9852475486885572
       },
       "ok": true,
       "label": "ADAPTED \u2014 'models 3..7 are just other waveshapes' is the shortcut this leaf exists to refuse; the frozen model REFUSES indices 0..2 and #57 REFUSES 3..7"
@@ -246,7 +271,7 @@
         "max_abs_diff_lsb": 357748.77069384325,
         "rms_diff_lsb": 164760.5784430192,
         "rms_diff_dbfs": -16.07493210534669,
-        "spectral_corr": 0.9639549963773385
+        "spectral_corr": 0.9639549963773393
       },
       "ok": true
     },
@@ -261,7 +286,7 @@
         "max_abs_diff_lsb": 80094.65138545819,
         "rms_diff_lsb": 8811.250521781642,
         "rms_diff_dbfs": -41.511247279715775,
-        "spectral_corr": 0.9973674967863988
+        "spectral_corr": 0.9973674967863986
       },
       "ok": true,
       "graded_on": "FX model 4 (wst_digital)",
@@ -273,7 +298,7 @@
           "max_abs_diff_lsb": 129277.0597446831,
           "rms_diff_lsb": 30723.291563934374,
           "rms_diff_dbfs": -30.66264341895308,
-          "spectral_corr": 0.9865929556347491
+          "spectral_corr": 0.9865929556347495
         },
         "note": "for models 3/5/6/7 the 1/dNow pre-scale and the shaper's leading x*drive cancel, so dNow is NOT observable and the /128 variant is indistinguishable. Recorded as a REACHABILITY property of the defect, not as evidence that /128 is acceptable \u2014 the RTL exactness check rejects it unconditionally (rtl-exactness.json mutant_controls[mutant-drivestep128], graded on the digital bed)."
       }
@@ -305,7 +330,7 @@
         "max_abs_diff_lsb": 346706.03812680487,
         "rms_diff_lsb": 193674.58011750446,
         "rms_diff_dbfs": -14.670545803626442,
-        "spectral_corr": 0.9702230836819126
+        "spectral_corr": 0.9702230836819125
       },
       "ok": true,
       "graded_on": "FX model 4 (wst_digital)",
@@ -343,7 +368,7 @@
           "max_abs_diff_lsb": 1437051.0,
           "rms_diff_lsb": 915620.5521147893,
           "rms_diff_dbfs": -1.1776876189659107,
-          "spectral_corr": 0.807657505516778
+          "spectral_corr": 0.8076575055167778
         }
       }
     },
@@ -391,7 +416,7 @@
       "verdict": "REFUSED",
       "ok": true,
       "metrics": {
-        "model_revision": "aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743",
+        "model_revision": "b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b",
         "stale_pin_checked_in_rtl_harness": "reports/SXT-028e-sse/rtl-exactness.json mutant_controls[stale-revision-pin]"
       }
     }
