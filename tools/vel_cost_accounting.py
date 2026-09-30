@@ -556,8 +556,10 @@ def main():
         worst = max(runs.values(), key=lambda m: m["max_live_voices"])
         log(f"      worst measured shape gap: '{worst['sequence']}' peaks at "
             f"{worst['max_live_voices']} live voices, so a voice row's peak "
-            f"per-frame work is {worst['max_live_voices']}x what the "
-            "accounting charges for it.")
+            f"per-frame work is {worst['max_live_voices']}x what the RETIRED "
+            "shape charged for it. Since #239 the accounting charges a voice "
+            "row at its own worst-case voice count, so this gap is what the "
+            "decision closed, not an outstanding understatement.")
         # K2: a route-count-blind prediction
         fixed = 6
         k2_bad = [n for n, m in sweep.items()

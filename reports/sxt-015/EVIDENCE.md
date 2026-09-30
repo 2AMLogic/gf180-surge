@@ -308,8 +308,10 @@ SXT-017 (#12) work.
 | `tools/account_corpus.py` | negative control 5 (`nc-modroute-shape.json`, §5 table) and `modroute_shape_decision()`, which re-derives the retired shape from each record's own numbers and enumerates every status flip → `reports/sxt-015/decision-239-modroute-shape.json`. |
 | `probes/worked_bundle.py` | the SXT-016 worked bundle read a *second copy* of the old formula; it now reads `budget.modulation_rows.row_evaluations_per_frame` off the account. One source of truth. |
 | `tools/vel_cost_accounting.py` | SXT-015 pin **re-recorded** (`model_version`, `params_digest`) from the live model — never re-tuned, `cyc_modroute_frame` still pinned at 15 — and the carrier section is now a per-carrier *conformance* check (`shape_resolution`) instead of a divergence record. The remaining constant-level divergence is still recorded, not reconciled. |
+| `tools/publish_coverage.py` | two `STRUCTURAL_INPUTS` sha256 pins **revised in the same commit as the data they cover**, as that table's own rule requires: `reports/sxt-020/compile-corpus-scan.json` and `reports/sxt-017/predictions/B4-broad.json`. Each revision carries a comment naming what moved inside the pinned file and why no published gate, status or denominator moved with it (§8.5). |
+| `docs/dag.json` | `evidence_sha256` refreshed for nodes 10 (SXT-015) and 11 (SXT-016) because this change edits both EVIDENCE files. Refreshed through `tools/compile_backlog_dag.py render`, never by hand; `--check` (the `dag-check` CI job) then reports PASS with 26 nodes and STALE=0. No node's `status` changed. |
 | `tests/test_sxt015_modroute_shape.py` (new), `tests/test_sxt036_vel_cost.py` | see §8.4. |
-| regenerated deterministically | `reports/sxt-015/{corpus-accounting.json,examples/*,negative-control/*}`, `reports/sxt-016/{worked-bundles.json,probes/SUMMARY.md}`, `reports/sxt-017/{cost-closure.json,predictions/*,predictions/variants/*}`, `reports/sxt-020/compile-corpus-scan.json`, `compiler/golden/*`, `reports/SXT-036/artifacts/cost-accounting.{txt,json}`. |
+| regenerated deterministically | `reports/sxt-015/{corpus-accounting.json,examples/*,negative-control/*}`, `reports/sxt-016/{worked-bundles.json,probes/SUMMARY.md}`, `reports/sxt-017/{cost-closure.json,predictions/*,predictions/variants/*}`, `reports/sxt-020/compile-corpus-scan.json`, `reports/coverage-v1/coverage.json`, `compiler/golden/*`, `reports/SXT-036/artifacts/cost-accounting.{txt,json}`. |
 
 ### 8.3 What it moved — the flip list, enumerated
 
@@ -358,11 +360,18 @@ scope note did not cover.
   `test_the_shape_is_consumed_row_class_by_row_class` moves the row split by
   five known deltas and requires the accounted term to move by exactly
   `(Δscene_rows + Δvoice_rows × worst_voices) × cyc_modroute_frame`.
-- **Mutation-checked.** With `_modroute_evaluations` reverted to
-  `rows_total` (the retired shape) in the live model, 12 tests across
-  `tests/test_sxt015_modroute_shape.py` and `tests/test_sxt036_vel_cost.py`
-  FAIL, including the flip-list re-derivation; restoring it returns them to
-  green. The controls are not vacuous.
+- **Mutation-checked, twice, in opposite directions.** With
+  `_modroute_evaluations` reverted to `rows_total` (the retired shape) in the
+  live model, **12** tests across `tests/test_sxt015_modroute_shape.py` and
+  `tests/test_sxt036_vel_cost.py` FAIL, including the flip-list re-derivation.
+  With it mutated the *other* way — `worst_voices × rows_total`, i.e. scaling
+  **every** row class instead of only the voice rows — a different **12** fail,
+  among them
+  `test_a_graph_with_no_voice_rows_is_voice_count_independent` and the
+  `(Δscene_rows, 0)` arms of the row-class test, which the first mutant leaves
+  green. Restoring the shape returns both sets to green. So the suite pins the
+  shape from both sides: neither "changed nothing" nor "scaled everything"
+  passes it.
 - **The flip list is generated, not hand-maintained** —
   `test_the_committed_decision_record_is_re_derivable` re-scans all 3,561
   graphs and requires byte-equality with the committed record;
@@ -403,6 +412,34 @@ scope note did not cover.
   The scan's only changed field is
   `provenance.accounting_model_version` — all 3,561 compile statuses and the
   2 named reconciliation deltas are unchanged.
+- `reports/coverage-v1/` (SXT-029 publication): two `STRUCTURAL_INPUTS` pins
+  in `tools/publish_coverage.py` are revised in this commit, because that
+  tool REFUSES (exit 2) rather than republishing over moved inputs and its own
+  rule is that "the pin changes in the same commit as the data". The pinned
+  files are the two regenerated above — `reports/sxt-020/compile-corpus-scan.json`
+  and `reports/sxt-017/predictions/B4-broad.json`. Re-published:
+  **`per-preset.csv` is byte-identical**, and the only change in
+  `coverage.json` is the two recorded input sha256 values — so no
+  `headline_status`, no gate cell, no `b4_prediction`, no slate membership and
+  no denominator moved. `tests/test_sxt029_publication.py` (5 tests) passes,
+  including its stale-pin-must-downgrade control. **Coverage claim delta: 0.**
+- **STALE BASIS in three SXT-027 artifacts, deliberately not regenerated:**
+  `reports/sxt-027/{leaf-plan,leaf-backlog,leaves-filed}.json` each record the
+  compile-scan sha256 they were generated from
+  (`inputs.compile_scan = e23e351c…`), which is now the superseded value.
+  Their *content* is derived from compile statuses and leaf attribution, none
+  of which this change moves, and two of the three are themselves pinned
+  structural inputs — re-emitting them is an SXT-027 leaf-ledger revision, not
+  a cost-model one. Recorded as STALE, not corrected; noted on follow-up #246
+  alongside the image snapshots below.
+- **NOT regenerated, pre-existing drift unrelated to this change:**
+  `reports/sxt-016/probes/probe_scheduler__event_queue_and_control__a24__m{18,32}__onchip.json`
+  record `fixture_files` / `total_events_across_fixtures` from the SXT-012
+  sequence library, which grew on `main` (10 → 18 fixtures) without a probe
+  re-run. Re-running `probes/run_all.py` therefore moves those two records
+  for a reason that has nothing to do with the modulation shape, so they are
+  left exactly as committed and only the two artifacts this change actually
+  moves (`worked-bundles.json`, `probes/SUMMARY.md`) are taken from that run.
 - **Absorbed, pre-existing, and NOT caused by this change** (both already
   flagged in `reports/sxt-017/EVIDENCE.md` §9 and in §7.4 above as awaiting
   the next re-export): `event_profile.sequence_fixtures` 10 → 18 with

@@ -29,8 +29,8 @@ ROUTE-TABLE SWEEP on sxt036-vel-overlap-v1 (declared sidecar truncated to its fi
    6    2940   17640   17640               0   PASS
 
 CONTROLS on the measured law (each must MISPREDICT):
-  [K1 per-frame shape] SXT-015 shape (routes x frames) predicts 19350, measured 17640 -> MISPREDICTS as required
-      worst measured shape gap: 'seq-poly-8-v1' peaks at 8 live voices, so a voice row's peak per-frame work is 8x what the accounting charges for it.
+  [K1 per-frame shape] the retired shape (routes x frames) predicts 19350, measured 17640 -> MISPREDICTS as required
+      worst measured shape gap: 'seq-poly-8-v1' peaks at 8 live voices, so a voice row's peak per-frame work is 8x what the RETIRED shape charged for it. Since #239 the accounting charges a voice row at its own worst-case voice count, so this gap is what the decision closed, not an outstanding understatement.
   [K2 route-count-blind] predicting with a fixed R=6 mispredicts at R in [0, 1, 2, 3, 4, 5] -> MISPREDICTS as required
   [K3 attribution] empty route table measures evals=0 mul32=0 while the per-frame prediction is 19350 -> all measured multiply work is attributable to the routes
 
@@ -38,7 +38,7 @@ MEASURED per-route-evaluation op profile (SXT-016 op taxonomy): mul32=1, add64=1
   DERIVED candidate cycles per evaluation (NOT measured, NOT a probe): 2 .. 8
     low  reading: A-DSP-1c read as 'the 32x32->64 multiply, its rounding add and its saturation clamp are one MAC pass' + A-ALU-1 for the 32-bit accumulate
     high reading: every op a separate cycle, with the 64-bit rounding add and the two 64-bit saturation compares costing 2 cycles each on a 32-bit ALU (A-ALU-1 covers <=32-bit words only)
-  SXT-015 charges 15 cycles per row per frame. Per EVALUATION the accounted constant is therefore 1.88x to 7.50x the derived bracket -- conservative for a global/scene row, while the SHAPE below understates a voice row.
+  SXT-015 charges 15 cycles per row EVALUATION (#239 shape). The accounted constant is therefore 1.88x to 7.50x the derived bracket for EVERY row class -- conservative per evaluation, and now applied to the measured number of evaluations rather than to the row count (see below). The constant itself stays a placeholder only SXT-016 may pin.
 
 SXT-015 ACCOUNTING vs THE MEASURED SHAPE, on the carriers named by #70 (rows from graphs.jsonl; accounted cycles from model/resources/accounting.py):
   carrier                             g  sc  vc rows  acct cyc worstV evals/frame  shape x
