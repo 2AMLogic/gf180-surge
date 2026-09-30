@@ -74,7 +74,3 @@ def write_record(rec, outdir=PROBES_DIR):
         json.dump(rec, f, sort_keys=True, indent=1)
         f.write("\n")
     return path
-
-
-def write_records(records, outdir=PROBES_DIR):
-    return [write_record(r, outdir) for r in records]

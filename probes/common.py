@@ -222,12 +222,6 @@ def op_cycles(ops, multiplier):
     return c
 
 
-def sram_pair_note():
-    return ("A-MEM-1: read+write pairs to one macro serialize; probes count "
-            "each access as one cycle (a dual-macro layout A-MEM-2 would hide "
-            "the write behind the next read at 2x state bits).")
-
-
 # ---------------------------------------------------------------------------
 # External-memory transaction model
 # ---------------------------------------------------------------------------
