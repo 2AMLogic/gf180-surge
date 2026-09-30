@@ -33,7 +33,12 @@ The audit has four groups of checks:
      vocabulary in one file, so a later foreign quotation elsewhere in the
      same file still fails). The tripwires are deliberately high-precision:
        * `foreign-license-text`        — foreign license body, non-Apache
-                                         SPDX tag, or foreign copyright line
+                                         SPDX tag, or foreign copyright line.
+                                         EVERY notice in a file is inspected
+                                         and each one's holder is read from
+                                         its own line, so our own attribution
+                                         above a pasted upstream header does
+                                         not mask it
        * `upstream-asset-extension`    — Surge/third-party asset or opaque
                                          binary-bundle extensions
        * `foreign-source-language`     — source languages this repository
@@ -60,7 +65,11 @@ DECLARED LIMITS — read before quoting this tool as evidence:
 Self-test: `--negative-control` rebuilds a synthetic tree, injects one
 deliberate violation per rule, and requires every rule to fire. A rule that
 silently stops firing — the false-negative failure mode that would otherwise
-pass review unnoticed — fails the self-test, and therefore CI.
+pass review unnoticed — fails the self-test, and therefore CI. It also runs the
+occurrence-scoped exemption controls and the `masking/*` controls, which pin
+the ways a non-exemptible rule was disarmed without any rule being removed
+(our own attribution above a pasted upstream one), together with the positive
+cases that keep the fix from flagging our own headers.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -285,6 +294,23 @@ COPYRIGHT_RE = re.compile(
     re.IGNORECASE,
 )
 OWN_HOLDER_RE = re.compile(r"2AM\s*Logic|2AMLogic|gf180-surge", re.IGNORECASE)
+
+
+def copyright_line(text, match):
+    """The single line carrying `match` — the only place its holder may be read.
+
+    A copyright notice names its holder on its own line. Testing a ±120-char
+    *window* around the match instead (what this did before) means any nearby
+    mention of this project — an own header line above a pasted upstream
+    header, or a prose "gf180-surge" a few words away — reads as "this holder
+    is us" and silently disarms the non-exemptible `foreign-license-text`
+    rule. Scoped to the line, an own notice still suppresses itself and a
+    foreign notice beside it still fires (controls `masking/*`).
+    """
+    start = text.rfind("\n", 0, match.start()) + 1
+    end = text.find("\n", match.end())
+    return text[start : len(text) if end == -1 else end]
+
 
 # The repository's own Apache-2.0 license text (its appendix contains a
 # copyright placeholder). Hardcoded rather than exemptible: the LICENSE file
@@ -1102,27 +1128,34 @@ def tripwire_hits(tree: Tree, rel):
             if match:
                 hits.append(("foreign-license-text", f"{name}: {_snippet(text, match)}"))
                 break
+        # EVERY tag/line is inspected, not just the first: an own Apache tag or
+        # own copyright header sitting ABOVE a pasted upstream header must not
+        # mask it. `.search()` here made both signals silently stop firing in
+        # exactly that layout — the false-negative shape this audit exists to
+        # prevent, on a rule that cannot be exempted (issue #25, acceptance
+        # item 4; controls `masking/*` in --negative-control).
         if "spdx-license-identifier" in low:
-            spdx = SPDX_RE.search(text)
-            if spdx and spdx.group(1).strip().lower() != OWN_SPDX:
-                # Label assembled from fragments (see the fixture note below).
-                hits.append(
-                    (
-                        "foreign-license-text",
-                        "SPDX-License" + "-Identifier tag: " + spdx.group(1),
+            for spdx in SPDX_RE.finditer(text):
+                if spdx.group(1).strip().lower() != OWN_SPDX:
+                    # Label assembled from fragments (see the fixture note below).
+                    hits.append(
+                        (
+                            "foreign-license-text",
+                            "SPDX-License" + "-Identifier tag: " + spdx.group(1),
+                        )
                     )
-                )
+                    break
         if any(token in low for token in COPYRIGHT_PREFILTERS):
-            copyright_match = COPYRIGHT_RE.search(text)
-            if copyright_match and not OWN_HOLDER_RE.search(
-                text[max(0, copyright_match.start() - 120) : copyright_match.end() + 120]
-            ):
+            for copyright_match in COPYRIGHT_RE.finditer(text):
+                if OWN_HOLDER_RE.search(copyright_line(text, copyright_match)):
+                    continue  # this notice names us; keep looking at the rest
                 hits.append(
                     (
                         "foreign-license-text",
                         f"copyright line: {_snippet(text, copyright_match)}",
                     )
                 )
+                break
     if any(token in low for token in UPSTREAM_CITATION_PREFILTERS):
         for name, prefilter, regex in QUOTATION_MARKER_RES:
             if prefilter not in low:
@@ -1378,6 +1411,26 @@ FIXTURE_OWN_COPY_OCCURRENCE = "`tb_own.sv` carries a verbatim copy of it"
 FIXTURE_FOREIGN_COPY_LINE = (
     "\nThe table below is copied verbatim from the pinned upstream wavetable.\n"
 )
+
+
+# --- masking fixtures ---------------------------------------------------------
+#
+# Our OWN attribution above a pasted upstream one. This is how the
+# non-exemptible `foreign-license-text` rule was disarmed before: the signal
+# read only the FIRST copyright line / SPDX tag in a file, and judged that
+# line's holder from a ±120-char window that any nearby mention of this
+# project satisfied. Both shapes below audited clean until the fix; both must
+# fail now, and our own attribution alone must still audit clean (a rule that
+# fires on our own header would just be turned off again).
+# Assembled from fragments, like the fixtures above — see the fixture note.
+FIXTURE_OWN_COPYRIGHT = "# Copy" + "right 20" + "26 2AM" + "Logic\n"
+FIXTURE_OWN_SPDX_TAG = "# SPDX-License" + "-Identifier" + ": Apache-2.0\n"
+FIXTURE_OWN_PROJECT_LINE = "# This module belongs to the gf180-surge model.\n"
+FIXTURE_FOREIGN_COPYRIGHT_LINE = "# Copy" + "right (C) 20" + "19 Some Upstream Author\n"
+FIXTURE_FOREIGN_SPDX_TAG = "# SPDX-License" + "-Identifier" + ": GPL-3.0-or-later\n"
+# Long enough that the foreign notice is well outside the old ±120-char
+# proximity window, so this control isolates the first-match-only bug.
+FIXTURE_FILLER = "\n" + "".join(f"ROW_{n} = [{n}, {n}, {n}]\n" for n in range(12)) + "\n"
 
 
 def _scoped_exemption(root: Path, occurrences, path="docs/own_copy.md"):
@@ -1710,6 +1763,91 @@ def _scoped_exemption_controls():
     ]
 
 
+MASKED_REL = "model/pasted_below_our_header.py"
+OWN_ONLY_REL = "model/own_header_only.py"
+
+
+def _masking_controls():
+    """[(label, expected rule or None, expected path, description, mutator)].
+
+    `foreign-license-text` cannot be exempted, so the only way to disarm it is
+    to make it stop firing. These controls pin the two ways that happened —
+    reading only a file's FIRST notice, and judging a notice's holder from a
+    proximity window rather than from the notice itself — plus the positive
+    cases that keep the fix from degenerating into "flag our own headers too".
+    """
+    below = FIXTURE_OWN_COPYRIGHT + FIXTURE_FILLER + FIXTURE_FOREIGN_COPYRIGHT_LINE
+    adjacent = FIXTURE_OWN_PROJECT_LINE + FIXTURE_FOREIGN_COPYRIGHT_LINE
+    spdx_below = FIXTURE_OWN_SPDX_TAG + FIXTURE_FILLER + FIXTURE_FOREIGN_SPDX_TAG
+    return [
+        (
+            "masking/foreign-copyright-under-our-own",
+            "foreign-license-text",
+            MASKED_REL,
+            "a pasted foreign copyright line below our own copyright header",
+            lambda root: _write(root, MASKED_REL, below),
+        ),
+        (
+            "masking/foreign-copyright-beside-a-project-mention",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign copyright line one line under a 'gf180-surge' mention",
+            lambda root: _write(root, MASKED_REL, adjacent),
+        ),
+        (
+            "masking/foreign-spdx-under-our-own",
+            "foreign-license-text",
+            MASKED_REL,
+            "a pasted foreign SPDX tag below our own Apache tag",
+            lambda root: _write(root, MASKED_REL, spdx_below),
+        ),
+        (
+            "masking/our-own-copyright-alone-passes",
+            None,
+            None,
+            "a file carrying only our own copyright header",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/our-own-spdx-alone-passes",
+            None,
+            None,
+            "a file carrying only our own Apache SPDX tag",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_SPDX_TAG + FIXTURE_FILLER
+            ),
+        ),
+    ]
+
+
+def _run_case_controls(tmp_root: Path, prefix, cases):
+    """Run (label, expected, path, description, mutate) cases; [(label, ok, detail)]."""
+    results = []
+    for index, (label, expected, where, description, mutate) in enumerate(cases):
+        case = Path(tmp_root) / f"{prefix}-{index}"
+        case.mkdir()
+        build_skeleton(case)
+        mutate(case)
+        findings, _ = audit(case)
+        found = ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing"
+        if expected is None:
+            passed = not findings
+            detail = f"{description} -> " + ("audits clean" if passed else f"found {found}")
+        else:
+            passed = any(
+                f.rule == expected and (where is None or f.path == where) for f in findings
+            )
+            detail = f"{description} -> " + (
+                f"{expected} fired on {where}"
+                if passed
+                else f"{expected} did NOT fire on {where} (found {found})"
+            )
+        results.append((label, passed, detail))
+    return results
+
+
 def run_negative_control(verbose=True):
     """Every rule must fire on a deliberate violation. Returns exit code."""
     controls = _controls()
@@ -1757,29 +1895,24 @@ def run_negative_control(verbose=True):
                     )
                 )
 
-        scoped = _scoped_exemption_controls()
-        for index, (label, expected, description, mutate) in enumerate(scoped):
-            case = Path(tmp) / f"scoped-{index}"
-            case.mkdir()
-            build_skeleton(case)
-            mutate(case)
-            findings, _ = audit(case)
-            found = ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing"
-            if expected is None:
-                passed = not findings
-                detail = f"{description} -> " + ("audits clean" if passed else f"found {found}")
-            else:
-                # A tripwire must fire on the exempted file itself, not on the
-                # manifest; a manifest rule fires on the manifest.
-                where = "docs/own_copy.md" if expected in TRIPWIRE_RULES else MANIFEST_REL
-                passed = any(f.rule == expected and f.path == where for f in findings)
-                detail = f"{description} -> " + (
-                    f"{expected} fired on {where}"
-                    if passed
-                    else f"{expected} did NOT fire on {where} (found {found})"
-                )
-            ok = ok and passed
-            results.append((label, "PASS" if passed else "FAIL", detail))
+        # A scoped-exemption tripwire must fire on the exempted file itself,
+        # not on the manifest; a manifest rule fires on the manifest.
+        scoped = [
+            (
+                label,
+                expected,
+                None
+                if expected is None
+                else ("docs/own_copy.md" if expected in TRIPWIRE_RULES else MANIFEST_REL),
+                description,
+                mutate,
+            )
+            for label, expected, description, mutate in _scoped_exemption_controls()
+        ]
+        for prefix, cases in (("scoped", scoped), ("masking", _masking_controls())):
+            for label, passed, detail in _run_case_controls(Path(tmp), prefix, cases):
+                ok = ok and passed
+                results.append((label, "PASS" if passed else "FAIL", detail))
 
     if verbose:
         print("negative control: one deliberate violation per rule\n")
@@ -1795,9 +1928,11 @@ def run_negative_control(verbose=True):
         if ok and not missing:
             print(
                 f"PASS: all {len(controls)} rules fired on their deliberate "
-                "violation, the clean control tree produced no findings, and "
+                "violation, the clean control tree produced no findings, "
                 f"all {len(_scoped_exemption_controls())} occurrence-scoped "
-                "exemption controls behaved."
+                "exemption controls behaved, and all "
+                f"{len(_masking_controls())} own-attribution masking controls "
+                "behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
