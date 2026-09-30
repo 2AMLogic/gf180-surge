@@ -144,6 +144,24 @@ All are declared in `model/voice/README.md`; none is silently absorbed:
    (`FIRoffset`) are dead parameters for this preset (sub mix 1.0 ⇒
    `dc_uni ≡ 0`); the committed mutant exercise shows such constants can be
    inert — the negative control uses a constantly-active constant instead.
+6. **The scene decimator does not settle to zero on silence** (F-176-2, issue
+   [#181](https://github.com/2AMLogic/gf180-surge/issues/181), DECLARED —
+   SXT-017 option (a)). The shared `voice_model.HalfbandD2` (`README.md` step
+   7) has a round-half-up dead band, so after this leaf's last voice dies the
+   decimator holds a permanent output-Nyquist (period-2) cycle rather than
+   decaying to 0. Declared bound over a 315-case input sweep: **36 Q10.21 LSB
+   = 0.5625 int16 LSB ≈ −95.3 dBFS**, i.e. below one int16 LSB, so it cannot
+   reach this leaf's int16 render on its own and **no metric in the acceptance
+   mapping above is affected**. In situ on `seq-notes-repeated-v1`: ±1 Q10.21
+   LSB held for all 3,703 blocks (118,496 output samples) after the last voice
+   death; that region is **inside** `tools/compare_rtl_model.py`'s compared
+   window (every M line of every block) and `tb_voice.sv` matches it exactly.
+   The float64 recursion with the same coefficients decays to 1.8e-322 (float64
+   subnormals) over the same silence, so this
+   is a consequence of the Q10.21 freeze, not of the pinned recursion. Changing
+   the decimator's arithmetic is a contract revision owned by SXT-017 /
+   [#12](https://github.com/2AMLogic/gf180-surge/issues/12) and is **not** done
+   here. Evidence: `reports/halfband-limit-cycle/EVIDENCE.md`.
 
 ## Escalations / hand-offs
 

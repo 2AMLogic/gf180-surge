@@ -673,19 +673,6 @@ def cmd_case(args):
     return 0 if all(res["checks"].values()) else 1
 
 
-def t60_fit(curve, times, start_db=-10.0, stop_db=-50.0):
-    """Linear fit of the decay curve between start_db and stop_db rel peak."""
-    peak = curve.max()
-    m = (curve <= peak + start_db) & (curve >= peak + stop_db) & (curve > FLOOR)
-    if m.sum() < 4:
-        return None
-    A = np.vstack([times[m], np.ones(m.sum())]).T
-    slope, _ = np.linalg.lstsq(A, curve[m], rcond=None)[0]
-    if slope >= 0:
-        return None
-    return -60.0 / slope  # seconds for -60 dB
-
-
 def t60_of_tail(sig, t0, win=WIN):
     """t60 from the reverb-only tail: linear fit of the windowed dB curve over
     the contiguous descent from (tail peak - 5 dB) to (tail peak - 35 dB)."""

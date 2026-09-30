@@ -42,6 +42,14 @@ Arithmetic discipline (FROZEN, same rules as SXT-022):
     are built in double from the quoted 63-tap halfband and quantized once
     (the engine accumulates in float32 — declared deviation);
   * no floating point at run time; no dict-iteration-order dependence.
+
+Topology note (SXT-017 contract revision, #180,
+decision-records/0018-wavetable-scene-decimation-placement.md): the decimator
+and the master stage are ONE PER SCENE (`SceneDecimator`), not per voice slice.
+`Slice` ends at its unclipped 96 kHz `sceneout` contribution; the runner sums
+those, clips once, and drives one `SceneDecimator` that persists across voice
+death -- the pinned engine's placement (`SurgeSynthesizer::halfbandA/B`), the
+same one the SXT-022 voice leaf models and implements.
 """
 
 import json
@@ -642,9 +650,23 @@ class Inputs:
 
 
 class Slice:
-    """Voice slice: WT osc -> o2 level -> AEG gain -> scene out -> halfband
-    -> master (mono). Sine osc muted, filter units Off, noise/ring muted by
-    the declared fixture configuration (see extract_inputs.py)."""
+    """Voice slice: WT osc -> o2 level -> AEG gain -> scene out (96 kHz).
+    Sine osc muted, filter units Off, noise/ring muted by the declared
+    fixture configuration (see extract_inputs.py).
+
+    The slice ENDS at its unclipped 96 kHz `sceneout` contribution. The
+    decimator (`HalfbandD2`) and the master stage are NOT here: they are one
+    per-SCENE stage (`SceneDecimator`), which is the pinned engine's placement
+    (`SurgeSynthesizer::halfbandA/B` -> `HalfRateFilter::process_block_D2` on
+    the summed `sceneout`) and the placement `model/voice/run_model.py` models
+    and `rtl/voice/tb_voice.sv` implements.
+
+    They used to sit inside this slice (one HalfbandD2 per voice, slices
+    summed after decimation) -- declared deviation 7 of #176. Moving them out
+    changed the frozen model's numerical behaviour and was therefore landed as
+    an SXT-017 visible contract revision
+    (`decision-records/0018-wavetable-scene-decimation-placement.md`, #180),
+    with every moved render published in `reports/sxt-026/EVIDENCE.md`."""
 
     def __init__(self, inp, key, velocity):
         self.inp = inp
@@ -660,13 +682,18 @@ class Slice:
         vca_db_eff = inp.vca_db + inp.vca_vs * (1.0 - velocity / 127.0)
         self.vca = vm.db_to_linear(qint(vca_db_eff))
         self.outl = vm.amp_to_linear(qint(inp.scene_volume)) >> 1
-        self.master = vm.db_to_linear(qint(inp.master_db))
         self.gain = vm.qmul(self.vca, self.aeg.output)
         self.prev_gain = self.gain
-        self.halfband = vm.HalfbandD2()
+        # gain-ramp endpoints of the LAST processed block; streamed to the
+        # RTL as control words (same control-plane class as hpf_start/hpf_d)
+        self.ctrl_gain_start = self.gain
+        self.ctrl_gain_d = 0
         self.keep_playing = True
 
-    def process_block(self, b):
+    def scene_block(self, b):
+        """This slice's 96 kHz scene contribution, BEFORE the +/-8 clip and
+        the per-scene decimator. Advances the slice's state exactly once;
+        returns (scene_os, osout, keep_playing)."""
         self.aeg.process_block()
         if self.aeg.is_idle():
             self.keep_playing = False
@@ -675,6 +702,8 @@ class Slice:
         d = target - self.prev_gain
         start = self.prev_gain
         self.prev_gain = target
+        self.ctrl_gain_start = start
+        self.ctrl_gain_d = d
         scene = [0] * BLOCK_SIZE_OS
         for k in range(BLOCK_SIZE_OS):
             x = vm.qmul(osout[k], self.lvl)
@@ -682,6 +711,33 @@ class Slice:
             v = vm.qmul(vm.qmul(x, start + vm.qround(d * (k + 1), 6)),
                         self.outl)
             scene[k] = v
+        return scene, osout, self.keep_playing
+
+
+class SceneDecimator:
+    """The per-SCENE decimator and master stage (pinned-engine placement).
+
+    ONE instance per scene, shared by every live slice and PERSISTING ACROSS
+    VOICE DEATH -- the engine's scene filter keeps ringing when a voice ends,
+    and so does this one. Statement order is the engine's, and is the same
+    order `model/voice/run_model.py` uses for the SXT-022 voice leaf:
+
+        sum unclipped 96 kHz sceneout -> ONE +/-8 clip -> ONE HalfbandD2
+        -> master -> +/-8 clip -> +/-1 clip        (int16 once, in the runner)
+
+    The mono bus is the engine's (L+R)/2 with L == R, which reduces to L
+    exactly, so no averaging step appears here (declared deviation 4).
+
+    Arithmetic is UNCHANGED by the move (SXT-017 revision
+    `decision-records/0018`): Q10.21 words, round-half-up products, the
+    `decision-records/0002` halfband coefficients. What moved is where the
+    stage runs and how many instances exist."""
+
+    def __init__(self, inp):
+        self.master = vm.db_to_linear(qint(inp.master_db))
+        self.halfband = vm.HalfbandD2()
+
+    def process_block(self, scene):
         scene = [vm.limit_i(x, vm.qint(-8.0), vm.qint(8.0)) for x in scene]
         bl = self.halfband.process(scene)
         mono = []
@@ -690,8 +746,7 @@ class Slice:
             l = vm.limit_i(l, vm.qint(-8.0), vm.qint(8.0))
             m = vm.limit_i(l, -ONE, ONE)
             mono.append(m)          # Q10.21; int16 conversion happens once
-        self.lastmono = mono        # in the runner (single conversion)
-        return mono, osout, self.keep_playing
+        return mono                 # in the runner (single conversion)
 
 
 def write_wav16(path, samples):

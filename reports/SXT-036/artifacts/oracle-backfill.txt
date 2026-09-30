@@ -1,0 +1,75 @@
+SXT-036 (#70) oracle gate and backfill plan
+===========================================
+oracle gate: UNAVAILABLE
+reason: no pinned-engine checkout and/or no surgepy built from it in this environment; the oracle-gated legs were not run and must never be reported as a pass (#96, #232)
+
+probed engine dir : /Users/joseph/dev/surge-xt-oracle/surge (present=False, git worktree=False)
+probed HEAD       : None (pin 58914e59c608ed4384ba6002e44c3465c58b2e71, matches=False)
+surgepy, naive    : False   <- a bare `import surgepy`; NOT proof of the pin
+surgepy, pinned   : False (module inside the checkout=False)
+
+Acceptance items 2 and 5 of #70 are therefore NOT_RUN. A leg that did
+not run is never reported as a pass (AGENTS.md). Nothing in this leaf's
+evidence is estimated, extrapolated, or substituted in place of a real oracle
+render.
+
+Legs, split by the gate each one actually needs
+-----------------------------------------------
+  blob-verify-carriers       item 1 (fixture provenance under item 1)    NOT_RUN
+      gate: pinned checkout only (no built surgepy needed)
+      tool: oracle/oracle_common.py::git_blob_sha1
+  compare-budgets            item 2                                      NOT_RUN
+      gate: pinned checkout + surgepy built from it
+      tool: tools/compare_audio_reference.py
+  extract-fixture-depths     item 1 (replaces the DECLARED depths behind items 2 and 5) NOT_RUN
+      gate: pinned checkout + surgepy built from it
+      tool: model/voice/extract_vel_inputs.py (to be written on the oracle host, modelled on model/voice/extract_mw_inputs.py)
+  reference-budget-controls  item 5                                      NOT_RUN
+      gate: pinned checkout + surgepy built from it
+      tool: tools/vel_negative_controls.py (exactness side, landed) + tools/compare_audio_reference.py (budget side, this leg)
+  render-reference           item 2                                      NOT_RUN
+      gate: pinned checkout + surgepy built from it
+      tool: fixtures/render_vel_fixture.py (to be written on the oracle host, modelled on fixtures/render_mw_fixture.py)
+
+Tool paths named by #70, resolved against the committed tree
+------------------------------------------------------------
+  tools/render_fixture.py              CORRECTED  -> fixtures/render_fixture.py
+  tools/compare_audio_reference.py     OK         -> tools/compare_audio_reference.py
+  tools/compare_rtl_model.py           OK         -> tools/compare_rtl_model.py
+  model/voice/extract_inputs.py        OK         -> model/voice/extract_inputs.py
+
+Falsifiable predictions for the oracle host
+-------------------------------------------
+  graphs.jsonl sha256 c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715
+  route  Bad News.fxp: ms_velocity -> 308 (A Filter 1 Cutoff) depth_normalized 0.218077
+  extent dest 298 = 95.9966
+  extent dest 308 = 130.007607
+  extent dest 309 = 1.0
+  extent dest 310 = 192.00662
+  observed normalized range ms_releasevelocity: [-1.0, 1.0] over 162 rows
+  observed normalized range ms_velocity: [-1.0, 1.0] over 5212 rows
+
+a disagreement on an oracle host is a finding about the corpus pipeline or about the cited reading of the engine -- never a tuning opportunity, and never a reason to re-derive the corners so they stay green
+
+Negative controls (each must demonstrably fail the check it targets)
+--------------------------------------------------------------------
+  O1 FIRED  a bare `import surgepy` accepted as proof of the pinned oracle (the reading used by increments 1-5)
+  O2 FIRED  an `os.path.isdir` reading of ORACLE_SURGE_DIR accepted as a pinned checkout
+  O3 FIRED  any git checkout at ORACLE_SURGE_DIR accepted as THE pinned checkout regardless of its HEAD
+  O4 FIRED  an oracle/manifest.json engine pin that disagrees with the commit #70 pins
+  O5 FIRED  the consolidated backfill predictions drifting away from, or being restated without, the committed artifacts they are derived from
+  O6 FIRED  an oracle-gated leg this tool never ran being emitted as PASS
+  O7 FIRED  a tool path named by #70 being reported as resolved without checking the tree
+
+Re-run on an oracle host
+------------------------
+  python3 tools/vel_oracle_status.py --artifacts reports/SXT-036/artifacts
+  #   -> flips the gate; every leg below becomes RUNNABLE, none becomes PASS.
+  # then, in order:
+  #   1. blob-verify the carriers (checkout only)
+  #   2. write model/voice/extract_vel_inputs.py and replace the DECLARED
+  #      model/voice/attacky_vel_inputs.json with read-back depths
+  #   3. write fixtures/render_vel_fixture.py and render the references
+  #   4. python3 tools/compare_audio_reference.py      -> acceptance item 2
+  #   5. re-run the routing-zeroed and source-swap mutations through step 4;
+  #      BOTH must FAIL the reference-budget check   -> acceptance item 5

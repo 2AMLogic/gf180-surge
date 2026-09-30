@@ -1,0 +1,14 @@
+issue #110 -- shared full-scale log-floor spectral_corr: leg 6
+run: 2026-09-30T04:09:00Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
+definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
+
+==========================================================================
+[6] regrade ledger (tools/regrade_spectral_corr.py)
+==========================================================================
+  REGENERATED (102 artifacts)
+  CARRY spectral_corr BUT NOT REGENERATED (28)
+  UNEXPLAINED diffs: 0
+  full ledger: reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}
+
+leg 6 verdict: PASS

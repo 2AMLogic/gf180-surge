@@ -1,0 +1,4872 @@
+{
+  "issue": 110,
+  "base_rev": "baba823b266ef6740aa360cda07d8b4967b02fe4",
+  "regenerated": [
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-alienappears__seq-notes-coverage-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999991820048015,
+          "new": 0.9999933002897194
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999991686154339,
+          "new": 0.9999935330508232
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999991729212511,
+          "new": 0.9999928158665067
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-alienappears__seq-poly-8-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999997225888233,
+          "new": 0.9999995120131207
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.999999733230152,
+          "new": 0.9999993828412151
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999997252690682,
+          "new": 0.9999993550542892
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmcombo__seq-notes-coverage-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999998982578345,
+          "new": 0.9999969876272492
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.999999897995093,
+          "new": 0.9999969694865198
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999998986649515,
+          "new": 0.9999970430984566
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmcombo__seq-poly-8-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999677545487,
+          "new": 0.9999982681443376
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999674353361,
+          "new": 0.9999981100449482
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999679456947,
+          "new": 0.9999981095386176
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmtwang2__seq-notes-coverage-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999996886737456,
+          "new": 0.9999959029706493
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999996661217301,
+          "new": 0.9999960472250505
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999997742303959,
+          "new": 0.9999974302491713
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmtwang2__seq-poly-8-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999145853391,
+          "new": 0.999998590371921
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999998580090257,
+          "new": 0.9999982497794506
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999110854106,
+          "new": 0.999998709192587
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9895294211226552,
+          "new": 0.9795578866159448
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.996072621439653,
+          "new": 0.9828101497588241
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [
+        {
+          "artifact": "reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json",
+          "key": "/verdict",
+          "old": "FAIL",
+          "new": "PASS",
+          "cause": "#110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)"
+        }
+      ],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": false,
+          "new": true
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9744227953033333,
+          "new": 0.9989760733145877
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "FAIL against proposed budgets",
+          "new": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9830044321779814,
+          "new": 0.9993986068356864
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7534505518975164,
+          "new": 0.8422433285924609
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-horn-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8086309065256551,
+          "new": 0.8330659434167054
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9802121891513782,
+          "new": 0.9952705975754197
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9888108925666398,
+          "new": 0.9970490733295704
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-crush.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9719667266784292,
+          "new": 0.8597518345387021
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-horn.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7634557660284563,
+          "new": 0.6202245313114492
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc1-collapsed.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9625799403937294,
+          "new": 0.9249494495585138
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc1-diff-vs-true.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9678145978869725,
+          "new": 0.9061306434875965
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni1-rep.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9920851447593002,
+          "new": 0.998839814688084
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni2-cov.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9643616545807963,
+          "new": 0.9359768921775162
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni4-rep.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9840901794675873,
+          "new": 0.9631054982338696
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-badnews-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9306053841293582,
+          "new": 0.9700127903010176
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-badnews-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9471139375941886,
+          "new": 0.9752255790533861
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [
+        {
+          "artifact": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json",
+          "key": "/verdict",
+          "old": "FAIL",
+          "new": "PASS",
+          "cause": "#110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)"
+        }
+      ],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": false,
+          "new": true
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9665832799372938,
+          "new": 0.990825356358914
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "FAIL against proposed budgets",
+          "new": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9800197200726508,
+          "new": 0.9836301098168843
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": false,
+          "new": true
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9444411345365575,
+          "new": 0.9867132851291923
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": false,
+          "new": true
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.977328063720294,
+          "new": 0.9892028303265433
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/nc-classic-substitution.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8282801563447789,
+          "new": 0.32957755712880615
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/nc-shape-migration.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.6252904036121575,
+          "new": 0.6723094411392843
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-baseline.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9212367046094617,
+          "new": 0.7847668163685115
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9259000500106875,
+          "new": 0.7962955197788826
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8742957579533996,
+          "new": 0.5966794799138789
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.892602501992357,
+          "new": 0.7272040011543643
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9212225892067946,
+          "new": 0.784170235898177
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9259000500106875,
+          "new": 0.7962955197788826
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-source-swap-velocity.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9276044075508479,
+          "new": 0.7999340487637123
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/negative-controls.json",
+      "class_counts": {
+        "SPECTRAL": 7
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/baseline/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9212367046094617,
+          "new": 0.7847668163685115
+        },
+        {
+          "key": "/cutoff-zeroed/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9259000500106875,
+          "new": 0.7962955197788826
+        },
+        {
+          "key": "/ignore-keytrack-root/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8742957579533996,
+          "new": 0.5966794799138789
+        },
+        {
+          "key": "/probe-velocity-cutoff-zeroed/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.892602501992357,
+          "new": 0.7272040011543643
+        },
+        {
+          "key": "/shared-keytrack-word/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9212225892067946,
+          "new": 0.784170235898177
+        },
+        {
+          "key": "/source-swap-modwheel/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9259000500106875,
+          "new": 0.7962955197788826
+        },
+        {
+          "key": "/source-swap-velocity/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9276044075508479,
+          "new": 0.7999340487637123
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/checks-summary.json",
+      "class_counts": {
+        "RUN-METADATA": 5
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/partial_reruns[0]/issue",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": 110
+        },
+        {
+          "key": "/partial_reruns[0]/legs_rerun[0]",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "wet_tail_controls"
+        },
+        {
+          "key": "/partial_reruns[0]/note",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "leg 2 re-run under the #110 spectral_corr definition; every other leg entry is carried unchanged from the #93 record (see reports/spectral-corr-fs-floor/EVIDENCE.md)"
+        },
+        {
+          "key": "/partial_reruns[0]/repo_head",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "173931890e490a7ed4eddf339bf72bb21af0d264"
+        },
+        {
+          "key": "/partial_reruns[0]/run_utc",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "2026-09-30T04:08:42Z"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7337798323820329,
+          "new": 0.9226058929798204
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9115429733824324,
+          "new": 0.974734588056243
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-full-tail-within-budget.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.999719975596556,
+          "new": 0.999959632590465
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-no-sidecar.json",
+      "class_counts": {
+        "HOST-PATH": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/reason",
+          "class": "HOST-PATH",
+          "old": "--path wet requires a fixture sidecar declaring the tail region (note-off offset plus declared tail length); none was given and none was found next to /tmp/sxt-tail-shape-leg/t93/no-sidecar/orphan-wet.wav. Do not guess a tail region -- record a bounded finding instead (issue #93 stop condition).",
+          "new": "--path wet requires a fixture sidecar declaring the tail region (note-off offset plus declared tail length); none was given and none was found next to /tmp/sxt-tail-gate-checks/no-sidecar/orphan-wet.wav. Do not guess a tail region -- record a bounded finding instead (issue #93 stop condition)."
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9895601387686883,
+          "new": 0.9977339674613598
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-truncate-at-tail-start.json",
+      "class_counts": {
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/checks-summary.json",
+      "class_counts": {
+        "SPECTRAL": 18,
+        "HOST-PATH": 2,
+        "RUN-METADATA": 5
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/baseline]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999991729212511,
+          "new": 0.9999928158665067
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/drop-full-tail]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.974620174181011,
+          "new": 0.9377835972842583
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/drop-right-tail]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9951227357110358,
+          "new": 0.9894679872004901
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/tail-decays-too-fast]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9955160748007165,
+          "new": 0.9865682103089096
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/truncate-at-tail-start]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999992183449143,
+          "new": 0.9999929771783324
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/zero-late-tail-from-30%]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9982305390601888,
+          "new": 0.9915995786063989
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/zero-late-tail-from-40%]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9995210707837576,
+          "new": 0.995699738753822
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[alienappears/zero-late-tail-from-60%]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999623780813175,
+          "new": 0.9993521615382204
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fm_bass_1/baseline]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283181,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fm_bass_1/drop-full-tail]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9891593797766984,
+          "new": 0.9828808858184472
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fm_bass_1/drop-right-tail]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9970456805494846,
+          "new": 0.9928777805296974
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fm_bass_1/tail-decays-too-fast]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999629296224155,
+          "new": 0.9999245969106798
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fm_bass_1/truncate-at-tail-start]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989888663,
+          "new": 0.9999999793715918
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fmcombo/baseline]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999998986649515,
+          "new": 0.9999970430984566
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fmcombo/drop-full-tail]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9943794918762797,
+          "new": 0.9849288248329527
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fmcombo/drop-right-tail]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9981842850678174,
+          "new": 0.9926205411456539
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fmcombo/tail-decays-too-fast]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999970561746049,
+          "new": 0.9999917412287707
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[fmcombo/truncate-at-tail-start]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999217443128,
+          "new": 0.9999972769577459
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[refusal/missing-sidecar]/reason",
+          "class": "HOST-PATH",
+          "old": "fixture sidecar not found: /tmp/sxt-tail-shape-leg/t100/leg2/refusals/missing-sidecar.json -- the wet-path tail region cannot be declared, and this tool does not guess one (issue #100)",
+          "new": "fixture sidecar not found: /tmp/sxt-stereo-tail-gate/leg2/refusals/missing-sidecar.json -- the wet-path tail region cannot be declared, and this tool does not guess one (issue #100)"
+        },
+        {
+          "key": "/legs/stereo_tail_controls/controls[refusal/undeclared-tail_s]/reason",
+          "class": "HOST-PATH",
+          "old": "sidecar /tmp/sxt-tail-shape-leg/t100/leg2/refusals/undeclared-tail_s.json does not declare tail_s for bus 'wet': a tail region cannot be defined from committed data, and this tool does not guess one (issue #93 stop condition)",
+          "new": "sidecar /tmp/sxt-stereo-tail-gate/leg2/refusals/undeclared-tail_s.json does not declare tail_s for bus 'wet': a tail region cannot be defined from committed data, and this tool does not guess one (issue #93 stop condition)"
+        },
+        {
+          "key": "/partial_reruns[0]/issue",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": 110
+        },
+        {
+          "key": "/partial_reruns[0]/legs_rerun[0]",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "stereo_tail_controls"
+        },
+        {
+          "key": "/partial_reruns[0]/note",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "leg 2 re-run under the #110 spectral_corr definition; every other leg entry is carried unchanged from the #100 record (see reports/spectral-corr-fs-floor/EVIDENCE.md)"
+        },
+        {
+          "key": "/partial_reruns[0]/repo_head",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "173931890e490a7ed4eddf339bf72bb21af0d264"
+        },
+        {
+          "key": "/partial_reruns[0]/run_utc",
+          "class": "RUN-METADATA",
+          "old": "<absent>",
+          "new": "2026-09-30T04:08:42Z"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/control-drop-full-tail-fmcombo.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "HOST-PATH": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9942145284949965,
+          "new": 0.9851742976828645
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.994238933824641,
+          "new": 0.9843874281031483
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9943794918762797,
+          "new": 0.9849288248329527
+        },
+        {
+          "key": "/model",
+          "class": "HOST-PATH",
+          "old": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/fmcombo/drop-full-tail.f32.wav",
+          "new": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/fmcombo/drop-full-tail.f32.wav"
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-alienappears.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "HOST-PATH": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9954931209366824,
+          "new": 0.9865839303312299
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9953404511060121,
+          "new": 0.9866518313562894
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9955160748007165,
+          "new": 0.9865682103089096
+        },
+        {
+          "key": "/model",
+          "class": "HOST-PATH",
+          "old": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/alienappears/tail-decays-too-fast.f32.wav",
+          "new": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/alienappears/tail-decays-too-fast.f32.wav"
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "HOST-PATH": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999969906757272,
+          "new": 0.9999915815016404
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999971161306493,
+          "new": 0.99999196401763
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999970561746049,
+          "new": 0.9999917412287707
+        },
+        {
+          "key": "/model",
+          "class": "HOST-PATH",
+          "old": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/fmcombo/tail-decays-too-fast.f32.wav",
+          "new": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/fmcombo/tail-decays-too-fast.f32.wav"
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9780425891326552,
+          "new": 0.9790296538260929
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777700561341401,
+          "new": 0.9791106792696013
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9952246615641761,
+          "new": 0.9928337922264088
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-fm_bass_1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283181,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283181,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283181,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9262112461653684,
+          "new": 0.9403276348888046
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9266317854573318,
+          "new": 0.9405774935777103
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752176394639271,
+          "new": 0.9709885662701574
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-022/artifacts/audio-seq-modwheel-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.980185578016267,
+          "new": 0.9913506336218479
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": false,
+          "new": true
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.979067414962698,
+          "new": 0.998463047759134
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9920737566278564,
+          "new": 0.9988402578753665
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9780425866365158,
+          "new": 0.9790296561040484
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777700576844413,
+          "new": 0.9791106515307101
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9952246619233887,
+          "new": 0.9928337895708889
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9262112444061594,
+          "new": 0.9403276260022776
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9266317812235816,
+          "new": 0.9405774249086032
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752176385504892,
+          "new": 0.9709885852457745
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32both-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9259207675452673,
+          "new": 0.9401553996852238
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9268128526826416,
+          "new": 0.9408553647893628
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752199691414565,
+          "new": 0.9711119582623198
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32lag-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9780418744373911,
+          "new": 0.9790297613452704
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777704693313017,
+          "new": 0.9791103858488697
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9952245752771212,
+          "new": 0.9928340900878231
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32lag-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9259207695218048,
+          "new": 0.9401554913267939
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9268128578559107,
+          "new": 0.9408553763830465
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752199695275062,
+          "new": 0.9711119510408369
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32table-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9262112454310082,
+          "new": 0.9403276814563699
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9266317832984432,
+          "new": 0.9405774252585467
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752176392708728,
+          "new": 0.970988586900409
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k0.9-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777243321373601,
+          "new": 0.9793672293742526
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9772808337810438,
+          "new": 0.979112930525858
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9951905595175956,
+          "new": 0.9924731646998366
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k0.95-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9780315546052456,
+          "new": 0.9790870541520499
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9775071086557596,
+          "new": 0.9792586005663698
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9951896781222431,
+          "new": 0.9927563822237497
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k1.05-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.977428698204584,
+          "new": 0.9785602167542652
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9773159992780068,
+          "new": 0.9786539769072441
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9951479561910995,
+          "new": 0.9925488970428733
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-lfosamedir-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.979576699050652,
+          "new": 0.9744869727261062
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752949011041193,
+          "new": 0.9700809161225546
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9921322533160661,
+          "new": 0.9871925973808091
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-lfosamedir-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9212692164151879,
+          "new": 0.9327648837713134
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9062286473550923,
+          "new": 0.9233430121911445
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9627591795831667,
+          "new": 0.9609201687552565
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomod-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999894066796277,
+          "new": 0.999988685876337
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999890431393534,
+          "new": 0.9999882983205028
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999979982737,
+          "new": 0.9999999958294894
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomod-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9991382376560194,
+          "new": 0.9978142208672329
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9993039836743411,
+          "new": 0.998227060398056
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9997567096026293,
+          "new": 0.9989436074237801
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomodf32lag-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.999165085423274,
+          "new": 0.9978534469486314
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9993044511244114,
+          "new": 0.9982551963192121
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9997689397190729,
+          "new": 0.9989724398615313
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nowidth-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9780425866365158,
+          "new": 0.9790296561040484
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777700576844413,
+          "new": 0.9791106515307101
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9952246619233887,
+          "new": 0.9928337895708889
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nowidth-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9262112444061594,
+          "new": 0.9403276260022776
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9266317812235816,
+          "new": 0.9405774249086032
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752176385504892,
+          "new": 0.9709885852457745
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-slowrate-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9697888277410246,
+          "new": 0.9607570589795542
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9674441026129743,
+          "new": 0.9600005162257431
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9947140966782788,
+          "new": 0.9885429989206062
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-tgtlag1-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9778674858481609,
+          "new": 0.9789722729006467
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777151498567372,
+          "new": 0.9791328072678659
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.995197761580725,
+          "new": 0.9928362913729648
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-tgtlag1-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9258396073992149,
+          "new": 0.9400421037944713
+        },
+        {
+          "key": "/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.926437236600576,
+          "new": 0.9404327211705996
+        },
+        {
+          "key": "/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9751288385668442,
+          "new": 0.9709091366125931
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/nc-b/nc-b-dexie.json",
+      "class_counts": {
+        "ULP": 7,
+        "SPECTRAL": 3,
+        "SCHEMA-#100": 49,
+        "HOST-PATH": 2,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 12777.351515555501,
+          "new": 12777.3515155555
+        },
+        {
+          "key": "/channels/L/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 12777.351515555501,
+          "new": 12777.3515155555
+        },
+        {
+          "key": "/channels/L/rms_diff_dbfs",
+          "class": "ULP",
+          "old": -38.28318141039715,
+          "new": -38.283181410397155
+        },
+        {
+          "key": "/channels/L/rms_diff_lsb",
+          "class": "ULP",
+          "old": 12777.351515555501,
+          "new": 12777.3515155555
+        },
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.975530600535669,
+          "new": 0.9636307678830617
+        },
+        {
+          "key": "/channels/R/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 12773.181609231458,
+          "new": 12773.18160923146
+        },
+        {
+          "key": "/channels/R/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 12773.181609231458,
+          "new": 12773.18160923146
+        },
+        {
+          "key": "/channels/R/rms_diff_lsb",
+          "class": "ULP",
+          "old": 12773.181609231458,
+          "new": 12773.18160923146
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.974872652067968,
+          "new": 0.9629516143589298
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9960093741107398,
+          "new": 0.9884178662100841
+        },
+        {
+          "key": "/fixture_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/model",
+          "class": "HOST-PATH",
+          "old": "/Users/joseph/dev/gf180-surge-wt-016fix/reports/sxt-023/artifacts-followup/nc-b/ncb__dexie__seq-notes-coverage-v1.f32.wav",
+          "new": "reports/sxt-023/artifacts-followup/nc-b/ncb__dexie__seq-notes-coverage-v1.f32.wav"
+        },
+        {
+          "key": "/path",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "wet"
+        },
+        {
+          "key": "/proposed_tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/ref",
+          "class": "HOST-PATH",
+          "old": "/Users/joseph/dev/gf180-surge-wt-016fix/reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav"
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/tail_check/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -16.83 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 17475.4013671875
+        },
+        {
+          "key": "/tail_check/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 10713.060656343732
+        },
+        {
+          "key": "/tail_check/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 10965.663911611084
+        },
+        {
+          "key": "/tail_check/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 1579.5140816751973
+        },
+        {
+          "key": "/tail_check/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -16.830228578242842
+        },
+        {
+          "key": "/tail_check_lr/L/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/L/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -8.12 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/L/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/L/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 44589.7890625
+        },
+        {
+          "key": "/tail_check_lr/L/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 10713.06065658137
+        },
+        {
+          "key": "/tail_check_lr/L/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/L/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 11656.651900771303
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 4579.3862732086345
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -8.115330989077854
+        },
+        {
+          "key": "/tail_check_lr/R/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/R/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -8.28 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/R/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/R/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 43423.6171875
+        },
+        {
+          "key": "/tail_check_lr/R/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 10713.060656638154
+        },
+        {
+          "key": "/tail_check_lr/R/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/R/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 11901.284580122478
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 4587.536265630464
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -8.280286591253981
+        },
+        {
+          "key": "/tail_gate_ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "FAIL against proposed budgets",
+          "new": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -16.83 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -8.12 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -8.28 dB exceeds the proposed -20.00 dB relative budget)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/nc-b/nc-b-metallic.json",
+      "class_counts": {
+        "ULP": 7,
+        "SPECTRAL": 3,
+        "SCHEMA-#100": 49,
+        "HOST-PATH": 2,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 53855.57326834591,
+          "new": 53855.57326834589
+        },
+        {
+          "key": "/channels/L/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 53855.57326834591,
+          "new": 53855.57326834589
+        },
+        {
+          "key": "/channels/L/rms_diff_dbfs",
+          "class": "ULP",
+          "old": -25.787385203183845,
+          "new": -25.78738520318385
+        },
+        {
+          "key": "/channels/L/rms_diff_lsb",
+          "class": "ULP",
+          "old": 53855.57326834591,
+          "new": 53855.57326834589
+        },
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.896859410849816,
+          "new": 0.898244703767729
+        },
+        {
+          "key": "/channels/R/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 53864.26690551648,
+          "new": 53864.26690551647
+        },
+        {
+          "key": "/channels/R/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 53864.26690551648,
+          "new": 53864.26690551647
+        },
+        {
+          "key": "/channels/R/rms_diff_lsb",
+          "class": "ULP",
+          "old": 53864.26690551648,
+          "new": 53864.26690551647
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8953672576534811,
+          "new": 0.8979901739437812
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.975493532674659,
+          "new": 0.9593758146587297
+        },
+        {
+          "key": "/fixture_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/model",
+          "class": "HOST-PATH",
+          "old": "/Users/joseph/dev/gf180-surge-wt-016fix/reports/sxt-023/artifacts-followup/nc-b/ncb__metallic__seq-notes-coverage-v1.f32.wav",
+          "new": "reports/sxt-023/artifacts-followup/nc-b/ncb__metallic__seq-notes-coverage-v1.f32.wav"
+        },
+        {
+          "key": "/path",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "wet"
+        },
+        {
+          "key": "/proposed_tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/ref",
+          "class": "HOST-PATH",
+          "old": "/Users/joseph/dev/gf180-surge-wt-016fix/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav"
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/tail_check/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -10.49 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 68244.228515625
+        },
+        {
+          "key": "/tail_check/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 15300.176368422195
+        },
+        {
+          "key": "/tail_check/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 16909.381231057556
+        },
+        {
+          "key": "/tail_check/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 5053.881678875053
+        },
+        {
+          "key": "/tail_check/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -10.490052912362378
+        },
+        {
+          "key": "/tail_check_lr/L/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/L/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -2.52 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/L/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/L/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 215717.96875
+        },
+        {
+          "key": "/tail_check_lr/L/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 15300.176368422195
+        },
+        {
+          "key": "/tail_check_lr/L/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/L/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 21797.895619143244
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 16315.065158594309
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -2.5165151200131697
+        },
+        {
+          "key": "/tail_check_lr/R/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/R/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -3.23 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/R/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/R/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 208662.390625
+        },
+        {
+          "key": "/tail_check_lr/R/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 15300.176368422195
+        },
+        {
+          "key": "/tail_check_lr/R/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/R/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 24384.684555008953
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 16816.92111995633
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -3.227413094506435
+        },
+        {
+          "key": "/tail_gate_ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "FAIL against proposed budgets",
+          "new": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -10.49 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -2.52 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -3.23 dB exceeds the proposed -20.00 dB relative budget)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts/audio-dexie.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "ULP": 3,
+        "SCHEMA-#100": 49,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9780425891326552,
+          "new": 0.9790296538260929
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9777700561341403,
+          "new": 0.9791106792696013
+        },
+        {
+          "key": "/channels/mono/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 6477.165686584091,
+          "new": 6477.16568658409
+        },
+        {
+          "key": "/channels/mono/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 6477.165686584091,
+          "new": 6477.16568658409
+        },
+        {
+          "key": "/channels/mono/rms_diff_lsb",
+          "class": "ULP",
+          "old": 6477.165686584091,
+          "new": 6477.16568658409
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.995224661564176,
+          "new": 0.9928337922264088
+        },
+        {
+          "key": "/fixture_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/path",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "wet"
+        },
+        {
+          "key": "/proposed_tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/tail_check/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -12.60 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 28514.7509765625
+        },
+        {
+          "key": "/tail_check/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 10630.130152246784
+        },
+        {
+          "key": "/tail_check/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 10965.663911611084
+        },
+        {
+          "key": "/tail_check/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 2569.928937750857
+        },
+        {
+          "key": "/tail_check/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -12.602276327261324
+        },
+        {
+          "key": "/tail_check_lr/L/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/L/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -4.20 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/L/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/L/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 71582.8515625
+        },
+        {
+          "key": "/tail_check_lr/L/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 11695.794281968056
+        },
+        {
+          "key": "/tail_check_lr/L/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/L/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 11656.651900771303
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 7189.734822623336
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -4.197219095227142
+        },
+        {
+          "key": "/tail_check_lr/R/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/R/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -4.37 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/R/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/R/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 75157.3671875
+        },
+        {
+          "key": "/tail_check_lr/R/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 11304.244514827531
+        },
+        {
+          "key": "/tail_check_lr/R/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/R/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 11901.284580122478
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 7195.263316732071
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -4.370942962146211
+        },
+        {
+          "key": "/tail_gate_ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "FAIL against proposed budgets",
+          "new": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -12.60 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -4.20 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -4.37 dB exceeds the proposed -20.00 dB relative budget)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts/audio-fm_bass_1.json",
+      "class_counts": {
+        "ULP": 9,
+        "SPECTRAL": 3,
+        "SCHEMA-#100": 49,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/L/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/L/rms_diff_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283176,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/channels/R/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/R/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/R/rms_diff_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283176,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/channels/mono/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/mono/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/mono/rms_diff_lsb",
+          "class": "ULP",
+          "old": 1.0433691745732971,
+          "new": 1.043369174573297
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999989283176,
+          "new": 0.9999999802565774
+        },
+        {
+          "key": "/fixture_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/path",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "wet"
+        },
+        {
+          "key": "/proposed_tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/tail_check/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": ""
+        },
+        {
+          "key": "/tail_check/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 4.6640625
+        },
+        {
+          "key": "/tail_check/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 13362.961857328512
+        },
+        {
+          "key": "/tail_check/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 13362.995217899841
+        },
+        {
+          "key": "/tail_check/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 0.32052714236184476
+        },
+        {
+          "key": "/tail_check/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -92.40078002709436
+        },
+        {
+          "key": "/tail_check_lr/L/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": ""
+        },
+        {
+          "key": "/tail_check_lr/L/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/L/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/L/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 4.6640625
+        },
+        {
+          "key": "/tail_check_lr/L/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 13362.961857328512
+        },
+        {
+          "key": "/tail_check_lr/L/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/L/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 13362.995217899841
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 0.32052714236184476
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -92.40078002709436
+        },
+        {
+          "key": "/tail_check_lr/R/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": ""
+        },
+        {
+          "key": "/tail_check_lr/R/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/R/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/R/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 4.6640625
+        },
+        {
+          "key": "/tail_check_lr/R/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 13362.961857328512
+        },
+        {
+          "key": "/tail_check_lr/R/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/R/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 13362.995217899841
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 0.32052714236184476
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -92.40078002709436
+        },
+        {
+          "key": "/tail_gate_ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "PASS (PENDING-FREEZE: budgets are proposals, not frozen policy)",
+          "new": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts/audio-metallic.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "ULP": 7,
+        "SCHEMA-#100": 49,
+        "DEFINITION": 1,
+        "VERDICT": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9262112461653685,
+          "new": 0.9403276348888046
+        },
+        {
+          "key": "/channels/R/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 82913.35801059817,
+          "new": 82913.35801059815
+        },
+        {
+          "key": "/channels/R/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 82913.35801059817,
+          "new": 82913.35801059815
+        },
+        {
+          "key": "/channels/R/rms_diff_lsb",
+          "class": "ULP",
+          "old": 82913.35801059817,
+          "new": 82913.35801059815
+        },
+        {
+          "key": "/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9266317854573317,
+          "new": 0.9405774935777103
+        },
+        {
+          "key": "/channels/mono/rms_diff_at_best_shift_lsb",
+          "class": "ULP",
+          "old": 22206.523960747993,
+          "new": 22206.523960747996
+        },
+        {
+          "key": "/channels/mono/rms_diff_at_shift0_lsb",
+          "class": "ULP",
+          "old": 22206.523960747993,
+          "new": 22206.523960747996
+        },
+        {
+          "key": "/channels/mono/rms_diff_dbfs",
+          "class": "ULP",
+          "old": -33.48238661088811,
+          "new": -33.482386610888106
+        },
+        {
+          "key": "/channels/mono/rms_diff_lsb",
+          "class": "ULP",
+          "old": 22206.523960747993,
+          "new": 22206.523960747996
+        },
+        {
+          "key": "/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9752176394639275,
+          "new": 0.9709885662701574
+        },
+        {
+          "key": "/fixture_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/path",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "wet"
+        },
+        {
+          "key": "/proposed_tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/tail_check/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 112088.880859375
+        },
+        {
+          "key": "/tail_check/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 16697.92437608015
+        },
+        {
+          "key": "/tail_check/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 16909.381231057556
+        },
+        {
+          "key": "/tail_check/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 6654.443309124145
+        },
+        {
+          "key": "/tail_check/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -8.100319721988349
+        },
+        {
+          "key": "/tail_check_lr/L/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/L/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/L/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/L/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 268571.0625
+        },
+        {
+          "key": "/tail_check_lr/L/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 23547.1718623658
+        },
+        {
+          "key": "/tail_check_lr/L/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/L/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 21797.895619143244
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 22874.408505525385
+        },
+        {
+          "key": "/tail_check_lr/L/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 0.4187060829008924
+        },
+        {
+          "key": "/tail_check_lr/R/model_tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/tail_check_lr/R/reason",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_budget/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -20.0
+        },
+        {
+          "key": "/tail_check_lr/R/tail_frames",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 120000
+        },
+        {
+          "key": "/tail_check_lr/R/tail_max_abs_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 263057.8910522461
+        },
+        {
+          "key": "/tail_check_lr/R/tail_model_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 22268.599305904005
+        },
+        {
+          "key": "/tail_check_lr/R/tail_offset",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 153600
+        },
+        {
+          "key": "/tail_check_lr/R/tail_present",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_ref_rms_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 24384.684555008953
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_covered",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_sidecar",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_region_source",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)"
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_diff_lsb",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": 23053.603579932314
+        },
+        {
+          "key": "/tail_check_lr/R/tail_rms_rel_db",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": -0.48756641807384987
+        },
+        {
+          "key": "/tail_gate_ok",
+          "class": "SCHEMA-#100",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/verdict",
+          "class": "VERDICT",
+          "old": "FAIL against proposed budgets",
+          "new": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -8.10 dB exceeds the proposed -20.00 dB relative budget; L: tail residual 0.42 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -0.49 dB exceeds the proposed -20.00 dB relative budget)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-025/artifacts/compare__sxt025-accept-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/full_render/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999998378385,
+          "new": 0.999999997927093
+        },
+        {
+          "key": "/full_render/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999998401096,
+          "new": 0.9999999979145937
+        },
+        {
+          "key": "/full_render/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999998980862,
+          "new": 0.9999999984155656
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-025/artifacts/compare__sxt025-smoke-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3,
+        "ULP": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/full_render/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999998594291,
+          "new": 0.9999999981013192
+        },
+        {
+          "key": "/full_render/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999998606666,
+          "new": 0.9999999980854134
+        },
+        {
+          "key": "/full_render/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999999058489,
+          "new": 0.9999999985510315
+        },
+        {
+          "key": "/tail/tail_continuity_worst_margin_db",
+          "class": "ULP",
+          "old": 10.932439022087117,
+          "new": 10.932439022087113
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-025/negative-controls/nc-a-sxt025-accept-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9487671622296786,
+          "new": 0.97061548681531
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-025/negative-controls/nc-a-sxt025-smoke-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9301007519360114,
+          "new": 0.9470468344401687
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-026/artifacts/budget-metrics.json",
+      "class_counts": {
+        "SPECTRAL": 9,
+        "DEFINITION": 9
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/rows[0]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9234419021399648,
+          "new": 0.9523318799228803
+        },
+        {
+          "key": "/rows[0]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[1]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9225587741994487,
+          "new": 0.9523129317076342
+        },
+        {
+          "key": "/rows[1]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[2]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9234419021399648,
+          "new": 0.9523318799228803
+        },
+        {
+          "key": "/rows[2]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[3]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9575967223340163,
+          "new": 0.8956481813049025
+        },
+        {
+          "key": "/rows[3]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[4]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9381037550402566,
+          "new": 0.8498154794009908
+        },
+        {
+          "key": "/rows[4]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[5]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9092110108499554,
+          "new": 0.9156558324996035
+        },
+        {
+          "key": "/rows[5]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[6]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9755512597793249,
+          "new": 0.9169167861318831
+        },
+        {
+          "key": "/rows[6]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[7]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9687487861068206,
+          "new": 0.9056153600196133
+        },
+        {
+          "key": "/rows[7]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/rows[8]/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9704886498945166,
+          "new": 0.8808801405195944
+        },
+        {
+          "key": "/rows[8]/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-026a/artifacts/compare__sxt025-accept-v1.json",
+      "class_counts": {
+        "SPECTRAL": 3
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/full_render/channels/L/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7808584520119917,
+          "new": 0.9132872409708397
+        },
+        {
+          "key": "/full_render/channels/R/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7817711307942015,
+          "new": 0.9139869564725127
+        },
+        {
+          "key": "/full_render/channels/mono/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7798729847951672,
+          "new": 0.9132547556664261
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-coverage.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9884446215850758,
+          "new": 0.9981459982673252
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-holds.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9874378026804184,
+          "new": 0.9978196681985922
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-modwheel.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9914964131921044,
+          "new": 0.993285595585784
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8982691161035846,
+          "new": 0.8053474568488528
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-free-running.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8657771362425071,
+          "new": 0.7311091109490182
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-reso-zeroed.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9906855917791523,
+          "new": 0.9811003636003802
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-source-swap.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8328138586601302,
+          "new": 0.6617468434338597
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-repeated.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9971927936912464,
+          "new": 0.9989079083560051
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-baseline.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9874579116733226,
+          "new": 0.970959074770404
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9844211159424442,
+          "new": 0.954174570527245
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-reso-zeroed.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.986402830630958,
+          "new": 0.968702572789794
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9850202124210111,
+          "new": 0.9741411759510864
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7295344070606425,
+          "new": 0.4529885686916976
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-vca-zeroed.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8615236223435704,
+          "new": 0.6705498501921455
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-seq-modwheel-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9874579116733234,
+          "new": 0.970959074770404
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json",
+      "class_counts": {
+        "BUDGET-#110": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/proposed_budget_results/spectral_corr",
+          "class": "BUDGET-#110",
+          "old": false,
+          "new": true
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9791296734702285,
+          "new": 0.9984631680236014
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json",
+      "class_counts": {
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9920851447593002,
+          "new": 0.998839814688084
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/negative-controls.json",
+      "class_counts": {
+        "SPECTRAL": 6,
+        "VERDICT": 2
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/baseline/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9874579116733226,
+          "new": 0.970959074770404
+        },
+        {
+          "key": "/cutoff-zeroed/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9844211159424442,
+          "new": 0.954174570527245
+        },
+        {
+          "key": "/reso-zeroed/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.986402830630958,
+          "new": 0.968702572789794
+        },
+        {
+          "key": "/smoothing-bypass/beyond_model_error_via[0]",
+          "class": "VERDICT",
+          "old": "spectral",
+          "new": "mw-ramp"
+        },
+        {
+          "key": "/smoothing-bypass/beyond_model_error_via[1]",
+          "class": "VERDICT",
+          "old": "mw-ramp",
+          "new": "<absent>"
+        },
+        {
+          "key": "/smoothing-bypass/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9850202124210111,
+          "new": 0.9741411759510864
+        },
+        {
+          "key": "/source-swap-lfo/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.7295344070606425,
+          "new": 0.4529885686916976
+        },
+        {
+          "key": "/vca-zeroed/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8615236223435704,
+          "new": 0.6705498501921455
+        }
+      ]
+    }
+  ],
+  "verdict_flips": [
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json",
+      "key": "/verdict",
+      "old": "FAIL",
+      "new": "PASS",
+      "cause": "#110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json",
+      "key": "/verdict",
+      "old": "FAIL",
+      "new": "PASS",
+      "cause": "#110 spectral_corr (decisive: with the old spectral flag the verdict would be FAIL)"
+    }
+  ],
+  "not_regenerated": [
+    {
+      "artifact": "reports/SXT-028e-sse/negative-controls/negative-controls.json",
+      "reason": "NOT-MIGRATED: distortion-SSE negative controls keep their own log1p spectral_corr"
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "reason": "NOT-MIGRATED: distortion_negative_controls.py keeps its own log1p spectral_corr (frame 1024, Q10.21 LSB)"
+    },
+    {
+      "artifact": "reports/SXT-028f/negative-controls/negative-controls.json",
+      "reason": "NOT-MIGRATED: reverb2_negative_controls.py keeps its own log1p spectral_corr (integer LSB)"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc2-detune-zeroed.json",
+      "reason": "STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc2-diff-vs-true.json",
+      "reason": "STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni16-smoke.json",
+      "reason": "STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni2-poly.json",
+      "reason": "STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-chords.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-cut-hi.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-cut-lo.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-disturb.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-hot.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-king-b1.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-king-b2.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-reso1.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-sub12db.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-sub18db.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-toggle.json",
+      "reason": "NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"
+    },
+    {
+      "artifact": "reports/halfband-branch-order/artifacts/before-after-fixtures.json",
+      "reason": "HISTORICAL: #146 before/after measurement (no committed producing tool; the b_even renders are not committed); values are pre-#110 by construction and are not a current verdict"
+    },
+    {
+      "artifact": "reports/halfband-republication/artifacts/republication-record.json",
+      "reason": "HISTORICAL: #145 before/after republication record (legacy-metric spectral values quoted as the measurements #145 made; not a current verdict)"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/spectral-corr-sweep.json",
+      "reason": "HISTORICAL: #100 leg 4 characterization of the LEGACY metric (the runner now calls spectral_corr_legacy_log1p explicitly)"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-fmod09__seq-notes-coverage-v1.json",
+      "reason": "NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-fmod09__seq-poly-8-v1.json",
+      "reason": "NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-temple__seq-notes-coverage-v1.json",
+      "reason": "NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-temple__seq-poly-8-v1.json",
+      "reason": "NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-unity__seq-notes-coverage-v1.json",
+      "reason": "NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-unity__seq-poly-8-v1.json",
+      "reason": "NOT-MIGRATED: compare_aw49_reference.py keeps its own native-unit log1p spectral_corr (float32 bus)"
+    },
+    {
+      "artifact": "reports/sxt-037/artifacts/f038-102/budget-before-after.json",
+      "reason": "NOT-MIGRATED: filter_lp12 L2 leg (0.999, Q10.21 LSB), a different budget family"
+    }
+  ],
+  "unexplained": []
+}

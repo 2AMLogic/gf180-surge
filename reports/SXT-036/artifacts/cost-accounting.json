@@ -1,0 +1,468 @@
+{
+  "tool": "vel_cost_accounting/1",
+  "pins": {
+    "sxt015": {
+      "model_version": "sxt-015-accounting/1.1.0",
+      "cost_profile": "placeholder-v0",
+      "params_digest": "a639d3115ae1a0ca",
+      "cyc_modroute_frame": 15,
+      "clock_hz": 480000000,
+      "sample_rate_hz": 48000,
+      "reserve_fraction": 0.2
+    },
+    "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
+  },
+  "controls": {
+    "K4_pin_drift": {
+      "fires": true,
+      "drift": [
+        "cyc_modroute_frame: pinned 15 != live 16"
+      ]
+    },
+    "K5_probe_claim_detector": {
+      "fires": true
+    },
+    "K1_per_frame_shape": {
+      "fires": true,
+      "predicted": 19350,
+      "measured": 17640
+    },
+    "K2_route_count_blind": {
+      "fires": true,
+      "mispredicted_at": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "K3_attribution": {
+      "fires": true,
+      "evals_at_zero_routes": 0
+    },
+    "K6_state_cross_check": {
+      "status": "PASS",
+      "shared_slot_mutant_mismatches": 45,
+      "source": "negative-controls.json"
+    }
+  },
+  "sxt016_probe_coverage": {
+    "probe_records": 76,
+    "records_replacing_row": [],
+    "row": "cyc_modroute_frame",
+    "status": "unpinned_by_any_probe"
+  },
+  "measured_runs": {
+    "sxt036-vel-overlap-v1": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 6,
+      "ops": {
+        "passes": 2940,
+        "evals": 17640,
+        "mul32": 17640,
+        "add64": 17640,
+        "cmp64": 35280,
+        "add32": 17640
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "seq-notes-coverage-v1": {
+      "sequence": "seq-notes-coverage-v1",
+      "frames": 8550,
+      "control_passes": 3132,
+      "max_live_voices": 1,
+      "mean_live_voices": 0.3663157894736842,
+      "event_rom_reads": 18,
+      "routes": 6,
+      "ops": {
+        "passes": 3132,
+        "evals": 18792,
+        "mul32": 18792,
+        "add64": 18792,
+        "cmp64": 37584,
+        "add32": 18792
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "seq-notes-repeated-v1": {
+      "sequence": "seq-notes-repeated-v1",
+      "frames": 6150,
+      "control_passes": 1944,
+      "max_live_voices": 1,
+      "mean_live_voices": 0.31609756097560976,
+      "event_rom_reads": 16,
+      "routes": 6,
+      "ops": {
+        "passes": 1944,
+        "evals": 11664,
+        "mul32": 11664,
+        "add64": 11664,
+        "cmp64": 23328,
+        "add32": 11664
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "seq-notes-holds-v1": {
+      "sequence": "seq-notes-holds-v1",
+      "frames": 9300,
+      "control_passes": 4392,
+      "max_live_voices": 1,
+      "mean_live_voices": 0.472258064516129,
+      "event_rom_reads": 8,
+      "routes": 6,
+      "ops": {
+        "passes": 4392,
+        "evals": 26352,
+        "mul32": 26352,
+        "add64": 26352,
+        "cmp64": 52704,
+        "add32": 26352
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "seq-poly-8-v1": {
+      "sequence": "seq-poly-8-v1",
+      "frames": 5550,
+      "control_passes": 14784,
+      "max_live_voices": 8,
+      "mean_live_voices": 2.6637837837837837,
+      "event_rom_reads": 16,
+      "routes": 6,
+      "ops": {
+        "passes": 14784,
+        "evals": 88704,
+        "mul32": 88704,
+        "add64": 88704,
+        "cmp64": 177408,
+        "add32": 88704
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    }
+  },
+  "route_table_sweep": {
+    "0": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 0,
+      "ops": {
+        "passes": 2940,
+        "evals": 0,
+        "mul32": 0,
+        "add64": 0,
+        "cmp64": 0,
+        "add32": 0
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "1": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 1,
+      "ops": {
+        "passes": 2940,
+        "evals": 2940,
+        "mul32": 2940,
+        "add64": 2940,
+        "cmp64": 5880,
+        "add32": 2940
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "2": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 2,
+      "ops": {
+        "passes": 2940,
+        "evals": 5880,
+        "mul32": 5880,
+        "add64": 5880,
+        "cmp64": 11760,
+        "add32": 5880
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "3": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 3,
+      "ops": {
+        "passes": 2940,
+        "evals": 8820,
+        "mul32": 8820,
+        "add64": 8820,
+        "cmp64": 17640,
+        "add32": 8820
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "4": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 4,
+      "ops": {
+        "passes": 2940,
+        "evals": 11760,
+        "mul32": 11760,
+        "add64": 11760,
+        "cmp64": 23520,
+        "add32": 11760
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "5": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 5,
+      "ops": {
+        "passes": 2940,
+        "evals": 14700,
+        "mul32": 14700,
+        "add64": 14700,
+        "cmp64": 29400,
+        "add32": 14700
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    },
+    "6": {
+      "sequence": "sxt036-vel-overlap-v1",
+      "frames": 3225,
+      "control_passes": 2940,
+      "max_live_voices": 3,
+      "mean_live_voices": 0.9116279069767442,
+      "event_rom_reads": 10,
+      "routes": 6,
+      "ops": {
+        "passes": 2940,
+        "evals": 17640,
+        "mul32": 17640,
+        "add64": 17640,
+        "cmp64": 35280,
+        "add32": 17640
+      },
+      "exactness_verdict": "PASS",
+      "exactness_mismatches": 0
+    }
+  },
+  "per_evaluation": {
+    "measured_ops": {
+      "mul32": 1,
+      "add64": 1,
+      "cmp64": 2,
+      "add32": 1
+    },
+    "derived_cycles_bracket": [
+      2,
+      8
+    ],
+    "readings": {
+      "low": "A-DSP-1c read as 'the 32x32->64 multiply, its rounding add and its saturation clamp are one MAC pass' + A-ALU-1 for the 32-bit accumulate",
+      "high": "every op a separate cycle, with the 64-bit rounding add and the two 64-bit saturation compares costing 2 cycles each on a 32-bit ALU (A-ALU-1 covers <=32-bit words only)"
+    },
+    "sxt015_cycles_per_row_per_frame": 15
+  },
+  "carriers": {
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp": {
+      "row_split": {
+        "global": 0,
+        "scene_rows_per_scene": [
+          1,
+          0
+        ],
+        "voice_rows_per_scene": [
+          3,
+          0
+        ],
+        "scene_rows": 1,
+        "voice_rows": 3,
+        "total": 4
+      },
+      "worst_case_voices": 16,
+      "scene_mode": "Single",
+      "accounted_modulation_cycles_per_frame": 735.0,
+      "measured_shape_evaluations_per_frame": 49,
+      "shape_factor": 12.25,
+      "accounted_total_cycles_per_frame": 25755.0,
+      "accounted_status": "rejected",
+      "derived_cycles_bracket_for_evaluations": [
+        98,
+        392
+      ],
+      "accounting_charges_the_measured_shape": true
+    },
+    "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp": {
+      "row_split": {
+        "global": 0,
+        "scene_rows_per_scene": [
+          10,
+          0
+        ],
+        "voice_rows_per_scene": [
+          3,
+          0
+        ],
+        "scene_rows": 10,
+        "voice_rows": 3,
+        "total": 13
+      },
+      "worst_case_voices": 16,
+      "scene_mode": "Single",
+      "accounted_modulation_cycles_per_frame": 870.0,
+      "measured_shape_evaluations_per_frame": 58,
+      "shape_factor": 4.461538461538462,
+      "accounted_total_cycles_per_frame": 29090.0,
+      "accounted_status": "rejected",
+      "derived_cycles_bracket_for_evaluations": [
+        116,
+        464
+      ],
+      "accounting_charges_the_measured_shape": true
+    },
+    "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp": {
+      "row_split": {
+        "global": 2,
+        "scene_rows_per_scene": [
+          4,
+          0
+        ],
+        "voice_rows_per_scene": [
+          1,
+          3
+        ],
+        "scene_rows": 4,
+        "voice_rows": 4,
+        "total": 10
+      },
+      "worst_case_voices": 16,
+      "scene_mode": "Dual",
+      "accounted_modulation_cycles_per_frame": 1050.0,
+      "measured_shape_evaluations_per_frame": 70,
+      "shape_factor": 7.0,
+      "accounted_total_cycles_per_frame": 30850.0,
+      "accounted_status": "rejected",
+      "derived_cycles_bracket_for_evaluations": [
+        140,
+        560
+      ],
+      "accounting_charges_the_measured_shape": true
+    },
+    "resources/data/patches_factory/Basses/Attacky.fxp": {
+      "row_split": {
+        "global": 0,
+        "scene_rows_per_scene": [
+          2,
+          0
+        ],
+        "voice_rows_per_scene": [
+          0,
+          0
+        ],
+        "scene_rows": 2,
+        "voice_rows": 0,
+        "total": 2
+      },
+      "worst_case_voices": 16,
+      "scene_mode": "Single",
+      "accounted_modulation_cycles_per_frame": 30.0,
+      "measured_shape_evaluations_per_frame": 2,
+      "shape_factor": 1.0,
+      "accounted_total_cycles_per_frame": 9650.0,
+      "accounted_status": "rejected",
+      "derived_cycles_bracket_for_evaluations": [
+        4,
+        16
+      ],
+      "accounting_charges_the_measured_shape": true
+    }
+  },
+  "shape_resolution": {
+    "decision_issue": 239,
+    "accounting_shape": "global/scene-list rows once per frame; voice-list rows once per worst-case live voice per frame",
+    "accounting_charges_the_measured_shape": true,
+    "per_carrier": {
+      "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp": true,
+      "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp": true,
+      "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp": true,
+      "resources/data/patches_factory/Basses/Attacky.fxp": true
+    },
+    "remaining_divergence": "per-evaluation constant only (cyc_modroute_frame placeholder vs the derived bracket); SXT-016 pins it"
+  },
+  "state": {
+    "per_instance_state_bits": 512,
+    "slots": 8,
+    "sxt015_modulation_state_row": null,
+    "sxt015_modulation_state_disposition": {
+      "decision_issue": 239,
+      "decided": "declared inside voice_base_state_bytes (no separate row); value unchanged at 4096 B",
+      "retires_when": "SXT-016 re-derives the voice state bucket at the selected word lengths"
+    },
+    "K6_shared_register_control": {
+      "status": "PASS",
+      "shared_slot_mutant_mismatches": 45,
+      "source": "negative-controls.json"
+    }
+  },
+  "costs_txt_cross_check": {
+    "quoted": {
+      "qmul_per_running_voice_block": 6,
+      "per_slot_state_bits": 512,
+      "probe_cycles_per_event": 88,
+      "probe_state_ram_bits": 512
+    },
+    "rederived": {
+      "qmul_per_running_voice_block": 6,
+      "per_slot_state_bits": 512,
+      "probe_cycles_per_event": 88,
+      "probe_state_ram_bits": 512
+    },
+    "stale": {}
+  },
+  "followup_issue": 239,
+  "verdict": "PASS",
+  "oracle_dependent_items": {
+    "2": "NOT_RUN",
+    "5": "NOT_RUN"
+  }
+}

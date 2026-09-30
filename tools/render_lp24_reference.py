@@ -24,7 +24,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import struct
@@ -33,8 +32,10 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "voice", "filter_lp24"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
 import case_plan as cp  # noqa: E402
+import oracle_common as oc  # noqa: E402
 
 CASES_DIR = os.path.join(REPO, "reports", "SXT-038", "artifacts", "cases")
 BUILD = os.path.join(REPO, "oracle", "sxt038", "build_lp24_ref.sh")
@@ -42,14 +43,6 @@ BUILD = os.path.join(REPO, "oracle", "sxt038", "build_lp24_ref.sh")
 
 class Refuse(Exception):
     pass
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def build_harness():
@@ -149,9 +142,9 @@ def render_case(case_path, out_dir, binary, prov, provider):
             "peak_abs_out": peaks["out"],
         },
         "sha256": {
-            "coeffs.jsonl": sha256_file(os.path.join(bundle, "coeffs.jsonl")),
-            "units.bin": sha256_file(os.path.join(bundle, "units.bin")),
-            "regs.bin": sha256_file(os.path.join(bundle, "regs.bin")),
+            "coeffs.jsonl": oc.sha256_file(os.path.join(bundle, "coeffs.jsonl")),
+            "units.bin": oc.sha256_file(os.path.join(bundle, "units.bin")),
+            "regs.bin": oc.sha256_file(os.path.join(bundle, "regs.bin")),
         },
     }
     with open(os.path.join(bundle, "meta.json"), "w", encoding="utf-8") as f:

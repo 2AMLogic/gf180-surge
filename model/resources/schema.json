@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SXT-015 resource account (one normalized graph)",
-  "model_version": "sxt-015-accounting/1.0.0",
+  "model_version": "sxt-015-accounting/1.1.0",
   "description": "Result of model.resources.accounting.account_graph() over one corpus/normalized/graphs.jsonl line. Deterministic bookkeeping model only: NO technology/area/cycle measurement (SXT-016), NO profile freeze (SXT-017), NO fidelity or preset-quality claim, NO hardware claim. Cycle values use the named placeholder-v0 cost profile so the closure machinery is executable; every placeholder is listed in the parameter registry.",
   "inputs": {
     "graph_line": "one JSON object from corpus/normalized/graphs.jsonl (SXT-011 schema sxt-011-normalized-graph-schema/1.0.0; engine pin 58914e59c608ed4384ba6002e44c3465c58b2e71)",
@@ -72,6 +72,7 @@
   "budget_object": {
     "formula": "gross = F/Fs; dsp_budget = gross * (1 - reserve); cost = voice + fx + modulation + events; closure = OVERFLOW when cost > dsp_budget",
     "closure_enum": ["within_budget", "OVERFLOW"],
+    "modulation_rows": "how the modulation term was charged: rows_charged_once_per_frame (global + scene lists), rows_charged_once_per_live_voice (voice lists), rows_total, worst_case_voices, row_evaluations_per_frame = rows_charged_once_per_frame + worst_case_voices * rows_charged_once_per_live_voice, cycles_per_row_evaluation. modulation cost = row_evaluations_per_frame * cyc_modroute_frame (decision #239, from the SXT-036 measured law; the voice-row term is an upper bound in dual/split scene modes because a pool voice is resident in one scene)",
     "note": "F and all per-unit cycle costs are placeholder-v0; an OVERFLOW here supports no technology claim"
   },
   "rejection_codes": {

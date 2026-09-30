@@ -493,13 +493,38 @@ forge_check_auto_delete() {
   fi
 }
 
+# url_encode_path_segment VALUE -> VALUE, safe to interpolate into an API URL
+# path. Percent-encodes (as UTF-8 bytes) everything outside RFC 3986's
+# unreserved set `[A-Za-z0-9._~-]`, per `/`-delimited segment.
+#
+# A branch name is forge-derived, and while git's ref-format forbids `..` (so
+# there is no path traversal here), it permits URL metacharacters — a name
+# containing `?`, `#` or `%` interpolated raw silently addresses a DIFFERENT
+# endpoint than the caller asked for (#9109). Encoding closes that.
+#
+# The `/` SEPARATORS are deliberately preserved rather than encoded: both
+# endpoints this feeds route on literal slashes (GitHub's
+# `git/refs/heads/<a>/<b>`, Gitea's `branches/*` wildcard), so `%2F` would
+# break every ordinary `feature/issue-N` name. Only the characters WITHIN each
+# segment are encoded, which is what the metacharacter problem is about.
+#
+# jq (a hard dependency of this lib already) rather than a bash character loop:
+# `@uri` is exactly the RFC 3986 encoder and handles multi-byte input without
+# locale juggling. Written as a one-liner because `defaults/scripts/lib/` is
+# inside the portable pool `loom-daemon shell-budget --check` ratchets, where
+# comments are free and code lines are not.
+url_encode_path_segment() { printf '%s' "${1:-}" | jq -sRr 'split("/") | map(@uri) | join("/")'; }
+
 # Delete a remote branch.
 # Usage: forge_delete_branch NWO BRANCH_NAME
 # GitHub: DELETE /repos/{nwo}/git/refs/heads/{branch}
 # Gitea: DELETE /repos/{owner}/{repo}/branches/{branch}
 forge_delete_branch() {
-  local nwo="$1"
-  local branch="$2"
+  # Declaration and assignment are separate statements sharing one physical
+  # line: the encode call is net-new code in the portable pool
+  # `loom-daemon shell-budget --check` ratchets, and packing it against the
+  # `local` is what pays for it there.
+  local nwo="$1" branch; branch="$(url_encode_path_segment "$2")"
 
   if [[ "$FORGE_TYPE" == "gitea" ]]; then
     forge_split_nwo "$nwo"
@@ -543,6 +568,20 @@ FORGE_CHECK_RUNS_RC_NOT_FOUND=44
 # partial JSON keeps a truncated read from ever being read as settlement.
 FORGE_CHECK_RUNS_RC_TRUNCATED=45
 
+# jq filter mapping ONE page of Gitea commit statuses to GitHub check-run rows,
+# as NDJSON — the per-page shape _forge_gitea_paginate emits (#8987).
+# Gitea status: pending, success, error, failure, warning.
+# GitHub check run: status=completed/queued/in_progress, conclusion=success/…
+_FORGE_GITEA_CHECK_RUN_JQ='.[] | {
+  name: .context,
+  status: (if .status == "pending" then "queued" else "completed" end),
+  conclusion: (if .status == "success" then "success"
+               elif .status == "failure" or .status == "error" then "failure"
+               elif .status == "warning" then "neutral"
+               else null end),
+  html_url: .target_url
+} | tojson'
+
 # Get CI check runs for a commit.
 # Usage: forge_get_check_runs NWO COMMIT_SHA
 # GitHub: GET /repos/{nwo}/commits/{sha}/check-runs (fully paginated)
@@ -550,44 +589,30 @@ FORGE_CHECK_RUNS_RC_TRUNCATED=45
 #
 # Return codes: 0 success (JSON on stdout); $FORGE_CHECK_RUNS_RC_NOT_FOUND
 # (44) on a confirmed HTTP 404 (GitHub only — see below);
-# $FORGE_CHECK_RUNS_RC_TRUNCATED (45) on a short read (GitHub only); 1 for any
-# other failure.
-#
-# KNOWN GAP (Gitea): the Gitea branch below makes ONE unpaginated request and
-# derives `total_count` from the rows it got, so a page-capped read there is
-# undetectable by the fail-closed check the GitHub branch gets. Tracked
-# separately — the live mechanism this guards (`merge-pr.sh --auto`) runs
-# against GitHub.
+# $FORGE_CHECK_RUNS_RC_TRUNCATED (45) on a short read (GitHub only — Gitea's
+# statuses endpoint publishes no independent count to compare against, so the
+# Gitea branch's equivalent guarantee is exhaustive pagination that returns
+# nonzero rather than a short list, #8987); 1 for any other failure.
 forge_get_check_runs() {
   local nwo="$1"
   local commit="$2"
 
   if [[ "$FORGE_TYPE" == "gitea" ]]; then
     forge_split_nwo "$nwo"
-    local statuses
-    statuses=$(gitea_api GET "repos/$FORGE_OWNER/$FORGE_REPO/commits/$commit/statuses" 2>/dev/null) || {
-      echo '{"total_count":0,"check_runs":[]}'
-      return 1
-    }
-
-    # Map Gitea commit statuses to GitHub check-run shape.
-    # Gitea status field: pending, success, error, failure, warning
-    # GitHub check run: status=completed/queued/in_progress, conclusion=success/failure/...
-    echo "$statuses" | jq '{
-      total_count: (. | length),
-      check_runs: [.[] | {
-        name: .context,
-        status: (if .status == "pending" then "queued"
-                 else "completed" end),
-        conclusion: (if .status == "success" then "success"
-                     elif .status == "failure" then "failure"
-                     elif .status == "error" then "failure"
-                     elif .status == "warning" then "neutral"
-                     elif .status == "pending" then null
-                     else null end),
-        html_url: .target_url
-      }]
-    }'
+    # Page to exhaustion (#8987). This used to be ONE unpaginated request, which
+    # Gitea caps at DEFAULT_PAGING_NUM (30) / MAX_RESPONSE_ITEMS (50) — the same
+    # truncation class as #8895 — and its total_count came from `length` of the
+    # rows that arrived, so a truncated read looked self-consistent and no
+    # short-read check could ever fire. _forge_gitea_paginate returns nonzero on
+    # ANY page failure or page-cap trip instead of reporting a short list, so
+    # total_count below counts a COMPLETE read. (Gitea's own CombinedStatus
+    # total_count is itself len() of one fetched page, so it is not a usable
+    # independent cross-check the way GitHub's is.)
+    local rows
+    rows=$(_forge_gitea_paginate \
+      "repos/$FORGE_OWNER/$FORGE_REPO/commits/$commit/statuses" \
+      "$_FORGE_GITEA_CHECK_RUN_JQ") || return 1
+    printf '%s\n' "$rows" | jq -cs '{total_count: length, check_runs: .}'
   else
     # Capture stdout and stderr into separate temp files so a non-2xx
     # response's HTTP status (which `gh api` reports only on stderr, as
@@ -2033,9 +2058,15 @@ forge_get_required_status_check_contexts() {
   # real failure text without a temp file. A source the gate excuses
   # configures no required checks, with a stderr warning so the relaxation is
   # never silent; any other failure still fails the whole lookup closed.
+  #
+  # `$branch` goes through url_encode_path_segment for the REST call because
+  # it lands in a URL path there (#9109). The GraphQL call below deliberately
+  # does NOT encode it: `-F ref=refs/heads/$branch` is a typed variable VALUE
+  # gh serialises into the request body, not a path, so percent-encoding would
+  # send a literally wrong ref name.
   local ruleset_rc=0 classic_rc=0 ruleset_out="" classic_out="" _pg
   local query='query($owner: String!, $name: String!, $ref: String!) { repository(owner: $owner, name: $name) { ref(qualifiedName: $ref) { branchProtectionRule { requiredStatusCheckContexts } } } }'
-  ruleset_out="$("$gh_cmd" api "repos/${FORGE_OWNER}/${FORGE_REPO}/rules/branches/${branch}" --jq '.[]? | select(.type == "required_status_checks") | .parameters.required_status_checks[]?.context' 2>&1)" || ruleset_rc=1
+  ruleset_out="$("$gh_cmd" api "repos/${FORGE_OWNER}/${FORGE_REPO}/rules/branches/$(url_encode_path_segment "${branch}")" --jq '.[]? | select(.type == "required_status_checks") | .parameters.required_status_checks[]?.context' 2>&1)" || ruleset_rc=1
   classic_out="$("$gh_cmd" api graphql -f "query=$query" -F "owner=$FORGE_OWNER" -F "name=$FORGE_REPO" -F "ref=refs/heads/$branch" --jq '.data.repository.ref.branchProtectionRule.requiredStatusCheckContexts // [] | .[]' 2>&1)" || classic_rc=1
   [[ "$ruleset_rc" -eq 0 ]] || { _pg=$(printf '%s' "$ruleset_out" | tr '[:upper:]' '[:lower:]'); [[ "$_pg" == *"upgrade to github"* && "$_pg" == *"make this repository public"* ]] && { echo "forge-helpers: ruleset required-checks lookup for '$branch' is plan-gated (#8872) -- treating as no required checks: $ruleset_out" >&2; ruleset_out=""; } || return 1; }; [[ "$classic_rc" -eq 0 ]] || { _pg=$(printf '%s' "$classic_out" | tr '[:upper:]' '[:lower:]'); [[ "$_pg" == *"upgrade to github"* && "$_pg" == *"make this repository public"* ]] && { echo "forge-helpers: classic branch-protection required-checks lookup for '$branch' is plan-gated (#8872) -- treating as no required checks: $classic_out" >&2; classic_out=""; } || return 1; }
   # Union, order-preserving, de-duplicated: a context can legitimately be

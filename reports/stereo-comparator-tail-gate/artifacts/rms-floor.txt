@@ -1,5 +1,5 @@
 issue #100 -- stereo comparator tail gate / metric findings: leg 3
-run: 2026-09-26T23:50:41Z   repo HEAD: 8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e   numpy 2.4.1
+run: 2026-09-27T01:26:03Z   repo HEAD: abcba146dd313be3c9b6c57aa578891a3bbe70a0   numpy 2.4.1
 claim scope: comparator behaviour only; no fidelity, support, or sound claim.
 amended by issue #111: tail gate now carries the tail-shape (decay-curve) leg; budget {"decay_curve_floor_dbfs": -100.0, "decay_curve_max_dev_db": 1.0, "decay_curve_window_s": 0.05, "tail_rms_rel_db": -20.0}
 
@@ -9,6 +9,6 @@ amended by issue #111: tail gate now carries the tail-shape (decay-curve) leg; b
   shared-mono  exact-agreement rms_diff_dbfs=-300.0 strict-JSON=True verdict=PASS -> OK
   chorus       exact-agreement rms_diff_dbfs=-300.0 strict-JSON=True verdict=PASS -> OK
   fx           exact-agreement rms_diff_dbfs=-300.0 strict-JSON=True verdict=PASS -> OK
-  committed reports/**/*.json strict-parsed: 780 files, 0 rejected
+  committed reports/**/*.json strict-parsed: 786 files, 0 rejected
 
 leg 3 verdict: PASS

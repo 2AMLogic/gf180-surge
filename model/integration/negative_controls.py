@@ -68,12 +68,6 @@ def wet_activity_contract(wet, dry):
             "ok": rms > 1e-4}
 
 
-def run_config(image, inputs, dry, frames, seq):
-    run = IntegrationRun.__new__(IntegrationRun)
-    IntegrationRun.__init__(run, image, inputs, dry, frames)
-    return run.run(seq)
-
-
 def nc_a(sequence):
     seq_name = sequence
     seq = json.load(open(os.path.join(SEQ_DIR, seq_name + ".json")))

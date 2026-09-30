@@ -381,3 +381,71 @@ remains an unpriced placeholder [PENDING-SXT-016]; no bundle gained a fit
 claim; no preset became supported; the SXT-028f model-vs-pinned-Surge
 agreement leg remains NOT_RUN/BLOCKED in its own record (#126). Nothing is
 frozen, and no budget was relaxed.
+
+---
+
+## 11. ACCOUNTING-SHAPE REVISION (2026-09-30) — modulation rows charged per evaluation, issue #239
+
+**What changed.** Nothing in this record's method, tooling, gates, or
+verdicts. One SXT-015 *shape* moved: a modulation routing row is now charged
+once per **evaluation** — a global/scene-list row once per frame, a
+**voice**-list row once per worst-case live voice per frame — instead of
+every row once per frame. The per-evaluation constant `cyc_modroute_frame` is
+**unchanged at 15** (a placeholder no SXT-016 probe pins), so this is a
+structural correction, not a re-priced row. The decision, its measured basis
+(SXT-036 #70: `route evaluations = routes x per-voice control passes`), its
+controls and its corpus flip list are recorded in
+`reports/sxt-015/EVIDENCE.md` §8. `MODEL_VERSION` 1.0.0 -> 1.1.0;
+`params_digest` 646942e9c3887ecb -> a639d3115ae1a0ca.
+
+`probes/worked_bundle.py` carried a second copy of the retired formula; it
+now reads `budget.modulation_rows.row_evaluations_per_frame` off the account,
+so the stage-2 mixed total and the SXT-015 account can no longer disagree.
+
+### 11.1 Effect on the bundle stage (`predictions/*`)
+
+All five headline predictions and all seven variant summaries were
+regenerated with the §7 recipe. Per-preset `status` is **identical** for all
+3,561 entries in every one of the 12 artifacts, and so are every `reasons`
+list, `totals`, `per_bank` and `slate_coverage`. What moved:
+
+| field | movement |
+|---|---|
+| `presets[].columns.cost_cycles_per_frame_placeholder_v0` | 3,234 of 3,561 presets (every preset with at least one voice-list row), all **upward** |
+| `presets[].columns.budget_closure_placeholder_v0` | `within_budget -> OVERFLOW` for 9 presets at pool 16 (B3/B4/R0) and 80 at pool 8 (B1/B2, VAR-B1-inst8, VAR-B3-pool8); **no** flip in the other direction, in any artifact |
+| `aggregates.*.cost_cycles_per_frame_placeholder_v0` + the OVERFLOW caveat line | follow from the two rows above |
+| `provenance.accounting_model_version` | 1.0.0 -> 1.1.0 |
+
+Cycles gate nothing in this stage by construction (§8: "cycles gate nothing
+in this DRAFT"), which is why no status can move here.
+
+### 11.2 Effect on the cost-closure stage (`cost-closure.json`)
+
+| field | movement |
+|---|---|
+| `worst_mixed_cycles_per_frame` | **48 of 120** grid cells, all **upward** (48 up, 0 down): B1-core-narrow 4121.2->4331.2, 4453.8->4678.8, 6375.0->6600.0, 6753.0->6978.0, 7563.8->7788.8, 9863.0->10088.0; B2-core-wet-plan3 7640.6->7850.6, 8205.6->8325.6, 11094.2->11304.2 (each value recurring across the clock/memory cells that share a multiplier) |
+| `lanes_required_floor_mixed` | **3** cells: B1-core-narrow @96 MHz M32 7 -> 8; B2-core-wet-plan3 @96 MHz M32 13 -> 14 (two cells) |
+| `provenance.accounting_model_version` | 1.0.0 -> 1.1.0 |
+
+**Unchanged:** every cell `verdict`, `worst_probe_only_cycles_per_frame` and
+`worst_probe_only_preset` (the modulation term is a placeholder component and
+is excluded from the lower bound by construction), every `ext_*` column,
+`admissible`, `fit_claimable`, `admissible_configs`, `fit_claim_configs`,
+`selected_bundle` (`B1-core-narrow`), `selected_bundle_fit_claim` (`false`),
+`goal_test`, `stop_escalate`, `stop_escalate_reasons`, and
+`reports/sxt-017/negative-controls-budget.txt` (regenerated, byte-identical).
+
+**Stop/escalate check: NOT TRIGGERED.** Every movement is **pessimistic** —
+a mixed total can only rise, so a cell can only move toward OVERFLOW, and
+none did. This is the opposite of §10.3, where an optimistic
+`EXCEEDS -> within` movement forced the correction to be held and routed to
+#12. Nothing is routed to #12 by this change, and nothing is frozen.
+
+### 11.3 What this does NOT establish
+
+`cyc_modroute_frame` remains an unpriced `placeholder` [PENDING-SXT-016] and
+SXT-036's 2..8 cycles-per-evaluation bracket is derived under named
+assumptions, never measured. No bundle gained or lost a fit claim, no preset
+became supported or unsupported (supported-preset delta **0**), no budget was
+relaxed, and no profile was frozen. A `placeholder-v0` closure column is not
+a support claim in either direction.

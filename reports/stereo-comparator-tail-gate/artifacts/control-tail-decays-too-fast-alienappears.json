@@ -4,7 +4,7 @@
   "slug": "alienappears",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/alienappears/tail-decays-too-fast.f32.wav",
+  "model": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/alienappears/tail-decays-too-fast.f32.wav",
   "path": "wet",
   "fixture_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
   "channels": {
@@ -18,7 +18,7 @@
       "rms_diff_at_shift0_lsb": 1160.8517483017838,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 1160.8517483017838,
-      "spectral_corr": 0.9954931209366824
+      "spectral_corr": 0.9865839303312299
     },
     "R": {
       "frames": 273600,
@@ -30,7 +30,7 @@
       "rms_diff_at_shift0_lsb": 1145.9919360061003,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 1145.9919360061003,
-      "spectral_corr": 0.9953404511060121
+      "spectral_corr": 0.9866518313562894
     },
     "mono": {
       "frames": 273600,
@@ -42,7 +42,7 @@
       "rms_diff_at_shift0_lsb": 1095.223262135507,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 1095.223262135507,
-      "spectral_corr": 0.9955160748007165
+      "spectral_corr": 0.9865682103089096
     }
   },
   "proposed_budgets": {
@@ -50,6 +50,7 @@
     "rms_diff_dbfs": -46.0,
     "spectral_corr_min": 0.98
   },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
   "proposed_budget_results": {
     "max_abs_diff_lsb": false,
     "rms_diff_dbfs": true,

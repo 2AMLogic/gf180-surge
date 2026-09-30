@@ -36,8 +36,19 @@ cited, never copied), `policy` (this repository's declared convention),
   active scenes (sum of effective unison over active osc slots)`.
 - Budget closure (plan section 5): `gross = F/Fs` cycles per output frame;
   `dsp_budget = gross x (1 - reserve)`; complete-patch cost =
-  voice + FX (enabled, route-active instances) + modulation rows + events;
-  `cost > dsp_budget` => explicit `budget_overflow` rejection. Never squeezed.
+  voice + FX (enabled, route-active instances) + modulation row
+  **evaluations** + events; `cost > dsp_budget` => explicit
+  `budget_overflow` rejection. Never squeezed.
+- Modulation rows are charged by **evaluation scope** (decision #239, from
+  SXT-036's measured law `route evaluations = routes x per-voice control
+  passes`): a global-list or scene-list row once per frame, a **voice**-list
+  row once per worst-case live voice per frame —
+  `row_evaluations_per_frame = rows_per_frame + worst_case_voices x
+  rows_per_voice`, each evaluation costing `cyc_modroute_frame`. The split is
+  reported in `budget.modulation_rows`. In dual/split scene modes this is an
+  upper bound (a pool voice is resident in exactly one scene), in the same
+  conservative style as the per-voice osc/filter terms. Row *counts* are
+  unchanged; what changed is how many times a row is charged.
 - External classification: a writable state class larger than
   `external_threshold_bytes` (64 KiB) is **external writable memory**; flash
   holds assets only and is **never** counted as delay/reverb storage.

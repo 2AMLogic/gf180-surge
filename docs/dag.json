@@ -173,7 +173,7 @@
       "status": "PASS",
       "note": "Landed PR #34. Per-instance FX/voice accounting, external-memory split, corpus scan (2,912 fit 4-instance), fail-closed controls.",
       "evidence": "reports/sxt-015/EVIDENCE.md",
-      "evidence_sha256": "eb7b7881a2bf58808bc49fa75e41858b8ef4124f6ff2842a313432c1c2f95261"
+      "evidence_sha256": "8a661cf578f1d6be81fff0aec0b27899c44efe0d6db352ffaabb903a8fe7e421"
     },
     {
       "id": 11,
@@ -187,7 +187,7 @@
       "status": "PASS",
       "note": "Landed PR #38. Kernel probes under named assumptions; scalar single-lane closure fails at all clocks (finding, not infeasibility); 11 ESTIMATE-REF items replaced.",
       "evidence": "reports/sxt-016/EVIDENCE.md",
-      "evidence_sha256": "77d430f9996ca935ca2372e6dcff28911cade7c56fc99b41946d908a13486312"
+      "evidence_sha256": "d1eb27317d0ec8483b991539a226652e78b933416de143994ed26db9aa68fc90"
     },
     {
       "id": 12,
@@ -247,7 +247,7 @@
       "status": "PASS",
       "note": "Landed PR #40. Attacky.fxp slice: RTL==model exact on 3 sequences (12,609 state fields); mutant control fails as designed; reference errors reported against [PROPOSED] budgets (1 pass, 2 pending-freeze).",
       "evidence": "reports/sxt-022/EVIDENCE.md",
-      "evidence_sha256": "c47473998b23e74f490ca6c38bd97ca0daac66c6f6a466d757981e2947a5574e"
+      "evidence_sha256": "6af4fc7bcdb356b8ff810999fbc28051428cad90efb3a0ce3e032d9fc3ac9707"
     },
     {
       "id": 16,

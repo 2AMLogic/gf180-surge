@@ -40,8 +40,8 @@ records, memory model E1-conservative):
 
 | Bundle | xMult | total cyc/frame | @48M | @96M | @192M | @480M | RAM bits | ext B/frame |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| july | M18 | 16230 | OVERFLOW (1623%) | OVERFLOW (811%) | OVERFLOW (406%) | OVERFLOW (162%) | 26097824 | 24 |
-| july | M32 | 11581 | OVERFLOW (1158%) | OVERFLOW (579%) | OVERFLOW (290%) | OVERFLOW (116%) | 26097824 | 24 |
+| july | M18 | 19605 | OVERFLOW (1960%) | OVERFLOW (980%) | OVERFLOW (490%) | OVERFLOW (196%) | 26097824 | 24 |
+| july | M32 | 14956 | OVERFLOW (1496%) | OVERFLOW (748%) | OVERFLOW (374%) | OVERFLOW (150%) | 26097824 | 24 |
 | supersaw | M18 | 550845 | OVERFLOW (55085%) | OVERFLOW (27542%) | OVERFLOW (13771%) | OVERFLOW (5508%) | 125778880 | 252 |
 | supersaw | M32 | 279085 | OVERFLOW (27908%) | OVERFLOW (13954%) | OVERFLOW (6977%) | OVERFLOW (2791%) | 125778880 | 252 |
 | covered_worst_synth | M18 | 282890 | OVERFLOW (28289%) | OVERFLOW (14144%) | OVERFLOW (7072%) | OVERFLOW (2829%) | 215923 | 168 |
@@ -51,10 +51,19 @@ records, memory model E1-conservative):
   the modeled scalar single-lane schedule (A-SCHED-1). The
   worst-pitch-corner BLIT oscillator dominates (classic 175.8–352.7
   cyc/sample/instance; 768 instances in the supersaw preset).
-- July still overflows at 480 MHz with ~62% of the total in
-  probe-covered components (osc 5467 + filters 4608 of 16230 @M18);
-  the remainder is flagged placeholder components (LFO 2880, env 640,
-  waveshaper 50, Phaser+Airwindows 1600, modulation 270).
+- July still overflows at 480 MHz, with the probe-covered components a
+  minority of the total (osc 5457.6 + filters 3584 + scheduler 818 of
+  19604.6 @M18); the remainder is flagged placeholder components (modulation
+  3645, LFO 3060, env 640, waveshaper 800, Phaser+Airwindows 1600). Every
+  figure here is quoted from the live `worked-bundles.json`. The modulation
+  component moved 270 -> 3645 with the #239 shape decision (a global/scene
+  row once per frame, a voice row once per worst-case live voice per frame —
+  july carries 3 per-frame rows and 15 voice rows at 16 worst-case voices,
+  so 3 + 15x16 = 243 evaluations); the other component figures in this
+  bullet were already stale on `main` against the committed artifact
+  (later probe/param work) and are re-quoted here rather than left wrong.
+  `cyc_modroute_frame` itself is UNCHANGED at 15 and is still unpriced by
+  any probe (section 3 below).
 - Alternatives are UNCOMBINED (no single score): bundles x multipliers
   x clocks with cycles / RAM bits / external bytes as separate columns;
   adaptation-candidate kernels (naive Classic 13–25, WT-direct 21–39

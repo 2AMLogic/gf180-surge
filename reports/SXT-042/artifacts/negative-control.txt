@@ -1,22 +1,22 @@
 SXT-042 negative controls (each must demonstrably FAIL its check)
-date: 2026-09-27T10:37:37Z
+date: 2026-09-30T03:43:10Z
 carrier: Rozzer/Bells/Hell's Bells.fxp  sequence: sxt025-accept-v1
 reference (unmodified, committed pinned-engine dry render): reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav
   sha256 afb3ad51739609ff43bc7372d6d0db6322532f3cc43bce1653834fb621e3fcc2
 
-[baseline] unmutated model-vs-reference: max=16740 rms=-27.85dBFS spec=0.9212 -> FAIL against proposed budgets
+[baseline] unmutated model-vs-reference: max=16740 rms=-27.85dBFS spec=0.7848 -> FAIL against proposed budgets
   windowed rms: kt!=0 1916.6 LSB, kt==0 2719.9 LSB
   (the carrier's own budget miss is the landed SXT-026a finding F-48a; a control is called DISCRIMINATING only if it also degrades a metric relative to THIS row)
 
-[cutoff-zeroed] max=16336 rms=-28.48dBFS spec=0.9259 wrms(kt!=0)=1729.2 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
+[cutoff-zeroed] max=16336 rms=-28.48dBFS spec=0.7963 wrms(kt!=0)=1729.2 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
 [reso-zeroed] render BIT-IDENTICAL to the baseline -> DEGENERATE, not counted as a control
 [fegmod-zeroed] render BIT-IDENTICAL to the baseline -> DEGENERATE, not counted as a control
-[shared-keytrack-word] max=17074 rms=-27.69dBFS spec=0.9212 wrms(kt!=0)=1964.9 -> FAIL against proposed budgets; control degrades=['max', 'rms', 'spectral', 'windowed_kt_rms']
-[source-swap-velocity] max=16461 rms=-28.25dBFS spec=0.9276 wrms(kt!=0)=1786.7 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
-[source-swap-modwheel] max=16336 rms=-28.48dBFS spec=0.9259 wrms(kt!=0)=1729.2 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
+[shared-keytrack-word] max=17074 rms=-27.69dBFS spec=0.7842 wrms(kt!=0)=1964.9 -> FAIL against proposed budgets; control degrades=['max', 'rms', 'spectral', 'windowed_kt_rms']
+[source-swap-velocity] max=16461 rms=-28.25dBFS spec=0.7999 wrms(kt!=0)=1786.7 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
+[source-swap-modwheel] max=16336 rms=-28.48dBFS spec=0.7963 wrms(kt!=0)=1729.2 -> FAIL against proposed budgets; control degrades=NONE (non-discriminating on this carrier)
   source-swap-modwheel render == cutoff-zeroed render: True
-[ignore-keytrack-root] max=20797 rms=-26.04dBFS spec=0.8743 wrms(kt!=0)=2439.1 -> FAIL against proposed budgets; control degrades=['max', 'rms', 'spectral', 'windowed_kt_rms']
-[probe-velocity-cutoff-zeroed] max=15304 rms=-29.33dBFS spec=0.8926 wrms(kt!=0)=1578.5 -> FAIL against proposed budgets; PROBE degrades=['spectral']
+[ignore-keytrack-root] max=20797 rms=-26.04dBFS spec=0.5967 wrms(kt!=0)=2439.1 -> FAIL against proposed budgets; control degrades=['max', 'rms', 'spectral', 'windowed_kt_rms']
+[probe-velocity-cutoff-zeroed] max=15304 rms=-29.33dBFS spec=0.7272 wrms(kt!=0)=1578.5 -> FAIL against proposed budgets; PROBE degrades=['spectral']
 
 [P5 lag-refresh-before] bit-identical to baseline: True (expected TRUE: pitch is constant per voice, so the declared 1-control-pass lag is unobservable in this class -- probe, not a control)
 

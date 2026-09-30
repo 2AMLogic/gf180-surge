@@ -4,7 +4,7 @@
     "expected": "informational",
     "max_abs_diff_lsb": 65534.0,
     "rms_diff_dbfs": -18.038918387458317,
-    "spectral_corr": 0.9874579116733226,
+    "spectral_corr": 0.970959074770404,
     "mw_ramp": {
       "metric": "blocks-to-converge of the smoothed modwheel word after each CC dispatch (model_trace.json mw_value)",
       "declared_ramp_blocks": 54.422005968599976,
@@ -90,7 +90,7 @@
     "max_abs_diff_lsb": 65534.0,
     "rms_diff_lsb": 6600.747306786425,
     "rms_diff_dbfs": -13.916871479145609,
-    "spectral_corr": 0.9844211159424442,
+    "spectral_corr": 0.954174570527245,
     "metrics_file": "run-out/nc/audio-nc-cutoff-zeroed.json",
     "control_ok": true,
     "beyond_model_error_via": [
@@ -105,7 +105,7 @@
     "max_abs_diff_lsb": 65534.0,
     "rms_diff_lsb": 4140.893318372829,
     "rms_diff_dbfs": -17.966852784043652,
-    "spectral_corr": 0.986402830630958,
+    "spectral_corr": 0.968702572789794,
     "metrics_file": "run-out/nc/audio-nc-reso-zeroed.json",
     "control_ok": true,
     "beyond_model_error_via": [
@@ -120,7 +120,7 @@
     "max_abs_diff_lsb": 38478.0,
     "rms_diff_lsb": 8444.570970056258,
     "rms_diff_dbfs": -11.777181823722977,
-    "spectral_corr": 0.8615236223435704,
+    "spectral_corr": 0.6705498501921455,
     "metrics_file": "run-out/nc/audio-nc-vca-zeroed.json",
     "control_ok": true,
     "beyond_model_error_via": [
@@ -135,7 +135,7 @@
     "max_abs_diff_lsb": 65534.0,
     "rms_diff_lsb": 3213.65349953038,
     "rms_diff_dbfs": -20.168752648178533,
-    "spectral_corr": 0.9850202124210111,
+    "spectral_corr": 0.9741411759510864,
     "metrics_file": "run-out/nc/audio-nc-smoothing-bypass.json",
     "mw_ramp": {
       "metric": "blocks-to-converge of the smoothed modwheel word after each CC dispatch (model_trace.json mw_value)",
@@ -218,7 +218,6 @@
     },
     "control_ok": true,
     "beyond_model_error_via": [
-      "spectral",
       "mw-ramp"
     ],
     "control_ok_without_spectral_leg": true
@@ -229,7 +228,7 @@
     "max_abs_diff_lsb": 65534.0,
     "rms_diff_lsb": 10211.852919789126,
     "rms_diff_dbfs": -10.126642601215925,
-    "spectral_corr": 0.7295344070606425,
+    "spectral_corr": 0.4529885686916976,
     "metrics_file": "run-out/nc/audio-nc-source-swap-lfo.json",
     "control_ok": true,
     "beyond_model_error_via": [

@@ -144,6 +144,69 @@ Arithmetic rules (FROZEN):
    float32 tables; agreement is within one float32 ulp and is part of the
    model-vs-reference budget).
 
+### DECLARED word-length consequence: the scene decimator does not settle to zero (F-176-2, issue #181)
+
+`HalfbandD2` — the shared Q10.21 scene decimator (step 7 below) used by every
+consumer of this model — **has a zero-input dead band and therefore does not
+return to the zero state after its input goes silent.** Rule 2's round-half-up
+`qmul` gives the allpass recursion `y[n] = x[n-2] + a·(x[n] − y[n-2])` a
+fixed point at a non-zero state, so after the last voice dies the decimator
+holds a *permanent* alternating-sign (output-Nyquist, period-2) output instead
+of decaying to 0. This is **declared as a property of the frozen model**
+(SXT-017 option (a)), not a defect to be silently fixed: changing it is a
+contract revision owned by SXT-017 / [#12](https://github.com/2AMLogic/gf180-surge/issues/12).
+
+Declared bound, measured over a declared input sweep (315 cases: impulse, DC,
+sine, square, two-tone and seeded noise, amplitudes from 1 Q10.21 LSB to the
+±8.0 `sceneout` clip that every consumer applies upstream, frequencies from
+0.002 to 0.5 of the 96 kHz decimator input rate including the whole stopband;
+each case followed by silence, each settled amplitude obtained **exactly** by
+zero-input state recurrence rather than by observing a finite tail):
+
+| quantity | value |
+|---|---|
+| **worst settled peak** | **36 Q10.21 LSB** = 0.5625 int16 LSB ≈ **−95.3 dBFS** |
+| period of every non-zero cycle | 2 output samples (24 kHz, the output Nyquist) |
+| cases with a non-zero cycle | 306 / 315 (9 settle to exactly 0) |
+| largest lead-in before the cycle is entered | 2,304 input samples (36 blocks) |
+| worst case above one int16 LSB? | **no** (one int16 LSB = 64 Q10.21 LSB) |
+
+Consequences that follow, and only these:
+
+* **It cannot reach an int16 render at any master gain below 64/36 = 16/9 ≈
+  1.7778.** 36 Q10.21 LSB is 0.5625 int16 LSB, so `int(clip(x,−1,1)·32767)`
+  truncates it to 0 unless the master amplitude reaches that crossing point
+  (one int16 LSB is 64 Q10.21 LSB). Measured in situ after the last
+  voice dies: **±1** Q10.21 LSB on `seq-notes-repeated-v1` (voice leaf), **±2**
+  on `horn / seq-notes-repeated-v1` (Classic), **0** on `tentacles /
+  seq-notes-repeated-v1` (Sine).
+* **It is not a defect of the recursion.** The same recursion with the same
+  quoted coefficients in float64 decays to 1.8e-322 (float64 subnormals) over
+  the same silence, so the dead band is the quantizer. Whether the *pinned*
+  float32 kernel settles to zero is **NOT_RUN** — it needs the external oracle
+  host and is not assumed.
+* **RTL reproduces it exactly** (claim (1)). All **four** committed RTL copies
+  of the cascade — `rtl/voice/tb_voice.sv`,
+  `rtl/oscillators/classic/tb_classic.sv`, `rtl/oscillators/sine/tb_sine.sv`
+  and, since the #180 contract revision moved that leaf's decimator to a
+  per-scene stage, `rtl/oscillators/wavetable/tb_wavetable.sv` — were spliced
+  verbatim and matched the model over the settled region with 0 mismatches. The
+  ring-out region is inside the committed compared window of the voice, Classic
+  and Sine leaves (measured by re-running their own comparators); the wavetable
+  leaf's comparator now compares every 48 kHz sample too, but that leg is
+  **NOT_RUN** here — its model render needs the external pinned asset root.
+* **A musically silent scene is not numerically silent.** Any future hardware
+  idle-noise, idle-power or output-stage-gain claim must carry this forward: a
+  permanent 24 kHz tone at −95 dBFS is inaudible in an int16 render and can
+  still be a real measurement after an output stage's own gain.
+
+Evidence, per-case amplitudes, the RTL check and the failure control:
+`reports/halfband-limit-cycle/EVIDENCE.md`
+(`tools/measure_halfband_limit_cycle.py`). **Not** covered by that bound:
+`model/effects/type-distortion*/`'s own `HalfbandD2` is a different class
+(`HalfRateFilter(M=3)`, Q24.43 state, oversampling rather than scene
+decimation) and is unmeasured.
+
 ## Frozen block schedule (one 32-sample engine block)
 
 1. **Dispatch**: events with `ceil(t/32) <= b` fire now. `note_on` creates a
@@ -182,6 +245,8 @@ Arithmetic rules (FROZEN):
    master amplitude (converged after settle), hard clip ±8, mono
    `(L+R)/2` with L == R, int16 conversion
    `int(clip(x, -1, 1) * 32767)` (truncation toward zero).
+   The halfband D2 stage does **not** settle to zero on zero input — see the
+   declared ≤ 36 Q10.21 LSB zero-input limit cycle above (F-176-2, #181).
 
 ## Declared control-plane boundary (model → RTL)
 
@@ -588,3 +653,218 @@ amplitudes / FX (all present in the corpus — refused, see
 pitch-bend or portamento contributions to `state.pitch` (which would make
 the 1-control-pass lag observable), and MPE/tuning-dependent `octaveSize`.
 Keytrack as a modulation DESTINATION is not modeled.
+
+# SXT-036 velocity / release-velocity route extension (frozen; #70)
+
+Model: `model/voice/run_vel_model.py` (`VelVoice` over `VoiceV2`); RTL
+control-plane schedule: `rtl/voice/tb_vel.sv`; exactness harness:
+`tools/compare_vel_rtl_model.py` (+ `tools/compare_rtl_model.py` on the
+unchanged datapath); evidence `reports/SXT-036/EVIDENCE.md`.
+
+Pinned facts (surge@58914e59c608ed4384ba6002e44c3465c58b2e71, cited, not
+copied): `SurgeVoice.cpp` ctor sets `state.fvel = velocity/127`,
+`velocitySource.init(0, fvel)`, `releaseVelocitySource.set_output(0, 0)`;
+`SurgeVoice::release()` sets the release-velocity source to
+`releasevelocity/127`; `applyModulationToLocalcopy` does
+`localcopy[dst] += depth * source` after scene modulation. Modsource ids:
+`ms_velocity` = 1, `ms_releasevelocity` = 30.
+
+Word lengths and op order (all Q10.21, 32-bit, saturating adds):
+
+1. `vel_q = qint(midi/127) = (midi*2^22 + 127) // 254` (round-half-up,
+   exact integer form; asserted equal to the float quantizer for 0..127).
+   Latched at voice construction; `relvel_q` = 0 at construction, set to
+   `vel_q(release_midi)` on release (same block's control pass reads it).
+2. Per control pass, per voice: scene modwheel routes first (landed SXT-035
+   table), then voice routes in `md` order: `term = qmul(qint(depth), src)`
+   (Q10.21 `qmul`, round-half-up, saturating); `param = sat(param + term)`.
+   The per-destination sums of terms are the RTL checkpoint words.
+3. Destination class (frozen): Filter 1 Cutoff 308, Filter 1 Resonance 309,
+   Filter 1 FEG Mod Amount 310, VCA Gain 298 (`mod_vca_db`, shared with the
+   modwheel VCA term). Anything else is refused (exit 2).
+4. Per-instance state: one `{vel_q, relvel_q}` pair per voice slot; never
+   shared across voices or scenes. VCA-Gain velocity terms make the
+   constructor gain anchor (`SetQFB(0,0)`) per-voice; it is streamed in
+   `tb_voice.sv` slot word 37 under flags bit 4 (legacy stimuli never set
+   bit 4: landed fixtures unchanged).
+5. Fixture: `attacky_vel_inputs.json` holds DECLARED synthetic route depths
+   on the landed Attacky class; they are NOT engine readbacks (no oracle on
+   the authoring host, #96) and must be re-extracted or confirmed on an
+   oracle host (#232) before any reference-budget number is produced.
+   `model/voice/audit_vel_carriers.py` records, from `graphs.jsonl` + the
+   census alone, why the fixture substitutes Attacky for the carriers named by
+   #70: none of those carriers has an `ms_releasevelocity` route at all, and
+   only `Bad News.fxp` has a velocity route inside the frozen destination
+   class. Attacky itself has none, hence declared routes.
+6. Stimuli: `tools/vel_declared_coverage.py` runs the three
+   `fixtures/sequences/seq-notes-*` sequences named by #70 through this model
+   and both exactness harnesses. They are monophonic, so they do NOT
+   discriminate rule 4 (per-instance state) — `tools/vel_negative_controls.py`
+   reports those two controls `NOT_RUN` on such a stimulus rather than passing
+   them, and the overlapping leaf-local `sxt036-vel-overlap-v1` sequence stays
+   the per-instance-state carrier. The same driver also renders
+   `seq-poly-8-v1`, the only polyphonic note fixture committed in
+   `fixtures/sequences/`, and measures that it holds eight voices at a single
+   velocity/release velocity, so no committed shared fixture discriminates
+   rule 4 either.
+7. Parameter corners (frozen; driver `tools/vel_param_corners.py`, transcript
+   `reports/SXT-036/artifacts/param-corners.{txt,json}`, stimulus
+   `model/voice/sequences/sxt036-vel-corners-v1.json`):
+   * **Source-word domain.** `vel_q` is a 128-entry table; it is checked
+     EXHAUSTIVELY (all 128 words, RTL `vel_rom` lifted verbatim out of
+     `rtl/voice/tb_vel.sv` vs the model quantizer), not only at the corners.
+     `vel_q(0) = 0`, `vel_q(127) = 2^21` exactly. Velocities 1/63/126 give ODD
+     words (16513 / 1040319 / 2080639), which is what makes a depth of exactly
+     ±0.5 an exact round-half-up tie.
+   * **Destination extents (derived, not read back).** `depth_raw /
+     depth_normalized` in `corpus/normalized/graphs.jsonl` gives each
+     destination's full extent, agreeing across hundreds of independent rows:
+     308 = 130.0 (2914 rows, 0.19 % spread), 309 = 1.0 (874 rows), 310 = 192.0
+     (483 rows), 298 = 96.0 (838 rows). Observed normalized depth range of both
+     sources over the whole corpus: [−1, +1]. These are corpus-pipeline values
+     and therefore FALSIFIABLE PREDICTIONS for the oracle host (#232), never
+     reference values.
+   * **Declared corner set.** normalized depth ±1 (`depth_raw` = ±extent),
+     mixed sign (velocity +1 / release velocity −1), the smallest nonzero model
+     depth (`depth_q` = ±1), the rounding-tie depth ±0.5, and the largest
+     `|depth_raw|` each source/destination pair actually shows in the corpus.
+   * **Checkpoint-word precondition.** The per-destination route sum is a
+     32-bit signed word in the RTL; the frozen checkpoint definition holds
+     while `|sum| ≤ 2^31−1`. Worst declared corner: 805,306,368 (both sources
+     at full scale onto 310, the widest destination), i.e. **2.67× headroom**.
+     Beyond ≈2.67× full-scale depth the RTL word wraps while the model's
+     Python sum does not; that is outside the declared range, is demonstrated
+     by the `over-range-accumulator` control, and is recorded rather than
+     designed around.
+   * **Controls at the corners.** the `round-trunc` RTL mutant must FAIL on the
+     tie corner (it does: 44 mismatches) and the `rom-floor` mutant must FAIL
+     the exhaustive ROM check (it does: 63 of 128 entries). A corner set that
+     could not distinguish round-half-up from truncation would not be freezing
+     the rounding rule.
+8. State rules, their controls, and the scene boundary (fourth increment;
+   census `tools/vel_state_coverage.py` -> `reports/SXT-036/artifacts/
+   state-coverage.{txt,json}`):
+   * **Construction re-initialization (frozen).** A voice slot is reused. The
+     cited ctor sets `state.freleasevel = 0` /
+     `releaseVelocitySource.set_output(0, 0)`, so `relvel_q[slot]` is cleared
+     ON CREATE and the previous occupant's release velocity is never inherited
+     (`tb_vel.sv` create branch; model `VelVoice.__init__`). The power-on reset
+     of all eight slot register pairs is a DIFFERENT thing and is unchanged.
+     Controls: `--stale-slot-relvel` (model) and the `stale-slot-reinit` RTL
+     mutant, both of which must FAIL exactness (they do: 42 mismatches each,
+     first at block 1200 slot 0 `relvel_q` model=330260 vs rtl=0).
+   * **Release-latch timing (frozen).** `SurgeSynthesizer::releaseNote` stamps
+     `state.releasevelocity` and calls `release()` before the next block, so
+     the release-velocity word is visible to THAT block's control pass. Control:
+     the `release-one-block-late` RTL mutant moves the latch after the control
+     pass and must FAIL (it does: 15 mismatches on the leaf-local stimulus, 3
+     on `seq-notes-holds-v1`).
+   * **Scene boundary — what is NOT established.** The frozen destination class
+     is scene A only (308/309/310/298). A scene-B destination is REFUSED, not
+     folded in: control R2 replays the real route the named carrier
+     `House Of Chords.fxp` carries (`ms_velocity` -> 502 `B Osc 1 Sync`, scene
+     index 1) and the runner must exit 2. That is a refusal, not a
+     demonstration: this leaf's model instantiates ONE scene, so the "state is
+     never shared across scenes" half of #70's per-instance rule has **no live
+     control here** and is NOT claimed. It needs a second scene in the model
+     (outside this leaf) to become testable.
+   * **Stimulus preconditions and measured coverage.** Three preconditions
+     decide whether these controls can fire: `per_instance` (>=2 concurrent
+     voices with distinct source words), `slot_reuse` (a slot reused after a
+     nonzero release velocity) and `release_word` (a running voice released
+     with a nonzero release-velocity word). Measured over every committed note
+     sequence: exactly ONE shared fixture (`seq-notes-holds-v1`) carries any
+     nonzero MIDI release velocity at all, and NO shared fixture satisfies
+     `per_instance` or `slot_reuse`. On a stimulus whose precondition is unmet
+     the control is reported NOT_RUN with the reason named, never as a pass;
+     the leaf-local `sxt036-vel-overlap-v1` is the only committed stimulus that
+     satisfies all three.
+9. Cost rule and its accounting boundary (fifth increment; driver
+   `tools/vel_cost_accounting.py` -> `reports/SXT-036/artifacts/
+   cost-accounting.{txt,json}`; counters in `rtl/voice/tb_vel.sv`, `OPS` line):
+   * **Measured cost law (frozen).** `route evaluations = routes × per-voice
+     control passes`, with exactly **1 × 32×32→64 multiply + 1 × 64-bit
+     rounding add + 2 × 64-bit saturation compares + 1 × 32-bit accumulate**
+     per evaluation, and one event-rate `vel_rom` read per note-on and per
+     note-off. Verified on five stimuli and across a 0..6 route-table sweep
+     (each run also checked EXACT against the model as a positive control);
+     controls K1/K2/K3 must and do mispredict.
+   * **Cycles are not measured here.** Op counts are; a cycles figure is only
+     DERIVED under two explicitly named readings of the SXT-016 assumptions
+     (A-DSP-1c / A-ALU-1), reported as the bracket **2..8 cycles per
+     evaluation**, and is never a probe result or a technology claim.
+   * **SXT-015 shape divergence — recorded here, then DISPOSITIONED in #239.**
+     The accounting used to charge every modulation row **once per frame**,
+     while both sources here are PER-VOICE, so their rows are voice-list rows
+     whose work scales with LIVE VOICES: at the accounting's own worst-case
+     voice count the row-evaluation count is 12.25× / 4.46× / 7.00× the row
+     count for `Bad News` / `Rainy Day Dreamaway` / `House Of Chords`, and
+     1.00× for the fixture carrier `Attacky` (no voice rows — which is why the
+     divergence was invisible on the fixture). Decision #239 took that shape:
+     `mod_cycles = _modroute_evaluations(g, worst_voices) ×
+     cyc_modroute_frame`, a global/scene row once per frame and a voice row
+     once per worst-case live voice per frame. This tool now CROSS-CHECKS the
+     accounting against the measured shape per carrier (`shape_resolution` in
+     `cost-accounting.json`) instead of recording a gap.
+   * **What still diverges (recorded, not reconciled).** The per-evaluation
+     CONSTANT: 15 accounted cycles against the 2..8 derived bracket. 15 is a
+     `placeholder` param that no SXT-016 probe replaces (asserted over all 76
+     committed probe records) and only a probe may pin it; #239 deliberately
+     did not. Nothing here is tuned to agree.
+   * **State.** 8 slots × {`vel_q`, `relvel_q`} × 32 b = **512 bits**, and the
+     count is load-bearing because the scene-wide-register mutant FAILS
+     exactness (read back from the committed control transcript, K6). SXT-015
+     still has **no separate** modulation-source state row; #239 decided that
+     per-voice source registers are declared INSIDE `voice_base_state_bytes`
+     (whose `estimate_ref` now enumerates them; 4096 B unchanged), and this
+     leaf's 8 B/voice for two sources is a lower bound on a full source set,
+     never a row value. SXT-016 re-derives that bucket.
+   * **Pins, fail closed.** The comparison is pinned to SXT-015
+     `sxt-015-accounting/1.1.0` / `placeholder-v0` / params digest
+     `a639d3115ae1a0ca` / `cyc_modroute_frame = 15` (re-recorded for #239 from
+     the live model — the constant was never re-tuned); drift REFUSES
+     (exit 2) so the comparison is re-recorded against the new model rather
+     than silently carried forward, and `tests/test_sxt036_vel_cost.py` fails
+     in CI if the live model moves.
+10. Oracle gate and the frozen backfill plan (sixth increment; driver
+   `tools/vel_oracle_status.py` -> `reports/SXT-036/artifacts/
+   oracle-status.json` + `oracle-backfill.txt`):
+   * **The gate is measured, not asserted.** Acceptance items 2 and 5 of #70
+     are oracle-dependent and stay `NOT_RUN`; what the sixth increment freezes
+     is *how that verdict is established*. Measured gate on the dispatch host:
+     **`UNAVAILABLE`**.
+   * **Strict reading (frozen).** The oracle counts as present only when ALL
+     of: the checkout directory exists; it is a git work tree; its HEAD equals
+     the SXT-010 pin `58914e59c608ed4384ba6002e44c3465c58b2e71`; and the
+     imported `surgepy` module file lives INSIDE that checkout. Four statuses
+     are distinguished rather than collapsed — `AVAILABLE`, `PIN_MISMATCH`,
+     `UNPINNED_SURGEPY`, `UNAVAILABLE` — so a wrong-commit checkout is refused
+     rather than silently reported as merely absent. A bare `import surgepy`
+     (the reading increments 1–5 used) is explicitly NOT sufficient, and the
+     probe records both readings so the difference stays falsifiable.
+   * **Status vocabulary, fail closed.** A leg this driver did not run may
+     carry only `{NOT_RUN, RUNNABLE, BLOCKED}`; `PASS` is not in the
+     vocabulary and an injected `PASS` raises (control O6). An available
+     oracle makes a leg `RUNNABLE` — running it remains a separate act.
+   * **Legs split by gate.** `blob-verify-carriers` needs the pinned CHECKOUT
+     only; the other four (`extract-fixture-depths`, `render-reference`,
+     `compare-budgets`, `reference-budget-controls`) additionally need a built
+     `surgepy`. The cheapest leg — the one that turns today's
+     `blob_verified: false` into a real payload hash — is therefore not
+     bundled behind the expensive one.
+   * **Named-tool resolution.** Every tool path #70 names is resolved against
+     the committed tree on each run. `tools/render_fixture.py`, named by the
+     issue body and by earlier revisions of the evidence record, **does not
+     exist**; it resolves to `fixtures/render_fixture.py` (SXT-012 harness),
+     with `fixtures/render_mw_fixture.py` and `model/voice/extract_mw_inputs.py`
+     as the per-leaf patterns to copy. A bogus name reports `MISSING`
+     (control O7), so the table cannot rubber-stamp.
+   * **Predictions are derived, never restated.** The backfill predictions are
+     read out of `carrier-route-audit.json` and `param-corners.json`; a
+     disagreement between them, a missing source, or a corpus pin that no
+     longer matches #70 REFUSES (exit 2). A disagreement observed on the
+     oracle host is a corpus-pipeline or cited-reading finding — never a
+     tuning opportunity.
+   * **Necessary, not sufficient.** The gate checks HEAD against the pin; it
+     does not revalidate submodule SHAs, build flags, or the pinned
+     interpreter. Those remain `oracle/fetch-and-build.sh`'s job.

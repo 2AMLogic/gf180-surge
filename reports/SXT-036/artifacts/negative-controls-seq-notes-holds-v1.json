@@ -1,0 +1,378 @@
+{
+  "overall": "PASS_WITH_NOT_RUN",
+  "sequence": "seq-notes-holds-v1",
+  "controls_not_run": [
+    {
+      "control": "E3 shared-state",
+      "reason": "stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers",
+      "precondition": "per_instance"
+    },
+    {
+      "control": "E4 stale-slot-relvel",
+      "reason": "stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable",
+      "precondition": "slot_reuse"
+    },
+    {
+      "control": "E-rtl shared-slot mutant",
+      "reason": "stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers",
+      "precondition": "per_instance"
+    },
+    {
+      "control": "E-rtl stale-slot-reinit mutant",
+      "reason": "stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable",
+      "precondition": "slot_reuse"
+    }
+  ],
+  "reference_budget_controls": "NOT_RUN",
+  "results": {
+    "positive": {
+      "tb": "rtl/voice/tb_vel.sv",
+      "sequence": "seq-notes-holds-v1",
+      "control_mode": "normal",
+      "verdict": "PASS",
+      "checked": {
+        "voice_block_checkpoints": 4392,
+        "source_words": 8784,
+        "route_sums": 17568
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "rtl_done_line": "DONE vel-qmuls=26352"
+    },
+    "stimulus_precondition": {
+      "concurrent_distinct_source_word_blocks": 0,
+      "per_instance_state_controls_testable": false,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "reinitialization_controls_testable": false,
+      "release_blocks_with_nonzero_relvel_word": 1,
+      "release_timing_control_testable": true
+    },
+    "zero-vel-cutoff": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 1 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 2 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 3 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 4 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 5 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 6 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 7 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 8 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 9 slot 0 route_sum[0]: model=0 rtl=27741864"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 3830,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-vel-reso": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 1 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 2 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 3 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 4 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 5 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 6 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 7 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 8 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 9 slot 0 route_sum[1]: model=0 rtl=288978"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 939,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-vel-fegmod": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 1 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 2 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 3 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 4 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 5 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 6 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 7 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 8 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 9 slot 0 route_sum[2]: model=0 rtl=346774"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 14,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-vel-vca": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 41,
+          "source_words": 82,
+          "route_sums": 164
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 0 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 1 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 2 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 3 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 4 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 5 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 6 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 7 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 8 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 9 slot 0 route_sum[3]: model=0 rtl=-13870932"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 6805,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-relvel-cutoff": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 4385,
+          "source_words": 8770,
+          "route_sums": 17540
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 5550 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5551 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5552 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5553 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5554 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5555 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5556 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5557 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5558 slot 0 route_sum[0]: model=27741864 rtl=47557476",
+          "block 5559 slot 0 route_sum[0]: model=27741864 rtl=47557476"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 2237,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "zero-relvel-vca": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 4385,
+          "source_words": 8770,
+          "route_sums": 17540
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 5550 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5551 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5552 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5553 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5554 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5555 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5556 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5557 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5558 slot 0 route_sum[3]: model=-13870932 rtl=-3963126",
+          "block 5559 slot 0 route_sum[3]: model=-13870932 rtl=-3963126"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 2505,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "source-swap-mw": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "source_swap_mw",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 11,
+          "source_words": 22,
+          "route_sums": 44
+        },
+        "mismatches": 44,
+        "first_failures": [
+          "block 0 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 0 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 0 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 0 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 1 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 1 slot 0 route_sum[1]: model=0 rtl=288978",
+          "block 1 slot 0 route_sum[2]: model=0 rtl=346774",
+          "block 1 slot 0 route_sum[3]: model=0 rtl=-13870932",
+          "block 2 slot 0 route_sum[0]: model=0 rtl=27741864",
+          "block 2 slot 0 route_sum[1]: model=0 rtl=288978"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "model_max_abs_delta_lsb": 6398,
+      "fails_as_required": true,
+      "model_differs": true
+    },
+    "shared-state": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "per_instance"
+    },
+    "stale-slot-relvel": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "slot_reuse"
+    },
+    "rtl-shared-slot": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "per_instance"
+    },
+    "rtl-round-trunc": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_round_trunc_mutant.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 21,
+          "source_words": 42,
+          "route_sums": 84
+        },
+        "mismatches": 42,
+        "first_failures": [
+          "block 0 slot 0 route_sum[1]: model=288978 rtl=288977",
+          "block 0 slot 0 route_sum[2]: model=346774 rtl=346773",
+          "block 1 slot 0 route_sum[1]: model=288978 rtl=288977",
+          "block 1 slot 0 route_sum[2]: model=346774 rtl=346773",
+          "block 2 slot 0 route_sum[1]: model=288978 rtl=288977",
+          "block 2 slot 0 route_sum[2]: model=346774 rtl=346773",
+          "block 3 slot 0 route_sum[1]: model=288978 rtl=288977",
+          "block 3 slot 0 route_sum[2]: model=346774 rtl=346773",
+          "block 4 slot 0 route_sum[1]: model=288978 rtl=288977",
+          "block 4 slot 0 route_sum[2]: model=346774 rtl=346773"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "fails_as_required": true
+    },
+    "rtl-rom-floor": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_rom_floor_mutant.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 11,
+          "source_words": 22,
+          "route_sums": 44
+        },
+        "mismatches": 44,
+        "first_failures": [
+          "block 0 slot 0 vel_q: model=1155911 rtl=1155910",
+          "block 0 slot 0 route_sum[0]: model=27741864 rtl=27741840",
+          "block 0 slot 0 route_sum[2]: model=346774 rtl=346773",
+          "block 0 slot 0 route_sum[3]: model=-13870932 rtl=-13870920",
+          "block 1 slot 0 vel_q: model=1155911 rtl=1155910",
+          "block 1 slot 0 route_sum[0]: model=27741864 rtl=27741840",
+          "block 1 slot 0 route_sum[2]: model=346774 rtl=346773",
+          "block 1 slot 0 route_sum[3]: model=-13870932 rtl=-13870920",
+          "block 2 slot 0 vel_q: model=1155911 rtl=1155910",
+          "block 2 slot 0 route_sum[0]: model=27741864 rtl=27741840"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "fails_as_required": true
+    },
+    "rtl-stale-slot-reinit": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "slot_reuse"
+    },
+    "rtl-release-one-block-late": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_release_one_block_late_mutant.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 4392,
+          "source_words": 8784,
+          "route_sums": 17568
+        },
+        "mismatches": 3,
+        "first_failures": [
+          "block 5550 slot 0 relvel_q: model=1651301 rtl=0",
+          "block 5550 slot 0 route_sum[0]: model=47557476 rtl=27741864",
+          "block 5550 slot 0 route_sum[3]: model=-3963126 rtl=-13870932"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "fails_as_required": true
+    },
+    "invariance": {
+      "landed": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
+      "stripped": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
+      "equal": true
+    },
+    "refuse-out-of-class": {
+      "exit": 2,
+      "refused": true,
+      "control": "R1"
+    },
+    "refuse-zero-route": {
+      "exit": 2,
+      "refused": true,
+      "control": "R1"
+    },
+    "refuse-cross-scene": {
+      "exit": 2,
+      "refused": true,
+      "control": "R2"
+    }
+  }
+}

@@ -8,10 +8,10 @@
      "ext_traffic_bytes_per_s": 0.0
     },
     "basis": {
-     "accounting_model_version": "sxt-015-accounting/1.0.0",
+     "accounting_model_version": "sxt-015-accounting/1.1.0",
      "cost_profile": "placeholder-v0",
      "note": "SXT-015 bookkeeping model; every state/cycle/bandwidth number is a named placeholder [PENDING-SXT-016]; voice state is one aggregate block until SXT-016/023 pin the per-voice layout",
-     "params_digest": "646942e9c3887ecb"
+     "params_digest": "a639d3115ae1a0ca"
     },
     "budgets": {
      "cycle_closure": "not_gated_pending_sxt_016",
@@ -26,8 +26,8 @@
      "per_frame": {
       "events": 320.0,
       "fx": 800.0,
-      "modulation": 195.0,
-      "total": 17195.0,
+      "modulation": 1770.0,
+      "total": 18770.0,
       "voice": 15880.0
      }
     },
@@ -1140,7 +1140,7 @@
   }
  },
  "header": {
-  "body_sha256": "8596fe817da0a514c437095e2827c783a06267f31be466238e93cd43874060e4",
+  "body_sha256": "daa656fc6570a8d72ba2b5e102d21a71b222de0d3a3990303abd6bf7341381ac",
   "compiler_version": "sxt-020-compile/1.1.0",
   "format": "sxt-020-patch-image/1.1.0",
   "format_major": 1,

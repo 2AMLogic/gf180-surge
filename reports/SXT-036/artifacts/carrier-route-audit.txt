@@ -1,0 +1,41 @@
+SXT-036 (#70) carrier audit - oracle-independent (graphs.jsonl + census only)
+graphs.jsonl sha256 c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715 == value pinned in issue #70
+census blob sha1 == graphs.jsonl `sha` for every carrier below (two committed artifacts agreeing; NOT a payload hash of the .fxp, which needs the pinned Surge tree)
+frozen SXT-036 destination class: {298: 'A VCA Gain', 308: 'A Filter 1 Cutoff', 309: 'A Filter 1 Resonance', 310: 'A Filter 1 FEG Mod Amount'}
+
+Refusal control (each fail-closed path must demonstrably refuse):
+  [graphs.jsonl sha256 pin mismatch] -> REFUSED as required: sha256 mismatch
+  [carrier absent from graphs.jsonl] -> REFUSED as required: carrier absent from graphs.jsonl: resources/data/patches_factory/Basses/NoSuchPreset.fxp
+  [census/graphs blob sha1 disagreement] -> REFUSED as required: blob sha1 disagreement (census vs graphs)
+
+resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp
+  blob sha1 8c61a18938fa816d0711e88eeb7a32dce41cf1cb
+  ms_velocity         scene 0 voice  ->  275 'A Osc 2 Volume' raw=0.1125 norm=0.1125 [OUT OF frozen class]
+  ms_velocity         scene 0 voice  ->  308 'A Filter 1 Cutoff' raw=28.350002 norm=0.218077 [IN frozen class]
+  totals: 1 in class, 1 out of class, 0 release-velocity route(s)
+
+resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp
+  blob sha1 13979de9231f1b5d2b83e4370948cc33b5b52dfc
+  ms_velocity         scene 0 voice  ->  275 'A Osc 2 Volume' raw=0.321429 norm=0.321429 [OUT OF frozen class]
+  totals: 0 in class, 1 out of class, 0 release-velocity route(s)
+
+resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp
+  blob sha1 ceaa96a85b3fdd3d9f026087c70d6fb2a6e76057
+  ms_velocity         scene 1 voice  ->  502 'B Osc 1 Sync' raw=-12.192568 norm=-0.203209 [OUT OF frozen class]
+  totals: 0 in class, 1 out of class, 0 release-velocity route(s)
+
+resources/data/patches_factory/Basses/Attacky.fxp (fixture carrier)
+  blob sha1 4675e423a7489b02f501f7763b4760f64ab035f9
+  no ms_velocity / ms_releasevelocity route at all
+  totals: 0 in class, 0 out of class, 0 release-velocity route(s)
+
+Findings (oracle-independent, from committed corpus artifacts only):
+  * across the three NAMED carriers: 1 velocity route(s) land inside the frozen destination class and 0 ms_releasevelocity route(s) exist at all.
+  * the fixture carrier (Attacky) has no velocity or release-velocity route of its own, which is why the landed fixture adds DECLARED synthetic routes rather than reusing preset routes.
+  * this substantiates the fixture substitution recorded in reports/SXT-036/EVIDENCE.md: the named carriers do not supply a release-velocity route at all, and all but one of their velocity routes target parameters outside the frozen class.
+  * it does NOT make any carrier supported: supported-preset delta from this leaf stays 0.
+
+Backfill predictions for the oracle host (#232) - FALSIFIABLE, not evidence: a live getModDepth01 / routing getDepth readback on the pinned engine should reproduce each normalized depth below; a disagreement is a finding about the corpus pipeline, not a tuning opportunity.
+  resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp: ms_velocity -> 308 'A Filter 1 Cutoff' norm=0.218077
+
+VERDICT: audit complete (oracle-independent); refusal control PASS. Acceptance items 2 and 5 of #70 remain NOT_RUN - pinned oracle unavailable on dispatch host (#96).

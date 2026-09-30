@@ -1,0 +1,37 @@
+{
+  "issue": 110,
+  "legs": {
+    "tail_gate_controls_rerun": {
+      "status": "PASS",
+      "issue93_leg2": "PASS",
+      "issue93_carried_mismatches": [],
+      "issue100_leg2": "PASS",
+      "issue100_carried_mismatches": []
+    },
+    "floor_sensitivity": {
+      "status": "PASS",
+      "note": "characterization"
+    },
+    "dry_parity_vs_pre110": {
+      "status": "PASS",
+      "base_rev": "baba823b266ef6740aa360cda07d8b4967b02fe4"
+    },
+    "rerender_proof": {
+      "status": "PASS"
+    },
+    "unit_sweep": {
+      "status": "PASS"
+    },
+    "regrade_ledger": {
+      "status": "PASS",
+      "ledger": "reports/spectral-corr-fs-floor/artifacts/regrade-ledger.json"
+    }
+  },
+  "run_utc": "2026-09-30T04:09:00Z",
+  "repo_head": "173931890e490a7ed4eddf339bf72bb21af0d264",
+  "numpy": "2.4.1",
+  "definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "floor_db": -100.0,
+  "overall": "PASS",
+  "base_rev": "baba823b266ef6740aa360cda07d8b4967b02fe4"
+}

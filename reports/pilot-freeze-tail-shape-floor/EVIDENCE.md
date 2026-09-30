@@ -166,3 +166,40 @@ read, and a leg that did not run is not a pass. See the header of
 * Defects below the declared floor remain invisible to this leg by construction
   (#111 F3). That limit is unchanged by this decision.
 * The fixture- or bus-side remedy (F-E) is unattempted: **NOT_RUN**.
+  *(Superseded by §7 below, appended 2026-09-27 under issue #187 — the
+  fixture-side arm has since been taken. This line records the status as of
+  #160 and is left as written.)*
+
+## 7. Continuation: F-E disposed of by issue #187 (appended 2026-09-27)
+
+This section is an **append-only** pointer. Nothing above it was edited, and
+neither `artifacts/floor-probe.txt`, `artifacts/floor-probe.json`,
+`artifacts/issue-111-leg2-controls-rerun.txt`, nor
+`reports/tail-shape-leg/artifacts/` was regenerated — the #160 record stays
+reproducible exactly as landed.
+
+Issue #187 disposed of option **F-E**, which §4 and §6 above report as
+NOT_RUN, by taking its **fixture-side** arm and rejecting its bus-side arm on
+measurement:
+
+* the int16 wet shape leg is graded on a **designated eligible fixture**,
+  `fixtures/audio/behemoth/seq-notes-holds-v1-wet.wav`, whose whole declared
+  tail region is graded (50/50 windows) with its lowest graded window at
+  **−46.7 dBFS** — 25.3 dB clear of the band's upper edge, where a worst-case
+  ±1 LSB difference spends 0.06 dB of the 1.00 dB budget instead of the
+  **0.79 dB** §2 measures on `koala2/seq-notes-coverage-v1`;
+* **no new render was required**: 7 of the 30 committed int16 wet fixtures
+  already satisfy the eligibility criterion (that arm is reported NOT_REQUIRED,
+  measured, not as a pass), and the bus-side arm is reported **NOT_RUN**;
+* the #111 mono late-tail controls were re-derived there, including a
+  single-window control (`zero-late-tail-from-98%`) that replaces the one whose
+  only defect window sat *inside* the band, and all of them FAIL with every
+  over-budget window above the band;
+* **this record's live control is retained and still fires**: on the old
+  fixture `mono/koala2/zero-late-tail-from-44%` still FAILs at the declared
+  floor and is still disabled by a floor raised to −80.0 / −72.0 dBFS.
+
+Decision: `decision-records/0017-int16-wet-tail-shape-grading-fixture.md`
+(0016's Status line carries the amendment). Evidence:
+`reports/int16-wet-shape-fixture/EVIDENCE.md`. No constant, committed render,
+or landed verdict changed there either.

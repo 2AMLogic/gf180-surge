@@ -91,10 +91,94 @@ def scan_corpus(limit_free_only=False):
             "closure": (r["budget"] or {}).get("closure"),
             "cost_total_cycles": ((r["budget"] or {}).get(
                 "cost_cycles_per_frame") or {}).get("total"),
+            "cost_modulation_cycles": ((r["budget"] or {}).get(
+                "cost_cycles_per_frame") or {}).get("modulation"),
+            "modulation_rows": (r["budget"] or {}).get("modulation_rows"),
+            "dsp_budget_cycles": (r["budget"] or {}).get(
+                "dsp_budget_cycles_per_frame"),
             "rejection_codes": sorted(x["code"] for x in r["rejections"]),
             "anomaly_codes": sorted({x["code"] for x in r["anomalies"]}),
         })
     return records, ep
+
+
+def modroute_shape_decision(records):
+    """Enumerate what the #239 modulation-shape decision moved, per preset.
+
+    The retired shape (every modulation row charged once per frame) is
+    recomputed from each record's own numbers — `cost_total_cycles` minus the
+    accounted modulation term plus `rows_total x cyc_modroute_frame` — so the
+    comparison never depends on a second, hand-maintained copy of either
+    formula. Only the modulation term differs between the two shapes; every
+    other rejection code is carried across unchanged.
+    """
+    cyc = REG.cyc_modroute_frame
+    flipped, unchanged_status, with_voice_rows = [], 0, 0
+    for r in records:
+        if r["input_status"] != "normalized":
+            continue
+        mr = r["modulation_rows"]
+        if mr["rows_charged_once_per_live_voice"]:
+            with_voice_rows += 1
+        retired_mod = mr["rows_total"] * cyc
+        retired_total = round(
+            r["cost_total_cycles"] - r["cost_modulation_cycles"] + retired_mod, 6)
+        retired_overflow = retired_total > r["dsp_budget_cycles"]
+        other = [c for c in r["rejection_codes"] if c != "budget_overflow"]
+        retired_status = "rejected" if (other or retired_overflow) else "fit"
+        if retired_status == r["status"]:
+            unchanged_status += 1
+            continue
+        flipped.append({
+            "path": r["path"], "sha": r["sha"], "bank": r["bank"],
+            "status_retired_shape": retired_status,
+            "status_this_shape": r["status"],
+            "direction": "%s -> %s" % (retired_status, r["status"]),
+            "worst_case_voices": mr["worst_case_voices"],
+            "rows_charged_once_per_frame": mr["rows_charged_once_per_frame"],
+            "rows_charged_once_per_live_voice":
+                mr["rows_charged_once_per_live_voice"],
+            "row_evaluations_per_frame": mr["row_evaluations_per_frame"],
+            "modulation_cycles_retired_shape": retired_mod,
+            "modulation_cycles_this_shape": r["cost_modulation_cycles"],
+            "total_cycles_retired_shape": retired_total,
+            "total_cycles_this_shape": r["cost_total_cycles"],
+            "dsp_budget_cycles_per_frame": r["dsp_budget_cycles"],
+            "other_rejection_codes": other,
+        })
+    flipped.sort(key=lambda x: x["path"])
+    toward_fit = [f["path"] for f in flipped if f["status_this_shape"] == "fit"]
+    return {
+        "issue": "SXT-015",
+        "decision": "#239 — modulation rows are charged by EVALUATION scope: "
+                    "a global/scene-list row once per frame, a voice-list row "
+                    "once per worst-case live voice per frame (SXT-036 #70 "
+                    "measured law). cyc_modroute_frame is UNCHANGED at %d "
+                    "cycles per row evaluation; per-voice modulation-source "
+                    "state is declared inside voice_base_state_bytes (no new "
+                    "row, value unchanged)" % cyc,
+        "model_version": MODEL_VERSION,
+        "params_digest": params_digest(),
+        "cost_profile": REG.cost_profile,
+        "cyc_modroute_frame": cyc,
+        "retired_shape": "every modulation row charged once per frame "
+                         "(rows_total x cyc_modroute_frame)",
+        "graphs_file": "corpus/normalized/graphs.jsonl",
+        "normalized_graphs": sum(1 for r in records
+                                 if r["input_status"] == "normalized"),
+        "presets_with_voice_list_rows": with_voice_rows,
+        "status_unchanged": unchanged_status,
+        "status_flipped_count": len(flipped),
+        "status_flipped_toward_fit": toward_fit,
+        "status_flipped": flipped,
+        "note": "the flip list is enumerated, never summarized. Every flip "
+                "is fit -> rejected: the new shape charges >= the retired one "
+                "for every graph (worst_case_voices >= 1), so no preset can "
+                "become cheaper and `status_flipped_toward_fit` must stay "
+                "empty. A placeholder-v0 closure is NOT a preset-support "
+                "claim in either direction (SXT-016 replaces the profile, "
+                "SXT-017 freezes it); supported-preset delta is 0.",
+    }
 
 
 def cross_check_census(records):
@@ -286,6 +370,104 @@ def negative_controls(outdir):
     results.append(c4)
     _dump(os.path.join(outdir, "nc-unison-out-of-range.json"), c4)
 
+    # --- control 5: voice-list mod rows are charged per live voice ----------
+    # Decision #239 (SXT-036 #70 measured law): a global/scene-list row is
+    # evaluated once per frame, a voice-list row once per live voice per
+    # frame. This control must show the accounted modulation TERM actually
+    # moving, and must show it moving for the right reason: only voice-list
+    # rows scale, and only with the worst-case voice count.
+    from model.resources.accounting import _split_modroutes
+
+    def _retired_shape_cycles(graph):
+        """The shape this decision replaced: every row once per frame."""
+        return _split_modroutes(graph)["rows_total"] * REG.cyc_modroute_frame
+
+    def _mod_arm(graph):
+        r = account_graph(graph, fx_instance_limit=None, event_profile=ep)
+        return {
+            "worst_case_voices": r["voice"]["worst_case_voices"],
+            "rows": r["budget"]["modulation_rows"],
+            "accounted_modulation_cycles_per_frame":
+                r["budget"]["cost_cycles_per_frame"]["modulation"],
+            "retired_shape_cycles_per_frame": _retired_shape_cycles(graph["g"]),
+        }
+
+    # three DECLARED synthetic rows on filter destinations: neither an osc
+    # slot nor the waveshaper, so activity (which is read from these same
+    # rows) is untouched and the control isolates the modulation term
+    declared_rows = [[1, 0, 0, 308, "A Filter 1 Cutoff", 1.0, 1.0],
+                     [16, 0, 0, 309, "A Filter 1 Resonance", 1.0, 1.0],
+                     [30, 0, 0, 318, "A Filter 2 FEG Mod Amount", 1.0, 1.0]]
+
+    def _with_rows(bus, poly):
+        """base with EVERY modulation list emptied, then the declared rows
+        placed on exactly one bus of the active scene: each arm's row split
+        is then fully determined by the arm, not by the base preset."""
+        d = json.loads(json.dumps(base))
+        d["p"] = "synthetic/negative-control-modroute-shape-%s-poly%d" % (
+            bus, poly)
+        d["g"]["poly"] = poly
+        d["g"]["md"]["g"] = []
+        for sc in d["g"]["md"]["s"]:
+            sc["s"] = []
+            sc["v"] = []
+        d["g"]["md"]["s"][d["g"]["sa"]][bus] = list(declared_rows)
+        return d
+
+    arms = {
+        "voice_rows_poly16": _mod_arm(_with_rows("v", 16)),
+        "voice_rows_poly1": _mod_arm(_with_rows("v", 1)),
+        "scene_rows_poly16": _mod_arm(_with_rows("s", 16)),
+    }
+    a16, a1, s16 = (arms["voice_rows_poly16"], arms["voice_rows_poly1"],
+                    arms["scene_rows_poly16"])
+    checks = {
+        # the shape change is visible: > 1 live voice + voice rows => the
+        # accounted term differs from the retired once-per-frame shape
+        "voice_rows_at_16_voices_differ_from_retired_shape":
+            a16["accounted_modulation_cycles_per_frame"]
+            != a16["retired_shape_cycles_per_frame"],
+        "voice_rows_at_16_voices_match_the_measured_shape":
+            a16["accounted_modulation_cycles_per_frame"]
+            == (a16["rows"]["rows_charged_once_per_frame"]
+                + 16 * a16["rows"]["rows_charged_once_per_live_voice"])
+            * REG.cyc_modroute_frame,
+        # one live voice reproduces the retired shape exactly: the multiplier
+        # is the live-voice count, not a blanket constant
+        "one_live_voice_reproduces_the_retired_shape":
+            a1["worst_case_voices"] == 1
+            and a1["accounted_modulation_cycles_per_frame"]
+            == a1["retired_shape_cycles_per_frame"],
+        # the same rows on the SCENE list do not scale with voices
+        "scene_list_rows_do_not_scale_with_voices":
+            s16["rows"]["rows_charged_once_per_live_voice"] == 0
+            and s16["accounted_modulation_cycles_per_frame"]
+            == s16["retired_shape_cycles_per_frame"],
+    }
+    c5 = {
+        "control": "modroute_voice_rows_charged_per_live_voice",
+        "targets": "a shape change that leaves every account numerically "
+                   "identical has not changed the shape it claims to change "
+                   "(issue #239 failure control); and a change that scaled "
+                   "EVERY row, or scaled by something other than the live "
+                   "voice count, would be a different (wrong) shape",
+        "decision": "#239 — voice-list rows are charged once per worst-case "
+                    "live voice per frame; cyc_modroute_frame is unchanged "
+                    "at %d cycles per row EVALUATION (never re-tuned)"
+                    % REG.cyc_modroute_frame,
+        "base_preset": base["p"],
+        "declared_rows": declared_rows,
+        "arms": arms,
+        "checks": checks,
+        "outcome": "PASS" if all(checks.values()) else "FAIL",
+        "note": "synthetic declared rows on filter destinations so that osc "
+                "and waveshaper activity (read from the same rows) is "
+                "unaffected; the retired shape is recomputed live from "
+                "_split_modroutes, never quoted",
+    }
+    results.append(c5)
+    _dump(os.path.join(outdir, "nc-modroute-shape.json"), c5)
+
     return results
 
 
@@ -403,6 +585,11 @@ def main():
     }
     summary["census_cross_check"] = cross_check_census(records)
     _dump(os.path.join(args.outdir, "corpus-accounting.json"), summary)
+
+    # modulation-shape decision record (#239): what the shape moved, per
+    # preset, enumerated
+    shape = modroute_shape_decision(records)
+    _dump(os.path.join(args.outdir, "decision-239-modroute-shape.json"), shape)
 
     # worked examples ----------------------------------------------------------
     picks = pick_examples(records, lines_by_path)

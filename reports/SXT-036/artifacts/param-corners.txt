@@ -1,0 +1,80 @@
+SXT-036 (#70) parameter corners - oracle-independent (graphs.jsonl + iverilog only)
+Claim established: RTL == frozen model, exactly, at the declared corners (claim 1). Model-vs-pinned-engine agreement: NOT_RUN (#96). No fidelity, sound-quality, synthesis or hardware claim.
+stimulus: sxt036-vel-corners-v1
+
+Derived destination extents from 3561 normalized corpus graphs (graphs.jsonl sha256 c90424d91f2dc9ec.. == value pinned in #70):
+  308 'A Filter 1 Cutoff': extent 130.007607 (declared corner uses 130.0) from 2914 rows, spread 0.1942%
+  309 'A Filter 1 Resonance': extent 1.0 (declared corner uses 1.0) from 874 rows, spread 0.0000%
+  310 'A Filter 1 FEG Mod Amount': extent 192.00662 (declared corner uses 192.0) from 483 rows, spread 0.0109%
+  298 'A VCA Gain': extent 95.9966 (declared corner uses 96.0) from 838 rows, spread 0.0248%
+  These extents are depth_raw/depth_normalized ratios recorded by the corpus pipeline - a FALSIFIABLE PREDICTION for the oracle host (#232), not an engine readback.
+
+Observed normalized depth range of this leaf's sources, whole corpus:
+  ms_velocity: 5212 route rows, normalized depth [-1.0, 1.0]
+  ms_releasevelocity: 162 route rows, normalized depth [-1.0, 1.0]
+  In-class rows (source -> frozen destination):
+    ms_velocity->308: 576 rows, raw [-43.200008, 130.0], norm [-0.332308, 1.0]
+    ms_velocity->309: 127 rows, raw [-1.0, 0.65625], norm [-1.0, 0.65625]
+    ms_velocity->310: 258 rows, raw [-131.657211, 192.0], norm [-0.685715, 1.0]
+    ms_velocity->298: 62 rows, raw [-22.114292, 66.342888], norm [-0.230357, 0.691072]
+    ms_releasevelocity->308: 12 rows, raw [-130.0, 102.966263], norm [-1.0, 0.792048]
+    ms_releasevelocity->309: 2 rows, raw [-0.587143, -0.587143], norm [-0.587143, -0.587143]
+    ms_releasevelocity->310: 0 rows
+    ms_releasevelocity->298: 0 rows
+
+[exhaustive ROM] all 128 ms_velocity / ms_releasevelocity source words, RTL (vel_rom lifted from rtl/voice/tb_vel.sv) vs frozen model vel_q(): PASS entries=128 mismatches=0
+[exhaustive ROM control] rom-floor mutant (no +127 rounding): FAIL mismatches=63 -> FAILS as required
+
+[full-scale-positive] every route at normalized depth +1 (depth_raw = +derived extent)
+    depths: velocity->cutoff 130, releasevelocity->cutoff 130, velocity->reso 1, releasevelocity->reso 1, velocity->fegmod 192, releasevelocity->fegmod 192, velocity->vca 96, releasevelocity->vca 96
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352} (expected PASS) -> as required
+    tb_voice.sv datapath:    PASS mismatches=0 checked={'checkpoints': 312, 'fields': 10920, 'oscout': 19968, 'mono': 36800}
+    worst |route sum| 805306368 of 2147483647 (32-bit checkpoint word), headroom 2.67x; fits=True; max |term| 402653184; saturated qmul terms 0; exact rounding ties 0; blocks with >=2 concurrently-live voices carrying distinct source words 498
+
+[full-scale-negative] every route at normalized depth -1
+    depths: velocity->cutoff -130, releasevelocity->cutoff -130, velocity->reso -1, releasevelocity->reso -1, velocity->fegmod -192, releasevelocity->fegmod -192, velocity->vca -96, releasevelocity->vca -96
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352} (expected PASS) -> as required
+    tb_voice.sv datapath:    PASS mismatches=0 checked={'checkpoints': 312, 'fields': 10920, 'oscout': 19968, 'mono': 36800}
+    worst |route sum| 805306368 of 2147483647 (32-bit checkpoint word), headroom 2.67x; fits=True; max |term| 402653184; saturated qmul terms 0; exact rounding ties 0; blocks with >=2 concurrently-live voices carrying distinct source words 498
+
+[mixed-sign-full-scale] velocity +1, release velocity -1 (per-destination cancellation at full-scale terms)
+    depths: velocity->cutoff 130, releasevelocity->cutoff -130, velocity->reso 1, releasevelocity->reso -1, velocity->fegmod 192, releasevelocity->fegmod -192, velocity->vca 96, releasevelocity->vca -96
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352} (expected PASS) -> as required
+    tb_voice.sv datapath:    PASS mismatches=0 checked={'checkpoints': 312, 'fields': 10920, 'oscout': 19968, 'mono': 36800}
+    worst |route sum| 402653184 of 2147483647 (32-bit checkpoint word), headroom 5.33x; fits=True; max |term| 402653184; saturated qmul terms 0; exact rounding ties 0; blocks with >=2 concurrently-live voices carrying distinct source words 498
+
+[one-lsb] smallest nonzero model depth word (depth_q = +-1): the rounding floor of the qmul
+    depths: velocity->cutoff 4.76837e-07, releasevelocity->cutoff -4.76837e-07, velocity->reso 4.76837e-07, releasevelocity->reso -4.76837e-07, velocity->fegmod 4.76837e-07, releasevelocity->fegmod -4.76837e-07, velocity->vca 4.76837e-07, releasevelocity->vca -4.76837e-07
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352} (expected PASS) -> as required
+    tb_voice.sv datapath:    PASS mismatches=0 checked={'checkpoints': 312, 'fields': 10920, 'oscout': 19968, 'mono': 36800}
+    worst |route sum| 1 of 2147483647 (32-bit checkpoint word), headroom 2147483647.00x; fits=True; max |term| 1; saturated qmul terms 0; exact rounding ties 0; blocks with >=2 concurrently-live voices carrying distinct source words 498
+
+[rounding-tie-half] depth exactly +-0.5: an exact round-half-up tie for every odd source word, both signs
+    depths: velocity->cutoff 0.5, releasevelocity->cutoff -0.5, velocity->reso 0.5, releasevelocity->reso -0.5, velocity->fegmod 0.5, releasevelocity->fegmod -0.5, velocity->vca 0.5, releasevelocity->vca -0.5
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352} (expected PASS) -> as required
+    tb_voice.sv datapath:    PASS mismatches=0 checked={'checkpoints': 312, 'fields': 10920, 'oscout': 19968, 'mono': 36800}
+    worst |route sum| 1048576 of 2147483647 (32-bit checkpoint word), headroom 2048.00x; fits=True; max |term| 1048576; saturated qmul terms 0; exact rounding ties 6144; blocks with >=2 concurrently-live voices carrying distinct source words 498
+    [tie precondition] exact .5 products observed: 6144 -> ties really occur
+    [tie control] round-trunc RTL mutant on this corner: FAIL mismatches=44 -> FAILS as required
+
+[observed-corpus-extreme] largest |depth_raw| this source/destination pair actually shows anywhere in the corpus
+    depths: velocity->cutoff 130, releasevelocity->cutoff -130, velocity->reso -1, releasevelocity->reso -0.587143, velocity->fegmod 192, releasevelocity->fegmod 192, velocity->vca 66.3429, releasevelocity->vca 96
+    tb_vel.sv control plane: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352} (expected PASS) -> as required
+    fallback: ms_releasevelocity->310 'A Filter 1 FEG Mod Amount': no route with this source exists anywhere in the corpus, so the corner falls back to full scale (+192.0)
+    fallback: ms_releasevelocity->298 'A VCA Gain': no route with this source exists anywhere in the corpus, so the corner falls back to full scale (+96.0)
+    tb_voice.sv datapath:    PASS mismatches=0 checked={'checkpoints': 312, 'fields': 10920, 'oscout': 19968, 'mono': 36800}
+    worst |route sum| 805306368 of 2147483647 (32-bit checkpoint word), headroom 2.67x; fits=True; max |term| 402653184; saturated qmul terms 0; exact rounding ties 0; blocks with >=2 concurrently-live voices carrying distinct source words 498
+
+[over-range-accumulator] CONTROL, outside the derived ranges: depth 3x the derived extent overflows the 32-bit checkpoint word
+    depths: velocity->cutoff 390, releasevelocity->cutoff 390, velocity->reso 3, releasevelocity->reso 3, velocity->fegmod 576, releasevelocity->fegmod 576, velocity->vca 288, releasevelocity->vca 288
+    tb_vel.sv control plane: FAIL mismatches=41 checked={'voice_block_checkpoints': 2081, 'source_words': 4162, 'route_sums': 8324} (expected FAIL) -> as required
+    worst |route sum| 2415919104 of 2147483647 (32-bit checkpoint word), headroom 0.89x; fits=False; max |term| 1207959552; saturated qmul terms 0; exact rounding ties 0; blocks with >=2 concurrently-live voices carrying distinct source words 498
+    boundary recorded: The per-destination checkpoint sum is a 32-bit signed word in rtl/voice/tb_vel.sv and an unbounded Python integer in the model, so the frozen checkpoint definition holds only while |sum| <= 2^31-1. This corner is deliberately outside the derived ranges and shows the divergence is reachable there.
+
+Checkpoint-word accounting over the declared corners (not an agreement claim):
+  worst declared corner: full-scale-positive, |sum| 805306368 -> 2.67x headroom in the 32-bit checkpoint word
+  every declared corner fits the 32-bit checkpoint word: True
+  the over-range CONTROL above does not fit, and demonstrably fails exactness there - the boundary is recorded, not designed around.
+
+Not established here: model-vs-pinned-engine dry-render budgets (item 2) and the reference-budget negative controls (item 5) remain NOT_RUN - pinned oracle unavailable on dispatch host (#96). The derived extents and observed depth ranges above are predictions for the oracle-host backfill (#232), not reference values. Supported-preset delta from this leaf stays 0.
+VERDICT (declared corners exact AND every control fired): PASS

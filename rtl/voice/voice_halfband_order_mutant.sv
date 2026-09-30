@@ -173,11 +173,14 @@ module tb_voice;
   logic [31:0] cfg [0:DRAWS_BASE + 16*MAX_DRAWS_SETS - 1];
   // ctrl block header: [b, ncreate, modwheel, master_amp]
   // ctrl slot record (40 words):
-  //  0 flags(b0 active,b1 ckpt,b2 created,b3 released)  1 key  2 gate
+  //  0 flags(b0 active,b1 ckpt,b2 created,b3 released,
+  //          b4 ctor gain anchor streamed in word 37 -- SXT-036)
+  //  1 key  2 gate
   //  3 aeg_state 4 feg_state  5 pmi(Q13.18) 6 pitchmult 7 a_cov 8 hpf_target
   //  9..16 C0..C7  17..24 dC0..dC7  25 fbp_gain 26 fbp_outl
   //  27 aeg_phase 28 aeg_out 29 feg_phase 30 feg_out  31 reserved
-  //  32 fvel 33 kt_word  34..36 sine omega1..3 (Q3.28)  37..39 reserved
+  //  32 fvel 33 kt_word  34..36 sine omega1..3 (Q3.28)
+  //  37 ctor gain anchor (iff flags b4; SXT-036)  38..39 reserved
   logic [31:0] ctrl_mem [0:MAX_CTRL_WORDS-1];
 
   // --------------------------------------------------------- per-slot state
@@ -407,7 +410,13 @@ module tb_voice;
     if (cfg[26] != 0) begin aeg_state[s]=S_DECAY; aeg_out_r[s]=ONE; aeg_phase[s]=PH_ONE; end
     if (cfg[27] != 0) begin feg_state[s]=S_DECAY; feg_out_r[s]=ONE; feg_phase[s]=PH_ONE; end
     adsr_tick(1); adsr_tick(0);              // constructor envelope step
-    prev_gain[s] = qmul(32'(cfg[19]), aeg_out_r[s]);
+    // SXT-036: a per-voice modulation term on VCA Gain at construction
+    // (velocity -> VCA Gain) makes the SetQFB(0,0) gain anchor per-voice;
+    // the model streams it (declared control-plane word, slot word 37) and
+    // flags it with flags bit 4. Legacy stimuli never set bit 4 and keep the
+    // static cfg[19] anchor below (landed fixtures unchanged).
+    if (cw[0][4]) prev_gain[s] = 32'(cw[37]);
+    else          prev_gain[s] = qmul(32'(cfg[19]), aeg_out_r[s]);
     prev_outl[s] = 32'(cfg[20]);
     active[s] = 1;
   endtask

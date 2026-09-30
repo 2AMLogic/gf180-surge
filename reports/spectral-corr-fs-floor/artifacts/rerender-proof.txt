@@ -1,0 +1,42 @@
+issue #110 -- shared full-scale log-floor spectral_corr: leg 4
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
+definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
+
+==========================================================================
+[4] re-render proof: pre-#110 comparator on the SAME re-rendered control model
+==========================================================================
+  renders root: <scratch>/sxt110
+  reports/SXT-040/artifacts/nc-classic-substitution.json     only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-040/artifacts/nc-shape-migration.json          only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-033/artifacts/nc-submode-confusion-crush.json  only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-033/artifacts/nc-submode-confusion-horn.json   only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-reso-zeroed.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-source-swap.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-032/artifacts/audio-nc-free-running.json       only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-baseline.json           only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-reso-zeroed.json        only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-vca-zeroed.json         only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json   only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json    only #110 fields differ; re-render drift vs committed (pre-#110 tool): 0 keys
+  reports/SXT-042/artifacts/audio-nc-baseline.json           only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json      only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  T-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  ports/SXT-042/artifacts/audio-nc-source-swap-velocity.json only #110 fields differ (+2 runner-added keys recomputed equal); re-render drift vs committed (pre-#110 tool): 2 keys e.g. /windowed_rms_lsb/kt_nonzero
+  SXT-035 C2 smoothing-bypass discriminator (control must be WORSE than the unmutated baseline on rms or spectral):
+    rms_diff_lsb: baseline 4106.7, control 3213.7 -> control NOT worse
+    spectral legacy       baseline 0.9875, control 0.9850 -> control worse
+    spectral adopted_-80  baseline 0.9385, control 0.9487 -> control NOT worse
+    spectral adopted_-90  baseline 0.9579, control 0.9641 -> control NOT worse
+    spectral adopted_-100 baseline 0.9710, control 0.9741 -> control NOT worse
+    spectral adopted_-110 baseline 0.9796, control 0.9807 -> control NOT worse
+    spectral adopted_-120 baseline 0.9854, control 0.9834 -> control worse
+    => spectral discriminates under: legacy=True; adopted floors [-120] dBFS; at the declared -100 dBFS: NO (control-status finding)
+  leg 4: PASS
+
+leg 4 verdict: PASS

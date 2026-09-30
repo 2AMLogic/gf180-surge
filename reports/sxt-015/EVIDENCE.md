@@ -22,7 +22,7 @@ exists so the closure machinery is executable and must be replaced by SXT-016.
 | 2 | External writable-memory traffic modeled separately from on-chip state; flash not accepted as delay/reverb storage | **PASS** | `memory` object: `external_writable_state_bytes`, `on_chip_state_bytes`, `flash_asset_bytes` are separate sums. Classification rule: writable class > 64 KiB => external writable (`external_threshold_bytes`, policy). `flash_writable = 0` is a declared policy param citing plan section 3; flash carries assets only (`assets.flash_role`). |
 | 3 | Worst-case complete-patch cost computable for any normalized graph within declared limits; overflow is an explicit rejection | **PASS** | `budget` object closes the plan-section-5 formula per graph (`gross = F/Fs`, reserve, cost = voice+fx+modulation+events). Overflow => `budget_overflow` rejection object, status `rejected` — never a silent squeeze. Corpus scan: 3,561/3,561 graphs accounted (0 analysis failures in the committed export; the fail-closed path itself is demonstrated by negative control 2). |
 | 4 | Instance limits distinct from supported-type counts | **PASS** | `fx_instance_limit` applies to **enabled instances** (slots), independent of the distinct-type count; a preset with Delay+Delay+Delay is 3 instances of 1 type. Candidate limits {4, 8} are declared policy, NOT frozen product limits (SXT-017 freezes). |
-| 5 | Negative control: a graph exceeding declared instance limits must be rejected, not silently squeezed | **PASS** | `reports/sxt-015/negative-control/nc-instance-limit-overflow.json`: synthetic 5-instance graph (via `/tmp/sxt-015-nc-fx5.jsonl`) => `fx_instance_overflow` rejection at limit 4, fit at limit 8 (limit-driven). Controls 2–4: analysis_failure fails closed with null costs; budget overflow explicit; unison out of range flagged and clamped. All four controls PASS. |
+| 5 | Negative control: a graph exceeding declared instance limits must be rejected, not silently squeezed | **PASS** | `reports/sxt-015/negative-control/nc-instance-limit-overflow.json`: synthetic 5-instance graph (via `/tmp/sxt-015-nc-fx5.jsonl`) => `fx_instance_overflow` rejection at limit 4, fit at limit 8 (limit-driven). Controls 2–4: analysis_failure fails closed with null costs; budget overflow explicit; unison out of range flagged and clamped. Control 5 (added with the §8 shape decision): the modulation term moves only for voice-list rows and only with the live-voice count. All five controls PASS. |
 
 ## 2. Worked examples (issue-#10 deliverable: four-instance and two-scene-unison)
 
@@ -85,12 +85,16 @@ it byte-identically). Headlines:
   outside 1..16 (clamped to MAX_UNISON with raw value recorded); 87 presets
   declare the audio-input dependency; 577 MSEG/Formula LFO content gaps and
   599 scene-LFO (SLFO) export gaps (SXT-011 exposure notes, state counted
-  at engine constants); 2,363 presets include at least one FX class whose
-  exact state is not yet pinned (conservative placeholder); 2 presets have
-  wavetable assets whose flash bytes cannot be quantified from the graph
-  (recorded, not guessed).
-- **Budget closure under placeholder-v0:** 84 within budget / 3,477
-  OVERFLOW at the placeholder clock. This split demonstrates the closure
+  at engine constants); 2,178 presets include at least one FX class whose
+  exact state is not yet pinned (conservative placeholder; 2,363 as first
+  written — the #117 Conditioner promotion, absorbed by the §8 re-export);
+  2 presets have wavetable assets whose flash bytes cannot be quantified
+  from the graph (recorded, not guessed).
+- **Budget closure under placeholder-v0:** **75 within budget / 3,486
+  OVERFLOW** at the placeholder clock (84 / 3,477 as first written, before
+  the §8 modulation-shape decision moved 9 presets; that decision's flip
+  list is enumerated in §8.3 and in
+  `decision-239-modroute-shape.json`). This split demonstrates the closure
   machinery; it is NOT a technology result.
 
 **Stop/escalate note (per issue #10):** 31 presets (0.9%) exceed 8
@@ -122,6 +126,7 @@ committed in `corpus-accounting.json`.
 | `nc-analysis-failure-fails-closed.json` | default costs for a non-normalized graph | `analysis_failure` input => null cost objects, fail closed. **PASS** |
 | `nc-budget-overflow.json` (declared experiment: clock overridden to 1 MHz) | hiding a budget overflow | explicit `budget_overflow` rejection object. **PASS** |
 | `nc-unison-out-of-range.json` | trusting or dropping out-of-range unison | `unison_out_of_range` anomaly with raw value + engine-constant clamp. **PASS** |
+| `nc-modroute-shape.json` (§8) | a shape change that leaves every account numerically identical, or one that scales the wrong rows | three arms off one real base graph with every modulation list emptied and three DECLARED filter-destination rows placed on exactly one bus: voice rows at 16 worst-case voices charge 720 cyc vs the retired shape's 45; the same rows at polylimit 1 charge exactly the retired 45; the same rows on the SCENE list charge 45 at 16 voices. **PASS** |
 
 ## 6. What remains unproved
 
@@ -245,3 +250,225 @@ those two out of it.
 This is bookkeeping-model accounting, not a measurement. No cycle, area,
 technology, fidelity, preset-support or preset-quality claim is made or
 advanced; no budget was relaxed; nothing is frozen.
+
+---
+
+## 8. COST-MODEL SHAPE DECISION (2026-09-30) — modulation rows are charged per evaluation, issue #239
+
+**Outcome: the shape change is IMPLEMENTED, not declined.** Modulation rows
+are now charged by the scope they are *evaluated* in — a global-list or
+scene-list row once per frame, a **voice**-list row once per worst-case live
+voice per frame. `cyc_modroute_frame` is **unchanged at 15 cycles per row
+evaluation**; the decision changed the evaluation *count*, never the
+constant. The second half of the issue (a modulation-source state row) is
+decided the other way: **no new row**, the per-voice source registers are
+declared *inside* `voice_base_state_bytes`, value also unchanged.
+
+### 8.1 The finding, and why it was implemented rather than held
+
+SXT-036 (#70, fifth increment) measured, on its frozen behavioral schedule
+(`rtl/voice/tb_vel.sv` `OPS` counters, five stimuli, a 0..6 route-table
+sweep, every run also exact against the frozen model):
+
+```
+route evaluations = routes × per-voice control passes
+```
+
+i.e. a voice-list row is evaluated once per **live voice** per frame, while
+the accounting charged every row **once per frame**, independent of voice
+count. `reports/SXT-036/artifacts/cost-accounting.{txt,json}` recorded the
+gap as a bounded finding rather than fixing it inside a voice leaf.
+
+Two things separate this from the §7 Reverb 2 case, where a disagreeing row
+was deliberately **held**:
+
+1. **Direction.** §7's row is a conservative *over*-estimate, which may be
+   retained under a declared hold. This one was an *under*-estimate: it made
+   a complete patch look cheaper than the measured schedule says it is.
+   A budget-closure model may hold an over-estimate; holding an
+   under-estimate would make a future `within_budget` verdict optimistic for
+   a reason already known and recorded.
+2. **Shape vs constant.** SXT-016 replaces *constants*; the number of times
+   a row is evaluated is the model's own structure, which is SXT-015's to
+   fix. The constant — the part SXT-016 owns — is untouched here, and no
+   probe pins it (asserted over all 76 committed probe records).
+
+**Stop/escalate (per #239): NOT TRIGGERED.** Nothing was frozen: the profile
+is still `placeholder-v0`, no candidate limit, pool, budget or acceptance
+rule was relaxed, no bundle gained a fit claim, and no preset became
+supported (supported-preset delta **0**). The cost-profile *freeze* remains
+SXT-017 (#12) work.
+
+### 8.2 What changed in the tree
+
+| file | change |
+|---|---|
+| `model/resources/accounting.py` | `_split_modroutes()` splits rows by evaluation scope and is now the single row-counting definition (`_count_modroutes()` calls it, so the count and the split cannot drift); `_modroute_evaluations(g, worst_voices)` = `rows_per_frame + worst_voices × rows_per_voice`; `mod_cycles = mod_evaluations × REG.cyc_modroute_frame`; the account carries a new `budget.modulation_rows` block reporting both row classes, the voice count, the evaluation count and the per-evaluation constant. `MODEL_VERSION` 1.0.0 → **1.1.0** (the formula moved, so the version must). |
+| `model/resources/params.py` | `cyc_modroute_frame` **value unchanged (15)**; its `estimate_ref` now states the per-*evaluation* semantics, names the measured law, and records that SXT-016 still owns the constant (derived bracket 2..8 ⇒ 15 stays conservative per evaluation). `voice_base_state_bytes` **value unchanged (4096)**; its `estimate_ref` now enumerates the per-voice modulation-source registers explicitly, which is the state-row decision. `params_digest` 646942e9c3887ecb → **a639d3115ae1a0ca**. |
+| `tools/account_corpus.py` | negative control 5 (`nc-modroute-shape.json`, §5 table) and `modroute_shape_decision()`, which re-derives the retired shape from each record's own numbers and enumerates every status flip → `reports/sxt-015/decision-239-modroute-shape.json`. |
+| `probes/worked_bundle.py` | the SXT-016 worked bundle read a *second copy* of the old formula; it now reads `budget.modulation_rows.row_evaluations_per_frame` off the account. One source of truth. |
+| `tools/vel_cost_accounting.py` | SXT-015 pin **re-recorded** (`model_version`, `params_digest`) from the live model — never re-tuned, `cyc_modroute_frame` still pinned at 15 — and the carrier section is now a per-carrier *conformance* check (`shape_resolution`) instead of a divergence record. The remaining constant-level divergence is still recorded, not reconciled. |
+| `tools/publish_coverage.py` | two `STRUCTURAL_INPUTS` sha256 pins **revised in the same commit as the data they cover**, as that table's own rule requires: `reports/sxt-020/compile-corpus-scan.json` and `reports/sxt-017/predictions/B4-broad.json`. Each revision carries a comment naming what moved inside the pinned file and why no published gate, status or denominator moved with it (§8.5). |
+| `docs/dag.json` | `evidence_sha256` refreshed for nodes 10 (SXT-015) and 11 (SXT-016) because this change edits both EVIDENCE files. Refreshed through `tools/compile_backlog_dag.py render`, never by hand; `--check` (the `dag-check` CI job) then reports PASS with 26 nodes and STALE=0. No node's `status` changed. |
+| `tests/test_sxt015_modroute_shape.py` (new), `tests/test_sxt036_vel_cost.py` | see §8.4. |
+| regenerated deterministically | `reports/sxt-015/{corpus-accounting.json,examples/*,negative-control/*}`, `reports/sxt-016/{worked-bundles.json,probes/SUMMARY.md}`, `reports/sxt-017/{cost-closure.json,predictions/*,predictions/variants/*}`, `reports/sxt-020/compile-corpus-scan.json`, `reports/coverage-v1/coverage.json`, `compiler/golden/*`, `reports/SXT-036/artifacts/cost-accounting.{txt,json}`. |
+
+### 8.3 What it moved — the flip list, enumerated
+
+Corpus-wide, the modulation term moved for **3,234 of 3,561** normalized
+graphs (every preset that has at least one voice-list row); it moved for
+none of the others. Nine presets cross the `placeholder-v0` DSP budget
+(8,000 cyc/frame at the placeholder clock) as a result. **Every flip is
+`fit → rejected`**; `status_flipped_toward_fit` is empty and must stay empty
+— the new shape charges ≥ the retired one for every graph
+(`worst_case_voices ≥ 1`), so no account can get cheaper.
+
+| preset | bank | worst voices | rows per-frame / per-voice | row evals/frame | modulation cyc (retired → this) | total cyc (retired → this) |
+|---|---|---:|---|---:|---:|---:|
+| `patches_3rdparty/Luna/MPE/FM Trumpet.fxp` | contributor | 16 | 1 / 5 | 81 | 90 → 1215 | 7310 → 8435 |
+| `patches_3rdparty/Malfunction/Brass/Clean Trumpet.fxp` | contributor | 16 | 5 / 24 | 389 | 435 → 5835 | 7655 → 13055 |
+| `patches_3rdparty/Slowboat/Basses/Bass Guitar 3.fxp` | contributor | 3 | 0 / 20 | 60 | 300 → 900 | 7940 → 8540 |
+| `patches_3rdparty/Slowboat/Basses/Bass Guitar 5.fxp` | contributor | 2 | 0 / 31 | 62 | 465 → 930 | 7785 → 8250 |
+| `patches_3rdparty/Slowboat/Drums/Toms 1.fxp` | contributor | 2 | 8 / 34 | 76 | 630 → 1140 | 7850 → 8360 |
+| `patches_3rdparty/Slowboat/Drums/Toms 2.fxp` | contributor | 2 | 10 / 41 | 92 | 765 → 1380 | 7985 → 8600 |
+| `patches_3rdparty/Slowboat/FX/Water Tank.fxp` | contributor | 8 | 8 / 3 | 32 | 165 → 480 | 7725 → 8040 |
+| `patches_factory/Basses/FM Slap.fxp` | factory | 16 | 0 / 4 | 64 | 60 → 960 | 7280 → 8180 |
+| `patches_factory/Polysynths/Shenanigans.fxp` | factory | 16 | 5 / 3 | 53 | 120 → 795 | 7340 → 8015 |
+
+Corpus closure therefore reads **75 within budget / 3,486 OVERFLOW**
+(was 84 / 3,477). **A `placeholder-v0` closure verdict is not a
+preset-support claim in either direction** — it is a demonstration that the
+closure machinery runs against named placeholders, and the profile is the
+very thing SXT-016 replaces. No preset's *support* status changed anywhere
+(§8.5).
+
+The four carriers #70 named are all already `rejected` under
+`placeholder-v0`, so on them the decision changed a term and no verdict, as
+that issue predicted; the nine flips above are the corpus-wide part that its
+scope note did not cover.
+
+### 8.4 Controls (live; each demonstrably fails the check it targets)
+
+- **The shape is actually different** — `nc-modroute-shape.json` (§5) and
+  `test_the_failure_control_of_the_issue_actually_fires`: voice rows at 16
+  worst-case voices charge 720 cyc where the retired shape charges 45; the
+  identical rows at polylimit 1 charge exactly the retired 45; the identical
+  rows moved to the *scene* list charge 45 even at 16 voices. A change that
+  left every account numerically identical, or that scaled every row, fails
+  all three arms.
+- **The right rows scale, by the right factor** —
+  `test_the_shape_is_consumed_row_class_by_row_class` moves the row split by
+  five known deltas and requires the accounted term to move by exactly
+  `(Δscene_rows + Δvoice_rows × worst_voices) × cyc_modroute_frame`.
+- **Mutation-checked, twice, in opposite directions.** With
+  `_modroute_evaluations` reverted to `rows_total` (the retired shape) in the
+  live model, **12** tests across `tests/test_sxt015_modroute_shape.py` and
+  `tests/test_sxt036_vel_cost.py` FAIL, including the flip-list re-derivation.
+  With it mutated the *other* way — `worst_voices × rows_total`, i.e. scaling
+  **every** row class instead of only the voice rows — a different **12** fail,
+  among them
+  `test_a_graph_with_no_voice_rows_is_voice_count_independent` and the
+  `(Δscene_rows, 0)` arms of the row-class test, which the first mutant leaves
+  green. Restoring the shape returns both sets to green. So the suite pins the
+  shape from both sides: neither "changed nothing" nor "scaled everything"
+  passes it.
+- **The flip list is generated, not hand-maintained** —
+  `test_the_committed_decision_record_is_re_derivable` re-scans all 3,561
+  graphs and requires byte-equality with the committed record;
+  `test_every_flip_is_toward_rejection_and_is_explained_by_voice_rows`
+  requires every entry to have voice rows, `worst_case_voices > 1`, no other
+  rejection code, and the budget strictly between the two totals.
+- **The measured law is still the source** — `tools/vel_cost_accounting.py`
+  re-runs the iverilog measurement and now *fails* if any carrier's
+  accounted modulation term stops equalling `evaluations ×
+  cyc_modroute_frame` (`shape_resolution.per_carrier`), and its pin still
+  REFUSES (exit 2) on any SXT-015 drift.
+
+### 8.5 Downstream artifacts — what moved, and what did not
+
+- `reports/sxt-017/predictions/*` (5 headline + 7 variants): per-preset
+  `status`, every `reasons` list, `totals`, `per_bank` and `slate_coverage`
+  are **identical** for all 3,561 entries in all 12 artifacts. What moved is
+  the reported `cost_cycles_per_frame_placeholder_v0` column (3,234
+  presets), the `budget_closure_placeholder_v0` column (9 presets at pool
+  16 — B3/B4/R0 — and 80 at pool 8 — B1/B2 — all `within_budget →
+  OVERFLOW`), their aggregates, and `provenance.accounting_model_version`.
+  Cycles gate nothing in that stage by construction (§8 addendum), so no
+  prediction verdict depends on this change.
+- `reports/sxt-017/cost-closure.json`: `worst_mixed_cycles_per_frame` in
+  **48 of 120** grid cells, all **upward** (48 up, 0 down), and
+  `lanes_required_floor_mixed` in **3** cells (B1 @96 MHz M32 7 → 8;
+  B2 @96 MHz M32 13 → 14, twice). **Unchanged:** every cell `verdict`,
+  `worst_probe_only_cycles_per_frame` (the modulation term is a placeholder
+  component, excluded from the lower bound by construction), every
+  `ext_*` column, `admissible`, `fit_claimable`, `selected_bundle`
+  (`B1-core-narrow`), `selected_bundle_fit_claim` (`false`), `goal_test`,
+  `stop_escalate` and `stop_escalate_reasons`. Unlike §7.4 the movement is
+  **pessimistic**, so no previously-failing check reads as passing and
+  nothing is routed to #12 by this change.
+- `compiler/golden/*` + `reports/sxt-020/compile-corpus-scan.json`:
+  regenerated (`compiler/build_golden.py`, `compiler/compile.py scan`);
+  `compiler/verify.py golden` 183 checks PASS, `controls` 17 checks PASS.
+  The scan's only changed field is
+  `provenance.accounting_model_version` — all 3,561 compile statuses and the
+  2 named reconciliation deltas are unchanged.
+- `reports/coverage-v1/` (SXT-029 publication): two `STRUCTURAL_INPUTS` pins
+  in `tools/publish_coverage.py` are revised in this commit, because that
+  tool REFUSES (exit 2) rather than republishing over moved inputs and its own
+  rule is that "the pin changes in the same commit as the data". The pinned
+  files are the two regenerated above — `reports/sxt-020/compile-corpus-scan.json`
+  and `reports/sxt-017/predictions/B4-broad.json`. Re-published:
+  **`per-preset.csv` is byte-identical**, and the only change in
+  `coverage.json` is the two recorded input sha256 values — so no
+  `headline_status`, no gate cell, no `b4_prediction`, no slate membership and
+  no denominator moved. `tests/test_sxt029_publication.py` (5 tests) passes,
+  including its stale-pin-must-downgrade control. **Coverage claim delta: 0.**
+- **STALE BASIS in three SXT-027 artifacts, deliberately not regenerated:**
+  `reports/sxt-027/{leaf-plan,leaf-backlog,leaves-filed}.json` each record the
+  compile-scan sha256 they were generated from
+  (`inputs.compile_scan = e23e351c…`), which is now the superseded value.
+  Their *content* is derived from compile statuses and leaf attribution, none
+  of which this change moves, and two of the three are themselves pinned
+  structural inputs — re-emitting them is an SXT-027 leaf-ledger revision, not
+  a cost-model one. Recorded as STALE, not corrected; noted on follow-up #246
+  alongside the image snapshots below.
+- **NOT regenerated, pre-existing drift unrelated to this change:**
+  `reports/sxt-016/probes/probe_scheduler__event_queue_and_control__a24__m{18,32}__onchip.json`
+  record `fixture_files` / `total_events_across_fixtures` from the SXT-012
+  sequence library, which grew on `main` (10 → 18 fixtures) without a probe
+  re-run. Re-running `probes/run_all.py` therefore moves those two records
+  for a reason that has nothing to do with the modulation shape, so they are
+  left exactly as committed and only the two artifacts this change actually
+  moves (`worked-bundles.json`, `probes/SUMMARY.md`) are taken from that run.
+- **Absorbed, pre-existing, and NOT caused by this change** (both already
+  flagged in `reports/sxt-017/EVIDENCE.md` §9 and in §7.4 above as awaiting
+  the next re-export): `event_profile.sequence_fixtures` 10 → 18 with
+  `peak_events_per_second` 13.333333 → 137.142857 (SXT-012 fixture growth),
+  and `anomaly_code_counts.class_state_unverified` 2,363 → 2,178 (the #117
+  Conditioner promotion). Neither moves any status: re-scanning with the
+  *retired* shape and today's tree reproduces the committed 84 / 3,477
+  closure split exactly, so all nine flips are attributable to the shape and
+  to nothing else.
+- **STALE BASIS, deliberately not regenerated here:** three committed image
+  snapshots still record the superseded accounting basis
+  (`sxt-015-accounting/1.0.0` / `646942e9c3887ecb`) —
+  `model/integration/preset/Hell_s_Bells__e499f78d.image.json`,
+  `reports/sxt-026/artifacts/Kick__4f2443aa.image.json`,
+  `reports/sxt-025/negative-controls/image-permuted-placement.json`. They
+  are self-verifying snapshots whose own leaves' claims (SXT-025 integration
+  exactness, SXT-026 wavetable, placement controls) do not read the
+  modulation term, and re-emitting them means re-pinning each leaf's
+  recorded image sha256 — that belongs to those leaves, not here. Recorded
+  as STALE, not corrected, and filed as follow-up #246.
+
+### 8.6 What this does NOT establish
+
+`cyc_modroute_frame` is still a `placeholder` that **no** SXT-016 probe
+pins, and SXT-036's own derived bracket (2..8 cycles per evaluation, under
+two named readings of A-DSP-1c / A-ALU-1) is derived, not measured. So this
+is a *shape* correction inside a bookkeeping model: no cycle, area,
+technology, timing, synthesis, fidelity, preset-support or preset-quality
+claim is made or advanced, no profile is frozen, and the voice-row term is
+deliberately an upper bound in dual/split scene modes (a pool voice is
+resident in exactly one scene) in the same conservative style as the
+per-voice osc/filter terms. Supported-preset delta: **0**.

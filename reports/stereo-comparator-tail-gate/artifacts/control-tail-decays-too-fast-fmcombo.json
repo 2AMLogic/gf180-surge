@@ -4,7 +4,7 @@
   "slug": "fmcombo",
   "sequence": "seq-notes-coverage-v1",
   "ref": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "../../../../../../../tmp/sxt-tail-shape-leg/t100/leg2/fmcombo/tail-decays-too-fast.f32.wav",
+  "model": "../../../../../../../tmp/sxt-stereo-tail-gate/leg2/fmcombo/tail-decays-too-fast.f32.wav",
   "path": "wet",
   "fixture_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
   "channels": {
@@ -18,7 +18,7 @@
       "rms_diff_at_shift0_lsb": 476.3171931113386,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 476.3171931113386,
-      "spectral_corr": 0.9999969906757272
+      "spectral_corr": 0.9999915815016404
     },
     "R": {
       "frames": 273600,
@@ -30,7 +30,7 @@
       "rms_diff_at_shift0_lsb": 439.00315507380765,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 439.00315507380765,
-      "spectral_corr": 0.9999971161306493
+      "spectral_corr": 0.99999196401763
     },
     "mono": {
       "frames": 273600,
@@ -42,7 +42,7 @@
       "rms_diff_at_shift0_lsb": 457.02269297064765,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 457.02269297064765,
-      "spectral_corr": 0.9999970561746049
+      "spectral_corr": 0.9999917412287707
     }
   },
   "proposed_budgets": {
@@ -50,6 +50,7 @@
     "rms_diff_dbfs": -46.0,
     "spectral_corr_min": 0.98
   },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
   "proposed_budget_results": {
     "max_abs_diff_lsb": false,
     "rms_diff_dbfs": true,

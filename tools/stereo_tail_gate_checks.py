@@ -95,6 +95,8 @@ FX = os.path.join(REPO, "tools", "compare_fx_reference.py")
 SHARED = os.path.join(REPO, "tools", "compare_audio_reference.py")
 # main before issue #100 (holds the pre-#100 tools and SXT-028c record)
 PRE_CHANGE_REV = "b326bc00eaa81bbad74ee71c004f3ae86983f569"
+# main before issue #110 (holds the pre-#110 native-unit spectral_corr records)
+PRE_110_REV = "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e"
 
 SXT028C = os.path.join(REPO, "reports", "SXT-028c")
 CASES = [(s, q) for s in ("alienappears", "fmcombo", "fmtwang2")
@@ -207,6 +209,13 @@ def classify(before, after):
                 cls = "TAIL-WINDOW(declared region replaces hard-coded 2.0 s)"
             elif _num_equal(fb[k], fa[k]):
                 cls = "ULP"
+            elif (k.endswith("/spectral_corr")
+                  and "/spectral_corr_definition" in fa
+                  and "/spectral_corr_definition" not in fb):
+                # issue #110 replaced the native-unit log1p spectral_corr with
+                # the shared full-scale log-floor definition; the "after" tool
+                # stamps the definition it graded with
+                cls = "METRIC-#110(spectral_corr definition)"
             else:
                 cls = "UNEXPLAINED"
             rows.append((k, cls, fb[k], fa[k]))
@@ -286,7 +295,8 @@ def leg1(lines, scratch, write_artifacts):
         for k, cls, b, a in diff:
             if cls in ("ULP", "UNEXPLAINED", "VERDICT-STATUS-CHANGE",
                        "SCHEMA(removed)", "SCHEMA(version)") \
-                    or cls.startswith(("VERDICT-TEXT", "TAIL-WINDOW")):
+                    or cls.startswith(("VERDICT-TEXT", "TAIL-WINDOW",
+                                       "METRIC-#110")):
                 emit(lines, "      %-44s %-34s %r -> %r" % (k, cls, b, a))
         added = [k for k, cls, _b, _a in diff if cls == "SCHEMA(added)"]
         emit(lines, "      SCHEMA(added): %d keys under %s"
@@ -740,7 +750,6 @@ def corr_variant(a, b, full_scale, mode, frame=4096, floor_db=-100.0,
 
 
 def leg4(lines, scratch):
-    import compare_chorus_reference as cc
     emit(lines, "=" * 74)
     emit(lines, "[4] spectral_corr sensitivity sweep (characterization; metric "
                 "NOT changed)")
@@ -776,11 +785,11 @@ def leg4(lines, scratch):
     for label, kind, path, ks in fixtures:
         if kind == "i16":
             ref, _ = car.read_wav(path)
-            fs, unit, corr = 32767.0, 1.0, car.spectral_corr
+            fs, unit, corr = 32767.0, 1.0, car.spectral_corr_legacy_log1p
         else:
             st = read_f32(path).astype(np.float64)
             ref = 0.5 * (st[0] + st[1])
-            fs, unit, corr = 1.0, LSB, cc.spectral_corr
+            fs, unit, corr = 1.0, LSB, car.spectral_corr_legacy_log1p
         fr = _frames(ref)
         rms = np.sqrt((fr * fr).mean(axis=1))
         quiet_f = rms < unit
@@ -843,12 +852,16 @@ def leg4(lines, scratch):
                 continue
             ref, _ = car.read_wav(refp)
             mod, _ = car.read_wav(modp)
-            committed = json.load(open(bj))
+            # the pre-#110 committed record (the budget JSONs were re-graded
+            # under the #110 definition; this leg characterizes the legacy one)
+            committed = json.loads(git_show(PRE_110_REV, os.path.relpath(
+                bj, REPO)) or open(bj).read())
             n = min(len(ref), len(mod))
             ref, mod = ref[:n], mod[:n]
             row = {"case": "SXT-040 %s x %s" % (slug, seq),
                    "committed_spectral_corr": committed["spectral_corr"],
-                   "recomputed_spectral_corr": car.spectral_corr(ref, mod),
+                   "recomputed_spectral_corr":
+                       car.spectral_corr_legacy_log1p(ref, mod),
                    "rms_diff_dbfs": committed["rms_diff_dbfs"],
                    "max_abs_diff_lsb": committed["max_abs_diff_lsb"],
                    "ref_peak_lsb": float(np.abs(ref).max()),

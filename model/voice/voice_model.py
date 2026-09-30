@@ -508,10 +508,6 @@ class HalfbandD2:
 
 
 # -------------------------------------------------------------- voice model
-def limit_f(x, lo, hi):
-    return lo if x < lo else (hi if x > hi else x)
-
-
 class Voice:
     """One SurgeVoice-equivalent instance (Attacky slice, mono bus)."""
 

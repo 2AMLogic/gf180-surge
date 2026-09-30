@@ -102,9 +102,12 @@ pre-registered [PROPOSED] budgets 3500 LSB / −46 dBFS / 0.98 (SXT-022
 proposal; nothing frozen).
 
 * Canonical (840,000 frames): max|Δ| **16,960 LSB** (budget 3500 — MISS);
-  RMS Δ −27.87 dBFS (passes the committed comparator's RMS row);
-  spectral corr **0.9205** (budget 0.98 — MISS). Verdict:
-  **FAIL against proposed budgets.**
+  RMS Δ −27.87 dBFS (budget −46 dBFS — **MISS** under the corrected
+  `rms_diff_dbfs <= budget` polarity, PR #92/#95; this box-retained number
+  pre-dates that fix and reflects the pre-fix `>=` comparator's grading, not
+  the current one — it was never re-measured against the fixed comparator,
+  see the change note below); spectral corr **0.9205** (budget 0.98 — MISS).
+  Verdict: **FAIL against proposed budgets.**
 * Smoke (3,904 frames): max|Δ| 16,020 LSB; RMS Δ −17.94 dBFS; spectral corr
   0.0 (degenerate: render shorter than one 4096 analysis frame — metric
   artifact, recorded as-is). **Retired by #145** — see the change note
@@ -295,7 +298,32 @@ regressions (`tests/test_sxt022_voice.py`, `tests/test_sxt025_integration.py`,
   it); the frozen class models the live behavior (§6).
 * fastsin/fastcos exact big-int evaluation declares an audio-rate division
   deviation from A-ALU-2 (README); recorded for SXT-016 costing.
-* The two comparators disagree in RMS-row comparison direction
-  (`compare_audio_reference.py` uses ≥, `compare_integration.py` uses ≤);
-  both are committed SXT-022/SXT-025 semantics, used as-landed and reported
-  as-landed here. Reconciling them is a #12 freeze decision, not this leaf's.
+* **The scene decimator does not settle to zero on silence** (F-176-2, issue
+  [#181](https://github.com/2AMLogic/gf180-surge/issues/181), **DECLARED** —
+  SXT-017 option (a), recorded in `model/voice/README.md` §"DECLARED
+  word-length consequence"). The shared `voice_model.HalfbandD2` this class
+  uses at scene output has a round-half-up dead band, so on silence it holds a
+  permanent output-Nyquist (period-2) cycle instead of decaying to 0. Declared
+  bound over a 315-case input sweep (amplitudes 1 LSB → the ±8 `sceneout`
+  clip; frequencies 0.002 → 0.5 of the 96 kHz input rate, whole stopband
+  included; impulse/DC/sine/square/two-tone/noise, each followed by silence,
+  each settled amplitude obtained exactly by state recurrence): **36 Q10.21 LSB
+  = 0.5625 int16 LSB ≈ −95.3 dBFS**, below one int16 LSB. It therefore cannot
+  reach an int16 render on its own and **no §3–§5 number here is affected**;
+  `tb_voice.sv` reproduces the settled region exactly (claim (1) intact). It is
+  declared, not fixed: changing the decimator's arithmetic is a contract
+  revision owned by SXT-017 /
+  [#12](https://github.com/2AMLogic/gf180-surge/issues/12). Evidence:
+  `reports/halfband-limit-cycle/EVIDENCE.md`.
+* **Resolved by #92/#95 (2026-09-24, issue #189 re-check).** When this
+  record was first written (2026-09-22) the two comparators disagreed in
+  RMS-row comparison direction: `compare_audio_reference.py` used the
+  inverted `>=` polarity later fixed by #92/#95, while
+  `model/integration/compare_integration.py` already used the correct `<=`.
+  As of the current tree both tools use `rms_diff_dbfs <= budget` ⇒ pass
+  (verified directly against `tools/compare_audio_reference.py` line ~600
+  and `model/integration/compare_integration.py` lines ~232–233); the
+  disagreement this bullet originally recorded no longer exists. No
+  verdict in this record depended on the discrepancy — see the corrected
+  §4 RMS-leg note above for the one place the pre-fix polarity had leaked
+  into the prose.

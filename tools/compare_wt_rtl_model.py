@@ -1,17 +1,110 @@
 #!/usr/bin/env python3
 """SXT-026 RTL-vs-model exactness harness (issue #19).
 
+DECLARED SCOPE (issue #180, SXT-017 contract revision
+`decision-records/0018-wavetable-scene-decimation-placement.md`). This harness
+compares the model and the RTL from the oscillator through the **48 kHz
+output**: the model trace's `mono_block` samples are read and compared against
+the testbench's `M` trace lines at integer equality. Before #180 the leaf had
+no 48 kHz RTL stage at all and this harness did not read `mono_block`, so the
+PASS was oscillator-scoped (declared deviation 8 of #176); that boundary is
+gone, and the emitted summary carries the landed scope in its `scope` field so
+every transcript states what it covers.
+
+The 48 kHz stage is a per-SCENE resource and lives in `tb_wavetable.sv`, not in
+the per-slot `wavetable_core.sv` -- the same split `rtl/voice/tb_voice.sv` uses
+on the SXT-022 voice leaf.
+
 Compares, with INTEGER EQUALITY (any mismatch = FAIL):
   * per-voice impulse-engine state at every declared checkpoint
     (oscstate, table state, last_level, mipmap),
   * morph machinery state (tableid, tableipol, last_tableipol, l_shape),
   * the hpf/output stage (osc_out, bufpos, hpf_prev),
   * every 64-sample oscillator output block,
+  * every 32-sample 48 kHz `mono_block` (the per-scene o2 level / VCA x AEG
+    gain ramp / scene out / +/-8 clip / HalfbandD2 / master / clips stage),
+    on EVERY block including blocks with no live voice -- the scene filter
+    keeps ringing after the last voice dies, and that ring-out is compared,
   * external-asset traffic: core reads_words vs the model's declared
     2-words-per-impulse accounting, fill_words vs frame-fills.
 
-Also verifies the RTL negative-control mutant (NC-B RTL: -DWAVETABLE_MUTANT_MIP)
-FAILS the same comparison (--mutant).
+Two RTL negative-control mutants must FAIL the same comparison:
+  * `--mutant`             NC-B RTL, -DWAVETABLE_MUTANT_MIP (mip thresholds),
+  * `--mutant-scene`       #180 failure control, -DWT_SCENE_MUTANT_HB_ORDER:
+                           a SINGLE-LINE mutation of the scene decimator's
+                           reconstruction branch order (the pre-#123
+                           A-even/B-odd order). A 48 kHz comparison that
+                           passes against a mutated decimator does not cover
+                           the stage, so this control is what makes the 48 kHz
+                           coverage claim meaningful.
+
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #182, #188,
+#194). A run that never produced trustworthy traces must say so. Five
+mechanisms are recognized and recorded in the summary's `sim_fails` list, and
+every one of them sets `comparison: NOT_RUN` (the comparison and the traffic
+reconciliation are skipped entirely) so a transcript can never read "the RTL
+disagreed with the model" when the truth is "the stimulus never loaded":
+
+  1. a declared input missing before the simulator is invoked at all
+     (`model_trace.json` plus the five `rtl/*.hex` files of STIMULUS). This is
+     asserted up front deliberately (#188 checkbox 3): it is cheaper and more
+     direct than pattern-matching simulator output, and it names the exact
+     file. It does not *replace* mechanism 2 -- a file can be present and
+     still unreadable, and iverilog resolves the paths itself -- so both are
+     kept.
+  2. `$readmemh: Unable to open ...` on the simulation's STDOUT. Icarus
+     reports a stimulus open failure there and still exits 0 (measured on
+     Icarus 11, 12.0 and 13.0), so neither the exit status nor stderr sees it;
+     vvp's stdout is parsed, and a tail of it retained, exactly the way its
+     stderr already was.
+  3. a non-zero `vvp` exit (the mechanism #182/#190 fixed).
+  4. `iverilog` failing to compile (CalledProcessError) or `vvp` exceeding
+     --timeout (TimeoutExpired) -- caught, so the harness still writes a
+     verdict with a reason instead of dying by traceback with no verdict at
+     all.
+  5. a declared stimulus file that IS present and opens, but is TRUNCATED --
+     fewer hex words than the model wrote (#194). This is a CONTENT check
+     against the model side's own declaration (`rtl/stimulus_index.json`,
+     written by `run_model.py --rtl` beside the files), NOT a matcher on the
+     simulator's output, and the measurement that forced that choice is
+     recorded in `reports/tooling-wt-harness-stimulus-load/`: a genuinely
+     PASSING pinned-tree run emits `$readmemh(<file>): Not enough words in
+     the file for the requested range [...]` for ALL FIVE memories, because
+     the testbench declares them generously (`ctrl_mem[0:262143]`,
+     `wt_mem[0:131071]`, `init_mem[0:63]`, sinc `[0:6143]`) and a real run
+     never fills them. No stdout matcher on that warning can discriminate a
+     truncated file from a healthy one; a content check can, and it names the
+     file. When the run dir carries no `rtl/stimulus_index.json` (a run dir
+     produced by tooling older than #194), this check is reported as NOT_RUN
+     in the summary's `stimulus_lengths` field rather than failing closed --
+     reporting a healthy run as failed is the one outcome worse than the lost
+     reason (#188), and NOT_RUN is never a pass.
+
+The verdict vocabulary is unchanged (PASS/FAIL): every one of these fails
+closed as FAIL, with `comparison: NOT_RUN` carrying the distinction between
+"the comparison ran and disagreed" and "the comparison never ran".
+
+The two TRAFFIC inputs -- `tb_traffic.txt` (dumped by the testbench) and
+`traffic.json` (the model's own declaration) -- are read AFTER the comparison
+has been computed, and are optional: absent, the reconciliation simply makes no
+claim. Present but unparseable, they are recorded in `traffic_fails` naming the
+file and the reason (#205), never raised. That list already fails the verdict
+closed without setting `comparison: NOT_RUN`, which is the accurate report
+here: the simulator did run, the comparison did happen, and only the traffic
+reconciliation could not be performed. Before that guard existed, a truncated
+dump or a malformed declaration exited by traceback at this point and discarded
+the already-computed RTL-vs-model result together with the verdict JSON.
+
+EXIT STATUS (#218). For an ordinary run the process exit status is derived from
+the `verdict` field itself: 0 iff `verdict == "PASS"`. It used to be recomputed
+from `fails` alone, which omits `traffic_fails`, so a run whose only failures
+were traffic ones wrote `"verdict": "FAIL"` and exited 0 -- reading as success
+to any caller that tests `$?`. The two `--mutant*` runs are deliberately
+INVERTED and are a statement about the COMPARISON, not about `verdict`: exit 0
+means "the mutant was caught" (`cmp_fails` non-empty with no `sim_fails`, and
+for `--mutant-scene` a mismatch on the 48 kHz leg specifically). A mutant run
+that fails only on traffic has demonstrated nothing about the mutant, so it
+exits non-zero even though its `verdict` reads FAIL.
 
 Usage:
   python3 tools/compare_wt_rtl_model.py --run-dir DIR [--tb TB] [--out JSON]
@@ -26,10 +119,277 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RTLDIR = os.path.join(REPO, "rtl", "oscillators", "wavetable")
 
+# Machine-readable restatement of the module docstring's scope (issue #180):
+# every emitted transcript carries it, so what a PASS covers is never inferred.
+SCOPE = {
+    "covers": ("model-vs-RTL integer equality from the oscillator through the "
+               "48 kHz output: the 2x-rate (96 kHz) oscillator output block, "
+               "the declared per-voice/shared checkpoints, EVERY 48 kHz "
+               "mono_block sample of the per-scene stage (o2 level, "
+               "VCA x AEG gain ramp, scene out, +/-8 clip, HalfbandD2, "
+               "master, clips) including the post-voice-death ring-out, and "
+               "the declared external-asset traffic accounting"),
+    "does_not_cover": ("anything downstream of this leaf's scene bus (effects, "
+                       "the int16 file conversion, hardware playback), and "
+                       "NOTHING about model-vs-pinned-engine fidelity: that is "
+                       "a separate claim under [PROPOSED] budgets "
+                       "(reports/sxt-026/EVIDENCE.md section 3)"),
+    "declared_in": ("model/oscillators/wavetable/README.md (declared "
+                    "deviations 7-8), reports/sxt-026/EVIDENCE.md section 2, "
+                    "decision-records/0018-wavetable-scene-decimation-"
+                    "placement.md"),
+    "issue": 180,
+    "superseded_boundary": ("before #180 this harness did not read mono_block "
+                            "and the leaf's RTL had no 48 kHz stage, so the "
+                            "PASS was oscillator-scoped (deviation 8 of #176)"),
+}
+
+# The hex stimulus the testbench $readmemh's, as (plusarg, path relative to the
+# run dir) pairs. ONE list feeds both vvp's command line and the pre-flight
+# existence check, so the check can never drift from what is actually passed.
+STIMULUS = (
+    ("INIT", "rtl/init.hex"),
+    ("CTRL", "rtl/ctrl.hex"),
+    ("WT_TABLE", "rtl/wt_table.hex"),
+    ("SINC_MAIN", "rtl/sinc_main.hex"),
+    ("SINC_DERIV", "rtl/sinc_deriv.hex"),
+)
+
+# Declared inputs a run cannot proceed without: the model side of the
+# comparison plus the stimulus above.
+REQUIRED_INPUTS = ("model_trace.json",) + tuple(rel for _, rel in STIMULUS)
+
+# The model side's own declaration of how long each stimulus file is, written
+# next to the files by `run_model.py --rtl`. Deliberately NOT in
+# REQUIRED_INPUTS: its absence is reported as NOT_RUN coverage (see mechanism
+# 5 in the module docstring), never as a failure.
+STIMULUS_INDEX = "rtl/stimulus_index.json"
+
+
+def missing_inputs(run_dir):
+    """Declared inputs absent from `run_dir`, in declaration order."""
+    return [rel for rel in REQUIRED_INPUTS
+            if not os.path.exists(os.path.join(run_dir, rel))]
+
+
+def count_hex_words(path):
+    """Hex words in a `$readmemh` file, counted the way Icarus loads them.
+
+    `run_model.write_hex` emits one 8-digit word per line, but the count is
+    tokenized rather than line-counted so a hand-edited file (trailing blank
+    lines, several words per line, an `@address` directive, a `//` comment)
+    is counted by content and not by layout. Only tokens that would become
+    memory words are counted.
+    """
+    n = 0
+    with open(path) as f:
+        for line in f:
+            for tok in line.split("//")[0].split():
+                if not tok.startswith("@"):
+                    n += 1
+    return n
+
+
+def check_stimulus_lengths(run_dir):
+    """Every stimulus file's word count vs the model's declared length.
+
+    Mechanism 5 (#194): a file that opens but is SHORT. Returns
+    `(report, fails)`; `report` always states coverage explicitly, so a run
+    whose lengths were never checked can never read as one whose lengths
+    checked out:
+
+      status PASS    every STIMULUS file was declared and matches
+      status FAIL    at least one file disagrees with its declaration
+      status NOT_RUN no usable `rtl/stimulus_index.json`, or it declares only
+                     some of the files -- no length claim is made for the
+                     undeclared ones (`declared: null` in `words`)
+
+    Agreement is reported separately from coverage: `words` carries the
+    measured and declared count for every file either way.
+    """
+    report = {"status": "NOT_RUN", "declared_by": STIMULUS_INDEX,
+              "reason": "", "words": {}}
+    idx_path = os.path.join(run_dir, STIMULUS_INDEX)
+    declared = {}
+    if not os.path.exists(idx_path):
+        report["reason"] = (
+            "%s is absent from the run dir, so no stimulus length was "
+            "declared by the model side and no truncation claim is made "
+            "(a run dir produced by tooling older than issue #194); this "
+            "is NOT a pass" % STIMULUS_INDEX)
+    else:
+        try:
+            with open(idx_path) as f:
+                declared = json.load(f)["files"]
+            if not isinstance(declared, dict):
+                raise ValueError("'files' is not an object")
+        except (ValueError, KeyError, TypeError, OSError) as exc:
+            declared = {}
+            report["reason"] = (
+                "%s could not be read as a stimulus index (%s), so no "
+                "truncation claim is made; this is NOT a pass"
+                % (STIMULUS_INDEX, exc))
+
+    fails = []
+    undeclared = []
+    for _, rel in STIMULUS:
+        want = declared.get(rel)
+        try:
+            got = count_hex_words(os.path.join(run_dir, rel))
+        except OSError as exc:
+            got = None
+            fails.append("stimulus file %s could not be read: %s"
+                         % (rel, exc))
+        report["words"][rel] = {"declared": want, "actual": got}
+        if want is None:
+            undeclared.append(rel)
+            continue
+        if got is None or got == want:
+            continue
+        how = "TRUNCATED" if got < want else "LONGER THAN DECLARED"
+        fails.append(
+            "%s stimulus file: %s holds %d hex words but the model declared "
+            "%d in %s. The file opened, so $readmemh loaded what was there "
+            "and Icarus's `Not enough words in the file for the requested "
+            "range` WARNING cannot report it -- a PASSING run emits that "
+            "warning for every memory, because the testbench declares them "
+            "far larger than any real stimulus (#194)."
+            % (how, rel, got, want, STIMULUS_INDEX))
+
+    if fails:
+        report["status"] = "FAIL"
+    elif undeclared:
+        if not report["reason"]:
+            report["reason"] = (
+                "%s declares no length for %s, so no truncation claim is "
+                "made for %s; this is NOT a pass"
+                % (STIMULUS_INDEX, ", ".join(undeclared),
+                   "them" if len(undeclared) > 1 else "it"))
+    else:
+        report["status"] = "PASS"
+        report["reason"] = ("all %d stimulus files match the length the "
+                            "model declared" % len(STIMULUS))
+    return report, fails
+
+
+TB_TRAFFIC = "tb_traffic.txt"
+MODEL_TRAFFIC = "traffic.json"
+
+
+def read_tb_traffic(path):
+    """The testbench's traffic dump as `{name: count}`, or a named reason.
+
+    Returns `(counts, fails)`. The dump is the testbench's own
+    `$fdisplay(fd_traffic, "<name> %0d", ...)` output: exactly two
+    whitespace-separated tokens per line, the second an integer.
+
+    A file that EXISTS but does not parse -- a run killed mid-`$fclose` so the
+    last line is truncated, a line carrying stray whitespace, a non-integer
+    count, a non-UTF-8 file, an unopenable one -- used to raise straight out of
+    `main()` here (`ValueError` from the two-token unpack or from `int()`),
+    *after* the RTL-vs-model comparison had already been computed: traceback,
+    no verdict JSON, and the comparison result for that run discarded (#205).
+    It is returned as a named failure instead, and the caller records it in
+    `traffic_fails` -- which fails the verdict closed without claiming (as
+    `sim_fails` would) that the simulator never ran.
+
+    Fails closed on every line: a line that is blank-but-for-whitespace is
+    reported rather than skipped. No dump a passing run produces can be
+    affected, because such a line raised before this guard existed and so was
+    never part of a PASS.
+    """
+    counts = {}
+    try:
+        with open(path) as f:
+            for lineno, line in enumerate(f, 1):
+                fields = line.split()
+                if len(fields) != 2:
+                    raise ValueError(
+                        "line %d is not '<name> <count>': %r" % (lineno, line))
+                counts[fields[0]] = int(fields[1])
+    # OSError covers the open (mode 000, a directory, an I/O error); ValueError
+    # covers the line shape, the int() conversion, and -- as a sibling
+    # ValueError subclass raised by the decode before any line is seen --
+    # UnicodeDecodeError on a binary/truncated dump.
+    except (OSError, ValueError) as exc:
+        return {}, ["traffic dump present but unparseable: %s (%s: %s; the "
+                    "existence check cannot tell a truncated or malformed "
+                    "dump from a usable one, so the traffic reconciliation is "
+                    "not performed -- this is NOT a pass, and it does not "
+                    "mean the simulator failed to run)"
+                    % (TB_TRAFFIC, type(exc).__name__, exc)]
+    return counts, []
+
+
+def read_model_traffic(path):
+    """The model's declared traffic `totals`, or a named reason.
+
+    Returns `(totals, fails)`. `totals` is only returned when it carries the
+    one field the reconciliation reads, `ext_read_words`, as an integer --
+    otherwise the same read would raise a `KeyError`/`TypeError` a few lines
+    later and lose the verdict exactly the way the unguarded `json.load(...)
+    ["totals"]` did (#205). Both are the same read of the same file, so both
+    are guarded here rather than leaving half of it to traceback.
+    """
+    try:
+        with open(path) as f:
+            totals = json.load(f)["totals"]
+        want = totals["ext_read_words"]
+        if isinstance(want, bool) or not isinstance(want, int):
+            raise ValueError("'totals.ext_read_words' is not an integer: %r"
+                             % (want,))
+    # OSError: the open. ValueError: the JSON decode, a non-UTF-8 file
+    # (UnicodeDecodeError), and the type assertion above. KeyError/TypeError:
+    # a document that parsed but is not shaped like a traffic report (no
+    # `totals`, `totals` not an object, no `ext_read_words`).
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        return None, ["model traffic declaration present but unusable: %s "
+                      "(%s: %s; the existence check cannot tell a malformed "
+                      "declaration from a usable one, so the traffic "
+                      "reconciliation is not performed -- this is NOT a pass, "
+                      "and it does not mean the simulator failed to run)"
+                      % (MODEL_TRAFFIC, type(exc).__name__, exc)]
+    return totals, []
+
+
+def scan_stdout_for_load_failures(stdout, limit=10):
+    """Stimulus-load failures Icarus reports on STDOUT while exiting 0.
+
+    Matched NARROWLY, on both the `$readmem` token and `Unable to open`, and
+    deliberately NOT on a bare `ERROR:` prefix. The testbench's own runtime
+    diagnostics are `DBG `, `WARNING:`, `UNDERRUN:`, `WATCHDOG:` and
+    `TB done:` lines; none of them can match this pattern, so the matcher
+    cannot turn a genuinely passing exactness run into a FAIL. Reporting a run
+    that did not fail as failed would be a worse defect than the lost reason
+    this matcher exists to recover (issue #188).
+    """
+    hits = []
+    for line in _as_text(stdout).splitlines():
+        line = line.strip()
+        if "$readmem" in line and "Unable to open" in line:
+            hits.append(line)
+            if len(hits) >= limit:
+                break
+    return hits
+
+
+def _as_text(stream):
+    """subprocess streams: str, bytes or None (TimeoutExpired) -> str."""
+    if stream is None:
+        return ""
+    if isinstance(stream, bytes):
+        return stream.decode("utf-8", "replace")
+    return stream
+
 
 def parse_traces(run_dir, slots=4):
-    """Parse tb_trace.s<k> files: T (per-voice), S (shared), O (oscout)."""
-    t, sh, o = {}, {}, {}
+    """Parse the testbench traces.
+
+    tb_trace.s<k>: T (per-voice), S (shared), O (96 kHz oscout) -- per slot.
+    tb_trace.mono: M (48 kHz scene output) -- per SCENE, one file, because the
+    stage is a scene resource and not a per-slot one.
+    """
+    t, sh, o, mono = {}, {}, {}, {}
     for s in range(slots):
         p = os.path.join(run_dir, "tb_trace.s%d" % s)
         if not os.path.exists(p):
@@ -49,7 +409,14 @@ def parse_traces(run_dir, slots=4):
                     b, slot = int(parts[1]), int(parts[2])
                     o.setdefault((b, slot), []).extend(
                         int(x) for x in parts[3:])
-    return t, sh, o
+    p = os.path.join(run_dir, "tb_trace.mono")
+    if os.path.exists(p):
+        with open(p) as f:
+            for line in f:
+                parts = line.split()
+                if parts and parts[0] == "M":
+                    mono.setdefault(int(parts[1]), []).append(int(parts[2]))
+    return t, sh, o, mono
 
 
 def to_signed32(x):
@@ -58,13 +425,34 @@ def to_signed32(x):
 
 
 def compare(model_trace, rtl, max_blocks=None):
-    t, sh, o = rtl
+    t, sh, o, mono = rtl
     fails = []
-    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0}
+    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0, "mono48": 0}
     for blk in model_trace["blocks"]:
         b = blk["b"]
         if max_blocks is not None and b >= max_blocks:
             break
+        # ---- 48 kHz output (the per-scene stage; issue #180) ----
+        # Compared on EVERY block, not only checkpoint blocks and not only
+        # blocks with a live voice: the scene filter's post-death ring-out is
+        # part of the stage and must match too.
+        wm_mono = blk.get("mono_block")
+        if wm_mono is not None:
+            got_mono = mono.get(b)
+            if got_mono is None or len(got_mono) != len(wm_mono):
+                fails.append(
+                    "block %d: missing/short M line (48 kHz mono_block: "
+                    "model %d samples, rtl %s)"
+                    % (b, len(wm_mono),
+                       "absent" if got_mono is None else len(got_mono)))
+            else:
+                for k, (wv, gv) in enumerate(zip(wm_mono, got_mono)):
+                    checked["mono48"] += 1
+                    if to_signed32(wv) != gv:
+                        fails.append("block %d mono48[%d]: model=%d rtl=%d"
+                                     % (b, k, wv, gv))
+            if len(fails) > 30:
+                return checked, fails
         for rec in blk["voices"]:
             if "after" not in rec:
                 continue
@@ -120,98 +508,230 @@ def compare(model_trace, rtl, max_blocks=None):
     return checked, fails
 
 
+def compile_and_run_sim(run_dir, model_trace, *, mutant, mutant_scene,
+                        reverb_bg, max_blocks, timeout):
+    """Compile the testbench and run it; return (sim_fails, stdout_tail).
+
+    Recognizes mechanisms 2-4 of the module docstring. Never raises on a
+    simulator-level failure: every one is returned as a `sim_fails` string so
+    the caller can still write a verdict that states the reason.
+    """
+    sim_fails = []
+    stdout_tail = ""
+    vvp = os.path.join(run_dir, "tb_wt.vvp")
+    build = ["iverilog", "-g2012", "-o", vvp, "-s", "tb_wavetable"]
+    if mutant:
+        build.append("-DWAVETABLE_MUTANT_MIP")
+    if mutant_scene:
+        build.append("-DWT_SCENE_MUTANT_HB_ORDER")
+    build += [os.path.join(RTLDIR, "tb_wavetable.sv"),
+              os.path.join(RTLDIR, "wavetable_core.sv")]
+    # ---- mechanism 4a: a failed/unrunnable compile is a recorded reason,
+    # not a traceback that leaves no verdict JSON written at all.
+    try:
+        subprocess.run(build, check=True, cwd=run_dir)
+    except subprocess.CalledProcessError as exc:
+        # The compile's streams are inherited (so its diagnostics stay visible
+        # live), which means exc.stderr is None here; say so rather than
+        # printing an empty field that reads like "no reason given".
+        detail = (_as_text(exc.stderr)[-500:]
+                  or "(compiler diagnostics went to this harness's own "
+                     "stderr; the compile step is not captured)")
+        return (["iverilog compile failed rc=%s: %s"
+                 % (exc.returncode, detail)], "")
+    except OSError as exc:
+        return (["iverilog could not be executed: %s" % exc], "")
+
+    cmd = ["vvp", vvp, "+BLOCKS=%d" % max_blocks,
+           "+N_UNISON=%d" % model_trace["unison"],
+           "+WAVE_SIZE=%d" % model_trace.get("wave_size", 1024),
+           "+N_TABLES=%d" % model_trace["n_tables"],
+           "+NOINTERP=%d" % model_trace["nointerp"],
+           "+LEGACY=%d" % model_trace["legacy"],
+           "+TRACE=%s/tb_trace" % run_dir,
+           "+TRAFFIC=%s/tb_traffic.txt" % run_dir,
+           "+MUT=%d" % (1 if (mutant or mutant_scene) else 0),
+           "+REVERB_BG=%d" % (1 if reverb_bg else 0)]
+    cmd += ["+%s=%s" % (plusarg, rel) for plusarg, rel in STIMULUS]
+    # ---- mechanism 4b: a timeout kill is a recorded reason too ----
+    try:
+        run = subprocess.run(cmd, cwd=run_dir, capture_output=True,
+                             text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        stdout_tail = _as_text(exc.stdout)[-2000:]
+        return (["vvp exceeded the %gs timeout and was killed (the "
+                 "simulation never completed, so no trace it left can be "
+                 "trusted) stdout=%s" % (timeout, stdout_tail[-500:])],
+                stdout_tail)
+    except OSError as exc:
+        return (["vvp could not be executed: %s" % exc], "")
+
+    # ---- mechanism 3: non-zero exit (the #182/#190 mechanism) ----
+    if run.returncode != 0:
+        sim_fails.append("vvp exited rc=%d stderr=%s"
+                         % (run.returncode, _as_text(run.stderr)[-500:]))
+    # ---- mechanism 2: $readmemh open failure on STDOUT, with rc=0 ----
+    for line in scan_stdout_for_load_failures(run.stdout):
+        sim_fails.append("vvp rc=%d but a stimulus file never loaded: %s"
+                         % (run.returncode, line))
+    if sim_fails:
+        stdout_tail = _as_text(run.stdout)[-2000:]
+    return sim_fails, stdout_tail
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True,
                     help="run dir with model_trace.json + rtl/ stimulus")
     ap.add_argument("--out", help="write verdict JSON here")
     ap.add_argument("--mutant", action="store_true",
-                    help="build the committed mip-threshold mutant; "
-                         "the comparison must FAIL")
+                    help="build the committed mip-threshold mutant "
+                         "(NC-B RTL); the comparison must FAIL")
+    ap.add_argument("--mutant-scene", action="store_true",
+                    help="build the committed scene-decimator mutant "
+                         "(-DWT_SCENE_MUTANT_HB_ORDER: the pre-#123 "
+                         "A-even/B-odd reconstruction order, one line); the "
+                         "48 kHz comparison must FAIL (#180 failure control)")
     ap.add_argument("--reverb-bg", action="store_true",
                     help="enable the concurrent Reverb1 background bus "
                          "traffic (SXT-016 pattern, 34 words/frame); the "
                          "no-underrun gate applies to the combined load")
     ap.add_argument("--max-blocks", type=int, default=130)
+    ap.add_argument("--timeout", type=float, default=3600,
+                    help="seconds before the vvp run is killed; an expiry is "
+                         "recorded as a simulator-level failure, not raised")
     args = ap.parse_args()
 
-    with open(os.path.join(args.run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
-
-    n_unison = model_trace["unison"]
-    wave_size = model_trace.get("wave_size", 1024)
-    vvp = os.path.join(args.run_dir, "tb_wt.vvp")
-    build = ["iverilog", "-g2012", "-o", vvp, "-s", "tb_wavetable"]
-    if args.mutant:
-        build.append("-DWAVETABLE_MUTANT_MIP")
-    build += [os.path.join(RTLDIR, "tb_wavetable.sv"),
-              os.path.join(RTLDIR, "wavetable_core.sv")]
-    subprocess.run(build, check=True, cwd=args.run_dir)
     # Simulator-level failures are collected separately and then MERGED into
     # the comparison's own fail list, so a dead simulator reports its own
-    # reason (its stderr) in the verdict instead of being lost or raising.
+    # reason in the verdict instead of being lost, raising, or masquerading as
+    # a comparison disagreement.
     fails = []
     sim_fails = []
-    run = subprocess.run(
-        ["vvp", vvp, "+BLOCKS=%d" % args.max_blocks, "+N_UNISON=%d" % n_unison,
-         "+WAVE_SIZE=%d" % wave_size, "+N_TABLES=%d" % model_trace["n_tables"],
-         "+NOINTERP=%d" % model_trace["nointerp"],
-         "+LEGACY=%d" % model_trace["legacy"],
-         "+TRACE=%s/tb_trace" % args.run_dir, "+INIT=rtl/init.hex",
-         "+CTRL=rtl/ctrl.hex", "+WT_TABLE=rtl/wt_table.hex",
-         "+SINC_MAIN=rtl/sinc_main.hex", "+SINC_DERIV=rtl/sinc_deriv.hex",
-         "+TRAFFIC=%s/tb_traffic.txt" % args.run_dir,
-         "+MUT=%d" % (1 if args.mutant else 0),
-         "+REVERB_BG=%d" % (1 if args.reverb_bg else 0)],
-        cwd=args.run_dir, capture_output=True, text=True, timeout=3600)
-    if run.returncode != 0:
-        sim_fails.append("vvp exited rc=%d stderr=%s"
-                         % (run.returncode, run.stderr[-500:]))
+    cmp_fails = []
+    checked = {"voices": 0, "fields": 0, "oscout": 0, "shared": 0,
+               "mono48": 0}
+    sim_stdout_tail = ""
+    model_trace = None
+
+    # ---- mechanism 1: declared inputs, checked BEFORE the simulator runs ----
+    for rel in missing_inputs(args.run_dir):
+        sim_fails.append(
+            "missing declared input: %s (absent from the run dir; the "
+            "testbench $readmemh's the rtl/*.hex stimulus and Icarus reports "
+            "an open failure on stdout while still exiting 0, so this is "
+            "asserted before the simulator is invoked)" % rel)
+
+    # The existence check above is deliberately only that: a declared input
+    # that is PRESENT but malformed (not valid JSON) or unopenable (mode 000,
+    # a directory, an I/O error) used to raise straight out of main() here --
+    # traceback, no verdict JSON, no recorded reason (#197). It is recorded the
+    # same way every other simulator-level failure is, and the simulator is not
+    # invoked on a trace that never parsed.
+
+    # ---- mechanism 5: stimulus CONTENT (length) vs the model's own
+    # declaration, also before the simulator runs. Only meaningful once the
+    # files are known to exist, so it follows mechanism 1.
+    stimulus_lengths = {"status": "NOT_RUN", "declared_by": STIMULUS_INDEX,
+                        "reason": "not reached: a declared input was missing",
+                        "words": {}}
+    if not sim_fails:
+        stimulus_lengths, short_fails = check_stimulus_lengths(args.run_dir)
+        sim_fails += short_fails
+
+    if not sim_fails:
+        try:
+            with open(os.path.join(args.run_dir, "model_trace.json")) as f:
+                model_trace = json.load(f)
+        # OSError covers the open (mode 000, a directory, an I/O error);
+        # ValueError covers the decode, and is used rather than
+        # json.JSONDecodeError alone because UnicodeDecodeError -- raised by a
+        # non-UTF-8/binary file before the JSON parser ever sees it -- is a
+        # sibling ValueError subclass, not a JSONDecodeError.
+        except (OSError, ValueError) as exc:
+            model_trace = None
+            sim_fails.append(
+                "declared input present but unreadable: model_trace.json "
+                "(%s: %s; the existence pre-flight above cannot tell a "
+                "malformed or unopenable trace from a usable one, so this is "
+                "asserted before the simulator is invoked)"
+                % (type(exc).__name__, exc))
+        else:
+            sim_fails, sim_stdout_tail = compile_and_run_sim(
+                args.run_dir, model_trace, mutant=args.mutant,
+                mutant_scene=args.mutant_scene,
+                reverb_bg=args.reverb_bg, max_blocks=args.max_blocks,
+                timeout=args.timeout)
+
     fails += sim_fails
 
-    rtl = parse_traces(args.run_dir)
-    checked, cmp_fails = compare(model_trace, rtl, args.max_blocks)
-    fails += cmp_fails
-
-    # traffic reconciliation (counts from the core, dumped by the TB)
+    # A simulator-level failure makes the comparison NOT_RUN: comparing model
+    # state against traces from a run that did not happen (or is absent, or
+    # stale from an earlier run) is what produced the "wall of mismatches"
+    # misreport this path exists to prevent (#188).
     traffic = {}
-    tp = os.path.join(args.run_dir, "tb_traffic.txt")
-    if os.path.exists(tp):
-        with open(tp) as f:
-            for line in f:
-                k, v = line.split()
-                traffic[k] = int(v)
-
     model_traffic = None
-    tp = os.path.join(args.run_dir, "traffic.json")
-    if os.path.exists(tp):
-        with open(tp) as f:
-            model_traffic = json.load(f)["totals"]
-
-    # ---- traffic reconciliation (exact; any mismatch = FAIL) ----
     traffic_fails = []
-    if model_traffic is not None:
-        reads = traffic.get("core_reads_words", 0)
-        fills = traffic.get("core_fill_words", 0)
-        want = model_traffic["ext_read_words"]
-        if reads + fills != want:
-            traffic_fails.append(
-                "ext words: rtl reads+fills %d+%d != model %d"
-                % (reads, fills, want))
-    # no-underrun gate: the sustained/concurrent check must hold
-    underruns = traffic.get("underrun_blocks", 0)
-    if underruns:
-        traffic_fails.append("%d underrun block(s)" % underruns)
+    if not sim_fails:
+        rtl = parse_traces(args.run_dir)
+        checked, cmp_fails = compare(model_trace, rtl, args.max_blocks)
+        fails += cmp_fails
+
+        # traffic reconciliation (counts from the core, dumped by the TB).
+        # Both reads are existence-gated AND parse-guarded: a file that is
+        # present but malformed is recorded as a named `traffic_fails` entry,
+        # never raised. This point is reached only AFTER the comparison above
+        # has been computed, so a traceback here used to discard an otherwise
+        # complete RTL-vs-model result along with the verdict JSON (#205).
+        tb_fails, model_fails = [], []
+        tp = os.path.join(args.run_dir, TB_TRAFFIC)
+        if os.path.exists(tp):
+            traffic, tb_fails = read_tb_traffic(tp)
+
+        tp = os.path.join(args.run_dir, MODEL_TRAFFIC)
+        if os.path.exists(tp):
+            model_traffic, model_fails = read_model_traffic(tp)
+
+        traffic_fails += tb_fails + model_fails
+
+        # ---- traffic reconciliation (exact; any mismatch = FAIL) ----
+        # Skipped when either side failed to parse: reconciling against counts
+        # that are absent because a file was unreadable would report a derived
+        # "rtl reads+fills 0+0 != model N" mismatch (and a "no underruns"
+        # reading taken from an empty dict) on top of the real reason, which is
+        # the same misreport #188 removed from the comparison path.
+        if not (tb_fails or model_fails):
+            if model_traffic is not None:
+                reads = traffic.get("core_reads_words", 0)
+                fills = traffic.get("core_fill_words", 0)
+                want = model_traffic["ext_read_words"]
+                if reads + fills != want:
+                    traffic_fails.append(
+                        "ext words: rtl reads+fills %d+%d != model %d"
+                        % (reads, fills, want))
+            # no-underrun gate: the sustained/concurrent check must hold
+            underruns = traffic.get("underrun_blocks", 0)
+            if underruns:
+                traffic_fails.append("%d underrun block(s)" % underruns)
 
     verdict = "PASS" if not (fails or traffic_fails) else "FAIL"
+    if sim_fails:
+        comparison = "NOT_RUN"
+    else:
+        comparison = "FAIL" if (cmp_fails or traffic_fails) else "PASS"
     summary = {
         "verdict": verdict,
+        "comparison": comparison,
+        "scope": SCOPE,
         "mutant": args.mutant,
+        "mutant_scene": args.mutant_scene,
         "reverb_bg": bool(args.reverb_bg),
         "checked": checked,
         "mismatches": len(fails),
         "first_failures": fails[:10],
         "sim_fails": sim_fails,
+        "sim_stdout_tail": sim_stdout_tail,
+        "stimulus_lengths": stimulus_lengths,
         "traffic_fails": traffic_fails,
         "traffic_tb": traffic,
         "traffic_model": model_traffic,
@@ -221,12 +741,28 @@ def main():
         with open(args.out, "w") as f:
             json.dump(summary, f, indent=1)
             f.write("\n")
-    if args.mutant:
+    if args.mutant or args.mutant_scene:
         # The mutant must fail the COMPARISON. A simulator that never ran
         # demonstrates nothing about the mutant, so a simulator-level failure
         # is NOT_RUN for this control and must exit non-zero.
+        if args.mutant_scene:
+            # ... and the SCENE mutant must fail it ON THE 48 kHz LEG. A scene
+            # mutant that only broke an oscillator checkpoint would prove
+            # nothing about the 48 kHz coverage this control exists to
+            # establish, so a run whose only failures are elsewhere is
+            # refused (#180 failure control).
+            mono_fails = [f for f in cmp_fails if "mono48" in f]
+            return 0 if mono_fails and not sim_fails else 1
         return 0 if cmp_fails and not sim_fails else 1
-    return 0 if not fails else 1
+    # The exit status is derived from `verdict` itself, not recomputed from a
+    # subset of the fail lists. It used to read `not fails`, which omits
+    # `traffic_fails` -- so a run whose ONLY failures were traffic ones (the
+    # reconciliation mismatch or the no-underrun gate) wrote "verdict": "FAIL"
+    # and still exited 0, reading as success to any caller that follows the
+    # ordinary convention of testing the exit status (#218). Deriving the
+    # status from the field that was already printed keeps the two from
+    # drifting apart again if a further fail list is added.
+    return 0 if verdict == "PASS" else 1
 
 
 if __name__ == "__main__":

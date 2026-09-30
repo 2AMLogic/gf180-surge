@@ -128,14 +128,6 @@ def format_trace_block(blk, cp_dict, out_l, out_r):
     return s
 
 
-def write_mem_hex(path, model):
-    with open(path, "w") as f:
-        for v in model.delay:
-            f.write(f"{v & 0xFFFFFFFF:08x}\n")
-        for v in model.predelay:
-            f.write(f"{v & 0xFFFFFFFF:08x}\n")
-
-
 def load_preset_coefficients():
     """Frozen coefficient plane from the committed Behemoth wet sidecar."""
     side = json.load(open(os.path.join(TRACES, "preset-notes-coverage-wet.json")))

@@ -1,0 +1,421 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "artifact": "reports/SXT-040/artifacts/nc-classic-substitution.json",
+      "runner": "tools/run_sxt040_checks.py --steps 3",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/nc-shape-migration.json",
+      "runner": "tools/run_sxt040_checks.py --steps 3",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-crush.json",
+      "runner": "tools/run_sxt033_checks.py --steps 3",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-horn.json",
+      "runner": "tools/run_sxt033_checks.py --steps 3",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json",
+      "runner": "tools/lfo_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-reso-zeroed.json",
+      "runner": "tools/lfo_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-source-swap.json",
+      "runner": "tools/lfo_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-free-running.json",
+      "runner": "tools/lfo_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-baseline.json",
+      "runner": "tools/mw_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/proposed_budget_results/spectral_corr",
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json",
+      "runner": "tools/mw_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/proposed_budget_results/spectral_corr",
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-reso-zeroed.json",
+      "runner": "tools/mw_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/proposed_budget_results/spectral_corr",
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-vca-zeroed.json",
+      "runner": "tools/mw_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json",
+      "runner": "tools/mw_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/proposed_budget_results/spectral_corr",
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json",
+      "runner": "tools/mw_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": []
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": []
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-baseline.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          1916.5779351099552,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          2719.916539027949,
+          "<absent>"
+        ]
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          1729.2114269738304,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          2719.916539027949,
+          "<absent>"
+        ]
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          2439.087065524903,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          3028.7330455739825,
+          "<absent>"
+        ]
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          1578.4544949439764,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          2433.7866779065816,
+          "<absent>"
+        ]
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          1964.927136781551,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          2719.916539027949,
+          "<absent>"
+        ]
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          1729.2114269738304,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          2719.916539027949,
+          "<absent>"
+        ]
+      ]
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-source-swap-velocity.json",
+      "runner": "tools/kt_negative_controls.py",
+      "status": "PASS",
+      "regenerated_vs_pre110_tool_same_render": {
+        "owned": [
+          "/spectral_corr",
+          "/spectral_corr_definition"
+        ],
+        "unexplained": [],
+        "runner_added_recomputed_equal": [
+          "/windowed_rms_lsb/kt_nonzero",
+          "/windowed_rms_lsb/kt_zero"
+        ]
+      },
+      "rerender_drift_vs_committed_under_pre110_tool": [
+        [
+          "/windowed_rms_lsb/kt_nonzero",
+          1786.6511197824068,
+          "<absent>"
+        ],
+        [
+          "/windowed_rms_lsb/kt_zero",
+          2761.096389446557,
+          "<absent>"
+        ]
+      ]
+    }
+  ],
+  "sxt035_c2_discriminator": {
+    "baseline": {
+      "legacy": 0.9874579116733234,
+      "rms_diff_lsb": 4106.679041308484,
+      "adopted_-80": 0.9384753067326738,
+      "adopted_-90": 0.9579005521021947,
+      "adopted_-100": 0.970959074770404,
+      "adopted_-110": 0.9795685594246215,
+      "adopted_-120": 0.9853521473614796
+    },
+    "smoothing-bypass": {
+      "legacy": 0.9850202124210111,
+      "rms_diff_lsb": 3213.65349953038,
+      "adopted_-80": 0.9487399528098128,
+      "adopted_-90": 0.9641136727268214,
+      "adopted_-100": 0.9741411759510864,
+      "adopted_-110": 0.9807153456616017,
+      "adopted_-120": 0.9833759212957875
+    }
+  }
+}

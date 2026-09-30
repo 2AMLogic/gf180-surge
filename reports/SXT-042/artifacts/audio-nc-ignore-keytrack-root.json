@@ -18,7 +18,8 @@
   "rms_diff_at_shift0_lsb": 1634.5972739037502,
   "rms_diff_dbfs": -26.040518217040894,
   "rms_diff_lsb": 1634.5972739037502,
-  "spectral_corr": 0.8742957579533996,
+  "spectral_corr": 0.5966794799138789,
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
   "verdict": "FAIL against proposed budgets",
   "windowed_rms_lsb": {
     "kt_nonzero": 2439.087065524903,

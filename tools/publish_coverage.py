@@ -42,13 +42,15 @@ no clock, no randomness, fixed column order). Python 3 standard library only.
 
 import argparse
 import csv
-import hashlib
 import json
 import sys
 from collections import Counter
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 TOOL_VERSION = "sxt-029-coverage/1.0.0"
 SCHEMA_VERSION = "sxt-029-coverage/1.0.0"
@@ -81,10 +83,27 @@ RNG_EXCLUSION_DEFAULT = "reports/SXT-028-rng/artifacts/coverage-impact.json"
 # the pin changes in the same commit as the data.
 STRUCTURAL_INPUTS = {
     GRAPH_DEFAULT: "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
-    SCAN_DEFAULT: "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6",
+    # revised by #239: the SXT-015 modulation-shape decision (a voice-list row
+    # is charged once per live voice per frame) moves this scan's
+    # `provenance.accounting_model_version` 1.0.0 -> 1.1.0 and nothing else --
+    # all 3,561 compile statuses and both named reconciliation deltas are
+    # unchanged, so no gate, status or denominator this tool reads moved.
+    SCAN_DEFAULT: "791b2c88b7360256ead4c062cfe46e1bd367b0a67e6f36d42bae102ac621fdbe",
     # revised by #117: SXT-015 Conditioner state_bytes 8192 -> 2444 (SXT-028b
     # measurement) changes on_chip_state_bytes only; no preset status moved.
-    PREDICTION_DEFAULT: "11d5c2710e079a6c3d364a8d0188066b3b726cfdca6f6d423614a4da2e74795f",
+    # revised by #239: the same modulation-shape decision moves this
+    # prediction's reported cost_cycles_per_frame_placeholder_v0 column (3,234
+    # presets, all upward) and budget_closure_placeholder_v0 (9 presets,
+    # within_budget -> OVERFLOW). Every per-preset `status` and `reasons` list
+    # is byte-identical -- cycles gate nothing in that stage by construction --
+    # so no headline_status, gate cell or b4_prediction published here moved.
+    # revised by #248: corrected the false `provenance.accounting_params_note`
+    # claim ("params_digest varies by pool" -- it does not; the digest is
+    # deliberately override-blind, see ParamRegistry.override()). Only that
+    # one prose string moved; every per-preset status, reasons list and
+    # column is byte-identical, so no headline_status, gate cell or
+    # b4_prediction published here moved.
+    PREDICTION_DEFAULT: "c14dff2d5101f84bf0a1a5d696cb9eadc0868ca5184ebcc8028af09310a13b34",
     "reports/sxt-013/candidates/slate-256-balanced.json": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
     "reports/sxt-013/candidates/slate-256-contributor-lean.json": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e",
     "reports/sxt-013/candidates/slate-256-factory-lean.json": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883",
@@ -131,14 +150,6 @@ class Refuse(Exception):
     pass
 
 
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def load_json(repo: Path, rel: str):
     path = repo / rel
     if not path.is_file():
@@ -151,7 +162,7 @@ def check_pin(repo: Path, rel: str, expected: str) -> None:
     path = repo / rel
     if not path.is_file():
         raise Refuse(f"missing required input: {rel}")
-    actual = sha256_file(path)
+    actual = oc.sha256_file(path)
     if actual != expected:
         raise Refuse(
             f"input integrity mismatch for {rel}: expected sha256 {expected}, "
@@ -179,7 +190,7 @@ def evidence_state(repo: Path, evidence: list) -> tuple:
         path = repo / item["path"]
         if not path.is_file():
             return "STALE", f"missing evidence file {item['path']}"
-        actual = sha256_file(path)
+        actual = oc.sha256_file(path)
         if actual != item["sha256"]:
             return "STALE", (
                 f"evidence hash mismatch for {item['path']}: expected "
@@ -864,7 +875,7 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
             inputs_prov[rel] = {"role": "structural input (pinned)", "sha256": pin}
     inputs_prov[table_rel if Path(table_rel).is_absolute() else table_rel] = {
         "role": "leaf/gate verification table",
-        "sha256": sha256_file(Path(table_rel) if Path(table_rel).is_absolute() else repo / table_rel),
+        "sha256": oc.sha256_file(Path(table_rel) if Path(table_rel).is_absolute() else repo / table_rel),
     }
     for lid, lf in sorted(table["leaves"].items()):
         for item in lf.get("evidence", []):

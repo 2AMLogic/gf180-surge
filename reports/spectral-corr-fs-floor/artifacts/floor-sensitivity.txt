@@ -1,0 +1,80 @@
+issue #110 -- shared full-scale log-floor spectral_corr: leg 2
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
+definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
+
+==========================================================================
+[2] floor sensitivity on every committed model-vs-reference pair (spectral leg >= 0.98)
+==========================================================================
+  columns: legacy log1p | adopted at floor -80 / -90 / -100 / -110 / -120 dBFS per bin
+  '*' marks a pair whose spectral-leg outcome differs anywhere in [-110, -90] dBFS
+
+  SXT-033      model-crush-seq-notes-coverage-v1.wav              0.9895 | 0.9643 0.9717 0.9796 0.9855 0.9896 *
+  SXT-033      model-crush-seq-notes-repeated-v1.wav              0.9961 | 0.9691 0.9754 0.9828 0.9886 0.9922 *
+  SXT-033      model-edges-seq-notes-coverage-v1.wav              0.9744 | 0.9992 0.9991 0.9990 0.9987 0.9976 
+  SXT-033      model-edges-seq-notes-repeated-v1.wav              0.9830 | 0.9998 0.9996 0.9994 0.9992 0.9981 
+  SXT-033      model-horn-seq-notes-coverage-v1.wav               0.7535 | 0.8883 0.8641 0.8422 0.8192 0.7983 
+  SXT-033      model-horn-seq-notes-repeated-v1.wav               0.8086 | 0.8623 0.8425 0.8331 0.8268 0.8194 
+  SXT-033      model-tentacles-seq-notes-coverage-v1.wav          0.9802 | 0.9843 0.9915 0.9953 0.9969 0.9964 
+  SXT-033      model-tentacles-seq-notes-repeated-v1.wav          0.9888 | 0.9903 0.9941 0.9970 0.9982 0.9980 
+  SXT-034      model-seq-notes-coverage-v1-uni2.wav               0.9644 | 0.8705 0.9066 0.9360 0.9531 0.9609 
+  SXT-034      model-seq-notes-repeated-v1-uni1.wav               0.9921 | 0.9968 0.9982 0.9988 0.9991 0.9992 
+  SXT-034      model-seq-notes-repeated-v1-uni4.wav               0.9841 | 0.9109 0.9431 0.9631 0.9749 0.9813 
+  SXT-040      model-badnews-seq-notes-coverage-v1.wav            0.9306 | 0.9851 0.9771 0.9700 0.9677 0.9679 
+  SXT-040      model-badnews-seq-notes-repeated-v1.wav            0.9471 | 0.9918 0.9833 0.9752 0.9735 0.9792 *
+  SXT-040      model-popcorn2k-seq-notes-coverage-v1.wav          0.9666 | 0.9933 0.9918 0.9908 0.9904 0.9903 
+  SXT-040      model-popcorn2k-seq-notes-repeated-v1.wav          0.9800 | 0.9942 0.9896 0.9836 0.9834 0.9859 
+  SXT-040      model-tentacles-seq-notes-coverage-v1.wav          0.9444 | 0.9839 0.9876 0.9867 0.9859 0.9886 
+  SXT-040      model-tentacles-seq-notes-repeated-v1.wav          0.9773 | 0.9919 0.9937 0.9892 0.9902 0.9924 
+  SXT-042      model-sxt025-accept-v1-bells-dry.wav               0.9212 | 0.7125 0.7525 0.7848 0.8133 0.8396 
+  sxt-022      model-seq-modwheel-v1.wav                          0.9802 | 0.9842 0.9888 0.9914 0.9928 0.9932 
+  sxt-022      model-seq-notes-coverage-v1.wav                    0.9791 | 0.9975 0.9982 0.9985 0.9986 0.9984 
+  sxt-022      model-seq-notes-repeated-v1.wav                    0.9921 | 0.9968 0.9982 0.9988 0.9991 0.9992 
+  sxt-026      model-kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1.w 0.9381 | 0.7867 0.7978 0.8498 0.8953 0.9163 
+  sxt-026      model-kick-wtfix-morph25__seq-wt-base-v1.wav       0.9226 | 0.9796 0.9715 0.9523 0.9163 0.8640 
+  sxt-026      model-kick-wtfix-morph75__seq-wt-base-v1.wav       0.9234 | 0.9796 0.9715 0.9523 0.9164 0.8642 
+  sxt-026      model-kick-wtfix-uni16__seq-wt-unison16-v1.wav     0.9576 | 0.8818 0.8943 0.8956 0.8942 0.8973 
+  sxt-026      model-kick-wtfix__seq-wt-base-v1.wav               0.9234 | 0.9796 0.9715 0.9523 0.9164 0.8642 
+  sxt-026      model-kick-wtfix__seq-wt-pitch-extremes-v1.wav     0.9092 | 0.9187 0.9216 0.9157 0.8959 0.8631 
+  sxt-026      model-mf-wtfix-morph25__seq-wt-base-v1.wav         0.9687 | 0.8684 0.8983 0.9056 0.9048 0.9129 
+  sxt-026      model-mf-wtfix-morph75__seq-wt-base-v1.wav         0.9705 | 0.8304 0.8433 0.8809 0.9108 0.9289 
+  sxt-026      model-mf-wtfix__seq-wt-base-v1.wav                 0.9756 | 0.8841 0.9067 0.9169 0.9225 0.9349 
+  sxt-032      model-seq-modwheel-v1.wav                          0.9915 | 0.9922 0.9923 0.9933 0.9945 0.9956 
+  sxt-032      model-seq-notes-coverage-v1.wav                    0.9884 | 0.9966 0.9977 0.9981 0.9982 0.9980 
+  sxt-032      model-seq-notes-holds-v1.wav                       0.9874 | 0.9967 0.9976 0.9978 0.9979 0.9978 
+  sxt-032      model-seq-notes-repeated-v1.wav                    0.9972 | 0.9977 0.9986 0.9989 0.9991 0.9991 
+  sxt-035      model-seq-modwheel-v1.wav                          0.9875 | 0.9385 0.9579 0.9710 0.9796 0.9854 
+  sxt-035      model-seq-notes-coverage-v1.wav                    0.9791 | 0.9975 0.9982 0.9985 0.9986 0.9984 
+  sxt-035      model-seq-notes-repeated-v1.wav                    0.9921 | 0.9968 0.9982 0.9988 0.9991 0.9992 
+  SXT-028c     model__alienappears__seq-notes-coverage-v1.f32.wav 1.0000 | 1.0000 1.0000 1.0000 1.0000 1.0000 
+  SXT-028c     model__alienappears__seq-poly-8-v1.f32.wav         1.0000 | 1.0000 1.0000 1.0000 1.0000 1.0000 
+  SXT-028c     model__fmcombo__seq-notes-coverage-v1.f32.wav      1.0000 | 1.0000 1.0000 1.0000 1.0000 0.9999 
+  SXT-028c     model__fmcombo__seq-poly-8-v1.f32.wav              1.0000 | 1.0000 1.0000 1.0000 1.0000 1.0000 
+  SXT-028c     model__fmtwang2__seq-notes-coverage-v1.f32.wav     1.0000 | 1.0000 1.0000 1.0000 1.0000 0.9997 
+  SXT-028c     model__fmtwang2__seq-poly-8-v1.f32.wav             1.0000 | 1.0000 1.0000 1.0000 1.0000 0.9998 
+  sxt-023      model__dexie__seq-notes-coverage-v1.f32.wav        0.9952 | 0.9929 0.9926 0.9928 0.9930 0.9930 
+  sxt-023      model__fm_bass_1__seq-notes-coverage-v1.f32.wav    1.0000 | 1.0000 1.0000 1.0000 1.0000 1.0000 
+  sxt-023      model__metallic__seq-notes-coverage-v1.f32.wav     0.9752 | 0.9651 0.9679 0.9710 0.9741 0.9779 
+  sxt-023 nc-b ncb__dexie__seq-notes-coverage-v1.f32.wav          0.9960 | 0.9920 0.9899 0.9884 0.9881 0.9879 
+  sxt-023 nc-b ncb__metallic__seq-notes-coverage-v1.f32.wav       0.9755 | 0.9599 0.9590 0.9594 0.9597 0.9601 
+  sxt-025      model__sxt025-smoke-v1-wet.f32.wav                 1.0000 | 1.0000 1.0000 1.0000 1.0000 1.0000 
+  sxt-025      model__sxt025-accept-v1-wet.f32.wav                1.0000 | 1.0000 1.0000 1.0000 1.0000 1.0000 
+  sxt-026a     model__sxt025-accept-v1-wet.f32.wav                0.7799 | 0.8402 0.8855 0.9133 0.9313 0.9433 
+  sxt-026      kick-original__seq-wt-base-v1-ref.wav              NOT_RUN (no committed model render)
+  sxt-026a     model-smoke-bells-dry.wav                          NOT_RUN (no committed reference render)
+
+  pairs graded: 51; spectral-leg outcome moved legacy -> adopted: 9; floor-sensitive in [-110,-90]: 3
+    moved: SXT-033    model-crush-seq-notes-coverage-v1.wav  PASS -> FAIL
+    moved: SXT-033    model-edges-seq-notes-coverage-v1.wav  FAIL -> PASS
+    moved: SXT-034    model-seq-notes-repeated-v1-uni4.wav  PASS -> FAIL
+    moved: SXT-040    model-popcorn2k-seq-notes-coverage-v1.wav  FAIL -> PASS
+    moved: SXT-040    model-tentacles-seq-notes-coverage-v1.wav  FAIL -> PASS
+    moved: SXT-040    model-tentacles-seq-notes-repeated-v1.wav  FAIL -> PASS
+    moved: sxt-022    model-seq-notes-coverage-v1.wav  FAIL -> PASS
+    moved: sxt-035    model-seq-modwheel-v1.wav  PASS -> FAIL
+    moved: sxt-035    model-seq-notes-coverage-v1.wav  FAIL -> PASS
+    floor-sensitive: SXT-033    model-crush-seq-notes-coverage-v1.wav
+    floor-sensitive: SXT-033    model-crush-seq-notes-repeated-v1.wav
+    floor-sensitive: SXT-040    model-badnews-seq-notes-repeated-v1.wav
+
+leg 2 verdict: PASS

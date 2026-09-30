@@ -10,9 +10,60 @@ authority: pinned `src/common/dsp/oscillators/WavetableOscillator.cpp`,
 the 63 mip halfband constants are quoted as data under
 [decision-records/0004](../../decision-records/0004-wavetable-asset-boundary.md)).
 
+**Change note (2026-09-28, issue #180) — SXT-017 visible contract revision,
+`decision-records/0018-wavetable-scene-decimation-placement.md`.** The two
+scope gaps #176 declared as deviations 7–8 are now **closed by change**, not
+by declaration, and this is the first change to this leaf's frozen model
+arithmetic since it was frozen:
+
+1. **The decimator and the master stage moved out of `wt_model.Slice` to one
+   per-SCENE stage** (`wt_model.SceneDecimator`), persisting across voice
+   death — the pinned engine's placement and the one the SXT-022 voice leaf
+   already models and implements. No word length, Q format, rounding rule or
+   coefficient changed; only *where* the stage runs and *how many* instances
+   exist. **Three** of the nine committed renders moved (each by ≤ 1 int16
+   LSB); six are byte-identical. **No verdict in section 3 moved** — the
+   before → after for every fixture is published in section 3's change note,
+   not silently replaced.
+2. **RTL coverage now reaches the 48 kHz output.** The per-scene stage is
+   implemented in `rtl/oscillators/wavetable/tb_wavetable.sv` (a scene is a
+   shared resource, so it sits above the per-slot `wavetable_core.sv`, exactly
+   as in `rtl/voice/tb_voice.sv`) and `tools/compare_wt_rtl_model.py` compares
+   every 48 kHz `mono_block` sample at integer equality. Base **PASS**, 0
+   mismatches, **132,000** 48 kHz samples compared on the full 4125-block
+   pitch-extreme fixture; the new single-line scene-decimator mutant
+   (`-DWT_SCENE_MUTANT_HB_ORDER`) **FAILS on the 48 kHz leg** (section 6).
+
+The measurement that justified the move is unchanged and stays in section 2a
+as the record of what the retired placement was worth — it is not a fidelity
+claim, and the move was **not** made for fidelity (see section 2a's closing
+paragraph).
+
+**Change note (2026-09-27, issue #176).** Two scope gaps in this record were
+closed, both documentation-and-measurement only — no model arithmetic, no RTL
+behavior, and no verdict in this record changed. (1) Section 2 now states the
+RTL-vs-model **scope boundary** explicitly: this leaf's RTL ends at the
+2x-rate oscillator output and has no post-oscillator/48 kHz stage, so
+`rtl_vs_model: PASS` was never a 48 kHz-output claim and no longer reads like
+one. (2) New section 2a measures the frozen model's **per-slice** decimation
+against the engine's **per-scene** placement on all nine committed fixtures.
+`wt_model.Slice.process_block` was split into `scene_block()` +
+`decimate_scene()` at that stage boundary so the measurement uses the frozen
+model's own arithmetic; the split is structural only and all nine fixtures
+render byte-identically across it. Issue #145 separately republished this
+leaf's section 3 headline budget numbers after the #123 halfband
+branch-order fix (see that section's own change note); the per-segment
+decomposition and the section 4 discriminating experiments there remain the
+pre-#123 numbers, as noted in that section.
+
 **Claim discipline.** This record advances: (1) *RTL matches the frozen
-fixed-point model exactly* (iverilog-simulated; integer equality,
-demonstrated), and (2) *the model reproduces the pinned reference within
+fixed-point model exactly* — **covering the 2x-rate oscillator output, the
+declared checkpoints, the traffic accounting, AND the 48 kHz render**
+(every `mono_block` sample, per-scene stage included, with a live
+scene-decimator mutant as its control; section 2, issue #180 — this replaces
+the issue-#176 oscillator-only boundary, which is retired) — (iverilog-
+simulated; integer equality, demonstrated), and (2) *the model reproduces the
+pinned reference within
 [PROPOSED] budgets on the workhorse and morph fixtures* (measured,
 PENDING-FREEZE) — with **one bounded budget finding at deep-mip pitch
 extremes** (section 4) that is NOT silently absorbed. It establishes
@@ -41,9 +92,47 @@ the graph's hash at compile time (ABORT on mismatch).
 | 2 | Interpolation/morph/AA within declared budgets vs the pinned reference at pitch extremes | **PARTIAL — bounded budget finding recorded** | Workhorse + morph variants PASS the proposed bounds (section 3). Pitch extremes: low/mid (mip 0/2) track the reference; deep mips (5/6, notes 96/120) decorrelate immediately (corr −0.19/−0.01) — mechanism verified against pinned source as the engine's float32 phase pipeline (`WavetableOscillator.cpp:278–291,474`), NOT mip-table content (forced-mip0 control also decorrelates; model deep-vs-mip0 corr 0.995). Status vs proposed bounds: **MISS at deep-mip extremes**; escalation in section 4. |
 | 3 | Maximum supported unison validated; beyond-limit rejected explicitly | **PASS** | `kick-wtfix-uni16` (MAX_UNISON=16) renders through the model and the RTL with 16 sub-voices; RTL matches the model exactly over the full fixture (section 2). `unison=17` → `run_model` exits 1 with an explicit "explicitly rejected (no clamp)" message (`nc-c-unison-overflow.txt`); the engine clamps silently (SXT-015 flagged 58 presets) — this product contract rejects, per the frozen-model README. |
 | 4 | Sustained playback bandwidth measured with effects active; no underruns | **PASS (declared behavioral model)** | uni16 (worst case) full 2250 blocks with concurrent Reverb1 background bus traffic (SXT-016 pattern, 34 words/frame): `reverb_words=76500`, `underrun_blocks=0`, `max_frame_bus_cost` ≤ 32000 (`sustained-concurrent.txt`). Physical external traffic = frame fills + reverb ≈ 1.05 MB/s at the 48 MHz A-CLK candidate — within the SXT-016 E1 floor (8 MB/s). The logical 2-words/impulse demand is served by the on-chip frame cache, not the external bus. The bus/underrun model is DECLARED (behavioral costs), not cycle-accurate RTL — no timing claim. |
-| 5 | Negative control: hash mismatch aborts; substituted table fails the reference-budget check | **PASS** | NC-A (above); NC-B model-side: forced deep-mip (`SXT026_NC_B_FORCE_MIP6`) fails the proposed budget on the workhorse while the correct model passes (`nc-b-mip-mutant.txt`); NC-B RTL: the committed mip-threshold mutant (`-DWAVETABLE_MUTANT_MIP`) FAILS RTL-vs-model exactness on the pitch-extreme fixture while the clean RTL passes (`rtl-exactness.txt`). All controls are live — each demonstrably fails the check it targets. |
+| 5 | Negative control: hash mismatch aborts; substituted table fails the reference-budget check | **PASS** | NC-A (above); NC-B model-side: forced deep-mip (`SXT026_NC_B_FORCE_MIP6`) fails the proposed budget on the workhorse while the correct model passes (`nc-b-mip-mutant.txt`); NC-B RTL: the committed mip-threshold mutant (`-DWAVETABLE_MUTANT_MIP`) FAILS RTL-vs-model exactness on the pitch-extreme fixture while the clean RTL passes (`rtl-exactness.txt`). NC-D RTL (#180): the single-line scene-decimator mutant (`-DWT_SCENE_MUTANT_HB_ORDER`) FAILS the same comparison **on the 48 kHz leg** while the clean RTL passes all 132,000 48 kHz samples (`rtl-exactness.txt`, section 6). All controls are live — each demonstrably fails the check it targets. |
 
 ## 2. RTL-vs-frozen-model exactness (integer equality)
+
+**Declared scope (issue #180; the issue-#176 boundary is RETIRED) — read this
+before the verdicts below.** This leaf's RTL-vs-model exactness claim now
+covers the **2x-rate (96 kHz) oscillator output, the declared per-voice and
+shared checkpoints, the external-traffic accounting, and the 48 kHz output**.
+`rtl/oscillators/wavetable/tb_wavetable.sv` implements the per-scene stage —
+per-slot o2 level and VCA × AEG gain ramp, scene out, ONE ±8 clip, ONE
+`HalfbandD2` persisting across voice death, master, ±8 and ±1 clips — and
+emits an `M` trace line per 48 kHz sample;
+`tools/compare_wt_rtl_model.py` reads the model trace's `mono_block` and
+compares every one of those samples at **integer equality**, on every block
+including blocks with no live voice (the scene filter's post-voice-death
+ring-out is compared too). The stage lives in the testbench rather than in the
+per-slot `wavetable_core.sv` because a scene is a shared resource — the same
+split `rtl/voice/tb_voice.sv` uses on the SXT-022 voice leaf. The landed scope
+is machine-readable in the comparator's emitted `scope` field, in the two RTL
+file headers, and in `model/oscillators/wavetable/README.md` (deviations 7–8,
+both revised).
+
+**The coverage claim carries its own control.** A 48 kHz comparison that
+passes against a mutated decimator would cover nothing, so
+`-DWT_SCENE_MUTANT_HB_ORDER` mutates a single line of the scene decimator's
+reconstruction — the pre-#123 A-even/B-odd branch order that
+`rtl/voice/voice_halfband_order_mutant.sv` isolates on the voice leaf — and
+MUST FAIL the comparison **on the 48 kHz leg specifically**; the harness
+refuses a mutant run whose only failures are elsewhere. Verdicts in section 6.
+
+What this PASS still is **not**: it is claim (1) only — *the RTL matches the
+frozen fixed-point model exactly*. It says nothing about model-vs-pinned-engine
+fidelity (claim 2, section 3, [PROPOSED]/PARTIAL) and nothing about how the
+leaf sounds (claim 3; no human listening has occurred).
+
+Before #180 this leaf's RTL had no 48 kHz stage at all, `compare_wt_rtl_model.py`
+did not read `mono_block`, and `rtl_vs_model: PASS` was oscillator-scoped —
+declared deviation 8 of issue #176. That boundary was closed by an SXT-017
+visible contract revision
+(`decision-records/0018-wavetable-scene-decimation-placement.md`), not by
+widening a claim.
 
 `tools/compare_wt_rtl_model.py` compiles `rtl/oscillators/wavetable/`
 with iverilog 11, runs `tb_wavetable.sv` from the model runner's stimulus
@@ -55,32 +144,28 @@ every 64-sample oscillator output block, and the external-traffic
 accounting (reads+fills must equal the model's declared words exactly;
 any underrun block fails).
 
-**RTL boundary and the scene decimator (answered by #145).** The wavetable
-RTL (`rtl/oscillators/wavetable/wavetable_core.sv`, `tb_wavetable.sv`)
-contains **no** halfband/decimator logic under any name, and none is
-expected at this boundary: the comparator above checks per-voice state,
-shared state and the 64-sample (2×-rate) oscillator output block only — it
-never reads the model trace's `mono_block` (48 kHz, post-decimator)
-samples. The model's post-oscillator stage (`wt_model.py` `Slice`: o2
-level, VCA×AEG gain ramp, scene out, ±8 clip, `HalfbandD2`, master, clip)
-therefore has **no RTL counterpart at all** today — it is neither
-implemented under different naming nor structurally unnecessary; it is
-simply outside the SXT-026 RTL boundary, and this leaf's "RTL == model"
-claim is scoped to the oscillator output. In the pinned engine the
-decimator is a per-**scene** stage (`SurgeSynthesizer::halfbandA/B`,
-`process_block_D2` on the summed `sceneout`), which in this repository is
-implemented in `rtl/voice/tb_voice.sv` (with its own exactness gate). A
-further, recorded modeling difference: `wt_model.py` instantiates one
-`HalfbandD2` **per voice slice** and sums the decimated slices, whereas the
-engine decimates the scene sum once. The filter is linear, so the two agree
-up to fixed-point rounding and the ±8 pre-decimator clip — except that a
-per-slice filter's state (and its ring-out) is dropped with the slice when
-the voice dies, where the engine's scene filter keeps ringing. The size of
-that difference on these fixtures is not measured here. Both points
-(no RTL for the wavetable post-oscillator path; per-slice vs per-scene
-decimation) are routed to follow-up
-[#176](https://github.com/2AMLogic/gf180-surge/issues/176) — not absorbed,
-not fixed here.
+**RTL boundary and the scene decimator (raised by #145, declared by #176,
+CLOSED by #180).** Historical statement, kept so the chain is auditable: this
+leaf's RTL once contained **no** halfband/decimator logic under any name and
+the comparator never read the model trace's `mono_block`, so the model's
+post-oscillator stage (`wt_model.py` `Slice`: o2 level, VCA×AEG gain ramp,
+scene out, ±8 clip, `HalfbandD2`, master, clip) had no RTL counterpart at all
+and this leaf's "RTL == model" claim was scoped to the oscillator output.
+Separately, that model stage was placed **per voice slice** where the pinned
+engine places it **per scene** (`SurgeSynthesizer::halfbandA/B`,
+`process_block_D2` on the summed `sceneout`).
+
+Both points are now resolved by change rather than declaration. #176 measured
+the placement difference (section 2a); #180 moved the stage to one per-scene
+`wt_model.SceneDecimator` — the engine's placement, and the one
+`model/voice/run_model.py` models and `rtl/voice/tb_voice.sv` implements — and
+implemented that same stage in `tb_wavetable.sv`, so the 48 kHz output is now
+compared at integer equality with a live single-line mutant as its control
+(scope block above; verdicts in section 6). The state-lifetime asymmetry that
+paragraph described — a per-slice filter's ring-out dying with the voice where
+the engine's scene filter keeps ringing — no longer exists in this model: the
+scene filter persists across voice death, and its post-death ring-out is part
+of what the RTL comparison covers.
 
 Transcript: `rtl-exactness.txt` (regenerated by
 `tools/run_sxt026_checks.py` steps 6–7). Coverage: the full 4125-block
@@ -90,14 +175,184 @@ sequence previously claimed mip5/6 coverage but its mip-2 window was not
 exercised — fixed this branch, sequence re-rendered) and the full
 2250-block MAX_UNISON fixture. Verdicts: base **PASS** with 0 mismatches
 (kt: 2325 checkpoint records + 25575 state fields + 148800 oscillator
-output samples + exact external-traffic reconciliation; uni16: 18736
-checkpoint records + 74944 output samples under concurrent Reverb1
-background traffic); the mip-threshold mutant **FAILS** the same
-comparison (first divergence at the mip-2 window's first checkpoint,
-block 768).
+output samples + **132000 48 kHz `mono_block` samples** + exact
+external-traffic reconciliation; uni16: 18736 checkpoint records + 74944
+oscillator output samples + **72000 48 kHz `mono_block` samples** under
+concurrent Reverb1 background traffic); the mip-threshold mutant **FAILS**
+the same comparison (first divergence at the mip-2 window's first
+checkpoint, block 768), and the scene-decimator mutant **FAILS** it on the
+48 kHz leg from block 0 (section 6).
+
+**Stimulus-length status in the transcript (issue #203).** The comparator's
+verdict JSON has carried a `stimulus_lengths` field since #194 — every
+`rtl/*.hex` stimulus file's hex-word count checked against the count the
+model itself declared when it wrote the stimulus
+(`rtl/stimulus_index.json`), catching a file that opens and loads but is
+TRUNCATED (fewer words than declared), which Icarus's own
+`$readmemh`/`Not enough words` diagnostic cannot distinguish from a healthy
+run's benign over-sized-memory warning. That field used to be computed and
+then discarded when `rtl-exactness.txt` and `sustained-concurrent.txt` were
+written — a reader of the committed transcript alone could not tell a
+complete-stimulus PASS from an unverified one. Both writers now render a
+`<tag> stimulus_lengths: PASS|FAIL|NOT_RUN` line per run (FAIL additionally
+names the disagreeing file with its declared and measured word counts;
+NOT_RUN states the harness's own reason rather than omitting the field), so
+that status is now visible in the committed artifact itself.
+
+The 48 kHz leg is compared on **every** block, not only checkpoint blocks and
+not only blocks with a live voice: the scene filter persists across voice
+death, so its post-death ring-out is compared too. `run_sxt026_checks.py`
+asserts the clean run's 48 kHz sample count equals `blocks × 32`, so an
+absent or truncated 48 kHz trace fails instead of silently reducing coverage.
 
 Determinism: identical reruns produce identical traces (pure integer
 model + fixed stimulus; no time dependence).
+
+## 2a. Per-slice vs per-scene decimation: measured (issue #176)
+
+> **Status (issue #180): this measurement is the record of a placement that
+> has since been RETIRED.** It is kept verbatim because it is the evidence on
+> which the SXT-017 contract revision was decided — read the tense below as
+> describing the *pre-#180* frozen model. The per-scene leg (leg B) measured
+> here **is** the frozen model today; the per-slice leg (leg A) survives only
+> as `measure_wt_decimation_stage.LegacyPerSliceStage`, a legacy
+> re-implementation kept so this delta stays re-derivable, and the tool's
+> fail-closed byte-identity gate now guards the per-scene leg against
+> `run_model.py`. What actually moved when the revision landed is in section
+> 3's #180 change note.
+>
+> **Re-run after the move, the measurement reproduces exactly** (`|a − b|` is
+> symmetric, so it must — and that it does is the check that the topology
+> which landed is the topology that was measured before the decision was
+> taken). All nine cases: every metric field, the summary, and the failure
+> control are **identical** to the numbers #176 committed. Stronger still, the
+> two legs' render hashes now straddle the revision: **leg A still renders to
+> the nine pre-#180 committed `model-*.wav` sha256s, and leg B renders to the
+> nine post-#180 ones** — so the legacy leg is a faithful re-implementation of
+> the retired placement, and the three renders that moved in section 3 moved
+> for exactly this reason and no other. Artifact format bumped to
+> `sxt-026-decimation-stage-measurement/2` (both legs now carry a render
+> sha256; `frozen_leg_runner_equality` replaces `leg_a_runner_equality`).
+
+**Declared deviation, measured, not absorbed.** The frozen model instantiates
+one `voice_model.HalfbandD2` **per voice slice** (`wt_model.Slice`) and
+`run_model.py` sums the already-decimated slices. The pinned engine decimates
+**once per scene** on the summed `sceneout`
+(`SurgeSynthesizer::halfbandA/B` → `HalfRateFilter::process_block_D2`), which
+is what `model/voice/run_model.py` models and `rtl/voice/tb_voice.sv`
+implements. The filter is linear, so the two topologies differ only by
+fixed-point rounding, by where the ±8 `sceneout` clip falls (per slice vs once
+on the sum), by where the master gain and its clips fall, and by **state
+lifetime** — a slice's filter state and its ring-out die with the voice, while
+the engine's scene filter keeps ringing. Recorded as declared deviation 7 in
+`model/oscillators/wavetable/README.md`.
+
+Measurement: `tools/measure_wt_decimation_stage.py`, artifact
+`artifacts/decimation-stage-per-slice-vs-per-scene.json`. **Model-vs-model
+only** — both legs are this frozen model; no reference render is read, no
+pinned engine is executed, and no budget is graded. Both legs are driven from
+one shared upstream pass (`Slice.scene_block()`), so voice creation and death
+fall on identical blocks and every difference is attributable to the
+decimation stage alone. Leg A is verified **byte-identical to
+`run_model.py`'s own render** of each case (fail-closed gate inside the tool),
+so the numbers cannot come from a drifted re-implementation of the frozen leg.
+
+| Fixture case | max abs Δ (int16 LSB) | RMS Δ dBFS | max abs Δ (Q10.21 LSB) | int16 frames differing | max live voices | blocks with a voice death |
+|---|---|---|---|---|---|---|
+| kick-wtfix / base | 0 | exact (0) | 1 | 0 | 1 | 1 |
+| kick-wtfix-morph25 / base | 0 | exact (0) | 1 | 0 | 1 | 1 |
+| kick-wtfix-morph75 / base | 0 | exact (0) | 1 | 0 | 1 | 1 |
+| kick-wtfix / pitch-extremes | **1** | −121.40 | 2 | 84 | 2 | 3 |
+| kick-wtfix-kt / pitch-extremes-hi | **1** | −119.93 | 2 | 144 | 2 | 4 |
+| kick-wtfix-uni16 / unison16 | **1** | −112.13 | 7 | 473 | 2 | 1 |
+| mf-wtfix / base | 0 | exact (0) | **38** | 0 | 1 | 1 |
+| mf-wtfix-morph25 / base | 0 | exact (0) | 15 | 0 | 1 | 1 |
+| mf-wtfix-morph75 / base | 0 | exact (0) | 2 | 0 | 1 | 1 |
+
+One int16 LSB is 64 Q10.21 LSB, so the Q10.21 column is the finer reading;
+"exact (0)" is a zero int16 residual (the JSON reports the comparators' finite
+`rms_diff_dbfs` floor, −300.0, for it). **Worst case over all nine fixtures:
+1 int16 LSB, −112.1 dBFS residual RMS, 38 Q10.21 LSB.** For scale, the
+smallest [PROPOSED] `max_abs_diff_lsb` bound anywhere in section 3 is 3500 —
+this placement difference is ~3500× below it, and it moves no row of the
+section-3 matrix.
+
+**Failure control (required by #176): PASS.** The control requires the
+per-scene leg to differ from the per-slice leg on at least one case with
+overlapping or released voices; bit-identical everywhere would mean voice
+death was never exercised. All nine cases have a released voice that dies
+mid-render, three (`pitch-extremes`, `pitch-extremes-hi`, `unison16`) also
+carry overlapping voices, and **no** case is bit-identical (the tool exits 1
+if any qualifying case is). The control is live, not a formality: it is
+evaluated in the tool and recorded in the artifact's `failure_control` block.
+
+**F-176-1 — where the two legs separate.** The rounding leg scales with
+concurrency, exactly as a sum-of-roundings vs rounding-of-a-sum should: the
+single-voice cases agree bit-for-bit at int16 (residual ≤ 1–2 Q10.21 LSB),
+while the two-voice cases reach 1 int16 LSB on 84–473 frames. The
+state-lifetime leg is visible only in the Q10.21 domain: after the last voice
+dies, leg A is exactly zero by construction while leg B is still ringing, at a
+peak of 1 Q10.21 LSB on the kick cases and 38/15/2 on the `mf-*` cases —
+below one int16 LSB in every case, which is why the mf column's 38 never
+reaches the int16 render.
+
+**F-176-2 (bounded, routed out of this leaf).** That leg-B tail does not decay
+to zero: the shared fixed-point `voice_model.HalfbandD2` has a **zero-input
+limit cycle**. Driven with an impulse and then silence it settles to a
+non-decaying ±26 Q10.21 LSB alternating-sign (Nyquist-rate) output; on
+`mf-wtfix` the scene filter's post-death output peaks at 38 Q10.21 LSB, decays
+to ±24 within ~100 frames, and then holds ±24 for the rest of the render
+(71,776 frames after the death block). That is ≈ −98 dBFS and below one
+int16 LSB, so it
+never reaches an int16 render on its own — but it is a property of the
+**shared** decimator class, so it applies equally to the SXT-022 voice leaf's
+per-scene decimator and to every RTL copy of it (which reproduce it exactly,
+since RTL == model). It is **not** caused by the per-slice/per-scene question
+and is not fixed here; it is filed as issue #181 rather than absorbed.
+
+**F-176-2 disposition (resolved by #181, 2026-09-28): option (a) — DECLARED.**
+The ±26 LSB above was one impulse case, not a bound. #181 measured the settled
+amplitude across a declared 315-case input sweep (amplitudes from 1 Q10.21 LSB
+to the ±8 `sceneout` clip; frequencies 0.002 → 0.5 of the 96 kHz decimator
+input rate, whole stopband included; impulse/DC/sine/square/two-tone/seeded
+noise, each followed by silence, each settled amplitude obtained **exactly** by
+zero-input state recurrence rather than from a finite tail) and states the worst
+case as **36 Q10.21 LSB = 0.5625 int16 LSB ≈ −95.3 dBFS** — still below one
+int16 LSB, so the escalation clause did not fire and this record's conclusions
+are unchanged. The property is now declared in `model/voice/README.md`
+(§"DECLARED word-length consequence") and in each affected leaf's own record,
+so it no longer lives only here. Full evidence, per-case amplitudes, the
+verbatim-RTL check and the failure control:
+`reports/halfband-limit-cycle/EVIDENCE.md`.
+
+**Disposition (SXT-017 visible-contract rule): option (b) in #176, then option
+(a) in #180.** #176 declared the per-slice decimation and the oscillator-only
+RTL boundary as explicit, bounded deviations (README deviations 7–8, section 2
+above, and the `osc:Wavetable` ledger note) with the difference measured, and
+routed option (a) — moving the stage to a per-scene placement shared with the
+voice leaf and extending RTL coverage to the 48 kHz output — to issue #180 as
+a change to the frozen model's numerical behavior, i.e. an SXT-017 contract
+revision (#12). The measurement is what made that routing a decision rather
+than a deferral: the placement is worth at most 1 int16 LSB on these fixtures,
+so nothing in the section-3 budget matrix depended on it, and the remaining
+reason to move it was RTL coverage of the 48 kHz output, not fidelity.
+
+**#180 then took option (a)**, under
+`decision-records/0018-wavetable-scene-decimation-placement.md`, and the
+prediction held: three of the nine renders moved by ≤ 1 int16 LSB, six are
+byte-identical, and no section-3 verdict moved (section 3's change note).
+**Nobody may present that revision as a fidelity improvement** — the case for
+it was RTL coverage and topological agreement with the engine. The numbers
+above are the size of a *placement difference*, not of an error that was
+fixed.
+
+Reproduce:
+
+```bash
+ORACLE_SURGE_DATA=<pinned>/resources/data \
+python3 tools/measure_wt_decimation_stage.py \
+    --out reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json
+```
 
 ## 3. Model-vs-reference budgets (PENDING-FREEZE, measured)
 
@@ -119,6 +374,59 @@ neither is frozen.
 | mf-wtfix / base | 50735 | −12.7 | 0.976 | MISS | MISS |
 | mf-wtfix-morph25 / base | 40312 | −12.7 | 0.969 | MISS | MISS |
 | mf-wtfix-morph75 / base | 11686 | −19.6 | 0.971 | MISS | MISS |
+
+**Change note (issue #180, 2026-09-28): re-frozen after the decimator/master
+stage moved from the voice slice to ONE per-SCENE stage** (SXT-017 visible
+contract revision,
+`decision-records/0018-wavetable-scene-decimation-placement.md`).
+Every number above was re-derived; nothing was carried over.
+**No row's verdict moved** under either bound set, and **no `max_abs LSB`
+value moved at all**. Before → after, all nine, published rather than replaced
+(`spectral_corr` and `rms_diff_dbfs` at full committed precision; sha256 is
+the committed `artifacts/model-*.wav`):
+
+| Fixture | render | corr before → after | rms dBFS before → after | sha256 |
+|---|---|---|---|---|
+| kick-wtfix / base (workhorse) | identical | 0.9234419021399706 → 0.9234419021399648 | −35.987 → −35.987 | `f5058ec9…` (unmoved) |
+| kick-wtfix-morph25 / base | identical | 0.9225587741994460 → 0.9225587741994487 | −35.987 → −35.987 | `bc00b8bc…` (unmoved) |
+| kick-wtfix-morph75 / base | identical | 0.9234419021399706 → 0.9234419021399648 | −35.987 → −35.987 | `f5058ec9…` (unmoved) |
+| kick-wtfix-uni16 / unison16 | **moved** | 0.9576252433266804 → 0.9575967223340163 | −11.5513250 → −11.5513204 | `16a16cb8…` → `1649f0b1…` |
+| kick-wtfix-kt / pitch-extremes-hi | **moved** | 0.9381369880261247 → 0.9381037550402566 | −19.8508601 → −19.8508603 | `614eb0e9…` → `350c8662…` |
+| kick-wtfix / pitch-extremes | **moved** | 0.9091471178669477 → 0.9092110108499554 | −24.7420034 → −24.7420045 | `c2ead4c3…` → `7f04474b…` |
+| mf-wtfix / base | identical | 0.9755512597793251 → 0.9755512597793249 | −12.659 → −12.659 | `7ec3ffd9…` (unmoved) |
+| mf-wtfix-morph25 / base | identical | 0.9687487861068226 → 0.9687487861068206 | −12.724 → −12.724 | `e2265856…` (unmoved) |
+| mf-wtfix-morph75 / base | identical | 0.9704886498945159 → 0.9704886498945166 | −19.599 → −19.599 | `c9ac29c6…` (unmoved) |
+
+Reading the two kinds of movement, which are **not** the same thing:
+
+- **Three renders moved**, each by **exactly 1 int16 LSB** peak, on 473
+  (uni16), 144 (kt pitch-extremes-hi) and 84 (pitch-extremes) frames out of
+  72,000 / 132,000 / 108,000. These are precisely the three fixtures section
+  2a's measurement identified as carrying overlapping voices, and precisely
+  the per-case frame counts it predicted — the re-freeze reproduced the
+  prediction rather than discovering something new. The other six renders are
+  **byte-identical**.
+- **The six unmoved rows' `spectral_corr` still differs in the last 1–2
+  significant digits.** That is *not* a topology effect: the render bytes and
+  the reference bytes are identical on both sides, so it is last-ulp
+  recomputation noise from re-running `compare_audio_reference.py` on a
+  different host/NumPy than the #145 run that committed the previous values.
+  It is recorded rather than hidden, and it is the reason the moved rows are
+  quoted at full precision above instead of at the table's 3–4 digits.
+
+**No verdict moved.** The workhorse/morph rows still PASS the SXT-026 proposed
+bounds; the narrowest margin in the matrix — the workhorse spectral leg at
+0.92344 against the 0.92 bound, margin 0.00344 — is unchanged to five decimal
+places, so the row the SXT-017 record flagged as "the one to watch" did not
+move. Every other row's MISS is unchanged. Per the #180 stop/escalate rule,
+had any verdict moved it would have been routed to #12 rather than absorbed
+here. **STALE (not re-measured by #180):** the per-segment decomposition below
+and the section 4 discriminating experiments, which remain pre-#123 numbers
+for the reasons the #145 note gives; #180 moved no fixture by more than 1
+int16 LSB, so it does not change their standing either way. RTL-vs-model was
+re-run and **extended**: base PASS with 0 mismatches now including 132,000
+48 kHz `mono_block` samples, the mip-threshold mutant still FAILs, and the new
+scene-decimator mutant FAILs on the 48 kHz leg (sections 2 and 6).
 
 **Change note (issue #145, 2026-09-27): republished after the #123 halfband
 branch-order fix — this leaf was NOT_RUN in #123 and is measured here.** The
@@ -247,15 +555,27 @@ asserted; per-asset working sets are in the manifest (`mips`, `dims`).
 | NC-A: substituted/flipped asset | `nc-a-hash-abort.txt` | `Triangle.wt` bytes flipped in a scratch root → compile `ABORT` (exit 2, no image emitted) and `verify` `HASH MISMATCH` ABORT (exit 2) | **PASS** (fails as designed) |
 | NC-B model: wrong mip under budget | `nc-b-mip-mutant.txt` | `SXT026_NC_B_FORCE_MIP6` vs correct model on identical inputs; correct PASSES proposed corr/rms bounds, forced-mip6 corr falls below | **PASS** (fails as designed) |
 | NC-B RTL: mip-threshold mutant | `rtl-exactness.txt` | `-DWAVETABLE_MUTANT_MIP` (mip-2 threshold halved) vs clean RTL on the pitch-extreme fixture (mip 2 window exercised) | **PASS** (mutant FAILS exactness; clean PASSes) |
+| **NC-D RTL (#180): scene-decimator mutant** | `rtl-exactness.txt` | `-DWT_SCENE_MUTANT_HB_ORDER` — ONE line of the per-scene decimator's reconstruction swapped to the pre-#123 A-even/B-odd branch order (the same defect `rtl/voice/voice_halfband_order_mutant.sv` isolates on the voice leaf) vs clean RTL, same fixture and stimulus | **PASS** (mutant FAILS **on the 48 kHz leg**: first 48 kHz mismatches at block 0 `mono48[2] model=−4 rtl=−6`, `mono48[3] model=−15 rtl=35`, `mono48[4] model=548 rtl=911`; clean RTL PASSes all 132,000 48 kHz samples) |
 | NC-C: unison overflow | `nc-c-unison-overflow.txt` | `unison=17` → explicit rejection exit 1, never clamped | **PASS** (fails as designed) |
+
+**Why NC-D is load-bearing and not decorative.** Section 2's 48 kHz coverage
+claim is only worth the control that can refute it: a comparison that PASSed
+against a mutated decimator would be covering nothing. `compare_wt_rtl_model.py
+--mutant-scene` therefore exits non-zero unless the comparison fails *and* at
+least one of its failures is a `mono48` mismatch — a scene mutant that only
+broke an oscillator checkpoint is refused, not counted.
+`tools/run_sxt026_checks.py` step 6 asserts the same thing independently, and
+also asserts that the **clean** run actually compared `blocks × 32` 48 kHz
+samples, so a silently-empty 48 kHz leg cannot masquerade as a PASS.
 
 ## 7. Reproducibility
 
 `python3 tools/run_sxt026_checks.py --asset-root <pinned resources/data>`
 regenerates: the manifest image + end-to-end verify transcript (1), NC-A
 (2), NC-B (3), NC-C (4), the budget matrix (5, reuses committed
-reference renders), the RTL exactness pair (6, regenerates stimulus in
-/tmp — never committed), and the sustained concurrent run (7). Requires
+reference renders), the RTL exactness **triple** (6 — clean build plus the
+mip-threshold and scene-decimator mutants; regenerates stimulus in
+/tmp, never committed), and the sustained concurrent run (7). Requires
 the external pinned oracle for steps 1–5 reference re-checks; committed
 `*-ref.wav` renders were produced by `tools/render_wt_reference.py`
 (deterministic, 3 bit-identical repeats, sidecar JSONs committed).
@@ -263,6 +583,12 @@ the external pinned oracle for steps 1–5 reference re-checks; committed
 deterministic; the 11 oracle-dependent tests skip (NOT_RUN, never pass)
 when the external pinned oracle is absent (e.g. CI); the in-repo payload
 guard always runs.
+
+The nine committed `artifacts/model-*.wav` renders are regenerated by
+`run_model.py` per fixture (`--inputs <inputs>.json --sequence <seq>`), and
+`tests/test_wt_decimation_stage.py::test_leg_b_is_still_the_frozen_models_own_render`
+re-derives all nine and asserts they are byte-identical to what is committed —
+so a moved model cannot leave a stale WAV in this directory.
 
 Environment: 48 kHz; engine pin above; iverilog 11; python 3.11+.
 Executed against the pinned oracle tree (identical pin
@@ -287,3 +613,25 @@ the environment-independent reproducer).
 - Budget freeze: the proposed bounds and the SXT-022 proposal both remain
   PENDING-FREEZE; the section-4 finding must be resolved by the freeze
   owner, not by widening numbers here.
+- **The 48 kHz RTL-vs-model PASS (issue #180) is claim (1) only.** It
+  establishes that this leaf's RTL reproduces the frozen fixed-point model's
+  48 kHz output exactly, under a live scene-decimator mutant. It establishes
+  **nothing** about whether that model matches the pinned engine's 48 kHz
+  output — that is claim (2), still PARTIAL against [PROPOSED] budgets
+  (section 3) with the section-4 finding open — and nothing about how the leaf
+  sounds (claim 3).
+- **No claim that moving the decimator improved fidelity.** The move was made
+  for RTL coverage and topological agreement with the engine
+  (`decision-records/0018`); the measured placement difference was ≤ 1 int16
+  LSB and the re-freeze moved three renders by exactly that, with no verdict
+  change. Presenting #180 as a fidelity improvement would misread sections 2a
+  and 3.
+- **The per-scene placement being the engine's is not a claim that the scene
+  arithmetic matches the engine's.** The model is Q10.21 fixed point where the
+  engine's scene path is float32 — declared deviation 1, and the territory of
+  the section-4 bounded finding, untouched by #180.
+- **The committed `artifacts/model-*.wav` / `budget-metrics.json`**: section
+  3's headline numbers were republished by #145 after the #123 halfband
+  branch-order fix (see that section's own change note); the per-segment
+  decomposition and the section 4 discriminating experiments there remain
+  the pre-#123 numbers.

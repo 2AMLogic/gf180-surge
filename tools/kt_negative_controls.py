@@ -52,7 +52,6 @@ Writes <artifacts>/negative-control.txt and <artifacts>/negative-controls.json.
 
 import argparse
 import datetime
-import hashlib
 import json
 import os
 import shutil
@@ -63,6 +62,10 @@ import wave
 import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 TB = os.path.join(REPO, "rtl", "voice", "tb_kt.sv")
 MUTANT_ROUND = os.path.join(REPO, "rtl", "voice", "tb_kt_broken_mutant.sv")
 MUTANT_SHARED = os.path.join(REPO, "rtl", "voice", "tb_kt_shared_mutant.sv")
@@ -84,14 +87,6 @@ SCENE_OCTAVE = 2
 def sh(cmd):
     r = subprocess.run(cmd, capture_output=True, text=True)
     return r.returncode, r.stdout, r.stderr
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def read_i16(path):
@@ -192,7 +187,7 @@ def main():
     log(f"carrier: Rozzer/Bells/Hell's Bells.fxp  sequence: sxt025-accept-v1")
     log(f"reference (unmodified, committed pinned-engine dry render): "
         f"{os.path.relpath(args.reference, REPO)}")
-    log(f"  sha256 {sha256_file(args.reference)}")
+    log(f"  sha256 {oc.sha256_file(args.reference)}")
     log("")
 
     base_wav = model_render("baseline", [])
@@ -200,7 +195,7 @@ def main():
     if base is None:
         log("baseline render/compare failed -- aborting")
         return 1
-    base_sha = sha256_file(base_wav)
+    base_sha = oc.sha256_file(base_wav)
     log(f"[baseline] unmutated model-vs-reference: "
         f"max={base['max_abs_diff_lsb']:.0f} "
         f"rms={base['rms_diff_dbfs']:.2f}dBFS "
@@ -228,7 +223,7 @@ def main():
             ok_all = False
             results[name] = {"control_ok": False, "why": "render failed"}
             return None
-        sha = sha256_file(wav)
+        sha = oc.sha256_file(wav)
         if sha == base_sha:
             entry = {"expected": ("DEGENERATE (no route to mutate)"
                                   if expect_degenerate else "FAIL"),
@@ -325,7 +320,7 @@ def main():
     # ---- P5 lag probe (must be INERT) --------------------------------------
     log("")
     wav = model_render("lag-refresh-before", ["--refresh-before"])
-    inert = bool(wav) and sha256_file(wav) == base_sha
+    inert = bool(wav) and oc.sha256_file(wav) == base_sha
     log(f"[P5 lag-refresh-before] bit-identical to baseline: {inert} "
         "(expected TRUE: pitch is constant per voice, so the declared "
         "1-control-pass lag is unobservable in this class -- probe, not a "
@@ -375,11 +370,11 @@ def main():
     syn_dir = args.synthetic_run_dir
     syn_wav = os.path.join(syn_dir, "model.wav")
     if os.path.exists(syn_wav):
-        syn_sha = sha256_file(syn_wav)
+        syn_sha = oc.sha256_file(syn_wav)
         for dest in ("reso", "fegmod"):
             w = model_render(f"synthetic-{dest}-zeroed",
                              ["--synthetic-routes", "--zero-dest", dest])
-            changed = bool(w) and sha256_file(w) != syn_sha
+            changed = bool(w) and oc.sha256_file(w) != syn_sha
             log(f"[synthetic-{dest}-zeroed] render differs from the "
                 f"synthetic class-cover baseline: {changed} "
                 "(model-vs-model; no reference claim -- the pinned engine "

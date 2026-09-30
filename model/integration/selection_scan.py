@@ -31,7 +31,6 @@ sha256 (compiled live with the committed compiler, byte-deterministic).
 
 Original to this repository (Apache-2.0); reads committed artifacts only.
 """
-import hashlib
 import json
 import os
 import subprocess
@@ -39,6 +38,9 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
+import oracle_common as oc  # noqa: E402
 
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 SCAN = os.path.join(REPO, "reports", "sxt-020", "compile-corpus-scan.json")
@@ -48,14 +50,6 @@ OUT = os.path.join(REPO, "model", "integration", "selection-scan.json")
 GRAPH_SHA = "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
 CHOSEN = "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
 FX_LEGAL = {6: "EQ", 2: "Reverb 1"}
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def gates(g):
@@ -177,7 +171,7 @@ def gates(g):
 
 
 def main():
-    assert sha256_file(GRAPHS) == GRAPH_SHA, "graphs.jsonl sha drift"
+    assert oc.sha256_file(GRAPHS) == GRAPH_SHA, "graphs.jsonl sha drift"
     scan = json.load(open(SCAN))
     comp = {o["path"]: o["outcome"] for o in scan["outcomes"]}
 
@@ -266,7 +260,7 @@ def main():
             "census_blob_sha1": blob,
             "normalized_graph_sha256": graph_line["sha"],
             "compiled_image": img_bin,
-            "compiled_image_sha256": sha256_file(os.path.join(outdir, img_bin)),
+            "compiled_image_sha256": oc.sha256_file(os.path.join(outdir, img_bin)),
             "fx_composition": [["send2", "Reverb 1"]],
             "fx_rationale": "Reverb1+EQ > Reverb1-only > EQ-only ranking: no "
                             "Reverb1+EQ preset survives Tier 2 (or any near "

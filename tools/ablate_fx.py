@@ -150,10 +150,6 @@ def snapshot_slots(s, patch):
     return snap
 
 
-def slots_equal(a, b):
-    return a == b
-
-
 def verify_preset_blob(preset_rel):
     preset_abs = os.path.join(oc.data_home(), "patches_factory", preset_rel)
     actual = oc.git_blob_sha1(preset_abs)

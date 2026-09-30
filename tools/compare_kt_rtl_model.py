@@ -16,6 +16,23 @@ voice at every block boundary:
 Mirrors tools/compare_mw_rtl_model.py (same verdict JSON schema, same exit
 codes) for rtl/voice/tb_kt.sv.
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193). tb_kt.sv `$readmemh`s three files (kt_init.hex, kt_routes.hex,
+kt_ctrl.hex) from `rtl/` under the run dir. Measured on this leaf's own
+testbench with real Icarus 13.0 (issue #207 evidence): with `rtl/kt_ctrl.hex`
+absent, Icarus prints
+
+  ERROR: .../rtl/voice/tb_kt.sv:93: $readmemh: Unable to open
+         rtl/kt_ctrl.hex for reading.
+
+on the simulation's STDOUT (this leaf's testbench then also hits a FATAL
+"ctrl stream exhausted" and exits non-zero, but the missing-input check
+below fires before the simulator is ever invoked, so that does not matter).
+`check=True` alone cannot see mechanism 2, so such a run could still be
+reported as a wall of RTL-vs-model mismatches if it ever raced ahead of the
+non-zero exit. `_rtl_compile_common`'s `report_sim_fails=True` mode names
+the file and sets `comparison: NOT_RUN` instead.
+
 Usage:
   python3 tools/compare_kt_rtl_model.py --run-dir DIR [--tb rtl/voice/tb_kt.sv]
 """
@@ -30,6 +47,12 @@ from _rtl_compile_common import compile_and_run  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_kt.sv")
+
+# The hex stimulus tb_kt.sv `$readmemh`s, relative to the run dir (issue
+# #193's pre-flight check axis; single source of truth so the check can
+# never drift from what the testbench actually reads).
+STIMULUS_RELPATHS = ("rtl/kt_init.hex", "rtl/kt_routes.hex",
+                    "rtl/kt_ctrl.hex")
 
 FIELDS = ["kt_word", "kt_cut_sum", "kt_reso_sum", "kt_fegmod_sum",
           "mod_cutoff", "mod_reso", "mod_envmod", "mod_vca_db"]
@@ -88,21 +111,33 @@ def main():
     with open(os.path.join(args.run_dir, "model_trace.json")) as f:
         model_trace = json.load(f)
 
-    trace_path, qmuls = compile_and_run(
+    sim = compile_and_run(
         args.tb, args.run_dir, out_name="tb_kt.vvp", absolute=True,
         compile_in_workdir=True, quiet_compile=True,
-        done_prefix="DONE kt-qmuls=", trace_name="tb_kt_trace.txt")
-    checked, fails = compare(model_trace, parse_tb(trace_path))
+        done_prefix="DONE kt-qmuls=", trace_name="tb_kt_trace.txt",
+        stimulus_files=STIMULUS_RELPATHS, report_sim_fails=True)
+
+    checked = {"voice_checkpoints": 0, "fields": 0}
+    fails = list(sim.sim_fails)
+    comparison = "NOT_RUN"
+    if not sim.sim_fails:
+        checked, cmp_fails = compare(model_trace, parse_tb(sim.trace))
+        fails += cmp_fails
+        comparison = "FAIL" if cmp_fails else "PASS"
+
     summary = {
         "tb": os.path.relpath(args.tb, REPO),
         "sequence": model_trace.get("sequence"),
         "control_mode": model_trace.get("control_mode"),
         "verdict": "PASS" if not fails else "FAIL",
+        "comparison": comparison,
         "checked": checked,
-        "rtl_qmuls": qmuls,
+        "rtl_qmuls": sim.value,
         "blocks": len(model_trace["blocks"]),
         "mismatches": len(fails),
         "first_failures": fails[:10],
+        "sim_fails": sim.sim_fails,
+        "sim_stdout_tail": sim.stdout_tail,
     }
     print(json.dumps(summary, indent=2))
     if args.out:

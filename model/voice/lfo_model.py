@@ -136,17 +136,6 @@ def build_ws_sine_table():
 WS_SINE = build_ws_sine_table()
 
 
-def envelope_rate_linear_nowrap_q(x_q21):
-    """storage::envelope_rate_linear_nowrap evaluated in double at the pinned
-    formula, quantized once to Q2.29 (per-block increment).
-
-    Body (pinned): x *= 16; x += 256; e = int(x) in [0, 510]; lerp of
-    1 / (96000 * 2^((e - 256) / 16) / 64).
-    """
-    from voice_model import envelope_rate_linear_nowrap
-    return envelope_rate_linear_nowrap(x_q21)
-
-
 def warp_sine_lookup(x_q27):
     """lookup_waveshape_warp(wst_sine, x) with x in Q4.27; returns Q10.21.
 

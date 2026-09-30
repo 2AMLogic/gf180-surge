@@ -1,0 +1,67 @@
+SXT-036 cost accounting against the SXT-015 accounting (#70 acceptance item 4, second half) -- ORACLE-INDEPENDENT.
+Op counts are MEASURED on the iverilog behavioral schedule. Cycles are DERIVED under two named readings and reported as a bracket, never as a probe result. No technology/timing/hardware claim.
+
+[pins] SXT-015 cost model: model_version=sxt-015-accounting/1.1.0, cost_profile=placeholder-v0, params_digest=a639d3115ae1a0ca, cyc_modroute_frame=15
+       graphs.jsonl sha256 c90424d91f2dc9ec.. == value pinned by #70
+[K4 pin-drift control] a mutated cyc_modroute_frame is detected: True -> REFUSES as required
+[K5 probe-claim control] a synthetic probe record claiming to replace cyc_modroute_frame is detected: ['synthetic-control.json'] -> DETECTED as required
+[SXT-016 coverage] 76 committed probe records; records replacing cyc_modroute_frame: none
+    cyc_modroute_frame is a `placeholder` param (estimate_ref names SXT-016) that NO probe replaces. This leaf supplies the first measured per-route evaluation count for it; it is a refinement INPUT, not a replacement (only an SXT-016 probe pins a row).
+
+MEASURED cost law (tb_vel.sv OPS counters; each run also checked EXACT against the frozen model as a positive control):
+  stimulus                    R  frames  passes   evals   mul32   add32 maxV  ROM rd  exact
+  sxt036-vel-overlap-v1       6    3225    2940   17640   17640   17640    3      10   PASS
+  seq-notes-coverage-v1       6    8550    3132   18792   18792   18792    1      18   PASS
+  seq-notes-repeated-v1       6    6150    1944   11664   11664   11664    1      16   PASS
+  seq-notes-holds-v1          6    9300    4392   26352   26352   26352    1       8   PASS
+  seq-poly-8-v1               6    5550   14784   88704   88704   88704    8      16   PASS
+
+  Every run: evals == routes x per-voice control passes, with exactly 1 mul32 + 1 add64 + 2 cmp64 + 1 add32 per evaluation. Per-frame work therefore scales with LIVE VOICES, not with the row count alone.
+
+ROUTE-TABLE SWEEP on sxt036-vel-overlap-v1 (declared sidecar truncated to its first R routes; depths unchanged):
+   R  passes   evals   mul32  evals-R*passes  exact
+   0    2940       0       0               0   PASS
+   1    2940    2940    2940               0   PASS
+   2    2940    5880    5880               0   PASS
+   3    2940    8820    8820               0   PASS
+   4    2940   11760   11760               0   PASS
+   5    2940   14700   14700               0   PASS
+   6    2940   17640   17640               0   PASS
+
+CONTROLS on the measured law (each must MISPREDICT):
+  [K1 per-frame shape] the retired shape (routes x frames) predicts 19350, measured 17640 -> MISPREDICTS as required
+      worst measured shape gap: 'seq-poly-8-v1' peaks at 8 live voices, so a voice row's peak per-frame work is 8x what the RETIRED shape charged for it. Since #239 the accounting charges a voice row at its own worst-case voice count, so this gap is what the decision closed, not an outstanding understatement.
+  [K2 route-count-blind] predicting with a fixed R=6 mispredicts at R in [0, 1, 2, 3, 4, 5] -> MISPREDICTS as required
+  [K3 attribution] empty route table measures evals=0 mul32=0 while the per-frame prediction is 19350 -> all measured multiply work is attributable to the routes
+
+MEASURED per-route-evaluation op profile (SXT-016 op taxonomy): mul32=1, add64=1, cmp64=2, add32=1
+  DERIVED candidate cycles per evaluation (NOT measured, NOT a probe): 2 .. 8
+    low  reading: A-DSP-1c read as 'the 32x32->64 multiply, its rounding add and its saturation clamp are one MAC pass' + A-ALU-1 for the 32-bit accumulate
+    high reading: every op a separate cycle, with the 64-bit rounding add and the two 64-bit saturation compares costing 2 cycles each on a 32-bit ALU (A-ALU-1 covers <=32-bit words only)
+  SXT-015 charges 15 cycles per row EVALUATION (#239 shape). The accounted constant is therefore 1.88x to 7.50x the derived bracket for EVERY row class -- conservative per evaluation, and now applied to the measured number of evaluations rather than to the row count (see below). The constant itself stays a placeholder only SXT-016 may pin.
+
+SXT-015 ACCOUNTING vs THE MEASURED SHAPE, on the carriers named by #70 (rows from graphs.jsonl; accounted cycles from model/resources/accounting.py):
+  carrier                             g  sc  vc rows  acct cyc worstV evals/frame  shape x
+  Bad News.fxp                        0   1   3    4       735     16          49    12.25
+  Rainy Day Dreamaway.fxp             0  10   3   13       870     16          58     4.46
+  House Of Chords.fxp                 2   4   4   10      1050     16          70     7.00
+  Attacky.fxp                         0   2   0    2        30     16           2     1.00
+
+  g = global rows, sc = scene-list rows, vc = voice-list rows (both of this leaf's sources are PER-VOICE, so their routes are voice-list rows). 'evals/frame' applies the measured shape at the accounting's own worst-case voice count; 'shape x' is that count divided by the ROWS (it is a property of the graph, not of the accounting, and stays > 1 for every carrier with voice rows).
+  SHAPE: RESOLVED in #239 and cross-checked here. SXT-015 charges a global/scene row once per frame and a VOICE row once per worst-case live voice per frame, so 'acct cyc' == 'evals/frame' x cyc_modroute_frame on every carrier above (True). Before that decision the accounting charged every row once per frame and understated the row-evaluation count by the 'shape x' column; that record is in this file's git history and in reports/sxt-015/EVIDENCE.md.
+  STILL DIVERGING (recorded, not reconciled): the per-EVALUATION constant. SXT-015 charges 15 cycles; the derived bracket above is 2..8. That is a placeholder-vs-derived gap, not a shape gap, and only an SXT-016 probe may pin it (#239 explicitly did not). Nothing here is tuned to make the two agree.
+  Scope limit: the modulation term is a small part of these accounts (voice cost dominates) and every carrier above is already `rejected` (budget_overflow) under placeholder-v0, so on THESE carriers the decision changed a TERM and no fit verdict. Corpus-wide it did move 9 of 3,561 placeholder-v0 closures, all within_budget -> OVERFLOW; they are enumerated in reports/sxt-015/EVIDENCE.md and are not preset-support claims.
+  Note on the fixture carrier: Attacky.fxp has NO voice rows of its own, so the shape is invisible on it (shape x = 1.00) and only appears on the carriers #70 names. That is why the fixture adds DECLARED synthetic voice routes.
+
+STATE: 8 slots x 2 source registers x 32 b = 512 bits of per-instance source state (rtl/voice/tb_vel.sv).
+  SXT-015 still has no separate modulation-source state ROW: modulation rows feed cycles only, and on-chip state is worst_voices x voice_base_state_bytes + osc + filter + LFO rows. The ambiguity this leaf recorded (is the per-voice source register inside that bucket or missing from it?) was DECIDED in #239: it is declared INSIDE voice_base_state_bytes, whose estimate_ref now enumerates the per-voice modulation-source registers explicitly. The 4096 B value was NOT re-tuned, and this leaf's 8 B/voice for two sources is a lower bound on a full source set, never a row value; SXT-016 re-derives the bucket and may split the row out.
+  [K6 state cross-check] committed control transcript: the scene-wide (shared) register mutant FAILS exactness with 45 mismatches -> the 512-bit per-instance count is load-bearing, not padding
+
+CROSS-CHECK of the first increment's hand-assembled artifacts/costs.txt (a change here makes that file STALE):
+  per_slot_state_bits: costs.txt 512 vs re-derived 512 -> OK
+  probe_cycles_per_event: costs.txt 88 vs re-derived 88 -> OK
+  probe_state_ram_bits: costs.txt 512 vs re-derived 512 -> OK
+  qmul_per_running_voice_block: costs.txt 6 vs re-derived 6 -> OK
+
+Not established here: model-vs-pinned-engine dry-render budgets (item 2) and the reference-budget negative controls (item 5) remain NOT_RUN - pinned oracle unavailable on dispatch host (#96/#232). Cycles above are derived under named assumptions, never measured; no synthesis, timing or hardware claim. Supported-preset delta from this leaf stays 0.
+VERDICT: PASS (every measured law held, every control fired, divergences recorded)

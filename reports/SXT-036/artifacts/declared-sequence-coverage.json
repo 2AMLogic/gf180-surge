@@ -1,0 +1,403 @@
+{
+  "agreement": "PASS",
+  "claim": "RTL == frozen model (integer equality) on the sequences named by issue #70",
+  "reference_budget_items": "NOT_RUN (#96)",
+  "coverage_rollup": {
+    "vel_q_words": [
+      495390,
+      1155911,
+      1981561
+    ],
+    "relvel_q_nonzero_words": [
+      1651301
+    ],
+    "voice_blocks_with_nonzero_route_sum": {
+      "cutoff": 9468,
+      "reso": 9468,
+      "fegmod": 9468,
+      "vca": 9468
+    },
+    "concurrent_distinct_source_word_blocks": 0,
+    "gaps": [
+      "every declared sequence is monophonic (no block ever has two concurrently-live voices with distinct source words), so the PER-INSTANCE-STATE rule is NOT discriminated by the declared set: a scene-wide shared {vel, relvel} register would pass these runs. That control fires only on an overlapping stimulus (the leaf-local 'sxt036-vel-overlap-v1'); tools/vel_negative_controls.py reports it NOT_RUN on these sequences rather than passing it. Surveyed beyond the declared set: seq-poly-8-v1, the only polyphonic note fixture committed in fixtures/sequences/, holds eight voices at ONE velocity and one release velocity, so it does not discriminate either - no committed shared fixture closes this gap, which is why the leaf-local stimulus exists"
+    ]
+  },
+  "per_instance_state_survey": {
+    "sequence_path": "fixtures/sequences/seq-poly-8-v1.json",
+    "named_by_issue_70": false,
+    "control_plane": {
+      "tb": "rtl/voice/tb_vel.sv",
+      "sequence": "seq-poly-8-v1",
+      "control_mode": "normal",
+      "verdict": "PASS",
+      "checked": {
+        "voice_block_checkpoints": 14784,
+        "source_words": 29568,
+        "route_sums": 59136
+      },
+      "mismatches": 0,
+      "first_failures": [],
+      "rtl_done_line": "DONE vel-qmuls=88704"
+    },
+    "coverage": {
+      "blocks": 5550,
+      "voice_block_records": 14784,
+      "max_concurrent_voices": 8,
+      "concurrent_distinct_source_word_blocks": 0,
+      "distinct_vel_q": [
+        1155911
+      ],
+      "distinct_relvel_q": [
+        0
+      ],
+      "nonzero_relvel_q": [],
+      "voice_blocks_with_nonzero_route_sum": {
+        "cutoff": 14784,
+        "reso": 14784,
+        "fegmod": 14784,
+        "vca": 14784
+      },
+      "routes": [
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A Filter 1 Cutoff",
+          "dest_id": 308,
+          "depth_raw": 24.0
+        },
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A Filter 1 Resonance",
+          "dest_id": 309,
+          "depth_raw": 0.25
+        },
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A Filter 1 FEG Mod Amount",
+          "dest_id": 310,
+          "depth_raw": 0.3
+        },
+        {
+          "source": "ms_velocity",
+          "source_id": 1,
+          "dest": "A VCA Gain",
+          "dest_id": 298,
+          "depth_raw": -12.0
+        },
+        {
+          "source": "ms_releasevelocity",
+          "source_id": 30,
+          "dest": "A Filter 1 Cutoff",
+          "dest_id": 308,
+          "depth_raw": 12.0
+        },
+        {
+          "source": "ms_releasevelocity",
+          "source_id": 30,
+          "dest": "A VCA Gain",
+          "dest_id": 298,
+          "depth_raw": 6.0
+        }
+      ]
+    },
+    "datapath": {
+      "verdict": "NOT_RUN",
+      "reason": "not a sequence named by #70; run here only as the per-instance-state discrimination survey"
+    },
+    "discriminates_per_instance_state": false
+  },
+  "sequences": {
+    "seq-notes-coverage-v1": {
+      "sequence_path": "fixtures/sequences/seq-notes-coverage-v1.json",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-coverage-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 3132,
+          "source_words": 6264,
+          "route_sums": 12528
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=18792"
+      },
+      "coverage": {
+        "blocks": 8550,
+        "voice_block_records": 3132,
+        "max_concurrent_voices": 1,
+        "concurrent_distinct_source_word_blocks": 0,
+        "distinct_vel_q": [
+          495390,
+          1155911,
+          1981561
+        ],
+        "distinct_relvel_q": [
+          0
+        ],
+        "nonzero_relvel_q": [],
+        "voice_blocks_with_nonzero_route_sum": {
+          "cutoff": 3132,
+          "reso": 3132,
+          "fegmod": 3132,
+          "vca": 3132
+        },
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 24.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 0.25
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 0.3
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -12.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 12.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 6.0
+          }
+        ]
+      },
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 467,
+          "fields": 16345,
+          "oscout": 29888,
+          "mono": 273600
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "seq-notes-repeated-v1": {
+      "sequence_path": "fixtures/sequences/seq-notes-repeated-v1.json",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-repeated-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 1944,
+          "source_words": 3888,
+          "route_sums": 7776
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=11664"
+      },
+      "coverage": {
+        "blocks": 6150,
+        "voice_block_records": 1944,
+        "max_concurrent_voices": 1,
+        "concurrent_distinct_source_word_blocks": 0,
+        "distinct_vel_q": [
+          1981561
+        ],
+        "distinct_relvel_q": [
+          0
+        ],
+        "nonzero_relvel_q": [],
+        "voice_blocks_with_nonzero_route_sum": {
+          "cutoff": 1944,
+          "reso": 1944,
+          "fegmod": 1944,
+          "vca": 1944
+        },
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 24.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 0.25
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 0.3
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -12.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 12.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 6.0
+          }
+        ]
+      },
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 403,
+          "fields": 14105,
+          "oscout": 25792,
+          "mono": 196800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "seq-notes-holds-v1": {
+      "sequence_path": "fixtures/sequences/seq-notes-holds-v1.json",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 4392,
+          "source_words": 8784,
+          "route_sums": 17568
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "coverage": {
+        "blocks": 9300,
+        "voice_block_records": 4392,
+        "max_concurrent_voices": 1,
+        "concurrent_distinct_source_word_blocks": 0,
+        "distinct_vel_q": [
+          1155911
+        ],
+        "distinct_relvel_q": [
+          0,
+          1651301
+        ],
+        "nonzero_relvel_q": [
+          1651301
+        ],
+        "voice_blocks_with_nonzero_route_sum": {
+          "cutoff": 4392,
+          "reso": 4392,
+          "fegmod": 4392,
+          "vca": 4392
+        },
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 24.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 0.25
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 0.3
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -12.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 12.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 6.0
+          }
+        ]
+      },
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 255,
+          "fields": 8925,
+          "oscout": 16320,
+          "mono": 297600
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    }
+  }
+}

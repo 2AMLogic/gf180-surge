@@ -488,5 +488,16 @@
       ]
     }
   },
-  "overall": "PASS"
+  "overall": "PASS",
+  "partial_reruns": [
+    {
+      "issue": 110,
+      "run_utc": "2026-09-30T04:08:42Z",
+      "repo_head": "173931890e490a7ed4eddf339bf72bb21af0d264",
+      "legs_rerun": [
+        "wet_tail_controls"
+      ],
+      "note": "leg 2 re-run under the #110 spectral_corr definition; every other leg entry is carried unchanged from the #93 record (see reports/spectral-corr-fs-floor/EVIDENCE.md)"
+    }
+  ]
 }

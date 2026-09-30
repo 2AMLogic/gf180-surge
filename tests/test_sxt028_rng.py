@@ -10,7 +10,6 @@ coverage cost is published as a REDUCTION rather than deducted.
 """
 
 import csv
-import hashlib
 import json
 import os
 import subprocess
@@ -23,7 +22,9 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-phaser"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
+import oracle_common as oc  # noqa: E402
 import phaser_model as pm  # noqa: E402
 from phaser_model import PhaserParams, Refuse  # noqa: E402
 from corners import CORNERS  # noqa: E402
@@ -42,14 +43,6 @@ STATUS_VOCAB = {"PASS", "FAIL", "NOT_RUN", "BLOCKED", "NO_VERDICT", "STALE"}
 def load(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 # --------------------------------------------------------------------------
@@ -197,10 +190,10 @@ def test_the_coverage_gate_control_is_recorded_and_passed():
 def test_coverage_impact_is_measured_from_the_committed_graphs():
     d = load(IMPACT)
     graphs = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
-    assert d["inputs"]["corpus/normalized/graphs.jsonl"] == sha256_file(graphs)
+    assert d["inputs"]["corpus/normalized/graphs.jsonl"] == oc.sha256_file(graphs)
     assert d["inputs"][
         "reports/SXT-028-rng/artifacts/rng-characterization.json"] == \
-        sha256_file(CHAR)
+        oc.sha256_file(CHAR)
     assert d["corpus"]["denominator"] == 3561
     assert 0 < d["corpus"]["affected_presets"] <= 3561
     assert d["corpus"]["affected_presets_including_disabled_slots"] >= \
@@ -262,7 +255,7 @@ def test_no_affected_preset_is_reported_supported():
 def test_the_gate_input_is_pinned_by_the_coverage_tool():
     import publish_coverage as pc
     assert pc.RNG_EXCLUSION_DEFAULT in pc.STRUCTURAL_INPUTS
-    assert pc.STRUCTURAL_INPUTS[pc.RNG_EXCLUSION_DEFAULT] == sha256_file(IMPACT)
+    assert pc.STRUCTURAL_INPUTS[pc.RNG_EXCLUSION_DEFAULT] == oc.sha256_file(IMPACT)
     assert "fx_rng_gate" in pc.CSV_COLUMNS
 
 

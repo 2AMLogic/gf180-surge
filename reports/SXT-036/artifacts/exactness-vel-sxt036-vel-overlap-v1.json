@@ -1,0 +1,14 @@
+{
+  "tb": "rtl/voice/tb_vel.sv",
+  "sequence": "sxt036-vel-overlap-v1",
+  "control_mode": "normal",
+  "verdict": "PASS",
+  "checked": {
+    "voice_block_checkpoints": 2940,
+    "source_words": 5880,
+    "route_sums": 11760
+  },
+  "mismatches": 0,
+  "first_failures": [],
+  "rtl_done_line": "DONE vel-qmuls=17640"
+}

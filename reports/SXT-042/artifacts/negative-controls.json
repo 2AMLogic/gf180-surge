@@ -5,7 +5,7 @@
     "model_sha256": "e095d007ad0a070256d6b32c09bb43245ae8b058b564b0221e41be4d51570a04",
     "rms_diff_dbfs": -27.850580066550283,
     "rms_diff_lsb": 1327.1123106194211,
-    "spectral_corr": 0.9212367046094617,
+    "spectral_corr": 0.7847668163685115,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 1916.5779351099552,
@@ -84,7 +84,7 @@
     "render_changed": true,
     "rms_diff_dbfs": -28.484180509350278,
     "rms_diff_lsb": 1233.751391989855,
-    "spectral_corr": 0.9259000500106875,
+    "spectral_corr": 0.7962955197788826,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 1729.2114269738304,
@@ -116,7 +116,7 @@
     "render_changed": true,
     "rms_diff_dbfs": -26.040518217040894,
     "rms_diff_lsb": 1634.5972739037502,
-    "spectral_corr": 0.8742957579533996,
+    "spectral_corr": 0.5966794799138789,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 2439.087065524903,
@@ -154,7 +154,7 @@
     "render_changed": true,
     "rms_diff_dbfs": -29.32985998312307,
     "rms_diff_lsb": 1119.2927275096324,
-    "spectral_corr": 0.892602501992357,
+    "spectral_corr": 0.7272040011543643,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 1578.4544949439764,
@@ -208,7 +208,7 @@
     "render_changed": true,
     "rms_diff_dbfs": -27.691560262234685,
     "rms_diff_lsb": 1351.6326313115521,
-    "spectral_corr": 0.9212225892067946,
+    "spectral_corr": 0.784170235898177,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 1964.927136781551,
@@ -229,7 +229,7 @@
     "render_changed": true,
     "rms_diff_dbfs": -28.484180509350278,
     "rms_diff_lsb": 1233.751391989855,
-    "spectral_corr": 0.9259000500106875,
+    "spectral_corr": 0.7962955197788826,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 1729.2114269738304,
@@ -248,7 +248,7 @@
     "render_changed": true,
     "rms_diff_dbfs": -28.24767021596674,
     "rms_diff_lsb": 1267.807073013139,
-    "spectral_corr": 0.9276044075508479,
+    "spectral_corr": 0.7999340487637123,
     "verdict": "FAIL against proposed budgets",
     "windowed_rms_lsb": {
       "kt_nonzero": 1786.6511197824068,
