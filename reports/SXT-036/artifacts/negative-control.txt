@@ -3,6 +3,8 @@ sequence: sxt036-vel-overlap-v1
 
 [positive control] unmutated RTL vs unmutated model: PASS mismatches=0 checked={'voice_block_checkpoints': 2940, 'source_words': 5880, 'route_sums': 11760}
 [stimulus precondition] blocks with >=2 concurrently-live voices carrying distinct (vel_q, relvel_q) words: 1071 -> per-instance-state controls TESTABLE
+[stimulus precondition] slot reuses after a nonzero release velocity: 2 -> construction-re-initialization controls TESTABLE
+[stimulus precondition] releases of a running voice with a nonzero release-velocity word: 5 -> release-timing control TESTABLE
 [E1 zero-route vel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[0]: model=0 rtl=9907800'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=5715 LSB -> observable
 [E1 zero-route vel:reso] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[1]: model=0 rtl=103206'] -> FAILS as required
@@ -19,13 +21,18 @@ sequence: sxt036-vel-overlap-v1
     M1 model render differs from unmutated: max|delta|=12038 LSB -> observable
 [E3 shared-state] exactness verdict=FAIL mismatches=44 first=['block 150 slot 0 route_sum[0]: model=39631224 rtl=9907800'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=7784 LSB -> observable
+[E4 stale-slot-relvel] exactness verdict=FAIL mismatches=42 first=['block 1200 slot 0 relvel_q: model=330260 rtl=0'] -> FAILS as required
+    M1 model render differs from unmutated: max|delta|=3287 LSB -> observable
 [E-rtl shared-slot mutant] exactness verdict=FAIL mismatches=45 first=['block 150 slot 0 vel_q: model=412825 rtl=1651301'] -> FAILS as required
 [E-rtl round-trunc mutant] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[2]: model=123848 rtl=123847'] -> FAILS as required
 [E-rtl rom-floor mutant] exactness verdict=FAIL mismatches=44 first=['block 150 slot 1 vel_q: model=1651301 rtl=1651300'] -> FAILS as required
+[E-rtl stale-slot-reinit mutant] exactness verdict=FAIL mismatches=42 first=['block 1200 slot 0 relvel_q: model=0 rtl=330260'] -> FAILS as required
+[E-rtl release-one-block-late mutant] exactness verdict=FAIL mismatches=15 first=['block 600 slot 0 relvel_q: model=330260 rtl=0'] -> FAILS as required
 [positive control, re-run after mutants] PASS mismatches=0
 [M2 invariance] seq-notes-repeated-v1: landed run_model.py wav sha256 9b7e7f90f46ae71c.. vs --strip-vel-routes 9b7e7f90f46ae71c.. -> IDENTICAL
 [R1 refusal] out-of-class route (velocity -> 'A Highpass' 303): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->303 outside the declared SXT-036 destinatio) -> REFUSED as required
 [R1 refusal] zero-route of a nonexistent route: exit 2 (REFUSED (outside declared SXT-036 class): --zero-route relvel:fegmod: no such route in the table) -> REFUSED as required
+[R2 refusal] cross-scene route (velocity -> 'B Osc 1 Sync' 502, the route the named carrier 'House Of Chords.fxp' carries): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->502 outside the declared SXT-036 destinatio) -> REFUSED as required
 
 Reference-budget negative controls (acceptance item 5: routing-zeroed and source-swap vs pinned-engine render): NOT_RUN - pinned oracle unavailable on dispatch host (#96). The E1/E2 rows above test the RTL-vs-model exactness check, NOT the reference-budget check.
 OVERALL (oracle-independent controls): PASS (every control failed/held as required)

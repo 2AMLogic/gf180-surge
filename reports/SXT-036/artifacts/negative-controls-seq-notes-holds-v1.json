@@ -4,11 +4,23 @@
   "controls_not_run": [
     {
       "control": "E3 shared-state",
-      "reason": "stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers"
+      "reason": "stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers",
+      "precondition": "per_instance"
+    },
+    {
+      "control": "E4 stale-slot-relvel",
+      "reason": "stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable",
+      "precondition": "slot_reuse"
     },
     {
       "control": "E-rtl shared-slot mutant",
-      "reason": "stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers"
+      "reason": "stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers",
+      "precondition": "per_instance"
+    },
+    {
+      "control": "E-rtl stale-slot-reinit mutant",
+      "reason": "stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable",
+      "precondition": "slot_reuse"
     }
   ],
   "reference_budget_controls": "NOT_RUN",
@@ -29,7 +41,11 @@
     },
     "stimulus_precondition": {
       "concurrent_distinct_source_word_blocks": 0,
-      "per_instance_state_controls_testable": false
+      "per_instance_state_controls_testable": false,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "reinitialization_controls_testable": false,
+      "release_blocks_with_nonzero_relvel_word": 1,
+      "release_timing_control_testable": true
     },
     "zero-vel-cutoff": {
       "exactness": {
@@ -243,11 +259,18 @@
     },
     "shared-state": {
       "status": "NOT_RUN",
-      "reason": "stimulus precondition unmet"
+      "reason": "stimulus precondition unmet",
+      "precondition": "per_instance"
+    },
+    "stale-slot-relvel": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "slot_reuse"
     },
     "rtl-shared-slot": {
       "status": "NOT_RUN",
-      "reason": "stimulus precondition unmet"
+      "reason": "stimulus precondition unmet",
+      "precondition": "per_instance"
     },
     "rtl-round-trunc": {
       "exactness": {
@@ -305,6 +328,32 @@
       },
       "fails_as_required": true
     },
+    "rtl-stale-slot-reinit": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "slot_reuse"
+    },
+    "rtl-release-one-block-late": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_release_one_block_late_mutant.sv",
+        "sequence": "seq-notes-holds-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 4392,
+          "source_words": 8784,
+          "route_sums": 17568
+        },
+        "mismatches": 3,
+        "first_failures": [
+          "block 5550 slot 0 relvel_q: model=1651301 rtl=0",
+          "block 5550 slot 0 route_sum[0]: model=47557476 rtl=27741864",
+          "block 5550 slot 0 route_sum[3]: model=-3963126 rtl=-13870932"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=26352"
+      },
+      "fails_as_required": true
+    },
     "invariance": {
       "landed": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
       "stripped": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
@@ -312,11 +361,18 @@
     },
     "refuse-out-of-class": {
       "exit": 2,
-      "refused": true
+      "refused": true,
+      "control": "R1"
     },
     "refuse-zero-route": {
       "exit": 2,
-      "refused": true
+      "refused": true,
+      "control": "R1"
+    },
+    "refuse-cross-scene": {
+      "exit": 2,
+      "refused": true,
+      "control": "R2"
     }
   }
 }

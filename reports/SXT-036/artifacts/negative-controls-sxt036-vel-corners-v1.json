@@ -1,7 +1,18 @@
 {
-  "overall": "PASS",
+  "overall": "PASS_WITH_NOT_RUN",
   "sequence": "sxt036-vel-corners-v1",
-  "controls_not_run": [],
+  "controls_not_run": [
+    {
+      "control": "E4 stale-slot-relvel",
+      "reason": "stimulus 'sxt036-vel-corners-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable",
+      "precondition": "slot_reuse"
+    },
+    {
+      "control": "E-rtl stale-slot-reinit mutant",
+      "reason": "stimulus 'sxt036-vel-corners-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable",
+      "precondition": "slot_reuse"
+    }
+  ],
   "reference_budget_controls": "NOT_RUN",
   "results": {
     "positive": {
@@ -20,7 +31,11 @@
     },
     "stimulus_precondition": {
       "concurrent_distinct_source_word_blocks": 498,
-      "per_instance_state_controls_testable": true
+      "per_instance_state_controls_testable": true,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "reinitialization_controls_testable": false,
+      "release_blocks_with_nonzero_relvel_word": 5,
+      "release_timing_control_testable": true
     },
     "zero-vel-cutoff": {
       "exactness": {
@@ -262,6 +277,11 @@
       "fails_as_required": true,
       "model_differs": true
     },
+    "stale-slot-relvel": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "slot_reuse"
+    },
     "rtl-shared-slot": {
       "exactness": {
         "tb": "reports/SXT-036/artifacts/tb_vel_shared_slot_mutant.sv",
@@ -346,6 +366,39 @@
       },
       "fails_as_required": true
     },
+    "rtl-stale-slot-reinit": {
+      "status": "NOT_RUN",
+      "reason": "stimulus precondition unmet",
+      "precondition": "slot_reuse"
+    },
+    "rtl-release-one-block-late": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_release_one_block_late_mutant.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 15,
+        "first_failures": [
+          "block 300 slot 0 relvel_q: model=2097152 rtl=0",
+          "block 300 slot 0 route_sum[0]: model=25562136 rtl=396312",
+          "block 300 slot 0 route_sum[3]: model=12384756 rtl=-198156",
+          "block 400 slot 2 relvel_q: model=16513 rtl=0",
+          "block 400 slot 2 route_sum[0]: model=25165812 rtl=24967656",
+          "block 400 slot 2 route_sum[3]: model=-12384750 rtl=-12483828",
+          "block 450 slot 3 relvel_q: model=2080639 rtl=0",
+          "block 450 slot 3 route_sum[0]: model=50331660 rtl=25363992",
+          "block 450 slot 3 route_sum[3]: model=-198162 rtl=-12681996",
+          "block 500 slot 4 relvel_q: model=1040319 rtl=0"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=12528"
+      },
+      "fails_as_required": true
+    },
     "invariance": {
       "landed": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
       "stripped": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
@@ -353,11 +406,18 @@
     },
     "refuse-out-of-class": {
       "exit": 2,
-      "refused": true
+      "refused": true,
+      "control": "R1"
     },
     "refuse-zero-route": {
       "exit": 2,
-      "refused": true
+      "refused": true,
+      "control": "R1"
+    },
+    "refuse-cross-scene": {
+      "exit": 2,
+      "refused": true,
+      "control": "R2"
     }
   }
 }

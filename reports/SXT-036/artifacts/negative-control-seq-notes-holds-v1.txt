@@ -3,6 +3,8 @@ sequence: seq-notes-holds-v1  (non-default: the control set re-run on a sequence
 
 [positive control] unmutated RTL vs unmutated model: PASS mismatches=0 checked={'voice_block_checkpoints': 4392, 'source_words': 8784, 'route_sums': 17568}
 [stimulus precondition] blocks with >=2 concurrently-live voices carrying distinct (vel_q, relvel_q) words: 0 -> per-instance-state controls NOT TESTABLE on this stimulus
+[stimulus precondition] slot reuses after a nonzero release velocity: 0 -> construction-re-initialization controls NOT TESTABLE on this stimulus
+[stimulus precondition] releases of a running voice with a nonzero release-velocity word: 1 -> release-timing control TESTABLE
 [E1 zero-route vel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[0]: model=0 rtl=27741864'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=3830 LSB -> observable
 [E1 zero-route vel:reso] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[1]: model=0 rtl=288978'] -> FAILS as required
@@ -18,18 +20,24 @@ sequence: seq-notes-holds-v1  (non-default: the control set re-run on a sequence
 [E2 source-swap-mw] exactness verdict=FAIL mismatches=44 first=['block 0 slot 0 route_sum[0]: model=0 rtl=27741864'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=6398 LSB -> observable
 [E3 shared-state] NOT_RUN - stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
+[E4 stale-slot-relvel] NOT_RUN - stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
 [E-rtl shared-slot mutant] NOT_RUN - stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
 [E-rtl round-trunc mutant] exactness verdict=FAIL mismatches=42 first=['block 0 slot 0 route_sum[1]: model=288978 rtl=288977'] -> FAILS as required
 [E-rtl rom-floor mutant] exactness verdict=FAIL mismatches=44 first=['block 0 slot 0 vel_q: model=1155911 rtl=1155910'] -> FAILS as required
+[E-rtl stale-slot-reinit mutant] NOT_RUN - stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
+[E-rtl release-one-block-late mutant] exactness verdict=FAIL mismatches=3 first=['block 5550 slot 0 relvel_q: model=1651301 rtl=0'] -> FAILS as required
 [positive control, re-run after mutants] PASS mismatches=0
 [M2 invariance] seq-notes-repeated-v1: landed run_model.py wav sha256 9b7e7f90f46ae71c.. vs --strip-vel-routes 9b7e7f90f46ae71c.. -> IDENTICAL
 [R1 refusal] out-of-class route (velocity -> 'A Highpass' 303): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->303 outside the declared SXT-036 destinatio) -> REFUSED as required
 [R1 refusal] zero-route of a nonexistent route: exit 2 (REFUSED (outside declared SXT-036 class): --zero-route relvel:fegmod: no such route in the table) -> REFUSED as required
+[R2 refusal] cross-scene route (velocity -> 'B Osc 1 Sync' 502, the route the named carrier 'House Of Chords.fxp' carries): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->502 outside the declared SXT-036 destinatio) -> REFUSED as required
 
 Reference-budget negative controls (acceptance item 5: routing-zeroed and source-swap vs pinned-engine render): NOT_RUN - pinned oracle unavailable on dispatch host (#96). The E1/E2 rows above test the RTL-vs-model exactness check, NOT the reference-budget check.
 
-2 control(s) NOT_RUN on this stimulus (never reported as a pass):
+4 control(s) NOT_RUN on this stimulus (never reported as a pass):
   - E3 shared-state: stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
+  - E4 stale-slot-relvel: stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
   - E-rtl shared-slot mutant: stimulus 'seq-notes-holds-v1' never has two concurrently-live voices with distinct source words, so a shared register is behaviourally identical to per-voice registers
-  These controls DO fire on a stimulus that overlaps voices with distinct source words (the leaf-local 'sxt036-vel-overlap-v1'); see negative-control.txt.
-OVERALL (oracle-independent controls): PASS for every control that ran; 2 NOT_RUN (stimulus precondition unmet) - NOT a full control pass on this stimulus
+  - E-rtl stale-slot-reinit mutant: stimulus 'seq-notes-holds-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
+  These controls DO fire on a stimulus that overlaps voices with distinct source words AND reuses slots after a nonzero release velocity (the leaf-local 'sxt036-vel-overlap-v1'); see negative-control.txt.
+OVERALL (oracle-independent controls): PASS for every control that ran; 4 NOT_RUN (stimulus precondition unmet) - NOT a full control pass on this stimulus
