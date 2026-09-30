@@ -264,7 +264,9 @@ class ParamRegistry:
                 "estimate_ref": p.estimate_ref,
                 "note": p.note,
             }
-            for p in PARAMS
+            # Dict insertion order preserves PARAMS declaration order, while
+            # reading the live registry makes scoped overrides part of provenance.
+            for p in self._p.values()
         ]
 
 
