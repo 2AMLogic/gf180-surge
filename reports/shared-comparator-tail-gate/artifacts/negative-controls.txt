@@ -1,6 +1,7 @@
 issue #93 -- shared-comparator wet-path tail gate: checks
-run: 2026-09-26T23:50:08Z   repo HEAD: 8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264
 tool: tools/compare_audio_reference.py
+re-run: leg 2 only, by issue #110 (spectral_corr definition change); leg 1 is carried
 claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-support,
              or sound-quality claim follows from anything below.
 
@@ -19,16 +20,16 @@ claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-suppo
 
   full-tail-within-budget  expect PASS    got PASS    rc=0  OK
       tail: covered=True ref_present=True model_present=True rel=-50.27 dB ok=True
-      budgets: max=True rms=True corr=True  (max 1 LSB, rms -98.66 dBFS, corr 0.9997)
+      budgets: max=True rms=True corr=True  (max 1 LSB, rms -98.66 dBFS, corr 1.0000)
 
   drop-full-tail           expect FAIL    got FAIL    rc=1  OK
       tail: covered=True ref_present=True model_present=False rel=0.00 dB ok=False
-      budgets: max=False rms=True corr=False  (max 3831 LSB, rms -48.39 dBFS, corr 0.9115)
+      budgets: max=False rms=True corr=False  (max 3831 LSB, rms -48.39 dBFS, corr 0.9747)
       FAIL against proposed budgets (budget: max_abs_diff_lsb, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 268.94 dB (> 1.00 dB budget) in 23 of 23 graded windows (worst window 0: reference -31.1 dBFS, model -300.0 dBFS))
 
   tail-decays-too-fast     expect FAIL    got FAIL    rc=1  OK
       tail: covered=True ref_present=True model_present=True rel=-10.22 dB ok=False
-      budgets: max=True rms=True corr=True  (max 415 LSB, rms -58.61 dBFS, corr 0.9896)
+      budgets: max=True rms=True corr=True  (max 415 LSB, rms -58.61 dBFS, corr 0.9977)
       FAIL against proposed budgets (tail-region gate: tail residual -10.22 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 220.71 dB (> 1.00 dB budget) in 22 of 23 graded windows (worst window 21: reference -79.3 dBFS, model -300.0 dBFS))
       all three global budgets PASS; the verdict is FAIL solely because of the tail gate
 
@@ -42,14 +43,14 @@ claim scope: comparator behaviour only. No model-vs-reference, RTL, preset-suppo
       reference/model filename declares a wet bus but --path wet was not passed; a wet comparison must be tail-gated (issue #93). Re-run with --path wet --sidecar <fixture>.json.
 
   no-sidecar               expect REFUSE  got REFUSE  rc=2  OK
-      --path wet requires a fixture sidecar declaring the tail region (note-off offset plus declared tail length); none was given and none was found next to /tmp/sxt-tail-shape-leg/t93/no-sidecar/orphan-wet.wav. Do not guess a tail region -- record a bounded finding instead (issue #93 stop condition).
+      --path wet requires a fixture sidecar declaring the tail region (note-off offset plus declared tail length); none was given and none was found next to /tmp/sxt-tail-gate-checks/no-sidecar/orphan-wet.wav. Do not guess a tail region -- record a bounded finding instead (issue #93 stop condition).
 
   stale-sidecar            expect REFUSE  got REFUSE  rc=2  OK
       sidecar declares 273600 frames but a-short-wet.wav holds 213600: the sidecar is STALE with respect to the reference render
 
   drop-full-tail-second-preset expect FAIL    got FAIL    rc=1  OK
       tail: covered=True ref_present=True model_present=False rel=0.00 dB ok=False
-      budgets: max=True rms=False corr=False  (max 2496 LSB, rms -41.68 dBFS, corr 0.7338)
+      budgets: max=True rms=False corr=False  (max 2496 LSB, rms -41.68 dBFS, corr 0.9226)
       FAIL against proposed budgets (budget: rms_diff_dbfs, spectral_corr; tail-region gate: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 270.79 dB (> 1.00 dB budget) in 50 of 50 graded windows (worst window 0: reference -29.2 dBFS, model -300.0 dBFS))
 
   leg 2: PASS (8/8 controls behaved as required)

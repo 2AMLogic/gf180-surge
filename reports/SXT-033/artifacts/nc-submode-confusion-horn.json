@@ -8,7 +8,8 @@
   "rms_diff_at_shift0_lsb": 930.5213356132701,
   "best_shift": -2,
   "rms_diff_at_best_shift_lsb": 929.4589309912702,
-  "spectral_corr": 0.7634557660284563,
+  "spectral_corr": 0.6202245313114492,
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
   "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,

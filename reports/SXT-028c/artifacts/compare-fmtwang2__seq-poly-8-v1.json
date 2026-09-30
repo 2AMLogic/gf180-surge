@@ -18,7 +18,7 @@
       "rms_diff_at_shift0_lsb": 11.198931584903612,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 11.198931584903612,
-      "spectral_corr": 0.9999999145853391
+      "spectral_corr": 0.999998590371921
     },
     "R": {
       "frames": 177600,
@@ -30,7 +30,7 @@
       "rms_diff_at_shift0_lsb": 14.729562921670837,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 14.729562921670837,
-      "spectral_corr": 0.9999998580090257
+      "spectral_corr": 0.9999982497794506
     },
     "mono": {
       "frames": 177600,
@@ -42,7 +42,7 @@
       "rms_diff_at_shift0_lsb": 11.004506613150198,
       "best_shift": 0,
       "rms_diff_at_best_shift_lsb": 11.004506613150198,
-      "spectral_corr": 0.9999999110854106
+      "spectral_corr": 0.999998709192587
     }
   },
   "proposed_budgets": {
@@ -50,6 +50,7 @@
     "rms_diff_dbfs": -46.0,
     "spectral_corr_min": 0.98
   },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
   "proposed_budget_results": {
     "max_abs_diff_lsb": true,
     "rms_diff_dbfs": true,

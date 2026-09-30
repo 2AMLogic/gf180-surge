@@ -1,0 +1,50 @@
+issue #110 -- shared full-scale log-floor spectral_corr: leg 3
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
+definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
+
+==========================================================================
+[3] dry re-run parity: pre-#110 comparator (main at base baba823b266e) vs working tree
+==========================================================================
+  SXT-033    crush__seq-notes-coverage-v1-ref.wav             0.9895 -> 0.9796  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-033    crush__seq-notes-repeated-v1-ref.wav             0.9961 -> 0.9828  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-033    edges__seq-notes-coverage-v1-ref.wav             0.9744 -> 0.9990  FAIL -> PASS  OK (only #110 fields differ)
+  SXT-033    edges__seq-notes-repeated-v1-ref.wav             0.9830 -> 0.9994  PASS -> PASS  OK (only #110 fields differ)
+  SXT-033    horn__seq-notes-coverage-v1-ref.wav              0.7535 -> 0.8422  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-033    horn__seq-notes-repeated-v1-ref.wav              0.8086 -> 0.8331  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-033    tentacles__seq-notes-coverage-v1-ref.wav         0.9802 -> 0.9953  PASS -> PASS  OK (only #110 fields differ)
+  SXT-033    tentacles__seq-notes-repeated-v1-ref.wav         0.9888 -> 0.9970  PASS -> PASS  OK (only #110 fields differ)
+  SXT-034    reference-seq-notes-coverage-v1-uni2.wav         0.9644 -> 0.9360  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-034    reference-seq-notes-repeated-v1-uni1.wav         0.9921 -> 0.9988  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-034    reference-seq-notes-repeated-v1-uni4.wav         0.9841 -> 0.9631  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-040    badnews__seq-notes-coverage-v1-ref.wav           0.9306 -> 0.9700  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-040    badnews__seq-notes-repeated-v1-ref.wav           0.9471 -> 0.9752  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-040    popcorn2k__seq-notes-coverage-v1-ref.wav         0.9666 -> 0.9908  FAIL -> PASS  OK (only #110 fields differ)
+  SXT-040    popcorn2k__seq-notes-repeated-v1-ref.wav         0.9800 -> 0.9836  PASS -> PASS  OK (only #110 fields differ)
+  SXT-040    tentacles__seq-notes-coverage-v1-ref.wav         0.9444 -> 0.9867  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-040    tentacles__seq-notes-repeated-v1-ref.wav         0.9773 -> 0.9892  FAIL -> FAIL  OK (only #110 fields differ)
+  SXT-042    reference-sxt025-accept-v1-bells-dry.wav         0.9212 -> 0.7848  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-022    reference-seq-modwheel-v1-dry.wav                0.9802 -> 0.9914  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-022    reference-seq-notes-coverage-v1-dry.wav          0.9791 -> 0.9985  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-022    reference-seq-notes-repeated-v1-dry.wav          0.9921 -> 0.9988  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1-ref.w 0.9381 -> 0.8498  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-wtfix-morph25__seq-wt-base-v1-ref.wav       0.9226 -> 0.9523  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-wtfix-morph75__seq-wt-base-v1-ref.wav       0.9234 -> 0.9523  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-wtfix-uni16__seq-wt-unison16-v1-ref.wav     0.9576 -> 0.8956  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-wtfix__seq-wt-base-v1-ref.wav               0.9234 -> 0.9523  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-wtfix__seq-wt-pitch-extremes-v1-ref.wav     0.9092 -> 0.9157  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    mf-wtfix-morph25__seq-wt-base-v1-ref.wav         0.9687 -> 0.9056  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    mf-wtfix-morph75__seq-wt-base-v1-ref.wav         0.9705 -> 0.8809  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    mf-wtfix__seq-wt-base-v1-ref.wav                 0.9756 -> 0.9169  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-032    reference-seq-modwheel-v1-lfo-fixture.wav        0.9915 -> 0.9933  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-032    reference-seq-notes-coverage-v1-lfo-fixture.wav  0.9884 -> 0.9981  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-032    reference-seq-notes-holds-v1-lfo-fixture.wav     0.9874 -> 0.9978  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-032    reference-seq-notes-repeated-v1-lfo-fixture.wav  0.9972 -> 0.9989  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-035    reference-seq-modwheel-v1-mw-fixture.wav         0.9875 -> 0.9710  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-035    reference-seq-notes-coverage-v1-mw-fixture.wav   0.9791 -> 0.9985  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-035    reference-seq-notes-repeated-v1-mw-fixture.wav   0.9921 -> 0.9988  FAIL -> FAIL  OK (only #110 fields differ)
+  sxt-026    kick-original__seq-wt-base-v1-ref.wav            NOT_RUN (no committed model render)
+  sxt-026a   model-smoke-bells-dry.wav                        NOT_RUN (no committed reference render)
+  leg 3: PASS (37/37 dry cases differ only in #110-owned fields)
+
+leg 3 verdict: PASS

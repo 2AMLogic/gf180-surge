@@ -1,0 +1,44 @@
+issue #110 -- shared full-scale log-floor spectral_corr: leg 5
+run: 2026-09-30T04:08:42Z   repo HEAD: 173931890e490a7ed4eddf339bf72bb21af0d264   numpy 2.4.1
+definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric/comparator behaviour only; no fidelity, support, RTL or sound claim.
+
+==========================================================================
+[5] tail-gate control legs of #93 and #100 re-run under the #110 metric
+==========================================================================
+  #93 leg 2 (shared int16 tail-gate controls): PASS
+    full-tail-within-budget        expect PASS   got PASS   OK
+    drop-full-tail                 expect FAIL   got FAIL   OK
+    tail-decays-too-fast           expect FAIL   got FAIL   OK
+    truncate-at-tail-start         expect FAIL   got FAIL   OK
+    undeclared-wet-path            expect REFUSE got REFUSE OK
+    no-sidecar                     expect REFUSE got REFUSE OK
+    stale-sidecar                  expect REFUSE got REFUSE OK
+    drop-full-tail-second-preset   expect FAIL   got FAIL   OK
+  #100 leg 2 (stereo tail-gate controls): PASS
+  carried from main's records at base baba823b266e: #93 summary byte-identical; #100 summary byte-identical
+    fmcombo/baseline                         required PASS       observed PASS       CONTROL-OK
+    fmcombo/drop-full-tail                   required FAIL       observed FAIL       CONTROL-OK
+    fmcombo/tail-decays-too-fast             required FAIL       observed FAIL       CONTROL-OK
+    fmcombo/drop-right-tail                  required FAIL       observed FAIL       CONTROL-OK
+    fmcombo/truncate-at-tail-start           required FAIL       observed FAIL       CONTROL-OK
+    alienappears/baseline                    required PASS       observed PASS       CONTROL-OK
+    alienappears/drop-full-tail              required FAIL       observed FAIL       CONTROL-OK
+    alienappears/tail-decays-too-fast        required FAIL       observed FAIL       CONTROL-OK
+    alienappears/drop-right-tail             required FAIL       observed FAIL       CONTROL-OK
+    alienappears/truncate-at-tail-start      required FAIL       observed FAIL       CONTROL-OK
+    alienappears/zero-late-tail-from-30%     required FAIL       observed FAIL       CONTROL-OK
+    alienappears/zero-late-tail-from-40%     required FAIL       observed FAIL       CONTROL-OK
+    alienappears/zero-late-tail-from-60%     required FAIL       observed FAIL       CONTROL-OK
+    refusal/missing-sidecar                  required NO_VERDICT observed NO_VERDICT CONTROL-OK
+    refusal/undeclared-tail_s                required NO_VERDICT observed NO_VERDICT CONTROL-OK
+    refusal/stale-frames                     required NO_VERDICT observed NO_VERDICT CONTROL-OK
+    refusal/sha256-mismatch                  required NO_VERDICT observed NO_VERDICT CONTROL-OK
+    refusal/missing-sidecar                  required NO_VERDICT observed NO_VERDICT CONTROL-OK
+    fm_bass_1/baseline                       required PASS       observed PASS       CONTROL-OK
+    fm_bass_1/drop-full-tail                 required FAIL       observed FAIL       CONTROL-OK
+    fm_bass_1/tail-decays-too-fast           required FAIL       observed FAIL       CONTROL-OK
+    fm_bass_1/drop-right-tail                required FAIL       observed FAIL       CONTROL-OK
+    fm_bass_1/truncate-at-tail-start         required FAIL       observed FAIL       CONTROL-OK
+
+leg 5 verdict: PASS

@@ -14,7 +14,8 @@ the budgets are comparable across the float32 buses and the fixed-point word.
 Metrics per channel (L, R) and mono sum:
   max_abs_diff_lsb, rms_diff_lsb, rms_diff_dbfs (re 2^-21 full scale),
   best_shift ([-32, 32] scan; scheduling granularity is 32 samples),
-  spectral_corr (Hann 4096 log-magnitude correlation).
+  spectral_corr (the shared full-scale log-floor definition of issue #110,
+  compare_audio_reference.spectral_corr; float32 full scale 1.0).
 rms_diff_dbfs is clamped to a finite floor under exact agreement (issue #100;
 compare_audio_reference.RMS_DIFF_DBFS_FLOOR) so the JSON stays strict.
 
@@ -81,17 +82,11 @@ def read_wav_stereo_f32(path):
 
 
 def spectral_corr(a, b, frame=4096):
-    n = min(len(a), len(b))
-    if n < frame:
-        return 1.0 if np.allclose(a, b) else 0.0
-    ra = np.log1p(np.abs(np.fft.rfft(a[: n // frame * frame].reshape(-1, frame)
-                                     * np.hanning(frame), axis=1))).ravel()
-    rb = np.log1p(np.abs(np.fft.rfft(b[: n // frame * frame].reshape(-1, frame)
-                                     * np.hanning(frame), axis=1))).ravel()
-    ra -= ra.mean()
-    rb -= rb.mean()
-    d = np.sqrt((ra * ra).sum() * (rb * rb).sum())
-    return float((ra * rb).sum() / d) if d > 0 else 0.0
+    """The shared spectral_corr definition (issue #110), on the float32 bus
+    whose declared full scale is 1.0 (compare_audio_reference.FULL_SCALE_F32).
+    The pre-#110 native-unit log1p is gone: its log knee sat at full scale on
+    this bus but at one LSB on the int16 bus."""
+    return car.spectral_corr(a, b, full_scale=car.FULL_SCALE_F32, frame=frame)
 
 
 def channel_metrics(ref, mod):
@@ -175,6 +170,7 @@ def main():
         "spectral_corr": worst["spectral_corr"] >= PROPOSED["spectral_corr_min"],
     }
     metrics["proposed_budgets"] = PROPOSED
+    metrics["spectral_corr_definition"] = car.SPECTRAL_CORR_DEFINITION
     metrics["proposed_budget_results"] = proposed_results
     metrics["proposed_tail_budget"] = dict(PROPOSED_TAIL)
     tc, tc_lr, tail_ok, tail_reason = car.stereo_tail_gate(ref, mod, region, LSB)

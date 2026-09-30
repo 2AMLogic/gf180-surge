@@ -21,7 +21,8 @@
    "rms_diff_at_shift0_lsb": 520.0779625210051,
    "best_shift": -32,
    "rms_diff_at_best_shift_lsb": 362.7120568733832,
-   "spectral_corr": 0.9234419021399648,
+   "spectral_corr": 0.9523318799228803,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -45,7 +46,8 @@
    "rms_diff_at_shift0_lsb": 520.0773275837611,
    "best_shift": -32,
    "rms_diff_at_best_shift_lsb": 362.7112773274635,
-   "spectral_corr": 0.9225587741994487,
+   "spectral_corr": 0.9523129317076342,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -69,7 +71,8 @@
    "rms_diff_at_shift0_lsb": 520.0779625210051,
    "best_shift": -32,
    "rms_diff_at_best_shift_lsb": 362.7120568733832,
-   "spectral_corr": 0.9234419021399648,
+   "spectral_corr": 0.9523318799228803,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -93,7 +96,8 @@
    "rms_diff_at_shift0_lsb": 8667.037228758998,
    "best_shift": -32,
    "rms_diff_at_best_shift_lsb": 8640.87144324508,
-   "spectral_corr": 0.9575967223340163,
+   "spectral_corr": 0.8956481813049025,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -117,7 +121,8 @@
    "rms_diff_at_shift0_lsb": 3333.4478696977435,
    "best_shift": -7,
    "rms_diff_at_best_shift_lsb": 2744.7891712437563,
-   "spectral_corr": 0.9381037550402566,
+   "spectral_corr": 0.8498154794009908,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -141,7 +146,8 @@
    "rms_diff_at_shift0_lsb": 1898.1759136100266,
    "best_shift": -32,
    "rms_diff_at_best_shift_lsb": 1490.2345656527107,
-   "spectral_corr": 0.9092110108499554,
+   "spectral_corr": 0.9156558324996035,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -165,7 +171,8 @@
    "rms_diff_at_shift0_lsb": 7629.449661269263,
    "best_shift": 4,
    "rms_diff_at_best_shift_lsb": 7317.962206929859,
-   "spectral_corr": 0.9755512597793249,
+   "spectral_corr": 0.9169167861318831,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -189,7 +196,8 @@
    "rms_diff_at_shift0_lsb": 7572.560639105176,
    "best_shift": 5,
    "rms_diff_at_best_shift_lsb": 7288.884780725337,
-   "spectral_corr": 0.9687487861068206,
+   "spectral_corr": 0.9056153600196133,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,
@@ -213,7 +221,8 @@
    "rms_diff_at_shift0_lsb": 3431.7041027199593,
    "best_shift": -23,
    "rms_diff_at_best_shift_lsb": 3364.838434261294,
-   "spectral_corr": 0.9704886498945166,
+   "spectral_corr": 0.8808801405195944,
+   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
    "proposed_budgets": {
     "max_abs_diff_lsb": 3500,
     "rms_diff_dbfs": -46.0,

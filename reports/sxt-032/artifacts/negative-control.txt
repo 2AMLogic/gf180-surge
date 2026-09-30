@@ -1,10 +1,10 @@
 SXT-032 negative controls (all must demonstrably FAIL their check)
-date: 2026-09-27T09:38:16Z
+date: 2026-09-30T03:40:23Z
 
-[cutoff-zeroed] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=20592 rms_dbfs=-23.5 spec=0.8983 -> FAIL against proposed budgets (expected FAIL)
-[reso-zeroed] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=7027 rms_dbfs=-31.7 spec=0.9907 -> FAIL against proposed budgets (expected FAIL)
-[source-swap] ref=reference-seq-modwheel-v1-lfo-fixture.wav max=21502 rms_dbfs=-22.6 spec=0.8328 -> FAIL against proposed budgets (expected FAIL)
-[free-running] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=22565 rms_dbfs=-22.2 spec=0.8658 -> FAIL against proposed budgets (expected FAIL)
+[cutoff-zeroed] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=20592 rms_dbfs=-23.5 spec=0.8053 -> FAIL against proposed budgets (expected FAIL)
+[reso-zeroed] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=7027 rms_dbfs=-31.7 spec=0.9811 -> FAIL against proposed budgets (expected FAIL)
+[source-swap] ref=reference-seq-modwheel-v1-lfo-fixture.wav max=21502 rms_dbfs=-22.6 spec=0.6617 -> FAIL against proposed budgets (expected FAIL)
+[free-running] ref=reference-seq-notes-repeated-v1-lfo-fixture.wav max=22565 rms_dbfs=-22.2 spec=0.7311 -> FAIL against proposed budgets (expected FAIL)
 
 RTL mutant: rtl/voice/lfo_broken_mutant.sv = tb_lfo.sv with the
   output round-half-up bias mutated: '32'sd1 <<< (F_WAVE - FQ - 1)' -> '32'sd1 <<< (F_WAVE - FQ - 2)'

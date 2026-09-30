@@ -1,0 +1,892 @@
+{
+  "status": "PASS",
+  "note": "characterization",
+  "floors_dbfs": [
+    -80.0,
+    -90.0,
+    -100.0,
+    -110.0,
+    -120.0
+  ],
+  "rows": [
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/crush__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-crush-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9895294211226552,
+      "adopted_by_floor": {
+        "-80": 0.9643294853776097,
+        "-90": 0.9716869318415436,
+        "-100": 0.9795578866159448,
+        "-110": 0.9854946609853679,
+        "-120": 0.9895636579701376
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": true
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/crush__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-crush-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.996072621439653,
+      "adopted_by_floor": {
+        "-80": 0.9690894437208463,
+        "-90": 0.9754296772108763,
+        "-100": 0.9828101497588241,
+        "-110": 0.9885647708863217,
+        "-120": 0.9921720393385223
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": true
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/edges__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-edges-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9744227953033333,
+      "adopted_by_floor": {
+        "-80": 0.9992011945053499,
+        "-90": 0.9991287799622213,
+        "-100": 0.9989760733145877,
+        "-110": 0.9986896681724767,
+        "-120": 0.9975804154041548
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/edges__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-edges-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9830044321779814,
+      "adopted_by_floor": {
+        "-80": 0.9997724574564161,
+        "-90": 0.9996499156761954,
+        "-100": 0.9993986068356864,
+        "-110": 0.9992163722892596,
+        "-120": 0.9981246590559797
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/horn__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-horn-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.7534505518975164,
+      "adopted_by_floor": {
+        "-80": 0.8883280988415152,
+        "-90": 0.8641292537560314,
+        "-100": 0.8422433285924609,
+        "-110": 0.8192155435457794,
+        "-120": 0.7982519595069479
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/horn__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-horn-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.8086309065256551,
+      "adopted_by_floor": {
+        "-80": 0.8623421164828698,
+        "-90": 0.8425463206750619,
+        "-100": 0.8330659434167054,
+        "-110": 0.8268165982613711,
+        "-120": 0.8194155838536354
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/tentacles__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-tentacles-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9802121891513782,
+      "adopted_by_floor": {
+        "-80": 0.984328342431365,
+        "-90": 0.9915380115088525,
+        "-100": 0.9952705975754197,
+        "-110": 0.9968534654032889,
+        "-120": 0.9964225922799465
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-033",
+      "ref": "reports/SXT-033/artifacts/tentacles__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-033/artifacts/model-tentacles-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9888108925666398,
+      "adopted_by_floor": {
+        "-80": 0.9902980627733518,
+        "-90": 0.9940685859833798,
+        "-100": 0.9970490733295704,
+        "-110": 0.9982387471627723,
+        "-120": 0.9979810200015836
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-034",
+      "ref": "reports/SXT-034/artifacts/reference-seq-notes-coverage-v1-uni2.wav",
+      "model": "reports/SXT-034/artifacts/model-seq-notes-coverage-v1-uni2.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9643616545807963,
+      "adopted_by_floor": {
+        "-80": 0.8705468958588012,
+        "-90": 0.9066497872404781,
+        "-100": 0.9359768921775162,
+        "-110": 0.9531145927302084,
+        "-120": 0.9608659073854348
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-034",
+      "ref": "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni1.wav",
+      "model": "reports/SXT-034/artifacts/model-seq-notes-repeated-v1-uni1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9920851447593002,
+      "adopted_by_floor": {
+        "-80": 0.9968421894255483,
+        "-90": 0.9981701438912363,
+        "-100": 0.998839814688084,
+        "-110": 0.9991418350915259,
+        "-120": 0.9992134450646762
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-034",
+      "ref": "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni4.wav",
+      "model": "reports/SXT-034/artifacts/model-seq-notes-repeated-v1-uni4.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9840901794675873,
+      "adopted_by_floor": {
+        "-80": 0.9108697497827231,
+        "-90": 0.9430731830278444,
+        "-100": 0.9631054982338696,
+        "-110": 0.974917370380047,
+        "-120": 0.981271766892982
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-040",
+      "ref": "reports/SXT-040/artifacts/badnews__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-040/artifacts/model-badnews-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9306053841293582,
+      "adopted_by_floor": {
+        "-80": 0.9851291262587486,
+        "-90": 0.977144690408449,
+        "-100": 0.9700127903010176,
+        "-110": 0.9677137021169707,
+        "-120": 0.9678915418231725
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-040",
+      "ref": "reports/SXT-040/artifacts/badnews__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-040/artifacts/model-badnews-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9471139375941886,
+      "adopted_by_floor": {
+        "-80": 0.9917874410306186,
+        "-90": 0.9833239443668301,
+        "-100": 0.9752255790533861,
+        "-110": 0.9734635900632314,
+        "-120": 0.9791930777840996
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": true
+    },
+    {
+      "leaf": "SXT-040",
+      "ref": "reports/SXT-040/artifacts/popcorn2k__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9665832799372938,
+      "adopted_by_floor": {
+        "-80": 0.993340889121903,
+        "-90": 0.9917558286169791,
+        "-100": 0.990825356358914,
+        "-110": 0.9903960462681063,
+        "-120": 0.9902965627989273
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-040",
+      "ref": "reports/SXT-040/artifacts/popcorn2k__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-040/artifacts/model-popcorn2k-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9800197200726508,
+      "adopted_by_floor": {
+        "-80": 0.9941734736928924,
+        "-90": 0.9895859160954849,
+        "-100": 0.9836301098168843,
+        "-110": 0.9833584768285816,
+        "-120": 0.9859322802186743
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-040",
+      "ref": "reports/SXT-040/artifacts/tentacles__seq-notes-coverage-v1-ref.wav",
+      "model": "reports/SXT-040/artifacts/model-tentacles-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9444411345365575,
+      "adopted_by_floor": {
+        "-80": 0.9839201188014073,
+        "-90": 0.9876056395441886,
+        "-100": 0.9867132851291923,
+        "-110": 0.9859349529664226,
+        "-120": 0.9885845487778373
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-040",
+      "ref": "reports/SXT-040/artifacts/tentacles__seq-notes-repeated-v1-ref.wav",
+      "model": "reports/SXT-040/artifacts/model-tentacles-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.977328063720294,
+      "adopted_by_floor": {
+        "-80": 0.9918605286453831,
+        "-90": 0.9937161982771059,
+        "-100": 0.9892028303265433,
+        "-110": 0.9902124239090344,
+        "-120": 0.9923999458691827
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-042",
+      "ref": "reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav",
+      "model": "reports/SXT-042/artifacts/model-sxt025-accept-v1-bells-dry.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9212367046094617,
+      "adopted_by_floor": {
+        "-80": 0.7124845464082628,
+        "-90": 0.7524658205781805,
+        "-100": 0.7847668163685115,
+        "-110": 0.8133396876917903,
+        "-120": 0.8396027224377325
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-022",
+      "ref": "reports/sxt-022/artifacts/reference-seq-modwheel-v1-dry.wav",
+      "model": "reports/sxt-022/artifacts/model-seq-modwheel-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.980185578016267,
+      "adopted_by_floor": {
+        "-80": 0.9842179183298192,
+        "-90": 0.9887832337208889,
+        "-100": 0.9913506336218479,
+        "-110": 0.9928017402872319,
+        "-120": 0.9932133779932335
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-022",
+      "ref": "reports/sxt-022/artifacts/reference-seq-notes-coverage-v1-dry.wav",
+      "model": "reports/sxt-022/artifacts/model-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.979067414962698,
+      "adopted_by_floor": {
+        "-80": 0.9974880113139486,
+        "-90": 0.9981779141834045,
+        "-100": 0.998463047759134,
+        "-110": 0.9985884768339556,
+        "-120": 0.9983944499064099
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-022",
+      "ref": "reports/sxt-022/artifacts/reference-seq-notes-repeated-v1-dry.wav",
+      "model": "reports/sxt-022/artifacts/model-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9920737566278564,
+      "adopted_by_floor": {
+        "-80": 0.9968426683426918,
+        "-90": 0.9981705717481524,
+        "-100": 0.9988402578753665,
+        "-110": 0.9991424183702534,
+        "-120": 0.9992169267697145
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9381037550402577,
+      "adopted_by_floor": {
+        "-80": 0.7866735543009815,
+        "-90": 0.7978326056512467,
+        "-100": 0.8498154794009908,
+        "-110": 0.8953288977294497,
+        "-120": 0.9163002716465813
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/kick-wtfix-morph25__seq-wt-base-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-kick-wtfix-morph25__seq-wt-base-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.922558774199446,
+      "adopted_by_floor": {
+        "-80": 0.9796292034406143,
+        "-90": 0.9715100187751725,
+        "-100": 0.9523129317076342,
+        "-110": 0.9162996867036326,
+        "-120": 0.8639753757796286
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/kick-wtfix-morph75__seq-wt-base-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-kick-wtfix-morph75__seq-wt-base-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9234419021399706,
+      "adopted_by_floor": {
+        "-80": 0.9796306347299952,
+        "-90": 0.9715165223677429,
+        "-100": 0.9523318799228803,
+        "-110": 0.9163691089626206,
+        "-120": 0.8642084144224841
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/kick-wtfix-uni16__seq-wt-unison16-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-kick-wtfix-uni16__seq-wt-unison16-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9575967223340144,
+      "adopted_by_floor": {
+        "-80": 0.8818317700677433,
+        "-90": 0.8942802309415462,
+        "-100": 0.8956481813049025,
+        "-110": 0.8942009525769657,
+        "-120": 0.897305579441068
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-base-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-kick-wtfix__seq-wt-base-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9234419021399706,
+      "adopted_by_floor": {
+        "-80": 0.9796306347299952,
+        "-90": 0.9715165223677429,
+        "-100": 0.9523318799228803,
+        "-110": 0.9163691089626206,
+        "-120": 0.8642084144224841
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-pitch-extremes-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-kick-wtfix__seq-wt-pitch-extremes-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9092110108499516,
+      "adopted_by_floor": {
+        "-80": 0.9186673459574859,
+        "-90": 0.9215525510550113,
+        "-100": 0.9156558324996035,
+        "-110": 0.8959471649651737,
+        "-120": 0.8631235732522059
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/mf-wtfix-morph25__seq-wt-base-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-mf-wtfix-morph25__seq-wt-base-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9687487861068226,
+      "adopted_by_floor": {
+        "-80": 0.8683925839239588,
+        "-90": 0.8983015638656766,
+        "-100": 0.9056153600196133,
+        "-110": 0.9048051692555227,
+        "-120": 0.9128886722252783
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/mf-wtfix-morph75__seq-wt-base-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-mf-wtfix-morph75__seq-wt-base-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9704886498945159,
+      "adopted_by_floor": {
+        "-80": 0.8303645916475312,
+        "-90": 0.8432848905104097,
+        "-100": 0.8808801405195944,
+        "-110": 0.9107536912903622,
+        "-120": 0.928890282002776
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026",
+      "ref": "reports/sxt-026/artifacts/mf-wtfix__seq-wt-base-v1-ref.wav",
+      "model": "reports/sxt-026/artifacts/model-mf-wtfix__seq-wt-base-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9755512597793251,
+      "adopted_by_floor": {
+        "-80": 0.8840776378363648,
+        "-90": 0.9067444461490378,
+        "-100": 0.9169167861318831,
+        "-110": 0.9225035109205987,
+        "-120": 0.9348698040341774
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-032",
+      "ref": "reports/sxt-032/artifacts/reference-seq-modwheel-v1-lfo-fixture.wav",
+      "model": "reports/sxt-032/artifacts/model-seq-modwheel-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9914964131921044,
+      "adopted_by_floor": {
+        "-80": 0.9921645983544463,
+        "-90": 0.9923356717636163,
+        "-100": 0.993285595585784,
+        "-110": 0.9945485080612022,
+        "-120": 0.9956424773414665
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-032",
+      "ref": "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1-lfo-fixture.wav",
+      "model": "reports/sxt-032/artifacts/model-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9884446215850758,
+      "adopted_by_floor": {
+        "-80": 0.9966234714964934,
+        "-90": 0.9977018593157169,
+        "-100": 0.9981459982673252,
+        "-110": 0.9981772748536655,
+        "-120": 0.9980337614259762
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-032",
+      "ref": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1-lfo-fixture.wav",
+      "model": "reports/sxt-032/artifacts/model-seq-notes-holds-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9874378026804184,
+      "adopted_by_floor": {
+        "-80": 0.9967267920709914,
+        "-90": 0.9975655249042059,
+        "-100": 0.9978196681985922,
+        "-110": 0.997919589735976,
+        "-120": 0.9977653391078966
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-032",
+      "ref": "reports/sxt-032/artifacts/reference-seq-notes-repeated-v1-lfo-fixture.wav",
+      "model": "reports/sxt-032/artifacts/model-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9971927936912464,
+      "adopted_by_floor": {
+        "-80": 0.997720498814413,
+        "-90": 0.9985561670760119,
+        "-100": 0.9989079083560051,
+        "-110": 0.9990829678813938,
+        "-120": 0.9991429667003482
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-035",
+      "ref": "reports/sxt-035/artifacts/reference-seq-modwheel-v1-mw-fixture.wav",
+      "model": "reports/sxt-035/artifacts/model-seq-modwheel-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9874579116733234,
+      "adopted_by_floor": {
+        "-80": 0.9384753067326738,
+        "-90": 0.9579005521021947,
+        "-100": 0.970959074770404,
+        "-110": 0.9795685594246215,
+        "-120": 0.9853521473614796
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-035",
+      "ref": "reports/sxt-035/artifacts/reference-seq-notes-coverage-v1-mw-fixture.wav",
+      "model": "reports/sxt-035/artifacts/model-seq-notes-coverage-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9791296734702285,
+      "adopted_by_floor": {
+        "-80": 0.9974880408822547,
+        "-90": 0.9981779931153603,
+        "-100": 0.9984631680236014,
+        "-110": 0.9985890033410362,
+        "-120": 0.9983949457962861
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-035",
+      "ref": "reports/sxt-035/artifacts/reference-seq-notes-repeated-v1-mw-fixture.wav",
+      "model": "reports/sxt-035/artifacts/model-seq-notes-repeated-v1.wav",
+      "full_scale": 32767.0,
+      "legacy": 0.9920851447593002,
+      "adopted_by_floor": {
+        "-80": 0.9968421894255483,
+        "-90": 0.9981701438912363,
+        "-100": 0.998839814688084,
+        "-110": 0.9991418350915259,
+        "-120": 0.9992134450646762
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-028c",
+      "ref": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/SXT-028c/artifacts/model__alienappears__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999991729212732,
+      "adopted_by_floor": {
+        "-80": 0.999997787683444,
+        "-90": 0.9999959708422386,
+        "-100": 0.9999928158694695,
+        "-110": 0.9999926693751736,
+        "-120": 0.9999941004200467
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-028c",
+      "ref": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1-wet.f32.wav",
+      "model": "reports/SXT-028c/artifacts/model__alienappears__seq-poly-8-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999997252692472,
+      "adopted_by_floor": {
+        "-80": 0.9999994895059576,
+        "-90": 0.9999994410159669,
+        "-100": 0.9999993550509791,
+        "-110": 0.9999993068461176,
+        "-120": 0.9999991976802488
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-028c",
+      "ref": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/SXT-028c/artifacts/model__fmcombo__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999998986645581,
+      "adopted_by_floor": {
+        "-80": 0.9999998070381974,
+        "-90": 0.9999991146104745,
+        "-100": 0.9999970430709157,
+        "-110": 0.9999799654827282,
+        "-120": 0.999927540800867
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-028c",
+      "ref": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1-wet.f32.wav",
+      "model": "reports/SXT-028c/artifacts/model__fmcombo__seq-poly-8-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999999679457978,
+      "adopted_by_floor": {
+        "-80": 0.9999999620632163,
+        "-90": 0.9999995556046714,
+        "-100": 0.9999981095930525,
+        "-110": 0.9999940536875378,
+        "-120": 0.9999839323926081
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-028c",
+      "ref": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/SXT-028c/artifacts/model__fmtwang2__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999997742304114,
+      "adopted_by_floor": {
+        "-80": 0.9999999391205704,
+        "-90": 0.9999995805363137,
+        "-100": 0.9999974302580762,
+        "-110": 0.99996605387884,
+        "-120": 0.9997391714364696
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "SXT-028c",
+      "ref": "reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1-wet.f32.wav",
+      "model": "reports/SXT-028c/artifacts/model__fmtwang2__seq-poly-8-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999999110862804,
+      "adopted_by_floor": {
+        "-80": 0.9999999532534858,
+        "-90": 0.9999997878768971,
+        "-100": 0.9999987092107934,
+        "-110": 0.9999907369351982,
+        "-120": 0.9998192874833993
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-023",
+      "ref": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/sxt-023/artifacts/model__dexie__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9952246615293127,
+      "adopted_by_floor": {
+        "-80": 0.9928783999415618,
+        "-90": 0.9926091069603369,
+        "-100": 0.9928337918462019,
+        "-110": 0.992951713429208,
+        "-120": 0.9929550674344223
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-023",
+      "ref": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/sxt-023/artifacts/model__fm_bass_1__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999999989283181,
+      "adopted_by_floor": {
+        "-80": 0.9999999995396887,
+        "-90": 0.9999999970978707,
+        "-100": 0.9999999802565774,
+        "-110": 0.9999998583677635,
+        "-120": 0.9999989279773515
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-023",
+      "ref": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/sxt-023/artifacts/model__metallic__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.975217639348952,
+      "adopted_by_floor": {
+        "-80": 0.9650669887751725,
+        "-90": 0.9679036349113483,
+        "-100": 0.970988566168956,
+        "-110": 0.9741222003093963,
+        "-120": 0.9779279904894967
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-023 nc-b",
+      "ref": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/sxt-023/artifacts-followup/nc-b/ncb__dexie__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9960093740447223,
+      "adopted_by_floor": {
+        "-80": 0.9919629312687164,
+        "-90": 0.9898500604263211,
+        "-100": 0.9884178658051374,
+        "-110": 0.9880830635121545,
+        "-120": 0.9879175229323951
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-023 nc-b",
+      "ref": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
+      "model": "reports/sxt-023/artifacts-followup/nc-b/ncb__metallic__seq-notes-coverage-v1.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9754935326203266,
+      "adopted_by_floor": {
+        "-80": 0.9599252456762837,
+        "-90": 0.9589898018296171,
+        "-100": 0.9593758146026977,
+        "-110": 0.959683077073076,
+        "-120": 0.9601485002733027
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-025",
+      "ref": "reports/sxt-025/fixtures/hells_bells__sxt025-smoke-v1-wet.f32.wav",
+      "model": "reports/sxt-025/artifacts/model__sxt025-smoke-v1-wet.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999999999057505,
+      "adopted_by_floor": {
+        "-80": 0.9999999998950986,
+        "-90": 0.9999999996423447,
+        "-100": 0.9999999985501561,
+        "-110": 0.9999999930861131,
+        "-120": 0.9999999613467241
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-025",
+      "ref": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav",
+      "model": "reports/sxt-025/artifacts/model__sxt025-accept-v1-wet.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.9999999998980411,
+      "adopted_by_floor": {
+        "-80": 0.999999999920719,
+        "-90": 0.9999999996695677,
+        "-100": 0.9999999984160259,
+        "-110": 0.9999999919362274,
+        "-120": 0.9999999536466614
+      },
+      "legacy_leg_pass": true,
+      "adopted_leg_pass": true,
+      "floor_sensitive_90_110": false
+    },
+    {
+      "leaf": "sxt-026a",
+      "ref": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav",
+      "model": "reports/sxt-026a/artifacts/model__sxt025-accept-v1-wet.f32.wav",
+      "full_scale": 1.0,
+      "legacy": 0.7798729854175844,
+      "adopted_by_floor": {
+        "-80": 0.8402249675138909,
+        "-90": 0.8855303731622088,
+        "-100": 0.9132547581406125,
+        "-110": 0.9313264072070264,
+        "-120": 0.9433366152369568
+      },
+      "legacy_leg_pass": false,
+      "adopted_leg_pass": false,
+      "floor_sensitive_90_110": false
+    }
+  ],
+  "not_run": [
+    {
+      "leaf": "sxt-026",
+      "render": "reports/sxt-026/artifacts/kick-original__seq-wt-base-v1-ref.wav",
+      "reason": "no committed model render"
+    },
+    {
+      "leaf": "sxt-026a",
+      "render": "reports/sxt-026a/artifacts/model-smoke-bells-dry.wav",
+      "reason": "no committed reference render"
+    }
+  ]
+}
