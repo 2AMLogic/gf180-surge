@@ -34,11 +34,16 @@ The audit has four groups of checks:
      same file still fails). The tripwires are deliberately high-precision:
        * `foreign-license-text`        — foreign license body, non-Apache
                                          SPDX tag, or foreign copyright line.
-                                         EVERY notice in a file is inspected
-                                         and each one's holder is read from
-                                         its own line, so our own attribution
-                                         above a pasted upstream header does
-                                         not mask it
+                                         EVERY notice in a file is inspected;
+                                         each notice's holder is read from its
+                                         own HOLDER FIELD (the name after the
+                                         year), every operand of an SPDX
+                                         *expression* is compared, and a
+                                         license body is matched across the
+                                         comment leader a pasted header wraps
+                                         on — so our own attribution, above a
+                                         pasted upstream header or named
+                                         inside it, does not mask it
        * `upstream-asset-extension`    — Surge/third-party asset or opaque
                                          binary-bundle extensions
        * `foreign-source-language`     — source languages this repository
@@ -59,6 +64,15 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     matching against upstream trees.
   * A PASS says nothing about whether a decision record's *reasoning* is
     right, or whether the owner has ratified it. Most records are PROPOSED.
+  * The `foreign-license-text` signal reads *notices*, not licenses. A license
+    body wrapped across a comment leader is matched; a LEADERLESS prose wrap
+    of a license name is deliberately not (it is not a comment-block paste,
+    and the rule cannot be exempted, so ordinary prose naming a license must
+    not become an unanswerable finding). Control:
+    `masking/leaderless-prose-wrap-stays-out-of-scope`.
+  * Every masking path closed here was found by inspection, one increment at a
+    time. That two specific paths, then five more, were closed is not evidence
+    that no further path exists — only that these are pinned by controls.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -67,9 +81,11 @@ deliberate violation per rule, and requires every rule to fire. A rule that
 silently stops firing — the false-negative failure mode that would otherwise
 pass review unnoticed — fails the self-test, and therefore CI. It also runs the
 occurrence-scoped exemption controls and the `masking/*` controls, which pin
-the ways a non-exemptible rule was disarmed without any rule being removed
-(our own attribution above a pasted upstream one), together with the positive
-cases that keep the fix from flagging our own headers.
+every known way the non-exemptible `foreign-license-text` rule was disarmed
+without any rule being removed — our own attribution above a pasted upstream
+notice, or named inside one; a compound SPDX expression led by our own
+licence; a license body wrapped across a comment leader — together with the
+positive cases that keep the fixes from flagging our own headers.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -239,34 +255,67 @@ def occurrence_regex(literal):
     """Whitespace-insensitive matcher for an exemption's named occurrence."""
     return re.compile(r"\s+".join(re.escape(part) for part in literal.split()))
 
+# A pasted license header is a COMMENT block, so any gap between two words of
+# its body may carry the block's comment leader:
+#
+#     #  This program is free
+#     #  software; you can redistribute it
+#      *  GNU GENERAL
+#      *  PUBLIC LICENSE Version 3
+#
+# A plain `\s+` between the words does not span `"\n#  "`, so every phrase that
+# a vendored file happens to wrap mid-phrase slipped past this signal — on the
+# rule that cannot be exempted. `_GAP` therefore accepts either same-line
+# whitespace or a line break whose continuation begins with a comment leader.
+#
+# It deliberately does NOT accept a bare prose wrap ("the GNU General Public\n
+# License"): a leaderless newline stays unmatched so that ordinary in-repo
+# prose naming a license does not become a finding that no exemption could
+# answer. What is closed here is the *commented-header* shape, which is how
+# license bodies actually arrive in a copied file.
+_LEADER = r"[*#;%!>|]+|//+|--+|<!--"
+_GAP = r"(?:[ \t]+|[ \t]*\r?\n[ \t]*(?:" + _LEADER + r")[ \t]*)"
+
+
+def _license_phrase(*parts):
+    """Compile a license-body phrase whose word gaps tolerate comment leaders."""
+    return re.compile(_GAP.join(parts), re.IGNORECASE)
+
+
 # The license-body patterns are split across string fragments on purpose: a
 # contiguous license phrase in this file would make the audit flag its own
 # source (the rule is not exemptible, by design). See the fixture note further
 # down. Do not "tidy" these into single literals.
+#
+# Each prefilter is a SINGLE word the regex cannot match without — a superset
+# by construction, and unlike a multi-word prefilter it stays a superset once
+# the phrase may be interrupted by a comment leader (a "general public license"
+# prefilter silently un-armed the leader-interrupted match).
 FOREIGN_LICENSE_BODY_RES = (
     (
         "gpl-body",
-        "general public license",
-        re.compile(r"GNU\s+(?:LESSER\s+|AFFERO\s+)?GENERAL\s+PUBLIC\s+LICENSE", re.IGNORECASE),
+        "gnu",
+        _license_phrase(
+            "GNU", r"(?:LESSER" + _GAP + r"|AFFERO" + _GAP + r")?GENERAL", "PUBLIC", "LICENSE"
+        ),
     ),
     (
         "fsf-body",
-        "free software",
-        re.compile(r"This\s+program\s+is\s+" + r"free\s+software", re.IGNORECASE),
+        "free",
+        _license_phrase("This", "program", "is", "free", "software"),
     ),
     (
         "mit-body",
-        "permission is hereby granted",
-        re.compile(
-            r"Permission\s+is\s+hereby\s+granted,\s+" + r"free\s+of\s+charge", re.IGNORECASE
+        "hereby",
+        _license_phrase(
+            "Permission", "is", "hereby", r"granted,", "free", "of", "charge"
         ),
     ),
     (
         "bsd-body",
-        "redistribution and use",
-        re.compile(
-            r"Redistribution\s+and\s+use\s+in\s+source\s+" + r"and\s+binary\s+forms",
-            re.IGNORECASE,
+        "redistribution",
+        _license_phrase(
+            "Redistribution", "and", "use", "in", "source", "and", "binary", "forms"
         ),
     ),
     (
@@ -275,18 +324,67 @@ FOREIGN_LICENSE_BODY_RES = (
         # whole phrase.
         "mpl-body",
         "mozilla",
-        re.compile(r"MOZILLA\s+" + r"PUBLIC\s+LICENSE", re.IGNORECASE),
+        _license_phrase("MOZILLA", "PUBLIC", "LICENSE"),
     ),
 )
 
 # Assembled from fragments so this file does not itself contain a contiguous
 # SPDX tag (see the fixture note below). IGNORECASE: the prefilter above is a
-# lowercase substring check, so a lowercase "spdx-license-identifier:" tag
-# must not silently pass this regex — see PR #114 review, finding 2.
+# lowercase substring check, so an all-lowercase spelling of the tag name must
+# not silently pass this regex — see PR #114 review, finding 2. (That prefilter
+# is spelled without its colon here on purpose: with the capture widened to the
+# rest of the line, a colon in this comment would make the audit read the words
+# after it as an SPDX expression and flag its own source.)
+#
+# The capture is the REST OF THE LINE, not the first whitespace-delimited word:
+# an SPDX tag carries a license *expression*, and a tag whose leading operand
+# happens to be our own licence hid every other operand behind it
+# ("Apache-2.0 OR GPL-3.0-or-later" audited clean — the standard dual-licence
+# shape). `spdx_foreign_ids` parses the expression instead.
 SPDX_RE = re.compile(
-    "SPDX-License" "-Identifier" + r":\s*([^\s*/#\"']+)", re.IGNORECASE
+    "SPDX-License" "-Identifier" + r":[ \t]*([^\r\n]*)", re.IGNORECASE
 )
 OWN_SPDX = "apache-2.0"
+SPDX_OPERATORS = frozenset({"and", "or", "with"})
+# An SPDX id token; also strips the comment syntax a tag may trail in
+# ("... Apache-2.0 */", "... MIT -->").
+SPDX_TOKEN_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.+-]*")
+
+
+def spdx_foreign_ids(expression):
+    """License ids in an SPDX expression that are not this repository's own.
+
+    Walks the expression as `id (OPERATOR id)*` and stops at the first token
+    that is neither an operator nor an id in operator position — so a tag
+    quoted mid-sentence (one whose operand is followed by prose such as "tags
+    are used below") contributes only its real operand, while every operand of
+    a compound expression is examined:
+
+        Apache-2.0                        -> []                (ours)
+        Apache-2.0 OR GPL-3.0-or-later    -> ['GPL-3.0-or-later']
+        (MIT AND Apache-2.0)              -> ['MIT']
+        Apache-2.0 WITH LLVM-exception    -> ['LLVM-exception'] (over-flagged
+                                             on purpose: an exception clause is
+                                             foreign licence text too)
+    """
+    tokens = SPDX_TOKEN_RE.findall(expression.replace("(", " ").replace(")", " "))
+    foreign = []
+    expect_id = True
+    for token in tokens:
+        lowered = token.lower()
+        if expect_id:
+            if lowered in SPDX_OPERATORS:
+                break  # malformed; stop rather than guess
+            if lowered != OWN_SPDX:
+                foreign.append(token)
+            expect_id = False
+        else:
+            if lowered not in SPDX_OPERATORS:
+                break  # end of the expression (trailing prose or comment)
+            expect_id = True
+    return foreign
+
+
 COPYRIGHT_PREFILTERS = ("copyright", "(c)", "©")
 
 COPYRIGHT_RE = re.compile(
@@ -310,6 +408,53 @@ def copyright_line(text, match):
     start = text.rfind("\n", 0, match.start()) + 1
     end = text.find("\n", match.end())
     return text[start : len(text) if end == -1 else end]
+
+
+# Text that ends a copyright line's HOLDER field: a holder name does not
+# contain a parenthetical, a bracketed note, an em/en dash aside, a spaced
+# hyphen, a semicolon, an inline URL, or a closing comment delimiter.
+HOLDER_FIELD_END_RE = re.compile(r"[(\[{<;—–]| - |\*/|-->|https?://")
+# Filler that may legitimately precede the holder's own name inside the holder
+# field ("Copyright (c) 2026 The gf180-surge Authors"). Anything else standing
+# where the holder belongs means the notice names SOMEONE ELSE first.
+HOLDER_LEADING_FILLER = frozenset({"the", "by", "c", "and", "of", "for"})
+HOLDER_WORD_RE = re.compile(r"[A-Za-z][A-Za-z.'’]*")
+
+
+def own_copyright_holder(line, holder_start):
+    """True when the notice at `holder_start` in `line` names THIS project.
+
+    The holder is the name standing immediately after the year, so that is the
+    only text consulted. Searching the whole LINE for our name instead (what
+    this did before) means a pasted upstream notice that merely *mentions* this
+    project suppresses itself — the same masking bug as the old ±120-char
+    window, one level in. Two shapes audited clean on the non-exemptible rule:
+    a notice whose year is followed by
+
+        Some Upstream Author (adapted for gf180-surge)
+        Chris Johnson - vendored for gf180-surge
+
+    — this project named in a parenthetical, and after a spaced hyphen. Read as
+    a holder field the holders are Some Upstream Author and Chris Johnson, and
+    both fire. Our own header (our name, or "The gf180-surge Authors", standing
+    in the holder position) still suppresses itself: a rule that flagged our
+    own attribution would simply be switched off again. The byte-identical
+    notices live in the `masking/*` fixtures, assembled at run time.
+    """
+    tail = line[holder_start:]
+    field = HOLDER_FIELD_END_RE.split(tail, maxsplit=1)[0]
+    if not HOLDER_WORD_RE.search(field):
+        # No name in the holder field at all ("Copyright 2026 - 2AM Logic",
+        # "Copyright 2026 (2AM Logic)"): fall back to the whole line rather
+        # than flag a layout that never names a foreign holder.
+        field = tail
+    own = OWN_HOLDER_RE.search(field)
+    if not own:
+        return False
+    # Our name must be the FIRST name in the holder field — not one trailing
+    # somebody else's.
+    preceding = HOLDER_WORD_RE.findall(field[: own.start()])
+    return all(word.lower() in HOLDER_LEADING_FILLER for word in preceding)
 
 
 # The repository's own Apache-2.0 license text (its appendix contains a
@@ -1136,18 +1281,25 @@ def tripwire_hits(tree: Tree, rel):
         # item 4; controls `masking/*` in --negative-control).
         if "spdx-license-identifier" in low:
             for spdx in SPDX_RE.finditer(text):
-                if spdx.group(1).strip().lower() != OWN_SPDX:
+                # EVERY operand of the expression, not just the leading one:
+                # "Apache-2.0 OR GPL-3.0-or-later" is a foreign tag.
+                foreign = spdx_foreign_ids(spdx.group(1))
+                if foreign:
                     # Label assembled from fragments (see the fixture note below).
                     hits.append(
                         (
                             "foreign-license-text",
-                            "SPDX-License" + "-Identifier tag: " + spdx.group(1),
+                            "SPDX-License" + "-Identifier tag: " + ", ".join(foreign),
                         )
                     )
                     break
         if any(token in low for token in COPYRIGHT_PREFILTERS):
             for copyright_match in COPYRIGHT_RE.finditer(text):
-                if OWN_HOLDER_RE.search(copyright_line(text, copyright_match)):
+                line_start = text.rfind("\n", 0, copyright_match.start()) + 1
+                if own_copyright_holder(
+                    copyright_line(text, copyright_match),
+                    copyright_match.end() - line_start,
+                ):
                     continue  # this notice names us; keep looking at the rest
                 hits.append(
                     (
@@ -1428,6 +1580,51 @@ FIXTURE_OWN_SPDX_TAG = "# SPDX-License" + "-Identifier" + ": Apache-2.0\n"
 FIXTURE_OWN_PROJECT_LINE = "# This module belongs to the gf180-surge model.\n"
 FIXTURE_FOREIGN_COPYRIGHT_LINE = "# Copy" + "right (C) 20" + "19 Some Upstream Author\n"
 FIXTURE_FOREIGN_SPDX_TAG = "# SPDX-License" + "-Identifier" + ": GPL-3.0-or-later\n"
+
+# Increment 3 — the same masking one level in. Each of these audited clean on
+# the non-exemptible rule while every rule still "fired" in the self-test:
+#
+#   * our project named in the foreign notice's own HOLDER line (a
+#     parenthetical, or after a spaced hyphen) — the line-scoped holder test
+#     from increment 2 read the whole line, so the mention suppressed it;
+#   * an SPDX *expression* whose leading operand is our own licence — only the
+#     first whitespace-delimited word was compared, so every other operand was
+#     invisible (and `Apache-2.0 OR <foreign>` is the standard dual-licence
+#     spelling, not an exotic one);
+#   * a license body wrapped mid-phrase across a comment leader — the plain
+#     `\s+` between words does not span `"\n# "`, and the multi-word prefilter
+#     did not survive the wrap either.
+FIXTURE_FOREIGN_COPYRIGHT_PARENTHETICAL = (
+    "# Copy" + "right (C) 20" + "19 Some Upstream Author (adapted for gf180-surge)\n"
+)
+FIXTURE_FOREIGN_COPYRIGHT_AFTER_DASH = (
+    "# Copy" + "right 20" + "19 Chris Johnson - reworked for gf180-surge\n"
+)
+FIXTURE_COMPOUND_SPDX_OWN_FIRST = (
+    "# SPDX-License" + "-Identifier" + ": Apache-2.0 OR GPL-3.0-or-later\n"
+)
+FIXTURE_WRAPPED_FSF_BODY = (
+    "#  This program is " + "free\n#  software; you can redistribute it.\n"
+)
+FIXTURE_WRAPPED_GPL_TITLE = "/*\n * GNU " + "GENERAL\n * PUBLIC " + "LICENSE Version 3\n */\n"
+# Positive controls: own-attribution layouts that ALSO put a name-like aside or
+# a spaced hyphen on the notice line, plus an SPDX tag quoted inside prose.
+# A fix that flagged these would be reverted, and the rule with it.
+FIXTURE_OWN_COPYRIGHT_WITH_ASIDE = (
+    "# Copy" + "right 20" + "26 2AM" + "Logic (gf180-surge model sources)\n"
+)
+FIXTURE_OWN_COPYRIGHT_AUTHORS = "# Copy" + "right (c) 20" + "26 The gf180-surge Authors\n"
+FIXTURE_OWN_COPYRIGHT_AFTER_DASH = "# Copy" + "right 20" + "26 - 2AM " + "Logic\n"
+FIXTURE_OWN_SPDX_IN_PROSE = (
+    "# The SPDX-License" + "-Identifier" + ": Apache-2.0 tags below are ours.\n"
+)
+# The deliberate scope boundary (declared, not an oversight): a LEADERLESS
+# prose wrap of a license NAME is not a comment-block paste, and is not
+# treated as carriage — otherwise ordinary text that names a license would
+# become a finding that no exemption could answer (the rule is non-exemptible).
+FIXTURE_PROSE_WRAP_LICENSE_NAME = (
+    "The record cites the GNU " + "General Public\n" + "License as the upstream terms.\n"
+)
 # Long enough that the foreign notice is well outside the old ±120-char
 # proximity window, so this control isolates the first-match-only bug.
 FIXTURE_FILLER = "\n" + "".join(f"ROW_{n} = [{n}, {n}, {n}]\n" for n in range(12)) + "\n"
@@ -1817,6 +2014,89 @@ def _masking_controls():
             "a file carrying only our own Apache SPDX tag",
             lambda root: _write(
                 root, OWN_ONLY_REL, FIXTURE_OWN_SPDX_TAG + FIXTURE_FILLER
+            ),
+        ),
+        # --- increment 3: the same masking inside the notice itself ---------
+        (
+            "masking/foreign-holder-with-our-name-in-a-parenthetical",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign copyright line that names this project in a parenthetical",
+            lambda root: _write(
+                root, MASKED_REL, FIXTURE_FOREIGN_COPYRIGHT_PARENTHETICAL
+            ),
+        ),
+        (
+            "masking/foreign-holder-with-our-name-after-a-dash",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign copyright line that names this project after a spaced hyphen",
+            lambda root: _write(root, MASKED_REL, FIXTURE_FOREIGN_COPYRIGHT_AFTER_DASH),
+        ),
+        (
+            "masking/compound-spdx-behind-our-own-operand",
+            "foreign-license-text",
+            MASKED_REL,
+            "an SPDX expression whose leading operand is our own licence",
+            lambda root: _write(root, MASKED_REL, FIXTURE_COMPOUND_SPDX_OWN_FIRST),
+        ),
+        (
+            "masking/license-body-wrapped-across-a-comment-leader",
+            "foreign-license-text",
+            MASKED_REL,
+            "an FSF license body wrapped mid-phrase across a '#' comment leader",
+            lambda root: _write(root, MASKED_REL, FIXTURE_WRAPPED_FSF_BODY),
+        ),
+        (
+            "masking/license-title-wrapped-across-a-comment-leader",
+            "foreign-license-text",
+            MASKED_REL,
+            "a GPL license title wrapped mid-phrase across a '*' comment leader",
+            lambda root: _write(root, MASKED_REL, FIXTURE_WRAPPED_GPL_TITLE),
+        ),
+        (
+            "masking/our-own-copyright-with-an-aside-passes",
+            None,
+            None,
+            "our own copyright line trailed by a parenthetical aside",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT_WITH_ASIDE + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/our-own-authors-line-passes",
+            None,
+            None,
+            "our own copyright line spelled 'The gf180-surge Authors'",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT_AUTHORS + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/our-own-copyright-after-a-dash-passes",
+            None,
+            None,
+            "our own copyright line whose holder follows a spaced hyphen",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT_AFTER_DASH + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/our-own-spdx-quoted-in-prose-passes",
+            None,
+            None,
+            "our own SPDX tag quoted mid-sentence, with prose after the operand",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_SPDX_IN_PROSE + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/leaderless-prose-wrap-stays-out-of-scope",
+            None,
+            None,
+            "a declared boundary: a license NAME wrapped in leaderless prose",
+            lambda root: _write(
+                root, "docs/mentions.md", FIXTURE_PROSE_WRAP_LICENSE_NAME
             ),
         ),
     ]
