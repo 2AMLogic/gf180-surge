@@ -258,26 +258,6 @@ def compare_case(name, model_trace, model_txn, model_mem, workdir, want_mem):
     return res
 
 
-def build_case_stimulus(workdir, ctrl, cases_models, reset_blocks=(),
-                        ctrl1=None):
-    """cases_models: list of CaseModel already run; writes cfg+blocks hex.
-    ctrl1 (optional) writes a second coefficient plane (words 21..41) for
-    the dual-instance cases."""
-    os.makedirs(os.path.join(workdir, "rtl/effects/aw-49/sim"), exist_ok=True)
-    os.makedirs(os.path.join(workdir, "out/aw-49/rtl"), exist_ok=True)
-    words_cfg = coefficient_words(ctrl)
-    if ctrl1 is not None:
-        words_cfg += coefficient_words(ctrl1)[1:]
-    write_hex_words(os.path.join(workdir, "rtl/effects/aw-49/sim/cfg.hex"),
-                    words_cfg)
-    words = [sum(len(cm.stim) for cm in cases_models)]
-    for cm in cases_models:
-        for (hdr, stim) in cm.stim:
-            words.append(hdr)
-            words += stim
-    write_hex_words(os.path.join(workdir, "rtl/effects/aw-49/sim/blocks.hex"), words)
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep", action="store_true")

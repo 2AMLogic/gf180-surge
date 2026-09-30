@@ -393,23 +393,6 @@ def build(case):
     }
 
 
-def write_spec(case, out_dir):
-    """Write spec JSON + raw float32 stimulus for the external reference tool."""
-    spec = build(case)
-    os.makedirs(out_dir, exist_ok=True)
-    stim_path = os.path.join(out_dir, f"stim-{case}.f32")
-    with open(stim_path, "wb") as f:
-        f.write(struct.pack(f"<{len(spec['input'])}f", *spec["input"]))
-    meta = {k: v for k, v in spec.items() if k != "input"}
-    meta["input_file"] = os.path.basename(stim_path)
-    meta["input_samples"] = len(spec["input"])
-    spec_path = os.path.join(out_dir, f"spec-{case}.json")
-    with open(spec_path, "w", encoding="utf-8") as f:
-        json.dump(meta, f, indent=1)
-        f.write("\n")
-    return spec_path, stim_path
-
-
 if __name__ == "__main__":
     import sys
     for name in (sys.argv[1:] or sorted(CASES)):
