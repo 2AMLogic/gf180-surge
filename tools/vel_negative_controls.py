@@ -9,13 +9,17 @@ item 5 (reference-budget) controls, which require the pinned engine render
 and are reported NOT_RUN (see reports/SXT-036/EVIDENCE.md).
 
 Controls:
-  E1..E3  model-trace mutants vs the UNMODIFIED RTL stimulus/schedule:
+  E1..E4  model-trace mutants vs the UNMODIFIED RTL stimulus/schedule:
           --zero-route (all six routes, one at a time), --source-swap-mw,
-          --shared-state. The exactness check must FAIL (mismatches > 0).
-  E4..E6  RTL mutants vs the unmodified model trace:
+          --shared-state, --stale-slot-relvel. The exactness check must FAIL
+          (mismatches > 0).
+  E-rtl   RTL mutants vs the unmodified model trace:
           shared-slot (one scene-wide {vel, relvel} pair), rounding
           (truncate instead of round in the qmul), velocity ROM floor
-          (no +127 rounding). The exactness check must FAIL.
+          (no +127 rounding), stale-slot-reinit (construction does not clear
+          the slot's release-velocity register), release-one-block-late (the
+          release latch moved after the control pass). The exactness check
+          must FAIL.
   M1      model discrimination: each mutated model render must differ from
           the unmutated model render (samples16), i.e. the routes are
           observable in the model output.
@@ -24,6 +28,11 @@ Controls:
           no velocity dependence in the landed model.
   R1      refusal: out-of-class route (velocity -> 'A Highpass' 303) exits 2;
           --zero-route of a route that does not exist exits 2.
+  R2      refusal: the scene-B route the named carrier 'House Of Chords.fxp'
+          actually carries (velocity -> 'B Osc 1 Sync' 502) exits 2. The
+          frozen destination class is scene A only and per-instance state is
+          never shared across scenes, so a scene-B destination must be
+          refused rather than folded into a scene-A destination.
 Positive control: the unmutated RTL vs the unmodified model trace PASSES.
 
 `--sequence` runs the whole control set on a different stimulus. Use it to
@@ -35,11 +44,24 @@ suffix for any non-default sequence, so the default-sequence transcript is
 never overwritten.
 
 A control whose STIMULUS PRECONDITION is unmet is reported NOT_RUN with the
-reason named -- never as a pass, never as "control broken". The only such
-precondition here: the per-instance-state controls (E3 shared-state, E-rtl
-shared-slot) require a stimulus with two or more concurrently-live voices
-carrying distinct source words; on a monophonic stimulus a shared register is
-behaviourally identical to per-voice registers and the control cannot fire.
+reason named -- never as a pass, never as "control broken". Three such
+preconditions exist here:
+
+  per_instance   the per-instance-state controls (E3 shared-state, E-rtl
+                 shared-slot) require a stimulus with two or more
+                 concurrently-live voices carrying distinct source words; on
+                 a monophonic stimulus a shared register is behaviourally
+                 identical to per-voice registers and the control cannot fire.
+  slot_reuse     the construction-time re-initialization controls (E4
+                 stale-slot-relvel, E-rtl stale-slot-reinit) require a
+                 stimulus that REUSES a voice slot after that slot's previous
+                 voice was released with a NONZERO release velocity; with no
+                 such reuse a missing ctor clear is unobservable.
+  release_word   the release-timing control (E-rtl release-one-block-late)
+                 requires at least one block in which a voice is released
+                 with a nonzero release-velocity word AND runs a control pass
+                 in that same block; otherwise a one-block-late latch is
+                 unobservable.
 
 Exit codes: 0 = every control fired as required; 3 = every applicable control
 fired but at least one is NOT_RUN on an unmet, named precondition; 1 = a
@@ -58,6 +80,9 @@ import subprocess
 import sys
 import tempfile
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from vel_state_coverage import trace_preconditions   # noqa: E402
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNNER = os.path.join(REPO, "model", "voice", "run_vel_model.py")
 LANDED = os.path.join(REPO, "model", "voice", "run_model.py")
@@ -67,6 +92,16 @@ SEQ = "sxt036-vel-overlap-v1"
 INV_SEQ = "seq-notes-repeated-v1"
 ROUTES = ["vel:cutoff", "vel:reso", "vel:fegmod", "vel:vca",
           "relvel:cutoff", "relvel:vca"]
+
+_RELEASE_LATCH = """        if (ctrl_mem[base+3][0]) begin
+          relvel_q[s] = vel_rom(ctrl_mem[base+4]);
+        end
+"""
+_LATE_LATCH = """      for (s = 0; s < NSLOTS; s++) begin
+        base = ci + 1 + s*SW;
+        if (ctrl_mem[base+3][0]) relvel_q[s] = vel_rom(ctrl_mem[base+4]);
+      end
+      ci += STRIDE;"""
 
 MUTANTS = {
     "shared-slot": [("vel_q[s]    = vel_rom", "vel_q[0]    = vel_rom"),
@@ -80,6 +115,28 @@ MUTANTS = {
                     "r = p >>> sh;")],
     "rom-floor": [("(64'(midi) << (FQ+1)) + 64'd127;",
                    "(64'(midi) << (FQ+1));")],
+    # construction no longer clears the slot's release-velocity register:
+    # a REUSED slot inherits the previous voice's release velocity (the
+    # cited ctor fact releaseVelocitySource.set_output(0, 0) is dropped)
+    "stale-slot-reinit": [
+        ("""          vel_q[s]    = vel_rom(ctrl_mem[base+2]);
+          relvel_q[s] = 0;""",
+         """          vel_q[s]    = vel_rom(ctrl_mem[base+2]);
+          // [mutant] ctor does not clear the release-velocity register""")],
+    # the release latch is moved AFTER the per-voice control pass, so the
+    # release-velocity term appears one block late instead of in the same
+    # block's pass (the declared SXT-021 event timing)
+    "release-one-block-late": [
+        (_RELEASE_LATCH,
+         "        // [mutant] release latch moved after the control pass\n"),
+        ("      ci += STRIDE;", _LATE_LATCH)],
+}
+
+# stimulus precondition each RTL mutant needs in order to be able to fire
+MUTANT_PRECONDITION = {
+    "shared-slot": "per_instance",
+    "stale-slot-reinit": "slot_reuse",
+    "release-one-block-late": "release_word",
 }
 
 
@@ -153,27 +210,59 @@ def main():
     # control and not a passing one. Such a control is reported NOT_RUN with
     # its reason named (never PASS -- AGENTS.md: a test that did not run must
     # never be reported as a pass) and the run exits 3.
-    concurrent_blocks = sum(
-        1 for blk in base_trace["blocks"]
-        if len(blk["voices"]) > 1
-        and len({tuple(r["vel_words"]) for r in blk["voices"]}) > 1)
-    per_instance_testable = concurrent_blocks > 0
+    # Two further preconditions, measured from the same trace:
+    #  * slot_reuse   -- a slot is CREATED again after its previous voice was
+    #    released with a nonzero release-velocity word. Without such a reuse,
+    #    omitting the constructor's clear of that register is unobservable.
+    #  * release_word -- a voice is released with a nonzero release-velocity
+    #    word AND runs a control pass in that same block. Without that, a
+    #    release latch applied one block late is unobservable.
+    # Measured by the ONE implementation shared with the coverage census
+    # (tools/vel_state_coverage.py), so the two can never disagree about
+    # whether a control was able to fire.
+    testable = trace_preconditions(base_trace)
+    concurrent_blocks = testable["concurrent_distinct_source_word_blocks"]
+    reuse_blocks = testable["slot_reuse_after_nonzero_release_velocity_blocks"]
+    release_word_blocks = testable["release_blocks_with_nonzero_relvel_word"]
+    PRECONDITION_REASON = {
+        "per_instance": (f"stimulus '{seq}' never has two concurrently-live "
+                         "voices with distinct source words, so a shared "
+                         "register is behaviourally identical to per-voice "
+                         "registers"),
+        "slot_reuse": (f"stimulus '{seq}' never reuses a voice slot after "
+                       "that slot was released with a nonzero release "
+                       "velocity, so a missing constructor clear of the "
+                       "release-velocity register is unobservable"),
+        "release_word": (f"stimulus '{seq}' never releases a running voice "
+                         "with a nonzero release-velocity word, so a release "
+                         "latch applied one block late is unobservable"),
+    }
     log(f"[stimulus precondition] blocks with >=2 concurrently-live voices "
         f"carrying distinct (vel_q, relvel_q) words: {concurrent_blocks} -> "
         f"per-instance-state controls "
-        f"{'TESTABLE' if per_instance_testable else 'NOT TESTABLE on this stimulus'}")
+        f"{'TESTABLE' if testable['per_instance'] else 'NOT TESTABLE on this stimulus'}")
+    log(f"[stimulus precondition] slot reuses after a nonzero release "
+        f"velocity: {reuse_blocks} -> construction-re-initialization controls "
+        f"{'TESTABLE' if testable['slot_reuse'] else 'NOT TESTABLE on this stimulus'}")
+    log(f"[stimulus precondition] releases of a running voice with a nonzero "
+        f"release-velocity word: {release_word_blocks} -> release-timing "
+        f"control "
+        f"{'TESTABLE' if testable['release_word'] else 'NOT TESTABLE on this stimulus'}")
     results["stimulus_precondition"] = {
         "concurrent_distinct_source_word_blocks": concurrent_blocks,
-        "per_instance_state_controls_testable": per_instance_testable,
+        "per_instance_state_controls_testable": testable["per_instance"],
+        "slot_reuse_after_nonzero_release_velocity_blocks": reuse_blocks,
+        "reinitialization_controls_testable": testable["slot_reuse"],
+        "release_blocks_with_nonzero_relvel_word": release_word_blocks,
+        "release_timing_control_testable": testable["release_word"],
     }
 
-    def skip_per_instance(name):
-        """Record a per-instance-state control as NOT_RUN (precondition)."""
-        reason = (f"stimulus '{seq}' never has two concurrently-live voices "
-                  "with distinct source words, so a shared register is "
-                  "behaviourally identical to per-voice registers")
+    def skip_precondition(name, key):
+        """Record a control as NOT_RUN on an unmet, named precondition."""
+        reason = PRECONDITION_REASON[key]
         log(f"[{name}] NOT_RUN - {reason}")
-        not_run.append({"control": name, "reason": reason})
+        not_run.append({"control": name, "reason": reason,
+                        "precondition": key})
 
     def fail_expected(name, j, rc):
         nonlocal ok_all
@@ -186,16 +275,21 @@ def main():
             ok_all = False
         return failed
 
-    # E1-E3: model-trace mutants against the unmodified RTL schedule
+    # E1-E4: model-trace mutants against the unmodified RTL schedule
     mutants = [(f"E1 zero-route {r}", f"zero-{r.replace(':', '-')}",
-                ["--zero-route", r]) for r in ROUTES]
-    mutants += [("E2 source-swap-mw", "source-swap-mw", ["--source-swap-mw"]),
-                ("E3 shared-state", "shared-state", ["--shared-state"])]
-    for title, tag, extra in mutants:
-        if tag == "shared-state" and not per_instance_testable:
-            skip_per_instance("E3 shared-state")
+                ["--zero-route", r], None) for r in ROUTES]
+    mutants += [("E2 source-swap-mw", "source-swap-mw", ["--source-swap-mw"],
+                 None),
+                ("E3 shared-state", "shared-state", ["--shared-state"],
+                 "per_instance"),
+                ("E4 stale-slot-relvel", "stale-slot-relvel",
+                 ["--stale-slot-relvel"], "slot_reuse")]
+    for title, tag, extra, pre in mutants:
+        if pre is not None and not testable[pre]:
+            skip_precondition(title, pre)
             results[tag] = {"status": "NOT_RUN",
-                            "reason": "stimulus precondition unmet"}
+                            "reason": "stimulus precondition unmet",
+                            "precondition": pre}
             continue
         rc, d, err = model(tag, seq, extra)
         if rc != 0:
@@ -219,13 +313,15 @@ def main():
         results[tag] = {"exactness": j, "model_max_abs_delta_lsb": diff,
                         "fails_as_required": f, "model_differs": differs}
 
-    # E4-E6: RTL mutants against the unmodified model trace
+    # E-rtl: RTL mutants against the unmodified model trace
     src = open(TB, encoding="utf-8").read()
     for name, subs in MUTANTS.items():
-        if name == "shared-slot" and not per_instance_testable:
-            skip_per_instance("E-rtl shared-slot mutant")
+        pre = MUTANT_PRECONDITION.get(name)
+        if pre is not None and not testable[pre]:
+            skip_precondition(f"E-rtl {name} mutant", pre)
             results["rtl-" + name] = {"status": "NOT_RUN",
-                                      "reason": "stimulus precondition unmet"}
+                                      "reason": "stimulus precondition unmet",
+                                      "precondition": pre}
             continue
         m = src
         for needle, rep in subs:
@@ -267,17 +363,22 @@ def main():
         log(f"[M2 invariance] runner errors: {ea[-150:]} {eb[-150:]}")
         ok_all = False
 
-    # R1 refusals
-    for title, extra in [("out-of-class route (velocity -> 'A Highpass' 303)",
-                          ["--out-of-class-route"]),
-                         ("zero-route of a nonexistent route",
-                          ["--zero-route", "relvel:fegmod"])]:
+    # R1/R2 refusals
+    for tag, title, extra in [
+            ("R1", "out-of-class route (velocity -> 'A Highpass' 303)",
+             ["--out-of-class-route"]),
+            ("R1", "zero-route of a nonexistent route",
+             ["--zero-route", "relvel:fegmod"]),
+            ("R2", "cross-scene route (velocity -> 'B Osc 1 Sync' 502, the "
+                   "route the named carrier 'House Of Chords.fxp' carries)",
+             ["--cross-scene-route"])]:
         rc, d, err = model("refuse", seq, extra)
         good = rc == 2
-        log(f"[R1 refusal] {title}: exit {rc} "
+        log(f"[{tag} refusal] {title}: exit {rc} "
             f"({err.strip().splitlines()[-1][:110] if err.strip() else ''}) -> "
             f"{'REFUSED as required' if good else 'NOT REFUSED'}")
-        results["refuse-" + title.split()[0]] = {"exit": rc, "refused": good}
+        results["refuse-" + title.split()[0]] = {"exit": rc, "refused": good,
+                                                 "control": tag}
         ok_all &= good
 
     log("")
@@ -293,7 +394,8 @@ def main():
         for nr in not_run:
             log(f"  - {nr['control']}: {nr['reason']}")
         log("  These controls DO fire on a stimulus that overlaps voices "
-            f"with distinct source words (the leaf-local '{SEQ}'); see "
+            "with distinct source words AND reuses slots after a nonzero "
+            f"release velocity (the leaf-local '{SEQ}'); see "
             "negative-control.txt.")
     if not ok_all:
         verdict = "FAIL"

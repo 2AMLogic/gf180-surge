@@ -741,3 +741,41 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
      the exhaustive ROM check (it does: 63 of 128 entries). A corner set that
      could not distinguish round-half-up from truncation would not be freezing
      the rounding rule.
+8. State rules, their controls, and the scene boundary (fourth increment;
+   census `tools/vel_state_coverage.py` -> `reports/SXT-036/artifacts/
+   state-coverage.{txt,json}`):
+   * **Construction re-initialization (frozen).** A voice slot is reused. The
+     cited ctor sets `state.freleasevel = 0` /
+     `releaseVelocitySource.set_output(0, 0)`, so `relvel_q[slot]` is cleared
+     ON CREATE and the previous occupant's release velocity is never inherited
+     (`tb_vel.sv` create branch; model `VelVoice.__init__`). The power-on reset
+     of all eight slot register pairs is a DIFFERENT thing and is unchanged.
+     Controls: `--stale-slot-relvel` (model) and the `stale-slot-reinit` RTL
+     mutant, both of which must FAIL exactness (they do: 42 mismatches each,
+     first at block 1200 slot 0 `relvel_q` model=330260 vs rtl=0).
+   * **Release-latch timing (frozen).** `SurgeSynthesizer::releaseNote` stamps
+     `state.releasevelocity` and calls `release()` before the next block, so
+     the release-velocity word is visible to THAT block's control pass. Control:
+     the `release-one-block-late` RTL mutant moves the latch after the control
+     pass and must FAIL (it does: 15 mismatches on the leaf-local stimulus, 3
+     on `seq-notes-holds-v1`).
+   * **Scene boundary — what is NOT established.** The frozen destination class
+     is scene A only (308/309/310/298). A scene-B destination is REFUSED, not
+     folded in: control R2 replays the real route the named carrier
+     `House Of Chords.fxp` carries (`ms_velocity` -> 502 `B Osc 1 Sync`, scene
+     index 1) and the runner must exit 2. That is a refusal, not a
+     demonstration: this leaf's model instantiates ONE scene, so the "state is
+     never shared across scenes" half of #70's per-instance rule has **no live
+     control here** and is NOT claimed. It needs a second scene in the model
+     (outside this leaf) to become testable.
+   * **Stimulus preconditions and measured coverage.** Three preconditions
+     decide whether these controls can fire: `per_instance` (>=2 concurrent
+     voices with distinct source words), `slot_reuse` (a slot reused after a
+     nonzero release velocity) and `release_word` (a running voice released
+     with a nonzero release-velocity word). Measured over every committed note
+     sequence: exactly ONE shared fixture (`seq-notes-holds-v1`) carries any
+     nonzero MIDI release velocity at all, and NO shared fixture satisfies
+     `per_instance` or `slot_reuse`. On a stimulus whose precondition is unmet
+     the control is reported NOT_RUN with the reason named, never as a pass;
+     the leaf-local `sxt036-vel-overlap-v1` is the only committed stimulus that
+     satisfies all three.

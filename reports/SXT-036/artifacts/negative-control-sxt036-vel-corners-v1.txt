@@ -3,6 +3,8 @@ sequence: sxt036-vel-corners-v1  (non-default: the control set re-run on a seque
 
 [positive control] unmutated RTL vs unmutated model: PASS mismatches=0 checked={'voice_block_checkpoints': 2088, 'source_words': 4176, 'route_sums': 8352}
 [stimulus precondition] blocks with >=2 concurrently-live voices carrying distinct (vel_q, relvel_q) words: 498 -> per-instance-state controls TESTABLE
+[stimulus precondition] slot reuses after a nonzero release velocity: 0 -> construction-re-initialization controls NOT TESTABLE on this stimulus
+[stimulus precondition] releases of a running voice with a nonzero release-velocity word: 5 -> release-timing control TESTABLE
 [E1 zero-route vel:cutoff] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[0]: model=0 rtl=396312'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=10500 LSB -> observable
 [E1 zero-route vel:reso] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[1]: model=0 rtl=4128'] -> FAILS as required
@@ -19,13 +21,22 @@ sequence: sxt036-vel-corners-v1  (non-default: the control set re-run on a seque
     M1 model render differs from unmutated: max|delta|=19134 LSB -> observable
 [E3 shared-state] exactness verdict=FAIL mismatches=44 first=['block 50 slot 0 route_sum[0]: model=50331648 rtl=396312'] -> FAILS as required
     M1 model render differs from unmutated: max|delta|=13555 LSB -> observable
+[E4 stale-slot-relvel] NOT_RUN - stimulus 'sxt036-vel-corners-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
 [E-rtl shared-slot mutant] exactness verdict=FAIL mismatches=45 first=['block 50 slot 0 vel_q: model=16513 rtl=2097152'] -> FAILS as required
 [E-rtl round-trunc mutant] exactness verdict=FAIL mismatches=41 first=['block 0 slot 0 route_sum[2]: model=4954 rtl=4953'] -> FAILS as required
 [E-rtl rom-floor mutant] exactness verdict=FAIL mismatches=42 first=['block 150 slot 3 vel_q: model=1056833 rtl=1056832'] -> FAILS as required
+[E-rtl stale-slot-reinit mutant] NOT_RUN - stimulus 'sxt036-vel-corners-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
+[E-rtl release-one-block-late mutant] exactness verdict=FAIL mismatches=15 first=['block 300 slot 0 relvel_q: model=2097152 rtl=0'] -> FAILS as required
 [positive control, re-run after mutants] PASS mismatches=0
 [M2 invariance] seq-notes-repeated-v1: landed run_model.py wav sha256 9b7e7f90f46ae71c.. vs --strip-vel-routes 9b7e7f90f46ae71c.. -> IDENTICAL
 [R1 refusal] out-of-class route (velocity -> 'A Highpass' 303): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->303 outside the declared SXT-036 destinatio) -> REFUSED as required
 [R1 refusal] zero-route of a nonexistent route: exit 2 (REFUSED (outside declared SXT-036 class): --zero-route relvel:fegmod: no such route in the table) -> REFUSED as required
+[R2 refusal] cross-scene route (velocity -> 'B Osc 1 Sync' 502, the route the named carrier 'House Of Chords.fxp' carries): exit 2 (REFUSED (outside declared SXT-036 class): voice route ms_velocity->502 outside the declared SXT-036 destinatio) -> REFUSED as required
 
 Reference-budget negative controls (acceptance item 5: routing-zeroed and source-swap vs pinned-engine render): NOT_RUN - pinned oracle unavailable on dispatch host (#96). The E1/E2 rows above test the RTL-vs-model exactness check, NOT the reference-budget check.
-OVERALL (oracle-independent controls): PASS (every control failed/held as required)
+
+2 control(s) NOT_RUN on this stimulus (never reported as a pass):
+  - E4 stale-slot-relvel: stimulus 'sxt036-vel-corners-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
+  - E-rtl stale-slot-reinit mutant: stimulus 'sxt036-vel-corners-v1' never reuses a voice slot after that slot was released with a nonzero release velocity, so a missing constructor clear of the release-velocity register is unobservable
+  These controls DO fire on a stimulus that overlaps voices with distinct source words AND reuses slots after a nonzero release velocity (the leaf-local 'sxt036-vel-overlap-v1'); see negative-control.txt.
+OVERALL (oracle-independent controls): PASS for every control that ran; 2 NOT_RUN (stimulus precondition unmet) - NOT a full control pass on this stimulus

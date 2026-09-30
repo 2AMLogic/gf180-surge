@@ -1,0 +1,299 @@
+{
+  "tool": "vel_state_coverage/1",
+  "declared_sequences": [
+    "seq-notes-coverage-v1",
+    "seq-notes-repeated-v1",
+    "seq-notes-holds-v1"
+  ],
+  "static_screen": {
+    "leaf48-smoke-bells-v1": {
+      "id": "leaf48-smoke-bells-v1",
+      "note_ons": 3,
+      "note_offs": 3,
+      "distinct_note_on_velocities": 2,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 2,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "leaf48-smoke-quickspit-v1": {
+      "id": "leaf48-smoke-quickspit-v1",
+      "note_ons": 3,
+      "note_offs": 3,
+      "distinct_note_on_velocities": 2,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "nc-wt-mip0-v1": {
+      "id": "nc-wt-mip0-v1",
+      "note_ons": 1,
+      "note_offs": 1,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-lp12-smoke-v1": {
+      "id": "seq-lp12-smoke-v1",
+      "note_ons": 2,
+      "note_offs": 2,
+      "distinct_note_on_velocities": 2,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-macro-sweep-v1": {
+      "id": "seq-macro-sweep-v1",
+      "note_ons": 1,
+      "note_offs": 1,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-modwheel-v1": {
+      "id": "seq-modwheel-v1",
+      "note_ons": 1,
+      "note_offs": 1,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-notes-coverage-v1": {
+      "id": "seq-notes-coverage-v1",
+      "note_ons": 9,
+      "note_offs": 9,
+      "distinct_note_on_velocities": 3,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-notes-holds-v1": {
+      "id": "seq-notes-holds-v1",
+      "note_ons": 4,
+      "note_offs": 4,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 1,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": false,
+      "shared": true
+    },
+    "seq-notes-repeated-v1": {
+      "id": "seq-notes-repeated-v1",
+      "note_ons": 8,
+      "note_offs": 8,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-pitchbend-v1": {
+      "id": "seq-pitchbend-v1",
+      "note_ons": 1,
+      "note_offs": 1,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-poly-8-v1": {
+      "id": "seq-poly-8-v1",
+      "note_ons": 8,
+      "note_offs": 8,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 8,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-pressure-v1": {
+      "id": "seq-pressure-v1",
+      "note_ons": 2,
+      "note_offs": 2,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 2,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-sustain-pedal-v1": {
+      "id": "seq-sustain-pedal-v1",
+      "note_ons": 2,
+      "note_offs": 2,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-tempo-change-v1": {
+      "id": "seq-tempo-change-v1",
+      "note_ons": 12,
+      "note_offs": 12,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-wt-base-v1": {
+      "id": "seq-wt-base-v1",
+      "note_ons": 1,
+      "note_offs": 1,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-wt-pitch-extremes-hi-v1": {
+      "id": "seq-wt-pitch-extremes-hi-v1",
+      "note_ons": 4,
+      "note_offs": 4,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-wt-pitch-extremes-v1": {
+      "id": "seq-wt-pitch-extremes-v1",
+      "note_ons": 3,
+      "note_offs": 3,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "seq-wt-unison16-v1": {
+      "id": "seq-wt-unison16-v1",
+      "note_ons": 2,
+      "note_offs": 2,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 2,
+      "release_preconditions_impossible": true,
+      "shared": true
+    },
+    "sxt034-smoke-v1": {
+      "id": "sxt034-smoke-v1",
+      "note_ons": 2,
+      "note_offs": 2,
+      "distinct_note_on_velocities": 2,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": false
+    },
+    "sxt034-uni-mech-v1": {
+      "id": "sxt034-uni-mech-v1",
+      "note_ons": 2,
+      "note_offs": 2,
+      "distinct_note_on_velocities": 1,
+      "nonzero_release_velocities": 0,
+      "max_gated_overlap": 1,
+      "release_preconditions_impossible": true,
+      "shared": false
+    },
+    "sxt036-vel-corners-v1": {
+      "id": "sxt036-vel-corners-v1",
+      "note_ons": 6,
+      "note_offs": 6,
+      "distinct_note_on_velocities": 5,
+      "nonzero_release_velocities": 5,
+      "max_gated_overlap": 6,
+      "release_preconditions_impossible": false,
+      "shared": false
+    },
+    "sxt036-vel-overlap-v1": {
+      "id": "sxt036-vel-overlap-v1",
+      "note_ons": 5,
+      "note_offs": 5,
+      "distinct_note_on_velocities": 5,
+      "nonzero_release_velocities": 5,
+      "max_gated_overlap": 3,
+      "release_preconditions_impossible": false,
+      "shared": false
+    }
+  },
+  "dynamic": {
+    "seq-notes-coverage-v1": {
+      "concurrent_distinct_source_word_blocks": 0,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "release_blocks_with_nonzero_relvel_word": 0,
+      "per_instance": false,
+      "slot_reuse": false,
+      "release_word": false,
+      "shared": true
+    },
+    "seq-notes-repeated-v1": {
+      "concurrent_distinct_source_word_blocks": 0,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "release_blocks_with_nonzero_relvel_word": 0,
+      "per_instance": false,
+      "slot_reuse": false,
+      "release_word": false,
+      "shared": true
+    },
+    "seq-notes-holds-v1": {
+      "concurrent_distinct_source_word_blocks": 0,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "release_blocks_with_nonzero_relvel_word": 1,
+      "per_instance": false,
+      "slot_reuse": false,
+      "release_word": true,
+      "shared": true
+    },
+    "seq-poly-8-v1": {
+      "concurrent_distinct_source_word_blocks": 0,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "release_blocks_with_nonzero_relvel_word": 0,
+      "per_instance": false,
+      "slot_reuse": false,
+      "release_word": false,
+      "shared": true
+    },
+    "sxt036-vel-overlap-v1": {
+      "concurrent_distinct_source_word_blocks": 1071,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 2,
+      "release_blocks_with_nonzero_relvel_word": 5,
+      "per_instance": true,
+      "slot_reuse": true,
+      "release_word": true,
+      "shared": false
+    },
+    "sxt036-vel-corners-v1": {
+      "concurrent_distinct_source_word_blocks": 498,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 0,
+      "release_blocks_with_nonzero_relvel_word": 5,
+      "per_instance": true,
+      "slot_reuse": false,
+      "release_word": true,
+      "shared": false
+    }
+  },
+  "preconditions": [
+    "per_instance",
+    "slot_reuse",
+    "release_word"
+  ],
+  "shared_fixture_gaps": [
+    "per_instance",
+    "slot_reuse"
+  ],
+  "oracle_dependent_items": {
+    "2": "NOT_RUN",
+    "5": "NOT_RUN"
+  }
+}

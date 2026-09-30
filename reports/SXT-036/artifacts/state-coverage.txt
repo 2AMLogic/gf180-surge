@@ -1,0 +1,44 @@
+SXT-036 per-instance STATE coverage census (#70) -- oracle-independent (model runs only). Coverage, reported separately from agreement; no acceptance item passes here.
+
+STATIC screen of every committed sequence with note events (shared fixtures/sequences/ first, then model/voice/sequences/):
+  sequence                          on off distinct vel nonzero relvel gated overlap
+  leaf48-smoke-bells-v1              3   3            2              0             2
+  leaf48-smoke-quickspit-v1          3   3            2              0             1
+  nc-wt-mip0-v1                      1   1            1              0             1
+  seq-lp12-smoke-v1                  2   2            2              0             1
+  seq-macro-sweep-v1                 1   1            1              0             1
+  seq-modwheel-v1                    1   1            1              0             1
+  seq-notes-coverage-v1              9   9            3              0             1
+  seq-notes-holds-v1                 4   4            1              1             1
+  seq-notes-repeated-v1              8   8            1              0             1
+  seq-pitchbend-v1                   1   1            1              0             1
+  seq-poly-8-v1                      8   8            1              0             8
+  seq-pressure-v1                    2   2            1              0             2
+  seq-sustain-pedal-v1               2   2            1              0             1
+  seq-tempo-change-v1               12  12            1              0             1
+  seq-wt-base-v1                     1   1            1              0             1
+  seq-wt-pitch-extremes-hi-v1        4   4            1              0             1
+  seq-wt-pitch-extremes-v1           3   3            1              0             1
+  seq-wt-unison16-v1                 2   2            1              0             2
+  sxt034-smoke-v1                    2   2            2              0             1
+  sxt034-uni-mech-v1                 2   2            1              0             1
+  sxt036-vel-corners-v1              6   6            5              5             6
+  sxt036-vel-overlap-v1              5   5            5              5             3
+
+  22 sequences screened; 18 are shared fixtures. Shared fixtures carrying ANY nonzero MIDI release velocity: 1 (seq-notes-holds-v1).
+  For every other shared fixture both release-velocity preconditions are IMPOSSIBLE by inspection of the file (no nonzero release velocity exists to latch), so no render is needed to say so -- and that is a coverage statement, not a control verdict.
+
+DYNAMIC measurement (rendered through model/voice/run_vel_model.py; no iverilog, no oracle):
+  sequence                         per_instance  slot_reuse  release_word
+  seq-notes-coverage-v1                      no          no            no
+  seq-notes-repeated-v1                      no          no            no
+  seq-notes-holds-v1                         no          no         YES 1
+  seq-poly-8-v1                              no          no            no
+  sxt036-vel-overlap-v1                YES 1071       YES 2         YES 5
+  sxt036-vel-corners-v1                 YES 498          no         YES 5
+
+  precondition 'per_instance': satisfied by 0/3 sequences NAMED by #70, 0 shared fixture(s) (none), 2 leaf-local stimulus/stimuli (sxt036-vel-overlap-v1, sxt036-vel-corners-v1).
+  precondition 'slot_reuse': satisfied by 0/3 sequences NAMED by #70, 0 shared fixture(s) (none), 1 leaf-local stimulus/stimuli (sxt036-vel-overlap-v1).
+  precondition 'release_word': satisfied by 1/3 sequences NAMED by #70, 1 shared fixture(s) (seq-notes-holds-v1), 2 leaf-local stimulus/stimuli (sxt036-vel-overlap-v1, sxt036-vel-corners-v1).
+
+RECORDED COVERAGE GAP: no SHARED fixture satisfies 'per_instance', 'slot_reuse'. Controls targeting those rules can only fire on a leaf-local stimulus; on a shared fixture they are reported NOT_RUN with the precondition named, never as a pass. Adding such a stimulus to fixtures/sequences/ would be a change to shared fixtures and is out of this leaf's scope.

@@ -50,8 +50,19 @@ demonstrably fail its check):
   --shared-state            ONE scene-wide velocity / release-velocity
                             register (last note-on / last note-off wins)
                             instead of per-voice instances
+  --stale-slot-relvel       voice construction does NOT clear the slot's
+                            release-velocity register, so a REUSED slot
+                            inherits the previous voice's release velocity
+                            (violates the cited ctor fact
+                            releaseVelocitySource.set_output(0, 0))
   --out-of-class-route      inject velocity -> 'A Highpass' (303); the runner
                             must REFUSE (exit 2)
+  --cross-scene-route       inject the scene-B route the named carrier
+                            'House Of Chords.fxp' actually carries
+                            (velocity -> 'B Osc 1 Sync' 502); the runner must
+                            REFUSE (exit 2) -- the frozen destination class is
+                            scene A only and scene-B routes are never folded
+                            into it
   --strip-vel-routes        drop every velocity/release-velocity route (the
                             invariance check: must reproduce the landed
                             SXT-022 model render bit-identically)
@@ -130,15 +141,22 @@ class VelVoice(vm.VoiceV2):
     the voice route table, on top of the landed classic voice path (and the
     landed scene-modwheel route table, applied first -- scene data)."""
 
-    CONTROL_MODE = "normal"          # normal | source_swap_mw | shared_state
+    # normal | source_swap_mw | shared_state | stale_slot
+    CONTROL_MODE = "normal"
     SHARED = None                    # SharedVelRegister in shared_state mode
+    SLOT_RELVEL = {}                 # slot -> last relvel word (stale_slot)
 
-    def __init__(self, inp, key, velocity):
+    def __init__(self, inp, key, velocity, slot=None):
         # per-instance modulator state (set BEFORE the ctor control pass)
         self.midi_vel = int(velocity)
         self.vel_word = vel_q(velocity)
         self.relvel_word = 0
         self.midi_relvel = 0
+        if type(self).CONTROL_MODE == "stale_slot" and slot is not None:
+            # negative control: the ctor's releaseVelocitySource.set_output(
+            # 0, 0) is omitted, so a reused slot keeps the previous voice's
+            # release-velocity word instead of starting at 0
+            self.relvel_word = type(self).SLOT_RELVEL.get(slot, 0)
         if type(self).CONTROL_MODE == "shared_state":
             type(self).SHARED.vel = self.vel_word
             type(self).SHARED.relvel = 0
@@ -156,6 +174,10 @@ class VelVoice(vm.VoiceV2):
         self.relvel_word = vel_q(midi_relvel)
         if type(self).CONTROL_MODE == "shared_state":
             type(self).SHARED.relvel = self.relvel_word
+        if type(self).CONTROL_MODE == "stale_slot":
+            slot = getattr(self, "slot", None)
+            if slot is not None:
+                type(self).SLOT_RELVEL[slot] = self.relvel_word
 
     def _source_value(self, src):
         mode = type(self).CONTROL_MODE
@@ -224,7 +246,8 @@ def graph_row(graphs_path, rel):
     raise vm.Refuse(f"preset not found in graphs.jsonl: {rel}")
 
 
-def build_tables(inp, vel_in, graphs_path, zero_routes, strip, out_of_class):
+def build_tables(inp, vel_in, graphs_path, zero_routes, strip, out_of_class,
+                 cross_scene=False):
     """Scene modwheel table (landed, preset md 's') + voice velocity table
     (preset md 'v' rows for ids 1/30, then the runtime fixture routes)."""
     row = graph_row(graphs_path, inp.preset_path)
@@ -250,6 +273,14 @@ def build_tables(inp, vel_in, graphs_path, zero_routes, strip, out_of_class):
         vel_table.append((r["modsource_id"], r["dest_id"], r["depth_raw"]))
     if out_of_class:
         vel_table.append((VELOCITY_SRC, 303, 21.86507))   # 'A Highpass'
+    if cross_scene:
+        # the real scene-B route carried by the named carrier
+        # 'Damon Armani/Pads/House Of Chords.fxp' (graphs.jsonl: scene index
+        # 1, ms_velocity -> 502 'B Osc 1 Sync', depth_raw -12.192568). The
+        # frozen destination class is scene A only; per-instance state is
+        # never shared across scenes, so this must be REFUSED, not folded
+        # into a scene-A destination.
+        vel_table.append((VELOCITY_SRC, 502, -12.192568))
     if strip:
         vel_table = []
     for zr in zero_routes:
@@ -285,7 +316,9 @@ def main():
                     metavar="SRC:DEST")
     ap.add_argument("--source-swap-mw", action="store_true")
     ap.add_argument("--shared-state", action="store_true")
+    ap.add_argument("--stale-slot-relvel", action="store_true")
     ap.add_argument("--out-of-class-route", action="store_true")
+    ap.add_argument("--cross-scene-route", action="store_true")
     ap.add_argument("--strip-vel-routes", action="store_true")
     args = ap.parse_args()
 
@@ -315,16 +348,20 @@ def main():
 
     mw_table, vel_table = build_tables(inp, vel_in, args.graphs,
                                        args.zero_route, args.strip_vel_routes,
-                                       args.out_of_class_route)
+                                       args.out_of_class_route,
+                                       args.cross_scene_route)
     inp.scene_routes_mw = mw_table
     inp.vel_routes = vel_table
 
     VelVoice.CONTROL_MODE = "normal"
+    VelVoice.SLOT_RELVEL = {}
     if args.source_swap_mw:
         VelVoice.CONTROL_MODE = "source_swap_mw"
     if args.shared_state:
         VelVoice.CONTROL_MODE = "shared_state"
         VelVoice.SHARED = SharedVelRegister()
+    if args.stale_slot_relvel:
+        VelVoice.CONTROL_MODE = "stale_slot"
 
     notes = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
     last_t = max(e["t"] for e in notes) if notes else 0
@@ -340,6 +377,7 @@ def main():
     inp.reset_draws()
     if VelVoice.SHARED is not None:
         VelVoice.SHARED.vel = VelVoice.SHARED.relvel = 0
+    VelVoice.SLOT_RELVEL = {}
 
     def envrate(p):
         return vm.envelope_rate_linear_nowrap(vm.qint(p))
@@ -411,7 +449,7 @@ def main():
             if e["type"] == "note_on":
                 slot = next(i for i in range(N_SLOTS)
                             if all(v.slot != i for v in voices))
-                v = VelVoice(inp, e["note"], e.get("velocity", 0))
+                v = VelVoice(inp, e["note"], e.get("velocity", 0), slot=slot)
                 v.slot = slot
                 v.draw_set_index = draw_set_index_of(v)
                 voices.append(v)

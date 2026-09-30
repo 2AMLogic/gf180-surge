@@ -7,11 +7,11 @@ Pinned engine (cited only, external, GPL-3.0-or-later):
 **Scope and claim discipline.** Landed under the #96 re-queue policy: only
 the oracle-independent acceptance items. The pinned oracle (`surgepy`,
 `oracle/manifest.json`, `ORACLE_SURGE_DIR`) is **not available on this
-dispatch host** (`import surgepy` fails; re-verified 2026-09-29 for the
-second and third increments; `ORACLE_SURGE_DIR` unset, no prebuilt cache,
-#232 still open). This record establishes claim (1) only, for the declared
-fixture on the leaf-local sequence, on the three sequences named by #70, and
-at the declared parameter corners:
+dispatch host** (`import surgepy` fails; re-verified 2026-09-30 for the
+fourth increment, as for the second and third; `ORACLE_SURGE_DIR` unset, no
+prebuilt cache, #232 still open). This record establishes claim (1) only, for
+the declared fixture on the leaf-local sequence, on the three sequences named
+by #70, and at the declared parameter corners:
 **RTL == frozen model, exactly**, in iverilog simulation. It establishes **no** model-vs-reference agreement
 (claim 2: NOT_RUN), **no** fidelity, **no** preset support (supported delta
 0), **no** musical-quality claim (claim 3), and **no** FPGA/gf180mcu
@@ -22,7 +22,7 @@ copied; the model and RTL are original (Apache-2.0).
 
 | # | Item | Status | Evidence |
 |---|---|---|---|
-| 1 | Frozen fixed-point model, word lengths + op order | **PASS** (documented + implemented) | `model/voice/run_vel_model.py`; freeze section "SXT-036 velocity / release-velocity route extension" in `model/voice/README.md`. Q10.21 words, `vel_q=(midi*2^22+127)//254`, route order, destination class {308,309,310,298}, per-instance state. Scope: classic voice class on the declared Attacky carrier only (see Boundaries). **Parameter corners now frozen too** (third increment, README point 7): derived destination extents, the declared corner set, and the 32-bit checkpoint-word precondition with its measured headroom — `artifacts/param-corners.{txt,json}`. |
+| 1 | Frozen fixed-point model, word lengths + op order | **PASS** (documented + implemented) | `model/voice/run_vel_model.py`; freeze section "SXT-036 velocity / release-velocity route extension" in `model/voice/README.md`. Q10.21 words, `vel_q=(midi*2^22+127)//254`, route order, destination class {308,309,310,298}, per-instance state. Scope: classic voice class on the declared Attacky carrier only (see Boundaries). **Parameter corners now frozen too** (third increment, README point 7): derived destination extents, the declared corner set, and the 32-bit checkpoint-word precondition with its measured headroom — `artifacts/param-corners.{txt,json}`. **State rules now frozen with controls** (fourth increment, README point 8): construction re-initialization of the release-velocity register on slot reuse, the same-block release-latch timing, and the scene-A-only destination class with its refusal control — `artifacts/state-coverage.{txt,json}`. |
 | 2 | Model-vs-pinned-engine dry-render budgets on carrier fixtures | **NOT_RUN** | pinned oracle unavailable on dispatch host (#96). No numbers estimated or tuned. |
 | 3 | RTL-vs-model exact at declared checkpoints (integer equality) | **PASS** | `artifacts/exactness-vel-sxt036-vel-overlap-v1.json`: 2,940 voice-block checkpoints, 5,880 source words, 11,760 route sums, 0 mismatches (`tb_vel.sv`). `artifacts/exactness-voice-sxt036-vel-overlap-v1.json`: unchanged-datapath `tb_voice.sv` on the same run: 279 checkpoints / 9,765 fields / 17,856 oscout / 103,200 mono samples, 0 mismatches. Landed regression (SXT-022 seq-notes-repeated-v1, run_model.py stimulus): 403 / 14,105 / 25,792 / 196,800, 0 mismatches (`exactness-voice-landed-regression-*.json`); landed model wav is sha256-identical to `--strip-vel-routes` output (`9b7e7f90...`; was `6a73bb9a...` before main's halfband D2 fix #146, republished in `reports/halfband-republication/`). **Extended to the three sequences named by #70** (`artifacts/declared-sequence-coverage.{txt,json}`): `seq-notes-coverage-v1` / `seq-notes-repeated-v1` / `seq-notes-holds-v1`, control plane 3,132 / 1,944 / 4,392 checkpoints and datapath 467 / 403 / 255 checkpoints, **0 mismatches everywhere**. Coverage of that PASS is reported separately below, including one recorded gap (declared set is monophonic ⇒ per-instance-state not discriminated there). **Extended again to the declared parameter corners and to the whole source-word domain** (third increment, `artifacts/param-corners.{txt,json}`): six declared corners × (2,088 control-plane checkpoints / 4,176 source words / 8,352 route sums) and (312 datapath checkpoints / 10,920 fields / 19,968 oscout / 36,800 mono) each, **0 mismatches everywhere**; all **128** velocity-ROM entries exact. Survey run `seq-poly-8-v1` (8 concurrent voices): 14,784 control-plane checkpoints, 0 mismatches. |
 | 4 | Cycle/state costs vs SXT-016 probes / SXT-015 | **PASS (recorded, divergence noted)** | `artifacts/costs.txt`: 6 qmul per running-voice block (0.171 MAC/sample control plane), 512 state bits for the per-slot source registers; SXT-016 scheduler probe has no per-source row (88 cycles/event, 512 state bits = different quantity). Not reconciled. **Per-route linearity now measured** (third increment): every corner run uses an 8-route table and reports `DONE vel-qmuls=16704` = 8 × 2,088 voice-blocks exactly, confirming the "one qmul per route per running-voice block" cost rule the accounting states rather than assuming it. State is unchanged (route table is fixture-constant; the per-slot registers do not grow with routes). |
@@ -35,16 +35,24 @@ copied; the model and RTL are original (Apache-2.0).
 
 * E1 zero-route for each of the six routes (velocity→cutoff/reso/fegmod/vca,
   release velocity→cutoff/vca), E2 source-swap (scene modwheel in place of
-  velocity/release velocity), E3 shared (scene-wide) velocity register: a
-  mutated model trace against the unmodified RTL **FAILS** integer equality
-  (41–44 mismatches each), and each mutated model render differs from the
-  unmutated one (16 to 15,309 LSB max abs) so the routes are observable.
+  velocity/release velocity), E3 shared (scene-wide) velocity register,
+  **E4 stale-slot release velocity** (fourth increment: construction does not
+  clear the reused slot's release-velocity register): a mutated model trace
+  against the unmodified RTL **FAILS** integer equality (41–44 mismatches
+  each; E4 42, first `block 1200 slot 0 relvel_q: model=330260 rtl=0`), and
+  each mutated model render differs from the unmutated one (16 to 15,309 LSB
+  max abs; E4 3,287) so the routes and the re-initialization are observable.
 * E-rtl mutants (`artifacts/tb_vel_*_mutant.sv`): shared-slot register,
-  round→truncate in qmul, velocity ROM floor instead of round: each **FAILS**
-  against the unmodified model (41/45/44 mismatches).
+  round→truncate in qmul, velocity ROM floor instead of round, **stale-slot
+  re-initialization** and **release latch one block late** (both fourth
+  increment): each **FAILS** against the unmodified model (45 / 41 / 44 /
+  42 / 15 mismatches).
 * M2 invariance: routes stripped reproduces the landed SXT-022 model wav
   bit-identically. R1 refusals: velocity→'A Highpass' (303) and zeroing a
-  nonexistent route both exit 2.
+  nonexistent route both exit 2. **R2 refusal** (fourth increment): the real
+  scene-B route the named carrier `House Of Chords.fxp` carries
+  (velocity→502 `B Osc 1 Sync`, scene index 1) exits 2 — a scene-B
+  destination is refused, never folded into the scene-A class.
 * These controls are the exactness-side analogue. They do **not** replace
   the required reference-budget controls (item 5), which stay NOT_RUN.
 
@@ -176,11 +184,16 @@ in **498** blocks, so unlike the declared `seq-notes-*` set it *is* a
 per-instance-state carrier — and that is shown rather than asserted: the whole
 oracle-independent control set re-run on it
 (`artifacts/negative-control-sxt036-vel-corners-v1.txt`,
-`negative-controls-sxt036-vel-corners-v1.json`) reports **PASS (every control
-failed/held as required)** with **nothing NOT_RUN** — the six zero-route
-controls (41 mismatches each), source-swap (44), E3 shared-state (44), the
-shared-slot / round-trunc / rom-floor RTL mutants (45 / 41 / 42), both refusals
-and the invariance check all fire there.
+`negative-controls-sxt036-vel-corners-v1.json`) reports **PASS for every
+control that ran** — the six zero-route controls (41 mismatches each),
+source-swap (44), E3 shared-state (44), the shared-slot / round-trunc /
+rom-floor RTL mutants (45 / 41 / 42), all three refusals and the invariance
+check fire there. **Amended by the fourth increment:** when this increment
+added the construction-re-initialization controls, the corner stimulus turned
+out NOT to reuse a voice slot after a nonzero release velocity, so those two
+controls are `NOT_RUN` there and this transcript's exit code is now **3**, not
+0. The third increment's "nothing NOT_RUN" wording was true of the control set
+that existed then and is superseded here rather than left standing.
 
 **Controls (each demonstrably fails the check it targets).**
 
@@ -218,6 +231,84 @@ per-instance-state rule**; the leaf-local `sxt036-vel-overlap-v1` (and now the
 overlapping corner stimulus) remains the only carrier for that control. The gap
 is therefore narrowed in its description, not closed.
 
+### Per-instance STATE accounting (fourth increment, still oracle-independent)
+
+The first three increments froze the arithmetic (words, op order, rounding,
+corners) and proved RTL==model on it. Two rules this leaf's own issue states
+had **no live control at all**, and both are oracle-independent:
+construction-time re-initialization of the per-slot release-velocity register
+(cited: `SurgeVoice` ctor `releaseVelocitySource.set_output(0, 0)`) and the
+"never shared across **scenes**" half of the per-instance rule. Addressed as
+follows; nothing here touches items 2 or 5, which stay `NOT_RUN`.
+
+**Three new live controls** (each demonstrably fails the check it targets;
+transcripts in `artifacts/negative-control*.txt/.json`):
+
+| control | targets | verdict on `sxt036-vel-overlap-v1` |
+|---|---|---|
+| E4 `--stale-slot-relvel` (model) | reused slot inherits the previous voice's release velocity | **FAILS** exactness, 42 mismatches; render differs by 3,287 LSB |
+| E-rtl `stale-slot-reinit` | same rule, mutated on the RTL side (`tb_vel.sv` create branch) | **FAILS**, 42 mismatches (`model=0 rtl=330260`) |
+| E-rtl `release-one-block-late` | release latch moved after the control pass (SXT-021 event timing) | **FAILS**, 15 mismatches |
+| R2 `--cross-scene-route` | a scene-B destination silently folded into the scene-A class | **REFUSES** (exit 2) |
+
+The re-initialization mutant deliberately leaves the power-on reset of all
+eight slot register pairs alone — that is a different mechanism, and a mutant
+that disturbed both would not isolate the ctor rule (asserted in
+`tests/test_sxt036_vel_state.py`).
+
+**Coverage census, reported separately from agreement.**
+`tools/vel_state_coverage.py` → `artifacts/state-coverage.{txt,json}`
+(model runs only; no iverilog, no oracle). Three stimulus preconditions decide
+whether these controls can fire — `per_instance`, `slot_reuse`,
+`release_word` — measured by **one** implementation that the control driver
+imports, so census and controls cannot disagree. Over **all 22** committed
+note sequences (static screen) plus six rendered (dynamic):
+
+| stimulus | per_instance | slot_reuse | release_word |
+|---|---|---|---|
+| `seq-notes-coverage-v1` (declared) | no | no | no |
+| `seq-notes-repeated-v1` (declared) | no | no | no |
+| `seq-notes-holds-v1` (declared) | no | no | **yes** (1) |
+| `seq-poly-8-v1` (only polyphonic shared fixture) | no | no | no |
+| `sxt036-vel-overlap-v1` (leaf-local) | **yes** (1,071) | **yes** (2) | **yes** (5) |
+| `sxt036-vel-corners-v1` (leaf-local) | **yes** (498) | no | **yes** (5) |
+
+**Recorded coverage gaps (findings, not green ticks):**
+
+* Exactly **one of the 18 shared fixtures** (`seq-notes-holds-v1`) carries any
+  nonzero MIDI release velocity at all — one note-off out of four. For the
+  other 17 both release-velocity preconditions are **impossible by inspection
+  of the file**, which is why no render is needed to say so. `ms_release
+  velocity` (id 30) is therefore almost entirely unexercised by the shared
+  fixture set.
+* **No shared fixture** satisfies `per_instance` or `slot_reuse`. The
+  construction-re-initialization controls are consequently reported `NOT_RUN`
+  on all three sequences named by #70 **and** on the corner stimulus, with the
+  precondition named — never as a pass. `sxt036-vel-overlap-v1` is the only
+  committed stimulus satisfying all three.
+* Adding a polyphonic, distinct-velocity, slot-reusing sequence to
+  `fixtures/sequences/` would be a change to shared fixtures and stays out of
+  this leaf's scope.
+
+**Scene boundary — refused, not demonstrated.** R2 shows a scene-B
+destination is refused by the frozen class. It does **not** show that state is
+never shared across scenes: this leaf's model instantiates **one scene**, so
+that half of #70's per-instance rule has no live control here and is **not
+claimed**. Making it testable needs a second scene in the model, which is
+outside this leaf.
+
+**Exit codes seen:** `vel_state_coverage.py` → 3 (census complete, two shared
+fixture coverage gaps recorded — by design, not a failure);
+`vel_negative_controls.py` → 0 on `sxt036-vel-overlap-v1` (every control fired),
+3 on `seq-notes-holds-v1` (4 NOT_RUN) and 3 on `sxt036-vel-corners-v1` (2
+NOT_RUN). `pytest tests/test_sxt036_vel_state.py tests/test_sxt036_vel_corners.py`
+→ 35 passed.
+
+**Invariance held:** normal-mode output is unchanged by this increment — the
+baseline run-dir sha256s are still model.wav `14b04618…a5b18` and
+model_trace.json `e2a11ee5…9fe53`, and M2 (`--strip-vel-routes` reproducing the
+landed SXT-022 wav, `9b7e7f90…`) still holds.
+
 ## Commands (reproduce)
 
 ```
@@ -248,9 +339,24 @@ python3 tools/vel_negative_controls.py --artifacts reports/SXT-036/artifacts \
 python3 -m pytest -q tests/test_sxt036_vel_corners.py      # 20 passed, no iverilog
 ```
 Exit codes seen: `vel_param_corners.py` → 0 (every declared corner exact, every
-control fired); `vel_negative_controls.py --sequence sxt036-vel-corners-v1` → 0
-(no control NOT_RUN on that stimulus); `vel_declared_coverage.py` → 3 (exact
-everywhere, one coverage gap recorded — by design, not a failure).
+control fired); `vel_negative_controls.py --sequence sxt036-vel-corners-v1` → 3
+since the fourth increment (the two construction-re-initialization controls are
+NOT_RUN there; it was 0 against the third increment's smaller control set);
+`vel_declared_coverage.py` → 3 (exact everywhere, one coverage gap recorded —
+by design, not a failure).
+
+Per-instance state accounting (added 2026-09-30, fourth increment):
+
+```
+python3 tools/vel_state_coverage.py --artifacts reports/SXT-036/artifacts
+python3 tools/vel_negative_controls.py --artifacts reports/SXT-036/artifacts
+python3 tools/vel_negative_controls.py --artifacts reports/SXT-036/artifacts \
+    --sequence seq-notes-holds-v1
+python3 tools/vel_negative_controls.py --artifacts reports/SXT-036/artifacts \
+    --sequence sxt036-vel-corners-v1
+python3 -m pytest -q tests/test_sxt036_vel_state.py \
+    tests/test_sxt036_vel_corners.py      # 35 passed, no iverilog
+```
 
 ## Boundaries and what remains unproved
 
@@ -275,7 +381,19 @@ everywhere, one coverage gap recorded — by design, not a failure).
   stimuli in this leaf that discriminate per-voice from scene-wide velocity
   state. Adding a polyphonic, distinct-velocity sequence to the shared
   `fixtures/sequences/` set would be a change to shared fixtures and is out of
-  this leaf's scope.
+  this leaf's scope. **Fourth increment**: this is now measured across *all*
+  22 committed note sequences rather than the four previously spot-checked —
+  exactly one shared fixture carries any nonzero release velocity, and none
+  reuses a slot after one, so `sxt036-vel-overlap-v1` is the only committed
+  stimulus on which the construction-re-initialization controls can fire
+  (`artifacts/state-coverage.{txt,json}`).
+* **Scene separation is not demonstrated.** #70's per-instance rule has two
+  halves. Per-*voice* state is controlled (E3, E4, the shared-slot and
+  stale-slot RTL mutants). "Never shared across **scenes**" is **not**: the
+  landed model has a single scene, so the only thing shown is that a scene-B
+  destination is REFUSED (control R2, replaying the real
+  `House Of Chords.fxp` route velocity→502). Status for that half:
+  **NO_VERDICT**, needs a two-scene model outside this leaf.
 * **Checkpoint-word precondition (parameter corners).** The declared RTL/model
   checkpoint for a destination is the *unsaturated* sum of that destination's
   route terms: 32-bit signed in `tb_vel.sv`, unbounded in the Python model.

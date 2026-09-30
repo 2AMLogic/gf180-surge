@@ -20,7 +20,11 @@
     },
     "stimulus_precondition": {
       "concurrent_distinct_source_word_blocks": 1071,
-      "per_instance_state_controls_testable": true
+      "per_instance_state_controls_testable": true,
+      "slot_reuse_after_nonzero_release_velocity_blocks": 2,
+      "reinitialization_controls_testable": true,
+      "release_blocks_with_nonzero_relvel_word": 5,
+      "release_timing_control_testable": true
     },
     "zero-vel-cutoff": {
       "exactness": {
@@ -262,6 +266,36 @@
       "fails_as_required": true,
       "model_differs": true
     },
+    "stale-slot-relvel": {
+      "exactness": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-overlap-v1",
+        "control_mode": "stale_slot",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 1958,
+          "source_words": 3916,
+          "route_sums": 7832
+        },
+        "mismatches": 42,
+        "first_failures": [
+          "block 1200 slot 0 relvel_q: model=330260 rtl=0",
+          "block 1200 slot 0 route_sum[0]: model=7926240 rtl=3963120",
+          "block 1200 slot 0 route_sum[3]: model=0 rtl=-1981560",
+          "block 1201 slot 0 relvel_q: model=330260 rtl=0",
+          "block 1201 slot 0 route_sum[0]: model=7926240 rtl=3963120",
+          "block 1201 slot 0 route_sum[3]: model=0 rtl=-1981560",
+          "block 1202 slot 0 relvel_q: model=330260 rtl=0",
+          "block 1202 slot 0 route_sum[0]: model=7926240 rtl=3963120",
+          "block 1202 slot 0 route_sum[3]: model=0 rtl=-1981560",
+          "block 1203 slot 0 relvel_q: model=330260 rtl=0"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=17640"
+      },
+      "model_max_abs_delta_lsb": 3287,
+      "fails_as_required": true,
+      "model_differs": true
+    },
     "rtl-shared-slot": {
       "exactness": {
         "tb": "reports/SXT-036/artifacts/tb_vel_shared_slot_mutant.sv",
@@ -346,6 +380,62 @@
       },
       "fails_as_required": true
     },
+    "rtl-stale-slot-reinit": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_stale_slot_reinit_mutant.sv",
+        "sequence": "sxt036-vel-overlap-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 1958,
+          "source_words": 3916,
+          "route_sums": 7832
+        },
+        "mismatches": 42,
+        "first_failures": [
+          "block 1200 slot 0 relvel_q: model=0 rtl=330260",
+          "block 1200 slot 0 route_sum[0]: model=3963120 rtl=7926240",
+          "block 1200 slot 0 route_sum[3]: model=-1981560 rtl=0",
+          "block 1201 slot 0 relvel_q: model=0 rtl=330260",
+          "block 1201 slot 0 route_sum[0]: model=3963120 rtl=7926240",
+          "block 1201 slot 0 route_sum[3]: model=-1981560 rtl=0",
+          "block 1202 slot 0 relvel_q: model=0 rtl=330260",
+          "block 1202 slot 0 route_sum[0]: model=3963120 rtl=7926240",
+          "block 1202 slot 0 route_sum[3]: model=-1981560 rtl=0",
+          "block 1203 slot 0 relvel_q: model=0 rtl=330260"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=17640"
+      },
+      "fails_as_required": true
+    },
+    "rtl-release-one-block-late": {
+      "exactness": {
+        "tb": "reports/SXT-036/artifacts/tb_vel_release_one_block_late_mutant.sv",
+        "sequence": "sxt036-vel-overlap-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 2940,
+          "source_words": 5880,
+          "route_sums": 11760
+        },
+        "mismatches": 15,
+        "first_failures": [
+          "block 600 slot 0 relvel_q: model=330260 rtl=0",
+          "block 600 slot 0 route_sum[0]: model=13870920 rtl=9907800",
+          "block 600 slot 0 route_sum[3]: model=-2972340 rtl=-4953900",
+          "block 750 slot 2 relvel_q: model=2097152 rtl=0",
+          "block 750 slot 2 route_sum[0]: model=50529816 rtl=25363992",
+          "block 750 slot 2 route_sum[3]: model=-99084 rtl=-12681996",
+          "block 900 slot 1 relvel_q: model=1056833 rtl=0",
+          "block 900 slot 1 route_sum[0]: model=52313220 rtl=39631224",
+          "block 900 slot 1 route_sum[3]: model=-13474614 rtl=-19815612",
+          "block 1650 slot 1 relvel_q: model=16513 rtl=0"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=17640"
+      },
+      "fails_as_required": true
+    },
     "invariance": {
       "landed": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
       "stripped": "9b7e7f90f46ae71c802f4e566cdeed766bf048ce2df5fa7861452f9c7f6f5f50",
@@ -353,11 +443,18 @@
     },
     "refuse-out-of-class": {
       "exit": 2,
-      "refused": true
+      "refused": true,
+      "control": "R1"
     },
     "refuse-zero-route": {
       "exit": 2,
-      "refused": true
+      "refused": true,
+      "control": "R1"
+    },
+    "refuse-cross-scene": {
+      "exit": 2,
+      "refused": true,
+      "control": "R2"
     }
   }
 }
