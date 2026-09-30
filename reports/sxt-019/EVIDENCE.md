@@ -135,6 +135,11 @@ the probe: the control files are deliberately **not committed**.
 
 ## 4. The audit's own failure detection — PASS (29/29 rules + 6 scoped-exemption controls)
 
+> Superseded in part by §8: the self-test now also runs 5 own-attribution
+> `masking/*` controls, and the summary line quoted below reads
+> "… all 6 occurrence-scoped exemption controls behaved, and all 5
+> own-attribution masking controls behaved."
+
 The false-negative failure mode (a rule that silently stops firing while CI
 stays green) is itself tested:
 
@@ -237,3 +242,92 @@ No engine tree, no network, no oracle host required.
   derived from the existing records and the tripwire scan. A carrier that
   predates the records and leaves no signal would be missing from it; adding
   one is an ordinary follow-up, not a contradiction of this record.
+
+## 8. Increment 2 (2026-09-30) — an own-attribution mask on the non-exemptible rule
+
+Tree audited: `main` `4cf6104` plus this increment. Runtime: Python 3.12.3,
+Linux (stdlib only).
+
+**Finding.** `foreign-license-text` cannot be exempted (a foreign license body,
+SPDX tag or copyright line must be answered by a provenance row), so the only
+way to lose it is to make it stop firing. It did, in two layouts, both of which
+audited **clean** before this increment:
+
+| Injected shape | Before | After |
+|---|---|---|
+| our own copyright header, then a pasted foreign copyright line further down the file | PASS (no finding) | FAIL `foreign-license-text` |
+| a foreign copyright line one line under prose naming `gf180-surge` | PASS (no finding) | FAIL `foreign-license-text` |
+| our own `Apache-2.0` SPDX tag, then a pasted foreign SPDX tag | PASS (no finding) | FAIL `foreign-license-text` |
+| our own copyright / SPDX header alone (positive control) | PASS | PASS (unchanged) |
+
+Two independent causes, both in `tripwire_hits`:
+
+1. **First-match-only.** The SPDX and copyright signals used `re.search`, so
+   only a file's *first* notice was ever examined. Any own notice above a
+   pasted upstream one ended the search.
+2. **Proximity window.** A copyright line's holder was judged from a ±120-char
+   window around the match. Any nearby mention of this project — an own header
+   line, or ordinary prose containing `gf180-surge` — read as "this holder is
+   us". The holder is now read from the notice's own line (`copyright_line`).
+
+The pre-existing negative control could not catch either: its fixture file
+contains *only* the foreign notice, which is the one layout both bugs leave
+detectable.
+
+**Controls (`masking/*`, in `--negative-control`, so CI runs them).** Three
+must-fail controls (one per layout above) and two positive controls (our own
+copyright / own SPDX alone must still audit clean — a rule that flags our own
+headers would simply be switched off again). Non-vacuity was checked by
+reverting both hunks in a scratch copy of the tool: the three must-fail
+controls then report `did NOT fire … (found nothing)` and the self-test exits
+2, while the two positive controls still pass.
+
+```
+$ python3 tools/check_provenance.py --negative-control     # exit 0
+PASS: all 29 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 6 occurrence-scoped exemption controls behaved, and
+all 5 own-attribution masking controls behaved.
+
+$ python3 /tmp/pre_fix_check.py --negative-control          # exit 2 (both hunks reverted)
+  FAIL  masking/foreign-copyright-under-our-own            … found nothing
+  FAIL  masking/foreign-copyright-beside-a-project-mention … found nothing
+  FAIL  masking/foreign-spdx-under-our-own                 … found nothing
+  PASS  masking/our-own-copyright-alone-passes
+  PASS  masking/our-own-spdx-alone-passes
+```
+
+**Re-demonstrated on the real tree (acceptance item 4).** Three unattributed
+files injected into `main`'s tree — own-header-then-foreign-copyright,
+own-SPDX-then-foreign-SPDX, and a "transcribed from <pinned Surge commit>"
+table — then removed:
+
+```
+$ python3 tools/check_provenance.py
+coverage: 2101 files scanned, … 18 decision records, 20 provenance rows …
+tripwire hits: foreign-license-text=6, foreign-source-language=2,
+  self-declared-quotation=44, upstream-asset-extension=0
+FAIL: 3 provenance finding(s):
+  [foreign-license-text]     model/pasted_upstream_helper.py   (copyright line, REDACTED)
+  [foreign-license-text]     model/pasted_upstream_tag.py      (SPDX tag: GPL-3.0-or-later)
+  [self-declared-quotation]  model/undeclared_quote.py         (transcribed-from)
+exit 1
+```
+
+The first two would have been reported as PASS before this increment. Redaction
+of the copyright line follows §3's rule. After removal the tree is PASS (exit
+0) with `foreign-license-text=4`, i.e. the same four declared hits as `main`:
+**no committed file changed status**, so this increment adds no new provenance
+row and revises no decision record.
+
+```
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+24 passed        # 19 before, +5: three masking shapes, the positive control,
+                 # and a test that the masking controls are wired into the self-test
+```
+
+**What §8 does NOT establish.** It closes two specific masking paths; it is not
+evidence that no other masking path exists, and every limit in §7 still stands
+(a marker-free copy remains undetectable, and nothing here ratifies a decision
+record or makes a distribution-license determination). Whether any file in the
+repository's history ever carried such a masked notice was **NOT_RUN**: no
+history scan was performed, only the current tree, which is PASS.

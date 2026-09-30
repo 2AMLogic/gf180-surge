@@ -15,7 +15,11 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
   - the manifest cannot be weakened silently: blanket patterns, stale rows,
     stale exemptions and exemptions of non-exemptible rules all fail,
   - an occurrence-scoped exemption covers only its named occurrences: a
-    foreign quotation added elsewhere in the same file still fails.
+    foreign quotation added elsewhere in the same file still fails,
+  - the non-exemptible `foreign-license-text` rule cannot be masked by our own
+    attribution: a pasted upstream copyright line or SPDX tag still fires when
+    our own header sits above it (or a `gf180-surge` mention beside it), while
+    our own attribution alone still audits clean.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -320,3 +324,78 @@ def test_classic_readme_exemption_does_not_launder_a_foreign_copy(tmp_path):
             ),
         )
         assert ("self-declared-quotation" in _fired_on(root, rel)) is expect_fail, label
+
+
+# --- own-attribution masking (#25 acceptance item 4: the rule must still fire) -
+
+
+def _masked_tree(tmp_path, label, text):
+    (tmp_path / label).mkdir(parents=True, exist_ok=True)
+    root = _skeleton(tmp_path / label)
+    cp._write(root, cp.MASKED_REL, text)
+    return root
+
+
+def test_foreign_copyright_below_our_own_header_is_flagged(tmp_path):
+    """Reading only a file's FIRST copyright line disarmed the rule.
+
+    `foreign-license-text` cannot be exempted, so the only way to lose it is
+    to make it stop firing: a pasted upstream notice under our own header used
+    to audit clean, because the signal inspected one match per file.
+    """
+    root = _masked_tree(
+        tmp_path,
+        "under-own",
+        cp.FIXTURE_OWN_COPYRIGHT + cp.FIXTURE_FILLER + cp.FIXTURE_FOREIGN_COPYRIGHT_LINE,
+    )
+    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+
+
+def test_foreign_copyright_beside_a_project_mention_is_flagged(tmp_path):
+    """A holder is read from its own notice line, not from a ±120-char window.
+
+    Any nearby mention of this project (an own header, or prose naming
+    `gf180-surge`) satisfied the window and suppressed the foreign notice.
+    """
+    root = _masked_tree(
+        tmp_path,
+        "beside-mention",
+        cp.FIXTURE_OWN_PROJECT_LINE + cp.FIXTURE_FOREIGN_COPYRIGHT_LINE,
+    )
+    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+
+
+def test_foreign_spdx_below_our_own_tag_is_flagged(tmp_path):
+    root = _masked_tree(
+        tmp_path,
+        "spdx",
+        cp.FIXTURE_OWN_SPDX_TAG + cp.FIXTURE_FILLER + cp.FIXTURE_FOREIGN_SPDX_TAG,
+    )
+    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+
+
+def test_our_own_attribution_alone_still_audits_clean(tmp_path):
+    """The positive half: a rule that flags our own header would be turned off."""
+    for label, text in (
+        ("own-copyright", cp.FIXTURE_OWN_COPYRIGHT + cp.FIXTURE_FILLER),
+        ("own-spdx", cp.FIXTURE_OWN_SPDX_TAG + cp.FIXTURE_FILLER),
+        ("own-both", cp.FIXTURE_OWN_SPDX_TAG + cp.FIXTURE_OWN_COPYRIGHT + cp.FIXTURE_FILLER),
+    ):
+        (tmp_path / label).mkdir(parents=True, exist_ok=True)
+        root = _skeleton(tmp_path / label)
+        cp._write(root, cp.OWN_ONLY_REL, text)
+        findings, _ = cp.audit(root)
+        assert not findings, (label, [f.detail for f in findings])
+
+
+def test_masking_controls_run_in_the_self_test(tmp_path):
+    """The controls must be wired into `--negative-control`, not merely defined.
+
+    Without this, deleting the masking list from the runner would keep the
+    tests above green while CI stopped exercising them.
+    """
+    assert cp._masking_controls(), "the masking controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for label, _expected, _where, _description, _mutate in cp._masking_controls():
+        assert label in proc.stdout, f"{label} not exercised by --negative-control"
