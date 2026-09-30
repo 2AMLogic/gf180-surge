@@ -32,7 +32,6 @@ Original to this repository (Apache-2.0); no engine source is copied.
 """
 
 import argparse
-import glob
 import importlib.util
 import json
 import os

@@ -113,9 +113,6 @@ class Biquad:
     def instantize(self):
         self.lag = list(self.tgt)
 
-    def instantize(self):
-        self.lag = list(self.tgt)
-
     def step_lags(self):
         for i in range(5):
             self.lag[i] = qadd(qmul(self.lag[i], D_LPINV, C_FMT, C_FMT, C_FMT),

@@ -65,7 +65,6 @@ recorded in checks-summary.json, and passed to the ledger (leg 6).
 
 import argparse
 import datetime
-import glob
 import json
 import os
 import shutil
