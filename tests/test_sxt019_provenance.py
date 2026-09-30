@@ -18,8 +18,11 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     foreign quotation added elsewhere in the same file still fails,
   - the non-exemptible `foreign-license-text` rule cannot be masked by our own
     attribution: a pasted upstream copyright line or SPDX tag still fires when
-    our own header sits above it (or a `gf180-surge` mention beside it), while
-    our own attribution alone still audits clean.
+    our own header sits above it (or a `gf180-surge` mention beside it), when
+    this project is named inside the foreign notice's own holder line, when our
+    own licence is merely the leading operand of a compound SPDX expression,
+    and when a license body is wrapped mid-phrase across a comment leader —
+    while every own-attribution layout still audits clean.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -386,6 +389,98 @@ def test_our_own_attribution_alone_still_audits_clean(tmp_path):
         cp._write(root, cp.OWN_ONLY_REL, text)
         findings, _ = cp.audit(root)
         assert not findings, (label, [f.detail for f in findings])
+
+
+# --- the same masking one level in: inside the notice / tag / phrase ----------
+
+
+def test_foreign_holder_naming_this_project_is_still_flagged(tmp_path):
+    """A holder is read from the HOLDER FIELD, not from anywhere on the line.
+
+    Line-scoping the holder test (the previous fix) still let a pasted upstream
+    notice suppress itself by *mentioning* this project on its own line — in a
+    parenthetical, or after a spaced hyphen, which is exactly how a modified
+    vendored file gets annotated. Both audited clean on the non-exemptible rule.
+    """
+    for label, text in (
+        ("parenthetical", cp.FIXTURE_FOREIGN_COPYRIGHT_PARENTHETICAL),
+        ("after-dash", cp.FIXTURE_FOREIGN_COPYRIGHT_AFTER_DASH),
+    ):
+        root = _masked_tree(tmp_path, label, text)
+        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+
+
+def test_compound_spdx_expression_behind_our_own_operand_is_flagged(tmp_path):
+    """An SPDX tag carries an expression; only its first operand was compared.
+
+    `Apache-2.0 OR <foreign>` is the standard dual-licence spelling, so this
+    was not an exotic evasion — it read as "our own licence" and audited clean.
+    """
+    root = _masked_tree(tmp_path, "compound-spdx", cp.FIXTURE_COMPOUND_SPDX_OWN_FIRST)
+    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+
+
+def test_license_body_wrapped_across_a_comment_leader_is_flagged(tmp_path):
+    """A pasted license body is a comment block, and may wrap mid-phrase.
+
+    `\\s+` between two words does not span `"\\n# "`, and the old multi-word
+    prefilter did not survive the wrap either, so a header whose phrase broke
+    across lines carried no signal at all.
+    """
+    for label, text in (
+        ("wrapped-fsf", cp.FIXTURE_WRAPPED_FSF_BODY),
+        ("wrapped-gpl-title", cp.FIXTURE_WRAPPED_GPL_TITLE),
+    ):
+        root = _masked_tree(tmp_path, label, text)
+        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+
+
+def test_own_attribution_variants_still_audit_clean(tmp_path):
+    """The positive half of the holder-field and SPDX-expression fixes.
+
+    Each of these is an own-attribution layout that the fixes could plausibly
+    have started flagging (an aside on the notice line, an 'Authors' spelling, a
+    holder after a spaced hyphen, a tag quoted mid-sentence). A rule that fires
+    on our own header gets switched off, and the protection goes with it.
+    """
+    for label, text in (
+        ("own-with-aside", cp.FIXTURE_OWN_COPYRIGHT_WITH_ASIDE),
+        ("own-authors", cp.FIXTURE_OWN_COPYRIGHT_AUTHORS),
+        ("own-after-dash", cp.FIXTURE_OWN_COPYRIGHT_AFTER_DASH),
+        ("own-spdx-in-prose", cp.FIXTURE_OWN_SPDX_IN_PROSE),
+    ):
+        (tmp_path / label).mkdir(parents=True, exist_ok=True)
+        root = _skeleton(tmp_path / label)
+        cp._write(root, cp.OWN_ONLY_REL, text + cp.FIXTURE_FILLER)
+        findings, _ = cp.audit(root)
+        assert not findings, (label, [f.detail for f in findings])
+
+
+def test_leaderless_prose_wrap_is_a_declared_boundary(tmp_path):
+    """Pins the deliberate scope limit, so it cannot drift silently either way.
+
+    The comment-leader gap accepts a line break only when the continuation
+    carries a comment leader. A leaderless prose wrap of a license NAME is not
+    a comment-block paste and is not treated as carriage — the rule is
+    non-exemptible, so a finding here could not be answered by an exemption.
+    """
+    (tmp_path / "prose").mkdir(parents=True, exist_ok=True)
+    root = _skeleton(tmp_path / "prose")
+    cp._write(root, "docs/mentions.md", cp.FIXTURE_PROSE_WRAP_LICENSE_NAME)
+    findings, _ = cp.audit(root)
+    assert not findings, [f.detail for f in findings]
+
+
+def test_spdx_expression_parse_is_exact():
+    """Unit-level: every operand examined, prose after the expression ignored."""
+    assert cp.spdx_foreign_ids("Apache-2.0") == []
+    assert cp.spdx_foreign_ids("apache-2.0") == []
+    assert cp.spdx_foreign_ids("Apache-2.0 OR GPL-3.0-or-later") == ["GPL-3.0-or-later"]
+    assert cp.spdx_foreign_ids("Apache-2.0 AND MIT") == ["MIT"]
+    assert cp.spdx_foreign_ids("(MIT OR Apache-2.0)") == ["MIT"]
+    assert cp.spdx_foreign_ids("GPL-3.0-or-later") == ["GPL-3.0-or-later"]
+    assert cp.spdx_foreign_ids("Apache-2.0 tags are used below") == []
+    assert cp.spdx_foreign_ids("Apache-2.0 */") == []
 
 
 def test_masking_controls_run_in_the_self_test(tmp_path):

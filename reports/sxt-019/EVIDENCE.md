@@ -15,13 +15,16 @@ Tree audited: this PR's branch after merging `origin/main` `ce8c285` (merge
 update; §1/§4/§5 were re-run on that tree. Runtime for the re-run: Python
 3.14.7 (stdlib only), Darwin. The first-commit run (`d3e47ed`, §2/§3 history)
 used Python 3.12.3 on Linux. The previous re-run (head `e6b5923a`, 16 records,
-2000 files) is superseded by the numbers below.
+2000 files) is superseded by the numbers below. **§8 and §9 are later
+increments** on the same tool, each audited against the `main` commit named in
+its own heading; the §1/§4/§5 numbers above are not re-stated there except
+where a count changed.
 
 ## 0. What moved
 
 | Acceptance item (#25) | Before | After |
 |---|---|---|
-| 4. "an audit pass (script or checklist in review) flags any vendored file without a provenance row; demonstrate it once on a deliberately unattributed file" | no script, no manifest — enforcement was review habit only | `tools/check_provenance.py` + `decision-records/provenance.json` + CI job `provenance-audit`; demonstrated in §3 below |
+| 4. "an audit pass (script or checklist in review) flags any vendored file without a provenance row; demonstrate it once on a deliberately unattributed file" | no script, no manifest — enforcement was review habit only | `tools/check_provenance.py` + `decision-records/provenance.json` + CI job `provenance-audit`; demonstrated in §3, re-demonstrated after each later hardening increment in §8 and §9 |
 | 1–3 (per-issue adoption records, license/pin recorded in the adopting PR, GPL boundary enforced) | enforced by review only | still review-owned, now with machine checks behind them: a row is required at adoption time, must cite an existing indexed record, and must be corroborated by the file itself |
 | `decision-records/README.md` index completeness | 11 records on disk, 7 rows (0004–0007 missing) | 11 rows at the first commit; 18 rows / 18 records at the audited head (0012–0018 landed on `main` with their own index rows after the first commit); drift is now a CI failure (`index-missing-row`, `index-status-mismatch`, `index-date-mismatch`) |
 
@@ -331,3 +334,129 @@ evidence that no other masking path exists, and every limit in §7 still stands
 record or makes a distribution-license determination). Whether any file in the
 repository's history ever carried such a masked notice was **NOT_RUN**: no
 history scan was performed, only the current tree, which is PASS.
+
+## 9. Increment 3 (2026-09-30) — the same masking one level in: notice, tag, phrase
+
+Tree audited: `main` `bc931d6` plus this increment. Runtime: Python 3.14.7,
+macOS (stdlib only); CI runs the same checks on Python 3.12 / ubuntu-24.04.
+
+§8 closed two masking paths at the level of *which notice in a file* is
+inspected. This increment audits one level in — *how a single notice, tag, or
+phrase is read* — and finds four more layouts that audited **clean** on the
+non-exemptible `foreign-license-text` rule while `--negative-control` still
+reported all 29 rules firing:
+
+| Injected shape | Before | After |
+|---|---|---|
+| a foreign copyright line naming this project in a parenthetical (`… <upstream holder> (adapted for gf180-surge)`) | PASS (no finding) | FAIL `foreign-license-text` |
+| a foreign copyright line naming this project after a spaced hyphen (`… <upstream holder> - reworked for gf180-surge`) | PASS (no finding) | FAIL `foreign-license-text` |
+| an SPDX expression whose leading operand is ours (`Apache-2.0 OR GPL-3.0-or-later`) | PASS (no finding) | FAIL `foreign-license-text` |
+| a license body wrapped mid-phrase across a comment leader (`# This program is free` / `# software; …`; `* GNU GENERAL` / `* PUBLIC LICENSE`) | PASS (no finding) | FAIL `foreign-license-text` |
+| four own-attribution layouts + a leaderless prose wrap (positive controls) | PASS | PASS (unchanged) |
+
+Three independent causes, all in the signal layer:
+
+1. **Holder read from the whole line.** §8 scoped the holder test to the
+   notice's own line, but still searched that entire line for our name — so a
+   pasted upstream notice suppressed itself merely by *mentioning* this
+   project, which is exactly how a modified vendored file gets annotated. The
+   holder is now read from the **holder field** (the name standing after the
+   year, truncated at a parenthetical / bracket / dash / semicolon / URL /
+   comment close), and our name must be the *first* name in that field
+   (`own_copyright_holder`).
+2. **SPDX tag compared as one token.** `SPDX_RE` captured only the first
+   whitespace-delimited word, so every operand after the first was invisible.
+   `Apache-2.0 OR <foreign>` is the standard dual-licence spelling, not an
+   exotic evasion. The tag is now parsed as an expression — `id (AND|OR|WITH
+   id)*` — and **every** operand is compared (`spdx_foreign_ids`).
+3. **License bodies could not span a comment leader.** A pasted header is a
+   comment block; `\s+` between two words does not span `"\n# "`, and the old
+   multi-word prefilters (`"general public license"`, `"free software"`) did not
+   survive the wrap either, so a header that broke mid-phrase carried no signal
+   at all. Word gaps now accept same-line whitespace **or** a line break whose
+   continuation begins with a comment leader, and each prefilter is a single
+   word the regex cannot match without.
+
+The §8 controls could not catch any of these: their fixtures pair an own notice
+with a *separate* foreign one, which is the one shape all three bugs leave
+detectable.
+
+**Controls (`masking/*`, in `--negative-control`, so CI runs them).** Five new
+must-fail controls (one per layout above) and five new positive controls — our
+own copyright line with a parenthetical aside, the `The gf180-surge Authors`
+spelling, a holder after a spaced hyphen, our own SPDX tag quoted mid-sentence,
+and the declared leaderless-prose-wrap boundary. The positive half is not
+optional: a rule that fires on our own header gets switched off, and the
+protection goes with it.
+
+```
+$ python3 tools/check_provenance.py --negative-control     # exit 0
+PASS: all 29 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 6 occurrence-scoped exemption controls behaved, and
+all 15 own-attribution masking controls behaved.
+```
+
+**Non-vacuity — each new control fails when, and only when, its own fix is
+reverted.** The three hunks were reverted independently in a scratch copy of the
+tool and the five must-fail controls re-run against each:
+
+```
+== holder-field fix reverted ==
+  FAIL  masking/foreign-holder-with-our-name-in-a-parenthetical  … found nothing
+  FAIL  masking/foreign-holder-with-our-name-after-a-dash        … found nothing
+  PASS  masking/compound-spdx-behind-our-own-operand
+  PASS  masking/license-body-wrapped-across-a-comment-leader
+  PASS  masking/license-title-wrapped-across-a-comment-leader
+== SPDX-expression fix reverted ==
+  FAIL  masking/compound-spdx-behind-our-own-operand             … found nothing
+  (other four PASS)
+== comment-leader gap reverted ==
+  FAIL  masking/license-body-wrapped-across-a-comment-leader     … found nothing
+  FAIL  masking/license-title-wrapped-across-a-comment-leader    … found nothing
+  (other three PASS)
+```
+
+**Re-demonstrated on the real tree (acceptance item 4).** Three unattributed
+files carrying the newly-detected shapes, injected into the tracked tree
+(`git add -N` — `list_files` audits `git ls-files`, so untracked scratch is out
+of scope by design), then removed:
+
+```
+$ python3 tools/check_provenance.py
+coverage: 2103 files scanned, 754 excluded by declared scope exclusions,
+  18 decision records, 20 provenance rows covering 20 files, 9 exemptions
+tripwire hits: foreign-license-text=7, foreign-source-language=2,
+  self-declared-quotation=43, upstream-asset-extension=0
+FAIL: 3 provenance finding(s):
+  [foreign-license-text] model/masked_a.py   (copyright line w/ parenthetical, REDACTED)
+  [foreign-license-text] model/masked_b.py   (SPDX tag: GPL-3.0-or-later)
+  [foreign-license-text] model/masked_c.py   (fsf-body, wrapped across '#')
+exit 1
+```
+
+All three would have been reported as PASS before this increment. Redaction of
+the copyright line follows §3's rule. After removal the tree is PASS (exit 0)
+with `foreign-license-text=4` — the same four declared hits as `main`, so **no
+committed file changed status**: this increment adds no provenance row and
+revises no decision record. The `decision-records/README.md` index was
+re-derived and is already complete (18 records on disk, 18 rows).
+
+```
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+30 passed        # 24 before, +6: two foreign-holder shapes, the compound SPDX
+                 # tag, the wrapped bodies, the own-attribution variants, the
+                 # declared prose-wrap boundary, and a unit test of the SPDX
+                 # expression parse
+```
+
+**What §9 does NOT establish.** It closes four more specific masking paths on
+one rule. Every path was found by inspection, so this is **not** evidence that
+no further path exists — only that these are now pinned by controls that fail
+without their fix. Every limit in §7 stands, plus one made explicit in the
+tool's `--limits` text: a **leaderless** prose wrap of a license *name* is
+deliberately out of scope (it is not a comment-block paste, and the rule cannot
+be exempted, so prose naming a license must not become an unanswerable
+finding). Whether any file in the repository's history ever carried one of these
+masked notices remains **NOT_RUN** — only the current tree was audited, and it
+is PASS. Nothing here ratifies a decision record or makes a distribution-license
+determination.
