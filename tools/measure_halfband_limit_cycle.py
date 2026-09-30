@@ -863,11 +863,6 @@ def _quote_verbatim(text):
     return out
 
 
-def unquote_verbatim(lines):
-    """Inverse of `_quote_verbatim` (used by the test to re-derive)."""
-    return "\n".join(x[4:] if x.startswith("  | ") else "" for x in lines)
-
-
 def provenance_body(copies=None):
     """The derived part of the splice-provenance transcript.
 
