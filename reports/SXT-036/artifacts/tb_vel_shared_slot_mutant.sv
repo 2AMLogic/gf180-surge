@@ -51,11 +51,30 @@ module tb_vel;
 
   int unsigned qmul_count = 0;
 
+  // SXT-036 cost-accounting counters (issue #70 acceptance item 4, measured
+  // on THIS behavioral schedule; no technology claim, no timing claim). They
+  // are write-only bookkeeping: no traced value depends on them, the
+  // `DONE vel-qmuls=` line is unchanged, and they are deliberately placed
+  // clear of every mutation anchor the negative controls patch
+  // (tools/vel_negative_controls.py MUTANTS) so the state/rounding controls
+  // keep working byte-for-byte. Event-rate velocity-ROM reads are NOT counted
+  // here for exactly that reason -- the create/release latch blocks are
+  // mutation anchors and stay byte-identical; tools/vel_cost_accounting.py
+  // counts those reads from the same declared stimulus stream this bench
+  // consumes.
+  int unsigned pass_count  = 0;   // per-voice control passes (voice-blocks)
+  int unsigned eval_count  = 0;   // route evaluations (depth*source terms)
+  int unsigned add64_count = 0;   // 64-bit rounding add inside the qmul
+  int unsigned cmp64_count = 0;   // 64-bit saturation compares in the qmul
+  int unsigned add32_count = 0;   // 32-bit route-sum accumulations
+
   function automatic signed [31:0] qmul_sh(input signed [31:0] a,
                                            input signed [31:0] b,
                                            input integer sh);
     logic signed [63:0] p, r;
     qmul_count++;
+    add64_count++;
+    cmp64_count += 2;
     p = a * b;
     r = (p + (64'sd1 << (sh-1))) >>> sh;
     if      (r > 64'sd2147483647)  qmul_sh = 32'sd2147483647;
@@ -96,6 +115,9 @@ module tb_vel;
     run();
     $fclose(fd);
     $display("DONE vel-qmuls=%0d", qmul_count);
+    $display("OPS passes=%0d evals=%0d mul32=%0d add64=%0d cmp64=%0d add32=%0d",
+             pass_count, eval_count, qmul_count, add64_count, cmp64_count,
+             add32_count);
     $finish;
   end
 
@@ -124,8 +146,10 @@ module tb_vel;
       for (s = 0; s < NSLOTS; s++) begin
         base = ci + 1 + s*SW;
         if (ctrl_mem[base][0]) begin
+          pass_count++;
           sum_cut = 0; sum_reso = 0; sum_emod = 0; sum_vca = 0;
           for (k = 0; k < n_routes; k++) begin
+            eval_count++;
             src   = vel_route[1 + k*3];
             dst   = vel_route[2 + k*3];
             depth = 32'(vel_route[3 + k*3]);
@@ -137,6 +161,7 @@ module tb_vel;
               2: sum_emod = sum_emod + term;
               default: sum_vca = sum_vca + term;
             endcase
+            add32_count++;
           end
           $fwrite(fd, "V %0d %0d %0d %0d\n", b, s, vel_q[0], relvel_q[0]);
           $fwrite(fd, "S %0d %0d %0d %0d %0d %0d\n",

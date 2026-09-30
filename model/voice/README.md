@@ -779,3 +779,40 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
      the control is reported NOT_RUN with the reason named, never as a pass;
      the leaf-local `sxt036-vel-overlap-v1` is the only committed stimulus that
      satisfies all three.
+9. Cost rule and its accounting boundary (fifth increment; driver
+   `tools/vel_cost_accounting.py` -> `reports/SXT-036/artifacts/
+   cost-accounting.{txt,json}`; counters in `rtl/voice/tb_vel.sv`, `OPS` line):
+   * **Measured cost law (frozen).** `route evaluations = routes × per-voice
+     control passes`, with exactly **1 × 32×32→64 multiply + 1 × 64-bit
+     rounding add + 2 × 64-bit saturation compares + 1 × 32-bit accumulate**
+     per evaluation, and one event-rate `vel_rom` read per note-on and per
+     note-off. Verified on five stimuli and across a 0..6 route-table sweep
+     (each run also checked EXACT against the model as a positive control);
+     controls K1/K2/K3 must and do mispredict.
+   * **Cycles are not measured here.** Op counts are; a cycles figure is only
+     DERIVED under two explicitly named readings of the SXT-016 assumptions
+     (A-DSP-1c / A-ALU-1), reported as the bracket **2..8 cycles per
+     evaluation**, and is never a probe result or a technology claim.
+   * **SXT-015 divergence (recorded, not reconciled).** `mod_cycles =
+     _count_modroutes(g) × cyc_modroute_frame` charges every modulation row
+     **once per frame** (15 cycles, a `placeholder` param that no SXT-016 probe
+     replaces — asserted over all 76 committed probe records). Both sources
+     here are PER-VOICE, so their rows are voice-list rows whose work scales
+     with LIVE VOICES: at the accounting's own worst-case voice count the
+     row-evaluation count is 12.25× / 4.46× / 7.00× the charged row count for
+     `Bad News` / `Rainy Day Dreamaway` / `House Of Chords`, and 1.00× for the
+     fixture carrier `Attacky` (no voice rows — which is why the divergence is
+     invisible on the fixture). Re-pinning a cost row is SXT-016/SXT-017 work;
+     this leaf supplies a refinement INPUT, is not tuned to agree, and files
+     the finding as bounded follow-up #239.
+   * **State.** 8 slots × {`vel_q`, `relvel_q`} × 32 b = **512 bits**, and the
+     count is load-bearing because the scene-wide-register mutant FAILS
+     exactness (read back from the committed control transcript, K6). SXT-015
+     has **no** modulation-source state row, so this 8 B/voice is unnamed in
+     the accounting — recorded as a scope ambiguity, not resolved here.
+   * **Pins, fail closed.** The comparison is pinned to SXT-015
+     `sxt-015-accounting/1.0.0` / `placeholder-v0` / params digest
+     `646942e9c3887ecb` / `cyc_modroute_frame = 15`; drift REFUSES (exit 2) so
+     the recorded divergence is re-recorded against the new model rather than
+     silently carried forward, and `tests/test_sxt036_vel_cost.py` fails in CI
+     if the live model moves.
