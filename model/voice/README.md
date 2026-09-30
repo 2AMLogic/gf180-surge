@@ -702,4 +702,42 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
    discriminate rule 4 (per-instance state) — `tools/vel_negative_controls.py`
    reports those two controls `NOT_RUN` on such a stimulus rather than passing
    them, and the overlapping leaf-local `sxt036-vel-overlap-v1` sequence stays
-   the per-instance-state carrier.
+   the per-instance-state carrier. The same driver also renders
+   `seq-poly-8-v1`, the only polyphonic note fixture committed in
+   `fixtures/sequences/`, and measures that it holds eight voices at a single
+   velocity/release velocity, so no committed shared fixture discriminates
+   rule 4 either.
+7. Parameter corners (frozen; driver `tools/vel_param_corners.py`, transcript
+   `reports/SXT-036/artifacts/param-corners.{txt,json}`, stimulus
+   `model/voice/sequences/sxt036-vel-corners-v1.json`):
+   * **Source-word domain.** `vel_q` is a 128-entry table; it is checked
+     EXHAUSTIVELY (all 128 words, RTL `vel_rom` lifted verbatim out of
+     `rtl/voice/tb_vel.sv` vs the model quantizer), not only at the corners.
+     `vel_q(0) = 0`, `vel_q(127) = 2^21` exactly. Velocities 1/63/126 give ODD
+     words (16513 / 1040319 / 2080639), which is what makes a depth of exactly
+     ±0.5 an exact round-half-up tie.
+   * **Destination extents (derived, not read back).** `depth_raw /
+     depth_normalized` in `corpus/normalized/graphs.jsonl` gives each
+     destination's full extent, agreeing across hundreds of independent rows:
+     308 = 130.0 (2914 rows, 0.19 % spread), 309 = 1.0 (874 rows), 310 = 192.0
+     (483 rows), 298 = 96.0 (838 rows). Observed normalized depth range of both
+     sources over the whole corpus: [−1, +1]. These are corpus-pipeline values
+     and therefore FALSIFIABLE PREDICTIONS for the oracle host (#232), never
+     reference values.
+   * **Declared corner set.** normalized depth ±1 (`depth_raw` = ±extent),
+     mixed sign (velocity +1 / release velocity −1), the smallest nonzero model
+     depth (`depth_q` = ±1), the rounding-tie depth ±0.5, and the largest
+     `|depth_raw|` each source/destination pair actually shows in the corpus.
+   * **Checkpoint-word precondition.** The per-destination route sum is a
+     32-bit signed word in the RTL; the frozen checkpoint definition holds
+     while `|sum| ≤ 2^31−1`. Worst declared corner: 805,306,368 (both sources
+     at full scale onto 310, the widest destination), i.e. **2.67× headroom**.
+     Beyond ≈2.67× full-scale depth the RTL word wraps while the model's
+     Python sum does not; that is outside the declared range, is demonstrated
+     by the `over-range-accumulator` control, and is recorded rather than
+     designed around.
+   * **Controls at the corners.** the `round-trunc` RTL mutant must FAIL on the
+     tie corner (it does: 44 mismatches) and the `rom-floor` mutant must FAIL
+     the exhaustive ROM check (it does: 63 of 128 entries). A corner set that
+     could not distinguish round-half-up from truncation would not be freezing
+     the rounding rule.

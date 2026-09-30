@@ -1,0 +1,932 @@
+{
+  "verdict": "PASS",
+  "claim": "RTL == frozen model (integer equality) at the declared parameter corners of issue #70",
+  "sequence": "sxt036-vel-corners-v1",
+  "reference_budget_items": "NOT_RUN (#96)",
+  "derived_ranges": {
+    "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+    "presets_scanned": 3561,
+    "extents": {
+      "308": {
+        "extent": 130.007607,
+        "rows": 2914,
+        "row_min": 129.88135593220338,
+        "row_max": 130.13385826771653,
+        "relative_spread": 0.001942212007017506
+      },
+      "309": {
+        "extent": 1.0,
+        "rows": 874,
+        "row_min": 1.0,
+        "row_max": 1.0,
+        "relative_spread": 0.0
+      },
+      "310": {
+        "extent": 192.00662,
+        "rows": 483,
+        "row_min": 191.99612674413177,
+        "row_max": 192.017112632234,
+        "relative_spread": 0.00010929773221516027
+      },
+      "298": {
+        "extent": 95.9966,
+        "rows": 838,
+        "row_min": 95.98469578200822,
+        "row_max": 96.00850445965568,
+        "relative_spread": 0.0002480158424100201
+      }
+    },
+    "observed_source_normalized_range": {
+      "ms_velocity": {
+        "min": -1.0,
+        "max": 1.0,
+        "rows": 5212
+      },
+      "ms_releasevelocity": {
+        "min": -1.0,
+        "max": 1.0,
+        "rows": 162
+      }
+    },
+    "observed_in_class": {
+      "ms_velocity->308": {
+        "min_norm": -0.332308,
+        "max_norm": 1.0,
+        "min_raw": -43.200008,
+        "max_raw": 130.0,
+        "rows": 576
+      },
+      "ms_velocity->309": {
+        "min_norm": -1.0,
+        "max_norm": 0.65625,
+        "min_raw": -1.0,
+        "max_raw": 0.65625,
+        "rows": 127
+      },
+      "ms_velocity->310": {
+        "min_norm": -0.685715,
+        "max_norm": 1.0,
+        "min_raw": -131.657211,
+        "max_raw": 192.0,
+        "rows": 258
+      },
+      "ms_velocity->298": {
+        "min_norm": -0.230357,
+        "max_norm": 0.691072,
+        "min_raw": -22.114292,
+        "max_raw": 66.342888,
+        "rows": 62
+      },
+      "ms_releasevelocity->308": {
+        "min_norm": -1.0,
+        "max_norm": 0.792048,
+        "min_raw": -130.0,
+        "max_raw": 102.966263,
+        "rows": 12
+      },
+      "ms_releasevelocity->309": {
+        "min_norm": -0.587143,
+        "max_norm": -0.587143,
+        "min_raw": -0.587143,
+        "max_raw": -0.587143,
+        "rows": 2
+      },
+      "ms_releasevelocity->310": {
+        "min_norm": null,
+        "max_norm": null,
+        "min_raw": null,
+        "max_raw": null,
+        "rows": 0
+      },
+      "ms_releasevelocity->298": {
+        "min_norm": null,
+        "max_norm": null,
+        "min_raw": null,
+        "max_raw": null,
+        "rows": 0
+      }
+    }
+  },
+  "exhaustive_source_word_rom": {
+    "verdict": "PASS",
+    "entries_checked": 128,
+    "mismatches": 0,
+    "first_failures": [],
+    "rtl_done_line": "/tmp/sxt036-corners-dg6j13wf/rom-frozen/tb_vel_rom.sv:21: $finish called at 0 (1ps)"
+  },
+  "exhaustive_source_word_rom_control": {
+    "verdict": "FAIL",
+    "entries_checked": 128,
+    "mismatches": 63,
+    "first_failures": [
+      "midi 64: model=1056833 rtl=1056832",
+      "midi 65: model=1073346 rtl=1073345",
+      "midi 66: model=1089859 rtl=1089858",
+      "midi 67: model=1106372 rtl=1106371",
+      "midi 68: model=1122885 rtl=1122884",
+      "midi 69: model=1139398 rtl=1139397"
+    ],
+    "rtl_done_line": "/tmp/sxt036-corners-dg6j13wf/rom-floor-mutant/tb_vel_rom.sv:21: $finish called at 0 (1ps)"
+  },
+  "corners": {
+    "full-scale-positive": {
+      "note": "every route at normalized depth +1 (depth_raw = +derived extent)",
+      "expected_verdict": "PASS",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 545259520,
+          "reso": 4194304,
+          "fegmod": 805306368,
+          "vca": 402653184
+        },
+        "worst_abs_route_sum": 805306368,
+        "checkpoint_word_headroom_x": 2.6666666654249034,
+        "fits_32bit_checkpoint_word": true,
+        "max_abs_single_term": 402653184,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 0,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 130.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 130.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 1.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 1.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 192.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 192.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 96.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 96.0
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [],
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 312,
+          "fields": 10920,
+          "oscout": 19968,
+          "mono": 36800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "full-scale-negative": {
+      "note": "every route at normalized depth -1",
+      "expected_verdict": "PASS",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 545259520,
+          "reso": 4194304,
+          "fegmod": 805306368,
+          "vca": 402653184
+        },
+        "worst_abs_route_sum": 805306368,
+        "checkpoint_word_headroom_x": 2.6666666654249034,
+        "fits_32bit_checkpoint_word": true,
+        "max_abs_single_term": 402653184,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 0,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": -130.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": -130.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -1.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -1.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": -192.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": -192.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -96.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -96.0
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [],
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 312,
+          "fields": 10920,
+          "oscout": 19968,
+          "mono": 36800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "mixed-sign-full-scale": {
+      "note": "velocity +1, release velocity -1 (per-destination cancellation at full-scale terms)",
+      "expected_verdict": "PASS",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 272629760,
+          "reso": 2097152,
+          "fegmod": 402653184,
+          "vca": 201326592
+        },
+        "worst_abs_route_sum": 402653184,
+        "checkpoint_word_headroom_x": 5.333333330849807,
+        "fits_32bit_checkpoint_word": true,
+        "max_abs_single_term": 402653184,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 0,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 130.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": -130.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 1.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -1.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 192.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": -192.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 96.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -96.0
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [],
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 312,
+          "fields": 10920,
+          "oscout": 19968,
+          "mono": 36800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "one-lsb": {
+      "note": "smallest nonzero model depth word (depth_q = +-1): the rounding floor of the qmul",
+      "expected_verdict": "PASS",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 1,
+          "reso": 1,
+          "fegmod": 1,
+          "vca": 1
+        },
+        "worst_abs_route_sum": 1,
+        "checkpoint_word_headroom_x": 2147483647.0,
+        "fits_32bit_checkpoint_word": true,
+        "max_abs_single_term": 1,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 0,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 4.76837158203125e-07
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": -4.76837158203125e-07
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 4.76837158203125e-07
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -4.76837158203125e-07
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 4.76837158203125e-07
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": -4.76837158203125e-07
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 4.76837158203125e-07
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -4.76837158203125e-07
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [],
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 312,
+          "fields": 10920,
+          "oscout": 19968,
+          "mono": 36800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "rounding-tie-half": {
+      "note": "depth exactly +-0.5: an exact round-half-up tie for every odd source word, both signs",
+      "expected_verdict": "PASS",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 1048576,
+          "reso": 1048576,
+          "fegmod": 1048576,
+          "vca": 1048576
+        },
+        "worst_abs_route_sum": 1048576,
+        "checkpoint_word_headroom_x": 2047.9999990463257,
+        "fits_32bit_checkpoint_word": true,
+        "max_abs_single_term": 1048576,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 6144,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 0.5
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": -0.5
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 0.5
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -0.5
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 0.5
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": -0.5
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 0.5
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": -0.5
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [],
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 312,
+          "fields": 10920,
+          "oscout": 19968,
+          "mono": 36800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      },
+      "round_trunc_control": {
+        "exactness": {
+          "tb": "reports/SXT-036/artifacts/tb_vel_round_trunc_mutant.sv",
+          "sequence": "sxt036-vel-corners-v1",
+          "control_mode": "normal",
+          "verdict": "FAIL",
+          "checked": {
+            "voice_block_checkpoints": 11,
+            "source_words": 22,
+            "route_sums": 44
+          },
+          "mismatches": 44,
+          "first_failures": [
+            "block 0 slot 0 route_sum[0]: model=8257 rtl=8256",
+            "block 0 slot 0 route_sum[1]: model=8257 rtl=8256",
+            "block 0 slot 0 route_sum[2]: model=8257 rtl=8256",
+            "block 0 slot 0 route_sum[3]: model=8257 rtl=8256",
+            "block 1 slot 0 route_sum[0]: model=8257 rtl=8256",
+            "block 1 slot 0 route_sum[1]: model=8257 rtl=8256",
+            "block 1 slot 0 route_sum[2]: model=8257 rtl=8256",
+            "block 1 slot 0 route_sum[3]: model=8257 rtl=8256",
+            "block 2 slot 0 route_sum[0]: model=8257 rtl=8256",
+            "block 2 slot 0 route_sum[1]: model=8257 rtl=8256"
+          ],
+          "rtl_done_line": "DONE vel-qmuls=16704"
+        },
+        "fails_as_required": true
+      },
+      "control_plane_rerun": "PASS"
+    },
+    "observed-corpus-extreme": {
+      "note": "largest |depth_raw| this source/destination pair actually shows anywhere in the corpus",
+      "expected_verdict": "PASS",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "PASS",
+        "checked": {
+          "voice_block_checkpoints": 2088,
+          "source_words": 4176,
+          "route_sums": 8352
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 272629760,
+          "reso": 3328480,
+          "fegmod": 805306368,
+          "vca": 340457712
+        },
+        "worst_abs_route_sum": 805306368,
+        "checkpoint_word_headroom_x": 2.6666666654249034,
+        "fits_32bit_checkpoint_word": true,
+        "max_abs_single_term": 402653184,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 0,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 130.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": -130.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -1.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": -0.587143
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 192.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 192.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 66.342888
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 96.0
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [
+        "ms_releasevelocity->310 'A Filter 1 FEG Mod Amount': no route with this source exists anywhere in the corpus, so the corner falls back to full scale (+192.0)",
+        "ms_releasevelocity->298 'A VCA Gain': no route with this source exists anywhere in the corpus, so the corner falls back to full scale (+96.0)"
+      ],
+      "datapath": {
+        "tb": "tb_voice.sv",
+        "verdict": "PASS",
+        "comparison": "PASS",
+        "checked": {
+          "checkpoints": 312,
+          "fields": 10920,
+          "oscout": 19968,
+          "mono": 36800
+        },
+        "mismatches": 0,
+        "first_failures": [],
+        "sim_fails": [],
+        "sim_stdout_tail": ""
+      }
+    },
+    "over-range-accumulator": {
+      "note": "CONTROL, outside the derived ranges: depth 3x the derived extent overflows the 32-bit checkpoint word",
+      "expected_verdict": "FAIL",
+      "control_plane": {
+        "tb": "rtl/voice/tb_vel.sv",
+        "sequence": "sxt036-vel-corners-v1",
+        "control_mode": "normal",
+        "verdict": "FAIL",
+        "checked": {
+          "voice_block_checkpoints": 2081,
+          "source_words": 4162,
+          "route_sums": 8324
+        },
+        "mismatches": 41,
+        "first_failures": [
+          "block 550 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 551 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 552 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 553 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 554 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 555 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 556 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 557 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 558 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192",
+          "block 559 slot 5 route_sum[2]: model=2415919104 rtl=-1879048192"
+        ],
+        "rtl_done_line": "DONE vel-qmuls=16704"
+      },
+      "stats": {
+        "blocks": 1150,
+        "max_abs_route_sum": {
+          "cutoff": 1635778560,
+          "reso": 12582912,
+          "fegmod": 2415919104,
+          "vca": 1207959552
+        },
+        "worst_abs_route_sum": 2415919104,
+        "checkpoint_word_headroom_x": 0.8888888884749677,
+        "fits_32bit_checkpoint_word": false,
+        "max_abs_single_term": 1207959552,
+        "saturated_qmul_terms": 0,
+        "exact_rounding_ties": 0,
+        "distinct_source_word_pairs": 10,
+        "concurrent_distinct_source_word_blocks": 498,
+        "routes": [
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 390.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Cutoff",
+            "dest_id": 308,
+            "depth_raw": 390.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 3.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 Resonance",
+            "dest_id": 309,
+            "depth_raw": 3.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 576.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A Filter 1 FEG Mod Amount",
+            "dest_id": 310,
+            "depth_raw": 576.0
+          },
+          {
+            "source": "ms_velocity",
+            "source_id": 1,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 288.0
+          },
+          {
+            "source": "ms_releasevelocity",
+            "source_id": 30,
+            "dest": "A VCA Gain",
+            "dest_id": 298,
+            "depth_raw": 288.0
+          }
+        ]
+      },
+      "as_required": true,
+      "declared_depth_fallbacks": [],
+      "boundary": "The per-destination checkpoint sum is a 32-bit signed word in rtl/voice/tb_vel.sv and an unbounded Python integer in the model, so the frozen checkpoint definition holds only while |sum| <= 2^31-1. This corner is deliberately outside the derived ranges and shows the divergence is reachable there."
+    }
+  }
+}
