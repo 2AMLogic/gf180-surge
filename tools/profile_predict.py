@@ -598,7 +598,12 @@ def main(argv=None):
             "accounting_cost_profile": REG.cost_profile,
             "accounting_params_note": "voice_pool_limit overridden to the bundle "
                                       "pool via the declared REG override "
-                                      "mechanism (params_digest varies by pool)",
+                                      "mechanism; params_digest does NOT move "
+                                      "under this override (issue #248) -- the "
+                                      "effective pool is instead recorded "
+                                      "explicitly here as bundle_spec."
+                                      "voice_pool_limit and reflected in each "
+                                      "preset's worst_case_voices column",
             "bundle_file": _rel(args.bundle),
             "bundle_file_sha256": _sha256_file(bundle_path),
             "slates": sorted(slates),

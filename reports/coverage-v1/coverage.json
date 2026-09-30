@@ -304,7 +304,7 @@
   },
   "reports/sxt-017/predictions/B4-broad.json": {
    "role": "structural input (pinned)",
-   "sha256": "9030e26387a0f39e72f255444cd1577fdfb1fd50b03c068fe18413d1b768ffb5"
+   "sha256": "c14dff2d5101f84bf0a1a5d696cb9eadc0868ca5184ebcc8028af09310a13b34"
   },
   "reports/sxt-020/compile-corpus-scan.json": {
    "role": "structural input (pinned)",

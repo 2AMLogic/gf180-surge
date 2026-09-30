@@ -97,7 +97,13 @@ STRUCTURAL_INPUTS = {
     # within_budget -> OVERFLOW). Every per-preset `status` and `reasons` list
     # is byte-identical -- cycles gate nothing in that stage by construction --
     # so no headline_status, gate cell or b4_prediction published here moved.
-    PREDICTION_DEFAULT: "9030e26387a0f39e72f255444cd1577fdfb1fd50b03c068fe18413d1b768ffb5",
+    # revised by #248: corrected the false `provenance.accounting_params_note`
+    # claim ("params_digest varies by pool" -- it does not; the digest is
+    # deliberately override-blind, see ParamRegistry.override()). Only that
+    # one prose string moved; every per-preset status, reasons list and
+    # column is byte-identical, so no headline_status, gate cell or
+    # b4_prediction published here moved.
+    PREDICTION_DEFAULT: "c14dff2d5101f84bf0a1a5d696cb9eadc0868ca5184ebcc8028af09310a13b34",
     "reports/sxt-013/candidates/slate-256-balanced.json": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
     "reports/sxt-013/candidates/slate-256-contributor-lean.json": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e",
     "reports/sxt-013/candidates/slate-256-factory-lean.json": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883",
