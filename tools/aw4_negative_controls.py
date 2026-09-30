@@ -256,7 +256,6 @@ def nc_d_dropped_tail():
     full = stim(burst + span + resume, seed=231, amp=0.6,
                 silence_from=burst * M.BLOCK)
     # restore the resumed burst after the silent span
-    tail_end = (burst + span) * M.BLOCK
     live = stim(burst + span + resume, seed=231, amp=0.6)
     for b in range(burst + span, burst + span + resume):
         full[b] = live[b]
