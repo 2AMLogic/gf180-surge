@@ -62,7 +62,14 @@ Arithmetic discipline (FROZEN, enforced throughout):
 
 import json
 import math
+import os
 import struct
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__)))))
+
+from refusal import Refuse  # noqa: E402
 
 SR = 48000
 BLOCK_SIZE = 32
@@ -1011,10 +1018,6 @@ def keytrack_word(pitch_voice, keytrack_root):
     """
     return qint((pitch_voice - keytrack_root)
                 / float(KEYTRACK_SEMITONES_PER_UNIT))
-
-
-class Refuse(Exception):
-    """Fail-closed applicability refusal (exit 2 at the runner boundary)."""
 
 
 def qint28(x):

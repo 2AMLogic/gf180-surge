@@ -43,16 +43,14 @@ import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
+sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 MANIFEST = os.path.join(REPO, "reports", "sxt-025", "fixtures",
                         "hells_bells__sxt025-accept-v1.json")
 SR = 48000
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_file(path):

@@ -49,6 +49,10 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
+
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 CENSUS = os.path.join(REPO, "corpus", "census-v0.1", "corpus-manifest.json")
 OUTDIR = os.path.join(REPO, "model", "effects", "fx_inputs")
@@ -75,10 +79,6 @@ CARRIERS = {
     "novuo": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
     "harp": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
 }
-
-
-class Refuse(Exception):
-    """A fail-closed extraction refusal (recorded, never swallowed)."""
 
 
 def load_census():

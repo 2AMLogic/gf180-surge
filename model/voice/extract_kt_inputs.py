@@ -44,6 +44,10 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
+
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results",
                           "per-preset.csv")
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
@@ -66,10 +70,6 @@ DEST_NAMES = {
 }
 KT_DEST_LIVE = (308, 309, 310)        # modeled (filter unit 1 is the live unit)
 KT_DEST_INERT = (314, 315, 318)       # accepted, inert (unit 2 Off in class)
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_file(path):

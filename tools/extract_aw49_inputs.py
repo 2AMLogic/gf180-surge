@@ -33,6 +33,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -59,10 +60,6 @@ PRESETS = {
     "unity": "resources/data/patches_3rdparty/Altenberg/Pads/Unity.fxp",
     "fmod09": "resources/data/patches_factory/Tutorials/Formula Modulator/09 Example - Crossfading Oscillators.fxp",
 }
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_entry(rel_path):

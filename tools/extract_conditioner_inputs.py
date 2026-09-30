@@ -46,6 +46,7 @@ sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, REPO)
 
 from conditioner_corners import FIXTURE_PRESETS, PARAM_ORDER  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 FX_TYPE_CONDITIONER = 8
 ROLE_TAG = {**{f"ains{i}": f"A{i}" for i in range(1, 5)},
@@ -53,10 +54,6 @@ ROLE_TAG = {**{f"ains{i}": f"A{i}" for i in range(1, 5)},
             **{f"send{i}": f"S{i}" for i in range(1, 5)},
             **{f"global{i}": f"G{i}" for i in range(1, 5)}}
 DEACTIVATABLE = {0: "bass", 1: "treble", 8: "hpwidth"}
-
-
-class Refuse(Exception):
-    pass
 
 
 def md_routes(graphs):

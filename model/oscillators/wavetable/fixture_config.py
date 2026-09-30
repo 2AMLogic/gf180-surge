@@ -11,9 +11,14 @@ adapted presets, and never count toward preset coverage.
 """
 
 import os
+import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
 
 PRESET_REL = "resources/data/patches_3rdparty/Argitoth/Drums/Kick.fxp"
 PRESET_MF_REL = "resources/data/patches_3rdparty/Argitoth/FX/Monster Feedback.fxp"
@@ -27,10 +32,6 @@ WT_FIX = [("mute_o1", 1), ("mute_noise", 1), ("fu1_off", 1)]
 # phase; the product contract requires deterministic starts for evidence).
 MF_FIX = [("mute_o1", 1), ("mute_noise", 1), ("fu0_off", 1), ("fu1_off", 1),
           ("fx_off", 1), ("retrigger_on", 1), ("scene_volume", 0.6)]
-
-
-class Refuse(Exception):
-    pass
 
 
 def preset_abs(oc, preset_rel=PRESET_REL):

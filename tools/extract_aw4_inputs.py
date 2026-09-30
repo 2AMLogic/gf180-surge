@@ -68,8 +68,10 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "aw-4"))
+sys.path.insert(0, REPO)
 
 import logical4_model as M  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 LEAF = "SXT-028k"
 AW_FX_TYPE = 14                  # fxt_airwindows
@@ -115,10 +117,6 @@ CARRIER_WHY = {
                    "global1), i.e. the dual-instance acceptance case on a "
                    "real preset rather than a synthetic pair",
 }
-
-
-class Refuse(Exception):
-    pass
 
 
 # --------------------------------------------------------------------------

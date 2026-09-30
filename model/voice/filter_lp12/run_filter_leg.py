@@ -42,9 +42,11 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
 
 import voice_model as vm  # noqa: E402
 import filter_lp12_model as fp  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 BLOCK_OS = vm.BLOCK_SIZE_OS
 UNIT_NAMES = {0: "unit1", 1: "unit2"}
@@ -55,10 +57,6 @@ MASK32 = (1 << 32) - 1
 def qintf(x):
     """Quantize an engine float32 to Q10.21 round-half-up (declared)."""
     return vm.sat(int(math.floor(x * (1 << vm.FQ) + 0.5)))
-
-
-class Refuse(Exception):
-    pass
 
 
 def load_bundle(bundle_dir):

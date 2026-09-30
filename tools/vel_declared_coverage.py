@@ -51,6 +51,11 @@ import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
+
 RUNNER = os.path.join(REPO, "model", "voice", "run_vel_model.py")
 CMP_VEL = os.path.join(REPO, "tools", "compare_vel_rtl_model.py")
 CMP_VOICE = os.path.join(REPO, "tools", "compare_rtl_model.py")
@@ -69,10 +74,6 @@ DECLARED = ["seq-notes-coverage-v1", "seq-notes-repeated-v1",
 POLY_CANDIDATE = "seq-poly-8-v1"
 
 DEST_ORDER = ["cutoff", "reso", "fegmod", "vca"]
-
-
-class Refuse(Exception):
-    pass
 
 
 def sh(cmd, cwd=None):

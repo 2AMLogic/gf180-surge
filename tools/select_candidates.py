@@ -40,8 +40,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "oracle"))
+sys.path.insert(0, str(REPO_ROOT))
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 DEFAULT_GRAPHS = REPO_ROOT / "corpus" / "normalized" / "graphs.jsonl"
 DEFAULT_CENSUS_CSV = REPO_ROOT / "corpus" / "census-v0.1" / "results" / "per-preset.csv"
@@ -137,10 +139,6 @@ PROFILES = {
         "pilot_author_cap": 2,
     },
 }
-
-
-class Refuse(Exception):
-    pass
 
 
 def load_census(census_csv):

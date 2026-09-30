@@ -31,14 +31,11 @@ import oracle_common as oc  # noqa: E402
 oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 SR = 48000
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.csv")
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel):

@@ -59,13 +59,10 @@ from run_chorus_model import (  # noqa: E402
     Reverb1Adapter, run_chain, read_wav_stereo_f32, write_wav_stereo_f32,
     SETTLE_BLOCKS, checkpoint_set, qhex,
 )
+from refusal import Refuse  # noqa: E402
 
 TAP_CHECKPOINT_STRIDE = 16
 STAGE_SAMPLES = 4
-
-
-class Refuse(Exception):
-    pass
 
 
 def build_models(cfg):

@@ -44,17 +44,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, HERE)
+sys.path.insert(0, REPO)
 
 import voice_model as vm            # noqa: E402
 import filter_lp24_model as fp      # noqa: E402
 import case_plan as cp              # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 MASK32 = (1 << 32) - 1
 CASES_DIR = os.path.join(REPO, "reports", "SXT-038", "artifacts", "cases")
-
-
-class Refuse(Exception):
-    pass
 
 
 def qintf(x):

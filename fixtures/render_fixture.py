@@ -63,6 +63,7 @@ import oracle_common as oc  # noqa: E402
 oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 SR = 48000
 FX_SLOTS = 16
@@ -79,10 +80,6 @@ PILOT_PRESETS = {
 }
 
 EVENT_TYPES = {"note_on", "note_off", "cc", "pitch_bend", "channel_pressure", "tempo"}
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_file(path):

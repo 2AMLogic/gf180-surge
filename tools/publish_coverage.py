@@ -49,8 +49,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "oracle"))
+sys.path.insert(0, str(REPO_ROOT))
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 TOOL_VERSION = "sxt-029-coverage/1.0.0"
 SCHEMA_VERSION = "sxt-029-coverage/1.0.0"
@@ -144,10 +146,6 @@ CSV_COLUMNS = [
     "routing_leaves_gate", "fidelity_contract_gate", "essentiality_listening",
     "fx_required", "b4_prediction", "slates", "reasons",
 ]
-
-
-class Refuse(Exception):
-    pass
 
 
 def load_json(repo: Path, rel: str):

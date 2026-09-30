@@ -48,6 +48,7 @@ import oracle_common as oc  # noqa: E402
 oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 SR = 48000
 FX_SLOTS = 16
@@ -59,10 +60,6 @@ CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.
 REV1_PARAM_IDS = ["predelay", "shape", "roomsize", "decaytime", "damping",
                   "lowcut", "freq1", "gain1", "highcut", "mix", "width"]
 REV1_SLOT = 4  # send1
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_file(path):

@@ -40,6 +40,7 @@ oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
 import render_fixture as rf  # noqa: E402  (SXT-012 harness: policies inherited)
+from refusal import Refuse  # noqa: E402
 
 SR = 48000
 FX_SLOTS = 16
@@ -50,10 +51,6 @@ PRESETS = {
     "dexie": "resources/data/patches_3rdparty/John Valentine/Keys/Dexie Swirly E-Piano.fxp",
 }
 SEQUENCES = ["seq-notes-coverage-v1"]
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_buf(a):

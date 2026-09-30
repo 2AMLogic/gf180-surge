@@ -56,6 +56,7 @@ oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
 import render_fixture as rf  # noqa: E402  (policies + sequence library, reused)
+from refusal import Refuse  # noqa: E402
 
 SR = rf.SR
 FX_SLOTS = rf.FX_SLOTS
@@ -79,10 +80,6 @@ ALL_PRESETS = {**PILOT_PRESETS, **CONTROL_PRESETS}
 
 BIT_IDENTICAL_CLASS = {"sub4", "behemoth"}        # per reports/sxt-012/repeatability.json
 FREE_PHASE_CLASS = {"koala2"}                     # quantified variation, not bit-identical
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256_file(path):

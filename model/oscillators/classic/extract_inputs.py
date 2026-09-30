@@ -36,16 +36,13 @@ sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "classic"))
 
 import oracle_common as oc  # noqa: E402
 import fixture_config as fc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results",
                           "per-preset.csv")
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel):

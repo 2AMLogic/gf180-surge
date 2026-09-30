@@ -39,6 +39,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -49,10 +50,6 @@ ROUTE_CUTOFF_F01 = 0.5
 ROUTE_RESO_F01 = 0.5
 FROZEN_SHAPES = (0, 1, 2, 3)          # sine, tri, square, ramp
 N_VOICE_LFOS = 6
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel):

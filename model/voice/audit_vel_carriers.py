@@ -52,6 +52,11 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
+
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 CENSUS = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.csv")
 
@@ -70,10 +75,6 @@ SOURCES = {1: "ms_velocity", 30: "ms_releasevelocity"}
 # frozen SXT-036 destination class (scene A), see model/voice/README.md
 FROZEN_CLASS = {308: "A Filter 1 Cutoff", 309: "A Filter 1 Resonance",
                 310: "A Filter 1 FEG Mod Amount", 298: "A VCA Gain"}
-
-
-class Refuse(Exception):
-    pass
 
 
 def sha256(path):

@@ -36,6 +36,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -43,10 +44,6 @@ CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 MS_MODWHEEL = 6
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_blob(rel):

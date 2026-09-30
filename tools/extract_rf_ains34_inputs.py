@@ -62,6 +62,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import _census_graphs_common as cgc  # noqa: E402
+from refusal import Refuse  # noqa: E402
 
 # SurgeStorage.h fxslot_positions (re-derivable from
 # tools/export_normalized_graphs.py FX_ROLES / corpus/normalized/graphs.jsonl)
@@ -106,10 +107,6 @@ LEAF_B4 = os.path.join(REPO, "reports", "sxt-028", "leaves", "SXT-028i",
 OUT_DIR = os.path.join(REPO, "model", "effects", "fx_inputs")
 REFUSALS = os.path.join(REPO, "reports", "SXT-028i", "artifacts",
                         "extract-refusals.txt")
-
-
-class Refuse(Exception):
-    pass
 
 
 def census_row(rel_path):

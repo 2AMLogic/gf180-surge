@@ -31,10 +31,7 @@ oc.reexec_under_pinned_python(REPO)
 
 import render_fixture as rf  # noqa: E402
 import numpy as np  # noqa: E402
-
-
-class Refuse(Exception):
-    pass
+from refusal import Refuse  # noqa: E402
 
 
 def sha_bytes(b):
