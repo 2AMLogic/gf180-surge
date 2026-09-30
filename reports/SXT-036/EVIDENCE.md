@@ -32,7 +32,7 @@ copied; the model and RTL are original (Apache-2.0).
 | 1 | Frozen fixed-point model, word lengths + op order | **PASS** (documented + implemented) | `model/voice/run_vel_model.py`; freeze section "SXT-036 velocity / release-velocity route extension" in `model/voice/README.md`. Q10.21 words, `vel_q=(midi*2^22+127)//254`, route order, destination class {308,309,310,298}, per-instance state. Scope: classic voice class on the declared Attacky carrier only (see Boundaries). **Parameter corners now frozen too** (third increment, README point 7): derived destination extents, the declared corner set, and the 32-bit checkpoint-word precondition with its measured headroom — `artifacts/param-corners.{txt,json}`. **State rules now frozen with controls** (fourth increment, README point 8): construction re-initialization of the release-velocity register on slot reuse, the same-block release-latch timing, and the scene-A-only destination class with its refusal control — `artifacts/state-coverage.{txt,json}`. |
 | 2 | Model-vs-pinned-engine dry-render budgets on carrier fixtures | **NOT_RUN** | pinned oracle unavailable on dispatch host (#96). No numbers estimated or tuned. **Now MEASURED, not asserted** (sixth increment): `artifacts/oracle-status.json` → `oracle_gate.status = UNAVAILABLE`, legs `render-reference` and `compare-budgets` both `NOT_RUN`; the emitter cannot express `PASS` for a leg it did not run (control O6). |
 | 3 | RTL-vs-model exact at declared checkpoints (integer equality) | **PASS** | `artifacts/exactness-vel-sxt036-vel-overlap-v1.json`: 2,940 voice-block checkpoints, 5,880 source words, 11,760 route sums, 0 mismatches (`tb_vel.sv`). `artifacts/exactness-voice-sxt036-vel-overlap-v1.json`: unchanged-datapath `tb_voice.sv` on the same run: 279 checkpoints / 9,765 fields / 17,856 oscout / 103,200 mono samples, 0 mismatches. Landed regression (SXT-022 seq-notes-repeated-v1, run_model.py stimulus): 403 / 14,105 / 25,792 / 196,800, 0 mismatches (`exactness-voice-landed-regression-*.json`); landed model wav is sha256-identical to `--strip-vel-routes` output (`9b7e7f90...`; was `6a73bb9a...` before main's halfband D2 fix #146, republished in `reports/halfband-republication/`). **Extended to the three sequences named by #70** (`artifacts/declared-sequence-coverage.{txt,json}`): `seq-notes-coverage-v1` / `seq-notes-repeated-v1` / `seq-notes-holds-v1`, control plane 3,132 / 1,944 / 4,392 checkpoints and datapath 467 / 403 / 255 checkpoints, **0 mismatches everywhere**. Coverage of that PASS is reported separately below, including one recorded gap (declared set is monophonic ⇒ per-instance-state not discriminated there). **Extended again to the declared parameter corners and to the whole source-word domain** (third increment, `artifacts/param-corners.{txt,json}`): six declared corners × (2,088 control-plane checkpoints / 4,176 source words / 8,352 route sums) and (312 datapath checkpoints / 10,920 fields / 19,968 oscout / 36,800 mono) each, **0 mismatches everywhere**; all **128** velocity-ROM entries exact. Survey run `seq-poly-8-v1` (8 concurrent voices): 14,784 control-plane checkpoints, 0 mismatches. |
-| 4 | Cycle/state costs vs SXT-016 probes / SXT-015 | **PASS (recorded, divergences noted)** | `artifacts/costs.txt`: 6 qmul per running-voice block (0.171 MAC/sample control plane), 512 state bits for the per-slot source registers; SXT-016 scheduler probe has no per-source row (88 cycles/event, 512 state bits = different quantity). Not reconciled. **Per-route linearity measured** (third increment): every corner run uses an 8-route table and reports `DONE vel-qmuls=16704` = 8 × 2,088 voice-blocks exactly, confirming the "one qmul per route per running-voice block" cost rule the accounting states rather than assuming it. State is unchanged (route table is fixture-constant; the per-slot registers do not grow with routes). **The SXT-015 half of this item is recorded for the first time** (fifth increment): `tools/vel_cost_accounting.py` → `artifacts/cost-accounting.{txt,json}` — measured op profile per route evaluation, the 0..6 route-table sweep, the per-frame-vs-per-live-voice **shape divergence** against `cyc_modroute_frame` on the named carriers (12.25× / 4.46× / 7.00×), the missing modulation-state row, and a fail-closed pin on the SXT-015 cost model. See "Cost accounting against the SXT-015 accounting" below. |
+| 4 | Cycle/state costs vs SXT-016 probes / SXT-015 | **PASS (recorded, divergences noted)** | `artifacts/costs.txt`: 6 qmul per running-voice block (0.171 MAC/sample control plane), 512 state bits for the per-slot source registers; SXT-016 scheduler probe has no per-source row (88 cycles/event, 512 state bits = different quantity). Not reconciled. **Per-route linearity measured** (third increment): every corner run uses an 8-route table and reports `DONE vel-qmuls=16704` = 8 × 2,088 voice-blocks exactly, confirming the "one qmul per route per running-voice block" cost rule the accounting states rather than assuming it. State is unchanged (route table is fixture-constant; the per-slot registers do not grow with routes). **The SXT-015 half of this item is recorded for the first time** (fifth increment): `tools/vel_cost_accounting.py` → `artifacts/cost-accounting.{txt,json}` — measured op profile per route evaluation, the 0..6 route-table sweep, the per-frame-vs-per-live-voice **shape divergence** against `cyc_modroute_frame` on the named carriers (12.25× / 4.46× / 7.00×), the missing modulation-state row, and a fail-closed pin on the SXT-015 cost model. Both recorded divergences were then **dispositioned in #239** (shape changed to per-evaluation charging; modulation-source state declared inside `voice_base_state_bytes`), and this tool now cross-checks the shape rather than recording a gap; the per-evaluation constant is still an unpinned placeholder. See "Cost accounting against the SXT-015 accounting" below. |
 | 5 | Negative controls fail the reference-budget check (routing-zeroed per destination class; source-swap modwheel) | **NOT_RUN** | Requires the pinned-engine render (#96). What did run is a different check, below. **Now MEASURED, not asserted** (sixth increment): `artifacts/oracle-status.json` leg `reference-budget-controls` = `NOT_RUN`, with the gate it needs and the committed tool that will run it both named. |
 
 ### Oracle-independent controls that DID run (exactness check, not item 5)
@@ -326,10 +326,15 @@ The SXT-015 half had never been recorded. `tools/vel_cost_accounting.py` →
 corpus artifacts only. Overall verdict **PASS** (every measured law held, every
 control fired).
 
-**What SXT-015 charges.** `model/resources/accounting.py`:
-`mod_cycles = _count_modroutes(g) * REG.cyc_modroute_frame`, i.e. **15 cycles
-per modulation row per frame**, each row counted **once** regardless of how
-many voices are live. `cyc_modroute_frame` is a `placeholder` param whose
+**What SXT-015 charges.** `model/resources/accounting.py`, since the shape
+decision this increment fed (**#239**, merged after this record was first
+written): `mod_cycles = _modroute_evaluations(g, worst_voices) *
+REG.cyc_modroute_frame`, i.e. **15 cycles per modulation row EVALUATION**,
+with a global/scene-list row evaluated once per frame and a voice-list row
+once per worst-case live voice per frame. (As first recorded here it was
+`_count_modroutes(g) * REG.cyc_modroute_frame` — every row once per frame,
+regardless of how many voices are live; that is the shape the measurement
+below retired.) `cyc_modroute_frame` is a `placeholder` param whose
 `estimate_ref` names SXT-016 — and **no SXT-016 probe replaces it**: over all
 **76** committed probe records, `sxt015_replacement.replaces` covers
 `cyc_filter_unit_frame`, `cyc_fxdelay_frame`, `cyc_fxgeneric_frame`,
@@ -363,33 +368,47 @@ schedule and not on some other one.
 **Cycles are NOT measured.** Op counts are. A cycles figure appears only as a
 bracket derived under two explicitly named readings of the SXT-016 assumptions
 (A-DSP-1c, A-ALU-1): **2 .. 8 candidate cycles per evaluation**. Against that
-bracket the accounted constant (15 cycles per row per frame) is 1.88×–7.50×
-conservative *per evaluation* — while the shape below understates a voice row.
+bracket the accounted constant (15 cycles per row evaluation) is 1.88×–7.50×
+conservative *per evaluation*, and since #239 it is applied to the measured
+number of evaluations rather than to the row count.
 No probe claim, no technology, timing, synthesis or hardware claim.
 
-**Divergence 1 — shape (recorded, not reconciled).** Both sources of this leaf
-are PER-VOICE, so their routes are voice-list rows, and the measured schedule
-evaluates a voice row once per **live voice** per frame. At the accounting's
-own worst-case voice count:
+**Divergence 1 — shape: recorded here, DISPOSITIONED in #239.** Both sources
+of this leaf are PER-VOICE, so their routes are voice-list rows, and the
+measured schedule evaluates a voice row once per **live voice** per frame. At
+the accounting's own worst-case voice count:
 
-| carrier named by #70 | global / scene / voice rows | rows charged | accounted mod cycles/frame | worst voices | measured evals/frame | shape × |
+| carrier named by #70 | global / scene / voice rows | rows charged | accounted mod cycles/frame (before → now) | worst voices | measured evals/frame | shape × |
 |---|---|---|---|---|---|---|
-| `Bad News.fxp` | 0 / 1 / 3 | 4 | 60 | 16 | 49 | **12.25** |
-| `Rainy Day Dreamaway.fxp` | 0 / 10 / 3 | 13 | 195 | 16 | 58 | **4.46** |
-| `House Of Chords.fxp` | 2 / 4 / 4 | 10 | 150 | 16 | 70 | **7.00** |
-| `Attacky.fxp` (fixture carrier) | 0 / 2 / 0 | 2 | 30 | 16 | 2 | 1.00 |
+| `Bad News.fxp` | 0 / 1 / 3 | 4 | 60 → **735** | 16 | 49 | **12.25** |
+| `Rainy Day Dreamaway.fxp` | 0 / 10 / 3 | 13 | 195 → **870** | 16 | 58 | **4.46** |
+| `House Of Chords.fxp` | 2 / 4 / 4 | 10 | 150 → **1050** | 16 | 70 | **7.00** |
+| `Attacky.fxp` (fixture carrier) | 0 / 2 / 0 | 2 | 30 → **30** | 16 | 2 | 1.00 |
 
-The row split is cross-checked against SXT-015's own `_count_modroutes` (the
-tool REFUSES if the two disagree), and the accounted term is read from
-`account_graph`, not recomputed. **Scope limits stated rather than glossed:**
-the modulation term is a small part of these accounts (voice cost dominates),
-every carrier above is already `rejected` (`budget_overflow`) under
-`placeholder-v0`, so the correction changes a **term, not any fit verdict**;
-re-pinning a cost row is SXT-016/SXT-017 work and this leaf is not a probe —
-the finding is filed as bounded follow-up **#239** rather than fixed here.
-Note also that the divergence is **invisible on the fixture carrier** (no voice
-rows of its own, shape × = 1.00) — it only appears on the carriers #70 names,
-which is exactly why the fixture adds declared synthetic voice routes.
+`shape ×` is evaluations ÷ rows — a property of the graph, not of the
+accounting, so it does not change when the accounting does. The row split is
+cross-checked against SXT-015's own `_count_modroutes` (the tool REFUSES if
+the two disagree), and the accounted term is read from `account_graph`, never
+recomputed. **Since #239 the tool CROSS-CHECKS the shape** instead of
+recording a gap: `accounted mod cycles == evals/frame × cyc_modroute_frame`
+must hold on every carrier (`shape_resolution.per_carrier` in
+`cost-accounting.json`) or the run FAILS. What is still recorded as a
+divergence is the per-evaluation **constant** (15 vs the derived 2..8
+bracket), which only an SXT-016 probe may pin; #239 explicitly did not, and
+nothing here is tuned to agree.
+
+**Scope limits stated rather than glossed:** the modulation term is a small
+part of these accounts (voice cost dominates) and every carrier above is
+already `rejected` (`budget_overflow`) under `placeholder-v0`, so on **these
+carriers** the correction changed a term and no fit verdict — as this record
+first said. Corpus-wide it did move 9 of 3,561 `placeholder-v0` closures,
+all `within_budget → OVERFLOW`, enumerated in `reports/sxt-015/EVIDENCE.md`
+§8.3 and in `reports/sxt-015/decision-239-modroute-shape.json`; a
+`placeholder-v0` closure is not a preset-support claim in either direction
+and the supported-preset delta stays 0. Note also that the divergence was
+**invisible on the fixture carrier** (no voice rows of its own, shape × =
+1.00) — it only appears on the carriers #70 names, which is exactly why the
+fixture adds declared synthetic voice routes.
 
 **Divergence 2 — state scope (recorded, not resolved).** The leaf holds 8 slots
 × {`vel_q`, `relvel_q`} × 32 b = **512 bits** of per-instance source state, and
@@ -398,17 +417,22 @@ mutant FAILS exactness (K6 reads that verdict back from the committed
 transcript: 45 mismatches; reported NOT_RUN, never assumed, if the transcript
 is absent). SXT-015 has **no modulation-source state row at all**: modulation
 rows feed cycles only, and on-chip state is `worst_voices ×
-voice_base_state_bytes` (4096 B, whose own note enumerates "mixer/ring/FM
-registers" and excludes filter state) + osc + filter + LFO rows. This leaf's
-8 B per voice is therefore *unnamed* in the accounting — inside that
-placeholder bucket or missing from it, and the parameter's description does not
-say which.
+voice_base_state_bytes` (4096 B) + osc + filter + LFO rows. This leaf's 8 B
+per voice was therefore *unnamed* in the accounting — inside that placeholder
+bucket or missing from it, with the parameter's description silent on which.
+**#239 decided it:** per-voice modulation-source registers are declared
+INSIDE `voice_base_state_bytes`, whose `estimate_ref` now enumerates them
+explicitly, with **no separate row** and **no re-tuned value** (still
+4096 B). This leaf's 8 B/voice covers two sources only and is a lower bound
+on a full source set, never a row value; SXT-016 re-derives that bucket at
+the selected word lengths and may then split the row out
+(`state.sxt015_modulation_state_disposition` in `cost-accounting.json`).
 
 **Controls (each demonstrably fails the check it targets).**
 
 | control | targets | verdict |
 |---|---|---|
-| K1 per-frame shape | predicting evaluations with SXT-015's voice-count-independent shape (routes × frames) | **MISPREDICTS** (19,350 vs measured 17,640) |
+| K1 per-frame shape | predicting evaluations with the retired voice-count-independent shape (routes × frames, what SXT-015 charged before #239) | **MISPREDICTS** (19,350 vs measured 17,640) |
 | K2 route-count-blind | predicting with a fixed route count | **MISPREDICTS** at R = 0..5 |
 | K3 attribution | an empty route table must measure zero multiply work; a cost model that charges per frame regardless | **MISPREDICTS** (predicts 19,350 where the measurement is 0), so all measured multiply work is attributable to the routes |
 | K4 pin drift | a mutated SXT-015 pin (profile / digest / `cyc_modroute_frame`) | **REFUSES** (exit 2); per-field in `tests/test_sxt036_vel_cost.py` |
@@ -416,12 +440,15 @@ say which.
 | K6 state cross-check | the 512-bit figure without a live per-instance control | **PASS** via the committed shared-register mutant (45 mismatches) |
 
 **Fail-closed pins.** The comparison is pinned to SXT-015
-`sxt-015-accounting/1.0.0` / `placeholder-v0` / params digest `646942e9c3887ecb`
+`sxt-015-accounting/1.1.0` / `placeholder-v0` / params digest `a639d3115ae1a0ca`
 / `cyc_modroute_frame = 15`, plus the `graphs.jsonl` sha256 #70 pins. Drift
-refuses (exit 2) so the recorded divergence is **re-recorded** against a new
-cost model rather than silently carried forward, and
-`tests/test_sxt036_vel_cost.py` (36 tests, CI-visible, no iverilog) fails if
-the live SXT-015 model moves away from the pin.
+refuses (exit 2) so the comparison is **re-recorded** against a new cost model
+rather than silently carried forward, and `tests/test_sxt036_vel_cost.py`
+(39 tests, CI-visible, no iverilog) fails if the live SXT-015 model moves away
+from the pin. That tripwire fired exactly as designed when #239 moved the
+model: the pin was **re-recorded from the live model** (version + digest) and
+the artifacts re-run, never re-tuned — `cyc_modroute_frame` is still pinned at
+15.
 
 **costs.txt is no longer unchecked.** The first increment's hand-assembled
 `artifacts/costs.txt` quoted four numbers; all four are now re-derived by the

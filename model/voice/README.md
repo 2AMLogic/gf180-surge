@@ -793,29 +793,39 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
      DERIVED under two explicitly named readings of the SXT-016 assumptions
      (A-DSP-1c / A-ALU-1), reported as the bracket **2..8 cycles per
      evaluation**, and is never a probe result or a technology claim.
-   * **SXT-015 divergence (recorded, not reconciled).** `mod_cycles =
-     _count_modroutes(g) × cyc_modroute_frame` charges every modulation row
-     **once per frame** (15 cycles, a `placeholder` param that no SXT-016 probe
-     replaces — asserted over all 76 committed probe records). Both sources
-     here are PER-VOICE, so their rows are voice-list rows whose work scales
-     with LIVE VOICES: at the accounting's own worst-case voice count the
-     row-evaluation count is 12.25× / 4.46× / 7.00× the charged row count for
-     `Bad News` / `Rainy Day Dreamaway` / `House Of Chords`, and 1.00× for the
-     fixture carrier `Attacky` (no voice rows — which is why the divergence is
-     invisible on the fixture). Re-pinning a cost row is SXT-016/SXT-017 work;
-     this leaf supplies a refinement INPUT, is not tuned to agree, and files
-     the finding as bounded follow-up #239.
+   * **SXT-015 shape divergence — recorded here, then DISPOSITIONED in #239.**
+     The accounting used to charge every modulation row **once per frame**,
+     while both sources here are PER-VOICE, so their rows are voice-list rows
+     whose work scales with LIVE VOICES: at the accounting's own worst-case
+     voice count the row-evaluation count is 12.25× / 4.46× / 7.00× the row
+     count for `Bad News` / `Rainy Day Dreamaway` / `House Of Chords`, and
+     1.00× for the fixture carrier `Attacky` (no voice rows — which is why the
+     divergence was invisible on the fixture). Decision #239 took that shape:
+     `mod_cycles = _modroute_evaluations(g, worst_voices) ×
+     cyc_modroute_frame`, a global/scene row once per frame and a voice row
+     once per worst-case live voice per frame. This tool now CROSS-CHECKS the
+     accounting against the measured shape per carrier (`shape_resolution` in
+     `cost-accounting.json`) instead of recording a gap.
+   * **What still diverges (recorded, not reconciled).** The per-evaluation
+     CONSTANT: 15 accounted cycles against the 2..8 derived bracket. 15 is a
+     `placeholder` param that no SXT-016 probe replaces (asserted over all 76
+     committed probe records) and only a probe may pin it; #239 deliberately
+     did not. Nothing here is tuned to agree.
    * **State.** 8 slots × {`vel_q`, `relvel_q`} × 32 b = **512 bits**, and the
      count is load-bearing because the scene-wide-register mutant FAILS
      exactness (read back from the committed control transcript, K6). SXT-015
-     has **no** modulation-source state row, so this 8 B/voice is unnamed in
-     the accounting — recorded as a scope ambiguity, not resolved here.
+     still has **no separate** modulation-source state row; #239 decided that
+     per-voice source registers are declared INSIDE `voice_base_state_bytes`
+     (whose `estimate_ref` now enumerates them; 4096 B unchanged), and this
+     leaf's 8 B/voice for two sources is a lower bound on a full source set,
+     never a row value. SXT-016 re-derives that bucket.
    * **Pins, fail closed.** The comparison is pinned to SXT-015
-     `sxt-015-accounting/1.0.0` / `placeholder-v0` / params digest
-     `646942e9c3887ecb` / `cyc_modroute_frame = 15`; drift REFUSES (exit 2) so
-     the recorded divergence is re-recorded against the new model rather than
-     silently carried forward, and `tests/test_sxt036_vel_cost.py` fails in CI
-     if the live model moves.
+     `sxt-015-accounting/1.1.0` / `placeholder-v0` / params digest
+     `a639d3115ae1a0ca` / `cyc_modroute_frame = 15` (re-recorded for #239 from
+     the live model — the constant was never re-tuned); drift REFUSES
+     (exit 2) so the comparison is re-recorded against the new model rather
+     than silently carried forward, and `tests/test_sxt036_vel_cost.py` fails
+     in CI if the live model moves.
 10. Oracle gate and the frozen backfill plan (sixth increment; driver
    `tools/vel_oracle_status.py` -> `reports/SXT-036/artifacts/
    oracle-status.json` + `oracle-backfill.txt`):

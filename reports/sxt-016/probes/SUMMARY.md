@@ -87,8 +87,8 @@ All values are ESTIMATES under named assumptions (each record embeds them). No g
 
 | Bundle | xMult | total cyc/frame | @48M | @96M | @192M | @480M | RAM bits | ext B/frame |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| july | M18 | 16230 | OVERFLOW (1623%) | OVERFLOW (811%) | OVERFLOW (406%) | OVERFLOW (162%) | 26097824 | 24 |
-| july | M32 | 11581 | OVERFLOW (1158%) | OVERFLOW (579%) | OVERFLOW (290%) | OVERFLOW (116%) | 26097824 | 24 |
+| july | M18 | 19605 | OVERFLOW (1960%) | OVERFLOW (980%) | OVERFLOW (490%) | OVERFLOW (196%) | 26097824 | 24 |
+| july | M32 | 14956 | OVERFLOW (1496%) | OVERFLOW (748%) | OVERFLOW (374%) | OVERFLOW (150%) | 26097824 | 24 |
 | supersaw | M18 | 550845 | OVERFLOW (55085%) | OVERFLOW (27542%) | OVERFLOW (13771%) | OVERFLOW (5508%) | 125778880 | 252 |
 | supersaw | M32 | 279085 | OVERFLOW (27908%) | OVERFLOW (13954%) | OVERFLOW (6977%) | OVERFLOW (2791%) | 125778880 | 252 |
 | covered_worst_synth | M18 | 282890 | OVERFLOW (28289%) | OVERFLOW (14144%) | OVERFLOW (7072%) | OVERFLOW (2829%) | 215923 | 168 |

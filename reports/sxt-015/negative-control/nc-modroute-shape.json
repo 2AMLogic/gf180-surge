@@ -1,0 +1,87 @@
+{
+ "arms": {
+  "scene_rows_poly16": {
+   "accounted_modulation_cycles_per_frame": 45.0,
+   "retired_shape_cycles_per_frame": 45,
+   "rows": {
+    "cycles_per_row_evaluation": 15,
+    "note": "global/scene-list rows are evaluated once per frame; a voice-list row once per live voice per frame (SXT-036 measured law, decision #239). The per-evaluation cost is still the placeholder-v0 constant (SXT-016 pins it); the voice-row term is an upper bound in dual/split scene modes",
+    "row_evaluations_per_frame": 3,
+    "rows_charged_once_per_frame": 3,
+    "rows_charged_once_per_live_voice": 0,
+    "rows_total": 3,
+    "worst_case_voices": 16
+   },
+   "worst_case_voices": 16
+  },
+  "voice_rows_poly1": {
+   "accounted_modulation_cycles_per_frame": 45.0,
+   "retired_shape_cycles_per_frame": 45,
+   "rows": {
+    "cycles_per_row_evaluation": 15,
+    "note": "global/scene-list rows are evaluated once per frame; a voice-list row once per live voice per frame (SXT-036 measured law, decision #239). The per-evaluation cost is still the placeholder-v0 constant (SXT-016 pins it); the voice-row term is an upper bound in dual/split scene modes",
+    "row_evaluations_per_frame": 3,
+    "rows_charged_once_per_frame": 0,
+    "rows_charged_once_per_live_voice": 3,
+    "rows_total": 3,
+    "worst_case_voices": 1
+   },
+   "worst_case_voices": 1
+  },
+  "voice_rows_poly16": {
+   "accounted_modulation_cycles_per_frame": 720.0,
+   "retired_shape_cycles_per_frame": 45,
+   "rows": {
+    "cycles_per_row_evaluation": 15,
+    "note": "global/scene-list rows are evaluated once per frame; a voice-list row once per live voice per frame (SXT-036 measured law, decision #239). The per-evaluation cost is still the placeholder-v0 constant (SXT-016 pins it); the voice-row term is an upper bound in dual/split scene modes",
+    "row_evaluations_per_frame": 48,
+    "rows_charged_once_per_frame": 0,
+    "rows_charged_once_per_live_voice": 3,
+    "rows_total": 3,
+    "worst_case_voices": 16
+   },
+   "worst_case_voices": 16
+  }
+ },
+ "base_preset": "resources/data/patches_3rdparty/A.Liv/Basses/Move Like A Bucket Truck.fxp",
+ "checks": {
+  "one_live_voice_reproduces_the_retired_shape": true,
+  "scene_list_rows_do_not_scale_with_voices": true,
+  "voice_rows_at_16_voices_differ_from_retired_shape": true,
+  "voice_rows_at_16_voices_match_the_measured_shape": true
+ },
+ "control": "modroute_voice_rows_charged_per_live_voice",
+ "decision": "#239 \u2014 voice-list rows are charged once per worst-case live voice per frame; cyc_modroute_frame is unchanged at 15 cycles per row EVALUATION (never re-tuned)",
+ "declared_rows": [
+  [
+   1,
+   0,
+   0,
+   308,
+   "A Filter 1 Cutoff",
+   1.0,
+   1.0
+  ],
+  [
+   16,
+   0,
+   0,
+   309,
+   "A Filter 1 Resonance",
+   1.0,
+   1.0
+  ],
+  [
+   30,
+   0,
+   0,
+   318,
+   "A Filter 2 FEG Mod Amount",
+   1.0,
+   1.0
+  ]
+ ],
+ "note": "synthetic declared rows on filter destinations so that osc and waveshaper activity (read from the same rows) is unaffected; the retired shape is recomputed live from _split_modroutes, never quoted",
+ "outcome": "PASS",
+ "targets": "a shape change that leaves every account numerically identical has not changed the shape it claims to change (issue #239 failure control); and a change that scaled EVERY row, or scaled by something other than the live voice count, would be a different (wrong) shape"
+}

@@ -8,7 +8,7 @@
   {
    "case": "simple-classic",
    "expected": {
-    "image_sha256": "30c2dfef7b71e651d306acdb89024772747c4ef000ce6152891fbc2cc0334c92",
+    "image_sha256": "6b0befea10eb654acc217c650cd4bc4c4bb8b2f532aa54616a7996e499d3b55b",
     "outcome": "compiled"
    },
    "note": "factory single scene, Classic oscillators, LP 12 dB, no FX (dry baseline)",
@@ -20,7 +20,7 @@
   {
    "case": "all-fx-off-baseline",
    "expected": {
-    "image_sha256": "69b279294ef517bb107b7fd6cd09b0f627fc9b7732244b47860980d8596d913b",
+    "image_sha256": "5c364974697b83b1e8ef6d00c07a608fd37c843174454463548ece8d2febe135",
     "outcome": "compiled"
    },
    "note": "SXT-015 worked example (c): all-FX-off baseline, waveshaper + unison in the voice path",
@@ -32,7 +32,7 @@
   {
    "case": "wavetable-asset",
    "expected": {
-    "image_sha256": "85f5d23460eca4618e871ea4b6eccc4021f8d90171ddbbff09c97fd118573568",
+    "image_sha256": "c937dbddf03a2f7efa20a138d14379e273d6f7c5795254f6bfe62a27bb6247d1",
     "outcome": "compiled"
    },
    "note": "wavetable-carrying (resolved asset, flash block)",
@@ -44,7 +44,7 @@
   {
    "case": "dual-scene",
    "expected": {
-    "image_sha256": "90b6c1f7c3e747416ab933bf1d0b552a7e6e8735c0f22af05bb35b2e41ce374d",
+    "image_sha256": "f9f73c5b291bdaa94732409aa104b04cb62f21f1b4c3bf08d932cfb11e532300",
     "outcome": "compiled"
    },
    "note": "dual scene mode (two pool voices per note), FM2 oscillators, EQ",
@@ -56,7 +56,7 @@
   {
    "case": "four-fx-instance",
    "expected": {
-    "image_sha256": "af42ba2b8f8b50d789fb7a3e265466d5769bd2823ce304500b2ffe0c722b4d16",
+    "image_sha256": "9701832e068a296dd078ba10f7870da54a5f39a7449e0e70eec5ec466fff1322",
     "outcome": "compiled"
    },
    "note": "four enabled FX instances (EQ/Distortion/Delay/Reverb 1), insert+send roles, external delay+reverb state",
@@ -68,7 +68,7 @@
   {
    "case": "split-scene",
    "expected": {
-    "image_sha256": "1f17b9ea1ab9338cbac1d21bf617d92236642a2afac59f52835d9b052553c51c",
+    "image_sha256": "0e7aeb2ef1712121bc0e55d53043d2d9820a7b6aaef11a2c910e2de66e674af8",
     "outcome": "compiled"
    },
    "note": "split scene mode, THREE enabled Delay slots (three delay histories), FX Comb filter",
@@ -80,7 +80,7 @@
   {
    "case": "send-fx",
    "expected": {
-    "image_sha256": "bf5b68b157b76f79818866fc78ea29cc459b8cea872869fde5709a020596ec1a",
+    "image_sha256": "ad6b8d3140aecba7918c567f7d3924b683e8125b8bdcd3ccf6064e51b45bec60",
     "outcome": "compiled"
    },
    "note": "send-bus FX (Reverb 2 + Delay as sends with return levels), unison 3",
@@ -92,7 +92,7 @@
   {
    "case": "supersaw-96osc",
    "expected": {
-    "image_sha256": "9f822717e68e2fb3d24afb640effd2455eb60224458f8d5eec72365ed69cd81a",
+    "image_sha256": "f0bc777a76e99836c4955aaa1799308ff890ecfe2777550ce0841e94ffd29612",
     "outcome": "compiled"
    },
    "note": "SXT-015 worked example (b): dual scene, unison 16 on all six slots, Chorus + Reverb 2",

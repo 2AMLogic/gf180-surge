@@ -229,16 +229,22 @@ def build_bundle(name, line, idx, mult, fx_instance_limit=4, e_model="E1"):
         "cycles_per_frame": env_cycles,
         "source": "SXT-015 placeholder-v0 cyc_env_frame",
         "placeholder_component": True})
-    n_mod = 0
-    md = g.get("md", {})
-    n_mod += len(md.get("g", []))
-    for sc in md.get("s", []):
-        n_mod += len(sc.get("s", []))
-        n_mod += len(sc.get("v", []))
+    # row EVALUATIONS, read from the SXT-015 account rather than recounted
+    # here: a global/scene-list row is evaluated once per frame, a voice-list
+    # row once per live voice per frame (SXT-036 measured law, decision
+    # #239). One source of truth — a second copy of the formula here is
+    # exactly how this bundle drifted from the accounting before.
+    mod_rows = acc["budget"]["modulation_rows"]
+    n_mod = mod_rows["row_evaluations_per_frame"]
     mod_cycles = n_mod * REG.get("cyc_modroute_frame").value
     flags.append("placeholder_component:cyc_modroute_frame")
     components.append({
-        "component": "modulation routing rows", "instances": n_mod,
+        "component": "modulation routing row evaluations "
+                     "(%d per-frame rows + %d voice rows x %d voices)"
+                     % (mod_rows["rows_charged_once_per_frame"],
+                        mod_rows["rows_charged_once_per_live_voice"],
+                        mod_rows["worst_case_voices"]),
+        "instances": n_mod,
         "cycles_per_frame": mod_cycles,
         "source": "SXT-015 placeholder-v0 cyc_modroute_frame",
         "placeholder_component": True})
