@@ -1,0 +1,211 @@
+{
+  "acceptance_items_gated": {
+    "2": "NOT_RUN",
+    "5": "NOT_RUN"
+  },
+  "backfill_predictions": {
+    "carrier_routes": [
+      {
+        "dest_id": 308,
+        "dest_name": "A Filter 1 Cutoff",
+        "expected_depth_normalized": 0.218077,
+        "expected_depth_raw": 28.350002,
+        "modsource": "ms_velocity",
+        "preset": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp"
+      }
+    ],
+    "destination_extents": {
+      "298": 95.9966,
+      "308": 130.007607,
+      "309": 1.0,
+      "310": 192.00662
+    },
+    "frozen_destination_class": {
+      "298": "A VCA Gain",
+      "308": "A Filter 1 Cutoff",
+      "309": "A Filter 1 Resonance",
+      "310": "A Filter 1 FEG Mod Amount"
+    },
+    "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+    "observed_source_normalized_range": {
+      "ms_releasevelocity": {
+        "max": 1.0,
+        "min": -1.0,
+        "rows": 162
+      },
+      "ms_velocity": {
+        "max": 1.0,
+        "min": -1.0,
+        "rows": 5212
+      }
+    },
+    "rule": "a disagreement on an oracle host is a finding about the corpus pipeline or about the cited reading of the engine -- never a tuning opportunity, and never a reason to re-derive the corners so they stay green"
+  },
+  "controls": [
+    {
+      "detail": "the stub is importable and carries no engine; accepting it would have reported an oracle that does not exist",
+      "expected": "naive reading TRUE (fooled), pinned reading refuses: status UNPINNED_SURGEPY, surgepy_under_engine_dir False",
+      "fired": true,
+      "id": "O1",
+      "observed": "rc=0 naive=True status=UNPINNED_SURGEPY under_engine_dir=False",
+      "targets": "a bare `import surgepy` accepted as proof of the pinned oracle (the reading used by increments 1-5)"
+    },
+    {
+      "detail": "",
+      "expected": "dir present TRUE but git worktree FALSE and status != AVAILABLE",
+      "fired": true,
+      "id": "O2",
+      "observed": "rc=0 present=True git_worktree=False status=UNAVAILABLE",
+      "targets": "an `os.path.isdir` reading of ORACLE_SURGE_DIR accepted as a pinned checkout"
+    },
+    {
+      "detail": "",
+      "expected": "git worktree TRUE, HEAD != pin, status PIN_MISMATCH",
+      "fired": true,
+      "id": "O3",
+      "observed": "rc=0 git_worktree=True head_present=True head_is_pin=False status=PIN_MISMATCH",
+      "targets": "any git checkout at ORACLE_SURGE_DIR accepted as THE pinned checkout regardless of its HEAD"
+    },
+    {
+      "detail": "",
+      "expected": "exit 2 (fail-closed refusal), 'engine pin drift' on stderr",
+      "fired": true,
+      "id": "O4",
+      "observed": "rc=2 stderr=[\"REFUSED: engine pin drift: manifest '0000000000000000000000000000000000000000' != #70 pin '58914e59c608ed4384ba6002e44c3465c58b2e71'. The oracle backfill must not run against an unpinned engine.\"]",
+      "targets": "an oracle/manifest.json engine pin that disagrees with the commit #70 pins"
+    },
+    {
+      "detail": "",
+      "expected": "both exit 2: 'prediction drift' on a mutated artifact, 'prediction source missing' on an absent one",
+      "fired": true,
+      "id": "O5",
+      "observed": "drift rc=2 fired=True; missing rc=2 fired=True",
+      "targets": "the consolidated backfill predictions drifting away from, or being restated without, the committed artifacts they are derived from"
+    },
+    {
+      "detail": "",
+      "expected": "validate_legs rejects the mutated 'PASS' status; the unmutated leg set validates",
+      "fired": true,
+      "id": "O6",
+      "observed": "mutated_rejected=True baseline_statuses=['NOT_RUN']",
+      "targets": "an oracle-gated leg this tool never ran being emitted as PASS"
+    },
+    {
+      "detail": "",
+      "expected": "a bogus name resolves to MISSING; the real table reports tools/render_fixture.py as CORRECTED",
+      "fired": true,
+      "id": "O7",
+      "observed": "bogus=MISSING corrected=['tools/render_fixture.py']",
+      "targets": "a tool path named by #70 being reported as resolved without checking the tree"
+    }
+  ],
+  "controls_all_fired": true,
+  "issue": 70,
+  "leaf": "SXT-036",
+  "legs": {
+    "blob-verify-carriers": {
+      "acceptance_item": "1 (fixture provenance under item 1)",
+      "gate": "pinned checkout only (no built surgepy needed)",
+      "reason": "pinned oracle unavailable on dispatch host (#96); the leg was not run",
+      "status": "NOT_RUN",
+      "tool": "oracle/oracle_common.py::git_blob_sha1",
+      "what": "hash the .fxp payloads of the three carriers #70 names, plus the Attacky fixture carrier, in the pinned checkout and compare against the census blob SHA-1s. Today every sidecar carries blob_verified: false and the audit's census-vs-graphs agreement is strictly weaker than a payload hash."
+    },
+    "compare-budgets": {
+      "acceptance_item": "2",
+      "gate": "pinned checkout + surgepy built from it",
+      "reason": "pinned oracle unavailable on dispatch host (#96); the leg was not run",
+      "status": "NOT_RUN",
+      "tool": "tools/compare_audio_reference.py",
+      "what": "model-vs-pinned-engine dry-render budgets on the carrier fixtures: ACHIEVED numbers recorded, not tuned (PENDING-FREEZE per the fidelity policy draft)."
+    },
+    "extract-fixture-depths": {
+      "acceptance_item": "1 (replaces the DECLARED depths behind items 2 and 5)",
+      "gate": "pinned checkout + surgepy built from it",
+      "reason": "pinned oracle unavailable on dispatch host (#96); the leg was not run",
+      "status": "NOT_RUN",
+      "tool": "model/voice/extract_vel_inputs.py (to be written on the oracle host, modelled on model/voice/extract_mw_inputs.py)",
+      "what": "replace model/voice/attacky_vel_inputs.json -- whose own provenance field says the depths are hand-declared, NOT engine readbacks -- with setModDepth01/getModDepth01 read-back words, and cross-check the live getAllModRoutings against the normalized graphs.jsonl rows. Until this lands, no reference-budget number produced from that file means anything."
+    },
+    "reference-budget-controls": {
+      "acceptance_item": "5",
+      "gate": "pinned checkout + surgepy built from it",
+      "reason": "pinned oracle unavailable on dispatch host (#96); the leg was not run",
+      "status": "NOT_RUN",
+      "tool": "tools/vel_negative_controls.py (exactness side, landed) + tools/compare_audio_reference.py (budget side, this leg)",
+      "what": "the routing-zeroed control (depth forced to 0, per destination class) and the source-swap control (landed modwheel in place of velocity / release velocity) must BOTH FAIL the reference-budget check. Both mutations already run and already fail the RTL-vs-model EXACTNESS check (E1/E2) -- that is a different check and is not a substitute."
+    },
+    "render-reference": {
+      "acceptance_item": "2",
+      "gate": "pinned checkout + surgepy built from it",
+      "reason": "pinned oracle unavailable on dispatch host (#96); the leg was not run",
+      "status": "NOT_RUN",
+      "tool": "fixtures/render_vel_fixture.py (to be written on the oracle host, modelled on fixtures/render_mw_fixture.py)",
+      "what": "dry pinned-engine reference renders under the SXT-012 policies (fresh instance, controller reset, 0.25 s settle discarded, block-quantized events, mono int16, no normalization / time warping / fades) for the declared fixture across the three sequences #70 names plus the two leaf-local stimuli."
+    }
+  },
+  "named_tool_resolution": [
+    {
+      "cited_in": "#70 'Fixtures and oracle'; repeated in EVIDENCE.md 'Backfill'",
+      "named_by_issue": "tools/render_fixture.py",
+      "named_path_exists": false,
+      "resolves_to": "fixtures/render_fixture.py",
+      "status": "CORRECTED"
+    },
+    {
+      "cited_in": "#70 'Fixtures and oracle'",
+      "named_by_issue": "tools/compare_audio_reference.py",
+      "named_path_exists": true,
+      "resolves_to": "tools/compare_audio_reference.py",
+      "status": "OK"
+    },
+    {
+      "cited_in": "#70 acceptance item 3",
+      "named_by_issue": "tools/compare_rtl_model.py",
+      "named_path_exists": true,
+      "resolves_to": "tools/compare_rtl_model.py",
+      "status": "OK"
+    },
+    {
+      "cited_in": "#70 'Inputs / outputs / state'",
+      "named_by_issue": "model/voice/extract_inputs.py",
+      "named_path_exists": true,
+      "resolves_to": "model/voice/extract_inputs.py",
+      "status": "OK"
+    }
+  ],
+  "oracle_gate": {
+    "reason": "no pinned-engine checkout and/or no surgepy built from it in this environment; the oracle-gated legs were not run and must never be reported as a pass (#96, #232)",
+    "status": "UNAVAILABLE"
+  },
+  "probe": {
+    "engine_dir_is_git_worktree": false,
+    "engine_dir_present": false,
+    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "engine_head": null,
+    "engine_head_matches_pin": false,
+    "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "expected_checkout": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "oracle_surge_dir_env_set": false,
+    "surgepy_importable": false,
+    "surgepy_importable_naive": false,
+    "surgepy_naive": {
+      "err": "ModuleNotFoundError: No module named 'surgepy'",
+      "file": null,
+      "mode": "naive",
+      "ok": false
+    },
+    "surgepy_pinned": {
+      "err": "ModuleNotFoundError: No module named 'surgepy'",
+      "file": null,
+      "mode": "pinned",
+      "ok": false
+    },
+    "surgepy_so_dir_present": false,
+    "surgepy_so_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge/build-py311/src/surge-python",
+    "surgepy_under_engine_dir": false
+  },
+  "rule": "AGENTS.md: a test that did not run must never be reported as a pass. This tool runs no oracle-gated leg; it records whether they COULD run. It can never move an acceptance item to PASS, and it establishes no model-vs-reference agreement, no fidelity, and no preset support.",
+  "schema_version": 1,
+  "tool": "vel_oracle_status/1"
+}

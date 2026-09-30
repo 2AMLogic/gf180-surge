@@ -816,3 +816,45 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
      the recorded divergence is re-recorded against the new model rather than
      silently carried forward, and `tests/test_sxt036_vel_cost.py` fails in CI
      if the live model moves.
+10. Oracle gate and the frozen backfill plan (sixth increment; driver
+   `tools/vel_oracle_status.py` -> `reports/SXT-036/artifacts/
+   oracle-status.json` + `oracle-backfill.txt`):
+   * **The gate is measured, not asserted.** Acceptance items 2 and 5 of #70
+     are oracle-dependent and stay `NOT_RUN`; what the sixth increment freezes
+     is *how that verdict is established*. Measured gate on the dispatch host:
+     **`UNAVAILABLE`**.
+   * **Strict reading (frozen).** The oracle counts as present only when ALL
+     of: the checkout directory exists; it is a git work tree; its HEAD equals
+     the SXT-010 pin `58914e59c608ed4384ba6002e44c3465c58b2e71`; and the
+     imported `surgepy` module file lives INSIDE that checkout. Four statuses
+     are distinguished rather than collapsed — `AVAILABLE`, `PIN_MISMATCH`,
+     `UNPINNED_SURGEPY`, `UNAVAILABLE` — so a wrong-commit checkout is refused
+     rather than silently reported as merely absent. A bare `import surgepy`
+     (the reading increments 1–5 used) is explicitly NOT sufficient, and the
+     probe records both readings so the difference stays falsifiable.
+   * **Status vocabulary, fail closed.** A leg this driver did not run may
+     carry only `{NOT_RUN, RUNNABLE, BLOCKED}`; `PASS` is not in the
+     vocabulary and an injected `PASS` raises (control O6). An available
+     oracle makes a leg `RUNNABLE` — running it remains a separate act.
+   * **Legs split by gate.** `blob-verify-carriers` needs the pinned CHECKOUT
+     only; the other four (`extract-fixture-depths`, `render-reference`,
+     `compare-budgets`, `reference-budget-controls`) additionally need a built
+     `surgepy`. The cheapest leg — the one that turns today's
+     `blob_verified: false` into a real payload hash — is therefore not
+     bundled behind the expensive one.
+   * **Named-tool resolution.** Every tool path #70 names is resolved against
+     the committed tree on each run. `tools/render_fixture.py`, named by the
+     issue body and by earlier revisions of the evidence record, **does not
+     exist**; it resolves to `fixtures/render_fixture.py` (SXT-012 harness),
+     with `fixtures/render_mw_fixture.py` and `model/voice/extract_mw_inputs.py`
+     as the per-leaf patterns to copy. A bogus name reports `MISSING`
+     (control O7), so the table cannot rubber-stamp.
+   * **Predictions are derived, never restated.** The backfill predictions are
+     read out of `carrier-route-audit.json` and `param-corners.json`; a
+     disagreement between them, a missing source, or a corpus pin that no
+     longer matches #70 REFUSES (exit 2). A disagreement observed on the
+     oracle host is a corpus-pipeline or cited-reading finding — never a
+     tuning opportunity.
+   * **Necessary, not sufficient.** The gate checks HEAD against the pin; it
+     does not revalidate submodule SHAs, build flags, or the pinned
+     interpreter. Those remain `oracle/fetch-and-build.sh`'s job.
