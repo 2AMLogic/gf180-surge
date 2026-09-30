@@ -110,6 +110,16 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
 3. Divergence from the source is recorded in the adopting PR.
 4. Any GPL/Surge-derived artifact requires a license decision record before
    merge (see `AGENTS.md`).
+5. The adopted file gets a row in
+   [`decision-records/provenance.json`](../decision-records/provenance.json)
+   naming its class, upstream source, re-pinned commit, upstream license and
+   decision record. `python3 tools/check_provenance.py` fails on a file that
+   carries a third-party carriage signal without such a row, on a stale or
+   uncorroborated row, and on a decision record missing from the index;
+   `--negative-control` proves each of its rules still fires. Both run in CI
+   (job `provenance-audit`). The tool enforces bookkeeping — read its
+   `--limits` output before quoting a PASS as evidence: it is not proof that
+   nothing was copied.
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle
