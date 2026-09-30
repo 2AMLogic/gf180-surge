@@ -79,15 +79,53 @@ with `skipDriveNorm`. Grading NC-F/NC-G on a non-digital bed would produce a
 control that cannot fail; that would be theatre, so they are graded where the
 defect is reachable and this restriction is recorded here and in the JSON.
 
+WHAT THE RECORDED NUMBERS ARE EXACT UNDER (#243). This record's *metric*
+fields are reproducible exactly on one host, not across hosts, and the
+record carries an `environment` block saying which host they were measured
+on. Two measured mechanisms, neither of them in the frozen model:
+
+  (1) INPUT. `stimulus()` is built with libm `sin` at phases running to
+      ~118 rad, where libm is not correctly rounded -- under Apple libm 252
+      of this harness's 6144 `sin` evaluations are 1 ULP off the correctly
+      rounded value. A different libm therefore hands the harness a
+      different input before any model code runs, and `stimulus_digest`
+      differs outright between glibc 2.41 and Apple libm on the same
+      architecture and interpreter. Measured: regenerating on Apple libm
+      instead of glibc moves 43 max/rms fields, the FX-model-7 legs by up
+      to 12 % relative (F-028e-sse-4 chaos amplifying a 1-ULP input
+      change); substituting a correctly rounded `sin` reproduces the same
+      signature (FX 7 up to 14 %, FX 3/5/6 <= 4.2e-9, model-independent
+      controls <= 1e-13). FX model 4's max/rms fields do not move at all
+      -- `wst_digital`'s quantizer absorbs the perturbation.
+  (2) SPECTRAL METRIC. `spectral_corr()` is numpy (rfft + sum reductions),
+      so its last 1-2 bits follow the numpy build's reduction order. It
+      moves by <= 8.1e-16 relative even on legs whose signals are
+      bit-identical and whose stimulus digests match. Only `spectral_corr`
+      is affected, never max/rms.
+
+Neither mechanism touches a verdict, an `ok`, a budget, a status or a
+control outcome: those are byte-identical across the environments measured
+here. Nothing here is run-to-run nondeterminism -- two runs of the same
+code on one host are byte-identical.
+
+The `stimulus_digest` below makes mechanism (1) checkable rather than
+mysterious: same digest => the input was the same; a differing digest is
+the explanation for a metric diff and is not itself a regression.
+Mechanism (2) is bounded by the recorded `numpy` version instead, since a
+digest cannot fingerprint a reduction order.
+
 Usage: python3 tools/distortion_sse_negative_controls.py [--out DIR]
 Original to this repository (Apache-2.0).
 """
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import math
 import os
+import platform
+import struct
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -125,9 +163,90 @@ FHalfband = NC57.FHalfband
 GenericSubstitute = NC57.GenericSubstitute
 metrics = NC57.metrics
 verdict = NC57.verdict
-stimulus = NC57.stimulus
 PROPOSED = NC57.PROPOSED
 RMS_FLOOR_DBFS = NC57.RMS_FLOOR_DBFS
+
+# --------------------------------------------------------------------------
+# Stimulus digest: a fingerprint of the INPUT this run measured on (#243).
+#
+# See "WHAT THE RECORDED NUMBERS ARE EXACT UNDER" in the module docstring for
+# the measurement. In short: `stimulus()` builds its sine bed with libm
+# `math.sin` at phases running to ~118 rad, where libm is not correctly
+# rounded (252 of this harness's 6144 evaluations are 1 ULP off under Apple
+# libm), so a different libm is a different *input*, and the F-028e-sse-4
+# chaos amplifies that to percent-level movement on the FX-model-7 legs.
+# The committed record is taken under glibc; Apple libm yields a different
+# digest and is reported NOT_RUN there.
+#
+# The digest is taken over the three 96-block beds every graded control
+# renders on. The phase sequence is shared by all three -- only the noise
+# stream differs -- so one libm difference shows up in all of them. Same
+# digest => the input was identical and the max/rms metrics must reproduce
+# byte-for-byte; a differing digest EXPLAINS a metric diff rather than being
+# a regression. It fingerprints the input only: it says nothing about
+# `spectral_corr`'s numpy reduction order, which is bounded by the recorded
+# `numpy` version instead. Verdicts, budgets and the pass/fail structure do
+# not depend on either. Cheap to recompute, so `tests/test_sxt028e_sse.py`
+# re-derives it rather than trusting the record's word for it.
+# --------------------------------------------------------------------------
+stimulus = NC57.stimulus
+
+STIMULUS_BEDS = ((96, 17), (96, 41), (96, 53))
+
+
+def stimulus_digest():
+    """sha256 fingerprint of the harness's own INPUT on this host."""
+    h = hashlib.sha256()
+    for n_blocks, seed in STIMULUS_BEDS:
+        h.update(struct.pack("<ii", n_blocks, seed))
+        for il, ir, ringout in stimulus(n_blocks, seed=seed):
+            h.update(struct.pack("<%dd" % len(il), *il))
+            h.update(struct.pack("<%dd" % len(ir), *ir))
+            h.update(struct.pack("<i", ringout))
+    return h.hexdigest()
+
+
+def environment():
+    """The environment the metric fields in this record are exact under."""
+    try:
+        import numpy
+        numpy_version = numpy.__version__
+    except ImportError:              # spectral_corr degrades to NaN
+        numpy_version = None
+    return {
+        "reproducibility":
+            "metric fields are exact under THIS environment only; "
+            "verdicts, budgets, statuses and control outcomes are NOT "
+            "environment-dependent and were byte-identical across every "
+            "environment measured in #243",
+        "python": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+        "numpy": numpy_version,
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "stimulus_digest": stimulus_digest(),
+        "stimulus_beds": [{"n_blocks": n, "seed": s}
+                          for n, s in STIMULUS_BEDS],
+        "stimulus_digest_note":
+            "sha256 over the three 96-block stimulus beds every graded "
+            "control renders on (float64 little-endian, bed order). "
+            "Fingerprints the harness INPUT, which is libm-dependent: "
+            "stimulus() calls libm sin at phases where libm is not "
+            "correctly rounded, so a different libm yields a different "
+            "digest and ULP-class input drift -- amplified to percent "
+            "level on the chaotic FX-model-7 legs (F-028e-sse-4). A "
+            "DIFFERING digest explains a max/rms metric diff; a MATCHING "
+            "digest means the max/rms fields must reproduce byte-for-byte.",
+        "spectral_corr_note":
+            "spectral_corr is computed with numpy (rfft + sum reductions), "
+            "so its last 1-2 bits follow the numpy build's reduction order "
+            "and can move by up to 2.3e-16 relative even when the compared "
+            "signals are bit-identical and the stimulus digest matches. "
+            "That residue is bounded by the recorded numpy version above, "
+            "not by the stimulus digest. max_abs_diff_lsb and rms_diff_* "
+            "are pure-Python and carry no such residue.",
+    }
+
 
 LSB = 1 << 21
 
@@ -818,6 +937,7 @@ def main():
 
     out = {"schema_version": 1, "leaf": "SXT-028e-sse",
            "model_revision": rev,
+           "environment": environment(),
            "budget_class": "SXT-023 effect-slice [PROPOSED] (freeze gated on #12)",
            "budgets": PROPOSED,
            "grading_boundary": "model-vs-model (pinned-oracle leg NOT_RUN)",
@@ -832,8 +952,17 @@ def main():
     with open(os.path.join(args.out, "negative-controls.json"), "w") as f:
         json.dump(out, f, indent=2)
         f.write("\n")
+    env = out["environment"]
     lines = [f"SXT-028e-sse negative controls — {out['status']}",
              f"model revision {rev}",
+             f"environment: python {env['python']} "
+             f"({env['python_implementation']}), numpy {env['numpy']}, "
+             f"{env['platform']}",
+             f"stimulus digest {env['stimulus_digest']}",
+             "  metric fields are exact under the environment above only "
+             "(libm sin sets the input; numpy sets spectral_corr's last "
+             "1-2 bits). Verdicts, budgets and statuses are not "
+             "environment-dependent.",
              f"budgets (PROPOSED, not frozen): {PROPOSED}",
              "grading boundary: model-vs-model; pinned-oracle leg NOT_RUN", ""]
     for r in results:

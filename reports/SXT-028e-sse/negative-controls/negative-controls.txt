@@ -1,5 +1,8 @@
 SXT-028e-sse negative controls — ALL-CONTROLS-OK
-model revision aa1beacf6f164c763373a541043a26393198b7c2bad30be2ced0da2f97483743
+model revision b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b
+environment: python 3.14.7 (CPython), numpy 2.5.3, Linux-7.0.12-linuxkit-aarch64-with-glibc2.41
+stimulus digest ed759d673249a5bf1f6384026a40347781c17af31aab7327ce165f4a0189b306
+  metric fields are exact under the environment above only (libm sin sets the input; numpy sets spectral_corr's last 1-2 bits). Verdicts, budgets and statuses are not environment-dependent.
 budgets (PROPOSED, not frozen): {'max_abs_diff_lsb': 8192, 'rms_diff_dbfs': -46.0, 'spectral_corr_min': 0.98}
 grading boundary: model-vs-model; pinned-oracle leg NOT_RUN
 

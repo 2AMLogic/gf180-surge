@@ -43,6 +43,7 @@ prove both a generic and the *sibling leaf's own shaper* are rejected.
 | Quad-waveshaper state bounded (issue stop/escalate clause) | **PASS** — 8 × Q24.43 + 2 bits = 65 B/instance delta; 0 B external | §7, `artifacts/buffer-requirement.json` |
 | Constant inventory (DR-0012's reserved pass) | **DR-0014 PROPOSED**; the `FuzzTable<1>` re-derivation discharged BY BUILD against the *external* pinned headers (1025/1025 MATCH) | §8, `artifacts/fuzz-table-rederivation.json` |
 | Negative controls live | **11/11 CONTROL-OK** model-side + **10/10** RTL-side | `negative-controls/`, `rtl-exactness.json` |
+| Negative-control record reproducible | **PASS on one host, NOT across hosts** for the *metric* fields only — verdicts/statuses/`rtl-exactness.json`/`buffer-requirement.json` are host-stable (finding **F-028e-sse-6**) | §0, `negative-controls/negative-controls.json` → `environment` |
 | Oracle extraction of fixture inputs | **BLOCKED** (fail-closed refusal recorded) | §1 |
 | Newly-enabled presets supported | **0** (honest delta) | §9 |
 
@@ -122,6 +123,70 @@ instances (5.9 %) are in this leaf's scope, and **none of them uses model
 7**. The algorithm is implemented (it is reachable from the UI and from any
 future preset) and is exercised by synthetic corners, but no fixture record
 exists and none is invented. Inventory only; not a support claim.
+
+**F-028e-sse-6 — these metric numbers are exact under a declared
+environment, and only under it (measured in #243; the verdicts are not).**
+`negative-controls/negative-controls.json` now carries an `environment`
+block: interpreter, numpy, platform, and a sha256 `stimulus_digest` over
+every stimulus sample the run rendered.
+
+Measured across two libm implementations, not asserted. Regenerating this
+record from a byte-for-byte **unmodified** tree:
+
+| Regeneration host | `max_abs_diff_lsb` / `rms_diff_*` | `spectral_corr` | verdicts / `ok` / statuses |
+|---|---|---|---|
+| Linux, **glibc 2.41**, CPython 3.14.7, numpy 2.5.3 (aarch64) | **all byte-identical** to the committed record | 12 fields move, ≤ **8.1e-16** relative | **byte-identical** |
+| macOS 27, **Apple libm**, CPython 3.14.7, numpy 2.4.2 (arm64) | **43 fields move**, FX-model-7 legs by up to **12 %** | 12 more fields move, ≤ 2.3e-16 | **byte-identical** |
+
+So the record was originally taken on a **glibc** host, and two mechanisms —
+**neither of them in the frozen model** — account for every moved field:
+
+1. **The INPUT is libm-dependent.** `stimulus()`
+   (`tools/distortion_negative_controls.py`) is built with libm `sin` at
+   phases running to ~118 rad, where libm is **not** correctly rounded: 252
+   of this harness's 6,144 `sin` evaluations are 1 ULP off the correctly
+   rounded value under Apple libm. A different libm therefore hands the
+   harness a *different input* before any model code runs. The two libms'
+   `stimulus_digest` values differ outright
+   (`ed759d67…` glibc vs `41f51e16…` Apple libm, same architecture, same
+   interpreter, same source bytes). Substituting a correctly rounded `sin`
+   (mpmath, 200-bit) for libm's and changing nothing else reproduces the
+   same drift signature and the same worst-case field: the **FX-model-7**
+   legs by up to **14 %** relative — the F-028e-sse-4 chaos now amplifying a
+   1-ULP *input* change — FX models 3/5/6 by ≤ 4.2e-9, and the
+   model-independent controls by ≤ 1e-13. FX model 4's
+   `max_abs_diff_lsb` / `rms_diff_*` do not move at all; `wst_digital`'s
+   staircase absorbs the perturbation.
+2. **`spectral_corr` is numpy.** It is an rfft plus sum reductions, so its
+   last 1–2 bits follow the numpy build's reduction order. It moves by
+   ≤ 8.1e-16 relative even between two runs whose compared signals are
+   *bit-identical* and whose stimulus digests match — it is the only field
+   that does. Bounded by the recorded `numpy` version, not by the digest.
+
+This is **not** run-to-run nondeterminism: two runs of the same code on one
+host are byte-identical. It is also **not** sensitive to dead code — the
+zero-caller helper deleted from `sse_tables.py` in #243 changes this record
+in exactly two fields, both of them `model_revision`, with all 282 others
+byte-identical against an unmodified tree on the same host. And it does not
+reach the other two artifacts: `rtl-exactness.json` (iverilog 13.0) and
+`artifacts/buffer-requirement.json` each regenerate **byte-identical** on
+*both* hosts, so their only delta here is `model_revision` and its 8-hex
+`rtl_trace`/`expected` echoes.
+
+Consequently this record is regenerated **in its original glibc
+environment**, and the committed delta for #243 is: two `model_revision`
+fields, the new `environment` block, and 12 `spectral_corr` fields at
+≤ 8.1e-16 (numpy 2.5.3 vs the original recording numpy). Nothing else moved.
+
+Same stimulus digest ⇒ the `max`/`rms` fields must reproduce byte-for-byte,
+and a `max`/`rms` diff under a *matching* digest is a regression; a differing
+digest **explains** such a diff and is not itself one. `spectral_corr`
+carries the numpy residue above on top of that.
+`tests/test_sxt028e_sse.py` re-derives the digest rather than trusting the
+record, reports **NOT_RUN** (skip) — never a pass — on a host whose libm
+disagrees, and carries a live negative control proving the digest moves
+under a 1-ULP change to one input sample. Because the record is glibc-taken,
+that check is **live in CI** and NOT_RUN on an Apple-libm workstation.
 
 ## 1. Fixtures, applicability boundary (fail-closed), refusals
 

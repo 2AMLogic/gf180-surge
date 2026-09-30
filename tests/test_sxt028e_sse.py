@@ -18,6 +18,7 @@ exactly that. A missing iverilog makes the RTL leg NOT_RUN (skipped), never
 a pass.
 """
 import json
+import math
 import os
 import random
 import shutil
@@ -661,6 +662,123 @@ def test_negative_controls_record():
                 "NC-B"):
         c = next(x for x in rec["controls"] if x["id"] == cid)
         assert c["verdict"] == "FAIL", f"{cid} must FAIL the check it targets"
+
+
+def _load_sse_nc_tool():
+    """Import tools/distortion_sse_negative_controls.py as a module."""
+    import importlib.util
+    tool = os.path.join(REPO, "tools", "distortion_sse_negative_controls.py")
+    spec = importlib.util.spec_from_file_location("_ncsse", tool)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_negative_control_record_declares_the_environment_it_measured_under():
+    """The metric fields are exact under a declared environment ONLY (#243).
+
+    `model_revision` pins the frozen model, and nothing else in this record
+    was pinned to anything. But the *metric* fields are not a property of
+    the frozen model alone — they are a property of the frozen model AND the
+    host. Measured across two libm implementations (#243), regenerating from
+    a byte-for-byte **unmodified** tree, with every verdict, every `ok`,
+    `status: ALL-CONTROLS-OK`, `rtl-exactness.json` and
+    `artifacts/buffer-requirement.json` byte-identical throughout:
+
+    * glibc 2.41 / CPython 3.14.7 / numpy 2.5.3 reproduces every
+      `max_abs_diff_lsb` and `rms_diff_*` field byte-for-byte; only 12
+      `spectral_corr` fields move, by <= 8.1e-16 relative.
+    * Apple libm, same architecture and interpreter, moves 43 max/rms
+      fields — the FX-model-7 legs by up to 12 % relative.
+
+    Two mechanisms, both outside the frozen model:
+
+    1. INPUT. `stimulus()` calls libm `sin` at phases running to ~118 rad,
+       where libm is not correctly rounded (252 of the harness's 6144
+       evaluations are 1 ULP off under Apple libm), so a different libm is a
+       different input, which the F-028e-sse-4 chaos amplifies. Substituting
+       a correctly rounded `sin` reproduces the same signature: FX-model-7
+       legs up to 14 %, FX 3/5/6 <= 4.2e-9, model-independent controls
+       <= 1e-13.
+    2. `spectral_corr` is numpy, so its last 1-2 bits follow the numpy
+       build's reduction order (<= 8.1e-16 relative, on bit-identical
+       signals, under a matching digest). Bounded by the recorded numpy
+       version, not by the digest.
+
+    So the record must say which input it was measured on, and this test
+    RE-DERIVES that fingerprint rather than trusting the record's word for
+    it. Fails closed if the environment block is missing or its stimulus
+    beds are not the ones the generator renders. On a host whose libm
+    differs from the record's, the digest cannot match: that is reported as
+    NOT_RUN (skip), never as a pass and never by widening a tolerance — the
+    verdict assertions in `test_negative_controls_record` are unconditional
+    and carry the controls' actual weight. The committed record is
+    glibc-taken, so this check is live in CI and NOT_RUN on an Apple-libm
+    workstation.
+    """
+    rec = json.load(open(os.path.join(SXT, "negative-controls",
+                                      "negative-controls.json")))
+    env = rec.get("environment")
+    assert env, \
+        ("negative-control record declares no environment: its metric "
+         "fields are libm-dependent and are meaningless without one (#243)")
+    for key in ("reproducibility", "python", "python_implementation",
+                "platform", "machine", "stimulus_digest", "stimulus_beds",
+                "stimulus_digest_note", "spectral_corr_note"):
+        assert env.get(key), f"environment record is missing {key!r}"
+    # numpy may legitimately be null (spectral_corr degrades to NaN), but the
+    # key must be present: it is what bounds mechanism 2 above.
+    assert "numpy" in env, "environment record does not declare numpy"
+
+    mod = _load_sse_nc_tool()
+    assert [(b["n_blocks"], b["seed"]) for b in env["stimulus_beds"]] == \
+        [tuple(b) for b in mod.STIMULUS_BEDS], \
+        "the record's stimulus beds are not the ones the generator renders"
+
+    live = mod.stimulus_digest()
+    if live != env["stimulus_digest"]:
+        pytest.skip(
+            "NOT_RUN: this host's stimulus digest %s differs from the "
+            "record's %s (libm-dependent input, see EVIDENCE.md §0). The "
+            "committed metric fields are exact only under the recorded "
+            "environment; no metric comparison is made here and none is "
+            "reported as a pass." % (live[:16], env["stimulus_digest"][:16]))
+    assert live == env["stimulus_digest"]
+
+
+def test_stimulus_digest_detects_a_one_ulp_input_change():
+    """Live negative control for the digest above (#243).
+
+    The digest's whole claim is "a 1-ULP difference in the harness input
+    shows up here". A digest that could not detect the perturbation class it
+    exists to detect would be decorative — it would let a genuinely
+    different input be reported as the recorded one. So perturb exactly one
+    stimulus sample by one ULP and require the digest to move.
+    """
+    mod = _load_sse_nc_tool()
+    base = mod.stimulus_digest()
+
+    real = mod.stimulus
+
+    def one_ulp_off(n_blocks, **kw):
+        blocks = real(n_blocks, **kw)
+        il, ir, ring = blocks[0]
+        il = list(il)
+        il[7] = math.nextafter(il[7], math.inf)     # exactly 1 ULP
+        blocks[0] = (il, ir, ring)
+        return blocks
+
+    mod.stimulus = one_ulp_off
+    try:
+        perturbed = mod.stimulus_digest()
+    finally:
+        mod.stimulus = real
+
+    assert perturbed != base, \
+        ("the stimulus digest did not move under a 1-ULP change to one "
+         "input sample: it cannot detect the libm-class input difference "
+         "it is recorded to detect (#243)")
+    assert mod.stimulus_digest() == base, "digest is not restored/stable"
 
 
 def test_closed_loop_sensitivity_finding_is_recorded_not_hidden():
