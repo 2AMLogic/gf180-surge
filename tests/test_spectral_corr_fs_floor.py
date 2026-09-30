@@ -134,3 +134,76 @@ def test_floor_is_live():
     y[len(y) // 2:] = 1e-9 * _ternary(len(y) - len(y) // 2)   # ~-180 dBFS
     assert car.spectral_corr(x, y, full_scale=1.0) == pytest.approx(1.0,
                                                                      abs=1e-12)
+
+
+# --------------------------------------------------------------------------
+# PR #166 re-review: the leg-5 summary merge and the regrade ledger must be
+# attributed against main as this branch merged it, never a pinned older SHA.
+# --------------------------------------------------------------------------
+
+import json  # noqa: E402
+import subprocess  # noqa: E402
+
+import regrade_spectral_corr as rsc  # noqa: E402
+import spectral_corr_fs_floor_checks as chk  # noqa: E402
+
+# tail-gate summary -> the one leg #110 re-runs in it (leg 5)
+TAIL_GATE_SUMMARIES = {
+    "reports/shared-comparator-tail-gate/artifacts/checks-summary.json":
+        "wet_tail_controls",
+    "reports/stereo-comparator-tail-gate/artifacts/checks-summary.json":
+        "stereo_tail_controls",
+}
+# the pre-#111 main the first #110 run hard-coded as its merge base
+STALE_PRE_111_REV = "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e"
+EVIDENCE_SUMMARY = os.path.join(REPO, "reports", "spectral-corr-fs-floor",
+                                "artifacts", "checks-summary.json")
+
+
+def _git_show(rev, rel):
+    r = subprocess.run(["git", "show", "%s:%s" % (rev, rel)], cwd=REPO,
+                       capture_output=True, text=True)
+    return json.loads(r.stdout) if r.returncode == 0 else None
+
+
+def _recorded_base():
+    with open(EVIDENCE_SUMMARY) as f:
+        return json.load(f)["base_rev"]
+
+
+def test_carried_mismatches_names_the_drifted_keys():
+    base = {"issue": 100, "run_utc": "a", "amended_by_issue": 111,
+            "legs": {"a": {"status": "PASS"}, "b": {"status": "PASS"}},
+            "overall": "PASS"}
+    ok = dict(base, legs={"a": {"status": "PASS"}, "b": {"status": "FAIL"}},
+              partial_reruns=[{"issue": 110}], overall="FAIL")
+    assert chk.carried_mismatches(ok, base, ("b",)) == []
+    reverted = dict(ok, legs={"a": {"status": "FAIL"}, "b": {}})
+    del reverted["amended_by_issue"]
+    assert chk.carried_mismatches(reverted, base, ("b",)) == \
+        ["amended_by_issue", "legs/a"]
+
+
+def test_schema_classes_are_additions_only():
+    """A #111 tail-shape key ADDED to a re-emitted record is SCHEMA-#111; the
+    same key CHANGING value is not a schema difference and must not be
+    laundered by the class (it lands in OTHER -> UNEXPLAINED), and a status
+    change inside a control row is a VERDICT, never SCHEMA-#111."""
+    rel = "reports/stereo-comparator-tail-gate/artifacts/x.json"
+    k = "/tail_check/mono/tail_rms_rel_ok"
+    assert rsc.classify(rel, k, "<absent>", True, {}) == "SCHEMA-#111"
+    assert rsc.classify(rel, k, True, False, {}) == "OTHER"
+    assert rsc.classify(rel, "/controls[late-tail]/status", "PASS", "FAIL",
+                        {}) == "VERDICT"
+    k100 = "/tail_check/ok"
+    rel023 = "reports/sxt-023/artifacts/audio-dexie.json"
+    assert rsc.classify(rel023, "/tail_gate_ok", "<absent>", True, {}) == \
+        "SCHEMA-#100"
+    assert rsc.classify(rel023, k100, True, False, {}) == "VERDICT"
+
+
+def test_base_rev_resolution_fails_loudly():
+    with pytest.raises(SystemExit):
+        rsc.resolve_base_rev("HEAD")          # nothing to attribute
+    with pytest.raises(SystemExit):
+        rsc.resolve_base_rev("0" * 40)        # does not resolve

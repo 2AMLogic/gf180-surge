@@ -23,7 +23,8 @@ Legs
     not choose it.
 
 [3] Dry re-run parity against the pre-#110 tool. Every committed dry pair is
-    graded by the pre-#110 comparator (materialized from PRE_110_REV) and by
+    graded by the pre-#110 comparator -- main's, materialized from the BASE
+    revision (main as this branch last merged it; see --base-rev) -- and by
     the working tree. The two outputs must be identical except for the fields
     #110 owns: `spectral_corr`, `spectral_corr_definition` (added),
     `proposed_budget_results.spectral_corr`, and `verdict` when (and only
@@ -42,7 +43,10 @@ Legs
 [5] Tail-gate control legs of #93 (tools/tail_gate_checks.py leg 2) and #100
     (tools/stereo_tail_gate_checks.py leg 2) re-run under the #110 metric;
     their per-control JSONs and transcripts are regenerated and their
-    checks-summary.json leg entry is replaced (other legs carried, marked).
+    checks-summary.json leg entry is replaced. Every other leg and every
+    top-level field is carried byte-identical from the BASE revision's record
+    (main's, not an older pinned SHA -- the PR #166 re-review finding), and
+    the leg FAILS if the written summary's carried fields differ from it.
 
 [6] Regrade ledger (tools/regrade_spectral_corr.py).
 
@@ -51,7 +55,12 @@ RTL, preset-support, or sound claim follows; no budget is frozen here.
 
 Usage:
   python3 tools/spectral_corr_fs_floor_checks.py [--legs 1,2,3,4,5,6]
-      [--scratch-root DIR] [--renders-root DIR]
+      [--scratch-root DIR] [--renders-root DIR] [--base-rev REV]
+      [--main-ref REF]
+
+The base revision defaults to the merge base of HEAD with origin/main and
+is resolved once per run (tools/regrade_spectral_corr.resolve_base_rev),
+recorded in checks-summary.json, and passed to the ledger (leg 6).
 """
 
 import argparse
@@ -69,11 +78,15 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "tools"))
 
 import compare_audio_reference as car  # noqa: E402
+import regrade_spectral_corr as rsc  # noqa: E402
 import stereo_tail_gate_checks as stg  # noqa: E402
 import tail_gate_checks as tgc  # noqa: E402
 
 ART = os.path.join(REPO, "reports", "spectral-corr-fs-floor", "artifacts")
-PRE_110_REV = "8ade1d184d1b26f94caa9b3fa3bfbbab2069ff9e"
+# Resolved once in main() (merge base of HEAD with --main-ref, or --base-rev):
+# main as this branch last merged it, i.e. the pre-#110 tree every leg that
+# needs "the tool / the record without #110" reads. Never a pinned SHA.
+BASE_REV = None
 FLOORS = (-80.0, -90.0, -100.0, -110.0, -120.0)
 BUDGET = car.PROPOSED["spectral_corr_min"]
 OWNED = {"spectral_corr", "spectral_corr_definition"}
@@ -271,15 +284,30 @@ def leg2(lines, scratch):
 
 # ---------------------------------------------------------------- leg 3 --
 
+# Repo-relative modules the comparator imports by path (main's
+# compare_audio_reference.py puts <repo>/oracle on sys.path for
+# oracle_common); materialized alongside it so the base tool runs as it would
+# in a checkout of that revision. Absent at a revision -> not materialized.
+_MATERIALIZE_DEPS = ("oracle/oracle_common.py",)
+
+
 def _materialize(rev, rel, scratch, name):
     src = git_show(rev, rel)
     if src is None:
         return None
-    d = os.path.join(scratch, "pre110", "tools")
+    root = os.path.join(scratch, "pre110")
+    d = os.path.join(root, "tools")
     os.makedirs(d, exist_ok=True)
     p = os.path.join(d, name)
     with open(p, "wb") as f:
         f.write(src)
+    for dep in _MATERIALIZE_DEPS:
+        dsrc = git_show(rev, dep)
+        if dsrc is not None:
+            dp = os.path.join(root, dep)
+            os.makedirs(os.path.dirname(dp), exist_ok=True)
+            with open(dp, "wb") as f:
+                f.write(dsrc)
     return p
 
 
@@ -306,10 +334,10 @@ def owned_diff(base, cur):
 
 def leg3(lines, scratch):
     emit(lines, "=" * 74)
-    emit(lines, "[3] dry re-run parity: pre-#110 comparator (%s) vs working "
-                "tree" % PRE_110_REV[:12])
+    emit(lines, "[3] dry re-run parity: pre-#110 comparator (main at base %s) "
+                "vs working tree" % BASE_REV[:12])
     emit(lines, "=" * 74)
-    base_tool = _materialize(PRE_110_REV, "tools/compare_audio_reference.py",
+    base_tool = _materialize(BASE_REV, "tools/compare_audio_reference.py",
                              scratch, "compare_audio_reference.py")
     if base_tool is None:
         emit(lines, "  NOT_RUN: pre-#110 tool not available in this clone")
@@ -350,7 +378,7 @@ def leg3(lines, scratch):
                              sum(1 for r in rows if r["ok"]), len(rows)))
     emit(lines)
     return ok, {"status": "PASS" if ok else "FAIL",
-                "pre_110_rev": PRE_110_REV, "cases": rows,
+                "base_rev": BASE_REV, "cases": rows,
                 "not_run": [{"leaf": a, "render": os.path.relpath(b, REPO),
                              "reason": c} for a, b, c in skipped]}
 
@@ -433,7 +461,7 @@ def leg4(lines, scratch, renders_root):
                 "re-rendered control model")
     emit(lines, "=" * 74)
     emit(lines, "  renders root: %s" % renders_root)
-    base_tool = _materialize(PRE_110_REV, "tools/compare_audio_reference.py",
+    base_tool = _materialize(BASE_REV, "tools/compare_audio_reference.py",
                              scratch, "compare_audio_reference.py")
     ok = True
     rows = []
@@ -450,7 +478,7 @@ def leg4(lines, scratch, renders_root):
         tgc.run_tool(base_tool, os.path.join(REPO, ref), mp, bj)
         base = json.load(open(bj))
         regen = json.load(open(os.path.join(REPO, art)))
-        committed = json.loads(git_show(PRE_110_REV, art) or b"{}")
+        committed = json.loads(git_show(BASE_REV, art) or b"{}")
         owned, bad = owned_diff(base, regen)
         bad, proven = _runner_added_check(art, os.path.join(REPO, ref), mp,
                                           bad)
@@ -523,10 +551,40 @@ def leg4(lines, scratch, renders_root):
 
 # ---------------------------------------------------------------- leg 5 --
 
-def _merge_summary(path, issue_key, leg_key, rep, stamp, head, leg_desc):
-    # start from the pre-#110 record so re-running this leg is idempotent
-    base = git_show(PRE_110_REV, os.path.relpath(path, REPO))
-    old = json.loads(base if base is not None else open(path).read())
+# top-level keys a merged summary may legitimately change: the partial-re-run
+# note this leg appends, and `overall`, recomputed over the legs. Everything
+# else -- every carried leg, run_utc/repo_head of the original run,
+# amended_by_issue, proposed_tail_budget, ... -- must equal the base record.
+MERGE_OWNED_TOP = ("legs", "partial_reruns", "overall")
+
+
+def carried_mismatches(record, base_record, rerun_legs):
+    """Keys of a merged tail-gate summary that were supposed to be carried
+    from `base_record` unchanged but differ: every top-level key outside
+    MERGE_OWNED_TOP, and every leg not in `rerun_legs`. [] means the merge
+    carried the base faithfully. Used by leg 5 on its own output and by
+    tests/test_spectral_corr_fs_floor.py."""
+    bad = []
+    for k in sorted(set(record) | set(base_record)):
+        if k in MERGE_OWNED_TOP:
+            continue
+        if record.get(k, "<absent>") != base_record.get(k, "<absent>"):
+            bad.append(k)
+    rl, bl = record.get("legs", {}), base_record.get("legs", {})
+    for k in sorted(set(rl) | set(bl)):
+        if k in rerun_legs:
+            continue
+        if rl.get(k, "<absent>") != bl.get(k, "<absent>"):
+            bad.append("legs/" + k)
+    return bad
+
+
+def merge_summary_record(base_record, issue_key, leg_key, rep, stamp, head,
+                         leg_desc):
+    """The merged summary: `base_record` (main's record at BASE_REV) with
+    only `leg_key` replaced, a #110 partial-re-run note appended, and
+    `overall` recomputed. Pure, so a test can build one from any record."""
+    old = json.loads(json.dumps(base_record))
     old["legs"][leg_key] = {kk: vv for kk, vv in rep.items()
                             if kk != "sweep"}
     notes = old.setdefault("partial_reruns", [])
@@ -539,9 +597,29 @@ def _merge_summary(path, issue_key, leg_key, rep, stamp, head, leg_desc):
     old["overall"] = ("PASS" if all(
         v.get("status") in ("PASS",) for v in old["legs"].values())
         else "FAIL")
+    return old
+
+
+def _merge_summary(path, issue_key, leg_key, rep, stamp, head, leg_desc):
+    """Replace one leg of a committed tail-gate summary. The starting record
+    is main's at BASE_REV -- the record this branch merges into -- so every
+    carried leg and header field stays what main has, and re-running this
+    leg is idempotent. (It used to start from a pinned pre-#111 SHA, which
+    silently reverted #111's legs once main moved on: PR #166 re-review.)
+    No base record is a hard failure, never a fallback to the working tree.
+    Returns carried_mismatches() of what was written ([] = faithful)."""
+    rel = os.path.relpath(path, REPO)
+    base = git_show(BASE_REV, rel)
+    if base is None:
+        raise SystemExit("no %s at base %s: cannot carry its legs"
+                         % (rel, BASE_REV[:12]))
+    base_record = json.loads(base)
+    merged = merge_summary_record(base_record, issue_key, leg_key, rep,
+                                  stamp, head, leg_desc)
     with open(path, "w") as f:
-        json.dump(old, f, indent=2)
+        json.dump(merged, f, indent=2)
         f.write("\n")
+    return carried_mismatches(json.load(open(path)), base_record, (leg_key,))
 
 
 def leg5(lines, scratch, stamp, head):
@@ -570,10 +648,12 @@ def leg5(lines, scratch, stamp, head):
     l93.append("leg 2 verdict: %s" % r93["status"])
     with open(os.path.join(tgc.ART, "negative-controls.txt"), "w") as f:
         f.write("\n".join(l93) + "\n")
-    _merge_summary(os.path.join(tgc.ART, "checks-summary.json"), "#93",
-                   "wet_tail_controls", r93, stamp, head, "leg 2")
-    ok &= good
+    drift93 = _merge_summary(os.path.join(tgc.ART, "checks-summary.json"),
+                             "#93", "wet_tail_controls", r93, stamp, head,
+                             "leg 2")
+    ok &= good and not drift93
     rep["issue93_leg2"] = r93["status"]
+    rep["issue93_carried_mismatches"] = drift93
     emit(lines, "  #93 leg 2 (shared int16 tail-gate controls): %s"
          % r93["status"])
     for c in r93["controls"]:
@@ -591,18 +671,32 @@ def leg5(lines, scratch, stamp, head):
             "re-run by issue #110 (spectral_corr definition change); legs "
             "1, 3, 4, 5 are carried",
             "claim scope: comparator behaviour only; no fidelity, support, or "
-            "sound claim.", ""]
+            "sound claim.",
+            # the same #111 amendment line stereo_tail_gate_checks.main()
+            # writes on every leg transcript (dropped by the first #110 run)
+            "amended by issue #111: tail gate now carries the tail-shape "
+            "(decay-curve) leg; budget %s" % json.dumps(car.PROPOSED_TAIL,
+                                                         sort_keys=True),
+            ""]
     good, r100 = stg.leg2(l100, s100)
     l100.append("")
     l100.append("leg 2 verdict: %s" % r100["status"])
     with open(os.path.join(stg.ART, "negative-controls.txt"), "w") as f:
         f.write("\n".join(l100) + "\n")
-    _merge_summary(os.path.join(stg.ART, "checks-summary.json"), "#100",
-                   "stereo_tail_controls", r100, stamp, head, "leg 2")
-    ok &= good
+    drift100 = _merge_summary(os.path.join(stg.ART, "checks-summary.json"),
+                              "#100", "stereo_tail_controls", r100, stamp,
+                              head, "leg 2")
+    ok &= good and not drift100
     rep["issue100_leg2"] = r100["status"]
+    rep["issue100_carried_mismatches"] = drift100
     emit(lines, "  #100 leg 2 (stereo tail-gate controls): %s"
          % r100["status"])
+    emit(lines, "  carried from main's records at base %s: #93 summary %s; "
+                "#100 summary %s" % (BASE_REV[:12],
+                                     "byte-identical" if not drift93
+                                     else "DRIFT %s" % drift93,
+                                     "byte-identical" if not drift100
+                                     else "DRIFT %s" % drift100))
     for c in r100["controls"]:
         emit(lines, "    %-40s required %-10s observed %-10s %s"
              % (c["control"], c["required"], c["observed"], c["result"]))
@@ -618,7 +712,8 @@ def leg6(lines, scratch):
     emit(lines, "=" * 74)
     r = subprocess.run([sys.executable, os.path.join(REPO, "tools",
                                                      "regrade_spectral_corr.py"),
-                        "--out-dir", ART], capture_output=True, text=True,
+                        "--out-dir", ART, "--base-rev", BASE_REV],
+                       capture_output=True, text=True,
                        cwd=REPO)
     tail = [ln for ln in r.stdout.splitlines()
             if ln.startswith(("REGENERATED", "VERDICT FLIPS",
@@ -640,7 +735,13 @@ def main():
     ap.add_argument("--scratch-root", default="/tmp/sxt-spectral-corr-110")
     ap.add_argument("--renders-root", default="/tmp/sxt110",
                     help="root of the scratch control re-renders (leg 4)")
+    ap.add_argument("--base-rev", default=None,
+                    help="pre-#110 main to attribute against (default: the "
+                         "merge base of HEAD with --main-ref)")
+    ap.add_argument("--main-ref", default=rsc.MAIN_REF)
     args = ap.parse_args()
+    global BASE_REV
+    BASE_REV = rsc.resolve_base_rev(args.base_rev, args.main_ref)
     legs = {int(x) for x in args.legs.split(",") if x.strip()}
     if os.path.exists(args.scratch_root):
         shutil.rmtree(args.scratch_root)
@@ -660,6 +761,7 @@ def main():
     summary = (json.load(open(summary_path)) if os.path.exists(summary_path)
                else {"issue": 110, "legs": {}})
     summary.update({"issue": 110, "run_utc": stamp, "repo_head": head,
+                    "base_rev": BASE_REV,
                     "numpy": np.__version__,
                     "definition": car.SPECTRAL_CORR_DEFINITION,
                     "floor_db": car.SPECTRAL_CORR_FLOOR_DB})
@@ -692,7 +794,9 @@ def main():
         summary["legs"][key] = {k: v for k, v in rep.items()
                                 if k in ("status", "reason", "note",
                                          "issue93_leg2", "issue100_leg2",
-                                         "ledger", "pre_110_rev")}
+                                         "issue93_carried_mismatches",
+                                         "issue100_carried_mismatches",
+                                         "ledger", "base_rev")}
     summary["overall"] = ("PASS" if all(v.get("status") == "PASS"
                                         for v in summary["legs"].values())
                           else "FAIL")
