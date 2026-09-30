@@ -52,7 +52,7 @@ division deviation from A-ALU-2 recorded for SXT-016).
 | # | Acceptance (issue body) | Status | Evidence |
 |---|--------------------------|--------|----------|
 | 1 | New voice-slice arithmetic frozen (word lengths + op order, `model/voice/` conventions) | **PASS** | `model/voice/README.md` §"SXT-026a extension" (frozen at commit `8405f1f`…`e9f7ba3`); `model/voice/voice_model.py` (`VoiceV2`, `SineCore`, `CoefMakerLP24`) |
-| 2 | Model-vs-pinned-engine dry-render budgets on the extended slice (PENDING-FREEZE) | **DONE — budgets FAILED (bounded finding → SXT-013/#12)** | `audio-smoke-bells-dry.json`, `audio-canonical-bells-dry.json` (§4) |
+| 2 | Model-vs-pinned-engine dry-render budgets on the extended slice (PENDING-FREEZE) | **DONE — budgets FAILED (bounded finding → SXT-013/#12)** | `audio-canonical-bells-dry.json` (§4; box-retained, never committed); canonical re-measured at the #145 HEAD against the committed SXT-042 projection of the same pinned dry fixture (§4). `audio-smoke-bells-dry.json` **retired by #145** (§4) |
 | 3 | RTL-vs-model exact at declared checkpoints | **PASS (smoke + canonical)** | `exactness-canonical-bells.json` (26,250 blocks, 0 mismatches), `exactness-v1-attacky-smoke.json`; smoke exactness in §3 |
 | 4 | SXT-025 integrated path re-run with the ORIGINAL voice stage, same upstream fixture | **DONE — wet budgets FAILED (bounded finding → SXT-013/#12); adaptation at the voice stage resolved** | `compare__sxt025-accept-v1.json`, `model__sxt025-accept-v1-wet.f32.wav` (§5) |
 | 5 | `selection-scan.json` Tier-4 count with FX > 0 | **PASS (count = 1)** | `model/integration/selection-scan.json` (F-1 → RESOLVED; `tests/test_sxt025_integration.py`) |
@@ -102,12 +102,49 @@ pre-registered [PROPOSED] budgets 3500 LSB / −46 dBFS / 0.98 (SXT-022
 proposal; nothing frozen).
 
 * Canonical (840,000 frames): max|Δ| **16,960 LSB** (budget 3500 — MISS);
-  RMS Δ −27.87 dBFS (passes the committed comparator's RMS row);
-  spectral corr **0.9205** (budget 0.98 — MISS). Verdict:
-  **FAIL against proposed budgets.**
+  RMS Δ −27.87 dBFS (budget −46 dBFS — **MISS** under the corrected
+  `rms_diff_dbfs <= budget` polarity, PR #92/#95; this box-retained number
+  pre-dates that fix and reflects the pre-fix `>=` comparator's grading, not
+  the current one — it was never re-measured against the fixed comparator,
+  see the change note below); spectral corr **0.9205** (budget 0.98 — MISS).
+  Verdict: **FAIL against proposed budgets.**
 * Smoke (3,904 frames): max|Δ| 16,020 LSB; RMS Δ −17.94 dBFS; spectral corr
   0.0 (degenerate: render shorter than one 4096 analysis frame — metric
-  artifact, recorded as-is).
+  artifact, recorded as-is). **Retired by #145** — see the change note
+  below.
+
+**Change note (issue #145, 2026-09-27): republished after the #123 halfband
+branch-order fix.** Every model render in this leaf passes through the
+shared scene decimator. What moved, what was re-run, and what could not be:
+
+* **Canonical, dry.** The box-retained reference render behind the
+  16,960 / −27.87 / 0.9205 numbers above was never committed, so those
+  numbers are **STALE and cannot be re-measured on the #145 host**
+  (NOT_RUN against that reference). The same pinned-engine dry fixture *is*
+  committed as the SXT-042 projection
+  (`reports/SXT-042/artifacts/reference-sxt025-accept-v1-bells-dry.wav`,
+  `reference-provenance.json`); against it the canonical model measures
+  **16,740 LSB / −27.851 dBFS / 0.9212** at the #145 HEAD (pre-#123:
+  16,721 / −27.855 / 0.9207). `FAIL against proposed budgets` before and
+  after; F-48a stands unchanged. The HEAD canonical render is byte-identical
+  to `reports/SXT-042/artifacts/model-sxt025-accept-v1-bells-dry.wav`
+  (sha256 `e095d007…`), which is the committed copy.
+* **Smoke, dry — `audio-smoke-bells-dry.json` RETIRED (deleted).** It was
+  STALE after #123 (the model render `model-smoke-bells-dry.wav` was
+  refreshed there; this metric was not), its reference render for
+  `leaf48-smoke-bells-v1` was never committed and no pinned-oracle build
+  (surgepy) exists on the #145 host to produce one, and its spectral leg was
+  degenerate by construction (3,904 frames < one 4,096 analysis frame →
+  corr 0.0). Retiring it removes a metric that measured bytes no longer in
+  the tree and could not have discriminated anything spectrally; the smoke
+  fixture's live evidence is RTL-vs-model exactness (§3, re-run PASS) and
+  the two mutant controls (§6). Committing a smoke reference is left to a
+  pinned-oracle host if a smoke-level budget is ever wanted.
+* **Integrated path (§5)** re-run at the #145 HEAD; the pre-#123 legacy
+  ordering (`tools/halfband_legacy_render.py`) reproduces the committed
+  pre-#145 wet render byte-identically (`278de788…`), so the §5 deltas are
+  #123 alone.
+* Full record: `reports/halfband-republication/`.
 * Alignment: best RMS shift ±32 samples (one 32-sample scheduling block)
   with marginal RMS improvement (canonical 1324→1297 LSB), i.e. the model is
   event-locked within the block granularity and the residual is voice-slice
@@ -133,10 +170,16 @@ Comparison vs the SAME upstream wet fixture
 sha-pinned in the JSON), `compare_integration.py --artifacts
 reports/sxt-026a/artifacts`:
 
-* full render (mono): max|Δ| **1,747,739 LSB**; RMS Δ **−16.30 dBFS**;
+* full render (mono): max|Δ| **1,748,980 LSB**; RMS Δ **−16.29 dBFS**;
   spectral corr **0.780**; best_shift 30 → **FAIL**;
-* tail: relative RMS +1.06 dB (budget ≤ −50 dB) FAIL; decay-curve max dev
-  5.70 dB; stereo-corr delta 0.055; continuity PASS;
+* tail: relative RMS +1.07 dB (budget ≤ −50 dB) FAIL; decay-curve max dev
+  5.69 dB; stereo-corr delta 0.055; continuity PASS;
+* *(#145: numbers above re-measured at the #145 HEAD after the #123
+  decimator fix; pre-#123 they were 1,747,739 / −16.30 / 0.780, tail
+  +1.06 dB / 5.70 dB / 0.055 — no status moved; every status in
+  `compare__sxt025-accept-v1.json` is unchanged: event timing, placement,
+  memory PASS; full render and tail FAIL. `trace__sxt025-accept-v1.json` is
+  byte-identical before/after.)*
 * event timing PASS (max latency 16 ≤ 64; reserve respected);
   placement/order/gain PASS (send2, engine order 22); memory traffic PASS
   (34 words / 136 bytes per output frame).
@@ -156,12 +199,23 @@ blocked, as its issue states.**
 
 * **Wrong-algorithm/RTL mutant** (`rtl/voice/voice_broken_mutant.sv`,
   SXT-022 pattern, qmul round-half-up corrupted): `mutant-broken-smoke.json`
-  — verdict FAIL, 96 mismatch fields, re-run against the post-F-48c tb.
+  — verdict FAIL, 95 mismatch fields at the #145 HEAD (96 before the #123
+  decimator fix), re-run against the post-F-48c tb.
 * **Wrong-parameterization mutant** (`rtl/voice/voice_wrongparam_mutant.sv` —
   forces `poles = 12`, ignoring the declared `fu_poles` parameter):
   `mutant-wrongparam-smoke.json` — verdict FAIL, 41 mismatch fields,
   re-run against the post-F-48c tb. The comparison is parameter-sensitive,
-  not just structure-sensitive.
+  not just structure-sensitive. **#145 disposition — REFRESHED.** The
+  committed mutant had drifted into a stale snapshot of `tb_voice.sv` at
+  `4a5a1a5` (pre-SXT-034 cfg layout, pre-#123 decimator order, ~260
+  differing lines). Measured at the #145 HEAD on the smoke fixture: the
+  snapshot FAILs (41 mismatches) — but so does its **unmutated** base
+  (41 mismatches), so the control no longer isolated the parameter it
+  targets. It is regenerated as current `tb_voice.sv` + the single
+  `fu_poles` line (+ a 4-line banner) and FAILs with 41 mismatches while
+  the clean tb PASSes the same trace (193 checkpoints, 0 mismatches);
+  `tests/test_sxt026a_wrongparam_control.py` asserts the one-line diff and
+  the live FAIL so it cannot drift again.
 * **Out-of-class refusal, engine-vs-graph disagreement (NC3a):**
   `nc3-refusal-quickspit-transcript.txt` — `extract_inputs_v2.py` REFUSES
   `Quickspit.fxp` ("not poly playmode"): the census graph lacks playmode;
@@ -206,7 +260,7 @@ now holds only while the voice leaf does not fixture-verify the F-1 preset
 ## 8. Artifacts (this directory) and reproducibility
 
 Committed (in this PR): `exactness-canonical-bells.json`,
-`exactness-v1-attacky-smoke.json`, `audio-smoke-bells-dry.json`,
+`exactness-v1-attacky-smoke.json`, `audio-smoke-bells-dry.json` (retired by #145, §4),
 `model-smoke-bells-dry.wav`, `mutant-broken-smoke.json`,
 `mutant-wrongparam-smoke.json`, `nc3-refusal-*-transcript.txt`,
 `model__sxt025-accept-v1-wet.f32.wav`, `trace__sxt025-accept-v1.json`,
@@ -244,7 +298,32 @@ regressions (`tests/test_sxt022_voice.py`, `tests/test_sxt025_integration.py`,
   it); the frozen class models the live behavior (§6).
 * fastsin/fastcos exact big-int evaluation declares an audio-rate division
   deviation from A-ALU-2 (README); recorded for SXT-016 costing.
-* The two comparators disagree in RMS-row comparison direction
-  (`compare_audio_reference.py` uses ≥, `compare_integration.py` uses ≤);
-  both are committed SXT-022/SXT-025 semantics, used as-landed and reported
-  as-landed here. Reconciling them is a #12 freeze decision, not this leaf's.
+* **The scene decimator does not settle to zero on silence** (F-176-2, issue
+  [#181](https://github.com/2AMLogic/gf180-surge/issues/181), **DECLARED** —
+  SXT-017 option (a), recorded in `model/voice/README.md` §"DECLARED
+  word-length consequence"). The shared `voice_model.HalfbandD2` this class
+  uses at scene output has a round-half-up dead band, so on silence it holds a
+  permanent output-Nyquist (period-2) cycle instead of decaying to 0. Declared
+  bound over a 315-case input sweep (amplitudes 1 LSB → the ±8 `sceneout`
+  clip; frequencies 0.002 → 0.5 of the 96 kHz input rate, whole stopband
+  included; impulse/DC/sine/square/two-tone/noise, each followed by silence,
+  each settled amplitude obtained exactly by state recurrence): **36 Q10.21 LSB
+  = 0.5625 int16 LSB ≈ −95.3 dBFS**, below one int16 LSB. It therefore cannot
+  reach an int16 render on its own and **no §3–§5 number here is affected**;
+  `tb_voice.sv` reproduces the settled region exactly (claim (1) intact). It is
+  declared, not fixed: changing the decimator's arithmetic is a contract
+  revision owned by SXT-017 /
+  [#12](https://github.com/2AMLogic/gf180-surge/issues/12). Evidence:
+  `reports/halfband-limit-cycle/EVIDENCE.md`.
+* **Resolved by #92/#95 (2026-09-24, issue #189 re-check).** When this
+  record was first written (2026-09-22) the two comparators disagreed in
+  RMS-row comparison direction: `compare_audio_reference.py` used the
+  inverted `>=` polarity later fixed by #92/#95, while
+  `model/integration/compare_integration.py` already used the correct `<=`.
+  As of the current tree both tools use `rms_diff_dbfs <= budget` ⇒ pass
+  (verified directly against `tools/compare_audio_reference.py` line ~600
+  and `model/integration/compare_integration.py` lines ~232–233); the
+  disagreement this bullet originally recorded no longer exists. No
+  verdict in this record depended on the discrepancy — see the corrected
+  §4 RMS-leg note above for the one place the pre-fix polarity had leaked
+  into the prose.

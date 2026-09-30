@@ -8,6 +8,7 @@ missing or self-inconsistent evidence file fails). The RTL exactness suite
 itself requires iverilog and runs via tools/run_reverb_rtl.py; here we only
 check its committed evidence record for coherence.
 """
+import glob
 import json
 import os
 import sys
@@ -109,6 +110,110 @@ def test_ext_memory_hook_addresses_within_region():
     assert len(taps) == 32 * rf.BLOCK and len(pd) == 2 * rf.BLOCK
     assert all(0 <= a < rf.TAP_WORDS + rf.MAX_REV_DLY for a in
                [a for _, a in seen])
+
+
+def _comparator():
+    tools = os.path.join(REPO, "tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import compare_reverb_model as cm  # noqa: E402
+    return cm
+
+
+# --- issue #112: send/return gain precision is PINNED, not NumPy-dependent ---
+#
+# The committed sxt-024 records were written under two different NumPy
+# regimes and carried two different `send_gain` values for one declared
+# level, while a current host reproduced a third. The cube is now written as
+# explicit float32 multiplies; these tests pin that definition AND tie the
+# committed evidence to it, so the drift cannot silently return.
+
+# Declared scene_send_level of the pinned carrier preset (read from the
+# committed trace sidecar by the tests below; repeated here only as the
+# expected value of the float32 cube).
+PINNED_SEND_GAIN_F32 = 0.35360774397850037
+
+
+def test_send_return_gains_pins_float32_precision():
+    import numpy as np
+    cm = _comparator()
+    side = json.load(open(os.path.join(
+        SXT, "traces", "preset-notes-coverage-wet.json")))
+    st = side["engine_patch_state"]
+    x = st["scene_send_level"][0]
+    send, ret = cm.send_return_gains(st)
+    # 1. the exact pinned value, independent of the installed NumPy version
+    assert send == PINNED_SEND_GAIN_F32, (x, send)
+    assert send == cm.amp_to_linear_f32(x)
+    # 2. the returned Python float carries EXACTLY a float32 value
+    assert float(np.float32(send)) == send
+    assert float(np.float32(ret)) == ret
+    # 3. the three float32 multiplies of the pinned C++ expression, in order
+    v = np.float32(x)
+    assert send == float(np.float32(np.float32(v * v) * v))
+
+
+def test_float64_cube_is_a_live_negative_control_for_the_pin():
+    """The control the pin exists to catch: a float64 cube is DISTINGUISHABLE.
+
+    If send_return_gains() ever reverts to float64 arithmetic (or to the
+    version-dependent `np.float32(x) ** 3`, which is float64 under NumPy
+    1.x), the assertions above fail -- this test proves they can, by showing
+    the float64 value differs from the pinned one on this host.
+    """
+    cm = _comparator()
+    side = json.load(open(os.path.join(
+        SXT, "traces", "preset-notes-coverage-wet.json")))
+    x = side["engine_patch_state"]["scene_send_level"][0]
+    f64 = float(x) ** 3
+    assert f64 != cm.amp_to_linear_f32(x)   # the control fires
+
+
+# A record's `case` normally names its own trace sidecar. The negative
+# controls are synthesized from a carrier preset's trace instead, so their
+# trace is named here explicitly (see tools/reverb_negative_controls.py).
+_TRACE_FOR_CASE = {
+    "nc-a-generic-schroeder": "preset-notes-coverage-wet",
+}
+
+
+def test_committed_records_carry_the_pinned_send_gain():
+    """Fail-closed: committed evidence must agree with the pinned arithmetic.
+
+    One declared level, one value, in every record that reports it -- the
+    condition that was violated before #112 (two committed values, plus a
+    third on a current host).
+
+    The record set is DISCOVERED by globbing comparison/ and
+    negative-controls/, not hardcoded, so a record added later that reports
+    `send_gain` is graded too instead of escaping this check. A new record
+    whose trace cannot be resolved fails here rather than being skipped.
+    """
+    cm = _comparator()
+    paths = sorted(glob.glob(os.path.join(SXT, "comparison", "*.json"))
+                   + glob.glob(os.path.join(SXT, "negative-controls", "*.json")))
+    assert paths, "no committed sxt-024 records found"
+    graded, seen = [], set()
+    for path in paths:
+        rec = json.load(open(path))
+        if not isinstance(rec, dict) or "send_gain" not in rec:
+            continue
+        rel = os.path.relpath(path, SXT)
+        case = rec.get("case")
+        trace = _TRACE_FOR_CASE.get(case, case)
+        side = os.path.join(SXT, "traces", str(trace) + ".json")
+        assert os.path.exists(side), (rel, case, "unresolved trace: add it to "
+                                                 "_TRACE_FOR_CASE")
+        st = json.load(open(side))["engine_patch_state"]
+        send, ret = cm.send_return_gains(st)
+        assert rec["send_gain"] == send, rel
+        assert rec["return_gain"] == ret, rel
+        graded.append(rel)
+        seen.add(rec["send_gain"])
+    # the four records that report send_gain today; a regression that stopped
+    # writing the field would otherwise make this test vacuously pass
+    assert len(graded) >= 4, graded
+    assert seen == {PINNED_SEND_GAIN_F32}, seen
 
 
 def test_committed_evidence_files_are_coherent():

@@ -67,11 +67,42 @@ committed as `model/voice/attacky_inputs.json`.
 
 | # | Acceptance item | Status | Evidence |
 |---|---|---|---|
-| 1 | RTL vs frozen model: internal state equality at declared checkpoints (exact) | **PASS** | All three sequences, integer equality, zero mismatches: `exactness-seq-notes-coverage-v1.json` (467 checkpoints, 12,609 state fields, 29,888 osc samples, 273,600 mono samples), `exactness-seq-notes-repeated-v1.json` (403/10,881/25,792/196,800), `exactness-seq-modwheel-v1.json` (75/2,025/4,800/182,400). Checkpoints = state after blocks 0, 1, every 64th block, and every block of a released voice: envelope state machines (state/phase/output ×2), oscillator impulse-engine state (oscstate, impulse state, last_level, pwidth, pwidth2, dc_uni, dc, osc_out, osc_out2, bufpos), filter registers (f_r0, f_r1, f_clip), end-of-block coefficients C[8], plus the 64-sample oscillator output block and **every** 48 kHz output sample. |
-| 2 | Model vs upstream reference: declared budget metrics pass on the fixture set; raw subtraction not required where free-running phase/noise applies | **FAIL vs [PROPOSED] budgets on all three sequences / PENDING-FREEZE (recorded, not tuned)** | `audio-*.json` (proposed bounds: max\|Δ\| ≤ 3,500 LSB, RMS diff ≤ −46 dBFS, spectral corr ≥ 0.98): seq-notes-repeated-v1 passes the max\|Δ\| (2,321 LSB) and spectral (corr 0.9875) bounds but **FAILS the RMS bound** (−33.3 dBFS is louder than the ≤ −46 dBFS proposal) → `FAIL against proposed budgets`. seq-notes-coverage-v1 (max 4,760; RMS −30.1 dBFS; spec 0.9753) and seq-modwheel-v1 (max 12,677; RMS −32.3 dBFS; spec 0.9784) **fail all three proposed bounds** (max, RMS and spectral). *Re-grade note (issue #97):* this row originally read "PASS/PENDING-FREEZE (mixed)" with seq-notes-repeated-v1 passing all three bounds and the other two failing only max/spectral; those RMS legs were graded with the inverted `rms_diff_dbfs >= budget` comparison fixed in PR #92 and audited in issue #95 (`reports/tooling-rms-polarity-audit/`). The numeric metrics are unchanged; only the RMS-leg grading and the overall status moved. These budgets are `[PROPOSED-TO-BE-FROZEN-AT-PILOT]` placeholders — per the fidelity policy DRAFT nothing here is a fidelity verdict; the achieved numbers and the proposal misses are recorded for the SXT-013 freeze, not tuned away. Alignment: best RMS shift is 0 to −4 samples on two sequences (well inside the 32-sample scheduling granularity) and −2 on modwheel — the model is sample-locked to the reference render (no free-running phase: retrigger on, drift 0; 3× fresh-instance reference renders bit-identical, sha `9966433b…`). See "Deviations / known error sources". |
+| 1 | RTL vs frozen model: internal state equality at declared checkpoints (exact) | **PASS** | All three sequences, integer equality, zero mismatches: `exactness-seq-notes-coverage-v1.json` (467 checkpoints, 16,345 state fields, 29,888 osc samples, 273,600 mono samples), `exactness-seq-notes-repeated-v1.json` (403/14,105/25,792/196,800), `exactness-seq-modwheel-v1.json` (75/2,625/4,800/182,400) — re-run at the #145 HEAD after the #123 decimator fix (field counts grew because SXT-026a/SXT-034 added per-checkpoint fields after this record first published 12,609/10,881/2,025; checkpoint and sample counts are unchanged). Checkpoints = state after blocks 0, 1, every 64th block, and every block of a released voice: envelope state machines (state/phase/output ×2), oscillator impulse-engine state (oscstate, impulse state, last_level, pwidth, pwidth2, dc_uni, dc, osc_out, osc_out2, bufpos), filter registers (f_r0, f_r1, f_clip), end-of-block coefficients C[8], plus the 64-sample oscillator output block and **every** 48 kHz output sample. |
+| 2 | Model vs upstream reference: declared budget metrics pass on the fixture set; raw subtraction not required where free-running phase/noise applies | **FAIL vs [PROPOSED] budgets on all three sequences / PENDING-FREEZE (recorded, not tuned)** | `audio-*.json` (proposed bounds: max\|Δ\| ≤ 3,500 LSB, RMS diff ≤ −46 dBFS, spectral corr ≥ 0.98): seq-notes-repeated-v1 passes the max\|Δ\| (2,328 LSB) and spectral (corr 0.9921) bounds but **FAILS the RMS bound** (−33.3 dBFS is louder than the ≤ −46 dBFS proposal) → `FAIL against proposed budgets`. seq-notes-coverage-v1 (max 4,760; RMS −30.1 dBFS; spec 0.9791) **fails all three proposed bounds** (max, RMS and spectral); seq-modwheel-v1 (max 12,686; RMS −32.3 dBFS; spec 0.9802) **fails the max and RMS bounds** and passes the spectral bound. *Republication note (issue #145):* these are the numbers of the model re-rendered after the #123 halfband branch-order fix; the pre-#123 renders measured 2,321 / 0.9875 (repeated), 4,760 / 0.9753 (coverage) and 12,677 / 0.9784 (modwheel, spectral then a MISS) — see the change note below. No overall verdict moved. *Re-grade note (issue #97):* this row originally read "PASS/PENDING-FREEZE (mixed)" with seq-notes-repeated-v1 passing all three bounds and the other two failing only max/spectral; those RMS legs were graded with the inverted `rms_diff_dbfs >= budget` comparison fixed in PR #92 and audited in issue #95 (`reports/tooling-rms-polarity-audit/`). The numeric metrics are unchanged; only the RMS-leg grading and the overall status moved. These budgets are `[PROPOSED-TO-BE-FROZEN-AT-PILOT]` placeholders — per the fidelity policy DRAFT nothing here is a fidelity verdict; the achieved numbers and the proposal misses are recorded for the SXT-013 freeze, not tuned away. Alignment: best RMS shift is 0 to −4 samples on two sequences (well inside the 32-sample scheduling granularity) and −2 on modwheel — the model is sample-locked to the reference render (no free-running phase: retrigger on, drift 0; 3× fresh-instance reference renders bit-identical, sha `9966433b…`). See "Deviations / known error sources". |
 | 3 | Chosen preset is a real normalized corpus entry, not synthetic | **PASS** | Factory `Basses/Attacky.fxp`; normalized entry quoted above; census blob re-verified at extraction and at every render (`render_fixture.py` census check; extractor refuses on mismatch). |
 | 4 | Cycle/state costs recorded against SXT-016 probe estimates | **PASS (recorded; reconciliation = divergence note)** | Measured qmul counts of the exact RTL schedule (1 MAC/cycle assumed, A-DSP-1c): coverage 10,889,091 qmul / 8,550 blocks = **39.8 MAC per 48 kHz sample**; repeated 7,422,396 / 6,150 = **37.7**; modwheel 6,945,898 / 5,700 = **38.1** (one active voice; fixture material C2/C4/C6 through the octave −1). Non-MAC ops are not cycle-accurately scheduled in this behavioral slice and are reported as normalized op counts only. State: **11,520 bits** for the slice as scheduled (per-slot impulse buffers 2×140×32 = 8,960 mono [probe assumed stereo: 3×1,120-word buffers = 10,080], 32 scalar state words, shared halfband 1,536, plus control words), vs probe `classic_blit` `state_ram_bits` 10,274 per osc slot. Reconciliation vs SXT-016 `probe_osc__classic_blit__ph24__a24__m32__onchip.json` (**divergence recorded, not agreement**): the probe estimates the oscillator kernel alone (52.0 cycles/sample at C4, 175.8 at the MIDI-120 worst corner, stereo out, 24-bit audio words, osc-only scope); this slice measures the integrated mono voice (osc + mixer + filter + gains + halfband decimator + master) at fixture pitches with 32-bit words. The numbers are therefore **not directly comparable**; the probe remains the per-kernel planning number and this measurement is the integrated-slice reference point for SXT-016 refinement. No technology claim of any kind. |
 | 5 | Negative control: a single deliberately mutated RTL state must fail the exactness check | **PASS (control demonstrably fails)** | `artifacts/negative-control.txt`: `voice_broken_mutant.sv` = the testbench with the qmul round-half-up bias constant mutated by one shift (`<<20` → `<<19`) — committed, single-constant mutation. The harness **FAILs** (98 mismatches within block 0; exit 1). |
+
+### Change note (issue #145, 2026-09-27): republished after the #123 halfband branch-order fix
+
+The #123 fix (`HalfbandD2` reconstructs `(B[2n] + A[2n+1])·0.5`, per the
+pinned kernel; `reports/halfband-branch-order/`) moved every model render in
+this directory. #145 re-rendered all three sequences at HEAD, re-ran
+RTL-vs-model exactness and the shared comparator, and replaced
+`model-*.wav`, `audio-*.json` and `exactness-*.json`. Attribution: the
+pre-#123 ordering (`tools/halfband_legacy_render.py`) re-renders all three
+committed pre-#145 WAVs **byte-identically** from the committed tree, so the
+delta below is the #123 fix alone. Full record:
+`reports/halfband-republication/`.
+
+| sequence | max\|Δ\| LSB | RMS Δ dBFS | spectral corr | legs max/rms/spec | overall |
+|---|---|---|---|---|---|
+| seq-notes-coverage-v1 | 4,760 → 4,760 | −30.138 → −30.139 | 0.9753 → 0.9791 | F/F/F → F/F/F | FAIL → FAIL |
+| seq-notes-repeated-v1 | 2,321 → 2,328 | −33.327 → −33.327 | 0.9875 → 0.9921 | P/F/P → P/F/P | FAIL → FAIL |
+| seq-modwheel-v1 | 12,677 → 12,686 | −32.284 → −32.283 | 0.9784 → 0.9802 | F/F/F → F/F/**P** | FAIL → FAIL |
+
+* The seq-modwheel-v1 spectral leg crosses the proposed 0.98 floor (MISS →
+  PASS); its overall verdict does not move.
+* The regenerated coverage/modwheel JSONs also carry the corrected
+  `rms_diff_dbfs` polarity (PR #92 / #95 / #97): their committed
+  `proposed_budget_results.rms_diff_dbfs` read `true` under the inverted
+  comparison and now read `false`. That is the already-audited comparator
+  correction reaching the JSON, not a #123 effect; this row's prose was
+  already re-graded by #97.
+* RTL-vs-model exactness **PASS** (0 mismatches) on all three sequences at
+  HEAD (row 1 above).
+* Unchanged: the reference renders, the budgets (still `[PROPOSED]`, owned
+  by #12), and every claim this record does not make.
 
 ## Fixture set
 
@@ -97,7 +128,7 @@ All are declared in `model/voice/README.md`; none is silently absorbed:
    float32; the model uses Q10.21 fixed words with round-half-up. The pluck's
    fast filter sweep (env mod 96 st over ~33 ms) magnifies small coefficient
    and table-lookup differences into per-sample phase deviations; the
-   spectral correlation (0.975–0.988) and RMS (−30 to −33 dBFS) bound the
+   spectral correlation (0.979–0.992) and RMS (−30 to −33 dBFS) bound the
    audible effect, the per-sample max does not.
 2. **Frequency-domain tables**: the engine lerps float32 tables; the model
    evaluates the pinned construction formulas in double and quantizes once
@@ -113,6 +144,24 @@ All are declared in `model/voice/README.md`; none is silently absorbed:
    (`FIRoffset`) are dead parameters for this preset (sub mix 1.0 ⇒
    `dc_uni ≡ 0`); the committed mutant exercise shows such constants can be
    inert — the negative control uses a constantly-active constant instead.
+6. **The scene decimator does not settle to zero on silence** (F-176-2, issue
+   [#181](https://github.com/2AMLogic/gf180-surge/issues/181), DECLARED —
+   SXT-017 option (a)). The shared `voice_model.HalfbandD2` (`README.md` step
+   7) has a round-half-up dead band, so after this leaf's last voice dies the
+   decimator holds a permanent output-Nyquist (period-2) cycle rather than
+   decaying to 0. Declared bound over a 315-case input sweep: **36 Q10.21 LSB
+   = 0.5625 int16 LSB ≈ −95.3 dBFS**, i.e. below one int16 LSB, so it cannot
+   reach this leaf's int16 render on its own and **no metric in the acceptance
+   mapping above is affected**. In situ on `seq-notes-repeated-v1`: ±1 Q10.21
+   LSB held for all 3,703 blocks (118,496 output samples) after the last voice
+   death; that region is **inside** `tools/compare_rtl_model.py`'s compared
+   window (every M line of every block) and `tb_voice.sv` matches it exactly.
+   The float64 recursion with the same coefficients decays to 1.8e-322 (float64
+   subnormals) over the same silence, so this
+   is a consequence of the Q10.21 freeze, not of the pinned recursion. Changing
+   the decimator's arithmetic is a contract revision owned by SXT-017 /
+   [#12](https://github.com/2AMLogic/gf180-surge/issues/12) and is **not** done
+   here. Evidence: `reports/halfband-limit-cycle/EVIDENCE.md`.
 
 ## Escalations / hand-offs
 

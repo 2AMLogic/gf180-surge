@@ -77,7 +77,7 @@ are evidence.
 | 2 | Model-vs-pinned-engine dry-render budgets on the carrier fixtures | **PASS/PENDING-FREEZE (achieved numbers recorded, not tuned)** | §3 matrix: 6 budget JSONs (3 carriers × coverage/repeated). No bound is frozen; misses are recorded as findings (§4), not widened |
 | 3 | RTL-vs-model exact at declared checkpoints | **PASS** | §2: three canonical integer-equality runs + two smoke configurations (incl. legacy-unison-9), 689,505 state fields, 468,672 osc samples, 596,544 mono samples, zero mismatches; `exact-*.json` |
 | 4 | Cycle/state costs recorded vs SXT-016 probes / SXT-015 accounting | **PASS (recorded; divergence note)** | §5: measured model-side qmul (MAC) counts per canonical render; probe rows are per-kernel planning numbers at declared assumptions (same recorded-divergence treatment as SXT-022/SXT-033) |
-| 5 | Negative controls must demonstrably fail | **PASS (all fail as designed)** | `negative-control.txt` + NC jsons: (a) single-constant RTL mutant FAILS exactness (97 mismatches from block 0); (b) wrong-family substitution (Classic arithmetic) FAILS the budget check on badnews; (c) shape-migration confusion (raw pre-migration shape) FAILS the budget check on tentacles; (d) four out-of-class presets REFUSED exit 2 (playmode × 2, live voice routes × 2) |
+| 5 | Negative controls must demonstrably fail | **PASS (all fail as designed)** | `negative-control.txt` + NC jsons: (a) single-constant RTL mutant FAILS exactness (98 mismatches from block 0 at the #145 HEAD; 97 before the #123 decimator fix); (b) wrong-family substitution (Classic arithmetic) FAILS the budget check on badnews; (c) shape-migration confusion (raw pre-migration shape) FAILS the budget check on tentacles; (d) four out-of-class presets REFUSED exit 2 (playmode × 2, live voice routes × 2) |
 
 ## 2. RTL-vs-frozen-model exactness (integer equality)
 
@@ -100,29 +100,54 @@ output sample.
 | **total** | **7,323** | **689,505** | **8,631** | **468,672** | **596,544** | zero mismatches |
 
 The committed mutant (`sine_broken_mutant.sv`, qmul bias `<<20`→`<<19`)
-FAILS the same comparison on the badnews canonical run (97 mismatches from
+FAILS the same comparison on the badnews canonical run (98 mismatches at
+the #145 HEAD, 97 before the #123 decimator fix; mismatches from
 block 0, `exact-mutant-badnews.json`) while the clean RTL passes.
 
 ## 3. Model-vs-reference budgets (PENDING-FREEZE, measured)
 
 Comparator: `tools/compare_audio_reference.py` (dry policy; no
 normalization, no time-warping; shift-0 primary). Proposed SXT-022 bounds
-(max ≤ 3500 LSB · rms ≥ −46 dBFS · spectral corr ≥ 0.98) are placeholders;
+(max ≤ 3500 LSB · rms ≤ −46 dBFS · spectral corr ≥ 0.98) are placeholders;
 nothing is frozen. Reference renders are committed with sidecars
 (determinism: 3 fresh-instance repeats bit-identical per fixture).
 
 | Fixture | max LSB | rms dBFS | corr | shift | ref peak LSB | ref clipped | proposed max/rms/corr |
 |---|---|---|---|---|---|---|---|
-| badnews / coverage | 210 | −61.7 | 0.9298 | 0 | 3,635 | 0 | ✓/✓/✗ |
-| badnews / repeated | 62 | −71.0 | 0.9456 | 0 | 3,635 | 0 | ✓/✓/✗ |
-| tentacles / coverage | 3,458 | −26.4 | 0.9381 | 0 | 11,383 | 0 | ✓/✗/✗ |
-| tentacles / repeated | 3,164 | −27.9 | 0.9731 | 0 | 11,394 | 0 | ✓/✗/✗ |
-| popcorn2k / coverage | 1,789 | −47.5 | 0.9606 | 0 | 32,767 | 1,817 | ✓/✓/✗ |
-| popcorn2k / repeated | 888 | −49.2 | 0.9789 | 0 | 32,767 | 886 | ✓/✓/✗ |
+| badnews / coverage | 210 | −61.7 | 0.9306 | 0 | 3,635 | 0 | ✓/✓/✗ |
+| badnews / repeated | 62 | −71.1 | 0.9471 | 0 | 3,635 | 0 | ✓/✓/✗ |
+| tentacles / coverage | 3,458 | −26.4 | 0.9444 | 0 | 11,383 | 0 | ✓/✗/✗ |
+| tentacles / repeated | 3,165 | −27.9 | 0.9773 | 0 | 11,394 | 0 | ✓/✗/✗ |
+| popcorn2k / coverage | 1,789 | −47.2 | 0.9666 | 0 | 32,767 | 1,817 | ✓/✓/✗ |
+| popcorn2k / repeated | 906 | −49.1 | 0.98002 | 0 | 32,767 | 886 | ✓/✓/**✓** |
 
-All six rows pass the proposed max bound; four pass the rms bound; no row
-passes the spectral-corr proposal. The corr misses are the two recorded
-classes below — no number was tuned.
+All six rows pass the proposed max bound; four pass the rms bound; one row
+(popcorn2k / repeated) passes the spectral-corr proposal, and therefore all
+three proposals — `PASS (PENDING-FREEZE)`; the other five miss spectral
+corr. The corr misses are the two recorded classes below — no number was
+tuned.
+
+**Republication note (issue #145, 2026-09-27) — one verdict moved.** The
+numbers above are those of the model re-rendered after the #123 halfband
+branch-order fix (`reports/halfband-republication/`). The pre-#123 renders
+measured, in table order: 210 / −61.7 / 0.9298; 62 / −71.0 / 0.9456;
+3,458 / −26.4 / 0.9381; 3,164 / −27.9 / 0.9731; 1,789 / −47.5 / 0.9606;
+888 / −49.2 / 0.9789 — i.e. no row passed spectral. **popcorn2k / repeated
+moves from `FAIL against proposed budgets` to `PASS (PENDING-FREEZE)`**:
+spectral corr 0.9789 → 0.98002, which clears the proposed 0.98 floor by
+2.0e-5. That margin is knife-edge and is stated, not leaned on: the budget
+is `[PROPOSED]` (owned by #12), the reference saturates (886 clipped
+samples, F-040-2), and nothing here is a fidelity verdict. Attribution: the
+pre-#123 ordering (`tools/halfband_legacy_render.py`) re-renders all six
+committed pre-#145 WAVs byte-identically, so the movement is the #123 fix
+alone. Every other row's verdict is unchanged (FAIL).
+`tools/run_sxt040_checks.py` (steps 1–3) was re-run end to end at the #145
+HEAD, exit 0: RTL-vs-model exactness PASS on all three canonical runs
+(`exact-{badnews,tentacles,popcorn2k}.json` byte-identical to the committed
+files); the single-constant mutant FAILs (98 mismatches, was 97); the
+wrong-family and shape-migration controls still FAIL the budget check
+(`nc-*.json` regenerated; before/after in `negative-control.txt`); all four
+out-of-class presets are still REFUSED.
 
 **Tool note (rms flag, found by PR #92 judge review).**
 `tools/compare_audio_reference.py` originally tested the rms residual with
@@ -162,10 +187,10 @@ native int16 levels the ±1-LSB render quantization caps log-spectral
 correlation ≈ 0.93–0.95 regardless of the (excellent) sample agreement —
 max 62–210 LSB and rms −62/−71 dBFS are at the render floor. popcorn2k
 saturates its reference (peaks at FS, 886–1,817 clipped samples) and
-corr 0.979 — a clipping-race residual at the hard-clip.
+corr 0.967–0.980 — a clipping-race residual at the hard-clip.
 
 **F-040-3 — detuned-unison decorrelation (F-033-1 class).** tentacles
-(uni 4, detune 0.034): corr 0.94–0.97, rms −26/−28 dBFS. The engine's
+(uni 4, detune 0.034): corr 0.94–0.98, rms −26/−28 dBFS. The engine's
 legacy quadrature recurrence is float32 per voice; detuned stacks wander
 against the model's exact Q10.21 rotation. The modern path narrows the
 double phase to float32 at the fastsin input (declared deviation 4) — a
@@ -208,6 +233,30 @@ the incident itself is the finding. Process gap recorded: the
 artifact-collection step had no render-from-source identity check, and the
 committed budget JSON had never been cross-checked against its row in this
 record; re-verification (§7) now regenerates from inputs and compares.
+
+**F-040-6 — the scene decimator does not settle to zero on silence (F-176-2,
+issue [#181](https://github.com/2AMLogic/gf180-surge/issues/181); DECLARED, not
+absorbed).** `run_model.py` and `tb_sine.sv` both carry the shared
+`voice_model.HalfbandD2`, whose round-half-up dead band leaves it in a
+permanent output-Nyquist (period-2) cycle on silence instead of the zero state.
+Declared bound over a 315-case input sweep (amplitudes 1 Q10.21 LSB → the ±8
+`sceneout` clip; frequencies 0.002 → 0.5 of the 96 kHz input rate, whole
+stopband included; impulse/DC/sine/square/two-tone/seeded noise, each followed
+by silence, each settled amplitude obtained exactly by zero-input state
+recurrence, not from a finite tail): **36 Q10.21 LSB = 0.5625 int16 LSB ≈
+−95.3 dBFS**, below one int16 LSB, so it cannot reach an int16 render on its own
+and no §3 budget number here is affected. `tb_sine.sv` reproduces the settled
+region **exactly** on that sweep, so §2's exactness verdict is unaffected.
+**Read this leaf's in-situ result carefully:** on `tentacles /
+seq-notes-repeated-v1` the post-death mono output is exactly **0** for all
+3,702 blocks (118,464 samples) after the last voice death — the only one of the
+three measured leaves where it is. That is this fixture's master gain
+quantizing the cycle away, **not** an exemption for this leaf's decimator; the
+cycle is present in the decimator's own state either way. Disposition is
+SXT-017 option (a) — declare — recorded in `model/voice/README.md` and
+`README.md` here; changing the arithmetic is a contract revision owned by
+[#12](https://github.com/2AMLogic/gf180-surge/issues/12). Evidence:
+`reports/halfband-limit-cycle/EVIDENCE.md`.
 
 **Environment note.** The shared box's primary oracle tree had drifted
 off-pin again (surgepy self-reported `1.4.sxt037-tap`); all extraction

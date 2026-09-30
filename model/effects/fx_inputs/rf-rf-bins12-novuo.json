@@ -22,6 +22,13 @@
   },
   "cross_check": {
     "census_vs_graphs_drift_count": 0,
+    "engine_display_names_context": [
+      "Chorus",
+      "Delay",
+      "Distortion",
+      "EQ",
+      "Reverb 2"
+    ],
     "fields_compared": [
       "blob_sha1",
       "fx_bypass",
@@ -31,6 +38,7 @@
       "scene_mode",
       "stored_revision"
     ],
+    "fx_type_name_authority": "corpus/census-v0.1/census.py FX table, applied to the graph's stored type ids (content comparison, not spelling)",
     "values": {
       "blob_sha1": "e688adfdcdee44073968942914733783163b0e8c",
       "fx_bypass": 0,

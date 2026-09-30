@@ -39,6 +39,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 DEFAULT_GRAPHS = REPO_ROOT / "corpus" / "normalized" / "graphs.jsonl"
 DEFAULT_CENSUS_CSV = REPO_ROOT / "corpus" / "census-v0.1" / "results" / "per-preset.csv"
 
@@ -137,14 +141,6 @@ PROFILES = {
 
 class Refuse(Exception):
     pass
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def load_census(census_csv):
@@ -690,9 +686,9 @@ def build_profile(pool, exclusions, anomalies, profile_name, graphs_path,
                                   if slate_sel else None)},
         "inputs": {
             "graphs_jsonl": repo_rel(graphs_path),
-            "graphs_jsonl_sha256": sha256_file(graphs_path),
+            "graphs_jsonl_sha256": oc.sha256_file(graphs_path),
             "census_per_preset_csv": repo_rel(census_path),
-            "census_per_preset_csv_sha256": sha256_file(census_path),
+            "census_per_preset_csv_sha256": oc.sha256_file(census_path),
         },
         "integrity": (
             "every line cross-checked against the census per-preset.csv "

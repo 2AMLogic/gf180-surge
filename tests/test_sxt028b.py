@@ -31,7 +31,8 @@ import conditioner_model as cm  # noqa: E402
 from conditioner_model import (  # noqa: E402
     ConditionerModel, ConditionerParams, BLOCK, LOOKAHEAD, ONE_C,
     CTRL_WORDS, FLAG_CONTROL_ONLY, FLAG_FRESH, FLAG_SUSPEND, FLAG_HP_ON,
-    model_revision, tail_coverage_check, attack_release_f32,
+    model_revision, tail_coverage_check, present_segments, gated_tail_segments,
+    attack_release_f32,
 )
 import conditioner_corners as corners  # noqa: E402
 import extract_conditioner_inputs as ext  # noqa: E402
@@ -192,6 +193,43 @@ def test_dual_instance_independent_histories():
 def test_tail_coverage_check():
     assert tail_coverage_check(141, 39) == (True, 140)
     assert tail_coverage_check(139, 39) == (False, 140)
+
+
+def test_present_segments():
+    present = [True] * 40 + [False] * 110 + [True] * 20 + [False] * 30
+    assert present_segments(present) == [(0, 39), (150, 169)]
+    assert present_segments([False] * 5) == []
+    assert present_segments([True] * 3) == [(0, 2)]
+
+
+def test_gated_tail_segments_derives_from_the_schedule_not_a_constant():
+    """Issue #119: the tail gate must be derived from `present`, and must
+    catch a schedule edit that shortens the first tail -- not stay pinned
+    to a hand-picked block number."""
+    # the actual dual-lifecycle schedule (tools/compare_rtl_model_conditioner
+    # .lifecycle_schedule): the first present run's ring-out completes (at
+    # block 140) before the second run resumes at block 150, so it is
+    # gated; the second run's own ring-out needs block 270 but the schedule
+    # only runs to block 199, so it is reported but not claimed covered.
+    present = [True] * 40 + [False] * 110 + [True] * 20 + [False] * 30
+    segs = gated_tail_segments(present, len(present))
+    assert segs[0] == {"segment_start": 0, "segment_end": 39,
+                       "required_blocks": 140, "uninterrupted": True,
+                       "covered": True}
+    assert segs[1]["covered"] is False          # required 270 > 200 compared
+
+    # a schedule edit that cuts the first tail short by letting the second
+    # run resume (block 90) before the first run's ring-out (required 140)
+    # completes must FAIL the gate on segment 0, not silently keep passing
+    # against a stale constant.
+    shortened = [True] * 40 + [False] * 50 + [True] * 20 + [False] * 30
+    segs2 = gated_tail_segments(shortened, len(shortened))
+    assert segs2[0]["uninterrupted"] is False
+    assert segs2[0]["covered"] is False
+
+    # an uninterrupted but genuinely truncated run (fewer blocks compared)
+    # still fails on coverage, not interruption.
+    assert gated_tail_segments(present, 130)[0]["covered"] is False
 
 
 def test_corners_provenance_fail_closed():

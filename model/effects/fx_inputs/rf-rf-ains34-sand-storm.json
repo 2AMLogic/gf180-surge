@@ -23,6 +23,14 @@
   "carrier_source": "added by this leaf from its own B4-scope candidate list (reports/sxt-028/leaves/SXT-028i/newly-enabled.json): the three issue-named carriers each occupy only ONE of ains3/ains4, so none of them exercises the concurrent dual-instance or disabled-slot shape this leaf claims",
   "cross_check": {
     "census_vs_graphs_drift_count": 0,
+    "engine_display_names_context": [
+      "Airwindows",
+      "Conditioner",
+      "Delay",
+      "Distortion",
+      "EQ",
+      "Reverb 1"
+    ],
     "fields_compared": [
       "blob_sha1",
       "fx_bypass",
@@ -32,6 +40,7 @@
       "scene_mode",
       "stored_revision"
     ],
+    "fx_type_name_authority": "corpus/census-v0.1/census.py FX table, applied to the graph's stored type ids (content comparison, not spelling)",
     "values": {
       "blob_sha1": "2ba21470c23e49ca2bc12dd185159b1b539bbbb8",
       "fx_bypass": 0,

@@ -284,8 +284,8 @@ cross-checked against the pinned structure:
 * Long buffers are external **WRITABLE** memory; flash is never writable
   delay memory; all processing stays in-chip (plan section 3).
 
-**Finding (recorded, not silently fixed): the SXT-015 per-sample traffic
-row for Reverb 2 is an over-estimate.** The shared table
+**Finding F-028f-2 (recorded, not silently fixed): the SXT-015 per-sample
+traffic row for Reverb 2 is an over-estimate.** The shared table
 (`model/resources/fx_classes.py`) carries 40 reads / 18 writes; the
 structure measured here is 29 reads / 17 writes. Editing that table is
 SXT-015/016 scope, not this leaf's, and over-estimating traffic is
@@ -293,6 +293,28 @@ SXT-015/016 scope, not this leaf's, and over-estimating traffic is
 the discrepancy. It is recorded in `sxt015_reconciliation`
 (`traffic_agreement: false`) and asserted by the test suite so it stays
 visible rather than quietly reconciled.
+
+> **Disposition (2026-09-27, issue #127): DELIBERATELY RETAINED, not
+> corrected — routed to #12.** The reconciliation was taken up under
+> issue #127. Re-deriving `reports/sxt-017/cost-closure.json` with the
+> measured 29 / 17 moves 4 of its 120 grid cells' `ext_bandwidth_fit`
+> column from `EXCEEDS` to `within` (B4-broad and R0-ceiling-reference at
+> 192 MHz / M18 + M32 / E1). A previously-failing check reading pass inside
+> the artifact that #12's escalated profile-v1 freeze decides is exactly
+> what #127's stop/escalate clause says not to bank, so the shared row is
+> **held** at the conservative 40 / 18 pending #12, and the hold is now
+> *declared* rather than merely observed:
+> `model/resources/fx_classes.py` `_RETAINED_OVER_ESTIMATE_TX["reverb2"]`
+> carries the measured figure, this artifact, the numeric cost of
+> correcting it, and the unblocking condition. `sxt015_reconciliation`
+> gained `traffic_direction` and
+> `traffic_over_estimate_is_deliberate: true` plus a
+> `traffic_retention_record`, and is phrased from the **live** table values
+> so it cannot outlive the state it describes. Full before/after,
+> attribution control, and the escalation:
+> `reports/sxt-017/EVIDENCE.md` §10 and `reports/sxt-015/EVIDENCE.md` §7.
+> Nothing in **this** leaf's own numbers changed: state 14,532,608 B and
+> traffic 29 / 17 are as measured above.
 
 **External-memory fit: [PENDING-SXT-016], NOT CLAIMED.**
 `cyc_fxreverb2_frame` is still a placeholder
@@ -345,9 +367,18 @@ candidates) and the 708-carrier inventory of §1 are **not** support claims.
    controls and tooling are the inputs it needs.
 2. **F-028f-2 — SXT-015 traffic row** (§6): 40/18 vs the measured 29/17,
    state bytes agree exactly. **Filed as #127**, routed to SXT-015/016
-   scope; the disagreement stays asserted by
-   `tests/test_sxt028f.py::test_buffer_requirement_record` until it is
-   dispositioned there.
+   scope. **DISPOSITIONED 2026-09-27 (issue #127): retained deliberately,
+   correction routed to #12.** The shared row is held at the conservative
+   40/18 because re-deriving it moves four SXT-017 `ext_bandwidth_fit`
+   cells `EXCEEDS` → `within` inside the record #12's escalated freeze
+   decides; the hold is declared in
+   `model/resources/fx_classes.py` `_RETAINED_OVER_ESTIMATE_TX`, surfaced in
+   `sxt015_reconciliation.traffic_retention_record`, and asserted by
+   `tests/test_sxt028f.py::test_buffer_requirement_record` plus
+   `tests/test_sxt015_fx_classes.py`. Those assertions now pin the
+   *disposition* (declared, conservative, with an unblocking condition) and
+   go green either way, so landing the correction after the #12 decision
+   needs no test rewrite. See §6 and `reports/sxt-017/EVIDENCE.md` §10.
 
 ## 10. Reproduce
 

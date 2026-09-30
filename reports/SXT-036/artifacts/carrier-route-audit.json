@@ -1,0 +1,106 @@
+{
+  "graphs_sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
+  "graphs_sha256_matches_issue_pin": true,
+  "blob_verification": "census-vs-graphs cross-check only; NOT a payload hash",
+  "frozen_destination_class": {
+    "308": "A Filter 1 Cutoff",
+    "309": "A Filter 1 Resonance",
+    "310": "A Filter 1 FEG Mod Amount",
+    "298": "A VCA Gain"
+  },
+  "named_carriers": [
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+    "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+    "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp"
+  ],
+  "fixture_carrier": "resources/data/patches_factory/Basses/Attacky.fxp",
+  "audit": {
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp": {
+      "blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+      "routes": [
+        {
+          "list": "voice",
+          "scene_index": 0,
+          "modsource_id": 1,
+          "modsource": "ms_velocity",
+          "dest_id": 275,
+          "dest_name": "A Osc 2 Volume",
+          "depth_raw": 0.1125,
+          "depth_normalized": 0.1125,
+          "in_frozen_class": false
+        },
+        {
+          "list": "voice",
+          "scene_index": 0,
+          "modsource_id": 1,
+          "modsource": "ms_velocity",
+          "dest_id": 308,
+          "dest_name": "A Filter 1 Cutoff",
+          "depth_raw": 28.350002,
+          "depth_normalized": 0.218077,
+          "in_frozen_class": true
+        }
+      ],
+      "in_class": 1,
+      "out_of_class": 1,
+      "release_velocity_routes": 0
+    },
+    "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp": {
+      "blob_sha1": "13979de9231f1b5d2b83e4370948cc33b5b52dfc",
+      "routes": [
+        {
+          "list": "voice",
+          "scene_index": 0,
+          "modsource_id": 1,
+          "modsource": "ms_velocity",
+          "dest_id": 275,
+          "dest_name": "A Osc 2 Volume",
+          "depth_raw": 0.321429,
+          "depth_normalized": 0.321429,
+          "in_frozen_class": false
+        }
+      ],
+      "in_class": 0,
+      "out_of_class": 1,
+      "release_velocity_routes": 0
+    },
+    "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp": {
+      "blob_sha1": "ceaa96a85b3fdd3d9f026087c70d6fb2a6e76057",
+      "routes": [
+        {
+          "list": "voice",
+          "scene_index": 1,
+          "modsource_id": 1,
+          "modsource": "ms_velocity",
+          "dest_id": 502,
+          "dest_name": "B Osc 1 Sync",
+          "depth_raw": -12.192568,
+          "depth_normalized": -0.203209,
+          "in_frozen_class": false
+        }
+      ],
+      "in_class": 0,
+      "out_of_class": 1,
+      "release_velocity_routes": 0
+    },
+    "resources/data/patches_factory/Basses/Attacky.fxp": {
+      "blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+      "routes": [],
+      "in_class": 0,
+      "out_of_class": 0,
+      "release_velocity_routes": 0
+    }
+  },
+  "oracle_host_backfill_predictions": [
+    {
+      "preset": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+      "modsource": "ms_velocity",
+      "dest_id": 308,
+      "dest_name": "A Filter 1 Cutoff",
+      "expected_depth_normalized": 0.218077,
+      "expected_depth_raw": 28.350002
+    }
+  ],
+  "refusal_control": "PASS",
+  "reference_budget_items": "NOT_RUN (#96)"
+}

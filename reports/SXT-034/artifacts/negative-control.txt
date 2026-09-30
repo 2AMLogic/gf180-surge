@@ -117,3 +117,31 @@ All five controls re-executed on the merged model+RTL (pinned-oracle host):
 The mutants were regenerated from the composed testbench (post-rebase cfg
 layout: unison words 78..127, draw table 128+); the mutations are unchanged
 single-line deltas verified by diff.
+
+==============================================================================
+#145 RERUN (after the #123 halfband branch-order fix) — 2026-09-27
+==============================================================================
+Re-executed at the #145 HEAD on the macOS build host (iverilog 13); the
+uni2 reference render is the committed pinned-oracle-host render, unmodified.
+
+  NC-1 unison-collapsed .... FAIL against proposed budgets
+       (max 11,742 LSB | rms -24.66 dBFS | corr 0.9626; differential vs the
+        true uni2 model 18,238 LSB). The true uni2 model itself measures
+        21,876 / -18.48 / 0.9644 against the same reference, so this
+        reference-budget FAIL is NOT discriminating (EVIDENCE.md section 8).
+  NC-2 detune-zeroed ....... FAIL against proposed budgets
+       (max 12,887 LSB | corr 0.9686; differential vs true 20,884 LSB).
+       The original uni2-detune-zeroed.json input was never committed; the
+       mutant was re-derived with
+         python3 tools/halfband_legacy_render.py --zero-unison-spread \
+           model/voice/run_model.py --inputs model/voice/attacky_uni2_inputs.json \
+           --sequence seq-notes-coverage-v1 --out-dir <dir>
+       which reproduces the committed pre-#145 NC-2 numbers exactly
+       (model peak 12,677, max 12,717, corr 0.967578; differential 20,883)
+       under the legacy ordering, and was then run with --head-order.
+  NC-3 beyond-cap uni=17 ... not re-run (load-time refusal; no decimator
+       on its path)
+  NC-4 voice-count mutant .. FAIL, 105 mismatches
+       (first: block 0 sample 0: mono model=3 rtl=2)
+  NC-5 rounding mutant ..... FAIL, 99 mismatches
+       (first: block 0 sample 0: mono model=3 rtl=2)

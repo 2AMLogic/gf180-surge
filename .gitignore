@@ -22,11 +22,14 @@ out/aw-4/
 # Python bytecode
 __pycache__/
 *.pyc
+# Repo Skills guard-hook logs (machine-local; carry absolute paths)
+.claude/skills/repo/logs/
 # >>> loom-managed (do not edit) >>>
 # Loom runtime state (don't commit these)
 .loom-in-use
 .loom-checkpoint
 .loom-managed
+.loom-cargo-target-dir
 .no-changes-needed
 .snapshots/
 .loom/.daemon.pid
@@ -55,6 +58,7 @@ __pycache__/
 .loom/sweep-checkpoint/
 .loom/sweep-run/
 .loom/state/ci-telemetry/
+.loom/state/fleet-captain/
 .loom/concierge/
 .loom/stats/
 .loom/diagnostics/
@@ -65,10 +69,18 @@ __pycache__/
 .loom/metrics/
 .loom/usage-cache.json
 .loom/claude-config/
+.loom/claude-config.*/
+.loom/claude-config-*/
 .loom/native-tools/
 .loom/tokens/
+.loom/tokens.*/
+.loom/tokens-*/
 .loom/accounts.env
+.loom/accounts.env.*
+.loom/accounts.env-*
 .loom/api-keys/
+.loom/api-keys.*/
+.loom/api-keys-*/
 .loom/account-health.json
 .loom/account-health.lock
 .loom/CANARY
@@ -80,6 +92,15 @@ __pycache__/
 .loom/logs/
 .loom/.resync-in-progress
 .loom/gh-config/
+.loom/gh-config.*/
+.loom/gh-config-*/
 .loom/gh-config-by-owner/
+.loom/gh-config-by-owner.*/
+.loom/gh-config-by-owner-*/
 .loom-local/
 # <<< loom-managed <<<
+
+# Local environment files (e.g. /repo:remote session settings) are never committed
+.env
+.env.*
+!.env.example

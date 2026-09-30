@@ -15,10 +15,20 @@ live in tools/compare_rtl_model_conditioner.py.
                          (tb_fx_shared_line pattern) -> dual-instance
                          exactness FAILS for both instances
   NC-3 generic substitute an instantaneous peak limiter (no look-ahead, no
-                         EQ, no M/S) labeled ADAPTED -> REFUSED by the
-                         original-preset coverage gate, and it FAILS
-                         exactness vs the frozen model; the unmodified wet
-                         reference is retained byte-identical (bypass rule)
+                         EQ, no M/S) labeled ADAPTED -> refused by
+                         `coverage_gate()` below, a LOCAL predicate that
+                         mirrors the plan section 2 fidelity rule (algorithm
+                         identity + live model revision + not-adapted); it
+                         is NOT tools/publish_coverage.py, the corpus-wide
+                         admission pipeline, which this control does not
+                         invoke. The substitute also FAILS exactness vs the
+                         frozen model; the unmodified wet reference is
+                         retained byte-identical (bypass rule). Once the
+                         oracle leg is unblocked, add the Chorus-style
+                         reference-budget failure too (see
+                         tools/chorus_negative_controls.py NC-A) -- not done
+                         here because there is no oracle fixture on this
+                         host (issue #119).
   NC-4 dropped tail      a render truncated before the declared tail span
                          (get_ringout_decay()-1 = 99 process() blocks + the
                          control-only transition) -> tail-coverage check
@@ -50,7 +60,7 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-conditioner"))
 import conditioner_model as cm  # noqa: E402
 from conditioner_model import (  # noqa: E402
     ConditionerModel, ConditionerParams, model_revision, tail_coverage_check,
-    BLOCK, LOOKAHEAD, ONE_C, TAIL_PROCESS_BLOCKS,
+    present_segments, BLOCK, LOOKAHEAD, ONE_C, TAIL_PROCESS_BLOCKS,
 )
 from conditioner_corners import all_corners  # noqa: E402
 from compare_rtl_model_conditioner import (  # noqa: E402
@@ -75,8 +85,14 @@ def exact(ref, got):
 
 
 def coverage_gate(record):
-    """Original-preset coverage admission (plan section 2 fidelity rule):
-    only the frozen Conditioner algorithm, unadapted, counts."""
+    """LOCAL predicate for NC-3 only (issue #119): a stand-in for the plan
+    section 2 fidelity rule -- only the frozen Conditioner algorithm,
+    unadapted, counts. This is NOT the repository's real admission logic
+    (tools/publish_coverage.py, which reconciles the whole corpus from
+    committed evidence files); NC-3 does not call that tool, and nothing
+    here changes reports/coverage-v1/. It exists so this control can show
+    the ADAPTED label is refused by *some* admission check with the same
+    shape as the real rule, not to stand in for the corpus-wide gate."""
     return (record.get("algorithm") == ALGORITHM_ID
             and record.get("model_revision") == model_revision()
             and not record.get("adapted", True))
@@ -195,17 +211,23 @@ def nc_generic_substitute():
     differs = not exact(ref, sub)
     retained = hashlib.sha256(json.dumps(ref).encode()).hexdigest() == ref_hash
     return _ctl("generic substitute (instantaneous limiter, labeled ADAPTED)",
-                "original-preset coverage gate + exactness",
+                "local coverage_gate() predicate (NOT publish_coverage.py) "
+                "+ exactness",
                 refused and admitted and differs and retained,
-                {"substitute_refused_by_gate": refused,
-                 "frozen_model_admitted_by_gate": admitted,
+                {"substitute_refused_by_local_coverage_gate": refused,
+                 "frozen_model_admitted_by_local_coverage_gate": admitted,
                  "substitute_fails_exactness": differs,
                  "unmodified_wet_reference_retained": retained})
 
 
 def nc_dropped_tail():
-    present, _, last = lifecycle_schedule()
+    present, _ = lifecycle_schedule()
     present = present[:150]
+    # `present[:150]` keeps only the schedule's first input-present run
+    # (0-39) plus enough silence to state its full declared ring-out; the
+    # required span is derived from that run, not a hand-picked constant
+    # (issue #119).
+    last = present_segments(present)[0][1]
     full = render(PARAMS_A, present, seed=31)
     ok_full, required = tail_coverage_check(len(full), last)
     truncated = full[:last + 1 + 4]          # stops 4 blocks into the tail

@@ -76,13 +76,31 @@ DETERMINISTIC_WAVES = (0, 1, 2, 3, 4)   # sine, tri, saw, ramp, square
 REV1_PARAM_IDS = ["predelay", "shape", "roomsize", "decaytime", "damping",
                   "lowcut", "freq1", "gain1", "highcut", "mix", "width"]
 
-# B4-scope carriers named by issue #59, with the census blob SHA-1 recorded
-# by the generator (reports/sxt-028/leaves/SXT-028g/newly-enabled.json).
-# The SHA is re-verified from the engine checkout at extraction time.
+# B4-scope carriers drawn from the SXT-028 generator's own candidate list
+# (reports/sxt-028/leaves/SXT-028g/newly-enabled.json -> b4_scope_candidates,
+# 155 entries), with the census blob SHA-1 it recorded. The SHA is re-verified
+# from the engine checkout at extraction time.
+#
+# RE-SELECTED by #140. The three carriers first queued here (reson, bass11,
+# bass17) were named before the FX-modulation screen below actually walked the
+# modulation buses (#132/#141): with the screen repaired, all three refuse --
+# reson and bass11 on FX-destination modulation, bass17 on an active
+# Conditioner (fx type 8) in global1, which this leaf's chain ladder does not
+# build. The refusals and the re-selection are recorded in
+# reports/SXT-028g/EVIDENCE.md sections 6 and 8; the three carriers below are
+# the ones that survive every oracle-independent gate of extract():
+#
+#   phasey   patches_factory/Polysynths/Phasey.fxp  rev 9,  ains1 + send1 Delay
+#   squelch  patches_factory/Leads/Squelch.fxp      rev 20, ains1 only
+#   sticky   patches_factory/MPE/Sticky.fxp         rev 16, ains1 + send2 Reverb 1
+#
+# Queued is not extracted and not a pass: the oracle-dependent gates
+# (mod_wave, drift, retrigger, stages range, temposync cross-check, blob
+# re-verification against the engine checkout) run only on an oracle host.
 PRESETS = {
-    "reson": "resources/data/patches_3rdparty/Argitoth/FX/Reson.fxp",
-    "bass11": "resources/data/patches_3rdparty/Bluelight/Basses/Bass 11.fxp",
-    "bass17": "resources/data/patches_3rdparty/Bluelight/Basses/Bass 17.fxp",
+    "phasey": "resources/data/patches_factory/Polysynths/Phasey.fxp",
+    "squelch": "resources/data/patches_factory/Leads/Squelch.fxp",
+    "sticky": "resources/data/patches_factory/MPE/Sticky.fxp",
 }
 
 

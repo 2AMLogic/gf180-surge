@@ -72,6 +72,21 @@ never coverage.
 | sinc lipol fraction | 16-bit unsigned | `ipos & 0xFFFF` |
 | unison constants | float32 emulation at quantization time, then Q10.21 | attenuation 1/√n (`_f32(1.0/_f32(√n))`), detune bias 2/(n−1), offset −1, per-voice detune `udet_f·(bias·v+offset)` in float32 op order |
 
+**Declared word-length consequence on this leaf's output chain (F-176-2, issue
+[#181](https://github.com/2AMLogic/gf180-surge/issues/181)).** `run_model.py`
+instantiates the shared `voice_model.HalfbandD2`, and `tb_classic.sv` carries a
+verbatim copy of it. That decimator has a round-half-up dead band and therefore
+**does not settle to zero after the last voice dies**: it holds a permanent
+output-Nyquist (period-2) cycle bounded by **36 Q10.21 LSB = 0.5625 int16 LSB
+≈ −95.3 dBFS** over the declared input sweep. Declared, not fixed
+(SXT-017 option (a)); changing the arithmetic is a contract revision owned by
+#12. Measured in situ on this leaf's own `horn / seq-notes-repeated-v1`
+fixture: the post-death mono output holds ±2 Q10.21 LSB for all 3,519 blocks
+(112,608 samples) after the last voice dies, and `tb_classic.sv` reproduces the
+settled region exactly. Full declaration: `model/voice/README.md` §"DECLARED
+word-length consequence"; evidence:
+`reports/halfband-limit-cycle/EVIDENCE.md`.
+
 ## Operation order (normative, per convolute call, per unison voice u)
 
 1. sync branch: if `l_sync > 0 and syncstate[u] < oscstate[u]`:

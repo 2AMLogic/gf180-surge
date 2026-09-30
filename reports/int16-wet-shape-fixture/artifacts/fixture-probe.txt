@@ -1,0 +1,111 @@
+int16 wet tail-shape grading fixture probe (issue #187) -- SXT-017 pilot-freeze input
+continuation of issue #160 / decision-records/0016 option F-E (fixture-side arm)
+repo HEAD 577eea9609ae   numpy 1.26.4   python 3.12.3   2026-09-27T20:16:25Z
+shipped budget (unmodified): {"decay_curve_floor_dbfs": -100.0, "decay_curve_max_dev_db": 1.0, "decay_curve_window_s": 0.05, "tail_rms_rel_db": -20.0}
+claim scope: comparator and fixture-selection behaviour only; no fidelity, RTL, support,
+             coverage or sound claim; no budget frozen.
+
+==========================================================================
+[1] int16 wet fixture eligibility survey (shape-grading fixture selection)
+==========================================================================
+  declared floor -100.0 dBFS | declared max deviation 1.00 dB
+  1 int16 LSB RMS -90.3 dBFS | +-1 LSB band edges: incoherent -84.4 dBFS, coherent -72.0 dBFS
+  declared quantization-dominated band (policy 2.5): [-100.0, -72.0] dBFS
+  eligibility: (i) graded == total windows, and (ii) the lowest graded window loses
+               at most 10% of the 1.00 dB budget to a worst-case coherent +-1 LSB
+               difference, i.e. its level is >= -51.6 dBFS (20.5 dB above the band edge).
+
+  fixture (declared wet tail region)            tot  grd    lowest in-band    spend eligible
+  behemoth/seq-tempo-change-v1-wet.wav           50   50     -45.7       0    0.05  YES
+  behemoth/seq-modwheel-v1-wet.wav               50   50     -46.5       0    0.06  YES
+  behemoth/seq-macro-sweep-v1-wet.wav            50   50     -46.6       0    0.06  YES
+  behemoth/seq-notes-holds-v1-wet.wav            50   50     -46.7       0    0.06  YES
+  behemoth/seq-notes-repeated-v1-wet.wav         50   50     -47.0       0    0.06  YES
+  behemoth/seq-pitchbend-v1-wet.wav              50   50     -47.5       0    0.06  YES
+  behemoth/seq-sustain-pedal-v1-wet.wav          50   50     -49.1       0    0.08  YES
+  behemoth/seq-pressure-v1-wet.wav               50   50     -52.1       0    0.11  no
+  behemoth/seq-poly-8-v1-wet.wav                 50   50     -68.5       0    0.68  no
+  behemoth/seq-notes-coverage-v1-wet.wav         50   50     -69.3       0    0.74  no
+  sub4/seq-notes-repeated-v1-wet.wav             50    2     -80.6       1    2.45  no
+  sub4/seq-sustain-pedal-v1-wet.wav              50   10     -81.1       1    2.59  no
+  sub4/seq-macro-sweep-v1-wet.wav                50    2     -81.7       1    2.75  no
+  sub4/seq-pitchbend-v1-wet.wav                  50    2     -81.8       1    2.76  no
+  sub4/seq-modwheel-v1-wet.wav                   50    2     -82.1       1    2.85  no
+  sub4/seq-notes-holds-v1-wet.wav                50    2     -82.1       1    2.85  no
+  sub4/seq-notes-coverage-v1-wet.wav             50    2     -82.7       1    3.01  no
+  sub4/seq-tempo-change-v1-wet.wav               50    2     -82.7       1    3.03  no
+  koala2/seq-tempo-change-v1-wet.wav             50   23     -83.1       7    3.15  no
+  sub4/seq-pressure-v1-wet.wav                   50    2     -83.4       1    3.24  no
+  sub4/seq-poly-8-v1-wet.wav                     50    2     -84.2       1    3.49  no
+  koala2/seq-notes-coverage-v1-wet.wav           50   23     -85.1       7    3.79  no
+  koala2/seq-poly-8-v1-wet.wav                   50   24     -95.9       8    9.23  no
+  koala2/seq-sustain-pedal-v1-wet.wav            50   33     -96.8       9    9.83  no
+  koala2/seq-notes-repeated-v1-wet.wav           50   24     -98.0       8   10.66  no
+  koala2/seq-pitchbend-v1-wet.wav                50   25     -98.1       9   10.76  no
+  koala2/seq-pressure-v1-wet.wav                 50   25     -98.5       9   11.07  no
+  koala2/seq-modwheel-v1-wet.wav                 50   25     -99.5       9   11.78  no
+  koala2/seq-macro-sweep-v1-wet.wav              50   26     -99.6      10   11.84  no
+  koala2/seq-notes-holds-v1-wet.wav              50   25     -99.8       9   12.04  no
+
+  eligible fixtures: 7 of 30 committed int16 wet fixtures
+  designated (decision-records/0017): fixtures/audio/behemoth/seq-notes-holds-v1-wet.wav
+    50/50 windows graded, lowest graded -46.7 dBFS (43.6 dB above 1 LSB RMS, 25.3 dB above the band edge),
+    worst-case coherent +-1 LSB spend 0.06 dB = 5.7% of the 1.00 dB budget, 0 windows in band
+  old fixture (#160 conflict): fixtures/audio/koala2/seq-notes-coverage-v1-wet.wav
+    23/50 windows graded, lowest graded -85.1 dBFS, worst-case spend 3.79 dB = 379% of the budget, 7 windows in band -- INELIGIBLE: coverage gap: 27 of 50 windows below the declared floor; worst graded window spends 3.79 dB of the 1.00 dB budget on a +-1 LSB difference (> 0.10 dB)
+  leg 1: PASS (a committed int16 wet fixture with NO graded window inside the band exists; the fixture #160 measured the conflict on does not)
+
+==========================================================================
+[2] #111 mono late-tail controls re-derived on the designated fixture
+==========================================================================
+  NOTE (claim scope): every control model is derived from the COMMITTED reference render
+        (baseline model := reference), so a PASS here is a tool self-test, never a fidelity result.
+  fixture behemoth/seq-notes-holds-v1, declared wet tail region [177600, 297600), 2400-frame windows
+
+  baseline                                 required PASS observed PASS | shape leg PASS (50/50 graded, worst dev 0.00 dB) | CONTROL-OK
+      no over-budget window; residual leg PASS, budgets all pass=True
+  zero-late-tail-from-40%                  required FAIL observed FAIL | shape leg FAIL (50/50 graded, worst dev 274.08 dB) | CONTROL-OK
+      over-budget windows 20,21,22,23,24,25,26,27... at -25.9/-26.9/-27.7/-29.0/-29.6/-30.4/-31.0/-31.4... dBFS -- lowest -46.7 dBFS, CLEAR of the declared band (edge -72.0 dBFS)
+  zero-late-tail-from-60%                  required FAIL observed FAIL | shape leg FAIL (50/50 graded, worst dev 266.80 dB) | CONTROL-OK
+      over-budget windows 30,31,32,33,34,35,36,37... at -33.2/-33.7/-34.5/-35.0/-35.5/-35.9/-36.5/-37.2... dBFS -- lowest -46.7 dBFS, CLEAR of the declared band (edge -72.0 dBFS)
+  zero-late-tail-from-95%                  required FAIL observed FAIL | shape leg FAIL (50/50 graded, worst dev 253.76 dB) | CONTROL-OK
+      over-budget windows 47,48,49 at -45.5/-46.2/-46.7 dBFS -- lowest -46.7 dBFS, CLEAR of the declared band (edge -72.0 dBFS)
+  zero-late-tail-from-98%                  required FAIL observed FAIL | shape leg FAIL (50/50 graded, worst dev 253.31 dB) | CONTROL-OK
+      over-budget windows 49 at -46.7 dBFS -- lowest -46.7 dBFS, CLEAR of the declared band (edge -72.0 dBFS)
+  late-tail-decays-too-fast-from-40%       required FAIL observed FAIL | shape leg FAIL (50/50 graded, worst dev 254.49 dB) | CONTROL-OK
+      over-budget windows 21,22,23,24,25,26,27,28... at -26.9/-27.7/-29.0/-29.6/-30.4/-31.0/-31.4/-32.1... dBFS -- lowest -46.7 dBFS, CLEAR of the declared band (edge -72.0 dBFS)
+  dither-first-half                        required PASS observed PASS | shape leg PASS (50/50 graded, worst dev 0.00 dB) | CONTROL-OK
+      no over-budget window; residual leg PASS, budgets all pass=True
+
+  result: 7/7 controls behaved as required AND failed only above the declared band
+  shape leg is the sole failing leg for: zero-late-tail-from-95%, zero-late-tail-from-98%
+  +-1 LSB dither over the first half of the declared tail spends 0.00 dB of the 1.00 dB budget here
+    (#160 measured 0.79 dB for the same control on koala2/seq-notes-coverage-v1)
+  leg 2: PASS
+
+==========================================================================
+[3] floor-insensitivity pair (this issue's failure control)
+==========================================================================
+  a) designated fixture: raising the floor to the band edges must change nothing.
+  b) OLD fixture: raising the floor must STILL disable mono/koala2/zero-late-tail-from-44%.
+
+  [a] behemoth/seq-notes-holds-v1 at floor -100.0 dBFS -- declared today (PROPOSED_TAIL['decay_curve_floor_dbfs'])
+      baseline=PASS(50/50), zero-late-tail-from-40%=FAIL(50/50), zero-late-tail-from-60%=FAIL(50/50), zero-late-tail-from-95%=FAIL(50/50), zero-late-tail-from-98%=FAIL(50/50), late-tail-decays-too-fast-from-40%=FAIL(50/50), dither-first-half=PASS(50/50)
+  [a] behemoth/seq-notes-holds-v1 at floor -84.4 dBFS -- incoherent +-1 LSB band edge (#160 leg 1)
+      baseline=PASS(50/50), zero-late-tail-from-40%=FAIL(50/50), zero-late-tail-from-60%=FAIL(50/50), zero-late-tail-from-95%=FAIL(50/50), zero-late-tail-from-98%=FAIL(50/50), late-tail-decays-too-fast-from-40%=FAIL(50/50), dither-first-half=PASS(50/50)
+  [a] behemoth/seq-notes-holds-v1 at floor -80.0 dBFS -- 10 dB above 1 int16 LSB RMS
+      baseline=PASS(50/50), zero-late-tail-from-40%=FAIL(50/50), zero-late-tail-from-60%=FAIL(50/50), zero-late-tail-from-95%=FAIL(50/50), zero-late-tail-from-98%=FAIL(50/50), late-tail-decays-too-fast-from-40%=FAIL(50/50), dither-first-half=PASS(50/50)
+  [a] behemoth/seq-notes-holds-v1 at floor -72.0 dBFS -- coherent worst-case +-1 LSB band edge (#160 leg 1)
+      baseline=PASS(50/50), zero-late-tail-from-40%=FAIL(50/50), zero-late-tail-from-60%=FAIL(50/50), zero-late-tail-from-95%=FAIL(50/50), zero-late-tail-from-98%=FAIL(50/50), late-tail-decays-too-fast-from-40%=FAIL(50/50), dither-first-half=PASS(50/50)
+
+  [a] drift vs the declared floor: none -- every control keeps its status and its graded-window count at every band edge
+
+  [b] koala2/zero-late-tail-from-44% at floor -100.0 dBFS -> FAIL (23/50 graded) -- as landed
+  [b] koala2/zero-late-tail-from-44% at floor -84.4 dBFS -> FAIL (22/50 graded) -- as landed
+  [b] koala2/zero-late-tail-from-44% at floor -80.0 dBFS -> PASS (20/50 graded) -- DISABLED by the raised floor
+  [b] koala2/zero-late-tail-from-44% at floor -72.0 dBFS -> PASS (16/50 graded) -- DISABLED by the raised floor
+
+  [b] control still FAILs at the declared floor: True; raised floors that disable it: -80.0, -72.0
+  leg 3: PASS (the designated fixture is floor-insensitive across the band AND #160's control keeps firing on the old fixture)
+
+OVERALL: PASS

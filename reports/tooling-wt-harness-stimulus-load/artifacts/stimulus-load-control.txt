@@ -1,0 +1,259 @@
+issue #188 — tools/compare_wt_rtl_model.py stimulus-load failure reporting
+base: 577eea9 (origin/main) · branch: feature/issue-188 · date: 2026-09-27
+host: macOS (darwin 27.0.0), iverilog/vvp 13.0 (stable, v13_0) from
+/opt/homebrew/bin, external pinned asset tree ABSENT (decision-records/0004)
+
+SCOPE OF THIS TRANSCRIPT. These are controls on the harness's *reporting*
+path. Nothing here is evidence about the RTL, the frozen model, or their
+agreement: the model trace is a hand-written 1-block/1-slot/1-voice fixture
+and the hex stimulus is EMPTY (its contents are irrelevant to every question
+asked below). The SXT-026 RTL-vs-model exactness claim continues to rest on
+reports/sxt-026/artifacts/rtl-exactness.txt, which this change does not
+regenerate — see section 6 (status NOT_RUN, which is not a pass).
+
+Fixture (/tmp/wt188-control, never committed):
+  model_trace.json  synthetic 1-block / 1-slot / 1-unison-voice fixture
+  rtl/{init,ctrl,wt_table,sinc_main,sinc_deriv}.hex   present but empty
+Pre-fix harness copy: /tmp/wt188-prefix/tools/compare_wt_rtl_model.py
+  (git show HEAD:tools/compare_wt_rtl_model.py, with rtl/ symlinked so the
+  harness's REPO-relative testbench paths resolve identically)
+
+
+1. THE DEFECT, REPRODUCED WITH THE REAL TOOLCHAIN (Icarus 13.0)
+---------------------------------------------------------------
+CONTROL 1 — pre-fix harness, exactly one stimulus file removed
+(rtl/wt_table.hex), real iverilog + real vvp:
+
+  $ python3 /tmp/wt188-prefix/tools/compare_wt_rtl_model.py \
+      --run-dir /tmp/wt188-control --max-blocks 1
+  harness rc=1
+  verdict=FAIL  sim_fails=[]  mismatches=3
+  first_failures[0]=block 0 slot 0 voice 0: missing T line
+  keys of the summary that mention "wt_table.hex": []
+  (vvp's own stderr, as seen by the pre-fix harness: <empty>)
+
+The run fails closed, but every word of the verdict says "the RTL disagreed
+with the model" while the truth is "the stimulus never loaded", and the name
+of the missing file appears nowhere in the summary. This is the #188 defect,
+reproduced on Icarus 13.0 — NOT an Icarus 11 quirk (see section 5).
+
+CONTROL 2 — fixed harness, same run dir, same missing file:
+
+  $ python3 tools/compare_wt_rtl_model.py \
+      --run-dir /tmp/wt188-control --max-blocks 1
+  harness rc=1
+  verdict=FAIL  comparison=NOT_RUN  mismatches=1
+  sim_fails=[
+   "missing declared input: rtl/wt_table.hex (absent from the run dir; the
+    testbench $readmemh's the rtl/*.hex stimulus and Icarus reports an open
+    failure on stdout while still exiting 0, so this is asserted before the
+    simulator is invoked)"
+  ]
+  first_failures=[ <the same single entry> ]
+  checked={'voices': 0, 'fields': 0, 'oscout': 0, 'shared': 0}
+
+  -> the verdict NAMES the file, and the comparison is reported NOT_RUN
+     instead of manufacturing three mismatches out of traces that a run which
+     never happened could not have written. Merely observing FAIL does not
+     discriminate between control 1 and control 2; these assertions do.
+
+
+2. THE STDOUT MECHANISM, WITH A REAL vvp (rc=0, ERROR on stdout)
+----------------------------------------------------------------
+The pre-simulator existence check cannot see a file that exists and still
+fails to open, so the stdout matcher is exercised independently: all five hex
+files present, rtl/wt_table.hex made unreadable (chmod 000).
+
+CONTROL 3 — fixed harness, real iverilog + real vvp:
+
+  harness rc=1
+  verdict=FAIL  comparison=NOT_RUN  mismatches=1
+  sim_fails=[
+   "vvp rc=0 but a stimulus file never loaded: ERROR: <REPO>/rtl/oscillators/
+    wavetable/tb_wavetable.sv:280: $readmemh: Unable to open rtl/wt_table.hex
+    for reading."
+  ]
+  sim_stdout_tail='WARNING: <REPO>/rtl/oscillators/wavetable/tb_wavetable.sv:
+    277: $readmemh(rtl/init.hex): Not enough words in the file for the
+    requested range [0:63].\nWARNING: ...'
+  checked={'voices': 0, 'fields': 0, 'oscout': 0, 'shared': 0}
+
+  -> vvp exited 0 and wrote nothing to stderr; the reason was recovered from
+     stdout, and a tail of that stdout is now retained in the summary the way
+     stderr already was.
+
+
+3. FALSE-POSITIVE CONTROLS (the ones that matter most)
+------------------------------------------------------
+A matcher that flips a genuinely passing exactness run to FAIL would be worse
+than the lost reason this change recovers. Two controls, one measured against
+the real simulator and one in the automated suite.
+
+CONTROL 4 — real vvp, ALL five stimulus files present and readable:
+
+  $ vvp tb_wt.vvp +BLOCKS=1 ... +INIT=rtl/init.hex ... (probed directly)
+  vvp rc=0
+  stdout: 8 lines; lines matching '^ERROR:'      = 0
+                   lines matching 'Unable to open' = 0
+  the 8 lines are:
+    WARNING: .../tb_wavetable.sv:277: $readmemh(rtl/init.hex): Not enough
+      words in the file for the requested range [0:63].
+    WARNING: ...:279: $readmemh(rtl/ctrl.hex): Not enough words ... [0:262143]
+    WARNING: ...:280: $readmemh(rtl/wt_table.hex): Not enough words ...
+    WARNING: ...:281: $readmemh(rtl/sinc_main.hex): Not enough words ...
+    WARNING: ...:288: $readmemh(rtl/sinc_deriv.hex): Not enough words ...
+    WARNING: ctrl block index x != 0
+    TB done: blocks 1 ext_reads 0 fill_words 0 bursts 0 stall 0 reverb 0
+    .../tb_wavetable.sv:424: $finish called at 73500 (1ps)
+
+  $ python3 tools/compare_wt_rtl_model.py --run-dir /tmp/wt188-control \
+      --max-blocks 1
+  verdict=FAIL  comparison=FAIL  sim_fails=[]  mismatches=3
+  first_failures[0]=block 0 slot 0 voice 0: missing T line
+  checked={'voices': 1, 'fields': 0, 'oscout': 0, 'shared': 1}
+  sim_stdout_tail=''
+
+  -> this answers the question flagged as UNVERIFIED in issue #188: a run
+     whose stimulus loaded emits NO 'ERROR:'-prefixed line at all on stdout,
+     and the matcher adds nothing to sim_fails. The verdict is decided purely
+     by the comparison, which here genuinely disagrees (empty stimulus vs a
+     synthetic model trace) — exactly as it did pre-fix.
+
+CONTROL 5 — automated false-positive control, in the suite:
+  tests/test_sxt026_wt_rtl_harness.py::
+    test_healthy_stdout_diagnostics_do_not_flip_a_pass
+  feeds the stdout shape of control 4 (including the Icarus
+  '$readmemh(...): Not enough words' WARNING) to a run whose trace agrees, and
+  requires verdict PASS / comparison PASS / sim_fails == [].
+  test_stdout_matcher_is_narrow asserts the same on the matcher directly.
+
+
+4. THE TWO EXCEPTION MECHANISMS (no verdict JSON at all, pre-fix)
+-----------------------------------------------------------------
+$ grep -c 'except ' /tmp/wt188-prefix/tools/compare_wt_rtl_model.py   # pre-fix
+0
+$ grep -c 'except ' tools/compare_wt_rtl_model.py                      # fixed
+4
+
+CONTROL 6 — compile failure (stub iverilog first on PATH, exits 3).
+
+  pre-fix:
+    $ PATH=/tmp/wt188-stubbin:$PATH python3 \
+        /tmp/wt188-prefix/tools/compare_wt_rtl_model.py ...
+    Traceback (most recent call last):
+      ...
+        subprocess.run(build, check=True, cwd=args.run_dir)
+    subprocess.CalledProcessError: Command '['iverilog', '-g2012', ...]'
+      returned non-zero exit status 3.
+    rc=1   -> no verdict JSON written, no recorded reason.
+
+  fixed:
+    verdict=FAIL  comparison=NOT_RUN
+    sim_fails=["iverilog compile failed rc=3: (compiler diagnostics went to
+      this harness's own stderr; the compile step is not captured)"]
+    rc=1   -> and vvp is never invoked on an image that was not built.
+
+CONTROL 7 — timeout kill. Exercised in the automated suite with a REAL
+over-running child and the real subprocess machinery (not a simulated
+exception), via the new --timeout flag:
+  tests/test_sxt026_wt_rtl_harness.py::
+    test_vvp_timeout_is_recorded_instead_of_raising
+  substitutes `sh -c 'echo booting; sleep 1'` for vvp with --timeout 0.3, and
+  requires verdict FAIL / comparison NOT_RUN / one sim_fails entry naming the
+  timeout. Pre-fix the same situation raises subprocess.TimeoutExpired out of
+  main() (the pre-fix file contains no except clause at all, above), so no
+  verdict JSON is written.
+
+
+5. VERSION ATTRIBUTION CORRECTED (not Icarus-11-specific)
+----------------------------------------------------------
+reports/tooling-wt-harness-failure-path/artifacts/failure-path-control.txt §5
+recorded this behavior "under Icarus 11" (true of that host, which had 11).
+Every control in sections 1-4 above was measured on:
+
+  $ iverilog -V | head -1
+  Icarus Verilog version 13.0 (stable) (v13_0)
+
+and issue #188's own comment reproduced it on 12.0 and 13.0. The older
+transcript is left as written — it records what its host measured — and the
+finding is broader than it stated: this is not a quirk a toolchain bump clears.
+
+
+6. AUTOMATED CONTROLS, AND WHAT DEMONSTRABLY FAILS WITHOUT THE FIX
+-------------------------------------------------------------------
+$ python3 -m pytest tests/test_sxt026_wt_rtl_harness.py -v
+  test_simulator_failure_is_reported_as_fail_with_its_stderr          PASSED
+  test_simulator_failure_does_not_satisfy_the_mutant_control          PASSED
+  test_agreeing_trace_still_passes                                    PASSED
+  test_comparison_mismatch_still_reported                             PASSED
+  test_missing_stimulus_file_is_named_and_not_a_comparison_disagreement PASSED
+  test_readmemh_open_failure_on_stdout_with_rc_zero_is_a_sim_failure  PASSED
+  test_healthy_stdout_diagnostics_do_not_flip_a_pass                  PASSED
+  test_stdout_matcher_is_narrow                                       PASSED
+  test_vvp_timeout_is_recorded_instead_of_raising                     PASSED
+  test_compile_failure_is_recorded_instead_of_raising                 PASSED
+  test_missing_model_trace_is_named_without_raising                   PASSED
+  11 passed
+
+The same file run against the PRE-FIX harness (HARNESS repointed at
+/tmp/wt188-prefix/tools/compare_wt_rtl_model.py, STIMULUS_RELPATHS inlined
+because the pre-fix module has no STIMULUS table):
+
+  10 failed, 1 passed
+
+i.e. every new control demonstrably fails the check it targets on the pre-fix
+code. Notably test_missing_stimulus_file_... fails there with `assert 0 != 0`:
+with one stimulus file removed and a trace that agrees, the pre-fix harness
+reports verdict PASS and exits 0 — it has no notion of the stimulus at all.
+(The three #182 controls that also "fail" there do so only on the new
+`comparison` key, which the pre-fix summary does not have.)
+
+
+7. THE COMMITTED-PASS RE-RUN IS NOT_RUN (NOT a pass)
+-----------------------------------------------------
+reports/sxt-026/artifacts/rtl-exactness.txt (fixture kick-wtfix-kt /
+seq-wt-pitch-extremes-hi-v1) was NOT re-run: its stimulus is derived at run
+time from the external pinned asset tree, which is never committed
+(decision-records/0004) and is absent on this host. Status: NOT_RUN. No
+committed artifact was regenerated or re-graded by this change.
+
+What can be said without re-running it:
+  * On a run where the stimulus loaded and vvp exited 0, sim_fails is empty
+    (section 3, control 4 — measured, including the absence of any
+    'ERROR:' line on a real healthy-load stdout). With sim_fails empty the
+    comparison, the traffic reconciliation, `checked`, `mismatches`,
+    `first_failures`, `verdict` and both exit paths (base and --mutant) are
+    computed exactly as before; the summary gains two keys
+    (`comparison`, `sim_stdout_tail`) and loses none.
+  * The `--mutant` leg still requires cmp_fails AND a simulator that ran, so a
+    stimulus that never loaded cannot be reported as a passing negative
+    control; it now exits non-zero for a named reason instead of an unnamed
+    one.
+  * Issue #188's stop/escalate condition (a committed transcript produced by a
+    run with a missing stimulus file) was NOT triggered: pre-fix such a run
+    printed `mismatches=3, first_failures[0]='... missing T line'` and exited
+    non-zero (section 1, control 1), so it could not have been recorded as a
+    PASS. This is an argument about the pre-fix code's reachable paths, not a
+    re-execution of the fixture.
+
+
+8. BOUNDED FINDING recorded, not fixed (filed separately)
+----------------------------------------------------------
+A TRUNCATED (as opposed to absent/unopenable) stimulus file is NOT detected by
+this change. Icarus reports it as
+
+  WARNING: .../tb_wavetable.sv:279: $readmemh(rtl/ctrl.hex): Not enough words
+  in the file for the requested range [0:262143].
+
+— a WARNING about length, not an open failure, and one that a healthy run is
+expected to emit: `ctrl_mem` alone is declared [0:262143] while real ctrl.hex
+holds a few words per block. Matching it would flip genuinely passing runs to
+FAIL, so it is deliberately NOT matched, and the pre-fix-quality baseline
+needed to decide the question (what warnings a healthy pinned-tree run emits)
+requires the external asset tree: NOT measurable here. Filed as issue #194
+rather than guessed at.
+
+The shared helper tools/_rtl_compile_common.py::compile_and_run (check=True
+throughout) has the same blind spot and is imported by 11 harnesses, none of
+them this one; enumerated and filed as issue #193 — see EVIDENCE.md §"Scope
+decision".

@@ -37,3 +37,11 @@ mutation: rtl/voice/voice_broken_mutant.sv = tb_voice.sv with the qmul
   ]
 }
 exit code: 1
+
+# #145 note (2026-09-27): this transcript predates the #123 halfband fix and
+# was not re-run by #145. The same single-constant mutant
+# (voice_broken_mutant.sv) was re-run at the #145 HEAD on the SXT-026a smoke
+# fixture (reports/sxt-026a/artifacts/mutant-broken-smoke.json: FAIL, 95
+# mismatches) and on the SXT-034 uni2-cov fixture
+# (reports/SXT-034/artifacts/nc5-exactness.json: FAIL, 99 mismatches); it
+# remains a one-line diff from tb_voice.sv.

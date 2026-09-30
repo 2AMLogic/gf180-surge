@@ -177,7 +177,7 @@
       "from": "num = (64'sd1048576 * n) + 64'sd3;",
       "to": "num = (64'sd1048576 * n) + 64'sd0;"
     },
-    "run_dir": "../../../../../../../tmp/sxt110/s042/run-synthetic",
+    "run_dir": "../../../../../../../tmp/sxt042/run-synthetic",
     "verdict": "FAIL"
   },
   "rtl-mutant-shared": {
@@ -188,7 +188,7 @@
       "from": "kt = kt_word_of(key + 12*oct - root);",
       "to": "kt = kt_word_of(32'sd36 + 12*oct - root);"
     },
-    "run_dir": "../../../../../../../tmp/sxt110/s042/run-synthetic",
+    "run_dir": "../../../../../../../tmp/sxt042/run-synthetic",
     "verdict": "FAIL"
   },
   "shared-keytrack-word": {

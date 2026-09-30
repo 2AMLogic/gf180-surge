@@ -3,6 +3,21 @@
 // RTL-vs-model agreement must be EXACT (integer equality at every declared
 // checkpoint; tools/compare_wt_rtl_model.py).
 //
+// DECLARED SCOPE (issue #180, README deviations 7-8, SXT-017 contract
+// revision decision-records/0018): this CORE ends at the 2x-rate (96 kHz)
+// oscillator output block and is a PER-SLOT resource. It deliberately
+// implements no post-oscillator stage — no o2 level, no VCA x AEG gain ramp,
+// no scene out, no clip, no halfband/decimator, no master — because those are
+// PER-SCENE stages shared by every slot, and they live one level up in
+// rtl/oscillators/wavetable/tb_wavetable.sv, exactly as the equivalent stage
+// lives in rtl/voice/tb_voice.sv on the SXT-022 voice leaf. The leaf's 48 kHz
+// output IS therefore covered by RTL-vs-model integer equality (the M trace
+// lines, compared against the model trace's mono_block by
+// tools/compare_wt_rtl_model.py) — it is just not covered HERE.
+//
+// Before #180 the leaf had no 48 kHz stage in RTL at all and its exactness
+// claim was oscillator-scoped (declared deviation 8 of #176).
+//
 // Structure is cited from the pinned engine (read, never copied):
 // surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
 //   src/common/dsp/oscillators/WavetableOscillator.cpp

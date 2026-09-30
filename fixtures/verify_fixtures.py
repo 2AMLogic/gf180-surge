@@ -18,23 +18,18 @@ the recorded environment; it establishes no fidelity or support claim.
 """
 
 import argparse
-import hashlib
 import json
 import os
 import sys
 import wave
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 MANIFEST_PATH = os.path.join(REPO, "fixtures", "manifest.json")
 SEQ_DIR = os.path.join(REPO, "fixtures", "sequences")
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def wav_info(path):
@@ -96,7 +91,7 @@ def main():
         if os.path.exists(seq_path):
             recorded = man["sequence_library"].get(fx["sequence"])
             check("sequence_hash_recorded", recorded is not None, fx["sequence"])
-            actual = sha256_file(seq_path)
+            actual = oc.sha256_file(seq_path)
             check("sequence_hash_matches", recorded == actual,
                   f"recorded={recorded} actual={actual}")
             if sidecar:
@@ -112,7 +107,7 @@ def main():
             if not os.path.exists(path):
                 check(f"{bus}_wav_present", False, rel)
                 continue
-            actual = sha256_file(path)
+            actual = oc.sha256_file(path)
             check(f"{bus}_sha256_matches", actual == fx[bus]["sha256"],
                   f"recorded={fx[bus]['sha256']} actual={actual}")
             info = wav_info(path)

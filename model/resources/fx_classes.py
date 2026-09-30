@@ -25,6 +25,60 @@ from typing import Dict
 
 from .params import REG
 
+# --- deliberately retained over-estimates -------------------------------------
+# A `pinned` traffic row is RE-DERIVED from the SXT-028 leaf that measures it,
+# never hand-patched, the same way `_NO_LONG_BUFFER_MEASURED` promotes a state
+# row. One row is currently held at a figure its landed leaf has already
+# superseded, and it is held ON PURPOSE, not by oversight. Every entry here must
+# be conservative (retained >= measured, componentwise) and must name what
+# unblocks it; `tests/test_sxt015_fx_classes.py` enforces both, ties the entry
+# to the leaf's committed artifact, and fails if the row and this record drift.
+#
+# Correcting a traffic row DOWNWARD relaxes a bandwidth budget, so a correction
+# is not a free improvement: it can turn a previously-failing `ext_bandwidth_fit`
+# column into a passing one. Where that lands inside a record already escalated
+# to an operator decision, the correction waits for that decision instead of
+# being banked by whoever noticed it (issue #127 stop/escalate clause).
+_RETAINED_OVER_ESTIMATE_TX = {
+    "reverb2": {
+        # what the table carries (an over-estimate, therefore conservative)
+        "retained": {"ext_reads": 40, "ext_writes": 18},
+        # what the landed leaf measures and derives structurally
+        "measured": {"ext_reads": 29, "ext_writes": 17},
+        "leaf": "SXT-028f",
+        "artifact": "reports/SXT-028f/artifacts/buffer-requirement.json",
+        "field": "external_traffic.declared_from_structure",
+        "finding": "F-028f-2 (issue #127)",
+        "reason":
+            "the retired 40/18 row counted the two plain delay output taps as "
+            "2-point interpolated reads; only the recirculation read is "
+            "interpolated in the pinned delay::process, so the structure is "
+            "29 reads / 17 writes. Correcting it is the right end state, but "
+            "re-deriving reports/sxt-017/cost-closure.json with 29/17 moves 4 "
+            "of its 120 grid cells' ext_bandwidth_fit column from EXCEEDS to "
+            "within (B4-broad and R0-ceiling-reference at 192 MHz / M18+M32 / "
+            "E1: worst 696 -> 552 B/frame, required 33,408,000 -> 26,496,000 "
+            "B/s against an E1 sustained 32,000,000 B/s). That is a "
+            "previously-failing check reading pass inside the artifact that "
+            "#12's escalated profile-v1 freeze decides, which is exactly what "
+            "issue #127's stop/escalate clause says not to bank. Held here at "
+            "the conservative figure until #12 decides; no SXT-015/016/017 "
+            "artifact is derived from 29/17 yet.",
+        "unblocks_on": "#12 (SXT-017 profile v1 freeze, operator decision)",
+        "record": "reports/sxt-017/EVIDENCE.md §10",
+    },
+}
+
+
+def retained_over_estimate(class_key: str):
+    """The retention record for a pinned class key, or None.
+
+    Callers that report a traffic figure should say so when one exists: the
+    number is deliberately larger than the measured structure.
+    """
+    return _RETAINED_OVER_ESTIMATE_TX.get(class_key)
+
+
 # --- per-sample (per output frame) memory transactions, per stereo instance ----
 # All values are words per output frame; every non-pinned entry is a named
 # placeholder that SXT-016/023/024/028 must replace with measured behavior.
@@ -37,9 +91,17 @@ _PINNED_TX = {
     # Reverb1.h processBlock: 16 composite tap reads + predelay 1r/1w +
     # per-tap feedback writes (rev_taps=16 interleaved slots).
     "reverb1": {"ext_reads": 17, "ext_writes": 17},
-    # Reverb2.h: predelay 1r/1w, 4 input allpasses (1r+1w each), 8 block
-    # allpasses (1r+1w each), 4 delays (2 taps x subsample interp + 1 write).
-    "reverb2": {"ext_reads": 40, "ext_writes": 18},
+    # Reverb2.h structure, per sample per instance: predelay 1r/1w; 4 input +
+    # 8 block allpasses, 1r+1w each (allpass::process); 4 delays, 4r+1w each
+    # (delay::process -- 2 PLAIN output taps t1/t2 plus 2 reads for the one
+    # 2-point sub-sample interpolated recirculation read). That is
+    #   reads  = 1 + 12 + 4 x 4 = 29        writes = 1 + 12 + 4 x 1 = 17
+    # as SXT-028f measures with the frozen model's own ext_read/ext_write
+    # counters. This row is NOT 29/17: it is DELIBERATELY HELD at the retired
+    # 40/18 over-estimate -- see `_RETAINED_OVER_ESTIMATE_TX["reverb2"]` above
+    # for why, what unblocks it (#12), and reports/sxt-017/EVIDENCE.md §10 for
+    # the measured before/after of correcting it.
+    "reverb2": dict(_RETAINED_OVER_ESTIMATE_TX["reverb2"]["retained"]),
     # ChorusEffectImpl.h: mono shared buffer 1 write, 4 interpolated voice reads.
     "chorus": {"ext_reads": 4, "ext_writes": 1},
     # Flanger.h InterpDelay: per channel 1 write + 2-point interp read.
@@ -125,7 +187,7 @@ _NO_LONG_BUFFER_MEASURED = {
         "field": "on_chip_state.bytes",
         "state_bytes": 2444,
         "model_revision":
-            "8dcd09c8afc634fa66f1f10375404d4e15b62131057f0c91b27dc99886d9ae15",
+            "1d2300436062b1b7c1e8f34a121e6dcf61194ceb2ba35dc189573e4278fbcc15",
     },
 }
 

@@ -46,7 +46,6 @@ closure/cycle checks run over the declared DAG.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import subprocess
@@ -54,6 +53,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "oracle"))
+
+import oracle_common as oc  # noqa: E402
+
 DAG_PATH = ROOT / "docs" / "dag.json"
 README_PATH = ROOT / "README.md"
 BEGIN_MARKER = "<!-- DAG:BEGIN -->"
@@ -303,14 +306,6 @@ def validate_epic_aggregates(by_id: dict[int, dict], errors: list[str]) -> None:
             )
 
 
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1 << 16), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def git_tracked(rel_path: str) -> bool:
     try:
         result = subprocess.run(
@@ -349,7 +344,7 @@ def validate_evidence(by_id: dict[int, dict], errors: list[str], strict_hashes: 
             errors.append(f"{where}: evidence file {evidence!r} is not committed to git")
             continue
         if node.get("status") == "PASS":
-            current = sha256_file(abs_path)
+            current = oc.sha256_file(abs_path)
             recorded = node.get("evidence_sha256")
             if recorded is None:
                 if strict_hashes:
@@ -539,7 +534,7 @@ def cmd_render() -> int:
     changed_hashes = []
     for node in by_id.values():
         if node.get("status") == "PASS":
-            current = sha256_file(ROOT / node["evidence"])
+            current = oc.sha256_file(ROOT / node["evidence"])
             if node.get("evidence_sha256") != current:
                 node["evidence_sha256"] = current
                 changed_hashes.append(f"{node['id']}: {node['evidence']}")
