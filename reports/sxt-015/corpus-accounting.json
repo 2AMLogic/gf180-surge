@@ -2,7 +2,7 @@
  "anomaly_code_counts": {
   "asset_bytes_unresolved": 2,
   "audio_input_dependency": 87,
-  "class_state_unverified": 2363,
+  "class_state_unverified": 2178,
   "class_traffic_unverified": 841,
   "mseg_or_formula_contents_not_exported": 577,
   "slfo_defs_not_exported": 599,
@@ -10,8 +10,8 @@
  },
  "budget_closure_placeholder_v0": {
   "note": "cost profile placeholder-v0 ONLY; the split demonstrates the closure machinery and supports no technology claim (SXT-016 replaces the profile)",
-  "overflow": 3477,
-  "within_budget": 84
+  "overflow": 3486,
+  "within_budget": 75
  },
  "census_cross_check": {
   "compared": 3560,
@@ -24,8 +24,8 @@
  "disclaimer": "Model outputs under named assumptions (cost profile placeholder-v0, named limits, placeholder external memory bandwidth). NOT area/cycle measurements (SXT-016), NOT profile freeze (SXT-017), NOT a fidelity or preset-quality claim, NO hardware claim.",
  "event_profile": {
   "max_coincident_events": 8,
-  "peak_events_per_second": 13.333333,
-  "sequence_fixtures": 10,
+  "peak_events_per_second": 137.142857,
+  "sequence_fixtures": 18,
   "source": "fixtures/sequences/ (SXT-012 library)"
  },
  "event_queue_depth": 16,
@@ -4179,11 +4179,11 @@
   "normalized": 3561
  },
  "issue": "SXT-015",
- "model_version": "sxt-015-accounting/1.0.0",
- "params_digest": "646942e9c3887ecb",
+ "model_version": "sxt-015-accounting/1.1.0",
+ "params_digest": "a639d3115ae1a0ca",
  "status_counts": {
-  "fit": 84,
-  "rejected": 3477
+  "fit": 75,
+  "rejected": 3486
  },
  "voice_distribution": {
   "note": "worst-case voices = min(polylimit, voice_pool_limit); dual mode consumes two pool voices per note",

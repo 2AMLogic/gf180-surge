@@ -83,10 +83,21 @@ RNG_EXCLUSION_DEFAULT = "reports/SXT-028-rng/artifacts/coverage-impact.json"
 # the pin changes in the same commit as the data.
 STRUCTURAL_INPUTS = {
     GRAPH_DEFAULT: "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715",
-    SCAN_DEFAULT: "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6",
+    # revised by #239: the SXT-015 modulation-shape decision (a voice-list row
+    # is charged once per live voice per frame) moves this scan's
+    # `provenance.accounting_model_version` 1.0.0 -> 1.1.0 and nothing else --
+    # all 3,561 compile statuses and both named reconciliation deltas are
+    # unchanged, so no gate, status or denominator this tool reads moved.
+    SCAN_DEFAULT: "791b2c88b7360256ead4c062cfe46e1bd367b0a67e6f36d42bae102ac621fdbe",
     # revised by #117: SXT-015 Conditioner state_bytes 8192 -> 2444 (SXT-028b
     # measurement) changes on_chip_state_bytes only; no preset status moved.
-    PREDICTION_DEFAULT: "11d5c2710e079a6c3d364a8d0188066b3b726cfdca6f6d423614a4da2e74795f",
+    # revised by #239: the same modulation-shape decision moves this
+    # prediction's reported cost_cycles_per_frame_placeholder_v0 column (3,234
+    # presets, all upward) and budget_closure_placeholder_v0 (9 presets,
+    # within_budget -> OVERFLOW). Every per-preset `status` and `reasons` list
+    # is byte-identical -- cycles gate nothing in that stage by construction --
+    # so no headline_status, gate cell or b4_prediction published here moved.
+    PREDICTION_DEFAULT: "9030e26387a0f39e72f255444cd1577fdfb1fd50b03c068fe18413d1b768ffb5",
     "reports/sxt-013/candidates/slate-256-balanced.json": "23cb4e51b8ee8cbe0461ea168ec102a0815d5cd5e96ba5fc1b58d56d247f1f90",
     "reports/sxt-013/candidates/slate-256-contributor-lean.json": "0393aa5c4bd7b1ea8f257c41b45194345239cef99b4cb7d673b4556a7b51b06e",
     "reports/sxt-013/candidates/slate-256-factory-lean.json": "2426773096e226122fd52d008cc8d016187291dba743d6343c01fef5110e9883",

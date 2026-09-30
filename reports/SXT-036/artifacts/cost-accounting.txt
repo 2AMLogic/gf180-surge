@@ -1,7 +1,7 @@
 SXT-036 cost accounting against the SXT-015 accounting (#70 acceptance item 4, second half) -- ORACLE-INDEPENDENT.
 Op counts are MEASURED on the iverilog behavioral schedule. Cycles are DERIVED under two named readings and reported as a bracket, never as a probe result. No technology/timing/hardware claim.
 
-[pins] SXT-015 cost model: model_version=sxt-015-accounting/1.0.0, cost_profile=placeholder-v0, params_digest=646942e9c3887ecb, cyc_modroute_frame=15
+[pins] SXT-015 cost model: model_version=sxt-015-accounting/1.1.0, cost_profile=placeholder-v0, params_digest=a639d3115ae1a0ca, cyc_modroute_frame=15
        graphs.jsonl sha256 c90424d91f2dc9ec.. == value pinned by #70
 [K4 pin-drift control] a mutated cyc_modroute_frame is detected: True -> REFUSES as required
 [K5 probe-claim control] a synthetic probe record claiming to replace cyc_modroute_frame is detected: ['synthetic-control.json'] -> DETECTED as required
@@ -29,8 +29,8 @@ ROUTE-TABLE SWEEP on sxt036-vel-overlap-v1 (declared sidecar truncated to its fi
    6    2940   17640   17640               0   PASS
 
 CONTROLS on the measured law (each must MISPREDICT):
-  [K1 per-frame shape] SXT-015 shape (routes x frames) predicts 19350, measured 17640 -> MISPREDICTS as required
-      worst measured shape gap: 'seq-poly-8-v1' peaks at 8 live voices, so a voice row's peak per-frame work is 8x what the accounting charges for it.
+  [K1 per-frame shape] the retired shape (routes x frames) predicts 19350, measured 17640 -> MISPREDICTS as required
+      worst measured shape gap: 'seq-poly-8-v1' peaks at 8 live voices, so a voice row's peak per-frame work is 8x what the RETIRED shape charged for it. Since #239 the accounting charges a voice row at its own worst-case voice count, so this gap is what the decision closed, not an outstanding understatement.
   [K2 route-count-blind] predicting with a fixed R=6 mispredicts at R in [0, 1, 2, 3, 4, 5] -> MISPREDICTS as required
   [K3 attribution] empty route table measures evals=0 mul32=0 while the per-frame prediction is 19350 -> all measured multiply work is attributable to the routes
 
@@ -38,22 +38,23 @@ MEASURED per-route-evaluation op profile (SXT-016 op taxonomy): mul32=1, add64=1
   DERIVED candidate cycles per evaluation (NOT measured, NOT a probe): 2 .. 8
     low  reading: A-DSP-1c read as 'the 32x32->64 multiply, its rounding add and its saturation clamp are one MAC pass' + A-ALU-1 for the 32-bit accumulate
     high reading: every op a separate cycle, with the 64-bit rounding add and the two 64-bit saturation compares costing 2 cycles each on a 32-bit ALU (A-ALU-1 covers <=32-bit words only)
-  SXT-015 charges 15 cycles per row per frame. Per EVALUATION the accounted constant is therefore 1.88x to 7.50x the derived bracket -- conservative for a global/scene row, while the SHAPE below understates a voice row.
+  SXT-015 charges 15 cycles per row EVALUATION (#239 shape). The accounted constant is therefore 1.88x to 7.50x the derived bracket for EVERY row class -- conservative per evaluation, and now applied to the measured number of evaluations rather than to the row count (see below). The constant itself stays a placeholder only SXT-016 may pin.
 
 SXT-015 ACCOUNTING vs THE MEASURED SHAPE, on the carriers named by #70 (rows from graphs.jsonl; accounted cycles from model/resources/accounting.py):
   carrier                             g  sc  vc rows  acct cyc worstV evals/frame  shape x
-  Bad News.fxp                        0   1   3    4        60     16          49    12.25
-  Rainy Day Dreamaway.fxp             0  10   3   13       195     16          58     4.46
-  House Of Chords.fxp                 2   4   4   10       150     16          70     7.00
+  Bad News.fxp                        0   1   3    4       735     16          49    12.25
+  Rainy Day Dreamaway.fxp             0  10   3   13       870     16          58     4.46
+  House Of Chords.fxp                 2   4   4   10      1050     16          70     7.00
   Attacky.fxp                         0   2   0    2        30     16           2     1.00
 
-  g = global rows, sc = scene-list rows, vc = voice-list rows (both of this leaf's sources are PER-VOICE, so their routes are voice-list rows). 'evals/frame' applies the measured shape at the accounting's own worst-case voice count; 'shape x' is that count divided by the rows SXT-015 charges once per frame.
-  DIVERGENCE (recorded, not reconciled): SXT-015 charges every modulation row once per frame. The measured schedule evaluates a VOICE row once per live voice per frame, so the accounted modulation term understates the row-evaluation count for every carrier that has voice rows. Fixing the accounting is SXT-016/SXT-017 work (this leaf is not a probe and does not re-pin a cost row); filed as a bounded finding in #239. Nothing here is tuned to make the two agree.
-  Scope limit: the modulation term is a small part of these accounts (voice cost dominates) and every carrier above is already `rejected` (budget_overflow) under placeholder-v0, so the correction changes a TERM, not any fit verdict. It is recorded as a shape finding, not as a closure claim.
-  Note on the fixture carrier: Attacky.fxp has NO voice rows of its own, so the divergence is invisible on it (shape x = 1.00) and only appears on the carriers #70 names. That is why the fixture adds DECLARED synthetic voice routes.
+  g = global rows, sc = scene-list rows, vc = voice-list rows (both of this leaf's sources are PER-VOICE, so their routes are voice-list rows). 'evals/frame' applies the measured shape at the accounting's own worst-case voice count; 'shape x' is that count divided by the ROWS (it is a property of the graph, not of the accounting, and stays > 1 for every carrier with voice rows).
+  SHAPE: RESOLVED in #239 and cross-checked here. SXT-015 charges a global/scene row once per frame and a VOICE row once per worst-case live voice per frame, so 'acct cyc' == 'evals/frame' x cyc_modroute_frame on every carrier above (True). Before that decision the accounting charged every row once per frame and understated the row-evaluation count by the 'shape x' column; that record is in this file's git history and in reports/sxt-015/EVIDENCE.md.
+  STILL DIVERGING (recorded, not reconciled): the per-EVALUATION constant. SXT-015 charges 15 cycles; the derived bracket above is 2..8. That is a placeholder-vs-derived gap, not a shape gap, and only an SXT-016 probe may pin it (#239 explicitly did not). Nothing here is tuned to make the two agree.
+  Scope limit: the modulation term is a small part of these accounts (voice cost dominates) and every carrier above is already `rejected` (budget_overflow) under placeholder-v0, so on THESE carriers the decision changed a TERM and no fit verdict. Corpus-wide it did move 9 of 3,561 placeholder-v0 closures, all within_budget -> OVERFLOW; they are enumerated in reports/sxt-015/EVIDENCE.md and are not preset-support claims.
+  Note on the fixture carrier: Attacky.fxp has NO voice rows of its own, so the shape is invisible on it (shape x = 1.00) and only appears on the carriers #70 names. That is why the fixture adds DECLARED synthetic voice routes.
 
 STATE: 8 slots x 2 source registers x 32 b = 512 bits of per-instance source state (rtl/voice/tb_vel.sv).
-  SXT-015 has NO modulation-source state row at all: `_count_modroutes` feeds cycles only, and on-chip state is worst_voices x voice_base_state_bytes (4096 B, whose own note enumerates 'mixer/ring/FM registers' and excludes filter state) + osc + filter + LFO rows. This leaf's 8 B per voice is therefore UNNAMED in the accounting: it is either inside that placeholder bucket or missing from it, and the parameter's own description does not say which. Recorded as an accounting-scope ambiguity, not reconciled.
+  SXT-015 still has no separate modulation-source state ROW: modulation rows feed cycles only, and on-chip state is worst_voices x voice_base_state_bytes + osc + filter + LFO rows. The ambiguity this leaf recorded (is the per-voice source register inside that bucket or missing from it?) was DECIDED in #239: it is declared INSIDE voice_base_state_bytes, whose estimate_ref now enumerates the per-voice modulation-source registers explicitly. The 4096 B value was NOT re-tuned, and this leaf's 8 B/voice for two sources is a lower bound on a full source set, never a row value; SXT-016 re-derives the bucket and may split the row out.
   [K6 state cross-check] committed control transcript: the scene-wide (shared) register mutant FAILS exactness with 45 mismatches -> the 512-bit per-instance count is load-bearing, not padding
 
 CROSS-CHECK of the first increment's hand-assembled artifacts/costs.txt (a change here makes that file STALE):

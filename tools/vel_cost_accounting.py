@@ -9,16 +9,15 @@ scheduler probe has no per-source-evaluation row, divergence recorded). The
 **SXT-015 half was never recorded**. This tool records it.
 
 What SXT-015 charges (model/resources/accounting.py, cost profile
-`placeholder-v0`):
+`placeholder-v0`), since the shape decision of #239:
 
-    mod_cycles = _count_modroutes(g) * REG.cyc_modroute_frame
+    mod_cycles = _modroute_evaluations(g, worst_voices) * REG.cyc_modroute_frame
 
-i.e. **15 cycles per modulation routing row per frame**, where
-`_count_modroutes` counts the graph's global list plus, per scene, the scene
-list and the **voice** list -- each row ONCE per frame, independent of how
-many voices are live. `cyc_modroute_frame` is a `placeholder` param whose
-estimate_ref says "SXT-016", and no SXT-016 probe replaces it: of the 76
-committed probe records, `sxt015_replacement.replaces` covers
+i.e. **15 cycles per modulation routing row EVALUATION**, where a global or
+scene-list row is evaluated once per frame and a **voice**-list row once per
+worst-case live voice per frame. `cyc_modroute_frame` is still a `placeholder`
+param whose estimate_ref says "SXT-016", and no SXT-016 probe replaces it: of
+the 76 committed probe records, `sxt015_replacement.replaces` covers
 cyc_filter_unit_frame, cyc_fxdelay_frame, cyc_fxgeneric_frame,
 cyc_fxreverb1_frame, cyc_osc_unison_voice_frame and cyc_event_frame -- never
 cyc_modroute_frame (asserted here, and reported STALE if that ever changes).
@@ -31,10 +30,19 @@ What this leaf measures, on the exact behavioral schedule it froze
 Both sources this leaf implements (`ms_velocity` 1, `ms_releasevelocity` 30)
 are PER-VOICE sources, and their routes are voice-list rows, so a voice row's
 work scales with the number of LIVE VOICES in the frame -- not with the row
-count alone. That is a divergence in the SHAPE of the SXT-015 cost model, on
-top of the separate placeholder-constant divergence. Both are RECORDED here as
-SXT-016/SXT-017 refinement inputs; neither is reconciled, and nothing in this
-leaf is re-tuned to make the accounting agree.
+count alone.
+
+That measured law was FIRST RECORDED HERE as a SHAPE divergence against an
+accounting that charged every row once per frame. #239 took the shape
+decision it fed: the accounting now charges a voice row once per worst-case
+live voice per frame, so the shape divergence is RESOLVED and this tool
+CROSS-CHECKS it (`shape_resolution` below; a carrier whose accounted
+modulation term stops equalling `evaluations x cyc_modroute_frame` is a
+failure here, not a re-record). What remains diverging is the per-evaluation
+CONSTANT -- 15 accounted cycles against a 2..8 derived bracket -- and only an
+SXT-016 probe may pin that. Nothing in this leaf is re-tuned to make the two
+agree; the pin below was RE-RECORDED from the live model, never adjusted to
+keep a number small.
 
 Claim discipline (AGENTS.md):
   * Op counts (multiplies, adds, compares, control passes, route evaluations)
@@ -48,9 +56,10 @@ Claim discipline (AGENTS.md):
     (#96/#232). Supported-preset delta stays 0.
 
 Controls (each must demonstrably fail the check it targets):
-  K1 per-frame shape       predicting route evaluations with SXT-015's
-                           voice-count-independent shape (routes x frames)
-                           must MISPREDICT the measured count.
+  K1 per-frame shape       predicting route evaluations with the RETIRED
+                           voice-count-independent shape (routes x frames,
+                           what SXT-015 charged before #239) must MISPREDICT
+                           the measured count.
   K2 route-count-blind     predicting with a fixed route count must MISPREDICT
                            across the route-table sweep.
   K3 attribution           an empty route table must measure exactly zero
@@ -107,22 +116,29 @@ GRAPHS_SHA256 = ("c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df"
                  "39204715")
 
 # ---------------------------------------------------------------- SXT-015 pins
-# The recorded divergence below is only meaningful against a KNOWN cost model.
-# If any of these moves, this artifact is re-RECORDED against the new model --
-# the leaf is never re-tuned to keep the divergence small, and the tool must
-# not silently carry an old comparison forward. Fail closed (exit 2).
+# The comparison below is only meaningful against a KNOWN cost model. If any of
+# these moves, this artifact is re-RECORDED against the new model -- the leaf is
+# never re-tuned to keep a divergence small, and the tool must not silently
+# carry an old comparison forward. Fail closed (exit 2).
+#
+# RE-RECORDED for the #239 shape decision (2026-09-30): `model_version`
+# 1.0.0 -> 1.1.0 and `params_digest` 646942e9c3887ecb -> a639d3115ae1a0ca,
+# both read off the live model. `cyc_modroute_frame` is UNCHANGED at 15 --
+# the decision changed the number of evaluations charged, not the constant,
+# and this pin was not adjusted in any other way.
 PIN_SXT015 = {
-    "model_version": "sxt-015-accounting/1.0.0",
+    "model_version": "sxt-015-accounting/1.1.0",
     "cost_profile": "placeholder-v0",
-    "params_digest": "646942e9c3887ecb",
+    "params_digest": "a639d3115ae1a0ca",
     "cyc_modroute_frame": 15,
     "clock_hz": 480000000,
     "sample_rate_hz": 48000,
     "reserve_fraction": 0.2,
 }
 SXT015_ROW = "cyc_modroute_frame"
-# the shape divergence this tool records is filed as a bounded finding there;
-# changing the accounting itself is SXT-016/SXT-017 work, not voice-leaf work
+# the shape finding this tool first recorded was dispositioned there (the
+# accounting now charges voice rows per live voice); the per-evaluation
+# CONSTANT is still SXT-016 work, not voice-leaf work
 FOLLOWUP_ISSUE = 239
 
 # claims quoted by the first increment's hand-assembled artifacts/costs.txt,
@@ -531,7 +547,7 @@ def main():
             rc_hold = 3
         else:
             ok = k1_pred != k1_meas
-            log(f"  [K1 per-frame shape] SXT-015 shape (routes x frames) "
+            log(f"  [K1 per-frame shape] the retired shape (routes x frames) "
                 f"predicts {k1_pred}, measured {k1_meas} -> "
                 f"{'MISPREDICTS as required' if ok else 'CONTROL BROKEN'}")
             if not ok:
@@ -540,8 +556,10 @@ def main():
         worst = max(runs.values(), key=lambda m: m["max_live_voices"])
         log(f"      worst measured shape gap: '{worst['sequence']}' peaks at "
             f"{worst['max_live_voices']} live voices, so a voice row's peak "
-            f"per-frame work is {worst['max_live_voices']}x what the "
-            "accounting charges for it.")
+            f"per-frame work is {worst['max_live_voices']}x what the RETIRED "
+            "shape charged for it. Since #239 the accounting charges a voice "
+            "row at its own worst-case voice count, so this gap is what the "
+            "decision closed, not an outstanding understatement.")
         # K2: a route-count-blind prediction
         fixed = 6
         k2_bad = [n for n, m in sweep.items()
@@ -582,11 +600,13 @@ def main():
         log(f"    low  reading: {READING_MAC}")
         log(f"    high reading: {READING_ALU}")
         log(f"  SXT-015 charges {live['cyc_modroute_frame']} cycles per row "
-            "per frame. Per EVALUATION the accounted constant is therefore "
+            "EVALUATION (#239 shape). The accounted constant is therefore "
             f"{live['cyc_modroute_frame'] / br['alu_reading']:.2f}x to "
             f"{live['cyc_modroute_frame'] / br['mac_reading']:.2f}x the "
-            "derived bracket -- conservative for a global/scene row, while "
-            "the SHAPE below understates a voice row.")
+            "derived bracket for EVERY row class -- conservative per "
+            "evaluation, and now applied to the measured number of "
+            "evaluations rather than to the row count (see below). The "
+            "constant itself stays a placeholder only SXT-016 may pin.")
         out["per_evaluation"] = {
             "measured_ops": per_eval,
             "derived_cycles_bracket": [br["mac_reading"], br["alu_reading"]],
@@ -605,17 +625,26 @@ def main():
             f"{'rows':>4s} {'acct cyc':>9s} {'worstV':>6s} "
             f"{'evals/frame':>11s} {'shape x':>8s}")
         carriers_out = {}
+        shape_conformance = {}
         for path in CARRIERS + [FIXTURE_CARRIER]:
             g = rows[path]["g"]
             split = md_row_split(g)
             acct = account_graph(rows[path])
             worst_v = acct["voice"]["worst_case_voices"]
             accounted_cycles = acct["budget"]["cost_cycles_per_frame"]["modulation"]
-            if accounted_cycles != split["total"] * live["cyc_modroute_frame"]:
-                bad(f"    accounted modulation term for {path} is not "
-                    "rows x cyc_modroute_frame; the formula moved")
             evals_per_frame = (split["global"] + split["scene_rows"]
                                + split["voice_rows"] * worst_v)
+            # since #239 this is a CONFORMANCE check, not a divergence
+            # record: the accounting must charge exactly the measured number
+            # of row evaluations. A carrier that stops matching means the
+            # shape moved again and this artifact must be re-recorded.
+            conforms = (accounted_cycles
+                        == evals_per_frame * live["cyc_modroute_frame"])
+            shape_conformance[path] = conforms
+            if not conforms:
+                bad(f"    accounted modulation term for {path} is not "
+                    "evaluations x cyc_modroute_frame; the accounting shape "
+                    "moved away from the measured law")
             shape_x = evals_per_frame / split["total"] if split["total"] else None
             name = os.path.basename(path)
             log(f"  {name:34s} {split['global']:2d} {split['scene_rows']:3d} "
@@ -634,31 +663,53 @@ def main():
                 "accounted_status": acct.get("status"),
                 "derived_cycles_bracket_for_evaluations":
                     list(cycles_bracket(evals_per_frame).values()),
+                "accounting_charges_the_measured_shape": conforms,
             }
         log("")
         log("  g = global rows, sc = scene-list rows, vc = voice-list rows "
             "(both of this leaf's sources are PER-VOICE, so their routes are "
             "voice-list rows). 'evals/frame' applies the measured shape at "
             "the accounting's own worst-case voice count; 'shape x' is that "
-            "count divided by the rows SXT-015 charges once per frame.")
-        log("  DIVERGENCE (recorded, not reconciled): SXT-015 charges every "
-            "modulation row once per frame. The measured schedule evaluates a "
-            "VOICE row once per live voice per frame, so the accounted "
-            "modulation term understates the row-evaluation count for every "
-            "carrier that has voice rows. Fixing the accounting is SXT-016/"
-            "SXT-017 work (this leaf is not a probe and does not re-pin a "
-            f"cost row); filed as a bounded finding in #{FOLLOWUP_ISSUE}. "
-            "Nothing here is tuned to make the two agree.")
+            "count divided by the ROWS (it is a property of the graph, not of "
+            "the accounting, and stays > 1 for every carrier with voice rows).")
+        log("  SHAPE: RESOLVED in #239 and cross-checked here. SXT-015 "
+            "charges a global/scene row once per frame and a VOICE row once "
+            "per worst-case live voice per frame, so 'acct cyc' == "
+            "'evals/frame' x cyc_modroute_frame on every carrier above "
+            f"({all(shape_conformance.values())}). Before that decision the "
+            "accounting charged every row once per frame and understated the "
+            "row-evaluation count by the 'shape x' column; that record is in "
+            "this file's git history and in reports/sxt-015/EVIDENCE.md.")
+        log("  STILL DIVERGING (recorded, not reconciled): the per-EVALUATION "
+            f"constant. SXT-015 charges {live['cyc_modroute_frame']} cycles; "
+            "the derived bracket above is 2..8. That is a placeholder-vs-"
+            "derived gap, not a shape gap, and only an SXT-016 probe may pin "
+            f"it (#{FOLLOWUP_ISSUE} explicitly did not). Nothing here is "
+            "tuned to make the two agree.")
         log("  Scope limit: the modulation term is a small part of these "
             "accounts (voice cost dominates) and every carrier above is "
-            "already `rejected` (budget_overflow) under placeholder-v0, so "
-            "the correction changes a TERM, not any fit verdict. It is "
-            "recorded as a shape finding, not as a closure claim.")
+            "already `rejected` (budget_overflow) under placeholder-v0, so on "
+            "THESE carriers the decision changed a TERM and no fit verdict. "
+            "Corpus-wide it did move 9 of 3,561 placeholder-v0 closures, all "
+            "within_budget -> OVERFLOW; they are enumerated in "
+            "reports/sxt-015/EVIDENCE.md and are not preset-support claims.")
         log(f"  Note on the fixture carrier: {os.path.basename(FIXTURE_CARRIER)}"
-            " has NO voice rows of its own, so the divergence is invisible on "
-            "it (shape x = 1.00) and only appears on the carriers #70 names. "
+            " has NO voice rows of its own, so the shape is invisible on it "
+            "(shape x = 1.00) and only appears on the carriers #70 names. "
             "That is why the fixture adds DECLARED synthetic voice routes.")
         out["carriers"] = carriers_out
+        out["shape_resolution"] = {
+            "decision_issue": FOLLOWUP_ISSUE,
+            "accounting_shape": "global/scene-list rows once per frame; "
+                                "voice-list rows once per worst-case live "
+                                "voice per frame",
+            "accounting_charges_the_measured_shape":
+                all(shape_conformance.values()),
+            "per_carrier": shape_conformance,
+            "remaining_divergence": "per-evaluation constant only "
+                                    "(cyc_modroute_frame placeholder vs the "
+                                    "derived bracket); SXT-016 pins it",
+        }
 
         # -------------------------------------------- 6. state accounting ---
         state_bits = N_SLOTS * SOURCES_PER_SLOT * SOURCE_WORD_BITS
@@ -666,15 +717,17 @@ def main():
         log(f"STATE: {N_SLOTS} slots x {SOURCES_PER_SLOT} source registers x "
             f"{SOURCE_WORD_BITS} b = {state_bits} bits of per-instance source "
             "state (rtl/voice/tb_vel.sv).")
-        log("  SXT-015 has NO modulation-source state row at all: "
-            "`_count_modroutes` feeds cycles only, and on-chip state is "
-            "worst_voices x voice_base_state_bytes (4096 B, whose own note "
-            "enumerates 'mixer/ring/FM registers' and excludes filter state) "
-            "+ osc + filter + LFO rows. This leaf's 8 B per voice is "
-            "therefore UNNAMED in the accounting: it is either inside that "
-            "placeholder bucket or missing from it, and the parameter's own "
-            "description does not say which. Recorded as an accounting-scope "
-            "ambiguity, not reconciled.")
+        log("  SXT-015 still has no separate modulation-source state ROW: "
+            "modulation rows feed cycles only, and on-chip state is "
+            "worst_voices x voice_base_state_bytes + osc + filter + LFO "
+            "rows. The ambiguity this leaf recorded (is the per-voice source "
+            "register inside that bucket or missing from it?) was DECIDED in "
+            f"#{FOLLOWUP_ISSUE}: it is declared INSIDE "
+            "voice_base_state_bytes, whose estimate_ref now enumerates the "
+            "per-voice modulation-source registers explicitly. The 4096 B "
+            "value was NOT re-tuned, and this leaf's 8 B/voice for two "
+            "sources is a lower bound on a full source set, never a row "
+            "value; SXT-016 re-derives the bucket and may split the row out.")
         # K6: the per-slot count is only meaningful because the shared-register
         # alternative demonstrably FAILS exactness. Read that verdict back from
         # the committed transcript rather than assuming it.
@@ -707,6 +760,15 @@ def main():
         out["state"] = {"per_instance_state_bits": state_bits,
                         "slots": N_SLOTS,
                         "sxt015_modulation_state_row": None,
+                        "sxt015_modulation_state_disposition": {
+                            "decision_issue": FOLLOWUP_ISSUE,
+                            "decided": "declared inside "
+                                       "voice_base_state_bytes (no separate "
+                                       "row); value unchanged at 4096 B",
+                            "retires_when": "SXT-016 re-derives the voice "
+                                            "state bucket at the selected "
+                                            "word lengths",
+                        },
                         "K6_shared_register_control": k6}
         out["controls"]["K6_state_cross_check"] = k6
 

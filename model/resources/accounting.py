@@ -4,6 +4,9 @@ Model scope (issue #10 / plan sections 3 and 5):
   - per-scene voice state (osc slots, unison, filters, waveshaper, LFOs),
     with per-preset voice-instance counts derived from scene mode — scene
     modes the model cannot account for are an explicit failure, never a guess;
+  - modulation routing rows charged by EVALUATION SCOPE: a global or
+    scene-list row once per frame, a voice-list row once per worst-case live
+    voice per frame (SXT-036 measured law, #70 -> decision #239);
   - per-INSTANCE effect state (two Delay slots = two instances, each with its
     own history), distinct from shared arithmetic and from supported-type
     counts; routing roles (scene insert / send / global) affect concurrency;
@@ -28,7 +31,7 @@ from typing import Dict, List, Optional
 from .fx_classes import delay_param_derived_samples, fx_class_spec
 from .params import REG
 
-MODEL_VERSION = "sxt-015-accounting/1.0.0"
+MODEL_VERSION = "sxt-015-accounting/1.1.0"
 
 # surgepy scene-mode ids (src/common/SurgeStorage.h:168-171 sm_single..sm_chsplit)
 SM_NAMES = {0: "single", 1: "split", 2: "dual", 3: "chsplit"}
@@ -73,13 +76,51 @@ def _ws_modulated(scene_index: int, md_scene: Dict) -> bool:
     return False
 
 
-def _count_modroutes(g: Dict) -> int:
+def _split_modroutes(g: Dict) -> Dict[str, int]:
+    """Modulation rows split by the scope they are EVALUATED in.
+
+    The global list and each scene's scene-list are evaluated once per frame.
+    Each scene's VOICE list is evaluated once per live voice per frame: that
+    is the engine's own shape (the per-voice control pass walks the voice
+    modulation list for every running voice), and it is the law SXT-036
+    measured on its frozen behavioral schedule — `route evaluations = routes
+    x per-voice control passes` (#70 artifacts/cost-accounting.json; shape
+    decision #239). Row COUNTS are unchanged; only the evaluation count is
+    split out here.
+    """
     md = g.get("md", {})
-    n = len(md.get("g", []))
+    per_frame = len(md.get("g", []))
+    per_voice = 0
     for sc in md.get("s", []):
-        n += len(sc.get("s", []))
-        n += len(sc.get("v", []))
-    return n
+        per_frame += len(sc.get("s", []))
+        per_voice += len(sc.get("v", []))
+    return {"rows_per_frame": per_frame, "rows_per_voice": per_voice,
+            "rows_total": per_frame + per_voice}
+
+
+def _count_modroutes(g: Dict) -> int:
+    """Total modulation rows in a graph (global + scene lists + voice lists).
+
+    A row count, NOT the per-frame evaluation count — see
+    `_modroute_evaluations`. Kept as the single row-counting definition so
+    the split above can never drift away from it.
+    """
+    return _split_modroutes(g)["rows_total"]
+
+
+def _modroute_evaluations(g: Dict, worst_voices: int) -> int:
+    """Modulation row EVALUATIONS per output frame at the worst-case voice
+    count.
+
+    Conservative by construction in dual/split scene modes: a voice-list row
+    is charged at the full worst-case pool count even though a pool voice is
+    resident in exactly one scene, so a two-scene preset's voice-row term is
+    an upper bound (at most 2x the resident-voice count), in the same style
+    as the per-voice osc/filter terms below. Never below the old
+    once-per-frame charge, because worst_voices >= 1.
+    """
+    split = _split_modroutes(g)
+    return split["rows_per_frame"] + worst_voices * split["rows_per_voice"]
 
 
 def _mseg_or_formula_lfos(scene: Dict) -> List[int]:
@@ -397,7 +438,9 @@ def account_graph(
         + env_instances * REG.cyc_env_frame
     )
     fx_cycles = sum(e["cycles_per_frame"] for e in processing)
-    mod_cycles = _count_modroutes(g) * REG.cyc_modroute_frame
+    mod_split = _split_modroutes(g)
+    mod_evaluations = _modroute_evaluations(g, worst_voices)
+    mod_cycles = mod_evaluations * REG.cyc_modroute_frame
     event_cycles = events["worst_case_events_per_frame"] * REG.cyc_event_frame
     total_cycles = voice_cycles + fx_cycles + mod_cycles + event_cycles
     gross = REG.clock_hz / REG.sample_rate_hz
@@ -424,6 +467,20 @@ def account_graph(
         },
         "utilization_fraction": _r6(total_cycles / gross) if gross else None,
         "closure": "OVERFLOW" if total_cycles > dsp_budget else "within_budget",
+        "modulation_rows": {
+            "rows_charged_once_per_frame": mod_split["rows_per_frame"],
+            "rows_charged_once_per_live_voice": mod_split["rows_per_voice"],
+            "rows_total": mod_split["rows_total"],
+            "worst_case_voices": worst_voices,
+            "row_evaluations_per_frame": mod_evaluations,
+            "cycles_per_row_evaluation": REG.cyc_modroute_frame,
+            "note": "global/scene-list rows are evaluated once per frame; a "
+                    "voice-list row once per live voice per frame (SXT-036 "
+                    "measured law, decision #239). The per-evaluation cost "
+                    "is still the placeholder-v0 constant (SXT-016 pins it); "
+                    "the voice-row term is an upper bound in dual/split "
+                    "scene modes",
+        },
     }
 
     base.update({

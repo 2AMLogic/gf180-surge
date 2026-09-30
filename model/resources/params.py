@@ -122,7 +122,18 @@ PARAMS: List[Param] = [
     # --- selected word lengths) ---------------------------------------------
     _P("voice_base_state_bytes", 4096, "bytes", "placeholder",
        "ESTIMATE-REF: cost profile placeholder-v0, per voice: envelopes, "
-       "mixer/ring/FM registers, filter state excluded (counted separately)"),
+       "mixer/ring/FM registers, AND the per-voice modulation-SOURCE "
+       "registers (the control words a per-voice source such as "
+       "ms_velocity / ms_releasevelocity holds for the voice); filter state "
+       "excluded (counted separately). The modulation-source share was "
+       "previously undeclared: decision #239 places it INSIDE this bucket "
+       "rather than giving modulation state its own row, because no "
+       "measured per-voice source-state total exists yet — SXT-036 measured "
+       "8 B/voice for the two sources it implements (512 b over 8 slots, "
+       "rtl/voice/tb_vel.sv), which is a lower bound on a full source set, "
+       "not a row value. Value UNCHANGED (never re-tuned); SXT-016 "
+       "re-derives this bucket at the selected word lengths and may then "
+       "split modulation-source state out as its own row"),
     _P("osc_state_bytes_per_unison", 512, "bytes", "placeholder",
        "ESTIMATE-REF: cost profile placeholder-v0, per unison voice per "
        "active oscillator slot (phase, feedback, interpolation state); "
@@ -178,8 +189,16 @@ PARAMS: List[Param] = [
     _P("cyc_env_frame", 20, "cycles", "placeholder",
        "ESTIMATE-REF: cost profile placeholder-v0, per envelope per voice; SXT-016"),
     _P("cyc_modroute_frame", 15, "cycles", "placeholder",
-       "ESTIMATE-REF: cost profile placeholder-v0, per mod routing row per "
-       "frame; SXT-016"),
+       "ESTIMATE-REF: cost profile placeholder-v0, per mod routing row "
+       "EVALUATION; SXT-016. Value UNCHANGED by decision #239 (never "
+       "re-tuned); what that decision changed is the number of evaluations "
+       "charged: a global/scene-list row is evaluated once per frame, a "
+       "voice-list row once per live voice per frame (SXT-036 #70 measured "
+       "law `route evaluations = routes x per-voice control passes`, "
+       "reports/SXT-036/artifacts/cost-accounting.json). SXT-016 must pin "
+       "the per-evaluation constant; the derived bracket recorded by "
+       "SXT-036 under its two named readings is 2..8 cycles, so 15 is "
+       "conservative per evaluation and is NOT a measurement"),
     _P("cyc_fxdelay_frame", 900, "cycles", "placeholder",
        "ESTIMATE-REF: cost profile placeholder-v0, per Delay/FloatyDelay "
        "instance per frame (stereo); SXT-016/SXT-023"),

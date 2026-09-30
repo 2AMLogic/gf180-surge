@@ -46,14 +46,48 @@ def test_pin_drift_detects_every_pinned_field(key):
     assert len(drift) == 1 and drift[0].startswith(key + ":")
 
 
-def test_sxt015_charges_modulation_rows_once_per_frame():
-    """The shape this leaf's measurement diverges from, read off the live
-    accounting rather than quoted."""
+def test_sxt015_charges_modulation_rows_by_evaluation_scope():
+    """The shape this leaf's measurement produced (#239), read off the live
+    accounting rather than quoted: rows are charged per EVALUATION, and a
+    voice-list row's evaluation count scales with the worst-case voices."""
     import inspect
 
     from model.resources import accounting
     src = inspect.getsource(accounting)
-    assert "mod_cycles = _count_modroutes(g) * REG.cyc_modroute_frame" in src
+    assert "mod_cycles = mod_evaluations * REG.cyc_modroute_frame" in src
+    assert ('return split["rows_per_frame"] + worst_voices '
+            '* split["rows_per_voice"]') in src
+    # the retired shape must be gone, not merely shadowed
+    assert "_count_modroutes(g) * REG.cyc_modroute_frame" not in src
+
+
+def test_the_accounting_charges_a_voice_row_once_per_live_voice():
+    """Behavioral form of the same claim: the accounted modulation term of
+    each named carrier equals (per-frame rows + voice rows x worst voices)
+    x cyc_modroute_frame, and the voice term is what makes it differ from
+    the retired once-per-frame charge."""
+    from model.resources.accounting import account_graph
+    from model.resources.params import REG
+    rows = vca.graph_rows(vca.CARRIERS + [vca.FIXTURE_CARRIER])
+    for path, row in rows.items():
+        split = vca.md_row_split(row["g"])
+        acct = account_graph(row)
+        mr = acct["budget"]["modulation_rows"]
+        worst = acct["voice"]["worst_case_voices"]
+        assert mr["rows_total"] == split["total"], path
+        assert mr["rows_charged_once_per_live_voice"] == split["voice_rows"], path
+        assert mr["row_evaluations_per_frame"] == (
+            split["global"] + split["scene_rows"]
+            + split["voice_rows"] * worst), path
+        assert (acct["budget"]["cost_cycles_per_frame"]["modulation"]
+                == mr["row_evaluations_per_frame"] * REG.cyc_modroute_frame), path
+        retired = split["total"] * REG.cyc_modroute_frame
+        if split["voice_rows"] and worst > 1:
+            assert acct["budget"]["cost_cycles_per_frame"]["modulation"] \
+                != retired, path
+        else:
+            assert acct["budget"]["cost_cycles_per_frame"]["modulation"] \
+                == retired, path
 
 
 # ------------------------------------------------------- SXT-016 probe claim --
@@ -258,6 +292,39 @@ def test_recorded_artifact_records_the_shape_divergence_for_every_carrier():
             + c["row_split"]["voice_rows"] * c["worst_case_voices"])
     fixture = d["carriers"][vca.FIXTURE_CARRIER]
     assert fixture["shape_factor"] == 1.0
+
+
+def test_recorded_artifact_shows_the_shape_divergence_resolved():
+    """#239: the accounting now charges the measured number of evaluations,
+    and the artifact says so per carrier (a re-record, not a re-tune: the
+    per-evaluation constant is still the placeholder)."""
+    d = json.load(open(os.path.join(ARTIFACTS, "cost-accounting.json"),
+                       encoding="utf-8"))
+    res = d["shape_resolution"]
+    assert res["decision_issue"] == 239
+    assert res["accounting_charges_the_measured_shape"] is True
+    for path in vca.CARRIERS + [vca.FIXTURE_CARRIER]:
+        assert res["per_carrier"][path] is True, path
+        c = d["carriers"][path]
+        assert c["accounting_charges_the_measured_shape"] is True, path
+        assert (c["accounted_modulation_cycles_per_frame"]
+                == c["measured_shape_evaluations_per_frame"]
+                * d["pins"]["sxt015"]["cyc_modroute_frame"]), path
+
+
+def test_recorded_artifact_dispositions_the_modulation_state_question():
+    """The second half of #239's decision: per-voice modulation-source state
+    is declared inside voice_base_state_bytes, with no separate row and no
+    re-tuned value."""
+    d = json.load(open(os.path.join(ARTIFACTS, "cost-accounting.json"),
+                       encoding="utf-8"))
+    disp = d["state"]["sxt015_modulation_state_disposition"]
+    assert disp["decision_issue"] == 239
+    assert "voice_base_state_bytes" in disp["decided"]
+    assert d["state"]["sxt015_modulation_state_row"] is None
+    from model.resources.params import REG
+    assert REG.voice_base_state_bytes == 4096
+    assert "modulation-SOURCE" in REG.get("voice_base_state_bytes").estimate_ref
 
 
 def test_recorded_artifact_shows_every_control_fired():

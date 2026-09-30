@@ -39,20 +39,29 @@
    "cost_cycles_per_frame": {
     "events": 320.0,
     "fx": 1600.0,
-    "modulation": 270.0,
-    "total": 17890.0,
+    "modulation": 3645.0,
+    "total": 21265.0,
     "voice": 15700.0
    },
    "dsp_budget_cycles_per_frame": 8000.0,
    "gross_cycles_per_frame": 10000.0,
+   "modulation_rows": {
+    "cycles_per_row_evaluation": 15,
+    "note": "global/scene-list rows are evaluated once per frame; a voice-list row once per live voice per frame (SXT-036 measured law, decision #239). The per-evaluation cost is still the placeholder-v0 constant (SXT-016 pins it); the voice-row term is an upper bound in dual/split scene modes",
+    "row_evaluations_per_frame": 243,
+    "rows_charged_once_per_frame": 3,
+    "rows_charged_once_per_live_voice": 15,
+    "rows_total": 18,
+    "worst_case_voices": 16
+   },
    "reserve_fraction": 0.2,
    "sample_rate_hz": 48000,
-   "utilization_fraction": 1.789
+   "utilization_fraction": 2.1265
   },
   "cost_profile": "placeholder-v0",
   "events": {
    "max_coincident_events": 8,
-   "peak_events_per_second": 13.333333,
+   "peak_events_per_second": 137.142857,
    "queue_depth": 16,
    "source": "fixtures/sequences/ (SXT-012 library)",
    "worst_case_events_per_frame": 8
@@ -161,15 +170,15 @@
    "on_chip_state_bytes": 198144,
    "word_bytes": 4
   },
-  "model_version": "sxt-015-accounting/1.0.0",
-  "params_digest": "646942e9c3887ecb",
+  "model_version": "sxt-015-accounting/1.1.0",
+  "params_digest": "a639d3115ae1a0ca",
   "path": "resources/data/patches_3rdparty/A.Liv/Keys/July.fxp",
   "rejections": [
    {
     "code": "budget_overflow",
     "detail": {
      "clock_hz": 480000000,
-     "cost_cycles_per_frame": 17890.0,
+     "cost_cycles_per_frame": 21265.0,
      "dsp_budget_cycles_per_frame": 8000.0,
      "reserve_fraction": 0.2
     },
