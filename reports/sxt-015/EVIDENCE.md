@@ -472,3 +472,46 @@ claim is made or advanced, no profile is frozen, and the voice-row term is
 deliberately an upper bound in dual/split scene modes (a pool voice is
 resident in exactly one scene) in the same conservative style as the
 per-voice osc/filter terms. Supported-preset delta: **0**.
+
+## 9. CURRENCY CHECK (2026-09-30) — the export is now kept current by CI, issue #247
+
+The two deltas §7.4 says "the next re-export will absorb" were absorbed by
+the #239 re-export (§8.5) without any check having flagged them: unlike
+`reports/sxt-017/*` and `reports/sxt-020/*`, this directory had no test that
+re-runs its generator. `tests/test_sxt015_currency.py` adds one in the same
+style.
+
+**What it checks.** `tools/account_corpus.py` is re-run in full (all 3,561
+graphs, worked examples, negative controls) into a temp dir; every emitted
+file must be byte-identical to its committed copy, and the two file sets must
+match (orphans and un-committed new outputs both fail). One file is exempt by
+name: this `EVIDENCE.md`, which the tool does not emit. No subset is sampled.
+Runtime: one scan ~4-5 s CPU; the module (one full run plus three sandbox
+control runs) ~17 s CPU / ~31 s wall on the #247 build host.
+
+**Status when it landed:** PASS — `main` at `dbd8df0` regenerates byte-for-byte,
+so no artifact was re-exported by this change and nothing moved.
+
+**Decision on the fixture library.** `fixtures/sequences/` is treated as a
+first-class input with no tolerance window: a fixture that moves the export
+fails the check until the export is regenerated in the same change. It is not
+cost-neutral by construction — `max_coincident_events > event_queue_depth` is
+an `event_queue_overflow` rejection, and the profile's peaks are copied into
+each worked example's `account.events` — and "current except for fixtures"
+would not tell a reader which inputs the export was computed against. To keep
+such re-exports reviewable, a failure names the top-level keys that moved.
+A re-export that moves a status, fit count, rejection code or anomaly count is
+still enumerated here first (the §8.3 pattern).
+
+**Failure controls (live).** Both run in the suite against a sandbox copy of
+the tool's inputs (preceded by an unmutated-sandbox control that must stay
+current), and were also run once against the real tree, then reverted:
+
+| mutation | check result | finding |
+|---|---|---|
+| copy `seq-poly-8-v1.json` to a new 19th fixture | **FAIL** | `corpus-accounting.json: stale (top-level keys moved: event_profile)` |
+| rename the `Conditioner` key in `_NO_LONG_BUFFER_MEASURED` (reverts the #117 promotion) | **FAIL** | `corpus-accounting.json: stale (top-level keys moved: anomaly_code_counts)` |
+
+Claim scope: bookkeeping freshness only. No cycle, area, technology,
+fidelity, preset-support or preset-quality claim; supported-preset delta
+**0**.
