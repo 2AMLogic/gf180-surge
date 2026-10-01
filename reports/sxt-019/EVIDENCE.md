@@ -491,7 +491,7 @@ controls behaving:
 | SPDX tag naming a foreign licence inside a **parenthetical** (`Apache-2.0 (upstream GPL-3.0-or-later)`) | PASS (no finding) | FAIL `foreign-license-text` |
 | a notice carrying a holder but **no year** | PASS (no finding) | FAIL `foreign-license-text` |
 | a holder list **wrapped** onto a continuation line carrying no keyword | PASS (no finding) | FAIL `foreign-license-text` |
-| 15 own-attribution / prose layouts (positive controls) | PASS | PASS (unchanged) |
+| 7 own-attribution / prose layouts (positive controls) | PASS | PASS (unchanged) |
 
 Four independent causes, all in the signal layer:
 
@@ -538,7 +538,7 @@ finding, and the only way to answer it is to switch the rule off.
 $ python3 tools/check_provenance.py --negative-control     # exit 0
 PASS: all 29 rules fired on their deliberate violation, the clean control tree
 produced no findings, all 6 occurrence-scoped exemption controls behaved, and
-all 29 own-attribution masking controls behaved.
+all 30 own-attribution masking controls behaved.
 ```
 
 **Non-vacuity — each control fails when, and only when, its own fix is
