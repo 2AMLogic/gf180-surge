@@ -24,8 +24,12 @@ The rule was written down only in a commit message (`2b268c7`, PR #152). Nothing
 in the tree said so, so a routine `ruff check` / pyflakes run surfaces unused
 names in these files and the same set of removals has been proposed twice and
 declined twice (#147 / PR #152, reverted after a Judge block; #252, declined
-again with a live control). The correct disposition of those findings is
-**permanently kept, for the reason recorded here** — not "pending cleanup".
+again with a live control). For a file under [Live pins](#live-pins) the
+correct disposition of those findings is **permanently kept, for the reason
+recorded here** — not "pending cleanup". The declines swept in three scripts
+that are *not* live pins; #269 separates them out and records the opposite
+disposition for that class (see
+[Disposition of the lint findings in these eight scripts](#disposition-of-the-lint-findings-in-these-eight-scripts-269)).
 
 A live control run while #252 was open: removing the unused `D_LP, D_LPINV`
 import from `distortion_model.py` failed 3 tests in `tests/test_sxt028e.py`,
@@ -44,6 +48,7 @@ compares the SXT-028a records against the live `frozen_revision()`, and
 | Superseded values in the tree? | No. A mismatch *is* a STALE record | Yes, legitimately — and every one of these scripts has already drifted |
 | Effect of editing the file | A committed `PASS` record silently becomes STALE | No record is invalidated; the record's provenance digest simply no longer resolves to any file in the tree |
 | Correct assertion | live equality (what the audit does) | none — a live-equality assertion would be wrong, and would fail today |
+| Lint-finding disposition | **permanently kept** (#147 / PR #152, #252) | **cleanable as ordinary code** (#269) |
 
 ## Live pins
 
@@ -90,23 +95,61 @@ Editing one therefore invalidates no record. What it does cost is resolvability:
 the record's provenance digest no longer names any file in the tree, and only a
 re-render under the pinned oracle restores that.
 
-| Script | Stamped field |
-|---|---|
-| `fixtures/render_fixture.py` | `script_sha256` |
-| `fixtures/render_lfo_fixture.py` | `script_sha256` |
-| `fixtures/render_mw_fixture.py` | `script_sha256` |
-| `tools/ablate_fx.py` | `script_sha256` |
-| `tools/ablation_delta.py` | `script_sha256` |
-| `tools/render_lp12_reference.py` | `script_sha256` |
-| `tools/render_reverb_reference.py` | `script_sha256` |
-| `tools/listening_session.py` | `tool_sha256` |
+| Script | Stamped field | Lint-finding disposition (#269) |
+|---|---|---|
+| `fixtures/render_fixture.py` | `script_sha256` | cleanable — the F841 `preset_slug` finding was cleaned in #269 |
+| `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
+| `fixtures/render_mw_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
+| `tools/ablate_fx.py` | `script_sha256` | cleanable — no finding as of #269 |
+| `tools/ablation_delta.py` | `script_sha256` | cleanable — no finding as of #269 |
+| `tools/render_lp12_reference.py` | `script_sha256` | cleanable — the two F401 `struct`/`zlib` findings were cleaned in #269 |
+| `tools/render_reverb_reference.py` | `script_sha256` | cleanable — the two F841 findings (`bs`, discarded `save_trace` return) were cleaned in #269 |
+| `tools/listening_session.py` | `tool_sha256` | cleanable — no finding as of #269 |
 
-`#254`'s source table listed `fixtures/render_fixture.py`,
-`tools/render_lp12_reference.py` and `tools/render_reverb_reference.py` as
-byte-frozen. Re-derived against the tree, they are not: their recorded stamps
-are already superseded. Whether the lint findings in those three may now be
-removed is a separate disposition question and is **not** settled by this
-registry.
+### Disposition of the lint findings in these eight scripts (#269)
+
+**Decided: these eight are ordinary code. A dead-code finding in one of them is
+cleanable under the normal rules, with no registry ceremony and no leaf
+re-run.** This is an explicit decision, not an inheritance. `#254`'s source
+table listed `fixtures/render_fixture.py`, `tools/render_lp12_reference.py` and
+`tools/render_reverb_reference.py` as byte-frozen; re-derived against the tree
+they are not, so the reason the findings in them were declined in #147/PR #152
+and again in #252 — "removing this turns a committed `PASS` record STALE" — is
+simply not true of these files. It remains true of every file under
+[Live pins](#live-pins), which this decision does not touch.
+
+What the decision costs, stated rather than waved past: each edit moves these
+files further from the digests their records carry. That buys no new loss here,
+because **resolvability is already spent** — all eight read
+`current_bytes_recorded: false` both before and after #269's cleanup (re-derived
+in the same change), so no edit can take a resolvable provenance stamp and make
+it unresolvable. Only a re-render under the pinned oracle restores
+resolvability, and it restores it from whatever bytes exist at render time;
+holding a dead local variable in place does not bring that re-render any closer.
+
+What this decision does **not** license:
+
+- It is not a licence to edit a [live pin](#live-pins). The two live-pinned
+  files that carry unrelated ruff findings today
+  (`model/effects/aw-49/galactic_model.py`,
+  `model/effects/type-distortion/distortion_model.py`) stay frozen; they need
+  the full procedure in
+  [If you must edit a live-pinned file](#if-you-must-edit-a-live-pinned-file).
+- It does not add a live-equality claim to a provenance entry. A provenance
+  entry carries no `sha256` field and asserts no live equality — that is what
+  `test_historical_provenance_carries_no_live_equality_claim` enforces, in both
+  directions, and doctoring a `current_bytes_recorded` flag to `true` still
+  fails it.
+- It does not survive a re-render. If one of these scripts' fixtures is ever
+  re-rendered under the pinned oracle, its stamp resolves to the tree again;
+  that does **not** make it a live pin (nothing re-derives it), but the entry
+  should be revisited here rather than assumed still "cleanable" by default.
+
+If a consumer is ever found that re-derives one of these stamps and compares it,
+that script is a live pin in disguise: move it to `live_pins` and stop cleaning
+it. Checked for #269 across tracked `.py`/`.sh`/`.yml` — the only readers of
+`script_sha256`/`tool_sha256` are the eight scripts' own write sites and this
+registry's audit, which asserts the *absence* of live equality.
 
 ## If you must edit a live-pinned file
 
