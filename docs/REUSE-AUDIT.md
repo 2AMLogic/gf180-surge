@@ -122,7 +122,11 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    nothing was copied. It audits the git **index**, so run it with
    `--include-untracked` while a newly copied file is still unstaged; the
    default run reports how many working-tree entries it skipped for that
-   reason, but does not look inside them.
+   reason, but does not look inside them. For an entry that IS in the index, both
+   byte sources are judged — the working-tree copy and, when the two are not
+   known to match, the staged blob a commit would publish — so staging a copied
+   file and then cleaning (or deleting) the working copy is not a way past the
+   rules, and the run reports which entries it read twice.
 6. Do not bring a substrate in **by reference** without the same record. A
    committed submodule (or a nested repository checkout) and a symlink whose
    target leaves this tree both put upstream content in the build tree while

@@ -32,7 +32,13 @@ runs it carries (a notice spliced into a render, a WAV copyright chunk). A
 wrapper that carries no marker at all is answered by the NAMES inside it — a
 `.wt` wavetable member in an archive renamed `.dat`, a stripped `.cpp` in a
 tar, a gzip whose header filename is the only name it has — each judged by the
-same extension sets a committed path is.
+same extension sets a committed path is. Both of an entry's byte sources are
+read, not just the one on disk: `git commit` commits the **index**, so a carrier
+`git add`ed and then cleaned, deleted, or hidden behind `assume-unchanged` is
+judged from its staged blob as well as from the working-tree copy, and each run
+reports how many entries diverged (printed even when zero). An unstaged paste
+into a tracked file still fires from the working-tree view, which is what a
+local run before `git add` is for.
 `--negative-control` demonstrates that every one of those rules still fires;
 both run in CI. A PASS is bookkeeping, not proof that nothing was copied, and
 never a ratification — each record's own Status line is authoritative.
