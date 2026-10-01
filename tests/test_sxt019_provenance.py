@@ -41,7 +41,12 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     wrappers deep are each flagged (and an outer member name is not masked by
     what it wraps), while this repository's own FNAME-carrying traces and
     `.npy`-member `.npz` fixtures stay clean — the rule is answered by a row
-    declaring `covers`, never by an exemption.
+    declaring `covers`, never by an exemption,
+  - the audited SET is the git index, and that boundary is disclosed rather
+    than silent: an unattributed carrier left unstaged is NAMED in
+    `entries_present_but_not_in_the_index` (and still not flagged), the count
+    is printed even when zero, `--include-untracked` audits it and the rule
+    fires, and ignored paths plus declared scope exclusions stay out of both.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -1399,4 +1404,159 @@ def test_discovery_controls_run_in_the_self_test():
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cp._discovery_controls():
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+# --- the index boundary (increment 11) ----------------------------------------
+#
+# `list_entries` reads the git INDEX, so the audited set is what the repository
+# has committed or staged, not what is on disk. That is right for CI and wrong
+# to leave SILENT: before this increment, an unattributed file carrying a GPL
+# body, a foreign SPDX tag and a foreign copyright line, dropped into `model/`
+# and left unstaged, audited PASS with a file count identical to the clean
+# tree's. The boundary is kept and now disclosed; `--include-untracked` crosses
+# it on demand, which is how acceptance item 4's own demonstration ("a
+# deliberately unattributed file") runs against a working tree without staging
+# the fixture first.
+
+
+def _staged_tree(tmp_path, label):
+    """A skeleton committed to a real index, so `ls-files` is the discovery path."""
+    root = _discovery_tree(tmp_path, label)
+    cp._git(root, "init", "-q")
+    cp._git(root, "add", "-A", "-f")
+    return root
+
+
+def test_unstaged_carrier_is_disclosed_rather_than_silently_skipped(tmp_path):
+    """The finding this increment exists for: silence, not a missed rule."""
+    root = _staged_tree(tmp_path, "unstaged")
+    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+
+    findings, stats = cp.audit(root)
+    # Default behaviour is deliberately "no finding" — so the assertion that
+    # matters is what the run SAID about the entry it did not audit.
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_present_but_not_in_the_index"] == [cp.FIXTURE_UNTRACKED_REL]
+    assert stats["untracked_entries_audited"] == 0
+
+
+def test_unstaged_carrier_is_audited_when_included(tmp_path):
+    """`--include-untracked` crosses the boundary and the rule fires."""
+    root = _staged_tree(tmp_path, "unstaged-included")
+    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+
+    findings, stats = cp.audit(root, include_untracked=True)
+    assert stats["entries_present_but_not_in_the_index"] == []
+    assert stats["untracked_entries_audited"] == 1
+    fired = {f.rule for f in findings if f.path == cp.FIXTURE_UNTRACKED_REL}
+    assert "foreign-license-text" in fired, [f.as_dict() for f in findings]
+
+
+def test_index_boundary_count_is_printed_even_when_zero(tmp_path):
+    """"None present" and "never looked" must not look alike in the report."""
+    root = _staged_tree(tmp_path, "staged-zero")
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_present_but_not_in_the_index"] == []
+
+    proc = run_tool("--root", str(root))
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "NOT in the git index: 0 entries" in proc.stdout
+
+
+def test_index_boundary_report_names_the_unaudited_paths(tmp_path):
+    """A count alone is not answerable: the report names what it skipped."""
+    root = _staged_tree(tmp_path, "unstaged-report")
+    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+
+    proc = run_tool("--root", str(root))
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "NOT in the git index: 1 entries" in proc.stdout
+    assert cp.FIXTURE_UNTRACKED_REL in proc.stdout
+
+    proc = run_tool("--root", str(root), "--include-untracked")
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "AUDITED (--include-untracked)" in proc.stdout
+    assert "foreign-license-text" in proc.stdout
+
+
+def test_ignored_paths_are_neither_counted_nor_audited(tmp_path):
+    """A declared sub-boundary: `.gitignore` is this repo's own statement."""
+    root = _discovery_tree(tmp_path, "ignored")
+    cp._write(root, ".gitignore", cp.FIXTURE_UNTRACKED_REL + "\n")
+    cp._git(root, "init", "-q")
+    cp._git(root, "add", "-A", "-f")
+    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+
+    for included in (False, True):
+        findings, stats = cp.audit(root, include_untracked=included)
+        assert stats["entries_present_but_not_in_the_index"] == []
+        assert not [f for f in findings if f.path == cp.FIXTURE_UNTRACKED_REL], (
+            "an ignored path was audited; the sub-boundary is declared, "
+            f"include_untracked={included}"
+        )
+
+
+def test_unstaged_path_inside_a_declared_scope_exclusion_is_not_recounted(tmp_path):
+    """An already-disclosed hole is not disclosed twice under a second name."""
+    root = _discovery_tree(tmp_path, "unstaged-excluded")
+    cp._patch_manifest(
+        root,
+        lambda d: d["scope_exclusions"].append(
+            {"prefix": ".loom/", "reason": "synthetic declared hole"}
+        ),
+    )
+    # A tracked file inside the hole, so the exclusion is not itself stale.
+    cp._write(root, ".loom/notes.md", "declared, unaudited.\n")
+    cp._git(root, "init", "-q")
+    cp._git(root, "add", "-A", "-f")
+    cp._write(root, ".loom/pasted_unstaged.py", cp.FIXTURE_GPL_BODY)
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_present_but_not_in_the_index"] == []
+
+
+def test_non_git_tree_reports_zero_and_still_audits_every_file(tmp_path):
+    """`list_untracked` must not report an enclosing repository's view.
+
+    In a synthetic (non-checkout) tree every file is WALKED, so nothing is
+    un-indexed — and the carrier must still fire. A `git ls-files --others`
+    answered by an enclosing repository would report the whole tree as
+    un-audited while every rule had in fact run on it.
+    """
+    root = _discovery_tree(tmp_path, "non-git")
+    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+
+    assert cp.list_untracked(root) == []
+    findings, stats = cp.audit(root)
+    assert stats["entries_present_but_not_in_the_index"] == []
+    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_UNTRACKED_REL)
+
+
+def test_real_tree_discloses_its_own_index_boundary():
+    """Coverage reported separately from agreement, on the committed tree."""
+    _, stats = cp.audit(REPO)
+    assert "entries_present_but_not_in_the_index" in stats
+    assert isinstance(stats["entries_present_but_not_in_the_index"], list)
+    assert stats["untracked_entries_audited"] == 0
+
+
+def test_index_boundary_is_declared_in_limits():
+    """A limit that is not printed is not declared."""
+    proc = run_tool("--limits")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "not in the git index" in proc.stdout
+    assert "--include-untracked" in proc.stdout
+    assert "entries_present_but_not_in_the_index" in proc.stdout
+
+
+def test_coverage_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    cases = cp._coverage_controls() + cp._coverage_include_untracked_controls()
+    assert cases, "the index-boundary coverage controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"

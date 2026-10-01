@@ -119,7 +119,10 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    `--negative-control` proves each of its rules still fires. Both run in CI
    (job `provenance-audit`). The tool enforces bookkeeping — read its
    `--limits` output before quoting a PASS as evidence: it is not proof that
-   nothing was copied.
+   nothing was copied. It audits the git **index**, so run it with
+   `--include-untracked` while a newly copied file is still unstaged; the
+   default run reports how many working-tree entries it skipped for that
+   reason, but does not look inside them.
 6. Do not bring a substrate in **by reference** without the same record. A
    committed submodule (or a nested repository checkout) and a symlink whose
    target leaves this tree both put upstream content in the build tree while
