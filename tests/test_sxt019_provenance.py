@@ -852,15 +852,121 @@ def test_our_own_payload_shapes_still_audit_clean(tmp_path):
     """
     for label, rel, payload in (
         ("pcm", "fixtures/audio/render.wav", cp.FIXTURE_PLAIN_PCM_WAV),
+        # A QUIET render is the hazard increment 10 had to be measured against:
+        # every sample is a low byte beside a NUL high byte, which is exactly the
+        # byte shape of a UTF-16-LE string.
+        ("quiet-pcm", "fixtures/audio/render.wav", cp.FIXTURE_QUIET_PCM_WAV),
         ("f32", "reports/artifacts/ref.f32", cp.FIXTURE_PLAIN_FLOAT_DUMP),
         ("npy", "reports/traces/click.npy", cp.FIXTURE_TENSOR_PAYLOAD),
         ("trace.gz", "reports/artifacts/trace.json.gz", cp.FIXTURE_OWN_GZIPPED_TRACE),
-        ("wide", "fixtures/audio/render.wav", cp.FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD),
+        # The residual increment 10 declares rather than closes: a notice carried
+        # in a TRANSFORMED encoding is not text at any stride.
+        ("base64", "fixtures/audio/render.wav", cp.FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD),
     ):
         root = _masked_tree(tmp_path, f"clean-{label}", "")
         cp._write(root, rel, payload)
         findings, _ = cp.audit(root)
         assert not findings, f"{label}: {[f.as_dict() for f in findings]}"
+
+
+# --- the same payload, read in a WIDE encoding (increment 10) -----------------
+#
+# Increment 8 harvested a refused payload's printable-ASCII runs and declared the
+# rest: "the harvest reads ASCII, so a notice written in a WIDE encoding inside a
+# binary payload stays out of reach". A "Unicode" save is an ordinary editor
+# default, so that residual was an ordinary evasion, not an exotic one: each tree
+# below audited PASS / exit 0 with UNCHANGED tripwire counts on the previous tool
+# (demonstrated on the real tree in `reports/sxt-019/EVIDENCE.md` §16).
+
+
+def test_wide_encoded_notice_in_a_payload_is_flagged(tmp_path):
+    """Every stride, both byte orders, BOM or not, committed or inside a wrapper."""
+    for label, rel, payload in (
+        ("utf-16-le", "fixtures/audio/render.wav", cp.FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD),
+        ("utf-16-be", "reports/artifacts/ref.f32", cp.FIXTURE_UTF16BE_NOTICE_IN_A_PAYLOAD),
+        ("utf-32-le", "fixtures/audio/render.wav", cp.FIXTURE_UTF32LE_NOTICE_IN_A_PAYLOAD),
+        ("utf-32-be", "fixtures/audio/render.wav", cp.FIXTURE_UTF32BE_NOTICE_IN_A_PAYLOAD),
+        ("bom-in-wav", "fixtures/audio/render.wav", cp.FIXTURE_WAV_WITH_WIDE_NOTICE),
+        (
+            "odd-offset",
+            "fixtures/audio/render.wav",
+            cp.FIXTURE_WIDE_NOTICE_AT_AN_ODD_OFFSET,
+        ),
+        (
+            "wrapper-member",
+            "compiler/golden/bundle.dat",
+            cp.FIXTURE_GZIPPED_WIDE_NOTICE_PAYLOAD,
+        ),
+    ):
+        root = _masked_tree(tmp_path, f"wide-{label}", "")
+        cp._write(root, rel, payload)
+        fired = [f for f in cp.audit(root)[0] if f.path == rel]
+        assert any(f.rule == "foreign-license-text" for f in fired), (
+            f"{label}: a wide-encoded notice inside a payload was not flagged"
+        )
+        assert any(cp.WIDE_NOTICE_LOCATOR in f.detail for f in fired), (
+            f"{label}: the finding does not quote the offending notice: "
+            + "; ".join(f.detail for f in fired)
+        )
+
+
+def test_wide_run_harvest_reads_each_encoding_and_refuses_decimated_noise():
+    """Unit-level pin on the admission test, including the shape that must FAIL.
+
+    The second halving step (which resolves UTF-32) must only read a data stream
+    whose other half is ALL NUL. Without that, quiet 16-bit PCM — a low byte
+    beside a NUL high byte — decimates into printable noise and manufactures runs
+    on a rule that cannot be exempted.
+    """
+    notice = cp.FIXTURE_WIDE_NOTICE_TEXT
+    # Every byte alignment, not just the even one: a notice spliced into a
+    # payload starts at an odd offset as often as an even one, and reading the
+    # data byte on the wrong side of its padding is how that was missed first.
+    for encoding in ("utf-16-le", "utf-16-be", "utf-32-le", "utf-32-be", "utf-16"):
+        for lead in range(4):
+            raw = b"\x81\x7f\x93\xee"[:lead] + notice.encode(encoding) + b"\xfe\x81"
+            runs = cp._wide_runs(raw)
+            assert any(cp.WIDE_NOTICE_LOCATOR in run for run in runs), (
+                encoding,
+                lead,
+                runs,
+            )
+    # The narrow runs are NOT what answers these: a NUL after every character
+    # means there is no printable-ASCII run six bytes long anywhere in the
+    # payload, which is exactly why increment 8 missed it.
+    narrow = [
+        match.group()
+        for match in cp.PRINTABLE_RUN_RE.finditer(notice.encode("utf-16-le"))
+        if cp.RUN_WORD_RE.search(match.group())
+    ]
+    assert narrow == [], narrow
+    # A quiet render carries no run that names a holder, and the audit counts
+    # whatever it did find rather than reporting nothing at all.
+    text, count = cp.harvest_payload(cp.FIXTURE_QUIET_PCM_WAV)
+    assert "Upstream" not in text, text[:200]
+    assert count == len(cp._wide_runs(cp.FIXTURE_QUIET_PCM_WAV))
+    # The sign spelling is admitted inside a wide run and normalised to `(c)`.
+    sign_runs = cp._wide_runs(cp.FIXTURE_WIDE_COPYRIGHT_SIGN_IN_A_PAYLOAD)
+    assert any("(c" + ") 20" + "19" in run for run in sign_runs), sign_runs
+    assert all(cp.COPYRIGHT_SIGN_CHAR not in run for run in sign_runs)
+
+
+def test_wide_run_coverage_is_reported_for_the_real_tree():
+    """Coverage separate from agreement: the layer ran, and says how much.
+
+    The upper bound is a PRECISION pin on real data, and the only one available:
+    the guard that makes the UTF-32 step read a stream whose other half is all
+    NUL is what keeps a real (correlated, musical) render from decimating into
+    printable noise, and synthetic LCG noise does not reproduce that — measured
+    on this tree, 71 runs with that guard against 978 without it. Compare with
+    `--json`'s `wide_encoded_runs_harvested` if this ever trips; several hundred
+    would mean the guard has been lost, not that the tree grew.
+    """
+    _, stats = cp.audit(REPO)
+    assert stats["wide_encoded_runs_harvested"] >= 1, stats
+    assert stats["wide_encoded_runs_harvested"] <= 300, stats
+    proc = run_tool()
+    assert "wide-encoded (UTF-16/UTF-32) runs harvested" in proc.stdout, proc.stdout
 
 
 def test_harvest_keeps_notices_and_drops_payload_noise():

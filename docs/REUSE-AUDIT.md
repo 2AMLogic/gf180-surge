@@ -133,23 +133,26 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    anything. The audit resolves an encoding first, then — for a payload it
    cannot decode — unwraps compressed streams and archives **by magic rather
    than by name** (so a gzipped source file, or a zip/tar renamed `.dat`, is
-   read as its members) and, failing that, reads the printable-ASCII runs the
-   payload carries (so a notice spliced into a render, or a WAV `LIST/INFO`
-   copyright chunk, is found). A wrapper whose members carry no marker at all
+   read as its members) and, failing that, reads the runs the payload carries —
+   printable-ASCII ones (so a notice spliced into a render, or a WAV `LIST/INFO`
+   copyright chunk, is found) and wide-encoded ones (UTF-16/UTF-32, either byte
+   order, BOM or not, at any byte offset), so re-saving the notice as "Unicode"
+   before splicing it in does not hide it either. A wrapper whose members carry no marker at all
    is answered by the member NAMES (`wrapper-member-name`): a `.wt` wavetable
    inside a zip renamed `.dat`, a stripped `.cpp` inside a tar, and a gzip
    whose header filename is its only name are each judged by the same
    extension sets a committed path is, and each component of a nested label is
    judged so an outer name is not masked by what it wraps. Every run prints
    how much of the tree each weaker mode covered — `unwrapped by magic` (with
-   the number of member names read), `scanned as extracted ASCII strings
-   only`, `not content-scanned` — plus any `TRUNCATED payload scan`. Two
-   residuals stay declared and control-pinned rather than closed: a notice
-   written in a WIDE encoding inside a binary payload, and an inflation that
-   hits the unwrap budget (a wrapper the audit cannot open yields no member
-   names either). A member type this repository authors (`.json`, `.hex`,
-   `.npy`) is not a signal, exactly as it is not for a file's own name. Read
-   the counts, not just the verdict.
+   the number of member names read), `scanned as extracted strings only`, the
+   number of `wide-encoded (UTF-16/UTF-32) runs harvested`, `not
+   content-scanned` — plus any `TRUNCATED payload scan`. Two residuals stay
+   declared and control-pinned rather than closed: a notice carried in a
+   TRANSFORMED encoding (base64, or any re-coding that is not the bytes of its
+   characters), and an inflation that hits the unwrap budget (a wrapper the
+   audit cannot open yields no member names either). A member type this
+   repository authors (`.json`, `.hex`, `.npy`) is not a signal, exactly as it
+   is not for a file's own name. Read the counts, not just the verdict.
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle
