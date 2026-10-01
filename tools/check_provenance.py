@@ -125,7 +125,26 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     contents are outside every content rule, exactly as the external pinned
     oracle is. An in-tree symlink to in-scope content is not a signal at all
     (`CLAUDE.md -> AGENTS.md` is this repository's own shape, pinned by
-    `discovery/in-repo-symlink-to-a-regular-file-passes`).
+    `discovery/in-repo-symlink-to-a-regular-file-passes`). Because the row IS
+    the description, what the row must say is now checked (increment 13): it
+    must carry `class: external-reference` — the class the vocabulary and the
+    manifest's own notes already named for these two rules, while any row at
+    the path used to cover them — and a `pinned_commit`, which was optional,
+    and whose absence also short-circuited the gitlink comparison so that
+    deleting the field defeated the wrong-commit control. A declared scope
+    exclusion does not hide such an entry either: it withholds CONTENT from the
+    content rules, and a gitlink has none of its own, so a submodule under an
+    excluded prefix is judged (and disclosed as
+    `by_reference_entries_inside_declared_exclusions`, printed even when zero)
+    rather than dropped before any rule sees it — the converse of the escape
+    `symlink_escape()` already reports for a link INTO the same prefix. What
+    stays DECLARED, not closed: for an escaping link the row is corroborated by
+    nothing but itself. The resolved upstream bytes are not required to cite one
+    of this repository's decision records — requiring that would mean editing
+    upstream bytes, which is #25's question and not this tool's — and a verdict
+    that depended on whether the external tree happened to be checked out
+    locally (PASS in CI, FAIL on a developer box, same committed tree) is the
+    thing increment 13 removed, not the thing it answered.
   * Content rules read three KINDS of text, and a run reports how much of the
     tree each one covered (`files_unwrapped_from_wrappers`,
     `files_scanned_as_extracted_strings`, `files_not_content_scanned`,
@@ -221,7 +240,14 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     member's FNAME was taken. Nothing disclosed the partial read —
     `wrapper_member_names_read` counted 1 for a two-name stream, which looks
     exactly like a one-member stream — so the tell was order-dependence, not
-    coverage.
+    coverage. Increment 13 did the same to increment 7: not whether a
+    by-reference entry is FOUND (it is, and the rule fires) but whether the row
+    that answers it describes anything — a row carrying no pin, or a class
+    saying it carries no upstream content at all, satisfied the rule by
+    existing at the path, and an exclusion prefix swallowed the entry outright.
+    The tell here was neither coverage nor order but ANSWERABILITY: each of
+    these trees audited clean while referencing a whole other repository, and
+    one of them did so only on the machines where that repository was absent.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -240,8 +266,13 @@ holder list continuing past a delimiter on the same line, or wrapped onto a
 continuation line; a license body wrapped across a comment leader — together
 with the positive cases that keep the fixes from flagging our own headers or
 ordinary prose. The `discovery/*` controls do the same for the layer below:
-a committed gitlink, a nested repository in a non-git tree, and an escaping
-symlink must each produce a finding, a declared one must not, and a plain
+a committed gitlink, a nested repository in a non-git tree, an escaping
+symlink, a gitlink inside a declared scope exclusion, and either by-reference
+entry answered by a row of the wrong class or by a row with no `pinned_commit`
+must each produce a finding, a declared one must not — including an excluded
+gitlink, whose finding has to be answerable where it fires, and a declared
+escaping link, which must pass identically whether or not its external target
+resolves on the machine running the audit — and a plain
 in-tree symlink must stay clean. The `payload/*` controls cover the layer below
 THAT: a license body inside a gzip/bzip2/xz stream, a zip or tar renamed
 `.dat`, a wrapper nested inside a wrapper, an `.npz` member, a WAV `ICOP`
@@ -314,6 +345,18 @@ RECORD_DIR_REL = "decision-records"
 
 SCHEMA_VERSION = 1
 
+# The class a row MUST carry to answer either by-reference rule
+# (`submodule-reference`, `external-symlink-target`). Named rather than spelled
+# inline because the tie is now enforced: before increment 13 any row at the
+# exact path covered those two rules whatever its class said, so a row declaring
+# it "restates an upstream attribution, carries no upstream content" silently
+# answered a committed GPL engine checkout — while this file's own vocabulary
+# and `decision-records/provenance.json`'s notes both described
+# `external-reference` as required. One of the two had to move; the wording was
+# right, so the code moved (control
+# `discovery/gitlink-answered-by-a-row-of-the-wrong-class`).
+BY_REFERENCE_CLASS = "external-reference"
+
 # Every provenance row must cite a decision record: "Nothing is adopted
 # without a recorded decision in #25" (docs/REUSE-AUDIT.md, standing rules).
 KNOWN_CLASSES = {
@@ -336,7 +379,10 @@ KNOWN_CLASSES = {
     # bytes: a committed submodule gitlink, or a symlink whose target leaves
     # the audited tree. The referenced content is in the build tree but not in
     # this audit, so the row (and its record) is the only description of it.
-    "external-reference": "a by-reference link to content outside this tree",
+    # REQUIRED (not merely advertised) for `submodule-reference` and
+    # `external-symlink-target`, and the only class for which `pinned_commit`
+    # is mandatory: with no bytes to read, the pin is the whole description.
+    BY_REFERENCE_CLASS: "a by-reference link to content outside this tree",
 }
 
 # --- rule ids -----------------------------------------------------------------
@@ -1792,10 +1838,27 @@ class Tree:
         }
         self.submodule_urls = parse_gitmodules(root)
         self.excluded = {}
+        # Gitlinks under a declared exclusion prefix (increment 13). A declared
+        # exclusion is a hole in CONTENT scanning — "this prefix's bytes are
+        # not product content, their provenance is the install as a whole" —
+        # and a gitlink has no bytes of its own for that statement to be about.
+        # Letting the prefix swallow it hid the single highest-volume entry a
+        # tree can carry (a whole other repository) behind a line of manifest
+        # text, while `symlink_escape()` was meanwhile treating a link INTO the
+        # same prefix as a reportable escape: a hole you can point at but not
+        # mount. So the existence of a by-reference entry is judged; only its
+        # (nonexistent) content is excluded. Kept separately from
+        # `self.excluded` so the exclusion is not double-counted as both
+        # scanned and excluded, and so `scope-exclusion-stale` still sees a
+        # prefix whose only member is a gitlink as live rather than stale.
+        self.excluded_by_reference = {}
         self.files = []
         for rel in self.all_files:
             hit = self.excluded_by(rel)
             if hit is None:
+                self.files.append(rel)
+            elif self.kinds.get(rel) == "gitlink":
+                self.excluded_by_reference.setdefault(hit, []).append(rel)
                 self.files.append(rel)
             else:
                 self.excluded.setdefault(hit, []).append(rel)
@@ -1826,6 +1889,17 @@ class Tree:
         if self.include_untracked:
             return []
         return [rel for rel in self.untracked if self.excluded_by(rel) is None]
+
+    def by_reference_inside_exclusions(self):
+        """Gitlinks a declared exclusion covers but does not hide (increment 13).
+
+        Reported as coverage on every run, zero included: an exclusion that
+        happens to contain no submodule must not look like one whose submodule
+        was never examined.
+        """
+        return sorted(
+            rel for rels in self.excluded_by_reference.values() for rel in rels
+        )
 
     def excluded_by(self, rel):
         for prefix in self.exclusions:
@@ -2386,7 +2460,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 covers_declared = {r for r in covers_raw if r in TRIPWIRE_RULES}
         for rel in hits:
             coverage.setdefault(rel, set()).update(
-                _structural_tripwire_rules(tree, rel) | covers_declared
+                _structural_tripwire_rules(tree, rel, entry) | covers_declared
             )
             findings.extend(_corroborate(tree, rel, entry, number, label))
 
@@ -2526,7 +2600,11 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 )
             )
             continue
-        if not tree.excluded.get(str(item["prefix"])):
+        prefix = str(item["prefix"])
+        # A prefix whose only member is a gitlink is NOT stale: it still
+        # declares the hole, even though the gitlink itself is judged at the
+        # discovery layer rather than excluded (increment 13).
+        if not tree.excluded.get(prefix) and not tree.excluded_by_reference.get(prefix):
             findings.append(
                 Finding(
                     "scope-exclusion-stale",
@@ -2550,15 +2628,54 @@ def check_manifest(tree: Tree, manifest, records, rows):
     return findings, coverage, exemptions
 
 
+def _pinned_commit_required(tree: Tree, rel, entry):
+    """Why this row MUST carry a `pinned_commit`, or None (increment 13).
+
+    The field is optional in general, and rightly so: a row describing quoted
+    constants is corroborated by the file's own bytes, which the audit reads.
+    It is not optional for a row describing content the audit never reads. A
+    gitlink's entire content is "whatever that commit is", and
+    `class: external-reference` says the same of a link into an external tree —
+    the pin IS the description, so a row without one describes nothing
+    checkable.
+
+    Before this increment the field's absence also SHORT-CIRCUITED the gitlink
+    arm's own comparison below (`actual and commit and …`), so the control that
+    catches a row naming the WRONG commit was defeated by deleting the field
+    rather than changing its value: a gitlink pinning the GPL engine, answered
+    by a row with no pin at all, audited clean with no pin recorded anywhere
+    (control `discovery/submodule-row-with-no-pinned-commit`).
+    """
+    if tree.kind(rel) == "gitlink":
+        return f"{rel} is a committed gitlink, whose content is its commit"
+    if str(entry.get("class") or "") == BY_REFERENCE_CLASS:
+        return f"the row's class is {BY_REFERENCE_CLASS!r}"
+    return None
+
+
 def _corroborate(tree: Tree, rel, entry, number, label):
     """The file must show the provenance its row claims (row != reality guard)."""
     commit = str(entry.get("pinned_commit") or "").strip()
     kind = tree.kind(rel)
+    if not commit:
+        why = _pinned_commit_required(tree, rel, entry)
+        if why is not None:
+            return [
+                Finding(
+                    "manifest-field-missing",
+                    MANIFEST_REL,
+                    f"{label} ({rel}): missing required field "
+                    f"['pinned_commit'] — {why}, so the row records nothing "
+                    "this audit (or a reviewer) can check it against",
+                )
+            ]
     if kind == "gitlink":
         # A gitlink carries its own pin, so corroboration is exact here: the
         # commit in the index is what a build checks out, whatever the row says.
+        # `commit` is non-empty by the guard above; `actual` can still be empty
+        # for a nested repository in a non-git tree, which records no mode.
         actual = tree.gitlink_commits.get(rel)
-        if actual and commit and actual.lower() != commit.lower():
+        if actual and actual.lower() != commit.lower():
             return [
                 Finding(
                     "manifest-uncorroborated",
@@ -2569,21 +2686,42 @@ def _corroborate(tree: Tree, rel, entry, number, label):
                 )
             ]
         return []
-    text = tree.text(rel)
     if kind == "symlink":
-        if text is None:
-            # The target is not readable here (an external tree, absent at
-            # audit time). There is no file body in which to state provenance,
-            # so the row and its record are the only description — as for a
-            # binary payload. The structural tripwire is what makes the row
-            # mandatory in the first place.
+        escape = symlink_escape(tree, rel)
+        if escape is not None:
+            # The target is outside what this audit reads — an external tree, an
+            # absolute path, a declared hole — WHETHER OR NOT it happens to be
+            # checked out on the machine running the audit. There is no file
+            # body in this tree in which to state provenance, so the row and its
+            # record are the only description, as for a binary payload; the
+            # structural tripwire is what makes the row mandatory in the first
+            # place.
+            #
+            # Keyed on the escape, not on readability, because the previous
+            # reading of the same reasoning ("the target is not readable here")
+            # made the verdict depend on the auditing machine: one identical
+            # committed tree audited PASS in CI, where the pinned oracle is not
+            # checked out, and FAIL on a developer box that had it, where the
+            # resolved UPSTREAM bytes were then required to cite one of this
+            # repository's decision records. Requiring that is not a tooling
+            # change — it would mean editing upstream bytes, which is #25's
+            # question, not this tool's. DECLARED LIMIT, not a closed hole: for
+            # an escaping link the row is corroborated by nothing but itself
+            # (control
+            # `discovery/declared-escaping-symlink-passes-whether-its-target-resolves-or-not`).
             return []
-        # The link target is what a reviewer reads first; search it alongside
-        # the content the link resolves to.
+        # An in-tree target: the link resolves to content this audit scans at
+        # its own path, so the row is still checked against what a reviewer
+        # reads. The link target is what they read first; search it alongside.
+        text = tree.text(rel)
+        if text is None:
+            return []
         try:
             text = text + "\n" + os.readlink(tree.root / rel)
         except OSError:  # pragma: no cover - raced away
             pass
+    else:
+        text = tree.text(rel)
     if text is None:
         return []  # binary payload: nothing to read; the row is the record
     tokens = []
@@ -2707,7 +2845,18 @@ def submodule_evidence(tree: Tree, rel):
         detail += f" pinned at {commit[:12]}"
     if url:
         detail += f", url {url}"
-    return detail + " — its files are in the build tree but not in this audit"
+    detail += " — its files are in the build tree but not in this audit"
+    excluded = tree.excluded_by(rel)
+    if excluded is not None:
+        # The locator a reviewer needs: the entry is inside a declared hole, so
+        # it looks exempted and is not. An exclusion withholds content from the
+        # content rules; it cannot withhold the existence of another repository.
+        detail += (
+            f"; it sits under the declared scope exclusion {excluded!r}, which "
+            "withholds content from the content rules but does not hide a "
+            "by-reference entry"
+        )
+    return detail
 
 
 def _extension_tripwire_rules(rel):
@@ -2731,7 +2880,7 @@ def _extension_tripwire_rules(rel):
     return rules
 
 
-def _structural_tripwire_rules(tree: Tree, rel):
+def _structural_tripwire_rules(tree: Tree, rel, entry):
     """Tripwire rules implied by the ENTRY itself, not by any text it holds.
 
     Extension rules plus the by-reference kinds. Like an extension rule, the
@@ -2740,13 +2889,28 @@ def _structural_tripwire_rules(tree: Tree, rel):
     describes it in full and covers the rule without a 'covers' declaration.
     The content-signal rules still require 'covers', because text can appear
     anywhere in a file regardless of what the row's 'content' field says.
+
+    The two by-reference rules additionally require the row to be of the class
+    that describes a by-reference entry (increment 13). Before that, ANY row at
+    the exact path covered them: a row whose class said
+    "restates an upstream attribution, carries no upstream content" answered a
+    committed GPL engine checkout, with the row and its record — the only
+    description a by-reference entry has — describing something else entirely.
+    A row of the wrong class is not a laundering trick to catch, it is a row
+    that does not say what the rule needs said; `external-reference` was
+    already named as the required class both in `KNOWN_CLASSES` and in the
+    manifest's own notes, so what moved was the enforcement, not the contract
+    (control `discovery/gitlink-answered-by-a-row-of-the-wrong-class`).
     """
     rules = _extension_tripwire_rules(rel)
     kind = tree.kind(rel)
-    if kind == "gitlink":
-        rules.add("submodule-reference")
-    elif kind == "symlink":
-        rules.add("external-symlink-target")
+    by_reference = {
+        "gitlink": "submodule-reference",
+        "symlink": "external-symlink-target",
+    }
+    row_class = str((entry or {}).get("class") or "")
+    if kind in by_reference and row_class == BY_REFERENCE_CLASS:
+        rules.add(by_reference[kind])
     return rules
 
 
@@ -2975,6 +3139,13 @@ def audit(root: Path, include_untracked=False):
             kind: sum(1 for rel in tree.files if tree.kind(rel) == kind)
             for kind in ("symlink", "gitlink")
         },
+        # Gitlinks a declared exclusion covers but does not hide (increment 13).
+        # Reported as the paths themselves, printed even when empty: a prefix
+        # that happens to contain no submodule must not look like one whose
+        # submodule was never examined.
+        "by_reference_entries_inside_declared_exclusions": (
+            tree.by_reference_inside_exclusions()
+        ),
         "tripwire_hits": tripwire_counts,
     }
     findings.sort(key=lambda f: (f.rule, f.path))
@@ -3061,6 +3232,13 @@ def report(findings, stats, root, as_json=False):
         f"{by_reference['gitlink']} submodule/nested repo(s) — judged at the "
         "discovery layer"
     )
+    inside = stats["by_reference_entries_inside_declared_exclusions"]
+    print(
+        f"      of those, inside a declared scope exclusion: {len(inside)} — "
+        "an exclusion withholds content, not the existence of another repository"
+    )
+    for rel in inside:
+        print(f"      by-reference entry inside a declared exclusion: {rel}")
     hits = ", ".join(f"{k}={v}" for k, v in sorted(stats["tripwire_hits"].items()))
     print(f"tripwire hits (declared + undeclared): {hits}")
     if findings:
@@ -3776,6 +3954,11 @@ FIXTURE_SUBMODULE_URL = "https://github.com/surge-synthesizer/surge.git"
 FIXTURE_NESTED_REPO_REL = "libs/vendored-engine"
 FIXTURE_ESCAPING_LINK_REL = "model/oracle_tables.py"
 FIXTURE_ESCAPING_LINK_TARGET = "../../surge-oracle/include/sst/effects/Reverb1.h"
+# A gitlink INSIDE a declared scope exclusion (increment 13): the shape an
+# exclusion used to swallow whole, while a symlink INTO the same prefix was
+# already a reportable escape.
+FIXTURE_EXCLUDED_SUBMODULE_REL = ".loom/surge"
+FIXTURE_DECLARED_HOLE_PREFIX = ".loom/"
 
 
 def _git(root: Path, *args):
@@ -3819,16 +4002,57 @@ def _nested_repo(root: Path, rel=FIXTURE_NESTED_REPO_REL):
     _write(root, f"{rel}/dsp/Reverb1.h", "float run(float x) { return x; }\n")
 
 
-def _submodule_row(commit=FIXTURE_SUBMODULE_COMMIT, rel=FIXTURE_SUBMODULE_REL):
-    return {
+def _submodule_row(
+    commit=FIXTURE_SUBMODULE_COMMIT,
+    rel=FIXTURE_SUBMODULE_REL,
+    row_class=BY_REFERENCE_CLASS,
+):
+    """A row answering a gitlink. `commit=None` OMITS the field entirely.
+
+    Omission is a distinct case from a wrong value, and the one the pin rule
+    missed: `pinned_commit` is not in `REQUIRED_ENTRY_FIELDS` (it is optional
+    for the content classes), so deleting it used to defeat the wrong-commit
+    control instead of tripping a field rule. `row_class` is a parameter for
+    the same reason — a row of the wrong class used to cover the rule anyway.
+    """
+    row = {
         "path": rel,
-        "class": "external-reference",
+        "class": row_class,
         "content": "synthetic: the pinned upstream engine, referenced as a submodule",
         "upstream": FIXTURE_SUBMODULE_URL,
-        "pinned_commit": commit,
         "upstream_license": "GPL-3.0-or-later",
         "decision_record": "0001",
     }
+    if commit is not None:
+        row["pinned_commit"] = commit
+    return row
+
+
+def _escaping_link_row(rel=FIXTURE_ESCAPING_LINK_REL, row_class=BY_REFERENCE_CLASS):
+    """A correct row answering an escaping symlink."""
+    return {
+        "path": rel,
+        "class": row_class,
+        "content": "synthetic: a link into the external oracle tree",
+        "upstream": "surge-synthesizer/surge",
+        "pinned_commit": FIXTURE_SUBMODULE_COMMIT,
+        "upstream_license": "GPL-3.0-or-later",
+        "decision_record": "0001",
+    }
+
+
+def _declared_hole(root: Path, rel=f"{FIXTURE_DECLARED_HOLE_PREFIX}notes.md"):
+    """Declare `FIXTURE_DECLARED_HOLE_PREFIX` as a scope exclusion, with a member."""
+    _write(root, rel, "A surface installed from elsewhere, not product content.\n")
+    _patch_manifest(
+        root,
+        lambda d: d["scope_exclusions"].append(
+            {
+                "prefix": FIXTURE_DECLARED_HOLE_PREFIX,
+                "reason": "synthetic declared hole",
+            }
+        ),
+    )
 
 
 def _controls():
@@ -5184,6 +5408,18 @@ def _discovery_controls():
     The positive controls matter as much: a repository that symlinks
     `CLAUDE.md -> AGENTS.md` (this one does) must not acquire a finding on a
     non-exemptible rule, or the rule would be switched off rather than answered.
+
+    Increment 13 went back INSIDE increment 7's own fix rather than below it.
+    Four ways a declared by-reference entry was described by nothing, each
+    probed clean on the tree that reported every other rule firing: a row with
+    no `pinned_commit` at all (the field is optional, and its absence
+    short-circuited the gitlink comparison); a gitlink UNDER a declared scope
+    exclusion (swallowed before any rule saw it, while a symlink INTO the same
+    prefix was already an escape); and a row of any class whatsoever covering
+    either by-reference rule. The fourth was not a mask but an
+    environment-dependent verdict — the same committed tree passed in CI and
+    failed where the external target happened to be checked out — which is now
+    decided from the committed link target alone.
     """
     return [
         (
@@ -5215,6 +5451,92 @@ def _discovery_controls():
                     root,
                     lambda d: d["entries"].append(
                         _submodule_row(commit="0" * 40)
+                    ),
+                ),
+            ),
+        ),
+        (
+            # R1 (increment 13): the wrong-commit control above is defeated by
+            # DELETING the field rather than changing it — `pinned_commit` is
+            # optional, and an empty one short-circuited the comparison, so the
+            # gitlink was declared by a row that recorded no pin anywhere.
+            "discovery/submodule-row-with-no-pinned-commit",
+            "manifest-field-missing",
+            MANIFEST_REL,
+            "a submodule row that omits pinned_commit entirely",
+            lambda root: (
+                _git_submodule_entry(root),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(_submodule_row(commit=None)),
+                ),
+            ),
+            "pinned_commit",
+        ),
+        (
+            # R4 (increment 13): `external-reference` is the class that
+            # describes a by-reference entry, and was advertised as required —
+            # but any row at the path used to cover the rule, whatever it said.
+            "discovery/gitlink-answered-by-a-row-of-the-wrong-class",
+            "submodule-reference",
+            FIXTURE_SUBMODULE_REL,
+            "a gitlink 'answered' by an attribution-statement row",
+            lambda root: (
+                _git_submodule_entry(root),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(
+                        _submodule_row(row_class="attribution-statement")
+                    ),
+                ),
+            ),
+        ),
+        (
+            # The same hole on the other by-reference rule.
+            "discovery/escaping-symlink-answered-by-a-row-of-the-wrong-class",
+            "external-symlink-target",
+            FIXTURE_ESCAPING_LINK_REL,
+            "an escaping symlink 'answered' by a quoted-constants row",
+            lambda root: (
+                _symlink(
+                    root, FIXTURE_ESCAPING_LINK_REL, FIXTURE_ESCAPING_LINK_TARGET
+                ),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(
+                        _escaping_link_row(row_class="quoted-constants")
+                    ),
+                ),
+            ),
+        ),
+        (
+            # R3 (increment 13): a declared exclusion withholds CONTENT from the
+            # content rules; a gitlink has none of its own, and the entry used
+            # to be dropped before any rule saw it.
+            "discovery/gitlink-under-a-declared-scope-exclusion",
+            "submodule-reference",
+            FIXTURE_EXCLUDED_SUBMODULE_REL,
+            "a committed gitlink inside a declared, unaudited hole",
+            lambda root: (
+                _declared_hole(root),
+                _git_submodule_entry(root, rel=FIXTURE_EXCLUDED_SUBMODULE_REL),
+            ),
+            "scope exclusion",
+        ),
+        (
+            # …and it must be ANSWERABLE where it fires, or the disclosure is a
+            # trap: a row naming an excluded path used to be read as stale.
+            "discovery/gitlink-under-an-exclusion-answered-by-a-row-passes",
+            None,
+            None,
+            "the same excluded gitlink, declared by a row at its exact commit",
+            lambda root: (
+                _declared_hole(root),
+                _git_submodule_entry(root, rel=FIXTURE_EXCLUDED_SUBMODULE_REL),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(
+                        _submodule_row(rel=FIXTURE_EXCLUDED_SUBMODULE_REL)
                     ),
                 ),
             ),
@@ -5305,17 +5627,35 @@ def _discovery_controls():
                 ),
                 _patch_manifest(
                     root,
-                    lambda d: d["entries"].append(
-                        {
-                            "path": FIXTURE_ESCAPING_LINK_REL,
-                            "class": "external-reference",
-                            "content": "synthetic: a link into the external oracle tree",
-                            "upstream": "surge-synthesizer/surge",
-                            "pinned_commit": FIXTURE_SUBMODULE_COMMIT,
-                            "upstream_license": "GPL-3.0-or-later",
-                            "decision_record": "0001",
-                        }
-                    ),
+                    lambda d: d["entries"].append(_escaping_link_row()),
+                ),
+            ),
+        ),
+        (
+            # R2 (increment 13): the SAME tree and the SAME row as the control
+            # above, with the external target checked out here. Both must audit
+            # clean, or one committed tree has two governance verdicts depending
+            # on whose machine ran the audit — which is what this one pins. The
+            # alternative (requiring the resolved UPSTREAM bytes to cite one of
+            # our decision records) is not a tooling change; see `_corroborate`.
+            "discovery/declared-escaping-symlink-passes-whether-its-target-resolves-or-not",
+            None,
+            None,
+            "the same declared escaping link, with its external target present",
+            lambda root: (
+                _write(
+                    root.parent / f"{root.name}-oracle",
+                    "oracle_tables.py",
+                    "TABLE = [7, 8, 9]\n",
+                ),
+                _symlink(
+                    root,
+                    FIXTURE_ESCAPING_LINK_REL,
+                    f"../../{root.name}-oracle/oracle_tables.py",
+                ),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(_escaping_link_row()),
                 ),
             ),
         ),
