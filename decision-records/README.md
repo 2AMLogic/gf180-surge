@@ -21,7 +21,10 @@ from the index below, when a status keyword or date drifts from the record,
 when a citation names a record that does not exist, when a provenance row is
 stale or uncorroborated by its file, and when a file carries a third-party
 carriage signal (foreign license text, upstream asset payload,
-foreign-language source, self-declared quotation) with no row.
+foreign-language source, self-declared quotation) with no row. Content brought
+in **by reference** is covered too: a committed submodule / nested repository
+checkout, and a symlink whose target leaves the tree, each need a row, and a
+submodule's row must name the commit its gitlink actually pins.
 `--negative-control` demonstrates that every one of those rules still fires;
 both run in CI. A PASS is bookkeeping, not proof that nothing was copied, and
 never a ratification — each record's own Status line is authoritative.

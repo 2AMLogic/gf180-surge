@@ -22,7 +22,12 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     this project is named inside the foreign notice's own holder line, when our
     own licence is merely the leading operand of a compound SPDX expression,
     and when a license body is wrapped mid-phrase across a comment leader —
-    while every own-attribution layout still audits clean.
+    while every own-attribution layout still audits clean,
+  - an entry that carries its content BY REFERENCE is judged at the discovery
+    layer: a committed submodule gitlink (or a nested repository checkout in a
+    non-git tree) and a symlink whose target leaves the audited tree are
+    findings, a declared one is not, and an ordinary in-tree symlink
+    (`CLAUDE.md -> AGENTS.md`, this repository's own shape) stays clean.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -113,7 +118,7 @@ def test_negative_control_every_rule_fires():
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "FAIL" not in proc.stdout, proc.stdout
-    assert "all 29 rules fired" in proc.stdout or "rules fired" in proc.stdout
+    assert f"all {len(cp.RULES)} rules fired" in proc.stdout, proc.stdout
 
 
 def test_every_rule_has_a_negative_control():
@@ -775,3 +780,236 @@ def test_unscanned_file_count_is_disclosed(tmp_path):
     assert stats["files_not_content_scanned"] == 1
     proc = run_tool("--root", str(root))
     assert "not content-scanned" in proc.stdout, proc.stdout
+
+
+# --- discovery-layer carriage (#25 acceptance item 4, increment 7) ------------
+#
+# Below the decode layer: an entry that carries its content BY REFERENCE has no
+# bytes of its own, so `open()` failed and it was counted as an undecodable
+# payload among the renders. A committed submodule gitlink pinning the GPL
+# Surge engine, and a symlink into the external (and in CI absent) pinned
+# oracle, both audited clean on a tree that reported every other rule firing.
+
+
+def _discovery_tree(tmp_path, label):
+    root = tmp_path / f"tree-{label}"
+    root.mkdir()
+    cp.build_skeleton(root)
+    findings, _ = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    return root
+
+
+def test_committed_submodule_gitlink_is_flagged(tmp_path):
+    """`AGENTS.md`/#25: no submodule by silent default — now mechanically so."""
+    root = _discovery_tree(tmp_path, "gitlink")
+    cp._git_submodule_entry(root)
+    findings, stats = cp.audit(root)
+    fired = [f for f in findings if f.rule == "submodule-reference"]
+    assert fired, [f.as_dict() for f in findings]
+    assert fired[0].path == cp.FIXTURE_SUBMODULE_REL
+    # The evidence must name the upstream and the pin, or the finding is not
+    # answerable: a gitlink has no text a reviewer can read instead.
+    assert cp.FIXTURE_SUBMODULE_COMMIT[:12] in fired[0].detail
+    assert "surge-synthesizer/surge" in fired[0].detail
+    assert stats["entries_by_reference"]["gitlink"] == 1
+    # …and it is NOT reported as an undecodable payload (that mislabelling is
+    # how it hid among the renders).
+    assert stats["files_not_content_scanned"] == 0
+
+
+def test_nested_repository_in_a_non_git_tree_is_flagged(tmp_path):
+    """The unpacked-tarball shape: a vendored checkout with no gitlink mode."""
+    root = _discovery_tree(tmp_path, "nested")
+    cp._nested_repo(root)
+    findings, _ = cp.audit(root)
+    assert [f.path for f in findings if f.rule == "submodule-reference"] == [
+        cp.FIXTURE_NESTED_REPO_REL
+    ], [f.as_dict() for f in findings]
+
+
+def test_submodule_row_must_name_the_committed_commit(tmp_path):
+    """A gitlink carries its own pin, so the row is checked against it exactly."""
+    root = _discovery_tree(tmp_path, "gitlink-pin")
+    cp._git_submodule_entry(root)
+    cp._patch_manifest(root, lambda d: d["entries"].append(cp._submodule_row()))
+    assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
+
+    root = _discovery_tree(tmp_path, "gitlink-wrong-pin")
+    cp._git_submodule_entry(root)
+    cp._patch_manifest(
+        root, lambda d: d["entries"].append(cp._submodule_row(commit="0" * 40))
+    )
+    assert "manifest-uncorroborated" in _rules_fired(root)
+
+
+def test_symlink_leaving_the_tree_is_flagged(tmp_path):
+    """Every way a link's target can be out of the audit's reach."""
+    cases = {
+        "absent": cp.FIXTURE_ESCAPING_LINK_TARGET,  # the CI shape: oracle not checked out
+        "absolute": "/opt/surge/include/sst/effects/Reverb1.h",
+    }
+    for label, target in cases.items():
+        root = _discovery_tree(tmp_path, f"link-{label}")
+        cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, target)
+        findings, stats = cp.audit(root)
+        fired = [f for f in findings if f.rule == "external-symlink-target"]
+        assert fired, f"{label}: {[f.as_dict() for f in findings]}"
+        assert fired[0].path == cp.FIXTURE_ESCAPING_LINK_REL
+        assert stats["entries_by_reference"]["symlink"] == 1
+        assert stats["files_not_content_scanned"] == 0
+
+
+def test_symlink_into_a_declared_scope_exclusion_is_flagged(tmp_path):
+    """A declared hole must not be re-imported at a product path."""
+    root = _discovery_tree(tmp_path, "link-hole")
+    cp._write(root, ".loom/vendored_table.py", "TABLE = [7, 8, 9]\n")
+    cp._patch_manifest(
+        root,
+        lambda d: d["scope_exclusions"].append(
+            {"prefix": ".loom/", "reason": "synthetic declared hole"}
+        ),
+    )
+    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, "../.loom/vendored_table.py")
+    fired = [f for f in cp.audit(root)[0] if f.rule == "external-symlink-target"]
+    assert fired and "scope exclusion" in fired[0].detail
+
+
+def test_resolvable_escaping_symlink_is_still_content_scanned(tmp_path):
+    """The structural rule must not replace the content rules.
+
+    `text()` follows the link, so a target that does resolve is read by every
+    content rule — a fix that short-circuited on the entry kind would have
+    dropped them silently.
+    """
+    root = _discovery_tree(tmp_path, "link-resolves")
+    cp._write(tmp_path / "external-oracle", "Reverb1.h", cp.FIXTURE_GPL_BODY)
+    cp._symlink(
+        root, cp.FIXTURE_ESCAPING_LINK_REL, "../../external-oracle/Reverb1.h"
+    )
+    fired = _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
+    assert "foreign-license-text" in fired
+    assert "external-symlink-target" in fired
+
+
+def test_in_tree_symlinks_still_audit_clean(tmp_path):
+    """The other failure direction, and this repository's own shape.
+
+    `CLAUDE.md -> AGENTS.md` is a tracked symlink here. Neither by-reference
+    rule is exemptible, so a false positive on an ordinary in-tree link could
+    only be answered by switching the rule off.
+    """
+    root = _discovery_tree(tmp_path, "link-in-tree")
+    cp._symlink(root, "CLAUDE.md", "docs/plain.md")
+    cp._symlink(root, "docs/model", "../model")
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_by_reference"]["symlink"] == 2
+
+
+def test_declared_by_reference_entries_audit_clean(tmp_path):
+    """A row naming the exact path answers the structural rule in full."""
+    root = _discovery_tree(tmp_path, "link-declared")
+    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
+    cp._patch_manifest(
+        root,
+        lambda d: d["entries"].append(
+            {
+                "path": cp.FIXTURE_ESCAPING_LINK_REL,
+                "class": "external-reference",
+                "content": "synthetic: a link into the external oracle tree",
+                "upstream": "surge-synthesizer/surge",
+                "pinned_commit": cp.FIXTURE_SUBMODULE_COMMIT,
+                "upstream_license": "GPL-3.0-or-later",
+                "decision_record": "0001",
+            }
+        ),
+    )
+    findings, _ = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+
+
+def test_entry_kinds_are_read_from_the_git_index(tmp_path):
+    """Unit pin on the discovery layer itself: modes, not guesses."""
+    root = _discovery_tree(tmp_path, "modes")
+    cp._git_submodule_entry(root)
+    cp._symlink(root, "CLAUDE.md", "docs/plain.md")
+    cp._git(root, "add", "-f", "CLAUDE.md")
+    kinds = dict((rel, kind) for rel, kind, _ in cp.list_entries(root))
+    assert kinds[cp.FIXTURE_SUBMODULE_REL] == "gitlink"
+    assert kinds["CLAUDE.md"] == "symlink"
+    assert kinds["model/carrier.py"] == "file"
+    commits = {
+        rel: blob for rel, kind, blob in cp.list_entries(root) if kind == "gitlink"
+    }
+    assert commits[cp.FIXTURE_SUBMODULE_REL] == cp.FIXTURE_SUBMODULE_COMMIT
+    assert cp.parse_gitmodules(root) == {
+        cp.FIXTURE_SUBMODULE_REL: cp.FIXTURE_SUBMODULE_URL
+    }
+
+
+def test_repository_has_no_undeclared_by_reference_entries():
+    """The committed tree itself: every symlink/gitlink is in-tree or declared."""
+    tree = cp.Tree(REPO, [])
+    by_reference = {
+        rel: tree.kind(rel) for rel in tree.files if tree.kind(rel) != "file"
+    }
+    # This repository has exactly one tracked symlink today (CLAUDE.md ->
+    # AGENTS.md) and no submodules; the assertion is about findings, not count.
+    for rel, kind in by_reference.items():
+        if kind == "symlink":
+            assert cp.symlink_escape(tree, rel) is None, (
+                f"{rel} leaves the audited tree with no provenance row"
+            )
+    _, stats = cp.audit(REPO)
+    assert stats["entries_by_reference"]["gitlink"] == 0, (
+        "a submodule appeared: it needs a provenance row and a decision record"
+    )
+
+
+def _index_as_symlink(root, rel, target_text):
+    """Record `rel` as mode 120000 while leaving a REGULAR file on disk.
+
+    This is what a `core.symlinks=false` checkout looks like: the index says
+    symlink, the filesystem has a plain file whose content is the target path.
+    """
+    cp._write(root, rel, target_text)
+    blob = subprocess.run(
+        ["git", "-C", str(root), "hash-object", "-w", "--", rel],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    cp._git(root, "update-index", "--add", "--cacheinfo", f"120000,{blob},{rel}")
+
+
+def test_symlink_entry_without_filesystem_symlink_support(tmp_path):
+    """Both directions on a checkout that cannot create real symlinks.
+
+    An in-tree link must not become a finding on a non-exemptible rule, and an
+    escaping one must still fire — read from the recorded target either way.
+    """
+    root = _discovery_tree(tmp_path, "nosymlink-clean")
+    cp._git(root, "init", "-q")
+    cp._git(root, "add", "-A", "-f")
+    _index_as_symlink(root, "CLAUDE.md", "docs/plain.md")
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_by_reference"]["symlink"] == 1
+
+    root = _discovery_tree(tmp_path, "nosymlink-escaping")
+    cp._git(root, "init", "-q")
+    cp._git(root, "add", "-A", "-f")
+    _index_as_symlink(
+        root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET
+    )
+    assert "external-symlink-target" in _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
+
+
+def test_discovery_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    assert cp._discovery_controls(), "the discovery controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cp._discovery_controls():
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
