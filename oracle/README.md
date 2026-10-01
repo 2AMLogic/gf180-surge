@@ -36,6 +36,35 @@ oracle/capture_first_note.py
 Environment overrides: `ORACLE_SURGE_DIR`, `ORACLE_MANIFEST`,
 `ORACLE_PYTHON`, `ORACLE_BUILD_DIR`, `ORACLE_JOBS` (see `fetch-and-build.sh`).
 
+### Prebuilt oracle (dispatch workers, #232)
+
+Where building is impractical (a dispatch worker, or a Builder turn), install
+the private prebuilt artifact pinned in `oracle/manifest.json` under
+`prebuilt.<platform>` instead. It is an internal build of the same pinned
+engine, stored privately and never committed (the engine is GPL).
+
+```sh
+ORACLE_PREBUILT_URL=<private store> oracle/fetch-and-build.sh --prebuilt   # or ORACLE_PREBUILT=1
+# prints the three exports to use it:
+#   ORACLE_SURGE_DIR=~/.cache/gf180-surge-oracle/<commit>/<platform>
+#   ORACLE_PYTHON=~/.cache/gf180-surge-oracle/<commit>/venv/bin/python
+#   LD_LIBRARY_PATH=~/.cache/gf180-surge-oracle/<commit>/cpython-3.11.16/lib
+"$ORACLE_PYTHON" fixtures/render_mw_fixture.py --sequence seq-modwheel-v1 --out-dir /tmp/check
+```
+
+- The artifact's sha256 is checked against the manifest **before** it is
+  unpacked; a mismatch refuses (exit 2) and nothing is installed.
+- Everything installs per user: CPython 3.11.16 from python-build-standalone
+  (itself sha256-pinned) and numpy 1.26.4. No system packages and no host-wide
+  Python changes.
+- With no `prebuilt` entry for the platform, the script falls back to the
+  from-source build above.
+- `ORACLE_PREBUILT_URL` may be a directory, a file path, or an `https://`
+  base. `ORACLE_PREBUILT_ROOT` overrides the install root.
+- Verified 2026-10-01 on both dispatch workers: SXT-035's
+  `reference-seq-modwheel-v1` re-renders byte-identically to the committed
+  WAV (sha256 `cdc6dd7b…d2002`).
+
 ## Semantics pinned by this oracle
 
 - Sample rate 48 kHz; compiled block size 32 (`SURGE_COMPILE_BLOCK_SIZE`
