@@ -38,7 +38,12 @@ read, not just the one on disk: `git commit` commits the **index**, so a carrier
 judged from its staged blob as well as from the working-tree copy, and each run
 reports how many entries diverged (printed even when zero). An unstaged paste
 into a tracked file still fires from the working-tree view, which is what a
-local run before `git add` is for.
+local run before `git add` is for. The **answers** are held to the same
+standard: a provenance row, an exemption, a scope exclusion or an index row
+that exists in this directory on disk but is not staged answers nothing,
+because the commit publishes the carrier and a bookkeeping set that does not
+mention it — so `git add decision-records/` alongside the file it declares.
+Each run reports which bookkeeping files diverged, printed even when none did.
 `--negative-control` demonstrates that every one of those rules still fires;
 both run in CI. A PASS is bookkeeping, not proof that nothing was copied, and
 never a ratification — each record's own Status line is authoritative.

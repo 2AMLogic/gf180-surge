@@ -53,7 +53,13 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     bytes a commit would publish — and the finding says which view offended,
     while an unstaged paste into a tracked file still fires as a working-tree
     finding, an innocuous edit is counted and read but never flagged, and a
-    gitlink stays a by-reference entry.
+    gitlink stays a by-reference entry,
+  - the ANSWERS are held to the same standard as the questions: a provenance
+    row, an exemption, a scope exclusion, an index row or a widened `covers`
+    list that exists on disk and in no commit answers nothing — the same row
+    staged as well does, an ordinary file's divergence does not open a second
+    answer set, and a bookkeeping edit that changes no answer is disclosed and
+    produces nothing.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -2245,11 +2251,12 @@ def test_staged_controls_run_in_the_self_test():
 
 
 def test_bookkeeping_groups_fail_loudly_on_a_staged_only_record(tmp_path):
-    """The declared split: groups 1–3 read the working-tree copy.
+    """A record in the index and absent on disk is loud in either direction.
 
-    Only the carriage rules read both views. That is safe in the one direction
-    that matters: a record present in the index and absent on disk must produce a
-    finding, never a silent pass that lets the bookkeeping drift.
+    This was increment 14's declared safe direction and it remains true after
+    increment 15 moved the ANSWER SET onto the committable bytes: whichever view
+    is read, a record whose header cannot be read is a finding, never a silent
+    pass that lets the bookkeeping drift.
     """
     root = _discovery_tree(tmp_path, "staged-only-record")
     cp._stage_all(root)
@@ -2259,3 +2266,344 @@ def test_bookkeeping_groups_fail_loudly_on_a_staged_only_record(tmp_path):
     assert any(f.rule == "record-header-missing" for f in findings), [
         f.as_dict() for f in findings
     ]
+
+
+# --- the ANSWER SET a commit publishes (increment 15) --------------------------
+#
+# Increment 14 asked each carriage question of both byte views an entry can
+# have. The ANSWERS kept coming from the working-tree copy of
+# `decision-records/` alone: `load_manifest` opened `root / MANIFEST_REL`
+# directly, and `parse_records` / `parse_index` / `check_manifest` read the
+# default (working-tree) view. So an answer could be published by no commit at
+# all — `git add` the carrier, then write its provenance row to disk WITHOUT
+# staging it, and the audit passed with the carrier's own bytes identical in
+# both views, while the commit published the carrier and a manifest that does
+# not mention it.
+#
+# The fix adds no rule. The same four groups run a second time with every read
+# resolved to the committable bytes, and only when the bookkeeping actually
+# diverges. Note the deliberate asymmetry with group 4's two views: a question
+# is asked of BOTH views (an unstaged paste must fire before a `git add`), while
+# an answer is accepted only from the view that raised the question.
+
+
+def _answer_tree(tmp_path, label):
+    """A clean skeleton, fully staged: one answer set, published and on disk."""
+    root = _discovery_tree(tmp_path, label)
+    cp._stage_all(root)
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["divergent_bookkeeping_files"] == []
+    return root
+
+
+def _patch_disk_manifest(root, mutate):
+    """Rewrite the manifest on disk ONLY — the whole mask in one helper."""
+    cp._patch_manifest(root, mutate, stage=False)
+
+
+def _committable_findings(root, rule, rel):
+    findings, stats = cp.audit(root)
+    fired = [f for f in findings if f.rule == rule and f.path == rel]
+    return fired, findings, stats
+
+
+def test_provenance_row_present_only_on_disk_does_not_answer_the_carrier(tmp_path):
+    """The finding this increment exists for.
+
+    The carrier is staged and its bytes are the same in both views. Only the
+    row answering it is unstaged — so `git commit` publishes an undeclared
+    GPL-bodied file, which the pre-increment tool audited PASS.
+    """
+    root = _answer_tree(tmp_path, "answer-unstaged-row")
+    rel = cp.FIXTURE_COMMITTED_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_COMMITTED_CARRIER)
+    cp._stage_all(root)
+    _patch_disk_manifest(root, lambda d: d["entries"].append(cp._committed_row()))
+
+    # The row really is there, on disk, and really is well-formed: a
+    # working-tree read finds the carrier fully declared.
+    on_disk = json.loads((root / cp.MANIFEST_REL).read_text(encoding="utf-8"))
+    assert any(e.get("path") == rel for e in on_disk["entries"])
+
+    fired, findings, stats = _committable_findings(root, "foreign-license-text", rel)
+    assert fired, [f.as_dict() for f in findings]
+    assert cp.MANIFEST_REL in stats["divergent_bookkeeping_files"]
+    assert stats["committed_answer_set_findings"] >= 1
+
+
+def test_the_same_row_staged_as_well_answers_the_carrier(tmp_path):
+    """The positive control: the legitimate shape must stay silent.
+
+    Without this, "flag everything" would pass the test above, and the
+    increment would be a tool that cannot be used.
+    """
+    root = _answer_tree(tmp_path, "answer-staged-row")
+    cp._write(root, cp.FIXTURE_COMMITTED_CARRIER_REL, cp.FIXTURE_COMMITTED_CARRIER)
+    cp._patch_manifest(root, lambda d: d["entries"].append(cp._committed_row()))
+    cp._stage_all(root)
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["divergent_bookkeeping_files"] == []
+    assert stats["committed_answer_set_findings"] == 0
+
+
+def test_a_row_removed_from_the_index_only_stops_answering(tmp_path):
+    """The converse shape, indistinguishable from a declared file on disk."""
+    root = _answer_tree(tmp_path, "answer-row-unstaged-removal")
+    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    full = json.loads((root / cp.MANIFEST_REL).read_text(encoding="utf-8"))
+    stripped = dict(full)
+    stripped["entries"] = [e for e in full["entries"] if e.get("path") != rel]
+    cp._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+    cp._stage_all(root)
+    cp._write(root, cp.MANIFEST_REL, json.dumps(full, indent=2) + "\n")
+
+    fired, findings, _ = _committable_findings(root, "self-declared-quotation", rel)
+    assert fired, [f.as_dict() for f in findings]
+
+
+def test_an_exemption_present_only_on_disk_does_not_answer_the_rule(tmp_path):
+    """The one exemptible rule cannot be exempted by an unpublished exemption."""
+    root = _answer_tree(tmp_path, "answer-unstaged-exemption")
+    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    full = json.loads((root / cp.MANIFEST_REL).read_text(encoding="utf-8"))
+    stripped = dict(full)
+    stripped["entries"] = [e for e in full["entries"] if e.get("path") != rel]
+    cp._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+    cp._stage_all(root)
+    cp._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+    _patch_disk_manifest(
+        root,
+        lambda d: d["exemptions"].append(
+            {
+                "path": rel,
+                "rules": ["self-declared-quotation"],
+                "reason": "synthetic: unstaged exemption",
+            }
+        ),
+    )
+
+    fired, findings, _ = _committable_findings(root, "self-declared-quotation", rel)
+    assert fired, [f.as_dict() for f in findings]
+
+
+def test_a_scope_exclusion_present_only_on_disk_hides_nothing(tmp_path):
+    """A declared hole is a statement this repository PUBLISHES.
+
+    An exclusion prefix on disk alone withholds the carrier from no commit, so
+    the committable tree must still scan it. This is the sub-case that forced the
+    second pass to build its own `Tree`: the audited set itself differs.
+    """
+    root = _answer_tree(tmp_path, "answer-unstaged-exclusion")
+    rel = cp.FIXTURE_COMMITTED_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_COMMITTED_CARRIER)
+    cp._stage_all(root)
+    _patch_disk_manifest(
+        root,
+        lambda d: d["scope_exclusions"].append(
+            {"prefix": "model/", "reason": "synthetic: unstaged hole"}
+        ),
+    )
+
+    fired, findings, _ = _committable_findings(root, "foreign-license-text", rel)
+    assert fired, [f.as_dict() for f in findings]
+
+
+def test_an_index_row_present_only_on_disk_does_not_index_the_record(tmp_path):
+    """Group 1/2: the published README indexes no such record.
+
+    This is the leg that needs the committable DEFAULT VIEW rather than the
+    staged manifest read — reverting one leaves the other, and only this case
+    fails.
+    """
+    root = _answer_tree(tmp_path, "answer-unstaged-index-row")
+    cp._write(
+        root,
+        cp.FIXTURE_SECOND_RECORD_REL,
+        "# 0002 second\n\n- **Status**: PROPOSED\n- **Date**: 2026-10-01\n",
+    )
+    cp._write(root, "docs/cites_0002.md", "This follows decision-records/0002-second.md.\n")
+    cp._stage_all(root)
+    cp._write(
+        root,
+        cp.INDEX_REL,
+        (root / cp.INDEX_REL).read_text(encoding="utf-8").rstrip("\n")
+        + "\n| [0002](0002-second.md) | Second record (synthetic) | PROPOSED | 2026-10-01 |\n",
+    )
+
+    fired, findings, stats = _committable_findings(
+        root, "unindexed-record-citation", "docs/cites_0002.md"
+    )
+    assert fired, [f.as_dict() for f in findings]
+    assert cp.INDEX_REL in stats["divergent_bookkeeping_files"]
+
+
+def test_a_committable_finding_names_the_answer_set_as_its_source(tmp_path):
+    """"Your file is undeclared" would be wrong AND unactionable here.
+
+    The file IS declared — on disk — and the remedy is `git add
+    decision-records/`, not a new row. A finding that does not say so sends the
+    author looking for a row that is already written.
+    """
+    root = _answer_tree(tmp_path, "answer-finding-wording")
+    rel = cp.FIXTURE_COMMITTED_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_COMMITTED_CARRIER)
+    cp._stage_all(root)
+    _patch_disk_manifest(root, lambda d: d["entries"].append(cp._committed_row()))
+
+    fired, findings, _ = _committable_findings(root, "foreign-license-text", rel)
+    assert fired, [f.as_dict() for f in findings]
+    assert all("ANSWER SET" in f.detail for f in fired), [f.detail for f in fired]
+    assert any("staged" in f.detail for f in fired), [f.detail for f in fired]
+
+
+def test_an_ordinary_divergence_does_not_open_a_second_answer_set(tmp_path):
+    """The second pass is scoped to the bookkeeping, not to any divergence.
+
+    A working copy differing from the index is the normal state of a tree being
+    edited. Re-judging the answer set on every such edit would double the audit's
+    work and its noise for no gain, since the answers themselves did not move.
+    """
+    root = _answer_tree(tmp_path, "answer-ordinary-divergence")
+    cp._stage_then_replace(
+        root, staged=cp.FIXTURE_INNOCUOUS, working=cp.FIXTURE_INNOCUOUS + "# edited\n"
+    )
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["divergent_bookkeeping_files"] == []
+    # Increment 14's disclosure is unaffected: the entry IS divergent.
+    assert cp.FIXTURE_STAGED_REL in stats[
+        "entries_whose_staged_content_differs_from_the_working_tree"
+    ]
+
+
+def test_a_bookkeeping_edit_that_changes_no_answer_is_disclosed_not_flagged(tmp_path):
+    """A developer rewording a `note` field is not committing a violation."""
+    root = _answer_tree(tmp_path, "answer-innocuous-bookkeeping-edit")
+    _patch_disk_manifest(
+        root,
+        lambda d: d["entries"][0].update({"content": "synthetic TABLE (reworded)"}),
+    )
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert cp.MANIFEST_REL in stats["divergent_bookkeeping_files"]
+    assert stats["committed_answer_set_findings"] == 0
+
+
+def test_the_committed_pass_does_not_audit_untracked_files(tmp_path):
+    """The committable tree IS the index, `--include-untracked` or not.
+
+    A file no commit publishes must not produce a finding against the tree a
+    commit would publish; increment 11's own boundary already owns that case.
+    """
+    root = _answer_tree(tmp_path, "answer-untracked-under-divergence")
+    _patch_disk_manifest(
+        root,
+        lambda d: d["entries"][0].update({"content": "synthetic TABLE (reworded)"}),
+    )
+    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+
+    findings, stats = cp.audit(root)
+    committable = [f for f in findings if "ANSWER SET" in f.detail]
+    assert not committable, [f.as_dict() for f in committable]
+    assert cp.FIXTURE_UNTRACKED_REL in stats["entries_present_but_not_in_the_index"]
+
+
+def test_a_path_removed_from_the_index_is_not_read_from_disk(tmp_path):
+    """`git rm --cached` leaves the file on disk and in no commit.
+
+    In the committable view such an entry has no content at all, so the
+    working-tree copy must not stand in for bytes no commit would publish.
+    """
+    root = _answer_tree(tmp_path, "answer-rm-cached")
+    tree = cp.Tree(root, [], default_view=cp.COMMITTED_VIEW)
+    assert tree.view_for("docs/not-an-entry.md") == cp.STAGED_VIEW
+    assert tree.view_for(cp.FIXTURE_SKELETON_CARRIER_REL) == cp.WORKTREE_VIEW
+    assert tree.text("docs/not-an-entry.md") is None
+
+
+def test_a_manifest_absent_from_the_index_answers_nothing(tmp_path):
+    """`git rm --cached` the manifest: a commit publishes NO manifest.
+
+    The sentinel case. `load_manifest(raw=...)` must distinguish "no text was
+    supplied" from "this view holds no readable manifest" — spelling both
+    `None` would make the committable pass fall back to the copy on disk and
+    answer from the exact bytes it exists to stop answering from.
+    """
+    root = _answer_tree(tmp_path, "answer-manifest-rm-cached")
+    cp._git(root, "rm", "--cached", "-q", cp.MANIFEST_REL)
+
+    findings, stats = cp.audit(root)
+    assert cp.MANIFEST_REL in stats["divergent_bookkeeping_files"], (
+        "a bookkeeping file absent from the index is the largest possible "
+        "difference between two answer sets and must be disclosed"
+    )
+    assert any(f.rule == "manifest-missing" for f in findings), [
+        f.as_dict() for f in findings
+    ]
+    # And the carrier it used to declare is no longer answered by anything.
+    assert any(
+        f.rule == "self-declared-quotation" and f.path == cp.FIXTURE_SKELETON_CARRIER_REL
+        for f in findings
+    ), [f.as_dict() for f in findings]
+
+
+def test_the_disk_sentinel_is_not_none(tmp_path):
+    """Pinned directly, because the bug it prevents is invisible in behaviour.
+
+    If `FROM_DISK` were `None`, every test above would still pass — the fallback
+    only fires for a view that yields no text, which is the one case no other
+    control constructs.
+    """
+    assert cp.FROM_DISK is not None
+    manifest, findings = cp.load_manifest(tmp_path, raw=None)
+    assert manifest is None
+    assert [f.rule for f in findings] == ["manifest-missing"]
+
+
+def test_divergent_bookkeeping_count_is_printed_even_when_zero(tmp_path):
+    """"The answers agree" and "only disk was consulted" must not look alike."""
+    proc = run_tool()
+    assert proc.returncode in (0, 1), proc.stdout + proc.stderr
+    assert "bookkeeping whose staged bytes are not known to match" in proc.stdout
+
+
+def test_committed_answer_set_is_declared_in_limits():
+    """A limit that is not printed is not declared."""
+    proc = run_tool("--limits")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "divergent_bookkeeping_files" in proc.stdout
+    assert "committed_answer_set_findings" in proc.stdout
+
+
+def test_committed_bookkeeping_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    cases = cp._committed_bookkeeping_controls()
+    assert cases, "the committed-answer-set controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cases:
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+def test_fixture_manifest_patches_are_staged_by_default(tmp_path):
+    """Two pre-existing controls were passing on an answer no commit published.
+
+    `_patch_manifest` wrote the manifest to disk without staging it, so
+    `discovery/submodule-gitlink-answered-by-a-row` and its excluded twin were
+    answered by an unstaged row. Fixed by staging the fixture's answer, not by
+    exempting the controls — and pinned here so it cannot silently regress.
+    """
+    root = _discovery_tree(tmp_path, "fixture-staging")
+    cp._git_submodule_entry(root)
+    cp._patch_manifest(root, lambda d: d["entries"].append(cp._submodule_row()))
+
+    findings, stats = cp.audit(root)
+    assert stats["divergent_bookkeeping_files"] == [], (
+        "the fixture left its own answer unstaged"
+    )
+    assert not findings, [f.as_dict() for f in findings]

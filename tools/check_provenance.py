@@ -254,12 +254,36 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     declared scope exclusion is not counted, for the same reason increment 11
     does not count one; and the audit still reads only what the index and the
     working tree hold NOW — a blob reachable from history but from neither of
-    those is outside every rule, as it was before. The CARRIAGE rules (group 4)
-    are what read both views; the bookkeeping groups (1–3: record headers, the
-    index table, manifest corroboration) still read the working-tree copy, which
-    is safe in the one direction that matters — a record or manifest present in
-    the index and absent or altered on disk produces a loud finding
-    (`record-header-missing`, a stale/uncorroborated row), never a silent pass.
+    those is outside every rule, as it was before.
+  * Increment 14 moved the carriage rules (group 4) onto both byte views. The
+    ANSWERS to them did not follow, and that was the next mask: `load_manifest`
+    opened `root / MANIFEST_REL` directly, and the record headers, the index
+    table and the manifest corroboration all read the working-tree view. So an
+    answer could be published by no commit at all — `git add` the carrier, then
+    write its provenance row to `provenance.json` on disk WITHOUT staging it,
+    and the audit passed with the carrier's own bytes identical in both views,
+    while the commit published the carrier and a manifest that does not mention
+    it. The same held for an unstaged exemption, an unstaged scope exclusion, an
+    unstaged index row and an unstaged widening of a row's `covers`. Increment 15
+    runs the same four groups a SECOND time with every read resolved to the
+    committable bytes, and only when `decision-records/` actually diverges — so
+    a tree whose bookkeeping is staged, or has no unstaged edits, takes that path
+    not at all. Reported on every run as `divergent_bookkeeping_files` (printed
+    even when empty, naming the paths) with `committed_answer_set_findings`, and
+    a finding from that pass says the ANSWER SET is what differs, because "your
+    file is undeclared" is both wrong and unactionable when the row is written
+    and merely unstaged. Note the deliberate asymmetry: a carriage QUESTION is
+    asked of both views, because an unstaged paste into a tracked file must fire
+    before a `git add`; an ANSWER is accepted only from the view that raised the
+    question, because an answer is a claim this repository publishes. Three
+    boundaries stay declared: the committable tree is the index, so an untracked
+    file is judged by pass one or by `--include-untracked` and never here (a
+    finding against a tree no commit publishes would be noise on a
+    non-exemptible rule); a record or manifest present in the index and absent
+    or altered on disk is still loud in the other direction too
+    (`record-header-missing`, a stale/uncorroborated row), never a silent pass;
+    and HISTORY is as far out of reach as before — a row that answered a carrier
+    in some earlier commit is not consulted, and neither is one that will.
   * Every masking path closed here was found by inspection, one increment at a
     time. That two specific paths, then five, then eight, then four more were
     closed is not evidence that no further path exists — only that these are
@@ -308,7 +332,18 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     working-tree copy while the index held what a commit would publish. The tell
     was not a finding or a count — both were identical to a clean tree's — but the
     mismatch between two layers of the same tool, one reading the index and one
-    reading the disk.
+    reading the disk. Increment 15 went INSIDE increment 14's own fix, the way
+    increment 12 went inside increment 9's: increment 14 moved the QUESTIONS onto
+    the committable bytes and left the ANSWERS on disk, so the tool was asking
+    about one tree and answering from another. The tell was not order, coverage
+    or answerability but SYMMETRY — increment 14's own disclosure line printed
+    `decision-records/provenance.json` among the divergent entries while nothing
+    read the divergent copy as an answer, and a declared residual in this very
+    section asserted that the split was "safe in the one direction that matters"
+    on the strength of one direction having been checked. Two of the trees that
+    exposed it were not constructions at all: `_patch_manifest` had been writing
+    fixture answers to disk without staging them, so two of this tool's own
+    pre-existing discovery controls were passing on a row no commit published.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -373,7 +408,19 @@ working-tree read in favour of the index read fails exactly this one), a fully
 staged tree must print the count as zero, an ordinary innocuous edit must be
 counted and read but never flagged, a divergence inside a declared scope
 exclusion must be neither counted nor read, and a gitlink must stay a
-by-reference entry rather than becoming a staged blob.
+by-reference entry rather than becoming a staged blob. The `committed/*`
+controls (increment 15) do the same for the ANSWER SET: a provenance row written
+to disk and not staged, an existing row deleted from the index only, an unstaged
+exemption, an unstaged scope exclusion, an unstaged index row and an unstaged
+widening of a row's `covers` must each produce a finding that NAMES the
+committable answer set as its source; so must a manifest `git rm --cached` left
+on disk, where the committable answer set is nothing at all (the one shape whose
+trigger is the untracked leg rather than the divergence leg, and the only one
+that fails when the read-from-disk sentinel is spelled `None`); while the same
+row staged as well must stay silent (otherwise the increment is a tool nobody can
+use), a fully staged tree must print the list as empty, an ordinary file's
+divergence must not open a second answer set at all, and a bookkeeping edit that
+changes no answer must be disclosed and produce nothing.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -1865,6 +1912,26 @@ STAGED_PATHS_LISTED = 10
 WORKTREE_VIEW = "working tree"
 STAGED_VIEW = "staged"
 
+# A third, DERIVED selector (increment 15), used as a `Tree`'s default view
+# rather than as a byte source of its own: "the bytes a commit would publish"
+# resolves per entry to its STAGED blob when the two views diverge, and to its
+# working-tree copy when git itself says the two are equal — in which case the
+# working-tree copy IS the committable content, and reading it is both cheaper
+# and the same bytes. It exists because increment 14 moved the carriage rules
+# onto both views while the ANSWERS to them (the provenance rows, exemptions,
+# scope exclusions, the record index and the records' own headers) stayed on the
+# working-tree copy, so an answer could be published by no commit at all.
+COMMITTED_VIEW = "committed"
+
+# The files that ANSWER a carriage finding rather than raise one. When any of
+# them is staged-divergent, the audited tree has two different answer sets and
+# the committable one has to be judged on its own (increment 15).
+def _is_bookkeeping(rel):
+    if rel in (MANIFEST_REL, INDEX_REL):
+        return True
+    parent, _, name = rel.rpartition("/")
+    return parent == RECORD_DIR_REL and bool(RECORD_FILE_RE.match(name))
+
 # `git ls-files -v` tags for entries git has been told not to compare against
 # the working tree. A lowercase tag means assume-unchanged for any state.
 SKIP_WORKTREE_TAG = "S"
@@ -2006,9 +2073,15 @@ def parse_gitmodules(root: Path):
 class Tree:
     """In-scope entry set (with kinds) plus cached text reads."""
 
-    def __init__(self, root: Path, exclusions, include_untracked=False):
+    def __init__(self, root: Path, exclusions, include_untracked=False,
+                 default_view=WORKTREE_VIEW, share_reads_from=None):
         self.root = root
         self.exclusions = exclusions
+        # Which bytes this tree reads when a caller names no view (increment
+        # 15). `WORKTREE_VIEW` is the historical behaviour and stays the
+        # default, so every existing call site is unchanged; `COMMITTED_VIEW`
+        # makes the same code read what a commit would publish.
+        self.default_view = default_view
         entries = list_entries(root)
         # Present in the working tree, absent from the index (increment 11).
         # Always computed, because the COUNT is coverage that is reported
@@ -2077,6 +2150,11 @@ class Tree:
             for rel in self.staged_divergent
             if rel in self.index_blobs and self.excluded_by(rel) is None
         ]
+        self._staged_view_set = set(self.staged_views)
+        # Read caches are keyed by (rel, VIEW), and a view's bytes do not depend
+        # on which scope exclusions a manifest declares — so a second tree built
+        # over the same root for the committable answer set shares them by
+        # reference rather than re-inflating every payload (increment 15).
         self._text_cache = {}
         self._lower_cache = {}
         # How each file's text was obtained, and which scans were cut short.
@@ -2094,6 +2172,55 @@ class Tree:
         # coverage for the same reason: a payload whose wide runs were never
         # examined must not look like one that carried none.
         self._wide_runs = {}
+        if share_reads_from is not None:
+            self._text_cache = share_reads_from._text_cache
+            self._lower_cache = share_reads_from._lower_cache
+            self._scan_modes = share_reads_from._scan_modes
+            self._truncated = share_reads_from._truncated
+            self._carried_names = share_reads_from._carried_names
+            self._wide_runs = share_reads_from._wide_runs
+
+    def view_for(self, rel):
+        """The byte source this tree reads `rel` as when no view is named.
+
+        The only non-trivial case is `COMMITTED_VIEW` (increment 15): the
+        committable bytes of a DIVERGENT entry are its index blob, and of every
+        other entry its working-tree copy — which git has just told us is the
+        same content, so this is a cheaper spelling of the same read and not a
+        weaker one. An entry with no blob in the index (a gitlink) is never in
+        `staged_views`, so it keeps its by-reference treatment in both.
+        """
+        if self.default_view != COMMITTED_VIEW:
+            return self.default_view
+        if rel in self.index_blobs and rel not in self._staged_view_set:
+            return WORKTREE_VIEW
+        # No blob in the index (an entry `git rm --cached` left on disk, an
+        # untracked path, a gitlink) or a divergent one: either way the answer
+        # comes from the index, and for the first group that is deliberately
+        # NOTHING — the working-tree copy must not stand in for content no
+        # commit would publish.
+        return STAGED_VIEW
+
+    def divergent_bookkeeping(self):
+        """Files that ANSWER findings rather than raise them, and that differ.
+
+        Non-empty means this tree has two different answer sets — one on disk,
+        one in the index — and the committable one has to be judged on its own.
+        Reported as coverage on every run, empty included, for the same reason
+        increment 14 prints its divergence list even when zero.
+
+        Two ways an answer set can differ, not one. The obvious one is a
+        staged-divergent file (increment 14's set). The other is a bookkeeping
+        file in the working tree and NOT in the index — a record written and
+        never staged, or a manifest `git rm --cached` left on disk. Its
+        committable content is nothing at all, which is the largest possible
+        difference, and leaving it out would have made the absent-manifest case
+        the one shape the committable pass never looked at.
+        """
+        return sorted(
+            {rel for rel in self.staged_views if _is_bookkeeping(rel)}
+            | {rel for rel in self.untracked if _is_bookkeeping(rel)}
+        )
 
     def untracked_not_audited(self):
         """In-scope working-tree entries this run did NOT audit (increment 11).
@@ -2141,14 +2268,18 @@ class Tree:
         """
         return [rel for rel in self.staged_views if not os.path.lexists(self.root / rel)]
 
-    def text(self, rel, view=WORKTREE_VIEW):
+    def text(self, rel, view=None):
         """Text for the content rules, or None when the entry yields none.
 
         `view` selects the BYTE SOURCE (increment 14): the working-tree file, or
         the entry's staged blob. Both are read for an entry whose staged bytes
         and working-tree bytes differ — the working-tree view because an
         unstaged paste must still fire before a `git add`, the staged view
-        because the index is what `git commit` publishes.
+        because the index is what `git commit` publishes. `None` means "this
+        tree's own default view" (increment 15), which is how the BOOKKEEPING
+        groups — which name no view, because an answer set is one tree-wide
+        thing rather than a per-entry choice — get moved onto the committable
+        bytes without touching their call sites.
 
         A file this returns None for is scanned by NOTHING except the
         extension tripwires — so every step below is a detection surface, not a
@@ -2174,6 +2305,7 @@ class Tree:
         `_scan_modes` and reported as coverage — a strings-only scan is weaker
         than a decode, and says so, rather than being counted as a full read.
         """
+        view = self.view_for(rel) if view is None else view
         key = (rel, view)
         if key in self._text_cache:
             return self._text_cache[key]
@@ -2247,13 +2379,14 @@ class Tree:
         value, wide = harvest_payload(raw)
         return (value or None), ("strings" if value else "none"), truncated, (), wide
 
-    def scan_mode(self, rel, view=WORKTREE_VIEW):
+    def scan_mode(self, rel, view=None):
         """"decoded" | "unwrapped" | "strings" | "none" | "unreadable"."""
+        view = self.view_for(rel) if view is None else view
         if (rel, view) not in self._scan_modes:
             self.text(rel, view)
         return self._scan_modes.get((rel, view), "unreadable")
 
-    def carried_names(self, rel, view=WORKTREE_VIEW):
+    def carried_names(self, rel, view=None):
         """Member names the wrapper at `rel` carries inside it (may be empty).
 
         Forces the read, like `scan_mode`: the unwrap that recovers these names
@@ -2262,16 +2395,18 @@ class Tree:
         budget carry no names here, and that partial read is disclosed as a
         TRUNCATED payload scan rather than counted as a pass.
         """
+        view = self.view_for(rel) if view is None else view
         if (rel, view) not in self._carried_names:
             self.text(rel, view)
         return self._carried_names.get((rel, view), ())
 
-    def wide_runs(self, rel, view=WORKTREE_VIEW):
+    def wide_runs(self, rel, view=None):
         """How many wide-encoded runs this entry's payload yielded (increment 10).
 
         Forces the read, like `scan_mode`. Zero for a decoded file — a file the
         sniff admits is read whole, in its own encoding, by every content rule.
         """
+        view = self.view_for(rel) if view is None else view
         if (rel, view) not in self._wide_runs:
             self.text(rel, view)
         return self._wide_runs.get((rel, view), 0)
@@ -2285,7 +2420,7 @@ class Tree:
         """
         return sorted(self._truncated)
 
-    def lower(self, rel, view=WORKTREE_VIEW):
+    def lower(self, rel, view=None):
         """Lowercased text — the cheap prefilter for every signal.
 
         Cached for ordinary decoded files. A payload-derived text (an inflated
@@ -2293,6 +2428,7 @@ class Tree:
         unwrapped payload roughly doubled the audit's peak memory, and
         `str.lower()` on the few large ones costs milliseconds.
         """
+        view = self.view_for(rel) if view is None else view
         key = (rel, view)
         if key in self._lower_cache:
             return self._lower_cache[key]
@@ -2559,31 +2695,59 @@ REQUIRED_ENTRY_FIELDS = (
 )
 
 
-def load_manifest(root: Path):
-    path = root / MANIFEST_REL
-    try:
-        raw = path.read_text(encoding="utf-8")
-    except OSError as exc:
-        return None, [Finding("manifest-missing", MANIFEST_REL, f"cannot read: {exc}")]
+FROM_DISK = object()
+"""Sentinel: `load_manifest` should open the working-tree copy itself.
+
+Deliberately NOT `None`. A view can legitimately yield `None` — a manifest
+`git rm --cached` left on disk, or a staged blob the encoding sniff refuses —
+and if that were spelled the same as "no text supplied", the committable pass
+would fall back to the copy on disk and answer from the very bytes this
+increment exists to stop answering from.
+"""
+
+
+def load_manifest(root: Path, raw=FROM_DISK, label=MANIFEST_REL):
+    """Parse the provenance manifest from `root`, or from `raw` text if given.
+
+    `raw` is how the COMMITTABLE manifest is parsed (increment 15): the index
+    blob's text, read through the tree's own cache. `label` is the path every
+    finding quotes, so a finding about the staged manifest names the staged
+    manifest rather than looking like one about the file on disk.
+    """
+    if raw is FROM_DISK:
+        path = root / MANIFEST_REL
+        try:
+            raw = path.read_text(encoding="utf-8")
+        except OSError as exc:
+            return None, [Finding("manifest-missing", label, f"cannot read: {exc}")]
+    if raw is None:
+        return None, [
+            Finding(
+                "manifest-missing",
+                label,
+                "this view holds no readable manifest — a commit would publish "
+                "none, so it answers nothing",
+            )
+        ]
     try:
         data = json.loads(raw)
     except json.JSONDecodeError as exc:
-        return None, [Finding("manifest-missing", MANIFEST_REL, f"invalid JSON: {exc}")]
+        return None, [Finding("manifest-missing", label, f"invalid JSON: {exc}")]
     if not isinstance(data, dict):
-        return None, [Finding("manifest-schema", MANIFEST_REL, "top level must be an object")]
+        return None, [Finding("manifest-schema", label, "top level must be an object")]
     findings = []
     if data.get("schema_version") != SCHEMA_VERSION:
         findings.append(
             Finding(
                 "manifest-schema",
-                MANIFEST_REL,
+                label,
                 f"schema_version {data.get('schema_version')!r} != {SCHEMA_VERSION}",
             )
         )
     for key in ("entries", "exemptions", "scope_exclusions"):
         value = data.get(key, [])
         if not isinstance(value, list):
-            findings.append(Finding("manifest-schema", MANIFEST_REL, f"{key!r} must be a list"))
+            findings.append(Finding("manifest-schema", label, f"{key!r} must be a list"))
             data[key] = []
     return data, findings
 
@@ -2606,8 +2770,15 @@ def _matcher(entry):
     return "pattern", pattern, lambda rel: bool(regex.match(rel))
 
 
-def check_manifest(tree: Tree, manifest, records, rows):
-    """Validate rows/exemptions and return (findings, coverage)."""
+def check_manifest(tree: Tree, manifest, records, rows, manifest_rel=MANIFEST_REL):
+    """Validate rows/exemptions and return (findings, coverage).
+
+    `manifest_rel` is the manifest path every finding here quotes. The committable
+    pass (increment 15) passes the staged manifest's label, so a row that is
+    wrong only in the bytes a commit would publish does not read as a finding
+    about the file on disk — which is clean, and is what the author is
+    looking at.
+    """
     findings = []
     # rel -> set of tripwire rule ids this file's row(s) cover. Scoped per
     # rule, not blanket per-file: a row naming a file only suppresses the
@@ -2622,13 +2793,13 @@ def check_manifest(tree: Tree, manifest, records, rows):
     for index, entry in enumerate(manifest.get("entries", []) or []):
         label = f"entries[{index}]"
         if not isinstance(entry, dict):
-            findings.append(Finding("manifest-schema", MANIFEST_REL, f"{label} must be an object"))
+            findings.append(Finding("manifest-schema", manifest_rel, f"{label} must be an object"))
             continue
         if bool(entry.get("path")) == bool(entry.get("pattern")):
             findings.append(
                 Finding(
                     "manifest-field-missing",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: exactly one of 'path' or 'pattern' is required",
                 )
             )
@@ -2638,7 +2809,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "manifest-field-missing",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label} ({entry.get('path') or entry.get('pattern')}): "
                     f"missing required field(s) {missing}",
                 )
@@ -2647,7 +2818,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "manifest-unknown-class",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: class {entry['class']!r} not in "
                     f"{sorted(KNOWN_CLASSES)}",
                 )
@@ -2657,7 +2828,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             problem = pattern_problem(target)
             if problem:
                 findings.append(
-                    Finding("manifest-bad-pattern", MANIFEST_REL, f"{label}: {problem}")
+                    Finding("manifest-bad-pattern", manifest_rel, f"{label}: {problem}")
                 )
                 continue
         hits = [rel for rel in tree.files if matches(rel)]
@@ -2665,7 +2836,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "manifest-stale-path",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: {target!r} matches no in-scope file (stale row — "
                     "remove it or fix the path)",
                 )
@@ -2676,7 +2847,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 findings.append(
                     Finding(
                         "manifest-missing-record",
-                        MANIFEST_REL,
+                        manifest_rel,
                         f"{label}: decision_record {number!r} does not exist",
                     )
                 )
@@ -2684,7 +2855,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 findings.append(
                     Finding(
                         "manifest-unindexed-record",
-                        MANIFEST_REL,
+                        manifest_rel,
                         f"{label}: decision_record {number!r} is not in the index",
                     )
                 )
@@ -2693,7 +2864,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
         if covers_raw is not None:
             if not isinstance(covers_raw, list):
                 findings.append(
-                    Finding("manifest-schema", MANIFEST_REL, f"{label}: 'covers' must be a list")
+                    Finding("manifest-schema", manifest_rel, f"{label}: 'covers' must be a list")
                 )
             else:
                 bad = [r for r in covers_raw if r not in TRIPWIRE_RULES]
@@ -2701,7 +2872,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                     findings.append(
                         Finding(
                             "manifest-schema",
-                            MANIFEST_REL,
+                            manifest_rel,
                             f"{label}: 'covers' rule(s) {bad} not in {sorted(TRIPWIRE_RULES)}",
                         )
                     )
@@ -2715,13 +2886,13 @@ def check_manifest(tree: Tree, manifest, records, rows):
     for index, item in enumerate(manifest.get("exemptions", []) or []):
         label = f"exemptions[{index}]"
         if not isinstance(item, dict):
-            findings.append(Finding("manifest-schema", MANIFEST_REL, f"{label} must be an object"))
+            findings.append(Finding("manifest-schema", manifest_rel, f"{label} must be an object"))
             continue
         if bool(item.get("path")) == bool(item.get("pattern")):
             findings.append(
                 Finding(
                     "exemption-field-missing",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: exactly one of 'path' or 'pattern' is required",
                 )
             )
@@ -2732,7 +2903,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "exemption-field-missing",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: non-empty 'rules' list and 'reason' are required",
                 )
             )
@@ -2742,7 +2913,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "exemption-non-exemptible-rule",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: rule(s) {bad} cannot be exempted (only "
                     f"{sorted(EXEMPTIBLE_RULES)} may be); answer them with a "
                     "provenance row instead",
@@ -2763,7 +2934,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 findings.append(
                     Finding(
                         "exemption-field-missing",
-                        MANIFEST_REL,
+                        manifest_rel,
                         f"{label}: 'occurrences' must be a non-empty list of "
                         "non-empty strings",
                     )
@@ -2773,7 +2944,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 findings.append(
                     Finding(
                         "exemption-bad-pattern",
-                        MANIFEST_REL,
+                        manifest_rel,
                         f"{label}: 'occurrences' requires an exact 'path', not a pattern",
                     )
                 )
@@ -2783,7 +2954,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             problem = pattern_problem(target)
             if problem:
                 findings.append(
-                    Finding("exemption-bad-pattern", MANIFEST_REL, f"{label}: {problem}")
+                    Finding("exemption-bad-pattern", manifest_rel, f"{label}: {problem}")
                 )
                 continue
         hits = [rel for rel in tree.files if matches(rel)]
@@ -2791,7 +2962,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "exemption-stale",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: {target!r} matches no in-scope file (stale "
                     "exemption — remove it)",
                 )
@@ -2837,7 +3008,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                         findings.append(
                             Finding(
                                 "exemption-stale",
-                                MANIFEST_REL,
+                                manifest_rel,
                                 f"{label}: occurrence {occurrence!r} "
                                 + (
                                     "contains no quotation marker"
@@ -2875,7 +3046,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "manifest-schema",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: 'prefix' and 'reason' are required",
                 )
             )
@@ -2888,7 +3059,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
             findings.append(
                 Finding(
                     "scope-exclusion-stale",
-                    MANIFEST_REL,
+                    manifest_rel,
                     f"{label}: prefix {item['prefix']!r} excludes nothing "
                     "(stale — remove it)",
                 )
@@ -2899,7 +3070,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
         findings.append(
             Finding(
                 "scan-underflow",
-                MANIFEST_REL,
+                manifest_rel,
                 f"scanned {len(tree.files)} in-scope files, below the declared "
                 f"scan_floor of {floor} — the audit may have walked the wrong "
                 "tree; a partial scan is not a pass",
@@ -3426,6 +3597,100 @@ def check_tripwires(tree: Tree, coverage, exemptions):
 # --- audit driver -------------------------------------------------------------
 
 
+COMMITTED_PREFIX = (
+    "in the ANSWER SET a commit would publish (the staged "
+    "decision-records bookkeeping differs from the copy on disk)"
+)
+
+
+def _committed_pass(root: Path, tree: Tree, already):
+    """Re-judge the tree against the ANSWER SET a commit would publish.
+
+    Increment 15. Increment 14 moved the carriage rules (group 4) onto both byte
+    views an entry can have; the four groups' ANSWERS — a provenance row, an
+    exemption, a scope exclusion, the record index, a record's own header —
+    stayed on the working-tree copy of `decision-records/`. So an answer could
+    be published by no commit at all: `git add` the carrier, then add its row to
+    `provenance.json` on disk WITHOUT staging it, and the audit passed with
+    coverage identical to a legitimately declared tree's, while the commit
+    published the carrier and a manifest that does not mention it.
+
+    The fix is not a new rule. It is to run the SAME four groups a second time
+    with every read resolved to the committable bytes (`COMMITTED_VIEW`), and
+    only when the bookkeeping actually diverges — so a tree whose
+    `decision-records/` is staged, or has no unstaged edits at all, takes this
+    path not at all and behaves exactly as before.
+
+    `already` is the (rule, path) set pass one produced: a finding both answer
+    sets agree on is reported once, by the pass that reads what the author is
+    looking at. What survives here is the finding that exists ONLY in the
+    committable tree, which is the whole mask.
+
+    Note the deliberate asymmetry with group 4's two views: a carriage question
+    is asked of BOTH views (an unstaged paste must fire before a `git add`),
+    while an answer is accepted only from the view that raised the question. An
+    answer is a claim this repository publishes; a question is a fact about bytes
+    on hand.
+    """
+    divergent = tree.divergent_bookkeeping()
+    if not divergent:
+        return [], []
+    # The staged manifest's own bytes, read through the shared cache. Read from
+    # the FIRST tree, because the committable tree's scope exclusions come out
+    # of this manifest and cannot be known before it is parsed.
+    # When the manifest itself does not diverge, `FROM_DISK` makes this read
+    # byte-for-byte the one pass one performed, rather than a second read
+    # through the content-scan machinery that could differ on an odd encoding.
+    raw = (
+        tree.text(MANIFEST_REL, STAGED_VIEW) if MANIFEST_REL in divergent else FROM_DISK
+    )
+    label = _view_label(MANIFEST_REL, STAGED_VIEW)
+    manifest, findings = load_manifest(root, raw=raw, label=label)
+    if manifest is None:
+        manifest = {"entries": [], "exemptions": [], "scope_exclusions": []}
+    # include_untracked is deliberately NOT carried over: the committable tree
+    # is the index. A file that is not in the index is published by no commit,
+    # so judging it here would report a finding against a tree that does not
+    # exist — pass one already audits it when the flag is on, and increment 11's
+    # coverage line discloses it when the flag is off.
+    committed = Tree(
+        root,
+        scope_exclusion_prefixes(manifest),
+        include_untracked=False,
+        default_view=COMMITTED_VIEW,
+        share_reads_from=tree,
+    )
+    records, record_findings = parse_records(committed)
+    try:
+        rows, index_findings = parse_index(committed)
+    except AuditError as exc:
+        # The working-tree README parsed (pass one got this far), so this is a
+        # statement about the committable bytes alone: reported as a finding
+        # against the staged index, never as an audit that could not run.
+        return findings + [
+            Finding(
+                "index-row-malformed",
+                _view_label(INDEX_REL, STAGED_VIEW),
+                f"{exc} — {COMMITTED_PREFIX}",
+            )
+        ], divergent
+    findings += record_findings + index_findings
+    findings += check_index(records, rows)
+    findings += check_citations(committed, records, rows)
+    manifest_findings, coverage, exemptions = check_manifest(
+        committed, manifest, records, rows, manifest_rel=label
+    )
+    findings += manifest_findings
+    tripwire_findings, _ = check_tripwires(committed, coverage, exemptions)
+    findings += tripwire_findings
+    tagged = []
+    for finding in findings:
+        if (finding.rule, finding.path) in already:
+            continue
+        tagged.append(Finding(finding.rule, finding.path, f"{COMMITTED_PREFIX} — {finding.detail}"))
+    return tagged, divergent
+
+
 def audit(root: Path, include_untracked=False):
     root = Path(root)
     manifest, findings = load_manifest(root)
@@ -3441,6 +3706,10 @@ def audit(root: Path, include_untracked=False):
     findings += manifest_findings
     tripwire_findings, tripwire_counts = check_tripwires(tree, coverage, exemptions)
     findings += tripwire_findings
+    committed_findings, divergent_bookkeeping = _committed_pass(
+        root, tree, {(f.rule, f.path) for f in findings}
+    )
+    findings += committed_findings
     stats = {
         "files_scanned": len(tree.files),
         "files_excluded": sum(len(v) for v in tree.excluded.values()),
@@ -3508,6 +3777,14 @@ def audit(root: Path, include_untracked=False):
         # The subset with no working-tree copy at all: their working-tree view
         # reaches no content rule, so the staged view is the only read there is.
         "staged_entries_absent_from_the_working_tree": tree.staged_only(),
+        # The ANSWER-SET boundary (increment 15): bookkeeping files whose staged
+        # bytes are not known to equal the working tree's, which means this tree
+        # has two different answer sets and the committable one was judged on
+        # its own. Printed even when empty, for the reason the two boundaries
+        # above are: "the answers agree in both views" and "only the copy on
+        # disk was ever consulted" must not look alike.
+        "divergent_bookkeeping_files": divergent_bookkeeping,
+        "committed_answer_set_findings": len(committed_findings),
         "entries_by_reference": {
             kind: sum(1 for rel in tree.files if tree.kind(rel) == kind)
             for kind in ("symlink", "gitlink")
@@ -3612,6 +3889,20 @@ def report(findings, stats, root, as_json=False):
             f"      … and {len(divergent) - STAGED_PATHS_LISTED} more "
             "(full list in --json)"
         )
+    bookkeeping = stats["divergent_bookkeeping_files"]
+    print(
+        f"  bookkeeping whose staged bytes are not known to match the working "
+        f"tree: {len(bookkeeping)} file(s) — "
+        + (
+            "the ANSWER SET a commit would publish was judged on its own, "
+            f"finding {stats['committed_answer_set_findings']} issue(s) present "
+            "only there"
+            if bookkeeping
+            else "one answer set, published and on disk alike"
+        )
+    )
+    for rel in bookkeeping:
+        print(f"      answers re-read from the staged blob: {rel}")
     for rel in stats["payload_scans_truncated"]:
         print(
             f"  TRUNCATED payload scan (unwrap budget/depth reached, NOT fully "
@@ -4333,11 +4624,22 @@ def _scoped_exemption(root: Path, occurrences, path="docs/own_copy.md"):
     _patch_manifest(root, lambda d: d["exemptions"].extend([manifest_exemption, item]))
 
 
-def _patch_manifest(root: Path, mutate):
+def _patch_manifest(root: Path, mutate, stage=True):
+    """Rewrite the manifest, re-staging it when the control tree is a checkout.
+
+    `stage` matters because of increment 15: an ANSWER present only on disk is
+    now a finding of its own, so a fixture that patches the manifest AFTER
+    staging would be asserting two things at once. Re-staging keeps a control
+    about some other layer (a gitlink declared by a row) a control about that
+    layer alone. The committed-answer-set controls pass `stage=False` on
+    purpose — there, the unstaged answer IS the subject.
+    """
     path = root / MANIFEST_REL
     data = json.loads(path.read_text(encoding="utf-8"))
     mutate(data)
     path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    if stage and (root / ".git").exists():
+        _git(root, "add", "-f", MANIFEST_REL)
 
 
 # --- discovery-layer fixtures -------------------------------------------------
@@ -6046,6 +6348,379 @@ def _staged_controls():
     ]
 
 
+# --- committed-answer-set fixtures (increment 15) -----------------------------
+#
+# Every case here turns on the SAME one-line difference: whether the answer a
+# carriage finding needs is in the index as well as on disk. The carrier itself
+# is identical in both views throughout — that is the point. Increment 14 reads
+# the committable BYTES of an entry; these fixtures move the committable ANSWER.
+FIXTURE_COMMITTED_CARRIER_REL = "model/pasted_committed.py"
+FIXTURE_SKELETON_CARRIER_REL = "model/carrier.py"
+FIXTURE_SECOND_RECORD_NUMBER = "0002"
+FIXTURE_SECOND_RECORD_REL = "decision-records/0002-second.md"
+
+
+def _committed_row(path=FIXTURE_COMMITTED_CARRIER_REL, covers=None):
+    """A well-formed provenance row for a GPL-bodied carrier.
+
+    Corroborated by the pinned commit, which the carrier cites, so the row is
+    rejected for being unstaged and for nothing else.
+    """
+    row = {
+        "path": path,
+        "class": "quoted-constants",
+        "content": "synthetic TABLE",
+        "upstream": "synthetic upstream",
+        "pinned_commit": FIXTURE_SUBMODULE_COMMIT,
+        "upstream_license": "GPL-3.0-or-later",
+        "decision_record": "0001",
+        "covers": list(covers or ["foreign-license-text"]),
+    }
+    return row
+
+
+FIXTURE_COMMITTED_CARRIER = (
+    FIXTURE_GPL_BODY
+    + f"# pinned at {FIXTURE_SUBMODULE_COMMIT}\n"
+    + "TABLE = [1, 2, 3]\n"
+)
+
+
+def _stage_carrier_then_answer_on_disk(root: Path, answer, rel=None,
+                                       body=FIXTURE_COMMITTED_CARRIER):
+    """Stage a carrier (and the whole skeleton), then write `answer` to DISK only.
+
+    `answer(root)` patches `decision-records/` without staging it, which is the
+    entire mask: `git commit` publishes the carrier and a bookkeeping set that
+    does not answer it.
+    """
+    if rel is not None:
+        _write(root, rel, body)
+    _stage_all(root)
+    answer(root)
+
+
+def _committed_bookkeeping_controls():
+    """[(label, description, mutate, check(findings, stats) -> (ok, detail))].
+
+    Increment 15 — the ANSWER SET, the other half of the layer increment 14
+    opened. Increment 14 asked each carriage question of both byte views an
+    entry can have; the four groups' ANSWERS (a provenance row, an exemption, a
+    scope exclusion, the record index, a record's own header) kept coming from
+    the working-tree copy of `decision-records/` alone. So every must-fire case
+    below audited **PASS** on increment 14's tool — with all 32 rules, 40
+    masking, 17 discovery, 27 payload, 10 wrapper-name, 7 coverage and 9 staged
+    controls reported as behaving, and with the carrier's own bytes identical in
+    both views — while the commit published the carrier and a manifest, index or
+    record that does not answer it.
+
+    Two of these are not hypothetical constructions: `_patch_manifest` wrote the
+    manifest to disk without staging it, so TWO pre-existing discovery controls
+    (a gitlink answered by a row, and an excluded gitlink answered by a row)
+    were passing on an answer no commit published. They are fixed in the same
+    change, by staging the fixture's answer — not by exempting them.
+
+    The must-NOT-fire cases carry equal weight and in the same two directions as
+    increment 14's. The second pass must not fire when the bookkeeping agrees in
+    both views — including when some ORDINARY file diverges, which is the normal
+    state of a tree being edited and must not drag the answer set into a second
+    judgement. And a bookkeeping edit that changes no answer must be disclosed
+    and produce nothing, because a developer editing a `note` field is not
+    committing a license violation.
+    """
+
+    def bookkeeping(stats):
+        return stats["divergent_bookkeeping_files"]
+
+    def check_committable_finding(rule, rel):
+        def check(findings, stats):
+            if MANIFEST_REL not in bookkeeping(stats) and INDEX_REL not in bookkeeping(
+                stats
+            ) and not bookkeeping(stats):
+                return False, (
+                    "the divergent bookkeeping was not disclosed "
+                    f"(divergent_bookkeeping_files={bookkeeping(stats)})"
+                )
+            hits = [f for f in findings if f.rule == rule and f.path == rel]
+            if not hits:
+                return False, (
+                    f"{rule} did NOT fire against the committable answer set for "
+                    f"{rel} (found "
+                    + (
+                        ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings}))
+                        or "nothing"
+                    )
+                    + ")"
+                )
+            # The finding must SAY the answer set is what differs. "Your file is
+            # undeclared" is wrong and unactionable here: the file IS declared,
+            # on disk, and the remedy is `git add decision-records/`.
+            if not any("ANSWER SET" in f.detail for f in hits):
+                return False, (
+                    "the finding does not name the committable answer set as its "
+                    "source: " + "; ".join(repr(f.detail) for f in hits)
+                )
+            if stats["committed_answer_set_findings"] < 1:
+                return False, "the finding was not counted in the coverage line"
+            return True, (
+                f"{rule} fired against the committable answer set for {rel}, and "
+                "said so"
+            )
+
+        return check
+
+    def check_no_second_answer_set(findings, stats):
+        if bookkeeping(stats):
+            return False, (
+                "reported a divergent answer set where the bookkeeping agrees: "
+                f"{bookkeeping(stats)}"
+            )
+        if stats["committed_answer_set_findings"]:
+            return False, "ran the committable pass on an undiverged answer set"
+        if findings:
+            return False, (
+                "false alarm: "
+                + "; ".join(f"{f.rule}@{f.path}" for f in findings)
+            )
+        return True, "no second answer set, and the list is printed as empty"
+
+    def check_disclosed_not_flagged(findings, stats):
+        if MANIFEST_REL not in bookkeeping(stats):
+            return False, (
+                "a bookkeeping divergence was not disclosed "
+                f"({bookkeeping(stats)})"
+            )
+        if findings:
+            return False, (
+                "flagged a bookkeeping edit that changes no answer: "
+                + "; ".join(f"{f.rule}@{f.path}" for f in findings)
+            )
+        return True, "disclosed as a second answer set, and produced nothing"
+
+    def answer_row_on_disk(root):
+        _patch_manifest(
+            root, lambda d: d["entries"].append(_committed_row()), stage=False
+        )
+
+    def strip_skeleton_row_from_the_index(root):
+        """The converse shape: the row is REMOVED from the index, kept on disk."""
+        full = json.loads((root / MANIFEST_REL).read_text(encoding="utf-8"))
+        stripped = dict(full)
+        stripped["entries"] = [
+            e for e in full["entries"] if e.get("path") != FIXTURE_SKELETON_CARRIER_REL
+        ]
+        _write(root, MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+        _stage_all(root)
+        _write(root, MANIFEST_REL, json.dumps(full, indent=2) + "\n")
+
+    def exemption_on_disk(root):
+        _patch_manifest(
+            root,
+            lambda d: d["exemptions"].append(
+                {
+                    "path": FIXTURE_SKELETON_CARRIER_REL,
+                    "rules": ["self-declared-quotation"],
+                    "reason": "synthetic: unstaged exemption",
+                }
+            ),
+            stage=False,
+        )
+
+    def strip_skeleton_row_and_exempt_on_disk(root):
+        strip_skeleton_row_from_the_index(root)
+        exemption_on_disk(root)
+
+    def exclusion_on_disk(root):
+        _patch_manifest(
+            root,
+            lambda d: d["scope_exclusions"].append(
+                {"prefix": "model/", "reason": "synthetic: unstaged hole"}
+            ),
+            stage=False,
+        )
+
+    def index_row_on_disk(root):
+        """A second record, cited by a staged file, indexed on DISK only."""
+        _write(
+            root,
+            FIXTURE_SECOND_RECORD_REL,
+            "# 0002 second\n\n- **Status**: PROPOSED\n- **Date**: 2026-10-01\n",
+        )
+        _write(
+            root,
+            "docs/cites_0002.md",
+            "This follows decision-records/0002-second.md.\n",
+        )
+        _stage_all(root)
+        row = (
+            f"| [{FIXTURE_SECOND_RECORD_NUMBER}]"
+            f"({FIXTURE_SECOND_RECORD_REL.split('/')[-1]}) | Second record "
+            "(synthetic) | PROPOSED | 2026-10-01 |\n"
+        )
+        _write(
+            root,
+            INDEX_REL,
+            (root / INDEX_REL).read_text(encoding="utf-8").rstrip("\n") + "\n" + row,
+        )
+
+    def covers_broadened_on_disk(root):
+        """The skeleton carrier gains a GPL body; its row's `covers` grows on disk."""
+        _write(
+            root,
+            FIXTURE_SKELETON_CARRIER_REL,
+            (root / FIXTURE_SKELETON_CARRIER_REL).read_text(encoding="utf-8")
+            + FIXTURE_GPL_BODY,
+        )
+        _stage_all(root)
+        def widen(data):
+            for entry in data["entries"]:
+                if entry.get("path") == FIXTURE_SKELETON_CARRIER_REL:
+                    entry["covers"] = sorted(
+                        set(entry.get("covers") or []) | {"foreign-license-text"}
+                    )
+        _patch_manifest(root, widen, stage=False)
+
+    def answer_row_staged_too(root):
+        _write(root, FIXTURE_COMMITTED_CARRIER_REL, FIXTURE_COMMITTED_CARRIER)
+        _patch_manifest(root, lambda d: d["entries"].append(_committed_row()))
+        _stage_all(root)
+
+    def innocuous_bookkeeping_edit(root):
+        _stage_all(root)
+        _patch_manifest(
+            root,
+            lambda d: d["entries"][0].update({"content": "synthetic TABLE (reworded)"}),
+            stage=False,
+        )
+
+    def ordinary_file_diverges_only(root):
+        _stage_then_replace(root, staged=FIXTURE_INNOCUOUS, working=FIXTURE_INNOCUOUS + "#\n")
+
+    def manifest_removed_from_the_index_only(root):
+        """`git rm --cached` the manifest: a commit publishes NO manifest.
+
+        The sentinel case. A view that yields no text must not be spelled the
+        same as "read the copy on disk", or the committable pass answers from
+        the exact bytes it exists to stop answering from.
+        """
+        _stage_all(root)
+        _git(root, "rm", "--cached", "-q", MANIFEST_REL)
+
+    def check_absent_manifest_answers_nothing(findings, stats):
+        if not any(f.rule == "manifest-missing" for f in findings):
+            return False, (
+                "a tree whose commit publishes no manifest audited without a "
+                "manifest-missing finding (found "
+                + (", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing")
+                + ")"
+            )
+        if not any(
+            f.rule in ("foreign-license-text", "self-declared-quotation")
+            for f in findings
+        ):
+            return False, (
+                "the absent manifest still answered the skeleton's carrier — the "
+                "copy on disk was read as a fallback"
+            )
+        return True, "an unpublished manifest answers nothing, and says so"
+
+    return [
+        (
+            "committed/provenance-row-added-on-disk-only",
+            "a staged GPL-bodied carrier whose row was written to "
+            "provenance.json without being staged — the commit publishes the "
+            "carrier and a manifest that does not mention it",
+            lambda root: _stage_carrier_then_answer_on_disk(
+                root, answer_row_on_disk, rel=FIXTURE_COMMITTED_CARRIER_REL
+            ),
+            check_committable_finding(
+                "foreign-license-text", FIXTURE_COMMITTED_CARRIER_REL
+            ),
+        ),
+        (
+            "committed/provenance-row-removed-from-the-index-only",
+            "the converse: an existing row deleted from the staged manifest and "
+            "kept on disk, which no working-tree read can tell from a declared "
+            "file",
+            strip_skeleton_row_from_the_index,
+            check_committable_finding(
+                "self-declared-quotation", FIXTURE_SKELETON_CARRIER_REL
+            ),
+        ),
+        (
+            "committed/exemption-added-on-disk-only",
+            "the one exemptible rule answered by an exemption that is on disk "
+            "and in no commit",
+            strip_skeleton_row_and_exempt_on_disk,
+            check_committable_finding(
+                "self-declared-quotation", FIXTURE_SKELETON_CARRIER_REL
+            ),
+        ),
+        (
+            "committed/scope-exclusion-added-on-disk-only",
+            "a declared hole is a statement this repository publishes: one that "
+            "exists only on disk hides the carrier from no commit",
+            lambda root: _stage_carrier_then_answer_on_disk(
+                root, exclusion_on_disk, rel=FIXTURE_COMMITTED_CARRIER_REL
+            ),
+            check_committable_finding(
+                "foreign-license-text", FIXTURE_COMMITTED_CARRIER_REL
+            ),
+        ),
+        (
+            "committed/index-row-added-on-disk-only",
+            "a staged citation of a staged record whose index row is on disk "
+            "only: the published README indexes no such record",
+            index_row_on_disk,
+            check_committable_finding("unindexed-record-citation", "docs/cites_0002.md"),
+        ),
+        (
+            "committed/row-covers-broadened-on-disk-only",
+            "a staged GPL body over an already-declared file, with the row's "
+            "'covers' widened to admit it on disk only",
+            covers_broadened_on_disk,
+            check_committable_finding(
+                "foreign-license-text", FIXTURE_SKELETON_CARRIER_REL
+            ),
+        ),
+        (
+            "committed/the-same-answer-staged-too-passes",
+            "the positive control: carrier and row staged together is the "
+            "legitimate shape and must stay silent",
+            answer_row_staged_too,
+            check_no_second_answer_set,
+        ),
+        (
+            "committed/fully-staged-bookkeeping-reports-zero",
+            "a tree whose decision-records match the index still reports the "
+            "list, as empty",
+            _stage_all,
+            check_no_second_answer_set,
+        ),
+        (
+            "committed/an-ordinary-divergence-does-not-open-a-second-answer-set",
+            "an unstaged edit to a file that answers nothing must not drag the "
+            "bookkeeping into a second judgement",
+            ordinary_file_diverges_only,
+            check_no_second_answer_set,
+        ),
+        (
+            "committed/a-manifest-absent-from-the-index-answers-nothing",
+            "`git rm --cached` on the manifest: a view that yields no text must "
+            "not fall back to the copy on disk",
+            manifest_removed_from_the_index_only,
+            check_absent_manifest_answers_nothing,
+        ),
+        (
+            "committed/an-innocuous-bookkeeping-edit-is-disclosed-not-flagged",
+            "a reworded 'content' field: two answer sets that answer the same "
+            "things must be disclosed and produce nothing",
+            innocuous_bookkeeping_edit,
+            check_disclosed_not_flagged,
+        ),
+    ]
+
+
 def _run_coverage_controls(tmp_root: Path, prefix, cases, include_untracked=False):
     """Run (label, description, mutate, check) cases that assert on COVERAGE."""
     results = []
@@ -6482,6 +7157,11 @@ def run_negative_control(verbose=True):
             ("coverage", _coverage_controls(), False),
             ("coverage-included", _coverage_include_untracked_controls(), True),
             ("staged", _staged_controls(), False),
+            # Increment 15 shares it for the same reason: the committed-answer-set
+            # controls assert on findings AND on the coverage line that discloses
+            # the second answer set, and the must-not-fire half is defined
+            # entirely by coverage (no second pass at all).
+            ("committed", _committed_bookkeeping_controls(), False),
         ):
             for label, passed, detail in _run_coverage_controls(
                 Path(tmp), prefix, cases, include_untracked=included
@@ -6513,7 +7193,9 @@ def run_negative_control(verbose=True):
                 "controls behaved, and all "
                 f"{len(_coverage_controls()) + len(_coverage_include_untracked_controls())}"
                 " index-boundary coverage controls and all "
-                f"{len(_staged_controls())} staged-content controls behaved."
+                f"{len(_staged_controls())} staged-content controls and all "
+                f"{len(_committed_bookkeeping_controls())} committed-answer-set "
+                "controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
