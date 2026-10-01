@@ -1520,6 +1520,176 @@ def test_symlink_entry_without_filesystem_symlink_support(tmp_path):
     assert "external-symlink-target" in _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
 
 
+# --- inside increment 7's own fix (increment 13) -------------------------------
+#
+# Four ways a DECLARED by-reference entry was described by nothing. None was a
+# mask of the rule increment 7 closed — the tripwire still fired, and still made
+# a row mandatory — but the row is the entry's only description, so a row that
+# records no pin, or that says it carries no upstream content at all, answers
+# the rule without describing the reference. A gitlink under a declared scope
+# exclusion was not judged at all, while a symlink INTO the same prefix was
+# already a reportable escape. And one verdict was not a mask but a function of
+# the auditing MACHINE: whether the external target happened to be checked out.
+
+
+def test_by_reference_row_must_carry_a_pinned_commit(tmp_path):
+    """R1: the field is optional only where the bytes can corroborate the row."""
+    root = _discovery_tree(tmp_path, "pin-omitted")
+    cp._git_submodule_entry(root)
+    cp._patch_manifest(
+        root, lambda d: d["entries"].append(cp._submodule_row(commit=None))
+    )
+    fired = [f for f in cp.audit(root)[0] if f.rule == "manifest-field-missing"]
+    assert fired, [f.as_dict() for f in cp.audit(root)[0]]
+    assert "pinned_commit" in fired[0].detail
+    assert cp.FIXTURE_SUBMODULE_REL in fired[0].detail
+
+    # The same for a symlink row, which has no committed pin to fall back on.
+    root = _discovery_tree(tmp_path, "pin-omitted-link")
+    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
+    row = cp._escaping_link_row()
+    row.pop("pinned_commit")
+    cp._patch_manifest(root, lambda d: d["entries"].append(row))
+    assert "manifest-field-missing" in _rules_fired(root)
+
+    # The false-positive direction: `pinned_commit` stays OPTIONAL for a row
+    # whose file the audit reads, which is every content class. Weakening that
+    # into a blanket requirement would make the manifest's own clean rows fail.
+    root = _discovery_tree(tmp_path, "pin-optional")
+
+    def drop_pin(data):
+        data["entries"][0].pop("pinned_commit")
+
+    cp._patch_manifest(root, drop_pin)
+    assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
+
+
+def test_declared_escaping_symlink_audits_the_same_wherever_it_is_run(tmp_path):
+    """R2: one committed tree, one verdict — not one per developer machine.
+
+    The row's corroboration used to be read out of the RESOLVED (upstream)
+    bytes, so the identical tree passed in CI, where the pinned oracle is not
+    checked out, and failed on a box that had it. Requiring upstream bytes to
+    cite one of this repository's decision records is not a tooling question,
+    so the "no body to write provenance in" reading now covers both.
+    """
+    verdicts = {}
+    for label, materialise in (
+        ("absent", lambda root: None),
+        (
+            "checked-out",
+            lambda root: cp._write(
+                tmp_path / "oracle-present", "oracle_tables.py", "TABLE = [7, 8, 9]\n"
+            ),
+        ),
+    ):
+        root = _discovery_tree(tmp_path, f"env-{label}")
+        materialise(root)
+        cp._symlink(
+            root,
+            cp.FIXTURE_ESCAPING_LINK_REL,
+            "../../oracle-present/oracle_tables.py",
+        )
+        # Same committed tree, same link, same row — the only difference is
+        # whether the external target resolves on this machine.
+        resolves = (root / cp.FIXTURE_ESCAPING_LINK_REL).exists()
+        assert resolves == (label == "checked-out"), label
+        cp._patch_manifest(
+            root, lambda d: d["entries"].append(cp._escaping_link_row())
+        )
+        verdicts[label] = sorted(
+            f"{f.rule}@{f.path}" for f in cp.audit(root)[0]
+        )
+    assert verdicts["absent"] == verdicts["checked-out"] == [], verdicts
+
+    # …and the structural rule is still what makes that row mandatory: the same
+    # resolvable link with NO row must still fire, undeclared.
+    root = _discovery_tree(tmp_path, "env-undeclared")
+    cp._write(tmp_path / "oracle-present", "oracle_tables.py", "TABLE = [7, 8, 9]\n")
+    cp._symlink(
+        root, cp.FIXTURE_ESCAPING_LINK_REL, "../../oracle-present/oracle_tables.py"
+    )
+    assert "external-symlink-target" in _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
+
+
+def test_gitlink_inside_a_declared_scope_exclusion_is_judged_and_answerable(tmp_path):
+    """R3: an exclusion withholds content; a gitlink has none of its own."""
+    root = _discovery_tree(tmp_path, "excluded-gitlink")
+    cp._declared_hole(root)
+    cp._git_submodule_entry(root, rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
+    findings, stats = cp.audit(root)
+    fired = [f for f in findings if f.rule == "submodule-reference"]
+    assert fired, [f.as_dict() for f in findings]
+    assert fired[0].path == cp.FIXTURE_EXCLUDED_SUBMODULE_REL
+    # The locator a reviewer needs: it looks exempted and is not.
+    assert "scope exclusion" in fired[0].detail
+    # Disclosed as coverage, not only as a finding.
+    assert stats["by_reference_entries_inside_declared_exclusions"] == [
+        cp.FIXTURE_EXCLUDED_SUBMODULE_REL
+    ]
+
+    # A finding that cannot be answered where it fires is a trap: before this
+    # increment a row naming an excluded path was read as a STALE row.
+    root = _discovery_tree(tmp_path, "excluded-gitlink-declared")
+    cp._declared_hole(root)
+    cp._git_submodule_entry(root, rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
+    cp._patch_manifest(
+        root,
+        lambda d: d["entries"].append(
+            cp._submodule_row(rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
+        ),
+    )
+    assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
+
+    # The exclusion itself is still LIVE when its only member is that gitlink:
+    # it declares the hole, and declaring it must not read as stale.
+    root = _discovery_tree(tmp_path, "excluded-gitlink-only")
+    cp._git_submodule_entry(root, rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
+    cp._patch_manifest(
+        root,
+        lambda d: d["scope_exclusions"].append(
+            {"prefix": cp.FIXTURE_DECLARED_HOLE_PREFIX, "reason": "synthetic hole"}
+        ),
+    )
+    assert "scope-exclusion-stale" not in _rules_fired(root)
+
+
+def test_by_reference_rules_require_the_by_reference_class(tmp_path):
+    """R4: the row must say what the rule needs said, not merely exist."""
+    assert cp.BY_REFERENCE_CLASS in cp.KNOWN_CLASSES
+
+    root = _discovery_tree(tmp_path, "class-gitlink")
+    cp._git_submodule_entry(root)
+    cp._patch_manifest(
+        root,
+        lambda d: d["entries"].append(
+            cp._submodule_row(row_class="attribution-statement")
+        ),
+    )
+    assert "submodule-reference" in _rules_fired(root)
+
+    root = _discovery_tree(tmp_path, "class-symlink")
+    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
+    cp._patch_manifest(
+        root,
+        lambda d: d["entries"].append(
+            cp._escaping_link_row(row_class="quoted-constants")
+        ),
+    )
+    assert "external-symlink-target" in _rules_fired(root)
+
+    # The right class still answers both rules in full (no 'covers' needed).
+    root = _discovery_tree(tmp_path, "class-right")
+    cp._git_submodule_entry(root)
+    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
+    cp._git(root, "add", "-f", cp.FIXTURE_ESCAPING_LINK_REL)
+    cp._patch_manifest(
+        root,
+        lambda d: d["entries"].extend([cp._submodule_row(), cp._escaping_link_row()]),
+    )
+    assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
+
+
 def test_discovery_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
     assert cp._discovery_controls(), "the discovery controls must not be empty"
