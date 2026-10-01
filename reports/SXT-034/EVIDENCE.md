@@ -364,3 +364,33 @@ matches the frozen unison model exactly; model-vs-reference numbers are
 recorded against [PROPOSED] budgets with bounded misses. No fidelity
 verdict, no preset-support claim, no synthesis/hardware claim is added by
 the rebase.
+
+## 11. Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used throughout §4/§8 above with one shared
+full-scale log-floor definition in every comparator. Every `spectral_corr`
+value quoted above is the pre-#110 figure and is superseded; full
+attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| row | §4 corr (pre-#110) | #110 corr | spectral leg | overall verdict |
+|---|---|---|---|---|
+| uni1-regress (`uni1-rep.json`) | 0.9921 | 0.9988 | PASS → PASS | FAIL (rms only) → FAIL (rms only), unchanged |
+| uni2-cov | 0.9644 | 0.9360 | MISS → MISS | FAIL → FAIL |
+| uni4-rep | 0.9841 | 0.9631 | PASS → **MISS** (new spectral miss; no overall effect: max+rms already FAIL) | FAIL → FAIL |
+| NC-1 unison-collapsed (`nc1-collapsed.json`) | 0.9626 | 0.9249 | control required to FAIL; still does | FAIL (required) |
+| `nc1-diff-vs-true.json` | 0.9678 | 0.9061 | n/a (differential record) | n/a |
+
+`uni2-poly.json` and `uni16-smoke.json` stay **STALE** for an unrelated,
+pre-existing reason (§4: their reference renders are retained only on the
+pinned remote oracle, never committed) and cannot be re-graded under #110
+either — their quoted legacy-metric numbers are STALE on both counts.
+`nc2-detune-zeroed.json` / `nc2-diff-vs-true.json` are likewise STALE (§8:
+the NC-2 mutant input is not committed) and are not regraded here; their
+quoted corr values (0.9686 / 0.9676) remain the pre-#110, pre-#175 numbers.
+
+The uni4-rep spectral leg is a new finding: the row already failed max+rms
+under the proposed budgets (§4), so this does not move its overall FAIL
+verdict, but §4's sentence "spectral corr passes at uni1 and uni4" is no
+longer accurate — under #110 it passes at uni1 only. No `verification`
+status in `reports/coverage-v1/leaf-verification.json` moves.

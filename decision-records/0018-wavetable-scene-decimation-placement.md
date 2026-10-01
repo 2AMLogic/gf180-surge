@@ -241,3 +241,15 @@ authorizes. The halfband coefficients used are the already-recorded ones from
 introduced, so no additional license decision record is required. The `.wt`
 payloads stay external and hash-verified (`decision-records/0004`); this
 repository has made **no** distribution-license determination (#25).
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+The `0.9234`/`0.92344` workhorse spectral-correlation figures quoted above
+("Which committed renders move" and the "CONFIRMED" table) used the
+native-unit `log1p` `spectral_corr` definition PR #166 (issue #110, merged
+2026-09-30) replaced with one shared full-scale log-floor definition. This
+decision record's own conclusions (no verdict moved, max\|Δ\| is unaffected,
+the three ≤1-LSB moves are the full effect) are unchanged by #110 — see the
+authoritative post-#110 table in `reports/sxt-026/EVIDENCE.md`'s own
+superseded-by-#110 note (workhorse rows move to ~0.9523, still clear of the
+0.92 bound by a wider margin, not a narrower one).

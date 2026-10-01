@@ -146,3 +146,21 @@ d(t) measurement — an impulse-train probe through the modulated delay.
   engine at runtime only, copies nothing; Apache-2.0).
 * No frozen model file, no budget constant, and no committed fixture was
   modified by this diagnosis.
+
+## 5. Superseded by #110 (issue #164, 2026-10-01)
+
+Every `corr` value in §1/§2 above was measured with the native-unit `log1p`
+`spectral_corr` definition PR #166 (issue #110, merged 2026-09-30) replaced
+with one shared full-scale log-floor definition in every comparator. §1's
+`diag-base-*.json` rows are "identical to the PR #44 A2 artifacts" — those
+committed A2 artifacts (`reports/sxt-023/artifacts/audio-{metallic,dexie}.json`)
+*are* regenerated and regraded by #166: see the superseded-by-#110 note in
+`reports/sxt-023/EVIDENCE.md` for their post-#110 values
+(metallic mono 0.9710, dexie mono 0.9928; full attribution
+`reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`). The
+rest of §2's isolation variants (`artifacts-followup/budget-diagnosis/diag-*.json`)
+are diagnostic, regenerable-not-committed renders per §4 and have no
+post-#110 re-measurement on record; none of this diagnosis's conclusions
+(the LFO-presence mechanism, the float32-lag refutation) depend on the
+exact spectral-corr value, only on its PASS/MISS class at the fixed-vs-float
+quantization floor, which is unaffected.

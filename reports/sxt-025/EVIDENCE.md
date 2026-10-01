@@ -159,3 +159,23 @@ All files under `model/integration/`, `rtl/integration/`,
 renders + engine-getter extraction); Reverb1 structure is cited, not copied
 (SXT-024 provenance carries). The committed WAVs are this project's own
 renders of the loaded preset, not redistributed upstream content.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used in the acceptance table above with one
+shared full-scale log-floor definition in every comparator. Full
+attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| row | mono corr (pre-#110) | mono corr (#110) |
+|---|---|---|
+| accept (`compare__sxt025-accept-v1.json`, full_render) | 1.000000 | 1.000000 |
+| smoke (`compare__sxt025-smoke-v1.json`, full_render) | 1.000000 | 1.000000 |
+| NC-A accept (`nc-a-sxt025-accept-v1.json`) | 0.948767 | 0.970615 |
+| NC-A smoke (`nc-a-sxt025-smoke-v1.json`) | 0.930101 | 0.947047 |
+
+No verdict moves: the wet/dry acceptance row stays `PASS (PENDING-FREEZE)`
+(both rows are still at 1.000000), and NC-A stays a detected control (both
+rows stay well under the 0.98 budget, so the comparator still flags the
+reordering). No `verification` status in
+`reports/coverage-v1/leaf-verification.json` moves.

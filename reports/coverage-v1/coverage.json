@@ -252,7 +252,7 @@
   },
   "reports/SXT-028c/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Chorus",
-   "sha256": "d50f1da6ddda08bdbb7ce414a97a7d2693a263d21328b41dde0e9976f2361369"
+   "sha256": "a8a4fb7c1a63ba46930897374d6c697ac7939582893e11623580fb62c5c02045"
   },
   "reports/SXT-028e/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Distortion",
@@ -260,11 +260,11 @@
   },
   "reports/SXT-033/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Classic",
-   "sha256": "2ead31b40e533c781f015745de99dfc9b37dffd0517a16ec2a2fc5b64922b020"
+   "sha256": "d0206b4d96ed858f23a90887c9f41c1358b2f2def98d683d77ed15e1f5a44b8c"
   },
   "reports/SXT-034/EVIDENCE.md": {
    "role": "evidence record for leaf voice:unison-stack",
-   "sha256": "eaafb2186ef7a8808c2a0d2e6eca2e5306b3d962aee3077770d643d6c597d0f2"
+   "sha256": "32126f9a46d7c6e286299dc967d9ab83fb8b6e53d3c4cc682556923696552a56"
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
@@ -276,15 +276,15 @@
   },
   "reports/SXT-040/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Sine",
-   "sha256": "78dec80810cfb1924c6496f2fcd15a10d4f6b28ab9b6d2dcdc987551fb228bff"
+   "sha256": "a4066cf76fda537b66a5a66eeefef732cb9b3294f8cd9d17dc85ee3a5e936b36"
   },
   "reports/SXT-042/EVIDENCE.md": {
    "role": "evidence record for leaf mod:keytrack",
-   "sha256": "13d19adc29eb00985e91a4a92eab464af21a3d39e370c1d18c76f4557e17a5cb"
+   "sha256": "267a97439a83e8e4c50fec5d89ce7d2ceff0657d2d4f49ca48ec77f5741ebc8f"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "b7030e0d60327030499e8b0931ae07a9e21e9d73708b392e5696f9e3d02bc9c7"
+   "sha256": "7db0ddc37f3dee067bb7d217e3221db72b5435fb2216e1307746ce011cae630d"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -312,11 +312,11 @@
   },
   "reports/sxt-022/EVIDENCE.md": {
    "role": "evidence record for leaf voice:attacky-slice",
-   "sha256": "6af4fc7bcdb356b8ff810999fbc28051428cad90efb3a0ce3e032d9fc3ac9707"
+   "sha256": "35da782f2257f4517e54e0c723804a354d0ce78cef6e983be1345d37d50698ff"
   },
   "reports/sxt-023/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Delay",
-   "sha256": "986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d"
+   "sha256": "6d8fa5f3cc6f25b087f24add0655bb53cc6725da7f903188394ad32979381763"
   },
   "reports/sxt-024/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Reverb1",
@@ -324,11 +324,11 @@
   },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
-   "sha256": "07e7891cc848f347820b334076f85f98b76a2c94c5980b2e27828266024e74ea"
+   "sha256": "ca32009f89c097e411cef38e02b2566d17c66284919b0b8e4f45a091802bbc25"
   },
   "reports/sxt-026a/EVIDENCE.md": {
    "role": "evidence record for leaf voice:sine-fm-lp24-v2",
-   "sha256": "efd2a0295c51166b2891272e4cb0179381c2f81069621265d7211e9073259269"
+   "sha256": "0c328b659aafa3dae749aa09d2eff7f4b023d045f8c2a0a9db4be5eea95b849b"
   },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",
@@ -352,11 +352,11 @@
   },
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",
-   "sha256": "41a1fe58e9ac4268049ee6a3b4f487ee749ae9a4a4f6b451c9c437eaf768f6d0"
+   "sha256": "cb6f52438f2ca37e765175e01a012a241f37b374c609c9f504b64a2e96e02961"
   },
   "reports/sxt-035/EVIDENCE.md": {
    "role": "evidence record for leaf mod:modwheel",
-   "sha256": "0ec971409bf3e58f1f9a9c575362b7a44aca5a5325694e5611eb32b438952045"
+   "sha256": "86acbf1877e67473fc6483579baea122ae6c2492e895705a471c050ae4b07dea"
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",

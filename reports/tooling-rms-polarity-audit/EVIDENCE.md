@@ -254,3 +254,22 @@ the SXT-022 `-46 dBFS` proposal embedded by the shared comparator itself;
 computed independently in that script and was already correct polarity
 (verified by reading its source) — this audit does not touch or re-derive
 that separate acceptance path.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+The "STOP" subsection's sentence "`max_abs_diff_lsb` (2,321 ≤ 3,500) and
+`spectral_corr` (0.9874–0.9875 ≥ 0.98) both already passed" is this audit's
+own present-tense claim (not one of the three verbatim leaf quotes
+immediately below it, which stay untouched as a historical record of what
+those `EVIDENCE.md` files asserted before #97's re-grade). It already
+predates #123's halfband branch-order fix: the `seq-notes-repeated-v1`
+render these three files share was re-rendered by #145, and its committed
+spectral_corr is 0.9921 (sxt-022/sxt-035) / 0.9921 (SXT-034's `uni1-rep.json`,
+0.992085) as of that fix — see each leaf's own `EVIDENCE.md` §4/#145-note.
+PR #166 (issue #110, merged 2026-09-30) replaced the `spectral_corr`
+definition again; per `reports/spectral-corr-fs-floor/artifacts/
+regrade-ledger.{txt,json}` the current committed value for all three files
+is **0.998840** (sxt-022: 0.998840 from 0.992074; SXT-034/sxt-035:
+0.998840 from 0.992085) — still `>= 0.98`, so the spectral leg still
+passes and the audit's STOP finding (the rms leg alone flips these three
+rows PASS → FAIL) is unaffected either way.

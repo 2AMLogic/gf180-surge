@@ -635,3 +635,29 @@ the environment-independent reproducer).
   branch-order fix (see that section's own change note); the per-segment
   decomposition and the section 4 discriminating experiments there remain
   the pre-#123 numbers.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used in section 3's matrix (and its #180 change
+note) with one shared full-scale log-floor definition in every comparator.
+Full attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| Fixture | corr (pre-#110) | corr (#110) | sxt-026 bound (0.92) | sxt-022 proposal (0.98) |
+|---|---|---|---|---|
+| kick-wtfix / base | 0.9234 | 0.9523 | PASS → PASS | MISS → MISS (max+rms) |
+| kick-wtfix-morph25 / base | 0.9226 | 0.9523 | PASS → PASS | MISS → MISS (max+rms) |
+| kick-wtfix-morph75 / base | 0.9234 | 0.9523 | PASS → PASS | MISS → MISS (max+rms) |
+| kick-wtfix-uni16 / unison16 | 0.9576 | 0.8956 | PASS → **MISS** (no overall effect: max already MISS) | MISS → MISS |
+| kick-wtfix-kt / pitch-extremes-hi | 0.9381 | 0.8498 | PASS → **MISS** (no overall effect: max already MISS) | MISS → MISS |
+| kick-wtfix / pitch-extremes | 0.9092 | 0.9157 | MISS → MISS | MISS → MISS |
+| mf-wtfix / base | 0.9756 | 0.9169 | PASS → **MISS** (no overall effect: max already MISS) | MISS → MISS |
+| mf-wtfix-morph25 / base | 0.9687 | 0.9056 | PASS → **MISS** (no overall effect: max already MISS) | MISS → MISS |
+| mf-wtfix-morph75 / base | 0.9705 | 0.8809 | PASS → **MISS** (no overall effect: max already MISS) | MISS → MISS |
+
+No row's overall MISS/PASS status moves under either bound set: the three
+workhorse rows stay PASS under the SXT-026 bound (their corr rises well
+clear of 0.92), and every other row stays MISS under both bound sets (it
+was already failing on `max_abs`, independently of the spectral leg's
+direction of travel). No `verification` status in
+`reports/coverage-v1/leaf-verification.json` moves.

@@ -266,3 +266,21 @@ python3 -m pytest tests/test_stereo_tail_gate.py tests/test_tail_gate.py tests/t
 Scratch renders go under `/tmp/sxt-stereo-tail-gate/` and are never committed.
 The committed evidence is the transcripts, the per-control and per-case JSONs,
 and `artifacts/checks-summary.json`.
+
+## 9. Superseded by #110 (issue #164, 2026-10-01)
+
+§6's recommendation was adopted: PR #166 (issue #110) merged on 2026-09-30,
+landing the shared full-scale log-floor `spectral_corr` definition in every
+comparator named in §6. §6 itself stays **HISTORICAL by design** — it is the
+before/after characterization of the legacy metric that led to filing #110
+(`reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`
+classifies `artifacts/spectral-corr-sweep.json` this way), so its quoted
+legacy-`log1p` values (the unit-dependence table, the four "fails on
+spectral_corr alone" rows at 0.9298/0.9456/0.9606/0.9789) are left verbatim,
+same treatment as `reports/halfband-branch-order/EVIDENCE.md`'s before/after
+table. §2's own `ULP(spectral_corr)` drift mentions are general observations,
+not a quoted committed value, and need no correction. The committed
+`SXT-028c`/`sxt-023` comparator JSONs this record's leg 1/leg 4 exercise
+were regenerated under #110 (ledger, same artifacts as `reports/SXT-028c/
+EVIDENCE.md`'s own superseded-by-#110 note); no leg-1/leg-2/leg-3 verdict in
+this record moves.

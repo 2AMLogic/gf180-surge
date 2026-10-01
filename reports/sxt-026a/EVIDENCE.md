@@ -327,3 +327,23 @@ regressions (`tests/test_sxt022_voice.py`, `tests/test_sxt025_integration.py`,
   verdict in this record depended on the discrepancy — see the corrected
   §4 RMS-leg note above for the one place the pre-fix polarity had leaked
   into the prose.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used in §5's integrated-path numbers (and its
+#145 re-measurement note) with one shared full-scale log-floor definition.
+Full attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| row (`compare__sxt025-accept-v1.json`, full_render) | mono corr (pre-#110) | mono corr (#110) |
+|---|---|---|
+| L | 0.780858 | 0.913287 |
+| R | 0.781771 | 0.913987 |
+| mono | 0.779873 | 0.913255 |
+
+§5's quoted "spectral corr 0.780" is the pre-#110 mono figure; under #110
+it is 0.9133. No verdict moves: the row stays `FAIL` (the budget is 0.98,
+and max\|Δ\|/tail already fail it regardless of the spectral leg's
+movement). F-48a and the integrated-path finding are unaffected. No
+`verification` status in `reports/coverage-v1/leaf-verification.json`
+moves.

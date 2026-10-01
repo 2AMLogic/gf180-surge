@@ -236,3 +236,36 @@ v1 adapter regained its `scene_octave`/`keytrack_root` words (regressed by
   instances, modwheel→FX or →LFO routing, stereo field, effects interaction.
 * Any FPGA/gf180mcu synthesis, place-and-route, timing, power, area, or
   hardware playback result.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used throughout the acceptance table, the #145
+change note, and the negative-controls transcript above with one shared
+full-scale log-floor definition in every comparator. Full attribution:
+`reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`;
+the SXT-035 C2 (`smoothing-bypass`) finding specifically is already fully
+documented, with its own before/after numbers, in
+`reports/spectral-corr-fs-floor/EVIDENCE.md` §2 (not repeated here).
+
+| row | corr (pre-#110) | corr (#110) | spectral leg | overall verdict |
+|---|---|---|---|---|
+| seq-notes-repeated-v1 (retrig) | 0.9921 | 0.9988 | PASS → PASS | FAIL (rms only) → FAIL (rms only), unchanged |
+| seq-notes-coverage-v1 (coverage) | 0.9791 | 0.9985 | MISS → PASS (no overall effect: max+rms already FAIL) | FAIL → FAIL |
+| seq-modwheel-v1 (staircase) | 0.9875 | 0.9710 | PASS → **MISS** (new spectral miss; no overall effect: max+rms already FAIL) | FAIL → FAIL |
+| routing-zeroed cutoff (`audio-nc-cutoff-zeroed.json`) | 0.9844 | 0.9542 | control required to FAIL; still does | FAIL (required) |
+| routing-zeroed reso (`audio-nc-reso-zeroed.json`) | 0.9864 | 0.9687 | control required to FAIL; still does | FAIL (required) |
+| routing-zeroed vca (`audio-nc-vca-zeroed.json`) | 0.8615 | 0.6706 | control required to FAIL; still does | FAIL (required) |
+| source-swap (`audio-nc-source-swap-lfo.json`) | 0.7295 | 0.4530 | control required to FAIL; still does | FAIL (required) |
+
+Two sentences in the acceptance table and change note above are now
+inaccurate and superseded by this table: "seq-modwheel-v1 ... spec 0.9875"
+(now 0.9710 — the staircase row's spectral leg now ALSO misses, in addition
+to max+RMS) and the #145 table's "seq-modwheel-v1 ... 0.9870 → 0.9875"
+history (unaffected in direction, but the current figure is 0.9710 under
+#110). No row's overall FAIL/PASS status moves (every row here was already
+determined by its max/rms legs, except C2 — see the floor-evidence record
+above). `reports/coverage-v1/leaf-verification.json`'s `mod:modwheel` note
+is updated in the same commit to the #110 values; no `verification` status
+moves — the leaf stays `model_vs_reference: NO_VERDICT` /
+`rtl_vs_model: PASS`.
