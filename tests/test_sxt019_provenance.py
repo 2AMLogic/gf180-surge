@@ -623,6 +623,85 @@ def test_own_holder_test_requires_our_name_alone():
     assert not cp.own_copyright_holder("|", 1)
 
 
+# --- increment 5: the holder list continues past a delimiter on the SAME line -
+
+
+def test_second_holder_on_an_own_notice_line_is_flagged(tmp_path):
+    """Our name in the first holder segment did not clear the rest of the line.
+
+    The segment walk judged the FIRST segment holding a name and returned, so a
+    second holder standing after that segment's closing delimiter was never read
+    — the same "stop as soon as our own name is recognised" shape as the earlier
+    increments, one segment to the right. All four of these audited clean on the
+    non-exemptible rule, and all four are how a part-vendored file actually gets
+    attributed.
+    """
+    for label, text in (
+        ("semicolon", cp.FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON),
+        ("parenthetical", cp.FIXTURE_SECOND_HOLDER_IN_PARENTHETICAL),
+        ("em-dash", cp.FIXTURE_SECOND_HOLDER_AFTER_EM_DASH),
+        ("spaced-hyphen", cp.FIXTURE_SECOND_HOLDER_AFTER_DASH),
+    ):
+        root = _masked_tree(tmp_path, f"second-holder-{label}", text)
+        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+
+
+def test_second_holder_finding_locates_the_offending_holder(tmp_path):
+    """`detail`'s snippet is the only locator, so it must reach the 2nd holder."""
+    root = _masked_tree(
+        tmp_path, "second-holder-detail", cp.FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON
+    )
+    findings, _ = cp.audit(root)
+    quoting = [
+        f
+        for f in findings
+        if f.rule == "foreign-license-text" and "Some Upstream Author" in f.detail
+    ]
+    assert quoting, [f.detail for f in findings]
+
+
+def test_second_holder_bounds_are_declared_boundaries(tmp_path):
+    """Pins both residual limits, so neither can drift silently either way.
+
+    A later segment is read as naming a holder only on a TWO-WORD name shape, and
+    only before the segment's first sentence break. Both bounds exist because
+    `foreign-license-text` cannot be exempted: an own aside carries at most one
+    capitalised token in practice, and text after a full stop is prose, not a
+    continuing holder list — a finding on either could only be answered by
+    switching the rule off.
+    """
+    for label, text in (
+        ("single-name-aside", cp.FIXTURE_OWN_SINGLE_NAME_ASIDE),
+        ("sentence-break", cp.FIXTURE_OWN_NOTICE_THEN_SENTENCE),
+    ):
+        (tmp_path / label).mkdir(parents=True, exist_ok=True)
+        root = _skeleton(tmp_path / label)
+        cp._write(root, cp.OWN_ONLY_REL, text + cp.FIXTURE_FILLER)
+        findings, _ = cp.audit(root)
+        assert not findings, (label, [f.detail for f in findings])
+
+
+def test_own_holder_test_reads_the_whole_holder_side():
+    """Unit-level: a second holder past the delimiter is not ours either.
+
+    Each argument is the holder side of a notice line only ('|' stands where the
+    year ends), so this file never contains a contiguous copyright notice — the
+    audit would correctly flag that as unattributed carriage in its own source.
+    """
+    # ours: one holder, with asides the audit must not read as a second name
+    assert cp.own_copyright_holder("| 2AM Logic (gf180-surge model sources)", 1)
+    assert cp.own_copyright_holder("| 2AM Logic (generated from Verilog)", 1)
+    assert cp.own_copyright_holder("| 2AM Logic; see NOTICE. Chris Johnson wrote it", 1)
+    assert cp.own_copyright_holder("| The gf180-surge Authors (All Rights Reserved)", 1)
+    # not ours: the holder list continues past the delimiter
+    assert not cp.own_copyright_holder("| 2AM Logic; Some Upstream Author", 1)
+    assert not cp.own_copyright_holder("| 2AM Logic (from Chris Johnson)", 1)
+    assert not cp.own_copyright_holder("| 2AM Logic — Chris Johnson", 1)
+    assert not cp.own_copyright_holder("| 2AM Logic - Some Upstream Author", 1)
+    assert not cp.own_copyright_holder("| 2AM Logic [also Chris Johnson]", 1)
+    assert not cp.own_copyright_holder("| The gf180-surge Authors — Some Upstream Author", 1)
+
+
 def test_masking_controls_run_in_the_self_test(tmp_path):
     """The controls must be wired into `--negative-control`, not merely defined.
 
