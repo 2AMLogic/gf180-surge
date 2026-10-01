@@ -126,7 +126,11 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    byte sources are judged — the working-tree copy and, when the two are not
    known to match, the staged blob a commit would publish — so staging a copied
    file and then cleaning (or deleting) the working copy is not a way past the
-   rules, and the run reports which entries it read twice.
+   rules, and the run reports which entries it read twice. The same applies to
+   the record or row that **answers** a finding: stage `decision-records/`
+   together with the file it declares, because a row, exemption, scope exclusion
+   or index row present only in your working copy is published by no commit and
+   answers nothing. The run reports which bookkeeping files diverged.
 6. Do not bring a substrate in **by reference** without the same record. A
    committed submodule (or a nested repository checkout) and a symlink whose
    target leaves this tree both put upstream content in the build tree while
