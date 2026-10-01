@@ -21,7 +21,8 @@
         "max_abs_diff_lsb": 15.22644645604305,
         "rms_diff_lsb": 5.73632528112405,
         "rms_diff_dbfs": -105.23932286082216,
-        "spectral_corr": 0.9999999954022704
+        "spectral_corr": 0.9999999755890889,
+        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
       },
       "ok": true,
       "note": "establishes the check has resolving power; NOT a reference claim"
@@ -37,7 +38,8 @@
         "max_abs_diff_lsb": 1082421.291061972,
         "rms_diff_lsb": 597528.49505854,
         "rms_diff_dbfs": -4.884825848867495,
-        "spectral_corr": 0.8540460697030138
+        "spectral_corr": 0.7407222974603241,
+        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
       },
       "ok": true,
       "label": "ADAPTED \u2014 refused from original-preset coverage"
@@ -53,7 +55,8 @@
         "max_abs_diff_lsb": 247051.42033011676,
         "rms_diff_lsb": 118841.93946241925,
         "rms_diff_dbfs": -18.912603650864106,
-        "spectral_corr": 0.9733324107670269
+        "spectral_corr": 0.9874039495133717,
+        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
       },
       "ok": true
     },
@@ -68,7 +71,8 @@
         "max_abs_diff_lsb": 63653.269951301394,
         "rms_diff_lsb": 30630.042714341547,
         "rms_diff_dbfs": -30.689046216767654,
-        "spectral_corr": 0.9828794565692054
+        "spectral_corr": 0.9754381473054824,
+        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
       },
       "ok": true,
       "benign_stimulus_leg": {
@@ -78,7 +82,8 @@
           "max_abs_diff_lsb": 2571.3988245141227,
           "rms_diff_lsb": 562.5808967436111,
           "rms_diff_dbfs": -65.40829864607579,
-          "spectral_corr": 0.999901190065928
+          "spectral_corr": 0.9992924426115927,
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
         },
         "note": "196 Hz sine: the swap stays inside the [PROPOSED] budgets. Recorded as a sensitivity limit of the model-boundary check, not as an acceptable defect."
       }
@@ -98,14 +103,16 @@
           "max_abs_diff_lsb": 806997.0,
           "rms_diff_lsb": 376382.0011628365,
           "rms_diff_dbfs": -8.899421325565669,
-          "spectral_corr": 0.9598694846071596
+          "spectral_corr": 0.9550690703931674,
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
         },
         "b": {
           "frames": 6144,
           "max_abs_diff_lsb": 1466608.0,
           "rms_diff_lsb": 579651.1365682819,
           "rms_diff_dbfs": -5.148664430444971,
-          "spectral_corr": 0.8980238940265071
+          "spectral_corr": 0.8912333068262983,
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
         }
       }
     },

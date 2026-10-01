@@ -8,13 +8,13 @@ NC-0  baseline-sanity      must=PASS                         verdict=PASS     ->
       max 15.2 LSB  rms -105.24 dBFS  corr 1.000000
 NC-A  generic-substitute   must=FAIL                         verdict=FAIL     -> CONTROL-OK
       single-rate tanh clip (no oversampling / halfband / EQ / feedback)
-      max 1082421.3 LSB  rms -4.88 dBFS  corr 0.854046
+      max 1082421.3 LSB  rms -4.88 dBFS  corr 0.740722
 NC-C  wrong-order          must=FAIL                         verdict=FAIL     -> CONTROL-OK
       pre-EQ and post-EQ bands swapped around the shaper
-      max 247051.4 LSB  rms -18.91 dBFS  corr 0.973332
+      max 247051.4 LSB  rms -18.91 dBFS  corr 0.987404
 NC-F  halfband-phase       must=FAIL                         verdict=FAIL     -> CONTROL-OK
       halfband A/B polyphase branches swapped in the reconstruction (bright/hot stimulus: 4.7 kHz + broadband noise, drive 45 dB)
-      max 63653.3 LSB  rms -30.69 dBFS  corr 0.982879
+      max 63653.3 LSB  rms -30.69 dBFS  corr 0.975438
 NC-D  shared-state         must=FAIL                         verdict=FAIL     -> CONTROL-OK
       two concurrent instances pooled onto one DistortionState
 NC-B  dropped-tail         must=FAIL                         verdict=FAIL     -> CONTROL-OK

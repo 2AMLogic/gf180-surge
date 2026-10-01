@@ -1,0 +1,260 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "leaf": "SXT-038",
+      "case": "brass",
+      "status": "PASS",
+      "rerun": 0.9995593593791626,
+      "committed": 0.999559,
+      "rel_diff": 3.5953758951771177e-07,
+      "reason": "committed value is rounded to 6 dp by its comparator"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "chords-clean",
+      "status": "PASS",
+      "rerun": 0.9963885921544633,
+      "committed": 0.996389,
+      "rel_diff": 4.09323604211083e-07,
+      "reason": "committed value is rounded to 6 dp by its comparator"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "chords-std",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "edges",
+      "status": "PASS",
+      "rerun": 0.976283775629373,
+      "committed": 0.976284,
+      "rel_diff": 2.2982106341771127e-07,
+      "reason": "committed value is rounded to 6 dp by its comparator"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "edges-cut-hi",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "edges-cut-lo",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "edges-reso1",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "edges-toggle",
+      "status": "PASS",
+      "rerun": 0.9880929290005581,
+      "committed": 0.988093,
+      "rel_diff": 7.185501959964278e-08,
+      "reason": "committed value is rounded to 6 dp by its comparator"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "major7mk2",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "phase1",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-038",
+      "case": "phase1-substd",
+      "status": "NOT_RUN",
+      "rerun": null,
+      "committed": null,
+      "rel_diff": 0.0,
+      "reason": "bundle holds meta.json only (needs the external pinned-filter harness)"
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "chords",
+      "status": "PASS",
+      "rerun": 0.9996281983125997,
+      "committed": 0.9996281983126097,
+      "rel_diff": 9.995723648545624e-15,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "cut-hi",
+      "status": "PASS",
+      "rerun": 0.9925717089963412,
+      "committed": 0.9925717089960324,
+      "rel_diff": 3.110636947938581e-13,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "cut-lo",
+      "status": "PASS",
+      "rerun": 0.0,
+      "committed": 0.0,
+      "rel_diff": 0.0,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "disturb",
+      "status": "PASS",
+      "rerun": 0.9974810797356867,
+      "committed": 0.9974810797357121,
+      "rel_diff": 2.5488310285195922e-14,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "hot",
+      "status": "PASS",
+      "rerun": 0.9964836524396447,
+      "committed": 0.9964836524407864,
+      "rel_diff": 1.1457823274149065e-12,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "king-b1",
+      "status": "PASS",
+      "rerun": 0.9948084113972897,
+      "committed": 0.9948084113971135,
+      "rel_diff": 1.7711188605707076e-13,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "king-b2",
+      "status": "PASS",
+      "rerun": 0.9909148559834079,
+      "committed": 0.9909148559829255,
+      "rel_diff": 4.868146857288693e-13,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "reso1",
+      "status": "PASS",
+      "rerun": 0.9990287738767646,
+      "committed": 0.999028773876725,
+      "rel_diff": 3.9673493912806225e-14,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "sub12db",
+      "status": "PASS",
+      "rerun": 0.9933864041677911,
+      "committed": 0.9933864041683445,
+      "rel_diff": 5.570190543693076e-13,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "sub18db",
+      "status": "PASS",
+      "rerun": 0.992774486739215,
+      "committed": 0.9927744867389694,
+      "rel_diff": 2.47368698861008e-13,
+      "reason": null
+    },
+    {
+      "leaf": "SXT-039",
+      "case": "toggle",
+      "status": "PASS",
+      "rerun": 0.9921673496844675,
+      "committed": 0.9921673496846412,
+      "rel_diff": 1.7500967060301404e-13,
+      "reason": null
+    },
+    {
+      "leaf": "sxt-037",
+      "case": "badnews-toggle[0]",
+      "status": "PASS",
+      "rerun": 0.9407525970113314,
+      "committed": 0.9407525970113314,
+      "rel_diff": 0.0,
+      "reason": null
+    },
+    {
+      "leaf": "sxt-037",
+      "case": "badnews-toggle[1]",
+      "status": "PASS",
+      "rerun": 0.5806809667330592,
+      "committed": 0.5806809667330592,
+      "rel_diff": 0.0,
+      "reason": null
+    },
+    {
+      "leaf": "sxt-037",
+      "case": "badnews-toggle[2]",
+      "status": "PASS",
+      "rerun": 1.0,
+      "committed": 1.0,
+      "rel_diff": 0.0,
+      "reason": null
+    },
+    {
+      "leaf": "sxt-037",
+      "case": "badnews-toggle[3]",
+      "status": "PASS",
+      "rerun": 1.0,
+      "committed": 1.0,
+      "rel_diff": 0.0,
+      "reason": null
+    },
+    {
+      "leaf": "sxt-037",
+      "case": "badnews[0]",
+      "status": "PASS",
+      "rerun": 0.9514883755833815,
+      "committed": 0.9514883755833815,
+      "rel_diff": 0.0,
+      "reason": null
+    },
+    {
+      "leaf": "sxt-037",
+      "case": "t9[0]",
+      "status": "PASS",
+      "rerun": 0.9959998618628834,
+      "committed": 0.9959998618631245,
+      "rel_diff": 2.421089100328839e-13,
+      "reason": null
+    }
+  ],
+  "n_rerun": 21,
+  "n_not_run": 7,
+  "worst_rel_diff": 4.09323604211083e-07
+}

@@ -36,7 +36,8 @@
       "rms_diff_dbfs": true,
       "spectral_corr": true
     },
-    "all_pass": true
+    "all_pass": true,
+    "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
   },
   "controls": [
     {
@@ -46,13 +47,14 @@
       "metrics": {
         "max_abs_diff_lsb": 592641.0,
         "rms_diff_dbfs": -25.737933911698544,
-        "spectral_corr": 0.6081198110903903,
+        "spectral_corr": 0.6042503694097767,
         "budget_results": {
           "max_abs_diff_lsb": false,
           "rms_diff_dbfs": false,
           "spectral_corr": false
         },
-        "all_pass": false
+        "all_pass": false,
+        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
       },
       "verdict": "CONTROL-OK (generic substitute FAILS the [PROPOSED] agreement budgets; ADAPTED != supported)"
     },
@@ -100,13 +102,14 @@
       "metrics": {
         "max_abs_diff_lsb": 23237.0,
         "rms_diff_dbfs": -56.48412803332977,
-        "spectral_corr": 0.975942636034437,
+        "spectral_corr": 0.9770827642580476,
         "budget_results": {
           "max_abs_diff_lsb": false,
           "rms_diff_dbfs": true,
           "spectral_corr": false
         },
-        "all_pass": false
+        "all_pass": false,
+        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
       },
       "verdict": "CONTROL-OK (the permuted chain is flagged: not bit-identical and outside the [PROPOSED] budgets)"
     },

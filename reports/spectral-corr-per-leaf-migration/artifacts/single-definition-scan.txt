@@ -1,0 +1,15 @@
+issue #165 -- per-leaf spectral_corr migration/rename: leg 1
+run: 2026-10-01T05:32:03Z   repo HEAD: b21c7e2b5c371e356d2832cbd80c8c01f649733c   base: dbd8df0ef6b6   numpy 2.4.2
+shared definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric naming/definition consistency only; no fidelity, RTL, support or sound claim.
+
+files COMPUTING a function named `spectral_corr` other than tools/compare_audio_reference.py: 0
+  tools/compare_aw49_reference.py              FS=1            wrapper=0.999640365 shared=0.999640365 retired=0.999969941  equal=True differs-from-retired=True
+  tools/compare_chorus_reference.py            FS=1            wrapper=0.999717619 shared=0.999717619 retired=0.999968638  equal=True differs-from-retired=True
+  tools/compare_fx_reference.py                FS=1            wrapper=0.999787437 shared=0.999787437 retired=0.999969161  equal=True differs-from-retired=True
+  tools/distortion_negative_controls.py        FS=1.04858e+06  wrapper=0.999758516 shared=0.999758516 retired=0.556343648  equal=True differs-from-retired=True
+  tools/reverb2_negative_controls.py           FS=2.09715e+06  wrapper=0.999604914 shared=0.999604914 retired=0.534455285  equal=True differs-from-retired=True
+
+CONTROL: a tool that silently reverted to its per-leaf log1p copy would fail both the scan and the equality above.
+
+leg 1 verdict: PASS

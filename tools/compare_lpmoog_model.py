@@ -12,7 +12,11 @@ Legs:
   L1r register state:    model R[0..4] at every block end vs the pinned
       kernel's registers (Q10.21 LSB) -- reported, not budgeted
   L2  audio:             model output vs the pinned kernel output
-      (Q10.21 LSB + log-spectral correlation)
+      (Q10.21 LSB + `l2_spectral_corr`, this family's OWN native-unit
+      log1p log-spectral correlation against `l2_spectral_corr_min` =
+      0.999 -- deliberately NOT the frozen `spectral_corr` of issue #110,
+      which is a different definition serving a different (0.98) budget
+      family; see `l2_spectral_corr` below and issue #165)
 
 The budgets below are PROPOSALS for the SXT-013/#12 fidelity freeze, NOT
 frozen policy, and they are a faithful port of the SXT-037 filter-leaf
@@ -57,6 +61,14 @@ PROPOSED = {
     "l2_spectral_corr_min": 0.999,
 }
 
+# The L2 family's own spectral metric, declared explicitly so no record can be
+# read as carrying the frozen `spectral_corr` of issue #110 (issue #165).
+L2_SPECTRAL_CORR_DEFINITION = (
+    "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale "
+    "reference, no floor, no gating; the pre-#110 per-leaf definition, "
+    "RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by "
+    "issue #165 -- NOT compare_audio_reference.spectral_corr)")
+
 
 def q(x, frac):
     return vm.sat(int(math.floor(x * (1 << frac) + 0.5)))
@@ -68,7 +80,33 @@ def read_f32(path):
     return struct.unpack(f"<{len(data) // 4}f", data)
 
 
-def spectral_corr(a, b, frame=4096):
+def l2_spectral_corr(a, b, frame=4096):
+    """The L2-family spectral metric: native-unit `log1p(|X|)` on Q10.21 LSB.
+
+    This is NOT `compare_audio_reference.spectral_corr` (issue #110's shared
+    full-scale log-floor definition) and it is deliberately not named
+    `spectral_corr` any more (issue #165). It is a DIFFERENT metric graded
+    against a DIFFERENT budget family: `l2_spectral_corr_min` = 0.999 in
+    Q10.21 LSB on a filter stage's own output, not the 0.98 effect-slice
+    budget the shared definition serves.
+
+    Why renamed rather than migrated (#165 decision, recorded in
+    reports/spectral-corr-per-leaf-migration/EVIDENCE.md):
+      * the 0.999 floor was proposed against THIS definition (as a port of
+        the SXT-037 proposal class), and SXT-037 has already recorded the
+        sub-budget itself as MIS-SCALED for filtered-voice spectra
+        (reports/sxt-037/EVIDENCE.md section 3, finding marked *): the L2b
+        attribution legs hold kernel error at -76..-98 dB while scoring
+        0.95-0.99. Re-grading a budget already recorded as mis-scaled under
+        a new definition, with the floor left at 0.999, would change what is
+        measured while leaving the proposal that it is measured against
+        untouched;
+      * choosing a different floor for this family here is exactly what
+        #165's stop condition forbids ("do not pick per-tool floors"). The
+        L2 family's metric and floor are the SXT-013/#12 freeze's decision.
+    Renaming removes the collision with the frozen `spectral_corr` name
+    without silently re-grading a second budget family.
+    """
     n = min(len(a), len(b))
     if n < frame:
         return None
@@ -114,7 +152,8 @@ def compare_case(run_dir, ref_dir):
     model_out = [v for blk in trace["trace_blocks"] for v in blk["out_model"]]
     ref_q = [q(v, FQ) for v in ref]
     l2 = metrics(model_out, ref_q)
-    l2["spectral_corr"] = spectral_corr(model_out, ref_q)
+    l2["l2_spectral_corr"] = l2_spectral_corr(model_out, ref_q)
+    l2["l2_spectral_corr_definition"] = L2_SPECTRAL_CORR_DEFINITION
 
     dC_err = []
     C_err = []
@@ -137,12 +176,14 @@ def compare_case(run_dir, ref_dir):
 
     l1_pass = (l1_C["max_abs"] <= PROPOSED["l1_C_max_lsb_q229"]
                and l1_C["rms"] <= PROPOSED["l1_C_rms_lsb_q229"])
-    corr = l2["spectral_corr"]
+    corr = l2["l2_spectral_corr"]
     l2_pass = (l2["max_abs_lsb"] <= PROPOSED["l2_max_abs_lsb"]
                and l2["rms_lsb"] <= PROPOSED["l2_rms_lsb"]
                and (corr is None or corr >= PROPOSED["l2_spectral_corr_min"]))
     return {
-        "schema_version": 1,
+        # 2: the L2 spectral metric is `l2_spectral_corr` (+ its definition
+        # stamp), renamed off the frozen `spectral_corr` name by issue #165.
+        "schema_version": 2,
         "issue": "SXT-039",
         "case": case,
         "leg": "L2-kernel (pinned sst-filters kernel, standalone build; the "
@@ -181,7 +222,7 @@ def main():
         with open(path, "w", encoding="utf-8") as f:
             json.dump(res, f, indent=2)
             f.write("\n")
-        corr = res["L2_audio_q1021"]["spectral_corr"]
+        corr = res["L2_audio_q1021"]["l2_spectral_corr"]
         print(f"{res['case']:9s} L1 max={res['L1_coefficients_q229']['C']['max_abs']:6d} "
               f"L2 max={res['L2_audio_q1021']['max_abs_lsb']:6d} "
               f"rms={res['L2_audio_q1021']['rms_lsb']:9.2f} "

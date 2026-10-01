@@ -1,0 +1,25 @@
+issue #165 -- per-leaf spectral_corr migration/rename: leg 3
+run: 2026-10-01T05:32:03Z   repo HEAD: b21c7e2b5c371e356d2832cbd80c8c01f649733c   base: dbd8df0ef6b6   numpy 2.4.2
+shared definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric naming/definition consistency only; no fidelity, RTL, support or sound claim.
+
+== reports/SXT-028e/negative-controls/negative-controls.json   declared spectral_corr_min: base=0.98 now=0.98
+  /controls[0]/metrics                         1.000000 -> 1.000000  leg True -> True  stamped=True
+  /controls[1]/metrics                         0.854046 -> 0.740722  leg False -> False  stamped=True
+  /controls[2]/metrics                         0.973332 -> 0.987404  leg False -> True   <<< SPECTRAL-LEG FLIP  stamped=True
+  /controls[3]/benign_stimulus_leg/metrics     0.999901 -> 0.999292  leg True -> True  stamped=True
+  /controls[3]/metrics                         0.982879 -> 0.975438  leg True -> False   <<< SPECTRAL-LEG FLIP  stamped=True
+  /controls[4]/metrics/a                       0.959869 -> 0.955069  leg False -> False  stamped=True
+  /controls[4]/metrics/b                       0.898024 -> 0.891233  leg False -> False  stamped=True
+  overall verdict / control-ok statuses moved: 0
+== reports/SXT-028f/negative-controls/negative-controls.json   declared spectral_corr_min: base=0.98 now=0.98
+  /baseline_self_agreement                     1.000000 -> 1.000000  leg True -> True  stamped=True
+  /controls[0]/metrics                         0.608120 -> 0.604250  leg False -> False  stamped=True
+  /controls[2]/metrics                         0.975943 -> 0.977083  leg False -> False  stamped=True
+  overall verdict / control-ok statuses moved: 0
+
+spectral-leg flips (both directions, every one named): 2
+  reports/SXT-028e/negative-controls/negative-controls.json /controls[2]/metrics: 0.973332 -> 0.987404  leg fail -> pass
+  reports/SXT-028e/negative-controls/negative-controls.json /controls[3]/metrics: 0.982879 -> 0.975438  leg pass -> fail
+
+leg 3 verdict: PASS

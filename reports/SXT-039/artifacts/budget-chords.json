@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "issue": "SXT-039",
   "case": "chords",
   "leg": "L2-kernel (pinned sst-filters kernel, standalone build; the engine-integrated leg is NOT_RUN -- see reports/SXT-039/EVIDENCE.md)",
@@ -29,7 +29,8 @@
     "rms_lsb": 0.674992766164942,
     "ref_peak_lsb": 922656,
     "rms_db_rel_ref_peak": -122.71481383456837,
-    "spectral_corr": 0.9996281983126097
+    "l2_spectral_corr": 0.9996281983126097,
+    "l2_spectral_corr_definition": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
   },
   "model_stability": "STABLE",
   "model_state_peak_lsb": 935293,

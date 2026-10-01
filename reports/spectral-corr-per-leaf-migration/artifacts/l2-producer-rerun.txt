@@ -1,0 +1,39 @@
+issue #165 -- per-leaf spectral_corr migration/rename: leg 5
+run: 2026-10-01T05:32:03Z   repo HEAD: b21c7e2b5c371e356d2832cbd80c8c01f649733c   base: dbd8df0ef6b6   numpy 2.4.2
+shared definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric naming/definition consistency only; no fidelity, RTL, support or sound claim.
+
+  SXT-038   brass       PASS    rerun=0.9995593593791626 committed=0.999559 rel=3.595e-07 committed value is rounded to 6 dp by its comparator
+  SXT-038   chords-clean PASS    rerun=0.9963885921544633 committed=0.996389 rel=4.093e-07 committed value is rounded to 6 dp by its comparator
+  SXT-038   chords-std  NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-038   edges       PASS    rerun=0.976283775629373 committed=0.976284 rel=2.298e-07 committed value is rounded to 6 dp by its comparator
+  SXT-038   edges-cut-hi NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-038   edges-cut-lo NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-038   edges-reso1 NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-038   edges-toggle PASS    rerun=0.9880929290005581 committed=0.988093 rel=7.186e-08 committed value is rounded to 6 dp by its comparator
+  SXT-038   major7mk2   NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-038   phase1      NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-038   phase1-substd NOT_RUN rerun=None committed=None rel=0.000e+00 bundle holds meta.json only (needs the external pinned-filter harness)
+  SXT-039   chords      PASS    rerun=0.9996281983125997 committed=0.9996281983126097 rel=9.996e-15 
+  SXT-039   cut-hi      PASS    rerun=0.9925717089963412 committed=0.9925717089960324 rel=3.111e-13 
+  SXT-039   cut-lo      PASS    rerun=0.0 committed=0.0 rel=0.000e+00 
+  SXT-039   disturb     PASS    rerun=0.9974810797356867 committed=0.9974810797357121 rel=2.549e-14 
+  SXT-039   hot         PASS    rerun=0.9964836524396447 committed=0.9964836524407864 rel=1.146e-12 
+  SXT-039   king-b1     PASS    rerun=0.9948084113972897 committed=0.9948084113971135 rel=1.771e-13 
+  SXT-039   king-b2     PASS    rerun=0.9909148559834079 committed=0.9909148559829255 rel=4.868e-13 
+  SXT-039   reso1       PASS    rerun=0.9990287738767646 committed=0.999028773876725 rel=3.967e-14 
+  SXT-039   sub12db     PASS    rerun=0.9933864041677911 committed=0.9933864041683445 rel=5.570e-13 
+  SXT-039   sub18db     PASS    rerun=0.992774486739215 committed=0.9927744867389694 rel=2.474e-13 
+  SXT-039   toggle      PASS    rerun=0.9921673496844675 committed=0.9921673496846412 rel=1.750e-13 
+  sxt-037   badnews-toggle[0] PASS    rerun=0.9407525970113314 committed=0.9407525970113314 rel=0.000e+00 
+  sxt-037   badnews-toggle[1] PASS    rerun=0.5806809667330592 committed=0.5806809667330592 rel=0.000e+00 
+  sxt-037   badnews-toggle[2] PASS    rerun=1.0 committed=1.0 rel=0.000e+00 
+  sxt-037   badnews-toggle[3] PASS    rerun=1.0 committed=1.0 rel=0.000e+00 
+  sxt-037   badnews[0]  PASS    rerun=0.9514883755833815 committed=0.9514883755833815 rel=0.000e+00 
+  sxt-037   t9[0]       PASS    rerun=0.9959998618628834 committed=0.9959998618631245 rel=2.421e-13 
+
+COVERAGE, reported separately from agreement: 21 re-run, 7 NOT_RUN (inputs not committed)
+worst relative difference re-run vs committed: 4.093e-07 (host float ordering; the committed SXT-038 values are 6-dp rounded by their own comparator)
+This leg shows the renamed PRODUCERS emit the committed values. It is not a fidelity claim: the budgets are [PROPOSED] and every verdict here is the leaf's own.
+
+leg 5 verdict: PASS

@@ -12,6 +12,14 @@ switching; budgets are [PROPOSED-TO-BE-FROZEN-AT-PILOT] (SXT-013 owns the
 fidelity policy) - the tool reports ACHIEVED numbers against explicitly
 proposed values and marks every verdict PENDING-FREEZE.
 
+`spectral_corr` is the SHARED full-scale log-floor definition of issue #110
+(`compare_audio_reference.spectral_corr`, float32 full scale 1.0), adopted
+here by issue #165: this leaf grades the same 0.98 effect-slice budget as the
+comparators #110 migrated, so it must not grade it with a different
+definition. Every emitted record carries the `spectral_corr_definition`
+stamp. Values in a record WITHOUT that stamp are pre-#110 (native-unit
+`log1p`) and must not be compared with the ones this tool now writes.
+
 Also verifies (per fixture):
   * internal-state agreement: the tapped engine iirAL/fbAR trajectories vs
     the model's fixed-point states (diagnostic LSB table),
@@ -33,8 +41,10 @@ import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "aw-49"))
+sys.path.insert(0, os.path.join(REPO, "tools"))
 
 import galactic_model as gm  # noqa: E402
+import compare_audio_reference as car  # noqa: E402
 
 # [PROPOSED-TO-BE-FROZEN-AT-PILOT] budgets, sxt-024 reverb-class values
 # (float32 bus units; the residual class is fixed-vs-float quantization):
@@ -47,18 +57,24 @@ PROPOSED = {
 FIXTURES_DIR = os.path.join(REPO, "reports", "sxt-028a", "fixtures")
 
 
-def spectral_corr(a, b, frame=4096):
-    n = min(len(a), len(b))
-    if n < frame:
-        return 1.0 if np.allclose(a, b) else 0.0
-    ra = np.log1p(np.abs(np.fft.rfft(a[:n // frame * frame].reshape(-1, frame)
-                                     * np.hanning(frame), axis=1))).ravel()
-    rb = np.log1p(np.abs(np.fft.rfft(b[:n // frame * frame].reshape(-1, frame)
-                                     * np.hanning(frame), axis=1))).ravel()
-    ra -= ra.mean()
-    rb -= rb.mean()
-    d = np.sqrt((ra * ra).sum() * (rb * rb).sum())
-    return float((ra * rb).sum() / d) if d > 0 else 0.0
+def spectral_corr(a, b, frame=car.SPECTRAL_CORR_FRAME):
+    """The SHARED `spectral_corr` definition (issue #110, migrated by #165).
+
+    This leaf grades the same `spectral_corr >= 0.98` effect-slice budget as
+    the comparators #110 migrated, so it uses the same definition rather than
+    a per-leaf copy: `compare_audio_reference.spectral_corr` with the declared
+    full scale of THIS bus. The AW-49 slot boundary is the engine's float32
+    Airwindows bus, so full scale is 1.0 (`car.FULL_SCALE_F32`) -- the same
+    value `compare_fx_reference.py` and `compare_chorus_reference.py` pass.
+
+    The retired per-leaf definition was the pre-#110 native-unit
+    `log1p(|X|)`, whose log knee sat at full scale on this float bus (and at
+    one LSB on the int16 bus), so the same name and the same 0.98 budget meant
+    two measurements ~50 dB apart. It is kept nowhere here; the regrade record
+    recomputes it from `car.spectral_corr_legacy_log1p` when it needs the old
+    value.
+    """
+    return car.spectral_corr(a, b, full_scale=car.FULL_SCALE_F32, frame=frame)
 
 
 def run(slug, seq_id, fixtures_dir, out_json, onset_block=0):
@@ -147,6 +163,7 @@ def run(slug, seq_id, fixtures_dir, out_json, onset_block=0):
             "rms_rel_db": rms_rel_db,
             "ref_rms": rms_ref,
             "spectral_corr": corr,
+            "spectral_corr_definition": car.SPECTRAL_CORR_DEFINITION,
             "saturations": int(m.saturations),
         },
         "state_diagnostics": {

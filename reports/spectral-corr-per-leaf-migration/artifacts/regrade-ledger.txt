@@ -1,0 +1,159 @@
+Issue #110 regrade ledger: committed artifacts at base dbd8df0ef6b6 (main as this branch last merged it) vs working tree
+definition: tools/compare_audio_reference.py SPECTRAL_CORR_* (fs-log-floor-v2, -100 dBFS/bin)
+
+REGENERATED (26 artifacts)
+  reports/SXT-028e/negative-controls/negative-controls.json   [DEFINITION=7, SPECTRAL=7]
+      SPECTRAL      /controls[0]/metrics/spectral_corr                   1.000000 -> 1.000000
+      SPECTRAL      /controls[1]/metrics/spectral_corr                   0.854046 -> 0.740722
+      SPECTRAL      /controls[2]/metrics/spectral_corr                   0.973332 -> 0.987404
+      SPECTRAL      ontrols[3]/benign_stimulus_leg/metrics/spectral_corr 0.999901 -> 0.999292
+      SPECTRAL      /controls[3]/metrics/spectral_corr                   0.982879 -> 0.975438
+      SPECTRAL      /controls[4]/metrics/a/spectral_corr                 0.959869 -> 0.955069
+      SPECTRAL      /controls[4]/metrics/b/spectral_corr                 0.898024 -> 0.891233
+  reports/SXT-028f/negative-controls/negative-controls.json   [DEFINITION=3, SPECTRAL=2]
+      SPECTRAL       generic substitute (ADAPTED)]/metrics/spectral_corr 0.608120 -> 0.604250
+      SPECTRAL      er (slot-content permutation)]/metrics/spectral_corr 0.975943 -> 0.977083
+  reports/SXT-038/artifacts/budget-summary.json   [RENAME-#165=2]
+  reports/SXT-038/artifacts/compare-brass.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-chords-clean.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-chords-std.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-edges-cut-hi.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-edges-cut-lo.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-edges-reso1.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-edges-toggle.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-edges.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-major7mk2.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-phase1-substd.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-038/artifacts/compare-phase1.json   [DEFINITION=1, RENAME-#165=10]
+  reports/SXT-039/artifacts/budget-chords.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-cut-hi.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-cut-lo.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-disturb.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-hot.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-king-b1.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-king-b2.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-reso1.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-sub12db.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-sub18db.json   [DEFINITION=1, RENAME-#165=3]
+  reports/SXT-039/artifacts/budget-toggle.json   [DEFINITION=1, RENAME-#165=3]
+  reports/sxt-037/artifacts/f038-102/budget-before-after.json   [RENAME-#165=49]
+
+VERDICT / CONTROL-STATUS FLIPS (0)
+
+CARRY spectral_corr BUT NOT REGENERATED (114)
+  reports/SXT-028c/artifacts/compare-alienappears__seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-028c/artifacts/compare-alienappears__seq-poly-8-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-028c/artifacts/compare-fmcombo__seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-028c/artifacts/compare-fmcombo__seq-poly-8-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-028c/artifacts/compare-fmtwang2__seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-028c/artifacts/compare-fmtwang2__seq-poly-8-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-028e-sse/negative-controls/negative-controls.json -- STALE-AFTER-#165: the SSE controls reuse distortion_negative_controls.metrics, which now grades the SHARED #110 definition, but this record's metric fields are exact only under the glibc environment it declares (#243); regenerating it on a different libm would republish 43 non-spectral max/rms fields, which is not #165's change. glibc-host re-run routed to #270
+  reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-horn-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-tentacles-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/nc-submode-confusion-crush.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-033/artifacts/nc-submode-confusion-horn.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-034/artifacts/nc1-collapsed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-034/artifacts/nc1-diff-vs-true.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-034/artifacts/nc2-detune-zeroed.json -- STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)
+  reports/SXT-034/artifacts/nc2-diff-vs-true.json -- STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)
+  reports/SXT-034/artifacts/uni1-rep.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-034/artifacts/uni16-smoke.json -- STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host
+  reports/SXT-034/artifacts/uni2-cov.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-034/artifacts/uni2-poly.json -- STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host
+  reports/SXT-034/artifacts/uni4-rep.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/budget-badnews-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/budget-badnews-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/budget-tentacles-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/budget-tentacles-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/nc-classic-substitution.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-040/artifacts/nc-shape-migration.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-baseline.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/audio-nc-source-swap-velocity.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/SXT-042/artifacts/negative-controls.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/halfband-branch-order/artifacts/before-after-fixtures.json -- HISTORICAL: #146 before/after measurement (no committed producing tool; the b_even renders are not committed); values are pre-#110 by construction and are not a current verdict
+  reports/halfband-republication/artifacts/republication-record.json -- HISTORICAL: #145 before/after republication record (legacy-metric spectral values quoted as the measurements #145 made; not a current verdict)
+  reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/shared-comparator-tail-gate/artifacts/tailgate-full-tail-within-budget.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/shared-comparator-tail-gate/artifacts/tailgate-truncate-at-tail-start.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/checks-summary.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/control-drop-full-tail-fmcombo.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-alienappears.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/spectral-corr-sweep.json -- HISTORICAL: #100 leg 4 characterization of the LEGACY metric (the runner now calls spectral_corr_legacy_log1p explicitly)
+  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-fm_bass_1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-022/artifacts/audio-seq-modwheel-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32both-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32lag-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32lag-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32table-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k0.9-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k0.95-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k1.05-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-lfosamedir-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-lfosamedir-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomod-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomod-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomodf32lag-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nowidth-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nowidth-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-slowrate-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-tgtlag1-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/budget-diagnosis/diag-tgtlag1-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/nc-b/nc-b-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts-followup/nc-b/nc-b-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts/audio-dexie.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts/audio-fm_bass_1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-023/artifacts/audio-metallic.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-025/artifacts/compare__sxt025-accept-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-025/artifacts/compare__sxt025-smoke-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-025/negative-controls/nc-a-sxt025-accept-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-025/negative-controls/nc-a-sxt025-smoke-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-026/artifacts/budget-metrics.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-026a/artifacts/compare__sxt025-accept-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-028a/artifacts/compare-fmod09__seq-notes-coverage-v1.json -- STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270
+  reports/sxt-028a/artifacts/compare-fmod09__seq-poly-8-v1.json -- STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270
+  reports/sxt-028a/artifacts/compare-temple__seq-notes-coverage-v1.json -- STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270
+  reports/sxt-028a/artifacts/compare-temple__seq-poly-8-v1.json -- STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270
+  reports/sxt-028a/artifacts/compare-unity__seq-notes-coverage-v1.json -- STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270
+  reports/sxt-028a/artifacts/compare-unity__seq-poly-8-v1.json -- STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270
+  reports/sxt-032/artifacts/audio-coverage.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-holds.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-modwheel.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-nc-free-running.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-nc-reso-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-nc-source-swap.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-032/artifacts/audio-repeated.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-nc-baseline.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-nc-reso-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-nc-vca-zeroed.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-seq-modwheel-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+  reports/sxt-035/artifacts/negative-controls.json -- UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md
+
+UNEXPLAINED diffs: 0

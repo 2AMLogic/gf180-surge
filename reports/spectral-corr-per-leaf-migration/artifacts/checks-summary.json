@@ -1,0 +1,55 @@
+{
+  "issue": 165,
+  "legs": {
+    "migration_diff_and_flips": {
+      "leg": 3,
+      "status": "PASS",
+      "artifact": "migration-flips",
+      "run_utc": "2026-10-01T05:32:03Z"
+    },
+    "l2_rename_value_preservation": {
+      "leg": 4,
+      "status": "PASS",
+      "artifact": "l2-rename",
+      "run_utc": "2026-10-01T05:32:03Z"
+    },
+    "rename_tool_idempotency": {
+      "leg": 6,
+      "status": "PASS",
+      "artifact": "rename-idempotency",
+      "run_utc": "2026-10-01T05:32:03Z"
+    },
+    "single_definition_scan": {
+      "leg": 1,
+      "status": "PASS",
+      "artifact": "single-definition-scan",
+      "run_utc": "2026-10-01T05:32:03Z"
+    },
+    "migrated_rerun_reproduction": {
+      "leg": 2,
+      "status": "PASS",
+      "artifact": "migrated-rerun",
+      "run_utc": "2026-10-01T05:32:03Z"
+    },
+    "l2_producer_rerun": {
+      "leg": 5,
+      "status": "PASS",
+      "artifact": "l2-producer-rerun",
+      "run_utc": "2026-10-01T05:32:03Z"
+    }
+  },
+  "run_utc": "2026-10-01T05:32:03Z",
+  "repo_head": "b21c7e2b5c371e356d2832cbd80c8c01f649733c",
+  "base_rev": "dbd8df0ef6b6b498f08cb3f31e50b6851bfb4a11",
+  "numpy": "2.4.2",
+  "shared_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "claim_scope": "metric naming/definition consistency over the measurement tooling; no fidelity, RTL, support or sound claim",
+  "legs_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ]
+}

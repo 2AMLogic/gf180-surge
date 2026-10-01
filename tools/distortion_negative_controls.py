@@ -7,6 +7,16 @@ SCOPE OF THE CHECK BEING TARGETED. The controls below are graded at the
 <= -46 dBFS; spectral correlation >= 0.98). Those budgets are PROPOSALS, not
 frozen policy (freeze is gated on SXT-017, #12).
 
+`spectral_corr` is the SHARED full-scale log-floor definition of issue #110
+(`compare_audio_reference.spectral_corr`, Q10.21 full scale FULL_SCALE_LSB),
+adopted here by issue #165 so that the 0.98 budget means one thing in every
+tool that grades it. Every emitted record carries the
+`spectral_corr_definition` stamp; a value in a record WITHOUT that stamp is
+pre-#110 (native-unit `log1p`, per-leaf 1024-sample frames) and must not be
+compared with the ones this tool now writes. This module is also loaded
+directly by tools/distortion_sse_negative_controls.py, which reuses these
+`metrics`/`spectral_corr`, so SXT-028e-sse grades the same definition.
+
 Grading at the model boundary rather than against the pinned engine is a
 DELIBERATE, DECLARED limitation of this record, not a substitute claim: the
 pinned oracle is not reachable in this environment, so the reference leg of
@@ -51,6 +61,9 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
+sys.path.insert(0, os.path.join(REPO, "tools"))
+
+import compare_audio_reference as car  # noqa: E402
 
 from distortion_model import (  # noqa: E402
     DistortionModel, DistortionParams, model_revision, BLOCK, RINGOUT_TIME,
@@ -310,23 +323,33 @@ def rms_dbfs(rms_lsb):
     return max(20 * math.log10(rms_lsb / FULL_SCALE_LSB), RMS_FLOOR_DBFS)
 
 
-def spectral_corr(a, b, frame=1024):
-    n = min(len(a), len(b))
-    if n < frame:
-        return 1.0 if all(abs(x - y) < 1e-12 for x, y in zip(a, b)) else 0.0
-    try:
-        import numpy as np
-    except ImportError:
-        return float("nan")
-    aa = np.asarray(a[:n // frame * frame], dtype=float).reshape(-1, frame)
-    bb = np.asarray(b[:n // frame * frame], dtype=float).reshape(-1, frame)
-    win = np.hanning(frame)
-    ra = np.log1p(np.abs(np.fft.rfft(aa * win, axis=1))).ravel()
-    rb = np.log1p(np.abs(np.fft.rfft(bb * win, axis=1))).ravel()
-    ra = ra - ra.mean()
-    rb = rb - rb.mean()
-    d = math.sqrt(float((ra * ra).sum()) * float((rb * rb).sum()))
-    return float((ra * rb).sum() / d) if d > 0 else 0.0
+def spectral_corr(a, b, frame=car.SPECTRAL_CORR_FRAME):
+    """The SHARED `spectral_corr` definition (issue #110, migrated by #165).
+
+    These controls grade the same `spectral_corr >= 0.98` effect-slice budget
+    as the comparators #110 migrated, so they use the same definition rather
+    than a per-leaf copy: `compare_audio_reference.spectral_corr` with the
+    declared full scale of THIS bus. The renders here are in Q10.21 LSB
+    units, whose declared full scale is `FULL_SCALE_LSB` (2^20) -- the same
+    constant this file's `rms_diff_dbfs` is referenced to, so the shared
+    definition's -100 dBFS/bin floor means the same dBFS here as in every
+    other tool.
+
+    Two declared changes from the retired per-leaf copy, both #165's:
+      * the magnitude is referenced to full scale and floored at
+        -100 dBFS/bin instead of the native-unit `log1p(|X|)`, whose log knee
+        sat at one Q10.21 LSB on this bus;
+      * the frame is the shared 4096, not the per-leaf 1024. Over the 6144-
+        sample control render that is one graded frame instead of six; the
+        measured effect on every control is recorded in
+        reports/SXT-028e/EVIDENCE.md.
+
+    numpy is a hard requirement of the shared definition. The pre-#165 copy
+    returned NaN without it and `verdict()` then IGNORED the spectral leg
+    (a leg that did not run, graded as a pass); now a missing numpy fails
+    this tool at import and `verdict()` refuses a non-finite value outright.
+    """
+    return car.spectral_corr(a, b, full_scale=FULL_SCALE_LSB, frame=frame)
 
 
 def metrics(ref_lsb, var_lsb):
@@ -336,14 +359,19 @@ def metrics(ref_lsb, var_lsb):
     rms = math.sqrt(sum(d * d for d in diffs) / n) if n else 0.0
     return {"frames": n, "max_abs_diff_lsb": mx, "rms_diff_lsb": rms,
             "rms_diff_dbfs": rms_dbfs(rms),
-            "spectral_corr": spectral_corr(ref_lsb, var_lsb)}
+            "spectral_corr": spectral_corr(ref_lsb, var_lsb),
+            "spectral_corr_definition": car.SPECTRAL_CORR_DEFINITION}
 
 
 def verdict(m):
+    # The spectral leg FAILS CLOSED on a non-finite value (#165). Before the
+    # migration a NaN (numpy absent) was treated as "ignore", i.e. a leg that
+    # never ran counted as a pass -- exactly what AGENTS.md forbids.
+    corr = m["spectral_corr"]
+    spectral_ok = corr == corr and corr >= PROPOSED["spectral_corr_min"]
     ok = (m["max_abs_diff_lsb"] <= PROPOSED["max_abs_diff_lsb"]
           and m["rms_diff_dbfs"] <= PROPOSED["rms_diff_dbfs"]
-          and (m["spectral_corr"] != m["spectral_corr"]      # NaN -> ignore
-               or m["spectral_corr"] >= PROPOSED["spectral_corr_min"]))
+          and spectral_ok)
     return "PASS" if ok else "FAIL"
 
 

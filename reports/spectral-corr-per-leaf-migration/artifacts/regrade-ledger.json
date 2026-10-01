@@ -1,0 +1,2134 @@
+{
+  "issue": 110,
+  "base_rev": "dbd8df0ef6b6b498f08cb3f31e50b6851bfb4a11",
+  "regenerated": [
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "class_counts": {
+        "SPECTRAL": 7,
+        "DEFINITION": 7
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/controls[0]/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9999999954022704,
+          "new": 0.9999999755890889
+        },
+        {
+          "key": "/controls[0]/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[1]/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8540460697030138,
+          "new": 0.7407222974603241
+        },
+        {
+          "key": "/controls[1]/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[2]/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9733324107670269,
+          "new": 0.9874039495133717
+        },
+        {
+          "key": "/controls[2]/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[3]/benign_stimulus_leg/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.999901190065928,
+          "new": 0.9992924426115927
+        },
+        {
+          "key": "/controls[3]/benign_stimulus_leg/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[3]/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9828794565692054,
+          "new": 0.9754381473054824
+        },
+        {
+          "key": "/controls[3]/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[4]/metrics/a/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9598694846071596,
+          "new": 0.9550690703931674
+        },
+        {
+          "key": "/controls[4]/metrics/a/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[4]/metrics/b/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8980238940265071,
+          "new": 0.8912333068262983
+        },
+        {
+          "key": "/controls[4]/metrics/b/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-028f/negative-controls/negative-controls.json",
+      "class_counts": {
+        "DEFINITION": 3,
+        "SPECTRAL": 2
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/baseline_self_agreement/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[NC-A generic substitute (ADAPTED)]/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.6081198110903903,
+          "new": 0.6042503694097767
+        },
+        {
+          "key": "/controls[NC-A generic substitute (ADAPTED)]/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        },
+        {
+          "key": "/controls[NC-C wrong order (slot-content permutation)]/metrics/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.975942636034437,
+          "new": 0.9770827642580476
+        },
+        {
+          "key": "/controls[NC-C wrong order (slot-content permutation)]/metrics/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/budget-summary.json",
+      "class_counts": {
+        "RENAME-#165": 2
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-brass.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999559
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.999559,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": true,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-chords-clean.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.996389
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.996389,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-chords-std.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999013
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.999013,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": true,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-cut-hi.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999966
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.999966,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": true,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-cut-lo.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.995239
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.995239,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-reso1.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999994
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.999994,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": true,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-toggle.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.988093
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.988093,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.976284
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.976284,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-major7mk2.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.988803
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.988803,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-phase1-substd.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999111
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": true
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.999111,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": true,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-phase1.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/budgets/l2_spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/budgets/spectral_corr_min",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/l2_spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.993546
+        },
+        {
+          "key": "/l2_spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999
+        },
+        {
+          "key": "/l2_spectral_corr/definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/l2_spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/l2_spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": false
+        },
+        {
+          "key": "/spectral_corr/achieved",
+          "class": "RENAME-#165",
+          "old": 0.993546,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/budget",
+          "class": "RENAME-#165",
+          "old": 0.999,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/gating",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        },
+        {
+          "key": "/spectral_corr/pass",
+          "class": "RENAME-#165",
+          "old": false,
+          "new": "<absent>"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-chords.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9996281983126097
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9996281983126097,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-cut-hi.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9925717089960324
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9925717089960324,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-cut-lo.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.0
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-disturb.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9974810797357121
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9974810797357121,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-hot.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9964836524407864
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9964836524407864,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-king-b1.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9948084113971135
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9948084113971135,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-king-b2.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9909148559829255
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9909148559829255,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-reso1.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.999028773876725
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.999028773876725,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-sub12db.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9933864041683445
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9933864041683445,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-sub18db.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9927744867389694
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9927744867389694,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-toggle.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9921673496846412
+        },
+        {
+          "key": "/L2_audio_q1021/l2_spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
+        },
+        {
+          "key": "/L2_audio_q1021/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9921673496846412,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    },
+    {
+      "artifact": "reports/sxt-037/artifacts/f038-102/budget-before-after.json",
+      "class_counts": {
+        "RENAME-#165": 49
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/L2a/after_f038_3/badnews-reso1/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9875
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-reso1/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9875,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9408
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9408,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane1/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.5807
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane1/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.5807,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane2/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 1.0
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane2/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 1.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane3/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 1.0
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews-toggle/unit1.lane3/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 1.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9514
+        },
+        {
+          "key": "/L2a/after_f038_3/badnews/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9514,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/rainy/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9944
+        },
+        {
+          "key": "/L2a/after_f038_3/rainy/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9944,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3/t9/unit2.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.996
+        },
+        {
+          "key": "/L2a/after_f038_3/t9/unit2.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.996,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-reso1/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9876
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-reso1/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9876,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9408
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9408,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane1/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.5807
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane1/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.5807,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane2/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 1.0
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane2/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 1.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane3/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 1.0
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews-toggle/unit1.lane3/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 1.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9515
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/badnews/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9515,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/rainy/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9944
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/rainy/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9944,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/t9/unit2.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.996
+        },
+        {
+          "key": "/L2a/after_f038_3_and_4/t9/unit2.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.996,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/badnews-reso1/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9875
+        },
+        {
+          "key": "/L2a/before/badnews-reso1/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9875,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9408
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9408,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane1/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.5807
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane1/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.5807,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane2/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 1.0
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane2/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 1.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane3/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 1.0
+        },
+        {
+          "key": "/L2a/before/badnews-toggle/unit1.lane3/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 1.0,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/badnews/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9514
+        },
+        {
+          "key": "/L2a/before/badnews/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9514,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/rainy/unit1.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.9944
+        },
+        {
+          "key": "/L2a/before/rainy/unit1.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.9944,
+          "new": "<absent>"
+        },
+        {
+          "key": "/L2a/before/t9/unit2.lane0/l2_spectral_corr",
+          "class": "RENAME-#165",
+          "old": "<absent>",
+          "new": 0.996
+        },
+        {
+          "key": "/L2a/before/t9/unit2.lane0/spectral_corr",
+          "class": "RENAME-#165",
+          "old": 0.996,
+          "new": "<absent>"
+        },
+        {
+          "key": "/schema_version",
+          "class": "RENAME-#165",
+          "old": 1,
+          "new": 2
+        }
+      ]
+    }
+  ],
+  "verdict_flips": [],
+  "not_regenerated": [
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-alienappears__seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-alienappears__seq-poly-8-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmcombo__seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmcombo__seq-poly-8-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmtwang2__seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-028c/artifacts/compare-fmtwang2__seq-poly-8-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-028e-sse/negative-controls/negative-controls.json",
+      "reason": "STALE-AFTER-#165: the SSE controls reuse distortion_negative_controls.metrics, which now grades the SHARED #110 definition, but this record's metric fields are exact only under the glibc environment it declares (#243); regenerating it on a different libm would republish 43 non-spectral max/rms fields, which is not #165's change. glibc-host re-run routed to #270"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-crush-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-crush-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-edges-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-edges-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-horn-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-horn-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-crush.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-033/artifacts/nc-submode-confusion-horn.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc1-collapsed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc1-diff-vs-true.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc2-detune-zeroed.json",
+      "reason": "STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/nc2-diff-vs-true.json",
+      "reason": "STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni1-rep.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni16-smoke.json",
+      "reason": "STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni2-cov.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni2-poly.json",
+      "reason": "STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host"
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni4-rep.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-badnews-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-badnews-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-popcorn2k-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/budget-tentacles-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/nc-classic-substitution.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-040/artifacts/nc-shape-migration.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-baseline.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-cutoff-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-ignore-keytrack-root.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-probe-velocity-cutoff-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-shared-keytrack-word.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-source-swap-modwheel.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/audio-nc-source-swap-velocity.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/SXT-042/artifacts/negative-controls.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/halfband-branch-order/artifacts/before-after-fixtures.json",
+      "reason": "HISTORICAL: #146 before/after measurement (no committed producing tool; the b_even renders are not committed); values are pre-#110 by construction and are not a current verdict"
+    },
+    {
+      "artifact": "reports/halfband-republication/artifacts/republication-record.json",
+      "reason": "HISTORICAL: #145 before/after republication record (legacy-metric spectral values quoted as the measurements #145 made; not a current verdict)"
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail-second-preset.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-drop-full-tail.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-full-tail-within-budget.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-tail-decays-too-fast.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/shared-comparator-tail-gate/artifacts/tailgate-truncate-at-tail-start.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/checks-summary.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/control-drop-full-tail-fmcombo.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-alienappears.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/control-tail-decays-too-fast-fmcombo.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/spectral-corr-sweep.json",
+      "reason": "HISTORICAL: #100 leg 4 characterization of the LEGACY metric (the runner now calls spectral_corr_legacy_log1p explicitly)"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-fm_bass_1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/stereo-comparator-tail-gate/artifacts/sxt023-rerun/audio-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-022/artifacts/audio-seq-modwheel-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-022/artifacts/audio-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-022/artifacts/audio-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-base-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32both-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32lag-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32lag-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-f32table-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k0.9-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k0.95-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-k1.05-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-lfosamedir-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-lfosamedir-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomod-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomod-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nomodf32lag-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nowidth-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-nowidth-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-slowrate-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-tgtlag1-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/budget-diagnosis/diag-tgtlag1-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/nc-b/nc-b-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts-followup/nc-b/nc-b-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts/audio-dexie.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts/audio-fm_bass_1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-023/artifacts/audio-metallic.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-025/artifacts/compare__sxt025-accept-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-025/artifacts/compare__sxt025-smoke-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-025/negative-controls/nc-a-sxt025-accept-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-025/negative-controls/nc-a-sxt025-smoke-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-026/artifacts/budget-metrics.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-026a/artifacts/compare__sxt025-accept-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-fmod09__seq-notes-coverage-v1.json",
+      "reason": "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-fmod09__seq-poly-8-v1.json",
+      "reason": "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-temple__seq-notes-coverage-v1.json",
+      "reason": "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-temple__seq-poly-8-v1.json",
+      "reason": "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-unity__seq-notes-coverage-v1.json",
+      "reason": "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270"
+    },
+    {
+      "artifact": "reports/sxt-028a/artifacts/compare-unity__seq-poly-8-v1.json",
+      "reason": "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED #110 definition (float32 full scale 1.0), so every value in these six records is pre-#110 and must not be compared with #110 values. They are NOT re-graded here for two separate reasons, both recorded: (a) five of the six cases have no committed aw49 taps .npz (only temple__seq-notes-coverage-v1 does), so they cannot run on any host without the DR-0006 oracle renders; (b) ALL SIX -- including the runnable one -- carry model_frozen_revision 1901510e..., while the committed model's frozen_revision() is 569bff13... (the docs/byte-frozen-sources.json pin), so re-emitting one would also republish a model-revision change that is NOT #165's. The leaf must be republished as one set on the oracle host: routed to #270"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-coverage.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-holds.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-modwheel.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-cutoff-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-free-running.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-reso-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-nc-source-swap.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-032/artifacts/audio-repeated.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-baseline.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-cutoff-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-reso-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-smoothing-bypass.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-source-swap-lfo.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-nc-vca-zeroed.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-seq-modwheel-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-seq-notes-coverage-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/audio-seq-notes-repeated-v1.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    },
+    {
+      "artifact": "reports/sxt-035/artifacts/negative-controls.json",
+      "reason": "UNTOUCHED: graded by a migrated comparator but NOT regenerated -- must be explained in EVIDENCE.md"
+    }
+  ],
+  "unexplained": []
+}
