@@ -59,7 +59,16 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     list that exists on disk and in no commit answers nothing — the same row
     staged as well does, an ordinary file's divergence does not open a second
     answer set, and a bookkeeping edit that changes no answer is disclosed and
-    produces nothing.
+    produces nothing,
+  - the EVIDENCE a bookkeeping judgement reads out of an entry is held to the
+    same standard, with the bookkeeping itself agreeing in both views: a
+    declared carrier staged with its provenance statement stripped (or staged
+    uncited and then deleted from disk) no longer corroborates its row, and a
+    citation of a nonexistent record staged and then cleaned off disk still
+    resolves against nothing — while the same two defects on disk only keep
+    firing unlabelled, a divergent carrier that states its provenance in both
+    views is read in both and flagged in neither, and a declared binary
+    payload, which has no text in either view, is disclosed rather than read.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -2607,3 +2616,221 @@ def test_fixture_manifest_patches_are_staged_by_default(tmp_path):
         "the fixture left its own answer unstaged"
     )
     assert not findings, [f.as_dict() for f in findings]
+
+
+# --- the EVIDENCE a bookkeeping judgement reads (increment 16) ------------------
+#
+# Increment 14 moved group 4 onto both byte views of an entry; increment 15
+# moved the four groups' ANSWER SET onto the committable bookkeeping. Neither
+# reached the two places where a BOOKKEEPING group reads an ENTRY's own content
+# as the evidence for its judgement — `check_citations` (group 2) and a
+# provenance row's corroboration (group 3). Both read the tree's default view
+# alone, and neither increment's trigger covers them: group 4 enumerates views
+# for its own rules, and the committable pass fires only when
+# `decision-records/` diverges, which it does not when the divergent entry is
+# the CARRIER.
+#
+# Every must-fire case below therefore audited PASS on increment 15's tool, with
+# the carrier disclosed as divergent and found clean by group 4 — correctly,
+# because the staged bytes carry no carriage signal. The defect is in what
+# answers the bookkeeping, not in what the bytes carry.
+
+
+def _evidence_tree(tmp_path, label):
+    """A clean skeleton, fully staged, with no bookkeeping divergence at all."""
+    root = _discovery_tree(tmp_path, label)
+    cp._stage_all(root)
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["divergent_bookkeeping_files"] == []
+    return root
+
+
+def _restage(root, rel, staged, working):
+    """Put `staged` in the index and `working` (or nothing) on disk."""
+    cp._write(root, rel, staged)
+    cp._git(root, "add", "-f", rel)
+    if working is None:
+        (root / rel).unlink()
+    else:
+        cp._write(root, rel, working)
+
+
+def test_a_row_corroborated_only_by_the_copy_on_disk_is_flagged(tmp_path):
+    """The finding this increment exists for.
+
+    The row is staged, well-formed and identical in both views. Only the
+    CARRIER diverges — and the bytes a commit publishes cite neither its
+    decision record nor its pinned commit, so the published row describes a
+    file that states no provenance at all.
+    """
+    root = _evidence_tree(tmp_path, "evidence-row-on-disk-only")
+    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cp.FIXTURE_UNCITED_CARRIER, cp.SKELETON_CARRIER)
+
+    findings, stats = cp.audit(root)
+    fired = [f for f in findings if f.rule == "manifest-uncorroborated" and f.path == rel]
+    assert fired, [f.as_dict() for f in findings]
+    # The defect is NOT an answer-set divergence: the committable pass never ran.
+    assert stats["divergent_bookkeeping_files"] == []
+    assert stats["committed_answer_set_findings"] == 0
+    assert rel in stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    assert rel in stats["staged_views_read_as_bookkeeping_evidence"]
+    assert any("STAGED" in f.detail for f in fired), [f.as_dict() for f in fired]
+
+
+def test_a_row_whose_only_published_carrier_was_deleted_from_disk_is_flagged(tmp_path):
+    """The shape whose working-tree view used to answer for the staged one.
+
+    `tree.text()` returns None for a path that is not on disk, and the
+    pre-increment `_corroborate` read exactly one view and returned [] on None —
+    so the only bytes a commit publishes were read by no bookkeeping check.
+    """
+    root = _evidence_tree(tmp_path, "evidence-carrier-deleted")
+    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cp.FIXTURE_UNCITED_CARRIER, None)
+
+    findings, stats = cp.audit(root)
+    fired = [f for f in findings if f.rule == "manifest-uncorroborated" and f.path == rel]
+    assert fired, [f.as_dict() for f in findings]
+    assert rel in stats["staged_entries_absent_from_the_working_tree"]
+    assert rel in stats["staged_views_read_as_bookkeeping_evidence"]
+
+
+def test_a_record_citation_only_in_the_staged_bytes_must_resolve(tmp_path):
+    """A citation published by the index is still published."""
+    root = _evidence_tree(tmp_path, "evidence-staged-citation")
+    rel = cp.FIXTURE_EVIDENCE_DOC_REL
+    _restage(
+        root,
+        rel,
+        cp.FIXTURE_DANGLING_CITATION,
+        cp.FIXTURE_EVIDENCE_INNOCUOUS_DOC,
+    )
+
+    findings, stats = cp.audit(root)
+    fired = [
+        f for f in findings if f.rule == "dangling-record-citation" and f.path == rel
+    ]
+    assert fired, [f.as_dict() for f in findings]
+    assert any("STAGED" in f.detail for f in fired), [f.as_dict() for f in fired]
+    assert stats["divergent_bookkeeping_files"] == []
+
+
+def test_the_working_tree_view_is_joined_not_replaced(tmp_path):
+    """The regression direction, for both checks at once.
+
+    A pre-commit run on an unstaged edit is what this audit is most used for.
+    Closing the staged hole by reading the index INSTEAD of the working tree
+    would open that one, so both defects are written on disk only here and must
+    still fire — and must not be mislabelled as staged content.
+    """
+    root = _evidence_tree(tmp_path, "evidence-worktree-still-fires")
+    doc = cp.FIXTURE_EVIDENCE_DOC_REL
+    carrier = cp.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, doc, cp.FIXTURE_EVIDENCE_INNOCUOUS_DOC, cp.FIXTURE_DANGLING_CITATION)
+    _restage(root, carrier, cp.SKELETON_CARRIER, cp.FIXTURE_UNCITED_CARRIER)
+
+    findings, _ = cp.audit(root)
+    for rule, rel in (
+        ("dangling-record-citation", doc),
+        ("manifest-uncorroborated", carrier),
+    ):
+        fired = [f for f in findings if f.rule == rule and f.path == rel]
+        assert fired, (rule, rel, [f.as_dict() for f in findings])
+        assert not any("STAGED" in f.detail for f in fired), [f.as_dict() for f in fired]
+
+
+def test_a_carrier_that_states_its_provenance_in_both_views_is_read_not_flagged(
+    tmp_path,
+):
+    """The positive control: an ordinary unstaged edit must stay silent.
+
+    Without it, "flag every divergent declared carrier" would pass the tests
+    above and the audit would be unusable on any tree being edited.
+    """
+    root = _evidence_tree(tmp_path, "evidence-both-views-cite")
+    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cp.SKELETON_CARRIER, cp.SKELETON_CARRIER + "\nEXTRA = [7]\n")
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert rel in stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    assert rel in stats["staged_views_read_as_bookkeeping_evidence"]
+
+
+def test_a_binary_payloads_row_is_corroborated_in_neither_view(tmp_path):
+    """"No text in this view, so the row is the record" stays a boundary.
+
+    It is now a per-view statement rather than a per-entry one, which is what
+    closed the deleted-carrier shape above. A payload that yields no text in
+    EITHER view must still be disclosed, not read, and not flagged — otherwise
+    every declared opaque asset becomes a finding the moment its bytes change.
+    """
+    root = _evidence_tree(tmp_path, "evidence-opaque-row")
+    rel = cp.FIXTURE_OPAQUE_ROW_REL
+    cp._write(root, rel, cp._float_dump(seed=11))
+    cp._patch_manifest(
+        root,
+        lambda d: d["entries"].append(
+            {
+                "path": rel,
+                "class": "quoted-constants",
+                "content": "synthetic opaque dump",
+                "upstream": "synthetic upstream",
+                "pinned_commit": cp.FIXTURE_SUBMODULE_COMMIT,
+                "upstream_license": "GPL-3.0-or-later",
+                "decision_record": "0001",
+            }
+        ),
+    )
+    cp._stage_all(root)
+    _restage(root, rel, cp._float_dump(seed=22), cp._float_dump(seed=33))
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert rel in stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    assert rel not in stats["staged_views_read_as_bookkeeping_evidence"]
+
+
+def test_entry_views_is_the_single_definition_of_the_view_set(tmp_path):
+    """Group 4 and the two bookkeeping checks must enumerate the same views.
+
+    Three copies of the same two lines is how one of them gets moved and the
+    others left behind — the shape of every mask this series has closed. The
+    enumeration `check_tripwires` performed inline is now `entry_views`, and
+    every entry in `staged_views` is in `files` by construction, so the per-entry
+    loop covers exactly what the two sequential loops did.
+    """
+    root = _evidence_tree(tmp_path, "evidence-one-enumeration")
+    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cp.SKELETON_CARRIER, cp.SKELETON_CARRIER + "\nEXTRA = [7]\n")
+    tree = cp.Tree(root, [])
+    assert set(tree.staged_views) <= set(tree.files)
+    assert cp.entry_views(tree, rel) == [cp.WORKTREE_VIEW, cp.STAGED_VIEW]
+    clean = next(r for r in tree.files if r not in tree.staged_views)
+    assert cp.entry_views(tree, clean) == [cp.WORKTREE_VIEW]
+
+
+def test_bookkeeping_evidence_coverage_is_printed_even_when_empty():
+    """"Both views agreed" and "only one view was read" must not look alike."""
+    proc = run_tool()
+    assert proc.returncode in (0, 1), proc.stdout + proc.stderr
+    assert "staged views read as BOOKKEEPING evidence" in proc.stdout
+
+
+def test_committable_evidence_boundary_is_declared_in_limits():
+    """A limit that is not printed is not declared."""
+    proc = run_tool("--limits")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "staged_views_read_as_bookkeeping_evidence" in proc.stdout
+
+
+def test_committable_evidence_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    cases = cp._committable_evidence_controls()
+    assert cases, "the committable-evidence controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cases:
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
