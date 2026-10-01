@@ -63,6 +63,17 @@ host/controller/DAC/storage.
   environment), RTL-vs-frozen-model (must be exact), and model-vs-reference
   (declared error budgets). Hardware audio captures need their own
   alignment/calibration procedure.
+- Some source files are **byte-frozen**: a sha256 over their exact bytes is
+  recorded in committed evidence and re-derived live by a test, so any edit --
+  including removing an unused import or reflowing whitespace -- turns a
+  committed PASS record STALE. `docs/byte-frozen-sources.md` is the registry
+  (machine-readable: `docs/byte-frozen-sources.json`, audited by
+  `tests/test_byte_frozen_sources.py`); it also separates those live pins from
+  one-shot `script_sha256` provenance stamps, which are historical and must not
+  be asserted live. Check it before acting on a lint finding in `model/`,
+  `tools/` or `fixtures/`: the findings in a live-pinned file are kept on
+  purpose, and removing one is only valid in the same change that re-derives
+  every record the registry lists.
 - Report verification statuses as PASS, FAIL, NOT_RUN, BLOCKED, NO_VERDICT,
   or STALE, and report coverage separately from agreement. A test that did
   not run must never be reported as a pass.

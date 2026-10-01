@@ -1,0 +1,277 @@
+{
+ "audit": "tests/test_byte_frozen_sources.py",
+ "claim": "Bookkeeping only: this registry says which source files have a sha256 of their bytes recorded in committed evidence, and which of those recordings are re-derived live. It establishes no RTL-exactness, model-vs-reference, or preset claim.",
+ "doc": "docs/byte-frozen-sources.md",
+ "historical_provenance": [
+  {
+   "current_bytes_recorded": false,
+   "path": "fixtures/render_fixture.py",
+   "stamped_field": "script_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "fixtures/render_lfo_fixture.py",
+   "stamped_field": "script_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "fixtures/render_mw_fixture.py",
+   "stamped_field": "script_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "tools/ablate_fx.py",
+   "stamped_field": "script_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "tools/ablation_delta.py",
+   "stamped_field": "script_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "tools/listening_session.py",
+   "stamped_field": "tool_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "tools/render_lp12_reference.py",
+   "stamped_field": "script_sha256"
+  },
+  {
+   "current_bytes_recorded": false,
+   "path": "tools/render_reverb_reference.py",
+   "stamped_field": "script_sha256"
+  }
+ ],
+ "historical_provenance_note": "script_sha256 / tool_sha256 is stamped once, at render time, into the record the script produced. It is NOT re-derived by any test, and superseded values are legitimately committed: as of this registry every one of these scripts has already drifted from the digests its records carry (current_bytes_recorded: false). A live-equality assertion on these would be wrong and would fail today. Editing one does not invalidate a record; it does mean the record's provenance digest no longer resolves to any file in the tree, so re-rendering is the only way to restore a resolvable stamp.",
+ "issue": "#254",
+ "live_pins": [
+  {
+   "covers": [
+    "model/effects/aw-4/logical4_model.py",
+    "model/effects/aw-4/tables.py"
+   ],
+   "freshness_test": "tests/test_sxt028k.py",
+   "leaf": "SXT-028k Airwindows Logical 4",
+   "mechanism": "self_hash",
+   "pin": "model/effects/aw-4/logical4_model.py::model_revision()",
+   "recorded_in": [
+    "model/effects/fx_inputs/aw-4-3x101.json",
+    "model/effects/fx_inputs/aw-4-acoustic-snare.json",
+    "model/effects/fx_inputs/aw-4-bass-guitar-5.json",
+    "model/effects/fx_inputs/aw-4-dad.json",
+    "model/effects/fx_inputs/aw-4-moogy-reese.json",
+    "reports/SXT-028k/artifacts/state-cost.json",
+    "reports/SXT-028k/artifacts/tail-window.json",
+    "reports/SXT-028k/negative-controls/negative-controls.json",
+    "reports/SXT-028k/negative-controls/negative-controls.txt",
+    "reports/SXT-028k/rtl-exactness.json"
+   ],
+   "recorded_word_in": [
+    "reports/SXT-028k/rtl-exactness.json"
+   ],
+   "revision_word": 943918787,
+   "sha256": "38430ec34b17507a168636d8c452a93d3f8f9598ae12c0e3f32cb13051bc9ef0"
+  },
+  {
+   "covers": [
+    "model/effects/aw-49/galactic_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028a.py",
+   "leaf": "SXT-028a Airwindows Galactic (id 49)",
+   "mechanism": "self_hash",
+   "pin": "model/effects/aw-49/galactic_model.py::frozen_revision()",
+   "recorded_in": [
+    "reports/sxt-028a/rtl-exactness.json"
+   ],
+   "recorded_word_in": [
+    "reports/sxt-028a/negative-controls/negative-controls.json",
+    "reports/sxt-028a/rtl-exactness.json"
+   ],
+   "revision_word": 1453063955,
+   "sha256": "569bff13caa7dad88d88cd185bfb024974b2fc3ec7566d5b7840dd828ca5c0cd"
+  },
+  {
+   "covers": [
+    "model/effects/rf-rf-ains34/rf_ains34_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028i.py",
+   "leaf": "SXT-028i rf-ains34",
+   "mechanism": "self_hash",
+   "pin": "model/effects/rf-rf-ains34/rf_ains34_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028i/negative-controls/negative-controls.json",
+    "reports/SXT-028i/rtl-exactness.json"
+   ],
+   "sha256": "50e671933c3edc28220b9a94248744e31c11050b9cd4c2fd78ff0bd832ac03e0"
+  },
+  {
+   "covers": [
+    "model/effects/rf-rf-bins12/rf_bins12_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028h.py",
+   "leaf": "SXT-028h rf-bins12",
+   "mechanism": "self_hash",
+   "pin": "model/effects/rf-rf-bins12/rf_bins12_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028h/negative-controls/negative-controls.json",
+    "reports/SXT-028h/rtl-exactness.json"
+   ],
+   "sha256": "a6089ce4e1663aa68e8628dcef3c407380931ac48d6ca8b5fb2aea29e7c54a7e"
+  },
+  {
+   "covers": [
+    "model/effects/rf-rf-global2/rf_global2_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028d.py",
+   "leaf": "SXT-028d rf-global2",
+   "mechanism": "self_hash",
+   "pin": "model/effects/rf-rf-global2/rf_global2_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028d/negative-controls/negative-controls.json",
+    "reports/SXT-028d/rtl-exactness.json"
+   ],
+   "sha256": "d8ac909c2fc2b72d3cfef7252420d02fa5373ab57935a5f634272afa5cf020b5"
+  },
+  {
+   "covers": [
+    "model/effects/rf-rf-global34/rf_global34_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028j.py",
+   "leaf": "SXT-028j rf-global34",
+   "mechanism": "self_hash",
+   "pin": "model/effects/rf-rf-global34/rf_global34_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028j/artifacts/state-cost.json",
+    "reports/SXT-028j/negative-controls/negative-controls.json",
+    "reports/SXT-028j/rtl-exactness.json"
+   ],
+   "sha256": "47d44bce92de29502689f9324420d07621455e3410eb8bcd93378e5a0bbd23fc"
+  },
+  {
+   "covers": [
+    "model/effects/rf-rf-send34/rf_send34_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028l.py",
+   "leaf": "SXT-028l rf-send34",
+   "mechanism": "self_hash",
+   "pin": "model/effects/rf-rf-send34/rf_send34_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028l/artifacts/state-cost.json",
+    "reports/SXT-028l/negative-controls/negative-controls.json",
+    "reports/SXT-028l/rtl-exactness.json"
+   ],
+   "sha256": "d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23"
+  },
+  {
+   "covers": [
+    "model/effects/type-chorus/chorus_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028c.py",
+   "leaf": "SXT-028c Chorus",
+   "mechanism": "self_hash",
+   "pin": "model/effects/type-chorus/chorus_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028c/rtl-exactness.json"
+   ],
+   "sha256": "7deb47c855c8041bf24335d966300a5b8607fcc89d857e75ff974d86bd55994c"
+  },
+  {
+   "covers": [
+    "model/effects/type-conditioner/conditioner_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028b.py",
+   "leaf": "SXT-028b Conditioner",
+   "mechanism": "self_hash",
+   "pin": "model/effects/type-conditioner/conditioner_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028b/artifacts/buffer-requirement.json",
+    "reports/SXT-028b/negative-controls/negative-controls.json",
+    "reports/SXT-028b/rtl-exactness.json"
+   ],
+   "sha256": "1d2300436062b1b7c1e8f34a121e6dcf61194ceb2ba35dc189573e4278fbcc15"
+  },
+  {
+   "covers": [
+    "model/effects/type-distortion-sse/sse_tables.py",
+    "model/effects/type-distortion-sse/quad_shapers.py",
+    "model/effects/type-distortion-sse/distortion_sse_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028e_sse.py",
+   "leaf": "SXT-028e-sse Distortion (SSE quad shapers)",
+   "mechanism": "self_hash",
+   "pin": "model/effects/type-distortion-sse/distortion_sse_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028e-sse/artifacts/buffer-requirement.json",
+    "reports/SXT-028e-sse/negative-controls/negative-controls.json",
+    "reports/SXT-028e-sse/negative-controls/negative-controls.txt",
+    "reports/SXT-028e-sse/rtl-exactness.json"
+   ],
+   "sha256": "b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b"
+  },
+  {
+   "covers": [
+    "model/effects/type-distortion/distortion_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028e.py",
+   "leaf": "SXT-028e Distortion",
+   "mechanism": "self_hash",
+   "pin": "model/effects/type-distortion/distortion_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028e/artifacts/buffer-requirement.json",
+    "reports/SXT-028e/negative-controls/negative-controls.json",
+    "reports/SXT-028e/negative-controls/negative-controls.txt",
+    "reports/SXT-028e/rtl-exactness.json"
+   ],
+   "sha256": "0ee06a48cbff15c2df1f19c08b1485ba5a247e6fa162ddf58b211afaca8c3d67"
+  },
+  {
+   "covers": [
+    "model/effects/type-phaser/phaser_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028g.py",
+   "leaf": "SXT-028g Phaser",
+   "mechanism": "self_hash",
+   "pin": "model/effects/type-phaser/phaser_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028-rng/negative-controls/negative-controls.json",
+    "reports/SXT-028-rng/negative-controls/negative-controls.txt",
+    "reports/SXT-028g/artifacts/buffer-requirement.json",
+    "reports/SXT-028g/negative-controls/negative-controls.json",
+    "reports/SXT-028g/rtl-exactness.json"
+   ],
+   "sha256": "7726b5f8182c72a27ce9b06f90a8196077ff2ee5978d2e742d673683a4ee5cae"
+  },
+  {
+   "covers": [
+    "model/effects/type-reverb 2/reverb2_model.py"
+   ],
+   "freshness_test": "tests/test_sxt028f.py",
+   "leaf": "SXT-028f Reverb 2",
+   "mechanism": "self_hash",
+   "pin": "model/effects/type-reverb 2/reverb2_model.py::model_revision()",
+   "recorded_in": [
+    "reports/SXT-028f/artifacts/buffer-requirement.json",
+    "reports/SXT-028f/negative-controls/negative-controls.json",
+    "reports/SXT-028f/rtl-exactness.json"
+   ],
+   "sha256": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee"
+  },
+  {
+   "covers": [
+    "fixtures/control/sequences/generate_control_sequences.py"
+   ],
+   "freshness_test": "tests/test_sxt021_control.py",
+   "leaf": "SXT-021 control plane fixtures",
+   "mechanism": "manifest_entry",
+   "pin": "fixtures/control/manifest.json::files[fixtures/control/sequences/generate_control_sequences.py]",
+   "recorded_in": [
+    "fixtures/control/manifest.json"
+   ],
+   "sha256": "71597ed06180e29c47c88bccc445346f4ae8ed06f00b6373fa14c8eccd466a28"
+  }
+ ],
+ "live_pins_note": "A live pin is re-derived from the current bytes every time its freshness test runs, so any edit -- including whitespace or a comment -- turns a committed PASS record STALE. Editing a covered file requires re-running that leaf's comparator/control tooling and re-committing every record listed in recorded_in, in the same change.",
+ "schema_version": 1
+}
