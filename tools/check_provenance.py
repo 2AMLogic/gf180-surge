@@ -650,19 +650,26 @@ def _wrapped_holder_match(text, notice_match):
     Called only for a notice already judged ours: a wrapped holder list puts the
     second holder on the next line, where no notice keyword stands to raise the
     signal on its own.
+
+    The returned match is searched against `text` with ABSOLUTE offsets, bounded
+    to the continuation line. `Finding` carries no line number, so the caller's
+    `_snippet(text, match)` is the finding's only locator: a match computed
+    against the line slice would be indexed into `text` at line-relative offsets
+    and quote unrelated bytes from the top of the file.
     """
     cursor = text.find("\n", notice_match.end())
     while cursor != -1:
         start = cursor + 1
         end = text.find("\n", start)
-        line = text[start : len(text) if end == -1 else end]
+        line_end = len(text) if end == -1 else end
+        line = text[start:line_end]
         continuation = HOLDER_CONTINUATION_RE.match(line)
         if not continuation:
             return None
         if COPYRIGHT_RE.search(line) or YEARLESS_COPYRIGHT_RE.search(line):
             return None  # a notice of its own; the normal scan judges it
         if not own_copyright_holder(line, continuation.end()):
-            return HOLDER_WORD_RE.search(line, continuation.end())
+            return HOLDER_WORD_RE.search(text, start + continuation.end(), line_end)
         cursor = end
     return None
 
@@ -2265,7 +2272,7 @@ OWN_ONLY_REL = "model/own_header_only.py"
 
 
 def _masking_controls():
-    """[(label, expected rule or None, expected path, description, mutator)].
+    """[(label, expected rule or None, expected path, description, mutator[, in_detail])].
 
     `foreign-license-text` cannot be exempted, so the only way to disarm it is
     to make it stop firing. These controls pin the two ways that happened —
@@ -2451,11 +2458,20 @@ def _masking_controls():
             lambda root: _write(root, MASKED_REL, FIXTURE_YEARLESS_FOREIGN_COPYRIGHT),
         ),
         (
+            # The notice is written BELOW a filler pad on purpose. `Finding`
+            # carries no line number, so the finding's `detail` snippet is its
+            # only locator -- and a wrapped-holder match computed at
+            # line-relative offsets quotes the right bytes only while the notice
+            # sits at the top of the file. The pad makes the offsets diverge, and
+            # the expected-detail substring below is what fails on a regression.
             "masking/foreign-holder-on-a-wrapped-continuation-line",
             "foreign-license-text",
             MASKED_REL,
             "a holder list wrapped onto a continuation line with no keyword",
-            lambda root: _write(root, MASKED_REL, FIXTURE_WRAPPED_HOLDER_LIST),
+            lambda root: _write(
+                root, MASKED_REL, FIXTURE_FILLER + FIXTURE_WRAPPED_HOLDER_LIST
+            ),
+            "Chris Johnson / Airwindows",
         ),
         (
             "masking/our-own-notice-with-rights-reserved-passes",
@@ -2525,27 +2541,52 @@ def _masking_controls():
 
 
 def _run_case_controls(tmp_root: Path, prefix, cases):
-    """Run (label, expected, path, description, mutate) cases; [(label, ok, detail)]."""
+    """Run (label, expected, path, description, mutate[, in_detail]) cases.
+
+    Returns [(label, ok, detail)]. The optional sixth element `in_detail` is a
+    substring the firing finding's own `detail` must contain. It exists because
+    `Finding` carries no line number: the `detail` snippet is the only locator a
+    human has for answering a finding, and `foreign-license-text` cannot be
+    exempted -- so a control that checks only `rule`/`path` would pass on a
+    finding whose evidence points at the wrong bytes.
+    """
     results = []
-    for index, (label, expected, where, description, mutate) in enumerate(cases):
-        case = Path(tmp_root) / f"{prefix}-{index}"
-        case.mkdir()
-        build_skeleton(case)
-        mutate(case)
-        findings, _ = audit(case)
+    for index, case in enumerate(cases):
+        label, expected, where, description, mutate = case[:5]
+        in_detail = case[5] if len(case) > 5 else None
+        case_root = Path(tmp_root) / f"{prefix}-{index}"
+        case_root.mkdir()
+        build_skeleton(case_root)
+        mutate(case_root)
+        findings, _ = audit(case_root)
         found = ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing"
         if expected is None:
             passed = not findings
             detail = f"{description} -> " + ("audits clean" if passed else f"found {found}")
         else:
-            passed = any(
-                f.rule == expected and (where is None or f.path == where) for f in findings
-            )
+            matched = [
+                f
+                for f in findings
+                if f.rule == expected and (where is None or f.path == where)
+            ]
+            passed = bool(matched)
             detail = f"{description} -> " + (
                 f"{expected} fired on {where}"
                 if passed
                 else f"{expected} did NOT fire on {where} (found {found})"
             )
+            if passed and in_detail is not None:
+                quoting = [f for f in matched if in_detail in f.detail]
+                passed = bool(quoting)
+                if not passed:
+                    detail = (
+                        f"{description} -> {expected} fired on {where} but no "
+                        f"finding quoted {in_detail!r} (details: "
+                        + "; ".join(repr(f.detail) for f in matched)
+                        + ")"
+                    )
+                else:
+                    detail += f", quoting {in_detail!r}"
         results.append((label, passed, detail))
     return results
 

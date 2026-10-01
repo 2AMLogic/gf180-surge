@@ -534,6 +534,41 @@ def test_yearless_and_wrapped_notices_are_flagged(tmp_path):
         assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
 
 
+def test_wrapped_holder_finding_locates_the_offending_holder(tmp_path):
+    """The wrapped-holder finding's snippet must name the holder, at any depth.
+
+    `Finding` carries no line number, so `detail`'s snippet is the only locator a
+    human has -- and `foreign-license-text` cannot be exempted, so an
+    unanswerable finding could only be answered by switching the rule off.
+    `_wrapped_holder_match` therefore has to search the full text with ABSOLUTE
+    offsets: a match computed against the continuation-line slice quotes the
+    right bytes only while the notice happens to sit at the top of the file,
+    which is exactly what the unpadded fixture used to hide.
+    """
+    # Unit level: the match offsets must index `text`, not the line slice.
+    for pad_lines in (0, 1, 10, 40):
+        text = "x = 1\n" * pad_lines + cp.FIXTURE_WRAPPED_HOLDER_LIST
+        match = cp.foreign_copyright_match(text)
+        assert match is not None, pad_lines
+        assert text[match.start() : match.end()] == "Chris", pad_lines
+        assert "Chris Johnson / Airwindows" in cp._snippet(text, match), pad_lines
+
+    # End to end: the finding the audit actually reports quotes the holder.
+    root = _masked_tree(
+        tmp_path, "wrapped-padded", cp.FIXTURE_FILLER + cp.FIXTURE_WRAPPED_HOLDER_LIST
+    )
+    findings, _ = cp.audit(root)
+    wrapped = [
+        f
+        for f in findings
+        if f.rule == "foreign-license-text" and f.path == cp.MASKED_REL
+    ]
+    assert wrapped, [f.detail for f in findings]
+    assert any("Chris Johnson / Airwindows" in f.detail for f in wrapped), [
+        f.detail for f in wrapped
+    ]
+
+
 def test_own_attribution_and_copyright_prose_still_audit_clean(tmp_path):
     """The positive half of increment 4 — a false positive here is unanswerable.
 
@@ -597,5 +632,6 @@ def test_masking_controls_run_in_the_self_test(tmp_path):
     assert cp._masking_controls(), "the masking controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    for label, _expected, _where, _description, _mutate in cp._masking_controls():
+    for case in cp._masking_controls():
+        label = case[0]
         assert label in proc.stdout, f"{label} not exercised by --negative-control"

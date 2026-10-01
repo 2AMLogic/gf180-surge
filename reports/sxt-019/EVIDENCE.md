@@ -609,10 +609,11 @@ revises no decision record.
 
 ```
 $ python3 -m pytest -q tests/test_sxt019_provenance.py
-36 passed        # 30 before, +6: the four delimiter-led holder layouts, the two
+37 passed        # 30 before, +7: the four delimiter-led holder layouts, the two
                  # SPDX-remainder shapes, the yearless and wrapped notices, the
                  # seven own-attribution/prose positive cases, a unit test of the
-                 # remainder scan, and a unit test of the holder test itself
+                 # remainder scan, a unit test of the holder test itself, and
+                 # (§11) the wrapped-holder finding's locator
 ```
 
 **What §10 does NOT establish.** It closes eight more specific masking paths on
@@ -640,3 +641,94 @@ licence decision to make. Whether any file in this repository's history ever
 carried one of these masked notices remains **NOT_RUN** — only the current tree
 was audited, and it is PASS. Nothing here ratifies a decision record or makes a
 distribution-license determination.
+
+## 11. Review fix — the wrapped-holder finding's locator was wrong
+
+Review of §10 found that the wrapped-holder path, while it *fired* correctly,
+reported a snippet quoting the **wrong bytes**. `_wrapped_holder_match` returned
+a `re.Match` computed against `line` — a *slice* of the file text — so its
+`.start()`/`.end()` were **line-relative**, while the caller's
+`_snippet(text, match)` indexes the **full text**. On any wrapped-holder notice
+more than a few lines into a file, the finding quoted unrelated code:
+
+```
+$ # 10 filler lines, then the wrapped-holder fixture
+$ text[match.start():match.end()]
+'1\nx ='                                           # not the holder name
+$ _snippet(text, match)
+'x = 1 x = 1 x = 1 x = 1 x = 1 x = 1 x = 1 x = 1 x'   # names nothing
+```
+
+This is a defect in the **evidence**, not merely in presentation. `Finding`
+carries no line number, so `detail`'s snippet is the only locator a human has;
+and `foreign-license-text` **cannot be exempted**, so the only way to answer one
+of its findings is to go read the cited notice and add a provenance row. A
+finding citing `x = 1 x = 1 …` is unanswerable — the exact failure mode §10
+argues against.
+
+**Fix.** `_wrapped_holder_match` now searches `text` directly with **absolute**
+offsets, bounded to the continuation line (`HOLDER_WORD_RE.search(text, start +
+continuation.end(), line_end)`). The snippet is now invariant to the notice's
+depth in the file:
+
+```
+pad= 0 lines  offsets= 36, 41   [our own notice, then '# and <upstream holder>' — REDACTED]
+pad=10 lines  offsets= 96,101   [identical snippet]
+pad=30 lines  offsets=216,221   [identical snippet]
+```
+
+The snippet is redacted per §3's rule, and for the same reason §3 records: the
+first draft of this section pasted it verbatim and **the audit failed this file**
+(1 finding, `foreign-license-text` on `reports/sxt-019/EVIDENCE.md`) — a live
+demonstration that the fixed path reports a real, locatable notice, since the
+tool flagged the fixed snippet in evidence prose having been unable to flag the
+broken one. The unredacted snippet is reproducible by re-running the unit test.
+
+**The control could not have caught this, and now can.** Two gaps had to be
+closed together, because either alone leaves the control vacuous:
+
+1. `_run_case_controls` asserted only `f.rule` and `f.path`, never `f.detail`, so
+   the control passed on a finding whose evidence pointed elsewhere. Cases may
+   now carry an optional sixth element — a substring the firing finding's own
+   `detail` must contain — and
+   `masking/foreign-holder-on-a-wrapped-continuation-line` requires
+   `'Chris Johnson / Airwindows'`.
+2. The control's fixture was written at the **top** of the file, where
+   line-relative and absolute offsets coincide — so even a `detail` assertion
+   would have passed with the bug present. The fixture is now written **below a
+   filler pad**, which is what makes the offsets diverge.
+
+**Non-vacuity — the control demonstrably fails the check it targets.** The
+absolute-offset fix was reverted in a scratch copy of the tool (fixture pad and
+`detail` assertion left in place) and the whole self-test re-run:
+
+```
+baseline (fix present):   exit 0, no failing control
+revert E  absolute offsets -> exit 2
+    FAIL  masking/foreign-holder-on-a-wrapped-continuation-line
+          … foreign-license-text fired on model/pasted_below_our_header.py but no
+          finding quoted 'Chris Johnson / Airwindows' (details: '… copyright
+          line: ROW_0 = [0, 0, 0] ROW_1 = [1, 1, 1] ROW_2 = [2, 2 — add a row …')
+```
+
+The reverted run's own transcript exhibits the garbage snippet, so the control
+now fails *for the reason it exists*. A unit test
+(`test_wrapped_holder_finding_locates_the_offending_holder`) pins the same
+property directly at pads of 0 / 1 / 10 / 40 lines, independently of the audit
+path.
+
+Also corrected in this pass: the §10 `--negative-control` transcript read "all
+29 own-attribution masking controls behaved" where the tool prints **30**
+(15 baseline + 8 negative + 7 positive), and the §10 `pytest` count moved 36 →
+37. Coverage and committed tripwire counts are unchanged — 2100 files scanned,
+`foreign-license-text=4`, the same four declared hits as `main`, so **no
+committed file changed status** and no provenance row or decision record is
+added or revised.
+
+**What §11 does NOT establish.** It fixes the locator for **one** finding family
+and pins it with a control that fails without the fix. It is not a review of
+every other finding's `detail` for offset correctness: the other five copyright
+families return a match produced by `COPYRIGHT_RE`/`YEARLESS_COPYRIGHT_RE`
+against the full text, so their offsets are absolute by construction, but that is
+an argument from construction, not a control — only the wrapped family is
+pinned by one. Every limit in §7 and §10 stands unchanged.
