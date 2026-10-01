@@ -2061,3 +2061,169 @@ $ python3 -m pytest -q tests/test_sxt019_provenance.py -> 91 passed
   **name string** in a gzip header, and the payload under it is a generated
   marker-free byte pattern already in the tool, carrying no upstream code,
   table or asset.
+
+
+## 19. Increment 7 (2026-09-30) — a named occurrence must name ONE place
+
+Base: `main` `4b5b23b` (merge of #291, increment 12). Runtime: Python 3.12.3,
+Linux (stdlib only); CI runs the same checks on Python 3.12 / ubuntu-24.04.
+Issue [#260](https://github.com/2AMLogic/gf180-surge/issues/260), from the
+independent review of PR #114.
+
+**Finding.** The occurrence-scoped exemption (§1) matched its named sentence by
+**literal wording**, and exempted *every* place that wording appeared in the
+exempted file. Wording cannot distinguish referents, so the one shape the
+scoping was supposed to catch — a genuinely foreign quotation in the same
+exempted file — slipped through whenever it was written as the **identical
+sentence**. §1's own claim that "a second 'verbatim copy' in the same wording"
+still failed was therefore false; §1 is left as the historical record it was
+and is not rewritten here (`main`'s own convention since §8 — see the note
+under its heading).
+
+| Injected shape (appended to `model/oscillators/classic/README.md`) | Before | After |
+|---|---|---|
+| a differently-worded foreign quotation ("…is copied verbatim from the pinned upstream engine.") | FAIL (exit 1) | FAIL (unchanged) |
+| the named sentence repeated with a **foreign referent** ("The Surge oscillator: `tb_classic.sv` carries a verbatim copy of it.") | **PASS (exit 0 — hidden)** | FAIL `exemption-ambiguous` + `self-declared-quotation` |
+| the same sentence a **third** time | PASS (exit 0) | FAIL `exemption-ambiguous` |
+| the README exactly as committed (positive control) | PASS | PASS (unchanged) |
+
+**Fix.** The rule is *uniqueness*, not disambiguation — the tool cannot tell two
+identically-worded sentences apart, so it refuses to guess. In the
+occurrence-scoping loop, a named occurrence matching more than once in its
+exempted file raises a new rule, `exemption-ambiguous` (the 33rd rule on this
+tree), scoped to the manifest item (`exemptions[N]`, like the neighbouring
+`exemption-stale` findings), and **no span is exempted for that occurrence at
+all** — so the exempted file's markers also fail on `self-declared-quotation`,
+as they would with no exemption. The remedy an author has is to extend the
+quoted text until it names one place, which the finding's own detail says.
+
+A zero-match occurrence keeps its existing `exemption-stale` finding; only the
+`>1` case is new. The uniqueness check is per exempted **file**, so the
+manifest's own restatement of the occurrence wording (answered by a separate
+whole-file exemption) is untouched — the committed tree still PASSes.
+
+**Controls (`--negative-control`, so CI runs them).** Two: the new rule's entry
+in the per-rule control table (`exemption-ambiguous`), and a 7th
+occurrence-scoped control, `scoped-exemption/duplicate-occurrence`, built from
+the synthetic own-copy document plus the same sentence re-used for a foreign
+referent. Run live on this branch (`main` `4b5b23b` plus this increment):
+
+```
+$ python3 tools/check_provenance.py --negative-control                  # exit 0
+PASS: all 33 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 7 occurrence-scoped exemption controls behaved, all
+40 own-attribution masking controls behaved, all 11 discovery-layer controls
+behaved, all 27 payload-layer controls behaved, all 10 wrapper-member-name
+controls behaved, and all 7 index-boundary coverage controls behaved.
+```
+
+**Non-vacuity — the controls fail when, and only when, this fix is reverted.**
+The one-line multi-match check (`if len(located) > 1:`) was disabled in place
+(`-> if False:`) and the whole self-test and test suite re-run on the same
+tree:
+
+```
+baseline (fix present):                 negative-control exit 0, 93 passed
+revert multi-match check (if False):     negative-control FAIL, 8 failed / 85 passed
+  FAILED test_negative_control_every_rule_fires
+  FAILED test_duplicated_occurrence_is_ambiguous_and_fails
+  FAILED test_classic_readme_exemption_does_not_launder_a_foreign_copy
+  FAILED test_masking_controls_run_in_the_self_test
+  FAILED test_payload_controls_run_in_the_self_test
+  FAILED test_wrapper_name_controls_run_in_the_self_test
+  FAILED test_discovery_controls_run_in_the_self_test
+  FAILED test_coverage_controls_run_in_the_self_test
+```
+
+The negative control's own failure message on the reverted tool: `FAIL: the
+audit's own failure detection is not intact.` The five aggregate-count tests
+(`test_masking_controls_...` through `test_coverage_controls_...`) fail
+incidentally — they assert the self-test's fixed category totals, which shift
+by one occurrence-scoped control when `exemption-ambiguous` stops firing — not
+because this increment touches those categories. The fix was restored
+immediately after this check (`git diff --stat` empty, byte-identical to the
+committed file).
+
+**Demonstrated on the real tree (acceptance item 4, verbatim).** The reviewer's
+own adversarial line appended to the committed
+`model/oscillators/classic/README.md`, which carries the one occurrence-scoped
+exemption in the manifest, then removed:
+
+```
+$ python3 tools/check_provenance.py
+FAIL: 2 provenance finding(s):
+  [exemption-ambiguous] decision-records/provenance.json
+      exemptions[8]: occurrence '`tb_classic.sv` carries a verbatim copy of it'
+      appears 2 times in model/oscillators/classic/README.md; an exemption must
+      name exactly one place (extend the quoted text until it is unique)
+  [self-declared-quotation] model/oscillators/classic/README.md
+      self-declared quotation without a provenance row: copied-verbatim: D2`,
+      and `tb_classic.sv` carries a verbatim copy of it. That decimator has a
+      round- (outside the occurrence(s) its exemption names) — add a row to
+      decision-records/provenance.json (with its decision record), or an
+      explicit 'self-declared-quotation' exemption with a reason
+exit 1
+```
+
+Then the **pre-change** tool (`git show HEAD~1:tools/check_provenance.py`,
+i.e. this branch without this increment's own commit) against **the same
+tree with the same line still in it** — the direct before/after, not an
+inference:
+
+```
+$ python3 /tmp/pre_change_cp.py --root .
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+exit 0
+```
+
+The line was then removed and is **not** committed (`git status` clean).
+
+**Coverage on this branch, re-derived live (not copied forward from any
+earlier re-pin of this PR's own branch).** `self-declared-quotation=43`, the
+same count §14 onward already carries on `main`. §1 itself still prints `42`:
+at the time §1 was written, that count was one short — the missing hit was
+`tests/test_sxt019_provenance.py`'s own already-exempted controls, so the
+verdict never moved, only the printed count was wrong. §1 is left as the
+historical record it is rather than hand-edited here, matching how later
+increments already treat it (see the note under §4's heading):
+
+```
+$ python3 tools/check_provenance.py
+coverage: 2128 files scanned, 759 excluded by declared scope exclusions,
+  18 decision records, 20 provenance rows covering 20 files, 9 exemptions
+tripwire hits: external-symlink-target=0, foreign-license-text=4,
+  foreign-source-language=2, self-declared-quotation=43,
+  submodule-reference=0, upstream-asset-extension=0, wrapper-member-name=0
+
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+```
+
+`git ls-files | wc -l` → 2887 tracked = 2128 scanned + 759 excluded.
+
+```
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+93 passed        # 91 before this increment (main's own §18 count), +2: the
+                 # duplicated-occurrence case (two and three copies, the
+                 # finding's path/detail, and the exempted file left
+                 # unexempted), and a live check that every committed
+                 # `occurrences` entry matches exactly once in its own file
+```
+
+The existing `test_classic_readme_exemption_does_not_launder_a_foreign_copy`
+also gained the identical-wording case against the real committed README, and
+asserts `exemption-ambiguous` fires for that case and **only** that case.
+
+**What §19 does NOT establish.** It closes one laundering path on the one
+*exemptible* rule, found by review rather than by search — so it is not evidence
+that no further path through the exemption machinery exists, only that this one
+is pinned by controls that fail without its fix. It says nothing about the
+non-exemptible `foreign-license-text` rule (§8–§14) and nothing new about
+coverage: every limit in §7 stands, a marker-free copy remains undetectable, and
+content under a declared scope exclusion is still out of scope. Whether any
+committed file ever carried a foreign quotation hidden this way is **NOT_RUN** —
+only the current tree was audited, and it is PASS. No Surge- or GPL-derived
+content was copied by this increment: the new fixture is repo-invented synthetic
+text assembled at run time. Nothing here ratifies a decision record or makes a
+distribution-license determination.

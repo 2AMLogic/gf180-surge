@@ -317,6 +317,64 @@ def test_scoped_exemption_covers_only_the_named_occurrence(tmp_path):
     assert "self-declared-quotation" in _fired_on(foreign, "docs/own_copy.md")
 
 
+def test_duplicated_occurrence_is_ambiguous_and_fails(tmp_path):
+    """The named sentence repeated WORD FOR WORD with a foreign referent.
+
+    Before #260 the occurrence regex matched every copy of the literal wording,
+    so a genuinely foreign quotation worded as the exact same sentence was
+    exempted alongside the legitimate self-copy and the tree audited clean.
+    Wording cannot separate the two referents, so a duplicated occurrence is
+    now a finding on the manifest, and the exemption is not applied at all.
+    """
+    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    duplicated = _own_copy_tree(
+        tmp_path / "dup",
+        cp.FIXTURE_OWN_COPY_DOC + cp.FIXTURE_DUPLICATE_OCCURRENCE_LINE,
+        occ,
+    )
+    fired = _rules_fired(duplicated)
+    assert "exemption-ambiguous" in fired
+    # ...on the manifest item, not on the document, and quoting the count.
+    [finding] = [
+        f
+        for f in cp.audit(duplicated)[0]
+        if f.rule == "exemption-ambiguous"
+    ]
+    assert finding.path == cp.MANIFEST_REL
+    assert "appears 2 times" in finding.detail
+    assert cp.FIXTURE_OWN_COPY_OCCURRENCE in finding.detail
+    # Three copies are ambiguous too, and the exempted file is left unexempted.
+    thrice = _own_copy_tree(
+        tmp_path / "thrice",
+        cp.FIXTURE_OWN_COPY_DOC
+        + cp.FIXTURE_DUPLICATE_OCCURRENCE_LINE
+        + cp.FIXTURE_DUPLICATE_OCCURRENCE_LINE,
+        occ,
+    )
+    assert "exemption-ambiguous" in _rules_fired(thrice)
+    assert "self-declared-quotation" in _fired_on(thrice, "docs/own_copy.md")
+
+
+def test_committed_scoped_occurrences_are_unique_in_their_file(tmp_path):
+    """The live positive control: every committed occurrence names one place.
+
+    A file-level uniqueness rule can only be enforced if the committed
+    manifest satisfies it; this pins that directly rather than inferring it
+    from the tree audit's exit code.
+    """
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    scoped = [e for e in manifest["exemptions"] if e.get("occurrences")]
+    assert scoped, "the #181 occurrence-scoped exemption must still exist"
+    for entry in scoped:
+        text = (REPO / entry["path"]).read_text(encoding="utf-8")
+        for occurrence in entry["occurrences"]:
+            hits = cp.occurrence_regex(occurrence).findall(text)
+            assert len(hits) == 1, (
+                f"{entry['path']}: occurrence {occurrence!r} appears "
+                f"{len(hits)} times"
+            )
+
+
 def test_scoped_exemption_goes_stale_and_cannot_be_a_blanket(tmp_path):
     gone = _own_copy_tree(
         tmp_path / "a", cp.FIXTURE_OWN_COPY_DOC, ["a sentence that is not there"]
@@ -332,15 +390,20 @@ def test_scoped_exemption_goes_stale_and_cannot_be_a_blanket(tmp_path):
 def test_classic_readme_exemption_does_not_launder_a_foreign_copy(tmp_path):
     """The committed exemption for model/oscillators/classic/README.md is
     occurrence-scoped: the README as committed passes, and the same README
-    with a foreign 'copied verbatim' line appended fails."""
+    with a foreign 'copied verbatim' line appended fails — including the
+    adversarial case where the foreign line is the named sentence repeated
+    word for word with a different referent (#260)."""
     rel = "model/oscillators/classic/README.md"
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     [entry] = [e for e in manifest["exemptions"] if e.get("path") == rel]
     assert entry.get("occurrences"), "the #181 exemption must stay occurrence-scoped"
     readme = (REPO / rel).read_text(encoding="utf-8")
+    [occurrence] = entry["occurrences"]
+    identical_wording = f"\nThe Surge oscillator: {occurrence}.\n"
     for label, text, expect_fail in (
         ("as-committed", readme, False),
         ("with-foreign-copy", readme + cp.FIXTURE_FOREIGN_COPY_LINE, True),
+        ("with-identical-wording", readme + identical_wording, True),
     ):
         (tmp_path / label).mkdir()
         root = _skeleton(tmp_path / label)
@@ -358,6 +421,8 @@ def test_classic_readme_exemption_does_not_launder_a_foreign_copy(tmp_path):
             ),
         )
         assert ("self-declared-quotation" in _fired_on(root, rel)) is expect_fail, label
+        ambiguous = "exemption-ambiguous" in _fired_on(root, cp.MANIFEST_REL)
+        assert ambiguous is (label == "with-identical-wording"), label
 
 
 # --- own-attribution masking (#25 acceptance item 4: the rule must still fire) -
