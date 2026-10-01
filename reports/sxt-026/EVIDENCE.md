@@ -661,3 +661,54 @@ clear of 0.92), and every other row stays MISS under both bound sets (it
 was already failing on `max_abs`, independently of the spectral leg's
 direction of travel). No `verification` status in
 `reports/coverage-v1/leaf-verification.json` moves.
+
+## DECLARED FROZEN BASIS — `Kick__4f2443aa.image.json` (issue #246, 2026-09-30)
+
+`reports/sxt-026/artifacts/Kick__4f2443aa.image.json` records the
+**superseded** SXT-015 accounting basis `sxt-015-accounting/1.0.0` /
+`params_digest` `646942e9c3887ecb` in
+`body.derived.allocations.basis`. The live basis is
+`sxt-015-accounting/1.1.0` / `a639d3115ae1a0ca`, moved by #239 (PR #249, the
+modulation-row shape decision). This artifact is **declared frozen at the
+superseded basis on purpose**, registered in
+`docs/frozen-artifact-basis.json` and asserted by
+`tests/test_frozen_artifact_basis.py`. It was recorded as STALE in
+`reports/sxt-015/EVIDENCE.md` §8.5 and filed as #246; this section is that
+record's disposition.
+
+**Why frozen rather than re-emitted — re-emission is oracle-gated,
+status NOT_RUN.** This image is the manifest-embedded one: it carries
+`derived.wavetable_asset_manifests`, and the compiler only produces it under
+`compiler/compile.py compile --asset-root <pinned Surge resources/data>`,
+aborting on any asset-identity mismatch (section 2 / `nc-a-hash-abort.txt`).
+That pinned asset tree is **not present** in the environment this
+disposition was made in (`tools/run_sxt026_checks.py`'s `DEFAULT_ORACLE` path
+does not exist, and `import surgepy` fails), so re-emitting it here is
+NOT_RUN — not skipped. Compiling without `--asset-root` *succeeds* and emits
+an image with **no** `wavetable_asset_manifests` at all, which would delete
+the end-to-end asset-identity evidence this leaf's
+`artifacts/manifest-image-verify.txt` reads (`assets_checked=1 failures=0`).
+That is a weakening of the leaf, not a re-basing of it, so per #246's
+stop/escalate clause the artifact is frozen instead.
+
+Nothing this leaf asserts reads the modulation term the basis move touched:
+the RTL-vs-frozen-model integer-equality cases (section 2 / 2a), the
+model-vs-reference budgets (section 3), the deep-mip finding (section 4) and
+the traffic accounting (section 5) are all independent of the SXT-015
+placeholder cycle rows, which gate nothing anywhere
+(`budgets.cycle_closure = not_gated_pending_sxt_016` in the image's own
+`profile.bundle_spec`).
+
+**What retires the freeze.** The next SXT-026 evidence run with the pinned
+asset root — `python3 tools/run_sxt026_checks.py --asset-root <pinned Surge
+resources/data>` — which re-emits this image together with every artifact it
+copies into `reports/sxt-026/artifacts/` and rewrites
+`manifest-image-verify.txt` from the same run.
+
+**Claim scope.** Bookkeeping only. No exactness case, budget row, finding,
+control verdict or supported-preset count in this record moves;
+supported-preset delta **0**. The only non-prose consequence of this section
+is that editing this file moves its sha256, so its pin in
+`reports/coverage-v1/leaf-verification.json` is revised and
+`reports/coverage-v1/` is republished in the same change — a republication in
+which only the recorded input sha256 moves (`per-preset.csv` byte-identical).

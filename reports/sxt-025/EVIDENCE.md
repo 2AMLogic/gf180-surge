@@ -179,3 +179,73 @@ No verdict moves: the wet/dry acceptance row stays `PASS (PENDING-FREEZE)`
 rows stay well under the 0.98 budget, so the comparator still flags the
 reordering). No `verification` status in
 `reports/coverage-v1/leaf-verification.json` moves.
+
+## DECLARED FROZEN BASIS — two image snapshots (issue #246, 2026-09-30)
+
+Two committed artifacts of this leaf record the **superseded** SXT-015
+accounting basis `sxt-015-accounting/1.0.0` / `params_digest`
+`646942e9c3887ecb` in `body.derived.allocations.basis`:
+
+| Artifact | Field |
+|---|---|
+| `model/integration/preset/Hell_s_Bells__e499f78d.image.json` | `body.derived.allocations.basis` |
+| `reports/sxt-025/negative-controls/image-permuted-placement.json` | `body.derived.allocations.basis` |
+
+The live basis is `sxt-015-accounting/1.1.0` / `a639d3115ae1a0ca`, moved by
+#239 (PR #249, the modulation-row shape decision). Both artifacts are
+**declared frozen at the superseded basis on purpose**, registered in
+`docs/frozen-artifact-basis.json` and asserted by
+`tests/test_frozen_artifact_basis.py`. They were recorded as STALE in
+`reports/sxt-015/EVIDENCE.md` §8.5 and filed as #246; this section is that
+record's disposition.
+
+**Why frozen rather than re-emitted.** Re-emitting
+`compiler/compile.py compile` on this preset today changes exactly four
+things in the image: the two basis fields, the reported `modulation` /
+`total` placeholder cost rows (105.0 / 12325.0 → 1455.0 / 13675.0 cycles per
+frame), `body_sha256`, and therefore the `.bin` digest. Nothing this leaf
+asserts reads the modulation term — `IntegrationRun` consumes
+`body.graph.fx_slots` and `body.derived.fx_section`, which are byte-identical
+across the re-emission, so no render, no `compare__*.json` status, and no
+`rtl-exactness.json` case moves either way. What blocks the re-emission is
+the **dependent digest chain**: this leaf records the image's sha256 in
+`model/integration/bells_inputs.json::compiled_image_sha256` and in the
+"Evidence hashes" table above, and those values are quoted by
+`reports/sxt-025/artifacts/trace__*.json`,
+`reports/sxt-025/negative-controls/inputs-permuted-placement.json`,
+`reports/sxt-026a/artifacts/trace__sxt025-accept-v1.json` and
+`model/integration/README.md`. They are **run stamps of the oracle-gated
+extraction** (`model/integration/extract_preset_inputs.py`, which loads the
+preset in the pinned engine), and that run is NOT_RUN here: `surgepy` and the
+pinned `resources/data` tree are not available in this environment. Editing
+those digests without re-running the extraction would falsify a run stamp;
+re-emitting without editing them would leave the chain further out of date.
+Per #246's stop/escalate clause the artifacts are therefore frozen, not
+re-baselined.
+
+**Pre-existing, unrelated drift recorded, not corrected (status: STALE).**
+The chain above is *already* one re-export behind, independently of #239 and
+of this section: commit `65a4b52` (issue #79) recompiled the image at format
+`sxt-020-patch-image/1.1.0` and re-pinned only
+`model/integration/selection-scan.json`, so `bells_inputs.json`, the
+"Evidence hashes" rows for the compiled image (`.bin`
+`bf21250e85ec52a7…`, `.json` `b1c3156603b8bdde…`) and
+`model/integration/README.md` still quote the pre-`65a4b52` digests, while
+the committed `.bin` hashes `68d22deacd744b9f…`. Nothing re-derives them
+live, so no verdict in this record depends on them; restoring them needs the
+same oracle-gated re-extraction that retires the freeze. Recorded here as a
+bounded STALE finding, explicitly out of scope for #246 (which is
+accounting-basis bookkeeping only).
+
+**What retires the freeze.** The oracle-gated re-extraction + re-render path
+in "Reproduce" above, from `extract_preset_inputs.py` onward: that run
+re-emits the image *and* re-derives every digest this leaf records for it,
+in one change. `image-permuted-placement.json` follows automatically — it is
+not independently emitted but written by
+`model/integration/negative_controls.py::nc_a`, which deep-copies the
+committed image and rewrites one stored role, so its basis is the image's
+basis by construction.
+
+**Claim scope.** Bookkeeping only. No acceptance row, exactness case,
+budget, control verdict or supported-preset count in this record moves;
+supported-preset delta **0**.

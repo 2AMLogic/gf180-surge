@@ -1,0 +1,162 @@
+{
+  "artifact": "frozen-artifact-basis/1.0.0",
+  "audit": "tests/test_frozen_artifact_basis.py",
+  "bases": {
+    "sxt-015-accounting": {
+      "live_moved_by": "#239 (PR #249, merged 2026-09-30) -- the SXT-015 modulation-row shape decision",
+      "live_source": "model.resources.accounting:MODEL_VERSION / model.resources.accounting:params_digest()",
+      "live_values": {
+        "accounting_model_version": "sxt-015-accounting/1.1.0",
+        "params_digest": "a639d3115ae1a0ca"
+      },
+      "what": "the live SXT-015 resource-accounting basis: the bookkeeping model's version string and the digest of the parameter set an account was computed with"
+    },
+    "sxt-020-compile-scan": {
+      "live_moved_by": "#239 (PR #249, merged 2026-09-30) -- the scan was re-exported; its only changed field was provenance.accounting_model_version",
+      "live_source": "sha256 over the committed bytes of reports/sxt-020/compile-corpus-scan.json",
+      "live_values": {
+        "compile_scan": "791b2c88b7360256ead4c062cfe46e1bd367b0a67e6f36d42bae102ac621fdbe"
+      },
+      "what": "the recorded input digest of the SXT-020 compile-corpus scan, quoted by artifacts that were generated from it"
+    }
+  },
+  "claim": "Bookkeeping only. This registry says which committed artifacts record a SUPERSEDED basis on purpose, at which named value, and what retires each freeze. It establishes no RTL-exactness, model-vs-reference, cycle, area, technology, preset-support or preset-quality claim, and it moves no leaf verdict. Supported-preset delta: 0.",
+  "doc": "docs/frozen-artifact-basis.md",
+  "frozen": [
+    {
+      "basis_class": "run_stamp",
+      "declared_in": "reports/sxt-025/EVIDENCE.md",
+      "frozen_values": [
+        {
+          "basis": "sxt-015-accounting",
+          "field": "accounting_model_version",
+          "json_path": "body.derived.allocations.basis.accounting_model_version",
+          "value": "sxt-015-accounting/1.0.0"
+        },
+        {
+          "basis": "sxt-015-accounting",
+          "field": "params_digest",
+          "json_path": "body.derived.allocations.basis.params_digest",
+          "value": "646942e9c3887ecb"
+        }
+      ],
+      "leaf": "SXT-025",
+      "path": "model/integration/preset/Hell_s_Bells__e499f78d.image.json",
+      "retired_by": "the next oracle-gated SXT-025 re-extraction + re-render (the 'Reproduce' block in reports/sxt-025/EVIDENCE.md, from extract_preset_inputs.py onward). That run re-emits the image AND re-derives every digest the leaf records for it, in one change.",
+      "why": "Re-emitting moves the image bytes (basis, the reported modulation/total placeholder cost rows, body_sha256, and the .bin digest). The leaf's recorded image digests are stamps of an oracle-gated extraction run -- model/integration/bells_inputs.json::compiled_image_sha256 and the 'Evidence hashes' table in reports/sxt-025/EVIDENCE.md, quoted by reports/sxt-025/artifacts/trace__*.json, reports/sxt-025/negative-controls/inputs-permuted-placement.json, reports/sxt-026a/artifacts/trace__sxt025-accept-v1.json and model/integration/README.md -- and that run needs the pinned Surge oracle (surgepy + the pinned resources tree), which is not available here: re-emitting now is NOT_RUN for those digests. Updating them without re-running the extraction would falsify a run stamp; leaving them would violate the 'every dependent recorded sha256 in the same change' rule. The leaf's own claims (integration exactness, placement/order, tail, traffic) do not read the modulation term the basis move touched."
+    },
+    {
+      "basis_class": "run_stamp",
+      "declared_in": "reports/sxt-025/EVIDENCE.md",
+      "frozen_values": [
+        {
+          "basis": "sxt-015-accounting",
+          "field": "accounting_model_version",
+          "json_path": "body.derived.allocations.basis.accounting_model_version",
+          "value": "sxt-015-accounting/1.0.0"
+        },
+        {
+          "basis": "sxt-015-accounting",
+          "field": "params_digest",
+          "json_path": "body.derived.allocations.basis.params_digest",
+          "value": "646942e9c3887ecb"
+        }
+      ],
+      "leaf": "SXT-025",
+      "path": "reports/sxt-025/negative-controls/image-permuted-placement.json",
+      "retired_by": "a re-run of model/integration/negative_controls.py after the entry above is retired; the control artifact follows the image it mutates and is never re-based on its own.",
+      "why": "This artifact is not independently emitted: model/integration/negative_controls.py::nc_a writes it by deep-copying the committed Hell's Bells image and rewriting one stored role (send2 -> ains1). Its basis is the image's basis BY CONSTRUCTION, so it cannot be made current while the image is frozen -- and making it current alone would break the control's premise that the permuted run differs from the reference in exactly the placement. It is additionally at format/compiler_version sxt-020-patch-image/1.0.0, i.e. it predates the 65a4b52 image recompile, which the same re-run retires."
+    },
+    {
+      "basis_class": "run_stamp",
+      "declared_in": "reports/sxt-026/EVIDENCE.md",
+      "frozen_values": [
+        {
+          "basis": "sxt-015-accounting",
+          "field": "accounting_model_version",
+          "json_path": "body.derived.allocations.basis.accounting_model_version",
+          "value": "sxt-015-accounting/1.0.0"
+        },
+        {
+          "basis": "sxt-015-accounting",
+          "field": "params_digest",
+          "json_path": "body.derived.allocations.basis.params_digest",
+          "value": "646942e9c3887ecb"
+        }
+      ],
+      "leaf": "SXT-026",
+      "path": "reports/sxt-026/artifacts/Kick__4f2443aa.image.json",
+      "retired_by": "the next SXT-026 evidence run with the pinned asset root (python3 tools/run_sxt026_checks.py --asset-root <pinned Surge resources/data>), which re-emits this image together with every artifact it copies into reports/sxt-026/artifacts/ and rewrites manifest-image-verify.txt from the same run.",
+      "why": "Re-emission is oracle-gated: this image embeds derived.wavetable_asset_manifests and the compiler ABORTS on asset-identity mismatch, so it can only be produced by compiler/compile.py compile --asset-root <pinned Surge resources/data>. That asset tree is not present in this environment (tools/run_sxt026_checks.py's DEFAULT_ORACLE path does not exist here), so re-emission is NOT_RUN / BLOCKED on the pinned oracle. Compiling without --asset-root would DROP the embedded manifest that the leaf's end-to-end asset-identity evidence reads (reports/sxt-026/artifacts/manifest-image-verify.txt, assets_checked=1 failures=0), which would weaken the leaf rather than re-base it. The leaf's claims (RTL-vs-model integer equality, wavetable playback budgets, external-residency traffic) do not read the modulation term."
+    },
+    {
+      "basis_class": "run_stamp",
+      "declared_in": "reports/sxt-027/EVIDENCE.md",
+      "frozen_values": [
+        {
+          "basis": "sxt-015-accounting",
+          "field": "accounting_model_version",
+          "json_path": "provenance.accounting_model_version",
+          "value": "sxt-015-accounting/1.0.0"
+        },
+        {
+          "basis": "sxt-020-compile-scan",
+          "field": "compile_scan",
+          "json_path": "provenance.inputs.compile_scan",
+          "value": "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6"
+        }
+      ],
+      "leaf": "SXT-027",
+      "path": "reports/sxt-027/leaf-plan.json",
+      "retired_by": "the next SXT-027 leaf-ledger revision (python3 tools/generate_voice_leaves.py), which must revise the reports/sxt-027/* pins in tools/publish_coverage.py::STRUCTURAL_INPUTS and republish reports/coverage-v1/ in the same change.",
+      "why": "The recorded values are generator-run stamps, not live pins: the artifact's CONTENT is derived from compile statuses and leaf attribution, and #239 moved neither (all 3,561 compile statuses and both named reconciliation deltas are unchanged; only provenance.accounting_model_version moved inside the scan). Nothing this artifact asserts is wrong -- only the basis it quotes is superseded. Re-emitting it is an SXT-027 leaf-ledger revision plus a coverage-v1 republication (reports/sxt-027/leaf-backlog.json and leaves-filed.json are themselves STRUCTURAL_INPUTS pins in tools/publish_coverage.py), not a cost-model one."
+    },
+    {
+      "basis_class": "run_stamp",
+      "declared_in": "reports/sxt-027/EVIDENCE.md",
+      "frozen_values": [
+        {
+          "basis": "sxt-015-accounting",
+          "field": "accounting_model_version",
+          "json_path": "provenance.accounting_model_version",
+          "value": "sxt-015-accounting/1.0.0"
+        },
+        {
+          "basis": "sxt-020-compile-scan",
+          "field": "compile_scan",
+          "json_path": "provenance.inputs.compile_scan",
+          "value": "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6"
+        }
+      ],
+      "leaf": "SXT-027",
+      "path": "reports/sxt-027/leaf-backlog.json",
+      "retired_by": "the next SXT-027 leaf-ledger revision (python3 tools/generate_voice_leaves.py), which must revise this file's pin in tools/publish_coverage.py::STRUCTURAL_INPUTS and republish reports/coverage-v1/ in the same change.",
+      "why": "Same class as reports/sxt-027/leaf-plan.json: a generator-run stamp over unchanged content. This file is additionally a pinned STRUCTURAL_INPUT of tools/publish_coverage.py, which REFUSES (exit 2) rather than publishing over a moved input -- so re-emitting it cannot be done without revising that pin and republishing reports/coverage-v1/."
+    },
+    {
+      "basis_class": "run_stamp",
+      "declared_in": "reports/sxt-027/EVIDENCE.md",
+      "frozen_values": [
+        {
+          "basis": "sxt-020-compile-scan",
+          "field": "compile_scan",
+          "json_path": "generator_run.inputs.compile_scan",
+          "value": "e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6"
+        }
+      ],
+      "leaf": "SXT-027",
+      "path": "reports/sxt-027/leaves-filed.json",
+      "retired_by": "the next SXT-027 leaf-ledger revision (python3 tools/generate_voice_leaves.py), which must revise this file's pin in tools/publish_coverage.py::STRUCTURAL_INPUTS and republish reports/coverage-v1/ in the same change.",
+      "why": "Same class as the two above: a generator-run stamp over unchanged content (this file records no accounting_model_version of its own; only the compile-scan input digest). It is also a pinned STRUCTURAL_INPUT of tools/publish_coverage.py."
+    }
+  ],
+  "issue": "#246",
+  "machine_record_suffixes": [
+    ".json"
+  ],
+  "narrative_records": [
+    "docs/frozen-artifact-basis.json"
+  ],
+  "narrative_records_note": "The completeness scan in the audit reads machine records only (the suffixes above). Prose that NARRATES a superseded value -- reports/sxt-015/EVIDENCE.md section 8.5, reports/sxt-017/EVIDENCE.md, the PIN_SXT015 comment in tools/vel_cost_accounting.py, and the markdown half of this registry -- is excluded by construction: a narrative may legitimately quote a retired basis. `narrative_records` lists the machine records that are allowed to carry a frozen value WITHOUT being a frozen artifact themselves; today that is only this registry.",
+  "retires_stale_record": "reports/sxt-015/EVIDENCE.md section 8.5 (the STALE-BASIS bullets recorded by #239/PR #249 and filed as follow-up #246)"
+}
