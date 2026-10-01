@@ -130,16 +130,24 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     decoded text; a wrapper's members, unwrapped by magic (gzip/bzip2/xz
     streams, zip and tar archives, nested — so a gzipped source file, or an
     archive renamed `.dat`, is read rather than counted as opaque); and, for a
-    payload that is still not text, the printable-ASCII RUNS it carries, which
-    is how a notice spliced into a render or a WAV `LIST/INFO` copyright chunk
-    is found. A wrapper's member NAMES are judged too (increment 9), which is
-    the only signal a marker-free member has. Two residuals here are declared,
-    not closed, each pinned by a positive control:
-      - the harvest reads ASCII, so a notice written in a WIDE encoding *inside*
-        a binary payload stays out of reach
-        (`payload/wide-encoded-notice-in-a-payload-stays-out-of-scope`); only
-        the UTF-8 © spelling is normalised, because the Latin-1 byte occurs
-        constantly inside PCM and float data;
+    payload that is still not text, the RUNS it carries — printable-ASCII ones,
+    which is how a notice spliced into a render or a WAV `LIST/INFO` copyright
+    chunk is found, and WIDE-encoded ones (UTF-16/UTF-32, either byte order,
+    BOM or not), which is how a notice re-saved as "Unicode" and spliced into
+    the same payload is found (increment 10; `wide_encoded_runs_harvested` is
+    reported per run, so a payload whose wide runs were never examined does not
+    look like one that carried none). A wrapper's member NAMES are judged too
+    (increment 9), which is the only signal a marker-free member has. Two
+    residuals here are declared, not closed, each pinned by a positive control:
+      - a run harvest reads text at a fixed stride, so a notice carried in a
+        TRANSFORMED encoding — base64, and any other re-coding that is not the
+        bytes of its characters — stays out of reach
+        (`payload/base64-encoded-notice-stays-out-of-scope`). In the NARROW
+        harvest only the UTF-8 © spelling is normalised, because the bare
+        Latin-1 byte occurs constantly inside PCM and float data; inside a wide
+        run that byte must arrive NUL-padded within an otherwise printable
+        NUL-padded run, so it is admitted there
+        (`payload/wide-encoded-copyright-sign-notice`);
       - an inflation that hits the 256 MiB budget or the 4-deep wrapper limit is
         reported as a TRUNCATED payload scan on every run and in `--json`, which
         is a disclosed partial read, not a pass. A wrapper the audit cannot open
@@ -150,10 +158,13 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     so a member type this repository authors (`.json`, `.hex`, `.npy`) is not a
     signal — the same boundary, and the same residual, as for a file's own name:
     an upstream member renamed to one of those is not detected here.
-    Relatedly, the encoding sniff admits a wide-encoded file on an "it is
-    mostly ASCII" test, so a UTF-16 file written wholly in a non-Latin script
-    is refused; license notices are ASCII English, and admitting everything
-    would turn every render into garbage findings on a non-exemptible rule.
+    Relatedly, both the encoding sniff and the wide-run harvest admit text on an
+    "its characters are ASCII" test, so a UTF-16 notice written wholly in a
+    non-Latin script is refused either way; license notices are ASCII English,
+    and admitting everything would turn every render into garbage findings on a
+    non-exemptible rule. A wide run must also be at least
+    `MIN_WIDE_RUN_UNITS` code units long, the same declared floor the ASCII
+    harvest applies in bytes.
   * Every masking path closed here was found by inspection, one increment at a
     time. That two specific paths, then five, then eight, then four more were
     closed is not evidence that no further path exists — only that these are
@@ -169,10 +180,14 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     9 did the same to increment 8's own declaration, which held that a wrapper
     whose members carry no marker is covered by the extension tripwires — it is
     not, because those judge the OUTER name, and a zip of `.wt` wavetables
-    renamed `.dat` carries no marker anywhere in it. So the layer a masking path
-    lives in is not bounded by the layers already audited, and a DECLARED limit
-    is not evidence that the limit was necessary — three increments running, the
-    next mask was inside the previous increment's own declared residual.
+    renamed `.dat` carries no marker anywhere in it; increment 10 did the same to
+    increment 8's OTHER declaration, which held that a notice written in a WIDE
+    encoding inside a payload was out of reach — a "Unicode" save is an ordinary
+    editor default, and the run is found by its NUL padding without loosening the
+    sniff at all. So the layer a masking path lives in is not bounded by the
+    layers already audited, and a DECLARED limit is not evidence that the limit
+    was necessary — four increments running, the next mask was inside the
+    previous increment's own declared residual.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -196,11 +211,15 @@ symlink must each produce a finding, a declared one must not, and a plain
 in-tree symlink must stay clean. The `payload/*` controls cover the layer below
 THAT: a license body inside a gzip/bzip2/xz stream, a zip or tar renamed
 `.dat`, a wrapper nested inside a wrapper, an `.npz` member, a WAV `ICOP`
-copyright chunk, a notice spliced into a float dump and one written with a ©
-sign must each produce a finding — while a real PCM render, a float dump, an
-`.npy` tensor and this repository's own gzipped JSON trace must all stay clean,
-because a false positive on one of those would be unanswerable on a rule that
-cannot be exempted. The `wrapper/*` controls cover the NAMES inside those same
+copyright chunk, a notice spliced into a float dump and one written with the
+sign spelling must each produce a finding; so must the same notice re-encoded
+UTF-16-LE, UTF-16-BE, UTF-32-LE, UTF-32-BE, BOM-led inside a real render's data
+chunk, inside a wrapper member, and written with the sign spelling in a wide run
+(increment 10) — while a real PCM render, a QUIET one (whose every sample is a
+low byte beside a NUL, the byte shape a UTF-16-LE string also has), a float
+dump, an `.npy` tensor and this repository's own gzipped JSON trace must all
+stay clean, because a false positive on one of those would be unanswerable on a
+rule that cannot be exempted. The `wrapper/*` controls cover the NAMES inside those same
 wrappers, where no content signal exists to find: a `.wt` member in a zip
 renamed `.dat`, a stripped `.cpp` in a tar, a gzip whose FNAME header is its
 only name, an asset member two wrappers deep, and a `.wt` member that is itself
@@ -224,6 +243,7 @@ Python 3 standard library only.
 from __future__ import annotations
 
 import argparse
+import base64
 import bz2
 import codecs
 import gzip
@@ -1080,28 +1100,165 @@ RUN_WORD_RE = re.compile(rb"[A-Za-z]{3,}")
 
 # A UTF-8 © would end a printable-ASCII run mid-notice and take the copyright
 # keyword with it. Normalised to its ASCII spelling before harvesting, which the
-# `(c)` prefilter already recognises. Only this one spelling: the Latin-1 single
-# byte 0xA9 occurs constantly inside PCM and float data, and rewriting it would
-# manufacture `(c)` tokens in noise on a rule that cannot be exempted (declared
-# limit — see DECLARED LIMITS).
+# `(c)` prefilter already recognises. Only this one spelling in the NARROW
+# harvest: the Latin-1 single byte 0xA9 occurs constantly inside PCM and float
+# data, and rewriting it there would manufacture `(c)` tokens in noise on a rule
+# that cannot be exempted. (Inside a WIDE run the same byte is admitted, because
+# it has to arrive NUL-padded inside an otherwise printable NUL-padded run —
+# see `_wide_runs`.)
 UTF8_COPYRIGHT_SIGN = b"\xc2\xa9"
+
+# --- increment 10: the same payload, read in a WIDE encoding -------------------
+#
+# Increment 8 harvested the printable-ASCII runs a refused payload carries and
+# then DECLARED the rest: "the harvest reads ASCII, so a notice written in a WIDE
+# encoding *inside* a binary payload stays out of reach". That declaration was
+# wrong in exactly the way increments 6, 8 and 9 were wrong about their own: a
+# UTF-16 save is what an ordinary Windows editor produces, so "wide" is not an
+# exotic carriage — and a notice re-encoded that way and spliced into a render,
+# a float dump or an opaque archive member went past the non-exemptible
+# `foreign-license-text` rule with the audit reporting PASS, exit 0 and
+# UNCHANGED tripwire counts (demonstrated on the real tree in
+# `reports/sxt-019/EVIDENCE.md` §16).
+#
+# The sniff already decodes a file that is wide-encoded THROUGHOUT; what it
+# cannot do is admit a payload that is mostly binary with a wide-encoded notice
+# in it, and loosening it is the other failure direction (increment 6's positive
+# control guards that: decoding a render as prose would turn 264 renders into
+# garbage findings on a rule nobody can exempt).
+#
+# So the runs are found the same way the ASCII ones are — by their SHAPE, not by
+# a name or a declaration. An ASCII code point in UTF-16/UTF-32 is one data byte
+# plus NUL padding, so a wide run is a run of NULs in one of the two half-stride
+# streams whose matching data bytes are all printable:
+#
+#   utf-16-le  'H\0e\0'   -> NULs at odd offsets,  data at even
+#   utf-16-be  '\0H\0e'   -> NULs at even offsets, data at odd
+#   utf-32-le  'H\0\0\0'  -> NULs at odd offsets,  and the data stream is itself
+#   utf-32-be  '\0\0\0H'     NUL-padded, so one more halving step resolves it
+#
+# Looking for the PADDING rather than for alternating pairs is what makes this
+# affordable: `\x00{6,}` has a literal prefix, so the regex engine scans for
+# candidates at memchr speed instead of restarting a character class at every
+# byte. Measured over this repository's 339 MiB of payloads: 4.0 s for this
+# shape against 18.8 s for the alternating-pair pattern, i.e. the same cost as
+# the ASCII harvest that was already being paid (§16).
+MIN_WIDE_RUN_UNITS = 6
+
+WIDE_PAD_RUN_RE = re.compile(rb"\x00{%d,}" % MIN_WIDE_RUN_UNITS)
+
+# The admission test for a wide run's data bytes, applied with `bytes.translate`
+# (C speed) rather than a per-character ratio: EVERY data byte must be printable
+# ASCII or ordinary whitespace. Not a ratio, because the padding constraint is
+# already doing the discriminating work and a single stray byte simply splits one
+# run into two. 0xA9 is admitted here and normalised below: a notice that writes
+# its holder with the sign spelling (U+00A9) rather than the word is the first
+# evasion anyone would reach for, and in a wide run that byte has to arrive
+# NUL-padded inside an otherwise printable NUL-padded run — which is nothing like
+# the bare 0xA9 that occurs constantly in PCM, and is why the NARROW harvest
+# still refuses it.
+WIDE_DATA_BYTES = bytes(range(0x20, 0x7F)) + b"\t\r\n"
+LATIN1_COPYRIGHT_SIGN = b"\xa9"
+WIDE_DATA_ALLOWED = WIDE_DATA_BYTES + LATIN1_COPYRIGHT_SIGN
+# Derived from the byte above rather than written as a character, so this file
+# carries no notice of its own — the same reason every fixture here is assembled
+# from fragments (see the fixture note below).
+COPYRIGHT_SIGN_CHAR = LATIN1_COPYRIGHT_SIGN.decode("latin-1")
+
+
+def _decode_wide_run(data: bytes):
+    """A candidate run's text, or None when its bytes are not printable.
+
+    `data` is the run's DATA bytes with the padding already removed, so this is
+    the admission test plus the U+00A9 normalisation, nothing more.
+    """
+    if len(data) < MIN_WIDE_RUN_UNITS:
+        return None
+    if data.translate(None, WIDE_DATA_ALLOWED):
+        return None
+    if not RUN_WORD_RE.search(data):
+        return None
+    # latin-1 rather than ascii: every admitted byte but 0xA9 is ASCII, and that
+    # one is normalised to the spelling the `(c)` prefilter already recognises.
+    return data.decode("latin-1").replace(COPYRIGHT_SIGN_CHAR, "(c)")
+
+
+def _wide_runs(raw: bytes):
+    """Text of each wide-encoded (UTF-16/UTF-32, either byte order) ASCII run.
+
+    A BOM is neither required nor consumed: the run is found by its padding, so
+    `\\xff\\xfe`-led text, BOM-less text and text spliced into the middle of a
+    payload are all the same case here.
+    """
+    runs = []
+    for pad_phase in (0, 1):
+        pad = raw[pad_phase::2]
+        data_stream = raw[1 - pad_phase :: 2]
+        # Whether a code unit's data byte PRECEDES its padding or FOLLOWS it
+        # depends on the byte order AND on the offset the text happens to start
+        # at, which is odd as often as it is even for a notice spliced into a
+        # payload. Both windows are therefore read; a misaligned one picks up a
+        # padding NUL (not in `WIDE_DATA_ALLOWED`) and fails the admission test,
+        # so reading both cannot invent a run — it can only read the same text
+        # twice, which the coverage count says it does.
+        shifts = (0, -1) if pad_phase == 0 else (0, 1)
+        for match in WIDE_PAD_RUN_RE.finditer(pad):
+            start, end = match.span()
+            for shift in shifts:
+                low = start + shift
+                if low < 0:
+                    continue
+                # pad[k] is one byte of a code unit; data_stream[k + shift] is
+                # its data byte, so these are the data bytes of the units this
+                # NUL run pads.
+                data = data_stream[low : end + shift]
+                text = _decode_wide_run(data)
+                if text is not None:
+                    runs.append(text)
+                    continue
+                # A 32-bit code unit pads its data stream in turn, so the same
+                # step once more resolves UTF-32 in either byte order. The OTHER
+                # half must be all NUL for that reading to be real padding rather
+                # than an arbitrary decimation of binary data — without that
+                # check, quiet 16-bit PCM (whose every high byte is NUL)
+                # decimates into printable noise and manufactures runs on a rule
+                # that cannot be exempted.
+                for inner_phase in (0, 1):
+                    if data[1 - inner_phase :: 2].translate(None, b"\x00"):
+                        continue
+                    text = _decode_wide_run(data[inner_phase::2])
+                    if text is not None:
+                        runs.append(text)
+                        break
+    return runs
 
 
 def harvest_strings(raw: bytes):
-    """Printable-ASCII runs of `raw` that carry a word, joined as text.
+    """Text harvested from a payload the sniff refused (see `harvest_payload`)."""
+    return harvest_payload(raw)[0]
 
-    The joint is a newline, which every content regex treats as an ordinary
-    word gap (`_GAP`), so a notice split across runs by a binary field is still
-    matched.
+
+def harvest_payload(raw: bytes):
+    """(text, number of wide-encoded runs) for a payload the sniff refused.
+
+    The text is the payload's printable-ASCII runs that carry a word, plus the
+    same for its wide-encoded (UTF-16/UTF-32) runs. The joint is a newline, which
+    every content regex treats as an ordinary word gap (`_GAP`), so a notice
+    split across runs by a binary field is still matched.
+
+    The wide-run count is returned rather than inferred: it is reported as
+    coverage, so "no wide run offended" and "no wide run was examined" cannot be
+    confused with each other.
     """
     if UTF8_COPYRIGHT_SIGN in raw:
         raw = raw.replace(UTF8_COPYRIGHT_SIGN, b"(c)")
     kept = [
-        match.group()
+        match.group().decode("ascii", "replace")
         for match in PRINTABLE_RUN_RE.finditer(raw)
         if RUN_WORD_RE.search(match.group())
     ]
-    return "\n".join(part.decode("ascii", "replace") for part in kept)
+    wide = _wide_runs(raw)
+    return "\n".join(kept + wide), len(wide)
 
 
 def _looks_like_wrapper(raw: bytes):
@@ -1434,6 +1591,10 @@ class Tree:
         # debug state: these are the only description a marker-free member has,
         # and the coverage line reports how many were read.
         self._carried_names = {}
+        # Wide-encoded runs harvested from a payload (increment 10). Reported as
+        # coverage for the same reason: a payload whose wide runs were never
+        # examined must not look like one that carried none.
+        self._wide_runs = {}
 
     def excluded_by(self, rel):
         for prefix in self.exclusions:
@@ -1465,26 +1626,31 @@ class Tree:
           * treating an undecodable payload as opaque let a WRAPPER (a gzipped
             source file, a zip or tar renamed `.dat`) and an EMBEDDED notice (a
             WAV `LIST/INFO` copyright chunk, a notice spliced into a float dump)
-            do the same (controls `payload/*`).
+            do the same (controls `payload/*`);
+          * harvesting only the ASCII runs of such a payload let the same notice
+            through once it was re-saved in a WIDE encoding — a "Unicode" save
+            spliced into a render, a float dump or an opaque archive member
+            (controls `payload/wide-*`, `payload/utf32-*`).
 
         So the order is: resolve an encoding; failing that, unwrap wrappers by
         magic and read their members; failing that, harvest the payload's
-        word-bearing ASCII runs. What each file got is recorded in
+        word-bearing ASCII runs and its wide-encoded ones. What each file got is recorded in
         `_scan_modes` and reported as coverage — a strings-only scan is weaker
         than a decode, and says so, rather than being counted as a full read.
         """
         if rel in self._text_cache:
             return self._text_cache[rel]
-        value, mode, truncated, names = self._read(rel)
+        value, mode, truncated, names, wide = self._read(rel)
         self._scan_modes[rel] = mode
         self._carried_names[rel] = tuple(names)
+        self._wide_runs[rel] = wide
         if truncated:
             self._truncated.add(rel)
         self._text_cache[rel] = value
         return value
 
     def _read(self, rel):
-        """(text|None, scan mode, truncated, carried member names) for one entry."""
+        """(text|None, scan mode, truncated, member names, wide runs) for an entry."""
         try:
             with (self.root / rel).open("rb") as handle:
                 head = handle.read(BINARY_SNIFF_BYTES)
@@ -1493,7 +1659,7 @@ class Tree:
         except OSError:
             # A by-reference entry (a gitlink, a symlink to a directory) and an
             # unreadable file both land here; the discovery layer judges those.
-            return None, "unreadable", False, ()
+            return None, "unreadable", False, (), 0
         if encoding is not None:
             value = raw.decode(encoding, "replace")
             # A stray NUL survives the narrow decode as U+0000 and would split a
@@ -1501,14 +1667,20 @@ class Tree:
             # signal layer sees the real text.
             if "\0" in value:
                 value = value.replace("\0", "")
-            return value, "decoded", False, ()
+            return value, "decoded", False, (), 0
         entries, truncated = unwrap_payload(raw)
         if entries is not None:
             parts = []
+            wide = 0
             for _, payload in entries:
                 member_encoding = sniff_encoding(payload[:BINARY_SNIFF_BYTES])
                 if member_encoding is None:
-                    parts.append(harvest_strings(payload))
+                    # A member the sniff refuses gets the same payload read as a
+                    # committed one, wide runs included: a wrapper is not a place
+                    # a re-encoded notice may hide (increment 10).
+                    part, member_wide = harvest_payload(payload)
+                    parts.append(part)
+                    wide += member_wide
                 else:
                     parts.append(
                         payload.decode(member_encoding, "replace").replace("\0", "")
@@ -1518,9 +1690,15 @@ class Tree:
             # Scan mode describes the CONTENT read, as before: a wrapper whose
             # members are all opaque still read no text, and saying otherwise
             # because a NAME was recovered would overstate the content coverage.
-            return (value or None), ("unwrapped" if value else "none"), truncated, names
-        value = harvest_strings(raw)
-        return (value or None), ("strings" if value else "none"), truncated, ()
+            return (
+                (value or None),
+                ("unwrapped" if value else "none"),
+                truncated,
+                names,
+                wide,
+            )
+        value, wide = harvest_payload(raw)
+        return (value or None), ("strings" if value else "none"), truncated, (), wide
 
     def scan_mode(self, rel):
         """"decoded" | "unwrapped" | "strings" | "none" | "unreadable"."""
@@ -1540,6 +1718,16 @@ class Tree:
         if rel not in self._carried_names:
             self.text(rel)
         return self._carried_names.get(rel, ())
+
+    def wide_runs(self, rel):
+        """How many wide-encoded runs this entry's payload yielded (increment 10).
+
+        Forces the read, like `scan_mode`. Zero for a decoded file — a file the
+        sniff admits is read whole, in its own encoding, by every content rule.
+        """
+        if rel not in self._wide_runs:
+            self.text(rel)
+        return self._wide_runs.get(rel, 0)
 
     def truncated_scans(self):
         """Paths whose payload scan hit the inflation/depth budget."""
@@ -2536,6 +2724,11 @@ def audit(root: Path):
         "wrapper_member_names_read": sum(
             len(tree.carried_names(rel)) for rel in tree.files
         ),
+        # Wide-encoded (UTF-16/UTF-32) runs read out of those payloads
+        # (increment 10). Reported for the same reason as the member names: a
+        # payload whose wide runs were never examined must not be reported the
+        # same way as one that carried none.
+        "wide_encoded_runs_harvested": sum(tree.wide_runs(rel) for rel in tree.files),
         # A scan that could not finish must never look like one that passed.
         "payload_scans_truncated": tree.truncated_scans(),
         "entries_by_reference": {
@@ -2586,9 +2779,15 @@ def report(findings, stats, root, as_json=False):
         f"{stats['wrapper_member_names_read']} member name(s) read and judged"
     )
     print(
-        f"  scanned as extracted ASCII strings only: "
-        f"{stats['files_scanned_as_extracted_strings']} files — a non-ASCII "
-        "notice inside one would be missed"
+        f"  scanned as extracted strings only: "
+        f"{stats['files_scanned_as_extracted_strings']} files — printable-ASCII "
+        "runs, plus the wide-encoded ones; a notice in some other encoding "
+        "inside one would still be missed"
+    )
+    print(
+        f"  wide-encoded (UTF-16/UTF-32) runs harvested from payloads and "
+        f"judged: {stats['wide_encoded_runs_harvested']} — counted over every "
+        "payload read as strings, members of wrappers included"
     )
     for rel in stats["payload_scans_truncated"]:
         print(
@@ -2951,16 +3150,28 @@ def _riff_chunk(chunk_id: bytes, payload: bytes):
     return chunk_id + struct.pack("<I", len(payload)) + payload
 
 
-def _wav_payload(info_fields=()):
+def _wav_payload(info_fields=(), spliced=b"", quiet=False):
     """A real 16-bit PCM WAV, optionally carrying LIST/INFO metadata.
 
     `ICOP` is the RIFF copyright field — exactly where an upstream sample pack
     or an exported preset render states its holder. None of this repository's
     own renders carries one.
+
+    `spliced` is inserted into the middle of the data chunk, which is how a
+    notice rides along inside a real render. `quiet` scales the samples into the
+    low-amplitude range this repository's own renders mostly occupy, where the
+    high byte of every sample is NUL — the shape a UTF-16-LE string also has
+    (increment 10's false-positive hazard).
     """
     fmt = _riff_chunk(b"fmt ", struct.pack("<HHIIHH", 1, 1, 48000, 96000, 2, 16))
     samples = _lcg_samples(2400)
-    data = _riff_chunk(b"data", struct.pack(f"<{len(samples)}h", *samples))
+    if quiet:
+        samples = [sample // 256 for sample in samples]
+    pcm = struct.pack(f"<{len(samples)}h", *samples)
+    if spliced:
+        middle = len(pcm) // 2
+        pcm = pcm[:middle] + spliced + pcm[middle:]
+    data = _riff_chunk(b"data", pcm)
     body = b"WAVE" + fmt
     if info_fields:
         info = b"".join(
@@ -2972,14 +3183,20 @@ def _wav_payload(info_fields=()):
     return b"RIFF" + struct.pack("<I", len(body)) + body
 
 
-def _float_dump(notice=None):
-    """A raw float32 dump (the `.f32` shape), optionally with a notice spliced in."""
-    values = [sample / 32768.0 for sample in _lcg_samples(1200, seed=777)]
+def _float_dump(notice=None, spliced=b"", seed=777):
+    """A raw float32 dump (the `.f32` shape), optionally with a notice spliced in.
+
+    `notice` is spliced as ASCII (increment 8); `spliced` takes raw bytes, which
+    is how a re-encoded notice arrives (increment 10).
+    """
+    values = [sample / 32768.0 for sample in _lcg_samples(1200, seed=seed)]
     payload = struct.pack(f"<{len(values)}f", *values)
-    if notice is None:
+    if notice is not None:
+        spliced = notice.encode("ascii")
+    if not spliced:
         return payload
     middle = len(payload) // 2
-    return payload[:middle] + notice.encode("ascii") + payload[middle:]
+    return payload[:middle] + spliced + payload[middle:]
 
 
 def _tensor_payload():
@@ -3070,14 +3287,94 @@ FIXTURE_COPYRIGHT_SIGN_IN_A_PAYLOAD = (
     + ("\u00a9 20" + "19 Some Upstream Author\n").encode("utf-8")
     + struct.pack("<600h", *_lcg_samples(600, seed=42))
 )
-# Positive control for the declared residual: the harvest reads ASCII runs, so a
-# notice written in a WIDE encoding inside a binary payload is still out of
-# reach. Non-vacuous in both directions — it fails the moment wide-string
-# harvesting is added, and it is clean today.
+# Increment 10 — the WIDE-ENCODED run inside a payload. Increment 8 declared
+# this out of reach ("the harvest reads ASCII"); the fixture below is kept
+# BYTE-FOR-BYTE from that declaration so this increment's control is a direct
+# inversion of it, exactly as increment 8 inverted increment 6's
+# `masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope`. It was
+# `payload/wide-encoded-notice-in-a-payload-stays-out-of-scope`, a POSITIVE
+# control, and is now `payload/wide-encoded-notice-in-a-payload`, which must FIRE.
 FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD = (
     struct.pack("<600h", *_lcg_samples(600, seed=99))
     + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-le")
     + struct.pack("<600h", *_lcg_samples(600, seed=100))
+)
+# The same mask in the other byte order, in UTF-32 (both orders), and with a BOM
+# in front of it — the four shapes `BOMLESS_WIDE_ENCODINGS` and `BOM_ENCODINGS`
+# already name at the decode layer, which a payload-embedded notice reached none
+# of. A `.wav`/`.f32` carriage is used rather than a source name so no extension
+# tripwire can answer them instead.
+FIXTURE_UTF16BE_NOTICE_IN_A_PAYLOAD = _float_dump(
+    spliced=FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-be"), seed=101
+)
+# The same notice spliced at an ODD byte offset. A notice lands on an odd offset
+# as often as an even one, and at an odd offset the data byte of each code unit
+# sits on the OTHER side of its padding — the reading that was missed first, and
+# the reason both windows are read.
+FIXTURE_WIDE_NOTICE_AT_AN_ODD_OFFSET = (
+    b"\x81" + struct.pack("<600h", *_lcg_samples(600, seed=110))
+    + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-le")
+    + struct.pack("<600h", *_lcg_samples(600, seed=111))
+)
+# The odd-offset case where the FIRST character of the run is load-bearing: a
+# bare holder line, with no "(c)" marker and no license body behind it, so
+# "opyright 2019 …" — the reading one unit late — matches no prefilter at all and
+# the audit comes back clean. This is what makes reading both windows a coverage
+# fix rather than a tidiness one.
+FIXTURE_WIDE_HOLDER_LINE_AT_AN_ODD_OFFSET = (
+    b"\x81" + struct.pack("<600h", *_lcg_samples(600, seed=112))
+    + ("Copy" + "right 20" + "19 Some Upstream Author\n").encode("utf-16-le")
+    + struct.pack("<600h", *_lcg_samples(600, seed=113))
+)
+FIXTURE_UTF32LE_NOTICE_IN_A_PAYLOAD = (
+    struct.pack("<600h", *_lcg_samples(600, seed=102))
+    + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-32-le")
+    + struct.pack("<600h", *_lcg_samples(600, seed=103))
+)
+FIXTURE_UTF32BE_NOTICE_IN_A_PAYLOAD = (
+    struct.pack("<600h", *_lcg_samples(600, seed=104))
+    + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-32-be")
+    + struct.pack("<600h", *_lcg_samples(600, seed=105))
+)
+# A real PCM render whose data chunk carries the notice in UTF-16-LE: the
+# carriage an exported render actually has, and the shape whose own quiet samples
+# are the false-positive hazard this layer had to be measured against.
+FIXTURE_WAV_WITH_WIDE_NOTICE = _wav_payload(
+    spliced=FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16")
+)
+# One wrapper deep: a gzip whose member is an opaque payload with a UTF-16-LE
+# notice in it. The unwrap resolves the member, the member is still refused by
+# the sniff, and only the wide harvest reads it — so this case fails if the
+# member path does not harvest wide runs, even when the top-level path does.
+FIXTURE_GZIPPED_WIDE_NOTICE_PAYLOAD = gzip.compress(
+    FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD
+)
+# A notice whose holder is written with the sign spelling (U+00A9), wide-encoded
+# inside a payload: 0xA9 arrives NUL-padded inside an otherwise printable
+# NUL-padded run, so it is admitted and normalised, where the bare Latin-1 byte
+# in the NARROW harvest deliberately is not. The sign is built from the byte
+# constant rather than written as a character, like every other fixture fragment
+# here, so this file carries no notice of its own.
+FIXTURE_WIDE_COPYRIGHT_SIGN_IN_A_PAYLOAD = (
+    struct.pack("<600h", *_lcg_samples(600, seed=106))
+    + (COPYRIGHT_SIGN_CHAR + " 20" + "19 Some Upstream Author\n").encode("utf-16-le")
+    + struct.pack("<600h", *_lcg_samples(600, seed=107))
+)
+# This repository's own renders are mostly QUIET, and a quiet 16-bit PCM sample
+# is a low byte beside a NUL high byte — byte-for-byte the shape a UTF-16-LE
+# string has. That makes a quiet render, not a full-scale one, the real
+# false-positive hazard for this layer, and `foreign-license-text` cannot be
+# exempted: a finding on one of this repository's 264 renders would be
+# unanswerable. Kept as a positive control with real PCM data.
+FIXTURE_QUIET_PCM_WAV = _wav_payload(quiet=True)
+# The residual this increment declares rather than closes: a notice carried in a
+# TRANSFORMED encoding (base64 here) is not text in any stride, so no run-shaped
+# harvest reaches it. Non-vacuous in both directions — it is clean today and
+# fails the moment a decoding layer is added.
+FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD = (
+    struct.pack("<600h", *_lcg_samples(600, seed=108))
+    + base64.b64encode(FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8"))
+    + struct.pack("<600h", *_lcg_samples(600, seed=109))
 )
 
 # Increment 9 — the NAMES a wrapper carries. Increment 8 unwrapped wrappers and
@@ -3947,13 +4244,22 @@ def _payload_controls():
     behaving — a gzipped source file, a zip/tar renamed `.dat`, a WAV copyright
     chunk, a notice spliced into a float dump.
 
+    Increment 10 then inverted this increment's own declared residual, on the
+    same fixture bytes: a notice re-saved in a WIDE encoding and spliced into the
+    same payloads went past the non-exemptible rule just as the ASCII one had,
+    and a "Unicode" save is an ordinary editor default rather than an exotic
+    carriage.
+
     The positive controls carry at least as much weight. `foreign-license-text`
     cannot be exempted, so a false positive on this repository's own 264
     renders, 22 float dumps, 8 tensors or 18 gzipped traces would be
     unanswerable — the rule would be switched off rather than answered. Hence a
     real PCM render, a float dump, an `.npy`-shaped tensor and an own gzipped
-    JSON trace must all stay clean, and the wide-encoded notice inside a payload
-    pins the residual limit this increment declares rather than closes.
+    JSON trace must all stay clean; so must a QUIET render, which is the shape
+    increment 10 had to be measured against (a quiet 16-bit sample is a low byte
+    beside a NUL high byte — byte-for-byte what a UTF-16-LE string looks like);
+    and a base64-carried notice pins the residual limit increment 10 declares
+    rather than closes.
     """
     return [
         (
@@ -4090,16 +4396,122 @@ def _payload_controls():
                 root, "reports/artifacts/trace.json.gz", FIXTURE_OWN_GZIPPED_TRACE
             ),
         ),
+        # Increment 10 — the inversion of increment 8's own declared residual,
+        # on the same fixture bytes, plus the other byte orders, strides and
+        # carriages that declaration also covered.
         (
-            "payload/wide-encoded-notice-in-a-payload-stays-out-of-scope",
+            "payload/wide-encoded-notice-in-a-payload",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "increment 8's declared limit, now closed: a UTF-16-LE notice in a payload",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/wide-encoded-notice-in-the-other-byte-order",
+            "foreign-license-text",
+            PAYLOAD_DUMP_REL,
+            "the same notice in UTF-16-BE, spliced into a float dump",
+            lambda root: _write(
+                root, PAYLOAD_DUMP_REL, FIXTURE_UTF16BE_NOTICE_IN_A_PAYLOAD
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/wide-notice-spliced-at-an-odd-offset",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "the same notice at an ODD offset: its data bytes sit on the other "
+            "side of their padding",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_WIDE_NOTICE_AT_AN_ODD_OFFSET
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/wide-holder-line-at-an-odd-offset",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "the same, where the run's FIRST character is the whole prefilter: a "
+            "bare holder line read one unit late matches nothing",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_WIDE_HOLDER_LINE_AT_AN_ODD_OFFSET
+            ),
+            PAYLOAD_COPYRIGHT_LOCATOR,
+        ),
+        (
+            "payload/utf32-le-notice-in-a-payload",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "a 32-bit code unit: three padding bytes per character, not one",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_UTF32LE_NOTICE_IN_A_PAYLOAD
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/utf32-be-notice-in-a-payload",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "the same, big-endian — the other half of the second halving step",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_UTF32BE_NOTICE_IN_A_PAYLOAD
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/bom-led-wide-notice-inside-a-real-render",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "a BOM-led UTF-16 notice inside a real PCM render's data chunk",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_WAV_WITH_WIDE_NOTICE
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/wide-notice-inside-a-wrapper-member",
+            "foreign-license-text",
+            PAYLOAD_BUNDLE_REL,
+            "a gzip whose member is an opaque payload with a UTF-16 notice in it",
+            lambda root: _write(
+                root, PAYLOAD_BUNDLE_REL, FIXTURE_GZIPPED_WIDE_NOTICE_PAYLOAD
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/wide-encoded-copyright-sign-notice",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "a wide-encoded notice whose holder is written with the sign spelling",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_WIDE_COPYRIGHT_SIGN_IN_A_PAYLOAD
+            ),
+            PAYLOAD_COPYRIGHT_LOCATOR,
+        ),
+        (
+            "payload/quiet-pcm-render-stays-clean",
             None,
             None,
             (
-                "a declared limit: the harvest reads ASCII runs, so a UTF-16 "
-                "notice inside a binary payload is still out of reach"
+                "the real false-positive hazard: a QUIET 16-bit PCM render, whose "
+                "every sample is a low byte beside a NUL — a UTF-16-LE string's "
+                "own byte shape"
+            ),
+            lambda root: _write(root, PAYLOAD_RENDER_REL, FIXTURE_QUIET_PCM_WAV),
+        ),
+        (
+            "payload/base64-encoded-notice-stays-out-of-scope",
+            None,
+            None,
+            (
+                "a declared limit: a notice carried in a TRANSFORMED encoding "
+                "(base64) is not text at any stride, so no run harvest reaches it"
             ),
             lambda root: _write(
-                root, PAYLOAD_RENDER_REL, FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD
+                root, PAYLOAD_RENDER_REL, FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD
             ),
         ),
     ]
