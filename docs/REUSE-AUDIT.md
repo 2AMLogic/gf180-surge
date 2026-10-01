@@ -135,14 +135,21 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    than by name** (so a gzipped source file, or a zip/tar renamed `.dat`, is
    read as its members) and, failing that, reads the printable-ASCII runs the
    payload carries (so a notice spliced into a render, or a WAV `LIST/INFO`
-   copyright chunk, is found). Every run prints how much of the tree each
-   weaker mode covered — `unwrapped by magic`, `scanned as extracted ASCII
-   strings only`, `not content-scanned` — plus any `TRUNCATED payload scan`.
-   Three residuals stay declared and control-pinned rather than closed: a
-   notice written in a WIDE encoding inside a binary payload, a wrapper whose
-   members carry no marker (covered only by the extension tripwires, member
-   names are not tripwired), and an inflation that hits the unwrap budget.
-   Read the counts, not just the verdict.
+   copyright chunk, is found). A wrapper whose members carry no marker at all
+   is answered by the member NAMES (`wrapper-member-name`): a `.wt` wavetable
+   inside a zip renamed `.dat`, a stripped `.cpp` inside a tar, and a gzip
+   whose header filename is its only name are each judged by the same
+   extension sets a committed path is, and each component of a nested label is
+   judged so an outer name is not masked by what it wraps. Every run prints
+   how much of the tree each weaker mode covered — `unwrapped by magic` (with
+   the number of member names read), `scanned as extracted ASCII strings
+   only`, `not content-scanned` — plus any `TRUNCATED payload scan`. Two
+   residuals stay declared and control-pinned rather than closed: a notice
+   written in a WIDE encoding inside a binary payload, and an inflation that
+   hits the unwrap budget (a wrapper the audit cannot open yields no member
+   names either). A member type this repository authors (`.json`, `.hex`,
+   `.npy`) is not a signal, exactly as it is not for a file's own name. Read
+   the counts, not just the verdict.
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle

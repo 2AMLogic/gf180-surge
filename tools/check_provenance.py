@@ -55,6 +55,18 @@ The audit has four groups of checks:
                                          binary-bundle extensions
        * `foreign-source-language`     — source languages this repository
                                          does not author
+       * `wrapper-member-name`         — a wrapper (gzip/bzip2/xz stream, zip
+                                         or tar, nested) carrying a MEMBER
+                                         NAME in either extension set above:
+                                         a `.wt` wavetable inside an archive
+                                         renamed `.dat`, a stripped `.cpp`
+                                         inside a tar, a gzip whose FNAME
+                                         header is the only name it has. The
+                                         member payload itself states nothing,
+                                         so its name is the whole signal; each
+                                         component of a nested label is judged,
+                                         so an outer name is not masked by what
+                                         it wraps
        * `self-declared-quotation`     — the repo's own quotation vocabulary
                                          ("quoted as data", "QUOTED",
                                          "transcribed from", "vendored", …)
@@ -113,25 +125,31 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     `discovery/in-repo-symlink-to-a-regular-file-passes`).
   * Content rules read three KINDS of text, and a run reports how much of the
     tree each one covered (`files_unwrapped_from_wrappers`,
-    `files_scanned_as_extracted_strings`, `files_not_content_scanned`):
+    `files_scanned_as_extracted_strings`, `files_not_content_scanned`,
+    `wrapper_member_names_read`):
     decoded text; a wrapper's members, unwrapped by magic (gzip/bzip2/xz
     streams, zip and tar archives, nested — so a gzipped source file, or an
     archive renamed `.dat`, is read rather than counted as opaque); and, for a
     payload that is still not text, the printable-ASCII RUNS it carries, which
     is how a notice spliced into a render or a WAV `LIST/INFO` copyright chunk
-    is found. Three residuals here are declared, not closed, each pinned by a
-    positive control:
+    is found. A wrapper's member NAMES are judged too (increment 9), which is
+    the only signal a marker-free member has. Two residuals here are declared,
+    not closed, each pinned by a positive control:
       - the harvest reads ASCII, so a notice written in a WIDE encoding *inside*
         a binary payload stays out of reach
         (`payload/wide-encoded-notice-in-a-payload-stays-out-of-scope`); only
         the UTF-8 © spelling is normalised, because the Latin-1 byte occurs
         constantly inside PCM and float data;
-      - a wrapper whose members carry no marker at all is covered only by the
-        extension tripwires, as any opaque bundle is — unwrapping reads member
-        CONTENT, and member NAMES are not themselves tripwired;
       - an inflation that hits the 256 MiB budget or the 4-deep wrapper limit is
         reported as a TRUNCATED payload scan on every run and in `--json`, which
-        is a disclosed partial read, not a pass.
+        is a disclosed partial read, not a pass. A wrapper the audit cannot open
+        at all (a corrupt stream) likewise yields no member names, and the
+        coverage line reports how many names were read so "none offended" and
+        "none examined" do not look alike.
+    A member name is judged by the same two extension sets as a committed path,
+    so a member type this repository authors (`.json`, `.hex`, `.npy`) is not a
+    signal — the same boundary, and the same residual, as for a file's own name:
+    an upstream member renamed to one of those is not detected here.
     Relatedly, the encoding sniff admits a wide-encoded file on an "it is
     mostly ASCII" test, so a UTF-16 file written wholly in a non-Latin script
     is refused; license notices are ASCII English, and admitting everything
@@ -147,9 +165,14 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     payload" and audited clean; increment 8 went back to the payload increment 6
     had declared out of reach and found a WRAPPER (a gzipped source file, an
     archive renamed `.dat`) and an EMBEDDED notice (a WAV copyright chunk, a
-    notice spliced into a float dump) hiding behind that declaration. So the
-    layer a masking path lives in is not bounded by the layers already audited,
-    and a DECLARED limit is not evidence that the limit was necessary.
+    notice spliced into a float dump) hiding behind that declaration; increment
+    9 did the same to increment 8's own declaration, which held that a wrapper
+    whose members carry no marker is covered by the extension tripwires — it is
+    not, because those judge the OUTER name, and a zip of `.wt` wavetables
+    renamed `.dat` carries no marker anywhere in it. So the layer a masking path
+    lives in is not bounded by the layers already audited, and a DECLARED limit
+    is not evidence that the limit was necessary — three increments running, the
+    next mask was inside the previous increment's own declared residual.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -177,7 +200,14 @@ copyright chunk, a notice spliced into a float dump and one written with a ©
 sign must each produce a finding — while a real PCM render, a float dump, an
 `.npy` tensor and this repository's own gzipped JSON trace must all stay clean,
 because a false positive on one of those would be unanswerable on a rule that
-cannot be exempted.
+cannot be exempted. The `wrapper/*` controls cover the NAMES inside those same
+wrappers, where no content signal exists to find: a `.wt` member in a zip
+renamed `.dat`, a stripped `.cpp` in a tar, a gzip whose FNAME header is its
+only name, an asset member two wrappers deep, and a `.wt` member that is itself
+a gzip (whose outer name must not be masked by the inner one) must each produce
+a finding; a row declaring `covers` must clear it and the same row WITHOUT
+`covers` must not; and this repository's own gzipped trace carrying an FNAME,
+plus an `.npz` of `.npy` members, must stay clean.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -278,6 +308,10 @@ RULES = {
     "foreign-license-text": "foreign license/copyright text without a provenance row",
     "upstream-asset-extension": "upstream asset / opaque bundle without a provenance row",
     "foreign-source-language": "foreign-language source file without a provenance row",
+    "wrapper-member-name": (
+        "wrapper carrying an upstream-asset / foreign-source member NAME "
+        "without a provenance row"
+    ),
     "self-declared-quotation": "self-declared quotation without a provenance row",
     "submodule-reference": "committed submodule / nested repository without a provenance row",
     "external-symlink-target": "symlink whose target leaves the audited tree without a provenance row",
@@ -287,6 +321,7 @@ TRIPWIRE_RULES = (
     "foreign-license-text",
     "upstream-asset-extension",
     "foreign-source-language",
+    "wrapper-member-name",
     "self-declared-quotation",
     "submodule-reference",
     "external-symlink-target",
@@ -1106,8 +1141,48 @@ def _unwrap_stream(raw: bytes, kind: str, limit: int):
     return out, False
 
 
+def _gzip_header_name(raw: bytes):
+    """The original filename a gzip header carries (FNAME), or None.
+
+    RFC 1952 §2.3.1: `FLG` bit 3 means a NUL-terminated original file name
+    follows the fixed 10-byte header (after `FEXTRA`, if bit 2 is set too).
+    `gzip.GzipFile` reads this field and throws it away, and there is no public
+    API for it — so it is parsed here. It is the ONLY name a single-stream
+    wrapper carries: `evidence.dat` whose gzip header says `Bank Sine.wt` has
+    no other name to judge, and before increment 9 nothing read it.
+    """
+    if not raw.startswith(GZIP_MAGIC) or len(raw) < 11:
+        return None
+    flags = raw[3]
+    if not flags & 0x08:  # FNAME not present
+        return None
+    offset = 10
+    if flags & 0x04:  # FEXTRA: a 2-byte length then that many bytes
+        if len(raw) < offset + 2:
+            return None
+        extra = raw[offset] | (raw[offset + 1] << 8)
+        offset += 2 + extra
+    end = raw.find(b"\0", offset)
+    if end < 0 or end <= offset:
+        return None
+    # Latin-1 per RFC 1952; replace rather than raise on anything else.
+    return raw[offset:end].decode("latin-1", "replace")
+
+
+# Joins a wrapper's name to the name of what it wraps. Every component of a
+# joined label is tripwired separately, so an outer name is never masked by the
+# inner one (`Bank Sine.wt!meta.json` must still read as a `.wt`).
+MEMBER_JOIN = "!"
+
+
+def _join_member(outer, inner):
+    if outer and inner:
+        return f"{outer}{MEMBER_JOIN}{inner}"
+    return outer or inner or ""
+
+
 def _unwrap_archive(raw: bytes, limit: int):
-    """([member payloads], truncated) for a zip/tar, or (None, False)."""
+    """([(member name, payload)], truncated) for a zip/tar, or (None, False)."""
     buf = io.BytesIO(raw)
     members = None
     try:
@@ -1121,9 +1196,9 @@ def _unwrap_archive(raw: bytes, limit: int):
                     with archive.open(info) as handle:
                         data = handle.read(remaining + 1)
                     if len(data) > remaining:
-                        return members + [data[:remaining]], True
+                        return members + [(info.filename, data[:remaining])], True
                     remaining -= len(data)
-                    members.append(data)
+                    members.append((info.filename, data))
             return members, False
     except Exception:
         return None, False
@@ -1143,22 +1218,30 @@ def _unwrap_archive(raw: bytes, limit: int):
                     continue
                 data = handle.read(remaining + 1)
                 if len(data) > remaining:
-                    return members + [data[:remaining]], True
+                    return members + [(info.name, data[:remaining])], True
                 remaining -= len(data)
-                members.append(data)
+                members.append((info.name, data))
         return members, False
     except Exception:
         return None, False
 
 
 def unwrap_payload(raw: bytes, limit=None, depth=0):
-    """(payloads carried inside `raw`, truncated), or (None, truncated).
+    """([(member name, payload)] carried inside `raw`, truncated), or (None, …).
 
     `None` means `raw` is not a wrapper — not that it is safe. Recurses so that
     a `.tar.gz` (and a `.tar.gz` inside a zip) is unwrapped to its real members;
     `truncated` is True when the inflation budget or the depth limit stopped the
     walk, so the caller can disclose an incomplete scan instead of reporting a
     pass.
+
+    The member NAME travels with its payload (increment 9). Unwrapping read
+    member CONTENT only, so a wrapper whose members carry no marker — a zip of
+    upstream `.wt` wavetables, a tar of marker-free `.cpp` sources — was
+    answered by nothing: the archive extensions judge the OUTER name, which a
+    `.dat` rename evades. A member that is itself a wrapper keeps its own name
+    in the label (`dsp/Reverb1.h.gz!…`) rather than being replaced by what it
+    wraps.
     """
     if limit is None:
         limit = MAX_UNWRAPPED_BYTES
@@ -1170,19 +1253,28 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
         inner, truncated = _unwrap_stream(raw, kind, limit)
         if inner is None:
             return None, False
+        label = _gzip_header_name(raw) if kind == "gzip" else None
         deeper, deeper_truncated = unwrap_payload(inner, limit, depth + 1)
+        truncated = truncated or deeper_truncated
         if deeper is not None:
-            return deeper, truncated or deeper_truncated
-        return [inner], truncated or deeper_truncated
+            return [
+                (_join_member(label, name), payload) for name, payload in deeper
+            ], truncated
+        return [(_join_member(label, ""), inner)], truncated
     members, truncated = _unwrap_archive(raw, limit)
     if members is None:
         return None, truncated
-    payloads = []
-    for member in members:
+    entries = []
+    for name, member in members:
         deeper, deeper_truncated = unwrap_payload(member, limit, depth + 1)
         truncated = truncated or deeper_truncated
-        payloads.extend(deeper if deeper is not None else [member])
-    return payloads, truncated
+        if deeper is None:
+            entries.append((name, member))
+        else:
+            entries.extend(
+                (_join_member(name, inner), payload) for inner, payload in deeper
+            )
+    return entries, truncated
 
 
 # --- file discovery -----------------------------------------------------------
@@ -1338,6 +1430,10 @@ class Tree:
         # past its budget.
         self._scan_modes = {}
         self._truncated = set()
+        # Names a wrapper carries INSIDE it (increment 9). Bookkeeping, not
+        # debug state: these are the only description a marker-free member has,
+        # and the coverage line reports how many were read.
+        self._carried_names = {}
 
     def excluded_by(self, rel):
         for prefix in self.exclusions:
@@ -1379,15 +1475,16 @@ class Tree:
         """
         if rel in self._text_cache:
             return self._text_cache[rel]
-        value, mode, truncated = self._read(rel)
+        value, mode, truncated, names = self._read(rel)
         self._scan_modes[rel] = mode
+        self._carried_names[rel] = tuple(names)
         if truncated:
             self._truncated.add(rel)
         self._text_cache[rel] = value
         return value
 
     def _read(self, rel):
-        """(text|None, scan mode, truncated) for one entry."""
+        """(text|None, scan mode, truncated, carried member names) for one entry."""
         try:
             with (self.root / rel).open("rb") as handle:
                 head = handle.read(BINARY_SNIFF_BYTES)
@@ -1396,7 +1493,7 @@ class Tree:
         except OSError:
             # A by-reference entry (a gitlink, a symlink to a directory) and an
             # unreadable file both land here; the discovery layer judges those.
-            return None, "unreadable", False
+            return None, "unreadable", False, ()
         if encoding is not None:
             value = raw.decode(encoding, "replace")
             # A stray NUL survives the narrow decode as U+0000 and would split a
@@ -1404,11 +1501,11 @@ class Tree:
             # signal layer sees the real text.
             if "\0" in value:
                 value = value.replace("\0", "")
-            return value, "decoded", False
-        payloads, truncated = unwrap_payload(raw)
-        if payloads is not None:
+            return value, "decoded", False, ()
+        entries, truncated = unwrap_payload(raw)
+        if entries is not None:
             parts = []
-            for payload in payloads:
+            for _, payload in entries:
                 member_encoding = sniff_encoding(payload[:BINARY_SNIFF_BYTES])
                 if member_encoding is None:
                     parts.append(harvest_strings(payload))
@@ -1417,15 +1514,32 @@ class Tree:
                         payload.decode(member_encoding, "replace").replace("\0", "")
                     )
             value = "\n".join(part for part in parts if part)
-            return (value or None), ("unwrapped" if value else "none"), truncated
+            names = tuple(name for name, _ in entries if name)
+            # Scan mode describes the CONTENT read, as before: a wrapper whose
+            # members are all opaque still read no text, and saying otherwise
+            # because a NAME was recovered would overstate the content coverage.
+            return (value or None), ("unwrapped" if value else "none"), truncated, names
         value = harvest_strings(raw)
-        return (value or None), ("strings" if value else "none"), truncated
+        return (value or None), ("strings" if value else "none"), truncated, ()
 
     def scan_mode(self, rel):
         """"decoded" | "unwrapped" | "strings" | "none" | "unreadable"."""
         if rel not in self._scan_modes:
             self.text(rel)
         return self._scan_modes.get(rel, "unreadable")
+
+    def carried_names(self, rel):
+        """Member names the wrapper at `rel` carries inside it (may be empty).
+
+        Forces the read, like `scan_mode`: the unwrap that recovers these names
+        happens there. Empty for every entry that is not a wrapper the audit
+        could open — a corrupt stream and anything past the depth/inflation
+        budget carry no names here, and that partial read is disclosed as a
+        TRUNCATED payload scan rather than counted as a pass.
+        """
+        if rel not in self._carried_names:
+            self.text(rel)
+        return self._carried_names.get(rel, ())
 
     def truncated_scans(self):
         """Paths whose payload scan hit the inflation/depth budget."""
@@ -2094,6 +2208,27 @@ def _extension_suffix(rel):
     return "." + name.rsplit(".", 1)[-1].lower() if "." in name else ""
 
 
+def member_name_signals(label):
+    """[(component, suffix, what it is)] for one wrapper member's name label.
+
+    EVERY `!`-joined component is judged, not just the last: a zip member named
+    `Bank Sine.wt` that is itself a gzip would otherwise be labelled
+    `Bank Sine.wt!inner.json` and read as a `.json`, which is the same
+    "stop at the first answer" masking shape increments 2-5 closed on the
+    license rule. The two extension sets are the ones that judge a file's own
+    name, so a member name is held to exactly the standard its own path would
+    be held to if it were committed unwrapped.
+    """
+    out = []
+    for component in label.split(MEMBER_JOIN):
+        suffix = _extension_suffix(component)
+        if suffix in UPSTREAM_ASSET_EXTS:
+            out.append((component, suffix, "upstream asset / opaque bundle"))
+        elif suffix in FOREIGN_SOURCE_EXTS:
+            out.append((component, suffix, "foreign-language source"))
+    return out
+
+
 def symlink_escape(tree: Tree, rel):
     """Why this symlink's target is not plain in-tree content, or None.
 
@@ -2222,6 +2357,26 @@ def tripwire_hits(tree: Tree, rel):
         hits.append(("upstream-asset-extension", f"extension {suffix}"))
     if suffix in FOREIGN_SOURCE_EXTS:
         hits.append(("foreign-source-language", f"extension {suffix}"))
+    # The names a wrapper carries INSIDE it, before the content rules: a member
+    # that carries no marker at all (a `.wt` payload, a stripped `.cpp`) reaches
+    # none of them, and `text()` is None for a wrapper whose members are all
+    # opaque — so judging names after the `text is None` return would have left
+    # the whole class unanswered. `carried_names` forces that read itself.
+    offenders = [
+        (label, signal)
+        for label in tree.carried_names(rel)
+        for signal in member_name_signals(label)
+    ]
+    if offenders:
+        label, (component, member_suffix, what) = offenders[0]
+        evidence = (
+            f"wrapper member {component!r} ({what}, extension {member_suffix})"
+        )
+        if label != component:
+            evidence += f", carried at {label!r}"
+        if len(offenders) > 1:
+            evidence += f", and {len(offenders) - 1} more member name(s)"
+        hits.append(("wrapper-member-name", evidence))
     text = tree.text(rel)
     if text is None:
         return hits
@@ -2375,6 +2530,12 @@ def audit(root: Path):
         "files_scanned_as_extracted_strings": sum(
             1 for rel in tree.files if tree.scan_mode(rel) == "strings"
         ),
+        # Names recovered from inside wrappers and judged by the extension sets
+        # (increment 9). Reported because a wrapper the audit could not open
+        # contributes none, so "0 names" and "no wrappers" must not look alike.
+        "wrapper_member_names_read": sum(
+            len(tree.carried_names(rel)) for rel in tree.files
+        ),
         # A scan that could not finish must never look like one that passed.
         "payload_scans_truncated": tree.truncated_scans(),
         "entries_by_reference": {
@@ -2421,7 +2582,8 @@ def report(findings, stats, root, as_json=False):
     )
     print(
         f"  unwrapped by magic (compressed stream / archive): "
-        f"{stats['files_unwrapped_from_wrappers']} files — members content-scanned"
+        f"{stats['files_unwrapped_from_wrappers']} files — members content-scanned, "
+        f"{stats['wrapper_member_names_read']} member name(s) read and judged"
     )
     print(
         f"  scanned as extracted ASCII strings only: "
@@ -2918,6 +3080,83 @@ FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD = (
     + struct.pack("<600h", *_lcg_samples(600, seed=100))
 )
 
+# Increment 9 — the NAMES a wrapper carries. Increment 8 unwrapped wrappers and
+# content-scanned their members, then DECLARED the remainder: "a wrapper whose
+# members carry no marker at all is covered only by the extension tripwires …
+# unwrapping reads member CONTENT, and member NAMES are not themselves
+# tripwired". Every must-fail fixture below audited **clean** under increment 8
+# — no license text anywhere in it to find, and the outer `.dat`/`.bin` name
+# evades both extension sets — which is precisely the shape upstream assets
+# arrive in: a wavetable payload states no copyright, and a stripped source file
+# states nothing either.
+#
+# Marker-free ON PURPOSE. A fixture carrying a notice would be caught by
+# `foreign-license-text` and prove nothing about this rule, so each payload
+# below is deterministic noise or plain code: the member NAME is the only signal
+# in the file.
+# NUL-interleaved high bytes: the encoding sniff refuses it (no BOM, NUL-dense,
+# no wide decode that is mostly ASCII) and no six consecutive printable bytes
+# exist, so the harvest is empty and `text()` is None. The member NAME is then
+# the only thing in the file any rule can read — which is both the point of this
+# control and the real shape of a wavetable payload. (Ordinary int16 noise fires
+# the rule just as well, but an accidental printable run in it makes
+# `manifest-uncorroborated` demand a citation a binary cannot carry — a
+# confound, not the rule under test.)
+FIXTURE_MARKER_FREE_ASSET_PAYLOAD = bytes(
+    value for i in range(512) for value in (0x00, 0x80 | (i * 37) % 0x80)
+)
+FIXTURE_MARKER_FREE_SOURCE = (
+    "float run(float x, float k) { return x - k * x * x * x; }\n"
+)
+
+
+def _gzip_with_name(name, payload: bytes):
+    """A gzip stream whose header carries `name` in its FNAME field.
+
+    `mtime=0` keeps the bytes deterministic. This is the shape `gzip <file>`
+    produces by default, and the shape 15 of this repository's own evidence
+    traces are in — so the positive control below is this repository's real
+    data, not a hypothetical.
+    """
+    buf = io.BytesIO()
+    with gzip.GzipFile(fileobj=buf, mode="wb", filename=name, mtime=0) as handle:
+        handle.write(payload)
+    return buf.getvalue()
+
+
+FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME = _zip_payload(
+    (("wavetables/Bank Sine.wt", FIXTURE_MARKER_FREE_ASSET_PAYLOAD),)
+)
+FIXTURE_TAR_GZ_WITH_SOURCE_MEMBER_NAME = _tar_gz_payload(
+    (("vendor/Reverb1.cpp", FIXTURE_MARKER_FREE_SOURCE),)
+)
+FIXTURE_GZIP_WITH_ASSET_FNAME = _gzip_with_name(
+    "Bank Sine.wt", FIXTURE_MARKER_FREE_ASSET_PAYLOAD
+)
+FIXTURE_GZIPPED_ZIP_WITH_ASSET_MEMBER = gzip.compress(
+    FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME
+)
+# The masking shape `member_name_signals` splits for: the offending name is the
+# OUTER member, and what it wraps is innocuous. Judging only the last component
+# of the joined label would read this as a `.json`.
+FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER = _zip_payload(
+    (("Bank Sine.wt", _gzip_with_name("meta.json", b'{"frames": 16}')),)
+)
+# Positive controls — this repository's own wrapper shapes, which must stay
+# clean. `wrapper-member-name` cannot be exempted, so a false positive here
+# would be answered by switching the rule off. Both are measured shapes: of the
+# 18 tracked `*.json.gz`/`*.hex.gz` traces, 15 carry an FNAME (9 `.json`,
+# 6 `.hex`; the other 3 carry none), and the `.npz` tap fixture is a zip of 11
+# `.npy` members — 26 real member names, 0 hits, re-derived by
+# `test_real_tree_member_names_are_read_and_none_offend` on every run.
+FIXTURE_OWN_GZIPPED_TRACE_WITH_FNAME = _gzip_with_name(
+    "trace_seq-notes-coverage-v1.json",
+    json.dumps({"fixture": "seq-notes-coverage-v1", "taps": [0.0, 0.25]}).encode("utf-8"),
+)
+FIXTURE_OWN_NPZ_MEMBERS = _zip_payload(
+    (("gal_in.npy", "x"), ("gal_out.npy", "y"), ("__trimmed__.npy", "z"))
+)
+
 
 def _scoped_exemption(root: Path, occurrences, path="docs/own_copy.md"):
     item = {
@@ -3042,6 +3281,12 @@ def _controls():
             "an undeclared foreign-language source file",
             lambda root: _write(
                 root, "src/copied_filter.cpp", "float run(float x) { return x; }\n"
+            ),
+        ),
+        "wrapper-member-name": (
+            "an archive renamed '.dat' carrying an upstream asset member name",
+            lambda root: _write(
+                root, PAYLOAD_BUNDLE_REL, FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME
             ),
         ),
         "self-declared-quotation": (
@@ -3860,6 +4105,158 @@ def _payload_controls():
     ]
 
 
+PAYLOAD_ASSET_BUNDLE_REL = "compiler/golden/wavetables.dat"
+
+
+def _asset_bundle_row(covers=None):
+    """A provenance row for the synthetic wavetable bundle, plus the manifest's
+    own `self-declared-quotation` exemption.
+
+    The row's class is `vendored-copy`, so the manifest itself then carries the
+    quotation vocabulary beside an upstream citation — exactly as the real
+    `decision-records/provenance.json` does, and exempted the same way (that
+    file's own exemption, not a special case in the tool). Without it the
+    control would fail on a confound rather than on the rule under test.
+    """
+    row = {
+        "path": PAYLOAD_ASSET_BUNDLE_REL,
+        "class": "vendored-copy",
+        "content": "synthetic: an archive of upstream wavetable assets",
+        "upstream": "surge-synthesizer/surge",
+        "pinned_commit": FIXTURE_SUBMODULE_COMMIT,
+        "upstream_license": "GPL-3.0-or-later",
+        "decision_record": "0001",
+    }
+    if covers is not None:
+        row["covers"] = list(covers)
+    exemption = {
+        "path": MANIFEST_REL,
+        "rules": ["self-declared-quotation"],
+        "reason": "synthetic: the manifest's own rows use the quotation vocabulary",
+    }
+
+    def mutate(root):
+        _write(root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME)
+        _patch_manifest(
+            root,
+            lambda d: (d["entries"].append(row), d["exemptions"].append(exemption)),
+        )
+
+    return mutate
+
+
+def _wrapper_name_controls():
+    """[(label, expected rule or None, expected path, description, mutator[, in_detail])].
+
+    Increment 9 — the NAMES inside a wrapper, which increment 8 declared rather
+    than closed. Every must-fail case below audited **clean** on increment 8's
+    tool while `--negative-control` reported all 31 rules, all 40 masking
+    controls, all 11 discovery controls and all 17 payload controls behaving:
+    the files carry no license text to find, and their outer name is in neither
+    extension set.
+
+    The positive controls carry at least as much weight as on every earlier
+    increment. `wrapper-member-name` is non-exemptible, so a false positive on
+    this repository's own 19 wrappers — 15 gzipped traces that really do carry
+    an FNAME, and the `.npz` tap fixture whose 11 members are all `.npy` — could
+    only be answered by switching the rule off. Both were measured over the
+    real tree before this was written: 0 hits across its 26 member names
+    (9 `.json`, 6 `.hex`, 11 `.npy`; 3 gzip streams carry no FNAME at all).
+    """
+    return [
+        (
+            "wrapper/zip-member-named-as-an-upstream-asset",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "a zip renamed '.dat' whose member is a '.wt' wavetable with no marker",
+            lambda root: _write(
+                root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME
+            ),
+            "Bank Sine.wt",
+        ),
+        (
+            "wrapper/tar-member-named-as-foreign-source",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "a tar.gz renamed '.dat' carrying a stripped '.cpp' — no notice in it",
+            lambda root: _write(
+                root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_TAR_GZ_WITH_SOURCE_MEMBER_NAME
+            ),
+            "Reverb1.cpp",
+        ),
+        (
+            "wrapper/gzip-fname-header-names-an-asset",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "a gzip whose FNAME header is the only name it has ('Bank Sine.wt')",
+            lambda root: _write(
+                root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_GZIP_WITH_ASSET_FNAME
+            ),
+            "Bank Sine.wt",
+        ),
+        (
+            "wrapper/asset-member-inside-a-gzipped-zip",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "the recursion site: a zip inside a gzip, '.wt' member two deep",
+            lambda root: _write(
+                root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_GZIPPED_ZIP_WITH_ASSET_MEMBER
+            ),
+            "Bank Sine.wt",
+        ),
+        (
+            "wrapper/outer-member-name-not-masked-by-the-inner-one",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "a '.wt' member that is itself a gzip of 'meta.json' — the outer "
+            "name must still be judged",
+            lambda root: _write(
+                root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER
+            ),
+            "Bank Sine.wt",
+        ),
+        (
+            "wrapper/own-gzipped-trace-with-an-fname-stays-clean",
+            None,
+            None,
+            "this repository's real shape: a gzipped JSON trace whose gzip "
+            "header carries its original '.json' filename",
+            lambda root: _write(
+                root,
+                "reports/artifacts/trace.json.gz",
+                FIXTURE_OWN_GZIPPED_TRACE_WITH_FNAME,
+            ),
+        ),
+        (
+            "wrapper/own-npz-members-stay-clean",
+            None,
+            None,
+            "an '.npz' tap fixture: a zip of this project's own '.npy' members",
+            lambda root: _write(
+                root, "reports/fixtures/taps.npz", FIXTURE_OWN_NPZ_MEMBERS
+            ),
+        ),
+        (
+            "wrapper/asset-member-answered-by-a-row-passes",
+            None,
+            None,
+            "the rule is ANSWERABLE: a row citing its record and declaring "
+            "'covers' clears the same bundle",
+            _asset_bundle_row(covers=["wrapper-member-name"]),
+        ),
+        (
+            "wrapper/a-row-without-covers-does-not-clear-it",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "and coverage is not implicit: the SAME row without 'covers' still "
+            "fails, so a row filed for another reason cannot absorb a member "
+            "name added later",
+            _asset_bundle_row(),
+            "Bank Sine.wt",
+        ),
+    ]
+
+
 def _discovery_controls():
     """[(label, expected rule or None, expected path, description, mutator[, in_detail])].
 
@@ -4140,6 +4537,7 @@ def run_negative_control(verbose=True):
             ("masking", _masking_controls()),
             ("discovery", _discovery_controls()),
             ("payload", _payload_controls()),
+            ("wrapper", _wrapper_name_controls()),
         ):
             for label, passed, detail in _run_case_controls(Path(tmp), prefix, cases):
                 ok = ok and passed
@@ -4164,8 +4562,9 @@ def run_negative_control(verbose=True):
                 f"exemption controls behaved, all {len(_masking_controls())} "
                 "own-attribution masking controls behaved, all "
                 f"{len(_discovery_controls())} discovery-layer controls behaved, "
-                f"and all {len(_payload_controls())} payload-layer controls "
-                "behaved."
+                f"all {len(_payload_controls())} payload-layer controls behaved, "
+                f"and all {len(_wrapper_name_controls())} wrapper-member-name "
+                "controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
