@@ -111,11 +111,27 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     oracle is. An in-tree symlink to in-scope content is not a signal at all
     (`CLAUDE.md -> AGENTS.md` is this repository's own shape, pinned by
     `discovery/in-repo-symlink-to-a-regular-file-passes`).
-  * Content rules only ever see files this tool can DECODE. An undecodable
-    payload (a render, a tensor, a wavetable) reaches the extension tripwires
-    and nothing else, so a notice sealed inside one is out of reach — pinned by
-    `masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope` and
-    disclosed on every run as `files_not_content_scanned`, never silently.
+  * Content rules read three KINDS of text, and a run reports how much of the
+    tree each one covered (`files_unwrapped_from_wrappers`,
+    `files_scanned_as_extracted_strings`, `files_not_content_scanned`):
+    decoded text; a wrapper's members, unwrapped by magic (gzip/bzip2/xz
+    streams, zip and tar archives, nested — so a gzipped source file, or an
+    archive renamed `.dat`, is read rather than counted as opaque); and, for a
+    payload that is still not text, the printable-ASCII RUNS it carries, which
+    is how a notice spliced into a render or a WAV `LIST/INFO` copyright chunk
+    is found. Three residuals here are declared, not closed, each pinned by a
+    positive control:
+      - the harvest reads ASCII, so a notice written in a WIDE encoding *inside*
+        a binary payload stays out of reach
+        (`payload/wide-encoded-notice-in-a-payload-stays-out-of-scope`); only
+        the UTF-8 © spelling is normalised, because the Latin-1 byte occurs
+        constantly inside PCM and float data;
+      - a wrapper whose members carry no marker at all is covered only by the
+        extension tripwires, as any opaque bundle is — unwrapping reads member
+        CONTENT, and member NAMES are not themselves tripwired;
+      - an inflation that hits the 256 MiB budget or the 4-deep wrapper limit is
+        reported as a TRUNCATED payload scan on every run and in `--json`, which
+        is a disclosed partial read, not a pass.
     Relatedly, the encoding sniff admits a wide-encoded file on an "it is
     mostly ASCII" test, so a UTF-16 file written wholly in a non-Latin script
     is refused; license notices are ASCII English, and admitting everything
@@ -128,8 +144,12 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     to decode was scanned by no content rule at all); increment 7 sat below
     THAT, at discovery — a committed submodule gitlink pinning the GPL engine,
     and a symlink into the external oracle tree, were both read as "undecodable
-    payload" and audited clean. So the layer a masking path lives in is not
-    bounded by the layers already audited.
+    payload" and audited clean; increment 8 went back to the payload increment 6
+    had declared out of reach and found a WRAPPER (a gzipped source file, an
+    archive renamed `.dat`) and an EMBEDDED notice (a WAV copyright chunk, a
+    notice spliced into a float dump) hiding behind that declaration. So the
+    layer a masking path lives in is not bounded by the layers already audited,
+    and a DECLARED limit is not evidence that the limit was necessary.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -150,7 +170,14 @@ with the positive cases that keep the fixes from flagging our own headers or
 ordinary prose. The `discovery/*` controls do the same for the layer below:
 a committed gitlink, a nested repository in a non-git tree, and an escaping
 symlink must each produce a finding, a declared one must not, and a plain
-in-tree symlink must stay clean.
+in-tree symlink must stay clean. The `payload/*` controls cover the layer below
+THAT: a license body inside a gzip/bzip2/xz stream, a zip or tar renamed
+`.dat`, a wrapper nested inside a wrapper, an `.npz` member, a WAV `ICOP`
+copyright chunk, a notice spliced into a float dump and one written with a ©
+sign must each produce a finding — while a real PCM render, a float dump, an
+`.npy` tensor and this repository's own gzipped JSON trace must all stay clean,
+because a false positive on one of those would be unanswerable on a rule that
+cannot be exempted.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -167,13 +194,20 @@ Python 3 standard library only.
 from __future__ import annotations
 
 import argparse
+import bz2
 import codecs
+import gzip
+import io
 import json
+import lzma
 import os
 import re
+import struct
 import subprocess
 import sys
+import tarfile
 import tempfile
+import zipfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -948,6 +982,209 @@ def sniff_encoding(head: bytes):
     return None
 
 
+# --- payloads the sniff refuses: wrappers and embedded strings ----------------
+#
+# Increment 8. The layer above decides HOW to decode a file; this one decides
+# what to do with the payload it refused. Until now the answer was "nothing":
+# `Tree.text()` returned None, `tripwire_hits()` returned before every content
+# rule, and the only trace was a count. Two shapes went straight past the
+# non-exemptible `foreign-license-text` rule on the real tree (both demonstrated
+# in `reports/sxt-019/EVIDENCE.md` §14):
+#
+#   * a WRAPPER. A gzip/bzip2/xz stream, a zip or a tar is not opaque content —
+#     it is text one `read()` away. `.gz` is deliberately absent from
+#     UPSTREAM_ASSET_EXTS (this repository gzips its own evidence traces) and
+#     `_extension_suffix` strips it, so `pasted_helper.py.gz` matched no
+#     extension tripwire either; a zip or tar renamed `.dat` evades the
+#     extension rule outright.
+#   * an EMBEDDED notice. A notice pasted into a render, a tensor or a raw
+#     float dump is ordinary ASCII sitting in a payload — a WAV `LIST/INFO`
+#     `ICOP` chunk is where an upstream sample pack states its copyright, and
+#     nothing in this repository's own renders carries one.
+#
+# Both are answered WITHOUT loosening the sniff, which is the failure the
+# previous increment's positive control guards (decoding a render as prose would
+# turn 264 renders into garbage findings on a rule nobody can exempt):
+#
+#   1. unwrap wrappers by MAGIC, not by extension, recursively (a `.tar.gz`
+#      is two layers), bounded by an inflation budget, and run the ordinary
+#      decode + content rules on each member;
+#   2. for a payload that is still not text, harvest the printable-ASCII RUNS
+#      that carry a word, and run the content rules on those. A license notice
+#      is ASCII English prose; 16-bit PCM and float32 data produce runs with no
+#      word in them.
+#
+# Measured on this repository before committing: 339 MiB of payloads over 335
+# files (264 `.wav`, 22 `.bin`, 22 `.f32`, 18 `.gz`, 8 `.npy`, 1 `.npz`) yield
+# ZERO hits on all four content signals. That matters because
+# `foreign-license-text` cannot be exempted: a false positive on our own render
+# would be unanswerable, so the rule would be switched off rather than answered.
+
+GZIP_MAGIC = b"\x1f\x8b"
+BZIP2_MAGIC = b"BZh"
+XZ_MAGIC = b"\xfd7zXZ\x00"
+ZIP_MAGIC = b"PK\x03\x04"
+STREAM_WRAPPERS = ((GZIP_MAGIC, "gzip"), (BZIP2_MAGIC, "bzip2"), (XZ_MAGIC, "xz"))
+
+# Bounds, so a decompression bomb cannot hang or OOM the audit. Both are
+# generous against this tree (its largest inflation is ~15 MiB at depth 1) and
+# neither is silent: a payload that hits either is reported as truncated on
+# every run and in `--json`, because a scan that could not finish must never
+# look like one that passed.
+MAX_UNWRAPPED_BYTES = 256 * 1024 * 1024
+MAX_UNWRAP_DEPTH = 4
+
+# A run of printable ASCII long enough to hold a word, and the word test
+# itself. Three consecutive letters is the cheapest filter that keeps every
+# license/copyright vocabulary word ("GNU", "Copyright", "GPL-3.0-or-later",
+# a holder name) while discarding PCM and float noise: dropping a WORDLESS run
+# can only bring two surviving runs CLOSER together, so it cannot break a
+# phrase the rules would otherwise have matched.
+PRINTABLE_RUN_RE = re.compile(rb"[\x20-\x7e\t\r\n]{6,}")
+RUN_WORD_RE = re.compile(rb"[A-Za-z]{3,}")
+
+# A UTF-8 © would end a printable-ASCII run mid-notice and take the copyright
+# keyword with it. Normalised to its ASCII spelling before harvesting, which the
+# `(c)` prefilter already recognises. Only this one spelling: the Latin-1 single
+# byte 0xA9 occurs constantly inside PCM and float data, and rewriting it would
+# manufacture `(c)` tokens in noise on a rule that cannot be exempted (declared
+# limit — see DECLARED LIMITS).
+UTF8_COPYRIGHT_SIGN = b"\xc2\xa9"
+
+
+def harvest_strings(raw: bytes):
+    """Printable-ASCII runs of `raw` that carry a word, joined as text.
+
+    The joint is a newline, which every content regex treats as an ordinary
+    word gap (`_GAP`), so a notice split across runs by a binary field is still
+    matched.
+    """
+    if UTF8_COPYRIGHT_SIGN in raw:
+        raw = raw.replace(UTF8_COPYRIGHT_SIGN, b"(c)")
+    kept = [
+        match.group()
+        for match in PRINTABLE_RUN_RE.finditer(raw)
+        if RUN_WORD_RE.search(match.group())
+    ]
+    return "\n".join(part.decode("ascii", "replace") for part in kept)
+
+
+def _looks_like_wrapper(raw: bytes):
+    """Cheap magic test: could `raw` be a compressed/archive wrapper?"""
+    if any(raw.startswith(magic) for magic, _ in STREAM_WRAPPERS):
+        return True
+    if raw.startswith(ZIP_MAGIC):
+        return True
+    # tar's magic sits at offset 257, so there is no prefix to test.
+    try:
+        return tarfile.is_tarfile(io.BytesIO(raw))
+    except Exception:  # pragma: no cover - defensive
+        return False
+
+
+def _unwrap_stream(raw: bytes, kind: str, limit: int):
+    """(payload, truncated) for a single-stream wrapper, or (None, False).
+
+    The `*File` wrappers are used rather than the one-shot `decompress()`
+    helpers because they handle CONCATENATED streams (a multi-member gzip) and
+    because `read(limit + 1)` bounds the inflation without materialising it.
+    """
+    openers = {
+        "gzip": lambda buf: gzip.GzipFile(fileobj=buf, mode="rb"),
+        "bzip2": lambda buf: bz2.BZ2File(buf, "rb"),
+        "xz": lambda buf: lzma.LZMAFile(buf, "rb"),
+    }
+    try:
+        with openers[kind](io.BytesIO(raw)) as handle:
+            out = handle.read(limit + 1)
+    except Exception:
+        # Corrupt or not actually this wrapper. Not a finding: the payload falls
+        # through to the string harvest, and whatever it is stays disclosed.
+        return None, False
+    if len(out) > limit:
+        return out[:limit], True
+    return out, False
+
+
+def _unwrap_archive(raw: bytes, limit: int):
+    """([member payloads], truncated) for a zip/tar, or (None, False)."""
+    buf = io.BytesIO(raw)
+    members = None
+    try:
+        if zipfile.is_zipfile(buf):
+            members = []
+            remaining = limit
+            with zipfile.ZipFile(buf) as archive:
+                for info in archive.infolist():
+                    if info.is_dir():
+                        continue
+                    with archive.open(info) as handle:
+                        data = handle.read(remaining + 1)
+                    if len(data) > remaining:
+                        return members + [data[:remaining]], True
+                    remaining -= len(data)
+                    members.append(data)
+            return members, False
+    except Exception:
+        return None, False
+    buf.seek(0)
+    try:
+        if not tarfile.is_tarfile(buf):
+            return None, False
+        buf.seek(0)
+        members = []
+        remaining = limit
+        with tarfile.open(fileobj=buf, mode="r") as archive:
+            for info in archive:
+                if not info.isfile():
+                    continue
+                handle = archive.extractfile(info)
+                if handle is None:  # pragma: no cover - sparse/odd member
+                    continue
+                data = handle.read(remaining + 1)
+                if len(data) > remaining:
+                    return members + [data[:remaining]], True
+                remaining -= len(data)
+                members.append(data)
+        return members, False
+    except Exception:
+        return None, False
+
+
+def unwrap_payload(raw: bytes, limit=None, depth=0):
+    """(payloads carried inside `raw`, truncated), or (None, truncated).
+
+    `None` means `raw` is not a wrapper — not that it is safe. Recurses so that
+    a `.tar.gz` (and a `.tar.gz` inside a zip) is unwrapped to its real members;
+    `truncated` is True when the inflation budget or the depth limit stopped the
+    walk, so the caller can disclose an incomplete scan instead of reporting a
+    pass.
+    """
+    if limit is None:
+        limit = MAX_UNWRAPPED_BYTES
+    if depth >= MAX_UNWRAP_DEPTH:
+        return None, _looks_like_wrapper(raw)
+    for magic, kind in STREAM_WRAPPERS:
+        if not raw.startswith(magic):
+            continue
+        inner, truncated = _unwrap_stream(raw, kind, limit)
+        if inner is None:
+            return None, False
+        deeper, deeper_truncated = unwrap_payload(inner, limit, depth + 1)
+        if deeper is not None:
+            return deeper, truncated or deeper_truncated
+        return [inner], truncated or deeper_truncated
+    members, truncated = _unwrap_archive(raw, limit)
+    if members is None:
+        return None, truncated
+    payloads = []
+    for member in members:
+        deeper, deeper_truncated = unwrap_payload(member, limit, depth + 1)
+        truncated = truncated or deeper_truncated
+        payloads.extend(deeper if deeper is not None else [member])
+    return payloads, truncated
+
+
 # --- file discovery -----------------------------------------------------------
 #
 # This layer decides what EXISTS as far as the audit is concerned, and — new in
@@ -1094,6 +1331,13 @@ class Tree:
                 self.excluded.setdefault(hit, []).append(rel)
         self._text_cache = {}
         self._lower_cache = {}
+        # How each file's text was obtained, and which scans were cut short.
+        # Coverage is reported from these, so they are bookkeeping, not debug
+        # state: a file scanned only as extracted strings has NOT had its whole
+        # payload read as prose, and a truncated unwrap has not been read at all
+        # past its budget.
+        self._scan_modes = {}
+        self._truncated = set()
 
     def excluded_by(self, rel):
         for prefix in self.exclusions:
@@ -1111,46 +1355,97 @@ class Tree:
         return self.kinds.get(rel, "file")
 
     def text(self, rel):
-        """Decoded text, or None for genuinely binary/unreadable files.
-
-        Sniffs the first block to pick an encoding before reading the rest, so
-        a multi-megabyte render or trace payload is never fully decoded.
+        """Text for the content rules, or None when the entry yields none.
 
         A file this returns None for is scanned by NOTHING except the
-        extension tripwires — so the sniff is itself a detection surface, not
-        a performance detail. Treating "a NUL byte appears in the head" as
-        "binary" let a UTF-16-encoded source file, or an ASCII one carrying a
-        single stray NUL, carry a complete foreign license body, SPDX tag and
-        copyright notice past every content rule (issue #25, acceptance item
-        4; controls `masking/*-encoded-*`, `masking/stray-nul-*`). Encoding is
-        now resolved first and only an un-decodable payload is skipped; the
-        residual count is disclosed by `files_not_content_scanned`.
+        extension tripwires — so every step below is a detection surface, not a
+        performance detail. Two increments of masking lived here:
+
+          * treating "a NUL byte appears in the head" as "binary" let a
+            UTF-16-encoded source file, or an ASCII one carrying a single stray
+            NUL, carry a complete foreign license body, SPDX tag and copyright
+            notice past every content rule (controls `masking/*-encoded-*`,
+            `masking/stray-nul-*`);
+          * treating an undecodable payload as opaque let a WRAPPER (a gzipped
+            source file, a zip or tar renamed `.dat`) and an EMBEDDED notice (a
+            WAV `LIST/INFO` copyright chunk, a notice spliced into a float dump)
+            do the same (controls `payload/*`).
+
+        So the order is: resolve an encoding; failing that, unwrap wrappers by
+        magic and read their members; failing that, harvest the payload's
+        word-bearing ASCII runs. What each file got is recorded in
+        `_scan_modes` and reported as coverage — a strings-only scan is weaker
+        than a decode, and says so, rather than being counted as a full read.
         """
         if rel in self._text_cache:
             return self._text_cache[rel]
-        value = None
+        value, mode, truncated = self._read(rel)
+        self._scan_modes[rel] = mode
+        if truncated:
+            self._truncated.add(rel)
+        self._text_cache[rel] = value
+        return value
+
+    def _read(self, rel):
+        """(text|None, scan mode, truncated) for one entry."""
         try:
             with (self.root / rel).open("rb") as handle:
                 head = handle.read(BINARY_SNIFF_BYTES)
                 encoding = sniff_encoding(head)
-                if encoding is not None:
-                    value = (head + handle.read()).decode(encoding, "replace")
-                    # A stray NUL survives the narrow decode as U+0000 and
-                    # would split a regex's word gap; it is masking noise, not
-                    # content. Drop it so the signal layer sees the real text.
-                    if "\0" in value:
-                        value = value.replace("\0", "")
+                raw = head + handle.read()
         except OSError:
-            value = None
-        self._text_cache[rel] = value
-        return value
+            # A by-reference entry (a gitlink, a symlink to a directory) and an
+            # unreadable file both land here; the discovery layer judges those.
+            return None, "unreadable", False
+        if encoding is not None:
+            value = raw.decode(encoding, "replace")
+            # A stray NUL survives the narrow decode as U+0000 and would split a
+            # regex's word gap; it is masking noise, not content. Drop it so the
+            # signal layer sees the real text.
+            if "\0" in value:
+                value = value.replace("\0", "")
+            return value, "decoded", False
+        payloads, truncated = unwrap_payload(raw)
+        if payloads is not None:
+            parts = []
+            for payload in payloads:
+                member_encoding = sniff_encoding(payload[:BINARY_SNIFF_BYTES])
+                if member_encoding is None:
+                    parts.append(harvest_strings(payload))
+                else:
+                    parts.append(
+                        payload.decode(member_encoding, "replace").replace("\0", "")
+                    )
+            value = "\n".join(part for part in parts if part)
+            return (value or None), ("unwrapped" if value else "none"), truncated
+        value = harvest_strings(raw)
+        return (value or None), ("strings" if value else "none"), truncated
+
+    def scan_mode(self, rel):
+        """"decoded" | "unwrapped" | "strings" | "none" | "unreadable"."""
+        if rel not in self._scan_modes:
+            self.text(rel)
+        return self._scan_modes.get(rel, "unreadable")
+
+    def truncated_scans(self):
+        """Paths whose payload scan hit the inflation/depth budget."""
+        return sorted(self._truncated)
 
     def lower(self, rel):
-        """Lowercased text (cached) — the cheap prefilter for every signal."""
-        if rel not in self._lower_cache:
-            text = self.text(rel)
-            self._lower_cache[rel] = None if text is None else text.lower()
-        return self._lower_cache[rel]
+        """Lowercased text — the cheap prefilter for every signal.
+
+        Cached for ordinary decoded files. A payload-derived text (an inflated
+        trace, a harvested render) is NOT cached: keeping a second copy of every
+        unwrapped payload roughly doubled the audit's peak memory, and
+        `str.lower()` on the few large ones costs milliseconds.
+        """
+        if rel in self._lower_cache:
+            return self._lower_cache[rel]
+        text = self.text(rel)
+        value = None if text is None else text.lower()
+        if value is None or self._scan_modes.get(rel) == "decoded":
+            self._lower_cache[rel] = value
+        return value
 
 
 # --- pattern handling ---------------------------------------------------------
@@ -2069,8 +2364,19 @@ def audit(root: Path):
         "files_not_content_scanned": sum(
             1
             for rel in tree.files
-            if tree.kind(rel) == "file" and tree.text(rel) is None
+            if tree.kind(rel) == "file" and tree.scan_mode(rel) in ("none", "unreadable")
         ),
+        # The two weaker scan modes, reported SEPARATELY from a full decode:
+        # a wrapper's members were read as their own payloads, and a binary
+        # payload was read only as the ASCII runs it carries (increment 8).
+        "files_unwrapped_from_wrappers": sum(
+            1 for rel in tree.files if tree.scan_mode(rel) == "unwrapped"
+        ),
+        "files_scanned_as_extracted_strings": sum(
+            1 for rel in tree.files if tree.scan_mode(rel) == "strings"
+        ),
+        # A scan that could not finish must never look like one that passed.
+        "payload_scans_truncated": tree.truncated_scans(),
         "entries_by_reference": {
             kind: sum(1 for rel in tree.files if tree.kind(rel) == kind)
             for kind in ("symlink", "gitlink")
@@ -2110,9 +2416,23 @@ def report(findings, stats, root, as_json=False):
     for prefix, count in stats["exclusions"].items():
         print(f"  excluded: {prefix} ({count} files)")
     print(
-        f"  not content-scanned (undecodable payload): "
+        f"  not content-scanned (no text in the payload at all): "
         f"{stats['files_not_content_scanned']} files — extension tripwires only"
     )
+    print(
+        f"  unwrapped by magic (compressed stream / archive): "
+        f"{stats['files_unwrapped_from_wrappers']} files — members content-scanned"
+    )
+    print(
+        f"  scanned as extracted ASCII strings only: "
+        f"{stats['files_scanned_as_extracted_strings']} files — a non-ASCII "
+        "notice inside one would be missed"
+    )
+    for rel in stats["payload_scans_truncated"]:
+        print(
+            f"  TRUNCATED payload scan (unwrap budget/depth reached, NOT fully "
+            f"read): {rel}"
+        )
     by_reference = stats["entries_by_reference"]
     print(
         f"  by reference (content is not in the entry's own bytes): "
@@ -2438,17 +2758,164 @@ FIXTURE_UTF16BE_BOMLESS_NOTICE = FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-be")
 FIXTURE_STRAY_NUL_NOTICE = (
     b"# \x00 vim: set fileencoding=utf-8 :\n" + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8")
 )
-# Positive control for the OTHER failure direction. If the sniff were loosened
-# into "decode everything", the 264 renders and 8 tensors in this tree would
-# start producing garbage matches on a rule nobody can exempt. The notice is
-# embedded as real ASCII so this control is not vacuous: loosening the sniff
-# makes it fire, tightening it back makes it stop. What it pins is therefore a
-# DECLARED LIMIT, not a win — content sealed inside an opaque payload is out of
-# this tool's reach, which is exactly what `files_not_content_scanned` is for.
-FIXTURE_NOTICE_SEALED_IN_BINARY = (
+# Increment 8 — the PAYLOAD layer, below the decode layer of increment 6. A
+# payload the sniff refuses is not evidence-free: it is either a WRAPPER (one
+# `read()` from text) or binary data with ASCII runs in it. Until this
+# increment all of the fixtures below audited **clean** while
+# `--negative-control` reported all 29 rules and all 41 masking controls
+# behaving — demonstrated on the real tree in `reports/sxt-019/EVIDENCE.md` §14.
+# Assembled from fragments like every other fixture here (see the fixture note).
+FIXTURE_PAYLOAD_COPYRIGHT = "Copy" + "right (C) 20" + "19 Some Upstream Author"
+PAYLOAD_COPYRIGHT_LOCATOR = "Some Upstream Author"
+
+
+def _lcg_samples(count, seed=12345):
+    """Deterministic pseudo-random 16-bit samples — stand-in render data.
+
+    Noise is the worst case for the string harvest (it maximises the chance of
+    an accidental printable run), which is what a positive control wants.
+    """
+    value = seed
+    out = []
+    for _ in range(count):
+        value = (1103515245 * value + 12345) & 0x7FFFFFFF
+        out.append((value >> 8) % 65536 - 32768)
+    return out
+
+
+def _riff_chunk(chunk_id: bytes, payload: bytes):
+    if len(payload) % 2:
+        payload += b"\x00"
+    return chunk_id + struct.pack("<I", len(payload)) + payload
+
+
+def _wav_payload(info_fields=()):
+    """A real 16-bit PCM WAV, optionally carrying LIST/INFO metadata.
+
+    `ICOP` is the RIFF copyright field — exactly where an upstream sample pack
+    or an exported preset render states its holder. None of this repository's
+    own renders carries one.
+    """
+    fmt = _riff_chunk(b"fmt ", struct.pack("<HHIIHH", 1, 1, 48000, 96000, 2, 16))
+    samples = _lcg_samples(2400)
+    data = _riff_chunk(b"data", struct.pack(f"<{len(samples)}h", *samples))
+    body = b"WAVE" + fmt
+    if info_fields:
+        info = b"".join(
+            _riff_chunk(field, text.encode("ascii") + b"\x00")
+            for field, text in info_fields
+        )
+        body += _riff_chunk(b"LIST", b"INFO" + info)
+    body += data
+    return b"RIFF" + struct.pack("<I", len(body)) + body
+
+
+def _float_dump(notice=None):
+    """A raw float32 dump (the `.f32` shape), optionally with a notice spliced in."""
+    values = [sample / 32768.0 for sample in _lcg_samples(1200, seed=777)]
+    payload = struct.pack(f"<{len(values)}f", *values)
+    if notice is None:
+        return payload
+    middle = len(payload) // 2
+    return payload[:middle] + notice.encode("ascii") + payload[middle:]
+
+
+def _tensor_payload():
+    """An `.npy`-shaped payload: a short ASCII header over float data."""
+    header = b"\x93NUMPY\x01\x00v\x00{'descr': '<f4', 'fortran_order': False, }"
+    return header + b" " * (64 - len(header) % 64) + _float_dump()
+
+
+def _zip_payload(members):
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name, content in members:
+            archive.writestr(name, content)
+    return buf.getvalue()
+
+
+def _tar_gz_payload(members):
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w") as archive:
+        for name, content in members:
+            raw = content.encode("utf-8")
+            info = tarfile.TarInfo(name)
+            info.size = len(raw)
+            archive.addfile(info, io.BytesIO(raw))
+    return gzip.compress(buf.getvalue())
+
+
+FIXTURE_WAV_WITH_COPYRIGHT_CHUNK = _wav_payload(
+    (
+        (b"ICOP", FIXTURE_PAYLOAD_COPYRIGHT),
+        (b"IART", "Some Upstream Author"),
+    )
+)
+FIXTURE_PLAIN_PCM_WAV = _wav_payload()
+FIXTURE_FLOAT_DUMP_WITH_NOTICE = _float_dump(FIXTURE_WIDE_NOTICE_TEXT)
+FIXTURE_PLAIN_FLOAT_DUMP = _float_dump()
+FIXTURE_TENSOR_PAYLOAD = _tensor_payload()
+FIXTURE_GZIPPED_NOTICE = gzip.compress(FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8"))
+FIXTURE_XZ_NOTICE = lzma.compress(FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8"))
+FIXTURE_BZIP2_NOTICE = bz2.compress(FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8"))
+FIXTURE_ZIP_WITH_NOTICE = _zip_payload(
+    (("dsp/Reverb1.h", "/*\n" + FIXTURE_WIDE_NOTICE_TEXT + "*/\n"),)
+)
+FIXTURE_NPZ_WITH_NOTICE = _zip_payload(
+    (("taps.npy", "x"), ("header.txt", FIXTURE_WIDE_NOTICE_TEXT))
+)
+FIXTURE_TAR_GZ_WITH_NOTICE = _tar_gz_payload(
+    (("vendor/filter.cpp", "// " + FIXTURE_WIDE_NOTICE_TEXT),)
+)
+# Wrapper inside wrapper, one for each recursion site. Neither is reachable by
+# the string harvest: the inner layer is itself compressed, so the notice is not
+# ASCII anywhere in the outer payload's bytes. (A `.tar.gz` is NOT such a case —
+# a tar stores its members uncompressed, so the harvest alone would find it.)
+FIXTURE_GZIPPED_ZIP_WITH_NOTICE = gzip.compress(FIXTURE_ZIP_WITH_NOTICE)
+FIXTURE_ZIP_WITH_GZIPPED_MEMBER = _zip_payload(
+    (("dsp/Reverb1.h.gz", FIXTURE_GZIPPED_NOTICE),)
+)
+# This repository's own evidence-trace shape: a gzipped JSON trace. 18 are
+# tracked, all now inflated and content-scanned, and none may become a finding.
+FIXTURE_OWN_GZIPPED_TRACE = gzip.compress(
+    json.dumps(
+        {
+            "fixture": "seq-notes-coverage-v1",
+            "tool": "tools/run_fx_model.py",
+            "taps": [sample / 32768.0 for sample in _lcg_samples(64, seed=31)],
+        },
+        indent=1,
+    ).encode("utf-8")
+)
+# The exact payload increment 6 declared out of reach ("a notice sealed inside
+# an opaque payload"), kept byte-for-byte so this increment's control is a
+# direct inversion of that one: it was `masking/notice-sealed-in-an-opaque-
+# payload-stays-out-of-scope`, a POSITIVE control, and is now
+# `payload/notice-embedded-in-an-opaque-payload`, which must FIRE.
+FIXTURE_NOTICE_IN_AN_OPAQUE_PAYLOAD = (
     bytes(range(256)) * 4
-    + ("Copy" + "right (C) 20" + "19 Some Upstream Author\n").encode("ascii")
+    + (FIXTURE_PAYLOAD_COPYRIGHT + "\n").encode("ascii")
     + bytes(range(256)) * 4
+)
+# A notice written with the sign spelling (U+00A9) rather than the word, inside
+# a payload. The UTF-8 sign is not printable ASCII, so without normalisation it
+# ENDS the run and takes the keyword with it: the surviving run reads
+# " 2019 Some Upstream Author", which matches no prefilter at all. The sign is
+# written as an ESCAPE here, like every other fixture fragment, so this file does
+# not itself carry a notice (see the fixture note above).
+FIXTURE_COPYRIGHT_SIGN_IN_A_PAYLOAD = (
+    struct.pack("<600h", *_lcg_samples(600, seed=41))
+    + ("\u00a9 20" + "19 Some Upstream Author\n").encode("utf-8")
+    + struct.pack("<600h", *_lcg_samples(600, seed=42))
+)
+# Positive control for the declared residual: the harvest reads ASCII runs, so a
+# notice written in a WIDE encoding inside a binary payload is still out of
+# reach. Non-vacuous in both directions — it fails the moment wide-string
+# harvesting is added, and it is clean today.
+FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD = (
+    struct.pack("<600h", *_lcg_samples(600, seed=99))
+    + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-le")
+    + struct.pack("<600h", *_lcg_samples(600, seed=100))
 )
 
 
@@ -3215,17 +3682,179 @@ def _masking_controls():
             lambda root: _write(root, MASKED_REL, FIXTURE_STRAY_NUL_NOTICE),
             WIDE_NOTICE_LOCATOR,
         ),
+    ]
+
+
+PAYLOAD_WRAPPED_REL = "model/pasted_helper.py.gz"
+PAYLOAD_RENDER_REL = "fixtures/audio/render.wav"
+PAYLOAD_DUMP_REL = "reports/artifacts/ref-hot.f32"
+PAYLOAD_BUNDLE_REL = "compiler/golden/bundle.dat"
+
+
+def _payload_controls():
+    """[(label, expected rule or None, expected path, description, mutator[, in_detail])].
+
+    Increment 8 — the PAYLOAD layer. Increment 6 made the decode layer honest
+    about ENCODINGS; a payload it still refused reached no content rule, and
+    `files_not_content_scanned` counted 335 such files on this tree. Every
+    must-fail case below audited **clean** before this increment while
+    `--negative-control` reported all 29 rules and all 41 masking controls
+    behaving — a gzipped source file, a zip/tar renamed `.dat`, a WAV copyright
+    chunk, a notice spliced into a float dump.
+
+    The positive controls carry at least as much weight. `foreign-license-text`
+    cannot be exempted, so a false positive on this repository's own 264
+    renders, 22 float dumps, 8 tensors or 18 gzipped traces would be
+    unanswerable — the rule would be switched off rather than answered. Hence a
+    real PCM render, a float dump, an `.npy`-shaped tensor and an own gzipped
+    JSON trace must all stay clean, and the wide-encoded notice inside a payload
+    pins the residual limit this increment declares rather than closes.
+    """
+    return [
         (
-            "masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope",
+            "payload/gzipped-source-with-a-license-body",
+            "foreign-license-text",
+            PAYLOAD_WRAPPED_REL,
+            "a gzipped source file whose stripped extension matches no tripwire",
+            lambda root: _write(root, PAYLOAD_WRAPPED_REL, FIXTURE_GZIPPED_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/xz-compressed-source-with-a-license-body",
+            "foreign-license-text",
+            PAYLOAD_WRAPPED_REL,
+            "the same body in an xz stream (the wrapper is found by magic, not name)",
+            lambda root: _write(root, PAYLOAD_WRAPPED_REL, FIXTURE_XZ_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/bzip2-compressed-source-with-a-license-body",
+            "foreign-license-text",
+            PAYLOAD_WRAPPED_REL,
+            "the same body in a bzip2 stream",
+            lambda root: _write(root, PAYLOAD_WRAPPED_REL, FIXTURE_BZIP2_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/zip-member-with-a-license-body",
+            "foreign-license-text",
+            PAYLOAD_BUNDLE_REL,
+            "a zip renamed '.dat' — the archive extension tripwire evaded outright",
+            lambda root: _write(root, PAYLOAD_BUNDLE_REL, FIXTURE_ZIP_WITH_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/tar-gz-member-with-a-license-body",
+            "foreign-license-text",
+            PAYLOAD_BUNDLE_REL,
+            "a tar inside a gzip inside a '.dat' name — two wrappers deep",
+            lambda root: _write(root, PAYLOAD_BUNDLE_REL, FIXTURE_TAR_GZ_WITH_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/zip-inside-a-gzip-stream",
+            "foreign-license-text",
+            PAYLOAD_BUNDLE_REL,
+            "a zip inside a gzip — the inner layer is compressed, not ASCII",
+            lambda root: _write(root, PAYLOAD_BUNDLE_REL, FIXTURE_GZIPPED_ZIP_WITH_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/gzipped-member-inside-a-zip",
+            "foreign-license-text",
+            PAYLOAD_BUNDLE_REL,
+            "a gzipped member inside a zip — the other recursion site",
+            lambda root: _write(root, PAYLOAD_BUNDLE_REL, FIXTURE_ZIP_WITH_GZIPPED_MEMBER),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/npz-member-with-a-license-body",
+            "foreign-license-text",
+            "reports/fixtures/taps.npz",
+            "a notice riding along in an '.npz' tensor archive (a zip)",
+            lambda root: _write(
+                root, "reports/fixtures/taps.npz", FIXTURE_NPZ_WITH_NOTICE
+            ),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/wav-copyright-chunk",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "a render whose RIFF LIST/INFO 'ICOP' chunk states an upstream holder",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_WAV_WITH_COPYRIGHT_CHUNK
+            ),
+            PAYLOAD_COPYRIGHT_LOCATOR,
+        ),
+        (
+            "payload/notice-spliced-into-a-float-dump",
+            "foreign-license-text",
+            PAYLOAD_DUMP_REL,
+            "a GPL body spliced into the middle of a raw float32 dump",
+            lambda root: _write(root, PAYLOAD_DUMP_REL, FIXTURE_FLOAT_DUMP_WITH_NOTICE),
+            WIDE_NOTICE_LOCATOR,
+        ),
+        (
+            "payload/notice-embedded-in-an-opaque-payload",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "increment 6's declared limit, now closed: an ASCII notice in binary data",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_NOTICE_IN_AN_OPAQUE_PAYLOAD
+            ),
+            PAYLOAD_COPYRIGHT_LOCATOR,
+        ),
+        (
+            "payload/copyright-sign-notice-in-a-payload",
+            "foreign-license-text",
+            PAYLOAD_RENDER_REL,
+            "a notice written with the © sign, which ends the printable run",
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_COPYRIGHT_SIGN_IN_A_PAYLOAD
+            ),
+            PAYLOAD_COPYRIGHT_LOCATOR,
+        ),
+        (
+            "payload/pcm-render-stays-clean",
+            None,
+            None,
+            "a real 16-bit PCM render with no metadata chunk",
+            lambda root: _write(root, PAYLOAD_RENDER_REL, FIXTURE_PLAIN_PCM_WAV),
+        ),
+        (
+            "payload/float-dump-stays-clean",
+            None,
+            None,
+            "a raw float32 dump of this repository's own shape",
+            lambda root: _write(root, PAYLOAD_DUMP_REL, FIXTURE_PLAIN_FLOAT_DUMP),
+        ),
+        (
+            "payload/tensor-payload-stays-clean",
+            None,
+            None,
+            "an '.npy'-shaped tensor payload (ASCII header over float data)",
+            lambda root: _write(root, "reports/traces/click-dry.npy", FIXTURE_TENSOR_PAYLOAD),
+        ),
+        (
+            "payload/our-own-gzipped-trace-stays-clean",
+            None,
+            None,
+            "this repository's own evidence shape: a gzipped JSON trace, now inflated",
+            lambda root: _write(
+                root, "reports/artifacts/trace.json.gz", FIXTURE_OWN_GZIPPED_TRACE
+            ),
+        ),
+        (
+            "payload/wide-encoded-notice-in-a-payload-stays-out-of-scope",
             None,
             None,
             (
-                "a declared limit: an opaque payload is not decoded as prose, "
-                "so a notice sealed inside one is out of reach (not a win — "
-                "disclosed by files_not_content_scanned)"
+                "a declared limit: the harvest reads ASCII runs, so a UTF-16 "
+                "notice inside a binary payload is still out of reach"
             ),
             lambda root: _write(
-                root, "fixtures/render.wav", FIXTURE_NOTICE_SEALED_IN_BINARY
+                root, PAYLOAD_RENDER_REL, FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD
             ),
         ),
     ]
@@ -3510,6 +4139,7 @@ def run_negative_control(verbose=True):
             ("scoped", scoped),
             ("masking", _masking_controls()),
             ("discovery", _discovery_controls()),
+            ("payload", _payload_controls()),
         ):
             for label, passed, detail in _run_case_controls(Path(tmp), prefix, cases):
                 ok = ok and passed
@@ -3532,8 +4162,10 @@ def run_negative_control(verbose=True):
                 "violation, the clean control tree produced no findings, "
                 f"all {len(_scoped_exemption_controls())} occurrence-scoped "
                 f"exemption controls behaved, all {len(_masking_controls())} "
-                "own-attribution masking controls behaved, and all "
-                f"{len(_discovery_controls())} discovery-layer controls behaved."
+                "own-attribution masking controls behaved, all "
+                f"{len(_discovery_controls())} discovery-layer controls behaved, "
+                f"and all {len(_payload_controls())} payload-layer controls "
+                "behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")

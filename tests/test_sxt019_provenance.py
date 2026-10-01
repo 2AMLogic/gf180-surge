@@ -27,7 +27,14 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     layer: a committed submodule gitlink (or a nested repository checkout in a
     non-git tree) and a symlink whose target leaves the audited tree are
     findings, a declared one is not, and an ordinary in-tree symlink
-    (`CLAUDE.md -> AGENTS.md`, this repository's own shape) stays clean.
+    (`CLAUDE.md -> AGENTS.md`, this repository's own shape) stays clean,
+  - a payload the encoding sniff refuses is not evidence-free: a wrapper
+    (gzip/bzip2/xz stream, zip or tar, nested, found by MAGIC rather than by
+    name) is unwrapped and its members content-scanned, and a payload that is
+    still not text is read as the printable-ASCII runs it carries — while this
+    repository's own renders, float dumps, tensors and gzipped traces stay
+    clean, which `test_repository_audits_clean` re-checks against all 335 real
+    payloads on every run.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -746,20 +753,14 @@ def test_utf16_encoded_license_body_is_flagged(tmp_path):
         )
 
 
-def test_opaque_payload_is_still_not_decoded_as_prose(tmp_path):
-    """The other failure direction: don't turn 264 renders into findings.
-
-    A notice sealed inside an opaque payload stays out of reach. That is a
-    DECLARED LIMIT disclosed by `files_not_content_scanned`, not a win.
-    """
-    root = _masked_tree(tmp_path, "opaque", "")
-    cp._write(root, "fixtures/render.wav", cp.FIXTURE_NOTICE_SEALED_IN_BINARY)
-    findings, _ = cp.audit(root)
-    assert not findings, [f.as_dict() for f in findings]
-
-
 def test_sniff_encoding_admits_text_and_refuses_payloads():
-    """Unit-level pin on the admission test itself."""
+    """Unit-level pin on the admission test itself.
+
+    The sniff is deliberately NOT loosened by the payload layer below: decoding
+    a render as prose would turn 264 renders into garbage findings on a rule
+    nobody can exempt. A refused payload is handled by unwrapping/harvesting
+    instead.
+    """
     assert cp.sniff_encoding(b"plain ascii\n") == "utf-8"
     assert cp.sniff_encoding("x = 1\n".encode("utf-16")) == "utf-16-le"
     assert cp.sniff_encoding("x = 1\n".encode("utf-16-be")) == "utf-16-be"
@@ -772,14 +773,148 @@ def test_sniff_encoding_admits_text_and_refuses_payloads():
 def test_unscanned_file_count_is_disclosed(tmp_path):
     """Coverage is reported separately from agreement (AGENTS.md).
 
-    A PASS that silently skipped files would overstate what was checked.
+    A PASS that silently skipped files would overstate what was checked. A
+    payload with no ASCII run in it at all reaches no content rule, and says so.
     """
     root = _masked_tree(tmp_path, "disclose", "")
-    cp._write(root, "fixtures/render.wav", cp.FIXTURE_NOTICE_SEALED_IN_BINARY)
+    cp._write(root, "fixtures/render.wav", b"\x00" * 4096)
     _, stats = cp.audit(root)
     assert stats["files_not_content_scanned"] == 1
     proc = run_tool("--root", str(root))
     assert "not content-scanned" in proc.stdout, proc.stdout
+
+
+# --- the payload layer (#25 acceptance item 4, increment 8) -------------------
+#
+# Below the decode layer: a payload the sniff refuses is either a WRAPPER one
+# `read()` from text, or binary data with ASCII runs in it. Increment 6 declared
+# both out of reach and pinned that declaration with a positive control; every
+# case below audited clean on the real tree while `--negative-control` reported
+# all 31 rules and all 40 masking controls behaving.
+
+
+def test_wrapped_license_body_is_flagged(tmp_path):
+    """A wrapper is found by MAGIC, not by name — `.gz` is stripped, `.dat` lies."""
+    for label, rel, payload in (
+        ("gzip", "model/pasted_helper.py.gz", cp.FIXTURE_GZIPPED_NOTICE),
+        ("xz", "model/pasted_helper.py.gz", cp.FIXTURE_XZ_NOTICE),
+        ("bzip2", "model/pasted_helper.py.gz", cp.FIXTURE_BZIP2_NOTICE),
+        ("zip", "compiler/golden/bundle.dat", cp.FIXTURE_ZIP_WITH_NOTICE),
+        ("tar.gz", "compiler/golden/bundle.dat", cp.FIXTURE_TAR_GZ_WITH_NOTICE),
+        ("npz", "reports/fixtures/taps.npz", cp.FIXTURE_NPZ_WITH_NOTICE),
+        ("zip-in-gzip", "compiler/golden/bundle.dat", cp.FIXTURE_GZIPPED_ZIP_WITH_NOTICE),
+        ("gzip-in-zip", "compiler/golden/bundle.dat", cp.FIXTURE_ZIP_WITH_GZIPPED_MEMBER),
+    ):
+        root = _masked_tree(tmp_path, f"wrap-{label}", "")
+        cp._write(root, rel, payload)
+        fired = [f for f in cp.audit(root)[0] if f.path == rel]
+        assert any(f.rule == "foreign-license-text" for f in fired), (
+            f"{label}: a GPL body survived the wrapper layer"
+        )
+        assert any(cp.WIDE_NOTICE_LOCATOR in f.detail for f in fired), (
+            f"{label}: the finding does not quote the offending notice: "
+            + "; ".join(f.detail for f in fired)
+        )
+
+
+def test_notice_embedded_in_a_binary_payload_is_flagged(tmp_path):
+    """The limit increment 6 declared, now closed by harvesting ASCII runs.
+
+    A WAV `LIST/INFO` `ICOP` chunk is where an upstream sample pack states its
+    holder; a notice spliced into a float dump is the same shape by hand.
+    """
+    for label, rel, payload in (
+        ("wav-icop", "fixtures/audio/render.wav", cp.FIXTURE_WAV_WITH_COPYRIGHT_CHUNK),
+        ("float-dump", "reports/artifacts/ref.f32", cp.FIXTURE_FLOAT_DUMP_WITH_NOTICE),
+        ("opaque", "fixtures/audio/render.wav", cp.FIXTURE_NOTICE_IN_AN_OPAQUE_PAYLOAD),
+        ("sign", "fixtures/audio/render.wav", cp.FIXTURE_COPYRIGHT_SIGN_IN_A_PAYLOAD),
+    ):
+        root = _masked_tree(tmp_path, f"embed-{label}", "")
+        cp._write(root, rel, payload)
+        fired = [f.rule for f in cp.audit(root)[0] if f.path == rel]
+        assert "foreign-license-text" in fired, (
+            f"{label}: a notice inside a binary payload was not flagged"
+        )
+
+
+def test_our_own_payload_shapes_still_audit_clean(tmp_path):
+    """The unanswerable direction: `foreign-license-text` cannot be exempted.
+
+    A false positive on a render, a float dump, a tensor or a gzipped trace
+    could only be answered by switching the rule off, so these must stay clean.
+    """
+    for label, rel, payload in (
+        ("pcm", "fixtures/audio/render.wav", cp.FIXTURE_PLAIN_PCM_WAV),
+        ("f32", "reports/artifacts/ref.f32", cp.FIXTURE_PLAIN_FLOAT_DUMP),
+        ("npy", "reports/traces/click.npy", cp.FIXTURE_TENSOR_PAYLOAD),
+        ("trace.gz", "reports/artifacts/trace.json.gz", cp.FIXTURE_OWN_GZIPPED_TRACE),
+        ("wide", "fixtures/audio/render.wav", cp.FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD),
+    ):
+        root = _masked_tree(tmp_path, f"clean-{label}", "")
+        cp._write(root, rel, payload)
+        findings, _ = cp.audit(root)
+        assert not findings, f"{label}: {[f.as_dict() for f in findings]}"
+
+
+def test_harvest_keeps_notices_and_drops_payload_noise():
+    """Unit-level pin on the harvest's admission test."""
+    notice = ("Copy" + "right (C) 20" + "19 Some Upstream Author").encode("ascii")
+    harvested = cp.harvest_strings(b"\x00\x01\x02" + notice + b"\xff\xfe")
+    assert notice.decode("ascii") in harvested
+    # The sign spelling (U+00A9) is normalised to ASCII instead of ending the
+    # run. Written as an escape so this file carries no notice of its own.
+    sign_notice = "\u00a9 20" + "19 Upstream Author"
+    harvested_sign = cp.harvest_strings(sign_notice.encode("utf-8"))
+    assert harvested_sign.startswith("(c" + ") 20"), harvested_sign
+    assert sign_notice[0] not in harvested_sign
+    # 16-bit PCM yields runs with no word in them, which are dropped.
+    pcm = cp._wav_payload()
+    assert not cp.RUN_WORD_RE.search(b"\x37\x22\x37\x37\x37\x47")
+    assert "Copy" + "right" not in cp.harvest_strings(pcm)
+
+
+def test_unwrap_payload_reads_wrappers_and_refuses_ordinary_payloads():
+    """Unit-level pin: a wrapper yields members, a render yields None."""
+    payloads, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
+    assert payloads and not truncated
+    assert cp.WIDE_NOTICE_LOCATOR.encode("ascii") in payloads[0]
+    assert cp.unwrap_payload(cp.FIXTURE_PLAIN_PCM_WAV) == (None, False)
+    assert cp.unwrap_payload(b"") == (None, False)
+    # Nested: a tar inside a gzip resolves to the tar's member, not the tar.
+    payloads, _ = cp.unwrap_payload(cp.FIXTURE_TAR_GZ_WITH_NOTICE)
+    assert any(b"filter" not in p and cp.WIDE_NOTICE_LOCATOR.encode() in p for p in payloads)
+
+
+def test_truncated_payload_scan_is_disclosed_not_silent(tmp_path, monkeypatch):
+    """A scan that could not finish must never look like one that passed."""
+    monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 32)
+    payloads, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
+    assert truncated and payloads and len(payloads[0]) == 32
+    root = _masked_tree(tmp_path, "truncated", "")
+    cp._write(root, "reports/artifacts/trace.json.gz", cp.FIXTURE_GZIPPED_NOTICE)
+    _, stats = cp.audit(root)
+    assert stats["payload_scans_truncated"] == ["reports/artifacts/trace.json.gz"], stats
+
+
+def test_payload_scan_modes_are_reported_for_the_real_tree():
+    """Non-vacuity in CI: the new layer actually runs on this repository.
+
+    Coverage is reported separately from agreement, and a weaker scan mode is
+    reported separately from a full decode.
+    """
+    _, stats = cp.audit(REPO)
+    assert stats["files_unwrapped_from_wrappers"] >= 1, stats
+    assert stats["files_scanned_as_extracted_strings"] >= 100, stats
+    assert stats["payload_scans_truncated"] == [], stats
+
+
+def test_payload_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    assert cp._payload_controls(), "the payload controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cp._payload_controls():
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
 
 
 # --- discovery-layer carriage (#25 acceptance item 4, increment 7) ------------

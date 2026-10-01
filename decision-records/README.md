@@ -24,7 +24,11 @@ carriage signal (foreign license text, upstream asset payload,
 foreign-language source, self-declared quotation) with no row. Content brought
 in **by reference** is covered too: a committed submodule / nested repository
 checkout, and a symlink whose target leaves the tree, each need a row, and a
-submodule's row must name the commit its gitlink actually pins.
+submodule's row must name the commit its gitlink actually pins. A payload the
+tool cannot decode is not exempt either: compressed streams and archives are
+unwrapped by magic rather than by name (a gzipped source file, a zip or tar
+renamed `.dat`) and whatever is still not text is read as the printable-ASCII
+runs it carries (a notice spliced into a render, a WAV copyright chunk).
 `--negative-control` demonstrates that every one of those rules still fires;
 both run in CI. A PASS is bookkeeping, not proof that nothing was copied, and
 never a ratification — each record's own Status line is authoritative.

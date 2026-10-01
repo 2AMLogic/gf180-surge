@@ -129,13 +129,20 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    dependencies, submodules, or shared packages by silent default" (#25) is
    therefore a check, not only a rule. A declared one is still unscanned
    content: the row and its record are its only description.
-7. Commit third-party text as UTF-8. The audit's content rules only reach
-   files it can decode, so every run prints a `not content-scanned` count
-   alongside its coverage: those files are seen by the extension tripwires
-   and nothing else. A notice sealed inside an opaque payload (a render, a
-   tensor, a wavetable) is out of the tool's reach by construction — that
-   residual is declared and control-pinned, not closed. Read the count, not
-   just the verdict.
+7. Commit third-party text as UTF-8, and do not expect a wrapper to hide
+   anything. The audit resolves an encoding first, then — for a payload it
+   cannot decode — unwraps compressed streams and archives **by magic rather
+   than by name** (so a gzipped source file, or a zip/tar renamed `.dat`, is
+   read as its members) and, failing that, reads the printable-ASCII runs the
+   payload carries (so a notice spliced into a render, or a WAV `LIST/INFO`
+   copyright chunk, is found). Every run prints how much of the tree each
+   weaker mode covered — `unwrapped by magic`, `scanned as extracted ASCII
+   strings only`, `not content-scanned` — plus any `TRUNCATED payload scan`.
+   Three residuals stay declared and control-pinned rather than closed: a
+   notice written in a WIDE encoding inside a binary payload, a wrapper whose
+   members carry no marker (covered only by the extension tripwires, member
+   names are not tripwired), and an inflation that hits the unwrap budget.
+   Read the counts, not just the verdict.
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle
