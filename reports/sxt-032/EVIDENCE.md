@@ -168,3 +168,29 @@ conventions.
   (ms_slfo1..6), stereo field, effects interaction.
 * Any FPGA/gf180mcu synthesis, place-and-route, timing, power, area, or
   hardware playback result.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used throughout the acceptance table and the
+#145 change note above with one shared full-scale log-floor definition in
+every comparator. Full attribution: `reports/spectral-corr-fs-floor/
+artifacts/regrade-ledger.{txt,json}`.
+
+| row | corr (pre-#110) | corr (#110) |
+|---|---|---|
+| seq-notes-coverage-v1 (`audio-coverage.json`) | 0.9884 | 0.9981 |
+| seq-notes-repeated-v1 (`audio-repeated.json`) | 0.9972 | 0.9989 |
+| seq-notes-holds-v1 (`audio-holds.json`) | 0.9874 | 0.9978 |
+| seq-modwheel-v1 (`audio-modwheel.json`) | 0.9915 | 0.9933 |
+| routing-zeroed cutoff (`audio-nc-cutoff-zeroed.json`) | 0.8983 | 0.8053 |
+| routing-zeroed reso (`audio-nc-reso-zeroed.json`) | 0.9907 | 0.9811 |
+| source-swap (`audio-nc-source-swap.json`) | 0.8328 | 0.6617 |
+| free-running confusion (`audio-nc-free-running.json`) | 0.8658 | 0.7311 |
+
+No verdict moves: all four sequences stay FAIL (max/rms already miss), and
+all five negative controls stay FAIL with the same PASS/FAIL-discrimination
+classification as recorded above (routing-zeroed reso's spectral leg stays
+above 0.98, so it is still non-discriminating on that leg alone, the same
+caveat already recorded). No `verification` status in
+`reports/coverage-v1/leaf-verification.json` moves.

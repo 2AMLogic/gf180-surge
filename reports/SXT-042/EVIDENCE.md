@@ -391,3 +391,28 @@ SXT-035 conventions.
   unresolved).
 * Any FPGA/gf180mcu synthesis, place-and-route, timing, power, area or
   hardware-playback result.
+
+## 12. Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used throughout §4/§5 above with one shared
+full-scale log-floor definition in every comparator. Every `spectral_corr`
+value quoted above is the pre-#110 figure and is superseded; full
+attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| row | pre-#110 spec | #110 spec |
+|---|---|---|
+| baseline (`audio-nc-baseline.json`) | 0.9212 | 0.7848 |
+| C1 cutoff-zeroed / C3 source-swap-modwheel (degenerate-to-zeroed, same sha) | 0.9259 | 0.7963 |
+| C2 shared-keytrack-word | 0.92122 | 0.7842 |
+| C3 source-swap-velocity | 0.9276 | 0.7999 |
+| C4 keytrack-root dropped | 0.8743 | 0.5967 |
+| P6 velocity-route probe | 0.8926 | 0.7272 |
+
+Every row was already failing the max and rms legs (§4 item 2 is already
+`NOT_RUN / refused` against the issue's three named carriers, and the
+baseline budget check already FAILS all three legs), so #110 does not move
+any PASS/FAIL outcome here — every row's spectral value simply moves
+further below 0.98, deepening an already-failing budget miss. No
+`verification` status in `reports/coverage-v1/leaf-verification.json`
+moves.

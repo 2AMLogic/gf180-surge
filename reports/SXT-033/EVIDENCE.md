@@ -357,3 +357,39 @@ iverilog 13, `ORACLE_SURGE_DIR` = the local checkout at the manifest pin
   FAIL → PASS; F-033-4 recorded). Full record:
   `reports/halfband-republication/`.
 
+## 11. Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used throughout §3/§4/§10 above with one shared
+full-scale log-floor definition in every comparator. Every `spectral_corr`
+value quoted above is the pre-#110 figure and is superseded; full
+attribution and every changed artifact: `reports/spectral-corr-fs-floor/
+artifacts/regrade-ledger.{txt,json}`, `reports/spectral-corr-fs-floor/
+EVIDENCE.md` §2.
+
+| row | §3 corr (pre-#110) | #110 corr | spectral leg | overall verdict |
+|---|---|---|---|---|
+| edges / coverage | 0.9744 | 0.9990 | MISS → PASS (**decisive flip**) | **FAIL → PASS** |
+| edges / repeated | 0.9830 | 0.9994 | PASS → PASS | PASS (PENDING-FREEZE, via #145) unchanged |
+| horn / coverage | 0.7535 | 0.8422 | MISS → MISS | FAIL → FAIL |
+| horn / repeated | 0.8086 | 0.8331 | MISS → MISS | FAIL → FAIL |
+| tentacles / coverage | 0.9802 | 0.9953 | PASS → PASS | PASS (via #145) unchanged |
+| tentacles / repeated | 0.9888 | 0.9970 | PASS → PASS | PASS (via #145) unchanged |
+| crush / coverage | 0.9895 | 0.9796 | PASS → MISS (no effect: max+rms already FAIL) | FAIL → FAIL |
+| crush / repeated | 0.9961 | 0.9828 | PASS → PASS | FAIL → FAIL (max+rms) |
+| nc-submode-confusion-crush (§7/§10, post-#145: 0.9720) | 0.9720 | 0.8598 | control required to FAIL; still does | FAIL (required) |
+| nc-submode-confusion-horn (§7/§10, post-#145: 0.7635) | 0.7635 | 0.6202 | control required to FAIL; still does | FAIL (required) |
+
+Only `edges / coverage` is a decisive #110 flip (the only one of the leaf's
+eight budget rows whose overall verdict moves); it is the one named in
+`reports/spectral-corr-fs-floor/EVIDENCE.md` §2. `crush / coverage` is the
+one row that is floor-sensitive in the other direction (PASS → MISS on the
+spectral leg alone) but its overall verdict does not move because max and
+rms already fail it (same source, §1 floor-sensitivity table). F-033-1's
+quoted horn corr range (§4: "0.75–0.81 after #123") is the pre-#110 figure;
+under #110 it is 0.83–0.84 — the same unresolved detuned-unison
+decorrelation finding, still routed to #12. No `verification` status in
+`reports/coverage-v1/leaf-verification.json` moves: `osc:Classic` stays
+`model_vs_reference: PARTIAL` / `rtl_vs_model: PASS` (4/8 budget rows now
+read PASS instead of 3/8; horn and crush keep the leaf PARTIAL either way).
+

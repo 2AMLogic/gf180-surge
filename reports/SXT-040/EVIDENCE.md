@@ -378,3 +378,39 @@ leaf patterns.
   exactness covered on the synthetic smoke configuration only).
 * Any gf180mcu/FPGA synthesis, place-and-route, timing, power, area, or
   hardware playback result.
+
+## 10. Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used throughout §3/§4 above with one shared
+full-scale log-floor definition in every comparator. Every `spectral_corr`
+value quoted above is the pre-#110 figure and is superseded; full
+attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| row | §3 corr (pre-#110) | #110 corr | spectral leg | overall verdict |
+|---|---|---|---|---|
+| badnews / coverage | 0.9306 | 0.9700 | MISS → MISS | FAIL → FAIL |
+| badnews / repeated | 0.9471 | 0.9752 | MISS → MISS | FAIL → FAIL |
+| popcorn2k / coverage | 0.9666 | 0.9908 | MISS → PASS (**decisive flip**) | **FAIL → PASS (PENDING-FREEZE)** |
+| popcorn2k / repeated | 0.98002 | 0.9836 | PASS → PASS | PASS (PENDING-FREEZE, via the #123 fix) unchanged |
+| tentacles / coverage | 0.9444 | 0.9867 | MISS → PASS (no overall effect: rms already FAIL) | FAIL → FAIL |
+| tentacles / repeated | 0.9773 | 0.9892 | MISS → PASS (no overall effect: rms already FAIL) | FAIL → FAIL |
+
+§1's acceptance-mapping line and §3's prose ("the other five miss spectral
+corr") are superseded: under #110 the spectral leg now misses on 2/6 rows
+(both badnews) and passes on 4/6 (popcorn2k ×2, tentacles ×2). Two rows'
+overall verdict read `PASS (PENDING-FREEZE)`: popcorn2k/repeated (already
+PASS via the #123/#145 fix, unaffected by #110) and popcorn2k/coverage
+(newly PASS — the one decisive #110 flip this leaf contributes, named in
+`reports/spectral-corr-fs-floor/EVIDENCE.md` §2). tentacles/coverage and
+tentacles/repeated now also clear the spectral floor but stay overall FAIL
+on the rms leg (§3); F-040-3's quoted tentacles corr range ("0.94–0.98") is
+the pre-#110 figure, now 0.987–0.989. F-040-2's badnews quantization-cap
+finding is unaffected (still MISS, further below the floor: 0.97 vs the
+0.93 pre-#110 figure — the finding is the same, the numbers moved as
+expected for a stricter floor on a low-level int16 render per §1's
+sensitivity note in `reports/spectral-corr-fs-floor/EVIDENCE.md`).
+
+`reports/coverage-v1/leaf-verification.json`'s `osc:Sine` note is updated in
+the same commit to the #110 values; no `verification` status moves — the
+leaf stays `model_vs_reference: PARTIAL` / `rtl_vs_model: PASS`.

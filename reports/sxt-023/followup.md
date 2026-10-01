@@ -107,3 +107,18 @@ SXT-017 options and predicted effects are in the diagnosis note §3
 Still NOT established: any preset-support or musical-quality claim; delay
 model-vs-engine within the proposed budgets (routed to SXT-017); any
 synthesis/timing/hardware claim.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+The `corr 1.0000` / `corr 0.9998` figures quoted in §4 above are from
+`tools/diagnose_delay_budget.py`/`tools/diagnose_delay_engine_probe.py`
+diagnostic renders under `artifacts-followup/budget-diagnosis/`, which are
+"regenerable via the documented command; not committed"
+(`delay-budget-diagnosis.md` §4) — they predate PR #166 (issue #110,
+merged 2026-09-30)'s shared full-scale log-floor `spectral_corr` definition
+and are superseded in the same sense as every other pre-#110 value in this
+repository, but because they were never committed JSON artifacts they are
+not part of `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`
+and have no recorded post-#110 re-measurement. Re-running the cited tools
+would produce the current numbers; nothing here is a frozen or re-verified
+claim either way.

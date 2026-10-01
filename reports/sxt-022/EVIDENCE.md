@@ -203,3 +203,25 @@ sibling code was copied.
   order verification, stereo field, tempo behavior.
 * Exact agreement of the model with the engine (the model is a fixed-point
   quantization; agreement is budget-bounded, budgets unfrozen).
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used in the acceptance table (item 2) and the
+#145 change-note table above with one shared full-scale log-floor
+definition in every comparator. Every `spectral_corr` value quoted above is
+the pre-#110 figure and is superseded; full attribution:
+`reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`.
+
+| sequence | corr (pre-#110) | corr (#110) | spectral leg | overall verdict |
+|---|---|---|---|---|
+| seq-notes-coverage-v1 | 0.9791 | 0.9985 | MISS → PASS (no overall effect: max+rms already FAIL) | FAIL → FAIL |
+| seq-notes-repeated-v1 | 0.9921 | 0.9988 | PASS → PASS | FAIL (rms only) → FAIL (rms only), unchanged |
+| seq-modwheel-v1 | 0.9802 | 0.9914 | PASS → PASS | FAIL (max+rms) → FAIL (max+rms), unchanged |
+
+The acceptance-item-2 sentence "seq-notes-coverage-v1 ... fails all three
+proposed bounds (max, RMS and spectral)" is superseded: under #110 its
+spectral leg now passes, so it fails only max and rms. No overall verdict
+in this record moves, and no `verification` status in
+`reports/coverage-v1/leaf-verification.json` moves (the voice gate stays
+`model_vs_reference` graded as recorded there).

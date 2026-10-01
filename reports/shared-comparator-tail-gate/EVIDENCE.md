@@ -222,3 +222,17 @@ python3 -m pytest tests/test_tail_gate.py -q      # 17 regression cases
 Scratch renders are written under `/tmp/sxt-tail-gate-checks/` and are never
 committed; the committed evidence is the transcripts, the per-control
 comparator JSONs, and `checks-summary.json`.
+
+## Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition this record's comparators use with one shared
+full-scale log-floor definition. This record does not quote a specific
+`spectral_corr` value as a current fact (the ULP-drift and silent-frame
+sensitivity notes above are about the metric's behavior in general, not a
+committed row), so no prose number here needs correcting; the committed
+JSON artifacts this leg exercises were regenerated per `reports/
+spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}` (tag
+`RUN-METADATA`/`SPECTRAL` rows for `reports/shared-comparator-tail-gate/
+artifacts/`), with no change to this record's own verdicts (leg 1 stays
+36/36, leg 2 stays 8/8, the pytest suite is unaffected).

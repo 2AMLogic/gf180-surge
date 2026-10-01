@@ -381,3 +381,27 @@ in DR-0006; this leaf's tap branch: `sxt028c-tap`, single commit
 `21056f915`, tap header sha256 `556581c658cf8d76392c99cf291ec07ada61a2b8b76d2d9525bfcbb2ab72d3ef`).
 No distribution-license determination has been made for Surge-derived
 material.
+
+## 11. Superseded by #110 (issue #164, 2026-10-01)
+
+PR #166 (issue #110, merged 2026-09-30) replaced the native-unit `log1p`
+`spectral_corr` definition used in §3's two tables (the original record and
+the #100 tail-gate re-grade) with one shared full-scale log-floor definition.
+Every `spectral_corr` value quoted in §3 is the pre-#110 figure and is
+superseded; full attribution: `reports/spectral-corr-fs-floor/
+artifacts/regrade-ledger.{txt,json}`. **No verdict moves**: all six cases
+stay `PASS (PENDING-FREEZE)` under #110 — the movement is last-digit drift
+only, nowhere near the 0.98 floor:
+
+| case | mono corr (pre-#110) | mono corr (#110) |
+|---|---|---|
+| fmcombo × notes | 1.000000 | 0.999997 |
+| fmcombo × poly-8 | 1.000000 | 0.999998 |
+| fmtwang2 × notes | 1.000000 | 0.999997 |
+| fmtwang2 × poly-8 | 1.000000 | 0.999999 |
+| alienappears × notes | 0.999999 | 0.999993 |
+| alienappears × poly-8 | 1.000000 | 0.999999 |
+
+(L/R channel values move by the same order of magnitude; see the ledger for
+every channel.) No `verification` status in
+`reports/coverage-v1/leaf-verification.json` moves.
