@@ -173,7 +173,7 @@
       "status": "PASS",
       "note": "Landed PR #34. Per-instance FX/voice accounting, external-memory split, corpus scan (2,912 fit 4-instance), fail-closed controls.",
       "evidence": "reports/sxt-015/EVIDENCE.md",
-      "evidence_sha256": "52e08a673944f54ec832621f21605537b0b594aa81aba32fcdb5752a2f62352a"
+      "evidence_sha256": "7abafd1b428e6e856b37b5aa5e0339a974d27eb2ed16ee2c4c93ea6bf036ba4d"
     },
     {
       "id": 11,
@@ -320,7 +320,7 @@
       "status": "PASS",
       "note": "Landed (#78): generator + 12 leaves filed (#66-#77, SXT-032..043), 60-leaf backlog, 5 negative controls.",
       "evidence": "reports/sxt-027/EVIDENCE.md",
-      "evidence_sha256": "87edfc54a6000871b3c75ba390237298eefbfe1a3dba80320e754dd8667b75d8"
+      "evidence_sha256": "9587cc2a720b6c752cc9ed9e9d9f38ef01565b5eb6d6e3de824b668138e9031e"
     },
     {
       "id": 21,

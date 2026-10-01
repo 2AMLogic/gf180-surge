@@ -424,14 +424,24 @@ scope note did not cover.
   no denominator moved. `tests/test_sxt029_publication.py` (5 tests) passes,
   including its stale-pin-must-downgrade control. **Coverage claim delta: 0.**
 - **STALE BASIS in three SXT-027 artifacts, deliberately not regenerated:**
-  `reports/sxt-027/{leaf-plan,leaf-backlog,leaves-filed}.json` each record the
+  `reports/sxt-027/leaf-plan.json`, `reports/sxt-027/leaf-backlog.json` and
+  `reports/sxt-027/leaves-filed.json` each record the
   compile-scan sha256 they were generated from
-  (`inputs.compile_scan = e23e351c…`), which is now the superseded value.
+  (`inputs.compile_scan = e23e351c…`), which is now the superseded value
+  (the first two also record `provenance.accounting_model_version
+  = sxt-015-accounting/1.0.0`).
   Their *content* is derived from compile statuses and leaf attribution, none
   of which this change moves, and two of the three are themselves pinned
   structural inputs — re-emitting them is an SXT-027 leaf-ledger revision, not
   a cost-model one. Recorded as STALE, not corrected; noted on follow-up #246
   alongside the image snapshots below.
+  **DISPOSITIONED by #246 (2026-09-30): declared frozen** at those named
+  values, in `reports/sxt-027/EVIDENCE.md` → "DECLARED FROZEN BASIS", and
+  registered in `docs/frozen-artifact-basis.json` (audit
+  `tests/test_frozen_artifact_basis.py`, which fails if one of these
+  artifacts drifts off its declared value *or* if the live basis moves again).
+  They are generator-run stamps, not live pins; what retires the freeze is
+  named in the registry entry.
 - **NOT regenerated, pre-existing drift unrelated to this change:**
   `reports/sxt-016/probes/probe_scheduler__event_queue_and_control__a24__m{18,32}__onchip.json`
   record `fixture_files` / `total_events_across_fixtures` from the SXT-012
@@ -460,6 +470,22 @@ scope note did not cover.
   modulation term, and re-emitting them means re-pinning each leaf's
   recorded image sha256 — that belongs to those leaves, not here. Recorded
   as STALE, not corrected, and filed as follow-up #246.
+  **DISPOSITIONED by #246 (2026-09-30): all three declared frozen** at
+  `sxt-015-accounting/1.0.0` / `646942e9c3887ecb`, in
+  `reports/sxt-025/EVIDENCE.md` and `reports/sxt-026/EVIDENCE.md` →
+  "DECLARED FROZEN BASIS", and registered in
+  `docs/frozen-artifact-basis.json` (audit
+  `tests/test_frozen_artifact_basis.py`). Both re-emissions are oracle-gated
+  and NOT_RUN outside the pinned tree: the SXT-025 image's dependent digests
+  are stamps of a `surgepy` extraction run, and the SXT-026 image can only be
+  emitted with the pinned `resources/data` asset tree (without it the
+  compiler emits an image with no `wavetable_asset_manifests`, deleting that
+  leaf's asset-identity evidence). `image-permuted-placement.json` is not
+  independently emitted at all — `model/integration/negative_controls.py`
+  writes it by mutating the committed SXT-025 image, so its basis follows
+  that image by construction. What retires each freeze is named in its
+  registry entry; the §8.5 STALE records above are superseded by those
+  declarations, not by a correction.
 
 ### 8.6 What this does NOT establish
 

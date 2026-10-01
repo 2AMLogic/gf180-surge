@@ -155,6 +155,58 @@ input bytes ⇒ byte-identical outputs.
 - Any claim about effects leaves (#21), the wet acceptance gate (#18's
   supported-status row, blocked on #48), or profile freeze (#12).
 
+## DECLARED FROZEN BASIS — recorded generator-run inputs (issue #246, 2026-09-30)
+
+All three committed generator artifacts of this leaf record **superseded**
+input values:
+
+| Artifact | Field | Frozen at |
+|---|---|---|
+| `leaf-plan.json` | `provenance.accounting_model_version` | `sxt-015-accounting/1.0.0` |
+| `leaf-plan.json` | `provenance.inputs.compile_scan` | `e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6` |
+| `leaf-backlog.json` | `provenance.accounting_model_version` | `sxt-015-accounting/1.0.0` |
+| `leaf-backlog.json` | `provenance.inputs.compile_scan` | `e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6` |
+| `leaves-filed.json` | `generator_run.inputs.compile_scan` | `e23e351c7850c2d4936afc887f3adca5274e800395f9b84232e4ede0dc4ed0d6` |
+
+The live values are `sxt-015-accounting/1.1.0` and compile-scan sha256
+`791b2c88b7360256ead4c062cfe46e1bd367b0a67e6f36d42bae102ac621fdbe`, both
+moved by #239 (PR #249, the modulation-row shape decision — which
+re-exported `reports/sxt-020/compile-corpus-scan.json`). All three artifacts
+are **declared frozen at the superseded values on purpose**, registered in
+`docs/frozen-artifact-basis.json` and asserted by
+`tests/test_frozen_artifact_basis.py`. They were recorded as STALE in
+`reports/sxt-015/EVIDENCE.md` §8.5 and filed as #246; this section is that
+record's disposition.
+
+**Why frozen rather than re-emitted.** These are **generator-run stamps, not
+live pins**: nothing in this record or in any test re-derives them, and
+nothing these artifacts assert is wrong. Their content is derived from
+compile statuses and leaf attribution, and the shape decision moved neither
+— all 3,561 compile statuses and both named reconciliation deltas in the
+re-exported scan are unchanged, with
+`provenance.accounting_model_version` its only changed field
+(`reports/sxt-015/EVIDENCE.md` §8.5). Only the basis the stamps *quote* is
+superseded.
+
+Re-emitting them is an **SXT-027 leaf-ledger revision, not a cost-model
+one**: `leaf-backlog.json` and `leaves-filed.json` are themselves pinned
+`STRUCTURAL_INPUTS` of `tools/publish_coverage.py`, which REFUSES (exit 2)
+rather than publishing over a moved input, so a re-emission must revise
+those pins and republish `reports/coverage-v1/` in the same change. Doing
+that under a bookkeeping-basis issue would re-derive this leaf's recovery
+ordering and filing record as a side effect of a provenance-stamp refresh,
+which is the re-baselining #246's stop/escalate clause forbids.
+
+**What retires the freeze.** The next SXT-027 leaf-ledger revision — a
+`python3 tools/generate_voice_leaves.py` re-run against the live scan —
+which must revise the `reports/sxt-027/*` pins in
+`tools/publish_coverage.py::STRUCTURAL_INPUTS` and republish
+`reports/coverage-v1/` in the same change.
+
+**Claim scope.** Bookkeeping only. No leaf, recovery count, backlog entry,
+filing record, negative control or determinism result in this record moves;
+supported-preset delta **0**.
+
 ## Licensing / provenance
 
 `tools/generate_voice_leaves.py` and everything under `reports/sxt-027/`
