@@ -144,8 +144,10 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    is answered by the member NAMES (`wrapper-member-name`): a `.wt` wavetable
    inside a zip renamed `.dat`, a stripped `.cpp` inside a tar, and a gzip
    whose header filename is its only name are each judged by the same
-   extension sets a committed path is, and each component of a nested label is
-   judged so an outer name is not masked by what it wraps. Every run prints
+   extension sets a committed path is; each component of a nested label is
+   judged so an outer name is not masked by what it wraps; and **every** member
+   of a CONCATENATED gzip is named, so the rule does not depend on which member
+   was written first. Every run prints
    how much of the tree each weaker mode covered — `unwrapped by magic` (with
    the number of member names read), `scanned as extracted strings only`, the
    number of `wide-encoded (UTF-16/UTF-32) runs harvested`, `not
