@@ -3,13 +3,18 @@
 Covers: frozen arithmetic helpers, coefficient-plane bounds, model
 determinism + per-instance independence, external-memory traffic accounting
 (54 words/frame), the buffer requirement, negative-control evidence
-integrity, and the committed comparison/RTL-exactness records (fail-closed).
+integrity, and the committed comparison/RTL-exactness records (fail-closed),
+including their freshness against the live `frozen_revision()` -- a record
+that pins an earlier revision of the frozen model is STALE, never a PASS
+(galactic_model.py is byte-frozen by those records: see
+docs/byte-frozen-sources.md).
 The oracle-dependent reference legs run via tools/render_aw49_reference.py
 and tools/compare_aw49_reference.py on the oracle host; here we only check
 the committed evidence records for coherence. RTL exactness requires
 iverilog (tools/compare_rtl_model_aw49.py) and is checked via its committed
 record; a missing oracle/iverilog makes those legs NOT_RUN, never a pass.
 """
+import hashlib
 import json
 import os
 import sys
@@ -147,6 +152,25 @@ def test_negative_controls_all_fail_their_checks():
     assert len(d["controls"]) >= 5
     for c in d["controls"]:
         assert c["ok"] is True and "CONTROL-OK" in c["verdict"], c["control"]
+    # NC-D is the stale-stub control: its pin must be the CURRENT frozen
+    # revision, or the control records a refusal of some earlier model.
+    ncd = next(c for c in d["controls"]
+               if c["control"].startswith("NC-D"))
+    assert ncd["metrics"]["expected_revision"] == \
+        int(gm.frozen_revision()[:8], 16), \
+        "NC-D's frozen-revision pin is STALE against galactic_model.py"
+    assert ncd["metrics"]["revision_pin_ok"] is False, \
+        "NC-D must fail the pin check it targets"
+
+
+def test_frozen_revision_is_a_hash_of_the_frozen_model_bytes():
+    """The stale-stub control depends on this: editing the model must move
+    the pin that every committed SXT-028a record carries."""
+    rev = gm.frozen_revision()
+    assert len(rev) == 64
+    src = os.path.join(REPO, "model", "effects", "aw-49",
+                       "galactic_model.py")
+    assert rev == hashlib.sha256(open(src, "rb").read()).hexdigest()
 
 
 def test_rtl_exactness_record():
@@ -155,9 +179,20 @@ def test_rtl_exactness_record():
         pytest.skip("rtl-exactness.json not committed (NOT_RUN)")
     d = json.load(open(p))
     assert d["status"] == "PASS"
+    # Fail closed on a record that pins some EARLIER frozen model: the claim
+    # is "the RTL matches the frozen model", not "matched some revision of
+    # it". galactic_model.py is byte-frozen by this record -- see
+    # docs/byte-frozen-sources.md before editing it.
+    assert d["model_frozen_revision"] == gm.frozen_revision(), \
+        "rtl-exactness.json is STALE against the frozen model"
+    assert d["cases"], "no RTL cases recorded"
     for c in d["cases"]:
         assert c["exact"] is True, c["case"]
         assert c["revision_pin"]["ok"] is True, c["case"]
+        assert c["revision_pin"]["expected"] == \
+            int(gm.frozen_revision()[:8], 16), c["case"]
+        assert c["revision_pin"]["rtl_trace"] == \
+            c["revision_pin"]["expected"], c["case"]
     for m in d["mutant_controls"]:
         assert m["exact"] is False and "CONTROL-OK" in m["verdict"], \
             m["case"]
