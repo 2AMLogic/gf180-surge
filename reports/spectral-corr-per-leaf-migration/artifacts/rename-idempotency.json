@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "check_exit": 0,
+  "idempotent": true,
+  "n_targets": 27,
+  "targets_changed_by_rerun": []
+}

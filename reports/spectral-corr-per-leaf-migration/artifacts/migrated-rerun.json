@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "reruns": [
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "producer": "tools/distortion_negative_controls.py",
+      "status": "PASS",
+      "reproduces_modulo_run_metadata": true
+    },
+    {
+      "artifact": "reports/SXT-028f/negative-controls/negative-controls.json",
+      "producer": "tools/reverb2_negative_controls.py",
+      "status": "PASS",
+      "reproduces_modulo_run_metadata": true
+    }
+  ]
+}

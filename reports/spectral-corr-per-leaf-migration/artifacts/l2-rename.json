@@ -1,0 +1,219 @@
+{
+  "status": "PASS",
+  "artifacts": [
+    {
+      "artifact": "reports/SXT-038/artifacts/budget-summary.json",
+      "class_counts": {
+        "RENAME-#165": 2
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-brass.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-chords-clean.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-chords-std.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-cut-hi.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-cut-lo.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-reso1.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges-toggle.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-edges.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-major7mk2.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-phase1-substd.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-038/artifacts/compare-phase1.json",
+      "class_counts": {
+        "RENAME-#165": 10,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-chords.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-cut-hi.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-cut-lo.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-disturb.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-hot.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-king-b1.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-king-b2.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-reso1.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-sub12db.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-sub18db.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/SXT-039/artifacts/budget-toggle.json",
+      "class_counts": {
+        "RENAME-#165": 3,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/sxt-037/artifacts/f038-102/budget-before-after.json",
+      "class_counts": {
+        "RENAME-#165": 49
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/sxt-037/artifacts/model-trace-badnews-toggle.json.gz",
+      "class_counts": {
+        "RENAME-#165": 8,
+        "DEFINITION": 4
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/sxt-037/artifacts/model-trace-badnews.json.gz",
+      "class_counts": {
+        "RENAME-#165": 2,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    },
+    {
+      "artifact": "reports/sxt-037/artifacts/model-trace-t9.json.gz",
+      "class_counts": {
+        "RENAME-#165": 2,
+        "DEFINITION": 1
+      },
+      "non_rename_changes": []
+    }
+  ]
+}

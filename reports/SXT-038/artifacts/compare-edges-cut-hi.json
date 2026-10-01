@@ -11,7 +11,7 @@
     "L1_C_max_rel_lsb": 16,
     "L2_max_abs_lsb": 4096,
     "L2_rms_lsb": 256,
-    "spectral_corr_min": 0.999
+    "l2_spectral_corr_min": 0.999
   },
   "checks": {
     "L1_C_max_abs_lsb": {
@@ -40,11 +40,12 @@
       "pass": true
     }
   },
-  "spectral_corr": {
+  "l2_spectral_corr": {
     "achieved": 0.999966,
     "budget": 0.999,
     "pass": true,
-    "gating": false
+    "gating": false,
+    "definition": "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale reference, no floor, no gating; the pre-#110 per-leaf definition, RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by issue #165 -- NOT compare_audio_reference.spectral_corr)"
   },
   "rms_db_rel_ref_peak": -91.88,
   "ref_peak_lsb": 28553,

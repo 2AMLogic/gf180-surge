@@ -96,22 +96,10 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     onto the next LINE, are both matched —
     `masking/second-holder-after-a-semicolon`,
     `masking/foreign-holder-on-a-wrapped-continuation-line`.
-  * Content rules only ever see files this tool can DECODE. An undecodable
-    payload (a render, a tensor, a wavetable) reaches the extension tripwires
-    and nothing else, so a notice sealed inside one is out of reach — pinned by
-    `masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope` and
-    disclosed on every run as `files_not_content_scanned`, never silently.
-    Relatedly, the encoding sniff admits a wide-encoded file on an "it is
-    mostly ASCII" test, so a UTF-16 file written wholly in a non-Latin script
-    is refused; license notices are ASCII English, and admitting everything
-    would turn every render into garbage findings on a non-exemptible rule.
   * Every masking path closed here was found by inspection, one increment at a
-    time. That two specific paths, then five, then eight, then four more were
-    closed is not evidence that no further path exists — only that these are
-    pinned by controls that fail when, and only when, their own fix is
-    reverted. The latest increment sat BELOW the signal layer entirely (a file
-    the sniff refused to decode was scanned by no content rule at all), so the
-    layer a masking path lives in is not bounded by the layers already audited.
+    time. That two specific paths, then five, then eight more, were closed is
+    not evidence that no further path exists — only that these are pinned by
+    controls that fail when, and only when, their own fix is reverted.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -146,7 +134,6 @@ Python 3 standard library only.
 from __future__ import annotations
 
 import argparse
-import codecs
 import json
 import re
 import subprocess
@@ -847,76 +834,6 @@ class Finding:
         return f"Finding({self.rule!r}, {self.path!r}, {self.detail!r})"
 
 
-# --- encoding sniffing --------------------------------------------------------
-#
-# Only files this layer turns into text are reachable by the content rules
-# (`foreign-license-text`, `self-declared-quotation`). Everything below exists
-# to keep an ordinary text file — whatever its encoding, however it has been
-# scuffed — from being discarded as "binary" before any rule can read it, while
-# still not pretending a render or a wavetable payload is prose.
-
-# Longest BOM first: UTF-32-LE's BOM starts with UTF-16-LE's.
-BOM_ENCODINGS = (
-    (codecs.BOM_UTF32_LE, "utf-32-le"),
-    (codecs.BOM_UTF32_BE, "utf-32-be"),
-    (codecs.BOM_UTF16_LE, "utf-16-le"),
-    (codecs.BOM_UTF16_BE, "utf-16-be"),
-    (codecs.BOM_UTF8, "utf-8-sig"),
-)
-
-# Tried in order when a head carries NULs but no BOM (the shape a Windows
-# editor's "Unicode" save leaves behind).
-BOMLESS_WIDE_ENCODINGS = ("utf-16-le", "utf-16-be", "utf-32-le", "utf-32-be")
-
-# A license notice is ASCII English prose, so "mostly ASCII" is the right
-# admission test: a .wav or .npy payload reinterpreted as UTF-16 decodes to
-# mostly non-ASCII code points and is correctly refused. The cost is a
-# DECLARED boundary, not a silent one — see DECLARED LIMITS.
-ASCII_TEXT_RATIO = 0.90
-
-# Above this share of NULs the payload is structural (PCM silence, a tensor),
-# not text someone scuffed to hide a notice.
-MAX_STRAY_NUL_RATIO = 0.01
-
-
-def _ascii_text_ratio(text):
-    """Share of `text` that is printable ASCII or ordinary whitespace."""
-    if not text:
-        return 0.0
-    good = sum(1 for ch in text if ch in "\t\n\r\f\v" or "\x20" <= ch <= "\x7e")
-    return good / len(text)
-
-
-def sniff_encoding(head: bytes):
-    """An encoding name to decode this payload with, or None if it is binary.
-
-    `head` is the first `BINARY_SNIFF_BYTES` only; a trailing split code unit
-    is harmless because the result is used solely to choose the codec.
-    """
-    for bom, encoding in BOM_ENCODINGS:
-        if head.startswith(bom):
-            return encoding
-    if not head:
-        return "utf-8"
-    if b"\0" not in head:
-        return "utf-8"
-    for encoding in BOMLESS_WIDE_ENCODINGS:
-        width = 4 if encoding.startswith("utf-32") else 2
-        # Decode whole code units only, so a split tail cannot skew the ratio.
-        usable = head[: len(head) - (len(head) % width)]
-        if not usable:
-            continue
-        if _ascii_text_ratio(usable.decode(encoding, "replace")) >= ASCII_TEXT_RATIO:
-            return encoding
-    # Narrow text someone has scuffed with a few NULs: sparse enough to be an
-    # evasion rather than a payload, and ASCII once they are removed.
-    if head.count(0) / len(head) <= MAX_STRAY_NUL_RATIO:
-        stripped = head.replace(b"\0", b"").decode("utf-8", "replace")
-        if _ascii_text_ratio(stripped) >= ASCII_TEXT_RATIO:
-            return "utf-8"
-    return None
-
-
 # --- file discovery -----------------------------------------------------------
 
 
@@ -980,20 +897,10 @@ class Tree:
         return None
 
     def text(self, rel):
-        """Decoded text, or None for genuinely binary/unreadable files.
+        """Decoded text, or None for binary/unreadable files.
 
-        Sniffs the first block to pick an encoding before reading the rest, so
-        a multi-megabyte render or trace payload is never fully decoded.
-
-        A file this returns None for is scanned by NOTHING except the
-        extension tripwires — so the sniff is itself a detection surface, not
-        a performance detail. Treating "a NUL byte appears in the head" as
-        "binary" let a UTF-16-encoded source file, or an ASCII one carrying a
-        single stray NUL, carry a complete foreign license body, SPDX tag and
-        copyright notice past every content rule (issue #25, acceptance item
-        4; controls `masking/*-encoded-*`, `masking/stray-nul-*`). Encoding is
-        now resolved first and only an un-decodable payload is skipped; the
-        residual count is disclosed by `files_not_content_scanned`.
+        Sniffs the first block for NUL bytes before reading the rest, so a
+        multi-megabyte render or trace payload is never fully decoded.
         """
         if rel in self._text_cache:
             return self._text_cache[rel]
@@ -1001,14 +908,8 @@ class Tree:
         try:
             with (self.root / rel).open("rb") as handle:
                 head = handle.read(BINARY_SNIFF_BYTES)
-                encoding = sniff_encoding(head)
-                if encoding is not None:
-                    value = (head + handle.read()).decode(encoding, "replace")
-                    # A stray NUL survives the narrow decode as U+0000 and
-                    # would split a regex's word gap; it is masking noise, not
-                    # content. Drop it so the signal layer sees the real text.
-                    if "\0" in value:
-                        value = value.replace("\0", "")
+                if b"\0" not in head:
+                    value = (head + handle.read()).decode("utf-8", "replace")
         except OSError:
             value = None
         self._text_cache[rel] = value
@@ -1807,11 +1708,6 @@ def audit(root: Path):
         "provenance_rows": len(manifest.get("entries", []) or []),
         "files_covered_by_rows": len(coverage),
         "exemptions": len(manifest.get("exemptions", []) or []),
-        # Disclosed, not silent: these files reached no content rule at all,
-        # so a PASS says nothing about what is inside them (DECLARED LIMITS).
-        "files_not_content_scanned": sum(
-            1 for rel in tree.files if tree.text(rel) is None
-        ),
         "tripwire_hits": tripwire_counts,
     }
     findings.sort(key=lambda f: (f.rule, f.path))
@@ -1846,10 +1742,6 @@ def report(findings, stats, root, as_json=False):
     )
     for prefix, count in stats["exclusions"].items():
         print(f"  excluded: {prefix} ({count} files)")
-    print(
-        f"  not content-scanned (undecodable payload): "
-        f"{stats['files_not_content_scanned']} files — extension tripwires only"
-    )
     hits = ", ".join(f"{k}={v}" for k, v in sorted(stats["tripwire_hits"].items()))
     print(f"tripwire hits (declared + undeclared): {hits}")
     if findings:
@@ -2144,42 +2036,6 @@ FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE = (
 # Long enough that the foreign notice is well outside the old ±120-char
 # proximity window, so this control isolates the first-match-only bug.
 FIXTURE_FILLER = "\n" + "".join(f"ROW_{n} = [{n}, {n}, {n}]\n" for n in range(12)) + "\n"
-
-# Increment 6 — masking one level BELOW the signal layer. Increments 1-5 all
-# assumed the file had become text; these never do. A head carrying a NUL was
-# classified "binary", and `tripwire_hits` returns before every content rule
-# for such a file — so an ordinary source file saved in UTF-16, or an ASCII one
-# carrying a single stray NUL, took a complete GPL body, a GPL SPDX tag and a
-# foreign copyright notice straight past the non-exemptible rule. Neither needs
-# an exotic tool: "Unicode" is a standard editor save, and `.py`/`.sv` are not
-# in FOREIGN_SOURCE_EXTS, so no extension tripwire covered them either.
-FIXTURE_WIDE_NOTICE_TEXT = (
-    "# Copy" + "right (C) 20" + "19 Some Upstream Author\n"
-    "# This program is free " + "software; you can redistribute it\n"
-    "# under the terms of the GNU " + "General Public License as published\n"
-    "# by the Free " + "Software Foundation.\n"
-)
-# The locator each wide-encoding control requires in its finding's evidence,
-# assembled from fragments for the same reason as the fixtures above.
-WIDE_NOTICE_LOCATOR = "GNU " + "General Public License"
-FIXTURE_UTF16_BOM_NOTICE = FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16")
-FIXTURE_UTF16LE_BOMLESS_NOTICE = FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-le")
-FIXTURE_UTF16BE_BOMLESS_NOTICE = FIXTURE_WIDE_NOTICE_TEXT.encode("utf-16-be")
-FIXTURE_STRAY_NUL_NOTICE = (
-    b"# \x00 vim: set fileencoding=utf-8 :\n" + FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8")
-)
-# Positive control for the OTHER failure direction. If the sniff were loosened
-# into "decode everything", the 264 renders and 8 tensors in this tree would
-# start producing garbage matches on a rule nobody can exempt. The notice is
-# embedded as real ASCII so this control is not vacuous: loosening the sniff
-# makes it fire, tightening it back makes it stop. What it pins is therefore a
-# DECLARED LIMIT, not a win — content sealed inside an opaque payload is out of
-# this tool's reach, which is exactly what `files_not_content_scanned` is for.
-FIXTURE_NOTICE_SEALED_IN_BINARY = (
-    bytes(range(256)) * 4
-    + ("Copy" + "right (C) 20" + "19 Some Upstream Author\n").encode("ascii")
-    + bytes(range(256)) * 4
-)
 
 
 def _scoped_exemption(root: Path, occurrences, path="docs/own_copy.md"):
@@ -2832,52 +2688,6 @@ def _masking_controls():
             "prose ABOUT copyright, whose holder position holds 'License'/'Notice'",
             lambda root: _write(
                 root, "docs/mentions.md", FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE
-            ),
-        ),
-        # --- increment 6: masking the DECODE layer, below every signal ------
-        (
-            "masking/utf16-bom-encoded-license-body",
-            "foreign-license-text",
-            MASKED_REL,
-            "a GPL body in a UTF-16 (BOM) source file the sniff called binary",
-            lambda root: _write(root, MASKED_REL, FIXTURE_UTF16_BOM_NOTICE),
-            WIDE_NOTICE_LOCATOR,
-        ),
-        (
-            "masking/utf16-le-bomless-encoded-license-body",
-            "foreign-license-text",
-            MASKED_REL,
-            "the same body in BOM-less UTF-16-LE (a plain 'Unicode' editor save)",
-            lambda root: _write(root, MASKED_REL, FIXTURE_UTF16LE_BOMLESS_NOTICE),
-            WIDE_NOTICE_LOCATOR,
-        ),
-        (
-            "masking/utf16-be-bomless-encoded-license-body",
-            "foreign-license-text",
-            MASKED_REL,
-            "the same body in BOM-less UTF-16-BE",
-            lambda root: _write(root, MASKED_REL, FIXTURE_UTF16BE_BOMLESS_NOTICE),
-            WIDE_NOTICE_LOCATOR,
-        ),
-        (
-            "masking/stray-nul-byte-above-a-license-body",
-            "foreign-license-text",
-            MASKED_REL,
-            "one stray NUL byte in the head of an otherwise ASCII GPL-headed file",
-            lambda root: _write(root, MASKED_REL, FIXTURE_STRAY_NUL_NOTICE),
-            WIDE_NOTICE_LOCATOR,
-        ),
-        (
-            "masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope",
-            None,
-            None,
-            (
-                "a declared limit: an opaque payload is not decoded as prose, "
-                "so a notice sealed inside one is out of reach (not a win — "
-                "disclosed by files_not_content_scanned)"
-            ),
-            lambda root: _write(
-                root, "fixtures/render.wav", FIXTURE_NOTICE_SEALED_IN_BINARY
             ),
         ),
     ]

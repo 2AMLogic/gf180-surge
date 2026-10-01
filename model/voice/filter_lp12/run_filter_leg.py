@@ -242,7 +242,34 @@ def _audio_metrics(model_out, engine_q):
     }
 
 
-def spectral_corr(a, b, frame=4096):
+# The L2 family's own spectral metric, declared explicitly so no record can
+# be read as carrying the frozen `spectral_corr` of issue #110 (issue #165).
+L2_SPECTRAL_CORR_DEFINITION = (
+    "l2-native-log1p-v1 (Hann 4096, log1p(|X|) in Q10.21 LSB, no full-scale "
+    "reference, no floor, no gating; the pre-#110 per-leaf definition, "
+    "RETAINED for the 0.999 L2 family and RENAMED off `spectral_corr` by "
+    "issue #165 -- NOT compare_audio_reference.spectral_corr)")
+
+
+def l2_spectral_corr(a, b, frame=4096):
+    """The L2-family spectral metric: native-unit `log1p(|X|)` on Q10.21 LSB.
+
+    This is NOT `tools/compare_audio_reference.py`'s `spectral_corr` (issue
+    #110's shared full-scale log-floor definition) and it is deliberately no
+    longer named `spectral_corr` (issue #165): it is a different metric,
+    graded against a different budget family (`l2_spectral_corr_min` = 0.999
+    in Q10.21 LSB on a filter stage's own output, not the 0.98 effect-slice
+    budget the shared definition serves).
+
+    Renamed rather than migrated because the 0.999 floor was proposed
+    against THIS definition and SXT-037 has already recorded that sub-budget
+    as MIS-SCALED for filtered-voice spectra (reports/sxt-037/EVIDENCE.md
+    section 3): re-grading it under a new definition while leaving the floor
+    at 0.999 would change what is measured without touching the proposal it
+    is measured against, and picking a different floor here is what #165's
+    stop condition forbids. That decision belongs to the SXT-013/#12 freeze.
+    Full reasoning: reports/spectral-corr-per-leaf-migration/EVIDENCE.md.
+    """
     n = min(len(a), len(b))
     if n < frame:
         return 1.0
@@ -300,9 +327,10 @@ def main():
     for key in inst:
         res = run_instance(key, audio[key], coef[key],
                            use_engine_coeffs=args.engine_coeffs)
-        res["spectral_corr"] = spectral_corr(
+        res["l2_spectral_corr"] = l2_spectral_corr(
             [v for blk in res["trace_blocks"] for v in blk["out_model"]],
             [v for blk in res["trace_blocks"] for v in blk["out_engine_q"]])
+        res["l2_spectral_corr_definition"] = L2_SPECTRAL_CORR_DEFINITION
         res["leg"] = "L2b-engine-coeffs" if args.engine_coeffs else "L2a-own-coeffs"
         results.append(res)
     which_default = 0
@@ -334,7 +362,7 @@ def main():
     print(json.dumps({
         "instances": [{k: v for k, v in r.items()
                        if k in ("key", "blocks", "subtypes", "l1_C_max", "l1_C_rms",
-                                "l2a", "spectral_corr", "leg")}
+                                "l2a", "l2_spectral_corr", "leg")}
                       for r in results],
         "rtl_input_words": n_in,
     }, indent=2))

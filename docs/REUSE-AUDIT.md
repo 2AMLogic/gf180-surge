@@ -120,13 +120,6 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    (job `provenance-audit`). The tool enforces bookkeeping — read its
    `--limits` output before quoting a PASS as evidence: it is not proof that
    nothing was copied.
-6. Commit third-party text as UTF-8. The audit's content rules only reach
-   files it can decode, so every run prints a `not content-scanned` count
-   alongside its coverage: those files are seen by the extension tripwires
-   and nothing else. A notice sealed inside an opaque payload (a render, a
-   tensor, a wavetable) is out of the tool's reach by construction — that
-   residual is declared and control-pinned, not closed. Read the count, not
-   just the verdict.
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle

@@ -1,0 +1,37 @@
+issue #165 -- per-leaf spectral_corr migration/rename: leg 4
+run: 2026-10-01T04:12:26Z   repo HEAD: 28379b8f84ec930cd7af556e0b09f22c122a4222   base: b71edf440074   numpy 2.4.2
+shared definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric naming/definition consistency only; no fidelity, RTL, support or sound claim.
+
+L2-family artifacts changed by this branch: 27
+  reports/SXT-038/artifacts/budget-summary.json            {'RENAME-#165': 2}
+  reports/SXT-038/artifacts/compare-brass.json             {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-chords-clean.json      {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-chords-std.json        {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-edges-cut-hi.json      {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-edges-cut-lo.json      {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-edges-reso1.json       {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-edges-toggle.json      {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-edges.json             {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-major7mk2.json         {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-phase1-substd.json     {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-038/artifacts/compare-phase1.json            {'RENAME-#165': 10, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-chords.json             {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-cut-hi.json             {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-cut-lo.json             {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-disturb.json            {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-hot.json                {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-king-b1.json            {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-king-b2.json            {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-reso1.json              {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-sub12db.json            {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-sub18db.json            {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/SXT-039/artifacts/budget-toggle.json             {'RENAME-#165': 3, 'DEFINITION': 1}
+  reports/sxt-037/artifacts/f038-102/budget-before-after.json {'RENAME-#165': 49}
+  reports/sxt-037/artifacts/model-trace-badnews-toggle.json.gz {'RENAME-#165': 8, 'DEFINITION': 4}
+  reports/sxt-037/artifacts/model-trace-badnews.json.gz    {'RENAME-#165': 2, 'DEFINITION': 1}
+  reports/sxt-037/artifacts/model-trace-t9.json.gz         {'RENAME-#165': 2, 'DEFINITION': 1}
+
+CONTROL: RENAME-#165 only classifies when the counterpart under the other name carries the SAME value, so a moved value falls through to SPECTRAL/VERDICT/OTHER and fails this leg (see tests/test_spectral_corr_single_definition.py ::test_the_ledger_rename_class_cannot_launder_a_moved_value)
+
+leg 4 verdict: PASS

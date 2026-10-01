@@ -42,7 +42,7 @@ def verdict_for(inst):
           and inst["l1_C_rms"] <= PROPOSED["l1_C_rms_lsb"])
     l2 = (inst["l2a"]["max_abs_lsb"] <= PROPOSED["l2_max_abs_lsb"]
           and inst["l2a"]["rms_lsb"] <= PROPOSED["l2_rms_lsb"]
-          and inst["spectral_corr"] >= PROPOSED["l2_spectral_corr_min"])
+          and inst["l2_spectral_corr"] >= PROPOSED["l2_spectral_corr_min"])
     peak_ok = inst.get("engine_peak_bounded", True)
     return {
         "L1_coefficients": "PASS" if l1 else "FAIL",

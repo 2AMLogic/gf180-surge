@@ -25,6 +25,13 @@ NC-G  suspend semantics: the pinned engine's suspendProcessing() is
       setvars(true) and does NOT clear the tank. A mutant that clears on
       suspend must be FLAGGED by the declared reset/suspend check.
 
+`spectral_corr` is the SHARED full-scale log-floor definition of issue #110
+(`compare_audio_reference.spectral_corr`, Q10.21 full scale FULL_SCALE),
+adopted here by issue #165 so that the 0.98 budget means one thing in every
+tool that grades it. Every agreement record carries the
+`spectral_corr_definition` stamp; a value in a record WITHOUT that stamp is
+pre-#110 (native-unit `log1p`) and must not be compared with these.
+
 CLAIM SCOPE. Every comparison here is model-vs-model: the frozen model is
 the reference. This establishes that the checks and budgets are live and
 that the listed defects are detectable. It establishes NOTHING about
@@ -47,6 +54,9 @@ import numpy as np
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-reverb 2"))
+sys.path.insert(0, os.path.join(REPO, "tools"))
+
+import compare_audio_reference as car  # noqa: E402
 
 from reverb2_model import (  # noqa: E402
     Reverb2Model, Reverb2Params, HARNESS_PROFILE, NUM_BLOCKS, BLOCK,
@@ -101,20 +111,24 @@ def render(model, stim):
     return np.array(ol, dtype=np.int64), np.array(orr, dtype=np.int64)
 
 
-def spectral_corr(a, b, frame=4096):
-    n = min(len(a), len(b))
-    if n < frame:
-        return 1.0 if np.allclose(a, b) else 0.0
-    ra = np.log1p(np.abs(np.fft.rfft(
-        a[: n // frame * frame].reshape(-1, frame) * np.hanning(frame),
-        axis=1))).ravel()
-    rb = np.log1p(np.abs(np.fft.rfft(
-        b[: n // frame * frame].reshape(-1, frame) * np.hanning(frame),
-        axis=1))).ravel()
-    ra -= ra.mean()
-    rb -= rb.mean()
-    d = math.sqrt(float((ra * ra).sum()) * float((rb * rb).sum()))
-    return float((ra * rb).sum() / d) if d > 0 else 0.0
+def spectral_corr(a, b, frame=car.SPECTRAL_CORR_FRAME):
+    """The SHARED `spectral_corr` definition (issue #110, migrated by #165).
+
+    These controls grade the same `spectral_corr >= 0.98` effect-slice budget
+    (`PROPOSED`, the sxt-023 family values) as the comparators #110 migrated,
+    so they use the same definition rather than a per-leaf copy:
+    `compare_audio_reference.spectral_corr` with the declared full scale of
+    THIS bus. The renders here are integer Q10.21 LSB, whose declared full
+    scale is `FULL_SCALE` (2^21) -- the same constant this file's `rms_dbfs`
+    is referenced to, so the shared definition's -100 dBFS/bin floor means
+    the same dBFS here as in every other tool.
+
+    The retired per-leaf copy was the pre-#110 native-unit `log1p(|X|)`,
+    whose log knee sat at one integer LSB on this bus; the frame (4096) is
+    unchanged. Records carry the `spectral_corr_definition` stamp; values in
+    a record without it are pre-#110 and must not be compared with these.
+    """
+    return car.spectral_corr(a, b, full_scale=FULL_SCALE, frame=frame)
 
 
 def rms_dbfs(rms):
@@ -145,6 +159,7 @@ def agreement(ref_l, ref_r, mod_l, mod_r):
     }
     worst["budget_results"] = passes
     worst["all_pass"] = all(passes.values())
+    worst["spectral_corr_definition"] = car.SPECTRAL_CORR_DEFINITION
     return worst
 
 

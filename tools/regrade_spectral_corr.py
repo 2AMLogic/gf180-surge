@@ -27,7 +27,11 @@ invisible -- the PR #166 re-review finding.)
                   audit, #97 re-grade); not caused by #110
   VERDICT         a verdict / status / control-ok field; every STATUS change
                   is listed as a flip with its attributed cause
-  DEFINITION      the new `spectral_corr_definition` stamp
+  DEFINITION      a `spectral_corr_definition` / `l2_spectral_corr_definition`
+                  stamp (which definition produced the value)
+  RENAME-#165     the L2 filter family's metric renamed off the frozen
+                  `spectral_corr` name to `l2_spectral_corr` -- name only,
+                  and only where the counterpart carries the SAME value
   ULP             float equal to 1e-12 relative (host float ordering)
   HOST-PATH       a path string that differs only in the host/worktree/scratch
                   prefix
@@ -68,6 +72,13 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "tools"))
 MAIN_REF = "origin/main"
+
+# This script's own output lives here, so it must not try to attribute its own
+# records: #110's (`spectral-corr-fs-floor`) and #165's
+# (`spectral-corr-per-leaf-migration`, which also holds
+# tools/spectral_corr_per_leaf_checks.py's transcripts).
+SELF_RECORD_DIRS = ("reports/spectral-corr-fs-floor/",
+                    "reports/spectral-corr-per-leaf-migration/")
 
 
 def resolve_base_rev(explicit=None, main_ref=MAIN_REF):
@@ -131,20 +142,32 @@ METADATA_KEYS = re.compile(r"(^|/)(run_utc|repo_head|date|numpy)$|"
 # changed here (independent per-leaf metric copies, or different budget
 # families), or that are historical records. Listed, not rewritten.
 NOT_MIGRATED = [
-    (r"^reports/sxt-028a/", "NOT-MIGRATED: compare_aw49_reference.py keeps "
-     "its own native-unit log1p spectral_corr (float32 bus)"),
-    (r"^reports/SXT-028e/", "NOT-MIGRATED: distortion_negative_controls.py "
-     "keeps its own log1p spectral_corr (frame 1024, Q10.21 LSB)"),
-    (r"^reports/SXT-028e-sse/", "NOT-MIGRATED: distortion-SSE negative "
-     "controls keep their own log1p spectral_corr"),
-    (r"^reports/SXT-028f/", "NOT-MIGRATED: reverb2_negative_controls.py "
-     "keeps its own log1p spectral_corr (integer LSB)"),
-    (r"^reports/SXT-039/", "NOT-MIGRATED: compare_lpmoog_model.py L2 leg "
-     "(l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family"),
-    (r"^reports/sxt-037/", "NOT-MIGRATED: filter_lp12 L2 leg (0.999, Q10.21 "
-     "LSB), a different budget family"),
-    (r"^reports/SXT-038/", "NOT-MIGRATED: filter_lp24 L2 leg (0.999), a "
-     "different budget family"),
+    # Issue #165 resolved every per-leaf copy these rows used to describe:
+    # the three 0.98-family tools were MIGRATED to the shared definition, and
+    # the 0.999 L2 family was RENAMED to `l2_spectral_corr`. A row survives
+    # here only where the TOOL is migrated but its committed record cannot be
+    # re-graded on an ordinary host, so the record's values are still
+    # pre-#110. See reports/spectral-corr-per-leaf-migration/EVIDENCE.md.
+    (r"^reports/sxt-028a/artifacts/compare-",
+     "STALE-AFTER-#165: compare_aw49_reference.py now grades the SHARED "
+     "#110 definition (float32 full scale 1.0), so every value in these six "
+     "records is pre-#110 and must not be compared with #110 values. They "
+     "are NOT re-graded here for two separate reasons, both recorded: (a) "
+     "five of the six cases have no committed aw49 taps .npz (only "
+     "temple__seq-notes-coverage-v1 does), so they cannot run on any host "
+     "without the DR-0006 oracle renders; (b) ALL SIX -- including the "
+     "runnable one -- carry model_frozen_revision 1901510e..., while the "
+     "committed model's frozen_revision() is 569bff13... (the "
+     "docs/byte-frozen-sources.json pin), so re-emitting one would also "
+     "republish a model-revision change that is NOT #165's. The leaf must be "
+     "republished as one set on the oracle host: routed to #270"),
+    (r"^reports/SXT-028e-sse/",
+     "STALE-AFTER-#165: the SSE controls reuse "
+     "distortion_negative_controls.metrics, which now grades the SHARED "
+     "#110 definition, but this record's metric fields are exact only under "
+     "the glibc environment it declares (#243); regenerating it on a "
+     "different libm would republish 43 non-spectral max/rms fields, which "
+     "is not #165's change. glibc-host re-run routed to #270"),
     (r"^reports/SXT-028c/negative-controls/|^reports/sxt-028a/negative-",
      "BUDGET-ONLY: records the spectral_corr_min budget value, no measured "
      "spectral_corr"),
@@ -173,6 +196,54 @@ NOT_MIGRATED = [
      "definitions give 0.0 for unequal sub-frame renders (reference not "
      "committed)"),
 ]
+
+# --------------------------------------------------------------------------
+# RENAME-#165: the L2 filter family's spectral metric moved from the frozen
+# `spectral_corr` NAME to `l2_spectral_corr` (issue #165). It is not the
+# frozen definition and is not graded against the 0.98 family, so it was
+# renamed rather than migrated (reasons in the `l2_spectral_corr` docstrings
+# and reports/spectral-corr-per-leaf-migration/EVIDENCE.md). A rename changes
+# no measurement, so a leaf only classifies here when its counterpart under
+# the OTHER name carries the SAME value (ULP-equal for floats). A moved value
+# therefore cannot hide inside this class: it falls through to SPECTRAL /
+# VERDICT / OTHER like any other change.
+#
+# This check runs BEFORE the VERDICT class on purpose: the SXT-038 record
+# nests `pass` INSIDE the renamed object (`spectral_corr.pass`), and a
+# positional VERDICT match there would report the rename as a status flip.
+L2_RENAME_FAMILY = re.compile(r"^reports/(SXT-038|SXT-039|sxt-037)/")
+_OLD_NAME = re.compile(r"(^|/)spectral_corr(_min)?(/|$)")
+_NEW_NAME = re.compile(r"(^|/)l2_spectral_corr(_min)?(/|$)")
+
+
+def _swap_name(key, to_new):
+    pat, a, b = ((_OLD_NAME, "spectral_corr", "l2_spectral_corr") if to_new
+                 else (_NEW_NAME, "l2_spectral_corr", "spectral_corr"))
+    return pat.sub(lambda m: "%s%s%s%s" % (m.group(1), b, m.group(2) or "",
+                                           m.group(3)), key, count=1)
+
+
+def _same_value(x, y):
+    if isinstance(x, float) and isinstance(y, float):
+        return abs(x - y) <= 1e-12 * max(abs(x), abs(y), 1e-300)
+    return x == y
+
+
+def _l2_rename(rel, key, old, new, flat_new, flat_old):
+    if not L2_RENAME_FAMILY.search(rel):
+        return None
+    if key == "/schema_version" and (old, new) == (1, 2):
+        return "RENAME-#165"
+    if new == "<absent>" and _OLD_NAME.search(key):
+        twin = flat_new.get(_swap_name(key, True), "<absent>")
+        return "RENAME-#165" if _same_value(old, twin) else None
+    if old == "<absent>" and _NEW_NAME.search(key):
+        if flat_old is None:
+            return None
+        twin = flat_old.get(_swap_name(key, False), "<absent>")
+        return "RENAME-#165" if _same_value(new, twin) else None
+    return None
+
 
 VERDICT_KEYS = re.compile(r"(^|/)(verdict|status|ok|all_pass|pass|fail|"
                           r"overall|overall_ok|detected|good|control_ok|"
@@ -214,8 +285,21 @@ def leaves(obj, path=""):
 
 
 def has_spectral_value(obj):
-    return any(k.rsplit("/", 1)[-1] == "spectral_corr"
-               and isinstance(v, float) for k, v in leaves(obj).items())
+    """True when the record carries a measured value NAMED `spectral_corr`.
+
+    Any path COMPONENT may be the name, not only the last one (#165): the
+    SXT-038 records put the value in a `spectral_corr` OBJECT
+    (`{"achieved": ..., "budget": ..., "pass": ...}`), so a last-component-only
+    test missed all eleven of them -- which is exactly why the #110 ledger had
+    no SXT-038 rows at all while `reports/SXT-038/artifacts/compare-brass.json`
+    was carrying a `spectral_corr` graded against 0.999. A budget-only record
+    (`spectral_corr_min` and nothing measured) still does not match, which is
+    what the BUDGET-ONLY rows below rely on.
+    """
+    for k, v in leaves(obj).items():
+        if isinstance(v, float) and "spectral_corr" in k.split("/"):
+            return True
+    return False
 
 
 def status_of(v):
@@ -240,12 +324,16 @@ def _norm_path(s):
                          "/tmp/<scratch>/", s))
 
 
-def classify(rel, key, old, new, flat_new):
+def classify(rel, key, old, new, flat_new, flat_old=None):
     last = key.rsplit("/", 1)[-1]
-    if last == "spectral_corr_definition":
+    if last in ("spectral_corr_definition", "l2_spectral_corr_definition") \
+            or key.endswith("/l2_spectral_corr/definition"):
         return "DEFINITION"
     if METADATA_KEYS.search(key):
         return "RUN-METADATA"
+    r = _l2_rename(rel, key, old, new, flat_new, flat_old)
+    if r:
+        return r
     if key.endswith("proposed_budget_results/spectral_corr") or \
             key.endswith("budget_results/spectral_corr") or \
             re.search(r"spectral_corr>=", key):
@@ -347,7 +435,10 @@ def main():
     for p in sorted(glob.glob(os.path.join(REPO, "reports", "**", "*.json"),
                               recursive=True)):
         rel = os.path.relpath(p, REPO)
-        if rel.startswith("reports/spectral-corr-fs-floor/"):
+        # A ledger record cannot attribute itself: these dirs ARE the output
+        # of this script (and of #165's checks runner), so every run would
+        # report them as this branch's own unexplained additions.
+        if rel.startswith(SELF_RECORD_DIRS):
             continue
         raw = open(p).read()
         if "spectral_corr" not in raw and rel not in changed:
@@ -369,7 +460,7 @@ def main():
             a, b = lo.get(k, "<absent>"), ln.get(k, "<absent>")
             if a == b:
                 continue
-            c = classify(rel, k, a, b, ln)
+            c = classify(rel, k, a, b, ln, lo)
             if c == "OTHER":
                 unexplained.append((rel, k, a, b))
             changes.append({"key": k, "class": c, "old": a, "new": b})
@@ -399,8 +490,7 @@ def main():
             untouched.append({"artifact": rel, "reason": why})
 
     for rel in sorted(changed):
-        if rel.endswith(".json") and not rel.startswith(
-                "reports/spectral-corr-fs-floor/") and \
+        if rel.endswith(".json") and not rel.startswith(SELF_RECORD_DIRS) and \
                 not os.path.exists(os.path.join(REPO, rel)):
             unexplained.append((rel, "/", "present at base", "DELETED"))
 

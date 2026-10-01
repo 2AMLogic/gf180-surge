@@ -1,0 +1,12 @@
+issue #165 -- per-leaf spectral_corr migration/rename: leg 6
+run: 2026-10-01T04:12:26Z   repo HEAD: 28379b8f84ec930cd7af556e0b09f22c122a4222   base: b71edf440074   numpy 2.4.2
+shared definition: fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)
+claim scope: metric naming/definition consistency only; no fidelity, RTL, support or sound claim.
+
+--check exit=0
+  checked 27 declared L2-family artifacts; 0 offenders
+declared targets: 27
+second run reports zero changes: True
+target bytes changed by the second run: 0
+
+leg 6 verdict: PASS

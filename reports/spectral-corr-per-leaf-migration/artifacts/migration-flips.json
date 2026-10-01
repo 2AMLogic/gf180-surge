@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "values": [
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[0]/metrics",
+      "old": 0.9999999954022704,
+      "new": 0.9999999755890889,
+      "old_leg_pass": true,
+      "new_leg_pass": true,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[1]/metrics",
+      "old": 0.8540460697030138,
+      "new": 0.7407222974603241,
+      "old_leg_pass": false,
+      "new_leg_pass": false,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[2]/metrics",
+      "old": 0.9733324107670269,
+      "new": 0.9874039495133717,
+      "old_leg_pass": false,
+      "new_leg_pass": true,
+      "spectral_leg_flip": true,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[3]/benign_stimulus_leg/metrics",
+      "old": 0.999901190065928,
+      "new": 0.9992924426115927,
+      "old_leg_pass": true,
+      "new_leg_pass": true,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[3]/metrics",
+      "old": 0.9828794565692054,
+      "new": 0.9754381473054824,
+      "old_leg_pass": true,
+      "new_leg_pass": false,
+      "spectral_leg_flip": true,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[4]/metrics/a",
+      "old": 0.9598694846071596,
+      "new": 0.9550690703931674,
+      "old_leg_pass": false,
+      "new_leg_pass": false,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[4]/metrics/b",
+      "old": 0.8980238940265071,
+      "new": 0.8912333068262983,
+      "old_leg_pass": false,
+      "new_leg_pass": false,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028f/negative-controls/negative-controls.json",
+      "block": "/baseline_self_agreement",
+      "old": 1.0,
+      "new": 1.0,
+      "old_leg_pass": true,
+      "new_leg_pass": true,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028f/negative-controls/negative-controls.json",
+      "block": "/controls[0]/metrics",
+      "old": 0.6081198110903903,
+      "new": 0.6042503694097767,
+      "old_leg_pass": false,
+      "new_leg_pass": false,
+      "spectral_leg_flip": false,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028f/negative-controls/negative-controls.json",
+      "block": "/controls[2]/metrics",
+      "old": 0.975942636034437,
+      "new": 0.9770827642580476,
+      "old_leg_pass": false,
+      "new_leg_pass": false,
+      "spectral_leg_flip": false,
+      "stamped": true
+    }
+  ],
+  "spectral_leg_flips": [
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[2]/metrics",
+      "old": 0.9733324107670269,
+      "new": 0.9874039495133717,
+      "old_leg_pass": false,
+      "new_leg_pass": true,
+      "spectral_leg_flip": true,
+      "stamped": true
+    },
+    {
+      "artifact": "reports/SXT-028e/negative-controls/negative-controls.json",
+      "block": "/controls[3]/metrics",
+      "old": 0.9828794565692054,
+      "new": 0.9754381473054824,
+      "old_leg_pass": true,
+      "new_leg_pass": false,
+      "spectral_leg_flip": true,
+      "stamped": true
+    }
+  ]
+}

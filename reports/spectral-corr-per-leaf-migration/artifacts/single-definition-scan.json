@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "offenders": [],
+  "delegates": [
+    {
+      "tool": "tools/compare_aw49_reference.py",
+      "full_scale": 1.0,
+      "wrapper": 0.999640364669432,
+      "shared": 0.999640364669432,
+      "retired_log1p": 0.9999699413933537,
+      "equals_shared": true,
+      "differs_from_retired": true
+    },
+    {
+      "tool": "tools/compare_chorus_reference.py",
+      "full_scale": 1.0,
+      "wrapper": 0.9997176191234928,
+      "shared": 0.9997176191234928,
+      "retired_log1p": 0.9999686380167534,
+      "equals_shared": true,
+      "differs_from_retired": true
+    },
+    {
+      "tool": "tools/compare_fx_reference.py",
+      "full_scale": 1.0,
+      "wrapper": 0.9997874369049631,
+      "shared": 0.9997874369049631,
+      "retired_log1p": 0.9999691607880477,
+      "equals_shared": true,
+      "differs_from_retired": true
+    },
+    {
+      "tool": "tools/distortion_negative_controls.py",
+      "full_scale": 1048576.0,
+      "wrapper": 0.9997585162317689,
+      "shared": 0.9997585162317689,
+      "retired_log1p": 0.556343647790046,
+      "equals_shared": true,
+      "differs_from_retired": true
+    },
+    {
+      "tool": "tools/reverb2_negative_controls.py",
+      "full_scale": 2097152.0,
+      "wrapper": 0.9996049136661913,
+      "shared": 0.9996049136661913,
+      "retired_log1p": 0.5344552854142663,
+      "equals_shared": true,
+      "differs_from_retired": true
+    }
+  ]
+}

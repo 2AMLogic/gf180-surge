@@ -14,12 +14,18 @@ Budgets (declared before the runs, same family as the landed SXT-037 leaf):
   L2_rms          rms |y_model - y_ref|                    <=  256 LSB
   stability       frozen-model per-block peak monitor      ==  STABLE
 
-  spectral_corr   log-magnitude spectral correlation       >= 0.999
+  l2_spectral_corr  log-magnitude spectral correlation     >= 0.999
                   REPORTED, NOT GATING: SXT-037 recorded this metric as
                   mis-scaled for filtered-voice spectra (sparse spectrum
                   dominates the score at error levels 80-100 dB down).  Both
                   verdicts are emitted -- `verdict` (L1+L2+stability) and
                   `verdict_including_spectral` -- so nothing is hidden.
+                  The metric is this L2 family's OWN native-unit log1p
+                  definition (`run_filter_leg.l2_spectral_corr`), NOT the
+                  frozen `spectral_corr` of issue #110, and since issue #165
+                  it is named and budgeted accordingly (`l2_spectral_corr`
+                  / `l2_spectral_corr_min`) so the two can never be read as
+                  the same measurement.
 
 Usage:
   python3 tools/compare_lp24_model.py --legs /tmp/run-*/leg.json \
@@ -37,7 +43,7 @@ BUDGETS = {
     "L1_C_max_rel_lsb": 16,
     "L2_max_abs_lsb": 4096,
     "L2_rms_lsb": 256,
-    "spectral_corr_min": 0.999,
+    "l2_spectral_corr_min": 0.999,
 }
 
 
@@ -56,7 +62,7 @@ def evaluate(leg, l2b=None):
         "stability": (leg["stability_verdict"], "STABLE",
                       leg["stability_verdict"] == "STABLE"),
     }
-    spec_ok = leg["spectral_corr"] >= BUDGETS["spectral_corr_min"]
+    spec_ok = leg["l2_spectral_corr"] >= BUDGETS["l2_spectral_corr_min"]
     gating = all(ok for _, _, ok in checks.values())
     out = {
         "case": leg["case"],
@@ -67,9 +73,11 @@ def evaluate(leg, l2b=None):
         "budgets": BUDGETS,
         "checks": {k: {"achieved": a, "budget": b, "pass": ok}
                    for k, (a, b, ok) in checks.items()},
-        "spectral_corr": {"achieved": round(leg["spectral_corr"], 6),
-                          "budget": BUDGETS["spectral_corr_min"],
-                          "pass": spec_ok, "gating": False},
+        "l2_spectral_corr": {"achieved": round(leg["l2_spectral_corr"], 6),
+                             "budget": BUDGETS["l2_spectral_corr_min"],
+                             "pass": spec_ok, "gating": False,
+                             "definition": leg.get(
+                                 "l2_spectral_corr_definition")},
         "rms_db_rel_ref_peak": round(au["rms_db_rel_ref_peak"], 2),
         "ref_peak_lsb": au["ref_peak_lsb"],
         "model_state_peak_lsb": leg["stability_peaks_max"],
@@ -138,7 +146,7 @@ def main():
                    "L2_max": r["checks"]["L2_max_abs_lsb"]["achieved"],
                    "L2_rms": r["checks"]["L2_rms_lsb"]["achieved"],
                    "dB": r["rms_db_rel_ref_peak"],
-                   "corr": r["spectral_corr"]["achieved"],
+                   "corr": r["l2_spectral_corr"]["achieved"],
                    "stability": r["checks"]["stability"]["achieved"],
                    "verdict": r["verdict"]} for r in rows],
     }
