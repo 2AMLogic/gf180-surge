@@ -525,7 +525,7 @@ notice with a *separate* foreign one, or put the mention inside a holder field
 that already contains a name — the shapes all four bugs leave detectable.
 
 **Controls (`masking/*`, inside `--negative-control`, so CI runs them).** Eight
-new must-fail controls (one per layout above) and six new positive controls:
+new must-fail controls (one per layout above) and seven new positive controls:
 our own notice trailed by `All Rights Reserved.`, trailed by a sentence pointing
 at `LICENSE`, after a spaced hyphen with a capitalised parenthetical aside,
 followed by an ordinary capitalised comment sentence, quoted mid-sentence inside
