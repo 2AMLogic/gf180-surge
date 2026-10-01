@@ -28,7 +28,11 @@ submodule's row must name the commit its gitlink actually pins. A payload the
 tool cannot decode is not exempt either: compressed streams and archives are
 unwrapped by magic rather than by name (a gzipped source file, a zip or tar
 renamed `.dat`) and whatever is still not text is read as the printable-ASCII
-runs it carries (a notice spliced into a render, a WAV copyright chunk).
+runs it carries (a notice spliced into a render, a WAV copyright chunk). A
+wrapper that carries no marker at all is answered by the NAMES inside it — a
+`.wt` wavetable member in an archive renamed `.dat`, a stripped `.cpp` in a
+tar, a gzip whose header filename is the only name it has — each judged by the
+same extension sets a committed path is.
 `--negative-control` demonstrates that every one of those rules still fires;
 both run in CI. A PASS is bookkeeping, not proof that nothing was copied, and
 never a ratification — each record's own Status line is authoritative.

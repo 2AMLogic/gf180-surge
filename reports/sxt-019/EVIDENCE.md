@@ -1138,3 +1138,243 @@ $ python3 -m pytest -q tests/test_sxt019_provenance.py
   built at run time (PCM from an LCG, float dumps, archives assembled in
   memory); `Some Upstream Author` appears only as a name string inside synthetic
   notices.
+
+## 15. Increment 9 (2026-10-01) — the names inside the wrapper the last increment opened
+
+Base: `main` `cd2f169` (merge of #282, which landed increment 8). Runtime:
+Python 3.12.3, Linux. Status: **PASS** on this branch; it ratifies nothing and
+establishes nothing about DSP, RTL, fidelity or sound.
+
+Increment 8 (§14) unwrapped wrappers by magic and content-scanned their
+members, then *declared* the remainder: "a wrapper whose members carry no
+marker at all is covered only by the extension tripwires — unwrapping reads
+member CONTENT, and member NAMES are not tripwired". That declaration was
+wrong in the same way §14's was wrong about §13's: the extension tripwires
+judge the **outer** name, which a `.dat` rename evades outright, so a wrapper
+of marker-free upstream content was covered by **nothing at all**. And
+marker-free is the normal case, not the exotic one — a `.wt` wavetable payload
+states no copyright, and a source file with its header stripped states nothing
+either.
+
+### Demonstrated on the real tree, before the fix
+
+Five deliberately unattributed wrappers, each carrying **no license text, no
+copyright line and no SPDX tag anywhere in it** — the member NAME is the only
+signal in the file — injected into the **tracked** tree (`git add -N`;
+`list_files` audits `git ls-files`, so untracked scratch is out of scope by
+design) and run against the **pre-change** tool:
+
+```
+$ git show HEAD:tools/check_provenance.py > /tmp/head_cp.py
+$ python3 /tmp/head_cp.py --root .
+  not content-scanned (no text in the payload at all): 9 files — extension tripwires only
+  unwrapped by magic (compressed stream / archive): 21 files — members content-scanned
+tripwire hits (declared + undeclared): external-symlink-target=0,
+  foreign-license-text=4, foreign-source-language=2, self-declared-quotation=43,
+  submodule-reference=0, upstream-asset-extension=0
+
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+$ echo $?
+0
+```
+
+| injected unattributed file | what it carries | before | after |
+|---|---|---|---|
+| `compiler/golden/masked_wavetables.dat` (zip renamed) | member `wavetables/Bank Sine.wt`, payload is opaque bytes | PASS | FAIL `wrapper-member-name` |
+| `compiler/golden/masked_sources.dat` (tar.gz renamed) | member `vendor/Reverb1.cpp`, header stripped | PASS | FAIL |
+| `reports/sxt-019/masked_asset.dat` (gzip renamed) | gzip FNAME header `Bank Sine.wt` — its only name | PASS | FAIL |
+| `compiler/golden/masked_zip_in_gz.dat` (zip inside gzip) | the same `.wt` member, two wrappers deep | PASS | FAIL |
+| `fixtures/audio/masked_wrapped_member.dat` (zip) | member `Bank Sine.wt` that is itself a gzip of `meta.json` | PASS | FAIL |
+
+### After the fix — same five files, same tree
+
+```
+$ python3 tools/check_provenance.py
+  unwrapped by magic (compressed stream / archive): 21 files — members
+    content-scanned, 31 member name(s) read and judged
+tripwire hits (declared + undeclared): …, wrapper-member-name=5
+
+FAIL: 5 provenance finding(s):
+  [wrapper-member-name] compiler/golden/masked_sources.dat
+      … wrapper member 'vendor/Reverb1.cpp' (foreign-language source, extension .cpp)
+  [wrapper-member-name] compiler/golden/masked_wavetables.dat
+      … wrapper member 'wavetables/Bank Sine.wt' (upstream asset / opaque bundle, extension .wt)
+  [wrapper-member-name] compiler/golden/masked_zip_in_gz.dat
+      … wrapper member 'wavetables/Bank Sine.wt' (upstream asset / opaque bundle, extension .wt)
+  [wrapper-member-name] fixtures/audio/masked_wrapped_member.dat
+      … wrapper member 'Bank Sine.wt' (…), carried at 'Bank Sine.wt!meta.json'
+  [wrapper-member-name] reports/sxt-019/masked_asset.dat
+      … wrapper member 'Bank Sine.wt' (upstream asset / opaque bundle, extension .wt)
+$ echo $?
+1
+```
+
+Each finding names the offending **member**, and the nested case names both the
+member and the label it was carried at — the `detail` snippet is the only
+locator a human has, and this rule cannot be exempted. The five files were then
+removed; the tree audits clean again (exit 0, numbers in §15 "Tree audit"
+below).
+
+### What changed
+
+Three hunks, each pinned by the control that fails when it alone is reverted
+(measured by monkeypatching the hunk out and re-running the group):
+
+1. **The member name travels with its payload.** `_unwrap_archive` now returns
+   `[(name, payload)]` (zip `info.filename`, tar `info.name`) and
+   `unwrap_payload` returns `[(label, payload)]`, so the walker that already
+   existed carries names instead of discarding them. One mechanism, not a
+   second walker. Reverting it: all six must-fail controls fail.
+2. **A gzip's FNAME header is parsed** (`_gzip_header_name`, RFC 1952 §2.3.1).
+   `gzip.GzipFile` reads that field and throws it away with no public API, and
+   it is the only name a single-stream wrapper has. Reverting it:
+   `wrapper/gzip-fname-header-names-an-asset` fails.
+3. **Every component of a nested label is judged** (`member_name_signals`
+   splits on the join). Judging the label whole reads `Bank Sine.wt!meta.json`
+   as a `.json` — the same "stop at the first answer" shape increments 2–5
+   closed on the license rule. Reverting it:
+   `wrapper/outer-member-name-not-masked-by-the-inner-one` fails.
+
+The check runs **before** the content rules' `text is None` early return,
+because a marker-free wrapper has no text at all:
+`test_marker_free_asset_member_reaches_no_content_rule` asserts
+`tree.text(rel) is None` while `wrapper-member-name` is the one rule that
+fires, so moving the check below that return would silently restore the whole
+mask and fail a test rather than passing quietly.
+
+Coverage for the new layer is reported, not assumed: `wrapper_member_names_read`
+(31 with the fixtures in place, 26 on the clean tree) is printed on every run
+and in `--json`, so "no member name offended" cannot be confused with "no
+member name was examined" — a wrapper the audit cannot open contributes none.
+
+### Coverage is not blanket: the rule must be declared
+
+`wrapper-member-name` is **not** in `_structural_tripwire_rules`, so a
+provenance row naming the file does not absorb it implicitly: the row must list
+it in `covers`. Both directions are controlled —
+`wrapper/asset-member-answered-by-a-row-passes` (row with `covers` → clean) and
+`wrapper/a-row-without-covers-does-not-clear-it` (the *same* row without
+`covers` → still fails). That is deliberate: a row filed for one reason (an
+evidence bundle, a golden archive) must not silently cover an upstream member
+name added to it later. It is also non-exemptible —
+`test_wrapper_member_name_cannot_be_exempted` shows an exemption attempt
+produces `exemption-non-exemptible-rule` **and** leaves the finding standing.
+
+### False positives were measured before this was written, not assumed
+
+`wrapper-member-name` cannot be exempted, so a false positive on one of this
+repository's own wrappers would be *unanswerable* — the rule would be switched
+off rather than answered. All 19 wrappers in the tracked tree were enumerated
+and every name they carry was judged **before** the change was committed:
+
+| | count | member-name extensions seen | hits |
+|---|---|---|---|
+| gzipped evidence traces (`*.json.gz`, `*.hex.gz`) | 18 | 9 `.json`, 6 `.hex` (3 streams carry no FNAME) | 0 |
+| `.npz` tap fixture | 1 | 11 `.npy` | 0 |
+| **total** | **19** | **26 names** | **0** |
+
+Both shapes are kept as positive controls with real payloads —
+`wrapper/own-gzipped-trace-with-an-fname-stays-clean` (a gzip whose header
+really does carry `trace_…json`, which is what `gzip <file>` writes by default)
+and `wrapper/own-npz-members-stay-clean`. Both stay clean under every hunk
+reversion too, so neither passes merely because the fix is present.
+
+Cost of the whole audit over this 533 MiB tree, same host, same runtime, two
+runs of each tool back to back: **8.10 / 8.30 s → 8.27 / 8.15 s** wall, peak RSS
+**572 MB → 571 MB**. The wall-clock delta is within run-to-run noise on this
+shared 8-core host, and no extra inflation is performed: a member name is a
+string the zip/tar reader has already produced, and the gzip FNAME parse reads
+the header bytes that were read anyway. Reported as the interval actually
+measured rather than as a single figure, because a sub-noise delta must not be
+quoted as if it were resolved.
+
+### Controls and tests
+
+```
+$ python3 tools/check_provenance.py --negative-control
+PASS: all 32 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 6 occurrence-scoped exemption controls behaved, all 40
+own-attribution masking controls behaved, all 11 discovery-layer controls
+behaved, all 17 payload-layer controls behaved, and all 9 wrapper-member-name
+controls behaved.
+$ echo $?
+0
+```
+
+Non-vacuity of the new group (9 controls: **6 must-fail, 3 must-stay-clean**),
+checked against the **pre-change** tool on synthetic trees built by the same
+mutators: all **six** must-fail cases audited **clean** (exit 0), and two of the
+three must-stay-clean cases audited clean.
+`wrapper/asset-member-answered-by-a-row-passes` is the one case the old tool
+does not merely pass — it reports `manifest-schema`, because the row declares a
+`covers` rule that tool has no concept of, which is itself the expected answer.
+
+```
+$ python3 -m pytest tests/test_sxt019_provenance.py -q
+72 passed
+```
+
+Seven of those tests are new (`test_wrapper_member_name_is_judged_like_a_committed_path`,
+`test_marker_free_asset_member_reaches_no_content_rule`,
+`test_outer_member_name_is_not_masked_by_what_it_wraps`,
+`test_gzip_header_name_is_parsed_and_absent_when_unset`,
+`test_our_own_wrapper_shapes_still_audit_clean`,
+`test_real_tree_member_names_are_read_and_none_offend`,
+`test_wrapper_member_name_cannot_be_exempted`), and two existing unit pins were
+updated for the walker's `(name, payload)` return shape.
+
+### Tree audit (clean tree, after the fixtures were removed)
+
+```
+$ python3 tools/check_provenance.py
+coverage: 2128 files scanned, 759 excluded by declared scope exclusions,
+  18 decision records, 20 provenance rows covering 20 files, 9 exemptions
+  unwrapped by magic (compressed stream / archive): 19 files — members
+    content-scanned, 26 member name(s) read and judged
+tripwire hits: …, upstream-asset-extension=0, wrapper-member-name=0
+
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+$ echo $?
+0
+```
+
+### What §15 does NOT establish
+
+- Found by **inspection**, like every increment before it. That this mask is
+  closed is not evidence that no further path exists — only that these three
+  hunks are pinned by controls that fail when each alone is reverted. The
+  pattern is now three increments deep: §13 declared a limit, §14 found a mask
+  inside it, §14 declared a limit, and this increment found a mask inside
+  **that**. A declared limit is not evidence the limit was necessary.
+- Two residuals stay **declared, not closed**, each pinned by a positive
+  control: a notice written in a WIDE encoding *inside* a binary payload
+  (`payload/wide-encoded-notice-in-a-payload-stays-out-of-scope`), and an
+  inflation that hits the 256 MiB / 4-deep budget — a wrapper the audit cannot
+  open (that budget, or a corrupt stream) yields no member names either, which
+  is why the name count is reported per run.
+- A member name is judged by the **same two extension sets** as a committed
+  path, so a member type this repository authors (`.json`, `.hex`, `.npy`,
+  `.py`, `.sv`) is not a signal. An upstream file renamed to one of those
+  inside an archive is **not** detected — the identical residual that applies
+  to a file's own name, not a new one.
+- Member names are read from the wrappers the audit can **open**. A corrupt or
+  truncated stream carries none; the partial read is disclosed, never counted
+  as a pass.
+- A PASS remains **bookkeeping and carriage-signal coverage only** (§7): a
+  marker-free copy committed under an ordinary name, and a re-typed constant
+  table with no citation, are still undetectable, as is anything under the
+  declared scope exclusions (`.loom/`, `.claude/`, `.agents/` — 759 files).
+- It ratifies nothing: 18 records on disk, most still
+  PROPOSED / RECORDED / ESCALATED pending owner ratification, and this project
+  has made **no distribution-license determination**.
+- Whether any file in this repository's **history** ever carried an
+  unattributed wrapper member is **NOT_RUN** — only the current tree was
+  audited.
+- No RTL, model, fidelity, preset or sound claim is touched by this increment.
+- No Surge-, GPL- or otherwise third-party-derived content was copied into this
+  repository by it. Every fixture is repo-invented synthetic data built at run
+  time (archives assembled in memory, an opaque byte pattern generated by
+  arithmetic); `Bank Sine.wt` and `vendor/Reverb1.cpp` appear only as member
+  NAME strings inside synthetic archives, with no upstream payload behind them.

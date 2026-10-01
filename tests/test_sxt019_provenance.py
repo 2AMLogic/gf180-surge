@@ -34,7 +34,14 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     still not text is read as the printable-ASCII runs it carries — while this
     repository's own renders, float dumps, tensors and gzipped traces stay
     clean, which `test_repository_audits_clean` re-checks against all 335 real
-    payloads on every run.
+    payloads on every run,
+  - a wrapper whose members carry no marker at all is answered by the member
+    NAMES: a `.wt` wavetable in a zip renamed `.dat`, a stripped `.cpp` in a
+    tar, a gzip whose FNAME header is its only name, and an asset member two
+    wrappers deep are each flagged (and an outer member name is not masked by
+    what it wraps), while this repository's own FNAME-carrying traces and
+    `.npy`-member `.npz` fixtures stay clean — the rule is answered by a row
+    declaring `covers`, never by an exemption.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -874,22 +881,27 @@ def test_harvest_keeps_notices_and_drops_payload_noise():
 
 
 def test_unwrap_payload_reads_wrappers_and_refuses_ordinary_payloads():
-    """Unit-level pin: a wrapper yields members, a render yields None."""
-    payloads, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
-    assert payloads and not truncated
-    assert cp.WIDE_NOTICE_LOCATOR.encode("ascii") in payloads[0]
+    """Unit-level pin: a wrapper yields (name, member), a render yields None."""
+    entries, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
+    assert entries and not truncated
+    assert cp.WIDE_NOTICE_LOCATOR.encode("ascii") in entries[0][1]
     assert cp.unwrap_payload(cp.FIXTURE_PLAIN_PCM_WAV) == (None, False)
     assert cp.unwrap_payload(b"") == (None, False)
-    # Nested: a tar inside a gzip resolves to the tar's member, not the tar.
-    payloads, _ = cp.unwrap_payload(cp.FIXTURE_TAR_GZ_WITH_NOTICE)
-    assert any(b"filter" not in p and cp.WIDE_NOTICE_LOCATOR.encode() in p for p in payloads)
+    # Nested: a tar inside a gzip resolves to the tar's member, not the tar,
+    # and the member keeps its own NAME (increment 9).
+    entries, _ = cp.unwrap_payload(cp.FIXTURE_TAR_GZ_WITH_NOTICE)
+    assert any(
+        b"filter" not in payload and cp.WIDE_NOTICE_LOCATOR.encode() in payload
+        for _, payload in entries
+    )
+    assert any("vendor/filter.cpp" in name for name, _ in entries), entries
 
 
 def test_truncated_payload_scan_is_disclosed_not_silent(tmp_path, monkeypatch):
     """A scan that could not finish must never look like one that passed."""
     monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 32)
-    payloads, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
-    assert truncated and payloads and len(payloads[0]) == 32
+    entries, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
+    assert truncated and entries and len(entries[0][1]) == 32
     root = _masked_tree(tmp_path, "truncated", "")
     cp._write(root, "reports/artifacts/trace.json.gz", cp.FIXTURE_GZIPPED_NOTICE)
     _, stats = cp.audit(root)
@@ -914,6 +926,140 @@ def test_payload_controls_run_in_the_self_test():
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cp._payload_controls():
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+# --- wrapper member NAMES (#25 acceptance item 4, increment 9) -----------------
+#
+# Increment 8 unwrapped wrappers and content-scanned their members, then
+# declared the remainder: "a wrapper whose members carry no marker at all is
+# covered only by the extension tripwires — unwrapping reads member CONTENT, and
+# member NAMES are not themselves tripwired". That is the shape upstream assets
+# actually arrive in: a `.wt` wavetable payload states no copyright, and a
+# stripped `.cpp` states nothing either, so there is no content signal to find.
+# Each tree below audited CLEAN on the previous tool.
+
+
+def test_wrapper_member_name_is_judged_like_a_committed_path(tmp_path):
+    """A marker-free member is answered by its NAME or by nothing at all."""
+    for label, rel, payload, quoted in (
+        ("zip-wt", "compiler/golden/bundle.dat",
+         cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME, "Bank Sine.wt"),
+        ("tar-cpp", "compiler/golden/bundle.dat",
+         cp.FIXTURE_TAR_GZ_WITH_SOURCE_MEMBER_NAME, "Reverb1.cpp"),
+        ("gzip-fname", "compiler/golden/bundle.dat",
+         cp.FIXTURE_GZIP_WITH_ASSET_FNAME, "Bank Sine.wt"),
+        ("gzipped-zip", "compiler/golden/bundle.dat",
+         cp.FIXTURE_GZIPPED_ZIP_WITH_ASSET_MEMBER, "Bank Sine.wt"),
+        ("wrapped-member", "compiler/golden/bundle.dat",
+         cp.FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER, "Bank Sine.wt"),
+    ):
+        root = _masked_tree(tmp_path, f"member-{label}", "")
+        cp._write(root, rel, payload)
+        fired = [f for f in cp.audit(root)[0] if f.path == rel]
+        rules = [f.rule for f in fired]
+        assert "wrapper-member-name" in rules, f"{label}: not flagged ({rules})"
+        assert any(quoted in f.detail for f in fired), (
+            f"{label}: the finding does not locate {quoted!r}: "
+            + "; ".join(f.detail for f in fired)
+        )
+
+
+def test_marker_free_asset_member_reaches_no_content_rule(tmp_path):
+    """Why the NAME is load-bearing: there is no text in the file to read.
+
+    The member name must therefore be judged BEFORE the content rules' early
+    `text is None` return, not after it — moving the check below that return
+    silently restores the whole mask.
+    """
+    root = _masked_tree(tmp_path, "no-text", "")
+    rel = "compiler/golden/bundle.dat"
+    cp._write(root, rel, cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME)
+    tree = cp.Tree(root, [])
+    assert tree.text(rel) is None, repr(tree.text(rel))
+    assert tree.carried_names(rel) == ("wavetables/Bank Sine.wt",)
+    assert [r for r, _ in cp.tripwire_hits(tree, rel)] == ["wrapper-member-name"]
+
+
+def test_outer_member_name_is_not_masked_by_what_it_wraps():
+    """Every `!`-joined component is judged, not just the innermost one."""
+    entries, _ = cp.unwrap_payload(cp.FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER)
+    label = entries[0][0]
+    assert label == "Bank Sine.wt" + cp.MEMBER_JOIN + "meta.json", label
+    # Judged whole, the label reads as a '.json' and nothing fires.
+    assert cp._extension_suffix(label) == ".json"
+    assert [c for c, _, _ in cp.member_name_signals(label)] == ["Bank Sine.wt"]
+
+
+def test_gzip_header_name_is_parsed_and_absent_when_unset():
+    """The FNAME field is the only name a single-stream wrapper carries."""
+    assert cp._gzip_header_name(cp.FIXTURE_GZIP_WITH_ASSET_FNAME) == "Bank Sine.wt"
+    # `gzip.compress` writes no FNAME, so there is no name to judge — and the
+    # absence must read as "no name", never as an empty-string member.
+    assert cp._gzip_header_name(cp.FIXTURE_OWN_GZIPPED_TRACE) is None
+    assert cp._gzip_header_name(cp.FIXTURE_PLAIN_PCM_WAV) is None
+    assert cp._gzip_header_name(b"") is None
+    assert cp._gzip_header_name(cp.GZIP_MAGIC + b"\x08" + b"\x00" * 7) is None
+
+
+def test_our_own_wrapper_shapes_still_audit_clean(tmp_path):
+    """The unanswerable direction: `wrapper-member-name` cannot be exempted.
+
+    15 of this repository's tracked `*.json.gz` / `*.hex.gz` traces really do
+    carry an FNAME, and the `.npz` tap fixture is a zip of `.npy` members. A
+    false positive on either could only be answered by switching the rule off.
+    """
+    for label, rel, payload in (
+        ("trace-fname", "reports/artifacts/trace.json.gz",
+         cp.FIXTURE_OWN_GZIPPED_TRACE_WITH_FNAME),
+        ("npz", "reports/fixtures/taps.npz", cp.FIXTURE_OWN_NPZ_MEMBERS),
+    ):
+        root = _masked_tree(tmp_path, f"own-wrapper-{label}", "")
+        cp._write(root, rel, payload)
+        findings, _ = cp.audit(root)
+        assert not findings, f"{label}: {[f.as_dict() for f in findings]}"
+
+
+def test_real_tree_member_names_are_read_and_none_offend():
+    """Non-vacuity in CI, measured on this repository rather than asserted.
+
+    Coverage separate from agreement: names must actually be READ here (a
+    wrapper the audit cannot open contributes none, so "0 offenders" and "no
+    names examined" must not look alike), and none of them may offend.
+    """
+    findings, stats = cp.audit(REPO)
+    assert stats["wrapper_member_names_read"] >= 20, stats
+    assert stats["tripwire_hits"]["wrapper-member-name"] == 0, stats
+    assert not [f for f in findings if f.rule == "wrapper-member-name"], findings
+
+
+def test_wrapper_member_name_cannot_be_exempted(tmp_path):
+    """It is answered by a provenance row, never by an exemption."""
+    root = _masked_tree(tmp_path, "member-exempt", "")
+    cp._write(
+        root, "compiler/golden/bundle.dat", cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME
+    )
+    cp._patch_manifest(
+        root,
+        lambda d: d["exemptions"].append(
+            {
+                "path": "compiler/golden/bundle.dat",
+                "rules": ["wrapper-member-name"],
+                "reason": "trying to wave away an archive of upstream wavetables",
+            }
+        ),
+    )
+    rules = {f.rule for f in cp.audit(root)[0]}
+    assert "exemption-non-exemptible-rule" in rules, rules
+    assert "wrapper-member-name" in rules, rules
+
+
+def test_wrapper_name_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    assert cp._wrapper_name_controls(), "the wrapper controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cp._wrapper_name_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
 
 
