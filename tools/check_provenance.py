@@ -60,6 +60,14 @@ The audit has four groups of checks:
                                          "transcribed from", "vendored", …)
                                          co-occurring with an upstream
                                          citation                (exemptible)
+       * `submodule-reference`         — a committed submodule gitlink (or, in
+                                         a non-git tree, a nested repository
+                                         checkout): content in the build tree
+                                         that is in no file of this one
+       * `external-symlink-target`     — a tracked symlink whose target leaves
+                                         the audited tree (absolute, escaping
+                                         via `..`, unresolvable here, or inside
+                                         a declared scope exclusion)
 
 DECLARED LIMITS — read before quoting this tool as evidence:
 
@@ -96,6 +104,13 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     onto the next LINE, are both matched —
     `masking/second-holder-after-a-semicolon`,
     `masking/foreign-holder-on-a-wrapped-continuation-line`.
+  * The two by-reference rules judge the ENTRY, not its bytes, and what they
+    establish is bookkeeping only: that a submodule or an escaping symlink is
+    *declared*. The referenced tree is never scanned — a declared submodule's
+    contents are outside every content rule, exactly as the external pinned
+    oracle is. An in-tree symlink to in-scope content is not a signal at all
+    (`CLAUDE.md -> AGENTS.md` is this repository's own shape, pinned by
+    `discovery/in-repo-symlink-to-a-regular-file-passes`).
   * Content rules only ever see files this tool can DECODE. An undecodable
     payload (a render, a tensor, a wavetable) reaches the extension tripwires
     and nothing else, so a notice sealed inside one is out of reach — pinned by
@@ -109,9 +124,12 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     time. That two specific paths, then five, then eight, then four more were
     closed is not evidence that no further path exists — only that these are
     pinned by controls that fail when, and only when, their own fix is
-    reverted. The latest increment sat BELOW the signal layer entirely (a file
-    the sniff refused to decode was scanned by no content rule at all), so the
-    layer a masking path lives in is not bounded by the layers already audited.
+    reverted. Increment 6 sat BELOW the signal layer (a file the sniff refused
+    to decode was scanned by no content rule at all); increment 7 sat below
+    THAT, at discovery — a committed submodule gitlink pinning the GPL engine,
+    and a symlink into the external oracle tree, were both read as "undecodable
+    payload" and audited clean. So the layer a masking path lives in is not
+    bounded by the layers already audited.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -129,7 +147,10 @@ end of the parseable expression; a notice carrying a holder but no year; a
 holder list continuing past a delimiter on the same line, or wrapped onto a
 continuation line; a license body wrapped across a comment leader — together
 with the positive cases that keep the fixes from flagging our own headers or
-ordinary prose.
+ordinary prose. The `discovery/*` controls do the same for the layer below:
+a committed gitlink, a nested repository in a non-git tree, and an escaping
+symlink must each produce a finding, a declared one must not, and a plain
+in-tree symlink must stay clean.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -148,6 +169,7 @@ from __future__ import annotations
 import argparse
 import codecs
 import json
+import os
 import re
 import subprocess
 import sys
@@ -180,6 +202,11 @@ KNOWN_CLASSES = {
     # carrying no third-party code, table or asset. Covers nothing implicitly:
     # the row must list the tripwire in 'covers' and cite its record.
     "attribution-statement": "restates an upstream attribution, carries no upstream content",
+    # a tree entry that carries its content BY REFERENCE rather than in its own
+    # bytes: a committed submodule gitlink, or a symlink whose target leaves
+    # the audited tree. The referenced content is in the build tree but not in
+    # this audit, so the row (and its record) is the only description of it.
+    "external-reference": "a by-reference link to content outside this tree",
 }
 
 # --- rule ids -----------------------------------------------------------------
@@ -218,6 +245,8 @@ RULES = {
     "upstream-asset-extension": "upstream asset / opaque bundle without a provenance row",
     "foreign-source-language": "foreign-language source file without a provenance row",
     "self-declared-quotation": "self-declared quotation without a provenance row",
+    "submodule-reference": "committed submodule / nested repository without a provenance row",
+    "external-symlink-target": "symlink whose target leaves the audited tree without a provenance row",
 }
 
 TRIPWIRE_RULES = (
@@ -225,6 +254,8 @@ TRIPWIRE_RULES = (
     "upstream-asset-extension",
     "foreign-source-language",
     "self-declared-quotation",
+    "submodule-reference",
+    "external-symlink-target",
 )
 
 # Only the prose-marker tripwire may be exempted: a document may *discuss*
@@ -918,49 +949,145 @@ def sniff_encoding(head: bytes):
 
 
 # --- file discovery -----------------------------------------------------------
+#
+# This layer decides what EXISTS as far as the audit is concerned, and — new in
+# increment 7 — what KIND of entry each path is. Everything above it reads
+# bytes; a tree entry that carries its content by REFERENCE has no bytes of its
+# own to read, so the signal layers never saw it:
+#
+#   * a committed submodule (mode 160000) is one index entry whose files are
+#     not listed in the parent at all. `open()` on it raises IsADirectoryError,
+#     so it decoded to None and reached no content rule — a gitlink pinning the
+#     GPL Surge engine audited clean, which is the single highest-volume way
+#     upstream content can enter this tree (and `AGENTS.md`/#25 forbid creating
+#     one "by silent default").
+#   * a tracked symlink (mode 120000) whose target leaves the tree carries
+#     upstream content at a product path. `open()` follows it, so a target that
+#     resolves is read — but a target that is absent at audit time (the CI
+#     shape: the pinned oracle is an EXTERNAL working directory by design) read
+#     as "undecodable payload" and was counted with the renders.
+#
+# Both are therefore judged here, from the entry itself, before any byte is
+# read. `.gitmodules` is used only to name the upstream in the finding.
+
+# `git ls-files -s` modes for entries that are not regular files.
+GIT_MODE_KINDS = {"120000": "symlink", "160000": "gitlink"}
 
 
-def list_files(root: Path):
-    """Repo-relative POSIX paths of candidate files, deterministically sorted.
+def list_entries(root: Path):
+    """[(rel, kind, gitlink_commit)] for candidate entries, sorted by path.
 
-    Uses `git ls-files` when the tree is a git checkout (so untracked scratch
-    files are not audited), and falls back to a filesystem walk otherwise
-    (synthetic trees in tests and in --negative-control).
+    `kind` is "file", "symlink" or "gitlink". Uses `git ls-files -s` when the
+    tree is a git checkout (so untracked scratch files are not audited, and the
+    recorded MODE is read rather than guessed), and falls back to a filesystem
+    walk otherwise (synthetic trees in tests and in --negative-control).
     """
     try:
         proc = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "-z"],
+            ["git", "-C", str(root), "ls-files", "-s", "-z"],
             capture_output=True,
             check=True,
         )
-        names = [n for n in proc.stdout.decode("utf-8", "replace").split("\0") if n]
-        if names:
-            return sorted(names)
+        records = [r for r in proc.stdout.decode("utf-8", "replace").split("\0") if r]
+        if records:
+            seen = {}
+            for record in records:
+                meta, _, rel = record.partition("\t")
+                if not rel:
+                    continue
+                fields = meta.split()
+                mode = fields[0] if fields else ""
+                blob = fields[1] if len(fields) > 1 else ""
+                kind = GIT_MODE_KINDS.get(mode, "file")
+                # Conflict stages repeat a path; the first stage is enough.
+                seen.setdefault(rel, (kind, blob if kind == "gitlink" else ""))
+            return sorted((rel, kind, blob) for rel, (kind, blob) in seen.items())
     except (OSError, subprocess.CalledProcessError):
         pass
+    return sorted(_walk_entries(root))
 
+
+def _walk_entries(root: Path):
+    """Filesystem fallback for a tree that is not a git checkout.
+
+    A directory that holds a `.git` entry is reported as a "gitlink": a nested
+    repository checkout is the same by-reference carriage shape as a committed
+    gitlink, and in a non-git tree (an unpacked tarball, a synthetic control
+    tree) it is the only way to see one. It is not descended into — its files
+    belong to that other repository, not this one.
+    """
     out = []
-    for path in root.rglob("*"):
-        if not path.is_file():
+    stack = [root]
+    while stack:
+        current = stack.pop()
+        try:
+            children = list(current.iterdir())
+        except OSError:
             continue
-        rel = path.relative_to(root).as_posix()
-        if rel.startswith(".git/") or "/__pycache__/" in f"/{rel}":
+        for path in children:
+            if path.name in (".git", "__pycache__"):
+                continue
+            rel = path.relative_to(root).as_posix()
+            if path.is_symlink():
+                out.append((rel, "symlink", ""))
+            elif path.is_dir():
+                if (path / ".git").exists():
+                    out.append((rel, "gitlink", ""))
+                    continue
+                stack.append(path)
+            elif path.is_file():
+                out.append((rel, "file", ""))
+    return out
+
+
+def list_files(root: Path):
+    """Repo-relative POSIX paths of candidate entries, deterministically sorted."""
+    return [rel for rel, _, _ in list_entries(root)]
+
+
+SUBMODULE_PATH_RE = re.compile(r"^\s*path\s*=\s*(.+?)\s*$")
+SUBMODULE_URL_RE = re.compile(r"^\s*url\s*=\s*(.+?)\s*$")
+
+
+def parse_gitmodules(root: Path):
+    """{submodule path: url} from `.gitmodules`, best effort (evidence only)."""
+    try:
+        text = (root / ".gitmodules").read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return {}
+    urls = {}
+    path = None
+    for line in text.splitlines():
+        if line.lstrip().startswith("["):
+            path = None
             continue
-        out.append(rel)
-    return sorted(out)
+        match = SUBMODULE_PATH_RE.match(line)
+        if match:
+            path = match.group(1)
+            continue
+        match = SUBMODULE_URL_RE.match(line)
+        if match and path:
+            urls[path] = match.group(1)
+    return urls
 
 
 class Tree:
-    """In-scope file set plus cached text reads."""
+    """In-scope entry set (with kinds) plus cached text reads."""
 
     def __init__(self, root: Path, exclusions):
         self.root = root
         self.exclusions = exclusions
-        self.all_files = list_files(root)
+        entries = list_entries(root)
+        self.all_files = [rel for rel, _, _ in entries]
+        self.kinds = {rel: kind for rel, kind, _ in entries}
+        self.gitlink_commits = {
+            rel: blob for rel, kind, blob in entries if kind == "gitlink" and blob
+        }
+        self.submodule_urls = parse_gitmodules(root)
         self.excluded = {}
         self.files = []
         for rel in self.all_files:
-            hit = self._excluded_by(rel)
+            hit = self.excluded_by(rel)
             if hit is None:
                 self.files.append(rel)
             else:
@@ -968,7 +1095,7 @@ class Tree:
         self._text_cache = {}
         self._lower_cache = {}
 
-    def _excluded_by(self, rel):
+    def excluded_by(self, rel):
         for prefix in self.exclusions:
             if rel == prefix:
                 return prefix
@@ -978,6 +1105,10 @@ class Tree:
             if rel.startswith(boundary):
                 return prefix
         return None
+
+    def kind(self, rel):
+        """"file" | "symlink" | "gitlink" — what sort of entry `rel` is."""
+        return self.kinds.get(rel, "file")
 
     def text(self, rel):
         """Decoded text, or None for genuinely binary/unreadable files.
@@ -1427,7 +1558,7 @@ def check_manifest(tree: Tree, manifest, records, rows):
                 covers_declared = {r for r in covers_raw if r in TRIPWIRE_RULES}
         for rel in hits:
             coverage.setdefault(rel, set()).update(
-                _extension_tripwire_rules(rel) | covers_declared
+                _structural_tripwire_rules(tree, rel) | covers_declared
             )
             findings.extend(_corroborate(tree, rel, entry, number, label))
 
@@ -1593,10 +1724,40 @@ def check_manifest(tree: Tree, manifest, records, rows):
 
 def _corroborate(tree: Tree, rel, entry, number, label):
     """The file must show the provenance its row claims (row != reality guard)."""
+    commit = str(entry.get("pinned_commit") or "").strip()
+    kind = tree.kind(rel)
+    if kind == "gitlink":
+        # A gitlink carries its own pin, so corroboration is exact here: the
+        # commit in the index is what a build checks out, whatever the row says.
+        actual = tree.gitlink_commits.get(rel)
+        if actual and commit and actual.lower() != commit.lower():
+            return [
+                Finding(
+                    "manifest-uncorroborated",
+                    rel,
+                    f"{label}: the committed submodule points at {actual[:12]}, "
+                    f"not the row's pinned_commit {commit[:12]} — the row "
+                    "describes a tree this repository does not reference",
+                )
+            ]
+        return []
     text = tree.text(rel)
+    if kind == "symlink":
+        if text is None:
+            # The target is not readable here (an external tree, absent at
+            # audit time). There is no file body in which to state provenance,
+            # so the row and its record are the only description — as for a
+            # binary payload. The structural tripwire is what makes the row
+            # mandatory in the first place.
+            return []
+        # The link target is what a reviewer reads first; search it alongside
+        # the content the link resolves to.
+        try:
+            text = text + "\n" + os.readlink(tree.root / rel)
+        except OSError:  # pragma: no cover - raced away
+            pass
     if text is None:
         return []  # binary payload: nothing to read; the row is the record
-    commit = str(entry.get("pinned_commit") or "").strip()
     tokens = []
     if number:
         tokens.append(f"decision-records/{number}")
@@ -1638,6 +1799,68 @@ def _extension_suffix(rel):
     return "." + name.rsplit(".", 1)[-1].lower() if "." in name else ""
 
 
+def symlink_escape(tree: Tree, rel):
+    """Why this symlink's target is not plain in-tree content, or None.
+
+    A symlink that stays inside the tree and lands on in-scope content is not a
+    carriage signal: whatever it points at is audited at its own path. What IS a
+    signal is a link whose target the audit cannot see — absolute, escaping via
+    `..`, unresolvable here, or inside a declared scope exclusion. In every one
+    of those cases the bytes that reach a build are not the bytes this audit
+    read, so only a provenance row can describe them.
+    """
+    link = tree.root / rel
+    try:
+        target = os.readlink(link)
+    except OSError:
+        # The index says mode 120000 but the filesystem has no symlink here: a
+        # `core.symlinks=false` checkout materialises the entry as a regular
+        # file whose CONTENT is the target path. Read it that way rather than
+        # inventing a finding on a rule that cannot be exempted.
+        try:
+            target = link.read_text(encoding="utf-8", errors="replace").strip()
+        except OSError as exc:  # pragma: no cover - raced away
+            return f"symlink target unreadable: {exc}"
+        if not target:
+            return "symlink with an empty target"
+    if os.path.isabs(target):
+        return f"absolute target outside the audited tree: {target!r}"
+    logical = os.path.normpath(os.path.join(os.path.dirname(rel), target))
+    if logical == ".." or logical.startswith(".." + os.sep) or logical.startswith("../"):
+        return f"target escapes the audited tree: {target!r} -> {logical!r}"
+    try:
+        resolved = link.resolve(strict=True)
+        root = tree.root.resolve()
+    except (OSError, RuntimeError, ValueError):
+        # Absent at audit time. This is the CI shape for a link into the
+        # pinned oracle: the external working directory is not checked out, so
+        # the content is invisible here but present wherever the link resolves.
+        return f"target does not resolve in this tree: {target!r}"
+    try:
+        inside = resolved.relative_to(root).as_posix()
+    except ValueError:
+        return f"target resolves outside the audited tree: {str(resolved)!r}"
+    excluded = tree.excluded_by(inside)
+    if excluded is not None:
+        return (
+            f"target {inside!r} is under the declared scope exclusion "
+            f"{excluded!r}, which this audit does not scan"
+        )
+    return None
+
+
+def submodule_evidence(tree: Tree, rel):
+    """Finding evidence for a committed gitlink / nested repository."""
+    commit = tree.gitlink_commits.get(rel)
+    url = tree.submodule_urls.get(rel)
+    detail = "committed submodule / nested repository"
+    if commit:
+        detail += f" pinned at {commit[:12]}"
+    if url:
+        detail += f", url {url}"
+    return detail + " — its files are in the build tree but not in this audit"
+
+
 def _extension_tripwire_rules(rel):
     """Tripwire rule ids implied purely by `rel`'s own (de-gzipped) extension.
 
@@ -1659,6 +1882,25 @@ def _extension_tripwire_rules(rel):
     return rules
 
 
+def _structural_tripwire_rules(tree: Tree, rel):
+    """Tripwire rules implied by the ENTRY itself, not by any text it holds.
+
+    Extension rules plus the by-reference kinds. Like an extension rule, the
+    kind is a property of the whole entry — a gitlink *is* a reference to
+    another tree, a symlink *is* its target — so a row naming this exact path
+    describes it in full and covers the rule without a 'covers' declaration.
+    The content-signal rules still require 'covers', because text can appear
+    anywhere in a file regardless of what the row's 'content' field says.
+    """
+    rules = _extension_tripwire_rules(rel)
+    kind = tree.kind(rel)
+    if kind == "gitlink":
+        rules.add("submodule-reference")
+    elif kind == "symlink":
+        rules.add("external-symlink-target")
+    return rules
+
+
 def tripwire_hits(tree: Tree, rel):
     """[(rule, evidence)] for content signals of third-party carriage.
 
@@ -1668,6 +1910,18 @@ def tripwire_hits(tree: Tree, rel):
     stops firing — `--negative-control` is what catches that mistake.
     """
     hits = []
+    # The discovery layer first: an entry that carries its content by reference
+    # has no bytes of its own for any signal below to read.
+    kind = tree.kind(rel)
+    if kind == "gitlink":
+        # Nothing further applies: a gitlink has no extension and no text.
+        return [("submodule-reference", submodule_evidence(tree, rel))]
+    if kind == "symlink":
+        escape = symlink_escape(tree, rel)
+        if escape is not None:
+            hits.append(("external-symlink-target", escape))
+        # Deliberately NOT a return: `text()` follows the link, so a target
+        # that does resolve is still read by every content rule below.
     suffix = _extension_suffix(rel)
     if suffix in UPSTREAM_ASSET_EXTS:
         hits.append(("upstream-asset-extension", f"extension {suffix}"))
@@ -1809,9 +2063,18 @@ def audit(root: Path):
         "exemptions": len(manifest.get("exemptions", []) or []),
         # Disclosed, not silent: these files reached no content rule at all,
         # so a PASS says nothing about what is inside them (DECLARED LIMITS).
+        # Counted over REGULAR files only: a by-reference entry has no bytes of
+        # its own, and reporting it here read as "an undecodable payload" —
+        # which is how a gitlink hid among the renders (increment 7).
         "files_not_content_scanned": sum(
-            1 for rel in tree.files if tree.text(rel) is None
+            1
+            for rel in tree.files
+            if tree.kind(rel) == "file" and tree.text(rel) is None
         ),
+        "entries_by_reference": {
+            kind: sum(1 for rel in tree.files if tree.kind(rel) == kind)
+            for kind in ("symlink", "gitlink")
+        },
         "tripwire_hits": tripwire_counts,
     }
     findings.sort(key=lambda f: (f.rule, f.path))
@@ -1849,6 +2112,13 @@ def report(findings, stats, root, as_json=False):
     print(
         f"  not content-scanned (undecodable payload): "
         f"{stats['files_not_content_scanned']} files — extension tripwires only"
+    )
+    by_reference = stats["entries_by_reference"]
+    print(
+        f"  by reference (content is not in the entry's own bytes): "
+        f"{by_reference['symlink']} symlink(s), "
+        f"{by_reference['gitlink']} submodule/nested repo(s) — judged at the "
+        "discovery layer"
     )
     hits = ", ".join(f"{k}={v}" for k, v in sorted(stats["tripwire_hits"].items()))
     print(f"tripwire hits (declared + undeclared): {hits}")
@@ -2206,6 +2476,74 @@ def _patch_manifest(root: Path, mutate):
     path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 
+# --- discovery-layer fixtures -------------------------------------------------
+#
+# A by-reference entry cannot be written as a string, so these controls build
+# real symlinks and a real mode-160000 index entry. The gitlink ones turn the
+# control tree into a git checkout on purpose: that is the path `list_entries`
+# takes on this repository, so the control exercises the actual `ls-files -s`
+# mode parsing rather than a stand-in for it.
+FIXTURE_SUBMODULE_REL = "libs/surge"
+FIXTURE_SUBMODULE_COMMIT = "58914e59c608ed4384ba6002e44c3465c58b2e71"
+FIXTURE_SUBMODULE_URL = "https://github.com/surge-synthesizer/surge.git"
+FIXTURE_NESTED_REPO_REL = "libs/vendored-engine"
+FIXTURE_ESCAPING_LINK_REL = "model/oracle_tables.py"
+FIXTURE_ESCAPING_LINK_TARGET = "../../surge-oracle/include/sst/effects/Reverb1.h"
+
+
+def _git(root: Path, *args):
+    proc = subprocess.run(
+        ["git", "-C", str(root), *args], capture_output=True
+    )
+    if proc.returncode != 0:
+        raise AuditError(
+            "git " + " ".join(args) + " failed: "
+            + proc.stderr.decode("utf-8", "replace").strip()
+        )
+
+
+def _symlink(root: Path, rel, target):
+    path = root / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.symlink_to(target)
+
+
+def _git_submodule_entry(root: Path, rel=FIXTURE_SUBMODULE_REL,
+                         commit=FIXTURE_SUBMODULE_COMMIT, url=FIXTURE_SUBMODULE_URL):
+    """Record a submodule GITLINK in a synthetic tree — no clone, no network.
+
+    `git update-index --cacheinfo 160000,…` writes exactly the index entry
+    `git submodule add` would, so the audit sees a real mode-160000 row.
+    """
+    _git(root, "init", "-q")
+    # -f: a host-level core.excludesFile must not silently drop skeleton files
+    # (an untracked file is invisible to `ls-files`, which would change what
+    # the control is actually testing).
+    _git(root, "add", "-A", "-f")
+    if url:
+        _write(root, ".gitmodules", f'[submodule "{rel}"]\n\tpath = {rel}\n\turl = {url}\n')
+        _git(root, "add", "-f", ".gitmodules")
+    _git(root, "update-index", "--add", "--cacheinfo", f"160000,{commit},{rel}")
+
+
+def _nested_repo(root: Path, rel=FIXTURE_NESTED_REPO_REL):
+    """A nested repository checkout in a NON-git tree (the tarball shape)."""
+    _write(root, f"{rel}/.git/config", "[core]\n\tbare = false\n")
+    _write(root, f"{rel}/dsp/Reverb1.h", "float run(float x) { return x; }\n")
+
+
+def _submodule_row(commit=FIXTURE_SUBMODULE_COMMIT, rel=FIXTURE_SUBMODULE_REL):
+    return {
+        "path": rel,
+        "class": "external-reference",
+        "content": "synthetic: the pinned upstream engine, referenced as a submodule",
+        "upstream": FIXTURE_SUBMODULE_URL,
+        "pinned_commit": commit,
+        "upstream_license": "GPL-3.0-or-later",
+        "decision_record": "0001",
+    }
+
+
 def _controls():
     """{rule: (description, mutator)} — one deliberate violation per rule."""
 
@@ -2242,6 +2580,16 @@ def _controls():
         "self-declared-quotation": (
             "a file admitting quotation with no provenance row",
             lambda root: _write(root, "model/undeclared_table.py", FIXTURE_TRANSCRIBED),
+        ),
+        "submodule-reference": (
+            "a committed submodule gitlink pinning the upstream engine",
+            _git_submodule_entry,
+        ),
+        "external-symlink-target": (
+            "a tracked symlink whose target leaves the audited tree",
+            lambda root: _symlink(
+                root, FIXTURE_ESCAPING_LINK_REL, FIXTURE_ESCAPING_LINK_TARGET
+            ),
         ),
         "dangling-record-citation": (
             "a citation of a decision record that does not exist",
@@ -2883,6 +3231,156 @@ def _masking_controls():
     ]
 
 
+def _discovery_controls():
+    """[(label, expected rule or None, expected path, description, mutator[, in_detail])].
+
+    Increment 7 — the DISCOVERY layer, below the decode layer increment 6
+    closed. Both negative cases below audited **clean** while
+    `--negative-control` reported all 29 earlier rules firing: a by-reference
+    entry has no bytes of its own, so `open()` failed and the file was counted
+    as an undecodable payload among the renders.
+
+    The positive controls matter as much: a repository that symlinks
+    `CLAUDE.md -> AGENTS.md` (this one does) must not acquire a finding on a
+    non-exemptible rule, or the rule would be switched off rather than answered.
+    """
+    return [
+        (
+            "discovery/committed-submodule-gitlink",
+            "submodule-reference",
+            FIXTURE_SUBMODULE_REL,
+            "a committed mode-160000 gitlink pinning the upstream GPL engine",
+            _git_submodule_entry,
+            "surge-synthesizer/surge",
+        ),
+        (
+            "discovery/submodule-gitlink-answered-by-a-row",
+            None,
+            None,
+            "the same gitlink, declared by a provenance row at its exact commit",
+            lambda root: (
+                _git_submodule_entry(root),
+                _patch_manifest(root, lambda d: d["entries"].append(_submodule_row())),
+            ),
+        ),
+        (
+            "discovery/submodule-row-naming-the-wrong-commit",
+            "manifest-uncorroborated",
+            FIXTURE_SUBMODULE_REL,
+            "a submodule row whose pinned_commit is not the committed gitlink",
+            lambda root: (
+                _git_submodule_entry(root),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(
+                        _submodule_row(commit="0" * 40)
+                    ),
+                ),
+            ),
+        ),
+        (
+            "discovery/nested-repository-in-a-non-git-tree",
+            "submodule-reference",
+            FIXTURE_NESTED_REPO_REL,
+            "a nested repository checkout in a tree that is not itself a checkout",
+            _nested_repo,
+        ),
+        (
+            "discovery/symlink-to-an-absent-external-target",
+            "external-symlink-target",
+            FIXTURE_ESCAPING_LINK_REL,
+            "a symlink into an external oracle tree that is not checked out here",
+            lambda root: _symlink(
+                root, FIXTURE_ESCAPING_LINK_REL, FIXTURE_ESCAPING_LINK_TARGET
+            ),
+            "escapes the audited tree",
+        ),
+        (
+            "discovery/symlink-with-an-absolute-target",
+            "external-symlink-target",
+            FIXTURE_ESCAPING_LINK_REL,
+            "a symlink whose target is an absolute path on the author's machine",
+            lambda root: _symlink(
+                root, FIXTURE_ESCAPING_LINK_REL, "/opt/surge/include/Reverb1.h"
+            ),
+            "absolute target",
+        ),
+        (
+            # The structural rule is not the only one that must fire here: a
+            # link that DOES resolve is read by every content rule, and a fix
+            # that short-circuited on the symlink kind would silently drop them.
+            "discovery/resolvable-escaping-symlink-is-still-content-scanned",
+            "foreign-license-text",
+            FIXTURE_ESCAPING_LINK_REL,
+            "an escaping symlink that resolves, whose target carries a GPL body",
+            lambda root: (
+                _write(root.parent / f"{root.name}-oracle", "Reverb1.h", FIXTURE_GPL_BODY),
+                _symlink(
+                    root,
+                    FIXTURE_ESCAPING_LINK_REL,
+                    f"../../{root.name}-oracle/Reverb1.h",
+                ),
+            ),
+        ),
+        (
+            "discovery/symlink-into-a-declared-scope-exclusion",
+            "external-symlink-target",
+            FIXTURE_ESCAPING_LINK_REL,
+            "a symlink from product space into a declared, unaudited hole",
+            lambda root: (
+                _write(root, ".loom/vendored_table.py", "TABLE = [7, 8, 9]\n"),
+                _patch_manifest(
+                    root,
+                    lambda d: d["scope_exclusions"].append(
+                        {"prefix": ".loom/", "reason": "synthetic declared hole"}
+                    ),
+                ),
+                _symlink(root, FIXTURE_ESCAPING_LINK_REL, "../.loom/vendored_table.py"),
+            ),
+            "scope exclusion",
+        ),
+        (
+            "discovery/in-repo-symlink-to-a-regular-file-passes",
+            None,
+            None,
+            "this repository's own shape: a symlink to an audited in-tree file",
+            lambda root: _symlink(root, "CLAUDE.md", "docs/plain.md"),
+        ),
+        (
+            "discovery/in-repo-symlink-to-a-directory-passes",
+            None,
+            None,
+            "a symlink to an in-tree directory, whose files are audited at their own paths",
+            lambda root: _symlink(root, "docs/model", "../model"),
+        ),
+        (
+            "discovery/escaping-symlink-answered-by-a-row-passes",
+            None,
+            None,
+            "an escaping symlink declared by a provenance row citing its record",
+            lambda root: (
+                _symlink(
+                    root, FIXTURE_ESCAPING_LINK_REL, FIXTURE_ESCAPING_LINK_TARGET
+                ),
+                _patch_manifest(
+                    root,
+                    lambda d: d["entries"].append(
+                        {
+                            "path": FIXTURE_ESCAPING_LINK_REL,
+                            "class": "external-reference",
+                            "content": "synthetic: a link into the external oracle tree",
+                            "upstream": "surge-synthesizer/surge",
+                            "pinned_commit": FIXTURE_SUBMODULE_COMMIT,
+                            "upstream_license": "GPL-3.0-or-later",
+                            "decision_record": "0001",
+                        }
+                    ),
+                ),
+            ),
+        ),
+    ]
+
+
 def _run_case_controls(tmp_root: Path, prefix, cases):
     """Run (label, expected, path, description, mutate[, in_detail]) cases.
 
@@ -2900,7 +3398,13 @@ def _run_case_controls(tmp_root: Path, prefix, cases):
         case_root = Path(tmp_root) / f"{prefix}-{index}"
         case_root.mkdir()
         build_skeleton(case_root)
-        mutate(case_root)
+        try:
+            mutate(case_root)
+        except Exception as exc:  # a control that cannot be SET UP is a FAIL
+            results.append(
+                (label, False, f"{description} -> control setup failed: {exc}")
+            )
+            continue
         findings, _ = audit(case_root)
         found = ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing"
         if expected is None:
@@ -2964,7 +3468,14 @@ def run_negative_control(verbose=True):
             case = Path(tmp) / f"case-{rule}"
             case.mkdir()
             build_skeleton(case)
-            mutate(case)
+            try:
+                mutate(case)
+            except Exception as exc:  # a control that cannot be SET UP is a FAIL
+                ok = False
+                results.append(
+                    (rule, "FAIL", f"{description} -> control setup failed: {exc}")
+                )
+                continue
             findings, _ = audit(case)
             fired = [f for f in findings if f.rule == rule]
             if fired:
@@ -2995,7 +3506,11 @@ def run_negative_control(verbose=True):
             )
             for label, expected, description, mutate in _scoped_exemption_controls()
         ]
-        for prefix, cases in (("scoped", scoped), ("masking", _masking_controls())):
+        for prefix, cases in (
+            ("scoped", scoped),
+            ("masking", _masking_controls()),
+            ("discovery", _discovery_controls()),
+        ):
             for label, passed, detail in _run_case_controls(Path(tmp), prefix, cases):
                 ok = ok and passed
                 results.append((label, "PASS" if passed else "FAIL", detail))
@@ -3016,9 +3531,9 @@ def run_negative_control(verbose=True):
                 f"PASS: all {len(controls)} rules fired on their deliberate "
                 "violation, the clean control tree produced no findings, "
                 f"all {len(_scoped_exemption_controls())} occurrence-scoped "
-                "exemption controls behaved, and all "
-                f"{len(_masking_controls())} own-attribution masking controls "
-                "behaved."
+                f"exemption controls behaved, all {len(_masking_controls())} "
+                "own-attribution masking controls behaved, and all "
+                f"{len(_discovery_controls())} discovery-layer controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")

@@ -120,7 +120,16 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    (job `provenance-audit`). The tool enforces bookkeeping — read its
    `--limits` output before quoting a PASS as evidence: it is not proof that
    nothing was copied.
-6. Commit third-party text as UTF-8. The audit's content rules only reach
+6. Do not bring a substrate in **by reference** without the same record. A
+   committed submodule (or a nested repository checkout) and a symlink whose
+   target leaves this tree both put upstream content in the build tree while
+   putting none of it in any file here; the audit flags both
+   (`submodule-reference`, `external-symlink-target`), and a submodule row is
+   checked against the commit the gitlink actually pins. "No moving
+   dependencies, submodules, or shared packages by silent default" (#25) is
+   therefore a check, not only a rule. A declared one is still unscanned
+   content: the row and its record are its only description.
+7. Commit third-party text as UTF-8. The audit's content rules only reach
    files it can decode, so every run prints a `not content-scanned` count
    alongside its coverage: those files are seen by the extension tripwires
    and nothing else. A notice sealed inside an opaque payload (a render, a
