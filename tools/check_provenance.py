@@ -37,13 +37,18 @@ The audit has four groups of checks:
                                          EVERY notice in a file is inspected;
                                          each notice's holder is read from its
                                          own HOLDER FIELD (the name after the
-                                         year), every operand of an SPDX
-                                         *expression* is compared, and a
-                                         license body is matched across the
-                                         comment leader a pasted header wraps
-                                         on — so our own attribution, above a
-                                         pasted upstream header or named
-                                         inside it, does not mask it
+                                         year), which must name US AND NOBODY
+                                         ELSE; a notice may carry no year at
+                                         all, or wrap its holder list onto a
+                                         continuation line; every operand of an
+                                         SPDX *expression* is compared and the
+                                         remainder of the tag is scanned for a
+                                         license id by shape; and a license
+                                         body is matched across the comment
+                                         leader a pasted header wraps on — so
+                                         our own attribution, above a pasted
+                                         upstream header or named inside it,
+                                         does not mask it
        * `upstream-asset-extension`    — Surge/third-party asset or opaque
                                          binary-bundle extensions
        * `foreign-source-language`     — source languages this repository
@@ -64,15 +69,27 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     matching against upstream trees.
   * A PASS says nothing about whether a decision record's *reasoning* is
     right, or whether the owner has ratified it. Most records are PROPOSED.
-  * The `foreign-license-text` signal reads *notices*, not licenses. A license
-    body wrapped across a comment leader is matched; a LEADERLESS prose wrap
-    of a license name is deliberately not (it is not a comment-block paste,
-    and the rule cannot be exempted, so ordinary prose naming a license must
-    not become an unanswerable finding). Control:
-    `masking/leaderless-prose-wrap-stays-out-of-scope`.
+  * The `foreign-license-text` signal reads *notices*, not licenses. Because the
+    rule cannot be exempted, a false positive on our own attribution would be an
+    unanswerable finding — so three boundaries are declared deliberately, each
+    pinned by a control, rather than closed:
+      - a LEADERLESS prose wrap of a license NAME is not matched (it is not a
+        comment-block paste, and ordinary prose naming a license must not become
+        a finding) — `masking/leaderless-prose-wrap-stays-out-of-scope`;
+      - a yearless notice written with a bare `(c)` is not matched, because this
+        repository marks enumerated legs "(a) … (b) … (c)" throughout its
+        decision records and evidence reports —
+        `masking/lettered-list-markers-stay-out-of-scope`;
+      - the holder test reads ONE segment of the notice line (a holder name does
+        not span a parenthetical, bracket, dash aside, semicolon or quotation
+        mark), so a foreign name standing in a LATER segment of an otherwise-own
+        notice line is not read as a second holder. A holder list wrapped onto
+        the next LINE is matched — `masking/our-own-dash-holder-with-an-aside-passes`,
+        `masking/foreign-holder-on-a-wrapped-continuation-line`.
   * Every masking path closed here was found by inspection, one increment at a
-    time. That two specific paths, then five more, were closed is not evidence
-    that no further path exists — only that these are pinned by controls.
+    time. That two specific paths, then five, then eight more, were closed is
+    not evidence that no further path exists — only that these are pinned by
+    controls that fail when, and only when, their own fix is reverted.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -83,9 +100,13 @@ pass review unnoticed — fails the self-test, and therefore CI. It also runs th
 occurrence-scoped exemption controls and the `masking/*` controls, which pin
 every known way the non-exemptible `foreign-license-text` rule was disarmed
 without any rule being removed — our own attribution above a pasted upstream
-notice, or named inside one; a compound SPDX expression led by our own
-licence; a license body wrapped across a comment leader — together with the
-positive cases that keep the fixes from flagging our own headers.
+notice, or named inside one; a foreign holder standing behind a bracketed,
+parenthesised, semicolon- or dash-led mention of this project; a compound SPDX
+expression led by our own licence, or one whose foreign operand sits past the
+end of the parseable expression; a notice carrying a holder but no year; a
+holder list wrapped onto a continuation line; a license body wrapped across a
+comment leader — together with the positive cases that keep the fixes from
+flagging our own headers or ordinary prose.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -350,6 +371,30 @@ SPDX_OPERATORS = frozenset({"and", "or", "with"})
 # ("... Apache-2.0 */", "... MIT -->").
 SPDX_TOKEN_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.+-]*")
 
+# License-id families this repository does not license under, recognised by
+# SHAPE. The expression walk below stops at the first token that is not part of
+# a parseable `id (OPERATOR id)*` expression — deliberately, so that our own tag
+# quoted inside a sentence does not read the following prose as operands. That
+# stop is also a mask: a foreign operand smuggled past the end of the parseable
+# expression was invisible, and these tag VALUES all audited clean (the tag name
+# itself is omitted here so this comment is not read as a tag — see the fixture
+# note further down) —
+#
+#     Apache-2.0, GPL-3.0-or-later
+#     Apache-2.0 / GPL-3.0-or-later
+#     Apache-2.0 (upstream GPL-3.0-or-later)
+#
+# — a comma list, a slash list, and a parenthetical, none of them exotic. The
+# remainder of the tag is therefore scanned for a license id by shape, which
+# prose cannot satisfy ("Apache-2.0 tags are used below" stays clean).
+FOREIGN_LICENSE_ID_RE = re.compile(
+    r"\b(?:(?:A|L)?GPL|MPL|EPL|CDDL|CPL|OSL|AFL|EUPL|BSL|ISC|NCSA|WTFPL"
+    r"|Artistic|Zlib|Unlicense|Sleepycat|CC-BY[A-Za-z0-9.-]*"
+    r"|BSD-[0-9]+-Clause[A-Za-z0-9.-]*|MIT)"
+    r"(?:-[0-9]+(?:\.[0-9]+)*)?(?:-or-later|-only|\+)?\b",
+    re.IGNORECASE,
+)
+
 
 def spdx_foreign_ids(expression):
     """License ids in an SPDX expression that are not this repository's own.
@@ -366,11 +411,21 @@ def spdx_foreign_ids(expression):
         Apache-2.0 WITH LLVM-exception    -> ['LLVM-exception'] (over-flagged
                                              on purpose: an exception clause is
                                              foreign licence text too)
+
+    Whatever follows the parseable expression is then scanned for a license id
+    BY SHAPE (`FOREIGN_LICENSE_ID_RE`), so that a foreign operand hidden behind
+    a comma, a slash or a parenthetical is not lost with the rest of the line:
+
+        Apache-2.0, GPL-3.0-or-later      -> ['GPL-3.0-or-later']
+        Apache-2.0 (upstream MIT)         -> ['MIT']
+        Apache-2.0 tags are used below    -> []                  (prose)
     """
-    tokens = SPDX_TOKEN_RE.findall(expression.replace("(", " ").replace(")", " "))
+    normalized = expression.replace("(", " ").replace(")", " ")
     foreign = []
     expect_id = True
-    for token in tokens:
+    consumed = 0
+    for match in SPDX_TOKEN_RE.finditer(normalized):
+        token = match.group(0)
         lowered = token.lower()
         if expect_id:
             if lowered in SPDX_OPERATORS:
@@ -382,6 +437,10 @@ def spdx_foreign_ids(expression):
             if lowered not in SPDX_OPERATORS:
                 break  # end of the expression (trailing prose or comment)
             expect_id = True
+        consumed = match.end()
+    for match in FOREIGN_LICENSE_ID_RE.finditer(normalized[consumed:]):
+        if match.group(0).lower() != OWN_SPDX:
+            foreign.append(match.group(0))
     return foreign
 
 
@@ -392,6 +451,50 @@ COPYRIGHT_RE = re.compile(
     re.IGNORECASE,
 )
 OWN_HOLDER_RE = re.compile(r"2AM\s*Logic|2AMLogic|gf180-surge", re.IGNORECASE)
+
+# A notice that names a holder but NO year — the keyword, or the © sign, run
+# straight into a holder name with no year between them. `COPYRIGHT_RE` requires
+# a year, so a yearless pasted notice carried no signal at all. (Spelled out in
+# the `masking/*` fixtures rather than here: a contiguous example in this comment
+# would make the audit flag its own source — see the fixture note further down.)
+#
+# Deliberately NOT matched from a bare "(c)": this repository marks enumerated
+# list items "(a) … (b) … (c)", and "(c) Tables" / "(c) Unknown status string"
+# are everywhere in the decision records and evidence reports. Matching those
+# would make ordinary lettered lists findings on a rule that CANNOT be exempted
+# — an unanswerable failure, which is how a rule gets switched off. The
+# remaining gap (a yearless notice written with a bare "(c)") is a declared
+# limit, not an oversight.
+#
+# Case-sensitive on purpose: the lookahead requires a capitalised holder name,
+# which IGNORECASE would silently widen to any letter.
+YEARLESS_COPYRIGHT_RE = re.compile(
+    r"(?:[Cc]opyright|COPYRIGHT|©)[ \t]*(?:\([cC]\)|©)?[ \t]*(?=[A-Z])"
+)
+# Capitalised words that follow the keyword in PROSE about copyright rather than
+# in a notice ("Grant of Copyright License", "the Copyright Notice is retained").
+# A notice whose holder position holds one of these is not read as a notice.
+NOT_A_HOLDER_WORDS = frozenset(
+    {
+        "license", "licence", "licenses", "licences", "licensing", "notice",
+        "notices", "act", "office", "holder", "holders", "owner", "owners",
+        "law", "statement", "statements", "year", "years", "header", "headers",
+        "line", "lines", "text", "texts", "assignment", "registration",
+        "information", "and", "or", "in", "is", "are", "the",
+    }
+)
+
+# A holder list may WRAP: the notice names us, and the next comment line names
+# someone else with no keyword of its own — our own notice, then a second line
+# reading `#     and Chris Johnson / Airwindows` (the notice line itself is in
+# the `masking/*` fixtures, not here — see the fixture note further down).
+#
+# That layout audited clean because the second line carries no notice keyword. Kept
+# deliberately narrow (a conjunction, then a capitalised name) so that ordinary
+# comment prose under an own notice is not a finding on the non-exemptible rule.
+HOLDER_CONTINUATION_RE = re.compile(
+    r"^[ \t]*(?:" + _LEADER + r")?[ \t]*(?:and|&|,)[ \t]+(?=[A-Z])"
+)
 
 
 def copyright_line(text, match):
@@ -412,13 +515,60 @@ def copyright_line(text, match):
 
 # Text that ends a copyright line's HOLDER field: a holder name does not
 # contain a parenthetical, a bracketed note, an em/en dash aside, a spaced
-# hyphen, a semicolon, an inline URL, or a closing comment delimiter.
-HOLDER_FIELD_END_RE = re.compile(r"[(\[{<;—–]| - |\*/|-->|https?://")
+# hyphen, a semicolon, a quotation mark, an inline URL, or a closing comment
+# delimiter. (The quotation marks matter because a notice QUOTED inside prose —
+# as several of this file's own comments do — would otherwise read the prose
+# after the closing quote as part of its holder field.)
+HOLDER_FIELD_END_RE = re.compile(r"[(\[{<;—–\"“”]| - |\*/|-->|https?://")
 # Filler that may legitimately precede the holder's own name inside the holder
 # field ("Copyright (c) 2026 The gf180-surge Authors"). Anything else standing
 # where the holder belongs means the notice names SOMEONE ELSE first.
 HOLDER_LEADING_FILLER = frozenset({"the", "by", "c", "and", "of", "for"})
 HOLDER_WORD_RE = re.compile(r"[A-Za-z][A-Za-z.'’]*")
+# A capitalised token is how a SECOND holder shows up next to our own name
+# ("[gf180-surge] Some Upstream Author"). These are the capitalised words that
+# are NOT a second holder: collective suffixes and corporate forms our own
+# notice legitimately carries. Everything else capitalised, standing in the
+# same holder field as our name, means the notice names someone else too.
+HOLDER_NAME_RE = re.compile(r"[A-Z][A-Za-z.'’]*")
+HOLDER_NEUTRAL_WORDS = HOLDER_LEADING_FILLER | frozenset(
+    {
+        "author", "authors", "contributor", "contributors", "developer",
+        "developers", "maintainer", "maintainers", "project", "team",
+        "inc", "llc", "ltd", "gmbh", "sa", "bv", "co",
+        "all", "rights", "reserved", "see", "or",
+        # legal boilerplate an own notice trails, never a holder name
+        "license", "licence", "licenses", "licences", "licensed", "notice",
+        "notices", "terms", "spdx", "apache",
+    }
+)
+
+
+def _holder_word_key(word):
+    """A holder word reduced to its vocabulary key.
+
+    The word regexes admit a trailing abbreviation dot so that "Inc." reads as
+    one token, which means the raw token ("Reserved.", "License.") does not
+    compare equal to its vocabulary entry. Without this, "2AM Logic, All Rights
+    Reserved." became a finding on the non-exemptible rule — a false positive on
+    our OWN notice, which is how this rule gets switched off.
+    """
+    return word.lower().strip(".'’")
+
+
+def _holder_segments(tail):
+    """The holder field, then each later segment of the line, in order.
+
+    A holder name does not span one of `HOLDER_FIELD_END_RE`'s delimiters, so
+    the holder field is the first segment — but a layout that opens with a
+    delimiter ("Copyright 2026 - 2AM Logic", "Copyright 2026 (2AM Logic)")
+    leaves that first segment empty of names, and the holder is in the next
+    one. Walking segment by segment is what replaced falling back to the WHOLE
+    LINE: that fallback reintroduced, for exactly these layouts, the
+    whole-line masking this function exists to prevent (a foreign notice whose
+    year is followed by `[gf180-surge] Some Upstream Author` audited clean).
+    """
+    return HOLDER_FIELD_END_RE.split(tail)
 
 
 def own_copyright_holder(line, holder_start):
@@ -436,25 +586,111 @@ def own_copyright_holder(line, holder_start):
 
     — this project named in a parenthetical, and after a spaced hyphen. Read as
     a holder field the holders are Some Upstream Author and Chris Johnson, and
-    both fire. Our own header (our name, or "The gf180-surge Authors", standing
-    in the holder position) still suppresses itself: a rule that flagged our
-    own attribution would simply be switched off again. The byte-identical
-    notices live in the `masking/*` fixtures, assembled at run time.
+    both fire.
+
+    Our name standing in the holder position is not sufficient on its own: the
+    holder field must name NOBODY ELSE. Five notices audited clean until that
+    second condition landed, because our name came first in each of them — the
+    text after the year was
+
+        [gf180-surge] Some Upstream Author
+        (gf180-surge port) Some Upstream Author
+        <gf180-surge> Chris Johnson
+        ; gf180-surge adaptation of Chris Johnson's filter
+        — gf180-surge vendoring of Chris Johnson
+
+    and each one opens with a delimiter, so the holder field itself held no name
+    and the old code fell back to searching the WHOLE line. (Only the holder
+    field is shown, not the whole notice: a contiguous notice in this file would
+    make the audit flag its own source — see the fixture note further down.)
+
+    Our own header (our name, or "The gf180-surge Authors", standing in the
+    holder position) still suppresses itself: a rule that flagged our own
+    attribution would simply be switched off again — and because this rule
+    cannot be exempted, a false positive here is an unanswerable finding. That
+    is why the test is scoped to ONE segment of the line: an own notice trailed
+    by an aside or a cross-reference ("… 2AM Logic — see NOTICE") keeps naming
+    only us. The byte-identical notices live in the `masking/*` fixtures,
+    assembled at run time.
     """
-    tail = line[holder_start:]
-    field = HOLDER_FIELD_END_RE.split(tail, maxsplit=1)[0]
-    if not HOLDER_WORD_RE.search(field):
-        # No name in the holder field at all ("Copyright 2026 - 2AM Logic",
-        # "Copyright 2026 (2AM Logic)"): fall back to the whole line rather
-        # than flag a layout that never names a foreign holder.
-        field = tail
-    own = OWN_HOLDER_RE.search(field)
-    if not own:
-        return False
-    # Our name must be the FIRST name in the holder field — not one trailing
-    # somebody else's.
-    preceding = HOLDER_WORD_RE.findall(field[: own.start()])
-    return all(word.lower() in HOLDER_LEADING_FILLER for word in preceding)
+    for field in _holder_segments(line[holder_start:]):
+        if not HOLDER_WORD_RE.search(field):
+            continue  # delimiter-led segment with no name in it; keep walking
+        own = OWN_HOLDER_RE.search(field)
+        if not own:
+            return False
+        # Our name must be the FIRST name in the holder field — not one
+        # trailing somebody else's.
+        preceding = HOLDER_WORD_RE.findall(field[: own.start()])
+        if not all(_holder_word_key(word) in HOLDER_LEADING_FILLER for word in preceding):
+            return False
+        # …and it must be the ONLY holder named in that field. Every other
+        # occurrence of our own name is excised first, so "2AM Logic /
+        # gf180-surge" stays ours.
+        rest = OWN_HOLDER_RE.sub(" ", field[: own.start()] + " " + field[own.end() :])
+        return all(
+            _holder_word_key(word) in HOLDER_NEUTRAL_WORDS
+            for word in HOLDER_NAME_RE.findall(rest)
+        )
+    return False  # no name anywhere on the holder side: not an own notice
+
+
+def _first_holder_word(line, holder_start):
+    """The first name standing in the holder position, lowercased (or None)."""
+    for field in _holder_segments(line[holder_start:]):
+        word = HOLDER_WORD_RE.search(field)
+        if word:
+            return _holder_word_key(word.group(0))
+    return None
+
+
+def _wrapped_holder_match(text, notice_match):
+    """A foreign name on a holder-list CONTINUATION line, or None.
+
+    Called only for a notice already judged ours: a wrapped holder list puts the
+    second holder on the next line, where no notice keyword stands to raise the
+    signal on its own.
+    """
+    cursor = text.find("\n", notice_match.end())
+    while cursor != -1:
+        start = cursor + 1
+        end = text.find("\n", start)
+        line = text[start : len(text) if end == -1 else end]
+        continuation = HOLDER_CONTINUATION_RE.match(line)
+        if not continuation:
+            return None
+        if COPYRIGHT_RE.search(line) or YEARLESS_COPYRIGHT_RE.search(line):
+            return None  # a notice of its own; the normal scan judges it
+        if not own_copyright_holder(line, continuation.end()):
+            return HOLDER_WORD_RE.search(line, continuation.end())
+        cursor = end
+    return None
+
+
+def foreign_copyright_match(text):
+    """The first copyright notice in `text` that does NOT name this project.
+
+    Three shapes are read as a notice: one carrying a year, one carrying only a
+    holder (no year), and a holder-list continuation line under an own notice.
+    All three are judged by `own_copyright_holder`, so our own attribution never
+    becomes a finding on this non-exemptible rule.
+    """
+    notices = [(match.start(), match, False) for match in COPYRIGHT_RE.finditer(text)]
+    covered = [(match.start(), match.end()) for _, match, _ in notices]
+    for match in YEARLESS_COPYRIGHT_RE.finditer(text):
+        if not any(start <= match.start() < end for start, end in covered):
+            notices.append((match.start(), match, True))
+    for _, match, yearless in sorted(notices, key=lambda item: item[0]):
+        line = copyright_line(text, match)
+        holder_start = match.end() - (text.rfind("\n", 0, match.start()) + 1)
+        if yearless and _first_holder_word(line, holder_start) in NOT_A_HOLDER_WORDS:
+            continue  # prose about copyright, not a notice
+        if not own_copyright_holder(line, holder_start):
+            return match
+        wrapped = _wrapped_holder_match(text, match)
+        if wrapped is not None:
+            return wrapped
+    return None
 
 
 # The repository's own Apache-2.0 license text (its appendix contains a
@@ -1294,20 +1530,17 @@ def tripwire_hits(tree: Tree, rel):
                     )
                     break
         if any(token in low for token in COPYRIGHT_PREFILTERS):
-            for copyright_match in COPYRIGHT_RE.finditer(text):
-                line_start = text.rfind("\n", 0, copyright_match.start()) + 1
-                if own_copyright_holder(
-                    copyright_line(text, copyright_match),
-                    copyright_match.end() - line_start,
-                ):
-                    continue  # this notice names us; keep looking at the rest
+            # EVERY notice is inspected (an own header above a pasted one must
+            # not mask it), each judged from its own holder field, and a notice
+            # may carry no year or wrap its holder list onto the next line.
+            copyright_match = foreign_copyright_match(text)
+            if copyright_match is not None:
                 hits.append(
                     (
                         "foreign-license-text",
                         f"copyright line: {_snippet(text, copyright_match)}",
                     )
                 )
-                break
     if any(token in low for token in UPSTREAM_CITATION_PREFILTERS):
         for name, prefilter, regex in QUOTATION_MARKER_RES:
             if prefilter not in low:
@@ -1624,6 +1857,73 @@ FIXTURE_OWN_SPDX_IN_PROSE = (
 # become a finding that no exemption could answer (the rule is non-exemptible).
 FIXTURE_PROSE_WRAP_LICENSE_NAME = (
     "The record cites the GNU " + "General Public\n" + "License as the upstream terms.\n"
+)
+
+# Increment 4 — four more families that audited clean while --negative-control
+# still reported every rule firing. All four are the SAME failure shape as
+# increments 2 and 3: a signal that stops reading as soon as it has seen enough
+# to recognise OUR OWN attribution.
+#
+#   * the holder field opens with a delimiter, so it held no name and the holder
+#     test fell back to searching the WHOLE LINE — the very thing increment 3
+#     removed, reinstated for every bracket/semicolon/dash layout;
+#   * an SPDX expression whose foreign operand sits past the end of the
+#     parseable expression (a comma list, a parenthetical);
+#   * a notice with a holder but NO year, which carried no signal at all;
+#   * a holder list WRAPPED onto a continuation line that carries no keyword.
+FIXTURE_FOREIGN_HOLDER_BEHIND_BRACKETS = (
+    "# Copy" + "right (C) 20" + "19 [gf180-surge] Some Upstream Author\n"
+)
+FIXTURE_FOREIGN_HOLDER_BEHIND_PARENS = (
+    "# Copy" + "right (C) 20" + "19 (gf180-surge port) Some Upstream Author\n"
+)
+FIXTURE_FOREIGN_HOLDER_AFTER_SEMICOLON = (
+    "# Copy" + "right 20" + "19; gf180-surge adaptation of Chris Johnson's filter\n"
+)
+FIXTURE_FOREIGN_HOLDER_AFTER_EM_DASH = (
+    "# Copy" + "right 20" + "19 — gf180-surge vendoring of Chris Johnson\n"
+)
+FIXTURE_SPDX_FOREIGN_AFTER_COMMA = (
+    "# SPDX-License" + "-Identifier" + ": Apache-2.0, GPL-3.0-or-later\n"
+)
+FIXTURE_SPDX_FOREIGN_IN_PARENTHETICAL = (
+    "# SPDX-License" + "-Identifier" + ": Apache-2.0 (upstream GPL-3.0-or-later)\n"
+)
+FIXTURE_YEARLESS_FOREIGN_COPYRIGHT = (
+    "# Copy" + "right (C) " + "Chris Johnson / Airwindows\n"
+)
+FIXTURE_WRAPPED_HOLDER_LIST = (
+    FIXTURE_OWN_COPYRIGHT + "#     and " + "Chris Johnson / Airwindows\n"
+)
+# Positive controls for increment 4: own-attribution and ordinary prose layouts
+# that the four fixes above could plausibly have started flagging. Each one is a
+# shape that really occurs in this repository (lettered list markers are used
+# throughout the decision records and evidence reports), and a false positive
+# here would be UNANSWERABLE — `foreign-license-text` cannot be exempted — so
+# the rule would be switched off rather than answered.
+FIXTURE_OWN_COPYRIGHT_RIGHTS_RESERVED = (
+    "# Copy" + "right (c) 20" + "26 2AM " + "Logic, All Rights Reserved.\n"
+)
+FIXTURE_OWN_COPYRIGHT_CROSS_REFERENCE = (
+    "# Copy" + "right 20" + "26 2AM " + "Logic. See LICENSE for terms.\n"
+)
+FIXTURE_OWN_COPYRIGHT_QUOTED_IN_PROSE = (
+    "The header reads \"Copy" + "right (c) 20" + "26 The gf180-surge Authors\". "
+    "Anything else names someone else.\n"
+)
+FIXTURE_OWN_DASH_HOLDER_WITH_ASIDE = (
+    "# Copy" + "right 20" + "26 - 2AM " + "Logic (SXT-019 governance)\n"
+)
+FIXTURE_OWN_COPYRIGHT_THEN_PROSE = (
+    FIXTURE_OWN_COPYRIGHT + "# Implements the halfband decimator.\n"
+)
+FIXTURE_LETTERED_LIST_MARKERS = (
+    "## (c) Unknown status string\n\n"
+    "| leg | control |\n| --- | --- |\n| (c) | status `DONE` rejected |\n"
+)
+FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE = (
+    "2. Grant of Copy" + "right License. Subject to the terms and conditions of\n"
+    "this record, the Copy" + "right Notice is retained verbatim.\n"
 )
 # Long enough that the foreign notice is well outside the old ±120-char
 # proximity window, so this control isolates the first-match-only bug.
@@ -2097,6 +2397,128 @@ def _masking_controls():
             "a declared boundary: a license NAME wrapped in leaderless prose",
             lambda root: _write(
                 root, "docs/mentions.md", FIXTURE_PROSE_WRAP_LICENSE_NAME
+            ),
+        ),
+        # --- increment 4: delimiter-led holder fields, SPDX operands past the
+        # --- expression, yearless notices, wrapped holder lists -------------
+        (
+            "masking/foreign-holder-behind-a-bracketed-project-name",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign holder behind a bracketed mention of this project",
+            lambda root: _write(root, MASKED_REL, FIXTURE_FOREIGN_HOLDER_BEHIND_BRACKETS),
+        ),
+        (
+            "masking/foreign-holder-behind-a-parenthesised-project-name",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign holder behind a parenthesised mention of this project",
+            lambda root: _write(root, MASKED_REL, FIXTURE_FOREIGN_HOLDER_BEHIND_PARENS),
+        ),
+        (
+            "masking/foreign-holder-after-a-semicolon-project-name",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign holder in a notice whose year is followed by '; gf180-surge …'",
+            lambda root: _write(root, MASKED_REL, FIXTURE_FOREIGN_HOLDER_AFTER_SEMICOLON),
+        ),
+        (
+            "masking/foreign-holder-after-an-em-dash-project-name",
+            "foreign-license-text",
+            MASKED_REL,
+            "a foreign holder in a notice whose year is followed by '— gf180-surge …'",
+            lambda root: _write(root, MASKED_REL, FIXTURE_FOREIGN_HOLDER_AFTER_EM_DASH),
+        ),
+        (
+            "masking/spdx-foreign-operand-after-a-comma",
+            "foreign-license-text",
+            MASKED_REL,
+            "an SPDX tag listing a foreign licence after a comma",
+            lambda root: _write(root, MASKED_REL, FIXTURE_SPDX_FOREIGN_AFTER_COMMA),
+        ),
+        (
+            "masking/spdx-foreign-operand-in-a-parenthetical",
+            "foreign-license-text",
+            MASKED_REL,
+            "an SPDX tag naming a foreign licence inside a parenthetical",
+            lambda root: _write(root, MASKED_REL, FIXTURE_SPDX_FOREIGN_IN_PARENTHETICAL),
+        ),
+        (
+            "masking/yearless-foreign-copyright-notice",
+            "foreign-license-text",
+            MASKED_REL,
+            "a pasted foreign notice that carries a holder but no year",
+            lambda root: _write(root, MASKED_REL, FIXTURE_YEARLESS_FOREIGN_COPYRIGHT),
+        ),
+        (
+            "masking/foreign-holder-on-a-wrapped-continuation-line",
+            "foreign-license-text",
+            MASKED_REL,
+            "a holder list wrapped onto a continuation line with no keyword",
+            lambda root: _write(root, MASKED_REL, FIXTURE_WRAPPED_HOLDER_LIST),
+        ),
+        (
+            "masking/our-own-notice-with-rights-reserved-passes",
+            None,
+            None,
+            "our own notice trailed by 'All Rights Reserved.'",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT_RIGHTS_RESERVED + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/our-own-notice-with-a-cross-reference-passes",
+            None,
+            None,
+            "our own notice trailed by a sentence pointing at LICENSE",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT_CROSS_REFERENCE + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/our-own-notice-quoted-inside-prose-passes",
+            None,
+            None,
+            "our own notice quoted mid-sentence, with prose after the closing quote",
+            lambda root: _write(
+                root, "docs/mentions.md", FIXTURE_OWN_COPYRIGHT_QUOTED_IN_PROSE
+            ),
+        ),
+        (
+            # Pins the segment walk itself: with the old fallback to the WHOLE
+            # LINE, the aside's own capitalised token reads as a second holder
+            # and our own notice becomes an unanswerable finding.
+            "masking/our-own-dash-holder-with-an-aside-passes",
+            None,
+            None,
+            "our own notice after a spaced hyphen, trailed by a capitalised aside",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_DASH_HOLDER_WITH_ASIDE + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/ordinary-comment-under-an-own-notice-passes",
+            None,
+            None,
+            "a capitalised comment sentence directly under our own notice",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_COPYRIGHT_THEN_PROSE + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/lettered-list-markers-stay-out-of-scope",
+            None,
+            None,
+            "a declared boundary: '(c)' list markers are not yearless notices",
+            lambda root: _write(root, "docs/legs.md", FIXTURE_LETTERED_LIST_MARKERS),
+        ),
+        (
+            "masking/copyright-prose-is-not-a-notice-passes",
+            None,
+            None,
+            "prose ABOUT copyright, whose holder position holds 'License'/'Notice'",
+            lambda root: _write(
+                root, "docs/mentions.md", FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE
             ),
         ),
     ]
