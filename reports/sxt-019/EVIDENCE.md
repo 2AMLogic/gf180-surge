@@ -1851,3 +1851,213 @@ $ python3 -m pytest -q tests/test_sxt019_provenance.py -> 85 passed
   repository by this increment. The demonstration file was synthetic, written
   and deleted inside this session; `Some Upstream Author` is a name string in a
   synthetic notice, carrying no upstream code, table or asset.
+
+## 18. Increment 12 (2026-10-01) — inside §15's own fix: the gzip members whose names were never read
+
+Base: `main` `9eca4e7` (the resync chore on top of `03e4758`/#290, which landed
+increment 11). Runtime: Python 3.12.3 (stdlib only), Linux. Status: **PASS** on
+this branch; it ratifies nothing and establishes nothing about DSP, RTL,
+fidelity, preset support or sound. Issue
+[#286](https://github.com/2AMLogic/gf180-surge/issues/286).
+
+Every increment from §13 to §17 went one layer *below* the last. This one went
+**back inside** §15's own fix. §15 added `wrapper-member-name`, the only signal a
+marker-free wrapper member has. For an archive it read every member's name. For
+a **stream** it read the name once:
+
+```python
+inner, truncated = _unwrap_stream(raw, kind, limit)   # inflates EVERY member
+label = _gzip_header_name(raw) if kind == "gzip" else None   # reads ONE name
+```
+
+A gzip may be **concatenated** — `cat a.gz b.gz > c.gz` is a valid gzip file —
+and every member carries its own FNAME header. So members 2..n were inflated and
+content-scanned but never **named**, and the rule became order-dependent: the
+same two members swapped were caught.
+
+### Demonstrated before the fix, on the fixture, with the base commit's own tool
+
+The fixture is a two-member gzip: member 1 named `notes.json` carrying ordinary
+JSON, member 2 named `Bank Sine.wt` carrying a marker-free wavetable payload —
+no notice, no copyright line, nothing but the name. Written to
+`compiler/golden/wavetables.dat` (so the file's own extension is innocuous too)
+in a skeleton tree, audited by `git show 9eca4e7:tools/check_provenance.py`:
+
+```
+$ git show 9eca4e7:tools/check_provenance.py > /tmp/base_cp_i12.py
+   fixture: _gzip_with_name("notes.json", …) + _gzip_with_name("Bank Sine.wt", …)
+
+second-member-names-a-.wt  BASE 9eca4e7  findings=CLEAN                  names_read=1
+second-member-names-a-.wt  AFTER         findings=['wrapper-member-name'] names_read=2
+first-member-names-a-.wt   BASE 9eca4e7  findings=['wrapper-member-name'] names_read=1
+first-member-names-a-.wt   AFTER         findings=['wrapper-member-name'] names_read=2
+own-two-member-trace       BASE 9eca4e7  findings=CLEAN                  names_read=1
+own-two-member-trace       AFTER         findings=CLEAN                  names_read=2
+```
+
+The two middle rows are the whole finding stated as the property it violated:
+**the same two members in the other order already fired**. The last row is the
+false-positive direction — two of this repository's own `.json` trace members in
+one stream, which must read as two names and stay clean.
+
+`unwrap_payload` directly, on the same fixture:
+
+| | member names returned | payload bytes inflated |
+|---|---|---|
+| `9eca4e7` | `['notes.json']` | 1038 |
+| this branch | `['notes.json', 'Bank Sine.wt']` | 1038 |
+
+**Content coverage was never the gap** — identical bytes, both tools. Every
+member was already inflated and string-scanned, so a member carrying a licence
+notice was caught by `foreign-license-text` either way. Only the NAME layer
+undercounted, and `wrapper_member_names_read` could not disclose it: a two-name
+stream reported `1`, which is exactly what a one-name stream reports. The tell
+was order-dependence, not coverage.
+
+### The change
+
+Two hunks in `tools/check_provenance.py`; no rule added, removed or loosened.
+
+1. `_gzip_members(raw, limit)` — walks the stream member by member with
+   `zlib.decompressobj(wbits=16+MAX_WBITS)`, which stops at each member's own
+   trailer and hands the remainder back as `unused_data` (the only boundary a
+   concatenated stream has; `gzip.GzipFile` inflates straight through them, which
+   is why it cannot be asked where member 2's header starts). Returns
+   `[(FNAME|None, payload)]` per member, or `None` for a stream that is not
+   cleanly parseable — the same answer, and the same fall-through to the string
+   harvest, that `BadGzipFile` produced before.
+2. `unwrap_payload` routes `gzip` through it and labels **each** member, instead
+   of reading one FNAME per stream. `bzip2`/`xz` still go through
+   `_unwrap_stream`; neither format carries a member name, so there is nothing
+   there to read.
+
+### The inflation budget and its truncation disclosure are unchanged
+
+This is the increment's **stop/escalate** clause (#286: *"if closing it would
+require tracking member boundaries in a way that changes the inflation budget's
+accounting, stop and declare it instead — do not weaken the truncation
+disclosure to make the name walk fit"*). It did not. One `remaining` counter is
+threaded across the members of one stream, exactly as `_unwrap_archive` already
+threads one across a zip's or a tar's members, so the **per-stream total is
+still `limit`** and the first member that exceeds what is left truncates there
+and reports it. `MAX_UNWRAPPED_BYTES` is `268435456` before and after.
+
+Re-derived by inflating the two-member fixture at both tools across the
+thresholds around its own size (1038 bytes):
+
+```
+limit=    1   base 1 bytes TRUNCATED   | new 1 bytes TRUNCATED
+limit=   14   base 14 bytes TRUNCATED  | new 14 bytes TRUNCATED   (member-1 boundary)
+limit=   20   base 20 bytes TRUNCATED  | new 20 bytes TRUNCATED   (inside member 2)
+limit= 1037   base 1037 bytes TRUNCATED| new 1037 bytes TRUNCATED
+limit= 1038   base 1038 bytes ok       | new 1038 bytes ok
+limit= 1039   base 1038 bytes ok       | new 1038 bytes ok
+```
+
+Byte-for-byte identical totals, and `truncated` flips at the identical
+threshold, so `payload_scans_truncated` names exactly the same scans it did
+before. A scan the budget stops is still reported **TRUNCATED**, never as a
+pass. Pinned live by
+`test_concatenated_gzip_keeps_the_inflation_budget_accounting`, which lowers
+`MAX_UNWRAPPED_BYTES` to 20 and asserts both halves.
+
+### Real-tree census, re-derived (not quoted)
+
+```
+tracked gzip streams:        18
+member-count histogram:      {1: 18}        <- every one single-member
+streams carrying an FNAME:   15  (3 carry none)
+truncated member walks:      []
+all wrapper member names read: 26  {.json: 9, .hex: 6, .npy: 11}
+```
+
+**Current exposure is zero**: no committed file in this repository is a
+multi-member stream, so no committed file changed status. That is why this was
+closed *before* it mattered rather than after. The count is re-derived live by
+`test_real_tree_gzip_streams_are_all_single_member` instead of being asserted in
+prose, so a future multi-member commit moves it.
+
+Whole-tree audit, same tree, both tools — **byte-identical coverage**:
+
+```
+$ python3 /tmp/base_cp_i12.py --root .     -> PASS (exit 0)
+$ python3 tools/check_provenance.py --root . -> PASS (exit 0)
+
+  coverage: 2128 files scanned, 759 excluded, 18 decision records,
+    20 provenance rows covering 20 files, 9 exemptions
+  unwrapped by magic: 19 files — 26 member name(s) read and judged
+  tripwire hits: foreign-license-text=4, foreign-source-language=2,
+    self-declared-quotation=43, wrapper-member-name=0,
+    upstream-asset-extension=0, external-symlink-target=0, submodule-reference=0
+```
+
+### Controls and tests
+
+One must-fail control added to the `wrapper/*` set, taking it from 9 to 10:
+
+| Control | Must |
+|---|---|
+| `wrapper/second-member-of-a-concatenated-gzip-names-an-asset` | fire `wrapper-member-name` quoting `Bank Sine.wt` |
+
+Its two existing own-wrapper positive controls
+(`own-gzipped-trace-with-an-fname-stays-clean`, `own-npz-members-stay-clean`)
+and the other seven must-fail cases are **unchanged and still behave**.
+
+**Non-vacuity**, checked in both directions:
+
+- On `9eca4e7`'s tool the new fixture audits **CLEAN** (table above) — so the
+  control is not satisfied by pre-existing behaviour.
+- Reverting the name walk alone in the working file (keep `_gzip_members`, but
+  label members 2..n `None`, reproducing the one-name-per-stream read) →
+  **exactly one** control FAILs,
+  `wrapper/second-member-of-a-concatenated-gzip-names-an-asset`; self-test exits
+  `2`.
+
+Six tests added to `tests/test_sxt019_provenance.py`: both names and both
+payloads returned; the rule fires in **either** member order (the property, not
+one example); the coverage counter reports `2`; the budget accounting and its
+truncation disclosure survive a lowered `MAX_UNWRAPPED_BYTES`; a corrupt or
+trailing-garbage gzip is *not* read as a wrapper (so it falls through to the
+string harvest rather than reading as clean); and the real tree's
+single-member census.
+
+### Verification run on this branch
+
+```
+$ python3 tools/check_provenance.py                    -> PASS  (exit 0)
+$ python3 tools/check_provenance.py --negative-control -> PASS  (exit 0)
+   32/32 rules, 6 scoped-exemption, 40 masking, 11 discovery,
+   27 payload, 10 wrapper-member-name, 7 index-boundary coverage controls
+$ python3 -m pytest -q tests/test_sxt019_provenance.py -> 91 passed
+```
+
+### What §18 does NOT establish
+
+- **The name layer is now order-independent for gzip; it was never the only
+  layer.** A member whose name is innocuous and whose content carries no marker
+  is still invisible to this rule, exactly as a committed file with those two
+  properties is. That is the standing limit of a carriage-signal audit, not a
+  new one.
+- **Two residuals remain declared, not closed**, unchanged by this increment and
+  each still control-pinned: a notice carried in a TRANSFORMED encoding
+  (base64, or any re-coding that is not the bytes of its characters), and an
+  inflation that hits the unwrap budget — a wrapper the audit cannot open
+  yields no member names either. This increment did **not** add a third: it
+  closed the gap rather than declaring it, which is why `tools/check_provenance.py`'s
+  DECLARED LIMITS section still says "two".
+- **Found by inspection**, during review of #285 — the increment that
+  introduced the rule. The pattern is now **six increments deep**, and this one
+  is the first to find the gap *inside* a previous increment's fix rather than
+  in a layer beneath it. That this residual is closed is not evidence no further
+  one exists.
+- **Zero committed files changed status.** No provenance row is added, no
+  decision record is revised or ratified (18 records, most still PROPOSED /
+  RECORDED / ESCALATED), and this project has made **no
+  distribution-license determination**.
+- No RTL, model, fidelity, preset or sound claim is touched. A PASS remains
+  bookkeeping and carriage-signal coverage only (§7).
+- No Surge-, GPL- or otherwise third-party-derived content was copied into this
+  repository by this increment. Both fixtures are synthetic: `Bank Sine.wt` is a
+  **name string** in a gzip header, and the payload under it is a generated
+  marker-free byte pattern already in the tool, carrying no upstream code,
+  table or asset.

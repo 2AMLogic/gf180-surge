@@ -66,7 +66,10 @@ The audit has four groups of checks:
                                          so its name is the whole signal; each
                                          component of a nested label is judged,
                                          so an outer name is not masked by what
-                                         it wraps
+                                         it wraps; and EVERY member of a
+                                         concatenated gzip stream is named, so
+                                         the rule does not depend on which
+                                         member was written first
        * `self-declared-quotation`     — the repo's own quotation vocabulary
                                          ("quoted as data", "QUOTED",
                                          "transcribed from", "vendored", …)
@@ -137,7 +140,9 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     the same payload is found (increment 10; `wide_encoded_runs_harvested` is
     reported per run, so a payload whose wide runs were never examined does not
     look like one that carried none). A wrapper's member NAMES are judged too
-    (increment 9), which is the only signal a marker-free member has. Two
+    (increment 9), which is the only signal a marker-free member has — EVERY
+    member's, including each member of a CONCATENATED gzip stream, of which
+    increment 9 read only the first (increment 12). Two
     residuals here are declared, not closed, each pinned by a positive control:
       - a run harvest reads text at a fixed stride, so a notice carried in a
         TRANSFORMED encoding — base64, and any other re-coding that is not the
@@ -210,7 +215,13 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     increment 7's layer again: not how an entry is READ, but which entries are
     ENUMERATED at all — and found the one residual that had never been declared
     anywhere, because it looked like a definition of the tree rather than a
-    limit on reading it.
+    limit on reading it. Increment 12 went back INSIDE increment 9's own fix
+    rather than below it: the member-name read was complete for an archive and
+    partial for a stream, because a gzip may be CONCATENATED and only the first
+    member's FNAME was taken. Nothing disclosed the partial read —
+    `wrapper_member_names_read` counted 1 for a two-name stream, which looks
+    exactly like a one-member stream — so the tell was order-dependence, not
+    coverage.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -245,9 +256,10 @@ stay clean, because a false positive on one of those would be unanswerable on a
 rule that cannot be exempted. The `wrapper/*` controls cover the NAMES inside those same
 wrappers, where no content signal exists to find: a `.wt` member in a zip
 renamed `.dat`, a stripped `.cpp` in a tar, a gzip whose FNAME header is its
-only name, an asset member two wrappers deep, and a `.wt` member that is itself
-a gzip (whose outer name must not be masked by the inner one) must each produce
-a finding; a row declaring `covers` must clear it and the same row WITHOUT
+only name, the SECOND member of a concatenated gzip whose FNAME names a `.wt`
+(increment 12), an asset member two wrappers deep, and a `.wt` member that is
+itself a gzip (whose outer name must not be masked by the inner one) must each
+produce a finding; a row declaring `covers` must clear it and the same row WITHOUT
 `covers` must not; and this repository's own gzipped trace carrying an FNAME,
 plus an `.npz` of `.npy` members, must stay clean. The `coverage/*` controls
 (increment 11) are the only ones that assert on COVERAGE rather than on
@@ -291,6 +303,7 @@ import sys
 import tarfile
 import tempfile
 import zipfile
+import zlib
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -1311,11 +1324,16 @@ def _unwrap_stream(raw: bytes, kind: str, limit: int):
     """(payload, truncated) for a single-stream wrapper, or (None, False).
 
     The `*File` wrappers are used rather than the one-shot `decompress()`
-    helpers because they handle CONCATENATED streams (a multi-member gzip) and
-    because `read(limit + 1)` bounds the inflation without materialising it.
+    helpers because they handle CONCATENATED streams (a multi-member bzip2 or
+    xz) and because `read(limit + 1)` bounds the inflation without
+    materialising it.
+
+    gzip does NOT come through here: it is walked member by member by
+    `_gzip_members` instead, because each of its members carries a NAME of its
+    own and this function would fold them all into one unnamed payload
+    (increment 12).
     """
     openers = {
-        "gzip": lambda buf: gzip.GzipFile(fileobj=buf, mode="rb"),
         "bzip2": lambda buf: bz2.BZ2File(buf, "rb"),
         "xz": lambda buf: lzma.LZMAFile(buf, "rb"),
     }
@@ -1357,6 +1375,66 @@ def _gzip_header_name(raw: bytes):
         return None
     # Latin-1 per RFC 1952; replace rather than raise on anything else.
     return raw[offset:end].decode("latin-1", "replace")
+
+
+# `zlib` with the gzip header/trailer handled for us (RFC 1952), one MEMBER at
+# a time: `decompressobj` stops at the member's own trailer and hands the
+# remainder back as `unused_data`, which is the only boundary a concatenated
+# stream has. `gzip.GzipFile` inflates straight through those boundaries, which
+# is why it cannot be asked where the second member's header starts.
+GZIP_WBITS = 16 + zlib.MAX_WBITS
+
+
+def _gzip_members(raw: bytes, limit: int):
+    """([(FNAME|None, payload)] per MEMBER, truncated), or (None, False).
+
+    A gzip stream may be CONCATENATED — `cat a.gz b.gz > c.gz` is a valid gzip
+    file whose content is `a`'s followed by `b`'s — and **every member carries
+    its own FNAME header**. Increment 9 read that header once per stream, from
+    the first member only, so a `.wt` named by the SECOND member's header was
+    not judged at all while the first member's innocuous `.json` name was: the
+    same two members in the other order fired. That order-dependence is the
+    whole defect this closes (increment 12).
+
+    The inflation budget is accounted exactly as `_unwrap_archive` already
+    accounts it for a zip's or a tar's members: one `remaining` counter is
+    threaded across the members of this stream, each read is `remaining + 1`
+    bytes, and the first member that exceeds what is left truncates there and
+    reports `truncated`. The per-stream total is still `limit`, and
+    `MAX_UNWRAPPED_BYTES` is unchanged — a stream that fits inflates to exactly
+    the same bytes this returned before, only split at the member boundaries
+    and labelled.
+
+    `None` means the stream is not cleanly parseable as gzip (a corrupt member,
+    or trailing bytes that are not another member's header) — the same answer,
+    and the same fall-through to the string harvest, that `gzip.GzipFile`
+    raising `BadGzipFile` produced before.
+    """
+    members = []
+    remaining = limit
+    rest = raw
+    while rest.startswith(GZIP_MAGIC):
+        name = _gzip_header_name(rest)
+        try:
+            obj = zlib.decompressobj(wbits=GZIP_WBITS)
+            data = obj.decompress(rest, remaining + 1)
+        except Exception:
+            return None, False
+        if len(data) > remaining:
+            # The budget stopped the walk mid-member: keep what fits, disclose
+            # the partial read, and do not pretend to have seen later members'
+            # names.
+            return members + [(name, data[:remaining])], True
+        if not obj.eof:
+            # All input consumed without reaching this member's trailer: the
+            # stream is truncated or corrupt, not a wrapper this audit opened.
+            return None, False
+        members.append((name, data))
+        remaining -= len(data)
+        rest = obj.unused_data
+    if rest or not members:
+        return None, False
+    return members, False
 
 
 # Joins a wrapper's name to the name of what it wraps. Every component of a
@@ -1432,6 +1510,11 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
     `.dat` rename evades. A member that is itself a wrapper keeps its own name
     in the label (`dsp/Reverb1.h.gz!…`) rather than being replaced by what it
     wraps.
+
+    A gzip stream is walked member by member (increment 12), so EVERY member of
+    a concatenated stream contributes its own name. Reading the FNAME once per
+    stream made the rule order-dependent: `cat notes.json.gz 'Bank Sine.wt.gz'`
+    audited clean while the same two members in the other order fired.
     """
     if limit is None:
         limit = MAX_UNWRAPPED_BYTES
@@ -1440,17 +1523,27 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
     for magic, kind in STREAM_WRAPPERS:
         if not raw.startswith(magic):
             continue
-        inner, truncated = _unwrap_stream(raw, kind, limit)
-        if inner is None:
+        if kind == "gzip":
+            # EVERY member of a concatenated stream, each with its own FNAME
+            # (increment 12). Before this, one name was read for the whole
+            # stream and members 2..n were content-scanned but never named.
+            members, truncated = _gzip_members(raw, limit)
+        else:
+            inner, truncated = _unwrap_stream(raw, kind, limit)
+            members = None if inner is None else [(None, inner)]
+        if members is None:
             return None, False
-        label = _gzip_header_name(raw) if kind == "gzip" else None
-        deeper, deeper_truncated = unwrap_payload(inner, limit, depth + 1)
-        truncated = truncated or deeper_truncated
-        if deeper is not None:
-            return [
-                (_join_member(label, name), payload) for name, payload in deeper
-            ], truncated
-        return [(_join_member(label, ""), inner)], truncated
+        entries = []
+        for label, inner in members:
+            deeper, deeper_truncated = unwrap_payload(inner, limit, depth + 1)
+            truncated = truncated or deeper_truncated
+            if deeper is None:
+                entries.append((_join_member(label, ""), inner))
+            else:
+                entries.extend(
+                    (_join_member(label, name), payload) for name, payload in deeper
+                )
+        return entries, truncated
     members, truncated = _unwrap_archive(raw, limit)
     if members is None:
         return None, truncated
@@ -3606,6 +3699,20 @@ FIXTURE_GZIPPED_ZIP_WITH_ASSET_MEMBER = gzip.compress(
 FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER = _zip_payload(
     (("Bank Sine.wt", _gzip_with_name("meta.json", b'{"frames": 16}')),)
 )
+# The masking shape increment 12 closes: a CONCATENATED gzip (`cat a.gz b.gz`
+# is a valid gzip file) whose offending name is on the SECOND member. Increment
+# 9 read the FNAME once per stream, so this audited clean while the same two
+# members in the other order fired — the order-dependence is the tell. The
+# first member's payload is ordinary JSON so the file still yields text, which
+# is what the pre-change tool saw and found nothing in.
+FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET = _gzip_with_name(
+    "notes.json", b'{"frames": 16}'
+) + _gzip_with_name("Bank Sine.wt", FIXTURE_MARKER_FREE_ASSET_PAYLOAD)
+# Its mirror, for the same stream read in the other order — kept beside it so a
+# test can assert the two now agree rather than asserting one of them alone.
+FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET = _gzip_with_name(
+    "Bank Sine.wt", FIXTURE_MARKER_FREE_ASSET_PAYLOAD
+) + _gzip_with_name("notes.json", b'{"frames": 16}')
 # Positive controls — this repository's own wrapper shapes, which must stay
 # clean. `wrapper-member-name` cannot be exempted, so a false positive here
 # would be answered by switching the rule off. Both are measured shapes: of the
@@ -3619,6 +3726,16 @@ FIXTURE_OWN_GZIPPED_TRACE_WITH_FNAME = _gzip_with_name(
 )
 FIXTURE_OWN_NPZ_MEMBERS = _zip_payload(
     (("gal_in.npy", "x"), ("gal_out.npy", "y"), ("__trimmed__.npy", "z"))
+)
+# The false-positive direction for increment 12: two of this repository's own
+# trace members concatenated into one stream must read as TWO `.json` names and
+# stay clean. A member walk that mis-parsed a boundary would surface here.
+FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE = _gzip_with_name(
+    "trace_seq-notes-coverage-v1.json",
+    json.dumps({"fixture": "seq-notes-coverage-v1", "taps": [0.0, 0.25]}).encode("utf-8"),
+) + _gzip_with_name(
+    "trace_seq-notes-coverage-v2.json",
+    json.dumps({"fixture": "seq-notes-coverage-v2", "taps": [0.5, 0.75]}).encode("utf-8"),
 )
 
 
@@ -4741,6 +4858,13 @@ def _wrapper_name_controls():
     only be answered by switching the rule off. Both were measured over the
     real tree before this was written: 0 hits across its 26 member names
     (9 `.json`, 6 `.hex`, 11 `.npy`; 3 gzip streams carry no FNAME at all).
+
+    Increment 12 adds one more must-fail case to the same set:
+    `second-member-of-a-concatenated-gzip-names-an-asset`, which audited
+    **clean** on increment 11's tool (the FNAME was read once per stream, from
+    the first member) and fires now. The real tree is unaffected either way —
+    all 18 of its tracked gzip streams are single-member, re-derived by
+    `test_real_tree_gzip_streams_are_all_single_member`.
     """
     return [
         (
@@ -4770,6 +4894,21 @@ def _wrapper_name_controls():
             "a gzip whose FNAME header is the only name it has ('Bank Sine.wt')",
             lambda root: _write(
                 root, PAYLOAD_ASSET_BUNDLE_REL, FIXTURE_GZIP_WITH_ASSET_FNAME
+            ),
+            "Bank Sine.wt",
+        ),
+        (
+            "wrapper/second-member-of-a-concatenated-gzip-names-an-asset",
+            "wrapper-member-name",
+            PAYLOAD_ASSET_BUNDLE_REL,
+            "increment 12: a CONCATENATED gzip whose SECOND member's FNAME "
+            "names a '.wt' — increment 9 read the first member's name only, so "
+            "this audited clean while the same two members in the other order "
+            "fired",
+            lambda root: _write(
+                root,
+                PAYLOAD_ASSET_BUNDLE_REL,
+                FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET,
             ),
             "Bank Sine.wt",
         ),

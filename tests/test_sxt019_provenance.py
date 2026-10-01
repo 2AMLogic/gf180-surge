@@ -1165,6 +1165,128 @@ def test_wrapper_member_name_cannot_be_exempted(tmp_path):
     assert "wrapper-member-name" in rules, rules
 
 
+# --- concatenated gzip member names (#25 acceptance item 4, increment 12) ----
+#
+# Increment 9 read the gzip FNAME header once per STREAM, while the unwrap
+# inflated every MEMBER of it. `cat a.gz b.gz > c.gz` is a valid gzip file, so
+# a `.wt` named by the second member's header was never judged — and the same
+# two members written in the other order fired. Order-dependence was the tell;
+# the coverage counter did not disclose it, because a two-name stream reported
+# `wrapper_member_names_read` of 1, which is what a one-name stream reports.
+
+
+def test_every_member_of_a_concatenated_gzip_is_named():
+    """Unit-level pin: both members' names AND both members' payloads."""
+    for label, payload in (
+        ("second-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET),
+        ("first-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET),
+    ):
+        entries, truncated = cp.unwrap_payload(payload)
+        assert not truncated, label
+        names = [name for name, _ in entries]
+        assert sorted(names) == ["Bank Sine.wt", "notes.json"], f"{label}: {names}"
+        # Content coverage is unchanged: every member is still inflated whole.
+        assert sum(len(p) for _, p in entries) == 14 + len(
+            cp.FIXTURE_MARKER_FREE_ASSET_PAYLOAD
+        ), label
+
+
+def test_concatenated_gzip_member_name_is_judged_in_either_order(tmp_path):
+    """The defect, stated as the property it violated: order-independence."""
+    rel = "compiler/golden/bundle.dat"
+    for label, payload in (
+        ("second-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET),
+        ("first-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET),
+    ):
+        root = _masked_tree(tmp_path, f"concat-{label}", "")
+        cp._write(root, rel, payload)
+        fired = [f for f in cp.audit(root)[0] if f.path == rel]
+        rules = [f.rule for f in fired]
+        assert "wrapper-member-name" in rules, f"{label}: not flagged ({rules})"
+        assert any("Bank Sine.wt" in f.detail for f in fired), (
+            f"{label}: " + "; ".join(f.detail for f in fired)
+        )
+
+
+def test_concatenated_gzip_contributes_one_name_per_member(tmp_path):
+    """Coverage, not just agreement: the counter must see BOTH names.
+
+    This is the half the coverage line could not disclose — a two-member stream
+    reporting 1 name read is indistinguishable from a one-member stream.
+    """
+    root = _masked_tree(tmp_path, "concat-coverage", "")
+    rel = "reports/artifacts/trace.json.gz"
+    cp._write(root, rel, cp.FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE)
+    findings, stats = cp.audit(root)
+    tree = cp.Tree(root, [])
+    assert tree.carried_names(rel) == (
+        "trace_seq-notes-coverage-v1.json",
+        "trace_seq-notes-coverage-v2.json",
+    ), tree.carried_names(rel)
+    assert stats["wrapper_member_names_read"] == 2, stats
+    # And the false-positive direction: two of our own members stay clean.
+    assert not findings, [f.as_dict() for f in findings]
+
+
+def test_concatenated_gzip_keeps_the_inflation_budget_accounting(
+    tmp_path, monkeypatch
+):
+    """The Stop/escalate clause: the budget and its disclosure are unchanged.
+
+    One `remaining` counter is threaded across the members of one stream,
+    exactly as `_unwrap_archive` already threads one across a zip's members, so
+    the per-stream total is still `MAX_UNWRAPPED_BYTES` and a scan stopped by it
+    is still reported as TRUNCATED rather than as a pass.
+    """
+    monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 20)
+    entries, truncated = cp.unwrap_payload(
+        cp.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET
+    )
+    assert truncated, entries
+    assert sum(len(p) for _, p in entries) == 20, entries
+    root = _masked_tree(tmp_path, "concat-truncated", "")
+    rel = "reports/artifacts/trace.json.gz"
+    cp._write(root, rel, cp.FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE)
+    _, stats = cp.audit(root)
+    assert stats["payload_scans_truncated"] == [rel], stats
+
+
+def test_a_corrupt_or_trailing_garbage_gzip_is_not_read_as_a_wrapper():
+    """Parity with what `gzip.GzipFile` raising `BadGzipFile` used to produce.
+
+    Unparseable means "not a wrapper", so the payload falls through to the
+    string harvest and stays disclosed — it must never mean "clean".
+    """
+    good = cp.FIXTURE_GZIP_WITH_ASSET_FNAME
+    assert cp.unwrap_payload(good + b"nonsense-tail") == (None, False)
+    assert cp.unwrap_payload(good[:-4]) == (None, False)
+    assert cp._gzip_members(b"", 1 << 20) == (None, False)
+
+
+def test_real_tree_gzip_streams_are_all_single_member():
+    """Re-derives this increment's exposure claim instead of asserting it.
+
+    Every tracked gzip in this repository is single-member, so closing the gap
+    changed no committed file's status. A future multi-member commit makes this
+    count move, which is the point of measuring it rather than quoting it.
+    """
+    manifest = cp.load_manifest(REPO)[0] or {}
+    tree = cp.Tree(REPO, cp.scope_exclusion_prefixes(manifest))
+    multi = []
+    for rel in tree.files:
+        path = REPO / rel
+        try:
+            raw = path.read_bytes()
+        except OSError:
+            continue
+        if not raw.startswith(cp.GZIP_MAGIC):
+            continue
+        members, _ = cp._gzip_members(raw, cp.MAX_UNWRAPPED_BYTES)
+        if members and len(members) > 1:
+            multi.append((rel, len(members)))
+    assert multi == [], multi
+
+
 def test_wrapper_name_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
     assert cp._wrapper_name_controls(), "the wrapper controls must not be empty"
