@@ -74,7 +74,6 @@ import hashlib
 import json
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 
@@ -129,11 +128,6 @@ module tb_vel_rom;
   end
 endmodule
 """
-
-
-def sh(cmd, cwd=None):
-    r = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
-    return r.returncode, r.stdout, r.stderr
 
 
 def sha256(path):
@@ -241,11 +235,11 @@ def rom_exhaustive(work, tb_text, tag):
     with open(sv, "w", encoding="utf-8") as f:
         f.write(ROM_TB_TEMPLATE.replace("{rom}", lift_rom(tb_text)))
     vvp = os.path.join(d, "tb_vel_rom.vvp")
-    rc, out, err = sh(["iverilog", "-g2012", "-o", vvp, sv], cwd=d)
+    rc, out, err = vnc.sh(["iverilog", "-g2012", "-o", vvp, sv], cwd=d)
     if rc != 0:
         return {"verdict": "ERROR", "mismatches": None,
                 "stderr_tail": err[-300:]}, sv
-    rc, out, err = sh(["vvp", vvp], cwd=d)
+    rc, out, err = vnc.sh(["vvp", vvp], cwd=d)
     words, fails = {}, []
     with open(os.path.join(d, "tb_vel_rom_trace.txt"), encoding="utf-8") as f:
         for line in f:
@@ -346,7 +340,7 @@ def exactness(cmp_tool, run_dir, tb=None):
     cmd = [sys.executable, cmp_tool, "--run-dir", run_dir]
     if tb:
         cmd += ["--tb", tb]
-    rc, out, err = sh(cmd)
+    rc, out, err = vnc.sh(cmd)
     try:
         return json.loads(out)
     except Exception:
@@ -498,7 +492,7 @@ def main():
         d = os.path.join(work, kind)
         sc = os.path.join(work, kind + "-inputs.json")
         sidecar(sc, rows, note)
-        rc, out, err = sh([sys.executable, RUNNER, "--sequence", args.sequence,
+        rc, out, err = vnc.sh([sys.executable, RUNNER, "--sequence", args.sequence,
                            "--vel-inputs", sc, "--out-dir", d])
         if rc != 0:
             log(f"[{kind}] model runner exit {rc}: {err[-300:]}")

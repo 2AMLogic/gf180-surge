@@ -46,14 +46,15 @@ import argparse
 import json
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, REPO)
 
+import vel_negative_controls as vnc  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
 RUNNER = os.path.join(REPO, "model", "voice", "run_vel_model.py")
@@ -74,11 +75,6 @@ DECLARED = ["seq-notes-coverage-v1", "seq-notes-repeated-v1",
 POLY_CANDIDATE = "seq-poly-8-v1"
 
 DEST_ORDER = ["cutoff", "reso", "fegmod", "vca"]
-
-
-def sh(cmd, cwd=None):
-    r = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
-    return r.returncode, r.stdout, r.stderr
 
 
 def declared_path(seq):
@@ -126,7 +122,7 @@ def trace_coverage(trace_path):
 
 
 def exactness(cmp_tool, run_dir):
-    rc, out, err = sh([sys.executable, cmp_tool, "--run-dir", run_dir])
+    rc, out, err = vnc.sh([sys.executable, cmp_tool, "--run-dir", run_dir])
     try:
         return rc, json.loads(out)
     except Exception:
@@ -159,7 +155,7 @@ def main():
     for seq in DECLARED:
         path = declared_path(seq)
         run_dir = os.path.join(work, seq)
-        rc, out, err = sh([sys.executable, RUNNER, "--sequence", path,
+        rc, out, err = vnc.sh([sys.executable, RUNNER, "--sequence", path,
                            "--out-dir", run_dir])
         if rc != 0:
             log(f"[{seq}] model runner exit {rc}: {err[-300:]}")
@@ -200,7 +196,7 @@ def main():
     survey = {}
     cand_path = declared_path(POLY_CANDIDATE)
     cand_dir = os.path.join(work, POLY_CANDIDATE)
-    rc, out, err = sh([sys.executable, RUNNER, "--sequence", cand_path,
+    rc, out, err = vnc.sh([sys.executable, RUNNER, "--sequence", cand_path,
                        "--out-dir", cand_dir])
     if rc != 0:
         log(f"[survey {POLY_CANDIDATE}] model runner exit {rc}: {err[-200:]}")
