@@ -60,6 +60,7 @@ fidelity, preset-support or preset-quality claim; supported-preset delta 0.
 """
 import json
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
@@ -96,8 +97,8 @@ def _run_tool(tool, outdir, *extra):
 
 def _moved_keys(emitted, committed):
     """Top-level JSON keys whose value differs (diagnostic only)."""
-    a = json.loads(open(emitted).read())
-    b = json.loads(open(committed).read())
+    a = json.loads(pathlib.Path(emitted).read_text())
+    b = json.loads(pathlib.Path(committed).read_text())
     return sorted(k for k in set(a) | set(b) if a.get(k) != b.get(k))
 
 
@@ -119,7 +120,7 @@ def stale_artifacts(emitted_root, committed_root, emitted_only=False):
     for rel in sorted(emitted & committed):
         e = os.path.join(emitted_root, rel)
         c = os.path.join(committed_root, rel)
-        if open(e, "rb").read() == open(c, "rb").read():
+        if pathlib.Path(e).read_bytes() == pathlib.Path(c).read_bytes():
             continue
         detail = ""
         if rel.endswith(".json"):
