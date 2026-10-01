@@ -46,7 +46,14 @@ Covers the automatable guarantees of `tools/check_provenance.py` only:
     than silent: an unattributed carrier left unstaged is NAMED in
     `entries_present_but_not_in_the_index` (and still not flagged), the count
     is printed even when zero, `--include-untracked` audits it and the rule
-    fires, and ignored paths plus declared scope exclusions stay out of both.
+    fires, and ignored paths plus declared scope exclusions stay out of both,
+  - the audited BYTES are both of an entry's byte sources, not just the one on
+    disk: a carrier `git add`ed and then cleaned (or deleted, or hidden behind
+    `assume-unchanged` / `skip-worktree`) is flagged from its STAGED blob — the
+    bytes a commit would publish — and the finding says which view offended,
+    while an unstaged paste into a tracked file still fires as a working-tree
+    finding, an innocuous edit is counted and read but never flagged, and a
+    gitlink stays a by-reference entry.
 
 These tests make NO claim that no third-party content was copied into this
 repository (see the tool's declared limits: a marker-free copy is not
@@ -1852,3 +1859,338 @@ def test_coverage_controls_run_in_the_self_test():
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+# --- the staged-content boundary (increment 14) --------------------------------
+#
+# The audited SET came from the index (increment 11), but the audited BYTES came
+# from the working tree: `Tree._read` opened `root / rel`. `git commit` commits
+# the INDEX, so the two disagree exactly where it matters. Before this increment,
+# `git add` on a file carrying a GPL body, a foreign SPDX tag and a foreign
+# copyright line, followed by overwriting (or deleting) the working-tree copy,
+# audited PASS with coverage identical to a clean tree's — while the staged blob
+# the commit would publish was read by nothing. Both views are now read; the
+# working-tree one is NOT replaced, because an unstaged paste into a tracked file
+# is what a local pre-commit run is for.
+
+
+def _staged_carrier_tree(tmp_path, label, staged=None, working=cp.FIXTURE_INNOCUOUS,
+                         rel=cp.FIXTURE_STAGED_REL, assume_unchanged=False):
+    """A real git index holding `staged` at `rel`, with `working` on disk."""
+    root = _discovery_tree(tmp_path, label)
+    cp._stage_then_replace(
+        root,
+        rel=rel,
+        staged=staged,
+        working=working,
+        assume_unchanged=assume_unchanged,
+    )
+    return root
+
+
+def test_staged_carrier_with_a_cleaned_working_copy_is_flagged(tmp_path):
+    """The finding this increment exists for: the committable bytes were unread."""
+    root = _staged_carrier_tree(tmp_path, "staged-cleaned")
+
+    # The working-tree copy really is innocuous: the old tool read only this.
+    assert "PUBLIC LICENSE" not in (root / cp.FIXTURE_STAGED_REL).read_text()
+    findings, stats = cp.audit(root)
+    fired = [
+        f
+        for f in findings
+        if f.rule == "foreign-license-text" and f.path == cp.FIXTURE_STAGED_REL
+    ]
+    assert fired, [f.as_dict() for f in findings]
+    # The evidence must name WHICH bytes offended: the remedy differs.
+    assert any("STAGED" in f.detail for f in fired), [f.as_dict() for f in fired]
+    assert stats["entries_whose_staged_content_differs_from_the_working_tree"] == [
+        cp.FIXTURE_STAGED_REL
+    ]
+    assert stats["staged_payloads_content_scanned"] == 1
+
+
+def test_staged_carrier_deleted_from_the_working_tree_is_flagged(tmp_path):
+    """`open()` failed, the entry was counted among the opaque payloads."""
+    root = _staged_carrier_tree(tmp_path, "staged-deleted", working=None)
+
+    findings, stats = cp.audit(root)
+    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_STAGED_REL)
+    assert stats["staged_entries_absent_from_the_working_tree"] == [
+        cp.FIXTURE_STAGED_REL
+    ]
+    # Its working-tree view still reaches no content rule — which is why the
+    # staged view is the only read there is, and why that is disclosed.
+    tree = cp.Tree(root, [])
+    assert tree.scan_mode(cp.FIXTURE_STAGED_REL) == "unreadable"
+    assert tree.scan_mode(cp.FIXTURE_STAGED_REL, cp.STAGED_VIEW) == "decoded"
+    assert findings
+
+
+def test_assume_unchanged_does_not_hide_the_staged_content(tmp_path):
+    """git's own "stop looking" bit sits directly under this rule."""
+    root = _staged_carrier_tree(tmp_path, "staged-assume", assume_unchanged=True)
+
+    # `diff-files` alone reports nothing for an assume-unchanged entry …
+    diff = subprocess.run(
+        ["git", "-C", str(root), "diff-files", "--name-only"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split()
+    assert cp.FIXTURE_STAGED_REL not in diff
+    # … so the divergence set must not be built from it alone.
+    assert cp.FIXTURE_STAGED_REL in cp.list_staged_divergent(root)
+    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_STAGED_REL)
+
+
+def test_skip_worktree_does_not_hide_the_staged_content(tmp_path):
+    """The other index bit with the same effect on `diff-files`."""
+    root = _discovery_tree(tmp_path, "staged-skip")
+    cp._write(root, cp.FIXTURE_STAGED_REL, cp.FIXTURE_GPL_BODY)
+    cp._stage_all(root)
+    cp._write(root, cp.FIXTURE_STAGED_REL, cp.FIXTURE_INNOCUOUS)
+    cp._git(root, "update-index", "--skip-worktree", cp.FIXTURE_STAGED_REL)
+
+    assert cp.FIXTURE_STAGED_REL in cp.list_staged_divergent(root)
+    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_STAGED_REL)
+
+
+def test_unstaged_working_tree_carrier_still_fires(tmp_path):
+    """The regression direction: a SECOND view, not a different one.
+
+    Reading the index INSTEAD of the working tree would close this increment's
+    masking path by opening the one the audit is most used for — the local run
+    before `git add`.
+    """
+    root = _staged_carrier_tree(
+        tmp_path,
+        "staged-unstaged-paste",
+        staged=cp.FIXTURE_INNOCUOUS,
+        working=cp.FIXTURE_GPL_BODY,
+    )
+
+    findings, _ = cp.audit(root)
+    fired = [
+        f
+        for f in findings
+        if f.rule == "foreign-license-text" and f.path == cp.FIXTURE_STAGED_REL
+    ]
+    assert fired, [f.as_dict() for f in findings]
+    assert not any("STAGED" in f.detail for f in fired), (
+        "a working-tree paste was reported as staged content"
+    )
+
+
+def test_innocuous_divergence_is_counted_and_read_but_not_flagged(tmp_path):
+    """An edited working tree is the normal state; a finding there is noise."""
+    root = _staged_carrier_tree(
+        tmp_path,
+        "staged-innocuous",
+        staged=cp.FIXTURE_INNOCUOUS,
+        working=cp.FIXTURE_INNOCUOUS + "# one more line, still nothing\n",
+    )
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_whose_staged_content_differs_from_the_working_tree"] == [
+        cp.FIXTURE_STAGED_REL
+    ]
+    assert stats["staged_payloads_content_scanned"] == 1
+    assert stats["staged_entries_absent_from_the_working_tree"] == []
+
+
+def test_staged_wrapper_member_name_is_judged(tmp_path):
+    """The name layer reads the staged bytes too, where no content signal exists."""
+    root = _staged_carrier_tree(
+        tmp_path,
+        "staged-wrapper",
+        rel=cp.FIXTURE_STAGED_BUNDLE_REL,
+        staged=cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME,
+        working=b"not an archive at all\n",
+    )
+
+    fired = _fired_on(root, cp.FIXTURE_STAGED_BUNDLE_REL)
+    assert "wrapper-member-name" in fired, fired
+
+
+def test_staged_view_is_read_from_the_index_blob(tmp_path):
+    """Unit pin: the blob id is carried for files, and the read uses it."""
+    root = _staged_carrier_tree(tmp_path, "staged-unit")
+
+    blobs = {rel: blob for rel, kind, blob in cp.list_entries(root) if kind == "file"}
+    assert blobs[cp.FIXTURE_STAGED_REL], "no blob id carried for a regular file"
+    staged = cp.read_index_blob(root, blobs[cp.FIXTURE_STAGED_REL])
+    assert b"PUBLIC LICENSE" in staged
+    tree = cp.Tree(root, [])
+    assert "PUBLIC LICENSE" in tree.text(cp.FIXTURE_STAGED_REL, cp.STAGED_VIEW)
+    assert "PUBLIC LICENSE" not in tree.text(cp.FIXTURE_STAGED_REL)
+    # A bad or absent id is "unread", never "clean".
+    assert cp.read_index_blob(root, "") is None
+    assert cp.read_index_blob(root, "not-an-object-id") is None
+
+
+def test_gitlink_is_not_read_as_a_staged_blob(tmp_path):
+    """A gitlink's object is a commit elsewhere, not a blob here."""
+    root = _discovery_tree(tmp_path, "staged-gitlink")
+    cp._git_submodule_entry(root)
+
+    findings, stats = cp.audit(root)
+    divergent = stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    assert cp.FIXTURE_SUBMODULE_REL not in divergent
+    assert "submodule-reference" in _fired_on(root, cp.FIXTURE_SUBMODULE_REL)
+    assert findings
+
+
+def test_staged_divergence_inside_a_declared_scope_exclusion_is_not_counted(tmp_path):
+    """An already-disclosed hole is not re-disclosed under a second name."""
+    root = _discovery_tree(tmp_path, "staged-excluded")
+    cp._patch_manifest(
+        root,
+        lambda d: d["scope_exclusions"].append(
+            {"prefix": ".loom/", "reason": "synthetic declared hole"}
+        ),
+    )
+    cp._write(root, ".loom/notes.md", "declared, unaudited.\n")
+    cp._stage_then_replace(root, rel=".loom/pasted_staged.py")
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_whose_staged_content_differs_from_the_working_tree"] == []
+
+
+def test_scoped_exemption_does_not_carry_across_to_the_staged_view(tmp_path):
+    """Spans are offsets into ONE view's text; the staged view resolves its own.
+
+    The exemption names an occurrence of this project's own copy. A genuinely
+    foreign quotation present only in the STAGED content must still fail — reusing
+    the working-tree spans would exempt whatever happened to sit at those offsets.
+    """
+    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    root = tmp_path / "staged-scoped"
+    root.mkdir(parents=True, exist_ok=True)
+    cp.build_skeleton(root)
+    cp._write(
+        root,
+        "docs/own_copy.md",
+        cp.FIXTURE_OWN_COPY_DOC + cp.FIXTURE_FOREIGN_COPY_LINE,
+    )
+    cp._scoped_exemption(root, occ)
+    cp._stage_all(root)
+    # The working-tree copy keeps only the exempted occurrence; the staged blob
+    # still carries the foreign quotation beside it.
+    cp._write(root, "docs/own_copy.md", cp.FIXTURE_OWN_COPY_DOC)
+
+    findings, stats = cp.audit(root)
+    assert "docs/own_copy.md" in (
+        stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    )
+    fired = [
+        f
+        for f in findings
+        if f.rule == "self-declared-quotation" and f.path == "docs/own_copy.md"
+    ]
+    assert fired, [f.as_dict() for f in findings]
+    assert any("STAGED" in f.detail for f in fired), [f.as_dict() for f in fired]
+
+
+def test_scoped_exemption_still_covers_a_divergent_file_it_names(tmp_path):
+    """The false-positive direction of the same mechanism.
+
+    When the staged content carries the exempted occurrence and nothing else,
+    re-resolving the spans must clear it — an exemption that stopped applying to
+    the committable bytes would make an ordinary edit unanswerable.
+    """
+    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    root = tmp_path / "staged-scoped-clean"
+    root.mkdir(parents=True, exist_ok=True)
+    cp.build_skeleton(root)
+    cp._write(root, "docs/own_copy.md", cp.FIXTURE_OWN_COPY_DOC)
+    cp._scoped_exemption(root, occ)
+    cp._stage_all(root)
+    cp._write(root, "docs/own_copy.md", "Leading sentence.\n\n" + cp.FIXTURE_OWN_COPY_DOC)
+
+    findings, stats = cp.audit(root)
+    assert "docs/own_copy.md" in (
+        stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    )
+    assert not findings, [f.as_dict() for f in findings]
+
+
+def test_staged_divergence_count_is_printed_even_when_zero(tmp_path):
+    """"Nothing diverges" and "the committable bytes were never read" differ."""
+    root = _discovery_tree(tmp_path, "staged-zero-divergence")
+    cp._stage_all(root)
+
+    findings, stats = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    assert stats["entries_whose_staged_content_differs_from_the_working_tree"] == []
+
+    proc = run_tool("--root", str(root))
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "staged content not known to match the working tree: 0 entries" in proc.stdout
+
+
+def test_staged_report_names_the_divergent_paths(tmp_path):
+    """A count alone is not answerable: the report names what it also read."""
+    root = _staged_carrier_tree(tmp_path, "staged-report", working=None)
+
+    proc = run_tool("--root", str(root))
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "staged content not known to match the working tree: 1 entries" in proc.stdout
+    assert f"also audited (staged blob): {cp.FIXTURE_STAGED_REL}" in proc.stdout
+    assert "not present in the working tree" in proc.stdout
+    assert "STAGED" in proc.stdout
+
+
+def test_real_tree_discloses_its_staged_content_boundary():
+    """Coverage reported separately from agreement, on the committed tree.
+
+    No assertion that the number is zero: a developer's working tree legitimately
+    diverges from its index mid-edit, and in CI (a fresh checkout) it is zero. The
+    claim under test is that the run REPORTS it either way.
+    """
+    _, stats = cp.audit(REPO)
+    assert "entries_whose_staged_content_differs_from_the_working_tree" in stats
+    assert isinstance(
+        stats["entries_whose_staged_content_differs_from_the_working_tree"], list
+    )
+    assert isinstance(stats["staged_entries_absent_from_the_working_tree"], list)
+    assert stats["staged_payloads_content_scanned"] <= len(
+        stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    )
+
+
+def test_staged_content_boundary_is_declared_in_limits():
+    """A limit that is not printed is not declared."""
+    proc = run_tool("--limits")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "entries_whose_staged_content_differs_from_the_working_tree" in proc.stdout
+    assert "assume-unchanged" in proc.stdout
+    assert "staged_entries_absent_from_the_working_tree" in proc.stdout
+
+
+def test_staged_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    cases = cp._staged_controls()
+    assert cases, "the staged-content controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cases:
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+def test_bookkeeping_groups_fail_loudly_on_a_staged_only_record(tmp_path):
+    """The declared split: groups 1–3 read the working-tree copy.
+
+    Only the carriage rules read both views. That is safe in the one direction
+    that matters: a record present in the index and absent on disk must produce a
+    finding, never a silent pass that lets the bookkeeping drift.
+    """
+    root = _discovery_tree(tmp_path, "staged-only-record")
+    cp._stage_all(root)
+    (root / "decision-records" / "0001-example.md").unlink()
+
+    findings, _ = cp.audit(root)
+    assert any(f.rule == "record-header-missing" for f in findings), [
+        f.as_dict() for f in findings
+    ]

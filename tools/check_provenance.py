@@ -31,7 +31,10 @@ The audit has four groups of checks:
      row (or, for the one exemptible rule, by an explicit exemption with a
      reason — optionally scoped to named *occurrences* of the quotation
      vocabulary in one file, so a later foreign quotation elsewhere in the
-     same file still fails). The tripwires are deliberately high-precision:
+     same file still fails). These read BOTH byte sources an entry can have —
+     its working-tree copy and, when the two are not known to match, its
+     STAGED blob, which is what `git commit` publishes (increment 14). The
+     tripwires are deliberately high-precision:
        * `foreign-license-text`        — foreign license body, non-Apache
                                          SPDX tag, or foreign copyright line.
                                          EVERY notice in a file is inspected;
@@ -188,7 +191,11 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     and admitting everything would turn every render into garbage findings on a
     non-exemptible rule. A wide run must also be at least
     `MIN_WIDE_RUN_UNITS` code units long, the same declared floor the ASCII
-    harvest applies in bytes.
+    harvest applies in bytes. All four of those per-file counts describe the
+    WORKING-TREE view of each entry; a second, staged view of the same entry is
+    read by the same three kinds of text and counted on its own line
+    (`staged_payloads_content_scanned`, increment 14), so a file whose staged
+    bytes were read is not confused with one whose working copy was.
   * The audited SET is the git INDEX, not the working tree. An entry present on
     disk but not in the git index is scanned by no rule at all — until increment 11 that
     was silent, and an unattributed file carrying a GPL body, a foreign SPDX tag
@@ -208,6 +215,42 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     inside a declared scope exclusion is not counted here because it is already
     disclosed as a hole. What this does NOT reach is history: whether a file was
     ever committed and later removed is outside every rule, then and now.
+  * The audited SET came from the index, but until increment 14 the audited
+    BYTES came from the working tree — `root / rel`, opened with `open()`. The
+    two disagree exactly when it matters: `git commit` commits the INDEX. So
+    `git add` on a file carrying a GPL body, a foreign SPDX tag and a foreign
+    copyright line, followed by overwriting the working-tree copy with innocuous
+    text (or deleting it), audited **PASS** with coverage identical to a clean
+    tree's, while the staged blob — the bytes the commit would publish — was read
+    by nothing. Both byte sources are now read for any entry whose index blob is
+    not known to equal its working-tree bytes: the working-tree view, because an
+    unstaged paste into a tracked file must keep firing before a `git add` (that
+    local run is what the audit is most used for), and the STAGED view, read from
+    the index blob. A finding from the staged view says so in its evidence, since
+    "the working copy is clean, the committable bytes are not" changes what the
+    author must do. The divergence is reported on every run as
+    `entries_whose_staged_content_differs_from_the_working_tree` (printed even
+    when zero, naming the paths), with
+    `staged_entries_absent_from_the_working_tree` for the subset whose only read
+    is the staged one. The divergence set is git's own index-vs-working-tree
+    comparison, so a difference a CRLF/clean filter introduces is not called
+    divergence — and when it is, the only cost is an extra scan of the
+    committable bytes. Added to it are the entries git was TOLD not to compare:
+    `assume-unchanged` and `skip-worktree` both make `diff-files` report an entry
+    clean however its working copy differs, so their staged bytes are read rather
+    than assumed (`staged/assume-unchanged-does-not-stop-the-staged-read`). Three
+    boundaries stay declared here: a gitlink has no blob in this repository, so
+    its staged content is by-reference in both views exactly as before
+    (`staged/a-gitlink-is-not-read-as-a-staged-blob`); a divergent path inside a
+    declared scope exclusion is not counted, for the same reason increment 11
+    does not count one; and the audit still reads only what the index and the
+    working tree hold NOW — a blob reachable from history but from neither of
+    those is outside every rule, as it was before. The CARRIAGE rules (group 4)
+    are what read both views; the bookkeeping groups (1–3: record headers, the
+    index table, manifest corroboration) still read the working-tree copy, which
+    is safe in the one direction that matters — a record or manifest present in
+    the index and absent or altered on disk produces a loud finding
+    (`record-header-missing`, a stale/uncorroborated row), never a silent pass.
   * Every masking path closed here was found by inspection, one increment at a
     time. That two specific paths, then five, then eight, then four more were
     closed is not evidence that no further path exists — only that these are
@@ -248,6 +291,15 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     The tell here was neither coverage nor order but ANSWERABILITY: each of
     these trees audited clean while referencing a whole other repository, and
     one of them did so only on the machines where that repository was absent.
+    Increment 14 went below increment 11 in the same direction:
+    increment 11 settled WHICH ENTRIES are enumerated, and the layer under it is
+    WHICH BYTES an enumerated entry is read as. Increment 7 had already moved the
+    discovery rules onto the index (an entry's mode, a gitlink's pinned commit);
+    the content rules never followed, so for seven increments the tool judged the
+    working-tree copy while the index held what a commit would publish. The tell
+    was not a finding or a count — both were identical to a clean tree's — but the
+    mismatch between two layers of the same tool, one reading the index and one
+    reading the disk.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -301,7 +353,18 @@ tree must still print the count, as zero; an ignored path and one inside a
 declared scope exclusion must be neither counted nor audited; a non-git tree
 (where every file is walked) must report zero AND still flag the carrier; and
 under `--include-untracked` the same carrier must produce a
-`foreign-license-text` finding while the ignored path stays out.
+`foreign-license-text` finding while the ignored path stays out. The `staged/*`
+controls (increment 14) assert on findings AND coverage together, because the
+increment has two halves that must both hold: a carrier staged and then cleaned
+on disk, one staged and then deleted, one hidden behind `assume-unchanged`, and a
+staged wrapper whose member NAME is the only signal must each produce a finding
+that NAMES the staged content as its source; while an unstaged paste into a
+tracked file must still fire as a working-tree finding (reverting the
+working-tree read in favour of the index read fails exactly this one), a fully
+staged tree must print the count as zero, an ordinary innocuous edit must be
+counted and read but never flagged, a divergence inside a declared scope
+exclusion must be neither counted nor read, and a gitlink must stay a
+by-reference entry rather than becoming a staged blob.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -1663,7 +1726,10 @@ def list_entries(root: Path):
                 blob = fields[1] if len(fields) > 1 else ""
                 kind = GIT_MODE_KINDS.get(mode, "file")
                 # Conflict stages repeat a path; the first stage is enough.
-                seen.setdefault(rel, (kind, blob if kind == "gitlink" else ""))
+                # The object id is kept for EVERY kind, not just gitlinks: for a
+                # blob it is how the STAGED bytes are read (increment 14), and
+                # for a gitlink it is the commit the entry pins (increment 7).
+                seen.setdefault(rel, (kind, blob))
             return sorted((rel, kind, blob) for rel, (kind, blob) in seen.items())
     except (OSError, subprocess.CalledProcessError):
         pass
@@ -1742,6 +1808,125 @@ def _is_git_checkout(root: Path):
         return Path(top).resolve() == Path(root).resolve()
     except OSError:
         return False
+
+
+# --- the staged-content boundary (increment 14) -------------------------------
+#
+# The layer below enumeration is not WHICH entries are read but WHICH BYTES an
+# enumerated entry is read as. Increment 7 moved the discovery rules onto the
+# INDEX (an entry's mode, a gitlink's pinned commit are read from `ls-files -s`),
+# and increment 11 disclosed that the audited SET is the index. The CONTENT rules
+# never followed: `Tree._read` opened `root / rel` — the WORKING TREE — so the
+# bytes judged were not the bytes the index holds, and `git commit` commits the
+# index. Two shapes audited **PASS** on a tree whose staged blob carried a
+# complete GPL body, a foreign SPDX tag and a foreign copyright line:
+#
+#   * `git add carrier.py` and then overwrite the working-tree copy with
+#     innocuous text (no re-add). Every content rule read the innocuous copy;
+#     the commit published the body. Coverage printed nothing at all — the file
+#     count, `files_not_content_scanned` and the un-indexed list were identical
+#     to the clean tree's.
+#   * `git add carrier.py` and then delete the working-tree copy. `ls-files`
+#     still names it, `open()` raised `OSError`, the entry was recorded
+#     "unreadable" and counted among the renders in `files_not_content_scanned`
+#     — the same place increment 7's gitlink hid.
+#
+# So the audit now reads BOTH views of an entry whose staged blob and
+# working-tree bytes differ: the working-tree view (unchanged — an unstaged
+# paste into a tracked file must keep firing, which is what the audit is for
+# before a `git add`) and the STAGED view, read from the index blob with
+# `git cat-file`. Findings from the staged view say so in their evidence, and
+# the divergence is reported as coverage on every run, printed even when zero.
+#
+# The divergence set is git's own index-vs-working-tree comparison
+# (`diff-files`), so a legitimate difference introduced by a CRLF/clean filter
+# is not called divergence — and when it is, the only cost is an extra scan of
+# the committable bytes. Added to it are the entries git was TOLD not to
+# compare: `assume-unchanged` (lowercase `ls-files -v` tag) and `skip-worktree`
+# (`S`) both make `diff-files` report an entry clean no matter what its working
+# copy holds, which is a "stop looking" switch sitting exactly under this rule.
+# Those are audited from the index unconditionally rather than trusted.
+
+# How many divergent paths the text report names individually (the COUNT is
+# always printed; `--json` carries the full list either way).
+STAGED_PATHS_LISTED = 10
+
+# The two byte sources a single entry can be read as.
+WORKTREE_VIEW = "working tree"
+STAGED_VIEW = "staged"
+
+# `git ls-files -v` tags for entries git has been told not to compare against
+# the working tree. A lowercase tag means assume-unchanged for any state.
+SKIP_WORKTREE_TAG = "S"
+
+
+def _view_label(rel, view):
+    """`rel`, naming the byte source when it is not the working-tree copy.
+
+    Used wherever coverage or a finding quotes a path: "which bytes offended" is
+    not answerable from the path alone once an entry has two views.
+    """
+    return rel if view == WORKTREE_VIEW else f"{rel} [{view} blob]"
+
+
+def list_staged_divergent(root: Path):
+    """Index entries whose STAGED bytes may differ from the working tree's.
+
+    `git diff-files` answers the question directly and with git's own filter /
+    CRLF semantics. Union-ed with the entries git was told not to compare
+    (`assume-unchanged`, `skip-worktree`), whose staged bytes are therefore
+    unknown here and are read rather than assumed clean.
+
+    Returns `[]` for a tree that is not a git checkout, where there is no index
+    to diverge from: `_walk_entries` has already read every file in it.
+    """
+    if not _is_git_checkout(root):
+        return []
+    divergent = set()
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "diff-files", "--name-only", "-z"],
+            capture_output=True,
+            check=True,
+        )
+        divergent.update(r for r in proc.stdout.decode("utf-8", "replace").split("\0") if r)
+    except (OSError, subprocess.CalledProcessError):
+        return []
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-v", "-z"],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return sorted(divergent)
+    for record in proc.stdout.decode("utf-8", "replace").split("\0"):
+        if len(record) < 3 or record[1] != " ":
+            continue
+        tag, rel = record[0], record[2:]
+        if tag.islower() or tag == SKIP_WORKTREE_TAG:
+            divergent.add(rel)
+    return sorted(divergent)
+
+
+def read_index_blob(root: Path, oid: str):
+    """The staged bytes of blob `oid`, or None when they cannot be read.
+
+    None is "this view yielded nothing", never "this view is clean": the caller
+    records it as an unreadable scan, and a view that was never read is reported
+    separately from one that was read and carried no signal.
+    """
+    if not oid or not re.fullmatch(r"[0-9a-f]{40,64}", oid):
+        return None
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "cat-file", "blob", oid],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return proc.stdout
 
 
 def _walk_entries(root: Path):
@@ -1836,6 +2021,14 @@ class Tree:
         self.gitlink_commits = {
             rel: blob for rel, kind, blob in entries if kind == "gitlink" and blob
         }
+        # Blob ids of the STAGED content of every entry that HAS content of its
+        # own (increment 14). A gitlink's object is a commit in another
+        # repository, not a blob here, so it is deliberately absent: its
+        # by-reference carriage is judged from the index at the discovery layer
+        # and its bytes are outside this audit in both views.
+        self.index_blobs = {
+            rel: blob for rel, kind, blob in entries if blob and kind != "gitlink"
+        }
         self.submodule_urls = parse_gitmodules(root)
         self.excluded = {}
         # Gitlinks under a declared exclusion prefix (increment 13). A declared
@@ -1862,6 +2055,18 @@ class Tree:
                 self.files.append(rel)
             else:
                 self.excluded.setdefault(hit, []).append(rel)
+        # In-scope entries whose staged bytes are not known to equal the working
+        # tree's, and which therefore get a SECOND content view (increment 14).
+        # A path inside a declared scope exclusion is left out for the same
+        # reason increment 11 leaves one out of its count: it is already
+        # disclosed as a hole, and counting it here would read as coverage the
+        # audit does not have.
+        self.staged_divergent = list_staged_divergent(root)
+        self.staged_views = [
+            rel
+            for rel in self.staged_divergent
+            if rel in self.index_blobs and self.excluded_by(rel) is None
+        ]
         self._text_cache = {}
         self._lower_cache = {}
         # How each file's text was obtained, and which scans were cut short.
@@ -1916,8 +2121,24 @@ class Tree:
         """"file" | "symlink" | "gitlink" — what sort of entry `rel` is."""
         return self.kinds.get(rel, "file")
 
-    def text(self, rel):
+    def staged_only(self):
+        """Divergent entries with NO working-tree copy at all (increment 14).
+
+        Reported separately because this is the shape whose working-tree view
+        reaches no content rule: `open()` fails, the entry is recorded
+        "unreadable" and counted among the opaque payloads, while its staged
+        blob is the content a commit would publish.
+        """
+        return [rel for rel in self.staged_views if not os.path.lexists(self.root / rel)]
+
+    def text(self, rel, view=WORKTREE_VIEW):
         """Text for the content rules, or None when the entry yields none.
+
+        `view` selects the BYTE SOURCE (increment 14): the working-tree file, or
+        the entry's staged blob. Both are read for an entry whose staged bytes
+        and working-tree bytes differ — the working-tree view because an
+        unstaged paste must still fire before a `git add`, the staged view
+        because the index is what `git commit` publishes.
 
         A file this returns None for is scanned by NOTHING except the
         extension tripwires — so every step below is a detection surface, not a
@@ -1943,28 +2164,39 @@ class Tree:
         `_scan_modes` and reported as coverage — a strings-only scan is weaker
         than a decode, and says so, rather than being counted as a full read.
         """
-        if rel in self._text_cache:
-            return self._text_cache[rel]
-        value, mode, truncated, names, wide = self._read(rel)
-        self._scan_modes[rel] = mode
-        self._carried_names[rel] = tuple(names)
-        self._wide_runs[rel] = wide
+        key = (rel, view)
+        if key in self._text_cache:
+            return self._text_cache[key]
+        value, mode, truncated, names, wide = self._read(rel, view)
+        self._scan_modes[key] = mode
+        self._carried_names[key] = tuple(names)
+        self._wide_runs[key] = wide
         if truncated:
-            self._truncated.add(rel)
-        self._text_cache[rel] = value
+            self._truncated.add(_view_label(rel, view))
+        self._text_cache[key] = value
         return value
 
-    def _read(self, rel):
-        """(text|None, scan mode, truncated, member names, wide runs) for an entry."""
-        try:
-            with (self.root / rel).open("rb") as handle:
-                head = handle.read(BINARY_SNIFF_BYTES)
-                encoding = sniff_encoding(head)
-                raw = head + handle.read()
-        except OSError:
-            # A by-reference entry (a gitlink, a symlink to a directory) and an
-            # unreadable file both land here; the discovery layer judges those.
-            return None, "unreadable", False, (), 0
+    def _read(self, rel, view=WORKTREE_VIEW):
+        """(text|None, scan mode, truncated, member names, wide runs) for a view."""
+        if view == STAGED_VIEW:
+            raw = read_index_blob(self.root, self.index_blobs.get(rel, ""))
+            if raw is None:
+                # The index holds no blob for this entry (a gitlink), or git
+                # could not produce it. Recorded as unread, never as clean.
+                return None, "unreadable", False, (), 0
+            encoding = sniff_encoding(raw[:BINARY_SNIFF_BYTES])
+        else:
+            try:
+                with (self.root / rel).open("rb") as handle:
+                    head = handle.read(BINARY_SNIFF_BYTES)
+                    encoding = sniff_encoding(head)
+                    raw = head + handle.read()
+            except OSError:
+                # A by-reference entry (a gitlink, a symlink to a directory), a
+                # staged entry whose working copy was deleted, and an unreadable
+                # file all land here. The discovery layer judges the first; the
+                # second is answered by its staged view (increment 14).
+                return None, "unreadable", False, (), 0
         if encoding is not None:
             value = raw.decode(encoding, "replace")
             # A stray NUL survives the narrow decode as U+0000 and would split a
@@ -2005,13 +2237,13 @@ class Tree:
         value, wide = harvest_payload(raw)
         return (value or None), ("strings" if value else "none"), truncated, (), wide
 
-    def scan_mode(self, rel):
+    def scan_mode(self, rel, view=WORKTREE_VIEW):
         """"decoded" | "unwrapped" | "strings" | "none" | "unreadable"."""
-        if rel not in self._scan_modes:
-            self.text(rel)
-        return self._scan_modes.get(rel, "unreadable")
+        if (rel, view) not in self._scan_modes:
+            self.text(rel, view)
+        return self._scan_modes.get((rel, view), "unreadable")
 
-    def carried_names(self, rel):
+    def carried_names(self, rel, view=WORKTREE_VIEW):
         """Member names the wrapper at `rel` carries inside it (may be empty).
 
         Forces the read, like `scan_mode`: the unwrap that recovers these names
@@ -2020,25 +2252,30 @@ class Tree:
         budget carry no names here, and that partial read is disclosed as a
         TRUNCATED payload scan rather than counted as a pass.
         """
-        if rel not in self._carried_names:
-            self.text(rel)
-        return self._carried_names.get(rel, ())
+        if (rel, view) not in self._carried_names:
+            self.text(rel, view)
+        return self._carried_names.get((rel, view), ())
 
-    def wide_runs(self, rel):
+    def wide_runs(self, rel, view=WORKTREE_VIEW):
         """How many wide-encoded runs this entry's payload yielded (increment 10).
 
         Forces the read, like `scan_mode`. Zero for a decoded file — a file the
         sniff admits is read whole, in its own encoding, by every content rule.
         """
-        if rel not in self._wide_runs:
-            self.text(rel)
-        return self._wide_runs.get(rel, 0)
+        if (rel, view) not in self._wide_runs:
+            self.text(rel, view)
+        return self._wide_runs.get((rel, view), 0)
 
     def truncated_scans(self):
-        """Paths whose payload scan hit the inflation/depth budget."""
+        """Paths whose payload scan hit the inflation/depth budget.
+
+        A staged view carries its view in the label, so a truncated read of the
+        committable bytes is not reported as if the working-tree copy had been
+        the one cut short.
+        """
         return sorted(self._truncated)
 
-    def lower(self, rel):
+    def lower(self, rel, view=WORKTREE_VIEW):
         """Lowercased text — the cheap prefilter for every signal.
 
         Cached for ordinary decoded files. A payload-derived text (an inflated
@@ -2046,12 +2283,13 @@ class Tree:
         unwrapped payload roughly doubled the audit's peak memory, and
         `str.lower()` on the few large ones costs milliseconds.
         """
-        if rel in self._lower_cache:
-            return self._lower_cache[rel]
-        text = self.text(rel)
+        key = (rel, view)
+        if key in self._lower_cache:
+            return self._lower_cache[key]
+        text = self.text(rel, view)
         value = None if text is None else text.lower()
-        if value is None or self._scan_modes.get(rel) == "decoded":
-            self._lower_cache[rel] = value
+        if value is None or self._scan_modes.get(key) == "decoded":
+            self._lower_cache[key] = value
         return value
 
 
@@ -2585,9 +2823,20 @@ def check_manifest(tree: Tree, manifest, records, rows):
                     if current is not None and current["spans"] is None:
                         continue  # an unscoped exemption already covers the file
                     if spans is None or current is None:
-                        exemptions[rel][rule] = {"reason": reason, "spans": spans}
+                        # The occurrence LITERALS travel with the resolved spans:
+                        # a second byte view of the same file needs its own
+                        # offsets, and only the literals can produce them
+                        # (increment 14).
+                        exemptions[rel][rule] = {
+                            "reason": reason,
+                            "spans": spans,
+                            "occurrences": None if occurrences is None else list(occurrences),
+                        }
                     else:
                         current["spans"].extend(spans)
+                        current["occurrences"] = (current.get("occurrences") or []) + list(
+                            occurrences or []
+                        )
 
     for index, item in enumerate(manifest.get("scope_exclusions", []) or []):
         label = f"scope_exclusions[{index}]"
@@ -2914,32 +3163,46 @@ def _structural_tripwire_rules(tree: Tree, rel, entry):
     return rules
 
 
-def tripwire_hits(tree: Tree, rel):
+def tripwire_hits(tree: Tree, rel, view=WORKTREE_VIEW):
     """[(rule, evidence)] for content signals of third-party carriage.
 
     Each signal is gated behind a cheap lowercase substring prefilter; the
     regexes below only run on files that could match. The prefilter tokens
     must stay a SUPERSET of what each regex can match, or the rule silently
     stops firing — `--negative-control` is what catches that mistake.
+
+    `view` selects which bytes of `rel` are judged (increment 14). The
+    structural signals — the by-reference kinds and the extension sets — are
+    properties of the ENTRY and of its path, identical in both views, so they
+    are evaluated once, on the working-tree pass; a staged view runs the content
+    signals and the wrapper-member-name signal, which are the ones that read
+    bytes.
     """
     hits = []
     # The discovery layer first: an entry that carries its content by reference
     # has no bytes of its own for any signal below to read.
     kind = tree.kind(rel)
-    if kind == "gitlink":
+    if view != WORKTREE_VIEW:
+        if kind == "gitlink":
+            # A gitlink's object is a commit in another repository, not a blob
+            # here: there is no staged payload to read. Its carriage is judged
+            # at the discovery layer on the working-tree pass.
+            return hits
+    elif kind == "gitlink":
         # Nothing further applies: a gitlink has no extension and no text.
         return [("submodule-reference", submodule_evidence(tree, rel))]
-    if kind == "symlink":
+    elif kind == "symlink":
         escape = symlink_escape(tree, rel)
         if escape is not None:
             hits.append(("external-symlink-target", escape))
         # Deliberately NOT a return: `text()` follows the link, so a target
         # that does resolve is still read by every content rule below.
-    suffix = _extension_suffix(rel)
-    if suffix in UPSTREAM_ASSET_EXTS:
-        hits.append(("upstream-asset-extension", f"extension {suffix}"))
-    if suffix in FOREIGN_SOURCE_EXTS:
-        hits.append(("foreign-source-language", f"extension {suffix}"))
+    if view == WORKTREE_VIEW:
+        suffix = _extension_suffix(rel)
+        if suffix in UPSTREAM_ASSET_EXTS:
+            hits.append(("upstream-asset-extension", f"extension {suffix}"))
+        if suffix in FOREIGN_SOURCE_EXTS:
+            hits.append(("foreign-source-language", f"extension {suffix}"))
     # The names a wrapper carries INSIDE it, before the content rules: a member
     # that carries no marker at all (a `.wt` payload, a stripped `.cpp`) reaches
     # none of them, and `text()` is None for a wrapper whose members are all
@@ -2947,7 +3210,7 @@ def tripwire_hits(tree: Tree, rel):
     # the whole class unanswered. `carried_names` forces that read itself.
     offenders = [
         (label, signal)
-        for label in tree.carried_names(rel)
+        for label in tree.carried_names(rel, view)
         for signal in member_name_signals(label)
     ]
     if offenders:
@@ -2960,10 +3223,10 @@ def tripwire_hits(tree: Tree, rel):
         if len(offenders) > 1:
             evidence += f", and {len(offenders) - 1} more member name(s)"
         hits.append(("wrapper-member-name", evidence))
-    text = tree.text(rel)
+    text = tree.text(rel, view)
     if text is None:
         return hits
-    low = tree.lower(rel)
+    low = tree.lower(rel, view)
     if rel not in OWN_LICENSE_PATHS:
         for name, prefilter, regex in FOREIGN_LICENSE_BODY_RES:
             if prefilter not in low:
@@ -3023,47 +3286,109 @@ def _snippet(text, match, width=70):
     return re.sub(r"\s+", " ", text[start:end]).strip()
 
 
+def live_quotation_spans(text, occurrences):
+    """Spans of `occurrences` in `text` that actually contain a quotation marker.
+
+    The same resolution `check_manifest` performs against the working-tree text,
+    re-run here for a staged view (increment 14): an exemption names occurrences
+    of the quotation vocabulary, and a span computed from one view's offsets
+    means nothing in the other's. An occurrence that is absent from the view
+    being judged contributes no span, so its markers are NOT exempt there —
+    which is the conservative direction on a scoped exemption.
+    """
+    markers = quotation_marker_matches(text)
+    spans = []
+    for occurrence in occurrences or ():
+        for match in occurrence_regex(occurrence).finditer(text):
+            if any(
+                match.start() <= mk.start() and mk.end() <= match.end()
+                for _, mk in markers
+            ):
+                spans.append((match.start(), match.end()))
+    return spans
+
+
+def _view_tripwire_findings(tree: Tree, rel, view, coverage, exemptions, counts):
+    """Findings for one BYTE VIEW of one entry, and the hits it contributes."""
+    findings = []
+    staged = view != WORKTREE_VIEW
+    for rule, evidence in tripwire_hits(tree, rel, view):
+        counts[rule] += 1
+        if rule in coverage.get(rel, ()):
+            continue
+        exemption = exemptions.get(rel, {}).get(rule)
+        if exemption and exemption["spans"] is None:
+            continue
+        if exemption:
+            # Occurrence-scoped: exempt only markers inside a named span. The
+            # spans resolved for the working-tree text do not address any other
+            # view's offsets, so a staged view re-resolves them against its own
+            # bytes rather than reusing them.
+            spans = (
+                live_quotation_spans(
+                    tree.text(rel, view) or "", exemption.get("occurrences")
+                )
+                if staged
+                else exemption["spans"]
+            )
+            outside = [
+                (name, match)
+                for name, match in quotation_marker_matches(tree.text(rel, view) or "")
+                if not any(
+                    start <= match.start() and match.end() <= end
+                    for start, end in spans
+                )
+            ]
+            if not outside:
+                continue
+            name, match = outside[0]
+            evidence = (
+                f"{name}: {_snippet(tree.text(rel, view), match)} (outside the "
+                "occurrence(s) its exemption names)"
+            )
+        if staged:
+            # The path alone does not say which bytes offended, and the answer
+            # changes what the author must do: the working-tree copy is clean,
+            # the STAGED one is not, and a commit would publish the staged one.
+            evidence = (
+                f"in the STAGED content ({view} blob), not in the working-tree "
+                f"copy — {evidence}"
+            )
+        findings.append(
+            Finding(
+                rule,
+                rel,
+                f"{RULES[rule]}: {evidence} — add a row to {MANIFEST_REL} "
+                "(with its decision record)"
+                + (
+                    f", or an explicit '{rule}' exemption with a reason"
+                    if rule in EXEMPTIBLE_RULES
+                    else ""
+                ),
+            )
+        )
+    return findings
+
+
 def check_tripwires(tree: Tree, coverage, exemptions):
+    """Tripwire findings over every byte view of every in-scope entry.
+
+    Two passes, not one (increment 14): the working-tree bytes of each in-scope
+    entry, then the STAGED bytes of each entry whose index blob is not known to
+    match them. A provenance row or exemption attached to the path answers both
+    views — it is the file's third-party content that is being declared — but the
+    occurrence spans of a scoped exemption are re-resolved per view.
+    """
     findings = []
     counts = {rule: 0 for rule in TRIPWIRE_RULES}
     for rel in tree.files:
-        for rule, evidence in tripwire_hits(tree, rel):
-            counts[rule] += 1
-            if rule in coverage.get(rel, ()):
-                continue
-            exemption = exemptions.get(rel, {}).get(rule)
-            if exemption and exemption["spans"] is None:
-                continue
-            if exemption:
-                # Occurrence-scoped: exempt only markers inside a named span.
-                outside = [
-                    (name, match)
-                    for name, match in quotation_marker_matches(tree.text(rel) or "")
-                    if not any(
-                        start <= match.start() and match.end() <= end
-                        for start, end in exemption["spans"]
-                    )
-                ]
-                if not outside:
-                    continue
-                name, match = outside[0]
-                evidence = (
-                    f"{name}: {_snippet(tree.text(rel), match)} (outside the "
-                    "occurrence(s) its exemption names)"
-                )
-            findings.append(
-                Finding(
-                    rule,
-                    rel,
-                    f"{RULES[rule]}: {evidence} — add a row to {MANIFEST_REL} "
-                    "(with its decision record)"
-                    + (
-                        f", or an explicit '{rule}' exemption with a reason"
-                        if rule in EXEMPTIBLE_RULES
-                        else ""
-                    ),
-                )
-            )
+        findings += _view_tripwire_findings(
+            tree, rel, WORKTREE_VIEW, coverage, exemptions, counts
+        )
+    for rel in tree.staged_views:
+        findings += _view_tripwire_findings(
+            tree, rel, STAGED_VIEW, coverage, exemptions, counts
+        )
     return findings, counts
 
 
@@ -3135,6 +3460,23 @@ def audit(root: Path, include_untracked=False):
         "untracked_entries_audited": (
             len(tree.untracked) if tree.include_untracked else 0
         ),
+        # The STAGED-CONTENT boundary (increment 14): entries whose index blob is
+        # not known to equal their working-tree bytes, and whose committable
+        # bytes were therefore read as a SECOND view. Reported as the paths and
+        # printed even when zero, for the same reason as the index boundary
+        # above: "nothing diverges here" and "the committable bytes were never
+        # read" must not look alike.
+        "entries_whose_staged_content_differs_from_the_working_tree": list(
+            tree.staged_views
+        ),
+        "staged_payloads_content_scanned": sum(
+            1
+            for rel in tree.staged_views
+            if tree.scan_mode(rel, STAGED_VIEW) not in ("none", "unreadable")
+        ),
+        # The subset with no working-tree copy at all: their working-tree view
+        # reaches no content rule, so the staged view is the only read there is.
+        "staged_entries_absent_from_the_working_tree": tree.staged_only(),
         "entries_by_reference": {
             kind: sum(1 for rel in tree.files if tree.kind(rel) == kind)
             for kind in ("symlink", "gitlink")
@@ -3220,6 +3562,25 @@ def report(findings, stats, root, as_json=False):
                 f"      … and {len(unindexed) - UNINDEXED_PATHS_LISTED} more "
                 "(full list in --json)"
             )
+    divergent = stats["entries_whose_staged_content_differs_from_the_working_tree"]
+    absent = stats["staged_entries_absent_from_the_working_tree"]
+    print(
+        f"  staged content not known to match the working tree: "
+        f"{len(divergent)} entries — their index blobs (what a commit would "
+        f"publish) were read as a second view, "
+        f"{stats['staged_payloads_content_scanned']} of them content-scanned; "
+        f"{len(absent)} have no working-tree copy at all"
+    )
+    for rel in divergent[:STAGED_PATHS_LISTED]:
+        print(
+            f"      also audited (staged blob): {rel}"
+            + (" — not present in the working tree" if rel in absent else "")
+        )
+    if len(divergent) > STAGED_PATHS_LISTED:
+        print(
+            f"      … and {len(divergent) - STAGED_PATHS_LISTED} more "
+            "(full list in --json)"
+        )
     for rel in stats["payload_scans_truncated"]:
         print(
             f"  TRUNCATED payload scan (unwrap budget/depth reached, NOT fully "
@@ -5372,6 +5733,257 @@ def _coverage_include_untracked_controls():
     ]
 
 
+# --- staged-content controls, increment 14 ------------------------------------
+#
+# These use the coverage runner (findings AND stats), because the increment has
+# two halves that must both hold: the staged view must FIRE on a carrier the
+# working-tree copy hides, and the divergence must be DISCLOSED even when the
+# staged bytes are clean. A control that only checked findings would pass on a
+# tool that read the index blob and said nothing about having done so; one that
+# only checked coverage would pass on a tool that counted the divergence and
+# never read it.
+FIXTURE_STAGED_REL = "model/pasted_staged.py"
+FIXTURE_STAGED_BUNDLE_REL = "compiler/golden/staged_bundle.dat"
+FIXTURE_INNOCUOUS = "# nothing third-party here\n"
+
+
+def _stage_all(root: Path):
+    """Make `root` a git checkout with every file in it staged (no commit).
+
+    No commit is needed — and none is made, so no committer identity is
+    required: `git commit` publishes the INDEX, which is exactly the content
+    under test here.
+    """
+    _git(root, "init", "-q")
+    # -f for the same reason the other git fixtures use it: a host-level
+    # core.excludesFile must not silently drop skeleton files.
+    _git(root, "add", "-A", "-f")
+
+
+def _stage_then_replace(root: Path, rel=FIXTURE_STAGED_REL, staged=None,
+                        working=FIXTURE_INNOCUOUS, assume_unchanged=False):
+    """Stage `staged` at `rel`, then put `working` (or nothing) on disk.
+
+    `working=None` deletes the working-tree copy. `assume_unchanged` sets the
+    index bit that makes `git diff-files` report the entry clean no matter what
+    the working copy holds — the "stop looking" switch that sits directly under
+    this rule.
+    """
+    _write(root, rel, FIXTURE_GPL_BODY if staged is None else staged)
+    _stage_all(root)
+    if assume_unchanged:
+        _git(root, "update-index", "--assume-unchanged", rel)
+    if working is None:
+        (root / rel).unlink()
+    else:
+        _write(root, rel, working)
+
+
+def _staged_controls():
+    """[(label, description, mutate, check(findings, stats) -> (ok, detail))].
+
+    Increment 14 — the BYTE SOURCE, below the enumeration layer increment 11
+    disclosed. Increment 7 moved the discovery rules onto the index; the content
+    rules kept reading `root / rel`. Every must-fire case below audited **PASS**
+    on increment 12's tool, with `--negative-control` reporting all 32 rules,
+    40 masking, 11 discovery, 27 payload, 10 wrapper-name and 7 coverage
+    controls behaving, and with coverage identical to a clean tree's — while the
+    staged blob held a complete GPL body that `git commit` would publish.
+
+    The must-NOT-fire cases carry equal weight, in two directions. An unstaged
+    paste into a tracked file must keep firing: the point is a SECOND view, not
+    a different one, and replacing the working-tree read with an index read
+    would close this masking path by opening the one the audit is most used
+    for (a local run before `git add`). And a divergent entry whose staged bytes
+    are clean must be counted, not flagged — a working copy differing from the
+    index is the normal state of a tree being edited, and a finding there would
+    be noise on a non-exemptible rule.
+    """
+
+    def divergent(stats):
+        return stats["entries_whose_staged_content_differs_from_the_working_tree"]
+
+    def fired(findings, rule, rel):
+        return [f for f in findings if f.rule == rule and f.path == rel]
+
+    def check_staged_carrier(rule=("foreign-license-text"), rel=FIXTURE_STAGED_REL,
+                             absent=False):
+        def check(findings, stats):
+            if rel not in divergent(stats):
+                return False, (
+                    "the divergent entry was not disclosed "
+                    f"(entries_whose_staged_content_differs…={divergent(stats)})"
+                )
+            if absent and rel not in stats["staged_entries_absent_from_the_working_tree"]:
+                return False, (
+                    "an entry with no working-tree copy was not reported as absent "
+                    f"({stats['staged_entries_absent_from_the_working_tree']})"
+                )
+            hits = fired(findings, rule, rel)
+            if not hits:
+                return False, (
+                    f"{rule} did NOT fire on the staged content of {rel} (found "
+                    + (", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing")
+                    + ")"
+                )
+            # The finding must SAY which bytes offended: "the working-tree copy
+            # is clean" changes what the author has to do about it.
+            if not any("STAGED" in f.detail for f in hits):
+                return False, (
+                    "the finding does not name the staged content as its source: "
+                    + "; ".join(repr(f.detail) for f in hits)
+                )
+            return True, f"{rule} fired on the staged content of {rel}, and said so"
+
+        return check
+
+    def check_worktree_carrier_still_fires(findings, stats):
+        hits = fired(findings, "foreign-license-text", FIXTURE_STAGED_REL)
+        if not hits:
+            return False, (
+                "an UNSTAGED paste into a tracked file stopped firing — the "
+                "working-tree view was replaced instead of joined"
+            )
+        if any("STAGED" in f.detail for f in hits):
+            return False, (
+                "the working-tree paste was reported as staged content: "
+                + "; ".join(repr(f.detail) for f in hits)
+            )
+        return True, "the working-tree view still fires, and is not mislabelled"
+
+    def check_clean_tree_reports_zero(findings, stats):
+        if divergent(stats):
+            return False, (
+                f"a fully staged tree reported divergence: {divergent(stats)}"
+            )
+        if findings:
+            return False, "false alarm on a clean, fully staged tree"
+        return True, "reports 0 divergent entries (printed, not omitted)"
+
+    def check_counted_not_flagged(findings, stats):
+        if FIXTURE_STAGED_REL not in divergent(stats):
+            return False, (
+                "an innocuous modification was not disclosed as divergent "
+                f"({divergent(stats)})"
+            )
+        if stats["staged_payloads_content_scanned"] < 1:
+            return False, "the divergence was counted but its staged bytes were not read"
+        if findings:
+            return False, (
+                "flagged a divergent entry whose staged bytes are clean: "
+                + "; ".join(f"{f.rule}@{f.path}" for f in findings)
+            )
+        return True, "counted and read, not flagged"
+
+    def check_not_counted(findings, stats):
+        if divergent(stats):
+            return False, f"counted a path it must not: {divergent(stats)}"
+        if findings:
+            return False, (
+                "produced a finding: "
+                + "; ".join(f"{f.rule}@{f.path}" for f in findings)
+            )
+        return True, "neither counted nor read as a second view"
+
+    return [
+        (
+            "staged/staged-carrier-whose-working-tree-copy-was-cleaned",
+            "a GPL body `git add`ed and then overwritten on disk — the commit "
+            "would publish the body the audit read past",
+            _stage_then_replace,
+            check_staged_carrier(),
+        ),
+        (
+            "staged/staged-carrier-whose-working-tree-copy-was-deleted",
+            "the same carrier staged and then deleted: `open()` failed and the "
+            "entry was counted among the opaque payloads",
+            lambda root: _stage_then_replace(root, working=None),
+            check_staged_carrier(absent=True),
+        ),
+        (
+            "staged/assume-unchanged-does-not-stop-the-staged-read",
+            "the index bit that makes `git diff-files` call the entry clean "
+            "however the working copy differs",
+            lambda root: _stage_then_replace(root, assume_unchanged=True),
+            check_staged_carrier(),
+        ),
+        (
+            "staged/staged-wrapper-member-name-is-judged",
+            "a zip of upstream `.wt` members renamed '.dat', staged and then "
+            "replaced on disk — no content signal exists in it to find",
+            lambda root: _stage_then_replace(
+                root,
+                rel=FIXTURE_STAGED_BUNDLE_REL,
+                staged=FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME,
+                working=b"not an archive at all\n",
+            ),
+            check_staged_carrier(
+                rule="wrapper-member-name", rel=FIXTURE_STAGED_BUNDLE_REL
+            ),
+        ),
+        (
+            "staged/an-unstaged-working-tree-carrier-still-fires",
+            "the regression direction: a paste into a tracked file that has NOT "
+            "been staged is what a pre-commit run is for",
+            lambda root: _stage_then_replace(
+                root, staged=FIXTURE_INNOCUOUS, working=FIXTURE_GPL_BODY
+            ),
+            check_worktree_carrier_still_fires,
+        ),
+        (
+            "staged/fully-staged-tree-reports-zero",
+            "a tree whose index matches its working copy still reports the "
+            "count, as zero",
+            _stage_all,
+            check_clean_tree_reports_zero,
+        ),
+        (
+            "staged/innocuous-divergence-is-counted-and-read-not-flagged",
+            "an ordinary unstaged edit: disclosed and scanned, never a finding",
+            lambda root: _stage_then_replace(
+                root,
+                staged=FIXTURE_INNOCUOUS,
+                working=FIXTURE_INNOCUOUS + "# one more line, still nothing\n",
+            ),
+            check_counted_not_flagged,
+        ),
+        (
+            "staged/divergent-path-inside-a-declared-scope-exclusion",
+            "a divergence in an already-disclosed hole is not re-counted, for "
+            "the same reason increment 11 does not re-count one",
+            lambda root: (
+                _patch_manifest(
+                    root,
+                    lambda d: d["scope_exclusions"].append(
+                        {"prefix": ".loom/", "reason": "synthetic declared hole"}
+                    ),
+                ),
+                _stage_then_replace(root, rel=".loom/pasted_staged.py"),
+            ),
+            check_not_counted,
+        ),
+        (
+            "staged/a-gitlink-is-not-read-as-a-staged-blob",
+            "a committed submodule's object is a commit in another repository, "
+            "not a blob here: it must not become a staged view",
+            lambda root: (_git_submodule_entry(root), None),
+            lambda findings, stats: (
+                (False, f"read a gitlink as a staged view: {divergent(stats)}")
+                if FIXTURE_SUBMODULE_REL in divergent(stats)
+                else (
+                    (True, "the gitlink stays a by-reference entry, judged at discovery")
+                    if any(
+                        f.rule == "submodule-reference"
+                        and f.path == FIXTURE_SUBMODULE_REL
+                        for f in findings
+                    )
+                    else (False, "the gitlink stopped producing its discovery finding")
+                )
+            ),
+        ),
+    ]
+
+
 def _run_coverage_controls(tmp_root: Path, prefix, cases, include_untracked=False):
     """Run (label, description, mutate, check) cases that assert on COVERAGE."""
     results = []
@@ -5801,9 +6413,13 @@ def run_negative_control(verbose=True):
         # Increment 11: coverage-asserting controls. These check what the run
         # SAID about an entry it did not audit, which no findings-based control
         # can do — the behaviour under test is deliberately "no finding".
+        # Increment 14 joins them: the staged-content controls assert on BOTH
+        # findings and coverage (a staged carrier must fire, an innocuous
+        # divergence must only be disclosed), so they share this runner.
         for prefix, cases, included in (
             ("coverage", _coverage_controls(), False),
             ("coverage-included", _coverage_include_untracked_controls(), True),
+            ("staged", _staged_controls(), False),
         ):
             for label, passed, detail in _run_coverage_controls(
                 Path(tmp), prefix, cases, include_untracked=included
@@ -5834,7 +6450,8 @@ def run_negative_control(verbose=True):
                 f"all {len(_wrapper_name_controls())} wrapper-member-name "
                 "controls behaved, and all "
                 f"{len(_coverage_controls()) + len(_coverage_include_untracked_controls())}"
-                " index-boundary coverage controls behaved."
+                " index-boundary coverage controls and all "
+                f"{len(_staged_controls())} staged-content controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
