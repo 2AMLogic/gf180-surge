@@ -977,3 +977,164 @@ notice is **NOT_RUN** — only the current tree was audited, and it is PASS. No
 Surge- or GPL-derived content was copied by this increment: every fixture is
 repo-invented synthetic text assembled at run time. Nothing here ratifies a
 decision record or makes a distribution-license determination.
+
+## 14. Increment 8 (2026-10-01) — the payload the previous increment declared out of reach
+
+Base: `main` `78bbf38` (merge of #278). Runtime: Python 3.12.3, Linux.
+
+Increment 6 (§13) made the decode layer honest about **encodings** and then
+*declared* what was left: "a notice sealed inside an opaque payload is out of
+reach", pinned by a positive control
+(`masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope`) and disclosed
+as `files_not_content_scanned` — **335 files, 339 MiB** on this tree. That
+declaration was wrong in two directions at once, and both were reachable without
+any exotic tool:
+
+- a **wrapper** is not opaque content, it is text one `read()` away. `.gz` is
+  deliberately absent from `UPSTREAM_ASSET_EXTS` (this repository gzips its own
+  evidence traces) and `_extension_suffix` strips it, so `pasted_helper.py.gz`
+  matched no extension tripwire either; a zip or tar renamed `.dat` evades the
+  archive extensions outright;
+- an **embedded notice** is ordinary ASCII sitting inside binary data. A WAV
+  `LIST/INFO` `ICOP` chunk is precisely where an upstream sample pack or an
+  exported render states its holder.
+
+### Demonstrated on the real tree, before the fix
+
+Six deliberately unattributed files, each carrying a complete foreign copyright
+line and GPL body (one also a `GPL-3.0-or-later` SPDX tag), injected into the
+**tracked** tree (`git add -N`; `list_files` audits `git ls-files`, so untracked
+scratch is out of scope by design) and run against the **pre-change** tool:
+
+```
+$ git show HEAD:tools/check_provenance.py > /tmp/head_check_provenance.py
+$ python3 /tmp/head_check_provenance.py --root .
+tripwire hits: foreign-license-text=4, …          # unchanged from the clean tree
+PASS … exit 0
+```
+
+| injected file | carriage | pre-change |
+|---|---|---|
+| `model/…/masked_trace.json.gz` (gzipped JSON trace) | GPL body + foreign SPDX tag + copyright line | PASS |
+| `compiler/golden/masked_bundle.dat` (zip renamed) | GPL body in member `Reverb1.h` | PASS |
+| `compiler/golden/masked_sources.dat` (tar.gz renamed) | GPL body in member `vendor/filter.cpp` | PASS |
+| `compiler/golden/masked_zip_in_gz.dat` (zip inside gzip) | GPL body, two wrappers deep | PASS |
+| `fixtures/audio/masked_notice.wav` (real PCM WAV) | `ICOP` copyright chunk | PASS |
+| `reports/sxt-019/masked_ref.f32` (float32 dump) | GPL body spliced mid-payload | PASS |
+
+**PASS, exit 0, tripwire counts unchanged.** The only visible trace was
+`not content-scanned` rising 335 → 341, and no gate reads that number.
+
+### After the fix — same six files, same tree
+
+```
+$ python3 tools/check_provenance.py
+  not content-scanned (no text in the payload at all): 6 files — extension tripwires only
+  unwrapped by magic (compressed stream / archive): 23 files — members content-scanned
+  scanned as extracted ASCII strings only: 312 files — a non-ASCII notice inside one would be missed
+tripwire hits: foreign-license-text=16, …
+FAIL: 12 provenance finding(s)   # every injected file, 1-3 findings each
+exit 1
+```
+
+Files removed afterwards; the tree is **PASS (exit 0)** at
+`foreign-license-text=4`, `self-declared-quotation=43` — the same counts as
+`main`, so **no committed file changed status**.
+
+### What changed
+
+`Tree._read()` now answers a refused payload in two steps instead of giving up,
+**without loosening the sniff** (decoding a render as prose is the other failure
+direction, and §13's positive control still guards it):
+
+1. **unwrap by magic, not by name** — gzip / bzip2 / xz streams, zip and tar
+   archives, recursively (4 deep, so a `.tar.gz`, a zip inside a gzip and a
+   gzipped member inside a zip all resolve), bounded by a 256 MiB inflation
+   budget; each member is then decoded or harvested in its own right;
+2. **harvest the payload's printable-ASCII runs** that carry a word
+   (`[A-Za-z]{3,}`), joined with newlines, and run the ordinary content rules
+   over that. Dropping a *wordless* run can only bring two surviving runs
+   closer together, so it cannot break a phrase the rules would otherwise have
+   matched. The UTF-8 © is normalised to `(c)` first, because it would
+   otherwise end the run and take the copyright keyword with it.
+
+### Coverage is reported per scan mode, not as one number
+
+A strings-only read is weaker than a decode and now says so. On the clean tree:
+335 payload files resolve to **19 unwrapped** (18 `.json.gz` traces + 1 `.npz`),
+**310 scanned as extracted strings**, **6 with no ASCII run at all**; zero
+truncated scans. `files_unwrapped_from_wrappers`,
+`files_scanned_as_extracted_strings` and `payload_scans_truncated` are in
+`--json`, and a truncated scan is printed per path — a scan that could not
+finish must never look like one that passed.
+
+### False positives were measured before this was written, not assumed
+
+`foreign-license-text` **cannot be exempted**, so a false positive on one of
+this repository's own 264 renders, 22 float dumps, 8 tensors or 18 gzipped
+traces would be unanswerable — the rule would be switched off rather than
+answered. All four content signals were run over all 335 payloads (339 MiB,
+plus 145 MiB of gzip inflation) **before** the change was committed: **zero
+hits**, with and without the word filter. Cost of the new layer: 3.9 s → 8.3 s
+wall, 400 MB → 570 MB peak RSS (one audit of a 533 MiB tree).
+
+### Controls (non-vacuity checked per hunk)
+
+17 `payload/*` controls, 11 of which must fire with a required locator in the
+finding's own evidence, 6 of which must stay clean. Each hunk was reverted
+independently in a scratch copy and the whole self-test re-run:
+
+```
+baseline (all hunks present)        -> exit 0, no failing control
+revert the unwrap step              -> exit 2, FAIL the 6 wrapper controls (gzip/xz/bzip2/zip/tar.gz/npz)
+revert the string harvest           -> exit 2, FAIL wav-copyright-chunk, float-dump, opaque-payload, copyright-sign
+revert the stream recursion         -> exit 2, FAIL payload/zip-inside-a-gzip-stream
+revert the member recursion         -> exit 2, FAIL payload/gzipped-member-inside-a-zip
+revert the © normalisation          -> exit 2, FAIL payload/copyright-sign-notice-in-a-payload
+revert the word filter              -> exit 0 (precision/cost only — pinned by the real tree, not by a control)
+```
+
+`masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope` is **inverted**
+by this increment: the same fixture bytes are now
+`payload/notice-embedded-in-an-opaque-payload` and must FIRE. The 6 positive
+controls (a real PCM render, a float dump, an `.npy`-shaped tensor, an own
+gzipped JSON trace, a wide-encoded notice inside a payload) replace it as the
+guard on the unanswerable direction.
+
+```
+$ python3 tools/check_provenance.py --negative-control
+PASS: all 31 rules fired …, all 40 own-attribution masking controls behaved,
+all 11 discovery-layer controls behaved, and all 17 payload-layer controls behaved.
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+64 passed        # 57 before, +8 new, -1 inverted (the sealed-payload test)
+```
+
+### What §14 does NOT establish
+
+- Found by **inspection**, like every increment before it: closing this layer is
+  not evidence that no further path exists, only that these are pinned by
+  controls that fail without their fix. The lesson of §13 is now sharper — the
+  layer that hid a mask was the one the previous increment had **declared** out
+  of reach, so a declared limit is not evidence the limit was necessary.
+- Three residuals stay **declared, not closed**, each pinned by a positive
+  control: a notice written in a WIDE encoding *inside* a binary payload (the
+  harvest reads ASCII; only the UTF-8 © spelling is normalised, because the
+  Latin-1 byte occurs constantly in PCM data); a wrapper whose members carry no
+  marker at all (covered only by the extension tripwires — unwrapping reads
+  member CONTENT, member NAMES are not tripwired); and an inflation that hits
+  the 256 MiB / 4-deep budget, which is disclosed per path rather than silently
+  truncated.
+- A PASS remains **bookkeeping and carriage-signal coverage only** (§7): a
+  marker-free copy and a re-typed constant table with no citation are still
+  undetectable, as is anything under the declared scope exclusions (`.loom/`,
+  `.claude/`, `.agents/` — 758 files).
+- It ratifies nothing: 18 records on disk, most still
+  PROPOSED / RECORDED / ESCALATED, and this project has made **no
+  distribution-license determination**.
+- Whether any file in this repository's **history** ever carried a wrapped or
+  embedded notice is **NOT_RUN** — only the current tree was audited.
+- No Surge-, GPL- or otherwise third-party-derived content was copied into this
+  repository by this increment. Every fixture is repo-invented synthetic data
+  built at run time (PCM from an LCG, float dumps, archives assembled in
+  memory); `Some Upstream Author` appears only as a name string inside synthetic
+  notices.
