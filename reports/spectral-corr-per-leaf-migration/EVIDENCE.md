@@ -46,7 +46,7 @@ Artifacts: `artifacts/single-definition-scan.*`, `migrated-rerun.*`,
 
 ## 2. The six sites, and the decision recorded per site
 
-`git grep -n "def spectral_corr"` on `origin/main` @ `b71edf4` returned ten
+`git grep -n "def spectral_corr"` on `origin/main` @ `dbd8df0` returned ten
 definitions: the shared one plus its retired-but-kept
 `spectral_corr_legacy_log1p` in `tools/compare_audio_reference.py`, the two
 delegating wrappers #110 already migrated (`compare_chorus_reference.py`,
@@ -249,7 +249,7 @@ re-graded here:
 
 Also in the ledger's not-regenerated list, and **not** this issue's:
 
-- **100 `UNTOUCHED`** records. The ledger's base is `origin/main` @ `b71edf4`,
+- **100 `UNTOUCHED`** records. The ledger's base is `origin/main` @ `dbd8df0`,
   which already contains #110/PR #166, so these are records main already
   regenerated under the shared definition; this branch changes none of them.
   73 of the 100 carry the shared `spectral_corr_definition` stamp. The other

@@ -1,4 +1,4 @@
-Issue #110 regrade ledger: committed artifacts at base b71edf440074 (main as this branch last merged it) vs working tree
+Issue #110 regrade ledger: committed artifacts at base dbd8df0ef6b6 (main as this branch last merged it) vs working tree
 definition: tools/compare_audio_reference.py SPECTRAL_CORR_* (fs-log-floor-v2, -100 dBFS/bin)
 
 REGENERATED (26 artifacts)
