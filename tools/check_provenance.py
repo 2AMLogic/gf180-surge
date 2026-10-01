@@ -31,10 +31,13 @@ The audit has four groups of checks:
      row (or, for the one exemptible rule, by an explicit exemption with a
      reason — optionally scoped to named *occurrences* of the quotation
      vocabulary in one file, so a later foreign quotation elsewhere in the
-     same file still fails). These read BOTH byte sources an entry can have —
-     its working-tree copy and, when the two are not known to match, its
-     STAGED blob, which is what `git commit` publishes (increment 14). The
-     tripwires are deliberately high-precision:
+     same file still fails; a named occurrence must match EXACTLY ONCE in
+     that file, so the same sentence re-used for a foreign referent is
+     reported as ambiguous instead of being exempted along with it). These
+     read BOTH byte sources an entry can have — its working-tree copy and,
+     when the two are not known to match, its STAGED blob, which is what
+     `git commit` publishes (increment 14). The tripwires are deliberately
+     high-precision:
        * `foreign-license-text`        — foreign license body, non-Apache
                                          SPDX tag, or foreign copyright line.
                                          EVERY notice in a file is inspected;
@@ -215,6 +218,12 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     inside a declared scope exclusion is not counted here because it is already
     disclosed as a hole. What this does NOT reach is history: whether a file was
     ever committed and later removed is outside every rule, then and now.
+  * An occurrence-scoped exemption is matched by LITERAL WORDING, so it cannot
+    tell two identically-worded sentences apart. The rule is therefore
+    uniqueness, not disambiguation: a named occurrence matching more than once
+    in its file is an `exemption-ambiguous` finding (the exemption is not
+    applied at all) and must be re-written with enough surrounding text to name
+    one place — `scoped-exemption/duplicate-occurrence`.
   * The audited SET came from the index, but until increment 14 the audited
     BYTES came from the working tree — `root / rel`, opened with `open()`. The
     two disagree exactly when it matters: `git commit` commits the INDEX. So
@@ -476,6 +485,7 @@ RULES = {
     "exemption-field-missing": "exemption missing a required field",
     "exemption-non-exemptible-rule": "exemption of a non-exemptible rule",
     "exemption-stale": "exemption matching no file",
+    "exemption-ambiguous": "exemption occurrence matching more than one place",
     "exemption-bad-pattern": "exemption pattern too broad or malformed",
     "scope-exclusion-stale": "declared scope exclusion matching no file",
     "scan-underflow": "fewer files scanned than the manifest's declared floor",
@@ -2797,6 +2807,27 @@ def check_manifest(tree: Tree, manifest, records, rows):
                         (m.start(), m.end())
                         for m in occurrence_regex(occurrence).finditer(text)
                     ]
+                    # A named occurrence must identify ONE place in the file.
+                    # Matching the literal wording everywhere it appears would
+                    # exempt a genuinely foreign quotation that happens to be
+                    # worded as the exact same sentence with a different
+                    # referent ("The Surge oscillator: `tb.sv` carries a
+                    # verbatim copy of it."), which is indistinguishable from
+                    # the legitimate self-copy by wording alone. Ambiguity is
+                    # therefore a finding, not a silent widening: name the
+                    # occurrence with enough surrounding text to be unique.
+                    if len(located) > 1:
+                        findings.append(
+                            Finding(
+                                "exemption-ambiguous",
+                                MANIFEST_REL,
+                                f"{label}: occurrence {occurrence!r} appears "
+                                f"{len(located)} times in {rel}; an exemption "
+                                "must name exactly one place (extend the quoted "
+                                "text until it is unique)",
+                            )
+                        )
+                        continue
                     live = [
                         (start, end)
                         for start, end in located
@@ -3731,6 +3762,13 @@ FIXTURE_OWN_COPY_OCCURRENCE = "`tb_own.sv` carries a verbatim copy of it"
 FIXTURE_FOREIGN_COPY_LINE = (
     "\nThe table below is copied verbatim from the pinned upstream wavetable.\n"
 )
+# The adversarial shape the occurrence scoping did NOT catch before #260: the
+# named sentence repeated WORD FOR WORD with a foreign referent. Wording alone
+# cannot separate it from the legitimate self-copy, so a duplicated occurrence
+# is reported as ambiguous instead of being exempted twice.
+FIXTURE_DUPLICATE_OCCURRENCE_LINE = (
+    "\nThe upstream Surge oscillator: `tb_own.sv` carries a verbatim copy of it.\n"
+)
 
 
 # --- masking fixtures ---------------------------------------------------------
@@ -4643,6 +4681,17 @@ def _controls():
                 ),
             ),
         ),
+        "exemption-ambiguous": (
+            "an occurrence-scoped exemption whose named sentence appears twice",
+            lambda root: (
+                _write(
+                    root,
+                    "docs/own_copy.md",
+                    FIXTURE_OWN_COPY_DOC + FIXTURE_DUPLICATE_OCCURRENCE_LINE,
+                ),
+                _scoped_exemption(root, [FIXTURE_OWN_COPY_OCCURRENCE]),
+            ),
+        ),
         "exemption-bad-pattern": (
             "a blanket exemption pattern",
             lambda root: _patch_manifest(
@@ -4724,6 +4773,19 @@ def _scoped_exemption_controls():
             lambda root: (
                 _write(root, "docs/own_copy.md", own),
                 _scoped_exemption(root, occ + ["instantiates the shared"]),
+            ),
+        ),
+        (
+            "scoped-exemption/duplicate-occurrence",
+            "exemption-ambiguous",
+            "the named occurrence repeated verbatim with a foreign referent",
+            lambda root: (
+                _write(
+                    root,
+                    "docs/own_copy.md",
+                    own + FIXTURE_DUPLICATE_OCCURRENCE_LINE,
+                ),
+                _scoped_exemption(root, occ),
             ),
         ),
         (
