@@ -165,6 +165,25 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     non-exemptible rule. A wide run must also be at least
     `MIN_WIDE_RUN_UNITS` code units long, the same declared floor the ASCII
     harvest applies in bytes.
+  * The audited SET is the git INDEX, not the working tree. An entry present on
+    disk but not in the git index is scanned by no rule at all — until increment 11 that
+    was silent, and an unattributed file carrying a GPL body, a foreign SPDX tag
+    and a foreign copyright line, dropped into `model/` and left unstaged,
+    audited PASS with a file count identical to the clean tree's. The boundary
+    is kept, because auditing a developer's scratch files by default would put
+    unanswerable findings on a non-exemptible rule, but it is no longer silent:
+    every run reports `entries_present_but_not_in_the_index` (printed even when
+    zero, and naming the paths, so "none present" and "never looked" do not look
+    alike), and `--include-untracked` audits them as ordinary entries — which is
+    how acceptance item 4's own demonstration is run against a working tree
+    without staging the fixture first. Two sub-boundaries are declared with it:
+    an IGNORED file is not counted and not audited either way (`.gitignore` is
+    this repository's own statement that a path is not part of it, and build
+    output would otherwise drown the signal —
+    `coverage/gitignored-scratch-is-neither-counted-nor-audited`), and a path
+    inside a declared scope exclusion is not counted here because it is already
+    disclosed as a hole. What this does NOT reach is history: whether a file was
+    ever committed and later removed is outside every rule, then and now.
   * Every masking path closed here was found by inspection, one increment at a
     time. That two specific paths, then five, then eight, then four more were
     closed is not evidence that no further path exists — only that these are
@@ -187,7 +206,11 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     sniff at all. So the layer a masking path lives in is not bounded by the
     layers already audited, and a DECLARED limit is not evidence that the limit
     was necessary — four increments running, the next mask was inside the
-    previous increment's own declared residual.
+    previous increment's own declared residual. Increment 11 went below
+    increment 7's layer again: not how an entry is READ, but which entries are
+    ENUMERATED at all — and found the one residual that had never been declared
+    anywhere, because it looked like a definition of the tree rather than a
+    limit on reading it.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -226,12 +249,22 @@ only name, an asset member two wrappers deep, and a `.wt` member that is itself
 a gzip (whose outer name must not be masked by the inner one) must each produce
 a finding; a row declaring `covers` must clear it and the same row WITHOUT
 `covers` must not; and this repository's own gzipped trace carrying an FNAME,
-plus an `.npz` of `.npy` members, must stay clean.
+plus an `.npz` of `.npy` members, must stay clean. The `coverage/*` controls
+(increment 11) are the only ones that assert on COVERAGE rather than on
+findings, because the default behaviour they pin is deliberately "produce no
+finding": an unstaged, unattributed carrier must be NAMED in
+`entries_present_but_not_in_the_index` and must not be flagged; a fully staged
+tree must still print the count, as zero; an ignored path and one inside a
+declared scope exclusion must be neither counted nor audited; a non-git tree
+(where every file is walked) must report zero AND still flag the carrier; and
+under `--include-untracked` the same carrier must produce a
+`foreign-license-text` finding while the ignored path stays out.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
     python3 tools/check_provenance.py --root DIR     # audit another tree
     python3 tools/check_provenance.py --json         # machine-readable report
+    python3 tools/check_provenance.py --include-untracked   # audit unstaged files too
     python3 tools/check_provenance.py --negative-control
 
 Exit codes: 0 = PASS, 1 = findings (FAIL), 2 = the audit itself could not run
@@ -1459,6 +1492,11 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
 # `git ls-files -s` modes for entries that are not regular files.
 GIT_MODE_KINDS = {"120000": "symlink", "160000": "gitlink"}
 
+# How many un-indexed working-tree paths the text report names individually.
+# The COUNT is always printed; this only bounds the listing (`--json` carries
+# the full list either way).
+UNINDEXED_PATHS_LISTED = 10
+
 
 def list_entries(root: Path):
     """[(rel, kind, gitlink_commit)] for candidate entries, sorted by path.
@@ -1491,6 +1529,80 @@ def list_entries(root: Path):
     except (OSError, subprocess.CalledProcessError):
         pass
     return sorted(_walk_entries(root))
+
+
+# --- the index boundary (increment 11) ---------------------------------------
+#
+# `list_entries` reads the git INDEX, so what it audits is "what this repository
+# has committed or staged", not "what is in this working tree". That boundary is
+# right for CI — a PR's files are all tracked — but it was SILENT, and silence
+# is the one thing every other residual in this tool is not:
+#
+#   * a file dropped into the working tree and not yet `git add`ed is scanned by
+#     no rule at all. Dropping an unattributed file carrying a GPL body, a
+#     foreign SPDX tag and a foreign copyright line into `model/` audited
+#     **PASS**, and the coverage line printed the SAME file count as the clean
+#     tree — so "no unattributed file is here" and "one is here, unlooked at"
+#     were indistinguishable in the output;
+#   * that is exactly the local, pre-commit run acceptance item 4's own wording
+#     describes ("demonstrate it once on a deliberately unattributed file"), and
+#     the demonstration only worked after staging the file.
+#
+# The boundary is kept — auditing a developer's scratch files by default would
+# put unanswerable findings on a non-exemptible rule — but it is now DISCLOSED
+# per run (a count, printed even when zero, so "none present" and "never looked"
+# do not look alike), DECLARED in `--limits`, and crossable on demand with
+# `--include-untracked`.
+#
+# Ignored files are deliberately not counted: `.gitignore` is this repository's
+# own statement that a path is not part of it, and build output would otherwise
+# drown the signal. That sub-boundary is declared and control-pinned too.
+
+
+def list_untracked(root: Path):
+    """Repo-relative paths present in the working tree but not in the index.
+
+    Ignored files are excluded (`--exclude-standard`). Returns `[]` for a tree
+    that is not a git checkout, where "untracked" has no meaning: the
+    filesystem walk in `_walk_entries` already sees every file there.
+    """
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--others", "--exclude-standard", "-z"],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return []
+    if not _is_git_checkout(root):
+        return []
+    return sorted(r for r in proc.stdout.decode("utf-8", "replace").split("\0") if r)
+
+
+def _is_git_checkout(root: Path):
+    """True when `list_entries` read `root`'s own git index rather than walking.
+
+    Guards against the one way the two discovery paths can disagree: a
+    NON-git synthetic tree created inside a git checkout would make
+    `git -C <tree> ls-files --others` succeed against the ENCLOSING repository
+    and report every file in the tree as untracked, while `list_entries` had
+    already walked and audited them all.
+    """
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return False
+    top = proc.stdout.decode("utf-8", "replace").strip()
+    if not top:
+        return False
+    try:
+        return Path(top).resolve() == Path(root).resolve()
+    except OSError:
+        return False
 
 
 def _walk_entries(root: Path):
@@ -1560,10 +1672,26 @@ def parse_gitmodules(root: Path):
 class Tree:
     """In-scope entry set (with kinds) plus cached text reads."""
 
-    def __init__(self, root: Path, exclusions):
+    def __init__(self, root: Path, exclusions, include_untracked=False):
         self.root = root
         self.exclusions = exclusions
         entries = list_entries(root)
+        # Present in the working tree, absent from the index (increment 11).
+        # Always computed, because the COUNT is coverage that is reported
+        # whether or not the entries are audited; `include_untracked` decides
+        # only whether they also become ordinary entries.
+        self.untracked = list_untracked(root)
+        self.include_untracked = include_untracked
+        if include_untracked:
+            known = {rel for rel, _, _ in entries}
+            entries = sorted(
+                list(entries)
+                + [
+                    (rel, "symlink" if (root / rel).is_symlink() else "file", "")
+                    for rel in self.untracked
+                    if rel not in known
+                ]
+            )
         self.all_files = [rel for rel, _, _ in entries]
         self.kinds = {rel: kind for rel, kind, _ in entries}
         self.gitlink_commits = {
@@ -1595,6 +1723,16 @@ class Tree:
         # coverage for the same reason: a payload whose wide runs were never
         # examined must not look like one that carried none.
         self._wide_runs = {}
+
+    def untracked_not_audited(self):
+        """In-scope working-tree entries this run did NOT audit (increment 11).
+
+        Empty when `--include-untracked` is on (they were audited) and when a
+        path falls in a declared scope exclusion (already disclosed as a hole).
+        """
+        if self.include_untracked:
+            return []
+        return [rel for rel in self.untracked if self.excluded_by(rel) is None]
 
     def excluded_by(self, rel):
         for prefix in self.exclusions:
@@ -2675,12 +2813,12 @@ def check_tripwires(tree: Tree, coverage, exemptions):
 # --- audit driver -------------------------------------------------------------
 
 
-def audit(root: Path):
+def audit(root: Path, include_untracked=False):
     root = Path(root)
     manifest, findings = load_manifest(root)
     if manifest is None:
         manifest = {"entries": [], "exemptions": [], "scope_exclusions": []}
-    tree = Tree(root, scope_exclusion_prefixes(manifest))
+    tree = Tree(root, scope_exclusion_prefixes(manifest), include_untracked)
     records, record_findings = parse_records(tree)
     rows, index_findings = parse_index(tree)
     findings = list(findings) + record_findings + index_findings
@@ -2731,6 +2869,15 @@ def audit(root: Path):
         "wide_encoded_runs_harvested": sum(tree.wide_runs(rel) for rel in tree.files),
         # A scan that could not finish must never look like one that passed.
         "payload_scans_truncated": tree.truncated_scans(),
+        # The INDEX boundary (increment 11): entries present in the working
+        # tree that this run did not audit because they are not in the git
+        # index. Reported as a count AND as the paths themselves, and printed
+        # even when zero — "none present" and "never looked" must not look
+        # alike. `--include-untracked` audits them, which empties this list.
+        "entries_present_but_not_in_the_index": tree.untracked_not_audited(),
+        "untracked_entries_audited": (
+            len(tree.untracked) if tree.include_untracked else 0
+        ),
         "entries_by_reference": {
             kind: sum(1 for rel in tree.files if tree.kind(rel) == kind)
             for kind in ("symlink", "gitlink")
@@ -2789,6 +2936,26 @@ def report(findings, stats, root, as_json=False):
         f"judged: {stats['wide_encoded_runs_harvested']} — counted over every "
         "payload read as strings, members of wrappers included"
     )
+    unindexed = stats["entries_present_but_not_in_the_index"]
+    if stats["untracked_entries_audited"]:
+        print(
+            f"  present in the working tree but not in the git index: "
+            f"{stats['untracked_entries_audited']} entries — AUDITED "
+            "(--include-untracked)"
+        )
+    else:
+        print(
+            f"  present in the working tree but NOT in the git index: "
+            f"{len(unindexed)} entries — not audited by any rule; "
+            "re-run with --include-untracked to audit them"
+        )
+        for rel in unindexed[:UNINDEXED_PATHS_LISTED]:
+            print(f"      not audited (not in the index): {rel}")
+        if len(unindexed) > UNINDEXED_PATHS_LISTED:
+            print(
+                f"      … and {len(unindexed) - UNINDEXED_PATHS_LISTED} more "
+                "(full list in --json)"
+            )
     for rel in stats["payload_scans_truncated"]:
         print(
             f"  TRUNCATED payload scan (unwrap budget/depth reached, NOT fully "
@@ -4669,6 +4836,203 @@ def _wrapper_name_controls():
     ]
 
 
+# --- index-boundary (coverage) controls, increment 11 -------------------------
+#
+# These assert on COVERAGE, not on findings, which is why they need their own
+# runner: the default behaviour under test is deliberately "this file produces
+# no finding", and a control that only checked findings would be satisfied by
+# the very silence the increment exists to remove. Each one therefore checks
+# what the run SAID about the entry it did not audit.
+FIXTURE_UNTRACKED_REL = "model/pasted_unstaged.py"
+
+
+def _git_init_with_untracked(root: Path, rel=FIXTURE_UNTRACKED_REL,
+                             content=None, ignored=False):
+    """Commit the skeleton, then leave `rel` on disk and OUT of the index."""
+    if ignored:
+        _write(root, ".gitignore", rel + "\n")
+    _git(root, "init", "-q")
+    # -f for the same reason _git_submodule_entry uses it: a host-level
+    # core.excludesFile must not silently drop skeleton files.
+    _git(root, "add", "-A", "-f")
+    _write(root, rel, FIXTURE_GPL_BODY if content is None else content)
+
+
+def _coverage_controls():
+    """[(label, description, mutate, check(findings, stats) -> (ok, detail))].
+
+    Increment 11 — the ENUMERATION layer, below the by-reference discovery
+    layer increment 7 closed. The negative case audited **clean** with a file
+    count identical to the clean tree's, while `--negative-control` reported
+    all 31 rules firing: `list_entries` reads the git index, so an unstaged
+    file is in no rule's input at all.
+    """
+
+    def unindexed(stats):
+        return stats["entries_present_but_not_in_the_index"]
+
+    def check_counted_and_disclosed(findings, stats):
+        paths = unindexed(stats)
+        if FIXTURE_UNTRACKED_REL not in paths:
+            return False, (
+                "the unstaged carrier was NOT disclosed as un-audited "
+                f"(entries_present_but_not_in_the_index={paths})"
+            )
+        if any(f.path == FIXTURE_UNTRACKED_REL for f in findings):
+            return False, "default run flagged an unstaged file (it must only disclose it)"
+        return True, f"disclosed as not audited: {paths}"
+
+    def check_clean_tree_reports_zero(findings, stats):
+        paths = unindexed(stats)
+        if paths:
+            return False, f"a fully staged tree reported un-indexed entries: {paths}"
+        if findings:
+            return False, "false alarm on a clean, fully staged tree"
+        return True, "reports 0 un-indexed entries (printed, not omitted)"
+
+    def check_not_counted(findings, stats):
+        paths = unindexed(stats)
+        if paths:
+            return False, f"counted a path it must not: {paths}"
+        if findings:
+            return False, (
+                "produced a finding: "
+                + "; ".join(f"{f.rule}@{f.path}" for f in findings)
+            )
+        return True, "neither counted nor audited"
+
+    return [
+        (
+            "coverage/unstaged-carrier-is-disclosed-not-silently-skipped",
+            "an unattributed GPL-bodied file on disk but not in the index",
+            _git_init_with_untracked,
+            check_counted_and_disclosed,
+        ),
+        (
+            "coverage/fully-staged-tree-reports-zero",
+            "a tree with nothing unstaged still reports the count, as zero",
+            lambda root: (_git(root, "init", "-q"), _git(root, "add", "-A", "-f")),
+            check_clean_tree_reports_zero,
+        ),
+        (
+            "coverage/gitignored-scratch-is-neither-counted-nor-audited",
+            "the declared sub-boundary: an ignored path is this repo's own "
+            "statement that it is not part of it",
+            lambda root: _git_init_with_untracked(root, ignored=True),
+            check_not_counted,
+        ),
+        (
+            "coverage/unstaged-path-inside-a-declared-scope-exclusion",
+            "an unstaged file in an already-disclosed hole is not re-counted",
+            lambda root: (
+                _patch_manifest(
+                    root,
+                    lambda d: d["scope_exclusions"].append(
+                        {"prefix": ".loom/", "reason": "synthetic declared hole"}
+                    ),
+                ),
+                # A tracked file inside the hole, so the exclusion is not stale.
+                _write(root, ".loom/notes.md", "declared, unaudited.\n"),
+                _git_init_with_untracked(root, rel=".loom/pasted_unstaged.py"),
+            ),
+            check_not_counted,
+        ),
+        (
+            "coverage/non-git-tree-reports-zero-and-still-audits-everything",
+            "a synthetic (non-checkout) tree: every file is walked, so nothing "
+            "is un-indexed and the carrier still fires",
+            lambda root: _write(root, FIXTURE_UNTRACKED_REL, FIXTURE_GPL_BODY),
+            lambda findings, stats: (
+                (False, f"reported un-indexed entries in a non-git tree: {unindexed(stats)}")
+                if unindexed(stats)
+                else (
+                    (True, "0 un-indexed, and foreign-license-text fired on the carrier")
+                    if any(
+                        f.rule == "foreign-license-text"
+                        and f.path == FIXTURE_UNTRACKED_REL
+                        for f in findings
+                    )
+                    else (False, "the walked carrier did not produce a finding")
+                )
+            ),
+        ),
+    ]
+
+
+def _coverage_include_untracked_controls():
+    """The same fixtures, run with `--include-untracked`: the boundary crossed.
+
+    Separated from `_coverage_controls` because they need a different audit
+    call, not a different assertion — which is exactly the thing a control
+    must pin: reverting the `--include-untracked` wiring leaves the default
+    controls above passing and only these failing.
+    """
+
+    def check_audited(findings, stats):
+        if stats["entries_present_but_not_in_the_index"]:
+            return False, (
+                "entries were audited but still reported as not audited: "
+                f"{stats['entries_present_but_not_in_the_index']}"
+            )
+        fired = [
+            f
+            for f in findings
+            if f.rule == "foreign-license-text" and f.path == FIXTURE_UNTRACKED_REL
+        ]
+        if not fired:
+            return False, (
+                "foreign-license-text did NOT fire on the unstaged carrier "
+                "(found "
+                + (", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing")
+                + ")"
+            )
+        return True, f"foreign-license-text fired on {FIXTURE_UNTRACKED_REL}"
+
+    def check_ignored_still_out(findings, stats):
+        if any(f.path == FIXTURE_UNTRACKED_REL for f in findings):
+            return False, "an ignored path was audited; the sub-boundary is declared"
+        return True, "an ignored path stays out even with --include-untracked"
+
+    return [
+        (
+            "coverage/unstaged-carrier-is-audited-when-included",
+            "acceptance item 4's demonstration, run without staging the fixture",
+            _git_init_with_untracked,
+            check_audited,
+        ),
+        (
+            "coverage/ignored-path-stays-out-even-when-included",
+            "the declared sub-boundary holds on the opt-in path too",
+            lambda root: _git_init_with_untracked(root, ignored=True),
+            check_ignored_still_out,
+        ),
+    ]
+
+
+def _run_coverage_controls(tmp_root: Path, prefix, cases, include_untracked=False):
+    """Run (label, description, mutate, check) cases that assert on COVERAGE."""
+    results = []
+    for index, (label, description, mutate, check) in enumerate(cases):
+        case_root = Path(tmp_root) / f"{prefix}-{index}"
+        case_root.mkdir()
+        build_skeleton(case_root)
+        try:
+            mutate(case_root)
+        except Exception as exc:  # a control that cannot be SET UP is a FAIL
+            results.append(
+                (label, False, f"{description} -> control setup failed: {exc}")
+            )
+            continue
+        try:
+            findings, stats = audit(case_root, include_untracked=include_untracked)
+        except AuditError as exc:
+            results.append((label, False, f"{description} -> audit did not run: {exc}"))
+            continue
+        passed, detail = check(findings, stats)
+        results.append((label, passed, f"{description} -> {detail}"))
+    return results
+
+
 def _discovery_controls():
     """[(label, expected rule or None, expected path, description, mutator[, in_detail])].
 
@@ -4955,6 +5319,19 @@ def run_negative_control(verbose=True):
                 ok = ok and passed
                 results.append((label, "PASS" if passed else "FAIL", detail))
 
+        # Increment 11: coverage-asserting controls. These check what the run
+        # SAID about an entry it did not audit, which no findings-based control
+        # can do — the behaviour under test is deliberately "no finding".
+        for prefix, cases, included in (
+            ("coverage", _coverage_controls(), False),
+            ("coverage-included", _coverage_include_untracked_controls(), True),
+        ):
+            for label, passed, detail in _run_coverage_controls(
+                Path(tmp), prefix, cases, include_untracked=included
+            ):
+                ok = ok and passed
+                results.append((label, "PASS" if passed else "FAIL", detail))
+
     if verbose:
         print("negative control: one deliberate violation per rule\n")
         for name, verdict, detail in results:
@@ -4975,8 +5352,10 @@ def run_negative_control(verbose=True):
                 "own-attribution masking controls behaved, all "
                 f"{len(_discovery_controls())} discovery-layer controls behaved, "
                 f"all {len(_payload_controls())} payload-layer controls behaved, "
-                f"and all {len(_wrapper_name_controls())} wrapper-member-name "
-                "controls behaved."
+                f"all {len(_wrapper_name_controls())} wrapper-member-name "
+                "controls behaved, and all "
+                f"{len(_coverage_controls()) + len(_coverage_include_untracked_controls())}"
+                " index-boundary coverage controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
@@ -5001,6 +5380,15 @@ def main(argv=None):
     parser.add_argument(
         "--limits", action="store_true", help="print the declared detection limits"
     )
+    parser.add_argument(
+        "--include-untracked",
+        action="store_true",
+        help=(
+            "also audit entries present in the working tree but not in the git "
+            "index (ignored files still excluded); the default audits the index "
+            "only and discloses the count it skipped"
+        ),
+    )
     args = parser.parse_args(argv)
 
     if args.limits:
@@ -5010,7 +5398,7 @@ def main(argv=None):
         return run_negative_control()
 
     try:
-        findings, stats = audit(Path(args.root))
+        findings, stats = audit(Path(args.root), include_untracked=args.include_untracked)
     except AuditError as exc:
         print(f"NOT_RUN: provenance audit could not run: {exc}")
         print(CAVEAT)

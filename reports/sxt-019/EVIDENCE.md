@@ -1674,3 +1674,180 @@ No committed file changed status: the counts are the same as `main`'s.
   time (PCM from an in-file LCG, float dumps, archives assembled in memory), and
   `Some Upstream Author` appears only as a name string inside synthetic notices,
   carrying no upstream code, table or asset.
+
+## 17. Increment 11 (2026-10-01) — the set that was never enumerated: the git index boundary
+
+Base: `main` `892c516` (post-#288, which landed increment 10). Runtime: Python
+3.12.3, Linux. Status: **PASS** on this branch; it ratifies nothing and
+establishes nothing about DSP, RTL, fidelity or sound.
+
+Every increment from §13 to §16 worked on how an entry is **read** — the
+encoding sniff, the by-reference discovery layer, wrappers, embedded notices,
+wide encodings. This one is below all of them: which entries are **enumerated**
+at all.
+
+`list_entries` reads `git ls-files -s`, so the audited set is the git **index**,
+not the working tree. That was never declared as a limit — it was written down
+once, in §16, as a definition:
+
+> `list_files` audits `git ls-files`, so untracked scratch is out of scope by
+> design
+
+The design is right. Auditing a developer's scratch files by default would put
+unanswerable findings on a **non-exemptible** rule. What was wrong is that the
+boundary was **silent**: nothing in the run said a file in the tree had been
+skipped, and the file count was identical either way — so "no unattributed file
+is here" and "one is here, unlooked at" produced byte-identical coverage.
+
+### Demonstrated on the real tree, before the fix
+
+One deliberately unattributed file — a complete foreign copyright line, a
+foreign SPDX tag **and** a GPL body — written to `model/_scratch_unattributed_demo.py`
+in the real tree and left unstaged, run against the **pre-change** tool:
+
+```
+$ git show HEAD:tools/check_provenance.py > /tmp/head_cp_i11.py
+$ python3 /tmp/head_cp_i11.py --root .
+coverage: 2128 files scanned, 759 excluded by declared scope exclusions,
+  18 decision records, 20 provenance rows covering 20 files, 9 exemptions
+tripwire hits (declared + undeclared): external-symlink-target=0,
+  foreign-license-text=4, foreign-source-language=2, self-declared-quotation=43,
+  submodule-reference=0, upstream-asset-extension=0, wrapper-member-name=0
+
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+$ echo $?
+0
+```
+
+`2128 files scanned` and every tripwire count are **identical to the clean
+tree's**. The file changed nothing at all, and the output disclosed nothing.
+
+This is the exact shape acceptance item 4 names ("demonstrate it once on a
+deliberately unattributed file"): prior demonstrations (§3, §16) had to `git add`
+the fixture first, which is the step the finding is about.
+
+### After the fix — the same tree, same file, same place
+
+Default run (the boundary is kept, and now disclosed):
+
+```
+$ python3 tools/check_provenance.py
+  present in the working tree but NOT in the git index: 1 entries — not audited
+    by any rule; re-run with --include-untracked to audit them
+      not audited (not in the index): model/_scratch_unattributed_demo.py
+
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+$ echo $?
+0
+```
+
+Opt-in run (the boundary crossed on demand):
+
+```
+$ python3 tools/check_provenance.py --include-untracked
+  present in the working tree but not in the git index: 1 entries — AUDITED
+    (--include-untracked)
+
+FAIL: 3 provenance finding(s):
+  [foreign-license-text] model/_scratch_unattributed_demo.py
+      foreign license/copyright text without a provenance row: gpl-body: …
+  [foreign-license-text] model/_scratch_unattributed_demo.py
+      foreign license/copyright text without a provenance row:
+      SPDX-License-Identifier tag: GPL-3.0-or-later …
+  [foreign-license-text] model/_scratch_unattributed_demo.py
+      foreign license/copyright text without a provenance row: copyright line: …
+$ echo $?
+1
+```
+
+The file was then removed and the tree re-audited: `0 entries` un-indexed,
+**PASS**, `git status --porcelain` showing only this increment's two source
+files.
+
+### The change
+
+Three hunks, all at the enumeration layer; no rule was added, removed or
+loosened, and the real tree's tripwire counts are unchanged
+(`foreign-license-text=4`).
+
+1. `list_untracked()` — `git ls-files --others --exclude-standard`, guarded by
+   `_is_git_checkout()` so a non-checkout tree (every synthetic control tree,
+   and `--negative-control`'s) reports **zero** rather than an enclosing
+   repository's view of itself. Without that guard a synthetic tree created
+   inside a checkout would report every file as un-audited while every rule had
+   in fact run on it.
+2. Coverage: `entries_present_but_not_in_the_index` (the paths, not just a
+   count) and `untracked_entries_audited`, in `--json` and on the text report —
+   **printed even when zero**, and naming up to 10 paths, for the same reason
+   `wrapper_member_names_read` and `wide_encoded_runs_harvested` are printed:
+   "none present" and "never looked" must not look alike.
+3. `--include-untracked` adds those entries as ordinary ones, so every rule
+   runs on them.
+
+### Controls
+
+Seven `coverage/*` controls run inside `--negative-control`. They are the
+**only** controls in this tool that assert on coverage rather than on findings,
+and they have their own runner because of it: the default behaviour under test
+is deliberately *"produce no finding"*, so a findings-based control would be
+satisfied by the very silence this increment removes.
+
+| Control | Must |
+|---|---|
+| `coverage/unstaged-carrier-is-disclosed-not-silently-skipped` | name the carrier in `entries_present_but_not_in_the_index`, and **not** flag it |
+| `coverage/fully-staged-tree-reports-zero` | still report the count, as zero |
+| `coverage/gitignored-scratch-is-neither-counted-nor-audited` | hold the declared sub-boundary |
+| `coverage/unstaged-path-inside-a-declared-scope-exclusion` | not re-count an already-disclosed hole |
+| `coverage/non-git-tree-reports-zero-and-still-audits-everything` | report zero **and** still fire on the walked carrier |
+| `coverage/unstaged-carrier-is-audited-when-included` | fire `foreign-license-text` under `--include-untracked` |
+| `coverage/ignored-path-stays-out-even-when-included` | keep the sub-boundary on the opt-in path |
+
+**Non-vacuity**, checked by reverting each hunk alone in the working file and
+re-running `--negative-control`:
+
+- revert hunk 1 (`list_untracked` returns `[]`) → `unstaged-carrier-is-disclosed-not-silently-skipped`
+  **FAILs** (`entries_present_but_not_in_the_index=[]`) and
+  `unstaged-carrier-is-audited-when-included` **FAILs**; self-test exits `2`.
+  Both fail because hunk 1 is the shared enumeration both paths read.
+- revert hunk 3 (`--include-untracked` stops adding entries) → **only**
+  `unstaged-carrier-is-audited-when-included` FAILs; all five disclosure
+  controls still PASS. Self-test exits `2`.
+
+### Verification run on this branch
+
+```
+$ python3 tools/check_provenance.py                   -> PASS  (exit 0)
+$ python3 tools/check_provenance.py --negative-control -> PASS  (exit 0)
+   32/32 rules, 6 scoped-exemption, 40 masking, 11 discovery,
+   27 payload, 9 wrapper-member-name, 7 index-boundary coverage controls
+$ python3 -m pytest -q tests/test_sxt019_provenance.py -> 85 passed
+```
+
+### What this increment does NOT establish
+
+- **The boundary is narrowed and disclosed, not removed.** The default audited
+  set is still the git index. A PASS on a dirty working tree now *says* what it
+  did not look at; it does not look at it.
+- **Ignored paths stay out, by declaration.** `.gitignore` is this repository's
+  own statement that a path is not part of it, and build output would otherwise
+  drown the signal. Pinned by two controls, on both the default and opt-in
+  paths.
+- **History is still out of reach.** Whether any file was ever committed and
+  later removed is **NOT_RUN** — then and now, only the current tree is audited.
+- **Found by inspection**, like every increment before it, and by running
+  acceptance item 4's own demonstration in the one layout it had never been run
+  in. That this residual is closed is not evidence no further one exists; the
+  pattern is now **five increments deep** — §16 wrote this boundary down as a
+  design decision and it turned out to be an undeclared limit.
+- A PASS remains **bookkeeping and carriage-signal coverage only** (§7). No
+  committed file changed status: no provenance row is added, no decision record
+  is revised or ratified (18 records, most still PROPOSED / RECORDED /
+  ESCALATED), and this project has made **no distribution-license
+  determination**.
+- No RTL, model, fidelity, preset or sound claim is touched.
+- No Surge-, GPL- or otherwise third-party-derived content was copied into this
+  repository by this increment. The demonstration file was synthetic, written
+  and deleted inside this session; `Some Upstream Author` is a name string in a
+  synthetic notice, carrying no upstream code, table or asset.
