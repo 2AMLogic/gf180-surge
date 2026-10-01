@@ -632,6 +632,9 @@ explicit in `--limits` and pinned by positive controls:
   holder. A holder list wrapped onto the next **line** is matched
   (`masking/our-own-dash-holder-with-an-aside-passes`,
   `masking/foreign-holder-on-a-wrapped-continuation-line`).
+  **Superseded by §12** (2026-10-01): this boundary is now closed for a two-word
+  name shape before the segment's first sentence break; §12 states the two
+  narrower limits that replace it.
 
 No Surge- or GPL-derived content was copied into this repository by this
 increment: every fixture is repo-invented synthetic text assembled at run time
@@ -732,3 +735,127 @@ families return a match produced by `COPYRIGHT_RE`/`YEARLESS_COPYRIGHT_RE`
 against the full text, so their offsets are absolute by construction, but that is
 an argument from construction, not a control — only the wrapped family is
 pinned by one. Every limit in §7 and §10 stands unchanged.
+
+## 12. Increment 5 (2026-10-01) — the holder list continues past the delimiter
+
+§10 closed the case where a foreign holder stands *behind* a bracketed,
+parenthesised, semicolon- or dash-led mention of this project, and declared the
+mirror case open: the holder test judged the **first** segment of the notice line
+that held a name and returned, so anything past **that** segment's closing
+delimiter was never read. That is the same
+stop-as-soon-as-our-own-name-is-recognised shape as every earlier increment, one
+segment to the right — and it is exactly how a part-vendored file gets
+attributed in practice ("ours, with upstream credited in a parenthetical").
+
+Four layouts audited **PASS** on `main` (`8dee975`) while `--negative-control`
+reported all 29 rules firing and all 30 `masking/*` controls behaving. The notice
+lines are redacted per §3's rule; `<ours>` is this project's own holder string
+and `<upstream>` a synthetic upstream name:
+
+| Injected notice line (redacted) | Before | After |
+|---|---|---|
+| year, then `<ours>; <upstream>` (semicolon) | PASS | FAIL `foreign-license-text` |
+| year, then `<ours> (from <upstream>)` (parenthetical) | PASS | FAIL |
+| year, then `<ours> — <upstream>` (em dash) | PASS | FAIL |
+| year, then `<ours> - <upstream>` (spaced hyphen) | PASS | FAIL |
+| 13 own-attribution / prose layouts (positive controls) | PASS | PASS (unchanged) |
+
+**Fix.** `own_copyright_holder` keeps the segment walk, but once a segment is
+judged ours it now also requires every **later** segment of the line to name no
+second holder (`_second_holder_name`). Two bounds keep that from flagging our own
+notices, which would be unanswerable on a rule that cannot be exempted:
+
+1. a later segment is read as naming a holder only on a **two-word name shape** —
+   two consecutive capitalised, non-neutral tokens — because an own aside carries
+   at most one capitalised token in practice (`(SXT-019 governance)`,
+   `(All Rights Reserved)`, `(see NOTICE)`) while a holder name is two or more;
+2. only **before the segment's first sentence break**, because text after a full
+   stop is prose, not a continuing holder list — our own notice quoted inside a
+   sentence is followed by exactly that.
+
+Both bounds are **declared limits, not closures**, and each is pinned by a
+positive control: a single-token name in a later segment
+(`masking/single-name-aside-stays-out-of-scope`) and a name written after a full
+stop (`masking/prose-after-a-sentence-break-stays-out-of-scope`) are **not**
+read as holders.
+
+**Controls (`masking/*`, inside `--negative-control`, so CI runs them).** Four
+negative, two positive; the four negative ones each require the firing finding's
+own `detail` to quote the second holder, per §11's locator rule.
+
+```
+$ python3 tools/check_provenance.py --negative-control
+PASS: all 29 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 6 occurrence-scoped exemption controls behaved, and
+all 36 own-attribution masking controls behaved.                       # exit 0
+```
+
+**Non-vacuity — the controls fail when, and only when, this fix is reverted.**
+The one-line later-segment check was reverted in a scratch copy of the tool
+(`return not any(_second_holder_name(…))` -> `return True`) and the whole
+self-test re-run:
+
+```
+baseline (fix present):                     exit 0, no failing control
+revert later-segment check               -> exit 2
+    FAIL  masking/second-holder-after-a-semicolon
+    FAIL  masking/second-holder-in-a-parenthetical
+    FAIL  masking/second-holder-after-an-em-dash
+    FAIL  masking/second-holder-after-a-spaced-hyphen
+```
+
+No other control changed state, so the four new controls fail *for the reason
+they exist* and nothing else depends on the hunk.
+
+**Negative control demonstrated on the real tree (acceptance item 4, verbatim).**
+Four deliberately unattributed files, one per layout, injected into the
+**tracked** tree (`git add -N` — `list_files` audits `git ls-files`, so untracked
+scratch is out of scope by design), then **removed**:
+
+```
+$ python3 tools/check_provenance.py
+tripwire hits: foreign-license-text=8, …
+FAIL: 4 provenance finding(s):
+  [foreign-license-text] model/masked_h.py   (semicolon, REDACTED)
+  [foreign-license-text] model/masked_i.py   (parenthetical, REDACTED)
+  [foreign-license-text] model/masked_j.py   (em dash, REDACTED)
+  [foreign-license-text] model/masked_k.py   (spaced hyphen, REDACTED)
+exit 1
+```
+
+Then the **pre-change** tool against **the same tree with the same four files
+still in it** — the direct before/after, not an inference:
+
+```
+$ git show HEAD:tools/check_provenance.py > /tmp/head_cp.py
+$ python3 /tmp/head_cp.py --root .
+tripwire hits: foreign-license-text=4, …
+PASS … exit 0
+```
+
+A tree carrying four unattributed files, each with an upstream holder on its
+copyright line, audited **PASS** before this increment. After removal the tree is
+PASS (exit 0) with `foreign-license-text=4` — the same four declared hits as
+`main`, so **no committed file changed status**: this increment adds no
+provenance row and revises no decision record.
+
+```
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+41 passed        # 37 before, +4: the four same-line holder-list layouts, the
+                 # finding's locator, the two declared bounds, and a unit test of
+                 # the holder test reading the whole holder side
+```
+
+**What §12 does NOT establish.** It closes one more masking family on one rule,
+found by **inspection** — so four more closed is **not** evidence that no further
+path exists, only that these four are pinned by controls that fail without their
+fix. Every limit in §7 stands. The bare-`(c)` yearless boundary from §10 stands
+unchanged. The two new bounds above are open by declaration: a **single-token**
+second holder (`(portions Airwindows)`) and a holder written **after a sentence
+break** are not detected. Whether any file in this repository's history ever
+carried one of these notices remains **NOT_RUN** — only the current tree was
+audited, and it is PASS. No Surge- or GPL-derived content was copied by this
+increment: every fixture is repo-invented synthetic text assembled at run time,
+with `Some Upstream Author` / `Chris Johnson` appearing as *name strings* only.
+Nothing here ratifies a decision record or makes a distribution-license
+determination.

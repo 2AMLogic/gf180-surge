@@ -38,9 +38,11 @@ The audit has four groups of checks:
                                          each notice's holder is read from its
                                          own HOLDER FIELD (the name after the
                                          year), which must name US AND NOBODY
-                                         ELSE; a notice may carry no year at
-                                         all, or wrap its holder list onto a
-                                         continuation line; every operand of an
+                                         ELSE — in that segment or in any later
+                                         segment of the same line; a notice may
+                                         carry no year at all, or wrap its
+                                         holder list onto a continuation line;
+                                         every operand of an
                                          SPDX *expression* is compared and the
                                          remainder of the tag is scanned for a
                                          license id by shape; and a license
@@ -71,7 +73,7 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     right, or whether the owner has ratified it. Most records are PROPOSED.
   * The `foreign-license-text` signal reads *notices*, not licenses. Because the
     rule cannot be exempted, a false positive on our own attribution would be an
-    unanswerable finding — so three boundaries are declared deliberately, each
+    unanswerable finding — so four boundaries are declared deliberately, each
     pinned by a control, rather than closed:
       - a LEADERLESS prose wrap of a license NAME is not matched (it is not a
         comment-block paste, and ordinary prose naming a license must not become
@@ -80,12 +82,20 @@ DECLARED LIMITS — read before quoting this tool as evidence:
         repository marks enumerated legs "(a) … (b) … (c)" throughout its
         decision records and evidence reports —
         `masking/lettered-list-markers-stay-out-of-scope`;
-      - the holder test reads ONE segment of the notice line (a holder name does
-        not span a parenthetical, bracket, dash aside, semicolon or quotation
-        mark), so a foreign name standing in a LATER segment of an otherwise-own
-        notice line is not read as a second holder. A holder list wrapped onto
-        the next LINE is matched — `masking/our-own-dash-holder-with-an-aside-passes`,
-        `masking/foreign-holder-on-a-wrapped-continuation-line`.
+      - a LATER segment of an otherwise-own notice line is read as naming a
+        second holder only on a TWO-WORD name shape, and only before the
+        segment's first sentence break. A single-token name after our own holder
+        (`… 2AM Logic (generated from Verilog)`) and a name written after a full
+        stop (`… 2AM Logic; see NOTICE. Chris Johnson's constants are quoted …`)
+        are therefore NOT read as holders: an own aside carries at most one
+        capitalised token in practice, and text after a full stop is prose, not a
+        continuing holder list — `masking/single-name-aside-stays-out-of-scope`,
+        `masking/prose-after-a-sentence-break-stays-out-of-scope`,
+        `masking/our-own-dash-holder-with-an-aside-passes`.
+    A holder list continuing past a delimiter on the SAME line, and one wrapped
+    onto the next LINE, are both matched —
+    `masking/second-holder-after-a-semicolon`,
+    `masking/foreign-holder-on-a-wrapped-continuation-line`.
   * Every masking path closed here was found by inspection, one increment at a
     time. That two specific paths, then five, then eight more, were closed is
     not evidence that no further path exists — only that these are pinned by
@@ -104,9 +114,10 @@ notice, or named inside one; a foreign holder standing behind a bracketed,
 parenthesised, semicolon- or dash-led mention of this project; a compound SPDX
 expression led by our own licence, or one whose foreign operand sits past the
 end of the parseable expression; a notice carrying a holder but no year; a
-holder list wrapped onto a continuation line; a license body wrapped across a
-comment leader — together with the positive cases that keep the fixes from
-flagging our own headers or ordinary prose.
+holder list continuing past a delimiter on the same line, or wrapped onto a
+continuation line; a license body wrapped across a comment leader — together
+with the positive cases that keep the fixes from flagging our own headers or
+ordinary prose.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
@@ -556,6 +567,54 @@ def _holder_word_key(word):
     return word.lower().strip(".'’")
 
 
+# A holder list may also continue past a delimiter on the SAME line, after a
+# segment that names us: `… 2AM Logic; Some Upstream Author`, `… 2AM Logic
+# (derived from Chris Johnson / Airwindows)`. `own_copyright_holder` judged the
+# FIRST segment holding a name and returned, so everything past that delimiter
+# was never read — the same stop-as-soon-as-our-own-name-is-recognised shape as
+# the earlier increments, one segment to the right. (The notice lines themselves
+# are in the `masking/*` fixtures, not here — see the fixture note further down.)
+#
+# A later segment is read as naming a second holder only on a TWO-WORD name
+# shape (two consecutive capitalised, non-neutral tokens), and only before the
+# segment's first sentence break. Both bounds exist because this rule cannot be
+# exempted, so a false positive on our own notice is unanswerable:
+#
+#   * an own aside carries at most one capitalised token in practice
+#     (`(SXT-019 governance)`, `(All Rights Reserved)`, `(see NOTICE)`), whereas a
+#     holder name is two or more (`Chris Johnson`, `Some Upstream Author`);
+#   * text after a full stop is prose, not a continuing holder list — our own
+#     notice quoted inside a sentence is followed by exactly that
+#     (`… The gf180-surge Authors". Anything else names someone else.`).
+#
+# The residual limits are declared, pinned by positive controls, and NOT closed:
+# a single-token second holder in a later segment (`(portions Airwindows)`), and
+# a second holder written after a sentence break.
+SENTENCE_BREAK_RE = re.compile(r"[.!?](?=[ \t]|$)")
+
+
+def _second_holder_name(field):
+    """True when a later segment of an own notice line names a SECOND holder.
+
+    Called only for segments standing after the one that named us, so our own
+    name is excised first ("2AM Logic (2AM Logic internal)" stays ours).
+    """
+    scrubbed = OWN_HOLDER_RE.sub(" ", field)
+    sentence_break = SENTENCE_BREAK_RE.search(scrubbed)
+    if sentence_break:
+        scrubbed = scrubbed[: sentence_break.start()]
+    run = 0
+    for match in HOLDER_WORD_RE.finditer(scrubbed):
+        word = match.group(0)
+        if HOLDER_NAME_RE.match(word) and _holder_word_key(word) not in HOLDER_NEUTRAL_WORDS:
+            run += 1
+            if run > 1:
+                return True
+        else:
+            run = 0
+    return False
+
+
 def _holder_segments(tail):
     """The holder field, then each later segment of the line, in order.
 
@@ -612,8 +671,15 @@ def own_copyright_holder(line, holder_start):
     by an aside or a cross-reference ("… 2AM Logic — see NOTICE") keeps naming
     only us. The byte-identical notices live in the `masking/*` fixtures,
     assembled at run time.
+
+    Scoped to one segment, the test still stopped at the first segment naming
+    us, so a holder list continuing past the NEXT delimiter on the same line was
+    never read ("… 2AM Logic; Some Upstream Author"). The segments after it are
+    therefore checked for a second holder too — see `_second_holder_name` for
+    the two bounds that keep an own aside from becoming an unanswerable finding.
     """
-    for field in _holder_segments(line[holder_start:]):
+    segments = _holder_segments(line[holder_start:])
+    for index, field in enumerate(segments):
         if not HOLDER_WORD_RE.search(field):
             continue  # delimiter-led segment with no name in it; keep walking
         own = OWN_HOLDER_RE.search(field)
@@ -628,10 +694,14 @@ def own_copyright_holder(line, holder_start):
         # occurrence of our own name is excised first, so "2AM Logic /
         # gf180-surge" stays ours.
         rest = OWN_HOLDER_RE.sub(" ", field[: own.start()] + " " + field[own.end() :])
-        return all(
+        if not all(
             _holder_word_key(word) in HOLDER_NEUTRAL_WORDS
             for word in HOLDER_NAME_RE.findall(rest)
-        )
+        ):
+            return False
+        # …and the holder list must not CONTINUE past the delimiter that ended
+        # this segment.
+        return not any(_second_holder_name(later) for later in segments[index + 1 :])
     return False  # no name anywhere on the holder side: not an own notice
 
 
@@ -1928,6 +1998,37 @@ FIXTURE_LETTERED_LIST_MARKERS = (
     "## (c) Unknown status string\n\n"
     "| leg | control |\n| --- | --- |\n| (c) | status `DONE` rejected |\n"
 )
+# Increment 5 — the holder list continues past the NEXT delimiter on the SAME
+# line. The segment walk from increment 4 judged the first segment holding a
+# name and returned, so a second holder standing after that segment's closing
+# delimiter was never read: the same "stop as soon as our own name is
+# recognised" shape, one segment to the right. All four audited clean while
+# --negative-control reported every rule firing, and all four are how a
+# part-vendored file actually gets attributed.
+FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON = (
+    "# Copy" + "right 20" + "26 2AM " + "Logic; Some Upstream Author\n"
+)
+FIXTURE_SECOND_HOLDER_IN_PARENTHETICAL = (
+    "# Copy" + "right (c) 20" + "26 2AM " + "Logic (from Chris Johnson)\n"
+)
+FIXTURE_SECOND_HOLDER_AFTER_EM_DASH = (
+    "# Copy" + "right 20" + "26 2AM " + "Logic — Chris Johnson\n"
+)
+FIXTURE_SECOND_HOLDER_AFTER_DASH = (
+    "# Copy" + "right 20" + "26 2AM " + "Logic - Some Upstream Author\n"
+)
+# Positive controls for increment 5, and the two residual limits it declares
+# rather than closes (see DECLARED LIMITS at the top of this file): a later
+# segment is read as a holder only on a TWO-WORD name shape, and only before the
+# segment's first sentence break. Both bounds exist because an own notice that
+# became a finding on this non-exemptible rule would be unanswerable.
+FIXTURE_OWN_SINGLE_NAME_ASIDE = (
+    "# Copy" + "right 20" + "26 2AM " + "Logic (generated from Verilog)\n"
+)
+FIXTURE_OWN_NOTICE_THEN_SENTENCE = (
+    "# Copy" + "right 20" + "26 2AM " + "Logic; see NOTICE. "
+    "Chris Johnson's filter is discussed in the record, not carried here.\n"
+)
 FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE = (
     "2. Grant of Copy" + "right License. Subject to the terms and conditions of\n"
     "this record, the Copy" + "right Notice is retained verbatim.\n"
@@ -2527,6 +2628,58 @@ def _masking_controls():
             None,
             "a declared boundary: '(c)' list markers are not yearless notices",
             lambda root: _write(root, "docs/legs.md", FIXTURE_LETTERED_LIST_MARKERS),
+        ),
+        # --- increment 5: the holder list continues past the next delimiter on
+        # --- the SAME line --------------------------------------------------
+        (
+            "masking/second-holder-after-a-semicolon",
+            "foreign-license-text",
+            MASKED_REL,
+            "a second holder after a semicolon on a notice line that names us first",
+            lambda root: _write(root, MASKED_REL, FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON),
+            "Some Upstream Author",
+        ),
+        (
+            "masking/second-holder-in-a-parenthetical",
+            "foreign-license-text",
+            MASKED_REL,
+            "an upstream holder credited in a parenthetical after our own holder",
+            lambda root: _write(root, MASKED_REL, FIXTURE_SECOND_HOLDER_IN_PARENTHETICAL),
+            "Chris Johnson",
+        ),
+        (
+            "masking/second-holder-after-an-em-dash",
+            "foreign-license-text",
+            MASKED_REL,
+            "a second holder after an em dash, our own holder standing first",
+            lambda root: _write(root, MASKED_REL, FIXTURE_SECOND_HOLDER_AFTER_EM_DASH),
+            "Chris Johnson",
+        ),
+        (
+            "masking/second-holder-after-a-spaced-hyphen",
+            "foreign-license-text",
+            MASKED_REL,
+            "a second holder after a spaced hyphen, our own holder standing first",
+            lambda root: _write(root, MASKED_REL, FIXTURE_SECOND_HOLDER_AFTER_DASH),
+            "Some Upstream Author",
+        ),
+        (
+            "masking/single-name-aside-stays-out-of-scope",
+            None,
+            None,
+            "a declared boundary: ONE capitalised token in an aside is not a holder",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_SINGLE_NAME_ASIDE + FIXTURE_FILLER
+            ),
+        ),
+        (
+            "masking/prose-after-a-sentence-break-stays-out-of-scope",
+            None,
+            None,
+            "a declared boundary: a name after a full stop is prose, not a holder list",
+            lambda root: _write(
+                root, OWN_ONLY_REL, FIXTURE_OWN_NOTICE_THEN_SENTENCE + FIXTURE_FILLER
+            ),
         ),
         (
             "masking/copyright-prose-is-not-a-notice-passes",
