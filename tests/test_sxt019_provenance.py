@@ -483,6 +483,146 @@ def test_spdx_expression_parse_is_exact():
     assert cp.spdx_foreign_ids("Apache-2.0 */") == []
 
 
+# --- increment 4: delimiter-led holder fields, SPDX operands past the
+# --- expression, yearless notices, wrapped holder lists -----------------------
+
+
+def test_foreign_holder_behind_a_project_mention_is_flagged(tmp_path):
+    """Our name standing FIRST in the holder field is not enough to be ours.
+
+    Each of these notices opens its holder field with a delimiter — a bracket, a
+    parenthesis, a semicolon, an em dash — so the field itself held no name and
+    the holder test fell back to searching the WHOLE line, reinstating the very
+    masking the line-scoped and field-scoped fixes removed. Our name came first
+    in all four, so all four audited clean on the non-exemptible rule.
+    """
+    for label, text in (
+        ("brackets", cp.FIXTURE_FOREIGN_HOLDER_BEHIND_BRACKETS),
+        ("parens", cp.FIXTURE_FOREIGN_HOLDER_BEHIND_PARENS),
+        ("semicolon", cp.FIXTURE_FOREIGN_HOLDER_AFTER_SEMICOLON),
+        ("em-dash", cp.FIXTURE_FOREIGN_HOLDER_AFTER_EM_DASH),
+    ):
+        root = _masked_tree(tmp_path, label, text)
+        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+
+
+def test_spdx_operand_past_the_parseable_expression_is_flagged(tmp_path):
+    """The expression walk stops at the first non-operator token, by design.
+
+    That stop is also a mask: a comma list and a parenthetical both put a foreign
+    operand past the end of the parseable expression, where nothing looked.
+    """
+    for label, text in (
+        ("comma-list", cp.FIXTURE_SPDX_FOREIGN_AFTER_COMMA),
+        ("parenthetical", cp.FIXTURE_SPDX_FOREIGN_IN_PARENTHETICAL),
+    ):
+        root = _masked_tree(tmp_path, label, text)
+        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+
+
+def test_yearless_and_wrapped_notices_are_flagged(tmp_path):
+    """A notice need not carry a year, and its holder list may wrap.
+
+    A yearless pasted notice carried no signal at all; a holder list wrapped onto
+    the next line put the second holder where no keyword stands to raise one.
+    """
+    for label, text in (
+        ("yearless", cp.FIXTURE_YEARLESS_FOREIGN_COPYRIGHT),
+        ("wrapped-holder-list", cp.FIXTURE_WRAPPED_HOLDER_LIST),
+    ):
+        root = _masked_tree(tmp_path, label, text)
+        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+
+
+def test_wrapped_holder_finding_locates_the_offending_holder(tmp_path):
+    """The wrapped-holder finding's snippet must name the holder, at any depth.
+
+    `Finding` carries no line number, so `detail`'s snippet is the only locator a
+    human has -- and `foreign-license-text` cannot be exempted, so an
+    unanswerable finding could only be answered by switching the rule off.
+    `_wrapped_holder_match` therefore has to search the full text with ABSOLUTE
+    offsets: a match computed against the continuation-line slice quotes the
+    right bytes only while the notice happens to sit at the top of the file,
+    which is exactly what the unpadded fixture used to hide.
+    """
+    # Unit level: the match offsets must index `text`, not the line slice.
+    for pad_lines in (0, 1, 10, 40):
+        text = "x = 1\n" * pad_lines + cp.FIXTURE_WRAPPED_HOLDER_LIST
+        match = cp.foreign_copyright_match(text)
+        assert match is not None, pad_lines
+        assert text[match.start() : match.end()] == "Chris", pad_lines
+        assert "Chris Johnson / Airwindows" in cp._snippet(text, match), pad_lines
+
+    # End to end: the finding the audit actually reports quotes the holder.
+    root = _masked_tree(
+        tmp_path, "wrapped-padded", cp.FIXTURE_FILLER + cp.FIXTURE_WRAPPED_HOLDER_LIST
+    )
+    findings, _ = cp.audit(root)
+    wrapped = [
+        f
+        for f in findings
+        if f.rule == "foreign-license-text" and f.path == cp.MASKED_REL
+    ]
+    assert wrapped, [f.detail for f in findings]
+    assert any("Chris Johnson / Airwindows" in f.detail for f in wrapped), [
+        f.detail for f in wrapped
+    ]
+
+
+def test_own_attribution_and_copyright_prose_still_audit_clean(tmp_path):
+    """The positive half of increment 4 — a false positive here is unanswerable.
+
+    `foreign-license-text` cannot be exempted, so an own notice (or ordinary
+    prose about copyright, or this repository's '(a) … (b) … (c)' leg markers)
+    that became a finding could only be answered by switching the rule off.
+    """
+    for label, rel, text in (
+        ("own-rights-reserved", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_COPYRIGHT_RIGHTS_RESERVED),
+        ("own-cross-reference", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_COPYRIGHT_CROSS_REFERENCE),
+        ("own-dash-with-aside", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_DASH_HOLDER_WITH_ASIDE),
+        ("own-then-prose", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_COPYRIGHT_THEN_PROSE),
+        ("own-quoted-in-prose", "docs/mentions.md", cp.FIXTURE_OWN_COPYRIGHT_QUOTED_IN_PROSE),
+        ("lettered-list-markers", "docs/legs.md", cp.FIXTURE_LETTERED_LIST_MARKERS),
+        ("copyright-prose", "docs/mentions.md", cp.FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE),
+    ):
+        (tmp_path / label).mkdir(parents=True, exist_ok=True)
+        root = _skeleton(tmp_path / label)
+        cp._write(root, rel, text + cp.FIXTURE_FILLER)
+        findings, _ = cp.audit(root)
+        assert not findings, (label, [f.detail for f in findings])
+
+
+def test_spdx_remainder_scan_reads_ids_not_prose():
+    """Unit-level: a license id by shape past the expression, but never prose."""
+    assert cp.spdx_foreign_ids("Apache-2.0, GPL-3.0-or-later") == ["GPL-3.0-or-later"]
+    assert cp.spdx_foreign_ids("Apache-2.0 / GPL-3.0-or-later") == ["GPL-3.0-or-later"]
+    assert cp.spdx_foreign_ids("Apache-2.0 (upstream MIT)") == ["MIT"]
+    # the expression walk already reported it; the remainder must not double it
+    assert cp.spdx_foreign_ids("Apache-2.0 OR GPL-3.0-or-later") == ["GPL-3.0-or-later"]
+    # prose, a comment close, and a bare own tag stay clean
+    assert cp.spdx_foreign_ids("Apache-2.0 tags are used below") == []
+    assert cp.spdx_foreign_ids("Apache-2.0 (ours; see the record)") == []
+    assert cp.spdx_foreign_ids("Apache-2.0 -->") == []
+
+
+def test_own_holder_test_requires_our_name_alone():
+    """Unit-level: ours iff our name is the first AND only holder in the field.
+
+    Each argument is the holder side of a notice line only (the '|' stands where
+    the year ends), so this file never contains a contiguous copyright notice —
+    which the audit would correctly flag as unattributed carriage in its own
+    source. Same reason as the runtime-assembled fixtures in the tool.
+    """
+    assert cp.own_copyright_holder("| 2AM Logic", 1)
+    assert cp.own_copyright_holder("| The gf180-surge Authors", 1)
+    assert cp.own_copyright_holder("| - 2AM Logic (SXT-019 governance)", 1)
+    assert cp.own_copyright_holder("| 2AM Logic, All Rights Reserved.", 1)
+    assert not cp.own_copyright_holder("| [gf180-surge] Some Upstream Author", 1)
+    assert not cp.own_copyright_holder("| Some Upstream Author (for gf180-surge)", 1)
+    assert not cp.own_copyright_holder("| Chris Johnson", 1)
+    assert not cp.own_copyright_holder("|", 1)
+
+
 def test_masking_controls_run_in_the_self_test(tmp_path):
     """The controls must be wired into `--negative-control`, not merely defined.
 
@@ -492,5 +632,6 @@ def test_masking_controls_run_in_the_self_test(tmp_path):
     assert cp._masking_controls(), "the masking controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    for label, _expected, _where, _description, _mutate in cp._masking_controls():
+    for case in cp._masking_controls():
+        label = case[0]
         assert label in proc.stdout, f"{label} not exercised by --negative-control"

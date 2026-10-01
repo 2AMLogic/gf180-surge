@@ -460,3 +460,275 @@ finding). Whether any file in the repository's history ever carried one of these
 masked notices remains **NOT_RUN** — only the current tree was audited, and it
 is PASS. Nothing here ratifies a decision record or makes a distribution-license
 determination.
+
+
+## 10. Increment 4 (2026-10-01) — four more families off the non-exemptible rule
+
+Tree audited: `main` `fb377df` plus this increment. Runtime: Python 3.13,
+Linux (stdlib only); CI runs the same checks on Python 3.12 / ubuntu-24.04.
+
+The two concrete gaps the 2026-09-25 Curator pass named are closed on `main` and
+were **re-derived here, not trusted**: `decision-records/*.md` → 18 records, and
+`decision-records/README.md` carries 18 index rows with an empty symmetric
+difference (diffed programmatically); `docs/REUSE-AUDIT.md` § "Adoption
+mechanics" step 5 already names the tool, the manifest, the CI job and
+`--limits`. Neither file is touched by this increment.
+
+§8 closed two masking paths at the level of *which notice is inspected*; §9
+closed four at the level of *how one notice, tag or phrase is read*. This
+increment audits the same rule once more and finds **eight** further layouts
+that audited **clean** on the non-exemptible `foreign-license-text` rule while
+`--negative-control` reported all 29 rules firing and all 15 `masking/*`
+controls behaving:
+
+| Injected shape | Before | After |
+|---|---|---|
+| foreign holder behind a **bracketed** mention of this project (year, then `[gf180-surge] <upstream holder>`) | PASS (no finding) | FAIL `foreign-license-text` |
+| the same behind a **parenthesised** mention (`(gf180-surge port) <upstream holder>`) | PASS (no finding) | FAIL `foreign-license-text` |
+| the same after a **semicolon** (`; gf180-surge adaptation of <upstream holder>'s filter`) | PASS (no finding) | FAIL `foreign-license-text` |
+| the same after an **em dash** (`— gf180-surge vendoring of <upstream holder>`) | PASS (no finding) | FAIL `foreign-license-text` |
+| SPDX tag with a foreign operand after a **comma** (`Apache-2.0, GPL-3.0-or-later`) | PASS (no finding) | FAIL `foreign-license-text` |
+| SPDX tag naming a foreign licence inside a **parenthetical** (`Apache-2.0 (upstream GPL-3.0-or-later)`) | PASS (no finding) | FAIL `foreign-license-text` |
+| a notice carrying a holder but **no year** | PASS (no finding) | FAIL `foreign-license-text` |
+| a holder list **wrapped** onto a continuation line carrying no keyword | PASS (no finding) | FAIL `foreign-license-text` |
+| 7 own-attribution / prose layouts (positive controls) | PASS | PASS (unchanged) |
+
+Four independent causes, all in the signal layer:
+
+1. **The holder test fell back to the WHOLE LINE.** §9 read the holder from the
+   holder *field* — but when that field opened with a delimiter (a bracket, a
+   parenthesis, a semicolon, a dash) it held no name, and the code then searched
+   the entire line, reinstating precisely the whole-line masking §8 and §9 had
+   removed. The field is now walked **segment by segment** (`_holder_segments`),
+   and — the load-bearing half — our name standing first is no longer
+   sufficient: the segment must name **us and nobody else**. "Somebody else" is a
+   capitalised token that is not our own name and not a collective/corporate/
+   boilerplate suffix our own notice legitimately carries.
+2. **The SPDX expression walk stopped at the first non-operator token.** That
+   stop is deliberate (so our own tag quoted inside a sentence does not read the
+   following prose as operands) — but it also discarded everything past it, so a
+   comma list, a slash list and a parenthetical each hid a foreign operand in
+   plain sight. `Apache-2.0, GPL-3.0-or-later` is a spelling a human writes, not
+   an evasion. The remainder of the tag is now scanned for a licence id **by
+   shape** (`FOREIGN_LICENSE_ID_RE`), which prose cannot satisfy.
+3. **A yearless notice carried no signal at all.** `COPYRIGHT_RE` requires a
+   four-digit year, so a pasted notice naming only a holder was invisible.
+   `YEARLESS_COPYRIGHT_RE` now reads the keyword (or `©`) running straight into a
+   capitalised holder name.
+4. **A holder list could wrap.** The second holder on the next line carries no
+   keyword, so nothing raised the signal; `_wrapped_holder_match` now reads a
+   narrow continuation shape (a conjunction, then a capitalised name) under a
+   notice already judged ours.
+
+The §8/§9 controls could not catch any of these: their fixtures pair an own
+notice with a *separate* foreign one, or put the mention inside a holder field
+that already contains a name — the shapes all four bugs leave detectable.
+
+**Controls (`masking/*`, inside `--negative-control`, so CI runs them).** Eight
+new must-fail controls (one per layout above) and seven new positive controls:
+our own notice trailed by `All Rights Reserved.`, trailed by a sentence pointing
+at `LICENSE`, after a spaced hyphen with a capitalised parenthetical aside,
+followed by an ordinary capitalised comment sentence, quoted mid-sentence inside
+prose, plus this repository's `(a) … (b) … (c)` leg markers and prose *about*
+copyright. The positive half is not optional and not cosmetic: this rule cannot
+be exempted, so a false positive on our own attribution is an **unanswerable**
+finding, and the only way to answer it is to switch the rule off.
+
+```
+$ python3 tools/check_provenance.py --negative-control     # exit 0
+PASS: all 29 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 6 occurrence-scoped exemption controls behaved, and
+all 30 own-attribution masking controls behaved.
+```
+
+**Non-vacuity — each control fails when, and only when, its own fix is
+reverted.** The four fixes (five hunks: the segment walk and the only-holder
+condition are separable) were reverted independently in a scratch copy of the
+tool and the whole self-test re-run against each:
+
+```
+baseline (all hunks present):              exit 0, no failing control
+
+revert A-i  segment walk  -> exit 2
+    FAIL  masking/our-own-dash-holder-with-an-aside-passes
+revert A-ii only-holder condition -> exit 2
+    FAIL  masking/foreign-holder-behind-a-bracketed-project-name
+    FAIL  masking/foreign-holder-behind-a-parenthesised-project-name
+    FAIL  masking/foreign-holder-after-a-semicolon-project-name
+    FAIL  masking/foreign-holder-after-an-em-dash-project-name
+revert B    SPDX remainder scan -> exit 2
+    FAIL  masking/spdx-foreign-operand-after-a-comma
+    FAIL  masking/spdx-foreign-operand-in-a-parenthetical
+revert C    yearless notice signal -> exit 2
+    FAIL  masking/yearless-foreign-copyright-notice
+revert D    wrapped holder-list continuation -> exit 2
+    FAIL  masking/foreign-holder-on-a-wrapped-continuation-line
+```
+
+No revert failed a control belonging to another hunk, and reverting the segment
+walk fails only a **positive** control — the segment walk exists to keep our own
+notice from becoming a finding, not to catch anything.
+
+**Re-demonstrated on the real tree (acceptance item 4, verbatim).** Four
+deliberately unattributed files, one per new family, injected into the *tracked*
+tree (`git add -N` — `list_files` audits `git ls-files`, so untracked scratch is
+out of scope by design), then removed:
+
+```
+$ python3 tools/check_provenance.py
+coverage: 2104 files scanned, 754 excluded by declared scope exclusions,
+  18 decision records, 20 provenance rows covering 20 files, 9 exemptions
+tripwire hits: foreign-license-text=8, foreign-source-language=2,
+  self-declared-quotation=43, upstream-asset-extension=0
+FAIL: 4 provenance finding(s):
+  [foreign-license-text] model/masked_d.py  (copyright line, bracketed mention, REDACTED)
+  [foreign-license-text] model/masked_e.py  (SPDX tag: GPL-3.0-or-later, after a comma)
+  [foreign-license-text] model/masked_f.py  (copyright line, no year, REDACTED)
+  [foreign-license-text] model/masked_g.py  (copyright line, wrapped holder list, REDACTED)
+exit 1
+```
+
+The pre-increment tool was then run against **the same tree, with the same four
+files still in it** — the direct before/after, not an inference:
+
+```
+$ git show HEAD:tools/check_provenance.py > /tmp/head_check_provenance.py
+$ python3 /tmp/head_check_provenance.py --root .
+tripwire hits: foreign-license-text=4, …
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+exit 0
+```
+
+A tree carrying four unattributed files with foreign copyright/SPDX notices
+audited **PASS** before this increment. Redaction of the copyright lines follows
+§3's rule. After removal the tree is PASS (exit 0) with
+`foreign-license-text=4` — the same four declared hits as `main`, so **no
+committed file changed status**: this increment adds no provenance row and
+revises no decision record.
+
+```
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+37 passed        # 30 before, +7: the four delimiter-led holder layouts, the two
+                 # SPDX-remainder shapes, the yearless and wrapped notices, the
+                 # seven own-attribution/prose positive cases, a unit test of the
+                 # remainder scan, a unit test of the holder test itself, and
+                 # (§11) the wrapped-holder finding's locator
+```
+
+**What §10 does NOT establish.** It closes eight more specific masking paths on
+one rule. Every one was found by **inspection**, so this is **not** evidence that
+no further path exists — only that these are now pinned by controls that fail
+without their fix. Every limit in §7 stands, plus two declared boundaries made
+explicit in `--limits` and pinned by positive controls:
+
+- a yearless notice written with a **bare `(c)`** is deliberately not matched —
+  this repository marks enumerated legs `(a) … (b) … (c)` throughout its decision
+  records and evidence reports, and matching those would make ordinary lettered
+  lists unanswerable findings
+  (`masking/lettered-list-markers-stay-out-of-scope`);
+- the holder test reads **one segment** of the notice line, so a foreign name in
+  a later segment of an otherwise-own notice *line* is not read as a second
+  holder. A holder list wrapped onto the next **line** is matched
+  (`masking/our-own-dash-holder-with-an-aside-passes`,
+  `masking/foreign-holder-on-a-wrapped-continuation-line`).
+
+No Surge- or GPL-derived content was copied into this repository by this
+increment: every fixture is repo-invented synthetic text assembled at run time
+(`Some Upstream Author`, `Chris Johnson / Airwindows` as a *name string* only),
+and no file was adopted, so there is no new provenance row to record and no
+licence decision to make. Whether any file in this repository's history ever
+carried one of these masked notices remains **NOT_RUN** — only the current tree
+was audited, and it is PASS. Nothing here ratifies a decision record or makes a
+distribution-license determination.
+
+## 11. Review fix — the wrapped-holder finding's locator was wrong
+
+Review of §10 found that the wrapped-holder path, while it *fired* correctly,
+reported a snippet quoting the **wrong bytes**. `_wrapped_holder_match` returned
+a `re.Match` computed against `line` — a *slice* of the file text — so its
+`.start()`/`.end()` were **line-relative**, while the caller's
+`_snippet(text, match)` indexes the **full text**. On any wrapped-holder notice
+more than a few lines into a file, the finding quoted unrelated code:
+
+```
+$ # 10 filler lines, then the wrapped-holder fixture
+$ text[match.start():match.end()]
+'1\nx ='                                           # not the holder name
+$ _snippet(text, match)
+'x = 1 x = 1 x = 1 x = 1 x = 1 x = 1 x = 1 x = 1 x'   # names nothing
+```
+
+This is a defect in the **evidence**, not merely in presentation. `Finding`
+carries no line number, so `detail`'s snippet is the only locator a human has;
+and `foreign-license-text` **cannot be exempted**, so the only way to answer one
+of its findings is to go read the cited notice and add a provenance row. A
+finding citing `x = 1 x = 1 …` is unanswerable — the exact failure mode §10
+argues against.
+
+**Fix.** `_wrapped_holder_match` now searches `text` directly with **absolute**
+offsets, bounded to the continuation line (`HOLDER_WORD_RE.search(text, start +
+continuation.end(), line_end)`). The snippet is now invariant to the notice's
+depth in the file:
+
+```
+pad= 0 lines  offsets= 36, 41   [our own notice, then '# and <upstream holder>' — REDACTED]
+pad=10 lines  offsets= 96,101   [identical snippet]
+pad=30 lines  offsets=216,221   [identical snippet]
+```
+
+The snippet is redacted per §3's rule, and for the same reason §3 records: the
+first draft of this section pasted it verbatim and **the audit failed this file**
+(1 finding, `foreign-license-text` on `reports/sxt-019/EVIDENCE.md`) — a live
+demonstration that the fixed path reports a real, locatable notice, since the
+tool flagged the fixed snippet in evidence prose having been unable to flag the
+broken one. The unredacted snippet is reproducible by re-running the unit test.
+
+**The control could not have caught this, and now can.** Two gaps had to be
+closed together, because either alone leaves the control vacuous:
+
+1. `_run_case_controls` asserted only `f.rule` and `f.path`, never `f.detail`, so
+   the control passed on a finding whose evidence pointed elsewhere. Cases may
+   now carry an optional sixth element — a substring the firing finding's own
+   `detail` must contain — and
+   `masking/foreign-holder-on-a-wrapped-continuation-line` requires
+   `'Chris Johnson / Airwindows'`.
+2. The control's fixture was written at the **top** of the file, where
+   line-relative and absolute offsets coincide — so even a `detail` assertion
+   would have passed with the bug present. The fixture is now written **below a
+   filler pad**, which is what makes the offsets diverge.
+
+**Non-vacuity — the control demonstrably fails the check it targets.** The
+absolute-offset fix was reverted in a scratch copy of the tool (fixture pad and
+`detail` assertion left in place) and the whole self-test re-run:
+
+```
+baseline (fix present):   exit 0, no failing control
+revert E  absolute offsets -> exit 2
+    FAIL  masking/foreign-holder-on-a-wrapped-continuation-line
+          … foreign-license-text fired on model/pasted_below_our_header.py but no
+          finding quoted 'Chris Johnson / Airwindows' (details: '… copyright
+          line: ROW_0 = [0, 0, 0] ROW_1 = [1, 1, 1] ROW_2 = [2, 2 — add a row …')
+```
+
+The reverted run's own transcript exhibits the garbage snippet, so the control
+now fails *for the reason it exists*. A unit test
+(`test_wrapped_holder_finding_locates_the_offending_holder`) pins the same
+property directly at pads of 0 / 1 / 10 / 40 lines, independently of the audit
+path.
+
+Also corrected in this pass: the §10 `--negative-control` transcript read "all
+29 own-attribution masking controls behaved" where the tool prints **30**
+(15 baseline + 8 negative + 7 positive), and the §10 `pytest` count moved 36 →
+37. Coverage and committed tripwire counts are unchanged — 2100 files scanned,
+`foreign-license-text=4`, the same four declared hits as `main`, so **no
+committed file changed status** and no provenance row or decision record is
+added or revised.
+
+**What §11 does NOT establish.** It fixes the locator for **one** finding family
+and pins it with a control that fails without the fix. It is not a review of
+every other finding's `detail` for offset correctness: the other five copyright
+families return a match produced by `COPYRIGHT_RE`/`YEARLESS_COPYRIGHT_RE`
+against the full text, so their offsets are absolute by construction, but that is
+an argument from construction, not a control — only the wrapped family is
+pinned by one. Every limit in §7 and §10 stands unchanged.
