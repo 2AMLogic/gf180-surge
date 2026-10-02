@@ -21,6 +21,7 @@
       "evidence": "reports/SXT-028l/artifacts/live-oracle-extraction.json",
       "ran": true,
       "reason": "the gate ran and FAILED for ['strynth']: a carrier with nonzero per-scene drift cannot carry a repeatable reference render",
+      "routed_to": "#322 (restore render coverage of the same-class dual-instance shape with a drift-0 carrier, or record a bounded coverage gap)",
       "status": "FAIL",
       "tool": "tools/extract_rf_send34_inputs.py",
       "what": "the engine-side per-scene drift determinism gate: a carrier whose scene `drift` is nonzero cannot carry a repeatable reference render at all, so it is not render-eligible even once #12 clears"

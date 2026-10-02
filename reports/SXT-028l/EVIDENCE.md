@@ -352,8 +352,8 @@ model agrees with the engine. Consequences, stated exactly:
 - It is **not** worked around. No drift value was zeroed, no carrier was
   silently swapped, and the gate was not relaxed. When #12 clears, the
   same-class dual-instance *render* shape needs a different carrier (or a
-  declared non-repeatability treatment); routed to its own follow-up issue
-  rather than absorbed here.
+  declared non-repeatability treatment); routed to **#322** rather than
+  absorbed here (`determinism_gate.routed_to` in the record).
 - `tools/extract_rf_send34_inputs.py` exits **3** on this condition (distinct
   from 0 and from a refusal), and `tests/test_sxt028l.py::`
   `test_live_oracle_leg_record_is_internally_consistent` derives the gate

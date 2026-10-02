@@ -237,7 +237,8 @@ def oracle_leg_status(name, live):
                          "live-oracle-extraction.json",
              "carriers_passing": sub["carriers_passing"],
              "carriers_failing": sub["carriers_failing"],
-             "bounds": sub["bounds"]}
+             "bounds": sub["bounds"],
+             "routed_to": sub.get("routed_to")}
     reason = (None if sub["status"] == "PASS" else
               f"the gate ran and FAILED for {sub['carriers_failing']}: a "
               f"carrier with nonzero per-scene drift cannot carry a "

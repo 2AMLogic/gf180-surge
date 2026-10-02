@@ -38,6 +38,7 @@
         "A": 0.0
       }
     },
+    "routed_to": "#322 (restore render coverage of the same-class dual-instance shape with a drift-0 carrier, or record a bounded coverage gap)",
     "status": "FAIL",
     "what": "per-scene `drift` must be 0 in every voicing scene, or no reference render of that carrier is repeatable (the harness never seeds engine RNG -- oracle/manifest.json)"
   },

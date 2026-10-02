@@ -754,6 +754,9 @@ def live_leg_summary(docs):
                       "#12 clears; it is NOT excluded from the routing "
                       "metadata above and the RTL-vs-frozen-model exactness "
                       "claim is unaffected.",
+            "routed_to": "#322 (restore render coverage of the same-class "
+                         "dual-instance shape with a drift-0 carrier, or "
+                         "record a bounded coverage gap)",
         },
         "render_eligible_once_12_clears": {
             slug: gates[slug] == "PASS" for slug in sorted(ran)},
