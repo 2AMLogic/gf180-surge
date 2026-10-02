@@ -86,13 +86,6 @@ def word_pattern(word):
     return re.compile(rf"(?<![0-9]){int(word)}(?![0-9])")
 
 
-def records_containing_word(word):
-    """Records carrying the decimal revision word as a standalone number."""
-    pat = word_pattern(word)
-    return sorted(rel for rel, body in record_corpus().items()
-                  if pat.search(body))
-
-
 def sha256_of(rels):
     """sha256 over the named files' bytes, concatenated in the given order."""
     h = hashlib.sha256()

@@ -2427,11 +2427,6 @@ def _walk_entries(root: Path):
     return out
 
 
-def list_files(root: Path):
-    """Repo-relative POSIX paths of candidate entries, deterministically sorted."""
-    return [rel for rel, _, _ in list_entries(root)]
-
-
 SUBMODULE_PATH_RE = re.compile(r"^\s*path\s*=\s*(.+?)\s*$")
 SUBMODULE_URL_RE = re.compile(r"^\s*url\s*=\s*(.+?)\s*$")
 
