@@ -1,7 +1,7 @@
 {
   "applicability": {
     "complete_wet_render_possible": false,
-    "complete_wet_render_reason": "per-slot algorithm parameter extraction and any wet-audio render require the pinned oracle (surgepy); additionally, fixture freezing for THIS routing form is gated on the SXT-017 send-level data-gap decision (#12). This leaf's own routing/scheduling claims depend on neither -- see oracle_extraction and send_level_gap",
+    "complete_wet_render_reason": "a wet-audio render needs BOTH the pinned oracle (surgepy, for the per-slot algorithm parameters -- see oracle_extraction) AND a per-scene send level for buses 3/4, which no artifact carries: fixture freezing for THIS routing form is gated on the SXT-017 send-level data-gap decision (#12), so this stays False even on an oracle host. This leaf's own routing/scheduling claims depend on neither -- see oracle_extraction and send_level_gap",
     "routing_metadata_verified": true
   },
   "base_half_context": {
@@ -53,8 +53,147 @@
   "leaf": "SXT-028l",
   "oracle_extraction": {
     "attempted": true,
-    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
-    "ok": false
+    "detail": "LIVE surgepy leg RAN against 1.4.HEAD.58914e59c: per-slot algorithm parameters extracted for send3/send4 and cross-checked against graphs.jsonl (drift gate PASS); the loader-default send-level probe for buses 3/4 stays BLOCKED on #12",
+    "live": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "c277c51ec0094a57c5fc219b3763db3801d7869e",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "4.2 ms",
+              "graphs_value": -7.885717,
+              "name": "FX S3 Time",
+              "value": -7.885717,
+              "value_type": "float"
+            },
+            {
+              "display": "0.618 Hz",
+              "graphs_value": -0.693749,
+              "name": "FX S3 Rate",
+              "value": -0.693749,
+              "value_type": "float"
+            },
+            {
+              "display": "53.04 %",
+              "graphs_value": 0.530357,
+              "name": "FX S3 Depth",
+              "value": 0.530357,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Feedback",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "112.41 Hz",
+              "graphs_value": -23.625008,
+              "name": "FX S3 Low Cut",
+              "value": -23.625008,
+              "value_type": "float"
+            },
+            {
+              "display": "19527.71 Hz",
+              "graphs_value": 65.662498,
+              "name": "FX S3 High Cut",
+              "value": 65.662498,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Mix",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "24.00 dB",
+              "graphs_value": 24.0,
+              "name": "FX S3 Width",
+              "value": 24.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 9",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 10",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "Chorus",
+          "type_id": 9
+        },
+        "send4": {
+          "note": "slot is off in the normalized state; the engine exposes no algorithm parameters to extract",
+          "occupied": false,
+          "params": null,
+          "return_level": null,
+          "slot": 13,
+          "type_display": "Off",
+          "type_id": 0
+        }
+      }
+    },
+    "ok": true
   },
   "patch_level": {
     "fx_bypass": 0,

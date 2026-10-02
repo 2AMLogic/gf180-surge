@@ -16,11 +16,17 @@ drift), the SXT-011 send-level data gap (recorded, never fabricated),
 negative-control evidence integrity, and the committed RTL-exactness record
 (fail-closed on a stale model revision).
 
-ORACLE-DEPENDENT LEGS (per-slot algorithm parameters, wet-audio fixture
-renders, model-vs-reference agreement) are NOT run here: they are recorded
-as refused/NOT_RUN and are never reported as a pass (AGENTS.md). The
-loader-default send-level probe for buses 3/4 is additionally BLOCKED on the
-SXT-017 data-gap decision (#12). The same rule covers a missing iverilog:
+ORACLE-DEPENDENT LEGS are never RUN by this file -- it asserts the integrity of
+whatever the oracle-host tooling recorded, and a leg that did not run must never
+read as a pass (AGENTS.md). As of #155 the live per-slot extraction leg and the
+engine-side per-scene drift gate HAVE been run on a linux-x86_64 oracle host
+(`artifacts/live-oracle-extraction.json`), so the checks here also pin that
+record's internal consistency: a carrier with nonzero drift must be gate-FAIL
+and not render-eligible, and the #12-gated fixture legs must never read PASS
+while `artifacts/send-level-gap.json` still reports the gap BLOCKED. The
+wet-audio fixture renders, the model-vs-reference agreement number and the
+loader-default send-level probe for buses 3/4 remain BLOCKED on the SXT-017
+data-gap decision (#12). The same rule covers a missing iverilog:
 the RTL-exactness and negative-control records are asserted only when
 committed, and a stale record (model-revision drift) FAILS rather than
 silently passing.
@@ -843,6 +849,13 @@ def test_rtl_exactness_record():
     assert same["dual_instance"]["final_histories_differ"] is True
 
 
+# The fixture legs cannot run while the SXT-011 send-level gap is open,
+# whatever the oracle's state: rendering one would mean guessing a per-scene
+# send level for buses 3/4, which is #12's decision.
+SXT017_GATED_LEGS = ("render", "model-render", "reference-compare",
+                     "send-level-default-probe")
+
+
 def test_oracle_status_record_is_measured_not_asserted():
     p = os.path.join(SXT, "artifacts", "oracle-status.json")
     if not os.path.exists(p):
@@ -850,21 +863,89 @@ def test_oracle_status_record_is_measured_not_asserted():
     d = json.load(open(p))
     assert d["oracle_status"] in ("AVAILABLE", "UNAVAILABLE")
     assert d["legs"], "the oracle-gated legs must be enumerated"
+    gap = json.load(open(os.path.join(SXT, "artifacts", "send-level-gap.json")))
+    gap_open = gap["status"].startswith("BLOCKED")
     for name, legrec in d["legs"].items():
-        if name == "send-level-default-probe":
-            # an available oracle does NOT unblock the SXT-017 data-gap leg
-            assert legrec["status"] == "BLOCKED", name
+        if name in SXT017_GATED_LEGS:
+            # an available oracle does NOT unblock the SXT-017 data-gap legs
+            if gap_open:
+                assert legrec["status"] in ("BLOCKED", "NOT_RUN"), name
+                assert legrec["ran"] is False, name
+                assert legrec["reason"], name
             continue
         if d["oracle_status"] == "UNAVAILABLE":
             assert legrec["status"] == "NOT_RUN", name
             assert legrec["reason"], name
+            assert legrec["ran"] is False, name
         else:
-            assert legrec["status"] in ("RUNNABLE", "NOT_RUN"), name
+            assert legrec["status"] in ("PASS", "FAIL", "NOT_RUN",
+                                        "RUNNABLE", "BLOCKED"), name
+            # a PASS is only legitimate for a leg that actually ran and points
+            # at the record it ran into
+            if legrec["status"] == "PASS":
+                assert legrec["ran"] is True, name
+                assert legrec["evidence"], name
+            else:
+                assert legrec["reason"], name
     # the probe must record what it actually found, not a bare assertion
     assert "surgepy_importable" in d["probe"]
     assert "engine_dir_present" in d["probe"]
     assert d["fixture_freeze_gates"]["sxt017_send_level_data_gap"] == \
         "BLOCKED (#12)"
+    # AVAILABLE is only legitimate for an engine that carries the pin
+    if d["oracle_status"] == "AVAILABLE":
+        assert d["probe"]["surgepy_version_carries_pin"] is True
+        assert d["probe"]["engine_pin"][:9] in d["probe"]["surgepy_version"]
+
+
+def test_live_oracle_leg_record_is_internally_consistent():
+    """#155 item 1a. The live leg's own record must keep its two verdicts
+    separate, must not call a non-run leg a pass, and must mark every carrier
+    whose per-scene drift is nonzero as gate-FAIL and NOT render-eligible."""
+    p = os.path.join(SXT, "artifacts", "live-oracle-extraction.json")
+    if not os.path.exists(p):
+        pytest.skip("live-oracle-extraction.json not committed (NOT_RUN)")
+    d = json.load(open(p))
+    ex = d["parameter_extraction"]
+    gate = d["determinism_gate"]
+    assert ex["status"] in ("PASS", "FAIL", "NOT_RUN")
+    assert gate["status"] in ("PASS", "FAIL", "NOT_RUN")
+    # coverage is reported separately from the verdicts, and a partial run is
+    # never a pass
+    if ex["status"] == "PASS":
+        assert ex["carriers_extracted"] == ex["carriers_total"]
+        assert ex["carriers_extracted"] == len(CARRIER_SLUGS)
+    # the gate's verdict must follow from the measured drift values, not be
+    # asserted alongside them
+    for slug, drifts in gate["drift_per_carrier"].items():
+        nonzero = any(v != 0.0 for v in drifts.values())
+        failing = slug in gate["carriers_failing"]
+        assert nonzero == failing, (slug, drifts)
+        assert d["render_eligible_once_12_clears"][slug] == (not nonzero)
+    assert bool(gate["carriers_failing"]) == (gate["status"] == "FAIL")
+    both_pass = ex["status"] == "PASS" and gate["status"] == "PASS"
+    assert (d["status"] == "PASS") == both_pass, \
+        "the rolled-up status must never read PASS unless both verdicts do"
+    # the engine it ran against must be the pinned one
+    assert d["engines_observed"], "no engine recorded for a leg that ran"
+    for eng in d["engines_observed"]:
+        assert eng["pin"][:9] in eng["surgepy_version"]
+        assert eng["sample_rate"] == 48000.0
+    # and the leg must NOT have read a send level for buses 3/4 (#12's call)
+    for rec in d["send_level_exposure_recheck"]:
+        assert rec["buses_3_4_value_read"] is False
+        assert rec["loader_default_probe"].startswith("BLOCKED (#12)")
+        assert rec["levels_exposed_per_scene"] == [2, 2]
+    # every per-carrier live record must agree with the committed carrier file
+    for slug, rec in d["per_carrier"].items():
+        carrier = json.load(open(os.path.join(
+            FX_INPUTS, f"rf-rf-send34-{slug}.json")))
+        assert rec["preset_blob_sha1_on_disk"] == \
+            carrier["preset"]["census_blob_sha1_verified"]
+        for role in ("send3", "send4"):
+            assert rec["slots"][role]["occupied"] == \
+                carrier[role]["occupied"]
+            assert rec["slots"][role]["type_id"] == carrier[role]["type_id"]
 
 
 def test_state_cost_record_no_external_memory_claimed():
@@ -898,5 +979,15 @@ def test_evidence_keeps_the_claims_separate():
     low = text.lower()
     assert "preset-support claim" in low
     assert "musical-quality claim" in low
-    assert "not_run** (oracle unavailable" in low   # budgets NOT_RUN, not PASS
     assert "#12" in text                 # the data-gap decision is routed
+    # The model-vs-pinned-engine budget row must never read PASS. Matched on the
+    # row itself rather than on a prose phrase, so that the reason for it being
+    # unrun (oracle missing before #155; the #12 send-level gate after) can be
+    # corrected without the check quietly ceasing to apply.
+    budget_rows = [ln for ln in text.splitlines()
+                   if ln.startswith("|") and "pinned engine" in ln
+                   and "PROPOSED" in ln]
+    assert budget_rows, "no model-vs-pinned-engine budget row in the headline"
+    for row in budget_rows:
+        assert "**NOT_RUN**" in row or "**BLOCKED**" in row, row
+        assert "**PASS**" not in row, row
