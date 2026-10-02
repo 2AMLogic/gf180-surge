@@ -61,16 +61,13 @@ from model.effects.delay.delay_model import db_to_linear_d, A_FMT, BLOCK  # noqa
 from reverb2_model import (  # noqa: E402
     ENGINE_PROFILE, Reverb2Model, Reverb2Params, model_revision,
 )
+from refusal import Refuse  # noqa: E402  (the one shared refusal marker, #258)
 from render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
 from run_fx_model import read_wav_stereo_f32  # noqa: E402
 
 SETTLE_BLOCKS = 375          # int(0.25 s * 48 kHz) / 32, the fixture settle
 HARDCLIP8 = 8 << FRAC[A_FMT]
 A_SCALE = float(1 << FRAC[A_FMT])
-
-
-class Refuse(Exception):
-    pass
 
 
 def declared_boundary(cfg):
