@@ -873,6 +873,54 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
    * **Necessary, not sufficient.** The gate checks HEAD against the pin; it
      does not revalidate submodule SHAs, build flags, or the pinned
      interpreter. Those remain `oracle/fetch-and-build.sh`'s job.
+11. Prebuilt oracle provisioning accepted; `blob-verify-carriers` run
+   (seventh increment; #232 closed, a sha256-verified prebuilt install is
+   genuinely present on this dispatch host):
+   * **A second AVAILABLE path, additive not replacing.** `tools/
+     vel_oracle_status.py`'s strict reading required a git-worktree checkout
+     only. A `fetch-and-build.sh --prebuilt` install (#232) is a BUILD OUTPUT
+     tree with no `.git`, so it could never satisfy that reading even though
+     `surgepy.getVersion()` reports the correct pinned commit at runtime. The
+     probe now ALSO accepts: `.installed-sha256` present under
+     `ORACLE_SURGE_DIR` and equal to `oracle/manifest.json`'s
+     `prebuilt.<platform>.sha256`, with the imported `surgepy` module living
+     inside that same directory. Neither path stands in for the other; a
+     directory satisfying neither (a bare directory, or a prebuilt-shaped
+     directory with a missing/mismatched `.installed-sha256`) still falls
+     through to `UNAVAILABLE`/`PIN_MISMATCH` exactly as before (controls
+     O2/O3/O8/O9). **Measured gate on this host: `AVAILABLE`** (prebuilt
+     provisioning); acceptance items 2 and 5 move from `NOT_RUN` to
+     `RUNNABLE` — a leg CAN run, not that it already passed.
+   * **Control-harness hardening.** The negative-control subprocesses
+     previously inherited the invoking shell's `PYTHONPATH` unconditionally;
+     with a real oracle now genuinely installable, a control that only
+     overrides `ORACLE_SURGE_DIR` (O1, O3, O9) could be masked by an ambient
+     `PYTHONPATH` pointing at the real engine, reporting a false pass. `_self`
+     now scrubs `PYTHONPATH` before applying each control's own overrides.
+   * **`blob-verify-carriers` run for real** (`model/voice/
+     blob_verify_vel_carriers.py` -> `reports/SXT-036/artifacts/
+     blob-verify-carriers.json`): the fixture carrier (Attacky.fxp) and the
+     three carriers #70 names are all byte-identical between the pinned
+     checkout and the census `git_blob_sha1` — **PASS, 4/4 verified**. This
+     is the leg `tools/vel_oracle_status.py` already identified as needing
+     the checkout only, not a built `surgepy`. `model/voice/
+     attacky_vel_inputs.json`'s `blob_verified` now reads `true` (was
+     `false`); its `fixture_routes` depths remain hand-declared, not engine
+     readbacks — that re-extraction (`extract_vel_inputs.py`, modelled on
+     `extract_mw_inputs.py`) is tracked by a follow-up issue (#308), not done here,
+     because replacing the depths would require re-deriving every already-
+     frozen comparison artifact in this leaf's evidence (state-coverage,
+     param-corners, cost-accounting) that embeds today's depth values, and
+     that blast radius is out of scope for a probe/gate fix.
+   * **Still NOT_RUN, and why.** `extract-fixture-depths`, `render-reference`,
+     `compare-budgets` and `reference-budget-controls` all need a built
+     `surgepy` AND would, if done naively, replace the frozen fixture depths
+     — invalidating the already-committed state/corner/cost evidence unless
+     the re-extraction is proven to round-trip the existing depth_raw values
+     exactly (normalized = raw / live-engine extent must reproduce the
+     committed raw value within the existing readback tolerance). That
+     verification, the reference renders, the budget comparison, and the
+     two reference-budget negative controls are #308's scope.
 
 ---
 

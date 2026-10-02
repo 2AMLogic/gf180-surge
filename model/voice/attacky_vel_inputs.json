@@ -1,11 +1,12 @@
 {
   "engine_pin": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71",
   "issue": "SXT-036",
-  "provenance": "DECLARED synthetic fixture routes, written by hand on a host WITHOUT the pinned oracle (#96). NOT extracted or read back from the engine: unlike model/voice/attacky_mw_inputs.json, no setModDepth01/getModDepth01 readback exists for these depths. An oracle-side re-extraction (backfill, #232) must replace or confirm this file before any reference-budget number is produced from it.",
+  "provenance": "DECLARED synthetic fixture routes, written by hand on a host WITHOUT the pinned oracle (#96). NOT extracted or read back from the engine: unlike model/voice/attacky_mw_inputs.json, no setModDepth01/getModDepth01 readback exists for these depths. The #232 backfill confirmed the oracle is now reachable (prebuilt provisioning) and this preset's blob is byte-identical in the pinned checkout (model/voice/blob_verify_vel_carriers.py -> reports/SXT-036/artifacts/blob-verify-carriers.json, 2026-10-02), so blob_verified below is now true -- but the fixture_routes depths themselves are STILL hand-declared, not engine readbacks: a setModDepth01/getModDepth01 re-extraction (model/voice/extract_vel_inputs.py, modelled on extract_mw_inputs.py) that replaces this file's depths with read-back words remains open work, tracked by follow-up issue #308.",
   "preset": {
     "path": "resources/data/patches_factory/Basses/Attacky.fxp",
     "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
-    "blob_verified": false
+    "blob_verified": true,
+    "blob_verified_against": "pinned-engine checkout resources/data/ (prebuilt provisioning, #232); reports/SXT-036/artifacts/blob-verify-carriers.json"
   },
   "frozen_scope": "voice-list routes {ms_velocity(1), ms_releasevelocity(30)} -> {Filter 1 Cutoff 308, Filter 1 Resonance 309, Filter 1 FEG Mod Amount 310, VCA Gain 298} on the landed SXT-022 classic voice class; Attacky's own preset voice list is empty",
   "fixture_routes": [
