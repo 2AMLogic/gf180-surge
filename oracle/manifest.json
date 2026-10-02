@@ -107,5 +107,24 @@
     "capture": "oracle/capture_first_note.py",
     "shared": "oracle/oracle_common.py"
   },
-  "licensing_note": "Harness scripts in oracle/ are original to this repository (Apache-2.0, 2AMLogic convention). They import the external GPL engine at runtime and copy no Surge source, tables, assets, or presets into this repository. The WAV in reports/sxt-010/first-capture/ is this project's own render of a loaded preset, kept small (~2 s mono 16-bit), and is not a redistribution of upstream assets."
+  "licensing_note": "Harness scripts in oracle/ are original to this repository (Apache-2.0, 2AMLogic convention). They import the external GPL engine at runtime and copy no Surge source, tables, assets, or presets into this repository. The WAV in reports/sxt-010/first-capture/ is this project's own render of a loaded preset, kept small (~2 s mono 16-bit), and is not a redistribution of upstream assets.",
+  "prebuilt": {
+    "linux-x86_64": {
+      "artifact": "surge-oracle-58914e59c608ed4384ba6002e44c3465c58b2e71-linux-x86_64.tar.gz",
+      "sha256": "d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571",
+      "store": "private object store, location via ORACLE_PREBUILT_URL; never committed (engine is GPL-3.0-or-later, kept external)",
+      "url_env_var": "ORACLE_PREBUILT_URL",
+      "build_date": "2026-10-01",
+      "built_in": "ubuntu:24.04 container (glibc 2.39, matches the dispatch workers), via oracle/fetch-and-build.sh so every engine and submodule pin was verified",
+      "cmake_configure_command": "cmake -S . -B build-py311 -G Ninja -DCMAKE_BUILD_TYPE=Release -DSURGE_BUILD_PYTHON_BINDINGS=ON -DSURGE_BUILD_TESTRUNNER=ON -DPYBIND11_FINDPYTHON=OFF -DPYTHON_EXECUTABLE=<cpython-3.11.16>",
+      "layout": "ORACLE_SURGE_DIR root: build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so, build-py311/src/surge-testrunner/surge-testrunner, resources/data/",
+      "python": {
+        "version": "3.11.16",
+        "source": "https://github.com/astral-sh/python-build-standalone/releases/download/20260929/cpython-3.11.16%2B20260929-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz",
+        "sha256": "f05084f3fbd7a0c7ed762ea6fd2455976a463952bb5c3253fc6cdc777f84728d"
+      },
+      "numpy": "1.26.4",
+      "verified": "2026-10-01 on loom-worker-1: reports/sxt-035/artifacts/reference-seq-modwheel-v1 re-rendered through this artifact (fixtures/render_mw_fixture.py) reproduces the committed wav_sha256 cdc6dd7b9915735b5cf05e74329cd19db0bd0f9a719f24f9b3d1e2e9693d2002 byte-identically"
+    }
+  }
 }
