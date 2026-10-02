@@ -96,7 +96,9 @@ the tree, only a re-render under the pinned oracle restores it.
 **One of the eight is now resolvable again (#126).** `fixtures/render_fixture.py`
 reads `current_bytes_recorded: true`: the SXT-028f Reverb 2 fixture bundles were
 re-rendered under the pinned oracle, so `reports/SXT-028f/artifacts/determinism-gate.json`
-and the six `reports/SXT-028f/fixtures/*.json` sidecars stamp its current bytes.
+and the six `reports/SXT-028f/fixtures/*.json` sidecars stamp its current bytes
+— and since #136 the fourteen `reports/SXT-028e-sse/fixtures/*.json` sidecars
+stamp them too, so the stamp is now resolvable through two independent leaves.
 This is exactly the re-render case flagged under
 [what the decision does not license](#disposition-of-the-lint-findings-in-these-eight-scripts-269)
 — it is **not** a live pin (nothing re-derives the stamp, and the entry still
@@ -106,7 +108,7 @@ to that one entry. The other seven remain `false`.
 
 | Script | Stamped field | Lint-finding disposition (#269, revisited for row 1 in #126) |
 |---|---|---|
-| `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until the SXT-028f bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
+| `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until **both** the SXT-028f (#126) and the SXT-028e-sse (#136) bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
 | `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `fixtures/render_mw_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/ablate_fx.py` | `script_sha256` | cleanable — no finding as of #269 |
