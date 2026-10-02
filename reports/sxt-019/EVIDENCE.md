@@ -2601,7 +2601,7 @@ observation, not a reasoned claim. The fork-PR case is not (see below).
   GPL-derived content was copied by this increment: the fixtures are
   repo-invented synthetic text assembled at run time, and the demonstration
   carrier lived only in a deleted clone.
-## 20. Increment 8 review correction (2026-10-01) — four record errors and the budget that was not global
+## 21. Increment 8 review correction (2026-10-01) — four record errors and the budget that was not global
 
 Base: `main` `57f0e20` (merge of #298, increment 16). Runtime: Python 3.12.3,
 Linux. Filed as [#283](https://github.com/2AMLogic/gf180-surge/issues/283) by
