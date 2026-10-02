@@ -821,21 +821,21 @@ record should be read as a coverage claim.
   -4 are **re-stated against measured data and stay routed to #12**, and
   the leg raised two further findings, F-028e-sse-7 (the peak clause) and
   F-028e-sse-8 (zero corpus reach). No budget was relaxed.
-* **#136-a (filed from this amendment) — an admissible corpus carrier for
-  the SSE branch.** All three of this leaf's corpus carriers are
+* **#314 — an admissible corpus carrier for the SSE branch.** All three
+  of this leaf's corpus carriers are
   render-REFUSED (F-028e-sse-8), so claim (2) rests entirely on declared
   synthetic patches. Finding one or more SSE-branch presets that pass the
   SXT-012/023 screens *and* the 3× determinism gate (or establishing that
   none exists in the corpus, which is itself a reportable result) is what
   would give this class any corpus reach.
-* **#136-b (filed from this amendment) — re-run the reference leg on the
-  arm64 macOS evidence host.** F-028e-sse-1's `rcp_ps` term is
+* **#317 — re-run the reference leg on the arm64 macOS evidence host.**
+  F-028e-sse-1's `rcp_ps` term is
   implementation-defined; §3 measured x86 SSE's estimate. The arm64
   simde path is unmeasured, and it is the host `oracle/manifest.json`
   names.
-* **#136-c (filed from this amendment) — audit the sibling leaves' model
-  runners for the §3.3 silent-pre-roll boundary.** `run_chorus_model.py`
-  and the SXT-023 `run_fx_model.py` pattern pre-roll the model through the
+* **#318 — audit every leaf's `run_*_model.py` for the §3.3
+  silent-pre-roll boundary.** `run_chorus_model.py` and the SXT-023
+  `run_fx_model.py` pattern pre-roll the model through the
   fixture settle. For an effect whose zero-input response is not its
   initialized state, that is worth tens of dB (73 dB here). Whether any
   landed sibling leaf's committed numbers are affected is a question this
