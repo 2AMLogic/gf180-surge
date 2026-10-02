@@ -1,0 +1,115 @@
+{
+  "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no normalization, no time warping, no fades",
+  "definition_overrides": [
+    {
+      "engine_range": [
+        0.0,
+        9.0
+      ],
+      "modsource": "ms_slfo2",
+      "override_value": 2.0,
+      "param": "shape",
+      "preset_value": 0.0,
+      "render_readback": 2.0,
+      "scene_lfo_index": 7
+    },
+    {
+      "engine_range": [
+        -7.0,
+        9.0
+      ],
+      "modsource": "ms_slfo2",
+      "override_value": 1.0,
+      "param": "rate",
+      "preset_value": 0.0,
+      "render_readback": 1.0,
+      "scene_lfo_index": 7
+    }
+  ],
+  "determinism": {
+    "bit_identical": true,
+    "repeats": 3,
+    "sha256": [
+      "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+      "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+      "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410"
+    ]
+  },
+  "engine": {
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "fixture_id": "attacky-slfo__slfo-fixture__seq-notes-holds-v1",
+  "fixture_modification": "SLFO2 shape/rate overridden via setParamVal and three scene modulation routes added via setModDepth01 (host modulation API) after loadPatch; preset file untouched; synthetic declared fixture on the landed voice slice",
+  "issue": "SXT-041",
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "render": {
+    "blocks": 9300,
+    "clipped_samples": 0,
+    "frames": 297600,
+    "last_event_sample": 177600,
+    "peak_abs_float": 0.5199868679046631,
+    "sample_rate": 48000,
+    "scheduling": "block-quantized (32 samples), ceil to next block start",
+    "settle_blocks": 375,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "route_list": "scene[0].modulation_scene (isScenelevel(ms_slfo*) is true; verified: modulation_voice stayed empty)",
+  "routes": [
+    {
+      "depth_raw": 65.0,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_cutoff",
+      "dest_name": "A Filter 1 Cutoff",
+      "dest_param": "cutoff",
+      "modsource": "ms_slfo1",
+      "modsource_id": 23,
+      "normalized_depth": 0.5,
+      "render_readback": 0.5,
+      "slfo_instance": 0
+    },
+    {
+      "depth_raw": 0.5,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_resonance",
+      "dest_name": "A Filter 1 Resonance",
+      "dest_param": "resonance",
+      "modsource": "ms_slfo1",
+      "modsource_id": 23,
+      "normalized_depth": 0.5,
+      "render_readback": 0.5,
+      "slfo_instance": 0
+    },
+    {
+      "depth_raw": 0.25,
+      "depth_readback": 0.25,
+      "dest": "filterunit0_resonance",
+      "dest_name": "A Filter 1 Resonance",
+      "dest_param": "resonance",
+      "modsource": "ms_slfo2",
+      "modsource_id": 24,
+      "normalized_depth": 0.25,
+      "render_readback": 0.25,
+      "slfo_instance": 1
+    }
+  ],
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-holds-v1",
+    "path": "fixtures/sequences/seq-notes-holds-v1.json",
+    "sha256": "a43affacb6103324451d573b0cc3c48d5dee363a91c0533a171ebe99152bb1f4"
+  },
+  "slfo_inputs": "model/voice/attacky_slfo_inputs.json",
+  "tool": {
+    "repo_commit": "963d5f2058853f8844cca8fa06a159170f6c2577",
+    "script_sha256": "0611c7f4f81cc0cb8efa65681b8ff1cf10887c4de54081c1b1e733001b5062d6"
+  },
+  "variant": "base",
+  "wav": "../../../../../../../tmp/sxt041-regen/reference-seq-notes-holds-v1-slfo-fixture.wav",
+  "wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05"
+}

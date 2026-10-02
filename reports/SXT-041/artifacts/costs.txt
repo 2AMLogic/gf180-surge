@@ -1,0 +1,21 @@
+SXT-041 scene-LFO cycle/state cost report
+========================================================
+sequence              seq-notes-repeated-v1
+blocks (+settle)      6150 (+375)
+output frames         196800 @ 48000 Hz
+
+slfo qmuls / render   198900
+bank advances         6525
+qmuls / advance       30.4828
+MAC / output sample   1.010671
+scene attacks         8
+scene releases        8
+scene routes          3 into 2 destination classes, applied once per block (shared by every voice)
+
+state / instance      167 bits (env_phase 29, env_releasestart 30, env_state 3, env_val 30, flags_phase_init_ever_attacked 2, output 22, phase 29, route_out_latch 22)
+state / scene         1002 bits (6 instances)
+
+SXT-016 / SXT-015: no scene-LFO probe row exists at this pin;
+divergence RECORDED, not reconciled (see the JSON sibling).
+
+NO synthesis, timing, area, power or hardware-playback claim.

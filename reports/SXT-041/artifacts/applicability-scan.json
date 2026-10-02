@@ -1,0 +1,206 @@
+{
+  "claim_scope": "Inventory over the committed normalized export (corpus/normalized/graphs.jsonl). NOT a support claim, NOT a coverage claim, and no oracle was used. Per AGENTS.md the census/normalized export is a prioritization aid only.",
+  "corpus": {
+    "presets_routing_scene_lfos": 985,
+    "presets_routing_voice_lfos": 2878,
+    "presets_scanned": 3561,
+    "presets_with_at_least_one_scene_lfo_route_inside_the_frozen_destination_classes": 134,
+    "scene_lfo_routes_by_instance": {
+      "ms_slfo1": 1156,
+      "ms_slfo2": 621,
+      "ms_slfo3": 392,
+      "ms_slfo4": 329,
+      "ms_slfo5": 254,
+      "ms_slfo6": 297
+    },
+    "scene_lfo_routes_by_list": {
+      "global": 800,
+      "scene": 2249
+    },
+    "top_scene_lfo_destinations": {
+      "A Filter 1 Cutoff": 111,
+      "A Filter 2 Cutoff": 79,
+      "A Filter Balance": 66,
+      "A Osc 1 Pitch": 47,
+      "A Osc 1 Volume": 62,
+      "A Osc 2 Pitch": 47,
+      "A Osc 2 Volume": 56,
+      "A Osc 3 Pitch": 46,
+      "A Pitch": 188,
+      "A Scene LFO 1 Deform": 49,
+      "B Osc 1 Volume": 54,
+      "B Osc 2 Volume": 46,
+      "B Osc 3 Volume": 45,
+      "B Pitch": 49,
+      "FX A1 Mix": 48
+    }
+  },
+  "finding": "0 of 3 named carriers are renderable end-to-end by the landed voice arithmetic, so the leaf's model-vs-reference legs run on the declared synthetic fixture instead (reports/SXT-041/EVIDENCE.md). Supported-preset delta from this leaf: 0.",
+  "frozen_destination_classes": [
+    "A Filter 1 Cutoff",
+    "A Filter 1 Resonance",
+    "B Filter 1 Cutoff",
+    "B Filter 1 Resonance"
+  ],
+  "issue": "SXT-041",
+  "named_carriers": {
+    "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp": {
+      "destinations_inside_frozen_classes": [],
+      "destinations_outside_frozen_classes": [
+        "A Osc 1 Morph"
+      ],
+      "landed_slice_blockers": [
+        "3 active FX slot(s), types [1, 6]",
+        "filter block config fbc=4 (not serial1)",
+        "waveshaper type 4 (not off)",
+        "scene lowcut -28.189274 (not the off value -72)",
+        "active mixer paths ['o1', 'o2', 'o3'] (not osc1-only)",
+        "osc1 normalized type 2 (not Classic); scene osc types [1, 2]",
+        "filter unit types [1, 8] (landed slice is LP12-active / unit-2 off)"
+      ],
+      "renderable_end_to_end_by_landed_leaves": false,
+      "slfo_destinations": [
+        "A Osc 1 Morph"
+      ],
+      "slfo_route_count": 1,
+      "slfo_routes": [
+        {
+          "depth": 0.123214,
+          "dest_name": "A Osc 1 Morph",
+          "list": "scene",
+          "modsource": "ms_slfo1",
+          "normalized_depth": 0.123214,
+          "scene": 0,
+          "source_id": 23
+        }
+      ]
+    },
+    "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp": {
+      "destinations_inside_frozen_classes": [],
+      "destinations_outside_frozen_classes": [
+        "A Filter 1 FEG Mod Amount",
+        "A Filter EG Sustain",
+        "A Osc 1 Morph",
+        "A Osc 3 Sync"
+      ],
+      "landed_slice_blockers": [
+        "3 active FX slot(s), types [1, 6]",
+        "filter block config fbc=5 (not serial1)",
+        "waveshaper type 2 (not off)",
+        "active mixer paths ['o1', 'o2', 'o3'] (not osc1-only)",
+        "osc1 normalized type 2 (not Classic); scene osc types [2, 3]",
+        "filter unit types [1, 8] (landed slice is LP12-active / unit-2 off)"
+      ],
+      "renderable_end_to_end_by_landed_leaves": false,
+      "slfo_destinations": [
+        "A Filter 1 FEG Mod Amount",
+        "A Filter EG Sustain",
+        "A Osc 1 Morph",
+        "A Osc 3 Sync"
+      ],
+      "slfo_route_count": 4,
+      "slfo_routes": [
+        {
+          "depth": 0.123214,
+          "dest_name": "A Osc 1 Morph",
+          "list": "scene",
+          "modsource": "ms_slfo1",
+          "normalized_depth": 0.123214,
+          "scene": 0,
+          "source_id": 23
+        },
+        {
+          "depth": -25.392862,
+          "dest_name": "A Osc 3 Sync",
+          "list": "scene",
+          "modsource": "ms_slfo2",
+          "normalized_depth": -0.423214,
+          "scene": 0,
+          "source_id": 24
+        },
+        {
+          "depth": -38.571384,
+          "dest_name": "A Filter 1 FEG Mod Amount",
+          "list": "scene",
+          "modsource": "ms_slfo3",
+          "normalized_depth": -0.200893,
+          "scene": 0,
+          "source_id": 25
+        },
+        {
+          "depth": -0.401786,
+          "dest_name": "A Filter EG Sustain",
+          "list": "scene",
+          "modsource": "ms_slfo3",
+          "normalized_depth": -0.401786,
+          "scene": 0,
+          "source_id": 25
+        }
+      ]
+    },
+    "resources/data/patches_3rdparty/Emu/Plucks/Pluck 2 Pad Demon Sad.fxp": {
+      "destinations_inside_frozen_classes": [],
+      "destinations_outside_frozen_classes": [
+        "A Highpass",
+        "A Osc 3 M1 Amount",
+        "A Osc 3 M2 Amount",
+        "FX S1 Mix"
+      ],
+      "landed_slice_blockers": [
+        "4 active FX slot(s), types [2, 5, 6]",
+        "filter block config fbc=7 (not serial1)",
+        "waveshaper type 4 (not off)",
+        "active mixer paths ['o1', 'o2', 'o3'] (not osc1-only)",
+        "filter unit types [1, 2] (landed slice is LP12-active / unit-2 off)"
+      ],
+      "renderable_end_to_end_by_landed_leaves": false,
+      "slfo_destinations": [
+        "A Highpass",
+        "A Osc 3 M1 Amount",
+        "A Osc 3 M2 Amount",
+        "FX S1 Mix"
+      ],
+      "slfo_route_count": 4,
+      "slfo_routes": [
+        {
+          "depth": 0.120536,
+          "dest_name": "A Osc 3 M1 Amount",
+          "list": "scene",
+          "modsource": "ms_slfo1",
+          "normalized_depth": 0.120536,
+          "scene": 0,
+          "source_id": 23
+        },
+        {
+          "depth": -0.128572,
+          "dest_name": "A Osc 3 M2 Amount",
+          "list": "scene",
+          "modsource": "ms_slfo1",
+          "normalized_depth": -0.128572,
+          "scene": 0,
+          "source_id": 23
+        },
+        {
+          "depth": 87.0,
+          "dest_name": "A Highpass",
+          "list": "scene",
+          "modsource": "ms_slfo4",
+          "normalized_depth": 1.0,
+          "scene": 0,
+          "source_id": 26
+        },
+        {
+          "depth": -1.0,
+          "dest_name": "FX S1 Mix",
+          "list": "global",
+          "modsource": "ms_slfo3",
+          "normalized_depth": -1.0,
+          "scene": 0,
+          "source_id": 25
+        }
+      ]
+    }
+  },
+  "named_carriers_absent_from_graphs": [],
+  "source": "corpus/normalized/graphs.jsonl"
+}

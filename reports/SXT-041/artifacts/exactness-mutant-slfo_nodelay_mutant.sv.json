@@ -1,0 +1,28 @@
+{
+  "tb": "../../../../../../../tmp/sxt041-regen/nc/rtl-mutants/slfo_nodelay_mutant.sv",
+  "verdict": "FAIL",
+  "comparison": "FAIL",
+  "scope": "scene-LFO control plane (ms_slfo1..6): one instance set per scene, all six checkpointed every block, plus the once-per-block scene route sums and the one-block route latch",
+  "checked": {
+    "slfo_checkpoints": 126,
+    "slfo_fields": 630,
+    "route_sums": 21,
+    "route_latches": 21,
+    "blocks": 21
+  },
+  "mismatches": 42,
+  "first_failures": [
+    "block 0 route_sum[0]: model=0 rtl=571025",
+    "block 0 route_sum[1]: model=0 rtl=528681",
+    "block 1 route_sum[0]: model=571025 rtl=1141985",
+    "block 1 route_sum[1]: model=528681 rtl=533073",
+    "block 2 route_sum[0]: model=1141985 rtl=1712945",
+    "block 2 route_sum[1]: model=533073 rtl=537465",
+    "block 3 route_sum[0]: model=1712945 rtl=2283840",
+    "block 3 route_sum[1]: model=537465 rtl=541856",
+    "block 4 route_sum[0]: model=2283840 rtl=2854735",
+    "block 4 route_sum[1]: model=541856 rtl=546248"
+  ],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
+}

@@ -1,0 +1,17 @@
+{
+  "tb": "rtl/voice/tb_slfo.sv",
+  "verdict": "PASS",
+  "comparison": "PASS",
+  "scope": "scene-LFO control plane (ms_slfo1..6): one instance set per scene, all six checkpointed every block, plus the once-per-block scene route sums and the one-block route latch",
+  "checked": {
+    "slfo_checkpoints": 55800,
+    "slfo_fields": 279000,
+    "route_sums": 9300,
+    "route_latches": 9300,
+    "blocks": 9300
+  },
+  "mismatches": 0,
+  "first_failures": [],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
+}

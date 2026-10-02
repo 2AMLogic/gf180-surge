@@ -1,0 +1,24 @@
+{
+  "frames": 297600,
+  "ref_peak_lsb": 17038.0,
+  "model_peak_lsb": 15505.0,
+  "max_abs_diff_lsb": 12822.0,
+  "rms_diff_lsb": 942.3874363435091,
+  "rms_diff_dbfs": -30.824143871152092,
+  "rms_diff_at_shift0_lsb": 942.3874363435091,
+  "best_shift": 1,
+  "rms_diff_at_best_shift_lsb": 930.8967541359116,
+  "spectral_corr": 0.9817985585904272,
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 3500,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": false,
+    "spectral_corr": true
+  },
+  "verdict": "FAIL against proposed budgets"
+}

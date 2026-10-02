@@ -466,8 +466,13 @@ only; any other destination class is fail-closed.
   the pinned 120 BPM the temposync rate formula agrees with the table path
   up to the declared table-lerp deviation).
 * LFO-parameter destinations, pitch/volume/morph/keytrack/... destinations,
-  scene LFOs (ms_slfo1..6), step-seq grids, MSEG/Formula, noise/S&H, and
-  deform ≠ 0 bends are outside the slice (extractor refuses).
+  step-seq grids, MSEG/Formula, noise/S&H, and deform ≠ 0 bends are outside
+  the slice (extractor refuses).
+* Scene LFOs (`ms_slfo1..6`) were outside the SXT-032 slice. **That omission
+  is lifted by SXT-041** (#75), which freezes the scene-scope *scheduling*
+  around this same instance arithmetic — see the SXT-041 section below. The
+  SXT-032 extractor still refuses them; `extract_slfo_inputs.py` is the
+  scene-scope entry point.
 * Double-precision rate/table evaluations quantize once (same declared
   deviation as SXT-022); the engine's float32 phase accumulation vs the
   fixed-point phase is part of the model-vs-reference budget.
@@ -868,3 +873,165 @@ Word lengths and op order (all Q10.21, 32-bit, saturating adds):
    * **Necessary, not sufficient.** The gate checks HEAD against the pin; it
      does not revalidate submodule SHAs, build flags, or the pinned
      interpreter. Those remain `oracle/fetch-and-build.sh`'s job.
+
+---
+
+# SXT-041 frozen scene-LFO (SLFO) scheduling (`slfo_model.py` + `tb_slfo.sv`)
+
+Leaf #75 (SXT-041, mod behavior `slfo`, pinned modsource ids
+23 = `ms_slfo1` .. 28 = `ms_slfo6`). The issue text calls SLFO "the same
+class as lfo at scene routing scope", and that is literally true of the
+*arithmetic*: the pinned engine builds scene LFOs from the same
+`LFOModulationSource` class frozen by SXT-032. **This section therefore
+freezes no new arithmetic.** `slfo_model.py` imports `lfo_model` and reuses
+its phase accumulator, `lfoeg_*` state machine, waveform evaluation,
+unipolar fold and magnitude scaling verbatim — duplicating them would create
+a second, driftable copy of a frozen kernel.
+
+What IS frozen here is the **scene-scope scheduling**, which differs from the
+per-voice LFOs on five independently observable axes (S1..S5 below). Each one
+has a paired negative control that must demonstrably fail
+(`tools/slfo_negative_controls.py`, `tests/test_sxt041_slfo.py`).
+
+## Pinned-source citations (read, not copied)
+
+Pin: `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`.
+
+* `src/common/ModulationSource.h`:
+  - `modsources` enum — `ms_lfo1..6` = 17..22, `ms_slfo1..6` = **23..28**;
+  - `isScenelevel(ms)` (line 211) is **true** for `ms_slfo1..6`, which is
+    what files an SLFO route into `scene[].modulation_scene` rather than
+    `modulation_voice`;
+  - `isVoiceModulator(ms)` (line 252) is `!((ms >= ms_slfo1) && (ms <=
+    ms_slfo6))` — false *exactly* for the six SLFOs;
+  - `isLFO(ms)` spans `ms_lfo1..ms_slfo6`: one class, two scopes.
+* `src/common/SurgeSynthesizer.cpp`:
+  - ctor: `scene.modsources[ms_slfo1 + l] = new LFOModulationSource()`, bound
+    to `scene.lfo[n_lfos_voice + l]` (i.e. `scene.lfo[6..11]`) with
+    `setIsVoice(false)`. `isVoice` is read only by the Formula modulator,
+    which is fail-closed in this leaf's frozen waveform set;
+  - `playVoice` (line 755): `if (getNonReleasedVoices(scene) == 0)` → attack
+    all `n_lfos_scene` instances, evaluated **before** the new voice exists;
+  - `releaseNote` (line 1832): the same predicate → release all six,
+    evaluated **after** `SurgeVoice::release` has cleared `state.gate`;
+  - `getNonReleasedVoices` (line 628) counts voices with `v->state.gate`;
+  - `processControl`: `copy_scenedata` → modwheel/controller `process_block`
+    → the `modulation_scene` apply loop → **then** the `n_lfos_scene`
+    `process_block()` loop (see S4).
+* `src/common/dsp/SurgeVoice.cpp` lines **325..330**:
+  `modsources[ms_slfo1 + i] = oscene->modsources[ms_slfo1 + i]` — the voice
+  borrows the *scene's* instance pointers (see S1).
+* `src/common/dsp/modulators/LFOModulationSource.cpp/.h` — the shared
+  instance arithmetic, frozen by SXT-032, unchanged here.
+
+## Frozen scene scheduling (S1..S5)
+
+**S1 — one instance set per scene, shared by every voice.** Six instances
+exist per *scene*, not six per voice; `SurgeVoice` copies pointers to them.
+Per-instance state is still never merged (AGENTS.md): the six keep six
+independent state sets even though the arithmetic is shared. Control:
+`--shared-instance` / `slfo_shared_mutant.sv`.
+
+**S2 — attack is gated on `getNonReleasedVoices(scene) == 0`.** A legato
+note-on does **not** restart a scene LFO, where it always restarts a voice
+LFO (every voice owns a fresh one). Control: `--per-note-retrigger`.
+
+**S3 — release is gated on the same predicate**, evaluated after the
+released voice's gate is cleared. Control: `--per-note-retrigger`.
+
+**S4 — the scene route is ONE BLOCK BEHIND the instance.** In
+`processControl` the `modulation_scene` apply loop
+(`scenedata[dst].f += depth * modsources[src]->get_output(...)`) runs
+**before** the `n_lfos_scene` `process_block()` loop, so block N's scene
+routes consume the output computed at the end of block N−1. This is visibly
+deliberate in the pin: the *original* pre-apply process loop is still present
+**commented out** immediately above the apply loop. The asymmetry is real —
+`ms_modwheel` is `process_block()`-ed earlier in the same function, before
+the apply loop, so SXT-035's modwheel route is **not** delayed. The model
+holds the delayed words in an explicit `route_out` latch. Control:
+`--zero-delay-route` / `slfo_nodelay_mutant.sv`.
+
+**S5 — all six instances process EVERY block while the scene plays**, with no
+`modsource_doprocess` gate (the `n_lfos_scene` loop is unconditional inside
+the `playA`/`playB` scene gate), including blocks with no voices at all and
+including the reference renderer's settle blocks. Voice LFOs 2..6 process
+only when routed and only while a voice exists. Control: `--gated-process`.
+
+## Frozen word lengths (SXT-041 additions)
+
+Unchanged from SXT-032 (same engine class, same parameter storage layout
+`scene.lfo[n_lfos_voice + i]`) plus exactly one new state field:
+
+| Field | Width | Note |
+|---|---|---|
+| `phase`, `env_phase` | Q2.29 (29) | SXT-032 |
+| `env_val`, `env_releasestart` | 30 | SXT-032 |
+| `env_state` | 3 | SXT-032 |
+| `output` | Q10.21 (22) | SXT-032 |
+| `flags` (phase_init, ever_attacked) | 2 | SXT-032 |
+| **`route_out_latch`** | **Q10.21 (22)** | **SXT-041 — the S4 one-block delay** |
+
+Per-instance **167 bits**; per scene **1002 bits** for six instances with
+shared arithmetic (`reports/SXT-041/artifacts/costs.txt`).
+
+## Frozen op order (one scene block, in `processControl` order)
+
+1. apply the `modulation_scene` route sums from the **`route_out` latch**
+   (the previous block's instance outputs): per route
+   `term = qmul(depth_q21, route_out[i])`, saturating-accumulated into the
+   `cutoff` / `reso` destination-class sums (Q10.21);
+2. **then** advance all six instances (SXT-032 arithmetic, unchanged);
+3. re-latch `route_out` from the fresh outputs, for the next block.
+
+Note that step 1 precedes step 2 — reversing them *is* the S4 control. The
+route sums are block-constant and shared by every voice.
+
+## Declared scope omissions (SXT-041; recorded, never guessed)
+
+* Frozen destination classes are **cutoff and resonance only**
+  (`FROZEN_DESTS`); any other destination raises. The corpus's most common
+  SLFO destinations (`A Pitch` 188, `A Filter 1 Cutoff` 111) are therefore
+  only partly inside the slice — see `artifacts/applicability-scan.json`.
+* The frozen waveform set is SXT-032's (sine/tri/square/ramp at deform 0);
+  step-seq grids, MSEG, Formula (and hence `setIsVoice`'s only real reader),
+  `temposync`/`deactivated` rate flags and `lm_random` trigger are refused by
+  the extractor.
+* Scene B / the second scene is not exercised: the fixture is single-scene
+  (scene A). The scheduling is frozen per scene; a two-scene fixture would
+  need its own extraction.
+* The SXT-017 `slfo_definitions` budget-risk caveat and the send-levels 3/4
+  exposure gap are carried unresolved; neither is a support claim.
+
+## Files (SXT-041)
+
+* `slfo_model.py` — frozen scene-scope scheduling (`SceneLfoBank`); imports
+  `lfo_model` for the arithmetic, does **not** re-freeze it
+* `extract_slfo_inputs.py` — fail-closed extractor (definitions + the three
+  declared scene routes, `modulation_scene` placement re-verified)
+* `attacky_slfo_inputs.json`, `attacky_slfo_fast_inputs.json` — committed
+  extractions (census-blob verified; `fast` is the rate/shape corner)
+* `run_slfo_model.py` — runner (SXT-022 voice trace + per-block bank records
+  for all six instances + RTL stimulus)
+* `sequences/sxt041-slfo-overlap-v1.json` — the overlap (legato) sequence that
+  makes S2/S3 observable: the pinned engine attacks 2× / releases 2× where a
+  per-note-retrigger model would do 5× / 5×
+* `rtl/voice/tb_slfo.sv` — scene-LFO control-plane RTL (exactness:
+  `tools/compare_slfo_rtl_model.py`). The SXT-022 `tb_voice.sv` audio
+  datapath is UNCHANGED and runs against the SLFO-influenced control words
+* `tools/slfo_negative_controls.py`, `tools/slfo_cost_report.py`,
+  `tools/slfo_applicability_scan.py`, `tools/slfo_harness_failure_probe.py`
+* Evidence: `reports/SXT-041/EVIDENCE.md`
+
+## Reproduce (SXT-041)
+
+```sh
+# oracle exports: see oracle/fetch-and-build.sh --prebuilt
+python3 model/voice/extract_slfo_inputs.py --variant base   # and --variant fast
+python3 fixtures/render_slfo_fixture.py --sequence <seq> --out-dir <R>
+python3 model/voice/run_slfo_model.py   --sequence <seq> --out-dir <R>/model-<seq>
+python3 tools/compare_audio_reference.py --ref <R>/reference-<seq>-slfo-fixture.wav \
+        --model <R>/model-<seq>/model.wav --json <R>/audio-<seq>.json
+python3 tools/compare_slfo_rtl_model.py --run-dir <R>/model-<seq> --out <R>/exactness-slfo-<seq>.json
+python3 tools/compare_rtl_model.py      --run-dir <R>/model-<seq> --out <R>/exactness-voice-<seq>.json
+python3 tools/slfo_negative_controls.py --artifacts <R>/nc --reference-dir <R>
+```

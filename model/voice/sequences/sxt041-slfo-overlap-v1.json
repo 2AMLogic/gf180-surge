@@ -1,0 +1,88 @@
+{
+ "id": "sxt041-slfo-overlap-v1",
+ "schema_version": 1,
+ "sample_rate": 48000,
+ "description": "SXT-041 scene-scope SLFO fixture: overlapping (legato) voices so the engine's scene-LFO attack/release gate (getNonReleasedVoices(scene) == 0) is observable; a per-note-retrigger model would attack 5 times and release 5 times where the pinned engine attacks 2 and releases 2. Model/voice-local sequence (SXT-034/SXT-036 pattern).",
+ "coverage": [
+  "overlap:polyphonic",
+  "slfo:attack-gate-nonreleased-zero",
+  "slfo:release-gate-nonreleased-zero",
+  "slfo:instance-recycle-after-full-release"
+ ],
+ "notes": "Expected engine scene-LFO events: ATTACK at t=0 (0 gated voices), no attack at t=4800/9600 (gated voices present), no release at t=19200/24000 (gated voices remain), RELEASE at t=28800 (last gate cleared), ATTACK at t=48000 (recycled instances), no attack at t=52800, no release at t=62400, RELEASE at t=67200.",
+ "settle_s": 0.25,
+ "tail_s": 2.0,
+ "tempo_events_renderable": true,
+ "events": [
+  {
+   "type": "note_on",
+   "t": 0,
+   "channel": 0,
+   "note": 48,
+   "velocity": 100
+  },
+  {
+   "type": "note_on",
+   "t": 4800,
+   "channel": 0,
+   "note": 55,
+   "velocity": 100
+  },
+  {
+   "type": "note_on",
+   "t": 9600,
+   "channel": 0,
+   "note": 60,
+   "velocity": 100
+  },
+  {
+   "type": "note_off",
+   "t": 19200,
+   "channel": 0,
+   "note": 48,
+   "velocity": 0
+  },
+  {
+   "type": "note_off",
+   "t": 24000,
+   "channel": 0,
+   "note": 60,
+   "velocity": 0
+  },
+  {
+   "type": "note_off",
+   "t": 28800,
+   "channel": 0,
+   "note": 55,
+   "velocity": 0
+  },
+  {
+   "type": "note_on",
+   "t": 48000,
+   "channel": 0,
+   "note": 52,
+   "velocity": 100
+  },
+  {
+   "type": "note_on",
+   "t": 52800,
+   "channel": 0,
+   "note": 64,
+   "velocity": 100
+  },
+  {
+   "type": "note_off",
+   "t": 62400,
+   "channel": 0,
+   "note": 52,
+   "velocity": 0
+  },
+  {
+   "type": "note_off",
+   "t": 67200,
+   "channel": 0,
+   "note": 64,
+   "velocity": 0
+  }
+ ]
+}
