@@ -25,6 +25,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The per-commit gate below needs this branch's own commits AND the
+          # base-branch tip as real objects. actions/checkout@v4 fetches depth
+          # 1, where any range is unresolvable: the tool then refuses with
+          # NOT_RUN (exit 2), so a shallow checkout cannot look like a pass --
+          # but it cannot audit anything either. #300.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -34,6 +41,64 @@ jobs:
         run: python3 tools/check_provenance.py --negative-control
       - name: Audit the tree for unattributed third-party-derived content
         run: python3 tools/check_provenance.py
+      # Per-commit declaration gate, decided in #300.
+      #
+      # The tree audit above reads only the bytes that survive to the tip. This
+      # repository merges with merge commits (squash and rebase merges are
+      # disabled on the forge), so every intermediate commit of a merged branch
+      # stays reachable from main and every clone carries its blobs: a carrier
+      # added by one commit and removed by the next is published content that no
+      # tree audit, in any view, ever reads. This step is the only check for
+      # that shape.
+      #
+      # POLICY (docs/REUSE-AUDIT.md "Adoption mechanics" item 8): a carrier must
+      # be declared IN THE COMMIT THAT ADDS IT. Declaring it later in the same
+      # branch FAILS here -- including on a merge commit that brought main's
+      # newer content under the branch's older manifest, which is the shape 7 of
+      # this repository's 16 historical findings have. The remedy is to rebase
+      # onto the base branch (what the builder workflow already does before
+      # pushing) or to carry the base branch's manifest rows through the merge
+      # resolution; both keep the work and drop the finding. There is
+      # deliberately no bypass input and no continue-on-error: an unmerged
+      # branch's history is still rewritable, which is exactly why the gate sits
+      # before the merge and not after it.
+      #
+      # RANGE: origin/<base ref>..<PR head sha> -- this branch's own commits.
+      # Taken from the event payload rather than from HEAD because (1) it
+      # resolves identically on a fork PR and a same-repo branch, (2) it skips
+      # GitHub's synthetic refs/pull/N/merge commit, which no clone carries,
+      # and (3) it excludes everything already on the base branch, so this gate
+      # never re-litigates main's existing history (that question stays with
+      # #25, and auditing all of published history stays a manual
+      # `--commits HEAD` run).
+      - name: Audit this branch's own commits for per-commit declaration
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -eu
+          if [ "$EVENT_NAME" != "pull_request" ]; then
+            echo "NOT_RUN: this gate audits a pull request's own commits; on a"
+            echo "  '$EVENT_NAME' event there is no such range (on main,"
+            echo "  origin/main..HEAD resolves to no commits, which the tool"
+            echo "  refuses as NOT_RUN/exit 2 rather than calling an empty range"
+            echo "  a pass). Every commit that reaches main passed this gate on"
+            echo "  its own pull request. Auditing ALL of published history is"
+            echo "  'python3 tools/check_provenance.py --commits HEAD' and is NOT"
+            echo "  run here (coverage: none -- this is not a pass)."
+            exit 0
+          fi
+          for rev in "refs/remotes/origin/${BASE_REF}" "${HEAD_SHA}"; do
+            if ! git rev-parse --verify --quiet "${rev}^{commit}" >/dev/null; then
+              echo "FAIL: ${rev} is not present in this checkout, so this" >&2
+              echo "  branch's commit range cannot be audited at all. This job" >&2
+              echo "  requires 'fetch-depth: 0' on its checkout step." >&2
+              exit 1
+            fi
+          done
+          python3 tools/check_provenance.py \
+            --commits "refs/remotes/origin/${BASE_REF}..${HEAD_SHA}"
 
   python-compile:
     name: python compile (stdlib only)

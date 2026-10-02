@@ -178,10 +178,34 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    merging a branch that touched third-party material. It judges the carriage
    question only, applies today's rules to older trees, and treats a commit none
    of whose parents published a manifest as NOT judged — all three are printed on
-   every run and spelled out in `--limits`. CI does **not** run it today: whether
-   a PR branch is gated on this is open as
-   [#300](https://github.com/2AMLogic/gf180-surge/issues/300), so this step is
-   yours to run, not a check that will stop you.
+   every run and spelled out in `--limits`. **CI gates every pull request on
+   this** ([#300](https://github.com/2AMLogic/gf180-surge/issues/300), recorded
+   in `reports/sxt-019/EVIDENCE.md` §20): the `provenance-audit` job checks out
+   with `fetch-depth: 0` and runs the mode over `origin/<base ref>..<PR head
+   sha>` — this branch's own commits, so a pull request is never judged on
+   history that was already on the base branch. Three consequences worth knowing
+   before you push:
+
+   * **Declaring late in the branch fails the gate**, which is the rule above
+     with teeth rather than a new rule. That includes a **merge commit** that
+     brought the base branch's newer content under this branch's older
+     manifest — the shape 7 of this repository's 16 historical findings have,
+     and the one case where a branch can fail the gate while its final tree
+     audits clean. Both remedies keep the work: rebase onto the base branch
+     (what the builder workflow already does before pushing), or carry the base
+     branch's manifest rows through the merge resolution. There is no bypass
+     input and no `continue-on-error`: while a branch is unmerged its history is
+     still rewritable, which is why the gate sits before the merge.
+   * **A commit none of whose parents published a manifest is still NOT judged**,
+     not failed, so a branch forked before 2026-09-25 is disclosed rather than
+     blocked — read the coverage lines, not just the verdict.
+   * **A push to `main` prints NOT_RUN, not a pass**, because `origin/main..HEAD`
+     resolves to no commits there (the tool refuses an empty range, exit 2).
+     Auditing *all* of published history stays the manual
+     `python3 tools/check_provenance.py --commits HEAD` run; the gate covers a
+     branch's own commits only, and the 16 findings already in `main`'s history
+     are untouched by it (they remain a question for
+     [#25](https://github.com/2AMLogic/gf180-surge/issues/25)).
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle

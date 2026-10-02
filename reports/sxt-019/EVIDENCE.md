@@ -2459,17 +2459,114 @@ environment, not the mode. Verified both directions in a real `git clone
 --depth 1` of this branch: the committed version of that test FAILS there, the
 fixture version PASSES.
 
+### The CI-gating question, resolved (#300, 2026-10-02)
+
+Increment 17 landed `--commits` as a mode you run, and filed the gating question
+as [#300](https://github.com/2AMLogic/gf180-surge/issues/300). **Decided: gate
+it.** `.github/workflows/ci.yml`'s `provenance-audit` job now checks out with
+`fetch-depth: 0` and runs, on `pull_request` events only:
+
+```
+python3 tools/check_provenance.py --commits refs/remotes/origin/<base ref>..<PR head sha>
+```
+
+**Policy, stated rather than left to the range**: a carrier must be declared in
+the commit that adds it; declaring it later in the same branch fails the gate,
+**including on a merge commit** that brought the base branch's newer content
+under the branch's older manifest. The remedies keep the work (rebase onto the
+base branch, or carry the base branch's manifest rows through the merge
+resolution); there is no bypass input and no `continue-on-error`, because an
+unmerged branch's history is still rewritable and that is the whole reason the
+gate sits before the merge rather than after it.
+
+**Why gate, given that 0 of the 16 findings are a dangerous shape.** The zero
+count is a measured **base rate**, not coverage, and this record will not read
+one as the other. Of the two shapes that matter, *still unanswered at the tip* is
+caught by the tree audit by definition (the tree audit fails too), but *published
+then removed* is invisible to the tree audit in every one of its four views —
+that is increment 17's whole premise, asserted by
+`test_a_carrier_published_then_deleted_is_invisible_to_the_tree_audit`. For that
+shape this gate is not defence in depth; it is the only check there is. The
+measured cost of running it is ~19–25 s wall for a PR-sized range (the fixed cost
+is reading one tree, not one per commit), against a documented rule that was
+otherwise enforced by nothing.
+
+**Why this range.** `origin/<base ref>..<head sha>` is taken from the event
+payload rather than from `HEAD`: it resolves identically on a fork PR and a
+same-repo branch, it skips GitHub's synthetic `refs/pull/N/merge` commit (which
+no clone carries), and it excludes everything already on the base branch — so
+**the gate never re-litigates `main`'s existing 16 findings**. Ruling on those
+stays an owner determination under
+[#25](https://github.com/2AMLogic/gf180-surge/issues/25), exactly as #300's
+stop/escalate clause required, and auditing all of published history stays the
+manual `--commits HEAD` run.
+
+**What the gate does not do, printed rather than implied.** On a push to `main`
+the step prints `NOT_RUN` and the reason (there `origin/main..HEAD` resolves to no
+commits, which the tool refuses as exit 2 rather than calling an empty range a
+pass); it is not a pass and does not claim to be. A commit none of whose parents
+published a manifest is still NOT judged, not failed. Every `--limits` boundary
+applies to each commit tree judged, as in the tree audit.
+
+**Behaviour verified before the workflow was written** (throwaway
+`git clone --no-hardlinks` of this repository at `f324d93`, synthetic fabricated
+carrier — the `FIXTURE_GPL_BODY` fixture text, not third-party content — in a
+scratch branch, clone deleted afterwards; the same shapes are pinned without a
+clone by the ten `history/*` controls and the twelve pytest cases above):
+
+| Case | tree audit | the gate | exit |
+|---|---|---|---|
+| **Failure control** — carrier added by one commit, declared by the next | PASS (0) | **FAIL**, 1 finding, *answered at the range tip*, attributed to the adding commit | 1 |
+| **Merge-commit shape** — branch merges a base-branch commit, resolves the manifest to its own older copy, then fixes it up in a follow-up commit (the `a1e4a57` shape) | PASS (0) | **FAIL**, 1 finding, attributed to the **merge commit** | 1 |
+| Same branch after `git rebase main` — same work, no merge commit | PASS (0) | PASS, 1 commit judged | 0 |
+| Carrier and its row in the **same** commit | PASS (0) | PASS, 2 commits judged | 0 |
+| An ordinary docs-only PR branch (zero history findings) | PASS (0) | PASS, 1 commit judged, no bookkeeping change needed | 0 |
+| Empty range (what `origin/main..HEAD` would be on `main`) | — | `NOT_RUN: … a range that audits nothing is not a pass` | 2 |
+| `git clone --depth 1` (what `fetch-depth: 1` leaves) | — | range unresolvable, `NOT_RUN` | 2 |
+
+The step's own shell was exercised on all three of its paths: the non-`pull_request`
+`NOT_RUN` path (exit 0), a missing base ref (exit **1**, naming `fetch-depth: 0`),
+and a missing head sha (exit 1) — so a range that cannot be resolved fails the job
+instead of skipping quietly. The workflow wiring itself is asserted by
+`tests/test_sxt019_provenance.py::test_ci_gates_pull_requests_on_per_commit_declaration`
+and two neighbours, which read `.github/workflows/ci.yml` rather than trusting this
+prose.
+
+**First live run, in GitHub Actions** (the PR that added the gate, run
+`36992865994`, job `provenance audit (SXT-019 / #25)`, 43 s for the whole job):
+
+```
+  range: refs/remotes/origin/main..5e1917a2cb285b44d355291cd9202036a9c0c139
+coverage: 1 commits in range, 1 judged, 0 NOT judged
+  findings by standing at the range tip (5e1917a2cb28): answered at the range tip
+  (declared in a later commit) = 0, still unanswered at the range tip (the tree
+  audit fails too) = 0, the offending bytes are gone at the range tip (the path
+  remains) = 0, the path does not exist at the range tip (published, then
+  removed) = 0
+
+PASS: every carriage signal in the 1 judged commit(s) is answered by the
+provenance bookkeeping that same commit publishes.
+```
+
+So the range resolving under `fetch-depth: 0` on a **same-repo** branch is an
+observation, not a reasoned claim. The fork-PR case is not (see below).
+
 ### What §20 does NOT establish
 
-* **Not a CI gate.** This PR adds the mode, its controls and this measurement; it
-  does **not** wire `--commits` into `.github/workflows/ci.yml`. Gating PR
-  branches on per-commit declaration is a real policy change (the measurement
-  above shows the repository's own base rate is non-zero, all of it sequencing),
-  and it needs `fetch-depth: 0`. That decision is filed as
-  [#300](https://github.com/2AMLogic/gf180-surge/issues/300) rather than smuggled
-  in here. Until it is decided, the mode's standing is "run it before merging a
-  branch that touched third-party material" — a documented step, not an enforced
-  one, and this record does not claim otherwise.
+* **The gate is a bookkeeping gate, not a licensing clearance.** It enforces
+  *when* a carrier must be declared, on a branch's own commits. It ratifies no
+  decision record, makes no distribution determination, and does not rule on the
+  16 findings already in `main`'s history (#25). Its PASS carries exactly the
+  tree audit's limits, one commit tree at a time.
+* **The fork-PR case is NOT_RUN as an observation.** Every row in the table
+  above is a local run against a real commit graph, and the live run quoted
+  above is a **same-repo** branch. That `fetch-depth: 0` also makes
+  `refs/remotes/origin/<base ref>` and the PR head sha resolvable *on a fork
+  PR* is reasoned from `actions/checkout@v4`'s documented behaviour (it clones
+  the base repository and the merge ref) plus the explicit
+  `git rev-parse --verify` guard that fails the job if either is missing; it
+  stays NOT_RUN until a fork PR runs it. The guard is what makes that unproved
+  case loud rather than silent.
 * **Coverage, not compliance.** 446 of 529 commits have no answer set and are
   NOT_RUN. Refs other than the audited range — tags, other branches, dropped
   `refs/pull/*` heads a clone can still fetch — are outside every rule.
