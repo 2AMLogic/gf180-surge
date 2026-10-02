@@ -38,12 +38,11 @@ Usage:
 """
 
 import argparse
-import json
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import run_leaf_comparison  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_kt.sv")
@@ -100,6 +99,28 @@ def compare(model_trace, rtl_rows):
     return checked, fails
 
 
+# This leaf reports four fields the other RTL-vs-model leaves do not, and
+# reports them INTERLEAVED among the shared ones (`sequence`/`control_mode`
+# after `tb`, `rtl_qmuls`/`blocks` after `checked`) rather than appended.
+# SUMMARY_KEY_ORDER pins that published order so a shared report-assembly
+# helper cannot silently re-order this leaf's committed evidence; it is
+# checked against the actual key set on every run (ValueError on drift).
+SUMMARY_KEY_ORDER = ("tb", "sequence", "control_mode", "verdict",
+                     "comparison", "checked", "rtl_qmuls", "blocks",
+                     "mismatches", "first_failures", "sim_fails",
+                     "sim_stdout_tail")
+
+
+def extra_summary_fields(model_trace, sim):
+    """The four keytrack-only summary fields (see SUMMARY_KEY_ORDER)."""
+    return {
+        "sequence": model_trace.get("sequence"),
+        "control_mode": model_trace.get("control_mode"),
+        "rtl_qmuls": sim.value,
+        "blocks": len(model_trace["blocks"]),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True,
@@ -108,43 +129,18 @@ def main():
     ap.add_argument("--out", help="write summary JSON here")
     args = ap.parse_args()
 
-    with open(os.path.join(args.run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
-
-    sim = compile_and_run(
-        args.tb, args.run_dir, out_name="tb_kt.vvp", absolute=True,
-        compile_in_workdir=True, quiet_compile=True,
-        done_prefix="DONE kt-qmuls=", trace_name="tb_kt_trace.txt",
-        stimulus_files=STIMULUS_RELPATHS, report_sim_fails=True)
-
-    checked = {"voice_checkpoints": 0, "fields": 0}
-    fails = list(sim.sim_fails)
-    comparison = "NOT_RUN"
-    if not sim.sim_fails:
-        checked, cmp_fails = compare(model_trace, parse_tb(sim.trace))
-        fails += cmp_fails
-        comparison = "FAIL" if cmp_fails else "PASS"
-
-    summary = {
-        "tb": os.path.relpath(args.tb, REPO),
-        "sequence": model_trace.get("sequence"),
-        "control_mode": model_trace.get("control_mode"),
-        "verdict": "PASS" if not fails else "FAIL",
-        "comparison": comparison,
-        "checked": checked,
-        "rtl_qmuls": sim.value,
-        "blocks": len(model_trace["blocks"]),
-        "mismatches": len(fails),
-        "first_failures": fails[:10],
-        "sim_fails": sim.sim_fails,
-        "sim_stdout_tail": sim.stdout_tail,
-    }
-    print(json.dumps(summary, indent=2))
-    if args.out:
-        with open(args.out, "w") as f:
-            json.dump(summary, f, indent=2)
-            f.write("\n")
-    return 0 if not fails else 1
+    return run_leaf_comparison(
+        tb=args.tb, tb_label=os.path.relpath(args.tb, REPO),
+        run_dir=args.run_dir, out=args.out,
+        parse_tb=parse_tb, compare=compare,
+        compile_kwargs=dict(
+            out_name="tb_kt.vvp", absolute=True, compile_in_workdir=True,
+            quiet_compile=True, done_prefix="DONE kt-qmuls=",
+            trace_name="tb_kt_trace.txt",
+            stimulus_files=STIMULUS_RELPATHS),
+        default_checked={"voice_checkpoints": 0, "fields": 0},
+        extra_summary_fields=extra_summary_fields,
+        summary_key_order=SUMMARY_KEY_ORDER)
 
 
 if __name__ == "__main__":
