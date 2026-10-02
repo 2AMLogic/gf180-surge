@@ -111,19 +111,24 @@ duplicate, not extend, the already-landed and already-qualified
 `tb_voice.sv`).
 
 **Digibass: the reference render is silent, independent of this leaf.**
-Bisected to a single cause: forcing Digibass's oscillator slot 1 to Sine
-(this leaf's declared isolation override, needed to compare apples-to-apples
-against the already-qualified Sine audio path) makes the **pinned engine**
-render completely silent (`peak_abs_float: 0.0`) at every MIDI key tested,
-before any of this leaf's other 29 overrides are applied, for reasons not
-yet root-caused (solo/mute/FM-switch/octave/pitch/unison all ruled out;
-`Bass 5.fxp`, which starts from the same original oscillator type, is
-unaffected). Filed separately as **#311** rather than investigated further
-here (root-causing an engine-level quirk on one specific factory preset is
-out of this leaf's declared scope). Digibass's RTL-vs-model exactness
-(claim 1) is **unaffected** — it is a pure register-level comparison that
-never touches rendered audio, and passed 0-mismatch identically to the
-other two carriers.
+Forcing Digibass's oscillator slot 1 to Sine (this leaf's declared isolation
+override) makes the **pinned engine** render completely silent
+(`peak_abs_float: 0.0`) at every MIDI key tested. Root-caused under **#311**
+(investigation finding; no verdict above changes): Digibass carries
+`Velocity` and `Filter EG` modulation routings into osc-1 `p[0]` (Morph on
+its Wavetable osc); the engine's type switch via the Python binding leaves
+them in place, they retarget the Sine oscillator's integer Shape selector,
+the float modulation add corrupts the integer, and the Sine oscillator
+produces no output. Bass 2 / Bass 5 have no osc-1 `p[]` routings and are
+unaffected. Zeroing those two routings before the switch restores a normal
+pitched render (peak 0.3869); adding a routing of the same kind to Bass 5
+silences it (peak 0.0). Full evidence table, ruled-out hypotheses and the
+caveat on intermittent nonzero results are in `model/voice/playmode/README.md`
+("Known finding"). Digibass's budget leg stays recorded as NOT A VALID
+COMPARISON; the fixture was not changed here. Digibass's RTL-vs-model
+exactness (claim 1) is **unaffected**: it is a pure register-level
+comparison that never touches rendered audio, and passed 0-mismatch
+identically to the other two carriers.
 
 ## Negative control (claim 5), required
 
