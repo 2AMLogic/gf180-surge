@@ -10,12 +10,16 @@ the DC-offset probe, the `/64` drive interpolation and the `wst_digital`
 zero-external-memory accounting, and the integrity of the committed evidence
 records.
 
-Oracle-dependent legs (reference renders, the complete oracle extraction)
-are NOT run here and must never be reported as a pass: the committed
-`model/effects/fx_inputs/type-distortion-sse-*.json` records carry
-`extraction_status = INCOMPLETE-BLOCKED-ON-ORACLE` and this suite asserts
-exactly that. A missing iverilog makes the RTL leg NOT_RUN (skipped), never
-a pass.
+Oracle-dependent legs are not RE-RUN here (no engine is linked into the test
+process); they are checked against their committed records. Since #136 the
+committed `model/effects/fx_inputs/type-distortion-sse-*.json` records are
+`extraction_status = COMPLETE` from the pinned loader's normalized state, and
+this suite asserts that plus the live fail-closed control that a record with
+any oracle-only field still `null` is REFUSED by `DistortionSSEParams`. The
+reference-leg artifacts (`reports/SXT-028e-sse/artifacts/compare-*.json`,
+`reference-leg.json`, `settle-boundary.json`) are checked for internal
+consistency and for their negative controls having FAILED as required; a
+missing iverilog makes the RTL leg NOT_RUN (skipped), never a pass.
 """
 import json
 import math
@@ -294,7 +298,17 @@ def test_unresolved_control_plane_inputs_refused():
         assert "fail-closed" in str(e.value)
 
 
-def test_committed_fx_inputs_are_blocked_on_oracle():
+ORACLE_ONLY_FIELDS = ("preeq_highcut_deactivated", "posteq_highcut_deactivated",
+                      "preeq_gain_extend", "posteq_gain_extend", "drive_extend")
+
+
+def test_committed_fx_inputs_are_complete_from_the_pinned_loader():
+    """#136: the oracle extraction ran, so the records are COMPLETE.
+
+    What is asserted is the *shape and provenance* of the record, never that
+    any render agreed with anything: a COMPLETE record permits a model run,
+    it is not a fidelity result.
+    """
     found = 0
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
     for name in sorted(os.listdir(d)):
@@ -303,15 +317,24 @@ def test_committed_fx_inputs_are_blocked_on_oracle():
         found += 1
         rec = json.load(open(os.path.join(d, name)))
         assert rec["leaf"] == "SXT-028e-sse"
-        assert rec["extraction_status"] == "INCOMPLETE-BLOCKED-ON-ORACLE"
-        assert rec["extraction_mode"] == "graphs"
+        assert rec["extraction_status"] == "COMPLETE"
+        assert rec["extraction_mode"] == "oracle"
+        assert rec["unresolved_fields"] == []
         assert rec["census_blob_sha1"]
+        assert "58914e59c608ed4384ba6002e44c3465c58b2e71" in rec["source"]
+        assert rec["oracle_extraction"]["flags_source"].startswith(
+            "savePatch round-trip")
         for slot in rec["distortion_slots"]:
             assert slot["fx_model_index"] in st.SSE_MODELS
-            for k in rec["unresolved_fields"]:
-                assert slot["params"][k] is None
-            with pytest.raises(RuntimeError):
-                DistortionSSEParams(slot["params"])
+            for k in ORACLE_ONLY_FIELDS:
+                assert isinstance(slot["params"][k], bool)
+            # a COMPLETE record is runnable; an incomplete one is not
+            DistortionSSEParams(slot["params"])
+            for k in ORACLE_ONLY_FIELDS:
+                blanked = dict(slot["params"])
+                blanked[k] = None
+                with pytest.raises(RuntimeError):
+                    DistortionSSEParams(blanked)
     assert found == 3, "one carrier each for FX models 3, 4 and 5"
 
 
@@ -851,6 +874,74 @@ def test_buffer_report_record():
     assert ws["bounded"] is True, \
         "the issue's stop/escalate clause turns on this being bounded"
     assert ws["registers_actually_touched_by_reachable_shapers"] == [0, 1]
+
+
+def test_settle_boundary_was_measured_not_assumed():
+    """#136: the model's silent pre-roll is a MEASURED boundary.
+
+    The two candidate boundaries differ by ~73 dB on the harness anchor, so
+    a guessed one would dominate every number in the leg. The record must
+    show the two engine-side invariances that settle it, and the declared
+    pre-roll must be the one those invariances imply.
+    """
+    rec = json.load(open(os.path.join(SXT, "artifacts",
+                                      "settle-boundary.json")))
+    assert rec["A_settle_length_invariance"]["byte_identical"] is True
+    assert rec["B_construction_invariance"]["byte_identical"] is True
+    assert rec["declared_silent_preroll_blocks"] == 0
+    assert rec["status"] == "RESOLVED"
+    legs = rec["C_model_boundary_vs_engine"]["silent_preroll_blocks"]
+    # the declared boundary must be the better-agreeing one BY MEASUREMENT,
+    # and the wrong one must be far outside the proposed budget
+    assert legs["0"]["rms_diff_dbfs"] < -46.0
+    assert legs["375"]["rms_diff_dbfs"] > -46.0
+
+
+def test_reference_leg_controls_all_failed_as_required():
+    """A reference leg whose negative controls PASS measured nothing."""
+    path = os.path.join(SXT, "artifacts", "reference-leg.json")
+    rec = json.load(open(path))
+    assert rec["controls_ok"] is True, rec.get("warning")
+    for cid in ("NC-A", "NC-A2", "NC-SHARED", "NC-B", "NC-C"):
+        c = rec["controls"][cid]
+        assert c["status"] == "CONTROL-OK", f"{cid}: {c}"
+        assert c["must"] == "FAIL"
+        if c["gate"] == "tail":
+            assert c["tail_gate_ok"] is False
+        else:
+            assert c["verdict"].startswith("FAIL")
+    assert rec["primary"], "no primary comparison was recorded"
+
+
+def test_reference_leg_carriers_are_declared_synthetic_everywhere():
+    """No synthetic number may be presented as corpus reach."""
+    import glob
+    seen = 0
+    for p in sorted(glob.glob(os.path.join(SXT, "artifacts",
+                                           "compare-*.json"))):
+        rec = json.load(open(p))
+        seen += 1
+        assert rec["carrier_kind"] == "DECLARED-SYNTHETIC", p
+        assert rec["corpus_reach"].startswith("NONE"), p
+        assert "no corpus reach" in rec["claim_scope"], p
+        assert rec["fx_model_index"] in st.SSE_MODELS, p
+    assert seen, "no compare-*.json committed"
+
+
+def test_corpus_carrier_renders_are_not_run_with_measured_reasons():
+    """The three corpus carriers are NOT_RUN, and say why, and have no
+    compare record standing in for one."""
+    import glob
+    text = open(os.path.join(SXT, "artifacts", "render-refusals.txt")).read()
+    for slug in ("reversecrash", "trancepluck", "mutantlofiacoustic"):
+        assert f"NOT_RUN {slug}__" in text, slug
+        assert not glob.glob(os.path.join(SXT, "artifacts",
+                                          f"compare-{slug}__*.json")), slug
+    # the refusals must be statements about the presets, not about this host
+    ctrl = json.load(open(os.path.join(SXT, "artifacts",
+                                       "harness-host-control.json")))
+    assert ctrl["status"] == "PASS"
+    assert ctrl["committed_sha256"] == ctrl["rerendered_sha256"]
 
 
 def test_evidence_record_exists_and_is_honest():

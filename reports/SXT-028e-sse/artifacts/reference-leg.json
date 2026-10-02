@@ -1,0 +1,363 @@
+{
+  "budgets": "the [PROPOSED] SXT-023 effect-slice values, imported from tools/compare_chorus_reference.py; nothing is frozen here and nothing was relaxed",
+  "bypass": {
+    "syn-m3__seq-poly-8-v1-bypass-fx0": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": true,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "max_abs_diff_lsb": 949.9375,
+      "rms_diff_dbfs": -94.93160920770477,
+      "spectral_corr": 0.9999999949118594,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -94.54776719554786,
+      "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12)"
+    },
+    "syn-m3__seq-poly-8-v1-bypass-fx4": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "max_abs_diff_lsb": 40542.796875,
+      "rms_diff_dbfs": -64.83127364520857,
+      "spectral_corr": 0.9999998797286813,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -98.93489667121318,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    }
+  },
+  "carrier_kind": "DECLARED-SYNTHETIC for every row below; the three corpus carriers are NOT_RUN with measured reasons in artifacts/render-refusals.txt",
+  "claim": "claim (2) model-vs-pinned-engine agreement only. Not claim (1) RTL-vs-frozen-model (separate, exact, #121) and not claim (3) the instrument sounds good (no listening record).",
+  "controls": {
+    "NC-A": {
+      "best_shift": 8,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": false
+      },
+      "gate": "budget",
+      "max_abs_diff_lsb": 1344898.5,
+      "must": "FAIL",
+      "ok": true,
+      "rms_diff_dbfs": -13.524848246560204,
+      "spectral_corr": 0.9001549362719463,
+      "status": "CONTROL-OK",
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": -6.147195008287483,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -6.15 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -6.15 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -6.15 dB exceeds the proposed -20.00 dB relative budget)",
+      "what": "a generic single-rate tanh substitute (no oversampling, no halfband, no pre/post EQ, no feedback, no quad-waveshaper state) in place of the frozen chain"
+    },
+    "NC-A2": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": true
+      },
+      "gate": "budget",
+      "max_abs_diff_lsb": 243750.375,
+      "must": "FAIL",
+      "ok": true,
+      "rms_diff_dbfs": -26.804032256691457,
+      "spectral_corr": 0.9836109535850535,
+      "status": "CONTROL-OK",
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -23.006358768176153,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs)",
+      "what": "the SXT-028e (#57) `lookup_waveshape` table shaper substituted for `GetQuadWaveshaper`, chain otherwise untouched"
+    },
+    "NC-B": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": true
+      },
+      "gate": "tail",
+      "max_abs_diff_lsb": 824996.5,
+      "must": "FAIL",
+      "ok": true,
+      "rms_diff_dbfs": -34.481241792690646,
+      "spectral_corr": 0.9946558864986057,
+      "status": "CONTROL-OK",
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": 0.0,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 278.18 dB (> 1.00 dB budget) in 7 of 7 graded windows (worst window 0: reference -21.8 dBFS, model -300.0 dBFS); L: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 278.18 dB (> 1.00 dB budget) in 7 of 7 graded windows (worst window 0: reference -21.8 dBFS, model -300.0 dBFS); R: model tail region is silent (dropped or stubbed tail); tail residual 0.00 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 278.18 dB (> 1.00 dB budget) in 7 of 7 graded windows (worst window 0: reference -21.8 dBFS, model -300.0 dBFS))",
+      "what": "the whole declared tail region (3750 blocks) dropped (zeroed) from the model render"
+    },
+    "NC-C": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": true
+      },
+      "gate": "budget",
+      "max_abs_diff_lsb": 944521.9609375,
+      "must": "FAIL",
+      "ok": true,
+      "rms_diff_dbfs": -37.468894055167695,
+      "spectral_corr": 0.9999935173949509,
+      "status": "CONTROL-OK",
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -97.78834982407506,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs)",
+      "what": "the WRONG settle boundary: the fixture's 375-block synth settle also run through the effect, pre-converging the lipol and coefficient ramps the engine has not started yet"
+    },
+    "NC-SHARED": {
+      "best_shift": 1,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": false
+      },
+      "gate": "budget",
+      "max_abs_diff_lsb": 1830053.625,
+      "must": "FAIL",
+      "ok": true,
+      "rms_diff_dbfs": -11.970418243733128,
+      "spectral_corr": 0.44362830974085854,
+      "status": "CONTROL-OK",
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": -4.151922487812019,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -4.15 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -4.15 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -4.15 dB exceeds the proposed -20.00 dB relative budget)",
+      "what": "ONE shared effect instance driving both the ains1 and the send1 slot (shared instead of per-instance state)"
+    }
+  },
+  "controls_ok": true,
+  "issue": "#136 (SXT-028e-sse follow-up): oracle-host reference leg",
+  "leaf": "SXT-028e-sse",
+  "not_run": [],
+  "primary": {
+    "syn-d0-m3__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": true,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 3,
+      "max_abs_diff_lsb": 10.5,
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "rms_diff_dbfs": -113.64470759311499,
+      "spectral_corr": 0.9999999948027902,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -96.94358341473708,
+      "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12)"
+    },
+    "syn-d12-m3__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 3,
+      "max_abs_diff_lsb": 188471.34375,
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "rms_diff_dbfs": -50.4788170546897,
+      "spectral_corr": 0.9999999439380544,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -99.4301279532146,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-d18-m3__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 3,
+      "max_abs_diff_lsb": 355513.1875,
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "rms_diff_dbfs": -47.08826401680664,
+      "spectral_corr": 0.9999975891828948,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -96.83047595898668,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-d6-m3__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 3,
+      "max_abs_diff_lsb": 66345.1875,
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "rms_diff_dbfs": -58.4341602489131,
+      "spectral_corr": 0.9999999518556925,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -99.53647374647579,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m3__seq-notes-coverage-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 3,
+      "max_abs_diff_lsb": 30557.6640625,
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "rms_diff_dbfs": -69.50032594935229,
+      "spectral_corr": 0.9999999940980682,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -100.64151101906472,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m3__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 3,
+      "max_abs_diff_lsb": 40817.359375,
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "rms_diff_dbfs": -64.37457898680461,
+      "spectral_corr": 0.9999998590680887,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -97.47629496263855,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m4__seq-notes-coverage-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": true
+      },
+      "fx_model_index": 4,
+      "max_abs_diff_lsb": 143097.1328125,
+      "quad_waveshaper": "DIGI_SSE2",
+      "rms_diff_dbfs": -45.388223328835345,
+      "spectral_corr": 0.9971113338894146,
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": -15.825529142444427,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -15.83 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 32.15 dB (> 1.00 dB budget) in 4 of 44 graded windows (worst window 43: reference -72.3 dBFS, model -40.2 dBFS); L: tail residual -15.83 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 32.15 dB (> 1.00 dB budget) in 4 of 44 graded windows (worst window 43: reference -72.3 dBFS, model -40.2 dBFS); R: tail residual -15.83 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 32.15 dB (> 1.00 dB budget) in 4 of 44 graded windows (worst window 43: reference -72.3 dBFS, model -40.2 dBFS))"
+    },
+    "syn-m4__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": true
+      },
+      "fx_model_index": 4,
+      "max_abs_diff_lsb": 171787.53125,
+      "quad_waveshaper": "DIGI_SSE2",
+      "rms_diff_dbfs": -43.44746678496765,
+      "spectral_corr": 0.991444618650109,
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": -14.339557128323342,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -14.34 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 32.15 dB (> 1.00 dB budget) in 4 of 44 graded windows (worst window 43: reference -72.3 dBFS, model -40.2 dBFS); L: tail residual -14.34 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 32.15 dB (> 1.00 dB budget) in 4 of 44 graded windows (worst window 43: reference -72.3 dBFS, model -40.2 dBFS); R: tail residual -14.34 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 32.15 dB (> 1.00 dB budget) in 4 of 44 graded windows (worst window 43: reference -72.3 dBFS, model -40.2 dBFS))"
+    },
+    "syn-m5__seq-notes-coverage-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 5,
+      "max_abs_diff_lsb": 21424.1796875,
+      "quad_waveshaper": "OJD",
+      "rms_diff_dbfs": -74.36529613207118,
+      "spectral_corr": 0.9999999960310807,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -101.70598994320108,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m5__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 5,
+      "max_abs_diff_lsb": 29692.4609375,
+      "quad_waveshaper": "OJD",
+      "rms_diff_dbfs": -70.11868318230478,
+      "spectral_corr": 0.999999965615235,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -97.78834982407506,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m6__seq-notes-coverage-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 6,
+      "max_abs_diff_lsb": 21537.984375,
+      "quad_waveshaper": "ADAA_FULL_WAVE",
+      "rms_diff_dbfs": -74.58469871798684,
+      "spectral_corr": 0.9999993003738116,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -93.03222015956669,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m6__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": true,
+        "spectral_corr": true
+      },
+      "fx_model_index": 6,
+      "max_abs_diff_lsb": 29816.578125,
+      "quad_waveshaper": "ADAA_FULL_WAVE",
+      "rms_diff_dbfs": -71.16993027842753,
+      "spectral_corr": 0.9999955153112738,
+      "tail_gate_ok": true,
+      "tail_rms_rel_db": -89.65730749091182,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)"
+    },
+    "syn-m7__seq-notes-coverage-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": false
+      },
+      "fx_model_index": 7,
+      "max_abs_diff_lsb": 105141.1171875,
+      "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+      "rms_diff_dbfs": -31.37969508010949,
+      "spectral_corr": 0.8792771941950286,
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": -2.8118283307150134,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -2.81 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.15 dB (> 1.00 dB budget) in 25 of 44 graded windows (worst window 43: reference -72.4 dBFS, model -37.2 dBFS); L: tail residual -2.81 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.15 dB (> 1.00 dB budget) in 25 of 44 graded windows (worst window 43: reference -72.4 dBFS, model -37.2 dBFS); R: tail residual -2.81 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.15 dB (> 1.00 dB budget) in 25 of 44 graded windows (worst window 43: reference -72.4 dBFS, model -37.2 dBFS))"
+    },
+    "syn-m7__seq-poly-8-v1": {
+      "best_shift": 0,
+      "budget_results": {
+        "max_abs_diff_lsb": false,
+        "rms_diff_dbfs": false,
+        "spectral_corr": false
+      },
+      "fx_model_index": 7,
+      "max_abs_diff_lsb": 111180.53125,
+      "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+      "rms_diff_dbfs": -31.99240040164891,
+      "spectral_corr": 0.8231934713165003,
+      "tail_gate_ok": false,
+      "tail_rms_rel_db": -1.3158492602498064,
+      "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS); L: tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS); R: tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS))"
+    }
+  },
+  "settle_boundary": "the fixture's 0.25 s synth settle is NOT run through the effect; measured, not assumed (artifacts/settle-boundary.json) and held in place by control NC-C"
+}

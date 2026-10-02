@@ -1,0 +1,13 @@
+{
+  "control": "SXT-028c fmcombo wet bus re-rendered through this host's prebuilt pinned oracle",
+  "purpose": "makes a determinism REFUSAL below a statement about the preset, not about this host or this harness",
+  "sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
+  "committed_sha256": "89d42e518eab60e28cac3e308dda7e3cce09e53d074264abb88f75fffbafe333",
+  "rerendered_sha256": "89d42e518eab60e28cac3e308dda7e3cce09e53d074264abb88f75fffbafe333",
+  "determinism_sha256_all": [
+    "db77a80a0ddaba21494974cb9d3c71ecd19b3f9ccc674f196c24b1d93a1f5c78",
+    "db77a80a0ddaba21494974cb9d3c71ecd19b3f9ccc674f196c24b1d93a1f5c78",
+    "db77a80a0ddaba21494974cb9d3c71ecd19b3f9ccc674f196c24b1d93a1f5c78"
+  ],
+  "status": "PASS"
+}

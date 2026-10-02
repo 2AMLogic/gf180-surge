@@ -1,0 +1,218 @@
+{
+  "schema_version": 2,
+  "leaf": "SXT-028e-sse",
+  "issue": "SXT-028e-sse reference leg (#136)",
+  "slug": "syn-m7",
+  "sequence": "seq-poly-8-v1",
+  "carrier_kind": "DECLARED-SYNTHETIC",
+  "corpus_reach": "NONE",
+  "fx_model_index": 7,
+  "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+  "ref": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1-original.f32.wav",
+  "ref_bus": "original",
+  "model": "reports/SXT-028e-sse/artifacts/model__syn-m7__seq-poly-8-v1.f32.wav",
+  "path": "wet",
+  "fixture_sidecar": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1.json",
+  "channels": {
+    "L": {
+      "frames": 177600,
+      "ref_peak_lsb": 937316.1875,
+      "model_peak_lsb": 943318.0,
+      "max_abs_diff_lsb": 111180.53125,
+      "rms_diff_lsb": 26362.093327703715,
+      "rms_diff_dbfs": -31.99240040164891,
+      "rms_diff_at_shift0_lsb": 26362.093327703715,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 26362.093327703715,
+      "spectral_corr": 0.8231934713165003
+    },
+    "R": {
+      "frames": 177600,
+      "ref_peak_lsb": 937316.1875,
+      "model_peak_lsb": 943318.0,
+      "max_abs_diff_lsb": 111180.53125,
+      "rms_diff_lsb": 26362.093327703715,
+      "rms_diff_dbfs": -31.99240040164891,
+      "rms_diff_at_shift0_lsb": 26362.093327703715,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 26362.093327703715,
+      "spectral_corr": 0.8231934713165003
+    },
+    "mono": {
+      "frames": 177600,
+      "ref_peak_lsb": 937316.1875,
+      "model_peak_lsb": 943318.0,
+      "max_abs_diff_lsb": 111180.53125,
+      "rms_diff_lsb": 26362.093327703715,
+      "rms_diff_dbfs": -31.99240040164891,
+      "rms_diff_at_shift0_lsb": 26362.093327703715,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 26362.093327703715,
+      "spectral_corr": 0.8231934713165003
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": false,
+    "spectral_corr": false
+  },
+  "peak_budget_exceedance": {
+    "threshold_lsb": 8192,
+    "samples_over": 128691,
+    "samples_total": 177600,
+    "fraction_over": 0.7246114864864864,
+    "worst_sample_index": 82,
+    "p99_9_abs_diff_lsb": 84613.9008828131,
+    "median_abs_diff_lsb": 17201.58984375,
+    "note": "descriptive only. The budget verdict above is unchanged by these numbers and no threshold here is a pass criterion."
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 57600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 104421.2265625,
+    "tail_rms_diff_lsb": 28046.23483299875,
+    "tail_rms_rel_db": -1.3158492602498064,
+    "tail_ref_rms_lsb": 32633.75352616443,
+    "tail_model_rms_lsb": 37614.38000780896,
+    "tail_rms_rel_ok": false,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 44,
+      "ref_first_window_dbfs": -22.65096074870765,
+      "ref_last_graded_window_dbfs": -72.58019930470502,
+      "max_dev_db": 35.41982783312041,
+      "worst_window": {
+        "index": 43,
+        "start_frame_in_tail": 103200,
+        "ref_dbfs": -72.58019930470502,
+        "model_dbfs": -37.16037147158461
+      },
+      "windows_over_budget": 26,
+      "ok": false,
+      "reason": "tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS)"
+    },
+    "tail_decay_curve_ok": false,
+    "ok": false,
+    "reason": "tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS)"
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 104421.2265625,
+      "tail_rms_diff_lsb": 28046.23483299875,
+      "tail_rms_rel_db": -1.3158492602498064,
+      "tail_ref_rms_lsb": 32633.75352616443,
+      "tail_model_rms_lsb": 37614.38000780896,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 44,
+        "ref_first_window_dbfs": -22.65096074870765,
+        "ref_last_graded_window_dbfs": -72.58019930470502,
+        "max_dev_db": 35.41982783312041,
+        "worst_window": {
+          "index": 43,
+          "start_frame_in_tail": 103200,
+          "ref_dbfs": -72.58019930470502,
+          "model_dbfs": -37.16037147158461
+        },
+        "windows_over_budget": 26,
+        "ok": false,
+        "reason": "tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
+      "ok": false,
+      "reason": "tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS)"
+    },
+    "R": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 104421.2265625,
+      "tail_rms_diff_lsb": 28046.23483299875,
+      "tail_rms_rel_db": -1.3158492602498064,
+      "tail_ref_rms_lsb": 32633.75352616443,
+      "tail_model_rms_lsb": 37614.38000780896,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 44,
+        "ref_first_window_dbfs": -22.65096074870765,
+        "ref_last_graded_window_dbfs": -72.58019930470502,
+        "max_dev_db": 35.41982783312041,
+        "worst_window": {
+          "index": 43,
+          "start_frame_in_tail": 103200,
+          "ref_dbfs": -72.58019930470502,
+          "model_dbfs": -37.16037147158461
+        },
+        "windows_over_budget": 26,
+        "ok": false,
+        "reason": "tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS)"
+      },
+      "tail_decay_curve_ok": false,
+      "ok": false,
+      "reason": "tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS)"
+    }
+  },
+  "tail_gate_ok": false,
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS); L: tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS); R: tail residual -1.32 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 35.42 dB (> 1.00 dB budget) in 26 of 44 graded windows (worst window 43: reference -72.6 dBFS, model -37.2 dBFS))",
+  "claim_scope": "model-vs-pinned-engine agreement on a DECLARED SYNTHETIC carrier (claim 2). Not claim 1 (RTL-vs-model, separate and exact) and not claim 3 (sounds good, no listening record). No preset-support claim and no corpus reach follow from this number."
+}

@@ -7,37 +7,82 @@
       "type": "Distortion"
     }
   ],
-  "claim_scope": "data export only; no support, fidelity or musical-quality claim",
+  "chain_models": {
+    "ains": [],
+    "globals": [],
+    "scene_sends_f": [
+      [
+        1.587399959564209,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "sends": [
+      {
+        "params": {
+          "drive_extend": false,
+          "drive_f": 24.0,
+          "feedback_f": 0.0,
+          "gain_f": 0.0,
+          "model_i": 3,
+          "posteq_bw_f": 2.03125,
+          "posteq_freq_f": 3.0,
+          "posteq_gain_extend": false,
+          "posteq_gain_f": 0.0,
+          "posteq_highcut_deactivated": false,
+          "posteq_highcut_f": 30.535736083984375,
+          "preeq_bw_f": 1.9446439743041992,
+          "preeq_freq_f": 3.8178598880767822,
+          "preeq_gain_extend": false,
+          "preeq_gain_f": 0.0,
+          "preeq_highcut_deactivated": false,
+          "preeq_highcut_f": 38.42144775390625
+        },
+        "return_f": 1.0,
+        "role": "send1",
+        "send_gain_f": 1.587399959564209,
+        "send_slot": 0,
+        "slot": 4,
+        "type": "distortion-sse"
+      }
+    ],
+    "tempo_bpm": 120.0,
+    "volume_f": -2.025745391845703
+  },
+  "claim_scope": "control-plane export + measured render-admissibility screens; no support, fidelity or musical-quality claim. A populated record permits a model run; it does not assert that one agreed with the engine.",
   "complete_wet_render_possible": true,
   "distortion_slots": [
     {
       "fx_model_index": 3,
       "params": {
-        "drive_extend": null,
+        "drive_extend": false,
         "drive_f": 24.0,
         "feedback_f": 0.0,
         "gain_f": 0.0,
         "model_i": 3,
         "posteq_bw_f": 2.03125,
         "posteq_freq_f": 3.0,
-        "posteq_gain_extend": null,
+        "posteq_gain_extend": false,
         "posteq_gain_f": 0.0,
-        "posteq_highcut_deactivated": null,
-        "posteq_highcut_f": 30.535736,
-        "preeq_bw_f": 1.944644,
-        "preeq_freq_f": 3.81786,
-        "preeq_gain_extend": null,
+        "posteq_highcut_deactivated": false,
+        "posteq_highcut_f": 30.535736083984375,
+        "preeq_bw_f": 1.9446439743041992,
+        "preeq_freq_f": 3.8178598880767822,
+        "preeq_gain_extend": false,
         "preeq_gain_f": 0.0,
-        "preeq_highcut_deactivated": null,
-        "preeq_highcut_f": 38.421448
+        "preeq_highcut_deactivated": false,
+        "preeq_highcut_f": 38.42144775390625
       },
       "quad_waveshaper": "SINUS_SSE2<false>",
       "routing": "send1",
       "slot_index": 4
     }
   ],
-  "extraction_mode": "graphs",
-  "extraction_status": "INCOMPLETE-BLOCKED-ON-ORACLE",
+  "extraction_mode": "oracle",
+  "extraction_status": "COMPLETE",
   "landed_classes_basis": {
     "landed_fx_classes": [
       "Chorus",
@@ -50,17 +95,61 @@
     "source": "reports/coverage-v1/leaf-verification.json (leaves[*].landed)"
   },
   "leaf": "SXT-028e-sse",
+  "oracle_extraction": {
+    "cross_checks": [
+      "live getExtend getter == normalized state (3 extend flags)",
+      "raw pre-migration .fxp attribute + documented handleStreamingMismatches rule == normalized state (all 5)",
+      "12 engine parameter values == the committed SXT-011 graphs.jsonl normalized export (drift == 0)",
+      "engine FX slot types == graphs.jsonl FX slot types",
+      "census blob SHA-1 re-verified against the file on the oracle host"
+    ],
+    "flags_source": "savePatch round-trip of the loaded patch \u2014 the loader's NORMALIZED state at the engine's current streaming revision, every documented handleStreamingMismatches migration already applied. Raw .fxp values are pre-migration and are NOT authoritative (CLAUDE.md).",
+    "no_getter_note": "surgepy exposes no getDeactivated; the round-trip is used precisely so the migration rule is READ from the engine rather than re-implemented here.",
+    "raw_fxp_revision": 15,
+    "roundtrip_revision": [
+      30
+    ]
+  },
   "preset_path": "resources/data/patches_3rdparty/Damon Armani/Drums/Reverse Crash.fxp",
-  "schema_version": 1,
+  "render_screens": {
+    "drifts": [
+      0.0
+    ],
+    "fx_bypass": 0,
+    "fx_disable": 0,
+    "modulation_into_fx_params": [],
+    "note": "static screens only. The 3x bit-identical render determinism gate is an EMPIRICAL gate and is applied by tools/render_distortion_sse_fixtures.py; passing these screens does not imply passing that one (SXT-028c precedent: melon, dronebee).",
+    "oscillators": [
+      {
+        "level_f": 1.0,
+        "mute": 1,
+        "osc": 1,
+        "retrigger": 0,
+        "scene": 0
+      },
+      {
+        "level_f": 1.0,
+        "mute": 1,
+        "osc": 2,
+        "retrigger": 0,
+        "scene": 0
+      },
+      {
+        "level_f": 1.0,
+        "mute": 1,
+        "osc": 3,
+        "retrigger": 0,
+        "scene": 0
+      }
+    ],
+    "reference_render_admissible": true,
+    "refusal_reasons": [],
+    "scene_active": 0,
+    "scene_mode": 0
+  },
+  "schema_version": 2,
   "slug": "reversecrash",
-  "source": "corpus/normalized/graphs.jsonl (SXT-011 pinned-loader normalized export; deterministic, engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71)",
+  "source": "the pinned engine's own loader, via surgepy at ORACLE_SURGE_DIR (engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71, 48 kHz, block 32); parameter values via getParamVal, the five oracle-only flags from the loader's normalized state via a savePatch round-trip",
   "unlanded_classes_in_chain": [],
-  "unresolved_fields": [
-    "preeq_highcut_deactivated",
-    "posteq_highcut_deactivated",
-    "preeq_gain_extend",
-    "posteq_gain_extend",
-    "drive_extend"
-  ],
-  "why_incomplete": "graphs.jsonl carries the 12 normalized FX parameter values but not the per-parameter `deactivated` / `extend_range` flags. DistortionSSEParams REFUSES a record with null fields, so this artifact cannot be used for a model run \u2014 it is a cross-check and extraction-status record only."
+  "unresolved_fields": []
 }

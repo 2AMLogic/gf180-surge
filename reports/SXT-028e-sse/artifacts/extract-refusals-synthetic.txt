@@ -1,0 +1,5 @@
+SXT-028e-sse extraction transcript — mode=synthetic
+engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
+DECLARED SYNTHETIC carriers; no corpus reach
+written: 9  refused: 0
+

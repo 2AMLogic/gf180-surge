@@ -1,9 +1,19 @@
 # SXT-028e-sse evidence record — Distortion, SSE quad-waveshaper branch
 # (FX models 3..7): frozen fixed model, exact RTL, per-instance
-# `QuadWaveshaperState`, reference leg NOT_RUN
+# `QuadWaveshaperState`, reference leg RUN on declared-synthetic carriers
 
 Branch: `feature/issue-121` · Issue: #121 (SXT-028e-sse) · Raised by: #57
 (SXT-028e) finding F-028e-2 · Epic: #3 · Date: 2026-09-26
+
+**Amended 2026-10-02 by #136** (the oracle-host reference leg), on a Linux
+x86-64 dispatch worker with the prebuilt pinned oracle of #232/#299
+(`~/.cache/gf180-surge-oracle/58914e59…/linux-x86_64`). What changed: the
+oracle extraction of the three corpus carriers now succeeds (§1), and §3 is
+no longer NOT_RUN — it carries measured model-vs-pinned-engine numbers on
+**declared synthetic** carriers, with every corpus carrier render-REFUSED
+and recorded as such. Nothing in §2, §4, §5, §6, §7 or §8 was re-derived:
+the frozen model is byte-identical (`model_revision()` unchanged) and the
+RTL leg was not re-run.
 
 Engine (external, GPL-3.0-or-later):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, 48 kHz,
@@ -18,16 +28,19 @@ in `Effects.h` / `Saturators.h` / `Rectifiers.h` / `ADAA.h` /
 chain is the machinery SXT-028e (#57) already froze. Read and cited; no
 code, tables or assets copied.
 
-**Claim discipline.** This record advances exactly one of the three separate
-claims: **(1) the RTL matches the frozen fixed-point model exactly**
-(iverilog; demonstrated). It does **NOT** advance **(2)
-model-vs-pinned-engine agreement** — that leg is **NOT_RUN** here (§3)
-because no pinned oracle was reachable in the implementation environment —
-and it does **NOT** advance **(3) the instrument sounds good** (no human
-listening; #8/#9 BLOCKED-on-human). It establishes no preset-support claim,
-no cost/area/timing/synthesis/hardware-playback claim, and it **freezes no
+**Claim discipline.** This record advances **(1) the RTL matches the frozen
+fixed-point model exactly** (iverilog; demonstrated) and, since #136,
+reports a **measured** result for **(2) model-vs-pinned-engine agreement**
+(§3) — a *result*, not an *advance of a support claim*: every carrier that
+produced a number is **declared synthetic**, so claim (2) here has **zero
+corpus reach** (F-028e-sse-8), and two of the three proposed budgets are
+**not met** for several shapers and are reported as not met. It does
+**NOT** advance **(3) the instrument sounds good** (no human listening;
+#8/#9 BLOCKED-on-human). It establishes no preset-support claim, no
+cost/area/timing/synthesis/hardware-playback claim, and it **freezes no
 budget**. No generic substitute is used under any claim — NC-A and NC-A2
-prove both a generic and the *sibling leaf's own shaper* are rejected.
+prove both a generic and the *sibling leaf's own shaper* are rejected, on
+the reference leg as well as at the model boundary.
 
 ## Headline results
 
@@ -35,7 +48,9 @@ prove both a generic and the *sibling leaf's own shaper* are rejected.
 |---|---|---|
 | Frozen model ↔ RTL exact | **PASS** (15 cases exact, 10/10 RTL mutant controls CONTROL-OK) | `rtl-exactness.json` |
 | Shared #57 chain REUSED unchanged (bit-identical) | **PASS** | `tests/test_sxt028e_sse.py::test_shared_chain_is_bit_identical_to_sxt028e` |
-| Model ↔ pinned engine vs [PROPOSED] budgets | **NOT_RUN** (no oracle reachable; finding F-028e-sse-3) | §3 |
+| Model ↔ pinned engine vs [PROPOSED] budgets, **declared-synthetic carriers** | **MEASURED, MIXED** — rms and corr met for FX models 3/5/6 (rms −64.4…−74.6 dBFS, corr ≥ 0.999996) and **not met** for 4 and 7; the **peak** budget is met by **no** carrier above 0 dB drive (F-028e-sse-7) | §3, `artifacts/compare-*.json`, `artifacts/reference-leg.json` |
+| Model ↔ pinned engine, **corpus carriers** | **NOT_RUN** — all three refused by the SXT-012/023 render policies, reasons measured (finding **F-028e-sse-8**) | §1, `artifacts/render-refusals.txt` |
+| Reference-leg negative controls live | **5/5 CONTROL-OK** (NC-A, NC-A2, NC-SHARED, NC-B, NC-C) | §3, `artifacts/reference-leg.json` |
 | Model-boundary agreement vs the independent float twin | **PASS** for FX models 3/5/6; **budget NOT met, at the measured sensitivity floor** for 4 and 7 (finding **F-028e-sse-4**) | §2, `negative-controls/` |
 | Per-instance `QuadWaveshaperState` (two concurrent instances) | **PASS**; pooling mutant FAILS | `rtl-exactness.json` `prs-dual-*`, `mutant-wsshared`, `tests/…::test_per_instance_independence` |
 | DC-offset probe + `/64` drive interpolation + `skipDriveNorm` | **PASS** (checkpointed, and three controls that "correct" them FAIL) | §4, §5 |
@@ -44,7 +59,8 @@ prove both a generic and the *sibling leaf's own shaper* are rejected.
 | Constant inventory (DR-0012's reserved pass) | **DR-0014 PROPOSED**; the `FuzzTable<1>` re-derivation discharged BY BUILD against the *external* pinned headers (1025/1025 MATCH) | §8, `artifacts/fuzz-table-rederivation.json` |
 | Negative controls live | **11/11 CONTROL-OK** model-side + **10/10** RTL-side | `negative-controls/`, `rtl-exactness.json` |
 | Negative-control record reproducible | **PASS on one host, NOT across hosts** for the *metric* fields only — verdicts/statuses/`rtl-exactness.json`/`buffer-requirement.json` are host-stable (finding **F-028e-sse-6**) | §0, `negative-controls/negative-controls.json` → `environment` |
-| Oracle extraction of fixture inputs | **BLOCKED** (fail-closed refusal recorded) | §1 |
+| Oracle extraction of fixture inputs | **PASS** — three carriers `COMPLETE` from the pinned loader's normalized state (F-028e-sse-3 closed); the model-6 carrier stays REFUSED on its own `fx_disable` screen | §1, `artifacts/extract-refusals-oracle.txt` |
+| Model's silent-pre-roll boundary | **RESOLVED BY MEASUREMENT** (two engine-side invariances); the wrong boundary is live control NC-C | §3, `artifacts/settle-boundary.json` |
 | Newly-enabled presets supported | **0** (honest delta) | §9 |
 
 ## 0. Findings (routed, not resolved here)
@@ -62,6 +78,22 @@ bounded by that estimate error. The RTL-vs-model leg is unaffected (both
 sides compute the exact reciprocal). Routed to SXT-017 (#12); no budget is
 frozen here.
 
+*Re-stated against measured data (#136).* The reference leg of §3 ran on a
+**Linux x86-64** host, not the arm64 macOS host the original record
+anticipated, so the `rcp_ps` term in it is x86 SSE's own estimate rather
+than simde-on-ARM's. Measured: FX model 6 (`ADAA_FULL_WAVE`, the one
+`rcp_ps` user whose metric is not also swamped by F-028e-sse-4's chaos)
+lands at rms **−71.2 / −74.6 dBFS** and corr **≥ 0.999996**, i.e. inside
+the [PROPOSED] rms and corr budgets *with* the estimate term present —
+indistinguishable, at this instrument's resolution, from FX models 3 and 5,
+which use no reciprocal estimate at all (−64.4…−74.4 dBFS). So the extra
+term is **not** the dominant error for model 6 on this host. That is **not**
+a bound on the arm64 host: this measurement constrains one implementation of
+`rcp_ps`, and the finding stays OPEN and routed to #12 until the same leg is
+run on the arm64 evidence host (follow-up filed, §10). For models 4 and 7
+the term is unmeasurable here — F-028e-sse-4's decision-flipping dominates
+by orders of magnitude.
+
 **F-028e-sse-2 — `QuadWaveshaperState::init` is indeterminate in the engine
 (declared, bounded).** `DistortionEffect::init()` zeroes `wsState.R[i]` but
 does **not** touch `wsState.init`, and `QuadWaveshaperState` has no
@@ -74,14 +106,17 @@ the ADAA registers are written unconditionally, so nothing persists. The
 `mutant-adaainit` RTL control flips the choice and FAILS the exactness
 check, so the decision is pinned rather than incidental.
 
-**F-028e-sse-3 — the reference leg could not be run (BLOCKED, routed to
-#12).** `oracle/manifest.json` pins the executable oracle *outside* this
-repository. No such checkout and no built `surgepy` exists in this
-implementation environment, so no fixture was rendered from the pinned
-engine, no model-vs-reference max/rms/corr number exists for this leaf, and
-the oracle extraction of the carriers' `deactivated` / `extend_range` flags
-is **BLOCKED**. Reported as **NOT_RUN**, never as a pass. Identical in kind
-to #57's F-028e-1. Everything needed to run it is committed.
+**F-028e-sse-3 — CLOSED 2026-10-02 (#136).** As originally recorded: no
+pinned oracle was reachable in the #121 implementation environment, so no
+fixture was rendered, no max/rms/corr existed, and the oracle extraction of
+the carriers' `deactivated` / `extend_range` flags was BLOCKED. The
+prebuilt pinned oracle of #232/#299 made all of it reachable on an ordinary
+dispatch worker. Both halves are now discharged: the three corpus carriers
+extract `COMPLETE` from the loader's normalized state (§1) and the
+reference leg is RUN with recorded numbers (§3). Closing this finding
+closes only *"the leg could not be run"* — it asserts **no agreement**: the
+numbers it produced are mixed, they are on declared-synthetic carriers
+only, and F-028e-sse-1/4/7/8 carry what remains open.
 
 **F-028e-sse-4 — two of the five shapers make the sample-domain [PROPOSED]
 budget an unattainable instrument (measured, routed to #12).** FX models 4
@@ -114,6 +149,28 @@ registers advancing.
 pass.** Choosing a metric that can discriminate for a chaotic quantizing
 nonlinearity is SXT-017's decision (#12), not this leaf's.
 
+*Re-stated against measured data (#136) — the prediction held.* The
+reference leg now measures the same two shapers **against the pinned engine
+itself**, through the complete wet chain, instead of against a float twin
+at the model boundary:
+
+| FX model | shaper | achieved rms (reference leg, two sequences) | vs [PROPOSED] ≤ −46 dBFS | corr vs ≥ 0.98 | samples over the 8,192-LSB peak budget |
+|---|---|---|---|---|---|
+| 4 | `DIGI_SSE2` | **−45.39 / −43.45 dBFS** | **FAIL** (by 0.6 / 2.6 dB) | 0.9971 / 0.9914 **PASS** | 4.93 % / 6.95 % |
+| 7 | `TableEval<FuzzTable<1>,1024,TANH>` | **−31.38 / −31.99 dBFS** | **FAIL** | 0.879 / 0.823 **FAIL** | **71.7 % / 72.5 %** |
+
+FX model 7's achieved −31.4 / −32.0 dBFS sits on top of the **−31.20 dBFS**
+model-boundary figure above, whose own sensitivity floor is **−31.51 dBFS**
+— i.e. against the real engine the frozen model is *still* no further away
+than the independent float twin is from itself under a perturbation the
+frozen drive word cannot represent. The two measurements were taken by
+different harnesses against different references and agree to ~0.5 dB. The
+median per-sample difference tells the two failures apart: FX model 4 is at
+**0.5–0.6 LSB** (a few percent of samples blow out), FX model 7 at
+**≈ 17,200 LSB** (the LUT index disagrees nearly everywhere). Both remain
+**routed to SXT-017 (#12)** and neither is reported as a pass; no budget
+was moved, and no region was excluded to improve either number.
+
 **F-028e-sse-5 — FX model 7 (`wst_fuzzsoft`) has ZERO corpus reach.** The
 active-Distortion-slot histogram, re-derived from
 `corpus/normalized/graphs.jsonl` by
@@ -123,6 +180,19 @@ instances (5.9 %) are in this leaf's scope, and **none of them uses model
 7**. The algorithm is implemented (it is reachable from the UI and from any
 future preset) and is exercised by synthetic corners, but no fixture record
 exists and none is invented. Inventory only; not a support claim.
+
+*Re-stated against measured data (#136).* The reference leg did **not**
+invent a corpus carrier for model 7 and did not fold it into another
+model's number. It built a **declared synthetic** carrier (`syn-m7`,
+`tools/distortion_sse_synthetic.py`) in the pinned engine, labelled
+`carrier_kind = DECLARED-SYNTHETIC` and `corpus_reach = NONE` in every
+artifact it touches, and reported its numbers on their own row (§3). The
+same treatment was given to FX model 6, whose single corpus instance is
+still REFUSED on its own `fx_disable = 1` screen. The histogram is
+unchanged by any of this; the declared-synthetic carriers add **zero**
+corpus reach, and
+`tests/test_sxt028e_sse.py::test_reference_leg_carriers_are_declared_synthetic_everywhere`
+is a live guard that no `compare-*.json` can quietly claim otherwise.
 
 **F-028e-sse-6 — these metric numbers are exact under a declared
 environment, and only under it (measured in #243; the verdicts are not).**
@@ -188,40 +258,113 @@ disagrees, and carries a live negative control proving the digest moves
 under a 1-ULP change to one input sample. Because the record is glibc-taken,
 that check is **live in CI** and NOT_RUN on an Apple-libm workstation.
 
+**F-028e-sse-7 — the sample-domain PEAK budget is not an attainable
+instrument for *any* shaper in this branch above 0 dB drive (measured in
+#136, routed to #12).** F-028e-sse-4 above reports two shapers for which
+the *rms* budget cannot discriminate. The reference leg shows the
+`max_abs_diff_lsb ≤ 8,192` clause is weaker still: **every** declared
+synthetic carrier misses it, including FX models 3, 5 and 6 whose rms and
+corr are met comfortably. The declared drive-sensitivity family (FX model
+3, one instance, identical in everything but drive; `syn-d{0,6,12,18}-m3`,
+`seq-poly-8-v1`) isolates the mechanism:
+
+| drive | max abs (LSB) | samples over 8,192 LSB | rms (dBFS) | corr |
+|---|---|---|---|---|
+| 0 dB | **10.5** | **0** / 177,600 | −113.64 | 1.000000 |
+| 6 dB | 66,345 | 261 (0.147 %) | −58.43 | 1.000000 |
+| 12 dB | 188,471 | 310 (0.175 %) | −50.48 | 1.000000 |
+| 18 dB | 355,513 | 370 (0.208 %) | −47.09 | 0.999998 |
+
+At 0 dB drive the whole chain agrees to **10.5 LSB** — so this is not a
+wiring, de-amp, clip or halfband error, and the harness is sound (that row
+is the harness anchor). What grows with drive is the *steepness* of the
+waveshaper: a sub-LSB fixed-point residue arriving at a steep part of the
+curve leaves as a large sample excursion, and the excursions stay **rare**
+(≤ 0.21 % of samples; median difference 0.02 LSB) rather than becoming a
+level or spectral error — which is why rms and corr stay met while the peak
+clause does not. A single-sample maximum therefore measures *where the
+curve is steepest*, not how closely the model tracks the engine. Whether
+the effect-slice budget should keep an unconditioned peak clause, replace
+it with a percentile/exceedance clause, or scale it with drive is
+**SXT-017's (#12) decision, not this leaf's**. The clause is reported as
+**not met**; it was not relaxed, re-scaled or dropped here, and every
+`compare-*.json` carries the exceedance count alongside the max so the
+difference between "missed by 29 samples" and "missed by 72 % of samples"
+cannot be lost.
+
+**F-028e-sse-8 — claim (2) for this leaf has ZERO corpus reach: every
+corpus carrier is render-REFUSED (measured in #136, routed to #12/#22).**
+The reference leg attempted all three corpus carriers × both sequences
+before building anything synthetic, and all six attempts were refused with
+measured reasons (`artifacts/render-refusals.txt`):
+
+| carrier | FX model | refusal |
+|---|---|---|
+| `Damon Armani/Drums/Reverse Crash.fxp` | 3 | its **all-off dry bus fails the 3× bit-identical determinism gate** |
+| `Damon Armani/Plucks/Trance Pluck.fxp` | 4 | `drift = 1.0`; two non-muted oscillators with retrigger off; modulation into `FX A1 Mix` and `FX S1 Drive`; **unlanded `Conditioner`** in the active chain |
+| `Kinsey Dulcet/.../Mutant Lo-Fi Acoustic Guitar Workstation.fxp` | 5 | modulation into `FX S1 Drive`; a non-muted oscillator with retrigger off |
+
+None was worked around: no screen was relaxed, no modulation was frozen to
+a constant, and the unlanded `Conditioner` was **not** replaced by a
+generic. A determinism refusal is a statement about the *preset*, not about
+this host: `artifacts/harness-host-control.json` re-renders the committed
+SXT-028c `fmcombo` wet bus on this worker's prebuilt oracle and reproduces
+its committed sha256 **exactly** (`89d42e51…`), three times over.
+Consequently **every number in §3 is on a declared synthetic carrier**, and
+no preset — not one — gains any support claim from this leaf. Routed to
+SXT-017 (#12) for the budget question and to coverage publication (#22) for
+the reach question; the follow-up for admissible corpus carriers is in §10.
+
 ## 1. Fixtures, applicability boundary (fail-closed), refusals
 
 None of the three B4-scope carriers SXT-028e named uses an SSE-branch model
 — all three are model 0 — so this leaf selected its **own** carriers, one
 per reachable FX model, from `corpus/normalized/graphs.jsonl`
-(`tools/extract_distortion_sse_inputs.py`). No oracle was reachable
-(F-028e-sse-3), so **no reference fixture was rendered**.
+(`tools/extract_distortion_sse_inputs.py`). Since **#136** the oracle
+extraction RUNS; the render-admissibility verdict in the right-hand column
+is the *measured* one from §0 F-028e-sse-8, not a screen read off the
+export.
 
-| FX model | shaper | carrier | census blob SHA-1 | status |
-|---|---|---|---|---|
-| 3 `wst_sine` | `SINUS_SSE2<false>` | `Damon Armani/Drums/Reverse Crash.fxp` | `de5c684d…` | graphs record written, **INCOMPLETE-BLOCKED-ON-ORACLE** |
-| 4 `wst_digital` | `DIGI_SSE2` | `Damon Armani/Plucks/Trance Pluck.fxp` | `1bb5209f…` | graphs record written, **INCOMPLETE-BLOCKED-ON-ORACLE** |
-| 5 `wst_ojd` | `OJD` | `Kinsey Dulcet/Guitars/Mutant Lo-Fi Acoustic Guitar Workstation.fxp` | `714821ee…` | graphs record written, **INCOMPLETE-BLOCKED-ON-ORACLE** |
-| 6 `wst_fwrectify` | `ADAA_FULL_WAVE` | `Luna/Guitars/Awful FM Guitar.fxp` | `d71a9cfd…` | **REFUSED**: `fx_disable = 1` (non-zero). It is the ONLY model-6 instance in the corpus, so model 6 has no usable carrier. |
-| 7 `wst_fuzzsoft` | `TableEval<FuzzTable<1>,…>` | — | — | **NO CARRIER EXISTS** (F-028e-sse-5) |
+| FX model | shaper | carrier | census blob SHA-1 | extraction | reference render |
+|---|---|---|---|---|---|
+| 3 `wst_sine` | `SINUS_SSE2<false>` | `Damon Armani/Drums/Reverse Crash.fxp` | `de5c684d…` | **COMPLETE** (oracle) | **NOT_RUN** — dry bus fails the 3× determinism gate |
+| 4 `wst_digital` | `DIGI_SSE2` | `Damon Armani/Plucks/Trance Pluck.fxp` | `1bb5209f…` | **COMPLETE** (oracle) | **NOT_RUN** — drift ≠ 0, retrigger-off oscillators, modulation into FX params, unlanded `Conditioner` |
+| 5 `wst_ojd` | `OJD` | `Kinsey Dulcet/Guitars/Mutant Lo-Fi Acoustic Guitar Workstation.fxp` | `714821ee…` | **COMPLETE** (oracle) | **NOT_RUN** — modulation into `FX S1 Drive`, retrigger-off oscillator |
+| 6 `wst_fwrectify` | `ADAA_FULL_WAVE` | `Luna/Guitars/Awful FM Guitar.fxp` | `d71a9cfd…` | **REFUSED**: `fx_disable = 1` (non-zero). It is the ONLY model-6 instance in the corpus, so model 6 has no usable carrier. | **NOT_RUN** |
+| 7 `wst_fuzzsoft` | `TableEval<FuzzTable<1>,…>` | — | — | **NO CARRIER EXISTS** (F-028e-sse-5) | **NOT_RUN** |
 
-* **Oracle extraction: REFUSED** for all four carriers rather than inventing
-  the missing flags. Transcript: `artifacts/extract-refusals-oracle.txt`.
-* **Graphs cross-check: written, and deliberately unusable for a model
-  run.** `--mode graphs` derives the 12 loader-normalized parameter values
-  from the SXT-011 pinned-loader export, re-verifies each census blob SHA-1
-  against `corpus/census-v0.1/corpus-manifest.json`, and writes
-  `model/effects/fx_inputs/type-distortion-sse-*.json` with
-  `extraction_status = INCOMPLETE-BLOCKED-ON-ORACLE` and the five
-  oracle-only fields explicitly `null`. `DistortionSSEParams` **refuses**
-  such a record; `tests/test_sxt028e_sse.py` asserts that refusal, so the
-  incomplete record can never be silently promoted into a model run.
+* **Oracle extraction: COMPLETE for the three admissible carriers** and
+  still REFUSED for the model-6 one, on its own `fx_disable` screen rather
+  than on host availability. Transcript:
+  `artifacts/extract-refusals-oracle.txt`.
+  The five oracle-only fields come from the loader's **normalized** state
+  via a `savePatch` round-trip of the loaded patch — not from the raw
+  pre-migration `.fxp`, which CLAUDE.md declares non-authoritative, and not
+  from re-implementing `handleStreamingMismatches` here. `surgepy` exposes
+  no `getDeactivated`, which is exactly why the round-trip is used. Four
+  fail-closed cross-checks must all agree or the extraction refuses: the
+  live `getExtend` getters (3 flags), the raw `.fxp` attribute plus the
+  documented migration rule (all 5), the twelve parameter values against
+  the committed SXT-011 `graphs.jsonl` export at its own 6-decimal
+  precision, and the engine's FX slot types against the export's.
+* **Graphs cross-check: still written, still deliberately unusable for a
+  model run.** `--mode graphs` derives the 12 loader-normalized parameter
+  values oracle-free and writes a record with the five oracle-only fields
+  explicitly `null`; `DistortionSSEParams` **refuses** such a record. That
+  refusal is still live-tested — now as a mutation of each COMPLETE record
+  (`test_committed_fx_inputs_are_complete_from_the_pinned_loader` blanks
+  each of the five fields in turn and requires a refusal), so the
+  fail-closed path cannot rot now that the committed records are complete.
 * The extractor also fails closed in the **other** direction: a Distortion
   slot whose FX model is 0..2 is refused here, because it belongs to #57.
 
-Because no reference bus exists, the RTL/model exactness cases below are
-driven by **declared synthetic stimuli and parameter corners**, not by
-fixture replays. That is a weaker basis than a canonical-fixture replay and
-it is stated as such — it bounds claim (1) only.
+The RTL/model exactness cases below are driven by **declared synthetic
+stimuli and parameter corners**, not by fixture replays (they were frozen
+in #121, before any reference bus existed, and #136 did not re-run them).
+That is a weaker basis than a canonical-fixture replay and it is stated as
+such — it bounds claim (1) only. The reference buses #136 *did* render are
+likewise synthetic (F-028e-sse-8); they bound claim (2) only, and neither
+bound transfers to the other.
 
 ## 2. Frozen fixed-point model
 
@@ -264,28 +407,138 @@ pinned sources — worst case **2.44 LSB Q10.21** over 20,000 points with
 registers advancing — and NC-0b does the same through the whole chain, with
 the results and the sensitivity floors in §0 (F-028e-sse-4).
 
-## 3. Model vs pinned engine — NOT_RUN
+## 3. Model vs pinned engine — MEASURED (#136), declared-synthetic carriers
 
-| Case | max abs (LSB) | rms (dBFS) | spectral corr | tail | Verdict |
-|---|---|---|---|---|---|
-| (any fixture × any sequence) | — | — | — | — | **NOT_RUN** |
+Budgets, unchanged from the issue and from SXT-023: max ≤ 8,192 LSB Q10.21;
+rms ≤ −46 dBFS; spectral corr ≥ 0.98 — **[PROPOSED], not frozen**; freeze
+gated on SXT-017 (#12). **Every number below is RECORDED, NOT TUNED**: the
+comparator has no threshold of its own (it imports SXT-028c's constants),
+the tail region is read from the fixture sidecar's declared values
+(#93/#100), and a FAIL is written out as a FAIL.
 
-Budgets that *would* apply, unchanged from the issue and from SXT-023:
-max ≤ 8,192 LSB Q10.21; rms ≤ −46 dBFS; spectral corr ≥ 0.98 —
-**[PROPOSED], not frozen**; freeze gated on SXT-017 (#12). No number is
-reported against them because none was measured. See F-028e-sse-3, and see
-F-028e-sse-4 for why the metric itself is in question for FX models 4 and 7.
+**Read the carrier column first.** All of them are **DECLARED SYNTHETIC**
+(F-028e-sse-8): patches constructed in the pinned engine from
+`patches_factory/Basses/FM Combo.fxp`, not corpus presets. They carry **no
+corpus reach, no preset-support claim and no musical-quality claim**. Every
+corpus carrier was attempted and refused (§1, §0 F-028e-sse-8).
 
-Reproduce on an oracle host (everything needed is committed):
+### 3.1 Primary legs — the unmodified `original` wet bus
 
-```sh
-ORACLE_SURGE_DIR=$HOME/oracle/surge python3.11 \
-    tools/extract_distortion_sse_inputs.py --mode oracle
-# then render fixtures under SXT-012 policies (tools/render_fx_fixtures.py
-# pattern) and compare the frozen model against the wet bus.
-# Also re-run tools/check_fuzz_table_rederivation.py there: the pinned host
-# is arm64 macOS / libc++, and the committed MATCH is libstdc++-only.
-```
+Metrics are on the mono sum (the worst channel-wise figures are in the
+per-leg JSON); `best_shift = 0` for every row, so nothing is time-aligned.
+
+| FX model | shaper | carrier | sequence | max abs (LSB) | over 8,192 LSB | rms (dBFS) | corr | tail rel (dB) | verdict vs [PROPOSED] |
+|---|---|---|---|---|---|---|---|---|---|
+| 3 | `SINUS_SSE2<false>` | `syn-m3` | notes-coverage | 30,558 | 135 (0.049 %) | **−69.50** | **1.000000** | −100.64 | FAIL (peak only) |
+| 3 | `SINUS_SSE2<false>` | `syn-m3` | poly-8 | 40,817 | 186 (0.105 %) | **−64.37** | **1.000000** | −97.48 | FAIL (peak only) |
+| 4 | `DIGI_SSE2` | `syn-m4` | notes-coverage | 143,097 | 13,491 (4.93 %) | −45.39 | 0.997111 | −15.83 | **FAIL** (peak, rms, tail) |
+| 4 | `DIGI_SSE2` | `syn-m4` | poly-8 | 171,788 | 12,345 (6.95 %) | −43.45 | 0.991445 | −14.34 | **FAIL** (peak, rms, tail) |
+| 5 | `OJD` | `syn-m5` | notes-coverage | 21,424 | 29 (0.011 %) | **−74.37** | **1.000000** | −101.71 | FAIL (peak only) |
+| 5 | `OJD` | `syn-m5` | poly-8 | 29,693 | 46 (0.026 %) | **−70.12** | **1.000000** | −97.79 | FAIL (peak only) |
+| 6 | `ADAA_FULL_WAVE` | `syn-m6` | notes-coverage | 21,538 | 29 (0.011 %) | **−74.58** | **0.999999** | −93.03 | FAIL (peak only) |
+| 6 | `ADAA_FULL_WAVE` | `syn-m6` | poly-8 | 29,817 | 25 (0.014 %) | **−71.17** | **0.999996** | −89.66 | FAIL (peak only) |
+| 7 | `TableEval<FuzzTable<1>,1024,TANH>` | `syn-m7` | notes-coverage | 105,141 | 196,306 (**71.75 %**) | −31.38 | 0.879277 | −2.81 | **FAIL** (all four) |
+| 7 | `TableEval<FuzzTable<1>,1024,TANH>` | `syn-m7` | poly-8 | 111,181 | 128,691 (**72.46 %**) | −31.99 | 0.823193 | −1.32 | **FAIL** (all four) |
+
+Drive-sensitivity family (FX model 3, one instance, `seq-poly-8-v1`) — the
+table is in §0 F-028e-sse-7. Its 0 dB row (`syn-d0-m3`: **10.5 LSB**,
+−113.64 dBFS, corr 1.000000, 0 samples over the peak budget) is the
+**harness anchor** and the only leg that meets all three proposed budgets.
+
+What the two stimuli show: no verdict flips between them, and the ordering
+of the shapers is the same under both, so nothing here is an artifact of
+one note pattern.
+
+**Honest reading.** FX models 3, 5 and 6 reproduce the pinned engine's wet
+bus at **−64 to −75 dBFS rms with spectral correlation indistinguishable
+from 1**, and their tails track to ≈ −90…−102 dB relative; they miss only
+the unconditioned peak clause, and only on ≈ 0.01–0.11 % of samples
+(F-028e-sse-7). FX models 4 and 7 miss the rms clause — and, for 7, the
+correlation clause as well — at the sensitivity floor F-028e-sse-4
+predicted. **No budget was relaxed, no region was excluded, and no FAIL was
+re-described as a pass.**
+
+### 3.2 Per-slot bypass legs (FX model 3, `seq-poly-8-v1`)
+
+Each leg switches exactly ONE Distortion slot Off in the engine and removes
+the same slot from the model chain. The unmodified `original` wet reference
+is untouched by these legs — it is still committed and still the bus §3.1
+grades against.
+
+| leg | active Distortion slot | max abs (LSB) | over 8,192 LSB | rms (dBFS) | corr | tail gate |
+|---|---|---|---|---|---|---|
+| `bypass-fx0` | `send1` only (drive 6 dB, inside its own feedback loop) | **950** | **0** | **−94.93** | **1.000000** | PASS |
+| `bypass-fx4` | `ains1` only (drive 12 dB) | 40,543 | 173 (0.097 %) | −64.83 | 1.000000 | PASS |
+
+`bypass-fx0` meets **all three** proposed budgets — the second independent
+leg (with the 0 dB anchor) that does — which is what makes the peak-clause
+failures elsewhere readable as a drive/steepness effect rather than a
+chain-wiring error.
+
+### 3.3 The settle boundary was MEASURED, not chosen
+
+The fixture render runs a 0.25 s (375-block) settle before the first note.
+Whether the **effect** must be pre-rolled through it or only the **synth**
+(whose settle is already baked into the all-off dry bus the model reads) is
+worth 73 dB on the anchor carrier — more than the whole budget — so it was
+settled by measurement, in `artifacts/settle-boundary.json`:
+
+| probe | result |
+|---|---|
+| A: engine wet bus, 375-block settle vs 3750-block settle | **byte-identical** (`deca8b7a…`) — the engine's effect state does not evolve during a silent settle |
+| B: synthetic carrier constructed in place vs saved to `.fxp` and re-loaded into a fresh instance | **byte-identical** — A is the engine's behaviour for an ORDINARY loaded preset, not an artifact of this leaf's construction |
+| C: frozen model vs engine, 0-block silent pre-roll | **10.5 LSB / −113.64 dBFS** |
+| C: frozen model vs engine, 375-block silent pre-roll | 672,130 LSB / −40.08 dBFS |
+
+So the engine's Distortion enters the first audio block with its control
+plane still in the `init()` state (both lipols and both peak-EQ /
+high-cut coefficient sets at zero), and the declared pre-roll is **0
+blocks**. This is a property of the **harness**
+(`model/effects/run_distortion_sse_model.py`, new in #136), not of the
+frozen model: no byte of `model/effects/type-distortion-sse/` changed and
+`model_revision()` is unchanged. The wrong boundary is kept live as control
+**NC-C** below, so it cannot silently come back.
+
+### 3.4 Negative controls on the reference leg — 5/5 CONTROL-OK
+
+Graded on `syn-m5` / `seq-poly-8-v1` against the unmodified `original` wet
+bus. **Each MUST FAIL**; a reference leg whose controls pass is measuring
+the wrong thing, and `reference-leg.json` sets `controls_ok = false` and
+refuses to present its primary numbers as agreement if any one of them
+passes.
+
+| control | substitution | max abs (LSB) | rms (dBFS) | corr | tail rel (dB) | required | result |
+|---|---|---|---|---|---|---|---|
+| **NC-A** | a generic single-rate `tanh` (no oversampling, no halfband, no pre/post EQ, no feedback, no quad-waveshaper state) in place of the frozen chain | 1,344,899 | −13.52 | 0.900155 | −6.15 | FAIL | **CONTROL-OK** |
+| **NC-A2** | the **sibling leaf's own** `lookup_waveshape` table shaper substituted for `GetQuadWaveshaper`, chain otherwise untouched | 243,750 | −26.80 | 0.983611 | −23.01 | FAIL | **CONTROL-OK** |
+| **NC-SHARED** | ONE shared effect instance driving both the `ains1` and the `send1` slot (shared instead of per-instance state) | 1,830,054 | −11.97 | 0.443628 | −4.15 | FAIL | **CONTROL-OK** |
+| **NC-B** | the whole declared tail region (3,750 blocks) dropped (zeroed) from the model render | 824,997 | −34.48 | 0.994656 | **0.00** | FAIL the **tail** gate | **CONTROL-OK** |
+| **NC-C** | the wrong settle boundary: the 375-block synth settle also run through the effect (§3.3) | 944,522 | −37.47 | 0.999994 | −97.79 | FAIL | **CONTROL-OK** |
+
+NC-A2 is the sharpest of these: it is not a convenient generic but *this
+project's other committed Distortion shaper*, and it still misses the
+budget by 19 dB of rms. NC-C is the one that would have silently corrupted
+every number in §3.1 had it not been measured — note that it passes the
+tail gate and keeps corr at 0.999994, so only the rms/peak clauses catch
+it.
+
+### 3.5 Reproducibility of the engine side
+
+Within a run, every fixture leg passed the **3× bit-identical** determinism
+gate (`determinism_gate.per_leg_sha256_all` in each sidecar; 48 leg-renders
+over 14 bundles). **Across runs**, the whole fixture set was rendered a
+second time into a separate directory on the same host: **36 / 36 WAVs
+byte-identical**, and all 14 sidecars identical apart from the output paths
+they were told to write. `artifacts/render-refusals.txt` reproduces in its
+rows and reasons but **not** byte-for-byte, by construction: a
+"determinism gate failed" row quotes that run's three differing hashes,
+which is the finding itself. The transcript says so in its own header.
+
+Host/harness control: `artifacts/harness-host-control.json` re-renders the
+committed SXT-028c `fmcombo` wet bus through this worker's prebuilt oracle
+and reproduces its committed sha256 exactly (`89d42e51…`), so a determinism
+REFUSAL above is a statement about the preset, not about this host. The
+renderer refuses to render or refuse anything else if that control fails.
 
 ## 4. RTL vs frozen model — EXACT (iverilog)
 
@@ -527,34 +780,66 @@ licensing-relevant claim.
 
 ## 9. Newly-enabled presets (honest delta)
 
-**Supported stays 0.** The conjunction in `reports/coverage-v1/README.md`
-still fails for every carrier at earlier gates, and this leaf adds its own:
-model-vs-reference is **NOT_RUN** for this class (F-028e-sse-3); FX model 6
-has no usable carrier and FX model 7 has no carrier at all
-(F-028e-sse-5); and the sample-domain budget is not an attainable
-instrument for models 4 and 7 (F-028e-sse-4).
+**Supported stays 0 — and #136 running the reference leg does not change
+that by one preset.** The conjunction in `reports/coverage-v1/README.md`
+still fails for every carrier at earlier gates, and this leaf's own gates
+still fail:
+
+* model-vs-reference is measured **only on declared synthetic carriers**;
+  **every corpus carrier is render-REFUSED** (F-028e-sse-8), so no corpus
+  preset has a reference comparison at all;
+* FX model 6 has no usable corpus carrier and FX model 7 has none at all
+  (F-028e-sse-5) — the synthetic carriers built for them add no reach;
+* the rms budget is not met for FX models 4 and 7 (F-028e-sse-4) and the
+  peak budget is met by no carrier above 0 dB drive (F-028e-sse-7);
+* the `Trance Pluck` chain contains an **unlanded `Conditioner`**, so even
+  if its other screens passed, a *complete-wet* comparison for that preset
+  is not yet constructible without substituting a generic — which this
+  project refuses.
 
 **`reports/coverage-v1/leaf-verification.json` is deliberately NOT
 modified.** Updating the ledger is a coverage-publication action, and
-coverage publication is an explicit non-goal of #121 (it belongs to #22);
-`main` also still carries the pre-existing republishability defect filed as
-#125. More to the point, **nothing would change**: the `fx:Distortion` row
-already names #121 as the sibling leaf for models 3..7, its
-`model_vs_reference` is `NOT_RUN`, and this leaf's reference leg is
-`NOT_RUN` too — so no coverage number moves in either direction. Nothing in
-this record should be read as a coverage claim.
+coverage publication is an explicit non-goal of #121 and of #136 (it
+belongs to #22); `main` also still carries the pre-existing
+republishability defect filed as #125. More to the point, **nothing in the
+ledger would change**: the `fx:Distortion` row's `model_vs_reference` turns
+on a *corpus* carrier comparison, and there is still none. Nothing in this
+record should be read as a coverage claim.
 
 ## 10. Follow-ups filed
 
 * **#136 — SXT-028e-sse follow-up (F-028e-sse-1/3/4/5): oracle-host
-  reference leg for the Distortion SSE quad-waveshaper branch.** Carries the
-  whole NOT_RUN claim-(2) leg: the fail-closed oracle extraction of the
-  three carriers' `deactivated`/`extend_range` flags, the SXT-012 fixture
-  renders with tails, the achieved max/rms/corr numbers, the missing
-  carriers for FX models 6 and 7 (which must become a *declared synthetic*
-  patch or stay NOT_RUN, never a substituted carrier), and the `rcp_ps`
-  estimate term. It also carries F-028e-sse-4's metric question forward to
-  SXT-017 (#12) with an explicit instruction not to relax the budget.
+  reference leg for the Distortion SSE quad-waveshaper branch.**
+  **DONE 2026-10-02** (this amendment). Carried the whole NOT_RUN claim-(2)
+  leg: the fail-closed oracle extraction of the three carriers'
+  `deactivated`/`extend_range` flags (now COMPLETE, §1), the SXT-012
+  fixture renders with tails over the declared 1600-block ring-out window
+  (§3.5), the achieved max/rms/corr numbers (§3.1), declared-synthetic
+  carriers for FX models 6 and 7 rather than a substituted one
+  (F-028e-sse-5), and the `rcp_ps` term (F-028e-sse-1, now measured on x86
+  and still open for arm64). F-028e-sse-3 is **closed**; F-028e-sse-1 and
+  -4 are **re-stated against measured data and stay routed to #12**, and
+  the leg raised two further findings, F-028e-sse-7 (the peak clause) and
+  F-028e-sse-8 (zero corpus reach). No budget was relaxed.
+* **#136-a (filed from this amendment) — an admissible corpus carrier for
+  the SSE branch.** All three of this leaf's corpus carriers are
+  render-REFUSED (F-028e-sse-8), so claim (2) rests entirely on declared
+  synthetic patches. Finding one or more SSE-branch presets that pass the
+  SXT-012/023 screens *and* the 3× determinism gate (or establishing that
+  none exists in the corpus, which is itself a reportable result) is what
+  would give this class any corpus reach.
+* **#136-b (filed from this amendment) — re-run the reference leg on the
+  arm64 macOS evidence host.** F-028e-sse-1's `rcp_ps` term is
+  implementation-defined; §3 measured x86 SSE's estimate. The arm64
+  simde path is unmeasured, and it is the host `oracle/manifest.json`
+  names.
+* **#136-c (filed from this amendment) — audit the sibling leaves' model
+  runners for the §3.3 silent-pre-roll boundary.** `run_chorus_model.py`
+  and the SXT-023 `run_fx_model.py` pattern pre-roll the model through the
+  fixture settle. For an effect whose zero-input response is not its
+  initialized state, that is worth tens of dB (73 dB here). Whether any
+  landed sibling leaf's committed numbers are affected is a question this
+  leaf cannot answer for them.
 * **#135 — SXT-028e-sse follow-up: discharge the `FuzzTable<1>`
   re-derivation on the pinned arm64/libc++ oracle host.** The committed
   build-discharge of DR-0014 clause 2 is libstdc++-only (§8); the pinned
@@ -571,10 +856,18 @@ place by the `mutant-adaainit` RTL control.
 
 ## 11. What this record does NOT establish
 
-- Any model-vs-reference agreement, any fidelity policy, or any frozen
-  budget (SXT-017/#12). The reference leg is **NOT_RUN**, not "passing
-  quietly", and F-028e-sse-4 explicitly reports a [PROPOSED] budget as
-  **not met** for two FX models rather than relaxing it.
+- Any fidelity policy or any frozen budget (SXT-017/#12). The reference
+  leg is now RUN, but **mixed**: F-028e-sse-4 reports the rms clause as
+  **not met** for FX models 4 and 7, and F-028e-sse-7 reports the peak
+  clause as **not met by any carrier above 0 dB drive**, rather than
+  relaxing either.
+- Any model-vs-reference agreement **for a corpus preset**. Every corpus
+  carrier is render-REFUSED (F-028e-sse-8); §3's numbers are all on
+  declared synthetic patches and carry zero corpus reach.
+- Any claim about `rcp_ps` on the arm64 macOS evidence host: §3 ran on
+  Linux x86-64 (F-028e-sse-1).
+- Anything about the sibling leaves' own settle boundaries (§3.3 is a
+  measurement of *this* leaf's harness against *this* effect).
 - Any preset-support or musical-quality claim; no human listening has
   occurred (#8/#9 BLOCKED-on-human). Essentiality of this feature remains
   **UNVERIFIED** — no SXT-014 ablation carrier exists for it.
@@ -584,8 +877,10 @@ place by the `mutant-adaainit` RTL control.
 - Anything about FX waveshaper models 0..2 (that is #57), about sibling
   effect classes, or about the engine's behaviour under a mid-render patch
   change.
-- Repeatability of any engine render (none was produced), and any
-  libc++-host equivalence of the `FuzzTable<1>` re-derivation (§8).
+- Repeatability of an engine render **beyond this one host**: §3.5's
+  3×-within-a-run and twice-across-runs results are from a single Linux
+  x86-64 worker. Cross-host render repeatability is not established here.
+- Any libc++-host equivalence of the `FuzzTable<1>` re-derivation (§8).
 
 ## 12. Reproduce
 
@@ -606,16 +901,34 @@ python3 tools/check_fuzz_table_rederivation.py
 # (or, on a host with a full pinned engine checkout:)
 # ORACLE_SURGE_DIR=$HOME/oracle/surge python3 tools/check_fuzz_table_rederivation.py
 
-# anywhere (fail-closed extraction: graphs cross-check + oracle refusal)
+# anywhere (fail-closed extraction cross-check, oracle-free)
 python3 tools/extract_distortion_sse_inputs.py --mode graphs
-python3 tools/extract_distortion_sse_inputs.py --mode oracle    # refuses
 
 # unit/integrity tests (both leaves: this one must not disturb #57)
 python3 -m pytest tests/test_sxt028e_sse.py tests/test_sxt028e.py -q
 
-# ORACLE HOST ONLY (the NOT_RUN leg of §3, and the libc++ leg of §8)
-ORACLE_SURGE_DIR=$HOME/oracle/surge python3.11 \
-    tools/extract_distortion_sse_inputs.py --mode oracle
+# --- THE REFERENCE LEG OF §3 (needs the pinned oracle) --------------------
+# Any fleet worker can install the prebuilt, sha256-verified pinned oracle
+# per user and print the three exports to source (#232 / PR #299):
+oracle/fetch-and-build.sh --prebuilt        # or ORACLE_PREBUILT=1
+export ORACLE_SURGE_DIR=~/.cache/gf180-surge-oracle/58914e59.../linux-x86_64
+export ORACLE_PYTHON=~/.cache/gf180-surge-oracle/58914e59.../venv/bin/python
+export LD_LIBRARY_PATH=~/.cache/gf180-surge-oracle/58914e59.../cpython-3.11.16/lib
+
+# 1. oracle extraction of the corpus carriers (writes COMPLETE records)
+$ORACLE_PYTHON tools/extract_distortion_sse_inputs.py --mode oracle
+# 2. the declared-synthetic carrier records
+$ORACLE_PYTHON tools/extract_distortion_sse_inputs.py --mode synthetic
+# 3. the settle boundary (§3.3) — run BEFORE trusting any number below
+$ORACLE_PYTHON tools/probe_distortion_sse_settle_boundary.py
+# 4. fixture bundles: corpus attempts + refusals, then the synthetic
+#    bundles, with the harness/host control and the 3x determinism gate
+$ORACLE_PYTHON tools/render_distortion_sse_fixtures.py
+# 5. the whole leg: primary + per-slot bypass + the five negative controls
+$ORACLE_PYTHON tools/run_distortion_sse_reference_leg.py
+#    (add --reuse-model to re-grade existing model renders in place)
+
+# ARM64/libc++ ORACLE HOST ONLY (the §8 leg, and F-028e-sse-1's open half)
 python3 tools/check_fuzz_table_rederivation.py     # on the arm64/libc++ host
 ```
 
@@ -630,6 +943,20 @@ scalars are quoted as data under
 (PROPOSED), the successor DR-0012 reserved for this branch; the two table
 rows are re-derived from the pinned construction formulas and are not quoted
 data.
+
+**The #136 reference-leg artifacts add no new licensing posture.** The
+fixture WAVs under `fixtures/` are *renders produced by* the external
+pinned engine, of a patch constructed from the bundled factory preset
+`patches_factory/Basses/FM Combo.fxp` — the same preset whose renders
+SXT-028c already commits, under the same unresolved
+distribution-license determination this repository has not made. No preset
+file, engine source, table or asset is copied into this repository by this
+amendment: the synthetic carrier is described by a *recipe*
+(`tools/distortion_sse_synthetic.py`: slot types, twelve parameter values
+per slot, one send level) plus the base preset's census blob SHA-1, which
+is re-verified against the oracle host at render time. The extraction's
+`savePatch` round-trip is written to a temporary directory and never
+committed.
 
 The `FuzzTable<1>` build discharge (§8) is the one place engine source is
 *executed*, and it executes it **where it lives**: the driver compiled by
