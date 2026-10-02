@@ -115,6 +115,10 @@ model and the RTL.
 
 ### 0c. Structural facts that are declared contracts, not fresh verified reads
 
+> **Update 2026-10-02 (#155):** contracts #1-#5 below were re-read against the
+> pinned source and confirmed (one wording correction on #3); see §0e. The text
+> in this section is the filing-time record and is kept as written.
+
 No oracle checkout means the pinned `process()` source text could not be
 re-read while writing this leaf. Consequences, stated exactly:
 
@@ -185,6 +189,87 @@ Stated here rather than implied away (full detail in §3):
    leaf's exactness check compares per-instance checkpoints and not only
    audio.
 
+### 0e. Follow-up #155 (2026-10-02): pinned-source re-read PERFORMED; oracle legs still NOT_RUN
+
+**Oracle status (measured): still UNAVAILABLE on this host -- legs 1a/1b/1c
+NOT_RUN, `send-level-default-probe` BLOCKED (#12).** The prebuilt install
+(`oracle/fetch-and-build.sh --prebuilt`, #232/PR #299) was attempted and
+refused to proceed: `oracle/manifest.json` carries a `prebuilt` entry for
+`linux-x86_64` only, this host is `darwin-arm64` ("no prebuilt entry for
+darwin-arm64 ... falling back to the from-source build"), no
+`ORACLE_PREBUILT_URL` store is configured, and no engine checkout exists at
+the manifest path. No oracle was built or substituted; `surgepy` is not
+importable, so `artifacts/oracle-status.json` and `render-refusals.txt` are
+unchanged (still `UNAVAILABLE`, which remains the truthful measurement) and the
+live `extract_rf_send34_inputs.py` leg and the per-scene drift gate were NOT
+run. These legs need a linux-x86_64 dispatch worker (or a darwin-arm64
+prebuilt entry).
+
+**Items 2-5 do not need a running oracle**; they were re-read from a read-only
+shallow fetch of the pinned source (`surge-synthesizer/surge@58914e59c608`,
+HEAD verified equal to the pin; nothing copied into this repository). Results,
+each against `src/common/SurgeSynthesizer.cpp` / `dsp/Effect.cpp` /
+`dsp/utilities/DSPUtils.h` at the pin:
+
+- **Contract #1 (send-stage routing) -- CONFIRMED against the pin.**
+  `process()` enters the send block only when `fx_bypass == fxb_all_fx`
+  (`fxb_no_sends` / `fxb_scene_fx_only` / `fxb_no_fx` skip it); per slot it
+  requires `fx[slot] && !(fx_disable & (1 << slot))`; the bus is
+  `send[idx][0]*sceneA + send[idx][1]*sceneB` (post-insert scene outputs),
+  processed in place by `process_ringout`, and mixed into `output` through
+  `FX[idx]` (the `return_level` gain). `sendToIndex` maps send3/send4 to
+  indices 2/3. The corpus still cannot discriminate the bypass partition (0 of
+  3,561 presets).
+- **Contract #3 (`sendused`-false behaviour) -- CONFIRMED, with a wording
+  correction.** The return accumulation (`FX[idx].MAC_2_blocks_to(...)`) is
+  UNCONDITIONAL inside the `if (fx[slot] && !disabled)` block; it is not
+  conditioned on the `process_ringout` return, which is only stored to
+  `sendused[idx]`. When the effect's ring-out has expired,
+  `Effect::process_ringout` calls `process_only_control()`, leaves the buffer
+  unprocessed, returns false -- so the unprocessed formed bus IS mixed back,
+  exactly what the frozen model does. The correction is to the prose, not the
+  arithmetic: in the engine `sendused[idx]` is the *return value* of
+  `process_ringout` (consumed only by the global-FX `glob` flag), and the
+  *input* flag handed to the send effect is `sc_state[0] || sc_state[1]`
+  (the scene/insert activity state), identical for both buses. The model's and
+  RTL's `send_in3`/`send_in4` ("this bus's `sendused[k]` flag") are therefore
+  an independently drivable per-bus input-flag stimulus (a superset of what the
+  engine can produce), and the model's `ring` output corresponds to the
+  engine's `sendused[idx]`. The statement above in §0c that "`sendused` false
+  means nothing was mixed into the bus" is superseded: false means the
+  effect's ring-out had expired. This is a naming/stimulus-scope finding with no
+  arithmetic consequence; the byte-frozen model docstring
+  (`docs/byte-frozen-sources.md` lists it as live-pinned together with
+  `rtl-exactness.json`, `negative-controls.json`, `state-cost.json`) was
+  deliberately NOT edited, since a prose-only edit would turn those records
+  STALE for no behavioural gain. Fix the docstring at the next model revision.
+- **Contract #4 (ring-out policy simplification) -- CONFIRMED as a
+  simplification.** The engine's `process_ringout` keeps a per-effect
+  `ringout` counter (reset when the input flag is true), and processes while
+  `get_ringout_decay() < 0` (default: never expires) or `ringout < decay`.
+  The model's occupant rings exactly while its input flag is true. For a
+  concrete occupant with a finite decay the engine keeps processing for
+  `decay` blocks after the flag drops, where the model passes through; this
+  remains algorithm-leaf scope (unchanged) and is NOT a contradiction of the
+  declared simplification, but it means the "tail" window of a concrete
+  occupant is not established by this leaf.
+- **Contract #5 (`enqueueFXOff` timing) -- CONFIRMED.** `enqueueFXOff()` only
+  sets `fxsync[].type = fxt_off` and `load_fx_needed = true`; `processControl()`
+  runs `loadFx(false,false)` when `load_fx_needed` is set (and so does
+  `processEnqueuedPatchIfNeeded()`), and `process()` calls `processControl()`
+  (line 4848) before any audio of the block, independent of `fx_bypass`. So
+  slot-off takes effect at the control pass preceding the block, matching the
+  model/RTL lifecycle contract.
+- **Contract #2 (`gain = level**3`) -- CONFIRMED against the pin.**
+  `amp_to_linear(x) = max(0,x)^3` (`DSPUtils.h`), applied to both
+  `scene[s].send_level[idx]` and the slot `return_level`, through
+  `set_target_smoothed` (per-block ramp -- the declared smoothing omission).
+  Note the `max(0, x)` clamp: a negative stored level maps to gain 0.
+
+**Not corrected, nothing regenerated:** no re-read contradicted the frozen
+arithmetic, so the model, RTL and `rtl-exactness.json` are untouched and the
+Failure-control re-runs below apply as a regression check only.
+
 ## Headline results
 
 | Claim | Status | Evidence |
@@ -200,6 +285,8 @@ Stated here rather than implied away (full detail in §3):
 | Gain-plane placement (send-form specific) | **PASS** (misplaced gains FAIL, model-side and in live RTL) | `negative-controls.json` NC-F |
 | Composition with the landed routing leaves | **PASS** (ains34 + bins12 → this leaf → global34; 8 independent histories) | `tests/test_sxt028l.py::test_composes_with_the_landed_insert_and_global_routing_leaves` |
 | Carrier routing/scheduling metadata | **PASS** (6/6, census+graphs cross-checked, drift 0) | `model/effects/fx_inputs/rf-rf-send34-*.json` |
+| Pinned-source re-read of declared contracts #1-#5 (#155) | **PASS** (all five confirmed against the pin; one wording correction, no arithmetic change; §0e) | §0e |
+| Oracle-gated legs 1a/1b/1c (#155) | **NOT_RUN** (no prebuilt for darwin-arm64; 1b/1c also BLOCKED on #12; §0e) | `artifacts/oracle-status.json` |
 | Complete-wet preset renders / new reference fixtures | **NOT_RUN** (oracle unavailable) + **BLOCKED** (#12) | §0a/§0b, `artifacts/render-refusals.txt` |
 | External-memory traffic | **PASS** (this leaf's own contribution: 0 words/sample; aggregate `[PENDING-SXT-016]`) | `artifacts/state-cost.json` |
 | Newly-enabled presets | **0** (no support claim follows from this record) | §6 |
