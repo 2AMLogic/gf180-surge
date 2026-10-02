@@ -2834,3 +2834,250 @@ def test_committable_evidence_controls_run_in_the_self_test():
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+# --- the history boundary (increment 17) --------------------------------------
+#
+# Every family above audits a tree that exists NOW — the working copy, the index,
+# the committable bytes, the committable answers. These audit what the commit
+# graph PUBLISHES, which in a merge-commit repository is permanent: a carrier
+# added by one commit and deleted by the next stays in every clone while the
+# final tree audits clean.
+
+
+def _history_tree(tmp_path, label):
+    """A clean skeleton that is a git checkout with one clean commit."""
+    root = _discovery_tree(tmp_path, label)
+    cp._history_repo(root)
+    return root
+
+
+def _history_rules(findings):
+    return sorted({f.rule for f in findings})
+
+
+def test_a_carrier_published_then_deleted_is_invisible_to_the_tree_audit(tmp_path):
+    """The premise of the whole increment, asserted rather than assumed."""
+    root = _history_tree(tmp_path, "history-premise")
+    rel = cp.FIXTURE_HISTORY_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
+    cp._commit_all(root, "add an undeclared carrier")
+    (root / rel).unlink()
+    cp._commit_all(root, "delete it again")
+
+    findings, _ = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+
+    # …and the bytes are still there, in the commit that published them.
+    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    assert "foreign-license-text" in _history_rules(history), [
+        f.as_dict() for f in history
+    ]
+    assert stats["commits_judged"] == 3, stats
+    offender = next(f for f in history if f.rule == "foreign-license-text")
+    assert offender.path.startswith(rel + " [commit "), offender.path
+    assert cp.TIP_ABSENT in offender.detail, offender.detail
+
+
+def test_history_answers_come_from_the_commit_that_published_the_bytes(tmp_path):
+    """A row added by a later commit does not declare what an earlier one published."""
+    root = _history_tree(tmp_path, "history-late-row")
+    rel = cp.FIXTURE_HISTORY_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
+    cp._commit_all(root, "add the carrier")
+    cp._write(root, rel, cp.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n")
+    cp._patch_manifest(
+        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    )
+    cp._commit_all(root, "declare it, one commit late")
+
+    tree_findings, _ = cp.audit(root)
+    assert not tree_findings, [f.as_dict() for f in tree_findings]
+    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    assert "foreign-license-text" in _history_rules(history), [
+        f.as_dict() for f in history
+    ]
+    offender = next(f for f in history if f.rule == "foreign-license-text")
+    assert cp.TIP_ANSWERED in offender.detail, offender.detail
+    assert stats["findings_by_standing_at_the_range_tip"][cp.TIP_ANSWERED] >= 1, stats
+
+
+def test_a_carrier_declared_in_its_own_commit_is_not_a_history_finding(tmp_path):
+    """The positive control: the mode must not be a blanket alarm on history."""
+    root = _history_tree(tmp_path, "history-declared")
+    rel = cp.FIXTURE_HISTORY_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
+    cp._patch_manifest(
+        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    )
+    cp._commit_all(root, "add a carrier and its row together")
+
+    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    assert not history, [f.as_dict() for f in history]
+    assert stats["commits_judged"] == 2, stats
+
+
+def test_a_commit_with_no_answer_set_is_disclosed_not_judged(tmp_path):
+    """NOT_RUN, named, and never folded into a PASS.
+
+    The pre-bookkeeping era (and, in a merge-commit history, every commit of a
+    branch forked before the manifest landed) has no answer set to be judged
+    against. Judging it anyway would produce one finding per carrier per commit
+    and bury the signal; skipping it silently would be worse.
+    """
+    root = tmp_path / "history-pre-manifest"
+    root.mkdir()
+    cp.build_skeleton(root)
+    (root / cp.MANIFEST_REL).unlink()
+    cp._write(root, cp.FIXTURE_HISTORY_CARRIER_REL, cp.FIXTURE_GPL_BODY)
+    cp._git(root, "init", "-q")
+    cp._commit_all(root, "a tree from before the provenance manifest existed")
+    (root / cp.FIXTURE_HISTORY_CARRIER_REL).unlink()
+    cp.build_skeleton(root)
+    cp._commit_all(root, "introduce the provenance manifest")
+
+    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    assert not history, [f.as_dict() for f in history]
+    assert stats["commits_judged"] == 1, stats
+    unjudged = stats["commits_not_judged_no_answer_set_yet"]
+    assert len(unjudged) == 1, unjudged
+    assert "subject" in unjudged[0] and unjudged[0]["commit"], unjudged
+
+
+def test_deleting_the_manifest_does_not_make_a_commit_unjudged(tmp_path):
+    """The one way the NOT_RUN disclosure above could have become an escape hatch."""
+    root = _history_tree(tmp_path, "history-dropped-manifest")
+    cp._write(root, cp.FIXTURE_HISTORY_CARRIER_REL, cp.FIXTURE_GPL_BODY)
+    (root / cp.MANIFEST_REL).unlink()
+    cp._commit_all(root, "delete the answer set and add a carrier at once")
+
+    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    assert "foreign-license-text" in _history_rules(history), [
+        f.as_dict() for f in history
+    ]
+    assert stats["commits_that_published_no_manifest_after_one_existed"], stats
+    assert not stats["commits_not_judged_no_answer_set_yet"], stats
+
+
+def test_history_reads_structural_signals_from_the_commits_own_entries(tmp_path):
+    """The extension and by-reference rules must be reachable in a commit tree.
+
+    They are gated on the tree's PRIMARY view. Spelled `== WORKTREE_VIEW`, that
+    gate makes every extension rule and both by-reference rules silently
+    unreachable here — a whole rule group reporting "nothing offended" for a view
+    it never examined.
+    """
+    root = _history_tree(tmp_path, "history-structural")
+    asset = cp.FIXTURE_HISTORY_ASSET_REL
+    cp._write(root, asset, cp.FIXTURE_MARKER_FREE_ASSET_PAYLOAD)
+    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
+    cp._commit_all(root, "publish an upstream asset and an escaping link")
+    (root / asset).unlink()
+    (root / cp.FIXTURE_ESCAPING_LINK_REL).unlink()
+    cp._commit_all(root, "delete both")
+
+    tree_findings, _ = cp.audit(root)
+    assert not tree_findings, [f.as_dict() for f in tree_findings]
+    history, _ = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    rules = _history_rules(history)
+    assert "upstream-asset-extension" in rules, [f.as_dict() for f in history]
+    assert "external-symlink-target" in rules, [f.as_dict() for f in history]
+    escape = next(f for f in history if f.rule == "external-symlink-target")
+    assert "escapes the audited tree" in escape.detail, escape.detail
+
+
+def test_an_in_repo_symlink_in_history_is_not_a_signal(tmp_path):
+    """The must-NOT-fire half of the same read, on a non-exemptible rule.
+
+    `CLAUDE.md -> AGENTS.md` is this repository's own shape. Resolving a historical
+    link against the current checkout — where the link no longer exists — would
+    invent an `external-symlink-target` finding that no exemption can answer.
+    """
+    root = _history_tree(tmp_path, "history-in-repo-link")
+    cp._symlink(root, cp.FIXTURE_HISTORY_ALIAS_REL, "plain.md")
+    cp._commit_all(root, "add an in-repo alias")
+    (root / cp.FIXTURE_HISTORY_ALIAS_REL).unlink()
+    cp._commit_all(root, "delete the alias")
+
+    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    assert not history, [f.as_dict() for f in history]
+    assert stats["commits_judged"] == 3, stats
+
+
+def test_the_signal_cache_is_keyed_by_path_and_blob(tmp_path):
+    """Identical bytes at two paths carry different structural signals."""
+    root = _history_tree(tmp_path, "history-cache-key")
+    first = cp.FIXTURE_HISTORY_CARRIER_REL
+    second = cp.FIXTURE_HISTORY_ASSET_REL
+    cp._write(root, first, cp.FIXTURE_GPL_BODY)
+    cp._commit_all(root, "publish the bytes at a .py path")
+    (root / first).unlink()
+    cp._write(root, second, cp.FIXTURE_GPL_BODY)
+    cp._commit_all(root, "republish the same bytes at a .wt path")
+    (root / second).unlink()
+    cp._commit_all(root, "delete it")
+
+    history, _ = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    pairs = {(f.rule, f.path.split(" [commit ")[0]) for f in history}
+    assert ("foreign-license-text", first) in pairs, pairs
+    assert ("upstream-asset-extension", second) in pairs, pairs
+
+
+def test_an_empty_commit_range_is_an_error_not_a_pass(tmp_path):
+    """"Nothing audited" and "nothing offended" must never look alike."""
+    root = _history_tree(tmp_path, "history-empty-range")
+    try:
+        cp.audit_history(root, "HEAD..HEAD")
+    except cp.AuditError as exc:
+        assert "no commits" in str(exc), str(exc)
+    else:  # pragma: no cover - the refusal is the behaviour under test
+        raise AssertionError("an empty range reported a verdict")
+
+
+def test_history_mode_is_reachable_from_the_cli_and_discloses_its_coverage(tmp_path):
+    """The mode a reviewer actually runs, including its NOT_RUN disclosures.
+
+    Against a fixture repository of its own, NOT this checkout: `HEAD~1` does not
+    resolve in a shallow clone, and `actions/checkout@v4` fetches depth 1 by
+    default, so running the range against `REPO` made the test assert on the
+    clone depth of whatever tree it happened to run in (it passed locally and
+    failed in CI with "ambiguous argument 'HEAD~1..HEAD'"). The fixture is built
+    with two commits here, so the rev-range spelling is still exercised — which
+    is the part of the CLI surface this test exists to cover.
+    """
+    root = _history_tree(tmp_path, "history-cli")
+    cp._write(root, "docs/second.md", "A second commit with nothing of interest.\n")
+    cp._commit_all(root, "a second clean commit, so HEAD~1 resolves")
+    proc = run_tool("--root", str(root), "--commits", "HEAD~1..HEAD")
+    assert proc.returncode in (0, 1), proc.stdout + proc.stderr
+    for line in (
+        "provenance history audit of",
+        "commits in range",
+        "not judged (no provenance manifest had been published yet",
+        "published no manifest after one had existed",
+        "distinct (path, blob) pairs published by the judged commits",
+        "findings by standing at the range tip",
+    ):
+        assert line in proc.stdout, proc.stdout
+
+
+def test_history_boundaries_are_declared_in_limits():
+    """A limit that is not printed is not declared."""
+    proc = run_tool("--limits")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for line in (
+        "--commits",
+        "commits_not_judged_no_answer_set_yet",
+        "the rules applied are TODAY's",
+    ):
+        assert line in proc.stdout, "missing from --limits: " + line
+
+
+def test_history_controls_run_in_the_self_test():
+    """Wired into `--negative-control`, not merely defined."""
+    cases = cp._history_controls()
+    assert cases, "the history controls must not be empty"
+    proc = run_tool("--negative-control")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    for case in cases:
+        assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"

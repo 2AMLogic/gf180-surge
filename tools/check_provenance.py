@@ -219,8 +219,9 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     output would otherwise drown the signal —
     `coverage/gitignored-scratch-is-neither-counted-nor-audited`), and a path
     inside a declared scope exclusion is not counted here because it is already
-    disclosed as a hole. What this does NOT reach is history: whether a file was
-    ever committed and later removed is outside every rule, then and now.
+    disclosed as a hole. What a DEFAULT run does not reach is history: whether a
+    file was ever committed and later removed is outside every rule here, and is
+    reachable only with `--commits` (see the last bullet).
   * An occurrence-scoped exemption is matched by LITERAL WORDING, so it cannot
     tell two identically-worded sentences apart. The rule is therefore
     uniqueness, not disambiguation: a named occurrence matching more than once
@@ -255,9 +256,9 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     its staged content is by-reference in both views exactly as before
     (`staged/a-gitlink-is-not-read-as-a-staged-blob`); a divergent path inside a
     declared scope exclusion is not counted, for the same reason increment 11
-    does not count one; and the audit still reads only what the index and the
+    does not count one; and a default run still reads only what the index and the
     working tree hold NOW — a blob reachable from history but from neither of
-    those is outside every rule, as it was before.
+    those is read only by `--commits` (last bullet), never by a default run.
   * Increment 14 moved the carriage rules (group 4) onto both byte views. The
     ANSWERS to them did not follow, and that was the next mask: `load_manifest`
     opened `root / MANIFEST_REL` directly, and the record headers, the index
@@ -285,8 +286,10 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     non-exemptible rule); a record or manifest present in the index and absent
     or altered on disk is still loud in the other direction too
     (`record-header-missing`, a stale/uncorroborated row), never a silent pass;
-    and HISTORY is as far out of reach as before — a row that answered a carrier
-    in some earlier commit is not consulted, and neither is one that will.
+    and in a DEFAULT run history is as far out of reach as before — a row that
+    answered a carrier in some earlier commit is not consulted, and neither is one
+    that will; `--commits` judges each commit against its own bookkeeping rather
+    than lifting that boundary.
   * Increments 14 and 15 between them moved group 4 onto both byte views and the
     four groups' ANSWER SET onto the committable bookkeeping. Neither reached the
     two places where a BOOKKEEPING group reads an ENTRY's own content as the
@@ -385,6 +388,42 @@ DECLARED LIMITS — read before quoting this tool as evidence:
     exposed it were not constructions at all: `_patch_manifest` had been writing
     fixture answers to disk without staging them, so two of this tool's own
     pre-existing discovery controls were passing on a row no commit published.
+  * The audited SET had been walked down one axis — the working tree, the index,
+    the committable bytes, the committable answers — and every one of those reads
+    the repository as it stands NOW. The set nobody enumerated is the one a clone
+    actually carries: every tree every commit publishes. This repository merges
+    with MERGE COMMITS (squash and rebase merges are disabled on the forge), so
+    every intermediate commit of every merged branch stays reachable from `main`,
+    and a carrier added by one commit and deleted by a later one is published
+    content that no tree audit, in any of those four views, ever reads.
+    `--commits <rev-range>` (increment 17) audits each commit in a range as its
+    own tree: that commit's entries (`git ls-tree -r`), that commit's blobs, and
+    the ANSWERS from the `decision-records/` bookkeeping THAT COMMIT publishes —
+    increment 15's asymmetry one step out, since a later commit's apology is not
+    retroactive. Each finding is deduplicated per (rule, path, blob), attributed
+    to the earliest commit in range that published it, and classified by its
+    standing at the range tip: answered there (declared in a later commit), the
+    bytes gone there, the path gone there (published then removed — the shape no
+    audit of the current tree can see), or still unanswered there (the tree audit
+    fails too). Five boundaries are DECLARED, not closed: (1) only the carriage
+    question is asked of history — a historical commit's own index/README/row
+    self-consistency is the current tree's obligation, and judging a months-old
+    README table against today's conventions would bury the carriage signal under
+    bookkeeping churn, so a row that grants coverage is accepted there without its
+    corroboration being re-litigated; (2) the rules applied are TODAY's, so a
+    finding is "what the current rule set says about bytes this history
+    published", never "a violation of the rule in force at the time"; (3) a commit
+    none of whose parents published a manifest has no answer set to be judged
+    against and is reported as NOT judged (`commits_not_judged_no_answer_set_yet`,
+    naming the commits) — in a merge-commit history that is most of a branch
+    forked before the manifest landed, which is why the test is the PARENTS and
+    not the calendar; deleting the manifest does not buy that silence
+    (`history/deleting-the-answer-set-does-not-silence-a-commit`), and such a
+    commit's own content is judged again at the merge commit that lands it; (4)
+    commits OUTSIDE the given range are NOT_RUN, not clean — including everything
+    a `git clone` can reach by other refs; (5) every limit above applies to each
+    tree judged here, so a PASS over history is still bookkeeping, not proof that
+    no third-party content was ever copied.
   * Coverage (files scanned, rows checked) is reported separately from
     agreement (findings), per `AGENTS.md`.
 
@@ -474,13 +513,31 @@ on DISK only must keep firing unlabelled (these are the two that fail if the
 staged view replaces the working-tree one), a divergent carrier that states its
 provenance in both views must be read in both and flagged in neither, and a
 declared binary payload — which has no text in either view — must be disclosed,
-not read, and not flagged.
+not read, and not flagged. The `history/*` controls (increment 17) are the only
+ones that build real COMMITS, because the behaviour under test has no
+representation outside a commit graph, and each one asserts on BOTH audits: the
+tree audit of the final checkout must be CLEAN (otherwise the case proves
+nothing about history) while the history audit must fire. A GPL body added by one
+commit and deleted by the next, an upstream-asset EXTENSION in the same shape (it
+is the structural half, and a primary-view gate spelled `== WORKTREE_VIEW` makes
+every extension and by-reference rule unreachable in a commit tree), an escaping
+symlink whose target has to be read from the commit's own blob, a carrier
+declared one commit LATE, and the same bytes republished at a path with a
+different extension must each produce a finding naming the commit; while a
+carrier declared in the SAME commit as its row, and an in-repo symlink to in-scope
+content (resolving it against the checkout instead of the commit invents a finding
+on a non-exemptible rule), must produce none; a commit that DELETES the manifest
+alongside its carrier must be judged with no answers and have that deletion
+disclosed; a commit older than the first manifest must be disclosed as NOT judged
+rather than flagged; and a range that resolves to no commits must be an error, not
+an empty PASS.
 
 Usage:
     python3 tools/check_provenance.py                # audit this repository
     python3 tools/check_provenance.py --root DIR     # audit another tree
     python3 tools/check_provenance.py --json         # machine-readable report
     python3 tools/check_provenance.py --include-untracked   # audit unstaged files too
+    python3 tools/check_provenance.py --commits origin/main..HEAD  # published history
     python3 tools/check_provenance.py --negative-control
 
 Exit codes: 0 = PASS, 1 = findings (FAIL), 2 = the audit itself could not run
@@ -2013,23 +2070,42 @@ def entry_views(tree, rel):
     bytes no commit publishes. It is a function rather than three copies of the
     same two lines precisely so a later increment cannot move one and leave the
     others behind, which is the shape of every mask this series has closed.
+
+    A history tree (increment 17) has exactly one view of each entry — the blob
+    its commit names — and that view is its PRIMARY one, so the structural
+    signals belong to it rather than to a working-tree copy that describes some
+    other tree entirely.
     """
+    if tree.primary_view != WORKTREE_VIEW:
+        return [tree.primary_view]
     views = [WORKTREE_VIEW]
     if rel in tree.staged_views:
         views.append(STAGED_VIEW)
     return views
 
 
+def view_evidence_prefix(view):
+    """How a finding names the bytes it read, or "" for the working-tree copy.
+
+    One definition, used by both places that say it (increment 17 added the
+    third view and would otherwise have inherited the staged wording for bytes
+    that have nothing to do with an index).
+    """
+    if view == WORKTREE_VIEW:
+        return ""
+    if view == HISTORY_VIEW:
+        return "in the content this COMMIT publishes (commit blob) — "
+    return f"in the STAGED content ({view} blob), not in the working-tree copy — "
+
+
 def _staged_evidence(view, detail):
-    """`detail`, saying so when the bytes it describes are the staged ones.
+    """`detail`, saying so when the bytes it describes are not the working copy.
 
     The path alone does not answer "which bytes" once an entry has two views,
     and the answer changes what the author must do — the same reason
     `_view_tripwire_findings` prefixes its evidence.
     """
-    if view == WORKTREE_VIEW:
-        return detail
-    return f"in the STAGED content ({view} blob), not in the working-tree copy — {detail}"
+    return view_evidence_prefix(view) + detail
 
 
 def list_staged_divergent(root: Path):
@@ -2092,6 +2168,163 @@ def read_index_blob(root: Path, oid: str):
     return proc.stdout
 
 
+# --- the history boundary (increment 17) --------------------------------------
+#
+# Increments 11, 14 and 15 walked down one axis: WHICH entries are audited (the
+# working tree, then the index), WHICH BYTES an audited entry is read as (the
+# working-tree copy, then the staged blob), and WHICH ANSWER SET judges them
+# (the copy on disk, then the committable one). Every one of those reads the
+# repository as it stands NOW. The set nobody enumerated is the one a clone
+# actually carries: **every tree every commit publishes**.
+#
+# That is not an abstract residual here. This repository merges with MERGE
+# COMMITS (squash and rebase merges are disabled on the forge), so every
+# intermediate commit of every merged branch is permanently reachable from
+# `main` — `git clone` fetches its blobs, and `git show` prints them. A carrier
+# added in one commit and deleted in a later one is therefore published content
+# that no tree audit, in any of the four views above, ever reads: the final tree
+# does not contain it.
+#
+# `--commits <rev-range>` audits each commit in a range as its own tree: the
+# entries are that commit's (`git ls-tree -r`), the bytes are that commit's
+# blobs, and the ANSWERS come from that commit's own `decision-records/`
+# bookkeeping — the same asymmetry increment 15 established, one step further
+# out. An answer is a claim a commit publishes, so a commit answers for the
+# bytes it publishes; a later commit's apology is not retroactive.
+#
+# What this does NOT do, and says so on every run: it judges the commits in the
+# range it was given, not all of history. Commits that predate the provenance
+# manifest entirely have no answer set to be judged against, and are reported as
+# NOT judged (a count and a list, never folded into a PASS) rather than buried
+# under a finding per carrier per commit. Deleting the manifest does not buy
+# that silence: once a commit in the range has published one, every later commit
+# in the range is judged, and a commit that drops it is judged with no answers
+# at all.
+
+# The byte source of an entry read from a commit's tree. A view name, like
+# WORKTREE_VIEW / STAGED_VIEW: `_read` resolves it through the same
+# `git cat-file blob <oid>` path the staged view uses, because an index blob and
+# a commit's blob are the same kind of object read the same way.
+HISTORY_VIEW = "commit"
+
+# How many commits the text report names individually per disclosure list (the
+# COUNT is always printed; `--json` carries the full list either way).
+HISTORY_COMMITS_LISTED = 10
+
+
+def list_entries_at_commit(root: Path, sha: str):
+    """[(rel, kind, oid)] for every entry commit `sha` publishes, sorted.
+
+    The commit-tree counterpart of `list_entries`: `git ls-tree -r` is to a
+    commit what `git ls-files -s` is to the index — the recorded MODE is read
+    rather than guessed (so a symlink and a gitlink are seen as such), and the
+    object id is how the bytes are read.
+    """
+    proc = subprocess.run(
+        ["git", "-C", str(root), "ls-tree", "-r", "-z", sha],
+        capture_output=True,
+    )
+    if proc.returncode != 0:
+        raise AuditError(
+            f"cannot list the tree of {sha}: "
+            + proc.stderr.decode("utf-8", "replace").strip()
+        )
+    seen = {}
+    for record in proc.stdout.decode("utf-8", "replace").split("\0"):
+        if not record:
+            continue
+        meta, _, rel = record.partition("\t")
+        if not rel:
+            continue
+        fields = meta.split()
+        if len(fields) < 3:
+            continue
+        mode, _type, oid = fields[0], fields[1], fields[2]
+        seen.setdefault(rel, (GIT_MODE_KINDS.get(mode, "file"), oid))
+    return sorted((rel, kind, oid) for rel, (kind, oid) in seen.items())
+
+
+# Field separator for the one `git log` call that reads the range: a unit
+# separator cannot occur in a commit subject.
+_LOG_SEP = "\x1f"
+
+
+def commit_log(root: Path, revrange):
+    """[(sha, date, parents, subject)] for `revrange`, PARENTS BEFORE CHILDREN.
+
+    `--topo-order --reverse` is not cosmetic: whether a commit that publishes no
+    provenance manifest is "older than the manifest" or "deleted the manifest" is
+    decided from its PARENTS, and in a merge-commit history (which this
+    repository's is) a branch forked before the manifest landed carries trees
+    that legitimately have none, interleaved by date with commits that do.
+    Walking parents first is what lets each commit be judged against its own
+    ancestry rather than against the calendar.
+
+    A range that resolves to no commits is an AuditError, never an empty PASS:
+    "nothing to audit" and "nothing offended" must not look alike.
+    """
+    args = [a for a in str(revrange).split() if a]
+    if not args:
+        raise AuditError("--commits needs a revision range (e.g. origin/main..HEAD)")
+    proc = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(root),
+            "log",
+            "--reverse",
+            "--topo-order",
+            "--date=short",
+            f"--format=%H{_LOG_SEP}%ad{_LOG_SEP}%P{_LOG_SEP}%s",
+            *args,
+        ],
+        capture_output=True,
+    )
+    if proc.returncode != 0:
+        raise AuditError(
+            f"cannot resolve the commit range {revrange!r}: "
+            + proc.stderr.decode("utf-8", "replace").strip()
+        )
+    commits = []
+    for line in proc.stdout.decode("utf-8", "replace").splitlines():
+        parts = line.split(_LOG_SEP)
+        if len(parts) == 4:
+            commits.append((parts[0], parts[1], parts[2].split(), parts[3]))
+    if not commits:
+        raise AuditError(
+            f"the commit range {revrange!r} resolves to no commits — a range "
+            "that audits nothing is not a pass"
+        )
+    return commits
+
+
+def commit_publishes_manifest(root: Path, sha, memo):
+    """Does commit `sha` publish a provenance manifest at all? (memoised)
+
+    Asked of PARENTS, including parents outside the audited range, which is why
+    it goes to git rather than reading the range's own bookkeeping: the question
+    "did this commit delete the answer set" is about the commit before it,
+    wherever that commit lives.
+    """
+    if sha in memo:
+        return memo[sha]
+    proc = subprocess.run(
+        ["git", "-C", str(root), "cat-file", "-e", f"{sha}:{MANIFEST_REL}"],
+        capture_output=True,
+    )
+    memo[sha] = proc.returncode == 0
+    return memo[sha]
+
+
+def commit_label(rel, sha):
+    """`rel`, naming the commit whose bytes were judged.
+
+    The history counterpart of `_view_label`: once the audited set spans
+    commits, a path alone does not say which published bytes offended.
+    """
+    return f"{rel} [commit {sha[:12]}]"
+
+
 def _walk_entries(root: Path):
     """Filesystem fallback for a tree that is not a git checkout.
 
@@ -2140,6 +2373,16 @@ def parse_gitmodules(root: Path):
         text = (root / ".gitmodules").read_text(encoding="utf-8", errors="replace")
     except OSError:
         return {}
+    return parse_gitmodules_text(text)
+
+
+def parse_gitmodules_text(text):
+    """The same parse, from text already in hand.
+
+    Split out for the history pass (increment 17): a commit's `.gitmodules` is a
+    blob in that commit, not a file on disk, and reading the working-tree copy
+    there would describe the wrong tree.
+    """
     urls = {}
     path = None
     for line in text.splitlines():
@@ -2160,20 +2403,39 @@ class Tree:
     """In-scope entry set (with kinds) plus cached text reads."""
 
     def __init__(self, root: Path, exclusions, include_untracked=False,
-                 default_view=WORKTREE_VIEW, share_reads_from=None):
+                 default_view=WORKTREE_VIEW, share_reads_from=None,
+                 entries=None, primary_view=WORKTREE_VIEW, signal_cache=None):
         self.root = root
         self.exclusions = exclusions
+        # The view that carries this tree's STRUCTURAL signals — an entry's
+        # kind, its extension (increment 17). For every tree built over the
+        # working checkout that is the working-tree view; for a commit tree it is
+        # the commit's own blobs, which are the only bytes that tree has. It is
+        # NOT the same question as `default_view`: the committable pass
+        # (increment 15) reads committable BYTES while its entries are still the
+        # working checkout's, and its primary view stays the working tree.
+        self.primary_view = primary_view
+        self.history = primary_view == HISTORY_VIEW
+        # Carriage signals already derived for a (path, blob) pair, shared across
+        # the commits of a history run (increment 17). Signals are a function of
+        # a regular file's path and bytes alone, so a blob that survives 200
+        # commits is scanned once; the ANSWERS are still re-derived per commit,
+        # because they are what differs between commits. `None` disables it.
+        self.signal_cache = signal_cache
         # Which bytes this tree reads when a caller names no view (increment
         # 15). `WORKTREE_VIEW` is the historical behaviour and stays the
         # default, so every existing call site is unchanged; `COMMITTED_VIEW`
         # makes the same code read what a commit would publish.
         self.default_view = default_view
-        entries = list_entries(root)
+        # `entries` is supplied only by the history pass, which enumerates a
+        # COMMIT's tree rather than this checkout's index (increment 17).
+        entries = list_entries(root) if entries is None else sorted(entries)
         # Present in the working tree, absent from the index (increment 11).
         # Always computed, because the COUNT is coverage that is reported
         # whether or not the entries are audited; `include_untracked` decides
-        # only whether they also become ordinary entries.
-        self.untracked = list_untracked(root)
+        # only whether they also become ordinary entries. A commit's tree has no
+        # working copy to be untracked relative to.
+        self.untracked = [] if self.history else list_untracked(root)
         self.include_untracked = include_untracked
         if include_untracked:
             known = {rel for rel, _, _ in entries}
@@ -2198,7 +2460,9 @@ class Tree:
         self.index_blobs = {
             rel: blob for rel, kind, blob in entries if blob and kind != "gitlink"
         }
-        self.submodule_urls = parse_gitmodules(root)
+        # A commit's `.gitmodules` is a blob in that commit; read below, once the
+        # caches exist, rather than from the working-tree copy of another tree.
+        self.submodule_urls = {} if self.history else parse_gitmodules(root)
         self.excluded = {}
         # Gitlinks under a declared exclusion prefix (increment 13). A declared
         # exclusion is a hole in CONTENT scanning — "this prefix's bytes are
@@ -2230,7 +2494,9 @@ class Tree:
         # reason increment 11 leaves one out of its count: it is already
         # disclosed as a hole, and counting it here would read as coverage the
         # audit does not have.
-        self.staged_divergent = list_staged_divergent(root)
+        # A commit's tree has one view of each entry: the blob it names. There is
+        # no index-vs-working-tree divergence to read there.
+        self.staged_divergent = [] if self.history else list_staged_divergent(root)
         self.staged_views = [
             rel
             for rel in self.staged_divergent
@@ -2274,6 +2540,19 @@ class Tree:
             self._truncated = share_reads_from._truncated
             self._carried_names = share_reads_from._carried_names
             self._wide_runs = share_reads_from._wide_runs
+        if self.history and ".gitmodules" in self.index_blobs:
+            self.submodule_urls = parse_gitmodules_text(self.text(".gitmodules") or "")
+
+    def _key(self, rel, view):
+        """Cache key for one read.
+
+        The blob id joins the key for a commit view (increment 17): the same path
+        holds different bytes in different commits, and a cache keyed on the path
+        alone would answer a later commit's read with an earlier commit's text.
+        """
+        if view == HISTORY_VIEW:
+            return (rel, view, self.index_blobs.get(rel, ""))
+        return (rel, view)
 
     def view_for(self, rel):
         """The byte source this tree reads `rel` as when no view is named.
@@ -2415,7 +2694,7 @@ class Tree:
         than a decode, and says so, rather than being counted as a full read.
         """
         view = self.view_for(rel) if view is None else view
-        key = (rel, view)
+        key = self._key(rel, view)
         if key in self._text_cache:
             return self._text_cache[key]
         value, mode, truncated, names, wide = self._read(rel, view)
@@ -2429,7 +2708,7 @@ class Tree:
 
     def _read(self, rel, view=WORKTREE_VIEW):
         """(text|None, scan mode, truncated, member names, wide runs) for a view."""
-        if view == STAGED_VIEW:
+        if view in (STAGED_VIEW, HISTORY_VIEW):
             raw = read_index_blob(self.root, self.index_blobs.get(rel, ""))
             if raw is None:
                 # The index holds no blob for this entry (a gitlink), or git
@@ -2491,9 +2770,9 @@ class Tree:
     def scan_mode(self, rel, view=None):
         """"decoded" | "unwrapped" | "strings" | "none" | "unreadable"."""
         view = self.view_for(rel) if view is None else view
-        if (rel, view) not in self._scan_modes:
+        if self._key(rel, view) not in self._scan_modes:
             self.text(rel, view)
-        return self._scan_modes.get((rel, view), "unreadable")
+        return self._scan_modes.get(self._key(rel, view), "unreadable")
 
     def carried_names(self, rel, view=None):
         """Member names the wrapper at `rel` carries inside it (may be empty).
@@ -2505,9 +2784,9 @@ class Tree:
         TRUNCATED payload scan rather than counted as a pass.
         """
         view = self.view_for(rel) if view is None else view
-        if (rel, view) not in self._carried_names:
+        if self._key(rel, view) not in self._carried_names:
             self.text(rel, view)
-        return self._carried_names.get((rel, view), ())
+        return self._carried_names.get(self._key(rel, view), ())
 
     def wide_runs(self, rel, view=None):
         """How many wide-encoded runs this entry's payload yielded (increment 10).
@@ -2516,9 +2795,9 @@ class Tree:
         sniff admits is read whole, in its own encoding, by every content rule.
         """
         view = self.view_for(rel) if view is None else view
-        if (rel, view) not in self._wide_runs:
+        if self._key(rel, view) not in self._wide_runs:
             self.text(rel, view)
-        return self._wide_runs.get((rel, view), 0)
+        return self._wide_runs.get(self._key(rel, view), 0)
 
     def truncated_scans(self):
         """Paths whose payload scan hit the inflation/depth budget.
@@ -2538,7 +2817,7 @@ class Tree:
         `str.lower()` on the few large ones costs milliseconds.
         """
         view = self.view_for(rel) if view is None else view
-        key = (rel, view)
+        key = self._key(rel, view)
         if key in self._lower_cache:
             return self._lower_cache[key]
         text = self.text(rel, view)
@@ -3405,24 +3684,51 @@ def symlink_escape(tree: Tree, rel):
     read, so only a provenance row can describe them.
     """
     link = tree.root / rel
-    try:
-        target = os.readlink(link)
-    except OSError:
-        # The index says mode 120000 but the filesystem has no symlink here: a
-        # `core.symlinks=false` checkout materialises the entry as a regular
-        # file whose CONTENT is the target path. Read it that way rather than
-        # inventing a finding on a rule that cannot be exempted.
-        try:
-            target = link.read_text(encoding="utf-8", errors="replace").strip()
-        except OSError as exc:  # pragma: no cover - raced away
-            return f"symlink target unreadable: {exc}"
+    if tree.history:
+        # A commit's symlink IS a blob whose content is the target path; the
+        # working-tree copy at this path belongs to whatever is checked out now,
+        # which is a different tree (increment 17).
+        raw = read_index_blob(tree.root, tree.index_blobs.get(rel, ""))
+        if raw is None:
+            return "symlink target unreadable: the commit's blob could not be read"
+        target = raw.decode("utf-8", "replace").strip()
         if not target:
             return "symlink with an empty target"
+    else:
+        try:
+            target = os.readlink(link)
+        except OSError:
+            # The index says mode 120000 but the filesystem has no symlink here: a
+            # `core.symlinks=false` checkout materialises the entry as a regular
+            # file whose CONTENT is the target path. Read it that way rather than
+            # inventing a finding on a rule that cannot be exempted.
+            try:
+                target = link.read_text(encoding="utf-8", errors="replace").strip()
+            except OSError as exc:  # pragma: no cover - raced away
+                return f"symlink target unreadable: {exc}"
+            if not target:
+                return "symlink with an empty target"
     if os.path.isabs(target):
         return f"absolute target outside the audited tree: {target!r}"
     logical = os.path.normpath(os.path.join(os.path.dirname(rel), target))
     if logical == ".." or logical.startswith(".." + os.sep) or logical.startswith("../"):
         return f"target escapes the audited tree: {target!r} -> {logical!r}"
+    if tree.history:
+        # Resolution against the COMMIT's own entry set, not the filesystem: the
+        # question is whether the tree that commit publishes contains the target,
+        # and a `resolve()` here would answer it from whatever is checked out now.
+        inside = logical.replace(os.sep, "/")
+        if inside not in tree.all_files and not any(
+            other.startswith(inside + "/") for other in tree.all_files
+        ):
+            return f"target does not resolve in this commit's tree: {target!r}"
+        excluded = tree.excluded_by(inside)
+        if excluded is not None:
+            return (
+                f"target {inside!r} is under the declared scope exclusion "
+                f"{excluded!r}, which this audit does not scan"
+            )
+        return None
     try:
         resolved = link.resolve(strict=True)
         root = tree.root.resolve()
@@ -3523,6 +3829,26 @@ def _structural_tripwire_rules(tree: Tree, rel, entry):
 
 
 def tripwire_hits(tree: Tree, rel, view=WORKTREE_VIEW):
+    """`_tripwire_hits`, memoised per (path, blob) when a cache is in use.
+
+    The history pass (increment 17) audits one tree per commit, and a blob that
+    survives two hundred commits would otherwise be scanned two hundred times.
+    Signals are a function of a REGULAR file's path and bytes, so (path, blob) is
+    a sound key for those; a by-reference entry is deliberately not cached, since
+    its evidence is read from the tree around it (`.gitmodules`, the declared
+    exclusions, where the link resolves) and not from bytes of its own. The
+    ANSWERS are never cached — they are precisely what differs between commits.
+    """
+    cache = tree.signal_cache
+    if cache is None or tree.kind(rel) != "file":
+        return _tripwire_hits(tree, rel, view)
+    key = (rel, tree.index_blobs.get(rel, ""), view)
+    if key not in cache:
+        cache[key] = _tripwire_hits(tree, rel, view)
+    return cache[key]
+
+
+def _tripwire_hits(tree: Tree, rel, view=WORKTREE_VIEW):
     """[(rule, evidence)] for content signals of third-party carriage.
 
     Each signal is gated behind a cheap lowercase substring prefilter; the
@@ -3533,15 +3859,22 @@ def tripwire_hits(tree: Tree, rel, view=WORKTREE_VIEW):
     `view` selects which bytes of `rel` are judged (increment 14). The
     structural signals — the by-reference kinds and the extension sets — are
     properties of the ENTRY and of its path, identical in both views, so they
-    are evaluated once, on the working-tree pass; a staged view runs the content
-    signals and the wrapper-member-name signal, which are the ones that read
-    bytes.
+    are evaluated once, on the tree's PRIMARY view; a secondary (staged) view
+    runs the content signals and the wrapper-member-name signal, which are the
+    ones that read bytes.
+
+    "Primary" rather than "the working tree" because of increment 17: a commit
+    tree's only view is the commit's own blobs, and gating the structural signals
+    on `view == WORKTREE_VIEW` would have made every extension rule and both
+    by-reference rules silently unreachable there — a whole rule group answering
+    "nothing offended" for a view it never examined.
     """
     hits = []
     # The discovery layer first: an entry that carries its content by reference
     # has no bytes of its own for any signal below to read.
     kind = tree.kind(rel)
-    if view != WORKTREE_VIEW:
+    primary = view == tree.primary_view
+    if not primary:
         if kind == "gitlink":
             # A gitlink's object is a commit in another repository, not a blob
             # here: there is no staged payload to read. Its carriage is judged
@@ -3556,7 +3889,7 @@ def tripwire_hits(tree: Tree, rel, view=WORKTREE_VIEW):
             hits.append(("external-symlink-target", escape))
         # Deliberately NOT a return: `text()` follows the link, so a target
         # that does resolve is still read by every content rule below.
-    if view == WORKTREE_VIEW:
+    if primary:
         suffix = _extension_suffix(rel)
         if suffix in UPSTREAM_ASSET_EXTS:
             hits.append(("upstream-asset-extension", f"extension {suffix}"))
@@ -3670,6 +4003,11 @@ def live_quotation_spans(text, occurrences):
 def _view_tripwire_findings(tree: Tree, rel, view, coverage, exemptions, counts):
     """Findings for one BYTE VIEW of one entry, and the hits it contributes."""
     findings = []
+    # True for any view whose offsets are not the ones `check_manifest` resolved
+    # a scoped exemption's occurrences against: the staged blob (increment 14)
+    # and a commit's blob (increment 17). Re-resolving is the conservative
+    # direction — an occurrence absent from THESE bytes exempts nothing in them.
+    reresolve = view != tree.view_for(rel)
     staged = view != WORKTREE_VIEW
     for rule, evidence in tripwire_hits(tree, rel, view):
         counts[rule] += 1
@@ -3687,7 +4025,7 @@ def _view_tripwire_findings(tree: Tree, rel, view, coverage, exemptions, counts)
                 live_quotation_spans(
                     tree.text(rel, view) or "", exemption.get("occurrences")
                 )
-                if staged
+                if reresolve
                 else exemption["spans"]
             )
             outside = [
@@ -3709,10 +4047,7 @@ def _view_tripwire_findings(tree: Tree, rel, view, coverage, exemptions, counts)
             # The path alone does not say which bytes offended, and the answer
             # changes what the author must do: the working-tree copy is clean,
             # the STAGED one is not, and a commit would publish the staged one.
-            evidence = (
-                f"in the STAGED content ({view} blob), not in the working-tree "
-                f"copy — {evidence}"
-            )
+            evidence = view_evidence_prefix(view) + evidence
         findings.append(
             Finding(
                 rule,
@@ -4108,6 +4443,304 @@ def report(findings, stats, root, as_json=False):
               "a declared exemption, and the decision-record bookkeeping is "
               "self-consistent.")
     print(CAVEAT)
+
+
+# --- the history pass (increment 17) -----------------------------------------
+
+
+HISTORY_CAVEAT = (
+    "\nNOTE: this judges the commits in the range it was given, and only the "
+    "carriage question (group 4) — a commit's own bookkeeping self-consistency "
+    "is the current tree's obligation, not a historical commit's. Commits "
+    "outside the range are NOT_RUN, not clean, and every limit in --limits "
+    "still applies to each tree judged here. The rules applied are TODAY's: a "
+    "commit that passed the audit as it existed then can be flagged here, so a "
+    "finding is 'what the current rule set says about bytes this history "
+    "published', never 'a violation of the rule in force at the time'."
+)
+
+# How a finding relates to the ANSWER SET at the range's final commit. The
+# distinction is the whole reason this mode is not a duplicate of the tree
+# audit: only the middle one is a shape no audit of the current tree can see,
+# and only the last one is also live today.
+TIP_ANSWERED = "answered at the range tip (declared in a later commit)"
+TIP_ABSENT = "the path does not exist at the range tip (published, then removed)"
+TIP_SIGNAL_GONE = "the offending bytes are gone at the range tip (the path remains)"
+TIP_UNANSWERED = "still unanswered at the range tip (the tree audit fails too)"
+
+
+def audit_history(root: Path, revrange):
+    """Audit every commit in `revrange` as the tree it publishes.
+
+    Returns (findings, stats). Each commit is judged on the carriage question
+    alone — does every signal in the bytes this commit publishes have an answer
+    in the bookkeeping THIS COMMIT publishes — because that is the question a
+    tree audit of HEAD cannot answer for a blob that no longer exists at HEAD,
+    and because judging a 2026-03 commit's README table against today's index
+    conventions would bury the signal under bookkeeping churn.
+
+    Findings are deduplicated per (rule, path, blob) and attributed to the
+    EARLIEST commit in the range that published them, with the number of commits
+    in range that carried the same bytes — a carrier that survived forty commits
+    is one finding about one blob, not forty.
+    """
+    root = Path(root)
+    commits = commit_log(root, revrange)
+    signals = {}
+    pairs = set()
+    found = {}
+    judged = 0
+    unjudged = []
+    dropped = []
+    unreadable_index = []
+    by_reference_signals = 0
+    by_reference_entries = 0
+    published = {}
+    tip = None
+    for sha, date, parents, subject in commits:
+        entries = list_entries_at_commit(root, sha)
+        blobs = {rel: oid for rel, kind, oid in entries if kind != "gitlink"}
+        published[sha] = MANIFEST_REL in blobs
+        raw = None
+        if MANIFEST_REL in blobs:
+            payload = read_index_blob(root, blobs[MANIFEST_REL])
+            raw = None if payload is None else payload.decode("utf-8", "replace")
+        if raw is None:
+            # No manifest here. Whether that is "this tree predates the
+            # bookkeeping" or "this commit removed the bookkeeping" is decided
+            # from the PARENTS, not from a range-wide latch: in a merge-commit
+            # history a branch forked before the manifest landed carries trees
+            # that legitimately have none, and a date-ordered latch would judge
+            # all of them against an empty answer set.
+            inherited = any(
+                commit_publishes_manifest(root, parent, published)
+                for parent in parents
+            )
+            if not inherited:
+                # Nothing to judge this commit's carriage against. Disclosed as a
+                # commit this run did NOT judge — never folded into a PASS, and
+                # never turned into a finding per carrier per commit, which would
+                # bury the signal this mode exists to surface.
+                unjudged.append(
+                    {"commit": sha, "date": date, "subject": subject}
+                )
+                continue
+            # A parent published an answer set and this commit does not: judged
+            # with NO answers, so deleting the manifest buys a commit nothing.
+            # This is the one way the "not judged" disclosure above could have
+            # become an escape hatch.
+            dropped.append({"commit": sha, "date": date, "subject": subject})
+        manifest, _ = load_manifest(root, raw=raw)
+        if manifest is None:
+            manifest = {"entries": [], "exemptions": [], "scope_exclusions": []}
+            if raw is not None:
+                # Present but unparseable: a manifest that answers nothing,
+                # judged as such and disclosed with the deletions.
+                dropped.append({"commit": sha, "date": date, "subject": subject})
+        tree = Tree(
+            root,
+            scope_exclusion_prefixes(manifest),
+            entries=entries,
+            default_view=HISTORY_VIEW,
+            primary_view=HISTORY_VIEW,
+            signal_cache=signals,
+        )
+        records, _ = parse_records(tree)
+        try:
+            rows, _ = parse_index(tree)
+        except AuditError:
+            # The record index is this commit's bookkeeping, not its carriage. A
+            # commit whose README cannot be parsed is still judged on content;
+            # the unknown row set is disclosed rather than treated as an answer.
+            rows = {}
+            unreadable_index.append({"commit": sha, "date": date})
+        _, coverage, exemptions = check_manifest(tree, manifest, records, rows)
+        tripwire_findings, counts = check_tripwires(tree, coverage, exemptions)
+        judged += 1
+        # Kept for the LAST judged commit only: how each finding relates to the
+        # answer set at the tip is what separates "declared one commit later"
+        # from "published and then removed" — and the second is the shape no
+        # audit of the current tree can see at all.
+        tip = {
+            "commit": sha,
+            "coverage": coverage,
+            "exemptions": exemptions,
+            "files": set(tree.files),
+            "blobs": blobs,
+        }
+        for rel in tree.files:
+            pairs.add((rel, blobs.get(rel, "")))
+            if tree.kind(rel) != "file":
+                by_reference_entries += 1
+        by_reference_signals += counts["submodule-reference"] + counts["external-symlink-target"]
+        for finding in tripwire_findings:
+            key = (finding.rule, finding.path, blobs.get(finding.path, ""))
+            record = found.get(key)
+            if record is None:
+                found[key] = {
+                    "commit": sha,
+                    "date": date,
+                    "subject": subject,
+                    "detail": finding.detail,
+                    # A SET of commits, not a count of findings: one blob can
+                    # carry several signals of the same rule (a GPL body, a
+                    # foreign SPDX tag and a foreign copyright line are three
+                    # `foreign-license-text` hits), and counting findings here
+                    # would report a one-commit carrier as "present in 3
+                    # commits".
+                    "commits": {sha},
+                }
+            else:
+                record["commits"].add(sha)
+    findings = []
+    standing = {TIP_ANSWERED: 0, TIP_ABSENT: 0, TIP_SIGNAL_GONE: 0, TIP_UNANSWERED: 0}
+    for (rule, rel, _oid), record in sorted(found.items()):
+        if tip is None:  # pragma: no cover - no commit was judged at all
+            where = TIP_UNANSWERED
+        elif rel not in tip["files"]:
+            where = TIP_ABSENT
+        elif rule in tip["coverage"].get(rel, ()) or (
+            tip["exemptions"].get(rel, {}).get(rule) is not None
+        ):
+            where = TIP_ANSWERED
+        elif rule not in {
+            hit
+            for hit, _evidence in signals.get(
+                (rel, tip["blobs"].get(rel, ""), HISTORY_VIEW), ()
+            )
+        }:
+            # The path is still there, has no answer, and needs none: the bytes
+            # that signalled are not the bytes the tip publishes. Distinct from
+            # the case below, which the ordinary tree audit would fail on too —
+            # and distinct from TIP_ABSENT, where the whole path went away.
+            where = TIP_SIGNAL_GONE
+        else:
+            where = TIP_UNANSWERED
+        standing[where] += 1
+        findings.append(
+            Finding(
+                rule,
+                commit_label(rel, record["commit"]),
+                f"first published by {record['commit'][:12]} ({record['date']}) "
+                f"{record['subject']!r}, present in {len(record['commits'])} "
+                f"commit(s) in range; {where} — {record['detail']}",
+            )
+        )
+    by_rule = {rule: 0 for rule in TRIPWIRE_RULES}
+    for hits in signals.values():
+        for rule, _evidence in hits:
+            by_rule[rule] += 1
+    stats = {
+        "range": str(revrange),
+        "commits_in_range": len(commits),
+        "commits_judged": judged,
+        # NOT_RUN, printed even when empty: "no commit predates the manifest" and
+        # "half the range was never looked at" must not look alike.
+        "commits_not_judged_no_answer_set_yet": unjudged,
+        "commits_that_published_no_manifest_after_one_existed": dropped,
+        "commits_whose_record_index_could_not_be_parsed": unreadable_index,
+        "distinct_path_blob_pairs_published": len(pairs),
+        # Regular-file signal derivations, memoised per (path, blob): the number
+        # of distinct blobs this run actually read, as opposed to the number of
+        # (commit, path) slots they occupy.
+        "distinct_pairs_examined_for_signals": len(signals),
+        "distinct_carriage_signals": sum(len(v) for v in signals.values()),
+        "distinct_carriage_signals_by_rule": by_rule,
+        "unanswered_signals": len(found),
+        "range_tip_commit": None if tip is None else tip["commit"],
+        "findings_by_standing_at_the_range_tip": standing,
+        # By-reference entries are re-judged per commit (their evidence comes
+        # from the tree around them, not from bytes of their own), so these are
+        # per-commit totals rather than distinct counts, and say so.
+        "by_reference_entry_slots_judged": by_reference_entries,
+        "by_reference_signals_per_commit_total": by_reference_signals,
+    }
+    return findings, stats
+
+
+def report_history(findings, stats, root, as_json=False):
+    if as_json:
+        print(
+            json.dumps(
+                {
+                    "root": str(root),
+                    "mode": "history",
+                    "verdict": "PASS" if not findings else "FAIL",
+                    "coverage": stats,
+                    "findings": [f.as_dict() for f in findings],
+                    "caveat": CAVEAT + HISTORY_CAVEAT,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+        )
+        return
+    unjudged = stats["commits_not_judged_no_answer_set_yet"]
+    dropped = stats["commits_that_published_no_manifest_after_one_existed"]
+    unreadable = stats["commits_whose_record_index_could_not_be_parsed"]
+    print(f"provenance history audit of {root}")
+    print(f"  range: {stats['range']}")
+    print(
+        f"coverage: {stats['commits_in_range']} commits in range, "
+        f"{stats['commits_judged']} judged, {len(unjudged)} NOT judged"
+    )
+    print(
+        f"  not judged (no provenance manifest had been published yet in this "
+        f"range — NOT_RUN, not a pass): {len(unjudged)} commit(s)"
+    )
+    for item in unjudged[:HISTORY_COMMITS_LISTED]:
+        print(f"      not judged: {item['commit'][:12]} ({item['date']}) {item['subject']}")
+    if len(unjudged) > HISTORY_COMMITS_LISTED:
+        print(
+            f"      … and {len(unjudged) - HISTORY_COMMITS_LISTED} more "
+            "(full list in --json)"
+        )
+    print(
+        f"  published no manifest after one had existed (judged with NO "
+        f"answers): {len(dropped)} commit(s)"
+    )
+    for item in dropped[:HISTORY_COMMITS_LISTED]:
+        print(f"      judged with no answer set: {item['commit'][:12]} ({item['date']})")
+    print(
+        f"  decision-record index unparseable (row set unknown, carriage still "
+        f"judged): {len(unreadable)} commit(s)"
+    )
+    print(
+        f"  distinct (path, blob) pairs published by the judged commits: "
+        f"{stats['distinct_path_blob_pairs_published']}, of which "
+        f"{stats['distinct_pairs_examined_for_signals']} were read for content "
+        "signals (each blob once, however many commits carry it)"
+    )
+    hits = ", ".join(
+        f"{k}={v}" for k, v in sorted(stats["distinct_carriage_signals_by_rule"].items())
+    )
+    print(
+        f"  distinct carriage signals in those pairs: "
+        f"{stats['distinct_carriage_signals']} — {hits}"
+    )
+    print(
+        f"  by-reference entries judged (per-commit slots): "
+        f"{stats['by_reference_entry_slots_judged']}, signalling "
+        f"{stats['by_reference_signals_per_commit_total']} time(s)"
+    )
+    standing = stats["findings_by_standing_at_the_range_tip"]
+    print(
+        "  findings by standing at the range tip "
+        f"({(stats['range_tip_commit'] or 'none')[:12]}): "
+        + ", ".join(f"{k} = {v}" for k, v in sorted(standing.items()))
+    )
+    if findings:
+        print(f"\nFAIL: {len(findings)} provenance finding(s) in published history:")
+        for finding in findings:
+            print(f"  [{finding.rule}] {finding.path}")
+            print(f"      {finding.detail}")
+    else:
+        print(
+            f"\nPASS: every carriage signal in the {stats['commits_judged']} "
+            "judged commit(s) is answered by the provenance bookkeeping that "
+            "same commit publishes."
+        )
+    print(CAVEAT + HISTORY_CAVEAT)
 
 
 # --- negative control (self-test) --------------------------------------------
@@ -7179,6 +7812,424 @@ def _committable_evidence_controls():
     ]
 
 
+# --- history-layer fixtures (increment 17) ------------------------------------
+#
+# These controls build real COMMITS, because that is the layer under test: every
+# earlier control family can make its point with a working tree or an index,
+# while "a carrier published by a commit and deleted by the next one" has no
+# representation outside a commit graph. Each case is audited twice — the
+# ordinary tree audit of the final checkout AND the history audit — and the
+# must-fire cases assert that the TREE audit is clean, which is what makes them
+# controls for this increment rather than re-runs of increment 14's.
+
+FIXTURE_HISTORY_CARRIER_REL = "model/pasted_history.py"
+FIXTURE_HISTORY_ASSET_REL = "fixtures/wavetables/history.wt"
+FIXTURE_HISTORY_ALIAS_REL = "docs/alias.md"
+# Every commit reachable from the branch tip: the control trees are small, and a
+# range that selects a subset would make each case's reach a second variable.
+HISTORY_CONTROL_RANGE = "HEAD"
+
+
+def _commit(root: Path, message):
+    """Commit the index of a synthetic tree, with an identity of its own.
+
+    `--no-verify` and the inline identity keep the control independent of the
+    host's git configuration: a global hooksPath or a missing user.email must not
+    turn a control into a setup failure.
+    """
+    _git(
+        root,
+        "-c",
+        "user.name=Provenance Control",
+        "-c",
+        "user.email=control@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--no-verify",
+        "-q",
+        "-m",
+        message,
+    )
+
+
+def _commit_all(root: Path, message):
+    """Stage everything in the tree (including deletions) and commit it."""
+    _git(root, "add", "-A", "-f")
+    _commit(root, message)
+
+
+def _history_repo(root: Path):
+    """Turn the skeleton into a git checkout with one clean commit."""
+    _git(root, "init", "-q")
+    _commit_all(root, "skeleton: a tree that audits clean")
+
+
+def _history_row(path, covers=None):
+    """A provenance row answering a synthetic history carrier."""
+    return {
+        "path": path,
+        "class": "quoted-constants",
+        "content": "synthetic: a carrier published by one commit in the range",
+        "upstream": "synthetic upstream",
+        "pinned_commit": FIXTURE_SUBMODULE_COMMIT,
+        "upstream_license": "GPL-3.0-or-later",
+        "decision_record": "0001",
+        "covers": list(covers or ["foreign-license-text"]),
+    }
+
+
+def _history_controls():
+    """[(label, description, revrange, mutate, check)] for the history pass.
+
+    `check(findings, stats, tree_findings)` -> (ok, detail). `findings` is None
+    and `stats` is the exception when the history audit deliberately refuses to
+    run, which is itself one of the behaviours under test: a range that resolves
+    to no commits must be an error, not an empty PASS.
+    """
+
+    def fired(findings, rule, rel, standing=None, in_detail=None):
+        """(ok, detail) for "this rule fired on this path in published history"."""
+        hits = [
+            f
+            for f in findings
+            if f.rule == rule and f.path.startswith(rel + " [commit ")
+        ]
+        if not hits:
+            found = ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings})) or "nothing"
+            return False, f"{rule} did NOT fire on {rel} in history (found {found})"
+        if standing is not None and not any(standing in f.detail for f in hits):
+            return False, (
+                f"{rule} fired on {rel} but not with standing {standing!r} "
+                "(details: " + "; ".join(repr(f.detail) for f in hits) + ")"
+            )
+        if in_detail is not None and not any(in_detail in f.detail for f in hits):
+            return False, (
+                f"{rule} fired on {rel} but no finding quoted {in_detail!r} "
+                "(details: " + "; ".join(repr(f.detail) for f in hits) + ")"
+            )
+        return True, f"{rule} fired on {rel} in published history"
+
+    def must_fire(rule, rel, standing=None, in_detail=None):
+        def check(findings, stats, tree_findings):
+            if findings is None:
+                return False, f"the history audit did not run: {stats}"
+            if tree_findings:
+                # The point of this family: the bytes are gone from the final
+                # tree. A control whose TREE audit also fails proves nothing
+                # about history.
+                return False, (
+                    "the tree audit of the final checkout is NOT clean, so this "
+                    "case does not isolate the history layer: "
+                    + ", ".join(sorted({f.rule for f in tree_findings}))
+                )
+            return fired(findings, rule, rel, standing, in_detail)
+
+        return check
+
+    def must_be_clean(findings, stats, tree_findings):
+        if findings is None:
+            return False, f"the history audit did not run: {stats}"
+        if findings:
+            return False, "history findings on a correctly declared tree: " + ", ".join(
+                sorted({f"{f.rule}@{f.path}" for f in findings})
+            )
+        if not stats["commits_judged"]:
+            return False, "no commit was judged at all, so 'clean' means nothing"
+        return True, f"{stats['commits_judged']} commit(s) judged, no finding"
+
+    def add_then_delete(root, rel=FIXTURE_HISTORY_CARRIER_REL, payload=None):
+        _history_repo(root)
+        _write(root, rel, FIXTURE_GPL_BODY if payload is None else payload)
+        _commit_all(root, "add an undeclared carrier")
+        (root / rel).unlink()
+        _commit_all(root, "delete it again")
+
+    def declared_in_the_same_commit(root):
+        _history_repo(root)
+        _write(root, FIXTURE_HISTORY_CARRIER_REL, FIXTURE_GPL_BODY)
+        _patch_manifest(
+            root,
+            lambda d: d["entries"].append(_history_row(FIXTURE_HISTORY_CARRIER_REL)),
+            stage=False,
+        )
+        _commit_all(root, "add a carrier AND its row, together")
+        (root / FIXTURE_HISTORY_CARRIER_REL).unlink()
+        _patch_manifest(
+            root,
+            lambda d: d.__setitem__(
+                "entries",
+                [e for e in d["entries"] if e.get("path") != FIXTURE_HISTORY_CARRIER_REL],
+            ),
+            stage=False,
+        )
+        _commit_all(root, "remove both")
+
+    def declared_one_commit_late(root):
+        _history_repo(root)
+        _write(root, FIXTURE_HISTORY_CARRIER_REL, FIXTURE_GPL_BODY)
+        _commit_all(root, "add the carrier")
+        # The second commit does what an author would do once reminded: adds the
+        # row AND states the provenance in the file, so the FINAL tree audits
+        # clean. What the first commit published is unchanged by that, which is
+        # the whole point of the case.
+        _write(
+            root,
+            FIXTURE_HISTORY_CARRIER_REL,
+            FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n",
+        )
+        _patch_manifest(
+            root,
+            lambda d: d["entries"].append(_history_row(FIXTURE_HISTORY_CARRIER_REL)),
+            stage=False,
+        )
+        _commit_all(root, "declare it, one commit late")
+
+    def manifest_deleted_with_the_carrier(root):
+        _history_repo(root)
+        _write(root, FIXTURE_HISTORY_CARRIER_REL, FIXTURE_GPL_BODY)
+        (root / MANIFEST_REL).unlink()
+        _commit_all(root, "delete the answer set and add a carrier in one commit")
+
+    def no_manifest_before_the_first_one(root):
+        # The pre-bookkeeping era: a first commit with a carrier and NO manifest
+        # at all, then the manifest arrives (without a row for it).
+        (root / MANIFEST_REL).unlink()
+        _write(root, FIXTURE_HISTORY_CARRIER_REL, FIXTURE_GPL_BODY)
+        _git(root, "init", "-q")
+        _commit_all(root, "a tree from before the provenance manifest existed")
+        (root / FIXTURE_HISTORY_CARRIER_REL).unlink()
+        build_skeleton(root)
+        _commit_all(root, "introduce the provenance manifest")
+
+    def check_pre_manifest_disclosure(findings, stats, tree_findings):
+        if findings is None:
+            return False, f"the history audit did not run: {stats}"
+        if findings:
+            return False, (
+                "a commit with no answer set must not be judged: "
+                + ", ".join(sorted({f"{f.rule}@{f.path}" for f in findings}))
+            )
+        unjudged = stats["commits_not_judged_no_answer_set_yet"]
+        if len(unjudged) != 1:
+            return False, (
+                f"expected exactly 1 commit disclosed as not judged, got "
+                f"{len(unjudged)}"
+            )
+        if stats["commits_judged"] != 1:
+            return False, f"expected 1 judged commit, got {stats['commits_judged']}"
+        return True, (
+            "the pre-manifest commit is disclosed as NOT judged (1) and the "
+            "commit that introduced the manifest is judged (1)"
+        )
+
+    def check_dropped_manifest(findings, stats, tree_findings):
+        ok, detail = fired(
+            findings or [], "foreign-license-text", FIXTURE_HISTORY_CARRIER_REL
+        )
+        if not ok:
+            return False, detail
+        if not stats["commits_that_published_no_manifest_after_one_existed"]:
+            return False, (
+                "the finding fired but the deletion of the answer set was not "
+                "disclosed, so a reader cannot tell why nothing answered"
+            )
+        return True, detail + ", with the deleted answer set disclosed"
+
+    def same_bytes_at_two_paths(root):
+        # The second path deliberately carries an UPSTREAM-ASSET extension while
+        # the first does not: identical bytes, different structural signals. A
+        # signal cache keyed on the blob alone would answer the `.wt` read from
+        # the `.py` scan and lose the extension rule entirely.
+        _history_repo(root)
+        _write(root, FIXTURE_HISTORY_CARRIER_REL, FIXTURE_GPL_BODY)
+        _commit_all(root, "add the carrier")
+        (root / FIXTURE_HISTORY_CARRIER_REL).unlink()
+        _write(root, FIXTURE_HISTORY_ASSET_REL, FIXTURE_GPL_BODY)
+        _commit_all(root, "move the same bytes to a path with an asset extension")
+        (root / FIXTURE_HISTORY_ASSET_REL).unlink()
+        _commit_all(root, "delete that too")
+
+    def check_both_paths(findings, stats, tree_findings):
+        if findings is None:
+            return False, f"the history audit did not run: {stats}"
+        if tree_findings:
+            return False, "the tree audit of the final checkout is NOT clean"
+        for rule, rel in (
+            ("foreign-license-text", FIXTURE_HISTORY_CARRIER_REL),
+            ("foreign-license-text", FIXTURE_HISTORY_ASSET_REL),
+            ("upstream-asset-extension", FIXTURE_HISTORY_ASSET_REL),
+        ):
+            ok, detail = fired(findings, rule, rel)
+            if not ok:
+                return False, detail
+        return True, (
+            "both paths that published the same bytes are named, and the second "
+            "path's own extension rule fired on it"
+        )
+
+    def escaping_link_then_deleted(root):
+        _history_repo(root)
+        _symlink(root, FIXTURE_ESCAPING_LINK_REL, FIXTURE_ESCAPING_LINK_TARGET)
+        _commit_all(root, "add a link into an external tree")
+        (root / FIXTURE_ESCAPING_LINK_REL).unlink()
+        _commit_all(root, "delete the link")
+
+    def in_repo_link_then_deleted(root):
+        _history_repo(root)
+        _symlink(root, FIXTURE_HISTORY_ALIAS_REL, "plain.md")
+        _commit_all(root, "add an in-repo alias link")
+        (root / FIXTURE_HISTORY_ALIAS_REL).unlink()
+        _commit_all(root, "delete the alias")
+
+    def empty_range(root):
+        _history_repo(root)
+
+    def check_refuses_empty_range(findings, stats, tree_findings):
+        if findings is not None:
+            return False, (
+                "a range that resolves to no commits was reported as a result "
+                "instead of an error"
+            )
+        if "no commits" not in str(stats):
+            return False, f"the refusal does not say the range is empty: {stats}"
+        return True, f"refused to report a verdict: {stats}"
+
+    return [
+        (
+            "history/a-carrier-published-and-then-deleted-is-judged",
+            "the shape no tree audit can see: a GPL body added by one commit and "
+            "deleted by the next, in a repository that merges with merge commits",
+            HISTORY_CONTROL_RANGE,
+            add_then_delete,
+            must_fire(
+                "foreign-license-text",
+                FIXTURE_HISTORY_CARRIER_REL,
+                standing=TIP_ABSENT,
+            ),
+        ),
+        (
+            "history/an-upstream-asset-published-and-then-deleted-is-judged",
+            "the same for a STRUCTURAL signal (an extension rule), which a "
+            "view-gated primary check would have made unreachable in a commit tree",
+            HISTORY_CONTROL_RANGE,
+            lambda root: add_then_delete(
+                root, FIXTURE_HISTORY_ASSET_REL, FIXTURE_MARKER_FREE_ASSET_PAYLOAD
+            ),
+            must_fire(
+                "upstream-asset-extension",
+                FIXTURE_HISTORY_ASSET_REL,
+                standing=TIP_ABSENT,
+            ),
+        ),
+        (
+            "history/an-escaping-symlink-published-and-then-deleted-is-judged",
+            "a by-reference entry whose target is read from the COMMIT's blob, "
+            "not from a working-tree link that no longer exists",
+            HISTORY_CONTROL_RANGE,
+            escaping_link_then_deleted,
+            must_fire(
+                "external-symlink-target",
+                FIXTURE_ESCAPING_LINK_REL,
+                in_detail="escapes the audited tree",
+            ),
+        ),
+        (
+            "history/an-in-repo-symlink-in-history-is-not-a-signal",
+            "the must-NOT-fire direction of the same read: a link to in-scope "
+            "content is this repository's own shape, and resolving it against "
+            "the checkout rather than the commit would invent a finding on a "
+            "rule that cannot be exempted",
+            HISTORY_CONTROL_RANGE,
+            in_repo_link_then_deleted,
+            must_be_clean,
+        ),
+        (
+            "history/a-carrier-declared-in-the-same-commit-passes",
+            "the positive control: a commit that publishes a carrier AND its row "
+            "answers for itself, so the mode is not a blanket alarm on history",
+            HISTORY_CONTROL_RANGE,
+            declared_in_the_same_commit,
+            must_be_clean,
+        ),
+        (
+            "history/a-carrier-declared-one-commit-late-is-judged",
+            "the answer must come from the commit's OWN bookkeeping: a row added "
+            "by the next commit does not retroactively declare published bytes",
+            HISTORY_CONTROL_RANGE,
+            declared_one_commit_late,
+            must_fire(
+                "foreign-license-text",
+                FIXTURE_HISTORY_CARRIER_REL,
+                standing=TIP_ANSWERED,
+            ),
+        ),
+        (
+            "history/deleting-the-answer-set-does-not-silence-a-commit",
+            "the escape hatch the 'not judged' disclosure could have become: "
+            "removing the manifest in the same commit as the carrier",
+            HISTORY_CONTROL_RANGE,
+            manifest_deleted_with_the_carrier,
+            check_dropped_manifest,
+        ),
+        (
+            "history/a-commit-older-than-the-manifest-is-disclosed-not-judged",
+            "the pre-bookkeeping era is NOT_RUN and says so, rather than one "
+            "finding per carrier per commit against an answer set that did not "
+            "exist yet",
+            HISTORY_CONTROL_RANGE,
+            no_manifest_before_the_first_one,
+            check_pre_manifest_disclosure,
+        ),
+        (
+            "history/the-same-bytes-at-two-paths-are-judged-at-both",
+            "the signal cache is keyed by (path, blob): a blob reintroduced "
+            "under a new name must not be answered from the first path's scan",
+            HISTORY_CONTROL_RANGE,
+            same_bytes_at_two_paths,
+            check_both_paths,
+        ),
+        (
+            "history/an-empty-range-is-an-error-not-a-pass",
+            "a range that selects no commit audits nothing, and nothing audited "
+            "must never print a verdict",
+            "HEAD..HEAD",
+            empty_range,
+            check_refuses_empty_range,
+        ),
+    ]
+
+
+def _run_history_controls(tmp_root: Path, prefix, cases):
+    """Run (label, description, revrange, mutate, check) history cases."""
+    results = []
+    for index, (label, description, revrange, mutate, check) in enumerate(cases):
+        case_root = Path(tmp_root) / f"{prefix}-{index}"
+        case_root.mkdir()
+        build_skeleton(case_root)
+        try:
+            mutate(case_root)
+        except Exception as exc:  # a control that cannot be SET UP is a FAIL
+            results.append(
+                (label, False, f"{description} -> control setup failed: {exc}")
+            )
+            continue
+        try:
+            tree_findings, _ = audit(case_root)
+        except AuditError as exc:
+            results.append(
+                (label, False, f"{description} -> the tree audit did not run: {exc}")
+            )
+            continue
+        try:
+            findings, stats = audit_history(case_root, revrange)
+        except AuditError as exc:
+            findings, stats = None, exc
+        passed, detail = check(findings, stats, tree_findings)
+        results.append((label, passed, f"{description} -> {detail}"))
+    return results
+
+
 def _run_coverage_controls(tmp_root: Path, prefix, cases, include_untracked=False):
     """Run (label, description, mutate, check) cases that assert on COVERAGE."""
     results = []
@@ -7633,6 +8684,16 @@ def run_negative_control(verbose=True):
                 ok = ok and passed
                 results.append((label, "PASS" if passed else "FAIL", detail))
 
+        # Increment 17: the HISTORY layer. Its own runner, because every case
+        # needs a real commit graph, and because each one asserts on BOTH audits
+        # — the tree audit of the final checkout must be clean (otherwise the
+        # case proves nothing about history) and the history audit must fire.
+        for label, passed, detail in _run_history_controls(
+            Path(tmp), "history", _history_controls()
+        ):
+            ok = ok and passed
+            results.append((label, "PASS" if passed else "FAIL", detail))
+
     if verbose:
         print("negative control: one deliberate violation per rule\n")
         for name, verdict, detail in results:
@@ -7660,7 +8721,8 @@ def run_negative_control(verbose=True):
                 f"{len(_staged_controls())} staged-content controls and all "
                 f"{len(_committed_bookkeeping_controls())} committed-answer-set "
                 f"controls and all {len(_committable_evidence_controls())} "
-                "committable-evidence controls behaved."
+                "committable-evidence controls and all "
+                f"{len(_history_controls())} published-history controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
@@ -7694,6 +8756,17 @@ def main(argv=None):
             "only and discloses the count it skipped"
         ),
     )
+    parser.add_argument(
+        "--commits",
+        metavar="REV-RANGE",
+        help=(
+            "audit the PUBLISHED HISTORY of a commit range (e.g. "
+            "origin/main..HEAD) instead of the working tree: every commit's own "
+            "tree, judged against the provenance bookkeeping that same commit "
+            "publishes — which is the only way a carrier added in one commit and "
+            "deleted in a later one is seen at all"
+        ),
+    )
     args = parser.parse_args(argv)
 
     if args.limits:
@@ -7701,6 +8774,15 @@ def main(argv=None):
         return 0
     if args.negative_control:
         return run_negative_control()
+    if args.commits:
+        try:
+            findings, stats = audit_history(Path(args.root), args.commits)
+        except AuditError as exc:
+            print(f"NOT_RUN: provenance history audit could not run: {exc}")
+            print(CAVEAT)
+            return 2
+        report_history(findings, stats, args.root, as_json=args.json)
+        return 1 if findings else 0
 
     try:
         findings, stats = audit(Path(args.root), include_untracked=args.include_untracked)
