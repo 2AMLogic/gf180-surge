@@ -2,10 +2,10 @@
   "applicability": {
     "complete_wet_render_possible": false,
     "reasons": [
-      "rev2_predelay temposync flag UNRESOLVED without the oracle host (not carried by the SXT-011 normalized graph; the .fxp bytes are external)",
-      "SXT-012 3x bit-identical determinism gate NOT_RUN (requires the oracle host)"
+      "SXT-012 3x bit-identical determinism gate FAIL: seq-notes-coverage-v1=REFUSED, seq-poly-8-v1=REFUSED"
     ],
-    "status": "BLOCKED (oracle host required)"
+    "status": "REFUSED (fail-closed)",
+    "temposync_resolved": true
   },
   "census_blob_reverified": true,
   "chain": [
@@ -26,6 +26,29 @@
       "type_name": "Delay"
     }
   ],
+  "determinism_gate": {
+    "artifact": "reports/SXT-028f/artifacts/determinism-gate.json",
+    "measured": {
+      "seq-notes-coverage-v1": {
+        "frames": 273600,
+        "frames_differing": 273600,
+        "max_abs_divergence": 0.18107911944389343,
+        "peak_abs": 0.16917891800403595
+      },
+      "seq-poly-8-v1": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.09512870013713837,
+        "peak_abs": 0.23620042204856873
+      }
+    },
+    "repeats": 3,
+    "sequences": {
+      "seq-notes-coverage-v1": "REFUSED",
+      "seq-poly-8-v1": "REFUSED"
+    },
+    "status": "FAIL"
+  },
   "drift_asserted": null,
   "fx_bypass": "All FX",
   "fx_class": "Reverb 2",
@@ -42,13 +65,15 @@
         "modulation_f": 0.0,
         "predelay_f": -8.0,
         "room_size_f": -0.35,
-        "ts_predelay": null,
-        "ts_ratio_inv": null,
+        "ts_predelay": false,
+        "ts_ratio_inv": 1.0,
         "width_f": 0.0
       },
       "return_level": 0.000871,
+      "return_level_engine": 0.0008710589027032256,
       "role": "send1",
-      "slot": 4
+      "slot": 4,
+      "temposync_source": "SurgeSynthesizer::getTempoSync on fx[4].p[0] after loadPatch (native loader read-back, post-migration)"
     }
   ],
   "leaf": "SXT-028f",
@@ -60,6 +85,19 @@
     "path": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
     "size": 33209
   },
+  "reference_leg": {
+    "input_boundary": "per-slot bypass (global-last) -- see model/effects/run_reverb2_model.py",
+    "refusals": [
+      "3x determinism gate did not pass",
+      "Reverb 2 is not in a global slot"
+    ],
+    "scope": "fx:Reverb 2 CLASS agreement only (model fed the engine's own per-slot-bypass bus); this is NOT a complete-wet preset claim and NOT a coverage or quality claim",
+    "usable": false
+  },
+  "scene_drift_f": [
+    0.0,
+    0.0
+  ],
   "scene_mode": "Single",
   "schema_version": 1,
   "source": {
@@ -68,5 +106,7 @@
     "normalized_graph": "corpus/normalized/graphs.jsonl (SXT-011)",
     "patch_revision": 22,
     "sample_rate_hz": 48000
-  }
+  },
+  "tempo_bpm": 120.0,
+  "volume_f": -20.24810028076172
 }

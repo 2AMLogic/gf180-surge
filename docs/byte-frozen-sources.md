@@ -89,15 +89,24 @@ form too.
 
 These scripts stamp a sha256 of their own bytes into the records they produce.
 The stamp says *which bytes produced this record*, so superseded values are
-expected: as of this registry, **none** of the eight scripts' current bytes
-match any committed stamp (`current_bytes_recorded: false` for every entry).
-Editing one therefore invalidates no record. What it does cost is resolvability:
-the record's provenance digest no longer names any file in the tree, and only a
-re-render under the pinned oracle restores that.
+expected. Editing one invalidates no record — nothing re-derives these stamps.
+What it can cost is *resolvability*: once the digest no longer names any file in
+the tree, only a re-render under the pinned oracle restores it.
 
-| Script | Stamped field | Lint-finding disposition (#269) |
+**One of the eight is now resolvable again (#126).** `fixtures/render_fixture.py`
+reads `current_bytes_recorded: true`: the SXT-028f Reverb 2 fixture bundles were
+re-rendered under the pinned oracle, so `reports/SXT-028f/artifacts/determinism-gate.json`
+and the six `reports/SXT-028f/fixtures/*.json` sidecars stamp its current bytes.
+This is exactly the re-render case flagged under
+[what the decision does not license](#disposition-of-the-lint-findings-in-these-eight-scripts-269)
+— it is **not** a live pin (nothing re-derives the stamp, and the entry still
+carries no `sha256` field), but its lint disposition was revisited rather than
+assumed, and the #269 "resolvability is already spent" argument no longer applies
+to that one entry. The other seven remain `false`.
+
+| Script | Stamped field | Lint-finding disposition (#269, revisited for row 1 in #126) |
 |---|---|---|
-| `fixtures/render_fixture.py` | `script_sha256` | cleanable — the F841 `preset_slug` finding was cleaned in #269 |
+| `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until the SXT-028f bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
 | `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `fixtures/render_mw_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/ablate_fx.py` | `script_sha256` | cleanable — no finding as of #269 |
@@ -119,13 +128,20 @@ simply not true of these files. It remains true of every file under
 [Live pins](#live-pins), which this decision does not touch.
 
 What the decision costs, stated rather than waved past: each edit moves these
-files further from the digests their records carry. That buys no new loss here,
-because **resolvability is already spent** — all eight read
+files further from the digests their records carry. For **seven of the eight**
+that buys no new loss, because resolvability is already spent — they read
 `current_bytes_recorded: false` both before and after #269's cleanup (re-derived
 in the same change), so no edit can take a resolvable provenance stamp and make
 it unresolvable. Only a re-render under the pinned oracle restores
 resolvability, and it restores it from whatever bytes exist at render time;
 holding a dead local variable in place does not bring that re-render any closer.
+
+**`fixtures/render_fixture.py` is now the exception** (#126, the SXT-028f
+reference leg): that re-render happened, its stamp resolves again, and so an
+edit there *does* spend something. The decision stands — it is still ordinary
+code and still not a live pin — but clean it in a change that either re-renders
+the SXT-028f bundles or says plainly that the stamp stopped resolving. This is
+the "does not survive a re-render" clause below, applied rather than deferred.
 
 What this decision does **not** license:
 
@@ -144,6 +160,8 @@ What this decision does **not** license:
   re-rendered under the pinned oracle, its stamp resolves to the tree again;
   that does **not** make it a live pin (nothing re-derives it), but the entry
   should be revisited here rather than assumed still "cleanable" by default.
+  **This happened in #126** for `fixtures/render_fixture.py` — see the note on
+  its row above for the revisited disposition.
 
 If a consumer is ever found that re-derives one of these stamps and compares it,
 that script is a live pin in disguise: move it to `live_pins` and stop cleaning

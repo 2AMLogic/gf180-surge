@@ -1,0 +1,136 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades, no time-warp",
+  "bypass": {
+    "fx7": {
+      "bit_identical_3x": true,
+      "bypass_method": "ONLY this Reverb 2 slot's type param -> fxt_off via setParamVal before settle; every other slot keeps the preset value; read-back verified; fresh instance",
+      "bytes": 2188844,
+      "determinism_sha256_all": [
+        "2a303947e7d235f3f3a136383eced9ee3a5b267b31e4608a7fa53613ba1372e4",
+        "2a303947e7d235f3f3a136383eced9ee3a5b267b31e4608a7fa53613ba1372e4",
+        "2a303947e7d235f3f3a136383eced9ee3a5b267b31e4608a7fa53613ba1372e4"
+      ],
+      "frames": 273600,
+      "fx_types_readback": [
+        0,
+        0,
+        0,
+        0,
+        12,
+        2,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "last_event_sample": 153600,
+      "other_slots_unmodified": true,
+      "peak_abs_float": 0.20718854665756226,
+      "sha256": "8b25cf645f297a731d9de0538488fd14324fa9bcb54d8683d449fa4ec37d621c",
+      "slot": 7,
+      "wav": "reports/SXT-028f/fixtures/mystical__seq-notes-coverage-v1-bypass-fx7.f32.wav"
+    }
+  },
+  "claim_scope": "reference-vs-reference wet / per-slot-bypass / all-off dry buses of the pinned engine under the SXT-012/023 policies; no fidelity, support, coverage or quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "drift_asserted": 0,
+    "repeats": 3,
+    "scope": "every committed bus (wet, all-off dry, each per-slot bypass) rendered 3x in fresh instances; all three buffers bit-identical (sha256) or the fixture is REFUSED and nothing is committed"
+  },
+  "dry": {
+    "bit_identical_3x": true,
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 2188844,
+    "determinism_sha256_all": [
+      "e7fcb4b227cb0dbb23608fd94789e565311a1fcffa0348036458f391c48781aa",
+      "e7fcb4b227cb0dbb23608fd94789e565311a1fcffa0348036458f391c48781aa",
+      "e7fcb4b227cb0dbb23608fd94789e565311a1fcffa0348036458f391c48781aa"
+    ],
+    "dry_fx_bypass_verified": true,
+    "frames": 273600,
+    "last_event_sample": 153600,
+    "peak_abs_float": 0.18487025797367096,
+    "sha256": "fd405ea35e88c23dff112dbaca4f0cc63012160ff81bc3282978643725fe7f0c",
+    "wav": "reports/SXT-028f/fixtures/mystical__seq-notes-coverage-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "mystical__seq-notes-coverage-v1",
+  "follow_up": "F-028f-1 (#126)",
+  "fx_types": [
+    0,
+    0,
+    0,
+    0,
+    12,
+    2,
+    6,
+    11,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "issue": "SXT-028f",
+  "preset": {
+    "census_blob_sha1": "fac150e6cb2b59b3ec549ea8beb9cc97d9298d83",
+    "graphs_sha256_prefix": "fac150e6cb2b59b3",
+    "path": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+    "slug": "mystical"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "policies_inherited": "fixtures/render_fixture.py via tools/render_fx_fixtures.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tails_included": true
+  },
+  "reverb2_slots": [
+    7
+  ],
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+    "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+  },
+  "wet": {
+    "bit_identical_3x": true,
+    "bytes": 2188844,
+    "determinism_sha256_all": [
+      "6f1aa0b3c253a2503a236855d150d3776c59d522e38dce699c0e06563c3c8748",
+      "6f1aa0b3c253a2503a236855d150d3776c59d522e38dce699c0e06563c3c8748",
+      "6f1aa0b3c253a2503a236855d150d3776c59d522e38dce699c0e06563c3c8748"
+    ],
+    "frames": 273600,
+    "last_event_sample": 153600,
+    "leg": "ORIGINAL (unmodified preset chain) -- the wet reference; never modified by the bypass legs",
+    "peak_abs_float": 0.1660982072353363,
+    "sha256": "ad9f51dd039513ebcc6c3a96198828889933aa482a645b06dabda335d57a1401",
+    "wav": "reports/SXT-028f/fixtures/mystical__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}

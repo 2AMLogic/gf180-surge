@@ -1,0 +1,43 @@
+{
+  "alloc_profile": "engine",
+  "blocks_total": 5925,
+  "claim_scope": "model-vs-pinned-engine input for the fx:Reverb 2 class only; establishes no preset-support, coverage or musical-quality claim",
+  "follow_up": "F-028f-1 (#126)",
+  "input_boundary": {
+    "bypass_sha256": "937839bdcb3f0161c8ee6c592edfd193013f772f56b9b5d5c8a4be1e3afd2bb0",
+    "bypass_wav": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1-bypass-fx7.f32.wav",
+    "deamp_then_quantize": "bypass / A in double, then one Q10.21 round-half-up (<= 1/2 LSB, ~ -132 dBFS class, declared)",
+    "kind": "per-slot-bypass (global-last)",
+    "master_amplitude": 0.7921042846916826,
+    "master_volume_db": -2.025745391845703,
+    "reverb2_slot": 7,
+    "role": "global2",
+    "wet_sha256": "b8002ddc76359e1c30f104d6112fbd042ed3f0de07cbd718be11f1996cf74230",
+    "wet_wav": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1-wet.f32.wav"
+  },
+  "input_peak_post_deamp": 0.4385732114315033,
+  "leaf": "SXT-028f",
+  "master_hardclip_samples": 0,
+  "model_peak_abs": 0.27791833877563477,
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "model_wav": "reports/SXT-028f/artifacts/model__mystical__seq-poly-8-v1.f32.wav",
+  "params": {
+    "buildup_f": 1.0,
+    "decay_time_f": 3.292782,
+    "diffusion_f": 1.0,
+    "hf_damping_f": 0.85,
+    "lf_damping_f": 0.36,
+    "mix_f": 0.2,
+    "modulation_f": 0.6,
+    "predelay_f": -3.0,
+    "room_size_f": 0.75,
+    "ts_predelay": false,
+    "ts_ratio_inv": 1.0,
+    "width_f": 0.0
+  },
+  "render_frames": 177600,
+  "schema_version": 1,
+  "sequence": "seq-poly-8-v1",
+  "settle_blocks": 375,
+  "slug": "mystical"
+}

@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028f",
+  "follow_up": "F-028f-1 (#126)",
+  "slug": "tacobell",
+  "sequence": "seq-notes-coverage-v1",
+  "ref": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/SXT-028f/artifacts/model__tacobell__seq-notes-coverage-v1.f32.wav",
+  "path": "wet",
+  "claim_scope": "fx:Reverb 2 CLASS agreement (model fed the engine's own per-slot-bypass bus); NOT a complete-wet preset, coverage or musical-quality claim",
+  "input_boundary": {
+    "bypass_sha256": "2211277822eefe73add092e862cd1870dab22b1cdb1ad92369b40e26d3589991",
+    "bypass_wav": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-bypass-fx6.f32.wav",
+    "deamp_then_quantize": "bypass / A in double, then one Q10.21 round-half-up (<= 1/2 LSB, ~ -132 dBFS class, declared)",
+    "kind": "per-slot-bypass (global-last)",
+    "master_amplitude": 1.0,
+    "master_volume_db": 0.0,
+    "reverb2_slot": 6,
+    "role": "global1",
+    "wet_sha256": "eb54a7c8e7135b693055bbe00c0156e60361216f622edf9c37575a9d4bb15ba2",
+    "wet_wav": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-wet.f32.wav"
+  },
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "fixture_sidecar": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1.json",
+  "reference_determinism_gate": {
+    "repeats": 3,
+    "bit_identical": true,
+    "drift_asserted": 0
+  },
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 721070.4375,
+      "model_peak_lsb": 721076.0,
+      "max_abs_diff_lsb": 19.69921875,
+      "rms_diff_lsb": 1.5734816938692475,
+      "rms_diff_dbfs": -116.47476437301086,
+      "rms_diff_at_shift0_lsb": 1.5734816938692475,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 1.5734816938692475,
+      "spectral_corr": 0.9999999822834497
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 725943.8125,
+      "model_peak_lsb": 725951.0,
+      "max_abs_diff_lsb": 17.234375,
+      "rms_diff_lsb": 1.5736810695853773,
+      "rms_diff_dbfs": -116.4736638544808,
+      "rms_diff_at_shift0_lsb": 1.5736810695853773,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 1.5736810695853773,
+      "spectral_corr": 0.9999999820962433
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 718575.25,
+      "model_peak_lsb": 718584.0,
+      "max_abs_diff_lsb": 9.0,
+      "rms_diff_lsb": 1.2230535268222071,
+      "rms_diff_dbfs": -118.66308897940769,
+      "rms_diff_at_shift0_lsb": 1.2230535268222071,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 1.2230535268222071,
+      "spectral_corr": 0.999999996469881
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 5.34375,
+    "tail_rms_diff_lsb": 0.5230688682628505,
+    "tail_rms_rel_db": -95.7585800913582,
+    "tail_ref_rms_lsb": 32098.73203673137,
+    "tail_model_rms_lsb": 32099.037103608927,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 25,
+      "ref_first_window_dbfs": -24.61192208243702,
+      "ref_last_graded_window_dbfs": -97.0569096459427,
+      "max_dev_db": 0.010643262654085106,
+      "worst_window": {
+        "index": 24,
+        "start_frame_in_tail": 57600,
+        "ref_dbfs": -97.0569096459427,
+        "model_dbfs": -97.06755290859678
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 12.998046875,
+      "tail_rms_diff_lsb": 0.9128330099617203,
+      "tail_rms_rel_db": -91.1799602280742,
+      "tail_ref_rms_lsb": 33066.58524889102,
+      "tail_model_rms_lsb": 33066.84329764498,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 28,
+        "ref_first_window_dbfs": -24.354962390939974,
+        "ref_last_graded_window_dbfs": -99.00523910552803,
+        "max_dev_db": 0.04276102870090881,
+        "worst_window": {
+          "index": 27,
+          "start_frame_in_tail": 64800,
+          "ref_dbfs": -99.00523910552803,
+          "model_dbfs": -99.04800013422894
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 13.47021484375,
+      "tail_rms_diff_lsb": 0.9154306863048727,
+      "tail_rms_rel_db": -91.10908134357324,
+      "tail_ref_rms_lsb": 32891.1859916239,
+      "tail_model_rms_lsb": 32891.40408271932,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 28,
+        "ref_first_window_dbfs": -24.67508836337427,
+        "ref_last_graded_window_dbfs": -98.68468946198227,
+        "max_dev_db": 0.038355127113405274,
+        "worst_window": {
+          "index": 27,
+          "start_frame_in_tail": 64800,
+          "ref_dbfs": -98.68468946198227,
+          "model_dbfs": -98.72304458909568
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+}

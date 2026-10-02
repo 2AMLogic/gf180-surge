@@ -1,0 +1,1235 @@
+{
+  "carriers": [
+    {
+      "active_classes": [
+        "Delay",
+        "Graphic EQ",
+        "Resonator",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.1958756148815155,
+        "peak_abs": 0.5562891960144043
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Guitars/Steel String Guitar.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Dual",
+      "sha": "13c7a4fe9c90b2a5cdb7e0219b5681538ebcf541"
+    },
+    {
+      "active_classes": [
+        "EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 30397,
+        "max_abs_divergence": 0.002777536865323782,
+        "peak_abs": 0.3298127353191376
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Dual",
+      "sha": "4f316a7f43eba60c40e9a7ca5de095a5775aeb21"
+    },
+    {
+      "active_classes": [
+        "Delay",
+        "EQ",
+        "Graphic EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.39967989921569824,
+        "peak_abs": 0.4187927842140198
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Lo-Fi Strings.fxp",
+      "reverb2_last_slot": 14,
+      "reverb2_roles": [
+        "global3"
+      ],
+      "reverb2_slots": [
+        14
+      ],
+      "scene_mode": "Dual",
+      "sha": "5e6e56277bfa67e2c0371d0b757f6c992a30e7b1"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.34022849798202515,
+        "peak_abs": 0.2818426489830017
+      },
+      "n_active_slots": 4,
+      "path": "resources/data/patches_3rdparty/Black-Sided Sun/Pads/Empty Spaces.fxp",
+      "reverb2_last_slot": 15,
+      "reverb2_roles": [
+        "global4"
+      ],
+      "reverb2_slots": [
+        15
+      ],
+      "scene_mode": "Dual",
+      "sha": "c32127600baa668df14f57cb9d1d3dd01ee4e1f1"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Distortion",
+        "Neuron",
+        "Reverb 2",
+        "Ring Mod"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177597,
+        "max_abs_divergence": 1.487425684928894,
+        "peak_abs": 1.075203776359558
+      },
+      "n_active_slots": 7,
+      "path": "resources/data/patches_3rdparty/Cybersoda/Drums/Short Snare.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Dual",
+      "sha": "29228657b9cc6618d5a1d47dcb3e0fb9f456a971"
+    },
+    {
+      "active_classes": [
+        "EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177599,
+        "max_abs_divergence": 7.773930072784424,
+        "peak_abs": 3.886965036392212
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Damon Armani/Drums/Tom L.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "095a57e6a34a45dfdbcf6749aa864f3f8fa80c25"
+    },
+    {
+      "active_classes": [
+        "EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 7.773930072784424,
+        "peak_abs": 3.886965036392212
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Damon Armani/Drums/Tom R.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "10c33e43af6469f63c38f2bf07271404600f757c"
+    },
+    {
+      "active_classes": [
+        "Nimbus",
+        "Reverb 2",
+        "Treemonster"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.6309326887130737,
+        "peak_abs": 0.45390596985816956
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Databroth/FX/Tears Of....fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "779db612ab985aea58ce8b63d97267f5d677a9a4"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Chorus",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177360,
+        "max_abs_divergence": 1.2350983619689941,
+        "peak_abs": 0.8733459115028381
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Databroth/Pads/Bright Strings.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "611554a0794ea61ab12796aa01c1aa382c140ed4"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Delay",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.4544248580932617,
+        "peak_abs": 0.24356959760189056
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Databroth/Pads/Quiet Lung.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "8b5a2080280cc11d225dd2b999407a70869e6cb9"
+    },
+    {
+      "active_classes": [
+        "Nimbus",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 164935,
+        "max_abs_divergence": 0.2777979373931885,
+        "peak_abs": 0.18557210266590118
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Databroth/Pads/Spectration.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "711ccc7a0dbcb93b13cbf15fdf95c3f4c5cb88cc"
+    },
+    {
+      "active_classes": [
+        "Combulator",
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.6969341039657593,
+        "peak_abs": 0.43714773654937744
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Modelled/Bowed Psaltery.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "d9b81e8989caa878dd114de737972fc9827fee80"
+    },
+    {
+      "active_classes": [
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.3527517020702362,
+        "peak_abs": 0.25523045659065247
+      },
+      "n_active_slots": 4,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Modelled/Hammered Dulcimer.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "042a900102b602dd137f58a25daa5d85dae3141d"
+    },
+    {
+      "active_classes": [
+        "Combulator",
+        "Delay",
+        "EQ",
+        "Graphic EQ",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.2265854775905609,
+        "peak_abs": 0.16221383213996887
+      },
+      "n_active_slots": 6,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Ensemble Modern.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "cffa0759ab85ea6a795e1f8b2ba96c9e3b858548"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Delay",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.16654053330421448,
+        "peak_abs": 0.12902456521987915
+      },
+      "n_active_slots": 6,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/Smooth Chorus.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "4107298b6d20a57f4b97b9fde6ba027249d1f7f4"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Delay",
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.6168773770332336,
+        "peak_abs": 0.4226979613304138
+      },
+      "n_active_slots": 6,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/String Machine 1.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "760088d3e53ef4424b4b1bb9018fc6c9335738f9"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Delay",
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.6522008180618286,
+        "peak_abs": 0.4994741380214691
+      },
+      "n_active_slots": 6,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/String Machine 2.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "09a2565555564eac22ee67492722f137742a1b0b"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Delay",
+        "EQ",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.5527649521827698,
+        "peak_abs": 0.508533239364624
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Pads/String Machine 3.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "db9f2c96a090f0233b3b4a7c290b91d7063e12d4"
+    },
+    {
+      "active_classes": [
+        "Delay",
+        "Ensemble",
+        "Reverb 2",
+        "Tape"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 4,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "73ebcb2cc9b28475f6fad4447e0ab0350a91e5c0",
+      "wet_peak_abs": 0.5329878926277161
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Delay",
+        "Ensemble",
+        "Reverb 2",
+        "Tape"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 2.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "30e760cc31d102dea4fe8bbc62a87b0c3dbe2bd0",
+      "wet_peak_abs": 0.39707836508750916
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Combulator",
+        "Delay",
+        "Flanger",
+        "Resonator",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177479,
+        "max_abs_divergence": 0.09199575334787369,
+        "peak_abs": 0.0721016451716423
+      },
+      "n_active_slots": 8,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Outerscapes.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Dual",
+      "sha": "57cf9ad0041ffd9d6144f6ea48d79a082a0c11e7"
+    },
+    {
+      "active_classes": [
+        "Combulator",
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.8096048831939697,
+        "peak_abs": 0.5713708400726318
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Strings/Bowed Psaltery.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "243e310f597fa6f2b3e096f099279f34d39ccf00"
+    },
+    {
+      "active_classes": [
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.3453117907047272,
+        "peak_abs": 0.2582487463951111
+      },
+      "n_active_slots": 4,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Strings/Hammered Dulcimer.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "6e3953dd83db43220db2237153060d51227bc9a2"
+    },
+    {
+      "active_classes": [
+        "Conditioner",
+        "Delay",
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 6,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Templates/Alias.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "878cb119fce0add7f64bfc2e2ec03ea3f13d9f93",
+      "wet_peak_abs": 0.3137834668159485
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Delay",
+        "EQ",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.9538883566856384,
+        "peak_abs": 0.551856517791748
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Jacky Ligon/Templates/Window.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "e47d00da0273427d8cba36168b8fc1563d6f0e20"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Delay",
+        "EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 1.7330090999603271,
+        "peak_abs": 3.439805746078491
+      },
+      "n_active_slots": 7,
+      "path": "resources/data/patches_3rdparty/John Valentine/FX/Fireworks - Bang And Fizzle.fxp",
+      "reverb2_last_slot": 14,
+      "reverb2_roles": [
+        "ains3",
+        "ains4",
+        "bins3",
+        "global3"
+      ],
+      "reverb2_slots": [
+        8,
+        9,
+        10,
+        14
+      ],
+      "scene_mode": "Dual",
+      "sha": "30bfb94b98358997aa25fead135d5968251e2d56"
+    },
+    {
+      "active_classes": [
+        "Airwindows",
+        "Delay",
+        "EQ",
+        "Flanger",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 1.04042649269104,
+        "peak_abs": 1.7846707105636597
+      },
+      "n_active_slots": 8,
+      "path": "resources/data/patches_3rdparty/John Valentine/FX/Fireworks - Launch.fxp",
+      "reverb2_last_slot": 14,
+      "reverb2_roles": [
+        "ains3",
+        "ains4",
+        "bins3",
+        "global3"
+      ],
+      "reverb2_slots": [
+        8,
+        9,
+        10,
+        14
+      ],
+      "scene_mode": "Dual",
+      "sha": "c226f1f1321f566c9ccfa11478e3d4c944ce97e1"
+    },
+    {
+      "active_classes": [
+        "Delay",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.4511398673057556,
+        "peak_abs": 0.2930011451244354
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/John Valentine/Keys/Rhythm Synth.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "2614b6d3ddea0e071e1e9665d02ee4e60b884ee6"
+    },
+    {
+      "active_classes": [
+        "Delay",
+        "EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.18844933807849884,
+        "peak_abs": 0.1236681193113327
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/John Valentine/Leads/Synced Synth Solo Lead.fxp",
+      "reverb2_last_slot": 14,
+      "reverb2_roles": [
+        "global3"
+      ],
+      "reverb2_slots": [
+        14
+      ],
+      "scene_mode": "Single",
+      "sha": "5cd4920167bd79ff12baa6b102df4b95067d966f"
+    },
+    {
+      "active_classes": [
+        "Combulator",
+        "Graphic EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177597,
+        "max_abs_divergence": 1.917436957359314,
+        "peak_abs": 1.3780783414840698
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/LinnStrument MPE/Strings/Bowed String.fxp",
+      "reverb2_last_slot": 15,
+      "reverb2_roles": [
+        "global4"
+      ],
+      "reverb2_slots": [
+        15
+      ],
+      "scene_mode": "Single",
+      "sha": "3ef7ace39ae6aec11395b5184b62d19e18bddbd8"
+    },
+    {
+      "active_classes": [
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177592,
+        "max_abs_divergence": 0.2875876724720001,
+        "peak_abs": 0.1601542830467224
+      },
+      "n_active_slots": 1,
+      "path": "resources/data/patches_3rdparty/LinnStrument MPE/Strings/Cello.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Dual",
+      "sha": "6c3c1a43d3e1fe9298cc143e5c679349f0fd7b68"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "EQ",
+        "Reverb 2",
+        "Tape"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177598,
+        "max_abs_divergence": 0.18247690796852112,
+        "peak_abs": 0.1278260201215744
+      },
+      "n_active_slots": 6,
+      "path": "resources/data/patches_3rdparty/Lopyt/Strings/Synth Strings.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "send1",
+        "global2"
+      ],
+      "reverb2_slots": [
+        4,
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "73170a8b34c598ad3466583413b3f80f974b98d8"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "4cb44bfe956ad4facc00e719b97f52f6f9100625",
+      "wet_peak_abs": 1.033359169960022
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Delay",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Luna/Bells/Tubular Bellsish But Less.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "b620cea34f930e6d12b9dd351934a7c9afe693ed",
+      "wet_peak_abs": 0.757500946521759
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Delay",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Luna/Bells/Tubular Bellsish But Zeroish.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "cb092c24408a6fc90ade9b619f1765904ccf6768",
+      "wet_peak_abs": 0.6787903904914856
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Luna/Bells/Tubular Bellsish.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "8fa3f196fce5c9fdbcf8d2c314d5943275e4920d",
+      "wet_peak_abs": 1.1287426948547363
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Luna/Keys/FM Electric Piano.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "72372133400c9942db004d7efc6dff4368657c8a",
+      "wet_peak_abs": 0.6725897192955017
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 1.5948569774627686,
+        "peak_abs": 1.0526071786880493
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Luna/Leads/96 Osc Supersaw.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Dual",
+      "sha": "feeaa7db6bf4c2ef08cd48e62f0b44fe0d11dda4"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177599,
+        "max_abs_divergence": 0.5087218284606934,
+        "peak_abs": 0.9281261563301086
+      },
+      "n_active_slots": 2,
+      "path": "resources/data/patches_3rdparty/Luna/MPE/Expressive Keys 1.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "5349f053bf1bd60a87e17c52e888bb1ac6de7833"
+    },
+    {
+      "active_classes": [
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 1,
+      "path": "resources/data/patches_3rdparty/Luna/MPE/Lap Harp.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "acf7477eb981233dbafc99aef26626da67512e0c",
+      "wet_peak_abs": 1.446617841720581
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Phaser",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.355346143245697,
+        "peak_abs": 0.42928627133369446
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Luna/Pads/String Pad.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "727ee743c0a329bd9bc05feca2decbfdbd1a96eb"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Phaser",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.5642059445381165,
+        "peak_abs": 0.41878804564476013
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Luna/Synths/Sweet Dreams.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "bdbda2b8fa08e5498980f5ab319c5571971f86d6"
+    },
+    {
+      "active_classes": [
+        "EQ",
+        "Flanger",
+        "Reverb 1",
+        "Reverb 2"
+      ],
+      "gate_3x": "PASS",
+      "n_active_slots": 4,
+      "path": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Dual",
+      "sha": "fac150e6cb2b59b3ec549ea8beb9cc97d9298d83",
+      "wet_peak_abs": 0.2779165804386139
+    },
+    {
+      "active_classes": [
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 1.0299315452575684,
+        "peak_abs": 0.9921103715896606
+      },
+      "n_active_slots": 1,
+      "path": "resources/data/patches_3rdparty/Vincent Zauhar/Keys/Viva La Trance.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "c202a1622ade4183c39aad2fa9acfce9afa947cc"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Graphic EQ",
+        "Phaser",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.7289186716079712,
+        "peak_abs": 0.572241485118866
+      },
+      "n_active_slots": 5,
+      "path": "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Beth's Breath.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Dual",
+      "sha": "cb51f7a4478da920b6adc08834bcd49babaf3ccb"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177599,
+        "max_abs_divergence": 0.9924805164337158,
+        "peak_abs": 0.652965784072876
+      },
+      "n_active_slots": 4,
+      "path": "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Classic Warm Jupiters.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "aaa10d052bb00aebdef627145e542396f46357c8"
+    },
+    {
+      "active_classes": [
+        "Chorus",
+        "Graphic EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.5994787216186523,
+        "peak_abs": 0.5348601341247559
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Vincent Zauhar/Pads/Multi-Timbral.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Dual",
+      "sha": "08f0cf997555809cc7fb19491a21ddf0ece0e3ba"
+    },
+    {
+      "active_classes": [
+        "Freq Shift",
+        "Graphic EQ",
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.7937935590744019,
+        "peak_abs": 0.5927953720092773
+      },
+      "n_active_slots": 3,
+      "path": "resources/data/patches_3rdparty/Vincent Zauhar/Pads/New Pad.fxp",
+      "reverb2_last_slot": 7,
+      "reverb2_roles": [
+        "global2"
+      ],
+      "reverb2_slots": [
+        7
+      ],
+      "scene_mode": "Single",
+      "sha": "7bc80cddf3ca7d5d138fcd79e91d9bf9d96867d5"
+    },
+    {
+      "active_classes": [
+        "Reverb 2"
+      ],
+      "gate_3x": "REFUSED (determinism)",
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.2474440485239029,
+        "peak_abs": 0.20604051649570465
+      },
+      "n_active_slots": 1,
+      "path": "resources/data/patches_3rdparty/qb/Keys/80s Hard Keys 2.fxp",
+      "reverb2_last_slot": 6,
+      "reverb2_roles": [
+        "global1"
+      ],
+      "reverb2_slots": [
+        6
+      ],
+      "scene_mode": "Single",
+      "sha": "bc00876bcd6bb7919bf00e79dc98c0ffc6842185"
+    }
+  ],
+  "claim_scope": "inventory and prioritisation only (AGENTS.md): NOT a support claim, NOT a coverage claim",
+  "follow_up": "F-028f-1 (#126)",
+  "leaf": "SXT-028f",
+  "render_gate": {
+    "attempted": 49,
+    "passing": 10,
+    "run": true,
+    "sequence": "seq-poly-8-v1"
+  },
+  "schema_version": 1,
+  "static_screen": {
+    "criteria": [
+      "active Reverb 2 slot",
+      "fx_bypass == All FX and fx_disable == 0",
+      "no modulation route into an FX parameter",
+      "the Reverb 2 slot is the LAST active FX slot, in a global role (the declared model input boundary)"
+    ],
+    "passing": 49,
+    "source": "corpus/normalized/graphs.jsonl (SXT-011)"
+  }
+}

@@ -9,9 +9,16 @@ tail presence and decay, external-memory accounting, the fail-closed
 extraction records, and the committed negative-control / RTL-exactness
 records (fail-closed, frozen-revision pinned).
 
-Oracle-dependent legs (fixture renders, model-vs-pinned-engine agreement)
-do not run here and are NOT_RUN, never a pass: there is no committed
-compare-*.json and no test asserts one exists.
+Oracle-dependent legs no longer run *here* -- they run on a host with the
+pinned oracle (tools/render_reverb2_fixtures.py,
+model/effects/run_reverb2_model.py, tools/compare_reverb2_reference.py,
+tools/reverb2_reference_controls.py, issue #126) and commit their records.
+What this file enforces about them is integrity, not a verdict: a
+comparison may exist only for a carrier whose reference passed the 3x
+bit-identical gate, it must be pinned to the live frozen-model revision,
+it must be scoped to the Reverb 2 class, and the three issue-named
+carriers -- all REFUSED by that gate -- must carry no fixture and no
+comparison at all.
 """
 import json
 import os
@@ -228,30 +235,109 @@ def test_unresolved_temposync_flag_is_refused():
 
 
 # ------------------------------------------------- committed evidence
+NAMED_CARRIERS = ("grant_me", "novuo", "harp")
+SCREENED_CARRIERS = ("tacobell", "moire1", "mystical")
+PARAM_KEYS = ("predelay_f", "room_size_f", "decay_time_f", "diffusion_f",
+              "buildup_f", "modulation_f", "lf_damping_f", "hf_damping_f",
+              "width_f", "mix_f")
+
+
+def _input_record(slug):
+    with open(os.path.join(INPUTS, f"type-reverb 2-{slug}.json")) as f:
+        return json.load(f)
+
+
 def test_extraction_records_fail_closed():
-    slugs = ("grant_me", "novuo", "harp")
-    for slug in slugs:
-        p = os.path.join(INPUTS, f"type-reverb 2-{slug}.json")
-        d = json.load(open(p))
+    """Every carrier record carries resolved inputs or an explicit refusal.
+
+    The temposync flag is now RESOLVED from the native loader read-back
+    (#126); `drift_asserted` is still fail-closed and is 0 only where the
+    3x render gate actually passed.
+    """
+    for slug in NAMED_CARRIERS + SCREENED_CARRIERS:
+        d = _input_record(slug)
         assert d["census_blob_reverified"] is True
         assert d["source"]["engine_pin"] == (
             "58914e59c608ed4384ba6002e44c3465c58b2e71")
         assert d["instances"], slug
         for inst in d["instances"]:
-            # every extracted value must be usable by the frozen model
-            # except the two deliberately UNRESOLVED fail-closed fields
-            assert inst["params"]["ts_predelay"] is None
-            for k in ("predelay_f", "room_size_f", "decay_time_f",
-                      "diffusion_f", "buildup_f", "modulation_f",
-                      "lf_damping_f", "hf_damping_f", "width_f", "mix_f"):
+            assert isinstance(inst["params"]["ts_predelay"], bool), slug
+            assert "temposync_source" in inst, slug
+            for k in PARAM_KEYS:
                 assert isinstance(inst["params"][k], float), (slug, k)
-        # NOT_RUN must never be recorded as a pass
-        assert d["drift_asserted"] is None
-        assert d["applicability"]["complete_wet_render_possible"] is False
-        assert d["applicability"]["status"].startswith("BLOCKED")
-    # the unlanded-sibling refusal must be visible for the Distortion carrier
-    novuo = json.load(open(os.path.join(INPUTS, "type-reverb 2-novuo.json")))
+        assert isinstance(d["volume_f"], float), slug
+        assert d["drift_asserted"] in (0, None), slug
+        # a record may claim a usable reference leg only with a passed gate
+        if d["reference_leg"]["usable"]:
+            assert d["drift_asserted"] == 0, slug
+            assert d["determinism_gate"]["status"] == "PASS", slug
+        else:
+            assert d["reference_leg"]["refusals"], slug
+    # the unlanded-sibling refusal must stay visible for the Distortion carrier
+    novuo = _input_record("novuo")
     assert any("unlanded" in r for r in novuo["applicability"]["reasons"])
+
+
+def test_named_carriers_are_refused_by_the_render_gate():
+    """All three issue-named carriers FAIL the 3x bit-identical gate; a
+    NOT_RUN/REFUSED leg must never be recorded as a determinism pass."""
+    for slug in NAMED_CARRIERS:
+        d = _input_record(slug)
+        assert d["drift_asserted"] is None, slug
+        assert d["determinism_gate"]["status"] == "FAIL", slug
+        assert d["applicability"]["complete_wet_render_possible"] is False
+        assert d["reference_leg"]["usable"] is False, slug
+        # and no fixture bus or comparison may be committed for them
+        fx = os.path.join(SXT, "fixtures")
+        assert not [f for f in os.listdir(fx) if f.startswith(slug + "__")]
+        art = os.path.join(SXT, "artifacts")
+        assert not [f for f in os.listdir(art)
+                    if f.startswith(f"compare-{slug}__")]
+
+
+def test_determinism_gate_record():
+    with open(os.path.join(SXT, "artifacts", "determinism-gate.json")) as f:
+        g = json.load(f)
+    assert g["repeats"] == 3
+    # the gate's own liveness: carriers with a committed sha256 elsewhere in
+    # the repo must pass it AND re-derive byte-identically on this host
+    assert g["positive_control"]
+    for row in g["positive_control"]:
+        assert row["gate_3x"] == "PASS", row
+        assert row["byte_identical"] is True, row
+    named = [r for r in g["results"] if r["named_carrier"]]
+    assert named and all(r["status"] == "REFUSED" for r in named)
+    for r in named:
+        assert r["refusal_class"] == "determinism-gate"
+        assert r["measured"]["max_abs_divergence"] > 0
+    passing = {r["slug"] for r in g["results"] if r["status"] == "PASS"}
+    assert passing == set(SCREENED_CARRIERS)
+    # the bimodal flake control: a carrier that passes a 3x gate most of the
+    # time and is still nondeterministic, so "3x passed once" is not a
+    # determinism claim on its own. The control is itself intermittent --
+    # that IS its point -- so what is asserted is that the screen OBSERVED
+    # the bimodality on at least one sequence, not that it must recur on
+    # every sequence of every run.
+    flake = [r for r in g["stress_screen"] if r["slug"] == "lapharp"]
+    assert flake, "the bimodal flake control did not run"
+    assert any(r["distinct_wet_buffers"] > 1 and not r["stable"]
+               for r in flake), flake
+    assert all(r["distinct_dry_buffers"] == 1 for r in flake), (
+        "the lapharp nondeterminism is FX-side; a flaky dry bus would make "
+        "it a source-side finding instead")
+    # the named carriers' refusal is CHARACTERISED, not just asserted: their
+    # all-off DRY bus is already unstable, so the nondeterminism sits in the
+    # voice path upstream of every FX slot and is a property of the preset,
+    # never of fx:Reverb 2.
+    named_stress = [r for r in g["stress_screen"]
+                    if r["slug"] in NAMED_CARRIERS]
+    assert len(named_stress) == len(NAMED_CARRIERS) * 2, named_stress
+    for r in named_stress:
+        assert r["distinct_dry_buffers"] > 1, r
+        assert not r["stable"], r
+    for r in g["stress_screen"]:
+        if r["slug"] in SCREENED_CARRIERS:
+            assert r["stable"], r
 
 
 def test_carrier_ledger_is_inventory_only():
@@ -348,13 +434,72 @@ def test_rtl_exactness_record():
     assert ex["ramp_dv_max_abs"][4] != 0       # the LF ramp control's target
 
 
-def test_model_vs_reference_leg_is_not_claimed():
-    """No compare-*.json may be committed while the oracle leg is NOT_RUN:
-    a reference verdict that did not run must never look like a pass."""
+def test_model_vs_reference_leg_is_graded_honestly():
+    """The oracle leg now RAN (#126). What this test enforces is that every
+    committed verdict is traceable to a reproducible reference, is scoped
+    to the Reverb 2 class, and records ACHIEVED numbers rather than tuned
+    ones; and that no comparison exists for a carrier whose reference is
+    not reproducible."""
     art = os.path.join(SXT, "artifacts")
-    if os.path.isdir(art):
-        assert not [f for f in os.listdir(art)
-                    if f.startswith("compare-") and f.endswith(".json")]
+    rows = sorted(f for f in os.listdir(art)
+                  if f.startswith("compare-") and f.endswith(".json"))
+    assert len(rows) == len(SCREENED_CARRIERS) * 2, rows
+    live = model_revision()
+    for name in rows:
+        with open(os.path.join(art, name)) as f:
+            c = json.load(f)
+        slug = c["slug"]
+        assert slug in SCREENED_CARRIERS, name
+        # the graded reference must itself be reproducible
+        assert c["reference_determinism_gate"]["bit_identical"] is True
+        assert c["reference_determinism_gate"]["drift_asserted"] == 0
+        # stale-stub control: the verdict is pinned to the live frozen model
+        assert c["model_revision"] == live, name
+        # the claim is class-scope only
+        for phrase in ("CLASS agreement", "NOT a complete-wet preset"):
+            assert phrase in c["claim_scope"], name
+        # budgets are the shared [PROPOSED] values, not per-leaf ones
+        assert c["proposed_budgets"] == {"max_abs_diff_lsb": 8192,
+                                         "rms_diff_dbfs": -46.0,
+                                         "spectral_corr_min": 0.98}
+        m = c["channels"]["mono"]
+        for k in ("max_abs_diff_lsb", "rms_diff_dbfs", "spectral_corr"):
+            assert isinstance(m[k], float), (name, k)
+        assert c["verdict"].startswith(("PASS", "FAIL"))
+        assert "PENDING-FREEZE" in c["verdict"] or c["verdict"].startswith("FAIL")
+        assert c["tail_gate_ok"] in (True, False)
+
+
+def test_reference_backed_negative_controls():
+    """NC-A (generic substitute) and NC-B (dropped tail) must still FAIL
+    against the REAL reference bundle, and the comparison must not be
+    vacuous (NC-REF-0)."""
+    p = os.path.join(SXT, "negative-controls", "reference-controls.json")
+    with open(p) as f:
+        d = json.load(f)
+    assert d["model_revision"] == model_revision()
+    assert d["status"] == "PASS"
+    assert d["cases"]
+    wanted = {"NC-REF-0", "NC-A-REF", "NC-B-REF"}
+    for case in d["cases"]:
+        assert case["baseline_frozen_model"]["ok"] is True, case["slug"]
+        names = {c["control"].split()[0] for c in case["controls"]}
+        assert wanted <= names, case["slug"]
+        for c in case["controls"]:
+            assert c["ok"] is True, (case["slug"], c["control"])
+            assert "CONTROL-OK" in c["verdict"]
+        gen = [c for c in case["controls"]
+               if c["control"].startswith("NC-A-REF")][0]
+        assert gen["metrics"]["all_pass"] is False
+        assert "ADAPTED" in gen["label"]
+
+
+def test_evidence_separates_coverage_from_agreement():
+    """The reference leg creates no support/coverage/quality claim, and the
+    named carriers' refusal stays visible in the record."""
     ev = open(os.path.join(SXT, "EVIDENCE.md")).read()
-    assert "NOT_RUN" in ev and "BLOCKED" in ev
-    assert "no oracle host" in ev.lower()
+    assert "REFUSED" in ev
+    assert "Newly-enabled presets" in ev
+    assert "no human listening" in ev.lower() or "#8/#9" in ev
+    for slug in ("Grant Me", "Novuo", "Harp"):
+        assert slug in ev
