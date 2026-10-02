@@ -113,6 +113,14 @@
       "id": "O9",
       "observed": "rc=0 prebuilt_sha256_matches=True surgepy_importable=False status=UNAVAILABLE",
       "targets": "a sha256-matched prebuilt directory with no real surgepy build underneath it being accepted as AVAILABLE on the strength of the hash alone"
+    },
+    {
+      "detail": "",
+      "expected": "prebuilt_sha256_matches TRUE, surgepy_importable TRUE, surgepy_under_engine_dir TRUE, surgepy_version_matches_pin FALSE, status != AVAILABLE",
+      "fired": true,
+      "id": "O10",
+      "observed": "rc=0 prebuilt_sha256_matches=True surgepy_importable=True under_engine_dir=True version_matches_pin=False status=UNAVAILABLE",
+      "targets": "a sha256-matched prebuilt directory with a present-but-fake surgepy module at the conventional path (PR #309 Judge review repro) being accepted as AVAILABLE because the hash string and a bare import both superficially succeed"
     }
   ],
   "controls_all_fired": true,
@@ -191,7 +199,7 @@
     }
   ],
   "oracle_gate": {
-    "reason": "prebuilt provisioning (#232): .installed-sha256 matches manifest prebuilt.linux-x86_64.sha256 'd2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571', surgepy imports from inside it",
+    "reason": "prebuilt provisioning (#232): .installed-sha256 matches manifest prebuilt.linux-x86_64.sha256 'd2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571', surgepy imports from inside it and reports version '1.4.HEAD.58914e59c', embedding the pinned commit '58914e59c608ed4384ba6002e44c3465c58b2e71'",
     "status": "AVAILABLE"
   },
   "probe": {
@@ -214,16 +222,20 @@
     "surgepy_naive": {
       "file": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
       "mode": "naive",
-      "ok": true
+      "ok": true,
+      "version": "1.4.HEAD.58914e59c"
     },
     "surgepy_pinned": {
       "file": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
       "mode": "pinned",
-      "ok": true
+      "ok": true,
+      "version": "1.4.HEAD.58914e59c"
     },
     "surgepy_so_dir_present": true,
     "surgepy_so_dir_probed": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python",
-    "surgepy_under_engine_dir": true
+    "surgepy_under_engine_dir": true,
+    "surgepy_version": "1.4.HEAD.58914e59c",
+    "surgepy_version_matches_pin": true
   },
   "rule": "AGENTS.md: a test that did not run must never be reported as a pass. This tool runs no oracle-gated leg; it records whether they COULD run. It can never move an acceptance item to PASS, and it establishes no model-vs-reference agreement, no fidelity, and no preset support.",
   "schema_version": 1,

@@ -228,12 +228,36 @@ try:
     import surgepy
     out["ok"] = True
     out["file"] = getattr(surgepy, "__file__", None)
+    try:
+        out["version"] = surgepy.getVersion()
+    except Exception:
+        out["version"] = None
 except Exception as e:
     out["ok"] = False
     out["file"] = None
+    out["version"] = None
     out["err"] = f"{type(e).__name__}: {e}"
 print(json.dumps(out))
 """
+
+
+def _version_matches_pin(version, pin):
+    """True iff a surgepy `getVersion()` string embeds a recognizable git
+    abbreviation of the pinned commit `pin`.
+
+    The real pinned build stamps a short git abbreviation into the version
+    string (observed on this leaf's own prebuilt install: `getVersion()` ==
+    "1.4.HEAD.58914e59c" for pin "58914e59c608...", a 9-hex-char prefix).
+    Accept any prefix length git might plausibly choose (7-12 hex chars,
+    the documented git short-hash range) rather than hardcoding one length.
+    This is the runtime fact a present-but-fake module (a bare `.py` stub
+    satisfying the sha256/import/path checks alone) cannot produce without
+    also faking `getVersion()` itself -- closing the gap identified in the
+    PR #309 Judge review against the prebuilt path (#232).
+    """
+    if not version:
+        return False
+    return any(pin[:n] in version for n in range(12, 6, -1))
 
 
 def probe(manifest, engine_dir_override=None):
@@ -316,6 +340,9 @@ def probe(manifest, engine_dir_override=None):
     d["surgepy_importable_naive"] = bool(d["surgepy_naive"].get("ok"))
     d["surgepy_importable"] = bool(d["surgepy_pinned"].get("ok"))
     d["surgepy_under_engine_dir"] = inside
+    d["surgepy_version"] = d["surgepy_pinned"].get("version")
+    d["surgepy_version_matches_pin"] = _version_matches_pin(
+        d["surgepy_version"], d["engine_pin"])
     return d
 
 
@@ -327,11 +354,22 @@ def classify(p):
       1. git-worktree: checkout present, HEAD == pin, surgepy importable
          from inside it.
       2. prebuilt: `.installed-sha256` present and equal to the manifest's
-         `prebuilt.<platform>.sha256`, surgepy importable from inside it.
+         `prebuilt.<platform>.sha256`, surgepy importable from inside it,
+         AND the imported module's own `getVersion()` embeds the pinned
+         commit. The sha256 and import/path checks alone are NOT sufficient
+         (PR #309 Judge review): `.installed-sha256`'s expected value is
+         public committed plaintext in this repo's own
+         `oracle/manifest.json`, so matching it proves only that whoever
+         wrote the file could read the manifest, not that any real engine
+         bytes exist underneath -- a two-line stub module satisfies the
+         sha256 match and the import/path checks with no build at all
+         (control O10). The `getVersion()` cross-check is a runtime fact
+         only a genuine build can produce.
     A directory that satisfies neither (control O2: empty; control O8: a
     prebuilt-shaped directory with a missing/mismatched
-    `.installed-sha256`) falls through to UNAVAILABLE/PIN_MISMATCH exactly
-    as before this provisioning shape was added.
+    `.installed-sha256`; control O10: a matching hash with a present-but-
+    fake module) falls through to UNAVAILABLE/PIN_MISMATCH exactly as
+    before this provisioning shape was added.
     """
     if (p["engine_dir_present"] and p["engine_head_matches_pin"]
             and p["surgepy_importable"] and p["surgepy_under_engine_dir"]):
@@ -339,12 +377,14 @@ def classify(p):
             "git-worktree provisioning: checkout present at the pinned "
             f"commit {p['engine_pin']!r}, surgepy imports from inside it")
     if (p["engine_dir_present"] and p["prebuilt_sha256_matches"]
-            and p["surgepy_importable"] and p["surgepy_under_engine_dir"]):
+            and p["surgepy_importable"] and p["surgepy_under_engine_dir"]
+            and p["surgepy_version_matches_pin"]):
         return "AVAILABLE", (
             "prebuilt provisioning (#232): .installed-sha256 matches "
             f"manifest prebuilt.{p['platform']}.sha256 "
             f"{p['prebuilt_manifest_sha256']!r}, surgepy imports from "
-            "inside it")
+            f"inside it and reports version {p['surgepy_version']!r}, "
+            f"embedding the pinned commit {p['engine_pin']!r}")
     if p["surgepy_importable"] and not p["surgepy_under_engine_dir"]:
         return "UNPINNED_SURGEPY", (
             "a surgepy module is importable but does not live inside the "
@@ -355,8 +395,10 @@ def classify(p):
             f"{p['engine_dir_probed']!r} exists but is not a git work tree "
             "and is not a sha256-verified prebuilt install "
             f"(.installed-sha256 present={p['prebuilt_installed_sha256'] is not None}, "
-            f"matches manifest={p['prebuilt_sha256_matches']}); a bare "
-            "directory is neither a pinned checkout nor a verified prebuilt")
+            f"matches manifest={p['prebuilt_sha256_matches']}, "
+            f"surgepy version matches pin={p['surgepy_version_matches_pin']}); "
+            "a bare directory is neither a pinned checkout nor a verified "
+            "prebuilt")
     if p["engine_dir_present"] and not p["engine_head_matches_pin"]:
         return "PIN_MISMATCH", (
             f"checkout HEAD {p['engine_head']!r} != pinned "
@@ -737,6 +779,64 @@ def run_controls(artifacts, log):
                 "not a gap: O8 already shows a non-matching hash is "
                 "refused; this sub-case needs a real platform entry to "
                 "construct a matching-but-unbuilt directory")
+
+        # O10 -- a sha256-matched prebuilt directory with a PRESENT, real
+        # Python module at the conventional surgepy path, but one that is
+        # NOT the genuine build, must still be refused. This is the exact
+        # repro from the PR #309 Judge review: O9's sibling, but with a
+        # two-line stub module present (rather than nothing at all) at
+        # <engine_dir>/build-py311/src/surge-python/surgepy.py, which is
+        # enough to make surgepy_importable and surgepy_under_engine_dir
+        # BOTH true -- the manifest's prebuilt.<platform>.sha256 is public
+        # committed plaintext, so matching it plus a trivial stub proves
+        # only that the forger could read oracle/manifest.json, never that
+        # any real engine bytes exist. classify() must refuse this because
+        # the stub cannot produce the real surgepy.getVersion() string
+        # embedding the pinned commit.
+        if pinned_sha:
+            fake_build_dir = os.path.join(
+                tmproot, "prebuilt-right-sha-fake-module")
+            fake_so_dir = os.path.join(
+                fake_build_dir, "build-py311", "src", "surge-python")
+            os.makedirs(fake_so_dir)
+            with open(os.path.join(fake_build_dir, ".installed-sha256"), "w",
+                     encoding="utf-8") as f:
+                f.write(pinned_sha)
+            with open(os.path.join(fake_so_dir, "surgepy.py"), "w",
+                     encoding="utf-8") as f:
+                f.write("# SXT-036 control O10: not the pinned engine.\n"
+                        "SurgeSynthesizer = None\n")
+            rc, doc = _self_json([], {"ORACLE_SURGE_DIR": fake_build_dir})
+            matches = doc and doc["probe"]["prebuilt_sha256_matches"]
+            importable = doc and doc["probe"]["surgepy_importable"]
+            under = doc and doc["probe"]["surgepy_under_engine_dir"]
+            vmatch = doc and doc["probe"]["surgepy_version_matches_pin"]
+            status = doc and doc["oracle_gate"]["status"]
+            rec("O10", "a sha256-matched prebuilt directory with a "
+                      "present-but-fake surgepy module at the conventional "
+                      "path (PR #309 Judge review repro) being accepted as "
+                      "AVAILABLE because the hash string and a bare import "
+                      "both superficially succeed",
+                "prebuilt_sha256_matches TRUE, surgepy_importable TRUE, "
+                "surgepy_under_engine_dir TRUE, "
+                "surgepy_version_matches_pin FALSE, status != AVAILABLE",
+                f"rc={rc} prebuilt_sha256_matches={matches} "
+                f"surgepy_importable={importable} under_engine_dir={under} "
+                f"version_matches_pin={vmatch} status={status}",
+                rc == 0 and matches is True and importable is True
+                and under is True and vmatch is False
+                and status != "AVAILABLE")
+        else:
+            rec("O10", "a sha256-matched prebuilt directory with a "
+                      "present-but-fake surgepy module at the conventional "
+                      "path being accepted as AVAILABLE on the strength of "
+                      "the hash and a bare import alone",
+                "SKIPPED: no manifest.prebuilt entry for this platform "
+                f"({plat!r}) to construct a matching hash from",
+                "n/a", True,
+                "not a gap: O8 already shows a non-matching hash is "
+                "refused; this sub-case needs a real platform entry to "
+                "construct a matching-but-fake directory")
     finally:
         shutil.rmtree(tmproot, ignore_errors=True)
 
@@ -754,6 +854,7 @@ probed HEAD       : {head} (pin {pin}, matches={matches})
 prebuilt (#232)   : platform={platform} installed_sha256={installed_sha} matches_manifest={prebuilt_matches}
 surgepy, naive    : {naive}   <- a bare `import surgepy`; NOT proof of the pin
 surgepy, pinned   : {pinned} (module inside the checkout={under})
+surgepy, version  : {version} (embeds pinned commit={version_matches})
 
 Acceptance items 2 and 5 of #70 are therefore {item_status}. A leg that did
 not run is never reported as a pass (AGENTS.md). Nothing in this leaf's
@@ -903,6 +1004,8 @@ def main():
             prebuilt_matches=p["prebuilt_sha256_matches"],
             naive=p["surgepy_importable_naive"],
             pinned=p["surgepy_importable"], under=p["surgepy_under_engine_dir"],
+            version=p["surgepy_version"],
+            version_matches=p["surgepy_version_matches_pin"],
             item_status=doc["acceptance_items_gated"]["2"],
             legs=legtxt, tools=tooltxt, predictions=predtxt,
             rule=predictions["rule"], controls=ctltxt))

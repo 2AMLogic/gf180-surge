@@ -1,13 +1,14 @@
 SXT-036 (#70) oracle gate and backfill plan
 ===========================================
 oracle gate: AVAILABLE
-reason: prebuilt provisioning (#232): .installed-sha256 matches manifest prebuilt.linux-x86_64.sha256 'd2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571', surgepy imports from inside it
+reason: prebuilt provisioning (#232): .installed-sha256 matches manifest prebuilt.linux-x86_64.sha256 'd2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571', surgepy imports from inside it and reports version '1.4.HEAD.58914e59c', embedding the pinned commit '58914e59c608ed4384ba6002e44c3465c58b2e71'
 
 probed engine dir : /home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64 (present=True, git worktree=False)
 probed HEAD       : None (pin 58914e59c608ed4384ba6002e44c3465c58b2e71, matches=False)
 prebuilt (#232)   : platform=linux-x86_64 installed_sha256=d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571 matches_manifest=True
 surgepy, naive    : True   <- a bare `import surgepy`; NOT proof of the pin
 surgepy, pinned   : True (module inside the checkout=True)
+surgepy, version  : 1.4.HEAD.58914e59c (embeds pinned commit=True)
 
 Acceptance items 2 and 5 of #70 are therefore RUNNABLE. A leg that did
 not run is never reported as a pass (AGENTS.md). Nothing in this leaf's
@@ -63,6 +64,7 @@ Negative controls (each must demonstrably fail the check it targets)
   O7 FIRED  a tool path named by #70 being reported as resolved without checking the tree
   O8 FIRED  a prebuilt-shaped directory (.installed-sha256 present) whose hash disagrees with manifest.prebuilt.<platform>.sha256 being accepted as a verified prebuilt install
   O9 FIRED  a sha256-matched prebuilt directory with no real surgepy build underneath it being accepted as AVAILABLE on the strength of the hash alone
+  O10 FIRED  a sha256-matched prebuilt directory with a present-but-fake surgepy module at the conventional path (PR #309 Judge review repro) being accepted as AVAILABLE because the hash string and a bare import both superficially succeed
 
 Re-run on an oracle host
 ------------------------
