@@ -1,0 +1,50 @@
+SXT-041 negative controls — scene-LFO (ms_slfo1..6) slice
+date: 2026-10-02T17:12:55Z
+engine pin: surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71 (48 kHz, block 32)
+
+FROZEN-MODEL baselines (the yardstick; they FAIL the [PROPOSED] max/rms budgets themselves — same error class as SXT-022/SXT-032 — so every control is also reported against these numbers, never against a 'pass' the model does not have):
+  sxt041-slfo-overlap-v1: max=13151 rms=-28.359dBFS spec=0.9820 -> FAIL against proposed budgets
+  seq-notes-repeated-v1: max=6668 rms=-33.129dBFS spec=0.9987 -> FAIL against proposed budgets
+  seq-modwheel-v1: max=14077 rms=-31.179dBFS spec=0.9776 -> FAIL against proposed budgets
+
+C1 routing-zeroed, per destination class (required control)
+[cutoff-zeroed] max=32452 (base 13151) rms=-20.217 (base -28.359) spec=0.7538 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=['max', 'rms', 'spectral']
+    control-plane: route-sum blocks differing=5099/5100 max|delta|=136314880 Q10.21; instance-output blocks differing=0 max|delta|=0
+[reso-zeroed] max=16982 (base 13151) rms=-26.319 (base -28.359) spec=0.9687 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=['max', 'rms', 'spectral']
+    control-plane: route-sum blocks differing=5099/5100 max|delta|=1572864 Q10.21; instance-output blocks differing=0 max|delta|=0
+[all-routes-zeroed] max=33570 (base 13151) rms=-19.324 (base -28.359) spec=0.7501 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=['max', 'rms', 'spectral']
+    control-plane: route-sum blocks differing=5099/5100 max|delta|=136314880 Q10.21; instance-output blocks differing=0 max|delta|=0
+
+C2 source-swap: the landed modwheel in place of the scene LFO (required control)
+[source-swap] max=23426 (base 14077) rms=-22.135 (base -31.179) spec=0.6587 (base 0.9776) -> FAIL against proposed budgets; changed=True; degrades=['max', 'rms', 'spectral']
+    control-plane: route-sum blocks differing=5549/5700 max|delta|=216438430 Q10.21; instance-output blocks differing=0 max|delta|=0
+
+C3 per-note retrigger: voice-LFO attack/release semantics applied to a scene LFO (discriminates this leaf's headline S2/S3 claim)
+[per-note-retrigger] max=27560 (base 13151) rms=-24.412 (base -28.359) spec=0.7721 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=['max', 'rms', 'spectral']
+    control-plane: route-sum blocks differing=4798/5100 max|delta|=159747055 Q10.21; instance-output blocks differing=4799 max|delta|=4128951
+
+C4 gated process: the scene LFOs advanced only while a gated voice exists (S5)
+[gated-process] max=13150 (base 13151) rms=-28.365 (base -28.359) spec=0.9754 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=['spectral']
+    control-plane: route-sum blocks differing=3599/5100 max|delta|=214948500 Q10.21; instance-output blocks differing=3600 max|delta|=4168089
+
+C5 zero-delay route (S4) and C6 shared-instance (S1): reported in the audio domain AND carried in the control-plane / exactness domain, because one engine block is 0.67 ms and the audio metric may not see it
+[zero-delay-route] max=13141 (base 13151) rms=-28.393 (base -28.359) spec=0.9823 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=NONE (audio-NON-DISCRIMINATING on this carrier)
+    control-plane: route-sum blocks differing=5100/5100 max|delta|=1046414 Q10.21; instance-output blocks differing=0 max|delta|=0
+[shared-instance] max=13154 (base 13151) rms=-27.892 (base -28.359) spec=0.9821 (base 0.9820) -> FAIL against proposed budgets; changed=True; degrades=['max', 'rms']
+    control-plane: route-sum blocks differing=5095/5100 max|delta|=1043684 Q10.21; instance-output blocks differing=5096 max|delta|=4174739
+  [zero-delay-route] control-plane control -> FAILS the frozen control-plane trace (expected)
+  [shared-instance] control-plane control -> FAILS the frozen control-plane trace (expected)
+
+P8 settle-replay probe (NOT a control): the 375 settle blocks must be a provable no-op on a keytrigger fixture
+[no-settle] render BIT-IDENTICAL -> PROBE OK (provably a no-op)
+
+C7 RTL mutants (must FAIL RTL-vs-model integer equality)
+[slfo_broken_mutant.sv] output round-half-up bias off by one shift
+    verdict=FAIL comparison=FAIL mismatches=51 first=['block 901 slfo 1 output: model=2097065 rtl=2097064']
+[slfo_nodelay_mutant.sv] the one-block scene-route latch dropped: the six instances are advanced BEFORE modulation_scene is applied, so the route consumes the current block's output
+    verdict=FAIL comparison=FAIL mismatches=42 first=['block 0 route_sum[0]: model=0 rtl=571025']
+[slfo_shared_mutant.sv] one shared state set for all six instances (per-instance scene-LFO state merged)
+    verdict=FAIL comparison=FAIL mismatches=43 first=['block 0 slfo 1 phase: model=178957 rtl=357914']
+
+overall: ALL COUNTED CONTROLS DEMONSTRABLY FAIL (expected)
+audio-non-discriminating on this carrier (carried in the control-plane/exactness domain): zero-delay-route

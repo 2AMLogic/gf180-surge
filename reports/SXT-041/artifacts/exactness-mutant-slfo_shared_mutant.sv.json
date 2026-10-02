@@ -1,0 +1,28 @@
+{
+  "tb": "../../../../../../../tmp/sxt041-regen/nc/rtl-mutants/slfo_shared_mutant.sv",
+  "verdict": "FAIL",
+  "comparison": "FAIL",
+  "scope": "scene-LFO control plane (ms_slfo1..6): one instance set per scene, all six checkpointed every block, plus the once-per-block scene route sums and the one-block route latch",
+  "checked": {
+    "slfo_checkpoints": 66,
+    "slfo_fields": 330,
+    "route_sums": 11,
+    "route_latches": 11,
+    "blocks": 11
+  },
+  "mismatches": 43,
+  "first_failures": [
+    "block 0 slfo 1 phase: model=178957 rtl=357914",
+    "block 0 slfo 1 output: model=2097152 rtl=8785",
+    "block 0 route_out[1]: model=2097152 rtl=8785",
+    "block 1 slfo 1 phase: model=357914 rtl=715828",
+    "block 1 slfo 1 output: model=2097152 rtl=17569",
+    "block 1 route_sum[1]: model=528681 rtl=6589",
+    "block 1 route_out[1]: model=2097152 rtl=17569",
+    "block 2 slfo 1 phase: model=536871 rtl=1073742",
+    "block 2 slfo 1 output: model=2097152 rtl=26353",
+    "block 2 route_sum[1]: model=533073 rtl=13177"
+  ],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
+}

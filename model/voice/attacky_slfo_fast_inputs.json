@@ -1,0 +1,422 @@
+{
+  "definition_overrides": [
+    {
+      "engine_range": [
+        -7.0,
+        9.0
+      ],
+      "modsource": "ms_slfo1",
+      "override_value": 4.0,
+      "param": "rate",
+      "preset_value": 0.0,
+      "scene_lfo_index": 6
+    },
+    {
+      "engine_range": [
+        0.0,
+        9.0
+      ],
+      "modsource": "ms_slfo2",
+      "override_value": 2.0,
+      "param": "shape",
+      "preset_value": 0.0,
+      "scene_lfo_index": 7
+    },
+    {
+      "engine_range": [
+        -7.0,
+        9.0
+      ],
+      "modsource": "ms_slfo2",
+      "override_value": 5.0,
+      "param": "rate",
+      "preset_value": 0.0,
+      "scene_lfo_index": 7
+    }
+  ],
+  "engine": {
+    "block_size": 32,
+    "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "ms_lfo1_id": 17,
+    "ms_slfo1_id": 23,
+    "sample_rate": 48000,
+    "scene_lfo_base_index": 6,
+    "version_string": "1.4.HEAD.58914e59c"
+  },
+  "fixture_routes": [
+    {
+      "depth_raw": 65.0,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_cutoff",
+      "dest_name": "A Filter 1 Cutoff",
+      "dest_param": "cutoff",
+      "modsource": "ms_slfo1",
+      "modsource_id": 23,
+      "normalized_depth": 0.5,
+      "slfo_instance": 0
+    },
+    {
+      "depth_raw": 0.5,
+      "depth_readback": 0.5,
+      "dest": "filterunit0_resonance",
+      "dest_name": "A Filter 1 Resonance",
+      "dest_param": "resonance",
+      "modsource": "ms_slfo1",
+      "modsource_id": 23,
+      "normalized_depth": 0.5,
+      "slfo_instance": 0
+    },
+    {
+      "depth_raw": 0.25,
+      "depth_readback": 0.25,
+      "dest": "filterunit0_resonance",
+      "dest_name": "A Filter 1 Resonance",
+      "dest_param": "resonance",
+      "modsource": "ms_slfo2",
+      "modsource_id": 24,
+      "normalized_depth": 0.25,
+      "slfo_instance": 1
+    }
+  ],
+  "frozen_scope": {
+    "destination_classes": [
+      "A Filter 1 Cutoff",
+      "A Filter 1 Resonance"
+    ],
+    "gaps": [
+      "rate temposync / deactivated flags not observable via surgepy; frozen model implements non-temposync, non-deactivated paths",
+      "step-sequencer grids outside normalized schema rev 1.0.0",
+      "MSEG/Formula contents not exposed by surgepy (setIsVoice(false) is read ONLY by the Formula modulator at this pin, so it has no arithmetic effect inside the frozen waveform set)",
+      "noise/snh shapes consume engine RNG (nondeterministic)",
+      "lt_envelope and type_3 deform bends need runtime sin",
+      "send-levels 3/4 exposure gap (schema README) applies to SLFO-routed presets; not exercised by this fixture",
+      "scene B / global modulation_global destinations, multi-scene (sm != 0) SLFO interaction"
+    ],
+    "modsources": [
+      "ms_slfo1..ms_slfo6 (ids 23..28)"
+    ],
+    "scene_scheduling": [
+      "one instance set per scene, shared by every voice (SurgeVoice ctor copies the scene modsource pointers)",
+      "attack when getNonReleasedVoices(scene) == 0 at note-on",
+      "release when getNonReleasedVoices(scene) == 0 at note-off (gate already cleared)",
+      "scene routes consume the PREVIOUS block's output (modulation_scene apply precedes the n_lfos_scene process loop in processControl)",
+      "all six instances process every block while the scene plays, routed or not, voices or not"
+    ],
+    "trigmodes": [
+      "freerun(songpos=0)",
+      "keytrigger"
+    ],
+    "waveforms": "sine(deform=0), tri(deform=0), square, ramp(deform=0)"
+  },
+  "issue": "SXT-041",
+  "parameter_corners": {
+    "engine_declared_ranges": {
+      "attack": {
+        "default": -8.0,
+        "max": 5.0,
+        "min": -8.0
+      },
+      "decay": {
+        "default": 0.0,
+        "max": 5.0,
+        "min": -8.0
+      },
+      "deform": {
+        "default": 0.0,
+        "max": 1.0,
+        "min": -1.0
+      },
+      "delay": {
+        "default": -8.0,
+        "max": 5.0,
+        "min": -8.0
+      },
+      "hold": {
+        "default": 0.0,
+        "max": 5.0,
+        "min": -8.0
+      },
+      "magnitude": {
+        "default": 1.0,
+        "max": 1.0,
+        "min": 0.0
+      },
+      "rate": {
+        "default": 0.0,
+        "max": 9.0,
+        "min": -7.0
+      },
+      "release": {
+        "default": 5.0,
+        "max": 5.0,
+        "min": -8.0
+      },
+      "shape": {
+        "default": 0.0,
+        "max": 9.0,
+        "min": 0.0
+      },
+      "start_phase": {
+        "default": 0.0,
+        "max": 1.0,
+        "min": 0.0
+      },
+      "sustain": {
+        "default": 1.0,
+        "max": 1.0,
+        "min": 0.0
+      },
+      "trigmode": {
+        "default": 0.0,
+        "max": 2.0,
+        "min": 0.0
+      },
+      "unipolar": {
+        "default": 0.0,
+        "max": 1.0,
+        "min": 0.0
+      }
+    },
+    "note": "engine-declared ranges are read live from the pin via getParamMin/getParamMax/getParamDef on scene.lfo[6] (ms_slfo1); observed values are the distinct values across the six scene-LFO definitions of THIS fixture variant",
+    "observed_scene_lfo_values": {
+      "attack": [
+        -8.0
+      ],
+      "decay": [
+        0.0
+      ],
+      "deform": [
+        0.0
+      ],
+      "delay": [
+        -8.0
+      ],
+      "hold": [
+        -8.0
+      ],
+      "magnitude": [
+        1.0
+      ],
+      "rate": [
+        0.0,
+        4.0,
+        5.0
+      ],
+      "release": [
+        5.0
+      ],
+      "shape": [
+        0.0,
+        2.0
+      ],
+      "start_phase": [
+        0.0
+      ],
+      "sustain": [
+        1.0
+      ],
+      "trigmode": [
+        1.0
+      ],
+      "unipolar": [
+        0.0
+      ]
+    }
+  },
+  "preset": {
+    "actual_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+    "path": "resources/data/patches_factory/Basses/Attacky.fxp"
+  },
+  "preset_modwheel_routes": {
+    "cutoff_depth": 34.425018,
+    "reso_depth": 0.383036
+  },
+  "route_list": "scene[0].modulation_scene (isScenelevel(ms_slfo*) is true; verified: modulation_voice stayed empty)",
+  "schema_version": 1,
+  "slfo_defs": [
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 4.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 5.0,
+      "release": 5.0,
+      "shape": 2,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    }
+  ],
+  "variant": "fast",
+  "voice_lfo_defs_unrouted": [
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    },
+    {
+      "attack": -8.0,
+      "decay": 0.0,
+      "deform": 0.0,
+      "delay": -8.0,
+      "hold": -8.0,
+      "magnitude": 1.0,
+      "rate": 0.0,
+      "release": 5.0,
+      "shape": 0,
+      "start_phase": 0.0,
+      "sustain": 1.0,
+      "trigmode": 1,
+      "unipolar": 0
+    }
+  ]
+}

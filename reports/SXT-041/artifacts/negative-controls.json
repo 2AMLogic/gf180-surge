@@ -1,0 +1,448 @@
+{
+  "all-routes-zeroed": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 1,
+        "frozen_route_sums": [
+          571025,
+          528681
+        ],
+        "mutant_route_sums": [
+          0,
+          0
+        ]
+      },
+      "instance_output_blocks_differing": 0,
+      "instance_output_max_abs_delta_q21": 0,
+      "route_sum_blocks_differing": 5099,
+      "route_sum_max_abs_delta_q21": 136314880
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "max",
+      "rms",
+      "spectral"
+    ],
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 33570.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-all-routes-zeroed.json",
+    "model_sha256": "62aba179d2f223e37fb95ec6eecd8192c6975872942050b25e3e754603f5ce25",
+    "render_changed": true,
+    "rms_diff_dbfs": -19.323734144323325,
+    "runner_flags": [
+      "--zero-routes"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.7501448671317777,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "audio_non_discriminating_on_this_carrier": [
+    "zero-delay-route"
+  ],
+  "claim_scope": "Controls only. This transcript establishes that each listed mutation demonstrably fails the check it targets; it establishes no fidelity, preset-support or preset-quality claim, and the frozen model itself FAILS the [PROPOSED] max/rms budgets on every fixture (recorded, not tuned).",
+  "counted_controls": [
+    "all-routes-zeroed",
+    "cutoff-zeroed",
+    "gated-process",
+    "per-note-retrigger",
+    "reso-zeroed",
+    "shared-instance",
+    "slfo_broken_mutant.sv",
+    "slfo_nodelay_mutant.sv",
+    "slfo_shared_mutant.sv",
+    "source-swap",
+    "zero-delay-route"
+  ],
+  "cutoff-zeroed": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 1,
+        "frozen_route_sums": [
+          571025,
+          528681
+        ],
+        "mutant_route_sums": [
+          0,
+          528681
+        ]
+      },
+      "instance_output_blocks_differing": 0,
+      "instance_output_max_abs_delta_q21": 0,
+      "route_sum_blocks_differing": 5099,
+      "route_sum_max_abs_delta_q21": 136314880
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "max",
+      "rms",
+      "spectral"
+    ],
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 32452.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-cutoff-zeroed.json",
+    "model_sha256": "c91c52e39d44e18ef4b9c6295f57704535362090b68b641fcfa49e7c41d9d093",
+    "render_changed": true,
+    "rms_diff_dbfs": -20.216867481127373,
+    "runner_flags": [
+      "--zero-dest",
+      "cutoff"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.7538168458948582,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "gated-process": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 901,
+        "frozen_route_sums": [
+          -80583360,
+          -95595
+        ],
+        "mutant_route_sums": [
+          -80123550,
+          -92047
+        ]
+      },
+      "instance_output_blocks_differing": 3600,
+      "instance_output_max_abs_delta_q21": 4168089,
+      "route_sum_blocks_differing": 3599,
+      "route_sum_max_abs_delta_q21": 214948500
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "spectral"
+    ],
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 13150.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-gated-process.json",
+    "model_sha256": "dcf9891a453d70e96d3d6a6a0f779448d023c633cfa6a185b4a7f82ade9de368",
+    "render_changed": true,
+    "rms_diff_dbfs": -28.36503222354384,
+    "runner_flags": [
+      "--gated-process"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.9754316264934678,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "no-settle": {
+    "audio_discriminating": false,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_diff": null,
+    "counted_as_control": false,
+    "degrades_vs_frozen_model": [],
+    "expected": "DEGENERATE (probe)",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 13151.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-no-settle.json",
+    "model_sha256": "85e2085f5f8841c3203416b538a2e41fa403581549b8f3ab81299fa8e427b165",
+    "render_changed": false,
+    "rms_diff_dbfs": -28.358892024974253,
+    "runner_flags": [
+      "--no-settle"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.981968769577001,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "overall_ok": true,
+  "per-note-retrigger": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 151,
+        "frozen_route_sums": [
+          80584985,
+          1144173
+        ],
+        "mutant_route_sums": [
+          571025,
+          528681
+        ]
+      },
+      "instance_output_blocks_differing": 4799,
+      "instance_output_max_abs_delta_q21": 4128951,
+      "route_sum_blocks_differing": 4798,
+      "route_sum_max_abs_delta_q21": 159747055
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "max",
+      "rms",
+      "spectral"
+    ],
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 27560.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-per-note-retrigger.json",
+    "model_sha256": "1056bb8488979b79d0d1bdda0fc2001780f9fa7237c7883810e096736b295fa5",
+    "render_changed": true,
+    "rms_diff_dbfs": -24.41195470354249,
+    "runner_flags": [
+      "--per-note-retrigger"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.7720838526606627,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "reso-zeroed": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 1,
+        "frozen_route_sums": [
+          571025,
+          528681
+        ],
+        "mutant_route_sums": [
+          571025,
+          0
+        ]
+      },
+      "instance_output_blocks_differing": 0,
+      "instance_output_max_abs_delta_q21": 0,
+      "route_sum_blocks_differing": 5099,
+      "route_sum_max_abs_delta_q21": 1572864
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "max",
+      "rms",
+      "spectral"
+    ],
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 16982.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-reso-zeroed.json",
+    "model_sha256": "ca332a4aeec92b3e810c5ddc267053bc9914054fce77c3dc3d65aa7455bd9885",
+    "render_changed": true,
+    "rms_diff_dbfs": -26.318564428388378,
+    "runner_flags": [
+      "--zero-dest",
+      "reso"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.9686914651449235,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "shared-instance": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 1,
+        "frozen_route_sums": [
+          571025,
+          528681
+        ],
+        "mutant_route_sums": [
+          571025,
+          6589
+        ]
+      },
+      "instance_output_blocks_differing": 5096,
+      "instance_output_max_abs_delta_q21": 4174739,
+      "route_sum_blocks_differing": 5095,
+      "route_sum_max_abs_delta_q21": 1043684
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "max",
+      "rms"
+    ],
+    "expected": "FAIL (uncounted)",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 13154.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-shared-instance.json",
+    "model_sha256": "2d0ef567f5107db57d6e002a110b2d3716fe006a160304052f36c50a8810d648",
+    "render_changed": true,
+    "rms_diff_dbfs": -27.891563682012116,
+    "runner_flags": [
+      "--shared-instance"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.982101724333345,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "slfo_broken_mutant.sv": {
+    "comparison": "FAIL",
+    "control_ok": true,
+    "counted_as_control": true,
+    "expected": "FAIL",
+    "first_failures": [
+      "block 901 slfo 1 output: model=2097065 rtl=2097064",
+      "block 901 route_out[1]: model=2097065 rtl=2097064",
+      "block 904 slfo 1 output: model=2096934 rtl=2096933"
+    ],
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/exactness-mutant-slfo_broken_mutant.sv.json",
+    "mismatches": 51,
+    "mutant_file": "../../../../../../../tmp/sxt041-regen/nc/rtl-mutants/slfo_broken_mutant.sv",
+    "mutation": "output round-half-up bias off by one shift",
+    "verdict": "FAIL"
+  },
+  "slfo_nodelay_mutant.sv": {
+    "comparison": "FAIL",
+    "control_ok": true,
+    "counted_as_control": true,
+    "expected": "FAIL",
+    "first_failures": [
+      "block 0 route_sum[0]: model=0 rtl=571025",
+      "block 0 route_sum[1]: model=0 rtl=528681",
+      "block 1 route_sum[0]: model=571025 rtl=1141985"
+    ],
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/exactness-mutant-slfo_nodelay_mutant.sv.json",
+    "mismatches": 42,
+    "mutant_file": "../../../../../../../tmp/sxt041-regen/nc/rtl-mutants/slfo_nodelay_mutant.sv",
+    "mutation": "the one-block scene-route latch dropped: the six instances are advanced BEFORE modulation_scene is applied, so the route consumes the current block's output",
+    "verdict": "FAIL"
+  },
+  "slfo_shared_mutant.sv": {
+    "comparison": "FAIL",
+    "control_ok": true,
+    "counted_as_control": true,
+    "expected": "FAIL",
+    "first_failures": [
+      "block 0 slfo 1 phase: model=178957 rtl=357914",
+      "block 0 slfo 1 output: model=2097152 rtl=8785",
+      "block 0 route_out[1]: model=2097152 rtl=8785"
+    ],
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/exactness-mutant-slfo_shared_mutant.sv.json",
+    "mismatches": 43,
+    "mutant_file": "../../../../../../../tmp/sxt041-regen/nc/rtl-mutants/slfo_shared_mutant.sv",
+    "mutation": "one shared state set for all six instances (per-instance scene-LFO state merged)",
+    "verdict": "FAIL"
+  },
+  "source-swap": {
+    "audio_discriminating": true,
+    "baseline_max_abs_diff_lsb": 14077.0,
+    "baseline_rms_diff_dbfs": -31.178988400949414,
+    "baseline_spectral_corr": 0.9776152091715476,
+    "control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5700,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 151,
+        "frozen_route_sums": [
+          571025,
+          528681
+        ],
+        "mutant_route_sums": [
+          0,
+          0
+        ]
+      },
+      "instance_output_blocks_differing": 0,
+      "instance_output_max_abs_delta_q21": 0,
+      "route_sum_blocks_differing": 5549,
+      "route_sum_max_abs_delta_q21": 216438430
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [
+      "max",
+      "rms",
+      "spectral"
+    ],
+    "expected": "FAIL",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 23426.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-source-swap.json",
+    "model_sha256": "ee5d713fa81b3edf1c2f8ec4815d4ee7da7148ae56b394173aaf1acbe4ce0049",
+    "render_changed": true,
+    "rms_diff_dbfs": -22.13490861282616,
+    "runner_flags": [
+      "--source-swap"
+    ],
+    "sequence": "seq-modwheel-v1",
+    "spectral_corr": 0.6587154492633356,
+    "verdict": "FAIL against proposed budgets"
+  },
+  "zero-delay-route": {
+    "audio_discriminating": false,
+    "baseline_max_abs_diff_lsb": 13151.0,
+    "baseline_rms_diff_dbfs": -28.358892024974253,
+    "baseline_spectral_corr": 0.981968769577001,
+    "control_ok": true,
+    "control_plane_control_ok": true,
+    "control_plane_diff": {
+      "blocks_compared": 5100,
+      "discriminating": true,
+      "first_differing_block": {
+        "block": 0,
+        "frozen_route_sums": [
+          0,
+          0
+        ],
+        "mutant_route_sums": [
+          571025,
+          528681
+        ]
+      },
+      "instance_output_blocks_differing": 0,
+      "instance_output_max_abs_delta_q21": 0,
+      "route_sum_blocks_differing": 5100,
+      "route_sum_max_abs_delta_q21": 1046414
+    },
+    "counted_as_control": true,
+    "degrades_vs_frozen_model": [],
+    "expected": "FAIL (uncounted)",
+    "fails_reference_budget": true,
+    "max_abs_diff_lsb": 13141.0,
+    "metrics_file": "../../../../../../../tmp/sxt041-regen/nc/audio-nc-zero-delay-route.json",
+    "model_sha256": "6cf4f0a0eed44bbe2848a71188d299b4473d8c0ec1b7c07d2f8677eb6d967efb",
+    "render_changed": true,
+    "rms_diff_dbfs": -28.39277750397782,
+    "runner_flags": [
+      "--zero-delay-route"
+    ],
+    "sequence": "sxt041-slfo-overlap-v1",
+    "spectral_corr": 0.9822754490407344,
+    "verdict": "FAIL against proposed budgets"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "claim_scope": "Schedule properties of a behavioral iverilog simulation proven integer-equal to the frozen model. NOT a synthesis, timing, area or power result; no gf180mcu or FPGA claim follows.",
+  "issue": "SXT-041",
+  "measured": {
+    "bank_advances": 6525,
+    "destination_classes": 2,
+    "mac_per_output_sample": 1.010671,
+    "note": "bank_advances == settle_blocks + blocks: the six instances advance unconditionally every block, which is the S5 scene-scope schedule",
+    "qmuls_per_advance": 30.4828,
+    "route_applications_per_block": 3,
+    "scene_attacks": 8,
+    "scene_releases": 8,
+    "scene_routes": 3,
+    "slfo_qmuls_per_render": 198900
+  },
+  "render": {
+    "blocks": 6150,
+    "frames": 196800,
+    "sample_rate": 48000,
+    "settle_blocks": 375
+  },
+  "sequence": "seq-notes-repeated-v1",
+  "state": {
+    "comparison_to_voice_lfo": "SXT-032 reported ~146 bits/instance x 6 instances PER VOICE. The scene LFOs are six instances PER SCENE, so the same per-instance state is paid once for the whole scene instead of once per concurrent voice - recorded, not offered as a budget claim.",
+    "instances_per_scene": 6,
+    "per_instance_bits": {
+      "env_phase": 29,
+      "env_releasestart": 30,
+      "env_state": 3,
+      "env_val": 30,
+      "flags_phase_init_ever_attacked": 2,
+      "output": 22,
+      "phase": 29,
+      "route_out_latch": 22
+    },
+    "per_instance_total_bits": 167,
+    "per_scene_total_bits": 1002
+  },
+  "sxt016_sxt015_divergence": {
+    "divergence": "SXT-016 has no scene-LFO probe row at this pin (the leaf's own cost note anticipated '[ESTIMATE] pending SXT-016 refinement'). The scheduler probe's per-event assumption names '8 envelope/LFO trigger writes, 12 routing ops'; the measured scene-LFO schedule issues 24 state writes per scene attack (six instances x phase/eg_state/env_val/env_phase) and 3 route applications per block. Recorded as the first concrete numbers for this kernel, NOT reconciled against the probe.",
+    "nearest_basis": {
+      "control_cycles_per_frame": 72,
+      "has_scene_lfo_row": false,
+      "id": null,
+      "path": "reports/sxt-016/probes/probe_scheduler__event_queue_and_control__a24__m32__onchip.json"
+    },
+    "scene_lfo_probe_row_exists": false
+  }
+}
