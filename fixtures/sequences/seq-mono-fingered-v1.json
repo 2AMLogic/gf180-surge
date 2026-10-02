@@ -1,0 +1,140 @@
+{
+  "coverage": [
+    "legato:up",
+    "legato:down",
+    "legato:mid-glide",
+    "legato:same-key",
+    "legato:release-handover",
+    "portamento:fingered",
+    "release:note-off"
+  ],
+  "description": "Overlapping (fingered) note stimulus for the mono playmode submodes: legato up (incl. one arriving mid-glide), note-off hand-over to still-held keys, a wide downward legato after the glide completed, a note-off for a key the voice already left, a legato down to a lower held key, and a same-key legato.",
+  "events": [
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 100
+    },
+    {
+      "channel": 0,
+      "note": 48,
+      "t": 4800,
+      "type": "note_on",
+      "velocity": 100
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 7200,
+      "type": "note_on",
+      "velocity": 100
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 14400,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 48,
+      "t": 19200,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 28800,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 72,
+      "t": 43200,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 52800,
+      "type": "note_on",
+      "velocity": 90
+    },
+    {
+      "channel": 0,
+      "note": 72,
+      "t": 57600,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 36,
+      "t": 67200,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 81600,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 67,
+      "t": 86400,
+      "type": "note_on",
+      "velocity": 70
+    },
+    {
+      "channel": 0,
+      "note": 67,
+      "t": 91200,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 100800,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 55,
+      "t": 115200,
+      "type": "note_on",
+      "velocity": 110
+    },
+    {
+      "channel": 0,
+      "note": 55,
+      "t": 120000,
+      "type": "note_on",
+      "velocity": 110
+    },
+    {
+      "channel": 0,
+      "note": 55,
+      "t": 124800,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-mono-fingered-v1",
+  "notes": "Added by SXT-043 (issue #77). The three seq-notes-* sequences are strictly non-overlapping and therefore cannot reach a legato transition at all; this sequence supplies the missing half of the submode's stimulus. No CC, aftertouch, pitch-bend or pedal events: every modulation source the carriers route from stays identically zero, as the fixture configuration declares.",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}

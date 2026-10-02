@@ -1,0 +1,14 @@
+{
+  "tb": "rtl/voice/tb_pm_mono_st_fp.sv",
+  "carrier": "digibass",
+  "sequence": "seq-mono-fingered-v1",
+  "pool": 8,
+  "verdict": "PASS",
+  "checked": {
+    "block_slot_checkpoints": 61200,
+    "fields": 979200
+  },
+  "mismatches": 0,
+  "first_failures": [],
+  "rtl_done_line": "DONE pm-qmuls=4770 voice-blocks=2742"
+}

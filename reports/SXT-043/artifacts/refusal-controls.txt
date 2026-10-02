@@ -1,0 +1,29 @@
+SXT-043 class-boundary refusal controls (model/voice/playmode/extract_inputs.py)
+===================================================================================
+Each of the four real, normalized-corpus carriers below has scene-A playmode
+set to a DIFFERENT member of the pinned `play_mode` enum (SurgeStorage.h),
+none of them `pm_mono_st_fp` (4). The extractor must REFUSE each one (exit 2)
+-- demonstrating the gate discriminates by the specific submode, not merely
+"not Poly". Run against the pinned oracle (`$ORACLE_PYTHON
+model/voice/playmode/extract_inputs.py --carrier <name> --out /tmp/x.json`):
+
+  attacky   (Attacky.fxp)    play_mode=0 Poly
+    -> REFUSED: "scene-A playmode is 0 (Poly); this leaf freezes ONLY
+       pm_mono_st_fp (4, ...)"
+
+  distbass1 (Dist Bass 1.fxp) play_mode=1 Mono
+    -> REFUSED: "scene-A playmode is 1 (Mono); this leaf freezes ONLY
+       pm_mono_st_fp (4, ...)"
+
+  behemoth  (Behemoth.fxp)   play_mode=2 Mono (Single Trigger)
+    -> REFUSED: "scene-A playmode is 2 (Mono (Single Trigger)); this leaf
+       freezes ONLY pm_mono_st_fp (4, ...)"
+
+  plain     (Plain.fxp)      play_mode=3 Mono (Fingered Portamento)
+    -> REFUSED: "scene-A playmode is 3 (Mono (Fingered Portamento)); this
+       leaf freezes ONLY pm_mono_st_fp (4, ...)"
+
+All four refuse (exit 2) as required, each citing the carrier's OWN actual
+playmode id -- a generic "not supported" message would not demonstrate
+per-submode discrimination the way these do. No output sidecar was written
+for any of the four (fail-closed before any file I/O).

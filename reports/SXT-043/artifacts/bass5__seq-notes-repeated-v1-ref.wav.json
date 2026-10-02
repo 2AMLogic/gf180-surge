@@ -1,0 +1,192 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "carrier": "bass5",
+ "declared_forcing": {},
+ "declared_overrides_applied": [
+  "mute_o1",
+  "mute_o2",
+  "mute_o3",
+  "mute_noise",
+  "mute_ring_12",
+  "mute_ring_23",
+  "fu0_off",
+  "fu1_off",
+  "fx_off",
+  "ws_off",
+  "lc_off",
+  "fbc_serial1",
+  "fm_off",
+  "scenemode_single",
+  "retrigger_on",
+  "drift_zero",
+  "route_slot_1",
+  "osc_sine",
+  "osc_shape_0",
+  "osc_fmmode_legacy",
+  "osc_unison_1",
+  "osc_lowcut_off",
+  "osc_highcut_off",
+  "osc_detune_zero",
+  "osc_octave_0",
+  "osc_pitch_0",
+  "osc_keytrack_on",
+  "scene_pitch_0",
+  "pfg_zero",
+  "modpin_zero"
+ ],
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "inputs": "model/voice/playmode/inputs/bass5.json",
+ "isolation_note": "declared fixture configuration (one Sine slot audible -- type/shape/FM-behavior/unison/lowcut/highcut/octave/pitch pinned; other mixer paths, both filter units, all FX, waveshaper, scene lowcut and FM routing off; fbc serial1; scene mode Single; retrigger on; drift 0; modulation depth zeroed for routes into pinned parameters) with the carrier's PLAYMODE and PORTAMENTO parameterization left intact -- a test configuration, never an adapted preset, never coverage",
+ "issue": "SXT-043",
+ "modulation_routes": {
+  "inert": [
+   {
+    "depth": 0.0964289978146553,
+    "dest": "A Volume",
+    "norm_depth": 0.0964289978146553,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": -7.714282989501953,
+    "dest": "A VCA Gain",
+    "norm_depth": -0.08035711199045181,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": -0.005357000045478344,
+    "dest": "A Feedback",
+    "norm_depth": -0.002678500022739172,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": 20.925012588500977,
+    "dest": "A Filter 1 Cutoff",
+    "norm_depth": 0.16096162796020508,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": -0.12857100367546082,
+    "dest": "A Filter 1 Resonance",
+    "norm_depth": -0.12857100367546082,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": -5.657145977020264,
+    "dest": "A Filter 2 Offset",
+    "norm_depth": -0.029464302584528923,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": -0.35892799496650696,
+    "dest": "A Filter 2 Resonance",
+    "norm_depth": -0.35892799496650696,
+    "scene": 0,
+    "scope": "scene",
+    "src": "Modwheel",
+    "why": "source 'Modwheel': no CC events in the fixture sequence"
+   },
+   {
+    "depth": 0.3678570091724396,
+    "dest": "A LFO 1 Amplitude",
+    "norm_depth": 0.3678570091724396,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "no LFO route reaches the declared audio slice"
+   },
+   {
+    "depth": 4.963637828826904,
+    "dest": "A LFO 1 Decay",
+    "norm_depth": 0.3818182945251465,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "no LFO route reaches the declared audio slice"
+   },
+   {
+    "depth": 16.53748893737793,
+    "dest": "A Filter 1 Cutoff",
+    "norm_depth": 0.12721145153045654,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Voice LFO 1",
+    "why": "filter unit 1 forced Off"
+   },
+   {
+    "depth": -24.42857551574707,
+    "dest": "A Filter 2 Offset",
+    "norm_depth": -0.127232164144516,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Voice LFO 1",
+    "why": "filter unit 2 forced Off"
+   }
+  ],
+  "live": [
+   {
+    "depth": -0.8742859959602356,
+    "dest": "A VCA Gain",
+    "norm_depth": -0.009107145480811596,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Keytrack",
+    "why": "destination in the declared live vocabulary"
+   }
+  ],
+  "pinned": []
+ },
+ "play_mode_rendered": 4,
+ "portamento_rendered": {
+  "options": {
+   "constantRate": false,
+   "curve": 0,
+   "glissando": false,
+   "retrigger": false
+  },
+  "value": -5.776785850524902
+ },
+ "preset_blob_sha1": "50fa48b69f35b22467f9fc663d31d2decd6ac8b6",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 6150,
+  "clipped_samples": 35112,
+  "frames": 196800,
+  "peak_abs_float": 2.233207941055298,
+  "repeat_hashes": [
+   "fe7e02b4ea958f9e9023f5d655099569c539984494cf1837f71e1967f4f1fc70",
+   "fe7e02b4ea958f9e9023f5d655099569c539984494cf1837f71e1967f4f1fc70"
+  ],
+  "repeats": 2,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-notes-repeated-v1",
+  "path": "fixtures/sequences/seq-notes-repeated-v1.json"
+ },
+ "wav": {
+  "path": "../../../../../../../tmp/pm-oracle-budgets/bass5/seq-notes-repeated-v1/bass5__seq-notes-repeated-v1-ref.wav",
+  "sha256": "3f4c22f827525c93f7d314a34e6b1c9f1523e52284c8f1112b52230b5a6e9ab9"
+ }
+}
