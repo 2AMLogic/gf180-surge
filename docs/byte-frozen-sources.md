@@ -89,9 +89,18 @@ form too.
 
 These scripts stamp a sha256 of their own bytes into the records they produce.
 The stamp says *which bytes produced this record*, so superseded values are
-expected. Editing one invalidates no record — nothing re-derives these stamps.
-What it can cost is *resolvability*: once the digest no longer names any file in
-the tree, only a re-render under the pinned oracle restores it.
+expected: of the nine scripts below, **seven** have current bytes that match
+no committed stamp (`current_bytes_recorded: false`). Two are exceptions:
+`fixtures/render_fixture.py`, re-rendered under the pinned oracle by #126 and
+again by #136, and `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75),
+whose current bytes are hashed into the reference sidecars it produced
+because that leaf's records were rendered from the file as committed — both
+detailed below. That flag is bookkeeping about resolvability, **not** a live
+pin: no test asserts byte-equality for anything in this table, and an edit to
+any of the nine still invalidates no record.
+Editing one therefore invalidates no record. What it does cost is resolvability:
+the record's provenance digest no longer names any file in the tree, and only a
+re-render under the pinned oracle restores that.
 
 **One of the eight is now resolvable again (#126).** `fixtures/render_fixture.py`
 reads `current_bytes_recorded: true`: the SXT-028f Reverb 2 fixture bundles were
@@ -104,13 +113,16 @@ This is exactly the re-render case flagged under
 — it is **not** a live pin (nothing re-derives the stamp, and the entry still
 carries no `sha256` field), but its lint disposition was revisited rather than
 assumed, and the #269 "resolvability is already spent" argument no longer applies
-to that one entry. The other seven remain `false`.
+to that one entry. One of the other eight is a second, independent exception —
+`fixtures/render_slfo_fixture.py`, added by SXT-041 (#75); see its own note
+below. The remaining six stay `false`.
 
 | Script | Stamped field | Lint-finding disposition (#269, revisited for row 1 in #126) |
 |---|---|---|
 | `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until **both** the SXT-028f (#126) and the SXT-028e-sse (#136) bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
 | `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `fixtures/render_mw_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
+| `fixtures/render_slfo_fixture.py` | `script_sha256` | cleanable — no finding as of SXT-041 (#75) |
 | `tools/ablate_fx.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/ablation_delta.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/render_lp12_reference.py` | `script_sha256` | cleanable — the two F401 `struct`/`zlib` findings were cleaned in #269 |
@@ -144,6 +156,16 @@ edit there *does* spend something. The decision stands — it is still ordinary
 code and still not a live pin — but clean it in a change that either re-renders
 the SXT-028f bundles or says plainly that the stamp stopped resolving. This is
 the "does not survive a re-render" clause below, applied rather than deferred.
+
+**The ninth entry inherits the same disposition (SXT-041, #75).**
+`fixtures/render_slfo_fixture.py` is ordinary code on the same terms: a lint
+finding in it is cleanable with no registry ceremony and no leaf re-run. It
+differs from the #269 eight only in that its stamp is currently *resolvable*
+(`current_bytes_recorded: true`), so an edit to it does spend that
+resolvability — which costs no committed record its validity, and is restored
+by re-rendering the SXT-041 references under the pinned oracle. The counts
+above ("these eight") are deliberately left as #269's scope; this decision is
+stated here rather than by silently renumbering someone else's ruling.
 
 What this decision does **not** license:
 
