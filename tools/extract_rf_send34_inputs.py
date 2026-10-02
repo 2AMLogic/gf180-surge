@@ -32,15 +32,23 @@ For each carrier preset this tool:
      blob sha1, stored revision, scene mode, fx_bypass, fx_disable, the
      non-off FX slot count and the non-off FX type set. Any disagreement is a
      REFUSAL, never a silently-preferred source;
-  6. attempts a LIVE surgepy extraction of the per-slot algorithm's own
-     parameter values, the loader-default send levels for buses 3/4 and the
-     engine-side determinism gate (per-scene drift == 0) -- all needed only
-     for an eventual concrete-occupant reference render, which is out of THIS
-     leaf's routing-form scope. If the pinned oracle build (surgepy) is
-     unavailable in the current environment, this step REFUSES explicitly
-     (never silently drops the preset, never fabricates a value) and the
-     routing-verification checks above still proceed and are still written to
-     the output record.
+  6. runs a LIVE surgepy leg (#155 item 1a) against the pinned engine: it
+     verifies the engine version really carries the pinned commit, re-verifies
+     the `.fxp` blob sha1 inside the pinned checkout, `loadPatch()`es the
+     preset, extracts the per-slot algorithm's own parameter values and
+     `return_level` for send3/send4 from the NORMALIZED (post-loader) state,
+     cross-checks every one of them against the committed graph, and runs the
+     engine-side per-scene drift determinism gate (drift == 0 in every voicing
+     scene, recorded as a PASS/FAIL verdict). It also re-verifies the SHAPE of
+     the SXT-011 exposure gap live -- the binding still exposes exactly two
+     per-scene send levels -- which until now was documented only. It
+     deliberately does NOT probe the loader-default send LEVEL for buses 3/4:
+     that probe is the SXT-017 data-gap decision's own input (#12) and stays
+     BLOCKED. If the pinned oracle is unavailable in the current environment
+     the leg is recorded NOT_RUN (never silently dropped, never fabricated as
+     a pass) and the routing-verification checks above still proceed and are
+     still written to the output record. A live engine that CONTRADICTS the
+     committed artifacts is a REFUSAL, not a downgrade to "unavailable".
 
 CARRIER SET. The first three carriers are the B4-scope presets named by the
 issue (reports/sxt-028/leaves/SXT-028l.json `carriers.top_presets`). Unlike
@@ -65,7 +73,15 @@ Writes model/effects/fx_inputs/rf-rf-send34-<slug>.json plus
 reports/SXT-028l/artifacts/{extract-refusals.txt, corpus-occupancy.json,
 send-level-gap.json} (the refusal transcript is created even when empty,
 matching the SXT-023/028c/028d/028h/028j refusal-log convention -- absence of
-oracle coverage is recorded, never silently dropped).
+oracle coverage is recorded, never silently dropped), and -- only when the
+live leg actually ran -- reports/SXT-028l/artifacts/live-oracle-extraction.json.
+Exit codes: 0 clean; 1 a carrier record could not be produced (see the refusal
+transcript); 3 the live leg ran and recorded a determinism-gate FAIL (the
+records are complete, but at least one carrier is not render-eligible).
+That file is an oracle host's evidence, so a run in an environment WITHOUT the
+oracle leaves it untouched instead of overwriting it with its own NOT_RUN
+measurement; the absence is recorded per carrier and by
+tools/rf_send34_oracle_status.py.
 
 Original to this repository (Apache-2.0); imports the GPL engine at runtime
 only, and only for the item-6 attempt.
@@ -74,6 +90,7 @@ only, and only for the item-6 attempt.
 import csv
 import json
 import os
+import platform
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -94,6 +111,14 @@ FXSLOT_SEND3, FXSLOT_SEND4 = 12, 13
 # corpus by `send_level_gap_scan()`.
 N_SEND_SLOTS = 4
 N_SEND_LEVELS_EXPOSED = 2
+
+# Live-oracle leg (#155 item 1a). The pin is the single source of truth for
+# which engine the live leg is allowed to talk to (oracle/manifest.json).
+ENGINE_PIN = "58914e59c608ed4384ba6002e44c3465c58b2e71"
+SAMPLE_RATE = 48000.0
+# graphs.jsonl stores float parameter values rounded to 6 decimals; the same
+# tolerance the landed SXT-028b extractor uses for its surgepy cross-check.
+GRAPHS_VALUE_TOL = 5e-6
 
 SEND_LEVEL_GAP_REASON = (
     "SXT-011 exposure gap: the engine has 4 send buses but a .fxp stores only "
@@ -150,6 +175,7 @@ ARTIFACTS = os.path.join(REPO, "reports", "SXT-028l", "artifacts")
 REFUSALS = os.path.join(ARTIFACTS, "extract-refusals.txt")
 OCCUPANCY = os.path.join(ARTIFACTS, "corpus-occupancy.json")
 GAP = os.path.join(ARTIFACTS, "send-level-gap.json")
+LIVE_LEG = os.path.join(ARTIFACTS, "live-oracle-extraction.json")
 
 
 def census_row(rel_path):
@@ -244,31 +270,188 @@ def send_level_check(graph):
     }
 
 
-def try_live_oracle_extraction(rel_path):
-    """Attempt a live surgepy extraction of the per-slot algorithm's own
-    parameters, the loader-default send levels for buses 3/4, and the
-    engine-side determinism gate (per-scene drift == 0). Returns
-    (ok, detail_or_reason). This is the ONLY step that needs the built oracle;
-    nothing above depends on it."""
+def _param_record(s, p, graphs_value):
+    """One live parameter row, cross-checked against the committed graph.
+
+    `graphs.jsonl` stores int/bool params as ints and float params rounded to
+    6 decimals (tools/export_normalized_graphs.py `val`/`valf`), so the
+    comparison is made in the graph's own representation. A disagreement is a
+    REFUSAL: the committed corpus artifact and the live pinned engine must not
+    be allowed to drift silently."""
+    vtype = s.getParamValType(p)
+    raw = float(s.getParamVal(p))
+    live = int(round(raw)) if vtype in ("int", "bool") else round(raw, 6)
+    if vtype in ("int", "bool"):
+        agrees = int(live) == int(graphs_value)
+    else:
+        agrees = abs(float(live) - float(graphs_value)) <= GRAPHS_VALUE_TOL
+    if not agrees:
+        raise Refuse(f"live surgepy value for {p.getName()} ({live}) "
+                     f"disagrees with corpus/normalized/graphs.jsonl "
+                     f"({graphs_value}); refusing rather than preferring one "
+                     f"artifact over the pinned engine")
+    return {"name": p.getName(), "value": live, "value_type": vtype,
+            "display": s.getParamDisplay(p),
+            "graphs_value": graphs_value}
+
+
+def live_oracle_extraction(carrier, graph):
+    """LIVE surgepy leg (#155 item 1a): extract the per-slot algorithm's own
+    parameter values for send3/send4 from the pinned engine's normalized
+    (post-`loadPatch`) state, and run the engine-side per-scene drift
+    determinism gate.
+
+    Returns `(ok, summary_string, record_or_None)`:
+      * `ok` False with a reason string when the pinned oracle is not
+        installed in this environment -- the leg is then NOT_RUN and the
+        oracle-free routing checks above still stand on their own;
+      * `ok` True with a record when the leg actually ran. The record carries
+        its own `determinism_gate.status`, which is PASS only when every
+        voicing scene really reported drift 0.0 -- a nonzero drift is recorded
+        as FAIL, never absorbed.
+
+    SCOPE. This is an ENGINE-SIDE extraction and determinism gate. It is NOT a
+    model-vs-pinned-engine agreement number (leg 1c, which needs reference
+    fixtures and is BLOCKED on #12) and NOT an RTL claim. It deliberately does
+    NOT probe the loader-default send levels for buses 3/4: that probe is the
+    SXT-017 data-gap decision's own input (#12) and stays BLOCKED. What it DOES
+    check live is the *shape* of the gap -- that the binding still exposes
+    exactly two per-scene send levels -- which until now was only documented.
+
+    A contradiction between the live engine and the committed corpus artifacts
+    (blob sha1, fx type vector, per-slot parameter values, return level, send
+    level count) is a REFUSAL, never a downgrade to "oracle unavailable"."""
+    rel = carrier["path"]
     try:
         import oracle_common as oc  # noqa: PLC0415
     except Exception as e:  # pragma: no cover - environment-dependent
-        return False, f"oracle_common import failed: {e}"
+        return False, f"oracle_common import failed: {e}", None
     try:
         surgepy = oc.import_surgepy()
     except Exception as e:
-        return False, f"surgepy unavailable (oracle not built in this " \
-                      f"environment): {e}"
-    # surgepy present: per-slot parameter extraction, the per-scene drift
-    # determinism gate and the send-level loader-default probe would run here.
-    # The first is algorithm-leaf scope; the last is the SXT-017 data-gap
-    # decision's input (#12), not this leaf's to settle. Recorded as available
-    # but not exercised by this routing-form leaf.
-    return True, f"surgepy present ({surgepy.__file__}); per-slot parameter " \
-                 f"extraction, the engine-side drift gate and the " \
-                 f"loader-default send-level probe for buses 3/4 are NOT " \
-                 f"exercised here (algorithm-leaf scope and SXT-017 #12 " \
-                 f"scope respectively)"
+        return False, (f"surgepy unavailable (pinned oracle not built or not "
+                       f"installed in this environment): {e}"), None
+    oc.apply_engine_env()
+
+    version = surgepy.getVersion()
+    if ENGINE_PIN[:9] not in version:
+        raise Refuse(f"live surgepy reports engine version {version!r}, which "
+                     f"does not carry the pinned commit {ENGINE_PIN[:9]} "
+                     f"(oracle/manifest.json); refusing to extract against an "
+                     f"unpinned engine")
+
+    abs_path = os.path.join(oc.engine_dir(), rel)
+    if not os.path.exists(abs_path):
+        return False, (f"pinned engine checkout {oc.engine_dir()} does not "
+                       f"carry {rel}"), None
+    on_disk_sha1 = oc.git_blob_sha1(abs_path)
+    if on_disk_sha1 != carrier["declared_sha1"]:
+        raise Refuse(f"pinned-checkout blob sha1 mismatch for {rel}: "
+                     f"on disk={on_disk_sha1} "
+                     f"declared={carrier['declared_sha1']}")
+
+    s = surgepy.createSurge(SAMPLE_RATE)
+    if not s.loadPatch(abs_path):
+        raise Refuse(f"loadPatch failed in the pinned engine: {rel}")
+    patch = s.getPatch()
+
+    # --- engine-side per-scene drift determinism gate -------------------
+    # Scene `drift` adds per-voice randomness, so a nonzero value makes any
+    # render of this carrier non-repeatable. Recorded as a verdict (PASS/FAIL)
+    # rather than a refusal: it bounds the RENDER legs (1b/1c), not the
+    # routing metadata above.
+    scene_mode = int(round(s.getParamVal(patch["scenemode"])))
+    scene_active = int(round(s.getParamVal(patch["scene_active"])))
+    voicing = [scene_active] if scene_mode == 0 else [0, 1]
+    drifts = {"AB"[i]: round(float(s.getParamVal(patch["scene"][i]["drift"])), 9)
+              for i in voicing}
+    gate_ok = all(v == 0.0 for v in drifts.values())
+
+    # --- live re-verification of the SXT-011 send-level exposure SHAPE ---
+    exposed = [len(patch["scene"][i]["send_level"]) for i in range(2)]
+    if exposed != [N_SEND_LEVELS_EXPOSED] * 2:
+        raise Refuse(f"the live surgepy binding exposes {exposed} per-scene "
+                     f"send levels, not {N_SEND_LEVELS_EXPOSED}: the SXT-011 "
+                     f"exposure gap this leaf's contract is built on has "
+                     f"changed -- refusing rather than reinterpreting")
+
+    # --- fx type vector: live engine vs committed graph -----------------
+    live_types = [int(round(s.getParamVal(patch["fx"][i]["type"])))
+                  for i in range(len(graph["g"]["fx"]))]
+    graph_types = [fx.get("t", 0) for fx in graph["g"]["fx"]]
+    if live_types != graph_types:
+        raise Refuse(f"live fx type vector disagrees with graphs.jsonl for "
+                     f"{rel}: engine={live_types} graphs={graph_types}")
+
+    # --- per-slot algorithm parameters for THIS leaf's two slots --------
+    slots = {}
+    for role, slot in (("send3", FXSLOT_SEND3), ("send4", FXSLOT_SEND4)):
+        gfx = slot_entry(graph, role)
+        fx = patch["fx"][slot]
+        occupied = bool(gfx.get("on", 0))
+        rec = {"slot": slot,
+               "occupied": occupied,
+               "type_id": int(round(s.getParamVal(fx["type"]))),
+               "type_display": s.getParamDisplay(fx["type"])}
+        if not occupied:
+            rec["params"] = None
+            rec["return_level"] = None
+            rec["note"] = ("slot is off in the normalized state; the engine "
+                           "exposes no algorithm parameters to extract")
+            slots[role] = rec
+            continue
+        gp = gfx.get("p")
+        if gp is None or len(gp) != len(fx["p"]):
+            raise Refuse(f"graphs.jsonl {role} parameter vector has "
+                         f"{None if gp is None else len(gp)} entries, engine "
+                         f"exposes {len(fx['p'])}")
+        rec["params"] = [_param_record(s, p, gp[j])
+                         for j, p in enumerate(fx["p"])]
+        rl_live = round(float(s.getParamVal(fx["return_level"])), 6)
+        if abs(rl_live - float(gfx["rl"])) > GRAPHS_VALUE_TOL:
+            raise Refuse(f"live {role} return_level {rl_live} disagrees with "
+                         f"graphs.jsonl {gfx['rl']}")
+        rec["return_level"] = rl_live
+        slots[role] = rec
+
+    record = {
+        "ran": True,
+        "engine": {"pin": ENGINE_PIN, "surgepy_version": version,
+                   "surgepy_module": surgepy.__file__,
+                   "sample_rate": s.getSampleRate(),
+                   "block_size": s.getBlockSize(),
+                   "oracle_surge_dir": oc.engine_dir()},
+        "preset_blob_sha1_on_disk": on_disk_sha1,
+        "determinism_gate": {
+            "what": "engine-side per-scene drift must be 0 in every voicing "
+                    "scene, or no render of this carrier is repeatable",
+            "scene_mode_id": scene_mode,
+            "scene_active": scene_active,
+            "voicing_scenes": ["AB"[i] for i in voicing],
+            "drift_per_voicing_scene": drifts,
+            "status": "PASS" if gate_ok else "FAIL",
+        },
+        "send_level_exposure_recheck": {
+            "what": "live re-verification of the SXT-011 exposure gap's SHAPE "
+                    "against the binding itself (previously documented only)",
+            "levels_exposed_per_scene": exposed,
+            "buses_3_4_value_read": False,
+            "loader_default_probe": "BLOCKED (#12) -- deliberately not probed "
+                                    "here; the default's semantics are the "
+                                    "SXT-017 decision's own input",
+        },
+        "fx_type_vector_matches_graphs": True,
+        "slots": slots,
+        "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a "
+                       "model-vs-pinned-engine agreement number (leg 1c, "
+                       "BLOCKED on #12) and NOT an RTL claim.",
+    }
+    summary = (f"LIVE surgepy leg RAN against {version}: per-slot algorithm "
+               f"parameters extracted for send3/send4 and cross-checked "
+               f"against graphs.jsonl (drift gate "
+               f"{record['determinism_gate']['status']}); the loader-default "
+               f"send-level probe for buses 3/4 stays BLOCKED on #12")
+    return True, summary, record
 
 
 def extract_one(carrier):
@@ -299,7 +482,8 @@ def extract_one(carrier):
     scene_mode_name = graph["g"].get("smn")
     scene_b_instantiated = scene_mode_name != "Single"
 
-    oracle_ok, oracle_detail = try_live_oracle_extraction(rel)
+    oracle_ok, oracle_detail, oracle_live = live_oracle_extraction(carrier,
+                                                                   graph)
 
     def slot_doc(fx, bit):
         return {"occupied": bool(fx.get("on", 0)),
@@ -366,15 +550,20 @@ def extract_one(carrier):
             "routing_metadata_verified": True,
             "complete_wet_render_possible": False,
             "complete_wet_render_reason":
-                "per-slot algorithm parameter extraction and any wet-audio "
-                "render require the pinned oracle (surgepy); additionally, "
-                "fixture freezing for THIS routing form is gated on the "
-                "SXT-017 send-level data-gap decision (#12). This leaf's own "
-                "routing/scheduling claims depend on neither -- see "
-                "oracle_extraction and send_level_gap",
+                "a wet-audio render needs BOTH the pinned oracle (surgepy, "
+                "for the per-slot algorithm parameters -- see "
+                "oracle_extraction) AND a per-scene send level for buses 3/4, "
+                "which no artifact carries: fixture freezing for THIS routing "
+                "form is gated on the SXT-017 send-level data-gap decision "
+                "(#12), so this stays False even on an oracle host. This "
+                "leaf's own routing/scheduling claims depend on neither -- "
+                "see oracle_extraction and send_level_gap",
         },
+        # `ok` False means the LIVE leg was NOT_RUN in this environment -- never
+        # a pass. `live` carries the leg's own record when it did run.
         "oracle_extraction": {"attempted": True, "ok": oracle_ok,
-                              "detail": oracle_detail},
+                              "detail": oracle_detail,
+                              "live": oracle_live},
     }
     return doc
 
@@ -478,11 +667,135 @@ def send_level_gap_scan():
     }
 
 
+def live_leg_summary(docs):
+    """Roll the per-carrier LIVE legs up into one record of the leg itself
+    (#155 item 1a).
+
+    TWO verdicts are kept separate, and neither is inferred from the other:
+
+      * `parameter_extraction.status` -- did the live per-slot extraction run
+        for every carrier and agree with the committed corpus artifacts? PASS
+        only when it ran for ALL of them (a partial run is NOT_RUN coverage,
+        never a pass).
+      * `determinism_gate.status` -- is every carrier's per-scene drift 0, so
+        that a reference render of it could be repeatable at all? A carrier
+        with nonzero drift FAILS, is listed by name, and is marked
+        `render_eligible: false`. The gate bounds the RENDER legs (1b/1c);
+        it does not touch the oracle-free routing metadata and it does not
+        touch the RTL-vs-frozen-model claim.
+
+    COVERAGE (how many carriers the leg ran for) is reported separately from
+    both verdicts, and NOT_RUN is recorded rather than a pass when the oracle
+    is absent."""
+    ran = {slug: d for slug, d in docs.items()
+           if d["oracle_extraction"]["ok"]}
+    not_run = {slug: d["oracle_extraction"]["detail"]
+               for slug, d in docs.items()
+               if not d["oracle_extraction"]["ok"]}
+    gates = {slug: d["oracle_extraction"]["live"]["determinism_gate"]["status"]
+             for slug, d in ran.items()}
+    drifts = {slug: d["oracle_extraction"]["live"]["determinism_gate"]
+              ["drift_per_voicing_scene"] for slug, d in ran.items()}
+    gate_failures = sorted(s for s, v in gates.items() if v != "PASS")
+    if not ran:
+        extraction_status = "NOT_RUN"
+    elif len(ran) != len(docs):
+        extraction_status = "NOT_RUN"
+    else:
+        extraction_status = "PASS"
+    if not ran:
+        gate_status = "NOT_RUN"
+    elif gate_failures:
+        gate_status = "FAIL"
+    else:
+        gate_status = "PASS"
+    status = "NOT_RUN" if not ran else (
+        "FAIL" if (extraction_status != "PASS" or gate_status != "PASS")
+        else "PASS")
+    engines = sorted({json.dumps(d["oracle_extraction"]["live"]["engine"],
+                                 sort_keys=True) for d in ran.values()})
+    return {
+        "schema_version": 2,
+        "leaf": "SXT-028l",
+        "work_item": "#155 item 1a (oracle-host reference leg: LIVE surgepy "
+                     "per-slot parameter extraction + the engine-side "
+                     "per-scene drift determinism gate)",
+        "claim_scope": "ENGINE-SIDE extraction and determinism only. This "
+                       "record establishes NO model-vs-pinned-engine "
+                       "agreement number (leg 1c; BLOCKED on #12), NO "
+                       "RTL-vs-frozen-model claim (that is "
+                       "reports/SXT-028l/rtl-exactness.json, which needs no "
+                       "oracle), NO preset-support claim and NO "
+                       "musical-quality claim.",
+        "status": status,
+        "status_note": "`status` is the WORST of the two independent verdicts "
+                       "below; read them separately. It is deliberately not a "
+                       "single pass/fail judgement on the leaf.",
+        "parameter_extraction": {
+            "what": "per-slot algorithm parameter values + return_level for "
+                    "send3/send4, read from the pinned engine's normalized "
+                    "(post-loadPatch) state and cross-checked against "
+                    "corpus/normalized/graphs.jsonl",
+            "status": extraction_status,
+            "carriers_extracted": len(ran),
+            "carriers_total": len(docs),
+        },
+        "determinism_gate": {
+            "what": "per-scene `drift` must be 0 in every voicing scene, or no "
+                    "reference render of that carrier is repeatable (the "
+                    "harness never seeds engine RNG -- oracle/manifest.json)",
+            "status": gate_status,
+            "carriers_passing": sorted(s for s, v in gates.items()
+                                       if v == "PASS"),
+            "carriers_failing": gate_failures,
+            "drift_per_carrier": drifts,
+            "bounds": "the RENDER legs (1b/1c) only. A carrier that fails this "
+                      "gate cannot carry a frozen reference fixture even once "
+                      "#12 clears; it is NOT excluded from the routing "
+                      "metadata above and the RTL-vs-frozen-model exactness "
+                      "claim is unaffected.",
+            "routed_to": "#322 (restore render coverage of the same-class "
+                         "dual-instance shape with a drift-0 carrier, or "
+                         "record a bounded coverage gap)",
+        },
+        "render_eligible_once_12_clears": {
+            slug: gates[slug] == "PASS" for slug in sorted(ran)},
+        "host": {"platform": platform.platform(),
+                 "machine": platform.machine(),
+                 "python": platform.python_version()},
+        "engines_observed": [json.loads(e) for e in engines],
+        "coverage": {"carriers_total": len(docs),
+                     "carriers_leg_ran": len(ran),
+                     "carriers_leg_not_run": not_run},
+        "determinism_gate_per_carrier": gates,
+        "send_level_exposure_recheck": [
+            json.loads(e) for e in sorted(
+                {json.dumps(d["oracle_extraction"]["live"]
+                            ["send_level_exposure_recheck"], sort_keys=True)
+                 for d in ran.values()})],
+        "legs_still_not_run_or_blocked": {
+            "render": "BLOCKED (#12) -- new reference fixtures for this "
+                      "routing form need a per-scene send level for buses 3/4",
+            "model-render": "BLOCKED (#12) -- same gate: no fixture bus to "
+                            "drive the frozen model with",
+            "reference-compare": "BLOCKED (#12) -- no reference fixture, so no "
+                                 "model-vs-engine agreement number",
+            "send-level-default-probe": "BLOCKED (#12) -- the loader-default "
+                                        "semantics are the SXT-017 decision's "
+                                        "own input and are deliberately not "
+                                        "probed here",
+        },
+        "per_carrier": {slug: d["oracle_extraction"]["live"]
+                        for slug, d in sorted(ran.items())},
+    }
+
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(ARTIFACTS, exist_ok=True)
     refusal_lines = []
     written = []
+    docs = {}
     for carrier in CARRIERS:
         try:
             doc = extract_one(carrier)
@@ -495,7 +808,37 @@ def main():
             json.dump(doc, f, indent=2, sort_keys=True)
             f.write("\n")
         written.append(out_path)
+        docs[carrier["slug"]] = doc
         print(f"wrote {out_path}")
+
+    live = live_leg_summary(docs) if docs else None
+    if live is None:
+        print("live leg: NOT_RUN (no carrier record was produced at all)")
+    elif live["status"] == "NOT_RUN":
+        # Do NOT overwrite a committed live-leg record with this environment's
+        # NOT_RUN measurement: that record is an oracle host's evidence and a
+        # NOT_RUN here is not a reason to delete it. The absence of the oracle
+        # here is already recorded per carrier (oracle_extraction.ok: false)
+        # and by tools/rf_send34_oracle_status.py.
+        print(f"live leg: NOT_RUN in this environment (oracle absent); left "
+              f"{LIVE_LEG} untouched")
+        for slug, why in live["coverage"]["carriers_leg_not_run"].items():
+            print(f"  {slug}: NOT_RUN: {why}")
+    else:
+        with open(LIVE_LEG, "w") as f:
+            json.dump(live, f, indent=2, sort_keys=True)
+            f.write("\n")
+        print(f"wrote {LIVE_LEG}")
+        print(f"live leg: parameter extraction "
+              f"{live['parameter_extraction']['status']} "
+              f"({live['parameter_extraction']['carriers_extracted']}/"
+              f"{live['parameter_extraction']['carriers_total']} carriers); "
+              f"per-scene drift determinism gate "
+              f"{live['determinism_gate']['status']}")
+        for slug in live["determinism_gate"]["carriers_failing"]:
+            print(f"  GATE FAIL {slug}: drift "
+                  f"{live['determinism_gate']['drift_per_carrier'][slug]} != 0 "
+                  f"-- not render-eligible (bounds legs 1b/1c only)")
 
     with open(OCCUPANCY, "w") as f:
         json.dump(corpus_occupancy(), f, indent=2, sort_keys=True)
@@ -511,7 +854,17 @@ def main():
         f.write("\n".join(refusal_lines) + ("\n" if refusal_lines else ""))
     for line in refusal_lines:
         print(line)
-    return 0 if len(written) == len(CARRIERS) else 1
+    if len(written) != len(CARRIERS):
+        return 1
+    # Exit 3: the live leg RAN and recorded a determinism-gate FAIL. A distinct
+    # code, because this is neither a clean run (0) nor a failure to produce the
+    # records (1): the carrier metadata is complete and correct, and one or more
+    # carriers are simply not render-eligible. It must stay visible rather than
+    # be absorbed into exit 0 -- the fix is to record the finding (and to pick a
+    # different render carrier), never to drop the gate.
+    if live is not None and live["determinism_gate"]["status"] == "FAIL":
+        return 3
+    return 0
 
 
 if __name__ == "__main__":

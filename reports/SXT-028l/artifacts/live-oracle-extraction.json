@@ -1,0 +1,1278 @@
+{
+  "claim_scope": "ENGINE-SIDE extraction and determinism only. This record establishes NO model-vs-pinned-engine agreement number (leg 1c; BLOCKED on #12), NO RTL-vs-frozen-model claim (that is reports/SXT-028l/rtl-exactness.json, which needs no oracle), NO preset-support claim and NO musical-quality claim.",
+  "coverage": {
+    "carriers_leg_not_run": {},
+    "carriers_leg_ran": 6,
+    "carriers_total": 6
+  },
+  "determinism_gate": {
+    "bounds": "the RENDER legs (1b/1c) only. A carrier that fails this gate cannot carry a frozen reference fixture even once #12 clears; it is NOT excluded from the routing metadata above and the RTL-vs-frozen-model exactness claim is unaffected.",
+    "carriers_failing": [
+      "strynth"
+    ],
+    "carriers_passing": [
+      "batbrass",
+      "closeout-sale",
+      "dystopia",
+      "random-bass-fx",
+      "trance"
+    ],
+    "drift_per_carrier": {
+      "batbrass": {
+        "A": 0.0
+      },
+      "closeout-sale": {
+        "A": 0.0
+      },
+      "dystopia": {
+        "A": 0.0
+      },
+      "random-bass-fx": {
+        "A": 0.0
+      },
+      "strynth": {
+        "A": 0.131249994,
+        "B": 0.131249994
+      },
+      "trance": {
+        "A": 0.0
+      }
+    },
+    "routed_to": "#322 (restore render coverage of the same-class dual-instance shape with a drift-0 carrier, or record a bounded coverage gap)",
+    "status": "FAIL",
+    "what": "per-scene `drift` must be 0 in every voicing scene, or no reference render of that carrier is repeatable (the harness never seeds engine RNG -- oracle/manifest.json)"
+  },
+  "determinism_gate_per_carrier": {
+    "batbrass": "PASS",
+    "closeout-sale": "PASS",
+    "dystopia": "PASS",
+    "random-bass-fx": "PASS",
+    "strynth": "FAIL",
+    "trance": "PASS"
+  },
+  "engines_observed": [
+    {
+      "block_size": 32,
+      "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+      "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "sample_rate": 48000.0,
+      "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+      "surgepy_version": "1.4.HEAD.58914e59c"
+    }
+  ],
+  "host": {
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-1010-aws-x86_64-with-glibc2.39",
+    "python": "3.11.16"
+  },
+  "leaf": "SXT-028l",
+  "legs_still_not_run_or_blocked": {
+    "model-render": "BLOCKED (#12) -- same gate: no fixture bus to drive the frozen model with",
+    "reference-compare": "BLOCKED (#12) -- no reference fixture, so no model-vs-engine agreement number",
+    "render": "BLOCKED (#12) -- new reference fixtures for this routing form need a per-scene send level for buses 3/4",
+    "send-level-default-probe": "BLOCKED (#12) -- the loader-default semantics are the SXT-017 decision's own input and are deliberately not probed here"
+  },
+  "parameter_extraction": {
+    "carriers_extracted": 6,
+    "carriers_total": 6,
+    "status": "PASS",
+    "what": "per-slot algorithm parameter values + return_level for send3/send4, read from the pinned engine's normalized (post-loadPatch) state and cross-checked against corpus/normalized/graphs.jsonl"
+  },
+  "per_carrier": {
+    "batbrass": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "e6b6f04bea58347fe3b999bc8ba19a0f7a36febf",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX S3 Gain",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "548.56 Hz",
+              "graphs_value": 3.81786,
+              "name": "FX S3 Frequency",
+              "value": 3.81786,
+              "value_type": "float"
+            },
+            {
+              "display": "1.94 octaves",
+              "graphs_value": 1.944644,
+              "name": "FX S3 Bandwidth",
+              "value": 1.944644,
+              "value_type": "float"
+            },
+            {
+              "display": "3303.31 Hz",
+              "graphs_value": 34.900024,
+              "name": "FX S3 High Cut",
+              "value": 34.900024,
+              "value_type": "float"
+            },
+            {
+              "display": "-6.93 dB",
+              "graphs_value": -6.925709,
+              "name": "FX S3 Drive",
+              "value": -6.925709,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Feedback",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "9.77 dB",
+              "graphs_value": 9.771435,
+              "name": "FX S3 Gain",
+              "value": 9.771435,
+              "value_type": "float"
+            },
+            {
+              "display": "13448.33 Hz",
+              "graphs_value": 59.205353,
+              "name": "FX S3 Frequency",
+              "value": 59.205353,
+              "value_type": "float"
+            },
+            {
+              "display": "2.03 octaves",
+              "graphs_value": 2.03125,
+              "name": "FX S3 Bandwidth",
+              "value": 2.03125,
+              "value_type": "float"
+            },
+            {
+              "display": "25087.71 Hz",
+              "graphs_value": 70.0,
+              "name": "FX S3 High Cut",
+              "value": 70.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-8.67 dB",
+              "graphs_value": -8.665709,
+              "name": "FX S3 Gain",
+              "value": -8.665709,
+              "value_type": "float"
+            },
+            {
+              "display": "Soft",
+              "graphs_value": 0,
+              "name": "FX S3 Model",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "Distortion",
+          "type_id": 5
+        },
+        "send4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "-1.07 %",
+              "graphs_value": -0.010714,
+              "name": "FX S4 Center",
+              "value": -0.010714,
+              "value_type": "float"
+            },
+            {
+              "display": "-90.00 %",
+              "graphs_value": -0.9,
+              "name": "FX S4 Feedback",
+              "value": -0.9,
+              "value_type": "float"
+            },
+            {
+              "display": "80.00 %",
+              "graphs_value": 0.8,
+              "name": "FX S4 Sharpness",
+              "value": 0.8,
+              "value_type": "float"
+            },
+            {
+              "display": "0.14 Hz",
+              "graphs_value": -2.820281,
+              "name": "FX S4 Rate",
+              "value": -2.820281,
+              "value_type": "float"
+            },
+            {
+              "display": "70.64 %",
+              "graphs_value": 0.706428,
+              "name": "FX S4 Depth",
+              "value": 0.706428,
+              "value_type": "float"
+            },
+            {
+              "display": "60.57 %",
+              "graphs_value": 0.605715,
+              "name": "FX S4 Stereo",
+              "value": 0.605715,
+              "value_type": "float"
+            },
+            {
+              "display": "35.00 %",
+              "graphs_value": 0.35,
+              "name": "FX S4 Mix",
+              "value": 0.35,
+              "value_type": "float"
+            },
+            {
+              "display": "14.83 dB",
+              "graphs_value": 14.8286,
+              "name": "FX S4 Width",
+              "value": 14.8286,
+              "value_type": "float"
+            },
+            {
+              "display": "6 stages",
+              "graphs_value": 6,
+              "name": "FX S4 Count",
+              "value": 6,
+              "value_type": "int"
+            },
+            {
+              "display": "86.61 %",
+              "graphs_value": 0.866071,
+              "name": "FX S4 Spread",
+              "value": 0.866071,
+              "value_type": "float"
+            },
+            {
+              "display": "Sine",
+              "graphs_value": 0,
+              "name": "FX S4 Waveform",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S4 Tone",
+              "value": 0.0,
+              "value_type": "float"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 13,
+          "type_display": "Phaser",
+          "type_id": 3
+        }
+      }
+    },
+    "closeout-sale": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "e9238ad6f88e416d7db31c83af85b802fbc7e75b",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "3.18 %",
+              "graphs_value": 0.031786,
+              "name": "FX S3 Size",
+              "value": 0.031786,
+              "value_type": "float"
+            },
+            {
+              "display": "689.8 ms",
+              "graphs_value": 0.146428,
+              "name": "FX S3 Decay",
+              "value": 0.146428,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Reflections",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "50.00 %",
+              "graphs_value": 0.5,
+              "name": "FX S3 HF Damping",
+              "value": 0.5,
+              "value_type": "float"
+            },
+            {
+              "display": "50.00 %",
+              "graphs_value": 0.5,
+              "name": "FX S3 Spin",
+              "value": 0.5,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Chaos",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "Off",
+              "graphs_value": 0.0,
+              "name": "FX S3 Knock",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 9",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 10",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "Spring Reverb",
+          "type_id": 27
+        },
+        "send4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "Granularizer",
+              "graphs_value": 0,
+              "name": "FX S4 Mode",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "32k 16-bit Mono",
+              "graphs_value": 1,
+              "name": "FX S4 Quality",
+              "value": 1,
+              "value_type": "int"
+            },
+            {
+              "display": "1.29 %",
+              "graphs_value": 0.012857,
+              "name": "FX S4 Position",
+              "value": 0.012857,
+              "value_type": "float"
+            },
+            {
+              "display": "-43.64 %",
+              "graphs_value": -0.436428,
+              "name": "FX S4 Size",
+              "value": -0.436428,
+              "value_type": "float"
+            },
+            {
+              "display": "2.33 semitones",
+              "graphs_value": 2.331242,
+              "name": "FX S4 Pitch",
+              "value": 2.331242,
+              "value_type": "float"
+            },
+            {
+              "display": "-35.71 %",
+              "graphs_value": -0.357142,
+              "name": "FX S4 Density",
+              "value": -0.357142,
+              "value_type": "float"
+            },
+            {
+              "display": "68.43 %",
+              "graphs_value": 0.68429,
+              "name": "FX S4 Texture",
+              "value": 0.68429,
+              "value_type": "float"
+            },
+            {
+              "display": "49.07 %",
+              "graphs_value": 0.490714,
+              "name": "FX S4 Spread",
+              "value": 0.490714,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 ",
+              "graphs_value": 0.0,
+              "name": "FX S4 Freeze",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "77.68 %",
+              "graphs_value": 0.776787,
+              "name": "FX S4 Feedback",
+              "value": 0.776787,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S4 Reverb",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S4 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 13,
+          "type_display": "Nimbus",
+          "type_id": 22
+        }
+      }
+    },
+    "dystopia": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "f884c4d1c866fdb2c50ec8bf67cf8c5345156f7d",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "0s",
+              "graphs_value": -8.0,
+              "name": "FX S3 Pre-Delay",
+              "value": -8.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-11.00 %",
+              "graphs_value": -0.11,
+              "name": "FX S3 Room Size",
+              "value": -0.11,
+              "value_type": "float"
+            },
+            {
+              "display": "1.30 s",
+              "graphs_value": 0.378512,
+              "name": "FX S3 Decay Time",
+              "value": 0.378512,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Diffusion",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "98.00 %",
+              "graphs_value": 0.98,
+              "name": "FX S3 Buildup",
+              "value": 0.98,
+              "value_type": "float"
+            },
+            {
+              "display": "58.29 %",
+              "graphs_value": 0.582857,
+              "name": "FX S3 Modulation",
+              "value": 0.582857,
+              "value_type": "float"
+            },
+            {
+              "display": "5.00 %",
+              "graphs_value": 0.05,
+              "name": "FX S3 LF Damping",
+              "value": 0.05,
+              "value_type": "float"
+            },
+            {
+              "display": "75.00 %",
+              "graphs_value": 0.75,
+              "name": "FX S3 HF Damping",
+              "value": 0.75,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX S3 Width",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "Reverb 2",
+          "type_id": 11
+        },
+        "send4": {
+          "note": "slot is off in the normalized state; the engine exposes no algorithm parameters to extract",
+          "occupied": false,
+          "params": null,
+          "return_level": null,
+          "slot": 13,
+          "type_display": "Off",
+          "type_id": 0
+        }
+      }
+    },
+    "random-bass-fx": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "e0b6b1d01a6dd1f696823056067bc3625e791075",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "4.0 ms",
+              "graphs_value": -7.98393,
+              "name": "FX S3 Pre-Delay",
+              "value": -7.98393,
+              "value_type": "float"
+            },
+            {
+              "display": "46.70 %",
+              "graphs_value": 0.467,
+              "name": "FX S3 Room Size",
+              "value": 0.467,
+              "value_type": "float"
+            },
+            {
+              "display": "4.50 s",
+              "graphs_value": 2.16992,
+              "name": "FX S3 Decay Time",
+              "value": 2.16992,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Diffusion",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "90.00 %",
+              "graphs_value": 0.9,
+              "name": "FX S3 Buildup",
+              "value": 0.9,
+              "value_type": "float"
+            },
+            {
+              "display": "50.00 %",
+              "graphs_value": 0.5,
+              "name": "FX S3 Modulation",
+              "value": 0.5,
+              "value_type": "float"
+            },
+            {
+              "display": "47.62 %",
+              "graphs_value": 0.47625,
+              "name": "FX S3 LF Damping",
+              "value": 0.47625,
+              "value_type": "float"
+            },
+            {
+              "display": "91.96 %",
+              "graphs_value": 0.919643,
+              "name": "FX S3 HF Damping",
+              "value": 0.919643,
+              "value_type": "float"
+            },
+            {
+              "display": "10.00 dB",
+              "graphs_value": 10.0,
+              "name": "FX S3 Width",
+              "value": 10.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 0.0,
+          "slot": 12,
+          "type_display": "Reverb 2",
+          "type_id": 11
+        },
+        "send4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "Spectral Madness",
+              "graphs_value": 3,
+              "name": "FX S4 Mode",
+              "value": 3,
+              "value_type": "int"
+            },
+            {
+              "display": "32k 16-bit Stereo",
+              "graphs_value": 0,
+              "name": "FX S4 Quality",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S4 Position",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "64.89 %",
+              "graphs_value": 0.648929,
+              "name": "FX S4 Warp",
+              "value": 0.648929,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 semitones",
+              "graphs_value": 0.0,
+              "name": "FX S4 Pitch",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "18.18 %",
+              "graphs_value": 0.181787,
+              "name": "FX S4 Smear",
+              "value": 0.181787,
+              "value_type": "float"
+            },
+            {
+              "display": "-63.21 %",
+              "graphs_value": -0.632143,
+              "name": "FX S4 Texture",
+              "value": -0.632143,
+              "value_type": "float"
+            },
+            {
+              "display": "14.20 %",
+              "graphs_value": 0.141964,
+              "name": "FX S4 Spread",
+              "value": 0.141964,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 ",
+              "graphs_value": 0.0,
+              "name": "FX S4 Freeze",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "52.50 %",
+              "graphs_value": 0.525,
+              "name": "FX S4 Feedback",
+              "value": 0.525,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S4 Reverb",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S4 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            }
+          ],
+          "return_level": 0.0,
+          "slot": 13,
+          "type_display": "Nimbus",
+          "type_id": 22
+        }
+      }
+    },
+    "strynth": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.131249994,
+          "B": 0.131249994
+        },
+        "scene_active": 0,
+        "scene_mode_id": 2,
+        "status": "FAIL",
+        "voicing_scenes": [
+          "A",
+          "B"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "f8c9666992e671d8ee5761d76867890c4c75c4ce",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "Granularizer",
+              "graphs_value": 0,
+              "name": "FX S3 Mode",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "32k 16-bit Stereo",
+              "graphs_value": 0,
+              "name": "FX S3 Quality",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Position",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-99.07 %",
+              "graphs_value": -0.990717,
+              "name": "FX S3 Size",
+              "value": -0.990717,
+              "value_type": "float"
+            },
+            {
+              "display": "12.00 semitones",
+              "graphs_value": 11.999977,
+              "name": "FX S3 Pitch",
+              "value": 11.999977,
+              "value_type": "float"
+            },
+            {
+              "display": "-50.00 %",
+              "graphs_value": -0.500001,
+              "name": "FX S3 Density",
+              "value": -0.500001,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Texture",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "85.18 %",
+              "graphs_value": 0.851786,
+              "name": "FX S3 Spread",
+              "value": 0.851786,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 ",
+              "graphs_value": 0.0,
+              "name": "FX S3 Freeze",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "29.46 %",
+              "graphs_value": 0.294643,
+              "name": "FX S3 Feedback",
+              "value": 0.294643,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Reverb",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "Nimbus",
+          "type_id": 22
+        },
+        "send4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "Granularizer",
+              "graphs_value": 0,
+              "name": "FX S4 Mode",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "32k 16-bit Stereo",
+              "graphs_value": 0,
+              "name": "FX S4 Quality",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S4 Position",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-99.07 %",
+              "graphs_value": -0.990717,
+              "name": "FX S4 Size",
+              "value": -0.990717,
+              "value_type": "float"
+            },
+            {
+              "display": "-12.07 semitones",
+              "graphs_value": -12.068596,
+              "name": "FX S4 Pitch",
+              "value": -12.068596,
+              "value_type": "float"
+            },
+            {
+              "display": "-50.00 %",
+              "graphs_value": -0.500001,
+              "name": "FX S4 Density",
+              "value": -0.500001,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S4 Texture",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "85.18 %",
+              "graphs_value": 0.851786,
+              "name": "FX S4 Spread",
+              "value": 0.851786,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 ",
+              "graphs_value": 0.0,
+              "name": "FX S4 Freeze",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "29.46 %",
+              "graphs_value": 0.294643,
+              "name": "FX S4 Feedback",
+              "value": 0.294643,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S4 Reverb",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S4 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 13,
+          "type_display": "Nimbus",
+          "type_id": 22
+        }
+      }
+    },
+    "trance": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "c277c51ec0094a57c5fc219b3763db3801d7869e",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "4.2 ms",
+              "graphs_value": -7.885717,
+              "name": "FX S3 Time",
+              "value": -7.885717,
+              "value_type": "float"
+            },
+            {
+              "display": "0.618 Hz",
+              "graphs_value": -0.693749,
+              "name": "FX S3 Rate",
+              "value": -0.693749,
+              "value_type": "float"
+            },
+            {
+              "display": "53.04 %",
+              "graphs_value": 0.530357,
+              "name": "FX S3 Depth",
+              "value": 0.530357,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Feedback",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "112.41 Hz",
+              "graphs_value": -23.625008,
+              "name": "FX S3 Low Cut",
+              "value": -23.625008,
+              "value_type": "float"
+            },
+            {
+              "display": "19527.71 Hz",
+              "graphs_value": 65.662498,
+              "name": "FX S3 High Cut",
+              "value": 65.662498,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX S3 Mix",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "24.00 dB",
+              "graphs_value": 24.0,
+              "name": "FX S3 Width",
+              "value": 24.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 9",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 10",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "Chorus",
+          "type_id": 9
+        },
+        "send4": {
+          "note": "slot is off in the normalized state; the engine exposes no algorithm parameters to extract",
+          "occupied": false,
+          "params": null,
+          "return_level": null,
+          "slot": 13,
+          "type_display": "Off",
+          "type_id": 0
+        }
+      }
+    }
+  },
+  "render_eligible_once_12_clears": {
+    "batbrass": true,
+    "closeout-sale": true,
+    "dystopia": true,
+    "random-bass-fx": true,
+    "strynth": false,
+    "trance": true
+  },
+  "schema_version": 2,
+  "send_level_exposure_recheck": [
+    {
+      "buses_3_4_value_read": false,
+      "levels_exposed_per_scene": [
+        2,
+        2
+      ],
+      "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+      "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+    }
+  ],
+  "status": "FAIL",
+  "status_note": "`status` is the WORST of the two independent verdicts below; read them separately. It is deliberately not a single pass/fail judgement on the leaf.",
+  "work_item": "#155 item 1a (oracle-host reference leg: LIVE surgepy per-slot parameter extraction + the engine-side per-scene drift determinism gate)"
+}

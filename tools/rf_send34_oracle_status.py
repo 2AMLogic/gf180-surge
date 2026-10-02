@@ -8,7 +8,20 @@ engine checkout and import surgepy, and writes what it found. A leg that did
 not run is recorded NOT_RUN (or BLOCKED), never PASS.
 
 Re-run on an oracle host to flip the record; the same file is then the
-input-of-record for the fixture-render and reference-comparison legs.
+input-of-record for the fixture-render and reference-comparison legs. Run it
+UNDER the oracle's own interpreter (`$ORACLE_PYTHON` from
+`oracle/fetch-and-build.sh --prebuilt`), because the surgepy binding is built
+for one CPython ABI -- a probe run under the ambient `python3` truthfully
+reports UNAVAILABLE even on a host that has the oracle installed.
+
+"AVAILABLE" requires all three of: the engine directory present, `import
+surgepy` succeeding through `oracle_common`, and the version string the binding
+itself reports carrying the pinned commit. An import that lands on an unpinned
+engine is NOT available.
+
+Whether an oracle-gated leg was actually RUN is read from the live record
+(`artifacts/live-oracle-extraction.json`), never inferred from the oracle being
+present: "RUNNABLE" is not "ran", and "ran" is not "passed".
 
 NOTE (specific to this leaf): an available oracle is NECESSARY BUT NOT
 SUFFICIENT for this routing form's fixture freeze. Send buses 3/4 hit the
@@ -29,20 +42,36 @@ Original to this repository (Apache-2.0).
 
 import json
 import os
-import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+
 ARTIFACTS = os.path.join(REPO, "reports", "SXT-028l", "artifacts")
 OUT = os.path.join(ARTIFACTS, "oracle-status.json")
 RENDER_REFUSALS = os.path.join(ARTIFACTS, "render-refusals.txt")
+LIVE_LEG = os.path.join(ARTIFACTS, "live-oracle-extraction.json")
 
+# Legs whose only gate is the oracle build: an available oracle makes them
+# runnable, and whether they were actually RUN is read from the live record,
+# never assumed.
 ORACLE_LEGS = [
     ("extract-slot-params", "tools/extract_rf_send34_inputs.py",
      "the LIVE surgepy leg of the carrier extraction: per-slot algorithm "
-     "parameter values + the engine-side per-scene drift determinism gate "
-     "(the census/graphs routing metadata itself needs no oracle and IS "
-     "verified)"),
+     "parameter values for send3/send4, read from the engine's normalized "
+     "state and cross-checked against the committed corpus graph (the "
+     "census/graphs routing metadata itself needs no oracle and IS verified)"),
+    ("drift-determinism-gate", "tools/extract_rf_send34_inputs.py",
+     "the engine-side per-scene drift determinism gate: a carrier whose "
+     "scene `drift` is nonzero cannot carry a repeatable reference render at "
+     "all, so it is not render-eligible even once #12 clears"),
+]
+
+# Legs that an available oracle alone does NOT unblock, because this routing
+# form's fixtures cannot be frozen until #12 decides the send-level policy.
+# These are BLOCKED, not merely NOT_RUN -- running them would require guessing
+# a per-scene send level for buses 3/4, which is exactly #12's decision.
+FIXTURE_LEGS = [
     ("render", "tools/render_fx_fixtures.py pattern",
      "NEW pinned-engine reference fixtures for this routing form under "
      "SXT-012 policies (original + per-slot bypass + all-off dry, tails "
@@ -68,13 +97,22 @@ POLICY_BLOCKED_LEGS = [
 
 
 def probe():
+    """Actually look for the oracle and import the binding. Everything here is
+    MEASURED in the environment this runs in: the engine pin, the checkout (or
+    prebuilt install) directory, an `import surgepy` through the same
+    `oracle_common` path every harness tool uses, and -- when the import
+    succeeds -- the engine version string the binding itself reports, checked
+    against the pinned commit. An import that lands on an UNPINNED engine is
+    recorded as not-available rather than counted."""
     detail = {}
-    engine_dir = os.environ.get("ORACLE_SURGE_DIR")
+    pin = None
     manifest = os.path.join(REPO, "oracle", "manifest.json")
+    engine_dir = os.environ.get("ORACLE_SURGE_DIR")
     if os.path.exists(manifest):
         with open(manifest) as f:
             m = json.load(f)
-        detail["engine_pin"] = m["engine"]["commit"]
+        pin = m["engine"]["commit"]
+        detail["engine_pin"] = pin
         detail["expected_checkout"] = \
             m["engine"]["expected_checkout"]["location_used_for_evidence"]
         if engine_dir is None:
@@ -82,11 +120,32 @@ def probe():
     detail["engine_dir_probed"] = engine_dir
     detail["engine_dir_present"] = bool(engine_dir and os.path.isdir(engine_dir))
 
-    r = subprocess.run([sys.executable, "-c", "import surgepy"],
-                       capture_output=True, text=True)
-    detail["surgepy_importable"] = r.returncode == 0
-    detail["surgepy_probe_stderr"] = r.stderr.strip().splitlines()[-1:] or []
+    detail["surgepy_version"] = None
+    detail["surgepy_module"] = None
+    detail["surgepy_version_carries_pin"] = False
+    try:
+        import oracle_common as oc  # noqa: PLC0415
+        surgepy = oc.import_surgepy()
+    except Exception as e:  # environment-dependent
+        detail["surgepy_importable"] = False
+        detail["surgepy_probe_stderr"] = [f"{type(e).__name__}: {e}"]
+        return detail
+    detail["surgepy_importable"] = True
+    detail["surgepy_probe_stderr"] = []
+    detail["surgepy_version"] = surgepy.getVersion()
+    detail["surgepy_module"] = surgepy.__file__
+    detail["surgepy_version_carries_pin"] = bool(
+        pin and pin[:9] in detail["surgepy_version"])
     return detail
+
+
+def live_leg_record():
+    """The live leg's own committed record, or None. Read rather than assumed:
+    an available oracle says a leg COULD run, never that it DID."""
+    if not os.path.exists(LIVE_LEG):
+        return None
+    with open(LIVE_LEG) as f:
+        return json.load(f)
 
 
 RENDER_REFUSAL_TEMPLATE = """\
@@ -98,18 +157,19 @@ ablation carrier exists for this routing form, so original + per-slot bypass
 + all-off dry buses (tails included) would have to be rendered from the
 pinned engine under SXT-012 policies.
 
-TWO independent gates apply to this leaf, and both are open:
-  1. the pinned oracle build (surgepy) -- see below;
+TWO independent gates apply to this leaf:
+  1. the pinned oracle build (surgepy) -- {gate1};
   2. the SXT-011 send-level exposure gap for buses 3/4, which needs an
      SXT-017 data-gap policy decision (#12) before ANY fixture for this
      routing form can be frozen, oracle or no oracle
-     (reports/SXT-028l/artifacts/send-level-gap.json).
+     (reports/SXT-028l/artifacts/send-level-gap.json) -- OPEN.
 
 {body}
 
 Re-run on an oracle host:
-  python3 tools/rf_send34_oracle_status.py       # flips the oracle half
-  python3 tools/extract_rf_send34_inputs.py      # live per-slot params
+  ORACLE_PREBUILT=1 oracle/fetch-and-build.sh    # installs/locates the oracle
+  "$ORACLE_PYTHON" tools/extract_rf_send34_inputs.py   # live per-slot params
+  "$ORACLE_PYTHON" tools/rf_send34_oracle_status.py    # records what ran
   # then, ONLY after #12 decides the send-level data-gap policy, render the
   # fixtures and run the reference comparison
 """
@@ -126,36 +186,101 @@ RTL-vs-frozen-model exactness claim is unaffected and was run in full
 (reports/SXT-028l/negative-controls/negative-controls.json)."""
 
 AVAILABLE_BODY = """\
-A pinned-engine checkout and an importable surgepy were found (measured:
-reports/SXT-028l/artifacts/oracle-status.json). The fixture renders
-themselves are still not produced by this tool -- and gate 2 above (the
-SXT-017 send-level data-gap decision, #12) still applies regardless. Once
-both are cleared, run the render and reference-comparison legs and replace
-this transcript with their per-carrier rows."""
+Gate 1 is CLEARED: a pinned-engine install and an importable surgepy whose
+reported version carries the pinned commit were found, and the LIVE
+extraction leg has been run against them (measured:
+reports/SXT-028l/artifacts/oracle-status.json,
+reports/SXT-028l/artifacts/live-oracle-extraction.json).
+
+Gate 2 is still OPEN, so NO fixture was rendered and there are no per-carrier
+rows yet: the SXT-017 send-level data-gap decision (#12) owns the per-scene
+send level for buses 3/4, and rendering a fixture without it would mean
+guessing that value. The render / model-render / reference-compare legs are
+therefore recorded BLOCKED (#12), not NOT_RUN-on-the-oracle and not a pass.
+
+Additionally, the engine-side per-scene drift determinism gate FAILS for at
+least one carrier in some environments (see
+`legs["drift-determinism-gate"]` in oracle-status.json): a carrier whose
+scene `drift` is nonzero cannot carry a repeatable reference render even once
+#12 clears, so it is not render-eligible and a different carrier must be
+chosen for that shape."""
+
+
+NOT_RUN_REASON = ("no pinned-engine checkout / surgepy in this environment; "
+                  "the leg was not run and must never be reported as a pass")
+BLOCKED_12_REASON = ("blocked on the SXT-017 data-gap policy decision (#12); "
+                     "an available oracle does not unblock it, because no "
+                     "fixture for this routing form can be frozen without a "
+                     "per-scene send level for buses 3/4")
+
+
+def oracle_leg_status(name, live):
+    """Measured status of an oracle-gated leg. `live` is the live record (or
+    None). Returns (status, reason, extra-fields)."""
+    if live is None:
+        return "NOT_RUN", ("the oracle is available but the leg has not been "
+                           "run here: run tools/extract_rf_send34_inputs.py "
+                           "and commit artifacts/live-oracle-extraction.json"), {}
+    if name == "extract-slot-params":
+        sub = live["parameter_extraction"]
+        extra = {"ran": True,
+                 "evidence": "reports/SXT-028l/artifacts/"
+                             "live-oracle-extraction.json",
+                 "carriers_extracted": sub["carriers_extracted"],
+                 "carriers_total": sub["carriers_total"]}
+        reason = (None if sub["status"] == "PASS" else
+                  f"the live leg ran but reported {sub['status']}")
+        return sub["status"], reason, extra
+    sub = live["determinism_gate"]
+    extra = {"ran": True,
+             "evidence": "reports/SXT-028l/artifacts/"
+                         "live-oracle-extraction.json",
+             "carriers_passing": sub["carriers_passing"],
+             "carriers_failing": sub["carriers_failing"],
+             "bounds": sub["bounds"],
+             "routed_to": sub.get("routed_to")}
+    reason = (None if sub["status"] == "PASS" else
+              f"the gate ran and FAILED for {sub['carriers_failing']}: a "
+              f"carrier with nonzero per-scene drift cannot carry a "
+              f"repeatable reference render")
+    return sub["status"], reason, extra
 
 
 def main():
     detail = probe()
-    available = detail["surgepy_importable"] and detail["engine_dir_present"]
+    available = (detail["surgepy_importable"] and detail["engine_dir_present"]
+                 and detail["surgepy_version_carries_pin"])
     status = "AVAILABLE" if available else "UNAVAILABLE"
-    legs = {
-        name: {
-            "tool": tool,
-            "what": what,
-            "status": "NOT_RUN" if not available else "RUNNABLE",
-            "reason": (None if available else
-                       "no pinned-engine checkout / surgepy in this "
-                       "environment; the leg was not run and must never "
-                       "be reported as a pass"),
-        } for name, tool, what in ORACLE_LEGS
-    }
+    live = live_leg_record() if available else None
+
+    legs = {}
+    for name, tool, what in ORACLE_LEGS:
+        if not available:
+            legs[name] = {"tool": tool, "what": what, "status": "NOT_RUN",
+                          "reason": NOT_RUN_REASON, "ran": False}
+            continue
+        st, reason, extra = oracle_leg_status(name, live)
+        legs[name] = {"tool": tool, "what": what, "status": st,
+                      "reason": reason, "ran": bool(extra.get("ran", False))}
+        legs[name].update({k: v for k, v in extra.items() if k != "ran"})
+    for name, tool, what in FIXTURE_LEGS:
+        # These stay unrun whether or not the oracle is there. While the oracle
+        # is missing BOTH gates are open, so NOT_RUN is the honest measurement;
+        # with the oracle present the remaining gate is #12 alone, so BLOCKED
+        # names the real reason instead of implying the leg could just be run.
+        legs[name] = {
+            "tool": tool, "what": what, "ran": False,
+            "status": "BLOCKED" if available else "NOT_RUN",
+            "reason": BLOCKED_12_REASON if available else NOT_RUN_REASON,
+            "blocking_issue": "#12 (SXT-017 send-level data-gap decision)",
+        }
     for name, gate, what, st in POLICY_BLOCKED_LEGS:
-        legs[name] = {"tool": gate, "what": what, "status": st,
-                      "reason": "blocked on the SXT-017 data-gap policy "
-                                "decision (#12); an available oracle does "
-                                "not unblock it"}
+        legs[name] = {"tool": gate, "what": what, "status": st, "ran": False,
+                      "blocking_issue": "#12 (SXT-017 send-level data-gap "
+                                        "decision)",
+                      "reason": BLOCKED_12_REASON}
     doc = {
-        "schema_version": 1,
+        "schema_version": 2,
         "leaf": "SXT-028l",
         "oracle_status": status,
         "probe": detail,
@@ -178,7 +303,10 @@ def main():
         f.write("\n")
     with open(RENDER_REFUSALS, "w") as f:
         f.write(RENDER_REFUSAL_TEMPLATE.format(
-            status="NOT_RUN" if not available else "RUNNABLE (not run here)",
+            status=("NOT_RUN (both gates open)" if not available else
+                    "BLOCKED (#12) -- the oracle gate is cleared, the "
+                    "send-level policy gate is not"),
+            gate1="OPEN" if not available else "CLEARED",
             body=UNAVAILABLE_BODY if not available else AVAILABLE_BODY))
     print(json.dumps({"oracle_status": status,
                       "legs": {k: v["status"] for k, v in doc["legs"].items()}},

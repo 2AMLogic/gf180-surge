@@ -1,4 +1,4 @@
-# SXT-028l evidence record — routing form: Send buses 3-4 (send3 / send4, extended rack half): frozen model, exact RTL, per-instance state + lifecycle, oracle-dependent legs NOT_RUN and the fixture freeze BLOCKED on the SXT-017 send-level data gap (#12)
+# SXT-028l evidence record — routing form: Send buses 3-4 (send3 / send4, extended rack half): frozen model, exact RTL, per-instance state + lifecycle, the live oracle extraction leg RUN (#155 item 1a) and the fixture freeze still BLOCKED on the SXT-017 send-level data gap (#12)
 
 Branch: `feature/issue-64` · Issue: #64 (SXT-028l) · Parent: #21 (SXT-028) ·
 Epic: #3
@@ -39,6 +39,15 @@ instantiated).
 ## 0. Named gaps (recorded, not worked around)
 
 ### 0a. Oracle-dependent legs — NOT_RUN; fixture freeze additionally BLOCKED on #12
+
+> **Update 2026-10-02 (#155 item 1a):** the oracle gate is now **CLEARED** on a
+> linux-x86_64 dispatch worker and the live `surgepy` extraction leg has
+> actually been **run** — see §0f, which supersedes this section's `NOT_RUN`
+> statuses for the extraction leg and for `oracle_status` itself. What this
+> section says about the *render / model-render / reference-compare* legs still
+> holds, but their reason has changed: they are no longer waiting on an oracle,
+> they are **BLOCKED on #12** (§0b). The text below is the filing-time record
+> and is kept as written.
 
 The pinned Surge XT engine's `surgepy` Python binding requires a full
 C++/JUCE build (`oracle/fetch-and-build.sh`); that build was not available in
@@ -189,7 +198,13 @@ Stated here rather than implied away (full detail in §3):
    leaf's exactness check compares per-instance checkpoints and not only
    audio.
 
-### 0e. Follow-up #155 (2026-10-02): pinned-source re-read PERFORMED; oracle legs still NOT_RUN
+### 0e. Follow-up #155 (2026-10-02): pinned-source re-read PERFORMED; oracle legs still NOT_RUN *on that host*
+
+> **Superseded in part by §0f (same day, different host):** leg 1a has since
+> been run on a linux-x86_64 worker, where the #232 prebuilt install exists.
+> The `UNAVAILABLE` measurement below remains the truthful measurement **for
+> the darwin-arm64 host that produced it**; it is not a statement about the
+> leaf. The items-2-to-5 re-reads below are unaffected and stand as written.
 
 **Oracle status (measured): still UNAVAILABLE on this host -- legs 1a/1b/1c
 NOT_RUN, `send-level-default-probe` BLOCKED (#12).** The prebuilt install
@@ -270,12 +285,102 @@ each against `src/common/SurgeSynthesizer.cpp` / `dsp/Effect.cpp` /
 arithmetic, so the model, RTL and `rtl-exactness.json` are untouched and the
 Failure-control re-runs below apply as a regression check only.
 
+### 0f. Follow-up #155 item 1a (2026-10-02): the LIVE oracle extraction leg RAN
+
+**Oracle status (measured, on a different host than §0e): `AVAILABLE`.** §0e
+was written on a darwin-arm64 host, for which `oracle/manifest.json` carries no
+`prebuilt` entry. This leg was run on a **linux-x86_64** dispatch worker, where
+the #232 prebuilt install exists:
+`~/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/`.
+`tools/rf_send34_oracle_status.py` now measures three things before it will say
+AVAILABLE — the engine directory, `import surgepy` through `oracle_common`, and
+the version string the binding itself reports — and records
+`surgepy_version: "1.4.HEAD.58914e59c"`, which carries the pinned commit
+`58914e59c608…`. An import that landed on an *unpinned* engine would be recorded
+as not available, not counted.
+
+**What ran (leg `extract-slot-params`): PASS, 6/6 carriers.**
+`tools/extract_rf_send34_inputs.py`'s live leg is no longer a presence check —
+it now loads each carrier in the pinned engine (`loadPatch`, the native loader
+with all migrations: the normalized state is the authoritative one) and reads
+the per-slot algorithm's own parameter values and `return_level` for **send3**
+and **send4** out of that state, cross-checking **every** value against the
+committed `corpus/normalized/graphs.jsonl` entry (ints exactly, floats to
+`5e-6`, the same tolerance the landed SXT-028b extractor uses). It also
+re-verifies the engine's 16-slot FX type vector against the graph and the
+`.fxp` blob sha1 inside the pinned checkout. Zero disagreements across the six
+carriers; a disagreement would have been a **REFUSAL**, never a downgrade to
+"oracle unavailable". Record: `artifacts/live-oracle-extraction.json`, echoed
+per carrier in `model/effects/fx_inputs/rf-rf-send34-*.json`
+(`oracle_extraction.live`).
+
+**What the live leg additionally established — the SXT-011 exposure gap's
+SHAPE, measured against the binding rather than quoted.** Until now "surgepy
+exposes only `send_level[0..1]`" was a documentation claim (§0b). The live leg
+reads `len(patch["scene"][i]["send_level"])` for both scenes of all six
+carriers: **2, 2** every time. A binding that exposed four would **REFUSE**
+rather than be reinterpreted. The leg deliberately does **not** read or infer a
+*value* for buses 3/4 — that is the loader-default probe, which is #12's own
+input and stays BLOCKED (`buses_3_4_value_read: false` in the record).
+
+**FINDING — leg `drift-determinism-gate`: FAIL for 1 of 6 carriers.** The
+engine-side per-scene determinism gate (scene `drift` must be 0, or the engine's
+own RNG makes a render non-repeatable — the harness never seeds it,
+`oracle/manifest.json`) measured:
+
+| Carrier | Voicing scenes | `drift` | Gate |
+|---|---|---|---|
+| `Trance.fxp` | A | 0.0 | **PASS** |
+| `Batbrass.fxp` | A | 0.0 | **PASS** |
+| `Dystopia.fxp` | A | 0.0 | **PASS** |
+| `Strynth.fxp` | A, B | **0.131249994** (both) | **FAIL** |
+| `Closeout Sale @ Electro Percussion Warehouse.fxp` | A | 0.0 | **PASS** |
+| `Random Bass FX.fxp` | A | 0.0 | **PASS** |
+
+`Strynth.fxp` is the carrier **this leaf added** for the same-FX-class
+(Nimbus-in-both-buses) dual-instance shape with scene B actually feeding both
+buses (§4). Its nonzero drift means it cannot carry a *repeatable* reference
+fixture at all — **independently of #12**, and independently of whether the
+model agrees with the engine. Consequences, stated exactly:
+
+- It bounds the **render** legs (1b/1c) only. `render_eligible_once_12_clears`
+  is `false` for `strynth` and `true` for the other five.
+- It does **not** touch this carrier's routing/scheduling metadata (§4), which
+  is derived from the committed corpus artifacts and is unaffected.
+- It does **not** touch the RTL-vs-frozen-model exactness claim (§2), whose
+  occupant is a synthetic biquad and whose stimulus is control-plane input.
+- It is **not** worked around. No drift value was zeroed, no carrier was
+  silently swapped, and the gate was not relaxed. When #12 clears, the
+  same-class dual-instance *render* shape needs a different carrier (or a
+  declared non-repeatability treatment); routed to **#322** rather than
+  absorbed here (`determinism_gate.routed_to` in the record).
+- `tools/extract_rf_send34_inputs.py` exits **3** on this condition (distinct
+  from 0 and from a refusal), and `tests/test_sxt028l.py::`
+  `test_live_oracle_leg_record_is_internally_consistent` derives the gate
+  verdict from the recorded drift values, so a record that called a nonzero-drift
+  carrier render-eligible FAILS.
+
+**Still BLOCKED on #12 (items 1b/1c), not NOT_RUN-on-the-oracle.** With the
+oracle gate cleared, `render`, `model-render` and `reference-compare` are
+recorded **BLOCKED (#12)** in `artifacts/oracle-status.json` — naming the real
+remaining gate instead of implying they could simply be run — and
+`artifacts/render-refusals.txt` says the same. There is therefore **still no
+model-vs-pinned-engine agreement number for this leaf, and the [PROPOSED]
+budgets remain NOT_RUN** (not PASS, not FAIL). Nothing in this section is a
+claim about the model reproducing the engine; it is an engine-side extraction
+and an engine-side determinism measurement.
+
+**Nothing regenerated:** the frozen model, the RTL and `rtl-exactness.json` are
+untouched by item 1a (`model_revision` unchanged:
+`d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23`), so the
+failure-control re-runs below apply as a regression check only.
+
 ## Headline results
 
 | Claim | Status | Evidence |
 |---|---|---|
 | Frozen model ↔ RTL exact | **PASS** (20 cases, 8,448 main-bus samples + 16,896 per-bus wet samples + 132 checkpoints, 0 mismatches) | `rtl-exactness.json` |
-| Model ↔ pinned engine vs [PROPOSED] budgets | **NOT_RUN** (oracle unavailable; §0a) | `artifacts/oracle-status.json` |
+| Model ↔ pinned engine vs [PROPOSED] budgets | **NOT_RUN** — no reference fixture exists to compare against; the oracle gate is cleared (§0f) and the remaining gate is the SXT-011 send-level data gap → #12 (§0b) | `artifacts/oracle-status.json` |
 | Reference-fixture freeze for this routing form | **BLOCKED** (SXT-011 send-level gap → SXT-017 decision, #12; §0b) | `artifacts/send-level-gap.json`, `artifacts/oracle-status.json` |
 | Negative controls live | **6/6 CONTROL-OK** (19 legs, 0 NOT_RUN; 6 are live RTL mutants) | `negative-controls/negative-controls.json` |
 | Per-instance state (dual-bus) | **PASS** (model NC-D + live RTL shared-state mutant fails, incl. the same-FX-class case) | `negative-controls.json`, `rtl-exactness.json` |
@@ -286,8 +391,12 @@ Failure-control re-runs below apply as a regression check only.
 | Composition with the landed routing leaves | **PASS** (ains34 + bins12 → this leaf → global34; 8 independent histories) | `tests/test_sxt028l.py::test_composes_with_the_landed_insert_and_global_routing_leaves` |
 | Carrier routing/scheduling metadata | **PASS** (6/6, census+graphs cross-checked, drift 0) | `model/effects/fx_inputs/rf-rf-send34-*.json` |
 | Pinned-source re-read of declared contracts #1-#5 (#155) | **PASS** (all five confirmed against the pin; one wording correction, no arithmetic change; §0e) | §0e |
-| Oracle-gated legs 1a/1b/1c (#155) | **NOT_RUN** (no prebuilt for darwin-arm64; 1b/1c also BLOCKED on #12; §0e) | `artifacts/oracle-status.json` |
-| Complete-wet preset renders / new reference fixtures | **NOT_RUN** (oracle unavailable) + **BLOCKED** (#12) | §0a/§0b, `artifacts/render-refusals.txt` |
+| Pinned oracle availability (measured) | **AVAILABLE** on linux-x86_64 (`surgepy 1.4.HEAD.58914e59c`, carries the pin); UNAVAILABLE on the darwin-arm64 host of §0e | `artifacts/oracle-status.json` |
+| Oracle-gated leg **1a** (#155): live per-slot algorithm-parameter extraction | **PASS** (6/6 carriers; every value cross-checked against `graphs.jsonl`, 0 disagreements; engine-side only — no model-vs-engine claim; §0f) | `artifacts/live-oracle-extraction.json` |
+| Oracle-gated leg **1a** (#155): engine-side per-scene drift determinism gate | **FAIL for 1 of 6** — `Strynth.fxp` carries `drift = 0.131249994` in both scenes, so it is **not render-eligible**; the other 5 PASS (§0f) | `artifacts/live-oracle-extraction.json` |
+| Oracle-gated legs **1b/1c** (#155): fixture render + budget comparison | **BLOCKED** (#12) — the oracle gate is cleared, the send-level policy gate is not; never NOT_RUN-on-the-oracle and never a pass | `artifacts/oracle-status.json`, `artifacts/render-refusals.txt` |
+| Live re-verification of the SXT-011 exposure gap's shape | **PASS** (the binding itself exposes 2 per-scene send levels, not 4, on all 6 carriers; no value for buses 3/4 was read — that probe is #12's) | `artifacts/live-oracle-extraction.json` |
+| Complete-wet preset renders / new reference fixtures | **BLOCKED** (#12; the oracle is no longer the gate) | §0b/§0f, `artifacts/render-refusals.txt` |
 | External-memory traffic | **PASS** (this leaf's own contribution: 0 words/sample; aggregate `[PENDING-SXT-016]`) | `artifacts/state-cost.json` |
 | Newly-enabled presets | **0** (no support claim follows from this record) | §6 |
 | Musical quality / listening | **NOT_RUN** (no listening record; #9 remains BLOCKED-on-human) | — |
@@ -489,11 +598,15 @@ never presented as issue-named carriers. Every carrier's stored per-slot
 insert/global leaves, where the same field is recorded but explicitly not
 consumed.
 
-Per-slot algorithm parameter values are NOT extracted (§0a — oracle
-unavailable); each record carries `oracle_extraction.ok: false` with the
-reason. Per-scene send levels for buses 3/4 are NOT extracted and NOT
-invented (§0b — the SXT-011 gap, `send_level_gap.send3_send4_levels_stored:
-null`).
+Per-slot algorithm parameter values **are** now extracted from the pinned
+engine's normalized state and cross-checked against the committed graph
+(§0f, #155 item 1a): each record carries `oracle_extraction.ok: true` with the
+live values under `oracle_extraction.live`. In an environment without the
+oracle the same field reads `ok: false` with the reason, and that is NOT_RUN —
+never a pass. Per-scene send levels for buses 3/4 are still NOT extracted and
+NOT invented (§0b — the SXT-011 gap,
+`send_level_gap.send3_send4_levels_stored: null`); what the live leg verified is
+only that the binding still exposes two of them, not four.
 
 ## 5. External-memory traffic
 

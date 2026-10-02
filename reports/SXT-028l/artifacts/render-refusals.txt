@@ -1,30 +1,40 @@
 SXT-028l pinned-engine fixture renders (tools/render_fx_fixtures.py pattern)
-status: NOT_RUN
+status: BLOCKED (#12) -- the oracle gate is cleared, the send-level policy gate is not
 
 The issue's Fixtures plan calls for NEW reference fixtures: no SXT-014
 ablation carrier exists for this routing form, so original + per-slot bypass
 + all-off dry buses (tails included) would have to be rendered from the
 pinned engine under SXT-012 policies.
 
-TWO independent gates apply to this leaf, and both are open:
-  1. the pinned oracle build (surgepy) -- see below;
+TWO independent gates apply to this leaf:
+  1. the pinned oracle build (surgepy) -- CLEARED;
   2. the SXT-011 send-level exposure gap for buses 3/4, which needs an
      SXT-017 data-gap policy decision (#12) before ANY fixture for this
      routing form can be frozen, oracle or no oracle
-     (reports/SXT-028l/artifacts/send-level-gap.json).
+     (reports/SXT-028l/artifacts/send-level-gap.json) -- OPEN.
 
-No pinned-engine checkout and no importable surgepy exist in the environment
-this leaf was built in (measured: reports/SXT-028l/artifacts/oracle-status.json).
-No wet/dry fixture bus was rendered, so there are no per-carrier refusal rows
-yet. NOT_RUN is not a pass.
+Gate 1 is CLEARED: a pinned-engine install and an importable surgepy whose
+reported version carries the pinned commit were found, and the LIVE
+extraction leg has been run against them (measured:
+reports/SXT-028l/artifacts/oracle-status.json,
+reports/SXT-028l/artifacts/live-oracle-extraction.json).
 
-Consequence: every model-vs-pinned-engine leg of this leaf is NOT_RUN. The
-RTL-vs-frozen-model exactness claim is unaffected and was run in full
-(reports/SXT-028l/rtl-exactness.json), as were all the negative controls
-(reports/SXT-028l/negative-controls/negative-controls.json).
+Gate 2 is still OPEN, so NO fixture was rendered and there are no per-carrier
+rows yet: the SXT-017 send-level data-gap decision (#12) owns the per-scene
+send level for buses 3/4, and rendering a fixture without it would mean
+guessing that value. The render / model-render / reference-compare legs are
+therefore recorded BLOCKED (#12), not NOT_RUN-on-the-oracle and not a pass.
+
+Additionally, the engine-side per-scene drift determinism gate FAILS for at
+least one carrier in some environments (see
+`legs["drift-determinism-gate"]` in oracle-status.json): a carrier whose
+scene `drift` is nonzero cannot carry a repeatable reference render even once
+#12 clears, so it is not render-eligible and a different carrier must be
+chosen for that shape.
 
 Re-run on an oracle host:
-  python3 tools/rf_send34_oracle_status.py       # flips the oracle half
-  python3 tools/extract_rf_send34_inputs.py      # live per-slot params
+  ORACLE_PREBUILT=1 oracle/fetch-and-build.sh    # installs/locates the oracle
+  "$ORACLE_PYTHON" tools/extract_rf_send34_inputs.py   # live per-slot params
+  "$ORACLE_PYTHON" tools/rf_send34_oracle_status.py    # records what ran
   # then, ONLY after #12 decides the send-level data-gap policy, render the
   # fixtures and run the reference comparison
