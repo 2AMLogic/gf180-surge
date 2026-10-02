@@ -1,0 +1,188 @@
+{
+  "absolute_detune": false,
+  "adsr": {
+    "a": -8.0,
+    "a_s": 1.0,
+    "d": 0.0,
+    "d_s": 0.0,
+    "mode": 0.0,
+    "r": -5.0,
+    "r_s": 2.0,
+    "s": 1.0
+  },
+  "carrier": "digibass",
+  "character": 0,
+  "declared_overrides": [
+    "mute_o1",
+    "mute_o2",
+    "mute_o3",
+    "mute_noise",
+    "mute_ring_12",
+    "mute_ring_23",
+    "fu0_off",
+    "fu1_off",
+    "fx_off",
+    "ws_off",
+    "lc_off",
+    "fbc_serial1",
+    "fm_off",
+    "scenemode_single",
+    "retrigger_on",
+    "drift_zero",
+    "route_slot_1",
+    "osc_sine",
+    "osc_shape_0",
+    "osc_fmmode_legacy",
+    "osc_unison_1",
+    "osc_lowcut_off",
+    "osc_highcut_off",
+    "osc_detune_zero",
+    "osc_octave_0",
+    "osc_pitch_0",
+    "osc_keytrack_on",
+    "scene_pitch_0",
+    "pfg_zero",
+    "modpin_zero"
+  ],
+  "drift": 0.0,
+  "engine_pin": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "extend_detune": false,
+  "fb": 0.0,
+  "fb_extend": false,
+  "fmmode": 0,
+  "graphs_sha": "843cf98463f9d8d7840993180739e63a114d7ed9",
+  "highcut": 70.0,
+  "issue": 77,
+  "keytrack": true,
+  "leaf": "SXT-043",
+  "level_pfg": 0.0,
+  "lowcut": -60.0,
+  "master_db": 0.0,
+  "modulation_routes": {
+    "inert": [
+      {
+        "depth": -20.057146072387695,
+        "dest": "FX A1 Param 1",
+        "norm_depth": 0.0,
+        "scene": null,
+        "scope": "global",
+        "src": "Modwheel",
+        "why": "every FX slot is forced Off"
+      },
+      {
+        "depth": 18.771427154541016,
+        "dest": "FX A1 Param 4",
+        "norm_depth": 0.0,
+        "scene": null,
+        "scope": "global",
+        "src": "Modwheel",
+        "why": "every FX slot is forced Off"
+      },
+      {
+        "depth": 31.724998474121094,
+        "dest": "A Filter 1 Cutoff",
+        "norm_depth": 0.2440384477376938,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Velocity",
+        "why": "filter unit 1 forced Off"
+      },
+      {
+        "depth": 0.15267899632453918,
+        "dest": "A Filter 1 Resonance",
+        "norm_depth": 0.15267899632453918,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Velocity",
+        "why": "filter unit 1 forced Off"
+      },
+      {
+        "depth": 15.942855834960938,
+        "dest": "A Filter 1 FEG Mod Amount",
+        "norm_depth": 0.08303570747375488,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Velocity",
+        "why": "filter unit 1 forced Off"
+      }
+    ],
+    "live": [],
+    "pinned": [
+      {
+        "depth": 0.3669640123844147,
+        "dest": "A Osc 1 Shape",
+        "norm_depth": 0.0,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Velocity",
+        "why": "destination is pinned by the declared fixture configuration; depth zeroed (modpin_zero)"
+      },
+      {
+        "depth": 0.22321400046348572,
+        "dest": "A Osc 1 Shape",
+        "norm_depth": 0.0,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Filter EG",
+        "why": "destination is pinned by the declared fixture configuration; depth zeroed (modpin_zero)"
+      }
+    ]
+  },
+  "mono_voice_envelope_mode": 1,
+  "mono_voice_priority_mode": 0,
+  "o_level": 1.0,
+  "octave": 0,
+  "osc_cut_activation_probe": {
+    "highcut_deactivated": true,
+    "highcut_probe": {
+      "sha256_a": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+      "sha256_b": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+      "value_a": 70.0,
+      "value_b": 0.0
+    },
+    "lowcut_deactivated": true,
+    "lowcut_probe": {
+      "sha256_a": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+      "sha256_b": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+      "value_a": -60.0,
+      "value_b": 20.0
+    }
+  },
+  "osc_type": 1,
+  "pan": 0.08571399748325348,
+  "pitch_extend": false,
+  "pitch_param": 0.0,
+  "play_mode": {
+    "id": 4,
+    "name": "Mono (Single Trigger & Fingered Portamento)"
+  },
+  "poly_voice_repeated_key_mode": 0,
+  "polylimit": 16,
+  "portamento": {
+    "options": {
+      "constantRate": false,
+      "curve": 0,
+      "glissando": false,
+      "retrigger": false
+    },
+    "temposync": false,
+    "val_max": 2.0,
+    "val_min": -8.0,
+    "value": -4.598213195800781
+  },
+  "preset_census_blob_sha1": "843cf98463f9d8d7840993180739e63a114d7ed9",
+  "preset_path": "resources/data/patches_factory/Basses/Digibass.fxp",
+  "retrigger": true,
+  "sample_rate": 48000,
+  "scene_octave": -1,
+  "scene_volume": 0.9732139706611633,
+  "schema": "sxt-043-playmode-inputs/1",
+  "schema_version": 1,
+  "shape": 0,
+  "slot": 0,
+  "unison": 1,
+  "unison_detune": 0.0,
+  "vca_db": 0.0,
+  "vca_velsense": -17.74286651611328,
+  "width": 1.0
+}

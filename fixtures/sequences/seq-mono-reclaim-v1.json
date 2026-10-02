@@ -1,0 +1,89 @@
+{
+  "coverage": [
+    "reclaim:same-key",
+    "reclaim:key-change",
+    "reclaim:velocity-change",
+    "repeated-notes",
+    "release:note-off"
+  ],
+  "description": "Re-pressed notes INSIDE the amp-envelope release tail (15 ms gaps against a ~30 ms release), with changing velocity and key, then one repeat after the tail has fully decayed. Makes the mono reclaim path and monoVoiceEnvelopeMode observable.",
+  "events": [
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 0,
+      "type": "note_on",
+      "velocity": 30
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 1920,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 2640,
+      "type": "note_on",
+      "velocity": 120
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 4560,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 67,
+      "t": 5280,
+      "type": "note_on",
+      "velocity": 120
+    },
+    {
+      "channel": 0,
+      "note": 67,
+      "t": 7200,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 48,
+      "t": 7920,
+      "type": "note_on",
+      "velocity": 60
+    },
+    {
+      "channel": 0,
+      "note": 48,
+      "t": 9840,
+      "type": "note_off",
+      "velocity": 0
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 19200,
+      "type": "note_on",
+      "velocity": 100
+    },
+    {
+      "channel": 0,
+      "note": 60,
+      "t": 21120,
+      "type": "note_off",
+      "velocity": 0
+    }
+  ],
+  "id": "seq-mono-reclaim-v1",
+  "notes": "Added by SXT-043 (issue #77). The seq-notes-* gaps all exceed the carriers' release time, so none of them can reach the reclaim path at all. No CC, aftertouch, pitch-bend or pedal events.",
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "settle_s": 0.25,
+  "tail_s": 2.5,
+  "tempo_events_renderable": true
+}

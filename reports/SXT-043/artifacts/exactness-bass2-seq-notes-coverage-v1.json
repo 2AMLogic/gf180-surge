@@ -1,0 +1,14 @@
+{
+  "tb": "rtl/voice/tb_pm_mono_st_fp.sv",
+  "carrier": "bass2",
+  "sequence": "seq-notes-coverage-v1",
+  "pool": 8,
+  "verdict": "PASS",
+  "checked": {
+    "block_slot_checkpoints": 68400,
+    "fields": 1094400
+  },
+  "mismatches": 0,
+  "first_failures": [],
+  "rtl_done_line": "DONE pm-qmuls=4833 voice-blocks=3132"
+}

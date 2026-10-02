@@ -1,0 +1,90 @@
+SXT-043 negative controls (issue #77)
+======================================
+
+1. REQUIRED control: forced-Poly render vs the pm_mono_st_fp reference
+-----------------------------------------------------------------------
+Carrier: bass2.fxp   Sequence: seq-mono-fingered-v1 (two legato-up
+transitions, one mid-glide re-anchor, a wide downward legato, a legato to a
+lower held key, a same-key legato -- the sequence this leaf's generator
+(fixtures/sequences/generate_pm_sequences.py) added specifically because the
+three sequences #77 names are all non-overlapping and can never reach a
+legato transition).
+
+Commands (pinned oracle, `oracle/fetch-and-build.sh --prebuilt`):
+  ORACLE_PYTHON tools/render_pm_reference.py --carrier bass2 \
+      --sequence seq-mono-fingered-v1 --out-dir <dir> --tag ref
+  ORACLE_PYTHON tools/render_pm_reference.py --carrier bass2 \
+      --sequence seq-mono-fingered-v1 --out-dir <dir> --tag forcedpoly \
+      --force-polymode 0
+  python3 tools/compare_audio_reference.py \
+      --ref  <dir>/bass2__seq-mono-fingered-v1-ref.wav \
+      --model <dir>/bass2__seq-mono-fingered-v1-forcedpoly.wav \
+      --json  neg-control-forced-poly-negative-control.json
+
+play_mode_rendered: pm_mono_st_fp (4) for -ref, pm_poly (0) for -forcedpoly
+(engine readback, both committed WAV sidecars).
+
+Result (neg-control-forced-poly-negative-control.json):
+  max_abs_diff_lsb      43492   (budget: <= 3500)   -> FAIL
+  rms_diff_dbfs         -12.48  (budget: <= -46.0)  -> FAIL
+  spectral_corr          0.846  (budget: >= 0.98)   -> FAIL
+  verdict: "FAIL against proposed budgets"
+
+REQUIRED outcome achieved: forcing Poly on the mono fixture FAILS every leg
+of the reference-budget check, by a wide margin on all three metrics -- the
+articulation difference (no portamento glide, independent per-note voices
+instead of single-trigger reuse, a different peak/clip profile: forcedpoly
+clips 513 samples at 1.18 peak vs the mono reference's clean 0.48 peak) is
+not a borderline case.
+
+2. Oracle-independent RTL-vs-model exactness controls (model/voice/playmode/run_model.py)
+-------------------------------------------------------------------------------------------
+These exercise the DECLARED model/RTL boundary's sensitivity without the
+oracle, the same way reports/sxt-022/EVIDENCE.md's RTL mutants do.
+
+(a) --nc-anchor-last-key (drops the pm_mono_st_fp "anchor at own pitch"
+    special case and anchors every new/reclaimed voice's glide at
+    `last_key` instead, the branch every OTHER mono submode takes):
+    REFUSES on bass2 + seq-mono-fingered-v1 with
+      "osc pitch -10.50120735168457 outside declared [24, 148]"
+    i.e. dropping the pm_mono_st_fp-defining branch drives the glide so far
+    off this fixture's declared pitch range that the model fails closed
+    rather than silently computing a wrong-but-plausible render. This is
+    the sharpest demonstration available that the branch is load-bearing:
+    it is not merely "a few LSBs off", it breaks the declared operating
+    envelope entirely.
+
+(b) --nc-reset-osc-on-reclaim (re-inits the Sine oscillator's quadrature
+    state on every mono reclaim; the pinned
+    `retriggerOSCWithIndependentAttacks` does NOT do this for a Sine slot):
+    bass2 + seq-mono-reclaim-v1 model.wav sha256:
+      unmodified:  d0fcc83cb95342b9fa2305b8ce12afdfc6948088f6546af6da515de3803d35cf
+      nc-variant:  262dd35d3ffaf25052b059339befe51d41c42207337f734c9feb7bcef004a8c9
+    DIFFERS -- the control is observable (the Sine slot's persisted
+    quadrature state is audible across a mono reclaim, as the per-instance
+    state rule requires).
+
+(c) --nc-share-portamento-state (one shared Portamento object across every
+    voice instead of per-instance state -- the generic "shared instead of
+    per-instance state" control CLAUDE.md requires):
+    run against rtl/voice/tb_pm_mono_st_fp.sv on all 3 carriers x all 5
+    sequences in this leaf's set: 0 mismatches everywhere (does NOT bite).
+    RECORDED COVERAGE GAP, not a false pass: all three declared carriers
+    report `mono_voice_envelope_mode = RESTART_FROM_LATEST` (1), under
+    which `note_on` ALWAYS reclaims the single existing non-gated voice
+    before ever reaching `_create()` for a second one (`envelope_mode !=
+    RESTART_FROM_ZERO` takes the `recycle` branch unconditionally ahead of
+    `uber_release`/create) -- so this articulation state machine never
+    produces two concurrently-alive voices on any of the 3 carriers x 5
+    sequences in this leaf's fixture set (max_concurrent_voices == 1
+    throughout, measured from every model_trace.json's `blocks[*].slots`).
+    A scene-wide shared portamento register is therefore indistinguishable
+    from the per-instance design on this carrier set -- a property of the
+    carriers' declared monoVoiceEnvelopeMode, not of the RTL or the
+    stimuli. This mirrors the identical, already-accepted limitation
+    recorded for SXT-036's per-instance-state control
+    (reports/SXT-036/EVIDENCE.md, "Recorded coverage gap"). Per-instance
+    portamento state IS implemented (every MonoVoice owns its own
+    Portamento instance; model/voice/playmode/pm_mono_st_fp.py
+    `MonoVoice.__init__`), it is simply not discriminated by this leaf's
+    three RESTART_FROM_LATEST carriers.

@@ -1,0 +1,147 @@
+{
+ "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] recorded; no normalization, no time warping, no fades",
+ "carrier": "digibass",
+ "declared_forcing": {},
+ "declared_overrides_applied": [
+  "mute_o1",
+  "mute_o2",
+  "mute_o3",
+  "mute_noise",
+  "mute_ring_12",
+  "mute_ring_23",
+  "fu0_off",
+  "fu1_off",
+  "fx_off",
+  "ws_off",
+  "lc_off",
+  "fbc_serial1",
+  "fm_off",
+  "scenemode_single",
+  "retrigger_on",
+  "drift_zero",
+  "route_slot_1",
+  "osc_sine",
+  "osc_shape_0",
+  "osc_fmmode_legacy",
+  "osc_unison_1",
+  "osc_lowcut_off",
+  "osc_highcut_off",
+  "osc_detune_zero",
+  "osc_octave_0",
+  "osc_pitch_0",
+  "osc_keytrack_on",
+  "scene_pitch_0",
+  "pfg_zero",
+  "modpin_zero"
+ ],
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "inputs": "model/voice/playmode/inputs/digibass.json",
+ "isolation_note": "declared fixture configuration (one Sine slot audible -- type/shape/FM-behavior/unison/lowcut/highcut/octave/pitch pinned; other mixer paths, both filter units, all FX, waveshaper, scene lowcut and FM routing off; fbc serial1; scene mode Single; retrigger on; drift 0; modulation depth zeroed for routes into pinned parameters) with the carrier's PLAYMODE and PORTAMENTO parameterization left intact -- a test configuration, never an adapted preset, never coverage",
+ "issue": "SXT-043",
+ "modulation_routes": {
+  "inert": [
+   {
+    "depth": -20.057146072387695,
+    "dest": "FX A1 Param 1",
+    "norm_depth": 0.0,
+    "scene": null,
+    "scope": "global",
+    "src": "Modwheel",
+    "why": "every FX slot is forced Off"
+   },
+   {
+    "depth": 18.771427154541016,
+    "dest": "FX A1 Param 4",
+    "norm_depth": 0.0,
+    "scene": null,
+    "scope": "global",
+    "src": "Modwheel",
+    "why": "every FX slot is forced Off"
+   },
+   {
+    "depth": 31.724998474121094,
+    "dest": "A Filter 1 Cutoff",
+    "norm_depth": 0.2440384477376938,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "filter unit 1 forced Off"
+   },
+   {
+    "depth": 0.15267899632453918,
+    "dest": "A Filter 1 Resonance",
+    "norm_depth": 0.15267899632453918,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "filter unit 1 forced Off"
+   },
+   {
+    "depth": 15.942855834960938,
+    "dest": "A Filter 1 FEG Mod Amount",
+    "norm_depth": 0.08303570747375488,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "filter unit 1 forced Off"
+   }
+  ],
+  "live": [],
+  "pinned": [
+   {
+    "depth": 0.3669640123844147,
+    "dest": "A Osc 1 Shape",
+    "norm_depth": 0.0,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "destination is pinned by the declared fixture configuration; depth zeroed (modpin_zero)"
+   },
+   {
+    "depth": 0.22321400046348572,
+    "dest": "A Osc 1 Shape",
+    "norm_depth": 0.0,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Filter EG",
+    "why": "destination is pinned by the declared fixture configuration; depth zeroed (modpin_zero)"
+   }
+  ]
+ },
+ "play_mode_rendered": 4,
+ "portamento_rendered": {
+  "options": {
+   "constantRate": false,
+   "curve": 0,
+   "glissando": false,
+   "retrigger": false
+  },
+  "value": -4.598213195800781
+ },
+ "preset_blob_sha1": "843cf98463f9d8d7840993180739e63a114d7ed9",
+ "render": {
+  "bit_identical_repeats": true,
+  "blocks": 8550,
+  "clipped_samples": 0,
+  "frames": 273600,
+  "peak_abs_float": 0.0,
+  "repeat_hashes": [
+   "67af3afbdbb1914b80e5eae5b22fdf7e29ae4cb085992aaaebe8925a9bda896a",
+   "67af3afbdbb1914b80e5eae5b22fdf7e29ae4cb085992aaaebe8925a9bda896a"
+  ],
+  "repeats": 2,
+  "sample_rate": 48000
+ },
+ "schema_version": 1,
+ "sequence": {
+  "id": "seq-notes-coverage-v1",
+  "path": "fixtures/sequences/seq-notes-coverage-v1.json"
+ },
+ "wav": {
+  "path": "../../../../../../../tmp/pm-oracle-budgets/digibass/seq-notes-coverage-v1/digibass__seq-notes-coverage-v1-ref.wav",
+  "sha256": "8b579626ede3af809619f4a85b714d35c8d68167b068b89ae0c6a09ba7675f86"
+ }
+}

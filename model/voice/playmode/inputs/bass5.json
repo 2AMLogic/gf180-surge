@@ -1,0 +1,233 @@
+{
+  "absolute_detune": false,
+  "adsr": {
+    "a": -8.0,
+    "a_s": 1.0,
+    "d": 0.0,
+    "d_s": 0.0,
+    "mode": 0.0,
+    "r": -5.0,
+    "r_s": 2.0,
+    "s": 1.0
+  },
+  "carrier": "bass5",
+  "character": 0,
+  "declared_overrides": [
+    "mute_o1",
+    "mute_o2",
+    "mute_o3",
+    "mute_noise",
+    "mute_ring_12",
+    "mute_ring_23",
+    "fu0_off",
+    "fu1_off",
+    "fx_off",
+    "ws_off",
+    "lc_off",
+    "fbc_serial1",
+    "fm_off",
+    "scenemode_single",
+    "retrigger_on",
+    "drift_zero",
+    "route_slot_1",
+    "osc_sine",
+    "osc_shape_0",
+    "osc_fmmode_legacy",
+    "osc_unison_1",
+    "osc_lowcut_off",
+    "osc_highcut_off",
+    "osc_detune_zero",
+    "osc_octave_0",
+    "osc_pitch_0",
+    "osc_keytrack_on",
+    "scene_pitch_0",
+    "pfg_zero",
+    "modpin_zero"
+  ],
+  "drift": 0.0,
+  "engine_pin": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "extend_detune": false,
+  "fb": 0.0,
+  "fb_extend": false,
+  "fmmode": 0,
+  "graphs_sha": "50fa48b69f35b22467f9fc663d31d2decd6ac8b6",
+  "highcut": 70.0,
+  "issue": 77,
+  "keytrack": true,
+  "leaf": "SXT-043",
+  "level_pfg": 0.0,
+  "lowcut": -60.0,
+  "master_db": 0.0,
+  "modulation_routes": {
+    "inert": [
+      {
+        "depth": 0.0964289978146553,
+        "dest": "A Volume",
+        "norm_depth": 0.0964289978146553,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": -7.714282989501953,
+        "dest": "A VCA Gain",
+        "norm_depth": -0.08035711199045181,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": -0.005357000045478344,
+        "dest": "A Feedback",
+        "norm_depth": -0.002678500022739172,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": 20.925012588500977,
+        "dest": "A Filter 1 Cutoff",
+        "norm_depth": 0.16096162796020508,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": -0.12857100367546082,
+        "dest": "A Filter 1 Resonance",
+        "norm_depth": -0.12857100367546082,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": -5.657145977020264,
+        "dest": "A Filter 2 Offset",
+        "norm_depth": -0.029464302584528923,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": -0.35892799496650696,
+        "dest": "A Filter 2 Resonance",
+        "norm_depth": -0.35892799496650696,
+        "scene": 0,
+        "scope": "scene",
+        "src": "Modwheel",
+        "why": "source 'Modwheel': no CC events in the fixture sequence"
+      },
+      {
+        "depth": 0.3678570091724396,
+        "dest": "A LFO 1 Amplitude",
+        "norm_depth": 0.3678570091724396,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Velocity",
+        "why": "no LFO route reaches the declared audio slice"
+      },
+      {
+        "depth": 4.963637828826904,
+        "dest": "A LFO 1 Decay",
+        "norm_depth": 0.3818182945251465,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Velocity",
+        "why": "no LFO route reaches the declared audio slice"
+      },
+      {
+        "depth": 16.53748893737793,
+        "dest": "A Filter 1 Cutoff",
+        "norm_depth": 0.12721145153045654,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Voice LFO 1",
+        "why": "filter unit 1 forced Off"
+      },
+      {
+        "depth": -24.42857551574707,
+        "dest": "A Filter 2 Offset",
+        "norm_depth": -0.127232164144516,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Voice LFO 1",
+        "why": "filter unit 2 forced Off"
+      }
+    ],
+    "live": [
+      {
+        "depth": -0.8742859959602356,
+        "dest": "A VCA Gain",
+        "norm_depth": -0.009107145480811596,
+        "scene": 0,
+        "scope": "voice",
+        "src": "Keytrack",
+        "why": "destination in the declared live vocabulary"
+      }
+    ],
+    "pinned": []
+  },
+  "mono_voice_envelope_mode": 1,
+  "mono_voice_priority_mode": 0,
+  "o_level": 1.0,
+  "octave": 0,
+  "osc_cut_activation_probe": {
+    "highcut_deactivated": true,
+    "highcut_probe": {
+      "sha256_a": "f6832d07663dcbcd7b19812134ff9c1e52dba98c1a32240216ad8ae9df876dfc",
+      "sha256_b": "f6832d07663dcbcd7b19812134ff9c1e52dba98c1a32240216ad8ae9df876dfc",
+      "value_a": 70.0,
+      "value_b": 0.0
+    },
+    "lowcut_deactivated": true,
+    "lowcut_probe": {
+      "sha256_a": "f6832d07663dcbcd7b19812134ff9c1e52dba98c1a32240216ad8ae9df876dfc",
+      "sha256_b": "f6832d07663dcbcd7b19812134ff9c1e52dba98c1a32240216ad8ae9df876dfc",
+      "value_a": -60.0,
+      "value_b": 20.0
+    }
+  },
+  "osc_type": 1,
+  "pan": 0.0,
+  "pitch_extend": false,
+  "pitch_param": 0.0,
+  "play_mode": {
+    "id": 4,
+    "name": "Mono (Single Trigger & Fingered Portamento)"
+  },
+  "poly_voice_repeated_key_mode": 0,
+  "polylimit": 16,
+  "portamento": {
+    "options": {
+      "constantRate": false,
+      "curve": 0,
+      "glissando": false,
+      "retrigger": false
+    },
+    "temposync": false,
+    "val_max": 2.0,
+    "val_min": -8.0,
+    "value": -5.776785850524902
+  },
+  "preset_census_blob_sha1": "50fa48b69f35b22467f9fc663d31d2decd6ac8b6",
+  "preset_path": "resources/data/patches_factory/Basses/Bass 5.fxp",
+  "retrigger": true,
+  "sample_rate": 48000,
+  "scene_octave": -1,
+  "scene_volume": 1.0,
+  "schema": "sxt-043-playmode-inputs/1",
+  "schema_version": 1,
+  "shape": 0,
+  "slot": 0,
+  "unison": 1,
+  "unison_detune": 0.0,
+  "vca_db": 12.44571304321289,
+  "vca_velsense": -16.714284896850586,
+  "width": 1.0
+}
