@@ -3035,8 +3035,20 @@ def test_an_empty_commit_range_is_an_error_not_a_pass(tmp_path):
 
 
 def test_history_mode_is_reachable_from_the_cli_and_discloses_its_coverage(tmp_path):
-    """The mode a reviewer actually runs, including its NOT_RUN disclosures."""
-    proc = run_tool("--commits", "HEAD~1..HEAD")
+    """The mode a reviewer actually runs, including its NOT_RUN disclosures.
+
+    Against a fixture repository of its own, NOT this checkout: `HEAD~1` does not
+    resolve in a shallow clone, and `actions/checkout@v4` fetches depth 1 by
+    default, so running the range against `REPO` made the test assert on the
+    clone depth of whatever tree it happened to run in (it passed locally and
+    failed in CI with "ambiguous argument 'HEAD~1..HEAD'"). The fixture is built
+    with two commits here, so the rev-range spelling is still exercised — which
+    is the part of the CLI surface this test exists to cover.
+    """
+    root = _history_tree(tmp_path, "history-cli")
+    cp._write(root, "docs/second.md", "A second commit with nothing of interest.\n")
+    cp._commit_all(root, "a second clean commit, so HEAD~1 resolves")
+    proc = run_tool("--root", str(root), "--commits", "HEAD~1..HEAD")
     assert proc.returncode in (0, 1), proc.stdout + proc.stderr
     for line in (
         "provenance history audit of",

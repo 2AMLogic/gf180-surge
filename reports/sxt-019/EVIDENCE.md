@@ -2449,6 +2449,16 @@ the in-repo-symlink must-not-fire direction, the (path, blob) cache key, the
 empty-range refusal, the CLI's own coverage lines, and that both the limits text
 and the self-test actually carry this layer.
 
+The CLI test builds a **two-commit fixture repository of its own** rather than
+running a range against this checkout. The first version ran `--commits
+HEAD~1..HEAD` against `REPO`, which passes locally and **failed in CI**
+(`ambiguous argument 'HEAD~1..HEAD'`): `actions/checkout@v4` fetches depth 1, so
+`HEAD~1` does not resolve and the tool correctly refused with NOT_RUN (exit 2).
+A test that asserts on the clone depth it happens to run in is testing the
+environment, not the mode. Verified both directions in a real `git clone
+--depth 1` of this branch: the committed version of that test FAILS there, the
+fixture version PASSES.
+
 ### What §20 does NOT establish
 
 * **Not a CI gate.** This PR adds the mode, its controls and this measurement; it
