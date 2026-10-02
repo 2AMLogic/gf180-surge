@@ -1,0 +1,120 @@
+{
+  "base_patch": "resources/data/patches_factory/Basses/FM Combo.fxp",
+  "base_patch_census_blob_sha1": "b50a36498d699f8ec409b7a5623ff516954cd242",
+  "carrier_kind": "DECLARED-SYNTHETIC",
+  "chain_models": {
+    "ains": [
+      {
+        "params": {
+          "drive_extend": false,
+          "drive_f": 12.0,
+          "feedback_f": 0.0,
+          "gain_f": 0.0,
+          "model_i": 3,
+          "posteq_bw_f": 2.03125,
+          "posteq_freq_f": 3.0,
+          "posteq_gain_extend": false,
+          "posteq_gain_f": 0.0,
+          "posteq_highcut_deactivated": false,
+          "posteq_highcut_f": 30.535736083984375,
+          "preeq_bw_f": 1.9446439743041992,
+          "preeq_freq_f": 3.817859649658203,
+          "preeq_gain_extend": false,
+          "preeq_gain_f": 0.0,
+          "preeq_highcut_deactivated": false,
+          "preeq_highcut_f": 38.42144775390625
+        },
+        "role": "ains1",
+        "slot": 0,
+        "type": "distortion-sse"
+      }
+    ],
+    "globals": [],
+    "scene_sends_f": [
+      [
+        0.5,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "sends": [],
+    "tempo_bpm": 120.0,
+    "volume_f": 0.0
+  },
+  "claim_scope": "model-vs-pinned-engine numeric instrument only; no corpus reach, no support claim, no musical-quality claim.",
+  "complete_wet_render_possible": true,
+  "construction": {
+    "active_slots": [
+      0
+    ],
+    "fixture_legs": [
+      "original",
+      "dry"
+    ],
+    "flags_source": "savePatch round-trip of the CONSTRUCTED patch (the loader's normalized state), same reader as the corpus carriers",
+    "fx_types_readback": [
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "send1_level_f": 0.5,
+    "settle_blocks": 375,
+    "settle_note": "1 FX-rebuild block + (settle_blocks - 1) settle blocks; total settle unchanged at 0.25 s",
+    "volume_f": 0.0
+  },
+  "corpus_reach": "NONE \u2014 this carrier is not a corpus preset. The committed corpus histogram for active Distortion slots is unchanged by it and no support claim follows from any number measured on it.",
+  "declaration": "DECLARED SYNTHETIC carrier: constructed in the pinned engine from resources/data/patches_factory/Basses/FM Combo.fxp by setting all 16 FX slot types Off except slots 0 (ains1) and 4 (send1) = Distortion, writing a declared parameter set into each and clearing the three extend_range flags. NOT a corpus preset. Carries NO corpus reach, NO preset-support claim and NO musical-quality claim; it is an instrument for the model-vs-pinned-engine numeric leg only.",
+  "distortion_slots": [
+    {
+      "fx_model_index": 3,
+      "params": {
+        "drive_extend": false,
+        "drive_f": 12.0,
+        "feedback_f": 0.0,
+        "gain_f": 0.0,
+        "model_i": 3,
+        "posteq_bw_f": 2.03125,
+        "posteq_freq_f": 3.0,
+        "posteq_gain_extend": false,
+        "posteq_gain_f": 0.0,
+        "posteq_highcut_deactivated": false,
+        "posteq_highcut_f": 30.535736083984375,
+        "preeq_bw_f": 1.9446439743041992,
+        "preeq_freq_f": 3.817859649658203,
+        "preeq_gain_extend": false,
+        "preeq_gain_f": 0.0,
+        "preeq_highcut_deactivated": false,
+        "preeq_highcut_f": 38.42144775390625
+      },
+      "quad_waveshaper": "SINUS_SSE2<false>",
+      "return_f": 1.0,
+      "routing": "ains1",
+      "slot_index": 0
+    }
+  ],
+  "extraction_mode": "oracle-synthetic",
+  "extraction_status": "COMPLETE",
+  "fx_model_index": 3,
+  "fxws_name": "wst_sine",
+  "leaf": "SXT-028e-sse",
+  "quad_waveshaper": "SINUS_SSE2<false>",
+  "schema_version": 1,
+  "slug": "syn-d12-m3",
+  "unresolved_fields": []
+}

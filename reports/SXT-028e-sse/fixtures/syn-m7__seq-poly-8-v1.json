@@ -1,0 +1,410 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "carrier_kind": "DECLARED-SYNTHETIC",
+  "claim_scope": "reference-vs-reference buses of the pinned engine under the SXT-012/023 policies, on a DECLARED SYNTHETIC patch; no fidelity, support or quality claim follows from their existence",
+  "corpus_reach": "NONE",
+  "declaration": "DECLARED SYNTHETIC carrier: constructed in the pinned engine from resources/data/patches_factory/Basses/FM Combo.fxp by setting all 16 FX slot types Off except slots 0 (ains1) and 4 (send1) = Distortion, writing a declared parameter set into each and clearing the three extend_range flags. NOT a corpus preset. Carries NO corpus reach, NO preset-support claim and NO musical-quality claim; it is an instrument for the model-vs-pinned-engine numeric leg only.",
+  "determinism_gate": {
+    "bit_identical": true,
+    "per_leg_sha256_all": {
+      "bypass-fx0": [
+        "a9feb35caf8b30275a19747b2c0ca7d29b7dd1c42bca223bb3faf8b0de51b17e",
+        "a9feb35caf8b30275a19747b2c0ca7d29b7dd1c42bca223bb3faf8b0de51b17e",
+        "a9feb35caf8b30275a19747b2c0ca7d29b7dd1c42bca223bb3faf8b0de51b17e"
+      ],
+      "bypass-fx4": [
+        "35b31665c78b528911255a6d59e9e1f9e912e987f4fe86054c227d3811922423",
+        "35b31665c78b528911255a6d59e9e1f9e912e987f4fe86054c227d3811922423",
+        "35b31665c78b528911255a6d59e9e1f9e912e987f4fe86054c227d3811922423"
+      ],
+      "dry": [
+        "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+        "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+        "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+      ],
+      "original": [
+        "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e",
+        "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e",
+        "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e"
+      ]
+    },
+    "repeats": 3
+  },
+  "dry": {
+    "active_distortion_slots": [],
+    "bit_identical": true,
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before the settle; read-back verified Off; fresh instance",
+    "bytes": 1420844,
+    "determinism_sha256_all": [
+      "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+      "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+      "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+    ],
+    "dry_fx_bypass_verified": true,
+    "frames": 177600,
+    "last_event_sample": 57600,
+    "peak_abs_float": 0.32341471314430237,
+    "sha256": "5405297df3f01786073cffc5f16f64d0fe19240d66ca028908a56743c2462a6b",
+    "shared_across_models": "yes \u2014 the all-off dry bus carries no model-specific state; one render per sequence serves every bundle",
+    "tail_s": 2.5,
+    "wav": "reports/SXT-028e-sse/fixtures/syn-shared__seq-poly-8-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "syn-m7__seq-poly-8-v1",
+  "fx_model_index": 7,
+  "fxws_name": "wst_fuzzsoft",
+  "issue": "SXT-028e-sse (#136)",
+  "leaf": "SXT-028e-sse",
+  "legs": {
+    "bypass-fx0": {
+      "active_distortion_slots": [
+        4
+      ],
+      "bit_identical": true,
+      "bytes": 1420844,
+      "construction_readback": {
+        "fx_types": [
+          0,
+          0,
+          0,
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_setparam_ulps": 1,
+        "send1_level_f": 0.5,
+        "slots": {
+          "4": {
+            "fxws_name": "wst_fuzzsoft",
+            "params": {
+              "drive_f": 6.0,
+              "feedback_f": -0.5,
+              "gain_f": -6.0,
+              "model_i": 7,
+              "posteq_bw_f": 2.03125,
+              "posteq_freq_f": 3.0,
+              "posteq_gain_f": -6.0,
+              "posteq_highcut_f": 30.535736083984375,
+              "preeq_bw_f": 1.9446439743041992,
+              "preeq_freq_f": 3.817859649658203,
+              "preeq_gain_f": -3.0,
+              "preeq_highcut_f": 38.42144775390625
+            },
+            "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+            "return_f": 1.0,
+            "role": "send1"
+          }
+        },
+        "volume_f": 0.0
+      },
+      "determinism_sha256_all": [
+        "a9feb35caf8b30275a19747b2c0ca7d29b7dd1c42bca223bb3faf8b0de51b17e",
+        "a9feb35caf8b30275a19747b2c0ca7d29b7dd1c42bca223bb3faf8b0de51b17e",
+        "a9feb35caf8b30275a19747b2c0ca7d29b7dd1c42bca223bb3faf8b0de51b17e"
+      ],
+      "frames": 177600,
+      "last_event_sample": 57600,
+      "peak_abs_float": 0.3489656150341034,
+      "sha256": "99b7558ee762acd5494d037b4a6969e1b7ba493e117207e6b5200f05bfbd73ef",
+      "tail_s": 2.5,
+      "wav": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1-bypass-fx0.f32.wav"
+    },
+    "bypass-fx4": {
+      "active_distortion_slots": [
+        0
+      ],
+      "bit_identical": true,
+      "bytes": 1420844,
+      "construction_readback": {
+        "fx_types": [
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_setparam_ulps": 1,
+        "send1_level_f": 0.5,
+        "slots": {
+          "0": {
+            "fxws_name": "wst_fuzzsoft",
+            "params": {
+              "drive_f": 12.0,
+              "feedback_f": 0.0,
+              "gain_f": -6.0,
+              "model_i": 7,
+              "posteq_bw_f": 2.03125,
+              "posteq_freq_f": 3.0,
+              "posteq_gain_f": 0.0,
+              "posteq_highcut_f": 30.535736083984375,
+              "preeq_bw_f": 1.9446439743041992,
+              "preeq_freq_f": 3.817859649658203,
+              "preeq_gain_f": 0.0,
+              "preeq_highcut_f": 38.42144775390625
+            },
+            "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+            "return_f": 1.0,
+            "role": "ains1"
+          }
+        },
+        "volume_f": 0.0
+      },
+      "determinism_sha256_all": [
+        "35b31665c78b528911255a6d59e9e1f9e912e987f4fe86054c227d3811922423",
+        "35b31665c78b528911255a6d59e9e1f9e912e987f4fe86054c227d3811922423",
+        "35b31665c78b528911255a6d59e9e1f9e912e987f4fe86054c227d3811922423"
+      ],
+      "frames": 177600,
+      "last_event_sample": 57600,
+      "peak_abs_float": 0.4199894070625305,
+      "sha256": "0a69ddd6955b960f7bcae3acc3f7bd17b063aaacecd3bcb5d14141ae78f759ff",
+      "tail_s": 2.5,
+      "wav": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1-bypass-fx4.f32.wav"
+    },
+    "dry": {
+      "active_distortion_slots": [],
+      "bit_identical": true,
+      "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before the settle; read-back verified Off; fresh instance",
+      "bytes": 1420844,
+      "determinism_sha256_all": [
+        "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+        "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+        "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+      ],
+      "dry_fx_bypass_verified": true,
+      "frames": 177600,
+      "last_event_sample": 57600,
+      "peak_abs_float": 0.32341471314430237,
+      "sha256": "5405297df3f01786073cffc5f16f64d0fe19240d66ca028908a56743c2462a6b",
+      "shared_across_models": "yes \u2014 the all-off dry bus carries no model-specific state; one render per sequence serves every bundle",
+      "tail_s": 2.5,
+      "wav": "reports/SXT-028e-sse/fixtures/syn-shared__seq-poly-8-v1-dry.f32.wav"
+    },
+    "original": {
+      "active_distortion_slots": [
+        0,
+        4
+      ],
+      "bit_identical": true,
+      "bytes": 1420844,
+      "construction_readback": {
+        "fx_types": [
+          5,
+          0,
+          0,
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max_setparam_ulps": 1,
+        "send1_level_f": 0.5,
+        "slots": {
+          "0": {
+            "fxws_name": "wst_fuzzsoft",
+            "params": {
+              "drive_f": 12.0,
+              "feedback_f": 0.0,
+              "gain_f": -6.0,
+              "model_i": 7,
+              "posteq_bw_f": 2.03125,
+              "posteq_freq_f": 3.0,
+              "posteq_gain_f": 0.0,
+              "posteq_highcut_f": 30.535736083984375,
+              "preeq_bw_f": 1.9446439743041992,
+              "preeq_freq_f": 3.817859649658203,
+              "preeq_gain_f": 0.0,
+              "preeq_highcut_f": 38.42144775390625
+            },
+            "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+            "return_f": 1.0,
+            "role": "ains1"
+          },
+          "4": {
+            "fxws_name": "wst_fuzzsoft",
+            "params": {
+              "drive_f": 6.0,
+              "feedback_f": -0.5,
+              "gain_f": -6.0,
+              "model_i": 7,
+              "posteq_bw_f": 2.03125,
+              "posteq_freq_f": 3.0,
+              "posteq_gain_f": -6.0,
+              "posteq_highcut_f": 30.535736083984375,
+              "preeq_bw_f": 1.9446439743041992,
+              "preeq_freq_f": 3.817859649658203,
+              "preeq_gain_f": -3.0,
+              "preeq_highcut_f": 38.42144775390625
+            },
+            "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+            "return_f": 1.0,
+            "role": "send1"
+          }
+        },
+        "volume_f": 0.0
+      },
+      "determinism_sha256_all": [
+        "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e",
+        "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e",
+        "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e"
+      ],
+      "frames": 177600,
+      "last_event_sample": 57600,
+      "peak_abs_float": 0.4469471871852875,
+      "sha256": "19abc70f840a889d47fa6e8a709bb56c1fc531b8e04b12bb4ec49d62e129629b",
+      "tail_s": 2.5,
+      "wav": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1-original.f32.wav"
+    }
+  },
+  "original": {
+    "active_distortion_slots": [
+      0,
+      4
+    ],
+    "bit_identical": true,
+    "bytes": 1420844,
+    "construction_readback": {
+      "fx_types": [
+        5,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_setparam_ulps": 1,
+      "send1_level_f": 0.5,
+      "slots": {
+        "0": {
+          "fxws_name": "wst_fuzzsoft",
+          "params": {
+            "drive_f": 12.0,
+            "feedback_f": 0.0,
+            "gain_f": -6.0,
+            "model_i": 7,
+            "posteq_bw_f": 2.03125,
+            "posteq_freq_f": 3.0,
+            "posteq_gain_f": 0.0,
+            "posteq_highcut_f": 30.535736083984375,
+            "preeq_bw_f": 1.9446439743041992,
+            "preeq_freq_f": 3.817859649658203,
+            "preeq_gain_f": 0.0,
+            "preeq_highcut_f": 38.42144775390625
+          },
+          "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+          "return_f": 1.0,
+          "role": "ains1"
+        },
+        "4": {
+          "fxws_name": "wst_fuzzsoft",
+          "params": {
+            "drive_f": 6.0,
+            "feedback_f": -0.5,
+            "gain_f": -6.0,
+            "model_i": 7,
+            "posteq_bw_f": 2.03125,
+            "posteq_freq_f": 3.0,
+            "posteq_gain_f": -6.0,
+            "posteq_highcut_f": 30.535736083984375,
+            "preeq_bw_f": 1.9446439743041992,
+            "preeq_freq_f": 3.817859649658203,
+            "preeq_gain_f": -3.0,
+            "preeq_highcut_f": 38.42144775390625
+          },
+          "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+          "return_f": 1.0,
+          "role": "send1"
+        }
+      },
+      "volume_f": 0.0
+    },
+    "determinism_sha256_all": [
+      "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e",
+      "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e",
+      "f08bb5cb5d2e39be5608f6e19e90bd921e7cc27172a61e318388bd230fc09a7e"
+    ],
+    "frames": 177600,
+    "last_event_sample": 57600,
+    "peak_abs_float": 0.4469471871852875,
+    "sha256": "19abc70f840a889d47fa6e8a709bb56c1fc531b8e04b12bb4ec49d62e129629b",
+    "tail_s": 2.5,
+    "wav": "reports/SXT-028e-sse/fixtures/syn-m7__seq-poly-8-v1-original.f32.wav"
+  },
+  "preset": {
+    "base_census_blob_sha1": "b50a36498d699f8ec409b7a5623ff516954cd242",
+    "base_path": "resources/data/patches_factory/Basses/FM Combo.fxp",
+    "slug": "syn-m7"
+  },
+  "quad_waveshaper": "TableEval<FuzzTable<1>, 1024, TANH>",
+  "render": {
+    "block_size": 32,
+    "declared_deviation": "the synthetic construction spends one of the 375 settle blocks materialising the FX instances before writing their parameters; the total settle is unchanged at 0.25 s",
+    "declared_ringout_blocks": 1600,
+    "duration_s": 3.7,
+    "frames": 177600,
+    "policies_inherited": "fixtures/render_fixture.py via tools/render_fx_fixtures.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_blocks": 3750,
+    "tail_s": 2.5,
+    "tail_spans_declared_ringout": true
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+    "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+  },
+  "wet_bus_name": "original"
+}

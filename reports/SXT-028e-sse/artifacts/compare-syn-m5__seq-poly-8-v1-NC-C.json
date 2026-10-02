@@ -1,0 +1,219 @@
+{
+  "schema_version": 2,
+  "leaf": "SXT-028e-sse",
+  "issue": "SXT-028e-sse reference leg (#136)",
+  "slug": "syn-m5",
+  "sequence": "seq-poly-8-v1",
+  "carrier_kind": "DECLARED-SYNTHETIC",
+  "corpus_reach": "NONE",
+  "fx_model_index": 5,
+  "quad_waveshaper": "OJD",
+  "ref": "reports/SXT-028e-sse/fixtures/syn-m5__seq-poly-8-v1-original.f32.wav",
+  "ref_bus": "original",
+  "model": "reports/SXT-028e-sse/artifacts/model__syn-m5__seq-poly-8-v1-NC-C.f32.wav",
+  "path": "wet",
+  "fixture_sidecar": "reports/SXT-028e-sse/fixtures/syn-m5__seq-poly-8-v1.json",
+  "label": "NC-C: the WRONG settle boundary: the fixture's 375-block synth settle also run through the effect, pre-converging the lipol and coefficient ramps the engine has not started yet",
+  "channels": {
+    "L": {
+      "frames": 177600,
+      "ref_peak_lsb": 1121522.0,
+      "model_peak_lsb": 1121521.0,
+      "max_abs_diff_lsb": 944521.9609375,
+      "rms_diff_lsb": 14033.151393418588,
+      "rms_diff_dbfs": -37.468894055167695,
+      "rms_diff_at_shift0_lsb": 14033.151393418588,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 14033.151393418588,
+      "spectral_corr": 0.9999935173949509
+    },
+    "R": {
+      "frames": 177600,
+      "ref_peak_lsb": 1121522.0,
+      "model_peak_lsb": 1121521.0,
+      "max_abs_diff_lsb": 944521.9609375,
+      "rms_diff_lsb": 14033.151393418588,
+      "rms_diff_dbfs": -37.468894055167695,
+      "rms_diff_at_shift0_lsb": 14033.151393418588,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 14033.151393418588,
+      "spectral_corr": 0.9999935173949509
+    },
+    "mono": {
+      "frames": 177600,
+      "ref_peak_lsb": 1121522.0,
+      "model_peak_lsb": 1121521.0,
+      "max_abs_diff_lsb": 944521.9609375,
+      "rms_diff_lsb": 14033.151393418588,
+      "rms_diff_dbfs": -37.468894055167695,
+      "rms_diff_at_shift0_lsb": 14033.151393418588,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 14033.151393418588,
+      "spectral_corr": 0.9999935173949509
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": false,
+    "spectral_corr": true
+  },
+  "peak_budget_exceedance": {
+    "threshold_lsb": 8192,
+    "samples_over": 491,
+    "samples_total": 177600,
+    "fraction_over": 0.0027646396396396396,
+    "worst_sample_index": 23,
+    "p99_9_abs_diff_lsb": 110941.18856250175,
+    "median_abs_diff_lsb": 0.019509050995111465,
+    "note": "descriptive only. The budget verdict above is unchanged by these numbers and no threshold here is a pass criterion."
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 57600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-m5__seq-poly-8-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 2.80224609375,
+    "tail_rms_diff_lsb": 0.31059316061196346,
+    "tail_rms_rel_db": -97.78834982407506,
+    "tail_ref_rms_lsb": 24077.38844443954,
+    "tail_model_rms_lsb": 24077.380080479237,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 7,
+      "ref_first_window_dbfs": -21.8175332665134,
+      "ref_last_graded_window_dbfs": -96.15244510100476,
+      "max_dev_db": 0.040815901110903496,
+      "worst_window": {
+        "index": 6,
+        "start_frame_in_tail": 14400,
+        "ref_dbfs": -96.15244510100476,
+        "model_dbfs": -96.11162919989386
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-m5__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 2.80224609375,
+      "tail_rms_diff_lsb": 0.31059316061196346,
+      "tail_rms_rel_db": -97.78834982407506,
+      "tail_ref_rms_lsb": 24077.38844443954,
+      "tail_model_rms_lsb": 24077.380080479237,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 7,
+        "ref_first_window_dbfs": -21.8175332665134,
+        "ref_last_graded_window_dbfs": -96.15244510100476,
+        "max_dev_db": 0.040815901110903496,
+        "worst_window": {
+          "index": 6,
+          "start_frame_in_tail": 14400,
+          "ref_dbfs": -96.15244510100476,
+          "model_dbfs": -96.11162919989386
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-m5__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 2.80224609375,
+      "tail_rms_diff_lsb": 0.31059316061196346,
+      "tail_rms_rel_db": -97.78834982407506,
+      "tail_ref_rms_lsb": 24077.38844443954,
+      "tail_model_rms_lsb": 24077.380080479237,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 7,
+        "ref_first_window_dbfs": -21.8175332665134,
+        "ref_last_graded_window_dbfs": -96.15244510100476,
+        "max_dev_db": 0.040815901110903496,
+        "worst_window": {
+          "index": 6,
+          "start_frame_in_tail": 14400,
+          "ref_dbfs": -96.15244510100476,
+          "model_dbfs": -96.11162919989386
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs)",
+  "claim_scope": "model-vs-pinned-engine agreement on a DECLARED SYNTHETIC carrier (claim 2). Not claim 1 (RTL-vs-model, separate and exact) and not claim 3 (sounds good, no listening record). No preset-support claim and no corpus reach follow from this number."
+}

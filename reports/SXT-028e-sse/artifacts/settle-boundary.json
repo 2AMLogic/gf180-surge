@@ -1,0 +1,45 @@
+{
+  "A_settle_length_invariance": {
+    "byte_identical": true,
+    "means": "the engine's effect state does NOT evolve during a silent settle",
+    "settle_blocks_compared": [
+      375,
+      3750
+    ],
+    "sha256": [
+      "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+      "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+    ]
+  },
+  "B_construction_invariance": {
+    "byte_identical": true,
+    "means": "A is the engine's behaviour for an ORDINARY loaded preset, not an artifact of the synthetic construction",
+    "sha256_constructed_in_place": "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+    "sha256_saved_and_reloaded": "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+  },
+  "C_model_boundary_vs_engine": {
+    "budget_reference": "[PROPOSED] SXT-023 effect slice: max <= 8192 LSB Q10.21, rms <= -46 dBFS. PROPOSED, not frozen (#12).",
+    "silent_preroll_blocks": {
+      "0": {
+        "max_abs_diff_lsb": 10.5,
+        "rms_diff_dbfs": -113.64470759312987
+      },
+      "375": {
+        "max_abs_diff_lsb": 672130.375,
+        "rms_diff_dbfs": -40.082655705692616
+      }
+    }
+  },
+  "block_size": 32,
+  "claim_scope": "a harness boundary measurement. It is not a fidelity result, not a support claim, and it does not change the frozen model (byte-frozen; docs/byte-frozen-sources.json).",
+  "declared_silent_preroll_blocks": 0,
+  "engine_pin": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "issue": "#136 reference leg: where does the effect's history start?",
+  "leaf": "SXT-028e-sse",
+  "note": "If A or B is not byte-identical the boundary is UNRESOLVED and the reference leg must say so; the harness does not pick whichever pre-roll scores better.",
+  "probe_carrier": "syn-d0-m3",
+  "probe_carrier_kind": "DECLARED-SYNTHETIC (the harness anchor)",
+  "sample_rate": 48000,
+  "sequence": "seq-poly-8-v1",
+  "status": "RESOLVED"
+}

@@ -1,0 +1,218 @@
+{
+  "schema_version": 2,
+  "leaf": "SXT-028e-sse",
+  "issue": "SXT-028e-sse reference leg (#136)",
+  "slug": "syn-d18-m3",
+  "sequence": "seq-poly-8-v1",
+  "carrier_kind": "DECLARED-SYNTHETIC",
+  "corpus_reach": "NONE",
+  "fx_model_index": 3,
+  "quad_waveshaper": "SINUS_SSE2<false>",
+  "ref": "reports/SXT-028e-sse/fixtures/syn-d18-m3__seq-poly-8-v1-original.f32.wav",
+  "ref_bus": "original",
+  "model": "reports/SXT-028e-sse/artifacts/model__syn-d18-m3__seq-poly-8-v1.f32.wav",
+  "path": "wet",
+  "fixture_sidecar": "reports/SXT-028e-sse/fixtures/syn-d18-m3__seq-poly-8-v1.json",
+  "channels": {
+    "L": {
+      "frames": 177600,
+      "ref_peak_lsb": 2156449.5,
+      "model_peak_lsb": 2156442.0,
+      "max_abs_diff_lsb": 355513.1875,
+      "rms_diff_lsb": 4636.462082650706,
+      "rms_diff_dbfs": -47.08826401680664,
+      "rms_diff_at_shift0_lsb": 4636.462082650706,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 4636.462082650706,
+      "spectral_corr": 0.9999975891828948
+    },
+    "R": {
+      "frames": 177600,
+      "ref_peak_lsb": 2156449.5,
+      "model_peak_lsb": 2156442.0,
+      "max_abs_diff_lsb": 355513.1875,
+      "rms_diff_lsb": 4636.462082650706,
+      "rms_diff_dbfs": -47.08826401680664,
+      "rms_diff_at_shift0_lsb": 4636.462082650706,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 4636.462082650706,
+      "spectral_corr": 0.9999975891828948
+    },
+    "mono": {
+      "frames": 177600,
+      "ref_peak_lsb": 2156449.5,
+      "model_peak_lsb": 2156442.0,
+      "max_abs_diff_lsb": 355513.1875,
+      "rms_diff_lsb": 4636.462082650706,
+      "rms_diff_dbfs": -47.08826401680664,
+      "rms_diff_at_shift0_lsb": 4636.462082650706,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 4636.462082650706,
+      "spectral_corr": 0.9999975891828948
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": false,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "peak_budget_exceedance": {
+    "threshold_lsb": 8192,
+    "samples_over": 370,
+    "samples_total": 177600,
+    "fraction_over": 0.0020833333333333333,
+    "worst_sample_index": 22,
+    "p99_9_abs_diff_lsb": 42873.62050000057,
+    "median_abs_diff_lsb": 0.022750336676836014,
+    "note": "descriptive only. The budget verdict above is unchanged by these numbers and no threshold here is a pass criterion."
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 57600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-d18-m3__seq-poly-8-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 8.75,
+    "tail_rms_diff_lsb": 1.3485670262313427,
+    "tail_rms_rel_db": -96.83047595898668,
+    "tail_ref_rms_lsb": 93625.97093038286,
+    "tail_model_rms_lsb": 93625.63055879927,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 9,
+      "ref_first_window_dbfs": -10.030001750320945,
+      "ref_last_graded_window_dbfs": -99.69406253012261,
+      "max_dev_db": 0.1143274664226368,
+      "worst_window": {
+        "index": 8,
+        "start_frame_in_tail": 19200,
+        "ref_dbfs": -99.69406253012261,
+        "model_dbfs": -99.57973506369997
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-d18-m3__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 8.75,
+      "tail_rms_diff_lsb": 1.3485670262313427,
+      "tail_rms_rel_db": -96.83047595898668,
+      "tail_ref_rms_lsb": 93625.97093038286,
+      "tail_model_rms_lsb": 93625.63055879927,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 9,
+        "ref_first_window_dbfs": -10.030001750320945,
+        "ref_last_graded_window_dbfs": -99.69406253012261,
+        "max_dev_db": 0.1143274664226368,
+        "worst_window": {
+          "index": 8,
+          "start_frame_in_tail": 19200,
+          "ref_dbfs": -99.69406253012261,
+          "model_dbfs": -99.57973506369997
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar original.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028e-sse/fixtures/syn-d18-m3__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 8.75,
+      "tail_rms_diff_lsb": 1.3485670262313427,
+      "tail_rms_rel_db": -96.83047595898668,
+      "tail_ref_rms_lsb": 93625.97093038286,
+      "tail_model_rms_lsb": 93625.63055879927,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 9,
+        "ref_first_window_dbfs": -10.030001750320945,
+        "ref_last_graded_window_dbfs": -99.69406253012261,
+        "max_dev_db": 0.1143274664226368,
+        "worst_window": {
+          "index": 8,
+          "start_frame_in_tail": 19200,
+          "ref_dbfs": -99.69406253012261,
+          "model_dbfs": -99.57973506369997
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb)",
+  "claim_scope": "model-vs-pinned-engine agreement on a DECLARED SYNTHETIC carrier (claim 2). Not claim 1 (RTL-vs-model, separate and exact) and not claim 3 (sounds good, no listening record). No preset-support claim and no corpus reach follow from this number."
+}

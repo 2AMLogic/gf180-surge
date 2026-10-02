@@ -17,37 +17,38 @@
       "type": "Conditioner"
     }
   ],
-  "claim_scope": "data export only; no support, fidelity or musical-quality claim",
+  "chain_models": null,
+  "claim_scope": "control-plane export + measured render-admissibility screens; no support, fidelity or musical-quality claim. A populated record permits a model run; it does not assert that one agreed with the engine.",
   "complete_wet_render_possible": false,
   "distortion_slots": [
     {
       "fx_model_index": 4,
       "params": {
-        "drive_extend": null,
+        "drive_extend": false,
         "drive_f": -24.0,
-        "feedback_f": -0.608571,
+        "feedback_f": -0.6085709929466248,
         "gain_f": 0.0,
         "model_i": 4,
         "posteq_bw_f": 2.03125,
-        "posteq_freq_f": 20.100006,
-        "posteq_gain_extend": null,
-        "posteq_gain_f": 7.971436,
-        "posteq_highcut_deactivated": null,
-        "posteq_highcut_f": 50.994675,
-        "preeq_bw_f": 1.234822,
-        "preeq_freq_f": -6.564289,
-        "preeq_gain_extend": null,
-        "preeq_gain_f": -6.171432,
-        "preeq_highcut_deactivated": null,
-        "preeq_highcut_f": 59.491096
+        "posteq_freq_f": 20.100006103515625,
+        "posteq_gain_extend": false,
+        "posteq_gain_f": 7.971436023712158,
+        "posteq_highcut_deactivated": false,
+        "posteq_highcut_f": 50.99467468261719,
+        "preeq_bw_f": 1.2348220348358154,
+        "preeq_freq_f": -6.564289093017578,
+        "preeq_gain_extend": false,
+        "preeq_gain_f": -6.171432018280029,
+        "preeq_highcut_deactivated": false,
+        "preeq_highcut_f": 59.49109649658203
       },
       "quad_waveshaper": "DIGI_SSE2",
       "routing": "send1",
       "slot_index": 4
     }
   ],
-  "extraction_mode": "graphs",
-  "extraction_status": "INCOMPLETE-BLOCKED-ON-ORACLE",
+  "extraction_mode": "oracle",
+  "extraction_status": "COMPLETE",
   "landed_classes_basis": {
     "landed_fx_classes": [
       "Chorus",
@@ -60,19 +61,71 @@
     "source": "reports/coverage-v1/leaf-verification.json (leaves[*].landed)"
   },
   "leaf": "SXT-028e-sse",
+  "oracle_extraction": {
+    "cross_checks": [
+      "live getExtend getter == normalized state (3 extend flags)",
+      "raw pre-migration .fxp attribute + documented handleStreamingMismatches rule == normalized state (all 5)",
+      "12 engine parameter values == the committed SXT-011 graphs.jsonl normalized export (drift == 0)",
+      "engine FX slot types == graphs.jsonl FX slot types",
+      "census blob SHA-1 re-verified against the file on the oracle host"
+    ],
+    "flags_source": "savePatch round-trip of the loaded patch \u2014 the loader's NORMALIZED state at the engine's current streaming revision, every documented handleStreamingMismatches migration already applied. Raw .fxp values are pre-migration and are NOT authoritative (CLAUDE.md).",
+    "no_getter_note": "surgepy exposes no getDeactivated; the round-trip is used precisely so the migration rule is READ from the engine rather than re-implemented here.",
+    "raw_fxp_revision": 12,
+    "roundtrip_revision": [
+      30
+    ]
+  },
   "preset_path": "resources/data/patches_3rdparty/Damon Armani/Plucks/Trance Pluck.fxp",
-  "schema_version": 1,
+  "render_screens": {
+    "drifts": [
+      1.0
+    ],
+    "fx_bypass": 0,
+    "fx_disable": 0,
+    "modulation_into_fx_params": [
+      "FX A1 Mix",
+      "FX S1 Drive"
+    ],
+    "note": "static screens only. The 3x bit-identical render determinism gate is an EMPIRICAL gate and is applied by tools/render_distortion_sse_fixtures.py; passing these screens does not imply passing that one (SXT-028c precedent: melon, dronebee).",
+    "oscillators": [
+      {
+        "level_f": 0.7342860102653503,
+        "mute": 0,
+        "osc": 1,
+        "retrigger": 0,
+        "scene": 0
+      },
+      {
+        "level_f": 0.5199999809265137,
+        "mute": 0,
+        "osc": 2,
+        "retrigger": 1,
+        "scene": 0
+      },
+      {
+        "level_f": 1.0,
+        "mute": 0,
+        "osc": 3,
+        "retrigger": 0,
+        "scene": 0
+      }
+    ],
+    "reference_render_admissible": false,
+    "refusal_reasons": [
+      "modulation routed into FX parameters: FX A1 Mix, FX S1 Drive",
+      "drift = 1.0 (not 0) in scene 0",
+      "scene 0 osc1 non-muted with retrigger off",
+      "scene 0 osc3 non-muted with retrigger off"
+    ],
+    "scene_active": 0,
+    "scene_mode": 0
+  },
+  "schema_version": 2,
   "slug": "trancepluck",
-  "source": "corpus/normalized/graphs.jsonl (SXT-011 pinned-loader normalized export; deterministic, engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71)",
+  "source": "the pinned engine's own loader, via surgepy at ORACLE_SURGE_DIR (engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71, 48 kHz, block 32); parameter values via getParamVal, the five oracle-only flags from the loader's normalized state via a savePatch round-trip",
   "unlanded_classes_in_chain": [
     "Conditioner"
   ],
-  "unresolved_fields": [
-    "preeq_highcut_deactivated",
-    "posteq_highcut_deactivated",
-    "preeq_gain_extend",
-    "posteq_gain_extend",
-    "drive_extend"
-  ],
-  "why_incomplete": "graphs.jsonl carries the 12 normalized FX parameter values but not the per-parameter `deactivated` / `extend_range` flags. DistortionSSEParams REFUSES a record with null fields, so this artifact cannot be used for a model run \u2014 it is a cross-check and extraction-status record only."
+  "unresolved_fields": []
 }
