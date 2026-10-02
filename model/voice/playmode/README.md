@@ -159,19 +159,88 @@ inactive in that same block's checkpoint — not one block later).
 ## Known finding: Digibass reference render is silent under this fixture configuration
 
 Measured (not a model/RTL defect): rendering `Digibass.fxp` through the
-pinned oracle with **only** the oscillator-1 type forced to Sine (no other
-override applied) already produces an all-zero output buffer at every MIDI
-key tested, on a fresh engine instance, for the untouched preset's raw
-amp/filter/mixer settings otherwise. `Bass 2.fxp` and `Bass 5.fxp` (same
-override sequence, same original `osc1 type == 2` as Digibass for `Bass
-5.fxp`) render normally. Root cause not identified (bisected override-by-
-override: silence appears immediately after the type-only change, before
-any of this leaf's other 29 declared overrides are applied; not explained
-by solo/mute state, FM switch, octave/pitch, or unison voice count, all of
-which read identically to the working carriers). This blocks a meaningful
-model-vs-reference budget comparison for Digibass specifically (the
-reference is all-zero; `tools/compare_audio_reference.py` reports a
-"comparison" against silence, not a fidelity measurement) and is tracked
-separately rather than fixed here: issue #311. It does **not** affect this leaf's RTL-vs-model
+pinned oracle with **only** the oscillator-1 type forced to Sine produces an
+all-zero output buffer at every MIDI key tested on a fresh engine instance.
+This blocks a meaningful model-vs-reference budget comparison for Digibass
+(the reference is all-zero; `tools/compare_audio_reference.py` reports a
+"comparison" against silence, not a fidelity measurement). Investigated
+under issue #311; root cause identified below.
+
+Root cause (investigated under issue #311; pinned engine
+`surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, external checkout read
+only, nothing copied here): **stale per-voice modulation routings that
+survive an oscillator-type change and then land on an integer parameter of
+the new oscillator type.**
+
+- `Digibass.fxp` routes `Velocity -> A Osc 1 Morph` (depth 0.366964) and
+  `Filter EG -> A Osc 1 Morph` (depth 0.223214) on osc 1 (a Wavetable
+  oscillator, type 2). `Bass 5.fxp` and `Bass 2.fxp` have no routing into
+  any osc-1 `p[]` parameter, which is the only difference that matters.
+- Switching the type through the Python binding (`setParamVal` on the osc
+  type) is queued by the engine and applied at the next `processMultiBlock`.
+  The queued-type handler resets the oscillator's parameters to the new
+  type's defaults and is written to call the engine's
+  `clear_osc_modulation` only when the queued type differs from the
+  parameter's current value; the binding has already written the new value
+  to the parameter by then, so that clear is skipped on this path
+  (inference from reading the code; the observed effect below agrees).
+  Read back via `getAllModRoutings()` after the switch, both Digibass
+  routings are still present, now named `A Osc 1 Shape` (the Sine
+  oscillator's slot `p[0]`, an integer parameter), with `normdepth` 0 but
+  the original `depth` intact.
+- Per voice, the engine copies the parameter values into a union-typed
+  scratch array and then adds each voice-modulation routing to it as a
+  **float** regardless of the target's value type. The Sine oscillator then
+  reads that slot as an **int** shape selector and dispatches over a switch
+  that covers only shapes 0-31 with no default case. A float such as
+  0.3 reinterpreted as an int is about 1.0e9, so no case runs and the
+  oscillator leaves its output buffer untouched (code read; consistent with
+  the interventions below, not separately instrumented).
+
+Interventions (all fresh process, fresh engine instance, single note at
+key 60 velocity 100, 256 blocks, pinned prebuilt oracle):
+
+| Variant | Peak (float) |
+|---|---|
+| Digibass, osc1 -> Sine only (issue reproduction) | 0.0 |
+| Digibass, set both Osc 1 Morph routing depths to 0 **before** the type switch, then switch | 0.3869, pitched output (dominant ~132 Hz at key 60 and ~264 Hz at key 72, the same one-octave-below-key offset as the Bass 5 Sine render at key 60 (~132 Hz); key 36 was not resolved by the ~12 Hz FFT bin width |
+| Digibass, try to zero the routings **after** the switch | 0.0 (the target is no longer modulatable, the call is a no-op, routings still listed) |
+| Bass 5 (osc1 type 2), osc1 -> Sine | 0.4879 |
+| Bass 5, add `Velocity -> Osc 1 p[0]` (depth 0.3) **before** the switch, then switch to Sine | 0.0 |
+| Bass 5, add that routing **after** the switch | 0.4879 (not added: Sine Shape is not modulatable) |
+
+So a donor-patch-free reproduction exists: any preset whose osc-1 `p[]`
+parameters are modulated, switched to Sine through this path, goes silent.
+
+Why the earlier bisection also saw "audible" results and why the silence
+looked intermittent: with the Sine oscillator never writing its output
+buffer, what reaches the mixer is whatever that oscillator-buffer memory
+already held. On a fresh engine it is zeros (silent). If a note was played
+and finished before the switch, or other engine instances in the same
+process ran before, the buffer can hold leftover non-Sine data. Observed:
+playing one note, releasing it, then switching and playing gives a nonzero
+render (peak ~0.09-0.25) whose dominant frequency is ~1.46 kHz at key 60
+rather than the Sine fundamental, i.e. not a Sine. This is evidence for
+that mechanism, not a proof of it (uninitialised/stale-memory behaviour was
+not instrumented). It also means the "silent" result is only reliable on a
+fresh engine instance with no prior note, which is exactly the fixture
+condition. Do not read any nonzero Digibass-Sine render as valid.
+
+What this does **not** change: the carrier fixture's reference leg for
+Digibass remains a non-comparison (NOT A VALID COMPARISON, reference silent).
+Deriving a valid Digibass reference needs the fixture override sequence to
+remove osc-1 `p[]` modulation routings before it switches the type; that is
+a change to a fixture/model file and a re-measure of #77's budget leg, left
+to a separate decision (follow-up issue linked from the PR) rather than done
+here. RTL-vs-model exactness (claim 1) for Digibass is unaffected.
+
+Reproduction on the pinned commit, re-run for this finding (prebuilt
+oracle, `$ORACLE_PYTHON` from `oracle/README.md` "Prebuilt oracle"): the
+issue's script prints `peak: 0.0` (3 of 3 fresh processes, and 4 of 4
+engine instances in one process). Re-check this after any engine re-pin.
+Bass 2 / Bass 5 re-measured under the Sine switch: peaks 0.7472 and 0.4752
+(audible, unaffected).
+
+It does **not** affect this leaf's RTL-vs-model
 exactness claim, which is purely a register-level comparison and was
 verified 0-mismatch on Digibass exactly as on the other two carriers.
