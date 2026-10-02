@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028f",
+  "follow_up": "F-028f-1 (#126)",
+  "slug": "mystical",
+  "sequence": "seq-poly-8-v1",
+  "ref": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1-wet.f32.wav",
+  "model": "reports/SXT-028f/artifacts/model__mystical__seq-poly-8-v1.f32.wav",
+  "path": "wet",
+  "claim_scope": "fx:Reverb 2 CLASS agreement (model fed the engine's own per-slot-bypass bus); NOT a complete-wet preset, coverage or musical-quality claim",
+  "input_boundary": {
+    "bypass_sha256": "937839bdcb3f0161c8ee6c592edfd193013f772f56b9b5d5c8a4be1e3afd2bb0",
+    "bypass_wav": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1-bypass-fx7.f32.wav",
+    "deamp_then_quantize": "bypass / A in double, then one Q10.21 round-half-up (<= 1/2 LSB, ~ -132 dBFS class, declared)",
+    "kind": "per-slot-bypass (global-last)",
+    "master_amplitude": 0.7921042846916826,
+    "master_volume_db": -2.025745391845703,
+    "reverb2_slot": 7,
+    "role": "global2",
+    "wet_sha256": "b8002ddc76359e1c30f104d6112fbd042ed3f0de07cbd718be11f1996cf74230",
+    "wet_wav": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1-wet.f32.wav"
+  },
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "fixture_sidecar": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1.json",
+  "reference_determinism_gate": {
+    "repeats": 3,
+    "bit_identical": true,
+    "drift_asserted": 0
+  },
+  "channels": {
+    "L": {
+      "frames": 177600,
+      "ref_peak_lsb": 582833.3125,
+      "model_peak_lsb": 582837.0,
+      "max_abs_diff_lsb": 4.25,
+      "rms_diff_lsb": 0.6541655483099778,
+      "rms_diff_dbfs": -124.0982449009613,
+      "rms_diff_at_shift0_lsb": 0.6541655483099778,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.6541655483099778,
+      "spectral_corr": 0.9999999942395223
+    },
+    "R": {
+      "frames": 177600,
+      "ref_peak_lsb": 565032.8125,
+      "model_peak_lsb": 565036.0,
+      "max_abs_diff_lsb": 4.0625,
+      "rms_diff_lsb": 0.6180630243112971,
+      "rms_diff_dbfs": -124.59134301252007,
+      "rms_diff_at_shift0_lsb": 0.6180630243112971,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.6180630243112971,
+      "spectral_corr": 0.9999999938854213
+    },
+    "mono": {
+      "frames": 177600,
+      "ref_peak_lsb": 573933.0625,
+      "model_peak_lsb": 573936.5,
+      "max_abs_diff_lsb": 4.0,
+      "rms_diff_lsb": 0.47854999339427307,
+      "rms_diff_dbfs": -126.8134519741765,
+      "rms_diff_at_shift0_lsb": 0.47854999339427307,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.47854999339427307,
+      "spectral_corr": 0.9999999970094123
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 57600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 1.587890625,
+    "tail_rms_diff_lsb": 0.37693932309799416,
+    "tail_rms_rel_db": -88.52842023867764,
+    "tail_ref_rms_lsb": 10062.188716252056,
+    "tail_model_rms_lsb": 10062.224514661051,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 50,
+      "ref_first_window_dbfs": -35.962777077346,
+      "ref_last_graded_window_dbfs": -71.1456418746993,
+      "max_dev_db": 0.0003724426664959424,
+      "worst_window": {
+        "index": 24,
+        "start_frame_in_tail": 57600,
+        "ref_dbfs": -62.007028228706,
+        "model_dbfs": -62.007400671372494
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 2.28125,
+      "tail_rms_diff_lsb": 0.5296300416685505,
+      "tail_rms_rel_db": -85.9657300424515,
+      "tail_ref_rms_lsb": 10525.896935470839,
+      "tail_model_rms_lsb": 10525.918130624044,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -35.86108305064628,
+        "ref_last_graded_window_dbfs": -71.51589509476845,
+        "max_dev_db": 0.0005242460764307566,
+        "worst_window": {
+          "index": 22,
+          "start_frame_in_tail": 52800,
+          "ref_dbfs": -60.2416227219,
+          "model_dbfs": -60.24214696797643
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 57600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 2.356201171875,
+      "tail_rms_diff_lsb": 0.5206287192119815,
+      "tail_rms_rel_db": -86.42108210697045,
+      "tail_ref_rms_lsb": 10903.909205799331,
+      "tail_model_rms_lsb": 10903.923320981765,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -35.832110322170635,
+        "ref_last_graded_window_dbfs": -69.35974783469612,
+        "max_dev_db": 0.0004629320236517742,
+        "worst_window": {
+          "index": 47,
+          "start_frame_in_tail": 112800,
+          "ref_dbfs": -69.32343215070321,
+          "model_dbfs": -69.32389508272686
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+}

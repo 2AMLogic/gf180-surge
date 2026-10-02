@@ -24,20 +24,28 @@ FAIL-CLOSED BOUNDARIES (recorded, never assumed away):
   * temposync. `rev2_predelay` is temposyncable, and the per-parameter
     temposync flag is NOT part of the SXT-011 normalized graph (and the
     .fxp bytes are external GPL assets that this repository does not
-    carry). Without the oracle host the flag is UNRESOLVED, so every
-    emitted record carries `ts_predelay: null` and its applicability
-    record sets `complete_wet_render_possible: false`.
+    carry). WITHOUT `--oracle` the flag stays UNRESOLVED (`ts_predelay:
+    null`) and `complete_wet_render_possible` is false. WITH `--oracle`
+    it is resolved from the native loader's own read-back
+    (`SurgeSynthesizer::getTempoSync` on the slot's predelay parameter
+    after `loadPatch`), which is the authoritative post-migration state.
   * determinism drift. The SXT-012 3x bit-identical render gate needs the
-    oracle; `drift_asserted` is therefore null (NOT_RUN), never 0.
+    oracle; `drift_asserted` is null (NOT_RUN) until the gate record
+    written by tools/render_reverb2_fixtures.py says otherwise. It is set
+    to 0 ONLY for a carrier whose every committed bus passed the gate --
+    a REFUSED carrier keeps null and gains a measured refusal record.
   * unlanded sibling FX classes in the same chain refuse the
-    complete-wet claim (the SXT-028c precedent).
+    complete-wet claim (the SXT-028c precedent). Note this is a
+    *complete-preset* refusal; the class-scope reference leg of #126 has
+    its own, narrower boundary (`reference_leg` below).
   * any modulation route whose destination names an FX parameter refuses
     the preset (parameter modulation into FX parameters is outside the
     frozen model scope).
 
 Usage:
-  python3 tools/extract_reverb2_inputs.py            # named carriers
+  python3 tools/extract_reverb2_inputs.py            # committed evidence only
   python3 tools/extract_reverb2_inputs.py --scan     # + corpus-wide ledger
+  "$ORACLE_PYTHON" tools/extract_reverb2_inputs.py --oracle   # + readback
 Original to this repository (Apache-2.0). No engine source, preset payload
 or GPL asset is read or copied by this tool.
 """
@@ -74,11 +82,23 @@ LANDED = {0: "off", 1: "delay (SXT-023)", 2: "reverb1 (SXT-024)",
           6: "eq (SXT-023)", 9: "chorus (SXT-028c)",
           FX_TYPE_REVERB2: "reverb2 (SXT-028f, this leaf)"}
 
-CARRIERS = {
+# The three issue-named B4-scope carriers (#58) ...
+NAMED_CARRIERS = {
     "grant_me": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
     "novuo": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
     "harp": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
 }
+# ... and the screened deterministic carriers the reference leg of #126
+# actually runs on, because all three named ones are REFUSED by the
+# empirical 3x render gate (tools/render_reverb2_fixtures.py; the SXT-028c
+# precedent, where the issue-named carriers were likewise refused and
+# replaced by screened ones).
+SCREENED_CARRIERS = {
+    "tacobell": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+    "moire1": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+    "mystical": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+}
+CARRIERS = dict(NAMED_CARRIERS, **SCREENED_CARRIERS)
 
 
 def load_census():
@@ -172,11 +192,8 @@ def extract_one(graph, census):
     if unlanded:
         refusals.append("chain needs unlanded FX classes: %s"
                         % ", ".join(sorted(set(unlanded))))
-    refusals.append("rev2_predelay temposync flag UNRESOLVED without the "
-                    "oracle host (not carried by the SXT-011 normalized "
-                    "graph; the .fxp bytes are external)")
-    refusals.append("SXT-012 3x bit-identical determinism gate NOT_RUN "
-                    "(requires the oracle host)")
+    refusals.append(TS_UNRESOLVED)
+    refusals.append(GATE_NOT_RUN)
 
     return {
         "schema_version": 1,
@@ -202,6 +219,7 @@ def extract_one(graph, census):
         "fx_bypass": g.get("fxbn"),
         "fx_disable": g.get("fxd"),
         "drift_asserted": None,
+        "volume_f": None,
         "applicability": {
             "complete_wet_render_possible": False,
             "reasons": refusals,
@@ -210,17 +228,176 @@ def extract_one(graph, census):
     }
 
 
+# ------------------------------------------------------------- oracle leg
+TS_UNRESOLVED = ("rev2_predelay temposync flag UNRESOLVED without the "
+                 "oracle host (not carried by the SXT-011 normalized "
+                 "graph; the .fxp bytes are external)")
+GATE_NOT_RUN = ("SXT-012 3x bit-identical determinism gate NOT_RUN "
+                "(requires the oracle host)")
+PARAM_TOL = 1e-6
+
+
+def oracle_resolve(doc, surgepy, oc):
+    """Resolve what only the native loader can tell us (issue #126).
+
+    * `ts_predelay` / `ts_ratio_inv` from `getTempoSync` on the slot's
+      predelay parameter after `loadPatch` -- the authoritative
+      post-migration state, not an .fxp byte reading.
+    * the master volume, needed as the de-amp constant at the model
+      boundary.
+    * a cross-check of all ten Reverb 2 parameter values against the
+      committed normalized graph: a mismatch is a REFUSAL, never a
+      silent preference for one source.
+    """
+    rel = doc["preset"]["path"]
+    abs_path = os.path.join(oc.engine_dir(), rel)
+    actual = oc.git_blob_sha1(abs_path)
+    if actual != doc["preset"]["git_blob_sha1"]:
+        raise Refuse("census blob mismatch at the oracle: %s != %s"
+                     % (actual, doc["preset"]["git_blob_sha1"]))
+    s = surgepy.createSurge(48000.0)
+    try:
+        if not s.loadPatch(abs_path):
+            raise Refuse("loadPatch failed: %s" % rel)
+        patch = s.getPatch()
+        tempo_bpm = 120.0        # pinned harness tempo (oracle/manifest.json)
+        for inst in doc["instances"]:
+            slot = inst["slot"]
+            fxd = patch["fx"][slot]
+            if int(s.getParamVal(fxd["type"])) != FX_TYPE_REVERB2:
+                raise Refuse("slot %d is not Reverb 2 at the oracle" % slot)
+            for j, name in enumerate(REV2_PARAM_NAMES):
+                v = float(s.getParamVal(fxd["p"][j]))
+                g = float(inst["params"][name])
+                if abs(v - g) > PARAM_TOL:
+                    raise Refuse(
+                        "slot %d %s differs: engine %r vs normalized graph %r"
+                        % (slot, name, v, g))
+            ts = bool(s.getTempoSync(fxd["p"][0]))
+            inst["params"]["ts_predelay"] = ts
+            # Reverb2.h:217 predelay uses temposyncratio_inv when synced;
+            # the harness never changes the transport tempo, so the ratio
+            # is 120/tempo at the pinned 120 BPM.
+            inst["params"]["ts_ratio_inv"] = (120.0 / tempo_bpm) if ts else 1.0
+            inst["temposync_source"] = (
+                "SurgeSynthesizer::getTempoSync on fx[%d].p[0] after "
+                "loadPatch (native loader read-back, post-migration)" % slot)
+            inst["return_level_engine"] = float(
+                s.getParamVal(fxd["return_level"]))
+        doc["volume_f"] = float(s.getParamVal(patch["volume"]))
+        doc["tempo_bpm"] = tempo_bpm
+        doc["scene_drift_f"] = [float(s.getParamVal(patch["scene"][k]["drift"]))
+                                for k in range(2)]
+    finally:
+        del s
+    reasons = [r for r in doc["applicability"]["reasons"] if r != TS_UNRESOLVED]
+    doc["applicability"]["reasons"] = reasons
+    doc["applicability"]["temposync_resolved"] = True
+    return doc
+
+
+def apply_gate(doc, slug, gate):
+    """Fold the committed 3x-render-gate record into the input record.
+
+    `drift_asserted` becomes 0 only when EVERY sequence of this carrier
+    passed the gate. A carrier with any REFUSED sequence keeps `null`
+    (NOT a pass) and carries the measured divergence.
+    """
+    rows = [r for r in gate.get("results", []) if r.get("slug") == slug]
+    doc["determinism_gate"] = {
+        "artifact": "reports/SXT-028f/artifacts/determinism-gate.json",
+        "repeats": gate.get("repeats"),
+        "sequences": {r["sequence"]: r["status"] for r in rows},
+        "measured": {r["sequence"]: r["measured"]
+                     for r in rows if "measured" in r},
+    }
+    reasons = [r for r in doc["applicability"]["reasons"] if r != GATE_NOT_RUN]
+    if rows and all(r["status"] == "PASS" for r in rows):
+        doc["drift_asserted"] = 0
+        doc["determinism_gate"]["status"] = "PASS"
+    else:
+        doc["drift_asserted"] = None
+        doc["determinism_gate"]["status"] = "FAIL" if rows else "NOT_RUN"
+        reasons.append(
+            "SXT-012 3x bit-identical determinism gate %s: %s"
+            % (doc["determinism_gate"]["status"],
+               ", ".join("%s=%s" % (k, v) for k, v in
+                         sorted(doc["determinism_gate"]["sequences"].items()))
+               or "no result row"))
+    doc["applicability"]["reasons"] = reasons
+    return doc
+
+
+def finalize_applicability(doc):
+    """Complete-wet stays false unless NOTHING refuses it; the narrower
+    class-scope reference leg gets its own, explicitly separate record."""
+    reasons = doc["applicability"]["reasons"]
+    doc["applicability"]["complete_wet_render_possible"] = not reasons
+    doc["applicability"]["status"] = (
+        "OK" if not reasons else "REFUSED (fail-closed)")
+    inst = doc["instances"]
+    ok = (doc.get("drift_asserted") == 0
+          and doc.get("volume_f") is not None
+          and len(inst) == 1
+          and str(inst[0]["role"]).startswith("global")
+          and max(c["slot"] for c in doc["chain"]) == inst[0]["slot"]
+          and inst[0]["params"].get("ts_predelay") is not None)
+    why = []
+    if doc.get("drift_asserted") != 0:
+        why.append("3x determinism gate did not pass")
+    if doc.get("volume_f") is None:
+        why.append("no master-volume read-back")
+    if len(inst) != 1:
+        why.append("boundary defined for exactly one Reverb 2 instance")
+    elif not str(inst[0]["role"]).startswith("global"):
+        why.append("Reverb 2 is not in a global slot")
+    elif max(c["slot"] for c in doc["chain"]) != inst[0]["slot"]:
+        why.append("an active FX slot sits downstream of the Reverb 2")
+    if inst and inst[0]["params"].get("ts_predelay") is None:
+        why.append("rev2_predelay temposync UNRESOLVED")
+    doc["reference_leg"] = {
+        "scope": "fx:Reverb 2 CLASS agreement only (model fed the engine's "
+                 "own per-slot-bypass bus); this is NOT a complete-wet "
+                 "preset claim and NOT a coverage or quality claim",
+        "input_boundary": "per-slot bypass (global-last) -- see "
+                          "model/effects/run_reverb2_model.py",
+        "usable": bool(ok),
+        "refusals": why,
+    }
+    return doc
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scan", action="store_true",
                     help="also write the corpus-wide Reverb 2 carrier ledger")
     ap.add_argument("--outdir", default=OUTDIR)
     ap.add_argument("--artdir", default=ARTDIR)
+    ap.add_argument("--oracle", action="store_true",
+                    help="resolve the temposync flag and the master volume "
+                         "from the pinned engine's native loader read-back, "
+                         "and fold in the committed 3x render-gate record")
+    ap.add_argument("--gate", default=os.path.join(
+        ARTDIR, "determinism-gate.json"),
+        help="render-gate record written by tools/render_reverb2_fixtures.py")
     args = ap.parse_args()
 
     census, man = load_census()
     os.makedirs(args.outdir, exist_ok=True)
     os.makedirs(args.artdir, exist_ok=True)
+
+    surgepy = oc = gate = None
+    if args.oracle:
+        sys.path.insert(0, os.path.join(REPO, "oracle"))
+        import oracle_common as oc  # noqa: PLC0415
+        surgepy = oc.import_surgepy()
+        oc.apply_engine_env()
+        if os.path.exists(args.gate):
+            with open(args.gate) as f:
+                gate = json.load(f)
+        else:
+            print("NOTE: no render-gate record at %s; drift_asserted stays "
+                  "null (NOT_RUN)" % args.gate, file=sys.stderr)
 
     by_path = {v: k for k, v in CARRIERS.items()}
     written, refused = [], []
@@ -228,6 +405,11 @@ def main():
         slug = by_path[graph["p"]]
         try:
             doc = extract_one(graph, census)
+            if args.oracle:
+                doc = oracle_resolve(doc, surgepy, oc)
+                if gate is not None:
+                    doc = apply_gate(doc, slug, gate)
+                doc = finalize_applicability(doc)
         except Refuse as e:
             refused.append({"slug": slug, "path": graph["p"],
                             "refusal": str(e)})
@@ -239,7 +421,12 @@ def main():
         written.append(os.path.relpath(out, REPO))
         print("wrote", os.path.relpath(out, REPO),
               "| complete-wet:",
-              doc["applicability"]["complete_wet_render_possible"])
+              doc["applicability"]["complete_wet_render_possible"],
+              "| drift_asserted:", doc.get("drift_asserted"),
+              "| ts_predelay:",
+              [i["params"].get("ts_predelay") for i in doc["instances"]],
+              "| reference-leg usable:",
+              (doc.get("reference_leg") or {}).get("usable"))
 
     if refused:
         with open(os.path.join(args.artdir, "extract-refusals.txt"),

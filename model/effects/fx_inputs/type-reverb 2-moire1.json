@@ -1,0 +1,112 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "reasons": [
+      "chain needs unlanded FX classes: Ensemble, Tape"
+    ],
+    "status": "REFUSED (fail-closed)",
+    "temposync_resolved": true
+  },
+  "census_blob_reverified": true,
+  "chain": [
+    {
+      "landed_model": false,
+      "landed_ref": null,
+      "role": "send1",
+      "slot": 4,
+      "type": 20,
+      "type_name": "Ensemble"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "delay (SXT-023)",
+      "role": "send2",
+      "slot": 5,
+      "type": 1,
+      "type_name": "Delay"
+    },
+    {
+      "landed_model": false,
+      "landed_ref": null,
+      "role": "global1",
+      "slot": 6,
+      "type": 23,
+      "type_name": "Tape"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "reverb2 (SXT-028f, this leaf)",
+      "role": "global2",
+      "slot": 7,
+      "type": 11,
+      "type_name": "Reverb 2"
+    }
+  ],
+  "determinism_gate": {
+    "artifact": "reports/SXT-028f/artifacts/determinism-gate.json",
+    "measured": {},
+    "repeats": 3,
+    "sequences": {
+      "seq-notes-coverage-v1": "PASS",
+      "seq-poly-8-v1": "PASS"
+    },
+    "status": "PASS"
+  },
+  "drift_asserted": 0,
+  "fx_bypass": "All FX",
+  "fx_class": "Reverb 2",
+  "fx_disable": 0,
+  "instances": [
+    {
+      "params": {
+        "buildup_f": 0.5,
+        "decay_time_f": 3.58496,
+        "diffusion_f": 0.25,
+        "hf_damping_f": 0.75,
+        "lf_damping_f": 0.25,
+        "mix_f": 0.16,
+        "modulation_f": 0.33333,
+        "predelay_f": -3.04921,
+        "room_size_f": -0.33333,
+        "ts_predelay": false,
+        "ts_ratio_inv": 1.0,
+        "width_f": 9.0
+      },
+      "return_level": 1.0,
+      "return_level_engine": 1.0,
+      "role": "global2",
+      "slot": 7,
+      "temposync_source": "SurgeSynthesizer::getTempoSync on fx[7].p[0] after loadPatch (native loader read-back, post-migration)"
+    }
+  ],
+  "leaf": "SXT-028f",
+  "param_order_ref": "sst-effects Reverb2.h:40-57 rev2_params; each value range-checked against Reverb2.h:152-197 paramAt",
+  "preset": {
+    "bank": "contributor",
+    "census_size": 32606,
+    "git_blob_sha1": "73ebcb2cc9b28475f6fad4447e0ab0350a91e5c0",
+    "path": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+    "size": 32606
+  },
+  "reference_leg": {
+    "input_boundary": "per-slot bypass (global-last) -- see model/effects/run_reverb2_model.py",
+    "refusals": [],
+    "scope": "fx:Reverb 2 CLASS agreement only (model fed the engine's own per-slot-bypass bus); this is NOT a complete-wet preset claim and NOT a coverage or quality claim",
+    "usable": true
+  },
+  "scene_drift_f": [
+    0.0,
+    0.0
+  ],
+  "scene_mode": "Single",
+  "schema_version": 1,
+  "source": {
+    "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
+    "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "normalized_graph": "corpus/normalized/graphs.jsonl (SXT-011)",
+    "patch_revision": 17,
+    "sample_rate_hz": 48000
+  },
+  "tempo_bpm": 120.0,
+  "volume_f": -4.0
+}

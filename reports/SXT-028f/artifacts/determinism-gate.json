@@ -1,0 +1,697 @@
+{
+  "claim_scope": "reference-vs-reference repeatability of the pinned engine under a defined environment; NOT a fidelity, support, coverage or quality claim",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "follow_up": "F-028f-1 (#126)",
+  "gate": "SXT-012/023 3x bit-identical render determinism gate",
+  "leaf": "SXT-028f",
+  "positive_control": [
+    {
+      "byte_identical": true,
+      "committed_in": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1.json",
+      "committed_wet_sha256": "f1b6a0506c98444da021721f50adcac922120894e9b1ec67ee579d4269d77d83",
+      "gate_3x": "PASS",
+      "rederived_wet_sha256": "f1b6a0506c98444da021721f50adcac922120894e9b1ec67ee579d4269d77d83",
+      "sequence": "seq-poly-8-v1",
+      "slug": "fmcombo"
+    },
+    {
+      "byte_identical": true,
+      "committed_in": "reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1.json",
+      "committed_wet_sha256": "2bfc8311ce6db199eeea36c29c4b332a88229b5448256a05cdc9e58da0d3d1c1",
+      "gate_3x": "PASS",
+      "rederived_wet_sha256": "2bfc8311ce6db199eeea36c29c4b332a88229b5448256a05cdc9e58da0d3d1c1",
+      "sequence": "seq-poly-8-v1",
+      "slug": "fmtwang2"
+    },
+    {
+      "byte_identical": true,
+      "committed_in": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
+      "committed_wet_sha256": "2c82f61625dc51633214e9c09dd0baf70869aced76d4ca0d9fad1d62a8d0d55e",
+      "gate_3x": "PASS",
+      "rederived_wet_sha256": "2c82f61625dc51633214e9c09dd0baf70869aced76d4ca0d9fad1d62a8d0d55e",
+      "sequence": "seq-poly-8-v1",
+      "slug": "alienappears"
+    }
+  ],
+  "positive_control_note": "SXT-028c carriers with a committed wet sha256: they must pass this harness's own gate and re-derive byte-identically, or a refusal below says nothing about the carrier",
+  "repeats": 3,
+  "results": [
+    {
+      "drift_asserted": null,
+      "measured": {
+        "frames": 273600,
+        "frames_differing": 273600,
+        "max_abs_divergence": 0.18107911944389343,
+        "peak_abs": 0.16917891800403595
+      },
+      "named_carrier": true,
+      "preset": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
+      "refusal_class": "determinism-gate",
+      "repeat_sha256": [
+        "34794c616a08cdfb38e62cd6f79fcfb2a1fdfe5e19c347e4414ac639e7f3d0ea",
+        "e01eac9f8732450fccf346a1d4d6074affb58cd1a046dc674fabd47742b9c26d",
+        "e5d5894ef58f89f06d98441cf22fefb5f3053a842f3d681128cde58d1973f49c"
+      ],
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "grant_me",
+      "status": "REFUSED"
+    },
+    {
+      "drift_asserted": null,
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177600,
+        "max_abs_divergence": 0.09512870013713837,
+        "peak_abs": 0.23620042204856873
+      },
+      "named_carrier": true,
+      "preset": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
+      "refusal_class": "determinism-gate",
+      "repeat_sha256": [
+        "94683475cc9e355c6024f3cbe79f2b7f418a77fb2034a7f380e8226e74f8efa5",
+        "09e3bcb5d5b0e00362f636e32306ebbc233e665a4fa938e0a94a90854f74fc48",
+        "0f1a202e433a00ffc28c36a9f308aa54c9ee264121ebfa660e2ce47aa7ca8d1b"
+      ],
+      "sequence": "seq-poly-8-v1",
+      "slug": "grant_me",
+      "status": "REFUSED"
+    },
+    {
+      "drift_asserted": null,
+      "measured": {
+        "frames": 273600,
+        "frames_differing": 142040,
+        "max_abs_divergence": 0.0074259936809539795,
+        "peak_abs": 0.46321603655815125
+      },
+      "named_carrier": true,
+      "preset": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
+      "refusal_class": "determinism-gate",
+      "repeat_sha256": [
+        "69cd310dbf9618f923463a3a7b7f095da646ad491236aec128ef528a197299a6",
+        "97fb9d8eae18cd40b23c841089851daac4f7a36daa1967f6d7dea098b97b9a2b",
+        "691c3d125b2fba707f8194991eb16d92bdf0cb76b85dab8110fe50ae712edcbe"
+      ],
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "harp",
+      "status": "REFUSED"
+    },
+    {
+      "drift_asserted": null,
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 30537,
+        "max_abs_divergence": 0.0032416749745607376,
+        "peak_abs": 0.330150842666626
+      },
+      "named_carrier": true,
+      "preset": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
+      "refusal_class": "determinism-gate",
+      "repeat_sha256": [
+        "126eb48ac5de0fd128e32737745af58de30e0569451b70edd7a50add6bd77571",
+        "538563bfedb46bbf6ab52981d2e66634949ba6e5f153537579b78a3b69823698",
+        "7b110bcb32efa1edc29807edaf59e66d36d0f2199ebbc9fd5197e405c05b2df9"
+      ],
+      "sequence": "seq-poly-8-v1",
+      "slug": "harp",
+      "status": "REFUSED"
+    },
+    {
+      "buses": [
+        "wet",
+        "dry",
+        "fx7"
+      ],
+      "drift_asserted": 0,
+      "named_carrier": false,
+      "preset": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "moire1",
+      "status": "PASS"
+    },
+    {
+      "buses": [
+        "wet",
+        "dry",
+        "fx7"
+      ],
+      "drift_asserted": 0,
+      "named_carrier": false,
+      "preset": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+      "sequence": "seq-poly-8-v1",
+      "slug": "moire1",
+      "status": "PASS"
+    },
+    {
+      "buses": [
+        "wet",
+        "dry",
+        "fx7"
+      ],
+      "drift_asserted": 0,
+      "named_carrier": false,
+      "preset": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "mystical",
+      "status": "PASS"
+    },
+    {
+      "buses": [
+        "wet",
+        "dry",
+        "fx7"
+      ],
+      "drift_asserted": 0,
+      "named_carrier": false,
+      "preset": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+      "sequence": "seq-poly-8-v1",
+      "slug": "mystical",
+      "status": "PASS"
+    },
+    {
+      "drift_asserted": null,
+      "measured": {
+        "frames": 273600,
+        "frames_differing": 273596,
+        "max_abs_divergence": 0.18811558187007904,
+        "peak_abs": 0.42199963331222534
+      },
+      "named_carrier": true,
+      "preset": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+      "refusal_class": "determinism-gate",
+      "repeat_sha256": [
+        "1a9d3042b69bdfa5e68d69408d10afa568eb6e9fcb3b7634d94068b039fc8343",
+        "8ec054d8eb86ba023f983e379658aa91ff8d38e371077ee84a208aa4f20fd127",
+        "7c6da7cc5c63a19458a4a9f77e1ed4efd699470ccc977ead035d8d4c70ab97fc"
+      ],
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "novuo",
+      "status": "REFUSED"
+    },
+    {
+      "drift_asserted": null,
+      "measured": {
+        "frames": 177600,
+        "frames_differing": 177599,
+        "max_abs_divergence": 0.16899773478507996,
+        "peak_abs": 0.4094841182231903
+      },
+      "named_carrier": true,
+      "preset": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+      "refusal_class": "determinism-gate",
+      "repeat_sha256": [
+        "c6ea1f755920a259e2d7787aea99873c913c5fc23de455a9ea0c77662c187876",
+        "a143d797efdd2fc4f76646a1931fde70b30af0f626b91e347c2ca7af4d621dec",
+        "c39c816fa7912ecb342f8e57ea58ce22279b35577af1eb5d14828cfbe75181b6"
+      ],
+      "sequence": "seq-poly-8-v1",
+      "slug": "novuo",
+      "status": "REFUSED"
+    },
+    {
+      "buses": [
+        "wet",
+        "dry",
+        "fx6"
+      ],
+      "drift_asserted": 0,
+      "named_carrier": false,
+      "preset": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "tacobell",
+      "status": "PASS"
+    },
+    {
+      "buses": [
+        "wet",
+        "dry",
+        "fx6"
+      ],
+      "drift_asserted": 0,
+      "named_carrier": false,
+      "preset": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+      "sequence": "seq-poly-8-v1",
+      "slug": "tacobell",
+      "status": "PASS"
+    }
+  ],
+  "schema_version": 1,
+  "sequences": [
+    "seq-notes-coverage-v1",
+    "seq-poly-8-v1"
+  ],
+  "stress_screen": [
+    {
+      "distinct_dry_buffers": 20,
+      "distinct_wet_buffers": 20,
+      "dry_buffer_counts": {
+        "088a7e026e4ba2c70289ab54bcf008a51f3cb71a5054ea6860dab3c86a9c20b7": 1,
+        "2b20d19a401fd98335b97b1d78b2869c2bee9d32906dad081433c21fd80c332e": 1,
+        "43c0b236e634bdea6d845cc2a73e8581e5ccd0d6485a8320a0d5e405041f763e": 1,
+        "4e188bc996831a8581eb4412cd99d9dab7ff7a0a5fa742ea198dd5a40bc167f0": 1,
+        "6b67fdf1bebdc6f45d2cffac1b6bf1638de158103fc4d63e7588caac967c4928": 1,
+        "6ee9381dc7de71c120c259603edbe81f3e9ac1e35ffbce0a708d8baa010dbdb3": 1,
+        "7e1b7f04f3466b9dfa500a123b945ec073ace6cf3eaa291dc626fcd2068c119e": 1,
+        "90604f1833fde5ef976ba680dd70402666ca9b3fbc7d43fb1c6aa80911634b58": 1,
+        "a153cc0fa5f73a1713a2551d93b700f9c1ada530215db68dd3e3f69a1fb7f035": 1,
+        "aabdddb1d7ff957f3cb9ffbfb8bed693185cea7b576a8977bb26efd0ca1d041e": 1,
+        "abb7d7bebfb249a2fce03b215c97d9fc542d870701433332f86e5d63fa1454aa": 1,
+        "cfbdceac28d5b3596f7ee461c202714eb68131c46e86347b41193b89d8b64b3c": 1,
+        "d595f5e741d0ca57cc8c7f0709ee58f5e6a532fc8e22d24a741febc27bd22a27": 1,
+        "da72de741d0f1cca4128e4fd7072770b793208fa5b40348024b982494f63633c": 1,
+        "daa70c7c140a2ab8ea505ff8806d1ddbda9af7b04142cc67d15a48ef0d9d45d7": 1,
+        "e70ced83f3c58c19be2bf28ecfe98e184556826bc0393df1c823288328acbfe2": 1,
+        "ecc72dd12ee2c4048468e12a8738ca4317261a8ee57232a6765499998e1342b4": 1,
+        "ef0bc1846cd260952fbbfff9fb3b2207a3e874f020e03bbc6fb6ff0513404808": 1,
+        "f85cfe2f8de60ebf79a62017f15cb2b9666092166e2d531290efb6acca37c831": 1,
+        "fad748d35909c3867b39a8f6202a3acc88074cfcf1f3d85a78a41683e2c89f0b": 1
+      },
+      "preset": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "grant_me",
+      "stable": false,
+      "wet_buffer_counts": {
+        "004c837848e7c983bd79b7b2a9d0112ff6a90fa8fd4a9a4072fee76bbec55d97": 1,
+        "187fc997f9b312e46df5f51e53ce11e0dff3451e6e736ecf56274f7a82984755": 1,
+        "1e4e873027100dddc035e578e1ef6ae9eb8a539400c159ec403c6862040a02c8": 1,
+        "295fafd5c5aa08d86791367964c8616b3418d28a73d07a2f1754790d4d1d6387": 1,
+        "3386abcaa015c3d4239bab7f7855e63502ab9eae33a8d7bf09744eb4e986ca25": 1,
+        "497977badeb6e9a898644fd65580023866299074966e1dbc9113874fa3bff3f6": 1,
+        "6057f85a28efe5650e983fc9c565b2297b024fcfde1caf64053fe3f1d33c8fe4": 1,
+        "66e27a63f8cf201f491a05a6f01bee2dd3565c50749bca1e12ffda01814b2450": 1,
+        "6dd6fda8ce496661d6294af04a8360e61640f2d7bb662abda6e264d76c110bee": 1,
+        "7c862310556ea95540694a03f2e1ad05a7602ca138dd8e8980f4b61aa1db29fc": 1,
+        "8209c1e224e435f191cc4973dce631011336712fcbee5f9c092ca34700056b36": 1,
+        "85ab86cc0455451c4fe2daa2089e05d13ca723c9cdf501af0c986b9a042349fb": 1,
+        "890d8bdc08cf0c4dbac15db4dcac3fc09bd9a92afeabf18e292da78c9c6ded4d": 1,
+        "95484807ef2420bd5934047c4b68f6a6c33159bf4dd0e3189cc8f3eee93c7f8e": 1,
+        "a68f078ac2ac5df58120c0cf30fd1ca5f9d2639dc93098a9162df3c5d11ed78a": 1,
+        "b15906434ae110b528b2a0dbb8d4214a5bb64174e9518b8b875043e58df32330": 1,
+        "b5b16cdb885a68704e7c72248dbbc4a8d0d41e6b56b53755c5430a55b4cfebd2": 1,
+        "c74b17aabeb49f715e834de5adbcab4b8c8d48db719bf4af2f4466dd142a144e": 1,
+        "c81dba6d19450af9b6b2ab79900906c341440535128b8a93557c4159615680fd": 1,
+        "c8bbff328a1a57028d5393467b74281feecd98b5f3ceb4f1775ff578e135ccd7": 1
+      }
+    },
+    {
+      "distinct_dry_buffers": 20,
+      "distinct_wet_buffers": 20,
+      "dry_buffer_counts": {
+        "0bf95d8bf880837c167032702edfb4c440b5f267d1c90694c86cc907a395b525": 1,
+        "13d776ee5357bdefc8ee9386e43b57cf6fec92f6e5fcb8a4a61cf05915169388": 1,
+        "167b4cf635553cf22d1ec2ed04da66b5f7baeecb83613d1f4835ffec41e24d00": 1,
+        "1cfc4c6aadc16f149ac41e8a1ebaa7c60a39e8eb473a5ff15a9788562957d96d": 1,
+        "1f79fa89ddddafa27bed9ca760bcbef986c1c4f7eb92c28947928811d6462673": 1,
+        "23f517bf3a9e6fbeb4219aafab8dd37c7c9acfc6252d74a9b808b8f3c3efc6de": 1,
+        "4069ea97d1fa8c1c810a04ed94a0bde833524f2a362e8b0c60a227183794cc49": 1,
+        "42c9dc5916a4b9f6103d66c561fc91e4a6d2dcfe38311648ec18834fcef1b62b": 1,
+        "46bc44c939437ec9fb2d05e232691246f28367733bf6207908e1e03b9c9a6e10": 1,
+        "5e9bbb93d2cb3a2e6ec65ba9663a505a149b359dd855709f2c7a2a67711a2ccd": 1,
+        "670aed88a7a1d0e8d8d03cb9d6f02ceb7dbb083df74a8f454a105e10ce91c79a": 1,
+        "6fbbb0a40554f731494c5419d132454f3babe44e1c5b3a7fb620dd640330abc6": 1,
+        "848cd931a73d1eebfe315d5ed67821d348b2285d39f318decc18698932cf4fbd": 1,
+        "9fb8cac24d1f91547977633562e3b8477aa52cd997032aa5e062866d272afd0c": 1,
+        "a99aeb4c3acbfff75cc79f3641c0817021732a58c1d52ba0cbca25000bcb1b45": 1,
+        "c0212d1a1d4809e880a28c4b4d21f673b8ce014d7503d86d217e0cff8fc2c585": 1,
+        "d2f9c01206c8089e8fbaf8bdde21207ebc74a512062cc4186ba5de090f03331e": 1,
+        "e08ef3aa00e8db1c42371271b662f3346221452ab0215468cfd61fad8f5868c8": 1,
+        "ee590652da6b3a3a5df867a2ea8ce71ce3783a145a5584ef09e96f95c995c683": 1,
+        "f9e92a9029cda46b40c2dfca93054d336764a6a572618712c10a318d2796cb4d": 1
+      },
+      "preset": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "grant_me",
+      "stable": false,
+      "wet_buffer_counts": {
+        "0b57188a6ba61e928494196c449abc6e84333ca6371da09b7bd3e426d94b2b64": 1,
+        "1c96301f2eb1ecbe95dbecabd74561df0b38bdce7f8a4eca3068eb8eee8a19d9": 1,
+        "2c0ec0570da3d202913536d8ce91e6bbefd29a1dcb5ae4ed41bf020542e0cf24": 1,
+        "31994231889b6b1f44a7cc834d22dbba6a0c3589e9f6cb1aa201e1294e2f02a1": 1,
+        "38c32e8bf66a475a9945b66d83cbf6bf672891ff032fb4cc59feb1b8bde6769b": 1,
+        "3985bbeb3e8a855cac0cfb810bf558a113ed62a16528f96fa679900db5c4f9d0": 1,
+        "4a364213334cb19504a912f56e3bd4255eebe980fab4e3fe2bac117878755b2a": 1,
+        "713ba17c97c833def0b9fbf348e9b8928eefa54a6c7b4fe9ee0d356b17fc44d3": 1,
+        "7a3e74073670480283f7844757110faac71b303efaf7133197c441295fe62131": 1,
+        "89001125224814d56677cfc4da438a346b5c76abccf5077ece26a895425c1847": 1,
+        "96c4540c3b72a6f6ebfbdcba309415190d68b9b54005c75d53f3435706266d8c": 1,
+        "baed81935c697bcba06ed23ac1913fbe2d445411ed834e4d7d49ee82097b23c4": 1,
+        "c0633ddccc6fd4ef37800fc0d3b046213a4548581a5c0841386a621d23a2b92c": 1,
+        "c43d218785f31ea9a34f0d7e48ca1e568cef855700795fcb4973447b1fc014af": 1,
+        "c9e0625392b814dd89c2df66aec80e0b94c874e22a60dd4f7a0cb3f20b63b79c": 1,
+        "cb7ba8f35a087474ac00a3986b7652bef0155a798b2b91f28364ba81206e09d4": 1,
+        "d52271132e1af71573c3c4f9eee2dc471b1b11c0cb58987501cd7b610559403f": 1,
+        "d5ed75a094b022af8a3002def3f41a8b03c520cf344ac8a20bf33ccfa9986470": 1,
+        "fa400359d0dba5b15c4cc1f03bf19fda1a526fcd8537649ae1793fa9773933d2": 1,
+        "fd87a27d58d014a1f4e4c5b592680469299a415f36c4414b7a08090bf2cdc300": 1
+      }
+    },
+    {
+      "distinct_dry_buffers": 20,
+      "distinct_wet_buffers": 20,
+      "dry_buffer_counts": {
+        "1e9da34dc1178656c6933d678f093710a21aacdff66dba1ea41e934705d64dfe": 1,
+        "275fd91dc0336e47a72bd3e75daf7faac10091116d98fde611b22a5e988ef1dd": 1,
+        "2b0652617722fbd107c20137eaa78ff91535cb1d9e6a9437c9f4fadb59d0a43d": 1,
+        "2cd343f681dbb589062758ceb966979c80a988ffcfcc641f68d5cf25280d3937": 1,
+        "3c911e3a23c3e96c78dec3591f535c44a9877f1dc200d9e3467ebbe4683b92c7": 1,
+        "3d0216384375fc5f3f2ae2fd75eae03a2ba5159a02b6eab63a3ddee8c21e9cf8": 1,
+        "4a3a2d456603ff7a680e669a3b03f986eed052c601ddaf4401b4c9e401f2f896": 1,
+        "4f7cdb089a085ef310ee9a908bfaa8c451602e877713269535b0412b33bad2d2": 1,
+        "57f61dfd90f9edc0fc10e80eadbc8feffda2f1d7e41eb2fbdc5b18308db9fc15": 1,
+        "591f32d5fd81bf36c96a08b1fdb0c935b3e7c088100fc8a9d724c3cb09ed3f09": 1,
+        "5bcbfc9d68bdf10aa77ceee9dc69b7634305286c0e1da87282c496b6819a5f10": 1,
+        "61855405a23910e04a54b825a5f22ae8cd014018d8504006e2b6a1976b89c149": 1,
+        "7cae9749faf93d5114d03ced88ce8f107fc72bbe92de847048832d9b3c43108a": 1,
+        "8aae1a4250e06c271a08ece2a10112b942156c54106e3f94e9637a6ee4a1df8b": 1,
+        "98a7787a6ca2da4b13da757ad7b719500a99a1020a77a7602dd740fa9ed56c7c": 1,
+        "a1c1a083a7fcfd3d7f1e5e752248712581d1eca2bf19fc2118399bd58e21ab99": 1,
+        "bcfa1a6ac0bd9c47d3be20486afa17c0c365be1d9870c45b7aacb61ec9701e67": 1,
+        "c238008075c49aa0cdbb626acade84423e05edc49f46f08153b9efc97b6d5279": 1,
+        "f4796fd11c410c5dbabea551d9d0a43d23611cbe631e2915130e561a687ee29c": 1,
+        "ff366e7e9517cf8aace58e0bba00a503197751d1cf627c0342a132f9ab0dd13d": 1
+      },
+      "preset": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "harp",
+      "stable": false,
+      "wet_buffer_counts": {
+        "080575ee2f120423036348a2089547e6788b10c37443c33a412097c177fce350": 1,
+        "0c994ca0b9ddd93df659f2963877ba3b6d456ab0e43a8722b26e9e5c165cc930": 1,
+        "1863cb83287e031c4f507da4bf9efb3c8e95cb4a0133e374e1c975434cbaabe2": 1,
+        "199dff389eaf522b5c6902c39ab6df189c86630fea0dccdea75ae52ebdfd2895": 1,
+        "1b26bdb26e659c19cf4ea0f4ee2d8c84512052a4e981ab5c896c83c80a36e8e0": 1,
+        "41a50b191d926d684502081effdb1ef9ab095ac6f906aac54813a8396f39e0b8": 1,
+        "59bd662fb164647e6a2a3be94a1bc1efb6cd7176034a7feaadc1691fa00931dc": 1,
+        "5c81da78857f8068a204d0b8fb212bba2e943427a41497f6c881379dabf0b9c9": 1,
+        "61515a72cf398c2c88ccdb169d25573fe0a25c41b8f56395bbaba436f5c2dda0": 1,
+        "80789b0c1f20643058eb2c6ed5c6e3277f6e79759c76e508793cf8ef6a61f12e": 1,
+        "84030c76260c4b061c00a4ea244602346cd069321a60aed5835d77159ba6eb7e": 1,
+        "92dac922d2597380fb5ab7b94a8c9f2077bce9fbfd2ebb2a434c24e1256ae478": 1,
+        "9bed245c615c8f20e81923c80511fb8df21725d9843588d3b33fc4b5a923fd34": 1,
+        "9ee3392e02063386936ea8f25fb19ce8064f035f92bb8c570f66facb0e3b46c6": 1,
+        "c4d47c626abe18595cce225dae4e351f84516b4d49a2c5f5e3a01db18d9fafea": 1,
+        "c5ce62ab72f1b200b57bf2cd0cc9ce30fe023fabb131df3728566e999ed7911e": 1,
+        "d9d2643522b46b782a7600cdff4270fa396a78bbe79fb9d519d8c11c96f7fd99": 1,
+        "dc4368ef96d8a53da7734129268cea01466e672ef97afe511516cd2b6f936987": 1,
+        "e7b557e42b2f2fb1cbcbe14b021c891daa0d4c2312bd37be566b4a4d4a69558b": 1,
+        "e7c6ae3209b1c1841ab93ea5e427dec5852571c30cea2afad74bae4f43c1f6e1": 1
+      }
+    },
+    {
+      "distinct_dry_buffers": 20,
+      "distinct_wet_buffers": 20,
+      "dry_buffer_counts": {
+        "0dfdc106dc8c6989683234d732da5d48a4e8a485a58586cdc69430b4f70d264b": 1,
+        "1361fa1b0a21c9d8f7b1e0f8ea7ee39c5d9fd8e4ca47ecff0e2a1f826efaa199": 1,
+        "3c20de3987fcfd7f0e96c2a616d77746614f905dc11f78720da4908f6c10bca4": 1,
+        "3ca9e2573a75300d08fd94d2a7b659aae0611afbba2e802bc530c8acac723893": 1,
+        "3d390ebb0280dbe89163dc4cea23d7d7bd845c41e63df7f19fa3fe9ec1e18d2a": 1,
+        "4e5619c8f5f33a243e6a49597b255cad976d4fe362403535581e287d82766c1a": 1,
+        "593391733170189c5b5d0011bc7775f7c6b5f948e996e9b79e4030fa686a1868": 1,
+        "6733c31bf4e17d6409117224438d8b1ca54c8dd1880ccd4502f8b7b1696fab2a": 1,
+        "674b2eee140dc738926258d20a5f12afa08da30c6078f0e716d2a39f302919d7": 1,
+        "67e1eab1869b93a2ec6dea5f10e9deb61c90a0b13e2ea0a9528985c708d607c8": 1,
+        "801cbcd1d76e7fa0ea3a898df3e6798d35e32259413bad36fc9be6b304fa4cf2": 1,
+        "810659336a529e5ed2677e362ac805fcc131937978f04570bc909c6966948920": 1,
+        "97ed2e544ea6345d1bde609105575a6f421cdaf35aa2393f0433ca090eb33507": 1,
+        "a45170ec173f492f062c922d22c9afb3db6ae306156e1783af480aa8a9664be6": 1,
+        "aa9501d2fe84533ee2ea9be977b2abc745ff117be32b309afbc7f3dcb1a2f4d5": 1,
+        "b9700fb640bfe80b7d5b01c682937388b182619c3759291b67c0d2671c8cc035": 1,
+        "eb47ff2a905624595d1988ff2c294495f991770c838debdc0954e43ce3aac7ad": 1,
+        "ef25aef633172e03ca8f2359638da09c26c07ffc9a7046095a66a79cb406cf69": 1,
+        "eff5d442b58a763bc07391b530aebc634402c2ef4bd46ca4b053f25e6b307e09": 1,
+        "fc6466b8e53c1eda46b529b42fc232573689499839cf6de7528e101a8ef2e132": 1
+      },
+      "preset": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "harp",
+      "stable": false,
+      "wet_buffer_counts": {
+        "06dce9e31e1c3c71e2cdfd4ad5355488541e36fe215ea814a0c414415e1b6b47": 1,
+        "1293d4a8c12ba7973cf5c9d7ae7381fe37ae254dd5ac992c3405b85d2fed1142": 1,
+        "1b7ff10486a52c72c1b74a59a44400b1520e7af79ace365bb6ba989eef85c34e": 1,
+        "262ccbec589aac92bee4921f00e6d5b284934dc9dbf5033123cd3786c8468079": 1,
+        "34283428d8a413859aa57cd5d81ba7a7b02252666ffeb70b9682e236df772532": 1,
+        "3e0b0c9efdf09cd6fa38405314b7a3f7026d248bec29dc972807de44962f34db": 1,
+        "3eceba90942ff6c309e33ac89874c1caea0e995892a2fc663072ece6601eb81e": 1,
+        "49688768753f21d3756c8f2015f143698cb9efff76c308bcaf5d3b49edd9405c": 1,
+        "76b6883cbd7a5315954c6836ab63d51d481726b28d0de36fb640a4ba42c70822": 1,
+        "856a09e5e71264f3c80a65b655664d579a4b31f05aa1a0306abd72341bf07445": 1,
+        "87b653aa7a5d5a273892a79fdc9d7037e0377fbaf47a1c5f483b328ba3371796": 1,
+        "8824d20b2b336ff83eb8aa69f6321c7cf9a985fa48ae174e928ad8c9bfe1536a": 1,
+        "8bc83e44b8c14f22cc4a01beeecf5fffe3e8632d31135bbee05b12ff5d6c11a6": 1,
+        "9f114f873b17245ad75451a89b8d8d6aa383b1244fc082831495d45411323de7": 1,
+        "b6327c5500377c4776823d9d863b57f33dd817bee2b157fc1e29aa9b83060aec": 1,
+        "ca0bc97942f79d184991f00e3e4b5b6a7d33da0e06c4703f9cba16904de6c731": 1,
+        "e4405412ac81229391f705f9456877772abe2b1e22214631075af3d8402afc53": 1,
+        "f40e4b36c2c23c3f3852804ceaf89afb9e077dee90364e6f348593bcd42cfdb3": 1,
+        "f4ea49f919b26cd55812125d0a2fc9f0c7e7b9a316a5e8650c4e71079d4aeebb": 1,
+        "f74fb33ebd62c7884d09dafd7fc543a18c202ad313453318ff0e8d65cb2d1173": 1
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 2,
+      "dry_buffer_counts": {
+        "fde997b0d7d1e277a00ac633a806d0576d0556fcec65e8c02e7766062ee78728": 20
+      },
+      "preset": "resources/data/patches_3rdparty/Luna/MPE/Lap Harp.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "lapharp",
+      "stable": false,
+      "wet_buffer_counts": {
+        "70556a73353630ccd5d53786dc33e25e84747693f74924833c758f84b55a4638": 3,
+        "af5f7d031aa1039c95a12bdde361d6ef3e8bb7edb6f8b36f3c95a097ba1cc9e6": 17
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "a99f14d23592353ef669e5765bb3961bb950f45d01f85760968eecfa57bdee24": 20
+      },
+      "preset": "resources/data/patches_3rdparty/Luna/MPE/Lap Harp.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "lapharp",
+      "stable": true,
+      "wet_buffer_counts": {
+        "aa3ce619e381cb4350cd6bbffda979132bdf2e274159d9f1867f6e373441ebc6": 20
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "23e3b3b7510a28de1caa62d735c2688802bd84d87a28f411c853b18c1a3f9397": 20
+      },
+      "preset": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "moire1",
+      "stable": true,
+      "wet_buffer_counts": {
+        "583653c2bd3a306e8033ee0bbe927167ebcefa009fd3a446ad4c29731c8c0fa4": 20
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "8802e6888a1707597d648f5cebdda9a4307ab6a4baf77a0ebdb760b23b7eae7b": 20
+      },
+      "preset": "resources/data/patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "moire1",
+      "stable": true,
+      "wet_buffer_counts": {
+        "e1a14383e9429b3ba60ef862d9f0b5d411265598f0a771c0b3700638c66e053d": 20
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "e7fcb4b227cb0dbb23608fd94789e565311a1fcffa0348036458f391c48781aa": 20
+      },
+      "preset": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "mystical",
+      "stable": true,
+      "wet_buffer_counts": {
+        "6f1aa0b3c253a2503a236855d150d3776c59d522e38dce699c0e06563c3c8748": 20
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "08908253e8ceea91b346b6b2cae2a9f3bf3ecc5ca6519756e006df69b4f899e6": 20
+      },
+      "preset": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "mystical",
+      "stable": true,
+      "wet_buffer_counts": {
+        "2098bfcecb4da3d48b1b18d10bb9a5cd76832ba76f6d23cacb512fa3c924ada6": 20
+      }
+    },
+    {
+      "distinct_dry_buffers": 20,
+      "distinct_wet_buffers": 20,
+      "dry_buffer_counts": {
+        "09805b81bfb3c7c0306a4984cc2b35402e9ba18fccc6f2296bd4552a05ad7e8c": 1,
+        "0a216efb6b37e7dc81501eb58112325a6a7919a7a2be86445b20a6b9e294f3a3": 1,
+        "1d2c059f5efda12e9c53220b9f7b8494882329f2cd5193b4dc6a4efbe04f1e17": 1,
+        "3132bd9203182d6c3c12543fe62b29fe201242dd62091f0b83ec887bf6286651": 1,
+        "40c652fcd706e4778149107398a755bc8e358dd6d4397f7924f354272d059b63": 1,
+        "421160194972d85c0e03a3974802b4398c1f19f8c19df3eb9ca2030322d37163": 1,
+        "4721ee37ace330ee67dc55874a1ee7855e58523d90bb1df9f1b5e77066b8cf0a": 1,
+        "60684e5816be807588e6b4c1a0a5584ba44e491a2cfd22e0ee19f09f4135b838": 1,
+        "743aa0d0723c4ffcbcdd5d09c72a961d26b8d974e9a52cc4eb8ad0181ae621a8": 1,
+        "85f4b710ce7ac3f5b1033f01e7536f3a4d5c961938af0218d9dad0491ec375b1": 1,
+        "9b297027bff62e30375b0e0502dc3d9b72365f776145ad40020d6b320a1dafe2": 1,
+        "9b813ad6d4894d7f6f114b35d2112509235dd30c26cf86ade145adb8eb1c5994": 1,
+        "9dab11b09e465a1eeb6ea612a5b0ae3a3b5697a6d4b7696a5461d1f1523a06d1": 1,
+        "ad2d6ae081192b3829ecc784e77310d36ab5d5ae9faba3c193f43f6b24934dbe": 1,
+        "b354cf304e87f4ff2c42af755608ed87e4b1c509923c5340de64c2c1d1a5b0a1": 1,
+        "bbeecd543345abd75f810e6c6faf0faec9ed0f23dfd7efcd79b3ffc835755434": 1,
+        "cabd0be2fc74d4cbc045346f9bceebe9a3dde08737b2ac3f024a54b1dba141b5": 1,
+        "d6e8bcd7e32c1aaa0d8105a918aa286c95a1b77f8a1427ed821daf8398861f2e": 1,
+        "de69221c2860b31b374b4fed762df5cdabba69632bbc98959db9c02c167d3c66": 1,
+        "e5698755d984f8fd6275c5e0c4ec8636e8dd1ccc1420672a602c4447484d8a13": 1
+      },
+      "preset": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "novuo",
+      "stable": false,
+      "wet_buffer_counts": {
+        "13015989c0e18bd993f01badc7286957e8fc06b8896cbd2f7e15e4a7709b0d68": 1,
+        "1e7eb1bcd110ee366ec5d169ab630f2dd725cb10d9fc83fba6a03d8234afcb2e": 1,
+        "3ce3f787baf432513b871721bb11c290916e8fc7053dae58cb3edd45dbccb8af": 1,
+        "40149644dc96120e48d0de9372642ec319acdb2c02d717f81695e8d190a02f87": 1,
+        "62de4f9fc36535a1815afadd110d95d7cb043d1e6d0992629dd78ba35b9a70c8": 1,
+        "6bb97163bdb03c7382aae237be60c045d785a03b506f14b1b3d86e1dab4dc3d3": 1,
+        "7756aa6145e185d99abbf7872322d693ec767267927aced5b9473d05f59eff6f": 1,
+        "77b8af75e96667dfddf434fea05e27014b3584db6499ec08362beeb1df08cab4": 1,
+        "830aa50118c15078248a51524c8090a4844cfb9b40e8787dc9c37d75a832e596": 1,
+        "8628bd1e98bdf8d43c9eeec6f249d797ec4d744dbf34682d4512d4325f4e204f": 1,
+        "879176f31eb9202c88b496d41c684f5b76e83fa588ab15b90ff21730b1a5d604": 1,
+        "87ad082a8d290206dce2c0277a5fac63e29f78b68b35f9853cf3e89b8e02dba5": 1,
+        "8f32854391d1205aba234b67d41d37c5d5caf09aff303046519f6c4a9055eefa": 1,
+        "a209843f43aafe68033f161e32c9bea530ba48e1e1973246150548a9f846e622": 1,
+        "af6c1d0a25e6f71428259871d86baf60dea390370a7443c9262ddec95339bbc3": 1,
+        "b5f6df3d4baf0ff3388bac5681c0d74f9ab830a389b06a9a8cddbe30b8f43295": 1,
+        "b71115cd9513dc1390ab19f6075e1fe03b11a03484f48eab0cfd542b16803ec9": 1,
+        "c64001ab37b6cababe1211a2a1a4fe261ed8afd2c7d333e53b818f357de87c3d": 1,
+        "c7dab93a21b0cbb57a080a530d2ca7937ead842f40c026c4d47a90e499ea5977": 1,
+        "d6db7dc9ee14f4f348bb7476ddf3cbf6606e2a913dfd34a788d7fac031ff3d53": 1
+      }
+    },
+    {
+      "distinct_dry_buffers": 20,
+      "distinct_wet_buffers": 20,
+      "dry_buffer_counts": {
+        "0655bfd7c9e14cb9f370cea11028cc000154e25a4add86d8a0839b1d0eecd237": 1,
+        "1d689516a6bdbecba0396c828e725040bead47619ddeaf1b8305f741a3db587b": 1,
+        "28a51674e2234070cfe4e51c8055cfee7ec4a2dd08efbf6e49312b73738a1da6": 1,
+        "2b83e51c78f5f773a517b153023e2d4f3c43363d8f1d1c5cdf82d6391f83ec5c": 1,
+        "2c934b78ba11571729fe790d3a52098646b803328925f7a9a8da10145ea10b39": 1,
+        "4c72d6d9523e28eeb13ef59eac0e571069d5b6bb40494d603f636e17e3f8f52f": 1,
+        "5a4b15e99f3217d768d66ee4e80dccb7e3c48ee5413851e83023fbd69422ca37": 1,
+        "60666c8d77695b241a782d7f3376f058708257fa6411320f995293504c022416": 1,
+        "7f0879a5fcbcb22e3b02ffd8175df91e59a97386d5298f85077052e36081b118": 1,
+        "8bec3a8e12ea47034b9b764085bf0d91470b25843a29656a5c1df7b1a3070d40": 1,
+        "8ed0f11a56145f77281eaea24fe168ae73786f8ebedd2b933154732a216cbff8": 1,
+        "937a01b55266901f61cedb8e783b8a362636491d325b4a7a133bcf0cca692e12": 1,
+        "a2385095ec3c4ba6543e1733f2d8f8d7c632636bff38bbe53c8552067bae0206": 1,
+        "a83979a4e56faed2ae5cb134bc1421c6bee1ffc4705ac6de9dfd3d7fc71b8f3d": 1,
+        "b20a0e270ab3a0bc73a3ab9b61e03836c84495926b9d48e08a9e6781f1845e09": 1,
+        "c4e28655faaed1af1c2dad4195aa784cdff0dd4f2fde264bce88436dcd52dfbc": 1,
+        "e42105eaa8c2dcb4d58fde926a80e437ec9f83f2445ea1017afa02ffeb380b7c": 1,
+        "ef90a8479cf94b5edd9f7b1d9de099d005d617aecbbbb9decd895a729c7736e1": 1,
+        "fcf4185f6ed9257c906c54dd559f449bd753b1a7050481e68c841dd7756cfedf": 1,
+        "ffdc4d7630b2d353c156d9d50f688918351e9d25f919a0862c12a87c72fe7c18": 1
+      },
+      "preset": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "novuo",
+      "stable": false,
+      "wet_buffer_counts": {
+        "085802b9ff5e281df8c160a62679c7578b245612ef97541d19b8838d0f69320f": 1,
+        "2ef173fba075096d4bf1229d7d10aba6bf04231c8ceb8147e3947fb30ff8bef1": 1,
+        "3189239a5dd67809f30fd7818a24862d5f4209e0959e5fcaa767d51763c3f890": 1,
+        "3695a745d2b6c6183e71223c1bddd7d6cce83428715f02909a2d2df46e4fda49": 1,
+        "3a0e28d7dc59cb7b362b9631d81676778c434fca1979b1231eed82ed40495d9e": 1,
+        "4361c04408928661e37c4837037fbd9bf74c6d1db4a07a72058f32ca87f8b0fd": 1,
+        "7884efa8c8629dd70314cf9d032eb8019bebd6cadc839fc4fe1b1c6aad8dd446": 1,
+        "7915afd55f16e657ee388defe324178cf51c5c21e5b33c21518ba12bca21ad71": 1,
+        "7a48350a6c6b0a95dfc450c53418c88b4e453ae72a9d681095c30d093f2f0eab": 1,
+        "7c61f61db52ca2a01b4fc973eb329d48163a6734f8b878bb4da0a4f4d8615634": 1,
+        "a6670630caf2971dd3eadb9fef5a792de31ed6da1176c164f4da6e9cbb314f75": 1,
+        "a69a917467285e9fa2c697a547c28f87e0ab9fa3181a5f740601da5bac04b0aa": 1,
+        "b0474fc8a23c6e4407ee6f696ca54a0ebd952b3827fcdb18a74ea7f3e1092117": 1,
+        "b094f6a1a182dcb5ef34b0109dab437a28bfad06bedb5a2b8bf63fea7c9b9efe": 1,
+        "b77ebac36d23c6e94a903077566ead6aaf149370b01afa53c6baf0a338cb4dd3": 1,
+        "c256dad9abb1cc97b568cfe63521aef950b20006bac93fb2fd203fd3293d79ac": 1,
+        "cda5b792576163974204e64697a85f0fdea996af501543311c5d64af1d53f34c": 1,
+        "d3284a561e671aaa948f48760ed4fc84678dcfd6e0f66acd7968036d1d564eb7": 1,
+        "d3376284474c5a0e9898e4dd8ff899688cfad48c33e6bc161962ac8fb3af109c": 1,
+        "da2c22f5652fcf33268ad47f243c1b9df56debe43d083ef2ae29c120dddf0866": 1
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "431d12f0f97bbab31ae312b2a9a02aa871aced5b365557f9bf3522124ea34fdb": 20
+      },
+      "preset": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-notes-coverage-v1",
+      "slug": "tacobell",
+      "stable": true,
+      "wet_buffer_counts": {
+        "63be231d9585a31c30a46d4ddccbafa37e021d934d3c31ae5483da8811581d1c": 20
+      }
+    },
+    {
+      "distinct_dry_buffers": 1,
+      "distinct_wet_buffers": 1,
+      "dry_buffer_counts": {
+        "40ff0542ae836d12e88f1998ed24fe1d3c09cb77062810503a52d447942545aa": 20
+      },
+      "preset": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+      "repeats_per_bus": 20,
+      "sequence": "seq-poly-8-v1",
+      "slug": "tacobell",
+      "stable": true,
+      "wet_buffer_counts": {
+        "4fc275b8f880bcef196a3deea98ed28912e86b7720c40f17a7bce6c542536602": 20
+      }
+    }
+  ],
+  "stress_screen_note": "live control on the 3x gate's own resolving power: each repeat is preceded by a render of an RNG-using preset in the same process. `lapharp` is the counter-example -- it passes a 3x gate most of the time and is still bimodal on the wet bus while its all-off dry bus is stable, so a single 3x PASS is weaker evidence than it looks and is NOT, by itself, a determinism claim. The three issue-named carriers are included so their REFUSAL is characterised rather than merely asserted: a carrier whose ALL-OFF DRY bus is already unstable is nondeterministic in the voice path, upstream of every FX slot, which is a property of the preset and not of fx:Reverb 2.",
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+    "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+  }
+}

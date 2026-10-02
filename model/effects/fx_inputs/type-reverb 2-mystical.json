@@ -2,7 +2,7 @@
   "applicability": {
     "complete_wet_render_possible": false,
     "reasons": [
-      "SXT-012 3x bit-identical determinism gate FAIL: seq-notes-coverage-v1=REFUSED, seq-poly-8-v1=REFUSED"
+      "chain needs unlanded FX classes: Flanger"
     ],
     "status": "REFUSED (fail-closed)",
     "temposync_resolved": true
@@ -10,88 +10,89 @@
   "census_blob_reverified": true,
   "chain": [
     {
+      "landed_model": false,
+      "landed_ref": null,
+      "role": "send1",
+      "slot": 4,
+      "type": 12,
+      "type_name": "Flanger"
+    },
+    {
+      "landed_model": true,
+      "landed_ref": "reverb1 (SXT-024)",
+      "role": "send2",
+      "slot": 5,
+      "type": 2,
+      "type_name": "Reverb 1"
+    },
+    {
       "landed_model": true,
       "landed_ref": "eq (SXT-023)",
-      "role": "ains1",
-      "slot": 0,
+      "role": "global1",
+      "slot": 6,
       "type": 6,
       "type_name": "EQ"
     },
     {
       "landed_model": true,
       "landed_ref": "reverb2 (SXT-028f, this leaf)",
-      "role": "global1",
-      "slot": 6,
+      "role": "global2",
+      "slot": 7,
       "type": 11,
       "type_name": "Reverb 2"
     }
   ],
   "determinism_gate": {
     "artifact": "reports/SXT-028f/artifacts/determinism-gate.json",
-    "measured": {
-      "seq-notes-coverage-v1": {
-        "frames": 273600,
-        "frames_differing": 142040,
-        "max_abs_divergence": 0.0074259936809539795,
-        "peak_abs": 0.46321603655815125
-      },
-      "seq-poly-8-v1": {
-        "frames": 177600,
-        "frames_differing": 30537,
-        "max_abs_divergence": 0.0032416749745607376,
-        "peak_abs": 0.330150842666626
-      }
-    },
+    "measured": {},
     "repeats": 3,
     "sequences": {
-      "seq-notes-coverage-v1": "REFUSED",
-      "seq-poly-8-v1": "REFUSED"
+      "seq-notes-coverage-v1": "PASS",
+      "seq-poly-8-v1": "PASS"
     },
-    "status": "FAIL"
+    "status": "PASS"
   },
-  "drift_asserted": null,
+  "drift_asserted": 0,
   "fx_bypass": "All FX",
   "fx_class": "Reverb 2",
   "fx_disable": 0,
   "instances": [
     {
       "params": {
-        "buildup_f": 0.0,
-        "decay_time_f": -4.0,
-        "diffusion_f": 0.8,
-        "hf_damping_f": 1.0,
-        "lf_damping_f": 0.5,
-        "mix_f": 0.137143,
-        "modulation_f": 0.001786,
-        "predelay_f": -7.645001,
-        "room_size_f": -1.0,
+        "buildup_f": 1.0,
+        "decay_time_f": 3.292782,
+        "diffusion_f": 1.0,
+        "hf_damping_f": 0.85,
+        "lf_damping_f": 0.36,
+        "mix_f": 0.2,
+        "modulation_f": 0.6,
+        "predelay_f": -3.0,
+        "room_size_f": 0.75,
         "ts_predelay": false,
         "ts_ratio_inv": 1.0,
-        "width_f": 11.07428
+        "width_f": 0.0
       },
       "return_level": 1.0,
       "return_level_engine": 1.0,
-      "role": "global1",
-      "slot": 6,
-      "temposync_source": "SurgeSynthesizer::getTempoSync on fx[6].p[0] after loadPatch (native loader read-back, post-migration)"
+      "role": "global2",
+      "slot": 7,
+      "temposync_source": "SurgeSynthesizer::getTempoSync on fx[7].p[0] after loadPatch (native loader read-back, post-migration)"
     }
   ],
   "leaf": "SXT-028f",
   "param_order_ref": "sst-effects Reverb2.h:40-57 rev2_params; each value range-checked against Reverb2.h:152-197 paramAt",
   "preset": {
     "bank": "contributor",
-    "census_size": 99606,
-    "git_blob_sha1": "4f316a7f43eba60c40e9a7ca5de095a5775aeb21",
-    "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp",
-    "size": 99606
+    "census_size": 28893,
+    "git_blob_sha1": "fac150e6cb2b59b3ec549ea8beb9cc97d9298d83",
+    "path": "resources/data/patches_3rdparty/TNMG/Bells/Mystical Creature.fxp",
+    "size": 28893
   },
   "reference_leg": {
     "input_boundary": "per-slot bypass (global-last) -- see model/effects/run_reverb2_model.py",
-    "refusals": [
-      "3x determinism gate did not pass"
-    ],
+    "refusals": [],
     "scope": "fx:Reverb 2 CLASS agreement only (model fed the engine's own per-slot-bypass bus); this is NOT a complete-wet preset claim and NOT a coverage or quality claim",
-    "usable": false
+    "usable": true
   },
   "scene_drift_f": [
     0.0,
@@ -103,9 +104,9 @@
     "census_manifest": "corpus/census-v0.1/corpus-manifest.json",
     "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
     "normalized_graph": "corpus/normalized/graphs.jsonl (SXT-011)",
-    "patch_revision": 28,
+    "patch_revision": 15,
     "sample_rate_hz": 48000
   },
   "tempo_bpm": 120.0,
-  "volume_f": -12.0
+  "volume_f": -2.025745391845703
 }

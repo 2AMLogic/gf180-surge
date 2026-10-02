@@ -1,0 +1,43 @@
+{
+  "alloc_profile": "engine",
+  "blocks_total": 5925,
+  "claim_scope": "model-vs-pinned-engine input for the fx:Reverb 2 class only; establishes no preset-support, coverage or musical-quality claim",
+  "follow_up": "F-028f-1 (#126)",
+  "input_boundary": {
+    "bypass_sha256": "59808613ad9ddcf73c6d1b202e50dd0b91b9c9c995067e6fa4dd0fd53ac5875a",
+    "bypass_wav": "reports/SXT-028f/fixtures/moire1__seq-poly-8-v1-bypass-fx7.f32.wav",
+    "deamp_then_quantize": "bypass / A in double, then one Q10.21 round-half-up (<= 1/2 LSB, ~ -132 dBFS class, declared)",
+    "kind": "per-slot-bypass (global-last)",
+    "master_amplitude": 0.6309573444801932,
+    "master_volume_db": -4.0,
+    "reverb2_slot": 7,
+    "role": "global2",
+    "wet_sha256": "cb8864ab4514b5828c7890b732285a5898ecc9fd965d6e0d9854c4cb4e1328c4",
+    "wet_wav": "reports/SXT-028f/fixtures/moire1__seq-poly-8-v1-wet.f32.wav"
+  },
+  "input_peak_post_deamp": 1.0049962997436523,
+  "leaf": "SXT-028f",
+  "master_hardclip_samples": 0,
+  "model_peak_abs": 0.5329890251159668,
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "model_wav": "reports/SXT-028f/artifacts/model__moire1__seq-poly-8-v1.f32.wav",
+  "params": {
+    "buildup_f": 0.5,
+    "decay_time_f": 3.58496,
+    "diffusion_f": 0.25,
+    "hf_damping_f": 0.75,
+    "lf_damping_f": 0.25,
+    "mix_f": 0.16,
+    "modulation_f": 0.33333,
+    "predelay_f": -3.04921,
+    "room_size_f": -0.33333,
+    "ts_predelay": false,
+    "ts_ratio_inv": 1.0,
+    "width_f": 9.0
+  },
+  "render_frames": 177600,
+  "schema_version": 1,
+  "sequence": "seq-poly-8-v1",
+  "settle_blocks": 375,
+  "slug": "moire1"
+}

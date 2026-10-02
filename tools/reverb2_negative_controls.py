@@ -217,9 +217,17 @@ class GenericReverbSubstitute:
 
     ADAPTED = True
 
-    def __init__(self, params, name="generic"):
-        self.ref = new_model(params, name)     # borrows the control plane
-        self.lines = [[0] * 16384 for _ in range(NUM_BLOCKS)]
+    def __init__(self, params, name="generic", profile=HARNESS_PROFILE,
+                 line_len=16384):
+        # `profile`/`line_len` are explicit so the SAME substitute can be
+        # driven by the reference-bundle controls at the engine allocation
+        # profile (tools/reverb2_reference_controls.py, issue #126) instead
+        # of a second, divergent copy of the generic. Defaults are the
+        # model-vs-model values this file has always used.
+        self.ref = new_model(params, name, profile)  # borrows the control plane
+        self.line_len = line_len
+        self.mask = line_len - 1
+        self.lines = [[0] * line_len for _ in range(NUM_BLOCKS)]
         self.k = [0] * NUM_BLOCKS
 
     def process_block(self, in_l, in_r):
@@ -233,13 +241,13 @@ class GenericReverbSubstitute:
             ol = orr = 0
             for b in range(NUM_BLOCKS):
                 ln = self.lines[b]
-                self.k[b] = (self.k[b] + 1) & 16383
-                rp = (self.k[b] - st.dl_len[b]) & 16383
+                self.k[b] = (self.k[b] + 1) & self.mask
+                rp = (self.k[b] - st.dl_len[b]) & self.mask
                 y = ln[rp]
                 ln[self.k[b]] = qadd(x_in, qmul(st.decay.v, y, C_FMT, A_FMT,
                                                 A_FMT), A_FMT)
-                tl = ln[(self.k[b] - st.tap_l[b]) & 16383]
-                tr = ln[(self.k[b] - st.tap_r[b]) & 16383]
+                tl = ln[(self.k[b] - st.tap_l[b]) & self.mask]
+                tr = ln[(self.k[b] - st.tap_r[b]) & self.mask]
                 ol = qadd(ol, qmul(TAP_GAIN_L[b], tl, G_FMT, A_FMT, A_FMT),
                           A_FMT)
                 orr = qadd(orr, qmul(TAP_GAIN_R[b], tr, G_FMT, A_FMT, A_FMT),

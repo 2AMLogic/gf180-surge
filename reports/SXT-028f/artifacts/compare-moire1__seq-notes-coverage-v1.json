@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "leaf": "SXT-028f",
+  "follow_up": "F-028f-1 (#126)",
+  "slug": "moire1",
+  "sequence": "seq-notes-coverage-v1",
+  "ref": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/SXT-028f/artifacts/model__moire1__seq-notes-coverage-v1.f32.wav",
+  "path": "wet",
+  "claim_scope": "fx:Reverb 2 CLASS agreement (model fed the engine's own per-slot-bypass bus); NOT a complete-wet preset, coverage or musical-quality claim",
+  "input_boundary": {
+    "bypass_sha256": "bb87be8af247b076a4ea27fe9540113a414c309858450dfa4cd1755e9b202dfd",
+    "bypass_wav": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1-bypass-fx7.f32.wav",
+    "deamp_then_quantize": "bypass / A in double, then one Q10.21 round-half-up (<= 1/2 LSB, ~ -132 dBFS class, declared)",
+    "kind": "per-slot-bypass (global-last)",
+    "master_amplitude": 0.6309573444801932,
+    "master_volume_db": -4.0,
+    "reverb2_slot": 7,
+    "role": "global2",
+    "wet_sha256": "bd80fed96f917de2f7e6368c19a5e09eefd7c818cb68d4d481ddec1787bb5bdf",
+    "wet_wav": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1-wet.f32.wav"
+  },
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "fixture_sidecar": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1.json",
+  "reference_determinism_gate": {
+    "repeats": 3,
+    "bit_identical": true,
+    "drift_asserted": 0
+  },
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 565554.125,
+      "model_peak_lsb": 565555.0,
+      "max_abs_diff_lsb": 4.2724609375,
+      "rms_diff_lsb": 0.5059584571438602,
+      "rms_diff_dbfs": -126.32970107400782,
+      "rms_diff_at_shift0_lsb": 0.5059584571438602,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.5059584571438602,
+      "spectral_corr": 0.9999999930111362
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 511870.5,
+      "model_peak_lsb": 511872.0,
+      "max_abs_diff_lsb": 4.4072265625,
+      "rms_diff_lsb": 0.5061142009202656,
+      "rms_diff_dbfs": -126.32702780099017,
+      "rms_diff_at_shift0_lsb": 0.5061142009202656,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.5061142009202656,
+      "spectral_corr": 0.9999999930428346
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 474912.09375,
+      "model_peak_lsb": 474913.0,
+      "max_abs_diff_lsb": 1.6650390625,
+      "rms_diff_lsb": 0.3189782387447706,
+      "rms_diff_dbfs": -130.33677715087097,
+      "rms_diff_at_shift0_lsb": 0.3189782387447706,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.3189782387447706,
+      "spectral_corr": 0.9999999973108948
+    }
+  },
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+    "tail_region_sidecar": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 1.6649169921875,
+    "tail_rms_diff_lsb": 0.31535602605707236,
+    "tail_rms_rel_db": -93.74130220575253,
+    "tail_ref_rms_lsb": 15341.444190488943,
+    "tail_model_rms_lsb": 15341.47277583096,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 50,
+      "ref_first_window_dbfs": -35.33243789537729,
+      "ref_last_graded_window_dbfs": -78.14125133344857,
+      "max_dev_db": 0.0008854351452356468,
+      "worst_window": {
+        "index": 48,
+        "start_frame_in_tail": 115200,
+        "ref_dbfs": -75.18586141063231,
+        "model_dbfs": -75.18674684577755
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 4.2724609375,
+      "tail_rms_diff_lsb": 0.5282148095085042,
+      "tail_rms_rel_db": -92.93878262998925,
+      "tail_ref_rms_lsb": 23428.78164634065,
+      "tail_model_rms_lsb": 23428.81159455205,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -26.926745995481596,
+        "ref_last_graded_window_dbfs": -61.958963850989115,
+        "max_dev_db": 0.00041287539815471064,
+        "worst_window": {
+          "index": 48,
+          "start_frame_in_tail": 115200,
+          "ref_dbfs": -64.97416631235266,
+          "model_dbfs": -64.97457918775082
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "sidecar wet.last_event_sample + declared tail_s",
+      "tail_region_sidecar": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 4.4072265625,
+      "tail_rms_diff_lsb": 0.5285982422749333,
+      "tail_rms_rel_db": -92.72634298350803,
+      "tail_ref_rms_lsb": 22879.306895828337,
+      "tail_model_rms_lsb": 22879.328364906898,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -28.01058826560255,
+        "ref_last_graded_window_dbfs": -63.14110800564596,
+        "max_dev_db": 0.0004758419714221418,
+        "worst_window": {
+          "index": 48,
+          "start_frame_in_tail": 115200,
+          "ref_dbfs": -62.89378404859454,
+          "model_dbfs": -62.89425989056596
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)"
+}

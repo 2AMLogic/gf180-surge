@@ -1,7 +1,16 @@
-# SXT-028f evidence record — Reverb 2 (sst-effects tank reverb): frozen fixed-point model, exact RTL, per-instance state; reference leg BLOCKED (no oracle host)
+# SXT-028f evidence record — Reverb 2 (sst-effects tank reverb): frozen fixed-point model, exact RTL, per-instance state; class-scope reference leg RAN (3 screened carriers; all 3 issue-named carriers REFUSED by the determinism gate)
 
 Branch: `feature/issue-58` · Issue: #58 (SXT-028f) · Parent: #21 (SXT-028) ·
 Date: 2026-09-25
+
+**Reference leg added 2026-10-02 (issue #126, finding F-028f-1)** on a host
+with the pinned prebuilt oracle installed by `oracle/fetch-and-build.sh
+--prebuilt` (per-user cache keyed by the engine commit; see §3 for the
+build provenance). §3 was **BLOCKED / NOT_RUN** before that date; it now
+carries a graded `fx:Reverb 2` **class** verdict. §1's temposync and
+`drift_asserted` fail-closed fields are resolved for the first time in the
+same change. Nothing in §4–§8 changed, **no** preset-support, coverage or
+musical-quality claim is created, and **no budget was widened or frozen**.
 
 Engine (external, GPL-3.0-or-later):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, 48 kHz,
@@ -17,14 +26,25 @@ Supporting pinned headers read and cited: the same sst-effects pin's
 `src/common/dsp/effects/SurgeSSTFXAdapter.h`. Read + cited; **no source,
 table or asset is copied into this repository**.
 
-**Claim discipline.** This record advances exactly one claim: **(1) the RTL
-matches the frozen fixed-point model exactly** (iverilog, demonstrated).
-It does **NOT** advance **(2) model-vs-pinned-engine agreement** — that leg
-is **BLOCKED / NOT_RUN** on this host (§3) — and it advances **no** claim
-of kind **(3) "it sounds good"** (no human listening; #8/#9 remain
-BLOCKED-on-human). It establishes no preset-support claim, no coverage
-claim, no cost or fit claim, no FPGA/gf180mcu synthesis, timing, area or
-hardware-playback claim, and it freezes no budget.
+**Claim discipline.** This record advances exactly two claims, kept
+separate and never inferred from one another:
+
+* **(1) the RTL matches the frozen fixed-point model exactly** (iverilog,
+  demonstrated — §4).
+* **(2) model-vs-pinned-engine agreement for the `fx:Reverb 2` class, on
+  three screened carriers × two sequences, against the [PROPOSED] SXT-023
+  budgets** (§3). This is a **class** result measured at a declared input
+  boundary (the engine's own per-slot-bypass bus), **not** a complete-wet
+  preset result; the budgets it is graded against remain **proposals**, so
+  every verdict is marked **PENDING-FREEZE** and the freeze stays gated on
+  SXT-017 (#12) and the delay-semantics finding (#16).
+
+It advances **no** claim of kind **(3) "it sounds good"** (no human
+listening; #8/#9 remain BLOCKED-on-human). It establishes no preset-support
+claim, no coverage claim, no cost or fit claim, no FPGA/gf180mcu synthesis,
+timing, area or hardware-playback claim, and it freezes no budget.
+Coverage is reported separately from agreement, in §7: **newly-enabled
+presets stays 0.**
 
 ## Headline results
 
@@ -37,8 +57,12 @@ hardware-playback claim, and it freezes no budget.
 | Tails (present, decaying, dropped tail FAILs) | **PASS** — model-side declared-region tail gate | NC-B, `tests/test_sxt028f.py` |
 | External-memory state + traffic | **PASS** (accounting) — 14,532,608 B/instance; 46 words/sample | `artifacts/buffer-requirement.json` |
 | External-memory **fit** | **[PENDING-SXT-016] / not claimed** | §6 |
-| Model ↔ pinned engine vs [PROPOSED] budgets | **BLOCKED (NOT_RUN)** — no oracle host in this environment | §3 |
-| Fixture renders (SXT-012 policies, 3× determinism gate) | **BLOCKED (NOT_RUN)** — needs the oracle host | §1, §3 |
+| Model ↔ pinned engine, `fx:Reverb 2` **class**, vs [PROPOSED] budgets | **PASS (PENDING-FREEZE)** — 6/6 cases (3 screened carriers × 2 sequences); worst achieved max 22.0 LSB (budget ≤ 8,192), worst rms −114.3 dBFS (budget ≤ −46), worst corr 0.99999999 (budget ≥ 0.98) | §3, `artifacts/compare-*.json` |
+| Reference-backed negative controls (NC-A generic, NC-B dropped tail, NC-REF-0 vacuity) | **PASS** — 18/18 CONTROL-OK against real reference audio | §3, §5, `negative-controls/reference-controls.json` |
+| Fixture renders (SXT-012 policies, 3× determinism gate) | **PASS for 3 screened carriers** (18 buses, `drift_asserted: 0`); **REFUSED for all 3 issue-named carriers** | §1, §3, `artifacts/determinism-gate.json` |
+| Issue-named carriers (`Grant Me…`, `Novuo`, `Harp`) | **REFUSED** — 6/6 legs fail the 3× bit-identical gate; characterised as **source-side** (all-off dry bus already unstable, 20/20 distinct) | §3 |
+| `rev2_predelay` temposync | **RESOLVED** — native loader read-back, `false` (not synced) for all six carriers | §1 |
+| Model ↔ pinned engine, **complete wet preset** | **NOT_RUN / not claimed** — the graded boundary is the per-slot bypass bus, not the whole chain | §3, §8 |
 | Newly-enabled presets supported | **0** (honest delta) | §7 |
 
 ## 1. Inputs, applicability boundary (fail-closed), refusals
@@ -63,22 +87,69 @@ independent corroboration of the mapping:
 | `patches_3rdparty/A.Liv/Leads/Novuo.fxp` | send1 | EQ + Chorus + Reverb 2 + Delay + **Distortion** | **no** — Distortion is an unlanded sibling class (SXT-028e, #57) |
 | `patches_3rdparty/Aleksey Zhehanov/Strings/Harp.fxp` | global1 | EQ + Reverb 2 | **no** (fail-closed, below) |
 
+Three further carriers were added by #126 because **all three issue-named
+ones are REFUSED by the empirical 3× render gate** (§3) — the same
+precedent SXT-028c set, where the issue-named presets were likewise
+refused and replaced by screened deterministic ones
+(`reports/SXT-028c/EVIDENCE.md` §1). They are selected from the committed
+corpus ledger by `tools/screen_reverb2_carriers.py` for the topology the
+declared model input boundary requires — exactly one Reverb 2 instance, in
+a **global** role, in the **last** active FX slot — and then confirmed
+empirically by the gate:
+
+| Preset (screened carrier, #126) | slot | chain (active slots) | 3× gate | complete-wet? |
+|---|---|---|---|---|
+| `patches_3rdparty/Luna/Bells/Taco Bell.fxp` | global1 (6) | Chorus + Reverb 2 | **PASS** | yes |
+| `patches_3rdparty/Jacky Ligon/Soundscapes/Moire 1.fxp` | global2 (7) | Ensemble + Delay + Tape + Reverb 2 | **PASS** | **no** — Ensemble/Tape unlanded |
+| `patches_3rdparty/TNMG/Bells/Mystical Creature.fxp` | global2 (7) | Flanger + Reverb 1 + EQ + Reverb 2 | **PASS** | **no** — Flanger unlanded |
+
+The unlanded siblings in two of those chains do **not** weaken §3: the
+model is fed the engine's own per-slot-bypass bus, so no sibling model is
+required and no complete-wet claim is made for them (§3, §8).
+
+**Screen result (`artifacts/carrier-screen.json`; inventory and
+prioritisation only — NOT a support or coverage claim).** 49 of the 708
+Reverb 2 carriers pass the static stage. Of those 49, **only 10 pass the
+empirical 3× render gate** on `seq-poly-8-v1`; **39 are REFUSED for
+nondeterminism.** The static screen therefore cannot replace the render
+gate — the same finding SXT-028c recorded, reproduced here: all three
+issue-named carriers pass every static criterion and are still refused by
+the gate. The 10 that pass are not a coverage number; three of them are
+the carriers used in §3 and the remaining seven are untested here.
+
 Fail-closed reasons recorded in every emitted record
 (`model/effects/fx_inputs/type-reverb 2-*.json`):
 
-* **`rev2_predelay` temposync is UNRESOLVED.** The per-parameter temposync
-  flag is not part of the SXT-011 normalized graph, and the `.fxp` bytes
-  are external GPL assets this repository deliberately does not carry. The
-  record emits `ts_predelay: null`, and `Reverb2Params` **raises** rather
-  than default it to "not synced".
-* **Determinism drift is `null`, not `0`.** The SXT-012 3× bit-identical
-  render gate needs the oracle host; `drift_asserted: null` = NOT_RUN.
-  (Independently: SXT-028c already recorded `Novuo.fxp` as REFUSED at
-  extraction for drift ≠ 0 — `reports/SXT-028c/EVIDENCE.md` §1 — so that
-  carrier is unlikely to survive the gate when it is run.)
+* **`rev2_predelay` temposync — RESOLVED 2026-10-02 (#126).** The
+  per-parameter temposync flag is not part of the SXT-011 normalized graph,
+  and the `.fxp` bytes are external GPL assets this repository
+  deliberately does not carry, so without the oracle the record emitted
+  `ts_predelay: null` and `Reverb2Params` **raised** rather than default it
+  to "not synced". It is now read back from the **native loader** —
+  `SurgeSynthesizer::getTempoSync` on `fx[slot].p[0]` after `loadPatch`,
+  i.e. the authoritative post-migration state, never an `.fxp` byte
+  reading — by `tools/extract_reverb2_inputs.py --oracle`. Result:
+  **`false` (not synced) for all six carriers**, recorded with its
+  provenance string in each record's `temposync_source`. The same pass
+  reads back the master volume (`volume_f`, the de-amp constant at the
+  model boundary) and **cross-checks all ten Reverb 2 parameter values**
+  against the committed normalized graph; a mismatch beyond 1e-6 is a
+  refusal, never a silent preference for one source. All six carriers
+  agree, which is independent corroboration of the SXT-011 graph.
+* **Determinism drift: `0` only where the gate actually passed.** The
+  SXT-012 3× bit-identical render gate ran on the oracle host (§3).
+  `drift_asserted: 0` for the three screened carriers; **`null` (NOT_RUN /
+  REFUSED, never a pass) for all three issue-named carriers**, each
+  carrying the measured divergence in its `determinism_gate.measured`
+  block. (SXT-028c had independently recorded `Novuo.fxp` as REFUSED at
+  extraction for drift ≠ 0 — `reports/SXT-028c/EVIDENCE.md` §1 — and the
+  render gate now confirms that at the engine level.)
 * Unlanded sibling FX classes in the chain, non-default `fx_bypass`,
   non-zero `fx_disable`, and any modulation route whose destination names
-  an FX parameter each refuse the preset.
+  an FX parameter each refuse the preset. `complete_wet_render_possible`
+  therefore stays `false` for five of the six carriers and is **not** what
+  §3 grades — §3's `reference_leg.usable` flag is a separate, narrower
+  record (class scope at the per-slot-bypass boundary).
 
 Corpus inventory (`artifacts/carrier-ledger.json`, **inventory and
 prioritisation only — NOT a support or coverage claim**, AGENTS.md): 708
@@ -148,35 +219,199 @@ and (b) `test_alloc_profile_equivalence` runs the same stimulus under both
 profiles and requires **identical output, tank state and transaction
 counts**. Both sides of every exactness comparison run the same profile.
 
-## 3. Model vs pinned engine — **NOT_RUN / BLOCKED**
+## 3. Model vs pinned engine — **PASS (PENDING-FREEZE)**, `fx:Reverb 2` class, 3 screened carriers
 
-**Status: BLOCKED. Reason: no oracle host in this environment**
-(`ORACLE_SURGE_DIR` unset; no built surgepy; `oracle/manifest.json` names
-the expected external checkout). No fixture was rendered, no comparison
-was run, and **no `compare-*.json` is committed** — a verdict that did not
-run must never look like a pass, and
-`tests/test_sxt028f.py::test_model_vs_reference_leg_is_not_claimed`
-enforces that absence.
+**Status: RAN 2026-10-02** (issue #126, finding F-028f-1). Was BLOCKED /
+NOT_RUN until then; the oracle is now installable on any worker by
+`oracle/fetch-and-build.sh --prebuilt` (#232), which verifies a sha256 and
+installs per-user under `~/.cache/gf180-surge-oracle/<engine-commit>/`.
 
-Consequently this leaf reports **no** achieved max/rms/corr numbers
-against the [PROPOSED] SXT-023 effect-slice budgets (max ≤ 8,192 LSB; rms
-≤ −46 dBFS; corr ≥ 0.98), and it does not move the reference-budget
-acceptance item. Those budgets are used **only** inside the model-side
-controls of §5 as a *substitution detector* (model-vs-model), which is
-stated in the control record's own `claim_scope`.
+### 3.0 Environment and provenance
 
-Mid-render patch-change/reset on the engine side is additionally BLOCKED
-by the known surgepy embedding limitation already documented in
-`reports/sxt-024/EVIDENCE.md` §3. Reset semantics are exercised exactly on
-the RTL side (`prs-reset48-128` = bulk clear + constructor reset, the
-engine's fx-rebuild path) and the distinct *suspend* semantics are pinned
-model-side (§2, NC-G).
+Recorded in every artifact's `engine` block (`artifacts/determinism-gate.json`,
+each `fixtures/*.json`):
 
-**Stop/escalate (per the issue's own clause):** the acceptance criterion is
-NOT weakened to make this pass. The gap is bounded and named: the leaf
-needs one oracle-host run (fixture render under SXT-012 policies with the
-3× bit-identical gate, the temposync-flag readback, the drift assertion,
-and the model-vs-engine comparison). Follow-up issue filed — see §9.
+| Field | Value |
+|---|---|
+| `engine_commit` | `58914e59c608ed4384ba6002e44c3465c58b2e71` (the SXT-010 pin) |
+| `engine_version_string` | `1.4.HEAD.58914e59c` |
+| `sample_rate` / `block_size_samples` | 48000 / 32 |
+| `tempo_bpm` | 120 (pinned harness tempo; the transport is never changed) |
+| `surgepy_module` | `surgepy.cpython-311-x86_64-linux-gnu.so` |
+
+### 3.1 Reference-vs-reference repeatability (the 3× gate) — and what it REFUSED
+
+`tools/render_reverb2_fixtures.py` inherits the SXT-012/023 fixture policy
+from `tools/render_fx_fixtures.py` (fresh engine instance per bus,
+census-blob-verified load, controller reset, 0.25 s settle,
+block-quantized scheduling, identical tails, all-off dry bus with
+read-back). Three legs per carrier × sequence, **tails included, nothing
+truncated, faded or normalized**:
+
+* **ORIGINAL (`-wet`)** — the preset's unmodified chain. This is the
+  reference every number below is graded against and it is **never
+  modified by the bypass legs** (AGENTS.md: "bypass tests must retain the
+  unmodified wet reference").
+* **PER-SLOT BYPASS (`-bypass-fx<slot>`)** — one render with **only** that
+  Reverb 2 slot's type set to `Off`; every other slot keeps the preset's
+  own value; read-back verified.
+* **ALL-OFF DRY (`-dry`)** — all 16 FX-slot types `Off`, read-back
+  verified.
+
+Every committed bus is rendered **3× in fresh instances and must be
+bit-identical (sha256)** or the fixture is REFUSED and nothing is
+committed. Result: **18 buses committed across 3 carriers × 2 sequences,
+all `bit_identical: true`, `drift_asserted: 0`.**
+
+**Gate liveness (positive control).** A gate that refuses everything is
+indistinguishable from a broken harness, so three SXT-028c carriers whose
+wet sha256 is already committed are re-derived through this harness: all
+three pass the 3× gate **and reproduce the committed hash byte-for-byte**
+(`fmcombo`, `fmtwang2`, `alienappears` — `positive_control` rows). The
+refusals below are therefore a property of the carriers, not of the host.
+
+**All three issue-named carriers are REFUSED** (6/6 legs). Measured
+divergence across the three repeats, written into the gate record rather
+than paraphrased:
+
+| Carrier | sequence | max abs divergence | peak abs | frames differing |
+|---|---|---|---|---|
+| `Grant Me….fxp` | `seq-notes-coverage-v1` | 1.811e−01 | 1.692e−01 | 273,600 / 273,600 |
+| `Grant Me….fxp` | `seq-poly-8-v1` | 9.513e−02 | 2.362e−01 | 177,600 / 177,600 |
+| `Novuo.fxp` | `seq-notes-coverage-v1` | 1.881e−01 | 4.220e−01 | 273,596 / 273,600 |
+| `Novuo.fxp` | `seq-poly-8-v1` | 1.690e−01 | 4.095e−01 | 177,599 / 177,600 |
+| `Harp.fxp` | `seq-notes-coverage-v1` | 7.426e−03 | 4.632e−01 | 142,040 / 273,600 |
+| `Harp.fxp` | `seq-poly-8-v1` | 3.242e−03 | 3.302e−01 | 30,537 / 177,600 |
+
+(These are run-to-run magnitudes, not stable alternatives: an independent
+re-run of the whole gate produced a different hash triple for each leg.)
+
+**The refusal is characterised, not merely asserted.** The interleaved
+stress screen (`--stress 20`: 20 single renders per bus, each preceded by a
+render of an RNG-using preset in the same process) shows all three named
+carriers produce **20 distinct buffers out of 20 on the ALL-OFF DRY bus**.
+Their nondeterminism therefore sits in the **voice path, upstream of every
+FX slot** — it is a property of those presets, **not** of `fx:Reverb 2`,
+and no choice of effect model could make them reproducible. The same
+screen shows the three screened carriers stable on both buses (1 distinct
+buffer in 20) and keeps a deliberately **bimodal** counter-example,
+`Luna/MPE/Lap Harp.fxp`, which passes a 3× gate much of the time and still
+settles on one of two distinct **wet** buffers while its dry bus stays
+stable (FX-side). That control is why a single 3× PASS is recorded as
+repeatability-under-this-environment and **never** as a determinism claim
+on its own; it is intermittent by construction, so the test asserts the
+bimodality was *observed*, not that it recurs on every sequence of every
+run.
+
+### 3.2 Declared model input boundary (why this is a CLASS result)
+
+`model/effects/run_reverb2_model.py`. For a Reverb 2 that is the **last
+active** FX slot in a **global** role:
+
+```
+wet    = clip8( A · Reverb2(X) )     the ORIGINAL unmodified chain
+bypass = clip8( A · X )              the same chain, only that slot Off
+model  = A · Reverb2Model( quantize_Q10.21( bypass / A ) )
+```
+
+with `A = db_to_linear(volume_f)` the read-back master amplitude. Since
+nothing downstream of the slot differs between the two legs, `bypass` is
+exactly the signal the engine feeds the Reverb 2, so what is graded is the
+**`fx:Reverb 2` class** and not a stack of sibling models. Any other
+topology is **REFUSED** rather than approximated — including the
+issue-named `Novuo` carrier, whose Reverb 2 sits in a send slot with an
+unlanded Distortion downstream. The model is run through the same 375-block
+(0.25 s) silent settle as the engine side, so ramps, LFO and tank state
+evolve identically before the first scheduled event. Declared boundary
+error, absorbed by the budgets and never hidden: one Q10.21 round-half-up
+after the de-amp, ≤ ½ LSB (≈ −132 dBFS class).
+
+### 3.3 Achieved agreement (not tuned) vs the [PROPOSED] SXT-023 budgets
+
+`tools/compare_reverb2_reference.py` → `artifacts/compare-<slug>__<seq>.json`.
+No normalization, no time-warping, no reference switching, no per-patch
+engine switching; raw per-sample differences at native level in Q10.21 LSB
+(1 LSB = 2⁻²¹ ≈ 4.77e−7), plus the shared full-scale log-floor spectral
+correlation (`fs-log-floor-v2`, issue #110). Values below are the **mono**
+channel (the worst-case grading channel); per-channel L/R rows are in each
+artifact. Budgets: **max ≤ 8,192 LSB · rms ≤ −46 dBFS · corr ≥ 0.98.**
+
+| Carrier | sequence | max abs diff (LSB) | rms diff (dBFS) | spectral corr | best shift | tail gate | verdict |
+|---|---|---|---|---|---|---|---|
+| `tacobell` | `seq-notes-coverage-v1` | 9.000 | −118.663 | 0.999999996 | 0 | ok | PASS |
+| `tacobell` | `seq-poly-8-v1` | 22.000 | −114.325 | 0.999999997 | 0 | ok | PASS |
+| `moire1` | `seq-notes-coverage-v1` | 1.665 | −130.337 | 0.999999997 | 0 | ok | PASS |
+| `moire1` | `seq-poly-8-v1` | 2.630 | −129.228 | 0.999999997 | 0 | ok | PASS |
+| `mystical` | `seq-notes-coverage-v1` | 2.875 | −126.422 | 0.999999994 | 0 | ok | PASS |
+| `mystical` | `seq-poly-8-v1` | 4.000 | −126.813 | 0.999999997 | 0 | ok | PASS |
+
+Worst case over all six: **22.0 LSB** (0.27 % of the proposed max),
+**−114.3 dBFS** (68.3 dB of margin), **corr 0.99999999**. `best_shift` is
+0 in every case, i.e. the agreement is at zero lag and was not obtained by
+sliding the renders.
+
+**Every verdict is marked `PASS (PENDING-FREEZE)`** in its artifact: the
+budgets and the wet-path tail-region gate are **proposals, not frozen
+policy**, and the freeze is gated on SXT-017 (#12) and the delay-semantics
+finding (#16). No budget was tuned to a measurement, and the comparator
+refuses (NO_VERDICT, exit 2) rather than grade when the sidecar does not
+declare a passing 3× gate, when the model render was produced against a
+different wet reference, or when the tail region is not declared.
+
+### 3.4 Wet tail-region gate (#93/#100)
+
+The tail region is read from each fixture sidecar's **declared** values
+(`wet.last_event_sample` + `render.tail_s` at `render.sample_rate`) —
+never hard-coded, never inferred from silence; a missing or non-describing
+sidecar is a refusal. Both legs of the stereo gate pass for all six cases
+(mono and per-channel L/R): the tail RMS difference relative to the
+reference tail is **at worst −85.97 dB** (budget −20 dB; `mystical` /
+`seq-poly-8-v1`, L), and the 50-window decay curve deviates by at most
+**0.0428 dB** (budget 1.0 dB; `tacobell`, L) with 0 windows over budget,
+graded against the **declared** −100 dBFS floor rather than an inferred
+one. The reference tail carries real energy in every case
+(`tail_present`), so the gate is not passing on silence.
+
+### 3.5 Reference-backed negative controls
+
+`tools/reverb2_reference_controls.py` →
+`negative-controls/reference-controls.json`. The §5 controls grade
+model-vs-model; these re-run the two the issue names **against the real
+pinned-engine reference bundle**, driven through the *same*
+`run_reverb2_model.prepare` boundary as the graded model render itself, on
+all 6 cases:
+
+| Control | Result (6/6 cases) |
+|---|---|
+| **NC-REF-0** vacuity — the engine's own per-slot-bypass bus graded as if it were the model | **CONTROL-OK** — FAILS the budgets everywhere (max 82,915 – 545,336 LSB; rms −26.5 … −42.2 dBFS). Removing the Reverb 2 is detected, so the budgets are resolving the Reverb 2's own contribution and the PASS in §3.3 is **not vacuous** |
+| **NC-A-REF** generic substitute (four feedback combs; no allpass diffusion, no damping, no predelay, no sub-sample read), **ADAPTED** | **CONTROL-OK** — still FAILS on real reference audio in all 6 cases: **max and rms fail in every case** (max 43,626 – 318,602 LSB vs 8,192; rms −30.3 … −41.2 dBFS vs −46), and corr additionally fails in 4 of 6 (0.906 – 0.958; it stays above 0.98 on the two `tacobell` cases, which is why the budget is a conjunction). A convenient generic reverb does **not** pass once a real reference is present, so the budgets are discriminating; **ADAPTED ≠ supported** |
+| **NC-B-REF** dropped tail — the committed model render truncated at the declared tail offset, and separately zeroed across the declared tail region | **CONTROL-OK** — both FAIL the declared-region stereo tail gate that the full render passes, with the full-tail baseline asserted live first |
+
+Had NC-A passed here, the finding would have been **the budgets, not the
+leaf** (the issue's own stop clause). It did not: the generic's rms misses
+by 4.8 – 15.7 dB and its max by 5–39×.
+
+### 3.6 What §3 does not cover
+
+* **Complete-wet preset agreement: NOT_RUN.** The graded boundary is the
+  per-slot bypass bus, so sibling classes in these chains (Ensemble, Tape,
+  Flanger, Reverb 1 …) are supplied by the engine, not modelled. No
+  complete-wet, support or coverage claim follows from §3 — see §7, §8.
+* **The three issue-named carriers carry no agreement number at all**
+  (REFUSED at §3.1; no fixture and no `compare-*.json` exists for them,
+  and `tests/test_sxt028f.py` asserts that absence).
+* Mid-render patch-change/reset on the engine side stays BLOCKED by the
+  known surgepy embedding limitation documented in
+  `reports/sxt-024/EVIDENCE.md` §3. Reset semantics are exercised exactly
+  on the RTL side (`prs-reset48-128` = bulk clear + constructor reset, the
+  engine's fx-rebuild path) and the distinct *suspend* semantics are
+  pinned model-side (§2, NC-G).
+
+**Stop/escalate (per the issue's own clause):** no acceptance rule was
+weakened and no budget widened to produce this result. The one place the
+issue's exact inputs could not be honoured — the three named carriers — is
+recorded as a REFUSAL with its measurement and its cause, not worked
+around; see §9 F-028f-3 for the bounded follow-up.
 
 ## 4. RTL vs frozen model — **EXACT** (iverilog 13.0)
 
@@ -255,11 +490,15 @@ Baseline sanity first (the unmutated model passes its own checks), then:
 | **NC-F** bypass transparency (mix = 0 exact; injected mix leak detected) | **CONTROL-OK** |
 | **NC-G** suspend must not clear the tank (pinned semantics) | **CONTROL-OK** — a clearing mutant is flagged |
 
-**Claim scope of §5, stated in the artifact itself:** every comparison here
-is *model-vs-model* — the frozen model is the reference. These controls
-show the checks and the budget thresholds are live and that the listed
-defects are detectable. They establish nothing about agreement with the
-pinned engine (§3) and no sound claim.
+**Claim scope of §5, stated in the artifact itself:** every comparison in
+this section is *model-vs-model* — the frozen model is its own reference.
+These controls show the checks and the budget thresholds are live and that
+the listed defects are detectable. On their own they establish nothing
+about agreement with the pinned engine and no sound claim. **NC-A and
+NC-B are additionally re-run against the real pinned-engine reference
+bundle in §3.5** (`negative-controls/reference-controls.json`), where both
+still FAIL the checks they target, alongside an NC-REF-0 vacuity control
+showing the §3.3 PASS is not vacuous. NC-C/D/E/F/G remain model-side only.
 
 ## 6. External memory and traffic (SXT-015/016 conventions)
 
@@ -327,23 +566,41 @@ the issue's SXT-017 callout requires.
 
 ## 7. Newly-enabled presets (honest delta)
 
-**Supported stays 0.** The conjunction in `reports/coverage-v1/README.md`
-still fails for every carrier at earlier gates: the model-vs-engine leg is
-BLOCKED here (§3), the fidelity freeze (#12) is open and escalated, sibling
-FX classes in the named carriers' chains are unlanded (Distortion,
-SXT-028e), the voice stage is incomplete, and listening is BLOCKED-on-human
-(#8/#9). What this leaf adds is the `fx:Reverb 2` **class** evidence of §4
-and §6 — RTL-vs-model exactness and the external-memory accounting — plus
-the fail-closed input records of §1. The issue's B4-scope upper bound (232
-candidates) and the 708-carrier inventory of §1 are **not** support claims.
+**Supported stays 0 — including after §3.** Coverage is reported here
+separately from agreement, and a PASS in §3 does not move it. The
+conjunction in `reports/coverage-v1/README.md` still fails for every
+carrier at other gates: the §3 result is **class** scope at the per-slot
+bypass boundary and not a complete-wet preset result, the fidelity freeze
+(#12) is open and escalated so the budgets §3 grades against are still
+proposals, sibling FX classes in these chains are unlanded (Distortion
+SXT-028e in `Novuo`; Ensemble/Tape in `moire1`; Flanger in `mystical`), the
+voice stage is incomplete, and listening is BLOCKED-on-human (#8/#9) — **no
+human listening has occurred for any carrier in this record.** The three
+issue-named carriers additionally carry no reference result at all (§3.1).
+
+What this leaf adds is the `fx:Reverb 2` **class** evidence of §3, §4 and
+§6 — model-vs-engine agreement at a declared boundary, RTL-vs-model
+exactness, and the external-memory accounting — plus the fail-closed input
+records of §1. The issue's B4-scope upper bound (232 candidates) and the
+708-carrier inventory of §1 are **not** support claims, and neither are
+the six graded cases of §3.3.
 
 ## 8. What this record does NOT establish
 
-- Any model-vs-pinned-engine fidelity result, achieved budget number, or
-  freeze (§3 is NOT_RUN/BLOCKED; SXT-017/#12 is escalated to an operator).
-- Any preset-support, coverage, or musical-quality claim; no human
-  listening has occurred (#8/#9). Essentiality remains UNVERIFIED — the
-  issue records no SXT-014 ablation carrier for this algorithm.
+- **Any frozen fidelity result.** §3 reports *achieved* numbers against
+  **[PROPOSED]** budgets and is marked PENDING-FREEZE throughout; the
+  freeze itself is SXT-017/#12's, escalated to an operator.
+- **Any complete-wet preset agreement result** (§3.6): the graded boundary
+  is the engine's per-slot bypass bus, so sibling classes in those chains
+  are supplied by the engine rather than modelled.
+- **Any reference result for the three issue-named carriers**
+  (`Grant Me…`, `Novuo`, `Harp`) — all six legs are REFUSED by the 3×
+  determinism gate (§3.1) and nothing is committed for them.
+- Any preset-support, coverage, or musical-quality claim; **no human
+  listening has occurred** (#8/#9), and six passing numeric comparisons
+  establish nothing about how anything sounds. Essentiality remains
+  UNVERIFIED — the issue records no SXT-014 ablation carrier for this
+  algorithm.
 - Any cost or fit claim: `cyc_fxreverb2_frame` is unpriced
   [PENDING-SXT-016].
 - FPGA/gf180mcu synthesis, place-and-route, timing, power, area, or
@@ -352,19 +609,23 @@ candidates) and the 708-carrier inventory of §1 are **not** support claims.
   synthesised and no synthesis claim is implied.
 - Anything about sibling effect classes (Distortion SXT-028e, Conditioner
   SXT-028b, …), or about the open SXT-023 delay-semantics finding (#16).
-- Repeatability of engine renders (none were made) or of hardware capture
-  alignment (none exists).
+- **General repeatability of engine renders.** §3.1 establishes
+  reference-vs-reference repeatability **for the committed buses, on this
+  host, under this environment** — nothing wider. The `Lap Harp`
+  counter-example shows a 3× PASS can be intermittent, so no carrier
+  outside the committed set is claimed reproducible.
+- Hardware capture alignment (none exists).
 
 ## 9. Bounded gaps and follow-up
 
-1. **F-028f-1 — oracle-host reference leg (BLOCKED).** Needs: the pinned
-   surgepy build; the `rev2_predelay` temposync readback for the three
-   carriers; the SXT-012 fixture renders (original + per-slot bypass +
-   all-off dry, tails included) under the 3× bit-identical gate; the drift
-   assertion; and `model`-vs-engine comparison against the [PROPOSED]
-   budgets, with the declared-region wet tail gate (#93/#100). **Filed as
-   #126** (same infra-gap class as #96 and #101); this leaf's model, RTL,
-   controls and tooling are the inputs it needs.
+1. **F-028f-1 — oracle-host reference leg. CLOSED 2026-10-02 (issue
+   #126).** All of it ran on a worker with the prebuilt pinned oracle
+   (#232): the `rev2_predelay` temposync read-back for all six carriers
+   (§1), the SXT-012 fixture renders with tails under the 3× bit-identical
+   gate (§3.1), the drift assertion, the model-vs-engine comparison against
+   the [PROPOSED] budgets with the declared-region wet tail gate
+   (§3.3/§3.4), and the reference-backed NC-A/NC-B/NC-REF-0 controls
+   (§3.5). Residual, newly-opened gap: F-028f-3 below.
 2. **F-028f-2 — SXT-015 traffic row** (§6): 40/18 vs the measured 29/17,
    state bytes agree exactly. **Filed as #127**, routed to SXT-015/016
    scope. **DISPOSITIONED 2026-09-27 (issue #127): retained deliberately,
@@ -379,6 +640,20 @@ candidates) and the 708-carrier inventory of §1 are **not** support claims.
    *disposition* (declared, conservative, with an unblocking condition) and
    go green either way, so landing the correction after the #12 decision
    needs no test rewrite. See §6 and `reports/sxt-017/EVIDENCE.md` §10.
+3. **F-028f-3 — SXT-012 fixture policy for source-nondeterministic
+   presets (OPEN).** All three issue-named carriers are REFUSED by the 3×
+   gate, and the cause is upstream of every FX slot: their **all-off dry**
+   bus is already unstable (20/20 distinct buffers under the stress
+   screen). It is not rare — of the 49 statically-eligible Reverb 2
+   carriers, only 10 pass the render gate (§1). SXT-028c hit the same wall
+   and substituted screened carriers; SXT-028f has now done the same, so
+   the precedent is being re-established leaf by leaf instead of decided
+   once. **Filed as #310**, which asks for the policy decision plus a
+   diagnostic of *what* varies in the voice path, and explicitly forbids
+   widening the gate or counting a nondeterministic preset toward
+   coverage. **Blocks:** any complete-wet or support claim for
+   `Grant Me…`, `Novuo` and `Harp`. **Does not block:** §3's class-scope
+   result on the screened carriers.
 
 ## 10. Reproduce
 
@@ -394,6 +669,40 @@ python3 tools/extract_reverb2_inputs.py --scan
 # unit / integrity tests
 python3 -m pytest tests/test_sxt028f.py -q
 ```
+
+The §3 reference leg needs the pinned oracle. On any host:
+
+```sh
+./oracle/fetch-and-build.sh --prebuilt        # prints the three exports
+export ORACLE_SURGE_DIR=... ORACLE_PYTHON=... LD_LIBRARY_PATH=...
+
+# 1. fixture bundles + the 3x gate, its positive control and the stress
+#    screen (~6 min; writes artifacts/determinism-gate.json and
+#    artifacts/render-refusals.txt). --stress 20 is REQUIRED for the
+#    committed record: it produces the flake and named-carrier rows.
+"$ORACLE_PYTHON" tools/render_reverb2_fixtures.py --stress 20
+
+# 2. temposync / master-volume read-back + fold in the gate record
+"$ORACLE_PYTHON" tools/extract_reverb2_inputs.py --oracle
+
+# 3. the frozen model over each reference bundle, then the comparison
+for s in tacobell moire1 mystical; do
+  for q in seq-notes-coverage-v1 seq-poly-8-v1; do
+    python3 model/effects/run_reverb2_model.py --slug "$s" --seq "$q"
+    python3 tools/compare_reverb2_reference.py --slug "$s" --seq "$q"
+  done
+done
+
+# 4. the reference-backed negative controls (exits non-zero if any
+#    control stops failing the check it targets)
+python3 tools/reverb2_reference_controls.py
+
+# optional: re-derive the deterministic-carrier screen of §1 (~1 min)
+"$ORACLE_PYTHON" tools/screen_reverb2_carriers.py --render-gate
+```
+
+Steps 3 and 4 need no oracle once the bundles exist — they read the
+committed fixtures.
 
 ## 11. Provenance / licensing
 

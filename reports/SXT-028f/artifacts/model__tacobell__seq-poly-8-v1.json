@@ -1,0 +1,43 @@
+{
+  "alloc_profile": "engine",
+  "blocks_total": 5925,
+  "claim_scope": "model-vs-pinned-engine input for the fx:Reverb 2 class only; establishes no preset-support, coverage or musical-quality claim",
+  "follow_up": "F-028f-1 (#126)",
+  "input_boundary": {
+    "bypass_sha256": "d60ed7afeeeb4f63ad427287b875a2aaed5c83069426713f5515bc86cf08bf72",
+    "bypass_wav": "reports/SXT-028f/fixtures/tacobell__seq-poly-8-v1-bypass-fx6.f32.wav",
+    "deamp_then_quantize": "bypass / A in double, then one Q10.21 round-half-up (<= 1/2 LSB, ~ -132 dBFS class, declared)",
+    "kind": "per-slot-bypass (global-last)",
+    "master_amplitude": 1.0,
+    "master_volume_db": 0.0,
+    "reverb2_slot": 6,
+    "role": "global1",
+    "wet_sha256": "bc9905acaf62b82ac6ebfda62f434f2744f9bce987964a7f1f892e4ffde01b65",
+    "wet_wav": "reports/SXT-028f/fixtures/tacobell__seq-poly-8-v1-wet.f32.wav"
+  },
+  "input_peak_post_deamp": 1.300406813621521,
+  "leaf": "SXT-028f",
+  "master_hardclip_samples": 0,
+  "model_peak_abs": 1.033369541168213,
+  "model_revision": "1a20c2395a7831462f211746b4c11f82755b5311f487a23dcaa5831003b5bdee",
+  "model_wav": "reports/SXT-028f/artifacts/model__tacobell__seq-poly-8-v1.f32.wav",
+  "params": {
+    "buildup_f": 0.666072,
+    "decay_time_f": -0.205358,
+    "diffusion_f": 0.5,
+    "hf_damping_f": 0.666072,
+    "lf_damping_f": 0.911607,
+    "mix_f": 0.205357,
+    "modulation_f": 0.5,
+    "predelay_f": -3.0,
+    "room_size_f": -0.626786,
+    "ts_predelay": false,
+    "ts_ratio_inv": 1.0,
+    "width_f": 7.071434
+  },
+  "render_frames": 177600,
+  "schema_version": 1,
+  "sequence": "seq-poly-8-v1",
+  "settle_blocks": 375,
+  "slug": "tacobell"
+}

@@ -1,0 +1,136 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades, no time-warp",
+  "bypass": {
+    "fx6": {
+      "bit_identical_3x": true,
+      "bypass_method": "ONLY this Reverb 2 slot's type param -> fxt_off via setParamVal before settle; every other slot keeps the preset value; read-back verified; fresh instance",
+      "bytes": 2188844,
+      "determinism_sha256_all": [
+        "a3d5bdbbc16e7f39a326e03cb0aecdb829ecb479c274135af7c6f42c3fdf04dd",
+        "a3d5bdbbc16e7f39a326e03cb0aecdb829ecb479c274135af7c6f42c3fdf04dd",
+        "a3d5bdbbc16e7f39a326e03cb0aecdb829ecb479c274135af7c6f42c3fdf04dd"
+      ],
+      "frames": 273600,
+      "fx_types_readback": [
+        9,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "last_event_sample": 153600,
+      "other_slots_unmodified": true,
+      "peak_abs_float": 0.4410278797149658,
+      "sha256": "2211277822eefe73add092e862cd1870dab22b1cdb1ad92369b40e26d3589991",
+      "slot": 6,
+      "wav": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-bypass-fx6.f32.wav"
+    }
+  },
+  "claim_scope": "reference-vs-reference wet / per-slot-bypass / all-off dry buses of the pinned engine under the SXT-012/023 policies; no fidelity, support, coverage or quality claim",
+  "determinism_gate": {
+    "bit_identical": true,
+    "drift_asserted": 0,
+    "repeats": 3,
+    "scope": "every committed bus (wet, all-off dry, each per-slot bypass) rendered 3x in fresh instances; all three buffers bit-identical (sha256) or the fixture is REFUSED and nothing is committed"
+  },
+  "dry": {
+    "bit_identical_3x": true,
+    "bypass_method": "all 16 FX-slot type params -> fxt_off via setParamVal before settle; read-back verified Off; fresh instance",
+    "bytes": 2188844,
+    "determinism_sha256_all": [
+      "431d12f0f97bbab31ae312b2a9a02aa871aced5b365557f9bf3522124ea34fdb",
+      "431d12f0f97bbab31ae312b2a9a02aa871aced5b365557f9bf3522124ea34fdb",
+      "431d12f0f97bbab31ae312b2a9a02aa871aced5b365557f9bf3522124ea34fdb"
+    ],
+    "dry_fx_bypass_verified": true,
+    "frames": 273600,
+    "last_event_sample": 153600,
+    "peak_abs_float": 0.32620829343795776,
+    "sha256": "1cf5bb6821a8d3ab0ac46ba7bc41cf16c62091e595b7b48c23340a751b597294",
+    "wav": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-dry.f32.wav"
+  },
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "tacobell__seq-notes-coverage-v1",
+  "follow_up": "F-028f-1 (#126)",
+  "fx_types": [
+    9,
+    0,
+    0,
+    0,
+    0,
+    0,
+    11,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "issue": "SXT-028f",
+  "preset": {
+    "census_blob_sha1": "4cb44bfe956ad4facc00e719b97f52f6f9100625",
+    "graphs_sha256_prefix": "4cb44bfe956ad4fa",
+    "path": "resources/data/patches_3rdparty/Luna/Bells/Taco Bell.fxp",
+    "slug": "tacobell"
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 5.7,
+    "frames": 273600,
+    "policies_inherited": "fixtures/render_fixture.py via tools/render_fx_fixtures.py (reset/scheduling/tail/dry-bypass); see fixtures/README.md",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5,
+    "tails_included": true
+  },
+  "reverb2_slots": [
+    6
+  ],
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-notes-coverage-v1",
+    "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+    "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+  },
+  "wet": {
+    "bit_identical_3x": true,
+    "bytes": 2188844,
+    "determinism_sha256_all": [
+      "63be231d9585a31c30a46d4ddccbafa37e021d934d3c31ae5483da8811581d1c",
+      "63be231d9585a31c30a46d4ddccbafa37e021d934d3c31ae5483da8811581d1c",
+      "63be231d9585a31c30a46d4ddccbafa37e021d934d3c31ae5483da8811581d1c"
+    ],
+    "frames": 273600,
+    "last_event_sample": 153600,
+    "leg": "ORIGINAL (unmodified preset chain) -- the wet reference; never modified by the bypass legs",
+    "peak_abs_float": 0.3461569845676422,
+    "sha256": "eb54a7c8e7135b693055bbe00c0156e60361216f622edf9c37575a9d4bb15ba2",
+    "wav": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-wet.f32.wav"
+  }
+}
