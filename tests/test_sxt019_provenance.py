@@ -3081,3 +3081,138 @@ def test_history_controls_run_in_the_self_test():
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
+
+
+# --- the CI gate on per-commit declaration (#300) -----------------------------
+#
+# The history mode is a documented step until something runs it; #300 decided it
+# gates every pull request, over that branch's own commits, with the
+# declare-in-the-adding-commit policy stated rather than left implicit in the
+# range. These cases read the workflow and exercise the gate's exit-code
+# contract. Like the CLI case above, none of them run a range against THIS
+# checkout: a test that did would be asserting on the clone depth it happened to
+# run in rather than on the gate.
+
+CI_WORKFLOW = REPO / ".github" / "workflows" / "ci.yml"
+REUSE_AUDIT_DOC = REPO / "docs" / "REUSE-AUDIT.md"
+
+
+def _ci_job_block(name):
+    """The lines of one ci.yml job, by indentation.
+
+    Deliberately not a YAML parse: the `tests` job installs numpy and pytest
+    only, so PyYAML is not importable in the one environment whose verdict
+    counts, and a test that skipped there would be NOT_RUN disguised as green.
+    """
+    lines = CI_WORKFLOW.read_text(encoding="utf-8").splitlines()
+    start = lines.index(f"  {name}:")
+    block = []
+    for line in lines[start + 1 :]:
+        if line.strip() and not line.startswith("    "):
+            break
+        block.append(line)
+    assert block, f"job {name} has no body"
+    return "\n".join(block)
+
+
+def test_ci_gates_pull_requests_on_per_commit_declaration():
+    """The decision of #300, read off the workflow rather than off its prose."""
+    block = _ci_job_block("provenance-audit")
+    # Without this the range is unresolvable and the gate can only ever say
+    # NOT_RUN (exit 2) -- it would be a job that cannot run, not a check.
+    assert "fetch-depth: 0" in block, block
+    assert "--commits" in block, block
+    # This branch's own commits: excludes the base branch's history (so main's
+    # 16 existing findings are never re-litigated here, #25) and GitHub's
+    # synthetic refs/pull/N/merge commit, and resolves on a fork PR.
+    assert "refs/remotes/origin/${BASE_REF}..${HEAD_SHA}" in block, block
+    # The gate is an addition, not a replacement: the tree audit and the
+    # audit's own negative control must still run ahead of it.
+    assert "--negative-control" in block, block
+    # No way for the gate to be green without having run. Checked against the
+    # directives only -- the job's comments discuss the absence of a bypass.
+    directives = "\n".join(
+        line for line in block.splitlines() if not line.lstrip().startswith("#")
+    )
+    assert "continue-on-error" not in directives, directives
+    # A non-pull_request event has no such range; it must say so, not pass.
+    assert "NOT_RUN" in block, block
+
+
+def test_the_reuse_audit_doc_and_the_workflow_agree_about_enforcement():
+    """The drift #300 was filed against: a rule assumed to be enforced.
+
+    Either the doc states the gate and the workflow runs it, or the doc states
+    that it does not -- never the pair that lets a reviewer assume a check they
+    do not have.
+    """
+    doc = REUSE_AUDIT_DOC.read_text(encoding="utf-8")
+    gated = "--commits" in _ci_job_block("provenance-audit")
+    claims_ungated = "CI does **not** run it today" in doc
+    assert gated != claims_ungated, (
+        f"workflow gated={gated} but docs/REUSE-AUDIT.md claims ungated="
+        f"{claims_ungated}"
+    )
+    if gated:
+        assert "CI gates every pull request on" in doc, (
+            "the gate exists but docs/REUSE-AUDIT.md does not state the policy "
+            "it enforces"
+        )
+
+
+def test_the_ci_gate_fails_a_carrier_declared_one_commit_late(tmp_path):
+    """#300's failure control, through the exact CLI the workflow step runs."""
+    root = _history_tree(tmp_path, "ci-gate-late")
+    rel = cp.FIXTURE_HISTORY_CARRIER_REL
+    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
+    cp._commit_all(root, "add the carrier")
+    cp._write(root, rel, cp.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n")
+    cp._patch_manifest(
+        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    )
+    cp._commit_all(root, "declare it, one commit late")
+
+    # The merged tree is clean -- which is precisely why the tree audit cannot
+    # be the gate for this shape.
+    tree = run_tool("--root", str(root))
+    assert tree.returncode == 0, tree.stdout + tree.stderr
+
+    gate = run_tool("--root", str(root), "--commits", "HEAD~2..HEAD")
+    assert gate.returncode == 1, gate.stdout + gate.stderr
+    assert "FAIL" in gate.stdout, gate.stdout
+    assert rel in gate.stdout, gate.stdout
+
+
+def test_the_ci_gate_passes_a_carrier_declared_in_its_own_commit(tmp_path):
+    """The positive control: the gate must not fail every branch that declares."""
+    root = _history_tree(tmp_path, "ci-gate-same-commit")
+    rel = cp.FIXTURE_HISTORY_CARRIER_REL
+    cp._write(
+        root, rel, cp.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n"
+    )
+    cp._patch_manifest(
+        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    )
+    cp._commit_all(root, "add a carrier AND its row, together")
+
+    gate = run_tool("--root", str(root), "--commits", "HEAD~1..HEAD")
+    assert gate.returncode == 0, gate.stdout + gate.stderr
+    assert "PASS" in gate.stdout, gate.stdout
+
+
+def test_the_ci_gate_reports_an_unauditable_range_as_not_run(tmp_path):
+    """A shallow checkout or a main push must never look like a clean gate.
+
+    Both collapse to the same CLI behaviour the workflow relies on: a range
+    that resolves to nothing is exit 2 with a NOT_RUN disclosure, never exit 0.
+    """
+    root = _history_tree(tmp_path, "ci-gate-unauditable")
+    cp._write(root, "docs/second.md", "A second clean commit.\n")
+    cp._commit_all(root, "a second clean commit")
+
+    empty = run_tool("--root", str(root), "--commits", "HEAD..HEAD")
+    assert empty.returncode == 2, empty.stdout + empty.stderr
+    assert "NOT_RUN" in empty.stdout + empty.stderr, empty.stdout + empty.stderr
+
+    missing = run_tool("--root", str(root), "--commits", "no/such/ref..HEAD")
+    assert missing.returncode == 2, missing.stdout + missing.stderr
