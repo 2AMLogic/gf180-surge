@@ -25,7 +25,7 @@
  "event_profile": {
   "max_coincident_events": 8,
   "peak_events_per_second": 137.142857,
-  "sequence_fixtures": 18,
+  "sequence_fixtures": 20,
   "source": "fixtures/sequences/ (SXT-012 library)"
  },
  "event_queue_depth": 16,
