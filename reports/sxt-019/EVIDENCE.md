@@ -1078,25 +1078,39 @@ plus 145 MiB of gzip inflation) **before** the change was committed: **zero
 hits**, with and without the word filter. Cost of the new layer: 3.9 s → 8.3 s
 wall, 400 MB → 570 MB peak RSS (one audit of a 533 MiB tree).
 
+That measurement covers the four **content** signals only. Harvested text is
+fed to *every* rule, and §16 reports what this paragraph did not: with the word
+filter removed, a **bookkeeping** rule does hit on harvested noise.
+
 ### Controls (non-vacuity checked per hunk)
 
-17 `payload/*` controls, 11 of which must fire with a required locator in the
-finding's own evidence, 6 of which must stay clean. Each hunk was reverted
+> **Corrected 2026-10-01 (#283).** Three rows of the table and two counts below
+> were wrong in the increment-8 record. The corrected values are in place here
+> and the re-measurement transcripts are in §16; what the increment itself
+> established is unchanged.
+
+17 `payload/*` controls, 12 of which must fire with a required locator in the
+finding's own evidence, 5 of which must stay clean. Each hunk was reverted
 independently in a scratch copy and the whole self-test re-run:
 
 ```
 baseline (all hunks present)        -> exit 0, no failing control
-revert the unwrap step              -> exit 2, FAIL the 6 wrapper controls (gzip/xz/bzip2/zip/tar.gz/npz)
+revert the unwrap step              -> exit 2, FAIL 8 wrapper controls (gzip/xz/bzip2/zip/tar.gz/npz
+                                       plus zip-inside-a-gzip-stream and gzipped-member-inside-a-zip)
 revert the string harvest           -> exit 2, FAIL wav-copyright-chunk, float-dump, opaque-payload, copyright-sign
 revert the stream recursion         -> exit 2, FAIL payload/zip-inside-a-gzip-stream
 revert the member recursion         -> exit 2, FAIL payload/gzipped-member-inside-a-zip
 revert the © normalisation          -> exit 2, FAIL payload/copyright-sign-notice-in-a-payload
-revert the word filter              -> exit 0 (precision/cost only — pinned by the real tree, not by a control)
+revert the word filter              -> self-test exit 0, but the REAL TREE exits 1:
+                                       FAIL dangling-record-citation on
+                                       reports/sxt-024/traces/reset-midpatch-wet.npy.
+                                       The filter is pinned — by the tree in CI, not by a
+                                       control at increment 8. §16 adds the control.
 ```
 
 `masking/notice-sealed-in-an-opaque-payload-stays-out-of-scope` is **inverted**
 by this increment: the same fixture bytes are now
-`payload/notice-embedded-in-an-opaque-payload` and must FIRE. The 6 positive
+`payload/notice-embedded-in-an-opaque-payload` and must FIRE. The 5 positive
 controls (a real PCM render, a float dump, an `.npy`-shaped tensor, an own
 gzipped JSON trace, a wide-encoded notice inside a payload) replace it as the
 guard on the unanswerable direction.
@@ -1123,7 +1137,13 @@ $ python3 -m pytest -q tests/test_sxt019_provenance.py
   marker at all (covered only by the extension tripwires — unwrapping reads
   member CONTENT, member NAMES are not tripwired); and an inflation that hits
   the 256 MiB / 4-deep budget, which is disclosed per path rather than silently
-  truncated.
+  truncated. **Corrected (#283):** that budget was enforced per stream and per
+  archive level, **not** globally, so it did not bound the total one entry
+  could inflate to — see §16.
+- A **precision** residual this record did not name (#283): harvested runs
+  reach every rule, including the bookkeeping ones, and binary noise can
+  satisfy one of those by accident even though it cannot satisfy a license
+  body. Declared and pinned by a control in §16.
 - A PASS remains **bookkeeping and carriage-signal coverage only** (§7): a
   marker-free copy and a re-typed constant table with no citation are still
   undetectable, as is anything under the declared scope exclusions (`.loom/`,
@@ -2061,8 +2081,6 @@ $ python3 -m pytest -q tests/test_sxt019_provenance.py -> 91 passed
   **name string** in a gzip header, and the payload under it is a generated
   marker-free byte pattern already in the tool, carrying no upstream code,
   table or asset.
-
-
 ## 19. Increment 7 (2026-09-30) — a named occurrence must name ONE place
 
 Base: `main` `4b5b23b` (merge of #291, increment 12). Runtime: Python 3.12.3,
@@ -2583,3 +2601,259 @@ observation, not a reasoned claim. The fork-PR case is not (see below).
   GPL-derived content was copied by this increment: the fixtures are
   repo-invented synthetic text assembled at run time, and the demonstration
   carrier lived only in a deleted clone.
+## 21. Increment 8 review correction (2026-10-01) — four record errors and the budget that was not global
+
+Base: `main` `57f0e20` (merge of #298, increment 16). Runtime: Python 3.12.3,
+Linux. Filed as [#283](https://github.com/2AMLogic/gf180-surge/issues/283) by
+a Judge reviewing PR #282 after it had already merged. Status: **PASS** on
+this branch.
+
+This section corrects §14's own record and closes one robustness gap. It
+establishes nothing new about the audit's reach: the increment-8 conclusion
+(the wrapper and embedded-notice masks are closed, pinned by controls that fail
+without their fix) is reproduced unchanged, and nothing here touches DSP, RTL,
+fidelity, preset support or sound.
+
+### 1. The word filter is load-bearing for the real-tree PASS
+
+§14 reported `revert the word filter -> exit 0 (precision/cost only — pinned by
+the real tree, not by a control)`. That exit code is the **self-test's**. With
+the same hunk reverted (`if RUN_WORD_RE.search(match.group())` → `if True`) and
+run against the **real tree**:
+
+```
+$ sed 's|if RUN_WORD_RE.search(match.group())|if True|' tools/check_provenance.py > /tmp/nofilter.py
+$ python3 /tmp/nofilter.py --root .
+tripwire hits: …, foreign-license-text=4, foreign-source-language=2, self-declared-quotation=43, …
+
+FAIL: 1 provenance finding(s):
+  [dangling-record-citation] reports/sxt-024/traces/reset-midpatch-wet.npy
+      cites decision record 9045, which does not exist
+$ echo $?
+1
+```
+
+The four **carriage** counts are unchanged, so §14's literal claim ("all four
+content signals … zero hits, with and without the word filter") holds. But
+harvested text is fed to **all** rules, and a bookkeeping rule hits. The filter
+is therefore pinned — by the tree in CI, which is a legitimate pin, just not the
+one §14 reported.
+
+**Cause, and a refutation of #283's own account.** The issue attributed the hit
+to the run `2401-4` being read as a citation of record `2401`. That run does
+exist in the harvest, but it is **not** what fires. `RECORD_CITATION_RE` is
+`(?:decision-records/|\bDR-?)(\d{4})`, which has no `NNNN-` branch at all; the
+match is a `dR` + `90459` run (`dr` + four digits, case-insensitive), and the
+tool reaches that file only because an *unrelated* noise run contains the `dr0`
+prefilter token. Both are needed, and both are accidents of the same tensor:
+
+```
+$ python3 - <<'PY'   # harvest without the word filter, then look for the actual matches
+…
+pattern: (?:decision-records/|\bDR-?)(\d{4})
+'dR' + '9045'   num= 9045
+ctx= '9_@<9\n9u\n\t9`\n9\tu$9"\n' + 'dR' + '90459' + '\n3:\tf@:\nS:(iG:%\n:.A'
+$ # prefilter tokens in the same harvest: 'decision-records/' 0, 'dr-0' 0, 'dr0' 1
+$ #   "\n62h]62&\n12]212dr02\n+2f&*2\nj(2ji'"
+PY
+```
+
+The two `dR`-prefixed literals in that transcript are **split across string
+fragments** rather than quoted verbatim, for the reason the tool's fixture note
+gives: spelled out, this record would itself become a dangling citation — the
+audit reads this file too, and the first draft of this section duly failed the
+tree audit on its own text. Nothing else in the transcript is altered; the
+unsplit bytes are reproducible from the command above.
+
+**New DECLARED LIMIT (precision residual).** Binary noise can satisfy a
+*bookkeeping* rule by accident even though it cannot plausibly satisfy a
+license body. Declared in the tool's `DECLARED LIMITS` and now pinned by a
+control rather than by the tree alone:
+`payload/citation-shaped-noise-run-stays-clean` — a render carrying one
+wordless printable run of exactly that shape, which must stay clean.
+Non-vacuity, both directions:
+
+```
+$ python3 tools/check_provenance.py --negative-control | grep citation-shaped -A1
+  PASS  payload/citation-shaped-noise-run-stays-clean
+        … -> audits clean
+$ python3 /tmp/nofilter.py --negative-control; echo $?
+  FAIL  payload/citation-shaped-noise-run-stays-clean
+        … -> found dangling-record-citation@fixtures/audio/render.wav
+2
+```
+
+It is the **only** control that fails on that revert, so it pins that hunk and
+nothing else. On this branch — re-measured after rebasing onto further
+increments that landed on `main` in the interim and themselves added payload
+controls — the payload group is **28** controls: **21 must-fire, 7
+must-stay-clean** (`main` already carried 27 of these before this correction;
+this correction's own citation-shaped control is the 28th).
+
+### 2. The payload control split was 12 / 5, not 11 / 6
+
+§14 said "11 of which must fire … 6 of which must stay clean", then named five
+clean controls. Measured on the increment-8 tool (`a486a01`, 17 controls):
+12 must-fire, 5 must-stay-clean, matching what it enumerated.
+
+On this branch today the payload group has grown well past increment 8's own
+17 — several further increments (the wide-encoding fix, the git-index-boundary
+work, and others unrelated to this correction) landed on `main` in between and
+added payload controls of their own:
+
+```
+$ python3 tools/check_provenance.py --negative-control | grep -c 'payload/'
+28
+$ # 21 expect foreign-license-text (locator-checked); 7 expect clean:
+$ #   pcm-render, float-dump, tensor-payload, our-own-gzipped-trace,
+$ #   quiet-pcm-render, base64-encoded-notice-stays-out-of-scope,
+$ #   citation-shaped-noise-run
+```
+
+§14's prose is corrected to 12 / 5 (its own, increment-8 state) and the "6
+positive controls" list to 5, which is what it enumerated; the 28/21/7 split
+above describes this branch's current tree, not increment 8's.
+
+### 3. Reverting the unwrap step fails 8 controls, not 6
+
+Re-measured against the increment-8 tool exactly as §14 describes
+(`payloads, truncated = unwrap_payload(raw)` → `None, False`, whole self-test
+re-run):
+
+```
+$ git show a486a01:tools/check_provenance.py > /tmp/inc8.py
+$ sed 's|^        payloads, truncated = unwrap_payload(raw)$|        payloads, truncated = None, False|' /tmp/inc8.py > /tmp/inc8_nounwrap.py
+$ python3 /tmp/inc8_nounwrap.py --negative-control | grep -c '^  FAIL'
+8
+$ python3 /tmp/inc8_nounwrap.py --negative-control | grep '^  FAIL'
+  FAIL  payload/gzipped-source-with-a-license-body
+  FAIL  payload/xz-compressed-source-with-a-license-body
+  FAIL  payload/bzip2-compressed-source-with-a-license-body
+  FAIL  payload/zip-member-with-a-license-body
+  FAIL  payload/tar-gz-member-with-a-license-body
+  FAIL  payload/zip-inside-a-gzip-stream
+  FAIL  payload/gzipped-member-inside-a-zip
+  FAIL  payload/npz-member-with-a-license-body
+$ echo $?
+2
+```
+
+The two extra are the recursion controls, which also need the unwrap step to
+exist. The direction is conservative: the non-vacuity conclusion is unaffected.
+Every other row of §14's table reproduced exactly.
+
+### 4. The pre-change pair was 31 rules / 41 masking controls
+
+Three new comments carried stale historical counts: the increment-8 fixture
+block and `_payload_controls`'s docstring in `tools/check_provenance.py` said
+"all 29 rules and all 41 masking controls"; the payload block comment in
+`tests/test_sxt019_provenance.py` said "all 31 rules and all 40 masking
+controls". Measured on the pre-increment-8 tool:
+
+```
+$ git show 78bbf38:tools/check_provenance.py > /tmp/pre_inc8.py     # merge of #278
+$ python3 /tmp/pre_inc8.py --negative-control | tail -2 | head -1
+PASS: all 31 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 6 occurrence-scoped exemption controls behaved, all 41
+own-attribution masking controls behaved, and all 11 discovery-layer controls behaved.
+```
+
+All three comments now say **31 rules / 41 masking controls**. (§14's own quoted
+transcript — "all 31 rules …, all 40 …, all 11 …, all 17 payload" — is the
+POST-change state at increment 8 and was already right; it is left as the
+historical record, as is §15's.)
+
+### 5. The inflation budget is now global, so the comment above it is true
+
+`MAX_UNWRAPPED_BYTES` was passed into the recursion **unchanged**, so it bounded
+each stream and each archive level separately rather than the total. A zip of
+many small gzip members could therefore stay under the limit at every individual
+level while the sum vastly exceeded it, with **no** truncation flag — the
+comment "Bounds, so a decompression bomb cannot hang or OOM the audit"
+overclaimed. Reproduced on `main` `1aa4f43` with the budget monkeypatched to
+1 MiB (the real budget is 256 MiB, where the same shape is ~16 GiB resident):
+
+```
+pre-fix   (per-level budget):  outer zip bytes: 8726  members=64  total=64.0 MiB  budget=1.0 MiB  truncated=False
+post-fix  (shared budget):     outer zip bytes: 8726  members=64  total= 0.9 MiB  budget=1.0 MiB  truncated=True
+```
+
+Fixed as #283's first option rather than by softening the comment: a single
+mutable `_InflationBudget` is threaded by reference through `unwrap_payload` /
+`_unwrap_archive` / `_unwrap_stream`, decremented as bytes are materialised, and
+its `exhausted` flag becomes the caller's `truncated` — so an overrun is a
+disclosed partial read, never a silent pass. Pinned by
+`test_inflation_budget_is_global_not_per_level` (the 64-member shape above) and
+`test_inflation_budget_charges_every_level_of_one_unwrap` (the budget object).
+Non-vacuity: with the recursion handed a fresh budget again
+(`unwrap_payload(member, None, depth + 1)`), the first test fails on exactly the
+row it exists for — 64.0 MiB against a 1.0 MiB budget with `truncated=False`.
+
+A second refutation of the issue's wording: `_unwrap_archive` bounds the sum of
+each member's **decompressed** read (`ZipFile.open(...).read(n)` inflates), not
+"the sum of compressed member reads". The gap was the recursion's fresh budget
+alone; it is also why the double-counting the new budget introduces for a
+`.tar.gz` (the gzip's output, then the tar members read out of it) is the right
+accounting — it is the bytes actually materialised.
+
+### 6. Scope, and what this correction does NOT establish
+
+```
+$ python3 tools/check_provenance.py                       # the real tree
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+$ echo $?
+0
+$ diff <(python3 <origin/main's tool> --root .) <(python3 tools/check_provenance.py --root .)
+                                                          # byte-identical: no committed file changed status
+$ python3 tools/check_provenance.py --negative-control | tail -2 | head -1
+PASS: all 33 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 7 occurrence-scoped exemption controls behaved, all 40
+own-attribution masking controls behaved, all 17 discovery-layer controls
+behaved, all 28 payload-layer controls behaved, all 10 wrapper-member-name
+controls behaved, and all 7 index-boundary coverage controls and all 9
+staged-content controls and all 11 committed-answer-set controls and all 7
+committable-evidence controls behaved.
+$ echo $?
+0
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+145 passed                                                # 142 before (origin/main's own
+                                                           # count for this test file), +3 new
+```
+
+(Re-measured after rebasing onto `main`'s current tip: several increments
+unrelated to this correction — the wide-encoding fix, the git-index-boundary
+work, and the bytes-a-commit-publishes work, among others — landed in the
+interim and are what moved these totals past increment 8's own 17/9/31/41/11.
+The **delta this correction itself is responsible for** is unchanged and
+small: the rule count stays at 33 either way (no rule was added), +1 payload
+control (28 vs the 27 `main` already carried) and +3 tests (145 vs the 142
+`main`'s own test file already carried), both confirmed directly against
+`origin/main`'s own tool and test file run on this same tree before this
+correction's commit is applied.)
+
+- **No new reach.** One control and one bound were added; no rule, no scan mode
+  and no extension set changed. Coverage of the tree is unchanged (19 unwrapped,
+  310 strings-only, 6 with no ASCII run, 26 member names, 0 truncated scans).
+- The precision residual is **declared, not closed**: the word filter keeps
+  bookkeeping rules off *wordless* runs only. A noise run that happens to carry
+  both a three-letter word and a citation shape would still hit, and nothing
+  pins that case. It fails **loud** (a visible finding on a named path), never
+  as a silent PASS.
+- The global budget is a bound on **one entry**, not on an audit: the audit
+  holds one file's payloads at a time, which is the quantity that can OOM it.
+  An overrun is still disclosed rather than repaired — a payload past the
+  budget is a TRUNCATED scan, and a truncated scan establishes nothing about
+  the bytes it did not read.
+- The decompression-bomb shape needed a **hostile committed file** and failed
+  loud before this fix too (OOM / non-zero exit). This is a robustness fix, not
+  the closure of a false-negative path, and §14's finding record is not
+  affected by it.
+- Whether any file in this repository's **history** ever carried a wrapped or
+  embedded notice remains **NOT_RUN**.
+- It ratifies nothing: 18 records on disk, most still
+  PROPOSED / RECORDED / ESCALATED, and this project has made **no
+  distribution-license determination**.
+- No Surge-, GPL- or otherwise third-party-derived content was copied by this
+  correction. The one new fixture is repo-invented synthetic noise (an LCG
+  payload with one hand-written wordless run spliced into it).

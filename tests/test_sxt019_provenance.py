@@ -78,6 +78,8 @@ ratified by the owner.
 Python 3 standard library only (pytest as runner).
 """
 
+import gzip
+import io
 import json
 import subprocess
 import sys
@@ -889,7 +891,7 @@ def test_unscanned_file_count_is_disclosed(tmp_path):
 # `read()` from text, or binary data with ASCII runs in it. Increment 6 declared
 # both out of reach and pinned that declaration with a positive control; every
 # case below audited clean on the real tree while `--negative-control` reported
-# all 31 rules and all 40 masking controls behaving.
+# all 31 rules and all 41 masking controls behaving.
 
 
 def test_wrapped_license_body_is_flagged(tmp_path):
@@ -1104,6 +1106,66 @@ def test_truncated_payload_scan_is_disclosed_not_silent(tmp_path, monkeypatch):
     cp._write(root, "reports/artifacts/trace.json.gz", cp.FIXTURE_GZIPPED_NOTICE)
     _, stats = cp.audit(root)
     assert stats["payload_scans_truncated"] == ["reports/artifacts/trace.json.gz"], stats
+
+
+def test_inflation_budget_is_global_not_per_level(monkeypatch):
+    """The bound is on the TOTAL one entry inflates to, not on each level.
+
+    Review of increment 8 (#283) measured the gap: the recursion was handed
+    `limit` unchanged, so a zip of 64 gzip members that each inflate to just
+    under the budget stayed under it at every individual level while the sum was
+    64x it — and `truncated` stayed False, so nothing disclosed the overrun.
+    """
+    budget = 1 << 20
+    monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", budget)
+    gzipped = gzip.compress(b"A" * (budget - 1), 9)
+    bomb = cp._zip_payload(tuple((f"m{i:02d}.gz", gzipped) for i in range(64)))
+    assert len(bomb) < 32 * 1024, "the hostile input must stay small"
+    entries, truncated = cp.unwrap_payload(bomb)
+    total = sum(len(payload) for _, payload in entries)
+    assert total <= budget, f"{total} bytes inflated against a {budget}-byte budget"
+    assert truncated, "an exhausted budget must be disclosed, not silent"
+
+
+def test_inflation_budget_charges_every_level_of_one_unwrap():
+    """Unit pin on the shared budget object itself."""
+    budget = cp._InflationBudget(10)
+    data, over = budget.read(io.BytesIO(b"abcd"))
+    assert (data, over, budget.remaining, budget.exhausted) == (b"abcd", False, 6, False)
+    data, over = budget.read(io.BytesIO(b"x" * 99))
+    assert (data, over, budget.remaining, budget.exhausted) == (b"x" * 6, True, 0, True)
+    # Exhausted stays exhausted: later members and deeper levels get nothing.
+    data, over = budget.read(io.BytesIO(b"y"))
+    assert (data, over) == (b"", True)
+
+
+def test_citation_shaped_noise_run_needs_the_word_filter(tmp_path):
+    """The precision residual #283 named: noise can satisfy a BOOKKEEPING rule.
+
+    A license body cannot plausibly appear in a render; a four-digit record
+    citation can, and harvested runs reach every rule rather than only the four
+    carriage signals. The word filter is what keeps it out, so this control is
+    checked in both directions here.
+    """
+    run = cp.FIXTURE_CITATION_SHAPED_NOISE_RUN
+    assert cp.RECORD_CITATION_RE.search(run.decode("ascii")), run
+    assert not cp.RUN_WORD_RE.search(run), "the run must carry no word"
+    # With the filter (today): the run never reaches a rule, so the tree is clean.
+    assert run.decode("ascii") not in cp.harvest_strings(
+        cp.FIXTURE_CITATION_SHAPED_NOISE
+    )
+    root = _masked_tree(tmp_path, "citation-noise", "")
+    cp._write(root, "fixtures/audio/render.wav", cp.FIXTURE_CITATION_SHAPED_NOISE)
+    findings, _ = cp.audit(root)
+    assert not findings, [f.as_dict() for f in findings]
+    # Without it: the same bytes become a dangling-citation finding. Reverting
+    # the filter is the hunk this control exists to fail on.
+    kept = [
+        match.group()
+        for match in cp.PRINTABLE_RUN_RE.finditer(cp.FIXTURE_CITATION_SHAPED_NOISE)
+    ]
+    unfiltered = "\n".join(part.decode("ascii", "replace") for part in kept)
+    assert "0945" in set(cp.RECORD_CITATION_RE.findall(unfiltered)), unfiltered
 
 
 def test_payload_scan_modes_are_reported_for_the_real_tree():

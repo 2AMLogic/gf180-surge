@@ -181,12 +181,24 @@ DECLARED LIMITS — read before quoting this tool as evidence:
         run that byte must arrive NUL-padded within an otherwise printable
         NUL-padded run, so it is admitted there
         (`payload/wide-encoded-copyright-sign-notice`);
-      - an inflation that hits the 256 MiB budget or the 4-deep wrapper limit is
-        reported as a TRUNCATED payload scan on every run and in `--json`, which
-        is a disclosed partial read, not a pass. A wrapper the audit cannot open
-        at all (a corrupt stream) likewise yields no member names, and the
-        coverage line reports how many names were read so "none offended" and
-        "none examined" do not look alike.
+      - an inflation that hits the 256 MiB budget (a total over the whole
+        unwrap of one entry, not a per-level ceiling) or the 4-deep wrapper
+        limit is reported as a TRUNCATED payload scan on every run and in
+        `--json`, which is a disclosed partial read, not a pass. A wrapper the
+        audit cannot open at all (a corrupt stream) likewise yields no member
+        names, and the coverage line reports how many names were read so "none
+        offended" and "none examined" do not look alike.
+    A PRECISION residual sits beside them: harvested runs are fed to EVERY
+    rule, not only to the four carriage signals, and a bookkeeping rule is
+    cheap enough for binary noise to satisfy by accident even though a license
+    body is not. `RECORD_CITATION_RE` is the measured case — a real tensor in
+    this tree carries a `dR` + `90459` run (fragmented here so this docstring
+    is not itself a dangling citation), which reads as a citation of a
+    non-existent record. The word filter (`RUN_WORD_RE`) is what keeps it
+    out, and that is precision only in the sense that it drops WORDLESS runs:
+    it is load-bearing for this tree's PASS, and is pinned by
+    `payload/citation-shaped-noise-run-stays-clean` rather than by the tree
+    alone.
     A member name is judged by the same two extension sets as a committed path,
     so a member type this repository authors (`.json`, `.hex`, `.npy`) is not a
     signal — the same boundary, and the same residual, as for a file's own name:
@@ -1404,11 +1416,14 @@ XZ_MAGIC = b"\xfd7zXZ\x00"
 ZIP_MAGIC = b"PK\x03\x04"
 STREAM_WRAPPERS = ((GZIP_MAGIC, "gzip"), (BZIP2_MAGIC, "bzip2"), (XZ_MAGIC, "xz"))
 
-# Bounds, so a decompression bomb cannot hang or OOM the audit. Both are
-# generous against this tree (its largest inflation is ~15 MiB at depth 1) and
-# neither is silent: a payload that hits either is reported as truncated on
-# every run and in `--json`, because a scan that could not finish must never
-# look like one that passed.
+# Bounds on what ONE tree entry may inflate to, so a decompression bomb cannot
+# hang or OOM the audit. `MAX_UNWRAPPED_BYTES` is a budget over the WHOLE unwrap
+# of an entry, summed across every stream, archive member and recursion level
+# (`_InflationBudget`), not a per-level ceiling; `MAX_UNWRAP_DEPTH` bounds the
+# recursion. Both are generous against this tree (its largest inflation is
+# ~15 MiB at depth 1) and neither is silent: a payload that hits either is
+# reported as truncated on every run and in `--json`, because a scan that could
+# not finish must never look like one that passed.
 MAX_UNWRAPPED_BYTES = 256 * 1024 * 1024
 MAX_UNWRAP_DEPTH = 4
 
@@ -1418,6 +1433,16 @@ MAX_UNWRAP_DEPTH = 4
 # a holder name) while discarding PCM and float noise: dropping a WORDLESS run
 # can only bring two surviving runs CLOSER together, so it cannot break a
 # phrase the rules would otherwise have matched.
+#
+# It is NOT merely a precision/cost knob (#283 corrected the increment-8
+# record, which said so). Harvested text reaches every rule, including the
+# BOOKKEEPING ones, and those are cheap enough for noise to satisfy: with this
+# filter removed, `reports/sxt-024/traces/reset-midpatch-wet.npy` fails the
+# real-tree audit with `dangling-record-citation`, because its noise happens to
+# carry a `dR` + `90459` run. (Written as fragments here for the same reason as
+# every fixture below: spelled out, this comment would itself be a citation of
+# a record that does not exist — the rule reads THIS file too.) Pinned by
+# `payload/citation-shaped-noise-run-stays-clean`.
 PRINTABLE_RUN_RE = re.compile(rb"[\x20-\x7e\t\r\n]{6,}")
 RUN_WORD_RE = re.compile(rb"[A-Za-z]{3,}")
 
@@ -1597,12 +1622,53 @@ def _looks_like_wrapper(raw: bytes):
         return False
 
 
-def _unwrap_stream(raw: bytes, kind: str, limit: int):
+class _InflationBudget:
+    """One mutable remaining-byte budget, SHARED by every level of one unwrap.
+
+    A per-level limit is not a bound on the total. Until #283 the recursion was
+    handed `limit` unchanged, so a zip of many small gzip members could stay
+    under the limit at every individual level while the sum vastly exceeded it:
+    measured at a 1 MiB test budget, an 8.7 KB zip of 64 gzip members (each
+    inflating to just under 1 MiB) yielded 64 MiB of payload with
+    `truncated=False` — 16 GiB resident at the real 256 MiB budget. Passing this
+    object by REFERENCE instead makes the budget a bound on the TOTAL bytes one
+    tree entry may be inflated to.
+
+    `exhausted` is the disclosure half: it becomes the caller's `truncated`, so
+    a walk the budget cut short is reported as a partial read rather than
+    counted as a pass.
+    """
+
+    __slots__ = ("remaining", "exhausted")
+
+    def __init__(self, limit: int):
+        self.remaining = max(0, limit)
+        self.exhausted = False
+
+    def read(self, handle):
+        """`(data, over)` — read at most what is left, charging the budget.
+
+        One byte PAST the remaining budget is requested on purpose: it is how a
+        payload that exactly fills the budget is told apart from one that
+        overruns it. `over` is True only in the latter case, and the budget is
+        then exhausted for every later member and deeper level too.
+        """
+        data = handle.read(self.remaining + 1)
+        if len(data) > self.remaining:
+            data = data[: self.remaining]
+            self.remaining = 0
+            self.exhausted = True
+            return data, True
+        self.remaining -= len(data)
+        return data, False
+
+
+def _unwrap_stream(raw: bytes, kind: str, budget: "_InflationBudget"):
     """(payload, truncated) for a single-stream wrapper, or (None, False).
 
     The `*File` wrappers are used rather than the one-shot `decompress()`
     helpers because they handle CONCATENATED streams (a multi-member bzip2 or
-    xz) and because `read(limit + 1)` bounds the inflation without
+    xz) and because the bounded `read()` caps the inflation without
     materialising it.
 
     gzip does NOT come through here: it is walked member by member by
@@ -1616,14 +1682,12 @@ def _unwrap_stream(raw: bytes, kind: str, limit: int):
     }
     try:
         with openers[kind](io.BytesIO(raw)) as handle:
-            out = handle.read(limit + 1)
+            out, over = budget.read(handle)
     except Exception:
         # Corrupt or not actually this wrapper. Not a finding: the payload falls
         # through to the string harvest, and whatever it is stays disclosed.
         return None, False
-    if len(out) > limit:
-        return out[:limit], True
-    return out, False
+    return out, over
 
 
 def _gzip_header_name(raw: bytes):
@@ -1662,7 +1726,7 @@ def _gzip_header_name(raw: bytes):
 GZIP_WBITS = 16 + zlib.MAX_WBITS
 
 
-def _gzip_members(raw: bytes, limit: int):
+def _gzip_members(raw: bytes, budget: "_InflationBudget"):
     """([(FNAME|None, payload)] per MEMBER, truncated), or (None, False).
 
     A gzip stream may be CONCATENATED — `cat a.gz b.gz > c.gz` is a valid gzip
@@ -1673,14 +1737,12 @@ def _gzip_members(raw: bytes, limit: int):
     same two members in the other order fired. That order-dependence is the
     whole defect this closes (increment 12).
 
-    The inflation budget is accounted exactly as `_unwrap_archive` already
-    accounts it for a zip's or a tar's members: one `remaining` counter is
-    threaded across the members of this stream, each read is `remaining + 1`
-    bytes, and the first member that exceeds what is left truncates there and
-    reports `truncated`. The per-stream total is still `limit`, and
-    `MAX_UNWRAPPED_BYTES` is unchanged — a stream that fits inflates to exactly
-    the same bytes this returned before, only split at the member boundaries
-    and labelled.
+    The inflation budget is SHARED with every other level of the same unwrap
+    (`_InflationBudget`), exactly as `_unwrap_archive` already shares it across
+    a zip's or a tar's members: each member's read is charged against the one
+    `remaining` counter, and the first member that overruns it truncates there
+    and reports `truncated` for the whole stream — a bound on the TOTAL this
+    entry inflates to, not a fresh allowance per member.
 
     `None` means the stream is not cleanly parseable as gzip (a corrupt member,
     or trailing bytes that are not another member's header) — the same answer,
@@ -1688,26 +1750,28 @@ def _gzip_members(raw: bytes, limit: int):
     raising `BadGzipFile` produced before.
     """
     members = []
-    remaining = limit
     rest = raw
     while rest.startswith(GZIP_MAGIC):
         name = _gzip_header_name(rest)
         try:
             obj = zlib.decompressobj(wbits=GZIP_WBITS)
-            data = obj.decompress(rest, remaining + 1)
+            data = obj.decompress(rest, budget.remaining + 1)
         except Exception:
             return None, False
-        if len(data) > remaining:
+        if len(data) > budget.remaining:
             # The budget stopped the walk mid-member: keep what fits, disclose
             # the partial read, and do not pretend to have seen later members'
             # names.
-            return members + [(name, data[:remaining])], True
+            data = data[: budget.remaining]
+            budget.remaining = 0
+            budget.exhausted = True
+            return members + [(name, data)], True
         if not obj.eof:
             # All input consumed without reaching this member's trailer: the
             # stream is truncated or corrupt, not a wrapper this audit opened.
             return None, False
         members.append((name, data))
-        remaining -= len(data)
+        budget.remaining -= len(data)
         rest = obj.unused_data
     if rest or not members:
         return None, False
@@ -1726,24 +1790,27 @@ def _join_member(outer, inner):
     return outer or inner or ""
 
 
-def _unwrap_archive(raw: bytes, limit: int):
-    """([(member name, payload)], truncated) for a zip/tar, or (None, False)."""
+def _unwrap_archive(raw: bytes, budget: "_InflationBudget"):
+    """([(member name, payload)], truncated) for a zip/tar, or (None, False).
+
+    The budget is shared with every other level of the same unwrap, so the sum
+    of this archive's members is charged against whatever its own wrappers
+    already spent — and against whatever its members go on to inflate to.
+    """
     buf = io.BytesIO(raw)
     members = None
     try:
         if zipfile.is_zipfile(buf):
             members = []
-            remaining = limit
             with zipfile.ZipFile(buf) as archive:
                 for info in archive.infolist():
                     if info.is_dir():
                         continue
                     with archive.open(info) as handle:
-                        data = handle.read(remaining + 1)
-                    if len(data) > remaining:
-                        return members + [(info.filename, data[:remaining])], True
-                    remaining -= len(data)
+                        data, over = budget.read(handle)
                     members.append((info.filename, data))
+                    if over:
+                        return members, True
             return members, False
     except Exception:
         return None, False
@@ -1753,7 +1820,6 @@ def _unwrap_archive(raw: bytes, limit: int):
             return None, False
         buf.seek(0)
         members = []
-        remaining = limit
         with tarfile.open(fileobj=buf, mode="r") as archive:
             for info in archive:
                 if not info.isfile():
@@ -1761,17 +1827,16 @@ def _unwrap_archive(raw: bytes, limit: int):
                 handle = archive.extractfile(info)
                 if handle is None:  # pragma: no cover - sparse/odd member
                     continue
-                data = handle.read(remaining + 1)
-                if len(data) > remaining:
-                    return members + [(info.name, data[:remaining])], True
-                remaining -= len(data)
+                data, over = budget.read(handle)
                 members.append((info.name, data))
+                if over:
+                    return members, True
         return members, False
     except Exception:
         return None, False
 
 
-def unwrap_payload(raw: bytes, limit=None, depth=0):
+def unwrap_payload(raw: bytes, budget=None, depth=0):
     """([(member name, payload)] carried inside `raw`, truncated), or (None, …).
 
     `None` means `raw` is not a wrapper — not that it is safe. Recurses so that
@@ -1779,6 +1844,10 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
     `truncated` is True when the inflation budget or the depth limit stopped the
     walk, so the caller can disclose an incomplete scan instead of reporting a
     pass.
+
+    `budget` is an `_InflationBudget` shared by the whole recursion (default: a
+    fresh `MAX_UNWRAPPED_BYTES` one per entry), so `MAX_UNWRAPPED_BYTES` bounds
+    the TOTAL this entry inflates to rather than each level separately (#283).
 
     The member NAME travels with its payload (increment 9). Unwrapping read
     member CONTENT only, so a wrapper whose members carry no marker — a zip of
@@ -1793,8 +1862,8 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
     stream made the rule order-dependent: `cat notes.json.gz 'Bank Sine.wt.gz'`
     audited clean while the same two members in the other order fired.
     """
-    if limit is None:
-        limit = MAX_UNWRAPPED_BYTES
+    if budget is None:
+        budget = _InflationBudget(MAX_UNWRAPPED_BYTES)
     if depth >= MAX_UNWRAP_DEPTH:
         return None, _looks_like_wrapper(raw)
     for magic, kind in STREAM_WRAPPERS:
@@ -1804,15 +1873,15 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
             # EVERY member of a concatenated stream, each with its own FNAME
             # (increment 12). Before this, one name was read for the whole
             # stream and members 2..n were content-scanned but never named.
-            members, truncated = _gzip_members(raw, limit)
+            members, truncated = _gzip_members(raw, budget)
         else:
-            inner, truncated = _unwrap_stream(raw, kind, limit)
+            inner, truncated = _unwrap_stream(raw, kind, budget)
             members = None if inner is None else [(None, inner)]
         if members is None:
             return None, False
         entries = []
         for label, inner in members:
-            deeper, deeper_truncated = unwrap_payload(inner, limit, depth + 1)
+            deeper, deeper_truncated = unwrap_payload(inner, budget, depth + 1)
             truncated = truncated or deeper_truncated
             if deeper is None:
                 entries.append((_join_member(label, ""), inner))
@@ -1821,12 +1890,12 @@ def unwrap_payload(raw: bytes, limit=None, depth=0):
                     (_join_member(label, name), payload) for name, payload in deeper
                 )
         return entries, truncated
-    members, truncated = _unwrap_archive(raw, limit)
+    members, truncated = _unwrap_archive(raw, budget)
     if members is None:
         return None, truncated
     entries = []
     for name, member in members:
-        deeper, deeper_truncated = unwrap_payload(member, limit, depth + 1)
+        deeper, deeper_truncated = unwrap_payload(member, budget, depth + 1)
         truncated = truncated or deeper_truncated
         if deeper is None:
             entries.append((name, member))
@@ -5058,7 +5127,7 @@ FIXTURE_STRAY_NUL_NOTICE = (
 # payload the sniff refuses is not evidence-free: it is either a WRAPPER (one
 # `read()` from text) or binary data with ASCII runs in it. Until this
 # increment all of the fixtures below audited **clean** while
-# `--negative-control` reported all 29 rules and all 41 masking controls
+# `--negative-control` reported all 31 rules and all 41 masking controls
 # behaving — demonstrated on the real tree in `reports/sxt-019/EVIDENCE.md` §14.
 # Assembled from fragments like every other fixture here (see the fixture note).
 FIXTURE_PAYLOAD_COPYRIGHT = "Copy" + "right (C) 20" + "19 Some Upstream Author"
@@ -5310,6 +5379,30 @@ FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD = (
     struct.pack("<600h", *_lcg_samples(600, seed=108))
     + base64.b64encode(FIXTURE_WIDE_NOTICE_TEXT.encode("utf-8"))
     + struct.pack("<600h", *_lcg_samples(600, seed=109))
+)
+# Positive control for the PRECISION residual the increment-8 review found
+# (#283): harvested runs are fed to every rule, not only to the four carriage
+# signals, and a BOOKKEEPING rule is cheap enough for noise to satisfy by
+# accident. A license body cannot plausibly appear in a render; a four-digit
+# record citation can — `reports/sxt-024/traces/reset-midpatch-wet.npy` on the
+# real tree carries a printable `dR` + `90459` run, which `RECORD_CITATION_RE`
+# reads as a citation of a decision record that does not exist. The word filter
+# is what keeps it out: that run holds no three consecutive letters, so the
+# harvest drops it. Before this control nothing but the real tree pinned the
+# filter.
+#
+# Shaped like the real hit rather than like a citation anyone would write: it
+# needs the `dr0` prefilter token to reach the rule at all, a non-letter before
+# the `d` for the regex's `\b`, and no word anywhere in the run. Assembled from
+# fragments like every other fixture here (see the fixture note): spelled out,
+# the literal would make THIS file a dangling citation — the rule reads the
+# tool's own source. Non-vacuous in both directions — the control is clean
+# today and fires `dangling-record-citation` the moment the filter is dropped.
+FIXTURE_CITATION_SHAPED_NOISE_RUN = b';9$dR' + b'09' + b'45"4-7;'
+FIXTURE_CITATION_SHAPED_NOISE = (
+    struct.pack("<600h", *_lcg_samples(600, seed=101))
+    + FIXTURE_CITATION_SHAPED_NOISE_RUN
+    + struct.pack("<600h", *_lcg_samples(600, seed=102))
 )
 
 # Increment 9 — the NAMES a wrapper carries. Increment 8 unwrapped wrappers and
@@ -6280,7 +6373,7 @@ def _payload_controls():
     about ENCODINGS; a payload it still refused reached no content rule, and
     `files_not_content_scanned` counted 335 such files on this tree. Every
     must-fail case below audited **clean** before this increment while
-    `--negative-control` reported all 29 rules and all 41 masking controls
+    `--negative-control` reported all 31 rules and all 41 masking controls
     behaving — a gzipped source file, a zip/tar renamed `.dat`, a WAV copyright
     chunk, a notice spliced into a float dump.
 
@@ -6298,8 +6391,10 @@ def _payload_controls():
     JSON trace must all stay clean; so must a QUIET render, which is the shape
     increment 10 had to be measured against (a quiet 16-bit sample is a low byte
     beside a NUL high byte — byte-for-byte what a UTF-16-LE string looks like);
-    and a base64-carried notice pins the residual limit increment 10 declares
-    rather than closes.
+    a base64-carried notice pins the residual limit increment 10 declares
+    rather than closes; and (added by the increment-8 review, #283) a
+    citation-shaped wordless noise run, which is what keeps the word filter
+    honest about being load-bearing rather than cosmetic.
     """
     return [
         (
@@ -6552,6 +6647,19 @@ def _payload_controls():
             ),
             lambda root: _write(
                 root, PAYLOAD_RENDER_REL, FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD
+            ),
+        ),
+        (
+            "payload/citation-shaped-noise-run-stays-clean",
+            None,
+            None,
+            (
+                "the precision residual (#283): a wordless printable run in a "
+                "render that reads as a citation of record 0945 — the word "
+                "filter is the only thing keeping a bookkeeping rule off noise"
+            ),
+            lambda root: _write(
+                root, PAYLOAD_RENDER_REL, FIXTURE_CITATION_SHAPED_NOISE
             ),
         ),
     ]
