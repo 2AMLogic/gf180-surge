@@ -2532,6 +2532,25 @@ instead of skipping quietly. The workflow wiring itself is asserted by
 and two neighbours, which read `.github/workflows/ci.yml` rather than trusting this
 prose.
 
+**First live run, in GitHub Actions** (the PR that added the gate, run
+`36992865994`, job `provenance audit (SXT-019 / #25)`, 43 s for the whole job):
+
+```
+  range: refs/remotes/origin/main..5e1917a2cb285b44d355291cd9202036a9c0c139
+coverage: 1 commits in range, 1 judged, 0 NOT judged
+  findings by standing at the range tip (5e1917a2cb28): answered at the range tip
+  (declared in a later commit) = 0, still unanswered at the range tip (the tree
+  audit fails too) = 0, the offending bytes are gone at the range tip (the path
+  remains) = 0, the path does not exist at the range tip (published, then
+  removed) = 0
+
+PASS: every carriage signal in the 1 judged commit(s) is answered by the
+provenance bookkeeping that same commit publishes.
+```
+
+So the range resolving under `fetch-depth: 0` on a **same-repo** branch is an
+observation, not a reasoned claim. The fork-PR case is not (see below).
+
 ### What §20 does NOT establish
 
 * **The gate is a bookkeeping gate, not a licensing clearance.** It enforces
@@ -2539,14 +2558,15 @@ prose.
   decision record, makes no distribution determination, and does not rule on the
   16 findings already in `main`'s history (#25). Its PASS carries exactly the
   tree audit's limits, one commit tree at a time.
-* **Not verified inside GitHub Actions by this record.** Every row in the table
-  above is a local run against a real commit graph; that `fetch-depth: 0` makes
-  `refs/remotes/origin/<base ref>` and the PR head sha resolvable *on a fork PR*
-  is reasoned from `actions/checkout@v4`'s documented behaviour (it clones the
-  base repository and the merge ref) plus the explicit `git rev-parse --verify`
-  guard that fails the job if either is missing — it is **NOT_RUN** as a
-  fork-PR observation until a fork PR runs it. The guard is what makes that
-  unproved case loud rather than silent.
+* **The fork-PR case is NOT_RUN as an observation.** Every row in the table
+  above is a local run against a real commit graph, and the live run quoted
+  above is a **same-repo** branch. That `fetch-depth: 0` also makes
+  `refs/remotes/origin/<base ref>` and the PR head sha resolvable *on a fork
+  PR* is reasoned from `actions/checkout@v4`'s documented behaviour (it clones
+  the base repository and the merge ref) plus the explicit
+  `git rev-parse --verify` guard that fails the job if either is missing; it
+  stays NOT_RUN until a fork PR runs it. The guard is what makes that unproved
+  case loud rather than silent.
 * **Coverage, not compliance.** 446 of 529 commits have no answer set and are
   NOT_RUN. Refs other than the audited range — tags, other branches, dropped
   `refs/pull/*` heads a clone can still fetch — are outside every rule.
