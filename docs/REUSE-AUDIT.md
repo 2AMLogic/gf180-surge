@@ -166,6 +166,22 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    audit cannot open yields no member names either). A member type this
    repository authors (`.json`, `.hex`, `.npy`) is not a signal, exactly as it
    is not for a file's own name. Read the counts, not just the verdict.
+8. Declare a copied file **in the commit that adds it**, not in a later one on
+   the same branch. This repository merges with merge commits, so every
+   intermediate commit of a merged branch stays reachable from `main` and every
+   clone carries its blobs: a carrier added by one commit and deleted (or
+   declared) by the next is published content that no audit of the current tree
+   reads. `python3 tools/check_provenance.py --commits origin/main..HEAD` audits
+   each commit in a range as its own tree, answered by the bookkeeping that same
+   commit publishes, and reports each finding's standing at the range tip
+   (declared later / bytes gone / path gone / still unanswered). Run it before
+   merging a branch that touched third-party material. It judges the carriage
+   question only, applies today's rules to older trees, and treats a commit none
+   of whose parents published a manifest as NOT judged — all three are printed on
+   every run and spelled out in `--limits`. CI does **not** run it today: whether
+   a PR branch is gated on this is open as
+   [#300](https://github.com/2AMLogic/gf180-surge/issues/300), so this step is
+   yours to run, not a check that will stop you.
 
 Recorded decisions live in [`decision-records/`](../decision-records/);
 [0001](../decision-records/0001-oracle-automation-source.md) (oracle

@@ -2227,3 +2227,252 @@ only the current tree was audited, and it is PASS. No Surge- or GPL-derived
 content was copied by this increment: the new fixture is repo-invented synthetic
 text assembled at run time. Nothing here ratifies a decision record or makes a
 distribution-license determination.
+
+## 20. Increment 17 (2026-10-02) — the set a clone carries: published history
+
+Base: `main` `57f0e20` (the merge of #298, which landed increment 16). Runtime:
+Python 3.12.3 (stdlib only), Linux. Status: the tree audit is **PASS**; the new
+history audit of this repository's own post-manifest range is **FAIL with 16
+findings**, all accounted for below, none of them an undeclared third-party
+carrier at the range tip. It ratifies nothing and establishes nothing about DSP,
+RTL, fidelity, preset support or sound. Issue
+[#25](https://github.com/2AMLogic/gf180-surge/issues/25).
+
+### The set that was never enumerated
+
+Increments 11, 14, 15 and 16 walked one axis down: which entries are audited
+(working tree → git index), which bytes an audited entry is read as (working
+copy → staged blob), which answer set judges them (the copy on disk → the
+committable one), and which bytes a bookkeeping judgement reads as evidence.
+**Every one of those reads the repository as it stands now.**
+
+The set nobody enumerated is the one a `git clone` actually carries. This is not
+hypothetical here: the forge has **squash and rebase merges disabled** (`gh api
+repos/2AMLogic/gf180-surge` → `allow_squash_merge: false`,
+`allow_rebase_merge: false`, `allow_merge_commit: true`), so every intermediate
+commit of every merged branch stays reachable from `main`. A carrier added by one
+commit and deleted by a later one is **permanently published content** that no
+tree audit, in any of the four views above, ever reads — the final tree does not
+contain it. Until this increment the limit was declared in exactly those terms
+("whether a file was ever committed and later removed is outside every rule, then
+and now") and the corresponding question in §13/§19 was recorded as **NOT_RUN**.
+
+### Demonstrated on the real tree, before and after
+
+A throwaway clone of this branch (`git clone --no-hardlinks . /tmp/i25-demo`),
+two real commits, no repository file touched. The pasted carrier is **synthetic**
+— a fabricated notice naming a fictitious "Example Upstream Authors" plus the GPL
+preamble sentence, not a copy of anyone's source — because the demonstration
+needs a carriage *signal*, not third-party content in this repository's history.
+The clone's own `tools/check_provenance.py` is the merged increment-16 build
+(this branch's tool is run against it via `--root`), so the first run below is
+also the control for "no earlier increment could see this":
+
+```
+$ # commit 1 (4a5d945d1db3): paste a synthetic unattributed carrier (GPL body +
+$ #                          foreign SPDX tag + foreign copyright line) at
+$ #                          model/pasted_from_upstream.py
+$ # commit 2 (8c005d74faec): git rm it
+$ cd /tmp/i25-demo && python3 tools/check_provenance.py --root /tmp/i25-demo
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.      (exit 0)
+```
+
+The tree audit is right: those bytes are not in the tree. They are in the clone,
+in `git show 4a5d945d:model/pasted_from_upstream.py`, forever. This branch's tool
+on the same clone agrees about the tree (`--root /tmp/i25-demo` → PASS, exit 0),
+and disagrees about the history:
+
+```
+$ python3 tools/check_provenance.py --root /tmp/i25-demo --commits 57f0e205..HEAD
+coverage: 2 commits in range, 2 judged, 0 NOT judged
+  distinct (path, blob) pairs published by the judged commits: 2128, of which
+  2127 were read for content signals (each blob once, however many commits carry it)
+  findings by standing at the range tip (8c005d74faec): answered at the range tip
+  (declared in a later commit) = 0, still unanswered at the range tip (the tree
+  audit fails too) = 0, the offending bytes are gone at the range tip (the path
+  remains) = 0, the path does not exist at the range tip (published, then
+  removed) = 1
+
+FAIL: 1 provenance finding(s) in published history:
+  [foreign-license-text] model/pasted_from_upstream.py [commit 4a5d945d1db3]
+      first published by 4a5d945d1db3 (2026-10-02) 'demo: paste a synthetic
+      unattributed carrier', present in 1 commit(s) in range; the path does not
+      exist at the range tip (published, then removed) — foreign license/
+      copyright text without a provenance row: in the content this COMMIT
+      publishes (commit blob) — gpl-body: … — add a row to
+      decision-records/provenance.json (with its decision record)      (exit 1)
+```
+
+The clone was then deleted. This is acceptance item 4's demonstration ("flag a
+deliberately unattributed file") run against the one carrier shape every earlier
+increment's demonstration could not reach. The same four shapes are pinned
+without a clone by the `history/*` self-test controls and by the twelve pytest
+cases listed below, so the demonstration is reproducible from the repository
+alone.
+
+### What the mode does
+
+`--commits <rev-range>` audits each commit in the range as its own tree: that
+commit's entries (`git ls-tree -r`), that commit's blobs (`git cat-file`), and
+the **answers** from the `decision-records/` bookkeeping *that commit* publishes
+— increment 15's asymmetry ("an answer is a claim this repository publishes") one
+step further out, since a later commit's apology is not retroactive. No rule is
+added. The four existing rule groups' carriage half (group 4) runs unchanged,
+through the same `entry_views` / `tripwire_hits` / `check_tripwires` path the
+tree audit uses, with the tree's **primary view** now naming which view carries
+the structural signals — spelled `== WORKTREE_VIEW`, that gate makes every
+extension rule and both by-reference rules silently unreachable in a commit tree
+(non-vacuity row B below).
+
+Findings are deduplicated per **(rule, path, blob)** and attributed to the
+earliest commit in range that published them, with the number of commits in range
+that carry the same bytes, and classified by standing at the range tip: *answered
+there* (declared in a later commit), *bytes gone there*, *path gone there*
+(published then removed — the shape no audit of the current tree can see), or
+*still unanswered there* (the tree audit fails too). Signals are memoised per
+(path, blob), so a blob surviving two hundred commits is read once: 529 commits
+of this repository cost 46 s wall (27 s user) on the loaded shared host this
+record was produced on, and 27 s for a 3-commit range — the fixed cost is reading
+one tree, not one per commit.
+
+### This repository's own published history, measured
+
+```
+$ python3 tools/check_provenance.py --commits HEAD
+coverage: 529 commits in range, 83 judged, 446 NOT judged
+  not judged (no provenance manifest had been published yet in this range —
+  NOT_RUN, not a pass): 446 commit(s)
+  published no manifest after one had existed (judged with NO answers): 0
+  distinct (path, blob) pairs published by the judged commits: 2902, of which
+    2901 were read for content signals
+  distinct carriage signals in those pairs: 139 — foreign-license-text=8,
+    foreign-source-language=2, self-declared-quotation=129, others 0
+  findings by standing at the range tip (57f0e2057d90):
+    answered at the range tip (declared in a later commit) = 12,
+    the offending bytes are gone at the range tip (the path remains) = 4,
+    the path does not exist at the range tip (published, then removed) = 0,
+    still unanswered at the range tip (the tree audit fails too) = 0
+
+FAIL: 16 provenance finding(s) in published history:              (exit 1)
+```
+
+The post-manifest range (`d3e47ed^..HEAD`, 272 commits) reports the identical 16
+findings and the identical 83 judged commits — every judged commit is in it.
+
+**What the 16 are**, read individually:
+
+| # | Shape | Standing at tip |
+|---|---|---|
+| 12 | A carrier (or an exempted self-quotation, or an `oracle/*.cpp` harness) published by a commit whose own `provenance.json` did not yet name it, and named by a later commit. 7 of the 12 are on a single merge commit on this issue's own branch (`a1e4a57`, "Merge origin/main into feature/issue-25"), where `main`'s newer content met the branch's older manifest; the commit that followed it is literally titled "keep the provenance audit green on current main". 4 more are on `d3e47ed`, the commit that introduced the audit, whose first manifest did not yet carry rows later increments added. | answered at the tip |
+| 4 | Four blobs of `tools/check_provenance.py` itself, tripping its own non-exemptible `foreign-license-text` rule on the SPDX-tag label in its own finding text, which was a contiguous literal in those versions. The current source assembles that label from fragments on purpose (see the fixture note in the tool: a contiguous one makes the audit flag its own source), which is why the tip blob carries no signal. | bytes gone at the tip |
+
+So: **0 findings are an undeclared third-party carrier that is still unanswered
+at the tip, and 0 are a path published and then removed.** The vanished-carrier
+question that §13/§19 recorded as NOT_RUN is, for the 83 commits that have an
+answer set at all, now **PASS**; for the other 446 it remains **NOT_RUN** and is
+printed as such on every run.
+
+Two framing points this record will not blur:
+
+* The rules applied are **today's**. A commit that passed the audit as it existed
+  then can be flagged here, so a finding is "what the current rule set says about
+  bytes this history published", never "a violation of the rule in force at the
+  time". The 12 sequencing findings are of exactly that kind.
+* A commit none of whose **parents** published a manifest has no answer set to be
+  judged against and is reported as NOT judged. In a merge-commit history that is
+  most of a branch forked before 2026-09-25, which is why the test is the parents
+  and not the calendar (an earlier draft used a range-wide latch and mislabelled
+  189 such commits as having *deleted* the manifest). Deleting the manifest buys
+  no silence: a commit whose parent published one and which does not is judged
+  with no answers at all, and the deletion is disclosed
+  (`history/deleting-the-answer-set-does-not-silence-a-commit`).
+
+### Controls (non-vacuity checked per hunk)
+
+Ten `history/*` controls run inside `--negative-control`. They are the only
+control family that builds real **commits**, because the behaviour under test has
+no representation outside a commit graph, and each one asserts on **both**
+audits: the tree audit of the final checkout must be clean (otherwise the case
+proves nothing about history) while the history audit must fire.
+
+Must fire: a GPL body added by one commit and deleted by the next; an
+upstream-asset **extension** in the same shape (the structural half); an escaping
+symlink whose target has to be read from the commit's own blob; a carrier
+declared one commit **late**; the same bytes republished at a path with a
+different extension. Must not fire: a carrier declared in the **same** commit as
+its row; an in-repo symlink to in-scope content. Plus: a commit that deletes the
+manifest alongside its carrier is judged with no answers *and* discloses the
+deletion; a commit older than the first manifest is disclosed as NOT judged
+(1 judged, 1 not judged, 0 findings); a range resolving to no commits is an
+error, not an empty PASS.
+
+Each fix hunk was reverted in a scratch copy of the tool and the controls re-run
+— every row below is the failure set of that revert alone:
+
+| Reverted hunk | history controls that FAIL |
+|---|---|
+| A — `entry_views` drops its primary-view branch (a commit tree reads the working copy) | 4/10: the carrier, the asset extension, the escaping link, the two-path case all report "did NOT fire (found nothing)" |
+| B — structural gate back to `view == WORKTREE_VIEW` | 3/10: `upstream-asset-extension` and `external-symlink-target` never fire in a commit tree |
+| C — the symlink target read from the checkout instead of the commit blob | 2/10: the escaping link's evidence no longer locates the escape, **and the in-repo symlink becomes a false finding on a non-exemptible rule** |
+| D — a commit with no manifest is never judged (no parent test) | 1/10: deleting the answer set silences the carrier again |
+| E — `tripwire_hits`'s SIGNAL cache keyed on the blob alone, without the path | 1/10: the `.wt` republication is answered from the `.py` scan and loses its extension rule |
+
+Row E is the **signal** cache (`tripwire_hits`), not `Tree._key`'s text cache.
+Reverting the path component of the *text* key instead leaves all ten controls
+passing, and correctly so: a blob's text is a function of its bytes alone, so the
+path there is defensive redundancy, while a *signal* depends on the path (the
+extension rules read it). Each row above was re-derived by reverting that hunk
+alone in a scratch copy of the tool (`/tmp/revert<row>.py`) and re-running
+`--negative-control`; the failure sets quoted are the observed ones, including
+row C's second failure, where an ordinary in-repo symlink becomes a FALSE finding
+on a rule that cannot be exempted.
+
+### Test suite
+
+```
+$ python3 -m pytest -q tests/test_sxt019_provenance.py
+154 passed in 256.67s        # 142 before this increment, +12 history tests
+$ python3 tools/check_provenance.py --negative-control    # exit 0
+PASS: all 33 rules fired on their deliberate violation, … and all 10
+published-history controls behaved.
+$ python3 tools/check_provenance.py                       # exit 0
+PASS: every carriage signal is answered by a provenance row or a declared
+exemption, and the decision-record bookkeeping is self-consistent.
+```
+
+The 12 new tests assert the premise itself (a carrier published and then deleted
+is invisible to the tree audit and visible here), that answers come from the
+publishing commit, that a carrier declared in its own commit is not a finding,
+the NOT_judged disclosure, the manifest-deletion case, the structural signals,
+the in-repo-symlink must-not-fire direction, the (path, blob) cache key, the
+empty-range refusal, the CLI's own coverage lines, and that both the limits text
+and the self-test actually carry this layer.
+
+### What §20 does NOT establish
+
+* **Not a CI gate.** This PR adds the mode, its controls and this measurement; it
+  does **not** wire `--commits` into `.github/workflows/ci.yml`. Gating PR
+  branches on per-commit declaration is a real policy change (the measurement
+  above shows the repository's own base rate is non-zero, all of it sequencing),
+  and it needs `fetch-depth: 0`. That decision is filed as
+  [#300](https://github.com/2AMLogic/gf180-surge/issues/300) rather than smuggled
+  in here. Until it is decided, the mode's standing is "run it before merging a
+  branch that touched third-party material" — a documented step, not an enforced
+  one, and this record does not claim otherwise.
+* **Coverage, not compliance.** 446 of 529 commits have no answer set and are
+  NOT_RUN. Refs other than the audited range — tags, other branches, dropped
+  `refs/pull/*` heads a clone can still fetch — are outside every rule.
+* **Bookkeeping, not similarity.** Every limit in `--limits` applies to each tree
+  judged here: a marker-free copy, a re-typed table with no citation, content
+  under a declared scope exclusion (`.loom/`, `.claude/`, `.agents/`) and a notice
+  in a transformed encoding remain undetectable in history exactly as in the
+  current tree. Only the carriage question is asked of history; a historical
+  commit's own index/row self-consistency is not judged.
+* **No ratification, no distribution determination.** No decision record moved;
+  of the 18 records on disk, 2 are `ratified` and 1 `accepted`, while 10 are
+  `PROPOSED`, 4 `RECORDED` and 1 `ESCALATED` (re-derived with
+  `parse_records` at `57f0e20`). No Surge- or
+  GPL-derived content was copied by this increment: the fixtures are
+  repo-invented synthetic text assembled at run time, and the demonstration
+  carrier lived only in a deleted clone.
