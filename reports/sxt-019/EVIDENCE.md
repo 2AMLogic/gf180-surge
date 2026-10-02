@@ -2603,9 +2603,10 @@ observation, not a reasoned claim. The fork-PR case is not (see below).
   carrier lived only in a deleted clone.
 ## 20. Increment 8 review correction (2026-10-01) — four record errors and the budget that was not global
 
-Base: `main` `1aa4f43`. Runtime: Python 3.12.3, Linux. Filed as
-[#283](https://github.com/2AMLogic/gf180-surge/issues/283) by a Judge reviewing
-PR #282 after it had already merged. Status: **PASS** on this branch.
+Base: `main` `57f0e20` (merge of #298, increment 16). Runtime: Python 3.12.3,
+Linux. Filed as [#283](https://github.com/2AMLogic/gf180-surge/issues/283) by
+a Judge reviewing PR #282 after it had already merged. Status: **PASS** on
+this branch.
 
 This section corrects §14's own record and closes one robustness gap. It
 establishes nothing new about the audit's reach: the increment-8 conclusion
@@ -2683,25 +2684,35 @@ $ python3 /tmp/nofilter.py --negative-control; echo $?
 ```
 
 It is the **only** control that fails on that revert, so it pins that hunk and
-nothing else. The payload group is therefore **18** controls now: **12
-must-fire, 6 must-stay-clean**.
+nothing else. On this branch — re-measured after rebasing onto further
+increments that landed on `main` in the interim and themselves added payload
+controls — the payload group is **28** controls: **21 must-fire, 7
+must-stay-clean** (`main` already carried 27 of these before this correction;
+this correction's own citation-shaped control is the 28th).
 
 ### 2. The payload control split was 12 / 5, not 11 / 6
 
 §14 said "11 of which must fire … 6 of which must stay clean", then named five
-clean controls. Measured on the increment-8 tool (`a486a01`, 17 controls) and on
-this branch (18, after the control above):
+clean controls. Measured on the increment-8 tool (`a486a01`, 17 controls):
+12 must-fire, 5 must-stay-clean, matching what it enumerated.
+
+On this branch today the payload group has grown well past increment 8's own
+17 — several further increments (the wide-encoding fix, the git-index-boundary
+work, and others unrelated to this correction) landed on `main` in between and
+added payload controls of their own:
 
 ```
 $ python3 tools/check_provenance.py --negative-control | grep -c 'payload/'
-18
-$ # 12 expect foreign-license-text (locator-checked); 6 expect clean:
+28
+$ # 21 expect foreign-license-text (locator-checked); 7 expect clean:
 $ #   pcm-render, float-dump, tensor-payload, our-own-gzipped-trace,
-$ #   wide-encoded-notice-…-out-of-scope, citation-shaped-noise-run
+$ #   quiet-pcm-render, base64-encoded-notice-stays-out-of-scope,
+$ #   citation-shaped-noise-run
 ```
 
-§14's prose is corrected to 12 / 5 (its own state) and the "6 positive
-controls" list to 5, which is what it enumerated.
+§14's prose is corrected to 12 / 5 (its own, increment-8 state) and the "6
+positive controls" list to 5, which is what it enumerated; the 28/21/7 split
+above describes this branch's current tree, not increment 8's.
 
 ### 3. Reverting the unwrap step fails 8 controls, not 6
 
@@ -2793,19 +2804,33 @@ PASS: every carriage signal is answered by a provenance row or a declared
 exemption, and the decision-record bookkeeping is self-consistent.
 $ echo $?
 0
-$ diff <(python3 <HEAD's tool> --root .) <(python3 tools/check_provenance.py --root .)
+$ diff <(python3 <origin/main's tool> --root .) <(python3 tools/check_provenance.py --root .)
                                                           # byte-identical: no committed file changed status
 $ python3 tools/check_provenance.py --negative-control | tail -2 | head -1
-PASS: all 32 rules fired on their deliberate violation, the clean control tree
-produced no findings, all 6 occurrence-scoped exemption controls behaved, all 40
-own-attribution masking controls behaved, all 11 discovery-layer controls
-behaved, all 18 payload-layer controls behaved, and all 9 wrapper-member-name
-controls behaved.
+PASS: all 33 rules fired on their deliberate violation, the clean control tree
+produced no findings, all 7 occurrence-scoped exemption controls behaved, all 40
+own-attribution masking controls behaved, all 17 discovery-layer controls
+behaved, all 28 payload-layer controls behaved, all 10 wrapper-member-name
+controls behaved, and all 7 index-boundary coverage controls and all 9
+staged-content controls and all 11 committed-answer-set controls and all 7
+committable-evidence controls behaved.
 $ echo $?
 0
 $ python3 -m pytest -q tests/test_sxt019_provenance.py
-75 passed                                                 # 72 before, +3 new
+145 passed                                                # 142 before (origin/main's own
+                                                           # count for this test file), +3 new
 ```
+
+(Re-measured after rebasing onto `main`'s current tip: several increments
+unrelated to this correction — the wide-encoding fix, the git-index-boundary
+work, and the bytes-a-commit-publishes work, among others — landed in the
+interim and are what moved these totals past increment 8's own 17/9/31/41/11.
+The **delta this correction itself is responsible for** is unchanged and
+small: the rule count stays at 33 either way (no rule was added), +1 payload
+control (28 vs the 27 `main` already carried) and +3 tests (145 vs the 142
+`main`'s own test file already carried), both confirmed directly against
+`origin/main`'s own tool and test file run on this same tree before this
+correction's commit is applied.)
 
 - **No new reach.** One control and one bound were added; no rule, no scan mode
   and no extension set changed. Coverage of the tree is unchanged (19 unwrapped,
