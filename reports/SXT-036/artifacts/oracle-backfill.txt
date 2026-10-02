@@ -1,33 +1,35 @@
 SXT-036 (#70) oracle gate and backfill plan
 ===========================================
-oracle gate: UNAVAILABLE
-reason: no pinned-engine checkout and/or no surgepy built from it in this environment; the oracle-gated legs were not run and must never be reported as a pass (#96, #232)
+oracle gate: AVAILABLE
+reason: prebuilt provisioning (#232): .installed-sha256 matches manifest prebuilt.linux-x86_64.sha256 'd2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571', surgepy imports from inside it and reports version '1.4.HEAD.58914e59c', embedding the pinned commit '58914e59c608ed4384ba6002e44c3465c58b2e71'
 
-probed engine dir : /Users/joseph/dev/surge-xt-oracle/surge (present=False, git worktree=False)
+probed engine dir : /home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64 (present=True, git worktree=False)
 probed HEAD       : None (pin 58914e59c608ed4384ba6002e44c3465c58b2e71, matches=False)
-surgepy, naive    : False   <- a bare `import surgepy`; NOT proof of the pin
-surgepy, pinned   : False (module inside the checkout=False)
+prebuilt (#232)   : platform=linux-x86_64 installed_sha256=d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571 matches_manifest=True
+surgepy, naive    : True   <- a bare `import surgepy`; NOT proof of the pin
+surgepy, pinned   : True (module inside the checkout=True)
+surgepy, version  : 1.4.HEAD.58914e59c (embeds pinned commit=True)
 
-Acceptance items 2 and 5 of #70 are therefore NOT_RUN. A leg that did
+Acceptance items 2 and 5 of #70 are therefore RUNNABLE. A leg that did
 not run is never reported as a pass (AGENTS.md). Nothing in this leaf's
 evidence is estimated, extrapolated, or substituted in place of a real oracle
 render.
 
 Legs, split by the gate each one actually needs
 -----------------------------------------------
-  blob-verify-carriers       item 1 (fixture provenance under item 1)    NOT_RUN
+  blob-verify-carriers       item 1 (fixture provenance under item 1)    RUNNABLE
       gate: pinned checkout only (no built surgepy needed)
-      tool: oracle/oracle_common.py::git_blob_sha1
-  compare-budgets            item 2                                      NOT_RUN
+      tool: model/voice/blob_verify_vel_carriers.py (oracle/oracle_common.py::git_blob_sha1)
+  compare-budgets            item 2                                      RUNNABLE
       gate: pinned checkout + surgepy built from it
       tool: tools/compare_audio_reference.py
-  extract-fixture-depths     item 1 (replaces the DECLARED depths behind items 2 and 5) NOT_RUN
+  extract-fixture-depths     item 1 (replaces the DECLARED depths behind items 2 and 5) RUNNABLE
       gate: pinned checkout + surgepy built from it
       tool: model/voice/extract_vel_inputs.py (to be written on the oracle host, modelled on model/voice/extract_mw_inputs.py)
-  reference-budget-controls  item 5                                      NOT_RUN
+  reference-budget-controls  item 5                                      RUNNABLE
       gate: pinned checkout + surgepy built from it
       tool: tools/vel_negative_controls.py (exactness side, landed) + tools/compare_audio_reference.py (budget side, this leg)
-  render-reference           item 2                                      NOT_RUN
+  render-reference           item 2                                      RUNNABLE
       gate: pinned checkout + surgepy built from it
       tool: fixtures/render_vel_fixture.py (to be written on the oracle host, modelled on fixtures/render_mw_fixture.py)
 
@@ -60,6 +62,9 @@ Negative controls (each must demonstrably fail the check it targets)
   O5 FIRED  the consolidated backfill predictions drifting away from, or being restated without, the committed artifacts they are derived from
   O6 FIRED  an oracle-gated leg this tool never ran being emitted as PASS
   O7 FIRED  a tool path named by #70 being reported as resolved without checking the tree
+  O8 FIRED  a prebuilt-shaped directory (.installed-sha256 present) whose hash disagrees with manifest.prebuilt.<platform>.sha256 being accepted as a verified prebuilt install
+  O9 FIRED  a sha256-matched prebuilt directory with no real surgepy build underneath it being accepted as AVAILABLE on the strength of the hash alone
+  O10 FIRED  a sha256-matched prebuilt directory with a present-but-fake surgepy module at the conventional path (PR #309 Judge review repro) being accepted as AVAILABLE because the hash string and a bare import both superficially succeed
 
 Re-run on an oracle host
 ------------------------

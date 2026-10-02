@@ -1,39 +1,48 @@
 # SXT-036 evidence record — voice leaf: modulation behavior velocity
 
-Issue: #70 (SXT-036) · Branch `feature/issue-70` · Date: 2026-09-30
-(sixth increment)
+Issue: #70 (SXT-036) · Branch `feature/issue-70` · Date: 2026-10-02
+(seventh increment)
 Pinned engine (cited only, external, GPL-3.0-or-later):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, 48 kHz.
 
-**Scope and claim discipline.** Landed under the #96 re-queue policy: only
-the oracle-independent acceptance items. The pinned oracle (`surgepy`,
-`oracle/manifest.json`, `ORACLE_SURGE_DIR`) is **not available on this
-dispatch host** (`import surgepy` → `ModuleNotFoundError`; re-verified
-2026-09-30 for the fifth increment, as for the second, third and fourth;
-`ORACLE_SURGE_DIR` unset, no prebuilt cache, #232 still open). **The sixth
-increment replaces that hand-run check with a measured one**:
-`tools/vel_oracle_status.py` → `artifacts/oracle-status.json` records the gate
-under a *strict* reading (pinned checkout present, at the SXT-010 commit, with
-`surgepy` importing from inside it), and the transcript
-`artifacts/oracle-backfill.txt` freezes the backfill plan the `oracle:backfill`
-marker on #70 points at. Measured gate on this host: **`UNAVAILABLE`**. This record establishes claim (1) only, for
-the declared fixture on the leaf-local sequence, on the three sequences named
-by #70, and at the declared parameter corners:
-**RTL == frozen model, exactly**, in iverilog simulation. It establishes **no** model-vs-reference agreement
-(claim 2: NOT_RUN), **no** fidelity, **no** preset support (supported delta
-0), **no** musical-quality claim (claim 3), and **no** FPGA/gf180mcu
-synthesis, timing or hardware playback. No Surge code/tables/assets are
-copied; the model and RTL are original (Apache-2.0).
+**Scope and claim discipline.** Increments 1–6 landed under the #96 re-queue
+policy: only the oracle-independent acceptance items, with the pinned oracle
+unavailable on every dispatch host tried. **#232 ("Prebuilt pinned Surge
+oracle for dispatch workers") closed 2026-10-02**, and a sha256-verified
+prebuilt install is genuinely present on this seventh increment's host
+(`surgepy.getVersion()` reports the pinned commit; `.installed-sha256`
+matches `oracle/manifest.json`). `tools/vel_oracle_status.py`'s strict gate
+previously recognized a git-worktree checkout only — structurally unable to
+accept a prebuilt install, which has no `.git` — so it still measured
+`UNAVAILABLE` even with the oracle reachable. This increment extends the
+gate to accept BOTH provisioning shapes (additively; see "Prebuilt oracle
+provisioning accepted" below) and runs the one leg that needs the checkout
+only (`blob-verify-carriers`, **PASS**). **Measured gate on this host:
+`AVAILABLE`**; acceptance items 2 and 5 move to **`RUNNABLE`** (the gate is
+open) but stay **`NOT_RUN`** (no number produced) — the remaining four legs
+all need a built `surgepy` AND, done naively, would invalidate this leaf's
+already-committed frozen evidence (see the seventh-increment section below
+for why), so they are deferred to a follow-up issue (#308) rather than attempted
+here. This record establishes claim (1) only, for the declared fixture on
+the leaf-local sequence, on the three sequences named by #70, and at the
+declared parameter corners: **RTL == frozen model, exactly**, in iverilog
+simulation, PLUS the fixture carrier's and the three named carriers' `.fxp`
+payload bytes now genuinely verified against the pinned checkout. It
+establishes **no** model-vs-reference agreement (claim 2: NOT_RUN), **no**
+fidelity, **no** preset support (supported delta 0), **no** musical-quality
+claim (claim 3), and **no** FPGA/gf180mcu synthesis, timing or hardware
+playback. No Surge code/tables/assets are copied; the model and RTL are
+original (Apache-2.0).
 
 ## Acceptance status
 
 | # | Item | Status | Evidence |
 |---|---|---|---|
-| 1 | Frozen fixed-point model, word lengths + op order | **PASS** (documented + implemented) | `model/voice/run_vel_model.py`; freeze section "SXT-036 velocity / release-velocity route extension" in `model/voice/README.md`. Q10.21 words, `vel_q=(midi*2^22+127)//254`, route order, destination class {308,309,310,298}, per-instance state. Scope: classic voice class on the declared Attacky carrier only (see Boundaries). **Parameter corners now frozen too** (third increment, README point 7): derived destination extents, the declared corner set, and the 32-bit checkpoint-word precondition with its measured headroom — `artifacts/param-corners.{txt,json}`. **State rules now frozen with controls** (fourth increment, README point 8): construction re-initialization of the release-velocity register on slot reuse, the same-block release-latch timing, and the scene-A-only destination class with its refusal control — `artifacts/state-coverage.{txt,json}`. |
-| 2 | Model-vs-pinned-engine dry-render budgets on carrier fixtures | **NOT_RUN** | pinned oracle unavailable on dispatch host (#96). No numbers estimated or tuned. **Now MEASURED, not asserted** (sixth increment): `artifacts/oracle-status.json` → `oracle_gate.status = UNAVAILABLE`, legs `render-reference` and `compare-budgets` both `NOT_RUN`; the emitter cannot express `PASS` for a leg it did not run (control O6). |
+| 1 | Frozen fixed-point model, word lengths + op order | **PASS** (documented + implemented) | `model/voice/run_vel_model.py`; freeze section "SXT-036 velocity / release-velocity route extension" in `model/voice/README.md`. Q10.21 words, `vel_q=(midi*2^22+127)//254`, route order, destination class {308,309,310,298}, per-instance state. Scope: classic voice class on the declared Attacky carrier only (see Boundaries). **Parameter corners now frozen too** (third increment, README point 7): derived destination extents, the declared corner set, and the 32-bit checkpoint-word precondition with its measured headroom — `artifacts/param-corners.{txt,json}`. **State rules now frozen with controls** (fourth increment, README point 8): construction re-initialization of the release-velocity register on slot reuse, the same-block release-latch timing, and the scene-A-only destination class with its refusal control — `artifacts/state-coverage.{txt,json}`. **Fixture provenance partially upgraded** (seventh increment, README point 11): `blob-verify-carriers` hashes the fixture carrier and the three named carriers against the pinned checkout — **PASS, 4/4 byte-identical**; `attacky_vel_inputs.json.preset.blob_verified` now `true` (was `false`). The `fixture_routes` depths themselves remain hand-declared — a separate, not-yet-done re-extraction (see item 2). |
+| 2 | Model-vs-pinned-engine dry-render budgets on carrier fixtures | **NOT_RUN** | pinned oracle unavailable on every dispatch host tried through the sixth increment (#96/#232). No numbers estimated or tuned. **Measured, not asserted, since the sixth increment**: `artifacts/oracle-status.json` → `oracle_gate.status`. **Seventh increment: the gate now measures `AVAILABLE`** (prebuilt provisioning, #232 closed) and this item's legs (`render-reference`, `compare-budgets`) move to `RUNNABLE` — but stay `NOT_RUN`: running them as specified would replace `attacky_vel_inputs.json`'s hand-declared depths with engine readbacks, which risks invalidating every already-committed comparison artifact that embeds today's depth values unless the re-extraction is first shown to round-trip them exactly. Deferred to a follow-up issue (#308) rather than attempted hastily; the emitter cannot express `PASS` for a leg it did not run regardless (control O6). |
 | 3 | RTL-vs-model exact at declared checkpoints (integer equality) | **PASS** | `artifacts/exactness-vel-sxt036-vel-overlap-v1.json`: 2,940 voice-block checkpoints, 5,880 source words, 11,760 route sums, 0 mismatches (`tb_vel.sv`). `artifacts/exactness-voice-sxt036-vel-overlap-v1.json`: unchanged-datapath `tb_voice.sv` on the same run: 279 checkpoints / 9,765 fields / 17,856 oscout / 103,200 mono samples, 0 mismatches. Landed regression (SXT-022 seq-notes-repeated-v1, run_model.py stimulus): 403 / 14,105 / 25,792 / 196,800, 0 mismatches (`exactness-voice-landed-regression-*.json`); landed model wav is sha256-identical to `--strip-vel-routes` output (`9b7e7f90...`; was `6a73bb9a...` before main's halfband D2 fix #146, republished in `reports/halfband-republication/`). **Extended to the three sequences named by #70** (`artifacts/declared-sequence-coverage.{txt,json}`): `seq-notes-coverage-v1` / `seq-notes-repeated-v1` / `seq-notes-holds-v1`, control plane 3,132 / 1,944 / 4,392 checkpoints and datapath 467 / 403 / 255 checkpoints, **0 mismatches everywhere**. Coverage of that PASS is reported separately below, including one recorded gap (declared set is monophonic ⇒ per-instance-state not discriminated there). **Extended again to the declared parameter corners and to the whole source-word domain** (third increment, `artifacts/param-corners.{txt,json}`): six declared corners × (2,088 control-plane checkpoints / 4,176 source words / 8,352 route sums) and (312 datapath checkpoints / 10,920 fields / 19,968 oscout / 36,800 mono) each, **0 mismatches everywhere**; all **128** velocity-ROM entries exact. Survey run `seq-poly-8-v1` (8 concurrent voices): 14,784 control-plane checkpoints, 0 mismatches. |
 | 4 | Cycle/state costs vs SXT-016 probes / SXT-015 | **PASS (recorded, divergences noted)** | `artifacts/costs.txt`: 6 qmul per running-voice block (0.171 MAC/sample control plane), 512 state bits for the per-slot source registers; SXT-016 scheduler probe has no per-source row (88 cycles/event, 512 state bits = different quantity). Not reconciled. **Per-route linearity measured** (third increment): every corner run uses an 8-route table and reports `DONE vel-qmuls=16704` = 8 × 2,088 voice-blocks exactly, confirming the "one qmul per route per running-voice block" cost rule the accounting states rather than assuming it. State is unchanged (route table is fixture-constant; the per-slot registers do not grow with routes). **The SXT-015 half of this item is recorded for the first time** (fifth increment): `tools/vel_cost_accounting.py` → `artifacts/cost-accounting.{txt,json}` — measured op profile per route evaluation, the 0..6 route-table sweep, the per-frame-vs-per-live-voice **shape divergence** against `cyc_modroute_frame` on the named carriers (12.25× / 4.46× / 7.00×), the missing modulation-state row, and a fail-closed pin on the SXT-015 cost model. Both recorded divergences were then **dispositioned in #239** (shape changed to per-evaluation charging; modulation-source state declared inside `voice_base_state_bytes`), and this tool now cross-checks the shape rather than recording a gap; the per-evaluation constant is still an unpinned placeholder. See "Cost accounting against the SXT-015 accounting" below. |
-| 5 | Negative controls fail the reference-budget check (routing-zeroed per destination class; source-swap modwheel) | **NOT_RUN** | Requires the pinned-engine render (#96). What did run is a different check, below. **Now MEASURED, not asserted** (sixth increment): `artifacts/oracle-status.json` leg `reference-budget-controls` = `NOT_RUN`, with the gate it needs and the committed tool that will run it both named. |
+| 5 | Negative controls fail the reference-budget check (routing-zeroed per destination class; source-swap modwheel) | **NOT_RUN** | Requires the pinned-engine render (#96/#232). What did run is a different check, below. **Measured, not asserted, since the sixth increment**: `artifacts/oracle-status.json` leg `reference-budget-controls`. **Seventh increment: gate now `AVAILABLE`, leg now `RUNNABLE`** — but stays `NOT_RUN` for the same reason as item 2 (running it needs the same at-risk re-extraction); deferred to the same follow-up issue (#308). |
 
 ### Oracle-independent controls that DID run (exactness check, not item 5)
 
@@ -555,8 +564,122 @@ opportunity.
 `tests/test_sxt036_vel_oracle_status.py` (36 tests, no iverilog, no oracle)
 pins the same properties in CI, including that dropping *any single* one of the
 four gate requirements loses `AVAILABLE`, that no `PASS`-like status survives
-validation, and that the committed `oracle-status.json` still records items 2
-and 5 as `NOT_RUN` with every control fired.
+validation, and that the committed `oracle-status.json` (as of the sixth
+increment) recorded items 2 and 5 as `NOT_RUN` with every control fired.
+**Superseded by the seventh increment below**: the committed
+`oracle-status.json` now reflects a genuinely `AVAILABLE` gate on the host
+that produced it, and the test file was updated to check internal
+consistency (gate status agrees with the gated items; no leg ever reads
+`PASS`) rather than pin one specific gate value, since this file is a
+snapshot of whichever host last ran the tool, not a live re-probe.
+
+### Prebuilt oracle provisioning accepted; blob-verify-carriers run (seventh increment)
+
+**#232 closed 2026-10-02** ("Prebuilt pinned Surge oracle for dispatch
+workers"): `oracle/fetch-and-build.sh --prebuilt` installs a sha256-verified
+prebuilt artifact per-user under `~/.cache/gf180-surge-oracle/<pin>/`, and
+that install is genuinely present on this dispatch host
+(`surgepy.getVersion()` reports `1.4.HEAD.58914e59c`, matching the pin;
+`.installed-sha256` equals `oracle/manifest.json`'s
+`prebuilt.linux-x86_64.sha256` `d2cc702913c4...`).
+
+**The gap.** `tools/vel_oracle_status.py`'s strict reading (sixth increment)
+required a git-worktree checkout: directory present, `git rev-parse HEAD`
+succeeds, HEAD equals the pin. A prebuilt install is a build OUTPUT tree
+(`build-py311/`, `resources/`) with no `.git` at all, so it structurally
+could never satisfy that reading — re-running the probe with the prebuilt
+env vars exported still reported `UNAVAILABLE`/`UNPINNED_SURGEPY` against an
+unrelated default macOS path, even though the real, correct, pin-matching
+engine was one directory away and genuinely importable.
+
+**The fix.** `classify()` now accepts a SECOND provisioning shape,
+additively (the git-worktree path is unchanged and still required to work on
+its own): `.installed-sha256` under the probed `ORACLE_SURGE_DIR`, present
+and equal to `oracle/manifest.json`'s `prebuilt.<platform>.sha256` (platform
+auto-detected, matching `fetch-and-build.sh`'s own `uname -s`/`uname -m` case
+statement), AND the imported `surgepy` module file lives inside that same
+directory (the existing `surgepy_under_engine_dir` check, reused unchanged).
+**Fails closed, verified by two new live controls, not merely asserted:**
+
+* **O8** — a directory shaped like a prebuilt install (`.installed-sha256`
+  present) whose hash disagrees with the manifest: `prebuilt_sha256_matches`
+  is `False` and the gate does NOT report `AVAILABLE` via this path (it falls
+  through to the unchanged git-worktree logic, which correctly reports
+  `UNAVAILABLE` for a non-git directory).
+* **O9** — a directory whose `.installed-sha256` DOES match the manifest but
+  carries no real `surgepy` build underneath it: `prebuilt_sha256_matches` is
+  `True`, `surgepy_importable` is `False`, and the gate still does NOT report
+  `AVAILABLE` — a matching hash alone is insufficient; the module must
+  actually import from inside the verified directory too.
+
+**A real environment-leakage bug, found by running the full control suite in
+the now-realistic environment** (the human re-run command this leaf's own
+docs point at: `PYTHONPATH=.../surge-python $ORACLE_PYTHON tools/
+vel_oracle_status.py`): three controls (O1, O3, and the new O9) spawn a
+subprocess that overrides `ORACLE_SURGE_DIR` but, before this increment, left
+`PYTHONPATH` inherited from the invoking shell unchanged. With a real oracle
+genuinely on `PYTHONPATH` at the top level, that leaked the REAL engine's
+`surgepy` into every control subprocess regardless of the `ORACLE_SURGE_DIR`
+override under test, masking a wrong-commit checkout (O3) or an unbuilt
+directory (O9) with a real import that did not come from the directory being
+tested — a false `AVAILABLE`/pass on the control itself. `_self()` now
+scrubs `PYTHONPATH` before applying each control's own overrides (only O1
+re-adds it, deliberately, to its stub). Re-run after the fix: **all nine
+controls FIRE**, in exactly the environment the sixth increment could not
+reach (`PYTHONPATH` exported, prebuilt env vars exported, oracle genuinely
+present).
+
+**Measured gate on this host: `AVAILABLE`** (reason: "prebuilt provisioning
+(#232): `.installed-sha256` matches manifest `prebuilt.linux-x86_64.sha256`
+... surgepy imports from inside it"). Acceptance items 2 and 5 move from
+`NOT_RUN` to **`RUNNABLE`** — the gate is open; the legs below still had to
+be run (or deferred) separately, per the emitter's own O6 guarantee that it
+can never itself emit `PASS` for a leg it did not run.
+
+**`blob-verify-carriers` run for real, PASS.** This is the leg `tools/
+vel_oracle_status.py` already identified as needing the pinned checkout only
+(no built `surgepy`). New tool `model/voice/blob_verify_vel_carriers.py` ->
+`reports/SXT-036/artifacts/blob-verify-carriers.json`: hashes the fixture
+carrier (`Basses/Attacky.fxp`) and the three carriers #70 names
+(`Bad News.fxp`, `Rainy Day Dreamaway.fxp`, `House Of Chords.fxp`) against
+the actual bytes inside the pinned checkout's `resources/data/` tree (not a
+cross-check between two committed artifacts, which is what the pre-existing
+`audit_vel_carriers.py` does) — **all four byte-identical to the census
+`git_blob_sha1`, PASS 4/4**. `model/voice/attacky_vel_inputs.json`'s
+`preset.blob_verified` now reads `true` (was `false`), with
+`blob_verified_against` naming the artifact.
+
+**Deliberately NOT done in this increment (scope boundary, not an oversight).**
+The remaining four legs (`extract-fixture-depths`, `render-reference`,
+`compare-budgets`, `reference-budget-controls`) all need a built `surgepy`,
+which is now genuinely available — but `extract-fixture-depths` as specified
+replaces `attacky_vel_inputs.json`'s hand-declared `fixture_routes` depths
+with engine readbacks, and this leaf's existing frozen evidence
+(`state-coverage.json`, `param-corners.json`, `cost-accounting.json`,
+`exactness-*.json`) was all produced against TODAY's hand-declared depth
+values. Replacing them naively — even with genuinely-read-back numbers —
+would silently invalidate every one of those committed PASS records unless
+the re-extraction is first shown to round-trip the existing values exactly
+(i.e. `normalized = depth_raw / live_engine_extent` reproduces each committed
+`depth_raw` within the existing readback tolerance, confirming the
+corpus-derived extents in `param-corners.json` against a live
+`getModDepth01` reading rather than silently changing the frozen numbers).
+That verification, the dry reference renders across the three named
+sequences plus the two leaf-local sequences, the model-vs-reference budget
+comparison, and the two reference-budget negative controls (routing-zeroed,
+source-swap) are real, oracle-dependent work with a real blast-radius risk to
+already-committed evidence if done hastily — tracked by a follow-up issue (#308)
+filed from #70, not attempted in this probe/gate-fix increment. Items 2 and 5
+stay **`NOT_RUN`** (not estimated, not inferred) pending that follow-up; only
+the gate itself and the cheapest, lowest-risk leg moved.
+
+**Invariance held.** No change to `model/voice/run_vel_model.py`,
+`voice_model.py`, or any RTL/testbench file in this increment; the baseline
+run-dir sha256s, the exactness/cost/corner/state artifacts, and every
+previously-committed negative-control transcript are untouched byte-for-byte
+except `oracle-status.json` / `oracle-backfill.txt` (re-measured, expected to
+change) and the new `blob-verify-carriers.json` / the `attacky_vel_inputs.json`
+provenance fields (both intentional, both documented above).
 
 ## Commands (reproduce)
 
@@ -632,6 +755,23 @@ artifact, or on a corpus pin that no longer matches #70; → 1 if a control does
 not fire. The two artifacts it writes are byte-reproducible across runs
 (verified by re-running and diffing).
 
+Prebuilt oracle provisioning accepted; blob-verify-carriers run (added
+2026-10-02, seventh increment; requires the pinned checkout, EITHER
+provisioning shape -- git-worktree or a sha256-verified prebuilt install,
+#232):
+
+```
+export ORACLE_SURGE_DIR=~/.cache/gf180-surge-oracle/<pin>/<platform>
+python3 tools/vel_oracle_status.py --artifacts reports/SXT-036/artifacts
+python3 -m pytest -q tests/test_sxt036_vel_oracle_status.py   # 44 passed
+python3 model/voice/blob_verify_vel_carriers.py \
+    --out reports/SXT-036/artifacts/blob-verify-carriers.json
+```
+Exit codes seen: `vel_oracle_status.py` → 0 (gate `AVAILABLE` on this host,
+all nine controls fired); `blob_verify_vel_carriers.py` → 0 (4/4 carriers
+byte-identical to the census); → 2 if `ORACLE_SURGE_DIR` is absent/unset or a
+carrier is missing from the checkout.
+
 ## Boundaries and what remains unproved
 
 * **Fixture provenance.** The issue's named carriers (Bad News, Rainy Day
@@ -691,18 +831,29 @@ not fire. The two artifacts it writes are byte-reproducible across runs
   here); reference-budget negative controls; fidelity; sound quality;
   synthesis/timing/hardware.
 * **Backfill.** The issue remains open until items 2 and 5 pass on an
-  oracle host (#232). The plan is now frozen and machine-readable in
+  oracle host. **#232 closed 2026-10-02** (prebuilt provisioning now accepted
+  by the gate, seventh increment); the blocker that remains is doing the
+  render/extract/compare/negative-control work itself without invalidating
+  this leaf's already-committed frozen evidence, tracked by a follow-up issue (#308)
+  filed from #70. The plan is frozen and machine-readable in
   `artifacts/oracle-status.json` + `artifacts/oracle-backfill.txt` (sixth
-  increment) rather than described here; run
-  `python3 tools/vel_oracle_status.py` on that host first to flip the gate.
+  increment, gate logic extended seventh); run
+  `python3 tools/vel_oracle_status.py` to re-measure the gate (now
+  `AVAILABLE` on a host with either a git-worktree checkout or a
+  sha256-verified prebuilt install, #232).
   Existing scripts to reuse there: **`fixtures/render_fixture.py`** (the
   SXT-012 harness — #70's body and earlier revisions of this file named
   `tools/render_fixture.py`, **which does not exist**; corrected by the
   sixth increment's `named_tool_resolution` table and control O7),
   `fixtures/render_mw_fixture.py` as the per-leaf render pattern,
   `tools/compare_audio_reference.py`, and an extractor modelled on
-  `model/voice/extract_mw_inputs.py` to replace `attacky_vel_inputs.json`.
-  `artifacts/carrier-route-audit.json` carries the
+  `model/voice/extract_mw_inputs.py` to replace `attacky_vel_inputs.json`
+  — **follow-up issue #308 must have that extractor round-trip today's
+  hand-declared `depth_raw` values exactly before replacing them**, or
+  re-run every comparison artifact that embeds them
+  (`state-coverage.json`, `param-corners.json`, `cost-accounting.json`,
+  every `exactness-*.json`) in the same change, not silently leave them
+  stale. `artifacts/carrier-route-audit.json` carries the
   `oracle_host_backfill_predictions` list for that host to confirm or
   contradict (currently one entry: `Bad News.fxp` velocity → 308, normalized
   depth 0.218077); a disagreement there is a finding about the corpus
@@ -714,6 +865,11 @@ not fire. The two artifacts it writes are byte-reproducible across runs
   reproduce them; a disagreement is again a corpus-pipeline finding, and the
   corner *depths* would then be re-derived from the engine rather than
   re-tuned to keep the corners green.
+  **Already done, oracle-independent and checkout-only:**
+  `model/voice/blob_verify_vel_carriers.py` (seventh increment) — the
+  fixture carrier and the three named carriers are byte-identical to the
+  census in the pinned checkout; do not re-do this leg, extend it only if a
+  new carrier is added.
 * **Cost accounting is bookkeeping, not a cost pin.** The fifth increment
   measures op counts on this leaf's own behavioral schedule and confronts them
   with the SXT-015 accounting. It does **not** pin `cyc_modroute_frame` (only an

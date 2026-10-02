@@ -27,8 +27,12 @@ WHAT THIS IS NOT (do not upgrade these claims):
   * NOT a payload verification of the `.fxp` blob. The census blob sha1 and
     graphs.jsonl `sha` are cross-checked against each other -- two committed
     artifacts agreeing -- which is strictly weaker than hashing the preset
-    file itself. That needs the pinned Surge tree, so the fixture sidecar's
-    `blob_verified` stays false.
+    file itself. That needs the pinned Surge tree -- a SEPARATE tool,
+    `model/voice/blob_verify_vel_carriers.py`, now does exactly that on a
+    host with the oracle checkout (#232); it hashes the fixture carrier
+    (Attacky.fxp) and the three carriers named here against the pinned
+    checkout's bytes, which is why the fixture sidecar's `blob_verified`
+    now reads true. THIS script still does not perform that check itself.
   * NOT an engine readback. graphs.jsonl holds the normalized loader state
     recorded by the corpus pipeline, not a live `getModDepth01` result on
     this host. Depths below are therefore PREDICTIONS the oracle-host

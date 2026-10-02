@@ -1,0 +1,40 @@
+{
+  "all_verified": true,
+  "carriers": [
+    {
+      "census_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+      "checkout_blob_sha1": "8c61a18938fa816d0711e88eeb7a32dce41cf1cb",
+      "note": "named carrier (#70 Fixtures and oracle)",
+      "path": "resources/data/patches_3rdparty/Bluelight/Pads/Bad News.fxp",
+      "verified": true
+    },
+    {
+      "census_blob_sha1": "13979de9231f1b5d2b83e4370948cc33b5b52dfc",
+      "checkout_blob_sha1": "13979de9231f1b5d2b83e4370948cc33b5b52dfc",
+      "note": "named carrier (#70 Fixtures and oracle)",
+      "path": "resources/data/patches_3rdparty/Bluelight/Pads/Rainy Day Dreamaway.fxp",
+      "verified": true
+    },
+    {
+      "census_blob_sha1": "ceaa96a85b3fdd3d9f026087c70d6fb2a6e76057",
+      "checkout_blob_sha1": "ceaa96a85b3fdd3d9f026087c70d6fb2a6e76057",
+      "note": "named carrier (#70 Fixtures and oracle)",
+      "path": "resources/data/patches_3rdparty/Damon Armani/Pads/House Of Chords.fxp",
+      "verified": true
+    },
+    {
+      "census_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+      "checkout_blob_sha1": "4675e423a7489b02f501f7763b4760f64ab035f9",
+      "note": "fixture carrier actually used by model/voice/run_vel_model.py (SXT-035/SXT-032 substitution convention; the three named carriers are outside the landed classic-voice class)",
+      "path": "resources/data/patches_factory/Basses/Attacky.fxp",
+      "verified": true
+    }
+  ],
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "gate": "pinned checkout only (no built surgepy needed)",
+  "issue": "SXT-036",
+  "leg": "blob-verify-carriers",
+  "provisioning": "not-a-git-worktree (sha256-verification against oracle/manifest.json's prebuilt.<platform> entry is tracked separately by tools/vel_oracle_status.py, not duplicated here)",
+  "rule": "a blob mismatch is a finding about this host's checkout, never silently passed over -- recorded per-carrier, not collapsed into one boolean",
+  "schema_version": 1
+}

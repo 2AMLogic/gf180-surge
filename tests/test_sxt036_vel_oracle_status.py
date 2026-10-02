@@ -52,6 +52,14 @@ def _probe(**overrides):
         "surgepy_importable": False,
         "surgepy_under_engine_dir": False,
         "surgepy_pinned": {"ok": False, "file": None},
+        "surgepy_version": None,
+        "surgepy_version_matches_pin": False,
+        "platform": "linux-x86_64",
+        "prebuilt_manifest_sha256": "f" * 64,
+        "prebuilt_installed_sha256_path": "/nowhere/.installed-sha256",
+        "prebuilt_installed_sha256": None,
+        "prebuilt_sha256_matches": False,
+        "prebuilt_buildinfo_present": False,
     }
     p.update(overrides)
     return p
@@ -132,6 +140,102 @@ def test_every_classified_status_is_in_the_documented_set():
                {"engine_dir_present": True, "engine_dir_is_git_worktree": True},
                {"surgepy_importable": True}):
         assert vos.classify(_probe(**kw))[0] in known
+
+
+# --------------------------------------------- prebuilt provisioning (#232) --
+def test_prebuilt_sha256_match_is_a_second_path_to_available():
+    """A sha256-verified prebuilt install is AVAILABLE even with no git
+    checkout at all -- the whole point of accepting this provisioning shape."""
+    p = _probe(engine_dir_present=True, engine_dir_is_git_worktree=False,
+               prebuilt_sha256_matches=True,
+               surgepy_importable=True, surgepy_under_engine_dir=True,
+               surgepy_version="1.4.HEAD.58914e59c",
+               surgepy_version_matches_pin=True)
+    assert vos.classify(p)[0] == "AVAILABLE"
+
+
+def test_prebuilt_path_does_not_replace_the_git_worktree_path():
+    """Dropping the git-worktree fields must not matter when prebuilt-verified
+    (and conversely, a prebuilt mismatch must not break a real git checkout)."""
+    git_ok = _probe(engine_dir_present=True, engine_dir_is_git_worktree=True,
+                    engine_head=vos.ISSUE_PIN, engine_head_matches_pin=True,
+                    surgepy_importable=True, surgepy_under_engine_dir=True,
+                    prebuilt_sha256_matches=False)
+    assert vos.classify(git_ok)[0] == "AVAILABLE"
+
+
+@pytest.mark.parametrize("drop", [
+    "engine_dir_present", "surgepy_importable", "surgepy_under_engine_dir",
+    "surgepy_version_matches_pin",
+])
+def test_dropping_any_prebuilt_requirement_loses_available(drop):
+    p = _probe(engine_dir_present=True, prebuilt_sha256_matches=True,
+               surgepy_importable=True, surgepy_under_engine_dir=True,
+               surgepy_version="1.4.HEAD.58914e59c",
+               surgepy_version_matches_pin=True)
+    p[drop] = False
+    assert vos.classify(p)[0] != "AVAILABLE"
+
+
+def test_prebuilt_sha256_mismatch_fails_closed_even_with_real_surgepy():
+    """Control O8 as a unit test: a wrong hash is refused even though the
+    rest of the probe looks exactly like a real, working install -- the
+    sha256 check must gate, not merely corroborate."""
+    p = _probe(engine_dir_present=True, engine_dir_is_git_worktree=False,
+               prebuilt_sha256_matches=False,
+               surgepy_importable=True, surgepy_under_engine_dir=True,
+               surgepy_version="1.4.HEAD.58914e59c",
+               surgepy_version_matches_pin=True)
+    status, reason = vos.classify(p)
+    assert status != "AVAILABLE"
+    assert "prebuilt" in reason.lower() or "verified prebuilt" in reason.lower()
+
+
+def test_prebuilt_sha256_match_alone_is_not_sufficient():
+    """Control O9 as a unit test: a matching hash with no real surgepy build
+    underneath it must not be accepted on the hash alone."""
+    p = _probe(engine_dir_present=True, engine_dir_is_git_worktree=False,
+               prebuilt_sha256_matches=True,
+               surgepy_importable=False, surgepy_under_engine_dir=False)
+    assert vos.classify(p)[0] != "AVAILABLE"
+
+
+def test_prebuilt_sha256_match_with_fake_module_is_refused():
+    """Control O10 as a unit test (PR #309 Judge review repro): a matching
+    hash PLUS a present, importable-from-inside-it module is still not
+    sufficient when that module cannot produce the real getVersion() string
+    embedding the pinned commit -- a two-line stub satisfies every other
+    prebuilt-path check without any real engine behind it."""
+    p = _probe(engine_dir_present=True, engine_dir_is_git_worktree=False,
+               prebuilt_sha256_matches=True,
+               surgepy_importable=True, surgepy_under_engine_dir=True,
+               surgepy_version=None, surgepy_version_matches_pin=False)
+    status, reason = vos.classify(p)
+    assert status != "AVAILABLE"
+
+
+@pytest.mark.parametrize("version,expected", [
+    ("1.4.HEAD.58914e59c", True),
+    ("1.4.HEAD." + vos.ISSUE_PIN[:7], True),
+    ("1.4.HEAD." + vos.ISSUE_PIN[:12], True),
+    (None, False),
+    ("", False),
+    ("1.4.HEAD.deadbeef0", False),
+    ("1.4.HEAD.", False),
+])
+def test_version_matches_pin(version, expected):
+    assert vos._version_matches_pin(version, vos.ISSUE_PIN) is expected
+
+
+def test_platform_detection_matches_fetch_and_build_cases():
+    """detect_platform() must agree with oracle/fetch-and-build.sh's own
+    `--prebuilt` case statement for the two platforms it names explicitly."""
+    import platform as _p
+    plat = vos.detect_platform()
+    if (_p.system(), _p.machine()) == ("Linux", "x86_64"):
+        assert plat == "linux-x86_64"
+    elif (_p.system(), _p.machine()) == ("Darwin", "arm64"):
+        assert plat == "darwin-arm64"
 
 
 # ------------------------------------------------- legs may never say "PASS" -
@@ -261,9 +365,21 @@ def test_predictions_carry_the_no_tuning_rule():
 
 
 # --------------------------------------------- the committed artifact itself -
-def test_committed_status_records_not_run_for_items_2_and_5(committed):
-    assert committed["acceptance_items_gated"] == {"2": "NOT_RUN", "5": "NOT_RUN"}
-    assert committed["oracle_gate"]["status"] != "AVAILABLE"
+def test_committed_status_reflects_the_measured_gate_on_the_host_that_wrote_it(
+        committed):
+    """This file is a snapshot of whatever host last ran the tool, not a
+    live probe -- so it is checked for internal consistency (the gate status
+    and the gated items must agree, and a leg may never read PASS), not
+    pinned to one particular gate value. #70's own backfill note: a host
+    with the oracle genuinely installed (#232) is expected to flip this to
+    AVAILABLE/RUNNABLE; a host without it is expected to show
+    UNAVAILABLE/NOT_RUN. Both are legitimate committed snapshots."""
+    gate = committed["oracle_gate"]["status"]
+    expected_item_status = "RUNNABLE" if gate == "AVAILABLE" else "NOT_RUN"
+    assert committed["acceptance_items_gated"] == {
+        "2": expected_item_status, "5": expected_item_status}
+    for leg in committed["legs"].values():
+        assert leg["status"] in vos.LEG_STATUS_VOCABULARY
 
 
 def test_committed_status_has_no_pass_anywhere_in_its_legs(committed):
@@ -274,7 +390,8 @@ def test_committed_status_has_no_pass_anywhere_in_its_legs(committed):
 def test_committed_status_records_every_control_as_fired(committed):
     assert committed["controls_all_fired"] is True
     ids = {c["id"] for c in committed["controls"]}
-    assert ids == {"O1", "O2", "O3", "O4", "O5", "O6", "O7"}
+    assert ids == {"O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9",
+                   "O10"}
     assert all(c["fired"] for c in committed["controls"])
 
 
