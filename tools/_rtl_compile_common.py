@@ -16,10 +16,16 @@ is launched via `vvp` or exec'd directly).  This module holds the single
 implementation and exposes every axis those copies actually differed on, so
 each call site keeps its *exact* previous behavior.
 
-This is a build/run helper only.  It parses no traces, compares no fields and
-makes no verdict: claim (1) — "the RTL matches the frozen fixed-point model
-exactly" — is still decided entirely by each harness's own `parse_tb`/
-`compare` logic, which this module does not touch.
+`compile_and_run` is a build/run helper only: it parses no traces, compares no
+fields and makes no verdict.  `run_leaf_comparison` (issue #303) wraps it with
+the *report-assembly* skeleton five of those harnesses had copied verbatim --
+load `model_trace.json`, run the simulator, decide `comparison` from
+`SimResult.sim_fails`, assemble/print/write the summary JSON, return the 0/1
+exit code.  It still delegates every judgement: claim (1) — "the RTL matches
+the frozen fixed-point model exactly" — is decided entirely by each harness's
+own `parse_tb`/`compare` callables, which this module receives and calls but
+never inspects, and by the per-leaf `checked`/summary shapes it is handed
+rather than normalizing.
 
 ISSUE #193 (the #188 blind spot, shared): by default (`report_sim_fails`
 unset), this function still runs both subprocess steps with `check=True` --
@@ -67,10 +73,12 @@ Original to this repository (Apache-2.0).
 """
 
 import collections
+import json
 import os
 import subprocess
 
-__all__ = ["compile_and_run", "scan_stdout_for_load_failures", "SimResult"]
+__all__ = ["compile_and_run", "run_leaf_comparison",
+           "scan_stdout_for_load_failures", "SimResult"]
 
 
 # The result shape returned ONLY when `report_sim_fails=True`. Deliberately a
@@ -326,3 +334,100 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
                 value = int(line.split("=")[1])
 
     return SimResult(trace, value, result.stdout, sim_fails, stdout_tail)
+
+
+def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
+                        compile_kwargs, default_checked,
+                        extra_summary_fields=None, summary_key_order=None):
+    """The report-assembly skeleton shared by five RTL-vs-model leaves.
+
+    Extracted by issue #303 from the byte-identical halves of
+    `compare_rtl_model.py`, `compare_classic_rtl_model.py`,
+    `compare_kt_rtl_model.py`, `compare_lfo_rtl_model.py` and
+    `compare_mw_rtl_model.py`.  Every axis those five actually differed on is
+    a parameter here, so each call site keeps its *exact* previous JSON
+    (same keys, same key order, same values) and exit code.  Nothing is
+    normalized: a leaf whose report shape differs keeps the difference by
+    passing it in.
+
+    Parameters:
+      tb            testbench source to compile (the leaf's `--tb` value)
+      tb_label      the literal string reported as `summary["tb"]`; leaves
+                    disagree here on purpose (`os.path.basename(tb)` for the
+                    SXT-022 voice leaf, `os.path.relpath(tb, REPO)` for the
+                    other four) and this helper does not pick for them
+      run_dir       run directory holding `model_trace.json`; also the
+                    simulation's cwd
+      out           path to write the summary JSON to, or None/"" for
+                    stdout only (the leaf's `--out`)
+      parse_tb      callable(trace_path) -> the leaf's own RTL trace object
+      compare       callable(model_trace, rtl_trace) -> (checked, fails)
+      compile_kwargs  dict of `compile_and_run` keyword arguments
+                    (`out_name`, `trace_name`, `done_prefix`, `direct_exec`,
+                    `stimulus_files`, ...).  `report_sim_fails=True` is
+                    supplied by this helper and must NOT appear here: the
+                    `comparison: NOT_RUN` branch below exists precisely
+                    because a simulator-level failure is not a
+                    RTL-vs-model disagreement (issues #188/#193), and that
+                    branch needs a `SimResult`.
+      default_checked  the leaf's zeroed `checked` dict, reported verbatim
+                    when a simulator-level failure means `compare` never
+                    ran (`comparison: NOT_RUN`).  Its shape and key order
+                    are the leaf's, not this helper's.
+      extra_summary_fields  optional callable(model_trace, sim) -> dict of
+                    additional summary keys (only the keytrack leaf uses
+                    this: `sequence`, `control_mode`, `rtl_qmuls`, `blocks`)
+      summary_key_order  optional sequence naming the exact output key
+                    order.  Required with `extra_summary_fields` whenever
+                    the leaf's committed report interleaves its extra keys
+                    among the base ones rather than appending them (the
+                    keytrack leaf does).  Must name exactly the merged key
+                    set -- a mismatch raises `ValueError` rather than
+                    silently dropping or reordering a reported field.
+
+    Returns the process exit code: 0 when nothing failed, else 1.
+    """
+    if "report_sim_fails" in compile_kwargs:
+        raise ValueError("run_leaf_comparison supplies report_sim_fails=True "
+                         "itself; the NOT_RUN branch requires a SimResult")
+
+    with open(os.path.join(run_dir, "model_trace.json")) as f:
+        model_trace = json.load(f)
+
+    sim = compile_and_run(tb, run_dir, report_sim_fails=True, **compile_kwargs)
+
+    checked = dict(default_checked)
+    fails = list(sim.sim_fails)
+    comparison = "NOT_RUN"
+    if not sim.sim_fails:
+        rtl_trace = parse_tb(sim.trace)
+        checked, cmp_fails = compare(model_trace, rtl_trace)
+        fails += cmp_fails
+        comparison = "FAIL" if cmp_fails else "PASS"
+
+    summary = {
+        "tb": tb_label,
+        "verdict": "PASS" if not fails else "FAIL",
+        "comparison": comparison,
+        "checked": checked,
+        "mismatches": len(fails),
+        "first_failures": fails[:10],
+        "sim_fails": sim.sim_fails,
+        "sim_stdout_tail": sim.stdout_tail,
+    }
+    if extra_summary_fields is not None:
+        summary.update(extra_summary_fields(model_trace, sim))
+    if summary_key_order is not None:
+        order = list(summary_key_order)
+        if sorted(order) != sorted(summary) or len(order) != len(set(order)):
+            raise ValueError(
+                "summary_key_order %r does not name exactly the summary keys "
+                "%r" % (order, sorted(summary)))
+        summary = {k: summary[k] for k in order}
+
+    print(json.dumps(summary, indent=2))
+    if out:
+        with open(out, "w") as f:
+            json.dump(summary, f, indent=2)
+            f.write("\n")
+    return 0 if not fails else 1

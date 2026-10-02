@@ -35,12 +35,11 @@ Usage:
 """
 
 import argparse
-import json
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import run_leaf_comparison  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_mw.sv")
@@ -110,40 +109,16 @@ def main():
     ap.add_argument("--out", help="write summary JSON here")
     args = ap.parse_args()
 
-    with open(os.path.join(args.run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
-
-    sim = compile_and_run(
-        args.tb, args.run_dir, out_name="tb_mw.vvp", absolute=True,
-        compile_in_workdir=True, quiet_compile=True,
-        trace_name="tb_mw_trace.txt",
-        stimulus_files=STIMULUS_RELPATHS, report_sim_fails=True)
-
-    checked = {"mw_values": 0, "route_sum_checkpoints": 0, "route_sums": 0}
-    fails = list(sim.sim_fails)
-    comparison = "NOT_RUN"
-    if not sim.sim_fails:
-        rtl_trace = parse_tb(sim.trace)
-        checked, cmp_fails = compare(model_trace, rtl_trace)
-        fails += cmp_fails
-        comparison = "FAIL" if cmp_fails else "PASS"
-
-    summary = {
-        "tb": os.path.relpath(args.tb, REPO),
-        "verdict": "PASS" if not fails else "FAIL",
-        "comparison": comparison,
-        "checked": checked,
-        "mismatches": len(fails),
-        "first_failures": fails[:10],
-        "sim_fails": sim.sim_fails,
-        "sim_stdout_tail": sim.stdout_tail,
-    }
-    print(json.dumps(summary, indent=2))
-    if args.out:
-        with open(args.out, "w") as f:
-            json.dump(summary, f, indent=2)
-            f.write("\n")
-    return 0 if not fails else 1
+    return run_leaf_comparison(
+        tb=args.tb, tb_label=os.path.relpath(args.tb, REPO),
+        run_dir=args.run_dir, out=args.out,
+        parse_tb=parse_tb, compare=compare,
+        compile_kwargs=dict(
+            out_name="tb_mw.vvp", absolute=True, compile_in_workdir=True,
+            quiet_compile=True, trace_name="tb_mw_trace.txt",
+            stimulus_files=STIMULUS_RELPATHS),
+        default_checked={"mw_values": 0, "route_sum_checkpoints": 0,
+                         "route_sums": 0})
 
 
 if __name__ == "__main__":

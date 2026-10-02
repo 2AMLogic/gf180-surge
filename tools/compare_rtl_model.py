@@ -29,12 +29,11 @@ Usage:
 """
 
 import argparse
-import json
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import run_leaf_comparison  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_voice.sv")
@@ -178,39 +177,18 @@ def main():
     ap.add_argument("--out", help="write summary JSON here")
     args = ap.parse_args()
 
-    with open(os.path.join(args.run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
-
-    sim = compile_and_run(
-        args.tb, args.run_dir, absolute=True,
-        out_name="tb_mut.vvp" if args.tb == MUTANT else "tb.vvp",
-        stimulus_files=STIMULUS_RELPATHS, report_sim_fails=True)
-
-    checked = {"checkpoints": 0, "fields": 0, "oscout": 0, "mono": 0}
-    fails = list(sim.sim_fails)
-    comparison = "NOT_RUN"
-    if not sim.sim_fails:
-        rtl_trace = parse_tb(sim.trace)
-        checked, cmp_fails = compare(model_trace, rtl_trace)
-        fails += cmp_fails
-        comparison = "FAIL" if cmp_fails else "PASS"
-
-    summary = {
-        "tb": os.path.basename(args.tb),
-        "verdict": "PASS" if not fails else "FAIL",
-        "comparison": comparison,
-        "checked": checked,
-        "mismatches": len(fails),
-        "first_failures": fails[:10],
-        "sim_fails": sim.sim_fails,
-        "sim_stdout_tail": sim.stdout_tail,
-    }
-    print(json.dumps(summary, indent=2))
-    if args.out:
-        with open(args.out, "w") as f:
-            json.dump(summary, f, indent=2)
-            f.write("\n")
-    return 0 if not fails else 1
+    return run_leaf_comparison(
+        tb=args.tb,
+        # this leaf reports the bare basename, not a repo-relative path
+        tb_label=os.path.basename(args.tb),
+        run_dir=args.run_dir, out=args.out,
+        parse_tb=parse_tb, compare=compare,
+        compile_kwargs=dict(
+            absolute=True,
+            out_name="tb_mut.vvp" if args.tb == MUTANT else "tb.vvp",
+            stimulus_files=STIMULUS_RELPATHS),
+        default_checked={"checkpoints": 0, "fields": 0, "oscout": 0,
+                         "mono": 0})
 
 
 if __name__ == "__main__":
