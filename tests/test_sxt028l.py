@@ -48,7 +48,7 @@ import rf_send34_model as rm  # noqa: E402
 SXT = os.path.join(REPO, "reports", "SXT-028l")
 FX_INPUTS = os.path.join(REPO, "model", "effects", "fx_inputs")
 CARRIER_SLUGS = ("trance", "batbrass", "dystopia", "strynth",
-                 "closeout-sale", "random-bass-fx")
+                 "closeout-sale", "random-bass-fx", "violin-section")
 
 COEFFS_A = (rm.to_q(0.4, 29, 32), rm.to_q(-0.15, 29, 32), rm.to_q(0.08, 29, 32),
             rm.to_q(0.25, 29, 32), rm.to_q(-0.12, 29, 32))
@@ -683,6 +683,23 @@ def test_carrier_set_covers_the_shapes_the_acceptance_needs():
     assert muted["send3"]["return_muted"] is True
     assert muted["send4"]["return_muted"] is True
 
+    # #322: the drift-0 render carrier for the same-class dual-instance
+    # shape. It must carry the SAME routing shape Strynth.fxp does (same class
+    # in both buses, scene B feeding them, neither slot disabled nor muted),
+    # be recorded as a #322 addition, and never displace Strynth.fxp, which
+    # stays in the set as the non-render-eligible same-class carrier.
+    vs = json.load(open(os.path.join(FX_INPUTS,
+                                     "rf-rf-send34-violin-section.json")))
+    assert vs["carrier_source"].startswith("added by this leaf (#322)")
+    assert "issue-named" not in vs["carrier_source"]
+    assert vs["dual_instance_concurrent"] is True
+    assert vs["same_class_both_buses"] is True
+    assert vs["scene_context"]["scene_b_instantiated"] is True
+    assert vs["both_slots_disabled"] is False
+    for role in ("send3", "send4"):
+        assert vs[role]["fx_disable_bit"] is False
+        assert vs[role]["return_muted"] is False
+
 
 def test_extraction_refuses_injected_drift():
     """Live control for the fail-closed claim: a census/graphs disagreement,
@@ -923,6 +940,23 @@ def test_live_oracle_leg_record_is_internally_consistent():
         assert nonzero == failing, (slug, drifts)
         assert d["render_eligible_once_12_clears"][slug] == (not nonzero)
     assert bool(gate["carriers_failing"]) == (gate["status"] == "FAIL")
+    # #322: the same-class shape's render coverage is DERIVED from the same
+    # drift values -- a nonzero-drift carrier can never be listed eligible,
+    # and the render itself stays BLOCKED on #12 whatever the eligibility.
+    sc = d.get("same_class_dual_instance_render_coverage")
+    if sc is not None:
+        for slug in sc["render_eligible_carriers"]:
+            assert all(v == 0.0
+                       for v in gate["drift_per_carrier"][slug].values()), slug
+            assert d["render_eligible_once_12_clears"][slug] is True, slug
+        for slug in sc["not_render_eligible_carriers"]:
+            assert d["render_eligible_once_12_clears"][slug] is False, slug
+        assert sorted(sc["render_eligible_carriers"] +
+                      sc["not_render_eligible_carriers"]) == \
+            sorted(sc["carriers_with_shape_leg_ran"])
+        assert (sc["eligible_carrier_exists"] == "PASS") == \
+            bool(sc["render_eligible_carriers"])
+        assert sc["render"].startswith("BLOCKED (#12)")
     both_pass = ex["status"] == "PASS" and gate["status"] == "PASS"
     assert (d["status"] == "PASS") == both_pass, \
         "the rolled-up status must never read PASS unless both verdicts do"
@@ -946,6 +980,99 @@ def test_live_oracle_leg_record_is_internally_consistent():
             assert rec["slots"][role]["occupied"] == \
                 carrier[role]["occupied"]
             assert rec["slots"][role]["type_id"] == carrier[role]["type_id"]
+
+
+def _nonzero(drifts):
+    return any(v != 0.0 for v in drifts.values())
+
+
+def test_same_class_carrier_screen_record_is_internally_consistent():
+    """#322. The screen record must name EVERY same-class dual-occupant corpus
+    preset (the committed denominator), keep coverage apart from the verdict,
+    derive each gate verdict from the measured drift values, select a render
+    carrier only by its declared rule and only among drift-0 candidates, and
+    keep the Strynth.fxp finding (gate FAIL, not render-eligible, still a
+    carrier) rather than editing it away."""
+    p = os.path.join(SXT, "artifacts", "same-class-carrier-screen.json")
+    if not os.path.exists(p):
+        pytest.skip("same-class-carrier-screen.json not committed (NOT_RUN)")
+    d = json.load(open(p))
+    import extract_rf_send34_inputs as ex
+    import screen_rf_send34_same_class as scr
+
+    # --- coverage: the denominator is the committed one, all of it --------
+    occ = json.load(open(os.path.join(SXT, "artifacts",
+                                      "corpus-occupancy.json")))
+    fresh = [c["path"] for c in scr.corpus_candidates()]
+    cov = d["coverage"]
+    assert cov["candidates_in_corpus"] == len(fresh) == \
+        occ["both_buses_occupied_same_fx_class"]
+    assert [c["path"] for c in d["candidates"]] == fresh, \
+        "stale screen: candidate list differs from graphs.jsonl"
+    assert cov["candidates_screened"] + cov["candidates_not_screened"] == \
+        cov["candidates_in_corpus"]
+
+    # --- verdict: derived from the drift values, never asserted -----------
+    for c in d["candidates"]:
+        g = c["determinism_gate"]
+        assert (g["status"] == "FAIL") == _nonzero(g["drift_per_voicing_scene"])
+    v = d["verdict"]
+    zero = [c["path"] for c in d["candidates"]
+            if not _nonzero(c["determinism_gate"]["drift_per_voicing_scene"])]
+    assert v["drift_zero_paths"] == zero
+    assert v["drift_zero"] == len(zero)
+    assert v["drift_zero"] + v["drift_nonzero"] == cov["candidates_screened"]
+
+    # --- selection: only a drift-0 full-shape candidate, by the rule ------
+    chosen = scr.select(d["candidates"])
+    if chosen is None:
+        assert d["outcome"] == "BOUNDED_GAP"
+        assert d["selected_render_carrier"] is None
+    else:
+        assert d["outcome"] == "CARRIER_ADOPTED"
+        sel = d["selected_render_carrier"]
+        assert sel["path"] == chosen["path"]
+        assert not _nonzero(
+            chosen["determinism_gate"]["drift_per_voicing_scene"])
+        assert chosen["carries_every_strynth_routing_feature"] is True
+        carrier = {c["path"]: c for c in ex.CARRIERS}[sel["path"]]
+        assert carrier["slug"] == sel["slug"]
+        assert "#322" in carrier["carrier_source"]
+        live_p = os.path.join(SXT, "artifacts", "live-oracle-extraction.json")
+        if os.path.exists(live_p):
+            live = json.load(open(live_p))
+            assert live["render_eligible_once_12_clears"][sel["slug"]] is True
+            assert live["determinism_gate"]["drift_per_carrier"][
+                sel["slug"]] == chosen["determinism_gate"][
+                "drift_per_voicing_scene"]
+    # whatever the outcome, the render itself is still gated on #12
+    assert d["same_class_render_leg"].startswith("BLOCKED (#12)")
+
+    # --- the Strynth finding survives -------------------------------------
+    st = d["strynth_finding_retained"]
+    assert st is not None
+    assert st["determinism_gate"] == "FAIL"
+    assert _nonzero(st["drift_per_voicing_scene"])
+    assert st["render_eligible"] is False
+    assert st["kept_in_extractor_carriers"] is True
+    assert any(c["slug"] == "strynth" for c in ex.CARRIERS)
+    live_p = os.path.join(SXT, "artifacts", "live-oracle-extraction.json")
+    if os.path.exists(live_p):
+        live = json.load(open(live_p))
+        assert "strynth" in live["determinism_gate"]["carriers_failing"]
+        assert live["render_eligible_once_12_clears"]["strynth"] is False
+
+    # --- sibling audit (work item 4): FAIL list derived from drift --------
+    sib = d["sibling_render_carrier_audit"]
+    derived = [f"{r['leaf']}:{r['slug']}" for r in sib["carriers"]
+               if _nonzero(r["determinism_gate"]["drift_per_voicing_scene"])]
+    assert sib["failing"] == derived
+    if sib["failing"]:
+        # a sibling FAIL is routed to an issue, never absorbed into this leaf
+        assert sib["routed_to"].startswith("#")
+    for r in sib["carriers"]:
+        assert (r["determinism_gate"]["status"] == "FAIL") == \
+            _nonzero(r["determinism_gate"]["drift_per_voicing_scene"])
 
 
 def test_state_cost_record_no_external_memory_claimed():

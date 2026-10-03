@@ -66,6 +66,15 @@ identical fail-closed path:
   * Random Bass FX.fxp -- both slots occupied with return_level 0.0 on BOTH:
     the return-muted shape, which only exists because this routing form
     consumes `return_level` at all.
+  * Violin Section.fxp (John Valentine) -- added by #322: the SAME FX class
+    (EQ) in both send3 and send4 AND a Dual scene mode, i.e. the same routing
+    shape as Strynth.fxp, but with per-scene drift 0 in both voicing scenes.
+    Strynth.fxp fails the engine-side drift determinism gate (#155 item 1a),
+    so it cannot carry a repeatable render; it is KEPT in this set as the
+    non-render-eligible same-class carrier (the finding must survive), and
+    this carrier is the same-class shape's render carrier once #12 clears.
+    Selected by tools/screen_rf_send34_same_class.py, which screens every
+    same-class dual-occupant corpus preset through `drift_gate()` below.
 The additions are recorded as such (`carrier_source`), never presented as
 issue-named carriers.
 
@@ -165,7 +174,25 @@ CARRIERS = [
                        "return_level 0.0 on BOTH (the return-muted shape; "
                        "this routing form is the one that consumes "
                        "return_level)"},
+    {"slug": "violin-section",
+     "path": "resources/data/patches_3rdparty/John Valentine/Strings/"
+             "Violin Section.fxp",
+     "declared_sha1": "8b63179855d865563a88516214874ba40fb299d8",
+     "carrier_source": "added by this leaf (#322): SAME FX class (EQ) in "
+                       "both send3 and send4 AND a Dual scene mode (scene B "
+                       "really feeds "
+                       "both buses) with per-scene drift 0 -- the drift-0 "
+                       "render carrier for the same-class dual-instance "
+                       "shape, because Strynth.fxp fails the drift gate "
+                       "(reports/SXT-028l/artifacts/"
+                       "same-class-carrier-screen.json)"},
 ]
+
+# The routing SHAPE #322 restores render coverage for (the corpus predicate
+# reports/SXT-028l/artifacts/corpus-occupancy.json already counts as
+# `both_buses_occupied_same_fx_class`).
+SAME_CLASS_SHAPE = ("same-FX-class dual-instance: send3.on && send4.on && "
+                    "send3.tn == send4.tn")
 
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results",
                           "per-preset.csv")
@@ -295,6 +322,43 @@ def _param_record(s, p, graphs_value):
             "graphs_value": graphs_value}
 
 
+def drift_gate(s, patch):
+    """The engine-side per-scene drift determinism gate, read from a LOADED
+    pinned-engine instance (`s.loadPatch()` already done; `patch` is
+    `s.getPatch()`), i.e. from the native loader's normalized state, never the
+    raw `.fxp`.
+
+    Scene `drift` adds per-voice randomness (the harness never seeds engine RNG
+    -- oracle/manifest.json "randomness"), so a nonzero value in any VOICING
+    scene makes every render of the preset non-repeatable. Voicing scenes: the
+    active scene in Single mode, both scenes otherwise.
+
+    The ONE implementation used both by this extractor's live leg and by
+    tools/screen_rf_send34_same_class.py (#322), so a candidate replacement
+    carrier is screened exactly the way the committed carriers are.
+
+    Scope: drift == 0 is a NECESSARY condition for a repeatable render, not a
+    sufficient one. Other engine RNG paths (free-running oscillator phase,
+    RNG-driven FX classes -- fixtures/README.md, oracle/manifest.json
+    `fx_modulation_randomness`, #310) are only caught by an empirical repeated
+    render, which is the render leg's job (BLOCKED on #12 here)."""
+    scene_mode = int(round(s.getParamVal(patch["scenemode"])))
+    scene_active = int(round(s.getParamVal(patch["scene_active"])))
+    voicing = [scene_active] if scene_mode == 0 else [0, 1]
+    drifts = {"AB"[i]: round(float(s.getParamVal(patch["scene"][i]["drift"])), 9)
+              for i in voicing}
+    gate_ok = all(v == 0.0 for v in drifts.values())
+    return {
+        "what": "engine-side per-scene drift must be 0 in every voicing "
+                "scene, or no render of this carrier is repeatable",
+        "scene_mode_id": scene_mode,
+        "scene_active": scene_active,
+        "voicing_scenes": ["AB"[i] for i in voicing],
+        "drift_per_voicing_scene": drifts,
+        "status": "PASS" if gate_ok else "FAIL",
+    }
+
+
 def live_oracle_extraction(carrier, graph):
     """LIVE surgepy leg (#155 item 1a): extract the per-slot algorithm's own
     parameter values for send3/send4 from the pinned engine's normalized
@@ -360,12 +424,7 @@ def live_oracle_extraction(carrier, graph):
     # render of this carrier non-repeatable. Recorded as a verdict (PASS/FAIL)
     # rather than a refusal: it bounds the RENDER legs (1b/1c), not the
     # routing metadata above.
-    scene_mode = int(round(s.getParamVal(patch["scenemode"])))
-    scene_active = int(round(s.getParamVal(patch["scene_active"])))
-    voicing = [scene_active] if scene_mode == 0 else [0, 1]
-    drifts = {"AB"[i]: round(float(s.getParamVal(patch["scene"][i]["drift"])), 9)
-              for i in voicing}
-    gate_ok = all(v == 0.0 for v in drifts.values())
+    gate = drift_gate(s, patch)
 
     # --- live re-verification of the SXT-011 send-level exposure SHAPE ---
     exposed = [len(patch["scene"][i]["send_level"]) for i in range(2)]
@@ -422,15 +481,7 @@ def live_oracle_extraction(carrier, graph):
                    "block_size": s.getBlockSize(),
                    "oracle_surge_dir": oc.engine_dir()},
         "preset_blob_sha1_on_disk": on_disk_sha1,
-        "determinism_gate": {
-            "what": "engine-side per-scene drift must be 0 in every voicing "
-                    "scene, or no render of this carrier is repeatable",
-            "scene_mode_id": scene_mode,
-            "scene_active": scene_active,
-            "voicing_scenes": ["AB"[i] for i in voicing],
-            "drift_per_voicing_scene": drifts,
-            "status": "PASS" if gate_ok else "FAIL",
-        },
+        "determinism_gate": gate,
         "send_level_exposure_recheck": {
             "what": "live re-verification of the SXT-011 exposure gap's SHAPE "
                     "against the binding itself (previously documented only)",
@@ -667,6 +718,44 @@ def send_level_gap_scan():
     }
 
 
+def same_class_coverage(docs, ran, gates):
+    """#322: does the same-FX-class dual-instance routing shape have at least
+    one carrier that can carry a REPEATABLE render once #12 clears?
+
+    Derived from the per-carrier records and the measured gate verdicts, never
+    asserted. Coverage (which carriers have the shape, which of those the live
+    leg ran for) is kept apart from eligibility, and the render itself is
+    BLOCKED on #12 either way -- an eligible carrier is not a rendered one,
+    and the drift gate is necessary, not sufficient, for repeatability (see
+    `drift_gate`)."""
+    with_shape = sorted(s for s, d in docs.items() if d["same_class_both_buses"])
+    screened = [s for s in with_shape if s in ran]
+    eligible = sorted(s for s in screened if gates[s] == "PASS")
+    not_eligible = sorted(s for s in screened if gates[s] != "PASS")
+    if len(screened) != len(with_shape):
+        eligibility = "NOT_RUN"
+    elif eligible:
+        eligibility = "PASS"
+    else:
+        eligibility = "FAIL"
+    return {
+        "shape": SAME_CLASS_SHAPE,
+        "carriers_with_shape": with_shape,
+        "carriers_with_shape_leg_ran": screened,
+        "render_eligible_carriers": eligible,
+        "not_render_eligible_carriers": not_eligible,
+        "eligible_carrier_exists": eligibility,
+        "eligible_carrier_exists_note":
+            "PASS here means only that at least one carrier with this shape "
+            "passed the drift gate. It is NOT a render result: no fixture for "
+            "this routing form has been rendered.",
+        "render": "BLOCKED (#12)",
+        "screen": "reports/SXT-028l/artifacts/same-class-carrier-screen.json "
+                  "(every same-class dual-occupant preset in the corpus, "
+                  "screened through the same drift_gate)",
+    }
+
+
 def live_leg_summary(docs):
     """Roll the per-carrier LIVE legs up into one record of the leg itself
     (#155 item 1a).
@@ -756,8 +845,11 @@ def live_leg_summary(docs):
                       "claim is unaffected.",
             "routed_to": "#322 (restore render coverage of the same-class "
                          "dual-instance shape with a drift-0 carrier, or "
-                         "record a bounded coverage gap)",
+                         "record a bounded coverage gap) -- see "
+                         "`same_class_dual_instance_render_coverage`",
         },
+        "same_class_dual_instance_render_coverage": same_class_coverage(
+            docs, ran, gates),
         "render_eligible_once_12_clears": {
             slug: gates[slug] == "PASS" for slug in sorted(ran)},
         "host": {"platform": platform.platform(),

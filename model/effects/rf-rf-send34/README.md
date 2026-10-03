@@ -223,7 +223,13 @@ This is checked in the case that matters most: the corpus really does host
 carries Nimbus in `send3` **and** `send4` (7 corpus presets do this at all).
 Identical arithmetic is exactly where a pooled implementation hides best, so
 the RTL case `same-class-dual-occupants` and the NC-D same-class legs run the
-controls there too.
+controls there too. (Those cases use a synthetic occupant and control-plane
+stimulus, so they do not depend on Strynth.fxp being renderable. It is not
+renderable repeatably: its scene drift is nonzero. For a future reference
+*render* of this shape, #322 adds
+`John Valentine/Strings/Violin Section.fxp` (EQ in both buses, Dual scene
+mode, drift 0) as the render carrier. See `reports/SXT-028l/EVIDENCE.md`
+§0g.)
 
 The per-bus **gain plane is bus state, not occupant state**: a `loadFx()`
 replaces the occupant and clears its history but never disturbs the bus's
