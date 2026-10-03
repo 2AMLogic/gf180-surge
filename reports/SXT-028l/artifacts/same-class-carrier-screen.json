@@ -1,0 +1,820 @@
+{
+  "bounds": [
+    "The selected carrier hosts EQ, not Nimbus, in both buses: the routing shape is the same, the occupant class Strynth.fxp exercised is not. Drift-0 candidates with Nimbus in both buses: ['resources/data/patches_3rdparty/Exquis MPE/Keys/Chimes.fxp']; of those, carrying every Strynth routing feature (scene B feeding both buses, neither slot disabled, neither return muted): [].",
+    "drift 0 does not exclude other engine RNG paths (free-running oscillator phase, RNG-driven FX classes; fixtures/README.md, oracle/manifest.json fx_modulation_randomness, #310); only the empirical 3x render gate of the (BLOCKED, #12) render leg can.",
+    "The SXT-028-rng survey lists these FX classes NOT_RUN: ['Airwindows', 'Nimbus']."
+  ],
+  "candidates": [
+    {
+      "carries_every_strynth_routing_feature": false,
+      "census_blob_sha1_verified": "0ece5075e1646994c35a908959299debd7f63191",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "Delay",
+      "fx_disable_bits": [
+        9
+      ],
+      "fx_disable_mask": 512,
+      "fx_type_id": 1,
+      "graphs_blob_sha1": "0ece5075e1646994c35a908959299debd7f63191",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "Delay",
+          "type_id": 1
+        },
+        "send4": {
+          "type_display": "Delay",
+          "type_id": 1
+        }
+      },
+      "path": "resources/data/patches_3rdparty/Exquis MPE/Brass/Morphing.fxp",
+      "pinned_checkout_blob_sha1": "0ece5075e1646994c35a908959299debd7f63191",
+      "scene_b_instantiated": false,
+      "scene_mode": "Single",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 1.0,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    },
+    {
+      "carries_every_strynth_routing_feature": false,
+      "census_blob_sha1_verified": "80e653a987be999f820013805f898e1a840cb151",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "Delay",
+      "fx_disable_bits": [],
+      "fx_disable_mask": 0,
+      "fx_type_id": 1,
+      "graphs_blob_sha1": "80e653a987be999f820013805f898e1a840cb151",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "Delay",
+          "type_id": 1
+        },
+        "send4": {
+          "type_display": "Delay",
+          "type_id": 1
+        }
+      },
+      "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Artificial.fxp",
+      "pinned_checkout_blob_sha1": "80e653a987be999f820013805f898e1a840cb151",
+      "scene_b_instantiated": false,
+      "scene_mode": "Single",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 1.0,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    },
+    {
+      "carries_every_strynth_routing_feature": false,
+      "census_blob_sha1_verified": "3e6c1edd19a5067bb7df3ebf702413aab628f40b",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "Nimbus",
+      "fx_disable_bits": [],
+      "fx_disable_mask": 0,
+      "fx_type_id": 22,
+      "graphs_blob_sha1": "3e6c1edd19a5067bb7df3ebf702413aab628f40b",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "Nimbus",
+          "type_id": 22
+        },
+        "send4": {
+          "type_display": "Nimbus",
+          "type_id": 22
+        }
+      },
+      "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Chimes.fxp",
+      "pinned_checkout_blob_sha1": "3e6c1edd19a5067bb7df3ebf702413aab628f40b",
+      "scene_b_instantiated": false,
+      "scene_mode": "Single",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 0.704285,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    },
+    {
+      "carries_every_strynth_routing_feature": false,
+      "census_blob_sha1_verified": "880ee3099b0063e62cf79277de929e34147810f9",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "Delay",
+      "fx_disable_bits": [],
+      "fx_disable_mask": 0,
+      "fx_type_id": 1,
+      "graphs_blob_sha1": "880ee3099b0063e62cf79277de929e34147810f9",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "Delay",
+          "type_id": 1
+        },
+        "send4": {
+          "type_display": "Delay",
+          "type_id": 1
+        }
+      },
+      "path": "resources/data/patches_3rdparty/Exquis MPE/Leads/Fortune Chip.fxp",
+      "pinned_checkout_blob_sha1": "880ee3099b0063e62cf79277de929e34147810f9",
+      "scene_b_instantiated": false,
+      "scene_mode": "Single",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 1.0,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    },
+    {
+      "carries_every_strynth_routing_feature": true,
+      "census_blob_sha1_verified": "f8c9666992e671d8ee5761d76867890c4c75c4ce",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.131249994,
+          "B": 0.131249994
+        },
+        "scene_active": 0,
+        "scene_mode_id": 2,
+        "status": "FAIL",
+        "voicing_scenes": [
+          "A",
+          "B"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "Nimbus",
+      "fx_disable_bits": [],
+      "fx_disable_mask": 0,
+      "fx_type_id": 22,
+      "graphs_blob_sha1": "f8c9666992e671d8ee5761d76867890c4c75c4ce",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "Nimbus",
+          "type_id": 22
+        },
+        "send4": {
+          "type_display": "Nimbus",
+          "type_id": 22
+        }
+      },
+      "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Strynth.fxp",
+      "pinned_checkout_blob_sha1": "f8c9666992e671d8ee5761d76867890c4c75c4ce",
+      "scene_b_instantiated": true,
+      "scene_mode": "Dual",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 1.0,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    },
+    {
+      "carries_every_strynth_routing_feature": true,
+      "census_blob_sha1_verified": "9fb1c81fc525c6cdd67e7f4255f6a23dd4e53903",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0,
+          "B": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 2,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A",
+          "B"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "EQ",
+      "fx_disable_bits": [
+        0,
+        1,
+        3,
+        9,
+        10
+      ],
+      "fx_disable_mask": 1547,
+      "fx_type_id": 6,
+      "graphs_blob_sha1": "9fb1c81fc525c6cdd67e7f4255f6a23dd4e53903",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "EQ",
+          "type_id": 6
+        },
+        "send4": {
+          "type_display": "EQ",
+          "type_id": 6
+        }
+      },
+      "path": "resources/data/patches_3rdparty/John Valentine/Strings/Solo Violin.fxp",
+      "pinned_checkout_blob_sha1": "9fb1c81fc525c6cdd67e7f4255f6a23dd4e53903",
+      "scene_b_instantiated": true,
+      "scene_mode": "Dual",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 1.0,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    },
+    {
+      "carries_every_strynth_routing_feature": true,
+      "census_blob_sha1_verified": "8b63179855d865563a88516214874ba40fb299d8",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0,
+          "B": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 2,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A",
+          "B"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "fx_bypass_name": "All FX",
+      "fx_class": "EQ",
+      "fx_disable_bits": [
+        1,
+        9
+      ],
+      "fx_disable_mask": 514,
+      "fx_type_id": 6,
+      "graphs_blob_sha1": "8b63179855d865563a88516214874ba40fb299d8",
+      "live_send_slot_types": {
+        "send3": {
+          "type_display": "EQ",
+          "type_id": 6
+        },
+        "send4": {
+          "type_display": "EQ",
+          "type_id": 6
+        }
+      },
+      "path": "resources/data/patches_3rdparty/John Valentine/Strings/Violin Section.fxp",
+      "pinned_checkout_blob_sha1": "8b63179855d865563a88516214874ba40fb299d8",
+      "scene_b_instantiated": true,
+      "scene_mode": "Dual",
+      "send3_disabled": false,
+      "send3_return_level": 1.0,
+      "send4_disabled": false,
+      "send4_return_level": 1.0,
+      "send_stage_runs": true,
+      "sxt028_rng_survey_context": {
+        "affected_classes": [],
+        "listed_as_affected": false,
+        "note": "CONTEXT ONLY (reports/SXT-028-rng/artifacts/coverage-impact.json); not part of the drift gate"
+      }
+    }
+  ],
+  "claim_scope": "ENGINE-SIDE drift screen only. Nothing was rendered. Establishes NO model-vs-engine agreement, NO preset-support claim, NO musical-quality claim and NO repeatability claim: drift 0 is a necessary, not a sufficient, condition for a repeatable render.",
+  "coverage": {
+    "candidates_in_corpus": 7,
+    "candidates_not_screened": 0,
+    "candidates_screened": 7,
+    "denominator_check": {
+      "candidates_enumerated": 7,
+      "corpus_occupancy_committed": 7,
+      "corpus_occupancy_fresh": 7
+    },
+    "what": "how many same-class dual-occupant presets the corpus holds and how many were screened live -- reported separately from the verdict below"
+  },
+  "engine": {
+    "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+    "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "sample_rate": 48000.0,
+    "surgepy_version": "1.4.HEAD.58914e59c"
+  },
+  "host": {
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-1010-aws-x86_64-with-glibc2.39",
+    "python": "3.11.16"
+  },
+  "issue": "#322",
+  "leaf": "SXT-028l",
+  "outcome": "CARRIER_ADOPTED",
+  "routing_form": "rf-send34",
+  "same_class_render_leg": "BLOCKED (#12) -- the render of this shape needs the SXT-017 send-level decision in every outcome; an eligible carrier is not a rendered one",
+  "schema_version": 1,
+  "selected_render_carrier": {
+    "carrier_source": "added by this leaf (#322): SAME FX class (EQ) in both send3 and send4 AND a Dual scene mode (scene B really feeds both buses) with per-scene drift 0 -- the drift-0 render carrier for the same-class dual-instance shape, because Strynth.fxp fails the drift gate (reports/SXT-028l/artifacts/same-class-carrier-screen.json)",
+    "path": "resources/data/patches_3rdparty/John Valentine/Strings/Violin Section.fxp",
+    "slug": "violin-section"
+  },
+  "selection_rule": "Among candidates whose drift gate PASSES, keep those that carry EVERY routing feature of the Strynth.fxp shape -- same FX class in send3 and send4 (the predicate), scene B instantiated (non-Single scene mode, so scene B feeds both buses), neither slot disabled by fx_disable bits 12/13, neither return muted -- then take the one with the FEWEST fx_disable bits set anywhere (the most of the complete wet chain active), ties broken by corpus path. The FX class itself is NOT part of the routing shape (this leaf is form scope, not algorithm scope; model/effects/rf-rf-send34/README.md).",
+  "shape": "same-FX-class dual-instance: send3.on && send4.on && send3.tn == send4.tn",
+  "sibling_render_carrier_audit": {
+    "carriers": [
+      {
+        "declared_in": "tools/extract_rf_global2_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.092024997
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028d",
+        "leaf_issue": "#56",
+        "path": "resources/data/patches_3rdparty/Altenberg/Basses/Ancient FM.fxp",
+        "routing_form_or_leaf": "rf-global2",
+        "slug": "ancient-fm"
+      },
+      {
+        "declared_in": "tools/extract_rf_global2_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028d",
+        "leaf_issue": "#56",
+        "path": "resources/data/patches_3rdparty/Altenberg/Basses/Piercing.fxp",
+        "routing_form_or_leaf": "rf-global2",
+        "slug": "piercing"
+      },
+      {
+        "declared_in": "tools/extract_rf_global2_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.152826995
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028d",
+        "leaf_issue": "#56",
+        "path": "resources/data/patches_3rdparty/Altenberg/Basses/Rounded.fxp",
+        "routing_form_or_leaf": "rf-global2",
+        "slug": "rounded"
+      },
+      {
+        "declared_in": "tools/extract_rf_bins12_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.01,
+            "B": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 2,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A",
+            "B"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028h",
+        "leaf_issue": "#60",
+        "path": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+        "routing_form_or_leaf": "rf-bins12",
+        "slug": "novuo"
+      },
+      {
+        "declared_in": "tools/extract_rf_bins12_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.41785726,
+            "B": 0.190122858
+          },
+          "scene_active": 0,
+          "scene_mode_id": 1,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A",
+            "B"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028h",
+        "leaf_issue": "#60",
+        "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Keys/Acoordion Basses.fxp",
+        "routing_form_or_leaf": "rf-bins12",
+        "slug": "acoordion-basses"
+      },
+      {
+        "declared_in": "tools/extract_rf_bins12_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0,
+            "B": 0.083664998
+          },
+          "scene_active": 0,
+          "scene_mode_id": 2,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A",
+            "B"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028h",
+        "leaf_issue": "#60",
+        "path": "resources/data/patches_3rdparty/Altenberg/FX/Shore.fxp",
+        "routing_form_or_leaf": "rf-bins12",
+        "slug": "shore"
+      },
+      {
+        "declared_in": "tools/extract_rf_ains34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028i",
+        "leaf_issue": "#61",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+        "routing_form_or_leaf": "rf-ains34",
+        "slug": "jigsaw"
+      },
+      {
+        "declared_in": "tools/extract_rf_ains34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028i",
+        "leaf_issue": "#61",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Resurrection.fxp",
+        "routing_form_or_leaf": "rf-ains34",
+        "slug": "resurrection"
+      },
+      {
+        "declared_in": "tools/extract_rf_ains34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028i",
+        "leaf_issue": "#61",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+        "routing_form_or_leaf": "rf-ains34",
+        "slug": "pixel"
+      },
+      {
+        "declared_in": "tools/extract_rf_ains34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028i",
+        "leaf_issue": "#61",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Sand Storm.fxp",
+        "routing_form_or_leaf": "rf-ains34",
+        "slug": "sand-storm"
+      },
+      {
+        "declared_in": "tools/extract_rf_ains34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028i",
+        "leaf_issue": "#61",
+        "path": "resources/data/patches_3rdparty/Lopyt/Brass/Brass Ensemble.fxp",
+        "routing_form_or_leaf": "rf-ains34",
+        "slug": "brass-ensemble"
+      },
+      {
+        "declared_in": "tools/extract_rf_global34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028j",
+        "leaf_issue": "#62",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+        "routing_form_or_leaf": "rf-global34",
+        "slug": "jigsaw"
+      },
+      {
+        "declared_in": "tools/extract_rf_global34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028j",
+        "leaf_issue": "#62",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+        "routing_form_or_leaf": "rf-global34",
+        "slug": "pixel"
+      },
+      {
+        "declared_in": "tools/extract_rf_global34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028j",
+        "leaf_issue": "#62",
+        "path": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+        "routing_form_or_leaf": "rf-global34",
+        "slug": "lazy"
+      },
+      {
+        "declared_in": "tools/extract_rf_global34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0,
+            "B": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 2,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A",
+            "B"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028j",
+        "leaf_issue": "#62",
+        "path": "resources/data/patches_3rdparty/John Valentine/Strings/String Contrabass.fxp",
+        "routing_form_or_leaf": "rf-global34",
+        "slug": "string-contrabass"
+      },
+      {
+        "declared_in": "tools/extract_rf_global34_inputs.py::CARRIERS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028j",
+        "leaf_issue": "#62",
+        "path": "resources/data/patches_3rdparty/John Valentine/Winds/Bassoon.fxp",
+        "routing_form_or_leaf": "rf-global34",
+        "slug": "bassoon"
+      },
+      {
+        "declared_in": "tools/extract_phaser_inputs.py::PRESETS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028g",
+        "leaf_issue": "#59",
+        "path": "resources/data/patches_factory/Polysynths/Phasey.fxp",
+        "routing_form_or_leaf": "type-phaser",
+        "slug": "phasey"
+      },
+      {
+        "declared_in": "tools/extract_phaser_inputs.py::PRESETS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.1875
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028g",
+        "leaf_issue": "#59",
+        "path": "resources/data/patches_factory/Leads/Squelch.fxp",
+        "routing_form_or_leaf": "type-phaser",
+        "slug": "squelch"
+      },
+      {
+        "declared_in": "tools/extract_phaser_inputs.py::PRESETS",
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 0,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "leaf": "SXT-028g",
+        "leaf_issue": "#59",
+        "path": "resources/data/patches_factory/MPE/Sticky.fxp",
+        "routing_form_or_leaf": "type-phaser",
+        "slug": "sticky"
+      }
+    ],
+    "failing": [
+      "SXT-028d:ancient-fm",
+      "SXT-028d:rounded",
+      "SXT-028h:novuo",
+      "SXT-028h:acoordion-basses",
+      "SXT-028h:shore",
+      "SXT-028g:squelch"
+    ],
+    "not_re_measured_declared_treatment": {
+      "SXT-012 pilot fixtures": "fixtures/README.md 'Repeatability and known engine variation' + reports/sxt-012/repeatability.json",
+      "SXT-028c (chorus)": "tools/render_chorus_fixtures.py: issue-named carriers refused at extraction (drift != 0); Drone Bee refused by the 3x bit-identical render gate",
+      "SXT-028e-sse (distortion SSE)": "tools/render_distortion_sse_fixtures.py: Trance Pluck refused by the static screens (drift)",
+      "SXT-028f (reverb 2)": "tools/render_reverb2_fixtures.py + reports/SXT-028f/EVIDENCE.md: Novuo et al. REFUSED by the 3x gate; policy question open as #310",
+      "aw-49 (Airwindows)": "tools/render_aw49_reference.py: declared 'conditioned-on-tap' repeatability class for drift > 0 fixtures (no 3x gate claimed)",
+      "voice/oscillator leaves": "model/oscillators/*/fixture_config.py, model/voice/playmode/fixture_config.py: a declared `drift_zero` component-fixture adaptation (not a preset render)"
+    },
+    "routed_to": "#331 (SXT-028h/028d/028g: declared render carriers fail the per-scene drift gate)",
+    "what": "#322 work item 4: sibling leaves' declared carriers through the same drift gate. A FAIL here is a measured finding ROUTED to a follow-up issue (EVIDENCE.md \u00a70g), never fixed in this leaf."
+  },
+  "strynth_finding_retained": {
+    "determinism_gate": "FAIL",
+    "drift_per_voicing_scene": {
+      "A": 0.131249994,
+      "B": 0.131249994
+    },
+    "kept_in_extractor_carriers": true,
+    "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Strynth.fxp",
+    "render_eligible": false
+  },
+  "verdict": {
+    "drift_nonzero": 1,
+    "drift_nonzero_paths": [
+      "resources/data/patches_3rdparty/Exquis MPE/Strings/Strynth.fxp"
+    ],
+    "drift_zero": 6,
+    "drift_zero_paths": [
+      "resources/data/patches_3rdparty/Exquis MPE/Brass/Morphing.fxp",
+      "resources/data/patches_3rdparty/Exquis MPE/Keys/Artificial.fxp",
+      "resources/data/patches_3rdparty/Exquis MPE/Keys/Chimes.fxp",
+      "resources/data/patches_3rdparty/Exquis MPE/Leads/Fortune Chip.fxp",
+      "resources/data/patches_3rdparty/John Valentine/Strings/Solo Violin.fxp",
+      "resources/data/patches_3rdparty/John Valentine/Strings/Violin Section.fxp"
+    ],
+    "what": "how many screened candidates have per-scene drift 0 in every voicing scene (extract_rf_send34_inputs.drift_gate)"
+  }
+}

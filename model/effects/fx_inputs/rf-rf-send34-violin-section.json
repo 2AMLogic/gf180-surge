@@ -1,0 +1,362 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "a wet-audio render needs BOTH the pinned oracle (surgepy, for the per-slot algorithm parameters -- see oracle_extraction) AND a per-scene send level for buses 3/4, which no artifact carries: fixture freezing for THIS routing form is gated on the SXT-017 send-level data-gap decision (#12), so this stays False even on an oracle host. This leaf's own routing/scheduling claims depend on neither -- see oracle_extraction and send_level_gap",
+    "routing_metadata_verified": true
+  },
+  "base_half_context": {
+    "base_half_slots_active": 1,
+    "note": "send1/send2 are the BASE half of the same send rack. They are not upstream of this leaf (the buses are parallel) -- they are co-tenants of the same main bus, so their returns are part of this leaf's `main_l`/`main_r` stimulus. A sibling rf-send12-class leaf's scope; no such leaf exists in this repository yet.",
+    "send1_occupied": true,
+    "send1_type_name": "Combulator",
+    "send2_occupied": false,
+    "send2_type_name": "Off"
+  },
+  "both_slots_disabled": false,
+  "carrier_source": "added by this leaf (#322): SAME FX class (EQ) in both send3 and send4 AND a Dual scene mode (scene B really feeds both buses) with per-scene drift 0 -- the drift-0 render carrier for the same-class dual-instance shape, because Strynth.fxp fails the drift gate (reports/SXT-028l/artifacts/same-class-carrier-screen.json)",
+  "cross_check": {
+    "census_vs_graphs_drift_count": 0,
+    "engine_display_names_context": [
+      "Airwindows",
+      "Combulator",
+      "EQ",
+      "Ensemble",
+      "Resonator"
+    ],
+    "fields_compared": [
+      "blob_sha1",
+      "fx_bypass",
+      "fx_disable",
+      "nonoff_fx_slot_count",
+      "nonoff_fx_type_set",
+      "scene_mode",
+      "stored_revision"
+    ],
+    "fx_type_name_authority": "corpus/census-v0.1/census.py FX table, applied to the graph's stored type ids (content comparison, not spelling)",
+    "values": {
+      "blob_sha1": "8b63179855d865563a88516214874ba40fb299d8",
+      "fx_bypass": 0,
+      "fx_disable": 514,
+      "nonoff_fx_slot_count": 13,
+      "nonoff_fx_type_set": [
+        "Airwindows",
+        "Combulator",
+        "EQ",
+        "Ensemble",
+        "Resonator"
+      ],
+      "scene_mode": "Dual",
+      "stored_revision": 28
+    }
+  },
+  "dual_instance_concurrent": true,
+  "leaf": "SXT-028l",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "LIVE surgepy leg RAN against 1.4.HEAD.58914e59c: per-slot algorithm parameters extracted for send3/send4 and cross-checked against graphs.jsonl (drift gate PASS); the loader-default send-level probe for buses 3/4 stays BLOCKED on #12",
+    "live": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0,
+          "B": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 2,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A",
+          "B"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "8b63179855d865563a88516214874ba40fb299d8",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "13.85 dB",
+              "graphs_value": 13.851334,
+              "name": "FX S3 Gain 1",
+              "value": 13.851334,
+              "value_type": "float"
+            },
+            {
+              "display": "295.77 Hz",
+              "graphs_value": -6.876453,
+              "name": "FX S3 Frequency 1",
+              "value": -6.876453,
+              "value_type": "float"
+            },
+            {
+              "display": "0.26 octaves",
+              "graphs_value": 0.264286,
+              "name": "FX S3 Bandwidth 1",
+              "value": 0.264286,
+              "value_type": "float"
+            },
+            {
+              "display": "3.50 dB",
+              "graphs_value": 3.49712,
+              "name": "FX S3 Gain 2",
+              "value": 3.49712,
+              "value_type": "float"
+            },
+            {
+              "display": "1557.04 Hz",
+              "graphs_value": 21.878731,
+              "name": "FX S3 Frequency 2",
+              "value": 21.878731,
+              "value_type": "float"
+            },
+            {
+              "display": "0.22 octaves",
+              "graphs_value": 0.221428,
+              "name": "FX S3 Bandwidth 2",
+              "value": 0.221428,
+              "value_type": "float"
+            },
+            {
+              "display": "18.93 dB",
+              "graphs_value": 18.925774,
+              "name": "FX S3 Gain 3",
+              "value": 18.925774,
+              "value_type": "float"
+            },
+            {
+              "display": "103.91 Hz",
+              "graphs_value": -24.985718,
+              "name": "FX S3 Frequency 3",
+              "value": -24.985718,
+              "value_type": "float"
+            },
+            {
+              "display": "0.67 octaves",
+              "graphs_value": 0.669644,
+              "name": "FX S3 Bandwidth 3",
+              "value": 0.669644,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX S3 Gain",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "EQ",
+          "type_id": 6
+        },
+        "send4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "4.60 dB",
+              "graphs_value": 4.597702,
+              "name": "FX S4 Gain 1",
+              "value": 4.597702,
+              "value_type": "float"
+            },
+            {
+              "display": "592.17 Hz",
+              "graphs_value": 5.142105,
+              "name": "FX S4 Frequency 1",
+              "value": 5.142105,
+              "value_type": "float"
+            },
+            {
+              "display": "0.13 octaves",
+              "graphs_value": 0.129817,
+              "name": "FX S4 Bandwidth 1",
+              "value": 0.129817,
+              "value_type": "float"
+            },
+            {
+              "display": "16.42 dB",
+              "graphs_value": 16.421349,
+              "name": "FX S4 Gain 2",
+              "value": 16.421349,
+              "value_type": "float"
+            },
+            {
+              "display": "440.25 Hz",
+              "graphs_value": 0.009842,
+              "name": "FX S4 Frequency 2",
+              "value": 0.009842,
+              "value_type": "float"
+            },
+            {
+              "display": "0.25 octaves",
+              "graphs_value": 0.250485,
+              "name": "FX S4 Bandwidth 2",
+              "value": 0.250485,
+              "value_type": "float"
+            },
+            {
+              "display": "15.04 dB",
+              "graphs_value": 15.044392,
+              "name": "FX S4 Gain 3",
+              "value": 15.044392,
+              "value_type": "float"
+            },
+            {
+              "display": "273.94 Hz",
+              "graphs_value": -8.203876,
+              "name": "FX S4 Frequency 3",
+              "value": -8.203876,
+              "value_type": "float"
+            },
+            {
+              "display": "0.11 octaves",
+              "graphs_value": 0.114081,
+              "name": "FX S4 Bandwidth 3",
+              "value": 0.114081,
+              "value_type": "float"
+            },
+            {
+              "display": "-11.50 dB",
+              "graphs_value": -11.499584,
+              "name": "FX S4 Gain",
+              "value": -11.499584,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S4 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S4 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 13,
+          "type_display": "EQ",
+          "type_id": 6
+        }
+      }
+    },
+    "ok": true
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 514,
+    "send_stage_runs_in_this_mode": true
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "8b63179855d865563a88516214874ba40fb299d8",
+    "census_status": "parsed_static_only",
+    "graphs_blob_sha1_verified": "8b63179855d865563a88516214874ba40fb299d8",
+    "path": "resources/data/patches_3rdparty/John Valentine/Strings/Violin Section.fxp",
+    "stored_revision": 28
+  },
+  "roles": [
+    "send3",
+    "send4"
+  ],
+  "routing_form": "rf-send34",
+  "same_class_both_buses": true,
+  "scene_context": {
+    "note": "each send bus sums BOTH scenes' post-insert outputs through that scene's own send level; in Single scene mode the engine never instantiates scene B, so only scene A feeds the buses",
+    "scene_b_instantiated": true,
+    "scene_mode": "Dual",
+    "scene_mode_id": 2
+  },
+  "schema_version": 1,
+  "send3": {
+    "airwindows_sub_id": null,
+    "airwindows_sub_name": null,
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_send_path": true,
+    "return_level_stored": 1.0,
+    "return_muted": false,
+    "type_id": 6,
+    "type_name": "EQ"
+  },
+  "send4": {
+    "airwindows_sub_id": null,
+    "airwindows_sub_name": null,
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_send_path": true,
+    "return_level_stored": 1.0,
+    "return_muted": false,
+    "type_id": 6,
+    "type_name": "EQ"
+  },
+  "send_level_gap": {
+    "blocking_issue": "#12 (SXT-017 data-gap policy decision)",
+    "consumed_by_this_leaf_as": "control-plane stimulus only (model/effects/rf-rf-send34: send_gain_a / send_gain_b); never derived from a corpus record",
+    "exposed_bus_indices": [
+      1,
+      2
+    ],
+    "exposed_levels_per_scene": [
+      [
+        0.986457,
+        0.0
+      ],
+      [
+        1.015631,
+        0.0
+      ]
+    ],
+    "reason": "SXT-011 exposure gap: the engine has 4 send buses but a .fxp stores only 2 per-scene send levels and surgepy exposes only send_level[0..1] (corpus/normalized/README.md 'Send levels 3/4'; corpus/normalized/schema.json scene.send). Buses 3/4 run at LOADER DEFAULTS for every corpus preset; no in-repo artifact carries a value, so none is emitted here. Resolving it needs an engine-behavior probe of the loader default plus an SXT-017 data-gap policy decision (#12) before reference fixtures for this routing form can be frozen.",
+    "send3_send4_levels_stored": null
+  },
+  "slot_index_check": {
+    "source": "corpus/normalized/graphs.jsonl fx[].i / fx[].r (SXT-011 output; no live oracle needed)",
+    "verified_indices": {
+      "12": "send3",
+      "13": "send4",
+      "4": "send1",
+      "5": "send2"
+    }
+  }
+}

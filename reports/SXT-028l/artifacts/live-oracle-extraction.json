@@ -2,8 +2,8 @@
   "claim_scope": "ENGINE-SIDE extraction and determinism only. This record establishes NO model-vs-pinned-engine agreement number (leg 1c; BLOCKED on #12), NO RTL-vs-frozen-model claim (that is reports/SXT-028l/rtl-exactness.json, which needs no oracle), NO preset-support claim and NO musical-quality claim.",
   "coverage": {
     "carriers_leg_not_run": {},
-    "carriers_leg_ran": 6,
-    "carriers_total": 6
+    "carriers_leg_ran": 7,
+    "carriers_total": 7
   },
   "determinism_gate": {
     "bounds": "the RENDER legs (1b/1c) only. A carrier that fails this gate cannot carry a frozen reference fixture even once #12 clears; it is NOT excluded from the routing metadata above and the RTL-vs-frozen-model exactness claim is unaffected.",
@@ -15,7 +15,8 @@
       "closeout-sale",
       "dystopia",
       "random-bass-fx",
-      "trance"
+      "trance",
+      "violin-section"
     ],
     "drift_per_carrier": {
       "batbrass": {
@@ -36,9 +37,13 @@
       },
       "trance": {
         "A": 0.0
+      },
+      "violin-section": {
+        "A": 0.0,
+        "B": 0.0
       }
     },
-    "routed_to": "#322 (restore render coverage of the same-class dual-instance shape with a drift-0 carrier, or record a bounded coverage gap)",
+    "routed_to": "#322 (restore render coverage of the same-class dual-instance shape with a drift-0 carrier, or record a bounded coverage gap) -- see `same_class_dual_instance_render_coverage`",
     "status": "FAIL",
     "what": "per-scene `drift` must be 0 in every voicing scene, or no reference render of that carrier is repeatable (the harness never seeds engine RNG -- oracle/manifest.json)"
   },
@@ -48,7 +53,8 @@
     "dystopia": "PASS",
     "random-bass-fx": "PASS",
     "strynth": "FAIL",
-    "trance": "PASS"
+    "trance": "PASS",
+    "violin-section": "PASS"
   },
   "engines_observed": [
     {
@@ -73,8 +79,8 @@
     "send-level-default-probe": "BLOCKED (#12) -- the loader-default semantics are the SXT-017 decision's own input and are deliberately not probed here"
   },
   "parameter_extraction": {
-    "carriers_extracted": 6,
-    "carriers_total": 6,
+    "carriers_extracted": 7,
+    "carriers_total": 7,
     "status": "PASS",
     "what": "per-slot algorithm parameter values + return_level for send3/send4, read from the pinned engine's normalized (post-loadPatch) state and cross-checked against corpus/normalized/graphs.jsonl"
   },
@@ -1250,6 +1256,231 @@
           "type_id": 0
         }
       }
+    },
+    "violin-section": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number (leg 1c, BLOCKED on #12) and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0,
+          "B": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 2,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A",
+          "B"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "block_size": 32,
+        "oracle_surge_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "sample_rate": 48000.0,
+        "surgepy_module": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "8b63179855d865563a88516214874ba40fb299d8",
+      "ran": true,
+      "send_level_exposure_recheck": {
+        "buses_3_4_value_read": false,
+        "levels_exposed_per_scene": [
+          2,
+          2
+        ],
+        "loader_default_probe": "BLOCKED (#12) -- deliberately not probed here; the default's semantics are the SXT-017 decision's own input",
+        "what": "live re-verification of the SXT-011 exposure gap's SHAPE against the binding itself (previously documented only)"
+      },
+      "slots": {
+        "send3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "13.85 dB",
+              "graphs_value": 13.851334,
+              "name": "FX S3 Gain 1",
+              "value": 13.851334,
+              "value_type": "float"
+            },
+            {
+              "display": "295.77 Hz",
+              "graphs_value": -6.876453,
+              "name": "FX S3 Frequency 1",
+              "value": -6.876453,
+              "value_type": "float"
+            },
+            {
+              "display": "0.26 octaves",
+              "graphs_value": 0.264286,
+              "name": "FX S3 Bandwidth 1",
+              "value": 0.264286,
+              "value_type": "float"
+            },
+            {
+              "display": "3.50 dB",
+              "graphs_value": 3.49712,
+              "name": "FX S3 Gain 2",
+              "value": 3.49712,
+              "value_type": "float"
+            },
+            {
+              "display": "1557.04 Hz",
+              "graphs_value": 21.878731,
+              "name": "FX S3 Frequency 2",
+              "value": 21.878731,
+              "value_type": "float"
+            },
+            {
+              "display": "0.22 octaves",
+              "graphs_value": 0.221428,
+              "name": "FX S3 Bandwidth 2",
+              "value": 0.221428,
+              "value_type": "float"
+            },
+            {
+              "display": "18.93 dB",
+              "graphs_value": 18.925774,
+              "name": "FX S3 Gain 3",
+              "value": 18.925774,
+              "value_type": "float"
+            },
+            {
+              "display": "103.91 Hz",
+              "graphs_value": -24.985718,
+              "name": "FX S3 Frequency 3",
+              "value": -24.985718,
+              "value_type": "float"
+            },
+            {
+              "display": "0.67 octaves",
+              "graphs_value": 0.669644,
+              "name": "FX S3 Bandwidth 3",
+              "value": 0.669644,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX S3 Gain",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S3 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 12,
+          "type_display": "EQ",
+          "type_id": 6
+        },
+        "send4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "4.60 dB",
+              "graphs_value": 4.597702,
+              "name": "FX S4 Gain 1",
+              "value": 4.597702,
+              "value_type": "float"
+            },
+            {
+              "display": "592.17 Hz",
+              "graphs_value": 5.142105,
+              "name": "FX S4 Frequency 1",
+              "value": 5.142105,
+              "value_type": "float"
+            },
+            {
+              "display": "0.13 octaves",
+              "graphs_value": 0.129817,
+              "name": "FX S4 Bandwidth 1",
+              "value": 0.129817,
+              "value_type": "float"
+            },
+            {
+              "display": "16.42 dB",
+              "graphs_value": 16.421349,
+              "name": "FX S4 Gain 2",
+              "value": 16.421349,
+              "value_type": "float"
+            },
+            {
+              "display": "440.25 Hz",
+              "graphs_value": 0.009842,
+              "name": "FX S4 Frequency 2",
+              "value": 0.009842,
+              "value_type": "float"
+            },
+            {
+              "display": "0.25 octaves",
+              "graphs_value": 0.250485,
+              "name": "FX S4 Bandwidth 2",
+              "value": 0.250485,
+              "value_type": "float"
+            },
+            {
+              "display": "15.04 dB",
+              "graphs_value": 15.044392,
+              "name": "FX S4 Gain 3",
+              "value": 15.044392,
+              "value_type": "float"
+            },
+            {
+              "display": "273.94 Hz",
+              "graphs_value": -8.203876,
+              "name": "FX S4 Frequency 3",
+              "value": -8.203876,
+              "value_type": "float"
+            },
+            {
+              "display": "0.11 octaves",
+              "graphs_value": 0.114081,
+              "name": "FX S4 Bandwidth 3",
+              "value": 0.114081,
+              "value_type": "float"
+            },
+            {
+              "display": "-11.50 dB",
+              "graphs_value": -11.499584,
+              "name": "FX S4 Gain",
+              "value": -11.499584,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX S4 Mix",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX S4 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 13,
+          "type_display": "EQ",
+          "type_id": 6
+        }
+      }
     }
   },
   "render_eligible_once_12_clears": {
@@ -1258,7 +1489,29 @@
     "dystopia": true,
     "random-bass-fx": true,
     "strynth": false,
-    "trance": true
+    "trance": true,
+    "violin-section": true
+  },
+  "same_class_dual_instance_render_coverage": {
+    "carriers_with_shape": [
+      "strynth",
+      "violin-section"
+    ],
+    "carriers_with_shape_leg_ran": [
+      "strynth",
+      "violin-section"
+    ],
+    "eligible_carrier_exists": "PASS",
+    "eligible_carrier_exists_note": "PASS here means only that at least one carrier with this shape passed the drift gate. It is NOT a render result: no fixture for this routing form has been rendered.",
+    "not_render_eligible_carriers": [
+      "strynth"
+    ],
+    "render": "BLOCKED (#12)",
+    "render_eligible_carriers": [
+      "violin-section"
+    ],
+    "screen": "reports/SXT-028l/artifacts/same-class-carrier-screen.json (every same-class dual-occupant preset in the corpus, screened through the same drift_gate)",
+    "shape": "same-FX-class dual-instance: send3.on && send4.on && send3.tn == send4.tn"
   },
   "schema_version": 2,
   "send_level_exposure_recheck": [
