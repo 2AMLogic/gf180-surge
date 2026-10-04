@@ -382,6 +382,28 @@ untouched by item 1a (`model_revision` unchanged:
 `d863b263005c7d4afc0d361adec139688f1a3f169ab5d07f42f97ca647431a23`), so the
 failure-control re-runs below apply as a regression check only.
 
+**#325 (2026-10-04): carrier-file / live-record agreement is now pinned live.**
+Remedy chosen: test-side invariant only (the optional tool-side guard in
+`tools/extract_rf_send34_inputs.py` was NOT added; the extractor is untouched).
+`test_live_oracle_leg_record_is_internally_consistent` now asserts, per carrier
+slug, `oracle_extraction["ok"] is True` and `oracle_extraction["live"] is not
+None` in every committed carrier file while `live-oracle-extraction.json`
+records the leg as run. The embedded `oracle_extraction.live` blocks are kept.
+A non-oracle re-run of the extractor therefore no longer passes the suite
+silently (it still rewrites the carrier files; the suite now FAILS until they
+are restored). Failing control (hand-mutated `rf-rf-send34-trance.json` to
+`{"ok": false, "live": null}`, then restored; `git status` clean afterwards):
+
+```
+>       assert carrier["oracle_extraction"]["ok"] is True, slug
+E       AssertionError: trance
+FAILED tests/test_sxt028l.py::test_live_oracle_leg_record_is_internally_consistent
+```
+
+Also parameterized in-memory controls (`test_carrier_downgrade_contradicting_
+live_record_is_detected`, one per carrier slug). Unmutated tree:
+`tests/test_sxt028l.py` + `tests/test_byte_frozen_sources.py` 70 passed.
+
 ### 0g. Follow-up #322 (2026-10-03): same-class dual-instance render carrier RESTORED; Strynth.fxp finding retained
 
 **What #322 asked.** §0f measured that `Strynth.fxp`, the only committed

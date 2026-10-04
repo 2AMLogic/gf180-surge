@@ -974,12 +974,50 @@ def test_live_oracle_leg_record_is_internally_consistent():
     for slug, rec in d["per_carrier"].items():
         carrier = json.load(open(os.path.join(
             FX_INPUTS, f"rf-rf-send34-{slug}.json")))
-        assert rec["preset_blob_sha1_on_disk"] == \
-            carrier["preset"]["census_blob_sha1_verified"]
-        for role in ("send3", "send4"):
-            assert rec["slots"][role]["occupied"] == \
-                carrier[role]["occupied"]
-            assert rec["slots"][role]["type_id"] == carrier[role]["type_id"]
+        _assert_carrier_agrees_with_live_record(slug, rec, carrier)
+
+
+def _assert_carrier_agrees_with_live_record(slug, rec, carrier):
+    """#325. A carrier file must agree with a committed ran:true live record,
+    including its embedded oracle_extraction echo: a non-oracle re-run of the
+    extractor resets that block to {"ok": false, "live": null}, which would
+    contradict live-oracle-extraction.json."""
+    assert rec["preset_blob_sha1_on_disk"] == \
+        carrier["preset"]["census_blob_sha1_verified"], slug
+    for role in ("send3", "send4"):
+        assert rec["slots"][role]["occupied"] == \
+            carrier[role]["occupied"], slug
+        assert rec["slots"][role]["type_id"] == carrier[role]["type_id"], slug
+    assert carrier["oracle_extraction"]["ok"] is True, slug
+    assert carrier["oracle_extraction"]["live"] is not None, slug
+
+
+def _live_record_and_carriers():
+    p = os.path.join(SXT, "artifacts", "live-oracle-extraction.json")
+    if not os.path.exists(p):
+        pytest.skip("live-oracle-extraction.json not committed (NOT_RUN)")
+    d = json.load(open(p))
+    return d, {slug: json.load(open(os.path.join(
+        FX_INPUTS, f"rf-rf-send34-{slug}.json"))) for slug in d["per_carrier"]}
+
+
+@pytest.mark.parametrize("slug", CARRIER_SLUGS)
+def test_carrier_downgrade_contradicting_live_record_is_detected(slug):
+    """#325 failure control (in-memory copy; committed files never touched):
+    downgrading one carrier to {"ok": false, "live": null} while the live
+    record still says it ran must FAIL the agreement check for that slug."""
+    d, carriers = _live_record_and_carriers()
+    if slug not in d["per_carrier"]:
+        pytest.skip(f"{slug} has no live record")
+    rec = d["per_carrier"][slug]
+    _assert_carrier_agrees_with_live_record(slug, rec, carriers[slug])  # clean
+    for bad in ({"ok": False, "live": None},
+                {"ok": True, "live": None}):
+        mutated = copy.deepcopy(carriers[slug])
+        mutated["oracle_extraction"] = bad
+        with pytest.raises(AssertionError) as ei:
+            _assert_carrier_agrees_with_live_record(slug, rec, mutated)
+        assert slug in str(ei.value)
 
 
 def _nonzero(drifts):
