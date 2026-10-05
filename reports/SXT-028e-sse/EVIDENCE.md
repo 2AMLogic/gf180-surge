@@ -49,7 +49,7 @@ the reference leg as well as at the model boundary.
 | Frozen model ↔ RTL exact | **PASS** (15 cases exact, 10/10 RTL mutant controls CONTROL-OK) | `rtl-exactness.json` |
 | Shared #57 chain REUSED unchanged (bit-identical) | **PASS** | `tests/test_sxt028e_sse.py::test_shared_chain_is_bit_identical_to_sxt028e` |
 | Model ↔ pinned engine vs [PROPOSED] budgets, **declared-synthetic carriers** | **MEASURED, MIXED** — rms and corr met for FX models 3/5/6 (rms −64.4…−74.6 dBFS, corr ≥ 0.999996) and **not met** for 4 and 7; the **peak** budget is met by **no** carrier above 0 dB drive (F-028e-sse-7) | §3, `artifacts/compare-*.json`, `artifacts/reference-leg.json` |
-| Model ↔ pinned engine, **corpus carriers** | **NOT_RUN** — all three refused by the SXT-012/023 render policies, reasons measured (finding **F-028e-sse-8**) | §1, `artifacts/render-refusals.txt` |
+| Model ↔ pinned engine, **corpus carriers** | **NOT_RUN, confirmed with a stronger basis (#314)** — all **28** in-scope corpus slot instances (not only the three #121 picked) have a recorded terminal refusal: 27 by the static screens, 1 by the measured #136 determinism gate. Admitted carriers: **0**; coverage numbers do not move (finding **F-028e-sse-8**) | §1.1, `artifacts/slot-census.json`, `artifacts/slot-census.txt`, `artifacts/render-refusals.txt` |
 | Reference-leg negative controls live | **5/5 CONTROL-OK** (NC-A, NC-A2, NC-SHARED, NC-B, NC-C) | §3, `artifacts/reference-leg.json` |
 | Model-boundary agreement vs the independent float twin | **PASS** for FX models 3/5/6; **budget NOT met, at the measured sensitivity floor** for 4 and 7 (finding **F-028e-sse-4**) | §2, `negative-controls/` |
 | Per-instance `QuadWaveshaperState` (two concurrent instances) | **PASS**; pooling mutant FAILS | `rtl-exactness.json` `prs-dual-*`, `mutant-wsshared`, `tests/…::test_per_instance_independence` |
@@ -315,6 +315,18 @@ no preset — not one — gains any support claim from this leaf. Routed to
 SXT-017 (#12) for the budget question and to coverage publication (#22) for
 the reach question; the follow-up for admissible corpus carriers is in §10.
 
+**F-028e-sse-8 re-stated by #314 (2026-10-05): from "the three carriers
+tried were refused" to "the corpus contains none".** The full per-slot
+census (§1.1) shows that no active Distortion slot with FX model 3..7 in
+`corpus/normalized/graphs.jsonl` is admissible: 28 of 28 are refused with
+a recorded reason, FX model 7 has zero instances. Consequence for #22:
+the SSE branch has **no** corpus reach, so no preset can gain a
+model-vs-reference claim from this leaf and no coverage number can move;
+claim (2) for FX models 3..7 stays on declared-synthetic carriers
+(§3) until the pinned corpus or the refusal policies change (the latter
+is #310/SXT-017's decision, not this record's). Scope of the basis:
+see §1.1 "What the census does and does not prove".
+
 ## 1. Fixtures, applicability boundary (fail-closed), refusals
 
 None of the three B4-scope carriers SXT-028e named uses an SSE-branch model
@@ -365,6 +377,56 @@ That is a weaker basis than a canonical-fixture replay and it is stated as
 such — it bounds claim (1) only. The reference buses #136 *did* render are
 likewise synthetic (F-028e-sse-8); they bound claim (2) only, and neither
 bound transfers to the other.
+
+### 1.1 Per-slot corpus census (#314, F-028e-sse-8)
+
+`tools/census_distortion_sse_slots.py` enumerates **every** active
+Distortion slot with FX model 3..7 over `corpus/normalized/graphs.jsonl`,
+one row per (preset, slot) — never per preset — and writes
+`artifacts/slot-census.json` / `.txt` (re-derived by
+`tests/test_sxt028e_sse_slot_census.py`, which also recomputes the 28 keys
+independently of the tool).
+
+| FX model | slot instances | REFUSED-STATIC | REFUSED-EMPIRICAL (#136, measured) | admitted |
+|---|---|---|---|---|
+| 3 `wst_sine` | 13 | 12 | 1 (`Reverse Crash`: dry-bus 3× gate) | 0 |
+| 4 `wst_digital` | 8 | 8 | 0 | 0 |
+| 5 `wst_ojd` | 6 | 6 | 0 | 0 |
+| 6 `wst_fwrectify` | 1 | 1 (`fx_disable = 1`) | 0 | 0 |
+| 7 `wst_fuzzsoft` | 0 | — | — | — (zero-instance model, recorded separately; no synthetic row) |
+| **total** | **28** | **27** | **1** | **0** |
+
+Per-row reasons (`fx_disable`, FX-parameter modulation, non-muted
+oscillator with retrigger off, unlanded active-chain classes such as
+`Conditioner`, `Airwindows`, `Reverb 2`, `Freq Shift`, `Nimbus`) are in
+`artifacts/slot-census.txt`. Several rows are refused for an unlanded
+class even where an SSE slot is otherwise unremarkable; none was
+substituted.
+
+**What the census does and does not prove.**
+
+* The static screens are evaluated from the committed normalized graphs
+  (the same values `_render_screens` reads via `getParamVal`), by an
+  oracle-free mirror of those screens. The scene `drift` screen is **not**
+  evaluable from the normalized schema and is recorded NOT_EVALUATED; it can
+  only add refusals, so it cannot rescue any row.
+* No row survived the static screens except `Reverse Crash`, whose
+  empirical refusal was measured on the pinned oracle in #136 (harness
+  control PASS). Its quoted hashes vary run to run by definition; the
+  reason is what is retained.
+* **NOT_RUN in this change:** no oracle host was available to this builder
+  (`surgepy` absent, arm64 darwin, no prebuilt URL), so the 3× gates were
+  not re-run for any row, no fixture bundle or `compare-*.json` was
+  produced, and the five reference-leg negative controls were not
+  re-exercised (there is no new carrier to apply them to; the committed
+  5/5 CONTROL-OK of §3.4 stands for the synthetic legs only). Because 27
+  rows are refused *before* any render, an oracle host cannot change their
+  outcome; only the `Reverse Crash` verdict rests on an oracle run, and
+  that run is #136's.
+* `tools/render_distortion_sse_fixtures.py` is **unchanged**: its
+  `CORPUS_CARRIERS` list is no longer the selector of record. The census
+  is, and since nothing is statically admissible there is nothing further
+  for that tool to consume.
 
 ## 2. Frozen fixed-point model
 
@@ -786,8 +848,10 @@ still fails for every carrier at earlier gates, and this leaf's own gates
 still fail:
 
 * model-vs-reference is measured **only on declared synthetic carriers**;
-  **every corpus carrier is render-REFUSED** (F-028e-sse-8), so no corpus
-  preset has a reference comparison at all;
+  **every corpus carrier is render-REFUSED** (F-028e-sse-8) — since #314
+  that covers all 28 in-scope slot instances (§1.1), so no corpus
+  preset has a reference comparison at all and none can be obtained without
+  changing a policy or the corpus;
 * FX model 6 has no usable corpus carrier and FX model 7 has none at all
   (F-028e-sse-5) — the synthetic carriers built for them add no reach;
 * the rms budget is not met for FX models 4 and 7 (F-028e-sse-4) and the
@@ -821,13 +885,13 @@ record should be read as a coverage claim.
   -4 are **re-stated against measured data and stay routed to #12**, and
   the leg raised two further findings, F-028e-sse-7 (the peak clause) and
   F-028e-sse-8 (zero corpus reach). No budget was relaxed.
-* **#314 — an admissible corpus carrier for the SSE branch.** All three
-  of this leaf's corpus carriers are
-  render-REFUSED (F-028e-sse-8), so claim (2) rests entirely on declared
-  synthetic patches. Finding one or more SSE-branch presets that pass the
-  SXT-012/023 screens *and* the 3× determinism gate (or establishing that
-  none exists in the corpus, which is itself a reportable result) is what
-  would give this class any corpus reach.
+* **#314 — an admissible corpus carrier for the SSE branch.** **DONE
+  2026-10-05 as the "none exists" outcome** (§1.1): all 28 in-scope slot
+  instances carry a recorded terminal refusal, FX model 7 has zero
+  instances, admitted carriers = 0, no budget or screen touched, support
+  count unchanged. Claim (2) still rests entirely on declared synthetic
+  patches. Oracle-host re-run of the Reverse Crash dry-bus gate: NOT_RUN
+  here (no oracle on the builder host).
 * **#317 — re-run the reference leg on the arm64 macOS evidence host.**
   F-028e-sse-1's `rcp_ps` term is
   implementation-defined; §3 measured x86 SSE's estimate. The arm64
@@ -903,6 +967,9 @@ python3 tools/check_fuzz_table_rederivation.py
 
 # anywhere (fail-closed extraction cross-check, oracle-free)
 python3 tools/extract_distortion_sse_inputs.py --mode graphs
+
+# per-slot corpus census (#314), oracle-free; --check reports PASS/STALE
+python3 tools/census_distortion_sse_slots.py --check
 
 # unit/integrity tests (both leaves: this one must not disturb #57)
 python3 -m pytest tests/test_sxt028e_sse.py tests/test_sxt028e.py -q
