@@ -113,16 +113,16 @@ This is exactly the re-render case flagged under
 — it is **not** a live pin (nothing re-derives the stamp, and the entry still
 carries no `sha256` field), but its lint disposition was revisited rather than
 assumed, and the #269 "resolvability is already spent" argument no longer applies
-to that one entry. One of the other eight is a second, independent exception —
-`fixtures/render_slfo_fixture.py`, added by SXT-041 (#75); see its own note
-below. The remaining six stay `false`.
+to that one entry. The ninth entry is a second, independent exception —
+`fixtures/render_slfo_fixture.py`, added by SXT-041 (#75) after #269 and so not
+one of its eight; see its own note below. The remaining seven stay `false`.
 
-| Script | Stamped field | Lint-finding disposition (#269, revisited for row 1 in #126) |
+| Script | Stamped field | Lint-finding disposition (#269; revisited for `fixtures/render_fixture.py` in #126, and stated for `fixtures/render_slfo_fixture.py` in SXT-041 (#75) on the same terms) |
 |---|---|---|
 | `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until **both** the SXT-028f (#126) and the SXT-028e-sse (#136) bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
 | `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `fixtures/render_mw_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
-| `fixtures/render_slfo_fixture.py` | `script_sha256` | cleanable — no finding as of SXT-041 (#75) |
+| `fixtures/render_slfo_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit makes a **resolvable** stamp unresolvable until the SXT-041 (#75) references (the six `reports/SXT-041/artifacts/reference-*.json` sidecars) are re-rendered under the pinned oracle, and fails `test_historical_provenance_carries_no_live_equality_claim` until either that re-render lands or the flag is set `false` in the same change (no finding as of SXT-041) |
 | `tools/ablate_fx.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/ablation_delta.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/render_lp12_reference.py` | `script_sha256` | cleanable — the two F401 `struct`/`zlib` findings were cleaned in #269 |
@@ -159,13 +159,22 @@ the "does not survive a re-render" clause below, applied rather than deferred.
 
 **The ninth entry inherits the same disposition (SXT-041, #75).**
 `fixtures/render_slfo_fixture.py` is ordinary code on the same terms: a lint
-finding in it is cleanable with no registry ceremony and no leaf re-run. It
-differs from the #269 eight only in that its stamp is currently *resolvable*
-(`current_bytes_recorded: true`), so an edit to it does spend that
-resolvability — which costs no committed record its validity, and is restored
-by re-rendering the SXT-041 references under the pinned oracle. The counts
-above ("these eight") are deliberately left as #269's scope; this decision is
-stated here rather than by silently renumbering someone else's ruling.
+finding in it is cleanable with no registry ceremony and no leaf re-run. Its
+stamp is currently *resolvable* (`current_bytes_recorded: true`), as
+`fixtures/render_fixture.py`'s has been since #126; what differs is the route.
+`fixtures/render_fixture.py` regained resolvability by being re-rendered, while
+this entry's never lapsed: SXT-041's references were rendered from the file as
+committed. Either way the #126 precedent applies — an edit spends that
+resolvability, which costs no committed record its validity, and is restored
+by re-rendering the SXT-041 references under the pinned oracle; its row in the
+table above records that cost.
+
+Which counts are #269's: this subsection's heading ("these eight scripts"), its
+"seven of the eight" paragraph, and the "eight scripts' own write sites" check
+below are #269's ruling over the eight entries that existed when it was made,
+and are deliberately not renumbered. The whole-registry counts at the top of
+this section — nine entries, seven `false`, two exceptions — describe the
+registry as it stands and do move with it.
 
 What this decision does **not** license:
 

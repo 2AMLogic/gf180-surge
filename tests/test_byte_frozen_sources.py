@@ -26,7 +26,8 @@ keeps the registry from drifting silently.
 
 The two classes must not be conflated: a live pin must always equal the
 current bytes, while a `script_sha256` stamp is historical and legitimately
-names superseded bytes (every one of them does today).
+names superseded bytes (most of them do today; the registry's
+`current_bytes_recorded` flags say which).
 """
 
 import ast
@@ -256,6 +257,91 @@ def audit_completeness(reg):
     return findings
 
 
+NUMBER_WORDS = {w: i for i, w in enumerate((
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+    "nine", "ten", "eleven", "twelve"))}
+
+# Whole-registry count statements (#326). Each pattern must match exactly
+# once, and each named group must equal the count derived from the JSON:
+# `total` = len(historical_provenance), `false`/`true` = entries whose
+# current_bytes_recorded is False/True. #269-scoped counts ("these eight",
+# "seven of the eight") are deliberately NOT listed: they describe #269's
+# ruling, not the registry as it stands.
+DOC_COUNT_PATTERNS = (
+    (r"of the (?P<total>\w+) scripts below, \*\*(?P<false>\w+)\*\* have "
+     r"current bytes"),
+    r"(?P<true>\w+) are exceptions:",
+    r"The remaining (?P<false>\w+) stay `false`",
+    (r"whole-registry counts at the top of\s+this section — (?P<total>\w+) "
+     r"entries, (?P<false>\w+) `false`, (?P<true>\w+) exceptions"),
+)
+NOTE_COUNT_PATTERNS = (
+    r"(?P<false>\w+) of these (?P<total>\w+) scripts have drifted",
+    r"; (?P<true>\w+) are exceptions\.",
+    r"For the (?P<false>\w+) entries that still read false",
+)
+# What every resolvable entry's disposition must say (the #126 shape).
+COST_CAVEAT = {"json": "cost is no longer zero", "md": "cost no longer zero"}
+
+
+def doc_table_rows(doc):
+    """path -> disposition cell, for the historical-provenance table."""
+    rows = {}
+    for line in doc.splitlines():
+        m = re.match(r"\| `([^`]+)` \| `(?:script|tool)_sha256` \| (.*) \|$",
+                     line)
+        if m:
+            rows[m.group(1)] = m.group(2)
+    return rows
+
+
+def audit_prose(reg, doc):
+    """Findings where the registry's prose disagrees with its own data.
+
+    Counts: every whole-registry count word in the .md and in
+    `historical_provenance_note` must equal the number derived from
+    `historical_provenance`. Dispositions: every entry whose stamp is
+    resolvable (`current_bytes_recorded: true`) must carry the #126 cost
+    caveat, and name a re-render, in both its JSON field and its .md row --
+    the note claims "their per-entry dispositions record that".
+    """
+    entries = provenance(reg)
+    want = {"total": len(entries),
+            "false": sum(not e["current_bytes_recorded"] for e in entries),
+            "true": sum(bool(e["current_bytes_recorded"]) for e in entries)}
+    findings = []
+    for where, text, patterns in (
+            ("md", doc, DOC_COUNT_PATTERNS),
+            ("historical_provenance_note", reg["historical_provenance_note"],
+             NOTE_COUNT_PATTERNS)):
+        for pat in patterns:
+            hits = list(re.finditer(pat, text, flags=re.IGNORECASE))
+            if len(hits) != 1:
+                findings.append(f"{where}: count statement /{pat}/ matched "
+                                f"{len(hits)} times, expected exactly 1")
+                continue
+            for key, word in hits[0].groupdict().items():
+                got = NUMBER_WORDS.get(word.lower())
+                if got != want[key]:
+                    findings.append(
+                        f"{where}: {hits[0].group(0)!r} says {key}={word}, "
+                        f"the registry has {want[key]}")
+    rows = doc_table_rows(doc)
+    for e in entries:
+        if e["path"] not in rows:
+            findings.append(f"md: no table row for {e['path']}")
+            continue
+        if not e["current_bytes_recorded"]:
+            continue
+        for where, text in (("json", e["lint_finding_disposition"]),
+                            ("md", rows[e["path"]])):
+            if COST_CAVEAT[where] not in text or "re-render" not in text:
+                findings.append(
+                    f"{where}: {e['path']} has a resolvable stamp but its "
+                    "disposition lacks the #126 cost caveat / re-render path")
+    return findings
+
+
 # ------------------------------------------------------- non-vacuity legs
 def test_the_scans_see_a_nonempty_tree():
     """Coverage leg: scans over an empty tree would vacuously 'pass'."""
@@ -355,6 +441,51 @@ def test_the_documentation_names_every_registry_entry():
     assert REGISTRY_REL.replace(os.sep, "/") in doc
     for rel in sorted(covered_files() | {e["path"] for e in provenance()}):
         assert rel in doc, f"{rel} is in the registry but not in {DOC_REL}"
+
+
+def read_doc():
+    with open(os.path.join(REPO, DOC_REL), encoding="utf-8") as f:
+        return f.read()
+
+
+def test_the_prose_counts_and_dispositions_match_the_registry():
+    """#326: a renumbering or a missing cost caveat cannot drift silently."""
+    assert audit_prose(registry(), read_doc()) == []
+
+
+@pytest.mark.parametrize("doctor", [
+    "md_count_word", "note_count_word", "drop_md_caveat", "drop_json_caveat",
+    "drop_count_sentence", "flip_flag"])
+def test_control_the_prose_audit_fires_on_a_doctored_copy(doctor):
+    """The #326 failure control, on in-memory copies only."""
+    reg, doc = copy.deepcopy(registry()), read_doc()
+    slfo = next(e for e in reg["historical_provenance"]
+                if e["path"] == "fixtures/render_slfo_fixture.py")
+    if doctor == "md_count_word":
+        mutant = doc.replace("The remaining seven stay", "The remaining six stay")
+        assert mutant != doc, "the mutant did not apply"
+        doc = mutant
+    elif doctor == "note_count_word":
+        note = reg["historical_provenance_note"]
+        reg["historical_provenance_note"] = note.replace(
+            "seven of these nine", "six of these nine")
+        assert reg["historical_provenance_note"] != note
+    elif doctor == "drop_md_caveat":
+        row = doc_table_rows(doc)[slfo["path"]]
+        doc = doc.replace(row, "cleanable — no finding as of SXT-041 (#75)")
+    elif doctor == "drop_json_caveat":
+        slfo["lint_finding_disposition"] = \
+            "cleanable; no lint finding as of SXT-041 (#75)"
+    elif doctor == "drop_count_sentence":
+        mutant = re.sub(r"The remaining \w+ stay `false`\.", "", doc)
+        assert mutant != doc, "the mutant did not apply"
+        doc = mutant
+    else:
+        # A flag flip moves the derived counts; the unchanged prose must
+        # then disagree with them.
+        slfo["current_bytes_recorded"] = False
+    findings = audit_prose(reg, doc)
+    assert findings, f"the {doctor} prose leg did not fire"
 
 
 @pytest.mark.parametrize("rel", ["AGENTS.md", "CLAUDE.md"])
