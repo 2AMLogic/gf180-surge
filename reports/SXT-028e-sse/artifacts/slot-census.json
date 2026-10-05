@@ -1,0 +1,623 @@
+{
+  "admitted_carriers": 0,
+  "disposition_counts": {
+    "REFUSED-EMPIRICAL-COMMITTED": 1,
+    "REFUSED-STATIC": 27
+  },
+  "finding": "F-028e-sse-8",
+  "in_scope_slot_instances": 28,
+  "issue": 314,
+  "kind": "corpus-reach INVENTORY; not a support claim; coverage numbers do not move",
+  "leaf": "SXT-028e-sse",
+  "model_histogram": {
+    "3": 13,
+    "4": 8,
+    "5": 6,
+    "6": 1,
+    "7": 0
+  },
+  "model_zero_instances": [
+    7
+  ],
+  "slots": [
+    {
+      "census_blob_sha1": "8ede1b51dd2b9795ae1e53c769c26c439eaf053b",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Basses/House Fly.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [
+        "fx_disable = 1 (non-zero)",
+        "modulation routed into FX parameters: FX G1 Feedback, FX G1 Mix, FX G1 Time, FX G2 Gain, FX S1 Drive, FX S1 Feedback",
+        "scene 0 osc3 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner, Freq Shift -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner",
+        "Freq Shift"
+      ]
+    },
+    {
+      "census_blob_sha1": "8a38d372414ded214868341deaa66723218ae4ed",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Basses/Normal Bass.fxp",
+      "slot_index": 6,
+      "slot_role": "global1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX G1 Drive, FX G1 Feedback, FX G1 Frequency, FX G1 Gain",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc2 non-muted with retrigger off",
+        "scene 1 osc1 non-muted with retrigger off",
+        "scene 1 osc2 non-muted with retrigger off"
+      ],
+      "unlanded_classes_in_chain": []
+    },
+    {
+      "census_blob_sha1": "de5c684d96d6090728dfe2ede0a3dbd73af1d65f",
+      "determinism_gate_dry": "FAIL (measured, #136)",
+      "determinism_gate_wet": "NOT_RUN (short-circuited by the dry-bus refusal)",
+      "disposition": "REFUSED-EMPIRICAL-COMMITTED",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "empirical_basis": "reports/SXT-028e-sse/artifacts/render-refusals.txt (#136, pinned oracle, harness control PASS)",
+      "empirical_refusal_reasons": [
+        "dry bus: determinism gate failed over 3 repeats"
+      ],
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Drums/Reverse Crash.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [],
+      "unlanded_classes_in_chain": []
+    },
+    {
+      "census_blob_sha1": "6b2556657c5f525a71574b0dbf53a3219e21127b",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Plucks/Brass N4.fxp",
+      "slot_index": 5,
+      "slot_role": "send2",
+      "static_screen_reasons": [
+        "fx_disable = 192 (non-zero)",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc2 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Freq Shift, Reverb 2 -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Freq Shift",
+        "Reverb 2"
+      ]
+    },
+    {
+      "census_blob_sha1": "a2ef6693f372c76de6380f99b313d08cf51f6e85",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Plucks/Modern Bell.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [
+        "fx_disable = 130 (non-zero)",
+        "modulation routed into FX parameters: FX A1 Mix, FX G1 Gain, FX G1 Threshold",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc2 non-muted with retrigger off",
+        "scene 0 osc3 non-muted with retrigger off",
+        "scene 1 osc2 non-muted with retrigger off",
+        "scene 1 osc3 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner, Freq Shift -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner",
+        "Freq Shift"
+      ]
+    },
+    {
+      "census_blob_sha1": "60098f57a4181ef4372539d9798ef1ee267814ca",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Lopyt/FX/Weird Dubstep.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX A2 Gain",
+        "scene 0 osc1 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Phaser, Waveshaper -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Phaser",
+        "Waveshaper"
+      ]
+    },
+    {
+      "census_blob_sha1": "6bc13001e2c7ee9b6fc4b34f5c8005b435117e2a",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/Basses/Neuro Grease.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "fx_disable = 35 (non-zero)",
+        "modulation routed into FX parameters: FX A2 Drive",
+        "unlanded class(es) in the active chain: Airwindows, Freq Shift, Nimbus -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Freq Shift",
+        "Nimbus"
+      ]
+    },
+    {
+      "census_blob_sha1": "6bc13001e2c7ee9b6fc4b34f5c8005b435117e2a",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/Basses/Neuro Grease.fxp",
+      "slot_index": 1,
+      "slot_role": "ains2",
+      "static_screen_reasons": [
+        "fx_disable = 35 (non-zero)",
+        "modulation routed into FX parameters: FX A2 Drive",
+        "unlanded class(es) in the active chain: Airwindows, Freq Shift, Nimbus -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Freq Shift",
+        "Nimbus"
+      ]
+    },
+    {
+      "census_blob_sha1": "a56415d7581ac932e36f3d36c3267202a224a3bd",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/Drums/Toms Electric.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX A1 Gain, FX G1 Wetness",
+        "unlanded class(es) in the active chain: Airwindows -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows"
+      ]
+    },
+    {
+      "census_blob_sha1": "e0b6b1d01a6dd1f696823056067bc3625e791075",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/FX/Random Bass FX.fxp",
+      "slot_index": 6,
+      "slot_role": "global1",
+      "static_screen_reasons": [
+        "fx_disable = 72 (non-zero)",
+        "modulation routed into FX parameters: FX A3 Mix, FX A4 Center, FX A4 Mix, FX A4 Rate, FX G1 Gain, FX G1 High Cut",
+        "scene 0 osc1 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Airwindows, Conditioner, Freq Shift, Nimbus, Phaser, Reverb 2 -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Conditioner",
+        "Freq Shift",
+        "Nimbus",
+        "Phaser",
+        "Reverb 2"
+      ]
+    },
+    {
+      "census_blob_sha1": "bfc146275901f180552a60aab932594de1daf92c",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/Leads/Turnout.fxp",
+      "slot_index": 6,
+      "slot_role": "global1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX A1 Mix, FX G1 Drive, FX G1 Feedback, FX G1 Frequency, FX G1 Gain, FX G2 Treble",
+        "unlanded class(es) in the active chain: Conditioner -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner"
+      ]
+    },
+    {
+      "census_blob_sha1": "0a1152223d80eb056f62f91d449022b546e4d734",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/Percussion/Another Perc Thing.fxp",
+      "slot_index": 6,
+      "slot_role": "global1",
+      "static_screen_reasons": [
+        "fx_disable = 64 (non-zero)",
+        "modulation routed into FX parameters: FX B1 Time, FX G2 Width",
+        "scene 1 osc1 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner, Reverb 2 -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner",
+        "Reverb 2"
+      ]
+    },
+    {
+      "census_blob_sha1": "d71286b5a50959e7cb882b9ec10961117b6fd129",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 3,
+      "fx_model_name": "wst_sine",
+      "preset": "resources/data/patches_3rdparty/Slowboat/Sequences/Bouncy Surge.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "fx_disable = 1 (non-zero)",
+        "scene 0 osc1 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Airwindows, Conditioner -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Conditioner"
+      ]
+    },
+    {
+      "census_blob_sha1": "b3f2925de04c3fbe8029fd4e78de6b841671a0bb",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Cybersoda/Basses/Badass.fxp",
+      "slot_index": 1,
+      "slot_role": "ains2",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX G1 Drive, FX G1 Gain, FX G1 High Cut, FX G2 Input Gain",
+        "unlanded class(es) in the active chain: Airwindows, CHOW, Freq Shift -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "CHOW",
+        "Freq Shift"
+      ]
+    },
+    {
+      "census_blob_sha1": "008951a4543da6febb6e84dc7cdb4bdebf3abda2",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Basses/Longest Bass.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX G1 Mix",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc2 non-muted with retrigger off",
+        "scene 1 osc1 non-muted with retrigger off",
+        "scene 1 osc2 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner, Freq Shift -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner",
+        "Freq Shift"
+      ]
+    },
+    {
+      "census_blob_sha1": "1bb5209f0f1d306df05a109d6015cf1a99c73d08",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Damon Armani/Plucks/Trance Pluck.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX A1 Mix, FX S1 Drive",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc3 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner"
+      ]
+    },
+    {
+      "census_blob_sha1": "c6d604f7622e0403a9b3fe0298864eed899a5836",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Dan Maurer/Rhythms/Rhythm and Lead.fxp",
+      "slot_index": 1,
+      "slot_role": "ains2",
+      "static_screen_reasons": [
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc2 non-muted with retrigger off",
+        "scene 0 osc3 non-muted with retrigger off",
+        "scene 1 osc1 non-muted with retrigger off",
+        "scene 1 osc2 non-muted with retrigger off",
+        "scene 1 osc3 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Phaser -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Phaser"
+      ]
+    },
+    {
+      "census_blob_sha1": "138ce2cd5a166b45d2e3b04296e9bcdc019d08cd",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Kyurumi/Leads/High Meta.fxp",
+      "slot_index": 1,
+      "slot_role": "ains2",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX A2 Bandwidth, FX A2 Drive, FX A2 Frequency, FX A2 Gain, FX A2 High Cut, FX S1 Mix",
+        "scene 0 osc2 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner, Reverb 2 -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner",
+        "Reverb 2"
+      ]
+    },
+    {
+      "census_blob_sha1": "e0b6b1d01a6dd1f696823056067bc3625e791075",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Slowboat/FX/Random Bass FX.fxp",
+      "slot_index": 3,
+      "slot_role": "bins2",
+      "static_screen_reasons": [
+        "fx_disable = 72 (non-zero)",
+        "modulation routed into FX parameters: FX A3 Mix, FX A4 Center, FX A4 Mix, FX A4 Rate, FX G1 Gain, FX G1 High Cut",
+        "scene 0 osc1 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Airwindows, Conditioner, Freq Shift, Nimbus, Phaser, Reverb 2 -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Conditioner",
+        "Freq Shift",
+        "Nimbus",
+        "Phaser",
+        "Reverb 2"
+      ]
+    },
+    {
+      "census_blob_sha1": "e8068f6697b8db94dc5b8c44eda75b53c9bc8079",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Vospi/Drums/Hakko Kick.fxp",
+      "slot_index": 6,
+      "slot_role": "global1",
+      "static_screen_reasons": [
+        "unlanded class(es) in the active chain: Airwindows -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows"
+      ]
+    },
+    {
+      "census_blob_sha1": "63a85b908d40f61cc3a9b8231fc77c281da0789f",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 4,
+      "fx_model_name": "wst_digital",
+      "preset": "resources/data/patches_3rdparty/Vospi/Keys/Picked Driven Synth.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 1 osc1 non-muted with retrigger off"
+      ],
+      "unlanded_classes_in_chain": []
+    },
+    {
+      "census_blob_sha1": "6e34dddde790d62af7123713617a213d8bed4e50",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 5,
+      "fx_model_name": "wst_ojd",
+      "preset": "resources/data/patches_3rdparty/Cybersoda/Basses/Joe Has Had A Bad Day.fxp",
+      "slot_index": 8,
+      "slot_role": "ains3",
+      "static_screen_reasons": [
+        "fx_disable = 16 (non-zero)",
+        "modulation routed into FX parameters: FX A1 Bias, FX A1 Drive, FX A1 Mix, FX A4 Mix, FX A4 Sharpness, FX A4 Spread",
+        "unlanded class(es) in the active chain: Airwindows, Flanger, Freq Shift, Nimbus, Phaser, Waveshaper -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Flanger",
+        "Freq Shift",
+        "Nimbus",
+        "Phaser",
+        "Waveshaper"
+      ]
+    },
+    {
+      "census_blob_sha1": "5cf02de086aa01e4de8a5cb96ca76b69bbbcd688",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 5,
+      "fx_model_name": "wst_ojd",
+      "preset": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX A2 Drive, FX S3 Mix, FX S4 Mix",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc2 non-muted with retrigger off",
+        "scene 0 osc3 non-muted with retrigger off",
+        "scene 1 osc1 non-muted with retrigger off",
+        "scene 1 osc3 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Conditioner -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Conditioner"
+      ]
+    },
+    {
+      "census_blob_sha1": "714821ee0c7561bc1293bb422e2c4bd2f978b163",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 5,
+      "fx_model_name": "wst_ojd",
+      "preset": "resources/data/patches_3rdparty/Kinsey Dulcet/Guitars/Mutant Lo-Fi Acoustic Guitar Workstation.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX S1 Drive",
+        "scene 0 osc1 non-muted with retrigger off"
+      ],
+      "unlanded_classes_in_chain": []
+    },
+    {
+      "census_blob_sha1": "0b281c70208d1771e27884b6e3728d06e51016a4",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 5,
+      "fx_model_name": "wst_ojd",
+      "preset": "resources/data/patches_3rdparty/Kinsey Dulcet/Guitars/Mutant Lo-Fi Electric Guitar Workstation.fxp",
+      "slot_index": 4,
+      "slot_role": "send1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX S1 Drive",
+        "scene 0 osc1 non-muted with retrigger off"
+      ],
+      "unlanded_classes_in_chain": []
+    },
+    {
+      "census_blob_sha1": "d77534a7d94910cdbfecd980f212780b7e24cdce",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 5,
+      "fx_model_name": "wst_ojd",
+      "preset": "resources/data/patches_3rdparty/Kinsey Dulcet/Percussion/Deep Cut Snare.fxp",
+      "slot_index": 6,
+      "slot_role": "global1",
+      "static_screen_reasons": [
+        "modulation routed into FX parameters: FX G1 Drive, FX G3 Mix",
+        "scene 0 osc2 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Reverb 2 -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Reverb 2"
+      ]
+    },
+    {
+      "census_blob_sha1": "997798f3140ac77fcaee9bd28d733554fcbcc4f2",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 5,
+      "fx_model_name": "wst_ojd",
+      "preset": "resources/data/patches_3rdparty/Kinsey Dulcet/Sequences/Holy Emoji.fxp",
+      "slot_index": 9,
+      "slot_role": "ains4",
+      "static_screen_reasons": [
+        "fx_disable = 128 (non-zero)",
+        "modulation routed into FX parameters: FX A4 Gain",
+        "scene 0 osc1 non-muted with retrigger off",
+        "scene 0 osc3 non-muted with retrigger off",
+        "scene 1 osc1 non-muted with retrigger off",
+        "scene 1 osc2 non-muted with retrigger off",
+        "scene 1 osc3 non-muted with retrigger off",
+        "unlanded class(es) in the active chain: Airwindows, Conditioner, Spring Reverb -- a complete-wet comparison would need a model this project has not landed, and substituting a generic is refused"
+      ],
+      "unlanded_classes_in_chain": [
+        "Airwindows",
+        "Conditioner",
+        "Spring Reverb"
+      ]
+    },
+    {
+      "census_blob_sha1": "d71a9cfd39789ca43e9b72ca3e65dd40d10be8f2",
+      "determinism_gate_dry": "NOT_RUN (refused statically)",
+      "determinism_gate_wet": "NOT_RUN (refused statically)",
+      "disposition": "REFUSED-STATIC",
+      "drift_screen": "NOT_EVALUATED (scene drift is not in the normalized graph schema; oracle read required)",
+      "fx_model": 6,
+      "fx_model_name": "wst_fwrectify",
+      "preset": "resources/data/patches_3rdparty/Luna/Guitars/Awful FM Guitar.fxp",
+      "slot_index": 0,
+      "slot_role": "ains1",
+      "static_screen_reasons": [
+        "fx_disable = 1 (non-zero)"
+      ],
+      "unlanded_classes_in_chain": []
+    }
+  ],
+  "source": "corpus/normalized/graphs.jsonl"
+}
