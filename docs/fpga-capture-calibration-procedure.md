@@ -706,7 +706,8 @@ which never counts toward original-preset coverage (root `CLAUDE.md`).
 
 The controls below are only testable if the design carries the following.
 This is a **specification for #304's build** (and for the RTL issue that
-implements it); none of it exists yet and none of it is claimed here.
+implements it). It is implemented and verified **in simulation only** (see
+the implementation note below); no hardware behavior of it is claimed here.
 
 | Register / signal | Meaning |
 |---|---|
