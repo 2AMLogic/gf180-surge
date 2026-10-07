@@ -190,6 +190,23 @@ OVERRIDE_KEYS = [
 ]
 
 
+def require_current_revision(inputs, label):
+    """Refuse an inputs sidecar extracted under another fixture revision.
+
+    Revision 1 sidecars carry no `fixture_revision` field.  Pure (no
+    oracle), so the refusal the reference renderer relies on is testable
+    without the pinned engine.  `label` names the sidecar in the message.
+    """
+    in_rev = inputs.get("fixture_revision", 1)
+    if in_rev != FIXTURE_REVISION:
+        raise Refuse(
+            "inputs %s were extracted under fixture revision %r; this "
+            "renderer applies revision %r -- STALE, re-run "
+            "model/voice/playmode/extract_inputs.py first"
+            % (label, in_rev, FIXTURE_REVISION))
+    return in_rev
+
+
 def preset_abs(oc, carrier):
     rel, _slot = CARRIERS[carrier]
     return os.path.join(oc.engine_dir(), "resources", "data", rel)

@@ -15,6 +15,7 @@ synthetic signals: that shows the gate rejects silence and a stale /
 non-pitched signal and accepts a pitched Sine, not that any engine render
 passes it.
 """
+import ast
 import json
 import math
 import os
@@ -32,13 +33,41 @@ import fixture_config as fc                                   # noqa: E402
 import reference_validity as rv                               # noqa: E402
 from refusal import Refuse                                    # noqa: E402
 
-# apply_overrides imports surgepy.constants for fxt_off only
-_sp = types.ModuleType("surgepy")
-_spc = types.ModuleType("surgepy.constants")
-_spc.fxt_off = 0
-_sp.constants = _spc
-sys.modules.setdefault("surgepy", _sp)
-sys.modules.setdefault("surgepy.constants", _spc)
+
+# apply_overrides does `import surgepy.constants` (for fxt_off only) at CALL
+# time.  The stand-in is installed per test through monkeypatch, which
+# restores sys.modules on teardown, so it can never leak into another test
+# module (an oracle probe such as `oracle_common.import_surgepy()` must keep
+# seeing "not installed" and skip).  No module under test imports surgepy
+# at import time; the teardown below still evicts any module that captured
+# the stand-in, so a future import-time `import surgepy` cannot cache it.
+def _fake_surgepy():
+    sp = types.ModuleType("surgepy")
+    spc = types.ModuleType("surgepy.constants")
+    spc.fxt_off = 0
+    sp.constants = spc
+    return sp, spc
+
+
+def _install_fake_surgepy(monkeypatch):
+    sp, spc = _fake_surgepy()
+    monkeypatch.setitem(sys.modules, "surgepy", sp)
+    monkeypatch.setitem(sys.modules, "surgepy.constants", spc)
+    yield sp
+    for name, mod in list(sys.modules.items()):
+        if mod is sp or mod is spc:
+            continue                    # monkeypatch restores these two
+        if any(v is sp or v is spc
+               for v in list(getattr(mod, "__dict__", {}).values())):
+            sys.modules.pop(name, None)
+
+
+@pytest.fixture
+def fake_surgepy(monkeypatch):
+    yield from _install_fake_surgepy(monkeypatch)
+
+
+pytestmark = pytest.mark.usefixtures("fake_surgepy")
 
 
 # ------------------------------------------------------------- API double
@@ -373,10 +402,20 @@ def test_rev1_readback_could_not_see_the_stale_route_rev2_refuses():
         fc.classify_and_pin_routes(s, pinned_names)
 
 
+def _function_source(src, name):
+    tree = ast.parse(src)
+    node = next(n for n in tree.body
+                if isinstance(n, ast.FunctionDef) and n.name == name)
+    return ast.get_source_segment(src, node)
+
+
 def test_production_entry_points_never_pass_the_private_control_hook():
     src = open(fc.__file__, encoding="utf-8").read()
-    body = src.split("def configure_loaded", 1)[1]
-    assert "_nc_record_stale" not in body
+    for fn in ("build_instance", "configure_loaded",
+               "clear_osc_param_routes", "classify_and_pin_routes",
+               "probe_cut_activation"):
+        body = _function_source(src, fn)
+        assert "_nc_record_stale" not in body, fn
     for rel in ("model/voice/playmode/extract_inputs.py",
                 "tools/render_pm_reference.py"):
         assert "_nc_record_stale" not in open(os.path.join(REPO, rel),
@@ -403,6 +442,46 @@ def test_normalized_corpus_osc1_route_inventory_for_the_carriers():
     assert found["bass2"] == [] and found["bass5"] == []
     assert found["digibass"] == [(1, 225, "A Osc 1 Morph"),
                                  (16, 225, "A Osc 1 Morph")]
+
+
+def test_renderer_revision_gate_refuses_other_revision_inputs():
+    with pytest.raises(Refuse, match="fixture revision 1.*STALE"):
+        fc.require_current_revision({}, "inputs/x.json")       # rev 1: no field
+    with pytest.raises(Refuse, match="STALE"):
+        fc.require_current_revision({"fixture_revision": 3}, "x")
+    assert fc.require_current_revision(
+        {"fixture_revision": fc.FIXTURE_REVISION}, "x") == 2
+    # every committed sidecar is revision 1 today -> the renderer refuses it
+    for c in fc.FIXTURE_CARRIERS:
+        p = os.path.join(REPO, "model", "voice", "playmode", "inputs",
+                         c + ".json")
+        with open(p, encoding="utf-8") as f:
+            d = json.load(f)
+        if d.get("fixture_revision", 1) != fc.FIXTURE_REVISION:
+            with pytest.raises(Refuse, match="STALE"):
+                fc.require_current_revision(d, c)
+    # and the renderer actually routes through the gate
+    with open(os.path.join(REPO, "tools", "render_pm_reference.py"),
+              encoding="utf-8") as f:
+        rsrc = f.read()
+    assert "fc.require_current_revision(inputs," in \
+        _function_source(rsrc, "main")
+
+
+def test_fake_surgepy_is_scoped_to_the_test():
+    """Regression guard for the CI leak: the stand-in must be removed (or
+    the prior entry restored) when the fixture's monkeypatch is undone."""
+    assert sys.modules["surgepy"].__name__ == "surgepy"
+    assert not hasattr(sys.modules["surgepy"], "__file__")   # the stand-in
+    before = {k: sys.modules.get(k) for k in ("surgepy", "surgepy.constants")}
+    mp = pytest.MonkeyPatch()
+    gen = _install_fake_surgepy(mp)
+    inner = next(gen)
+    assert sys.modules["surgepy"] is inner
+    with pytest.raises(StopIteration):
+        next(gen)
+    mp.undo()
+    assert {k: sys.modules.get(k) for k in before} == before
 
 
 def test_current_revision_inputs_never_record_an_osc_p_route_as_pinned():

@@ -172,14 +172,7 @@ def main():
     # older fixture revision (revision 1 carries no field) describes a
     # different configuration; rendering a "reference" against it would
     # pair a revision-2 render with stale inputs.  Re-extract first.
-    in_rev = inputs.get("fixture_revision", 1)
-    if in_rev != fc.FIXTURE_REVISION:
-        raise fc.Refuse(
-            "inputs %s were extracted under fixture revision %r; this "
-            "renderer applies revision %r -- STALE, re-run "
-            "model/voice/playmode/extract_inputs.py first"
-            % (os.path.relpath(inputs_rel, REPO), in_rev,
-               fc.FIXTURE_REVISION))
+    fc.require_current_revision(inputs, os.path.relpath(inputs_rel, REPO))
 
     porta_options = None
     if any((args.porta_curve is not None, args.porta_gliss,
