@@ -1,0 +1,2199 @@
+{
+  "claim_scope": "a harness settle-boundary audit. Not a fidelity result, not a support claim; A/B output invariance would establish the tested output behaviour only, not every internal state variable. Committed leaf records are not modified.",
+  "comparator": "tools/compare_chorus_reference.py",
+  "comparator_git_blob_sha1": "9c405c2ec15ebdba9b483af199c47fc9a33543ac",
+  "environment": {
+    "audit_tool_git_blob_sha1": "3f5d18e080e429528d070dfdc513c70881e56355",
+    "block_size": 32,
+    "comparator_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_submodules_sha256": "61823b187e8751bc043541753f7eb35ea0977e16e20c8eda57dff1d94782a553",
+    "machine": "x86_64",
+    "numpy": "1.26.4",
+    "oracle_manifest": "oracle/manifest.json",
+    "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
+    "platform": "Linux-6.17.0-1019-aws-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "sample_rate": 48000,
+    "source_revision": "e3a5e8891e46b9df8fbac0600a30e4b6a41d8ba5",
+    "source_tree_dirty": false
+  },
+  "issue": "#318",
+  "leaves": [
+    "SXT-028c (fx:Chorus)"
+  ],
+  "oracle": {
+    "ORACLE_PREBUILT_URL_set": false,
+    "ORACLE_SURGE_DIR_set": false,
+    "available": false,
+    "engine_dir_present": false,
+    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "reason": "no surgepy build under /Users/joseph/dev/surge-xt-oracle/surge/build-py311/src/surge-python",
+    "surgepy_dir_present": false
+  },
+  "production_preroll": {
+    "blocks": 375,
+    "inherited_from": null,
+    "source": "SETTLE_BLOCKS = 375 (module constant)"
+  },
+  "rows": [
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "PASS",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": false,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.13187153009855024,
+              "spectral_corr": -1.005172731605164e-06
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.16316074249715484,
+              "spectral_corr": -7.308337180989e-07
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.14188104195356743,
+              "spectral_corr": -8.901396804095185e-07
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/alienappears__seq-notes-coverage-v1/preroll-0/model__alienappears__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/alienappears__seq-notes-coverage-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/alienappears__seq-notes-coverage-v1/preroll-0"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 530.4415588378906,
+                  "rms_diff_dbfs": -94.45253186002384,
+                  "spectral_corr": 0.9999922956304497
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 530.4415588378906,
+                  "rms_diff_dbfs": -94.36745768593383,
+                  "spectral_corr": 0.9999928009117781
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 530.4415588378906,
+                  "rms_diff_dbfs": -94.44386661146254,
+                  "spectral_corr": 0.9999919257597341
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -53.77871578018956,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "0e17381d948f3054c74f4ffae0a628aa460966bbe7f7e51a9003c2fcf50d75fa",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/alienappears__seq-notes-coverage-v1/preroll-375/model__alienappears__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/alienappears__seq-notes-coverage-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/alienappears__seq-notes-coverage-v1/preroll-375"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 530.4415588378906,
+                  "rms_diff_dbfs": -94.58440339012239,
+                  "spectral_corr": 0.9999933008031813
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 530.4415588378906,
+                  "rms_diff_dbfs": -94.53061842843098,
+                  "spectral_corr": 0.9999935317454962
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 530.4415588378906,
+                  "rms_diff_dbfs": -94.5857476534161,
+                  "spectral_corr": 0.9999928158994145
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -53.838766314852506,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "95f5f2a893725f31d821b314972500258333b7daabb2a406f400e63ede7a40e9",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "3bfbc5f1546e52ed2c3e1922e537f0fcfd1157001b964611ecb0a89e14899ab6",
+          "sidecar_declared_buffer_sha256": "3bfbc5f1546e52ed2c3e1922e537f0fcfd1157001b964611ecb0a89e14899ab6",
+          "wav": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1-wet.f32.wav",
+          "wav_sha256": "759895c4c0274d67f7e4d3d5d375af811b9191042782029f7c10e3dd045ce84e"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 530.4415588378906,
+              "rms_diff_dbfs": -94.584418226954,
+              "spectral_corr": 0.9999933002897194
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 530.4415588378906,
+              "rms_diff_dbfs": -94.53066295748805,
+              "spectral_corr": 0.9999935330508232
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 530.4415588378906,
+              "rms_diff_dbfs": -94.58577085702507,
+              "spectral_corr": 0.9999928158665067
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -53.838623488158234,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.13188636693016065,
+              "spectral_corr": -1.0046592697765533e-06
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.1632052715542187,
+              "spectral_corr": -7.321390450565346e-07
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.14190424556252879,
+              "spectral_corr": -8.901067726219125e-07
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 1.4836831610409718e-05,
+              "spectral_corr": 5.134618286106729e-10
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 4.4529057063869004e-05,
+              "spectral_corr": -1.3053269576346338e-09
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 2.3203608961352984e-05,
+              "spectral_corr": 3.290778760600688e-11
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028c/artifacts/model__alienappears__seq-notes-coverage-v1.f32.wav",
+        "model_wav_sha256": "852041a1dd3dc9a22205c7f36da8c6dc31a63d41bb7a05547e0a749c680c6bc9",
+        "production_leg_metrics_bit_identical_to_committed": false,
+        "production_leg_metrics_max_rel_deviation": 4.7105410742643826e-07,
+        "production_leg_metrics_within_tolerance": false,
+        "production_leg_reproduces_committed_model": false,
+        "reason": "the production leg does not reproduce the committed model render / metrics / verdict on this host; the committed record is STALE for this comparison",
+        "record": "reports/SXT-028c/artifacts/compare-alienappears__seq-notes-coverage-v1.json",
+        "record_sha256": "bd2df4758f1265ce222a045f4525599ce8170227a9d81b01b03fb945b4df27b9",
+        "status": "STALE",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "alienappears",
+      "chain": "globals: reverb1(6), chorus(7)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+          "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-notes-coverage-v1",
+          "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+        },
+        "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
+        "sidecar_sha256": "87cab60cb2da549967b2b7d9155e81f46feb8932abd5d1df63f57fd44e646a00"
+      },
+      "leaf": "SXT-028c (fx:Chorus)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-notes-coverage-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "PASS",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": false,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": -1.0,
+              "rms_diff_dbfs": 0.3706354135497065,
+              "spectral_corr": -3.270821106626798e-06
+            },
+            "R": {
+              "max_abs_diff_lsb": 20.0,
+              "rms_diff_dbfs": 0.4854905064411241,
+              "spectral_corr": -3.966263799171088e-06
+            },
+            "mono": {
+              "max_abs_diff_lsb": 11.53125,
+              "rms_diff_dbfs": 0.4270821163823939,
+              "spectral_corr": -3.2464261464637545e-06
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/alienappears__seq-poly-8-v1/preroll-0/model__alienappears__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/alienappears__seq-poly-8-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/alienappears__seq-poly-8-v1/preroll-0"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1261.25,
+                  "rms_diff_dbfs": -79.23078439477624,
+                  "spectral_corr": 0.9999962411376853
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1242.90625,
+                  "rms_diff_dbfs": -79.12272118938948,
+                  "spectral_corr": 0.9999954167712752
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1241.59375,
+                  "rms_diff_dbfs": -79.2270907471418,
+                  "spectral_corr": 0.9999961087941684
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -60.220504012804135,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "353f9b14dc572c26c917584e222427ebb4ac78ff3689f198f2e0d451f5fe63ab",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/alienappears__seq-poly-8-v1/preroll-375/model__alienappears__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/alienappears__seq-poly-8-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "alienappears",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/alienappears__seq-poly-8-v1/preroll-375"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1262.25,
+                  "rms_diff_dbfs": -79.60141980832594,
+                  "spectral_corr": 0.9999995119587919
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1222.90625,
+                  "rms_diff_dbfs": -79.6082116958306,
+                  "spectral_corr": 0.9999993830350744
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1230.0625,
+                  "rms_diff_dbfs": -79.6541728635242,
+                  "spectral_corr": 0.9999993552203149
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -60.24712915334122,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "fdcaedd629197a7366b2b4bab99c7049a0458c8e3142dafe88fa3a8b2422e292",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "bb5a40759315561ee690ef15a722dd50fbdcdae019959bc0486e7ef84f96541f",
+          "sidecar_declared_buffer_sha256": "bb5a40759315561ee690ef15a722dd50fbdcdae019959bc0486e7ef84f96541f",
+          "wav": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1-wet.f32.wav",
+          "wav_sha256": "2c82f61625dc51633214e9c09dd0baf70869aced76d4ca0d9fad1d62a8d0d55e"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 1262.25,
+              "rms_diff_dbfs": -79.60142312830462,
+              "spectral_corr": 0.9999995120131207
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 1222.90625,
+              "rms_diff_dbfs": -79.60818174335454,
+              "spectral_corr": 0.9999993828412151
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 1230.0625,
+              "rms_diff_dbfs": -79.65416513583725,
+              "spectral_corr": 0.9999993550542892
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -60.2471192888784,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": -1.0,
+              "rms_diff_dbfs": 0.3706387335283807,
+              "spectral_corr": -3.270875435390508e-06
+            },
+            "R": {
+              "max_abs_diff_lsb": 20.0,
+              "rms_diff_dbfs": 0.48546055396505494,
+              "spectral_corr": -3.9660699399091115e-06
+            },
+            "mono": {
+              "max_abs_diff_lsb": 11.53125,
+              "rms_diff_dbfs": 0.4270743886954449,
+              "spectral_corr": -3.24626012071505e-06
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 3.3199786741988646e-06,
+              "spectral_corr": -5.4328763710032035e-11
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": -2.995247606918383e-05,
+              "spectral_corr": 1.9385926197657e-10
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": -7.727686949010604e-06,
+              "spectral_corr": 1.660257487046124e-10
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028c/artifacts/model__alienappears__seq-poly-8-v1.f32.wav",
+        "model_wav_sha256": "e4f08d0c25ca3b6dab59c49b227a89fa7d9ed80c0db169f3458e2da058a3f2fe",
+        "production_leg_metrics_bit_identical_to_committed": false,
+        "production_leg_metrics_max_rel_deviation": 3.7624871480856525e-07,
+        "production_leg_metrics_within_tolerance": false,
+        "production_leg_reproduces_committed_model": false,
+        "reason": "the production leg does not reproduce the committed model render / metrics / verdict on this host; the committed record is STALE for this comparison",
+        "record": "reports/SXT-028c/artifacts/compare-alienappears__seq-poly-8-v1.json",
+        "record_sha256": "2999035e0025abf71fbd95acb10d70572865c5b67ad964a8d21d12af6cf22488",
+        "status": "STALE",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "alienappears",
+      "chain": "globals: reverb1(6), chorus(7)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+          "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-poly-8-v1",
+          "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+        },
+        "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
+        "sidecar_sha256": "8d6d413ee83d0308ad30ea0e01540500af87c39d65912dbfb728bfc915e2fbb4"
+      },
+      "leaf": "SXT-028c (fx:Chorus)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-poly-8-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 1049613.5546875,
+              "rms_diff_dbfs": 82.78562768653578,
+              "spectral_corr": -0.012482167739478744
+            },
+            "R": {
+              "max_abs_diff_lsb": 1105928.875,
+              "rms_diff_dbfs": 83.01249187175824,
+              "spectral_corr": -0.012862024771257419
+            },
+            "mono": {
+              "max_abs_diff_lsb": 1051419.15625,
+              "rms_diff_dbfs": 82.9152777589176,
+              "spectral_corr": -0.012773758498749288
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmcombo__seq-notes-coverage-v1/preroll-0/model__fmcombo__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmcombo__seq-notes-coverage-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmcombo__seq-notes-coverage-v1/preroll-0"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": -27,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 1049892.875,
+                  "rms_diff_dbfs": -15.440798735603416,
+                  "spectral_corr": 0.9875148198877703
+                },
+                "R": {
+                  "best_shift": -27,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 1106215.875,
+                  "rms_diff_dbfs": -15.48480455015249,
+                  "spectral_corr": 0.9871349447152629
+                },
+                "mono": {
+                  "best_shift": -27,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 1051694.09375,
+                  "rms_diff_dbfs": -15.503095524283502,
+                  "spectral_corr": 0.9872232845997077
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": false,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": 5.967141755934727,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual 5.97 dB exceeds the proposed -20.00 dB relative budget; L: tail residual 6.07 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 1.07 dB (> 1.00 dB budget) in 1 of 6 graded windows (worst window 0: reference -22.2 dBFS, model -21.2 dBFS); R: tail residual 5.82 dB exceeds the proposed -20.00 dB relative budget)",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "8f4cb86e80450dbb6814e1628c850eb04c44922ff26c8b743ed198307fe61b1c",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmcombo__seq-notes-coverage-v1/preroll-375/model__fmcombo__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmcombo__seq-notes-coverage-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmcombo__seq-notes-coverage-v1/preroll-375"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 279.3203125,
+                  "rms_diff_dbfs": -98.2264264221392,
+                  "spectral_corr": 0.9999969876272491
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 287.0,
+                  "rms_diff_dbfs": -98.49729642191073,
+                  "spectral_corr": 0.9999969694865203
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 274.9375,
+                  "rms_diff_dbfs": -98.4183732832011,
+                  "spectral_corr": 0.9999970430984569
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -73.45675738066619,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "0aea88de4f5bd62e5e59d77867aacb71ce2850479be60f853ba041c592f31cc8",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "db77a80a0ddaba21494974cb9d3c71ecd19b3f9ccc674f196c24b1d93a1f5c78",
+          "sidecar_declared_buffer_sha256": "db77a80a0ddaba21494974cb9d3c71ecd19b3f9ccc674f196c24b1d93a1f5c78",
+          "wav": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-wet.f32.wav",
+          "wav_sha256": "89d42e518eab60e28cac3e308dda7e3cce09e53d074264abb88f75fffbafe333"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 279.3203125,
+              "rms_diff_dbfs": -98.2264264221392,
+              "spectral_corr": 0.9999969876272492
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 287.0,
+              "rms_diff_dbfs": -98.49729642191073,
+              "spectral_corr": 0.9999969694865198
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 274.9375,
+              "rms_diff_dbfs": -98.4183732832011,
+              "spectral_corr": 0.9999970430984566
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -73.45675738066619,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 1049613.5546875,
+              "rms_diff_dbfs": 82.78562768653578,
+              "spectral_corr": -0.012482167739478855
+            },
+            "R": {
+              "max_abs_diff_lsb": 1105928.875,
+              "rms_diff_dbfs": 83.01249187175824,
+              "spectral_corr": -0.012862024771256975
+            },
+            "mono": {
+              "max_abs_diff_lsb": 1051419.15625,
+              "rms_diff_dbfs": 82.9152777589176,
+              "spectral_corr": -0.012773758498748955
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": -1.1102230246251565e-16
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 4.440892098500626e-16
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 3.3306690738754696e-16
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028c/artifacts/model__fmcombo__seq-notes-coverage-v1.f32.wav",
+        "model_wav_sha256": "0aea88de4f5bd62e5e59d77867aacb71ce2850479be60f853ba041c592f31cc8",
+        "production_leg_metrics_bit_identical_to_committed": false,
+        "production_leg_metrics_max_rel_deviation": 4.440892098500626e-16,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028c/artifacts/compare-fmcombo__seq-notes-coverage-v1.json",
+        "record_sha256": "8b2c339d221b699c9ef8877575930d2a920b91b1027f312d5fd114ae879a342f",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "fmcombo",
+      "chain": "ains: eq(0), chorus(1)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+          "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-notes-coverage-v1",
+          "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+        },
+        "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
+        "sidecar_sha256": "f1efb45e0fbfa0a6675de9671752e51581322d4f3fade5f6e842ea7c6ff879b2"
+      },
+      "leaf": "SXT-028c (fx:Chorus)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-notes-coverage-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 582271.08984375,
+              "rms_diff_dbfs": 86.36499451467887,
+              "spectral_corr": -0.010935066696932005
+            },
+            "R": {
+              "max_abs_diff_lsb": 565821.580078125,
+              "rms_diff_dbfs": 85.77812507804487,
+              "spectral_corr": -0.010755066408886238
+            },
+            "mono": {
+              "max_abs_diff_lsb": 573649.5263671875,
+              "rms_diff_dbfs": 86.09839983860252,
+              "spectral_corr": -0.0107883516786198
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmcombo__seq-poly-8-v1/preroll-0/model__fmcombo__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmcombo__seq-poly-8-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmcombo__seq-poly-8-v1/preroll-0"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 15,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 582392.46875,
+                  "rms_diff_dbfs": -19.715525602627547,
+                  "spectral_corr": 0.9890632014474054
+                },
+                "R": {
+                  "best_shift": 11,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 565929.0703125,
+                  "rms_diff_dbfs": -20.068345191051836,
+                  "spectral_corr": 0.9892430436360619
+                },
+                "mono": {
+                  "best_shift": 14,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 573763.9609375,
+                  "rms_diff_dbfs": -19.911304943779662,
+                  "spectral_corr": 0.9892097578599978
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": false,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -7.166130657921523,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -7.17 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 1.38 dB (> 1.00 dB budget) in 1 of 6 graded windows (worst window 0: reference -32.6 dBFS, model -34.0 dBFS); L: tail residual -8.15 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -6.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 1.87 dB (> 1.00 dB budget) in 1 of 6 graded windows (worst window 0: reference -32.0 dBFS, model -33.8 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "7cdaf222d1246071d246a2910ffa12ffc16bac56de9edc53b850ceb67d1fe66b",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmcombo__seq-poly-8-v1/preroll-375/model__fmcombo__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmcombo__seq-poly-8-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmcombo",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmcombo__seq-poly-8-v1/preroll-375"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 121.37890625,
+                  "rms_diff_dbfs": -106.08052011730642,
+                  "spectral_corr": 0.9999982681443375
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 107.490234375,
+                  "rms_diff_dbfs": -105.8464702690967,
+                  "spectral_corr": 0.9999981100449481
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 114.4345703125,
+                  "rms_diff_dbfs": -106.00970478238217,
+                  "spectral_corr": 0.9999981095386176
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -83.28502551052938,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "5a68fd237a35d63b36da52a47e6fa36459cf85492dc97e90b7e8a64b2eaa29b0",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "44c673ea0c5c1f5f503cc9805bff30f6589ed98d9e08084df50cda145648c7bb",
+          "sidecar_declared_buffer_sha256": "44c673ea0c5c1f5f503cc9805bff30f6589ed98d9e08084df50cda145648c7bb",
+          "wav": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1-wet.f32.wav",
+          "wav_sha256": "f1b6a0506c98444da021721f50adcac922120894e9b1ec67ee579d4269d77d83"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 121.37890625,
+              "rms_diff_dbfs": -106.08052011730642,
+              "spectral_corr": 0.9999982681443376
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 107.490234375,
+              "rms_diff_dbfs": -105.8464702690967,
+              "spectral_corr": 0.9999981100449482
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 114.4345703125,
+              "rms_diff_dbfs": -106.00970478238217,
+              "spectral_corr": 0.9999981095386176
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -83.28502551052938,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 582271.08984375,
+              "rms_diff_dbfs": 86.36499451467887,
+              "spectral_corr": -0.010935066696932116
+            },
+            "R": {
+              "max_abs_diff_lsb": 565821.580078125,
+              "rms_diff_dbfs": 85.77812507804487,
+              "spectral_corr": -0.010755066408886349
+            },
+            "mono": {
+              "max_abs_diff_lsb": 573649.5263671875,
+              "rms_diff_dbfs": 86.09839983860252,
+              "spectral_corr": -0.0107883516786198
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": -1.1102230246251565e-16
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": -1.1102230246251565e-16
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028c/artifacts/model__fmcombo__seq-poly-8-v1.f32.wav",
+        "model_wav_sha256": "5a68fd237a35d63b36da52a47e6fa36459cf85492dc97e90b7e8a64b2eaa29b0",
+        "production_leg_metrics_bit_identical_to_committed": false,
+        "production_leg_metrics_max_rel_deviation": 1.1102230246251565e-16,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028c/artifacts/compare-fmcombo__seq-poly-8-v1.json",
+        "record_sha256": "3db7ad167a922c31e1a63e6d5afa8df906fb9ffc1ced7072ec1986bc69750b2c",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "fmcombo",
+      "chain": "ains: eq(0), chorus(1)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+          "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-poly-8-v1",
+          "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+        },
+        "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1.json",
+        "sidecar_sha256": "3f764d7768b1353c561025b931c6bc3c80df220b13e08689aa4328bc6dc844f7"
+      },
+      "leaf": "SXT-028c (fx:Chorus)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-poly-8-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 526940.15625,
+              "rms_diff_dbfs": 76.00267202033722,
+              "spectral_corr": -0.02641378161284258
+            },
+            "R": {
+              "max_abs_diff_lsb": 298002.8125,
+              "rms_diff_dbfs": 73.14472851561567,
+              "spectral_corr": -0.02932008009724818
+            },
+            "mono": {
+              "max_abs_diff_lsb": 346386.43359375,
+              "rms_diff_dbfs": 75.033985659136,
+              "spectral_corr": -0.02314681337090807
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-notes-coverage-v1/preroll-0/model__fmtwang2__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-notes-coverage-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-notes-coverage-v1/preroll-0"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": -28,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 527192.46875,
+                  "rms_diff_dbfs": -23.39364200228898,
+                  "spectral_corr": 0.9735821213578062
+                },
+                "R": {
+                  "best_shift": 4,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 298219.15625,
+                  "rms_diff_dbfs": -25.915564318876413,
+                  "spectral_corr": 0.9706759671278027
+                },
+                "mono": {
+                  "best_shift": 1,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 346572.87109375,
+                  "rms_diff_dbfs": -26.389666065667686,
+                  "spectral_corr": 0.9768506168782637
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": false,
+                "spectral_corr": false
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": 0.04746659642107849,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual 0.05 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 5.35 dB (> 1.00 dB budget) in 5 of 7 graded windows (worst window 4: reference -57.6 dBFS, model -62.9 dBFS); L: tail residual 3.58 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 7.63 dB (> 1.00 dB budget) in 6 of 7 graded windows (worst window 3: reference -51.4 dBFS, model -43.7 dBFS); R: tail residual 1.08 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 6.94 dB (> 1.00 dB budget) in 5 of 7 graded windows (worst window 4: reference -54.1 dBFS, model -61.0 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "108e55f5e990f1bc389a119feb10b41f2742ea934f72c48d0ec349ef744ef257",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-notes-coverage-v1/preroll-375/model__fmtwang2__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-notes-coverage-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-notes-coverage-v1/preroll-375"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 252.3125,
+                  "rms_diff_dbfs": -99.3963140226262,
+                  "spectral_corr": 0.9999959029706488
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 216.34375,
+                  "rms_diff_dbfs": -99.06029283449209,
+                  "spectral_corr": 0.9999960472250509
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 186.4375,
+                  "rms_diff_dbfs": -101.42365172480368,
+                  "spectral_corr": 0.9999974302491718
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -70.47578094029693,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "3d759bc5b988b573c7de17159cfb3f4090d3d479f3a0ad6783069719f6a87546",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "e39b8ed93aa0a49fef3a9c6c7b52d588852a3d1308f0da7a76cfb567b5722868",
+          "sidecar_declared_buffer_sha256": "e39b8ed93aa0a49fef3a9c6c7b52d588852a3d1308f0da7a76cfb567b5722868",
+          "wav": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1-wet.f32.wav",
+          "wav_sha256": "dea2a3350ba0a34ef3de88ac90c7a7572663620249ede962583d625f7b3fac8d"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 252.3125,
+              "rms_diff_dbfs": -99.3963140226262,
+              "spectral_corr": 0.9999959029706493
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 216.34375,
+              "rms_diff_dbfs": -99.06029283449209,
+              "spectral_corr": 0.9999960472250505
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 186.4375,
+              "rms_diff_dbfs": -101.42365172480368,
+              "spectral_corr": 0.9999974302491713
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -70.47578094029693,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 526940.15625,
+              "rms_diff_dbfs": 76.00267202033722,
+              "spectral_corr": -0.026413781612843135
+            },
+            "R": {
+              "max_abs_diff_lsb": 298002.8125,
+              "rms_diff_dbfs": 73.14472851561567,
+              "spectral_corr": -0.029320080097247847
+            },
+            "mono": {
+              "max_abs_diff_lsb": 346386.43359375,
+              "rms_diff_dbfs": 75.033985659136,
+              "spectral_corr": -0.023146813370907626
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": -5.551115123125783e-16
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 3.3306690738754696e-16
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 4.440892098500626e-16
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028c/artifacts/model__fmtwang2__seq-notes-coverage-v1.f32.wav",
+        "model_wav_sha256": "3d759bc5b988b573c7de17159cfb3f4090d3d479f3a0ad6783069719f6a87546",
+        "production_leg_metrics_bit_identical_to_committed": false,
+        "production_leg_metrics_max_rel_deviation": 5.551115123125783e-16,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028c/artifacts/compare-fmtwang2__seq-notes-coverage-v1.json",
+        "record_sha256": "fb85a6b1cd45129fb05ad1195ac9fe492038117586853ea05262983fc20d1929",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "fmtwang2",
+      "chain": "ains: chorus(0)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+          "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-notes-coverage-v1",
+          "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+        },
+        "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json",
+        "sidecar_sha256": "0596e7de3caa3bfdc0d3bced9b4bbf2f287ff0135803250565b5ed8ef5e49b3a"
+      },
+      "leaf": "SXT-028c (fx:Chorus)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-notes-coverage-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 1750443.5,
+              "rms_diff_dbfs": 87.2255041994275,
+              "spectral_corr": -0.020097610028400492
+            },
+            "R": {
+              "max_abs_diff_lsb": 2123026.6875,
+              "rms_diff_dbfs": 85.76359556618404,
+              "spectral_corr": -0.015491780643625885
+            },
+            "mono": {
+              "max_abs_diff_lsb": 1479742.28125,
+              "rms_diff_dbfs": 86.12670742483535,
+              "spectral_corr": -0.017941131470342153
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-poly-8-v1/preroll-0/model__fmtwang2__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-poly-8-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-poly-8-v1/preroll-0"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": -32,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1750601.0625,
+                  "rms_diff_dbfs": -12.202962235821929,
+                  "spectral_corr": 0.9799009803435204
+                },
+                "R": {
+                  "best_shift": 32,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 2123273.5625,
+                  "rms_diff_dbfs": -11.284605499857673,
+                  "spectral_corr": 0.9845064691358248
+                },
+                "mono": {
+                  "best_shift": -3,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 1479919.53125,
+                  "rms_diff_dbfs": -13.45387932594073,
+                  "spectral_corr": 0.982057577722245
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": false,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": 4.0374771861455,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual 4.04 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 3.44 dB (> 1.00 dB budget) in 4 of 9 graded windows (worst window 5: reference -58.4 dBFS, model -61.9 dBFS); L: tail residual 2.42 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 5.21 dB (> 1.00 dB budget) in 3 of 9 graded windows (worst window 5: reference -58.2 dBFS, model -63.4 dBFS); R: tail residual 5.50 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 1.90 dB (> 1.00 dB budget) in 2 of 9 graded windows (worst window 0: reference -15.9 dBFS, model -14.0 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "2d3b200fc88460af5d2845704fe849c3f5a7f349d17f6b9a42909f028d377e49",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_chorus_reference.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--model",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-poly-8-v1/preroll-375/model__fmtwang2__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-poly-8-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_chorus_model.py",
+                "--slug",
+                "fmtwang2",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028c/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/chorus/fmtwang2__seq-poly-8-v1/preroll-375"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 157.5625,
+                  "rms_diff_dbfs": -99.42846643524943,
+                  "spectral_corr": 0.9999985903719208
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 246.875,
+                  "rms_diff_dbfs": -97.04820106604171,
+                  "spectral_corr": 0.9999982497794507
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 177.25,
+                  "rms_diff_dbfs": -99.58058675077608,
+                  "spectral_corr": 0.9999987091925872
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -83.93595525777286,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "f162687a4a8c70ce4173b154fd8b8b77719af433b90dae65da6fff06a5800881",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "06b45d06d17f8054dfc766ac437b447340ac5b734ad5e05fd1ccbb22ee8ed568",
+          "sidecar_declared_buffer_sha256": "06b45d06d17f8054dfc766ac437b447340ac5b734ad5e05fd1ccbb22ee8ed568",
+          "wav": "reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1-wet.f32.wav",
+          "wav_sha256": "2bfc8311ce6db199eeea36c29c4b332a88229b5448256a05cdc9e58da0d3d1c1"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 157.5625,
+              "rms_diff_dbfs": -99.42846643524943,
+              "spectral_corr": 0.999998590371921
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 246.875,
+              "rms_diff_dbfs": -97.04820106604171,
+              "spectral_corr": 0.9999982497794506
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 177.25,
+              "rms_diff_dbfs": -99.58058675077608,
+              "spectral_corr": 0.999998709192587
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -83.93595525777286,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 1750443.5,
+              "rms_diff_dbfs": 87.2255041994275,
+              "spectral_corr": -0.020097610028400603
+            },
+            "R": {
+              "max_abs_diff_lsb": 2123026.6875,
+              "rms_diff_dbfs": 85.76359556618404,
+              "spectral_corr": -0.015491780643625774
+            },
+            "mono": {
+              "max_abs_diff_lsb": 1479742.28125,
+              "rms_diff_dbfs": 86.12670742483535,
+              "spectral_corr": -0.017941131470342042
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": -1.1102230246251565e-16
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 1.1102230246251565e-16
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 1.1102230246251565e-16
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028c/artifacts/model__fmtwang2__seq-poly-8-v1.f32.wav",
+        "model_wav_sha256": "f162687a4a8c70ce4173b154fd8b8b77719af433b90dae65da6fff06a5800881",
+        "production_leg_metrics_bit_identical_to_committed": false,
+        "production_leg_metrics_max_rel_deviation": 1.1102230246251565e-16,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028c/artifacts/compare-fmtwang2__seq-poly-8-v1.json",
+        "record_sha256": "67ef576a38038b2de60ee3e5c25fab5266770f3b7d3fe07327d37747fb87a863",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "fmtwang2",
+      "chain": "ains: chorus(0)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.sxt037-tap.ff8b4dba4",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "209217d7d1338d9919687f945dbd475bd8ad0135",
+          "script_sha256": "b9b8f2b6ba418ef4e7e55e67fc3864b4ba3b80aa9a51b72a8b51f886b185cdfe"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-poly-8-v1",
+          "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+        },
+        "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1.json",
+        "sidecar_sha256": "618e73cfe36205f7fa0fd0e7b23504158f2eaeab1f0cc128626bbcbd0f75c063"
+      },
+      "leaf": "SXT-028c (fx:Chorus)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-poly-8-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "melon",
+      "coverage": "none",
+      "leaf": "SXT-028c (fx:Chorus)",
+      "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028c/artifacts/render-refusals.txt)",
+      "status": "NOT_RUN"
+    }
+  ],
+  "runner": "model/effects/run_chorus_model.py",
+  "runner_git_blob_sha1": "efffc84226fa4f8987fef0c73637b3f814a5fd8f",
+  "schema_version": 1
+}

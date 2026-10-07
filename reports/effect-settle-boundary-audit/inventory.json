@@ -1,0 +1,435 @@
+{
+  "claim_scope": "source inventory of run_*_model.py pre-roll conventions; establishes no boundary, agreement or support claim",
+  "issue": "#318",
+  "not_runner_reached_models": {
+    "aw-4": {
+      "harness": "own leaf harness (tools/aw4_*); no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "aw-49": {
+      "harness": "own leaf harness (tools/render_aw49_reference.py, tools/compare_aw49_reference.py); no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "reverb1": {
+      "harness": "SXT-024 leaf harness (tools/render_reverb_reference.py); also a chain occupant inside run_chorus_model.py (alienappears), where it IS covered by that runner's rows",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "rf-rf-ains34": {
+      "harness": "routing-family model; no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "rf-rf-bins12": {
+      "harness": "routing-family model; no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "rf-rf-global2": {
+      "harness": "routing-family model; no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "rf-rf-global34": {
+      "harness": "routing-family model; no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "rf-rf-send34": {
+      "harness": "routing-family model; no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "type-conditioner": {
+      "harness": "no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    },
+    "type-distortion": {
+      "harness": "SXT-028e (non-SSE Distortion); no run_*_model.py runner",
+      "reason": "outside the run_*_model.py inventory; its own harness's settle handling is not audited here (never assumed correct)",
+      "status": "NOT_RUN"
+    }
+  },
+  "runner_reached_models": {
+    "delay": "run_fx_model.py (+ chain occupant in run_chorus_model.py / run_phaser_model.py)",
+    "eq": "run_fx_model.py (+ chain occupant in run_chorus_model.py / run_phaser_model.py)",
+    "type-chorus": "run_chorus_model.py",
+    "type-distortion-sse": "run_distortion_sse_model.py",
+    "type-phaser": "run_phaser_model.py",
+    "type-reverb 2": "run_reverb2_model.py"
+  },
+  "runners": [
+    {
+      "carriers": [
+        {
+          "chain": "globals: reverb1(6), chorus(7)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "87cab60cb2da549967b2b7d9155e81f46feb8932abd5d1df63f57fd44e646a00",
+          "leaf": "SXT-028c (fx:Chorus)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "alienappears"
+        },
+        {
+          "chain": "globals: reverb1(6), chorus(7)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028c/fixtures/alienappears__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "8d6d413ee83d0308ad30ea0e01540500af87c39d65912dbfb728bfc915e2fbb4",
+          "leaf": "SXT-028c (fx:Chorus)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-poly-8-v1",
+          "slug": "alienappears"
+        },
+        {
+          "chain": "ains: eq(0), chorus(1)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "f1efb45e0fbfa0a6675de9671752e51581322d4f3fade5f6e842ea7c6ff879b2",
+          "leaf": "SXT-028c (fx:Chorus)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "fmcombo"
+        },
+        {
+          "chain": "ains: eq(0), chorus(1)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "3f764d7768b1353c561025b931c6bc3c80df220b13e08689aa4328bc6dc844f7",
+          "leaf": "SXT-028c (fx:Chorus)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-poly-8-v1",
+          "slug": "fmcombo"
+        },
+        {
+          "chain": "ains: chorus(0)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "0596e7de3caa3bfdc0d3bced9b4bbf2f287ff0135803250565b5ed8ef5e49b3a",
+          "leaf": "SXT-028c (fx:Chorus)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "fmtwang2"
+        },
+        {
+          "chain": "ains: chorus(0)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028c/fixtures/fmtwang2__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "618e73cfe36205f7fa0fd0e7b23504158f2eaeab1f0cc128626bbcbd0f75c063",
+          "leaf": "SXT-028c (fx:Chorus)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-poly-8-v1",
+          "slug": "fmtwang2"
+        }
+      ],
+      "comparator": "tools/compare_chorus_reference.py",
+      "inherited_from": null,
+      "input_bus": "all-off dry bus (sidecar 'dry')",
+      "leaves": [
+        "SXT-028c (fx:Chorus)"
+      ],
+      "production_preroll_blocks": 375,
+      "production_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "runner": "model/effects/run_chorus_model.py",
+      "runner_git_blob_sha1": "efffc84226fa4f8987fef0c73637b3f814a5fd8f",
+      "unreachable_carriers": [
+        {
+          "leaf": "SXT-028c (fx:Chorus)",
+          "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028c/artifacts/render-refusals.txt)",
+          "slug": "melon"
+        }
+      ]
+    },
+    {
+      "carriers": [
+        {
+          "chain": "ains: distortion(0) -- the #136 harness anchor",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028e-sse/fixtures/syn-d0-m3__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "0f18d11de4b75786f62b101de59d194d7f60d2111bafaef3af34cf96aec30e4c",
+          "leaf": "SXT-028e-sse (fx:Distortion, SSE models)",
+          "runner_preroll_blocks": 0,
+          "runner_preroll_equals_fixture_settle": false,
+          "runner_preroll_seconds": 0.0,
+          "seq": "seq-poly-8-v1",
+          "slug": "syn-d0-m3"
+        }
+      ],
+      "comparator": "tools/compare_distortion_sse_reference.py",
+      "inherited_from": null,
+      "input_bus": "all-off dry bus (sidecar legs.dry, sha-verified by the runner)",
+      "leaves": [
+        "SXT-028e-sse (fx:Distortion, SSE models)"
+      ],
+      "production_preroll_blocks": 0,
+      "production_preroll_source": "run(silent_preroll_blocks=0) default",
+      "runner": "model/effects/run_distortion_sse_model.py",
+      "runner_git_blob_sha1": "f9bc2c816101397f4a85f69a5cdc9906c18ec58a",
+      "unreachable_carriers": [
+        {
+          "leaf": "SXT-028e-sse (fx:Distortion, SSE models)",
+          "reason": "bounded audit: the leaf's A/B was measured on the anchor only (#136), and its committed records already run the measured pre-roll 0; C is not re-derived for the other synthetic carriers here",
+          "slug": "syn-m3..m7, syn-d6/d12/d18-m3"
+        }
+      ]
+    },
+    {
+      "carriers": [
+        {
+          "chain": "ains: delay(0)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "46e2d944600b707ca16e73e087f6b21ad3f54cb19f64541daade145083bd893c",
+          "leaf": "SXT-023 (fx:Delay)",
+          "runner_preroll_blocks": 240,
+          "runner_preroll_equals_fixture_settle": false,
+          "runner_preroll_seconds": 0.16,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "dexie"
+        },
+        {
+          "chain": "ains: delay(0); sends: delay(4)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "819fee8881e330c80a9597840a3aac80e453e295d4c9e37171665c342da36fda",
+          "leaf": "SXT-023 (fx:Delay)",
+          "runner_preroll_blocks": 240,
+          "runner_preroll_equals_fixture_settle": false,
+          "runner_preroll_seconds": 0.16,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "metallic"
+        },
+        {
+          "chain": "ains: eq(0)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "a563a94fb7606d0f315cc0c645925a95678dac1d2c7fb5df1163d2c162561c4b",
+          "leaf": "SXT-023 (fx:EQ)",
+          "runner_preroll_blocks": 240,
+          "runner_preroll_equals_fixture_settle": false,
+          "runner_preroll_seconds": 0.16,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "fm_bass_1"
+        }
+      ],
+      "comparator": "tools/compare_fx_reference.py",
+      "inherited_from": null,
+      "input_bus": "all-off dry bus (sidecar 'dry')",
+      "leaves": [
+        "SXT-023 (fx:Delay)",
+        "SXT-023 (fx:EQ)"
+      ],
+      "production_preroll_blocks": 240,
+      "production_preroll_source": "SETTLE_BLOCKS = 240 (module constant)",
+      "runner": "model/effects/run_fx_model.py",
+      "runner_git_blob_sha1": "8c2f6bf191902d2d99e0682f11aa3262f7e7b4a3",
+      "unreachable_carriers": []
+    },
+    {
+      "carriers": [],
+      "comparator": "tools/compare_phaser_reference.py",
+      "inherited_from": "run_chorus_model.py",
+      "input_bus": "all-off dry bus (sidecar 'dry')",
+      "leaves": [
+        "SXT-028g (fx:Phaser)"
+      ],
+      "production_preroll_blocks": 375,
+      "production_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_git_blob_sha1": "c52bb2a3f10bc4bc48073570e025b63516f056cd",
+      "unreachable_carriers": [
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-a"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-b"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-c.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-c"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-clamp-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-clamp-a"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-clamp-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-clamp-b"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-legacy-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-legacy-a"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-legacy-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-legacy-b"
+        },
+        {
+          "leaf": "SXT-028g (fx:Phaser)",
+          "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-maxst.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+          "slug": "synth-maxst"
+        }
+      ]
+    },
+    {
+      "carriers": [
+        {
+          "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "2ad087782d37aa74622be61a7ad057bb5ef5630929751ec7706751a084b2fa7d",
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "moire1"
+        },
+        {
+          "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028f/fixtures/moire1__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "74ae5953b3b50f54bdf38fb88f5fad19acfad9e7de929bed98e691c3fa3702e9",
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-poly-8-v1",
+          "slug": "moire1"
+        },
+        {
+          "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028f/fixtures/mystical__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "9006ab4e2b42e4e4e4ceb0e83f3ef948f6c1e86e16680281c40820a2d2019390",
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "mystical"
+        },
+        {
+          "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "d2656b892ca71ec88c081a621491bcd8df60db066d4dad475d9540f4e859af86",
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-poly-8-v1",
+          "slug": "mystical"
+        },
+        {
+          "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1.json",
+          "fixture_sidecar_sha256": "d8a0f957a9589254ff1db51e34982386a5dd6c4526a0becc6c4645b2e9d7d759",
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-notes-coverage-v1",
+          "slug": "tacobell"
+        },
+        {
+          "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+          "fixture_block_size": 32,
+          "fixture_settle_blocks": 375,
+          "fixture_settle_s": 0.25,
+          "fixture_sidecar": "reports/SXT-028f/fixtures/tacobell__seq-poly-8-v1.json",
+          "fixture_sidecar_sha256": "8bc37b969e997ef96d2eb261aff0bcaf88b0ca45626ac46fb1a251a1f56755da",
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "runner_preroll_blocks": 375,
+          "runner_preroll_equals_fixture_settle": true,
+          "runner_preroll_seconds": 0.25,
+          "seq": "seq-poly-8-v1",
+          "slug": "tacobell"
+        }
+      ],
+      "comparator": "tools/compare_reverb2_reference.py",
+      "inherited_from": null,
+      "input_bus": "per-slot bypass bus of the Reverb 2 slot (sidecar 'bypass')",
+      "leaves": [
+        "SXT-028f (fx:Reverb 2)"
+      ],
+      "production_preroll_blocks": 375,
+      "production_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_git_blob_sha1": "05861d490efb1c5094028507584ebdb07448dd8d",
+      "unreachable_carriers": [
+        {
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028f/artifacts/render-refusals.txt)",
+          "slug": "grant_me"
+        },
+        {
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028f/artifacts/render-refusals.txt)",
+          "slug": "harp"
+        },
+        {
+          "leaf": "SXT-028f (fx:Reverb 2)",
+          "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028f/artifacts/render-refusals.txt)",
+          "slug": "novuo"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}
