@@ -1,0 +1,892 @@
+{
+  "declared_parameters": {
+    "cycles_per_frame": 1000,
+    "cycles_per_word": 4,
+    "fixture_words_per_frame": 6,
+    "hold_reset_sample": 16384,
+    "m2_tight_window": 16,
+    "mem_latency_cycles": 3,
+    "svc_reserve_cycles": 8,
+    "svc_window_nominal": 960
+  },
+  "issue": 316,
+  "results": {
+    "controls": {
+      "build_id_mismatch": {
+        "control_status": "PASS",
+        "dut": "rtl/instrumentation/ext_mem_instr.sv",
+        "expected_gate": "NO_VERDICT",
+        "gate": {
+          "reasons": [
+            "over take integrity: BUILD_ID read back 2065436694 != expected 2065436695"
+          ],
+          "verdict": "NO_VERDICT"
+        }
+      },
+      "silence_on_miss": {
+        "control_status": "PASS",
+        "dut": "rtl/instrumentation/ext_mem_instr_silence_mutant.sv",
+        "expected_gate": "FAIL",
+        "gate": {
+          "reasons": [
+            "stalled frames [8] do not hold the previous frame's sample (\u00a79.1 deadline-miss policy)",
+            "over-subscribed output is silent at frames [8, 9, 10, 11, 12, 13, 14, 15] -- the held-sample policy is violated"
+          ],
+          "verdict": "FAIL"
+        },
+        "over_take": {
+          "audio_fire": true,
+          "commanded_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "comparison": "FAIL",
+          "counters": {
+            "BUILD_ID": 1245246749,
+            "EXT_WORDS_RD": 96,
+            "EXT_WORDS_RD_TAG": [
+              48,
+              48,
+              0
+            ],
+            "EXT_WORDS_WR": 32,
+            "EXT_WORDS_WR_TAG": [
+              16,
+              16,
+              0
+            ],
+            "FIRST_STALL_FRAME": 8,
+            "FIRST_STALL_VALID": 1,
+            "FRAME_COUNT": 24,
+            "OUTPUT_FAULT": 1,
+            "STALL_CYCLES_MAX": 983,
+            "STALL_FRAMES": 8,
+            "STALL_FRAMES_SATURATED": 0,
+            "STALL_LED_STATUS": 1,
+            "SVC_OCCUPANCY_MAX": 24
+          },
+          "counters_fire": true,
+          "dropout_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "held_policy_violations": [
+            8
+          ],
+          "integrity": [],
+          "residual_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "silent": true,
+          "stall_led_pin": 1,
+          "strobe_fire": true,
+          "strobe_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "stuck_frames": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "silence_zero_counters": {
+        "control_status": "PASS",
+        "dut": "rtl/instrumentation/ext_mem_instr_silence_zero_counters_mutant.sv",
+        "expected_gate": "NO_VERDICT",
+        "gate": {
+          "reasons": [
+            "over take: output degraded/silent with STALL_FRAMES == 0 -- the instrumentation is the suspect (\u00a79.2)"
+          ],
+          "verdict": "NO_VERDICT"
+        },
+        "over_take": {
+          "audio_fire": true,
+          "commanded_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "comparison": "FAIL",
+          "counters": {
+            "BUILD_ID": 580789918,
+            "EXT_WORDS_RD": 96,
+            "EXT_WORDS_RD_TAG": [
+              48,
+              48,
+              0
+            ],
+            "EXT_WORDS_WR": 32,
+            "EXT_WORDS_WR_TAG": [
+              16,
+              16,
+              0
+            ],
+            "FIRST_STALL_FRAME": 0,
+            "FIRST_STALL_VALID": 0,
+            "FRAME_COUNT": 24,
+            "OUTPUT_FAULT": 0,
+            "STALL_CYCLES_MAX": 0,
+            "STALL_FRAMES": 0,
+            "STALL_FRAMES_SATURATED": 0,
+            "STALL_LED_STATUS": 0,
+            "SVC_OCCUPANCY_MAX": 24
+          },
+          "counters_fire": false,
+          "dropout_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "held_policy_violations": [],
+          "integrity": [],
+          "residual_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "silent": true,
+          "stall_led_pin": 0,
+          "strobe_fire": false,
+          "strobe_frames": [],
+          "stuck_frames": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "throttle_never_engages": {
+        "control_status": "PASS",
+        "dut": "rtl/instrumentation/ext_mem_instr_throttle_never_mutant.sv",
+        "expected_gate": "FAIL",
+        "gate": {
+          "reasons": [
+            "over-subscribed witness did not fire: counters",
+            "over-subscribed witness did not fire: strobe",
+            "over-subscribed witness did not fire: audio comparison"
+          ],
+          "verdict": "FAIL"
+        },
+        "over_take": {
+          "audio_fire": false,
+          "commanded_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "comparison": "PASS",
+          "counters": {
+            "BUILD_ID": 4191939726,
+            "EXT_WORDS_RD": 96,
+            "EXT_WORDS_RD_TAG": [
+              48,
+              48,
+              0
+            ],
+            "EXT_WORDS_WR": 48,
+            "EXT_WORDS_WR_TAG": [
+              24,
+              24,
+              0
+            ],
+            "FIRST_STALL_FRAME": 0,
+            "FIRST_STALL_VALID": 0,
+            "FRAME_COUNT": 24,
+            "OUTPUT_FAULT": 0,
+            "STALL_CYCLES_MAX": 0,
+            "STALL_FRAMES": 0,
+            "STALL_FRAMES_SATURATED": 0,
+            "STALL_LED_STATUS": 0,
+            "SVC_OCCUPANCY_MAX": 24
+          },
+          "counters_fire": false,
+          "dropout_frames": [],
+          "held_policy_violations": [],
+          "integrity": [],
+          "residual_frames": [],
+          "silent": false,
+          "stall_led_pin": 0,
+          "strobe_fire": false,
+          "strobe_frames": [],
+          "stuck_frames": []
+        }
+      },
+      "zero_counters": {
+        "control_status": "PASS",
+        "dut": "rtl/instrumentation/ext_mem_instr_zero_counters_mutant.sv",
+        "expected_gate": "NO_VERDICT",
+        "gate": {
+          "reasons": [
+            "over take: output degraded/silent with STALL_FRAMES == 0 -- the instrumentation is the suspect (\u00a79.2)"
+          ],
+          "verdict": "NO_VERDICT"
+        },
+        "over_take": {
+          "audio_fire": true,
+          "commanded_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "comparison": "FAIL",
+          "counters": {
+            "BUILD_ID": 2100451155,
+            "EXT_WORDS_RD": 96,
+            "EXT_WORDS_RD_TAG": [
+              48,
+              48,
+              0
+            ],
+            "EXT_WORDS_WR": 32,
+            "EXT_WORDS_WR_TAG": [
+              16,
+              16,
+              0
+            ],
+            "FIRST_STALL_FRAME": 0,
+            "FIRST_STALL_VALID": 0,
+            "FRAME_COUNT": 24,
+            "OUTPUT_FAULT": 0,
+            "STALL_CYCLES_MAX": 0,
+            "STALL_FRAMES": 0,
+            "STALL_FRAMES_SATURATED": 0,
+            "STALL_LED_STATUS": 0,
+            "SVC_OCCUPANCY_MAX": 24
+          },
+          "counters_fire": false,
+          "dropout_frames": [],
+          "held_policy_violations": [],
+          "integrity": [],
+          "residual_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "silent": false,
+          "stall_led_pin": 0,
+          "strobe_fire": false,
+          "strobe_frames": [],
+          "stuck_frames": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      }
+    },
+    "gates": {
+      "NC1_M1": {
+        "reasons": [],
+        "verdict": "PASS"
+      },
+      "NC1_M2": {
+        "reasons": [],
+        "verdict": "PASS"
+      },
+      "NC1_edge_saturation_stall_w3": {
+        "reasons": [],
+        "verdict": "PASS"
+      },
+      "NC1_edge_stall_in_frame0": {
+        "reasons": [],
+        "verdict": "PASS"
+      },
+      "NC1_edge_two_bursts": {
+        "reasons": [],
+        "verdict": "PASS"
+      }
+    },
+    "ladder": {
+      "first_stalling_rung": "L2",
+      "rungs": [
+        {
+          "bytes_per_s_added": 0,
+          "comparison": "PASS",
+          "rung": "L0",
+          "stall_frames": 0,
+          "take": {
+            "audio_fire": false,
+            "commanded_frames": [],
+            "comparison": "PASS",
+            "counters": {
+              "BUILD_ID": 2065436694,
+              "EXT_WORDS_RD": 64,
+              "EXT_WORDS_RD_TAG": [
+                32,
+                32,
+                0
+              ],
+              "EXT_WORDS_WR": 32,
+              "EXT_WORDS_WR_TAG": [
+                16,
+                16,
+                0
+              ],
+              "FIRST_STALL_FRAME": 0,
+              "FIRST_STALL_VALID": 0,
+              "FRAME_COUNT": 16,
+              "OUTPUT_FAULT": 0,
+              "STALL_CYCLES_MAX": 0,
+              "STALL_FRAMES": 0,
+              "STALL_FRAMES_SATURATED": 0,
+              "STALL_LED_STATUS": 0,
+              "SVC_OCCUPANCY_MAX": 24
+            },
+            "counters_fire": false,
+            "dropout_frames": [],
+            "held_policy_violations": [],
+            "integrity": [],
+            "residual_frames": [],
+            "silent": false,
+            "stall_led_pin": 0,
+            "strobe_fire": false,
+            "strobe_frames": [],
+            "stuck_frames": []
+          },
+          "words_per_frame_added": 0
+        },
+        {
+          "bytes_per_s_added": 33408000,
+          "comparison": "PASS",
+          "rung": "L1",
+          "stall_frames": 0,
+          "take": {
+            "audio_fire": false,
+            "commanded_frames": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "comparison": "PASS",
+            "counters": {
+              "BUILD_ID": 2065436694,
+              "EXT_WORDS_RD": 1456,
+              "EXT_WORDS_RD_TAG": [
+                32,
+                32,
+                1392
+              ],
+              "EXT_WORDS_WR": 32,
+              "EXT_WORDS_WR_TAG": [
+                16,
+                16,
+                0
+              ],
+              "FIRST_STALL_FRAME": 0,
+              "FIRST_STALL_VALID": 0,
+              "FRAME_COUNT": 16,
+              "OUTPUT_FAULT": 0,
+              "STALL_CYCLES_MAX": 0,
+              "STALL_FRAMES": 0,
+              "STALL_FRAMES_SATURATED": 0,
+              "STALL_LED_STATUS": 0,
+              "SVC_OCCUPANCY_MAX": 720
+            },
+            "counters_fire": false,
+            "dropout_frames": [],
+            "held_policy_violations": [],
+            "integrity": [],
+            "residual_frames": [],
+            "silent": false,
+            "stall_led_pin": 0,
+            "strobe_fire": false,
+            "strobe_frames": [],
+            "stuck_frames": []
+          },
+          "words_per_frame_added": 174
+        },
+        {
+          "bytes_per_s_added": 66816000,
+          "comparison": "FAIL",
+          "rung": "L2",
+          "stall_frames": 8,
+          "take": {
+            "audio_fire": true,
+            "commanded_frames": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "comparison": "FAIL",
+            "counters": {
+              "BUILD_ID": 2065436694,
+              "EXT_WORDS_RD": 1952,
+              "EXT_WORDS_RD_TAG": [
+                16,
+                16,
+                1920
+              ],
+              "EXT_WORDS_WR": 16,
+              "EXT_WORDS_WR_TAG": [
+                8,
+                8,
+                0
+              ],
+              "FIRST_STALL_FRAME": 4,
+              "FIRST_STALL_VALID": 1,
+              "FRAME_COUNT": 16,
+              "OUTPUT_FAULT": 1,
+              "STALL_CYCLES_MAX": 39,
+              "STALL_FRAMES": 8,
+              "STALL_FRAMES_SATURATED": 0,
+              "STALL_LED_STATUS": 1,
+              "SVC_OCCUPANCY_MAX": 960
+            },
+            "counters_fire": true,
+            "dropout_frames": [],
+            "held_policy_violations": [],
+            "integrity": [],
+            "residual_frames": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "silent": false,
+            "stall_led_pin": 1,
+            "strobe_fire": true,
+            "strobe_frames": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "stuck_frames": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          "words_per_frame_added": 348
+        }
+      ]
+    },
+    "takes": {
+      "edge_saturation_stall_w3": {
+        "audio_fire": true,
+        "commanded_frames": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "comparison": "FAIL",
+        "counters": {
+          "BUILD_ID": 2065436694,
+          "EXT_WORDS_RD": 64,
+          "EXT_WORDS_RD_TAG": [
+            32,
+            32,
+            0
+          ],
+          "EXT_WORDS_WR": 8,
+          "EXT_WORDS_WR_TAG": [
+            4,
+            4,
+            0
+          ],
+          "FIRST_STALL_FRAME": 2,
+          "FIRST_STALL_VALID": 1,
+          "FRAME_COUNT": 16,
+          "OUTPUT_FAULT": 1,
+          "STALL_CYCLES_MAX": 983,
+          "STALL_FRAMES": 7,
+          "STALL_FRAMES_SATURATED": 1,
+          "STALL_LED_STATUS": 1,
+          "SVC_OCCUPANCY_MAX": 24
+        },
+        "counters_fire": true,
+        "dropout_frames": [],
+        "held_policy_violations": [],
+        "integrity": [],
+        "residual_frames": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "silent": false,
+        "stall_led_pin": 1,
+        "strobe_fire": true,
+        "strobe_frames": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "stuck_frames": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      "edge_stall_in_frame0": {
+        "audio_fire": true,
+        "commanded_frames": [
+          0,
+          1,
+          2
+        ],
+        "comparison": "FAIL",
+        "counters": {
+          "BUILD_ID": 2065436694,
+          "EXT_WORDS_RD": 24,
+          "EXT_WORDS_RD_TAG": [
+            12,
+            12,
+            0
+          ],
+          "EXT_WORDS_WR": 6,
+          "EXT_WORDS_WR_TAG": [
+            3,
+            3,
+            0
+          ],
+          "FIRST_STALL_FRAME": 0,
+          "FIRST_STALL_VALID": 1,
+          "FRAME_COUNT": 6,
+          "OUTPUT_FAULT": 1,
+          "STALL_CYCLES_MAX": 983,
+          "STALL_FRAMES": 3,
+          "STALL_FRAMES_SATURATED": 0,
+          "STALL_LED_STATUS": 1,
+          "SVC_OCCUPANCY_MAX": 24
+        },
+        "counters_fire": true,
+        "dropout_frames": [],
+        "held_policy_violations": [],
+        "integrity": [],
+        "residual_frames": [
+          0,
+          1,
+          2
+        ],
+        "silent": false,
+        "stall_led_pin": 1,
+        "strobe_fire": true,
+        "strobe_frames": [
+          0,
+          1,
+          2
+        ],
+        "stuck_frames": [
+          1,
+          2
+        ]
+      },
+      "edge_two_bursts": {
+        "audio_fire": true,
+        "commanded_frames": [
+          3,
+          4,
+          9,
+          10,
+          11
+        ],
+        "comparison": "FAIL",
+        "counters": {
+          "BUILD_ID": 2065436694,
+          "EXT_WORDS_RD": 64,
+          "EXT_WORDS_RD_TAG": [
+            32,
+            32,
+            0
+          ],
+          "EXT_WORDS_WR": 22,
+          "EXT_WORDS_WR_TAG": [
+            11,
+            11,
+            0
+          ],
+          "FIRST_STALL_FRAME": 3,
+          "FIRST_STALL_VALID": 1,
+          "FRAME_COUNT": 16,
+          "OUTPUT_FAULT": 1,
+          "STALL_CYCLES_MAX": 983,
+          "STALL_FRAMES": 5,
+          "STALL_FRAMES_SATURATED": 0,
+          "STALL_LED_STATUS": 1,
+          "SVC_OCCUPANCY_MAX": 24
+        },
+        "counters_fire": true,
+        "dropout_frames": [],
+        "held_policy_violations": [],
+        "integrity": [],
+        "residual_frames": [
+          3,
+          4,
+          9,
+          10,
+          11
+        ],
+        "silent": false,
+        "stall_led_pin": 1,
+        "strobe_fire": true,
+        "strobe_frames": [
+          3,
+          4,
+          9,
+          10,
+          11
+        ],
+        "stuck_frames": [
+          3,
+          4,
+          9,
+          10,
+          11
+        ]
+      },
+      "in_budget": {
+        "audio_fire": false,
+        "commanded_frames": [],
+        "comparison": "PASS",
+        "counters": {
+          "BUILD_ID": 2065436694,
+          "EXT_WORDS_RD": 96,
+          "EXT_WORDS_RD_TAG": [
+            48,
+            48,
+            0
+          ],
+          "EXT_WORDS_WR": 48,
+          "EXT_WORDS_WR_TAG": [
+            24,
+            24,
+            0
+          ],
+          "FIRST_STALL_FRAME": 0,
+          "FIRST_STALL_VALID": 0,
+          "FRAME_COUNT": 24,
+          "OUTPUT_FAULT": 0,
+          "STALL_CYCLES_MAX": 0,
+          "STALL_FRAMES": 0,
+          "STALL_FRAMES_SATURATED": 0,
+          "STALL_LED_STATUS": 0,
+          "SVC_OCCUPANCY_MAX": 24
+        },
+        "counters_fire": false,
+        "dropout_frames": [],
+        "held_policy_violations": [],
+        "integrity": [],
+        "residual_frames": [],
+        "silent": false,
+        "stall_led_pin": 0,
+        "strobe_fire": false,
+        "strobe_frames": [],
+        "stuck_frames": []
+      },
+      "m2_throttle": {
+        "audio_fire": true,
+        "commanded_frames": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "comparison": "FAIL",
+        "counters": {
+          "BUILD_ID": 2065436694,
+          "EXT_WORDS_RD": 96,
+          "EXT_WORDS_RD_TAG": [
+            48,
+            48,
+            0
+          ],
+          "EXT_WORDS_WR": 32,
+          "EXT_WORDS_WR_TAG": [
+            16,
+            16,
+            0
+          ],
+          "FIRST_STALL_FRAME": 8,
+          "FIRST_STALL_VALID": 1,
+          "FRAME_COUNT": 24,
+          "OUTPUT_FAULT": 1,
+          "STALL_CYCLES_MAX": 983,
+          "STALL_FRAMES": 8,
+          "STALL_FRAMES_SATURATED": 0,
+          "STALL_LED_STATUS": 1,
+          "SVC_OCCUPANCY_MAX": 24
+        },
+        "counters_fire": true,
+        "dropout_frames": [],
+        "held_policy_violations": [],
+        "integrity": [],
+        "residual_frames": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "silent": false,
+        "stall_led_pin": 1,
+        "strobe_fire": true,
+        "strobe_frames": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "stuck_frames": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    }
+  },
+  "schema": "sxt030-stall-bench/1",
+  "scope": "SIMULATION ONLY (Icarus Verilog). No hardware measurement, latency/underrun figure, synthesis/timing/power result, or qualification claim.",
+  "sources_sha256": {
+    "rtl/instrumentation/ext_mem_instr.sv": "7b1c10168265c82e1a897ec4a799b49e54069aa0d1a52864ec97b474ac5c87b4",
+    "rtl/instrumentation/ext_mem_instr_silence_mutant.sv": "4a38f51de44d0f2f4f3a921f42181c33ea3fc56ec2efb995fdcae087af1d05e8",
+    "rtl/instrumentation/ext_mem_instr_silence_zero_counters_mutant.sv": "229e269ef1a076bded7edffd9452fdba017f954ec9ec80089f82ad1ecba5f257",
+    "rtl/instrumentation/ext_mem_instr_throttle_never_mutant.sv": "f9dbec8ee9a2b6254bd88f62a38189df520d92a657300ee33dcf4946597983b9",
+    "rtl/instrumentation/ext_mem_instr_zero_counters_mutant.sv": "7d32575394e8c822d8ae7c28936e1d095c8b57cdf27855c5f41c60db36802546",
+    "rtl/instrumentation/tb_ext_mem_instr.sv": "41c9d65abc74d917f1a0d6b773b1a43308b25d0cbab9d368b632522dda81055e"
+  }
+}
