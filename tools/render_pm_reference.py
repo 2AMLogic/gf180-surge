@@ -55,7 +55,9 @@ ISOLATION_NOTE = (
     "FM-behavior/unison/lowcut/highcut/octave/pitch pinned; other mixer "
     "paths, both filter units, all FX, waveshaper, scene lowcut and FM "
     "routing off; fbc serial1; scene mode Single; retrigger on; drift 0; "
-    "modulation depth zeroed for routes into pinned parameters) with the "
+    "modulation depth zeroed for routes into pinned parameters; fixture "
+    "revision 2: osc-slot p[] routes zeroed by original parameter identity "
+    "BEFORE the type switch, #329) with the "
     "carrier's PLAYMODE and PORTAMENTO parameterization left intact -- a "
     "test configuration, never an adapted preset, never coverage"
 )
@@ -166,6 +168,11 @@ def main():
                               args.carrier + ".json")
     with open(inputs_rel, encoding="utf-8") as f:
         inputs = json.load(f)
+    # Fixture revision gate (#329): an inputs sidecar extracted under an
+    # older fixture revision (revision 1 carries no field) describes a
+    # different configuration; rendering a "reference" against it would
+    # pair a revision-2 render with stale inputs.  Re-extract first.
+    fc.require_current_revision(inputs, os.path.relpath(inputs_rel, REPO))
 
     porta_options = None
     if any((args.porta_curve is not None, args.porta_gliss,
@@ -203,6 +210,7 @@ def main():
         "inputs": os.path.relpath(inputs_rel, REPO),
         "sequence": {"id": seq["id"], "path": os.path.relpath(seq_path, REPO)},
         "declared_overrides_applied": inputs["declared_overrides"],
+        "fixture_revision": fc.FIXTURE_REVISION,
         "declared_forcing": {k: v for k, v in forcing.items()
                              if v is not None},
         "play_mode_rendered": readback["polymode"],

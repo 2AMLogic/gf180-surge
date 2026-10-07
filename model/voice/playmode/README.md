@@ -244,3 +244,86 @@ Bass 2 / Bass 5 re-measured under the Sine switch: peaks 0.7472 and 0.4752
 It does **not** affect this leaf's RTL-vs-model
 exactness claim, which is purely a register-level comparison and was
 verified 0-mismatch on Digibass exactly as on the other two carriers.
+
+(The finding above is dated historical evidence from #311 and is kept
+verbatim; the fixture revision below responds to it.)
+
+## Fixture revision 2 (#329, 2026-10-07): osc-slot `p[]` routes cleared before the type switch
+
+**Visible fixture revision, not a product-contract change.** The declared
+isolation configuration is still a test configuration, never an adapted
+preset, never preset coverage.
+
+What changed (`fixture_config.py`, `FIXTURE_REVISION = 2`, override key
+`osc_p_route_clear`; one shared sequence `configure_loaded` used by the
+extractor, the reference renderer, the cut-activation probe and the
+controls):
+
+1. Immediately after `loadPatch`, every routing whose destination is one
+   of the modeled slot's seven **original** `p[]` parameters -- matched by
+   engine synth-side parameter id captured before the remap, never by
+   display name -- is set to depth 0 through `setModDepth01` with its
+   source scene/index preserved. Readback checks both `getModDepth01` and
+   the **raw** depth from a fresh `getAllModRoutings()`; failure refuses.
+   The original source/destination/depth/normalized depth, the readback
+   and the reason are retained in `modulation_routes.osc_p_route_clear`.
+2. Then the type switch, one settle block and the handle re-fetch, as
+   before.
+3. A post-switch guard refuses if any routing into the slot's `p[]` still
+   carries a nonzero raw depth.
+4. `modpin_zero` readback also checks the raw depth.
+
+A defect in revision 1 that this exposes: the committed revision-1
+`inputs/digibass.json` lists `Velocity` / `Filter EG -> A Osc 1 Shape` under
+`pinned` ("depth zeroed"). They were **not** zeroed. The post-switch
+`setModDepth01` is a no-op on the non-modulatable Sine Shape, and the
+revision-1 readback compared `getModDepth01`, which reads 0 there while the
+raw depth (0.367 / 0.223) stays intact. Revision 2 refuses in that state
+instead of recording it.
+
+Articulation under test is unaffected by construction: only routings whose
+**destination** is an osc-slot `p[]` parameter are cleared. Those
+parameters are overwritten by the pinned Sine slice anyway. Sources
+(Velocity, Filter EG) and every amp/VCA, playmode, portamento and mono
+priority/envelope parameter are untouched. Unknown routes still refuse.
+
+Valid-reference gate (`reference_validity.py`, thresholds declared before
+any measurement): a single fresh probe note (key 60, velocity 100, 1 s
+hold) is accepted as a valid reference only if, on the held segment 0.30 to
+0.80 s after note-on, its peak is at least 1e-3, its dominant frequency is
+within ±25 cents of `440 * 2^((key + 12*(scene_octave + osc_octave) + pitch
+- 69)/12)`, and at least half the segment's spectral power lies within ±100
+cents of that frequency. For Digibass (scene octave -1) the expected f0 is
+130.81 Hz. Peak alone is insufficient, so silence and a stale or
+non-pitched buffer both fail. `tools/probe_pm_reference_validity.py` runs
+the gate on the pinned oracle in three modes: `revised` (expected PASS),
+plus two negative controls that replay the pre-#329 order,
+`nc-retained-routes` (expected FAIL, silence) and `nc-stale-buffer`
+(expected FAIL, not pitched). The controls get the retained-route order
+only through a private hook that no production entry point passes.
+
+Status at the time of this revision: the code change, the API-double
+ordering/readback regression (`tests/test_sxt043_fixture_rev2.py`) and the
+gate's synthetic-signal checks are done. **Every native leg is BLOCKED**:
+the pinned oracle was not installed on the host that made the change.
+That covers re-extraction, the revised Digibass reference and its pitch
+gate, the three-carrier budgets, both negative controls, and RTL-vs-model
+exactness on re-extracted inputs. Until those legs run, the committed
+`inputs/*.json` and every `reports/SXT-043/artifacts/` record are
+**fixture revision 1**, and the Digibass budget rows stay NOT A VALID
+COMPARISON. `tools/render_pm_reference.py` refuses revision-1 inputs, so a
+revision-1 sidecar cannot be paired with a revision-2 render. See
+`reports/SXT-043/EVIDENCE.md`.
+
+Hazard inventory (source inspection, 2026-10-07): this playmode fixture is
+the only render path in the repository that **forces** an oscillator type.
+The SXT-026a/040 Sine, classic and wavetable leaves read and gate on the
+carrier's native type and do not rewrite it. In the committed normalized
+corpus (`graphs.jsonl`), Digibass is the only one of the three carriers
+with a routing into an osc-1 parameter: the two #311 routes, both to
+synth-side id 225. Bass 2 and Bass 5 have none, and a test pins this.
+There is a related but distinct pattern that this change does not address:
+`tools/ablate_fx.py` swaps FX slot types through `setParamVal`. FX
+parameters are float-valued, so the integer-selector failure mode does not
+apply as described, and whether FX-param routings survive that swap was
+not examined here.

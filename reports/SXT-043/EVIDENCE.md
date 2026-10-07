@@ -231,3 +231,59 @@ budget or expanding this leaf's scope to re-implement the full audio
 datapath. No acceptance rule was loosened to land this PR: item 2 is
 reported, not asserted PASS; item 5 (the only pass/fail-gated acceptance
 item that depends on the budget check) demonstrably fires as required.
+
+## Fixture revision 2 (#329), 2026-10-07: status of the revised Digibass reference
+
+Everything above this heading is the dated record from #77 and #311. It is
+kept verbatim, including the three Digibass **NOT A VALID COMPARISON** rows,
+and it describes **fixture revision 1**. Every file currently in
+`artifacts/` and `model/voice/playmode/inputs/` was produced under
+revision 1.
+
+**What changed.** `model/voice/playmode/fixture_config.py` now has
+`FIXTURE_REVISION = 2` and the new override `osc_p_route_clear`. Routings
+into the modeled osc slot's seven original `p[]` parameters are zeroed by
+synth-side parameter id **before** the type switch, and the zeroing is
+checked against both the 0..1 and the raw depth. A post-switch guard
+refuses on any surviving routing, and `modpin_zero` now also checks the raw
+depth. The extractor and reference renderer record the revision, and the
+renderer refuses inputs from any other revision. Full description:
+`model/voice/playmode/README.md`, "Fixture revision 2".
+
+**Correction to the revision-1 record.** `inputs/digibass.json` (revision 1)
+lists `Velocity -> A Osc 1 Shape` (depth 0.367) and `Filter EG -> A Osc 1
+Shape` (depth 0.223) under `pinned` as "depth zeroed (modpin_zero)". That
+statement is false. Both routings were still live, which is exactly the
+#311 root cause. The revision-1 readback compared `getModDepth01`, which
+reads 0 on the non-modulatable Sine Shape while the raw depth stays intact.
+The sidecar is left byte-unchanged as historical evidence and is
+**STALE** for revision 2.
+
+| # | #329 acceptance item | Status | Evidence / reason |
+|---|---|---|---|
+| 1 | Native readback shows targeted osc-1 `p[]` route depths are 0 before the type switch; original and revised state plus revision retained | **Code + API-double PASS; native BLOCKED** | `tests/test_sxt043_fixture_rev2.py` (18 tests) runs on an API double that reproduces the #311 engine behaviors. It checks that zeroing comes before the switch, that source scene/index are preserved, that handles are re-fetched, that matching uses identity and not names, and that a failed readback refuses. A mutation that restores the old order makes 7 of the 18 tests fail. These tests verify ordering, not native sound. No native readback was recorded: the pinned oracle is not installed on this host (no `~/.cache/gf180-surge-oracle`, `ORACLE_PREBUILT_URL` not provisioned). |
+| 2 | Pinned SXT-010 runtime at 48 kHz gives a nonzero Digibass reference pitched at key/scene octave/tuning, on a held segment | **BLOCKED** (oracle unavailable) | The gate and its window/tolerance were declared before any measurement (`reference_validity.py`: segment 0.30 to 0.80 s after note-on, ±25 cents, purity ≥ 0.5 within ±100 cents, peak ≥ 1e-3; Digibass f0 = 130.81 Hz). The runner `tools/probe_pm_reference_validity.py --mode revised` has **not run**. Synthetic-signal checks show the gate accepts a 130.81 Hz sine and rejects silence, 1.46 kHz, noise, the wrong octave and a 40-cent offset. That says nothing about the engine. |
+| 3 | Re-extract inputs; re-render and compare the three carriers on `seq-notes-{coverage,repeated,holds}-v1` | **BLOCKED** (oracle unavailable) | Nothing was re-extracted or re-rendered. The budget table above is still the revision-1 measurement, and Digibass stays NOT A VALID COMPARISON. No new budget numbers exist yet. |
+| 4 | RTL-vs-revised-model exact; forced-Poly and refusal controls re-run | **Partial: RTL-vs-model re-run PASS on revision-1 inputs; revised-inputs leg BLOCKED; oracle controls NOT_RUN** | The model, the RTL and the comparator were not changed by this revision. Re-run on 2026-10-07 for Digibass × {`seq-notes-coverage-v1`, `seq-mono-fingered-v1`, `seq-mono-reclaim-v1`}: 0 mismatches, with checkpoint/field counts identical to the committed records (68,400/1,094,400; 61,200/979,200; 35,280/564,480). This used the revision-1 inputs, because re-extraction needs the oracle. The forced-Poly and extractor refusal controls need the oracle and were NOT_RUN. |
+| 5 | Live negative control in the old retained-routing order fails the valid-reference gate (silence), and a stale/non-pitched output also fails | **Runner + API-double done; native BLOCKED** | `tools/probe_pm_reference_validity.py --mode nc-retained-routes` and `--mode nc-stale-buffer` have **not run** on the pinned engine. On the double, the old order now refuses at the post-switch guard, and the revision-1 readback blind spot is reproduced and refused by the raw-depth check. The #311 native observations (peak 0.0 under the old order; ~1.46 kHz stale buffer) are the investigation input. They are not a re-measurement. |
+| 6 | Historical NOT A VALID COMPARISON preserved; revised result appended with provenance; no stale artifact shown as current PASS | **PASS (record discipline)** | The historical rows are untouched. This section marks every committed SXT-043 artifact as revision 1, and the Digibass inputs as STALE for revision 2. The renderer refuses revision-1 inputs. No revised result exists to append yet. |
+
+**To unblock** (on a host with the prebuilt oracle, #232):
+
+```sh
+for c in bass2 bass5 digibass; do
+  "$ORACLE_PYTHON" model/voice/playmode/extract_inputs.py --carrier $c \
+      --out model/voice/playmode/inputs/$c.json
+done
+for m in revised nc-retained-routes nc-stale-buffer; do       # one process each
+  "$ORACLE_PYTHON" tools/probe_pm_reference_validity.py --carrier digibass \
+      --mode $m --out reports/SXT-043/artifacts/validity-digibass-$m.json
+done
+# then the Reproduce block above for the 3 carriers x 3 declared sequences,
+# the forced-Poly control, the refusal controls, and RTL exactness on the
+# re-extracted inputs; record achieved numbers, do not tune thresholds.
+```
+
+Stop conditions still apply. If the revised Digibass probe is silent or
+not pitched, or the old-order control does not fail, record a bounded
+finding and do not adjust the gate.
