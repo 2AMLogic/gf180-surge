@@ -599,7 +599,7 @@ and equal to `oracle/manifest.json`'s `prebuilt.<platform>.sha256` (platform
 auto-detected, matching `fetch-and-build.sh`'s own `uname -s`/`uname -m` case
 statement), AND the imported `surgepy` module file lives inside that same
 directory (the existing `surgepy_under_engine_dir` check, reused unchanged).
-**Fails closed, verified by two new live controls, not merely asserted:**
+**Fails closed, verified by live controls (O8, O9, O10), not merely asserted:**
 
 * **O8** — a directory shaped like a prebuilt install (`.installed-sha256`
   present) whose hash disagrees with the manifest: `prebuilt_sha256_matches`
@@ -611,6 +611,27 @@ directory (the existing `surgepy_under_engine_dir` check, reused unchanged).
   `True`, `surgepy_importable` is `False`, and the gate still does NOT report
   `AVAILABLE` — a matching hash alone is insufficient; the module must
   actually import from inside the verified directory too.
+* **O10** — a forged prebuilt directory: `.installed-sha256` matches the
+  manifest AND a present stub `surgepy.py` sits at the conventional
+  `build-py311/src/surge-python/` path. The hash, bare-import, and
+  under-engine-dir checks all pass (`prebuilt_sha256_matches` `True`,
+  `surgepy_importable` `True`, `surgepy_under_engine_dir` `True`) but the
+  version-pin check fails (`surgepy_version_matches_pin` `False`), so the
+  committed outcome is `UNAVAILABLE` (committed `oracle-status.json`
+  observed: `rc=0 prebuilt_sha256_matches=True surgepy_importable=True
+  under_engine_dir=True version_matches_pin=False status=UNAVAILABLE`;
+  `fired: true`). It differs from O9: O9 has an ABSENT module (import
+  fails), O10 has a PRESENT stub (import succeeds). The copied public hash
+  is insufficient because the expected value is committed plaintext in
+  `oracle/manifest.json`, so matching it shows only that the writer could
+  read the manifest. A successful bare import is insufficient because any
+  file at the right path imports. The version-pin check is a stronger
+  consistency requirement (a stub does not report the pinned commit), not
+  cryptographic authentication: a version string does not authenticate
+  arbitrary hostile code, and this control claims no such thing. Source:
+  `tools/vel_oracle_status.py` (control O10) and
+  `tests/test_sxt036_vel_oracle_status.py::test_prebuilt_sha256_match_with_fake_module_is_refused`
+  (not executed for this documentation change).
 
 **A real environment-leakage bug, found by running the full control suite in
 the now-realistic environment** (the human re-run command this leaf's own
@@ -624,8 +645,8 @@ override under test, masking a wrong-commit checkout (O3) or an unbuilt
 directory (O9) with a real import that did not come from the directory being
 tested — a false `AVAILABLE`/pass on the control itself. `_self()` now
 scrubs `PYTHONPATH` before applying each control's own overrides (only O1
-re-adds it, deliberately, to its stub). Re-run after the fix: **all nine
-controls FIRE**, in exactly the environment the sixth increment could not
+re-adds it, deliberately, to its stub). Re-run after the fix: **all controls FIRE**
+(nine at the time of that increment; the committed set is now ten, O1-O10, with O10 added later), in exactly the environment the sixth increment could not
 reach (`PYTHONPATH` exported, prebuilt env vars exported, oracle genuinely
 present).
 
@@ -768,7 +789,7 @@ python3 model/voice/blob_verify_vel_carriers.py \
     --out reports/SXT-036/artifacts/blob-verify-carriers.json
 ```
 Exit codes seen: `vel_oracle_status.py` → 0 (gate `AVAILABLE` on this host,
-all nine controls fired); `blob_verify_vel_carriers.py` → 0 (4/4 carriers
+all ten controls fired); `blob_verify_vel_carriers.py` → 0 (4/4 carriers
 byte-identical to the census); → 2 if `ORACLE_SURGE_DIR` is absent/unset or a
 carrier is missing from the checkout.
 
