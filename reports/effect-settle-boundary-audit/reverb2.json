@@ -1,0 +1,2243 @@
+{
+  "claim_scope": "a harness settle-boundary audit. Not a fidelity result, not a support claim; A/B output invariance would establish the tested output behaviour only, not every internal state variable. Committed leaf records are not modified.",
+  "comparator": "tools/compare_reverb2_reference.py",
+  "comparator_git_blob_sha1": "3ef32e627eee7a5b3428e71037070318e8d0f2be",
+  "environment": {
+    "audit_tool_git_blob_sha1": "3f5d18e080e429528d070dfdc513c70881e56355",
+    "block_size": 32,
+    "comparator_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_submodules_sha256": "61823b187e8751bc043541753f7eb35ea0977e16e20c8eda57dff1d94782a553",
+    "machine": "x86_64",
+    "numpy": "1.26.4",
+    "oracle_manifest": "oracle/manifest.json",
+    "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
+    "platform": "Linux-6.17.0-1019-aws-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "sample_rate": 48000,
+    "source_revision": "e3a5e8891e46b9df8fbac0600a30e4b6a41d8ba5",
+    "source_tree_dirty": false
+  },
+  "issue": "#318",
+  "leaves": [
+    "SXT-028f (fx:Reverb 2)"
+  ],
+  "oracle": {
+    "ORACLE_PREBUILT_URL_set": false,
+    "ORACLE_SURGE_DIR_set": false,
+    "available": false,
+    "engine_dir_present": false,
+    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "reason": "no surgepy build under /Users/joseph/dev/surge-xt-oracle/surge/build-py311/src/surge-python",
+    "surgepy_dir_present": false
+  },
+  "production_preroll": {
+    "blocks": 375,
+    "inherited_from": null,
+    "source": "SETTLE_BLOCKS = 375 (module constant)"
+  },
+  "rows": [
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 32037.5009765625,
+              "rms_diff_dbfs": 81.13918782106651,
+              "spectral_corr": -0.012857262657728574
+            },
+            "R": {
+              "max_abs_diff_lsb": 34923.5498046875,
+              "rms_diff_dbfs": 81.16730203925435,
+              "spectral_corr": -0.01228111386663211
+            },
+            "mono": {
+              "max_abs_diff_lsb": 11735.166015625,
+              "rms_diff_dbfs": 75.16951965193734,
+              "spectral_corr": -0.009064725710182131
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-0",
+                "--model",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-0/model__moire1__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-0"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 32041.7734375,
+                  "rms_diff_dbfs": -45.1905132529413,
+                  "spectral_corr": 0.9871427303534076
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 34927.95703125,
+                  "rms_diff_dbfs": -45.159725761735814,
+                  "spectral_corr": 0.9877188791762025
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 11736.8310546875,
+                  "rms_diff_dbfs": -55.16725749893364,
+                  "spectral_corr": 0.9909352716007127
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -17.425420830331987,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -17.43 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 8.43 dB (> 1.00 dB budget) in 29 of 50 graded windows (worst window 49: reference -78.1 dBFS, model -69.7 dBFS); L: tail residual -11.36 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 9.54 dB (> 1.00 dB budget) in 30 of 50 graded windows (worst window 28: reference -47.6 dBFS, model -57.1 dBFS); R: tail residual -11.09 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 5.48 dB (> 1.00 dB budget) in 26 of 50 graded windows (worst window 34: reference -51.6 dBFS, model -57.1 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "b4613e86281f61d4e33ef91aab9a552b12232636300fad4dbfb36a447fb1f17f",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-375",
+                "--model",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-375/model__moire1__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-notes-coverage-v1/preroll-375"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 4.2724609375,
+                  "rms_diff_dbfs": -126.32970107400782,
+                  "spectral_corr": 0.9999999930111362
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 4.4072265625,
+                  "rms_diff_dbfs": -126.32702780099017,
+                  "spectral_corr": 0.9999999930428346
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 1.6650390625,
+                  "rms_diff_dbfs": -130.33677715087097,
+                  "spectral_corr": 0.9999999973108948
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -93.74130220575253,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "343937a1550b8935511b71c73a49c6b6db9be5ec9a2b319745cf994fdf9ca4be",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "583653c2bd3a306e8033ee0bbe927167ebcefa009fd3a446ad4c29731c8c0fa4",
+          "sidecar_declared_buffer_sha256": "583653c2bd3a306e8033ee0bbe927167ebcefa009fd3a446ad4c29731c8c0fa4",
+          "wav": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1-wet.f32.wav",
+          "wav_sha256": "bd80fed96f917de2f7e6368c19a5e09eefd7c818cb68d4d481ddec1787bb5bdf"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 4.2724609375,
+              "rms_diff_dbfs": -126.32970107400782,
+              "spectral_corr": 0.9999999930111362
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 4.4072265625,
+              "rms_diff_dbfs": -126.32702780099017,
+              "spectral_corr": 0.9999999930428346
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 1.6650390625,
+              "rms_diff_dbfs": -130.33677715087097,
+              "spectral_corr": 0.9999999973108948
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -93.74130220575253,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 32037.5009765625,
+              "rms_diff_dbfs": 81.13918782106651,
+              "spectral_corr": -0.012857262657728574
+            },
+            "R": {
+              "max_abs_diff_lsb": 34923.5498046875,
+              "rms_diff_dbfs": 81.16730203925435,
+              "spectral_corr": -0.01228111386663211
+            },
+            "mono": {
+              "max_abs_diff_lsb": 11735.166015625,
+              "rms_diff_dbfs": 75.16951965193734,
+              "spectral_corr": -0.009064725710182131
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028f/artifacts/model__moire1__seq-notes-coverage-v1.f32.wav",
+        "model_wav_sha256": "343937a1550b8935511b71c73a49c6b6db9be5ec9a2b319745cf994fdf9ca4be",
+        "production_leg_metrics_bit_identical_to_committed": true,
+        "production_leg_metrics_max_rel_deviation": 0.0,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028f/artifacts/compare-moire1__seq-notes-coverage-v1.json",
+        "record_sha256": "89595f62dfb5b1dc787f9bcca5defd8e42e6155d00e88839286d6e9ce604dab7",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "moire1",
+      "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.HEAD.58914e59c",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+          "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-notes-coverage-v1",
+          "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+        },
+        "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028f/fixtures/moire1__seq-notes-coverage-v1.json",
+        "sidecar_sha256": "2ad087782d37aa74622be61a7ad057bb5ef5630929751ec7706751a084b2fa7d"
+      },
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-notes-coverage-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 90858.43408203125,
+              "rms_diff_dbfs": 87.66534453779644,
+              "spectral_corr": -0.013023698444751597
+            },
+            "R": {
+              "max_abs_diff_lsb": 85714.763671875,
+              "rms_diff_dbfs": 87.51814295225032,
+              "spectral_corr": -0.0120602362535972
+            },
+            "mono": {
+              "max_abs_diff_lsb": 33026.5048828125,
+              "rms_diff_dbfs": 84.16037952064832,
+              "spectral_corr": -0.011688719255633861
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-0",
+                "--model",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-0/model__moire1__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-0"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 90867.59375,
+                  "rms_diff_dbfs": -36.27718214642281,
+                  "spectral_corr": 0.9869762925822497
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 85724.203125,
+                  "rms_diff_dbfs": -36.428353291696055,
+                  "spectral_corr": 0.9879397547067708
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 33029.134765625,
+                  "rms_diff_dbfs": -45.068090237587164,
+                  "spectral_corr": 0.9883112778197415
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": false,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -14.796964241913052,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs; tail-region gate: mono: tail residual -14.80 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 3.11 dB (> 1.00 dB budget) in 19 of 50 graded windows (worst window 39: reference -62.2 dBFS, model -59.0 dBFS); L: tail residual -9.26 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 3.26 dB (> 1.00 dB budget) in 20 of 50 graded windows (worst window 33: reference -49.6 dBFS, model -46.3 dBFS); R: tail residual -8.87 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 3.32 dB (> 1.00 dB budget) in 22 of 50 graded windows (worst window 40: reference -53.3 dBFS, model -50.0 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "21bba5b76858ee0de0d212e280d686e6bcfd41016ae44ad4f4071fcc23ed0410",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-375",
+                "--model",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-375/model__moire1__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "moire1",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/moire1__seq-poly-8-v1/preroll-375"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 9.15966796875,
+                  "rms_diff_dbfs": -123.94252668421926,
+                  "spectral_corr": 0.9999999910270013
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 9.439453125,
+                  "rms_diff_dbfs": -123.94649624394637,
+                  "spectral_corr": 0.999999990960368
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 2.6298828125,
+                  "rms_diff_dbfs": -129.2284697582355,
+                  "spectral_corr": 0.9999999970753753
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -99.33706821913097,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "127cd2a63f9e8cc47f0e4e14d6732d43bc937f3a49fbe05f3d520063bc6d3d14",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "e1a14383e9429b3ba60ef862d9f0b5d411265598f0a771c0b3700638c66e053d",
+          "sidecar_declared_buffer_sha256": "e1a14383e9429b3ba60ef862d9f0b5d411265598f0a771c0b3700638c66e053d",
+          "wav": "reports/SXT-028f/fixtures/moire1__seq-poly-8-v1-wet.f32.wav",
+          "wav_sha256": "cb8864ab4514b5828c7890b732285a5898ecc9fd965d6e0d9854c4cb4e1328c4"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 9.15966796875,
+              "rms_diff_dbfs": -123.94252668421926,
+              "spectral_corr": 0.9999999910270013
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 9.439453125,
+              "rms_diff_dbfs": -123.94649624394637,
+              "spectral_corr": 0.999999990960368
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 2.6298828125,
+              "rms_diff_dbfs": -129.2284697582355,
+              "spectral_corr": 0.9999999970753753
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -99.33706821913097,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 90858.43408203125,
+              "rms_diff_dbfs": 87.66534453779644,
+              "spectral_corr": -0.013023698444751597
+            },
+            "R": {
+              "max_abs_diff_lsb": 85714.763671875,
+              "rms_diff_dbfs": 87.51814295225032,
+              "spectral_corr": -0.0120602362535972
+            },
+            "mono": {
+              "max_abs_diff_lsb": 33026.5048828125,
+              "rms_diff_dbfs": 84.16037952064832,
+              "spectral_corr": -0.011688719255633861
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028f/artifacts/model__moire1__seq-poly-8-v1.f32.wav",
+        "model_wav_sha256": "127cd2a63f9e8cc47f0e4e14d6732d43bc937f3a49fbe05f3d520063bc6d3d14",
+        "production_leg_metrics_bit_identical_to_committed": true,
+        "production_leg_metrics_max_rel_deviation": 0.0,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028f/artifacts/compare-moire1__seq-poly-8-v1.json",
+        "record_sha256": "acd2b799fb53738ba9065275e60b212632d0a3e612ac873fe9ce73a47d51b766",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "moire1",
+      "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.HEAD.58914e59c",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+          "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-poly-8-v1",
+          "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+        },
+        "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028f/fixtures/moire1__seq-poly-8-v1.json",
+        "sidecar_sha256": "74ae5953b3b50f54bdf38fb88f5fad19acfad9e7de929bed98e691c3fa3702e9"
+      },
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-poly-8-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 21725.05078125,
+              "rms_diff_dbfs": 75.951499185741,
+              "spectral_corr": -0.011944232113532571
+            },
+            "R": {
+              "max_abs_diff_lsb": 26397.3466796875,
+              "rms_diff_dbfs": 76.21853013862722,
+              "spectral_corr": -0.011377763617707037
+            },
+            "mono": {
+              "max_abs_diff_lsb": 16370.91015625,
+              "rms_diff_dbfs": 75.63111910449133,
+              "spectral_corr": -0.010130473329543865
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-0",
+                "--model",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-0/model__mystical__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-0"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 21728.48828125,
+                  "rms_diff_dbfs": -48.035916851794056,
+                  "spectral_corr": 0.988055756798531
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 26401.115234375,
+                  "rms_diff_dbfs": -47.54265435750046,
+                  "spectral_corr": 0.9886222254421209
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 16373.78515625,
+                  "rms_diff_dbfs": -50.790689173486285,
+                  "spectral_corr": 0.9898695204977392
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -17.010078230723128,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -17.01 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 7.46 dB (> 1.00 dB budget) in 20 of 50 graded windows (worst window 44: reference -58.7 dBFS, model -66.1 dBFS); L: tail residual -16.49 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 7.35 dB (> 1.00 dB budget) in 21 of 50 graded windows (worst window 48: reference -64.6 dBFS, model -57.3 dBFS); R: tail residual -17.36 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 9.42 dB (> 1.00 dB budget) in 19 of 50 graded windows (worst window 35: reference -50.5 dBFS, model -59.9 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "df24744978804a3ff4823c1e17914d8baf3db115130b89eac8179ca5d3e10862",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-375",
+                "--model",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-375/model__mystical__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-notes-coverage-v1/preroll-375"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 3.4375,
+                  "rms_diff_dbfs": -123.98741603753506,
+                  "spectral_corr": 0.9999999889120635
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 3.7685546875,
+                  "rms_diff_dbfs": -123.76118449612768,
+                  "spectral_corr": 0.9999999890598279
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 2.875,
+                  "rms_diff_dbfs": -126.42180827797762,
+                  "spectral_corr": 0.9999999938272831
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -95.39997345269552,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "cacbbaf85afa95d5da8bf7a9dd0954df90c3206d0110bd5a4165ddf28be5de88",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "6f1aa0b3c253a2503a236855d150d3776c59d522e38dce699c0e06563c3c8748",
+          "sidecar_declared_buffer_sha256": "6f1aa0b3c253a2503a236855d150d3776c59d522e38dce699c0e06563c3c8748",
+          "wav": "reports/SXT-028f/fixtures/mystical__seq-notes-coverage-v1-wet.f32.wav",
+          "wav_sha256": "ad9f51dd039513ebcc6c3a96198828889933aa482a645b06dabda335d57a1401"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 3.4375,
+              "rms_diff_dbfs": -123.98741603753506,
+              "spectral_corr": 0.9999999889120635
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 3.7685546875,
+              "rms_diff_dbfs": -123.76118449612768,
+              "spectral_corr": 0.9999999890598279
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 2.875,
+              "rms_diff_dbfs": -126.42180827797762,
+              "spectral_corr": 0.9999999938272831
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -95.39997345269552,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 21725.05078125,
+              "rms_diff_dbfs": 75.951499185741,
+              "spectral_corr": -0.011944232113532571
+            },
+            "R": {
+              "max_abs_diff_lsb": 26397.3466796875,
+              "rms_diff_dbfs": 76.21853013862722,
+              "spectral_corr": -0.011377763617707037
+            },
+            "mono": {
+              "max_abs_diff_lsb": 16370.91015625,
+              "rms_diff_dbfs": 75.63111910449133,
+              "spectral_corr": -0.010130473329543865
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028f/artifacts/model__mystical__seq-notes-coverage-v1.f32.wav",
+        "model_wav_sha256": "cacbbaf85afa95d5da8bf7a9dd0954df90c3206d0110bd5a4165ddf28be5de88",
+        "production_leg_metrics_bit_identical_to_committed": true,
+        "production_leg_metrics_max_rel_deviation": 0.0,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028f/artifacts/compare-mystical__seq-notes-coverage-v1.json",
+        "record_sha256": "384a61a40a03b7684cd88d6d685a2a777bcecc2b5ad4b737acce666302b2783e",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "mystical",
+      "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.HEAD.58914e59c",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+          "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-notes-coverage-v1",
+          "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+        },
+        "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028f/fixtures/mystical__seq-notes-coverage-v1.json",
+        "sidecar_sha256": "9006ab4e2b42e4e4e4ceb0e83f3ef948f6c1e86e16680281c40820a2d2019390"
+      },
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-notes-coverage-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 21343.58984375,
+              "rms_diff_dbfs": 75.55592309802154,
+              "spectral_corr": -0.015635353665851226
+            },
+            "R": {
+              "max_abs_diff_lsb": 20328.9140625,
+              "rms_diff_dbfs": 75.59859127352598,
+              "spectral_corr": -0.016587714306369294
+            },
+            "mono": {
+              "max_abs_diff_lsb": 17317.5,
+              "rms_diff_dbfs": 75.5555613956287,
+              "spectral_corr": -0.013436142282482022
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-0",
+                "--model",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-0/model__mystical__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-0"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 21347.83984375,
+                  "rms_diff_dbfs": -48.542321802939774,
+                  "spectral_corr": 0.9843646405736711
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 20332.9765625,
+                  "rms_diff_dbfs": -48.99275173899408,
+                  "spectral_corr": 0.983412279579052
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 17321.5,
+                  "rms_diff_dbfs": -51.25789057854781,
+                  "spectral_corr": 0.9865638547269303
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -10.886771944702412,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail residual -10.89 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 2.29 dB (> 1.00 dB budget) in 13 of 50 graded windows (worst window 23: reference -62.2 dBFS, model -59.9 dBFS); L: tail residual -8.66 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 4.34 dB (> 1.00 dB budget) in 19 of 50 graded windows (worst window 23: reference -60.9 dBFS, model -56.5 dBFS); R: tail residual -9.68 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 3.67 dB (> 1.00 dB budget) in 17 of 50 graded windows (worst window 22: reference -56.6 dBFS, model -60.3 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "ee1e34bc3ccab90f88bf144b7b6d970b3187dcc47cce7315523370801e7c1b66",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-375",
+                "--model",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-375/model__mystical__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "mystical",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/mystical__seq-poly-8-v1/preroll-375"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 4.25,
+                  "rms_diff_dbfs": -124.0982449009613,
+                  "spectral_corr": 0.9999999942395223
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 4.0625,
+                  "rms_diff_dbfs": -124.59134301252007,
+                  "spectral_corr": 0.9999999938854213
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 4.0,
+                  "rms_diff_dbfs": -126.8134519741765,
+                  "spectral_corr": 0.9999999970094123
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -88.52842023867764,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "f0c38be784a426999c686dd638dd2bb26b0dd3e6d9137aaa90572ced41e4f9bc",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "2098bfcecb4da3d48b1b18d10bb9a5cd76832ba76f6d23cacb512fa3c924ada6",
+          "sidecar_declared_buffer_sha256": "2098bfcecb4da3d48b1b18d10bb9a5cd76832ba76f6d23cacb512fa3c924ada6",
+          "wav": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1-wet.f32.wav",
+          "wav_sha256": "b8002ddc76359e1c30f104d6112fbd042ed3f0de07cbd718be11f1996cf74230"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 4.25,
+              "rms_diff_dbfs": -124.0982449009613,
+              "spectral_corr": 0.9999999942395223
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 4.0625,
+              "rms_diff_dbfs": -124.59134301252007,
+              "spectral_corr": 0.9999999938854213
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 4.0,
+              "rms_diff_dbfs": -126.8134519741765,
+              "spectral_corr": 0.9999999970094123
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -88.52842023867764,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 21343.58984375,
+              "rms_diff_dbfs": 75.55592309802154,
+              "spectral_corr": -0.015635353665851226
+            },
+            "R": {
+              "max_abs_diff_lsb": 20328.9140625,
+              "rms_diff_dbfs": 75.59859127352598,
+              "spectral_corr": -0.016587714306369294
+            },
+            "mono": {
+              "max_abs_diff_lsb": 17317.5,
+              "rms_diff_dbfs": 75.5555613956287,
+              "spectral_corr": -0.013436142282482022
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028f/artifacts/model__mystical__seq-poly-8-v1.f32.wav",
+        "model_wav_sha256": "f0c38be784a426999c686dd638dd2bb26b0dd3e6d9137aaa90572ced41e4f9bc",
+        "production_leg_metrics_bit_identical_to_committed": true,
+        "production_leg_metrics_max_rel_deviation": 0.0,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028f/artifacts/compare-mystical__seq-poly-8-v1.json",
+        "record_sha256": "bf79c0c7de604a0975c818ba25798df909cf2f82aa84ddfd0d0765064894b0d7",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "mystical",
+      "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.HEAD.58914e59c",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+          "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-poly-8-v1",
+          "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+        },
+        "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028f/fixtures/mystical__seq-poly-8-v1.json",
+        "sidecar_sha256": "d2656b892ca71ec88c081a621491bcd8df60db066d4dad475d9540f4e859af86"
+      },
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-poly-8-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 47453.83984375,
+              "rms_diff_dbfs": 71.92039141564189,
+              "spectral_corr": -0.003972320823047659
+            },
+            "R": {
+              "max_abs_diff_lsb": 40696.48779296875,
+              "rms_diff_dbfs": 71.81938050985488,
+              "spectral_corr": -0.0041292385107557505
+            },
+            "mono": {
+              "max_abs_diff_lsb": 20914.26123046875,
+              "rms_diff_dbfs": 66.67263509121946,
+              "spectral_corr": -0.002025654616131245
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-0",
+                "--model",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-0/model__tacobell__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-0"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 47473.5390625,
+                  "rms_diff_dbfs": -44.55437295736896,
+                  "spectral_corr": 0.996027661460402
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 40713.72216796875,
+                  "rms_diff_dbfs": -44.654283344625924,
+                  "spectral_corr": 0.9958707435854876
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 20923.26123046875,
+                  "rms_diff_dbfs": -51.99045388818823,
+                  "spectral_corr": 0.9979743418537498
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -25.916221928558834,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail decay curve deviates 5.47 dB (> 1.00 dB budget) in 10 of 25 graded windows (worst window 23: reference -90.2 dBFS, model -95.7 dBFS); L: tail residual -18.29 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 6.30 dB (> 1.00 dB budget) in 12 of 28 graded windows (worst window 24: reference -85.1 dBFS, model -91.4 dBFS); R: tail residual -18.48 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 7.18 dB (> 1.00 dB budget) in 14 of 28 graded windows (worst window 18: reference -64.4 dBFS, model -71.6 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "0bfd2f1db05720a1f6ff98436b231602cac0455a1c79ebb312b98bd9c06c7c34",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-375",
+                "--model",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-375/model__tacobell__seq-notes-coverage-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-notes-coverage-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-notes-coverage-v1/preroll-375"
+              ]
+            },
+            "frames": 273600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 19.69921875,
+                  "rms_diff_dbfs": -116.47476437301086,
+                  "spectral_corr": 0.9999999822834497
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 17.234375,
+                  "rms_diff_dbfs": -116.4736638544808,
+                  "spectral_corr": 0.9999999820962433
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 273600,
+                  "max_abs_diff_lsb": 9.0,
+                  "rms_diff_dbfs": -118.66308897940769,
+                  "spectral_corr": 0.999999996469881
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -95.7585800913582,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "a66267def3d23d15d20238c8c8aebfaa0ad1c7fc9584a50d32fd62c66ad1bdb6",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "63be231d9585a31c30a46d4ddccbafa37e021d934d3c31ae5483da8811581d1c",
+          "sidecar_declared_buffer_sha256": "63be231d9585a31c30a46d4ddccbafa37e021d934d3c31ae5483da8811581d1c",
+          "wav": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1-wet.f32.wav",
+          "wav_sha256": "eb54a7c8e7135b693055bbe00c0156e60361216f622edf9c37575a9d4bb15ba2"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 19.69921875,
+              "rms_diff_dbfs": -116.47476437301086,
+              "spectral_corr": 0.9999999822834497
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 17.234375,
+              "rms_diff_dbfs": -116.4736638544808,
+              "spectral_corr": 0.9999999820962433
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 273600,
+              "max_abs_diff_lsb": 9.0,
+              "rms_diff_dbfs": -118.66308897940769,
+              "spectral_corr": 0.999999996469881
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -95.7585800913582,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 47453.83984375,
+              "rms_diff_dbfs": 71.92039141564189,
+              "spectral_corr": -0.003972320823047659
+            },
+            "R": {
+              "max_abs_diff_lsb": 40696.48779296875,
+              "rms_diff_dbfs": 71.81938050985488,
+              "spectral_corr": -0.0041292385107557505
+            },
+            "mono": {
+              "max_abs_diff_lsb": 20914.26123046875,
+              "rms_diff_dbfs": 66.67263509121946,
+              "spectral_corr": -0.002025654616131245
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028f/artifacts/model__tacobell__seq-notes-coverage-v1.f32.wav",
+        "model_wav_sha256": "a66267def3d23d15d20238c8c8aebfaa0ad1c7fc9584a50d32fd62c66ad1bdb6",
+        "production_leg_metrics_bit_identical_to_committed": true,
+        "production_leg_metrics_max_rel_deviation": 0.0,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028f/artifacts/compare-tacobell__seq-notes-coverage-v1.json",
+        "record_sha256": "0419bc6ec6865eea02067a199d9535c88d3e7dd62a36b8ae17044629391aa036",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "tacobell",
+      "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.HEAD.58914e59c",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+          "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-notes-coverage-v1",
+          "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+        },
+        "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028f/fixtures/tacobell__seq-notes-coverage-v1.json",
+        "sidecar_sha256": "d8a0f957a9589254ff1db51e34982386a5dd6c4526a0becc6c4645b2e9d7d759"
+      },
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-notes-coverage-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "B_construction_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "C_model_boundary_vs_engine": {
+        "comparator_verdict_by_preroll": {
+          "0": "FAIL",
+          "375": "PASS"
+        },
+        "comparator_verdict_depends_on_preroll": true,
+        "deltas_vs_production": {
+          "0_minus_production": {
+            "L": {
+              "max_abs_diff_lsb": 121407.71875,
+              "rms_diff_dbfs": 73.03824820491221,
+              "spectral_corr": -0.005656779099149967
+            },
+            "R": {
+              "max_abs_diff_lsb": 112342.5625,
+              "rms_diff_dbfs": 72.97467728388875,
+              "spectral_corr": -0.005455280223073955
+            },
+            "mono": {
+              "max_abs_diff_lsb": 43510.09375,
+              "rms_diff_dbfs": 67.12177236904307,
+              "spectral_corr": -0.002239663302256889
+            }
+          }
+        },
+        "fixture_settle_blocks": 375,
+        "legs": {
+          "0": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-0",
+                "--model",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-0/model__tacobell__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-0/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "0",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-0"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 121429.46875,
+                  "rms_diff_dbfs": -39.72243294481543,
+                  "spectral_corr": 0.9943432086379945
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 112365.0625,
+                  "rms_diff_dbfs": -39.7591990424474,
+                  "spectral_corr": 0.9945447081670297
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 43532.09375,
+                  "rms_diff_dbfs": -47.203105858541605,
+                  "spectral_corr": 0.9977603340993638
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": false,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": false,
+              "tail_rms_rel_db": -26.96571821376739,
+              "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb; tail-region gate: mono: tail decay curve deviates 1.81 dB (> 1.00 dB budget) in 6 of 22 graded windows (worst window 20: reference -95.0 dBFS, model -93.2 dBFS); L: tail residual -19.91 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 3.96 dB (> 1.00 dB budget) in 4 of 24 graded windows (worst window 23: reference -98.9 dBFS, model -94.9 dBFS); R: tail decay curve deviates 3.35 dB (> 1.00 dB budget) in 3 of 24 graded windows (worst window 21: reference -90.2 dBFS, model -93.6 dBFS))",
+              "verdict_class": "FAIL"
+            },
+            "model_wav_sha256": "ee61bfc06762bcca452b9a56944d420ab19888d2af8b1bf275bb0d5874714787",
+            "role": "zero",
+            "silent_preroll_blocks": 0
+          },
+          "375": {
+            "commands": {
+              "comparator": [
+                "python3",
+                "tools/compare_reverb2_reference.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-poly-8-v1",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--art-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-375",
+                "--model",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-375/model__tacobell__seq-poly-8-v1.f32.wav",
+                "--json",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-375/compare.json"
+              ],
+              "model": [
+                "python3",
+                "tools/audit_effect_settle_boundaries.py",
+                "_leg",
+                "--runner",
+                "run_reverb2_model.py",
+                "--slug",
+                "tacobell",
+                "--seq",
+                "seq-poly-8-v1",
+                "--pre",
+                "375",
+                "--fixtures-dir",
+                "reports/SXT-028f/fixtures",
+                "--out-dir",
+                "<work>/sxt318/work/reverb2/tacobell__seq-poly-8-v1/preroll-375"
+              ]
+            },
+            "frames": 177600,
+            "metrics": {
+              "channels": {
+                "L": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 21.75,
+                  "rms_diff_dbfs": -112.76068114972765,
+                  "spectral_corr": 0.9999999877371445
+                },
+                "R": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 22.5,
+                  "rms_diff_dbfs": -112.73387632633616,
+                  "spectral_corr": 0.9999999883901036
+                },
+                "mono": {
+                  "best_shift": 0,
+                  "frames": 177600,
+                  "max_abs_diff_lsb": 22.0,
+                  "rms_diff_dbfs": -114.32487822758468,
+                  "spectral_corr": 0.9999999974016207
+                }
+              },
+              "proposed_budget_results": {
+                "max_abs_diff_lsb": true,
+                "rms_diff_dbfs": true,
+                "spectral_corr": true
+              },
+              "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+              "tail_gate_ok": true,
+              "tail_rms_rel_db": -96.30932842669482,
+              "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+              "verdict_class": "PASS"
+            },
+            "model_wav_sha256": "a21fa73d2bac797fca41187b379ebc1658676790a0b749d241cd1b06f6f77396",
+            "role": "production",
+            "silent_preroll_blocks": 375
+          }
+        },
+        "model_output_identity_groups": [
+          [
+            0
+          ],
+          [
+            375
+          ]
+        ],
+        "model_output_preroll_sensitive": true,
+        "note": "recorded, not tuned: no pre-roll is selected by these numbers",
+        "production_preroll_blocks": 375,
+        "reference": {
+          "buffer_sha256": "4fc275b8f880bcef196a3deea98ed28912e86b7720c40f17a7bce6c542536602",
+          "sidecar_declared_buffer_sha256": "4fc275b8f880bcef196a3deea98ed28912e86b7720c40f17a7bce6c542536602",
+          "wav": "reports/SXT-028f/fixtures/tacobell__seq-poly-8-v1-wet.f32.wav",
+          "wav_sha256": "bc9905acaf62b82ac6ebfda62f434f2744f9bce987964a7f1f892e4ffde01b65"
+        },
+        "status": "MEASURED"
+      },
+      "ab_source": null,
+      "baseline": {
+        "committed_metrics": {
+          "channels": {
+            "L": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 21.75,
+              "rms_diff_dbfs": -112.76068114972765,
+              "spectral_corr": 0.9999999877371445
+            },
+            "R": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 22.5,
+              "rms_diff_dbfs": -112.73387632633616,
+              "spectral_corr": 0.9999999883901036
+            },
+            "mono": {
+              "best_shift": 0,
+              "frames": 177600,
+              "max_abs_diff_lsb": 22.0,
+              "rms_diff_dbfs": -114.32487822758468,
+              "spectral_corr": 0.9999999974016207
+            }
+          },
+          "proposed_budget_results": {
+            "max_abs_diff_lsb": true,
+            "rms_diff_dbfs": true,
+            "spectral_corr": true
+          },
+          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+          "tail_gate_ok": true,
+          "tail_rms_rel_db": -96.30932842669482,
+          "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12 / shared delay-semantics #16)",
+          "verdict_class": "PASS"
+        },
+        "committed_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+        "committed_verdict_class": "PASS",
+        "definition_matches_current": true,
+        "deltas_vs_committed": {
+          "0_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 121407.71875,
+              "rms_diff_dbfs": 73.03824820491221,
+              "spectral_corr": -0.005656779099149967
+            },
+            "R": {
+              "max_abs_diff_lsb": 112342.5625,
+              "rms_diff_dbfs": 72.97467728388875,
+              "spectral_corr": -0.005455280223073955
+            },
+            "mono": {
+              "max_abs_diff_lsb": 43510.09375,
+              "rms_diff_dbfs": 67.12177236904307,
+              "spectral_corr": -0.002239663302256889
+            }
+          },
+          "375_minus_committed": {
+            "L": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "R": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            },
+            "mono": {
+              "max_abs_diff_lsb": 0.0,
+              "rms_diff_dbfs": 0.0,
+              "spectral_corr": 0.0
+            }
+          }
+        },
+        "metric_tolerance": {
+          "relative": 1e-09,
+          "why": "comparator metrics are float64 reductions (FFT, RMS) that agree across numpy builds/platforms to rounding only; the model render itself is compared bit-exactly by sha256"
+        },
+        "model_wav": "reports/SXT-028f/artifacts/model__tacobell__seq-poly-8-v1.f32.wav",
+        "model_wav_sha256": "a21fa73d2bac797fca41187b379ebc1658676790a0b749d241cd1b06f6f77396",
+        "production_leg_metrics_bit_identical_to_committed": true,
+        "production_leg_metrics_max_rel_deviation": 0.0,
+        "production_leg_metrics_within_tolerance": true,
+        "production_leg_reproduces_committed_model": true,
+        "record": "reports/SXT-028f/artifacts/compare-tacobell__seq-poly-8-v1.json",
+        "record_sha256": "29fb5974f5c09ac3d9a7ff9ce38918235275d428e39053b4de505548c9cdb08c",
+        "status": "PASS",
+        "verdict_class_reproduced": true
+      },
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
+        "status": "NOT_MEASURED"
+      },
+      "carrier": "tacobell",
+      "chain": "Reverb 2 last active global slot (model input = engine per-slot bypass bus)",
+      "committed_numbers_dependence": "SENSITIVE",
+      "coverage": "C only",
+      "escalation": null,
+      "fixture": {
+        "block_size": 32,
+        "engine": {
+          "block_size_samples": 32,
+          "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "engine_version_string": "1.4.HEAD.58914e59c",
+          "sample_rate": 48000,
+          "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+          "tempo_bpm": 120
+        },
+        "render_tool": {
+          "pinned_inputs_clean": true,
+          "repo_commit": "6bbafb27f962933ee15ca99936a1ca4a3a966cbd",
+          "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+        },
+        "sample_rate": 48000,
+        "sequence": {
+          "id": "seq-poly-8-v1",
+          "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+        },
+        "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+        "settle_blocks": 375,
+        "settle_s": 0.25,
+        "sidecar": "reports/SXT-028f/fixtures/tacobell__seq-poly-8-v1.json",
+        "sidecar_sha256": "8bc37b969e997ef96d2eb261aff0bcaf88b0ca45626ac46fb1a251a1f56755da"
+      },
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "nc_c_control": {
+        "reason": "the wrong boundary is not yet known (boundary NOT_MEASURED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "runner": "model/effects/run_reverb2_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A/B not measured: pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS = 375 (module constant)",
+      "sequence": "seq-poly-8-v1",
+      "source_reconciliation": {
+        "candidates": [
+          0,
+          375
+        ],
+        "check": "runner pre-roll in {0, fixture settle}",
+        "limitation": "the probe's rule can positively RESOLVE only the 0 boundary; a runner using the fixture settle can at best be NO_VERDICT under this method",
+        "reason": "pre-roll 375 is candidate 'fixture settle' (375 blocks)",
+        "runner_preroll_blocks": 375,
+        "status": "PASS"
+      },
+      "status": "BLOCKED"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "grant_me",
+      "coverage": "none",
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028f/artifacts/render-refusals.txt)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "harp",
+      "coverage": "none",
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028f/artifacts/render-refusals.txt)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "novuo",
+      "coverage": "none",
+      "leaf": "SXT-028f (fx:Reverb 2)",
+      "reason": "no committed fixture: the pinned-engine render was REFUSED by its 3x determinism gate (reports/SXT-028f/artifacts/render-refusals.txt)",
+      "status": "NOT_RUN"
+    }
+  ],
+  "runner": "model/effects/run_reverb2_model.py",
+  "runner_git_blob_sha1": "05861d490efb1c5094028507584ebdb07448dd8d",
+  "schema_version": 1
+}

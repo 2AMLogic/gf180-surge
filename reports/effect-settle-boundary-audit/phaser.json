@@ -1,0 +1,132 @@
+{
+  "claim_scope": "a harness settle-boundary audit. Not a fidelity result, not a support claim; A/B output invariance would establish the tested output behaviour only, not every internal state variable. Committed leaf records are not modified.",
+  "comparator": "tools/compare_phaser_reference.py",
+  "comparator_git_blob_sha1": "14af9de68e6828d90c22da210100c01b774a8077",
+  "environment": {
+    "audit_tool_git_blob_sha1": "3f5d18e080e429528d070dfdc513c70881e56355",
+    "block_size": 32,
+    "comparator_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_submodules_sha256": "61823b187e8751bc043541753f7eb35ea0977e16e20c8eda57dff1d94782a553",
+    "machine": "x86_64",
+    "numpy": "1.26.4",
+    "oracle_manifest": "oracle/manifest.json",
+    "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
+    "platform": "Linux-6.17.0-1019-aws-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "sample_rate": 48000,
+    "source_revision": "e3a5e8891e46b9df8fbac0600a30e4b6a41d8ba5",
+    "source_tree_dirty": false
+  },
+  "issue": "#318",
+  "leaves": [
+    "SXT-028g (fx:Phaser)"
+  ],
+  "oracle": {
+    "ORACLE_PREBUILT_URL_set": false,
+    "ORACLE_SURGE_DIR_set": false,
+    "available": false,
+    "engine_dir_present": false,
+    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
+    "reason": "no surgepy build under /Users/joseph/dev/surge-xt-oracle/surge/build-py311/src/surge-python",
+    "surgepy_dir_present": false
+  },
+  "production_preroll": {
+    "blocks": 375,
+    "inherited_from": "run_chorus_model.py",
+    "source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))"
+  },
+  "rows": [
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-a",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-b",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-c",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-c.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-clamp-a",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-clamp-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-clamp-b",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-clamp-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-legacy-a",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-legacy-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-legacy-b",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-legacy-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
+        "status": "BLOCKED"
+      },
+      "carrier": "synth-maxst",
+      "coverage": "none",
+      "leaf": "SXT-028g (fx:Phaser)",
+      "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-maxst.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+      "status": "NOT_RUN"
+    }
+  ],
+  "runner": "model/effects/run_phaser_model.py",
+  "runner_git_blob_sha1": "c52bb2a3f10bc4bc48073570e025b63516f056cd",
+  "schema_version": 1
+}
