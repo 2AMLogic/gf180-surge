@@ -68,10 +68,18 @@ for _p in (os.path.join(REPO, "oracle"), TOOLS, REPO):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2             # 2: A0 repeatability, A/B diagnostics, leg D
 SR = 48000
 BLOCK = 32
 LONG_SETTLE_S = 2.5            # 10x the declared 0.25 s, as in the probe
+LIVE_REPEATS = 2               # A0: every live bus, fresh instances
+SETTLE_BLOCKS_FIXTURE = 375    # int(0.25 * 48000) // 32, the fixture settle
+LONG_SETTLE_BLOCKS = 3750      # int(2.5 * 48000) // 32
+EARLY_SETTLE_BLOCKS = 2        # A_early: the shortest settle EVERY carrier
+                               # accepts (the SSE synthetic construction
+                               # needs its rebuild block + one settle block)
+SWEEP_SETTLE_BLOCKS = (32, 120, 240)   # convergence diagnostic only
+LSB_Q21 = float(1 << 21)
 ENGINE_PIN = "58914e59c608ed4384ba6002e44c3465c58b2e71"
 DEFAULT_OUT = os.path.join(REPO, "reports", "effect-settle-boundary-audit")
 STATUSES = ("PASS", "FAIL", "NOT_RUN", "BLOCKED", "NO_VERDICT", "STALE")
@@ -165,6 +173,22 @@ RUNNERS = {
             for s in ("synth-a", "synth-b", "synth-c", "synth-clamp-a",
                       "synth-clamp-b", "synth-legacy-a", "synth-legacy-b",
                       "synth-maxst")],
+        # Engine-side A/B needs only the engine and a preset, not committed
+        # fixtures: the leaf's queued factory carriers
+        # (tools/render_phaser_fixtures.py PRESETS, census-blob verified at
+        # run time). C stays NOT_RUN for them (no fixture buses / extracted
+        # inputs: that is the SXT-028g reference leg, not this audit).
+        "ab_only_carriers": [
+            {"slug": s, "seq": q, "leaf": "SXT-028g (fx:Phaser)",
+             "preset": p, "chain": "factory preset chain (engine-side A/B "
+                                   "only)"}
+            for s, p in (
+                ("phasey", "resources/data/patches_factory/Polysynths/"
+                           "Phasey.fxp"),
+                ("squelch", "resources/data/patches_factory/Leads/"
+                            "Squelch.fxp"),
+                ("sticky", "resources/data/patches_factory/MPE/Sticky.fxp"))
+            for q in ("seq-notes-coverage-v1", "seq-poly-8-v1")],
     },
     "run_reverb2_model.py": {
         "leaves": ["SXT-028f (fx:Reverb 2)"],
@@ -436,10 +460,13 @@ def inventory():
 # The fail-closed boundary decision (the probe's rule, factored out)
 # --------------------------------------------------------------------------
 
-def decide_boundary(a_identical, b_identical):
-    """A/B byte-identity -> (boundary_status, declared_preroll_blocks).
+def decide_boundary_v1(a_identical, b_identical):
+    """The #136 probe's rule, verbatim (kept for transparency only).
 
-    `None` means the leg was not measured. Nothing here looks at C.
+    RESOLVED (0) on A (375 vs 3750) and B byte identity. #318's live run
+    measured that A cannot see an engine state that evolves during the
+    settle and converges before block 375 (A_early), so this rule is no
+    longer the audit's decision; every row records what it WOULD say.
     """
     if a_identical is None or b_identical is None:
         if a_identical is False or b_identical is False:
@@ -448,6 +475,32 @@ def decide_boundary(a_identical, b_identical):
     if a_identical is True and b_identical is True:
         return "RESOLVED", 0
     return "UNRESOLVED", None
+
+
+def decide_boundary(a_identical, b_identical, repeatable=None,
+                    a_early_identical=None):
+    """A0/A/A_early/B -> (boundary_status, declared_preroll_blocks).
+
+    The probe's fail-closed rule, TIGHTENED (never relaxed): the boundary is
+    RESOLVED (declared pre-roll 0) only if A, A_early and B are all measured
+    byte-identical and A0 did not fail. `None` means not measured. Nothing
+    here looks at C (or D).
+
+    * `repeatable` is the A0 control: a live render that does not reproduce
+      itself in a fresh instance supports no byte-identity reading, so a
+      measured `False` is UNRESOLVED.
+    * `a_early_identical`: A (375 vs 3750) alone cannot tell "no evolution
+      during the settle" from "evolution that converged before block 375";
+      without A_early the boundary is not RESOLVED.
+    """
+    if repeatable is False:
+        return "UNRESOLVED", None
+    legs = (a_identical, b_identical, a_early_identical)
+    if any(x is False for x in legs):
+        return "UNRESOLVED", None
+    if any(x is None for x in legs):
+        return "NOT_MEASURED", None
+    return "RESOLVED", 0
 
 
 def runner_verdict(boundary_status, declared, runner_preroll, ab_status):
@@ -888,7 +941,65 @@ def oracle_status():
     info["available"] = p.returncode == 0
     info["reason"] = (p.stdout.strip() if p.returncode == 0
                       else p.stderr.strip()[-300:])
+    info["identity"] = oracle_identity(oc.engine_dir())
+    if info["available"] and ENGINE_PIN[:9] not in info["reason"]:
+        info["identity"]["mismatches"].append(
+            "surgepy version %r does not name the pinned commit"
+            % info["reason"])
+        info["identity"]["matches_manifest"] = False
+    if info["available"] and not info["identity"]["matches_manifest"]:
+        info.update(available=False, reason=(
+            "oracle present but its identity does not match "
+            "oracle/manifest.json: %s" % info["identity"]["mismatches"]))
+    info["engine_dir_probed"] = _home(info["engine_dir_probed"])
     return info
+
+
+def _home(path):
+    h = os.path.expanduser("~")
+    return ("~" + path[len(h):]) if path and path.startswith(h + os.sep) \
+        else path
+
+
+def oracle_identity(engine_dir):
+    """Tie the oracle that ran to oracle/manifest.json (fail-closed).
+
+    For a prebuilt install (#232) the install root carries BUILDINFO.json and
+    .installed-sha256 (the artifact sha256 verified before unpacking). Their
+    engine commit and artifact sha must equal the manifest's pins, or the
+    oracle is treated as unavailable.
+    """
+    man = json.load(open(os.path.join(REPO, "oracle", "manifest.json")))
+    out = {"manifest_engine_commit": man["engine"]["commit"],
+           "mismatches": []}
+    bi = os.path.join(engine_dir, "BUILDINFO.json")
+    inst = os.path.join(engine_dir, ".installed-sha256")
+    if os.path.exists(bi):
+        b = json.load(open(bi))
+        out["buildinfo"] = b
+        plat = b.get("platform")
+        pre = (man.get("prebuilt") or {}).get(plat) or {}
+        out["manifest_prebuilt_platform"] = plat
+        out["manifest_prebuilt_sha256"] = pre.get("sha256")
+        if b.get("engine_commit") != man["engine"]["commit"]:
+            out["mismatches"].append("BUILDINFO engine_commit %r"
+                                     % b.get("engine_commit"))
+        if os.path.exists(inst):
+            got = open(inst).read().strip()
+            out["installed_artifact_sha256"] = got
+            if got != pre.get("sha256"):
+                out["mismatches"].append("installed artifact sha256 %r != "
+                                         "manifest prebuilt %r"
+                                         % (got, pre.get("sha256")))
+        else:
+            out["mismatches"].append("prebuilt install has no "
+                                     ".installed-sha256")
+        out["kind"] = "prebuilt (#232)"
+    else:
+        out["kind"] = ("source build (no BUILDINFO.json; drift gate is "
+                       "oracle/fetch-and-build.sh)")
+    out["matches_manifest"] = not out["mismatches"]
+    return out
 
 
 def committed_ab(runner, carrier):
@@ -925,56 +1036,477 @@ def committed_ab(runner, carrier):
     }
 
 
-def live_ab_factory(surgepy, sidecar, seq_id, tmpdir):
+FX_SLOTS = 16
+
+
+def diff_stats(a, b):
+    """Magnitude of a byte-identity failure (diagnostic, never a verdict)."""
+    import numpy as np
+    if a.shape != b.shape:
+        return {"shape_mismatch": [list(a.shape), list(b.shape)]}
+    d = np.abs(a.astype(np.float64) - b.astype(np.float64))
+    per_frame = d.max(axis=0) if d.size else d
+    nz = np.nonzero(per_frame)[0]
+    first = int(nz[0]) if nz.size else None
+    return {
+        "max_abs_diff": float(d.max()) if d.size else 0.0,
+        "max_abs_diff_lsb_q10_21": float(d.max() * LSB_Q21) if d.size else 0.0,
+        "frames": int(a.shape[1]),
+        "frames_differing": int(nz.size),
+        "first_differing_frame": first,
+        "first_differing_block": None if first is None else first // BLOCK,
+    }
+
+
+class _Bus:
+    """One live bus, rendered LIVE_REPEATS times in fresh instances."""
+
+    def __init__(self, buf, hashes, repeatable, divergence=None):
+        self.buf, self.hashes = buf, hashes
+        self.repeatable, self.divergence = repeatable, divergence
+
+    @property
+    def sha(self):
+        return self.hashes[0] if self.hashes else None
+
+    def record(self):
+        return {"repeats": LIVE_REPEATS, "sha256_all": self.hashes,
+                "byte_identical": self.repeatable,
+                "divergence": self.divergence}
+
+
+def live_bus(surgepy, path, seq, settle_s, off_slots=None,
+             mutate_factory=None):
+    """Render one bus under the SXT-012/023 fixture policy, A0-checked.
+
+    Wet/dry/per-slot-bypass go through `render_reverb2_fixtures.
+    render_bus_slots` (off_slots None = the unmodified chain, all 16 = the
+    all-off dry bus, {k} = per-slot bypass) -- procedurally the committed
+    renderers' path; `A_short_matches_committed_reference` checks that
+    against committed bytes. `mutate` (SSE synthetic construction) goes
+    through `render_distortion_sse_fixtures._render_once`, the probe's path
+    (`mutate_factory()` builds a fresh mutator per render, as the probe does).
+    A non-repeatable bus is RETURNED (buffer of the first repeat) with
+    repeatable=False; the caller fails closed.
+    """
+    import render_fx_fixtures as rfx  # noqa: PLC0415  (oracle-gated)
+    seq = dict(seq, settle_s=settle_s)
+    if mutate_factory is not None:
+        import numpy as np  # noqa: PLC0415
+        import render_distortion_sse_fixtures as rdf  # noqa: PLC0415
+        bufs = [np.asarray(rdf._render_once(surgepy, path, seq,
+                                            mutate_factory())[0],
+                           dtype=np.float32)
+                for _ in range(LIVE_REPEATS)]
+    else:
+        import render_reverb2_fixtures as rr2  # noqa: PLC0415
+        try:
+            buf, hashes, _info = rr2.render_bus_slots(
+                surgepy, path, seq, off_slots, repeats=LIVE_REPEATS)
+            return _Bus(buf, hashes, True)
+        except rr2.DeterminismRefusal as e:
+            buf, _h, _i = rr2.render_bus_slots(surgepy, path, seq, off_slots,
+                                               repeats=1)
+            return _Bus(buf, e.hashes, False, e.stats)
+    hashes = [rfx.sha256_buf(b) for b in bufs]
+    ok = all(h == hashes[0] for h in hashes)
+    return _Bus(bufs[0], hashes, ok,
+                None if ok else diff_stats(bufs[0], bufs[1]))
+
+
+def settle_s_for(blocks):
+    """settle_s that the fixture renderers turn into exactly `blocks`
+    (`int(settle_s * SR) // 32`); the +0.5 sample guards float floor."""
+    s = (blocks * BLOCK + 0.5) / SR
+    assert int(s * SR) // BLOCK == blocks, blocks
+    return s
+
+
+def _settle_buses(render, prefix, settles):
+    """{"<prefix>_<settle>": bus} for each settle length in blocks."""
+    return {"%s_%d" % (prefix, n): render(n) for n in settles}
+
+
+def _a_records(buses, have_bypass_slots=(), have_dry=True):
+    """A (375 vs 3750), A_early (EARLY vs 375) and the convergence sweep.
+
+    Diagnostics (never verdicts): the all-off dry bus at the same settles (a
+    difference there is synth-side and makes any wet difference
+    unattributable) and, for a per-slot-bypass leaf, that bus (a difference
+    there is upstream of the leaf).
+    """
+    def pair(prefix, n0, n1):
+        x, y = buses["%s_%d" % (prefix, n0)], buses["%s_%d" % (prefix, n1)]
+        return {"byte_identical": x.sha == y.sha,
+                "diff": diff_stats(x.buf, y.buf)}
+
+    def leg(n0, n1, extra=None):
+        p = pair("wet", n0, n1)
+        rec = {"status": "MEASURED", "byte_identical": p["byte_identical"],
+               "settle_blocks_compared": [n0, n1],
+               "sha256": [buses["wet_%d" % n0].sha, buses["wet_%d" % n1].sha],
+               "diff": p["diff"]}
+        if have_dry:
+            d = pair("dry", n0, n1)
+            rec["dry_diagnostic_byte_identical"] = d["byte_identical"]
+            rec["dry_diagnostic_diff"] = d["diff"]
+        if have_bypass_slots:
+            rec["bypass_diagnostic"] = {
+                "fx%d" % k: pair("bypass_fx%d" % k, n0, n1)
+                for k in have_bypass_slots}
+        rec.update(extra or {})
+        return rec
+    a = leg(SETTLE_BLOCKS_FIXTURE, LONG_SETTLE_BLOCKS)
+    a_early = leg(EARLY_SETTLE_BLOCKS, SETTLE_BLOCKS_FIXTURE, {
+        "why": "A compares 375 with 3750 settle blocks only. An engine "
+               "state that evolves during the settle and has converged to "
+               "a fixed point before block 375 passes A while the effect "
+               "did NOT start the audio in its init() state. A_early "
+               "compares the earliest settle every carrier accepts with "
+               "375; only if it is ALSO identical is 'no evolution during "
+               "the settle' measured."})
+    sweep = {"settle_blocks": [], "wet_equals_fixture_settle": [],
+             "dry_equals_fixture_settle": []}
+    for n in sorted({EARLY_SETTLE_BLOCKS, *SWEEP_SETTLE_BLOCKS,
+                     LONG_SETTLE_BLOCKS}):
+        sweep["settle_blocks"].append(n)
+        sweep["wet_equals_fixture_settle"].append(
+            buses["wet_%d" % n].sha == buses["wet_375"].sha)
+        if have_dry:
+            sweep["dry_equals_fixture_settle"].append(
+                buses["dry_%d" % n].sha == buses["dry_375"].sha)
+    sweep["note"] = ("convergence diagnostic: which settle lengths reproduce "
+                     "the 375-block fixture settle byte-for-byte")
+    return a, a_early, sweep
+
+
+def _a0(buses):
+    ok = all(b.repeatable for b in buses.values())
+    return {"status": "MEASURED", "repeats": LIVE_REPEATS,
+            "all_buses_repeatable": ok,
+            "non_repeatable_buses": sorted(k for k, b in buses.items()
+                                           if not b.repeatable),
+            "per_bus": {k: b.record() for k, b in buses.items()}}
+
+
+def _b_record(short, reloaded, instantiation, extra=None):
+    b = {"status": "MEASURED", "byte_identical": short.sha == reloaded.sha,
+         "instantiation": instantiation, "sha256": [short.sha, reloaded.sha],
+         "diff": diff_stats(short.buf, reloaded.buf)}
+    b.update(extra or {})
+    return b
+
+
+def _settles():
+    return sorted({EARLY_SETTLE_BLOCKS, *SWEEP_SETTLE_BLOCKS,
+                   SETTLE_BLOCKS_FIXTURE, LONG_SETTLE_BLOCKS})
+
+
+def live_ab_factory(surgepy, sidecar, seq_id, tmpdir, bypass_slots=(),
+                    keep_buffers=False):
     """A/B on the pinned engine for an ORDINARY factory/3rd-party preset.
 
-    UNEXERCISED on the host that wrote this tool (no oracle): its first live
-    run is itself evidence to retain. B is instantiated as native loadPatch
-    vs savePatch-then-loadPatch into a fresh instance (the ordinary load
-    path for a real carrier; there is no synthetic construction to test).
-    The dry bus is rendered at both settle lengths as a diagnostic: a dry
-    difference means the settle sensitivity is synth-side, which still
-    leaves the effect boundary UNRESOLVED (fail-closed).
+    First exercised live by #318's second increment (prebuilt oracle, #232).
+
+    A0 (repeatability control): every bus below is rendered LIVE_REPEATS
+       times in fresh instances; any non-repeatable bus makes the boundary
+       UNRESOLVED -- without it a nondeterministic engine would read as
+       "the effect evolved during the settle".
+    A:  wet bus, 375- vs 3750-block settle (the probe's leg).
+    A_early: wet bus, EARLY_SETTLE_BLOCKS vs 375 (see `_a_records`).
+    B:  native loadPatch vs savePatch + loadPatch into a fresh instance (the
+       ordinary load path for a real carrier; there is no synthetic
+       construction). Diagnostics: whether a second save/reload is a fixed
+       point.
     """
     import oracle_common as oc  # noqa: PLC0415
-    import render_fx_fixtures as rfx  # noqa: PLC0415  (oracle-gated import)
-    import render_fixture as rf  # noqa: PLC0415
+    import render_fx_fixtures as rfx  # noqa: PLC0415  (oracle-gated)
+    rf = rfx.rf                       # fixtures/render_fixture.py
     preset_abs = os.path.join(oc.engine_dir(), sidecar["preset"]["path"])
     seq = rf.load_sequence(seq_id)[0]
+    all_off = set(range(FX_SLOTS))
+    settles = _settles()
+    buses = {}
+    buses.update(_settle_buses(lambda n: live_bus(
+        surgepy, preset_abs, seq, settle_s_for(n)), "wet", settles))
+    buses.update(_settle_buses(lambda n: live_bus(
+        surgepy, preset_abs, seq, settle_s_for(n), all_off), "dry", settles))
+    for k in bypass_slots:
+        buses.update(_settle_buses(lambda n, k=k: live_bus(
+            surgepy, preset_abs, seq, settle_s_for(n), {k}),
+            "bypass_fx%d" % k,
+            (EARLY_SETTLE_BLOCKS, SETTLE_BLOCKS_FIXTURE, LONG_SETTLE_BLOCKS)))
+    saved = os.path.join(tmpdir, "reloaded.fxp")
+    saved2 = os.path.join(tmpdir, "reloaded2.fxp")
+    for src, dst in ((preset_abs, saved), (saved, saved2)):
+        s = surgepy.createSurge(float(SR))
+        try:
+            if not s.loadPatch(src):
+                raise AuditRefused("loadPatch failed: %s" % src)
+            s.savePatch(dst)
+        finally:
+            del s
+    buses["wet_reloaded"] = live_bus(surgepy, saved, seq,
+                                     settle_s_for(SETTLE_BLOCKS_FIXTURE))
+    buses["wet_reloaded_twice"] = live_bus(
+        surgepy, saved2, seq, settle_s_for(SETTLE_BLOCKS_FIXTURE))
+    a, a_early, sweep = _a_records(buses, bypass_slots)
+    b = _b_record(
+        buses["wet_375"], buses["wet_reloaded"],
+        "native loadPatch vs savePatch + loadPatch into a fresh instance", {
+            "reload_round_trip_fixed_point":
+                buses["wet_reloaded"].sha == buses["wet_reloaded_twice"].sha,
+            "saved_patch_sha256": sha256_file(saved),
+            "saved_twice_patch_sha256": sha256_file(saved2),
+            "source_patch_sha256": sha256_file(preset_abs)})
+    out = {"source": "live, this run", "A0_repeatability": _a0(buses),
+           "A": a, "A_early": a_early, "settle_sweep": sweep, "B": b,
+           "a_short_buffer_sha256": buses["wet_375"].sha}
+    if keep_buffers:
+        out["_buses"] = buses
+    return out
 
-    def render(path, settle_s, fx_off=False):
-        buf, _h, info = rfx.render_bus_stereo(
-            surgepy, path, dict(seq, settle_s=settle_s), fx_off, repeats=1)
-        return buf, info
 
-    short, _ = render(preset_abs, 0.25)
-    long_, _ = render(preset_abs, LONG_SETTLE_S)
-    dshort, _ = render(preset_abs, 0.25, True)
-    dlong, _ = render(preset_abs, LONG_SETTLE_S, True)
+def live_ab_sse(surgepy, carrier, tmpdir, keep_buffers=False):
+    """Live re-measurement of the #136 probe's A/B on this host, plus A0,
+    A_early and the dry diagnostic (all-off mutator of the leaf's renderer).
+
+    The probe's own legs (synthetic construction in place, A at 375 vs 3750,
+    B as constructed vs savePatch + loadPatch). The probe itself is not run:
+    it would overwrite its committed record.
+    """
+    import oracle_common as oc  # noqa: PLC0415
+    import render_fx_fixtures as rfx  # noqa: PLC0415  (oracle-gated)
+    rf = rfx.rf
+    import distortion_sse_synthetic as syn  # noqa: PLC0415
+    import render_distortion_sse_fixtures as rdf  # noqa: PLC0415
+    slug = carrier["slug"]
+    base = os.path.join(oc.engine_dir(), syn.SYN_BASE)
+    if not os.path.exists(base):
+        raise AuditRefused("synthetic base patch absent: %s" % base)
+    slots = syn.carrier_slots(slug)
+    seq = rf.load_sequence(carrier["seq"])[0]
+
+    def mut():
+        return rdf.synthetic_mutator(slug, slots)
+    settles = _settles()
+    buses = {}
+    buses.update(_settle_buses(lambda n: live_bus(
+        surgepy, base, seq, settle_s_for(n), mutate_factory=mut),
+        "wet", settles))
+    buses.update(_settle_buses(lambda n: live_bus(
+        surgepy, base, seq, settle_s_for(n),
+        mutate_factory=rdf.all_off_mutator), "dry", settles))
     s = surgepy.createSurge(float(SR))
     try:
-        if not s.loadPatch(preset_abs):
-            raise AuditRefused("loadPatch failed: %s" % preset_abs)
-        saved = os.path.join(tmpdir, "reloaded.fxp")
+        if not s.loadPatch(base):
+            raise AuditRefused("loadPatch failed: %s" % base)
+        s.pitchBend(0, 0)
+        s.channelController(0, 64, 0)
+        s.channelController(0, 1, 0)
+        s.channelController(0, 11, 0)
+        s.channelAftertouch(0, 0)
+        s.allNotesOff()
+        syn.construct(s, slug, slots, SETTLE_BLOCKS_FIXTURE)
+        saved = os.path.join(tmpdir, "constructed.fxp")
         s.savePatch(saved)
     finally:
         del s
-    reloaded, _ = render(saved, 0.25)
-    hs, hl, hr = sha256_buf(short), sha256_buf(long_), sha256_buf(reloaded)
+    buses["wet_reloaded"] = live_bus(surgepy, saved, seq,
+                                     settle_s_for(SETTLE_BLOCKS_FIXTURE))
+    a, a_early, sweep = _a_records(buses)
+    b = _b_record(buses["wet_375"], buses["wet_reloaded"],
+                  "synthetic carrier constructed in place vs saved to .fxp "
+                  "and re-loaded via loadPatch")
+    out = {"source": "live, this run (the #136 probe's legs re-measured; "
+                     "probe not run)",
+           "A0_repeatability": _a0(buses), "A": a, "A_early": a_early,
+           "settle_sweep": sweep, "B": b,
+           "a_short_buffer_sha256": buses["wet_375"].sha}
+    if keep_buffers:
+        out["_buses"] = buses
+    return out
+
+
+# --------------------------------------------------------------------------
+# Leg D (DIAGNOSTIC): does the model track the engine across settle lengths?
+# --------------------------------------------------------------------------
+
+D_NOTE = ("DIAGNOSTIC ONLY. Not an input to the boundary decision, which "
+          "stays the A0/A/A_early/B rule: a pre-roll is never chosen from "
+          "these numbers. D asks whether the model, pre-rolled N blocks, "
+          "tracks the engine rendered with an N-block settle, for N = 375 "
+          "and 3750, each graded by the leaf's own comparator against LIVE "
+          "buses of this host's engine (input bus re-rendered at the same N).")
+
+
+def _write_bus(path, buf):
+    import render_fx_fixtures as rfx  # noqa: PLC0415
+    rfx.write_wav_stereo_f32(path, buf)
+    return {"wav": path, "sha256": sha256_file(path),
+            "bytes": os.path.getsize(path), "frames": int(buf.shape[1])}
+
+
+def d_bundle(runner, carrier, sidecar, sc_path, buses, n, out_dir):
+    """A scratch fixture bundle of live buses at an n-block settle, shaped
+    like the committed one so the production runner and the leaf's
+    comparator read it unchanged. Never written under reports/."""
+    import copy
+    slug, seq = carrier["slug"], carrier["seq"]
+    os.makedirs(out_dir, exist_ok=True)
+    side = copy.deepcopy(sidecar)
+    settle_s = settle_s_for(n)
+    side["render"]["settle_s"] = settle_s
+    wet = buses["wet_%d" % n]
+    if wet.buf.shape[1] != int(side["render"]["frames"]):
+        raise AuditRefused("live wet frames %d != declared %r"
+                           % (wet.buf.shape[1], side["render"]["frames"]))
+    wet_e = _write_bus(os.path.join(out_dir, "%s__%s-wet.f32.wav"
+                                    % (slug, seq)), wet.buf)
+    dry_e = _write_bus(os.path.join(out_dir, "%s__%s-dry.f32.wav"
+                                    % (slug, seq)), buses["dry_%d" % n].buf)
+    if "legs" in side:                 # SXT-028e-sse bundle shape
+        for key in ("original",):
+            side[key] = dict(side.get(key) or {}, **wet_e)
+            side["legs"][key] = dict(side["legs"].get(key) or {}, **wet_e)
+        side["dry"] = dict(side.get("dry") or {}, **dry_e)
+        side["legs"]["dry"] = dict(side["legs"].get("dry") or {}, **dry_e)
+    else:
+        side["wet"] = dict(side.get("wet") or {}, **wet_e)
+        side["dry"] = dict(side.get("dry") or {}, **dry_e)
+    for key in list((side.get("bypass") or {})):
+        k = int(key[2:])
+        side["bypass"][key] = dict(side["bypass"][key], **_write_bus(
+            os.path.join(out_dir, "%s__%s-bypass-fx%d.f32.wav"
+                         % (slug, seq, k)),
+            buses["bypass_fx%d_%d" % (k, n)].buf))
+    used = [b for name, b in buses.items() if name.endswith("_%d" % n)]
+    side["determinism_gate"] = {
+        "repeats": LIVE_REPEATS, "drift_asserted": 0,
+        "bit_identical": all(b.repeatable for b in used),
+        "wet_sha256_all": wet.hashes,
+        "scope": "#318 leg D scratch bundle: every bus re-rendered live "
+                 "%dx in fresh instances on this host" % LIVE_REPEATS}
+    side["audit_scratch"] = {"derived_from": rel(sc_path),
+                             "settle_blocks": n,
+                             "note": "scratch, never committed"}
+    write_json(os.path.join(out_dir, "%s__%s.json" % (slug, seq)), side)
+    return out_dir, wet_e["wav"]
+
+
+def live_settle_tracking(runner, carrier, sidecar, sc_path, buses,
+                         work_root):
+    slug, seq = carrier["slug"], carrier["seq"]
+    prod = resolve_preroll(runner)["blocks"]
+    out = {"status": "MEASURED", "note": D_NOTE, "by_settle": {}}
+    for n in (SETTLE_BLOCKS_FIXTURE, LONG_SETTLE_BLOCKS):
+        root = os.path.join(work_root, "%s__%s" % (slug, seq),
+                            "D-settle-%d" % n)
+        fx_dir, ref = d_bundle(runner, carrier, sidecar, sc_path, buses, n,
+                               os.path.join(root, "fixtures"))
+        legs = {}
+        for pre in sorted({0, prod, n}):
+            leg_dir = os.path.join(root, "preroll-%d" % pre)
+            wav, run_cmd = run_model_leg(runner, slug, seq, pre, fx_dir,
+                                         leg_dir)
+            frames = equal_length_check(ref, wav)
+            rec, cmp_cmd = run_comparator(runner, slug, seq, fx_dir, wav,
+                                          leg_dir)
+            legs[str(pre)] = {
+                "silent_preroll_blocks": pre,
+                "role": ("pre-roll = engine settle" if pre == n else
+                         "zero" if pre == 0 else "production"),
+                "model_wav_sha256": sha256_file(wav), "frames": frames,
+                "metrics": extract_metrics(rec),
+                "commands": {"model": _portable(run_cmd),
+                             "comparator": _portable(cmp_cmd)}}
+        out["by_settle"][str(n)] = {
+            "engine_settle_blocks": n,
+            "engine_wet_sha256": buses["wet_%d" % n].sha,
+            "legs": legs,
+            "comparator_verdict_by_preroll": {
+                k: v["metrics"]["verdict_class"] for k, v in legs.items()}}
+    s, lg = (out["by_settle"][str(SETTLE_BLOCKS_FIXTURE)],
+             out["by_settle"][str(LONG_SETTLE_BLOCKS)])
+    out["summary"] = {
+        "preroll_equals_settle_verdicts": [
+            s["comparator_verdict_by_preroll"][str(SETTLE_BLOCKS_FIXTURE)],
+            lg["comparator_verdict_by_preroll"][str(LONG_SETTLE_BLOCKS)]],
+        "preroll_zero_verdicts": [s["comparator_verdict_by_preroll"]["0"],
+                                  lg["comparator_verdict_by_preroll"]["0"]],
+        "production_preroll_verdicts": [
+            s["comparator_verdict_by_preroll"][str(prod)],
+            lg["comparator_verdict_by_preroll"][str(prod)]],
+        "reading": "verdict pairs are [engine settle 375, engine settle "
+                   "3750]; recorded, not used to choose a pre-roll"}
+    return out
+
+
+def nc_d_control(dd):
+    """NC-C's shape applied to the D DIAGNOSTIC: the wrong settle must FAIL.
+
+    At each engine settle N, every model pre-roll that is NOT N must FAIL
+    the leaf's own comparator, or D cannot tell settle histories apart on
+    this carrier (and its "pre-roll = settle tracks" reading is empty). A
+    control on D only: it never resolves a boundary and never turns a
+    NO_VERDICT row into a verdict.
+    """
+    if not dd or dd.get("status") != "MEASURED":
+        return {"status": "NOT_RUN", "reason": "leg D not measured on this "
+                                               "row"}
+    wrong = {}
+    for n, v in sorted(dd["by_settle"].items(), key=lambda kv: int(kv[0])):
+        for k, verdict in sorted(v["comparator_verdict_by_preroll"].items(),
+                                 key=lambda kv: int(kv[0])):
+            if k != n:
+                wrong["settle %s / pre-roll %s" % (n, k)] = verdict
+    ok = bool(wrong) and all(v == "FAIL" for v in wrong.values())
     return {
-        "source": "live, this run",
-        "A": {"status": "MEASURED", "byte_identical": hs == hl,
-              "settle_blocks_compared": [
-                  int(0.25 * SR) // BLOCK, int(LONG_SETTLE_S * SR) // BLOCK],
-              "sha256": [hs, hl],
-              "dry_diagnostic_byte_identical":
-                  sha256_buf(dshort) == sha256_buf(dlong)},
-        "B": {"status": "MEASURED", "byte_identical": hs == hr,
-              "instantiation": "native loadPatch vs savePatch + loadPatch "
-                               "into a fresh instance",
-              "sha256": [hs, hr]},
-        "a_short_buffer_sha256": hs,
+        "status": "PASS" if ok else "FAIL",
+        "targets": "leg D (diagnostic): a model pre-roll that does not equal "
+                   "the engine settle must FAIL the leaf's own comparator "
+                   "at that settle",
+        "mismatched_verdicts": wrong,
+        "reason": ("every mismatched pre-roll FAILs: D discriminates settle "
+                   "history on this carrier" if ok else
+                   "a mismatched pre-roll does not FAIL: D cannot "
+                   "discriminate settle history on this carrier"),
+        "scope": "a control on the D diagnostic only; the boundary decision "
+                 "is unchanged (A0/A/B)",
     }
+
+
+def derive_controls(rec):
+    """Derived, measurement-free fields of a per-leaf record (pure functions
+    of recorded legs). Applied by `run` and re-applied by `rederive`."""
+    for r in rec.get("rows", []):
+        if "D_settle_tracking" in r:
+            r["nc_d_control"] = nc_d_control(r["D_settle_tracking"])
+    return rec
+
+
+def cmd_rederive(args):
+    """Re-apply `derive_controls` to committed per-leaf records.
+
+    No engine, model or comparator runs: only fields that are pure functions
+    of already-recorded leg results are (re)computed, and the record says so.
+    """
+    for runner in RUNNERS:
+        p = os.path.join(args.out, "%s.json" % leaf_file(runner))
+        if not os.path.exists(p):
+            continue
+        rec = derive_controls(json.load(open(p)))
+        rec["derived_fields"] = {
+            "fields": ["rows[].nc_d_control"],
+            "how": "tools/audit_effect_settle_boundaries.py rederive: pure "
+                   "functions of the recorded leg-D comparator verdicts; "
+                   "nothing re-measured",
+            "audit_tool_git_blob_sha1": git_blob_sha1(
+                os.path.abspath(__file__)),
+        }
+        write_json(p, rec)
+        print("rederived %s" % rel(p))
+    return 0
 
 
 # --------------------------------------------------------------------------
@@ -1010,38 +1542,123 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
         "render_tool": sidecar.get("tool"),
     }
     # --- A/B -------------------------------------------------------------
+    live = oracle.get("available") and surgepy is not None
+    a0 = None
     if d.get("committed_ab_record"):
         ab = committed_ab(runner, carrier)
-    elif oracle.get("available") and surgepy is not None:
+        ab["A_early"] = {"status": "NOT_RUN", "reason": (
+            "the committed #136 record has no A_early leg")}
+        if live:
+            with tempfile.TemporaryDirectory(prefix="sxt318-ab-") as td:
+                rc = live_ab_sse(surgepy, carrier, td, keep_buffers=True)
+            ab["_buses"] = rc.pop("_buses")
+            row["live_recheck"] = rc
+            row["live_recheck_matches_committed_record"] = (
+                rc["A"]["sha256"] == ab["A"]["sha256"]
+                and rc["B"]["sha256"] == ab["B"]["sha256"])
+            # fail-closed: the committed AND the live measurement must hold
+            for leg in ("A", "B"):
+                ab[leg] = dict(ab[leg], byte_identical=bool(
+                    ab[leg]["byte_identical"]
+                    and rc[leg]["byte_identical"]))
+            ab["A_early"] = rc["A_early"]
+            ab["settle_sweep"] = rc["settle_sweep"]
+            a0 = rc["A0_repeatability"]
+            ab["source"] += "; re-measured live on this host (live_recheck)"
+    elif live:
         with tempfile.TemporaryDirectory(prefix="sxt318-ab-") as td:
-            ab = live_ab_factory(surgepy, sidecar, carrier["seq"], td)
+            ab = live_ab_factory(
+                surgepy, sidecar, carrier["seq"], td,
+                bypass_slots=tuple(sidecar.get("reverb2_slots") or ())
+                if runner == "run_reverb2_model.py" else (),
+                keep_buffers=True)
+        a0 = ab.get("A0_repeatability")
     else:
         ab = {"source": None,
               "A": {"status": "BLOCKED", "reason": ORACLE_DEPENDENCY},
+              "A_early": {"status": "BLOCKED", "reason": ORACLE_DEPENDENCY},
               "B": {"status": "BLOCKED", "reason": ORACLE_DEPENDENCY}}
+    buses = ab.pop("_buses", None)
+    ab.setdefault("A_early", {"status": "NOT_RUN",
+                              "reason": "the A/B source has no A_early leg"})
+    row["A0_repeatability"] = a0 or {
+        "status": "NOT_RUN",
+        "reason": "no live render on this run" if not live else
+                  "the A/B source carries no repeatability leg"}
     row["A_settle_length_invariance"] = ab["A"]
+    row["A_early_settle_invariance"] = ab["A_early"]
+    if ab.get("settle_sweep"):
+        row["settle_sweep"] = ab["settle_sweep"]
     row["B_construction_invariance"] = ab["B"]
     row["ab_source"] = ab["source"]
-    a_id = ab["A"].get("byte_identical") if ab["A"]["status"] == "MEASURED" \
-        else None
-    b_id = ab["B"].get("byte_identical") if ab["B"]["status"] == "MEASURED" \
-        else None
-    bstat, declared = decide_boundary(a_id, b_id)
-    row["boundary"] = {"status": bstat, "declared_preroll_blocks": declared,
-                       "rule": "RESOLVED (declared 0) only if A and B are "
-                               "both measured byte-identical; otherwise no "
-                               "pre-roll is declared"}
+
+    def measured(x):
+        return x.get("byte_identical") if x.get("status") == "MEASURED" \
+            else None
+    a_id, b_id, e_id = (measured(ab["A"]), measured(ab["B"]),
+                        measured(ab["A_early"]))
+    repeatable = a0.get("all_buses_repeatable") if a0 else None
+    bstat, declared = decide_boundary(a_id, b_id, repeatable, e_id)
+    v1stat, v1decl = decide_boundary_v1(a_id, b_id)
     ab_status = "BLOCKED" if ab["A"]["status"] == "BLOCKED" else (
         "MEASURED" if ab["A"]["status"] == "MEASURED" else "NOT_RUN")
+    row["boundary"] = {
+        "status": bstat, "declared_preroll_blocks": declared,
+        "rule": "RESOLVED (declared 0) only if A (375 vs 3750), A_early "
+                "(%d vs 375) and B are all measured byte-identical and A0 "
+                "did not fail; otherwise no pre-roll is declared"
+                % EARLY_SETTLE_BLOCKS,
+        "probe_rule_v1": {
+            "status": v1stat, "declared_preroll_blocks": v1decl,
+            "runner_verdict_under_v1": runner_verdict(
+                v1stat, v1decl, prod["blocks"], ab_status)[0],
+            "note": "the #136 probe's rule (A and B only), recorded so a "
+                    "changed reading is visible, never silently relabeled"},
+    }
     # --- C ---------------------------------------------------------------
     c = c_runner(runner, carrier, work_root)
     row["C_model_boundary_vs_engine"] = c
     if "a_short_buffer_sha256" in ab:
         row["A_short_matches_committed_reference"] = (
             ab["a_short_buffer_sha256"] == c["reference"]["buffer_sha256"])
+        if buses is not None and not row["A_short_matches_committed_reference"]:
+            from compare_chorus_reference import (  # noqa: PLC0415
+                read_wav_stereo_f32)
+            ref_buf, _ = read_wav_stereo_f32(os.path.join(
+                REPO, c["reference"]["wav"]))
+            row["A_short_vs_committed_reference_diff"] = diff_stats(
+                ref_buf, buses["wet_%d" % SETTLE_BLOCKS_FIXTURE].buf)
     row["baseline"] = baseline_check(runner, carrier, c)
+    # --- D (diagnostic) --------------------------------------------------
+    if buses is None:
+        row["D_settle_tracking"] = {
+            "status": "NOT_RUN", "note": D_NOTE,
+            "reason": "no live buses on this run (needs the pinned oracle)"}
+    elif bstat == "RESOLVED":
+        row["D_settle_tracking"] = {
+            "status": "NOT_RUN", "note": D_NOTE,
+            "reason": "boundary RESOLVED by A0/A/A_early/B; D is only "
+                      "recorded for unresolved rows"}
+    elif repeatable is False:
+        row["D_settle_tracking"] = {
+            "status": "NOT_RUN", "note": D_NOTE,
+            "reason": "A0 FAIL: a live bus is not repeatable, so no live "
+                      "bundle can carry a determinism gate"}
+    else:
+        row["D_settle_tracking"] = live_settle_tracking(
+            runner, carrier, sidecar, sc_path, buses, work_root)
     # --- verdicts --------------------------------------------------------
     vstat, vwhy = runner_verdict(bstat, declared, prod["blocks"], ab_status)
+    if repeatable is False:
+        vwhy = ("A0 FAIL: a live render is not repeatable in a fresh "
+                "instance; no byte-identity reading is possible, the "
+                "boundary is UNRESOLVED")
+    elif e_id is False and a_id is not False:
+        vwhy = ("A_early DIFFERS (settle %d vs 375) while A (375 vs 3750) "
+                "is identical: the engine evolves during the settle and "
+                "converges before block 375, so A's identity does not "
+                "establish an init-state start; the boundary is UNRESOLVED "
+                "and no pre-roll is chosen by score" % EARLY_SETTLE_BLOCKS)
     row["runner_boundary_verdict"] = {"status": vstat, "reason": vwhy}
     row["committed_numbers_dependence"] = (
         "SENSITIVE" if c["model_output_preroll_sensitive"] else "INSENSITIVE")
@@ -1050,8 +1667,109 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
     row["nc_c_control"] = nc_c_control(bstat, declared, prod["blocks"], c)
     row["escalation"] = escalation(vstat, row["baseline"], c, declared,
                                    row["source_reconciliation"])
+    v1 = row["boundary"]["probe_rule_v1"]
+    if v1["runner_verdict_under_v1"] != vstat:
+        row["probe_rule_v1_reading_changed"] = {
+            "under_probe_rule_v1": v1["runner_verdict_under_v1"],
+            "under_this_audit": vstat,
+            "committed_verdict": row["baseline"].get(
+                "committed_verdict_class"),
+            "verdict_at_v1_declared_preroll": (
+                c["legs"][str(v1["declared_preroll_blocks"])]["metrics"]
+                ["verdict_class"]
+                if v1["declared_preroll_blocks"] is not None
+                and str(v1["declared_preroll_blocks"]) in c["legs"]
+                else None),
+            "route": "#12 (SXT-017)",
+            "reason": "the probe's rule would read this row %s; A_early "
+                      "(or A0) shows that reading is not supported by the "
+                      "engine measurement. Both readings and both numbers "
+                      "are retained; nothing is relabeled."
+                      % v1["runner_verdict_under_v1"]}
     row["status"] = vstat
     row["coverage"] = ("A,B,C" if ab_status == "MEASURED" else "C only")
+    if row["D_settle_tracking"]["status"] == "MEASURED":
+        row["coverage"] += " (+D diagnostic)"
+    return row
+
+
+def ab_only_row(runner, carrier, work_root, oracle, surgepy=None):
+    """Engine-side A/B for a carrier with no committed fixture (C NOT_RUN).
+
+    Records the measured boundary for a leaf whose reference leg has not
+    run yet, so its runner's pre-roll can be checked before it produces any
+    committed number. Census-blob verified, as the leaf's own renderer is.
+    """
+    prod = resolve_preroll(runner)
+    row = {"leaf": carrier["leaf"], "runner": "model/effects/" + runner,
+           "carrier": carrier["slug"], "sequence": carrier["seq"],
+           "chain": carrier.get("chain"), "preset": carrier["preset"],
+           "runner_preroll_blocks": prod["blocks"],
+           "runner_preroll_source": prod["source"],
+           "C_model_boundary_vs_engine": None,
+           "C_reason": "NOT_RUN: no committed fixture buses or extracted "
+                       "model inputs for this carrier (the leaf's reference "
+                       "leg, not this audit)"}
+    if not (oracle.get("available") and surgepy is not None):
+        row.update(status="BLOCKED", coverage="none",
+                   reason="A/B not measured: " + ORACLE_DEPENDENCY,
+                   A_settle_length_invariance={"status": "BLOCKED",
+                                               "reason": ORACLE_DEPENDENCY})
+        return row
+    import oracle_common as oc  # noqa: PLC0415
+    import render_fx_fixtures as rfx  # noqa: PLC0415
+    blob, _graphs = rfx.census_entry(carrier["preset"])
+    got = oc.git_blob_sha1(os.path.join(oc.engine_dir(), carrier["preset"]))
+    row["census_blob_sha1"] = blob
+    if got != blob:
+        row.update(status="NO_VERDICT", coverage="refused",
+                   reason="census blob mismatch: %s (%s != %s)"
+                          % (carrier["preset"], got, blob))
+        return row
+    with tempfile.TemporaryDirectory(prefix="sxt318-ab-") as td:
+        ab = live_ab_factory(surgepy, {"preset": {"path": carrier["preset"]}},
+                             carrier["seq"], td)
+    a0 = ab["A0_repeatability"]
+    row["sequence_file_sha256"] = sha256_file(os.path.join(
+        REPO, "fixtures", "sequences", carrier["seq"] + ".json"))
+    row["A0_repeatability"] = a0
+    row["A_settle_length_invariance"] = ab["A"]
+    row["A_early_settle_invariance"] = ab["A_early"]
+    row["settle_sweep"] = ab["settle_sweep"]
+    row["B_construction_invariance"] = ab["B"]
+    row["ab_source"] = ab["source"]
+    a_id, b_id, e_id = (ab["A"]["byte_identical"], ab["B"]["byte_identical"],
+                        ab["A_early"]["byte_identical"])
+    bstat, declared = decide_boundary(a_id, b_id,
+                                      a0["all_buses_repeatable"], e_id)
+    v1stat, v1decl = decide_boundary_v1(a_id, b_id)
+    row["boundary"] = {
+        "status": bstat, "declared_preroll_blocks": declared,
+        "probe_rule_v1": {
+            "status": v1stat, "declared_preroll_blocks": v1decl,
+            "runner_verdict_under_v1": runner_verdict(
+                v1stat, v1decl, prod["blocks"], "MEASURED")[0]}}
+    vstat, vwhy = runner_verdict(bstat, declared, prod["blocks"], "MEASURED")
+    if a0["all_buses_repeatable"] is False:
+        vwhy = ("A0 FAIL: a live render is not repeatable in a fresh "
+                "instance; the boundary is UNRESOLVED")
+    elif e_id is False and a_id is not False:
+        vwhy = ("A_early DIFFERS while A is identical: the engine evolves "
+                "during the settle and converges before block 375; the "
+                "boundary is UNRESOLVED")
+    row["runner_boundary_verdict"] = {"status": vstat, "reason": vwhy}
+    row["nc_c_control"] = {"status": "NOT_RUN",
+                           "reason": "no leg C on this carrier"}
+    row["escalation"] = None
+    if vstat == "FAIL":
+        row["finding"] = (
+            "latent: the runner's pre-roll %d is measured wrong for this "
+            "carrier (boundary %d) BEFORE the leaf has any committed "
+            "model-vs-reference number; no committed PASS moves, so this is "
+            "not a #12 stop. It must be resolved before the leaf's "
+            "reference leg runs." % (prod["blocks"], declared))
+    row["status"] = vstat
+    row["coverage"] = "A,B only"
     return row
 
 
@@ -1225,6 +1943,20 @@ def cmd_run(args):
                              "reason": "audit refused: %s" % e})
             print("%s %s__%s -> %s" % (runner, c["slug"], c["seq"],
                                        rows[-1]["status"]), flush=True)
+        for c in d.get("ab_only_carriers", []):
+            if args.carrier and "%s__%s" % (c["slug"], c["seq"]) \
+                    not in args.carrier:
+                continue
+            try:
+                rows.append(ab_only_row(runner, c, os.path.join(
+                    work, leaf_file(runner)), oracle, surgepy))
+            except AuditRefused as e:
+                rows.append({"leaf": c["leaf"], "carrier": c["slug"],
+                             "sequence": c["seq"], "status": "NO_VERDICT",
+                             "coverage": "refused",
+                             "reason": "audit refused: %s" % e})
+            print("%s %s__%s (A/B only) -> %s" % (
+                runner, c["slug"], c["seq"], rows[-1]["status"]), flush=True)
         for u in d["unreachable"]:
             rows.append({"leaf": u["leaf"], "carrier": u["slug"],
                          "status": "NOT_RUN", "coverage": "none",
@@ -1255,6 +1987,7 @@ def cmd_run(args):
                            "variable. Committed leaf records are not "
                            "modified.",
         }
+        derive_controls(rec)
         out = os.path.join(args.out, "%s.json" % leaf_file(runner))
         if args.carrier and os.path.exists(out):
             out = os.path.join(args.out, "%s.partial.json" % leaf_file(runner))
@@ -1270,11 +2003,14 @@ def fmt_db(x):
 def cmd_table(args):
     """Render the per-leaf table (markdown) from the per-leaf JSON records."""
     lines = ["| leaf | carrier / seq | runner pre-roll | fixture settle | "
-             "A (settle-length) | B (construction) | boundary | "
-             "C: model sensitive? | C mono rms dBFS / max LSB by pre-roll | "
-             "comparator verdict by pre-roll | committed record | "
+             "A0 (repeat) | A (375 vs 3750) | A_early (2 vs 375) | "
+             "B (construction) | "
+             "boundary | C: model sensitive? | "
+             "C mono rms dBFS / max LSB by pre-roll | "
+             "C comparator verdict by pre-roll | committed record | "
+             "D (diagnostic) verdicts [settle 375, 3750] by pre-roll | "
              "pre-roll in {0, settle}? | runner verdict | coverage |",
-             "|" + "---|" * 14]
+             "|" + "---|" * 17]
     for runner in RUNNERS:
         p = os.path.join(args.out, "%s.json" % leaf_file(runner))
         if not os.path.exists(p):
@@ -1282,13 +2018,19 @@ def cmd_table(args):
         rec = json.load(open(p))
         for r in rec["rows"]:
             a = r.get("A_settle_length_invariance") or {}
+            ae = r.get("A_early_settle_invariance") or {}
             b = r.get("B_construction_invariance") or {}
             c = r.get("C_model_boundary_vs_engine")
+            a0 = r.get("A0_repeatability") or {}
+            dd = r.get("D_settle_tracking") or {}
 
             def ab(x):
                 if x.get("status") == "MEASURED":
                     return "identical" if x["byte_identical"] else "DIFFERS"
                 return x.get("status", "NOT_RUN")
+            a0s = ("PASS" if a0.get("all_buses_repeatable") else "FAIL") \
+                if a0.get("status") == "MEASURED" else \
+                a0.get("status", "NOT_RUN")
             if c:
                 cm = "; ".join(
                     "%s: %s / %.1f" % (k, fmt_db(v["metrics"]["channels"]
@@ -1306,18 +2048,29 @@ def cmd_table(args):
                     bl.get("committed_verdict_class", "-"), bl.get("status"))
             else:
                 cm = cv = sens = bls = "NOT_RUN"
+            if dd.get("status") == "MEASURED":
+                bs = dd["by_settle"]
+                pres = sorted({int(k) for v in bs.values()
+                               for k in v["legs"]})
+                ds = "; ".join(
+                    "%d: [%s]" % (k, ", ".join(
+                        bs[n]["comparator_verdict_by_preroll"].get(
+                            str(k), "-") for n in ("375", "3750")))
+                    for k in pres)
+            else:
+                ds = dd.get("status", "NOT_RUN")
             src = (r.get("source_reconciliation") or {}).get("status", "-")
             lines.append("| %s | %s%s | %s | %s | %s | %s | %s | %s | %s | %s "
-                         "| %s | %s | %s | %s |" % (
+                         "| %s | %s | %s | %s | %s | %s | %s |" % (
                              r["leaf"], r["carrier"],
                              (" / " + r["sequence"]) if r.get("sequence")
                              else "",
                              r.get("runner_preroll_blocks", "-"),
                              (r.get("fixture") or {}).get("settle_blocks",
                                                           "-"),
-                             ab(a), ab(b),
+                             a0s, ab(a), ab(ae), ab(b),
                              (r.get("boundary") or {}).get("status", "-"),
-                             sens, cm, cv, bls, src, r["status"],
+                             sens, cm, cv, bls, ds, src, r["status"],
                              r.get("coverage", "-")))
     out = os.path.join(args.out, "audit-table.md")
     with open(out, "w") as f:
@@ -1334,7 +2087,7 @@ def main(argv=None):
         return _leg_main(argv[1:])
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("inventory", "run", "table"):
+    for name in ("inventory", "run", "table", "rederive"):
         sp = sub.add_parser(name)
         sp.add_argument("--out", default=DEFAULT_OUT)
         if name == "run":
@@ -1345,7 +2098,7 @@ def main(argv=None):
                                            "(default: a fresh temp dir)")
     args = ap.parse_args(argv)
     return {"inventory": cmd_inventory, "run": cmd_run,
-            "table": cmd_table}[args.cmd](args)
+            "table": cmd_table, "rederive": cmd_rederive}[args.cmd](args)
 
 
 if __name__ == "__main__":

@@ -181,8 +181,27 @@ def test_every_runner_reached_model_dir_is_named():
     (None, None, ("NOT_MEASURED", None)),
     (True, None, ("NOT_MEASURED", None)),
 ])
-def test_decide_boundary_is_the_probe_rule(a, b, want):
-    assert aud.decide_boundary(a, b) == want
+def test_probe_rule_v1_is_preserved_verbatim(a, b, want):
+    """The #136 probe's own rule, kept so a changed reading stays visible."""
+    assert aud.decide_boundary_v1(a, b) == want
+
+
+@pytest.mark.parametrize("a,b,early,want", [
+    (True, True, True, ("RESOLVED", 0)),
+    (True, True, False, ("UNRESOLVED", None)),     # fm_bass_1's shape
+    (True, True, None, ("NOT_MEASURED", None)),    # committed record only
+    (False, True, True, ("UNRESOLVED", None)),
+    (True, False, True, ("UNRESOLVED", None)),
+    (None, None, None, ("NOT_MEASURED", None)),
+    (False, None, None, ("UNRESOLVED", None)),
+])
+def test_decide_boundary_is_the_probe_rule_tightened(a, b, early, want):
+    """RESOLVED needs A, A_early AND B measured identical: strictly fewer
+    RESOLVED outcomes than the probe's rule, never more."""
+    assert aud.decide_boundary(a, b, None, early) == want
+    v1 = aud.decide_boundary_v1(a, b)
+    if want[0] == "RESOLVED":
+        assert v1 == want
 
 
 @pytest.mark.parametrize("bstat,declared,pre,ab,want", [
@@ -248,6 +267,7 @@ def test_resolved_wrong_runner_boundary_fails_and_routes_to_12(monkeypatch):
     monkeypatch.setattr(aud, "live_ab_factory", lambda *_a, **_k: {
         "source": "test",
         "A": {"status": "MEASURED", "byte_identical": True},
+        "A_early": {"status": "MEASURED", "byte_identical": True},
         "B": {"status": "MEASURED", "byte_identical": True}})
     row = aud.audit_row(CHORUS, CHORUS_CARRIER, "/nonexistent",
                         {"available": True}, surgepy=object(),
@@ -442,3 +462,217 @@ def test_metric_reproduction_tolerates_rounding_not_a_real_change():
     shifted = json.loads(json.dumps(base))
     shifted["channels"]["R"]["best_shift"] += 1
     assert not aud.metrics_deviation(base, shifted)[0]
+
+
+# ------------------------------------------ A0 repeatability (fail-closed)
+@pytest.mark.parametrize("a,b", [(True, True), (False, True), (None, None),
+                                 (True, None)])
+def test_unrepeatable_live_render_is_unresolved(a, b):
+    """A render that does not reproduce itself cannot support ANY byte-
+    identity reading: a nondeterministic engine would otherwise read as
+    'the effect evolved during the settle' (or, worse, as identity)."""
+    assert aud.decide_boundary(a, b, repeatable=False) == ("UNRESOLVED", None)
+
+
+def test_measured_repeatability_leaves_the_rule_unchanged():
+    assert aud.decide_boundary(True, True, True, True) == ("RESOLVED", 0)
+    assert aud.decide_boundary(None, None, repeatable=None) == \
+        ("NOT_MEASURED", None)
+
+
+def test_a_early_failure_is_no_verdict_and_keeps_the_v1_reading(monkeypatch):
+    """fm_bass_1's measured shape: A and B identical, A_early differs. The
+    probe's rule would RESOLVE 0 and FAIL the runner; this audit reports
+    NO_VERDICT and records the changed reading for #12 instead of hiding
+    either one."""
+    base = chorus_baseline_metrics()
+    c = stub_c(base, failing_copy(base), 375, 0)
+    monkeypatch.setattr(aud, "live_ab_factory", lambda *_a, **_k: {
+        "source": "test",
+        "A0_repeatability": {"status": "MEASURED",
+                             "all_buses_repeatable": True},
+        "A": {"status": "MEASURED", "byte_identical": True},
+        "A_early": {"status": "MEASURED", "byte_identical": False},
+        "B": {"status": "MEASURED", "byte_identical": True}})
+    row = aud.audit_row(CHORUS, CHORUS_CARRIER, "/nonexistent",
+                        {"available": True}, surgepy=object(),
+                        c_runner=lambda *_a, **_k: c)
+    assert row["boundary"]["status"] == "UNRESOLVED"
+    assert row["status"] == "NO_VERDICT"
+    assert "A_early DIFFERS" in row["runner_boundary_verdict"]["reason"]
+    v1 = row["boundary"]["probe_rule_v1"]
+    assert v1["status"] == "RESOLVED" and v1["runner_verdict_under_v1"] == \
+        "FAIL"
+    ch = row["probe_rule_v1_reading_changed"]
+    assert ch["under_probe_rule_v1"] == "FAIL"
+    assert ch["under_this_audit"] == "NO_VERDICT"
+    assert ch["committed_verdict"] == "PASS"
+    assert ch["verdict_at_v1_declared_preroll"] == "FAIL"
+    assert ch["route"].startswith("#12")
+
+
+def test_a0_failure_is_no_verdict_even_with_identical_a_and_b(monkeypatch):
+    base = chorus_baseline_metrics()
+    c = stub_c(base, failing_copy(base), 375, 0)
+    monkeypatch.setattr(aud, "live_ab_factory", lambda *_a, **_k: {
+        "source": "test",
+        "A0_repeatability": {"status": "MEASURED",
+                             "all_buses_repeatable": False},
+        "A": {"status": "MEASURED", "byte_identical": True},
+        "B": {"status": "MEASURED", "byte_identical": True}})
+    row = aud.audit_row(CHORUS, CHORUS_CARRIER, "/nonexistent",
+                        {"available": True}, surgepy=object(),
+                        c_runner=lambda *_a, **_k: c)
+    assert row["boundary"]["status"] == "UNRESOLVED"
+    assert row["status"] == "NO_VERDICT"
+    assert "A0 FAIL" in row["runner_boundary_verdict"]["reason"]
+    assert row["D_settle_tracking"]["status"] == "NOT_RUN"
+
+
+def test_ab_only_row_without_oracle_is_blocked_never_pass():
+    runner = "run_phaser_model.py"
+    carrier = aud.RUNNERS[runner]["ab_only_carriers"][0]
+    row = aud.ab_only_row(runner, carrier, "/nonexistent",
+                          {"available": False})
+    assert row["status"] == "BLOCKED"
+    assert row["C_model_boundary_vs_engine"] is None
+    assert "NOT_RUN" in row["C_reason"]
+
+
+def test_ab_only_carriers_are_the_leaf_renderers_queue():
+    """The Phaser A/B-only carriers are exactly the presets the leaf's own
+    renderer queues (source-read, no import: the renderer is oracle-gated)."""
+    import ast
+    src = open(os.path.join(REPO, "tools", "render_phaser_fixtures.py")).read()
+    presets = None
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.Assign) and getattr(
+                node.targets[0], "id", None) == "PRESETS":
+            presets = ast.literal_eval(node.value)
+    got = {(c["slug"], c["preset"])
+           for c in aud.RUNNERS["run_phaser_model.py"]["ab_only_carriers"]}
+    assert got == set(presets.items())
+
+
+# ---------------------------------------------------- oracle identity
+def _prebuilt(tmp_path, commit=None, sha=None, write_sha=True):
+    man = committed("oracle/manifest.json")
+    (tmp_path / "BUILDINFO.json").write_text(json.dumps({
+        "engine_commit": commit or man["engine"]["commit"],
+        "platform": "linux-x86_64"}))
+    if write_sha:
+        (tmp_path / ".installed-sha256").write_text(
+            (sha or man["prebuilt"]["linux-x86_64"]["sha256"]) + "\n")
+    return aud.oracle_identity(str(tmp_path))
+
+
+def test_oracle_identity_accepts_the_manifest_prebuilt(tmp_path):
+    idn = _prebuilt(tmp_path)
+    assert idn["matches_manifest"] and idn["kind"].startswith("prebuilt")
+
+
+@pytest.mark.parametrize("kw", [{"commit": "0" * 40}, {"sha": "f" * 64},
+                                {"write_sha": False}])
+def test_oracle_identity_refuses_a_foreign_prebuilt(tmp_path, kw):
+    assert not _prebuilt(tmp_path, **kw)["matches_manifest"]
+
+
+def test_source_build_identity_defers_to_the_drift_gate(tmp_path):
+    idn = aud.oracle_identity(str(tmp_path))
+    assert idn["matches_manifest"] and "source build" in idn["kind"]
+
+
+# ------------------------------------------------------ diagnostics
+def test_diff_stats_locates_the_first_differing_block():
+    import numpy as np
+    a = np.zeros((2, 320), dtype=np.float32)
+    b = a.copy()
+    assert aud.diff_stats(a, b)["frames_differing"] == 0
+    assert aud.diff_stats(a, b)["first_differing_block"] is None
+    b[1, 70] = 2.0 ** -21
+    d = aud.diff_stats(a, b)
+    assert d["first_differing_frame"] == 70
+    assert d["first_differing_block"] == 2
+    assert d["max_abs_diff_lsb_q10_21"] == 1.0
+    assert "shape_mismatch" in aud.diff_stats(a, b[:, :32])
+
+
+# ------------------------------------------- leg D scratch bundle
+def _fake_buses(frames, repeatable=True, slots=()):
+    import numpy as np
+    z = np.zeros((2, frames), dtype=np.float32)
+    names = ["wet", "dry"] + ["bypass_fx%d" % k for k in slots]
+    return {"%s_%d" % (n, t): aud._Bus(z, ["h" * 64] * aud.LIVE_REPEATS,
+                                       repeatable)
+            for n in names for t in (375, 3750)}
+
+
+@pytest.mark.parametrize("blocks", [2, 32, 120, 240, 375, 3750])
+def test_settle_s_for_is_exact_in_the_renderers_arithmetic(blocks):
+    s = aud.settle_s_for(blocks)
+    assert int(s * 48000) // 32 == blocks
+
+
+@pytest.mark.parametrize("n", [375, 3750])
+def test_d_bundle_is_a_declared_scratch_fixture(tmp_path, n):
+    import compare_audio_reference as car
+    c = CHORUS_CARRIER
+    sc_path = os.path.join(REPO, "reports", "SXT-028c", "fixtures",
+                           "%s__%s.json" % (c["slug"], c["seq"]))
+    side = committed(os.path.relpath(sc_path, REPO))
+    out, ref = aud.d_bundle(CHORUS, c, side, sc_path,
+                            _fake_buses(side["render"]["frames"]), n,
+                            str(tmp_path / "fx"))
+    assert os.path.exists(ref)
+    sc = json.load(open(os.path.join(out, "%s__%s.json"
+                                     % (c["slug"], c["seq"]))))
+    assert int(sc["render"]["settle_s"] * 48000) // 32 == n
+    assert sc["audit_scratch"]["settle_blocks"] == n
+    assert sc["wet"]["sha256"] == aud.sha256_file(sc["wet"]["wav"])
+    assert sc["determinism_gate"]["bit_identical"] is True
+    assert not sc["wet"]["wav"].startswith(os.path.join(REPO, "reports"))
+    car.declared_tail_region(os.path.join(out, "%s__%s.json"
+                                          % (c["slug"], c["seq"])), "wet")
+
+
+def test_d_bundle_carries_a_failed_gate_and_refuses_wrong_length(tmp_path):
+    c = CHORUS_CARRIER
+    sc_path = os.path.join(REPO, "reports", "SXT-028c", "fixtures",
+                           "%s__%s.json" % (c["slug"], c["seq"]))
+    side = committed(os.path.relpath(sc_path, REPO))
+    frames = side["render"]["frames"]
+    out, _ref = aud.d_bundle(CHORUS, c, side, sc_path,
+                             _fake_buses(frames, repeatable=False), 375,
+                             str(tmp_path / "a"))
+    sc = json.load(open(os.path.join(out, "%s__%s.json"
+                                     % (c["slug"], c["seq"]))))
+    assert sc["determinism_gate"]["bit_identical"] is False
+    with pytest.raises(aud.AuditRefused, match="frames"):
+        aud.d_bundle(CHORUS, c, side, sc_path, _fake_buses(frames - 32),
+                     375, str(tmp_path / "b"))
+
+
+# ------------------------------------------- NC-D: D must discriminate
+def _d(verdicts):
+    return {"status": "MEASURED", "by_settle": {
+        n: {"comparator_verdict_by_preroll": v} for n, v in verdicts.items()}}
+
+
+def test_nc_d_passes_only_when_every_mismatched_preroll_fails():
+    ok = _d({"375": {"0": "FAIL", "375": "PASS"},
+             "3750": {"0": "FAIL", "375": "FAIL", "3750": "PASS"}})
+    assert aud.nc_d_control(ok)["status"] == "PASS"
+    blind = _d({"375": {"0": "PASS", "375": "PASS"},
+                "3750": {"0": "PASS", "375": "PASS", "3750": "PASS"}})
+    r = aud.nc_d_control(blind)
+    assert r["status"] == "FAIL"
+    assert r["mismatched_verdicts"]["settle 3750 / pre-roll 375"] == "PASS"
+    assert aud.nc_d_control({"status": "NOT_RUN"})["status"] == "NOT_RUN"
+
+
+def test_nc_d_never_decides_the_boundary():
+    """Even a perfectly discriminating D leaves an UNRESOLVED row NO_VERDICT:
+    the boundary decision takes A0/A/A_early/B only."""
+    import inspect
+    assert set(inspect.signature(aud.decide_boundary).parameters) == {
+        "a_identical", "b_identical", "repeatable", "a_early_identical"}
