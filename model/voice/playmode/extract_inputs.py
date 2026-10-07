@@ -13,7 +13,9 @@ Fail-closed, in this order:
   2. the normalized graph entry must exist and be `normalized`;
   3. every gate of the declared SXT-043 articulation class must hold
      (`Refuse` -> exit 2), INCLUDING scene-A playmode == pm_mono_st_fp;
-  4. every declared override must survive readback (`apply_overrides`);
+  4. every declared override must survive readback (`configure_loaded`:
+     fixture revision 2 first clears osc-slot p[] routes by original
+     parameter identity BEFORE the oscillator type switch, #329);
   5. every live modulation route must be either structurally inert under the
      overrides or inside the declared destination vocabulary;
   6. the live engine read must agree with the graphs.jsonl echo for the
@@ -222,6 +224,7 @@ def main():
         "poly_voice_repeated_key_mode":
             nonparam["poly_voice_repeated_key_mode"],
         "declared_overrides": fc.OVERRIDE_KEYS,
+        "fixture_revision": fc.FIXTURE_REVISION,
         "modulation_routes": routes,
         "osc_cut_activation_probe": cuts,
         # audio-stage words (post-override; the landed Sine slice reads these)
@@ -260,6 +263,9 @@ def main():
         json.dump(out, f, indent=2, sort_keys=True)
         f.write("\n")
     print(json.dumps({"carrier": carrier, "out": args.out,
+                      "fixture_revision": fc.FIXTURE_REVISION,
+                      "osc_p_routes_cleared": len(
+                          routes["osc_p_route_clear"]["cleared"]),
                       "play_mode": out["play_mode"],
                       "portamento": out["portamento"],
                       "mono_voice_priority_mode":

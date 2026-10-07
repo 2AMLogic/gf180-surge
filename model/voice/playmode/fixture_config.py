@@ -41,6 +41,42 @@ is therefore under test -- is:
 The oracle renders the SAME overridden configuration, so the comparison is
 model-vs-engine over the articulation, not over three unmodeled oscillator
 families.
+
+FIXTURE REVISION 2 (issue #329, follow-up to the #311 root cause)
+----------------------------------------------------------------
+Revision 1 switched the oscillator type FIRST and classified/zeroed
+modulation routes AFTERWARDS by post-switch display name.  A voice route into
+one of the slot's seven `p[]` parameters survives the queued type switch
+(the engine's `clear_osc_modulation` is skipped on the binding path), lands
+on the Sine oscillator's integer Shape selector and silences it (Digibass:
+`Velocity` / `Filter EG -> A Osc 1 Morph`).  Revision 1's `modpin_zero` then
+"zeroed" the retargeted route through `setModDepth01`, which is a no-op on a
+non-modulatable target, and its readback compared the NORMALIZED depth --
+which reads 0 for such a target while the raw depth stays intact -- so the
+committed revision-1 Digibass sidecar records those two routes as pinned
+although they were still live.
+
+Revision 2 changes only the ORDER and the READBACK:
+
+  1. immediately after `loadPatch`, before any override, every routing
+     whose destination is one of the modeled slot's seven ORIGINAL `p[]`
+     parameters (matched by engine synth-side parameter id, captured
+     before the type remap; display names are recorded but never used for
+     matching) is set to depth 0 through the official `setModDepth01` path
+     with its source scene/index preserved; the readback is verified both
+     through `getModDepth01` and by re-enumerating `getAllModRoutings()`
+     and checking the RAW depth (`osc_p_route_clear`, recorded verbatim in
+     fixture metadata with the original depths and the reason);
+  2. then the type switch, settle, handle re-fetch (unchanged);
+  3. a post-switch guard refuses if ANY routing into the slot's `p[]`
+     parameters still carries a nonzero raw depth;
+  4. `modpin_zero` readback now also re-enumerates raw depths, so a no-op
+     zeroing can never again be recorded as pinned.
+
+Amp/VCA, playmode, portamento and mono priority/envelope behaviour are not
+touched by the route clear: only routings whose DESTINATION is an osc-slot
+`p[]` parameter are cleared, and those parameters are replaced wholesale by
+the pinned Sine slice anyway.  Unknown routes still refuse.
 """
 
 import os
@@ -131,7 +167,18 @@ INERT_DEST_PREFIXES = (
     ("Scene B ", "scene mode forced to Single: scene B is not rendered"),
 )
 
+# Fixture revision.  1 = the #77 landing (type switch first, name-based
+# post-switch route pin); 2 = #329 (osc-slot p[] routes cleared by original
+# parameter identity BEFORE the type switch, raw-depth readback).  Every
+# sidecar written by the extractor / reference renderer records it, so an
+# artifact produced under revision 1 can never pass for a revision-2 one.
+FIXTURE_REVISION = 2
+
+# Depth below which a routing counts as zero on readback (raw and 0..1).
+ROUTE_ZERO_EPS = 1e-9
+
 OVERRIDE_KEYS = [
+    "osc_p_route_clear",
     "mute_o1", "mute_o2", "mute_o3", "mute_noise", "mute_ring_12",
     "mute_ring_23", "fu0_off", "fu1_off", "fx_off", "ws_off", "lc_off",
     "fbc_serial1", "fm_off", "scenemode_single", "retrigger_on",
@@ -276,6 +323,139 @@ def carrier_overrides(slot):
     ]
 
 
+def _route_rows(s):
+    """Flatten `getAllModRoutings()` into `(scope, scene_or_None, routing)`."""
+    routings = s.getAllModRoutings()
+    rows = [("global", None, r) for r in routings.get("global", [])]
+    for si, tbl in enumerate(routings.get("scene", [])):
+        for scope in ("scene", "voice"):
+            for r in tbl.get(scope, []):
+                rows.append((scope, si, r))
+    return rows
+
+
+def _param_id(p):
+    """The engine's synth-side parameter id: stable across a type remap
+    (the slot's `p[k]` keeps its id while its meaning/name changes)."""
+    return int(p.getId().getSynthSideId())
+
+
+def _raw_depth_of(s, dest_id, src_name, source_scene, source_index):
+    """Re-enumerate the engine's routes and return the RAW depth of the
+    matching routing, or None when the engine no longer lists it."""
+    for _scope, _si, r in _route_rows(s):
+        if (_param_id(r.getDest()) == dest_id
+                and r.getSource().getName() == src_name
+                and int(r.getSourceScene()) == int(source_scene)
+                and int(r.getSourceIndex()) == int(source_index)):
+            return float(r.getDepth())
+    return None
+
+
+def osc_param_targets(s, slot):
+    """Identity of the modeled slot's seven `p[]` parameters, read NOW.
+
+    Returns `{synth_side_id: (k, display_name)}`.  Must be called before the
+    type switch: afterwards the same ids carry the new type's names.
+    """
+    o = s.getPatch()["scene"][0]["osc"][slot]
+    targets = {}
+    for k in range(7):
+        h = o["p"][k]
+        pid = _param_id(h)
+        if pid in targets:
+            raise Refuse("osc slot %d p[%d] and p[%d] share synth-side id %d: "
+                         "route identity is ambiguous" % (slot, targets[pid][0],
+                                                          k, pid))
+        targets[pid] = (k, h.getName())
+    return targets
+
+
+def clear_osc_param_routes(s, slot):
+    """Override `osc_p_route_clear` (fixture revision 2, issue #329).
+
+    MUST run after `loadPatch` and BEFORE the oscillator type switch.  Every
+    routing (any scope) whose destination is one of the modeled slot's seven
+    ORIGINAL `p[]` parameters -- matched by synth-side id, never by display
+    name -- is set to depth 0 through the official `setModDepth01` path with
+    its source scene and index preserved.  Readback is verified twice: the
+    0..1 depth via `getModDepth01`, and the RAW depth by re-enumerating
+    `getAllModRoutings()` (the route must be gone or carry depth 0).  Any
+    failure REFUSES.  The original state of every cleared routing and the
+    reason are returned for the fixture metadata.
+    """
+    targets = osc_param_targets(s, slot)
+    cleared = []
+    for scope, si, r in _route_rows(s):
+        dest = r.getDest()
+        did = _param_id(dest)
+        if did not in targets:
+            continue
+        k, orig_name = targets[did]
+        src = r.getSource()
+        rec = {
+            "scope": scope, "scene": si,
+            "src": src.getName(),
+            "source_scene": int(r.getSourceScene()),
+            "source_index": int(r.getSourceIndex()),
+            "dest": dest.getName(),
+            "dest_original_name": orig_name,
+            "dest_param_index": k,
+            "dest_synth_side_id": did,
+            "depth_original": float(r.getDepth()),
+            "norm_depth_original": float(r.getNormalizedDepth()),
+            "why": ("destination is osc slot %d p[%d] (%s), which the "
+                    "declared Sine type switch remaps; a surviving routing "
+                    "retargets the Sine integer Shape selector (#311), so "
+                    "its depth is zeroed BEFORE the switch "
+                    "(osc_p_route_clear, fixture revision %d)"
+                    % (slot, k, orig_name, FIXTURE_REVISION)),
+        }
+        s.setModDepth01(dest, src, 0.0, scene=rec["source_scene"],
+                        index=rec["source_index"])
+        back01 = s.getModDepth01(dest, src, scene=rec["source_scene"],
+                                 index=rec["source_index"])
+        rec["readback_depth01"] = float(back01)
+        cleared.append(rec)
+    for rec in cleared:
+        raw = _raw_depth_of(s, rec["dest_synth_side_id"], rec["src"],
+                            rec["source_scene"], rec["source_index"])
+        rec["readback_raw_depth"] = raw          # None == routing removed
+        if abs(rec["readback_depth01"]) > ROUTE_ZERO_EPS or (
+                raw is not None and abs(raw) > ROUTE_ZERO_EPS):
+            raise Refuse(
+                "osc_p_route_clear readback failed for %s -> %s (p[%d]): "
+                "depth01=%r raw=%r" % (rec["src"], rec["dest_original_name"],
+                                       rec["dest_param_index"],
+                                       rec["readback_depth01"], raw))
+    return {
+        "fixture_revision": FIXTURE_REVISION,
+        "order": "after loadPatch, before the oscillator type switch",
+        "match": "engine synth-side parameter id of osc slot p[0..6]",
+        "slot": slot,
+        "targets": [{"param_index": k, "synth_side_id": pid,
+                     "original_name": name}
+                    for pid, (k, name) in sorted(targets.items(),
+                                                 key=lambda t: t[1][0])],
+        "cleared": cleared,
+    }
+
+
+def stale_osc_param_routes(s, slot):
+    """Every routing into the slot's `p[]` parameters with a nonzero RAW
+    depth (post-switch guard; empty on a correctly configured instance)."""
+    o = s.getPatch()["scene"][0]["osc"][slot]
+    ids = {_param_id(o["p"][k]) for k in range(7)}
+    out = []
+    for scope, si, r in _route_rows(s):
+        if _param_id(r.getDest()) in ids and abs(r.getDepth()) > ROUTE_ZERO_EPS:
+            out.append({"scope": scope, "scene": si,
+                        "src": r.getSource().getName(),
+                        "dest": r.getDest().getName(),
+                        "depth": float(r.getDepth())})
+    return out
+
+
 def classify_and_pin_routes(s, pinned_names):
     """Classify every live modulation route; zero the ones into pinned params.
 
@@ -298,19 +478,15 @@ def classify_and_pin_routes(s, pinned_names):
         vocabulary and the model implements it.
 
     Anything else REFUSES (exit 2).  No route is ever silently dropped.
+
+    Fixture revision 2: a `modpin_zero` readback also re-enumerates the
+    routes and checks the RAW depth.  Revision 1 checked only
+    `getModDepth01`, which reads 0 on a non-modulatable destination even
+    while the raw depth is intact -- that is how the retargeted Digibass
+    routes were recorded as pinned though still live (#329).
     """
-    routings = s.getAllModRoutings()
-    rows = list(routings.get("global", []))
-    for si, tbl in enumerate(routings.get("scene", [])):
-        for scope in ("scene", "voice"):
-            for r in tbl.get(scope, []):
-                rows.append((si, scope, r))
     live, inert, pinned = [], [], []
-    for row in rows:
-        if isinstance(row, tuple):
-            si, scope, r = row
-        else:
-            si, scope, r = None, "global", row
+    for scope, si, r in _route_rows(s):
         src = r.getSource()
         dest = r.getDest()
         src_name = src.getName()
@@ -335,9 +511,16 @@ def classify_and_pin_routes(s, pinned_names):
                             index=r.getSourceIndex())
             back = s.getModDepth01(dest, src, scene=r.getSourceScene(),
                                    index=r.getSourceIndex())
-            if abs(back) > 1e-9:
-                raise Refuse("modpin_zero readback failed for %s -> %s: %r"
-                             % (src_name, dest_name, back))
+            raw = _raw_depth_of(s, _param_id(dest), src_name,
+                                r.getSourceScene(), r.getSourceIndex())
+            if abs(back) > ROUTE_ZERO_EPS or (
+                    raw is not None and abs(raw) > ROUTE_ZERO_EPS):
+                raise Refuse("modpin_zero readback failed for %s -> %s: "
+                             "depth01=%r raw=%r -- the zeroing did not take "
+                             "(a non-modulatable destination ignores "
+                             "setModDepth01)" % (src_name, dest_name, back,
+                                                 raw))
+            rec["readback_raw_depth"] = raw
             rec["why"] = ("destination is pinned by the declared fixture "
                           "configuration; depth zeroed (modpin_zero)")
             pinned.append(rec)
@@ -430,7 +613,7 @@ def assert_sequence_sources_inert(seq, inert_route_records):
 
 
 def apply_overrides(s, slot, force_polymode=None, porta_options=None,
-                    porta_value=None):
+                    porta_value=None, _nc_record_stale=None):
     """Apply the declared overrides, then VERIFY every one by readback.
 
     Returns `(readback_dict, pinned_parameter_names)`.  The second element is
@@ -441,6 +624,16 @@ def apply_overrides(s, slot, force_polymode=None, porta_options=None,
     `force_polymode` / `porta_options` / `porta_value` exist only for the
     declared negative controls and parameter-corner probes; a real carrier
     run passes none of them and the readback records that.
+
+    Precondition (fixture revision 2): `clear_osc_param_routes` has already
+    run on this instance.  The post-switch guard REFUSES if any routing into
+    the slot's `p[]` parameters still carries a nonzero raw depth.
+    `_nc_record_stale` is private to the retained-route negative control
+    (`tools/probe_pm_reference_validity.py`): when it is a list, the guard's
+    findings are appended to it instead of refusing, so the control can
+    render the pre-#329 order and show it FAILS the valid-reference gate.
+    No production entry point (`configure_loaded`, `build_instance`, the
+    extractor, the reference renderer) passes it.
     """
     import surgepy.constants as C
 
@@ -473,6 +666,15 @@ def apply_overrides(s, slot, force_polymode=None, porta_options=None,
     o = sc["osc"][slot]
     for k in range(7):
         pinned_names.add(o["p"][k].getName())
+    stale = stale_osc_param_routes(s, slot)
+    if stale:
+        if _nc_record_stale is None:
+            raise Refuse(
+                "osc slot %d p[] routings survived the type switch with "
+                "nonzero raw depth %r -- they retarget the Sine slot (#311); "
+                "clear_osc_param_routes must run BEFORE the switch "
+                "(fixture revision %d)" % (slot, stale, FIXTURE_REVISION))
+        _nc_record_stale.extend(stale)
 
     for key, val in carrier_overrides(slot):
         if key.startswith("mute_"):
@@ -619,8 +821,35 @@ def build_instance(surgepy, oc, carrier, force_polymode=None,
             % path)
     if not s.loadPatch(path):
         raise Refuse("loadPatch failed: %s" % carrier)
+    d, routes = configure_loaded(
+        s, slot, force_polymode=force_polymode,
+        porta_options=porta_options, porta_value=porta_value)
+    return s, d, routes
+
+
+def configure_loaded(s, slot, force_polymode=None, porta_options=None,
+                     porta_value=None):
+    """The ONE production configuration sequence on a freshly loaded patch.
+
+    Shared by the extractor, the reference renderer, the cut-activation
+    probe and the controls (through `build_instance`):
+
+      1. `clear_osc_param_routes`  -- osc-slot p[] routes zeroed by original
+         parameter identity, raw/0..1 readback verified (BEFORE the switch);
+      2. `apply_overrides`         -- type switch, settle, handle re-fetch,
+         post-switch stale-route guard, declared overrides, readback;
+      3. `classify_and_pin_routes` -- every remaining route is live, inert
+         or pinned, else REFUSE.
+
+    Returns `(readback, routes)`; `routes` carries the live/inert/pinned
+    classification plus the `osc_p_route_clear` record (original and
+    revised routing state) and the fixture revision.
+    """
+    clear = clear_osc_param_routes(s, slot)
     d, pinned_names = apply_overrides(
         s, slot, force_polymode=force_polymode,
         porta_options=porta_options, porta_value=porta_value)
     live, inert, pinned = classify_and_pin_routes(s, pinned_names)
-    return s, d, {"live": live, "inert": inert, "pinned": pinned}
+    return d, {"fixture_revision": FIXTURE_REVISION,
+               "osc_p_route_clear": clear,
+               "live": live, "inert": inert, "pinned": pinned}
