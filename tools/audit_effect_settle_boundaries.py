@@ -1513,6 +1513,35 @@ def cmd_rederive(args):
 # One row
 # --------------------------------------------------------------------------
 
+def attribute_a_early(ae):
+    """Say whether an A_early difference is attributable to the effect.
+
+    The all-off dry bus (effects bypassed) is rendered at the same settles;
+    if it also differs, the wet difference is not attributable to the effect.
+    Annotation only: the boundary decision does not read it.
+    """
+    if ae.get("status") == "MEASURED" and ae.get("byte_identical") is False:
+        if ae.get("dry_diagnostic_byte_identical") is False:
+            ae["attribution"] = "CONFOUNDED_SYNTH_SIDE"
+            ae["attribution_note"] = (
+                "the all-off dry bus (effects bypassed) ALSO differs at "
+                "these settle lengths, so the wet difference is not "
+                "attributable to the effect: part or all of it is synth-side "
+                "evolution (voices/filters/envelopes still settling). "
+                "A_early therefore cannot establish effect-state evolution "
+                "either; it only withholds RESOLVED.")
+        elif ae.get("dry_diagnostic_byte_identical") is True:
+            ae["attribution"] = "EFFECT_SIDE"
+            ae["attribution_note"] = (
+                "the dry bus is identical at these settle lengths while "
+                "the wet bus differs: the difference is at or downstream "
+                "of the effect chain.")
+        else:
+            ae["attribution"] = "UNATTRIBUTED"
+            ae["attribution_note"] = "no dry diagnostic for this carrier."
+    return ae
+
+
 def audit_row(runner, carrier, work_root, oracle, surgepy=None,
               c_runner=offline_c):
     d = RUNNERS[runner]
@@ -1586,7 +1615,8 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
         "reason": "no live render on this run" if not live else
                   "the A/B source carries no repeatability leg"}
     row["A_settle_length_invariance"] = ab["A"]
-    row["A_early_settle_invariance"] = ab["A_early"]
+    ae = attribute_a_early(ab["A_early"])
+    row["A_early_settle_invariance"] = ae
     if ab.get("settle_sweep"):
         row["settle_sweep"] = ab["settle_sweep"]
     row["B_construction_invariance"] = ab["B"]
@@ -1655,10 +1685,12 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
                 "boundary is UNRESOLVED")
     elif e_id is False and a_id is not False:
         vwhy = ("A_early DIFFERS (settle %d vs 375) while A (375 vs 3750) "
-                "is identical: the engine evolves during the settle and "
-                "converges before block 375, so A's identity does not "
-                "establish an init-state start; the boundary is UNRESOLVED "
-                "and no pre-roll is chosen by score" % EARLY_SETTLE_BLOCKS)
+                "is identical: the bus evolves during the first settle "
+                "blocks and converges before block 375, so A's identity "
+                "does not establish an init-state start; the boundary is "
+                "UNRESOLVED and no pre-roll is chosen by score. %s"
+                % (EARLY_SETTLE_BLOCKS, row["A_early_settle_invariance"]
+                   .get("attribution_note", "")))
     row["runner_boundary_verdict"] = {"status": vstat, "reason": vwhy}
     row["committed_numbers_dependence"] = (
         "SENSITIVE" if c["model_output_preroll_sensitive"] else "INSENSITIVE")
@@ -1681,11 +1713,13 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
                 and str(v1["declared_preroll_blocks"]) in c["legs"]
                 else None),
             "route": "#12 (SXT-017)",
-            "reason": "the probe's rule would read this row %s; A_early "
-                      "(or A0) shows that reading is not supported by the "
-                      "engine measurement. Both readings and both numbers "
-                      "are retained; nothing is relabeled."
-                      % v1["runner_verdict_under_v1"]}
+            "reason": "the probe's rule would read this row %s; this "
+                      "audit's stricter rule (A_early, A0) withholds that "
+                      "reading (A_early attribution: %s). Both readings and "
+                      "both numbers are retained; nothing is relabeled and "
+                      "no pre-roll is chosen by score."
+                      % (v1["runner_verdict_under_v1"],
+                         ae.get("attribution", "n/a"))}
     row["status"] = vstat
     row["coverage"] = ("A,B,C" if ab_status == "MEASURED" else "C only")
     if row["D_settle_tracking"]["status"] == "MEASURED":
@@ -1734,7 +1768,8 @@ def ab_only_row(runner, carrier, work_root, oracle, surgepy=None):
         REPO, "fixtures", "sequences", carrier["seq"] + ".json"))
     row["A0_repeatability"] = a0
     row["A_settle_length_invariance"] = ab["A"]
-    row["A_early_settle_invariance"] = ab["A_early"]
+    ae = attribute_a_early(ab["A_early"])
+    row["A_early_settle_invariance"] = ae
     row["settle_sweep"] = ab["settle_sweep"]
     row["B_construction_invariance"] = ab["B"]
     row["ab_source"] = ab["source"]
@@ -1754,10 +1789,12 @@ def ab_only_row(runner, carrier, work_root, oracle, surgepy=None):
         vwhy = ("A0 FAIL: a live render is not repeatable in a fresh "
                 "instance; the boundary is UNRESOLVED")
     elif e_id is False and a_id is not False:
-        vwhy = ("A_early DIFFERS while A is identical: the engine evolves "
-                "during the settle and converges before block 375; the "
-                "boundary is UNRESOLVED")
+        vwhy = ("A_early DIFFERS while A is identical: the bus evolves "
+                "during the first settle blocks and converges before block "
+                "375; the boundary is UNRESOLVED. %s"
+                % ae.get("attribution_note", ""))
     row["runner_boundary_verdict"] = {"status": vstat, "reason": vwhy}
+    row["reason"] = vwhy
     row["nc_c_control"] = {"status": "NOT_RUN",
                            "reason": "no leg C on this carrier"}
     row["escalation"] = None

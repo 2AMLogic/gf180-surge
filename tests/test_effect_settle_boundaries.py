@@ -427,9 +427,20 @@ def test_committed_sse_row_reproduces_the_worked_example():
         assert got[pre]["metrics"]["channels"]["mono"]["max_abs_diff_lsb"] \
             == want["C_model_boundary_vs_engine"]["silent_preroll_blocks"][
                 pre]["max_abs_diff_lsb"]
-    assert row["status"] == "PASS"
-    assert row["nc_c_control"]["status"] == "PASS"
-    assert row["nc_c_control"]["wrong_boundary_verdicts"] == {"375": "FAIL"}
+    # #136's probe rule (A, B) reads this row RESOLVED/PASS; this audit's
+    # stricter rule (A0 + A_early) withholds that reading, so the row is
+    # NO_VERDICT with the probe reading retained alongside, never relabeled.
+    assert row["boundary"]["probe_rule_v1"]["status"] == "RESOLVED"
+    assert row["boundary"]["probe_rule_v1"]["runner_verdict_under_v1"] \
+        == "PASS"
+    assert row["status"] == "NO_VERDICT"
+    assert row["A_early_settle_invariance"]["attribution"] \
+        == "CONFOUNDED_SYNTH_SIDE"
+    assert row["probe_rule_v1_reading_changed"]["route"].startswith("#12")
+    assert row["nc_c_control"]["status"] == "NOT_RUN"
+    # the wrong boundary (375) still FAILs the declared comparison (data)
+    assert got["375"]["metrics"]["verdict_class"] == "FAIL"
+    assert got["0"]["metrics"]["verdict_class"] == "PASS"
 
 
 # ------------------------------------------------- source reconciliation
@@ -676,3 +687,16 @@ def test_nc_d_never_decides_the_boundary():
     import inspect
     assert set(inspect.signature(aud.decide_boundary).parameters) == {
         "a_identical", "b_identical", "repeatable", "a_early_identical"}
+
+
+def test_attribute_a_early_confounded_by_dry_difference():
+    ae = {"status": "MEASURED", "byte_identical": False,
+          "dry_diagnostic_byte_identical": False}
+    assert aud.attribute_a_early(dict(ae))["attribution"] \
+        == "CONFOUNDED_SYNTH_SIDE"
+    ae["dry_diagnostic_byte_identical"] = True
+    assert aud.attribute_a_early(dict(ae))["attribution"] == "EFFECT_SIDE"
+    ae["dry_diagnostic_byte_identical"] = None
+    assert aud.attribute_a_early(dict(ae))["attribution"] == "UNATTRIBUTED"
+    assert "attribution" not in aud.attribute_a_early(
+        {"status": "MEASURED", "byte_identical": True})
