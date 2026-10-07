@@ -706,7 +706,8 @@ which never counts toward original-preset coverage (root `CLAUDE.md`).
 
 The controls below are only testable if the design carries the following.
 This is a **specification for #304's build** (and for the RTL issue that
-implements it); none of it exists yet and none of it is claimed here.
+implements it). It is implemented and verified **in simulation only** (see
+the implementation note below); no hardware behavior of it is claimed here.
 
 | Register / signal | Meaning |
 |---|---|
@@ -729,6 +730,21 @@ discontinuity against the prediction) and sets `OUTPUT_FAULT`. It must
 quiet failure is the failure mode root `CLAUDE.md` names explicitly
 ("silent/stale stubs"). Counters are read before and after every take and
 the deltas are recorded in the bundle.
+
+**Implementation note (revision, #316).** The set above is implemented in
+RTL and verified **in simulation only** in `rtl/instrumentation/`
+(evidence: `reports/SXT-030/EVIDENCE.md`). No row's meaning changed; the
+implementation makes three additive clarifications, recorded here so they
+are not silent: (1) a stall in frame 0 has no previous frame to hold, so
+the output register resets to a declared **non-zero** `HOLD_RESET` sample
+(holding a reset value of 0 would be the silence this section forbids);
+(2) a `STATUS` register carries the sticky bits (`OUTPUT_FAULT`, latched
+LED) plus a `FIRST_STALL_VALID` bit, so "first stall in frame 0" is
+distinguishable from "no stall"; (3) a `CTRL.RUN` bit and per-tag
+`EXT_WORDS_RD/WR` counters (instance 0, instance 1, load generator) realize
+"per-instance tagged". The deadline is the frame's whole external service,
+load-generator traffic included. None of this is a hardware claim; #304
+still runs NC-1 live.
 
 ### 9.2 NC-1 — over-subscribed traffic must appear as a **measured stall**, not silence
 
@@ -981,6 +997,6 @@ pin table and no tables of third-party values.** Specifically:
 | Fabric adequacy of the selected board for this instrument's RTL | **NOT_RUN** (§2.5) |
 | Sustained external-memory efficiency on the selected board | **NOT_RUN** (§2.4; measured at step D-7) |
 | Latency, underrun, stall figures | **NOT_RUN** — #304 |
-| Wrapper instrumentation of §9.1 (registers, load generator, strobe) | **NOT_RUN** — not implemented anywhere yet |
+| Wrapper instrumentation of §9.1 (registers, load generator, strobe) | **PASS in simulation only** (#316, `reports/SXT-030/EVIDENCE.md`); on hardware **NOT_RUN** — #304 |
 | FPGA synthesis / place-and-route / timing / power for this instrument | **NOT_RUN** — and not claimed anywhere in this document |
 | Any hardware-playback, Surge-fidelity or preset-quality claim | **none made** |
