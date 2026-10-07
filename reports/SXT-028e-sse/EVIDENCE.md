@@ -428,6 +428,34 @@ substituted.
   is, and since nothing is statically admissible there is nothing further
   for that tool to consume.
 
+**Mirror/oracle screen parity (#336).** `tests/test_sxt028e_sse_slot_census.py`
+now pins the oracle-free mirror (`preset_screens`) against the committed
+oracle-read screens. For each `model/effects/fx_inputs/type-distortion-sse-*.json`
+record carrying `render_screens`, the expected reasons are built from the
+record alone (`refusal_reasons` minus `drift = ` entries, plus the renderer's
+unlanded-class reason from `unlanded_classes_in_chain`, spelled with the
+census `--` separator) and compared with the mirror run on the single
+`graphs.jsonl` row joined by `preset_path`, using the record's own
+`landed_classes_basis`. Missing/duplicate graph joins and an empty population
+fail.
+
+* Checked-record population (coverage): 3 records, `reversecrash` (empty
+  reasons), `mutantlofiacoustic` (FX modulation + retrigger), `trancepluck`
+  (FX modulation, two retrigger reasons, oracle-only drift excluded, unlanded
+  `Conditioner`). Parity: **PASS** for all 3; no divergence, so the
+  F-028e-sse-8 basis above is unchanged.
+* Failure control: a mirror wrapper dropping `retrigger off` reasons makes the
+  same parity assertion fail on both committed records containing such a
+  reason (mismatch diagnostic lists mirror vs oracle reasons): **PASS**
+  (control demonstrably fails). Missing/duplicate-graph fail-closed: **PASS**.
+* Commands: `python3 -m pytest -q tests/test_sxt028e_sse_slot_census.py` run
+  with Python 3.12.3 in a throwaway venv (system python lacks pytest): 12
+  passed. `python3 tools/census_distortion_sse_slots.py --check`: PASS
+  (artifact freshness only; not a screen-parity statement).
+* Not established: screen policy correctness (#310), the drift screen (stays
+  NOT_EVALUATED in the mirror), any render, fidelity, preset-support or
+  musical-quality claim.
+
 ## 2. Frozen fixed-point model
 
 `model/effects/type-distortion-sse/` — `sse_tables.py` (the two re-derived
