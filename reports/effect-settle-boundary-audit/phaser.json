@@ -2,8 +2,15 @@
   "claim_scope": "a harness settle-boundary audit. Not a fidelity result, not a support claim; A/B output invariance would establish the tested output behaviour only, not every internal state variable. Committed leaf records are not modified.",
   "comparator": "tools/compare_phaser_reference.py",
   "comparator_git_blob_sha1": "14af9de68e6828d90c22da210100c01b774a8077",
+  "derived_fields": {
+    "audit_tool_git_blob_sha1": "b5f0b7a7573bdd8b15bbebb735fb55892b1a192c",
+    "fields": [
+      "rows[].nc_d_control"
+    ],
+    "how": "tools/audit_effect_settle_boundaries.py rederive: pure functions of the recorded leg-D comparator verdicts; nothing re-measured"
+  },
   "environment": {
-    "audit_tool_git_blob_sha1": "3f5d18e080e429528d070dfdc513c70881e56355",
+    "audit_tool_git_blob_sha1": "b5f0b7a7573bdd8b15bbebb735fb55892b1a192c",
     "block_size": 32,
     "comparator_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
     "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
@@ -12,10 +19,10 @@
     "numpy": "1.26.4",
     "oracle_manifest": "oracle/manifest.json",
     "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
-    "platform": "Linux-6.17.0-1019-aws-x86_64-with-glibc2.39",
-    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1010-aws-x86_64-with-glibc2.39",
+    "python": "3.11.16",
     "sample_rate": 48000,
-    "source_revision": "e3a5e8891e46b9df8fbac0600a30e4b6a41d8ba5",
+    "source_revision": "cf82d7a9602025d92834eabb5c30dd4ccca7fce4",
     "source_tree_dirty": false
   },
   "issue": "#318",
@@ -24,12 +31,33 @@
   ],
   "oracle": {
     "ORACLE_PREBUILT_URL_set": false,
-    "ORACLE_SURGE_DIR_set": false,
-    "available": false,
-    "engine_dir_present": false,
-    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
-    "reason": "no surgepy build under /Users/joseph/dev/surge-xt-oracle/surge/build-py311/src/surge-python",
-    "surgepy_dir_present": false
+    "ORACLE_SURGE_DIR_set": true,
+    "available": true,
+    "engine_dir_present": true,
+    "engine_dir_probed": "~/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+    "identity": {
+      "buildinfo": {
+        "build_date": "2026-10-01",
+        "built_in": "ubuntu:24.04 container",
+        "cmake_configure": "via oracle/fetch-and-build.sh: -G Ninja -DCMAKE_BUILD_TYPE=Release -DSURGE_BUILD_PYTHON_BINDINGS=ON -DSURGE_BUILD_TESTRUNNER=ON -DPYBIND11_FINDPYTHON=OFF -DPYTHON_EXECUTABLE=<uv cpython-3.11.16>",
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "glibc_min": "2.39",
+        "layout": "ORACLE_SURGE_DIR root: build-py311/src/surge-python/*.so, resources/data/",
+        "numpy": "1.26.4",
+        "platform": "linux-x86_64",
+        "python": "3.11.16"
+      },
+      "installed_artifact_sha256": "d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571",
+      "kind": "prebuilt (#232)",
+      "manifest_engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "manifest_prebuilt_platform": "linux-x86_64",
+      "manifest_prebuilt_sha256": "d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571",
+      "matches_manifest": true,
+      "mismatches": []
+    },
+    "reason": "1.4.HEAD.58914e59c",
+    "surgepy_dir_present": true,
+    "surgepy_importable": true
   },
   "production_preroll": {
     "blocks": 375,
@@ -38,9 +66,2175 @@
   },
   "rows": [
     {
+      "A0_repeatability": {
+        "all_buses_repeatable": false,
+        "non_repeatable_buses": [
+          "dry_120",
+          "dry_2",
+          "dry_240",
+          "dry_32",
+          "dry_375",
+          "dry_3750",
+          "wet_120",
+          "wet_2",
+          "wet_240",
+          "wet_32",
+          "wet_375",
+          "wet_3750",
+          "wet_reloaded",
+          "wet_reloaded_twice"
+        ],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273590,
+              "max_abs_divergence": 0.6214096546173096,
+              "peak_abs": 0.5141210556030273
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "c6f836113fcfe154594d78181a85ebc1f7a7b32efc4585aea6848a7ca0c9c2fb",
+              "d25d8dccafc08ecdaa6467350d9451c72208f1c258fd88dcb83295a805d0cc62"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273599,
+              "max_abs_divergence": 0.6125739812850952,
+              "peak_abs": 0.4938822090625763
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "b900a5ba6dabd31968868e38a53e93135afc5184a5c58c3f4f5f6face6dc0a82",
+              "b4d88b1182e389b4e91b9889b8687a1c0854fecb73ebf165d356074d5236f575"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273588,
+              "max_abs_divergence": 0.6160339117050171,
+              "peak_abs": 0.5115125179290771
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "50a54a70dd637773460c6e55440ffbdb4cb7b3abf846135d8736c8c4d19d5110",
+              "a067f53b92a7648ebf0f310ccbc8b1d4061a355403333048e06f9dc13f09141d"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273542,
+              "max_abs_divergence": 0.6810145378112793,
+              "peak_abs": 0.4923209846019745
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "65be8ef4495f3235f896970684996a98c0dcaf48df3cbb459729ed73c7703c0f",
+              "db4e0a0526b6aebe5b7a90349ea2bd0c58e8791fb05f5148e4df4a8261887942"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273545,
+              "max_abs_divergence": 0.6765360832214355,
+              "peak_abs": 0.46045878529548645
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "ac27ba735c1e93dbb4ee0f26f7a37fa3c7bd8b72051e32fd342ae91ea781f681",
+              "5d290414937b0f6b8b4d8cb51a08cdfa5678e0147b57e89fcef5b1acbef6d8a6"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273576,
+              "max_abs_divergence": 0.6313263773918152,
+              "peak_abs": 0.41289007663726807
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "80b71931c86c270b389d16e45156f00e8cf707f7eaf3f918a4e9f1d3744f3a51",
+              "88461bba496730f31792983f9c44fb77252186e204788b9e56d0f65d47127cb1"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273556,
+              "max_abs_divergence": 1.0756417512893677,
+              "peak_abs": 0.6216645240783691
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "84a3d2cb4d03a88f3618989c7aaf6efd0bee21eb16dd934d72cc00dc546d6648",
+              "9d929fa6e926637bb322e2159b758267afa9d2fdc6716c6e00dc5624f1733c1b"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273580,
+              "max_abs_divergence": 0.8375614881515503,
+              "peak_abs": 0.49378901720046997
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "fa6144cd9d9e160b338695aaef6ffc8cbfd6b084c20c60b67a30b1e4c0b84e5c",
+              "1a3475524abe55f5c3fc244089bfcb2b080ef962665dcc3ce8928eb7a26a74cb"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273568,
+              "max_abs_divergence": 0.649544894695282,
+              "peak_abs": 0.48061105608940125
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "e496fa8423134fad2b3a3ff9d6fa5b2bb7a8b571d56f7fe7ecd7e0bc1f5aaac9",
+              "bbdb3c5172261e73637954691f84ba4a4093004899c9216fae13d1debf727f86"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273600,
+              "max_abs_divergence": 1.1070990562438965,
+              "peak_abs": 0.6047865748405457
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "121ecf40670b56ec2d1522070d7d5ed38af96e5615c4d879be0f280edf836aa9",
+              "df1ca21e589456a210bc641026b86749be5dceeeab782fba811c4fd7649d485c"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273514,
+              "max_abs_divergence": 0.5445092916488647,
+              "peak_abs": 0.5341856479644775
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "7e783dd09db6c18c46d3303b80731e210ed1ea0c2af00a6dd6634089445ed7a5",
+              "9e7239834e3727d0109225c335f673c4c165281ac4d313074f8f6e7f2405f031"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273585,
+              "max_abs_divergence": 0.5206332206726074,
+              "peak_abs": 0.45258021354675293
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "5ad5315bc07d4ab70cf736db1dee6c27d3a479e99bd79937b7817342ed75aa30",
+              "efdff0f9efdd027553f447e34d3c375e0708c077ef8c5d9a1fe5e4773c43b8aa"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273568,
+              "max_abs_divergence": 0.6657586693763733,
+              "peak_abs": 0.4857310950756073
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "45da7bc66cb7b1574cd236d58c09b1610f36c6a5bd9cd63c59be8ec83af5d190",
+              "94b57443fe3eb2829a6107be22ee3d030404f4139508ab48acd5f7a2056d17a0"
+            ]
+          },
+          "wet_reloaded_twice": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273561,
+              "max_abs_divergence": 0.71003258228302,
+              "peak_abs": 0.5230789184570312
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "075d8a4fb695699e9d5eda6efccd477785b7174d5ef2bda1645626edc8cd8c33",
+              "9b0e8dae7dc5459f3c6502343fd6b72a81b72a87fa1b12b6624a106ac4a73ff7"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 32,
+          "frames": 273600,
+          "frames_differing": 273568,
+          "max_abs_diff": 1.0191959738731384,
+          "max_abs_diff_lsb_q10_21": 2137408.875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 36,
+          "frames": 273600,
+          "frames_differing": 273564,
+          "max_abs_diff": 0.8032020032405853,
+          "max_abs_diff_lsb_q10_21": 1684436.6875
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "fa6144cd9d9e160b338695aaef6ffc8cbfd6b084c20c60b67a30b1e4c0b84e5c",
+          "7e783dd09db6c18c46d3303b80731e210ed1ea0c2af00a6dd6634089445ed7a5"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 32,
+          "frames": 273600,
+          "frames_differing": 273568,
+          "max_abs_diff": 0.8133715987205505,
+          "max_abs_diff_lsb_q10_21": 1705763.875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 39,
+          "frames": 273600,
+          "frames_differing": 273561,
+          "max_abs_diff": 0.7939710021018982,
+          "max_abs_diff_lsb_q10_21": 1665077.875
+        },
+        "settle_blocks_compared": [
+          375,
+          3750
+        ],
+        "sha256": [
+          "7e783dd09db6c18c46d3303b80731e210ed1ea0c2af00a6dd6634089445ed7a5",
+          "5ad5315bc07d4ab70cf736db1dee6c27d3a479e99bd79937b7817342ed75aa30"
+        ],
+        "status": "MEASURED"
+      },
+      "B_construction_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 37,
+          "frames": 273600,
+          "frames_differing": 273563,
+          "max_abs_diff": 0.56831094622612,
+          "max_abs_diff_lsb_q10_21": 1191834.4375
+        },
+        "instantiation": "native loadPatch vs savePatch + loadPatch into a fresh instance",
+        "reload_round_trip_fixed_point": false,
+        "saved_patch_sha256": "0a3f2430a47bfea6673ae09a4d21b35410afc49d118833a5ca5fe4aa97248728",
+        "saved_twice_patch_sha256": "e5ebf32eda1ed9d8ba751b6b0941ec332598fedcca3fb155a1fa916781693593",
+        "sha256": [
+          "7e783dd09db6c18c46d3303b80731e210ed1ea0c2af00a6dd6634089445ed7a5",
+          "45da7bc66cb7b1574cd236d58c09b1610f36c6a5bd9cd63c59be8ec83af5d190"
+        ],
+        "source_patch_sha256": "328f9156d293518b43d50b5db7ae5d291266e42c5b36441cc8fca578c17c7ff4",
+        "status": "MEASURED"
+      },
+      "C_model_boundary_vs_engine": null,
+      "C_reason": "NOT_RUN: no committed fixture buses or extracted model inputs for this carrier (the leaf's reference leg, not this audit)",
+      "ab_source": "live, this run",
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": null,
+          "runner_verdict_under_v1": "NO_VERDICT",
+          "status": "UNRESOLVED"
+        },
+        "status": "UNRESOLVED"
+      },
+      "carrier": "phasey",
+      "census_blob_sha1": "59e24827a94cba709975a3ec5de9965137b4177d",
+      "chain": "factory preset chain (engine-side A/B only)",
+      "coverage": "A,B only",
+      "escalation": null,
+      "leaf": "SXT-028g (fx:Phaser)",
+      "nc_c_control": {
+        "reason": "no leg C on this carrier",
+        "status": "NOT_RUN"
+      },
+      "preset": "resources/data/patches_factory/Polysynths/Phasey.fxp",
+      "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+        "status": "NO_VERDICT"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "sequence": "seq-notes-coverage-v1",
+      "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "status": "NO_VERDICT"
+    },
+    {
+      "A0_repeatability": {
+        "all_buses_repeatable": false,
+        "non_repeatable_buses": [
+          "dry_120",
+          "dry_2",
+          "dry_240",
+          "dry_32",
+          "dry_375",
+          "dry_3750",
+          "wet_120",
+          "wet_2",
+          "wet_240",
+          "wet_32",
+          "wet_375",
+          "wet_3750",
+          "wet_reloaded",
+          "wet_reloaded_twice"
+        ],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177598,
+              "max_abs_divergence": 1.618531584739685,
+              "peak_abs": 1.3556712865829468
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "5faf54f203aa7bfe1fc5b0b9536cdd7de2c6fe9df2568572b1b388b511f52a2a",
+              "8778a55b4a9b8338da0464166730ee2052837c149855f4ffbbcc0153ae44f163"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177598,
+              "max_abs_divergence": 1.800107717514038,
+              "peak_abs": 1.2621101140975952
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "de27d57bfe7961f9b2b7ff9b713e628b23662236889789783a1e3a55a1e40741",
+              "9b7c6c1f5acbbf14585b95c557099c99e4c7800232a87bed84b7348f7872cb51"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177597,
+              "max_abs_divergence": 1.4012752771377563,
+              "peak_abs": 1.0252643823623657
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "797d0bdbc1ad365d50d68799b6f2240f50fb7a1464bcc4268327d93916e098eb",
+              "95b7ecbe88490a35471b9386b134daed5b5731fc8afbded7a9363a64008f8791"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177596,
+              "max_abs_divergence": 1.6620303392410278,
+              "peak_abs": 1.1023873090744019
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "aa131d5be2003639d62edf3929c669dadb6db79bd90b6aa38dcab43b91989309",
+              "ecf520615e665247c7029b6e5fa32c936da291cfed97567c05a5c4994b361a93"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.7920992374420166,
+              "peak_abs": 1.3887310028076172
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "00cf2ee800cb322fd9b5d0a33cbe904126083c0e7a7b26352d49bbdac06748dd",
+              "0734bd3dd8d56bc785d8a1f36cf42bc33d3f2b9c85fc7a3594cac0803a54f101"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177592,
+              "max_abs_divergence": 1.4891215562820435,
+              "peak_abs": 1.1033238172531128
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "6dd04c186fa5805a7e6907033e3be5fa227be45c37aacd2dd3bc86cccf61a09f",
+              "757058fa7e541176338303ececd33821230fb9acf35d9cc9c2fd2532d879302e"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.7817221879959106,
+              "peak_abs": 1.102016806602478
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "b73d2b5159583680d0eca317603ca64e8e876aeaa075337a9a9d46d2c0b4af94",
+              "394111535398be25c99107f402ce3a52fed695dbb74e1ff729b67d2b30289e76"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177598,
+              "max_abs_divergence": 2.259190797805786,
+              "peak_abs": 1.4285553693771362
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "7b27ab2b0c6f022d30301cf8ad1f9fec9cfd2fcefeb3bdc2c13fe1a147718217",
+              "f83a5615b3d768529c89fdb3b26342527a7eb2807be4fcdf3583f4e7f4f45475"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177594,
+              "max_abs_divergence": 1.5227484703063965,
+              "peak_abs": 1.2928307056427002
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d534dd9cfb20a64565b93fd8be75d60d4f2bec8d37c6945bb9c261cccdf9d304",
+              "163e8018f1f6d7b17a6615a1cd51ef7707f0643e2f9645e0df35350c9379e6a8"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177597,
+              "max_abs_divergence": 1.8544235229492188,
+              "peak_abs": 1.1813228130340576
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "cbd97d0b8af49389e1d6716d5011bc5763f1bea3f140ddfa7b043253eb3c2636",
+              "ea1e2c2cd75776177eccba2afd294e5176beb037006913e43093a9d7f7273bcb"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.58748459815979,
+              "peak_abs": 1.0856963396072388
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "a6ecf5dcf0ef61c3bb08fceeb22eced97c003ad04597370de9c2c0089922d392",
+              "762bdf3e52b0dd64cafbc820d2b0f631e792a8a291dafa878ee28072132215b0"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.3893487453460693,
+              "peak_abs": 0.9189500212669373
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "517b035cc803387e1251a73318fa21bcf0c0e452f2a249f857d20cb229232093",
+              "f87d8ad3a67a4a103eda472fa8096ddf90c634f7e65efa34fbdc59e00b80c097"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177597,
+              "max_abs_divergence": 1.637507438659668,
+              "peak_abs": 1.1204895973205566
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "11c09d49785829db0f1d33c246b17b76a0b054c634dce076625d5878f45eb7bb",
+              "19733c4fb87014861a6620737417edf5a49700c5b162207af8654131987a8f9f"
+            ]
+          },
+          "wet_reloaded_twice": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.6101343631744385,
+              "peak_abs": 1.3949710130691528
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "a887526ffb32f25ce13e455459f8cb128e9a77c5545c0fa8e591e1a806a6dfc4",
+              "d1e2c457d8e902cbe8659082ff7b97320875a426b933e397e80f5b9819794fb9"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 177600,
+          "max_abs_diff": 1.4401516318321228,
+          "max_abs_diff_lsb_q10_21": 3020216.875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 177600,
+          "max_abs_diff": 1.2904797792434692,
+          "max_abs_diff_lsb_q10_21": 2706332.25
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "7b27ab2b0c6f022d30301cf8ad1f9fec9cfd2fcefeb3bdc2c13fe1a147718217",
+          "a6ecf5dcf0ef61c3bb08fceeb22eced97c003ad04597370de9c2c0089922d392"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
+      "A_settle_length_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 2,
+          "frames": 177600,
+          "frames_differing": 177598,
+          "max_abs_diff": 1.4995855689048767,
+          "max_abs_diff_lsb_q10_21": 3144858.875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 177600,
+          "max_abs_diff": 1.6516065001487732,
+          "max_abs_diff_lsb_q10_21": 3463669.875
+        },
+        "settle_blocks_compared": [
+          375,
+          3750
+        ],
+        "sha256": [
+          "a6ecf5dcf0ef61c3bb08fceeb22eced97c003ad04597370de9c2c0089922d392",
+          "517b035cc803387e1251a73318fa21bcf0c0e452f2a249f857d20cb229232093"
+        ],
+        "status": "MEASURED"
+      },
+      "B_construction_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 2,
+          "frames": 177600,
+          "frames_differing": 177598,
+          "max_abs_diff": 1.7393068373203278,
+          "max_abs_diff_lsb_q10_21": 3647590.8125
+        },
+        "instantiation": "native loadPatch vs savePatch + loadPatch into a fresh instance",
+        "reload_round_trip_fixed_point": false,
+        "saved_patch_sha256": "0a3f2430a47bfea6673ae09a4d21b35410afc49d118833a5ca5fe4aa97248728",
+        "saved_twice_patch_sha256": "e5ebf32eda1ed9d8ba751b6b0941ec332598fedcca3fb155a1fa916781693593",
+        "sha256": [
+          "a6ecf5dcf0ef61c3bb08fceeb22eced97c003ad04597370de9c2c0089922d392",
+          "11c09d49785829db0f1d33c246b17b76a0b054c634dce076625d5878f45eb7bb"
+        ],
+        "source_patch_sha256": "328f9156d293518b43d50b5db7ae5d291266e42c5b36441cc8fca578c17c7ff4",
+        "status": "MEASURED"
+      },
+      "C_model_boundary_vs_engine": null,
+      "C_reason": "NOT_RUN: no committed fixture buses or extracted model inputs for this carrier (the leaf's reference leg, not this audit)",
+      "ab_source": "live, this run",
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": null,
+          "runner_verdict_under_v1": "NO_VERDICT",
+          "status": "UNRESOLVED"
+        },
+        "status": "UNRESOLVED"
+      },
+      "carrier": "phasey",
+      "census_blob_sha1": "59e24827a94cba709975a3ec5de9965137b4177d",
+      "chain": "factory preset chain (engine-side A/B only)",
+      "coverage": "A,B only",
+      "escalation": null,
+      "leaf": "SXT-028g (fx:Phaser)",
+      "nc_c_control": {
+        "reason": "no leg C on this carrier",
+        "status": "NOT_RUN"
+      },
+      "preset": "resources/data/patches_factory/Polysynths/Phasey.fxp",
+      "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+        "status": "NO_VERDICT"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "sequence": "seq-poly-8-v1",
+      "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "status": "NO_VERDICT"
+    },
+    {
+      "A0_repeatability": {
+        "all_buses_repeatable": false,
+        "non_repeatable_buses": [
+          "dry_120",
+          "dry_2",
+          "dry_240",
+          "dry_32",
+          "dry_375",
+          "dry_3750",
+          "wet_120",
+          "wet_2",
+          "wet_240",
+          "wet_32",
+          "wet_375",
+          "wet_3750",
+          "wet_reloaded",
+          "wet_reloaded_twice"
+        ],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273468,
+              "max_abs_divergence": 0.9583885073661804,
+              "peak_abs": 0.619533896446228
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "cee02ac22a6dd924fcfa0d0407b8f42d72009832dcfc1fe536dd0494c7c50e64",
+              "9355fbae804071bbe23d6f54be38c6d5824b68e5837b460b63e9ef5de6cc893b"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273443,
+              "max_abs_divergence": 0.810050904750824,
+              "peak_abs": 0.6047544479370117
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "e3d237fab97dfb27294b211bdd4cb1b0dd2b07ba03274259847799188be3ce11",
+              "911bf2bdbaa43b6f8e17c9b89dcedc7a93675ab46c6e07a150a3736b282246b0"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273505,
+              "max_abs_divergence": 0.9760587811470032,
+              "peak_abs": 0.6174544095993042
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "fbc9cb730c0b1ce4ae05ef5f4a945ab4a5174830e3b53f11b00c80f25b947f0c",
+              "6a1264450c17730ce20fa25312e2955fbe8ae20dc542e7100923ef9c13301226"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273598,
+              "max_abs_divergence": 0.791279673576355,
+              "peak_abs": 0.5932084918022156
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "55a969eeed41726b92c11e45ab7e69b273fa5cf7daa70d7673fc95d6f2e37c9f",
+              "82cd0ad12ce98d03eef710e50e91b4e1c397b55fc8162f9ba1d0659819202a6b"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273576,
+              "max_abs_divergence": 0.85926353931427,
+              "peak_abs": 0.5041507482528687
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "16e4f05a67165858fb2b381f718997103c6f0c777977755467cb5b9924c92131",
+              "29f43a8fe52cee3b4acd91e89300d55c3c4d90cd22ed5c7ec15cbc3d06a49471"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273509,
+              "max_abs_divergence": 0.9036298990249634,
+              "peak_abs": 0.5879047513008118
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "b8fea5f42b0a7f631e268e6802eff02cc644a5f15e414ab9389b1e9d28f9b476",
+              "778e6c94aa9dad7dae05bc95c454a33071999b60f2a646ab34059045641071e2"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273453,
+              "max_abs_divergence": 0.7586711645126343,
+              "peak_abs": 0.48423048853874207
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "4ff955cf5dbd8cfa107fec3f4eb60cdffa3f4c2737b6804bbbb9eb9976e13421",
+              "7c8d7d5f1a68bbbc5c6e0842cfda6bea141126704a1d5cf047703859069e213a"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273549,
+              "max_abs_divergence": 0.5882081985473633,
+              "peak_abs": 0.5489883422851562
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "09d00778135173711be1594deae8adb07364d5076d0937ca88a3fe6e71de4dc7",
+              "dccf76efdbda3d15aa8981046b6bb000b4b4ae585a99398eede29c5f2e65360e"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273476,
+              "max_abs_divergence": 0.5757914781570435,
+              "peak_abs": 0.4376845359802246
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "f28505806684e2f5b2070b76a0897e6700d215e998243d70b2a5804bea34f84b",
+              "9f91ea34ca88cc797a01080c28ee4bc7e3f45853fa80d150f248f9a9698249b2"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273479,
+              "max_abs_divergence": 0.7022361755371094,
+              "peak_abs": 0.48993760347366333
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "bb8b89169aaaeb381b40a7000f69514dcfa979cf5935c6f836d559e26e16410e",
+              "b73fbb3ffee7811a4317ee1ad9049611d49cbadc741c058d1188d8a3ed9f7fc8"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273580,
+              "max_abs_divergence": 0.7223814129829407,
+              "peak_abs": 0.4592777490615845
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d260943a4145702df828a8997652bbab5aac7646e5fcf44d76982987ae2bf790",
+              "aa618f1606ca70a4038f9d9d59e158f12d395facaf6c190351ce95f382ea051e"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273594,
+              "max_abs_divergence": 0.6283107995986938,
+              "peak_abs": 0.4608267545700073
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "4fbe70ac8d08a3b9a3ef95968957429c434918fa7a32b44febc432c9e54bd9aa",
+              "f545510d7f45376eb430d874761f46736360f48561812bab17a323a9cda31dd3"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273527,
+              "max_abs_divergence": 0.6842434406280518,
+              "peak_abs": 0.5189568400382996
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "02ba6b4f2ce2f2a9eee0e84aeff748ab0fbdb0d167130f45bb8c9bbfe9509f39",
+              "dbbfd7a79aef755dfc4266a611fa28c94bf3171cd8456bb4e27d91013b9f7e05"
+            ]
+          },
+          "wet_reloaded_twice": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273553,
+              "max_abs_divergence": 0.6035573482513428,
+              "peak_abs": 0.489022433757782
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "3d909477ed0f1169d4f8b5ae021f82c6479e346b8d5c564c7f98955bf8d63461",
+              "c70788cff6086bd09baba3e8ee0c9f0f7d374e40a4674975b73ad924cf51d3c3"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 2,
+          "first_differing_frame": 72,
+          "frames": 273600,
+          "frames_differing": 273528,
+          "max_abs_diff": 0.8081359267234802,
+          "max_abs_diff_lsb_q10_21": 1694783.875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 4,
+          "first_differing_frame": 150,
+          "frames": 273600,
+          "frames_differing": 273450,
+          "max_abs_diff": 0.92914679646492,
+          "max_abs_diff_lsb_q10_21": 1948562.0625
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "09d00778135173711be1594deae8adb07364d5076d0937ca88a3fe6e71de4dc7",
+          "d260943a4145702df828a8997652bbab5aac7646e5fcf44d76982987ae2bf790"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
+      "A_settle_length_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 2,
+          "first_differing_frame": 69,
+          "frames": 273600,
+          "frames_differing": 273531,
+          "max_abs_diff": 0.8771777749061584,
+          "max_abs_diff_lsb_q10_21": 1839575.125
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 4,
+          "first_differing_frame": 131,
+          "frames": 273600,
+          "frames_differing": 273469,
+          "max_abs_diff": 0.8030937612056732,
+          "max_abs_diff_lsb_q10_21": 1684209.6875
+        },
+        "settle_blocks_compared": [
+          375,
+          3750
+        ],
+        "sha256": [
+          "d260943a4145702df828a8997652bbab5aac7646e5fcf44d76982987ae2bf790",
+          "4fbe70ac8d08a3b9a3ef95968957429c434918fa7a32b44febc432c9e54bd9aa"
+        ],
+        "status": "MEASURED"
+      },
+      "B_construction_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 2,
+          "first_differing_frame": 69,
+          "frames": 273600,
+          "frames_differing": 273531,
+          "max_abs_diff": 0.7027353942394257,
+          "max_abs_diff_lsb_q10_21": 1473742.9375
+        },
+        "instantiation": "native loadPatch vs savePatch + loadPatch into a fresh instance",
+        "reload_round_trip_fixed_point": false,
+        "saved_patch_sha256": "8dc1b6dba03a98ac0dba71efc992541cbd2ddf1a24a35e396f2c701edc8ab8ef",
+        "saved_twice_patch_sha256": "24ab85049e3a9f63e220a311d043ba9a3448bfe88a17971744d9becc31c2544f",
+        "sha256": [
+          "d260943a4145702df828a8997652bbab5aac7646e5fcf44d76982987ae2bf790",
+          "02ba6b4f2ce2f2a9eee0e84aeff748ab0fbdb0d167130f45bb8c9bbfe9509f39"
+        ],
+        "source_patch_sha256": "9d1b20084131ba279b2b74edd45d334aa120b73ce7893119e6ef99d8419fe92d",
+        "status": "MEASURED"
+      },
+      "C_model_boundary_vs_engine": null,
+      "C_reason": "NOT_RUN: no committed fixture buses or extracted model inputs for this carrier (the leaf's reference leg, not this audit)",
+      "ab_source": "live, this run",
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": null,
+          "runner_verdict_under_v1": "NO_VERDICT",
+          "status": "UNRESOLVED"
+        },
+        "status": "UNRESOLVED"
+      },
+      "carrier": "squelch",
+      "census_blob_sha1": "03d1d38ceaf69bc3d964982e5ccbf65bdbff278d",
+      "chain": "factory preset chain (engine-side A/B only)",
+      "coverage": "A,B only",
+      "escalation": null,
+      "leaf": "SXT-028g (fx:Phaser)",
+      "nc_c_control": {
+        "reason": "no leg C on this carrier",
+        "status": "NOT_RUN"
+      },
+      "preset": "resources/data/patches_factory/Leads/Squelch.fxp",
+      "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+        "status": "NO_VERDICT"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "sequence": "seq-notes-coverage-v1",
+      "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "status": "NO_VERDICT"
+    },
+    {
+      "A0_repeatability": {
+        "all_buses_repeatable": false,
+        "non_repeatable_buses": [
+          "dry_120",
+          "dry_2",
+          "dry_240",
+          "dry_32",
+          "dry_375",
+          "dry_3750",
+          "wet_120",
+          "wet_2",
+          "wet_240",
+          "wet_32",
+          "wet_375",
+          "wet_3750",
+          "wet_reloaded",
+          "wet_reloaded_twice"
+        ],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177578,
+              "max_abs_divergence": 0.8426752090454102,
+              "peak_abs": 0.4938681125640869
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "5734708a9edc9124aea2840c1031bce98429fb822d042cab366bcb7adbdecad4",
+              "efd964282827400690c487f750f2b0c3e89b201066f090471b22957de907426b"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177598,
+              "max_abs_divergence": 0.8834688663482666,
+              "peak_abs": 0.5045746564865112
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "b27a8223dc4e2327d931709449a86a3d20ec3d3233f9e05bcde7d6dc48763371",
+              "266052f67ba480b2b33e5e0860bad3a0b17e82aab5421f8e5c9aa1e66e2122a8"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177564,
+              "max_abs_divergence": 0.7378640174865723,
+              "peak_abs": 0.5077686309814453
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "fa95780918653678452275133584bf43fc1d92362e2af3dc92352515867b0bc6",
+              "a4250b58f25b7fce880959d69ef6d1887422ad32a7d68023ca88e02f907e89ba"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177526,
+              "max_abs_divergence": 0.6740580797195435,
+              "peak_abs": 0.5200086832046509
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "c6ed0eb13a56fa48178f7000efab1cfef4592753afebe94f08af8c78ba4a694a",
+              "769221a32d93f22384944c7712b50c5d6d5382240fd409c3c06eb5df94d5ce64"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177547,
+              "max_abs_divergence": 0.6995068192481995,
+              "peak_abs": 0.5155879855155945
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d80cc50515b4b9e0303c6493946bc266c43711b2c5ff0b04c21713695dfca694",
+              "a36b6fa0459a706d2a37aeb946090e0a1ee39783f94b96f279656321ddf167bf"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177514,
+              "max_abs_divergence": 0.811812162399292,
+              "peak_abs": 0.540530264377594
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "ad0d80ffbc8ef5c87aa3bcc65ccb1ee4cf43c187cb8e62811ddc1596687fa901",
+              "97c4a530d72531645256b6bb24ea72d3605a3145b465de8f5a730ed992a5f5db"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177598,
+              "max_abs_divergence": 0.6524320840835571,
+              "peak_abs": 0.41962146759033203
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "822644119fb82e2cf8144f471d22c732db6f77f811b68909f8f8aad034b02aad",
+              "e6d24faccc4a891cf8605c1726986b44ced541cb59cf686701a5bbe34f0155bf"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177585,
+              "max_abs_divergence": 0.5776922702789307,
+              "peak_abs": 0.48189443349838257
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "4a1ada87aa2f20b1e635fe03355a3aa4dc1fe347cce72fab9b25f59cc66a7824",
+              "032efd1e7c9c4aa9fc7043b4845f5a2a32a8297a0c020d13081f5d85febfd7ef"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177590,
+              "max_abs_divergence": 0.4622989594936371,
+              "peak_abs": 0.41253969073295593
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d7d9cc105bd8136a1340a6d6d06bfeda875c8a4a9b58e2ab303196fc7d7a3204",
+              "fc114853779e76e93bd4599f023ec29028b3a94171a799a6a2636aba30c94ac7"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 0.5757172107696533,
+              "peak_abs": 0.4862557053565979
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "41187f5c5b017dd3c08c5d8a2955b83ac7b64a52f1a37703954473bfac4ca842",
+              "2462f97992d76a2157a6cc63660edb7a9122dd4dd9d2cd73a10129c07137af24"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177491,
+              "max_abs_divergence": 0.7091785669326782,
+              "peak_abs": 0.4436708092689514
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "877163623fbd943ff2c00523c60641ff6517eb6dcc4c043ec9b613fa9fd670ce",
+              "e8949aeab6c7dfd1606deb0821fe270e86b25ea2fdef77c83d1dd97b9862b0b2"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177537,
+              "max_abs_divergence": 0.7619132995605469,
+              "peak_abs": 0.4773455858230591
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "39422816ce5f131dc52eb51587236351d9a79dd9c86a31a5a6a75f55a3d2142a",
+              "565c390fadc6476546bbe2c45c44165b5524e597141676d130746fdfdb4c2707"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177587,
+              "max_abs_divergence": 0.6137092709541321,
+              "peak_abs": 0.4495454430580139
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "6df33282e11774f4828f0f4925bf8dd66de1d45338aa5658873dec4e0a61e729",
+              "e56ad6f268d8424950d5b73d8009d796af1705fd095440bea78ee07780fc6eb6"
+            ]
+          },
+          "wet_reloaded_twice": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177577,
+              "max_abs_divergence": 0.6792987585067749,
+              "peak_abs": 0.46008744835853577
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "73aa0f3684bf967355d5ee4ea74864d7a1b2b95bafbc829d28a7213f45b03e06",
+              "ddab33bca6d065ab1022f05b742cf854810aa44254205426f1788d14c8a9910c"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 8,
+          "frames": 177600,
+          "frames_differing": 177592,
+          "max_abs_diff": 0.6476564407348633,
+          "max_abs_diff_lsb_q10_21": 1358234.0
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 38,
+          "frames": 177600,
+          "frames_differing": 177562,
+          "max_abs_diff": 0.8696735203266144,
+          "max_abs_diff_lsb_q10_21": 1823837.5625
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "4a1ada87aa2f20b1e635fe03355a3aa4dc1fe347cce72fab9b25f59cc66a7824",
+          "877163623fbd943ff2c00523c60641ff6517eb6dcc4c043ec9b613fa9fd670ce"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
+      "A_settle_length_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 8,
+          "frames": 177600,
+          "frames_differing": 177592,
+          "max_abs_diff": 0.7176539599895477,
+          "max_abs_diff_lsb_q10_21": 1505029.4375
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 38,
+          "frames": 177600,
+          "frames_differing": 177562,
+          "max_abs_diff": 0.9153563678264618,
+          "max_abs_diff_lsb_q10_21": 1919641.4375
+        },
+        "settle_blocks_compared": [
+          375,
+          3750
+        ],
+        "sha256": [
+          "877163623fbd943ff2c00523c60641ff6517eb6dcc4c043ec9b613fa9fd670ce",
+          "39422816ce5f131dc52eb51587236351d9a79dd9c86a31a5a6a75f55a3d2142a"
+        ],
+        "status": "MEASURED"
+      },
+      "B_construction_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 8,
+          "frames": 177600,
+          "frames_differing": 177592,
+          "max_abs_diff": 0.5894635915756226,
+          "max_abs_diff_lsb_q10_21": 1236194.75
+        },
+        "instantiation": "native loadPatch vs savePatch + loadPatch into a fresh instance",
+        "reload_round_trip_fixed_point": false,
+        "saved_patch_sha256": "8dc1b6dba03a98ac0dba71efc992541cbd2ddf1a24a35e396f2c701edc8ab8ef",
+        "saved_twice_patch_sha256": "24ab85049e3a9f63e220a311d043ba9a3448bfe88a17971744d9becc31c2544f",
+        "sha256": [
+          "877163623fbd943ff2c00523c60641ff6517eb6dcc4c043ec9b613fa9fd670ce",
+          "6df33282e11774f4828f0f4925bf8dd66de1d45338aa5658873dec4e0a61e729"
+        ],
+        "source_patch_sha256": "9d1b20084131ba279b2b74edd45d334aa120b73ce7893119e6ef99d8419fe92d",
+        "status": "MEASURED"
+      },
+      "C_model_boundary_vs_engine": null,
+      "C_reason": "NOT_RUN: no committed fixture buses or extracted model inputs for this carrier (the leaf's reference leg, not this audit)",
+      "ab_source": "live, this run",
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": null,
+          "runner_verdict_under_v1": "NO_VERDICT",
+          "status": "UNRESOLVED"
+        },
+        "status": "UNRESOLVED"
+      },
+      "carrier": "squelch",
+      "census_blob_sha1": "03d1d38ceaf69bc3d964982e5ccbf65bdbff278d",
+      "chain": "factory preset chain (engine-side A/B only)",
+      "coverage": "A,B only",
+      "escalation": null,
+      "leaf": "SXT-028g (fx:Phaser)",
+      "nc_c_control": {
+        "reason": "no leg C on this carrier",
+        "status": "NOT_RUN"
+      },
+      "preset": "resources/data/patches_factory/Leads/Squelch.fxp",
+      "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+        "status": "NO_VERDICT"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "sequence": "seq-poly-8-v1",
+      "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "status": "NO_VERDICT"
+    },
+    {
+      "A0_repeatability": {
+        "all_buses_repeatable": false,
+        "non_repeatable_buses": [
+          "dry_120",
+          "dry_2",
+          "dry_240",
+          "dry_32",
+          "dry_375",
+          "dry_3750",
+          "wet_120",
+          "wet_2",
+          "wet_240",
+          "wet_32",
+          "wet_375",
+          "wet_3750",
+          "wet_reloaded",
+          "wet_reloaded_twice"
+        ],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 170014,
+              "max_abs_divergence": 0.4692476987838745,
+              "peak_abs": 0.4470676779747009
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "16b4ad9e3e47c929eaa04d095d153007380ea216ed739fd3629c4a3155886b6e",
+              "48260019e3a9ccb08a4fddd69f5923acbbc5938738aced4e1240682afa16850b"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 169813,
+              "max_abs_divergence": 0.3851444125175476,
+              "peak_abs": 0.465364545583725
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "9fe026168763c3de5569b7a408dc06b21e0c0a079cd7a0b712ce3907a214794e",
+              "f04638d4a6ea4eda3697e76bd2a12b19acfbbaed157ee3a58ecddb4606895fde"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 171132,
+              "max_abs_divergence": 0.6141040325164795,
+              "peak_abs": 0.449580579996109
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "b8dbbc18576da54df41a16d1162cc57a4cc8acaff13c77edb326462005ce3937",
+              "6ed7119cbb2d333aaf880afd8f3851dd5b218eae2030a19e168c23f6f5d2839f"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 169860,
+              "max_abs_divergence": 0.6325967907905579,
+              "peak_abs": 0.4831548035144806
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "2128ff99798fc6a4750277d370928896e125d94b91574cc809bb5f4186087810",
+              "ba4d95c823e1864df3c37e3166b585e55fce28f48b9313e4160b714f4480fbf5"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 169842,
+              "max_abs_divergence": 0.500845730304718,
+              "peak_abs": 0.5763137340545654
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "173f20a2e5c2c249a08cdbd826a2e117b3e0c1cb6b1ebe6e62b902630f4f9d00",
+              "dde41de0ff76a9fc0a5c23725622babd84cbf8b89e2f640227fe419d65a9a183"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 171293,
+              "max_abs_divergence": 0.4947602152824402,
+              "peak_abs": 0.5062026381492615
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "04257c66f903261e3d758ede41fefac2b87fd888954626f9919a5bb03cd62b26",
+              "e71c8d4469e52eeea5d7bfc1c61c903767f3eaddb8085e6dfa624b6b89adfe50"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273599,
+              "max_abs_divergence": 0.9833611249923706,
+              "peak_abs": 1.4703948497772217
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "ae58d12f904b418caa2c41dce4679c6ae11e70594bd1d1fc27fb34f515d0c920",
+              "65b6654d22e4eaea6ff7d0072e6b361a4b43028ab0a95d03509e4c3b620a8cde"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273595,
+              "max_abs_divergence": 0.7409240007400513,
+              "peak_abs": 1.7599067687988281
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "2901cb63eb62029bc48213b10d9cc3a29d2c6305db230efc955f689ed080a878",
+              "ee76cb9ce37509dfeaeda2246b7d3df4d0b4e3aad7a1cb65b597b68a864f2606"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273596,
+              "max_abs_divergence": 0.6826922297477722,
+              "peak_abs": 1.5624223947525024
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "7f6824f63e43737e7c52f406c556cd04bf44891366d45aa805223fe596835ba1",
+              "d5dd77102fd89301364f7717c5ce149d7586524c9d55fc110caddc2f330dfe38"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273582,
+              "max_abs_divergence": 0.595373809337616,
+              "peak_abs": 1.90274977684021
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "89e31ddd2f5488b741604be18dc8dd16118c5966839d3959d4467d507044996e",
+              "b498e186fa017b0fcdeb78f4d83a4dc0e9a628360d3b17703192e88c40a3de16"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273581,
+              "max_abs_divergence": 0.8392229080200195,
+              "peak_abs": 1.2611382007598877
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "77cc125a9fea005bfb3c2354fd997e0043a3fb5a7654d927e9845a8025c0cb1a",
+              "54aa3e7779a521dcb9618673b70260a154ace9469dd73e527e1bd4187fffc5bc"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273600,
+              "max_abs_divergence": 0.47444355487823486,
+              "peak_abs": 1.514141321182251
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "beb9bbbcdb375e8b01bfe65aceebd4fd8bf63552d72f1fa16b949013c3837151",
+              "e803dce48b8b50ad7ac3015620240fdef825824e4f8644385c415e5ee2c10e87"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273539,
+              "max_abs_divergence": 0.9356051683425903,
+              "peak_abs": 1.2528588771820068
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "20bedcf6f6e7998e37751ceca4f145d8f03ec0f62651a9f8f35c0a040ca8501f",
+              "24b474e946b88a8067cd7585d6b4f0259145f8c250b876afabee9b99a9408a83"
+            ]
+          },
+          "wet_reloaded_twice": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 273600,
+              "frames_differing": 273594,
+              "max_abs_divergence": 1.4060139656066895,
+              "peak_abs": 1.4015218019485474
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d7c82546c3bccfa42f3263f759c6b7523c5c374277cc12cb9ba92f3a2e2c72d4",
+              "762a574e11ed17543ce90b916e9be5a56ea441f992a52994a4f5baf7b46b6dc4"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 30,
+          "frames": 273600,
+          "frames_differing": 273570,
+          "max_abs_diff": 0.9405190646648407,
+          "max_abs_diff_lsb_q10_21": 1972411.4375
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 2,
+          "frames": 273600,
+          "frames_differing": 170046,
+          "max_abs_diff": 0.5831014513969421,
+          "max_abs_diff_lsb_q10_21": 1222852.375
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "2901cb63eb62029bc48213b10d9cc3a29d2c6305db230efc955f689ed080a878",
+          "77cc125a9fea005bfb3c2354fd997e0043a3fb5a7654d927e9845a8025c0cb1a"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
+      "A_settle_length_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 1,
+          "first_differing_frame": 35,
+          "frames": 273600,
+          "frames_differing": 273565,
+          "max_abs_diff": 1.1922709112986922,
+          "max_abs_diff_lsb_q10_21": 2500373.326171875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 2,
+          "frames": 273600,
+          "frames_differing": 170046,
+          "max_abs_diff": 0.7124755084514618,
+          "max_abs_diff_lsb_q10_21": 1494169.4375
+        },
+        "settle_blocks_compared": [
+          375,
+          3750
+        ],
+        "sha256": [
+          "77cc125a9fea005bfb3c2354fd997e0043a3fb5a7654d927e9845a8025c0cb1a",
+          "beb9bbbcdb375e8b01bfe65aceebd4fd8bf63552d72f1fa16b949013c3837151"
+        ],
+        "status": "MEASURED"
+      },
+      "B_construction_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 31,
+          "frames": 273600,
+          "frames_differing": 273569,
+          "max_abs_diff": 1.7172330394387245,
+          "max_abs_diff_lsb_q10_21": 3601298.703125
+        },
+        "instantiation": "native loadPatch vs savePatch + loadPatch into a fresh instance",
+        "reload_round_trip_fixed_point": false,
+        "saved_patch_sha256": "d8cfde6062630c82ecc529600340df55c97199dad5ee4e0bff49bda6c5526f06",
+        "saved_twice_patch_sha256": "6116be9433ee1187e61ac0d6633b0db7267ed949afbef6130ae97ec1f51a706b",
+        "sha256": [
+          "77cc125a9fea005bfb3c2354fd997e0043a3fb5a7654d927e9845a8025c0cb1a",
+          "20bedcf6f6e7998e37751ceca4f145d8f03ec0f62651a9f8f35c0a040ca8501f"
+        ],
+        "source_patch_sha256": "6af547961eef3164eeab3bd8694702112489ccb943a20759f300ea54772ccde8",
+        "status": "MEASURED"
+      },
+      "C_model_boundary_vs_engine": null,
+      "C_reason": "NOT_RUN: no committed fixture buses or extracted model inputs for this carrier (the leaf's reference leg, not this audit)",
+      "ab_source": "live, this run",
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": null,
+          "runner_verdict_under_v1": "NO_VERDICT",
+          "status": "UNRESOLVED"
+        },
+        "status": "UNRESOLVED"
+      },
+      "carrier": "sticky",
+      "census_blob_sha1": "e785e1c51e8d8ceac364e78921593ac4fe33e6f7",
+      "chain": "factory preset chain (engine-side A/B only)",
+      "coverage": "A,B only",
+      "escalation": null,
+      "leaf": "SXT-028g (fx:Phaser)",
+      "nc_c_control": {
+        "reason": "no leg C on this carrier",
+        "status": "NOT_RUN"
+      },
+      "preset": "resources/data/patches_factory/MPE/Sticky.fxp",
+      "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+        "status": "NO_VERDICT"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "sequence": "seq-notes-coverage-v1",
+      "sequence_file_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "status": "NO_VERDICT"
+    },
+    {
+      "A0_repeatability": {
+        "all_buses_repeatable": false,
+        "non_repeatable_buses": [
+          "dry_120",
+          "dry_2",
+          "dry_240",
+          "dry_32",
+          "dry_375",
+          "dry_3750",
+          "wet_120",
+          "wet_2",
+          "wet_240",
+          "wet_32",
+          "wet_375",
+          "wet_3750",
+          "wet_reloaded",
+          "wet_reloaded_twice"
+        ],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 74624,
+              "max_abs_divergence": 0.8242228627204895,
+              "peak_abs": 1.1788147687911987
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "bcc4c8cc80fb0c5a1b454e83eab2fc68f45fc41f1d1a4cbd46700a4bb38ec66d",
+              "d4bd5a4f31ae4c9288c193f0b0c42c937492984223f4bcf5d0bfa443e6e90d74"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 74847,
+              "max_abs_divergence": 0.9531337022781372,
+              "peak_abs": 1.4344017505645752
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "7ecea20e2866e19c1d3c415dea5d555dbadfe4e8cc39ea686f5fe7e66716cc26",
+              "181ec53b11ff324cbe700fdc4b7dbf6c4d1ac8fae98865b65e9995c8ba93fd7e"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 75040,
+              "max_abs_divergence": 1.1269750595092773,
+              "peak_abs": 1.2822251319885254
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "2beb58dbedb66935e2febeb9acc1d5198ca4f0c378ab19f777749075774a6acf",
+              "e928f3c6cdb17174f246f3309553e9242dffd9bee81415133fa8195a5999ac81"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 74816,
+              "max_abs_divergence": 1.2254116535186768,
+              "peak_abs": 1.6677991151809692
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "6329baaf043fa586cb829de265a0c58fd77fb70e603e443108345ef00d63621a",
+              "50cb441d161695752c31cfcb99d20ce3eabe3bc8beff446d124cd2dfb62c8279"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 75424,
+              "max_abs_divergence": 1.0369157791137695,
+              "peak_abs": 1.4588855504989624
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "da4f52bc3b661a3c95d951163f2eb9dad40004f02caee19275897bf546aa2d2f",
+              "9f5cca5e7fc210e8bed9f8550a37709cc8ba39eecb2b8334e545843ed5847889"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 74752,
+              "max_abs_divergence": 1.0991885662078857,
+              "peak_abs": 1.2066818475723267
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "bc7861b6e9071d90fbe789ce6ae6e4a7ac21db55663235d7bec5a114aa89487a",
+              "12f858cc95bc8faff9afdfe7922b13506eb1f6eb2623e91b2e65f3d38add07c7"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177599,
+              "max_abs_divergence": 2.118396282196045,
+              "peak_abs": 1.31830894947052
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "8fc63ce48c8e2e05875236b697ea1e524db2a30ee8602babbe5ae4ba3eefca1e",
+              "cead1252e9e09364757f07c37e37e03df3f79c1bd152df311f8213df81f2926b"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177598,
+              "max_abs_divergence": 1.4522382020950317,
+              "peak_abs": 1.8485981225967407
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "7ffc9e1535dd35c2d2b34d3c8d44d2ea5ece420a19629a9b16e8801ff844f607",
+              "352506276e113425d593696d51678351bb3de793ee10771c27cb89c8fff28dd8"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.4293330907821655,
+              "peak_abs": 1.6124463081359863
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "7551b3e1322d214302beea993f1748c51b20329fba8ba26d3b0bedac75be401a",
+              "7ceb5922017ce86fb2e16dcf53c8a3cfd124fc2ea64430c2db5839e3b169d827"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 2.3203744888305664,
+              "peak_abs": 1.481187343597412
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d65b6bde7cbc06d1512f11d95822cb0cca9c6548d11c03d72c2cb7d357ee66f4",
+              "650cc118b0f9054b572ccb249671cdd793aad947c760689bdaf8762436eb4abd"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177599,
+              "max_abs_divergence": 1.3026318550109863,
+              "peak_abs": 1.9035178422927856
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "d91257b905aa68f79a0c30e51f0a0fafd838863c9fc78eb306b5ca6b0eeac9a5",
+              "c46407dd6739d7fcdd7bd44fcc86d8ac627efada0acc82dc228f6cc5f4a0b1be"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.5400824546813965,
+              "peak_abs": 2.0605738162994385
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "c8e3a817be9b7ced1c35603d85deb02c89627431f5efa1b74ca790f1bed4a05f",
+              "5c2327a1387c54f0edb3ccb52762f87b223266e332dc9f103b8e066d04bd3156"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177599,
+              "max_abs_divergence": 1.4780051708221436,
+              "peak_abs": 2.1190013885498047
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "33e4e626d4e61f4e416cc2ebc168109ce326e7206ed970d6055f8c02cac2c4d9",
+              "bc5b3292d25169194bae690aebb38bab4489db338d9929cdad1365037b0ac849"
+            ]
+          },
+          "wet_reloaded_twice": {
+            "byte_identical": false,
+            "divergence": {
+              "frames": 177600,
+              "frames_differing": 177600,
+              "max_abs_divergence": 1.3091299533843994,
+              "peak_abs": 1.9758667945861816
+            },
+            "repeats": 2,
+            "sha256_all": [
+              "505777c448cbf6fa26d39c5f16e16c96d9cb559ad108d2f4e011142600d31708",
+              "ee2e29eb585350c544348e17e7d37e8349a1eafcfc40ead676c0382ae1f5161e"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 177600,
+          "max_abs_diff": 1.35486501455307,
+          "max_abs_diff_lsb_q10_21": 2841357.875
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 2,
+          "frames": 177600,
+          "frames_differing": 74974,
+          "max_abs_diff": 0.9893157184123993,
+          "max_abs_diff_lsb_q10_21": 2074745.4375
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "7ffc9e1535dd35c2d2b34d3c8d44d2ea5ece420a19629a9b16e8801ff844f607",
+          "d91257b905aa68f79a0c30e51f0a0fafd838863c9fc78eb306b5ca6b0eeac9a5"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
+      "A_settle_length_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 177600,
+          "max_abs_diff": 1.5445891916751862,
+          "max_abs_diff_lsb_q10_21": 3239238.3125
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 1,
+          "frames": 177600,
+          "frames_differing": 75647,
+          "max_abs_diff": 1.2734200656414032,
+          "max_abs_diff_lsb_q10_21": 2670555.4375
+        },
+        "settle_blocks_compared": [
+          375,
+          3750
+        ],
+        "sha256": [
+          "d91257b905aa68f79a0c30e51f0a0fafd838863c9fc78eb306b5ca6b0eeac9a5",
+          "c8e3a817be9b7ced1c35603d85deb02c89627431f5efa1b74ca790f1bed4a05f"
+        ],
+        "status": "MEASURED"
+      },
+      "B_construction_invariance": {
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 177600,
+          "max_abs_diff": 1.5930134654045105,
+          "max_abs_diff_lsb_q10_21": 3340791.375
+        },
+        "instantiation": "native loadPatch vs savePatch + loadPatch into a fresh instance",
+        "reload_round_trip_fixed_point": false,
+        "saved_patch_sha256": "d8cfde6062630c82ecc529600340df55c97199dad5ee4e0bff49bda6c5526f06",
+        "saved_twice_patch_sha256": "6116be9433ee1187e61ac0d6633b0db7267ed949afbef6130ae97ec1f51a706b",
+        "sha256": [
+          "d91257b905aa68f79a0c30e51f0a0fafd838863c9fc78eb306b5ca6b0eeac9a5",
+          "33e4e626d4e61f4e416cc2ebc168109ce326e7206ed970d6055f8c02cac2c4d9"
+        ],
+        "source_patch_sha256": "6af547961eef3164eeab3bd8694702112489ccb943a20759f300ea54772ccde8",
+        "status": "MEASURED"
+      },
+      "C_model_boundary_vs_engine": null,
+      "C_reason": "NOT_RUN: no committed fixture buses or extracted model inputs for this carrier (the leaf's reference leg, not this audit)",
+      "ab_source": "live, this run",
+      "boundary": {
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": null,
+          "runner_verdict_under_v1": "NO_VERDICT",
+          "status": "UNRESOLVED"
+        },
+        "status": "UNRESOLVED"
+      },
+      "carrier": "sticky",
+      "census_blob_sha1": "e785e1c51e8d8ceac364e78921593ac4fe33e6f7",
+      "chain": "factory preset chain (engine-side A/B only)",
+      "coverage": "A,B only",
+      "escalation": null,
+      "leaf": "SXT-028g (fx:Phaser)",
+      "nc_c_control": {
+        "reason": "no leg C on this carrier",
+        "status": "NOT_RUN"
+      },
+      "preset": "resources/data/patches_factory/MPE/Sticky.fxp",
+      "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+      "runner": "model/effects/run_phaser_model.py",
+      "runner_boundary_verdict": {
+        "reason": "A0 FAIL: a live render is not repeatable in a fresh instance; the boundary is UNRESOLVED",
+        "status": "NO_VERDICT"
+      },
+      "runner_preroll_blocks": 375,
+      "runner_preroll_source": "SETTLE_BLOCKS imported from run_chorus_model.py (SETTLE_BLOCKS = 375 (module constant))",
+      "sequence": "seq-poly-8-v1",
+      "sequence_file_sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "status": "NO_VERDICT"
+    },
+    {
+      "A_settle_length_invariance": {
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-a",
       "coverage": "none",
@@ -50,8 +2244,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-b",
       "coverage": "none",
@@ -61,8 +2255,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-c.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-c",
       "coverage": "none",
@@ -72,8 +2266,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-clamp-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-clamp-a",
       "coverage": "none",
@@ -83,8 +2277,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-clamp-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-clamp-b",
       "coverage": "none",
@@ -94,8 +2288,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-legacy-a.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-legacy-a",
       "coverage": "none",
@@ -105,8 +2299,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-legacy-b.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-legacy-b",
       "coverage": "none",
@@ -116,8 +2310,8 @@
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "no committed fixture buses and no oracle-extracted input record (fx_inputs/type-phaser-synth-maxst.json is a 'synthetic-corner' record, which the runner refuses for a reference render); every SXT-028g reference leg is NOT_RUN (reports/SXT-028g/artifacts/oracle-status.json)",
+        "status": "NOT_RUN"
       },
       "carrier": "synth-maxst",
       "coverage": "none",
@@ -128,5 +2322,5 @@
   ],
   "runner": "model/effects/run_phaser_model.py",
   "runner_git_blob_sha1": "c52bb2a3f10bc4bc48073570e025b63516f056cd",
-  "schema_version": 1
+  "schema_version": 2
 }

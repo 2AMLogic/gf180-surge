@@ -2,8 +2,15 @@
   "claim_scope": "a harness settle-boundary audit. Not a fidelity result, not a support claim; A/B output invariance would establish the tested output behaviour only, not every internal state variable. Committed leaf records are not modified.",
   "comparator": "tools/compare_distortion_sse_reference.py",
   "comparator_git_blob_sha1": "2361559c62e27a8ed0dcbcd018c13eaebc8be121",
+  "derived_fields": {
+    "audit_tool_git_blob_sha1": "b5f0b7a7573bdd8b15bbebb735fb55892b1a192c",
+    "fields": [
+      "rows[].nc_d_control"
+    ],
+    "how": "tools/audit_effect_settle_boundaries.py rederive: pure functions of the recorded leg-D comparator verdicts; nothing re-measured"
+  },
   "environment": {
-    "audit_tool_git_blob_sha1": "3f5d18e080e429528d070dfdc513c70881e56355",
+    "audit_tool_git_blob_sha1": "b5f0b7a7573bdd8b15bbebb735fb55892b1a192c",
     "block_size": 32,
     "comparator_spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
     "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
@@ -12,10 +19,10 @@
     "numpy": "1.26.4",
     "oracle_manifest": "oracle/manifest.json",
     "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
-    "platform": "Linux-6.17.0-1019-aws-x86_64-with-glibc2.39",
-    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1010-aws-x86_64-with-glibc2.39",
+    "python": "3.11.16",
     "sample_rate": 48000,
-    "source_revision": "e3a5e8891e46b9df8fbac0600a30e4b6a41d8ba5",
+    "source_revision": "cf82d7a9602025d92834eabb5c30dd4ccca7fce4",
     "source_tree_dirty": false
   },
   "issue": "#318",
@@ -24,12 +31,33 @@
   ],
   "oracle": {
     "ORACLE_PREBUILT_URL_set": false,
-    "ORACLE_SURGE_DIR_set": false,
-    "available": false,
-    "engine_dir_present": false,
-    "engine_dir_probed": "/Users/joseph/dev/surge-xt-oracle/surge",
-    "reason": "no surgepy build under /Users/joseph/dev/surge-xt-oracle/surge/build-py311/src/surge-python",
-    "surgepy_dir_present": false
+    "ORACLE_SURGE_DIR_set": true,
+    "available": true,
+    "engine_dir_present": true,
+    "engine_dir_probed": "~/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64",
+    "identity": {
+      "buildinfo": {
+        "build_date": "2026-10-01",
+        "built_in": "ubuntu:24.04 container",
+        "cmake_configure": "via oracle/fetch-and-build.sh: -G Ninja -DCMAKE_BUILD_TYPE=Release -DSURGE_BUILD_PYTHON_BINDINGS=ON -DSURGE_BUILD_TESTRUNNER=ON -DPYBIND11_FINDPYTHON=OFF -DPYTHON_EXECUTABLE=<uv cpython-3.11.16>",
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "glibc_min": "2.39",
+        "layout": "ORACLE_SURGE_DIR root: build-py311/src/surge-python/*.so, resources/data/",
+        "numpy": "1.26.4",
+        "platform": "linux-x86_64",
+        "python": "3.11.16"
+      },
+      "installed_artifact_sha256": "d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571",
+      "kind": "prebuilt (#232)",
+      "manifest_engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "manifest_prebuilt_platform": "linux-x86_64",
+      "manifest_prebuilt_sha256": "d2cc702913c4b2d48054351f5447e09c07877364288adc5c46e5f509b777f571",
+      "matches_manifest": true,
+      "mismatches": []
+    },
+    "reason": "1.4.HEAD.58914e59c",
+    "surgepy_dir_present": true,
+    "surgepy_importable": true
   },
   "production_preroll": {
     "blocks": 0,
@@ -38,6 +66,163 @@
   },
   "rows": [
     {
+      "A0_repeatability": {
+        "all_buses_repeatable": true,
+        "non_repeatable_buses": [],
+        "per_bus": {
+          "dry_120": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+            ]
+          },
+          "dry_2": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "a7cb1c98b33e9deb222be904d27f72720540b5f634b9d91b64096dcaab5dda32",
+              "a7cb1c98b33e9deb222be904d27f72720540b5f634b9d91b64096dcaab5dda32"
+            ]
+          },
+          "dry_240": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+            ]
+          },
+          "dry_32": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "967b9de11e502cb32c22d9f9c5cb02c9a86c61ab0696afe6b448f163f28f410e",
+              "967b9de11e502cb32c22d9f9c5cb02c9a86c61ab0696afe6b448f163f28f410e"
+            ]
+          },
+          "dry_375": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+            ]
+          },
+          "dry_3750": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+              "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+            ]
+          },
+          "wet_120": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+            ]
+          },
+          "wet_2": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "1f53143afd839ba6a6ae7ae936bbd9fd4a1ef92d612d47991a92e0eb797a4dcb",
+              "1f53143afd839ba6a6ae7ae936bbd9fd4a1ef92d612d47991a92e0eb797a4dcb"
+            ]
+          },
+          "wet_240": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+            ]
+          },
+          "wet_32": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "f7a1ba599e284915629ef3caf2181d4f0e88c33ffaedd09bbeb686d056413587",
+              "f7a1ba599e284915629ef3caf2181d4f0e88c33ffaedd09bbeb686d056413587"
+            ]
+          },
+          "wet_375": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+            ]
+          },
+          "wet_3750": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+            ]
+          },
+          "wet_reloaded": {
+            "byte_identical": true,
+            "divergence": null,
+            "repeats": 2,
+            "sha256_all": [
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+              "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+            ]
+          }
+        },
+        "repeats": 2,
+        "status": "MEASURED"
+      },
+      "A_early_settle_invariance": {
+        "attribution": "CONFOUNDED_SYNTH_SIDE",
+        "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "byte_identical": false,
+        "diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 1677,
+          "max_abs_diff": 0.03943637013435364,
+          "max_abs_diff_lsb_q10_21": 82704.0625
+        },
+        "dry_diagnostic_byte_identical": false,
+        "dry_diagnostic_diff": {
+          "first_differing_block": 0,
+          "first_differing_frame": 0,
+          "frames": 177600,
+          "frames_differing": 1671,
+          "max_abs_diff": 0.12095978111028671,
+          "max_abs_diff_lsb_q10_21": 253671.046875
+        },
+        "settle_blocks_compared": [
+          2,
+          375
+        ],
+        "sha256": [
+          "1f53143afd839ba6a6ae7ae936bbd9fd4a1ef92d612d47991a92e0eb797a4dcb",
+          "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+        ],
+        "status": "MEASURED",
+        "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+      },
       "A_settle_length_invariance": {
         "byte_identical": true,
         "settle_blocks_compared": [
@@ -259,7 +444,352 @@
         },
         "status": "MEASURED"
       },
-      "ab_source": "committed record reports/SXT-028e-sse/artifacts/settle-boundary.json (sha256 abdff49e4bfc1e990594925f7eae594be2967f3d77e17a5bfcb69536fbeebea0), measured by tools/probe_distortion_sse_settle_boundary.py (#136); not re-run here (the probe would overwrite its committed record)",
+      "D_settle_tracking": {
+        "by_settle": {
+          "375": {
+            "comparator_verdict_by_preroll": {
+              "0": "PASS",
+              "375": "FAIL"
+            },
+            "engine_settle_blocks": 375,
+            "engine_wet_sha256": "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+            "legs": {
+              "0": {
+                "commands": {
+                  "comparator": [
+                    "python3",
+                    "tools/compare_distortion_sse_reference.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/fixtures",
+                    "--art-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-0",
+                    "--model",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-0/model__syn-d0-m3__seq-poly-8-v1.f32.wav",
+                    "--json",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-0/compare.json"
+                  ],
+                  "model": [
+                    "python3",
+                    "tools/audit_effect_settle_boundaries.py",
+                    "_leg",
+                    "--runner",
+                    "run_distortion_sse_model.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--pre",
+                    "0",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/fixtures",
+                    "--out-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-0"
+                  ]
+                },
+                "frames": 177600,
+                "metrics": {
+                  "channels": {
+                    "L": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 10.5,
+                      "rms_diff_dbfs": -113.64470759311499,
+                      "spectral_corr": 0.9999999948027902
+                    },
+                    "R": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 10.5,
+                      "rms_diff_dbfs": -113.64470759311499,
+                      "spectral_corr": 0.9999999948027902
+                    },
+                    "mono": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 10.5,
+                      "rms_diff_dbfs": -113.64470759311499,
+                      "spectral_corr": 0.9999999948027902
+                    }
+                  },
+                  "proposed_budget_results": {
+                    "max_abs_diff_lsb": true,
+                    "rms_diff_dbfs": true,
+                    "spectral_corr": true
+                  },
+                  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+                  "tail_gate_ok": true,
+                  "tail_rms_rel_db": -96.94358341473708,
+                  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12)",
+                  "verdict_class": "PASS"
+                },
+                "model_wav_sha256": "dda2319d706c90fc7bfdff7e814da567b5617ed46000452414051f9c3de0d1c4",
+                "role": "zero",
+                "silent_preroll_blocks": 0
+              },
+              "375": {
+                "commands": {
+                  "comparator": [
+                    "python3",
+                    "tools/compare_distortion_sse_reference.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/fixtures",
+                    "--art-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-375",
+                    "--model",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-375/model__syn-d0-m3__seq-poly-8-v1.f32.wav",
+                    "--json",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-375/compare.json"
+                  ],
+                  "model": [
+                    "python3",
+                    "tools/audit_effect_settle_boundaries.py",
+                    "_leg",
+                    "--runner",
+                    "run_distortion_sse_model.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--pre",
+                    "375",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/fixtures",
+                    "--out-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-375/preroll-375"
+                  ]
+                },
+                "frames": 177600,
+                "metrics": {
+                  "channels": {
+                    "L": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 672130.375,
+                      "rms_diff_dbfs": -40.082655665024525,
+                      "spectral_corr": 0.9999926218119419
+                    },
+                    "R": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 672130.375,
+                      "rms_diff_dbfs": -40.082655665024525,
+                      "spectral_corr": 0.9999926218119419
+                    },
+                    "mono": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 672130.375,
+                      "rms_diff_dbfs": -40.082655665024525,
+                      "spectral_corr": 0.9999926218119419
+                    }
+                  },
+                  "proposed_budget_results": {
+                    "max_abs_diff_lsb": false,
+                    "rms_diff_dbfs": false,
+                    "spectral_corr": true
+                  },
+                  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+                  "tail_gate_ok": true,
+                  "tail_rms_rel_db": -96.94358341473708,
+                  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs)",
+                  "verdict_class": "FAIL"
+                },
+                "model_wav_sha256": "ec31e55fc34d40c41f93b93233d3efcf09b7cbee8e4ffee9c518fcd39a14eb7b",
+                "role": "pre-roll = engine settle",
+                "silent_preroll_blocks": 375
+              }
+            }
+          },
+          "3750": {
+            "comparator_verdict_by_preroll": {
+              "0": "PASS",
+              "3750": "FAIL"
+            },
+            "engine_settle_blocks": 3750,
+            "engine_wet_sha256": "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+            "legs": {
+              "0": {
+                "commands": {
+                  "comparator": [
+                    "python3",
+                    "tools/compare_distortion_sse_reference.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/fixtures",
+                    "--art-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-0",
+                    "--model",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-0/model__syn-d0-m3__seq-poly-8-v1.f32.wav",
+                    "--json",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-0/compare.json"
+                  ],
+                  "model": [
+                    "python3",
+                    "tools/audit_effect_settle_boundaries.py",
+                    "_leg",
+                    "--runner",
+                    "run_distortion_sse_model.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--pre",
+                    "0",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/fixtures",
+                    "--out-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-0"
+                  ]
+                },
+                "frames": 177600,
+                "metrics": {
+                  "channels": {
+                    "L": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 10.5,
+                      "rms_diff_dbfs": -113.64470759311499,
+                      "spectral_corr": 0.9999999948027902
+                    },
+                    "R": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 10.5,
+                      "rms_diff_dbfs": -113.64470759311499,
+                      "spectral_corr": 0.9999999948027902
+                    },
+                    "mono": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 10.5,
+                      "rms_diff_dbfs": -113.64470759311499,
+                      "spectral_corr": 0.9999999948027902
+                    }
+                  },
+                  "proposed_budget_results": {
+                    "max_abs_diff_lsb": true,
+                    "rms_diff_dbfs": true,
+                    "spectral_corr": true
+                  },
+                  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+                  "tail_gate_ok": true,
+                  "tail_rms_rel_db": -96.94358341473708,
+                  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy; freeze gated on SXT-017 #12)",
+                  "verdict_class": "PASS"
+                },
+                "model_wav_sha256": "dda2319d706c90fc7bfdff7e814da567b5617ed46000452414051f9c3de0d1c4",
+                "role": "zero",
+                "silent_preroll_blocks": 0
+              },
+              "3750": {
+                "commands": {
+                  "comparator": [
+                    "python3",
+                    "tools/compare_distortion_sse_reference.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/fixtures",
+                    "--art-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-3750",
+                    "--model",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-3750/model__syn-d0-m3__seq-poly-8-v1.f32.wav",
+                    "--json",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-3750/compare.json"
+                  ],
+                  "model": [
+                    "python3",
+                    "tools/audit_effect_settle_boundaries.py",
+                    "_leg",
+                    "--runner",
+                    "run_distortion_sse_model.py",
+                    "--slug",
+                    "syn-d0-m3",
+                    "--seq",
+                    "seq-poly-8-v1",
+                    "--pre",
+                    "3750",
+                    "--fixtures-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/fixtures",
+                    "--out-dir",
+                    "<work>/sxt318/work/distortion_sse/syn-d0-m3__seq-poly-8-v1/D-settle-3750/preroll-3750"
+                  ]
+                },
+                "frames": 177600,
+                "metrics": {
+                  "channels": {
+                    "L": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 672130.375,
+                      "rms_diff_dbfs": -40.082655665024525,
+                      "spectral_corr": 0.9999926218119419
+                    },
+                    "R": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 672130.375,
+                      "rms_diff_dbfs": -40.082655665024525,
+                      "spectral_corr": 0.9999926218119419
+                    },
+                    "mono": {
+                      "best_shift": 0,
+                      "frames": 177600,
+                      "max_abs_diff_lsb": 672130.375,
+                      "rms_diff_dbfs": -40.082655665024525,
+                      "spectral_corr": 0.9999926218119419
+                    }
+                  },
+                  "proposed_budget_results": {
+                    "max_abs_diff_lsb": false,
+                    "rms_diff_dbfs": false,
+                    "spectral_corr": true
+                  },
+                  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+                  "tail_gate_ok": true,
+                  "tail_rms_rel_db": -96.94358341473708,
+                  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs)",
+                  "verdict_class": "FAIL"
+                },
+                "model_wav_sha256": "ec31e55fc34d40c41f93b93233d3efcf09b7cbee8e4ffee9c518fcd39a14eb7b",
+                "role": "pre-roll = engine settle",
+                "silent_preroll_blocks": 3750
+              }
+            }
+          }
+        },
+        "note": "DIAGNOSTIC ONLY. Not an input to the boundary decision, which stays the A0/A/A_early/B rule: a pre-roll is never chosen from these numbers. D asks whether the model, pre-rolled N blocks, tracks the engine rendered with an N-block settle, for N = 375 and 3750, each graded by the leaf's own comparator against LIVE buses of this host's engine (input bus re-rendered at the same N).",
+        "status": "MEASURED",
+        "summary": {
+          "preroll_equals_settle_verdicts": [
+            "FAIL",
+            "FAIL"
+          ],
+          "preroll_zero_verdicts": [
+            "PASS",
+            "PASS"
+          ],
+          "production_preroll_verdicts": [
+            "PASS",
+            "PASS"
+          ],
+          "reading": "verdict pairs are [engine settle 375, engine settle 3750]; recorded, not used to choose a pre-roll"
+        }
+      },
+      "ab_source": "committed record reports/SXT-028e-sse/artifacts/settle-boundary.json (sha256 abdff49e4bfc1e990594925f7eae594be2967f3d77e17a5bfcb69536fbeebea0), measured by tools/probe_distortion_sse_settle_boundary.py (#136); not re-run here (the probe would overwrite its committed record); re-measured live on this host (live_recheck)",
       "baseline": {
         "committed_metrics": {
           "channels": {
@@ -351,14 +881,20 @@
         "verdict_class_reproduced": true
       },
       "boundary": {
-        "declared_preroll_blocks": 0,
-        "rule": "RESOLVED (declared 0) only if A and B are both measured byte-identical; otherwise no pre-roll is declared",
-        "status": "RESOLVED"
+        "declared_preroll_blocks": null,
+        "probe_rule_v1": {
+          "declared_preroll_blocks": 0,
+          "note": "the #136 probe's rule (A and B only), recorded so a changed reading is visible, never silently relabeled",
+          "runner_verdict_under_v1": "PASS",
+          "status": "RESOLVED"
+        },
+        "rule": "RESOLVED (declared 0) only if A (375 vs 3750), A_early (2 vs 375) and B are all measured byte-identical and A0 did not fail; otherwise no pre-roll is declared",
+        "status": "UNRESOLVED"
       },
       "carrier": "syn-d0-m3",
       "chain": "ains: distortion(0) -- the #136 harness anchor",
       "committed_numbers_dependence": "SENSITIVE",
-      "coverage": "A,B,C",
+      "coverage": "A,B,C (+D diagnostic)",
       "escalation": null,
       "fixture": {
         "block_size": 32,
@@ -387,21 +923,292 @@
         "sidecar_sha256": "0f18d11de4b75786f62b101de59d194d7f60d2111bafaef3af34cf96aec30e4c"
       },
       "leaf": "SXT-028e-sse (fx:Distortion, SSE models)",
+      "live_recheck": {
+        "A": {
+          "byte_identical": true,
+          "diff": {
+            "first_differing_block": null,
+            "first_differing_frame": null,
+            "frames": 177600,
+            "frames_differing": 0,
+            "max_abs_diff": 0.0,
+            "max_abs_diff_lsb_q10_21": 0.0
+          },
+          "dry_diagnostic_byte_identical": true,
+          "dry_diagnostic_diff": {
+            "first_differing_block": null,
+            "first_differing_frame": null,
+            "frames": 177600,
+            "frames_differing": 0,
+            "max_abs_diff": 0.0,
+            "max_abs_diff_lsb_q10_21": 0.0
+          },
+          "settle_blocks_compared": [
+            375,
+            3750
+          ],
+          "sha256": [
+            "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+            "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+          ],
+          "status": "MEASURED"
+        },
+        "A0_repeatability": {
+          "all_buses_repeatable": true,
+          "non_repeatable_buses": [],
+          "per_bus": {
+            "dry_120": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+              ]
+            },
+            "dry_2": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "a7cb1c98b33e9deb222be904d27f72720540b5f634b9d91b64096dcaab5dda32",
+                "a7cb1c98b33e9deb222be904d27f72720540b5f634b9d91b64096dcaab5dda32"
+              ]
+            },
+            "dry_240": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+              ]
+            },
+            "dry_32": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "967b9de11e502cb32c22d9f9c5cb02c9a86c61ab0696afe6b448f163f28f410e",
+                "967b9de11e502cb32c22d9f9c5cb02c9a86c61ab0696afe6b448f163f28f410e"
+              ]
+            },
+            "dry_375": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+              ]
+            },
+            "dry_3750": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1",
+                "807f7114d310a7a0e0a677b95ddca3004f894656641e4c75cdb49be589a417e1"
+              ]
+            },
+            "wet_120": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+              ]
+            },
+            "wet_2": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "1f53143afd839ba6a6ae7ae936bbd9fd4a1ef92d612d47991a92e0eb797a4dcb",
+                "1f53143afd839ba6a6ae7ae936bbd9fd4a1ef92d612d47991a92e0eb797a4dcb"
+              ]
+            },
+            "wet_240": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+              ]
+            },
+            "wet_32": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "f7a1ba599e284915629ef3caf2181d4f0e88c33ffaedd09bbeb686d056413587",
+                "f7a1ba599e284915629ef3caf2181d4f0e88c33ffaedd09bbeb686d056413587"
+              ]
+            },
+            "wet_375": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+              ]
+            },
+            "wet_3750": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+              ]
+            },
+            "wet_reloaded": {
+              "byte_identical": true,
+              "divergence": null,
+              "repeats": 2,
+              "sha256_all": [
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+                "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+              ]
+            }
+          },
+          "repeats": 2,
+          "status": "MEASURED"
+        },
+        "A_early": {
+          "attribution": "CONFOUNDED_SYNTH_SIDE",
+          "attribution_note": "the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+          "byte_identical": false,
+          "diff": {
+            "first_differing_block": 0,
+            "first_differing_frame": 0,
+            "frames": 177600,
+            "frames_differing": 1677,
+            "max_abs_diff": 0.03943637013435364,
+            "max_abs_diff_lsb_q10_21": 82704.0625
+          },
+          "dry_diagnostic_byte_identical": false,
+          "dry_diagnostic_diff": {
+            "first_differing_block": 0,
+            "first_differing_frame": 0,
+            "frames": 177600,
+            "frames_differing": 1671,
+            "max_abs_diff": 0.12095978111028671,
+            "max_abs_diff_lsb_q10_21": 253671.046875
+          },
+          "settle_blocks_compared": [
+            2,
+            375
+          ],
+          "sha256": [
+            "1f53143afd839ba6a6ae7ae936bbd9fd4a1ef92d612d47991a92e0eb797a4dcb",
+            "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+          ],
+          "status": "MEASURED",
+          "why": "A compares 375 with 3750 settle blocks only. An engine state that evolves during the settle and has converged to a fixed point before block 375 passes A while the effect did NOT start the audio in its init() state. A_early compares the earliest settle every carrier accepts with 375; only if it is ALSO identical is 'no evolution during the settle' measured."
+        },
+        "B": {
+          "byte_identical": true,
+          "diff": {
+            "first_differing_block": null,
+            "first_differing_frame": null,
+            "frames": 177600,
+            "frames_differing": 0,
+            "max_abs_diff": 0.0,
+            "max_abs_diff_lsb_q10_21": 0.0
+          },
+          "instantiation": "synthetic carrier constructed in place vs saved to .fxp and re-loaded via loadPatch",
+          "sha256": [
+            "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+            "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845"
+          ],
+          "status": "MEASURED"
+        },
+        "a_short_buffer_sha256": "deca8b7a87533e4f866046a486f7e741d7b8489bb07ba3800a4eb15ac195c845",
+        "settle_sweep": {
+          "dry_equals_fixture_settle": [
+            false,
+            false,
+            true,
+            true,
+            true
+          ],
+          "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+          "settle_blocks": [
+            2,
+            32,
+            120,
+            240,
+            3750
+          ],
+          "wet_equals_fixture_settle": [
+            false,
+            false,
+            true,
+            true,
+            true
+          ]
+        },
+        "source": "live, this run (the #136 probe's legs re-measured; probe not run)"
+      },
+      "live_recheck_matches_committed_record": true,
       "nc_c_control": {
-        "reason": "every wrong-boundary leg FAILs the declared comparison",
-        "status": "PASS",
-        "wrong_boundary_verdicts": {
-          "375": "FAIL"
-        }
+        "reason": "the wrong boundary is not yet known (boundary UNRESOLVED); each candidate's comparator verdict is already recorded under C so the control is designated, not re-run, once A/B resolve",
+        "status": "NOT_RUN"
+      },
+      "nc_d_control": {
+        "mismatched_verdicts": {
+          "settle 375 / pre-roll 0": "PASS",
+          "settle 3750 / pre-roll 0": "PASS"
+        },
+        "reason": "a mismatched pre-roll does not FAIL: D cannot discriminate settle history on this carrier",
+        "scope": "a control on the D diagnostic only; the boundary decision is unchanged (A0/A/B)",
+        "status": "FAIL",
+        "targets": "leg D (diagnostic): a model pre-roll that does not equal the engine settle must FAIL the leaf's own comparator at that settle"
+      },
+      "probe_rule_v1_reading_changed": {
+        "committed_verdict": "PASS",
+        "reason": "the probe's rule would read this row PASS; this audit's stricter rule (A_early, A0) withholds that reading (A_early attribution: CONFOUNDED_SYNTH_SIDE). Both readings and both numbers are retained; nothing is relabeled and no pre-roll is chosen by score.",
+        "route": "#12 (SXT-017)",
+        "under_probe_rule_v1": "PASS",
+        "under_this_audit": "NO_VERDICT",
+        "verdict_at_v1_declared_preroll": "PASS"
       },
       "runner": "model/effects/run_distortion_sse_model.py",
       "runner_boundary_verdict": {
-        "reason": "runner pre-roll 0 equals the measured boundary 0",
-        "status": "PASS"
+        "reason": "A_early DIFFERS (settle 2 vs 375) while A (375 vs 3750) is identical: the bus evolves during the first settle blocks and converges before block 375, so A's identity does not establish an init-state start; the boundary is UNRESOLVED and no pre-roll is chosen by score. the all-off dry bus (effects bypassed) ALSO differs at these settle lengths, so the wet difference is not attributable to the effect: part or all of it is synth-side evolution (voices/filters/envelopes still settling). A_early therefore cannot establish effect-state evolution either; it only withholds RESOLVED.",
+        "status": "NO_VERDICT"
       },
       "runner_preroll_blocks": 0,
       "runner_preroll_source": "run(silent_preroll_blocks=0) default",
       "sequence": "seq-poly-8-v1",
+      "settle_sweep": {
+        "dry_equals_fixture_settle": [
+          false,
+          false,
+          true,
+          true,
+          true
+        ],
+        "note": "convergence diagnostic: which settle lengths reproduce the 375-block fixture settle byte-for-byte",
+        "settle_blocks": [
+          2,
+          32,
+          120,
+          240,
+          3750
+        ],
+        "wet_equals_fixture_settle": [
+          false,
+          false,
+          true,
+          true,
+          true
+        ]
+      },
       "source_reconciliation": {
         "candidates": [
           0,
@@ -413,12 +1220,12 @@
         "runner_preroll_blocks": 0,
         "status": "PASS"
       },
-      "status": "PASS"
+      "status": "NO_VERDICT"
     },
     {
       "A_settle_length_invariance": {
-        "reason": "pinned oracle (surgepy built from surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71) unavailable on this host",
-        "status": "BLOCKED"
+        "reason": "bounded audit: the leaf's A/B was measured on the anchor only (#136), and its committed records already run the measured pre-roll 0; C is not re-derived for the other synthetic carriers here",
+        "status": "NOT_RUN"
       },
       "carrier": "syn-m3..m7, syn-d6/d12/d18-m3",
       "coverage": "none",
@@ -429,5 +1236,5 @@
   ],
   "runner": "model/effects/run_distortion_sse_model.py",
   "runner_git_blob_sha1": "f9bc2c816101397f4a85f69a5cdc9906c18ec58a",
-  "schema_version": 1
+  "schema_version": 2
 }
