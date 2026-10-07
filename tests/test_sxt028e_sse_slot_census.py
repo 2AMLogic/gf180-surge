@@ -135,3 +135,120 @@ def test_no_unlanded_class_is_substituted():
           and "Damon Armani" in s["preset"]][0]
     assert tp["unlanded_classes_in_chain"] == ["Conditioner"]
     assert tp["disposition"] == cs.REFUSED
+
+
+# ---------------------------------------------------------------------------
+# #336: live parity between the oracle-free census mirror and the oracle-read
+# screens committed in the SSE extraction records. Expectations are built from
+# the committed record only (render_screens.refusal_reasons plus the
+# renderer's unlanded-class rule), never from another call into the census.
+# ---------------------------------------------------------------------------
+import glob  # noqa: E402
+
+_REC_GLOB = os.path.join(REPO, "model", "effects", "fx_inputs",
+                         "type-distortion-sse-*.json")
+_DRIFT = "drift = "
+_UNLANDED_TAIL = (" -- a complete-wet comparison would need a model this "
+                  "project has not landed, and substituting a generic is "
+                  "refused")
+
+
+def _screen_records():
+    out = []
+    for path in sorted(glob.glob(_REC_GLOB)):
+        rec = json.load(open(path))
+        if isinstance(rec.get("render_screens"), dict):
+            out.append((path, rec))
+    return out
+
+
+def _graphs_by_preset():
+    by = {}
+    for line in open(os.path.join(REPO, "corpus", "normalized",
+                                  "graphs.jsonl")):
+        r = json.loads(line)
+        by.setdefault(r["p"], []).append(r)
+    return by
+
+
+def _expected_reasons(rec):
+    """Oracle record -> expected mirror reasons (drift excluded; the one
+    known em-dash/`--` separator spelling is the census's)."""
+    exp = [r for r in rec["render_screens"]["refusal_reasons"]
+           if not r.startswith(_DRIFT)]
+    if rec.get("unlanded_classes_in_chain"):
+        exp.append("unlanded class(es) in the active chain: "
+                   + ", ".join(rec["unlanded_classes_in_chain"])
+                   + _UNLANDED_TAIL)
+    return exp
+
+
+def _assert_parity(path, rec, graphs, mirror):
+    name = os.path.basename(path)
+    matches = graphs.get(rec["preset_path"], [])
+    assert len(matches) == 1, (name, rec["preset_path"], len(matches),
+                               "expected exactly one normalized graph")
+    landed = set(rec["landed_classes_basis"]["landed_fx_classes"])
+    reasons, detail = mirror(matches[0]["g"], landed)
+    expected = _expected_reasons(rec)
+    assert sorted(reasons) == sorted(expected), (
+        f"{name} [{rec['preset_path']}] mirror/oracle screen mismatch:\n"
+        f"  mirror  : {sorted(reasons)}\n  oracle  : {sorted(expected)}")
+    assert detail["unlanded"] == sorted(
+        rec.get("unlanded_classes_in_chain") or []), (name, detail)
+
+
+def test_mirror_screens_match_committed_oracle_screens():
+    recs = _screen_records()
+    assert recs, "no committed SSE record carries render_screens"
+    graphs = _graphs_by_preset()
+    for path, rec in recs:
+        _assert_parity(path, rec, graphs, cs.preset_screens)
+
+
+def test_parity_population_covers_the_distinguishing_cases():
+    recs = {os.path.basename(p): r for p, r in _screen_records()}
+    names = set(recs)
+    for n in ("reversecrash", "mutantlofiacoustic", "trancepluck"):
+        assert f"type-distortion-sse-{n}.json" in names, names
+    rc = recs["type-distortion-sse-reversecrash.json"]
+    assert rc["render_screens"]["refusal_reasons"] == []
+    assert not rc.get("unlanded_classes_in_chain")
+    ml = recs["type-distortion-sse-mutantlofiacoustic.json"]
+    assert any(r.startswith("modulation routed into FX")
+               for r in ml["render_screens"]["refusal_reasons"])
+    tp = recs["type-distortion-sse-trancepluck.json"]
+    rr = tp["render_screens"]["refusal_reasons"]
+    assert sum("retrigger off" in r for r in rr) >= 2
+    assert any(r.startswith(_DRIFT) for r in rr)
+    assert tp["unlanded_classes_in_chain"] == ["Conditioner"]
+
+
+def test_parity_control_fails_when_mirror_drops_retrigger_screen():
+    import pytest
+
+    def mutated(g, landed):
+        reasons, detail = cs.preset_screens(g, landed)
+        return [r for r in reasons if "retrigger off" not in r], detail
+
+    graphs = _graphs_by_preset()
+    hit = 0
+    for path, rec in _screen_records():
+        if not any("retrigger off" in r
+                   for r in rec["render_screens"]["refusal_reasons"]):
+            continue
+        hit += 1
+        with pytest.raises(AssertionError, match="mismatch"):
+            _assert_parity(path, rec, graphs, mutated)
+    assert hit >= 2
+
+
+def test_parity_fails_closed_on_missing_or_duplicate_graph():
+    import pytest
+    path, rec = _screen_records()[0]
+    with pytest.raises(AssertionError, match="exactly one"):
+        _assert_parity(path, rec, {}, cs.preset_screens)
+    g = _graphs_by_preset()[rec["preset_path"]][0]
+    with pytest.raises(AssertionError, match="exactly one"):
+        _assert_parity(path, rec, {rec["preset_path"]: [g, g]},
+                       cs.preset_screens)
