@@ -131,7 +131,7 @@ interpreter rebuilding shifts band-1 coefficients by ≤ 7 c29 LSB, which the
 | compare accept / smoke | `4c27bfefa52f53641dbf5586662484fe3d5fd34fdb968047b24e51052cdc357a` / `fc403c05616efbda32cf9533be34b118c5f8d7221a7ce3857f11caf6be7850dc` |
 | schedule-closure.json | `544642cac3b8d0f1c34e89e320ba2b7e5c2f1876e63952ad0a0776fca5efd400` |
 | rtl-exactness.json | `4d5702e8d453c96c6e57c1f79d3aa46118b50cc7a1131dcb31d038054d1b25c2` |
-| rtl cfg.hex | `ae144e16c2c2982c9e5a28d6ebe62c96c36ec77183d2c15cf32c7181420c616f` |
+| rtl cfg.hex (`reports/sxt-025/artifacts/rtl/sxt025-accept-v1/cfg.hex`) | `ae144e16c2c2982c9e5a28d6ebe62c96c36ec77183d2c15cf32c7181420c616f` |
 
 ## Reproduce
 
