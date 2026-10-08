@@ -13,6 +13,8 @@ import os
 import shutil
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from model.control import (  # noqa: E402
@@ -169,7 +171,7 @@ def test_stub_output_contract_catches_silent_slot():
 
 # --------------------------------------------------- committed fixtures
 def _iverilog_present():
-    return shutil.which("iverilog") is not None
+    return all(shutil.which(x) is not None for x in ("iverilog", "vvp"))
 
 
 def test_committed_fixtures_model_leg_and_manifest():
@@ -209,9 +211,12 @@ def test_committed_fixtures_model_leg_and_manifest():
 
 def test_committed_fixtures_rtl_equality_or_not_run():
     if not _iverilog_present():
-        print("NOT_RUN: iverilog not available; RTL fixture equality not "
-              "executed (coverage: none for the RTL leg — not a pass)")
-        return
+        # A skip, not an early return: a returned test is reported as PASSED,
+        # which the rtl-sim coverage gate (tools/check_rtl_ci_results.py)
+        # could not tell apart from a real simulation (#356).
+        pytest.skip("NOT_RUN: iverilog/vvp not available; RTL fixture "
+                    "equality not executed (coverage: none for the RTL leg "
+                    "— not a pass)")
     for ident in ("ctl-notes-steal-v1", "ctl-patch-change-v1",
                   "ctl-burst-overload-v1", "ctl-queue-overflow-v1"):
         seq = json.load(open(os.path.join(
@@ -228,9 +233,8 @@ def test_committed_fixtures_rtl_equality_or_not_run():
 
 def test_comparator_catches_committed_queue_depth_mutant():
     if not _iverilog_present():
-        print("NOT_RUN: iverilog not available; mutant control not "
-              "executed (not a pass)")
-        return
+        pytest.skip("NOT_RUN: iverilog/vvp not available; mutant control "
+                    "not executed (not a pass)")
     seq = json.load(open(os.path.join(
         REPO, "fixtures", "control", "sequences",
         "ctl-queue-overflow-v1.json")))
