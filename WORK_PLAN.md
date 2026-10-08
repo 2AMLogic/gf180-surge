@@ -20,15 +20,13 @@ Issues the operator starred (`loom:operator-priority`); land these first.
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf)
-- **#345**: CI: iverilog-gated tests are silently skipped on the PR runner, so RTL-vs-model harness tests never run in CI
-- **#346**: README Status says Planning/only SXT-000 done while the generated board shows 14 PASS nodes
-- **#347**: CI python-compile gate covers only tools and census; compiler, probes, fixtures, oracle, model, tests are uncompiled
+- **#355**: Add a test that enumerates tools/*_negative_controls.py so no control goes unrun (14 of 25 unreferenced)
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#353**: SXT-029: reconcile the voice-scope coverage ledger with landed SXT-026a evidence
 
 ## PRs Awaiting Review
 
@@ -40,7 +38,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#358**: SXT-029: reconcile voice-scope ledger with landed SXT-026a evidence
 
 ## Proposed
 
@@ -63,10 +61,11 @@ Issues carrying `loom:curated`.
 - **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf) *(curated)*
 - **#329**: SXT-043 fixture: clear osc-1 p[] modulation routings before Sine override so Digibass reference is valid (follow-up to #311) *(curated)*
 - **#331**: SXT-028h/028d/028g: six declared render carriers fail the engine-side per-scene drift gate (measured by #322) — screen drift-0 replacements or record bounded gaps *(curated)*
-- **#345**: CI: iverilog-gated tests are silently skipped on the PR runner, so RTL-vs-model harness tests never run in CI *(curated)*
+- **#353**: SXT-029: reconcile the voice-scope coverage ledger with landed SXT-026a evidence *(curated)*
 
 ## Proposed (Architect / Hermit)
 
+- **#356**: Require an explicit simulator-case inventory in the RTL CI report gate *(architect)*
 - **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
 - **#261**: Remove duplicated main()/revision_pin_ok() skeleton across rf_* RTL-model harnesses *(hermit)*
 - **#265**: Remove duplicated sha256(path) helper: 5 copies in tools/ instead of one shared module *(hermit)*
@@ -84,11 +83,11 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Operator priority | 1 |
-| Ready (`loom:issue`) | 4 |
-| In Progress (`loom:building`) | 0 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 18 |
-| Architect / Hermit proposals | 4 |
+| Architect / Hermit proposals | 5 |
 | Active epics | 3 |
 <!-- guide:plan-body:end -->

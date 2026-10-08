@@ -2,6 +2,15 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-08
+
+- **PR #357**: docs: README Status points to generated DAG (#346)
+- **PR #350**: ci: widen python-compile gate to all repository python
+- **PR #349**: CI: add rtl-sim job with Icarus Verilog and simulator-skip gate
+- **Issue #347** (closed): CI python-compile gate covers only tools and census; compiler, probes, fixtures, oracle, model, tests are uncompiled
+- **Issue #346** (closed): README Status says Planning/only SXT-000 done while the generated board shows 14 PASS nodes
+- **Issue #345** (closed): CI: iverilog-gated tests are silently skipped on the PR runner, so RTL-vs-model harness tests never run in CI
+
 ### 2026-10-07
 
 - **PR #344**: audit(#318): live A/B/C settle-boundary measurements on the pinned oracle
