@@ -7,7 +7,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
 
-_None._
+- **#368**: LP24 full-engine observation tap, external host route (#307)
 
 ## Operator Priority
 
@@ -19,14 +19,21 @@ Issues the operator starred (`loom:operator-priority`); land these first.
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf)
-- **#355**: Add a test that enumerates tools/*_negative_controls.py so no control goes unrun (14 of 25 unreferenced)
+- **#16**: SXT-023: Implement Delay and EQ
+- **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host
+- **#310**: SXT-028f follow-up (F-028f-3): SXT-012 fixture policy for source-nondeterministic presets (39/49 Reverb 2 carriers refused by the 3x render gate)
+- **#317**: SXT-028e-sse follow-up (F-028e-sse-1): re-run the Distortion SSE reference leg on the arm64 macOS evidence host (rcp_ps is implementation-defined)
+- **#360**: Reject stale trace outputs in shared RTL simulator runs
+- **#361**: Write current refusal verdicts for shared RTL comparison input errors
+- **#364**: Enforce AGENTS.md/CLAUDE.md parity outside Loom marker blocks with a test
+- **#365**: Audit committed report verdict tokens against the six-status vocabulary (REFUSED/VERIFIED/OK undeclared)
+- **#376**: Deduplicate stereo WAV reader and channel metrics in wet effect comparators
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#353**: SXT-029: reconcile the voice-scope coverage ledger with landed SXT-026a evidence
+_None._
 
 ## PRs Awaiting Review
 
@@ -38,7 +45,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#358**: SXT-029: reconcile voice-scope ledger with landed SXT-026a evidence
+- **#368**: LP24 full-engine observation tap, external host route (#307)
 
 ## Proposed
 
@@ -46,7 +53,6 @@ Issues carrying `loom:curated`.
 
 - **#12**: SXT-017: Freeze profile v1 *(curated)*
 - **#16**: SXT-023: Implement Delay and EQ *(curated)*
-- **#25**: SXT-019: Reuse substrate adoption decision *(curated)*
 - **#70**: SXT-036: voice leaf — modulation behavior: velocity *(curated)*
 - **#72**: SXT-038: voice leaf — filter algorithm: LP 24 dB *(curated)*
 - **#94**: SXT-028c follow-up: pin the tap re-render hash pair for committed reference fixtures *(curated)*
@@ -60,16 +66,15 @@ Issues carrying `loom:curated`.
 - **#317**: SXT-028e-sse follow-up (F-028e-sse-1): re-run the Distortion SSE reference leg on the arm64 macOS evidence host (rcp_ps is implementation-defined) *(curated)*
 - **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf) *(curated)*
 - **#329**: SXT-043 fixture: clear osc-1 p[] modulation routings before Sine override so Digibass reference is valid (follow-up to #311) *(curated)*
-- **#331**: SXT-028h/028d/028g: six declared render carriers fail the engine-side per-scene drift gate (measured by #322) — screen drift-0 replacements or record bounded gaps *(curated)*
-- **#353**: SXT-029: reconcile the voice-scope coverage ledger with landed SXT-026a evidence *(curated)*
+- **#360**: Reject stale trace outputs in shared RTL simulator runs *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#356**: Require an explicit simulator-case inventory in the RTL CI report gate *(architect)*
 - **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
 - **#261**: Remove duplicated main()/revision_pin_ok() skeleton across rf_* RTL-model harnesses *(hermit)*
 - **#265**: Remove duplicated sha256(path) helper: 5 copies in tools/ instead of one shared module *(hermit)*
 - **#272**: Remove duplicated sha256_file(path) reimplementation: 7 copies already have a canonical oracle_common.sha256_file *(hermit)*
+- **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
 
 ## Epics
 
@@ -81,13 +86,13 @@ Issues carrying `loom:curated`.
 
 | Tier | Count |
 |------|-------|
-| Operator merge-risk holds | 0 |
+| Operator merge-risk holds | 1 |
 | Operator priority | 1 |
-| Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 1 |
+| Ready (`loom:issue`) | 9 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 18 |
+| Curated | 17 |
 | Architect / Hermit proposals | 5 |
 | Active epics | 3 |
 <!-- guide:plan-body:end -->
