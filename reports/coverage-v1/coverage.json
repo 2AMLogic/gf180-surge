@@ -202,7 +202,8 @@
    },
    "voice_leaf_gate": {
     "": 1785,
-    "NOT_RUN": 1135
+    "NOT_RUN": 1134,
+    "NO_VERDICT": 1
    },
    "wavetable_leaf_gate": {
     "": 2392,
@@ -284,7 +285,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "d55aa68faf792ac78e45432cea8ee6d4fb00549bb108f3f963ef1dfe115e8ef1"
+   "sha256": "84685a59e8ae458e91c31f93a39650a918b62f91f9a22d1315f6e5b1672cc2a7"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -683,12 +684,6 @@
     "support_ready": false,
     "verification": {}
    },
-   "fx:SXT-026a-voice-scope-extension": {
-    "evidence_state": "OK",
-    "landed": false,
-    "support_ready": false,
-    "verification": {}
-   },
    "mod:keytrack": {
     "evidence_state": "OK",
     "landed": true,
@@ -812,9 +807,9 @@
  ],
  "per_bank": {
   "contributor": {
-   "adapted": 145,
+   "adapted": 144,
    "supported": 0,
-   "unresolved": 1700,
+   "unresolved": 1701,
    "unsupported": 1075
   },
   "factory": {
@@ -827,8 +822,7 @@
  "reconciliation": {
   "b4_prediction_x_headline": {
    "adapted-not-predicted|adapted": 164,
-   "supported|adapted": 1,
-   "supported|unresolved": 1682,
+   "supported|unresolved": 1683,
    "supported|unsupported": 2,
    "unresolved|unresolved": 582,
    "unsupported|unsupported": 1130
@@ -841,12 +835,6 @@
     "compile_codes": "send_levels_not_exported",
     "headline": "unsupported",
     "path": "resources/data/patches_3rdparty/Exquis MPE/Strings/Rock.fxp"
-   },
-   {
-    "b4_prediction": "supported",
-    "compile_codes": "",
-    "headline": "adapted",
-    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
    },
    {
     "b4_prediction": "supported",
@@ -868,13 +856,13 @@
  "supported_set": {
   "composition": [],
   "count": 0,
-  "note": "empty today: the honest result. No compiled preset has a verified voice path (F-1: the only two in-slice presets carry no FX and only Attacky is fixture-verified), the Delay leaf is FAIL, wavetable is partial at deep mips, the fidelity freeze (#12) is open, and no listening record exists. 1,685 B4 'supported' predictions qualify nothing."
+  "note": "empty today: the honest result. The selected voice leaf (voice:sine-fm-lp24-v2) fixture-verifies 2 preset path(s) (original voice stage; SXT-026a #48), but its model-vs-reference verdict is NO_VERDICT against the [PROPOSED] budgets, so no compiled preset has a verified voice path; fixture verification and exact RTL agreement are not fidelity or support. The Delay leaf is FAIL, wavetable is partial at deep mips, the fidelity freeze (#12) is open, and no listening record exists. The earlier SXT-025 dry-bus substitution diagnostic is historical and superseded for F-1 by the SXT-026a original-stage run. B4 'supported' predictions qualify nothing."
  },
  "tool_version": "sxt-029-coverage/1.0.0",
  "totals": {
-  "adapted": 165,
+  "adapted": 164,
   "supported": 0,
-  "unresolved": 2264,
+  "unresolved": 2265,
   "unsupported": 1132
  }
 }

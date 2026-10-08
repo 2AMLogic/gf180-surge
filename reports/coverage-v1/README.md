@@ -11,15 +11,18 @@ about how any preset sounds.
 | status | factory (641) | contributor (2,920) | total (3,561) |
 |---|---:|---:|---:|
 | supported | 0 | 0 | **0** |
-| adapted (never counts toward supported) | 20 | 145 | **165** |
+| adapted (never counts toward supported) | 20 | 144 | **164** |
 | unsupported | 57 | 1,075 | **1,132** |
-| unresolved | 564 | 1,700 | **2,264** |
+| unresolved | 564 | 1,701 | **2,265** |
 
 **supported = 0 is the honest result, not a failure of this pipeline.** The
 1,685 `supported` entries in the SXT-017 B4-broad *prediction* qualify
 nothing: prediction ≠ qualification. No compiled corpus preset has a verified
-voice path (finding F-1: the only two presets inside the landed voice
-arithmetic carry no FX, and only `Basses/Attacky.fxp` is fixture-verified);
+voice path: the selected voice leaf `voice:sine-fm-lp24-v2` (SXT-026a, #48)
+fixture-verifies `Basses/Attacky.fxp` and `Bells/Hell's Bells.fxp` on the
+original voice stage, but its model-vs-reference verdict is NO_VERDICT
+against the [PROPOSED] budgets (dry and wet both miss; F-48a/F-48b -> #12) —
+fixture verification and exact RTL agreement are not fidelity or support;
 the Delay leaf is FAIL (SXT-023); the wavetable leaf is partial at deep mips
 (SXT-026 §4); the fidelity-budget freeze (#12) is open, so every
 model-vs-reference number remains PENDING-FREEZE; and no listening record
@@ -48,8 +51,11 @@ Anything else gets the hardest honest label that fits:
 - **adapted** — renderable only with *disclosed edits*, per committed records:
   the SXT-017 polylimit-reduction policy (`poly_gate: adapted_beyond_pool`;
   164 presets whose rejection codes are exactly `polylimit_reduction_required`)
-  and finding F-1 (Hell's Bells; the SXT-025 integration used the engine's dry
-  bus as the declared voice-stage boundary). Adapted presets are **never**
+  and, only while the selected voice leaf does not fixture-verify the original
+  voice stage, finding F-1 (Hell's Bells; the SXT-025 integration used the
+  engine's dry bus as the declared voice-stage boundary — a historical
+  diagnostic record, superseded by the SXT-026a original-stage run, after
+  which Hell's Bells is **unresolved**, not adapted). Adapted presets are **never**
   counted toward supported. Where an adapted-class preset has *additional*
   blockers, it keeps the harder headline (`unsupported`/`unresolved`) and
   carries `also_requires_edit:…` in its reasons.
@@ -108,8 +114,10 @@ would fabricate precision. The prospective SXT-017 prediction columns
 
 ## Leaf ledger (what exists; filing is not progress)
 
-Landed leaves: `voice:attacky-slice` (SXT-022, scope = Attacky only; Quickspit
-is F-1 arithmetic overlap **without** fixture evidence), `mod:lfo` (SXT-032,
+Landed leaves: `voice:sine-fm-lp24-v2` (SXT-026a, selected; fixture scope =
+Attacky and Hell's Bells; Quickspit is outside it — engine-refused mono
+playmode) and its predecessor `voice:attacky-slice` (SXT-022, scope = Attacky
+only), `mod:lfo` (SXT-032,
 scope = LFO1-6 modulator on the Attacky slice via a declared synthetic
 runtime-route fixture; supported delta 0), `fx:EQ` and
 `fx:Reverb1` (SXT-023/SXT-024 — leaf-verified, PENDING-FREEZE caveats
@@ -117,8 +125,8 @@ recorded), `fx:Delay` (SXT-023 — landed, **FAIL**, routed #16→#12),
 `osc:Wavetable` (SXT-026 — landed, **PARTIAL**: deep-mip finding routed to the
 freeze).
 
-Filed open leaves (**25**): #48 (SXT-026a voice-scope extension — the F-1
-leaf that gates every FX preset), #53–#64 (SXT-028a–l, effects), #66–#77
+Filed open leaves (**24**; #48 / SXT-026a is landed, with verification
+NO_VERDICT, and is no longer open): #53–#64 (SXT-028a–l, effects), #66–#77
 (SXT-032–043, voice). Backlogs: **60** unfiled voice leaves (SXT-027, 29 of
 them zero-slate-basis/deferred) and **10** unfiled Airwindows leaves
 (SXT-028m–v). Machine-readable ledger: `leaf-verification.json` (statuses,
