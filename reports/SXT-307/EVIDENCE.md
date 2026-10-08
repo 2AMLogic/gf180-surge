@@ -30,7 +30,18 @@ FPGA/gf180mcu or hardware claim. #101 is not closed by it.
 - Baseline oracle drift refusal is unchanged (`oracle/fetch-and-build.sh` untouched;
   the patch script refuses unless HEAD equals the pin and the tree is clean).
 
-## 2. Neutrality (acceptance 3) — PASS on one deterministic control; NO_VERDICT elsewhere
+## 2. Neutrality (acceptance 3) — STALE: quantized-WAV equality only; raw re-derivation NOT_RUN
+
+**Qualification (review of head 71e2ff3).** The table below records equality of
+*clipped, int16-quantized WAVs*, not exact DSP neutrality: distinct engine outputs
+(sub-LSB differences, values beyond full scale) can share a WAV digest. The tool now
+decides neutrality on a digest of the raw engine samples (pre-clip, pre-quantization,
+with dtype/shape retained) and refuses to qualify a reference when it FAILs or when the
+deterministic control does not PASS. The control has **not** been re-rendered with the
+raw digest (the external tap/base builds are not available to this change), so the
+status of neutrality below is **NOT_RUN / STALE**, not PASS. The WAV digests are kept
+as diagnostics only.
+
 
 Run: `tools/render_lp24_tap_reference.py --case all` (`artifacts/cases/*.json`).
 
@@ -41,7 +52,7 @@ Run: `tools/render_lp24_tap_reference.py --case all` (`artifacts/cases/*.json`).
 | patched, tap off, repeat | same |
 | unpatched build of the same pin/host/toolchain/runtime | same |
 
-All four are bit-identical: **PASS** (control `neutrality-control-bass3`). The tap
+All four WAVs are identical (quantized WAVs only; see the qualification above) — previously recorded as PASS (control `neutrality-control-bass3`). The tap
 stream for this render is non-empty (hashes in the provenance file), i.e. the
 identity is not a vacuous no-op.
 
@@ -104,5 +115,5 @@ Model-vs-reference agreement on any native LP24 render; neutrality on the eleven
 carrier presets; that a native control plane can match an unchanged case; stimulus
 equivalence; `fc_wide` right-channel (units 2/3) bundle conversion beyond sharing the
 left unit's coefficient record; cross-host reproducibility; everything audible or
-hardware-related. Adapter statuses: build PASS, neutrality control PASS, carrier
+hardware-related. Adapter statuses: build PASS, neutrality control STALE (quantized-WAV equality only; raw re-derivation NOT_RUN), carrier
 neutrality NO_VERDICT (11), availability BLOCKED (11), model comparison NOT_RUN.

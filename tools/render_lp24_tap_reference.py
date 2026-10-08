@@ -167,13 +167,19 @@ def worker(args):
     stereo = np.asarray(buf)
     version = surgepy.getVersion()
     del s
+    # Exact neutrality is judged on the raw engine samples, BEFORE clipping and int16
+    # quantization (both are lossy: 0 and 1e-6 share an int16 value, as do 1.1 and 1.2).
+    raw = np.ascontiguousarray(stereo)
+    raw_sha256 = hashlib.sha256(raw.tobytes()).hexdigest()
     pcm = (np.ascontiguousarray(np.clip(stereo, -1, 1).T) * 32767.0).astype("<i2")
     with wave.open(args.wav, "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(2)
         w.setframerate(SR)
         w.writeframes(pcm.tobytes())
-    print(json.dumps({"version": version, "blocks": total, "wav_sha256": sha256_file(args.wav)}))
+    print(json.dumps({"version": version, "blocks": total, "wav_sha256": sha256_file(args.wav),
+                      "raw_sha256": raw_sha256, "raw_dtype": raw.dtype.str,
+                      "raw_shape": list(raw.shape)}))
     return 0
 
 
@@ -297,7 +303,25 @@ def run_variant(args, case, variant, out_dir, repeat=0):
     return info
 
 
-def one_case(args, name):
+def neutrality_verdict(tap, unt, unt2, base):
+    """PASS/FAIL only when the same-build engine is deterministic; else NO_VERDICT.
+
+    Compares the raw (pre-clip, pre-quantization) engine sample digests.  The WAV
+    digests are diagnostics: they are lossy and must not decide neutrality.
+    """
+    keys = ("raw_sha256", "raw_dtype", "raw_shape")
+    if any(k not in r for r in (tap, unt, unt2, base) for k in keys):
+        return "NO_VERDICT", False
+    det = (unt[keys[0]], unt[keys[1]], unt[keys[2]]) == \
+          (unt2[keys[0]], unt2[keys[1]], unt2[keys[2]])
+    if not det:
+        return "NO_VERDICT", False
+    same = all((r[keys[0]], r[keys[1]], r[keys[2]]) ==
+               (unt[keys[0]], unt[keys[1]], unt[keys[2]]) for r in (tap, base))
+    return ("PASS" if same else "FAIL"), True
+
+
+def one_case(args, name, control_ok=True):
     out = os.path.join(args.out_dir, name)
     os.makedirs(out, exist_ok=True)
     case = load_case(name)
@@ -305,35 +329,43 @@ def one_case(args, name):
     unt = run_variant(args, name, "untapped", out)
     unt2 = run_variant(args, name, "untapped", out, repeat=2)
     base = run_variant(args, name, "base", out)
-    det = unt["wav_sha256"] == unt2["wav_sha256"]
-    if not det:
-        neutral = "NO_VERDICT"
-    else:
-        neutral = ("PASS" if tap["wav_sha256"] == unt["wav_sha256"] == base["wav_sha256"]
-                   else "FAIL")
+    neutral, det = neutrality_verdict(tap, unt, unt2, base)
+    digests = {"raw_sha256": {"tap": tap["raw_sha256"], "untapped": unt["raw_sha256"],
+                              "untapped_repeat": unt2["raw_sha256"], "base": base["raw_sha256"]},
+               "raw_format": {"dtype": tap["raw_dtype"], "shape": tap["raw_shape"]},
+               "wav_sha256_diagnostic_only": {"tap": tap["wav_sha256"],
+                                              "untapped": unt["wav_sha256"],
+                                              "untapped_repeat": unt2["wav_sha256"],
+                                              "base": base["wav_sha256"]}}
     if name == CONTROL["case"]:
         result = {"case": name, "role": "same-build neutrality control (not an SXT-038 case)",
                   "engine_version_tap": tap["version"], "engine_version_base": base["version"],
-                  "wav_sha256": {"tap": tap["wav_sha256"], "untapped": unt["wav_sha256"],
-                                 "untapped_repeat": unt2["wav_sha256"],
-                                 "base": base["wav_sha256"]},
-                  "engine_deterministic_same_build": det, "neutrality": neutral}
+                  **digests, "engine_deterministic_same_build": det, "neutrality": neutral,
+                  "reference_qualified": neutral == "PASS"}
+        json.dump(result, open(os.path.join(out, "result.json"), "w"), indent=1, sort_keys=True)
+        return result
+    result = {"case": name, "engine_version_tap": tap["version"],
+              "engine_version_base": base["version"], **digests,
+              "engine_deterministic_same_build": det, "neutrality": neutral,
+              "reference_qualified": False}
+    if neutral == "FAIL" or not control_ok:
+        # Fail closed: keep the diagnostic observations, but produce no bundles and
+        # offer nothing to the consumer.
+        result["availability"] = "REFUSED"
+        result["refusal"] = ("deterministic tapped/untapped/base mismatch" if neutral == "FAIL"
+                             else "deterministic neutrality control did not PASS")
         json.dump(result, open(os.path.join(out, "result.json"), "w"), indent=1, sort_keys=True)
         return result
     insts = split_bundles(os.path.join(out, "tap-raw"), os.path.join(out, "bundles"),
                           case, tap["version"])
     want = [i for i in insts if i[1]["scene"] == case["carrier"]["scene"]
             and i[1]["unit"] == case["carrier"]["unit"] and i[1]["type"] == 2]
-    result = {
-        "case": name, "engine_version_tap": tap["version"], "engine_version_base": base["version"],
-        "wav_sha256": {"tap": tap["wav_sha256"], "untapped": unt["wav_sha256"],
-                       "untapped_repeat": unt2["wav_sha256"], "base": base["wav_sha256"]},
-        "engine_deterministic_same_build": det, "neutrality": neutral,
+    result.update({
         "instances_total": len(insts), "instances_for_carrier_unit": len(want),
         "instance_blocks": [i[2] for i in want],
         "plan_blocks": int(case["stimulus"]["blocks"]),
         "runner": {},
-    }
+    })
     scratch = os.path.join(out, "runner-scratch")
     if want:
         cat = concat_bundle(want, out, case, tap["version"])
@@ -345,6 +377,8 @@ def one_case(args, name):
                                   else "BLOCKED")
     else:
         result["availability"] = "BLOCKED"
+    # NO_VERDICT carriers stay unqualified: neutrality is not established for them.
+    result["reference_qualified"] = neutral == "PASS" and result["availability"] == "PASS"
     json.dump(result, open(os.path.join(out, "result.json"), "w"), indent=1, sort_keys=True)
     return result
 
@@ -367,12 +401,26 @@ def main():
             return 3
     if not args.out_dir:
         ap.error("--out-dir required")
-    names = (case_names() + [CONTROL["case"]]) if args.case == "all" else [args.case]
+    names = case_names() if args.case == "all" else [args.case]
+    # The deterministic control must PASS before any build is qualified.
+    ctl = one_case(args, CONTROL["case"]) if args.case != CONTROL["case"] else None
+    if ctl is not None:
+        print(json.dumps({k: ctl[k] for k in ("case", "neutrality", "reference_qualified")}))
+    control_ok = ctl is None or ctl["neutrality"] == "PASS"
+    rc = 0 if control_ok else 4
     for n in names:
-        r = one_case(args, n)
+        r = one_case(args, n, control_ok=control_ok) if n != CONTROL["case"] else ctl or one_case(args, n)
         print(json.dumps({k: r[k] for k in ("case", "neutrality", "availability",
+                                            "reference_qualified",
                                             "instances_for_carrier_unit") if k in r}))
-    return 0
+        if r["neutrality"] == "FAIL" or (n == CONTROL["case"] and r["neutrality"] != "PASS"):
+            print(f"REFUSING: {n}: neutrality {r['neutrality']}; no qualified reference",
+                  file=sys.stderr)
+            rc = 4
+    if not control_ok:
+        print("REFUSING: deterministic neutrality control did not PASS; build not qualified",
+              file=sys.stderr)
+    return rc
 
 
 if __name__ == "__main__":
