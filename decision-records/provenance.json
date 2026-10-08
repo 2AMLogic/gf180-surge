@@ -135,6 +135,15 @@
       "decision_record": "0005"
     },
     {
+      "path": "tools/render_lp24_tap_reference.py",
+      "class": "external-build-client",
+      "content": "Runs only against the DR-0019 tap-instrumented build of the pinned engine (and an unpatched build of the same pin for the neutrality comparison). The patch and both builds live outside this repository; this file carries no upstream code.",
+      "upstream": "surge (externally patched build on the oracle host)",
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "upstream_license": "GPL-3.0-or-later (the patched build)",
+      "decision_record": "0019"
+    },
+    {
       "path": "tools/render_aw49_reference.py",
       "class": "external-build-client",
       "content": "Runs only where the DR-0006 instrumented build of the pinned engine exists (tapped AW-49 slot-boundary renders). The instrumented build lives outside this repository; this file carries no upstream code.",
