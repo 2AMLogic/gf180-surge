@@ -65,6 +65,16 @@ ORACLE_PREBUILT_URL=<private store> oracle/fetch-and-build.sh --prebuilt   # or 
   `reference-seq-modwheel-v1` re-renders byte-identically to the committed
   WAV (sha256 `cdc6dd7b…d2002`).
 
+### LP 24 dB full-engine tap (#307, DR-0019)
+
+A separate, **externally** patched build of the same pin observes the LP24 filter
+unit (`decision-records/0019-lp24-full-engine-tap.md`). It is not the prebuilt
+above (that one is vanilla and compiled-only) and is never committed or
+distributed; the patch and tree live on the oracle host and only hashes are
+recorded (`reports/SXT-307/artifacts/tap-build-provenance.json`).
+`tools/render_lp24_tap_reference.py` needs `ORACLE_TAP_SURGEPY_DIR`,
+`ORACLE_BASE_SURGEPY_DIR` and `ORACLE_SURGE_DIR` and refuses (exit 3) without them.
+
 ## Semantics pinned by this oracle
 
 - Sample rate 48 kHz; compiled block size 32 (`SURGE_COMPILE_BLOCK_SIZE`

@@ -1,0 +1,38 @@
+{
+ "availability": "BLOCKED",
+ "case": "edges-cut-lo",
+ "engine_deterministic_same_build": false,
+ "engine_version_base": "1.4.HEAD.58914e59c",
+ "engine_version_tap": "1.4.sxt307-tap.754d13c5a",
+ "instance_blocks": [
+  307,
+  307,
+  307,
+  307,
+  307,
+  307,
+  307,
+  307,
+  307
+ ],
+ "instances_for_carrier_unit": 9,
+ "instances_total": 9,
+ "neutrality": "NO_VERDICT",
+ "plan_blocks": 384,
+ "runner": {
+  "concat": {
+   "exit": 2,
+   "message": "REFUSING: plan has 384 blocks, bundle has 2763"
+  },
+  "longest_instance": {
+   "exit": 2,
+   "message": "REFUSING: plan has 384 blocks, bundle has 307"
+  }
+ },
+ "wav_sha256": {
+  "base": "bec28cdce75570084d5dedfeea48785399110872a8c356ea56cc3bc463fed641",
+  "tap": "070ad0ce184f77a2b42661f6871fb382c40e3ce32904b25669cb695cc62bca94",
+  "untapped": "d5bad5416fa65117fed09faff5bb9d9475a48e92c27e003169c8ff5b30602c5f",
+  "untapped_repeat": "1268ffc7232e35228907c8eea30b128ffcb90db8428d37440fbe2f31ea2764f8"
+ }
+}

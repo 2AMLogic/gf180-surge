@@ -1,0 +1,52 @@
+{
+ "artifacts_sha256": {
+  "baseline_surgepy_so": "e72b5ed2768273d0b8c9c7515c23da6a1d06928a62a8311ec0c82cbd4c421e17",
+  "tap_surgepy_so": "30188b67277b5e9732ae7514859cb07fc7bbbc82cf9e1064882cc2b61ee902ea"
+ },
+ "build": {
+  "build_type": "Release",
+  "cmake": "cmake version 3.28.3",
+  "cxx": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "engine_block_size": 32,
+  "filter_oversampled_rate_hz": 96000,
+  "generator": "Unix Makefiles",
+  "jobs": 2,
+  "juce_configure_note": "JUCE's configure-time juceaide needs X11/ALSA dev headers absent from the worker; headers from libxrandr/xinerama/xcursor/xrender/xfixes/xext/curl/asound -dev debs were dpkg -x extracted into a private sysroot (no apt install, no host path written). Not linked into surgepy DSP.",
+  "python": "CPython 3.13.16 (uv venv), numpy 2.5.3 -- differs from the SXT-010 pinned 3.11 runtime; affects only the binding, not engine DSP",
+  "sample_rate_hz": 48000,
+  "targets": [
+   "surgepy",
+   "surge-testrunner(baseline only)"
+  ]
+ },
+ "control_tap_stream_sha256": {
+  "coeffs.jsonl": "fb8e9ed76ebacf9a22bff0c7a2a2d5eeee044c5b823313ed3d5315f8a00a3ff1",
+  "regs.bin": "cff648ef3c9b667a65506ec16bb29b2bd9b1c71c3577b661ab37843117deda3b",
+  "units.bin": "c53a182bc0521063606928c82195ae871b830c1d7f72acc3b48c650ec02f2638"
+ },
+ "engine": {
+  "baseline_version_string": "1.4.HEAD.58914e59c",
+  "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "repository": "surge-synthesizer/surge",
+  "submodules": "as oracle/manifest.json (git submodule update --init --recursive at the pin; no drift; tree clean before patching)",
+  "tap_branch_commit": "754d13c5a630c9f2a4daecbcfab30b6f223bf749",
+  "tap_version_string": "1.4.sxt307-tap.754d13c5a"
+ },
+ "host": {
+  "cpu": "Intel(R) Xeon(R) Platinum 8488C",
+  "uname": "Linux 6.17.0-1019-aws x86_64"
+ },
+ "issue": "SXT-307 / #307 (serves #101 F-038-1)",
+ "patch": {
+  "edited_files": [
+   "src/common/dsp/SurgeVoice.cpp",
+   "src/common/SurgeSynthesizer.cpp"
+  ],
+  "header_sha256": "255bb339eb536ef43dfe11b40ecaea270624d6ad84e736a96c442dc684ef4e1a",
+  "location": "external only (~/oracle-307/patch on the oracle host); NOT in this repository",
+  "new_file": "src/common/sxt307_tap.h",
+  "script_sha256": "c1709a5f06b5d953c541ae92bfc6a141b0a88aa81e3d7e20e62536b5963ccb37"
+ },
+ "route": "option 1: author and validate on an accessible external oracle host (agent-authored; the loom-worker host, Linux x86_64)",
+ "schema": "sxt-307-tap-build-provenance/1"
+}
