@@ -56,18 +56,29 @@ def _path(name):
 @contextlib.contextmanager
 def _isolated_imports():
     """Scripts add model dirs to sys.path and import same-named helpers
-    (e.g. several run_filter_leg.py); restore import state after each."""
-    mods, path = dict(sys.modules), list(sys.path)
+    (e.g. several run_filter_leg.py); restore import state after each.
+
+    Helpers already cached by earlier test modules in a full-suite run would
+    shadow the ones a script imports, so model/ and tools/ modules are evicted
+    on entry (and put back on exit); the result must not depend on test order.
+    """
+    path = list(sys.path)
+    local = tuple(os.path.join(REPO, d) + os.sep for d in ("model", "tools"))
+
+    def _is_local(mod):
+        return (getattr(mod, "__file__", None) or "").startswith(local)
+
+    evicted = {k: m for k, m in sys.modules.items() if _is_local(m)}
+    for k in evicted:
+        del sys.modules[k]
+    before = set(sys.modules)
     try:
         yield
     finally:
         for k in list(sys.modules):
-            if k in mods:
-                continue
-            f = getattr(sys.modules[k], "__file__", None) or ""
-            # only repo-local modules are dropped; third-party (numpy) stay
-            if f.startswith(REPO + os.sep):
+            if k not in before and _is_local(sys.modules[k]):
                 del sys.modules[k]
+        sys.modules.update(evicted)
         sys.path[:] = path
 
 
