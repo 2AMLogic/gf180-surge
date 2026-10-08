@@ -4,6 +4,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-08
 
+- **Issue #351** (closed): Auditor Capability Request: Python runtime for gf180-surge validation
 - **PR #366**: docs(sxt-023): Delay word-length record; d(t) probe BLOCKED (no oracle) -- Part of #16
 - **PR #362**: test: enumerate tools/*_negative_controls.py so no control goes unrun
 - **Issue #355** (closed): Add a test that enumerates tools/*_negative_controls.py so no control goes unrun (14 of 25 unreferenced)
