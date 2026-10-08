@@ -18,16 +18,14 @@ comparisons use declared error budgets.
 
 ## Status
 
-Planning. The executable backlog is defined in
+The executable backlog is defined in
 [docs/surge-xt-chip-plan-v0.1-2026-09-20.md](docs/surge-xt-chip-plan-v0.1-2026-09-20.md)
 and tracked in GitHub issues.
 
-Completed:
-
-- **SXT-000 — preliminary static preset census** of the pinned bundled corpus
-  (3,561 presets, verified against Git blob identities), with reproducible
-  outputs in [corpus/census-v0.1/](corpus/census-v0.1/). This is an
-  inventory and prioritization aid only; it makes no audio-support claim.
+The generated Backlog DAG below is the current source of backlog-node status.
+Board states are bookkeeping derived from committed evidence records; they do
+not independently establish product capability, fidelity, synthesis, hardware
+playback, preset coverage, or musical quality.
 
 Epics:
 
