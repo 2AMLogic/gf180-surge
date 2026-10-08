@@ -109,7 +109,11 @@ jobs:
         with:
           python-version: "3.12"
       - name: Byte-compile repository python
-        run: python3 -m compileall -q tools corpus/census-v0.1
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: >-
+          python3 -I -m compileall -q
+          compiler corpus/census-v0.1 fixtures model oracle probes tests tools refusal.py
 
   tests:
     name: pytest (only when tests exist)
