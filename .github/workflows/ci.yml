@@ -166,6 +166,11 @@ jobs:
           command -v iverilog >/dev/null && command -v vvp >/dev/null || {
             echo "FAIL: iverilog and vvp are both required" >&2; exit 1; }
           start=$(date +%s)
+          # GitHub runs this step as `bash -e`; set -uo pipefail does not clear
+          # that inherited errexit. Disable it explicitly so a failing pytest
+          # still reaches the checker and both statuses are captured.
+          # Failure control: tests/test_rtl_ci_step_errexit.py.
+          set +e
           python3 -m pytest -q -rs -p no:cacheprovider tests --junitxml=rtl-sim-junit.xml
           pytest_rc=$?
           echo "pytest exit status: ${pytest_rc}; duration: $(( $(date +%s) - start ))s"
