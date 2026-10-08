@@ -6,8 +6,9 @@ Issue: #307 · Date: 2026-10-08 · Decision record: `decision-records/0019-lp24-
 `oracle/manifest.json`, tree clean before patching.
 
 **Claim discipline.** This record establishes only that an observation tap for the
-LP 24 dB filter unit exists, builds, is DSP-neutral on one deterministic control, is
-rejected when absent, and what the native control plane looks like relative to the
+LP 24 dB filter unit exists, builds, is rejected when absent (neutrality on the one
+deterministic control is **STALE**: quantized-WAV equality only, raw-sample
+re-derivation NOT_RUN; see §2), and what the native control plane looks like relative to the
 committed SXT-038 case plans. It establishes **no** model-vs-reference agreement,
 **no** full-engine fidelity, **no** preset coverage, **no** musical quality and **no**
 FPGA/gf180mcu or hardware claim. #101 is not closed by it.
