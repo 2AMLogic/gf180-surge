@@ -143,7 +143,16 @@ Re-confirmed against `model/effects/delay/delay_model.py` (header, lines
 | sinc interpolator | FIRipol_N = 12 taps (`FIRIPOL_N`), FIRipol_M phases (`FIRIPOL_M`) |
 | rounding | round-half-up to the target format; exact products |
 | RTL sinc accumulator | exact 64-bit (Q10.21 x Q2.29 = 50 fractional bits, rounded to Q10.21) |
-| line allocation | `MAX_DELAY + FIRIPOL_N` words per channel (ext-mem: 24 reads + 64 writes per frame per instance) |
+| line allocation | `MAX_DELAY + FIRIPOL_N` words per channel |
+| ext-mem traffic per instance | 24 line reads + 2 line writes per sample = 768 reads + 64 writes per 32-sample frame (model `ext_reads += FIRIPOL_N * 2` per sample and `ext_writes += BLOCK * 2` per block in `DelayEffect.process_block`; matches the `artifacts/ext_mem_traffic.json` counters 6,750,720 reads / 562,560 writes = 8,790 blocks x 768 / x 64) |
+
+Note: the "24 line reads + 64 writes per frame = 88 accesses/frame" wording
+in `EVIDENCE.md` A6 and the `rtl/effects/delay/ext_mem_if.md` traffic table
+mixes a per-sample read count with a per-block write count; per frame the
+reads are 768, not 24. `ext_mem_traffic.json` also records
+`frames_rendered: 8550` while its counters correspond to 8,790 blocks.
+`EVIDENCE.md` is sha256-pinned and is not edited here; the correction is
+tracked in #367.
 
 The probe was not run, so nothing here is changed or justified by new
 evidence. #12's rerun may revisit any of these; the reported budget misses
