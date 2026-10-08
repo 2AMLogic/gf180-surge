@@ -351,9 +351,9 @@
         21
       ],
       "status": "PASS",
-      "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls.",
+      "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls. Republished (#353): adapted 164, unresolved 2,265 (Hell's Bells adapted -> unresolved under SXT-026a; supported still 0).",
       "evidence": "reports/coverage-v1/README.md",
-      "evidence_sha256": "a4ea9db50ae19410eaf46560f6c2cd386a8f87ea9a4b8a6598589ec254314557"
+      "evidence_sha256": "e5af501aa338a6c2902b4cbf9fec2e49ca66d2f93f8525bea3c37916419556d1"
     },
     {
       "id": 23,

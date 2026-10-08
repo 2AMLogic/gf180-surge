@@ -123,7 +123,7 @@ def counterfactual_table(dest: Path) -> Path:
     for lid, lf in table["leaves"].items():
         lf["landed"] = True
         lf["verification"] = dict(PASS_VERIF)
-    table["leaves"]["voice:attacky-slice"]["verified_scope"] = "all"
+    table["leaves"][table["voice_leaf_key"]]["verified_scope"] = "all"
     for section in ("routing_leaves", "airwindows_leaves"):
         for lf in table[section].values():
             lf["landed"] = True
@@ -341,6 +341,72 @@ def control_sha_disagree(transcript) -> None:
     transcript.append("    PASS: fail-closed, no outputs written")
 
 
+HB = "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"
+F1_SUBST = "adapted_edit:sxt025_F1_voice_boundary"
+
+
+def control_f1_original_stage(transcript) -> None:
+    transcript.append("NC-F1-ORIGINAL-STAGE: SXT-026a fixture verification "
+                      "removed -> substitution-based adapted class restored (#353)")
+    base = NC_ROOT / "f1-original-stage" / "base"
+    tamp = NC_ROOT / "f1-original-stage" / "tampered"
+    committed = REPO / "reports/coverage-v1/leaf-verification.json"
+    r = run_tool(REPO, base, leaf_table=committed)
+    assert r.returncode == 0, r.stderr
+    b = read_rows(base)
+    hb = {x["path"]: x for x in b}[HB]
+    assert F1_SUBST not in hb["reasons"] and hb["headline_status"] != "adapted", \
+        "committed ledger still carries the substitution-based adapted class"
+    table = json.loads(committed.read_text(encoding="utf-8"))
+    leaf = table["leaves"][table["voice_leaf_key"]]
+    leaf["fixture_verified_paths"] = [
+        x for x in leaf["fixture_verified_paths"] if x != HB]
+    cf = NC_ROOT / "f1-original-stage" / "ledger-no-hb.json"
+    cf.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
+                  encoding="utf-8")
+    r = run_tool(REPO, tamp, leaf_table=cf)
+    assert r.returncode == 0, r.stderr
+    t = {x["path"]: x for x in read_rows(tamp)}[HB]
+    assert t["headline_status"] == "adapted" and F1_SUBST in t["reasons"], \
+        f"substitution class not restored: {t['headline_status']}"
+    transcript.append(f"    committed ledger : {hb['headline_status']} "
+                      "(no substitution reason)")
+    transcript.append(f"    fixture removed  : {t['headline_status']} "
+                      "(adapted_edit:sxt025_F1_voice_boundary restored)")
+    transcript.append("    PASS: control demonstrably restores the old class")
+
+
+def control_voice_pin_corrupt(transcript) -> None:
+    transcript.append("NC-VOICE-PIN-CORRUPT: newly selected voice leaf "
+                      "evidence pin corrupted -> no support-ready gate (#353)")
+    base = NC_ROOT / "voice-pin-corrupt" / "base"
+    tamp = NC_ROOT / "voice-pin-corrupt" / "tampered"
+    cf = counterfactual_table(NC_ROOT / "voice-pin-corrupt" / "cf.json")
+    r = run_tool(REPO, base, leaf_table=cf)
+    assert r.returncode == 0, r.stderr
+    s0, _, _ = load_supported(base)
+    assert len(s0) > 0, "counterfactual world produced no supported presets"
+    table = json.loads(cf.read_text(encoding="utf-8"))
+    key = table["voice_leaf_key"]
+    assert key == "voice:sine-fm-lp24-v2", key
+    ev = table["leaves"][key]["evidence"]
+    ev[-1]["sha256"] = "0" * 64
+    cf2 = NC_ROOT / "voice-pin-corrupt" / "cf-corrupt.json"
+    cf2.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
+                   encoding="utf-8")
+    r = run_tool(REPO, tamp, leaf_table=cf2)
+    assert r.returncode == 0, r.stderr
+    s1, _, _ = load_supported(tamp)
+    rows = read_rows(tamp)
+    assert len(s1) == 0, f"{len(s1)} presets supported with corrupt voice pin"
+    stale = [x for x in rows if x["voice_leaf_gate"] == "STALE"]
+    assert stale and all("stale_leaf:" + key in x["reasons"] for x in stale)
+    transcript.append(f"    baseline supported : {len(s0)}")
+    transcript.append(f"    corrupt-pin supported: {len(s1)} "
+                      f"({len(stale)} rows voice_leaf_gate=STALE)")
+    transcript.append("    PASS: corrupt pin cannot produce a support-ready gate")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--transcript",
@@ -373,6 +439,8 @@ def main() -> int:
         control_row_missing,
         control_sha_disagree,
         control_rng_exclusion,
+        control_f1_original_stage,
+        control_voice_pin_corrupt,
     ]
     if args.only:
         wanted = set(args.only)

@@ -356,12 +356,6 @@
       "leaf_id": "SXT-028f",
       "note": "unlanded; flags its tank state as the batch's largest external-memory candidate [PENDING-SXT-016]"
     },
-    "fx:SXT-026a-voice-scope-extension": {
-      "issue": 48,
-      "landed": false,
-      "leaf_id": "SXT-026a",
-      "note": "first-class F-1 leaf: the landed voice arithmetic covers exactly Attacky (fixture-verified) and Quickspit (arithmetic overlap only, no fixture evidence); until it lands, no compiled corpus preset carrying FX can reach a supported status"
-    },
     "mod:keytrack": {
       "evidence": [
         {
@@ -597,5 +591,5 @@
     "send2"
   ],
   "schema_version": "sxt-029-leaf-verification/1.0.0",
-  "voice_leaf_key": "voice:attacky-slice"
+  "voice_leaf_key": "voice:sine-fm-lp24-v2"
 }

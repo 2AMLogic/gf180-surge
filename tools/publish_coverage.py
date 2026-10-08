@@ -946,12 +946,23 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
                 for r in rows if r["headline_status"] == "supported"
             ],
             "note": (
-                "empty today: the honest result. No compiled preset has a "
-                "verified voice path (F-1: the only two in-slice presets "
-                "carry no FX and only Attacky is fixture-verified), the "
-                "Delay leaf is FAIL, wavetable is partial at deep mips, the "
-                "fidelity freeze (#12) is open, and no listening record "
-                "exists. 1,685 B4 'supported' predictions qualify nothing."
+                "empty today: the honest result. The selected voice leaf ("
+                + table["voice_leaf_key"] + ") fixture-verifies "
+                + str(len(table["leaves"][table["voice_leaf_key"]].get("fixture_verified_paths", [])))
+                + " preset path(s) (original voice stage; SXT-026a #48), "
+                "but its model-vs-reference verdict is "
+                + str(table["leaves"][table["voice_leaf_key"]]
+                      .get("verification", {})
+                      .get("model_vs_reference", "unrecorded"))
+                + " against the [PROPOSED] budgets, so no compiled preset "
+                "has a verified voice path; fixture verification and exact "
+                "RTL agreement are not fidelity or support. The Delay leaf "
+                "is FAIL, wavetable is partial at deep mips, the fidelity "
+                "freeze (#12) is open, and no listening record exists. "
+                "The earlier SXT-025 dry-bus substitution diagnostic is "
+                "historical and superseded for F-1 by the SXT-026a "
+                "original-stage run. B4 'supported' predictions qualify "
+                "nothing."
             ),
         },
         "favorites_slates": slate_cov,
