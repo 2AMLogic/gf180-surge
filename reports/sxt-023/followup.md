@@ -122,3 +122,58 @@ not part of `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}`
 and have no recorded post-#110 re-measurement. Re-running the cited tools
 would produce the current numbers; nothing here is a frozen or re-verified
 claim either way.
+
+## Issue #16 increment (2026-10-08): word-length assumption record; engine probe BLOCKED
+
+Scope of this section: deliverable 3 of the revised issue #16 (record the
+word-length assumption for #12's cost-closure rerun) and an honest status for
+deliverables 1-2. No model, RTL, fixture, or budget was changed.
+
+### Word-length assumption this leaf was built against
+
+Re-confirmed against `model/effects/delay/delay_model.py` (header, lines
+47-49) and `model/effects/qmath.py` on this date:
+
+| item | format / value |
+|---|---|
+| audio words and delay lines | Q10.21, signed 32-bit (LSB 2^-21) |
+| sinc taps (table) | Q2.29, signed 32-bit |
+| block-rate gain ramps | Q13.18, signed 32-bit |
+| biquad, delay-time (lag), LFO state | Q24.43, signed 64-bit |
+| sinc interpolator | FIRipol_N = 12 taps (`FIRIPOL_N`), FIRipol_M phases (`FIRIPOL_M`) |
+| rounding | round-half-up to the target format; exact products |
+| RTL sinc accumulator | exact 64-bit (Q10.21 x Q2.29 = 50 fractional bits, rounded to Q10.21) |
+| line allocation | `MAX_DELAY + FIRIPOL_N` words per channel |
+| ext-mem traffic per instance | 24 line reads + 2 line writes per sample = 768 reads + 64 writes per 32-sample frame (model `ext_reads += FIRIPOL_N * 2` per sample and `ext_writes += BLOCK * 2` per block in `DelayEffect.process_block`; matches the `artifacts/ext_mem_traffic.json` counters 6,750,720 reads / 562,560 writes = 8,790 blocks x 768 / x 64) |
+
+Note: the "24 line reads + 64 writes per frame = 88 accesses/frame" wording
+in `EVIDENCE.md` A6 and the `rtl/effects/delay/ext_mem_if.md` traffic table
+mixes a per-sample read count with a per-block write count; per frame the
+reads are 768, not 24. `ext_mem_traffic.json` also records
+`frames_rendered: 8550` while its counters correspond to 8,790 blocks.
+`EVIDENCE.md` is sha256-pinned and is not edited here; the correction is
+tracked in #367.
+
+The probe was not run, so nothing here is changed or justified by new
+evidence. #12's rerun may revisit any of these; the reported budget misses
+(metallic -33.5 dBFS, dexie -44.2 dBFS rms vs -46) were diagnosed as
+LFO-to-delay-time presence, not as a word-length effect (static path with
+depth 0: dexie -109.6 dBFS, metallic -53.3 dBFS; non-committed renders, not
+re-measured here).
+
+### Status of the remaining increment (this run)
+
+| item | status | reason |
+|---|---|---|
+| d(t) engine impulse-train probe (deliverable 1) | BLOCKED | The pinned surgepy oracle is not available on this dispatch worker: no built `surgepy*.so` anywhere on the host, `/home/ubuntu/oracle-307` holds only an incomplete configure (no build products), `ORACLE_SURGE_DIR`/`ORACLE_PREBUILT_URL` are unset and the manifest `prebuilt` store is not reachable. A from-source JUCE/Surge build is not appropriate on this shared 8-vCPU host. No engine numbers were fabricated. |
+| Model revision (deliverable 2) | NOT_RUN | Depends on the probe; revising the model without the engine trajectory would be tuning, not mirroring. |
+| Delay model-vs-engine, metallic and dexie | FAIL (unchanged, from committed records; not re-run) | -33.5 / -44.2 dBFS rms vs -46; tail gate FAIL. |
+| Delay RTL-vs-model exactness | PASS as recorded (PR #46); NOT_RUN here | no model change. |
+| EQ regression | PASS as recorded; NOT_RUN here | no change. |
+| NC-a / NC-b / NC-e re-derivation | NOT_RUN | no revised baseline to re-derive against. |
+
+To resume: provision the prebuilt oracle (`oracle/fetch-and-build.sh --prebuilt`
+with `ORACLE_PREBUILT_URL`) on a host that has it, then run the d(t) probe by
+extending `tools/diagnose_delay_engine_probe.py`. If the probe plus a faithful
+model revision cannot meet the budgets, the issue's stop clause applies:
+leave the rows FAIL and route to #12 per `delay-budget-diagnosis.md` section 3.
