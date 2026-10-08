@@ -132,10 +132,65 @@ jobs:
             # (~0.6% 1-ulp divergence), and np.float32 contagion (NEP 50) from
             # _db_to_linear into _coeff_orfanidis double math changes rounding.
             python3 -m pip install --quiet numpy pytest
-            python3 -m pytest -q tests
+            # -rs prints every skip reason so skipped (NOT_RUN) tests are visible.
+            python3 -m pytest -q -rs tests
           else
             echo "NOT_RUN: no tests/ directory with test files in this tree; pytest was not executed (coverage: none — this is not a pass)."
           fi
+
+  rtl-sim:
+    name: pytest with Icarus Verilog (simulator skips are failures)
+    runs-on: ubuntu-24.04
+    env:
+      # Package-version strategy: pin the exact Ubuntu 24.04 (noble) apt
+      # version. If apt cannot install exactly this version the job fails
+      # visibly; bumping it is a deliberate edit, not a silent drift.
+      IVERILOG_APT_VERSION: "12.0-2build2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned Icarus Verilog
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends "iverilog=${IVERILOG_APT_VERSION}"
+          command -v iverilog >/dev/null || { echo "FAIL: iverilog not on PATH" >&2; exit 1; }
+          command -v vvp >/dev/null || { echo "FAIL: vvp not on PATH" >&2; exit 1; }
+          echo "resolved package: $(dpkg-query -W -f='${Package} ${Version}\n' iverilog)"
+          iverilog -V | head -n 1
+          vvp -V | head -n 1
+      - name: Install python dependencies
+        run: python3 -m pip install --quiet numpy pytest
+      - name: Run pytest (JUnit XML) and gate on simulator skips
+        run: |
+          set -uo pipefail
+          # Fail before collection if either simulator binary is missing.
+          command -v iverilog >/dev/null && command -v vvp >/dev/null || {
+            echo "FAIL: iverilog and vvp are both required" >&2; exit 1; }
+          start=$(date +%s)
+          # GitHub runs this step as `bash -e`; set -uo pipefail does not clear
+          # that inherited errexit. Disable it explicitly so a failing pytest
+          # still reaches the checker and both statuses are captured.
+          # Failure control: tests/test_rtl_ci_step_errexit.py.
+          set +e
+          python3 -m pytest -q -rs -p no:cacheprovider tests --junitxml=rtl-sim-junit.xml
+          pytest_rc=$?
+          echo "pytest exit status: ${pytest_rc}; duration: $(( $(date +%s) - start ))s"
+          python3 tools/check_rtl_ci_results.py rtl-sim-junit.xml
+          check_rc=$?
+          echo "report checker exit status: ${check_rc}"
+          # Both statuses are independent; neither may mask the other.
+          if [ "${pytest_rc}" -ne 0 ]; then exit "${pytest_rc}"; fi
+          exit "${check_rc}"
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rtl-sim-junit
+          path: rtl-sim-junit.xml
+          if-no-files-found: warn
 
   dag-check:
     name: backlog DAG + board freshness
