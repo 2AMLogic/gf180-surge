@@ -56,9 +56,11 @@
 
 ## Consequences
 
-- #101 has a reachable, pinned, neutral observation source for the LP24 filter
-  unit. **No fidelity, coverage, musical-quality or hardware claim follows**
-  from this record: it is infrastructure plus availability findings.
+- #101 has a reachable, pinned observation source for the LP24 filter unit
+  whose neutrality is not yet re-derived on raw samples (EVIDENCE §2:
+  quantized-WAV equality only, STALE; raw re-derivation NOT_RUN). **No
+  fidelity, coverage, musical-quality or hardware claim follows** from this
+  record: it is infrastructure plus availability findings.
 - The declared case plans (FEG fixture trajectory, fixed per-segment length,
   stimulus from the SXT-037 bundles) are not what a native render produces, so
   the unchanged runner currently REFUSES all eleven cases at the first gate
