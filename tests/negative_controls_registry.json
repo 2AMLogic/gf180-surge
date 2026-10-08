@@ -1,0 +1,267 @@
+{
+ "schema": 1,
+ "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir.",
+ "scripts": {
+  "aw4": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "aw49": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "chorus": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": true,
+   "requires": [],
+   "reason": "~110 s"
+  },
+  "conditioner": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "control": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT",
+    "REPORTS"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "coverage": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--transcript",
+    "{tmp}/coverage.txt"
+   ],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "distortion": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--out",
+    "{tmp}/distortion"
+   ],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "distortion_sse": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--out",
+    "{tmp}/distortion_sse"
+   ],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "fx_rng": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--outdir",
+    "{tmp}/fx_rng"
+   ],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "kt": {
+   "status": "NOT_RUN:needs-oracle",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "requires --reference mono int16 dry reference rendered by the pinned Surge engine"
+  },
+  "lfo": {
+   "status": "NOT_RUN:needs-oracle",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-lfo-fixture.wav)"
+  },
+  "lp12": {
+   "status": "NOT_RUN:needs-oracle",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "requires reference bundles (reports/sxt-037/artifacts/bundle-*) built from pinned-engine renders; absent from the repo"
+  },
+  "lp24": {
+   "status": "NOT_RUN:needs-oracle",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "requires reference bundles (reports/SXT-038/artifacts/bundle-*) built from pinned-engine renders; absent from the repo"
+  },
+  "lpmoog": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--artifact-dir",
+    "{tmp}/lpmoog",
+    "--run-root",
+    "{tmp}"
+   ],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "mw": {
+   "status": "NOT_RUN:needs-oracle",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-mw-fixture.wav)"
+  },
+  "phaser": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT",
+    "ART"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "reverb": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": true,
+   "requires": [],
+   "reason": "~107 s"
+  },
+  "reverb2": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--out",
+    "{tmp}/reverb2/negative-controls.json"
+   ],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "rf_ains34": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "rf_bins12": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "rf_global2": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": ""
+  },
+  "rf_global34": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "rf_send34": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [
+    "iverilog"
+   ],
+   "reason": ""
+  },
+  "slfo": {
+   "status": "NOT_RUN:needs-oracle",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-slfo fixture)"
+  },
+  "vel": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--artifacts",
+    "{tmp}/vel"
+   ],
+   "slow": true,
+   "requires": [],
+   "reason": "~64 s"
+  }
+ }
+}
