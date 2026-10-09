@@ -1,0 +1,18 @@
+PASS image/parse — 15401 bytes
+PASS image/graph-lossless — rebuilt graph hash vs header
+PASS image/body-sha
+PASS image/format
+PASS image/profile-draft
+image ok True
+PASS alloc/on-chip-agrees — 198144 vs 198144
+PASS alloc/external-agrees — 4325376 vs 4325376
+PASS alloc/flash-agrees
+PASS alloc/bandwidth-agrees
+PASS alloc/per-instance-blocks — 4 blocks vs 4 instances
+PASS alloc/instance-sizes-and-regions
+PASS alloc/on-chip-budget
+PASS alloc/external-budget
+PASS alloc/bandwidth-budget
+PASS alloc/budgets-match-image-spec
+PASS alloc/no-hidden-cycle-gate
+alloc ok True

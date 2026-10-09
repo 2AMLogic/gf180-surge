@@ -94,6 +94,68 @@ def image_checks(container_bytes, expect=None):
 # allocation reconciliation
 # --------------------------------------------------------------------------
 
+def _is_int(v):
+    return isinstance(v, int) and not isinstance(v, bool)
+
+
+def layout_checks(alloc, instances):
+    """Offset/interval/ownership checks on an allocation section (issue #392).
+
+    Each address space (on_chip, external_writable, flash_assets) is checked
+    independently: equal numeric offsets in different regions are not an
+    overlap. Zero-length blocks are accepted (they must still carry an integer
+    nonnegative offset <= total) and take no part in the overlap test.
+    `instances` is the expected list of fx instances (SXT-015 account).
+    Structural checks only; no hardware-state-isolation claim.
+    """
+    ok = True
+    regions = ("on_chip", "external_writable", "flash_assets")
+    for reg in regions:
+        sec = alloc[reg]
+        blocks = sec["blocks"]
+        total = sec["total_bytes"]
+        typed = all(_is_int(b.get("offset")) and _is_int(b.get("size_bytes"))
+                    and b["offset"] >= 0 and b["size_bytes"] >= 0
+                    for b in blocks) and _is_int(total) and total >= 0
+        ok &= check("alloc/offsets-integer-nonneg/%s" % reg, typed,
+                    "%d blocks" % len(blocks))
+        if not typed:
+            ok &= check("alloc/blocks-contained/%s" % reg, False,
+                        "skipped: non-integer or negative offset/size")
+            ok &= check("alloc/no-overlap/%s" % reg, False,
+                        "skipped: non-integer or negative offset/size")
+            continue
+        bad = [b["name"] for b in blocks
+               if b["offset"] > total or b["offset"] + b["size_bytes"] > total]
+        ok &= check("alloc/blocks-contained/%s" % reg, not bad,
+                    ("out of range: %s" % ",".join(map(str, bad))) if bad
+                    else "all blocks within total %d" % total)
+        live = sorted((b for b in blocks if b["size_bytes"] > 0),
+                      key=lambda b: (b["offset"], b["name"]))
+        clash = [(a["name"], b["name"]) for a, b in zip(live, live[1:])
+                 if b["offset"] < a["offset"] + a["size_bytes"]]
+        ok &= check("alloc/no-overlap/%s" % reg, not clash,
+                    ("overlap: %s" % clash) if clash else "no overlaps")
+    inst = [b for reg in ("on_chip", "external_writable")
+            for b in alloc[reg]["blocks"] if b["kind"] == "fx_instance_state"]
+    slots = [b.get("slot") for b in inst]
+    want = sorted(e["slot"] for e in instances)
+    ok &= check("alloc/unique-slot-ownership",
+                len(set(slots)) == len(slots) and sorted(slots) == want,
+                "block slots %s vs instance slots %s" % (sorted(slots), want))
+    # the duplicated fx_instances placement copy must agree with the blocks
+    where = {}
+    for reg in ("on_chip", "external_writable"):
+        for b in alloc[reg]["blocks"]:
+            if b["kind"] == "fx_instance_state":
+                where[b.get("slot")] = (reg, b["offset"], b["size_bytes"])
+    agree = all(where.get(e.get("slot")) == (e.get("region"), e.get("offset"),
+                                             e.get("size_bytes"))
+                for e in alloc.get("fx_instances", []))
+    ok &= check("alloc/fx-instances-agree-with-blocks", agree)
+    return ok
+
+
 def alloc_checks(parsed, spec):
     """Recompute the SXT-015 account for the image's source graph and require
     agreement with the image's allocation section, then check bundle budgets."""
@@ -143,6 +205,7 @@ def alloc_checks(parsed, spec):
                    for x in alloc[want_region]["blocks"]):
             region_ok = False
     ok &= check("alloc/instance-sizes-and-regions", region_ok)
+    ok &= layout_checks(alloc, acc["fx_instances"])
     # bundle budgets (from the image's own recorded spec)
     bud = alloc["budgets"]
     ok &= check("alloc/on-chip-budget",
@@ -366,6 +429,99 @@ def negative_controls(golden_dir=GOLDEN_DIR):
             ".rejection.json", ".image.bin"))
         ok &= check("nc4/no-image-for-%s" % rec.name.split("__")[0],
                     not img.exists())
+
+    # NC5 (issue #392): allocation-layout controls. Each mutation rewrites the
+    # golden four-fx-instance body, then recomputes body_sha256 and the
+    # container digest, so image/* checks PASS and only the allocation layout
+    # check named below can catch it. The inner check output is captured, not
+    # printed, so an expected FAIL is not confused with a control failing.
+    ok &= layout_controls(golden_dir, spec_b4)
+    return ok
+
+
+def _mutated_image(golden_dir, mutate):
+    import copy
+    data = (golden_dir / "compiled" / "four-fx-instance.image.bin").read_bytes()
+    parsed = C.parse_image(data)
+    header, body = copy.deepcopy(parsed["header"]), copy.deepcopy(parsed["body"])
+    mutate(body["derived"]["allocations"])
+    header["body_sha256"] = hashlib.sha256(C.canonical_json(body)).hexdigest()
+    return C.build_container(header, body)
+
+
+def _quiet_verify(container, spec):
+    """Run image + alloc checks silently; return {check name: passed}."""
+    import contextlib
+    import io
+    start = len(RESULTS)
+    with contextlib.redirect_stdout(io.StringIO()):
+        _ok, parsed = image_checks(container)
+        if parsed is not None:
+            alloc_checks(parsed, spec)
+    got = RESULTS[start:]
+    del RESULTS[start:]
+    return {n: s for n, s, _ in got}
+
+
+def _set_block(al, region, which, **kv):
+    for b in al[region]["blocks"]:
+        if b.get("slot") == which and b["kind"] == "fx_instance_state":
+            b.update(kv)
+    for e in al["fx_instances"]:
+        if e["slot"] == which:
+            e.update({k: v for k, v in kv.items() if k in ("offset",
+                                                          "size_bytes")})
+
+
+def layout_controls(golden_dir, spec):
+    ok = True
+    ext, onc = "external_writable", "on_chip"
+
+    def dup_owner(al):
+        _set_block(al, ext, 5, slot=4)
+
+    def zero_len(al):
+        # a zero-length block at a legal offset (== total) is accepted
+        al[ext]["blocks"].append({"kind": "fx_instance_state_probe",
+                                  "name": "zero_len_probe", "offset":
+                                  al[ext]["total_bytes"], "size_bytes": 0})
+
+    # (label, mutation, check that must FAIL or None for must-pass)
+    negatives = (
+        ("overlap", lambda al: _set_block(al, ext, 5, offset=0),
+         "alloc/no-overlap/external_writable"),
+        ("overlap-on-chip", lambda al: _set_block(al, onc, 1, offset=181760),
+         "alloc/no-overlap/on_chip"),
+        ("out-of-range", lambda al: _set_block(
+            al, ext, 5, offset=al[ext]["total_bytes"] - 1),
+         "alloc/blocks-contained/external_writable"),
+        ("negative-offset", lambda al: _set_block(al, ext, 4, offset=-1),
+         "alloc/offsets-integer-nonneg/external_writable"),
+        ("bool-offset", lambda al: _set_block(al, ext, 4, offset=True),
+         "alloc/offsets-integer-nonneg/external_writable"),
+        ("duplicate-slot-ownership", dup_owner, "alloc/unique-slot-ownership"),
+    )
+    for label, mut, want in negatives:
+        res = _quiet_verify(_mutated_image(golden_dir, mut), spec)
+        image_ok = all(v for n, v in res.items() if n.startswith("image/"))
+        ok &= check("nc5/%s-fails-%s" % (label, want),
+                    image_ok and res.get(want) is False,
+                    "image checks pass=%s; targeted check=%s"
+                    % (image_ok, res.get(want)))
+    # positives: the unmutated golden (on_chip voice_state @0 and external
+    # fx_slot_4 @0 already share offset 0 across address spaces) and a
+    # zero-length block must both pass every layout check.
+    for label, mut in (("cross-address-space-equal-offsets", lambda al: None),
+                       ("zero-length-block", zero_len)):
+        res = _quiet_verify(_mutated_image(golden_dir, mut), spec)
+        lay = {n: v for n, v in res.items()
+               if n.startswith("alloc/") and ("offsets" in n or "contained" in n
+                                              or "overlap" in n
+                                              or "ownership" in n)}
+        ok &= check("nc5/%s-accepted" % label,
+                    bool(lay) and all(lay.values())
+                    and all(v for n, v in res.items() if n.startswith("image/")),
+                    "%d layout checks" % len(lay))
     return ok
 
 

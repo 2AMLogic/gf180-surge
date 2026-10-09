@@ -171,3 +171,33 @@ def test_golden_manifest_covers_the_required_span():
         assert c["expected"]["codes"]
     for c in compiled:
         assert c["expected"]["image_sha256"]
+
+
+def _write_mutated_four_fx(tmp_path, mutate):
+    sys.path.insert(0, str(REPO))
+    from compiler import verify as V
+    out = tmp_path / "mutated.image.bin"
+    out.write_bytes(V._mutated_image(V.GOLDEN_DIR, mutate))
+    return out
+
+
+def test_alloc_overlap_fails_cli_and_is_checksum_valid(tmp_path):
+    """Issue #392: a checksum-valid overlap passes `image` but fails `alloc`."""
+    def overlap(al):
+        for b in al["external_writable"]["blocks"]:
+            if b.get("slot") == 5:
+                b["offset"] = 0
+        for e in al["fx_instances"]:
+            if e["slot"] == 5:
+                e["offset"] = 0
+    img = _write_mutated_four_fx(tmp_path, overlap)
+    assert run_py(VERIFY, "image", str(img)).returncode == 0
+    r = run_py(VERIFY, "alloc", str(img))
+    assert r.returncode != 0
+    assert "FAIL alloc/no-overlap/external_writable" in r.stdout
+
+
+def test_alloc_unmutated_golden_passes_cli():
+    img = COMPILER / "golden" / "compiled" / "four-fx-instance.image.bin"
+    r = run_py(VERIFY, "alloc", str(img))
+    assert r.returncode == 0, r.stdout
