@@ -8,7 +8,8 @@ committed evidence:
 
     supported  = normalized AND compiled AND every required leaf verified
                  (voice slice, all active FX classes, wavetable envelope,
-                 routing forms) AND the fidelity-freeze gate PASS.
+                 routing forms) AND the fidelity-freeze gate PASS AND a
+                 preset-scoped complete-wet INTEGRATION record PASS (#384).
     adapted    = renderable only with disclosed edits per committed records
                  (SXT-017 polylimit-reduction policy; SXT-025 finding F-1).
                  Never counted toward supported.
@@ -22,6 +23,17 @@ SXT-017 B4-broad prediction appears only as a prospective per-row column and
 is never an input to the headline status. Coverage (counts) is reported
 separately from agreement (fidelity metrics live only in the linked evidence
 records) and from listening outcomes (none exist; #8/#9 BLOCKED).
+
+Leaf agreement is not complete-preset qualification (#384): every leaf on a
+preset's path may be verified and the fidelity policy frozen, yet nothing has
+shown that THIS preset's original wet graph -- voice plus every selected
+effect, in its stored placement/order, with per-instance state, gain, timing
+and tails -- passes that policy when integrated. The integration gate reads
+that per-preset claim from the hash-pinned integration ledger
+(reports/coverage-v1/integration-ledger.json). A missing record is NOT_RUN;
+it is never inferred from leaf matches, closed issues, file existence or
+refreshed hashes. Disclosed ADAPTED integration runs (e.g. the SXT-025
+dry-bus substitution) are recorded but can never authorize original support.
 
 FAIL-CLOSED: every structural input is pinned by its full sha256; a missing
 or mismatched input REFUSES the run (exit 2), as does any reconciliation gap
@@ -42,6 +54,7 @@ no clock, no randomness, fixed column order). Python 3 standard library only.
 
 import argparse
 import csv
+import hashlib
 import json
 import sys
 from collections import Counter
@@ -54,8 +67,8 @@ sys.path.insert(0, str(REPO_ROOT))
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
-TOOL_VERSION = "sxt-029-coverage/1.0.0"
-SCHEMA_VERSION = "sxt-029-coverage/1.0.0"
+TOOL_VERSION = "sxt-029-coverage/1.1.0"
+SCHEMA_VERSION = "sxt-029-coverage/1.1.0"
 ISSUE = "SXT-029 (#22)"
 
 GRAPH_DEFAULT = "corpus/normalized/graphs.jsonl"
@@ -79,6 +92,17 @@ TABLE_DEFAULT = "reports/coverage-v1/leaf-verification.json"
 # SXT-010 manifest. Published as a coverage REDUCTION: the denominators do
 # not move, the affected presets can never be reported supported.
 RNG_EXCLUSION_DEFAULT = "reports/SXT-028-rng/artifacts/coverage-impact.json"
+# #384: preset-scoped complete-wet integration ledger. Keyed by corpus
+# bank/path/blob identity and qualification scope; its records pin the
+# normalized graph, patch image, oracle fixture, event sequence, frozen
+# fidelity policy and integrated model/RTL evidence by full sha256.
+INTEGRATION_LEDGER_DEFAULT = "reports/coverage-v1/integration-ledger.json"
+INTEGRATION_SCHEMA = "sxt-029-integration-ledger/1.0.0"
+INTEGRATION_ASPECTS = ["timing", "gain", "routing_order",
+                       "per_instance_state", "tails"]
+INTEGRATION_SCOPES = ["original", "adapted"]
+INTEGRATION_PINNED_FIELDS = ["patch_image", "oracle_fixture",
+                             "event_sequence"]
 
 # Full sha256 pins of the structural inputs (no truncation). A mismatch
 # REFUSES the run. Legitimate data updates are visible contract revisions:
@@ -117,6 +141,8 @@ STRUCTURAL_INPUTS = {
     SELECTION_SCAN: "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f",
     # added by #122 (decision record 0013): measured FX-RNG exclusion set.
     RNG_EXCLUSION_DEFAULT: "c358b4764f2d789cdd663237639216cdf25849f54ef0b75a7c7eee3c44ed26aa",
+    # added by #384: preset-scoped complete-wet integration ledger.
+    INTEGRATION_LEDGER_DEFAULT: "a945e96c522747fe942c216761424e18f1175a5f3cfd7a0a9047c828f6e49b3a",
 }
 
 STATUS_VOCAB = ["PASS", "FAIL", "NOT_RUN", "BLOCKED", "NO_VERDICT", "STALE"]
@@ -143,7 +169,8 @@ CSV_COLUMNS = [
     "normalized", "compile_gate", "compile_codes",
     "voice_leaf_gate", "fx_leaves_gate", "fx_rng_gate",
     "wavetable_leaf_gate",
-    "routing_leaves_gate", "fidelity_contract_gate", "essentiality_listening",
+    "routing_leaves_gate", "fidelity_contract_gate",
+    "integration_gate", "integration_record", "essentiality_listening",
     "fx_required", "b4_prediction", "slates", "reasons",
 ]
 
@@ -197,6 +224,201 @@ def evidence_state(repo: Path, evidence: list) -> tuple:
     return "OK", ""
 
 
+# ------------------------------------------------- integration gate (#384)
+
+def graph_sha256(g: dict) -> str:
+    """Normalized-graph identity: the same canonical-JSON sha256 the compiler
+    stamps into every image header (compiler/compile.py::graph_sha256)."""
+    data = json.dumps(g, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=True, allow_nan=False).encode("utf-8")
+    return hashlib.sha256(data).hexdigest()
+
+
+def required_fx(g: dict) -> list:
+    """Required effect instances: slot ON and not in the fx_disable mask --
+    the compile scan's notion, shared by every gate in this tool."""
+    fxd = g.get("fxd", 0)
+    return [fx for fx in g.get("fx", [])
+            if fx.get("on") == 1 and not (fxd & (1 << fx["i"]))]
+
+
+def fx_placement_order(g: dict) -> list:
+    """Placement/order identity of the ORIGINAL wet graph: one entry per
+    required effect instance, in stored slot order, naming slot index,
+    routing role and effect class (Airwindows sub-type included). Two
+    instances of the same class are two entries (per-instance state)."""
+    out = []
+    for fx in sorted(required_fx(g), key=lambda f: f["i"]):
+        tn = fx["tn"]
+        if tn == "Airwindows":
+            tn = f"Airwindows:aw{fx.get('aw')}"
+        out.append(f"{fx['i']}:{fx['r']}:{tn}")
+    return out
+
+
+def _pin_ok(item) -> bool:
+    return (isinstance(item, dict) and isinstance(item.get("path"), str)
+            and isinstance(item.get("sha256"), str)
+            and len(item["sha256"]) == 64)
+
+
+def load_integration_ledger(path: Path, by_path: dict,
+                            allow_synthetic: bool) -> dict:
+    """Validate the ledger shape fail-closed (REFUSE on malformed records).
+
+    Shape errors refuse; evidential problems (stale pins, identity
+    mismatches, failed legs) do NOT refuse -- they are per-preset gate
+    verdicts evaluated later, so they can never be silently dropped.
+    Returns {corpus path: [record, ...]}.
+    """
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    if doc.get("schema_version") != INTEGRATION_SCHEMA:
+        raise Refuse(f"integration ledger schema {doc.get('schema_version')!r} "
+                     f"!= {INTEGRATION_SCHEMA}")
+    if doc.get("required_aspects") != INTEGRATION_ASPECTS:
+        raise Refuse("integration ledger required_aspects disagree with the "
+                     f"tool ({INTEGRATION_ASPECTS})")
+    records = doc.get("records")
+    if not isinstance(records, list):
+        raise Refuse("integration ledger has no records list")
+    by_preset = {}
+    seen_ids = set()
+    for rec in records:
+        rid = rec.get("record_id")
+        if not isinstance(rid, str) or not rid:
+            raise Refuse("integration record without record_id")
+        if rid in seen_ids:
+            raise Refuse(f"duplicate integration record_id {rid}")
+        seen_ids.add(rid)
+        for k in ("bank", "path", "blob_sha1", "normalized_graph_sha256"):
+            if not isinstance(rec.get(k), str) or not rec[k]:
+                raise Refuse(f"integration record {rid}: missing {k}")
+        if rec["path"] not in by_path:
+            raise Refuse(f"integration record {rid}: path not in corpus: "
+                         f"{rec['path']}")
+        if rec.get("qualification_scope") not in INTEGRATION_SCOPES:
+            raise Refuse(f"integration record {rid}: qualification_scope must "
+                         f"be one of {INTEGRATION_SCOPES}")
+        if rec["qualification_scope"] == "adapted" and not str(
+                rec.get("adaptation") or "").strip():
+            raise Refuse(f"integration record {rid}: adapted scope must "
+                         "disclose its adaptation")
+        if rec.get("synthetic") and not allow_synthetic:
+            raise Refuse(f"integration record {rid} is a SYNTHETIC control "
+                         "fixture; synthetic records are never valid in a "
+                         "published run")
+        if not isinstance(rec.get("fx_placement_order"), list):
+            raise Refuse(f"integration record {rid}: missing fx_placement_order")
+        for k in INTEGRATION_PINNED_FIELDS:
+            if not _pin_ok(rec.get(k)):
+                raise Refuse(f"integration record {rid}: {k} must be a "
+                             "{path, sha256} pin")
+        pol = rec.get("fidelity_policy")
+        if pol is not None and not _pin_ok(pol):
+            raise Refuse(f"integration record {rid}: fidelity_policy must be "
+                         "null or a {path, sha256} pin")
+        ev = rec.get("evidence")
+        if not isinstance(ev, list) or not ev or not all(_pin_ok(i) for i in ev):
+            raise Refuse(f"integration record {rid}: evidence must be a "
+                         "non-empty list of {path, sha256} pins")
+        for leg in ("rtl_vs_model", "model_vs_reference"):
+            if rec.get(leg) not in STATUS_VOCAB:
+                raise Refuse(f"integration record {rid}: {leg} status "
+                             f"{rec.get(leg)!r} not in {STATUS_VOCAB}")
+        aspects = rec.get("aspects")
+        if not isinstance(aspects, dict) or sorted(aspects) != sorted(
+                INTEGRATION_ASPECTS):
+            raise Refuse(f"integration record {rid}: aspects must name exactly "
+                         f"{INTEGRATION_ASPECTS}")
+        for a, st in aspects.items():
+            if st not in STATUS_VOCAB:
+                raise Refuse(f"integration record {rid}: aspect {a} status "
+                             f"{st!r} not in {STATUS_VOCAB}")
+        if rec.get("blocker") is not None and not str(rec["blocker"]).strip():
+            raise Refuse(f"integration record {rid}: empty blocker")
+        by_preset.setdefault(rec["path"], []).append(rec)
+    for p, recs in by_preset.items():
+        if sum(1 for r in recs if r["qualification_scope"] == "original") > 1:
+            raise Refuse(f"more than one original-scope integration record "
+                         f"for {p}; the ledger must name one")
+    return {"doc": doc, "by_preset": by_preset}
+
+
+def evaluate_integration(repo: Path, entry: dict, records: list,
+                         frozen_policy) -> tuple:
+    """Per-preset integration verdict. Returns (status, record_id, reasons).
+
+    Only an ORIGINAL-scope record whose preset identity (bank, path, blob),
+    normalized-graph identity and placement/order identity all match this
+    corpus entry, whose every pin re-hashes, which carries no blocker, whose
+    fidelity policy IS the frozen policy, and whose RTL-vs-model leg,
+    model-vs-reference leg and every required aspect are PASS, yields PASS.
+    """
+    g = entry.get("g", {})
+    reasons = []
+    originals = [r for r in records if r["qualification_scope"] == "original"]
+    for r in records:
+        if r["qualification_scope"] == "adapted":
+            reasons.append(
+                f"integration_adapted_only:{r['record_id']}"
+                "(disclosed-adaptation-cannot-authorize-original-support)")
+    if not originals:
+        if not records:
+            reasons.append(
+                "integration_not_run:no-preset-scoped-complete-wet-record")
+        return "NOT_RUN", "", reasons
+    r = originals[0]
+    rid = r["record_id"]
+    if r["bank"] != entry["b"] or r["blob_sha1"] != entry["sha"]:
+        reasons.append(
+            f"integration_preset_identity_mismatch:{rid}"
+            f"(record {r['bank']}/{r['blob_sha1']} != corpus "
+            f"{entry['b']}/{entry['sha']})")
+        return "NOT_RUN", rid, reasons
+
+    status = ""
+    pins = [r[k] for k in INTEGRATION_PINNED_FIELDS] + list(r["evidence"])
+    if r.get("fidelity_policy") is not None:
+        pins.append(r["fidelity_policy"])
+    state, detail = evidence_state(repo, pins)
+    if state == "STALE":
+        status = worst(status, "STALE")
+        reasons.append(f"integration_evidence_stale:{rid}({detail})")
+    if r["normalized_graph_sha256"] != graph_sha256(g):
+        status = worst(status, "STALE")
+        reasons.append(f"integration_graph_identity_mismatch:{rid}"
+                       "(record graph is not this preset's normalized graph)")
+    if r["fx_placement_order"] != fx_placement_order(g):
+        status = worst(status, "STALE")
+        reasons.append(f"integration_order_identity_mismatch:{rid}"
+                       f"(record {'|'.join(r['fx_placement_order'])} != "
+                       f"graph {'|'.join(fx_placement_order(g))})")
+    if r.get("blocker"):
+        status = worst(status, "BLOCKED")
+        reasons.append(f"integration_blocked:{rid}({r['blocker']})")
+    pol = r.get("fidelity_policy")
+    if frozen_policy is None or pol is None:
+        status = worst(status, "NO_VERDICT")
+        reasons.append(f"integration_policy_not_frozen:{rid}"
+                       "(no-frozen-fidelity-policy-identity,#12)")
+    elif (pol["path"], pol["sha256"]) != (frozen_policy["path"],
+                                          frozen_policy["sha256"]):
+        status = worst(status, "STALE")
+        reasons.append(f"integration_policy_identity_mismatch:{rid}"
+                       "(record policy is not the frozen policy)")
+    for leg in ("rtl_vs_model", "model_vs_reference"):
+        st = r[leg]
+        status = worst(status, st)
+        if st != "PASS":
+            reasons.append(f"integration_{leg}_{st}:{rid}")
+    for a in INTEGRATION_ASPECTS:
+        st = r["aspects"][a]
+        status = worst(status, st)
+        if st != "PASS":
+            reasons.append(f"integration_aspect_{a}_{st}:{rid}")
+    return status, rid, reasons
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--repo-root", default=str(REPO_ROOT))
@@ -218,6 +440,12 @@ def main() -> int:
                     help="ignore the #122/DR-0013 FX-RNG exclusion gate "
                          "(negative-control scenarios only, to show the gate "
                          "is load-bearing). Never valid for a published run.")
+    ap.add_argument("--integration-ledger", default=None,
+                    help="override the committed #384 preset-scoped "
+                         "complete-wet integration ledger (negative-control "
+                         "scenarios only; SYNTHETIC records are accepted only "
+                         "through this override and are never valid in a "
+                         "published run)")
     args = ap.parse_args()
     repo = Path(args.repo_root).resolve()
 
@@ -298,6 +526,16 @@ def run(repo: Path, args) -> None:
     for p in sorted(rng_affected):
         if p not in by_path:
             raise Refuse(f"FX-RNG exclusion path not in corpus: {p}")
+
+    # #384: preset-scoped complete-wet integration ledger. Fail-closed on
+    # shape; per-record evidential problems become per-preset verdicts.
+    integ_rel = args.integration_ledger or INTEGRATION_LEDGER_DEFAULT
+    integ_path = Path(table_path_abs(repo, integ_rel))
+    if not integ_path.is_file():
+        raise Refuse(f"missing integration ledger: {integ_rel}")
+    integ = load_integration_ledger(
+        integ_path, by_path,
+        allow_synthetic=args.integration_ledger is not None)
 
     outcomes = scan["outcomes"]
     outcome_by_path = {}
@@ -394,6 +632,22 @@ def run(repo: Path, args) -> None:
 
     freeze_pass = gate_states["fidelity_freeze"]["status"] == "PASS" \
         and not gate_states["fidelity_freeze"]["stale"]
+    # #384: the frozen fidelity-policy identity an integration record must
+    # name. Available only once the freeze gate is PASS and declares a
+    # {path, sha256} pin for the policy; absent today (#12 open).
+    frozen_policy = None
+    fp = table["gates"]["fidelity_freeze"].get("frozen_policy")
+    if freeze_pass and fp is not None:
+        if not _pin_ok(fp):
+            raise Refuse("fidelity_freeze.frozen_policy must be a "
+                         "{path, sha256} pin")
+        fp_state, fp_detail = evidence_state(repo, [fp])
+        if fp_state == "OK":
+            frozen_policy = fp
+        else:
+            gate_states["fidelity_freeze"]["stale"] = True
+            gate_states["fidelity_freeze"]["stale_detail"] = fp_detail
+            freeze_pass = False
     voice_scope_all = voice_leaf.get("verified_scope") == "all"
 
     # ---- per-preset evaluation ----------------------------------------
@@ -643,6 +897,16 @@ def run(repo: Path, args) -> None:
                 fid_gate = "BLOCKED"
                 reasons.add("fidelity_freeze_pending:#12/SXT-017(budgets-PENDING-FREEZE)")
 
+        # preset-scoped complete-wet integration gate (#384). Reached only
+        # past the structural gates, like the fidelity-contract gate. Leaf
+        # agreement never substitutes for it.
+        int_gate = ""
+        int_rec = ""
+        if outcome == "compiled":
+            int_gate, int_rec, int_reasons = evaluate_integration(
+                repo, e, integ["by_preset"].get(p, []), frozen_policy)
+            reasons.update(int_reasons)
+
         # headline status (conservative conjunction)
         if adapted:
             headline = "adapted"
@@ -659,9 +923,11 @@ def run(repo: Path, args) -> None:
                 and wt_gate in ("", "PASS")
                 and rt_gate in ("", "PASS")
                 and fid_gate == "PASS"
+                and int_gate == "PASS"
             )
             headline = "supported" if gates_ok else "unresolved"
-        if "STALE" in (voice_gate, fx_gate, wt_gate, rt_gate, fid_gate):
+        if "STALE" in (voice_gate, fx_gate, wt_gate, rt_gate, fid_gate,
+                       int_gate):
             if headline == "supported":
                 raise Refuse(f"internal: stale gates cannot support {p}")
             reasons.add("stale_downgrade:never-reported-supported")
@@ -692,6 +958,8 @@ def run(repo: Path, args) -> None:
             "wavetable_leaf_gate": wt_gate,
             "routing_leaves_gate": rt_gate,
             "fidelity_contract_gate": fid_gate,
+            "integration_gate": int_gate,
+            "integration_record": int_rec,
             "essentiality_listening": ess,
             "fx_required": ";".join(sorted(req_display)),
             "b4_prediction": pred_by_path[p]["status"],
@@ -721,6 +989,7 @@ def run(repo: Path, args) -> None:
         drift_allowed=args.control_allow_input_drift,
         rng_affected=rng_affected, rng_doc=rng_doc,
         rng_gate_active=rng_gate_active, rng_rel=rng_rel,
+        integ=integ, integ_rel=integ_rel, frozen_policy=frozen_policy,
     )
     json_path = outdir / "coverage.json"
     with open(json_path, "w", newline="") as f:
@@ -738,7 +1007,8 @@ def table_path_abs(repo: Path, table_rel: str) -> str:
 def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
                    leaf_states, gate_states, outcomes, by_path,
                    input_pins, table_rel, drift_allowed,
-                   rng_affected, rng_doc, rng_gate_active, rng_rel):
+                   rng_affected, rng_doc, rng_gate_active, rng_rel,
+                   integ, integ_rel, frozen_policy):
     totals = Counter(r["headline_status"] for r in rows)
     per_bank = {b: Counter(r["headline_status"] for r in rows if r["bank"] == b)
                 for b in BANKS}
@@ -747,7 +1017,7 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
             col: Counter(r[col] for r in rows if r["bank"] == b)
             for col in ("voice_leaf_gate", "fx_leaves_gate",
                         "wavetable_leaf_gate", "routing_leaves_gate",
-                        "fidelity_contract_gate")
+                        "fidelity_contract_gate", "integration_gate")
         }
         for b in BANKS
     }
@@ -846,7 +1116,7 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
     open_decisions = [
         {"decision": "#12/SXT-017 freeze profile v1 (fidelity budgets)",
          "state": "OPEN",
-         "blocks": "every supported promotion; all model-vs-reference verdicts are PENDING-FREEZE"},
+         "blocks": "every supported promotion; all model-vs-reference verdicts are PENDING-FREEZE; no integration record can name a frozen policy identity (#384)"},
         {"decision": "#16->#12 delay budget/exactness decision",
          "state": "OPEN",
          "blocks": "every preset requiring an active Delay slot (SXT-023 A1/A2 FAIL; routing of Chorus budgets too, SXT-028c)"},
@@ -888,6 +1158,64 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
                 "sha256": item["sha256"],
             })
 
+    inputs_prov[integ_rel] = {
+        "role": "preset-scoped complete-wet integration ledger (#384)",
+        "sha256": oc.sha256_file(Path(table_path_abs(repo, integ_rel))),
+    }
+    integ_records = integ["doc"]["records"]
+    for rec in sorted(integ_records, key=lambda r: r["record_id"]):
+        pins = [rec[k] for k in INTEGRATION_PINNED_FIELDS] + rec["evidence"]
+        if rec.get("fidelity_policy") is not None:
+            pins.append(rec["fidelity_policy"])
+        for item in pins:
+            inputs_prov.setdefault(item["path"], {
+                "role": f"pinned by integration record {rec['record_id']}",
+                "sha256": item["sha256"],
+            })
+
+    int_counts = Counter(r["integration_gate"] for r in rows)
+    integration_section = {
+        "issue": "#384",
+        "ledger": integ_rel,
+        "schema_version": integ["doc"]["schema_version"],
+        "gate_column": "integration_gate",
+        "record_column": "integration_record",
+        "rule": (
+            "Leaf agreement is not complete-preset qualification. A compiled "
+            "preset is supported only when exactly one ORIGINAL-scope "
+            "integration record matches its bank/path/blob identity, its "
+            "normalized-graph sha256 and its effect placement/order "
+            "identity; every pin (patch image, oracle fixture, event "
+            "sequence, fidelity policy, integrated evidence) re-hashes; it "
+            "carries no blocker; its fidelity policy IS the frozen policy "
+            "declared by the fidelity_freeze gate; and its integrated "
+            "RTL-vs-model leg, model-vs-reference leg and every required "
+            "aspect are PASS. Missing record -> NOT_RUN; explicit blocker "
+            "-> BLOCKED; failed leg/aspect -> FAIL; stale pin or identity "
+            "-> STALE; unfrozen policy or unresolved interpretation -> "
+            "NO_VERDICT. Adapted-scope records are listed but can never "
+            "authorize original support. A PASS is never inferred from a "
+            "leaf-family match, a closed issue, file existence or "
+            "refreshed hashes."
+        ),
+        "required_aspects": list(INTEGRATION_ASPECTS),
+        "frozen_policy": frozen_policy,
+        "records": [
+            {"record_id": rec["record_id"], "path": rec["path"],
+             "qualification_scope": rec["qualification_scope"],
+             "rtl_vs_model": rec["rtl_vs_model"],
+             "model_vs_reference": rec["model_vs_reference"],
+             "aspects": rec["aspects"],
+             "synthetic": bool(rec.get("synthetic"))}
+            for rec in sorted(integ_records, key=lambda r: r["record_id"])
+        ],
+        "rows_per_status": {
+            (k if k else "not_reached"): v
+            for k, v in sorted(int_counts.items())
+        },
+        "rows_pass": int_counts.get("PASS", 0),
+    }
+
     agreement_links = [
         {"record": "reports/sxt-022/EVIDENCE.md",
          "subject": "dry voice slice (Attacky): RTL-vs-model exact; audio vs reference mixed vs [PROPOSED]"},
@@ -923,7 +1251,12 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
         "status_vocabulary": STATUS_VOCAB,
         "headline_rule": (
             "supported = normalized AND compiled AND every required leaf "
-            "verified AND fidelity-freeze PASS; adapted = disclosed-edit "
+            "verified AND fidelity-freeze PASS AND a preset-scoped "
+            "complete-wet integration record PASS (#384: original scope, "
+            "matching bank/path/blob, normalized-graph and placement/order "
+            "identity, frozen-policy identity, integrated RTL-vs-model AND "
+            "model-vs-reference PASS, timing/gain/routing-order/"
+            "per-instance-state/tails PASS); adapted = disclosed-edit "
             "classes (SXT-017 polylimit policy, SXT-025 F-1) and never "
             "counted toward supported; unsupported = structural compile "
             "rejection; unresolved = named missing step(s) in reasons"
@@ -958,7 +1291,9 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
                 "has a verified voice path; fixture verification and exact "
                 "RTL agreement are not fidelity or support. The Delay leaf "
                 "is FAIL, wavetable is partial at deep mips, the fidelity "
-                "freeze (#12) is open, and no listening record exists. "
+                "freeze (#12) is open, no preset-scoped complete-wet "
+                "integration record is PASS (#384), and no listening "
+                "record exists. "
                 "The earlier SXT-025 dry-bus substitution diagnostic is "
                 "historical and superseded for F-1 by the SXT-026a "
                 "original-stage run. B4 'supported' predictions qualify "
@@ -997,6 +1332,7 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
                 "supported for independent reasons"
             ),
         },
+        "integration_gate": integration_section,
         "leaf_ledger": leaf_ledger,
         "open_decisions": open_decisions,
         "reconciliation": {

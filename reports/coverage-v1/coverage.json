@@ -196,6 +196,10 @@
     "NOT_RUN": 140,
     "PASS": 186
    },
+   "integration_gate": {
+    "": 1785,
+    "NOT_RUN": 1135
+   },
    "routing_leaves_gate": {
     "": 2680,
     "NOT_RUN": 240
@@ -221,6 +225,10 @@
     "NOT_RUN": 30,
     "PASS": 71
    },
+   "integration_gate": {
+    "": 93,
+    "NOT_RUN": 548
+   },
    "routing_leaves_gate": {
     "": 632,
     "NOT_RUN": 9
@@ -236,16 +244,28 @@
    }
   }
  },
- "headline_rule": "supported = normalized AND compiled AND every required leaf verified AND fidelity-freeze PASS; adapted = disclosed-edit classes (SXT-017 polylimit policy, SXT-025 F-1) and never counted toward supported; unsupported = structural compile rejection; unresolved = named missing step(s) in reasons",
+ "headline_rule": "supported = normalized AND compiled AND every required leaf verified AND fidelity-freeze PASS AND a preset-scoped complete-wet integration record PASS (#384: original scope, matching bank/path/blob, normalized-graph and placement/order identity, frozen-policy identity, integrated RTL-vs-model AND model-vs-reference PASS, timing/gain/routing-order/per-instance-state/tails PASS); adapted = disclosed-edit classes (SXT-017 polylimit policy, SXT-025 F-1) and never counted toward supported; unsupported = structural compile rejection; unresolved = named missing step(s) in reasons",
  "input_integrity": "refuse-on-mismatch",
  "inputs": {
   "corpus/normalized/graphs.jsonl": {
    "role": "structural input (pinned)",
    "sha256": "c90424d91f2dc9ec4222c0cd28e4d0dba470dd895419db33305c53df39204715"
   },
+  "model/integration/preset/Hell_s_Bells__e499f78d.image.bin": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "68d22deacd744b9f400061a2ef7dc94da43775175f43d955f278cd73581fae8f"
+  },
+  "model/integration/preset/Hell_s_Bells__e499f78d.image.json": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "518773d5ef01bed545d12280c31778a61242b13052f4813db0147cf844229644"
+  },
   "model/integration/selection-scan.json": {
    "role": "structural input (pinned)",
    "sha256": "7d0ab62d5d098d930e84c4bb78809d18eddac9932c536e70e086aeb88ee92d4f"
+  },
+  "model/integration/sequences/sxt025-accept-v1.json": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "ed08fc0712e3454a870801f03779bf8c0474e759e03cd1c6d69305acbc1fac6b"
   },
   "reports/SXT-028-rng/artifacts/coverage-impact.json": {
    "role": "structural input (pinned)",
@@ -282,6 +302,10 @@
   "reports/SXT-042/EVIDENCE.md": {
    "role": "evidence record for leaf mod:keytrack",
    "sha256": "267a97439a83e8e4c50fec5d89ce7d2ceff0657d2d4f49ca48ec77f5741ebc8f"
+  },
+  "reports/coverage-v1/integration-ledger.json": {
+   "role": "preset-scoped complete-wet integration ledger (#384)",
+   "sha256": "a945e96c522747fe942c216761424e18f1175a5f3cfd7a0a9047c828f6e49b3a"
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
@@ -323,6 +347,22 @@
    "role": "evidence record for leaf fx:Reverb1",
    "sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
   },
+  "reports/sxt-025/EVIDENCE.md": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "f25f2bd53579782c14b8d5406297044d624112622feb3c6150271bafa53f1b03"
+  },
+  "reports/sxt-025/artifacts/compare__sxt025-accept-v1.json": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "ad2548cad68086b086cff83e8429d568bc549771f894feae9dea7e502db26bdb"
+  },
+  "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "bbb4b14850dbf95dd1a55dbffec68b6375d0fdfc90d6d5a855ec414ee7a05241"
+  },
+  "reports/sxt-025/rtl-exactness.json": {
+   "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
+   "sha256": "4d5702e8d453c96c6e57c1f79d3aa46118b50cc7a1131dcb31d038054d1b25c2"
+  },
   "reports/sxt-026/EVIDENCE.md": {
    "role": "evidence record for leaf osc:Wavetable",
    "sha256": "1b0a99eb0b10b9f8b6664918df87a8a785e23e087f3ef66fa09a9afdc0280c38"
@@ -330,6 +370,14 @@
   "reports/sxt-026a/EVIDENCE.md": {
    "role": "evidence record for leaf voice:sine-fm-lp24-v2",
    "sha256": "0c328b659aafa3dae749aa09d2eff7f4b023d045f8c2a0a9db4be5eea95b849b"
+  },
+  "reports/sxt-026a/artifacts/compare__sxt025-accept-v1.json": {
+   "role": "pinned by integration record sxt-026a-hells-bells-original-voice",
+   "sha256": "518ed366740f7c5adab7b9a31e4528e4ef41b7c41b97cdbced1df7e81af6f6ca"
+  },
+  "reports/sxt-026a/artifacts/trace__sxt025-accept-v1.json": {
+   "role": "pinned by integration record sxt-026a-hells-bells-original-voice",
+   "sha256": "e7044ac932f715f8f7039a7fd6fa37ab4b7c086a3e8f9bb83a954f44b4f013b3"
   },
   "reports/sxt-027/leaf-backlog.json": {
    "role": "structural input (pinned)",
@@ -363,6 +411,59 @@
    "role": "evidence record for leaf filter_type:LP 12 dB",
    "sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff"
   }
+ },
+ "integration_gate": {
+  "frozen_policy": null,
+  "gate_column": "integration_gate",
+  "issue": "#384",
+  "ledger": "reports/coverage-v1/integration-ledger.json",
+  "record_column": "integration_record",
+  "records": [
+   {
+    "aspects": {
+     "gain": "PASS",
+     "per_instance_state": "NO_VERDICT",
+     "routing_order": "PASS",
+     "tails": "NO_VERDICT",
+     "timing": "PASS"
+    },
+    "model_vs_reference": "NO_VERDICT",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "qualification_scope": "adapted",
+    "record_id": "sxt-025-hells-bells-drybus-adapted",
+    "rtl_vs_model": "PASS",
+    "synthetic": false
+   },
+   {
+    "aspects": {
+     "gain": "PASS",
+     "per_instance_state": "NO_VERDICT",
+     "routing_order": "PASS",
+     "tails": "NO_VERDICT",
+     "timing": "PASS"
+    },
+    "model_vs_reference": "NO_VERDICT",
+    "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+    "qualification_scope": "original",
+    "record_id": "sxt-026a-hells-bells-original-voice",
+    "rtl_vs_model": "NOT_RUN",
+    "synthetic": false
+   }
+  ],
+  "required_aspects": [
+   "timing",
+   "gain",
+   "routing_order",
+   "per_instance_state",
+   "tails"
+  ],
+  "rows_pass": 0,
+  "rows_per_status": {
+   "NOT_RUN": 1683,
+   "not_reached": 1878
+  },
+  "rule": "Leaf agreement is not complete-preset qualification. A compiled preset is supported only when exactly one ORIGINAL-scope integration record matches its bank/path/blob identity, its normalized-graph sha256 and its effect placement/order identity; every pin (patch image, oracle fixture, event sequence, fidelity policy, integrated evidence) re-hashes; it carries no blocker; its fidelity policy IS the frozen policy declared by the fidelity_freeze gate; and its integrated RTL-vs-model leg, model-vs-reference leg and every required aspect are PASS. Missing record -> NOT_RUN; explicit blocker -> BLOCKED; failed leg/aspect -> FAIL; stale pin or identity -> STALE; unfrozen policy or unresolved interpretation -> NO_VERDICT. Adapted-scope records are listed but can never authorize original support. A PASS is never inferred from a leaf-family match, a closed issue, file existence or refreshed hashes.",
+  "schema_version": "sxt-029-integration-ledger/1.0.0"
  },
  "issue": "SXT-029 (#22)",
  "leaf_ledger": {
@@ -775,7 +876,7 @@
  },
  "open_decisions": [
   {
-   "blocks": "every supported promotion; all model-vs-reference verdicts are PENDING-FREEZE",
+   "blocks": "every supported promotion; all model-vs-reference verdicts are PENDING-FREEZE; no integration record can name a frozen policy identity (#384)",
    "decision": "#12/SXT-017 freeze profile v1 (fidelity budgets)",
    "state": "OPEN"
   },
@@ -844,7 +945,7 @@
    }
   ]
  },
- "schema_version": "sxt-029-coverage/1.0.0",
+ "schema_version": "sxt-029-coverage/1.1.0",
  "status_vocabulary": [
   "PASS",
   "FAIL",
@@ -856,9 +957,9 @@
  "supported_set": {
   "composition": [],
   "count": 0,
-  "note": "empty today: the honest result. The selected voice leaf (voice:sine-fm-lp24-v2) fixture-verifies 2 preset path(s) (original voice stage; SXT-026a #48), but its model-vs-reference verdict is NO_VERDICT against the [PROPOSED] budgets, so no compiled preset has a verified voice path; fixture verification and exact RTL agreement are not fidelity or support. The Delay leaf is FAIL, wavetable is partial at deep mips, the fidelity freeze (#12) is open, and no listening record exists. The earlier SXT-025 dry-bus substitution diagnostic is historical and superseded for F-1 by the SXT-026a original-stage run. B4 'supported' predictions qualify nothing."
+  "note": "empty today: the honest result. The selected voice leaf (voice:sine-fm-lp24-v2) fixture-verifies 2 preset path(s) (original voice stage; SXT-026a #48), but its model-vs-reference verdict is NO_VERDICT against the [PROPOSED] budgets, so no compiled preset has a verified voice path; fixture verification and exact RTL agreement are not fidelity or support. The Delay leaf is FAIL, wavetable is partial at deep mips, the fidelity freeze (#12) is open, no preset-scoped complete-wet integration record is PASS (#384), and no listening record exists. The earlier SXT-025 dry-bus substitution diagnostic is historical and superseded for F-1 by the SXT-026a original-stage run. B4 'supported' predictions qualify nothing."
  },
- "tool_version": "sxt-029-coverage/1.0.0",
+ "tool_version": "sxt-029-coverage/1.1.0",
  "totals": {
   "adapted": 164,
   "supported": 0,
