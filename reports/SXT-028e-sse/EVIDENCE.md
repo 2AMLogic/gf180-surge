@@ -56,7 +56,7 @@ the reference leg as well as at the model boundary.
 | DC-offset probe + `/64` drive interpolation + `skipDriveNorm` | **PASS** (checkpointed, and three controls that "correct" them FAIL) | §4, §5 |
 | Tails (declared 1600-block ringout span, incl. a mid-tail fx-rebuild reset) | **PASS** at the exactness boundary; one KNOWN-GAP recorded | §6 |
 | Quad-waveshaper state bounded (issue stop/escalate clause) | **PASS** — 8 × Q24.43 + 2 bits = 65 B/instance delta; 0 B external | §7, `artifacts/buffer-requirement.json` |
-| Constant inventory (DR-0012's reserved pass) | **DR-0014 PROPOSED**; the `FuzzTable<1>` re-derivation discharged BY BUILD against the *external* pinned headers (1025/1025 MATCH) | §8, `artifacts/fuzz-table-rederivation.json` |
+| Constant inventory (DR-0012's reserved pass) | **DR-0014 PROPOSED**; `FuzzTable<1>` build check against the *external* pinned headers: libstdc++ **MATCH** 1025/1025; libc++ on an *alternate* host **MISMATCH** 305/1025 at default flags (MATCH with `-ffp-contract=off`); pinned-host leg **NOT_RUN** (#135). The row is therefore **re-classified as quoted data with provenance** (DR-0014 clause 3 amendment, conservative); `wst_sine` stays re-derived | §8, `artifacts/fuzz-table-rederivation*.json` |
 | Negative controls live | **11/11 CONTROL-OK** model-side + **10/10** RTL-side | `negative-controls/`, `rtl-exactness.json` |
 | Negative-control record reproducible | **PASS on one host, NOT across hosts** for the *metric* fields only — verdicts/statuses/`rtl-exactness.json`/`buffer-requirement.json` are host-stable (finding **F-028e-sse-6**) | §0, `negative-controls/negative-controls.json` → `environment` |
 | Oracle extraction of fixture inputs | **PASS** — three carriers `COMPLETE` from the pinned loader's normalized state (F-028e-sse-3 closed); the model-6 carrier stays REFUSED on its own `fx_disable` screen | §1, `artifacts/extract-refusals-oracle.txt` |
@@ -458,8 +458,9 @@ fail.
 
 ## 2. Frozen fixed-point model
 
-`model/effects/type-distortion-sse/` — `sse_tables.py` (the two re-derived
-table rows), `quad_shapers.py` (the five shapers, the state layout and the
+`model/effects/type-distortion-sse/` — `sse_tables.py` (the generator for
+the two table rows: `wst_sine`, re-derived, and `FuzzTable<1>`, classified
+quoted data with provenance per DR-0014 clause 3 as amended, §8), `quad_shapers.py` (the five shapers, the state layout and the
 four declared deviations), `distortion_sse_model.py` (the block schedule),
 plus the freeze doc `README.md`.
 
@@ -827,16 +828,22 @@ counters):
   `quad_shapers.py` and **streamed to the RTL** through the testbench init
   file, never duplicated there (DR-0002 clause 1). A test asserts none of
   the eleven appears as a literal in the RTL source.
-* **2 re-derived table rows** — `wst_sine` (1024 words) from
+* **2 generated table rows** — `wst_sine` (1024 words) from
   `sin((i−512)·π/512)`, and `FuzzTable<1>` (1025 words) from
   `x·(1−range) + U(−range, range)` with the header's own pinned
   `portable_minstd_rand(2112)`. The committed ROM is a build product of
-  `sse_tables.py` and a test asserts it byte for byte.
+  `sse_tables.py` and a test asserts it byte for byte. *As first recorded
+  both rows were classified re-derived; as amended (DR-0014 clause 3, #135,
+  below) only `wst_sine` is re-derived and `FuzzTable<1>` is classified
+  **quoted data with provenance**, conservatively, pending the NOT_RUN
+  pinned-host leg.*
 * **6 structural powers of two** — not engine data; `localparam`s in the RTL.
 
-**The `FuzzTable<1>` re-derivation claim is discharged BY BUILD, not by
+**The `FuzzTable<1>` re-derivation claim is checked BY BUILD, not by
 assertion — against the pinned headers themselves, which stay outside this
-repository.** The one implementation-defined step is the standard library's
+repository.** (The libstdc++ build MATCHes, below; the libc++ leg that
+follows does not at default flags, so the claim is not established and the
+row is re-classified as quoted data — see the libc++ paragraph.) The one implementation-defined step is the standard library's
 uniform real-valued draw, which the pinned header does *not* pin (it only
 de-typedefs the LCG). `tools/check_fuzz_table_rederivation.py` resolves an
 **external** checkout of the pinned `sst-waveshapers` and
@@ -860,13 +867,45 @@ asserts the NOT_RUN path live. A second live guard,
 `::test_rederivation_checker_carries_no_engine_source_text`, fails if any
 engine expression, constant or typedef is re-introduced into the tool.
 
-**Limit, stated:** the build validates libstdc++ only. The libc++
-equivalence is derived by reading its `generate_canonical` and is recorded
-as **UNVERIFIED-BY-BUILD**; the pinned oracle host is arm64 macOS / libc++,
-so re-running the tool there is a named follow-up (#135), not a completed
-leg. If the check ever reports MISMATCH, the row must be re-classified as
-quoted data by amending DR-0014 — it is a live guard on a
-licensing-relevant claim.
+**libc++ leg (#135): alternate-environment observation; pinned-host leg
+NOT_RUN.** `oracle/manifest.json` (`environment`) freezes the oracle host as
+macOS 26.5.1 (Build 25F80), Apple clang 21.0.0 (clang-2100.1.1.101), target
+arm64-apple-darwin25.5.0. The libc++ transcripts below were NOT produced
+there: they ran on an arm64 macOS host at Darwin 27.0.0 (`RELEASE_ARM64_T6050`,
+macOS 27.0.1) with Apple clang version 21.0.0 (clang-2100.3.34.2), libc++
+(`_LIBCPP_VERSION` 220106), against the pinned headers `dd12f31a…` /
+`a32b8aec…`, simde `71fd833d…` fetched by `oracle/fetch-waveshaper-headers.sh`
+into an external directory. They are retained as **alternate-environment
+observations** and do **not** discharge the pinned-host acceptance leg,
+which is **NOT_RUN**; #135 stays open for it. Each transcript records this
+itself (`environment.scope`, `environment.pinned_host_acceptance =
+NOT_RUN`), computed by the tool against the manifest, and records the
+standard library from a macro probe that uses the driver's exact flags and
+include path (`stdlib_detection`). Both compared 1025 entries:
+
+| flags | status | mismatches | transcript |
+|---|---|---|---|
+| `-O2 -std=c++20` (compiler default) | **MISMATCH** | 305 (first at index 2) | `artifacts/fuzz-table-rederivation-libcxx-arm64.json` |
+| `-O2 -std=c++20 -ffp-contract=off` (diagnostic) | **MATCH** | 0 | `artifacts/fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json` |
+
+The libstdc++ transcript (`fuzz-table-rederivation.json`) is retained
+unchanged. Cause, on that alternate host: Apple clang fuses
+`x * (1 - range) + draw` into an FMA by default; with contraction off the
+libc++ draw sequence reproduces the generator bit for bit. So on that host
+the libc++ `generate_canonical` reading is confirmed by build, and the tool's
+default-flags verdict is **MISMATCH**. DR-0014 clause 3 (amended) therefore
+**conservatively** re-classifies the `FuzzTable<1>` row as quoted data with
+provenance (class (a)): the "re-derived" claim is not established on any
+libc++ build observed. **Not established:** the verdict under the pinned
+toolchain (clang-2100.1.1.101 may contract differently), and whether the
+pinned oracle's real build uses contraction (its flags are not in
+`oracle/manifest.json`); the model/RTL values are unchanged. The tool
+(`tools/check_fuzz_table_rederivation.py`, not byte-frozen) gained
+`--cxxflag`, a flag-faithful standard-library probe (a failed probe is
+recorded `UNKNOWN`, never guessed), and the environment-scope record; the
+stale "UNVERIFIED-BY-BUILD" and "re-derived" wording in the byte-frozen
+`model/effects/type-distortion-sse/sse_tables.py` docstring is left
+unedited and is superseded by this section and DR-0014.
 
 ## 9. Newly-enabled presets (honest delta)
 
@@ -978,14 +1017,22 @@ build the committed tap variant or compare the same build on both hosts.
   initialized state, that is worth tens of dB (73 dB here). Whether any
   landed sibling leaf's committed numbers are affected is a question this
   leaf cannot answer for them.
-* **#135 — SXT-028e-sse follow-up: discharge the `FuzzTable<1>`
+* **#135 — (OPEN; pinned-host leg NOT_RUN. Alternate-environment
+  observations recorded in §8: MISMATCH at default flags, MATCH with
+  `-ffp-contract=off`; row conservatively re-classified.) SXT-028e-sse
+  follow-up: discharge the `FuzzTable<1>`
   re-derivation on the pinned arm64/libc++ oracle host.** The committed
-  build-discharge of DR-0014 clause 2 is libstdc++-only (§8); the pinned
-  evidence host is arm64 macOS / libc++, where the equivalence is currently
-  derived by *reading* `generate_canonical`. On MISMATCH the row must be
-  re-classified from "re-derived" to "quoted data with provenance" by
-  amending DR-0014 — a licensing-relevant classification, which is why it is
-  tracked rather than assumed.
+  build checks are a libstdc++ MATCH and, on an alternate arm64 macOS /
+  libc++ host (not the pinned one), a default-flags MISMATCH (305/1025) and
+  a `-ffp-contract=off` MATCH (§8). The libc++ `generate_canonical` reading
+  is thus confirmed by build on that alternate host, but no transcript
+  exists from the pinned oracle host (macOS 26.5.1 / clang-2100.1.1.101).
+  Applying the MISMATCH rule conservatively, DR-0014 clause 3 (amended)
+  already re-classifies the row from "re-derived" to "quoted data with
+  provenance"; what remains open is the pinned-host verdict, which would
+  decide whether that conservative re-classification can ever be revisited.
+  It is a licensing-relevant classification, which is why it is tracked
+  rather than assumed.
 
 No follow-up is filed for F-028e-sse-2 (`QuadWaveshaperState::init` is
 indeterminate in the engine): it is decided and pinned here, bounded to the
@@ -1018,7 +1065,11 @@ place by the `mutant-adaainit` RTL control.
 - Repeatability of an engine render **beyond this one host**: §3.5's
   3×-within-a-run and twice-across-runs results are from a single Linux
   x86-64 worker. Cross-host render repeatability is not established here.
-- Any libc++-host equivalence of the `FuzzTable<1>` re-derivation (§8).
+- The `FuzzTable<1>` re-derivation verdict on the pinned oracle host
+  (macOS 26.5.1 / clang-2100.1.1.101): **NOT_RUN** (#135). The §8 libc++
+  transcripts are alternate-environment observations only.
+- Whether the pinned oracle's own build contracts FMAs (so which
+  `FuzzTable<1>` values it holds) (§8).
 
 ## 12. Reproduce
 
@@ -1070,20 +1121,34 @@ $ORACLE_PYTHON tools/run_distortion_sse_reference_leg.py
 #    (add --reuse-model to re-grade existing model renders in place)
 
 # ARM64/libc++ ORACLE HOST ONLY (the §8 leg, and F-028e-sse-1's open half)
-python3 tools/check_fuzz_table_rederivation.py     # on the arm64/libc++ host
+# The pinned-host leg (manifest environment) is NOT_RUN. On the alternate
+# Darwin 27.0.0 / clang-2100.3.34.2 host these gave the §8 results; each
+# transcript's `environment` block says which kind of host it ran on.
+CXX=clang++ python3 tools/check_fuzz_table_rederivation.py \
+    --out <json>                     # alt host: MISMATCH 305/1025
+CXX=clang++ python3 tools/check_fuzz_table_rederivation.py \
+    --cxxflag=-ffp-contract=off --out <json>   # alt host: MATCH 1025/1025
 ```
 
 ## 13. Provenance / licensing
 
-All files in this repository are original (Apache-2.0 per `LICENSE`). The
+The code in this repository is original (Apache-2.0 per `LICENSE`). The
 SSE quad-waveshaper structure is read and cited from the pinned
 GPL-3.0-or-later trees (`DistortionEffect.cpp` and sst-waveshapers); no
-Surge or SST source or assets are committed. The eleven designed shaper
-scalars are quoted as data under
+Surge or SST source code or assets are committed. Quoted engine **data**
+is committed under
 `decision-records/0014-distortion-sse-quad-waveshaper-constants.md`
-(PROPOSED), the successor DR-0012 reserved for this branch; the two table
-rows are re-derived from the pinned construction formulas and are not quoted
-data.
+(PROPOSED), the successor DR-0012 reserved for this branch, and is
+classified there as *quoted data with provenance*: the eleven designed
+shaper scalars and, as amended by DR-0014 clause 3 (#135), the
+`FuzzTable<1>` table row (1025 words; `sst-waveshapers@dd12f31a…`,
+`Fuzzes.h` + `WaveshaperLUT.h`, GPL-3.0-or-later). That row is reproduced
+by the generator in `sse_tables.py` and is carried in the generated ROM
+`rtl/effects/type-distortion-sse/ws_sse_q29.hex`; its re-classification is
+conservative, pending the pinned-host leg (NOT_RUN, §8). Only the
+`wst_sine` row remains classified as re-derived from its pinned construction
+formula and not quoted data. These are classifications for the visible
+record; they make no distribution-license determination.
 
 **The #136 reference-leg artifacts add no new licensing posture.** The
 fixture WAVs under `fixtures/` are *renders produced by* the external
@@ -1103,8 +1168,9 @@ The `FuzzTable<1>` build discharge (§8) is the one place engine source is
 *executed*, and it executes it **where it lives**: the driver compiled by
 `tools/check_fuzz_table_rederivation.py` is original to this repository and
 only `#include`s the pinned headers from an **external** checkout, pinned by
-SHA to `oracle/manifest.json`. Nothing GPL-licensed is transcribed,
-embedded, or committed here, and
+SHA to `oracle/manifest.json`. No GPL-licensed source text is transcribed,
+embedded, or committed by that tool (the quoted *data* above is classified
+separately under DR-0014), and
 `tests/test_sxt028e_sse.py::test_rederivation_checker_carries_no_engine_source_text`
 is a live guard on that. `oracle/fetch-waveshaper-headers.sh` refuses a
 destination inside the repository for the same reason. No
