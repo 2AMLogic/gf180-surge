@@ -2,6 +2,30 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-09
+
+- **PR #399**: feat(#392): verify allocation offsets, overlap and slot ownership
+- **PR #398**: test: enumerate profile_budget and reverb2 reference controls (#387)
+- **PR #396**: SXT-023: Delay matches pinned-engine fixtures within budgets (d(t) probe + model revision)
+- **PR #395**: SXT-029: require preset-scoped complete-wet integration evidence before supported (#384)
+- **PR #394**: Deduplicate stereo WAV reader and channel metrics in Chorus comparator (#376)
+- **PR #393**: Audit committed report verdict tokens against the six-status vocabulary (#365)
+- **PR #389**: Publish current NOT_RUN refusal verdicts for shared RTL comparison input errors
+- **PR #388**: test: AGENTS.md/CLAUDE.md parity outside marker blocks (#364)
+- **PR #386**: SXT-028e-sse: arm64 macOS reference-leg attempt (control FAIL, rest NOT_RUN) (#317)
+- **PR #385**: Reject stale trace outputs in shared RTL simulator runs (#360)
+- **PR #383**: SXT-028e-sse: FuzzTable<1> libc++ observation on alternate arm64 host - MISMATCH at default flags; pinned-host leg NOT_RUN (#135)
+- **PR #380**: docs(policy): option A for source-nonrepeatable carriers + census spec (#310)
+- **Issue #392** (closed): SXT-020: verify allocation intervals cannot alias per-instance effect state
+- **Issue #387** (closed): Extend the negative-control enumerator to cover profile_budget_controls.py and reverb2_reference_controls.py (outside the *_negative_controls.py glob)
+- **Issue #384** (closed): SXT-029: require preset-scoped complete-wet integration evidence before supported
+- **Issue #376** (closed): Deduplicate stereo WAV reader and channel metrics in wet effect comparators
+- **Issue #365** (closed): Audit committed report verdict tokens against the six-status vocabulary (REFUSED/VERIFIED/OK undeclared)
+- **Issue #364** (closed): Enforce AGENTS.md/CLAUDE.md parity outside Loom marker blocks with a test
+- **Issue #361** (closed): Write current refusal verdicts for shared RTL comparison input errors
+- **Issue #360** (closed): Reject stale trace outputs in shared RTL simulator runs
+- **Issue #261** (closed): Remove duplicated main()/revision_pin_ok() skeleton across rf_* RTL-model harnesses
+
 ### 2026-10-08
 
 - **Issue #351** (closed): Auditor Capability Request: Python runtime for gf180-surge validation
