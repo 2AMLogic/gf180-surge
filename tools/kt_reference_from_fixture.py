@@ -32,7 +32,6 @@ reference-sxt025-accept-v1-bells-dry.wav [--json OUT.json]
 """
 
 import argparse
-import hashlib
 import io
 import json
 import os
@@ -51,14 +50,6 @@ from refusal import Refuse  # noqa: E402
 MANIFEST = os.path.join(REPO, "reports", "sxt-025", "fixtures",
                         "hells_bells__sxt025-accept-v1.json")
 SR = 48000
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def read_f32_wav(path):
@@ -106,7 +97,7 @@ def main():
     src = os.path.join(REPO, rec_bus["wav"])
     if not os.path.exists(src):
         raise Refuse(f"committed fixture missing: {src}")
-    got_sha = sha256_file(src)
+    got_sha = oc.sha256_file(src)
     if got_sha != rec_bus["sha256"]:
         raise Refuse(f"fixture sha256 {got_sha} != manifest "
                      f"{rec_bus['sha256']}")
@@ -144,7 +135,7 @@ def main():
         "frames": frames,
         "mono_law": "0.5*(L+R) in float32, then int(clamp(x,-1,1)*32767)",
         "out": os.path.relpath(os.path.abspath(args.out), REPO),
-        "out_sha256": sha256_file(args.out),
+        "out_sha256": oc.sha256_file(args.out),
         "peak_abs_float": peak,
     }
     if args.json:
