@@ -40,6 +40,14 @@ GPL-3.0-or-later):
 Their constants fall into **three** classes, and only one of them is the
 DR-0002/DR-0012(a) "quoted opaque data" class.
 
+> **Superseded in part by the clause 3 amendment (2026-10-08, #135).** The
+> class lists below are the inventory as first recorded. The `FuzzTable<1>`
+> row has since been **re-classified into class (a), quoted data with
+> provenance** (conservatively, pending the pinned-host leg, which is
+> NOT_RUN). Only the `wst_sine` row remains in the re-derived class. Where a
+> statement below or in clauses 1 and 2 says otherwise, clause 3 (amended)
+> governs.
+
 ### (a) Designed scalars — opaque, quoted (11 values)
 
 These have no construction formula anywhere in the pinned tree. They are
@@ -71,7 +79,13 @@ and `N-1` = `1023`. These are the arithmetic shape of the index mapping
 (a power-of-two scale and the LUT's own size), not designed coefficients.
 Nothing is adopted by reproducing them.
 
-### (c) Tables — formula-derived, NOT quoted (2 rows, 2049 words)
+### (c) Tables — formula-generated (2 rows, 2049 words)
+
+*Originally both rows were classified "re-derived, NOT quoted". As amended
+(clause 3, #135): `wst_sine` stays re-derived; `FuzzTable<1>` is classified
+as **quoted data with provenance**. Both rows are still produced by the same
+generator; the amendment changes their licensing classification, not the
+values or how the ROM is built.*
 
 **`wst_sine` (1024 words).** Built by
 `sst::waveshapers::WaveshaperTables::WaveshaperTables()` from the closed
@@ -116,9 +130,21 @@ draw_k = u_k * (b - a) + a
    indices 16..26) — the RTL carries no independent copy, exactly as DR-0002
    clause 1 requires and as DR-0012 clause 1 already does for the twelve
    halfband coefficients. Together with DR-0002's twelve and DR-0012's
-   twelve, these eleven are the only engine data constants reproduced in
-   this repository by the voice and Distortion slices.
-2. **(b) Re-derived tables.** The `wst_sine` and `FuzzTable<1>` rows are
+   twelve, these eleven were, as first recorded, the only engine data
+   constants reproduced in this repository by the voice and Distortion
+   slices. **As amended by clause 3 (2026-10-08, #135), the `FuzzTable<1>`
+   row (1025 words) is also class (a) quoted data with provenance**
+   (`sst-waveshapers@dd12f31a…`, `Fuzzes.h` + `WaveshaperLUT.h`,
+   GPL-3.0-or-later); this re-classification is conservative and pending
+   the pinned-host leg (NOT_RUN). Unlike the eleven scalars it is not
+   streamed through the init file: it is reproduced by the generator in
+   `sse_tables.py` and carried in the generated ROM (clause 2).
+2. **(b) Re-derived tables.** *(Superseded in part: as amended by clause 3,
+   only the `wst_sine` row is classified re-derived; the `FuzzTable<1>` row
+   is class (a) quoted data with provenance. Its values are still produced
+   by the same generator and the ROM mechanics below still hold for it, but
+   "no table data is copied" is no longer claimed for that row.)* The
+   `wst_sine` and `FuzzTable<1>` rows are
    **recomputed** from the pinned construction formulas in
    `model/effects/type-distortion-sse/sse_tables.py`, in the same
    double/float32 sequence the engine uses, and quantized once to Q2.29. No
@@ -251,7 +277,11 @@ draw_k = u_k * (b - a) + a
 
 No distribution-license determination for Surge-derived material has been
 made by this repository (`CLAUDE.md` / `AGENTS.md`). This record authorizes
-the eleven scalars as *quoted data with provenance* and classifies the two
-table rows as *re-derived*; it makes no claim about redistribution of the
+the eleven scalars as *quoted data with provenance*; as amended by clause 3
+(#135) it classifies the `FuzzTable<1>` table row (1025 words) as *quoted
+data with provenance* as well (conservatively, pending the NOT_RUN
+pinned-host leg) and the `wst_sine` row as *re-derived*. These are
+classifications for the visible record only; it makes no claim about
+redistribution of the
 pinned engine, its presets, or its assets. It establishes no fidelity,
 preset-support, cost or musical-quality claim.

@@ -159,15 +159,21 @@ Inventoried in
   denominators, TANH's 9 and 27, the ADAA tolerance, the dcBlock pole) —
   streamed to the RTL through the testbench init file, never duplicated
   there (DR-0002 clause 1);
-* **2 re-derived table rows** (`wst_sine` 1024 words, `FuzzTable<1>` 1025
+* **2 generated table rows** (`wst_sine` 1024 words, `FuzzTable<1>` 1025
   words) — recomputed from the pinned construction formulas in
   `sse_tables.py`; the committed ROM is a build product and a test asserts
-  it. The `FuzzTable<1>` re-derivation is discharged **by build**:
+  it. `wst_sine` is classified **re-derived**. `FuzzTable<1>` is classified
+  **quoted data with provenance** (DR-0014 clause 3 as amended by #135,
+  conservatively, pending the pinned-host leg, which is NOT_RUN):
   `tools/check_fuzz_table_rederivation.py` compares all 1025 float32 bit
   patterns against a compile of the pinned headers themselves, taken from an
-  **external** SHA-pinned checkout (MATCH, 1025/1025, libstdc++). No engine
-  source text is transcribed or committed here; absent that checkout the
-  tool reports NOT_RUN, never a pass;
+  **external** SHA-pinned checkout — MATCH 1025/1025 with libstdc++, but
+  MISMATCH 305/1025 at default flags with libc++ on an alternate (not the
+  pinned) host, so the re-derivation claim is not established for that row.
+  No engine source text is transcribed or committed here; absent that
+  checkout the tool reports NOT_RUN, never a pass. The "re-derived" wording
+  in the byte-frozen `sse_tables.py` docstring is stale and is superseded by
+  DR-0014;
 * **6 structural powers of two** — not engine data, `localparam`s in the RTL.
 
 ## Declared scope omissions (fail-closed)

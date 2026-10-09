@@ -2,8 +2,8 @@
 """SXT-028e-sse: validate the FuzzTable<1> re-derivation against a build of
 the PINNED headers, which live OUTSIDE this repository.
 
-DR-0014 clause 2 claims the `wst_fuzzsoft` LUT is a RE-DERIVATION from the
-pinned construction formula, not quoted engine data. That claim has one
+DR-0014 clause 2 (as first recorded) claimed the `wst_fuzzsoft` LUT is a
+RE-DERIVATION from the pinned construction formula, not quoted engine data. That claim has one
 implementation-defined step -- the standard library's uniform real-valued
 draw -- which the pinned header does NOT pin (it only de-typedefs the LCG).
 This tool discharges the claim by construction rather than by assertion:
@@ -20,13 +20,17 @@ This tool discharges the claim by construction rather than by assertion:
      `model/effects/type-distortion-sse/sse_tables.build_fuzz1_row()`'s own
      pre-quantization float32 values.
 
-Nothing GPL-licensed is transcribed, embedded, or committed here: the
-engine's expression is never copied, it is *included* from the pinned tree,
-so this check is also insensitive to transcription error.
+No GPL-licensed source text is transcribed, embedded, or committed by this
+tool: the engine's expression is never copied, it is *included* from the
+pinned tree, so this check is also insensitive to transcription error.
 
 A mismatch means the re-derivation claim is false and the table would have to
 be re-classified as quoted data (a DR-0014 amendment), so this check is a
-LIVE guard on a licensing-relevant claim, not decoration.
+LIVE guard on a licensing-relevant claim, not decoration. That has happened:
+the libc++ build on an alternate arm64 macOS host reported MISMATCH at
+default flags (#135), and DR-0014 clause 3 (amended) conservatively
+re-classifies the row as quoted data with provenance; the pinned-host leg is
+NOT_RUN.
 
 The pinned headers are not present on an ordinary build host. Fetch them
 externally (they are never written into this repository) with:
