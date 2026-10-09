@@ -92,14 +92,19 @@ def test_always_pass_classifier_fails_controls():
     assert len(fails) == 4  # lapharp + three named carriers
 
 
-def test_single_3x_pass_classifier_fails_bimodal_control():
-    """A '3x passed once' classifier is exposed by the Lap Harp row that
-    passes the 3x gate but not the stress screen."""
+def test_last_row_wins_classifier_fails_bimodal_control():
+    """Live negative control: a last-row-wins classifier (trusts only the
+    final stress row, ``r[-1]``) is exposed by the Lap Harp bimodal control,
+    whose final stress row is stable although another row is not."""
     gate = _load(GATE)
-    # lapharp's seq-poly-8 row is stable: a last-row-wins classifier
-    # calls it repeatable and must be caught by the bimodal control.
+
+    def last_row_wins(slug, rows):
+        return rows[-1]["stable"]
+
+    # lapharp's last stress row (seq-poly-8) is stable, so a last-row-wins
+    # classifier calls it repeatable and must be caught by the bimodal control.
     assert any("bimodal" in f for f in
-               check_census_controls(lambda s, r: r[-1]["stable"], gate))
+               check_census_controls(last_row_wins, gate))
 
 
 def test_decision_record_states_option_a_and_limits():

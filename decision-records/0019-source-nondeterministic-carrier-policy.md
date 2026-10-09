@@ -53,6 +53,8 @@ either would need its own visible record.
 ## Census specification (implementation is separate, separately reviewed work)
 
 The census is an inventory and prioritization aid, **not** a support claim.
+Its implementation is tracked in
+[#381](https://github.com/2AMLogic/gf180-surge/issues/381).
 
 - **Scope:** every preset in the pinned corpus that any leaf may draw as a
   carrier (not only Reverb 2). One row per (preset, sequence).
@@ -93,10 +95,10 @@ The census is an inventory and prioritization aid, **not** a support claim.
 - **Cause of the voice-path variation** (for `Grant Me...`, `Novuo`, `Harp`):
   the one-factor bisection (oscillator type / unison / noise / drift against the
   ALL-OFF dry bus) required by #310's acceptance check is **NOT_RUN** here; it
-  needs the pinned oracle host and is carried by the census implementation
-  issue [#381](https://github.com/2AMLogic/gf180-surge/issues/381). #310 stays
-  open until that diagnostic runs or is explicitly re-scoped there. Any such
-  variant is diagnostic only.
+  needs the pinned oracle host and is carried by the bounded diagnostic issue
+  [#382](https://github.com/2AMLogic/gf180-surge/issues/382) (one named
+  carrier, `Novuo`). #310 stays open until that diagnostic lands or #310 is
+  explicitly re-scoped to it. Any such variant is diagnostic only.
 - The census itself (**NOT_RUN**), any preset support, coverage, fidelity or
   quality claim, and any B or C feasibility.
 - **Owner overrule path:** the owner may reverse this disposition at any time by

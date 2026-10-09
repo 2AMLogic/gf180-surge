@@ -192,7 +192,7 @@ A preset whose own render fails the exact 3x bit-identical gate is **refused
 as an original carrier**; the gate is not softened, no seed/drift conditioning
 or statistical tolerance is adopted, and a refused preset never counts toward
 original-preset coverage. Leaves draw carriers from a specified reproducibility
-census (census implementation: NOT_RUN, separate work). See
+census (census implementation: NOT_RUN, tracked in #381). See
 [`decision-records/0019-source-nondeterministic-carrier-policy.md`](../decision-records/0019-source-nondeterministic-carrier-policy.md).
 
 ## Licensing / provenance
