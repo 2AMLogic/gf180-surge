@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir. Keys are script filenames under tools/ (discovery: tools/*_controls.py). 'verdict' selects the acceptance adapter in the test module (exit0 = rc==0 only; script-specific adapters additionally parse stdout). 'guard' lists committed files whose bytes must be identical before/after the run.",
+ "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir. Keys are script filenames under tools/ (discovery: tools/*_controls.py). 'verdict' selects the acceptance adapter in the test module (exit0 = rc==0 only; script-specific adapters additionally parse stdout). 'guard' lists committed files whose bytes must be identical before/after the run. 'outputs' (optional, default []) lists scratch-relative paths the script is verified to write from main() itself; the test requires each to exist after the run. A redirected constant is not by itself an output (control_negative_controls.py writes OUT only under __main__).",
  "scripts": {
   "aw49_negative_controls.py": {
    "status": "LIVE",
@@ -210,7 +210,10 @@
     "reports/sxt-017/negative-controls-budget.txt",
     "reports/sxt-017/cost-closure.json"
    ],
-   "reason": "~47 s; oracle-independent (reads committed slate/probe reports only). NC-B5 is a recorded finding, not counted."
+   "reason": "~47 s; oracle-independent (reads committed slate/probe reports only). NC-B5 is a recorded finding, not counted.",
+   "outputs": [
+    "OUT_REL"
+   ]
   },
   "reverb2_negative_controls.py": {
    "status": "LIVE",
@@ -238,7 +241,10 @@
    "guard": [
     "reports/SXT-028f/negative-controls/reference-controls.json"
    ],
-   "reason": "~23 s; executes 6 declared reference-backed cases x 3 controls against the committed pinned-engine bundle reports/SXT-028f/fixtures (inputs present; no engine run needed)"
+   "reason": "~23 s; executes 6 declared reference-backed cases x 3 controls against the committed pinned-engine bundle reports/SXT-028f/fixtures (inputs present; no engine run needed)",
+   "outputs": [
+    "reference-controls.json"
+   ]
   },
   "reverb_negative_controls.py": {
    "status": "LIVE",

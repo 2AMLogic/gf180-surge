@@ -17,8 +17,10 @@ script nothing executes can rot silently. This module:
    exit 0 only when every control failed its target check), plus a
    script-specific stdout verdict for scripts that exit 0 unconditionally or
    could pass vacuously (profile_budget_controls, reverb2_reference_controls).
-   Committed report bytes named in the registry "guard" must be unchanged. Scripts that need pinned-oracle inputs are NOT_RUN: they are
-   import-smoked only and their execution test is skipped with the reason,
+   Committed report bytes named in the registry "guard" must be unchanged,
+   and every scratch path in the registry "outputs" (only scripts verified to
+   write from main() itself) must exist after the run. Scripts that need
+   pinned-oracle inputs are NOT_RUN: they are import-smoked only and their execution test is skipped with the reason,
    never reported as a pass. Slow LIVE scripts (>60 s) run only with
    NC_LIVE_SLOW=1; otherwise they skip with a visible NOT_RUN reason.
 4. Failure control: a temporary copy of a control script whose mutation is
@@ -204,6 +206,16 @@ def test_registry_is_well_formed():
                                   "reverb2-reference"), (name, ent["verdict"])
         if ent["status"] != "LIVE":
             assert ent["reason"], f"{name}: NOT_RUN needs a recorded reason"
+        outs = ent.get("outputs", [])
+        assert isinstance(outs, list) and all(
+            isinstance(o, str) and o and not os.path.isabs(o) for o in outs), (
+            name, outs)
+    # scripts verified to write their report from main() must declare it, so
+    # the scratch-output check cannot silently drop them
+    for must, out in (("profile_budget_controls.py", "OUT_REL"),
+                      ("reverb2_reference_controls.py",
+                       "reference-controls.json")):
+        assert out in reg[must].get("outputs", []), (must, out)
 
 
 def test_every_control_script_is_registered():
@@ -261,9 +273,9 @@ def test_control_script_executes_and_all_controls_fail_their_checks(
                 f"errored ({why}):\n{out[-2000:]}")
     assert {g: _sha(g) for g in ent["guard"]} == before, (
         f"{name}: committed report bytes changed")
-    for const in ent["redirect"]:
-        assert os.path.exists(os.path.join(str(tmp_path), const)), (
-            f"{name}: scratch output {const} not written")
+    for rel in ent.get("outputs", []):
+        assert os.path.exists(os.path.join(str(tmp_path), rel)), (
+            f"{name}: scratch output {rel} not written")
 
 
 def _noop_mutation_copy(tmp_path):
