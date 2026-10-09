@@ -82,20 +82,22 @@ Coverage and agreement are reported separately by the underlying evidence; this 
 | [#10](https://github.com/2AMLogic/gf180-surge/issues/10) | SXT-015 | SXT-015: Create resource accounting | PASS | [`reports/sxt-015/EVIDENCE.md`](reports/sxt-015/EVIDENCE.md) |
 | [#11](https://github.com/2AMLogic/gf180-surge/issues/11) | SXT-016 | SXT-016: Run representative cost probes | PASS | [`reports/sxt-016/EVIDENCE.md`](reports/sxt-016/EVIDENCE.md) |
 | [#12](https://github.com/2AMLogic/gf180-surge/issues/12) | SXT-017 | SXT-017: Freeze profile v1 | BLOCKED | [`reports/sxt-017/EVIDENCE.md`](reports/sxt-017/EVIDENCE.md) |
-| [#13](https://github.com/2AMLogic/gf180-surge/issues/13) | SXT-020 | SXT-020: Compile patch images | PASS | [`reports/sxt-020/EVIDENCE.md`](reports/sxt-020/EVIDENCE.md) |
-| [#14](https://github.com/2AMLogic/gf180-surge/issues/14) | SXT-021 | SXT-021: Implement timed control and scheduling | PASS | [`reports/sxt-021/EVIDENCE.md`](reports/sxt-021/EVIDENCE.md) |
-| [#15](https://github.com/2AMLogic/gf180-surge/issues/15) | SXT-022 | SXT-022: Qualify a first dry voice slice | PASS | [`reports/sxt-022/EVIDENCE.md`](reports/sxt-022/EVIDENCE.md) |
+| [#13](https://github.com/2AMLogic/gf180-surge/issues/13) | SXT-020 | SXT-020: Compile patch images | PASS (waived: #12) | [`reports/sxt-020/EVIDENCE.md`](reports/sxt-020/EVIDENCE.md) |
+| [#14](https://github.com/2AMLogic/gf180-surge/issues/14) | SXT-021 | SXT-021: Implement timed control and scheduling | PASS (waived: #12) | [`reports/sxt-021/EVIDENCE.md`](reports/sxt-021/EVIDENCE.md) |
+| [#15](https://github.com/2AMLogic/gf180-surge/issues/15) | SXT-022 | SXT-022: Qualify a first dry voice slice | PASS (waived: #12) | [`reports/sxt-022/EVIDENCE.md`](reports/sxt-022/EVIDENCE.md) |
 | [#16](https://github.com/2AMLogic/gf180-surge/issues/16) | SXT-023 | SXT-023: Implement Delay and EQ | BLOCKED | — |
-| [#17](https://github.com/2AMLogic/gf180-surge/issues/17) | SXT-024 | SXT-024: Implement Reverb1 | PASS | [`reports/sxt-024/EVIDENCE.md`](reports/sxt-024/EVIDENCE.md) |
+| [#17](https://github.com/2AMLogic/gf180-surge/issues/17) | SXT-024 | SXT-024: Implement Reverb1 | PASS (waived: #12) | [`reports/sxt-024/EVIDENCE.md`](reports/sxt-024/EVIDENCE.md) |
 | [#18](https://github.com/2AMLogic/gf180-surge/issues/18) | SXT-025 | SXT-025: Pass one complete wet preset | BLOCKED | — |
 | [#19](https://github.com/2AMLogic/gf180-surge/issues/19) | SXT-026 | SXT-026: Add Wavetable asset and playback support | BLOCKED | — |
-| [#20](https://github.com/2AMLogic/gf180-surge/issues/20) | SXT-027 | SXT-027: Generate remaining voice-feature leaf issues | PASS | [`reports/sxt-027/EVIDENCE.md`](reports/sxt-027/EVIDENCE.md) |
-| [#21](https://github.com/2AMLogic/gf180-surge/issues/21) | SXT-028 | SXT-028: Expand effects by measured recovery | PASS | [`reports/sxt-028/EVIDENCE.md`](reports/sxt-028/EVIDENCE.md) |
-| [#22](https://github.com/2AMLogic/gf180-surge/issues/22) | SXT-029 | SXT-029: Run full qualification and publish coverage | PASS | [`reports/coverage-v1/README.md`](reports/coverage-v1/README.md) |
+| [#20](https://github.com/2AMLogic/gf180-surge/issues/20) | SXT-027 | SXT-027: Generate remaining voice-feature leaf issues | PASS (waived: #12) | [`reports/sxt-027/EVIDENCE.md`](reports/sxt-027/EVIDENCE.md) |
+| [#21](https://github.com/2AMLogic/gf180-surge/issues/21) | SXT-028 | SXT-028: Expand effects by measured recovery | PASS (waived: #9, #12, #16) | [`reports/sxt-028/EVIDENCE.md`](reports/sxt-028/EVIDENCE.md) |
+| [#22](https://github.com/2AMLogic/gf180-surge/issues/22) | SXT-029 | SXT-029: Run full qualification and publish coverage | PASS (waived: #18) | [`reports/coverage-v1/README.md`](reports/coverage-v1/README.md) |
 | [#23](https://github.com/2AMLogic/gf180-surge/issues/23) | SXT-030 | SXT-030: Qualify FPGA and external memory | BLOCKED | — |
 | [#24](https://github.com/2AMLogic/gf180-surge/issues/24) | SXT-031 | SXT-031: Qualify the GF180 implementation | BLOCKED | — |
 | [#25](https://github.com/2AMLogic/gf180-surge/issues/25) | SXT-019 | SXT-019: Reuse substrate adoption decision | IN PROGRESS | — |
 | [#29](https://github.com/2AMLogic/gf180-surge/issues/29) | SXT-018 | SXT-018: Backlog DAG + evidence-derived status board (README marker block) | PASS | [`reports/sxt-018/EVIDENCE.md`](reports/sxt-018/EVIDENCE.md) |
+
+`PASS (waived: #N)`: the node passes on its own committed evidence while prerequisite #N is not PASS; the scoped reason is in `prerequisite_waivers` in docs/dag.json and the graph edge is dashed. A waiver is not a claim that the prerequisite's own claim holds.
 
 </details>
 
@@ -151,18 +153,18 @@ graph TD
   n7 --> n17
   n8 --> n12
   n9 --> n12
-  n9 --> n21
+  n9 -.-> n21
   n10 --> n11
   n11 --> n12
   n12 --> n2
-  n12 --> n13
-  n12 --> n14
-  n12 --> n15
+  n12 -.-> n13
+  n12 -.-> n14
+  n12 -.-> n15
   n12 --> n16
-  n12 --> n17
+  n12 -.-> n17
   n12 --> n19
-  n12 --> n20
-  n12 --> n21
+  n12 -.-> n20
+  n12 -.-> n21
   n13 --> n14
   n13 --> n18
   n13 --> n19
@@ -171,11 +173,11 @@ graph TD
   n15 --> n18
   n15 --> n20
   n16 --> n18
-  n16 --> n21
+  n16 -.-> n21
   n17 --> n18
   n17 --> n21
   n18 --> n3
-  n18 --> n22
+  n18 -.-> n22
   n18 --> n23
   n19 --> n23
   n20 --> n22
