@@ -1,8 +1,20 @@
 {
  "schema": 1,
- "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir.",
+ "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir. Keys are script filenames under tools/ (discovery: tools/*_controls.py). 'verdict' selects the acceptance adapter in the test module (exit0 = rc==0 only; script-specific adapters additionally parse stdout). 'guard' lists committed files whose bytes must be identical before/after the run.",
  "scripts": {
-  "aw4": {
+  "aw49_negative_controls.py": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
+  },
+  "aw4_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [],
@@ -10,19 +22,11 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "aw49": {
-   "status": "LIVE",
-   "redirect": [
-    "OUT"
-   ],
-   "argv": [],
-   "slow": false,
-   "requires": [],
-   "reason": ""
-  },
-  "chorus": {
+  "chorus_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -30,9 +34,11 @@
    "argv": [],
    "slow": true,
    "requires": [],
-   "reason": "~110 s"
+   "reason": "~110 s",
+   "verdict": "exit0",
+   "guard": []
   },
-  "conditioner": {
+  "conditioner_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -40,9 +46,11 @@
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "control": {
+  "control_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT",
@@ -53,9 +61,11 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "coverage": {
+  "coverage_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -64,9 +74,11 @@
    ],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "distortion": {
+  "distortion_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -75,9 +87,11 @@
    ],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "distortion_sse": {
+  "distortion_sse_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -86,9 +100,11 @@
    ],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "fx_rng": {
+  "fx_rng_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -97,41 +113,51 @@
    ],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "kt": {
+  "kt_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
    "redirect": [],
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": "requires --reference mono int16 dry reference rendered by the pinned Surge engine"
+   "reason": "requires --reference mono int16 dry reference rendered by the pinned Surge engine",
+   "verdict": "exit0",
+   "guard": []
   },
-  "lfo": {
+  "lfo_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
    "redirect": [],
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-lfo-fixture.wav)"
+   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-lfo-fixture.wav)",
+   "verdict": "exit0",
+   "guard": []
   },
-  "lp12": {
+  "lp12_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
    "redirect": [],
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": "requires reference bundles (reports/sxt-037/artifacts/bundle-*) built from pinned-engine renders; absent from the repo"
+   "reason": "requires reference bundles (reports/sxt-037/artifacts/bundle-*) built from pinned-engine renders; absent from the repo",
+   "verdict": "exit0",
+   "guard": []
   },
-  "lp24": {
+  "lp24_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
    "redirect": [],
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": "requires reference bundles (reports/SXT-038/artifacts/bundle-*) built from pinned-engine renders; absent from the repo"
+   "reason": "requires reference bundles (reports/SXT-038/artifacts/bundle-*) built from pinned-engine renders; absent from the repo",
+   "verdict": "exit0",
+   "guard": []
   },
-  "lpmoog": {
+  "lpmoog_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -144,17 +170,21 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "mw": {
+  "mw_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
    "redirect": [],
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-mw-fixture.wav)"
+   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-mw-fixture.wav)",
+   "verdict": "exit0",
+   "guard": []
   },
-  "phaser": {
+  "phaser_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT",
@@ -163,19 +193,26 @@
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "reverb": {
+  "profile_budget_controls.py": {
    "status": "LIVE",
    "redirect": [
-    "OUT"
+    "OUT_REL"
    ],
    "argv": [],
-   "slow": true,
+   "slow": false,
    "requires": [],
-   "reason": "~107 s"
+   "verdict": "budget-nc-b1-b4",
+   "guard": [
+    "reports/sxt-017/negative-controls-budget.txt",
+    "reports/sxt-017/cost-closure.json"
+   ],
+   "reason": "~47 s; oracle-independent (reads committed slate/probe reports only). NC-B5 is a recorded finding, not counted."
   },
-  "reverb2": {
+  "reverb2_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -184,9 +221,38 @@
    ],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "rf_ains34": {
+  "reverb2_reference_controls.py": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [
+    "--out",
+    "{tmp}/reference-controls.json"
+   ],
+   "slow": false,
+   "requires": [],
+   "verdict": "reverb2-reference",
+   "guard": [
+    "reports/SXT-028f/negative-controls/reference-controls.json"
+   ],
+   "reason": "~23 s; executes 6 declared reference-backed cases x 3 controls against the committed pinned-engine bundle reports/SXT-028f/fixtures (inputs present; no engine run needed)"
+  },
+  "reverb_negative_controls.py": {
+   "status": "LIVE",
+   "redirect": [
+    "OUT"
+   ],
+   "argv": [],
+   "slow": true,
+   "requires": [],
+   "reason": "~107 s",
+   "verdict": "exit0",
+   "guard": []
+  },
+  "rf_ains34_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -196,9 +262,11 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "rf_bins12": {
+  "rf_bins12_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -208,9 +276,11 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "rf_global2": {
+  "rf_global2_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -218,9 +288,11 @@
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "rf_global34": {
+  "rf_global34_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -230,9 +302,11 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "rf_send34": {
+  "rf_send34_negative_controls.py": {
    "status": "LIVE",
    "redirect": [
     "OUT"
@@ -242,17 +316,21 @@
    "requires": [
     "iverilog"
    ],
-   "reason": ""
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
   },
-  "slfo": {
+  "slfo_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
    "redirect": [],
    "argv": [],
    "slow": false,
    "requires": [],
-   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-slfo fixture)"
+   "reason": "requires --reference-dir of pinned-engine dry renders (reference-<seq>-slfo fixture)",
+   "verdict": "exit0",
+   "guard": []
   },
-  "vel": {
+  "vel_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],
    "argv": [
@@ -261,7 +339,9 @@
    ],
    "slow": true,
    "requires": [],
-   "reason": "~64 s"
+   "reason": "~64 s",
+   "verdict": "exit0",
+   "guard": []
   }
  }
 }
