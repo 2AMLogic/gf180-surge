@@ -53,8 +53,8 @@ resolved here (see section 4).
 
 | fixture | max (LSB, budget 8,192) | rms (dBFS, budget -46.0) | spectral_corr (>= 0.98) | tail residual mono / L / R (budget -20 dB) | verdict |
 |---|---|---|---|---|---|
-| metallic | 182.4 | -109.0 | 0.9999995 | -77.4 / -68.8 / see JSON | PASS |
-| dexie | 11.1 | -130.3 | 0.99999999 | see JSON | PASS |
+| metallic | 182.4 | -109.0 | 0.9999995 | -77.4 / -68.8 / -69.8 | PASS |
+| dexie | 11.1 | -130.3 | 0.99999999 | -92.5 / -87.8 / -88.1 | PASS |
 | fm_bass_1 (EQ, regression) | 7.75 | -120.0 | 0.99999998 | tail gate PASS | PASS |
 
 (was: metallic -33.5 dBFS / 195,634 LSB / tail FAIL; dexie -44.2 dBFS / 72,738
