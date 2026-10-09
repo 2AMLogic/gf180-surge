@@ -860,12 +860,21 @@ asserts the NOT_RUN path live. A second live guard,
 `::test_rederivation_checker_carries_no_engine_source_text`, fails if any
 engine expression, constant or typedef is re-introduced into the tool.
 
-**Pinned-host leg (#135), run 2026-10-08.** Host: `Darwin 27.0.0 ...
-RELEASE_ARM64_T6050 arm64`; compiler Apple clang version 21.0.0
-(clang-2100.3.34.2); standard library libc++ (`_LIBCPP_VERSION` 220106);
-pinned headers `dd12f31a…` / `a32b8aec…`, simde `71fd833d…` fetched by
-`oracle/fetch-waveshaper-headers.sh` into an external directory. Both
-transcripts compared 1025 entries:
+**libc++ leg (#135): alternate-environment observation; pinned-host leg
+NOT_RUN.** `oracle/manifest.json` (`environment`) freezes the oracle host as
+macOS 26.5.1 (Build 25F80), Apple clang 21.0.0 (clang-2100.1.1.101), target
+arm64-apple-darwin25.5.0. The libc++ transcripts below were NOT produced
+there: they ran on an arm64 macOS host at Darwin 27.0.0 (`RELEASE_ARM64_T6050`,
+macOS 27.0.1) with Apple clang version 21.0.0 (clang-2100.3.34.2), libc++
+(`_LIBCPP_VERSION` 220106), against the pinned headers `dd12f31a…` /
+`a32b8aec…`, simde `71fd833d…` fetched by `oracle/fetch-waveshaper-headers.sh`
+into an external directory. They are retained as **alternate-environment
+observations** and do **not** discharge the pinned-host acceptance leg,
+which is **NOT_RUN**; #135 stays open for it. Each transcript records this
+itself (`environment.scope`, `environment.pinned_host_acceptance =
+NOT_RUN`), computed by the tool against the manifest, and records the
+standard library from a macro probe that uses the driver's exact flags and
+include path (`stdlib_detection`). Both compared 1025 entries:
 
 | flags | status | mismatches | transcript |
 |---|---|---|---|
@@ -873,16 +882,20 @@ transcripts compared 1025 entries:
 | `-O2 -std=c++20 -ffp-contract=off` (diagnostic) | **MATCH** | 0 | `artifacts/fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json` |
 
 The libstdc++ transcript (`fuzz-table-rederivation.json`) is retained
-unchanged. Cause: Apple clang fuses `x * (1 - range) + draw` into an FMA by
-default; the libc++ draw sequence itself is identical. So the libc++
-`generate_canonical` reading is now confirmed by build, but the verdict the
-tool returns on the pinned host as built by default is **MISMATCH**, and
-DR-0014 clause 3 (amended) therefore re-classifies the `FuzzTable<1>` row as
-quoted data with provenance (class (a)). **Not established:** whether the
+unchanged. Cause, on that alternate host: Apple clang fuses
+`x * (1 - range) + draw` into an FMA by default; with contraction off the
+libc++ draw sequence reproduces the generator bit for bit. So on that host
+the libc++ `generate_canonical` reading is confirmed by build, and the tool's
+default-flags verdict is **MISMATCH**. DR-0014 clause 3 (amended) therefore
+**conservatively** re-classifies the `FuzzTable<1>` row as quoted data with
+provenance (class (a)): the "re-derived" claim is not established on any
+libc++ build observed. **Not established:** the verdict under the pinned
+toolchain (clang-2100.1.1.101 may contract differently), and whether the
 pinned oracle's real build uses contraction (its flags are not in
 `oracle/manifest.json`); the model/RTL values are unchanged. The tool
 (`tools/check_fuzz_table_rederivation.py`, not byte-frozen) gained
-`--cxxflag` and now records the detected standard library and host; the
+`--cxxflag`, a flag-faithful standard-library probe (a failed probe is
+recorded `UNKNOWN`, never guessed), and the environment-scope record; the
 stale "UNVERIFIED-BY-BUILD" and "re-derived" wording in the byte-frozen
 `model/effects/type-distortion-sse/sse_tables.py` docstring is left
 unedited and is superseded by this section and DR-0014.
@@ -951,8 +964,10 @@ record should be read as a coverage claim.
   initialized state, that is worth tens of dB (73 dB here). Whether any
   landed sibling leaf's committed numbers are affected is a question this
   leaf cannot answer for them.
-* **#135 — (DONE 2026-10-08, see §8: MISMATCH at default flags, MATCH with
-  `-ffp-contract=off`; row re-classified.) SXT-028e-sse follow-up: discharge the `FuzzTable<1>`
+* **#135 — (OPEN; pinned-host leg NOT_RUN. Alternate-environment
+  observations recorded in §8: MISMATCH at default flags, MATCH with
+  `-ffp-contract=off`; row conservatively re-classified.) SXT-028e-sse
+  follow-up: discharge the `FuzzTable<1>`
   re-derivation on the pinned arm64/libc++ oracle host.** The committed
   build-discharge of DR-0014 clause 2 is libstdc++-only (§8); the pinned
   evidence host is arm64 macOS / libc++, where the equivalence is currently
@@ -992,7 +1007,11 @@ place by the `mutant-adaainit` RTL control.
 - Repeatability of an engine render **beyond this one host**: §3.5's
   3×-within-a-run and twice-across-runs results are from a single Linux
   x86-64 worker. Cross-host render repeatability is not established here.
-- Whether the pinned oracle's own build contracts FMAs (so which `FuzzTable<1>` values it holds) (§8).
+- The `FuzzTable<1>` re-derivation verdict on the pinned oracle host
+  (macOS 26.5.1 / clang-2100.1.1.101): **NOT_RUN** (#135). The §8 libc++
+  transcripts are alternate-environment observations only.
+- Whether the pinned oracle's own build contracts FMAs (so which
+  `FuzzTable<1>` values it holds) (§8).
 
 ## 12. Reproduce
 
@@ -1044,10 +1063,13 @@ $ORACLE_PYTHON tools/run_distortion_sse_reference_leg.py
 #    (add --reuse-model to re-grade existing model renders in place)
 
 # ARM64/libc++ ORACLE HOST ONLY (the §8 leg, and F-028e-sse-1's open half)
+# The pinned-host leg (manifest environment) is NOT_RUN. On the alternate
+# Darwin 27.0.0 / clang-2100.3.34.2 host these gave the §8 results; each
+# transcript's `environment` block says which kind of host it ran on.
 CXX=clang++ python3 tools/check_fuzz_table_rederivation.py \
-    --out <json>                                   # MISMATCH 305/1025
+    --out <json>                     # alt host: MISMATCH 305/1025
 CXX=clang++ python3 tools/check_fuzz_table_rederivation.py \
-    --cxxflag=-ffp-contract=off --out <json>       # MATCH 1025/1025
+    --cxxflag=-ffp-contract=off --out <json>   # alt host: MATCH 1025/1025
 ```
 
 ## 13. Provenance / licensing

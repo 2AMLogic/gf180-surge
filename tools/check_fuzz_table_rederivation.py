@@ -37,14 +37,22 @@ or point the tool at a full pinned engine checkout with `ORACLE_SURGE_DIR`.
 With neither reachable the tool reports **NOT_RUN** -- never a silent pass.
 
 LIMIT OF THE CHECK (stated, not hidden): it validates against whichever
-standard library AND floating-point contraction policy the host toolchain
-uses; both are recorded in the transcript. The libstdc++ transcript is
-`fuzz-table-rederivation.json`. On the pinned arm64 macOS / libc++ host (#135)
-Apple clang's DEFAULT -ffp-contract fuses `x * a + b` into an FMA and the
-check reports MISMATCH (305/1025); with `--cxxflag=-ffp-contract=off` it
-reports MATCH 1025/1025. See DR-0014 clause 3 and EVIDENCE.md section 8.
+standard library AND floating-point contraction policy the driver build
+uses; both are recorded in the transcript. The standard library is detected
+with the driver's own flags and include path (so `--cxxflag=-stdlib=...` is
+honoured), and a failed detection is recorded as UNKNOWN, never guessed. The
+transcript also compares the host with the frozen `environment` of
+`oracle/manifest.json`; a run elsewhere is recorded as an
+ALTERNATE-ENVIRONMENT OBSERVATION and leaves the pinned-host leg NOT_RUN.
+The libstdc++ transcript is `fuzz-table-rederivation.json`. On an arm64
+macOS / libc++ host that is NOT the pinned environment (Darwin 27.0.0, Apple
+clang-2100.3.34.2; #135) Apple clang's DEFAULT -ffp-contract fuses
+`x * a + b` into an FMA and the check reports MISMATCH (305/1025); with
+`--cxxflag=-ffp-contract=off` it reports MATCH 1025/1025. The pinned
+environment (macOS 26.5.1 / clang-2100.1.1.101) has NOT been run. See
+DR-0014 clause 3 and EVIDENCE.md section 8.
 
-Usage: python3 tools/check_fuzz_table_rederivation.py [--out JSON]
+Usage: python3 tools/check_fuzz_table_rederivation.py [--out JSON] [--cxxflag F]...
                   [--sst-include DIR]... [--cxx CXX]
 Exit 0 = MATCH, 1 = MISMATCH, 77 = NOT_RUN (no toolchain / no pinned
 headers), 78 = BLOCKED (the external checkout drifted from the pins).
@@ -231,6 +239,92 @@ def resolve_headers(args):
     return incs, defines, prov, None, None
 
 
+def stdlib_detection_cmd(cxx, flags, incs):
+    """The preprocessor-only command that reports which C++ standard library
+    the DRIVER compile selects. It carries the driver's exact `flags`
+    (including every --cxxflag, e.g. -stdlib=..., -nostdinc++, --sysroot)
+    and include directories, so the recorded library is the one the driver
+    was actually built against -- not the compiler's bare default."""
+    return ([cxx] + list(flags) + [f"-I{d}" for d in incs]
+            + ["-dM", "-E", "-x", "c++", "-include", "cstddef", os.devnull])
+
+
+def detect_stdlib(cxx, flags, incs, run=subprocess.run):
+    """Return (stdlib, detection_record).
+
+    `stdlib` is "libc++ (...)", "libstdc++ (...)" or an explicit
+    "UNKNOWN (...)" -- a failed or inconclusive detection is recorded as
+    such, never guessed from the compiler's name."""
+    cmd = stdlib_detection_cmd(cxx, flags, incs)
+    det = {"command": " ".join(cmd)}
+    try:
+        pre = run(cmd, capture_output=True, text=True)
+    except OSError as e:
+        det.update(returncode=None, error=f"{type(e).__name__}: {e}")
+        return f"UNKNOWN (stdlib macro detection could not run: {e})", det
+    det["returncode"] = pre.returncode
+    if pre.returncode != 0:
+        err = (pre.stderr or "").strip().splitlines()
+        det["error"] = err[-1] if err else "no diagnostic"
+        return ("UNKNOWN (stdlib macro detection failed, exit "
+                f"{pre.returncode}: {det['error']})"), det
+    libcxx = glibcxx = None
+    for line in (pre.stdout or "").splitlines():
+        parts = line.split()
+        if len(parts) >= 3 and parts[:2] == ["#define", "_LIBCPP_VERSION"]:
+            libcxx = parts[2]
+        if len(parts) >= 3 and parts[:2] == ["#define", "__GLIBCXX__"]:
+            glibcxx = parts[2]
+    if libcxx and glibcxx:
+        det["error"] = "both _LIBCPP_VERSION and __GLIBCXX__ defined"
+        return ("UNKNOWN (both _LIBCPP_VERSION and __GLIBCXX__ are "
+                "defined)"), det
+    if libcxx:
+        return f"libc++ (_LIBCPP_VERSION {libcxx})", det
+    if glibcxx:
+        return f"libstdc++ (__GLIBCXX__ {glibcxx})", det
+    det["error"] = "neither _LIBCPP_VERSION nor __GLIBCXX__ defined"
+    return ("UNKNOWN (neither _LIBCPP_VERSION nor __GLIBCXX__ is "
+            "defined)"), det
+
+
+def environment_scope(toolchain_version, mac_ver=None, manifest=MANIFEST):
+    """Compare this host to the frozen `environment` in oracle/manifest.json.
+
+    A transcript produced anywhere else is an ALTERNATE-ENVIRONMENT
+    OBSERVATION: it does not discharge the pinned-host acceptance leg, which
+    stays NOT_RUN. A string match on OS version + clang build is necessary,
+    not sufficient -- it is recorded, and the acceptance decision stays with
+    the evidence record."""
+    if mac_ver is None:
+        mac_ver = platform.mac_ver()[0] if platform.system() == "Darwin" \
+            else ""
+    with open(manifest) as f:
+        env = json.load(f).get("environment", {})
+    pin_os, pin_clang = env.get("os", ""), env.get("clang", "")
+    pin_os_ver = pin_os.split()[1] if pin_os.startswith("macOS ") else None
+    pin_clang_id = None
+    if "(" in pin_clang and ")" in pin_clang:
+        pin_clang_id = pin_clang.split("(", 1)[1].split(")", 1)[0]
+    os_ok = bool(pin_os_ver) and mac_ver == pin_os_ver
+    clang_ok = bool(pin_clang_id) and \
+        f"({pin_clang_id})" in (toolchain_version or "")
+    match = os_ok and clang_ok
+    return {
+        "pinned_environment": {"os": pin_os, "clang": pin_clang},
+        "host_os_version": mac_ver or platform.platform(),
+        "os_matches_pin": os_ok,
+        "clang_matches_pin": clang_ok,
+        "scope": ("host OS version and clang build match the "
+                  "oracle/manifest.json environment strings"
+                  if match else
+                  "ALTERNATE-ENVIRONMENT OBSERVATION: this host is not the "
+                  "oracle/manifest.json frozen environment; it does not "
+                  "discharge the pinned-host acceptance leg (NOT_RUN)"),
+        "pinned_host_acceptance": "see scope" if match else "NOT_RUN",
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=os.path.join(
@@ -305,36 +399,36 @@ def main():
             f.write(DRIVER_CPP.format(n=st.FUZZ_N, scale=1))
         ver = subprocess.run([cxx, "--version"], capture_output=True,
                              text=True)
-        pre = subprocess.run([cxx, "-std=c++20", "-dM", "-E", "-x", "c++",
-                              "-include", "cstddef", os.devnull],
-                             capture_output=True, text=True)
-        stdlib = "unidentified"
-        for line in pre.stdout.splitlines():
-            if line.startswith("#define _LIBCPP_VERSION "):
-                stdlib = "libc++ (_LIBCPP_VERSION " + line.split()[2] + ")"
-                break
-            if line.startswith("#define __GLIBCXX__ "):
-                stdlib = "libstdc++ (__GLIBCXX__ " + line.split()[2] + ")"
-        cmd = [cxx] + flags + [f"-I{d}" for d in incs] + ["-o", exe, src]
+        # Same flags and include path as the driver compile below, so the
+        # recorded library is the one the driver is actually built against.
+        stdlib, stdlib_det = detect_stdlib(cxx, flags, incs)
+        cmd =[cxx] + flags + [f"-I{d}" for d in incs] + ["-o", exe, src]
         subprocess.run(cmd, check=True)
         got = subprocess.run([exe], capture_output=True, text=True,
                              check=True).stdout.split()
 
     cpp = [int(w, 16) for w in got]
     mismatches = [i for i in range(min(len(py), len(cpp))) if py[i] != cpp[i]]
+    if stdlib.startswith("libc++ "):
+        libcxx_eq = "see status: this transcript was built against " + stdlib
+    elif stdlib.startswith("libstdc++ "):
+        libcxx_eq = ("UNVERIFIED-BY-BUILD (this run used libstdc++; derived "
+                     "by reading libc++'s generate_canonical, see "
+                     "sse_tables.py)")
+    else:
+        libcxx_eq = ("UNVERIFIED-BY-BUILD (the standard library of this "
+                     "build could not be identified: " + stdlib + ")")
     rec.update(
         status="MATCH" if (not mismatches and len(py) == len(cpp))
                else "MISMATCH",
         toolchain=(ver.stdout or "").splitlines()[0] if ver.stdout else cxx,
         compile_flags=" ".join(flags),
         stdlib_validated=stdlib,
+        stdlib_detection=stdlib_det,
         host={"uname": " ".join(platform.uname()),
               "machine": platform.machine()},
-        libcxx_equivalence=(
-            "see status: this transcript was built against " + stdlib
-            if "libc++" in stdlib else
-            "UNVERIFIED-BY-BUILD (this run did not use libc++; derived by "
-            "reading libc++'s generate_canonical, see sse_tables.py)"),
+        environment=environment_scope(ver.stdout or ""),
+        libcxx_equivalence=libcxx_eq,
         cpp_entries=len(cpp), mismatches=len(mismatches),
         first_mismatch_index=mismatches[0] if mismatches else None)
     _write(args.out, rec)

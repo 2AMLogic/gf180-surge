@@ -10,20 +10,20 @@
   "probe_source_note": "no Surge/SST source text is transcribed or committed here: the driver compiled by this tool only #includes the pinned GPL-3.0-or-later headers from an EXTERNAL checkout and instantiates the library's own LUT type",
   "external_headers": {
     "sst-waveshapers": {
-      "checkout": "/tmp/sxt-hdrhPa3/sst-waveshapers",
-      "include": "/tmp/sxt-hdrhPa3/sst-waveshapers/include",
+      "checkout": "/tmp/sxt-hdr-doctor.Pbfh/sst-waveshapers",
+      "include": "/tmp/sxt-hdr-doctor.Pbfh/sst-waveshapers/include",
       "pinned_commit": "dd12f31a5a9016c9895e52d1a00eee0e1eebe6ce",
       "commit": "dd12f31a5a9016c9895e52d1a00eee0e1eebe6ce"
     },
     "sst-basic-blocks": {
-      "checkout": "/tmp/sxt-hdrhPa3/sst-basic-blocks",
-      "include": "/tmp/sxt-hdrhPa3/sst-basic-blocks/include",
+      "checkout": "/tmp/sxt-hdr-doctor.Pbfh/sst-basic-blocks",
+      "include": "/tmp/sxt-hdr-doctor.Pbfh/sst-basic-blocks/include",
       "pinned_commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
       "commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96"
     },
     "simde": {
-      "checkout": "/tmp/sxt-hdrhPa3/simde",
-      "include": "/tmp/sxt-hdrhPa3/simde",
+      "checkout": "/tmp/sxt-hdr-doctor.Pbfh/simde",
+      "include": "/tmp/sxt-hdr-doctor.Pbfh/simde",
       "pinned_commit": "71fd833d9666141edcd1d3c109a80e228303d8d7",
       "commit": "71fd833d9666141edcd1d3c109a80e228303d8d7"
     }
@@ -32,9 +32,24 @@
   "toolchain": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
   "compile_flags": "-O2 -std=c++20 -ffp-contract=off",
   "stdlib_validated": "libc++ (_LIBCPP_VERSION 220106)",
+  "stdlib_detection": {
+    "command": "/usr/bin/clang++ -O2 -std=c++20 -ffp-contract=off -I/tmp/sxt-hdr-doctor.Pbfh/sst-waveshapers/include -I/tmp/sxt-hdr-doctor.Pbfh/sst-basic-blocks/include -I/tmp/sxt-hdr-doctor.Pbfh/simde -dM -E -x c++ -include cstddef /dev/null",
+    "returncode": 0
+  },
   "host": {
     "uname": "Darwin robb-pro 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:06:40 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T6050 arm64 arm",
     "machine": "arm64"
+  },
+  "environment": {
+    "pinned_environment": {
+      "os": "macOS 26.5.1 (Build 25F80), arm64",
+      "clang": "Apple clang 21.0.0 (clang-2100.1.1.101), target arm64-apple-darwin25.5.0"
+    },
+    "host_os_version": "27.0.1",
+    "os_matches_pin": false,
+    "clang_matches_pin": false,
+    "scope": "ALTERNATE-ENVIRONMENT OBSERVATION: this host is not the oracle/manifest.json frozen environment; it does not discharge the pinned-host acceptance leg (NOT_RUN)",
+    "pinned_host_acceptance": "NOT_RUN"
   },
   "libcxx_equivalence": "see status: this transcript was built against libc++ (_LIBCPP_VERSION 220106)",
   "cpp_entries": 1025,

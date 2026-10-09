@@ -154,10 +154,16 @@ draw_k = u_k * (b - a) + a
    re-classified as quoted data by amending this record — the check is a
    live guard on a licensing-relevant claim.
 
-   **Amendment 2026-10-08 (#135, pinned arm64 macOS / libc++ host).** The
-   check was run on `Darwin ... RELEASE_ARM64_T6050 arm64`, Apple clang
+   **Amendment 2026-10-08 (#135, libc++ on an ALTERNATE arm64 macOS
+   host; the pinned-host leg is NOT_RUN).** `oracle/manifest.json`
+   (`environment`) freezes the oracle host as macOS 26.5.1 (Build 25F80),
+   Apple clang 21.0.0 (clang-2100.1.1.101). The check was instead run on an
+   arm64 macOS host at Darwin 27.0.0 (`RELEASE_ARM64_T6050`), Apple clang
    version 21.0.0 (clang-2100.3.34.2), libc++ (`_LIBCPP_VERSION` 220106),
-   against the pinned headers `dd12f31a…` / `a32b8aec…` / simde `71fd833d…`:
+   against the pinned headers `dd12f31a…` / `a32b8aec…` / simde `71fd833d…`.
+   These are **alternate-environment observations**; each transcript records
+   that scope itself (`environment.pinned_host_acceptance = NOT_RUN`). They
+   do not discharge the pinned-host leg, which remains NOT_RUN (#135 open):
    * default flags (`-O2 -std=c++20`): **MISMATCH**, 1025 compared, 305
      mismatches, first at index 2
      (`artifacts/fuzz-table-rederivation-libcxx-arm64.json`);
@@ -165,16 +171,18 @@ draw_k = u_k * (b - a) + a
      0 mismatches
      (`artifacts/fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json`).
 
-   Reading: libc++'s `generate_canonical` reduction is now confirmed BY BUILD
-   (the draw sequence is identical; the libc++ half of the UNVERIFIED-BY-BUILD
-   qualifier is discharged for that part). The mismatch is a one-ulp float32
-   difference from Apple clang fusing `x * (1 - range) + draw` into an FMA,
-   which the generator's separately-rounded float32 ops do not do. It is NOT
-   shown that the pinned oracle's own build flags contract or not (no
-   oracle build flags are recorded in `oracle/manifest.json`), so which
-   values the pinned oracle actually holds is **UNVERIFIED**.
-   Per this clause's own rule, the check reporting MISMATCH on the pinned
-   host means the "re-derived, not quoted" claim is not established there, so
+   Reading: on that alternate host libc++'s `generate_canonical` reduction
+   is confirmed BY BUILD (with contraction off the draw sequence is
+   identical). The default-flags mismatch is a one-ulp float32 difference
+   from Apple clang fusing `x * (1 - range) + draw` into an FMA, which the
+   generator's separately-rounded float32 ops do not do. NOT shown: the
+   verdict under the pinned toolchain (clang-2100.1.1.101), and whether the
+   pinned oracle's own build flags contract (no oracle build flags are
+   recorded in `oracle/manifest.json`), so which values the pinned oracle
+   actually holds is **UNVERIFIED**. Because the only libc++ build observed
+   reports MISMATCH at default flags, the "re-derived, not quoted" claim is
+   not established for libc++, and this amendment **conservatively**
+   applies this clause's MISMATCH rule ahead of the pinned-host leg:
    **the `FuzzTable<1>` row is re-classified from class (b) to class (a):
    quoted data with provenance** (`sst-waveshapers@dd12f31a…`, `Fuzzes.h` +
    `WaveshaperLUT.h`, GPL-3.0-or-later; the generator in `sse_tables.py`
@@ -219,13 +227,14 @@ draw_k = u_k * (b - a) + a
   that; `quad_shapers.py` DD-3 freezes it to "first sample" and bounds the
   consequence to the single first oversampled sample after each reset
   (finding F-028e-sse-2).
-- The `FuzzTable<1>` validation leg now has a libc++ transcript from the
-  pinned arm64 macOS host (#135, clause 3 amendment): **MISMATCH** at default
-  flags (FMA contraction, 305/1025), **MATCH** 1025/1025 with
-  `-ffp-contract=off`. The libc++ `generate_canonical` equivalence is
-  verified by build; the row is re-classified as quoted data with
-  provenance. Whether the pinned oracle's own build contracts is
-  **UNVERIFIED**.
+- The `FuzzTable<1>` validation leg now has libc++ transcripts from an
+  ALTERNATE arm64 macOS host (Darwin 27.0.0 / clang-2100.3.34.2, not the
+  manifest's frozen environment; #135, clause 3 amendment): **MISMATCH** at
+  default flags (FMA contraction, 305/1025), **MATCH** 1025/1025 with
+  `-ffp-contract=off`. The row is conservatively re-classified as quoted
+  data with provenance. The pinned-host leg (macOS 26.5.1 /
+  clang-2100.1.1.101) is **NOT_RUN**, and whether the pinned oracle's own
+  build contracts is **UNVERIFIED**.
 - The clause 3 discharge now depends on an **external** pinned checkout, so
   it is host-conditional by construction: a host without it records
   NOT_RUN. That is the intended trade — this repository stays free of
