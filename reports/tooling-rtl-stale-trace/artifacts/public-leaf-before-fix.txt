@@ -1,8 +1,8 @@
 # issue #360 public-command probe: tools/compare_mw_rtl_model.py
-git HEAD: 52f5321a0821f55b4969ccc175b47bef82f79b0a (tools/rtl/model worktree dirty: yes)
+git HEAD: 1ff9c0830f2f0a203807bf04a3c25514e451898b (tools/rtl/model worktree dirty: yes)
 python: CPython 3.13.16
 iverilog: Icarus Verilog version 13.0 (stable) (v13_0)
-helper sha256: 58912168e1f0f75eb92d53d50bf2cfcd86939ec91d5d42f88fa007442d52e850
+helper tools/_rtl_compile_common.py git blob: a54039e7d83ef848b3b979fa6a26aa5e37162962
 run dir: <work>/mw (reused across all three runs)
 
 model runner: model/voice/run_mw_model.py --sequence seq-modwheel-v1 exit=0

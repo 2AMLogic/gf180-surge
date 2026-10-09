@@ -98,8 +98,13 @@ def main():
     log("python: %s %s" % (platform.python_implementation(),
                            platform.python_version()))
     log("iverilog: %s" % tool_version(["iverilog", "-V"]))
-    log("helper sha256: %s"
-        % sha(os.path.join(REPO, "tools", "_rtl_compile_common.py")))
+    # identified by git blob id, NOT sha256: a sha256 of the helper's bytes
+    # in a committed record would make it an (unregistered) byte-frozen pin
+    blob = subprocess.run(
+        ["git", "-C", REPO, "hash-object",
+         os.path.join(REPO, "tools", "_rtl_compile_common.py")],
+        capture_output=True, text=True).stdout.strip()
+    log("helper tools/_rtl_compile_common.py git blob: %s" % blob)
     log("run dir: <work>/mw (reused across all three runs)")
     log("")
 
