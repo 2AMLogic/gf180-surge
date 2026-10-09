@@ -181,6 +181,34 @@ def run_case(slug, seq, fixtures_dir, art_dir):
     return out
 
 
+def case_id(slug, seq):
+    return f"{slug}__{seq}"
+
+
+def select_cases(spec):
+    """Resolve a --cases selector against the declared CASES.
+
+    Returns (cases, None) or (None, diagnostic). None (flag omitted) means
+    the full declared run. An empty, malformed (empty token, duplicate) or
+    unknown selector is refused, including a valid+unknown mix: requested
+    coverage that cannot execute must never become a zero-work PASS."""
+    declared = [case_id(s, q) for s, q in CASES]
+    if spec is None:
+        return list(CASES), None
+    tokens = spec.split(",")
+    if any(t == "" for t in tokens):
+        return None, (f"malformed --cases {spec!r}: empty selector token "
+                      "(empty selection or stray comma)")
+    dup = sorted({t for t in tokens if tokens.count(t) > 1})
+    if dup:
+        return None, f"malformed --cases {spec!r}: duplicate IDs {dup}"
+    unknown = [t for t in tokens if t not in declared]
+    if unknown:
+        return None, (f"unknown --cases ID(s) {unknown}; declared: "
+                      f"{declared}")
+    return [(s, q) for s, q in CASES if case_id(s, q) in set(tokens)], None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fixtures-dir", default=FIXTURES)
@@ -190,10 +218,16 @@ def main():
     ap.add_argument("--cases", help="comma-separated slug__seq subset")
     args = ap.parse_args()
 
-    cases = CASES
-    if args.cases:
-        want = set(args.cases.split(","))
-        cases = [(s, q) for s, q in CASES if f"{s}__{q}" in want]
+    cases, err = select_cases(args.cases)
+    if err:
+        print("status: FAIL (NOT_RUN) -- " + err + "; requested coverage "
+              "did not execute; no controls run and no report written "
+              f"(any existing {args.out} is NOT output of this invocation)",
+              file=sys.stderr)
+        return 2
+    declared_ids = [case_id(s, q) for s, q in CASES]
+    requested_ids = (args.cases.split(",") if args.cases is not None
+                     else declared_ids)
     rows = []
     for slug, seq in cases:
         row = run_case(slug, seq, args.fixtures_dir, args.art_dir)
@@ -215,6 +249,18 @@ def main():
                        "preset-support, coverage or musical-quality claim.",
         "proposed_budgets": PROPOSED,
         "proposed_tail_budget": dict(PROPOSED_TAIL),
+        "coverage": {
+            "declared_case_ids": declared_ids,
+            "requested_case_ids": requested_ids,
+            "executed_case_ids": [case_id(r["slug"], r["sequence"])
+                                  for r in rows],
+            "declared_count": len(declared_ids),
+            "executed_count": len(rows),
+            "scope": ("full" if len(rows) == len(declared_ids)
+                      else "subset"),
+            "note": "status grades agreement only on the executed cases; a "
+                    "subset PASS is not full acceptance.",
+        },
         "cases": rows,
         "status": "PASS" if all(r["ok"] for r in rows) else "FAIL",
     }
@@ -222,6 +268,9 @@ def main():
     with open(args.out, "w") as f:
         json.dump(doc, f, indent=2, sort_keys=True)
         f.write("\n")
+    cov = doc["coverage"]
+    print("coverage: %s (%d/%d declared cases executed)"
+          % (cov["scope"], cov["executed_count"], cov["declared_count"]))
     print("status:", doc["status"])
     return 0 if doc["status"] == "PASS" else 1
 

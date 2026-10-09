@@ -350,14 +350,53 @@ def test_reverb2_adapter_rejects_vacuous_empty_case_selection(tmp_path):
     assert not _accept(ent, 0, "status: PASS\n")[0]
     assert not _accept(ent, 0, "ok x\n" * 17 + "FAIL x\nstatus: PASS\n")[0]
     assert not _accept(ent, 1, healthy)[0]
-    # real script, empty selection: exits 0 with status PASS but must be
-    # rejected as vacuous
+    # synthetic legacy artifact: cases=[] / status PASS / PASS stdout
+    legacy = tmp_path / "reference-controls.json"
+    legacy.write_text(json.dumps({"cases": [], "status": "PASS"}))
+    assert not _accept(ent, 0, "status: PASS\n", tmp_path)[0]
+    # the producing CLI itself must now refuse invalid selections
+    for sel in ("no__such_case", "", "tacobell__seq-poly-8-v1,",
+                "tacobell__seq-poly-8-v1,no__such_case",
+                "tacobell__seq-poly-8-v1,tacobell__seq-poly-8-v1"):
+        scratch = tmp_path / "cli"
+        scratch.mkdir(exist_ok=True)
+        with _isolated_imports():
+            mod = _load(_path("reverb2_reference_controls.py"), "ncl_rv2_empty")
+
+            def boom(*a, **k):
+                raise AssertionError("run_case executed for refused selector")
+            mod.run_case = boom
+            rc, out = _run_main(mod, [], ["--out", "{tmp}/cli/rc.json",
+                                          "--cases", sel], tmp_path)
+        assert rc != 0 and "status: PASS" not in out, sel
+        assert not (scratch / "rc.json").exists(), sel
+
+
+def test_reverb2_cli_subset_records_coverage(tmp_path):
     with _isolated_imports():
-        mod = _load(_path("reverb2_reference_controls.py"), "ncl_rv2_empty")
-        rc, out = _run_main(mod, [], ["--out", "{tmp}/reference-controls.json",
-                                      "--cases", "no__such_case"], tmp_path)
-    assert rc == 0 and "status: PASS" in out
-    assert not _accept(ent, rc, out, tmp_path)[0]
+        mod = _load(_path("reverb2_reference_controls.py"), "ncl_rv2_subset")
+        seen = []
+
+        def fake(slug, seq, *a):
+            seen.append((slug, seq))
+            return {"slug": slug, "sequence": seq, "ok": True,
+                    "controls": [{"ok": True, "verdict": "v"}]}
+        mod.run_case = fake
+        sel = "mystical__seq-poly-8-v1,tacobell__seq-poly-8-v1"
+        rc, out = _run_main(mod, [], ["--out", "{tmp}/r.json",
+                                      "--cases", sel], tmp_path)
+        full_rc, full_out = _run_main(mod, [], ["--out", "{tmp}/f.json"],
+                                      tmp_path)
+    assert rc == 0 and seen[:2] == [("tacobell", "seq-poly-8-v1"),
+                                    ("mystical", "seq-poly-8-v1")]
+    cov = json.load(open(tmp_path / "r.json"))["coverage"]
+    assert cov["scope"] == "subset" and cov["executed_count"] == 2
+    assert cov["requested_case_ids"] == sel.split(",")
+    assert "coverage: subset" in out
+    # a subset PASS is never accepted by the full-run registry adapter
+    assert not _accept({"verdict": "reverb2-reference"}, rc, out, tmp_path)[0]
+    assert full_rc == 0 and len(seen) == 8
+    assert json.load(open(tmp_path / "f.json"))["coverage"]["scope"] == "full"
 
 
 def _budget_copies(tmp_path):
