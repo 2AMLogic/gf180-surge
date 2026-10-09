@@ -37,12 +37,12 @@ or point the tool at a full pinned engine checkout with `ORACLE_SURGE_DIR`.
 With neither reachable the tool reports **NOT_RUN** -- never a silent pass.
 
 LIMIT OF THE CHECK (stated, not hidden): it validates against whichever
-standard library the host toolchain uses. On this build host that is
-libstdc++. The libc++ equivalence is derived by reading its
-`generate_canonical` (see sse_tables.py) and is recorded as
-UNVERIFIED-BY-BUILD. The pinned oracle host is arm64 macOS / libc++
-(`oracle/manifest.json`), so re-running this tool there is a named follow-up,
-not a completed leg (#135).
+standard library AND floating-point contraction policy the host toolchain
+uses; both are recorded in the transcript. The libstdc++ transcript is
+`fuzz-table-rederivation.json`. On the pinned arm64 macOS / libc++ host (#135)
+Apple clang's DEFAULT -ffp-contract fuses `x * a + b` into an FMA and the
+check reports MISMATCH (305/1025); with `--cxxflag=-ffp-contract=off` it
+reports MATCH 1025/1025. See DR-0014 clause 3 and EVIDENCE.md section 8.
 
 Usage: python3 tools/check_fuzz_table_rederivation.py [--out JSON]
                   [--sst-include DIR]... [--cxx CXX]
@@ -237,6 +237,9 @@ def main():
         REPO, "reports", "SXT-028e-sse", "artifacts",
         "fuzz-table-rederivation.json"))
     ap.add_argument("--cxx", default=os.environ.get("CXX", "g++"))
+    ap.add_argument("--cxxflag", action="append", default=[], metavar="FLAG",
+                    help="extra compiler flag (repeatable), e.g. "
+                         "--cxxflag=-ffp-contract=off; recorded verbatim")
     ap.add_argument("--sst-include", action="append", metavar="DIR",
                     help="external checkout of a pinned dependency "
                          "(repeatable; sst-waveshapers, sst-basic-blocks, "
@@ -294,7 +297,7 @@ def main():
         print(f"BLOCKED: {blocked}")
         return 78
 
-    flags = ["-O2", "-std=c++20"] + defines
+    flags = ["-O2", "-std=c++20"] + defines + list(args.cxxflag)
     with tempfile.TemporaryDirectory(prefix="sxt028e-sse-fuzz-") as td:
         src = os.path.join(td, "driver.cpp")
         exe = os.path.join(td, "driver")
@@ -302,6 +305,16 @@ def main():
             f.write(DRIVER_CPP.format(n=st.FUZZ_N, scale=1))
         ver = subprocess.run([cxx, "--version"], capture_output=True,
                              text=True)
+        pre = subprocess.run([cxx, "-std=c++20", "-dM", "-E", "-x", "c++",
+                              "-include", "cstddef", os.devnull],
+                             capture_output=True, text=True)
+        stdlib = "unidentified"
+        for line in pre.stdout.splitlines():
+            if line.startswith("#define _LIBCPP_VERSION "):
+                stdlib = "libc++ (_LIBCPP_VERSION " + line.split()[2] + ")"
+                break
+            if line.startswith("#define __GLIBCXX__ "):
+                stdlib = "libstdc++ (__GLIBCXX__ " + line.split()[2] + ")"
         cmd = [cxx] + flags + [f"-I{d}" for d in incs] + ["-o", exe, src]
         subprocess.run(cmd, check=True)
         got = subprocess.run([exe], capture_output=True, text=True,
@@ -314,13 +327,14 @@ def main():
                else "MISMATCH",
         toolchain=(ver.stdout or "").splitlines()[0] if ver.stdout else cxx,
         compile_flags=" ".join(flags),
-        stdlib_validated="libstdc++ (host toolchain)"
-                         if "g++" in os.path.basename(cxx) else "host default",
-        libcxx_equivalence="UNVERIFIED-BY-BUILD (derived by reading libc++'s "
-                           "generate_canonical; see sse_tables.py). The "
-                           "pinned oracle host is arm64 macOS / libc++ — "
-                           "re-running this tool there is a named follow-up "
-                           "(#135).",
+        stdlib_validated=stdlib,
+        host={"uname": " ".join(platform.uname()),
+              "machine": platform.machine()},
+        libcxx_equivalence=(
+            "see status: this transcript was built against " + stdlib
+            if "libc++" in stdlib else
+            "UNVERIFIED-BY-BUILD (this run did not use libc++; derived by "
+            "reading libc++'s generate_canonical, see sse_tables.py)"),
         cpp_entries=len(cpp), mismatches=len(mismatches),
         first_mismatch_index=mismatches[0] if mismatches else None)
     _write(args.out, rec)

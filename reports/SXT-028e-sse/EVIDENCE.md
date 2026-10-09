@@ -860,13 +860,32 @@ asserts the NOT_RUN path live. A second live guard,
 `::test_rederivation_checker_carries_no_engine_source_text`, fails if any
 engine expression, constant or typedef is re-introduced into the tool.
 
-**Limit, stated:** the build validates libstdc++ only. The libc++
-equivalence is derived by reading its `generate_canonical` and is recorded
-as **UNVERIFIED-BY-BUILD**; the pinned oracle host is arm64 macOS / libc++,
-so re-running the tool there is a named follow-up (#135), not a completed
-leg. If the check ever reports MISMATCH, the row must be re-classified as
-quoted data by amending DR-0014 — it is a live guard on a
-licensing-relevant claim.
+**Pinned-host leg (#135), run 2026-10-08.** Host: `Darwin 27.0.0 ...
+RELEASE_ARM64_T6050 arm64`; compiler Apple clang version 21.0.0
+(clang-2100.3.34.2); standard library libc++ (`_LIBCPP_VERSION` 220106);
+pinned headers `dd12f31a…` / `a32b8aec…`, simde `71fd833d…` fetched by
+`oracle/fetch-waveshaper-headers.sh` into an external directory. Both
+transcripts compared 1025 entries:
+
+| flags | status | mismatches | transcript |
+|---|---|---|---|
+| `-O2 -std=c++20` (compiler default) | **MISMATCH** | 305 (first at index 2) | `artifacts/fuzz-table-rederivation-libcxx-arm64.json` |
+| `-O2 -std=c++20 -ffp-contract=off` (diagnostic) | **MATCH** | 0 | `artifacts/fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json` |
+
+The libstdc++ transcript (`fuzz-table-rederivation.json`) is retained
+unchanged. Cause: Apple clang fuses `x * (1 - range) + draw` into an FMA by
+default; the libc++ draw sequence itself is identical. So the libc++
+`generate_canonical` reading is now confirmed by build, but the verdict the
+tool returns on the pinned host as built by default is **MISMATCH**, and
+DR-0014 clause 3 (amended) therefore re-classifies the `FuzzTable<1>` row as
+quoted data with provenance (class (a)). **Not established:** whether the
+pinned oracle's real build uses contraction (its flags are not in
+`oracle/manifest.json`); the model/RTL values are unchanged. The tool
+(`tools/check_fuzz_table_rederivation.py`, not byte-frozen) gained
+`--cxxflag` and now records the detected standard library and host; the
+stale "UNVERIFIED-BY-BUILD" and "re-derived" wording in the byte-frozen
+`model/effects/type-distortion-sse/sse_tables.py` docstring is left
+unedited and is superseded by this section and DR-0014.
 
 ## 9. Newly-enabled presets (honest delta)
 
@@ -932,7 +951,8 @@ record should be read as a coverage claim.
   initialized state, that is worth tens of dB (73 dB here). Whether any
   landed sibling leaf's committed numbers are affected is a question this
   leaf cannot answer for them.
-* **#135 — SXT-028e-sse follow-up: discharge the `FuzzTable<1>`
+* **#135 — (DONE 2026-10-08, see §8: MISMATCH at default flags, MATCH with
+  `-ffp-contract=off`; row re-classified.) SXT-028e-sse follow-up: discharge the `FuzzTable<1>`
   re-derivation on the pinned arm64/libc++ oracle host.** The committed
   build-discharge of DR-0014 clause 2 is libstdc++-only (§8); the pinned
   evidence host is arm64 macOS / libc++, where the equivalence is currently
@@ -972,7 +992,7 @@ place by the `mutant-adaainit` RTL control.
 - Repeatability of an engine render **beyond this one host**: §3.5's
   3×-within-a-run and twice-across-runs results are from a single Linux
   x86-64 worker. Cross-host render repeatability is not established here.
-- Any libc++-host equivalence of the `FuzzTable<1>` re-derivation (§8).
+- Whether the pinned oracle's own build contracts FMAs (so which `FuzzTable<1>` values it holds) (§8).
 
 ## 12. Reproduce
 
@@ -1024,7 +1044,10 @@ $ORACLE_PYTHON tools/run_distortion_sse_reference_leg.py
 #    (add --reuse-model to re-grade existing model renders in place)
 
 # ARM64/libc++ ORACLE HOST ONLY (the §8 leg, and F-028e-sse-1's open half)
-python3 tools/check_fuzz_table_rederivation.py     # on the arm64/libc++ host
+CXX=clang++ python3 tools/check_fuzz_table_rederivation.py \
+    --out <json>                                   # MISMATCH 305/1025
+CXX=clang++ python3 tools/check_fuzz_table_rederivation.py \
+    --cxxflag=-ffp-contract=off --out <json>       # MATCH 1025/1025
 ```
 
 ## 13. Provenance / licensing

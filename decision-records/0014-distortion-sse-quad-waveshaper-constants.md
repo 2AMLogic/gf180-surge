@@ -153,6 +153,37 @@ draw_k = u_k * (b - a) + a
    MISMATCH, clause 2 is false for that row and the row must be
    re-classified as quoted data by amending this record — the check is a
    live guard on a licensing-relevant claim.
+
+   **Amendment 2026-10-08 (#135, pinned arm64 macOS / libc++ host).** The
+   check was run on `Darwin ... RELEASE_ARM64_T6050 arm64`, Apple clang
+   version 21.0.0 (clang-2100.3.34.2), libc++ (`_LIBCPP_VERSION` 220106),
+   against the pinned headers `dd12f31a…` / `a32b8aec…` / simde `71fd833d…`:
+   * default flags (`-O2 -std=c++20`): **MISMATCH**, 1025 compared, 305
+     mismatches, first at index 2
+     (`artifacts/fuzz-table-rederivation-libcxx-arm64.json`);
+   * diagnostic, same build plus `-ffp-contract=off`: **MATCH**, 1025/1025,
+     0 mismatches
+     (`artifacts/fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json`).
+
+   Reading: libc++'s `generate_canonical` reduction is now confirmed BY BUILD
+   (the draw sequence is identical; the libc++ half of the UNVERIFIED-BY-BUILD
+   qualifier is discharged for that part). The mismatch is a one-ulp float32
+   difference from Apple clang fusing `x * (1 - range) + draw` into an FMA,
+   which the generator's separately-rounded float32 ops do not do. It is NOT
+   shown that the pinned oracle's own build flags contract or not (no
+   oracle build flags are recorded in `oracle/manifest.json`), so which
+   values the pinned oracle actually holds is **UNVERIFIED**.
+   Per this clause's own rule, the check reporting MISMATCH on the pinned
+   host means the "re-derived, not quoted" claim is not established there, so
+   **the `FuzzTable<1>` row is re-classified from class (b) to class (a):
+   quoted data with provenance** (`sst-waveshapers@dd12f31a…`, `Fuzzes.h` +
+   `WaveshaperLUT.h`, GPL-3.0-or-later; the generator in `sse_tables.py`
+   reproduces it and the committed ROM remains a build product of it). The
+   `wst_sine` row is unaffected. No model or RTL numeric changes; no
+   distribution-license determination is made by this amendment. The
+   "re-derived" wording in `sse_tables.py`, which is byte-frozen
+   (`docs/byte-frozen-sources.md`), is left unedited and is stale against
+   this amendment; this record governs.
 4. **(b) Structural scalars stay in the RTL.** The six power-of-two /
    LUT-size constants of class (b) are `localparam`s in
    `rtl/effects/type-distortion-sse/tb_distortion_sse.sv`. They are not
@@ -188,10 +219,13 @@ draw_k = u_k * (b - a) + a
   that; `quad_shapers.py` DD-3 freezes it to "first sample" and bounds the
   consequence to the single first oversampled sample after each reset
   (finding F-028e-sse-2).
-- The `FuzzTable<1>` validation leg is currently libstdc++-only. Re-running
-  `tools/check_fuzz_table_rederivation.py` on the pinned arm64 macOS /
-  libc++ oracle host is a named follow-up; until then the libc++ equivalence
-  is **UNVERIFIED-BY-BUILD**, derived by reading its `generate_canonical`.
+- The `FuzzTable<1>` validation leg now has a libc++ transcript from the
+  pinned arm64 macOS host (#135, clause 3 amendment): **MISMATCH** at default
+  flags (FMA contraction, 305/1025), **MATCH** 1025/1025 with
+  `-ffp-contract=off`. The libc++ `generate_canonical` equivalence is
+  verified by build; the row is re-classified as quoted data with
+  provenance. Whether the pinned oracle's own build contracts is
+  **UNVERIFIED**.
 - The clause 3 discharge now depends on an **external** pinned checkout, so
   it is host-conditional by construction: a host without it records
   NOT_RUN. That is the intended trade — this repository stays free of
