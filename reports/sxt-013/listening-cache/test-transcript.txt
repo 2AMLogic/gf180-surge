@@ -1,0 +1,15 @@
+test_failure_control_legacy_cache_reuses_A_for_B (__main__.TestCollision.test_failure_control_legacy_cache_reuses_A_for_B) ... ok
+test_new_cache_gives_independent_entries (__main__.TestCollision.test_new_cache_gives_independent_entries) ... ok
+test_new_cache_rejects_seeded_legacy_basename_entry (__main__.TestCollision.test_new_cache_rejects_seeded_legacy_basename_entry) ... ok
+test_changed_identity_fields_select_other_entry (__main__.TestReuseAndStale.test_changed_identity_fields_select_other_entry) ... ok
+test_corrupt_identity_record (__main__.TestReuseAndStale.test_corrupt_identity_record) ... ok
+test_mismatched_recorded_identity (__main__.TestReuseAndStale.test_mismatched_recorded_identity) ... ok
+test_missing_identity_record (__main__.TestReuseAndStale.test_missing_identity_record) ... ok
+test_tampered_dry (__main__.TestReuseAndStale.test_tampered_dry) ... ok
+test_tampered_wet (__main__.TestReuseAndStale.test_tampered_wet) ... ok
+test_valid_entry_reused_without_renderer (__main__.TestReuseAndStale.test_valid_entry_reused_without_renderer) ... ok
+test_missing_oracle_is_blocked_and_not_counted (__main__.TestSession.test_missing_oracle_is_blocked_and_not_counted) ... ok
+test_second_session_reuses_with_binding (__main__.TestSession.test_second_session_reuses_with_binding) ... ok
+test_session_associates_each_candidate_with_its_own_audio (__main__.TestSession.test_session_associates_each_candidate_with_its_own_audio) ... ok
+Ran 13 tests in 0.076s
+OK

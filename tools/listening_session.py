@@ -8,7 +8,12 @@ this harness:
      census (mismatch refuses the session),
   2. locates or renders its fixture audio through the SXT-012 renderer
      (fixtures/render_fixture.py, unchanged: fresh-instance reset policy,
-     wet + diagnostic dry, no normalization) and caches it locally,
+     wet + diagnostic dry, no normalization) and caches it locally in an
+     identity-bound entry (#404): keyed by sha256 of preset path + blob,
+     sequence bytes, renderer bytes, oracle manifest identity, sample rate
+     and render policy; reused only if the identity record and both WAV
+     digests verify. If the pinned oracle/renderer is unavailable the entry
+     is recorded BLOCKED and gets no acceptance-counting rating,
   3. pairs the WET render against the comparison the operator requested
      (default: the diagnostic DRY render; or --compare custom:<path>),
   4. runs the requested session mode and records structured ratings.
@@ -80,6 +85,14 @@ CLAIM_SCOPE = (
     "exercises with placeholder ratings and are NOT human listening.")
 
 
+class Blocked(Refuse):
+    """The pinned oracle/renderer needed for this entry is unavailable.
+
+    Raised per entry: the session records the entry as BLOCKED with no
+    acceptance-counting rating instead of reusing unbound audio.
+    """
+
+
 def git_blob_sha1(path):
     data = Path(path).read_bytes()
     blob = b"blob %d\x00" % len(data) + data
@@ -119,7 +132,7 @@ def engine_root():
                    .get("location_used_for_evidence"))
         if loc and Path(loc).exists():
             return Path(loc)
-    raise Refuse(
+    raise Blocked(
         "cannot locate the pinned engine tree; set ORACLE_SURGE_DIR")
 
 
@@ -133,7 +146,7 @@ def verify_candidate(cand, census):
             f"{cand.get('census_blob_sha1')!r} != census {census[path]!r}")
     preset_abs = engine_root() / path
     if not preset_abs.exists():
-        raise Refuse(f"preset file missing from pinned engine tree: {preset_abs}")
+        raise Blocked(f"preset file missing from pinned engine tree: {preset_abs}")
     actual = git_blob_sha1(preset_abs)
     if actual != census[path]:
         raise Refuse(
@@ -142,29 +155,164 @@ def verify_candidate(cand, census):
     return preset_abs
 
 
-def render_wet_dry(preset_abs, sequence, cache_dir):
-    """Locate or render wet+dry via fixtures/render_fixture.py (subprocess)."""
-    slug = preset_abs.stem.replace(" ", "_")
-    out_dir = cache_dir / slug
-    wet = out_dir / f"{sequence}-wet.wav"
-    dry = out_dir / f"{sequence}-dry.wav"
-    if wet.exists() and dry.exists():
-        return wet, dry, {"rendered": False}
-    out_dir.mkdir(parents=True, exist_ok=True)
+CACHE_SCHEMA = "sxt-013-listening-cache-entry/1.0.0"
+CACHE_NAMESPACE = "by-identity"
+IDENTITY_RECORD = "identity.json"
+SEQUENCE_DIR = REPO_ROOT / "fixtures" / "sequences"
+RENDER_POLICY = (
+    "SXT-012 render_fixture.py render --preset-file: fresh instance, wet + "
+    "diagnostic dry, mono int16, no normalization")
+RENDER_SAMPLE_RATE_HZ = 48000  # render_fixture.py SR; manifest-checked below
+
+
+def _canon(obj):
+    return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+
+
+def render_identity(preset_rel, preset_blob_sha1, sequence):
+    """Identity every cached listening stimulus is bound to.
+
+    Runtime identity is what the committed oracle manifest declares plus the
+    live bytes of the renderer; it is NOT a live probe of the engine binary
+    (recorded as such in ``runtime_identity_basis``).
+    """
+    seq_path = SEQUENCE_DIR / f"{sequence}.json"
+    if not seq_path.is_file():
+        raise Refuse(f"sequence not found in fixtures/sequences: {sequence}")
+    if not ORACLE_MANIFEST.is_file():
+        raise Blocked(f"oracle manifest missing: {ORACLE_MANIFEST}")
+    with open(ORACLE_MANIFEST, encoding="utf-8") as f:
+        man = json.load(f)
+    rt = man.get("runtime", {})
+    return {
+        "preset_path": preset_rel,
+        "preset_blob_sha1": preset_blob_sha1,
+        "sequence_id": sequence,
+        "sequence_sha256": oc.sha256_file(seq_path),
+        "renderer": "fixtures/render_fixture.py",
+        "renderer_sha256": oc.sha256_file(RENDER_SCRIPT),
+        "oracle_manifest_sha256": oc.sha256_file(ORACLE_MANIFEST),
+        "oracle_engine_commit": man.get("engine", {}).get("commit"),
+        "oracle_python_runtime": man.get("environment", {}).get(
+            "python_runtime"),
+        "sample_rate_hz": RENDER_SAMPLE_RATE_HZ,
+        "manifest_sample_rate_hz": rt.get("sample_rate_hz"),
+        "block_size_samples": rt.get("block_size_samples"),
+        "render_policy": RENDER_POLICY,
+        "runtime_identity_basis": "oracle manifest declaration + renderer "
+                                  "bytes; engine binary not live-probed",
+    }
+
+
+def identity_key(identity):
+    return hashlib.sha256(_canon(identity)).hexdigest()
+
+
+def entry_dir_for(cache_dir, identity):
+    return Path(cache_dir) / CACHE_NAMESPACE / identity_key(identity)
+
+
+def check_entry(entry_dir, sequence, identity):
+    """Return (ok, reason). Reuse only if identity record and both WAVs match."""
+    rec_path = entry_dir / IDENTITY_RECORD
+    if not rec_path.is_file():
+        return False, "identity record missing"
+    try:
+        rec = json.loads(rec_path.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return False, "identity record corrupt"
+    if not isinstance(rec, dict) or rec.get("schema_version") != CACHE_SCHEMA:
+        return False, "identity record malformed (schema)"
+    if rec.get("identity") != identity:
+        return False, "identity mismatch (preset/sequence/renderer/oracle)"
+    if rec.get("identity_key") != identity_key(identity):
+        return False, "identity key mismatch"
+    for kind in ("wet", "dry"):
+        wav = entry_dir / f"{sequence}-{kind}.wav"
+        want = (rec.get("audio") or {}).get(kind, {}).get("sha256")
+        if not wav.is_file():
+            return False, f"{kind} wav missing"
+        if not want or oc.sha256_file(wav) != want:
+            return False, f"{kind} wav digest mismatch (modified)"
+    return True, None
+
+
+def run_renderer(preset_abs, sequence, out_dir):
+    """Invoke fixtures/render_fixture.py (subprocess); return its report."""
     cmd = [sys.executable, str(RENDER_SCRIPT), "render",
            "--preset-file", str(preset_abs),
            "--sequence", sequence, "--out", str(out_dir)]
     proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
     if proc.returncode != 0:
-        raise Refuse(f"renderer failed ({proc.returncode}): "
-                     f"{(proc.stderr or proc.stdout).strip()[-500:]}")
+        raise Blocked(f"renderer failed ({proc.returncode}): "
+                      f"{(proc.stderr or proc.stdout).strip()[-500:]}")
     stdout = proc.stdout
     try:
-        info = json.JSONDecoder().raw_decode(stdout[stdout.index("{"):])[0]
+        return json.JSONDecoder().raw_decode(stdout[stdout.index("{"):])[0]
     except (ValueError, IndexError) as exc:
         raise Refuse(f"cannot parse renderer output: {exc}; "
                      f"stdout tail: {stdout[-300:]}") from exc
-    return wet, dry, {"rendered": True, "renderer_report": info}
+
+
+def render_wet_dry(preset_abs, sequence, cache_dir, identity, renderer=None):
+    """Locate or render wet+dry in a digest-keyed, identity-bound entry.
+
+    Entries live at <cache>/by-identity/<sha256(identity)>/ and are reused only
+    when ``check_entry`` passes. Legacy basename-keyed directories are never
+    consulted (unverified; re-rendered, never relabeled).
+    """
+    renderer = renderer or run_renderer
+    entry = entry_dir_for(cache_dir, identity)
+    wet = entry / f"{sequence}-wet.wav"
+    dry = entry / f"{sequence}-dry.wav"
+    ok, reason = check_entry(entry, sequence, identity)
+    if ok:
+        return wet, dry, {"rendered": False, "reuse_refused_reason": None,
+                          "entry": entry}
+    refused = None if reason == "identity record missing" and not entry.exists() \
+        else reason
+    tmp = entry.parent / f".tmp-{identity_key(identity)}"
+    if tmp.exists():
+        shutil.rmtree(tmp)
+    tmp.mkdir(parents=True)
+    try:
+        info = renderer(preset_abs, sequence, tmp)
+        for kind in ("wet", "dry"):
+            if not (tmp / f"{sequence}-{kind}.wav").is_file():
+                raise Blocked(f"renderer did not produce {kind} wav")
+        record = {
+            "schema_version": CACHE_SCHEMA,
+            "identity": identity,
+            "identity_key": identity_key(identity),
+            "audio": {k: {"sha256": oc.sha256_file(
+                tmp / f"{sequence}-{k}.wav")} for k in ("wet", "dry")},
+            "renderer_report": info,
+        }
+        (tmp / IDENTITY_RECORD).write_text(
+            json.dumps(record, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8")
+        if entry.exists():
+            shutil.rmtree(entry)
+        os.replace(tmp, entry)
+    finally:
+        if tmp.exists():
+            shutil.rmtree(tmp)
+    return wet, dry, {"rendered": True, "reuse_refused_reason": refused,
+                      "entry": entry, "renderer_report": info}
+
+
+def binding_record(identity, info, cache_dir):
+    """Binding persisted in the session audio record (survives cache removal)."""
+    entry = info["entry"]
+    return {
+        "schema_version": CACHE_SCHEMA,
+        "identity": identity,
+        "identity_key": identity_key(identity),
+        "cache_entry": str(Path(entry).relative_to(Path(cache_dir))),
+        "identity_record_sha256": oc.sha256_file(entry / IDENTITY_RECORD),
+        "disposition": "rendered" if info["rendered"] else "reused_verified",
+        "reuse_refused_reason": info.get("reuse_refused_reason"),
+    }
 
 
 def wav_rms(path):
@@ -426,28 +574,49 @@ def run_session(args):
     records = []
     cache_dir = Path(args.audio_cache).resolve()
     cache_dir.mkdir(parents=True, exist_ok=True)
+    compare_label = "dry" if compare_kind == "dry" else "custom"
     for idx, cand in enumerate(candidates, 1):
         print(f"[{idx}/{len(candidates)}] {cand['path']} "
               f"({cand['bank']}/{cand['category']})")
-        preset_abs = verify_candidate(cand, census)
-        wet, dry, render_info = render_wet_dry(
-            preset_abs, args.sequence, cache_dir)
-        if isinstance(compare_kind, str) and compare_kind == "dry":
-            compare, compare_label = dry, "dry"
-        else:
-            compare = Path(compare_kind.split("custom:", 1)[1])
-            compare_label = "custom"
-        record = {
+        base = {
             "candidate_id": cand["id"],
             "path": cand["path"],
             "bank": cand["bank"],
             "category": cand["category"],
             "census_blob_sha1": cand["census_blob_sha1"],
             "sequence_id": args.sequence,
+        }
+        try:
+            preset_abs = verify_candidate(cand, census)
+            identity = render_identity(cand["path"], git_blob_sha1(preset_abs),
+                                       args.sequence)
+            wet, dry, render_info = render_wet_dry(
+                preset_abs, args.sequence, cache_dir, identity)
+        except Blocked as exc:
+            print(f"    BLOCKED (no audio, not rated): {exc}")
+            records.append({
+                **base,
+                "verification_status": "BLOCKED",
+                "blocked_reason": str(exc),
+                "audio": None,
+                "ratings": None,
+                "counts_toward_acceptance": False,
+                "blind": False,
+            })
+            continue
+        binding = binding_record(identity, render_info, cache_dir)
+        if compare_label == "dry":
+            compare = dry
+        else:
+            compare = Path(compare_kind.split("custom:", 1)[1])
+        record = {
+            **base,
+            "verification_status": "PASS_IDENTITY_BOUND",
             "audio": {
                 "wet": stim_record("wet", wet, "native"),
                 "comparison": stim_record(compare_label, compare, "native"),
                 "rendered_this_session": render_info.get("rendered", False),
+                "binding": binding,
             },
         }
         if args.dry_run:
@@ -499,6 +668,8 @@ def run_session(args):
             "candidates": len(records),
             "counting_toward_acceptance": sum(
                 1 for r in records if r.get("counts_toward_acceptance")),
+            "blocked": sum(1 for r in records
+                           if r.get("verification_status") == "BLOCKED"),
         },
         "records": records,
     }
