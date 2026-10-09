@@ -98,7 +98,43 @@ def _is_int(v):
     return isinstance(v, int) and not isinstance(v, bool)
 
 
-def layout_checks(alloc, instances):
+# Block kinds whose offsets compiler/format.md section 5 makes normative:
+# cumulative from 0 in a fixed order per address space.
+_NORMATIVE_KINDS = ("voice_state_aggregate", "fx_instance_state",
+                    "flash_asset_wavetable")
+
+
+def expected_layout(acc, wta):
+    """Re-derive the deterministic block layout of compiler/format.md section 5
+    from the SXT-015 account and the source graph's wavetable records:
+    on_chip = voice_state then on-chip fx_slot_N in slot order;
+    external_writable = external fx_slot_N in slot order; flash_assets =
+    wavetables with embedded bytes in record order. Offsets are cumulative.
+    Returns {region: [(name, kind, offset, size_bytes), ...]}."""
+    def pack(items):
+        out, at = [], 0
+        for name, kind, size in items:
+            out.append((name, kind, at, size))
+            at += size
+        return out
+    fx = list(acc["fx_instances"])
+    return {
+        "on_chip": pack(
+            [("voice_state", "voice_state_aggregate",
+              acc["voice"]["state_bytes_on_chip"])]
+            + [("fx_slot_%d" % e["slot"], "fx_instance_state", e["state_bytes"])
+               for e in fx if not e["external"]]),
+        "external_writable": pack(
+            [("fx_slot_%d" % e["slot"], "fx_instance_state", e["state_bytes"])
+             for e in fx if e["external"]]),
+        "flash_assets": pack(
+            [("wavetable_s%s_o%s" % (w.get("sc"), w.get("osc")),
+              "flash_asset_wavetable", w.get("emb") or 0)
+             for w in wta if (w.get("emb") or 0) > 0]),
+    }
+
+
+def layout_checks(alloc, instances, expected=None):
     """Offset/interval/ownership checks on an allocation section (issue #392).
 
     Each address space (on_chip, external_writable, flash_assets) is checked
@@ -106,6 +142,10 @@ def layout_checks(alloc, instances):
     overlap. Zero-length blocks are accepted (they must still carry an integer
     nonnegative offset <= total) and take no part in the overlap test.
     `instances` is the expected list of fx instances (SXT-015 account).
+    `expected` (from expected_layout) reconciles every block of a normative
+    kind against the compiler's cumulative fixed-order layout; blocks of any
+    other kind (e.g. the zero-length probe control) are not part of that
+    layout and are held only to the typing/containment/overlap checks.
     Structural checks only; no hardware-state-isolation claim.
     """
     ok = True
@@ -136,6 +176,16 @@ def layout_checks(alloc, instances):
                  if b["offset"] < a["offset"] + a["size_bytes"]]
         ok &= check("alloc/no-overlap/%s" % reg, not clash,
                     ("overlap: %s" % clash) if clash else "no overlaps")
+        if expected is not None:
+            got = sorted(((b.get("name"), b.get("kind"), b.get("offset"),
+                           b.get("size_bytes")) for b in blocks
+                          if b.get("kind") in _NORMATIVE_KINDS), key=repr)
+            exp = sorted(expected[reg], key=repr)
+            diff = sorted(set(got) ^ set(exp), key=repr)
+            ok &= check("alloc/cumulative-layout/%s" % reg, got == exp,
+                        ("differs from format.md section 5 layout: %s"
+                         % diff[:4]) if got != exp
+                        else "%d blocks at cumulative offsets" % len(exp))
     inst = [b for reg in ("on_chip", "external_writable")
             for b in alloc[reg]["blocks"] if b["kind"] == "fx_instance_state"]
     slots = [b.get("slot") for b in inst]
@@ -143,7 +193,21 @@ def layout_checks(alloc, instances):
     ok &= check("alloc/unique-slot-ownership",
                 len(set(slots)) == len(slots) and sorted(slots) == want,
                 "block slots %s vs instance slots %s" % (sorted(slots), want))
-    # the duplicated fx_instances placement copy must agree with the blocks
+    # the duplicated fx_instances placement copy: exactly one entry per
+    # expected slot (no missing, extra or duplicate owners) ...
+    entries = alloc.get("fx_instances")
+    entries = entries if isinstance(entries, list) else []
+    eslots = [e.get("slot") if isinstance(e, dict) else None for e in entries]
+    one_per_slot = (all(_is_int(v) for v in eslots)
+                    and len(set(eslots)) == len(eslots)
+                    and sorted(eslots) == want)
+    ok &= check("alloc/fx-instances-one-per-slot", one_per_slot,
+                "placement slots %s vs instance slots %s" % (eslots, want))
+    # ... and only then must every entry agree with its block.
+    if not one_per_slot:
+        ok &= check("alloc/fx-instances-agree-with-blocks", False,
+                    "skipped: placement entries are not one per slot")
+        return ok
     where = {}
     for reg in ("on_chip", "external_writable"):
         for b in alloc[reg]["blocks"]:
@@ -151,8 +215,9 @@ def layout_checks(alloc, instances):
                 where[b.get("slot")] = (reg, b["offset"], b["size_bytes"])
     agree = all(where.get(e.get("slot")) == (e.get("region"), e.get("offset"),
                                              e.get("size_bytes"))
-                for e in alloc.get("fx_instances", []))
-    ok &= check("alloc/fx-instances-agree-with-blocks", agree)
+                for e in entries)
+    ok &= check("alloc/fx-instances-agree-with-blocks", agree,
+                "%d entries" % len(entries))
     return ok
 
 
@@ -205,7 +270,12 @@ def alloc_checks(parsed, spec):
                    for x in alloc[want_region]["blocks"]):
             region_ok = False
     ok &= check("alloc/instance-sizes-and-regions", region_ok)
-    ok &= layout_checks(alloc, acc["fx_instances"])
+    try:
+        expected = expected_layout(acc, line["g"].get("wta", []))
+    except (KeyError, TypeError) as exc:
+        expected = None
+        ok &= check("alloc/cumulative-layout-derivable", False, repr(exc))
+    ok &= layout_checks(alloc, acc["fx_instances"], expected)
     # bundle budgets (from the image's own recorded spec)
     bud = alloc["budgets"]
     ok &= check("alloc/on-chip-budget",
@@ -486,6 +556,13 @@ def layout_controls(golden_dir, spec):
                                   "name": "zero_len_probe", "offset":
                                   al[ext]["total_bytes"], "size_bytes": 0})
 
+    def reverse_packing(al):
+        # swap the two external blocks' order: slot 5 at 0, slot 4 after it
+        blk = {b["slot"]: b for b in al[ext]["blocks"]
+               if b["kind"] == "fx_instance_state"}
+        _set_block(al, ext, 5, offset=0)
+        _set_block(al, ext, 4, offset=blk[5]["size_bytes"])
+
     # (label, mutation, check that must FAIL or None for must-pass)
     negatives = (
         ("overlap", lambda al: _set_block(al, ext, 5, offset=0),
@@ -500,6 +577,16 @@ def layout_controls(golden_dir, spec):
         ("bool-offset", lambda al: _set_block(al, ext, 4, offset=True),
          "alloc/offsets-integer-nonneg/external_writable"),
         ("duplicate-slot-ownership", dup_owner, "alloc/unique-slot-ownership"),
+        # nonoverlapping, contained, checksum-valid, but reverses the
+        # format.md section 5 cumulative slot order (both placement copies)
+        ("reverse-packing", reverse_packing,
+         "alloc/cumulative-layout/external_writable"),
+        ("fx-instances-empty", lambda al: al.update(fx_instances=[]),
+         "alloc/fx-instances-one-per-slot"),
+        ("fx-instances-omitted", lambda al: al["fx_instances"].pop(),
+         "alloc/fx-instances-one-per-slot"),
+        ("fx-instances-duplicate", lambda al: al["fx_instances"].append(
+            dict(al["fx_instances"][0])), "alloc/fx-instances-one-per-slot"),
     )
     for label, mut, want in negatives:
         res = _quiet_verify(_mutated_image(golden_dir, mut), spec)
@@ -517,7 +604,9 @@ def layout_controls(golden_dir, spec):
         lay = {n: v for n, v in res.items()
                if n.startswith("alloc/") and ("offsets" in n or "contained" in n
                                               or "overlap" in n
-                                              or "ownership" in n)}
+                                              or "ownership" in n
+                                              or "cumulative" in n
+                                              or "fx-instances" in n)}
         ok &= check("nc5/%s-accepted" % label,
                     bool(lay) and all(lay.values())
                     and all(v for n, v in res.items() if n.startswith("image/")),

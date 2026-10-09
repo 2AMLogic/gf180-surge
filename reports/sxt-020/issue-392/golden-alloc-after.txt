@@ -12,18 +12,22 @@ PASS alloc/instance-sizes-and-regions
 PASS alloc/offsets-integer-nonneg/on_chip — 3 blocks
 PASS alloc/blocks-contained/on_chip — all blocks within total 198144
 PASS alloc/no-overlap/on_chip — no overlaps
+PASS alloc/cumulative-layout/on_chip — 3 blocks at cumulative offsets
 PASS alloc/offsets-integer-nonneg/external_writable — 2 blocks
 PASS alloc/blocks-contained/external_writable — all blocks within total 4325376
 PASS alloc/no-overlap/external_writable — no overlaps
+PASS alloc/cumulative-layout/external_writable — 2 blocks at cumulative offsets
 PASS alloc/offsets-integer-nonneg/flash_assets — 1 blocks
 PASS alloc/blocks-contained/flash_assets — all blocks within total 3852
 PASS alloc/no-overlap/flash_assets — no overlaps
+PASS alloc/cumulative-layout/flash_assets — 1 blocks at cumulative offsets
 PASS alloc/unique-slot-ownership — block slots [0, 1, 4, 5] vs instance slots [0, 1, 4, 5]
-PASS alloc/fx-instances-agree-with-blocks
+PASS alloc/fx-instances-one-per-slot — placement slots [0, 1, 4, 5] vs instance slots [0, 1, 4, 5]
+PASS alloc/fx-instances-agree-with-blocks — 4 entries
 PASS alloc/on-chip-budget
 PASS alloc/external-budget
 PASS alloc/bandwidth-budget
 PASS alloc/budgets-match-image-spec
 PASS alloc/no-hidden-cycle-gate
 ---
-PASS: 27 checks, 0 failed
+PASS: 31 checks, 0 failed

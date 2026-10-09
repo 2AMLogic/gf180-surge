@@ -21,7 +21,11 @@ PASS nc5/out-of-range-fails-alloc/blocks-contained/external_writable — image c
 PASS nc5/negative-offset-fails-alloc/offsets-integer-nonneg/external_writable — image checks pass=True; targeted check=False
 PASS nc5/bool-offset-fails-alloc/offsets-integer-nonneg/external_writable — image checks pass=True; targeted check=False
 PASS nc5/duplicate-slot-ownership-fails-alloc/unique-slot-ownership — image checks pass=True; targeted check=False
-PASS nc5/cross-address-space-equal-offsets-accepted — 10 layout checks
-PASS nc5/zero-length-block-accepted — 10 layout checks
+PASS nc5/reverse-packing-fails-alloc/cumulative-layout/external_writable — image checks pass=True; targeted check=False
+PASS nc5/fx-instances-empty-fails-alloc/fx-instances-one-per-slot — image checks pass=True; targeted check=False
+PASS nc5/fx-instances-omitted-fails-alloc/fx-instances-one-per-slot — image checks pass=True; targeted check=False
+PASS nc5/fx-instances-duplicate-fails-alloc/fx-instances-one-per-slot — image checks pass=True; targeted check=False
+PASS nc5/cross-address-space-equal-offsets-accepted — 15 layout checks
+PASS nc5/zero-length-block-accepted — 15 layout checks
 ---
-PASS: 25 checks, 0 failed
+PASS: 29 checks, 0 failed

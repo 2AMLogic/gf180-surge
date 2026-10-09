@@ -201,3 +201,41 @@ def test_alloc_unmutated_golden_passes_cli():
     img = COMPILER / "golden" / "compiled" / "four-fx-instance.image.bin"
     r = run_py(VERIFY, "alloc", str(img))
     assert r.returncode == 0, r.stdout
+
+
+def test_alloc_reverse_packing_fails_cumulative_layout(tmp_path):
+    """Issue #392 review: a nonoverlapping, contained, checksum-valid layout
+    that reverses the format.md section 5 slot order must fail `alloc`."""
+    def reverse(al):
+        size5 = next(b["size_bytes"] for b in al["external_writable"]["blocks"]
+                     if b.get("slot") == 5)
+        offsets = {5: 0, 4: size5}
+        for b in al["external_writable"]["blocks"]:
+            b["offset"] = offsets[b["slot"]]
+        for e in al["fx_instances"]:
+            if e["slot"] in offsets:
+                e["offset"] = offsets[e["slot"]]
+    img = _write_mutated_four_fx(tmp_path, reverse)
+    assert run_py(VERIFY, "image", str(img)).returncode == 0
+    r = run_py(VERIFY, "alloc", str(img))
+    assert r.returncode != 0
+    assert "FAIL alloc/cumulative-layout/external_writable" in r.stdout
+    assert "PASS alloc/no-overlap/external_writable" in r.stdout
+    assert "PASS alloc/blocks-contained/external_writable" in r.stdout
+
+
+def test_alloc_fx_instances_missing_or_duplicate_fail(tmp_path):
+    """Issue #392 review: placement copy needs exactly one entry per slot."""
+    mutations = {
+        "empty": lambda al: al.update(fx_instances=[]),
+        "duplicate": lambda al: al["fx_instances"].append(
+            dict(al["fx_instances"][0])),
+    }
+    for label, mut in mutations.items():
+        d = tmp_path / label
+        d.mkdir()
+        img = _write_mutated_four_fx(d, mut)
+        assert run_py(VERIFY, "image", str(img)).returncode == 0, label
+        r = run_py(VERIFY, "alloc", str(img))
+        assert r.returncode != 0, label
+        assert "FAIL alloc/fx-instances-one-per-slot" in r.stdout, label
