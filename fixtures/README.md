@@ -186,6 +186,14 @@ Bit-exactness is scoped to the recorded environment (`oracle/manifest.json`
 `environment` block); other hosts must re-run rather than assume equality.
 Free-phase presets reproduce only within their quantified variation (above).
 
+## Source-nonrepeatable original presets (policy, #310)
+
+A preset whose own render fails the exact 3x bit-identical gate is **refused
+as an original carrier**; the gate is not softened, no seed/drift conditioning
+or statistical tolerance is adopted, and a refused preset never counts toward
+original-preset coverage. Leaves draw carriers from a specified reproducibility
+census (census implementation: NOT_RUN, separate work). See
+[`decision-records/0019-source-nondeterministic-carrier-policy.md`](../decision-records/0019-source-nondeterministic-carrier-policy.md).
 ## Licensing / provenance
 
 Everything under `fixtures/` is original to this repository (Apache-2.0 per
