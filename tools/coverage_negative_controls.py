@@ -29,6 +29,27 @@ NC-RNG-EXCLUSION (#122 / decision record 0013) same counterfactual world,
                 proving the RNG gate (not some other gate) caused the
                 downgrade. A gate that changed nothing either way would be
                 a broken control.
+NC-INTEGRATION-* (#384) preset-scoped complete-wet integration gate. The
+                counterfactual world above also carries a DECLARED SYNTHETIC
+                integration ledger with one matching original-scope PASS
+                record per compiled preset (and a synthetic frozen-policy
+                pin on the freeze gate). Required: (a) the same
+                component-PASS, freeze-PASS world with the COMMITTED ledger
+                (no PASS record) supports nothing and every otherwise-ready
+                row reads integration_gate=NOT_RUN -- freezing budgets and
+                verifying leaves alone cannot promote a preset; the
+                synthetic PASS ledger restores the supported set, so the
+                gate is load-bearing; (b) holding every component gate PASS,
+                each single-record mutation of one victim preset (record
+                removed, evidence hash corrupted, blob identity changed,
+                graph identity changed, placement/order identity changed,
+                adapted-only record, dropped-tail FAIL, wrong-order FAIL,
+                integrated RTL-vs-model FAIL, model-vs-reference FAIL,
+                explicit blocker, unresolved interpretation, policy identity
+                mismatch) removes exactly that preset from the supported set
+                with the expected gate value and a named integration_
+                reason; (c) a record relabelled from one preset onto another
+                qualifies neither the other preset nor anything else.
 
 Exit 0 iff every control is healthy; transcript goes to
 reports/coverage-v1/negative-controls.txt.
@@ -46,6 +67,9 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "oracle"))
 
 import oracle_common as oc  # noqa: E402
+
+sys.path.insert(0, str(REPO / "tools"))
+import publish_coverage as pc  # noqa: E402
 
 TOOL = REPO / "tools" / "publish_coverage.py"
 NC_ROOT = Path("/tmp/sxt029-negative-controls")
@@ -71,12 +95,13 @@ COPY_PATHS = [
     "reports/sxt-026/EVIDENCE.md",
     "reports/coverage-v1/leaf-verification.json",
     "reports/SXT-028-rng/artifacts/coverage-impact.json",
+    "reports/coverage-v1/integration-ledger.json",
 ]
 
 
 def run_tool(root: Path, outdir: Path, leaf_table: Path = None,
              allow_drift: bool = False, rng_exclusion: Path = None,
-             ignore_rng: bool = False):
+             ignore_rng: bool = False, integration_ledger: Path = None):
     cmd = [sys.executable, str(TOOL), "--repo-root", str(root),
            "--outdir", str(outdir)]
     if leaf_table is not None:
@@ -87,6 +112,8 @@ def run_tool(root: Path, outdir: Path, leaf_table: Path = None,
         cmd += ["--rng-exclusion", str(rng_exclusion)]
     if ignore_rng:
         cmd += ["--control-ignore-rng-exclusion"]
+    if integration_ledger is not None:
+        cmd += ["--integration-ledger", str(integration_ledger)]
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
@@ -95,8 +122,87 @@ def read_rows(outdir: Path):
         return list(csv.DictReader(f))
 
 
+def ledger_for(table_path: Path) -> Path:
+    """The synthetic integration ledger written next to a counterfactual
+    table by counterfactual_table()."""
+    return table_path.parent / "integration-ledger-synthetic.json"
+
+
+def _stub_pin(directory: Path, name: str, body: str) -> dict:
+    path = directory / name
+    path.write_text(body, encoding="utf-8")
+    return {"path": str(path), "sha256": oc.sha256_file(path)}
+
+
+def synthetic_integration_ledger(directory: Path) -> tuple:
+    """Declared SYNTHETIC integration ledger (test fixture; never published).
+
+    One original-scope PASS record per COMPILED corpus preset, carrying that
+    preset's own bank/path/blob, normalized-graph sha256 and placement/order
+    identity, all pins pointed at declared synthetic stub files. Returns
+    (ledger_doc, frozen_policy_pin). The publisher refuses synthetic records
+    unless the ledger is passed through --integration-ledger.
+    """
+    directory.mkdir(parents=True, exist_ok=True)
+    stub = "SYNTHETIC negative-control stub (#384); NEVER evidence.\n"
+    policy = _stub_pin(directory, "frozen-policy-synthetic.txt",
+                       "SYNTHETIC frozen fidelity policy (#384 control)\n")
+    image = _stub_pin(directory, "patch-image-synthetic.txt", stub)
+    fixture = _stub_pin(directory, "oracle-fixture-synthetic.txt", stub)
+    seq = _stub_pin(directory, "event-sequence-synthetic.txt", stub)
+    ev = _stub_pin(directory, "integrated-evidence-synthetic.txt", stub)
+    scan = json.loads((REPO / "reports/sxt-020/compile-corpus-scan.json")
+                      .read_text(encoding="utf-8"))
+    compiled = {o["path"] for o in scan["outcomes"]
+                if o["outcome"] == "compiled"}
+    records = []
+    with open(REPO / pc.GRAPH_DEFAULT, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            e = json.loads(line)
+            if e["p"] not in compiled:
+                continue
+            records.append({
+                "record_id": "synthetic:" + e["sha"],
+                "synthetic": True,
+                "bank": e["b"], "path": e["p"], "blob_sha1": e["sha"],
+                "qualification_scope": "original",
+                "normalized_graph_sha256": pc.graph_sha256(e["g"]),
+                "fx_placement_order": pc.fx_placement_order(e["g"]),
+                "patch_image": dict(image),
+                "oracle_fixture": dict(fixture),
+                "event_sequence": dict(seq),
+                "fidelity_policy": dict(policy),
+                "evidence": [dict(ev)],
+                "rtl_vs_model": "PASS",
+                "model_vs_reference": "PASS",
+                "aspects": {a: "PASS" for a in pc.INTEGRATION_ASPECTS},
+                "blocker": None,
+            })
+    doc = {
+        "artifact": "sxt-029-integration-ledger",
+        "schema_version": pc.INTEGRATION_SCHEMA,
+        "required_aspects": list(pc.INTEGRATION_ASPECTS),
+        "synthetic_control": "NC-INTEGRATION scenario artifact; NEVER published",
+        "records": records,
+    }
+    return doc, policy
+
+
+def write_ledger(doc: dict, dest: Path) -> Path:
+    dest.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n",
+                    encoding="utf-8")
+    return dest
+
+
 def counterfactual_table(dest: Path) -> Path:
     """Synthetic verified-world table (test fixture; never published).
+
+    #384: the verified world also needs preset-scoped complete-wet
+    integration evidence; a DECLARED SYNTHETIC ledger with a matching PASS
+    record per compiled preset is written to ledger_for(dest), and the
+    freeze gate is given a synthetic frozen-policy pin those records name.
 
     Evidence sha256 pins are REFRESHED from the on-disk files here. A
     synthetic *verified* world is by construction a world in which no
@@ -130,6 +236,9 @@ def counterfactual_table(dest: Path) -> Path:
             lf["verification"] = dict(PASS_VERIF)
             lf["filed"] = True
     table["gates"]["fidelity_freeze"]["status"] = "PASS"
+    ledger, policy = synthetic_integration_ledger(dest.parent)
+    table["gates"]["fidelity_freeze"]["frozen_policy"] = policy
+    write_ledger(ledger, ledger_for(dest))
     dest.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
                     encoding="utf-8")
     return dest
@@ -175,7 +284,7 @@ def control_stale_hash(transcript) -> None:
     base = NC_ROOT / "stale-hash" / "base"
     tamp = NC_ROOT / "stale-hash" / "tampered"
     cf = counterfactual_table(NC_ROOT / "stale-hash" / "counterfactual.json")
-    r = run_tool(REPO, base, leaf_table=cf)
+    r = run_tool(REPO, base, leaf_table=cf, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, r.stderr
     table = json.loads(cf.read_text(encoding="utf-8"))
     # point the EQ leaf's evidence hash at a *different committed file*
@@ -184,7 +293,7 @@ def control_stale_hash(transcript) -> None:
     cf2 = NC_ROOT / "stale-hash" / "counterfactual-stale.json"
     cf2.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
                    encoding="utf-8")
-    r = run_tool(REPO, tamp, leaf_table=cf2)
+    r = run_tool(REPO, tamp, leaf_table=cf2, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, (
         f"STALE must downgrade (exit 0), not refuse: rc={r.returncode} {r.stderr}"
     )
@@ -196,7 +305,7 @@ def control_stale_missing(transcript) -> None:
     base = NC_ROOT / "stale-missing" / "base"
     tamp = NC_ROOT / "stale-missing" / "tampered"
     cf = counterfactual_table(NC_ROOT / "stale-missing" / "counterfactual.json")
-    r = run_tool(REPO, base, leaf_table=cf)
+    r = run_tool(REPO, base, leaf_table=cf, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, r.stderr
     table = json.loads(cf.read_text(encoding="utf-8"))
     table["leaves"]["fx:EQ"]["evidence"] = [
@@ -206,7 +315,7 @@ def control_stale_missing(transcript) -> None:
     cf2 = NC_ROOT / "stale-missing" / "counterfactual-stale.json"
     cf2.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
                    encoding="utf-8")
-    r = run_tool(REPO, tamp, leaf_table=cf2)
+    r = run_tool(REPO, tamp, leaf_table=cf2, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, (
         f"missing evidence must downgrade (exit 0), not crash/refuse: "
         f"rc={r.returncode} {r.stderr}"
@@ -225,7 +334,7 @@ def control_rng_exclusion(transcript) -> None:
     bypass = NC_ROOT / "rng-exclusion" / "bypassed"
     cf = counterfactual_table(NC_ROOT / "rng-exclusion" / "counterfactual.json")
 
-    r = run_tool(REPO, base, leaf_table=cf)
+    r = run_tool(REPO, base, leaf_table=cf, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, r.stderr
     s0, _, by0 = load_supported(base)
     assert len(s0) > NC_RNG_SYNTHETIC_N, \
@@ -252,12 +361,13 @@ def control_rng_exclusion(transcript) -> None:
     synth.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n",
                      encoding="utf-8")
 
-    r = run_tool(REPO, tamp, leaf_table=cf, rng_exclusion=synth)
+    r = run_tool(REPO, tamp, leaf_table=cf, rng_exclusion=synth,
+                 integration_ledger=ledger_for(cf))
     assert r.returncode == 0, f"gate must downgrade, not refuse: {r.stderr}"
     s1, _, by1 = load_supported(tamp)
 
     r = run_tool(REPO, bypass, leaf_table=cf, rng_exclusion=synth,
-                 ignore_rng=True)
+                 ignore_rng=True, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, r.stderr
     s2, _, _ = load_supported(bypass)
 
@@ -382,7 +492,7 @@ def control_voice_pin_corrupt(transcript) -> None:
     base = NC_ROOT / "voice-pin-corrupt" / "base"
     tamp = NC_ROOT / "voice-pin-corrupt" / "tampered"
     cf = counterfactual_table(NC_ROOT / "voice-pin-corrupt" / "cf.json")
-    r = run_tool(REPO, base, leaf_table=cf)
+    r = run_tool(REPO, base, leaf_table=cf, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, r.stderr
     s0, _, _ = load_supported(base)
     assert len(s0) > 0, "counterfactual world produced no supported presets"
@@ -394,7 +504,7 @@ def control_voice_pin_corrupt(transcript) -> None:
     cf2 = NC_ROOT / "voice-pin-corrupt" / "cf-corrupt.json"
     cf2.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
                    encoding="utf-8")
-    r = run_tool(REPO, tamp, leaf_table=cf2)
+    r = run_tool(REPO, tamp, leaf_table=cf2, integration_ledger=ledger_for(cf))
     assert r.returncode == 0, r.stderr
     s1, _, _ = load_supported(tamp)
     rows = read_rows(tamp)
@@ -407,6 +517,206 @@ def control_voice_pin_corrupt(transcript) -> None:
     transcript.append("    PASS: corrupt pin cannot produce a support-ready gate")
 
 
+def _victims(by0: dict, s0: set, ledger: dict) -> tuple:
+    """Deterministic victim V (supported, >= 2 distinct required effect
+    instances so a placement/order permutation is observable) and a second
+    supported preset W for the cross-preset control."""
+    recs = {r["path"]: r for r in ledger["records"]}
+    multi = [p for p in sorted(s0)
+             if len(set(recs[p]["fx_placement_order"])) >= 2]
+    assert multi, "no supported preset with >= 2 effect instances"
+    v = multi[0]
+    others = [p for p in sorted(s0) if p != v and by0[p]["blob_sha1"]
+              != by0[v]["blob_sha1"]]
+    assert others, "no second supported preset"
+    return v, others[0]
+
+
+def _mutations(v_rec: dict, other_rec: dict) -> list:
+    """(name, mutate(record) -> record-or-None, expected gate, reason)."""
+    def m_order(r):
+        r["fx_placement_order"] = list(reversed(r["fx_placement_order"]))
+        return r
+
+    def m_graph(r):
+        r["normalized_graph_sha256"] = other_rec["normalized_graph_sha256"]
+        return r
+
+    def m_blob(r):
+        r["blob_sha1"] = other_rec["blob_sha1"]
+        return r
+
+    def m_hash(r):
+        r["evidence"][0]["sha256"] = "0" * 64
+        return r
+
+    def m_set(key, value):
+        def f(r):
+            r[key] = value
+            return r
+        return f
+
+    def m_aspect(a, st):
+        def f(r):
+            r["aspects"][a] = st
+            return r
+        return f
+
+    def m_adapted(r):
+        r["qualification_scope"] = "adapted"
+        r["adaptation"] = "SYNTHETIC control: generic reverb substituted"
+        return r
+
+    def m_policy(r):
+        r["fidelity_policy"] = dict(r["evidence"][0])
+        return r
+
+    return [
+        ("record-removed", lambda r: None, "NOT_RUN",
+         "integration_not_run:"),
+        ("evidence-hash-corrupted", m_hash, "STALE",
+         "integration_evidence_stale:"),
+        ("preset-identity-changed", m_blob, "NOT_RUN",
+         "integration_preset_identity_mismatch:"),
+        ("graph-identity-changed", m_graph, "STALE",
+         "integration_graph_identity_mismatch:"),
+        ("order-identity-changed", m_order, "STALE",
+         "integration_order_identity_mismatch:"),
+        ("adapted-only-record", m_adapted, "NOT_RUN",
+         "integration_adapted_only:"),
+        ("dropped-tail-FAIL", m_aspect("tails", "FAIL"), "FAIL",
+         "integration_aspect_tails_FAIL:"),
+        ("wrong-order-FAIL", m_aspect("routing_order", "FAIL"), "FAIL",
+         "integration_aspect_routing_order_FAIL:"),
+        ("shared-instance-state-FAIL", m_aspect("per_instance_state", "FAIL"),
+         "FAIL", "integration_aspect_per_instance_state_FAIL:"),
+        ("rtl-vs-model-FAIL", m_set("rtl_vs_model", "FAIL"), "FAIL",
+         "integration_rtl_vs_model_FAIL:"),
+        ("model-vs-reference-FAIL", m_set("model_vs_reference", "FAIL"),
+         "FAIL", "integration_model_vs_reference_FAIL:"),
+        ("explicit-blocker", m_set("blocker", "SYNTHETIC control blocker"),
+         "BLOCKED", "integration_blocked:"),
+        ("unresolved-interpretation",
+         m_set("model_vs_reference", "NO_VERDICT"), "NO_VERDICT",
+         "integration_model_vs_reference_NO_VERDICT:"),
+        ("policy-identity-mismatch", m_policy, "STALE",
+         "integration_policy_identity_mismatch:"),
+    ]
+
+
+def control_integration_gate(transcript) -> None:
+    transcript.append("NC-INTEGRATION: preset-scoped complete-wet integration "
+                      "gate (#384)")
+    root = NC_ROOT / "integration"
+    cf = counterfactual_table(root / "counterfactual.json")
+    synth = ledger_for(cf)
+    ledger = json.loads(synth.read_text(encoding="utf-8"))
+
+    # (a) load-bearing: component PASS + freeze PASS, committed ledger (no
+    # PASS record) -> nothing supported; synthetic PASS ledger -> restored.
+    base = root / "base"
+    r = run_tool(REPO, base, leaf_table=cf, integration_ledger=synth)
+    assert r.returncode == 0, r.stderr
+    s0, _, by0 = load_supported(base)
+    assert len(s0) > 0, "counterfactual world produced no supported presets"
+    for p in s0:
+        assert by0[p]["integration_gate"] == "PASS", p
+    no_int = root / "committed-ledger"
+    r = run_tool(REPO, no_int, leaf_table=cf)
+    assert r.returncode == 0, r.stderr
+    s_none, _, by_none = load_supported(no_int)
+    assert len(s_none) == 0, (
+        f"{len(s_none)} presets supported with component gates and freeze "
+        "PASS but no matching integration PASS record")
+    for p in s0:
+        row = by_none[p]
+        assert row["integration_gate"] in ("NOT_RUN", "NO_VERDICT"), \
+            (p, row["integration_gate"])
+        assert row["headline_status"] == "unresolved", p
+        for col in ("voice_leaf_gate", "fidelity_contract_gate"):
+            assert row[col] == "PASS", (p, col, row[col])
+        assert "integration_" in row["reasons"], p
+    not_run = sum(1 for p in s0 if by_none[p]["integration_gate"] == "NOT_RUN")
+    transcript.append(f"    component+freeze PASS, synthetic PASS ledger : "
+                      f"{len(s0)} supported")
+    transcript.append(f"    same world, committed ledger (no PASS record): "
+                      f"{len(s_none)} supported ({not_run} of the {len(s0)} "
+                      f"rows integration_gate=NOT_RUN; component gates still "
+                      f"PASS)")
+    transcript.append("    -> freezing budgets + verifying leaves alone "
+                      "promotes nothing; the integration gate is load-bearing")
+
+    # (b) single-record mutations of one victim, component evidence held PASS
+    v, w = _victims(by0, s0, ledger)
+    idx = {rec["path"]: i for i, rec in enumerate(ledger["records"])}
+    transcript.append(f"    victim V: {v} "
+                      f"({'|'.join(ledger['records'][idx[v]]['fx_placement_order'])})")
+    for name, mutate, want, reason in _mutations(
+            ledger["records"][idx[v]], ledger["records"][idx[w]]):
+        doc = json.loads(json.dumps(ledger))
+        rec = mutate(doc["records"][idx[v]])
+        if rec is None:
+            del doc["records"][idx[v]]
+        led = write_ledger(doc, root / f"ledger-{name}.json")
+        out = root / f"out-{name}"
+        r = run_tool(REPO, out, leaf_table=cf, integration_ledger=led)
+        assert r.returncode == 0, f"{name}: must downgrade, not refuse: {r.stderr}"
+        s1, _, by1 = load_supported(out)
+        row = by1[v]
+        assert v not in s1, f"{name}: victim still supported"
+        assert s1 == s0 - {v}, (
+            f"{name}: inexact: dropped={len(s0 - s1)} gained={len(s1 - s0)}")
+        assert row["headline_status"] == "unresolved", (name, row["headline_status"])
+        assert row["integration_gate"] == want, (name, row["integration_gate"])
+        assert reason in row["reasons"], (name, row["reasons"])
+        for col in ("voice_leaf_gate", "fidelity_contract_gate"):
+            assert row[col] == "PASS", (name, col, row[col])
+        assert row["fx_leaves_gate"] in ("", "PASS"), name
+        assert row["routing_leaves_gate"] in ("", "PASS"), name
+        transcript.append(f"    {name:<28}: V {row['integration_gate']:<10} "
+                          f"supported {len(s1)} (= baseline - V) "
+                          f"reason {reason}")
+
+    # (c) a record for one preset cannot qualify another: V's PASS record
+    # relabelled onto W's path (W's own record removed).
+    doc = json.loads(json.dumps(ledger))
+    moved = doc["records"][idx[v]]
+    moved = json.loads(json.dumps(moved))
+    moved["record_id"] = "synthetic:relabelled-V-onto-W"
+    moved["path"] = w
+    doc["records"] = [r0 for r0 in doc["records"] if r0["path"] != w]
+    doc["records"].append(moved)
+    led = write_ledger(doc, root / "ledger-cross-preset.json")
+    out = root / "out-cross-preset"
+    r = run_tool(REPO, out, leaf_table=cf, integration_ledger=led)
+    assert r.returncode == 0, r.stderr
+    s1, _, by1 = load_supported(out)
+    assert w not in s1, "a record for V qualified W"
+    assert s1 == s0 - {w}, (
+        f"cross-preset: dropped={len(s0 - s1)} gained={len(s1 - s0)}")
+    assert by1[w]["integration_gate"] == "NOT_RUN", by1[w]["integration_gate"]
+    assert "integration_preset_identity_mismatch:" in by1[w]["reasons"]
+    transcript.append(f"    {'cross-preset (V record on W)':<28}: W "
+                      f"{by1[w]['integration_gate']:<10} supported {len(s1)} "
+                      f"(= baseline - W) reason "
+                      f"integration_preset_identity_mismatch:")
+
+    # (d) synthetic records are refused outside the control override
+    tmp = make_tmp_repo("integration-synthetic-refused")
+    shutil.copyfile(synth, tmp / "reports/coverage-v1/integration-ledger.json")
+    out = root / "out-synthetic-refused"
+    r = run_tool(tmp, out, allow_drift=True)
+    assert r.returncode == 2, f"expected refuse, got {r.returncode}"
+    assert "SYNTHETIC" in r.stderr, r.stderr
+    assert not (out / "per-preset.csv").exists()
+    transcript.append("    synthetic ledger as the default input  : REFUSED "
+                      "(exit 2; synthetic records never valid in a published "
+                      "run)")
+    transcript.append("    PASS: integration gate load-bearing; every "
+                      "mutation prevents support with a named reason; no "
+                      "cross-preset qualification")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--transcript",
@@ -414,7 +724,8 @@ def main() -> int:
     ap.add_argument("--only", action="append", default=None,
                     help="run only the named control(s): stale_hash, "
                          "stale_missing, row_missing, sha_disagree, "
-                         "rng_exclusion. Used by #122 to record its own "
+                         "rng_exclusion, f1_original_stage, "
+                         "voice_pin_corrupt, integration_gate. Used by #122 to record its own "
                          "gate control under reports/SXT-028-rng/.")
     args = ap.parse_args()
 
@@ -441,6 +752,7 @@ def main() -> int:
         control_rng_exclusion,
         control_f1_original_stage,
         control_voice_pin_corrupt,
+        control_integration_gate,
     ]
     if args.only:
         wanted = set(args.only)

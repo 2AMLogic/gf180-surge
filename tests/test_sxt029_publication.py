@@ -29,6 +29,10 @@ import oracle_common as oc  # noqa: E402
 COV = os.path.join(REPO, "reports", "coverage-v1")
 TABLE = os.path.join(COV, "leaf-verification.json")
 TOOL = os.path.join(REPO, "tools", "publish_coverage.py")
+LEDGER = os.path.join(COV, "integration-ledger.json")
+sys.path.insert(0, os.path.join(REPO, "tools"))
+
+import publish_coverage as pc  # noqa: E402
 
 
 def load_table():
@@ -48,10 +52,12 @@ def pinned_records(table):
     return out
 
 
-def publish(outdir, leaf_table=None):
+def publish(outdir, leaf_table=None, integration_ledger=None):
     cmd = [sys.executable, TOOL, "--outdir", outdir]
     if leaf_table is not None:
         cmd += ["--leaf-table", leaf_table]
+    if integration_ledger is not None:
+        cmd += ["--integration-ledger", integration_ledger]
     return subprocess.run(cmd, cwd=REPO, capture_output=True, text=True)
 
 
@@ -146,6 +152,112 @@ def test_published_artifact_claims_no_unearned_support():
             for col in ("voice_leaf_gate", "fx_leaves_gate",
                         "wavetable_leaf_gate", "routing_leaves_gate"):
                 assert row[col] in ("", "PASS"), (path, col, row[col])
+            # #384: leaf agreement is not complete-preset qualification
+            assert row["integration_gate"] == "PASS", path
+            assert row["integration_record"], path
+    # no committed integration record is PASS, so nothing can be supported
+    assert cov["integration_gate"]["rows_pass"] == 0
+    assert cov["totals"]["supported"] == 0
+    assert cov["denominators"]["corpus_total"] == 3561
+    assert cov["denominators"]["per_bank"] == {"contributor": 2920,
+                                               "factory": 641}
+
+
+# ------------------------------------------- integration ledger (#384)
+
+def test_integration_ledger_is_pinned_and_honest():
+    """The committed integration ledger is a pinned structural input, every
+    record's pins re-hash, every record names its own preset's graph and
+    placement/order identity, and no record is synthetic."""
+    assert pc.STRUCTURAL_INPUTS[pc.INTEGRATION_LEDGER_DEFAULT] == \
+        oc.sha256_file(LEDGER)
+    with open(LEDGER, encoding="utf-8") as f:
+        doc = json.load(f)
+    assert doc["schema_version"] == pc.INTEGRATION_SCHEMA
+    assert doc["required_aspects"] == pc.INTEGRATION_ASPECTS
+    graphs = {}
+    with open(os.path.join(REPO, pc.GRAPH_DEFAULT), encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                e = json.loads(line)
+                graphs[e["p"]] = e
+    stale = []
+    for rec in doc["records"]:
+        assert not rec.get("synthetic"), rec["record_id"]
+        e = graphs[rec["path"]]
+        assert (rec["bank"], rec["blob_sha1"]) == (e["b"], e["sha"])
+        assert rec["normalized_graph_sha256"] == pc.graph_sha256(e["g"])
+        assert rec["fx_placement_order"] == pc.fx_placement_order(e["g"])
+        pins = [rec[k] for k in pc.INTEGRATION_PINNED_FIELDS] + rec["evidence"]
+        if rec["fidelity_policy"] is not None:
+            pins.append(rec["fidelity_policy"])
+        for item in pins:
+            path = os.path.join(REPO, item["path"])
+            if not os.path.exists(path) or oc.sha256_file(path) != item["sha256"]:
+                stale.append(f"{rec['record_id']}: {item['path']}")
+        # while #12 is open no record can name a frozen policy
+        assert rec["fidelity_policy"] is None, rec["record_id"]
+        if rec["qualification_scope"] == "adapted":
+            assert rec["adaptation"].strip()
+    assert not stale, "stale integration pin(s):\n  " + "\n  ".join(stale)
+
+
+def test_adapted_integration_cannot_authorize_original_support():
+    """The historical SXT-025 dry-bus run is recorded as ADAPTED; it is
+    visible on the row but never qualifies the original preset."""
+    rows = read_rows(COV)
+    hb = rows["resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp"]
+    assert hb["headline_status"] != "supported"
+    assert hb["integration_gate"] != "PASS"
+    assert hb["integration_record"] == "sxt-026a-hells-bells-original-voice"
+    assert ("integration_adapted_only:sxt-025-hells-bells-drybus-adapted"
+            in hb["reasons"])
+    assert "integration_rtl_vs_model_NOT_RUN:" in hb["reasons"]
+
+
+def test_integration_gate_is_load_bearing_and_fails_closed(tmp_path):
+    """Failure controls (#384), against a declared synthetic world in which
+    every component gate and the freeze gate PASS: without a matching
+    integration PASS record nothing is supported; with one per preset the
+    set is restored; each single-record mutation of one victim removes
+    exactly that preset with the expected gate value and named reason."""
+    import coverage_negative_controls as ncc
+    cf = ncc.counterfactual_table(tmp_path / "cf" / "counterfactual.json")
+    synth = ncc.ledger_for(cf)
+    ledger = json.loads(synth.read_text(encoding="utf-8"))
+
+    base = str(tmp_path / "base")
+    assert publish(base, str(cf), str(synth)).returncode == 0
+    b = read_rows(base)
+    s0 = {p for p, r in b.items() if r["headline_status"] == "supported"}
+    assert s0
+
+    none = str(tmp_path / "none")
+    assert publish(none, str(cf)).returncode == 0
+    n = read_rows(none)
+    assert not {p for p, r in n.items() if r["headline_status"] == "supported"}
+    for p in s0:
+        assert n[p]["integration_gate"] in ("NOT_RUN", "NO_VERDICT"), p
+        assert n[p]["fidelity_contract_gate"] == "PASS", p
+
+    by0 = {p: {"blob_sha1": r["blob_sha1"]} for p, r in b.items()}
+    v, w = ncc._victims(by0, s0, ledger)
+    idx = {rec["path"]: i for i, rec in enumerate(ledger["records"])}
+    for name, mutate, want, reason in ncc._mutations(
+            ledger["records"][idx[v]], ledger["records"][idx[w]]):
+        doc = json.loads(json.dumps(ledger))
+        if mutate(doc["records"][idx[v]]) is None:
+            del doc["records"][idx[v]]
+        led = tmp_path / f"ledger-{name}.json"
+        led.write_text(json.dumps(doc), encoding="utf-8")
+        out = str(tmp_path / f"out-{name}")
+        r = publish(out, str(cf), str(led))
+        assert r.returncode == 0, (name, r.stderr)
+        rows = read_rows(out)
+        s1 = {p for p, x in rows.items() if x["headline_status"] == "supported"}
+        assert s1 == s0 - {v}, name
+        assert rows[v]["integration_gate"] == want, (name, rows[v]["integration_gate"])
+        assert reason in rows[v]["reasons"], name
 
 
 # ------------------------------------------------------------ failure control

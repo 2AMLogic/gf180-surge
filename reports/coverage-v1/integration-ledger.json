@@ -1,0 +1,132 @@
+{
+ "artifact": "sxt-029-integration-ledger",
+ "claim_scope": "Preset-scoped complete-wet integration ledger consumed by tools/publish_coverage.py. Each record states what one committed integration run of ONE corpus preset (bank/path/blob identity) establishes, under a declared qualification scope (original or adapted), pinning the normalized graph, patch image, oracle fixture, event sequence, fidelity policy and integrated evidence by full sha256 (re-hashed at run time; mismatch -> STALE). Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, musical-quality or hardware claim; no record in this file is PASS. Synthetic records are control fixtures only and are refused in a published run.",
+ "issue": "#384",
+ "record_rules": [
+  "a record qualifies only the preset whose bank, path and blob_sha1 it names",
+  "normalized_graph_sha256 is compiler/compile.py::graph_sha256 of the corpus graph",
+  "fx_placement_order lists required effect instances in slot order as slot:role:class",
+  "fidelity_policy must equal the fidelity_freeze gate's frozen_policy pin; null while #12 is open",
+  "adapted-scope records disclose their adaptation and never authorize original support",
+  "a measured FAIL against [PROPOSED] budgets is recorded as NO_VERDICT (leaf-ledger convention) and the measurement named in the note"
+ ],
+ "records": [
+  {
+   "adaptation": "finding F-1: the voice stage is the pinned engine's own all-off DRY bus of the same preset+sequence (declared voice-stage boundary), not the original voice; the wet path downstream of it is the original Reverb 1 @ send2",
+   "aspects": {
+    "gain": "PASS",
+    "per_instance_state": "NO_VERDICT",
+    "routing_order": "PASS",
+    "tails": "NO_VERDICT",
+    "timing": "PASS"
+   },
+   "bank": "contributor",
+   "blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+   "blocker": null,
+   "event_sequence": {
+    "path": "model/integration/sequences/sxt025-accept-v1.json",
+    "sha256": "ed08fc0712e3454a870801f03779bf8c0474e759e03cd1c6d69305acbc1fac6b"
+   },
+   "evidence": [
+    {
+     "path": "reports/sxt-025/EVIDENCE.md",
+     "sha256": "f25f2bd53579782c14b8d5406297044d624112622feb3c6150271bafa53f1b03"
+    },
+    {
+     "path": "reports/sxt-025/artifacts/compare__sxt025-accept-v1.json",
+     "sha256": "ad2548cad68086b086cff83e8429d568bc549771f894feae9dea7e502db26bdb"
+    },
+    {
+     "path": "reports/sxt-025/rtl-exactness.json",
+     "sha256": "4d5702e8d453c96c6e57c1f79d3aa46118b50cc7a1131dcb31d038054d1b25c2"
+    },
+    {
+     "path": "model/integration/preset/Hell_s_Bells__e499f78d.image.bin",
+     "sha256": "68d22deacd744b9f400061a2ef7dc94da43775175f43d955f278cd73581fae8f"
+    }
+   ],
+   "fidelity_policy": null,
+   "fx_placement_order": [
+    "5:send2:Reverb 1"
+   ],
+   "issue": "#18 (SXT-025)",
+   "model_vs_reference": "NO_VERDICT",
+   "normalized_graph_sha256": "081d6ea6ed299a6793313eb193c9b17d2353e1a4770f54b3e752e23d90cd549a",
+   "note": "Transcribed from reports/sxt-025/EVIDENCE.md and compare__sxt025-accept-v1.json. rtl_vs_model PASS is rtl-exactness.json (control_top + reverb1_core vs frozen models, sequence sxt025-smoke-v1, voice stage + gain staging host-side). model_vs_reference NO_VERDICT: every comparison is against [PROPOSED] budgets (PENDING-FREEZE, #12) and the tail band-energy sub-budget measured FAIL (decay-floor finding). per_instance_state NO_VERDICT: a single Reverb 1 instance, so instance separation is degenerate and not established here. ADAPTED scope: this record can never authorize original-preset support.",
+   "oracle_fixture": {
+    "path": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav",
+    "sha256": "bbb4b14850dbf95dd1a55dbffec68b6375d0fdfc90d6d5a855ec414ee7a05241"
+   },
+   "patch_image": {
+    "path": "model/integration/preset/Hell_s_Bells__e499f78d.image.json",
+    "sha256": "518773d5ef01bed545d12280c31778a61242b13052f4813db0147cf844229644"
+   },
+   "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+   "qualification_scope": "adapted",
+   "record_id": "sxt-025-hells-bells-drybus-adapted",
+   "rtl_vs_model": "PASS"
+  },
+  {
+   "aspects": {
+    "gain": "PASS",
+    "per_instance_state": "NO_VERDICT",
+    "routing_order": "PASS",
+    "tails": "NO_VERDICT",
+    "timing": "PASS"
+   },
+   "bank": "contributor",
+   "blob_sha1": "e499f78df5664012717dd2961944502846e28cf7",
+   "blocker": null,
+   "event_sequence": {
+    "path": "model/integration/sequences/sxt025-accept-v1.json",
+    "sha256": "ed08fc0712e3454a870801f03779bf8c0474e759e03cd1c6d69305acbc1fac6b"
+   },
+   "evidence": [
+    {
+     "path": "reports/sxt-026a/EVIDENCE.md",
+     "sha256": "0c328b659aafa3dae749aa09d2eff7f4b023d045f8c2a0a9db4be5eea95b849b"
+    },
+    {
+     "path": "reports/sxt-026a/artifacts/compare__sxt025-accept-v1.json",
+     "sha256": "518ed366740f7c5adab7b9a31e4528e4ef41b7c41b97cdbced1df7e81af6f6ca"
+    },
+    {
+     "path": "reports/sxt-026a/artifacts/trace__sxt025-accept-v1.json",
+     "sha256": "e7044ac932f715f8f7039a7fd6fa37ab4b7c086a3e8f9bb83a954f44b4f013b3"
+    },
+    {
+     "path": "model/integration/preset/Hell_s_Bells__e499f78d.image.bin",
+     "sha256": "68d22deacd744b9f400061a2ef7dc94da43775175f43d955f278cd73581fae8f"
+    }
+   ],
+   "fidelity_policy": null,
+   "fx_placement_order": [
+    "5:send2:Reverb 1"
+   ],
+   "issue": "#48 (SXT-026a)",
+   "model_vs_reference": "NO_VERDICT",
+   "normalized_graph_sha256": "081d6ea6ed299a6793313eb193c9b17d2353e1a4770f54b3e752e23d90cd549a",
+   "note": "Transcribed from reports/sxt-026a/EVIDENCE.md section 5 and its compare__sxt025-accept-v1.json: the SXT-025 integrated path re-run with the ORIGINAL voice stage against the same pinned wet fixture. rtl_vs_model NOT_RUN: no single integrated RTL run of the original voice stage plus Reverb 1 is committed (voice RTL exactness and the SXT-025 Reverb 1 RTL run are separate component legs, the latter with a host-side voice). model_vs_reference NO_VERDICT: full render and tail measured FAIL against [PROPOSED] budgets (finding F-48b -> SXT-013/#12); not a verdict until a policy is frozen. timing/gain/routing_order PASS are the model-side event-timing and placement/order/gain checks of that comparison. per_instance_state NO_VERDICT: single Reverb 1 instance (degenerate).",
+   "oracle_fixture": {
+    "path": "reports/sxt-025/fixtures/hells_bells__sxt025-accept-v1-wet.f32.wav",
+    "sha256": "bbb4b14850dbf95dd1a55dbffec68b6375d0fdfc90d6d5a855ec414ee7a05241"
+   },
+   "patch_image": {
+    "path": "model/integration/preset/Hell_s_Bells__e499f78d.image.json",
+    "sha256": "518773d5ef01bed545d12280c31778a61242b13052f4813db0147cf844229644"
+   },
+   "path": "resources/data/patches_3rdparty/Rozzer/Bells/Hell's Bells.fxp",
+   "qualification_scope": "original",
+   "record_id": "sxt-026a-hells-bells-original-voice",
+   "rtl_vs_model": "NOT_RUN"
+  }
+ ],
+ "required_aspects": [
+  "timing",
+  "gain",
+  "routing_order",
+  "per_instance_state",
+  "tails"
+ ],
+ "schema_version": "sxt-029-integration-ledger/1.0.0"
+}
