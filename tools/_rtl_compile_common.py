@@ -89,6 +89,7 @@ import collections
 import json
 import os
 import subprocess
+import sys
 
 __all__ = ["compile_and_run", "run_leaf_comparison",
            "scan_stdout_for_load_failures", "SimResult"]
@@ -395,7 +396,8 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
 
 def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                         compile_kwargs, default_checked,
-                        extra_summary_fields=None, summary_key_order=None):
+                        extra_summary_fields=None, summary_key_order=None,
+                        validate_model=None):
     """The report-assembly skeleton shared by five RTL-vs-model leaves.
 
     Extracted by issue #303 from the byte-identical halves of
@@ -442,14 +444,45 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                     set -- a mismatch raises `ValueError` rather than
                     silently dropping or reordering a reported field.
 
+      validate_model  optional callable(model_trace) raising `LeafInputError`
+                    for leaf-specific structure beyond the shared minimum.
+
+    Input failures (issue #361): an unreadable/malformed/mis-shaped
+    `model_trace.json` is refused BEFORE the simulator launches; an absent
+    or unparseable RTL trace is refused before `compare`.  Both publish
+    `comparison: NOT_RUN`, the leaf's zeroed `checked`, an `input_error`
+    object, and exit 1 -- never a numeric verdict.  A prior verdict at `out`
+    is removed first, so it cannot outlive a failing invocation; if `out`
+    cannot be invalidated/written the exit is 1 with an stderr message.
+
     Returns the process exit code: 0 when nothing failed, else 1.
     """
     if "report_sim_fails" in compile_kwargs:
         raise ValueError("run_leaf_comparison supplies report_sim_fails=True "
                          "itself; the NOT_RUN branch requires a SimResult")
 
-    with open(os.path.join(run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
+    # ---- issue #361: input-refusal reporting boundary ----
+    # A previously published verdict at the requested path must never survive
+    # this invocation, so it is invalidated BEFORE any input is touched.
+    publish_error = None
+    if out:
+        try:
+            os.remove(out)
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            publish_error = ("could not invalidate the prior verdict at %s "
+                             "(%s)" % (out, exc))
+
+    model_path = os.path.join(run_dir, "model_trace.json")
+    try:
+        model_trace = _load_model_trace(model_path)
+        if validate_model is not None:
+            validate_model(model_trace)
+    except LeafInputError as exc:
+        return _publish_refusal(exc, tb_label, default_checked, out,
+                                publish_error, extra_summary_fields,
+                                summary_key_order)
 
     sim = compile_and_run(tb, run_dir, report_sim_fails=True, **compile_kwargs)
 
@@ -457,7 +490,12 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
     fails = list(sim.sim_fails)
     comparison = "NOT_RUN"
     if not sim.sim_fails:
-        rtl_trace = parse_tb(sim.trace)
+        try:
+            rtl_trace = _parse_rtl_trace(parse_tb, sim.trace)
+        except LeafInputError as exc:
+            return _publish_refusal(exc, tb_label, default_checked, out,
+                                    publish_error, extra_summary_fields,
+                                    summary_key_order, model_trace, sim)
         checked, cmp_fails = compare(model_trace, rtl_trace)
         fails += cmp_fails
         comparison = "FAIL" if cmp_fails else "PASS"
@@ -482,9 +520,118 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                 "%r" % (order, sorted(summary)))
         summary = {k: summary[k] for k in order}
 
+    return _emit_summary(summary, out, publish_error, fails)
+
+
+class LeafInputError(Exception):
+    """An expected input failure (unreadable/malformed model or RTL trace).
+
+    Carries which input failed and why.  Only raised at the explicit input
+    boundaries below; programmer defects (TypeError/KeyError/AttributeError
+    in a leaf's own code) are deliberately NOT converted into this.
+    """
+
+    def __init__(self, which, path, reason):
+        super().__init__("%s %s: %s" % (which, path, reason))
+        self.which = which
+        self.path = path
+        self.reason = reason
+
+
+def _load_model_trace(path):
+    """Read and minimally structure-check the frozen model trace.
+
+    Structure required by all five adopted leaves: a JSON object whose
+    `blocks` is a non-empty list of objects, each with an integer `b` and a
+    `voices` list of objects carrying `slot`.  Anything deeper stays the
+    leaf's `compare` contract; JSON syntax alone is not accepted as a model.
+    """
+    try:
+        with open(path) as f:
+            model = json.load(f)
+    except OSError as exc:
+        raise LeafInputError("model", path, "unreadable: %s" % exc)
+    except ValueError as exc:   # JSONDecodeError and UnicodeDecodeError
+        raise LeafInputError("model", path, "invalid JSON: %s" % exc)
+    if not isinstance(model, dict):
+        raise LeafInputError("model", path, "top level is not a JSON object")
+    blocks = model.get("blocks")
+    if not isinstance(blocks, list) or not blocks:
+        raise LeafInputError("model", path,
+                             "`blocks` is missing, not a list, or empty")
+    for n, blk in enumerate(blocks):
+        if not isinstance(blk, dict) or isinstance(blk.get("b"), bool) \
+                or not isinstance(blk.get("b"), int):
+            raise LeafInputError("model", path,
+                                 "blocks[%d] lacks an integer `b`" % n)
+        voices = blk.get("voices")
+        if not isinstance(voices, list) or not all(
+                isinstance(v, dict) and "slot" in v for v in voices):
+            raise LeafInputError(
+                "model", path,
+                "blocks[%d].voices is not a list of objects with `slot`" % n)
+    return model
+
+
+def _parse_rtl_trace(parse_tb, trace):
+    """Run the leaf's parser; data-shaped failures become input refusals."""
+    if trace is None:
+        raise LeafInputError("rtl_trace", trace, "no trace path was produced")
+    try:
+        return parse_tb(trace)
+    except FileNotFoundError:
+        raise LeafInputError("rtl_trace", trace, "trace file is absent")
+    except OSError as exc:
+        raise LeafInputError("rtl_trace", trace, "unreadable: %s" % exc)
+    except (ValueError, IndexError) as exc:
+        # int()/float() token errors, undecodable bytes, truncated rows
+        raise LeafInputError("rtl_trace", trace,
+                             "malformed trace (%s: %s)"
+                             % (type(exc).__name__, exc))
+
+
+def _publish_refusal(exc, tb_label, default_checked, out, publish_error,
+                     extra_summary_fields, summary_key_order,
+                     model_trace=None, sim=None):
+    """Current non-PASS report: comparison NOT_RUN, the leaf's zeroed
+    coverage, and the offending input.  `sim_fails` stays empty -- the
+    simulator did not fail, an input did."""
+    reason = "input refusal: %s" % exc
+    summary = {
+        "tb": tb_label,
+        "verdict": "FAIL",
+        "comparison": "NOT_RUN",
+        "checked": dict(default_checked),
+        "mismatches": 1,
+        "first_failures": [reason],
+        "sim_fails": list(sim.sim_fails) if sim is not None else [],
+        "sim_stdout_tail": sim.stdout_tail if sim is not None else "",
+    }
+    if summary_key_order is not None:
+        # Leaf-specific extras are not derived from an unusable model or
+        # trace (that would index it a second time, or fabricate values);
+        # their keys are reported as null in the leaf's own order.
+        for k in summary_key_order:
+            summary.setdefault(k, None)
+        summary = {k: summary[k] for k in summary_key_order}
+    summary["input_error"] = {"input": exc.which, "path": exc.path,
+                              "reason": exc.reason}
+    _emit_summary(summary, out, publish_error, [reason])
+    return 1
+
+
+def _emit_summary(summary, out, publish_error, fails):
     print(json.dumps(summary, indent=2))
-    if out:
-        with open(out, "w") as f:
-            json.dump(summary, f, indent=2)
-            f.write("\n")
+    if out and publish_error is None:
+        try:
+            with open(out, "w") as f:
+                json.dump(summary, f, indent=2)
+                f.write("\n")
+        except OSError as exc:
+            publish_error = "could not write the verdict to %s (%s)" % (out,
+                                                                        exc)
+    if publish_error is not None:
+        print("ERROR: no current verdict was published: %s" % publish_error,
+              file=sys.stderr)
+        return 1
     return 0 if not fails else 1
