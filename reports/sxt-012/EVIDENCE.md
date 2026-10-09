@@ -71,6 +71,16 @@ change; comparing renders from this harness at sub-block precision is invalid.
    fixture renders can qualify. Until then, tempo-synced LFO/FX behavior is
    NOT covered by any fixture and no claim may rely on it.
 
+## Fixture policy for source-nonrepeatable presets (#310)
+
+Option A is recorded in
+[`decision-records/0019-source-nondeterministic-carrier-policy.md`](../../decision-records/0019-source-nondeterministic-carrier-policy.md):
+exact original-carrier refusal stays, with a reproducibility census specified
+(not yet implemented: NOT_RUN). Limits: no cause of the voice-path variation is
+established here, no coverage/support claim follows, and an always-pass
+classifier is checked to fail the Lap Harp and named-carrier controls by
+`tests/test_sxt310_fixture_policy.py`.
+
 ## Licensing / provenance
 
 Everything under `fixtures/` and `reports/sxt-012/` is original to this

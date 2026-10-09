@@ -134,7 +134,7 @@
       "status": "PASS",
       "note": "Landed PR #32. 30 fixtures wet+dry; repeatability 20/30 bit-identical, 10/30 quantified variation (RNG+free-phase); tempo NO_VERDICT recorded.",
       "evidence": "reports/sxt-012/EVIDENCE.md",
-      "evidence_sha256": "c83aa2ac878529f03b92f99a48688a0547f0590cc1b894c871427bfa6b771965"
+      "evidence_sha256": "b6752a4e94a0cf4b16c2160c661d3921ea36c2ba6b79331f636143fb8ecd1671"
     },
     {
       "id": 8,
