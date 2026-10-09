@@ -189,16 +189,17 @@ because no oracle was available; it ran on this build). Full detail:
 |---|---|
 | d(t) engine probe (deliverable 1), `tools/probe_delay_dt_engine.py`, 3x determinism | PASS (run); records in `artifacts-followup/dt-probe/` |
 | Model revision (deliverable 2): runner pre-roll 240 -> 375 blocks, load-time LFO step, float32-grid fused delay-time lag; tb mirrors | done |
-| Delay model-vs-engine metallic / dexie (max, rms, corr, tail L/R/mono) | PASS / PASS (metallic -109.0 dBFS rms, dexie -130.3) |
+| Delay model-vs-engine metallic / dexie (max, rms, corr, tail L/R/mono), **against the committed darwin-arm64 fixtures only** | PASS / PASS (metallic -109.0 dBFS rms, dexie -130.3); baselines re-emitted with `--per-channel-budgets` on (L/R legs also PASS) |
+| Same model vs the linux x86_64 engine build (unfused lag) | FAIL on the d(t) probe (`delay-dt-probe.md`); reference-platform variance open, routed to #12 (SXT-017). Claim 2 is scoped to the darwin fixtures until #12 rules |
 | Delay RTL-vs-model, full-length iverilog, metallic and dexie | PASS, 0 mismatches / 547,200 samples each |
 | EQ fm_bass_1 regression (both legs) | PASS (model output bit-unchanged; RTL 0 mismatches, 8,925 blocks) |
 | NC-a shared line (500 blocks, metallic) | FAIL as required (control fires): 26 mismatches |
 | NC-e one-digit RTL mutant | FAIL as required (control fires) |
 | NC-b nearest-neighbour model | FAIL as required on both: metallic on mono budgets; dexie passes the mono budgets (rms -71.4) and fails only the new `--per-channel-budgets` leg (L/R max, corr; tail gate not tripped) |
 | NC-c max-feedback corner (`tools/check_delay_maxfb_corner.py`) | PASS bounded, max 1.45, 0 saturated (model-side) |
-| NC-d bypass | NOT_RUN (path untouched; PR #44 record stands) |
-| Verilator equivalence on revised tb | NOT_RUN |
-| `ext_mem_traffic.json` | not regenerated; counters unchanged by the revision, window length differs only by the 135 added settle blocks |
+| NC-d bypass (`tools/run_ncd_bypass.py`, revised runner, fm_bass_1, 375-block pre-roll) | PASS: 0 mismatches / 571,200 samples (8,925 blocks, L+R); discrimination check (A = 1.0 - 1 LSB) fires with 74,864 mismatches. Record `negative-controls/nc-d-bypass-rerun-issue16.json`; PR #44 `nc-d-bypass.json` kept unedited. Model-side only |
+| Verilator equivalence on revised tb (Verilator 5.050, linux x86_64) | PASS: full-length Verilator RTL-vs-model metallic and dexie 0 mismatches / 547,200 samples each; metallic 3,200-block iverilog 13.0 vs Verilator raw traces byte-identical. Record `artifacts-followup/verilator-equivalence-issue16.json`; iverilog remains canonical |
+| ext-mem traffic counters, revised tree (`tools/ext_mem_traffic_rerun.py`) | PASS: dexie 6,854,400 reads / 571,200 writes = 8,925 blocks x 768 / x 64 (24r + 2w per sample). Record `artifacts/ext_mem_traffic-rerun-issue16.json`; PR #44 `ext_mem_traffic.json` and EVIDENCE.md A6 wording left to #367 |
 
 ### Word-length assumption this leaf is built against (consumed by #12)
 

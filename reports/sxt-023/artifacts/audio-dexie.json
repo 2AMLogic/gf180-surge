@@ -42,7 +42,7 @@
       "spectral_corr": 0.9999999970463026
     }
   },
-  "per_channel_budget_leg": false,
+  "per_channel_budget_leg": true,
   "proposed_budgets": {
     "max_abs_diff_lsb": 8192,
     "rms_diff_dbfs": -46.0,
@@ -52,7 +52,13 @@
   "proposed_budget_results": {
     "max_abs_diff_lsb": true,
     "rms_diff_dbfs": true,
-    "spectral_corr": true
+    "spectral_corr": true,
+    "L:max_abs_diff_lsb": true,
+    "L:rms_diff_dbfs": true,
+    "L:spectral_corr": true,
+    "R:max_abs_diff_lsb": true,
+    "R:rms_diff_dbfs": true,
+    "R:spectral_corr": true
   },
   "proposed_tail_budget": {
     "tail_rms_rel_db": -20.0,
