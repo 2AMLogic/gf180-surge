@@ -1,0 +1,31 @@
+PASS nc1/9th-instance-rejected — outcome=rejected codes=['fx_instance_overflow']
+PASS nc1/no-image-emitted — trimmed image would defeat issue #13
+PASS nc1/rejection-cataloged
+PASS nc2/fm3-compiles-under-B4 — FM3 is in B4's oscillator_allowlist
+PASS nc2/fm3-rejected-under-B2 — outcome=rejected codes=['oscillator_family_not_in_bundle', 'polylimit_reduction_required'] (the B2 polylimit code is expected: B2's pool is 8 and the base stores 16)
+PASS nc3/corruption-detected-body-byte — container checksum mismatch
+PASS nc3/corruption-detected-truncated — length mismatch: file 11900, header+body+digest 11903
+PASS nc4/no-image-for-reject-adapted-poly.rejection.json
+PASS nc4/no-image-for-reject-instance-overflow.rejection.json
+PASS nc4/no-image-for-synthetic-airwindows-point.rejection.json
+PASS nc4/no-image-for-reject-osc-family.rejection.json
+PASS nc4/no-image-for-reject-mseg-gap.rejection.json
+PASS nc4/no-image-for-reject-july.rejection.json
+PASS nc4/no-image-for-reject-fx-class.rejection.json
+PASS nc4/no-image-for-reject-asset-unresolved.rejection.json
+PASS nc4/no-image-for-reject-audio-input.rejection.json
+PASS nc4/no-image-for-reject-send-levels.rejection.json
+PASS nc5/overlap-fails-alloc/no-overlap/external_writable — image checks pass=True; targeted check=False
+PASS nc5/overlap-on-chip-fails-alloc/no-overlap/on_chip — image checks pass=True; targeted check=False
+PASS nc5/out-of-range-fails-alloc/blocks-contained/external_writable — image checks pass=True; targeted check=False
+PASS nc5/negative-offset-fails-alloc/offsets-integer-nonneg/external_writable — image checks pass=True; targeted check=False
+PASS nc5/bool-offset-fails-alloc/offsets-integer-nonneg/external_writable — image checks pass=True; targeted check=False
+PASS nc5/duplicate-slot-ownership-fails-alloc/unique-slot-ownership — image checks pass=True; targeted check=False
+PASS nc5/reverse-packing-fails-alloc/cumulative-layout/external_writable — image checks pass=True; targeted check=False
+PASS nc5/fx-instances-empty-fails-alloc/fx-instances-one-per-slot — image checks pass=True; targeted check=False
+PASS nc5/fx-instances-omitted-fails-alloc/fx-instances-one-per-slot — image checks pass=True; targeted check=False
+PASS nc5/fx-instances-duplicate-fails-alloc/fx-instances-one-per-slot — image checks pass=True; targeted check=False
+PASS nc5/cross-address-space-equal-offsets-accepted — 15 layout checks
+PASS nc5/zero-length-block-accepted — 15 layout checks
+---
+PASS: 29 checks, 0 failed
