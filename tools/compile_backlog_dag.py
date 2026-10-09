@@ -29,6 +29,14 @@ statuses, or broken edges, so drift is never silent.
     evidence_sha256 equal to the file's current SHA-256, so stale evidence
     is detectable. File existence alone approves nothing; closed issues,
     labels, and generated reports never stamp PASS.
+  * prerequisite monotonicity: a PASS node whose depends_on contains a
+    non-PASS node must carry `prerequisite_waivers`, one
+    {"node": <id>, "reason": "<what the PASS claim does and does not
+    assume>"} entry per non-PASS prerequisite. A waiver naming a PASS
+    prerequisite (stale), a node outside depends_on, a duplicate, or with
+    an empty reason is a violation, as is a waiver on a non-PASS node.
+    Waivers never change a status; the board renders them ("PASS (waived:
+    #N)", dashed edge) so the assumption is visible, not hidden.
   * epic nodes are aggregates, not claim nodes: their declared status must
     equal the aggregate of the member statuses (see aggregate_status);
     an epic PASS is impossible unless every member PASSes on its own
@@ -360,9 +368,62 @@ def validate_evidence(by_id: dict[int, dict], errors: list[str], strict_hashes: 
                 )
 
 
+def validate_prerequisite_waivers(by_id: dict[int, dict], errors: list[str]) -> None:
+    """PASS must not silently sit on a non-PASS prerequisite (see module doc)."""
+    for node in by_id.values():
+        where = f"node {node['id']}"
+        waivers = node.get("prerequisite_waivers")
+        if waivers is not None and node.get("status") != "PASS":
+            errors.append(f"{where}: 'prerequisite_waivers' is only valid on PASS nodes")
+            continue
+        if waivers is not None and not isinstance(waivers, list):
+            errors.append(f"{where}: 'prerequisite_waivers' must be a list")
+            continue
+        if node.get("status") != "PASS":
+            continue
+        deps = [d for d in node.get("depends_on", []) if d in by_id]
+        waived: set[int] = set()
+        for entry in waivers or []:
+            if (
+                not isinstance(entry, dict)
+                or not isinstance(entry.get("node"), int)
+                or isinstance(entry.get("node"), bool)
+            ):
+                errors.append(f"{where}: each waiver must be an object with an integer 'node'")
+                continue
+            target = entry["node"]
+            reason = entry.get("reason")
+            if not isinstance(reason, str) or not reason.strip():
+                errors.append(f"{where}: waiver for prerequisite {target} needs a non-empty 'reason'")
+            if target in waived:
+                errors.append(f"{where}: duplicate waiver for prerequisite {target}")
+            waived.add(target)
+            if target not in deps:
+                errors.append(f"{where}: waiver names {target}, which is not in depends_on")
+            elif by_id[target].get("status") == "PASS":
+                errors.append(
+                    f"{where}: stale waiver: prerequisite {target} is PASS; remove the waiver"
+                )
+        for dep in deps:
+            if by_id[dep].get("status") != "PASS" and dep not in waived:
+                errors.append(
+                    f"{where}: PASS node has non-PASS prerequisite {dep} "
+                    f"({by_id[dep].get('status')}) without a prerequisite_waivers entry"
+                )
+
+
+def waived_ids(node: dict) -> list[int]:
+    return sorted(
+        w["node"]
+        for w in (node.get("prerequisite_waivers") or [])
+        if isinstance(w, dict) and isinstance(w.get("node"), int)
+    )
+
+
 def validate(dag: dict, strict_hashes: bool = True) -> dict[int, dict]:
     by_id, errors = validate_schema(dag)
     validate_epic_aggregates(by_id, errors)
+    validate_prerequisite_waivers(by_id, errors)
     validate_evidence(by_id, errors, strict_hashes=strict_hashes)
     if errors:
         raise ValidationError("\n".join(f"  - {e}" for e in errors))
@@ -406,9 +467,13 @@ def node_table(by_id: dict[int, dict]) -> str:
             evidence_cell = "aggregate of members"
         else:
             evidence_cell = "—"
+        status_cell = display_status(node.get("status", "NOT_RUN"))
+        waived = waived_ids(node)
+        if waived:
+            status_cell += " (waived: " + ", ".join(f"#{w}" for w in waived) + ")"
         lines.append(
             f"| [#{node_id}]({ISSUE_URL}{node_id}) | {node.get('planning-id', '')} "
-            f"| {title} | {display_status(node.get('status', 'NOT_RUN'))} | {evidence_cell} |"
+            f"| {title} | {status_cell} | {evidence_cell} |"
         )
     return "\n".join(lines)
 
@@ -450,7 +515,8 @@ def mermaid_graph(by_id: dict[int, dict]) -> str:
             if dep in by_id:
                 edges.add((dep, node_id))
     for dep, target in sorted(edges):
-        lines.append(f"  n{dep} --> n{target}")
+        arrow = "-.->" if dep in waived_ids(by_id[target]) else "-->"
+        lines.append(f"  n{dep} {arrow} n{target}")
 
     lines.append("  classDef pass fill:#0E6B5E,color:#fff")
     lines.append("  classDef fail fill:#8E2438,color:#fff")
@@ -482,6 +548,17 @@ def render_block(by_id: dict[int, dict]) -> str:
         f"<summary>Node status and evidence ({len(by_id)} nodes)</summary>",
         "",
         node_table(by_id),
+        *(
+            [
+                "",
+                "`PASS (waived: #N)`: the node passes on its own committed evidence while"
+                " prerequisite #N is not PASS; the scoped reason is in"
+                " `prerequisite_waivers` in docs/dag.json and the graph edge is dashed."
+                " A waiver is not a claim that the prerequisite's own claim holds.",
+            ]
+            if any(waived_ids(n) for n in by_id.values())
+            else []
+        ),
         "",
         "</details>",
         "",
