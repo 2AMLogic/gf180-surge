@@ -101,7 +101,10 @@ def checkpoint_set(model_trace):
     return cps
 
 
-def compare(slug, model_trace, rtl_trace):
+def compare(slug, model_trace, rtl_trace, n_blocks=None):
+    """n_blocks bounds the comparison to the simulated window (--max-blocks):
+    model blocks the RTL was never asked to simulate are not compared, so a
+    truncated negative-control run cannot FAIL on 'missing O line' alone."""
     fails = []
     checked = {"outputs": 0, "checkpoints": 0, "fields": 0}
     O, T = rtl_trace
@@ -109,6 +112,8 @@ def compare(slug, model_trace, rtl_trace):
 
     for blk in model_trace["blocks"]:
         b = blk["b"]
+        if n_blocks is not None and b >= n_blocks:
+            continue
         # outputs
         rtl_o = O.get(b)
         if rtl_o is None:
@@ -190,7 +195,9 @@ def main():
     n_blocks = args.max_blocks if args.max_blocks else n_total
 
     # compile + run
-    vvp_path = "/tmp/tb_fx_compiled.vvp"
+    # compiled image next to the raw trace (a fixed /tmp path collided
+    # between concurrent runs on a shared host)
+    vvp_path = os.path.splitext(os.path.abspath(args.rtl_trace))[0] + ".vvp"
     rtl_trace_path = args.rtl_trace
     sinc_path = SINC
     zeros_path = os.path.join(REPO, "rtl", "effects", "line_zeros.hex")
@@ -205,7 +212,7 @@ def main():
     run_sim(args.sim, args.tb, vvp_path, "/tmp/sxt023_verilator", plusargs)
 
     rtl = parse_tb_trace(rtl_trace_path)
-    checked, fails = compare(slug, model_trace, rtl)
+    checked, fails = compare(slug, model_trace, rtl, n_blocks)
     summary = {
         "slug": slug,
         "tb": os.path.basename(args.tb),

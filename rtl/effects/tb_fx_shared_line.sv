@@ -9,6 +9,12 @@
 // gains) are CONTROL-PLANE: streamed one word per line from
 // <slug>_ctrl.hex and echoed in the trace.
 //
+// Exception to "round-half-up" (issue #16): the delay-time lag runs on the
+// float32 grid inside its Q24.43 word (lag_f32: exact products, one
+// round-to-nearest-even at 24 significant bits per rounding point, fused
+// v*lpinv + (float)(t*lp)), mirroring model Lag.process; the streamed lag
+// targets are already on the float32 grid.
+//
 // Delay channel lines (2^18+12 x Q10.21) live in external-memory
 // modules (fx_line_ext) with transaction counters and an additive hash.
 //
@@ -197,6 +203,64 @@ module tb_fx;
               + ($signed({{32{tsum[95]}}, tsum}) <<< 32)
               + $signed({64'h0, al} * {64'h0, bl});
             qmul_cc = sat64((p + $signed(128'd4398046511104)) >>> 43);
+        end
+    endfunction
+
+    // exact 64x64 signed product (128-bit), same partial products as qmul_cc
+    function automatic signed [127:0] mul128(input signed [63:0] a, input signed [63:0] b);
+        reg signed [31:0] ah, bh;
+        reg [31:0] al, bl;
+        reg signed [63:0] t_hh;
+        reg signed [95:0] t_hl, t_lh, tsum;
+        begin
+            ah = a[63:32]; al = a[31:0];
+            bh = b[63:32]; bl = b[31:0];
+            t_hh = $signed(ah) * $signed(bh);
+            t_hl = $signed(ah) * $signed({32'h0, bl});
+            t_lh = $signed({32'h0, al}) * $signed(bh);
+            tsum = t_hl + t_lh;
+            mul128 = ($signed({{64{t_hh[63]}}, t_hh}) <<< 64)
+                   + ($signed({{32{tsum[95]}}, tsum}) <<< 32)
+                   + $signed({64'h0, al} * {64'h0, bl});
+        end
+    endfunction
+
+    // Round an exact Q.86 value to the float32 grid (24 significant bits,
+    // round-to-nearest-even; never finer than the Q24.43 LSB) and return
+    // it as a Q24.43 word. Mirrors model f32_round_q43(x, 86) bit-for-bit.
+    function automatic signed [63:0] f32r86(input signed [127:0] x);
+        reg [127:0] m, q, rem, half;
+        integer n, s, i;
+        reg neg;
+        begin
+            if (x == 0) f32r86 = 64'sd0;
+            else begin
+                neg = x[127];
+                m = neg ? (~x + 128'd1) : x;
+                n = 0;
+                for (i = 127; (i >= 0) && (n == 0); i = i - 1)
+                    if (m[i]) n = i + 1;
+                s = n - 24;
+                if (s < 43) s = 43;
+                q = m >> s;
+                rem = m & ((128'd1 << s) - 128'd1);
+                half = 128'd1 << (s - 1);
+                if ((rem > half) || ((rem == half) && q[0])) q = q + 128'd1;
+                q = q << (s - 43);
+                f32r86 = sat64(neg ? -$signed(q) : $signed(q));
+            end
+        end
+    endfunction
+
+    // delay-time lag step (model Lag.process): engine SurgeLag<float>
+    // v = fma(v, lpinv, (float)(target*lp)) on the float32 grid
+    function automatic signed [63:0] lag_f32(input signed [63:0] v, input signed [63:0] t);
+        reg signed [63:0] tlp;
+        reg signed [127:0] tlp86;
+        begin
+            tlp = f32r86(mul128(t, LPT_r));
+            tlp86 = $signed({{64{tlp[63]}}, tlp}) <<< 43;
+            lag_f32 = f32r86(mul128(v, LPIT_r) + tlp86);
         end
     endfunction
 
@@ -430,8 +494,8 @@ module tb_fx;
         longint signed acc_l, acc_r;
         begin
             for (kk = 0; kk < 32; kk = kk + 1) begin
-                d_tlv[inst] = qadd64(qmul_cc(d_tlv[inst], LPIT_r), qmul_cc(d_tlt[inst], LPT_r));
-                d_trv[inst] = qadd64(qmul_cc(d_trv[inst], LPIT_r), qmul_cc(d_trt[inst], LPT_r));
+                d_tlv[inst] = lag_f32(d_tlv[inst], d_tlt[inst]);
+                d_trv[inst] = lag_f32(d_trv[inst], d_trt[inst]);
                 i_dt  = clipi(int_part(d_tlv[inst]), 32, (1 << 18) - 13);
                 i_dtr = clipi(int_part(d_trv[inst]), 32, (1 << 18) - 13);
                 base_l = ((d_wpos[inst] - i_dt + kk) - 12) & ((1 << 18) - 1);
@@ -629,7 +693,7 @@ module tb_fx;
     initial begin
         if (!$value$plusargs("PCONFIG=%d", PCONFIG)) PCONFIG = 1;
         if (!$value$plusargs("NBLOCKS=%d", N_BLOCKS)) N_BLOCKS = 1;
-        if (!$value$plusargs("RENDER0=%d", RENDER0)) RENDER0 = 240;
+        if (!$value$plusargs("RENDER0=%d", RENDER0)) RENDER0 = 375;
         if (!$value$plusargs("TRACE=%s", trace_name)) trace_name = "tb_trace.txt";
         if (!$value$plusargs("INFILE=%s", fin_name)) fin_name = "in.hex";
         if (!$value$plusargs("CTRLFILE=%s", fct_name)) fct_name = "ctrl.hex";
@@ -651,7 +715,7 @@ module tb_fx;
         e_bi = 0;
 
         for (b = 0; b < N_BLOCKS; b = b + 1) begin
-            chk = (b == 239) || (b == 240) || (b == 241) || (b == N_BLOCKS - 1) ||
+            chk = (b == RENDER0 - 1) || (b == RENDER0) || (b == RENDER0 + 1) || (b == N_BLOCKS - 1) ||
                   ((b >= RENDER0) && (((b - RENDER0) % 64) == 0));
 
             rd64(fct, v64); a_q = $signed(v64[31:0]);   // master amplitude (control)
