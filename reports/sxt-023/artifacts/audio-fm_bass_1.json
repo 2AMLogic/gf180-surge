@@ -42,6 +42,7 @@
       "spectral_corr": 0.9999999802565774
     }
   },
+  "per_channel_budget_leg": false,
   "proposed_budgets": {
     "max_abs_diff_lsb": 8192,
     "rms_diff_dbfs": -46.0,
@@ -54,7 +55,10 @@
     "spectral_corr": true
   },
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
@@ -62,7 +66,10 @@
     "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
     "tail_region_sidecar": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
@@ -72,6 +79,28 @@
     "tail_rms_rel_db": -92.40078002709436,
     "tail_ref_rms_lsb": 13362.995217899841,
     "tail_model_rms_lsb": 13362.961857328512,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 4,
+      "ref_first_window_dbfs": -27.811782300090783,
+      "ref_last_graded_window_dbfs": -73.45108635749811,
+      "max_dev_db": 0.000130087232790288,
+      "worst_window": {
+        "index": 3,
+        "start_frame_in_tail": 7200,
+        "ref_dbfs": -73.45108635749811,
+        "model_dbfs": -73.45095627026532
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
     "ok": true,
     "reason": ""
   },
@@ -82,7 +111,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -92,6 +124,28 @@
       "tail_rms_rel_db": -92.40078002709436,
       "tail_ref_rms_lsb": 13362.995217899841,
       "tail_model_rms_lsb": 13362.961857328512,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 4,
+        "ref_first_window_dbfs": -27.811782300090783,
+        "ref_last_graded_window_dbfs": -73.45108635749811,
+        "max_dev_db": 0.000130087232790288,
+        "worst_window": {
+          "index": 3,
+          "start_frame_in_tail": 7200,
+          "ref_dbfs": -73.45108635749811,
+          "model_dbfs": -73.45095627026532
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
       "ok": true,
       "reason": ""
     },
@@ -101,7 +155,10 @@
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
       "tail_region_sidecar": "reports/sxt-023/fixtures/fm_bass_1__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
@@ -111,6 +168,28 @@
       "tail_rms_rel_db": -92.40078002709436,
       "tail_ref_rms_lsb": 13362.995217899841,
       "tail_model_rms_lsb": 13362.961857328512,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 4,
+        "ref_first_window_dbfs": -27.811782300090783,
+        "ref_last_graded_window_dbfs": -73.45108635749811,
+        "max_dev_db": 0.000130087232790288,
+        "worst_window": {
+          "index": 3,
+          "start_frame_in_tail": 7200,
+          "ref_dbfs": -73.45108635749811,
+          "model_dbfs": -73.45095627026532
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
       "ok": true,
       "reason": ""
     }

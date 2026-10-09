@@ -177,3 +177,38 @@ with `ORACLE_PREBUILT_URL`) on a host that has it, then run the d(t) probe by
 extending `tools/diagnose_delay_engine_probe.py`. If the probe plus a faithful
 model revision cannot meet the budgets, the issue's stop clause applies:
 leave the rows FAIL and route to #12 per `delay-budget-diagnosis.md` section 3.
+
+
+## 2026-10-09 update (issue #16): remaining increment executed
+
+Supersedes the 2026-10-08 status table above (the probe was BLOCKED there
+because no oracle was available; it ran on this build). Full detail:
+`delay-dt-probe.md`.
+
+| item | status |
+|---|---|
+| d(t) engine probe (deliverable 1), `tools/probe_delay_dt_engine.py`, 3x determinism | PASS (run); records in `artifacts-followup/dt-probe/` |
+| Model revision (deliverable 2): runner pre-roll 240 -> 375 blocks, load-time LFO step, float32-grid fused delay-time lag; tb mirrors | done |
+| Delay model-vs-engine metallic / dexie (max, rms, corr, tail L/R/mono) | PASS / PASS (metallic -109.0 dBFS rms, dexie -130.3) |
+| Delay RTL-vs-model, full-length iverilog, metallic and dexie | PASS, 0 mismatches / 547,200 samples each |
+| EQ fm_bass_1 regression (both legs) | PASS (model output bit-unchanged; RTL 0 mismatches, 8,925 blocks) |
+| NC-a shared line (500 blocks, metallic) | FAIL as required (control fires): 26 mismatches |
+| NC-e one-digit RTL mutant | FAIL as required (control fires) |
+| NC-b nearest-neighbour model | FAIL as required on both: metallic on mono budgets; dexie passes the mono budgets (rms -71.4) and fails only the new `--per-channel-budgets` leg (L/R max, corr; tail gate not tripped) |
+| NC-c max-feedback corner (`tools/check_delay_maxfb_corner.py`) | PASS bounded, max 1.45, 0 saturated (model-side) |
+| NC-d bypass | NOT_RUN (path untouched; PR #44 record stands) |
+| Verilator equivalence on revised tb | NOT_RUN |
+| `ext_mem_traffic.json` | not regenerated; counters unchanged by the revision, window length differs only by the 135 added settle blocks |
+
+### Word-length assumption this leaf is built against (consumed by #12)
+
+Confirmed against `model/effects/delay/delay_model.py` / `sinc_table.py`:
+audio and delay lines Q10.21 (`A_FMT`, LSB 2^-21); gain ramps Q13.18
+(`G_FMT`); sinc taps Q2.29 (`SINC_FMT`), FIRipol_N = 12, FIRipol_M = 256;
+coefficient/lag/LFO/biquad words Q24.43 (`C_FMT`); exact products rounded
+round-half-up; the 12-tap sinc accumulates exactly (RTL 64-bit) then rounds
+once to Q10.21. **Change forced by the probe:** the delay-time lag value and
+its target are held on the float32 grid inside the Q24.43 word (RNE at 24
+significant bits, fused v*lpinv + (float)(t*lp)); this needs a 128-bit
+exact product and a 24-bit-significand rounder in the lag datapath. The
+delay-time target is rounded once to the float32 grid.

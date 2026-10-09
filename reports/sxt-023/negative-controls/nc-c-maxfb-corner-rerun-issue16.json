@@ -1,0 +1,9 @@
+{
+ "corner": "max-feedback extended fb=+1.0 (fb gain 1.0), mix=1.0, click train",
+ "samples": 111360,
+ "blocks": 1740,
+ "max_abs_out": 1.44999361038208,
+ "saturated_samples": 0,
+ "bounded": true,
+ "verdict": "PASS"
+}

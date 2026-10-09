@@ -128,12 +128,13 @@ def test_every_fixture_carrier_reconciles_settle_and_block_size():
                 r["production_preroll_blocks"] == 375)
 
 
-def test_delay_eq_runner_preroll_is_neither_zero_nor_the_fixture_settle():
-    """The curated discrepancy: 240 blocks = 0.16 s, not 0.25 s."""
+def test_delay_eq_runner_preroll_equals_the_fixture_settle():
+    """Resolved by issue #16 (finding F-318-1): the Delay/EQ runner pre-roll
+    was 240 blocks = 0.16 s; it is now the fixture settle, 375 = 0.25 s."""
     inv = {r["runner"]: r for r in aud.inventory()["runners"]}
     fx = inv["model/effects/run_fx_model.py"]
-    assert fx["production_preroll_blocks"] == 240
-    assert all(c["runner_preroll_seconds"] == 0.16 for c in fx["carriers"])
+    assert fx["production_preroll_blocks"] == 375
+    assert all(c["runner_preroll_seconds"] == 0.25 for c in fx["carriers"])
 
 
 def test_inventory_refuses_an_unaudited_runner(monkeypatch):
