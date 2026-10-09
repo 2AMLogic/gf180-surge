@@ -81,7 +81,7 @@ compiled coverage.
 offset  size  field
 0       4     magic "SXP1"
 4       1     format_major (=1)
-5       1     format_minor (=0)
+5       1     format_minor (=1)
 6       2     header_len (u16, bytes of canonical header JSON)
 8       4     body_len   (u32, bytes of canonical body JSON)
 12      H     header JSON  (UTF-8, canonical: sorted keys, separators ',':')
