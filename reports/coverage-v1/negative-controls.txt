@@ -43,4 +43,27 @@ NC-VOICE-PIN-CORRUPT: newly selected voice leaf evidence pin corrupted -> no sup
     corrupt-pin supported: 0 (1683 rows voice_leaf_gate=STALE)
     PASS: corrupt pin cannot produce a support-ready gate
 
+NC-INTEGRATION: preset-scoped complete-wet integration gate (#384)
+    component+freeze PASS, synthetic PASS ledger : 1682 supported
+    same world, committed ledger (no PASS record): 0 supported (1682 of the 1682 rows integration_gate=NOT_RUN; component gates still PASS)
+    -> freezing budgets + verifying leaves alone promotes nothing; the integration gate is load-bearing
+    victim V: resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp (4:send1:Reverb 2|5:send2:Delay)
+    record-removed              : V NOT_RUN    supported 1681 (= baseline - V) reason integration_not_run:
+    evidence-hash-corrupted     : V STALE      supported 1681 (= baseline - V) reason integration_evidence_stale:
+    preset-identity-changed     : V NOT_RUN    supported 1681 (= baseline - V) reason integration_preset_identity_mismatch:
+    graph-identity-changed      : V STALE      supported 1681 (= baseline - V) reason integration_graph_identity_mismatch:
+    order-identity-changed      : V STALE      supported 1681 (= baseline - V) reason integration_order_identity_mismatch:
+    adapted-only-record         : V NOT_RUN    supported 1681 (= baseline - V) reason integration_adapted_only:
+    dropped-tail-FAIL           : V FAIL       supported 1681 (= baseline - V) reason integration_aspect_tails_FAIL:
+    wrong-order-FAIL            : V FAIL       supported 1681 (= baseline - V) reason integration_aspect_routing_order_FAIL:
+    shared-instance-state-FAIL  : V FAIL       supported 1681 (= baseline - V) reason integration_aspect_per_instance_state_FAIL:
+    rtl-vs-model-FAIL           : V FAIL       supported 1681 (= baseline - V) reason integration_rtl_vs_model_FAIL:
+    model-vs-reference-FAIL     : V FAIL       supported 1681 (= baseline - V) reason integration_model_vs_reference_FAIL:
+    explicit-blocker            : V BLOCKED    supported 1681 (= baseline - V) reason integration_blocked:
+    unresolved-interpretation   : V NO_VERDICT supported 1681 (= baseline - V) reason integration_model_vs_reference_NO_VERDICT:
+    policy-identity-mismatch    : V STALE      supported 1681 (= baseline - V) reason integration_policy_identity_mismatch:
+    cross-preset (V record on W): W NOT_RUN    supported 1681 (= baseline - W) reason integration_preset_identity_mismatch:
+    synthetic ledger as the default input  : REFUSED (exit 2; synthetic records never valid in a published run)
+    PASS: integration gate load-bearing; every mutation prevents support with a named reason; no cross-preset qualification
+
 RESULT: PASS — all controls healthy (each demonstrably fails the check it targets)
