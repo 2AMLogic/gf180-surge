@@ -96,7 +96,7 @@ def test_single_3x_pass_classifier_fails_bimodal_control():
     """A '3x passed once' classifier is exposed by the Lap Harp row that
     passes the 3x gate but not the stress screen."""
     gate = _load(GATE)
-    # lapharp's seq-poly-8 row is stable: a last/first-pass-wins classifier
+    # lapharp's seq-poly-8 row is stable: a last-row-wins classifier
     # calls it repeatable and must be caught by the bimodal control.
     assert any("bimodal" in f for f in
                check_census_controls(lambda s, r: r[-1]["stable"], gate))

@@ -80,6 +80,7 @@ exact original-carrier refusal stays, with a reproducibility census specified
 established here, no coverage/support claim follows, and an always-pass
 classifier is checked to fail the Lap Harp and named-carrier controls by
 `tests/test_sxt310_fixture_policy.py`.
+
 ## Licensing / provenance
 
 Everything under `fixtures/` and `reports/sxt-012/` is original to this

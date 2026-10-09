@@ -194,6 +194,7 @@ or statistical tolerance is adopted, and a refused preset never counts toward
 original-preset coverage. Leaves draw carriers from a specified reproducibility
 census (census implementation: NOT_RUN, separate work). See
 [`decision-records/0019-source-nondeterministic-carrier-policy.md`](../decision-records/0019-source-nondeterministic-carrier-policy.md).
+
 ## Licensing / provenance
 
 Everything under `fixtures/` is original to this repository (Apache-2.0 per

@@ -94,9 +94,14 @@ The census is an inventory and prioritization aid, **not** a support claim.
   the one-factor bisection (oscillator type / unison / noise / drift against the
   ALL-OFF dry bus) required by #310's acceptance check is **NOT_RUN** here; it
   needs the pinned oracle host and is carried by the census implementation
-  issue (or a bounded diagnostic issue). Any such variant is diagnostic only.
+  issue [#381](https://github.com/2AMLogic/gf180-surge/issues/381). #310 stays
+  open until that diagnostic runs or is explicitly re-scoped there. Any such
+  variant is diagnostic only.
 - The census itself (**NOT_RUN**), any preset support, coverage, fidelity or
   quality claim, and any B or C feasibility.
+- **Owner overrule path:** the owner may reverse this disposition at any time by
+  restoring `loom:operator-decision` on #310; this record is then superseded by a
+  new record, not edited in place.
 - The `loom-daemon` side of the decision is the agent decision comment on #310.
 
 ## Enforcement points
