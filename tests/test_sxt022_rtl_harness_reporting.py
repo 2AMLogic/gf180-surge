@@ -321,3 +321,183 @@ def test_fresh_trace_wins_over_a_stale_passing_trace(tmp_path, monkeypatch):
     assert d["comparison"] == "FAIL", d
     assert d["sim_fails"] == []
     assert d["mismatches"] == 1
+
+
+# --------------------------------------------------------------------------
+# Issue #361: input failures through the public leaf entry point
+# --------------------------------------------------------------------------
+#
+# Stubbed-simulator legs: vvp "succeeds" and writes a trace the leaf's
+# parser cannot read. A previous PASS verdict is pre-seeded at --out.
+
+import json  # noqa: E402
+
+STALE_PASS = {"tb": "tb_voice.sv", "verdict": "PASS", "comparison": "PASS"}
+
+BAD_TRACES = {
+    "malformed-numeric-token": MATCHING_TRACE.replace("M 0 100", "M 0 1x0", 1),
+    "truncated-O-row": "O 0\n" + MATCHING_TRACE,
+    "truncated-M-row": MATCHING_TRACE + "M\n",
+}
+
+
+def _seed_stale(run_dir):
+    out = os.path.join(run_dir, "verdict.json")
+    with open(out, "w") as f:
+        json.dump(STALE_PASS, f)
+    return out
+
+
+@pytest.mark.parametrize("name", sorted(BAD_TRACES))
+def test_unparseable_rtl_trace_is_refused_not_compared(tmp_path, monkeypatch,
+                                                       name):
+    run_dir = _write_run_dir(tmp_path)
+    _seed_stale(run_dir)
+    _stub_simulator(monkeypatch, run_dir, 0, BAD_TRACES[name])
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert rc != 0
+    assert d != STALE_PASS
+    assert d["verdict"] == "FAIL", d
+    assert d["comparison"] == "NOT_RUN", d
+    assert d["checked"] == {"checkpoints": 0, "fields": 0, "oscout": 0,
+                            "mono": 0}, d["checked"]
+    assert d["sim_fails"] == []
+    assert d["input_error"]["input"] == "rtl_trace"
+    assert d["input_error"]["path"].endswith("tb_trace.txt")
+    assert "model=" not in "\n".join(d["first_failures"])  # not a mismatch
+
+
+@pytest.mark.parametrize("how", ["absent", "invalid-json", "bad-shape"])
+def test_bad_model_is_refused_before_the_simulator_launches(
+        tmp_path, monkeypatch, how):
+    run_dir = _write_run_dir(tmp_path)
+    _seed_stale(run_dir)
+    path = os.path.join(run_dir, "model_trace.json")
+    if how == "absent":
+        os.remove(path)
+    elif how == "invalid-json":
+        with open(path, "w") as f:
+            f.write("{not json")
+    else:
+        with open(path, "w") as f:
+            json.dump({"blocks": [{"b": 0, "voices": "oops"}]}, f)
+    calls = []
+    _stub_simulator(monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert calls == [], calls
+    assert rc != 0
+    assert d["verdict"] == "FAIL" and d["comparison"] == "NOT_RUN", d
+    assert d["checked"]["fields"] == 0
+    assert d["input_error"]["input"] == "model"
+
+
+# Real-simulator legs (no stubs): the model is produced by the frozen model
+# runner on a committed sequence into a temporary directory; only temporary
+# copies are mutated. Skipped (NOT_RUN) when iverilog/vvp are unavailable.
+
+import shutil  # noqa: E402
+
+
+def _real_toolchain():
+    return shutil.which("iverilog") and shutil.which("vvp")
+
+
+@pytest.fixture(scope="module")
+def real_run_dir(tmp_path_factory):
+    if not _real_toolchain():
+        pytest.skip("NOT_RUN: iverilog/vvp not available")
+    run_dir = str(tmp_path_factory.mktemp("real-voice-run"))
+    subprocess.run(
+        [sys.executable, os.path.join(REPO, "model", "voice", "run_model.py"),
+         "--sequence", "seq-notes-repeated-v1", "--out-dir", run_dir],
+        check=True, stdout=subprocess.DEVNULL)
+    return run_dir
+
+
+def _public(run_dir, out):
+    """The real public command, as a subprocess."""
+    p = subprocess.run(
+        [sys.executable, os.path.join(REPO, "tools", "compare_rtl_model.py"),
+         "--run-dir", run_dir, "--out", out],
+        capture_output=True, text=True)
+    return p.returncode, p
+
+
+def _copy_run(real_run_dir, tmp_path):
+    dst = str(tmp_path / "run")
+    shutil.copytree(real_run_dir, dst)
+    return dst
+
+
+def test_real_sim_healthy_run_passes_and_replaces_stale_pass(
+        real_run_dir, tmp_path):
+    run_dir = _copy_run(real_run_dir, tmp_path)
+    out = str(tmp_path / "v.json")
+    with open(out, "w") as f:
+        json.dump({"verdict": "FAIL", "stale": True}, f)
+
+    rc, _ = _public(run_dir, out)
+
+    with open(out) as f:
+        d = json.load(f)
+    assert rc == 0
+    assert d["verdict"] == "PASS" and d["comparison"] == "PASS"
+    assert d["checked"]["mono"] > 0 and d["checked"]["fields"] > 0
+    assert "input_error" not in d and "stale" not in d
+
+
+def test_real_sim_numeric_mismatch_is_fail_not_an_input_refusal(
+        real_run_dir, tmp_path):
+    run_dir = _copy_run(real_run_dir, tmp_path)
+    mpath = os.path.join(run_dir, "model_trace.json")
+    with open(mpath) as f:
+        model = json.load(f)
+    model["blocks"][0]["mono_block"][0] += 1      # one model sample off
+    with open(mpath, "w") as f:
+        json.dump(model, f)
+    out = str(tmp_path / "v.json")
+    with open(out, "w") as f:
+        json.dump(STALE_PASS, f)
+
+    rc, _ = _public(run_dir, out)
+
+    with open(out) as f:
+        d = json.load(f)
+    assert rc == 1
+    assert d["comparison"] == "FAIL", d
+    assert d["checked"]["mono"] > 0
+    assert "input_error" not in d
+
+
+@pytest.mark.parametrize("how", ["absent", "invalid-json", "bad-shape"])
+def test_real_public_command_refuses_bad_model_and_replaces_stale_pass(
+        real_run_dir, tmp_path, how):
+    run_dir = _copy_run(real_run_dir, tmp_path)
+    mpath = os.path.join(run_dir, "model_trace.json")
+    if how == "absent":
+        os.remove(mpath)
+    elif how == "invalid-json":
+        with open(mpath, "w") as f:
+            f.write('{"blocks": [')
+    else:
+        with open(mpath, "w") as f:
+            json.dump({"blocks": {"b": 0}}, f)
+    out = str(tmp_path / "v.json")
+    with open(out, "w") as f:
+        json.dump(STALE_PASS, f)
+
+    rc, p = _public(run_dir, out)
+
+    with open(out) as f:
+        d = json.load(f)
+    assert rc == 1
+    assert d != STALE_PASS
+    assert d["comparison"] == "NOT_RUN" and d["verdict"] == "FAIL"
+    assert d["checked"] == {"checkpoints": 0, "fields": 0, "oscout": 0,
+                            "mono": 0}
+    assert d["input_error"]["input"] == "model"
+    assert "Traceback" not in p.stderr

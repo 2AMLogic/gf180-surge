@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "issue": 365,
+  "doc": "Reviewed allowlist of non-canonical tokens in verdict-position keys of committed reports/**/*.json. Canonical six statuses are implicit (optionally followed by a free-text qualifier). Targets: the six statuses, NON_VERDICT (descriptor, not a verdict), or OPEN (producer meaning undecided; open finding for the owning leaf). No extra token may map to PASS; a refusal may only map to NOT_RUN/NO_VERDICT/BLOCKED/FAIL. Entries match a whole value or a value-prefix ending at whitespace, '(' or ':'. This establishes vocabulary conformance only.",
+  "keys": {
+    "status": {
+      "ALL-CONTROLS-OK": {
+        "to": "NON_VERDICT",
+        "reason": "Negative-control outcome label: says the injected defect was caught by the check it targets, not that the subject passed; deliberately not mapped to PASS."
+      },
+      "CONTROL-OK": {
+        "to": "NON_VERDICT",
+        "reason": "Negative-control outcome label: says the injected defect was caught by the check it targets, not that the subject passed; deliberately not mapped to PASS."
+      },
+      "AT-SENSITIVITY-FLOOR": {
+        "to": "OPEN",
+        "reason": "Text says budget NOT met but the producer's intended verdict class is undecided; open finding for the owning leaf (SXT-028e-sse)."
+      },
+      "AVAILABLE": {
+        "to": "NON_VERDICT",
+        "reason": "Tool/oracle availability descriptor, not a verification result."
+      },
+      "RUNNABLE": {
+        "to": "NON_VERDICT",
+        "reason": "Leg-runnable descriptor, not a verification result."
+      },
+      "CORRECTED": {
+        "to": "OPEN",
+        "reason": "Named-tool resolution state; meaning (resolved vs. still failing) not decided here."
+      },
+      "DRAFT-NOT-FROZEN": {
+        "to": "NON_VERDICT",
+        "reason": "Freeze-stage descriptor; the record is explicitly not a support/fidelity claim."
+      },
+      "ESTIMATE": {
+        "to": "NON_VERDICT",
+        "reason": "Measurement-kind label (arithmetic estimate), not a verdict."
+      },
+      "FINDING": {
+        "to": "OPEN",
+        "reason": "Finding record; whether it is a pass/fail-class result is the owning leaf's call."
+      },
+      "MATCH": {
+        "to": "OPEN",
+        "reason": "Could be misread as PASS; comparison semantics (budgeted vs exact) undeclared; owning leaf SXT-028e-sse."
+      },
+      "MISMATCH": {
+        "to": "OPEN",
+        "reason": "Could be misread as a verdict; comparison semantics undeclared; owning leaf SXT-028e-sse."
+      },
+      "MEASURED": {
+        "to": "NON_VERDICT",
+        "reason": "Measurement-kind label (value was measured), not a verdict."
+      },
+      "OK": {
+        "to": "OPEN",
+        "reason": "Bare OK is ambiguous with PASS; tool-resolution check in SXT-036 left to the owning leaf."
+      },
+      "PLAN-ONLY": {
+        "to": "NON_VERDICT",
+        "reason": "Planning-artifact descriptor; explicitly not a support or quality claim."
+      },
+      "RECORDED": {
+        "to": "NON_VERDICT",
+        "reason": "Record-keeping descriptor for a finding, not a verdict."
+      },
+      "REFUSED": {
+        "to": "NOT_RUN",
+        "reason": "A harness refusal produces no comparison; it is not a pass and not a measured FAIL."
+      },
+      "REFUSED-STALE": {
+        "to": "NOT_RUN",
+        "reason": "Stale-pin refusal: the comparator declined to run; not a pass."
+      },
+      "RESOLVED": {
+        "to": "NON_VERDICT",
+        "reason": "Boundary-resolution state descriptor (effect-settle audit), not a verdict."
+      },
+      "UNRESOLVED": {
+        "to": "NON_VERDICT",
+        "reason": "Boundary-resolution state descriptor (effect-settle audit), not a verdict."
+      },
+      "VERIFIED": {
+        "to": "OPEN",
+        "reason": "Bare VERIFIED is ambiguous with PASS (SXT-028-rng source inventory); owning leaf to decide."
+      },
+      "[PENDING-SXT-016]": {
+        "to": "NON_VERDICT",
+        "reason": "Placeholder marker for a cost value pending SXT-016; not a verdict."
+      },
+      "adapted-not-predicted": {
+        "to": "NON_VERDICT",
+        "reason": "Preset coverage classification (census/prediction), not a verification status."
+      },
+      "supported": {
+        "to": "NON_VERDICT",
+        "reason": "Preset coverage classification; per CLAUDE.md not a support claim by itself."
+      },
+      "unsupported": {
+        "to": "NON_VERDICT",
+        "reason": "Preset coverage classification, not a verification status."
+      },
+      "unresolved": {
+        "to": "NON_VERDICT",
+        "reason": "Preset coverage classification, not a verification status."
+      },
+      "analysis_failure": {
+        "to": "OPEN",
+        "reason": "Negative-control analysis outcome; meaning (FAIL vs NOT_RUN) undecided; owning leaf SXT-015."
+      },
+      "fit": {
+        "to": "OPEN",
+        "reason": "Word-limit fit descriptor in SXT-015 examples; verdict class undecided."
+      },
+      "rejected": {
+        "to": "OPEN",
+        "reason": "Word-limit rejection descriptor in SXT-015; verdict class undecided."
+      },
+      "filed": {
+        "to": "NON_VERDICT",
+        "reason": "Issue-ledger state descriptor, not a verification status."
+      },
+      "landed": {
+        "to": "NON_VERDICT",
+        "reason": "Issue-ledger state descriptor, not a verification status."
+      },
+      "normalized": {
+        "to": "NON_VERDICT",
+        "reason": "Preset normalisation state descriptor, not a verdict."
+      },
+      "unpinned_by_any_probe": {
+        "to": "NON_VERDICT",
+        "reason": "Coverage descriptor, not a verdict."
+      },
+      "class_state_unverified": {
+        "to": "OPEN",
+        "reason": "Free-text SXT-028g reconciliation note; verdict class undecided."
+      }
+    },
+    "verdict": {
+      "CONTROL-OK": {
+        "to": "NON_VERDICT",
+        "reason": "Negative-control outcome label: says the injected defect was caught by the check it targets, not that the subject passed; deliberately not mapped to PASS."
+      },
+      "BIT-IDENTICAL": {
+        "to": "OPEN",
+        "reason": "Row verdict in sxt-014 deltas; could be misread as PASS; owning leaf to decide."
+      },
+      "MEASURABLE-DIFFERENCE": {
+        "to": "OPEN",
+        "reason": "Row verdict in sxt-014 deltas; owning leaf to decide."
+      },
+      "NOT REPRODUCIBLE": {
+        "to": "OPEN",
+        "reason": "SXT-028-rng seed-reproducibility verdict; FAIL-vs-finding class undecided."
+      },
+      "NO_VERDICT_UNPRICED_COMPONENTS": {
+        "to": "NO_VERDICT",
+        "reason": "Token name states NO_VERDICT with the reason (unpriced components)."
+      },
+      "OVERFLOW_CONCLUSIVE": {
+        "to": "OPEN",
+        "reason": "sxt-017 grid-cell outcome; verdict class undecided."
+      },
+      "OVERFLOW_PLACEHOLDER_DEPENDENT": {
+        "to": "OPEN",
+        "reason": "sxt-017 grid-cell outcome; verdict class undecided."
+      },
+      "PARTIAL": {
+        "to": "OPEN",
+        "reason": "SXT-028e-sse partial-budget outcome; verdict class undecided."
+      },
+      "REFUSED": {
+        "to": "NOT_RUN",
+        "reason": "A harness refusal produces no comparison; it is not a pass."
+      },
+      "no reseed call site reachable": {
+        "to": "NON_VERDICT",
+        "reason": "Free-text source-inventory observation, not a verdict."
+      }
+    },
+    "result": {
+      "CONTROL-OK": {
+        "to": "NON_VERDICT",
+        "reason": "Negative-control outcome label: says the injected defect was caught by the check it targets, not that the subject passed; deliberately not mapped to PASS."
+      },
+      "CHARACTERIZATION": {
+        "to": "OPEN",
+        "reason": "Tail-shape characterization outcome; verdict class undecided."
+      }
+    },
+    "comparison": {}
+  }
+}
