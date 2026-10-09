@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "worktree:return": "./.loom/scripts/worktree-return.sh",
-    "check:ci": "echo 'No CI checks configured. Customize this script for your project.' && exit 0",
-    "check:all": "echo 'No checks configured. Customize this script for your project.' && exit 0",
-    "test": "echo 'No tests configured. Customize this script for your project.' && exit 0",
-    "lint": "echo 'No linter configured. Customize this script for your project.' && exit 0"
+    "check:ci": "python3 tools/check_census_consistency.py && python3 tools/check_provenance.py --negative-control && python3 tools/check_provenance.py && python3 -I -m compileall -q compiler corpus/census-v0.1 fixtures model oracle probes tests tools refusal.py && python3 tools/compile_backlog_dag.py --check",
+    "check:all": "npm run check:ci",
+    "test": "python3 -m pytest -q -rs tests",
+    "lint": "echo 'NOT_RUN: no linter configured (coverage: none -- not a pass)' && exit 2"
   }
 }
