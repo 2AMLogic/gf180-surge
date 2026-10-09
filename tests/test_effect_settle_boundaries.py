@@ -103,7 +103,7 @@ def test_inventory_lists_every_runner_with_its_source_preroll():
     assert got == {
         "model/effects/run_chorus_model.py": 375,
         "model/effects/run_distortion_sse_model.py": 0,
-        "model/effects/run_fx_model.py": 240,
+        "model/effects/run_fx_model.py": 375,   # 240 until issue #16 (F-318-1)
         "model/effects/run_phaser_model.py": 375,
         "model/effects/run_reverb2_model.py": 375,
     }

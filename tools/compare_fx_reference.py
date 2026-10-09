@@ -19,6 +19,12 @@ Metrics per channel (L, R) and mono sum:
 rms_diff_dbfs is clamped to a finite floor under exact agreement (issue #100;
 compare_audio_reference.RMS_DIFF_DBFS_FLOOR) so the JSON stays strict.
 
+Optional stricter leg (--per-channel-budgets, issue #16): the same proposed
+max/rms/spectral_corr budgets are also applied to L and R. Added because
+the nearest-neighbour tap control (NC-b) passes the mono budgets on the
+dexie fixture; it must fail a check the frozen model passes. Off by
+default; the JSON records `per_channel_budget_leg`.
+
 Wet-path tail gate (issue #100; same legs as the shared mono comparator's
 #93 gate): the tail region is read from the fixture sidecar's DECLARED values
 (`--sidecar`, auto-discovered as <seq>.json next to a `<seq>-wet.f32.wav`
@@ -128,6 +134,11 @@ def main():
                          "(auto-discovered next to --ref when it follows the "
                          "committed <seq>-wet.f32.wav -> <seq>.json convention)")
     ap.add_argument("--json", help="write metrics JSON here")
+    ap.add_argument("--per-channel-budgets", action="store_true",
+                    help="stricter leg (issue #16, NC-b): ALSO apply the same "
+                         "proposed max/rms/spectral_corr budgets to L and R, "
+                         "not only to the mono sum. Off by default (verdicts "
+                         "of every other consumer unchanged).")
     args = ap.parse_args()
 
     if car.name_declares(args.ref, car.DRY_NAME_MARKERS):
@@ -169,6 +180,16 @@ def main():
         "rms_diff_dbfs": worst["rms_diff_dbfs"] <= PROPOSED["rms_diff_dbfs"],
         "spectral_corr": worst["spectral_corr"] >= PROPOSED["spectral_corr_min"],
     }
+    if args.per_channel_budgets:
+        for name in ("L", "R"):
+            c = chs[name]
+            proposed_results[name + ":max_abs_diff_lsb"] = \
+                c["max_abs_diff_lsb"] <= PROPOSED["max_abs_diff_lsb"]
+            proposed_results[name + ":rms_diff_dbfs"] = \
+                c["rms_diff_dbfs"] <= PROPOSED["rms_diff_dbfs"]
+            proposed_results[name + ":spectral_corr"] = \
+                c["spectral_corr"] >= PROPOSED["spectral_corr_min"]
+    metrics["per_channel_budget_leg"] = bool(args.per_channel_budgets)
     metrics["proposed_budgets"] = PROPOSED
     metrics["spectral_corr_definition"] = car.SPECTRAL_CORR_DEFINITION
     metrics["proposed_budget_results"] = proposed_results

@@ -2,7 +2,8 @@
 """SXT-023 follow-up smoke driver: truncated-slice RTL-vs-model exactness.
 
 Runs the frozen fixed-point models over the first SMOKE_RENDER render blocks
-(after the declared 240-block settle) of a fixture dry bus, emits the model
+(after the declared run_fx_model.SETTLE_BLOCKS settle: 375 blocks since
+issue #16, the fixture harness's 0.25 s) of a fixture dry bus, emits the model
 trace + RTL stimulus in the standard formats, runs the SV tb (iverilog or
 Verilator), and compares with integer equality. Fast-iteration harness; the
 canonical evidence run remains the full-length iverilog run.
