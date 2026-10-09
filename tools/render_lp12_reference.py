@@ -81,14 +81,6 @@ SMOKE_SEQ = "seq-lp12-smoke-v1"
 MAIN_SEQ = "seq-notes-repeated-v1"
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def census_blob(rel):
     import csv
 
@@ -111,7 +103,7 @@ def tool_version():
                                 capture_output=True, text=True, check=True).stdout.strip()
     except Exception:  # pragma: no cover
         commit = "unavailable"
-    return {"repo_commit": commit, "script_sha256": sha256_file(os.path.abspath(__file__))}
+    return {"repo_commit": commit, "script_sha256": oc.sha256_file(os.path.abspath(__file__))}
 
 
 def load_seq(ref):
@@ -280,10 +272,10 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
         del s2
         wav2_path = os.path.join(out_dir, f"render-plain{i + 1}.wav")
         write_wav_stereo16(wav2_path, st2)
-        shas.append(sha256_file(wav2_path))
+        shas.append(oc.sha256_file(wav2_path))
         os.remove(wav2_path)
     engine_deterministic = shas[0] == shas[1]
-    neutral = (shas[0] == sha256_file(wav_path))
+    neutral = (shas[0] == oc.sha256_file(wav_path))
     if engine_deterministic and not neutral:
         raise Refuse(f"{case}: tap instrumentation is NOT DSP-neutral "
                      "(tapped vs untapped renders differ on a deterministic case)")
@@ -306,7 +298,7 @@ def capture_case(surgepy, case, carrier, seq, out_dir, overrides=None,
         "engine_deterministic_same_case": engine_deterministic,
         "neutrality_violated": bool(engine_deterministic and not neutral),
         "neutrality": {
-            "wav_sha_tapped": sha256_file(wav_path),
+            "wav_sha_tapped": oc.sha256_file(wav_path),
             "wav_sha_plain": shas[0],
             "wav_sha_plain_repeat": shas[1],
             "bit_identical": neutral,

@@ -47,14 +47,6 @@ def census_blob(rel):
     raise Refuse(f"preset not in census: {rel}")
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def load_sequence(ref):
     if os.path.sep not in ref:
         path = os.path.join(REPO, "fixtures", "sequences", ref + ".json")
@@ -68,7 +60,7 @@ def load_sequence(ref):
         raise Refuse(f"{path}: unsupported schema_version")
     if seq.get("sample_rate") != SR:
         raise Refuse(f"{path}: sample_rate must be {SR}")
-    return seq, path, sha256_file(path)
+    return seq, path, oc.sha256_file(path)
 
 
 def render_bus(surgepy, preset_abs, seq, unison, nodraw):
@@ -204,7 +196,7 @@ def main():
         "render_sha256": hashes,
         "bit_identical_across_repeats": all(h == hashes[0] for h in hashes),
         "wav": os.path.relpath(wav_path, REPO),
-        "wav_sha256": sha256_file(wav_path),
+        "wav_sha256": oc.sha256_file(wav_path),
         "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1], no "
                         "normalization, no time warping, no fades",
         "engine": {

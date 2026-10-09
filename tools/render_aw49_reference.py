@@ -151,14 +151,6 @@ print(hashlib.sha256(np.ascontiguousarray(out).tobytes()).hexdigest())
 """
 
 
-def sha256_file(p):
-    h = hashlib.sha256()
-    with open(p, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def sha256_buf(a):
     return hashlib.sha256(np.ascontiguousarray(a).tobytes()).hexdigest()
 
@@ -462,7 +454,7 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
                                       for (s, a), v in recs.items()},
             "galactic_blocks": int(len(gal_in)),
             "npz": os.path.relpath(npz_path, REPO),
-            "npz_sha256": sha256_file(npz_path),
+            "npz_sha256": oc.sha256_file(npz_path),
         },
         "neutrality_gate": {
             "method": "DR-0005 adapted for nondeterministic fixtures: probe "
@@ -477,7 +469,7 @@ def run_fixture(slug, rel_path, seq_id, out_dir):
                               "DSP-identical per DR-0005)",
         },
         "wet": {"wav": os.path.relpath(wav_path, REPO),
-                "sha256": sha256_file(wav_path),
+                "sha256": oc.sha256_file(wav_path),
                 "peak_abs_float": float(np.abs(wet).max())},
         "engine": rf.engine_identity(surgepy, surgepy.createSurge(float(SR))),
         "tap_build": os.path.basename(BUILD),
