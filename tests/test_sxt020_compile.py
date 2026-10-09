@@ -28,6 +28,8 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
 COMPILER = REPO / "compiler"
 VERIFY = COMPILER / "verify.py"
 COMPILE = COMPILER / "compile.py"
@@ -171,3 +173,33 @@ def test_golden_manifest_covers_the_required_span():
         assert c["expected"]["codes"]
     for c in compiled:
         assert c["expected"]["image_sha256"]
+
+
+GOLDEN_SIMPLE = COMPILER / "golden" / "compiled" / "simple-classic.image.bin"
+
+
+def test_golden_simple_image_verifies_and_is_unchanged(tmp_path):
+    import hashlib
+    from compiler.version_controls import mutate
+    data = GOLDEN_SIMPLE.read_bytes()
+    assert mutate(data) == data  # mutator is the identity without changes
+    r = run_py(VERIFY, "image", str(GOLDEN_SIMPLE))
+    assert r.returncode == 0, r.stdout
+    assert "PASS: " in r.stdout
+    assert hashlib.sha256(data).hexdigest() == hashlib.sha256(
+        GOLDEN_SIMPLE.read_bytes()).hexdigest()
+
+
+def test_version_controls_are_rejected_with_version_specific_fail(tmp_path):
+    from compiler.version_controls import CONTROLS, mutate
+    data = GOLDEN_SIMPLE.read_bytes()
+    for name, major, minor, hdr in CONTROLS:
+        mutant = mutate(data, major, minor, hdr)
+        assert mutant != data, name
+        p = tmp_path / (name + ".image.bin")
+        p.write_bytes(mutant)
+        r = run_py(VERIFY, "image", str(p))
+        assert r.returncode != 0, name
+        assert "FAIL image/parse" in r.stdout, (name, r.stdout)
+        assert "version:" in r.stdout, (name, r.stdout)
+        assert "checksum" not in r.stdout, (name, r.stdout)
