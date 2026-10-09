@@ -1,0 +1,64 @@
+# issue #360 public-command probe: tools/compare_mw_rtl_model.py
+git HEAD: 52f5321a0821f55b4969ccc175b47bef82f79b0a (tools/rtl/model worktree dirty: yes)
+python: CPython 3.13.16
+iverilog: Icarus Verilog version 13.0 (stable) (v13_0)
+helper sha256: 58912168e1f0f75eb92d53d50bf2cfcd86939ec91d5d42f88fa007442d52e850
+run dir: <work>/mw (reused across all three runs)
+
+model runner: model/voice/run_mw_model.py --sequence seq-modwheel-v1 exit=0
+## healthy
+command: python3 tools/compare_mw_rtl_model.py --run-dir <work>/mw --out <work>/healthy-verdict.json
+exit: 0
+trace sha256 before: ABSENT
+trace sha256 after:  32e9a83ddb7941abe31ae252069cd8ad5b20d904abf1cd57e4ae3d195e49a738
+verdict json:
+{
+  "tb": "rtl/voice/tb_mw.sv",
+  "verdict": "PASS",
+  "comparison": "PASS",
+  "checked": {
+    "mw_values": 5700,
+    "route_sum_checkpoints": 1847,
+    "route_sums": 5541
+  },
+  "mismatches": 0,
+  "first_failures": [],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
+}
+
+## stale
+command: python3 tools/compare_mw_rtl_model.py --run-dir <work>/mw --out <work>/stale-verdict.json --tb <work>/tb_mw_no_output.sv
+exit: 0
+trace sha256 before: 32e9a83ddb7941abe31ae252069cd8ad5b20d904abf1cd57e4ae3d195e49a738
+trace sha256 after:  32e9a83ddb7941abe31ae252069cd8ad5b20d904abf1cd57e4ae3d195e49a738
+verdict json:
+{
+  "tb": "<work>/tb_mw_no_output.sv",
+  "verdict": "PASS",
+  "comparison": "PASS",
+  "checked": {
+    "mw_values": 5700,
+    "route_sum_checkpoints": 1847,
+    "route_sums": 5541
+  },
+  "mismatches": 0,
+  "first_failures": [],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
+}
+
+## empty-dir
+command: python3 tools/compare_mw_rtl_model.py --run-dir <work>/mw --out <work>/empty-dir-verdict.json --tb <work>/tb_mw_no_output.sv
+exit: 1
+trace sha256 before: ABSENT
+trace sha256 after:  ABSENT
+verdict json:
+null
+
+## checks
+PASS  healthy: exit 0, comparison PASS, fresh trace written
+FAIL  stale: exit!=0, NOT_RUN, named missing output, zero checked, no trace left
+FAIL  empty-dir: exit!=0, NOT_RUN, named missing output, zero checked, no trace left
+FAIL  stale: pre-seeded trace was the healthy run's passing trace and was NOT reported as PASS
+RESULT FAIL
