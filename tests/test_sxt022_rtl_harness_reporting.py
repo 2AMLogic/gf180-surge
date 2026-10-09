@@ -265,3 +265,59 @@ def test_compile_failure_is_recorded_instead_of_raising(tmp_path, monkeypatch):
     assert d["comparison"] == "NOT_RUN", d
     assert len(d["sim_fails"]) == 1, d["sim_fails"]
     assert "iverilog compile failed rc=3" in d["sim_fails"][0]
+
+
+# --------------------------------------------------------------------------
+# Issue #360: the public leaf refuses a trace the current run did not write.
+# The stubbed vvp exits 0 with this leaf's measured healthy stdout but writes
+# no trace; a prior invocation's MATCHING (i.e. passing) trace may sit at the
+# expected path. Neither may be reported as a comparison.
+# --------------------------------------------------------------------------
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize("preseed", [None, MATCHING_TRACE],
+                         ids=["empty-dir", "stale-passing-trace"])
+def test_no_current_trace_is_not_run_even_with_a_passing_stale_trace(
+        tmp_path, monkeypatch, preseed):
+    run_dir = _write_run_dir(tmp_path)
+    trace = os.path.join(run_dir, "tb_trace.txt")
+    if preseed is not None:
+        with open(trace, "w") as f:
+            f.write(preseed)
+    calls = []
+    _stub_simulator(monkeypatch, run_dir, 0, None, sim_stdout=HEALTHY_STDOUT,
+                    calls=calls)
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert calls == ["iverilog", "vvp"], calls
+    assert rc != 0
+    assert d["verdict"] == "FAIL", d
+    assert d["comparison"] == "NOT_RUN", d
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    assert d["sim_fails"][0].startswith(
+        "missing current-run output: tb_trace.txt"), d["sim_fails"]
+    assert d["mismatches"] == 1
+    assert d["checked"] == {"checkpoints": 0, "fields": 0, "oscout": 0,
+                            "mono": 0}, d["checked"]
+    assert "DONE qmuls=" in d["sim_stdout_tail"]
+    assert not os.path.exists(trace)
+
+
+def test_fresh_trace_wins_over_a_stale_passing_trace(tmp_path, monkeypatch):
+    """The stale MATCHING trace is replaced by the current run's
+    MISMATCHING one, so the leaf reports the current FAIL, not the old
+    PASS."""
+    run_dir = _write_run_dir(tmp_path)
+    with open(os.path.join(run_dir, "tb_trace.txt"), "w") as f:
+        f.write(MATCHING_TRACE)
+    _stub_simulator(monkeypatch, run_dir, 0, MISMATCHING_TRACE)
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert rc != 0
+    assert d["comparison"] == "FAIL", d
+    assert d["sim_fails"] == []
+    assert d["mismatches"] == 1
