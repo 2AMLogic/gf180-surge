@@ -73,6 +73,9 @@ is the same in both, i.e. the exact-comparison result did not move.
   passing one.
 - `tests/test_sxt022_rtl_harness_reporting.py`: same controls through the
   public `compare_rtl_model.py` `main()`.
+- `tests/rtl_sim_required_cases.txt`: the seven new real-simulator cases in
+  `tests/test_rtl_compile_common.py` are added to the rtl-sim CI required-case
+  inventory (a coverage addition; no entry removed or renamed).
 - The five new no-output/scope tests in the helper file and the four new
   no-output cases in the wrapper/leaf files fail against the pre-change helper.
 
