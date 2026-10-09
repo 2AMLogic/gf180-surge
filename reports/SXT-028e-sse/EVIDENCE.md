@@ -898,6 +898,51 @@ ledger would change**: the `fx:Distortion` row's `model_vs_reference` turns
 on a *corpus* carrier comparison, and there is still none. Nothing in this
 record should be read as a coverage claim.
 
+## 9b. Arm64 macOS re-run of the reference leg (#317) -- BLOCKED / NOT_RUN
+
+Run 2026-10-09 on an arm64 macOS host (Darwin 27.0.1, Apple clang from Xcode
+27.0), pinned engine built from source with `oracle/fetch-and-build.sh`
+(drift gate PASS). Records: `artifacts-arm64-macos/` (committed *alongside*
+the x86-64 set in `artifacts/`; the x86-64 set is unchanged).
+
+| Acceptance item | Status | Why |
+|---|---|---|
+| Harness/host control reproduces SXT-028c sha256 | **FAIL** | re-render is deterministic on this host (3/3 identical, `1382316462c8...`) but is `701aa330...`, not the committed `89d42e51...`. The whole run is therefore NOT_RUN downstream, as the issue requires. |
+| Settle-boundary probe re-run, invariances re-derived | **NOT_RUN** | probe aborts on the synthetic-construction refusal below; no `settle-boundary.json` produced |
+| 14 primary legs max/rms/corr | **NOT_RUN** | no fixture could be rendered (control FAIL; synthetic construction refused) |
+| Per-shaper delta for FX models 4, 6, 7 | **NOT_RUN** | no arm64 numbers exist; none is inferred from x86-64 |
+| F-028e-sse-1 re-stated | **UNCHANGED, still OPEN** | the `rcp_ps` term on simde-on-ARM is still unmeasured |
+| NC-A, NC-A2, NC-SHARED, NC-B, NC-C still FAIL | **NOT_RUN** | no comparison ran |
+
+Facts established on this host:
+
+1. **Oracle build.** The committed configure defaults to a 10.15 deployment
+   target and fails to compile with this SDK. The build used
+   `-DCMAKE_OSX_DEPLOYMENT_TARGET=13.0`, no engine source change. Its
+   effect on render bytes is unmeasured. The engine is an unpatched pin
+   (`1.4.HEAD.58914e59c`), whereas the committed control bus was rendered
+   by `1.4.sxt037-tap.ff8b4dba4` on x86-64 Linux.
+2. **Cross-host render repeatability (new result; §11's disclaimer now has a
+   data point).** The SXT-028c FM Combo wet bus does NOT reproduce
+   byte-for-byte across hosts. An unaligned sample-for-sample diagnostic
+   (`control-diagnostic.py`) gives rms difference 5.77e-3 against rms 8.94e-2
+   (about -24 dB), max 0.085. Not attributed: libm, FMA contraction, the
+   deployment-target deviation and the tap-build difference are all
+   untested candidates, and none is asserted.
+3. **Synthetic construction fails closed.** `extract_distortion_sse_inputs.py
+   --mode synthetic` refused all 9 carriers: the engine's read-back of
+   `preeq_freq_f` is 6 binary32 ULPs from the value set (bound 4). The bound
+   was not relaxed. Whether this is host libm, the build deviation, or
+   something else is not determined.
+4. Oracle-mode extraction of the corpus carriers ran and is identical to the
+   committed records.
+
+Unproved: everything the issue asked for. No arm64 max/rms/corr, no `rcp_ps`
+bound, no negative-control result on this host. Metric questions remain
+routed to #12; the host-repeatability result is the new fact. Suggested next
+step (not done here): attribute the control difference by measurement, e.g.
+build the committed tap variant or compare the same build on both hosts.
+
 ## 10. Follow-ups filed
 
 * **#136 — SXT-028e-sse follow-up (F-028e-sse-1/3/4/5): oracle-host
@@ -924,7 +969,8 @@ record should be read as a coverage claim.
   F-028e-sse-1's `rcp_ps` term is
   implementation-defined; §3 measured x86 SSE's estimate. The arm64
   simde path is unmeasured, and it is the host `oracle/manifest.json`
-  names.
+  names. **Attempted 2026-10-09: BLOCKED/NOT_RUN, see §9b** (control FAIL,
+  synthetic construction refused).
 * **#318 — audit every leaf's `run_*_model.py` for the §3.3
   silent-pre-roll boundary.** `run_chorus_model.py` and the SXT-023
   `run_fx_model.py` pattern pre-roll the model through the
