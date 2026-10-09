@@ -69,6 +69,19 @@ model" when the truth is "the stimulus never loaded". The four mechanisms:
      verdict with a reason instead of dying by traceback with no verdict at
      all.
 
+Issue #360 adds a fifth, for a non-null `trace_name` only:
+
+  5. a clean run (none of 1-4 fired) that left no trace at the declared
+     path. The helper-owned `workdir/trace_name` is removed BEFORE `vvp`
+     launches, so a trace there afterward can only be this invocation's
+     output; a prior invocation's trace in a reused run dir can no longer be
+     parsed as if the current run produced it. Absence becomes a
+     `missing current-run output: ...` entry, which the callers' existing
+     `comparison: NOT_RUN` branch already handles. `trace_name=None`
+     declares no trace output and is exempt; the non-reporting default path
+     and explicitly supplied offline traces (`compare_sine_rtl_model.py
+     --trace`, which never calls this module) are unchanged.
+
 Original to this repository (Apache-2.0).
 """
 
@@ -89,7 +102,8 @@ __all__ = ["compile_and_run", "run_leaf_comparison",
 #
 #   trace        os.path.join(workdir, trace_name), or None (trace_name is
 #                None, or a simulator-level failure means nothing trustworthy
-#                was produced)
+#                was produced -- including mechanism 5, the declared trace
+#                was not written by this invocation)
 #   value        int(...) of the last `done_prefix`-prefixed stdout line, or
 #                None (no done_prefix given, or a simulator-level failure)
 #   stdout       the simulation's full captured stdout ("" if it never ran)
@@ -166,8 +180,10 @@ def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
       report_sim_fails when True, return a `SimResult` instead of raising or
                        returning one of the legacy shapes below: every
                        recognized simulator-level failure becomes a
-                       `SimResult.sim_fails` entry (mechanisms 1-4 in the
-                       module docstring)
+                       `SimResult.sim_fails` entry (mechanisms 1-5 in the
+                       module docstring); a non-null `trace_name` under
+                       `workdir` is deleted before `vvp` runs and must be
+                       re-created by it (mechanism 5)
       timeout          seconds before the vvp run is killed when
                        `report_sim_fails=True` (None = no timeout, matching
                        the unbounded default `subprocess.run` already had)
@@ -294,6 +310,38 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
     image = out_name if run_by_name else vvp
     cmd = [image] if direct_exec else ["vvp", image]
 
+    # ---- mechanism 5 (issue #360), part 1: invocation-owned trace. The
+    # helper-owned expected trace under the run dir is invalidated BEFORE
+    # the simulator launches, so the only file that can exist at that path
+    # afterward is one THIS invocation wrote. A reused run dir holding a
+    # previous run's trace can otherwise satisfy a testbench that exits 0
+    # without writing anything. Ownership, not timestamps: an mtime
+    # comparison depends on clock/filesystem resolution. Scoped to the
+    # declared `trace_name` inside `workdir` only; `trace_name=None` declares
+    # no trace output and is exempt, and an explicitly supplied offline trace
+    # (e.g. compare_sine_rtl_model.py --trace) never reaches this function.
+    trace = None
+    if trace_name is not None:
+        trace = os.path.join(workdir, trace_name)
+        owned_root = os.path.realpath(workdir)
+        if os.path.commonpath([owned_root, os.path.realpath(trace)]) \
+                != owned_root:
+            sim_fails.append(
+                "refusing trace_name %r: it resolves outside the run dir %s, "
+                "so it is not a helper-owned output this invocation may "
+                "invalidate" % (trace_name, workdir))
+            return SimResult(None, None, "", sim_fails, "")
+        try:
+            os.remove(trace)
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            sim_fails.append(
+                "could not invalidate the prior trace %s before the "
+                "simulator ran (%s); a file left there could not be told "
+                "apart from this invocation's output" % (trace_name, exc))
+            return SimResult(None, None, "", sim_fails, "")
+
     # Stdout is ALWAYS captured here (regardless of suppress_stdout /
     # capture_output) so mechanism 2 can scan it; `stdout_path` is honored
     # afterward as a side-effect write, same content it would have received.
@@ -323,10 +371,19 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
     for line in scan_stdout_for_load_failures(result.stdout):
         sim_fails.append("vvp rc=%d but a stimulus file never loaded: %s"
                          % (result.returncode, line))
+    # ---- mechanism 5 (issue #360), part 2: a clean run must have produced
+    # the declared trace. Only checked when nothing above already failed, so
+    # an earlier, more specific reason is not buried under this one.
+    if not sim_fails and trace is not None and not os.path.isfile(trace):
+        sim_fails.append(
+            "missing current-run output: %s (vvp rc=%d but this invocation "
+            "wrote no trace at the expected path; any prior trace there was "
+            "invalidated before the simulator ran, so nothing is compared)"
+            % (trace_name, result.returncode))
+        trace = None
 
     stdout_tail = _as_text(result.stdout)[-2000:] if sim_fails else ""
 
-    trace = None if trace_name is None else os.path.join(workdir, trace_name)
     value = None
     if done_prefix is not None:
         for line in result.stdout.splitlines():

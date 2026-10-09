@@ -48,8 +48,29 @@ pytestmark = pytest.mark.skipif(not HAS_IVERILOG,
 # A minimal testbench that $readmemh's ONE file relative to its cwd, prints a
 # DONE marker, and finishes -- deliberately as small as Icarus allows so the
 # compile+run round trip stays fast across every axis combination below.
+#
+# Issue #360: it also writes the helper's default expected trace
+# (`tb_trace.txt`) into its cwd, because reporting mode with a non-null
+# `trace_name` now requires the CURRENT invocation to produce that file.
 TB_SRC = """\
 module tb_common_test;
+  reg [7:0] mem [0:15];
+  integer fd;
+  initial begin
+    $readmemh("stim.hex", mem);
+    fd = $fopen("tb_trace.txt", "w");
+    $fdisplay(fd, "V %0d", mem[0]);
+    $fclose(fd);
+    $display("DONE marker=%0d", mem[0]);
+    $finish;
+  end
+endmodule
+"""
+
+# Issue #360's no-output testbench: identical stimulus load and DONE marker,
+# exits 0, but never opens or writes the expected trace.
+NO_TRACE_TB_SRC = """\
+module tb_no_trace_test;
   reg [7:0] mem [0:15];
   initial begin
     $readmemh("stim.hex", mem);
@@ -77,6 +98,17 @@ def _make_tb(tmp_path):
     tb = os.path.join(str(tmp_path), "tb_common_test.sv")
     _write(tb, TB_SRC)
     return tb
+
+
+def _make_no_trace_tb(tmp_path):
+    tb = os.path.join(str(tmp_path), "tb_no_trace_test.sv")
+    _write(tb, NO_TRACE_TB_SRC)
+    return tb
+
+
+def _read(path):
+    with open(path) as f:
+        return f.read()
 
 
 def _make_stim(run_dir, value="ab"):
@@ -201,6 +233,7 @@ def test_healthy_stdout_does_not_flip_a_pass(tmp_path):
     assert r.stdout_tail == ""
     assert r.value == 0xab
     assert r.trace == os.path.join(run_dir, "tb_trace.txt")
+    assert _read(r.trace) == "V 171\n"
 
 
 # --------------------------------------------------------------------------
@@ -323,6 +356,139 @@ def test_trace_name_none_axis_with_reporting(tmp_path):
                             trace_name=None, report_sim_fails=True)
     assert r.sim_fails == [], r.sim_fails
     assert r.trace is None
+
+
+# --------------------------------------------------------------------------
+# report_sim_fails=True: mechanism 5 (issue #360) -- the declared trace must
+# be produced by THIS invocation; a prior invocation's trace is refused.
+# --------------------------------------------------------------------------
+
+MISSING_OUTPUT = "missing current-run output: tb_trace.txt"
+
+
+def _seed_passing_prior_trace(tmp_path, run_dir):
+    """A real, previously-generated passing trace at the expected path:
+    produced by a healthy run of TB_SRC in the same run dir, so the stale
+    control below is a genuine prior output, not a hand-written stand-in."""
+    tb = _make_tb(tmp_path)
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb_prior.vvp",
+                            report_sim_fails=True)
+    assert r.sim_fails == [], r.sim_fails
+    assert _read(r.trace) == "V 171\n"
+    return r.trace
+
+
+def test_healthy_run_writes_a_fresh_trace_over_a_stale_one(tmp_path):
+    """A pre-seeded stale trace is replaced, never returned: after a healthy
+    run the file at the expected path holds this invocation's content."""
+    run_dir = str(tmp_path)
+    tb = _make_tb(tmp_path)
+    _make_stim(run_dir, value="ab")
+    stale = os.path.join(run_dir, "tb_trace.txt")
+    _write(stale, "STALE prior-invocation content\n")
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            report_sim_fails=True)
+    assert r.sim_fails == [], r.sim_fails
+    assert r.trace == stale
+    assert _read(r.trace) == "V 171\n"
+
+
+def test_no_output_testbench_in_empty_dir_is_a_named_failure(tmp_path):
+    """Empty-directory control: exit 0, nothing written -> named failure."""
+    run_dir = str(tmp_path)
+    tb = _make_no_trace_tb(tmp_path)
+    _make_stim(run_dir)
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            report_sim_fails=True, done_prefix="DONE marker=")
+    assert len(r.sim_fails) == 1, r.sim_fails
+    assert r.sim_fails[0].startswith(MISSING_OUTPUT), r.sim_fails
+    assert "rc=0" in r.sim_fails[0]
+    assert r.trace is None
+    assert "DONE marker=171" in r.stdout_tail      # diagnostics retained
+    assert not os.path.exists(os.path.join(run_dir, "tb_trace.txt"))
+
+
+def test_control_stale_passing_trace_is_rejected_not_reused(tmp_path):
+    """LIVE NEGATIVE CONTROL (stale output): a valid trace from a previous
+    passing invocation sits at the expected path, and the current testbench
+    exits 0 without writing anything. Before issue #360 the helper returned
+    that path with empty sim_fails, so a caller parsed the old trace and
+    could report PASS. It must now be rejected exactly like the empty-dir
+    case, and the stale file must be gone (invalidated before vvp ran)."""
+    run_dir = str(tmp_path)
+    _make_stim(run_dir)
+    stale = _seed_passing_prior_trace(tmp_path, run_dir)
+    tb = _make_no_trace_tb(tmp_path)
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            report_sim_fails=True)
+    assert len(r.sim_fails) == 1, r.sim_fails
+    assert r.sim_fails[0].startswith(MISSING_OUTPUT), r.sim_fails
+    assert r.trace is None
+    assert not os.path.exists(stale)
+
+
+def test_stale_trace_is_invalidated_even_when_the_run_fails_otherwise(
+        tmp_path):
+    """A non-zero exit keeps its own (more specific) reason as the only
+    entry -- the missing-output reason is not stacked on top -- and the
+    prior trace is still not left behind to be mistaken for this run's."""
+    run_dir = str(tmp_path)
+    stale = os.path.join(run_dir, "tb_trace.txt")
+    _write(stale, "V 171\n")
+    tb = os.path.join(run_dir, "tb_fail_test.sv")
+    _write(tb, 'module tb_fail_test; initial $fatal(1, "boom"); endmodule\n')
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            report_sim_fails=True)
+    assert len(r.sim_fails) == 1, r.sim_fails
+    assert "vvp exited rc=" in r.sim_fails[0]
+    assert not os.path.exists(stale)
+
+
+def test_custom_trace_name_is_owned_and_required(tmp_path):
+    run_dir = str(tmp_path)
+    tb = _make_tb(tmp_path)          # writes tb_trace.txt, not other.txt
+    _make_stim(run_dir)
+    stale = os.path.join(run_dir, "other.txt")
+    _write(stale, "V 171\n")
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            trace_name="other.txt", report_sim_fails=True)
+    assert len(r.sim_fails) == 1, r.sim_fails
+    assert r.sim_fails[0].startswith(
+        "missing current-run output: other.txt"), r.sim_fails
+    assert not os.path.exists(stale)
+
+
+def test_trace_name_none_declares_no_output_and_touches_nothing(tmp_path):
+    """`trace_name=None` callers (compare_control_rtl.py) declare no trace:
+    a no-output testbench is NOT a failure for them, and a file at the
+    default trace name is outside the helper's ownership and survives."""
+    run_dir = str(tmp_path)
+    tb = _make_no_trace_tb(tmp_path)
+    _make_stim(run_dir)
+    bystander = os.path.join(run_dir, "tb_trace.txt")
+    _write(bystander, "not the helper's\n")
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            trace_name=None, report_sim_fails=True)
+    assert r.sim_fails == [], r.sim_fails
+    assert r.trace is None
+    assert _read(bystander) == "not the helper's\n"
+
+
+def test_trace_name_outside_run_dir_is_refused_not_deleted(tmp_path):
+    """Invalidation is scoped to the run dir: a trace_name escaping it is
+    refused before anything is removed or the simulator is invoked."""
+    run_dir = os.path.join(str(tmp_path), "run")
+    _make_stim(run_dir)
+    outside = os.path.join(str(tmp_path), "outside.txt")
+    _write(outside, "keep me\n")
+    tb = _make_tb(tmp_path)
+    r = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                            trace_name=os.path.join("..", "outside.txt"),
+                            report_sim_fails=True)
+    assert len(r.sim_fails) == 1, r.sim_fails
+    assert "resolves outside the run dir" in r.sim_fails[0]
+    assert _read(outside) == "keep me\n"
+    assert r.stdout == ""
 
 
 # --------------------------------------------------------------------------

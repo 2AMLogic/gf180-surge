@@ -23,7 +23,8 @@ this file pins the skeleton's own contract:
     something that is not a `SimResult`).
 
 The simulator is never invoked here: `compile_and_run` is replaced by a stub
-returning a chosen `SimResult`, because what is under test is the report
+returning a chosen `SimResult` (or, for the issue #360 current-output
+controls, the real `compile_and_run` runs against a stubbed `subprocess`), because what is under test is the report
 assembly, not the compile/run step (that has its own coverage in
 `test_rtl_compile_common.py`) and not any leaf's trace format or comparison
 semantics (each leaf's own test file owns those).  Nothing here is evidence
@@ -33,7 +34,9 @@ about the RTL, the frozen model, or their agreement.
 import io
 import json
 import os
+import subprocess
 import sys
+import types
 from contextlib import redirect_stdout
 
 import pytest
@@ -219,6 +222,113 @@ def test_default_checked_is_not_mutated_across_runs(tmp_path, monkeypatch):
     _run(run_dir, default_checked=default_checked)
 
     assert default_checked == {"mw_values": 0, "route_sum_checkpoints": 0}
+
+
+# --------------------------------------------------------------------------
+# Issue #360: a trace this invocation did not produce never reaches the leaf
+# --------------------------------------------------------------------------
+#
+# These drive the REAL `compile_and_run` (reporting mode) through the
+# wrapper, with only `subprocess` stubbed: iverilog "succeeds", and vvp exits
+# 0 after optionally writing `fresh_trace` to the expected path. That keeps
+# the missing-current-output decision inside the helper under test rather
+# than in a hand-picked SimResult.
+
+STALE_PASSING_TRACE = "a previous invocation's passing trace\n"
+
+
+def _stub_subprocess(monkeypatch, run_dir, fresh_trace):
+    vvp_calls = []
+
+    def fake_run(cmd, **kwargs):
+        if cmd[0] == "iverilog":
+            return types.SimpleNamespace(returncode=0, stdout="", stderr="")
+        vvp_calls.append(cmd)
+        if fresh_trace is not None:
+            with open(os.path.join(run_dir, "tb_trace.txt"), "w") as f:
+                f.write(fresh_trace)
+        return types.SimpleNamespace(returncode=0, stdout="DONE\n",
+                                     stderr="")
+
+    monkeypatch.setattr(rcc, "subprocess", types.SimpleNamespace(
+        run=fake_run, DEVNULL=subprocess.DEVNULL,
+        CalledProcessError=subprocess.CalledProcessError,
+        TimeoutExpired=subprocess.TimeoutExpired))
+    return vvp_calls
+
+
+@pytest.mark.parametrize("preseed", [False, True],
+                         ids=["empty-dir", "stale-passing-trace"])
+def test_missing_current_output_is_not_run_and_never_parses(
+        tmp_path, monkeypatch, preseed):
+    """Both no-output controls: exit 0, no trace written by this run. The
+    stale case pre-seeds a trace the leaf's own parse/compare would PASS;
+    it must be rejected identically to the empty dir, never parsed."""
+    run_dir = _write_trace(tmp_path)
+    trace = os.path.join(run_dir, "tb_trace.txt")
+    if preseed:
+        with open(trace, "w") as f:
+            f.write(STALE_PASSING_TRACE)
+    vvp_calls = _stub_subprocess(monkeypatch, run_dir, fresh_trace=None)
+    called = []
+
+    def parse_tb(path):
+        called.append("parse_tb")
+        with open(path) as f:
+            return f.read()
+
+    def compare(mt, rt):
+        called.append("compare")
+        return {"f": 1}, ([] if rt == STALE_PASSING_TRACE else ["differs"])
+
+    rc, _, order, d = _run(
+        run_dir, parse_tb=parse_tb, compare=compare,
+        compile_kwargs={"out_name": "tb.vvp", "trace_name": "tb_trace.txt"},
+        default_checked={"checkpoints": 0, "fields": 0})
+
+    assert len(vvp_calls) == 1          # the simulator really did run
+    assert called == [], called
+    assert rc == 1
+    assert d["verdict"] == "FAIL"
+    assert d["comparison"] == "NOT_RUN"
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    assert d["sim_fails"][0].startswith(
+        "missing current-run output: tb_trace.txt"), d["sim_fails"]
+    assert d["mismatches"] == 1
+    assert d["checked"] == {"checkpoints": 0, "fields": 0}
+    assert list(d["checked"]) == ["checkpoints", "fields"]
+    assert order == ["tb", "verdict", "comparison", "checked", "mismatches",
+                     "first_failures", "sim_fails", "sim_stdout_tail"]
+    assert not os.path.exists(trace)    # the stale trace was invalidated
+
+
+def test_fresh_trace_is_the_one_parsed_over_a_stale_one(tmp_path,
+                                                        monkeypatch):
+    """Healthy path: a stale passing trace is pre-seeded, the current run
+    writes a different (disagreeing) one. The leaf must see the CURRENT
+    content -- FAIL -- proving the stale trace cannot mask a fresh result."""
+    run_dir = _write_trace(tmp_path)
+    with open(os.path.join(run_dir, "tb_trace.txt"), "w") as f:
+        f.write(STALE_PASSING_TRACE)
+    _stub_subprocess(monkeypatch, run_dir, fresh_trace="fresh, disagrees\n")
+    seen = []
+
+    def parse_tb(path):
+        with open(path) as f:
+            seen.append(f.read())
+        return seen[-1]
+
+    rc, _, _, d = _run(
+        run_dir, parse_tb=parse_tb,
+        compare=lambda mt, rt: ({"f": 1},
+                                [] if rt == STALE_PASSING_TRACE
+                                else ["differs"]),
+        compile_kwargs={"out_name": "tb.vvp", "trace_name": "tb_trace.txt"})
+
+    assert seen == ["fresh, disagrees\n"]
+    assert rc == 1
+    assert d["comparison"] == "FAIL"
+    assert d["sim_fails"] == []
 
 
 # --------------------------------------------------------------------------
