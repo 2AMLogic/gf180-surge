@@ -419,6 +419,66 @@ def evaluate_integration(repo: Path, entry: dict, records: list,
     return status, rid, reasons
 
 
+PUBLICATION_REL = "reports/coverage-v1"
+
+# (argparse dest, CLI flag) for every control/override input. A value that is
+# not None/False enables control mode. Adding a control argument without
+# listing it here is caught by tests/test_sxt029_control_guard.py.
+CONTROL_ARGS = (
+    ("leaf_table", "--leaf-table"),
+    ("control_allow_input_drift", "--control-allow-input-drift"),
+    ("rng_exclusion", "--rng-exclusion"),
+    ("control_ignore_rng_exclusion", "--control-ignore-rng-exclusion"),
+    ("integration_ledger", "--integration-ledger"),
+)
+CONTROL_MARKER_FILE = "CONTROL-MODE.txt"
+
+
+def active_controls(args) -> list:
+    return [flag for dest, flag in CONTROL_ARGS
+            if getattr(args, dest, None) not in (None, False)]
+
+
+def _inside(path: Path, root: Path) -> bool:
+    return path == root or root in path.parents
+
+
+def control_mode_guard(repo: Path, args) -> list:
+    """Central control-mode guard. Runs before any output mutation.
+
+    Returns the enabled control flags. Refuses when any control is enabled and
+    the destination (or either output file) resolves -- through traversal or
+    symlinks -- to or inside the normal publication directory.
+    """
+    controls = active_controls(args)
+    if not controls:
+        return controls
+    normal = (repo / PUBLICATION_REL).resolve()
+    dests = [(repo / args.outdir).resolve(),
+             (repo / args.outdir / "per-preset.csv").resolve(),
+             (repo / args.outdir / "coverage.json").resolve(),
+             (repo / args.outdir / CONTROL_MARKER_FILE).resolve()]
+    for d in dests:
+        if _inside(d, normal):
+            raise Refuse(
+                f"control/override arguments ({', '.join(controls)}) are "
+                f"never valid for the normal publication directory "
+                f"{PUBLICATION_REL}; destination resolves to {d}. Use a "
+                f"scratch --outdir.")
+    return controls
+
+
+def control_marker(controls: list) -> dict:
+    return {
+        "enabled": True,
+        "controls": sorted(controls),
+        "notice": ("CONTROL MODE: negative-control scratch output ("
+                   + ", ".join(sorted(controls))
+                   + "); not a published coverage artifact and not valid "
+                   "for any support claim"),
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--repo-root", default=str(REPO_ROOT))
@@ -458,6 +518,7 @@ def main() -> int:
 
 
 def run(repo: Path, args) -> None:
+    controls = control_mode_guard(repo, args)
     # ---- inputs + integrity -------------------------------------------
     if not args.control_allow_input_drift:
         for rel, pin in sorted(STRUCTURAL_INPUTS.items()):
@@ -991,9 +1052,15 @@ def run(repo: Path, args) -> None:
         rng_gate_active=rng_gate_active, rng_rel=rng_rel,
         integ=integ, integ_rel=integ_rel, frozen_policy=frozen_policy,
     )
+    if controls:
+        coverage["control_mode"] = control_marker(controls)
     json_path = outdir / "coverage.json"
     with open(json_path, "w", newline="") as f:
         f.write(json.dumps(coverage, indent=1, sort_keys=True) + "\n")
+
+    if controls:
+        with open(outdir / CONTROL_MARKER_FILE, "w", newline="") as f:
+            f.write(control_marker(controls)["notice"] + "\n")
 
     print(f"wrote {csv_path} ({len(rows)} rows)")
     print(f"wrote {json_path}")
