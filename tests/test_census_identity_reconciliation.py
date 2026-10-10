@@ -13,7 +13,7 @@ import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "tools"))
-import check_census_consistency as cc  # noqa: E402
+import check_census_consistency as cc
 
 SRC = os.path.join(REPO, "corpus", "census-v0.1")
 TOOL = os.path.join(REPO, "tools", "check_census_consistency.py")
@@ -106,7 +106,7 @@ IDENTITY_MUTATIONS = {
 def test_baseline_pass(census):
     assert _check(census) == []
     assert subprocess.run([sys.executable, TOOL], capture_output=True,
-                          text=True).returncode == 0
+                          text=True, check=False).returncode == 0
 
 
 @pytest.mark.parametrize("name", sorted(IDENTITY_MUTATIONS))
@@ -144,7 +144,7 @@ def test_missing_identity_column_fails_cleanly(census, col):
     _write(census, [f for f in fields if f != col],
            [{k: v for k, v in r.items() if k != col} for r in rows])
     p = subprocess.run([sys.executable, TOOL, "--census-dir", str(census)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, check=False)
     assert p.returncode == 1
     assert p.stdout.startswith("FAIL") and "Traceback" not in p.stderr
     assert col in p.stdout
@@ -156,7 +156,7 @@ def test_malformed_size_fails_cleanly(census, bad):
     rows[_parsed(rows, "contributor")[0]]["size"] = bad
     _write(census, fields, rows)
     p = subprocess.run([sys.executable, TOOL, "--census-dir", str(census)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, check=False)
     assert p.returncode == 1 and "malformed size" in p.stdout
     assert "Traceback" not in p.stderr
 
@@ -178,9 +178,9 @@ def test_snare_tight_historical_failure_still_checked(census):
     _, rows = _read(census)
     snare = [r for r in rows if "Snare Tight.fxp" in r["path"]]
     assert len(snare) == 0  # copy mutated; committed file asserted below
-    _, committed = (None, list(csv.DictReader(open(
-        os.path.join(SRC, "results", "per-preset.csv"), newline="",
-        encoding="utf-8"))))
+    with open(os.path.join(SRC, "results", "per-preset.csv"), newline="",
+              encoding="utf-8") as f:
+        committed = list(csv.DictReader(f))
     s = [r for r in committed if "Snare Tight.fxp" in r["path"]]
     assert len(s) == 1 and s[0]["status"] == cc.UNRESOLVED_STATUS
     assert s[0]["bank"] == "factory"

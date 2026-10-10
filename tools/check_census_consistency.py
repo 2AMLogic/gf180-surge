@@ -332,11 +332,11 @@ def main(argv=None):
             print("usage: check_census_consistency.py [--census-dir DIR]")
             return 2
         base = Path(argv[1])
-        kwargs = dict(
-            manifest=base / "corpus-manifest.json",
-            summary_path=base / "results" / "summary.json",
-            per_preset=base / "results" / "per-preset.csv",
-        )
+        kwargs = {
+            "manifest": base / "corpus-manifest.json",
+            "summary_path": base / "results" / "summary.json",
+            "per_preset": base / "results" / "per-preset.csv",
+        }
     try:
         failures, stats = run_checks(**kwargs)
     except CheckError as exc:
