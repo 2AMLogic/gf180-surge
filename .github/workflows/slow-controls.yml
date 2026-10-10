@@ -1,0 +1,68 @@
+name: slow-controls
+
+# Executes the NC_LIVE_SLOW negative controls (Chorus, Reverb, velocity, and the
+# profile-budget no-op control) that the default ci.yml reports as NOT_RUN.
+# Separate from ci.yml so the required checks stay fast (#415).
+
+on:
+  schedule:
+    - cron: "17 5 * * 1" # weekly, Monday 05:17 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/slow-controls.yml"
+      - "tools/*_controls.py"
+      - "tools/check_slow_controls_results.py"
+      - "tests/negative_controls_registry.json"
+      - "tests/test_negative_controls_live.py"
+      - "model/**"
+      - "rtl/**"
+      - "fixtures/**"
+
+permissions:
+  contents: read
+
+jobs:
+  slow-controls:
+    name: slow negative controls (skips of LIVE controls are failures)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      # Same pin and mechanism as the rtl-sim job in ci.yml; keep in sync.
+      IVERILOG_APT_VERSION: "12.0-2build2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned Icarus Verilog
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends "iverilog=${IVERILOG_APT_VERSION}"
+          command -v iverilog >/dev/null || { echo "FAIL: iverilog not on PATH" >&2; exit 1; }
+          command -v vvp >/dev/null || { echo "FAIL: vvp not on PATH" >&2; exit 1; }
+          iverilog -V | head -n 1
+      - name: Install python dependencies
+        run: python3 -m pip install --quiet numpy pytest
+      - name: Run slow negative controls and gate on skips
+        run: |
+          set -uo pipefail
+          # Runs as bash -e; disable errexit so both statuses are captured.
+          set +e
+          NC_LIVE_SLOW=1 python3 -m pytest -q -rs -p no:cacheprovider \
+            tests/test_negative_controls_live.py --junitxml=slow-controls-junit.xml
+          pytest_rc=$?
+          echo "pytest exit status: ${pytest_rc}"
+          python3 tools/check_slow_controls_results.py slow-controls-junit.xml
+          check_rc=$?
+          echo "report checker exit status: ${check_rc}"
+          if [ "${pytest_rc}" -ne 0 ]; then exit "${pytest_rc}"; fi
+          exit "${check_rc}"
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slow-controls-junit
+          path: slow-controls-junit.xml
+          if-no-files-found: warn
