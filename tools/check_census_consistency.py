@@ -9,6 +9,11 @@ Verifies only that the census bookkeeping files agree with each other:
   - the known unresolved parser failure (Snare Tight.fxp) is still present as
     a recorded failure row in both files, not silently dropped
   - summary.json and per-preset.csv agree on the unresolved count
+  - one-to-one identity reconciliation: per-preset.csv paths are unique and
+    equal the manifest path set exactly; each row's git_blob_sha1 and integer
+    size equal its manifest entry; each row's bank equals the bank derived from
+    its path root. Row order does not matter. Equal aggregate counts alone
+    cannot hide a substituted, duplicated, or misidentified row.
 
 This is NOT a support claim, NOT a sound-quality claim, and NOT a
 preset-coverage claim. The static census is an inventory and prioritization
@@ -19,6 +24,7 @@ Python 3 standard library only.
 
 import csv
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -28,6 +34,15 @@ MANIFEST = REPO_ROOT / "corpus" / "census-v0.1" / "corpus-manifest.json"
 SUMMARY = REPO_ROOT / "corpus" / "census-v0.1" / "results" / "summary.json"
 PER_PRESET = REPO_ROOT / "corpus" / "census-v0.1" / "results" / "per-preset.csv"
 
+# Bank roots as documented in corpus/census-v0.1/README.md ("641 presets in
+# `patches_factory` and 2,920 in `patches_3rdparty`").
+BANK_ROOTS = {
+    "resources/data/patches_factory/": "factory",
+    "resources/data/patches_3rdparty/": "contributor",
+}
+REQUIRED_CSV_COLUMNS = {"path", "git_blob_sha1", "size", "bank", "status", "error"}
+SHA1_RE = re.compile(r"[0-9a-f]{40}")
+SIZE_RE = re.compile(r"[0-9]+")
 EXPECTED_FACTORY_DENOMINATOR = 641
 EXPECTED_CONTRIBUTOR_DENOMINATOR = 2920
 UNRESOLVED_STATUS = "unresolved_by_static_parser"
@@ -42,12 +57,12 @@ class CheckError(Exception):
     pass
 
 
-def load_manifest_entries():
+def load_manifest_entries(MANIFEST=MANIFEST):
     try:
         with MANIFEST.open(encoding="utf-8") as f:
             data = json.load(f)
     except (OSError, json.JSONDecodeError) as exc:
-        raise CheckError(f"cannot read {MANIFEST.relative_to(REPO_ROOT)}: {exc}") from exc
+        raise CheckError(f"cannot read {MANIFEST}: {exc}") from exc
     entries = data.get("entries") if isinstance(data, dict) else None
     if not isinstance(entries, list) or not entries:
         raise CheckError("corpus-manifest.json: expected a non-empty 'entries' list")
@@ -57,30 +72,102 @@ def load_manifest_entries():
     return entries
 
 
-def load_summary():
+def load_summary(SUMMARY=SUMMARY):
     try:
         with SUMMARY.open(encoding="utf-8") as f:
             return json.load(f)
     except (OSError, json.JSONDecodeError) as exc:
-        raise CheckError(f"cannot read {SUMMARY.relative_to(REPO_ROOT)}: {exc}") from exc
+        raise CheckError(f"cannot read {SUMMARY}: {exc}") from exc
 
 
-def load_csv_rows():
+def load_csv_rows(PER_PRESET=PER_PRESET):
     try:
         with PER_PRESET.open(newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             header = reader.fieldnames or []
-            missing = sorted({"path", "bank", "status", "error"} - set(header))
+            missing = sorted(REQUIRED_CSV_COLUMNS - set(header))
             if missing:
                 raise CheckError(
                     "per-preset.csv: missing required column(s): " + ", ".join(missing)
                 )
             rows = list(reader)
     except OSError as exc:
-        raise CheckError(f"cannot read {PER_PRESET.relative_to(REPO_ROOT)}: {exc}") from exc
+        raise CheckError(f"cannot read {PER_PRESET}: {exc}") from exc
     if not rows:
         raise CheckError("per-preset.csv: no data rows")
     return rows
+
+
+def bank_for_path(path):
+    for root, bank in BANK_ROOTS.items():
+        if path.startswith(root):
+            return bank
+    return None
+
+
+def reconcile_identity(entries, rows):
+    """One-to-one manifest/CSV identity reconciliation; returns failure strings."""
+    failures = []
+    manifest = {}
+    for entry in entries:
+        path = entry["path"]
+        sha = entry.get("git_blob_sha1")
+        size = entry.get("size")
+        if not isinstance(sha, str) or not SHA1_RE.fullmatch(sha):
+            failures.append(f"corpus-manifest.json: {path!r} has malformed git_blob_sha1 {sha!r}")
+        if not isinstance(size, int) or isinstance(size, bool) or size < 0:
+            failures.append(f"corpus-manifest.json: {path!r} has malformed size {size!r}")
+        manifest.setdefault(path, (sha, size))
+
+    seen = Counter()
+    csv_ident = {}
+    for row in rows:
+        path = (row.get("path") or "").strip()
+        if not path:
+            failures.append("per-preset.csv: row with empty path")
+            continue
+        seen[path] += 1
+        sha = row.get("git_blob_sha1") or ""
+        size_text = row.get("size") or ""
+        if not SHA1_RE.fullmatch(sha):
+            failures.append(f"per-preset.csv: {path!r} has malformed git_blob_sha1 {sha!r}")
+            sha = None
+        if not SIZE_RE.fullmatch(size_text):
+            failures.append(f"per-preset.csv: {path!r} has malformed size {size_text!r}")
+            size = None
+        else:
+            size = int(size_text)
+        csv_ident.setdefault(path, (sha, size))
+        derived = bank_for_path(path)
+        if derived is None:
+            failures.append(f"per-preset.csv: {path!r} is under no documented bank root")
+        elif row.get("bank") != derived:
+            failures.append(
+                f"per-preset.csv: {path!r} bank={row.get('bank')!r} != bank "
+                f"{derived!r} derived from its path root"
+            )
+
+    duplicates = sorted(p for p, n in seen.items() if n > 1)
+    if duplicates:
+        failures.append(
+            f"per-preset.csv: {len(duplicates)} duplicate path(s), e.g. {duplicates[:3]}"
+        )
+    extra = sorted(set(seen) - set(manifest))
+    missing = sorted(set(manifest) - set(seen))
+    if extra or missing:
+        failures.append(
+            f"path set mismatch: {len(missing)} manifest path(s) missing from "
+            f"per-preset.csv, e.g. {missing[:3]}; {len(extra)} extra csv path(s) "
+            f"not in manifest, e.g. {extra[:3]}"
+        )
+    for path in sorted(set(seen) & set(manifest)):
+        m_sha, m_size = manifest[path]
+        c_sha, c_size = csv_ident[path]
+        if c_sha is not None and c_sha != m_sha:
+            failures.append(f"git_blob_sha1 mismatch for {path!r}: csv={c_sha} manifest={m_sha}")
+        if c_size is not None and c_size != m_size:
+            failures.append(f"size mismatch for {path!r}: csv={c_size} manifest={m_size}")
+    return failures
 
 
 def summary_value(summary, keys):
@@ -94,11 +181,16 @@ def summary_value(summary, keys):
     return node
 
 
-def run_checks():
+def run_checks(manifest=MANIFEST, summary_path=SUMMARY, per_preset=PER_PRESET,
+               reconcile=True):
+    """`reconcile=False` exists only so tests can show the identity controls
+    depend on the reconciliation; the CLI always enforces it."""
     failures = []
-    entries = load_manifest_entries()
-    rows = load_csv_rows()
-    summary = load_summary()
+    entries = load_manifest_entries(manifest)
+    rows = load_csv_rows(per_preset)
+    summary = load_summary(summary_path)
+    if reconcile:
+        failures.extend(reconcile_identity(entries, rows))
 
     manifest_count = len(entries)
     csv_count = len(rows)
@@ -231,9 +323,22 @@ def run_checks():
     }
 
 
-def main():
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    kwargs = {}
+    if argv:
+        # Test hook: --census-dir DIR with the committed layout.
+        if len(argv) != 2 or argv[0] != "--census-dir":
+            print("usage: check_census_consistency.py [--census-dir DIR]")
+            return 2
+        base = Path(argv[1])
+        kwargs = dict(
+            manifest=base / "corpus-manifest.json",
+            summary_path=base / "results" / "summary.json",
+            per_preset=base / "results" / "per-preset.csv",
+        )
     try:
-        failures, stats = run_checks()
+        failures, stats = run_checks(**kwargs)
     except CheckError as exc:
         print(f"FAIL: {exc}")
         print(CAVEAT)
@@ -247,7 +352,7 @@ def main():
     print(
         f"PASS: census bookkeeping internally consistent: {stats['total']} manifest "
         f"entries = {stats['total']} per-preset.csv rows = stated total "
-        f"(factory {stats['factory']}, contributor {stats['contributor']}, "
+        f"(identity reconciled per row; factory {stats['factory']}, contributor {stats['contributor']}, "
         f"unresolved {stats['unresolved']} incl. known '{KNOWN_UNRESOLVED_MARKER}' row)"
     )
     print(CAVEAT)
