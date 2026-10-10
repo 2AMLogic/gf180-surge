@@ -17,6 +17,8 @@ on:
       - "tests/test_negative_controls_live.py"
       - "tests/test_compare_rtl_model_live.py"
       - "tests/comparator_registry.json"
+      - "tests/slow_comparator_required_cases.txt"
+      - "tools/check_rtl_ci_results.py"
       - "tools/compare_rtl_model_*.py"
       - "model/**"
       - "rtl/**"
@@ -62,21 +64,33 @@ jobs:
           echo "report checker exit status: ${check_rc}"
           if [ "${pytest_rc}" -ne 0 ]; then exit "${pytest_rc}"; fi
           exit "${check_rc}"
-      - name: Run slow RTL-vs-model comparator re-runs (#416) and gate on skips
+      - name: Run slow RTL-vs-model comparator re-runs (#416) and gate on skips and absent cases
         run: |
           set -uo pipefail
           set +e
+          # Same checkout, test path and plugin flags as the run below; the
+          # checker reconciles the committed inventory against this listing
+          # (stale entry = FAIL) and against the JUnit report.
+          python3 -m pytest --collect-only -q -p no:cacheprovider \
+            tests/test_compare_rtl_model_live.py > comparator-live-collected.txt
+          collect_rc=$?
+          echo "collect exit status: ${collect_rc}"
           COMPARATOR_LIVE_SLOW=1 python3 -m pytest -q -rs -p no:cacheprovider \
             tests/test_compare_rtl_model_live.py --junitxml=comparator-live-junit.xml
           pytest_rc=$?
           echo "pytest exit status: ${pytest_rc}"
-          # With COMPARATOR_LIVE_SLOW=1 every LIVE-IN-CI case must execute;
-          # any skip (missing simulator included) is a failure, not a pass.
-          if grep -q "<skipped" comparator-live-junit.xml; then
-            echo "FAIL: skipped comparator case(s) under COMPARATOR_LIVE_SLOW=1" >&2
-            exit 1
-          fi
-          exit "${pytest_rc}"
+          # Every required comparator rerun and mutation control must be
+          # present and executed: a skip, an absent case, or a missing or
+          # malformed JUnit report is a failure, not a pass.
+          python3 tools/check_rtl_ci_results.py comparator-live-junit.xml \
+            --inventory tests/slow_comparator_required_cases.txt \
+            --collected comparator-live-collected.txt
+          check_rc=$?
+          echo "report checker exit status: ${check_rc}"
+          # Independent statuses; neither may mask the other.
+          if [ "${collect_rc}" -ne 0 ]; then exit "${collect_rc}"; fi
+          if [ "${pytest_rc}" -ne 0 ]; then exit "${pytest_rc}"; fi
+          exit "${check_rc}"
       - name: Upload JUnit report
         if: always()
         uses: actions/upload-artifact@v4
@@ -85,4 +99,5 @@ jobs:
           path: |
             slow-controls-junit.xml
             comparator-live-junit.xml
+            comparator-live-collected.txt
           if-no-files-found: warn

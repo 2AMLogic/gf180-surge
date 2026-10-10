@@ -1,0 +1,22 @@
+# Required slow RTL-vs-model comparator cases for the slow-controls workflow (#416).
+#
+# Read by tools/check_rtl_ci_results.py (--inventory) in the "slow RTL-vs-model
+# comparator re-runs" step of .github/workflows/slow-controls.yml, with
+# COMPARATOR_LIVE_SLOW=1. Every entry must be in the pytest collection of
+# tests/test_compare_rtl_model_live.py and present exactly once, NOT skipped,
+# in comparator-live-junit.xml. A missing, renamed, deselected, duplicated or
+# skipped entry FAILS the job. This is execution coverage only; agreement is
+# pytest's own exit status, which the step gates independently.
+#
+# One reproduce case and one mutation failure control per LIVE-IN-CI
+# comparator in tests/comparator_registry.json (all four, including
+# distortion_sse). Do NOT regenerate this file from a collection of the same
+# run; adding, removing or re-scoping an entry is a reviewed coverage change.
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_chorus.py]
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_distortion_sse.py]
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_reverb2.py]
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_rf_global2.py]
+tests/test_compare_rtl_model_live.py::test_failure_control_mutated_rtl_fails_the_scratch_run[compare_rtl_model_chorus.py]
+tests/test_compare_rtl_model_live.py::test_failure_control_mutated_rtl_fails_the_scratch_run[compare_rtl_model_distortion_sse.py]
+tests/test_compare_rtl_model_live.py::test_failure_control_mutated_rtl_fails_the_scratch_run[compare_rtl_model_reverb2.py]
+tests/test_compare_rtl_model_live.py::test_failure_control_mutated_rtl_fails_the_scratch_run[compare_rtl_model_rf_global2.py]
