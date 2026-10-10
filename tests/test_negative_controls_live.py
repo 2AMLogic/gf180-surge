@@ -59,13 +59,34 @@ def _registry():
 NON_CONTROL_HELPERS = ("make_control_mutant.py", "render_control_fixtures.py")
 
 
+# Registry keys: a bare filename is an alias for tools/<name>; a key with "/"
+# is repo-relative. Discovery scope is exactly tools/*_controls.py UNION the
+# model/ control entrypoints below -- nothing else under model/, and never
+# reports/ or fixtures/ (archives), so helpers/generators are not controls.
+MODEL_CONTROL_GLOBS = ("model/**/negative_controls.py",
+                       "model/**/*_negative_controls.py")
+MODEL_NON_CONTROL_HELPERS = tuple(
+    f"model/integration/{n}.py" for n in (
+        "run_model", "render_fixtures", "extract_preset_inputs",
+        "compare_integration", "selection_scan", "schedule_closure"))
+SXT025_ENTRY = "model/integration/negative_controls.py"
+
+
 def _on_disk():
-    return sorted(os.path.basename(p) for p in
-                  glob.glob(os.path.join(TOOLS, "*_controls.py")))
+    found = {os.path.basename(p) for p in
+             glob.glob(os.path.join(TOOLS, "*_controls.py"))}
+    for g in MODEL_CONTROL_GLOBS:
+        for p in glob.glob(os.path.join(REPO, g), recursive=True):
+            found.add(os.path.relpath(p, REPO).replace(os.sep, "/"))
+    return sorted(found)
 
 
 def _path(name):
-    return os.path.join(TOOLS, name)
+    return os.path.join(REPO, name) if "/" in name else os.path.join(TOOLS, name)
+
+
+def _modname(prefix, name):
+    return prefix + re.sub(r"\W", "_", name[:-3])
 
 
 def _sha(rel):
@@ -122,6 +143,40 @@ def _accept_reverb2_reference(rc, out, tmp=None):
     return True, ""
 
 
+_SXT025_LINE = re.compile(r"^NC-([ABC]): (\S+)", re.M)
+
+
+def _accept_sxt025(rc, out, tmp=None, seq="sxt025-smoke-v1"):
+    """Integrated wet-path controls: exit 0 alone is not enough. Require a
+    CONTROL-OK line for each of NC-A/B/C exactly once, the HEALTHY summary,
+    and (when tmp is given) the three scratch result files with detected ==
+    true and non-empty case coverage. The committed RTL mutant clause that
+    also feeds the exit code is historical input, not live RTL coverage."""
+    if rc != 0:
+        return False, f"exit {rc}"
+    seen = {}
+    for k, word in _SXT025_LINE.findall(out):
+        seen.setdefault(k, []).append(word)
+    for k in "ABC":
+        # the script prints each line twice (per-control, then transcript)
+        if not seen.get(k) or set(seen[k]) != {"CONTROL-OK"}:
+            return False, f"NC-{k}: {seen.get(k)} (need only CONTROL-OK)"
+    if "ALL CONTROLS HEALTHY" not in out.splitlines():
+        return False, "no 'ALL CONTROLS HEALTHY' line"
+    if tmp is not None:
+        for k in "abc":
+            p = os.path.join(str(tmp), "NC_DIR", f"nc-{k}-{seq}.json")
+            if not os.path.exists(p):
+                return False, f"scratch result {p} not written"
+            with open(p, encoding="utf-8") as f:
+                doc = json.load(f)
+            if doc.get("detected") is not True:
+                return False, f"nc-{k}: detected != true"
+            if not doc.get("control"):
+                return False, f"nc-{k}: empty case coverage"
+    return True, ""
+
+
 def _accept(ent, rc, out, tmp=None):
     """The one acceptance helper used by the registry run and the failure
     controls. Returns (accepted, reason)."""
@@ -132,6 +187,8 @@ def _accept(ent, rc, out, tmp=None):
         return _accept_budget(rc, out)
     if v == "reverb2-reference":
         return _accept_reverb2_reference(rc, out, tmp)
+    if v == "sxt025-integration":
+        return _accept_sxt025(rc, out, tmp)
     raise AssertionError(f"unknown verdict adapter {v!r}")
 
 
@@ -201,9 +258,11 @@ def test_registry_is_well_formed():
     reg = _registry()
     for name, ent in reg.items():
         assert name.endswith("_controls.py"), name
+        assert os.path.exists(_path(name)), f"{name}: path missing"
         assert ent["status"] in STATUSES, (name, ent["status"])
         assert ent["verdict"] in ("exit0", "budget-nc-b1-b4",
-                                  "reverb2-reference"), (name, ent["verdict"])
+                                  "reverb2-reference",
+                                  "sxt025-integration"), (name, ent["verdict"])
         if ent["status"] != "LIVE":
             assert ent["reason"], f"{name}: NOT_RUN needs a recorded reason"
         outs = ent.get("outputs", [])
@@ -220,7 +279,12 @@ def test_registry_is_well_formed():
 
 def test_every_control_script_is_registered():
     on_disk, reg = set(_on_disk()), set(_registry())
-    assert len(on_disk) >= 27, "enumeration found too few scripts"
+    assert len(on_disk) >= 28, "enumeration found too few scripts"
+    assert SXT025_ENTRY in on_disk and SXT025_ENTRY in reg
+    assert _registry()[SXT025_ENTRY]["status"] in STATUSES
+    for h in MODEL_NON_CONTROL_HELPERS:
+        assert os.path.exists(_path(h)), f"helper {h} moved: re-classify"
+        assert h not in on_disk and h not in reg, h
     for h in NON_CONTROL_HELPERS:
         assert os.path.exists(_path(h)), f"helper {h} moved: re-classify"
         assert h not in on_disk and h not in reg, (
@@ -240,14 +304,15 @@ def test_unregistered_controls_script_is_rejected(tmp_path):
     reg = set(_registry())
     on_disk = set(_on_disk()) | {"scratch_x_controls.py"}
     assert on_disk - reg == {"scratch_x_controls.py"}
-    for gone in ("profile_budget_controls.py", "reverb2_reference_controls.py"):
+    for gone in ("profile_budget_controls.py", "reverb2_reference_controls.py",
+                 SXT025_ENTRY):
         assert set(_on_disk()) - (reg - {gone}) == {gone}
 
 
 @pytest.mark.parametrize("name", sorted(_registry()))
 def test_control_script_imports_and_exposes_main(name):
     with _isolated_imports():
-        mod = _load(_path(name), f"ncl_smoke_{name[:-3]}")
+        mod = _load(_path(name), _modname("ncl_smoke_", name))
         assert callable(getattr(mod, "main", None)), f"{name}: no main()"
 
 
@@ -266,7 +331,7 @@ def test_control_script_executes_and_all_controls_fail_their_checks(
                     "NC_LIVE_SLOW=1 to execute (not a pass)")
     with _isolated_imports():
         before = {g: _sha(g) for g in ent["guard"]}
-        mod = _load(_path(name), f"ncl_run_{name[:-3]}")
+        mod = _load(_path(name), _modname("ncl_run_", name))
         rc, out = _run_main(mod, ent["redirect"], ent["argv"], tmp_path)
     ok, why = _accept(ent, rc, out, tmp_path)
     assert ok, (f"{name}: a control did not fail its target check or "
@@ -438,3 +503,104 @@ def test_failure_control_budget_noop_is_rejected_despite_exit_zero(tmp_path):
     assert rc_b == 0, "premise: the no-op copy still exits zero"
     assert re.search(r"^[ \t]+NC-B1 FAIL", out_b, re.M)
     assert not _accept(ent, rc_b, out_b)[0]
+
+
+# ---- SXT-025 integrated wet-path controls (#419) ----
+
+def _tree_hashes(rel_dirs):
+    out = {}
+    for d in rel_dirs:
+        for root, _, files in os.walk(os.path.join(REPO, d)):
+            for fn in files:
+                rel = os.path.relpath(os.path.join(root, fn), REPO)
+                out[rel] = _sha(rel)
+    return out
+
+
+def _sxt025_noop_copies(tmp_path):
+    """Temporary source copy of the integration entrypoint with the NC-A
+    placement mutation turned into a no-op (the permuted image/inputs are
+    replaced by unmodified deep copies). REPO is pinned because the copy lives
+    outside model/integration."""
+    src = open(_path(SXT025_ENTRY), encoding="utf-8").read()
+    repo_line = ("REPO = os.path.dirname(os.path.dirname(os.path.dirname("
+                 "os.path.abspath(__file__))))")
+    img = '    mut_path = os.path.join(NC_DIR, "image-permuted-placement.json")\n'
+    inp = ('    mut_inputs_path = os.path.join(NC_DIR, '
+           '"inputs-permuted-placement.json")\n')
+    for a in (repo_line, img, inp):
+        assert src.count(a) == 1, f"failure-control anchor moved: {a!r}"
+    healthy = src.replace(repo_line, f"REPO = {REPO!r}")
+    noop = healthy.replace(img, "    mut = copy.deepcopy(image)\n" + img)
+    noop = noop.replace(inp, "    mut_inputs = copy.deepcopy(inputs)\n" + inp)
+    paths = {}
+    for tag, text in (("healthy", healthy), ("noop", noop)):
+        p = tmp_path / f"sxt025_{tag}_negative_controls.py"
+        p.write_text(text, encoding="utf-8")
+        paths[tag] = str(p)
+    return paths
+
+
+def test_failure_control_sxt025_nc_a_noop_is_rejected(tmp_path):
+    """NC-A made a no-op in a temp source copy must be rejected by the
+    registry adapter even though the committed transcript stays healthy."""
+    ent = _registry()[SXT025_ENTRY]
+    guard = ent["guard"]
+    before = {g: _sha(g) for g in guard}
+    paths = _sxt025_noop_copies(tmp_path)
+    res = {}
+    for tag in ("healthy", "noop"):
+        scratch = tmp_path / tag
+        scratch.mkdir()
+        with _isolated_imports():
+            mod = _load(paths[tag], f"ncl_sxt025_{tag}")
+            res[tag] = _run_main(mod, ent["redirect"], ent["argv"], scratch)
+        assert {g: _sha(g) for g in guard} == before, tag
+    rc_h, out_h = res["healthy"]
+    assert _accept(ent, rc_h, out_h, tmp_path / "healthy")[0], out_h[-1500:]
+    rc_b, out_b = res["noop"]
+    assert rc_b != 0, "no-op NC-A mutation was NOT detected by the harness"
+    assert "NC-A: CONTROL-BROKEN" in out_b
+    assert not _accept(ent, rc_b, out_b, tmp_path / "noop")[0]
+    # the committed healthy transcript does not rescue the adapter
+    assert "ALL CONTROLS HEALTHY" in open(
+        os.path.join(REPO, "reports/sxt-025/negative-controls.txt"),
+        encoding="utf-8").read()
+
+
+def test_sxt025_adapter_rejects_incomplete_runs(tmp_path):
+    ent = {"verdict": "sxt025-integration"}
+    good = ("NC-A: CONTROL-OK (x)\nNC-B: CONTROL-OK (y)\nNC-C: CONTROL-OK (z)\n"
+            "ALL CONTROLS HEALTHY\n")
+    assert _accept(ent, 0, good)[0]
+    assert not _accept(ent, 1, good)[0]
+    assert not _accept(ent, 0, good.replace("NC-B: CONTROL-OK", "NC-B: CONTROL-BROKEN"))[0]
+    assert not _accept(ent, 0, good.replace("NC-C: CONTROL-OK (z)\n", ""))[0]
+    assert not _accept(ent, 0, good.replace("ALL CONTROLS HEALTHY\n", ""))[0]
+    # missing / not-detected / empty scratch results
+    assert not _accept(ent, 0, good, tmp_path)[0]
+    d = tmp_path / "NC_DIR"
+    d.mkdir()
+    for k in "abc":
+        (d / f"nc-{k}-sxt025-smoke-v1.json").write_text(
+            json.dumps({"control": "c", "detected": True}))
+    assert _accept(ent, 0, good, tmp_path)[0]
+    (d / "nc-b-sxt025-smoke-v1.json").write_text(
+        json.dumps({"control": "c", "detected": False}))
+    assert not _accept(ent, 0, good, tmp_path)[0]
+    (d / "nc-b-sxt025-smoke-v1.json").write_text(
+        json.dumps({"control": "", "detected": True}))
+    assert not _accept(ent, 0, good, tmp_path)[0]
+
+
+def test_sxt025_live_run_leaves_committed_artifacts_byte_identical(tmp_path):
+    """Whole-tree before/after hash of reports/sxt-025 around a scratch run."""
+    ent = _registry()[SXT025_ENTRY]
+    before = _tree_hashes(["reports/sxt-025"])
+    with _isolated_imports():
+        mod = _load(_path(SXT025_ENTRY), "ncl_sxt025_tree")
+        rc, out = _run_main(mod, ent["redirect"], ent["argv"], tmp_path)
+    assert _accept(ent, rc, out, tmp_path)[0], out[-1500:]
+    assert _tree_hashes(["reports/sxt-025"]) == before
+    for rel in ent["outputs"]:
+        assert os.path.exists(os.path.join(str(tmp_path), rel)), rel

@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir. Keys are script filenames under tools/ (discovery: tools/*_controls.py). 'verdict' selects the acceptance adapter in the test module (exit0 = rc==0 only; script-specific adapters additionally parse stdout). 'guard' lists committed files whose bytes must be identical before/after the run. 'outputs' (optional, default []) lists scratch-relative paths the script is verified to write from main() itself; the test requires each to exist after the run. A redirected constant is not by itself an output (control_negative_controls.py writes OUT only under __main__).",
+ "doc": "Registry for tests/test_negative_controls_live.py. status LIVE = the test executes the script's main() into a scratch dir and requires exit 0 (slow ones only when NC_LIVE_SLOW=1, else NOT_RUN/skip). NOT_RUN:needs-oracle = the script cannot execute here; the test only smoke-imports it and never reports it as a pass. 'redirect' names module-level output-dir constants re-pointed at the scratch dir; '{tmp}' in argv is the scratch dir. Keys are script filenames under tools/ (discovery: tools/*_controls.py). 'verdict' selects the acceptance adapter in the test module (exit0 = rc==0 only; script-specific adapters additionally parse stdout). 'guard' lists committed files whose bytes must be identical before/after the run. 'outputs' (optional, default []) lists scratch-relative paths the script is verified to write from main() itself; the test requires each to exist after the run. A redirected constant is not by itself an output (control_negative_controls.py writes OUT only under __main__). Keys are bare tools/ filenames (alias for tools/<name>) or repo-relative paths containing '/' (e.g. model/integration/negative_controls.py); discovery = tools/*_controls.py UNION model/**/negative_controls.py and model/**/*_negative_controls.py. verdict sxt025-integration additionally requires NC-A/B/C CONTROL-OK stdout lines, 'ALL CONTROLS HEALTHY', and nc-{a,b,c}-<seq>.json in scratch with detected == true; the committed RTL mutant verdict it also reads is HISTORICAL input, not live RTL coverage (#416).",
  "scripts": {
   "aw49_negative_controls.py": {
    "status": "LIVE",
@@ -173,6 +173,38 @@
    "reason": "",
    "verdict": "exit0",
    "guard": []
+  },
+  "model/integration/negative_controls.py": {
+   "status": "LIVE",
+   "redirect": [
+    "NC_DIR",
+    "TRANSCRIPT"
+   ],
+   "argv": [
+    "--sequence",
+    "sxt025-smoke-v1"
+   ],
+   "slow": false,
+   "requires": [],
+   "reason": "",
+   "verdict": "sxt025-integration",
+   "guard": [
+    "reports/sxt-025/negative-controls.txt",
+    "reports/sxt-025/negative-controls/nc-a-sxt025-smoke-v1.json",
+    "reports/sxt-025/negative-controls/nc-b-sxt025-smoke-v1.json",
+    "reports/sxt-025/negative-controls/nc-c-sxt025-smoke-v1.json",
+    "reports/sxt-025/negative-controls/image-permuted-placement.json",
+    "reports/sxt-025/negative-controls/inputs-permuted-placement.json",
+    "reports/sxt-025/rtl-exactness.json"
+   ],
+   "outputs": [
+    "NC_DIR/nc-a-sxt025-smoke-v1.json",
+    "NC_DIR/nc-b-sxt025-smoke-v1.json",
+    "NC_DIR/nc-c-sxt025-smoke-v1.json",
+    "NC_DIR/image-permuted-placement.json",
+    "NC_DIR/inputs-permuted-placement.json",
+    "TRANSCRIPT"
+   ]
   },
   "mw_negative_controls.py": {
    "status": "NOT_RUN:needs-oracle",
