@@ -3278,3 +3278,391 @@ def test_the_ci_gate_reports_an_unauditable_range_as_not_run(tmp_path):
 
     missing = run_tool("--root", str(root), "--commits", "no/such/ref..HEAD")
     assert missing.returncode == 2, missing.stdout + missing.stderr
+
+
+# --- GPL-boundary register (issue #370; governance issue #25) -----------------
+#
+# The register is the table-level view of the quoted-constants inventory;
+# `provenance.json` stays the file-level source. These tests pin the cross-check
+# between them and the decision records: a missing, malformed, extra/unmapped or
+# stale register entry fails, the DR-0014 gap (quoted data with no manifest row)
+# stays covered by a checkable exception, and MIT Airwindows constants are never
+# folded into the GPL-derived table. Nothing here says a record is ratified or
+# that the register is complete against model source (its declared limit).
+
+REGISTER = REPO / cp.REGISTER_REL
+
+
+def _register_text():
+    return REGISTER.read_text(encoding="utf-8")
+
+
+def _register_tree(tmp_path, register_text=None, mutate_manifest=None):
+    """A copy of the real bookkeeping (records, index, manifest, register).
+
+    Every file the register or the manifest names is stubbed so existence checks
+    hold; only the register/manifest/record text is real. Returns the findings
+    of `check_register` alone, so each test isolates this one layer.
+    """
+    root = tmp_path / "real"
+    (root / cp.RECORD_DIR_REL).mkdir(parents=True)
+    for source in RECORD_DIR.iterdir():
+        if source.suffix in (".md", ".json"):
+            (root / cp.RECORD_DIR_REL / source.name).write_bytes(source.read_bytes())
+    text = _register_text() if register_text is None else register_text
+    (root / cp.REGISTER_REL).write_text(text, encoding="utf-8")
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    if mutate_manifest:
+        mutate_manifest(manifest)
+    (root / cp.MANIFEST_REL).write_text(json.dumps(manifest), encoding="utf-8")
+    sections, _ = cp.parse_register(text)
+    stubs = {e["path"] for e in manifest["entries"] if "path" in e}
+    for name in (cp.REGISTER_GPL_SECTION, cp.REGISTER_MIT_SECTION):
+        stubs |= {cells[1] for _l, cells in sections.get(name, []) if len(cells) > 1}
+    for _l, cells in sections.get(cp.REGISTER_EXCEPTION_SECTION, []):
+        if len(cells) > 1:
+            stubs |= {p.strip() for p in cells[1].split(";")}
+    for _l, cells in sections.get(cp.REGISTER_EXCLUSION_SECTION, []):
+        if len(cells) > 2:
+            stubs.add(cells[2])
+    for rel in stubs:
+        if rel != cp.MANIFEST_REL and not (root / rel).exists():
+            cp._write(root, rel, "stub\n")
+    tree = cp.Tree(root, cp.scope_exclusion_prefixes(manifest), False)
+    records, _ = cp.parse_records(tree)
+    rows, _ = cp.parse_index(tree)
+    loaded, _ = cp.load_manifest(root)
+    findings, stats = cp.check_register(tree, loaded, records, rows)
+    return findings, stats
+
+
+def _rules(findings):
+    return {f.rule for f in findings}
+
+
+def _drop_rows(text, *ids):
+    keep = [
+        line
+        for line in text.splitlines()
+        if not any(line.startswith(f"| {rid} |") for rid in ids)
+    ]
+    return "\n".join(keep) + "\n"
+
+
+def test_real_register_reconciles_with_manifest_and_records(tmp_path):
+    findings, stats = _register_tree(tmp_path)
+    assert not findings, [(f.rule, f.detail) for f in findings]
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    quoted = [e for e in manifest["entries"] if e["class"] == "quoted-constants"]
+    assert len(quoted) >= 8, "the eight quoted-constants rows are the register's floor"
+    assert stats["register_rows"] > 0 and stats["register_mit_rows"] > 0
+    # listed, not failed: rows whose upstream file/revision no record establishes
+    assert stats["register_provenance_incomplete"], stats
+
+
+def test_register_covers_every_quoted_constants_manifest_row():
+    sections, findings = cp.parse_register(_register_text())
+    assert not findings
+    cited = set()
+    for name in (cp.REGISTER_GPL_SECTION, cp.REGISTER_MIT_SECTION):
+        for _line, cells in sections[name]:
+            kind, _, target = cells[7].partition(":")
+            if kind == "manifest":
+                cited.add(target)
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    for entry in manifest["entries"]:
+        if entry["class"] == "quoted-constants":
+            assert entry["path"] in cited, entry["path"]
+
+
+def test_removing_a_register_row_fails_for_its_manifest_row(tmp_path):
+    # G-03 is the only register row for the reverb1 delay-time tables.
+    findings, _ = _register_tree(tmp_path, _drop_rows(_register_text(), "G-03"))
+    missing = [f for f in findings if f.rule == "register-missing-row"]
+    assert missing, [(f.rule, f.detail) for f in findings]
+    assert "reverb1/coefficient_plane.py" in missing[0].detail
+
+
+def test_register_control_is_demonstrated_on_a_synthetic_tree(tmp_path):
+    root = _skeleton(tmp_path)
+    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=[]))
+    fired = _rules_fired(root)
+    assert "register-missing-row" in fired, fired
+
+
+def test_missing_register_file_fails(tmp_path):
+    root = _skeleton(tmp_path)
+    (root / cp.REGISTER_REL).unlink()
+    assert "register-missing" in _rules_fired(root)
+
+
+def test_malformed_register_rows_fail(tmp_path):
+    base = cp.SKELETON_REGISTER_ROW
+    cases = {
+        "empty field": base[:-1] + [""],
+        "short row": base[:-2],
+        "repeated id": None,
+        "bad revision": base[:4] + ["58914e59"] + base[5:],
+        "incomplete revision with registered status": base[:4]
+        + ["incomplete"]
+        + base[5:],
+        "unknown status": base[:8] + ["maybe"] + base[9:],
+        "unknown licence": base[:5] + ["BSD"] + base[6:],
+        "unknown record": base[:6] + ["0099"] + base[7:],
+        "bad id": ["row1"] + base[1:],
+        "missing in-repo file": base[:1] + ["model/not_there.py"] + base[2:],
+    }
+    for label, row in cases.items():
+        root = tmp_path / label.replace(" ", "-")
+        root.mkdir()
+        cp.build_skeleton(root)
+        rows = [base, base] if row is None else [row]
+        cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=rows))
+        assert "register-malformed-row" in _rules_fired(root), label
+
+
+def test_malformed_header_fails(tmp_path):
+    root = _skeleton(tmp_path)
+    text = (root / cp.REGISTER_REL).read_text(encoding="utf-8")
+    cp._write(root, cp.REGISTER_REL, text.replace("Pinned revision", "Revision", 1))
+    assert "register-malformed-row" in _rules_fired(root)
+
+
+def test_extra_or_unmapped_register_rows_fail(tmp_path):
+    base = cp.SKELETON_REGISTER_ROW
+    # cites a provenance row that does not exist
+    extra = ["G-2", "model/carrier.py"] + base[2:7] + ["manifest:model/other.py"] + base[8:]
+    # right file, wrong record
+    wrong_record = base[:6] + ["0001x"] + base[7:]
+    # neither a manifest nor an exception citation
+    free_text = base[:7] + ["see the PR"] + base[8:]
+    # exception that does not exist
+    ghost = base[:7] + ["exception:E-9"] + base[8:]
+    for label, rows in {
+        "extra row": [base, extra],
+        "free-text citation": [free_text],
+        "unknown exception": [ghost],
+    }.items():
+        root = tmp_path / label.replace(" ", "-")
+        root.mkdir()
+        cp.build_skeleton(root)
+        cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=rows))
+        assert "register-unmapped-row" in _rules_fired(root), label
+    assert wrong_record  # kept for readability of the case list above
+
+
+def test_row_whose_pin_or_record_differs_from_its_manifest_row_fails(tmp_path):
+    base = cp.SKELETON_REGISTER_ROW
+    for label, row in {
+        "pin": base[:4] + ["a" * 40] + base[5:],
+    }.items():
+        root = tmp_path / label
+        root.mkdir()
+        cp.build_skeleton(root)
+        cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=[row]))
+        assert "register-unmapped-row" in _rules_fired(root), label
+    # record: a second, indexed record exists, but the manifest row cites 0001
+    root = tmp_path / "record"
+    root.mkdir()
+    cp.build_skeleton(root)
+    cp._write(
+        root,
+        f"{cp.RECORD_DIR_REL}/0002-second.md",
+        "# 0002: Second (synthetic)\n\n- **Status**: proposed\n- **Date**: 2026-01-02\n",
+    )
+    cp._write(
+        root,
+        cp.INDEX_REL,
+        cp.SKELETON_INDEX
+        + "| [0002](0002-second.md) | Second (synthetic) | proposed | 2026-01-02 |\n",
+    )
+    cp._write(
+        root,
+        cp.REGISTER_REL,
+        cp.skeleton_register(gpl_rows=[base[:6] + ["0002"] + base[7:]]),
+    )
+    assert "register-unmapped-row" in _rules_fired(root)
+
+
+def test_unused_or_stale_exception_fails(tmp_path):
+    base = cp.SKELETON_REGISTER_ROW
+    unused = [["E-1", "docs/plain.md", "0001", "reason", "closing action"]]
+    root = tmp_path / "unused"
+    root.mkdir()
+    cp.build_skeleton(root)
+    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(exceptions=unused))
+    assert "register-exception-stale" in _rules_fired(root)
+    # a listed file that does not exist
+    root = tmp_path / "gone"
+    root.mkdir()
+    cp.build_skeleton(root)
+    gone = [["E-1", "model/gone.py", "0001", "reason", "closing action"]]
+    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(exceptions=gone))
+    assert "register-exception-stale" in _rules_fired(root)
+    # an exception with an empty justification is malformed, not accepted
+    root = tmp_path / "unjustified"
+    root.mkdir()
+    cp.build_skeleton(root)
+    bare = [["E-1", "docs/plain.md", "0001", "", "closing action"]]
+    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(exceptions=bare))
+    assert "register-malformed-row" in _rules_fired(root)
+    assert base  # the skeleton row stays valid throughout
+
+
+def test_dr0014_gap_is_a_checkable_exception_today():
+    """DR-0014 classifies quoted data; the manifest has no row naming it."""
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    assert not [
+        e for e in manifest["entries"] if str(e.get("decision_record")) == "0014"
+    ], "a 0014 manifest row now exists: replace exception E-1 by manifest citations"
+    sections, _ = cp.parse_register(_register_text())
+    rows_0014 = [
+        cells
+        for _l, cells in sections[cp.REGISTER_GPL_SECTION]
+        if cells[6] == "0014"
+    ]
+    names = " ".join(cells[2] for cells in rows_0014)
+    assert "OJD_M17_C" in names and "DCBLOCK_FAC_C" in names
+    assert any("FuzzTable<1>" in cells[2] for cells in rows_0014), names
+    assert all(cells[7] == "exception:E-1" for cells in rows_0014)
+    assert all(cells[5] == "GPL-3.0-or-later" for cells in rows_0014)
+    assert {cells[1] for cells in rows_0014} >= {
+        "model/effects/type-distortion-sse/quad_shapers.py",
+        "model/effects/type-distortion-sse/sse_tables.py",
+        "rtl/effects/type-distortion-sse/ws_sse_q29.hex",
+    }
+
+
+def test_dr0014_cannot_be_silently_dropped(tmp_path):
+    text = _register_text()
+    # 1. drop the exception: the 0014 rows become unmapped
+    lines = [line for line in text.splitlines() if not line.startswith("| E-1 |")]
+    findings, _ = _register_tree(tmp_path / "a", "\n".join(lines) + "\n")
+    assert "register-unmapped-row" in _rules(findings)
+    # 2. drop the exception AND every 0014 row: the record itself is unaccounted
+    ids = [f"G-{n}" for n in range(11, 18)]
+    stripped = _drop_rows(text, "E-1", *ids)
+    findings, _ = _register_tree(tmp_path / "b", stripped)
+    unaccounted = [f for f in findings if f.rule == "register-record-unaccounted"]
+    assert any("0014" in f.detail for f in unaccounted), [
+        (f.rule, f.detail) for f in findings
+    ]
+
+
+def test_exception_goes_stale_once_a_manifest_row_covers_the_file(tmp_path):
+    def add_row(manifest):
+        manifest["entries"].append(
+            {
+                "path": "model/effects/type-distortion-sse/quad_shapers.py",
+                "class": "quoted-constants",
+                "content": "synthetic",
+                "upstream": "synthetic",
+                "pinned_commit": "dd12f31a5a9016c9895e52d1a00eee0e1eebe6ce",
+                "upstream_license": "GPL-3.0-or-later",
+                "decision_record": "0014",
+            }
+        )
+
+    findings, _ = _register_tree(tmp_path, mutate_manifest=add_row)
+    rules = _rules(findings)
+    assert "register-exception-stale" in rules, [(f.rule, f.detail) for f in findings]
+
+
+def test_every_decision_record_declaring_quoted_data_is_accounted_for():
+    sections, _ = cp.parse_register(_register_text())
+    accounted = set()
+    for name in (cp.REGISTER_GPL_SECTION, cp.REGISTER_MIT_SECTION):
+        accounted |= {cells[6] for _l, cells in sections[name]}
+    accounted |= {cells[1] for _l, cells in sections[cp.REGISTER_EXCLUSION_SECTION]}
+    for path in sorted(RECORD_DIR.glob("[0-9][0-9][0-9][0-9]-*.md")):
+        if cp.QUOTED_RECORD_RE.search(path.read_text(encoding="utf-8")):
+            assert path.name[:4] in accounted, path.name
+    # the records the operator ruling names as GPL-boundary records, plus 0007's
+    # reviewed classification, are all present
+    for number in ("0003", "0004", "0012", "0014", "0015", "0007"):
+        assert number in accounted, number
+
+
+def test_mit_airwindows_constants_stay_distinct_from_gpl_adapter_code(tmp_path):
+    sections, _ = cp.parse_register(_register_text())
+    gpl = sections[cp.REGISTER_GPL_SECTION]
+    mit = sections[cp.REGISTER_MIT_SECTION]
+    assert all(cells[5] == "GPL-3.0-or-later" for _l, cells in gpl)
+    assert all(cells[5] == "MIT" for _l, cells in mit)
+    airwindows = [cells for _l, cells in mit if "libs/airwindows" in cells[3]]
+    assert len(airwindows) >= 15
+    assert not [cells for _l, cells in gpl if "airwindows" in cells[3].lower()]
+    # no register row anywhere cites the GPL adapter as an upstream constant file
+    assert not [
+        cells for _l, cells in gpl + mit if "AirWindowsEffect" in cells[3]
+    ]
+    # relabelling an MIT row GPL (keeping it in the MIT table) fails
+    text = "\n".join(
+        line.replace(" | MIT | ", " | GPL-3.0-or-later | ", 1)
+        if line.startswith("| M-01 |")
+        else line
+        for line in _register_text().splitlines()
+    ) + "\n"
+    assert text != _register_text()
+    findings, _ = _register_tree(tmp_path, text)
+    assert "register-licence-mismatch" in _rules(findings)
+
+
+def test_licence_disagreement_with_the_manifest_must_be_reconciled(tmp_path):
+    base = cp.SKELETON_REGISTER_ROW
+    root = tmp_path / "unreconciled"
+    root.mkdir()
+    cp.build_skeleton(root)
+    # an MIT table row whose manifest row says GPL, status registered: mismatch
+    text = cp.skeleton_register(gpl_rows=[]).replace(
+        "## MIT-sourced quoted constants\n\n"
+        + cp._register_table(cp.REGISTER_ROW_COLUMNS, []),
+        "## MIT-sourced quoted constants\n\n"
+        + cp._register_table(
+            cp.REGISTER_ROW_COLUMNS, [base[:5] + ["MIT"] + base[6:]]
+        ),
+    )
+    cp._write(root, cp.REGISTER_REL, text)
+    assert "register-licence-mismatch" in _rules_fired(root)
+    # the same row reconciled by a cited record is accepted
+    reconciled = base[:5] + ["MIT"] + base[6:8] + ["licence reconciled", "licence per 0001"]
+    text = text.replace(
+        cp._register_table(cp.REGISTER_ROW_COLUMNS, [base[:5] + ["MIT"] + base[6:]]),
+        cp._register_table(cp.REGISTER_ROW_COLUMNS, [reconciled]),
+    )
+    cp._write(root, cp.REGISTER_REL, text)
+    assert "register-licence-mismatch" not in _rules_fired(root)
+    # 'licence reconciled' with nothing to reconcile is itself a mismatch
+    nothing = base[:8] + ["licence reconciled", "licence per 0001"]
+    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=[nothing]))
+    assert "register-licence-mismatch" in _rules_fired(root)
+
+
+def test_provenance_incomplete_is_listed_not_guessed():
+    sections, _ = cp.parse_register(_register_text())
+    incomplete = [
+        cells
+        for name in (cp.REGISTER_GPL_SECTION, cp.REGISTER_MIT_SECTION)
+        for _l, cells in sections[name]
+        if cells[8] == "provenance incomplete"
+    ]
+    assert incomplete
+    # a row with no established revision says so instead of carrying a guess
+    assert any(cells[4] == cp.REGISTER_INCOMPLETE_REVISION for cells in incomplete)
+    for cells in incomplete:
+        assert cells[4] == cp.REGISTER_INCOMPLETE_REVISION or cp.REGISTER_REVISION_RE.match(
+            cells[4]
+        )
+
+
+def test_register_check_reports_coverage_and_incomplete_rows():
+    proc = run_tool()
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "gpl-boundary register:" in proc.stdout
+    assert "provenance incomplete:" in proc.stdout
+
+
+def test_adoption_mechanics_require_the_register_in_the_same_pr():
+    text = (REPO / "docs" / "REUSE-AUDIT.md").read_text(encoding="utf-8")
+    assert "gpl-boundary-register.md" in text
+    assert "same PR" in text
