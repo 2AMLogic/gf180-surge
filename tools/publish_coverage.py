@@ -209,9 +209,34 @@ def leaf_ready(leaf: dict) -> bool:
     return v.get("rtl_vs_model") == "PASS" and v.get("model_vs_reference") == "PASS"
 
 
-def evidence_state(repo: Path, evidence: list) -> tuple:
-    """Return (state, detail). state in {OK, STALE}."""
-    for item in evidence or []:
+def evidence_pins(owner: str, evidence) -> list:
+    """Shape-validate an evidence member (#432). Absent/null/[] mean "no
+    pins" (legitimate on a NOT_RUN/unlanded placeholder; see
+    evidence_state(require=True) for the claim case); anything else must be
+    a list of {path, sha256} pins or the publisher refuses before writing
+    any output."""
+    if evidence is None:
+        return []
+    if not isinstance(evidence, list):
+        raise Refuse(f"{owner}: evidence must be a list of {{path, sha256}} "
+                     f"pins, got {type(evidence).__name__}")
+    for i, item in enumerate(evidence):
+        if not _pin_ok(item):
+            raise Refuse(f"{owner}: evidence[{i}] must be a {{path, sha256}} "
+                         "pin with a 64-hex sha256")
+    return evidence
+
+
+def evidence_state(repo: Path, evidence, require: bool = False,
+                   owner: str = "evidence") -> tuple:
+    """Return (state, detail). state in {OK, STALE, MISSING}.
+
+    require=True means the owner CLAIMS readiness (landed PASS/PASS leaf, or
+    a PASS gate): an empty/absent/null evidence collection can then never
+    authorize it and yields MISSING (a named non-PASS result, #432). STALE
+    (missing file or digest mismatch) is preserved and takes precedence."""
+    pins = evidence_pins(owner, evidence)
+    for item in pins:
         path = repo / item["path"]
         if not path.is_file():
             return "STALE", f"missing evidence file {item['path']}"
@@ -221,7 +246,43 @@ def evidence_state(repo: Path, evidence: list) -> tuple:
                 f"evidence hash mismatch for {item['path']}: expected "
                 f"{item['sha256']}, found {actual}"
             )
+    if require and not pins:
+        return "MISSING", f"{owner} claims readiness with no evidence pins"
     return "OK", ""
+
+
+def build_leaf_state(repo: Path, lf: dict, owner: str) -> dict:
+    """One evidence-aware readiness calculation for ordinary, routing and
+    Airwindows leaves (#432)."""
+    landed = bool(lf.get("landed"))
+    claim = landed and leaf_ready(lf)
+    state, detail = evidence_state(repo, lf.get("evidence"), require=claim,
+                                   owner=owner)
+    return {
+        "landed": landed,
+        "ready": claim and state == "OK",
+        "stale": state == "STALE",
+        "unevidenced": state == "MISSING",
+        "stale_detail": detail,
+        "verification": lf.get("verification", {}),
+    }
+
+
+def section_leaf_state(repo: Path, table: dict, leaf_states: dict,
+                       section: str, key: str, lf: dict) -> dict:
+    """State for a routing/Airwindows section entry. A declared
+    `canonical_leaf` names an evidence-bearing record in table["leaves"] and
+    is the single source of truth (its integrity verdict is the entry's);
+    otherwise the entry's own evidence is evaluated. Never a stale=False
+    fallback."""
+    canon = lf.get("canonical_leaf")
+    owner = f"{section}[{key}]"
+    if canon is not None:
+        if not isinstance(canon, str) or canon not in leaf_states:
+            raise Refuse(f"{owner}: canonical_leaf {canon!r} is not a record "
+                         "in the leaves map")
+        return leaf_states[canon]
+    return build_leaf_state(repo, lf, owner)
 
 
 # ------------------------------------------------- integration gate (#384)
@@ -674,25 +735,29 @@ def run(repo: Path, args) -> None:
     # ---- leaf/gate states (STALE detection) ---------------------------
     leaf_states = {}
     for lid, lf in table["leaves"].items():
-        state, detail = evidence_state(repo, lf.get("evidence"))
-        leaf_states[lid] = {
-            "landed": bool(lf.get("landed")),
-            "ready": bool(lf.get("landed")) and leaf_ready(lf),
-            "stale": state == "STALE",
-            "stale_detail": detail,
-            "verification": lf.get("verification", {}),
-        }
+        leaf_states[lid] = build_leaf_state(repo, lf, f"leaves[{lid}]")
     gate_states = {}
     for gid, gf in table["gates"].items():
-        state, detail = evidence_state(repo, gf.get("evidence"))
+        state, detail = evidence_state(
+            repo, gf.get("evidence"), require=gf.get("status") == "PASS",
+            owner=f"gates[{gid}]")
         gate_states[gid] = {
             "status": gf.get("status"),
             "stale": state == "STALE",
+            "unevidenced": state == "MISSING",
             "stale_detail": detail,
         }
+    # routing / Airwindows section entries: same evidence-aware calculation
+    # (#432); evaluated up front so malformed shapes refuse before output.
+    section_states = {}
+    for section in ("routing_leaves", "airwindows_leaves"):
+        for key, lf in table[section].items():
+            section_states[(section, key)] = section_leaf_state(
+                repo, table, leaf_states, section, key, lf)
 
     freeze_pass = gate_states["fidelity_freeze"]["status"] == "PASS" \
-        and not gate_states["fidelity_freeze"]["stale"]
+        and not gate_states["fidelity_freeze"]["stale"] \
+        and not gate_states["fidelity_freeze"]["unevidenced"]
     # #384: the frozen fidelity-policy identity an integration record must
     # name. Available only once the freeze gate is PASS and declares a
     # {path, sha256} pin for the policy; absent today (#12 open).
@@ -787,6 +852,9 @@ def run(repo: Path, args) -> None:
             if vs["stale"]:
                 voice_gate = "STALE"
                 reasons.add(f"stale_leaf:{vg}({vs['stale_detail']})")
+            elif vs["unevidenced"]:
+                voice_gate = "NO_VERDICT"
+                reasons.add(f"leaf_evidence_missing:{vg}({vs['stale_detail']})")
             elif voice_scope_all:
                 voice_gate = "PASS" if vs["ready"] else "NO_VERDICT"
                 if not vs["ready"]:
@@ -828,7 +896,6 @@ def run(repo: Path, args) -> None:
                     reasons.add(f"fx_leaf_unfiled:Airwindows:aw{aw_id}-{awn}")
                     continue
                 lid = f"fx:Airwindows:{lf['leaf_id']}"
-                landed = lf.get("landed", False)
                 label = f"fx:Airwindows:aw{aw_id}-{awn}"
             else:
                 lid = FX_TYPE_TO_LEAF.get(tn)
@@ -840,20 +907,17 @@ def run(repo: Path, args) -> None:
                         )
                     continue
                 lf = table["leaves"][lid]
-                landed = lf.get("landed", False)
                 label = f"fx:{tn}"
-            st = leaf_states.get(lid)
-            if st is None:
-                st = {
-                    "landed": landed,
-                    "ready": landed and leaf_ready(lf),
-                    "stale": False,
-                    "stale_detail": "",
-                    "verification": lf.get("verification", {}),
-                }
+            if tn == "Airwindows":
+                st = section_states[("airwindows_leaves", aw_id)]
+            else:
+                st = leaf_states[lid]
             if st["stale"]:
                 fx_gate = worst(fx_gate, "STALE")
                 reasons.add(f"stale_leaf:{label}({st['stale_detail']})")
+            elif st["unevidenced"]:
+                fx_gate = worst(fx_gate, "NO_VERDICT")
+                reasons.add(f"leaf_evidence_missing:{label}({st['stale_detail']})")
             elif not st["landed"]:
                 fx_gate = worst(fx_gate, "NOT_RUN")
                 issue = lf.get("issue")
@@ -905,6 +969,9 @@ def run(repo: Path, args) -> None:
             if st["stale"]:
                 wt_gate = "STALE"
                 reasons.add(f"stale_leaf:{lid}({st['stale_detail']})")
+            elif st["unevidenced"]:
+                wt_gate = "NO_VERDICT"
+                reasons.add(f"leaf_evidence_missing:{lid}({st['stale_detail']})")
             elif not st["ready"]:
                 wt_gate = "NOT_RUN"
                 reasons.add(
@@ -924,18 +991,13 @@ def run(repo: Path, args) -> None:
                 rt_gate = worst(rt_gate, "NOT_RUN")
                 reasons.add(f"routing_leaf_unfiled:{role}")
                 continue
-            st = leaf_states.get(f"routing:{lf['leaf_id']}")
-            if st is None:
-                st = {
-                    "landed": lf.get("landed", False),
-                    "ready": lf.get("landed", False) and leaf_ready(lf),
-                    "stale": False,
-                    "stale_detail": "",
-                    "verification": lf.get("verification", {}),
-                }
+            st = section_states[("routing_leaves", role)]
             if st["stale"]:
                 rt_gate = worst(rt_gate, "STALE")
                 reasons.add(f"stale_leaf:routing:{role}({st['stale_detail']})")
+            elif st["unevidenced"]:
+                rt_gate = worst(rt_gate, "NO_VERDICT")
+                reasons.add(f"leaf_evidence_missing:routing:{role}({st['stale_detail']})")
             elif not st["landed"]:
                 rt_gate = worst(rt_gate, "NOT_RUN")
                 reasons.add(f"leaf_not_landed:routing:{role}({lf['leaf_id']}#{lf.get('issue')})")
@@ -952,6 +1014,9 @@ def run(repo: Path, args) -> None:
             if gst["stale"]:
                 fid_gate = "STALE"
                 reasons.add(f"stale_gate:fidelity_freeze({gst['stale_detail']})")
+            elif gst["unevidenced"]:
+                fid_gate = "NO_VERDICT"
+                reasons.add(f"gate_evidence_missing:fidelity_freeze({gst['stale_detail']})")
             elif freeze_pass:
                 fid_gate = "PASS"
             else:
@@ -1000,6 +1065,9 @@ def run(repo: Path, args) -> None:
             ess = "STALE" if gst["stale"] else gst["status"]
             if gst["stale"]:
                 reasons.add(f"stale_gate:listening_labels({gst['stale_detail']})")
+            elif gst["unevidenced"]:
+                ess = "NO_VERDICT"
+                reasons.add(f"gate_evidence_missing:listening_labels({gst['stale_detail']})")
 
         req_display = []
         for tn, aw_id, awn in req_classes:
@@ -1154,7 +1222,8 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
             lid: {
                 "landed": st["landed"],
                 "support_ready": st["ready"],
-                "evidence_state": "STALE" if st["stale"] else "OK",
+                "evidence_state": ("STALE" if st["stale"] else
+                                   "MISSING" if st["unevidenced"] else "OK"),
                 "verification": st["verification"],
             }
             for lid, st in sorted(leaf_states.items())
@@ -1162,7 +1231,8 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
         "gates": {
             gid: {
                 "status": st["status"],
-                "evidence_state": "STALE" if st["stale"] else "OK",
+                "evidence_state": ("STALE" if st["stale"] else
+                                   "MISSING" if st["unevidenced"] else "OK"),
             }
             for gid, st in sorted(gate_states.items())
         },
@@ -1213,13 +1283,20 @@ def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
         "sha256": oc.sha256_file(Path(table_rel) if Path(table_rel).is_absolute() else repo / table_rel),
     }
     for lid, lf in sorted(table["leaves"].items()):
-        for item in lf.get("evidence", []):
+        for item in lf.get("evidence") or []:
             inputs_prov.setdefault(item["path"], {
                 "role": f"evidence record for leaf {lid}",
                 "sha256": item["sha256"],
             })
+    for section in ("routing_leaves", "airwindows_leaves"):
+        for key, lf in sorted(table[section].items()):
+            for item in lf.get("evidence") or []:
+                inputs_prov.setdefault(item["path"], {
+                    "role": f"evidence record for {section}[{key}]",
+                    "sha256": item["sha256"],
+                })
     for gid, gf in sorted(table["gates"].items()):
-        for item in gf.get("evidence", []):
+        for item in gf.get("evidence") or []:
             inputs_prov.setdefault(item["path"], {
                 "role": f"evidence record for gate {gid}",
                 "sha256": item["sha256"],

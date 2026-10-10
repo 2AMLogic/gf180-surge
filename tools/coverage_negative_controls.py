@@ -101,8 +101,9 @@ COPY_PATHS = [
 
 def run_tool(root: Path, outdir: Path, leaf_table: Path = None,
              allow_drift: bool = False, rng_exclusion: Path = None,
-             ignore_rng: bool = False, integration_ledger: Path = None):
-    cmd = [sys.executable, str(TOOL), "--repo-root", str(root),
+             ignore_rng: bool = False, integration_ledger: Path = None,
+             tool: "Path | None" = None):
+    cmd = [sys.executable, str(tool or TOOL), "--repo-root", str(root),
            "--outdir", str(outdir)]
     if leaf_table is not None:
         cmd += ["--leaf-table", str(leaf_table)]
@@ -134,7 +135,7 @@ def _stub_pin(directory: Path, name: str, body: str) -> dict:
     return {"path": str(path), "sha256": oc.sha256_file(path)}
 
 
-def synthetic_integration_ledger(directory: Path) -> tuple:
+def synthetic_integration_ledger(directory: Path, root: Path = REPO) -> tuple:
     """Declared SYNTHETIC integration ledger (test fixture; never published).
 
     One original-scope PASS record per COMPILED corpus preset, carrying that
@@ -156,7 +157,7 @@ def synthetic_integration_ledger(directory: Path) -> tuple:
     compiled = {o["path"] for o in scan["outcomes"]
                 if o["outcome"] == "compiled"}
     records = []
-    with open(REPO / pc.GRAPH_DEFAULT, encoding="utf-8") as f:
+    with open(root / pc.GRAPH_DEFAULT, encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
@@ -196,7 +197,7 @@ def write_ledger(doc: dict, dest: Path) -> Path:
     return dest
 
 
-def counterfactual_table(dest: Path) -> Path:
+def counterfactual_table(dest: Path, root: Path = REPO) -> Path:
     """Synthetic verified-world table (test fixture; never published).
 
     #384: the verified world also needs preset-scoped complete-wet
@@ -235,8 +236,17 @@ def counterfactual_table(dest: Path) -> Path:
             lf["landed"] = True
             lf["verification"] = dict(PASS_VERIF)
             lf["filed"] = True
+    # #432: a readiness claim needs a nonempty valid evidence collection, so
+    # the declared-synthetic verified world pins every claim that carries no
+    # pin of its own to a committed record (synthetic; never published).
+    default_pin = {"path": "reports/sxt-023/EVIDENCE.md",
+                   "sha256": oc.sha256_file(REPO / "reports/sxt-023/EVIDENCE.md")}
+    for section in ("leaves", "routing_leaves", "airwindows_leaves"):
+        for block in table.get(section, {}).values():
+            if not block.get("evidence"):
+                block["evidence"] = [dict(default_pin)]
     table["gates"]["fidelity_freeze"]["status"] = "PASS"
-    ledger, policy = synthetic_integration_ledger(dest.parent)
+    ledger, policy = synthetic_integration_ledger(dest.parent, root)
     table["gates"]["fidelity_freeze"]["frozen_policy"] = policy
     write_ledger(ledger, ledger_for(dest))
     dest.write_text(json.dumps(table, indent=1, sort_keys=True) + "\n",
@@ -717,6 +727,359 @@ def control_integration_gate(transcript) -> None:
                       "cross-preset qualification")
 
 
+# ----------------------------------------------- evidence-backed readiness
+# (#432) Every readiness claim -- ordinary leaf, routing leaf, Airwindows
+# leaf, qualification gate -- must resolve a nonempty collection of valid
+# evidence pins. The scenarios below are written once and run both against
+# the real publisher (must hold) and against temporary mutated copies that
+# restore the pre-#432 shortcuts (must FAIL a TARGETED assertion).
+
+TARGETED = "TARGETED"
+
+
+def _write_json(doc: dict, dest: Path) -> Path:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n",
+                    encoding="utf-8")
+    return dest
+
+
+def _targeted(cond, msg: str) -> None:
+    if not cond:
+        raise AssertionError(f"{TARGETED}: {msg}")
+
+
+def _rows_by_path(outdir: Path) -> dict:
+    return {r["path"]: r for r in read_rows(outdir)}
+
+
+def _graphs() -> dict:
+    out = {}
+    with open(REPO / "corpus/normalized/graphs.jsonl", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                e = json.loads(line)
+                out[e["p"]] = e
+    return out
+
+
+def scenario_ordinary(root: Path, tool: Path, transcript) -> None:
+    """EQ in the all-other-gates-PASS world: evidence member absent / null /
+    empty list must leave NO reached gate ready; malformed shapes refuse
+    before any output is written."""
+    cf = counterfactual_table(root / "counterfactual.json")
+    led = ledger_for(cf)
+    base = root / "base"
+    r = run_tool(REPO, base, leaf_table=cf, integration_ledger=led, tool=tool)
+    assert r.returncode == 0, r.stderr
+    b = _rows_by_path(base)
+    s0 = {p for p, x in b.items() if x["headline_status"] == "supported"}
+    affected = {p for p, x in b.items()
+                if "EQ" in x["fx_required"].split(";")
+                and x["fx_leaves_gate"] == "PASS"}
+    assert s0 and affected & s0, "synthetic world has no reached EQ victims"
+    transcript.append(f"    ordinary leaf fx:EQ: baseline supported={len(s0)}; "
+                      f"reached EQ gates (PASS)={len(affected)}; "
+                      f"supported victims={len(affected & s0)}")
+    table = json.loads(cf.read_text(encoding="utf-8"))
+    for mode in ("absent", "null", "empty"):
+        t = json.loads(json.dumps(table))
+        if mode == "absent":
+            del t["leaves"]["fx:EQ"]["evidence"]
+        elif mode == "null":
+            t["leaves"]["fx:EQ"]["evidence"] = None
+        else:
+            t["leaves"]["fx:EQ"]["evidence"] = []
+        tp = _write_json(t, root / f"cf-{mode}.json")
+        out = root / f"out-{mode}"
+        r = run_tool(REPO, out, leaf_table=tp, integration_ledger=led, tool=tool)
+        assert r.returncode == 0, f"{mode}: must downgrade, not crash: {r.stderr}"
+        rows = _rows_by_path(out)
+        s1 = {p for p, x in rows.items() if x["headline_status"] == "supported"}
+        still = sorted(p for p in affected if rows[p]["fx_leaves_gate"] == "PASS")
+        _targeted(not still,
+                  f"evidence {mode}: {len(still)}/{len(affected)} reached "
+                  "EQ gates remain PASS on an evidence-free claim")
+        for p in affected:
+            _targeted("leaf_evidence_missing:fx:EQ" in rows[p]["reasons"],
+                      f"evidence {mode}: {p} has no named reason")
+        _targeted(s1 == s0 - affected,
+                  f"evidence {mode}: supported set not exactly baseline - "
+                  "affected")
+        cov = json.loads((out / "coverage.json").read_text(encoding="utf-8"))
+        _targeted(cov["leaf_ledger"]["leaves"]["fx:EQ"]["evidence_state"]
+                  == "MISSING", f"evidence {mode}: ledger not MISSING")
+        transcript.append(f"    evidence {mode:<6}: reached EQ gates "
+                          f"{sorted({rows[p]['fx_leaves_gate'] for p in affected})} "
+                          f"supported {len(s1)} (= baseline - {len(affected & s0)})"
+                          " reason leaf_evidence_missing:fx:EQ")
+    for name, bad in (("string", "oops"), ("bad-item", [{"path": 1}]),
+                      ("short-sha", [{"path": "x", "sha256": "ab"}])):
+        t = json.loads(json.dumps(table))
+        t["leaves"]["fx:EQ"]["evidence"] = bad
+        tp = _write_json(t, root / f"cf-bad-{name}.json")
+        out = root / f"out-bad-{name}"
+        r = run_tool(REPO, out, leaf_table=tp, integration_ledger=led, tool=tool)
+        assert r.returncode == 2, f"malformed {name}: rc={r.returncode}"
+        assert not (out / "per-preset.csv").exists(), name
+        assert not (out / "coverage.json").exists(), name
+    transcript.append("    malformed evidence (string / bad item / short sha): "
+                      "REFUSED exit 2, no output written")
+
+
+def _affected_for(section: str, key: str, b: dict, graphs: dict) -> set:
+    out = set()
+    for p, x in b.items():
+        if x["compile_gate"] != "PASS":
+            continue
+        if section == "routing_leaves":
+            col = x["routing_leaves_gate"]
+            g = graphs[p]["g"]
+            fxd = g.get("fxd", 0)
+            if col and any(fx["r"] == key and fx.get("on") == 1
+                           and not (fxd & (1 << fx["i"]))
+                           for fx in g.get("fx", [])):
+                out.add(p)
+        else:
+            if x["fx_leaves_gate"] and f"(aw{key})" in x["fx_required"]:
+                out.add(p)
+    return out
+
+
+AW_MIRROR_KEY = "49"
+AW_MIRROR_N = 6
+
+
+def _aw_mirror(dest: Path, base_rows: dict, graphs: dict) -> Path:
+    """Symlink mirror of the repo whose corpus/normalized/graphs.jsonl has an
+    Airwindows slot (streamed id AW_MIRROR_KEY) enabled on the first
+    AW_MIRROR_N supported presets that have an Off slot. Synthetic."""
+    chosen = {}
+    for p in sorted(base_rows):
+        if len(chosen) == AW_MIRROR_N:
+            break
+        if base_rows[p]["headline_status"] != "supported":
+            continue
+        for fx in graphs[p]["g"].get("fx", []):
+            if fx.get("on") == 0 and fx.get("tn") == "Off":
+                chosen[p] = fx["i"]
+                break
+    assert chosen, "no supported preset with an Off slot for the AW mirror"
+    dest.mkdir(parents=True)
+    for child in REPO.iterdir():
+        if child.name in (".git", ".loom", "corpus"):
+            continue
+        (dest / child.name).symlink_to(child)
+    (dest / "corpus/normalized").mkdir(parents=True)
+    for child in (REPO / "corpus").iterdir():
+        if child.name != "normalized":
+            (dest / "corpus" / child.name).symlink_to(child)
+    for child in (REPO / "corpus/normalized").iterdir():
+        if child.name != "graphs.jsonl":
+            (dest / "corpus/normalized" / child.name).symlink_to(child)
+    lines = []
+    with open(REPO / pc.GRAPH_DEFAULT, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            e = json.loads(line)
+            if e["p"] in chosen:
+                for fx in e["g"]["fx"]:
+                    if fx["i"] == chosen[e["p"]]:
+                        fx.update({"on": 1, "tn": "Airwindows",
+                                   "aw": int(AW_MIRROR_KEY),
+                                   "awn": "SyntheticAW"})
+            lines.append(json.dumps(e, sort_keys=True, separators=(",", ":")))
+    (dest / pc.GRAPH_DEFAULT).write_text("\n".join(lines) + "\n",
+                                         encoding="utf-8")
+    return dest
+
+
+def scenario_section(root: Path, tool: Path, section: str, mapping: str,
+                     transcript) -> None:
+    """Routing / Airwindows leaf in the synthetic world, made ready with a
+    valid pin (section-local record, or a declared canonical mapping), then
+    its pin is corrupted / its file removed."""
+    assert section in ("routing_leaves", "airwindows_leaves")
+    assert mapping in ("local", "canonical")
+    cf = counterfactual_table(root / "counterfactual.json")
+    led = ledger_for(cf)
+    table = json.loads(cf.read_text(encoding="utf-8"))
+    graphs = _graphs()
+    base0 = root / "base0"
+    rp, drift = REPO, False
+    r = run_tool(REPO, base0, leaf_table=cf, integration_ledger=led, tool=tool)
+    assert r.returncode == 0, r.stderr
+    b0 = _rows_by_path(base0)
+    if section == "airwindows_leaves":
+        # No compiled corpus preset requires an Airwindows effect, so no
+        # Airwindows gate is reachable in the real corpus. Reach it in a
+        # DECLARED SYNTHETIC mirror whose graph input enables an Airwindows
+        # slot on a few supported presets (scratch only; never published).
+        rp, drift = _aw_mirror(root / "mirror", b0, graphs), True
+        cf = counterfactual_table(root / "cf-aw" / "counterfactual.json", rp)
+        led = ledger_for(cf)
+        table = json.loads(cf.read_text(encoding="utf-8"))
+        graphs = {}
+        with open(rp / pc.GRAPH_DEFAULT, encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    e = json.loads(line)
+                    graphs[e["p"]] = e
+        base0 = root / "base0-aw"
+        r = run_tool(rp, base0, leaf_table=cf, integration_ledger=led,
+                     allow_drift=True, tool=tool)
+        assert r.returncode == 0, r.stderr
+        b0 = _rows_by_path(base0)
+    s_all = {p for p, x in b0.items() if x["headline_status"] == "supported"}
+    key = None
+    for k in sorted(table[section]):
+        aff = _affected_for(section, k, b0, graphs)
+        if aff & s_all and (set(b0) - aff):
+            key = k
+            break
+    assert key is not None, f"no {section} entry reaches a supported victim"
+    label = f"{section}[{key}] ({mapping})"
+    ev = root / "evidence-record.md"
+    ev.write_text(f"synthetic {section} {key} evidence record\n",
+                  encoding="utf-8")
+    pin = {"path": str(ev), "sha256": oc.sha256_file(ev)}
+    canon = f"canon:{section}:{key}"
+    t = json.loads(json.dumps(table))
+    entry = t[section][key]
+    if mapping == "local":
+        entry["evidence"] = [dict(pin)]
+    else:
+        entry.pop("evidence", None)
+        entry["canonical_leaf"] = canon
+        t["leaves"][canon] = {"landed": True, "evidence": [dict(pin)],
+                              "verification": dict(PASS_VERIF)}
+    good = _write_json(t, root / "cf-good.json")
+    base = root / "base"
+    r = run_tool(rp, base, leaf_table=good, integration_ledger=led,
+                 allow_drift=drift, tool=tool)
+    assert r.returncode == 0, r.stderr
+    b = _rows_by_path(base)
+    s0 = {p for p, x in b.items() if x["headline_status"] == "supported"}
+    affected = _affected_for(section, key, b, graphs)
+    col = "routing_leaves_gate" if section == "routing_leaves" else "fx_leaves_gate"
+    victims = affected & s0
+    assert affected and victims, f"{label}: empty affected/victim set"
+    assert all(b[p][col] == "PASS" for p in affected), label
+    cov = json.loads((base / "coverage.json").read_text(encoding="utf-8"))
+    assert str(ev) in cov["inputs"], f"{label}: pin absent from provenance"
+    transcript.append(f"    {label}: valid pin -> affected={len(affected)} "
+                      f"(gates PASS), supported victims={len(victims)}, "
+                      "pin in provenance")
+    prefix = (f"stale_leaf:routing:{key}(" if section == "routing_leaves"
+              else f"stale_leaf:fx:Airwindows:aw{key}-")
+    for how in ("hash", "missing"):
+        t2 = json.loads(json.dumps(t))
+        tgt = (t2[section][key] if mapping == "local" else t2["leaves"][canon])
+        if how == "hash":
+            tgt["evidence"][0]["sha256"] = oc.sha256_file(
+                REPO / "reports/sxt-024/EVIDENCE.md")
+        else:
+            tgt["evidence"][0]["path"] = str(root / "evidence-absent.md")
+        tp = _write_json(t2, root / f"cf-{how}.json")
+        out = root / f"out-{how}"
+        r = run_tool(rp, out, leaf_table=tp, integration_ledger=led,
+                     allow_drift=drift, tool=tool)
+        assert r.returncode == 0, f"{label} {how}: must downgrade: {r.stderr}"
+        rows = _rows_by_path(out)
+        s1 = {p for p, x in rows.items() if x["headline_status"] == "supported"}
+        notstale = sorted(p for p in affected if rows[p][col] != "STALE")
+        _targeted(not notstale, f"{label} {how}: {len(notstale)}/"
+                  f"{len(affected)} affected gates not STALE")
+        for p in affected:
+            _targeted(prefix in rows[p]["reasons"],
+                      f"{label} {how}: {p} lacks reason {prefix}")
+        _targeted(s1 == s0 - affected,
+                  f"{label} {how}: supported set not exactly baseline - "
+                  "affected")
+        for p in victims:
+            _targeted(rows[p]["headline_status"] == "unresolved",
+                      f"{label} {how}: victim {p} not unresolved")
+        for p in set(b) - affected:
+            _targeted(rows[p] == b[p],
+                      f"{label} {how}: unaffected row {p} changed")
+        transcript.append(f"    {label} {how:<7}: affected gates -> STALE "
+                          f"({len(affected)}); supported {len(s0)} -> {len(s1)}"
+                          f"; victims unresolved; {len(set(b) - affected)} "
+                          "unaffected rows byte-equal")
+
+
+def _mutant_tool(tag: str, old: str, new: str) -> Path:
+    """Temporary copy of the publisher with one pre-#432 shortcut restored.
+    The replacement must match exactly once or the control is not live."""
+    src = (REPO / "tools/publish_coverage.py").read_text(encoding="utf-8")
+    assert src.count(old) == 1, f"mutant {tag}: anchor not found exactly once"
+    d = NC_ROOT / f"mutant-{tag}"
+    (d / "tools").mkdir(parents=True)
+    (d / "tools/publish_coverage.py").write_text(src.replace(old, new),
+                                                 encoding="utf-8")
+    (d / "oracle").symlink_to(REPO / "oracle")
+    (d / "refusal.py").symlink_to(REPO / "refusal.py")
+    return d / "tools/publish_coverage.py"
+
+
+FALLBACK = ('return {"landed": bool(lf.get("landed")), '
+            '"ready": bool(lf.get("landed")) and leaf_ready(lf), '
+            '"stale": False, "unevidenced": False, "stale_detail": "", '
+            '"verification": lf.get("verification", {})}')
+
+
+def control_evidence_readiness(transcript) -> None:
+    transcript.append("NC-EVIDENCE-READINESS: every coverage leaf/gate "
+                      "readiness claim needs current evidence (#432)")
+    root = NC_ROOT / "evidence-readiness"
+    scenario_ordinary(root / "ordinary", TOOL, transcript)
+    for section in ("routing_leaves", "airwindows_leaves"):
+        for mapping in ("local", "canonical"):
+            scenario_section(root / f"{section}-{mapping}", TOOL, section,
+                             mapping, transcript)
+
+    # live failure controls: each restored shortcut must FAIL its targeted
+    # assertion; a control that changes no reached gate is FAIL.
+    sec_old = "    return build_leaf_state(repo, lf, owner)\n"
+    can_old = "        return leaf_states[canon]\n"
+    mutants = [
+        ("empty-list-shortcut", "if require and not pins:", "if False:",
+         lambda tool, tr: scenario_ordinary(root / "m1", tool, tr)),
+        ("stale-false-fallback-routing", sec_old,
+         f'    if section == "routing_leaves":\n        {FALLBACK}\n' + sec_old,
+         lambda tool, tr: scenario_section(
+             root / "m2", tool, "routing_leaves", "local", tr)),
+        ("stale-false-fallback-airwindows", sec_old,
+         f'    if section == "airwindows_leaves":\n        {FALLBACK}\n' + sec_old,
+         lambda tool, tr: scenario_section(
+             root / "m3", tool, "airwindows_leaves", "local", tr)),
+        ("canonical-mapping-ignored", can_old,
+         f"        {FALLBACK}\n",
+         lambda tool, tr: scenario_section(
+             root / "m4", tool, "routing_leaves", "canonical", tr)),
+    ]
+    for tag, old, new, scenario in mutants:
+        tool = _mutant_tool(tag, old, new)
+        sink = []
+        try:
+            scenario(tool, sink)
+        except AssertionError as e:
+            msg = str(e)
+            assert msg.startswith(f"{TARGETED}:"), (
+                f"live control {tag}: failed for an untargeted reason "
+                f"(CONTROL-BROKEN): {msg}")
+            transcript.append(f"    live control {tag}: mutated copy FAILS "
+                              f"the targeted assertion ({msg[:110]})")
+        else:
+            raise AssertionError(
+                f"live control {tag}: mutated copy passed every targeted "
+                "assertion (CONTROL-BROKEN: changed no reached gate)")
+    transcript.append("    PASS: absent/null/empty evidence never ready; "
+                      "stale section/canonical evidence STALEs every reached "
+                      "gate; restored shortcuts each fail their assertion")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--transcript",
@@ -725,7 +1088,8 @@ def main() -> int:
                     help="run only the named control(s): stale_hash, "
                          "stale_missing, row_missing, sha_disagree, "
                          "rng_exclusion, f1_original_stage, "
-                         "voice_pin_corrupt, integration_gate. Used by #122 to record its own "
+                         "voice_pin_corrupt, integration_gate, "
+                         "evidence_readiness. Used by #122 to record its own "
                          "gate control under reports/SXT-028-rng/.")
     args = ap.parse_args()
 
@@ -753,6 +1117,7 @@ def main() -> int:
         control_f1_original_stage,
         control_voice_pin_corrupt,
         control_integration_gate,
+        control_evidence_readiness,
     ]
     if args.only:
         wanted = set(args.only)
