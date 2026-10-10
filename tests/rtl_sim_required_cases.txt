@@ -28,6 +28,10 @@
 # -- deleting a test would then delete its expectation too. A deliberate
 # rename edits the entry in the same change as the test; adding, removing or
 # re-scoping an entry is a reviewed coverage change and the PR must say so.
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_chorus.py]
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_reverb2.py]
+tests/test_compare_rtl_model_live.py::test_comparator_reproduces_committed_verdict[compare_rtl_model_rf_global2.py]
+tests/test_compare_rtl_model_live.py::test_failure_control_mutated_rtl_fails_the_scratch_run[compare_rtl_model_rf_global2.py]
 tests/test_halfband_d2_voice.py::test_negative_control_rtl_branch_order_mutant_fails_exactness
 tests/test_halfband_d2_voice.py::test_rtl_vs_model_exact_after_the_coordinated_fix
 tests/test_halfband_limit_cycle.py::test_rtl_copies_reproduce_the_settled_amplitude_exactly
