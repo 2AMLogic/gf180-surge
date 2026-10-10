@@ -33,22 +33,34 @@ addr = (wpos + k) & (2^18 − 1)                        // writes
 Addresses wrap the 2^18 ring (the engine's `& (max_delay_length−1)` with
 the +12 guard words unused by the masked addressing).
 
-## Measured traffic (per stereo instance, per 32-sample frame)
+## Measured traffic (per stereo instance)
 
-| Direction | Count | Derivation |
-|---|---|---|
-| reads | **24** (12-tap sinc × 2 channels) | `Delay.h:365-378` (3×4 SIMD lanes = 12 taps/channel) |
-| writes | **64** (32 samples × 2 channels) | `Delay.h:434-441` |
-| total | 88 accesses/frame/instance | counted by the RTL sim (`er`/`ew` trace fields) and the model (`ext_reads`/`ext_writes`) |
+One basis throughout: counts are words per stereo Delay instance, stated
+per sample and, equivalently, per 32-sample block (= per sample × 32).
+
+| Direction | Per sample | Per 32-sample block | Derivation |
+|---|---|---|---|
+| reads | **24** (12-tap sinc × 2 channels) | **768** (24 × 32) | `Delay.h:365-378` (3×4 SIMD lanes = 12 taps/channel); model `ext_reads += TAP_READS * 2` inside the per-sample loop of `DelayEffect.process_block` |
+| writes | **2** (1 per channel) | **64** (32 samples × 2 channels) | `Delay.h:434-441`; model `ext_writes += BLOCK * 2` once per block |
+| total | **26** | **832** | counted by the RTL sim (`er`/`ew` trace fields) and the model (`ext_reads`/`ext_writes`) |
+
+Arithmetic check against the committed PR #44 counters
+(`reports/sxt-023/artifacts/ext_mem_traffic.json`): 6,750,720 reads / 768
+= 562,560 writes / 64 = 8,790 blocks. That artifact's
+`per_frame_per_instance` block and
+`frames_rendered: 8550`, and `reports/sxt-023/EVIDENCE.md` row A6, are
+sha256-pinned historical records that mixed a per-sample read count with
+a per-block write count; they are superseded by
+`reports/sxt-023/followup.md` (issue #367) and are not edited. This is a
+metadata-consistency statement only, not an RTL or hardware measurement.
 
 vs SXT-016 `probe_fx_delay` (E1/E2/E3): the probe's logical 6r+2w
-undercounted the physical tap reads (24r) and its naive-physical 24r+2w
-matches this measurement's read count; the write count here is 64 words
-(32 samples × 2 channels) — the probe's per-frame accounting used the same
-per-sample frame basis. Reconciliation: the SXT-016 "window cache" estimate
+undercounted the physical tap reads; its naive-physical 24r+2w (its "per
+frame" is one stereo sample frame) matches this table's per-sample basis.
+Reconciliation: the SXT-016 "window cache" estimate
 (~2r+2w with a 4-word cache line) does NOT apply to this tap pattern (the
 12-tap window spans 12 consecutive words = 3 cache lines) — the measured
-24r+2w stands as the physical bound; a line-placed burst cache would fetch
+24r+2w per sample stands as the physical bound; a line-placed burst cache would fetch
 12 consecutive words per tap window (≤ 4 lines of 64 B per channel per
 sample, amortizable across the 32-sample frame to ~12 line fills = 768 B
 read/frame/instance worst case, 1,536 B/frame for stereo).
@@ -71,5 +83,5 @@ step (they are, in schedule order). Writes have no consumer within the
 frame (the tap window never reaches the write position: max read offset =
 wpos − 32 vs write at wpos) — write latency tolerance = unbounded within a
 frame. A longer-latency DRAM (≥ 32 samples) requires the double-buffer
-window cache described above; the traffic budget then stays 24r+2w logical,
-12 line-fill bursts physical.
+window cache described above; the traffic budget then stays 24r+2w per sample
+(768r+64w per 32-sample block) logical, 12 line-fill bursts physical.
