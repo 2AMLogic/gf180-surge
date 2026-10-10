@@ -366,6 +366,49 @@ def test_malformed_evidence_refuses_before_output(tmp_path, bad):
     assert not (out / "per-preset.csv").exists()
 
 
+def _first_key(table, section):
+    return next(iter(table[section]))
+
+
+@pytest.mark.parametrize("section", ["routing_leaves", "airwindows_leaves"])
+@pytest.mark.parametrize("bad", ["oops", {}, [{"path": "x", "sha256": "z" * 64}]])
+def test_canonical_mapping_still_validates_section_evidence(tmp_path, section, bad):
+    """A canonical_leaf supplies readiness but must not bypass the entry's own
+    evidence shape check: malformed evidence REFUSEs (exit 2), no output."""
+    table = load_table()
+    key = _first_key(table, section)
+    table[section][key]["canonical_leaf"] = "fx:EQ"
+    table[section][key]["evidence"] = bad
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = tmp_path / "out"
+    r = publish(str(out), leaf_table=str(tp))
+    assert r.returncode == 2, r.stderr
+    assert "Traceback" not in r.stderr
+    assert not (out / "coverage.json").exists()
+    assert not (out / "per-preset.csv").exists()
+
+
+def test_non_hex_sha256_pin_refuses_but_wellformed_mismatch_is_stale(tmp_path):
+    table = load_table()
+    pin = table["leaves"]["fx:EQ"]["evidence"][0]
+    pin["sha256"] = "z" * 64
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = tmp_path / "out"
+    r = publish(str(out), leaf_table=str(tp))
+    assert r.returncode == 2, r.stderr
+    assert not (out / "coverage.json").exists()
+    # Control: a well-formed but wrong digest still publishes, as STALE.
+    pin["sha256"] = "0" * 64
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out2 = str(tmp_path / "out2")
+    assert publish(out2, leaf_table=str(tp)).returncode == 0
+    with open(os.path.join(out2, "coverage.json"), encoding="utf-8") as f:
+        cov = json.load(f)
+    assert cov["leaf_ledger"]["leaves"]["fx:EQ"]["evidence_state"] == "STALE"
+
+
 def test_unlanded_placeholders_stay_non_pass_with_empty_evidence():
     """Empty evidence is legitimate on an unlanded placeholder and must stay
     so: the committed entries carry no pins and none authorizes PASS."""

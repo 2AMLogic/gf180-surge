@@ -277,6 +277,9 @@ def section_leaf_state(repo: Path, table: dict, leaf_states: dict,
     fallback."""
     canon = lf.get("canonical_leaf")
     owner = f"{section}[{key}]"
+    # The entry's own evidence shape is validated even when a canonical
+    # record supplies readiness: provenance walks it unconditionally.
+    evidence_pins(owner, lf.get("evidence"))
     if canon is not None:
         if not isinstance(canon, str) or canon not in leaf_states:
             raise Refuse(f"{owner}: canonical_leaf {canon!r} is not a record "
@@ -320,7 +323,8 @@ def fx_placement_order(g: dict) -> list:
 def _pin_ok(item) -> bool:
     return (isinstance(item, dict) and isinstance(item.get("path"), str)
             and isinstance(item.get("sha256"), str)
-            and len(item["sha256"]) == 64)
+            and len(item["sha256"]) == 64
+            and all(c in "0123456789abcdef" for c in item["sha256"]))
 
 
 def load_integration_ledger(path: Path, by_path: dict,
