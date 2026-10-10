@@ -117,3 +117,19 @@ def test_cli_exit_codes(tmp_path, capsys):
     _write(os.path.join(d, "a.json"), {"status": "GREEN"})
     assert aud.main(["--reports", d]) == 1
     assert "VIOLATION" in capsys.readouterr().out
+
+
+def test_sxt013_dry_run_status_stays_not_listening_evidence(allow):
+    # The SXT-013 machine dry-run is allowlisted as NOT_RUN (human listening
+    # did not run), never a pass; `comparison: dry` is a render-kind descriptor.
+    assert aud.classify("status", "DRY_RUN_NOT_HUMAN_LISTENING", allow)[:2] == (
+        "allowlisted", "NOT_RUN")
+    assert aud.classify("comparison", "dry", allow)[:2] == (
+        "allowlisted", "NON_VERDICT")
+    # Live control: without the entry, the committed SXT-013 record fails.
+    a = copy.deepcopy(allow)
+    del a["keys"]["status"]["DRY_RUN_NOT_HUMAN_LISTENING"]
+    res = aud.audit(aud.DEFAULT_REPORTS, a)
+    assert not res["ok"]
+    assert ("status", "DRY_RUN_NOT_HUMAN_LISTENING") in [
+        (k, t) for k, t, _ in res["violations"]]

@@ -135,6 +135,10 @@
       "class_state_unverified": {
         "to": "OPEN",
         "reason": "Free-text SXT-028g reconciliation note; verdict class undecided."
+      },
+      "DRY_RUN_NOT_HUMAN_LISTENING": {
+        "to": "NOT_RUN",
+        "reason": "SXT-013 tools/listening_session.py --dry-run session status: a scripted machine exercise with placeholder ratings. Human listening was not run; never listening evidence and counts toward no acceptance (contracts/fidelity-policy-DRAFT.md)."
       }
     },
     "verdict": {
@@ -189,6 +193,11 @@
         "reason": "Tail-shape characterization outcome; verdict class undecided."
       }
     },
-    "comparison": {}
+    "comparison": {
+      "dry": {
+        "to": "NON_VERDICT",
+        "reason": "SXT-013 listening-session descriptor naming the comparison render path (dry, per the comparison-render rule); it names an audio kind and is not a verdict."
+      }
+    }
   }
 }
