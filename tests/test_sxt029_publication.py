@@ -313,5 +313,167 @@ def test_stale_pin_downgrades_affected_presets(tmp_path):
     assert bad_cov["totals"]["supported"] == 0
 
 
+# ------------------------------------- evidence-backed readiness (#432)
+
+def _eq_rows_pass(rows):
+    return {p for p, r in rows.items()
+            if "EQ" in (r["fx_required"] or "").split(";")
+            and r["fx_leaves_gate"] == "PASS"}
+
+
+@pytest.mark.parametrize("mode", ["absent", "null", "empty"])
+def test_ready_leaf_without_evidence_is_never_pass(tmp_path, mode):
+    """Removing / nulling / emptying the evidence of a landed PASS/PASS leaf
+    must not leave any reached gate PASS (it used to: the empty-list shortcut
+    in evidence_state returned OK)."""
+    good = str(tmp_path / "good")
+    assert publish(good).returncode == 0
+    baseline = _eq_rows_pass(read_rows(good))
+    assert baseline, "no reached EQ PASS gate -- control not live"
+    table = load_table()
+    if mode == "absent":
+        del table["leaves"]["fx:EQ"]["evidence"]
+    elif mode == "null":
+        table["leaves"]["fx:EQ"]["evidence"] = None
+    else:
+        table["leaves"]["fx:EQ"]["evidence"] = []
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = str(tmp_path / "out")
+    r = publish(out, leaf_table=str(tp))
+    assert r.returncode == 0, r.stderr
+    rows = read_rows(out)
+    for p in baseline:
+        assert rows[p]["fx_leaves_gate"] == "NO_VERDICT", p
+        assert "leaf_evidence_missing:fx:EQ" in rows[p]["reasons"], p
+        assert rows[p]["headline_status"] != "supported", p
+    with open(os.path.join(out, "coverage.json"), encoding="utf-8") as f:
+        cov = json.load(f)
+    assert cov["leaf_ledger"]["leaves"]["fx:EQ"]["evidence_state"] == "MISSING"
+
+
+@pytest.mark.parametrize("bad", ["oops", [{"path": 1}],
+                                 [{"path": "x", "sha256": "ab"}]])
+def test_malformed_evidence_refuses_before_output(tmp_path, bad):
+    table = load_table()
+    table["leaves"]["fx:EQ"]["evidence"] = bad
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = tmp_path / "out"
+    r = publish(str(out), leaf_table=str(tp))
+    assert r.returncode == 2, r.stderr
+    assert not (out / "coverage.json").exists()
+    assert not (out / "per-preset.csv").exists()
+
+
+def _first_key(table, section):
+    return next(iter(table[section]))
+
+
+@pytest.mark.parametrize("section", ["routing_leaves", "airwindows_leaves"])
+@pytest.mark.parametrize("bad", ["oops", {}, [{"path": "x", "sha256": "z" * 64}]])
+def test_canonical_mapping_still_validates_section_evidence(tmp_path, section, bad):
+    """A canonical_leaf supplies readiness but must not bypass the entry's own
+    evidence shape check: malformed evidence REFUSEs (exit 2), no output."""
+    table = load_table()
+    key = _first_key(table, section)
+    table[section][key]["canonical_leaf"] = "fx:EQ"
+    table[section][key]["evidence"] = bad
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = tmp_path / "out"
+    r = publish(str(out), leaf_table=str(tp))
+    assert r.returncode == 2, r.stderr
+    assert "Traceback" not in r.stderr
+    assert not (out / "coverage.json").exists()
+    assert not (out / "per-preset.csv").exists()
+
+
+def test_non_hex_sha256_pin_refuses_but_wellformed_mismatch_is_stale(tmp_path):
+    table = load_table()
+    pin = table["leaves"]["fx:EQ"]["evidence"][0]
+    pin["sha256"] = "z" * 64
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = tmp_path / "out"
+    r = publish(str(out), leaf_table=str(tp))
+    assert r.returncode == 2, r.stderr
+    assert not (out / "coverage.json").exists()
+    # Control: a well-formed but wrong digest still publishes, as STALE.
+    pin["sha256"] = "0" * 64
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out2 = str(tmp_path / "out2")
+    assert publish(out2, leaf_table=str(tp)).returncode == 0
+    with open(os.path.join(out2, "coverage.json"), encoding="utf-8") as f:
+        cov = json.load(f)
+    assert cov["leaf_ledger"]["leaves"]["fx:EQ"]["evidence_state"] == "STALE"
+
+
+def test_unlanded_placeholders_stay_non_pass_with_empty_evidence():
+    """Empty evidence is legitimate on an unlanded placeholder and must stay
+    so: the committed entries carry no pins and none authorizes PASS."""
+    table = load_table()
+    for section in ("routing_leaves", "airwindows_leaves"):
+        for key, lf in table[section].items():
+            if not lf.get("landed"):
+                assert not lf.get("evidence"), (section, key)
+    rows = read_rows(COV)
+    assert not any(r["headline_status"] == "supported" for r in rows.values())
+
+
+def test_pass_gate_without_evidence_is_not_pass(tmp_path):
+    table = load_table()
+    table["gates"]["fidelity_freeze"]["status"] = "PASS"
+    table["gates"]["fidelity_freeze"]["evidence"] = []
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    out = str(tmp_path / "out")
+    assert publish(out, leaf_table=str(tp)).returncode == 0
+    rows = read_rows(out)
+    gated = [r for r in rows.values() if r["fidelity_contract_gate"]]
+    assert gated
+    for r in gated:
+        assert r["fidelity_contract_gate"] == "NO_VERDICT"
+        assert "gate_evidence_missing:fidelity_freeze" in r["reasons"]
+        assert r["headline_status"] != "supported"
+
+
+def test_unknown_canonical_leaf_refuses(tmp_path):
+    table = load_table()
+    table["routing_leaves"]["ains3"]["canonical_leaf"] = "no-such-leaf"
+    tp = tmp_path / "t.json"
+    tp.write_text(json.dumps(table), encoding="utf-8")
+    r = publish(str(tmp_path / "out"), leaf_table=str(tp))
+    assert r.returncode == 2 and "canonical_leaf" in r.stderr
+
+
+def _ncc_scratch(monkeypatch, tmp_path):
+    import coverage_negative_controls as ncc
+    monkeypatch.setattr(ncc, "NC_ROOT", tmp_path / "nc")
+    return ncc
+
+
+def test_live_control_empty_list_shortcut_fails_targeted_assertion(
+        monkeypatch, tmp_path):
+    """The real publisher passes the ordinary-leaf scenario; a temporary copy
+    restoring the empty-list shortcut fails its TARGETED assertion."""
+    ncc = _ncc_scratch(monkeypatch, tmp_path)
+    ncc.scenario_ordinary(tmp_path / "real", ncc.TOOL, [])
+    mut = ncc._mutant_tool("empty", "if require and not pins:", "if False:")
+    with pytest.raises(AssertionError, match=ncc.TARGETED):
+        ncc.scenario_ordinary(tmp_path / "mut", mut, [])
+
+
+def test_live_control_stale_false_fallback_fails_targeted_assertion(
+        monkeypatch, tmp_path):
+    ncc = _ncc_scratch(monkeypatch, tmp_path)
+    old = "    return build_leaf_state(repo, lf, owner)\n"
+    mut = ncc._mutant_tool(
+        "fallback", old,
+        f'    if section == "routing_leaves":\n        {ncc.FALLBACK}\n' + old)
+    with pytest.raises(AssertionError, match=ncc.TARGETED):
+        ncc.scenario_section(tmp_path / "mut", mut, "routing_leaves", "local", [])
+
+
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(pytest.main([__file__, "-q"]))
