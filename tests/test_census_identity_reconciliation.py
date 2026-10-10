@@ -73,6 +73,20 @@ def _nonexistent(census):
     _write(census, fields, rows)
 
 
+def _pad_leading(census):
+    fields, rows = _read(census)
+    r = rows[_parsed(rows, "contributor")[0]]
+    r["path"] = " " + r["path"]
+    _write(census, fields, rows)
+
+
+def _pad_trailing(census):
+    fields, rows = _read(census)
+    r = rows[_parsed(rows, "contributor")[0]]
+    r["path"] = r["path"] + " "
+    _write(census, fields, rows)
+
+
 def _blob(census):
     fields, rows = _read(census)
     rows[_parsed(rows, "contributor")[0]]["git_blob_sha1"] = "0" * 40
@@ -97,6 +111,8 @@ def _swap_banks(census):
 IDENTITY_MUTATIONS = {
     "dup_and_drop": (_dup_and_drop, ("duplicate path", "missing from")),
     "nonexistent_path": (_nonexistent, ("path set mismatch",)),
+    "leading_space_path": (_pad_leading, ("path set mismatch",)),
+    "trailing_space_path": (_pad_trailing, ("path set mismatch",)),
     "blob_hash": (_blob, ("git_blob_sha1 mismatch",)),
     "size": (_size, ("size mismatch",)),
     "bank_swap": (_swap_banks, ("derived from its path root",)),

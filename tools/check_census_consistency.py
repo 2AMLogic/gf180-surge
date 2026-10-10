@@ -122,8 +122,8 @@ def reconcile_identity(entries, rows):
     seen = Counter()
     csv_ident = {}
     for row in rows:
-        path = (row.get("path") or "").strip()
-        if not path:
+        path = row.get("path") or ""
+        if not path.strip():
             failures.append("per-preset.csv: row with empty path")
             continue
         seen[path] += 1
