@@ -24,7 +24,7 @@ from model.effects.run_fx_model import (  # noqa: E402
 )
 from model.effects.qmath import to_q  # noqa: E402
 from model.effects.delay.delay_model import db_to_linear_d  # noqa: E402
-from tools.compare_rtl_model_fx import parse_tb_trace, compare  # noqa: E402
+from tools.compare_rtl_model_fx import parse_tb_trace, compare, NO_COVERAGE  # noqa: E402
 
 PCONFIG = {"metallic": 1, "fm_bass_1": 2, "dexie": 3}
 
@@ -155,7 +155,8 @@ def main():
         "slug": slug, "sim": args.sim, "tb": os.path.basename(args.tb),
         "settle_blocks": args.settle_blocks, "blocks_total": n_total,
         "samples_total": n_total * 32,
-        "verdict": "PASS" if not fails else "FAIL",
+        "verdict": ("PASS" if not fails else "NO_VERDICT"
+                    if fails == [NO_COVERAGE] else "FAIL"),
         "checked": checked, "mismatches": len(fails),
         "first_failures": fails[:10],
         "sim_seconds": round(sim_time, 2),
