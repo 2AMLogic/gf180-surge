@@ -1,0 +1,391 @@
+{
+ "schema": 1,
+ "doc": "Explicit classification of every tracked rtl/**/*.sv (#434). Never auto-classified by name: a new file fails the lint gate until it is added here by a reviewed edit. 'product' = candidate datapath/control module, NOT demonstrated synthesizable or qualified. Mutant controls take precedence over testbench for mixed names. Groups: one source, one top, empty dependencies/include_dirs/defines/parameter_overrides, declaration-default parameters.",
+ "files": [
+  {
+   "path": "rtl/control/control_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/control/control_top.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/control/tb_control.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/aw-4/logical4_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/aw-4/logical4_mutants.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/aw-4/tb_logical4.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/aw-49/galactic_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/aw-49/tb_galactic.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/fx_line_ext.sv",
+   "class": "sim_model"
+  },
+  {
+   "path": "rtl/effects/reverb1/reverb1_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/reverb1/reverb1_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/reverb1/tb_reverb1.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/rf-rf-ains34/rf_ains34_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/rf-rf-ains34/rf_ains34_mutants.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/rf-rf-ains34/tb_rf_ains34.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/rf-rf-bins12/rf_bins12_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/rf-rf-bins12/rf_bins12_mutants.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/rf-rf-bins12/tb_rf_bins12.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/rf-rf-global2/rf_global2_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/rf-rf-global2/tb_rf_global2.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/rf-rf-global34/rf_global34_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/rf-rf-global34/rf_global34_mutants.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/rf-rf-global34/tb_rf_global34.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/rf-rf-send34/rf_send34_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/effects/rf-rf-send34/rf_send34_mutants.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/rf-rf-send34/tb_rf_send34.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/tb_fx.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/tb_fx_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/tb_fx_shared_line.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/type-chorus/tb_chorus.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/type-conditioner/tb_conditioner.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/type-conditioner/tb_conditioner_mutant_nolimiter.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/type-conditioner/tb_conditioner_mutant_shared.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/effects/type-distortion-sse/tb_distortion_sse.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/type-distortion/tb_distortion.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/type-phaser/tb_phaser.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/effects/type-reverb 2/tb_reverb2.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/instrumentation/ext_mem_instr.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/instrumentation/ext_mem_instr_silence_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/instrumentation/ext_mem_instr_silence_zero_counters_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/instrumentation/ext_mem_instr_throttle_never_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/instrumentation/ext_mem_instr_zero_counters_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/instrumentation/tb_ext_mem_instr.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/integration/tb_sxt025.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/oscillators/classic/classic_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/oscillators/classic/tb_classic.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/oscillators/sine/sine_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/oscillators/sine/tb_sine.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/oscillators/wavetable/tb_wavetable.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/oscillators/wavetable/wavetable_core.sv",
+   "class": "product"
+  },
+  {
+   "path": "rtl/voice/lfo_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/lp12_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/lp24_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/lpmoog_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/tb_kt.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_kt_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/tb_kt_shared_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/tb_lfo.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_lp12.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_lp24.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_lpmoog.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_mw.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_mw_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/tb_pm_mono_st_fp.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_slfo.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_vel.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/tb_voice.sv",
+   "class": "testbench"
+  },
+  {
+   "path": "rtl/voice/voice_broken_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/voice_halfband_order_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/voice_uni_mutant.sv",
+   "class": "mutant_control"
+  },
+  {
+   "path": "rtl/voice/voice_wrongparam_mutant.sv",
+   "class": "mutant_control"
+  }
+ ],
+ "groups": [
+  {
+   "id": "control_top",
+   "source": "rtl/control/control_top.sv",
+   "top": "control_top",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "ext_mem_instr",
+   "source": "rtl/instrumentation/ext_mem_instr.sv",
+   "top": "ext_mem_instr",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "wavetable_core",
+   "source": "rtl/oscillators/wavetable/wavetable_core.sv",
+   "top": "wavetable_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "reverb1_core",
+   "source": "rtl/effects/reverb1/reverb1_core.sv",
+   "top": "reverb1_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "logical4_core",
+   "source": "rtl/effects/aw-4/logical4_core.sv",
+   "top": "logical4_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "galactic_core",
+   "source": "rtl/effects/aw-49/galactic_core.sv",
+   "top": "galactic_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "rf_ains34_core",
+   "source": "rtl/effects/rf-rf-ains34/rf_ains34_core.sv",
+   "top": "rf_ains34_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "rf_bins12_core",
+   "source": "rtl/effects/rf-rf-bins12/rf_bins12_core.sv",
+   "top": "rf_bins12_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "rf_global2_core",
+   "source": "rtl/effects/rf-rf-global2/rf_global2_core.sv",
+   "top": "rf_global2_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "rf_global34_core",
+   "source": "rtl/effects/rf-rf-global34/rf_global34_core.sv",
+   "top": "rf_global34_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  },
+  {
+   "id": "rf_send34_core",
+   "source": "rtl/effects/rf-rf-send34/rf_send34_core.sv",
+   "top": "rf_send34_core",
+   "dependencies": [],
+   "include_dirs": [],
+   "defines": [],
+   "parameter_overrides": []
+  }
+ ]
+}
