@@ -98,6 +98,10 @@ AUDITION_RULE = (
 # Named audition-verification outcomes on an open-mode rating record.
 AUDITION_CONFIRMED = "CONFIRMED_HEARD_BOTH"
 AUDITION_UNCONFIRMED = "AUDITION_UNCONFIRMED_NOT_COUNTED"
+# A fabricated nonempty string some pre-gate records may carry in place of a
+# real method. It is never accepted as a recorded method: the listener must
+# supply nonblank free text, and the eligibility gate rejects this value.
+AUDITION_METHOD_PLACEHOLDER = "external (unspecified)"
 # The only playback outcome that says the player PROCESS completed; it is
 # never evidence that anything was audible.
 PLAYED_PROCESS_OK = "played_process_ok"
@@ -482,8 +486,12 @@ def acceptance_eligibility_problem(record):
         return "listener did not confirm hearing both stimuli"
     if aud.get("verification") != AUDITION_CONFIRMED:
         return f"audition verification is {aud.get('verification')!r}"
-    if not aud.get("method"):
+    method = aud.get("method")
+    if not method:
         return "audition method not recorded"
+    if method == AUDITION_METHOD_PLACEHOLDER:
+        return ("audition method is the unspecified placeholder, not a "
+                "listener-supplied method")
     return None
 
 
@@ -509,6 +517,7 @@ def rate_open(cand, wet, compare, compare_kind, play_mode):
     heard = ask_bool(
         "    did you hear BOTH stimuli just presented? [y/n]: ")
     method = None
+    counts = heard
     if heard:
         both_played = (wet_play["outcome"] == PLAYED_PROCESS_OK
                        and compare_play["outcome"] == PLAYED_PROCESS_OK)
@@ -516,18 +525,28 @@ def rate_open(cand, wet, compare, compare_kind, play_mode):
             method = wet_play["method"]
         else:
             method = input(
-                "    how did you audition the named files? "
-                "(free text, recorded verbatim): ").strip() or \
-                "external (unspecified)"
+                "    how did you audition the named files? (free text, "
+                "recorded verbatim; a nonblank method is required for this "
+                "rating to count): ").strip()
+            if not method:
+                method = input(
+                    "    a NONBLANK audition method is required for this "
+                    "rating to count (free text, recorded verbatim): "
+                    ).strip()
+            if not method:
+                print("    no audition method supplied: this rating will "
+                      "NOT count toward acceptance.")
+                method = None
+                counts = False
     return {
         "ratings": ratings,
-        "counts_toward_acceptance": heard,
+        "counts_toward_acceptance": counts,
         "blind": False,
         "playback": {"wet": wet_play, "comparison": compare_play},
         "audition": {
             "confirmed_heard_both": heard,
             "method": method,
-            "verification": (AUDITION_CONFIRMED if heard
+            "verification": (AUDITION_CONFIRMED if counts
                              else AUDITION_UNCONFIRMED),
         },
     }

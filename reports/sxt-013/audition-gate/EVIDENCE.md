@@ -23,15 +23,21 @@ the eligibility gate rejects such records instead of counting them.
   false`, and the session continues to the next candidate.
 - With `--play off`, a missing player, or failed automatic playback, the
   printed-path manual workflow is preserved: explicit confirmation plus a
-  free-text audition method (recorded verbatim) keeps the rating eligible.
-  Automatic success records the player command as the method.
+  NONBLANK free-text audition method (recorded verbatim) keeps the rating
+  eligible. A blank/whitespace answer is re-prompted once; if still blank the
+  rating stays uncounted (`method: null`,
+  `verification: AUDITION_UNCONFIRMED_NOT_COUNTED`) and the session
+  continues — no placeholder is ever fabricated. Automatic success records
+  the player command as the method.
 - `rate_blind()` records `playback` outcomes for inspectability; blind
   sessions stay supplementary-only regardless (no gate applies, nothing
   counts). Dry-run placeholder records are untouched and remain unqualified.
 - `acceptance_eligibility_problem(record)` is the machine-checkable gate: it
   returns the reason a record is NOT acceptance-eligible, or None. A
   pre-1.1.0-shaped record (unconditional counts flag, no audition fields) is
-  rejected: unrecorded is never inferred as heard.
+  rejected: unrecorded is never inferred as heard. A record whose method is
+  the 1.1.0-era fabricated placeholder `external (unspecified)` is likewise
+  rejected: a placeholder never substitutes for a listener-supplied method.
 - `contracts/fidelity-policy-DRAFT.md` §4 gains the audition-gate bullet
   (a strengthening of the listening contract; nothing weakened).
 
@@ -40,14 +46,15 @@ the eligibility gate rejects such records instead of counting them.
 | Check | Status |
 |---|---|
 | NC5 live negative control: mocked player exits 1, ordinary ratings, no confirmation → not counted; pre-#447 unconditional record rejected by the gate | PASS |
+| Live negative control (review fix): `--play off`, hearing confirmed, blank-then-whitespace method → re-prompted once, NOT counted, `method: null`, gate rejects; blank-then-valid method → counted, supplied text preserved verbatim; placeholder-method record rejected by the gate | PASS |
 | Manual-confirmation success case (`--play off`, external method recorded verbatim) → counted | PASS |
 | Automatic player success + confirmation → counted, method = player; automatic success WITHOUT confirmation → not counted (process ≠ audibility) | PASS |
 | Missing player and launch exception → inspectable outcomes; external confirmation still honored, declinable | PASS |
 | Session continues after an unconfirmed candidate; per-session counts include `audition_unconfirmed_not_counted` | PASS |
 | Blind session records playback, stays supplementary (`acceptance_eligibility_problem` nonzero) | PASS |
-| `tests/test_sxt013_apparatus.py` — 21 tests (8 audition-gate, 13 pre-existing) | PASS (21 passed, python 3.12.3) |
+| `tests/test_sxt013_apparatus.py` — 24 tests (11 audition-gate, 13 pre-existing) | PASS (24 passed, python 3.12.3) |
 | `tests/test_sxt013_listening_cache.py` (#404 cache identity) + `tests/test_byte_frozen_sources.py` | PASS (41 passed) |
-| Registry check | `tools/listening_session.py` is a historical `tool_sha256` stamp (`current_bytes_recorded: false`), not a live pin; no `live_pins` entry covers it — no committed record goes STALE |
+| Registry check | `tools/listening_session.py` is a historical `tool_sha256` stamp (`current_bytes_recorded: false`), not a live pin; no `live_pins` entry covers it — no committed record goes STALE. The review fix also declared the audit-flagged `reports/sxt-013/audition-gate/generate-samples.py` as a tenth historical-provenance entry (it writes the samples' `tool_sha256` as the literal `<omitted>` and stamps no digest); `tests/test_byte_frozen_sources.py` passes with its controls re-aimed at the current prose |
 | Real playback with a real audio device; audibility of any stimulus | NOT_RUN / no claim (bookkeeping only; actual listening remains human work) |
 
 Coverage (harness bookkeeping with mocked players, scripted answers, tiny

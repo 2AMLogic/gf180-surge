@@ -287,6 +287,46 @@ class TestAuditionGate:
         assert rec["playback"]["comparison"]["path"] == str(compare)
         assert ls.acceptance_eligibility_problem(rec) is None
 
+    def test_blank_method_reprompt_still_blank_not_counted(
+            self, stimuli, monkeypatch):
+        # Negative control for the manual/fallback branch: confirming hearing
+        # with --play off and then supplying blank/whitespace methods must
+        # not fabricate a method or let the rating count.
+        wet, compare = stimuli
+        answers = self._ratings_answers(confirm=True, method="")
+        answers.append("   \t ")  # still blank on the re-prompt
+        monkeypatch.setattr("builtins.input", _feed(answers))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "off")
+        assert rec["counts_toward_acceptance"] is False
+        assert rec["audition"]["confirmed_heard_both"] is True
+        assert rec["audition"]["method"] is None
+        assert rec["audition"]["verification"] == ls.AUDITION_UNCONFIRMED
+        problem = ls.acceptance_eligibility_problem(rec)
+        assert problem and "counts_toward_acceptance is false" in problem
+
+    def test_blank_method_reprompt_then_valid_counts_verbatim(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        answers = self._ratings_answers(confirm=True, method="")
+        answers.append("  studio monitors, both files  ")
+        monkeypatch.setattr("builtins.input", _feed(answers))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "off")
+        assert rec["counts_toward_acceptance"] is True
+        assert rec["audition"]["method"] == "studio monitors, both files"
+        assert rec["audition"]["verification"] == ls.AUDITION_CONFIRMED
+        assert ls.acceptance_eligibility_problem(rec) is None
+
+    def test_eligibility_gate_rejects_placeholder_method(self):
+        # The 1.1.0-era fabricated placeholder must never substitute for a
+        # listener-supplied method even when every other field looks valid.
+        rec = {"ratings": {}, "counts_toward_acceptance": True,
+               "blind": False,
+               "audition": {"confirmed_heard_both": True,
+                            "method": ls.AUDITION_METHOD_PLACEHOLDER,
+                            "verification": ls.AUDITION_CONFIRMED}}
+        problem = ls.acceptance_eligibility_problem(rec)
+        assert problem and "placeholder" in problem
+
     def test_auto_process_success_still_needs_confirmation(
             self, stimuli, monkeypatch):
         wet, compare = stimuli

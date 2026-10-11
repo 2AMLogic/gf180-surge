@@ -1,5 +1,8 @@
 # Audition-gate test transcript (issue #447)
 # Date: 2026-10-11 · python 3.12.3 · pytest 9.1.1
+# Doctor re-derivation after the review fix (blank/whitespace audition method
+# no longer fabricated into a counting record; placeholder rejected by the
+# eligibility gate). 24 apparatus tests (11 audition-gate, 13 pre-existing).
 
 ## tests/test_sxt013_apparatus.py (audition-gate classes + pre-existing)
 
@@ -9,35 +12,48 @@ $ python3 -m pytest tests/test_sxt013_apparatus.py -v
 platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
 cachedir: .pytest_cache
 rootdir: /home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-447
-collecting ... collected 21 items
+collecting ... collected 24 items
+
 tests/test_sxt013_apparatus.py::TestDeterminism::test_same_inputs_byte_identical PASSED [  4%]
-tests/test_sxt013_apparatus.py::TestDeterminism::test_committed_artifacts_are_current PASSED [  9%]
-tests/test_sxt013_apparatus.py::TestTamperRefusal::test_refuses_mismatched_census_hash PASSED [ 14%]
-tests/test_sxt013_apparatus.py::TestSlates::test_slate_sizes_and_quotas PASSED [ 19%]
-tests/test_sxt013_apparatus.py::TestSlates::test_both_banks_in_every_profile PASSED [ 23%]
-tests/test_sxt013_apparatus.py::TestSlates::test_pilot_is_subset_of_slate PASSED [ 28%]
-tests/test_sxt013_apparatus.py::TestSlates::test_census_hashes_and_reasons_present PASSED [ 33%]
-tests/test_sxt013_apparatus.py::TestSlates::test_no_popularity_data_field_anywhere PASSED [ 38%]
-tests/test_sxt013_apparatus.py::TestCensusIntegrityHelpers::test_load_census_size PASSED [ 42%]
-tests/test_sxt013_apparatus.py::TestCensusIntegrityHelpers::test_load_graphs_refuses_missing_census_row PASSED [ 47%]
-tests/test_sxt013_apparatus.py::TestListeningHelpers::test_load_slate_rejects_foreign_schema PASSED [ 52%]
-tests/test_sxt013_apparatus.py::TestListeningHelpers::test_wav_rms_and_level_match PASSED [ 57%]
-tests/test_sxt013_apparatus.py::TestListeningHelpers::test_acceptance_mode_string PASSED [ 61%]
-tests/test_sxt013_apparatus.py::TestAuditionGate::test_negative_control_player_exit_nonzero_never_counts PASSED [ 66%]
-tests/test_sxt013_apparatus.py::TestAuditionGate::test_manual_confirmation_success_preserves_play_off PASSED [ 71%]
-tests/test_sxt013_apparatus.py::TestAuditionGate::test_auto_process_success_still_needs_confirmation PASSED [ 76%]
-tests/test_sxt013_apparatus.py::TestAuditionGate::test_auto_success_confirmed_records_player_and_counts PASSED [ 80%]
-tests/test_sxt013_apparatus.py::TestAuditionGate::test_launch_exception_recorded_and_external_confirmation_counts PASSED [ 85%]
-tests/test_sxt013_apparatus.py::TestAuditionGate::test_missing_player_recorded_and_declined_not_counted PASSED [ 90%]
+tests/test_sxt013_apparatus.py::TestDeterminism::test_committed_artifacts_are_current PASSED [  8%]
+tests/test_sxt013_apparatus.py::TestTamperRefusal::test_refuses_mismatched_census_hash PASSED [ 12%]
+tests/test_sxt013_apparatus.py::TestSlates::test_slate_sizes_and_quotas PASSED [ 16%]
+tests/test_sxt013_apparatus.py::TestSlates::test_both_banks_in_every_profile PASSED [ 20%]
+tests/test_sxt013_apparatus.py::TestSlates::test_pilot_is_subset_of_slate PASSED [ 25%]
+tests/test_sxt013_apparatus.py::TestSlates::test_census_hashes_and_reasons_present PASSED [ 29%]
+tests/test_sxt013_apparatus.py::TestSlates::test_no_popularity_data_field_anywhere PASSED [ 33%]
+tests/test_sxt013_apparatus.py::TestCensusIntegrityHelpers::test_load_census_size PASSED [ 37%]
+tests/test_sxt013_apparatus.py::TestCensusIntegrityHelpers::test_load_graphs_refuses_missing_census_row PASSED [ 41%]
+tests/test_sxt013_apparatus.py::TestListeningHelpers::test_load_slate_rejects_foreign_schema PASSED [ 45%]
+tests/test_sxt013_apparatus.py::TestListeningHelpers::test_wav_rms_and_level_match PASSED [ 50%]
+tests/test_sxt013_apparatus.py::TestListeningHelpers::test_acceptance_mode_string PASSED [ 54%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_negative_control_player_exit_nonzero_never_counts PASSED [ 58%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_manual_confirmation_success_preserves_play_off PASSED [ 62%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_blank_method_reprompt_still_blank_not_counted PASSED [ 66%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_blank_method_reprompt_then_valid_counts_verbatim PASSED [ 70%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_eligibility_gate_rejects_placeholder_method PASSED [ 75%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_auto_process_success_still_needs_confirmation PASSED [ 79%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_auto_success_confirmed_records_player_and_counts PASSED [ 83%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_launch_exception_recorded_and_external_confirmation_counts PASSED [ 87%]
+tests/test_sxt013_apparatus.py::TestAuditionGate::test_missing_player_recorded_and_declined_not_counted PASSED [ 91%]
 tests/test_sxt013_apparatus.py::TestAuditionGate::test_blind_records_playback_and_stays_supplementary PASSED [ 95%]
 tests/test_sxt013_apparatus.py::TestAuditionGateSession::test_unconfirmed_candidate_not_counted_session_continues PASSED [100%]
+
+=============================== warnings summary ===============================
 tests/test_sxt013_apparatus.py::TestTamperRefusal::test_refuses_mismatched_census_hash
+  /home/ubuntu/.local/lib/python3.12/site-packages/_pytest/fixtures.py:1313: PytestRemovedIn10Warning: Class-scoped fixture defined as instance method is deprecated.
+  Instance attributes set in this fixture will NOT be visible to test methods,
+  as each test gets a new instance while the fixture runs only once per class.
+  Use @classmethod decorator and set attributes on cls instead.
+  See https://docs.pytest.org/en/stable/deprecations.html#class-scoped-fixture-as-instance-method
+    fixturefunc = resolve_fixture_function(fixturedef, request)
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 21 passed, 1 warning in 4.58s =========================
+======================== 24 passed, 1 warning in 3.57s =========================
 
 ## committed samples regeneration (fake renderer, mocked player)
 
-$ python3 reports/sxt-013/audition-gate/generate-samples.py 2>/dev/null | tail -5
+$ python3 reports/sxt-013/audition-gate/generate-samples.py 2>/dev/null | grep -E "^(sample-session|legacy|done)"
 
 sample-session-player-exit-nonzero-unconfirmed.json: counts=False audition=AUDITION_UNCONFIRMED_NOT_COUNTED wet_playback=player_exit_nonzero
 sample-session-auto-confirmed.json: counts=True audition=CONFIRMED_HEARD_BOTH wet_playback=played_process_ok

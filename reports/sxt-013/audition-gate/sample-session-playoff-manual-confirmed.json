@@ -12,7 +12,7 @@
   },
   "harness": {
     "renderer": "fixtures/render_fixture.py (SXT-012, unmodified)",
-    "repo_commit": "d9cfa923e54f2bf67dcb079de3ff759e3abb7fc6",
+    "repo_commit": "e58490e74062e575ea14f65bfe273018cd90d957",
     "tool": "tools/listening_session.py",
     "tool_sha256": "<omitted>"
   },
@@ -20,7 +20,7 @@
   "level_policy": "level-correct native render levels; no per-clip normalization",
   "mode": "open",
   "operator": "scripted-audition-gate-sample (NOT human listening)",
-  "recorded_at_utc": "2026-10-11T21:54:52+00:00",
+  "recorded_at_utc": "2026-10-11T22:20:31+00:00",
   "records": [
     {
       "audio": {
@@ -51,14 +51,14 @@
         "comparison": {
           "kind": "dry",
           "level_treatment": "native",
-          "path": "/tmp/loom-nt/5c96b2ff-c388-4295-a101-e5447f532ff3/tmp7pk7my9l/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-dry.wav",
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-dry.wav",
           "sha256": "a5d1dcd9b12e8278940d87f19fbddff774ac0603fe5f2e3cf797f7ea186e17ec"
         },
         "rendered_this_session": true,
         "wet": {
           "kind": "wet",
           "level_treatment": "native",
-          "path": "/tmp/loom-nt/5c96b2ff-c388-4295-a101-e5447f532ff3/tmp7pk7my9l/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-wet.wav",
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-wet.wav",
           "sha256": "e8b9b74e280f2ef36112719f2f5117aa3c38c292321ae4cd20cf149a46fa372c"
         }
       },
@@ -79,13 +79,13 @@
           "attempted": false,
           "method": "manual_printed_path",
           "outcome": "not_attempted_play_off",
-          "path": "/tmp/loom-nt/5c96b2ff-c388-4295-a101-e5447f532ff3/tmp7pk7my9l/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-dry.wav"
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-dry.wav"
         },
         "wet": {
           "attempted": false,
           "method": "manual_printed_path",
           "outcome": "not_attempted_play_off",
-          "path": "/tmp/loom-nt/5c96b2ff-c388-4295-a101-e5447f532ff3/tmp7pk7my9l/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-wet.wav"
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-wet.wav"
         }
       },
       "ratings": {
@@ -105,7 +105,7 @@
   "session_id": "20261011-scripted-audition-gate-sample--not-human-open",
   "slate": {
     "artifact": "audition-gate-sample",
-    "path": "/tmp/loom-nt/5c96b2ff-c388-4295-a101-e5447f532ff3/tmp7pk7my9l/slate.json",
+    "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/slate.json",
     "profile": null,
     "sha256": "a92147e9fc91c6d4bbb59d6ec9d3955d1c5b9af8dc948d40a895463aef85334f"
   },
