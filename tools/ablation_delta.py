@@ -27,6 +27,7 @@ agreement is not claimed beyond the reported roundings).
 
 import argparse
 import hashlib
+import io
 import json
 import math
 import os
@@ -194,14 +195,57 @@ def band_energies(x, use_numpy):
     return acc
 
 
-def compare(anchor_path, variant_path, anchor_sc, variant_sc, use_numpy):
-    if anchor_sc["wav"]["sha256"] == variant_sc["wav"]["sha256"]:
-        return {"bit_identical": True, "verdict": "BIT-IDENTICAL",
-                "near_zero_delta_candidate": False}
-    a, na = read_wav(anchor_path)
-    b, nb = read_wav(variant_path)
+def load_validated_wav(path, sidecar, role):
+    """Open one WAV and reconcile it with its sidecar before any use (#438).
+
+    Requires: file present; live sha256 (and byte count, when declared) equal
+    to the sidecar's declared values; mono int16 at SR; nonempty audio.
+    Returns (live_sha256, samples, n_frames). Any failure raises Refuse.
+    """
+    declared = sidecar["wav"]
+    try:
+        with open(path, "rb") as f:
+            raw = f.read()
+    except OSError as e:
+        raise Refuse(f"{role} WAV missing/unreadable ({path}): {e}")
+    live = hashlib.sha256(raw).hexdigest()
+    if live != declared.get("sha256"):
+        raise Refuse(f"{role} WAV bytes changed: live sha256 {live} != declared "
+                     f"{declared.get('sha256')} ({path})")
+    if "bytes" in declared and declared["bytes"] != len(raw):
+        raise Refuse(f"{role} WAV size {len(raw)} != declared {declared['bytes']} ({path})")
+    try:
+        with wave.open(io.BytesIO(raw), "rb") as w:
+            ch, width, rate, nframes = (w.getnchannels(), w.getsampwidth(),
+                                        w.getframerate(), w.getnframes())
+            frames = w.readframes(nframes)
+    except (wave.Error, EOFError) as e:
+        raise Refuse(f"{role} WAV unparseable ({path}): {e}")
+    if ch != 1 or width != 2:
+        raise Refuse(f"{role} WAV {path}: expected mono 16-bit, got {ch} ch / {8 * width}-bit")
+    if rate != SR:
+        raise Refuse(f"{role} WAV {path}: sample rate {rate} Hz != required {SR} Hz")
+    n = len(frames) // 2
+    if n == 0:
+        raise Refuse(f"{role} WAV {path}: empty audio (0 frames)")
+    samples = [v / 32768.0 for v in struct.unpack("<%dh" % n, frames[: 2 * n])]
+    return live, samples, n
+
+
+def load_pair(anchor_path, variant_path, anchor_sc, variant_sc):
+    """Single validated pair-loading path used before the identity shortcut."""
+    ha, a, na = load_validated_wav(anchor_path, anchor_sc, "anchor")
+    hb, b, nb = load_validated_wav(variant_path, variant_sc, "variant")
     if na != nb:
         raise Refuse(f"frame count mismatch: {na} vs {nb} ({variant_path})")
+    return ha, hb, a, b, na
+
+
+def compare(anchor_path, variant_path, anchor_sc, variant_sc, use_numpy):
+    ha, hb, a, b, na = load_pair(anchor_path, variant_path, anchor_sc, variant_sc)
+    if ha == hb:  # validated live digests of validated bytes
+        return {"bit_identical": True, "verdict": "BIT-IDENTICAL",
+                "near_zero_delta_candidate": False}
     max_abs = 0.0
     mean_abs = 0.0
     for xa, xb in zip(a, b):
