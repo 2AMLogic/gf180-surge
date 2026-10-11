@@ -1543,7 +1543,7 @@ def attribute_a_early(ae):
 
 
 def audit_row(runner, carrier, work_root, oracle, surgepy=None,
-              c_runner=offline_c):
+              c_runner=offline_c, tap_bundle=None):
     d = RUNNERS[runner]
     prod = resolve_preroll(runner)
     sc_path = os.path.join(REPO, d["report"], "fixtures",
@@ -1720,6 +1720,9 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
                       "no pre-roll is chosen by score."
                       % (v1["runner_verdict_under_v1"],
                          ae.get("attribution", "n/a"))}
+    # --- E (#372): effect-input-only observation, recorded beside A/B -----
+    row["E_effect_input_observation"] = observe_effect_input(
+        carrier, oracle, tap_bundle)
     row["status"] = vstat
     row["coverage"] = ("A,B,C" if ab_status == "MEASURED" else "C only")
     if row["D_settle_tracking"]["status"] == "MEASURED":
@@ -1889,6 +1892,264 @@ def escalation(vstat, baseline, c, declared, src=None):
             "reason": "the runner's pre-roll is measured wrong; both numbers "
                       "are retained here and the committed record is NOT "
                       "replaced by this audit"}
+
+
+# --------------------------------------------------------------------------
+# Leg E (#372): effect-INPUT-only observation (paired per-instance taps)
+# --------------------------------------------------------------------------
+#
+# Why: for SXT-023 Delay/EQ, Chorus and Reverb 2 invariance A differs because
+# the synth output feeding the effect also moves during the silent settle, so
+# A cannot be attributed to the effect (`attribute_a_early`). Leg E observes,
+# per effect instance, the effect's own input and output with block indices
+# and processing-call activity, from initialisation through settle, note
+# sequence and tail. The tap is an external observation-only patch of the
+# pinned engine (decision-records/0020); nothing Surge-derived is committed
+# here. This section only VALIDATES and INTERPRETS the tap records.
+#
+# Inference rule (defined before C is graded; never reads C or any score):
+#   0. refuse a bundle with bad provenance / identity / order / truncation /
+#      failed neutrality / non-repeatable A0 (AuditRefused -> NO_VERDICT).
+#   1. the settle input of every observation must be observed silent; else
+#      NO_VERDICT (a non-silent settle input cannot be attributed).
+#   2. the audio-window effect INPUT hashes must be identical across the
+#      observed settle lengths; else NO_VERDICT "INPUT_DIFFERS" (the synth
+#      confound survives; the native signal path is NOT altered to force
+#      equality -- controlled replay would be a separately identified
+#      diagnostic).
+#   3. with identical inputs: identical audio-window OUTPUT hashes and no
+#      processing call during the settle -> ZERO (effect did not advance);
+#      identical outputs although it processed silence -> ZERO_OUTPUT_ONLY
+#      (output invariance only, not every internal state variable);
+#      different outputs while it processed the settle -> NONZERO (the
+#      effect advances; the boundary is the settle length); different outputs
+#      without any settle processing -> NO_VERDICT (contradictory record).
+#   4. the settle lengths must include the early (2) and the fixture (375)
+#      settle, so A_early's early-convergence case is distinguishable from
+#      absence of advancement; otherwise NOT_MEASURED.
+
+TAP_SCHEMA = "sxt372-effect-tap-v1"
+TAP_PHASES = ("init", "settle", "audio", "tail")
+E_REQUIRED_SETTLES = (EARLY_SETTLE_BLOCKS, SETTLE_BLOCKS_FIXTURE)
+_HEX64 = frozenset("0123456789abcdef")
+
+
+def _is_sha(x):
+    return isinstance(x, str) and len(x) == 64 and set(x) <= _HEX64
+
+
+def tap_availability(oracle):
+    """Is a tap-capable pinned oracle present? Fail-closed (never PASS).
+
+    A vanilla prebuilt is not proof that source-level taps exist: the oracle
+    identity must carry an explicit tap patch identity.
+    """
+    if not (oracle and oracle.get("available")):
+        return {"status": "BLOCKED", "reason": ORACLE_DEPENDENCY}
+    bi = ((oracle.get("identity") or {}).get("buildinfo") or {})
+    tap = bi.get("effect_tap")
+    if not isinstance(tap, dict) or not _is_sha(tap.get("patch_sha256")):
+        return {"status": "BLOCKED", "reason": (
+            "oracle present but its BUILDINFO names no effect_tap patch "
+            "identity (a vanilla build is not an observation build; "
+            "decision-records/0020)")}
+    return {"status": "AVAILABLE", "effect_tap": tap}
+
+
+def validate_tap_neutrality(n):
+    """Both neutrality comparisons must be bit-identical in ONE environment:
+    tap-on vs tap-off in the patched build, and patched-off vs unpatched."""
+    keys = ("tap_on_sha256", "tap_off_sha256", "patched_off_sha256",
+            "unpatched_sha256", "environment")
+    if not isinstance(n, dict) or any(k not in n for k in keys):
+        raise AuditRefused("neutrality record missing one of %s" % (keys,))
+    for k in keys[:4]:
+        if not _is_sha(n[k]):
+            raise AuditRefused("neutrality %s is not a sha256" % k)
+    if not n["environment"]:
+        raise AuditRefused("neutrality record names no environment")
+    if n["tap_on_sha256"] != n["tap_off_sha256"]:
+        raise AuditRefused("neutrality FAILED: tap-on differs from tap-off")
+    if n["patched_off_sha256"] != n["unpatched_sha256"]:
+        raise AuditRefused("neutrality FAILED: patched-off differs from "
+                           "unpatched")
+    return {"status": "PASS", "environment": n["environment"],
+            "sha256": n["tap_on_sha256"]}
+
+
+def validate_tap_observation(obs, expect):
+    """Refuse a malformed / mis-identified / truncated / reordered tap record.
+
+    `expect` = {"settle_blocks", "slot", "scene", "effect_type", "channels",
+    "audio_blocks", "tail_blocks"}.
+    """
+    if not isinstance(obs, dict) or obs.get("schema") != TAP_SCHEMA:
+        raise AuditRefused("tap record is not schema %s" % TAP_SCHEMA)
+    b = obs.get("build") or {}
+    if b.get("engine_commit") != ENGINE_PIN:
+        raise AuditRefused("tap build engine_commit %r is not the pin"
+                           % b.get("engine_commit"))
+    if not _is_sha(b.get("patch_sha256")):
+        raise AuditRefused("tap build carries no patch sha256 (baseline-"
+                           "only/wrong-tap build refused)")
+    if not b.get("submodules_sha256") or b.get("sample_rate") != SR:
+        raise AuditRefused("tap build lacks submodule identity or is not "
+                           "%d Hz (got %r)" % (SR, b.get("sample_rate")))
+    if b.get("tap_enabled") is not True:
+        raise AuditRefused("tap record from a tap-disabled build")
+    inst = obs.get("instance") or {}
+    for k in ("slot", "scene", "effect_type", "channels", "chain_position"):
+        if k not in inst:
+            raise AuditRefused("instance identity lacks %s" % k)
+        if k in expect and inst[k] != expect[k]:
+            raise AuditRefused("instance %s %r != expected %r (wrong "
+                               "slot/instance)" % (k, inst[k], expect[k]))
+    blocks = obs.get("blocks")
+    if not isinstance(blocks, list) or not blocks:
+        raise AuditRefused("tap record has no blocks")
+    seen_phase = -1
+    for i, r in enumerate(blocks):
+        if r.get("block") != i:
+            raise AuditRefused("tap block %d out of order/missing (got %r)"
+                               % (i, r.get("block")))
+        if r.get("phase") not in TAP_PHASES:
+            raise AuditRefused("block %d has unknown phase %r"
+                               % (i, r.get("phase")))
+        p = TAP_PHASES.index(r["phase"])
+        if p < seen_phase:
+            raise AuditRefused("block %d phase %s is out of order"
+                               % (i, r["phase"]))
+        seen_phase = p
+        if not (_is_sha(r.get("in_sha256")) and _is_sha(r.get("out_sha256"))):
+            raise AuditRefused("block %d lacks a paired input/output hash"
+                               % i)
+        if not isinstance(r.get("processed"), bool) \
+                or not isinstance(r.get("in_silent"), bool):
+            raise AuditRefused("block %d lacks processing/silence flags" % i)
+    count = {ph: sum(1 for r in blocks if r["phase"] == ph)
+             for ph in TAP_PHASES}
+    if count["init"] < 1:
+        raise AuditRefused("no init observation: zero and nonzero "
+                           "boundaries cannot be distinguished")
+    if count["settle"] != expect["settle_blocks"]:
+        raise AuditRefused("settle blocks %d != %d (truncated or wrong "
+                           "settle)" % (count["settle"],
+                                        expect["settle_blocks"]))
+    for ph, key in (("audio", "audio_blocks"), ("tail", "tail_blocks")):
+        if key in expect and count[ph] != expect[key]:
+            raise AuditRefused("%s blocks %d != %d (truncated)"
+                               % (ph, count[ph], expect[key]))
+    if count["audio"] < 1:
+        raise AuditRefused("no audio-window blocks")
+    return obs
+
+
+def _window(obs, phase, key):
+    return [r[key] for r in obs["blocks"] if r["phase"] == phase]
+
+
+def infer_effect_boundary(observations, repeatable, neutrality):
+    """Independent boundary inference from validated tap observations.
+
+    `observations` = {settle_blocks: validated record}. Returns
+    {"status", "reason", "declared_preroll_blocks", "scope"}; reads no C.
+    """
+    if repeatable is not True:
+        return {"status": "NO_VERDICT", "declared_preroll_blocks": None,
+                "reason": "A0 not measured repeatable: no identity reading"}
+    if not neutrality or neutrality.get("status") != "PASS":
+        return {"status": "NO_VERDICT", "declared_preroll_blocks": None,
+                "reason": "tap neutrality not PASS: the observation is "
+                          "not shown to leave the output unchanged"}
+    missing = [n for n in E_REQUIRED_SETTLES if n not in observations]
+    if missing:
+        return {"status": "NOT_MEASURED", "declared_preroll_blocks": None,
+                "reason": "settle lengths %s not observed: early "
+                          "convergence cannot be told from no advancement"
+                          % missing}
+    ref = observations[SETTLE_BLOCKS_FIXTURE]
+    for n, o in sorted(observations.items()):
+        if not all(r["in_silent"] for r in o["blocks"]
+                   if r["phase"] == "settle"):
+            return {"status": "NO_VERDICT", "declared_preroll_blocks": None,
+                    "reason": "settle %d: the effect input is not silent "
+                              "during the settle" % n}
+        if _window(o, "audio", "in_sha256") != _window(ref, "audio",
+                                                       "in_sha256"):
+            return {"status": "NO_VERDICT", "declared_preroll_blocks": None,
+                    "reason": "INPUT_DIFFERS: the effect input in the audio "
+                              "window differs between settle %d and %d; the "
+                              "synth confound survives and the effect "
+                              "boundary is unidentifiable by this method "
+                              "(native path not altered to force equality)"
+                              % (n, SETTLE_BLOCKS_FIXTURE)}
+    outs_same = all(_window(o, "audio", "out_sha256")
+                    == _window(ref, "audio", "out_sha256")
+                    and _window(o, "tail", "out_sha256")
+                    == _window(ref, "tail", "out_sha256")
+                    for o in observations.values())
+    processed = any(r["processed"] for o in observations.values()
+                    for r in o["blocks"] if r["phase"] == "settle")
+    if outs_same and not processed:
+        return {"status": "RESOLVED", "boundary": "ZERO",
+                "declared_preroll_blocks": 0, "scope": "state",
+                "reason": "effect input identical, no processing call "
+                          "during the settle: the effect starts the audio "
+                          "in its init state"}
+    if outs_same:
+        return {"status": "RESOLVED", "boundary": "ZERO_OUTPUT_ONLY",
+                "declared_preroll_blocks": 0, "scope": "output",
+                "reason": "effect processed the silent settle but the "
+                          "wet output is identical for every settle: "
+                          "output invariance only, not every internal "
+                          "state variable"}
+    if processed:
+        return {"status": "RESOLVED", "boundary": "NONZERO",
+                "declared_preroll_blocks": SETTLE_BLOCKS_FIXTURE,
+                "scope": "output",
+                "reason": "identical effect input, differing wet output, "
+                          "and the effect processed the settle: it "
+                          "advances; boundary = the fixture settle"}
+    return {"status": "NO_VERDICT", "declared_preroll_blocks": None,
+            "reason": "output differs with identical input but the effect "
+                      "was never processed during the settle: contradictory "
+                      "record"}
+
+
+def observe_effect_input(carrier, oracle, bundle=None):
+    """Adapter: leg E for one carrier row. Never alters the A0/A/A_early/B
+    decision; it is recorded beside it.
+
+    `bundle` is an externally produced JSON {"neutrality", "repeatable",
+    "expect", "observations": {settle: record}} (the engine tap and its
+    capture are external, decision-records/0020). No bundle / no tap-capable
+    oracle -> BLOCKED/NOT_RUN with the exact reason, never PASS.
+    """
+    base = {"carrier": carrier["slug"], "sequence": carrier["seq"],
+            "inference_rule": "audit_effect_settle_boundaries.py "
+                              "(Leg E rule, before C is graded)"}
+    avail = tap_availability(oracle)
+    if avail["status"] != "AVAILABLE":
+        return dict(base, **avail, coverage="none")
+    if bundle is None:
+        return dict(base, status="NOT_RUN", coverage="none",
+                    reason="tap-capable oracle present but no capture "
+                           "bundle supplied for this carrier")
+    try:
+        neutrality = validate_tap_neutrality(bundle.get("neutrality"))
+        obs = {}
+        for n, rec in (bundle.get("observations") or {}).items():
+            ex = dict(bundle["expect"], settle_blocks=int(n))
+            obs[int(n)] = validate_tap_observation(rec, ex)
+    except (AuditRefused, KeyError, TypeError, ValueError) as e:
+        return dict(base, status="NO_VERDICT", coverage="refused",
+                    reason="refused: %s" % e)
+    inf = infer_effect_boundary(obs, bundle.get("repeatable"), neutrality)
+    st = inf["status"]
+    return dict(base, neutrality=neutrality, inference=inf,
+                status=("NOT_RUN" if st == "NOT_MEASURED" else
+                        "NO_VERDICT" if st == "NO_VERDICT" else "MEASURED"),
+                coverage="E (settle lengths %s)" % sorted(obs))
 
 
 # --------------------------------------------------------------------------
