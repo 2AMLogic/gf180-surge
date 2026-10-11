@@ -1,0 +1,154 @@
+{
+  "claim_scope": "reference-vs-reference repeatability under the recorded environment; not a determinism claim, not original-preset support; variants are adapted diagnostic input only",
+  "conclusion": null,
+  "factors": [],
+  "limits": [],
+  "plan_ref": {
+    "issue": 382,
+    "reps_per_bus": 20,
+    "sequences": [
+      "seq-notes-coverage-v1",
+      "seq-poly-8-v1"
+    ]
+  },
+  "positive_control": {
+    "status": "NOT_RUN"
+  },
+  "provenance": {
+    "block_size": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "environment": {
+      "clang": "Apple clang 21.0.0 (clang-2100.1.1.101), target arm64-apple-darwin25.5.0",
+      "cmake": "4.4.3",
+      "git": "2.55.0",
+      "ninja": "1.11.1.git.kitware.jobserver-1",
+      "os": "macOS 26.5.1 (Build 25F80), arm64",
+      "python_alternatives_verified": "3.14.7: full surgepy build + import verified (build-py314), not used for evidence; 3.12/3.13: no numpy runtime installed",
+      "python_runtime": "3.11.16 (numpy 1.26.4)",
+      "xcode": "26.6 (Build 17F113)"
+    },
+    "harness_script": "tools/diagnose_carrier_variation.py",
+    "harness_script_sha256": "fe7fe1ed26000b0ee54d2f1b01b71404d53b75253660f294249c5866e1e839fb",
+    "repo_commit": "bf8949f2c2aa21eedcf04c0e6423c680a7023610",
+    "runtime": {
+      "block_size_note": "SURGE_COMPILE_BLOCK_SIZE default 32 (src/CMakeLists.txt); process scheduling is per-multiblock via surgepy.processMultiBlock",
+      "block_size_samples": 32,
+      "data_home": "SURGE_DATA_HOME=<engine>/resources/data",
+      "data_home_note": "Engine env override read by SurgeStorage::getOverrideDataHome (src/common/SurgeStorage.cpp); pins all factory assets/wavetables to the pinned source tree, never to machine-global Surge installs",
+      "fx_modulation_randomness": {
+        "characterization": "reports/SXT-028-rng/artifacts/rng-characterization.json",
+        "consequence": "Model and RTL leaves REFUSE the RNG-driven FX modulation shapes fail-closed rather than substituting a convenient deterministic shape; the preset-coverage cost is published as a reduction (reports/SXT-028-rng/artifacts/coverage-impact.json) and routed to SXT-017 (#12). This manifest field records the characterization; it does not change any pin and applies no seed override.",
+        "decision_record": "decision-records/0013-fx-modulation-rng-stream.md",
+        "evidence": "reports/SXT-028-rng/EVIDENCE.md",
+        "finding": "No reseed call site reachable from a patch load exists in the pinned engine (SurgeStorage::seed_rand is commented out), so the seed is a function of wall-clock time and not of the patch or of this manifest. Two loads of the same patch therefore do not share an FX-modulation RNG stream. Pinning one would require PATCHING the pinned engine, and this manifest states that the pinned engine's own RNG initialization IS part of the reference -- a patched engine is a different reference.",
+        "generators": {
+          "FXModControl::rng": "sst-basic-blocks dsp::RNG (std::minstd_rand), ONE PER FXModControl INSTANCE, seeded from std::chrono::system_clock at construction; drives mod_wave 5 (Noise) and 6 (Sample & Hold). Consumers at the pin: sst-effects Phaser, Surge Neuron (via Surge::ModControl).",
+          "SurgeStorage::rngGen": "std::minstd_rand, ONE PER SurgeStorage (shared by every storage->rand_* consumer on the audio thread), seeded from std::chrono::system_clock at construction; reached from FX through SurgeSSTFXAdapter.h rand01 -> EffectCore storageRand01(). Consumers at the pin: sst-effects Flanger (waves 3/4), Surge Combulator (noise mix > 0).",
+          "chowdsp std::random_device": "per-processor generators in Tape and Spring Reverb; strictly less pinnable than the clock-seeded generators."
+        },
+        "issue": "#122",
+        "status": "MEASURED NOT REPRODUCIBLE"
+      },
+      "mpe": false,
+      "ppq_pos": 0,
+      "randomness": "No seed override is applied; the pinned engine's own RNG initialization is part of the reference. The first-note capture measures render-to-render repeatability and reports it (bit-identical or max abs diff), it does not assume determinism.",
+      "reset_policy": "Harness calls allNotesOff() before each patch load; loadPatch() unstreams the patch into a fresh patch object. No global engine state outside the loaded patch is modified by the harness.",
+      "sample_rate_hz": 48000,
+      "tempo_bpm": 120,
+      "tuning": "Engine default: standard 12-TET, no SCL/KBM override, default tuningApplicationMode. MTS-ESP client not connected."
+    },
+    "sample_rate": 48000,
+    "submodules": [
+      {
+        "commit": "a8c7c714c7564b9248749e1e8cefcc5ef2b6f0cc",
+        "path": "libs/JUCE"
+      },
+      {
+        "commit": "64af78c6a7959cd5753ad165ec9f65591aa96f2d",
+        "path": "libs/PEGTL"
+      },
+      {
+        "commit": "16e9d4ca7b1e86c76e04584b2c08e85a764bcda8",
+        "path": "libs/clap-juce-extensions"
+      },
+      {
+        "commit": "888298b0e3ec5daabf96c5ab912ffc42825a2b4c",
+        "path": "libs/eurorack/eurorack"
+      },
+      {
+        "commit": "e424e3f2e607da02742f73db84873b8084fc714c",
+        "path": "libs/fmt"
+      },
+      {
+        "commit": "18b087cd2cd4ddc4a79782bf155383a689d5093d",
+        "path": "libs/luajitlib/LuaJIT"
+      },
+      {
+        "commit": "b859bf0ffd1ca447b09a6384c99846fcfe3e27b7",
+        "path": "libs/luajitlib/cmake"
+      },
+      {
+        "commit": "9e91e4e3d6cc41688c8d2108ef7ed33c1a90dcc9",
+        "path": "libs/melatonin_inspector"
+      },
+      {
+        "commit": "ec13f5749ea8c4ad45158477ce284082f3ce4e0d",
+        "path": "libs/oddsound-mts/MTS-ESP"
+      },
+      {
+        "commit": "d027f2a290ca0047d95513c2a20570d13557e381",
+        "path": "libs/pffft"
+      },
+      {
+        "commit": "7c33cdc2d39c7b99a122579f53bc94c8eb3332ff",
+        "path": "libs/pybind11"
+      },
+      {
+        "commit": "b3f0753d90b3325b8ea8a08fd699e8e6db26e5b5",
+        "path": "libs/r8brain-free-src"
+      },
+      {
+        "commit": "71fd833d9666141edcd1d3c109a80e228303d8d7",
+        "path": "libs/simde"
+      },
+      {
+        "commit": "a32b8aec14d661e415bb676bb2e2a0a4da4efc96",
+        "path": "libs/sst/sst-basic-blocks"
+      },
+      {
+        "commit": "49008aacfe82507be59b08f25809cc271cdc0bf6",
+        "path": "libs/sst/sst-cmake"
+      },
+      {
+        "commit": "52c4b749c0e155077ee1df79fee5d237bef7a1a8",
+        "path": "libs/sst/sst-cpputils"
+      },
+      {
+        "commit": "adcac6950292dacc529651093e7ece2d1c8c0d4b",
+        "path": "libs/sst/sst-effects"
+      },
+      {
+        "commit": "e92d93a92beabde03fa4ab767b285fa21c6608d6",
+        "path": "libs/sst/sst-filters"
+      },
+      {
+        "commit": "ebdaf5e936361994a30b0d51d2ff6cb750232d4b",
+        "path": "libs/sst/sst-plugininfra"
+      },
+      {
+        "commit": "dd12f31a5a9016c9895e52d1a00eee0e1eebe6ce",
+        "path": "libs/sst/sst-waveshapers"
+      },
+      {
+        "commit": "5a18353a0444caa068b648383cae37d156b97e1c",
+        "path": "libs/tuning-library"
+      },
+      {
+        "commit": "92505deb29bc17fe014ed918e67f15a84d70b230",
+        "path": "libs/zstd"
+      }
+    ]
+  },
+  "reason": "oracle/batch route unavailable: engine checkout not found: /Users/joseph/dev/surge-xt-oracle/surge",
+  "status": "BLOCKED"
+}

@@ -81,6 +81,39 @@ established here, no coverage/support claim follows, and an always-pass
 classifier is checked to fail the Lap Harp and named-carrier controls by
 `tests/test_sxt310_fixture_policy.py`.
 
+## Novuo dry-bus variation diagnostic (#382, follow-up of #310)
+
+Coordinator: `tools/diagnose_carrier_variation.py` (new; no existing
+byte-frozen file touched). Frozen plan and transcript:
+`reports/sxt-012/diagnostics/novuo/plan.json` and `transcript.json`.
+
+- **Diagnostic result: BLOCKED** (live experiment NOT_RUN). The dispatch host
+  has no pinned oracle checkout (`engine checkout not found:
+  /Users/joseph/dev/surge-xt-oracle/surge`) and no oracle batch submit route is
+  available from it. Per the issue and host rules nothing was run locally. No
+  factor is identified, none is excluded, and no positive-control hash was
+  re-derived in this change.
+- Coverage (planned, not executed): one carrier (`novuo`), 2 sequences, the
+  unmodified original plus one variant per factor (oscillator type x6, unison
+  count x6, noise level x2, noise colour x2, drift, random LFO shapes x2), 20
+  interleaved stress repeats per bus, a separate 3x gate record, the Lap Harp
+  control, and the three SXT-028c wet-hash positive controls.
+- What the unit tests (`tests/test_diagnose_carrier_variation.py`) pin: variant
+  isolation, read-back accounting, and status routing (stable original dry bus,
+  failed positive control or an always-stable classifier against Lap Harp ->
+  NO_VERDICT/FAIL; missing oracle -> BLOCKED; missing shards never PASS). They
+  use synthetic inputs and establish classifier behaviour only.
+- Unverified until the live run: the surgepy parameter names/slots used for the
+  factors (for example unison voices at oscillator slot `p[7]`); a name that
+  does not resolve is recorded `not_exposed`, not skipped. Oscillator
+  replacement may reset dependent parameters; those are recorded as
+  loader-dependent changes and limit the claim.
+- Run on an oracle host: `render-shard --job-id <id>` per `plan.json` shard
+  (one process per shard, fan-out via the authorized batch route only), then
+  `assemble`. A conclusion would read "repeatable under the recorded
+  environment", never a determinism claim; variants are adapted diagnostic
+  input, never fixtures or original-preset coverage. #310 stays open.
+
 ## Licensing / provenance
 
 Everything under `fixtures/` and `reports/sxt-012/` is original to this
