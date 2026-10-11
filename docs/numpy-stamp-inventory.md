@@ -56,7 +56,7 @@ below cites the traced consumer that justifies it.
 | int16-wet-shape-fixture (issue #187 / DR-0017) | `reports/int16-wet-shape-fixture/artifacts/fixture-probe.json`<br>`reports/int16-wet-shape-fixture/artifacts/fixture-probe.txt`<br>`reports/int16-wet-shape-fixture/EVIDENCE.md` | 1.26.4 | Historical provenance | Test consumer asserts verdicts and declared budgets only (`tests/test_pilot_freeze_tail_shape_floor.py:440-459`: overall PASS, shipped budget constants, control outcomes); it never reads the environment block. Writer: `tools/int16_wet_shape_fixture_probe.py:635` (txt echo at :627). |
 | pilot-freeze-tail-shape-floor (issue #111 leg / DR-0016) | `reports/pilot-freeze-tail-shape-floor/artifacts/floor-probe.json`<br>`reports/pilot-freeze-tail-shape-floor/artifacts/floor-probe.txt`<br>`reports/pilot-freeze-tail-shape-floor/artifacts/issue-111-leg2-controls-rerun.txt`<br>`reports/pilot-freeze-tail-shape-floor/EVIDENCE.md` | 2.4.2 | Historical provenance | Test consumer asserts verdicts/budgets only (`tests/test_pilot_freeze_tail_shape_floor.py:144-160`); no environment read. Writer: `tools/tail_shape_floor_probe.py:440` (markdown header echo at :433 — the non-JSON stamp shape the issue's test plan calls out). |
 | spectral-corr-fs-floor (issue #110) | `reports/spectral-corr-fs-floor/artifacts/checks-summary.json`<br>`reports/spectral-corr-fs-floor/artifacts/dry-parity.txt`<br>`reports/spectral-corr-fs-floor/artifacts/floor-sensitivity.txt`<br>`reports/spectral-corr-fs-floor/artifacts/regrade-ledger-run.txt`<br>`reports/spectral-corr-fs-floor/artifacts/rerender-proof.txt`<br>`reports/spectral-corr-fs-floor/artifacts/tail-gate-controls.txt`<br>`reports/spectral-corr-fs-floor/artifacts/unit-sweep.txt` | 2.4.1 | Historical provenance | The test that reads this record takes only its `base_rev` for merge-base attribution (`tests/test_spectral_corr_fs_floor.py:176-179`); no stamp comparison. Writer: `tools/spectral_corr_fs_floor_checks.py:764` (txt run-header echoes at :669, :773). |
-| spectral-corr-per-leaf-migration (issue #165) | `reports/spectral-corr-per-leaf-migration/artifacts/checks-summary.json`<br>`reports/spectral-corr-per-leaf-migration/artifacts/l2-producer-rerun.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/l2-rename.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/migrated-rerun.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/migration-flips.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/rename-idempotency.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/single-definition-scan.txt` | 2.4.2 | Declared cross-environment | The producer's own comparison mechanism excludes the key by name: `tools/spectral_corr_per_leaf_checks.py:110-135` lists `numpy` in `RUN_META` — "run metadata that legitimately differs between two runs of the same producer" — and `strip_meta`/`canon` remove it before any record-vs-record comparison. The test consumer asserts the shared definition string and leg statuses and explicitly does not re-derive measurements (`tests/test_spectral_corr_single_definition.py:315-337`). |
+| spectral-corr-per-leaf-migration (issue #165) | `reports/spectral-corr-per-leaf-migration/artifacts/checks-summary.json`<br>`reports/spectral-corr-per-leaf-migration/artifacts/l2-producer-rerun.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/l2-rename.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/migrated-rerun.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/migration-flips.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/rename-idempotency.txt`<br>`reports/spectral-corr-per-leaf-migration/artifacts/single-definition-scan.txt` | 2.4.2 | Declared cross-environment | The stamp key is excluded by name from the producer's own record-vs-record comparison: `tools/spectral_corr_per_leaf_checks.py:110-135` lists `numpy` in `RUN_META` — "run metadata that legitimately differs between two runs of the same producer" — and `strip_meta`/`canon` remove it before comparing. That exclusion is scoped to the stamp and run metadata; it does not exempt the record's (potentially numpy-sensitive) metric fields, which the same tool's manual replay legs do compare against regenerated output: leg 2 re-runs the migrated producers in subprocesses and requires canonical equality after the metadata strip (`:180-181`, `:192-197`), and leg 5 records rerun-vs-committed `l2_spectral_corr` relative differences (`:399-405`, `:437-443`, `:458-465`). Those legs run in neither CI nor pytest — the test consumer asserts the shared definition string and leg statuses and explicitly does not re-derive measurements (`tests/test_spectral_corr_single_definition.py:315-337`) — so they bound manual evidence regeneration, not #354's CI pin. |
 | stereo-comparator-tail-gate (issue #100) | `reports/stereo-comparator-tail-gate/artifacts/checks-summary.json`<br>`reports/stereo-comparator-tail-gate/artifacts/negative-controls.txt`<br>`reports/stereo-comparator-tail-gate/artifacts/rms-floor.txt`<br>`reports/stereo-comparator-tail-gate/artifacts/spectral-corr-sweep.txt`<br>`reports/stereo-comparator-tail-gate/artifacts/sxt023-sxt024-rerun.txt`<br>`reports/stereo-comparator-tail-gate/artifacts/sxt028c-rerun.txt` | 2.4.1 | Historical provenance | Test consumers assert leg/control statuses and case counts (`tests/test_stereo_tail_gate.py:190-212`) and use the record's `base_rev` for attribution (`tests/test_spectral_corr_fs_floor.py:151-186`); neither reads the stamp. Writer: `tools/stereo_tail_gate_checks.py:1081` (txt echoes at :1102). |
 | tail-shape-leg (issue #111) | `reports/tail-shape-leg/artifacts/checks-summary.json`<br>`reports/tail-shape-leg/artifacts/canonical-reruns.txt`<br>`reports/tail-shape-leg/artifacts/landed-verdict-rerun.txt`<br>`reports/tail-shape-leg/artifacts/late-tail-controls.txt`<br>`reports/tail-shape-leg/EVIDENCE.md` | 2.4.1 | Historical provenance | Test consumer asserts issue/overall/budget/leg fields (`tests/test_tail_shape_leg.py:245-262`); no environment read. Writer: `tools/tail_shape_leg_checks.py:487` (txt echoes at :503). |
 | sxt-024 precision-pin records (issues #108/#112) | `reports/sxt-024/EVIDENCE.md`<br>`reports/sxt-024/artifacts/issue-108/DIFF.txt`<br>`reports/sxt-024/artifacts/issue-108/WHY-NOT-REGENERATED.txt`<br>`reports/sxt-024/artifacts/issue-112/CONTROL.txt`<br>`reports/sxt-024/artifacts/issue-112/DIFF.txt`<br>`reports/sxt-024/artifacts/issue-112/PRECISION-PROBE.txt`<br>`reports/sxt-024/artifacts/issue-112/TAIL-SHAPE-LEG.txt` | 1.26.4 | Historical provenance | These stamps document the two pre-#112 NumPy regimes under which the committed sxt-024 records were written. The NumPy-sensitive constant they explain (the float32 `send_gain` cube) was made NumPy-independent by #112: the pin is computed with explicit float32 multiplies "independent of the installed NumPy version" (`tests/test_sxt024_reverb1.py:135-160`), and `test_committed_records_carry_the_pinned_send_gain` (:180-213) re-derives `send_gain` from every committed record and requires exact equality — a live consumer that is version-independent by construction, so the stamps themselves are never re-checked. This group is the repo's own precedent for the float32-power hazard noted in `.github/workflows/ci.yml:129-133`. |
@@ -76,7 +76,8 @@ or compared by CI or by any pytest acceptance check.** Traced outcome per
 consumer family:
 
 - presence-only assertions (settle records, SXT-028e-sse),
-- explicit run-metadata exclusion (per-leaf migration),
+- explicit run-metadata exclusion of the stamp key, plus manual
+  environment-sensitive replay legs (per-leaf migration),
 - deliberately NumPy-independent live re-derivation (sxt-024 `send_gain`),
 - libm-bound digest re-derivation that skips off-host (SXT-028e-sse),
 - structure/verdict assertions that never open the environment block
@@ -90,11 +91,26 @@ choice, recorded here so it is not re-derived: both CI jobs install numpy
 `:165` for `rtl-sim`), numpy is required because tests import
 `model/effects/reverb1/coefficient_plane.py`, and the float32 `power`
 divergence across NumPy majors is why a numpy-optional fallback was rejected
-(`.github/workflows/ci.yml:129-133`). Because no committed record is compared
-against a live-computed metric (the comparisons that exist compute both sides
-in the same process), changing CI's numpy version cannot silently turn a
-committed PASS record STALE per this inventory — the failure mode would be a
-visible test failure, not a silent re-grade. No bounded finding is required.
+(`.github/workflows/ci.yml:129-133`). Two distinct obligations must not be
+conflated here. (a) *Stamps*: no CI job or pytest acceptance check compares
+any committed stamp value against the installed numpy, so no stamp constrains
+#354's pin and a stamp difference alone can never gate CI. (b) *Numeric
+replay*: the repo does compare committed records against live-computed
+metrics — in one manual evidence tool, `tools/spectral_corr_per_leaf_checks.py`
+(the issue #165 transcript): its leg 2 re-runs the two migrated producers in
+subprocesses (`:180-181`) and requires canonical equality against the
+committed records after stripping `RUN_META` (`:192-197`), and its leg 5
+re-runs the renamed L2 producers from committed inputs and records
+rerun-vs-committed `l2_spectral_corr` relative differences (`:399-405`,
+`:437-443`, `:458-465`). The `numpy`-key exclusion covers the stamp and run
+metadata only — it does not exempt numpy-dependent metric fields — so leg 2's
+exact replay equality is environment-sensitive: regenerating that evidence
+under a different numpy than the stamped 2.4.2 must expect a visible leg-2
+FAIL/NOT_RUN, not a silent re-grade. Neither leg is invoked by CI or pytest
+(`tests/test_spectral_corr_single_definition.py:315-337` asserts the
+committed summary's structure and explicitly does not re-derive
+measurements), so these replay obligations bound manual evidence
+regeneration, not #354's CI pin. No bounded finding is required.
 
 ## Failure control (automated)
 
