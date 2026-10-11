@@ -35,11 +35,14 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import compile_and_run, record_width_error  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lp12.sv")
 MUTANT = os.path.join(REPO, "rtl", "voice", "lp12_broken_mutant.sv")
+
+# T record fields after the block key: subtype + registers + 8 coeffs.
+T_FIELDS = 12
 
 # The hex stimulus tb_lp12.sv `$readmemh`s, relative to the run dir (issue
 # #193's pre-flight check axis).  Single source of truth so the check can
@@ -86,6 +89,15 @@ def compare(model_trace, tb, instance=0):
             continue
         want_fields = [blk["subtype"], after["r0"], after["r1"], after["r_clip"],
                        *after["C_end"]]
+        bad = [e for e in (
+            record_width_error("T", b, "model", want_fields, T_FIELDS),
+            record_width_error("T", b, "rtl", got, T_FIELDS)) if e]
+        if bad:
+            # shape error: no field compared, checkpoint not counted complete
+            fails.extend(bad)
+            checked["malformed_checkpoints"] = (
+                checked.get("malformed_checkpoints", 0) + 1)
+            continue
         checked["checkpoints"] += 1
         for i, (w, g) in enumerate(zip(want_fields, got)):
             checked["fields"] += 1
