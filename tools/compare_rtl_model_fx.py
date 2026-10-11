@@ -113,7 +113,8 @@ def validate_window(model_trace, max_blocks):
 
     max_blocks == 0 is the full-run sentinel. Negative or beyond-extent
     bounds are refused (never clamped); the model trace must declare a
-    positive extent, carry blocks, and have unique in-range block indices.
+    positive extent, carry blocks, have unique in-range block indices, and
+    carry every block index in [settle_blocks, window).
     """
     n_total = model_trace.get("n_blocks_total")
     if not isinstance(n_total, int) or isinstance(n_total, bool) or n_total <= 0:
@@ -131,7 +132,19 @@ def validate_window(model_trace, max_blocks):
         raise WindowError(f"--max-blocks {max_blocks} is negative")
     if max_blocks > n_total:
         raise WindowError(f"--max-blocks {max_blocks} exceeds model extent {n_total}")
-    return max_blocks if max_blocks else n_total
+    window = max_blocks if max_blocks else n_total
+    # Every rendered (post-pre-roll) block in the selected window must be
+    # present: a truncated or sparse trace must never be reported as covered.
+    # Pre-roll blocks are only carried at checkpoints, so they are not required.
+    settle = model_trace.get("settle_blocks")
+    if not isinstance(settle, int) or isinstance(settle, bool) or settle < 0:
+        raise WindowError(f"model trace settle_blocks={settle!r} is not a non-negative integer")
+    missing = sorted(set(range(settle, window)) - set(idx))
+    if missing:
+        shown = ", ".join(map(str, missing[:8])) + (", ..." if len(missing) > 8 else "")
+        raise WindowError(f"model trace is missing {len(missing)} block(s) in the selected "
+                          f"window [{settle}, {window}): {shown}")
+    return window
 
 
 def compare(slug, model_trace, rtl_trace, n_blocks=None):
@@ -266,8 +279,13 @@ def main():
         verdict = "NO_VERDICT"  # empty selected coverage: nothing compared
     else:
         verdict = "PASS"
-    scoped = [b for b in model_trace["blocks"] if b["b"] < n_blocks
-              and b["b"] >= model_trace["settle_blocks"]]
+    # expected coverage comes from the declared extent, not from the blocks
+    # the trace happens to carry (validate_window refuses missing blocks)
+    expected = max(0, n_blocks - model_trace["settle_blocks"])
+    # NOTE (#452): "blocks_compared" is the number of blocks whose outputs were
+    # actually compared (pre-roll excluded). Committed SXT-023 records written
+    # before #452 used this key for the window bound (now "blocks_window");
+    # do not read a lower value in a new record as lost coverage.
     summary = {
         "slug": slug,
         "tb": os.path.basename(args.tb),
@@ -276,12 +294,15 @@ def main():
         "blocks_window": n_blocks,
         "blocks_total": n_total,
         "blocks_compared": checked["blocks"],
-        "blocks_in_window_expected": len(scoped),
-        "coverage": ("full" if n_blocks == n_total and checked["blocks"] > 0
+        "blocks_compared_semantics": "blocks_actually_compared",
+        "blocks_in_window_expected": expected,
+        "coverage": ("full" if n_blocks == n_total and checked["blocks"] == expected
+                     and checked["blocks"] > 0
                      else "partial" if checked["blocks"] > 0 else "none"),
         "verdict": verdict,
         "checked": checked,
-        "mismatches": len(fails),
+        "mismatches": len(real_fails),
+        "no_verdict_reason": NO_COVERAGE if verdict == "NO_VERDICT" else None,
         "first_failures": fails[:10],
     }
     print(json.dumps(summary, indent=2))

@@ -151,13 +151,15 @@ def main():
 
     rtl = parse_tb_trace(trace_txt)
     checked, fails = compare(slug, trace, rtl)
+    real_fails = [x for x in fails if x != NO_COVERAGE]
     summary = {
         "slug": slug, "sim": args.sim, "tb": os.path.basename(args.tb),
         "settle_blocks": args.settle_blocks, "blocks_total": n_total,
         "samples_total": n_total * 32,
         "verdict": ("PASS" if not fails else "NO_VERDICT"
                     if fails == [NO_COVERAGE] else "FAIL"),
-        "checked": checked, "mismatches": len(fails),
+        "checked": checked, "mismatches": len(real_fails),
+        "no_verdict_reason": (NO_COVERAGE if fails == [NO_COVERAGE] else None),
         "first_failures": fails[:10],
         "sim_seconds": round(sim_time, 2),
     }

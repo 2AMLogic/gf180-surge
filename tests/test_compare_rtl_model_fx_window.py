@@ -50,6 +50,21 @@ class WindowTests(unittest.TestCase):
         with self.assertRaises(C.WindowError):
             C.validate_window(model_trace(n_total=0), 0)
 
+    def test_truncated_or_sparse_trace_refused(self):
+        # declared extent 6, but only blocks 0..3 carried (cut trace)
+        cut = model_trace(blocks=model_trace()["blocks"][:4])
+        for n in (0, N_TOTAL, 5):
+            with self.assertRaises(C.WindowError):
+                C.validate_window(cut, n)
+        # a window that ends inside the carried blocks is still valid
+        self.assertEqual(C.validate_window(cut, 4), 4)
+        sparse = model_trace(blocks=[b for b in model_trace()["blocks"] if b["b"] != 3])
+        with self.assertRaises(C.WindowError):
+            C.validate_window(sparse, 0)
+        # pre-roll blocks are only carried at checkpoints: not required
+        preroll_sparse = model_trace(blocks=model_trace()["blocks"][SETTLE - 1:])
+        self.assertEqual(C.validate_window(preroll_sparse, 0), N_TOTAL)
+
     def test_full_and_partial_pass_with_distinct_coverage(self):
         mt = model_trace()
         c_full, f_full = C.compare("x", mt, rtl_for(mt), N_TOTAL)
@@ -107,12 +122,23 @@ class MainTests(unittest.TestCase):
         rc, calls, _ = self.run_main(0, model_trace(blocks=[]))
         self.assertEqual((rc, calls), (2, 0))
 
+    def test_truncated_trace_refused_before_simulation(self):
+        cut = model_trace(blocks=model_trace()["blocks"][:4])
+        for n in (0, N_TOTAL):
+            rc, calls, summary = self.run_main(n, cut)
+            self.assertEqual((rc, calls, summary), (2, 0, None))
+        # bounded window inside the carried blocks: valid partial
+        rc, calls, s = self.run_main(4, cut)
+        self.assertEqual((rc, calls, s["verdict"], s["coverage"]), (0, 1, "PASS", "partial"))
+        self.assertEqual(s["blocks_in_window_expected"], 2)
+
     def test_full_partial_summaries(self):
         rc, calls, s = self.run_main(0, model_trace())
         self.assertEqual((rc, calls, s["verdict"], s["coverage"]), (0, 1, "PASS", "full"))
         rc, _, s = self.run_main(4, model_trace())
         self.assertEqual((rc, s["verdict"], s["coverage"]), (0, "PASS", "partial"))
         self.assertEqual(s["blocks_requested"], 4)
+        self.assertEqual(s["blocks_compared_semantics"], "blocks_actually_compared")
         self.assertEqual((s["blocks_window"], s["blocks_compared"]), (4, 2))  # actual, not requested
 
     def test_preroll_only_window_is_no_verdict(self):
@@ -120,10 +146,14 @@ class MainTests(unittest.TestCase):
         rc, calls, s = self.run_main(SETTLE, model_trace())
         self.assertEqual(calls, 1)
         self.assertEqual((rc, s["verdict"], s["coverage"]), (1, "NO_VERDICT", "none"))
+        # the no-coverage marker is not a mismatch; the reason stays visible
+        self.assertEqual(s["mismatches"], 0)
+        self.assertEqual(s["no_verdict_reason"], C.NO_COVERAGE)
 
     def test_mismatch_fails(self):
         rc, _, s = self.run_main(4, model_trace(), bad=3)
-        self.assertEqual((rc, s["verdict"]), (1, "FAIL"))
+        self.assertEqual((rc, s["verdict"], s["mismatches"]), (1, "FAIL", 1))
+        self.assertIsNone(s["no_verdict_reason"])
 
 
 if __name__ == "__main__":
