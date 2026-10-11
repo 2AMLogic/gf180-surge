@@ -27,9 +27,8 @@
       "python_runtime": "3.11.16 (numpy 1.26.4)",
       "xcode": "26.6 (Build 17F113)"
     },
-    "harness_script": "tools/diagnose_carrier_variation.py",
-    "harness_script_sha256": "fe7fe1ed26000b0ee54d2f1b01b71404d53b75253660f294249c5866e1e839fb",
-    "repo_commit": "bf8949f2c2aa21eedcf04c0e6423c680a7023610",
+    "provenance_note": "engine_commit, submodules, runtime and environment are copied verbatim from oracle/manifest.json: they describe the pinned oracle build, not the host that wrote this file, and were not re-derived here. They are run evidence only when the transcript also carries returned shard results; a BLOCKED or NOT_RUN transcript used no oracle build at all. script_sha256 is a one-shot historical provenance stamp of this tool's bytes at write time (docs/byte-frozen-sources.md), not a live pin.",
+    "repo_commit": "0ef0abf4d5a44eb157f8b7613aa21f3daace5bda",
     "runtime": {
       "block_size_note": "SURGE_COMPILE_BLOCK_SIZE default 32 (src/CMakeLists.txt); process scheduling is per-multiblock via surgepy.processMultiBlock",
       "block_size_samples": 32,
@@ -58,6 +57,8 @@
       "tuning": "Engine default: standard 12-TET, no SCL/KBM override, default tuningApplicationMode. MTS-ESP client not connected."
     },
     "sample_rate": 48000,
+    "script": "tools/diagnose_carrier_variation.py",
+    "script_sha256": "b7f1589136ce331612f8ea0e70ab2baca76d68675a627bb65545cb3b250afab0",
     "submodules": [
       {
         "commit": "a8c7c714c7564b9248749e1e8cefcc5ef2b6f0cc",

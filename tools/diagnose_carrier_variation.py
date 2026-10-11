@@ -361,6 +361,16 @@ def repo_commit():
         return f"unavailable: {e}"
 
 
+PROVENANCE_NOTE = (
+    "engine_commit, submodules, runtime and environment are copied verbatim "
+    "from oracle/manifest.json: they describe the pinned oracle build, not "
+    "the host that wrote this file, and were not re-derived here. They are "
+    "run evidence only when the transcript also carries returned shard "
+    "results; a BLOCKED or NOT_RUN transcript used no oracle build at all. "
+    "script_sha256 is a one-shot historical provenance stamp of this tool's "
+    "bytes at write time (docs/byte-frozen-sources.md), not a live pin.")
+
+
 def provenance():
     with open(os.path.join(REPO, "oracle", "manifest.json"),
               encoding="utf-8") as f:
@@ -369,8 +379,9 @@ def provenance():
             "submodules": m.get("submodules"),
             "runtime": m.get("runtime"),
             "environment": m.get("environment"),
-            "harness_script": "tools/diagnose_carrier_variation.py",
-            "harness_script_sha256": sha256_file(os.path.abspath(__file__)),
+            "provenance_note": PROVENANCE_NOTE,
+            "script": "tools/diagnose_carrier_variation.py",
+            "script_sha256": sha256_file(os.path.abspath(__file__)),
             "repo_commit": repo_commit(),
             "sample_rate": SR, "block_size": BLOCK}
 

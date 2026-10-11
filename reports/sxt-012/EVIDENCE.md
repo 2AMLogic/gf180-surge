@@ -93,6 +93,17 @@ byte-frozen file touched). Frozen plan and transcript:
   available from it. Per the issue and host rules nothing was run locally. No
   factor is identified, none is excluded, and no positive-control hash was
   re-derived in this change.
+- **The transcript's `provenance` block is not run evidence.** Its
+  `engine_commit`, `submodules`, `runtime` and `environment` fields (the macOS
+  arm64 / Apple clang / Python 3.11 oracle build) are copied verbatim from
+  `oracle/manifest.json`. That build was **not used** in this run: no oracle
+  was present, nothing was rendered, and those fields were not re-derived on
+  the host that wrote the transcript. The transcript says so in
+  `provenance.provenance_note`. Its `script_sha256` is a one-shot historical
+  provenance stamp of the tool's bytes at write time. It is registered under
+  historical provenance in `docs/byte-frozen-sources.md`, not as a live pin,
+  so editing the tool invalidates no record. It only makes that stamp
+  unresolvable until the transcript is re-assembled.
 - Coverage (planned, not executed): one carrier (`novuo`), 2 sequences, the
   unmodified original plus one variant per factor (oscillator type x6, unison
   count x6, noise level x2, noise colour x2, drift, random LFO shapes x2), 20
