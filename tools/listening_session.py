@@ -16,12 +16,18 @@ this harness:
      is recorded BLOCKED and gets no acceptance-counting rating,
   3. pairs the WET render against the comparison the operator requested
      (default: the diagnostic DRY render; or --compare custom:<path>),
-  4. runs the requested session mode and records structured ratings.
+  4. records per-stimulus playback outcomes (player process result, or that
+     playback was not attempted) and an explicit listener audition
+     confirmation (#447): an open-mode rating counts toward acceptance only
+     after the listener confirms hearing BOTH named stimuli — a clean
+     player exit alone is process completion, never audibility,
+  5. runs the requested session mode and records structured ratings.
 
 Modes
   open   UNBLINDED, LEVEL-CORRECT: stimuli keep their native render levels
          (no per-clip normalization). Per the fidelity policy (DRAFT), only
-         ratings recorded in this mode count toward the favorites acceptance.
+         ratings recorded in this mode count toward the favorites acceptance,
+         and only behind the audition gate above.
   blind  pairwise blind: A/B order randomized per candidate; optional
          --level-match RMS-matches the quieter stimulus (a level MATCH, which
          is a normalization of the pair and therefore supplementary-only).
@@ -69,14 +75,36 @@ DEFAULT_SEQUENCE = "seq-notes-coverage-v1"
 RENDER_SCRIPT = REPO_ROOT / "fixtures" / "render_fixture.py"
 ORACLE_MANIFEST = REPO_ROOT / "oracle" / "manifest.json"
 
-SCHEMA_VERSION = "sxt-013-listening-session/1.0.0"
+SCHEMA_VERSION = "sxt-013-listening-session/1.1.0"
 ISSUE = "SXT-013"
 
 ACCEPTANCE_RULE = (
     "Ratings count toward favorites acceptance ONLY in mode=open "
-    "(unblinded, level-correct, no per-clip normalization). Blind "
-    "level-matched sessions are supplementary per the fidelity policy "
+    "(unblinded, level-correct, no per-clip normalization) AND after the "
+    "listener explicitly confirmed hearing both stimuli (audition gate). "
+    "Blind level-matched sessions are supplementary per the fidelity policy "
     "(contracts/fidelity-policy-DRAFT.md, listening procedure).")
+
+AUDITION_RULE = (
+    "Audition gate (schema 1.1.0): an acceptance-counting open-mode rating "
+    "requires the listener to explicitly confirm hearing BOTH named "
+    "stimuli. Automatic player success records process completion, not "
+    "audibility; --play off or failed automatic playback may proceed via "
+    "explicit confirmation of external audition of the printed files (the "
+    "method is recorded). Declining leaves the candidate uncounted. "
+    "Sessions older than 1.1.0 have no playback/audition fields: absent "
+    "means unrecorded, never inferred success.")
+
+# Named audition-verification outcomes on an open-mode rating record.
+AUDITION_CONFIRMED = "CONFIRMED_HEARD_BOTH"
+AUDITION_UNCONFIRMED = "AUDITION_UNCONFIRMED_NOT_COUNTED"
+# A fabricated nonempty string some pre-gate records may carry in place of a
+# real method. It is never accepted as a recorded method: the listener must
+# supply nonblank free text, and the eligibility gate rejects this value.
+AUDITION_METHOD_PLACEHOLDER = "external (unspecified)"
+# The only playback outcome that says the player PROCESS completed; it is
+# never evidence that anything was audible.
+PLAYED_PROCESS_OK = "played_process_ok"
 
 CLAIM_SCOPE = (
     "A listening session records one listener's structured judgments on "
@@ -354,9 +382,17 @@ def level_match(stim_path, target_rms, cache_dir, tag):
 
 
 def play(path, play_mode):
+    """Attempt playback of one stimulus; return a structured outcome record.
+
+    The outcome records only what the harness observed about the player
+    PROCESS (or that playback was not attempted); it is never evidence that
+    anything was audible. With --play off, or when no player is found, the
+    named file is printed for manual audition and the outcome records that.
+    """
     if play_mode == "off":
         print(f"    [play off] listen to: {path}")
-        return
+        return {"method": "manual_printed_path", "attempted": False,
+                "outcome": "not_attempted_play_off", "path": str(path)}
     player = None
     for cand in (("afplay",) if sys.platform == "darwin" else
                  ("aplay", "play", "paplay")):
@@ -365,9 +401,23 @@ def play(path, play_mode):
             break
     if player is None:
         print(f"    [no player found] listen to: {path}")
-        return
+        return {"method": "manual_printed_path", "attempted": False,
+                "outcome": "no_player_found", "path": str(path)}
     print(f"    playing ({player}): {path}")
-    subprocess.run([player, str(path)], check=False)
+    try:
+        proc = subprocess.run([player, str(path)], check=False)
+    except OSError as exc:
+        print(f"    [player launch failed: {exc}] listen to: {path}")
+        return {"method": f"auto:{player}", "attempted": True,
+                "player": player, "outcome": "launch_error",
+                "error": str(exc), "path": str(path)}
+    if proc.returncode != 0:
+        print(f"    [player exited {proc.returncode}] listen to: {path}")
+    return {"method": f"auto:{player}", "attempted": True, "player": player,
+            "returncode": proc.returncode,
+            "outcome": (PLAYED_PROCESS_OK if proc.returncode == 0
+                        else "player_exit_nonzero"),
+            "path": str(path)}
 
 
 def ask(prompt, validator, default=None):
@@ -417,13 +467,41 @@ def stim_record(kind, path, level_treatment):
     }
 
 
+def acceptance_eligibility_problem(record):
+    """None iff this rating record qualifies for favorites acceptance.
+
+    The machine-checkable gate behind ACCEPTANCE_RULE and AUDITION_RULE: an
+    explicit, persisted listener confirmation of hearing both stimuli, with
+    the audition method recorded. A pre-1.1.0-shaped record (unconditional
+    counts flag, no audition fields) does NOT qualify: unrecorded audition
+    is never inferred as success.
+    """
+    if not record.get("counts_toward_acceptance"):
+        return "counts_toward_acceptance is false"
+    aud = record.get("audition")
+    if not isinstance(aud, dict):
+        return ("audition fields absent (pre-1.1.0 record); unrecorded is "
+                "never inferred as heard")
+    if aud.get("confirmed_heard_both") is not True:
+        return "listener did not confirm hearing both stimuli"
+    if aud.get("verification") != AUDITION_CONFIRMED:
+        return f"audition verification is {aud.get('verification')!r}"
+    method = aud.get("method")
+    if not method:
+        return "audition method not recorded"
+    if method == AUDITION_METHOD_PLACEHOLDER:
+        return ("audition method is the unspecified placeholder, not a "
+                "listener-supplied method")
+    return None
+
+
 def rate_open(cand, wet, compare, compare_kind, play_mode):
     """Unblinded level-correct rating (the acceptance mode)."""
     print(f"  OPEN (level-correct) pair for: {cand['path']}")
     print("    stimulus WET   (native level):")
-    play(wet, play_mode)
+    wet_play = play(wet, play_mode)
     print(f"    stimulus {compare_kind.upper()} (native level):")
-    play(compare, play_mode)
+    compare_play = play(compare, play_mode)
     ratings = {
         "fidelity_wet_vs_comparison_1to5": ask(
             "    fidelity of WET vs comparison [1-5]: ", scale_1_5),
@@ -435,10 +513,42 @@ def rate_open(cand, wet, compare, compare_kind, play_mode):
         "confidence_1to5": ask("    confidence [1-5]: ", conf_1_5),
         "notes": input("    notes (free text, may be empty): ").strip(),
     }
+    print(f"    {AUDITION_RULE}")
+    heard = ask_bool(
+        "    did you hear BOTH stimuli just presented? [y/n]: ")
+    method = None
+    counts = heard
+    if heard:
+        both_played = (wet_play["outcome"] == PLAYED_PROCESS_OK
+                       and compare_play["outcome"] == PLAYED_PROCESS_OK)
+        if both_played:
+            method = wet_play["method"]
+        else:
+            method = input(
+                "    how did you audition the named files? (free text, "
+                "recorded verbatim; a nonblank method is required for this "
+                "rating to count): ").strip()
+            if not method:
+                method = input(
+                    "    a NONBLANK audition method is required for this "
+                    "rating to count (free text, recorded verbatim): "
+                    ).strip()
+            if not method:
+                print("    no audition method supplied: this rating will "
+                      "NOT count toward acceptance.")
+                method = None
+                counts = False
     return {
         "ratings": ratings,
-        "counts_toward_acceptance": True,
+        "counts_toward_acceptance": counts,
         "blind": False,
+        "playback": {"wet": wet_play, "comparison": compare_play},
+        "audition": {
+            "confirmed_heard_both": heard,
+            "method": method,
+            "verification": (AUDITION_CONFIRMED if counts
+                             else AUDITION_UNCONFIRMED),
+        },
     }
 
 
@@ -470,10 +580,11 @@ def rate_blind(cand, wet, compare, compare_kind, play_mode, level_match_on,
           + ("  [LEVEL-MATCHED — supplementary only]" if level_match_on
              else "  [native levels — supplementary only]"))
     labels = {}
+    playback = {}
     for label, (kind, path) in zip(("A", "B"), order):
         labels[label] = kind
         print(f"    stimulus {label}:")
-        play(path, play_mode)
+        playback[label] = play(path, play_mode)
     pref = ask("    preference [A|B|tie]: ", ask_choice(("a", "b", "tie")))
     pref = pref.upper() if pref in ("a", "b") else "tie"
     confidence = ask("    confidence [1-5]: ", conf_1_5)
@@ -490,6 +601,9 @@ def rate_blind(cand, wet, compare, compare_kind, play_mode, level_match_on,
         "blind": True,
         "blind_assignment": unblind,
         "level_treatment": treatment,
+        # Playback outcomes are recorded for inspectability; the mode stays
+        # supplementary-only regardless of them (no audition gate applies).
+        "playback": playback,
     }
 
 
@@ -635,6 +749,7 @@ def run_session(args):
         "session_id": session_path.stem,
         "claim_scope": CLAIM_SCOPE,
         "acceptance_rule": ACCEPTANCE_RULE,
+        "audition_rule": AUDITION_RULE,
         "status": ("DRY_RUN_NOT_HUMAN_LISTENING" if args.dry_run
                    else "HUMAN_LISTENING_SESSION"),
         "recorded_at_utc": datetime.now(timezone.utc).isoformat(
@@ -668,6 +783,9 @@ def run_session(args):
             "candidates": len(records),
             "counting_toward_acceptance": sum(
                 1 for r in records if r.get("counts_toward_acceptance")),
+            "audition_unconfirmed_not_counted": sum(
+                1 for r in records if (r.get("audition") or {}).get(
+                    "verification") == AUDITION_UNCONFIRMED),
             "blocked": sum(1 for r in records
                            if r.get("verification_status") == "BLOCKED"),
         },

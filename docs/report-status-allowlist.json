@@ -40,6 +40,10 @@
         "to": "OPEN",
         "reason": "Finding record; whether it is a pass/fail-class result is the owning leaf's call."
       },
+      "HUMAN_LISTENING_SESSION": {
+        "to": "NON_VERDICT",
+        "reason": "SXT-013 tools/listening_session.py session-mode label for non-dry-run sessions (issue #447): a structured-record descriptor making no verdict claim. It does not by itself establish that a human listened — the operator field and the owning evidence record carry that; acceptance counting is additionally gated on the recorded audition confirmation."
+      },
       "MATCH": {
         "to": "OPEN",
         "reason": "Could be misread as PASS; comparison semantics (budgeted vs exact) undeclared; owning leaf SXT-028e-sse."
