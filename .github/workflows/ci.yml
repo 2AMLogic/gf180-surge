@@ -243,7 +243,10 @@ jobs:
           curl -fsSL -o "$work/verilator.tar.gz" \
             "https://github.com/verilator/verilator/archive/refs/tags/${VERILATOR_TAG}.tar.gz"
           echo "${VERILATOR_ARCHIVE_SHA256}  $work/verilator.tar.gz" | sha256sum -c -
-          got="$(gunzip -c "$work/verilator.tar.gz" | git get-tar-commit-id)"
+          # Decompress to a file first: piping gunzip into get-tar-commit-id
+          # (which exits after the header) SIGPIPEs gunzip under pipefail.
+          gunzip -c "$work/verilator.tar.gz" > "$work/verilator.tar"
+          got="$(git get-tar-commit-id < "$work/verilator.tar")"
           [ "$got" = "${VERILATOR_COMMIT}" ] || { echo "FAIL: archive commit $got != ${VERILATOR_COMMIT}" >&2; exit 1; }
           mkdir "$work/src"
           tar -xzf "$work/verilator.tar.gz" -C "$work/src" --strip-components=1

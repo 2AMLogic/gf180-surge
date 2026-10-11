@@ -103,6 +103,16 @@ Every UNDRIVEN signal name was text-checked to appear as a hierarchical
 proof of how it is driven). No existing RTL, frozen model, fixture or tool byte
 was edited to remove any warning.
 
+**A green `rtl-lint` job does not mean these 96 severe waivers are
+accepted.** The checker returns PASS (exit 0) when the diagnostic multiset
+matches the baseline, whether or not the severe waivers' `review_decision`
+is still `proposed_pending_pr_review`. PASS establishes only "no new,
+changed, missing or stale diagnostic relative to the recorded baseline"; the
+pending count is reported separately in the report as
+`severe_waivers_pending_review` and must be read alongside it. Acceptance or
+rejection of each severe waiver is a human reviewer decision recorded on the
+PR; neither the checker, CI, nor the Judge label flow grants it.
+
 ## Reproduce
 
     python3 tools/check_rtl_lint.py --negative-control --verilator <pinned>
