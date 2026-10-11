@@ -36,6 +36,28 @@ oracle/capture_first_note.py
 Environment overrides: `ORACLE_SURGE_DIR`, `ORACLE_MANIFEST`,
 `ORACLE_PYTHON`, `ORACLE_BUILD_DIR`, `ORACLE_JOBS` (see `fetch-and-build.sh`).
 
+### Binding resolution and provenance (#436)
+
+`oracle_common.import_surgepy()` no longer relies on `sys.path`. It loads the
+native extension explicitly from `$ORACLE_SURGE_DIR/$ORACLE_BUILD_DIR_REL/src/surge-python/`
+(source build, manifest-declared Linux prebuilt, or an explicitly selected tap
+build such as `build-py311-aw49`; any platform-supported extension suffix).
+It raises `OracleBindingError` (an `ImportError`) before any engine exists if
+the directory has no native candidate, more than one, a `surgepy.py` stub, a
+candidate whose real path escapes the directory, or a candidate that fails to
+load. An already-imported `surgepy` is reused only if it was loaded by the
+extension loader from that same canonical file; a module of any other origin,
+or a changed build selection, refuses (no in-process native reload).
+This does not replace the provisioning checks in `fetch-and-build.sh`, and
+independent loaders (e.g. `tools/render_aw49_reference.py`) are not covered.
+
+`oracle_common.binding_provenance(module)` returns `module_path`,
+`module_sha256` and `build_dir` for a validated module. Only
+`capture_first_note.py` records it, as an additive top-level `oracle_binding`
+object in newly emitted `first-note.json`; older records without it stay valid
+and are never backfilled. The digest identifies the loaded binary only and is
+not proof of the engine source commit. Other metadata writers are unchanged.
+
 ### Prebuilt oracle (dispatch workers, #232)
 
 Where building is impractical (a dispatch worker, or a Builder turn), install
