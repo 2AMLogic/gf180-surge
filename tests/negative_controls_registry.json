@@ -376,7 +376,10 @@
     "{tmp}/vel"
    ],
    "slow": true,
-   "requires": [],
+   "requires": [
+    "iverilog",
+    "vvp"
+   ],
    "reason": "~64 s",
    "verdict": "exit0",
    "guard": []
