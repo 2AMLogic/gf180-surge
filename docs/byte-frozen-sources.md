@@ -89,15 +89,16 @@ form too.
 
 These scripts stamp a sha256 of their own bytes into the records they produce.
 The stamp says *which bytes produced this record*, so superseded values are
-expected: of the nine scripts below, **seven** have current bytes that match
-no committed stamp (`current_bytes_recorded: false`). Two are exceptions:
+expected: of the ten scripts below, **seven** have current bytes that match
+no committed stamp (`current_bytes_recorded: false`). Three are exceptions:
 `fixtures/render_fixture.py`, re-rendered under the pinned oracle by #126 and
-again by #136, and `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75),
+again by #136; `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75),
 whose current bytes are hashed into the reference sidecars it produced
-because that leaf's records were rendered from the file as committed — both
-detailed below. That flag is bookkeeping about resolvability, **not** a live
+because that leaf's records were rendered from the file as committed; and
+`tools/diagnose_carrier_variation.py`, added by #382 on the same terms as the
+SXT-041 entry — all three detailed below. That flag is bookkeeping about resolvability, **not** a live
 pin: no test asserts byte-equality for anything in this table, and an edit to
-any of the nine still invalidates no record.
+any of the ten still invalidates no record.
 Editing one therefore invalidates no record. What it does cost is resolvability:
 the record's provenance digest no longer names any file in the tree, and only a
 re-render under the pinned oracle restores that.
@@ -115,9 +116,10 @@ carries no `sha256` field), but its lint disposition was revisited rather than
 assumed, and the #269 "resolvability is already spent" argument no longer applies
 to that one entry. The ninth entry is a second, independent exception —
 `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75) after #269 and so not
-one of its eight; see its own note below. The remaining seven stay `false`.
+one of its eight; see its own note below. The tenth,
+`tools/diagnose_carrier_variation.py` (#382), is a third. The remaining seven stay `false`.
 
-| Script | Stamped field | Lint-finding disposition (#269; revisited for `fixtures/render_fixture.py` in #126, and stated for `fixtures/render_slfo_fixture.py` in SXT-041 (#75) on the same terms) |
+| Script | Stamped field | Lint-finding disposition (#269; revisited for `fixtures/render_fixture.py` in #126, and stated for `fixtures/render_slfo_fixture.py` in SXT-041 (#75) and for `tools/diagnose_carrier_variation.py` in #382 on the same terms) |
 |---|---|---|
 | `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until **both** the SXT-028f (#126) and the SXT-028e-sse (#136) bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
 | `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
@@ -128,6 +130,7 @@ one of its eight; see its own note below. The remaining seven stay `false`.
 | `tools/render_lp12_reference.py` | `script_sha256` | cleanable — the two F401 `struct`/`zlib` findings were cleaned in #269 |
 | `tools/render_reverb_reference.py` | `script_sha256` | cleanable — the two F841 findings (`bs`, discarded `save_trace` return) were cleaned in #269 |
 | `tools/listening_session.py` | `tool_sha256` | cleanable — no finding as of #269 |
+| `tools/diagnose_carrier_variation.py` | `script_sha256` | cleanable, cost no longer zero — an edit makes a **resolvable** stamp unresolvable until `reports/sxt-012/diagnostics/novuo/transcript.json` is re-assembled (`assemble`, or the oracle-host re-render of its shards), and fails `test_historical_provenance_carries_no_live_equality_claim` until either that lands or the flag is set `false` in the same change. Not a live pin: nothing re-derives the stamp, and the tool is expected to change for the oracle-host run (#382, #310). That transcript is BLOCKED and used no oracle build (no finding as of #382) |
 
 ### Disposition of the lint findings in these eight scripts (#269)
 
@@ -169,11 +172,21 @@ resolvability, which costs no committed record its validity, and is restored
 by re-rendering the SXT-041 references under the pinned oracle; its row in the
 table above records that cost.
 
+**The tenth entry, on the same terms (#382).**
+`tools/diagnose_carrier_variation.py` stamps `script_sha256` into
+`reports/sxt-012/diagnostics/novuo/transcript.json`, which was assembled from
+the file as committed, so its stamp resolves (`current_bytes_recorded: true`)
+the way SXT-041's does. Nothing re-derives the stamp, so it is historical
+provenance, not a live pin. The tool is expected to change before the
+oracle-host run, and each such change is followed by re-assembling the
+transcript. That transcript is BLOCKED: its environment fields are copied from
+`oracle/manifest.json` and describe a build that was not used.
+
 Which counts are #269's: this subsection's heading ("these eight scripts"), its
 "seven of the eight" paragraph, and the "eight scripts' own write sites" check
 below are #269's ruling over the eight entries that existed when it was made,
 and are deliberately not renumbered. The whole-registry counts at the top of
-this section — nine entries, seven `false`, two exceptions — describe the
+this section — ten entries, seven `false`, three exceptions — describe the
 registry as it stands and do move with it.
 
 What this decision does **not** license:

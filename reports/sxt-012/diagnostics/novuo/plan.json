@@ -1,0 +1,576 @@
+{
+  "block_size": 32,
+  "carrier": "resources/data/patches_3rdparty/A.Liv/Leads/Novuo.fxp",
+  "carrier_slug": "novuo",
+  "control": "resources/data/patches_3rdparty/Luna/MPE/Lap Harp.fxp",
+  "gate_reps": 3,
+  "interleaved_control": "lapharp is stress-rendered in the same process/shard family as the carrier",
+  "issue": 382,
+  "perturbing_preset": "resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp",
+  "reps_per_bus": 20,
+  "sample_rate": 48000,
+  "schema_version": 1,
+  "sequences": [
+    "seq-notes-coverage-v1",
+    "seq-poly-8-v1"
+  ],
+  "shards": [
+    {
+      "job_id": "novuo:original:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/original__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "original"
+    },
+    {
+      "job_id": "novuo:original:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/original__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "original"
+    },
+    {
+      "job_id": "novuo:osc_type_s0_o0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s0_o0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "osc_type_s0_o0"
+    },
+    {
+      "job_id": "novuo:osc_type_s0_o0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s0_o0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "osc_type_s0_o0"
+    },
+    {
+      "job_id": "novuo:osc_type_s0_o1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s0_o1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "osc_type_s0_o1"
+    },
+    {
+      "job_id": "novuo:osc_type_s0_o1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s0_o1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "osc_type_s0_o1"
+    },
+    {
+      "job_id": "novuo:osc_type_s0_o2:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s0_o2__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "osc_type_s0_o2"
+    },
+    {
+      "job_id": "novuo:osc_type_s0_o2:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s0_o2__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "osc_type_s0_o2"
+    },
+    {
+      "job_id": "novuo:unison_voices_s0_o0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s0_o0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "unison_voices_s0_o0"
+    },
+    {
+      "job_id": "novuo:unison_voices_s0_o0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s0_o0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "unison_voices_s0_o0"
+    },
+    {
+      "job_id": "novuo:unison_voices_s0_o1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s0_o1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "unison_voices_s0_o1"
+    },
+    {
+      "job_id": "novuo:unison_voices_s0_o1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s0_o1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "unison_voices_s0_o1"
+    },
+    {
+      "job_id": "novuo:unison_voices_s0_o2:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s0_o2__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "unison_voices_s0_o2"
+    },
+    {
+      "job_id": "novuo:unison_voices_s0_o2:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s0_o2__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "unison_voices_s0_o2"
+    },
+    {
+      "job_id": "novuo:noise_level_s0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_level_s0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "noise_level_s0"
+    },
+    {
+      "job_id": "novuo:noise_level_s0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_level_s0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "noise_level_s0"
+    },
+    {
+      "job_id": "novuo:noise_colour_s0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_colour_s0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "noise_colour_s0"
+    },
+    {
+      "job_id": "novuo:noise_colour_s0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_colour_s0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "noise_colour_s0"
+    },
+    {
+      "job_id": "novuo:osc_type_s1_o0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s1_o0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "osc_type_s1_o0"
+    },
+    {
+      "job_id": "novuo:osc_type_s1_o0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s1_o0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "osc_type_s1_o0"
+    },
+    {
+      "job_id": "novuo:osc_type_s1_o1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s1_o1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "osc_type_s1_o1"
+    },
+    {
+      "job_id": "novuo:osc_type_s1_o1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s1_o1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "osc_type_s1_o1"
+    },
+    {
+      "job_id": "novuo:osc_type_s1_o2:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s1_o2__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "osc_type_s1_o2"
+    },
+    {
+      "job_id": "novuo:osc_type_s1_o2:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/osc_type_s1_o2__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "osc_type_s1_o2"
+    },
+    {
+      "job_id": "novuo:unison_voices_s1_o0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s1_o0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "unison_voices_s1_o0"
+    },
+    {
+      "job_id": "novuo:unison_voices_s1_o0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s1_o0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "unison_voices_s1_o0"
+    },
+    {
+      "job_id": "novuo:unison_voices_s1_o1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s1_o1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "unison_voices_s1_o1"
+    },
+    {
+      "job_id": "novuo:unison_voices_s1_o1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s1_o1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "unison_voices_s1_o1"
+    },
+    {
+      "job_id": "novuo:unison_voices_s1_o2:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s1_o2__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "unison_voices_s1_o2"
+    },
+    {
+      "job_id": "novuo:unison_voices_s1_o2:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/unison_voices_s1_o2__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "unison_voices_s1_o2"
+    },
+    {
+      "job_id": "novuo:noise_level_s1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_level_s1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "noise_level_s1"
+    },
+    {
+      "job_id": "novuo:noise_level_s1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_level_s1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "noise_level_s1"
+    },
+    {
+      "job_id": "novuo:noise_colour_s1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_colour_s1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "noise_colour_s1"
+    },
+    {
+      "job_id": "novuo:noise_colour_s1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/noise_colour_s1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "noise_colour_s1"
+    },
+    {
+      "job_id": "novuo:drift_all_osc:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/drift_all_osc__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "drift_all_osc"
+    },
+    {
+      "job_id": "novuo:drift_all_osc:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/drift_all_osc__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "drift_all_osc"
+    },
+    {
+      "job_id": "novuo:lfo_random_s0:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/lfo_random_s0__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "lfo_random_s0"
+    },
+    {
+      "job_id": "novuo:lfo_random_s0:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/lfo_random_s0__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "lfo_random_s0"
+    },
+    {
+      "job_id": "novuo:lfo_random_s1:seq-notes-coverage-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/lfo_random_s1__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "lfo_random_s1"
+    },
+    {
+      "job_id": "novuo:lfo_random_s1:seq-poly-8-v1",
+      "kind": "variant",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/lfo_random_s1__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "lfo_random_s1"
+    },
+    {
+      "job_id": "lapharp:original:seq-notes-coverage-v1",
+      "kind": "flake_control",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/lapharp__seq-notes-coverage-v1.json",
+      "sequence": "seq-notes-coverage-v1",
+      "variant": "original"
+    },
+    {
+      "job_id": "lapharp:original:seq-poly-8-v1",
+      "kind": "flake_control",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/lapharp__seq-poly-8-v1.json",
+      "sequence": "seq-poly-8-v1",
+      "variant": "original"
+    },
+    {
+      "job_id": "positive-controls",
+      "kind": "positive_control",
+      "output": "reports/sxt-012/diagnostics/novuo/shards/positive-controls.json"
+    }
+  ],
+  "status": "NOT_RUN",
+  "variants": [
+    {
+      "factors": [],
+      "id": "original",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "osc_type_s0_o0",
+          "kind": "osc_type",
+          "note": "oscillator REPLACEMENT; the loader may reset the oscillator's dependent params, which is recorded, so the cause is not isolated to a scalar",
+          "osc": 0,
+          "scene": 0,
+          "target": "ot_sine"
+        }
+      ],
+      "id": "osc_type_s0_o0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "osc_type_s0_o1",
+          "kind": "osc_type",
+          "note": "oscillator REPLACEMENT; the loader may reset the oscillator's dependent params, which is recorded, so the cause is not isolated to a scalar",
+          "osc": 1,
+          "scene": 0,
+          "target": "ot_sine"
+        }
+      ],
+      "id": "osc_type_s0_o1",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "osc_type_s0_o2",
+          "kind": "osc_type",
+          "note": "oscillator REPLACEMENT; the loader may reset the oscillator's dependent params, which is recorded, so the cause is not isolated to a scalar",
+          "osc": 2,
+          "scene": 0,
+          "target": "ot_sine"
+        }
+      ],
+      "id": "osc_type_s0_o2",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "unison_voices_s0_o0",
+          "kind": "unison",
+          "osc": 0,
+          "scene": 0,
+          "target": 1
+        }
+      ],
+      "id": "unison_voices_s0_o0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "unison_voices_s0_o1",
+          "kind": "unison",
+          "osc": 1,
+          "scene": 0,
+          "target": 1
+        }
+      ],
+      "id": "unison_voices_s0_o1",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "unison_voices_s0_o2",
+          "kind": "unison",
+          "osc": 2,
+          "scene": 0,
+          "target": 1
+        }
+      ],
+      "id": "unison_voices_s0_o2",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "noise_level_s0",
+          "kind": "noise_level",
+          "scene": 0,
+          "target": 0.0
+        }
+      ],
+      "id": "noise_level_s0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "noise_colour_s0",
+          "kind": "noise_colour",
+          "note": "colour has no effect if level is nonzero-free; recorded as tried",
+          "scene": 0,
+          "target": 0.0
+        }
+      ],
+      "id": "noise_colour_s0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "osc_type_s1_o0",
+          "kind": "osc_type",
+          "note": "oscillator REPLACEMENT; the loader may reset the oscillator's dependent params, which is recorded, so the cause is not isolated to a scalar",
+          "osc": 0,
+          "scene": 1,
+          "target": "ot_sine"
+        }
+      ],
+      "id": "osc_type_s1_o0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "osc_type_s1_o1",
+          "kind": "osc_type",
+          "note": "oscillator REPLACEMENT; the loader may reset the oscillator's dependent params, which is recorded, so the cause is not isolated to a scalar",
+          "osc": 1,
+          "scene": 1,
+          "target": "ot_sine"
+        }
+      ],
+      "id": "osc_type_s1_o1",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "osc_type_s1_o2",
+          "kind": "osc_type",
+          "note": "oscillator REPLACEMENT; the loader may reset the oscillator's dependent params, which is recorded, so the cause is not isolated to a scalar",
+          "osc": 2,
+          "scene": 1,
+          "target": "ot_sine"
+        }
+      ],
+      "id": "osc_type_s1_o2",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "unison_voices_s1_o0",
+          "kind": "unison",
+          "osc": 0,
+          "scene": 1,
+          "target": 1
+        }
+      ],
+      "id": "unison_voices_s1_o0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "unison_voices_s1_o1",
+          "kind": "unison",
+          "osc": 1,
+          "scene": 1,
+          "target": 1
+        }
+      ],
+      "id": "unison_voices_s1_o1",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "unison_voices_s1_o2",
+          "kind": "unison",
+          "osc": 2,
+          "scene": 1,
+          "target": 1
+        }
+      ],
+      "id": "unison_voices_s1_o2",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "noise_level_s1",
+          "kind": "noise_level",
+          "scene": 1,
+          "target": 0.0
+        }
+      ],
+      "id": "noise_level_s1",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "noise_colour_s1",
+          "kind": "noise_colour",
+          "note": "colour has no effect if level is nonzero-free; recorded as tried",
+          "scene": 1,
+          "target": 0.0
+        }
+      ],
+      "id": "noise_colour_s1",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "drift_all_osc",
+          "kind": "drift",
+          "note": "normalized read-back first, then set to 0 on every oscillator (a single named native factor)",
+          "target": 0.0
+        }
+      ],
+      "id": "drift_all_osc",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "lfo_random_s0",
+          "kind": "lfo_random",
+          "note": "every LFO of the scene whose shape is a random or S&H source is replaced by a sine shape",
+          "scene": 0,
+          "target": "ls_sine"
+        }
+      ],
+      "id": "lfo_random_s0",
+      "start_from": "original"
+    },
+    {
+      "factors": [
+        {
+          "id": "lfo_random_s1",
+          "kind": "lfo_random",
+          "note": "every LFO of the scene whose shape is a random or S&H source is replaced by a sine shape",
+          "scene": 1,
+          "target": "ls_sine"
+        }
+      ],
+      "id": "lfo_random_s1",
+      "start_from": "original"
+    }
+  ]
+}

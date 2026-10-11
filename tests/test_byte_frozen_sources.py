@@ -468,7 +468,7 @@ def test_control_the_prose_audit_fires_on_a_doctored_copy(doctor):
     elif doctor == "note_count_word":
         note = reg["historical_provenance_note"]
         reg["historical_provenance_note"] = note.replace(
-            "seven of these nine", "six of these nine")
+            "seven of these ten", "six of these ten")
         assert reg["historical_provenance_note"] != note
     elif doctor == "drop_md_caveat":
         row = doc_table_rows(doc)[slfo["path"]]
