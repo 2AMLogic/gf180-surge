@@ -31,6 +31,7 @@ No byte-frozen file is edited: scripts are only imported and run, with their
 output constants re-pointed at a scratch directory.
 """
 
+import copy
 import contextlib
 import glob
 import importlib.util
@@ -316,16 +317,24 @@ def test_control_script_imports_and_exposes_main(name):
         assert callable(getattr(mod, "main", None)), f"{name}: no main()"
 
 
+def _missing_tool(name, ent):
+    """NOT_RUN reason naming the first absent declared tool, else None."""
+    for tool in ent["requires"]:
+        if shutil.which(tool) is None:
+            return (f"NOT_RUN: {tool} absent; {name} controls not "
+                    "executed (not a pass)")
+    return None
+
+
 @pytest.mark.parametrize("name", sorted(_registry()))
 def test_control_script_executes_and_all_controls_fail_their_checks(
         name, tmp_path):
     ent = _registry()[name]
     if ent["status"] != "LIVE":
         pytest.skip(f"{ent['status']}: {ent['reason']} (not a pass)")
-    for tool in ent["requires"]:
-        if shutil.which(tool) is None:
-            pytest.skip(f"NOT_RUN: {tool} absent; {name} controls not "
-                        "executed (not a pass)")
+    missing = _missing_tool(name, ent)
+    if missing:
+        pytest.skip(missing)
     if ent["slow"] and os.environ.get("NC_LIVE_SLOW") != "1":
         pytest.skip(f"NOT_RUN: slow control ({ent['reason']}); set "
                     "NC_LIVE_SLOW=1 to execute (not a pass)")
@@ -604,3 +613,75 @@ def test_sxt025_live_run_leaves_committed_artifacts_byte_identical(tmp_path):
     assert _tree_hashes(["reports/sxt-025"]) == before
     for rel in ent["outputs"]:
         assert os.path.exists(os.path.join(str(tmp_path), rel)), rel
+
+
+# ---- velocity row: simulator prerequisites (#400) --------------------------
+VEL = "vel_negative_controls.py"
+
+
+def _vel_gate(monkeypatch, present, registry=None):
+    """Apply the harness gate to the velocity row with only `present` tools."""
+    monkeypatch.setattr(
+        shutil, "which", lambda t: f"/x/{t}" if t in present else None)
+    ent = (registry or _registry())[VEL]
+    called = []
+    reason = _missing_tool(VEL, ent)
+    if reason is None:
+        called.append("main")  # the harness would proceed to mod.main()
+    return reason, called
+
+
+def test_vel_registry_declares_iverilog_and_vvp():
+    assert {"iverilog", "vvp"} <= set(_registry()[VEL]["requires"])
+
+
+def test_vel_missing_iverilog_is_not_run_and_main_not_called(monkeypatch):
+    reason, called = _vel_gate(monkeypatch, {"vvp"})
+    assert reason and reason.startswith("NOT_RUN") and "iverilog" in reason
+    assert called == []
+
+
+def test_vel_missing_vvp_is_not_run_and_main_not_called(monkeypatch):
+    reason, called = _vel_gate(monkeypatch, {"iverilog"})
+    assert reason and reason.startswith("NOT_RUN") and "vvp" in reason
+    assert called == []
+
+
+def test_vel_both_tools_present_proceeds_to_run(monkeypatch):
+    reason, called = _vel_gate(monkeypatch, {"iverilog", "vvp"})
+    assert reason is None and called == ["main"]
+
+
+@pytest.mark.parametrize("drop", ["iverilog", "vvp"])
+def test_failure_control_vel_prerequisite_removal_is_detected(
+        monkeypatch, drop):
+    """Removing a declared prerequisite must make the gate assertions fail."""
+    reg = copy.deepcopy(_registry())
+    reg[VEL]["requires"] = [t for t in reg[VEL]["requires"] if t != drop]
+    present = {"iverilog", "vvp"} - {drop}
+    reason, called = _vel_gate(monkeypatch, present, reg)
+    # With the prerequisite undeclared the gate lets main() run on a host
+    # lacking the tool: exactly what the regression tests above forbid.
+    assert reason is None and called == ["main"]
+    with pytest.raises(AssertionError):
+        assert reason and drop in reason and called == []
+
+
+@pytest.mark.parametrize("stdout", ["not json", "{}", "[]",
+                                    '{"verdict": "ERROR"}'])
+def test_vel_malformed_comparator_is_controlled_failure(
+        tmp_path, monkeypatch, capsys, stdout):
+    with _isolated_imports():
+        mod = _load(_path(VEL), _modname("ncl_vel_malformed_", VEL))
+
+    def fake_sh(cmd, cwd=None):
+        if mod.RUNNER in cmd:
+            return 0, "", ""
+        return 1, stdout, "boom"
+    monkeypatch.setattr(mod, "sh", fake_sh)
+    monkeypatch.setattr(sys, "argv", [mod.__file__, "--artifacts",
+                                      str(tmp_path / "a")])
+    rc = mod.main()
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "comparator" in out and "FAIL" in out
