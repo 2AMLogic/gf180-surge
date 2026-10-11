@@ -14,6 +14,7 @@ tested here — no engine tree is required or used.
 Python 3 standard library only.
 """
 
+import argparse
 import importlib.util
 import json
 import struct
@@ -198,4 +199,212 @@ class TestListeningHelpers:
 
     def test_acceptance_mode_string(self):
         assert "mode=open" in ls.ACCEPTANCE_RULE
+
+
+def _feed(answers):
+    it = iter(answers)
+    return lambda *a, **k: next(it)
+
+
+def _write_wav(path, level=1000):
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(48000)
+        w.writeframes(struct.pack("<8h", *([level, -level] * 4)))
+    return path
+
+
+class TestAuditionGate:
+    """Issue #447: acceptance ratings require recorded audition.
+
+    Bookkeeping controls only: mocked platform players, scripted listener
+    answers, tiny synthetic WAVs. No audio device, no human judgment, no
+    fidelity claim.
+    """
+
+    @pytest.fixture
+    def stimuli(self, tmp_path):
+        return (_write_wav(tmp_path / "stim-wet.wav"),
+                _write_wav(tmp_path / "stim-dry.wav"))
+
+    @staticmethod
+    def _ratings_answers(confirm, method=None):
+        # fidelity, timbre, artifacts, tail, confidence, notes, then the
+        # audition confirmation (and the free-text method when the automatic
+        # path did not cleanly play both stimuli).
+        answers = ["5", "4", "none", "y", "3", "", "y" if confirm else "n"]
+        if confirm and method is not None:
+            answers.append(method)
+        return answers
+
+    @staticmethod
+    def _install_player(monkeypatch, which_name="fakeplay", rc=None,
+                        exc=None):
+        calls = []
+        monkeypatch.setattr(ls.shutil, "which", lambda name: which_name)
+
+        def run(cmd, **kwargs):
+            calls.append(cmd)
+            if exc is not None:
+                raise exc
+            return subprocess.CompletedProcess(cmd, rc)
+        monkeypatch.setattr(ls.subprocess, "run", run)
+        return calls
+
+    def test_negative_control_player_exit_nonzero_never_counts(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        self._install_player(monkeypatch, rc=1)
+        monkeypatch.setattr(
+            "builtins.input", _feed(self._ratings_answers(confirm=False)))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "auto")
+        assert rec["playback"]["wet"]["outcome"] == "player_exit_nonzero"
+        assert rec["playback"]["wet"]["returncode"] == 1
+        assert rec["playback"]["comparison"]["outcome"] == "player_exit_nonzero"
+        assert rec["counts_toward_acceptance"] is False
+        assert rec["audition"]["verification"] == ls.AUDITION_UNCONFIRMED
+        assert ls.acceptance_eligibility_problem(rec)
+        # failure control: the PRE-#447 unconditional result (ordinary
+        # ratings, counts flag True, no audition fields) is rejected by the
+        # eligibility gate rather than silently counting.
+        legacy = {"ratings": rec["ratings"],
+                  "counts_toward_acceptance": True, "blind": False}
+        assert ls.acceptance_eligibility_problem(legacy)
+
+    def test_manual_confirmation_success_preserves_play_off(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        monkeypatch.setattr("builtins.input", _feed(
+            self._ratings_answers(
+                confirm=True, method="laptop speakers via printed paths")))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "off")
+        assert rec["counts_toward_acceptance"] is True
+        assert rec["audition"]["confirmed_heard_both"] is True
+        assert rec["audition"]["method"] == \
+            "laptop speakers via printed paths"
+        assert rec["playback"]["wet"]["outcome"] == "not_attempted_play_off"
+        assert rec["playback"]["comparison"]["path"] == str(compare)
+        assert ls.acceptance_eligibility_problem(rec) is None
+
+    def test_auto_process_success_still_needs_confirmation(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        self._install_player(monkeypatch, rc=0)
+        monkeypatch.setattr(
+            "builtins.input", _feed(self._ratings_answers(confirm=False)))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "auto")
+        assert rec["playback"]["wet"]["outcome"] == ls.PLAYED_PROCESS_OK
+        assert rec["counts_toward_acceptance"] is False
+        assert ls.acceptance_eligibility_problem(rec)
+
+    def test_auto_success_confirmed_records_player_and_counts(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        self._install_player(monkeypatch, rc=0)
+        monkeypatch.setattr(
+            "builtins.input", _feed(self._ratings_answers(confirm=True)))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "auto")
+        assert rec["counts_toward_acceptance"] is True
+        assert rec["audition"]["method"] == "auto:aplay"
+        assert rec["audition"]["verification"] == ls.AUDITION_CONFIRMED
+        assert ls.acceptance_eligibility_problem(rec) is None
+
+    def test_launch_exception_recorded_and_external_confirmation_counts(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        self._install_player(monkeypatch, exc=OSError("exec format error"))
+        monkeypatch.setattr("builtins.input", _feed(
+            self._ratings_answers(confirm=True, method="phone+headphones")))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "auto")
+        assert rec["playback"]["wet"]["outcome"] == "launch_error"
+        assert "exec format error" in rec["playback"]["wet"]["error"]
+        assert rec["counts_toward_acceptance"] is True
+        assert rec["audition"]["method"] == "phone+headphones"
+        assert ls.acceptance_eligibility_problem(rec) is None
+
+    def test_missing_player_recorded_and_declined_not_counted(
+            self, stimuli, monkeypatch):
+        wet, compare = stimuli
+        monkeypatch.setattr(ls.shutil, "which", lambda name: None)
+        monkeypatch.setattr(
+            "builtins.input", _feed(self._ratings_answers(confirm=False)))
+        rec = ls.rate_open({"path": "fake/A.fxp"}, wet, compare, "dry", "auto")
+        assert rec["playback"]["wet"]["outcome"] == "no_player_found"
+        assert rec["counts_toward_acceptance"] is False
+        assert ls.acceptance_eligibility_problem(rec)
+
+    def test_blind_records_playback_and_stays_supplementary(
+            self, stimuli, tmp_path, monkeypatch):
+        wet, compare = stimuli
+        self._install_player(monkeypatch, rc=0)
+        monkeypatch.setattr("builtins.input", _feed(["a", "4", ""]))
+        rec = ls.rate_blind({"path": "fake/A.fxp"}, wet, compare, "dry",
+                            "auto", False, tmp_path)
+        assert rec["counts_toward_acceptance"] is False
+        assert set(rec["playback"]) == {"A", "B"}
+        assert ls.acceptance_eligibility_problem(rec)
+
+
+class TestAuditionGateSession:
+    """Session-level gating: unconfirmed candidate uncounted, session goes on."""
+
+    @staticmethod
+    def _slate_and_census(tmp_path):
+        census = tmp_path / "census.csv"
+        rels = ["fake/A.fxp", "fake/B.fxp"]
+        census.write_text("path,git_blob_sha1\n" + "\n".join(
+            f"{r},{ls.git_blob_sha1(tmp_path / 'fake.fxp')}" for r in rels)
+            + "\n")
+        cands = [{"id": f"c{i}", "path": r, "bank": "b", "category": "c",
+                  "census_blob_sha1": ls.git_blob_sha1(tmp_path / "fake.fxp")}
+                 for i, r in enumerate(rels)]
+        slate = tmp_path / "slate.json"
+        slate.write_text(json.dumps({
+            "schema_version": "sxt-013-candidate-slate/1.0.0",
+            "artifact": "fake", "candidates": cands}))
+        return slate, census
+
+    def test_unconfirmed_candidate_not_counted_session_continues(
+            self, tmp_path, monkeypatch):
+        preset = tmp_path / "fake.fxp"
+        preset.write_bytes(b"X" * 20)
+        slate, census = self._slate_and_census(tmp_path)
+
+        def fake_renderer(preset_abs, sequence, out_dir):
+            for kind, lvl in (("wet", 1200), ("dry", 600)):
+                _write_wav(Path(out_dir) / f"{sequence}-{kind}.wav", lvl)
+            return {"fake": True}
+        monkeypatch.setattr(ls, "verify_candidate", lambda c, cen: preset)
+        monkeypatch.setattr(ls, "run_renderer", fake_renderer)
+        monkeypatch.setattr(ls.shutil, "which", lambda name: "fakeplay")
+
+        def fake_run(cmd, **kwargs):
+            if cmd and cmd[0] == "git":  # the in-harness repo_commit probe
+                return subprocess.CompletedProcess(cmd, 0, stdout="a" * 40)
+            return subprocess.CompletedProcess(cmd, 0)
+        monkeypatch.setattr(ls.subprocess, "run", fake_run)
+        # candidate 1: ordinary ratings, declines confirmation;
+        # candidate 2: ordinary ratings, confirms (auto played cleanly).
+        answers = (TestAuditionGate._ratings_answers(confirm=False)
+                   + TestAuditionGate._ratings_answers(confirm=True))
+        monkeypatch.setattr("builtins.input", _feed(answers))
+        args = argparse.Namespace(
+            slate=str(slate), census=str(census), limit=0, pick="first",
+            compare="dry", dry_run=False, operator="tester", mode="open",
+            sequence=ls.DEFAULT_SEQUENCE,
+            sessions_dir=str(tmp_path / "sessions"),
+            audio_cache=str(tmp_path / "cache"), play="auto",
+            level_match=False)
+        assert ls.run_session(args) == 0
+        session = json.loads(
+            next((tmp_path / "sessions").glob("*.json")).read_text())
+        recs = session["records"]
+        assert len(recs) == 2  # session continued past the unconfirmed one
+        assert [r["counts_toward_acceptance"] for r in recs] == [False, True]
+        assert recs[0]["audition"]["verification"] == ls.AUDITION_UNCONFIRMED
+        assert recs[1]["audition"]["verification"] == ls.AUDITION_CONFIRMED
+        assert recs[0]["ratings"]["fidelity_wet_vs_comparison_1to5"] == 5
+        assert session["counts"]["counting_toward_acceptance"] == 1
+        assert session["counts"]["audition_unconfirmed_not_counted"] == 1
         assert "supplementary" in ls.ACCEPTANCE_RULE
