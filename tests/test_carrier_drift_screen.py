@@ -239,6 +239,9 @@ def test_non_single_scene_b_only_drift_fails(corpus):
     assert r["determinism_gate"]["drift_per_voicing_scene"] == {
         "A": 0.0, "B": 0.131249994}
     assert doc["status"] == "PASS"            # coverage complete; not a verdict
+    assert doc["coverage_status"] == "PASS"
+    assert doc["drift_gate_status"] == "FAIL"   # drift outcome is separate
+    assert "drift_gate_status=FAIL" in doc["status_reason"]
     assert doc["observations"]["drift_gate_fail"] == 1
     assert "NOT_ESTABLISHED" in doc["render_eligibility"]
     with pytest.raises(AssertionError):
@@ -310,3 +313,405 @@ def test_missing_predicate_blocks(corpus):
     kw = corpus([graph("a")])
     doc = cds.run_screen("x", None, native_shape_check, FakeLoader({}), **kw)
     assert doc["status"] == "BLOCKED"
+
+
+# ---------------------------------------------------------------------------
+# Coverage status vs drift outcome (never quote coverage PASS as drift-clean)
+# ---------------------------------------------------------------------------
+
+def test_drift_gate_status_pass_only_when_complete_and_all_pass(corpus):
+    kw = corpus([graph("a"), graph("c")])
+    doc = run(kw, FakeLoader({"p/a.fxp": vals(), "p/c.fxp": vals()}))
+    assert (doc["status"], doc["coverage_status"],
+            doc["drift_gate_status"]) == ("PASS", "PASS", "PASS")
+    assert "coverage only" in doc["status_scope"]
+
+
+def test_drift_gate_status_no_verdict_when_coverage_incomplete(corpus):
+    kw = corpus([graph("a"), graph("c")],
+                census_over={"p/a.fxp": {"content_verified": "False"}})
+    doc = run(kw, FakeLoader({"p/c.fxp": vals()}))
+    assert doc["status"] == "NO_VERDICT"
+    assert doc["drift_gate_status"] == "NO_VERDICT"   # 1 PASS is not clean
+
+
+def test_drift_gate_status_fail_dominates_incomplete_coverage(corpus):
+    kw = corpus([graph("a"), graph("c")],
+                census_over={"p/a.fxp": {"content_verified": "False"}})
+    doc = run(kw, FakeLoader({"p/c.fxp": vals(b=0.5)}))
+    assert doc["status"] == "NO_VERDICT" and doc["drift_gate_status"] == "FAIL"
+
+
+# ---------------------------------------------------------------------------
+# Unexpected caller exceptions become per-candidate refusals
+# ---------------------------------------------------------------------------
+
+def raising_shape_check(s, patch, cand):
+    if cand["path"] == "p/a.fxp":
+        raise KeyError("shape check bug")
+
+
+def test_shape_check_exception_is_a_per_candidate_refusal(corpus):
+    kw = corpus([graph("a"), graph("c")])
+    ld = FakeLoader({"p/a.fxp": vals(), "p/c.fxp": vals()})
+    doc = run(kw, ld, shape_check=raising_shape_check)
+    recs = by_path(doc)
+    assert recs["p/a.fxp"]["refusal"]["code"] == cds.R_SHAPE_CHECK_ERROR
+    assert "KeyError" in recs["p/a.fxp"]["refusal"]["detail"]
+    assert recs["p/a.fxp"]["determinism_gate"] is None
+    assert recs["p/c.fxp"]["screened"]                 # run continued
+    assert doc["status"] == "NO_VERDICT"
+    assert doc["coverage"]["candidates_refused"] == 1
+
+
+@pytest.mark.parametrize("bad_gate", [
+    lambda s, p: 1 / 0,                                # raises
+    lambda s, p: None,                                 # no observation
+    lambda s, p: {"status": "MAYBE"},                  # not PASS/FAIL
+])
+def test_gate_exception_or_malformed_result_is_a_refusal(corpus, bad_gate):
+    kw = corpus([graph("a"), graph("c")])
+    doc = run(kw, FakeLoader({"p/a.fxp": vals(), "p/c.fxp": vals()}),
+              gate=bad_gate)
+    for r in doc["candidates"]:
+        assert r["refusal"]["code"] == cds.R_GATE_ERROR
+        assert r["determinism_gate"] is None and not r["screened"]
+    assert doc["status"] == "NO_VERDICT"
+    assert doc["drift_gate_status"] == "NO_VERDICT"
+
+
+def test_unexpected_loader_exception_is_a_refusal(corpus):
+    kw = corpus([graph("a"), graph("c")])
+    ld = FakeLoader({"p/a.fxp": vals(), "p/c.fxp": vals()})
+    orig = ld.load
+
+    def load(rel, sha):
+        if rel == "p/a.fxp":
+            raise RuntimeError("native crash surrogate")
+        return orig(rel, sha)
+    ld.load = load
+    recs = by_path(run(kw, ld))
+    assert recs["p/a.fxp"]["refusal"]["code"] == cds.R_LOAD_ERROR
+    assert recs["p/c.fxp"]["screened"]
+
+
+def test_refusal_codes_are_distinct_and_not_status_tokens():
+    codes = [cds.R_NO_CENSUS_ROW, cds.R_BAD_HASH, cds.R_HASH_MISMATCH,
+             cds.R_NOT_VERIFIED, cds.R_BLOB_MISMATCH, cds.R_LOAD_FAILED,
+             cds.R_SHAPE_MISMATCH, cds.R_NOT_ATTEMPTED, cds.R_LOAD_ERROR,
+             cds.R_SHAPE_CHECK_ERROR, cds.R_GATE_ERROR]
+    assert len(set(codes)) == len(codes)
+    assert not set(codes) & {"PASS", "FAIL", "NOT_RUN", "BLOCKED",
+                             "NO_VERDICT", "STALE"}
+
+
+# ---------------------------------------------------------------------------
+# PinnedSurgepyLoader provenance: full pin, clean tree, submodules, runtime,
+# build, binding -- all BEFORE loadPatch. Injected git/oracle_common only:
+# plumbing controls, not a live-engine run.
+# ---------------------------------------------------------------------------
+
+PIN = cds.ENGINE_PIN
+# Same 9-char prefix as the pin, different commit: getVersion() would carry
+# the prefix, so only full-HEAD verification can tell them apart.
+PREFIX_TWIN = PIN[:9] + "0" * 31
+SUBS = [{"path": "libs/one", "commit": "1" * 40},
+        {"path": "libs/two", "commit": "2" * 40}]
+NESTED = [{"path": "libs/two/inner", "commit": "3" * 40}]
+PY = "3.11.16"
+PLAT = "linux-x86_64"
+PREBUILT_SHA = "d" * 64
+
+
+def oracle_manifest():
+    return {"engine": {"commit": PIN},
+            "submodules": SUBS, "nested_submodules_observed": NESTED,
+            "build": {"python_version": PY,
+                      "products": {"surgepy_module":
+                                   "build-py311/src/surge-python/x.so"}},
+            "prebuilt": {PLAT: {"artifact": "a.tar.gz",
+                                "sha256": PREBUILT_SHA,
+                                "python": {"version": PY}}}}
+
+
+class FakeGit:
+    """Fake `git -C cwd args` for a pinned checkout; mutate to inject faults."""
+
+    def __init__(self, engine):
+        self.engine = os.path.realpath(engine)
+        self.heads = {self.engine: PIN}
+        self.heads.update({os.path.join(self.engine, s["path"]): s["commit"]
+                           for s in SUBS + NESTED})
+        self.links = {s["path"]: s["commit"] for s in SUBS}
+        self.status = ""
+        self.toplevel_override = {}
+        self.calls = []
+
+    def __call__(self, args, cwd):
+        cwd = os.path.realpath(cwd)
+        self.calls.append((cwd, tuple(args)))
+        if args[:2] == ["rev-parse", "--show-toplevel"]:
+            if cwd in self.toplevel_override:
+                return 0, self.toplevel_override[cwd]
+            return (0, cwd) if cwd in self.heads else (128, "")
+        if args == ["rev-parse", "HEAD"]:
+            return (0, self.heads[cwd]) if cwd in self.heads else (128, "")
+        if args[0] == "rev-parse" and args[1].startswith("HEAD:"):
+            p = args[1][5:]
+            return (0, self.links[p]) if p in self.links else (128, "")
+        if args[0] == "status":
+            return 0, self.status
+        raise AssertionError(f"unexpected git call {args}")
+
+
+class FakeSurge:
+    def __init__(self, log):
+        self.log = log
+
+    def loadPatch(self, path):
+        self.log.append(path)
+        return True
+
+    def getPatch(self):
+        return fake_patch()
+
+
+class FakeSurgepy:
+    def __init__(self, version="1.4.0.nightly." + PIN[:9]):
+        self.version, self.loaded = version, []
+
+    def getVersion(self):
+        return self.version
+
+    def createSurge(self, sr):
+        assert sr == cds.SAMPLE_RATE
+        return FakeSurge(self.loaded)
+
+
+class FakeOC:
+    def __init__(self, engine, surgepy, build_rel="build-py311",
+                 module_path=None):
+        self.engine, self.surgepy, self.build_rel = engine, surgepy, build_rel
+        self.module_path = module_path or os.path.join(
+            engine, "build-py311", "src", "surge-python", "x.so")
+        self.imported = False
+
+    def engine_dir(self):
+        return self.engine
+
+    def build_dir(self):
+        return os.path.join(self.engine, self.build_rel)
+
+    def import_surgepy(self):
+        self.imported = True
+        return self.surgepy
+
+    def binding_provenance(self, m):
+        assert m is self.surgepy
+        return {"module_path": self.module_path, "module_sha256": "e" * 64,
+                "build_dir": self.build_dir()}
+
+    def apply_engine_env(self):
+        pass
+
+    def git_blob_sha1(self, path):
+        return SHA["a"]
+
+
+@pytest.fixture
+def engine(tmp_path):
+    root = tmp_path / "engine"
+    for s in SUBS + NESTED:
+        (root / s["path"]).mkdir(parents=True)
+    (root / "p").mkdir()
+    (root / "p" / "a.fxp").write_bytes(b"x")
+    mp = tmp_path / "oracle-manifest.json"
+    mp.write_text(json.dumps(oracle_manifest()))
+    return str(root), str(mp)
+
+
+def make_loader(engine, git=None, surgepy=None, python_version=PY, **oc_kw):
+    root, mp = engine
+    sp = surgepy or FakeSurgepy()
+    oc = FakeOC(root, sp, **oc_kw)
+    ld = cds.PinnedSurgepyLoader(oc=oc, manifest_path=mp,
+                                 git=git or FakeGit(root),
+                                 platform_key=PLAT,
+                                 python_version=python_version)
+    return ld, oc, sp
+
+
+def test_loader_positive_control_full_provenance_opens_and_loads(engine):
+    ld, _oc, sp = make_loader(engine)
+    info = ld.open()
+    prov = info["provenance"]
+    assert prov["mode"] == cds.PROV_SOURCE and prov["engine_head"] == PIN
+    assert prov["tracked_tree_clean"] is True
+    assert [s["commit"] for s in prov["submodules_verified"]] == [
+        s["commit"] for s in SUBS]
+    assert prov["nested_submodules"][0]["status"] == "verified"
+    assert info["binding"]["module_sha256"] == "e" * 64
+    ld.load("p/a.fxp", SHA["a"])
+    assert sp.loaded == [os.path.join(engine[0], "p/a.fxp")]
+
+
+def _break_head(g):
+    g.heads[g.engine] = PREFIX_TWIN
+
+
+def _dirty(g):
+    g.status = " M src/common/dsp/Oscillator.cpp"
+
+
+def _dirty_submodule(g):
+    g.status = " m libs/one"
+
+
+def _sub_drift(g):
+    g.heads[os.path.join(g.engine, "libs/one")] = "9" * 40
+
+
+def _gitlink_drift(g):
+    g.links["libs/two"] = "8" * 40
+
+
+def _sub_uninitialized(g):
+    g.toplevel_override[os.path.join(g.engine, "libs/one")] = g.engine
+
+
+def _nested_drift(g):
+    g.heads[os.path.join(g.engine, "libs/two/inner")] = "7" * 40
+
+
+@pytest.mark.parametrize("fault", [
+    _break_head, _dirty, _dirty_submodule, _sub_drift, _gitlink_drift,
+    _sub_uninitialized, _nested_drift])
+def test_loader_prefix_match_with_wrong_or_dirty_source_blocks(engine, fault):
+    """Negative control: getVersion() carries the pin prefix (the old
+    prefix-only check would accept), but the source is wrong/dirty/drifted:
+    open() must BLOCK before any import or loadPatch."""
+    g = FakeGit(engine[0])
+    fault(g)
+    ld, oc, sp = make_loader(engine, git=g)
+    assert PIN[:9] in sp.getVersion()           # prefix check alone passes
+    with pytest.raises(cds.RunBlocked):
+        ld.open()
+    assert not oc.imported and sp.loaded == []
+    with pytest.raises(cds.Refuse):
+        ld.load("p/a.fxp", SHA["a"])            # no load without open()
+    assert sp.loaded == []
+
+
+def test_loader_reviewer_control_custom_build_prefix_refuses(engine, tmp_path):
+    """The Judge's control: getVersion()='custom-build-58914e59c' with an
+    unverified checkout must not open."""
+    sp = FakeSurgepy("custom-build-" + PIN[:9])
+    ld, _oc, _ = make_loader(engine, surgepy=sp,
+                            git=lambda args, cwd: (128, ""))
+    with pytest.raises(cds.RunBlocked):
+        ld.open()
+    absent = cds.PinnedSurgepyLoader(
+        oc=FakeOC(str(tmp_path / "does-not-exist"), sp),
+        manifest_path=engine[1], git=FakeGit(engine[0]),
+        platform_key=PLAT, python_version=PY)
+    with pytest.raises(cds.OracleAbsent):
+        absent.open()
+    assert sp.loaded == []
+
+
+@pytest.mark.parametrize("kw,needle", [
+    ({"python_version": "3.12.1"}, "Python"),
+    ({"build_rel": "build-py314"}, "build dir"),
+    ({"module_path": "/elsewhere/surgepy.so"}, "outside"),
+    ({"surgepy": FakeSurgepy("1.4.0.nightly.deadbeef0")}, "pinned commit"),
+])
+def test_loader_runtime_build_binding_mismatch_blocks(engine, kw, needle):
+    ld, _oc, sp = make_loader(engine, **kw)
+    with pytest.raises(cds.RunBlocked) as ei:
+        ld.open()
+    assert needle in str(ei.value)
+    assert sp.loaded == []
+
+
+def test_loader_block_surfaces_as_blocked_run_without_evidence(
+        corpus, engine, tmp_path):
+    kw = corpus([graph("a")])
+    g = FakeGit(engine[0])
+    _break_head(g)
+    ld, _oc, sp = make_loader(engine, git=g)
+    doc = run(kw, ld)
+    assert doc["status"] == "BLOCKED" and doc["live"] is False
+    assert "candidates" not in doc and sp.loaded == []
+    out = tmp_path / "rec.json"
+    with pytest.raises(cds.Refuse):
+        cds.write_record(doc, str(out))
+    assert not out.exists()
+
+
+def _prebuilt(tmp_path, stamp=PREBUILT_SHA, pin=PIN, plat=PLAT):
+    d = tmp_path / "cache" / pin / plat
+    (d / "p").mkdir(parents=True)
+    (d / "p" / "a.fxp").write_bytes(b"x")
+    if stamp is not None:
+        (d / cds.PREBUILT_STAMP).write_text(stamp + "\n")
+    mp = tmp_path / "oracle-manifest.json"
+    mp.write_text(json.dumps(oracle_manifest()))
+    return str(d), str(mp)
+
+
+def no_git(args, cwd):
+    return 128, ""
+
+
+def test_loader_prebuilt_artifact_opens_with_explicit_scope(tmp_path):
+    ld, _oc, _sp = make_loader(_prebuilt(tmp_path), git=no_git)
+    prov = ld.open()["provenance"]
+    assert prov["mode"] == cds.PROV_PREBUILT
+    assert prov["artifact_sha256"] == PREBUILT_SHA
+    assert "NOT re-verified live" in prov["source_tree_verification"]
+
+
+@pytest.mark.parametrize("kw", [
+    {"stamp": "0" * 64},                 # different artifact
+    {"stamp": None},                     # foreign directory, no stamp
+    {"pin": PREFIX_TWIN},                # installed under another commit
+    {"plat": "darwin-arm64"},            # wrong platform layout
+])
+def test_loader_prebuilt_mismatch_blocks(tmp_path, kw):
+    ld, oc, sp = make_loader(_prebuilt(tmp_path, **kw), git=no_git)
+    with pytest.raises(cds.RunBlocked):
+        ld.open()
+    assert not oc.imported and sp.loaded == []
+
+
+def test_verify_provenance_with_real_git(tmp_path):
+    """Exercises the real `git` invocations (HEAD + dirty detection) on a
+    throwaway repo; the manifest pin is re-pointed only inside the verifier
+    call, the module-level ENGINE_PIN check is satisfied separately."""
+    import shutil
+    import subprocess
+    if shutil.which("git") is None:
+        pytest.skip("git not available")
+    repo = tmp_path / "r"
+    repo.mkdir()
+    env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+               GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+    for c in (["init", "-q"], ["add", "-A"],
+              ["commit", "-q", "--allow-empty", "-m", "x"]):
+        subprocess.run(["git", "-C", str(repo), *c], check=True, env=env)
+    (repo / "f.txt").write_text("a")
+    subprocess.run(["git", "-C", str(repo), "add", "f.txt"], check=True)
+    subprocess.run(["git", "-C", str(repo), "commit", "-q", "-m", "f"],
+                   check=True, env=env)
+    head = cds.run_git(["rev-parse", "HEAD"], str(repo))[1]
+    man = {"engine": {"commit": head}, "submodules": [],
+           "build": {"python_version": PY}}
+    prov = cds._verify_source_checkout(str(repo), man, cds.run_git)
+    assert prov["engine_head"] == head
+    man_wrong = {**man, "engine": {"commit": PREFIX_TWIN}}
+    with pytest.raises(cds.RunBlocked):
+        cds._verify_source_checkout(str(repo), man_wrong, cds.run_git)
+    (repo / "f.txt").write_text("b")
+    with pytest.raises(cds.RunBlocked) as ei:
+        cds._verify_source_checkout(str(repo), man, cds.run_git)
+    assert "modified tracked" in str(ei.value)
