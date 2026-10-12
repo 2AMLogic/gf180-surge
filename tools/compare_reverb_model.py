@@ -833,8 +833,8 @@ def aggregate_sweep_coverage(results, required, discovered):
     Verdict rule: refusal when a required case is missing (the caller refuses
     before writing any evidence); NO_VERDICT when no mandatory check could be
     graded anywhere; FAIL when any graded check is false; PASS only with
-    every required case discovered and at least one graded check per case and
-    no graded check false. Coverage ("full"/"partial"/"none") is reported
+    every required case discovered, at least one graded check overall and
+    no graded check false (ungraded cases make coverage 'partial'). Coverage ("full"/"partial"/"none") is reported
     separately from agreement, with per-case statuses and reasons.
     """
     missing = [c for c in required if c not in discovered]
@@ -890,8 +890,10 @@ def aggregate_sweep_coverage(results, required, discovered):
         "coverage": coverage,
         "verdict": verdict,
         "verdict_rule": (
-            "PASS iff every required case is discovered, every case grades "
-            ">=1 check, and no graded check is false; FAIL if any graded "
+            "PASS iff every required case is discovered, at least one "
+            "mandatory check is graded, and no graded check is false "
+            "(cases with nothing gradable are listed NOT_RUN and make "
+            "coverage 'partial'); FAIL if any graded "
             "check is false; NO_VERDICT with a nonzero exit when no "
             "mandatory check is graded anywhere; a missing (or unusable) "
             "required case is refused before any evidence is written. "
