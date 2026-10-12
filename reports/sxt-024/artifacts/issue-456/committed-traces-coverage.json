@@ -1,0 +1,119 @@
+{
+  "cases": [
+    {
+      "graded_checks": [
+        "t60_w_vs_pred",
+        "tail_level_tracking"
+      ],
+      "not_run_checks": [],
+      "reason": null,
+      "status": "PASS",
+      "trace": "sweepmdecaym0"
+    },
+    {
+      "graded_checks": [
+        "t60_w_vs_pred",
+        "tail_level_tracking"
+      ],
+      "not_run_checks": [],
+      "reason": null,
+      "status": "PASS",
+      "trace": "sweepmdecaym1_879465"
+    },
+    {
+      "graded_checks": [
+        "t60_w_vs_pred",
+        "tail_level_tracking"
+      ],
+      "not_run_checks": [],
+      "reason": null,
+      "status": "PASS",
+      "trace": "sweepmdecaym3"
+    },
+    {
+      "graded_checks": [
+        "tail_level_tracking"
+      ],
+      "not_run_checks": [
+        "t60_w_vs_pred"
+      ],
+      "reason": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+      "status": "PASS",
+      "trace": "sweepmdecaym4_5"
+    },
+    {
+      "graded_checks": [
+        "tail_level_tracking"
+      ],
+      "not_run_checks": [
+        "t60_w_vs_pred"
+      ],
+      "reason": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+      "status": "PASS",
+      "trace": "sweepmdecaym6"
+    },
+    {
+      "graded_checks": [
+        "tail_level_tracking"
+      ],
+      "not_run_checks": [
+        "t60_w_vs_pred"
+      ],
+      "reason": "t60 comparison NOT_RUN: nominal decay (2^decay) is shorter than the structure's own echo/loop delays; measured t60 is dominated by the composite geometry, not the feedback exponent (engine and model agree via tail_level_tracking)",
+      "status": "PASS",
+      "trace": "sweepmdecaymm2"
+    },
+    {
+      "graded_checks": [],
+      "not_run_checks": [
+        "t60_w_vs_pred",
+        "tail_level_tracking"
+      ],
+      "reason": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+      "status": "NOT_RUN",
+      "trace": "sweepmdecaymm4"
+    }
+  ],
+  "cases_discovered": 7,
+  "cases_graded": 6,
+  "cases_not_run": 1,
+  "cases_required": 7,
+  "checks_graded_false": 0,
+  "checks_graded_true": 9,
+  "checks_not_run": 5,
+  "coverage": "partial",
+  "discovered_cases": [
+    "sweepmdecaym0",
+    "sweepmdecaym1_879465",
+    "sweepmdecaym3",
+    "sweepmdecaym4_5",
+    "sweepmdecaym6",
+    "sweepmdecaymm2",
+    "sweepmdecaymm4"
+  ],
+  "extra_discovered": [],
+  "issue": 456,
+  "missing_required": [],
+  "required_cases": [
+    "sweepmdecaymm4",
+    "sweepmdecaymm2",
+    "sweepmdecaym0",
+    "sweepmdecaym1_879465",
+    "sweepmdecaym3",
+    "sweepmdecaym4_5",
+    "sweepmdecaym6"
+  ],
+  "required_grid": [
+    "-4",
+    "-2",
+    "0",
+    "1.879465",
+    "3",
+    "4.5",
+    "6"
+  ],
+  "required_set_source": "tools/render_reverb_reference.py cmd_sweep default grid and trace naming (committed generator policy); pinned against the committed traces by tests/test_sxt024_sweep_coverage.py",
+  "schema": "sxt-024/sweep-coverage-v1",
+  "verdict": "PASS",
+  "verdict_rule": "PASS iff every required case is discovered, every case grades >=1 check, and no graded check is false; FAIL if any graded check is false; NO_VERDICT with a nonzero exit when no mandatory check is graded anywhere; a missing (or unusable) required case is refused before any evidence is written. Per-fit None stays a documented NOT_RUN exception (see t60_note per case) and never counts as a graded pass."
+}

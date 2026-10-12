@@ -89,6 +89,7 @@ and record regeneration (issue #112)" in this section; verdicts unchanged):
 | click-wet (impulse/decay carrier) | 5.9e-7 | −55.8 dB | −55.6 dB | 0.0014 dB | 1.4e-5 dB | 3.0e-7 | **PASS** |
 | hardreset-midpatch-wet (type-toggle reset) | 3.2e-6 | −58.6 dB | −42.6 dB * | 0.0003 dB | 0.0050 dB | 6.2e-8 | **PASS with one recorded budget finding (*)** |
 | sweep decay −4…6 (t60 vs 2^decay, diagnostic) | — | — | tail level tracking mean ≤0.64 dB, max ≤4.96 dB | — | — | — | **PASS** (t60 fits NOT_RUN where the tail is below the −100 dBFS floor; tracking carries the agreement) |
+| sweep decay −4…6, per-case coverage (#456) | — | — | 6 of 7 cases grade the tracking agreement | — | — | — | coverage **partial**: the decay −4 case is excitation-bounded — its tail falls below the −100 dBFS floor, so BOTH agreement checks are NOT_RUN there and it grades nothing (see the #456 note below) |
 
 **(*) Bounded finding for the freeze.** In the factory-default parameter
 regime (the post-rebuild state, see below) the tail error is −42.6 dB
@@ -328,6 +329,30 @@ Other field changes are (a) the additive fields the records predated —
 `tail_gate` (#100, extended by #111's tail-shape leg), `tail_window` (#108),
 and `tail_err_rms_dbfs` / `tail_wet_rms_dbfs` (the tail floor-guard,
 `efd4c59`) — and (b) last-bits moves of the metrics.
+
+**Decay-sweep coverage gate (#456).** `tools/compare_reverb_model.py sweep`
+now declares its required case set from the committed generator policy
+(`render_reverb_reference.py` default grid −4, −2, 0, 1.879465, 3, 4.5, 6),
+refuses (NO_VERDICT, exit 2, no evidence written) when a required case is
+missing or unusable, and never turns an ungraded run into success: with no
+mandatory check gradeable anywhere it exits NO_VERDICT, and a graded false
+check is FAIL. Coverage — required / discovered / graded / unmeasurable,
+with per-case statuses and reasons — is reported separately in
+`comparison/sweep-t60-coverage.json` (written by future runs; the committed
+`sweep-t60.json` list predates the gate and is not rewritten by it). Applied
+to the committed traces on this host (python 3.12.3 / numpy 1.26.4, the
+#112 regeneration environment) the gate reproduces every per-case value
+exactly (`artifacts/issue-456/RETENTION.txt`) and reports coverage
+**partial**: six of the seven cases grade the mandatory tail-level-tracking
+agreement, while the decay −4 case is excitation-bounded — its tail falls
+below the −100 dBFS measurement floor, so **both** agreement checks are
+NOT_RUN there and it grades nothing (before #456 that vacuity was invisible:
+the old aggregate `all(...)` over only non-None values returned success even
+on a fully ungraded sweep — demonstrated by the fired controls in
+`artifacts/issue-456/NEGATIVE-CONTROLS.txt`). The committed sweep verdict is
+not invalidated by this change; the partial coverage above is a bounded
+fixture finding for the SXT-013 freeze (a decay −4 grade would need a
+stronger short-decay excitation, i.e. an oracle re-render).
 
 **Residual reproducibility finding (bounded, reported not hidden).** The pin
 removes the *arithmetic-definition* drift; it does not make the records

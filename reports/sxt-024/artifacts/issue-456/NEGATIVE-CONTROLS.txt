@@ -1,0 +1,29 @@
+issue #456 -- negative controls for the decay-sweep coverage gate
+
+environment: 3.12.3 / numpy 1.26.4
+tool under control: worktree tools/compare_reverb_model.py; the pre-#456 tool is loaded from git HEAD:tools/compare_reverb_model.py
+all fixtures are synthetic temp constructions; no committed report or trace is modified
+
+NC-456-A  empty trace directory
+  command : sweep --traces-dir <empty> --out-dir <out>
+  exit: 2   files written: none
+  FIRES (refused, no evidence written): True
+
+NC-456-B  one required case missing (committed set minus sweepmdecaym3)
+  command : sweep --traces-dir <6 of 7> --out-dir <out with sentinel>
+  exit: 2   sentinel intact: True   coverage file written: False
+  FIRES (refused before overwriting evidence): True
+
+NC-456-C  fully ungraded sweep (wet := dry; every check None), full declared set
+  fixture : all 7 committed sweep traces with wet := dry (the reverb-only component is exactly zero, so no agreement check is measurable anywhere)
+  new tool: exit 1  verdict 'NO_VERDICT'  coverage 'none'  cases_not_run 7
+  old tool: exit 0  aggregate all(...) over non-None values: True
+  FIRES (old tool returned success on exactly this result set; the gate does not): True
+
+NC-456-D  graded false check (reverb component +6 dB vs the prediction) -> FAIL
+  fixture : two-case subset (sweepmdecaym0, sweepmdecaymm2); wet := dry + 2 x (model reverb), i.e. the reverb-only component is +6 dB against the prediction
+  scope   : REQUIRED_SWEEP_CASES scoped to the subset in this driver process (full-set pin: tests/test_sxt024_sweep_coverage.py)
+  exit: 1  verdict 'FAIL'  checks_graded_false 2  per-case {'sweepmdecaym0': 'FAIL', 'sweepmdecaymm2': 'FAIL'}
+  FIRES (a graded false check is a FAIL, never a pass): True
+
+CONTROL SUITE: all controls FIRED (exit 0)
