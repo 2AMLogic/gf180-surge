@@ -49,3 +49,13 @@ def test_needs_oracle_skip_allowed_not_counted_pass():
     assert bad == []
     assert any(l.startswith("NOT_RUN") and "needs-oracle" in l for l in lines)
     assert not any("PASS" in l and "needs-oracle" in l for l in lines)
+
+
+def test_missing_or_skipped_sxt025_integration_case_fails():
+    key = f"{g.EXEC}[model/integration/negative_controls.py]"
+    assert key in _healthy(), "registry must carry the SXT-025 integration row"
+    o = _healthy()
+    o[key] = "NOT_RUN"
+    assert g.evaluate(REG, o)[1]
+    del o[key]
+    assert g.evaluate(REG, o)[1]

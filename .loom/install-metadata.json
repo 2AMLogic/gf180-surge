@@ -1,6 +1,6 @@
 {
-  "loom_version": "0.19.1019",
-  "loom_commit": "0dca83f94fad8edfd754c67832a60a03e165e25d",
+  "loom_version": "0.19.1087",
+  "loom_commit": "51ac271f990b317a52ebf27cc21f34561e1179fb",
   "install_date": "2026-09-24",
   "loom_source_remote": "https://github.com/rjwalters/loom.git",
   "installed_files": [
@@ -654,8 +654,21 @@
     ".claude/commands/loom/champion-critical-file-hold.md",
     ".loom/docs/rollout-check.md",
     ".loom/docs/telemetry-kind-pick-decision.md",
-    ".loom/scripts/tests/test-sweep-lease-renew-lifecycle.sh"
+    ".loom/scripts/tests/test-sweep-lease-renew-lifecycle.sh",
+    ".loom/scripts/tests/test-check-main-clean-build-trees.sh",
+    ".agents/skills/loom-builder-pr/SKILL.md",
+    ".loom/docs/park-record.md",
+    ".loom/scripts/tests/test-champion-pr-merge-negation-guard.sh",
+    ".claude/commands/loom/sweep-doctor-glm-escalation.md",
+    ".loom/docs/stale-check-inputs.md",
+    ".loom/docs/session-output.md",
+    ".loom/docs/branch-update-strategy.md",
+    ".loom/docs/push-lease-pinning.md",
+    ".loom/scripts/tests/test-merge-pr-required-checks.sh",
+    ".loom/scripts/tests/test-sweep-wave-judge-done-staleness.sh",
+    ".agents/skills/loom-builder-worktree/SKILL.md",
+    ".loom/scripts/tests/test-merge-pr-ci-result.sh"
   ],
-  "last_resync": "2026-10-10",
-  "requires_daemon": "0.19.772"
+  "last_resync": "2026-10-12",
+  "requires_daemon": "0.19.1081"
 }
