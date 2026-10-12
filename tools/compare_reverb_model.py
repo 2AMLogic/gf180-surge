@@ -92,6 +92,11 @@ per-fit NOT_RUN exceptions and graded mandatory tail tracking PASSes (exit 0)
 with coverage reported separately: reports/sxt-024/comparison/
 sweep-t60-coverage.json carries required/discovered/missing/extra case
 counts, graded/unmeasurable per-case statuses with reasons, and the verdict.
+Each discovered case's identity is validated before it is graded (issue #458
+review): the declared trace, the requested grid value, the applied decay
+override, and the normalized engine decaytime readback must agree (within
+the declared native readback tolerance), so renamed copies of one decay case
+refuse instead of supplying the required coverage.
 The per-case sweep-t60.json list keeps its shape (additive `status` field
 only), so existing consumers are preserved. Committed sweep evidence written
 before this gate predates it and is not rewritten by it.
@@ -157,6 +162,60 @@ def sweep_case_name(grid_v):
 REQUIRED_SWEEP_CASES = tuple(sweep_case_name(v) for v in SWEEP_GRID_DEFAULT)
 SWEEP_REPORT = "sweep-t60.json"
 SWEEP_COVERAGE_REPORT = "sweep-t60-coverage.json"
+
+# Identity validation (issue #458 review): a sweep sidecar must declare the
+# identity its filename claims, so renamed copies of one decay case cannot
+# supply the required coverage. Native readback tolerance: the generator
+# writes the requested grid value and the engine stores the applied decay as
+# float32; on the committed traces the largest requested-vs-applied gap is
+# 3.5e-07 (~1.4 float32 ULP at 1.879), orders of magnitude below the smallest
+# declared grid gap (2.0) and far above anything a real identity mismatch
+# would produce by accident.
+SWEEP_IDENTITY_READBACK_TOL = 1e-6
+REQUIRED_CASE_GRID = {sweep_case_name(v): float(v) for v in SWEEP_GRID_DEFAULT}
+
+
+def validate_sweep_case_identity(name, side):
+    """Check one sweep sidecar against the identity its filename claims.
+
+    Raises ValueError (a SWEEP_INPUT_ERRORS member, so the sweep refuses
+    before any evidence is written) unless:
+
+      * the declared trace equals the filename stem;
+      * a declared (required) case name carries exactly the committed
+        generator grid value for that name as its requested decay;
+      * the applied decay override matches the normalized engine decaytime
+        readback (the same native readback, so the tight tolerance);
+      * the applied decay override is the requested grid value within the
+        native readback tolerance.
+
+    NaN fails every comparison on purpose. Returns the requested value.
+    """
+    declared = side.get("trace")
+    if declared != name:
+        raise ValueError(
+            "sweep sidecar %s.json declares trace %r; a case is only graded "
+            "under its own declared identity" % (name, declared))
+    requested = float(side["sweep"]["requested"])
+    applied = float(side["render"]["overrides_applied"]["3"])
+    engine = float(side["engine_patch_state"]["params"]["decaytime"])
+    expected = REQUIRED_CASE_GRID.get(name)
+    if expected is not None and requested != expected:
+        raise ValueError(
+            "sweep case %s declares requested decay %r; the committed "
+            "generator grid declares %r for this trace name"
+            % (name, requested, expected))
+    if not abs(applied - engine) <= SWEEP_IDENTITY_READBACK_TOL:
+        raise ValueError(
+            "sweep case %s: applied decay override %r does not match the "
+            "normalized engine decaytime readback %r"
+            % (name, applied, engine))
+    if not abs(applied - requested) <= SWEEP_IDENTITY_READBACK_TOL:
+        raise ValueError(
+            "sweep case %s: applied decay override %r is not the requested "
+            "grid value %r within the declared native readback tolerance %r"
+            % (name, applied, requested, SWEEP_IDENTITY_READBACK_TOL))
+    return requested
 
 BUDGETS = {
     # PROPOSED pending the SXT-013 fidelity-policy freeze (nothing here is
@@ -763,9 +822,12 @@ def sweep_case_result(name, traces_dir):
 
     Raises one of SWEEP_INPUT_ERRORS when the case's sidecar, wet trace, or
     the selected directory's dry bus is missing or unusable -- cmd_sweep
-    turns that into a refusal rather than silently dropping a case.
+    turns that into a refusal rather than silently dropping a case. The
+    sidecar's declared identity is validated first (issue #458 review): a
+    renamed copy of another case refuses before anything is graded.
     """
     side = json.load(open(os.path.join(traces_dir, name + ".json")))
+    validate_sweep_case_identity(name, side)
     decay = side["render"]["overrides_applied"]["3"]
     wet = read_wav(os.path.join(traces_dir, name + ".wav"))
     model, c, st = build_model(side)

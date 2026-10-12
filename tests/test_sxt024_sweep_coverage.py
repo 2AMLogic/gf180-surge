@@ -10,6 +10,10 @@ now REQUIRES declared case coverage and graded agreement.
   * a missing required case, an empty trace directory, or an unusable
     required sidecar REFUSES (NO_VERDICT, exit 2) BEFORE any evidence file
     is written;
+  * a sidecar whose declared trace, requested grid value, applied decay
+    override, or normalized engine readback disagrees with its filename
+    REFUSES the same way -- renamed duplicate identities cannot supply the
+    required coverage (issue #458 review);
   * a sweep where no mandatory check could be graded (every check None) is
     NO_VERDICT with a nonzero exit -- the old vacuous all(...) over non-None
     values can no longer masquerade as success;
@@ -292,6 +296,89 @@ def test_sweep_refuses_an_unusable_required_sidecar(tmp_path, capsys):
     assert payload["verdict"] == "NO_VERDICT (refused)"
     assert "unusable" in payload["reason"]
     assert not out.exists() or not list(out.iterdir())
+
+
+@pytest.mark.usefixtures("subset_gate")
+def test_sweep_refuses_renamed_duplicate_identities(synth_sweeps, capsys):
+    """Issue #458 review: discovery counts filenames, so one identity copied
+    under every required name must be refused, not graded as the grid. The
+    first sorted case carries the duplicate so the refusal precedes any
+    grading output."""
+    traces, out = synth_sweeps["pass"]
+    victim = os.path.join(traces, "sweepmdecaym0.json")
+    victim_wav = os.path.join(traces, "sweepmdecaym0.wav")
+    saved = (open(victim).read(), open(victim_wav, "rb").read())
+    try:
+        for suffix in (".json", ".wav"):
+            src = os.path.join(traces, "sweepmdecaymm2" + suffix)
+            with open(src, "rb") as a, open(victim_wav if suffix == ".wav"
+                                            else victim, "wb") as b:
+                b.write(a.read())
+        sentinel = os.path.join(out, "sweep-t60.json")
+        with open(sentinel, "w") as f:
+            f.write("[]\n")
+        rc = crm.cmd_sweep(_ns(traces, out))
+        assert rc == 2
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["verdict"] == "NO_VERDICT (refused)"
+        assert "identity" in payload["reason"]
+        # the duplicate identity never became graded coverage
+        assert payload["coverage"]["required_checks_graded"] == 0
+        assert open(sentinel).read() == "[]\n"
+        assert not os.path.exists(
+            os.path.join(out, "sweep-t60-coverage.json"))
+    finally:
+        with open(victim, "w") as f:
+            f.write(saved[0])
+        with open(victim_wav, "wb") as f:
+            f.write(saved[1])
+
+
+@pytest.mark.usefixtures("subset_gate")
+def test_sweep_refuses_relabeled_requested_with_unchanged_applied_decay(
+        synth_sweeps, capsys):
+    """Issue #458 review: a sidecar whose trace/requested labels are edited
+    to match the filename but whose applied decay override and normalized
+    engine readback are left at another case's values must refuse."""
+    traces, out = synth_sweeps["pass"]
+    victim = os.path.join(traces, "sweepmdecaymm2.json")
+    saved = open(victim).read()
+    try:
+        side = json.load(open(os.path.join(traces, "sweepmdecaym0.json")))
+        side["trace"] = "sweepmdecaymm2"            # label edited
+        side["sweep"] = {"param": "fx4_p3 decaytime",
+                         "requested": -2.0}         # label edited
+        # render.overrides_applied["3"] and engine decaytime stay at m0's
+        with open(victim, "w") as f:
+            json.dump(side, f, indent=2, sort_keys=True)
+            f.write("\n")
+        sentinel = os.path.join(out, "sweep-t60.json")
+        with open(sentinel, "w") as f:
+            f.write("[]\n")
+        rc = crm.cmd_sweep(_ns(traces, out))
+        assert rc == 2
+        # sweepmdecaymm2 sorts after sweepmdecaym0, so m0's graded-case
+        # status line precedes the refusal payload in stdout
+        captured = capsys.readouterr().out
+        payload = json.loads(captured[captured.index("{"):])
+        assert payload["verdict"] == "NO_VERDICT (refused)"
+        assert "applied decay override" in payload["reason"]
+        assert payload["coverage"]["required_checks_graded"] >= 1
+        assert open(sentinel).read() == "[]\n"
+        assert not os.path.exists(
+            os.path.join(out, "sweep-t60-coverage.json"))
+    finally:
+        with open(victim, "w") as f:
+            f.write(saved)
+
+
+def test_committed_sweep_sidecars_pass_identity_validation():
+    """The identity contract holds on the committed traces: declared trace,
+    requested grid value, applied override, and engine readback agree."""
+    for name in crm.REQUIRED_SWEEP_CASES:
+        side = json.load(open(os.path.join(COMMITTED, name + ".json")))
+        requested = crm.validate_sweep_case_identity(name, side)
+        assert requested == crm.REQUIRED_CASE_GRID[name]
 
 
 # --------------------------------------------------------------------------

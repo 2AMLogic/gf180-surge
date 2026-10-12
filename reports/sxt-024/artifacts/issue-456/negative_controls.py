@@ -28,6 +28,18 @@ reports/sxt-024/comparison/.
             subset with a -6 dB click-dry -> per-case tracking values differ
             from the true-dry run, i.e. the selected directory's dry bus is
             the one used (the committed one is never borrowed).
+  NC-456-G  renamed duplicate identities (issue #458 review): the committed
+            m0 sidecar and wav copied under every required filename -> the
+            tool must refuse (exit 2) before overwriting prior evidence,
+            while the pre-#456 tool accepts exactly this masquerade (exit 0)
+            -- one decay case renamed seven times must never count as the
+            declared grid.
+  NC-456-H  relabelled identity with the applied/engine decay left behind
+            (issue #458 review): every required name gets a sidecar whose
+            declared trace and requested grid value are consistent with the
+            filename but whose applied decay override and normalized engine
+            readback are still m0's -> refuse (exit 2), prior evidence
+            untouched; labels alone cannot vouch for an identity.
 
 Usage: python3 reports/sxt-024/artifacts/issue-456/negative_controls.py <repo_root>
 """
@@ -372,6 +384,93 @@ def control_f(root):
     return fired
 
 
+def control_g(root):
+    log("NC-456-G  renamed duplicate identities: the m0 case under every "
+        "required filename")
+    base = os.path.join(root, "nc-g")
+    traces, out = os.path.join(base, "traces"), os.path.join(base, "out")
+    os.makedirs(traces)
+    os.makedirs(out)
+    shutil.copy(os.path.join(crm.TRACES, "click-dry.npy"),
+                os.path.join(traces, "click-dry.npy"))
+    for name in crm.REQUIRED_SWEEP_CASES:
+        for suffix in (".json", ".wav"):
+            shutil.copy(os.path.join(crm.TRACES, "sweepmdecaym0" + suffix),
+                        os.path.join(traces, name + suffix))
+    sentinel = os.path.join(out, "sweep-t60.json")
+    with open(sentinel, "w") as f:
+        f.write("committed evidence sentinel\n")
+    rc_new = run_cli(traces, out)
+    intact = open(sentinel).read() == "committed evidence sentinel\n"
+    no_cov = not os.path.exists(os.path.join(out, "sweep-t60-coverage.json"))
+    # the masquerade the identity check closes: the pre-#456 tool counts
+    # filenames, so one decay case renamed seven times grades as the whole
+    # declared grid and exits 0 (the issue #458 review's live demonstration)
+    old = load_old_module()
+    old.TRACES = traces
+    rc_old = old.cmd_sweep(None)
+    log("  fixture : the committed m0 sidecar+wav copied under all %d "
+        "required filenames (+ the committed click-dry)"
+        % len(crm.REQUIRED_SWEEP_CASES))
+    log("  new tool: exit %d  prior evidence intact: %s  coverage file "
+        "written: %s" % (rc_new, intact, not no_cov))
+    log("  old tool: exit %d (renamed duplicates accepted as full coverage)"
+        % rc_old)
+    fired = rc_new == 2 and intact and no_cov and rc_old == 0
+    log("  FIRES (duplicate identities refuse before overwriting evidence; "
+        "the old tool passed exactly this fixture): %s" % fired)
+    log()
+    return fired
+
+
+def control_h(root):
+    log("NC-456-H  relabelled trace/requested with the applied/engine decay "
+        "left behind")
+    base = os.path.join(root, "nc-h")
+    traces, out = os.path.join(base, "traces"), os.path.join(base, "out")
+    os.makedirs(traces)
+    os.makedirs(out)
+    shutil.copy(os.path.join(crm.TRACES, "click-dry.npy"),
+                os.path.join(traces, "click-dry.npy"))
+    src = json.load(open(os.path.join(crm.TRACES, "sweepmdecaym0.json")))
+    grid = {crm.sweep_case_name(v): float(v)
+            for v in crm.SWEEP_GRID_DEFAULT}
+    for name, requested in grid.items():
+        shutil.copy(os.path.join(crm.TRACES, "sweepmdecaym0.wav"),
+                    os.path.join(traces, name + ".wav"))
+        side = copy.deepcopy(src)
+        side["trace"] = name                       # label edited
+        side["sweep"] = {"param": "fx4_p3 decaytime",
+                         "requested": requested}   # label edited
+        # render.overrides_applied["3"] and engine_patch_state decaytime are
+        # deliberately UNCHANGED (m0's applied decay): labels cannot vouch
+        side["wav"] = src["wav"]  # honest: the artifact IS m0's wav
+        side["synthetic_negative_control"] = (
+            "issue #456 NC-456-H: trace/requested relabelled, applied and "
+            "engine decay left at m0's; not an oracle render")
+        with open(os.path.join(traces, name + ".json"), "w") as f:
+            json.dump(side, f, indent=2, sort_keys=True)
+            f.write("\n")
+    sentinel = os.path.join(out, "sweep-t60.json")
+    with open(sentinel, "w") as f:
+        f.write("committed evidence sentinel\n")
+    rc = run_cli(traces, out)
+    intact = open(sentinel).read() == "committed evidence sentinel\n"
+    no_cov = not os.path.exists(os.path.join(out, "sweep-t60-coverage.json"))
+    log("  fixture : every required name declares its own grid value as "
+        "requested, but the applied override and engine readback stay at "
+        "m0's (5.96e-08)")
+    log("  command : sweep --traces-dir <relabelled set> --out-dir <out with "
+        "sentinel>")
+    log("  exit: %d   sentinel intact: %s   coverage file written: %s"
+        % (rc, intact, not no_cov))
+    fired = rc == 2 and intact and no_cov
+    log("  FIRES (labels alone cannot supply an identity; refuse before "
+        "overwriting evidence): %s" % fired)
+    log()
+    return fired
+
+
 def main():
     root = tempfile.mkdtemp(prefix="issue456-nc-")
     log("issue #456 -- negative controls for the decay-sweep coverage gate")
@@ -385,7 +484,8 @@ def main():
         "or trace is modified")
     log("")
     ok = all([control_a(root), control_b(root), control_c(root),
-              control_d(root), control_e(root), control_f(root)])
+              control_d(root), control_e(root), control_f(root),
+              control_g(root), control_h(root)])
     log("CONTROL SUITE: %s (exit %d)" % ("all controls FIRED" if ok
                                          else "A CONTROL DID NOT FIRE",
                                          0 if ok else 1))

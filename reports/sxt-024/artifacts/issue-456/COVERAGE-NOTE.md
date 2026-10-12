@@ -45,3 +45,24 @@ finding for the SXT-013 freeze (a decay −4 grade would need a stronger
 short-decay excitation, i.e. an oracle re-render). Folding this note into
 `EVIDENCE.md` is left to a change that re-derives the node 17 and coverage-v1
 pins together.
+
+## Identity validation (issue #458 review)
+
+Discovery counts filenames, so a sidecar could masquerade under a required
+name it does not belong to — one decay case renamed seven times graded as the
+whole declared grid (demonstrated live in the #458 review and now by control
+NC-456-G against the pinned pre-#456 tool). Each discovered case is now
+validated before it is graded: the declared trace must equal the filename
+stem, a required name must carry exactly the committed generator grid value
+as its requested decay, the applied decay override must match the normalized
+engine decaytime readback, and the applied override must equal the requested
+value within the declared native readback tolerance (`1e-6`; the committed
+traces' largest requested-vs-applied gap is 3.5e-07, ≈1.4 float32 ULP at
+1.879). Any disagreement refuses (NO_VERDICT, exit 2) before either evidence
+file is written; per-fit NOT_RUN exceptions and the legitimate
+partial-coverage PASS are unchanged, and `RETENTION.txt` re-derives every
+per-case value byte-identically under the validation. Controls NC-456-G
+(renamed duplicates) and NC-456-H (relabelled trace/requested with the
+applied/engine decay left behind) both refuse without overwriting prior
+evidence; the live suite equivalents live in
+`tests/test_sxt024_sweep_coverage.py`.
