@@ -3,10 +3,10 @@
 A skipped LIVE slow control (the NC_LIVE_SLOW unset shape) must turn the gate
 red; a skipped needs-oracle control must not; a missing case must fail.
 #463: required cases are matched by full JUnit (classname, name) identity and
-must appear exactly once -- a skipped-then-passing duplicate pair, a passing
-same-name testcase from another module, and an unsupported report root must
-all fail, exercised through the real XML parser and CLI, independently of
-report order.
+must appear exactly once -- skipped-then-passing and passing-then-skipped
+duplicate pairs, a passing same-name testcase from another module, and an
+unsupported report root must all fail, exercised through the real XML parser
+and CLI, independently of report order.
 """
 import json
 import subprocess
@@ -138,32 +138,39 @@ def test_failed_live_control_fails(tmp_path):
 
 # ---- #463: duplicate required identities are rejected, order-independently ----
 
-def _with_duplicate(entries, name, extra_kind):
-    """Insert one extra record for `name` before (extra_kind="skip") or after
-    (extra_kind="pass") the existing passing record."""
+def _with_duplicate(entries, name, kinds):
+    """Replace `name`'s single record with a same-identity duplicate pair
+    emitting `kinds` in report order -- e.g. ("skip", "pass") is a skipped
+    record followed by a passing one, ("pass", "skip") the reversed pair."""
     out = []
     for rec in entries:
-        if rec[1] == name and extra_kind == "skip":
-            out.append((rec[0], rec[1], "skip"))
-        out.append(rec)
-        if rec[1] == name and extra_kind == "pass":
-            out.append((rec[0], rec[1], "pass"))
+        if rec[1] == name:
+            out.extend((rec[0], rec[1], k) for k in kinds)
+        else:
+            out.append(rec)
     return out
 
 
-@pytest.mark.parametrize("extra_kind", ["skip", "pass"])
-def test_duplicate_required_identity_fails_both_orders(tmp_path, extra_kind):
+_DUPLICATE_ORDERS = [
+    pytest.param(("skip", "pass"), id="skip-then-pass"),
+    pytest.param(("pass", "skip"), id="pass-then-skip"),
+    pytest.param(("pass", "pass"), id="pass-then-pass"),
+]
+
+
+@pytest.mark.parametrize("kinds", _DUPLICATE_ORDERS)
+def test_duplicate_required_identity_fails_both_orders(tmp_path, kinds):
     key = _exec_name("chorus_negative_controls.py")
-    entries = _with_duplicate(_healthy_entries(), key, extra_kind)
+    entries = _with_duplicate(_healthy_entries(), key, kinds)
     lines, bad = g.evaluate(REG, _parse(tmp_path, entries))
     assert bad
     assert any("AMBIGUOUS" in l for l in lines)
 
 
-@pytest.mark.parametrize("extra_kind", ["skip", "pass"])
-def test_duplicate_required_identity_fails_via_cli(tmp_path, extra_kind):
+@pytest.mark.parametrize("kinds", _DUPLICATE_ORDERS)
+def test_duplicate_required_identity_fails_via_cli(tmp_path, kinds):
     key = _exec_name("chorus_negative_controls.py")
-    entries = _with_duplicate(_healthy_entries(), key, extra_kind)
+    entries = _with_duplicate(_healthy_entries(), key, kinds)
     r = _cli(_write_report(tmp_path / "junit.xml", entries))
     assert r.returncode != 0, r.stdout
     assert "AMBIGUOUS" in r.stdout
