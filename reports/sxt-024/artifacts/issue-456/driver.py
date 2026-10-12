@@ -4,8 +4,9 @@ committed traces). Original to this repository (Apache-2.0).
 
 Runs, against the COMMITTED sxt-024 traces:
 
-  1. RETENTION: the pre-#456 tool (git HEAD:tools/compare_reverb_model.py,
-     loaded from its blob, output redirected to a temp dir) vs the current
+  1. RETENTION: the pre-#456 tool (git OLD_TOOL_COMMIT:tools/
+     compare_reverb_model.py -- a FIXED commit, never HEAD, which on the
+     committed branch is the gated tool itself -- loaded from its blob, output redirected to a temp dir) vs the current
      tool -- every per-case field the old tool wrote must be reproduced
      exactly (float-exact), with `status` the only new per-case field; both
      must also agree with the COMMITTED comparison/sweep-t60.json.
@@ -35,10 +36,17 @@ sys.path.insert(0, os.path.join(REPO, "tools"))
 import compare_reverb_model as crm  # noqa: E402
 
 
+# last origin/main commit touching tools/compare_reverb_model.py before #456
+OLD_TOOL_COMMIT = "e4c25bfc5aec129c0113ce74236aa00cf32aa521"
+
+
 def load_old_module():
     blob = subprocess.run(
-        ["git", "-C", REPO, "show", "HEAD:tools/compare_reverb_model.py"],
+        ["git", "-C", REPO, "show",
+         OLD_TOOL_COMMIT + ":tools/compare_reverb_model.py"],
         check=True, capture_output=True).stdout
+    if b"REQUIRED_SWEEP_CASES" in blob:
+        raise SystemExit("pinned old tool already carries the #456 gate")
     path = os.path.join(tempfile.mkdtemp(prefix="issue456-old-"),
                         "compare_reverb_model_old.py")
     with open(path, "wb") as f:
@@ -78,8 +86,9 @@ def main():
     lines.append("")
     lines.append("environment: %s / numpy %s" % (sys.version.split()[0],
                                                  __import__("numpy").__version__))
-    lines.append("old tool: git HEAD:tools/compare_reverb_model.py (loaded "
-                 "from its blob; output redirected to a temp dir)")
+    lines.append("old tool: git %s:tools/compare_reverb_model.py (fixed "
+                 "commit, not HEAD; loaded from its blob; output redirected "
+                 "to a temp dir)" % OLD_TOOL_COMMIT)
     lines.append("new tool: worktree tools/compare_reverb_model.py")
     lines.append("inputs : the committed reports/sxt-024/traces/ (unchanged)")
     lines.append("")

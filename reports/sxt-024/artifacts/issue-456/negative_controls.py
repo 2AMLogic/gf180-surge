@@ -19,6 +19,15 @@ reports/sxt-024/comparison/.
             exit 1. Runs on the two-case subset with the declared required
             set scoped to it (disclosed: REQUIRED_SWEEP_CASES patched in the
             driver process); the full-set pin lives in the pytest suite.
+  NC-456-E  graded EXTRA case beside a wholly ungraded required set (the
+            NC-456-C fixture plus one extra identity whose wet is the
+            model's own prediction): the extra is graded True, yet the
+            verdict stays NO_VERDICT, exit 1 -- an extra never enables PASS.
+  NC-456-F  supplied dry bus: (i) the NC-456-D subset with its click-dry
+            removed -> REFUSED, exit 2, nothing written; (ii) the same
+            subset with a -6 dB click-dry -> per-case tracking values differ
+            from the true-dry run, i.e. the selected directory's dry bus is
+            the one used (the committed one is never borrowed).
 
 Usage: python3 reports/sxt-024/artifacts/issue-456/negative_controls.py <repo_root>
 """
@@ -96,10 +105,24 @@ def synth_sidecar(dst_dir, name, decay_v, wav_path, frames):
         f.write("\n")
 
 
+# The pre-#456 tool is pinned to a FIXED commit, never HEAD: on the committed
+# branch HEAD is the gated tool, so HEAD would compare the new code with
+# itself. e4c25bf is the last origin/main commit touching
+# tools/compare_reverb_model.py before #456 (the merge base's blob).
+OLD_TOOL_COMMIT = "e4c25bfc5aec129c0113ce74236aa00cf32aa521"
+OLD_TOOL_BLOB_SHA256 = None  # filled from the blob and logged for audit
+
+
 def load_old_module():
+    global OLD_TOOL_BLOB_SHA256
     blob = subprocess.run(
-        ["git", "-C", REPO, "show", "HEAD:tools/compare_reverb_model.py"],
+        ["git", "-C", REPO, "show",
+         OLD_TOOL_COMMIT + ":tools/compare_reverb_model.py"],
         check=True, capture_output=True).stdout
+    OLD_TOOL_BLOB_SHA256 = hashlib.sha256(blob).hexdigest()
+    if b"REQUIRED_SWEEP_CASES" in blob:
+        raise SystemExit("NC-456-C: pinned old tool already carries the #456 "
+                         "gate; the control would compare new with new")
     path = os.path.join(tempfile.mkdtemp(prefix="issue456-nc-old-"),
                         "compare_reverb_model_old.py")
     with open(path, "wb") as f:
@@ -203,6 +226,8 @@ def control_c(root):
         "measurable anywhere)" % len(crm.REQUIRED_SWEEP_CASES))
     log("  new tool: exit %d  verdict %r  coverage %r  cases_not_run %d"
         % (rc_new, cov["verdict"], cov["coverage"], cov["cases_not_run"]))
+    log("  old tool: %s blob sha256 %s"
+        % (OLD_TOOL_COMMIT[:12], OLD_TOOL_BLOB_SHA256))
     log("  old tool: exit %d  aggregate all(...) over non-None values: %r"
         % (rc_old, old_all))
     fired = (rc_new == 1 and cov["verdict"] == "NO_VERDICT"
@@ -216,15 +241,12 @@ def control_c(root):
     return fired
 
 
-def control_d(root):
-    log("NC-456-D  graded false check (reverb component +6 dB vs the "
-        "prediction) -> FAIL")
-    base = os.path.join(root, "nc-d")
-    traces, out = os.path.join(base, "traces"), os.path.join(base, "out")
-    os.makedirs(traces)
-    os.makedirs(out)
+def build_subset(traces, gain):
+    """Two-case subset: wet := dry + gain x (model reverb), with the subset's
+    own click-dry.npy written into the selected directory."""
     dry = np.load(os.path.join(crm.TRACES, "click-dry.npy")).astype(
         np.float64)[:, :SYNTH_FRAMES]
+    np.save(os.path.join(traces, "click-dry.npy"), dry.astype(np.float32))
     for name, decay_v in SUBSET_DECAY.items():
         side = copy.deepcopy(
             json.load(open(os.path.join(crm.TRACES, name + ".json"))))
@@ -232,16 +254,31 @@ def control_d(root):
         model, _c, st = crm.build_model(side)
         send, ret = crm.send_return_gains(st)
         (pl, pr), _ = crm.run_model_on_dry(model, dry[0], dry[1], send, ret)
-        wet = (2.0 * pl - dry[0], 2.0 * pr - dry[1])
+        wet = (dry[0] + gain * (pl - dry[0]), dry[1] + gain * (pr - dry[1]))
         wav = os.path.join(traces, name + ".wav")
         write_wav(wav, wet)
         synth_sidecar(traces, name, decay_v, wav, SYNTH_FRAMES)
+    return dry
+
+
+def run_subset(traces, out):
     required_backup = crm.REQUIRED_SWEEP_CASES
     crm.REQUIRED_SWEEP_CASES = SUBSET  # disclosed subset scope for this control
     try:
-        rc = run_cli(traces, out)
+        return run_cli(traces, out)
     finally:
         crm.REQUIRED_SWEEP_CASES = required_backup
+
+
+def control_d(root):
+    log("NC-456-D  graded false check (reverb component +6 dB vs the "
+        "prediction) -> FAIL")
+    base = os.path.join(root, "nc-d")
+    traces, out = os.path.join(base, "traces"), os.path.join(base, "out")
+    os.makedirs(traces)
+    os.makedirs(out)
+    build_subset(traces, gain=2.0)
+    rc = run_subset(traces, out)
     cov = json.load(open(os.path.join(out, "sweep-t60-coverage.json")))
     results = json.load(open(os.path.join(out, "sweep-t60.json")))
     log("  fixture : two-case subset (%s); wet := dry + 2 x (model reverb), "
@@ -259,6 +296,82 @@ def control_d(root):
     return fired
 
 
+def control_e(root):
+    log("NC-456-E  graded EXTRA case beside a wholly ungraded required set")
+    base = os.path.join(root, "nc-e")
+    traces, out = os.path.join(base, "traces"), os.path.join(base, "out")
+    shutil.copytree(os.path.join(root, "nc-c", "traces"), traces)
+    os.makedirs(out)
+    # one extra identity whose wet is the model's own prediction -> gradable
+    ptraces = os.path.join(base, "pred")
+    os.makedirs(ptraces)
+    build_subset(ptraces, gain=1.0)
+    extra = "sweepmdecaym9"
+    shutil.copy(os.path.join(ptraces, "sweepmdecaym0.wav"),
+                os.path.join(traces, extra + ".wav"))
+    side = json.load(open(os.path.join(ptraces, "sweepmdecaym0.json")))
+    side["trace"] = extra
+    with open(os.path.join(traces, extra + ".json"), "w") as f:
+        json.dump(side, f, indent=2, sort_keys=True)
+        f.write("\n")
+    rc = run_cli(traces, out)
+    cov = json.load(open(os.path.join(out, "sweep-t60-coverage.json")))
+    status = {c["trace"]: c["status"] for c in cov["cases"]}
+    log("  fixture : NC-456-C traces (all %d required cases ungraded) + extra "
+        "%s (wet := model prediction)" % (len(crm.REQUIRED_SWEEP_CASES),
+                                         extra))
+    log("  exit: %d  verdict %r  coverage %r  extra status %r  "
+        "required_checks_graded %d  checks_graded_true %d"
+        % (rc, cov["verdict"], cov["coverage"], status.get(extra),
+           cov["required_checks_graded"], cov["checks_graded_true"]))
+    fired = (rc == 1 and cov["verdict"] == "NO_VERDICT"
+             and status.get(extra) == "PASS"
+             and cov["required_checks_graded"] == 0
+             and cov["checks_graded_true"] >= 1)
+    log("  FIRES (a graded extra cannot supply the agreement a PASS needs): "
+        "%s" % fired)
+    log()
+    return fired
+
+
+def control_f(root):
+    log("NC-456-F  dry input comes from the SELECTED trace directory")
+    base = os.path.join(root, "nc-f")
+    true_t, true_o = os.path.join(base, "true"), os.path.join(base, "true-out")
+    gone_t, gone_o = os.path.join(base, "gone"), os.path.join(base, "gone-out")
+    half_t, half_o = os.path.join(base, "half"), os.path.join(base, "half-out")
+    for d in (true_t, true_o, gone_o, half_o):
+        os.makedirs(d)
+    dry = build_subset(true_t, gain=1.0)
+    shutil.copytree(true_t, gone_t)
+    os.remove(os.path.join(gone_t, "click-dry.npy"))
+    shutil.copytree(true_t, half_t)
+    np.save(os.path.join(half_t, "click-dry.npy"),
+            (0.5 * dry).astype(np.float32))
+    rc_true = run_subset(true_t, true_o)
+    rc_gone = run_subset(gone_t, gone_o)
+    gone_left = sorted(os.listdir(gone_o))
+    rc_half = run_subset(half_t, half_o)
+
+    def track(out):
+        return {r["trace"]: r["tail_level_tracking_mean_dev_db"]
+                for r in json.load(open(os.path.join(out, "sweep-t60.json")))}
+    t_true, t_half = track(true_o), track(half_o)
+    log("  (i)  click-dry removed from the subset: exit %d  files written: %s"
+        % (rc_gone, gone_left or "none"))
+    log("  (ii) true dry: exit %d  tracking mean dev %s"
+        % (rc_true, {k: round(v, 4) for k, v in t_true.items()}))
+    log("       -6 dB dry: exit %d  tracking mean dev %s"
+        % (rc_half, {k: (None if v is None else round(v, 4))
+                     for k, v in t_half.items()}))
+    fired = (rc_gone == 2 and not gone_left and rc_true == 0
+             and all(t_half[k] != t_true[k] for k in SUBSET))
+    log("  FIRES (missing dry refused; a different supplied dry changes the "
+        "graded result): %s" % fired)
+    log()
+    return fired
+
+
 def main():
     root = tempfile.mkdtemp(prefix="issue456-nc-")
     log("issue #456 -- negative controls for the decay-sweep coverage gate")
@@ -266,12 +379,13 @@ def main():
     log("environment: %s / numpy %s" % (sys.version.split()[0],
                                         np.__version__))
     log("tool under control: worktree tools/compare_reverb_model.py; the "
-        "pre-#456 tool is loaded from git HEAD:tools/compare_reverb_model.py")
+        "pre-#456 tool is loaded from git %s:tools/compare_reverb_model.py "
+        "(fixed commit, not HEAD)" % OLD_TOOL_COMMIT)
     log("all fixtures are synthetic temp constructions; no committed report "
         "or trace is modified")
     log("")
     ok = all([control_a(root), control_b(root), control_c(root),
-              control_d(root)])
+              control_d(root), control_e(root), control_f(root)])
     log("CONTROL SUITE: %s (exit %d)" % ("all controls FIRED" if ok
                                          else "A CONTROL DID NOT FIRE",
                                          0 if ok else 1))

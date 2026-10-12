@@ -81,10 +81,13 @@ undefined or empty window.
 Decay-sweep coverage gate (issue #456): the `sweep` command's success now
 REQUIRES declared case coverage and graded agreement. The required case set
 is declared from the committed generator policy (below); a missing or
-unusable required case REFUSES (NO_VERDICT, exit 2) before any evidence file
-is written; a run where no mandatory check could be graded anywhere is
-NO_VERDICT with a nonzero exit -- never a vacuous all(...)-over-empty PASS;
-a graded false check is FAIL (exit 1); a complete run with the documented
+unusable required case, or a missing or unusable dry input (click-dry, read
+from the SELECTED trace directory, never borrowed from the committed one),
+REFUSES (NO_VERDICT, exit 2) before any evidence file is written; a run where
+no mandatory check could be graded in the required set is NO_VERDICT with a
+nonzero exit -- never a vacuous all(...)-over-empty PASS, and extra
+discovered cases are graded and reported but can never supply that graded
+agreement; a graded false check is FAIL (exit 1); a complete run with the documented
 per-fit NOT_RUN exceptions and graded mandatory tail tracking PASSes (exit 0)
 with coverage reported separately: reports/sxt-024/comparison/
 sweep-t60-coverage.json carries required/discovered/missing/extra case
@@ -502,12 +505,18 @@ def declared_trace_tail_region(side, sidecar_path, frames):
     }
 
 
-def read_bus(name):
-    """Prefer the committed float32 npy (no WAV quantization); else int16 WAV."""
-    fnpy = read_npy(os.path.join(TRACES, name + ".npy"))
+def read_bus(name, traces_dir=None):
+    """Prefer the committed float32 npy (no WAV quantization); else int16 WAV.
+
+    `traces_dir` defaults to the committed TRACES; the sweep passes its own
+    selected directory so a supplied trace set never silently borrows the
+    committed dry bus (issue #456). Neither file present -> FileNotFoundError.
+    """
+    base = traces_dir or TRACES
+    fnpy = read_npy(os.path.join(base, name + ".npy"))
     if fnpy is not None:
         return fnpy.astype(np.float64), True
-    return read_wav(os.path.join(TRACES, name + ".wav")), False
+    return read_wav(os.path.join(base, name + ".wav")), False
 
 
 def cmd_case(args):
@@ -752,16 +761,16 @@ def sweep_case_result(name, traces_dir):
     """Grade one decay-sweep case against the model (per-case math unchanged
     by issue #456; the loop body previously inside cmd_sweep).
 
-    Raises OSError/KeyError/ValueError when the required case's sidecar or
-    wet trace is missing or unusable -- cmd_sweep turns that into a refusal
-    rather than silently dropping a required case from the sweep.
+    Raises one of SWEEP_INPUT_ERRORS when the case's sidecar, wet trace, or
+    the selected directory's dry bus is missing or unusable -- cmd_sweep
+    turns that into a refusal rather than silently dropping a case.
     """
     side = json.load(open(os.path.join(traces_dir, name + ".json")))
     decay = side["render"]["overrides_applied"]["3"]
     wet = read_wav(os.path.join(traces_dir, name + ".wav"))
     model, c, st = build_model(side)
     send, ret = send_return_gains(st)
-    dry = read_bus("click-dry")[0]
+    dry = read_sweep_dry(traces_dir)
     n = min(len(wet[0]), len(dry[0]))
     (pred_l, pred_r), (ol, orr) = run_model_on_dry(model, dry[0][:n], dry[1][:n], send, ret)
     # reverb-only signals: engine wet - dry; model fxout * ret
@@ -827,15 +836,40 @@ def sweep_case_status(checks):
     return "PASS" if graded else "NOT_RUN"
 
 
+# Input failures the sweep refuses on (NO_VERDICT, exit 2) instead of a
+# traceback: missing files, bad JSON/keys/shapes, malformed or truncated WAVs
+# (wave.Error / EOFError) and read_wav's format assertion.
+SWEEP_INPUT_ERRORS = (OSError, KeyError, ValueError, wave.Error, EOFError,
+                      AssertionError)
+
+
+def read_sweep_dry(traces_dir):
+    """The sweep's dry input, from the SELECTED trace directory only (#456).
+
+    Raises ValueError when the bus is not a non-empty 2-channel finite array,
+    FileNotFoundError when neither click-dry.npy nor click-dry.wav exists.
+    """
+    dry = read_bus("click-dry", traces_dir)[0]
+    if dry.ndim != 2 or dry.shape[0] != 2 or dry.shape[1] == 0 \
+            or not np.all(np.isfinite(dry)):
+        raise ValueError("click-dry bus in %s is not a non-empty finite "
+                         "2-channel signal (shape %r)" % (traces_dir, dry.shape))
+    return dry
+
+
 def aggregate_sweep_coverage(results, required, discovered):
     """Aggregate coverage + verdict for one sweep run (issue #456).
 
     Verdict rule: refusal when a required case is missing (the caller refuses
-    before writing any evidence); NO_VERDICT when no mandatory check could be
-    graded anywhere; FAIL when any graded check is false; PASS only with
-    every required case discovered, at least one graded check overall and
-    no graded check false (ungraded cases make coverage 'partial'). Coverage ("full"/"partial"/"none") is reported
-    separately from agreement, with per-case statuses and reasons.
+    before writing any evidence); FAIL when any graded check is false (in a
+    required or an extra case -- a failing agreement is never hidden);
+    NO_VERDICT when no mandatory check could be graded in the REQUIRED set;
+    PASS only with every required case discovered, at least one graded check
+    in a required case and no graded check false. Extra discovered cases are
+    graded and reported (disposition 'reported, not success-enabling') but
+    can never supply the graded agreement a PASS needs. Ungraded required
+    cases make coverage 'partial'. Coverage ("full"/"partial"/"none") is
+    reported separately from agreement, with per-case statuses and reasons.
     """
     missing = [c for c in required if c not in discovered]
     extra = [c for c in discovered if c not in required]
@@ -846,6 +880,7 @@ def aggregate_sweep_coverage(results, required, discovered):
         not_run = sorted(k for k, v in checks.items() if v is None)
         cases.append({
             "trace": r.get("trace"),
+            "required": r.get("trace") in required,
             "status": r.get("status", sweep_case_status(checks)),
             "graded_checks": sorted(graded),
             "not_run_checks": not_run,
@@ -854,17 +889,22 @@ def aggregate_sweep_coverage(results, required, discovered):
     n_true = sum(1 for r in results for v in r["checks"].values() if v is True)
     n_false = sum(1 for r in results for v in r["checks"].values() if v is False)
     n_nr = sum(1 for r in results for v in r["checks"].values() if v is None)
+    req_results = [r for r in results if r.get("trace") in required]
+    n_req_graded = sum(1 for r in req_results for v in r["checks"].values()
+                       if v is not None)
     cases_graded = sum(1 for c in cases if c["status"] in ("PASS", "FAIL"))
-    cases_not_run = sum(1 for c in cases if c["status"] == "NOT_RUN")
+    cases_not_run = sum(1 for c in cases if c["required"]
+                        and c["status"] == "NOT_RUN")
     if missing:
         verdict = "NO_VERDICT (refused)"
         coverage = "none"
-    elif n_true + n_false == 0:
-        verdict = "NO_VERDICT"
-        coverage = "none"
     elif n_false:
         verdict = "FAIL"
-        coverage = "full" if cases_not_run == 0 else "partial"
+        coverage = ("none" if n_req_graded == 0 else
+                    "full" if cases_not_run == 0 else "partial")
+    elif n_req_graded == 0:
+        verdict = "NO_VERDICT"
+        coverage = "none"
     else:
         verdict = "PASS"
         coverage = "full" if cases_not_run == 0 else "partial"
@@ -887,15 +927,21 @@ def aggregate_sweep_coverage(results, required, discovered):
         "checks_graded_true": n_true,
         "checks_graded_false": n_false,
         "checks_not_run": n_nr,
+        "required_checks_graded": n_req_graded,
+        "extra_disposition": (
+            "extra discovered cases are graded and reported; a false check "
+            "in one is a FAIL, but they never count toward the graded "
+            "agreement a PASS requires"),
         "coverage": coverage,
         "verdict": verdict,
         "verdict_rule": (
             "PASS iff every required case is discovered, at least one "
-            "mandatory check is graded, and no graded check is false "
-            "(cases with nothing gradable are listed NOT_RUN and make "
-            "coverage 'partial'); FAIL if any graded "
-            "check is false; NO_VERDICT with a nonzero exit when no "
-            "mandatory check is graded anywhere; a missing (or unusable) "
+            "mandatory check is graded in a REQUIRED case, and no graded "
+            "check is false (required cases with nothing gradable are "
+            "listed NOT_RUN and make coverage 'partial'; extra cases never "
+            "enable success); FAIL if any graded check is false; "
+            "NO_VERDICT with a nonzero exit when no mandatory check is "
+            "graded in the required set; a missing (or unusable) "
             "required case is refused before any evidence is written. "
             "Per-fit None stays a documented NOT_RUN exception (see "
             "t60_note per case) and never counts as a graded pass."),
@@ -928,11 +974,22 @@ def cmd_sweep(args):
             % (os.path.relpath(traces_dir, REPO), ", ".join(missing),
                len(REQUIRED_SWEEP_CASES)),
             aggregate_sweep_coverage([], REQUIRED_SWEEP_CASES, discovered))
+    # the dry input comes from the SELECTED directory and is validated before
+    # any grading or evidence write (a supplied trace set must never borrow
+    # the committed dry bus)
+    try:
+        read_sweep_dry(traces_dir)
+    except SWEEP_INPUT_ERRORS as e:
+        return _refuse_sweep(
+            "dry input click-dry (.npy or .wav) in %s is missing or unusable: "
+            "%r; no evidence was written"
+            % (os.path.relpath(traces_dir, REPO), e),
+            aggregate_sweep_coverage([], REQUIRED_SWEEP_CASES, discovered))
     results = []
     for name in discovered:
         try:
             out = sweep_case_result(name, traces_dir)
-        except (OSError, KeyError, ValueError) as e:
+        except SWEEP_INPUT_ERRORS as e:
             return _refuse_sweep(
                 "required decay-sweep case %s in %s is unusable: %r; no "
                 "evidence was written"

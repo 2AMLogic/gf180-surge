@@ -371,3 +371,152 @@ def test_fully_ungraded_sweep_is_no_verdict_with_nonzero_exit(synth_sweeps):
                   if v is not None)
     assert old_all is True
     assert cov["verdict"] != "PASS"
+
+
+# --------------------------------------------------------------------------
+# review follow-ups: dry input from the SELECTED directory; extra identities
+# never enable success; malformed WAVs refuse instead of a traceback
+# --------------------------------------------------------------------------
+
+def _copy_dir(src, dst):
+    os.makedirs(dst)
+    for fn in os.listdir(src):
+        with open(os.path.join(src, fn), "rb") as a, \
+                open(os.path.join(dst, fn), "wb") as b:
+            b.write(a.read())
+    return str(dst)
+
+
+def _add_extra(traces, src_traces, src_name, extra_name):
+    for suffix in (".json", ".wav"):
+        with open(os.path.join(src_traces, src_name + suffix), "rb") as a, \
+                open(os.path.join(traces, extra_name + suffix), "wb") as b:
+            b.write(a.read())
+    p = os.path.join(traces, extra_name + ".json")
+    side = json.load(open(p))
+    side["trace"] = extra_name
+    with open(p, "w") as f:
+        json.dump(side, f, indent=2, sort_keys=True)
+        f.write("\n")
+
+
+def test_aggregate_graded_extra_cannot_rescue_ungraded_required_set():
+    cov = crm.aggregate_sweep_coverage(
+        [_res("a", {"x": None}), _res("b", {"x": None}),
+         _res("extra", {"x": True})],
+        ("a", "b"), ["a", "b", "extra"])
+    assert cov["verdict"] == "NO_VERDICT" and cov["coverage"] == "none"
+    assert cov["required_checks_graded"] == 0
+    assert cov["extra_discovered"] == ["extra"]
+    assert {c["trace"]: c["required"] for c in cov["cases"]} == {
+        "a": True, "b": True, "extra": False}
+
+
+def test_aggregate_false_extra_is_still_a_fail():
+    cov = crm.aggregate_sweep_coverage(
+        [_res("a", {"x": True}), _res("extra", {"x": False})],
+        ("a",), ["a", "extra"])
+    assert cov["verdict"] == "FAIL"
+
+
+def test_aggregate_short_decay_exception_still_passes_partial():
+    # the legitimate -4 shape: one required case grades nothing, others do
+    cov = crm.aggregate_sweep_coverage(
+        [_res("m4", {"t60": None, "track": None}),
+         _res("m0", {"t60": True, "track": True})],
+        ("m4", "m0"), ["m4", "m0"])
+    assert cov["verdict"] == "PASS" and cov["coverage"] == "partial"
+    assert cov["cases_not_run"] == 1
+
+
+@pytest.mark.usefixtures("subset_gate")
+def test_graded_extra_cannot_turn_ungraded_required_set_into_pass(
+        synth_sweeps, tmp_path):
+    traces = _copy_dir(synth_sweeps["flat"][0], tmp_path / "traces")
+    out = tmp_path / "out"
+    _add_extra(traces, synth_sweeps["pass"][0], "sweepmdecaym0",
+               "sweepmdecaym9")
+    rc = crm.cmd_sweep(_ns(traces, out))
+    assert rc == 1
+    cov = json.load(open(os.path.join(out, "sweep-t60-coverage.json")))
+    assert cov["verdict"] == "NO_VERDICT" and cov["coverage"] == "none"
+    assert cov["extra_discovered"] == ["sweepmdecaym9"]
+    # the extra really was graded -- it just cannot enable success
+    assert cov["checks_graded_true"] >= 1
+    assert cov["required_checks_graded"] == 0
+
+
+@pytest.mark.usefixtures("subset_gate")
+def test_sweep_refuses_a_missing_dry_input(synth_sweeps, tmp_path, capsys):
+    traces = _copy_dir(synth_sweeps["pass"][0], tmp_path / "traces")
+    os.remove(os.path.join(traces, "click-dry.npy"))
+    out = tmp_path / "out"
+    rc = crm.cmd_sweep(_ns(traces, out))
+    assert rc == 2
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["verdict"] == "NO_VERDICT (refused)"
+    assert "dry input" in payload["reason"]
+    assert not out.exists() or not list(out.iterdir())
+
+
+@pytest.mark.usefixtures("subset_gate")
+@pytest.mark.parametrize("bad", ["nan", "mono", "empty"])
+def test_sweep_refuses_an_unusable_dry_input(synth_sweeps, tmp_path, capsys,
+                                             bad):
+    traces = _copy_dir(synth_sweeps["pass"][0], tmp_path / "traces")
+    dry = np.load(os.path.join(traces, "click-dry.npy"))
+    if bad == "nan":
+        dry = dry.copy()
+        dry[0, 100] = np.nan
+    elif bad == "mono":
+        dry = dry[:1]
+    else:
+        dry = dry[:, :0]
+    np.save(os.path.join(traces, "click-dry.npy"), dry)
+    out = tmp_path / "out"
+    rc = crm.cmd_sweep(_ns(traces, out))
+    assert rc == 2
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["verdict"] == "NO_VERDICT (refused)"
+    assert "dry input" in payload["reason"]
+    assert not out.exists() or not list(out.iterdir())
+
+
+@pytest.mark.usefixtures("subset_gate")
+def test_sweep_uses_the_supplied_dry_bus_not_the_committed_one(
+        synth_sweeps, tmp_path):
+    base_traces, base_out = synth_sweeps["pass"]
+    assert crm.cmd_sweep(_ns(base_traces, base_out)) == 0
+    base = {r["trace"]: r for r in json.load(
+        open(os.path.join(base_out, "sweep-t60.json")))}
+    traces = _copy_dir(base_traces, tmp_path / "traces")
+    dry = np.load(os.path.join(traces, "click-dry.npy"))
+    # a DIFFERENT dry signal (-6 dB) in the supplied directory; the committed
+    # click-dry.npy is untouched, so borrowing it would reproduce `base`
+    np.save(os.path.join(traces, "click-dry.npy"),
+            (0.5 * dry).astype(np.float32))
+    out = tmp_path / "out"
+    crm.cmd_sweep(_ns(traces, out))
+    got = {r["trace"]: r for r in json.load(
+        open(os.path.join(out, "sweep-t60.json")))}
+    for name in GRID_SUBSET:
+        assert got[name]["tail_level_tracking_mean_dev_db"] != \
+            base[name]["tail_level_tracking_mean_dev_db"], name
+
+
+@pytest.mark.usefixtures("subset_gate")
+@pytest.mark.parametrize("bad", ["garbage", "truncated"])
+def test_sweep_refuses_a_malformed_wav_without_traceback(
+        synth_sweeps, tmp_path, capsys, bad):
+    traces = _copy_dir(synth_sweeps["pass"][0], tmp_path / "traces")
+    wav = os.path.join(traces, "sweepmdecaym0.wav")
+    data = open(wav, "rb").read()
+    with open(wav, "wb") as f:
+        f.write(b"not a wav file at all" if bad == "garbage" else data[:30])
+    out = tmp_path / "out"
+    rc = crm.cmd_sweep(_ns(traces, out))
+    assert rc == 2
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["verdict"] == "NO_VERDICT (refused)"
+    assert "unusable" in payload["reason"]
+    assert not out.exists() or not list(out.iterdir())

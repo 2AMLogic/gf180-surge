@@ -1,7 +1,7 @@
 issue #456 -- decay-sweep coverage gate: retention check
 
 environment: 3.12.3 / numpy 1.26.4
-old tool: git HEAD:tools/compare_reverb_model.py (loaded from its blob; output redirected to a temp dir)
+old tool: git e4c25bfc5aec129c0113ce74236aa00cf32aa521:tools/compare_reverb_model.py (fixed commit, not HEAD; loaded from its blob; output redirected to a temp dir)
 new tool: worktree tools/compare_reverb_model.py
 inputs : the committed reports/sxt-024/traces/ (unchanged)
 

@@ -7,6 +7,7 @@
       ],
       "not_run_checks": [],
       "reason": null,
+      "required": true,
       "status": "PASS",
       "trace": "sweepmdecaym0"
     },
@@ -17,6 +18,7 @@
       ],
       "not_run_checks": [],
       "reason": null,
+      "required": true,
       "status": "PASS",
       "trace": "sweepmdecaym1_879465"
     },
@@ -27,6 +29,7 @@
       ],
       "not_run_checks": [],
       "reason": null,
+      "required": true,
       "status": "PASS",
       "trace": "sweepmdecaym3"
     },
@@ -38,6 +41,7 @@
         "t60_w_vs_pred"
       ],
       "reason": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+      "required": true,
       "status": "PASS",
       "trace": "sweepmdecaym4_5"
     },
@@ -49,6 +53,7 @@
         "t60_w_vs_pred"
       ],
       "reason": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+      "required": true,
       "status": "PASS",
       "trace": "sweepmdecaym6"
     },
@@ -60,6 +65,7 @@
         "t60_w_vs_pred"
       ],
       "reason": "t60 comparison NOT_RUN: nominal decay (2^decay) is shorter than the structure's own echo/loop delays; measured t60 is dominated by the composite geometry, not the feedback exponent (engine and model agree via tail_level_tracking)",
+      "required": true,
       "status": "PASS",
       "trace": "sweepmdecaymm2"
     },
@@ -70,6 +76,7 @@
         "tail_level_tracking"
       ],
       "reason": "t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking",
+      "required": true,
       "status": "NOT_RUN",
       "trace": "sweepmdecaymm4"
     }
@@ -92,6 +99,7 @@
     "sweepmdecaymm4"
   ],
   "extra_discovered": [],
+  "extra_disposition": "extra discovered cases are graded and reported; a false check in one is a FAIL, but they never count toward the graded agreement a PASS requires",
   "issue": 456,
   "missing_required": [],
   "required_cases": [
@@ -103,6 +111,7 @@
     "sweepmdecaym4_5",
     "sweepmdecaym6"
   ],
+  "required_checks_graded": 9,
   "required_grid": [
     "-4",
     "-2",
@@ -115,5 +124,5 @@
   "required_set_source": "tools/render_reverb_reference.py cmd_sweep default grid and trace naming (committed generator policy); pinned against the committed traces by tests/test_sxt024_sweep_coverage.py",
   "schema": "sxt-024/sweep-coverage-v1",
   "verdict": "PASS",
-  "verdict_rule": "PASS iff every required case is discovered, every case grades >=1 check, and no graded check is false; FAIL if any graded check is false; NO_VERDICT with a nonzero exit when no mandatory check is graded anywhere; a missing (or unusable) required case is refused before any evidence is written. Per-fit None stays a documented NOT_RUN exception (see t60_note per case) and never counts as a graded pass."
+  "verdict_rule": "PASS iff every required case is discovered, at least one mandatory check is graded in a REQUIRED case, and no graded check is false (required cases with nothing gradable are listed NOT_RUN and make coverage 'partial'; extra cases never enable success); FAIL if any graded check is false; NO_VERDICT with a nonzero exit when no mandatory check is graded in the required set; a missing (or unusable) required case is refused before any evidence is written. Per-fit None stays a documented NOT_RUN exception (see t60_note per case) and never counts as a graded pass."
 }
