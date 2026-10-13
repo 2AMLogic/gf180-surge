@@ -35,6 +35,7 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
+sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, REPO)
 
 from refusal import Refuse  # noqa: E402
@@ -107,6 +108,50 @@ def try_live_oracle_extraction(rel_path):
                  f"extraction is algorithm-leaf scope, not exercised here"
 
 
+def live_drift_eligibility(carrier):
+    """Live per-scene drift gate for one declared carrier (#425), via the
+    shared #423 helper's provenance-verified loader and the SAME gate the
+    SXT-028l tools use. Returns a render_eligibility record whose verdict is
+    derived ONLY from the gate observation:
+      * gate FAIL -> render_eligible False (the carrier is preserved as
+        non-render-eligible, never dropped or zeroed);
+      * gate PASS -> only the drift screening condition holds
+        (necessary, never sufficient);
+      * oracle absent / provenance blocked / load refused -> NOT_RUN /
+        BLOCKED / REFUSED with NO drift value (never a pass).
+    No wet-fidelity, support, audio-repeatability or RTL claim follows."""
+    import carrier_drift_screen as cds  # noqa: PLC0415
+    scope = ("drift gate is the screening condition only: necessary, never "
+             "sufficient, for render eligibility")
+    loader = cds.PinnedSurgepyLoader()
+    try:
+        info = loader.open()
+    except cds.OracleAbsent as e:
+        return {"drift_screen": "NOT_RUN", "render_eligible": "NOT_RUN",
+                "reason": str(e), "scope": scope}
+    except Refuse as e:
+        return {"drift_screen": "BLOCKED", "render_eligible": "NOT_RUN",
+                "reason": str(e), "scope": scope}
+    try:
+        s, patch, on_disk = loader.load(carrier["path"],
+                                        carrier["declared_sha1"])
+    except cds.LoadRefusal as e:
+        return {"drift_screen": "REFUSED", "render_eligible": "NOT_RUN",
+                "reason": f"{e.code}: {e.detail}", "scope": scope}
+    gate = cds.DRIFT_GATE(s, patch)
+    rec = {"drift_screen": gate["status"],
+           "determinism_gate": gate,
+           "pinned_checkout_blob_sha1": on_disk,
+           "engine": {"pin": info["pin"],
+                      "surgepy_version": info["surgepy_version"],
+                      "provenance_mode": info["provenance"]["mode"],
+                      "sample_rate": info["sample_rate"]},
+           "scope": scope}
+    rec["render_eligible"] = (False if gate["status"] != "PASS"
+                              else "NOT_ESTABLISHED")
+    return rec
+
+
 def extract_one(carrier):
     rel = carrier["path"]
     row = census_row(rel)
@@ -155,6 +200,7 @@ def extract_one(carrier):
         },
         "oracle_extraction": {"attempted": True, "ok": oracle_ok,
                               "detail": oracle_detail},
+        "render_eligibility": live_drift_eligibility(carrier),
     }
     return doc
 
@@ -171,6 +217,17 @@ def main():
             refusal_lines.append(f"{carrier['slug']}: REFUSED: {e}")
             continue
         out_path = os.path.join(OUT_DIR, f"rf-rf-global2-{carrier['slug']}.json")
+        el = doc["render_eligibility"]["drift_screen"]
+        if el in ("NOT_RUN", "BLOCKED", "REFUSED") and os.path.exists(out_path):
+            # A run without the live oracle must not overwrite a committed
+            # live eligibility record: keep the prior leg verbatim.
+            with open(out_path) as f:
+                prior = json.load(f).get("render_eligibility")
+            if prior and prior.get("drift_screen") in ("PASS", "FAIL"):
+                doc["render_eligibility"] = prior
+                refusal_lines.append(
+                    f"{carrier['slug']}: live drift leg {el} this run; "
+                    f"prior committed render_eligibility preserved")
         with open(out_path, "w") as f:
             json.dump(doc, f, indent=2, sort_keys=True)
             f.write("\n")
