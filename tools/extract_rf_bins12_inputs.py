@@ -19,14 +19,19 @@ this tool:
      blob sha1, stored revision, scene mode, fx_bypass, fx_disable, the
      non-off FX slot count and the non-off FX type set. Any disagreement is a
      REFUSAL, never a silently-preferred source;
-  4. attempts a LIVE surgepy extraction of the per-slot algorithm's own
-     parameter values and the engine-side determinism gate (per-scene drift
-     == 0) -- both needed only for an eventual concrete-occupant reference
-     render, which is out of THIS leaf's routing-form scope. If the pinned
-     oracle build (surgepy) is unavailable in the current environment, this
-     step REFUSES explicitly (never silently drops the preset, never
-     fabricates a value) and the routing-verification checks above still
-     proceed and are still written to the output record.
+  4. LIVE leg (#424): on the pinned oracle, natively `loadPatch`es the
+     preset, reads the slot types / fx_bypass / fx_disable / scene mode back
+     from the NATIVE normalized state, checks them against the carrier's
+     declared shape (tools/screen_rf_bins12_carriers.py::SHAPES), and runs the
+     shared per-voicing-scene drift gate (tools/carrier_drift_screen.py, #423).
+     The per-carrier observation is recorded, not deferred. Per-slot algorithm
+     parameter extraction and wet rendering remain out of THIS leaf's scope.
+     If the pinned oracle is unavailable, the live leg is NOT_RUN (never
+     fabricated; the static checks still proceed) and any previously
+     committed live observation in the output record is RETAINED unchanged.
+     Drift-gate eligibility is separately derived from the committed
+     reports/SXT-028h/artifacts/carrier-drift-screen.json; drift PASS is
+     necessary, never sufficient, for render eligibility.
 
 Writes model/effects/fx_inputs/rf-rf-bins12-<slug>.json plus a refusal
 transcript at reports/SXT-028h/artifacts/extract-refusals.txt (created even
@@ -48,6 +53,8 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
 import _census_graphs_common as cgc  # noqa: E402
+import carrier_drift_screen as cds  # noqa: E402
+import screen_rf_bins12_carriers as scr  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
 # SurgeStorage.h fxslot_positions (re-derivable from
@@ -67,6 +74,33 @@ CARRIERS = [
      "declared_sha1": "e0c8107755b359c69527aa22508ea7762991ac3d"},
 ]
 
+# Labeled ADDITIONS (#424): the deterministic selection (first drift-gate PASS
+# path in byte order among the same-shape candidates, excluding the original)
+# recorded in reports/SXT-028h/artifacts/carrier-drift-screen.json. They are
+# additions beside the originals, never silent substitutions; a test pins this
+# list to the committed screen record. Drift PASS is necessary, never
+# sufficient, for render eligibility.
+ADDITIONS = [
+    {"slug": "add-novuo-shape", "declared_sha1": "59a29d3c061e224354bcd095931478b528dca632",
+     "role": "addition", "replaces_original_slug": "novuo",
+     "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Pads/"
+             "Winter Breath.fxp"},
+    {"slug": "add-acoordion-basses-shape", "declared_sha1": "3090cd0f9b5f89a390ca0bdcc89a9d527760dfec",
+     "role": "addition", "replaces_original_slug": "acoordion-basses",
+     "path": "resources/data/patches_3rdparty/Bluelight/Splits/"
+             "Royals Straight Flushed 110 BPM.fxp"},
+    {"slug": "add-shore-shape", "declared_sha1": "ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba",
+     "role": "addition", "replaces_original_slug": "shore",
+     "path": "resources/data/patches_3rdparty/A.Liv/Basses/"
+             "808er Than 808.fxp"},
+]
+for _c in CARRIERS:
+    _c["role"] = "original"
+    _c["shape_slug"] = _c["slug"]
+for _a in ADDITIONS:
+    _a["shape_slug"] = _a["replaces_original_slug"]
+
+SCREEN_RECORD = scr.SCREEN_RECORD
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results",
                           "per-preset.csv")
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
@@ -122,27 +156,113 @@ def cross_check(row, graph):
     return cgc.cross_check(row, graph, refuse=Refuse)
 
 
-def try_live_oracle_extraction(rel_path):
-    """Attempt a live surgepy extraction of the per-slot algorithm's own
-    parameters and the engine-side determinism gate (per-scene drift == 0).
-    Returns (ok, detail_or_reason). This is the ONLY step that needs the built
-    oracle; nothing above depends on it."""
-    try:
-        import oracle_common as oc  # noqa: PLC0415
-    except Exception as e:  # pragma: no cover - environment-dependent
-        return False, f"oracle_common import failed: {e}"
-    try:
-        surgepy = oc.import_surgepy()
-    except Exception as e:
-        return False, f"surgepy unavailable (oracle not built in this " \
-                      f"environment): {e}"
-    # surgepy present: per-slot parameter extraction + the per-scene drift
-    # determinism gate would run here (out of THIS leaf's routing-form scope;
-    # left for the algorithm leaf that eventually occupies each concrete
-    # slot). Recorded as available but not exercised by this routing-form leaf.
-    return True, f"surgepy present ({surgepy.__file__}); per-slot parameter " \
-                 f"extraction and the engine-side drift gate are " \
-                 f"algorithm-leaf scope, not exercised here"
+def recompute_drift_eligibility(scene_mode_id, scene_active, drift_by_scene):
+    """Independent recomputation of the drift-gate verdict from the recorded
+    per-scene drift (NOT from a recorded status string). Voicing scenes: the
+    active scene in Single mode (id 0), both scenes otherwise. Read-back is
+    compared after the same nine-decimal rounding as
+    extract_rf_send34_inputs.drift_gate. A voicing scene with no recorded
+    value is ineligible (cannot be shown to be 0)."""
+    voicing = [scene_active] if scene_mode_id == 0 else [0, 1]
+    names = ["AB"[i] for i in voicing]
+    missing = [n for n in names if n not in drift_by_scene]
+    ok = not missing and all(round(float(drift_by_scene[n]), 9) == 0.0
+                             for n in names)
+    return {"voicing_scenes": names, "missing_scenes": missing,
+            "drift_gate_eligible": ok, "read_back_decimals": 9}
+
+
+def load_screen_record(path=None):
+    p = path or SCREEN_RECORD
+    if not os.path.exists(p):
+        return None
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def carrier_eligibility(carrier, record):
+    """Drift-gate eligibility of a declared carrier, derived from the
+    committed live screen record (recomputed from its recorded drift, and
+    required to agree with the recorded gate status). Never a render
+    eligibility claim."""
+    base = {"render_eligibility": "NOT_ESTABLISHED",
+            "scope": "drift-gate screening condition only; necessary, never "
+                     "sufficient, for render eligibility"}
+    if record is None:
+        return dict(base, drift_gate_eligible=False,
+                    status="NOT_RUN",
+                    reason="no committed live screen record")
+    shape = record["shapes"][carrier["shape_slug"]]
+    cand = next((c for c in shape["run"].get("candidates", [])
+                 if c["path"] == carrier["path"]), None)
+    if cand is None or not cand.get("screened"):
+        return dict(base, drift_gate_eligible=False, status="NO_VERDICT",
+                    reason="carrier not screened in the committed record: "
+                           f"{(cand or {}).get('refusal')}")
+    gate = cand["determinism_gate"]
+    native = cand["native_state"]
+    rc = recompute_drift_eligibility(
+        native["scene_mode_id"], native["scene_active"],
+        gate["drift_per_voicing_scene"])
+    if rc["drift_gate_eligible"] != (gate["status"] == "PASS"):
+        raise Refuse(f"recorded gate status {gate['status']} disagrees with "
+                     f"the recomputed verdict for {carrier['path']}")
+    return dict(base, drift_gate_eligible=rc["drift_gate_eligible"],
+                status="PASS" if rc["drift_gate_eligible"] else "FAIL",
+                role=carrier["role"],
+                shape_id=scr.SHAPES[carrier["shape_slug"]]["shape_id"],
+                drift_per_voicing_scene=gate["drift_per_voicing_scene"],
+                voicing_scenes=rc["voicing_scenes"],
+                read_back_decimals=rc["read_back_decimals"],
+                non_render_eligible=not rc["drift_gate_eligible"],
+                reason=None if rc["drift_gate_eligible"] else
+                "nonzero drift in a voicing scene; preserved, not removed")
+
+
+_LIVE = {}
+
+
+def _live_loader():
+    """Open the pinned live loader once per process (full provenance check).
+    Returns (loader, None) or (None, reason)."""
+    if "v" not in _LIVE:
+        loader = cds.PinnedSurgepyLoader()
+        try:
+            loader.open()
+            _LIVE["v"] = (loader, None)
+        except cds.OracleAbsent as e:
+            _LIVE["v"] = (None, f"NOT_RUN: pinned oracle unavailable: {e}")
+        except Refuse as e:
+            _LIVE["v"] = (None, f"BLOCKED: {e}")
+    return _LIVE["v"]
+
+
+def try_live_oracle_extraction(carrier, graph, loader=None):
+    """LIVE leg (#424): native load + shape read-back against the declared
+    shape + the shared per-voicing-scene drift gate, for ONE carrier.
+    Returns (ok, detail, live_or_None). `ok` means a native drift observation
+    was obtained (NOT that the gate passed). Nothing here fabricates a value:
+    an absent oracle yields (False, reason, None)."""
+    if loader is None:
+        loader, why = _live_loader()
+        if loader is None:
+            return False, why, None
+    spec = scr.SHAPES[carrier["shape_slug"]]
+    observed = {}
+    cand = {"path": carrier["path"],
+            "graphs_blob_sha1": carrier["declared_sha1"], "graph": graph["g"]}
+    rec = cds.screen_candidate(loader, cand,
+                               scr.make_shape_check(spec, observed),
+                               cds.DRIFT_GATE)
+    rec["native_state"] = observed.get(carrier["path"])
+    if not rec["screened"]:
+        return False, f"live leg refused: {rec['refusal']}", None
+    g = rec["determinism_gate"]
+    return True, ("native load + shape read-back + per-scene drift gate "
+                  f"observed: {g['status']} "
+                  f"{g['drift_per_voicing_scene']}"), {
+        "live": True, "gate_status": g["status"],
+        "engine_pin": cds.ENGINE_PIN, "record": rec}
 
 
 def extract_one(carrier):
@@ -168,7 +288,9 @@ def extract_one(carrier):
     fxd = graph["g"]["fxd"]
     scene_mode_name = graph["g"].get("smn")
 
-    oracle_ok, oracle_detail = try_live_oracle_extraction(rel)
+    oracle_ok, oracle_detail, oracle_live = \
+        try_live_oracle_extraction(carrier, graph)
+    eligibility = carrier_eligibility(carrier, load_screen_record())
 
     def slot_doc(fx, bit):
         return {"occupied": bool(fx.get("on", 0)),
@@ -216,9 +338,25 @@ def extract_one(carrier):
                 "routing/scheduling claims do not depend on it -- see "
                 "oracle_extraction below",
         },
+        "carrier_role": carrier["role"],
+        "drift_eligibility": eligibility,
         "oracle_extraction": {"attempted": True, "ok": oracle_ok,
-                              "detail": oracle_detail},
+                              "detail": oracle_detail,
+                              "live": oracle_live},
     }
+    return doc
+
+
+def merge_prior_live(doc, prior):
+    """Oracle absent now but a prior committed record carries a LIVE
+    observation: retain it unchanged (never overwrite live evidence with an
+    unavailable-oracle result); the current run is reported NOT_RUN."""
+    ox = doc["oracle_extraction"]
+    pox = (prior or {}).get("oracle_extraction") or {}
+    if ox.get("live") is None and pox.get("live"):
+        doc["oracle_extraction"] = dict(
+            pox, retained_from_prior_live_run=True,
+            current_run={"status": "NOT_RUN", "detail": ox["detail"]})
     return doc
 
 
@@ -227,13 +365,16 @@ def main():
     os.makedirs(os.path.dirname(REFUSALS), exist_ok=True)
     refusal_lines = []
     written = []
-    for carrier in CARRIERS:
+    for carrier in CARRIERS + ADDITIONS:
         try:
             doc = extract_one(carrier)
         except Refuse as e:
             refusal_lines.append(f"{carrier['slug']}: REFUSED: {e}")
             continue
         out_path = os.path.join(OUT_DIR, f"rf-rf-bins12-{carrier['slug']}.json")
+        if os.path.exists(out_path):
+            with open(out_path) as f:
+                doc = merge_prior_live(doc, json.load(f))
         with open(out_path, "w") as f:
             json.dump(doc, f, indent=2, sort_keys=True)
             f.write("\n")
@@ -244,7 +385,7 @@ def main():
         f.write("\n".join(refusal_lines) + ("\n" if refusal_lines else ""))
     for line in refusal_lines:
         print(line)
-    return 0 if len(written) == len(CARRIERS) else 1
+    return 0 if len(written) == len(CARRIERS) + len(ADDITIONS) else 1
 
 
 if __name__ == "__main__":

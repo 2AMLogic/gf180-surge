@@ -522,3 +522,396 @@ def test_evidence_keeps_the_claims_separate():
     assert "preset-support claim" in low
     assert "musical-quality claim" in low
     assert "not_run** (oracle unavailable" in low   # budgets NOT_RUN, not PASS
+
+
+# --------------------------------------------------------------------------
+# #424: same-shape drift-zero carrier screen (tools/screen_rf_bins12_carriers.py)
+#
+# These tests check the COMMITTED live screen record for internal consistency
+# and exercise the eligibility logic with mutation controls. They do not
+# re-run the pinned oracle (that is the live screen; see EVIDENCE.md) and a
+# drift-gate PASS never implies render eligibility.
+# --------------------------------------------------------------------------
+
+SCREEN_JSON = os.path.join(SXT, "artifacts", "carrier-drift-screen.json")
+
+
+def _screen_modules():
+    import carrier_drift_screen as cds
+    import extract_rf_bins12_inputs as ex
+    import screen_rf_bins12_carriers as scr
+    return cds, ex, scr
+
+
+def _graph_records():
+    _cds, _ex, scr = _screen_modules()
+    out = {}
+    with open(os.path.join(REPO, "corpus", "normalized", "graphs.jsonl"),
+              encoding="utf-8") as f:
+        for line in f:
+            g = json.loads(line)
+            out[g["p"]] = g
+    return out
+
+
+def audit_screen_record(rec):
+    """Raise AssertionError unless the screen record is self-consistent:
+    complete denominator, per-candidate verdicts that agree with an
+    INDEPENDENT recomputation from the recorded per-scene drift, and the
+    selection equal to the deterministic rule."""
+    cds, ex, scr = _screen_modules()
+    assert rec["live"] is True and rec["status"] in ("PASS", "NO_VERDICT")
+    for slug, shape in rec["shapes"].items():
+        spec = scr.SHAPES[slug]
+        run = shape["run"]
+        cands = run["candidates"]
+        assert run["live"] is True
+        assert run["coverage"]["candidates_in_corpus"] == len(cands) \
+            == spec["expected_count"]
+        for c in cands:
+            if not c["screened"]:
+                continue
+            gate, nat = c["determinism_gate"], c["native_state"]
+            re = ex.recompute_drift_eligibility(
+                nat["scene_mode_id"], nat["scene_active"],
+                gate["drift_per_voicing_scene"])
+            assert re["voicing_scenes"] == gate["voicing_scenes"], c["path"]
+            assert re["drift_gate_eligible"] == (gate["status"] == "PASS"), \
+                f"{c['path']}: recorded {gate['status']} disagrees with " \
+                f"recomputed {re}"
+        orig = shape["original"]
+        oc = next(c for c in cands if c["path"] == spec["original_path"])
+        assert orig["drift_eligible"] == (
+            oc["determinism_gate"]["status"] == "PASS")
+        assert shape["selection"]["selected_addition"] == \
+            scr.select_replacement(spec["original_path"], cands)
+    return True
+
+
+def test_screen_record_is_complete_and_self_consistent():
+    rec = json.load(open(SCREEN_JSON))
+    assert audit_screen_record(rec) is True
+    cds, ex, scr = _screen_modules()
+    graphs = _graph_records()
+    for slug, shape in rec["shapes"].items():
+        spec = scr.SHAPES[slug]
+        pred = scr.make_predicate(spec)
+        # the denominator is exactly the corpus records matching the
+        # predicate, in corpus order -- nothing sampled or dropped
+        want = [p for p, g in graphs.items() if pred(g)]
+        assert [m["path"] for m in shape["run"]["candidate_manifest"]] == want
+        cov = shape["run"]["coverage"]
+        assert cov["candidates_attempted"] == cov["candidates_screened"] \
+            == len(want) and cov["candidates_refused"] == 0
+        # every screened candidate carries its preset hash and native state
+        for c in shape["run"]["candidates"]:
+            assert c["graphs_blob_sha1"] == graphs[c["path"]]["sha"]
+            assert c["native_state"]["bins1_type_id"] is not None
+        # originals are preserved, with their historical nonzero drift
+        # reproduced by the live screen (re-measured, not copied)
+        assert shape["original"]["in_denominator"] is True
+        assert shape["original"]["drift_gate"] == "FAIL"
+        assert shape["original"]["drift_eligible"] is False
+        assert shape["original"]["render_eligibility"] == "NOT_ESTABLISHED"
+
+
+def test_declared_shapes_match_carriers_and_additions():
+    cds, ex, scr = _screen_modules()
+    rec = json.load(open(SCREEN_JSON))
+    graphs = _graph_records()
+    for c in ex.CARRIERS:
+        spec = scr.SHAPES[c["shape_slug"]]
+        assert spec["original_path"] == c["path"]
+        assert spec["original_sha1"] == c["declared_sha1"]
+        # the explicit predicate accepts the original's own graph record ...
+        assert scr.make_predicate(spec)(graphs[c["path"]]) is True
+        assert c["role"] == "original"
+    # ... and rejects a one-field mutation of it (occupancy / bypass)
+    for c in ex.CARRIERS:
+        spec = scr.SHAPES[c["shape_slug"]]
+        pred = scr.make_predicate(spec)
+        g = copy.deepcopy(graphs[c["path"]])
+        g["g"]["fxb"] = 1
+        assert pred(g) is False
+        g = copy.deepcopy(graphs[c["path"]])
+        g["g"]["fxd"] = 4
+        assert pred(g) is False
+        g = copy.deepcopy(graphs[c["path"]])
+        for fx in g["g"]["fx"]:
+            if fx["r"] == "bins2":
+                fx["on"] = 0 if fx["on"] else 1
+        assert pred(g) is False
+    # additions are exactly the committed deterministic selections
+    assert [a["path"] for a in ex.ADDITIONS] == [
+        rec["shapes"][a["shape_slug"]]["selection"]["selected_addition"]
+        for a in ex.ADDITIONS]
+    for a in ex.ADDITIONS:
+        assert a["role"] == "addition"
+        assert a["declared_sha1"] == graphs[a["path"]]["sha"]
+        assert ex.carrier_eligibility(a, rec)["drift_gate_eligible"] is True
+        assert a["path"] not in {c["path"] for c in ex.CARRIERS}
+
+
+def test_committed_carrier_records_carry_recorded_eligibility():
+    cds, ex, scr = _screen_modules()
+    rec = json.load(open(SCREEN_JSON))
+    for c in ex.CARRIERS + ex.ADDITIONS:
+        d = json.load(open(os.path.join(FX_INPUTS,
+                                        f"rf-rf-bins12-{c['slug']}.json")))
+        assert d["drift_eligibility"] == ex.carrier_eligibility(c, rec)
+        assert d["carrier_role"] == c["role"]
+        if c["role"] == "original":
+            assert d["drift_eligibility"]["non_render_eligible"] is True
+        assert d["drift_eligibility"]["render_eligibility"] == \
+            "NOT_ESTABLISHED"
+        live = d["oracle_extraction"].get("live")
+        if live:
+            # the live observation recorded in the carrier file is the one in
+            # the screen record (same native drift)
+            shape = rec["shapes"][c["shape_slug"]]
+            cand = next(x for x in shape["run"]["candidates"]
+                        if x["path"] == c["path"])
+            assert live["record"]["determinism_gate"] == \
+                cand["determinism_gate"]
+
+
+# -- mutation controls ------------------------------------------------------
+
+def test_mutating_a_nonzero_drift_original_to_eligible_is_detected():
+    """A hand edit that marks a nonzero-drift original eligible must FAIL, in
+    both forms: flipping the verdict only, and zeroing the drift value only."""
+    cds, ex, scr = _screen_modules()
+    rec = json.load(open(SCREEN_JSON))
+    carrier = ex.CARRIERS[0]
+    spec = scr.SHAPES[carrier["shape_slug"]]
+    assert ex.carrier_eligibility(carrier, rec)["drift_gate_eligible"] is False
+
+    def cand_of(r):
+        return next(c for c in
+                    r["shapes"][carrier["shape_slug"]]["run"]["candidates"]
+                    if c["path"] == spec["original_path"])
+
+    flipped = copy.deepcopy(rec)
+    cand_of(flipped)["determinism_gate"]["status"] = "PASS"
+    with pytest.raises(ex.Refuse):
+        ex.carrier_eligibility(carrier, flipped)
+    with pytest.raises(AssertionError):
+        audit_screen_record(flipped)
+    with pytest.raises(AssertionError):
+        cds.assert_drift_gate_passed(cand_of(rec))   # honest record: refuses
+
+    zeroed = copy.deepcopy(rec)
+    g = cand_of(zeroed)["determinism_gate"]
+    g["drift_per_voicing_scene"] = {k: 0.0 for k in
+                                    g["drift_per_voicing_scene"]}
+    with pytest.raises(ex.Refuse):   # status FAIL, recomputed PASS
+        ex.carrier_eligibility(carrier, zeroed)
+    with pytest.raises(AssertionError):
+        audit_screen_record(zeroed)
+
+    # mutating the verdict string of the extractor's own output is caught by
+    # the stale-record comparison as well
+    d = json.load(open(os.path.join(FX_INPUTS,
+                                    f"rf-rf-bins12-{carrier['slug']}.json")))
+    d["drift_eligibility"]["drift_gate_eligible"] = True
+    assert d["drift_eligibility"] != ex.carrier_eligibility(carrier, rec)
+
+
+def test_single_mode_with_scene_b_active_checks_scene_b_only():
+    cds, ex, scr = _screen_modules()
+    f = ex.recompute_drift_eligibility
+    # Single (id 0), scene B active: only B is a voicing scene
+    r = f(0, 1, {"A": 0.0, "B": 0.25})
+    assert r["voicing_scenes"] == ["B"] and r["drift_gate_eligible"] is False
+    # drift confined to the NON-voicing scene A does not matter
+    assert f(0, 1, {"A": 0.9, "B": 0.0})["drift_gate_eligible"] is True
+    # B active but only A was recorded: cannot be shown to be 0
+    r = f(0, 1, {"A": 0.0})
+    assert r["missing_scenes"] == ["B"] and r["drift_gate_eligible"] is False
+    # the shared live gate agrees on the same native state
+    s, patch = _fake_session(scene_mode=0, scene_active=1,
+                             drift={0: 0.9, 1: 0.0})
+    g = cds.DRIFT_GATE(s, patch)
+    assert g["voicing_scenes"] == ["B"] and g["status"] == "PASS"
+    s, patch = _fake_session(scene_mode=0, scene_active=1,
+                             drift={0: 0.0, 1: 0.25})
+    assert cds.DRIFT_GATE(s, patch)["status"] == "FAIL"
+
+
+def test_non_single_scene_b_only_drift_fails_both_scenes_checked():
+    cds, ex, scr = _screen_modules()
+    f = ex.recompute_drift_eligibility
+    for mode in (1, 2, 3):
+        r = f(mode, 0, {"A": 0.0, "B": 0.083664998})
+        assert r["voicing_scenes"] == ["A", "B"]
+        assert r["drift_gate_eligible"] is False
+        assert f(mode, 0, {"A": 0.0, "B": 0.0})["drift_gate_eligible"] is True
+        # B missing -> ineligible, not silently treated as 0
+        assert f(mode, 0, {"A": 0.0})["drift_gate_eligible"] is False
+    # nine-decimal read-back rounding is explicit: 4e-10 rounds to 0
+    assert f(2, 0, {"A": 4e-10, "B": 0.0})["drift_gate_eligible"] is True
+    assert f(2, 0, {"A": 1e-9, "B": 0.0})["drift_gate_eligible"] is False
+    s, patch = _fake_session(scene_mode=2, scene_active=0,
+                             drift={0: 0.0, 1: 0.083664998})
+    g = cds.DRIFT_GATE(s, patch)
+    assert g["voicing_scenes"] == ["A", "B"] and g["status"] == "FAIL"
+
+
+class _FakeParam:
+    def __init__(self, v):
+        self.v = v
+
+
+class _FakeSession:
+    def __init__(self, vals):
+        self.vals = vals
+
+    def getParamVal(self, p):
+        return self.vals[id(p)]
+
+
+def _fake_session(scene_mode=2, scene_active=0, drift=None, b1=2, b2=0,
+                  fxb=0, fxd=0):
+    drift = drift or {0: 0.0, 1: 0.0}
+    ps = {}
+
+    def mk(v):
+        p = _FakeParam(v)
+        ps[id(p)] = v
+        return p
+    patch = {"scenemode": mk(scene_mode), "scene_active": mk(scene_active),
+             "fx_bypass": mk(fxb), "fx_disable": mk(fxd),
+             "scene": [{"drift": mk(drift[0])}, {"drift": mk(drift[1])}],
+             "fx": [{"type": mk(0)} for _ in range(16)]}
+    patch["fx"][2]["type"] = mk(b1)
+    patch["fx"][3]["type"] = mk(b2)
+    return _FakeSession(ps), patch
+
+
+class _FakeLoader:
+    """Injected non-live loader serving one prepared native state."""
+    is_live = False
+
+    def __init__(self, session_patch):
+        self.sp = session_patch
+
+    def open(self):
+        return {"fake": True}
+
+    def load(self, rel, sha1):
+        return self.sp[0], self.sp[1], sha1
+
+
+def test_bypassed_native_shape_check_is_detected():
+    """A native state whose shape disagrees with the predicate must be refused
+    by the real shape check (no drift value); a bypassed check would instead
+    let the candidate through to the gate -- the control demonstrates that
+    difference and that the real check is what stops it."""
+    cds, ex, scr = _screen_modules()
+    spec = scr.SHAPES["shore"]            # bins1-only, scene mode 2
+    graph = _graph_records()[spec["original_path"]]
+    cand = {"path": spec["original_path"],
+            "graphs_blob_sha1": spec["original_sha1"], "graph": graph["g"]}
+    # native state: bins2 occupied (graph says empty) -> shape disagreement
+    bad = _fake_session(scene_mode=2, b1=graph["g"]["fx"][2]["t"], b2=9)
+    rec = cds.screen_candidate(_FakeLoader(bad), cand,
+                               scr.make_shape_check(spec), cds.DRIFT_GATE)
+    assert rec["screened"] is False and rec["determinism_gate"] is None
+    assert rec["refusal"]["code"] == cds.R_SHAPE_MISMATCH
+    assert "bins2" in rec["refusal"]["detail"]
+    # the bypassed check screens the same disagreeing state
+    byp = cds.screen_candidate(_FakeLoader(bad), cand,
+                               lambda s, p, c: None, cds.DRIFT_GATE)
+    assert byp["screened"] is True and byp["determinism_gate"] is not None
+    assert byp["screened"] != rec["screened"]
+    # a wrong scene mode / fx_disable / fx_bypass is also refused
+    for kw in ({"scene_mode": 0}, {"fxd": 4}, {"fxb": 3}):
+        st = _fake_session(b1=graph["g"]["fx"][2]["t"], b2=0, **kw)
+        r = cds.screen_candidate(_FakeLoader(st), cand,
+                                 scr.make_shape_check(spec), cds.DRIFT_GATE)
+        assert r["refusal"]["code"] == cds.R_SHAPE_MISMATCH, kw
+    # a matching native state passes the check and reaches the gate
+    ok = _fake_session(scene_mode=2, b1=graph["g"]["fx"][2]["t"], b2=0)
+    r = cds.screen_candidate(_FakeLoader(ok), cand,
+                             scr.make_shape_check(spec), cds.DRIFT_GATE)
+    assert r["screened"] is True and r["refusal"] is None
+
+
+def test_unavailable_oracle_is_not_run_and_preserves_live_evidence(
+        tmp_path, monkeypatch):
+    cds, ex, scr = _screen_modules()
+
+    class Absent:
+        is_live = False
+
+        def open(self):
+            raise cds.OracleAbsent("no oracle here")
+
+    doc = scr.build_record(Absent(), slugs=["shore"])
+    assert doc["status"] == "NOT_RUN" and doc["live"] is False
+    assert doc["shapes"]["shore"]["selection"]["status"] == "NOT_RUN"
+    with pytest.raises(ex.Refuse):          # never written as oracle evidence
+        cds.write_record(doc, str(tmp_path / "x.json"))
+
+    # an injected (mock) loader's PASS record is not live evidence either
+    spec = scr.SHAPES["shore"]
+    graph = _graph_records()[spec["original_path"]]
+    ok = _fake_session(scene_mode=2, b1=graph["g"]["fx"][2]["t"], b2=0)
+    mock = scr.build_record(_FakeLoader(ok), slugs=["shore"])
+    assert mock["live"] is False
+    with pytest.raises(ex.Refuse):
+        cds.write_record(mock, str(tmp_path / "y.json"))
+
+    # CLI: a pre-existing live record is left byte-identical on NOT_RUN
+    out = tmp_path / "carrier-drift-screen.json"
+    out.write_bytes(open(SCREEN_JSON, "rb").read())
+    before = out.read_bytes()
+    monkeypatch.setattr(cds, "PinnedSurgepyLoader", Absent)
+    assert scr.main(["--out", str(out)]) == 2
+    assert out.read_bytes() == before
+
+    # extractor: oracle absent -> NOT_RUN live leg; the prior LIVE observation
+    # in the carrier record is retained, not overwritten
+    carrier = ex.CARRIERS[0]
+    committed = json.load(open(os.path.join(
+        FX_INPUTS, f"rf-rf-bins12-{carrier['slug']}.json")))
+    if not committed["oracle_extraction"].get("live"):
+        pytest.skip("committed carrier record has no live observation")
+    fresh = ex.extract_one(carrier)
+    ex._LIVE["v"] = (None, "NOT_RUN: pinned oracle unavailable (test)")
+    try:
+        fresh = ex.extract_one(carrier)
+    finally:
+        ex._LIVE.pop("v", None)
+    assert fresh["oracle_extraction"]["live"] is None
+    assert fresh["oracle_extraction"]["ok"] is False
+    merged = ex.merge_prior_live(fresh, committed)
+    kept = merged["oracle_extraction"]
+    assert kept["live"] == committed["oracle_extraction"]["live"]
+    assert kept["retained_from_prior_live_run"] is True
+    assert kept["current_run"]["status"] == "NOT_RUN"
+    # without prior live evidence nothing is invented
+    bare = ex.merge_prior_live(ex.extract_one(carrier), {})
+    assert bare["oracle_extraction"].get("live") in (None,) or \
+        bare["oracle_extraction"]["live"]["live"] is True
+
+
+def test_selection_rule_is_deterministic_and_gap_is_bounded():
+    cds, ex, scr = _screen_modules()
+    rec = json.load(open(SCREEN_JSON))
+    spec = scr.SHAPES["shore"]
+    cands = rec["shapes"]["shore"]["run"]["candidates"]
+    pick = scr.select_replacement(spec["original_path"], cands)
+    assert pick == scr.select_replacement(spec["original_path"],
+                                          list(reversed(cands)))
+    passing = sorted(c["path"] for c in cands
+                     if c["determinism_gate"]["status"] == "PASS")
+    assert pick == passing[0]
+    # no eligible candidate -> bounded gap (None), never the failed original
+    failing_only = [c for c in cands
+                    if c["determinism_gate"]["status"] != "PASS"]
+    assert scr.select_replacement(spec["original_path"], failing_only) is None
+    unscreened = copy.deepcopy(cands)
+    for c in unscreened:
+        c["screened"] = False
+    assert scr.select_replacement(spec["original_path"], unscreened) is None

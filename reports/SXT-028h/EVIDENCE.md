@@ -89,6 +89,7 @@ could not be re-read while writing this leaf. Consequences, stated exactly:
 | Declared tail span rendered | **PASS** (6 silent-input blocks, all carrying nonzero audio) | `rtl-exactness.json` (`tail-span-silent-input`) |
 | Dropped-tail render | **FAILS the tail check, as required** | `negative-controls.json` NC-B |
 | Carrier routing/scheduling metadata | **PASS** (3/3, census+graphs cross-checked, drift 0) | `model/effects/fx_inputs/rf-rf-bins12-*.json` |
+| Same-shape drift-0 carrier screen (#424, live pinned oracle) | **coverage PASS (217/217 screened, 0 refused); drift outcome FAIL for all 3 originals (reproduced); 3 drift-0 additions selected** | `artifacts/carrier-drift-screen.json`, §8 |
 | Complete-wet preset renders | **NOT_RUN** (oracle unavailable) | §0a |
 | External-memory traffic | **PASS** (this leaf's own contribution: 0 words/sample; aggregate `[PENDING-SXT-016]`) | `artifacts/state-cost.json` |
 | Newly-enabled presets | **0** (no support claim follows from this record) | §6 |
@@ -274,10 +275,103 @@ than closed here: the oracle-dependent reference legs (§0a, blocked on an
 oracle build) and the bypass-partition re-verification item (§0b). The
 [PROPOSED] reference budgets remain unfrozen, gated on SXT-017 (#12).
 
+## 8. Same-shape drift-0 carrier screen (#424)
+
+Scope: ENGINE-SIDE drift screening only. Nothing was rendered. No wet fidelity,
+preset-support, audio-repeatability or RTL-exactness claim follows; a drift-gate
+PASS is necessary, never sufficient, for render eligibility, and #12 plus this
+leaf's own render gates still govern rendering. Coverage, drift outcome and
+selection are reported separately below.
+
+### 8.1 Shape predicates (declared before screening)
+
+Source: §4 of this record plus each original's `corpus/normalized/graphs.jsonl`
+record; encoded in `tools/screen_rf_bins12_carriers.py::SHAPES` (explicit,
+exact fields; the original's own record must satisfy its predicate, and a test
+mutates occupancy / fx_bypass / fx_disable to show the predicate rejects).
+
+| Original | Shape (all with `fx_bypass == 0`, `fx_disable == 0`, normalized) | Committed denominator |
+|---|---|---|
+| `A.Liv/Leads/Novuo.fxp` | scene mode Dual (id 2); bins1 AND bins2 occupied with DIFFERENT FX classes | 122 |
+| `Aleksey Zhehanov/Keys/Acoordion Basses.fxp` | scene mode Key Split (id 1); bins1 occupied, bins2 empty | 11 |
+| `Altenberg/FX/Shore.fxp` | scene mode Dual (id 2); bins1 occupied, bins2 empty | 84 |
+
+An FX-type count or census match is never taken as native agreement: for every
+candidate the screen re-reads slot types, `fx_bypass`, `fx_disable` and scene
+mode from the NATIVE post-`loadPatch` state and refuses on any disagreement with
+the predicate or with the graph record (0 such refusals occurred). The bins3/4
+and other roles are not part of this leaf's bins1/bins2 bus shape and are not
+constrained.
+
+### 8.2 Live run (pinned oracle, prebuilt artifact, 48 kHz)
+
+Engine `58914e59c608ed4384ba6002e44c3465c58b2e71` via the manifest-pinned
+prebuilt artifact (provenance verified by `tools/carrier_drift_screen.py`
+before any load). Gate: the shared `drift_gate` (Single mode -> active scene;
+other modes -> both scenes; read-back rounded to **9 decimals** before the
+`== 0` comparison). Input digests are in the record
+(`graphs.jsonl` sha256 `c90424d9...`, census CSV sha256 `e2d0ba68...`).
+
+| Shape | Enumerated / attempted / screened / refused | Gate PASS | Gate FAIL | Original (re-measured) |
+|---|---|---|---|---|
+| Novuo | 122 / 122 / 122 / 0 | 90 | 32 | **FAIL** A 0.01, B 0.0 |
+| Acoordion Basses | 11 / 11 / 11 / 0 | 9 | 2 | **FAIL** A 0.41785726, B 0.190122858 |
+| Shore | 84 / 84 / 84 / 0 | 59 | 25 | **FAIL** A 0.0, B 0.083664998 |
+
+Coverage status PASS means only that every enumerated candidate was attempted
+and screened. The drift outcome is a separate field (`drift_gate_status`): FAIL
+in each shape because the original fails. The re-measured original numbers equal
+the historical `sibling_render_carrier_audit` numbers, but this live run is the
+evidence, not the historical record. The per-candidate records (preset hash,
+native normalized FX/scene state, per-scene drift) are in
+`artifacts/carrier-drift-screen.json`.
+
+### 8.3 Originals, selection rule, additions
+
+All three originals are PRESERVED as declared carriers and marked
+non-render-eligible (drift gate failed; `drift_eligibility.non_render_eligible`
+in `model/effects/fx_inputs/rf-rf-bins12-<slug>.json`). Selection rule
+(deterministic, mechanical): among the shape's candidates that were screened
+with drift gate PASS, excluding the original, take the first in ascending byte
+order of the corpus-relative path. Selected, as labeled ADDITIONS (not
+substitutions; `ADDITIONS` in `tools/extract_rf_bins12_inputs.py`, pinned to
+the record by a test):
+
+| Shape | Selected addition | Drift (A / B) |
+|---|---|---|
+| Novuo | `Aleksey Zhehanov/Pads/Winter Breath.fxp` | 0 / 0 |
+| Acoordion Basses | `Bluelight/Splits/Royals Straight Flushed 110 BPM.fxp` | 0 / 0 |
+| Shore | `A.Liv/Basses/808er Than 808.fxp` | 0 / 0 |
+
+Each addition has a static routing record (`rf-rf-bins12-add-*.json`, census
+and graphs cross-check, 0 drift count) and the live native observation. The
+additions have the same routing/occupancy SHAPE, not the same FX classes or
+sound, as the originals; they do not count toward original-preset coverage.
+Since all three shapes have an addition, no bounded coverage gap is recorded.
+
+### 8.4 Extractor live leg
+
+`tools/extract_rf_bins12_inputs.py::try_live_oracle_extraction` now performs a
+native load, shape read-back against the declared shape and the shared
+per-scene drift gate per carrier (previously: an import-availability stub).
+With no oracle it reports NOT_RUN and RETAINS an earlier committed live
+observation unchanged (`retained_from_prior_live_run`); drift eligibility is
+derived from the committed record by an independent recomputation that must
+agree with the recorded status.
+
+### 8.5 Not proved
+
+Repeatability beyond drift 0 (other engine RNG paths: oscillator phase,
+RNG-driven FX, #310), complete wet renders (NOT_RUN, #12), per-slot algorithm
+parameters, model-vs-reference agreement and musical quality. Drift 0 for an
+addition is not evidence its wet render is repeatable.
+
 ## Reproduce
 
 ```sh
 python3 tools/extract_rf_bins12_inputs.py
+# live drift screen (#424), under the pinned oracle interpreter (oracle/README.md "Prebuilt oracle"):
+"$ORACLE_PYTHON" tools/screen_rf_bins12_carriers.py
 python3 tools/compare_rtl_model_rf_bins12.py --out reports/SXT-028h/rtl-exactness.json
 python3 tools/rf_bins12_negative_controls.py
 python3 -m pytest tests/test_sxt028h.py -q
