@@ -877,7 +877,6 @@ def test_unavailable_oracle_is_not_run_and_preserves_live_evidence(
         FX_INPUTS, f"rf-rf-bins12-{carrier['slug']}.json")))
     if not committed["oracle_extraction"].get("live"):
         pytest.skip("committed carrier record has no live observation")
-    fresh = ex.extract_one(carrier)
     ex._LIVE["v"] = (None, "NOT_RUN: pinned oracle unavailable (test)")
     try:
         fresh = ex.extract_one(carrier)
@@ -890,10 +889,132 @@ def test_unavailable_oracle_is_not_run_and_preserves_live_evidence(
     assert kept["live"] == committed["oracle_extraction"]["live"]
     assert kept["retained_from_prior_live_run"] is True
     assert kept["current_run"]["status"] == "NOT_RUN"
+    assert "prior_live_observation" not in kept
     # without prior live evidence nothing is invented
-    bare = ex.merge_prior_live(ex.extract_one(carrier), {})
-    assert bare["oracle_extraction"].get("live") in (None,) or \
-        bare["oracle_extraction"]["live"]["live"] is True
+    ex._LIVE["v"] = (None, "NOT_RUN: pinned oracle unavailable (test)")
+    try:
+        bare = ex.merge_prior_live(ex.extract_one(carrier), {})
+    finally:
+        ex._LIVE.pop("v", None)
+    assert bare["oracle_extraction"]["live"] is None
+    assert bare["oracle_extraction"]["ok"] is False
+    assert "retained_from_prior_live_run" not in bare["oracle_extraction"]
+    assert bare["oracle_extraction"]["current_run"]["status"] == "NOT_RUN"
+
+
+def _committed_carrier(ex, i=0):
+    carrier = ex.CARRIERS[i]
+    committed = json.load(open(os.path.join(
+        FX_INPUTS, f"rf-rf-bins12-{carrier['slug']}.json")))
+    if not committed["oracle_extraction"].get("live"):
+        pytest.skip("committed carrier record has no live observation")
+    return carrier, committed
+
+
+def _negative_live_doc(ex, carrier, detail):
+    """This run's doc as extract_one would build it when the live leg
+    returned (False, detail, None)."""
+    ex._LIVE["v"] = (None, "NOT_RUN: pinned oracle unavailable (test)")
+    try:
+        doc = ex.extract_one(carrier)
+    finally:
+        ex._LIVE.pop("v", None)
+    doc["oracle_extraction"] = {"attempted": True, "ok": False,
+                                "detail": detail, "live": None}
+    return doc
+
+
+def test_blocked_live_leg_is_recorded_blocked_not_hidden():
+    """A provenance BLOCKED is a fresh negative result: it must be recorded
+    as BLOCKED (ok false, no live observation) and must NOT be hidden behind
+    the prior ok:true live evidence labelled NOT_RUN."""
+    cds, ex, scr = _screen_modules()
+    carrier, committed = _committed_carrier(ex)
+    doc = _negative_live_doc(ex, carrier,
+                             "BLOCKED: provenance sha256 mismatch (test)")
+    ox = ex.merge_prior_live(doc, committed)["oracle_extraction"]
+    assert ox["ok"] is False and ox["live"] is None
+    assert ox["current_run"]["status"] == "BLOCKED"
+    assert "retained_from_prior_live_run" not in ox
+    stale = ox["prior_live_observation"]
+    assert stale["status"] == "STALE"
+    assert stale["live"] == committed["oracle_extraction"]["live"]
+    # a later NOT_RUN must not resurrect the STALE observation as current
+    nr = _negative_live_doc(ex, carrier, "NOT_RUN: absent (test)")
+    again = ex.merge_prior_live(nr, {"oracle_extraction": ox})
+    assert again["oracle_extraction"]["live"] is None
+    assert again["oracle_extraction"]["current_run"]["status"] == "NOT_RUN"
+    # control: the pre-fix behaviour (retain on any live=None) is detectable
+    assert ox["ok"] != committed["oracle_extraction"]["ok"]
+
+
+def test_native_refusal_is_recorded_refused_not_hidden():
+    """A fresh native refusal (e.g. shape mismatch) supersedes prior live
+    evidence: recorded as REFUSED with ok false; the old observation is
+    kept only as STALE history."""
+    cds, ex, scr = _screen_modules()
+    carrier, committed = _committed_carrier(ex)
+    detail = ("live leg refused: {'code': '%s', 'detail': 'bins2 occupied "
+              "(test)'}" % cds.R_SHAPE_MISMATCH)
+    doc = _negative_live_doc(ex, carrier, detail)
+    ox = ex.merge_prior_live(doc, committed)["oracle_extraction"]
+    assert ox["ok"] is False and ox["live"] is None
+    assert ox["current_run"]["status"] == "REFUSED"
+    assert ox["current_run"]["detail"] == detail
+    assert "retained_from_prior_live_run" not in ox
+    assert ox["prior_live_observation"]["status"] == "STALE"
+    # a fresh LIVE observation is taken as-is (no stale/current_run markers)
+    live = dict(doc, oracle_extraction={
+        "attempted": True, "ok": True, "detail": "observed (test)",
+        "live": {"live": True}})
+    out = ex.merge_prior_live(live, {"oracle_extraction": ox})
+    assert out["oracle_extraction"]["live"] == {"live": True}
+    assert "current_run" not in out["oracle_extraction"]
+    assert "prior_live_observation" not in out["oracle_extraction"]
+
+
+def test_extractor_without_oracle_leaves_committed_records_byte_identical(
+        tmp_path, monkeypatch):
+    """No oracle: nothing live changed, so the committed carrier records and
+    refusal log stay byte-identical (no host-specific detail is added) and
+    the CLI reports NOT_RUN with exit 2."""
+    cds, ex, scr = _screen_modules()
+    out_dir = tmp_path / "fx_inputs"
+    out_dir.mkdir()
+    before = {}
+    for c in ex.CARRIERS + ex.ADDITIONS:
+        name = f"rf-rf-bins12-{c['slug']}.json"
+        data = open(os.path.join(FX_INPUTS, name), "rb").read()
+        (out_dir / name).write_bytes(data)
+        before[name] = data
+    refusals = tmp_path / "extract-refusals.txt"
+    refusals.write_bytes(open(ex.REFUSALS, "rb").read())
+    ref_before = refusals.read_bytes()
+    monkeypatch.setattr(ex, "OUT_DIR", str(out_dir))
+    monkeypatch.setattr(ex, "REFUSALS", str(refusals))
+    ex._LIVE["v"] = (None, "NOT_RUN: pinned oracle unavailable: "
+                           "/somewhere/host-specific (test)")
+    try:
+        rc = ex.main()
+    finally:
+        ex._LIVE.pop("v", None)
+    assert rc == 2
+    for name, data in before.items():
+        assert (out_dir / name).read_bytes() == data, name
+    assert refusals.read_bytes() == ref_before
+    # control: a record whose non-live content differs IS rewritten
+    name = next(iter(before))
+    d = json.loads(before[name])
+    d["carrier_role"] = "tampered"
+    (out_dir / name).write_text(json.dumps(d))
+    ex._LIVE["v"] = (None, "NOT_RUN: pinned oracle unavailable (test)")
+    try:
+        assert ex.main() == 2
+    finally:
+        ex._LIVE.pop("v", None)
+    rewritten = json.loads((out_dir / name).read_bytes())
+    assert rewritten["carrier_role"] != "tampered"
+    assert rewritten["oracle_extraction"]["current_run"]["status"] == "NOT_RUN"
 
 
 def test_selection_rule_is_deterministic_and_gap_is_bounded():

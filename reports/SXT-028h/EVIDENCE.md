@@ -1,10 +1,12 @@
-# SXT-028h evidence record — routing form: Scene-B insert FX bus, slots 1-2 (bins1 → bins2): frozen model, exact RTL, per-instance state + lifecycle, oracle-dependent legs BLOCKED (named compute gap)
+# SXT-028h evidence record — routing form: Scene-B insert FX bus, slots 1-2 (bins1 → bins2): frozen model, exact RTL, per-instance state + lifecycle, live same-shape drift-0 carrier screen (#424); parameter-extraction and render legs NOT_RUN (named gap)
 
 Branch: `feature/issue-60` · Issue: #60 (SXT-028h) · Parent: #21 (SXT-028) ·
 Epic: #3
 
-Engine (external, GPL-3.0-or-later, pinned but not exercised by this leaf
-beyond the census/graphs cross-check):
+Engine (external, GPL-3.0-or-later, pinned; exercised by this leaf only for
+the census/graphs cross-check and, since #424, the live native load + shape
+read-back + per-scene drift gate of §8 -- never for per-slot parameter
+extraction or wet renders):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`
 (`oracle/manifest.json`). Structure authority:
 `src/common/SurgeSynthesizer.cpp` `process()` per-scene insert block
@@ -26,9 +28,17 @@ declared per-instance occupant and labels it ADAPTED.
 
 ## 0. Named gaps (recorded, not worked around)
 
-### 0a. Oracle-dependent legs — BLOCKED
+### 0a. Oracle-dependent legs — drift gate live (§8); extraction and renders NOT_RUN
 
-The pinned Surge XT engine's `surgepy` Python binding requires a full
+**Current status (#424).** The engine-side per-scene drift gate is now
+exercised live on the pinned prebuilt oracle (§8): every carrier record in
+`model/effects/fx_inputs/rf-rf-bins12-*.json` carries
+`oracle_extraction.ok: true` with its native drift observation. Per-slot
+algorithm-parameter extraction, wet-audio reference renders and therefore any
+model-vs-pinned-engine agreement number remain **NOT_RUN** for this leaf.
+
+**Historical (as originally recorded for #60, before #424; superseded where
+it conflicts with the status above).** The pinned Surge XT engine's `surgepy` Python binding requires a full
 C++/JUCE build (`oracle/fetch-and-build.sh`); that build was not available in
 the environment that produced this record (dispatch worker, no host-side
 oracle checkout; `oracle/manifest.json`'s pinned build path is a macOS path).
@@ -43,13 +53,16 @@ silently skipped:
   `fx_disable`, scene mode, stored `return_level` — re-derived from the
   ALREADY-committed, ALREADY-surgepy-derived `corpus/census-v0.1` and
   `corpus/normalized/graphs.jsonl` (SXT-011 outputs), with **zero drift
-  asserted between those two independent artifacts** (§4).
-- **What is BLOCKED**: any per-slot algorithm-parameter extraction, the
-  engine-side per-scene drift determinism gate, any wet-audio reference
-  render, and therefore any model-vs-pinned-engine reference-agreement number
-  for this leaf's fixtures (`tools/extract_rf_bins12_inputs.py`'s
-  `oracle_extraction.ok` is `false` for all three carriers, recorded verbatim
-  in `model/effects/fx_inputs/rf-rf-bins12-*.json`, never fabricated).
+  asserted between those two independent artifacts** (§4; a static
+  census-vs-graphs disagreement count, not engine-side drift).
+- **What was BLOCKED at #60 and is now live (#424, §8)**: the engine-side
+  per-scene drift determinism gate. At #60 the extractor recorded
+  `oracle_extraction.ok: false` for all three carriers; the records now carry
+  the live native observation (`ok: true`; the originals' gate outcome is
+  FAIL, preserved).
+- **What remains NOT_RUN**: any per-slot algorithm-parameter extraction, any
+  wet-audio reference render, and therefore any model-vs-pinned-engine
+  reference-agreement number for this leaf's fixtures.
 - **Reference budgets** [PROPOSED, not frozen] are therefore **NOT_RUN** for
   this leaf — not PASS and not FAIL. Freeze in any case is gated on SXT-017
   (#12) per the issue's own Acceptance section.
@@ -82,15 +95,15 @@ could not be re-read while writing this leaf. Consequences, stated exactly:
 | Claim | Status | Evidence |
 |---|---|---|
 | Frozen model ↔ RTL exact | **PASS** (16 cases, 6,912 output samples + 108 checkpoints, 0 mismatches) | `rtl-exactness.json` |
-| Model ↔ pinned engine vs [PROPOSED] budgets | **NOT_RUN** (oracle unavailable; §0a) | — |
+| Model ↔ pinned engine vs [PROPOSED] budgets | **NOT_RUN** (oracle unavailable when this leaf was built; parameter extraction and renders still not run; §0a) | — |
 | Negative controls live | **5/5 CONTROL-OK** (13 legs, 0 NOT_RUN; 2 are live RTL mutants) | `negative-controls/negative-controls.json` |
 | Per-instance state (dual-slot) | **PASS** (model-level NC-D + live RTL shared-state mutant fails + RTL cases with both slots occupied) | `negative-controls.json`, `rtl-exactness.json` |
 | Instance lifecycle (patch change mid-tail, slot off, panic/reset) | **PASS** (3 dedicated RTL cases + model tests) | `rtl-exactness.json` §2, `tests/test_sxt028h.py` |
 | Declared tail span rendered | **PASS** (6 silent-input blocks, all carrying nonzero audio) | `rtl-exactness.json` (`tail-span-silent-input`) |
 | Dropped-tail render | **FAILS the tail check, as required** | `negative-controls.json` NC-B |
-| Carrier routing/scheduling metadata | **PASS** (3/3, census+graphs cross-checked, drift 0) | `model/effects/fx_inputs/rf-rf-bins12-*.json` |
+| Carrier routing/scheduling metadata (static census-vs-graphs agreement) | **PASS** (6/6 records: 3 originals + 3 additions; census-vs-graphs disagreement count 0 -- static artifact agreement, NOT engine drift; see next row for engine drift) | `model/effects/fx_inputs/rf-rf-bins12-*.json`, §4 |
 | Same-shape drift-0 carrier screen (#424, live pinned oracle) | **coverage PASS (217/217 screened, 0 refused); drift outcome FAIL for all 3 originals (reproduced); 3 drift-0 additions selected** | `artifacts/carrier-drift-screen.json`, §8 |
-| Complete-wet preset renders | **NOT_RUN** (oracle unavailable) | §0a |
+| Complete-wet preset renders | **NOT_RUN** (not attempted by this leaf) | §0a |
 | External-memory traffic | **PASS** (this leaf's own contribution: 0 words/sample; aggregate `[PENDING-SXT-016]`) | `artifacts/state-cost.json` |
 | Newly-enabled presets | **0** (no support claim follows from this record) | §6 |
 | Musical quality / listening | **NOT_RUN** (no listening record; #9 remains BLOCKED-on-human) | — |
@@ -189,13 +202,14 @@ occupants are not LTI, so real slot permutations are far more visible; but the
 and that bound is stated here rather than implied away. It does not affect the
 RTL-vs-model exactness claim.
 
-## 4. Carrier routing/scheduling metadata (oracle-independent, zero-drift)
+## 4. Carrier routing/scheduling metadata (oracle-independent; census-vs-graphs disagreement 0)
 
 `tools/extract_rf_bins12_inputs.py` re-verifies the census blob sha1
 (`corpus/census-v0.1/results/per-preset.csv`), cross-checks
 `corpus/normalized/graphs.jsonl` (already surgepy-derived and committed;
-SXT-011), and **asserts zero drift between those two independent artifacts**
-on every field both carry (blob sha1, stored revision, scene mode,
+SXT-011), and **asserts zero disagreement ("drift" in this static sense --
+not the engine-side per-scene drift of §8) between those two independent
+artifacts** on every field both carry (blob sha1, stored revision, scene mode,
 `fx_bypass`, `fx_disable`, non-off FX slot count, non-off FX type set). Any
 disagreement is a refusal, not a silently preferred source
 (`tests/test_sxt028h.py::test_extraction_refuses_injected_drift` injects drift
@@ -223,7 +237,8 @@ that a genuinely different — or unmappable — FX type id still refuses.
 | `Aleksey Zhehanov/Keys/Acoordion Basses.fxp` | EQ (on) | Off | All FX | 0 | Key Split | no (single-instance) |
 | `Altenberg/FX/Shore.fxp` | Reverb 2 (on) | Off | All FX | 0 | Dual | no (single-instance) |
 
-3/3 census blob + graphs cross-checks PASS, drift count 0, 0 refusals
+3/3 census blob + graphs cross-checks PASS, census-vs-graphs disagreement
+count 0, 0 refusals
 (`artifacts/extract-refusals.txt` empty). `Novuo.fxp` genuinely exercises the
 two-concurrent-insert-instance shape this leaf claims — and does it with two
 *different* FX classes in the two slots, which is exactly the
@@ -234,9 +249,10 @@ multi-scene patches, so scene B is instantiated at all
 (`scene_context.scene_b_instantiated`); a Single-scene patch's bins slots
 would be unreachable and is recorded as such rather than assumed.
 
-Per-slot algorithm parameter values are NOT extracted (§0a — oracle
-unavailable); each record carries `oracle_extraction.ok: false` with the
-reason. Stored per-slot `return_level` is recorded but explicitly **not
+Per-slot algorithm parameter values are NOT extracted (§0a; NOT_RUN). Since
+#424 each record's `oracle_extraction` carries the live native load + shape
+read-back + per-scene drift observation (`ok: true`, §8.4) -- a drift
+observation only, not parameter extraction. Stored per-slot `return_level` is recorded but explicitly **not
 consumed** by the insert path (`return_level_consumed_by_insert_path: false`)
 — return/send-level semantics belong to the send-form (`rf-send*`) leaves.
 
@@ -344,7 +360,8 @@ the record by a test):
 | Shore | `A.Liv/Basses/808er Than 808.fxp` | 0 / 0 |
 
 Each addition has a static routing record (`rf-rf-bins12-add-*.json`, census
-and graphs cross-check, 0 drift count) and the live native observation. The
+and graphs cross-check, census-vs-graphs disagreement count 0) and the live
+native observation. The
 additions have the same routing/occupancy SHAPE, not the same FX classes or
 sound, as the originals; they do not count toward original-preset coverage.
 Since all three shapes have an addition, no bounded coverage gap is recorded.
@@ -354,8 +371,16 @@ Since all three shapes have an addition, no bounded coverage gap is recorded.
 `tools/extract_rf_bins12_inputs.py::try_live_oracle_extraction` now performs a
 native load, shape read-back against the declared shape and the shared
 per-scene drift gate per carrier (previously: an import-availability stub).
-With no oracle it reports NOT_RUN and RETAINS an earlier committed live
-observation unchanged (`retained_from_prior_live_run`); drift eligibility is
+Each run's live leg is classified: LIVE, NOT_RUN (pinned oracle absent),
+BLOCKED (provenance refusal while opening the oracle, e.g. the wrong
+interpreter) or REFUSED (a fresh native refusal such as a shape mismatch).
+Only a true NOT_RUN retains an earlier committed live observation
+(`retained_from_prior_live_run`, `current_run.status: NOT_RUN`), and the CLI
+then leaves a record whose content did not otherwise change byte-identical
+and exits 2. BLOCKED and REFUSED are recorded as the current result
+(`ok: false`, `live: null`, `current_run.status` BLOCKED/REFUSED); a prior
+live observation survives only under `prior_live_observation` with status
+STALE, never as current evidence. Drift eligibility is
 derived from the committed record by an independent recomputation that must
 agree with the recorded status.
 
@@ -369,7 +394,9 @@ addition is not evidence its wet render is repeatable.
 ## Reproduce
 
 ```sh
-python3 tools/extract_rf_bins12_inputs.py
+# carrier records incl. the live leg, under the pinned oracle interpreter
+# (system python3 is a provenance BLOCKED, recorded as such):
+"$ORACLE_PYTHON" tools/extract_rf_bins12_inputs.py
 # live drift screen (#424), under the pinned oracle interpreter (oracle/README.md "Prebuilt oracle"):
 "$ORACLE_PYTHON" tools/screen_rf_bins12_carriers.py
 python3 tools/compare_rtl_model_rf_bins12.py --out reports/SXT-028h/rtl-exactness.json

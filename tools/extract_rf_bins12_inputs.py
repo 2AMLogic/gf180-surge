@@ -27,8 +27,12 @@ this tool:
      The per-carrier observation is recorded, not deferred. Per-slot algorithm
      parameter extraction and wet rendering remain out of THIS leaf's scope.
      If the pinned oracle is unavailable, the live leg is NOT_RUN (never
-     fabricated; the static checks still proceed) and any previously
-     committed live observation in the output record is RETAINED unchanged.
+     fabricated; the static checks still proceed), any previously
+     committed live observation is RETAINED, a record whose content did not
+     otherwise change is left byte-identical, and the CLI exits 2. A
+     provenance BLOCKED or a fresh native refusal is recorded as the current
+     result (ok false); a prior live observation then survives only as
+     STALE history (`prior_live_observation`), never as current evidence.
      Drift-gate eligibility is separately derived from the committed
      reports/SXT-028h/artifacts/carrier-drift-screen.json; drift PASS is
      necessary, never sufficient, for render eligibility.
@@ -42,6 +46,7 @@ Original to this repository (Apache-2.0); imports the GPL engine at runtime
 only, and only for the item-4 attempt.
 """
 
+import copy
 import csv
 import json
 import os
@@ -347,17 +352,66 @@ def extract_one(carrier):
     return doc
 
 
+def live_leg_status(ox):
+    """Classify THIS run's live leg from its oracle_extraction block:
+    LIVE (a native observation was obtained), NOT_RUN (pinned oracle absent),
+    BLOCKED (provenance refusal while opening the pinned oracle) or REFUSED
+    (the native leg ran and refused this carrier, e.g. a shape mismatch)."""
+    if ox.get("live"):
+        return "LIVE"
+    detail = ox.get("detail") or ""
+    if detail.startswith("NOT_RUN"):
+        return "NOT_RUN"
+    if detail.startswith("BLOCKED"):
+        return "BLOCKED"
+    return "REFUSED"
+
+
 def merge_prior_live(doc, prior):
-    """Oracle absent now but a prior committed record carries a LIVE
-    observation: retain it unchanged (never overwrite live evidence with an
-    unavailable-oracle result); the current run is reported NOT_RUN."""
+    """Combine this run's live leg with a prior committed record.
+
+    Prior LIVE evidence is retained as current ONLY for a true NOT_RUN (the
+    pinned oracle is absent here, so nothing new was observed). A BLOCKED
+    (provenance refusal) or REFUSED (fresh native refusal) result is a new
+    negative observation: it is recorded as the current result (`ok: false`,
+    `live: None`) and any prior live observation is kept only as STALE
+    history under `prior_live_observation`, never presented as current."""
     ox = doc["oracle_extraction"]
     pox = (prior or {}).get("oracle_extraction") or {}
-    if ox.get("live") is None and pox.get("live"):
-        doc["oracle_extraction"] = dict(
-            pox, retained_from_prior_live_run=True,
-            current_run={"status": "NOT_RUN", "detail": ox["detail"]})
+    status = live_leg_status(ox)
+    if status == "LIVE":
+        return doc
+    current_run = {"status": status, "detail": ox["detail"]}
+    if status == "NOT_RUN":
+        if pox.get("live"):
+            keep = {k: v for k, v in pox.items()
+                    if k not in ("current_run", "prior_live_observation")}
+            doc["oracle_extraction"] = dict(
+                keep, retained_from_prior_live_run=True,
+                current_run=current_run)
+        else:
+            doc["oracle_extraction"] = dict(ox, current_run=current_run)
+        return doc
+    new = dict(ox, ok=False, live=None, current_run=current_run)
+    prior_live = pox.get("live") and pox or pox.get("prior_live_observation")
+    if prior_live:
+        stale = {k: v for k, v in prior_live.items()
+                 if k not in ("current_run", "prior_live_observation",
+                              "retained_from_prior_live_run", "status")}
+        new["prior_live_observation"] = dict(
+            stale, status="STALE",
+            reason=f"superseded by a {status} live leg in a later run; "
+                   "historical only, not current evidence")
+    doc["oracle_extraction"] = new
     return doc
+
+
+def _strip_current_run(doc):
+    d = copy.deepcopy(doc)
+    ox = d.get("oracle_extraction", {})
+    ox.pop("current_run", None)
+    ox.pop("retained_from_prior_live_run", None)
+    return d
 
 
 def main():
@@ -365,6 +419,7 @@ def main():
     os.makedirs(os.path.dirname(REFUSALS), exist_ok=True)
     refusal_lines = []
     written = []
+    not_run = 0
     for carrier in CARRIERS + ADDITIONS:
         try:
             doc = extract_one(carrier)
@@ -372,20 +427,39 @@ def main():
             refusal_lines.append(f"{carrier['slug']}: REFUSED: {e}")
             continue
         out_path = os.path.join(OUT_DIR, f"rf-rf-bins12-{carrier['slug']}.json")
+        prior = None
         if os.path.exists(out_path):
             with open(out_path) as f:
-                doc = merge_prior_live(doc, json.load(f))
+                prior = json.load(f)
+            doc = merge_prior_live(doc, prior)
+        status = (doc["oracle_extraction"].get("current_run")
+                  or {"status": "LIVE"})["status"]
+        if status == "NOT_RUN":
+            not_run += 1
+            # nothing live was observed: if nothing else changed either, leave
+            # the committed record byte-identical (no host-specific detail)
+            if prior is not None and \
+                    _strip_current_run(doc) == _strip_current_run(prior):
+                written.append(out_path)
+                print(f"NOT_RUN: left {out_path} unchanged "
+                      f"({doc['oracle_extraction']['current_run']['detail']})")
+                continue
         with open(out_path, "w") as f:
             json.dump(doc, f, indent=2, sort_keys=True)
             f.write("\n")
         written.append(out_path)
         print(f"wrote {out_path}")
 
-    with open(REFUSALS, "w") as f:
-        f.write("\n".join(refusal_lines) + ("\n" if refusal_lines else ""))
+    content = "\n".join(refusal_lines) + ("\n" if refusal_lines else "")
+    old = open(REFUSALS).read() if os.path.exists(REFUSALS) else None
+    if old != content:
+        with open(REFUSALS, "w") as f:
+            f.write(content)
     for line in refusal_lines:
         print(line)
-    return 0 if len(written) == len(CARRIERS) + len(ADDITIONS) else 1
+    if len(written) != len(CARRIERS) + len(ADDITIONS):
+        return 1
+    return 2 if not_run else 0
 
 
 if __name__ == "__main__":
