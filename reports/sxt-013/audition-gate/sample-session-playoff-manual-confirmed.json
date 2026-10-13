@@ -1,0 +1,113 @@
+{
+  "_sample_note": "FAKE bookkeeping sample for issue #447 (--play off; listener confirms external audition of the printed files -> counted, external method recorded verbatim); mocked player, scripted answers, tiny synthetic WAVs. NOT pinned-oracle audio, NOT human listening, no fidelity or preset claim.",
+  "acceptance_rule": "Ratings count toward favorites acceptance ONLY in mode=open (unblinded, level-correct, no per-clip normalization) AND after the listener explicitly confirmed hearing both stimuli (audition gate). Blind level-matched sessions are supplementary per the fidelity policy (contracts/fidelity-policy-DRAFT.md, listening procedure).",
+  "audition_rule": "Audition gate (schema 1.1.0): an acceptance-counting open-mode rating requires the listener to explicitly confirm hearing BOTH named stimuli. Automatic player success records process completion, not audibility; --play off or failed automatic playback may proceed via explicit confirmation of external audition of the printed files (the method is recorded). Declining leaves the candidate uncounted. Sessions older than 1.1.0 have no playback/audition fields: absent means unrecorded, never inferred success.",
+  "claim_scope": "A listening session records one listener's structured judgments on fixed audio. It is not a fidelity measurement, not a support claim, and not by itself a frozen selection. Dry-run sessions are machine exercises with placeholder ratings and are NOT human listening.",
+  "comparison": "dry",
+  "counts": {
+    "audition_unconfirmed_not_counted": 0,
+    "blocked": 0,
+    "candidates": 1,
+    "counting_toward_acceptance": 1
+  },
+  "harness": {
+    "renderer": "fixtures/render_fixture.py (SXT-012, unmodified)",
+    "repo_commit": "e58490e74062e575ea14f65bfe273018cd90d957",
+    "tool": "tools/listening_session.py",
+    "tool_sha256": "<omitted>"
+  },
+  "issue": "SXT-013",
+  "level_policy": "level-correct native render levels; no per-clip normalization",
+  "mode": "open",
+  "operator": "scripted-audition-gate-sample (NOT human listening)",
+  "recorded_at_utc": "2026-10-11T22:20:31+00:00",
+  "records": [
+    {
+      "audio": {
+        "binding": {
+          "cache_entry": "by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e",
+          "disposition": "rendered",
+          "identity": {
+            "block_size_samples": 32,
+            "manifest_sample_rate_hz": 48000,
+            "oracle_engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+            "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
+            "oracle_python_runtime": "3.11.16 (numpy 1.26.4)",
+            "preset_blob_sha1": "c89850fb59ca2a4c029faf64b2f5a79898b177c7",
+            "preset_path": "fake/A.fxp",
+            "render_policy": "SXT-012 render_fixture.py render --preset-file: fresh instance, wet + diagnostic dry, mono int16, no normalization",
+            "renderer": "fixtures/render_fixture.py",
+            "renderer_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b",
+            "runtime_identity_basis": "oracle manifest declaration + renderer bytes; engine binary not live-probed",
+            "sample_rate_hz": 48000,
+            "sequence_id": "seq-notes-coverage-v1",
+            "sequence_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+          },
+          "identity_key": "bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e",
+          "identity_record_sha256": "23aa83af52aaf352e40a50a5974a5228fb16b1b5080b68e8cc1788b3ff09246d",
+          "reuse_refused_reason": null,
+          "schema_version": "sxt-013-listening-cache-entry/1.0.0"
+        },
+        "comparison": {
+          "kind": "dry",
+          "level_treatment": "native",
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-dry.wav",
+          "sha256": "a5d1dcd9b12e8278940d87f19fbddff774ac0603fe5f2e3cf797f7ea186e17ec"
+        },
+        "rendered_this_session": true,
+        "wet": {
+          "kind": "wet",
+          "level_treatment": "native",
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-wet.wav",
+          "sha256": "e8b9b74e280f2ef36112719f2f5117aa3c38c292321ae4cd20cf149a46fa372c"
+        }
+      },
+      "audition": {
+        "confirmed_heard_both": true,
+        "method": "laptop speakers, files played from the printed paths",
+        "verification": "CONFIRMED_HEARD_BOTH"
+      },
+      "bank": "fake",
+      "blind": false,
+      "candidate_id": "c0",
+      "category": "sample",
+      "census_blob_sha1": "c89850fb59ca2a4c029faf64b2f5a79898b177c7",
+      "counts_toward_acceptance": true,
+      "path": "fake/A.fxp",
+      "playback": {
+        "comparison": {
+          "attempted": false,
+          "method": "manual_printed_path",
+          "outcome": "not_attempted_play_off",
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-dry.wav"
+        },
+        "wet": {
+          "attempted": false,
+          "method": "manual_printed_path",
+          "outcome": "not_attempted_play_off",
+          "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/cache/by-identity/bb9edeaa6b15b43674cc335fdef9c7403131f9d650fe3fa29d187d3cee20d27e/seq-notes-coverage-v1-wet.wav"
+        }
+      },
+      "ratings": {
+        "artifacts": "none",
+        "confidence_1to5": 3,
+        "fidelity_wet_vs_comparison_1to5": 5,
+        "notes": "",
+        "tail_ok": true,
+        "timbre_match_1to5": 4
+      },
+      "sequence_id": "seq-notes-coverage-v1",
+      "verification_status": "PASS_IDENTITY_BOUND"
+    }
+  ],
+  "schema_version": "sxt-013-listening-session/1.1.0",
+  "sequence_id": "seq-notes-coverage-v1",
+  "session_id": "20261011-scripted-audition-gate-sample--not-human-open",
+  "slate": {
+    "artifact": "audition-gate-sample",
+    "path": "/tmp/loom-nt/b3f63c43-12c2-4de7-80e6-5677f80f8fd0/tmp7a7v8kxk/slate.json",
+    "profile": null,
+    "sha256": "a92147e9fc91c6d4bbb59d6ec9d3955d1c5b9af8dc948d40a895463aef85334f"
+  },
+  "status": "HUMAN_LISTENING_SESSION"
+}

@@ -141,7 +141,7 @@ def main():
         "sequence_sha256": seq_sha,
         "probe": args.probe,
         "wav": args.out,
-        "sha256": sha256_file(args.out),
+        "sha256": oc.sha256_file(args.out),
         "frames": len(dry),
         "engine": rf.engine_identity(surgepy, surgepy.createSurge(float(rf.SR))),
     }
@@ -160,14 +160,6 @@ def main():
             f.write("\n")
     print(json.dumps(rec, indent=2))
     return 0
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 if __name__ == "__main__":

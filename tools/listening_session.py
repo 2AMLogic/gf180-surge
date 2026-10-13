@@ -8,15 +8,26 @@ this harness:
      census (mismatch refuses the session),
   2. locates or renders its fixture audio through the SXT-012 renderer
      (fixtures/render_fixture.py, unchanged: fresh-instance reset policy,
-     wet + diagnostic dry, no normalization) and caches it locally,
+     wet + diagnostic dry, no normalization) and caches it locally in an
+     identity-bound entry (#404): keyed by sha256 of preset path + blob,
+     sequence bytes, renderer bytes, oracle manifest identity, sample rate
+     and render policy; reused only if the identity record and both WAV
+     digests verify. If the pinned oracle/renderer is unavailable the entry
+     is recorded BLOCKED and gets no acceptance-counting rating,
   3. pairs the WET render against the comparison the operator requested
      (default: the diagnostic DRY render; or --compare custom:<path>),
-  4. runs the requested session mode and records structured ratings.
+  4. records per-stimulus playback outcomes (player process result, or that
+     playback was not attempted) and an explicit listener audition
+     confirmation (#447): an open-mode rating counts toward acceptance only
+     after the listener confirms hearing BOTH named stimuli — a clean
+     player exit alone is process completion, never audibility,
+  5. runs the requested session mode and records structured ratings.
 
 Modes
   open   UNBLINDED, LEVEL-CORRECT: stimuli keep their native render levels
          (no per-clip normalization). Per the fidelity policy (DRAFT), only
-         ratings recorded in this mode count toward the favorites acceptance.
+         ratings recorded in this mode count toward the favorites acceptance,
+         and only behind the audition gate above.
   blind  pairwise blind: A/B order randomized per candidate; optional
          --level-match RMS-matches the quieter stimulus (a level MATCH, which
          is a normalization of the pair and therefore supplementary-only).
@@ -64,20 +75,50 @@ DEFAULT_SEQUENCE = "seq-notes-coverage-v1"
 RENDER_SCRIPT = REPO_ROOT / "fixtures" / "render_fixture.py"
 ORACLE_MANIFEST = REPO_ROOT / "oracle" / "manifest.json"
 
-SCHEMA_VERSION = "sxt-013-listening-session/1.0.0"
+SCHEMA_VERSION = "sxt-013-listening-session/1.1.0"
 ISSUE = "SXT-013"
 
 ACCEPTANCE_RULE = (
     "Ratings count toward favorites acceptance ONLY in mode=open "
-    "(unblinded, level-correct, no per-clip normalization). Blind "
-    "level-matched sessions are supplementary per the fidelity policy "
+    "(unblinded, level-correct, no per-clip normalization) AND after the "
+    "listener explicitly confirmed hearing both stimuli (audition gate). "
+    "Blind level-matched sessions are supplementary per the fidelity policy "
     "(contracts/fidelity-policy-DRAFT.md, listening procedure).")
+
+AUDITION_RULE = (
+    "Audition gate (schema 1.1.0): an acceptance-counting open-mode rating "
+    "requires the listener to explicitly confirm hearing BOTH named "
+    "stimuli. Automatic player success records process completion, not "
+    "audibility; --play off or failed automatic playback may proceed via "
+    "explicit confirmation of external audition of the printed files (the "
+    "method is recorded). Declining leaves the candidate uncounted. "
+    "Sessions older than 1.1.0 have no playback/audition fields: absent "
+    "means unrecorded, never inferred success.")
+
+# Named audition-verification outcomes on an open-mode rating record.
+AUDITION_CONFIRMED = "CONFIRMED_HEARD_BOTH"
+AUDITION_UNCONFIRMED = "AUDITION_UNCONFIRMED_NOT_COUNTED"
+# A fabricated nonempty string some pre-gate records may carry in place of a
+# real method. It is never accepted as a recorded method: the listener must
+# supply nonblank free text, and the eligibility gate rejects this value.
+AUDITION_METHOD_PLACEHOLDER = "external (unspecified)"
+# The only playback outcome that says the player PROCESS completed; it is
+# never evidence that anything was audible.
+PLAYED_PROCESS_OK = "played_process_ok"
 
 CLAIM_SCOPE = (
     "A listening session records one listener's structured judgments on "
     "fixed audio. It is not a fidelity measurement, not a support claim, and "
     "not by itself a frozen selection. Dry-run sessions are machine "
     "exercises with placeholder ratings and are NOT human listening.")
+
+
+class Blocked(Refuse):
+    """The pinned oracle/renderer needed for this entry is unavailable.
+
+    Raised per entry: the session records the entry as BLOCKED with no
+    acceptance-counting rating instead of reusing unbound audio.
+    """
 
 
 def git_blob_sha1(path):
@@ -119,7 +160,7 @@ def engine_root():
                    .get("location_used_for_evidence"))
         if loc and Path(loc).exists():
             return Path(loc)
-    raise Refuse(
+    raise Blocked(
         "cannot locate the pinned engine tree; set ORACLE_SURGE_DIR")
 
 
@@ -133,7 +174,7 @@ def verify_candidate(cand, census):
             f"{cand.get('census_blob_sha1')!r} != census {census[path]!r}")
     preset_abs = engine_root() / path
     if not preset_abs.exists():
-        raise Refuse(f"preset file missing from pinned engine tree: {preset_abs}")
+        raise Blocked(f"preset file missing from pinned engine tree: {preset_abs}")
     actual = git_blob_sha1(preset_abs)
     if actual != census[path]:
         raise Refuse(
@@ -142,29 +183,164 @@ def verify_candidate(cand, census):
     return preset_abs
 
 
-def render_wet_dry(preset_abs, sequence, cache_dir):
-    """Locate or render wet+dry via fixtures/render_fixture.py (subprocess)."""
-    slug = preset_abs.stem.replace(" ", "_")
-    out_dir = cache_dir / slug
-    wet = out_dir / f"{sequence}-wet.wav"
-    dry = out_dir / f"{sequence}-dry.wav"
-    if wet.exists() and dry.exists():
-        return wet, dry, {"rendered": False}
-    out_dir.mkdir(parents=True, exist_ok=True)
+CACHE_SCHEMA = "sxt-013-listening-cache-entry/1.0.0"
+CACHE_NAMESPACE = "by-identity"
+IDENTITY_RECORD = "identity.json"
+SEQUENCE_DIR = REPO_ROOT / "fixtures" / "sequences"
+RENDER_POLICY = (
+    "SXT-012 render_fixture.py render --preset-file: fresh instance, wet + "
+    "diagnostic dry, mono int16, no normalization")
+RENDER_SAMPLE_RATE_HZ = 48000  # render_fixture.py SR; manifest-checked below
+
+
+def _canon(obj):
+    return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+
+
+def render_identity(preset_rel, preset_blob_sha1, sequence):
+    """Identity every cached listening stimulus is bound to.
+
+    Runtime identity is what the committed oracle manifest declares plus the
+    live bytes of the renderer; it is NOT a live probe of the engine binary
+    (recorded as such in ``runtime_identity_basis``).
+    """
+    seq_path = SEQUENCE_DIR / f"{sequence}.json"
+    if not seq_path.is_file():
+        raise Refuse(f"sequence not found in fixtures/sequences: {sequence}")
+    if not ORACLE_MANIFEST.is_file():
+        raise Blocked(f"oracle manifest missing: {ORACLE_MANIFEST}")
+    with open(ORACLE_MANIFEST, encoding="utf-8") as f:
+        man = json.load(f)
+    rt = man.get("runtime", {})
+    return {
+        "preset_path": preset_rel,
+        "preset_blob_sha1": preset_blob_sha1,
+        "sequence_id": sequence,
+        "sequence_sha256": oc.sha256_file(seq_path),
+        "renderer": "fixtures/render_fixture.py",
+        "renderer_sha256": oc.sha256_file(RENDER_SCRIPT),
+        "oracle_manifest_sha256": oc.sha256_file(ORACLE_MANIFEST),
+        "oracle_engine_commit": man.get("engine", {}).get("commit"),
+        "oracle_python_runtime": man.get("environment", {}).get(
+            "python_runtime"),
+        "sample_rate_hz": RENDER_SAMPLE_RATE_HZ,
+        "manifest_sample_rate_hz": rt.get("sample_rate_hz"),
+        "block_size_samples": rt.get("block_size_samples"),
+        "render_policy": RENDER_POLICY,
+        "runtime_identity_basis": "oracle manifest declaration + renderer "
+                                  "bytes; engine binary not live-probed",
+    }
+
+
+def identity_key(identity):
+    return hashlib.sha256(_canon(identity)).hexdigest()
+
+
+def entry_dir_for(cache_dir, identity):
+    return Path(cache_dir) / CACHE_NAMESPACE / identity_key(identity)
+
+
+def check_entry(entry_dir, sequence, identity):
+    """Return (ok, reason). Reuse only if identity record and both WAVs match."""
+    rec_path = entry_dir / IDENTITY_RECORD
+    if not rec_path.is_file():
+        return False, "identity record missing"
+    try:
+        rec = json.loads(rec_path.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return False, "identity record corrupt"
+    if not isinstance(rec, dict) or rec.get("schema_version") != CACHE_SCHEMA:
+        return False, "identity record malformed (schema)"
+    if rec.get("identity") != identity:
+        return False, "identity mismatch (preset/sequence/renderer/oracle)"
+    if rec.get("identity_key") != identity_key(identity):
+        return False, "identity key mismatch"
+    for kind in ("wet", "dry"):
+        wav = entry_dir / f"{sequence}-{kind}.wav"
+        want = (rec.get("audio") or {}).get(kind, {}).get("sha256")
+        if not wav.is_file():
+            return False, f"{kind} wav missing"
+        if not want or oc.sha256_file(wav) != want:
+            return False, f"{kind} wav digest mismatch (modified)"
+    return True, None
+
+
+def run_renderer(preset_abs, sequence, out_dir):
+    """Invoke fixtures/render_fixture.py (subprocess); return its report."""
     cmd = [sys.executable, str(RENDER_SCRIPT), "render",
            "--preset-file", str(preset_abs),
            "--sequence", sequence, "--out", str(out_dir)]
     proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
     if proc.returncode != 0:
-        raise Refuse(f"renderer failed ({proc.returncode}): "
-                     f"{(proc.stderr or proc.stdout).strip()[-500:]}")
+        raise Blocked(f"renderer failed ({proc.returncode}): "
+                      f"{(proc.stderr or proc.stdout).strip()[-500:]}")
     stdout = proc.stdout
     try:
-        info = json.JSONDecoder().raw_decode(stdout[stdout.index("{"):])[0]
+        return json.JSONDecoder().raw_decode(stdout[stdout.index("{"):])[0]
     except (ValueError, IndexError) as exc:
         raise Refuse(f"cannot parse renderer output: {exc}; "
                      f"stdout tail: {stdout[-300:]}") from exc
-    return wet, dry, {"rendered": True, "renderer_report": info}
+
+
+def render_wet_dry(preset_abs, sequence, cache_dir, identity, renderer=None):
+    """Locate or render wet+dry in a digest-keyed, identity-bound entry.
+
+    Entries live at <cache>/by-identity/<sha256(identity)>/ and are reused only
+    when ``check_entry`` passes. Legacy basename-keyed directories are never
+    consulted (unverified; re-rendered, never relabeled).
+    """
+    renderer = renderer or run_renderer
+    entry = entry_dir_for(cache_dir, identity)
+    wet = entry / f"{sequence}-wet.wav"
+    dry = entry / f"{sequence}-dry.wav"
+    ok, reason = check_entry(entry, sequence, identity)
+    if ok:
+        return wet, dry, {"rendered": False, "reuse_refused_reason": None,
+                          "entry": entry}
+    refused = None if reason == "identity record missing" and not entry.exists() \
+        else reason
+    tmp = entry.parent / f".tmp-{identity_key(identity)}"
+    if tmp.exists():
+        shutil.rmtree(tmp)
+    tmp.mkdir(parents=True)
+    try:
+        info = renderer(preset_abs, sequence, tmp)
+        for kind in ("wet", "dry"):
+            if not (tmp / f"{sequence}-{kind}.wav").is_file():
+                raise Blocked(f"renderer did not produce {kind} wav")
+        record = {
+            "schema_version": CACHE_SCHEMA,
+            "identity": identity,
+            "identity_key": identity_key(identity),
+            "audio": {k: {"sha256": oc.sha256_file(
+                tmp / f"{sequence}-{k}.wav")} for k in ("wet", "dry")},
+            "renderer_report": info,
+        }
+        (tmp / IDENTITY_RECORD).write_text(
+            json.dumps(record, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8")
+        if entry.exists():
+            shutil.rmtree(entry)
+        os.replace(tmp, entry)
+    finally:
+        if tmp.exists():
+            shutil.rmtree(tmp)
+    return wet, dry, {"rendered": True, "reuse_refused_reason": refused,
+                      "entry": entry, "renderer_report": info}
+
+
+def binding_record(identity, info, cache_dir):
+    """Binding persisted in the session audio record (survives cache removal)."""
+    entry = info["entry"]
+    return {
+        "schema_version": CACHE_SCHEMA,
+        "identity": identity,
+        "identity_key": identity_key(identity),
+        "cache_entry": str(Path(entry).relative_to(Path(cache_dir))),
+        "identity_record_sha256": oc.sha256_file(entry / IDENTITY_RECORD),
+        "disposition": "rendered" if info["rendered"] else "reused_verified",
+        "reuse_refused_reason": info.get("reuse_refused_reason"),
+    }
 
 
 def wav_rms(path):
@@ -206,9 +382,17 @@ def level_match(stim_path, target_rms, cache_dir, tag):
 
 
 def play(path, play_mode):
+    """Attempt playback of one stimulus; return a structured outcome record.
+
+    The outcome records only what the harness observed about the player
+    PROCESS (or that playback was not attempted); it is never evidence that
+    anything was audible. With --play off, or when no player is found, the
+    named file is printed for manual audition and the outcome records that.
+    """
     if play_mode == "off":
         print(f"    [play off] listen to: {path}")
-        return
+        return {"method": "manual_printed_path", "attempted": False,
+                "outcome": "not_attempted_play_off", "path": str(path)}
     player = None
     for cand in (("afplay",) if sys.platform == "darwin" else
                  ("aplay", "play", "paplay")):
@@ -217,9 +401,23 @@ def play(path, play_mode):
             break
     if player is None:
         print(f"    [no player found] listen to: {path}")
-        return
+        return {"method": "manual_printed_path", "attempted": False,
+                "outcome": "no_player_found", "path": str(path)}
     print(f"    playing ({player}): {path}")
-    subprocess.run([player, str(path)], check=False)
+    try:
+        proc = subprocess.run([player, str(path)], check=False)
+    except OSError as exc:
+        print(f"    [player launch failed: {exc}] listen to: {path}")
+        return {"method": f"auto:{player}", "attempted": True,
+                "player": player, "outcome": "launch_error",
+                "error": str(exc), "path": str(path)}
+    if proc.returncode != 0:
+        print(f"    [player exited {proc.returncode}] listen to: {path}")
+    return {"method": f"auto:{player}", "attempted": True, "player": player,
+            "returncode": proc.returncode,
+            "outcome": (PLAYED_PROCESS_OK if proc.returncode == 0
+                        else "player_exit_nonzero"),
+            "path": str(path)}
 
 
 def ask(prompt, validator, default=None):
@@ -269,13 +467,41 @@ def stim_record(kind, path, level_treatment):
     }
 
 
+def acceptance_eligibility_problem(record):
+    """None iff this rating record qualifies for favorites acceptance.
+
+    The machine-checkable gate behind ACCEPTANCE_RULE and AUDITION_RULE: an
+    explicit, persisted listener confirmation of hearing both stimuli, with
+    the audition method recorded. A pre-1.1.0-shaped record (unconditional
+    counts flag, no audition fields) does NOT qualify: unrecorded audition
+    is never inferred as success.
+    """
+    if not record.get("counts_toward_acceptance"):
+        return "counts_toward_acceptance is false"
+    aud = record.get("audition")
+    if not isinstance(aud, dict):
+        return ("audition fields absent (pre-1.1.0 record); unrecorded is "
+                "never inferred as heard")
+    if aud.get("confirmed_heard_both") is not True:
+        return "listener did not confirm hearing both stimuli"
+    if aud.get("verification") != AUDITION_CONFIRMED:
+        return f"audition verification is {aud.get('verification')!r}"
+    method = aud.get("method")
+    if not method:
+        return "audition method not recorded"
+    if method == AUDITION_METHOD_PLACEHOLDER:
+        return ("audition method is the unspecified placeholder, not a "
+                "listener-supplied method")
+    return None
+
+
 def rate_open(cand, wet, compare, compare_kind, play_mode):
     """Unblinded level-correct rating (the acceptance mode)."""
     print(f"  OPEN (level-correct) pair for: {cand['path']}")
     print("    stimulus WET   (native level):")
-    play(wet, play_mode)
+    wet_play = play(wet, play_mode)
     print(f"    stimulus {compare_kind.upper()} (native level):")
-    play(compare, play_mode)
+    compare_play = play(compare, play_mode)
     ratings = {
         "fidelity_wet_vs_comparison_1to5": ask(
             "    fidelity of WET vs comparison [1-5]: ", scale_1_5),
@@ -287,10 +513,42 @@ def rate_open(cand, wet, compare, compare_kind, play_mode):
         "confidence_1to5": ask("    confidence [1-5]: ", conf_1_5),
         "notes": input("    notes (free text, may be empty): ").strip(),
     }
+    print(f"    {AUDITION_RULE}")
+    heard = ask_bool(
+        "    did you hear BOTH stimuli just presented? [y/n]: ")
+    method = None
+    counts = heard
+    if heard:
+        both_played = (wet_play["outcome"] == PLAYED_PROCESS_OK
+                       and compare_play["outcome"] == PLAYED_PROCESS_OK)
+        if both_played:
+            method = wet_play["method"]
+        else:
+            method = input(
+                "    how did you audition the named files? (free text, "
+                "recorded verbatim; a nonblank method is required for this "
+                "rating to count): ").strip()
+            if not method:
+                method = input(
+                    "    a NONBLANK audition method is required for this "
+                    "rating to count (free text, recorded verbatim): "
+                    ).strip()
+            if not method:
+                print("    no audition method supplied: this rating will "
+                      "NOT count toward acceptance.")
+                method = None
+                counts = False
     return {
         "ratings": ratings,
-        "counts_toward_acceptance": True,
+        "counts_toward_acceptance": counts,
         "blind": False,
+        "playback": {"wet": wet_play, "comparison": compare_play},
+        "audition": {
+            "confirmed_heard_both": heard,
+            "method": method,
+            "verification": (AUDITION_CONFIRMED if counts
+                             else AUDITION_UNCONFIRMED),
+        },
     }
 
 
@@ -322,10 +580,11 @@ def rate_blind(cand, wet, compare, compare_kind, play_mode, level_match_on,
           + ("  [LEVEL-MATCHED — supplementary only]" if level_match_on
              else "  [native levels — supplementary only]"))
     labels = {}
+    playback = {}
     for label, (kind, path) in zip(("A", "B"), order):
         labels[label] = kind
         print(f"    stimulus {label}:")
-        play(path, play_mode)
+        playback[label] = play(path, play_mode)
     pref = ask("    preference [A|B|tie]: ", ask_choice(("a", "b", "tie")))
     pref = pref.upper() if pref in ("a", "b") else "tie"
     confidence = ask("    confidence [1-5]: ", conf_1_5)
@@ -342,6 +601,9 @@ def rate_blind(cand, wet, compare, compare_kind, play_mode, level_match_on,
         "blind": True,
         "blind_assignment": unblind,
         "level_treatment": treatment,
+        # Playback outcomes are recorded for inspectability; the mode stays
+        # supplementary-only regardless of them (no audition gate applies).
+        "playback": playback,
     }
 
 
@@ -426,28 +688,49 @@ def run_session(args):
     records = []
     cache_dir = Path(args.audio_cache).resolve()
     cache_dir.mkdir(parents=True, exist_ok=True)
+    compare_label = "dry" if compare_kind == "dry" else "custom"
     for idx, cand in enumerate(candidates, 1):
         print(f"[{idx}/{len(candidates)}] {cand['path']} "
               f"({cand['bank']}/{cand['category']})")
-        preset_abs = verify_candidate(cand, census)
-        wet, dry, render_info = render_wet_dry(
-            preset_abs, args.sequence, cache_dir)
-        if isinstance(compare_kind, str) and compare_kind == "dry":
-            compare, compare_label = dry, "dry"
-        else:
-            compare = Path(compare_kind.split("custom:", 1)[1])
-            compare_label = "custom"
-        record = {
+        base = {
             "candidate_id": cand["id"],
             "path": cand["path"],
             "bank": cand["bank"],
             "category": cand["category"],
             "census_blob_sha1": cand["census_blob_sha1"],
             "sequence_id": args.sequence,
+        }
+        try:
+            preset_abs = verify_candidate(cand, census)
+            identity = render_identity(cand["path"], git_blob_sha1(preset_abs),
+                                       args.sequence)
+            wet, dry, render_info = render_wet_dry(
+                preset_abs, args.sequence, cache_dir, identity)
+        except Blocked as exc:
+            print(f"    BLOCKED (no audio, not rated): {exc}")
+            records.append({
+                **base,
+                "verification_status": "BLOCKED",
+                "blocked_reason": str(exc),
+                "audio": None,
+                "ratings": None,
+                "counts_toward_acceptance": False,
+                "blind": False,
+            })
+            continue
+        binding = binding_record(identity, render_info, cache_dir)
+        if compare_label == "dry":
+            compare = dry
+        else:
+            compare = Path(compare_kind.split("custom:", 1)[1])
+        record = {
+            **base,
+            "verification_status": "PASS_IDENTITY_BOUND",
             "audio": {
                 "wet": stim_record("wet", wet, "native"),
                 "comparison": stim_record(compare_label, compare, "native"),
                 "rendered_this_session": render_info.get("rendered", False),
+                "binding": binding,
             },
         }
         if args.dry_run:
@@ -466,6 +749,7 @@ def run_session(args):
         "session_id": session_path.stem,
         "claim_scope": CLAIM_SCOPE,
         "acceptance_rule": ACCEPTANCE_RULE,
+        "audition_rule": AUDITION_RULE,
         "status": ("DRY_RUN_NOT_HUMAN_LISTENING" if args.dry_run
                    else "HUMAN_LISTENING_SESSION"),
         "recorded_at_utc": datetime.now(timezone.utc).isoformat(
@@ -499,6 +783,11 @@ def run_session(args):
             "candidates": len(records),
             "counting_toward_acceptance": sum(
                 1 for r in records if r.get("counts_toward_acceptance")),
+            "audition_unconfirmed_not_counted": sum(
+                1 for r in records if (r.get("audition") or {}).get(
+                    "verification") == AUDITION_UNCONFIRMED),
+            "blocked": sum(1 for r in records
+                           if r.get("verification_status") == "BLOCKED"),
         },
         "records": records,
     }

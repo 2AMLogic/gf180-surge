@@ -44,6 +44,9 @@ def test_committed_reports_conform(allow):
     assert res["allowlist_errors"] == []
     assert res["violations"] == [], aud.render(res)
     assert res["ok"]
+    assert res["unparsable"] == [], res["unparsable"]
+    assert res["coverage"]["walk_errors"] == []
+    assert res["coverage"]["files_found"] == res["coverage"]["files_parsed"] > 0
     # the survey must actually have walked something (not a vacuous pass)
     assert sum(e["count"] for e in res["inventory"]["status"].values()) > 1000
     assert "REFUSED" in res["inventory"]["status"]
@@ -117,3 +120,104 @@ def test_cli_exit_codes(tmp_path, capsys):
     _write(os.path.join(d, "a.json"), {"status": "GREEN"})
     assert aud.main(["--reports", d]) == 1
     assert "VIOLATION" in capsys.readouterr().out
+
+
+def test_sxt013_dry_run_status_stays_not_listening_evidence(allow):
+    # The SXT-013 machine dry-run is allowlisted as NOT_RUN (human listening
+    # did not run), never a pass; `comparison: dry` is a render-kind descriptor.
+    assert aud.classify("status", "DRY_RUN_NOT_HUMAN_LISTENING", allow)[:2] == (
+        "allowlisted", "NOT_RUN")
+    assert aud.classify("comparison", "dry", allow)[:2] == (
+        "allowlisted", "NON_VERDICT")
+    # Live control: without the entry, the committed SXT-013 record fails.
+    a = copy.deepcopy(allow)
+    del a["keys"]["status"]["DRY_RUN_NOT_HUMAN_LISTENING"]
+    res = aud.audit(aud.DEFAULT_REPORTS, a)
+    assert not res["ok"]
+    assert ("status", "DRY_RUN_NOT_HUMAN_LISTENING") in [
+        (k, t) for k, t, _ in res["violations"]]
+
+
+def _good(d):
+    _write(os.path.join(d, "ok.json"), {"status": "PASS"})
+
+
+def test_valid_nonempty_input_passes(tmp_path, capsys):
+    d = str(tmp_path / "r")
+    _good(d)
+    assert aud.main(["--reports", d]) == 0
+    out = capsys.readouterr().out
+    assert "RESULT: PASS (vocabulary conformance only)" in out
+    assert "json_files=1 parsed=1 unparsable=0" in out
+
+
+def test_control_malformed_report_defeats_pass(tmp_path, allow, capsys):
+    d = str(tmp_path / "r")
+    _good(d)
+    assert aud.audit(d, allow)["status"] == "PASS"
+    os.makedirs(os.path.join(d, "sub"))
+    with open(os.path.join(d, "sub", "broken.json"), "w") as fh:
+        fh.write("{not json")
+    res = aud.audit(d, allow)
+    assert not res["ok"] and res["status"] == "FAIL"
+    assert [p for p, _ in res["unparsable"]] == [os.path.join("sub", "broken.json")]
+    assert res["violations"] == [] and res["allowlist_errors"] == []
+    assert aud.main(["--reports", d]) == 1
+    out = capsys.readouterr().out
+    assert "UNPARSABLE sub" in out and "broken.json" in out
+    assert "RESULT: FAIL" in out and "RESULT: PASS" not in out
+
+
+def test_malformed_only_input_fails(tmp_path, capsys):
+    d = str(tmp_path / "r")
+    os.makedirs(d)
+    with open(os.path.join(d, "broken.json"), "w") as fh:
+        fh.write("")
+    assert aud.main(["--reports", d]) == 1
+    out = capsys.readouterr().out
+    assert "INCOMPLETE" in out and "RESULT: FAIL" in out
+
+
+def test_unreadable_report_fails(tmp_path, allow):
+    d = str(tmp_path / "r")
+    _good(d)
+    p = os.path.join(d, "locked.json")
+    _write(p, {"status": "PASS"})
+    os.chmod(p, 0)
+    try:
+        if os.access(p, os.R_OK):
+            pytest.skip("permissions not enforced (running as root)")
+        res = aud.audit(d, allow)
+        assert res["status"] == "FAIL" and len(res["unparsable"]) == 1
+    finally:
+        os.chmod(p, 0o600)
+
+
+def test_control_all_reports_removed_is_not_run(tmp_path, allow, capsys):
+    d = str(tmp_path / "r")
+    _good(d)
+    assert aud.main(["--reports", d]) == 0
+    capsys.readouterr()
+    os.remove(os.path.join(d, "ok.json"))
+    res = aud.audit(d, allow)
+    assert not res["ok"] and res["status"] == "NOT_RUN"
+    assert res["coverage"]["disposition"] == "EMPTY"
+    assert aud.main(["--reports", d]) == 2
+    out = capsys.readouterr().out
+    assert "RESULT: NOT_RUN" in out and "RESULT: PASS" not in out
+
+
+def test_missing_root_is_not_run(tmp_path, allow, capsys):
+    d = str(tmp_path / "does-not-exist")
+    res = aud.audit(d, allow)
+    assert res["status"] == "NOT_RUN" and not res["coverage"]["root_is_dir"]
+    assert aud.main(["--reports", d]) == 2
+    assert "missing or not a directory" in capsys.readouterr().out
+
+
+def test_fail_outranks_not_run(tmp_path, allow):
+    d = str(tmp_path / "r")
+    _write(os.path.join(d, "x.json"), {"status": "GREEN"})
+    os.remove(os.path.join(d, "x.json"))
+    _write(os.path.join(d, "y.json"), {"status": "GREEN"})
+    assert aud.audit(d, allow)["status"] == "FAIL"

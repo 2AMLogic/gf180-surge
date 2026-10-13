@@ -217,7 +217,13 @@
       "status": "PASS",
       "note": "Landed PR #39. Compiler v1: 3,561 graphs -> 1,683 compiled / 1,296 rejected / 582 unresolved; reconciles with SXT-017 within 2 named deltas; 22-code rejection catalog; repo-relative provenance fix applied in review.",
       "evidence": "reports/sxt-020/EVIDENCE.md",
-      "evidence_sha256": "e2a99e7649250e64bf7136f15f07b2540bb5d6e97d01eaad0a496841b1f8a686"
+      "evidence_sha256": "e2a99e7649250e64bf7136f15f07b2540bb5d6e97d01eaad0a496841b1f8a686",
+      "prerequisite_waivers": [
+        {
+          "node": 12,
+          "reason": "Compiler v1 passes on its own evidence (rejection catalog, corpus scan, reconciliation) against the SXT-017 DRAFT-NOT-FROZEN bundle B4-broad and its predictor; it assumes no frozen profile and makes no fidelity or preset-support claim. A profile freeze (#12 BLOCKED) may change which graphs compile and would require recompiling."
+        }
+      ]
     },
     {
       "id": 14,
@@ -232,7 +238,13 @@
       "status": "PASS",
       "note": "Landed (#42): control+schedule model/RTL exact, 4 fixtures byte-identical; worst case 1,776 cyc closes @192/480 MHz, explicit overflow @48/96; burst/stub/mutant controls.",
       "evidence": "reports/sxt-021/EVIDENCE.md",
-      "evidence_sha256": "e2637c513dab58150b5a875eea8f44616c2cf8e10e83686133975771b6996617"
+      "evidence_sha256": "e2637c513dab58150b5a875eea8f44616c2cf8e10e83686133975771b6996617",
+      "prerequisite_waivers": [
+        {
+          "node": 12,
+          "reason": "Control+schedule model/RTL exactness and fixture byte-identity pass on committed evidence; timing closure is reported per clock/overflow case and the profile stays DRAFT-NOT-FROZEN throughout. The PASS assumes no frozen profile, clock or memory model; #12 may revise them."
+        }
+      ]
     },
     {
       "id": 15,
@@ -247,7 +259,13 @@
       "status": "PASS",
       "note": "Landed PR #40. Attacky.fxp slice: RTL==model exact on 3 sequences (12,609 state fields); mutant control fails as designed; reference errors reported against [PROPOSED] budgets (1 pass, 2 pending-freeze).",
       "evidence": "reports/sxt-022/EVIDENCE.md",
-      "evidence_sha256": "35da782f2257f4517e54e0c723804a354d0ce78cef6e983be1345d37d50698ff"
+      "evidence_sha256": "35da782f2257f4517e54e0c723804a354d0ce78cef6e983be1345d37d50698ff",
+      "prerequisite_waivers": [
+        {
+          "node": 12,
+          "reason": "The PASS claim is RTL==frozen fixed-point model exactness on three sequences. The model-vs-reference leg is recorded as FAIL against [PROPOSED] budgets / PENDING-FREEZE and is not covered by this PASS; budgets are owned by the unfrozen profile (#12 BLOCKED)."
+        }
+      ]
     },
     {
       "id": 16,
@@ -275,7 +293,13 @@
       "status": "PASS",
       "note": "Landed (#43 + #45): Reverb1 RTL==model exact incl. 557,056-word memory image; reference within [PROPOSED]; 2.125 MiB/instance external; tail finding recorded; 4 controls OK.",
       "evidence": "reports/sxt-024/EVIDENCE.md",
-      "evidence_sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
+      "evidence_sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f",
+      "prerequisite_waivers": [
+        {
+          "node": 12,
+          "reason": "The PASS claim is Reverb1 RTL==model exactness plus measured buffers and tail/stability controls. The reference comparison is against [PROPOSED] budgets (PENDING-FREEZE, one bounded budget finding recorded), not frozen ones; the profile freeze (#12 BLOCKED) can change word length and memory assumptions."
+        }
+      ]
     },
     {
       "id": 18,
@@ -320,7 +344,13 @@
       "status": "PASS",
       "note": "Landed (#78): generator + 12 leaves filed (#66-#77, SXT-032..043), 60-leaf backlog, 5 negative controls.",
       "evidence": "reports/sxt-027/EVIDENCE.md",
-      "evidence_sha256": "9587cc2a720b6c752cc9ed9e9d9f38ef01565b5eb6d6e3de824b668138e9031e"
+      "evidence_sha256": "9587cc2a720b6c752cc9ed9e9d9f38ef01565b5eb6d6e3de824b668138e9031e",
+      "prerequisite_waivers": [
+        {
+          "node": 12,
+          "reason": "Generator and 12 leaf issues landed with negative controls. Ordering uses the SXT-017 DRAFT B4-broad predictions and a slate-union proxy, not a frozen profile or listening-ranked favorites; leaves gate budget freezing on #12, so this PASS makes no fidelity claim."
+        }
+      ]
     },
     {
       "id": 21,
@@ -337,7 +367,21 @@
       "status": "PASS",
       "note": "Landed (#65): generator + 12 leaves filed (#53-#64, SXT-028a-l), 10-leaf backlog, Chorus carries the SXT-017 decision marker.",
       "evidence": "reports/sxt-028/EVIDENCE.md",
-      "evidence_sha256": "38209f0cae4ed6f795f3771435470e5414afda1d4d0670f753db039a5fa26360"
+      "evidence_sha256": "38209f0cae4ed6f795f3771435470e5414afda1d4d0670f753db039a5fa26360",
+      "prerequisite_waivers": [
+        {
+          "node": 9,
+          "reason": "Leaf generation uses SXT-014 numeric ablation deltas only; essentiality labels (human listening) are not claimed and every artifact is stamped 'essentiality UNVERIFIED'."
+        },
+        {
+          "node": 12,
+          "reason": "Generator and leaves land on their own evidence; all leaves gate reference-budget freezing on the #12 freeze, and no budget in them is frozen."
+        },
+        {
+          "node": 16,
+          "reason": "Delay/EQ (SXT-023) is not consumed as a passed result; the Chorus leaf carries an explicit 'SXT-017 decision required' marker referencing the unresolved Delay budget miss, so no Chorus budget is asserted."
+        }
+      ]
     },
     {
       "id": 22,
@@ -353,7 +397,13 @@
       "status": "PASS",
       "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls. Republished (#353): adapted 164, unresolved 2,265 (Hell's Bells adapted -> unresolved under SXT-026a; supported still 0). Republished (#384): preset-scoped complete-wet integration gate added to the supported conjunction (integration_gate NOT_RUN on all 1,683 compiled rows; no headline moved; supported still 0).",
       "evidence": "reports/coverage-v1/README.md",
-      "evidence_sha256": "ca15670fda025c4f1e0a463b472013a4b68020612f336855cf3d5b5f136187eb"
+      "evidence_sha256": "ca15670fda025c4f1e0a463b472013a4b68020612f336855cf3d5b5f136187eb",
+      "prerequisite_waivers": [
+        {
+          "node": 18,
+          "reason": "Coverage-v1 publishes the conservative conjunction over all 3,561 rows and reports supported 0 (honest). It does not assume a complete wet preset passed: the integration gate is NOT_RUN on all compiled rows and #18 (SXT-025, adapted-only per F-1) stays BLOCKED."
+        }
+      ]
     },
     {
       "id": 23,

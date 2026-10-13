@@ -101,14 +101,68 @@ def checkpoint_set(model_trace):
     return cps
 
 
+NO_COVERAGE = "no output coverage: selected window compared zero outputs"
+
+
+class WindowError(ValueError):
+    """The requested comparison window is invalid for the model trace."""
+
+
+def validate_window(model_trace, max_blocks):
+    """Return the simulated window size (blocks) or raise WindowError.
+
+    max_blocks == 0 is the full-run sentinel. Negative or beyond-extent
+    bounds are refused (never clamped); the model trace must declare a
+    positive extent, carry blocks, have unique in-range block indices, and
+    carry every block index in [settle_blocks, window).
+    """
+    n_total = model_trace.get("n_blocks_total")
+    if not isinstance(n_total, int) or isinstance(n_total, bool) or n_total <= 0:
+        raise WindowError(f"model trace n_blocks_total={n_total!r} is not a positive integer")
+    blocks = model_trace.get("blocks")
+    if not blocks:
+        raise WindowError(f"model trace has no blocks but declares n_blocks_total={n_total}")
+    idx = [b["b"] for b in blocks]
+    if len(set(idx)) != len(idx):
+        raise WindowError("model trace has duplicate block indices")
+    if min(idx) < 0 or max(idx) >= n_total:
+        raise WindowError(f"model block indices span [{min(idx)}, {max(idx)}] "
+                          f"outside declared extent [0, {n_total})")
+    if max_blocks < 0:
+        raise WindowError(f"--max-blocks {max_blocks} is negative")
+    if max_blocks > n_total:
+        raise WindowError(f"--max-blocks {max_blocks} exceeds model extent {n_total}")
+    window = max_blocks if max_blocks else n_total
+    # Every rendered (post-pre-roll) block in the selected window must be
+    # present: a truncated or sparse trace must never be reported as covered.
+    # Pre-roll blocks are only carried at checkpoints, so they are not required.
+    settle = model_trace.get("settle_blocks")
+    if not isinstance(settle, int) or isinstance(settle, bool) or settle < 0:
+        raise WindowError(f"model trace settle_blocks={settle!r} is not a non-negative integer")
+    missing = sorted(set(range(settle, window)) - set(idx))
+    if missing:
+        shown = ", ".join(map(str, missing[:8])) + (", ..." if len(missing) > 8 else "")
+        raise WindowError(f"model trace is missing {len(missing)} block(s) in the selected "
+                          f"window [{settle}, {window}): {shown}")
+    return window
+
+
 def compare(slug, model_trace, rtl_trace, n_blocks=None):
     """n_blocks bounds the comparison to the simulated window (--max-blocks):
     model blocks the RTL was never asked to simulate are not compared, so a
     truncated negative-control run cannot FAIL on 'missing O line' alone."""
     fails = []
-    checked = {"outputs": 0, "checkpoints": 0, "fields": 0}
+    checked = {"blocks": 0, "outputs": 0, "checkpoints": 0, "fields": 0}
     O, T = rtl_trace
     cps = checkpoint_set(model_trace)
+    _compare_blocks(model_trace, O, T, n_blocks, cps, fails, checked)
+    if checked["outputs"] == 0:
+        # Empty selected coverage can never establish exactness.
+        fails.append(NO_COVERAGE)
+    return checked, fails
+
+
+def _compare_blocks(model_trace, O, T, n_blocks, cps, fails, checked):
 
     for blk in model_trace["blocks"]:
         b = blk["b"]
@@ -124,12 +178,13 @@ def compare(slug, model_trace, rtl_trace, n_blocks=None):
         if len(rtl_o) != len(exp):
             fails.append(f"block {b}: O width {len(rtl_o)} != {len(exp)}")
             continue
+        checked["blocks"] += 1
         for k, (a, bv) in enumerate(zip(exp, rtl_o)):
             checked["outputs"] += 1
             if a != bv:
                 fails.append(f"block {b} out[{k}]: model={a} rtl={bv}")
                 if len(fails) > 25:
-                    return checked, fails
+                    return
         # checkpoints (declared set only)
         if b not in cps:
             continue
@@ -167,8 +222,7 @@ def compare(slug, model_trace, rtl_trace, n_blocks=None):
                 if got != want:
                     fails.append(f"block {b} {tag} {rk}: model={want} rtl={got}")
                     if len(fails) > 25:
-                        return checked, fails
-    return checked, fails
+                        return
 
 
 def main():
@@ -191,8 +245,13 @@ def main():
     trace_path = os.path.join(art, f"model_trace_{slug}.json")
     with open(trace_path) as f:
         model_trace = json.load(f)
+    try:
+        n_blocks = validate_window(model_trace, args.max_blocks)
+    except WindowError as e:
+        # refused before any compile/simulate step
+        print(f"REFUSED: invalid comparison window: {e}", file=sys.stderr)
+        return 2
     n_total = model_trace["n_blocks_total"]
-    n_blocks = args.max_blocks if args.max_blocks else n_total
 
     # compile + run
     # compiled image next to the raw trace (a fixed /tmp path collided
@@ -213,14 +272,37 @@ def main():
 
     rtl = parse_tb_trace(rtl_trace_path)
     checked, fails = compare(slug, model_trace, rtl, n_blocks)
+    real_fails = [x for x in fails if x != NO_COVERAGE]
+    if real_fails:
+        verdict = "FAIL"
+    elif fails:
+        verdict = "NO_VERDICT"  # empty selected coverage: nothing compared
+    else:
+        verdict = "PASS"
+    # expected coverage comes from the declared extent, not from the blocks
+    # the trace happens to carry (validate_window refuses missing blocks)
+    expected = max(0, n_blocks - model_trace["settle_blocks"])
+    # NOTE (#452): "blocks_compared" is the number of blocks whose outputs were
+    # actually compared (pre-roll excluded). Committed SXT-023 records written
+    # before #452 used this key for the window bound (now "blocks_window");
+    # do not read a lower value in a new record as lost coverage.
     summary = {
         "slug": slug,
         "tb": os.path.basename(args.tb),
         "sim": args.sim,
-        "blocks_compared": n_blocks,
-        "verdict": "PASS" if not fails else "FAIL",
+        "blocks_requested": args.max_blocks,
+        "blocks_window": n_blocks,
+        "blocks_total": n_total,
+        "blocks_compared": checked["blocks"],
+        "blocks_compared_semantics": "blocks_actually_compared",
+        "blocks_in_window_expected": expected,
+        "coverage": ("full" if n_blocks == n_total and checked["blocks"] == expected
+                     and checked["blocks"] > 0
+                     else "partial" if checked["blocks"] > 0 else "none"),
+        "verdict": verdict,
         "checked": checked,
-        "mismatches": len(fails),
+        "mismatches": len(real_fails),
+        "no_verdict_reason": NO_COVERAGE if verdict == "NO_VERDICT" else None,
         "first_failures": fails[:10],
     }
     print(json.dumps(summary, indent=2))
@@ -228,7 +310,7 @@ def main():
         with open(args.out, "w") as f:
             json.dump(summary, f, indent=2)
             f.write("\n")
-    return 0 if not fails else 1
+    return 0 if verdict == "PASS" else 1
 
 
 if __name__ == "__main__":

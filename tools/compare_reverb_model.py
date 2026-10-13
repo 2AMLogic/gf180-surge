@@ -78,7 +78,34 @@ event index, or a start at/after the end of the loaded render -- a STALE
 sequence), the case REFUSES (NO_VERDICT, exit 2) instead of grading an
 undefined or empty window.
 
-Exit code 0 iff all checks PASS. Original to this repository (Apache-2.0).
+Decay-sweep coverage gate (issue #456): the `sweep` command's success now
+REQUIRES declared case coverage and graded agreement. The required case set
+is declared from the committed generator policy (below); a missing or
+unusable required case, or a missing or unusable dry input (click-dry, read
+from the SELECTED trace directory, never borrowed from the committed one),
+REFUSES (NO_VERDICT, exit 2) before any evidence file is written; a run where
+no mandatory check could be graded in the required set is NO_VERDICT with a
+nonzero exit -- never a vacuous all(...)-over-empty PASS, and extra
+discovered cases are graded and reported but can never supply that graded
+agreement; a graded false check is FAIL (exit 1); a complete run with the documented
+per-fit NOT_RUN exceptions and graded mandatory tail tracking PASSes (exit 0)
+with coverage reported separately: reports/sxt-024/comparison/
+sweep-t60-coverage.json carries required/discovered/missing/extra case
+counts, graded/unmeasurable per-case statuses with reasons, and the verdict.
+Each discovered case's identity is validated before it is graded (issue #458
+review): the declared trace, the requested grid value, the applied decay
+override, and the normalized engine decaytime readback must agree (within
+the declared native readback tolerance), so renamed copies of one decay case
+refuse instead of supplying the required coverage.
+The per-case sweep-t60.json list keeps its shape (additive `status` field
+only), so existing consumers are preserved. Committed sweep evidence written
+before this gate predates it and is not rewritten by it.
+
+Exit codes: `case` -- 0 iff all of that case's checks PASS (2 = refused
+NO_VERDICT, 1 = a check FAILED); `sweep` -- 0 iff the aggregate verdict is
+PASS, 1 on FAIL or NO_VERDICT, 2 on refusal.
+
+Original to this repository (Apache-2.0).
 """
 
 import argparse
@@ -113,6 +140,82 @@ TAIL_GUARD_SAMPLES = 4800
 # post-note-off window, so it covers the whole reverb decay of the carrier
 # including the excitation. Unchanged by issue #108 (it was 4800 before).
 CLICK_TAIL_START = TAIL_GUARD_SAMPLES
+
+# --- decay-sweep coverage gate (issue #456) ---------------------------------
+# The DECLARED required sweep case set: the committed generator policy in
+# tools/render_reverb_reference.py cmd_sweep -- default grid
+# "-4,-2,0,1.879465,3,4.5,6" and its trace naming rule
+# `f"sweep-decay-{v}".replace(".", "_").replace("-", "m")`. The generator file
+# is provenance-stamped (docs/byte-frozen-sources.json), so the set is
+# declared here from that committed policy instead of imported;
+# tests/test_sxt024_sweep_coverage.py pins this declaration against the
+# committed traces, so drift between the two files cannot silently split it.
+SWEEP_GRID_DEFAULT = ("-4", "-2", "0", "1.879465", "3", "4.5", "6")
+SWEEP_COVERAGE_SCHEMA = "sxt-024/sweep-coverage-v1"
+
+
+def sweep_case_name(grid_v):
+    """Trace name for one generator grid value (the generator's exact rule)."""
+    return f"sweep-decay-{grid_v}".replace(".", "_").replace("-", "m")
+
+
+REQUIRED_SWEEP_CASES = tuple(sweep_case_name(v) for v in SWEEP_GRID_DEFAULT)
+SWEEP_REPORT = "sweep-t60.json"
+SWEEP_COVERAGE_REPORT = "sweep-t60-coverage.json"
+
+# Identity validation (issue #458 review): a sweep sidecar must declare the
+# identity its filename claims, so renamed copies of one decay case cannot
+# supply the required coverage. Native readback tolerance: the generator
+# writes the requested grid value and the engine stores the applied decay as
+# float32; on the committed traces the largest requested-vs-applied gap is
+# 3.5e-07 (~1.4 float32 ULP at 1.879), orders of magnitude below the smallest
+# declared grid gap (2.0) and far above anything a real identity mismatch
+# would produce by accident.
+SWEEP_IDENTITY_READBACK_TOL = 1e-6
+REQUIRED_CASE_GRID = {sweep_case_name(v): float(v) for v in SWEEP_GRID_DEFAULT}
+
+
+def validate_sweep_case_identity(name, side):
+    """Check one sweep sidecar against the identity its filename claims.
+
+    Raises ValueError (a SWEEP_INPUT_ERRORS member, so the sweep refuses
+    before any evidence is written) unless:
+
+      * the declared trace equals the filename stem;
+      * a declared (required) case name carries exactly the committed
+        generator grid value for that name as its requested decay;
+      * the applied decay override matches the normalized engine decaytime
+        readback (the same native readback, so the tight tolerance);
+      * the applied decay override is the requested grid value within the
+        native readback tolerance.
+
+    NaN fails every comparison on purpose. Returns the requested value.
+    """
+    declared = side.get("trace")
+    if declared != name:
+        raise ValueError(
+            "sweep sidecar %s.json declares trace %r; a case is only graded "
+            "under its own declared identity" % (name, declared))
+    requested = float(side["sweep"]["requested"])
+    applied = float(side["render"]["overrides_applied"]["3"])
+    engine = float(side["engine_patch_state"]["params"]["decaytime"])
+    expected = REQUIRED_CASE_GRID.get(name)
+    if expected is not None and requested != expected:
+        raise ValueError(
+            "sweep case %s declares requested decay %r; the committed "
+            "generator grid declares %r for this trace name"
+            % (name, requested, expected))
+    if not abs(applied - engine) <= SWEEP_IDENTITY_READBACK_TOL:
+        raise ValueError(
+            "sweep case %s: applied decay override %r does not match the "
+            "normalized engine decaytime readback %r"
+            % (name, applied, engine))
+    if not abs(applied - requested) <= SWEEP_IDENTITY_READBACK_TOL:
+        raise ValueError(
+            "sweep case %s: applied decay override %r is not the requested "
+            "grid value %r within the declared native readback tolerance %r"
+            % (name, applied, requested, SWEEP_IDENTITY_READBACK_TOL))
+    return requested
 
 BUDGETS = {
     # PROPOSED pending the SXT-013 fidelity-policy freeze (nothing here is
@@ -461,12 +564,18 @@ def declared_trace_tail_region(side, sidecar_path, frames):
     }
 
 
-def read_bus(name):
-    """Prefer the committed float32 npy (no WAV quantization); else int16 WAV."""
-    fnpy = read_npy(os.path.join(TRACES, name + ".npy"))
+def read_bus(name, traces_dir=None):
+    """Prefer the committed float32 npy (no WAV quantization); else int16 WAV.
+
+    `traces_dir` defaults to the committed TRACES; the sweep passes its own
+    selected directory so a supplied trace set never silently borrows the
+    committed dry bus (issue #456). Neither file present -> FileNotFoundError.
+    """
+    base = traces_dir or TRACES
+    fnpy = read_npy(os.path.join(base, name + ".npy"))
     if fnpy is not None:
         return fnpy.astype(np.float64), True
-    return read_wav(os.path.join(TRACES, name + ".wav")), False
+    return read_wav(os.path.join(base, name + ".wav")), False
 
 
 def cmd_case(args):
@@ -701,77 +810,269 @@ def t60_of_tail(sig, t0, win=WIN):
     return -60.0 / (slope * 48000.0)  # seconds
 
 
-def cmd_sweep(args):
-    results = []
-    for fn in sorted(os.listdir(TRACES)):
-        if not (fn.startswith("sweepmdecaym") and fn.endswith(".json")):
-            continue
-        side = json.load(open(os.path.join(TRACES, fn)))
-        decay = side["render"]["overrides_applied"]["3"]
-        wet = read_wav(os.path.join(TRACES, fn.replace(".json", ".wav")))
-        model, c, st = build_model(side)
-        send, ret = send_return_gains(st)
-        dry = read_bus("click-dry")[0]
-        n = min(len(wet[0]), len(dry[0]))
-        (pred_l, pred_r), (ol, orr) = run_model_on_dry(model, dry[0][:n], dry[1][:n], send, ret)
-        # reverb-only signals: engine wet - dry; model fxout * ret
-        eng_rev = wet[0][:n] - dry[0][:n]
-        pred_rev = np.asarray(ol) * ret
-        t0 = 13200  # 250 ms click: note ends at 12000 + guard
-        t60_w = t60_of_tail(eng_rev, t0)
-        t60_p = t60_of_tail(pred_rev, t0)
-        # primary robust agreement: windowed RMS level tracking of the tail
-        cw, tw = decay_curve(eng_rev[t0:])
-        cpv, _ = decay_curve(pred_rev[t0:])
-        mask = (cw >= FLOOR + 2.0) & (cpv >= FLOOR + 2.0)  # stay off the floor edge
-        if mask.sum() > 4:
-            devs = np.abs(cpv[mask] - cw[mask])
-            track = float(np.mean(devs))
-            track_max = float(np.max(devs))
+def discover_sweep_cases(traces_dir):
+    """Sweep trace names present in `traces_dir` (sorted, .json sidecars)."""
+    return sorted(fn[:-len(".json")] for fn in os.listdir(traces_dir)
+                  if fn.startswith("sweepmdecaym") and fn.endswith(".json"))
+
+
+def sweep_case_result(name, traces_dir):
+    """Grade one decay-sweep case against the model (per-case math unchanged
+    by issue #456; the loop body previously inside cmd_sweep).
+
+    Raises one of SWEEP_INPUT_ERRORS when the case's sidecar, wet trace, or
+    the selected directory's dry bus is missing or unusable -- cmd_sweep
+    turns that into a refusal rather than silently dropping a case. The
+    sidecar's declared identity is validated first (issue #458 review): a
+    renamed copy of another case refuses before anything is graded.
+    """
+    side = json.load(open(os.path.join(traces_dir, name + ".json")))
+    validate_sweep_case_identity(name, side)
+    decay = side["render"]["overrides_applied"]["3"]
+    wet = read_wav(os.path.join(traces_dir, name + ".wav"))
+    model, c, st = build_model(side)
+    send, ret = send_return_gains(st)
+    dry = read_sweep_dry(traces_dir)
+    n = min(len(wet[0]), len(dry[0]))
+    (pred_l, pred_r), (ol, orr) = run_model_on_dry(model, dry[0][:n], dry[1][:n], send, ret)
+    # reverb-only signals: engine wet - dry; model fxout * ret
+    eng_rev = wet[0][:n] - dry[0][:n]
+    pred_rev = np.asarray(ol) * ret
+    t0 = 13200  # 250 ms click: note ends at 12000 + guard
+    t60_w = t60_of_tail(eng_rev, t0)
+    t60_p = t60_of_tail(pred_rev, t0)
+    # primary robust agreement: windowed RMS level tracking of the tail
+    cw, tw = decay_curve(eng_rev[t0:])
+    cpv, _ = decay_curve(pred_rev[t0:])
+    mask = (cw >= FLOOR + 2.0) & (cpv >= FLOOR + 2.0)  # stay off the floor edge
+    if mask.sum() > 4:
+        devs = np.abs(cpv[mask] - cw[mask])
+        track = float(np.mean(devs))
+        track_max = float(np.max(devs))
+    else:
+        track = None
+        track_max = None
+    nominal = 2.0 ** decay
+    out = {
+        "trace": name,
+        "decay_param": decay,
+        "nominal_t60_s": nominal,
+        "wet_t60_s": t60_w,
+        "pred_t60_s": t60_p,
+        "tail_level_tracking_mean_dev_db": track,
+        "tail_level_tracking_max_dev_db": track_max,
+    }
+    checks = {"tail_level_tracking": None,
+              "t60_w_vs_pred": None}  # None = NOT_RUN (not measurable here)
+    if track is not None:
+        checks["tail_level_tracking"] = bool(track <= 1.0)
+    if t60_w is not None and t60_p is not None:
+        if nominal < 1.0:
+            out["t60_note"] = ("t60 comparison NOT_RUN: nominal decay (2^decay) is "
+                               "shorter than the structure's own echo/loop delays; "
+                               "measured t60 is dominated by the composite geometry, "
+                               "not the feedback exponent (engine and model agree via "
+                               "tail_level_tracking)")
         else:
-            track = None
-            track_max = None
-        nominal = 2.0 ** decay
-        out = {
-            "trace": fn.replace(".json", ""),
-            "decay_param": decay,
-            "nominal_t60_s": nominal,
-            "wet_t60_s": t60_w,
-            "pred_t60_s": t60_p,
-            "tail_level_tracking_mean_dev_db": track,
-            "tail_level_tracking_max_dev_db": track_max,
-        }
-        checks = {"tail_level_tracking": None,
-                  "t60_w_vs_pred": None}  # None = NOT_RUN (not measurable here)
-        if track is not None:
-            checks["tail_level_tracking"] = bool(track <= 1.0)
-        if t60_w is not None and t60_p is not None:
-            if nominal < 1.0:
-                out["t60_note"] = ("t60 comparison NOT_RUN: nominal decay (2^decay) is "
-                                   "shorter than the structure's own echo/loop delays; "
-                                   "measured t60 is dominated by the composite geometry, "
-                                   "not the feedback exponent (engine and model agree via "
-                                   "tail_level_tracking)")
-            else:
-                out["t60_pred_minus_wet_s"] = t60_p - t60_w
-                out["t60_w_vs_pred_rel"] = abs(t60_p - t60_w) / t60_w
-                checks["t60_w_vs_pred"] = bool(out["t60_w_vs_pred_rel"] <= BUDGETS["sweep_t60_rel"])
-        if t60_w is not None:
-            out["wet_t60_rel_err_vs_nominal"] = abs(t60_w - nominal) / nominal
-        if t60_p is not None:
-            out["pred_t60_rel_err_vs_nominal"] = abs(t60_p - nominal) / nominal
-        if t60_w is None or t60_p is None:
-            out["t60_note"] = ("t60 fit NOT_RUN: excitation-bounded (tail below the "
-                               "-100 dBFS measurement floor for this decay); model-vs-"
-                               "engine agreement is carried by tail_level_tracking")
-        out["checks"] = checks
+            out["t60_pred_minus_wet_s"] = t60_p - t60_w
+            out["t60_w_vs_pred_rel"] = abs(t60_p - t60_w) / t60_w
+            checks["t60_w_vs_pred"] = bool(out["t60_w_vs_pred_rel"] <= BUDGETS["sweep_t60_rel"])
+    if t60_w is not None:
+        out["wet_t60_rel_err_vs_nominal"] = abs(t60_w - nominal) / nominal
+    if t60_p is not None:
+        out["pred_t60_rel_err_vs_nominal"] = abs(t60_p - nominal) / nominal
+    if t60_w is None or t60_p is None:
+        out["t60_note"] = ("t60 fit NOT_RUN: excitation-bounded (tail below the "
+                           "-100 dBFS measurement floor for this decay); model-vs-"
+                           "engine agreement is carried by tail_level_tracking")
+    out["checks"] = checks
+    return out
+
+
+def sweep_case_status(checks):
+    """Per-case status: FAIL on any graded false, NOT_RUN when nothing could
+    be graded (documented per-fit exceptions stay None, #456), else PASS."""
+    graded = [v for v in checks.values() if v is not None]
+    if any(v is False for v in graded):
+        return "FAIL"
+    return "PASS" if graded else "NOT_RUN"
+
+
+# Input failures the sweep refuses on (NO_VERDICT, exit 2) instead of a
+# traceback: missing files, bad JSON/keys/shapes, malformed or truncated WAVs
+# (wave.Error / EOFError) and read_wav's format assertion.
+SWEEP_INPUT_ERRORS = (OSError, KeyError, ValueError, wave.Error, EOFError,
+                      AssertionError)
+
+
+def read_sweep_dry(traces_dir):
+    """The sweep's dry input, from the SELECTED trace directory only (#456).
+
+    Raises ValueError when the bus is not a non-empty 2-channel finite array,
+    FileNotFoundError when neither click-dry.npy nor click-dry.wav exists.
+    """
+    dry = read_bus("click-dry", traces_dir)[0]
+    if dry.ndim != 2 or dry.shape[0] != 2 or dry.shape[1] == 0 \
+            or not np.all(np.isfinite(dry)):
+        raise ValueError("click-dry bus in %s is not a non-empty finite "
+                         "2-channel signal (shape %r)" % (traces_dir, dry.shape))
+    return dry
+
+
+def aggregate_sweep_coverage(results, required, discovered):
+    """Aggregate coverage + verdict for one sweep run (issue #456).
+
+    Verdict rule: refusal when a required case is missing (the caller refuses
+    before writing any evidence); FAIL when any graded check is false (in a
+    required or an extra case -- a failing agreement is never hidden);
+    NO_VERDICT when no mandatory check could be graded in the REQUIRED set;
+    PASS only with every required case discovered, at least one graded check
+    in a required case and no graded check false. Extra discovered cases are
+    graded and reported (disposition 'reported, not success-enabling') but
+    can never supply the graded agreement a PASS needs. Ungraded required
+    cases make coverage 'partial'. Coverage ("full"/"partial"/"none") is
+    reported separately from agreement, with per-case statuses and reasons.
+    """
+    missing = [c for c in required if c not in discovered]
+    extra = [c for c in discovered if c not in required]
+    cases = []
+    for r in results:
+        checks = r.get("checks", {})
+        graded = [k for k, v in checks.items() if v is not None]
+        not_run = sorted(k for k, v in checks.items() if v is None)
+        cases.append({
+            "trace": r.get("trace"),
+            "required": r.get("trace") in required,
+            "status": r.get("status", sweep_case_status(checks)),
+            "graded_checks": sorted(graded),
+            "not_run_checks": not_run,
+            "reason": r.get("t60_note") if not_run else None,
+        })
+    n_true = sum(1 for r in results for v in r["checks"].values() if v is True)
+    n_false = sum(1 for r in results for v in r["checks"].values() if v is False)
+    n_nr = sum(1 for r in results for v in r["checks"].values() if v is None)
+    req_results = [r for r in results if r.get("trace") in required]
+    n_req_graded = sum(1 for r in req_results for v in r["checks"].values()
+                       if v is not None)
+    cases_graded = sum(1 for c in cases if c["status"] in ("PASS", "FAIL"))
+    cases_not_run = sum(1 for c in cases if c["required"]
+                        and c["status"] == "NOT_RUN")
+    if missing:
+        verdict = "NO_VERDICT (refused)"
+        coverage = "none"
+    elif n_false:
+        verdict = "FAIL"
+        coverage = ("none" if n_req_graded == 0 else
+                    "full" if cases_not_run == 0 else "partial")
+    elif n_req_graded == 0:
+        verdict = "NO_VERDICT"
+        coverage = "none"
+    else:
+        verdict = "PASS"
+        coverage = "full" if cases_not_run == 0 else "partial"
+    return {
+        "schema": SWEEP_COVERAGE_SCHEMA,
+        "issue": 456,
+        "required_grid": list(SWEEP_GRID_DEFAULT),
+        "required_cases": list(required),
+        "required_set_source": (
+            "tools/render_reverb_reference.py cmd_sweep default grid and "
+            "trace naming (committed generator policy); pinned against the "
+            "committed traces by tests/test_sxt024_sweep_coverage.py"),
+        "discovered_cases": list(discovered),
+        "missing_required": missing,
+        "extra_discovered": extra,
+        "cases_required": len(required),
+        "cases_discovered": len(discovered),
+        "cases_graded": cases_graded,
+        "cases_not_run": cases_not_run,
+        "checks_graded_true": n_true,
+        "checks_graded_false": n_false,
+        "checks_not_run": n_nr,
+        "required_checks_graded": n_req_graded,
+        "extra_disposition": (
+            "extra discovered cases are graded and reported; a false check "
+            "in one is a FAIL, but they never count toward the graded "
+            "agreement a PASS requires"),
+        "coverage": coverage,
+        "verdict": verdict,
+        "verdict_rule": (
+            "PASS iff every required case is discovered, at least one "
+            "mandatory check is graded in a REQUIRED case, and no graded "
+            "check is false (required cases with nothing gradable are "
+            "listed NOT_RUN and make coverage 'partial'; extra cases never "
+            "enable success); FAIL if any graded check is false; "
+            "NO_VERDICT with a nonzero exit when no mandatory check is "
+            "graded in the required set; a missing (or unusable) "
+            "required case is refused before any evidence is written. "
+            "Per-fit None stays a documented NOT_RUN exception (see "
+            "t60_note per case) and never counts as a graded pass."),
+        "cases": cases,
+    }
+
+
+def _refuse_sweep(reason, coverage):
+    """Refuse a sweep run: explicit NO_VERDICT with the coverage block, no
+    evidence file written (issue #456)."""
+    payload = {"verdict": "NO_VERDICT (refused)", "reason": reason,
+               "coverage": coverage}
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    print("REFUSED: " + reason, file=sys.stderr)
+    return 2
+
+
+def cmd_sweep(args):
+    traces_dir = getattr(args, "traces_dir", None) or TRACES
+    out_dir = getattr(args, "out_dir", None) or COMPARISON
+    discovered = discover_sweep_cases(traces_dir)
+    # coverage gate FIRST (issue #456): a required case that is absent is
+    # refused before any grading and before any evidence file is touched.
+    if [c for c in REQUIRED_SWEEP_CASES if c not in discovered]:
+        missing = [c for c in REQUIRED_SWEEP_CASES if c not in discovered]
+        return _refuse_sweep(
+            "required decay-sweep case(s) missing from %s: %s (declared set "
+            "is the committed generator policy, %d cases); the sweep cannot "
+            "be graded without them and no evidence was written"
+            % (os.path.relpath(traces_dir, REPO), ", ".join(missing),
+               len(REQUIRED_SWEEP_CASES)),
+            aggregate_sweep_coverage([], REQUIRED_SWEEP_CASES, discovered))
+    # the dry input comes from the SELECTED directory and is validated before
+    # any grading or evidence write (a supplied trace set must never borrow
+    # the committed dry bus)
+    try:
+        read_sweep_dry(traces_dir)
+    except SWEEP_INPUT_ERRORS as e:
+        return _refuse_sweep(
+            "dry input click-dry (.npy or .wav) in %s is missing or unusable: "
+            "%r; no evidence was written"
+            % (os.path.relpath(traces_dir, REPO), e),
+            aggregate_sweep_coverage([], REQUIRED_SWEEP_CASES, discovered))
+    results = []
+    for name in discovered:
+        try:
+            out = sweep_case_result(name, traces_dir)
+        except SWEEP_INPUT_ERRORS as e:
+            return _refuse_sweep(
+                "required decay-sweep case %s in %s is unusable: %r; no "
+                "evidence was written"
+                % (name, os.path.relpath(traces_dir, REPO), e),
+                aggregate_sweep_coverage(results, REQUIRED_SWEEP_CASES,
+                                         discovered))
+        out["status"] = sweep_case_status(out["checks"])
         results.append(out)
-        print(r["trace"] if False else fn, "track_mean", track, "track_max", track_max)
-    with open(os.path.join(REPO, "reports", "sxt-024", "comparison", "sweep-t60.json"), "w") as f:
+        print(name, "track_mean", out["tail_level_tracking_mean_dev_db"],
+              "track_max", out["tail_level_tracking_max_dev_db"])
+    coverage = aggregate_sweep_coverage(results, REQUIRED_SWEEP_CASES,
+                                        discovered)
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, SWEEP_REPORT), "w") as f:
         json.dump(results, f, indent=2, sort_keys=True)
         f.write("\n")
-    ok = all(v for r in results for v in r["checks"].values() if v is not None)
-    return 0 if ok else 1
+    with open(os.path.join(out_dir, SWEEP_COVERAGE_REPORT), "w") as f:
+        json.dump(coverage, f, indent=2, sort_keys=True)
+        f.write("\n")
+    print(json.dumps(coverage, indent=2, sort_keys=True))
+    return 0 if coverage["verdict"] == "PASS" else 1
 
 
 def main():
@@ -784,6 +1085,12 @@ def main():
                         "reports/sxt-024/comparison)")
     p.set_defaults(func=cmd_case)
     p = sub.add_parser("sweep", help="t60 vs decay-parameter sweep (wet and model)")
+    p.add_argument("--traces-dir", default=None,
+                   help="trace directory to grade (default: %s)" % TRACES)
+    p.add_argument("--out-dir", default=None,
+                   help="write %s and %s here (default: "
+                        "reports/sxt-024/comparison)"
+                        % (SWEEP_REPORT, SWEEP_COVERAGE_REPORT))
     p.set_defaults(func=cmd_sweep)
     args = ap.parse_args()
     return args.func(args)

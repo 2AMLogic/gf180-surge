@@ -8,6 +8,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
 
 - **#368**: LP24 full-engine observation tap, external host route (#307)
+- **#397**: SXT-020: reject contradictory/unsupported patch-image versions (#391)
 
 ## Operator Priority
 
@@ -19,22 +20,13 @@ Issues the operator starred (`loom:operator-priority`); land these first.
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#16**: SXT-023: Implement Delay and EQ
-- **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host
 - **#307**: Oracle infra gap: no DR-0005-class tap patch/build exists for the LP 24 dB (SXT-038/#101) full-engine leg
-- **#310**: SXT-028f follow-up (F-028f-3): SXT-012 fixture policy for source-nondeterministic presets (39/49 Reverb 2 carriers refused by the 3x render gate)
-- **#317**: SXT-028e-sse follow-up (F-028e-sse-1): re-run the Distortion SSE reference leg on the arm64 macOS evidence host (rcp_ps is implementation-defined)
-- **#360**: Reject stale trace outputs in shared RTL simulator runs
-- **#361**: Write current refusal verdicts for shared RTL comparison input errors
-- **#364**: Enforce AGENTS.md/CLAUDE.md parity outside Loom marker blocks with a test
-- **#365**: Audit committed report verdict tokens against the six-status vocabulary (REFUSED/VERIFIED/OK undeclared)
-- **#376**: Deduplicate stereo WAV reader and channel metrics in wet effect comparators
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host
 
 ## PRs Awaiting Review
 
@@ -47,6 +39,7 @@ _None._
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#368**: LP24 full-engine observation tap, external host route (#307)
+- **#397**: SXT-020: reject contradictory/unsupported patch-image versions (#391)
 
 ## Proposed
 
@@ -68,12 +61,12 @@ Issues carrying `loom:curated`.
 - **#317**: SXT-028e-sse follow-up (F-028e-sse-1): re-run the Distortion SSE reference leg on the arm64 macOS evidence host (rcp_ps is implementation-defined) *(curated)*
 - **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf) *(curated)*
 - **#329**: SXT-043 fixture: clear osc-1 p[] modulation routings before Sine override so Digibass reference is valid (follow-up to #311) *(curated)*
-- **#360**: Reject stale trace outputs in shared RTL simulator runs *(curated)*
+- **#391**: SXT-020: reject contradictory binary and JSON patch-image versions *(curated)*
 
 ## Proposed (Architect / Hermit)
 
+- **#401**: package.json test/check:ci/check:all scripts exit 0 with no checks run (NOT_RUN reads as PASS) *(architect)*
 - **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
-- **#261**: Remove duplicated main()/revision_pin_ok() skeleton across rf_* RTL-model harnesses *(hermit)*
 - **#265**: Remove duplicated sha256(path) helper: 5 copies in tools/ instead of one shared module *(hermit)*
 - **#272**: Remove duplicated sha256_file(path) reimplementation: 7 copies already have a canonical oracle_common.sha256_file *(hermit)*
 - **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
@@ -88,12 +81,12 @@ Issues carrying `loom:curated`.
 
 | Tier | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 2 |
 | Operator priority | 1 |
-| Ready (`loom:issue`) | 10 |
-| In Progress (`loom:building`) | 0 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
+| Approved PRs awaiting merge | 2 |
 | Curated | 17 |
 | Architect / Hermit proposals | 5 |
 | Active epics | 3 |

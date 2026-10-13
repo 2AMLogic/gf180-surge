@@ -1,0 +1,32 @@
+{
+  "_sample_note": "FAKE-RENDERER sample identity record",
+  "audio": {
+    "dry": {
+      "sha256": "545bc9dce143a48bd16298ab193836f038e644a5d10ec7c8526ced82d6045011"
+    },
+    "wet": {
+      "sha256": "c5af2ed65891ca1fe4ca51464755567d97a307fb5dc9c93cc3b65f2c327c981e"
+    }
+  },
+  "identity": {
+    "block_size_samples": 32,
+    "manifest_sample_rate_hz": 48000,
+    "oracle_engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "oracle_manifest_sha256": "874f50de45b7bf51ee6cad52148efc4290c900846a7925aa0f6ead186e04d8ef",
+    "oracle_python_runtime": "3.11.16 (numpy 1.26.4)",
+    "preset_blob_sha1": "9a0c0c5e0c959eda78f8269fdd6d8303ae3c0605",
+    "preset_path": "bankB/Pad/Same Name.fxp",
+    "render_policy": "SXT-012 render_fixture.py render --preset-file: fresh instance, wet + diagnostic dry, mono int16, no normalization",
+    "renderer": "fixtures/render_fixture.py",
+    "renderer_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b",
+    "runtime_identity_basis": "oracle manifest declaration + renderer bytes; engine binary not live-probed",
+    "sample_rate_hz": 48000,
+    "sequence_id": "seq-notes-coverage-v1",
+    "sequence_sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016"
+  },
+  "identity_key": "975cd372345a80303ffcacd2939cdb1636ef03b1e954a0148a1a97614a58885c",
+  "renderer_report": {
+    "fake": true
+  },
+  "schema_version": "sxt-013-listening-cache-entry/1.0.0"
+}

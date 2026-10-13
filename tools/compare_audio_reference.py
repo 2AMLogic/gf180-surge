@@ -141,7 +141,15 @@ RMS_DIFF_DBFS_FLOOR = -300.0
 
 
 def rms_dbfs(rms, full_scale):
-    """20*log10(rms / full_scale), clamped to RMS_DIFF_DBFS_FLOOR (finite)."""
+    """20*log10(rms / full_scale), clamped to RMS_DIFF_DBFS_FLOOR (finite).
+
+    The floor is for exact agreement (rms <= 0) only. A non-finite rms (NaN,
+    +/-inf) is invalid numeric input, not agreement: it raises ValueError
+    instead of being mapped onto the floor (issue #439).
+    """
+    if not np.isfinite(rms):
+        raise ValueError("rms_dbfs: non-finite rms %r is invalid input, not "
+                         "exact agreement" % (rms,))
     if not rms > 0:
         return RMS_DIFF_DBFS_FLOOR
     return max(float(20 * np.log10(rms / full_scale)), RMS_DIFF_DBFS_FLOOR)
@@ -565,6 +573,7 @@ def refuse(reason, out_json=None):
     print(json.dumps(payload, indent=2))
     print("REFUSED: " + reason, file=sys.stderr)
     if out_json:
+        # Overwrites any stale report at the requested path with the refusal.
         with open(out_json, "w") as f:
             json.dump(payload, f, indent=2)
             f.write("\n")

@@ -89,7 +89,7 @@ form too.
 
 These scripts stamp a sha256 of their own bytes into the records they produce.
 The stamp says *which bytes produced this record*, so superseded values are
-expected: of the nine scripts below, **seven** have current bytes that match
+expected: of the ten scripts below, **eight** have current bytes that match
 no committed stamp (`current_bytes_recorded: false`). Two are exceptions:
 `fixtures/render_fixture.py`, re-rendered under the pinned oracle by #126 and
 again by #136, and `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75),
@@ -100,7 +100,9 @@ pin: no test asserts byte-equality for anything in this table, and an edit to
 any of the nine still invalidates no record.
 Editing one therefore invalidates no record. What it does cost is resolvability:
 the record's provenance digest no longer names any file in the tree, and only a
-re-render under the pinned oracle restores that.
+re-render under the pinned oracle restores that. (The tenth entry is the
+degenerate case: `reports/sxt-013/audition-gate/generate-samples.py` stamps no
+digest at all — it redacts — so there is nothing to resolve from the start.)
 
 **One of the eight is now resolvable again (#126).** `fixtures/render_fixture.py`
 reads `current_bytes_recorded: true`: the SXT-028f Reverb 2 fixture bundles were
@@ -115,7 +117,12 @@ carries no `sha256` field), but its lint disposition was revisited rather than
 assumed, and the #269 "resolvability is already spent" argument no longer applies
 to that one entry. The ninth entry is a second, independent exception —
 `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75) after #269 and so not
-one of its eight; see its own note below. The remaining seven stay `false`.
+one of its eight; see its own note below. The tenth entry (`reports/sxt-013/
+audition-gate/generate-samples.py`, added by #447) also reads `false`: it
+writes the samples' `harness.tool_sha256` as the literal placeholder
+`<omitted>`, stamping no digest of any file — the audit's heuristic flags it
+on the quoted field literal plus `__file__`, and it is declared here with
+that nuance rather than restructured around the check. The remaining eight stay `false`.
 
 | Script | Stamped field | Lint-finding disposition (#269; revisited for `fixtures/render_fixture.py` in #126, and stated for `fixtures/render_slfo_fixture.py` in SXT-041 (#75) on the same terms) |
 |---|---|---|
@@ -128,6 +135,7 @@ one of its eight; see its own note below. The remaining seven stay `false`.
 | `tools/render_lp12_reference.py` | `script_sha256` | cleanable — the two F401 `struct`/`zlib` findings were cleaned in #269 |
 | `tools/render_reverb_reference.py` | `script_sha256` | cleanable — the two F841 findings (`bs`, discarded `save_trace` return) were cleaned in #269 |
 | `tools/listening_session.py` | `tool_sha256` | cleanable — no finding as of #269 |
+| `reports/sxt-013/audition-gate/generate-samples.py` | `tool_sha256` | cleanable — ordinary code, per the #269 disposition extended by #447. Not a real stamp site: it writes the samples' `harness.tool_sha256` as the literal placeholder `<omitted>` and stamps no digest of itself; `current_bytes_recorded: false` because no record carries its bytes' digest (added by #447) |
 
 ### Disposition of the lint findings in these eight scripts (#269)
 
@@ -169,11 +177,17 @@ resolvability, which costs no committed record its validity, and is restored
 by re-rendering the SXT-041 references under the pinned oracle; its row in the
 table above records that cost.
 
+**The tenth entry inherits the same disposition (#447).**
+`reports/sxt-013/audition-gate/generate-samples.py` is ordinary code on the
+#269 terms. It is declared only because the audit's self-stamping heuristic
+fires on it; it writes no digest of itself, so its stamp has never resolved
+and an edit to it spends nothing.
+
 Which counts are #269's: this subsection's heading ("these eight scripts"), its
 "seven of the eight" paragraph, and the "eight scripts' own write sites" check
 below are #269's ruling over the eight entries that existed when it was made,
 and are deliberately not renumbered. The whole-registry counts at the top of
-this section — nine entries, seven `false`, two exceptions — describe the
+this section — ten entries, eight `false`, two exceptions — describe the
 registry as it stands and do move with it.
 
 What this decision does **not** license:
