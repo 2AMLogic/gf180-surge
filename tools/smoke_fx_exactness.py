@@ -2,7 +2,8 @@
 """SXT-023 follow-up smoke driver: truncated-slice RTL-vs-model exactness.
 
 Runs the frozen fixed-point models over the first SMOKE_RENDER render blocks
-(after the declared 240-block settle) of a fixture dry bus, emits the model
+(after the declared run_fx_model.SETTLE_BLOCKS settle: 375 blocks since
+issue #16, the fixture harness's 0.25 s) of a fixture dry bus, emits the model
 trace + RTL stimulus in the standard formats, runs the SV tb (iverilog or
 Verilator), and compares with integer equality. Fast-iteration harness; the
 canonical evidence run remains the full-length iverilog run.
@@ -23,7 +24,7 @@ from model.effects.run_fx_model import (  # noqa: E402
 )
 from model.effects.qmath import to_q  # noqa: E402
 from model.effects.delay.delay_model import db_to_linear_d  # noqa: E402
-from tools.compare_rtl_model_fx import parse_tb_trace, compare  # noqa: E402
+from tools.compare_rtl_model_fx import parse_tb_trace, compare, NO_COVERAGE  # noqa: E402
 
 PCONFIG = {"metallic": 1, "fm_bass_1": 2, "dexie": 3}
 
@@ -150,12 +151,15 @@ def main():
 
     rtl = parse_tb_trace(trace_txt)
     checked, fails = compare(slug, trace, rtl)
+    real_fails = [x for x in fails if x != NO_COVERAGE]
     summary = {
         "slug": slug, "sim": args.sim, "tb": os.path.basename(args.tb),
         "settle_blocks": args.settle_blocks, "blocks_total": n_total,
         "samples_total": n_total * 32,
-        "verdict": "PASS" if not fails else "FAIL",
-        "checked": checked, "mismatches": len(fails),
+        "verdict": ("PASS" if not fails else "NO_VERDICT"
+                    if fails == [NO_COVERAGE] else "FAIL"),
+        "checked": checked, "mismatches": len(real_fails),
+        "no_verdict_reason": (NO_COVERAGE if fails == [NO_COVERAGE] else None),
         "first_failures": fails[:10],
         "sim_seconds": round(sim_time, 2),
     }

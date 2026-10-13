@@ -1,0 +1,8 @@
+# CI Python test dependencies (issue #354). Exact pins; no ranges, no floats.
+# Used by both CI install sites (.github/workflows/ci.yml: `tests`, `rtl-sim`).
+# Interpreter in CI: CPython 3.12 (actions/setup-python).
+# This file is NOT the oracle runtime pin (oracle/manifest.json: CPython
+# 3.11.16 / numpy 1.26.4 stays separate) and no report stamp constrains it
+# (docs/numpy-stamp-inventory.md). Bump procedure: docs/ci-dependency-pins.md.
+numpy==2.4.2
+pytest==9.1.1

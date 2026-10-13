@@ -231,6 +231,135 @@ def test_rederivation_checker_carries_no_engine_source_text():
         assert tok not in driver
 
 
+def _load_rederivation_checker():
+    import importlib.util
+    tool = os.path.join(REPO, "tools", "check_fuzz_table_rederivation.py")
+    spec = importlib.util.spec_from_file_location("_fuzzchk_det", tool)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class _FakeRun:
+    """Stands in for subprocess.run: answers the macro dump according to the
+    -stdlib= flag it is GIVEN, so a detection that drops the driver's flags
+    would report the wrong library and fail the test."""
+
+    def __init__(self, returncode=0, stderr=""):
+        self.calls, self.returncode, self.stderr = [], returncode, stderr
+
+    def __call__(self, cmd, capture_output=True, text=True):
+        self.calls.append(list(cmd))
+        if "-stdlib=libstdc++" in cmd:
+            out = "#define __GLIBCXX__ 20260101\n#define __cplusplus 202002L\n"
+        elif "-stdlib=libc++" in cmd:
+            out = "#define _LIBCPP_VERSION 220106\n#define __cplusplus 202002L\n"
+        else:
+            out = "#define __cplusplus 202002L\n"
+        return subprocess.CompletedProcess(cmd, self.returncode, out,
+                                           self.stderr)
+
+
+def test_stdlib_detection_uses_the_driver_flags_and_includes():
+    """Review finding (#383): the recorded standard library must describe
+    the compilation actually performed, so the macro probe carries every
+    driver flag (incl. --cxxflag values) and include directory."""
+    mod = _load_rederivation_checker()
+    flags = ["-O2", "-std=c++20", "-DX=1", "-stdlib=libc++",
+             "-ffp-contract=off"]
+    incs = ["/ext/a/include", "/ext/b"]
+    cmd = mod.stdlib_detection_cmd("clang++", flags, incs)
+    assert cmd[0] == "clang++"
+    for f in flags:
+        assert f in cmd, f
+    for d in incs:
+        assert f"-I{d}" in cmd, d
+    assert {"-dM", "-E"} <= set(cmd)
+    # The recorded library follows the flags passed, in both directions.
+    for flag, want in (("-stdlib=libc++", "libc++ (_LIBCPP_VERSION 220106)"),
+                       ("-stdlib=libstdc++",
+                        "libstdc++ (__GLIBCXX__ 20260101)")):
+        fake = _FakeRun()
+        lib, det = mod.detect_stdlib("clang++", ["-O2", flag], incs, run=fake)
+        assert lib == want
+        assert len(fake.calls) == 1 and flag in fake.calls[0]
+        assert det["returncode"] == 0 and flag in det["command"]
+
+
+def test_stdlib_detection_failures_are_recorded_unknown_never_guessed():
+    mod = _load_rederivation_checker()
+    lib, det = mod.detect_stdlib(
+        "g++", ["-stdlib=bogus"], [],
+        run=_FakeRun(returncode=1, stderr="error: invalid library name"))
+    assert lib.startswith("UNKNOWN") and "exit 1" in lib
+    assert det["returncode"] == 1 and "invalid library" in det["error"]
+    # A compile that defines neither library macro is UNKNOWN too ...
+    lib, det = mod.detect_stdlib("g++", ["-O2"], [], run=_FakeRun())
+    assert lib.startswith("UNKNOWN") and "neither" in lib
+    # ... and so is a compiler that cannot be executed at all.
+
+    def boom(cmd, **kw):
+        raise FileNotFoundError(2, "No such file", cmd[0])
+    lib, det = mod.detect_stdlib("nope++", [], [], run=boom)
+    assert lib.startswith("UNKNOWN") and det["returncode"] is None
+    # The name of the compiler is never used as a fallback guess.
+    lib, _ = mod.detect_stdlib("g++", [], [], run=_FakeRun())
+    assert "libstdc++" not in lib
+
+
+def test_environment_scope_separates_pinned_host_from_alternate_hosts():
+    """A run off the manifest's frozen environment is an alternate-environment
+    observation and leaves the pinned-host leg NOT_RUN (review of #383)."""
+    mod = _load_rederivation_checker()
+    man = json.load(open(os.path.join(REPO, "oracle", "manifest.json")))
+    pin_clang = man["environment"]["clang"]
+    clang_id = pin_clang.split("(", 1)[1].split(")", 1)[0]
+    pin_os_ver = man["environment"]["os"].split()[1]
+    pinned_ver = f"Apple clang version 21.0.0 ({clang_id})\nTarget: x\n"
+    env = mod.environment_scope(pinned_ver, mac_ver=pin_os_ver)
+    assert env["os_matches_pin"] and env["clang_matches_pin"]
+    assert env["pinned_host_acceptance"] != "NOT_RUN"
+    for ver, osv in (("Apple clang version 21.0.0 (clang-2100.3.34.2)",
+                      "27.0.1"),
+                     ("Apple clang version 21.0.0 (clang-2100.3.34.2)",
+                      pin_os_ver),
+                     (pinned_ver, "27.0.1"),
+                     ("g++ (GCC) 14.2.0", "")):
+        env = mod.environment_scope(ver, mac_ver=osv)
+        assert env["pinned_host_acceptance"] == "NOT_RUN", (ver, osv)
+        assert env["scope"].startswith("ALTERNATE-ENVIRONMENT OBSERVATION")
+
+
+LIBCXX_TRANSCRIPTS = ("fuzz-table-rederivation-libcxx-arm64.json",
+                      "fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json")
+
+
+@pytest.mark.parametrize("name", LIBCXX_TRANSCRIPTS)
+def test_libcxx_transcripts_are_scoped_to_the_environment_they_ran_in(name):
+    """The #135 libc++ transcripts must state, against the CURRENT manifest
+    pin, whether they ran in the frozen environment -- and must not claim the
+    pinned-host leg unless both OS and clang matched."""
+    rec = json.load(open(os.path.join(SXT, "artifacts", name)))
+    man = json.load(open(os.path.join(REPO, "oracle", "manifest.json")))
+    env = rec["environment"]
+    assert env["pinned_environment"] == {
+        "os": man["environment"]["os"], "clang": man["environment"]["clang"]}, \
+        f"{name} is STALE against oracle/manifest.json environment"
+    pinned = env["os_matches_pin"] and env["clang_matches_pin"]
+    if not pinned:
+        assert env["pinned_host_acceptance"] == "NOT_RUN"
+        assert env["scope"].startswith("ALTERNATE-ENVIRONMENT OBSERVATION")
+    # The recorded stdlib came from a probe that used the driver's flags.
+    det = rec["stdlib_detection"]
+    assert det["returncode"] == 0
+    for flag in rec["compile_flags"].split():
+        assert flag in det["command"].split(), flag
+    assert rec["stdlib_validated"].startswith("libc++ ")
+    assert rec["entries"] == st.FUZZ_SIZE == rec["cpp_entries"]
+    assert rec["table_digest"] == st.table_digest(), \
+        f"{name} is STALE against the generator"
+
+
 def test_rederivation_checker_reports_not_run_without_the_pinned_headers(
         tmp_path):
     """Absent the external checkout the claim is NOT_RUN, never a pass."""

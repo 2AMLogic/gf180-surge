@@ -131,7 +131,7 @@ jobs:
             # infeasible bit-exact: numpy float32 power is not double-pow-then-round
             # (~0.6% 1-ulp divergence), and np.float32 contagion (NEP 50) from
             # _db_to_linear into _coeff_orfanidis double math changes rounding.
-            python3 -m pip install --quiet numpy pytest
+            python3 -m pip install --quiet -r requirements-ci.txt
             # -rs prints every skip reason so skipped (NOT_RUN) tests are visible.
             python3 -m pytest -q -rs tests
           else
@@ -162,7 +162,7 @@ jobs:
           iverilog -V | head -n 1
           vvp -V | head -n 1
       - name: Install python dependencies
-        run: python3 -m pip install --quiet numpy pytest
+        run: python3 -m pip install --quiet -r requirements-ci.txt
       - name: Collect pytest node IDs (required-case inventory input)
         run: |
           set -euo pipefail

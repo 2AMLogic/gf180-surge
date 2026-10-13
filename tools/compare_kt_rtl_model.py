@@ -42,7 +42,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import run_leaf_comparison  # noqa: E402
+from _rtl_compile_common import (  # noqa: E402
+    record_width_error, run_leaf_comparison)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_kt.sv")
@@ -64,7 +65,7 @@ def parse_tb(path):
             p = line.split()
             if not p or p[0] != "V":
                 continue
-            rows[(int(p[1]), int(p[2]))] = [int(x) for x in p[3:11]]
+            rows[(int(p[1]), int(p[2]))] = [int(x) for x in p[3:]]  # full width; compare() checks it
     return rows
 
 
@@ -81,6 +82,16 @@ def compare(model_trace, rtl_rows):
                 continue
             want = [rec["kt_word"], *rec["kt_route_sums"], rec["mod_cutoff"],
                     rec["mod_reso"], rec["mod_envmod"], rec["mod_vca_db"]]
+            bad = [e for e in (
+                record_width_error("V", key, "model", want, len(FIELDS)),
+                record_width_error("V", key, "rtl", got, len(FIELDS))) if e]
+            if bad:
+                # shape error: no field is compared, and the checkpoint is
+                # neither complete nor counted as such.
+                fails.extend(bad)
+                checked["malformed_checkpoints"] = (
+                    checked.get("malformed_checkpoints", 0) + 1)
+                continue
             checked["voice_checkpoints"] += 1
             for name, w, g in zip(FIELDS, want, got):
                 checked["fields"] += 1

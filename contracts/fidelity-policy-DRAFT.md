@@ -297,6 +297,15 @@ pilot freeze.
   recorded after rating. It can flag disagreements for investigation; it
   MUST NOT replace level-correct measurements (plan §5) and MUST NOT be the
   sole basis of any status.
+- **Audition gate (issue #447, schema `sxt-013-listening-session/1.1.0`)**:
+  an acceptance-counting `open`-mode rating additionally requires the
+  harness-recorded listener confirmation that BOTH named stimuli were heard,
+  with the audition method recorded. Automatic player success is process
+  completion, never audibility; `--play off` or failed automatic playback can
+  proceed via explicit confirmation of external audition of the printed files.
+  Declining leaves the candidate uncounted (`AUDITION_UNCONFIRMED_NOT_COUNTED`)
+  and the session continues. Older sessions carry no playback/audition fields:
+  absent means unrecorded, never inferred success.
 - Sessions are recorded as structured JSON in
   `decisions/listening-sessions/` (schema in the harness; one file per
   session; operator, mode, level treatment, stimulus hashes, and per-candidate

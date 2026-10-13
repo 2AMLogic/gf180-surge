@@ -51,7 +51,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import (LeafInputError, _publish_refusal,  # noqa: E402
+                                 compile_and_run)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_slfo.sv")
@@ -67,12 +68,19 @@ L_FIELDS = ["b", "index", "phase", "env_state", "env_phase", "env_val",
             "output"]
 CMP_FIELDS = ("phase", "env_state", "env_phase", "env_val", "output")
 MAX_REPORTED = 40
+SUMMARY_ORDER = ("tb", "verdict", "comparison", "scope", "checked",
+                 "mismatches", "first_failures", "sim_fails",
+                 "sim_stdout_tail")
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every L/S/O key must be unique (issue #455):
+    a repeated key -- identical or contradictory, in either order -- is
+    refused with LeafInputError rather than resolved last-row-wins."""
     lines = {}   # (block, index) -> dict
     sums = {}    # block -> [cut_sum, reso_sum]
     latch = {}   # block -> [out0..out5]
+    dups = []
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -81,12 +89,44 @@ def parse_tb(path):
             if parts[0] == "L":
                 vals = [int(x) for x in parts[1:]]
                 d = dict(zip(L_FIELDS, vals))
-                lines[(d["b"], d["index"])] = d
+                k = (d["b"], d["index"])
+                if k in lines:
+                    dups.append("L %r" % (k,))
+                lines[k] = d
             elif parts[0] == "S":
-                sums[int(parts[1])] = [int(parts[2]), int(parts[3])]
+                k = int(parts[1])
+                if k in sums:
+                    dups.append("S %r" % (k,))
+                sums[k] = [int(parts[2]), int(parts[3])]
             elif parts[0] == "O":
-                latch[int(parts[1])] = [int(x) for x in parts[2:]]
+                k = int(parts[1])
+                if k in latch:
+                    dups.append("O %r" % (k,))
+                latch[k] = [int(x) for x in parts[2:]]
+    if dups:
+        raise LeafInputError(
+            "rtl_trace", path, "duplicate checkpoint key(s), %d: %s"
+            % (len(dups), "; ".join(dups[:5])))
     return lines, sums, latch
+
+
+def _unowned(model_trace, tl, ts, to):
+    """RTL keys the model does not declare (extra block/instance)."""
+    own_l, own_s, own_o = set(), set(), set()
+    for blk in model_trace["blocks"]:
+        b = blk["b"]
+        for rec in blk.get("slfo", []):
+            own_l.add((b, rec["index"]))
+        if "slfo_route_sums" in blk:
+            own_s.add(b)
+        if "slfo_route_out" in blk:
+            own_o.add(b)
+    return ([f"unowned RTL L key (block, index)={k}: not declared by the "
+             "model" for k in sorted(set(tl) - own_l)] +
+            [f"unowned RTL S key block={k}: not declared by the model"
+             for k in sorted(set(ts) - own_s)] +
+            [f"unowned RTL O key block={k}: not declared by the model"
+             for k in sorted(set(to) - own_o)])
 
 
 def compare(model_trace, tb_trace):
@@ -94,6 +134,7 @@ def compare(model_trace, tb_trace):
     checked = {"slfo_checkpoints": 0, "slfo_fields": 0, "route_sums": 0,
                "route_latches": 0, "blocks": 0}
     tl, ts, to = tb_trace
+    fails.extend(_unowned(model_trace, tl, ts, to))
 
     for blk in model_trace["blocks"]:
         b = blk["b"]
@@ -155,7 +196,13 @@ def main():
     fails = list(sim.sim_fails)
     comparison = "NOT_RUN"
     if not sim.sim_fails:
-        rtl_trace = parse_tb(sim.trace)
+        try:
+            rtl_trace = parse_tb(sim.trace)
+        except LeafInputError as exc:
+            # Refuse before grading: ambiguous records are not evidence.
+            return _publish_refusal(exc, os.path.relpath(args.tb, REPO),
+                                    checked, args.out, None, None,
+                                    SUMMARY_ORDER, model_trace, sim)
         checked, cmp_fails = compare(model_trace, rtl_trace)
         fails += cmp_fails
         comparison = "FAIL" if cmp_fails else "PASS"

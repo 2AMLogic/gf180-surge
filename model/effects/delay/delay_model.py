@@ -21,6 +21,28 @@ Frozen word formats (model/effects/README.md):
   Q13.18 s32; biquad + delay-time + LFO state Q24.43 s64. Products are exact
   and rounded round-half-up to the target format (model/effects/qmath.py).
 
+  Exception (issue #16 revision, 2026-10-09; evidence
+  reports/sxt-023/delay-dt-probe.md): the delay-time lag VALUE and its
+  TARGET are held on the float32 grid inside their Q24.43 container words
+  and the lag recurrence rounds round-to-nearest-even at 24 significant
+  bits, because the engine's SurgeLag<float> state is float32 and its
+  v*lpinv + target*lp update is compiled as one fused multiply-add on the
+  reference-of-record runtime (see Lag.process). The engine-side impulse
+  probe measured this: with a Q24.43 lag the 24,000-sample send delay of
+  the metallic fixture misses the budgets; with the float32-grid fused lag
+  it is at the fixed-vs-float floor.
+
+Load-time semantics (issue #16 revision): Surge loads a patch's FX
+synchronously inside loadPatch (SurgeSynthesizerIO.cpp
+SurgeSynthesizer::loadRaw -> loadFx(false, true) -> Effect::init ->
+Delay::initialize -> setvars(true)), BEFORE the first processControl()
+refreshes storage.temposyncratio from the host tempo, so that one control
+pass advances the delay LFO with the SurgeStorage constructor ratio 1.0
+(SurgeStorage.cpp: temposyncratio = 1.f, temposyncratio_inv = 0.f). Its
+lag/lipol/biquad effects are re-instantized at the first processBlock
+(temposyncInitialized() turns true, Delay.h setvars) or converge during the
+settle; only the LFO advance persists. DelayModel.initialize mirrors it.
+
 Per-instance state: one DelayState holds BOTH channel lines, position, LFO,
 lags and filters. Two configured Delay slots are two DelayState objects; no
 line or smoother state is shared between instances (issue #16 acceptance).
@@ -68,6 +90,38 @@ import struct as _struct
 
 def _f32(x):
     return _struct.unpack("f", _struct.pack("f", x))[0]
+
+
+F32_SIG = 24        # float32 significand bits (incl. the implicit one)
+
+
+def f32_round_q43(x, frac):
+    """Round the exact value x * 2^-frac to the float32 grid, returned as a
+    Q24.43 word.
+
+    One round-to-nearest-even at max(24 significant bits, the Q24.43 LSB):
+    for |value| >= 2^-20 (every delay-time value; the lag is clamped far
+    above that) this is exactly IEEE-754 binary32 RNE rounding and the
+    result is exactly representable in Q24.43. Below 2^-20 the coarser
+    Q24.43 LSB governs (still a single rounding). Overflow/subnormals are
+    outside the Q24.43 range and do not arise. Mirrored bit-for-bit by
+    f32r() in rtl/effects/tb_fx.sv.
+    """
+    if x == 0:
+        return 0
+    neg = x < 0
+    m = -x if neg else x
+    s = max(m.bit_length() - F32_SIG, frac - FRAC[C_FMT])
+    if s > 0:
+        q = m >> s
+        rem = m & ((1 << s) - 1)
+        half = 1 << (s - 1)
+        if rem > half or (rem == half and (q & 1)):
+            q += 1
+        q <<= s - (frac - FRAC[C_FMT])
+    else:
+        q = m << (FRAC[C_FMT] - frac)
+    return sat(-q if neg else q, C_FMT)
 
 
 LP_TIME = to_q(_f32(0.0001), C_FMT)                    # float32 0.0001f
@@ -147,9 +201,22 @@ class Lag:
     """OnePoleLag<float,true> (Lag.h) in Q24.43.
 
     lp/lpinv are the float32 pair (lp, 1-lp) quantized; their quantized sum is
-    not exactly 2^FRAC, reproducing the engine's slow lag drift. The engine
-    holds v itself in FLOAT32, so the tap phase derived from v jitters on the
-    float32 grid; use f32grid() before deriving i_dtime/phase."""
+    not exactly 2^FRAC, reproducing the engine's slow lag drift. Both are
+    exact float32 values, exactly representable in Q24.43.
+
+    The engine holds v and target_v in FLOAT32 (Delay.h: SurgeLag<float,
+    true> timeL/timeR; Lag.h OnePoleLag::process: v = v*lpinv +
+    target_v*lp). The reference-of-record runtime (darwin arm64 clang,
+    default -ffp-contract=on) evaluates that statement as
+    fma(v, lpinv, (float)(target_v*lp)): the second product is rounded to
+    float32, then the first product and the sum are rounded ONCE. process()
+    mirrors exactly that on Q24.43 words (exact products, f32_round_q43).
+    Measured, not assumed (reports/sxt-023/delay-dt-probe.md): the unfused
+    order reproduces the linux x86_64 build instead, and the old Q24.43
+    lag misses the budgets on the 24,000-sample metallic send delay,
+    where the float32 lag step falls below half an ulp within ~10 samples
+    of the target. Targets must be on the float32 grid
+    (DelayModel._control snaps them)."""
 
     def __init__(self, lp=LP_TIME, lpinv=LPINV_TIME):
         self.v = 0
@@ -168,8 +235,9 @@ class Lag:
         self.v = self.target
 
     def process(self):
-        self.v = qadd(qmul(self.v, self.lpinv, C_FMT, C_FMT, C_FMT),
-                      qmul(self.target, self.lp, C_FMT, C_FMT, C_FMT), C_FMT)
+        f2 = 2 * FRAC[C_FMT]
+        tlp = f32_round_q43(self.target * self.lp, f2)       # (float)(target_v*lp)
+        self.v = f32_round_q43(self.v * self.lpinv + (tlp << FRAC[C_FMT]), f2)  # fused
 
 
 class Lipol:
@@ -381,17 +449,7 @@ class DelayModel:
         st.crossfeed.set_target_smoothed(to_q(cf, G_FMT))
 
         # lfophase / LFOval advance BEFORE the time targets (Delay.h:271-291)
-        lforate = envelope_rate_linear_d(-p.mod_rate_f) * p.ts_ratio_mod
-        st.lfophase = qadd(st.lfophase, to_q(lforate, C_FMT), C_FMT)
-        if st.lfophase > HALF_C:
-            st.lfophase = qsub(st.lfophase, 1 << FRAC[C_FMT], C_FMT)
-            st.lfo_dir = not st.lfo_dir
-        lfo_inc = (1e-11 + 2.0 ** (self._depth_extended() * (1.0 / 12.0)) - 1.0) * BLOCK
-        lfo_inc_q = to_q(lfo_inc, C_FMT)
-        if st.lfo_dir:
-            st.lfoval = qadd(qmul(st.lfoval, CA, C_FMT, C_FMT, C_FMT), lfo_inc_q, C_FMT)
-        else:
-            st.lfoval = qsub(qmul(st.lfoval, CA, C_FMT, C_FMT, C_FMT), lfo_inc_q, C_FMT)
+        lforate, lfo_inc_q = self._lfo_advance(p.ts_ratio_mod)
 
         is_linked = p.time_r_deactivated
         t_src_l = p.time_l_f
@@ -407,8 +465,14 @@ class DelayModel:
             "ws_tgt": to_q(db_to_linear_d(p.width_f), G_FMT),
             "lfo_rate": to_q(lforate, C_FMT),
             "lfo_inc": lfo_inc_q,
-            "time_l_tgt": sat(to_q(base_l, C_FMT) + st.lfoval - to_q(FIR_OFFSET, C_FMT), C_FMT),
-            "time_r_tgt": sat(to_q(base_r, C_FMT) - st.lfoval - to_q(FIR_OFFSET, C_FMT), C_FMT),
+            # engine timeL/timeR.newValue(float): the target is a float32;
+            # it is rounded ONCE here to the float32 grid (the engine's
+            # per-operation float32 rounding of the target expression is not
+            # mirrored; declared, measured below the fixed-vs-float floor)
+            "time_l_tgt": f32_round_q43(sat(to_q(base_l, C_FMT) + st.lfoval
+                                            - to_q(FIR_OFFSET, C_FMT), C_FMT), FRAC[C_FMT]),
+            "time_r_tgt": f32_round_q43(sat(to_q(base_r, C_FMT) - st.lfoval
+                                            - to_q(FIR_OFFSET, C_FMT), C_FMT), FRAC[C_FMT]),
             "lp_on": not p.highcut_deactivated,
             "hp_on": not p.lowcut_deactivated,
             "fb_sign": fb_sign,
@@ -433,6 +497,31 @@ class DelayModel:
             st.hp.instantize()
         self.ctrl = ctrl
         return ctrl
+
+    def _lfo_advance(self, ts_ratio_mod):
+        """One setvars LFO step (Delay.h:271-291): lfophase += lforate, flip
+        the direction at > 0.5, LFOval = 0.99*LFOval +- lfo_increment.
+        ts_ratio_mod is temposyncRatio(dly_mod_rate) as seen by that pass."""
+        p, st = self.p, self.st
+        lforate = envelope_rate_linear_d(-p.mod_rate_f) * ts_ratio_mod
+        st.lfophase = qadd(st.lfophase, to_q(lforate, C_FMT), C_FMT)
+        if st.lfophase > HALF_C:
+            st.lfophase = qsub(st.lfophase, 1 << FRAC[C_FMT], C_FMT)
+            st.lfo_dir = not st.lfo_dir
+        lfo_inc = (1e-11 + 2.0 ** (self._depth_extended() * (1.0 / 12.0)) - 1.0) * BLOCK
+        lfo_inc_q = to_q(lfo_inc, C_FMT)
+        if st.lfo_dir:
+            st.lfoval = qadd(qmul(st.lfoval, CA, C_FMT, C_FMT, C_FMT), lfo_inc_q, C_FMT)
+        else:
+            st.lfoval = qsub(qmul(st.lfoval, CA, C_FMT, C_FMT, C_FMT), lfo_inc_q, C_FMT)
+        return lforate, lfo_inc_q
+
+    def _load_time_control(self):
+        """The control pass Delay::initialize runs at patch load
+        (setvars(true)), before the host tempo reaches SurgeStorage: the
+        temposync ratio is the constructor's 1.0 whether or not the rate is
+        tempo-synced. Only its LFO advance persists (module docstring)."""
+        self._lfo_advance(1.0)
 
     def _depth_extended(self):
         p = self.p
@@ -480,6 +569,22 @@ class DelayModel:
         return cls._norm(1 + alpha, -2 * cosi, 1 - alpha,
                          (1 + cosi) * 0.5, -(1 + cosi), (1 + cosi) * 0.5)
 
+    # ---------------- tap read (Delay.h:357-381) ----------------------------
+    TAP_READS = FIRIPOL_N           # external-memory words read per channel/sample
+
+    @staticmethod
+    def _tap_read(line, rp, sp):
+        """12-tap windowed-sinc read at line[rp .. rp+11], phase sp: exact
+        Q10.21 x Q2.29 accumulation, round-half-up to Q10.21. The only
+        method the NC-b nearest-neighbour control overrides."""
+        base = sp * FIRIPOL_N
+        acc = 0
+        for t in range(FIRIPOL_N):
+            acc += TABLE_Q[base + t] * line[(rp + t) & LINE_MASK]
+        pf = FRAC[A_FMT] + FRAC[SINC_FMT]
+        half = 1 << (pf - FRAC[A_FMT] - 1)
+        return sat((acc + half) >> (pf - FRAC[A_FMT]), A_FMT)
+
     # ---------------- public API -------------------------------------------
     def initialize(self):
         """Delay.h initialize(): fresh-instance state (fx load)."""
@@ -495,6 +600,7 @@ class DelayModel:
         st.hp.suspend()
         st.ext_reads = 0
         st.ext_writes = 0
+        self._load_time_control()
         self._pending_inithadtempo = True
         self.initialized = True
 
@@ -531,20 +637,9 @@ class DelayModel:
                 return clip(ph, 0, FIRIPOL_M - 1)
             sp_l = sinc_phase(i_dt_l, vl)
             sp_r = sinc_phase(i_dt_r, vr)
-            base_l = sp_l * FIRIPOL_N
-            base_r = sp_r * FIRIPOL_N
-            acc_l = 0
-            acc_r = 0
-            pf = FRAC[A_FMT] + FRAC[SINC_FMT]
-            for t in range(FIRIPOL_N):
-                wv = st.line[0][(rp_l + t) & LINE_MASK]
-                acc_l += TABLE_Q[base_l + t] * wv
-                wv = st.line[1][(rp_r + t) & LINE_MASK]
-                acc_r += TABLE_Q[base_r + t] * wv
-            st.ext_reads += FIRIPOL_N * 2
-            half = 1 << (pf - FRAC[A_FMT] - 1)
-            tb_l[k] = sat((acc_l + half) >> (pf - FRAC[A_FMT]), A_FMT)
-            tb_r[k] = sat((acc_r + half) >> (pf - FRAC[A_FMT]), A_FMT)
+            tb_l[k] = self._tap_read(st.line[0], rp_l, sp_l)
+            tb_r[k] = self._tap_read(st.line[1], rp_r, sp_r)
+            st.ext_reads += self.TAP_READS * 2
 
         # negative feedback (Delay.h:384-389)
         if ctrl["fb_sign"]:

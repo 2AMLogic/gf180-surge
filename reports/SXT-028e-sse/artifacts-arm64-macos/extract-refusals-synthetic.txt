@@ -1,0 +1,14 @@
+SXT-028e-sse extraction transcript — mode=synthetic
+engine pin surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71
+DECLARED SYNTHETIC carriers; no corpus reach
+written: 0  refused: 9
+
+REFUSED syn-d0-m3 (synthetic model 3): syn-d0-m3: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-d12-m3 (synthetic model 3): syn-d12-m3: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-d18-m3 (synthetic model 3): syn-d18-m3: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-d6-m3 (synthetic model 3): syn-d6-m3: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-m3 (synthetic model 3): syn-m3: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-m4 (synthetic model 4): syn-m4: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-m5 (synthetic model 5): syn-m5: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-m6 (synthetic model 6): syn-m6: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)
+REFUSED syn-m7 (synthetic model 7): syn-m7: synthetic construction refused: slot 0 preeq_freq_f: set 3.81785988807678, read back 3.817861318588257 (6 binary32 ULPs away, bound 4)

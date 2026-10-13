@@ -654,6 +654,11 @@ the six graded cases of §3.3.
    coverage. **Blocks:** any complete-wet or support claim for
    `Grant Me…`, `Novuo` and `Harp`. **Does not block:** §3's class-scope
    result on the screened carriers.
+   **Disposition (2026-10-09, #310):** option A, exact refusal retained and a
+   reproducibility census specified; see
+   `decision-records/0019-source-nondeterministic-carrier-policy.md`. The
+   voice-path bisection and the census remain NOT_RUN; the three carriers stay
+   REFUSED and unsupported-pending.
 
 ## 10. Reproduce
 

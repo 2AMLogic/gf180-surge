@@ -1,7 +1,8 @@
 {
   "slug": "fm_bass_1",
   "tb": "tb_fx.sv",
-  "blocks_compared": 8790,
+  "sim": "iverilog",
+  "blocks_compared": 8925,
   "verdict": "PASS",
   "checked": {
     "outputs": 547200,

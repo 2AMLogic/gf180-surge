@@ -67,7 +67,11 @@ def render_probe(surgepy, slug, rel_path, depth_override, rate_override=None):
             s.channelAftertouch(0, 0)
             s.allNotesOff()
             bs = int(s.getBlockSize())
-            settle_blocks = 240
+            # the fixture harness settle (render_fx_fixtures.render_bus_stereo:
+            # int(settle_s * SR) // bs = 375). This tool hard-coded 240 until
+            # issue #16; its committed budget-diagnosis renders predate that
+            # (reports/sxt-023/delay-dt-probe.md section 5).
+            settle_blocks = int(float(seq.get("settle_s", 0.25)) * SR) // bs
             s.processMultiBlock(s.createMultiBlock(settle_blocks))
             events = seq["events"]
             last_t = max(e["t"] for e in events if e["type"] in ("note_on", "note_off"))
@@ -123,7 +127,8 @@ def main():
         "frames": int(stereo.shape[1]), "peak_abs_float": info["peak"],
         "determinism_gate": "3x bit-identical",
         "render_sha256": rf.sha256_file(path),
-        "policies": "render_fx_fixtures.py (settle 240 blocks, block-quantized, tails)",
+        "policies": "render_fx_fixtures.py (settle int(settle_s*48000)//32 = 375 "
+                    "blocks, block-quantized, tails)",
     }
     import json
     with open(path + ".json", "w") as f:

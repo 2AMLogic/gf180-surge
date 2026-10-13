@@ -40,6 +40,14 @@ GPL-3.0-or-later):
 Their constants fall into **three** classes, and only one of them is the
 DR-0002/DR-0012(a) "quoted opaque data" class.
 
+> **Superseded in part by the clause 3 amendment (2026-10-08, #135).** The
+> class lists below are the inventory as first recorded. The `FuzzTable<1>`
+> row has since been **re-classified into class (a), quoted data with
+> provenance** (conservatively, pending the pinned-host leg, which is
+> NOT_RUN). Only the `wst_sine` row remains in the re-derived class. Where a
+> statement below or in clauses 1 and 2 says otherwise, clause 3 (amended)
+> governs.
+
 ### (a) Designed scalars — opaque, quoted (11 values)
 
 These have no construction formula anywhere in the pinned tree. They are
@@ -71,7 +79,13 @@ and `N-1` = `1023`. These are the arithmetic shape of the index mapping
 (a power-of-two scale and the LUT's own size), not designed coefficients.
 Nothing is adopted by reproducing them.
 
-### (c) Tables — formula-derived, NOT quoted (2 rows, 2049 words)
+### (c) Tables — formula-generated (2 rows, 2049 words)
+
+*Originally both rows were classified "re-derived, NOT quoted". As amended
+(clause 3, #135): `wst_sine` stays re-derived; `FuzzTable<1>` is classified
+as **quoted data with provenance**. Both rows are still produced by the same
+generator; the amendment changes their licensing classification, not the
+values or how the ROM is built.*
 
 **`wst_sine` (1024 words).** Built by
 `sst::waveshapers::WaveshaperTables::WaveshaperTables()` from the closed
@@ -116,9 +130,21 @@ draw_k = u_k * (b - a) + a
    indices 16..26) — the RTL carries no independent copy, exactly as DR-0002
    clause 1 requires and as DR-0012 clause 1 already does for the twelve
    halfband coefficients. Together with DR-0002's twelve and DR-0012's
-   twelve, these eleven are the only engine data constants reproduced in
-   this repository by the voice and Distortion slices.
-2. **(b) Re-derived tables.** The `wst_sine` and `FuzzTable<1>` rows are
+   twelve, these eleven were, as first recorded, the only engine data
+   constants reproduced in this repository by the voice and Distortion
+   slices. **As amended by clause 3 (2026-10-08, #135), the `FuzzTable<1>`
+   row (1025 words) is also class (a) quoted data with provenance**
+   (`sst-waveshapers@dd12f31a…`, `Fuzzes.h` + `WaveshaperLUT.h`,
+   GPL-3.0-or-later); this re-classification is conservative and pending
+   the pinned-host leg (NOT_RUN). Unlike the eleven scalars it is not
+   streamed through the init file: it is reproduced by the generator in
+   `sse_tables.py` and carried in the generated ROM (clause 2).
+2. **(b) Re-derived tables.** *(Superseded in part: as amended by clause 3,
+   only the `wst_sine` row is classified re-derived; the `FuzzTable<1>` row
+   is class (a) quoted data with provenance. Its values are still produced
+   by the same generator and the ROM mechanics below still hold for it, but
+   "no table data is copied" is no longer claimed for that row.)* The
+   `wst_sine` and `FuzzTable<1>` rows are
    **recomputed** from the pinned construction formulas in
    `model/effects/type-distortion-sse/sse_tables.py`, in the same
    double/float32 sequence the engine uses, and quantized once to Q2.29. No
@@ -153,6 +179,45 @@ draw_k = u_k * (b - a) + a
    MISMATCH, clause 2 is false for that row and the row must be
    re-classified as quoted data by amending this record — the check is a
    live guard on a licensing-relevant claim.
+
+   **Amendment 2026-10-08 (#135, libc++ on an ALTERNATE arm64 macOS
+   host; the pinned-host leg is NOT_RUN).** `oracle/manifest.json`
+   (`environment`) freezes the oracle host as macOS 26.5.1 (Build 25F80),
+   Apple clang 21.0.0 (clang-2100.1.1.101). The check was instead run on an
+   arm64 macOS host at Darwin 27.0.0 (`RELEASE_ARM64_T6050`), Apple clang
+   version 21.0.0 (clang-2100.3.34.2), libc++ (`_LIBCPP_VERSION` 220106),
+   against the pinned headers `dd12f31a…` / `a32b8aec…` / simde `71fd833d…`.
+   These are **alternate-environment observations**; each transcript records
+   that scope itself (`environment.pinned_host_acceptance = NOT_RUN`). They
+   do not discharge the pinned-host leg, which remains NOT_RUN (#135 open):
+   * default flags (`-O2 -std=c++20`): **MISMATCH**, 1025 compared, 305
+     mismatches, first at index 2
+     (`artifacts/fuzz-table-rederivation-libcxx-arm64.json`);
+   * diagnostic, same build plus `-ffp-contract=off`: **MATCH**, 1025/1025,
+     0 mismatches
+     (`artifacts/fuzz-table-rederivation-libcxx-arm64-fpcontract-off.json`).
+
+   Reading: on that alternate host libc++'s `generate_canonical` reduction
+   is confirmed BY BUILD (with contraction off the draw sequence is
+   identical). The default-flags mismatch is a one-ulp float32 difference
+   from Apple clang fusing `x * (1 - range) + draw` into an FMA, which the
+   generator's separately-rounded float32 ops do not do. NOT shown: the
+   verdict under the pinned toolchain (clang-2100.1.1.101), and whether the
+   pinned oracle's own build flags contract (no oracle build flags are
+   recorded in `oracle/manifest.json`), so which values the pinned oracle
+   actually holds is **UNVERIFIED**. Because the only libc++ build observed
+   reports MISMATCH at default flags, the "re-derived, not quoted" claim is
+   not established for libc++, and this amendment **conservatively**
+   applies this clause's MISMATCH rule ahead of the pinned-host leg:
+   **the `FuzzTable<1>` row is re-classified from class (b) to class (a):
+   quoted data with provenance** (`sst-waveshapers@dd12f31a…`, `Fuzzes.h` +
+   `WaveshaperLUT.h`, GPL-3.0-or-later; the generator in `sse_tables.py`
+   reproduces it and the committed ROM remains a build product of it). The
+   `wst_sine` row is unaffected. No model or RTL numeric changes; no
+   distribution-license determination is made by this amendment. The
+   "re-derived" wording in `sse_tables.py`, which is byte-frozen
+   (`docs/byte-frozen-sources.md`), is left unedited and is stale against
+   this amendment; this record governs.
 4. **(b) Structural scalars stay in the RTL.** The six power-of-two /
    LUT-size constants of class (b) are `localparam`s in
    `rtl/effects/type-distortion-sse/tb_distortion_sse.sv`. They are not
@@ -188,10 +253,14 @@ draw_k = u_k * (b - a) + a
   that; `quad_shapers.py` DD-3 freezes it to "first sample" and bounds the
   consequence to the single first oversampled sample after each reset
   (finding F-028e-sse-2).
-- The `FuzzTable<1>` validation leg is currently libstdc++-only. Re-running
-  `tools/check_fuzz_table_rederivation.py` on the pinned arm64 macOS /
-  libc++ oracle host is a named follow-up; until then the libc++ equivalence
-  is **UNVERIFIED-BY-BUILD**, derived by reading its `generate_canonical`.
+- The `FuzzTable<1>` validation leg now has libc++ transcripts from an
+  ALTERNATE arm64 macOS host (Darwin 27.0.0 / clang-2100.3.34.2, not the
+  manifest's frozen environment; #135, clause 3 amendment): **MISMATCH** at
+  default flags (FMA contraction, 305/1025), **MATCH** 1025/1025 with
+  `-ffp-contract=off`. The row is conservatively re-classified as quoted
+  data with provenance. The pinned-host leg (macOS 26.5.1 /
+  clang-2100.1.1.101) is **NOT_RUN**, and whether the pinned oracle's own
+  build contracts is **UNVERIFIED**.
 - The clause 3 discharge now depends on an **external** pinned checkout, so
   it is host-conditional by construction: a host without it records
   NOT_RUN. That is the intended trade — this repository stays free of
@@ -208,7 +277,11 @@ draw_k = u_k * (b - a) + a
 
 No distribution-license determination for Surge-derived material has been
 made by this repository (`CLAUDE.md` / `AGENTS.md`). This record authorizes
-the eleven scalars as *quoted data with provenance* and classifies the two
-table rows as *re-derived*; it makes no claim about redistribution of the
+the eleven scalars as *quoted data with provenance*; as amended by clause 3
+(#135) it classifies the `FuzzTable<1>` table row (1025 words) as *quoted
+data with provenance* as well (conservatively, pending the NOT_RUN
+pinned-host leg) and the `wst_sine` row as *re-derived*. These are
+classifications for the visible record only; it makes no claim about
+redistribution of the
 pinned engine, its presets, or its assets. It establishes no fidelity,
 preset-support, cost or musical-quality claim.

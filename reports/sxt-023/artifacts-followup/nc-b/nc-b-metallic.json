@@ -1,47 +1,48 @@
 {
-  "ref": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
-  "model": "reports/sxt-023/artifacts-followup/nc-b/ncb__metallic__seq-notes-coverage-v1.f32.wav",
+  "ref": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/artifacts-followup/nc-b/ncb__metallic__seq-notes-coverage-v1.f32.wav",
   "preset": "metallic",
   "path": "wet",
-  "fixture_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+  "fixture_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
   "channels": {
     "L": {
       "frames": 273600,
       "ref_peak_lsb": 607661.625,
-      "model_peak_lsb": 351336.0,
-      "max_abs_diff_lsb": 544425.71875,
-      "rms_diff_lsb": 53855.57326834589,
-      "rms_diff_dbfs": -25.78738520318385,
-      "rms_diff_at_shift0_lsb": 53855.57326834589,
+      "model_peak_lsb": 590331.0,
+      "max_abs_diff_lsb": 141907.8125,
+      "rms_diff_lsb": 8581.317195171861,
+      "rms_diff_dbfs": -41.74091915969335,
+      "rms_diff_at_shift0_lsb": 8581.317195171861,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 53855.57326834589,
-      "spectral_corr": 0.898244703767729
+      "rms_diff_at_best_shift_lsb": 8581.317195171861,
+      "spectral_corr": 0.8955368258362227
     },
     "R": {
       "frames": 273600,
       "ref_peak_lsb": 647022.6875,
-      "model_peak_lsb": 351336.0,
-      "max_abs_diff_lsb": 554426.6875,
-      "rms_diff_lsb": 53864.26690551647,
-      "rms_diff_dbfs": -25.78598319640294,
-      "rms_diff_at_shift0_lsb": 53864.26690551647,
+      "model_peak_lsb": 618277.0,
+      "max_abs_diff_lsb": 122661.07421875,
+      "rms_diff_lsb": 8600.62149641646,
+      "rms_diff_dbfs": -41.72140155999607,
+      "rms_diff_at_shift0_lsb": 8600.62149641646,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 53864.26690551647,
-      "spectral_corr": 0.8979901739437812
+      "rms_diff_at_best_shift_lsb": 8600.62149641646,
+      "spectral_corr": 0.8959190788630176
     },
     "mono": {
       "frames": 273600,
       "ref_peak_lsb": 373772.65625,
-      "model_peak_lsb": 351336.0,
-      "max_abs_diff_lsb": 132177.26171875,
-      "rms_diff_lsb": 15381.732733291192,
-      "rms_diff_dbfs": -36.671893046374805,
-      "rms_diff_at_shift0_lsb": 15381.732733291192,
+      "model_peak_lsb": 373882.0,
+      "max_abs_diff_lsb": 33882.703125,
+      "rms_diff_lsb": 2369.0467171530545,
+      "rms_diff_dbfs": -52.92052576534796,
+      "rms_diff_at_shift0_lsb": 2369.0467171530545,
       "best_shift": 0,
-      "rms_diff_at_best_shift_lsb": 15381.732733291192,
-      "spectral_corr": 0.9593758146587297
+      "rms_diff_at_best_shift_lsb": 2369.0467171530545,
+      "spectral_corr": 0.952216524640467
     }
   },
+  "per_channel_budget_leg": true,
   "proposed_budgets": {
     "max_abs_diff_lsb": 8192,
     "rms_diff_dbfs": -46.0,
@@ -50,71 +51,155 @@
   "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
   "proposed_budget_results": {
     "max_abs_diff_lsb": false,
-    "rms_diff_dbfs": false,
-    "spectral_corr": false
+    "rms_diff_dbfs": true,
+    "spectral_corr": false,
+    "L:max_abs_diff_lsb": false,
+    "L:rms_diff_dbfs": false,
+    "L:spectral_corr": false,
+    "R:max_abs_diff_lsb": false,
+    "R:rms_diff_dbfs": false,
+    "R:spectral_corr": false
   },
   "proposed_tail_budget": {
-    "tail_rms_rel_db": -20.0
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
   },
   "tail_check": {
     "tail_offset": 153600,
     "tail_frames": 120000,
     "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
-    "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+    "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
     "tail_budget": {
-      "tail_rms_rel_db": -20.0
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
     },
     "tail_region_covered": true,
     "tail_present": true,
     "model_tail_present": true,
-    "tail_max_abs_diff_lsb": 68244.228515625,
-    "tail_rms_diff_lsb": 5053.881678875053,
-    "tail_rms_rel_db": -10.490052912362378,
+    "tail_max_abs_diff_lsb": 32162.6953125,
+    "tail_rms_diff_lsb": 1289.8865238956887,
+    "tail_rms_rel_db": -22.351524203329397,
     "tail_ref_rms_lsb": 16909.381231057556,
-    "tail_model_rms_lsb": 15300.176368422195,
-    "ok": false,
-    "reason": "tail residual -10.49 dB exceeds the proposed -20.00 dB relative budget"
+    "tail_model_rms_lsb": 16913.969005878567,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 48,
+      "ref_first_window_dbfs": -28.44618746023128,
+      "ref_last_graded_window_dbfs": -99.35581529001945,
+      "max_dev_db": 0.9609619515521786,
+      "worst_window": {
+        "index": 41,
+        "start_frame_in_tail": 98400,
+        "ref_dbfs": -89.2166753095683,
+        "model_dbfs": -88.25571335801612
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
   },
   "tail_check_lr": {
     "L": {
       "tail_offset": 153600,
       "tail_frames": 120000,
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
-      "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+      "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
       "model_tail_present": true,
-      "tail_max_abs_diff_lsb": 215717.96875,
-      "tail_rms_diff_lsb": 16315.065158594309,
-      "tail_rms_rel_db": -2.5165151200131697,
+      "tail_max_abs_diff_lsb": 98033.6875,
+      "tail_rms_diff_lsb": 4600.153178656813,
+      "tail_rms_rel_db": -13.512845505588762,
       "tail_ref_rms_lsb": 21797.895619143244,
-      "tail_model_rms_lsb": 15300.176368422195,
+      "tail_model_rms_lsb": 21871.15605321748,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -26.320341262868578,
+        "ref_last_graded_window_dbfs": -86.61438190527456,
+        "max_dev_db": 0.9304392966937911,
+        "worst_window": {
+          "index": 44,
+          "start_frame_in_tail": 105600,
+          "ref_dbfs": -87.31402257867643,
+          "model_dbfs": -88.24446187537022
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
       "ok": false,
-      "reason": "tail residual -2.52 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "tail residual -13.51 dB exceeds the proposed -20.00 dB relative budget"
     },
     "R": {
       "tail_offset": 153600,
       "tail_frames": 120000,
       "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
-      "tail_region_sidecar": "reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
+      "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/metallic__seq-notes-coverage-v1.json",
       "tail_budget": {
-        "tail_rms_rel_db": -20.0
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
       },
       "tail_region_covered": true,
       "tail_present": true,
       "model_tail_present": true,
-      "tail_max_abs_diff_lsb": 208662.390625,
-      "tail_rms_diff_lsb": 16816.92111995633,
-      "tail_rms_rel_db": -3.227413094506435,
+      "tail_max_abs_diff_lsb": 88826.4921875,
+      "tail_rms_diff_lsb": 4598.546901590523,
+      "tail_rms_rel_db": -14.489930430765378,
       "tail_ref_rms_lsb": 24384.684555008953,
-      "tail_model_rms_lsb": 15300.176368422195,
+      "tail_model_rms_lsb": 24383.95512017978,
+      "tail_rms_rel_ok": false,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 50,
+        "ref_first_window_dbfs": -25.96369674648838,
+        "ref_last_graded_window_dbfs": -87.38533091133536,
+        "max_dev_db": 0.5604578950389794,
+        "worst_window": {
+          "index": 40,
+          "start_frame_in_tail": 96000,
+          "ref_dbfs": -83.34789225078579,
+          "model_dbfs": -83.90835014582477
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
       "ok": false,
-      "reason": "tail residual -3.23 dB exceeds the proposed -20.00 dB relative budget"
+      "reason": "tail residual -14.49 dB exceeds the proposed -20.00 dB relative budget"
     }
   },
   "tail_gate_ok": false,
-  "verdict": "FAIL against proposed budgets (budget: max_abs_diff_lsb, rms_diff_dbfs, spectral_corr; tail-region gate: mono: tail residual -10.49 dB exceeds the proposed -20.00 dB relative budget; L: tail residual -2.52 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -3.23 dB exceeds the proposed -20.00 dB relative budget)"
+  "verdict": "FAIL against proposed budgets (budget: L:max_abs_diff_lsb, L:rms_diff_dbfs, L:spectral_corr, R:max_abs_diff_lsb, R:rms_diff_dbfs, R:spectral_corr, max_abs_diff_lsb, spectral_corr; tail-region gate: L: tail residual -13.51 dB exceeds the proposed -20.00 dB relative budget; R: tail residual -14.49 dB exceeds the proposed -20.00 dB relative budget)"
 }

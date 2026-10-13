@@ -14,8 +14,17 @@ of the same preset+sequence). A = db_to_linear is a converged block-constant
 after the 0.25 s settle, so the de-amp is exact up to float32 rounding
 (declared input-boundary error, ~2^-24 relative).
 
-The model runs the settle phase too (240 silent blocks) so lag/LFO/line state
-at t=0 matches the engine's wet-bus state evolution.
+The model runs the settle phase too (SETTLE_BLOCKS silent blocks) so
+lag/LFO/line state at t=0 matches the engine's wet-bus state evolution. The
+fixture harness (tools/render_fx_fixtures.py render_bus_stereo) settles
+int(settle_s * 48000) // 32 = 375 blocks (settle_s 0.25, block 32, declared
+in every SXT-023 sidecar). This runner used 240 (0.16 s) until issue #16
+(audit finding F-318-1, reports/effect-settle-boundary-audit): the Delay
+LFO advances during the silent settle, so the 135-block pre-roll error put
+the model's LFO out of phase with the fixtures and was the dominant
+model-vs-engine miss on dexie and metallic (reports/sxt-023/
+delay-dt-probe.md). main() now refuses a sidecar whose declared settle
+differs from SETTLE_BLOCKS.
 
 Outputs (under --out-dir):
   model__<slug>.f32.wav      model wet bus (stereo float32)
@@ -43,8 +52,21 @@ from model.effects.delay.delay_model import (  # noqa: E402
 from model.effects.eq.eq_model import EqModel, EqParams  # noqa: E402
 from tools.render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
 
-SETTLE_BLOCKS = 240
+SETTLE_BLOCKS = 375   # int(0.25 * 48000) // 32: the fixture harness settle
 HARDCLIP8 = 8 << FRAC[A_FMT]
+
+
+def check_settle_against_sidecar(sidecar_path):
+    """Fail closed unless the fixture sidecar's declared settle equals the
+    runner pre-roll (the engine's silent settle advances Delay LFO state)."""
+    with open(sidecar_path) as f:
+        r = json.load(f)["render"]
+    want = int(float(r["settle_s"]) * int(r["sample_rate"])) // int(r["block_size"])
+    if int(r["block_size"]) != BLOCK or want != SETTLE_BLOCKS:
+        raise ValueError(f"{sidecar_path}: fixture settle {want} blocks of "
+                         f"{r['block_size']} != runner SETTLE_BLOCKS "
+                         f"{SETTLE_BLOCKS} of {BLOCK}")
+    return want
 
 
 def read_wav_stereo_f32(path):
@@ -212,6 +234,8 @@ def main():
 
     slug = args.slug
     cfg = json.load(open(os.path.join(args.inputs_dir, f"{slug}.json")))
+    check_settle_against_sidecar(os.path.join(
+        args.fixtures_dir, f"{slug}__seq-notes-coverage-v1.json"))
     dry, _sr = read_wav_stereo_f32(os.path.join(
         args.fixtures_dir, f"{slug}__seq-notes-coverage-v1-dry.f32.wav"))
     frames = dry.shape[1]
@@ -232,10 +256,11 @@ def main():
     def q21(x):
         return to_q(float(x), A_FMT)
 
-    # The fixture dry WAV starts at engine block 240 (the harness discards the
-    # 0.25 s settle). The model must reproduce the engine's settle first: 240
-    # blocks of SILENT input (FX state: LFO phase/value, lags, line, bi counter
-    # evolve exactly as in the engine's wet instance), then the dry content.
+    # The fixture dry WAV starts at engine block SETTLE_BLOCKS (the harness
+    # discards the 0.25 s settle). The model must reproduce the engine's
+    # settle first: SETTLE_BLOCKS blocks of SILENT input (FX state: LFO
+    # phase/value, lags, line, bi counter evolve as in the engine's wet
+    # instance), then the dry content.
     zeros = [0] * (SETTLE_BLOCKS * BLOCK)
     in_l = zeros + [q21(x) for x in in_l_f] + [0] * (frames_padded - SETTLE_BLOCKS * BLOCK - frames)
     in_r = zeros + [q21(x) for x in in_r_f] + [0] * (frames_padded - SETTLE_BLOCKS * BLOCK - frames)

@@ -104,7 +104,10 @@ def main():
     subprocess.run([sys.executable,
                     os.path.join(REPO, "tools", "compare_fx_reference.py"),
                     "--ref", ref_path, "--model", wav_path,
-                    "--preset", slug, "--json", metrics_path],
+                    "--preset", slug, "--json", metrics_path,
+                    # stricter leg (issue #16): mono alone cannot discriminate
+                    # nearest-neighbour reads on dexie
+                    "--per-channel-budgets"],
                    check=True)
     print(f"NC-b {slug}: NN render {os.path.relpath(wav_path, REPO)}\n"
           f"  metrics   {os.path.relpath(metrics_path, REPO)}")

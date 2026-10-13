@@ -1,0 +1,38 @@
+{
+  "issue": 317,
+  "finding": "F-028e-sse-1",
+  "date": "2026-10-09",
+  "host": {
+    "uname": "Darwin 27.0.0 arm64 (T6050)",
+    "macos": "27.0.1",
+    "xcode": "27.0",
+    "cmake": "4.4.4",
+    "numpy_in_pinned_python": "1.26.0",
+    "pinned_python": "/opt/homebrew/opt/python@3.11/bin/python3.11"
+  },
+  "oracle_build": {
+    "engine": "surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "drift_gate": "oracle/fetch-and-build.sh: PASS (engine HEAD + all submodule pins verified; smoke import OK, sr 48000, block 32)",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "build_deviation": "The default configure (macOS deployment target 10.15) FAILED to compile on this SDK ('The selected platform is no longer supported by libc++', -Werror). The build was reconfigured by hand with -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0; no engine source was modified (git status clean). This is a build-configuration deviation from the committed script and is NOT known to be neutral to render bytes.",
+    "other_difference_vs_committed_control": "The committed SXT-028c control bus carries engine_version_string 1.4.sxt037-tap.ff8b4dba4 and surgepy x86_64-linux-gnu; this build is an unpatched pin on arm64."
+  },
+  "steps": {
+    "extract_oracle": "RAN, same COMPLETE records as committed (git diff empty)",
+    "extract_synthetic": "FAIL: 0 written, 9 refused (preeq_freq_f read-back 6 binary32 ULPs from set value, fail-closed bound 4). Bound NOT relaxed. See extract-refusals-synthetic.txt",
+    "settle_boundary_probe": "NOT_RUN: aborted on the same synthetic-construction refusal before producing settle-boundary.json",
+    "harness_host_control": "FAIL: see harness-host-control.json. Re-render deterministic on this host (3/3 identical) but not equal to the committed sha256",
+    "render": "NOT_RUN: render tool refuses to proceed after a failed control",
+    "reference_leg_14_primary_legs": "NOT_RUN",
+    "compare": "NOT_RUN",
+    "negative_controls_NC-A_NC-A2_NC-SHARED_NC-B_NC-C": "NOT_RUN"
+  },
+  "control_diagnostic": {
+    "script": "control-diagnostic.py",
+    "note": "diagnostic only, establishes no agreement; compares this host's re-render of the SXT-028c fmcombo wet bus with the committed wav, sample for sample, unaligned. Not attributed to libm/FMA/build-config/tap-patch by measurement.",
+    "max_abs_diff": 0.08546439185738564,
+    "rms_diff": 0.005767998390192323,
+    "rms_reference": 0.08938381496167806,
+    "fraction_samples_differing": 1.0
+  }
+}

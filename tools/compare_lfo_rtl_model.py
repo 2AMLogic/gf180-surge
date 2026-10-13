@@ -38,7 +38,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import run_leaf_comparison  # noqa: E402
+from _rtl_compile_common import LeafInputError, run_leaf_comparison  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lfo.sv")
@@ -55,8 +55,12 @@ L_FIELDS = ["b", "slot", "index", "phase", "env_state", "env_phase",
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every record key must be unique (issue #455):
+    a repeated L or S key -- identical or contradictory, in either order --
+    is refused with LeafInputError rather than resolved last-row-wins."""
     l = {}   # (block, slot, index) -> dict
     s = {}   # (block, slot) -> [cut_sum, reso_sum]
+    dups = []
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -65,17 +69,42 @@ def parse_tb(path):
             if parts[0] == "L":
                 vals = [int(x) for x in parts[1:]]
                 d = dict(zip(L_FIELDS, vals))
-                l[(d["b"], d["slot"], d["index"])] = d
+                k = (d["b"], d["slot"], d["index"])
+                if k in l:
+                    dups.append("L %r" % (k,))
+                l[k] = d
             elif parts[0] == "S":
-                s[(int(parts[1]), int(parts[2]))] = [int(parts[3]),
-                                                     int(parts[4])]
+                k = (int(parts[1]), int(parts[2]))
+                if k in s:
+                    dups.append("S %r" % (k,))
+                s[k] = [int(parts[3]), int(parts[4])]
+    if dups:
+        raise LeafInputError(
+            "rtl_trace", path, "duplicate checkpoint key(s), %d: %s"
+            % (len(dups), "; ".join(dups[:5])))
     return l, s
+
+
+def _unowned(model_trace, tl, ts):
+    """RTL keys the model does not declare (extra block/slot/instance)."""
+    own_l, own_s = set(), set()
+    for blk in model_trace["blocks"]:
+        for rec in blk["voices"]:
+            for lr in rec.get("lfo", []):
+                own_l.add((blk["b"], rec["slot"], lr["index"]))
+            if "lfo_route_sums" in rec:
+                own_s.add((blk["b"], rec["slot"]))
+    return ([f"unowned RTL L key (block, slot, index)={k}: not declared by "
+             "the model" for k in sorted(set(tl) - own_l)] +
+            [f"unowned RTL S key (block, slot)={k}: not declared by the "
+             "model" for k in sorted(set(ts) - own_s)])
 
 
 def compare(model_trace, tb_trace):
     fails = []
     checked = {"lfo_checkpoints": 0, "lfo_fields": 0, "route_sums": 0}
     tl, ts = tb_trace
+    fails.extend(_unowned(model_trace, tl, ts))
 
     for blk in model_trace["blocks"]:
         b = blk["b"]

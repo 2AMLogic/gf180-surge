@@ -238,12 +238,26 @@ def test_committed_evidence_files_are_coherent():
                                        and k == "tail_rms_rel"):
                     raise AssertionError(f"{fn}: check {k} is False without "
                                          f"a recorded finding")
-                if v is None and not fn.startswith("sweep-t60"):
-                    # sweep-t60 records NOT_RUN fits as None by design
-                    # (documented in the comparison module docstring)
-                    raise AssertionError(f"{fn}: check {k} is None (NOT_RUN "
-                                         f"must be recorded as a finding, "
-                                         f"not in checks)")
+                if v is None:
+                    if fn.startswith("sweep-t60"):
+                        # sweep-t60 records NOT_RUN fits as None by design
+                        # (documented in the comparison module docstring);
+                        # since #456 each such entry must carry its reason
+                        assert rec.get("t60_note"), \
+                            f"{fn}: check {k} is None without a recorded reason"
+                    else:
+                        raise AssertionError(
+                            f"{fn}: check {k} is None (NOT_RUN must be "
+                            f"recorded as a finding, not in checks)")
+    # the committed decay-sweep record must cover the DECLARED required case
+    # set exactly (issue #456): an absent sweep set can no longer masquerade
+    # as coverage, and the committed evidence is held to the same declared set
+    cm = _comparator()
+    sweep = json.load(open(os.path.join(comp, "sweep-t60.json")))
+    assert isinstance(sweep, list) and sweep
+    assert sorted(r["trace"] for r in sweep) == \
+        sorted(cm.REQUIRED_SWEEP_CASES), "committed sweep-t60.json does not " \
+        "cover the declared required case set"
     # negative controls: all must be CONTROL-OK
     for fn in os.listdir(os.path.join(SXT, "negative-controls")):
         d = json.load(open(os.path.join(SXT, "negative-controls", fn)))

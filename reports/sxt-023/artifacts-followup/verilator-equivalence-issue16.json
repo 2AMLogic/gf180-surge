@@ -1,0 +1,78 @@
+{
+ "schema_version": 1,
+ "artifact": "Verilator equivalence on the revised tb (issue #16, PR #396 doctor pass)",
+ "date": "2026-10-09",
+ "tree": "feature/issue-16 @ c08841aede4d972ed6cd89147c1c302424f91eb8 (revised model, runner pre-roll 375, tb_fx.sv float32-grid fused lag)",
+ "tb": "rtl/effects/tb_fx.sv + rtl/effects/fx_line_ext.sv",
+ "model_inputs": "committed reports/sxt-023/artifacts/model_trace_{metallic,dexie}.json.gz and rtl/<slug>_{in,ctrl}.hex.gz, decompressed to a scratch dir; dexie model re-run on this host reproduced the committed WAV, trace and ctrl hex byte-identically",
+ "simulators": {
+  "verilator": "Verilator 5.050 2026-07-01 (--binary --timing, --build-jobs 2), linux x86_64",
+  "iverilog": "Icarus Verilog 13.0 (stable), vvp, linux x86_64"
+ },
+ "method": [
+  "IVERILOG=iverilog VERILATOR=<wrapper adding --build-jobs 2> python tools/compare_rtl_model_fx.py --slug <metallic|dexie> --art-dir <scratch> --sim verilator --rtl-trace <t> --out <j>",
+  "python tools/compare_rtl_model_fx.py --slug metallic --art-dir <scratch> --sim {iverilog,verilator} --max-blocks 3200 --rtl-trace <t> --out <j>",
+  "cmp <iverilog trace> <verilator trace>"
+ ],
+ "results": {
+  "verilator_full_length_vs_model": {
+   "metallic": {
+    "blocks_compared": 8925,
+    "verdict": "PASS",
+    "checked": {
+     "outputs": 547200,
+     "checkpoints": 272,
+     "fields": 8704
+    },
+    "mismatches": 0,
+    "wall_seconds": 60.44,
+    "rtl_trace_sha256": "643af13b01c66b51e9c31e4177312be6b987ffff0e7f746c976d8d077fe5ac52"
+   },
+   "dexie": {
+    "blocks_compared": 8925,
+    "verdict": "PASS",
+    "checked": {
+     "outputs": 547200,
+     "checkpoints": 136,
+     "fields": 4352
+    },
+    "mismatches": 0,
+    "wall_seconds": 12.2,
+    "rtl_trace_sha256": "56b0440e23b6cea4cd6c4d659adf68c17fb63273adcf6aec87a5d5912184e84b"
+   }
+  },
+  "medium_sim_vs_sim": {
+   "slug": "metallic",
+   "blocks": 3200,
+   "iverilog": {
+    "verdict": "PASS",
+    "checked": {
+     "outputs": 180800,
+     "checkpoints": 92,
+     "fields": 2944
+    },
+    "mismatches": 0,
+    "wall_seconds": 133.65
+   },
+   "verilator": {
+    "verdict": "PASS",
+    "checked": {
+     "outputs": 180800,
+     "checkpoints": 92,
+     "fields": 2944
+    },
+    "mismatches": 0,
+    "wall_seconds": 8.98
+   },
+   "trace_equality": {
+    "method": "byte compare of the raw tb traces",
+    "byte_identical": true,
+    "bytes": 1271319,
+    "sha256_iverilog": "4a55567dfb9bc530fc1bf6c38fffc9d997ce8073d543e0226020569390d324cd",
+    "sha256_verilator": "4a55567dfb9bc530fc1bf6c38fffc9d997ce8073d543e0226020569390d324cd"
+   }
+  }
+ },
+ "claim_scope": "Simulator-vs-simulator equivalence of the behavioral tb, and Verilator RTL-vs-frozen-model exactness on the two Delay fixtures. iverilog remains the canonical evidence simulator. No model-vs-engine, synthesis, timing, or preset claim.",
+ "verdict": "PASS"
+}

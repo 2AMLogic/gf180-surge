@@ -25,8 +25,9 @@ against the [PROPOSED] budgets (dry and wet both miss; F-48a/F-48b -> #12) —
 fixture verification and exact RTL agreement are not fidelity or support;
 the Delay leaf is FAIL (SXT-023); the wavetable leaf is partial at deep mips
 (SXT-026 §4); the fidelity-budget freeze (#12) is open, so every
-model-vs-reference number remains PENDING-FREEZE; and no listening record
-exists (#8/#9).
+model-vs-reference number remains PENDING-FREEZE; no preset-scoped
+complete-wet integration record is PASS (#384; `integration_gate` is NOT_RUN
+on all 1,683 compiled rows); and no listening record exists (#8/#9).
 
 Favorites slates (SXT-013 *proposal* slates — no frozen favorites set exists)
 are reported as PROSPECTIVE only; the ≥205/256 target is assessed **NO_VERDICT**
@@ -45,6 +46,8 @@ A preset is **supported** only if *every* step on its path is verified:
               AND every required routing form on a verified leaf
               AND wavetable use inside the verified envelope
               AND fidelity-freeze gate PASS       (#12)
+              AND preset-scoped complete-wet integration
+                  record PASS                     (#384)
 
 Anything else gets the hardest honest label that fits:
 
@@ -73,6 +76,57 @@ Gate columns use the vocabulary PASS / FAIL / NOT_RUN / BLOCKED / NO_VERDICT /
 STALE. **NOT_RUN is never counted as a pass.** The empty cell means the gate
 was not reached (a structural status preceded it) or is vacuous (no FX
 required); it is never a pass either.
+
+### Leaf agreement is not complete-preset qualification (#384)
+
+Every leaf on a preset's path can be verified and the fidelity policy frozen
+without anything having shown that **this** preset's original wet graph —
+voice plus every selected effect, in its stored placement and order, with
+per-instance state, gain staging, event timing and tails — passes that
+policy when integrated. Leaf verdicts are per-component; support is
+per-preset. The **`integration_gate`** column therefore reads the
+hash-pinned ledger `integration-ledger.json` (a pinned structural input),
+whose records are keyed by corpus **bank / path / blob** identity and a
+declared **qualification scope** (`original` or `adapted`). A record pins,
+by full sha256, the patch image, the oracle fixture, the event sequence, the
+fidelity policy, and the integrated evidence; it names the preset's
+normalized-graph sha256 (the compiler's `graph_sha256`) and its placement /
+order identity (`slot:role:class` per required instance); and it carries
+**separate** integrated RTL-vs-model and model-vs-reference verdicts plus a
+verdict per required aspect (`timing`, `gain`, `routing_order`,
+`per_instance_state`, `tails`).
+
+| situation | `integration_gate` | reason prefix |
+|---|---|---|
+| no record for the preset | NOT_RUN | `integration_not_run:` |
+| only an adapted-scope record | NOT_RUN | `integration_adapted_only:` |
+| record names another blob/bank | NOT_RUN | `integration_preset_identity_mismatch:` |
+| a pin does not re-hash / file missing | STALE | `integration_evidence_stale:` |
+| graph or placement/order identity differs | STALE | `integration_graph_identity_mismatch:` / `integration_order_identity_mismatch:` |
+| record policy is not the frozen policy | STALE | `integration_policy_identity_mismatch:` |
+| no frozen policy identity exists (#12 open) | NO_VERDICT | `integration_policy_not_frozen:` |
+| explicit blocker | BLOCKED | `integration_blocked:` |
+| a leg or aspect FAIL / NOT_RUN / NO_VERDICT | that status | `integration_<leg>_<STATUS>:` / `integration_aspect_<a>_<STATUS>:` |
+| all of the above clean, both legs and every aspect PASS | PASS | — |
+
+The worst applicable status wins (PASS < NO_VERDICT < NOT_RUN < BLOCKED <
+FAIL < STALE). A PASS is never inferred from a leaf-family match, a closed
+issue, file existence or refreshed hashes, and a record qualifies only the
+preset it names. `integration_record` names the record that was evaluated.
+Synthetic records are refused in a published run.
+
+The committed ledger holds two records, both for Hell's Bells and neither
+PASS: the **SXT-025 dry-bus run** (`sxt-025-hells-bells-drybus-adapted`,
+scope **adapted** — finding F-1's voice-stage substitution; it is listed on
+the row as `integration_adapted_only:` and can never become original-voice
+qualification), and the **SXT-026a original-voice re-run**
+(`sxt-026a-hells-bells-original-voice`, scope original): integrated
+RTL-vs-model **NOT_RUN** (no single integrated RTL run of the original
+voice stage plus Reverb 1 is committed), model-vs-reference **NO_VERDICT**
+(full render and tail measured FAIL against the [PROPOSED] budgets, F-48b →
+#12), per-instance state **NO_VERDICT** (single instance), policy
+**not frozen** → row gate **NOT_RUN**. Every other compiled row has no
+record (NOT_RUN). This gate changed no headline status: supported stays 0.
 
 **`fx_rng_gate`** (added by #122, decision record
 `decision-records/0013-fx-modulation-rng-stream.md`) reads **BLOCKED** on
@@ -153,6 +207,8 @@ evidence pins) and `coverage.json` (`leaf_ledger`).
 - `leaf-verification.json` — committed input: per-leaf verification verdicts
   with full-sha256 evidence pins (re-hashed at run time; mismatch ⇒ STALE ⇒
   downgrade).
+- `integration-ledger.json` — committed, sha256-pinned input (#384):
+  preset-scoped complete-wet integration records (see above).
 - `negative-controls.txt` — committed transcript of the control run below.
 
 ## Negative controls (live; each must demonstrably fail the check it targets)
@@ -161,7 +217,7 @@ Run `python3 tools/coverage_negative_controls.py` (scratch space
 `/tmp/sxt029-negative-controls`; published outputs untouched):
 
 - **NC-STALE-HASH** — in a declared counterfactual world (synthetic table:
-  all leaves verified, freeze PASS → 1,681 supported), the fx:EQ evidence
+  all leaves verified, freeze PASS → 1,682 supported with the synthetic integration ledger; see NC-INTEGRATION), the fx:EQ evidence
   hash is pointed at a mismatching file → all 453 EQ-dependent supported
   presets are **downgraded** supported→unresolved with `stale_leaf:` reasons;
   none is reported supported.
@@ -171,6 +227,20 @@ Run `python3 tools/coverage_negative_controls.py` (scratch space
   REFUSES (exit 2) and writes no outputs (fails closed).
 - **NC-SHA-DISAGREE** — a graphs blob sha disagreeing with the scan → REFUSE
   (exit 2).
+- **NC-INTEGRATION** (#384) — the counterfactual world also carries a declared
+  synthetic integration ledger (one matching original-scope PASS record per
+  compiled preset, plus a synthetic frozen-policy pin): 1,682 supported. The
+  same component-PASS, freeze-PASS world with the committed ledger supports
+  **0** (every one of those rows `integration_gate=NOT_RUN`) — freezing
+  budgets and verifying leaves alone promote nothing. Holding every component
+  gate PASS, each single-record mutation of one victim (record removed,
+  evidence hash corrupted, blob identity changed, graph identity changed,
+  placement/order changed, adapted-only, dropped-tail FAIL, wrong-order FAIL,
+  shared-instance-state FAIL, integrated RTL-vs-model FAIL,
+  model-vs-reference FAIL, blocker, NO_VERDICT, policy identity mismatch)
+  removes exactly that preset with the expected status and named reason; a
+  record relabelled onto another preset qualifies neither; a synthetic ledger
+  in the default input position is REFUSED.
 
 ## Reproduce
 
@@ -183,7 +253,7 @@ Same committed inputs ⇒ byte-identical outputs (sorted keys, fixed column
 order, no clock). Input integrity is fail-closed: any structural input whose
 full sha256 differs from the pin refuses the run; legitimate data updates
 must revise the pin in the same commit (visible contract revision).
-`--leaf-table` / `--control-allow-input-drift` exist for the controls only
+`--leaf-table` / `--integration-ledger` / `--control-allow-input-drift` exist for the controls only
 and are never valid for a published run.
 
 **That invariant is asserted, not just documented** (`#125`):
@@ -200,7 +270,10 @@ and why no verification status moved with it).
 
 Landing a leaf's evidence (#48, #53–#64, #66–#77, …), resolving the delay
 defect and the #16→#12 budget decision, closing the wavetable deep-mip
-finding, freezing the fidelity budgets (#12), and recording listening labels
+finding, freezing the fidelity budgets (#12), committing preset-scoped
+original-scope integration evidence (integrated RTL-vs-model and
+model-vs-reference under the frozen policy, #18/#48/#384), and recording
+listening labels
 (#8/#9 — required for the favorites-target assessment, not for individual
 support). When that happens, re-running the tool promotes exactly the presets
 whose every path step is then verified — and not one more.

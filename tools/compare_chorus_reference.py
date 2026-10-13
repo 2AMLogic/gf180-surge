@@ -69,65 +69,14 @@ PROPOSED = {
 LSB = 2.0 ** -21
 
 
-def read_wav_stereo_f32(path):
-    import struct
-
-    with open(path, "rb") as f:
-        data = f.read()
-    pos = 12
-    fmt = None
-    raw = None
-    while pos + 8 <= len(data):
-        cid = data[pos:pos + 4]
-        sz = struct.unpack("<I", data[pos + 4:pos + 8])[0]
-        body = data[pos + 8:pos + 8 + sz]
-        if cid == b"fmt ":
-            fmt = struct.unpack("<HHIIHH", body[:16])
-        elif cid == b"data":
-            raw = body
-        pos += 8 + sz + (sz & 1)
-    audio_fmt, nch, sr, _b, _a, bits = fmt
-    if audio_fmt != 3 or bits != 32 or nch != 2:
-        raise ValueError(f"expected stereo float32: {path}")
-    a = np.frombuffer(raw, dtype="<f4").reshape(-1, 2)
-    return a.T.copy(), sr
-
-
-def spectral_corr(a, b, frame=4096):
-    """The shared spectral_corr definition (issue #110), on the float32 bus
-    whose declared full scale is 1.0 (compare_audio_reference.FULL_SCALE_F32).
-    The pre-#110 native-unit log1p is gone: its log knee sat at full scale on
-    this bus but at one LSB on the int16 bus."""
-    return car.spectral_corr(a, b, full_scale=car.FULL_SCALE_F32, frame=frame)
-
-
-def channel_metrics(ref, mod):
-    n = min(len(ref), len(mod))
-    ref, mod = ref[:n].astype(np.float64), mod[:n].astype(np.float64)
-
-    def rms_at(shift):
-        if shift >= 0:
-            r, m = ref[shift:], mod[: n - shift]
-        else:
-            r, m = ref[: n + shift], mod[-shift:]
-        return float(np.sqrt(((r - m) ** 2).mean()))
-
-    shifts = {s: rms_at(s) for s in range(-32, 33)}
-    best_shift = min(shifts, key=shifts.get)
-    d = np.abs(ref - mod)
-    rms = float(np.sqrt((d * d).mean()))
-    return {
-        "frames": n,
-        "ref_peak_lsb": float(np.abs(ref).max() / LSB),
-        "model_peak_lsb": float(np.abs(mod).max() / LSB),
-        "max_abs_diff_lsb": float(d.max() / LSB),
-        "rms_diff_lsb": rms / LSB,
-        "rms_diff_dbfs": car.rms_dbfs(rms / LSB, float(1 << 20)),
-        "rms_diff_at_shift0_lsb": shifts[0] / LSB,
-        "best_shift": best_shift,
-        "rms_diff_at_best_shift_lsb": shifts[best_shift] / LSB,
-        "spectral_corr": spectral_corr(ref, mod),
-    }
+# The stereo float32 WAV reader and per-channel metrics are byte-identical to
+# the Delay/EQ comparator's (issue #376); compare_fx_reference owns them and
+# the names stay importable from this module for downstream comparators.
+from compare_fx_reference import (  # noqa: E402,F401
+    channel_metrics,
+    read_wav_stereo_f32,
+    spectral_corr,
+)
 
 
 def refuse(reason, out_json=None):

@@ -43,4 +43,51 @@ NC-VOICE-PIN-CORRUPT: newly selected voice leaf evidence pin corrupted -> no sup
     corrupt-pin supported: 0 (1683 rows voice_leaf_gate=STALE)
     PASS: corrupt pin cannot produce a support-ready gate
 
+NC-INTEGRATION: preset-scoped complete-wet integration gate (#384)
+    component+freeze PASS, synthetic PASS ledger : 1682 supported
+    same world, committed ledger (no PASS record): 0 supported (1682 of the 1682 rows integration_gate=NOT_RUN; component gates still PASS)
+    -> freezing budgets + verifying leaves alone promotes nothing; the integration gate is load-bearing
+    victim V: resources/data/patches_3rdparty/A.Liv/Keys/Grant Me....fxp (4:send1:Reverb 2|5:send2:Delay)
+    record-removed              : V NOT_RUN    supported 1681 (= baseline - V) reason integration_not_run:
+    evidence-hash-corrupted     : V STALE      supported 1681 (= baseline - V) reason integration_evidence_stale:
+    preset-identity-changed     : V NOT_RUN    supported 1681 (= baseline - V) reason integration_preset_identity_mismatch:
+    graph-identity-changed      : V STALE      supported 1681 (= baseline - V) reason integration_graph_identity_mismatch:
+    order-identity-changed      : V STALE      supported 1681 (= baseline - V) reason integration_order_identity_mismatch:
+    adapted-only-record         : V NOT_RUN    supported 1681 (= baseline - V) reason integration_adapted_only:
+    dropped-tail-FAIL           : V FAIL       supported 1681 (= baseline - V) reason integration_aspect_tails_FAIL:
+    wrong-order-FAIL            : V FAIL       supported 1681 (= baseline - V) reason integration_aspect_routing_order_FAIL:
+    shared-instance-state-FAIL  : V FAIL       supported 1681 (= baseline - V) reason integration_aspect_per_instance_state_FAIL:
+    rtl-vs-model-FAIL           : V FAIL       supported 1681 (= baseline - V) reason integration_rtl_vs_model_FAIL:
+    model-vs-reference-FAIL     : V FAIL       supported 1681 (= baseline - V) reason integration_model_vs_reference_FAIL:
+    explicit-blocker            : V BLOCKED    supported 1681 (= baseline - V) reason integration_blocked:
+    unresolved-interpretation   : V NO_VERDICT supported 1681 (= baseline - V) reason integration_model_vs_reference_NO_VERDICT:
+    policy-identity-mismatch    : V STALE      supported 1681 (= baseline - V) reason integration_policy_identity_mismatch:
+    cross-preset (V record on W): W NOT_RUN    supported 1681 (= baseline - W) reason integration_preset_identity_mismatch:
+    synthetic ledger as the default input  : REFUSED (exit 2; synthetic records never valid in a published run)
+    PASS: integration gate load-bearing; every mutation prevents support with a named reason; no cross-preset qualification
+
+NC-EVIDENCE-READINESS: every coverage leaf/gate readiness claim needs current evidence (#432)
+    ordinary leaf fx:EQ: baseline supported=1682; reached EQ gates (PASS)=454; supported victims=453
+    evidence absent: reached EQ gates ['NO_VERDICT'] supported 1229 (= baseline - 453) reason leaf_evidence_missing:fx:EQ
+    evidence null  : reached EQ gates ['NO_VERDICT'] supported 1229 (= baseline - 453) reason leaf_evidence_missing:fx:EQ
+    evidence empty : reached EQ gates ['NO_VERDICT'] supported 1229 (= baseline - 453) reason leaf_evidence_missing:fx:EQ
+    malformed evidence (string / bad item / short sha): REFUSED exit 2, no output written
+    routing_leaves[ains3] (local): valid pin -> affected=14 (gates PASS), supported victims=14, pin in provenance
+    routing_leaves[ains3] (local) hash   : affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    routing_leaves[ains3] (local) missing: affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    routing_leaves[ains3] (canonical): valid pin -> affected=14 (gates PASS), supported victims=14, pin in provenance
+    routing_leaves[ains3] (canonical) hash   : affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    routing_leaves[ains3] (canonical) missing: affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    airwindows_leaves[49] (local): valid pin -> affected=6 (gates PASS), supported victims=6, pin in provenance
+    airwindows_leaves[49] (local) hash   : affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    airwindows_leaves[49] (local) missing: affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    airwindows_leaves[49] (canonical): valid pin -> affected=6 (gates PASS), supported victims=6, pin in provenance
+    airwindows_leaves[49] (canonical) hash   : affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    airwindows_leaves[49] (canonical) missing: affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    live control empty-list-shortcut: mutated copy FAILS the targeted assertion (TARGETED: evidence absent: 454/454 reached EQ gates remain PASS on an evidence-free claim)
+    live control stale-false-fallback-routing: mutated copy FAILS the targeted assertion (TARGETED: routing_leaves[ains3] (local) hash: 14/14 affected gates not STALE)
+    live control stale-false-fallback-airwindows: mutated copy FAILS the targeted assertion (TARGETED: airwindows_leaves[49] (local) hash: 6/6 affected gates not STALE)
+    live control canonical-mapping-ignored: mutated copy FAILS the targeted assertion (TARGETED: routing_leaves[ains3] (canonical) hash: 14/14 affected gates not STALE)
+    PASS: absent/null/empty evidence never ready; stale section/canonical evidence STALEs every reached gate; restored shortcuts each fail their assertion
+
 RESULT: PASS — all controls healthy (each demonstrably fails the check it targets)

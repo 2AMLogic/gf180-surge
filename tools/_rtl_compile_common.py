@@ -69,6 +69,19 @@ model" when the truth is "the stimulus never loaded". The four mechanisms:
      verdict with a reason instead of dying by traceback with no verdict at
      all.
 
+Issue #360 adds a fifth, for a non-null `trace_name` only:
+
+  5. a clean run (none of 1-4 fired) that left no trace at the declared
+     path. The helper-owned `workdir/trace_name` is removed BEFORE `vvp`
+     launches, so a trace there afterward can only be this invocation's
+     output; a prior invocation's trace in a reused run dir can no longer be
+     parsed as if the current run produced it. Absence becomes a
+     `missing current-run output: ...` entry, which the callers' existing
+     `comparison: NOT_RUN` branch already handles. `trace_name=None`
+     declares no trace output and is exempt; the non-reporting default path
+     and explicitly supplied offline traces (`compare_sine_rtl_model.py
+     --trace`, which never calls this module) are unchanged.
+
 Original to this repository (Apache-2.0).
 """
 
@@ -76,6 +89,7 @@ import collections
 import json
 import os
 import subprocess
+import sys
 
 __all__ = ["compile_and_run", "run_leaf_comparison",
            "scan_stdout_for_load_failures", "SimResult"]
@@ -89,7 +103,8 @@ __all__ = ["compile_and_run", "run_leaf_comparison",
 #
 #   trace        os.path.join(workdir, trace_name), or None (trace_name is
 #                None, or a simulator-level failure means nothing trustworthy
-#                was produced)
+#                was produced -- including mechanism 5, the declared trace
+#                was not written by this invocation)
 #   value        int(...) of the last `done_prefix`-prefixed stdout line, or
 #                None (no done_prefix given, or a simulator-level failure)
 #   stdout       the simulation's full captured stdout ("" if it never ran)
@@ -166,8 +181,10 @@ def compile_and_run(sv_file, workdir, *, out_name, extra_sources=(),
       report_sim_fails when True, return a `SimResult` instead of raising or
                        returning one of the legacy shapes below: every
                        recognized simulator-level failure becomes a
-                       `SimResult.sim_fails` entry (mechanisms 1-4 in the
-                       module docstring)
+                       `SimResult.sim_fails` entry (mechanisms 1-5 in the
+                       module docstring); a non-null `trace_name` under
+                       `workdir` is deleted before `vvp` runs and must be
+                       re-created by it (mechanism 5)
       timeout          seconds before the vvp run is killed when
                        `report_sim_fails=True` (None = no timeout, matching
                        the unbounded default `subprocess.run` already had)
@@ -294,6 +311,38 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
     image = out_name if run_by_name else vvp
     cmd = [image] if direct_exec else ["vvp", image]
 
+    # ---- mechanism 5 (issue #360), part 1: invocation-owned trace. The
+    # helper-owned expected trace under the run dir is invalidated BEFORE
+    # the simulator launches, so the only file that can exist at that path
+    # afterward is one THIS invocation wrote. A reused run dir holding a
+    # previous run's trace can otherwise satisfy a testbench that exits 0
+    # without writing anything. Ownership, not timestamps: an mtime
+    # comparison depends on clock/filesystem resolution. Scoped to the
+    # declared `trace_name` inside `workdir` only; `trace_name=None` declares
+    # no trace output and is exempt, and an explicitly supplied offline trace
+    # (e.g. compare_sine_rtl_model.py --trace) never reaches this function.
+    trace = None
+    if trace_name is not None:
+        trace = os.path.join(workdir, trace_name)
+        owned_root = os.path.realpath(workdir)
+        if os.path.commonpath([owned_root, os.path.realpath(trace)]) \
+                != owned_root:
+            sim_fails.append(
+                "refusing trace_name %r: it resolves outside the run dir %s, "
+                "so it is not a helper-owned output this invocation may "
+                "invalidate" % (trace_name, workdir))
+            return SimResult(None, None, "", sim_fails, "")
+        try:
+            os.remove(trace)
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            sim_fails.append(
+                "could not invalidate the prior trace %s before the "
+                "simulator ran (%s); a file left there could not be told "
+                "apart from this invocation's output" % (trace_name, exc))
+            return SimResult(None, None, "", sim_fails, "")
+
     # Stdout is ALWAYS captured here (regardless of suppress_stdout /
     # capture_output) so mechanism 2 can scan it; `stdout_path` is honored
     # afterward as a side-effect write, same content it would have received.
@@ -323,10 +372,19 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
     for line in scan_stdout_for_load_failures(result.stdout):
         sim_fails.append("vvp rc=%d but a stimulus file never loaded: %s"
                          % (result.returncode, line))
+    # ---- mechanism 5 (issue #360), part 2: a clean run must have produced
+    # the declared trace. Only checked when nothing above already failed, so
+    # an earlier, more specific reason is not buried under this one.
+    if not sim_fails and trace is not None and not os.path.isfile(trace):
+        sim_fails.append(
+            "missing current-run output: %s (vvp rc=%d but this invocation "
+            "wrote no trace at the expected path; any prior trace there was "
+            "invalidated before the simulator ran, so nothing is compared)"
+            % (trace_name, result.returncode))
+        trace = None
 
     stdout_tail = _as_text(result.stdout)[-2000:] if sim_fails else ""
 
-    trace = None if trace_name is None else os.path.join(workdir, trace_name)
     value = None
     if done_prefix is not None:
         for line in result.stdout.splitlines():
@@ -338,7 +396,8 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
 
 def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                         compile_kwargs, default_checked,
-                        extra_summary_fields=None, summary_key_order=None):
+                        extra_summary_fields=None, summary_key_order=None,
+                        validate_model=None):
     """The report-assembly skeleton shared by five RTL-vs-model leaves.
 
     Extracted by issue #303 from the byte-identical halves of
@@ -385,14 +444,45 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                     set -- a mismatch raises `ValueError` rather than
                     silently dropping or reordering a reported field.
 
+      validate_model  optional callable(model_trace) raising `LeafInputError`
+                    for leaf-specific structure beyond the shared minimum.
+
+    Input failures (issue #361): an unreadable/malformed/mis-shaped
+    `model_trace.json` is refused BEFORE the simulator launches; an absent
+    or unparseable RTL trace is refused before `compare`.  Both publish
+    `comparison: NOT_RUN`, the leaf's zeroed `checked`, an `input_error`
+    object, and exit 1 -- never a numeric verdict.  A prior verdict at `out`
+    is removed first, so it cannot outlive a failing invocation; if `out`
+    cannot be invalidated/written the exit is 1 with an stderr message.
+
     Returns the process exit code: 0 when nothing failed, else 1.
     """
     if "report_sim_fails" in compile_kwargs:
         raise ValueError("run_leaf_comparison supplies report_sim_fails=True "
                          "itself; the NOT_RUN branch requires a SimResult")
 
-    with open(os.path.join(run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
+    # ---- issue #361: input-refusal reporting boundary ----
+    # A previously published verdict at the requested path must never survive
+    # this invocation, so it is invalidated BEFORE any input is touched.
+    publish_error = None
+    if out:
+        try:
+            os.remove(out)
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            publish_error = ("could not invalidate the prior verdict at %s "
+                             "(%s)" % (out, exc))
+
+    model_path = os.path.join(run_dir, "model_trace.json")
+    try:
+        model_trace = _load_model_trace(model_path)
+        if validate_model is not None:
+            validate_model(model_trace)
+    except LeafInputError as exc:
+        return _publish_refusal(exc, tb_label, default_checked, out,
+                                publish_error, extra_summary_fields,
+                                summary_key_order)
 
     sim = compile_and_run(tb, run_dir, report_sim_fails=True, **compile_kwargs)
 
@@ -400,7 +490,12 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
     fails = list(sim.sim_fails)
     comparison = "NOT_RUN"
     if not sim.sim_fails:
-        rtl_trace = parse_tb(sim.trace)
+        try:
+            rtl_trace = _parse_rtl_trace(parse_tb, sim.trace)
+        except LeafInputError as exc:
+            return _publish_refusal(exc, tb_label, default_checked, out,
+                                    publish_error, extra_summary_fields,
+                                    summary_key_order, model_trace, sim)
         checked, cmp_fails = compare(model_trace, rtl_trace)
         fails += cmp_fails
         comparison = "FAIL" if cmp_fails else "PASS"
@@ -425,9 +520,133 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                 "%r" % (order, sorted(summary)))
         summary = {k: summary[k] for k in order}
 
+    return _emit_summary(summary, out, publish_error, fails)
+
+
+def record_width_error(kind, key, side, got, expected):
+    """Issue #451: name a checkpoint record whose field count is not exact.
+
+    Returns None when `len(got) == expected`, else a `SHAPE_ERROR` string
+    carrying record kind, key, which side (model/rtl), actual and expected
+    width.  Callers must then skip the record's field comparison and must not
+    count it as a complete checkpoint: a zip over a short or long row would
+    otherwise compare only a prefix and report agreement.
+    """
+    if len(got) == expected:
+        return None
+    return ("SHAPE_ERROR %s record %s (%s): width %d, expected %d"
+            % (kind, key, side, len(got), expected))
+
+
+class LeafInputError(Exception):
+    """An expected input failure (unreadable/malformed model or RTL trace).
+
+    Carries which input failed and why.  Only raised at the explicit input
+    boundaries below; programmer defects (TypeError/KeyError/AttributeError
+    in a leaf's own code) are deliberately NOT converted into this.
+    """
+
+    def __init__(self, which, path, reason):
+        super().__init__("%s %s: %s" % (which, path, reason))
+        self.which = which
+        self.path = path
+        self.reason = reason
+
+
+def _load_model_trace(path):
+    """Read and minimally structure-check the frozen model trace.
+
+    Structure required by all five adopted leaves: a JSON object whose
+    `blocks` is a non-empty list of objects, each with an integer `b` and a
+    `voices` list of objects carrying `slot`.  Anything deeper stays the
+    leaf's `compare` contract; JSON syntax alone is not accepted as a model.
+    """
+    try:
+        with open(path) as f:
+            model = json.load(f)
+    except OSError as exc:
+        raise LeafInputError("model", path, "unreadable: %s" % exc)
+    except ValueError as exc:   # JSONDecodeError and UnicodeDecodeError
+        raise LeafInputError("model", path, "invalid JSON: %s" % exc)
+    if not isinstance(model, dict):
+        raise LeafInputError("model", path, "top level is not a JSON object")
+    blocks = model.get("blocks")
+    if not isinstance(blocks, list) or not blocks:
+        raise LeafInputError("model", path,
+                             "`blocks` is missing, not a list, or empty")
+    for n, blk in enumerate(blocks):
+        if not isinstance(blk, dict) or isinstance(blk.get("b"), bool) \
+                or not isinstance(blk.get("b"), int):
+            raise LeafInputError("model", path,
+                                 "blocks[%d] lacks an integer `b`" % n)
+        voices = blk.get("voices")
+        if not isinstance(voices, list) or not all(
+                isinstance(v, dict) and "slot" in v for v in voices):
+            raise LeafInputError(
+                "model", path,
+                "blocks[%d].voices is not a list of objects with `slot`" % n)
+    return model
+
+
+def _parse_rtl_trace(parse_tb, trace):
+    """Run the leaf's parser; data-shaped failures become input refusals."""
+    if trace is None:
+        raise LeafInputError("rtl_trace", trace, "no trace path was produced")
+    try:
+        return parse_tb(trace)
+    except FileNotFoundError:
+        raise LeafInputError("rtl_trace", trace, "trace file is absent")
+    except OSError as exc:
+        raise LeafInputError("rtl_trace", trace, "unreadable: %s" % exc)
+    except (ValueError, IndexError) as exc:
+        # int()/float() token errors, undecodable bytes, truncated rows
+        raise LeafInputError("rtl_trace", trace,
+                             "malformed trace (%s: %s)"
+                             % (type(exc).__name__, exc))
+
+
+def _publish_refusal(exc, tb_label, default_checked, out, publish_error,
+                     extra_summary_fields, summary_key_order,
+                     model_trace=None, sim=None):
+    """Current non-PASS report: comparison NOT_RUN, the leaf's zeroed
+    coverage, and the offending input.  `sim_fails` stays empty -- the
+    simulator did not fail, an input did."""
+    reason = "input refusal: %s" % exc
+    summary = {
+        "tb": tb_label,
+        "verdict": "FAIL",
+        "comparison": "NOT_RUN",
+        "checked": dict(default_checked),
+        "mismatches": 1,
+        "first_failures": [reason],
+        "sim_fails": list(sim.sim_fails) if sim is not None else [],
+        "sim_stdout_tail": sim.stdout_tail if sim is not None else "",
+    }
+    if summary_key_order is not None:
+        # Leaf-specific extras are not derived from an unusable model or
+        # trace (that would index it a second time, or fabricate values);
+        # their keys are reported as null in the leaf's own order.
+        for k in summary_key_order:
+            summary.setdefault(k, None)
+        summary = {k: summary[k] for k in summary_key_order}
+    summary["input_error"] = {"input": exc.which, "path": exc.path,
+                              "reason": exc.reason}
+    _emit_summary(summary, out, publish_error, [reason])
+    return 1
+
+
+def _emit_summary(summary, out, publish_error, fails):
     print(json.dumps(summary, indent=2))
-    if out:
-        with open(out, "w") as f:
-            json.dump(summary, f, indent=2)
-            f.write("\n")
+    if out and publish_error is None:
+        try:
+            with open(out, "w") as f:
+                json.dump(summary, f, indent=2)
+                f.write("\n")
+        except OSError as exc:
+            publish_error = "could not write the verdict to %s (%s)" % (out,
+                                                                        exc)
+    if publish_error is not None:
+        print("ERROR: no current verdict was published: %s" % publish_error,
+              file=sys.stderr)
+        return 1
     return 0 if not fails else 1
