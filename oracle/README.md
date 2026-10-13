@@ -87,10 +87,10 @@ ORACLE_PREBUILT_URL=<private store> oracle/fetch-and-build.sh --prebuilt   # or 
   `reference-seq-modwheel-v1` re-renders byte-identically to the committed
   WAV (sha256 `cdc6dd7b…d2002`).
 
-### LP 24 dB full-engine tap (#307, DR-0019)
+### LP 24 dB full-engine tap (#307, DR-0020)
 
 A separate, **externally** patched build of the same pin observes the LP24 filter
-unit (`decision-records/0019-lp24-full-engine-tap.md`). It is not the prebuilt
+unit (`decision-records/0020-lp24-full-engine-tap.md`). It is not the prebuilt
 above (that one is vanilla and compiled-only) and is never committed or
 distributed; the patch and tree live on the oracle host and only hashes are
 recorded (`reports/SXT-307/artifacts/tap-build-provenance.json`).

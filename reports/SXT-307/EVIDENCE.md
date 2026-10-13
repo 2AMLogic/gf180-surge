@@ -1,6 +1,6 @@
 # SXT-307 evidence record — LP 24 dB full-engine tap (serves #101 F-038-1)
 
-Issue: #307 · Date: 2026-10-08 · Decision record: `decision-records/0019-lp24-full-engine-tap.md`
+Issue: #307 · Date: 2026-10-08 · Decision record: `decision-records/0020-lp24-full-engine-tap.md`
 (PROPOSED). Engine pin (external, GPL-3.0-or-later):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, submodules per
 `oracle/manifest.json`, tree clean before patching.

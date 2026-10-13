@@ -2,7 +2,7 @@
 """SXT-307 / SXT-038 F-038-1: full-engine LP 24 dB tap leg (oracle-side adapter).
 
 Drives the EXTERNAL, DR-0005-class tap-instrumented build of the pinned engine
-(decision-records/0019-lp24-full-engine-tap.md).  This file is original to this
+(decision-records/0020-lp24-full-engine-tap.md).  This file is original to this
 repository; it contains no engine source.  The tap patch and the patched tree
 stay on the oracle host.
 
