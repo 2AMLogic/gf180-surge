@@ -64,6 +64,7 @@ below cites the traced consumer that justifies it.
 | sxt-013 listening cache | `reports/sxt-013/listening-cache/sample-identity-record-fake-renderer.json`<br>`reports/sxt-013/listening-cache/sample-session-fake-renderer.json` | 1.26.4 (key `oracle_python_runtime`) | Historical provenance | The listening-cache consumers (`tests/test_sxt013_listening_cache.py`) check cache validity and apparatus; no test reads the runtime string. The stamps are echoes of the pinned oracle runtime made while recording the fake-renderer listening session. |
 | sxt-013 audition-gate samples (issue #447) | `reports/sxt-013/audition-gate/sample-session-auto-confirmed.json`<br>`reports/sxt-013/audition-gate/sample-session-player-exit-nonzero-unconfirmed.json`<br>`reports/sxt-013/audition-gate/sample-session-playoff-manual-confirmed.json` | 1.26.4 (key `oracle_python_runtime`) | Historical provenance | The audition-gate consumers (`tests/test_sxt013_apparatus.py`) check playback-outcome and audition-confirmation bookkeeping; no test reads the runtime string. The stamps are echoes of the pinned oracle runtime inside the #404 cache identity record shape, regenerated with a mocked player and scripted answers by `reports/sxt-013/audition-gate/generate-samples.py` (FAKE audio; never oracle renders). |
 | sxt-010 first capture (SXT-010) | `reports/sxt-010/first-capture/first-note.json`<br>`reports/sxt-010/EVIDENCE.md` | 1.26.4 (key `python_runtime`) | Historical provenance | The test that reads `first-note.json` asserts only the historical absence of the `oracle_binding` key (`tests/test_oracle_binding_metadata.py:36-40`); no version comparison. The runtime string is oracle-manifest provenance (SXT-010 leg 1, `reports/sxt-010/EVIDENCE.md:18,30`). |
+| SXT-307 LP24 tap build provenance (issue #307 / DR-0020) | `reports/SXT-307/artifacts/tap-build-provenance.json` | 2.5.3 (key `python`, inside the `build` block) | Historical provenance | One-shot build-provenance record: it pins the tap toolchain/runtime SHA-256s cited by decision record DR-0020 (`decision-records/0020-lp24-full-engine-tap.md:18`) and summarized in `reports/SXT-307/EVIDENCE.md:27-30` and `oracle/README.md:96`. No test or tool reads the record or compares its stamp against an installed NumPy — the only SXT-307 test consumer, `tests/test_render_lp24_tap_reference.py`, exercises the render tool's output, not this JSON. The stamp records the host runtime (CPython 3.13.16 uv venv) under which the tapped `.so` and its reference renders were built; the record itself declares the difference from the SXT-010 pinned 3.11 runtime as binding-only, not engine DSP. |
 
 ## Separate row — the oracle evidence runtime (outside the automated search)
 
@@ -84,7 +85,7 @@ consumer family:
 - libm-bound digest re-derivation that skips off-host (SXT-028e-sse),
 - structure/verdict assertions that never open the environment block
   (int16/pilot-freeze, fs-floor, stereo, tail-shape-leg, sxt-013, sxt-010),
-- no consumer at all (host-run-record).
+- no consumer at all (host-run-record, tap build provenance).
 
 Therefore **there is no conflict: no stamp constrains #354's CI pin**, and
 #354 can pick the pin on the test suite's own numeric needs. Context for that
