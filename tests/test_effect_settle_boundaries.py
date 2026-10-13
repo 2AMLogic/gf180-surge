@@ -701,3 +701,389 @@ def test_attribute_a_early_confounded_by_dry_difference():
     assert aud.attribute_a_early(dict(ae))["attribution"] == "UNATTRIBUTED"
     assert "attribution" not in aud.attribute_a_early(
         {"status": "MEASURED", "byte_identical": True})
+
+
+# ------------------------------------------------- #372 leg E (input taps)
+def _h(c):
+    import hashlib
+    return hashlib.sha256(c.encode()).hexdigest()
+
+
+SIL = aud.TAP_SILENT_BLOCK_SHA256
+PATCH = _h("e")
+SUBM = aud.manifest_submodules_sha256()
+ENV = {"platform": "test-platform", "machine": "test-machine"}
+TAP = {"patch_sha256": PATCH}
+BUILD = {"engine_commit": aud.ENGINE_PIN, "patch_sha256": PATCH,
+         "submodules_sha256": SUBM}
+
+
+def _obs(settle, audio_in="a", audio_out="b", processed=False,
+         silent=True, tail_out="t", tail_in=None, n_audio=3, n_tail=2,
+         slot=0, **over):
+    sid = aud.slot_identity(slot)
+    blocks = [{"block": 0, "phase": "init", "in_sha256": SIL,
+               "out_sha256": SIL, "processed": False, "in_silent": True}]
+    for _ in range(settle):
+        blocks.append({"phase": "settle",
+                       "in_sha256": SIL if silent else _h("noise"),
+                       "out_sha256": SIL, "processed": processed,
+                       "in_silent": silent})
+    for i in range(n_audio):
+        blocks.append({"phase": "audio", "in_sha256": _h(audio_in),
+                       "out_sha256": _h(audio_out), "processed": True,
+                       "in_silent": False})
+    for i in range(n_tail):
+        blocks.append({"phase": "tail",
+                       "in_sha256": SIL if tail_in is None else _h(tail_in),
+                       "out_sha256": _h(tail_out), "processed": True,
+                       "in_silent": tail_in is None})
+    for i, b in enumerate(blocks):
+        b["block"] = i
+    rec = {"schema": aud.TAP_SCHEMA,
+           "build": dict(BUILD, sample_rate=48000, tap_enabled=True),
+           "environment": dict(ENV),
+           "instance": {"slot": slot, "scene": sid[1], "effect_type": "delay",
+                        "channels": 2, "chain_position": sid[2]},
+           "blocks": blocks}
+    rec.update(over)
+    return rec
+
+
+EXP = {"slot": 0, "scene": "A", "chain_position": 0, "effect_type": "delay",
+       "channels": 2, "audio_blocks": 3, "tail_blocks": 2}
+NEUTRAL = {"tap_on_sha256": _h("1"), "tap_off_sha256": _h("1"),
+           "patched_off_sha256": _h("2"), "unpatched_sha256": _h("2"),
+           "environment": dict(ENV), "build": dict(BUILD)}
+
+
+def _v(o, n):
+    return aud.validate_tap_observation(o, dict(EXP, settle_blocks=n), TAP)
+
+
+def _validated(**kw):
+    return {n: _v(_obs(n, **kw), n) for n in (2, 375)}
+
+
+def _neutral():
+    return aud.validate_tap_neutrality(NEUTRAL, TAP)
+
+
+def test_leg_e_zero_boundary_when_effect_not_advanced():
+    r = aud.infer_effect_boundary(_validated(), True, _neutral())
+    assert (r["status"], r["boundary"], r["declared_preroll_blocks"]) == \
+        ("RESOLVED", "ZERO", 0)
+
+
+def test_leg_e_processed_silence_with_same_output_is_output_only():
+    r = aud.infer_effect_boundary(_validated(processed=True), True,
+                                  _neutral())
+    assert r["boundary"] == "ZERO_OUTPUT_ONLY" and r["scope"] == "output"
+
+
+def test_leg_e_nonzero_when_output_differs_with_identical_input():
+    obs = {2: _v(_obs(2, processed=True, audio_out="b"), 2),
+           375: _v(_obs(375, processed=True, audio_out="c"), 375)}
+    r = aud.infer_effect_boundary(obs, True, _neutral())
+    assert r["boundary"] == "NONZERO" and \
+        r["declared_preroll_blocks"] == 375
+
+
+def test_leg_e_contradictory_record_is_no_verdict():
+    obs = {2: _v(_obs(2, audio_out="b"), 2),
+           375: _v(_obs(375, audio_out="c"), 375)}
+    assert aud.infer_effect_boundary(obs, True, _neutral())["status"] == \
+        "NO_VERDICT"
+
+
+def test_leg_e_differing_synth_input_stays_no_verdict_even_if_c_would_fit():
+    obs = {2: _v(_obs(2, audio_in="a"), 2),
+           375: _v(_obs(375, audio_in="d"), 375)}
+    r = aud.infer_effect_boundary(obs, True, _neutral())
+    assert r["status"] == "NO_VERDICT" and "INPUT_DIFFERS" in r["reason"]
+
+
+def test_leg_e_tail_input_difference_is_input_differs_not_nonzero():
+    # Judge point 1: identical audio-window input, differing tail input
+    # (synth release moving) and differing tail output must NOT be NONZERO.
+    obs = {2: _v(_obs(2, processed=True, tail_in="r1", tail_out="t1"), 2),
+           375: _v(_obs(375, processed=True, tail_in="r2", tail_out="t2"),
+                   375)}
+    r = aud.infer_effect_boundary(obs, True, _neutral())
+    assert r["status"] == "NO_VERDICT"
+    assert "INPUT_DIFFERS" in r["reason"] and "tail" in r["reason"]
+    assert "identical effect input" not in r["reason"]
+    assert r.get("boundary") is None
+
+
+def test_leg_e_nonsilent_settle_input_is_no_verdict():
+    r = aud.infer_effect_boundary(_validated(silent=False), True, _neutral())
+    assert r["status"] == "NO_VERDICT" and "bit-silent" in r["reason"]
+
+
+@pytest.mark.parametrize("flag,h", [(True, _h("noise")), (False, SIL)])
+def test_silence_flag_must_agree_with_the_input_hash(flag, h):
+    # Judge point 5: in_silent is checked against the silent-block hash.
+    o = _obs(375)
+    o["blocks"][3].update(in_silent=flag, in_sha256=h)
+    with pytest.raises(aud.AuditRefused, match="contradicts its input"):
+        _v(o, 375)
+
+
+def test_leg_e_requires_early_and_fixture_settles():
+    v = _validated()
+    del v[2]
+    assert aud.infer_effect_boundary(v, True, _neutral())["status"] == \
+        "NOT_MEASURED"
+
+
+@pytest.mark.parametrize("rep,neu", [(False, "ok"), (None, "ok"),
+                                     (True, None)])
+def test_leg_e_refuses_without_a0_or_neutrality(rep, neu):
+    n = _neutral() if neu else None
+    assert aud.infer_effect_boundary(_validated(), rep, n)["status"] == \
+        "NO_VERDICT"
+
+
+@pytest.mark.parametrize("bad", [
+    {"tap_off_sha256": _h("9")}, {"unpatched_sha256": _h("9")},
+    {"environment": ""}, {"environment": {"platform": "p"}},
+    {"tap_on_sha256": "zz"},
+    {"build": dict(BUILD, patch_sha256=_h("other"))},     # wrong tap build
+    {"build": dict(BUILD, submodules_sha256=_h("x"))},
+    {"build": {k: v for k, v in BUILD.items() if k != "engine_commit"}}])
+def test_neutrality_failures_are_refused(bad):
+    with pytest.raises(aud.AuditRefused):
+        aud.validate_tap_neutrality(dict(NEUTRAL, **bad), TAP)
+
+
+def test_neutrality_without_build_is_refused():
+    n = dict(NEUTRAL)
+    del n["build"]
+    with pytest.raises(aud.AuditRefused):
+        aud.validate_tap_neutrality(n, TAP)
+
+
+def _mut(f):
+    o = _obs(375)
+    f(o)
+    return o
+
+
+@pytest.mark.parametrize("mutate", [
+    lambda o: o["blocks"].pop(5),                          # missing block
+    lambda o: o["blocks"].reverse(),                       # reordered
+    lambda o: o["blocks"].__delitem__(slice(-2, None)),    # truncated tail
+    lambda o: o["blocks"][3].update(in_sha256="bad"),      # malformed hash
+    lambda o: o["blocks"][3].pop("processed"),
+    lambda o: o["blocks"][3].update(phase="bogus"),
+    lambda o: o["blocks"].pop(0),                          # no init
+    lambda o: o["instance"].update(slot=3),                # wrong slot
+    lambda o: o["instance"].update(scene="B"),
+    lambda o: o["instance"].update(effect_type="eq"),
+    lambda o: o["instance"].update(channels=1),
+    lambda o: o["instance"].update(chain_position=1),      # point 6
+    lambda o: o["build"].update(engine_commit="0" * 40),
+    lambda o: o["build"].update(sample_rate=44100),
+    lambda o: o["build"].update(patch_sha256=""),
+    lambda o: o["build"].update(patch_sha256=_h("OTHER")),  # point 2
+    lambda o: o["build"].update(submodules_sha256="anything"),  # point 6
+    lambda o: o["build"].update(submodules_sha256=_h("x")),  # not manifest
+    lambda o: o["build"].update(tap_enabled=False),
+    lambda o: o.pop("environment"),
+    lambda o: o.update(schema="other"),
+])
+def test_malformed_tap_records_are_refused(mutate):
+    with pytest.raises(aud.AuditRefused):
+        _v(_mut(mutate), 375)
+
+
+@pytest.mark.parametrize("key", aud.TAP_EXPECT_KEYS)
+def test_every_expectation_key_is_mandatory(key):
+    # Judge point 3: a missing expectation is a refusal, never a skip.
+    ex = dict(EXP, settle_blocks=375)
+    del ex[key]
+    with pytest.raises(aud.AuditRefused, match="mandatory"):
+        aud.validate_tap_observation(_obs(375), ex, TAP)
+
+
+def test_wrong_audio_block_count_is_refused():
+    with pytest.raises(aud.AuditRefused, match="audio blocks"):
+        _v(_obs(375, n_audio=4), 375)
+
+
+def test_infer_refuses_build_mismatch_across_settles():
+    # Judge point 2, at the inference level: two settles from builds that
+    # differ from the neutrality record's build cannot be compared.
+    obs = _validated()
+    obs[2] = dict(obs[2], build=dict(obs[2]["build"],
+                                     patch_sha256=_h("OTHER2")))
+    r = aud.infer_effect_boundary(obs, True, _neutral())
+    assert r["status"] == "NO_VERDICT" and "build" in r["reason"]
+
+
+def test_infer_refuses_environment_mismatch_with_neutrality():
+    obs = _validated()
+    obs[375] = dict(obs[375], environment={"platform": "other",
+                                           "machine": "m"})
+    r = aud.infer_effect_boundary(obs, True, _neutral())
+    assert r["status"] == "NO_VERDICT" and "environment" in r["reason"]
+
+
+def test_tap_availability_blocks_without_oracle_and_on_vanilla_build():
+    assert aud.tap_availability({"available": False})["status"] == "BLOCKED"
+    van = {"available": True, "identity": {"buildinfo": {}}}
+    r = aud.tap_availability(van)
+    assert r["status"] == "BLOCKED" and "vanilla" in r["reason"]
+    ok = {"available": True, "identity": {"buildinfo": {
+        "effect_tap": {"patch_sha256": PATCH}}}}
+    assert aud.tap_availability(ok)["status"] == "AVAILABLE"
+
+
+# --- inventory-derived expectation (Judge point 3) ------------------------
+FX = "run_fx_model.py"
+DEXIE = aud.RUNNERS[FX]["carriers"][0]
+METALLIC = aud.RUNNERS[FX]["carriers"][1]
+# A synthetic sidecar render with 3 audio + 2 tail blocks (the audit derives
+# the counts from it exactly as from a committed one).
+SMALL_SC = {"render": {"sample_rate": 48000, "block_size": 32,
+                       "frames": 5 * 32, "tail_s": 64 / 48000.0}}
+
+
+def _fixture(runner, carrier):
+    return committed(os.path.join(aud.RUNNERS[runner]["report"], "fixtures",
+                                  "%s__%s.json" % (carrier["slug"],
+                                                   carrier["seq"])))
+
+
+def test_expected_instances_come_from_the_inventory():
+    assert aud.expected_tap_instances(FX, DEXIE, _fixture(FX, DEXIE)) == [
+        {"slot": 0, "scene": "A", "chain_position": 0,
+         "effect_type": "delay", "channels": 2}]
+    # metallic carries two Delay instances: both are expected, separately
+    assert [i["slot"] for i in aud.expected_tap_instances(
+        FX, METALLIC, _fixture(FX, METALLIC))] == [0, 4]
+    rv = "run_reverb2_model.py"
+    car = aud.RUNNERS[rv]["carriers"][0]
+    assert aud.expected_tap_instances(rv, car, _fixture(rv, car))[0][
+        "slot"] == _fixture(rv, car)["reverb2_slots"][0]
+    assert aud.expected_tap_blocks(_fixture(FX, DEXIE)) == {
+        "audio_blocks": 4800, "tail_blocks": 3750}
+    assert aud.expected_tap_blocks(SMALL_SC) == {"audio_blocks": 3,
+                                                 "tail_blocks": 2}
+
+
+@pytest.mark.parametrize("chain", ["delay(0)", "ains: delay0",
+                                   "sends: delay(0)", "ains: eq(0)", ""])
+def test_unparseable_or_inconsistent_inventory_is_refused(chain):
+    with pytest.raises(aud.AuditRefused):
+        aud.expected_tap_instances(FX, dict(DEXIE, chain=chain), {})
+
+
+CARRIER = DEXIE
+TAP_ORACLE = {"available": True, "identity": {"buildinfo": {
+    "effect_tap": dict(TAP)}}}
+A0_OK = {"status": "MEASURED", "all_buses_repeatable": True}
+
+
+def test_observe_without_tap_is_blocked_never_pass():
+    r = aud.observe_effect_input(CARRIER, {"available": False})
+    assert r["status"] == "BLOCKED" and r["coverage"] == "none"
+    r = aud.observe_effect_input(CARRIER, TAP_ORACLE)
+    assert r["status"] == "NOT_RUN"
+
+
+def _bundle(slots=(0,), **kw):
+    b = {"neutrality": NEUTRAL,
+         "instances": {str(s): {"2": _obs(2, slot=s), "375": _obs(375,
+                                                                  slot=s)}
+                       for s in slots}}
+    b.update(kw)
+    return b
+
+
+def _observe(bundle, carrier=CARRIER, a0=A0_OK, env=ENV, sidecar=SMALL_SC):
+    return aud.observe_effect_input(carrier, TAP_ORACLE, bundle, runner=FX,
+                                    sidecar=sidecar, a0=a0, host_env=env)
+
+
+def test_observe_valid_bundle_is_measured_and_refusals_are_no_verdict():
+    r = _observe(_bundle())
+    assert r["status"] == "MEASURED"
+    assert r["inference"]["per_instance"]["0"]["boundary"] == "ZERO"
+    assert "not a repeatability measurement of the tap capture" in \
+        r["repeatability_source"]
+    bad = _bundle(neutrality=dict(NEUTRAL, tap_off_sha256=_h("9")))
+    r = _observe(bad)
+    assert r["status"] == "NO_VERDICT" and "neutrality" in r["reason"]
+    trunc = _bundle()
+    trunc["instances"]["0"]["375"]["blocks"].pop()
+    assert _observe(trunc)["status"] == "NO_VERDICT"
+
+
+def test_observe_refuses_observations_from_other_tap_patches():
+    # Judge point 2 probe: oracle tap patch "e"; observations stamped with
+    # OTHER (settle 2) and OTHER2 (settle 375) must not give MEASURED/ZERO.
+    b = _bundle()
+    b["instances"]["0"]["2"]["build"]["patch_sha256"] = _h("OTHER")
+    b["instances"]["0"]["375"]["build"]["patch_sha256"] = _h("OTHER2")
+    r = _observe(b)
+    assert r["status"] == "NO_VERDICT" and "wrong tap build" in r["reason"]
+
+
+def test_observe_refuses_self_attested_expectation_and_wrong_slot():
+    # Judge point 3 probe: a bundle that declares slot 3 and observes slot 3.
+    b = _bundle(slots=(3,), expect=dict(EXP, slot=3))
+    r = _observe(b)
+    assert r["status"] == "NO_VERDICT" and "self-attests" in r["reason"]
+    b = _bundle(slots=(3,))
+    r = _observe(b)
+    assert r["status"] == "NO_VERDICT" and "inventory slots" in r["reason"]
+
+
+def test_observe_requires_every_instance_of_the_inventory():
+    r = _observe(_bundle(slots=(0,)), carrier=METALLIC)
+    assert r["status"] == "NO_VERDICT" and "missing or extra" in r["reason"]
+    r = _observe(_bundle(slots=(0, 4)), carrier=METALLIC)
+    assert r["status"] == "MEASURED"
+    assert sorted(r["inference"]["per_instance"]) == ["0", "4"]
+
+
+def test_observe_without_inventory_is_refused():
+    r = aud.observe_effect_input(CARRIER, TAP_ORACLE, _bundle(), a0=A0_OK,
+                                 host_env=ENV)
+    assert r["status"] == "NO_VERDICT" and "inventory" in r["reason"]
+
+
+@pytest.mark.parametrize("a0", [
+    None, {"status": "NOT_RUN"},
+    {"status": "MEASURED", "all_buses_repeatable": False}])
+def test_observe_repeatability_comes_from_the_audits_own_a0(a0):
+    # Judge point 4: no bundle field can supply "repeatable".
+    r = _observe(_bundle(), a0=a0)
+    assert r["status"] == "NO_VERDICT"
+    r = _observe(_bundle(repeatable=True), a0=a0)
+    assert r["status"] == "NO_VERDICT" and "self-attests" in r["reason"]
+
+
+def test_observe_refuses_capture_from_another_environment_than_a0():
+    r = _observe(_bundle(), env={"platform": "host-p", "machine": "host-m"})
+    assert r["status"] == "NO_VERDICT"
+    assert "repeatability is unverifiable" in r["reason"]
+
+
+def test_leg_e_does_not_change_the_row_decision(monkeypatch):
+    base = chorus_baseline_metrics()
+    c = stub_c(base, failing_copy(base), 375, 0)
+    monkeypatch.setattr(aud, "live_ab_factory", lambda *_a, **_k: {
+        "source": "test",
+        "A0_repeatability": {"status": "MEASURED",
+                             "all_buses_repeatable": True},
+        "A": {"status": "MEASURED", "byte_identical": True},
+        "A_early": {"status": "MEASURED", "byte_identical": False},
+        "B": {"status": "MEASURED", "byte_identical": True}})
+    row = aud.audit_row(CHORUS, CHORUS_CARRIER, "/nonexistent",
+                        {"available": True}, surgepy=object(),
+                        c_runner=lambda *_a, **_k: c)
+    assert row["status"] == "NO_VERDICT"
+    assert row["E_effect_input_observation"]["status"] == "BLOCKED"

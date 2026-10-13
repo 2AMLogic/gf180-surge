@@ -57,6 +57,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import subprocess
 import sys
 import tempfile
@@ -1543,7 +1544,7 @@ def attribute_a_early(ae):
 
 
 def audit_row(runner, carrier, work_root, oracle, surgepy=None,
-              c_runner=offline_c):
+              c_runner=offline_c, tap_bundle=None):
     d = RUNNERS[runner]
     prod = resolve_preroll(runner)
     sc_path = os.path.join(REPO, d["report"], "fixtures",
@@ -1720,6 +1721,10 @@ def audit_row(runner, carrier, work_root, oracle, surgepy=None,
                       "no pre-roll is chosen by score."
                       % (v1["runner_verdict_under_v1"],
                          ae.get("attribution", "n/a"))}
+    # --- E (#372): effect-input-only observation, recorded beside A/B -----
+    row["E_effect_input_observation"] = observe_effect_input(
+        carrier, oracle, tap_bundle, runner=runner, sidecar=sidecar,
+        a0=row["A0_repeatability"])
     row["status"] = vstat
     row["coverage"] = ("A,B,C" if ab_status == "MEASURED" else "C only")
     if row["D_settle_tracking"]["status"] == "MEASURED":
@@ -1889,6 +1894,490 @@ def escalation(vstat, baseline, c, declared, src=None):
             "reason": "the runner's pre-roll is measured wrong; both numbers "
                       "are retained here and the committed record is NOT "
                       "replaced by this audit"}
+
+
+# --------------------------------------------------------------------------
+# Leg E (#372): effect-INPUT-only observation (paired per-instance taps)
+# --------------------------------------------------------------------------
+#
+# Why: for SXT-023 Delay/EQ, Chorus and Reverb 2 invariance A differs because
+# the synth output feeding the effect also moves during the silent settle, so
+# A cannot be attributed to the effect (`attribute_a_early`). Leg E observes,
+# per effect instance, the effect's own input and output with block indices
+# and processing-call activity, from initialisation through settle, note
+# sequence and tail. The tap is an external observation-only patch of the
+# pinned engine (decision-records/0020); nothing Surge-derived is committed
+# here. This section only VALIDATES and INTERPRETS the tap records.
+#
+# Inference rule (defined before C is graded; never reads C or any score):
+#   0. refuse a bundle with bad provenance / identity / order / truncation /
+#      failed neutrality (AuditRefused -> NO_VERDICT). The expected instance
+#      identity (slot, scene, chain position, effect type, channels) and the
+#      expected block counts come from THIS audit's inventory (`RUNNERS`
+#      carrier chain + the committed fixture sidecar), never from the bundle,
+#      and every one of them is mandatory. Every observation's build identity
+#      (engine pin, manifest submodule digest, tap patch sha256) must equal
+#      the oracle's BUILDINFO tap identity and be equal across settle
+#      lengths; the neutrality record must carry that same build identity
+#      and the same environment as the observations.
+#   1. "repeatable" is THIS audit's own A0 leg on the tap-capable oracle that
+#      ran it (never a bundle field), and is only accepted for a capture whose
+#      environment (platform, machine) equals the host that measured A0;
+#      otherwise NO_VERDICT. A0 is wet-bus repeatability; it is NOT a
+#      repeatability measurement of the tap capture itself (scope note in
+#      decision-records/0020).
+#   2. the settle input of every observation must be bit-silent, checked
+#      against the data: every settle-block input hash must equal
+#      TAP_SILENT_BLOCK_SHA256 (the `in_silent` flag must agree with the hash
+#      on every block); else NO_VERDICT.
+#   3. the effect INPUT hashes must be identical across the observed settle
+#      lengths over EVERY window whose output is graded (audio and tail);
+#      else NO_VERDICT "INPUT_DIFFERS" (the synth confound survives; the
+#      native signal path is NOT altered to force equality -- controlled
+#      replay would be a separately identified diagnostic).
+#   4. with identical inputs: identical audio+tail OUTPUT hashes and no
+#      processing call during the settle -> ZERO (effect did not advance);
+#      identical outputs although it processed silence -> ZERO_OUTPUT_ONLY
+#      (output invariance only, not every internal state variable);
+#      different outputs while it processed the settle -> NONZERO (the
+#      effect advances; the boundary is the settle length); different outputs
+#      without any settle processing -> NO_VERDICT (contradictory record).
+#   5. the settle lengths must include the early (2) and the fixture (375)
+#      settle, so A_early's early-convergence case is distinguishable from
+#      absence of advancement; otherwise NOT_MEASURED.
+#   6. per-instance: every expected instance of the leaf's effect (e.g. both
+#      Delay slots of `metallic`) is inferred separately; the row is only
+#      MEASURED when every instance is RESOLVED.
+
+TAP_SCHEMA = "sxt372-effect-tap-v1"
+TAP_PHASES = ("init", "settle", "audio", "tail")
+E_REQUIRED_SETTLES = (EARLY_SETTLE_BLOCKS, SETTLE_BLOCKS_FIXTURE)
+TAP_CHANNELS = 2
+# Schema definition of a block hash: sha256 over the block's effect input
+# (resp. output) as BLOCK frames x TAP_CHANNELS little-endian float32,
+# channel-major (L block then R block). A bit-silent block is all-zero bytes.
+TAP_SILENT_BLOCK_SHA256 = hashlib.sha256(
+    bytes(BLOCK * TAP_CHANNELS * 4)).hexdigest()
+# Surge XT FX slot numbering (16 slots) -> chain group, its scene, and the
+# processing position of each slot inside its group.
+FX_SLOT_GROUPS = {"ains": ("A", (0, 1, 8, 9)),
+                  "bins": ("B", (2, 3, 10, 11)),
+                  "sends": ("global", (4, 5, 12, 13)),
+                  "globals": ("global", (6, 7, 14, 15))}
+# The effect a leaf grades, as named in the RUNNERS carrier chains.
+LEAF_TAP_EFFECT = {"SXT-023 (fx:Delay)": "delay",
+                   "SXT-023 (fx:EQ)": "eq",
+                   "SXT-028c (fx:Chorus)": "chorus",
+                   "SXT-028g (fx:Phaser)": "phaser",
+                   "SXT-028f (fx:Reverb 2)": "reverb2",
+                   "SXT-028e-sse (fx:Distortion, SSE models)": "distortion"}
+TAP_EXPECT_KEYS = ("settle_blocks", "slot", "scene", "chain_position",
+                   "effect_type", "channels", "audio_blocks", "tail_blocks")
+TAP_BUILD_KEYS = ("engine_commit", "submodules_sha256", "patch_sha256")
+# Bundle fields this audit derives itself and refuses to take on trust.
+TAP_SELF_ATTESTED = ("expect", "repeatable")
+_HEX64 = frozenset("0123456789abcdef")
+_CHAIN_ITEM = re.compile(r"\s*([a-z0-9]+)\((\d+)\)(?:\s+--.*)?\s*")
+
+
+def _is_sha(x):
+    return isinstance(x, str) and len(x) == 64 and set(x) <= _HEX64
+
+
+def manifest_submodules_sha256():
+    """Digest of oracle/manifest.json `submodules` (the same definition as
+    environment()['engine_submodules_sha256'])."""
+    m = json.load(open(os.path.join(REPO, "oracle", "manifest.json")))
+    return hashlib.sha256(json.dumps(m.get("submodules"),
+                                     sort_keys=True).encode()).hexdigest()
+
+
+def slot_identity(slot):
+    """(group, scene, chain_position) of a Surge XT FX slot index."""
+    for group, (scene, slots) in FX_SLOT_GROUPS.items():
+        if slot in slots:
+            return group, scene, slots.index(slot)
+    raise AuditRefused("FX slot %r is not one of the %d Surge XT slots"
+                       % (slot, FX_SLOTS))
+
+
+def expected_tap_instances(runner, carrier, sidecar):
+    """Every instance of the leaf's effect in this carrier, from the audit's
+    own inventory (RUNNERS chain; for Reverb 2 the sidecar's
+    `reverb2_slots`). Refuses if none can be derived."""
+    eff = LEAF_TAP_EFFECT.get(carrier.get("leaf"))
+    if eff is None:
+        raise AuditRefused("leaf %r names no tap effect type"
+                           % carrier.get("leaf"))
+    found = []
+    if runner == "run_reverb2_model.py":
+        slots = sidecar.get("reverb2_slots")
+        if not isinstance(slots, list) or not slots \
+                or not all(isinstance(s, int) for s in slots):
+            raise AuditRefused("sidecar declares no reverb2_slots")
+        found = [(slot_identity(s)[0], s) for s in slots]
+    else:
+        for part in (carrier.get("chain") or "").split(";"):
+            group, sep, items = part.partition(":")
+            group = group.strip()
+            if not sep or group not in FX_SLOT_GROUPS:
+                raise AuditRefused("carrier chain %r is not a parseable "
+                                   "slot inventory" % carrier.get("chain"))
+            for it in items.split(","):
+                m = _CHAIN_ITEM.fullmatch(it)
+                if not m:
+                    raise AuditRefused("carrier chain item %r is not "
+                                       "name(slot)" % it)
+                if m.group(1) == eff:
+                    found.append((group, int(m.group(2))))
+    out = []
+    for group, s in found:
+        g, scene, pos = slot_identity(s)
+        if g != group:
+            raise AuditRefused("chain names slot %d under %s, but it is a "
+                               "%s slot" % (s, group, g))
+        out.append({"slot": s, "scene": scene, "chain_position": pos,
+                    "effect_type": eff, "channels": TAP_CHANNELS})
+    if not out:
+        raise AuditRefused("the inventory names no %s instance for %s"
+                           % (eff, carrier.get("slug")))
+    if len({i["slot"] for i in out}) != len(out):
+        raise AuditRefused("duplicate slot in the carrier inventory")
+    return out
+
+
+def expected_tap_blocks(sidecar):
+    """audio/tail block counts of the committed fixture render
+    (fixtures/render_fixture.py: frames = last event + tail_s, whole
+    blocks; the audio window ends at the last event)."""
+    r = sidecar.get("render") or {}
+    bs, frames, tail_s = r.get("block_size"), r.get("frames"), r.get("tail_s")
+    if r.get("sample_rate") != SR or bs != BLOCK \
+            or not isinstance(frames, int) or tail_s is None:
+        raise AuditRefused("sidecar render lacks %d Hz / block %d / frames "
+                           "/ tail_s: %r" % (SR, BLOCK, r))
+    total = -(-frames // bs)
+    audio = -(-(frames - int(float(tail_s) * SR)) // bs)
+    if audio < 1 or audio > total:
+        raise AuditRefused("sidecar render has no audio window: %r" % r)
+    return {"audio_blocks": audio, "tail_blocks": total - audio}
+
+
+def tap_availability(oracle):
+    """Is a tap-capable pinned oracle present? Fail-closed (never PASS).
+
+    A vanilla prebuilt is not proof that source-level taps exist: the oracle
+    identity must carry an explicit tap patch identity.
+    """
+    if not (oracle and oracle.get("available")):
+        return {"status": "BLOCKED", "reason": ORACLE_DEPENDENCY}
+    bi = ((oracle.get("identity") or {}).get("buildinfo") or {})
+    tap = bi.get("effect_tap")
+    if not isinstance(tap, dict) or not _is_sha(tap.get("patch_sha256")):
+        return {"status": "BLOCKED", "reason": (
+            "oracle present but its BUILDINFO names no effect_tap patch "
+            "identity (a vanilla build is not an observation build; "
+            "decision-records/0020)")}
+    return {"status": "AVAILABLE", "effect_tap": tap}
+
+
+def _check_build(b, tap_identity, what):
+    if not isinstance(b, dict):
+        raise AuditRefused("%s carries no build identity" % what)
+    if b.get("engine_commit") != ENGINE_PIN:
+        raise AuditRefused("%s engine_commit %r is not the pin"
+                           % (what, b.get("engine_commit")))
+    if not _is_sha(b.get("submodules_sha256")) \
+            or b["submodules_sha256"] != manifest_submodules_sha256():
+        raise AuditRefused("%s submodules_sha256 %r is not the "
+                           "oracle/manifest.json submodule pin"
+                           % (what, b.get("submodules_sha256")))
+    if not _is_sha(b.get("patch_sha256")):
+        raise AuditRefused("%s carries no patch sha256 (baseline-only/"
+                           "wrong-tap build refused)" % what)
+    want = (tap_identity or {}).get("patch_sha256")
+    if not _is_sha(want) or b["patch_sha256"] != want:
+        raise AuditRefused("%s patch_sha256 %s != oracle BUILDINFO "
+                           "effect_tap patch %r (wrong tap build)"
+                           % (what, b["patch_sha256"], want))
+
+
+def _check_env(env, what):
+    if not isinstance(env, dict) or not env.get("platform") \
+            or not env.get("machine"):
+        raise AuditRefused("%s names no environment (platform, machine)"
+                           % what)
+
+
+def validate_tap_neutrality(n, tap_identity):
+    """Both neutrality comparisons must be bit-identical in ONE environment
+    and ONE build: tap-on vs tap-off in the patched build, and patched-off
+    vs unpatched. The record must name the build (the oracle's tap identity)
+    and environment it was measured in."""
+    keys = ("tap_on_sha256", "tap_off_sha256", "patched_off_sha256",
+            "unpatched_sha256", "environment", "build")
+    if not isinstance(n, dict) or any(k not in n for k in keys):
+        raise AuditRefused("neutrality record missing one of %s" % (keys,))
+    for k in keys[:4]:
+        if not _is_sha(n[k]):
+            raise AuditRefused("neutrality %s is not a sha256" % k)
+    _check_env(n["environment"], "neutrality record")
+    _check_build(n["build"], tap_identity, "neutrality record")
+    if n["tap_on_sha256"] != n["tap_off_sha256"]:
+        raise AuditRefused("neutrality FAILED: tap-on differs from tap-off")
+    if n["patched_off_sha256"] != n["unpatched_sha256"]:
+        raise AuditRefused("neutrality FAILED: patched-off differs from "
+                           "unpatched")
+    return {"status": "PASS", "environment": dict(n["environment"]),
+            "build": {k: n["build"][k] for k in TAP_BUILD_KEYS},
+            "sha256": n["tap_on_sha256"]}
+
+
+def validate_tap_observation(obs, expect, tap_identity):
+    """Refuse a malformed / mis-identified / truncated / reordered tap record.
+
+    `expect` is the audit-derived expectation (TAP_EXPECT_KEYS, all
+    mandatory); `tap_identity` is the oracle BUILDINFO `effect_tap`.
+    """
+    missing = [k for k in TAP_EXPECT_KEYS if k not in (expect or {})]
+    if missing:
+        raise AuditRefused("audit expectation lacks %s (identity and block "
+                           "counts are mandatory)" % missing)
+    if not isinstance(obs, dict) or obs.get("schema") != TAP_SCHEMA:
+        raise AuditRefused("tap record is not schema %s" % TAP_SCHEMA)
+    b = obs.get("build") or {}
+    _check_build(b, tap_identity, "tap build")
+    if b.get("sample_rate") != SR:
+        raise AuditRefused("tap build is not %d Hz (got %r)"
+                           % (SR, b.get("sample_rate")))
+    if b.get("tap_enabled") is not True:
+        raise AuditRefused("tap record from a tap-disabled build")
+    _check_env(obs.get("environment"), "tap record")
+    inst = obs.get("instance") or {}
+    for k in ("slot", "scene", "chain_position", "effect_type", "channels"):
+        if k not in inst:
+            raise AuditRefused("instance identity lacks %s" % k)
+        if inst[k] != expect[k]:
+            raise AuditRefused("instance %s %r != expected %r (wrong "
+                               "slot/instance)" % (k, inst[k], expect[k]))
+    blocks = obs.get("blocks")
+    if not isinstance(blocks, list) or not blocks:
+        raise AuditRefused("tap record has no blocks")
+    seen_phase = -1
+    for i, r in enumerate(blocks):
+        if not isinstance(r, dict) or r.get("block") != i:
+            raise AuditRefused("tap block %d out of order/missing (got %r)"
+                               % (i, r.get("block")
+                                  if isinstance(r, dict) else r))
+        if r.get("phase") not in TAP_PHASES:
+            raise AuditRefused("block %d has unknown phase %r"
+                               % (i, r.get("phase")))
+        p = TAP_PHASES.index(r["phase"])
+        if p < seen_phase:
+            raise AuditRefused("block %d phase %s is out of order"
+                               % (i, r["phase"]))
+        seen_phase = p
+        if not (_is_sha(r.get("in_sha256")) and _is_sha(r.get("out_sha256"))):
+            raise AuditRefused("block %d lacks a paired input/output hash"
+                               % i)
+        if not isinstance(r.get("processed"), bool) \
+                or not isinstance(r.get("in_silent"), bool):
+            raise AuditRefused("block %d lacks processing/silence flags" % i)
+        if r["in_silent"] != (r["in_sha256"] == TAP_SILENT_BLOCK_SHA256):
+            raise AuditRefused("block %d in_silent=%s contradicts its input "
+                               "hash (silent block hash %s)"
+                               % (i, r["in_silent"],
+                                  TAP_SILENT_BLOCK_SHA256))
+    count = {ph: sum(1 for r in blocks if r["phase"] == ph)
+             for ph in TAP_PHASES}
+    if count["init"] < 1:
+        raise AuditRefused("no init observation: zero and nonzero "
+                           "boundaries cannot be distinguished")
+    for ph, key in (("settle", "settle_blocks"), ("audio", "audio_blocks"),
+                    ("tail", "tail_blocks")):
+        if count[ph] != expect[key]:
+            raise AuditRefused("%s blocks %d != %d (truncated or wrong "
+                               "window)" % (ph, count[ph], expect[key]))
+    if count["audio"] < 1:
+        raise AuditRefused("no audio-window blocks")
+    return obs
+
+
+def _window(obs, phase, key):
+    return [r[key] for r in obs["blocks"] if r["phase"] == phase]
+
+
+GRADED_WINDOWS = ("audio", "tail")
+
+
+def infer_effect_boundary(observations, repeatable, neutrality):
+    """Independent boundary inference from validated tap observations of ONE
+    effect instance.
+
+    `observations` = {settle_blocks: validated record}; `repeatable` is the
+    audit's own A0 reading. Returns {"status", "reason",
+    "declared_preroll_blocks", "scope"}; reads no C.
+    """
+    def nv(why):
+        return {"status": "NO_VERDICT", "declared_preroll_blocks": None,
+                "reason": why}
+    if repeatable is not True:
+        return nv("A0 not measured repeatable: no identity reading")
+    if not neutrality or neutrality.get("status") != "PASS":
+        return nv("tap neutrality not PASS: the observation is not shown to "
+                  "leave the output unchanged")
+    missing = [n for n in E_REQUIRED_SETTLES if n not in observations]
+    if missing:
+        return {"status": "NOT_MEASURED", "declared_preroll_blocks": None,
+                "reason": "settle lengths %s not observed: early "
+                          "convergence cannot be told from no advancement"
+                          % missing}
+    ref = observations[SETTLE_BLOCKS_FIXTURE]
+    for n, o in sorted(observations.items()):
+        if {k: o["build"].get(k) for k in TAP_BUILD_KEYS} \
+                != neutrality.get("build"):
+            return nv("settle %d: observation build identity differs from "
+                      "the neutrality record's build (or across settle "
+                      "lengths)" % n)
+        if o.get("environment") != neutrality.get("environment"):
+            return nv("settle %d: observation environment differs from the "
+                      "neutrality record's environment" % n)
+        if not all(r["in_sha256"] == TAP_SILENT_BLOCK_SHA256
+                   for r in o["blocks"] if r["phase"] == "settle"):
+            return nv("settle %d: the effect input is not bit-silent during "
+                      "the settle (input hash != silent block hash)" % n)
+        for w in GRADED_WINDOWS:
+            if _window(o, w, "in_sha256") != _window(ref, w, "in_sha256"):
+                return nv("INPUT_DIFFERS: the effect input in the %s window "
+                          "differs between settle %d and %d; the synth "
+                          "confound survives and the effect boundary is "
+                          "unidentifiable by this method (native path not "
+                          "altered to force equality)"
+                          % (w, n, SETTLE_BLOCKS_FIXTURE))
+    outs_same = all(_window(o, w, "out_sha256") == _window(ref, w,
+                                                           "out_sha256")
+                    for o in observations.values() for w in GRADED_WINDOWS)
+    processed = any(r["processed"] for o in observations.values()
+                    for r in o["blocks"] if r["phase"] == "settle")
+    if outs_same and not processed:
+        return {"status": "RESOLVED", "boundary": "ZERO",
+                "declared_preroll_blocks": 0, "scope": "state",
+                "reason": "effect input identical (audio and tail), no "
+                          "processing call during the settle: the effect "
+                          "starts the audio in its init state"}
+    if outs_same:
+        return {"status": "RESOLVED", "boundary": "ZERO_OUTPUT_ONLY",
+                "declared_preroll_blocks": 0, "scope": "output",
+                "reason": "effect processed the silent settle but the "
+                          "wet output is identical for every settle: "
+                          "output invariance only, not every internal "
+                          "state variable"}
+    if processed:
+        return {"status": "RESOLVED", "boundary": "NONZERO",
+                "declared_preroll_blocks": SETTLE_BLOCKS_FIXTURE,
+                "scope": "output",
+                "reason": "identical effect input (audio and tail), "
+                          "differing wet output, and the effect processed "
+                          "the settle: it advances; boundary = the fixture "
+                          "settle"}
+    return nv("output differs with identical input but the effect was never "
+              "processed during the settle: contradictory record")
+
+
+def host_environment():
+    return {"platform": platform.platform(), "machine": platform.machine()}
+
+
+def a0_repeatable(a0):
+    """The audit's own A0 reading (True only if measured and repeatable)."""
+    return bool(a0 and a0.get("status") == "MEASURED"
+                and a0.get("all_buses_repeatable") is True)
+
+
+def observe_effect_input(carrier, oracle, bundle=None, runner=None,
+                         sidecar=None, a0=None, host_env=None):
+    """Adapter: leg E for one carrier row. Never alters the A0/A/A_early/B
+    decision; it is recorded beside it.
+
+    `bundle` is an externally produced JSON {"neutrality", "instances":
+    {slot: {settle: record}}} (the engine tap and its capture are external,
+    decision-records/0020). The expected identity / block counts come from
+    `runner`+`carrier`+`sidecar` (this audit's inventory) and repeatability
+    from `a0` (this audit's own A0 leg); a bundle that self-attests either is
+    refused. No bundle / no tap-capable oracle -> BLOCKED/NOT_RUN with the
+    exact reason, never PASS.
+    """
+    base = {"carrier": carrier["slug"], "sequence": carrier["seq"],
+            "inference_rule": "audit_effect_settle_boundaries.py "
+                              "(Leg E rule, before C is graded)"}
+    avail = tap_availability(oracle)
+    if avail["status"] != "AVAILABLE":
+        return dict(base, **avail, coverage="none")
+    if bundle is None:
+        return dict(base, status="NOT_RUN", coverage="none",
+                    reason="tap-capable oracle present but no capture "
+                           "bundle supplied for this carrier")
+    tap = avail["effect_tap"]
+    host_env = host_env or host_environment()
+    try:
+        if runner is None or sidecar is None:
+            raise AuditRefused("no audit inventory (runner + committed "
+                               "fixture sidecar) to derive the expected "
+                               "instance identity and block counts from")
+        insts = expected_tap_instances(runner, carrier, sidecar)
+        blocks = expected_tap_blocks(sidecar)
+        if not isinstance(bundle, dict):
+            raise AuditRefused("capture bundle is not an object")
+        for k in TAP_SELF_ATTESTED:
+            if k in bundle:
+                raise AuditRefused("bundle self-attests %r; this audit "
+                                   "derives it and does not accept it" % k)
+        neutrality = validate_tap_neutrality(bundle.get("neutrality"), tap)
+        got = bundle.get("instances")
+        if not isinstance(got, dict):
+            raise AuditRefused("bundle has no per-instance observations")
+        want = {str(i["slot"]) for i in insts}
+        if set(got) != want:
+            raise AuditRefused("bundle instances %s != inventory slots %s "
+                               "(missing or extra effect instance)"
+                               % (sorted(got), sorted(want)))
+        obs = {}
+        for i in insts:
+            per = {}
+            for n, rec in (got[str(i["slot"])] or {}).items():
+                ex = dict(i, settle_blocks=int(n), **blocks)
+                per[int(n)] = validate_tap_observation(rec, ex, tap)
+            obs[i["slot"]] = per
+    except (AuditRefused, KeyError, TypeError, ValueError,
+            AttributeError) as e:
+        return dict(base, status="NO_VERDICT", coverage="refused",
+                    reason="refused: %s" % e)
+    rep = a0_repeatable(a0)
+    rep_scope = ("A0 of this audit run (wet-bus repeatability on the "
+                 "tap-capable oracle, host %s); not a repeatability "
+                 "measurement of the tap capture itself" % host_env)
+    if rep and {k: neutrality["environment"].get(k) for k in host_env} \
+            != host_env:
+        return dict(base, status="NO_VERDICT", coverage="refused",
+                    neutrality=neutrality, repeatability_source=rep_scope,
+                    reason="refused: the capture environment %s is not the "
+                           "host that measured A0 %s; repeatability is "
+                           "unverifiable for this capture"
+                           % (neutrality["environment"], host_env))
+    per = {str(s): infer_effect_boundary(o, rep, neutrality)
+           for s, o in sorted(obs.items())}
+    sts = {v["status"] for v in per.values()}
+    st = ("NO_VERDICT" if "NO_VERDICT" in sts else
+          "NOT_RUN" if "NOT_MEASURED" in sts else "MEASURED")
+    inf = {"status": "RESOLVED" if st == "MEASURED" else st,
+           "per_instance": per,
+           "declared_preroll_blocks": (
+               max(v["declared_preroll_blocks"] for v in per.values())
+               if st == "MEASURED" else None)}
+    return dict(base, neutrality=neutrality, inference=inf, status=st,
+                repeatability_source=rep_scope,
+                coverage="E (instances %s; settle lengths %s)"
+                % (sorted(per), sorted({n for o in obs.values() for n in o})))
 
 
 # --------------------------------------------------------------------------
