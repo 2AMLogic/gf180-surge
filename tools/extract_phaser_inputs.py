@@ -97,6 +97,16 @@ REV1_PARAM_IDS = ["predelay", "shape", "roomsize", "decaytime", "damping",
 # Queued is not extracted and not a pass: the oracle-dependent gates
 # (mod_wave, drift, retrigger, stages range, temposync cross-check, blob
 # re-verification against the engine checkout) run only on an oracle host.
+# #426 drift-screen declaration (SXT-028g carrier eligibility). `squelch` is
+# declared here but is expected to be REFUSED by the fail-closed per-scene drift
+# gate in extract() on an oracle host: the read-only historical measurement
+# (reports/SXT-028l/artifacts/same-class-carrier-screen.json) recorded scene A
+# drift 0.1875. That number is NOT fresh evidence. The shape-preserving
+# screen of every same-shape candidate is tools/screen_phaser_carriers.py
+# (record: reports/SXT-028g/artifacts/carrier-drift-screen.json; NOT_RUN until
+# run on the pinned oracle). Any drift-0 replacement it selects is a labeled
+# ADDITION, never a silent substitution, and is not added to PRESETS by the
+# screen itself. The drift gate is not relaxed.
 PRESETS = {
     "phasey": "resources/data/patches_factory/Polysynths/Phasey.fxp",
     "squelch": "resources/data/patches_factory/Leads/Squelch.fxp",
