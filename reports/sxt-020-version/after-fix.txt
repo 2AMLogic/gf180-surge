@@ -1,0 +1,7 @@
+binary-major-99 1 ['FAIL image/parse — version: unsupported binary format version 99.1 (supported 1.1 only; no backward compatibility)', 'FAIL: 1 checks, 1 failed']
+binary-minor-99 1 ['FAIL image/parse — version: unsupported binary format version 1.99 (supported 1.1 only; no backward compatibility)', 'FAIL: 1 checks, 1 failed']
+binary-minor-0-vs-header-1 1 ['FAIL image/parse — version: unsupported binary format version 1.0 (supported 1.1 only; no backward compatibility)', 'FAIL: 1 checks, 1 failed']
+header-format-major-99 1 ['FAIL image/parse — version: header format_major 99 contradicts binary major 1', 'FAIL: 1 checks, 1 failed']
+header-format-minor-99 1 ['FAIL image/parse — version: header format_minor 99 contradicts binary minor 1', 'FAIL: 1 checks, 1 failed']
+header-format-minor-0-vs-binary-1 1 ['FAIL image/parse — version: header format_minor 0 contradicts binary minor 1', 'FAIL: 1 checks, 1 failed']
+header-format-major-str 1 ["FAIL image/parse — version: header format_major '1' contradicts binary major 1", 'FAIL: 1 checks, 1 failed']

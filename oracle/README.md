@@ -36,6 +36,28 @@ oracle/capture_first_note.py
 Environment overrides: `ORACLE_SURGE_DIR`, `ORACLE_MANIFEST`,
 `ORACLE_PYTHON`, `ORACLE_BUILD_DIR`, `ORACLE_JOBS` (see `fetch-and-build.sh`).
 
+### Binding resolution and provenance (#436)
+
+`oracle_common.import_surgepy()` no longer relies on `sys.path`. It loads the
+native extension explicitly from `$ORACLE_SURGE_DIR/$ORACLE_BUILD_DIR_REL/src/surge-python/`
+(source build, manifest-declared Linux prebuilt, or an explicitly selected tap
+build such as `build-py311-aw49`; any platform-supported extension suffix).
+It raises `OracleBindingError` (an `ImportError`) before any engine exists if
+the directory has no native candidate, more than one, a `surgepy.py` stub, a
+candidate whose real path escapes the directory, or a candidate that fails to
+load. An already-imported `surgepy` is reused only if it was loaded by the
+extension loader from that same canonical file; a module of any other origin,
+or a changed build selection, refuses (no in-process native reload).
+This does not replace the provisioning checks in `fetch-and-build.sh`, and
+independent loaders (e.g. `tools/render_aw49_reference.py`) are not covered.
+
+`oracle_common.binding_provenance(module)` returns `module_path`,
+`module_sha256` and `build_dir` for a validated module. Only
+`capture_first_note.py` records it, as an additive top-level `oracle_binding`
+object in newly emitted `first-note.json`; older records without it stay valid
+and are never backfilled. The digest identifies the loaded binary only and is
+not proof of the engine source commit. Other metadata writers are unchanged.
+
 ### Prebuilt oracle (dispatch workers, #232)
 
 Where building is impractical (a dispatch worker, or a Builder turn), install
@@ -64,6 +86,16 @@ ORACLE_PREBUILT_URL=<private store> oracle/fetch-and-build.sh --prebuilt   # or 
 - Verified 2026-10-01 on both dispatch workers: SXT-035's
   `reference-seq-modwheel-v1` re-renders byte-identically to the committed
   WAV (sha256 `cdc6dd7b…d2002`).
+
+### LP 24 dB full-engine tap (#307, DR-0020)
+
+A separate, **externally** patched build of the same pin observes the LP24 filter
+unit (`decision-records/0020-lp24-full-engine-tap.md`). It is not the prebuilt
+above (that one is vanilla and compiled-only) and is never committed or
+distributed; the patch and tree live on the oracle host and only hashes are
+recorded (`reports/SXT-307/artifacts/tap-build-provenance.json`).
+`tools/render_lp24_tap_reference.py` needs `ORACLE_TAP_SURGEPY_DIR`,
+`ORACLE_BASE_SURGEPY_DIR` and `ORACLE_SURGE_DIR` and refuses (exit 3) without them.
 
 ## Semantics pinned by this oracle
 

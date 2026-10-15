@@ -1,0 +1,140 @@
+{
+  "applicability": {
+    "complete_wet_render_possible": false,
+    "complete_wet_render_reason": "per-slot algorithm parameter extraction and any wet-audio render require the pinned oracle (surgepy); this leaf's own routing/scheduling claims do not depend on it -- see oracle_extraction below",
+    "routing_metadata_verified": true
+  },
+  "bins1": {
+    "fx_disable_bit": false,
+    "occupied": true,
+    "return_level_consumed_by_insert_path": false,
+    "return_level_stored": 1.0,
+    "type_id": 13,
+    "type_name": "Ring Mod"
+  },
+  "bins2": {
+    "fx_disable_bit": false,
+    "occupied": false,
+    "return_level_consumed_by_insert_path": false,
+    "return_level_stored": null,
+    "type_id": 0,
+    "type_name": "Off"
+  },
+  "carrier_role": "addition",
+  "cross_check": {
+    "census_vs_graphs_drift_count": 0,
+    "engine_display_names_context": [
+      "Ring Mod"
+    ],
+    "fields_compared": [
+      "blob_sha1",
+      "fx_bypass",
+      "fx_disable",
+      "nonoff_fx_slot_count",
+      "nonoff_fx_type_set",
+      "scene_mode",
+      "stored_revision"
+    ],
+    "fx_type_name_authority": "corpus/census-v0.1/census.py FX table, applied to the graph's stored type ids (content comparison, not spelling)",
+    "values": {
+      "blob_sha1": "ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba",
+      "fx_bypass": 0,
+      "fx_disable": 0,
+      "nonoff_fx_slot_count": 1,
+      "nonoff_fx_type_set": [
+        "RingModulator"
+      ],
+      "scene_mode": "Dual",
+      "stored_revision": 22
+    }
+  },
+  "drift_eligibility": {
+    "drift_gate_eligible": true,
+    "drift_per_voicing_scene": {
+      "A": 0.0,
+      "B": 0.0
+    },
+    "non_render_eligible": false,
+    "read_back_decimals": 9,
+    "reason": null,
+    "render_eligibility": "NOT_ESTABLISHED",
+    "role": "addition",
+    "scope": "drift-gate screening condition only; necessary, never sufficient, for render eligibility",
+    "shape_id": "rf-bins12/bins1-only/scene-mode-2-fxb0-fxd0",
+    "status": "PASS",
+    "voicing_scenes": [
+      "A",
+      "B"
+    ]
+  },
+  "dual_instance_concurrent": false,
+  "leaf": "SXT-028h",
+  "oracle_extraction": {
+    "attempted": true,
+    "detail": "native load + shape read-back + per-scene drift gate observed: PASS {'A': 0.0, 'B': 0.0}",
+    "live": {
+      "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "gate_status": "PASS",
+      "live": true,
+      "record": {
+        "attempted": true,
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.0,
+            "B": 0.0
+          },
+          "scene_active": 0,
+          "scene_mode_id": 2,
+          "status": "PASS",
+          "voicing_scenes": [
+            "A",
+            "B"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "graphs_blob_sha1": "ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba",
+        "native_state": {
+          "bins1_type_id": 13,
+          "bins2_type_id": 0,
+          "fx_bypass": 0,
+          "fx_disable": 0,
+          "scene_active": 0,
+          "scene_mode_id": 2
+        },
+        "path": "resources/data/patches_3rdparty/A.Liv/Basses/808er Than 808.fxp",
+        "pinned_checkout_blob_sha1": "ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba",
+        "refusal": null,
+        "screened": true
+      }
+    },
+    "ok": true
+  },
+  "patch_level": {
+    "fx_bypass": 0,
+    "fx_bypass_name": "All FX",
+    "fx_disable_mask": 0,
+    "insert_stage_runs_in_this_mode": true
+  },
+  "preset": {
+    "bank": "contributor",
+    "census_blob_sha1_verified": "ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba",
+    "census_status": "parsed_static_only",
+    "graphs_blob_sha1_verified": "ccf42b0e8bdc1c7884b3badbd3b26c6ec4ba0aba",
+    "path": "resources/data/patches_3rdparty/A.Liv/Basses/808er Than 808.fxp",
+    "stored_revision": 22
+  },
+  "roles": [
+    "bins1",
+    "bins2"
+  ],
+  "routing_form": "rf-bins12",
+  "scene_context": {
+    "census_required_scenes": "a;b",
+    "census_scene_mode": "Dual",
+    "note": "a Single-scene patch never instantiates scene B, so its bins slots are unreachable; all carriers named by this leaf are multi-scene",
+    "scene_b_instantiated": true,
+    "scene_mode_id": 2,
+    "scene_mode_name": "Dual"
+  },
+  "schema_version": 1
+}

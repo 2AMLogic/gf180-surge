@@ -1,0 +1,53 @@
+issue #456 -- negative controls for the decay-sweep coverage gate
+
+environment: 3.13.14 / numpy 1.26.4
+tool under control: worktree tools/compare_reverb_model.py; the pre-#456 tool is loaded from git e4c25bfc5aec129c0113ce74236aa00cf32aa521:tools/compare_reverb_model.py (fixed commit, not HEAD)
+all fixtures are synthetic temp constructions; no committed report or trace is modified
+
+NC-456-A  empty trace directory
+  command : sweep --traces-dir <empty> --out-dir <out>
+  exit: 2   files written: none
+  FIRES (refused, no evidence written): True
+
+NC-456-B  one required case missing (committed set minus sweepmdecaym3)
+  command : sweep --traces-dir <6 of 7> --out-dir <out with sentinel>
+  exit: 2   sentinel intact: True   coverage file written: False
+  FIRES (refused before overwriting evidence): True
+
+NC-456-C  fully ungraded sweep (wet := dry; every check None), full declared set
+  fixture : all 7 committed sweep traces with wet := dry (the reverb-only component is exactly zero, so no agreement check is measurable anywhere)
+  new tool: exit 1  verdict 'NO_VERDICT'  coverage 'none'  cases_not_run 7
+  old tool: e4c25bfc5aec blob sha256 bf99582092e26823c7ba82490dbd4b5ea8e3cf8a0397eada126b32092ec08345
+  old tool: exit 0  aggregate all(...) over non-None values: True
+  FIRES (old tool returned success on exactly this result set; the gate does not): True
+
+NC-456-D  graded false check (reverb component +6 dB vs the prediction) -> FAIL
+  fixture : two-case subset (sweepmdecaym0, sweepmdecaymm2); wet := dry + 2 x (model reverb), i.e. the reverb-only component is +6 dB against the prediction
+  scope   : REQUIRED_SWEEP_CASES scoped to the subset in this driver process (full-set pin: tests/test_sxt024_sweep_coverage.py)
+  exit: 1  verdict 'FAIL'  checks_graded_false 2  per-case {'sweepmdecaym0': 'FAIL', 'sweepmdecaymm2': 'FAIL'}
+  FIRES (a graded false check is a FAIL, never a pass): True
+
+NC-456-E  graded EXTRA case beside a wholly ungraded required set
+  fixture : NC-456-C traces (all 7 required cases ungraded) + extra sweepmdecaym9 (wet := model prediction)
+  exit: 1  verdict 'NO_VERDICT'  coverage 'none'  extra status 'PASS'  required_checks_graded 0  checks_graded_true 1
+  FIRES (a graded extra cannot supply the agreement a PASS needs): True
+
+NC-456-F  dry input comes from the SELECTED trace directory
+  (i)  click-dry removed from the subset: exit 2  files written: none
+  (ii) true dry: exit 0  tracking mean dev {'sweepmdecaym0': 0.0002, 'sweepmdecaymm2': 0.0723}
+       -6 dB dry: exit 1  tracking mean dev {'sweepmdecaym0': 6.9567, 'sweepmdecaymm2': 34.0979}
+  FIRES (missing dry refused; a different supplied dry changes the graded result): True
+
+NC-456-G  renamed duplicate identities: the m0 case under every required filename
+  fixture : the committed m0 sidecar+wav copied under all 7 required filenames (+ the committed click-dry)
+  new tool: exit 2  prior evidence intact: True  coverage file written: False
+  old tool: exit 0 (renamed duplicates accepted as full coverage)
+  FIRES (duplicate identities refuse before overwriting evidence; the old tool passed exactly this fixture): True
+
+NC-456-H  relabelled trace/requested with the applied/engine decay left behind
+  fixture : every required name declares its own grid value as requested, but the applied override and engine readback stay at m0's (5.96e-08)
+  command : sweep --traces-dir <relabelled set> --out-dir <out with sentinel>
+  exit: 2   sentinel intact: True   coverage file written: False
+  FIRES (labels alone cannot supply an identity; refuse before overwriting evidence): True
+
+CONTROL SUITE: all controls FIRED (exit 0)

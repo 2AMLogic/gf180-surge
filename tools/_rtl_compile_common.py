@@ -523,6 +523,21 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
     return _emit_summary(summary, out, publish_error, fails)
 
 
+def record_width_error(kind, key, side, got, expected):
+    """Issue #451: name a checkpoint record whose field count is not exact.
+
+    Returns None when `len(got) == expected`, else a `SHAPE_ERROR` string
+    carrying record kind, key, which side (model/rtl), actual and expected
+    width.  Callers must then skip the record's field comparison and must not
+    count it as a complete checkpoint: a zip over a short or long row would
+    otherwise compare only a prefix and report agreement.
+    """
+    if len(got) == expected:
+        return None
+    return ("SHAPE_ERROR %s record %s (%s): width %d, expected %d"
+            % (kind, key, side, len(got), expected))
+
+
 class LeafInputError(Exception):
     """An expected input failure (unreadable/malformed model or RTL trace).
 

@@ -60,6 +60,13 @@ oc.reexec_under_pinned_python(REPO)
 import render_fx_fixtures as rfx  # noqa: E402  (SXT-023 policies inherited)
 from phaser_model import ringout_blocks  # noqa: E402
 
+# #426: `squelch` is declared but expected non-render-eligible: the historical
+# (read-only, not fresh) drift gate measured scene A 0.1875, and the extractor's
+# fail-closed per-scene drift gate refuses it. This renderer has only its own 3x
+# bit-identical repeat gate, which does not replace that drift gate. Same-shape
+# drift-0 candidates are screened by tools/screen_phaser_carriers.py;
+# replacements are labeled additions only and are NOT queued here by that
+# screen.
 PRESETS = {
     "phasey": "resources/data/patches_factory/Polysynths/Phasey.fxp",
     "squelch": "resources/data/patches_factory/Leads/Squelch.fxp",

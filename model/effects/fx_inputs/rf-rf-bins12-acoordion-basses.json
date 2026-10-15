@@ -20,6 +20,7 @@
     "type_id": 0,
     "type_name": "Off"
   },
+  "carrier_role": "original",
   "cross_check": {
     "census_vs_graphs_drift_count": 0,
     "engine_display_names_context": [
@@ -47,12 +48,66 @@
       "stored_revision": 28
     }
   },
+  "drift_eligibility": {
+    "drift_gate_eligible": false,
+    "drift_per_voicing_scene": {
+      "A": 0.41785726,
+      "B": 0.190122858
+    },
+    "non_render_eligible": true,
+    "read_back_decimals": 9,
+    "reason": "nonzero drift in a voicing scene; preserved, not removed",
+    "render_eligibility": "NOT_ESTABLISHED",
+    "role": "original",
+    "scope": "drift-gate screening condition only; necessary, never sufficient, for render eligibility",
+    "shape_id": "rf-bins12/bins1-only/scene-mode-1-fxb0-fxd0",
+    "status": "FAIL",
+    "voicing_scenes": [
+      "A",
+      "B"
+    ]
+  },
   "dual_instance_concurrent": false,
   "leaf": "SXT-028h",
   "oracle_extraction": {
     "attempted": true,
-    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
-    "ok": false
+    "detail": "native load + shape read-back + per-scene drift gate observed: FAIL {'A': 0.41785726, 'B': 0.190122858}",
+    "live": {
+      "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "gate_status": "FAIL",
+      "live": true,
+      "record": {
+        "attempted": true,
+        "determinism_gate": {
+          "drift_per_voicing_scene": {
+            "A": 0.41785726,
+            "B": 0.190122858
+          },
+          "scene_active": 0,
+          "scene_mode_id": 1,
+          "status": "FAIL",
+          "voicing_scenes": [
+            "A",
+            "B"
+          ],
+          "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+        },
+        "graphs_blob_sha1": "a765202508e7522972196640c79dfd3fbb90f292",
+        "native_state": {
+          "bins1_type_id": 6,
+          "bins2_type_id": 0,
+          "fx_bypass": 0,
+          "fx_disable": 0,
+          "scene_active": 0,
+          "scene_mode_id": 1
+        },
+        "path": "resources/data/patches_3rdparty/Aleksey Zhehanov/Keys/Acoordion Basses.fxp",
+        "pinned_checkout_blob_sha1": "a765202508e7522972196640c79dfd3fbb90f292",
+        "refusal": null,
+        "screened": true
+      }
+    },
+    "ok": true
   },
   "patch_level": {
     "fx_bypass": 0,

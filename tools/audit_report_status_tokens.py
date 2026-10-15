@@ -24,9 +24,20 @@ allowlisted as NON_VERDICT/OPEN is not endorsed as a verdict.  Non-string
 values (ints, objects) under these keys are inventoried but not judged.
 It rewrites no report and no producer tool (many are byte-frozen).
 
+Input coverage is reported separately from token agreement.  A vocabulary
+PASS requires the scan itself to have completed over at least one report.
+
+CLI convention (exit code / RESULT line):
+  PASS     exit 0: >=1 report scanned, none unreadable/malformed, allowlist
+           valid, every token canonical or allowlisted (vocabulary only).
+  FAIL     exit 1: an unreadable or malformed report, an unreadable directory,
+           an invalid allowlist, or an unlisted token.  Broken inputs are never
+           skipped; the offending paths are named.
+  NOT_RUN  exit 2: no coverage at all (reports root missing / not a directory /
+           contains no `.json` report).  Nothing was checked, so nothing passed.
+FAIL outranks NOT_RUN when both apply.
+
 Usage: audit_report_status_tokens.py [--reports DIR] [--allowlist FILE] [--json]
-Exit 0 only when the allowlist is valid and every token is canonical or
-allowlisted; 1 otherwise.
 """
 
 import argparse
@@ -117,28 +128,37 @@ def _walk(obj, path, out):
 def scan(reports_dir):
     """Yield (relpath, key, value, jsonpath) for every verdict-position key."""
     rows, unparsable = [], []
-    for root, dirs, files in os.walk(reports_dir):
+    cov = {"root": reports_dir, "root_is_dir": os.path.isdir(reports_dir),
+           "files_found": 0, "files_parsed": 0, "walk_errors": []}
+
+    def _onerr(e):
+        if cov["root_is_dir"]:   # a bad root is NOT_RUN, not a broken input
+            cov["walk_errors"].append((str(e.filename), str(e)))
+
+    for root, dirs, files in os.walk(reports_dir, onerror=_onerr):
         dirs.sort()
         for fn in sorted(files):
             if not fn.endswith(".json"):
                 continue
             p = os.path.join(root, fn)
             rel = os.path.relpath(p, reports_dir)
+            cov["files_found"] += 1
             try:
                 with open(p, encoding="utf-8") as fh:
                     doc = json.load(fh)
             except (OSError, ValueError) as e:
                 unparsable.append((rel, str(e)))
                 continue
+            cov["files_parsed"] += 1
             found = []
             _walk(doc, "", found)
             rows.extend((rel, k, v, jp) for k, v, jp in found)
-    return rows, unparsable
+    return rows, unparsable, cov
 
 
 def audit(reports_dir, allow):
     errs = validate_allowlist(allow)
-    rows, unparsable = scan(reports_dir)
+    rows, unparsable, cov = scan(reports_dir)
     inv = {}      # key -> token -> {count, class, meaning, example}
     used = set()
     nonstr = {}
@@ -165,10 +185,20 @@ def audit(reports_dir, allow):
     unused = sorted(f"{k}.{t}" for k, ents in allow.get("keys", {}).items()
                     if isinstance(ents, dict) for t in ents
                     if (k, t) not in used)
-    return {"allowlist_errors": errs, "inventory": inv, "non_string": nonstr,
+    cov["unparsable"] = len(unparsable)
+    broken = bool(unparsable or cov["walk_errors"])
+    if errs or violations or broken:
+        status = "FAIL"
+    elif cov["files_parsed"] == 0:
+        status = "NOT_RUN"
+    else:
+        status = "PASS"
+    cov["disposition"] = ("INCOMPLETE" if broken else
+                          "EMPTY" if cov["files_found"] == 0 else "COMPLETE")
+    return {"allowlist_errors": errs, "coverage": cov, "status": status, "inventory": inv, "non_string": nonstr,
             "violations": violations, "unparsable": unparsable,
             "unused_allowlist_entries": unused,
-            "ok": not errs and not violations}
+            "ok": status == "PASS"}
 
 
 def render(res):
@@ -184,6 +214,17 @@ def render(res):
             lines.append(f"  {e['count']:6d}  {e['class']:<11}{m:<16} {t[:70]!r}{dv}")
     if res["non_string"]:
         lines.append(f"non-string values (not judged): {res['non_string']}")
+    c = res["coverage"]
+    lines.append(f"coverage: root={c['root']!r} is_dir={c['root_is_dir']} "
+                 f"json_files={c['files_found']} parsed={c['files_parsed']} "
+                 f"unparsable={c['unparsable']} "
+                 f"walk_errors={len(c['walk_errors'])} -> {c['disposition']}")
+    for p, e in c["walk_errors"]:
+        lines.append(f"UNREADABLE DIRECTORY {p}: {e}")
+    if not c["root_is_dir"]:
+        lines.append("NOT_RUN: reports root is missing or not a directory")
+    elif c["files_found"] == 0:
+        lines.append("NOT_RUN: no .json reports found under the reports root")
     for p, e in res["unparsable"]:
         lines.append(f"UNPARSABLE {p}: {e}")
     for e in res["allowlist_errors"]:
@@ -193,8 +234,9 @@ def render(res):
     if res["unused_allowlist_entries"]:
         lines.append("unused allowlist entries: "
                      + ", ".join(res["unused_allowlist_entries"]))
-    lines.append("RESULT: " + ("PASS (vocabulary conformance only)" if res["ok"]
-                               else "FAIL"))
+    lines.append("RESULT: " + {
+        "PASS": "PASS (vocabulary conformance only)",
+        "FAIL": "FAIL", "NOT_RUN": "NOT_RUN (no report coverage)"}[res["status"]])
     return "\n".join(lines)
 
 
@@ -211,7 +253,7 @@ def main(argv=None):
         print(json.dumps(res, indent=2, sort_keys=True, default=list))
     else:
         print(render(res))
-    return 0 if res["ok"] else 1
+    return {"PASS": 0, "FAIL": 1, "NOT_RUN": 2}[res["status"]]
 
 
 if __name__ == "__main__":

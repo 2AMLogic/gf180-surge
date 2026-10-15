@@ -425,6 +425,43 @@ written.
   mid-render): `n_stages` is block-constant in the frozen scope;
   `set_params()` refuses a stage-count change.
 
+## 8a. Same-shape drift-0 carrier screen (#426, part of #331) — **NOT_RUN**
+
+Tooling landed; the live screen has **not** been run. No pinned Surge oracle
+host was available to the builder (`ORACLE_SURGE_DIR` absent), so
+`tools/screen_phaser_carriers.py` exits NOT_RUN (code 2) and writes nothing.
+`reports/SXT-028g/artifacts/carrier-drift-screen.json` is therefore **not
+committed**; no drift value, selection or replacement below is a measurement.
+
+* Affected original: `patches_factory/Leads/Squelch.fxp`. The historical
+  scene-A drift 0.1875 in `reports/SXT-028l/artifacts/same-class-carrier-screen.json`
+  is read-only history, not fresh evidence. The extractor's fail-closed
+  per-scene drift gate is unchanged and still refuses a nonzero drift.
+* Shape predicate (declared before screening; the screen BLOCKS if the original
+  does not satisfy it): only `ains1` occupied, hosting Phaser (fx type 3);
+  `fx_bypass` = All FX; `fx_disable` = 0; Single scene mode; scene A active.
+  The Phaser class is part of this shape (algorithm leaf).
+* Oracle-independent denominator, pinned by `expected_count` = 5 from
+  `corpus/normalized/graphs.jsonl`: `Kuniklo/Basses/Big`, `Lopyt/Bass/Wide Short
+  Bass 1`, `qb/Keys/Soft Portamento`, `qb/Leads/Arpeggio Transient`, and the
+  original `Squelch`. This is candidate enumeration only (coverage), not a
+  drift result.
+* Selection rule (applied only to live-screened drift-0 candidates): ascending
+  corpus path, original excluded; no candidate passing => `BOUNDED_GAP`, which
+  blocks only this leaf's render leg. A selected candidate is a labeled
+  ADDITION, still subject to every other extractor gate (FX-modulation screen,
+  mod_wave, retrigger, stages, temposync).
+* Declarations: the Squelch refusal and screen are documented in
+  `tools/extract_phaser_inputs.py` and `tools/render_phaser_fixtures.py`
+  (`PRESETS` unchanged).
+
+Not established: any drift verdict for any candidate, Squelch's current drift,
+replacement existence, wet fidelity, preset support, audio repeatability or RTL
+exactness. Re-run under the pinned oracle interpreter:
+`$ORACLE_PYTHON tools/screen_phaser_carriers.py`, then
+`python3 -m pytest tests/test_sxt028g.py -q`; the record-dependent tests are
+NOT_RUN (skipped) until the record is committed.
+
 ## 9. Known deviations that are *not* measured here
 
 The dominant declared deviation of this leaf is the audio **grid**: the engine

@@ -125,6 +125,7 @@ def main():
             "max_abs_diff_float": diff,
             "note": "measured, not assumed; engine RNG is not overridden by the harness",
         },
+        "oracle_binding": oc.binding_provenance(surgepy),
         "environment": json.load(open(os.path.join(repo, "oracle", "manifest.json")))["environment"],
         "peak_abs_float": peak,
     }

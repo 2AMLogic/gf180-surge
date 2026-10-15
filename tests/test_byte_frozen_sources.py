@@ -462,13 +462,13 @@ def test_control_the_prose_audit_fires_on_a_doctored_copy(doctor):
     slfo = next(e for e in reg["historical_provenance"]
                 if e["path"] == "fixtures/render_slfo_fixture.py")
     if doctor == "md_count_word":
-        mutant = doc.replace("The remaining seven stay", "The remaining six stay")
+        mutant = doc.replace("The remaining eight stay", "The remaining seven stay")
         assert mutant != doc, "the mutant did not apply"
         doc = mutant
     elif doctor == "note_count_word":
         note = reg["historical_provenance_note"]
         reg["historical_provenance_note"] = note.replace(
-            "seven of these nine", "six of these nine")
+            "eight of these ten", "seven of these ten")
         assert reg["historical_provenance_note"] != note
     elif doctor == "drop_md_caveat":
         row = doc_table_rows(doc)[slfo["path"]]

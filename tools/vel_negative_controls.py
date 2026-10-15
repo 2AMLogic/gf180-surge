@@ -180,7 +180,15 @@ def main():
         try:
             j = json.loads(out)
         except Exception:
-            j = {"verdict": "ERROR", "mismatches": None, "err": err[-300:]}
+            j = None
+        if (not isinstance(j, dict)
+                or not {"verdict", "mismatches", "checked"} <= set(j)):
+            # Malformed/error comparator output is an explicit ERROR result
+            # (never PASS, never an incidental KeyError downstream).
+            j = {"verdict": "ERROR", "mismatches": None, "checked": None,
+                 "err": (f"comparator rc={rc}: unparseable or incomplete "
+                         f"JSON; stderr tail: {err[-300:]!r}; "
+                         f"stdout tail: {out[-200:]!r}")}
         return rc, j
 
     log("SXT-036 oracle-independent negative controls "
@@ -196,6 +204,11 @@ def main():
     log(f"[positive control] unmutated RTL vs unmutated model: "
         f"{j['verdict']} mismatches={j['mismatches']} checked={j['checked']}")
     results["positive"] = j
+    if j["verdict"] == "ERROR":
+        log(f"FAIL: baseline comparator returned an error/malformed result "
+            f"({j.get('err')}); controls cannot be evaluated")
+        shutil.rmtree(work, ignore_errors=True)
+        return 1
     if j["verdict"] != "PASS":
         ok_all = False
     base_trace = json.load(open(os.path.join(base, "model_trace.json")))
