@@ -560,8 +560,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #471 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -580,8 +580,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #471 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3015,8 +3015,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3035,8 +3035,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3055,8 +3055,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3075,8 +3075,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3095,8 +3095,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3115,8 +3115,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3135,8 +3135,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3155,8 +3155,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3175,8 +3175,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3195,8 +3195,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3215,8 +3215,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3235,8 +3235,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3255,8 +3255,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3275,8 +3275,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3295,8 +3295,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3315,8 +3315,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3335,8 +3335,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #472 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -3505,8 +3505,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #469 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -4170,8 +4170,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #473 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -4190,8 +4190,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #473 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -4210,8 +4210,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #473 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -4470,8 +4470,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #470 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7100,8 +7100,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7120,8 +7120,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7140,8 +7140,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7160,8 +7160,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7180,8 +7180,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7200,8 +7200,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7220,8 +7220,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7240,8 +7240,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7260,8 +7260,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7280,8 +7280,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -7330,8 +7330,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #474 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8835,8 +8835,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8855,8 +8855,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8875,8 +8875,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8895,8 +8895,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8915,8 +8915,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8935,8 +8935,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8955,8 +8955,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -8975,8 +8975,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9025,8 +9025,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9045,8 +9045,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9065,8 +9065,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #475 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9505,8 +9505,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9525,8 +9525,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9545,8 +9545,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9565,8 +9565,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9585,8 +9585,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9605,8 +9605,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9625,8 +9625,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9645,8 +9645,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9695,8 +9695,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9715,8 +9715,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -9735,8 +9735,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #476 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10130,8 +10130,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10150,8 +10150,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10170,8 +10170,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10190,8 +10190,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10210,8 +10210,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10230,8 +10230,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10250,8 +10250,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10270,8 +10270,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10290,8 +10290,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #477 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10685,8 +10685,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10705,8 +10705,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10725,8 +10725,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10745,8 +10745,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10765,8 +10765,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10785,8 +10785,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10805,8 +10805,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10825,8 +10825,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10875,8 +10875,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10895,8 +10895,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -10915,8 +10915,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #478 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11310,8 +11310,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11330,8 +11330,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11350,8 +11350,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11370,8 +11370,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11390,8 +11390,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11410,8 +11410,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11430,8 +11430,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11450,8 +11450,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11470,8 +11470,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11490,8 +11490,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11510,8 +11510,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11560,8 +11560,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11580,8 +11580,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11600,8 +11600,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11620,8 +11620,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11640,8 +11640,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11660,8 +11660,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11710,8 +11710,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
@@ -11730,8 +11730,8 @@
    "verilator_version": "5.050",
    "review_decision": {
     "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (requires visible reviewer decision on PR for issue #434)",
-    "reference": "PR for issue #434, severe-waiver review table"
+    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
+    "reference": "tracked: #479 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
    }
   },
   {
