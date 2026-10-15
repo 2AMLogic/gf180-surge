@@ -1,0 +1,38 @@
+{
+ "availability": "BLOCKED",
+ "case": "phase1-substd",
+ "engine_deterministic_same_build": false,
+ "engine_version_base": "1.4.HEAD.58914e59c",
+ "engine_version_tap": "1.4.sxt307-tap.754d13c5a",
+ "instance_blocks": [
+  319,
+  319,
+  319,
+  319,
+  319,
+  319,
+  319,
+  319,
+  319
+ ],
+ "instances_for_carrier_unit": 9,
+ "instances_total": 9,
+ "neutrality": "NO_VERDICT",
+ "plan_blocks": 384,
+ "runner": {
+  "concat": {
+   "exit": 2,
+   "message": "REFUSING: plan has 384 blocks, bundle has 2871"
+  },
+  "longest_instance": {
+   "exit": 2,
+   "message": "REFUSING: plan has 384 blocks, bundle has 319"
+  }
+ },
+ "wav_sha256": {
+  "base": "aab498f8dc855398e94977da3637679bb085d06322eb6f5a48f9b98a91362340",
+  "tap": "132727b570eede6d5bab715f7d24bbb3885613034c52c707e581785b0aad0aff",
+  "untapped": "0fc1aa0c63ac99c4917296241adf4f15231f57b8e3eba026f0138bc5b94730eb",
+  "untapped_repeat": "0d3acd5694f82f81c9f2f23251a25ffc5a9989f9e105ed8a4e98066bf08bcfbd"
+ }
+}

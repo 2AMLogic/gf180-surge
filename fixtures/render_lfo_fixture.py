@@ -49,14 +49,6 @@ LFO_INPUTS = os.path.join(REPO, "model", "voice", "attacky_lfo_inputs.json")
 SEQ_DIR = os.path.join(REPO, "fixtures", "sequences")
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def census_blob():
     import csv
 
@@ -168,7 +160,7 @@ def tool_version():
     except Exception as e:  # pragma: no cover
         commit = f"unavailable: {e}"
     return {"repo_commit": commit,
-            "script_sha256": sha256_file(os.path.abspath(__file__))}
+            "script_sha256": oc.sha256_file(os.path.abspath(__file__))}
 
 
 def main():
@@ -227,7 +219,7 @@ def main():
                                 "declared fixture on the landed voice slice",
         "routes": info["routes_applied"],
         "sequence": {"id": seq["id"],
-                     "sha256": sha256_file(seq_path),
+                     "sha256": oc.sha256_file(seq_path),
                      "path": os.path.relpath(seq_path, REPO)},
         "render": {"sample_rate": SR,
                    "scheduling": "block-quantized (32 samples), ceil to next "
@@ -238,7 +230,7 @@ def main():
         "audio_policy": "mono (L+R)/2, int16 PCM, hard clip [-1,1], no "
                         "normalization, no time warping, no fades",
         "wav": os.path.relpath(wav_path, REPO),
-        "wav_sha256": sha256_file(wav_path),
+        "wav_sha256": oc.sha256_file(wav_path),
         "tool": tool_version(),
         "engine": {"commit": lfo_in["engine"]["commit"],
                    "version_string": lfo_in["engine"]["version_string"]},

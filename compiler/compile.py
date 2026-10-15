@@ -456,6 +456,19 @@ def parse_image(data):
              % (header.get("body_sha256"), sha256_hex(body_bytes)))
     if header.get("format") != IMAGE_FORMAT_VERSION:
         fail("format %r != %r" % (header.get("format"), IMAGE_FORMAT_VERSION))
+    supported = (IMAGE_FORMAT_MAJOR, IMAGE_FORMAT_MINOR)
+    if (major, minor) != supported:
+        fail("version: unsupported binary format version %d.%d (supported "
+             "%d.%d only; no backward compatibility)" % ((major, minor)
+                                                         + supported))
+    for key, bin_val in (("format_major", major), ("format_minor", minor)):
+        hv = header.get(key)
+        if type(hv) is not int or hv != bin_val:
+            fail("version: header %s %r contradicts binary %s %d"
+                 % (key, hv, key.split("_")[1], bin_val))
+    if header.get("format") != "sxt-020-patch-image/%d.%d.0" % (major, minor):
+        fail("version: header format %r does not match binary version %d.%d"
+             % (header.get("format"), major, minor))
     return {"format_major": major, "format_minor": minor,
             "header": header, "body": body, "body_bytes": body_bytes}
 

@@ -31,7 +31,6 @@ Original to this repository (Apache-2.0).
 """
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -62,21 +61,13 @@ REV1_PARAM_IDS = ["predelay", "shape", "roomsize", "decaytime", "damping",
 REV1_SLOT = 4  # send1
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def tool_version():
     try:
         commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO,
                                 capture_output=True, text=True, check=True).stdout.strip()
     except Exception as e:  # pragma: no cover
         commit = f"unavailable: {e}"
-    return {"repo_commit": commit, "script_sha256": sha256_file(os.path.abspath(__file__))}
+    return {"repo_commit": commit, "script_sha256": oc.sha256_file(os.path.abspath(__file__))}
 
 
 def census_blob(relname):
@@ -277,7 +268,7 @@ def save_trace(name, stereo, state, info, extra=None, float_npy=False):
     if float_npy:
         npy_path = os.path.join(OUT_DIR, name + ".npy")
         np.save(npy_path, stereo.astype(np.float32))
-        npy_info = {"sha256": sha256_file(npy_path), "bytes": os.path.getsize(npy_path),
+        npy_info = {"sha256": oc.sha256_file(npy_path), "bytes": os.path.getsize(npy_path),
                     "format": "float32 [2][N], unclipped engine output"}
     side = {
         "schema_version": 1,
@@ -293,7 +284,7 @@ def save_trace(name, stereo, state, info, extra=None, float_npy=False):
         "engine_patch_state": state,
         "deactivated_flags_raw_fxp": read_deactivated_flags(
             os.path.join(oc.data_home(), "patches_factory", PRESET_REL)),
-        "wav": {"sha256": sha256_file(path), "bytes": os.path.getsize(path),
+        "wav": {"sha256": oc.sha256_file(path), "bytes": os.path.getsize(path),
                 "channels": 2, "sample_rate": SR, "frames": int(stereo.shape[1])},
         "float_npy": npy_info,
         "render": info,
@@ -352,11 +343,11 @@ def cmd_preset(args):
     dry, dstate, dinfo = capture_bus(surgepy, preset_abs, seq, True, tail_s)
     sw = save_trace("preset-notes-coverage-wet", wet, wstate, winfo,
                     {"sequence": {"id": seq["id"], "path": os.path.relpath(SEQ_COV, REPO),
-                                  "sha256": sha256_file(SEQ_COV)}, "bus": "wet"},
+                                  "sha256": oc.sha256_file(SEQ_COV)}, "bus": "wet"},
                     float_npy=True)
     sd = save_trace("preset-notes-coverage-dry", dry, dstate, dinfo,
                     {"sequence": {"id": seq["id"], "path": os.path.relpath(SEQ_COV, REPO),
-                                  "sha256": sha256_file(SEQ_COV)}, "bus": "dry"},
+                                  "sha256": oc.sha256_file(SEQ_COV)}, "bus": "dry"},
                     float_npy=True)
     # engine-vs-engine sanity: same-instance-class wet repeatability (1 repeat)
     wet2, _, _ = capture_bus(surgepy, preset_abs, seq, False, tail_s)
