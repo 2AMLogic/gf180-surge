@@ -398,3 +398,212 @@ def test_rtl_exactness_record():
     for name, m in mutants.items():
         assert m["ok"] is True and "CONTROL-OK" in m["verdict"], name
         assert m["exact"] is False, name
+
+
+# --------------------------------------------------------------------------
+# #426: Phaser same-shape drift-0 carrier screen. These tests check the
+# screen's refusal/selection logic with injected non-live fakes and, when
+# committed, the live record's internal consistency. They are NOT live-oracle
+# evidence; without reports/SXT-028g/artifacts/carrier-drift-screen.json the
+# record legs are NOT_RUN (skipped), never a pass.
+# --------------------------------------------------------------------------
+
+import carrier_drift_screen as cds  # noqa: E402
+import screen_phaser_carriers as scr  # noqa: E402
+
+SCREEN = os.path.join(SXT, "artifacts", "carrier-drift-screen.json")
+
+
+def load_screen():
+    if not os.path.exists(SCREEN):
+        pytest.skip("carrier-drift-screen.json not committed (NOT_RUN)")
+    return json.load(open(SCREEN))
+
+
+def derive_gate_status(gate):
+    drifts = gate["drift_per_voicing_scene"]
+    assert set(drifts) == set(gate["voicing_scenes"]), "voicing scene mismatch"
+    return "PASS" if all(v == 0.0 for v in drifts.values()) else "FAIL"
+
+
+def check_original_eligibility(shape_rec):
+    orig = shape_rec["original_result"]
+    assert orig["determinism_gate"]["status"] == \
+        derive_gate_status(orig["determinism_gate"])
+    el = shape_rec["original_eligibility"]
+    if derive_gate_status(orig["determinism_gate"]) == "FAIL":
+        assert el["render_eligible"] is False, "failed original made eligible"
+        assert el["drift_screen"] == "FAIL"
+    else:
+        assert el["drift_screen"] == "PASS"
+        assert el["render_eligible"] != True  # noqa: E712
+
+
+def _rec(path, drifts, screened=True):
+    gate = None
+    if screened:
+        gate = {"status": "PASS" if all(v == 0.0 for v in drifts.values())
+                else "FAIL", "drift_per_voicing_scene": drifts,
+                "voicing_scenes": sorted(drifts)}
+    return {"path": path, "screened": screened, "determinism_gate": gate,
+            "refusal": None if screened else {"code": "x"}}
+
+
+def test_shape_is_declared_and_original_satisfies_it():
+    sh = scr.SHAPES[0]
+    pred = scr.make_predicate(sh)
+    cands = cds.enumerate_candidates(pred)
+    assert len(cands) == sh["expected_count"]
+    assert sh["path"] in [c["path"] for c in cands]
+    assert sh["path"].endswith("Leads/Squelch.fxp")
+
+
+def test_predicate_rejects_other_shapes():
+    sh = scr.SHAPES[0]
+    pred = scr.make_predicate(sh)
+    inner = next(c["graph"] for c in cds.enumerate_candidates(pred)
+                 if c["path"] == sh["path"])
+    orig = {"st": "normalized", "g": inner}
+    assert pred(orig)
+    for mutate in (
+            lambda g: g["g"].__setitem__("fxb", 1),
+            lambda g: g["g"].__setitem__("sa", 1),
+            lambda g: g["g"]["fx"][1].__setitem__("on", 1),
+            lambda g: g["g"]["fx"][0].__setitem__("t", 1),
+            lambda g: g["g"]["fx"][0].__setitem__("on", 0)):
+        bad = json.loads(json.dumps(orig))
+        mutate(bad)
+        assert not pred(bad)
+
+
+def test_declarations_name_the_squelch_refusal_in_extractor_and_renderer():
+    for name in ("extract_phaser_inputs.py", "render_phaser_fixtures.py"):
+        txt = open(os.path.join(REPO, "tools", name), encoding="utf-8").read()
+        assert "#426" in txt and "0.1875" in txt and \
+            "screen_phaser_carriers.py" in txt, name
+    # the existing fail-closed extractor drift gate is still present
+    ext = open(os.path.join(REPO, "tools", "extract_phaser_inputs.py"),
+               encoding="utf-8").read()
+    assert "if drift != 0.0:" in ext
+
+
+def test_no_eligible_candidate_is_bounded_gap():
+    cands = [_rec("a", {"A": 0.1}), _rec("b", {"A": 0.0}, screened=False),
+             _rec("orig", {"A": 0.0})]
+    assert scr.select_replacement(cands, "orig") == ([], None)
+
+
+def test_scene_b_only_drift_fails_gate():
+    class S:
+        vals = {"mode": 2, "act": 0, "dA": 0.0, "dB": 0.25}
+
+        def getParamVal(self, k):
+            return self.vals[k]
+    patch = {"scenemode": "mode", "scene_active": "act",
+             "scene": [{"drift": "dA"}, {"drift": "dB"}]}
+    g = cds.DRIFT_GATE(S(), patch)
+    assert g["status"] == "FAIL" and g["drift_per_voicing_scene"]["A"] == 0.0
+    with pytest.raises(AssertionError):
+        cds.assert_drift_gate_passed({"path": "x", "screened": True,
+                                      "determinism_gate": g})
+
+
+def test_selection_deterministic_excludes_original_and_failures():
+    cands = [_rec("z", {"A": 0.0}), _rec("b", {"A": 0.0}),
+             _rec("a", {"A": 0.0}), _rec("f", {"A": 0.5}),
+             _rec("orig", {"A": 0.0})]
+    ranked, selected = scr.select_replacement(cands, "orig")
+    assert ranked == ["a", "b", "z"] and selected == "a"
+    assert scr.select_replacement(list(reversed(cands)), "orig") == \
+        (ranked, selected)
+
+
+def test_missing_oracle_is_not_run_and_writes_nothing(tmp_path):
+    class Absent:
+        is_live = False
+
+        def open(self):
+            raise cds.OracleAbsent("no oracle")
+    doc = scr.screen_all(Absent())
+    assert doc["status"] == "NOT_RUN" and doc["live"] is False
+    out = tmp_path / "x.json"
+    with pytest.raises(Exception):
+        cds.write_record(doc, str(out))
+    assert not out.exists()
+
+
+def test_injected_loader_run_is_never_writable_as_live_evidence(tmp_path):
+    class Fake:
+        is_live = False
+
+        def open(self):
+            return {"pin": cds.ENGINE_PIN}
+
+        def load(self, rel, sha):
+            raise cds.LoadRefusal(cds.R_LOAD_FAILED, "fake")
+    rec = scr.screen_shape(scr.SHAPES[0], Fake())
+    assert rec["run"]["coverage"]["candidates_screened"] == 0
+    assert rec["selection"]["outcome"] == "BOUNDED_GAP"
+    assert rec["original_eligibility"]["render_eligible"] is False
+    with pytest.raises(Exception):
+        cds.write_record(rec["run"], str(tmp_path / "y.json"))
+
+
+def test_shape_check_refuses_native_disagreement():
+    sh = scr.SHAPES[0]
+    cand = next(c for c in cds.enumerate_candidates(scr.make_predicate(sh))
+                if c["path"] == sh["path"])
+    ntypes = [fx.get("t", 0) for fx in cand["graph"]["fx"]]
+
+    class S:
+        def __init__(self, types, fxb=0):
+            self.types, self.fxb = types, fxb
+
+        def getParamVal(self, k):
+            if isinstance(k, tuple):
+                return self.types[k[1]]
+            return {"fxb": self.fxb, "fxd": 0, "mode": 0, "act": 0}[k]
+    patch = {"fx": [{"type": ("t", i)} for i in range(len(ntypes))],
+             "fx_bypass": "fxb", "fx_disable": "fxd", "scenemode": "mode",
+             "scene_active": "act"}
+    chk = scr.make_shape_check({})
+    assert chk(S(ntypes), patch, cand) is None
+    wrong = list(ntypes)
+    wrong[3] = 3                      # disagrees with graphs.jsonl
+    assert chk(S(wrong), patch, cand)
+    assert chk(S(ntypes, fxb=2), patch, cand)
+
+
+def test_screen_record_live_and_consistent():
+    d = load_screen()
+    assert d["live"] is True and d["issue"] == "#426"
+    s = d["shapes"][0]
+    assert s["run"]["coverage"]["candidates_in_corpus"] == \
+        scr.SHAPES[0]["expected_count"]
+    check_original_eligibility(s)
+
+
+def test_mutation_nonzero_drift_original_made_eligible_fails():
+    d = load_screen()
+    s = d["shapes"][0]
+    if derive_gate_status(s["original_result"]["determinism_gate"]) != "FAIL":
+        pytest.skip("original drift is 0 in the record; mutation N/A")
+    bad = json.loads(json.dumps(s))
+    bad["original_result"]["determinism_gate"]["status"] = "PASS"
+    with pytest.raises(AssertionError):
+        check_original_eligibility(bad)
+    bad2 = json.loads(json.dumps(s))
+    bad2["original_eligibility"]["render_eligible"] = True
+    with pytest.raises(AssertionError):
+        check_original_eligibility(bad2)
+
+
+def test_mutation_control_on_synthetic_failed_original():
+    """Live-independent control: a FAIL original made eligible must be caught."""
+    ok = {"original_result": _rec("o", {"A": 0.1875}),
+          "original_eligibility": {"drift_screen": "FAIL",
+                                   "render_eligible": False}}
+    check_original_eligibility(ok)
+    ok["original_eligibility"]["render_eligible"] = True
+    with pytest.raises(AssertionError):
+        check_original_eligibility(ok)

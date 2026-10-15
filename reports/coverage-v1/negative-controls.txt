@@ -66,4 +66,28 @@ NC-INTEGRATION: preset-scoped complete-wet integration gate (#384)
     synthetic ledger as the default input  : REFUSED (exit 2; synthetic records never valid in a published run)
     PASS: integration gate load-bearing; every mutation prevents support with a named reason; no cross-preset qualification
 
+NC-EVIDENCE-READINESS: every coverage leaf/gate readiness claim needs current evidence (#432)
+    ordinary leaf fx:EQ: baseline supported=1682; reached EQ gates (PASS)=454; supported victims=453
+    evidence absent: reached EQ gates ['NO_VERDICT'] supported 1229 (= baseline - 453) reason leaf_evidence_missing:fx:EQ
+    evidence null  : reached EQ gates ['NO_VERDICT'] supported 1229 (= baseline - 453) reason leaf_evidence_missing:fx:EQ
+    evidence empty : reached EQ gates ['NO_VERDICT'] supported 1229 (= baseline - 453) reason leaf_evidence_missing:fx:EQ
+    malformed evidence (string / bad item / short sha): REFUSED exit 2, no output written
+    routing_leaves[ains3] (local): valid pin -> affected=14 (gates PASS), supported victims=14, pin in provenance
+    routing_leaves[ains3] (local) hash   : affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    routing_leaves[ains3] (local) missing: affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    routing_leaves[ains3] (canonical): valid pin -> affected=14 (gates PASS), supported victims=14, pin in provenance
+    routing_leaves[ains3] (canonical) hash   : affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    routing_leaves[ains3] (canonical) missing: affected gates -> STALE (14); supported 1682 -> 1668; victims unresolved; 3547 unaffected rows byte-equal
+    airwindows_leaves[49] (local): valid pin -> affected=6 (gates PASS), supported victims=6, pin in provenance
+    airwindows_leaves[49] (local) hash   : affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    airwindows_leaves[49] (local) missing: affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    airwindows_leaves[49] (canonical): valid pin -> affected=6 (gates PASS), supported victims=6, pin in provenance
+    airwindows_leaves[49] (canonical) hash   : affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    airwindows_leaves[49] (canonical) missing: affected gates -> STALE (6); supported 1682 -> 1676; victims unresolved; 3555 unaffected rows byte-equal
+    live control empty-list-shortcut: mutated copy FAILS the targeted assertion (TARGETED: evidence absent: 454/454 reached EQ gates remain PASS on an evidence-free claim)
+    live control stale-false-fallback-routing: mutated copy FAILS the targeted assertion (TARGETED: routing_leaves[ains3] (local) hash: 14/14 affected gates not STALE)
+    live control stale-false-fallback-airwindows: mutated copy FAILS the targeted assertion (TARGETED: airwindows_leaves[49] (local) hash: 6/6 affected gates not STALE)
+    live control canonical-mapping-ignored: mutated copy FAILS the targeted assertion (TARGETED: routing_leaves[ains3] (canonical) hash: 14/14 affected gates not STALE)
+    PASS: absent/null/empty evidence never ready; stale section/canonical evidence STALEs every reached gate; restored shortcuts each fail their assertion
+
 RESULT: PASS — all controls healthy (each demonstrably fails the check it targets)

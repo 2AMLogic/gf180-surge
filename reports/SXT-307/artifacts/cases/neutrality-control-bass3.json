@@ -1,0 +1,15 @@
+{
+ "case": "neutrality-control-bass3",
+ "engine_deterministic_same_build": true,
+ "engine_version_base": "1.4.HEAD.58914e59c",
+ "engine_version_tap": "1.4.sxt307-tap.754d13c5a",
+ "neutrality": "STALE",
+ "neutrality_note": "historical: WAV digests below are equal (clipped int16 quantized WAVs only, diagnostics); raw-sample re-derivation NOT_RUN; not a current PASS",
+ "role": "same-build neutrality control (not an SXT-038 case)",
+ "wav_sha256": {
+  "base": "b98154935094f4c7f6b5b759f94e9ac0a8dc0a5790d1c96621462d8d0e71fd44",
+  "tap": "b98154935094f4c7f6b5b759f94e9ac0a8dc0a5790d1c96621462d8d0e71fd44",
+  "untapped": "b98154935094f4c7f6b5b759f94e9ac0a8dc0a5790d1c96621462d8d0e71fd44",
+  "untapped_repeat": "b98154935094f4c7f6b5b759f94e9ac0a8dc0a5790d1c96621462d8d0e71fd44"
+ }
+}

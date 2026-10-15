@@ -87,6 +87,16 @@ def read_wav_stereo_f32(path):
     return a.T.copy(), sr
 
 
+def first_nonfinite(bus):
+    """(channel_name, sample_index, value) of the first non-finite sample in a
+    (2, N) bus, or None when every sample is finite (issue #439)."""
+    for name, idx in (("L", 0), ("R", 1)):
+        bad = np.flatnonzero(~np.isfinite(bus[idx]))
+        if bad.size:
+            return name, int(bad[0]), float(bus[idx][bad[0]])
+    return None
+
+
 def spectral_corr(a, b, frame=4096):
     """The shared spectral_corr definition (issue #110), on the float32 bus
     whose declared full scale is 1.0 (compare_audio_reference.FULL_SCALE_F32).
@@ -159,6 +169,14 @@ def main():
     ref, sr = read_wav_stereo_f32(args.ref)
     mod, sr2 = read_wav_stereo_f32(args.model)
     assert sr == sr2 == 48000, (sr, sr2)
+    for label, path, bus in (("reference", args.ref, ref),
+                             ("model", args.model, mod)):
+        bad = first_nonfinite(bus)
+        if bad:
+            return car.refuse(
+                "input-validity: %s bus %s contains a non-finite sample "
+                "(channel %s, sample %d, value %r); nothing graded (issue "
+                "#439)" % (label, path, bad[0], bad[1], bad[2]), args.json)
     why = car.validate_region_against_render(region, sr, ref.shape[1], args.ref)
     if why:
         return car.refuse(why, args.json)
@@ -212,11 +230,16 @@ def main():
             parts.append("tail-region gate: " + tail_reason)
         metrics["verdict"] = ("FAIL against proposed budgets (%s)"
                               % "; ".join(parts))
-    print(json.dumps(metrics, indent=2))
+    try:
+        text = json.dumps(metrics, indent=2, allow_nan=False)
+    except ValueError as e:
+        return car.refuse("input-validity: metrics are not strict-JSON "
+                          "representable (%s); nothing graded (issue #439)"
+                          % e, args.json)
+    print(text)
     if args.json:
         with open(args.json, "w") as f:
-            json.dump(metrics, f, indent=2)
-            f.write("\n")
+            f.write(text + "\n")
     return 0
 
 
