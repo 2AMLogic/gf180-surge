@@ -1,0 +1,25 @@
+issue #456 -- decay-sweep coverage gate: retention check
+
+environment: 3.13.14 / numpy 1.26.4
+old tool: git e4c25bfc5aec129c0113ce74236aa00cf32aa521:tools/compare_reverb_model.py (fixed commit, not HEAD; loaded from its blob; output redirected to a temp dir)
+new tool: worktree tools/compare_reverb_model.py
+inputs : the committed reports/sxt-024/traces/ (unchanged)
+
+old exit: 0   new exit: 0
+old per-case count: 7   new: 7   committed: 7
+
+RETENTION: PASS -- every pre-#456 per-case field is reproduced exactly by the new tool and matches the committed record; `status` is the only new per-case field
+
+GATE on the committed traces (aggregate):
+  verdict : PASS
+  coverage: partial
+  required 7 / discovered 7 / graded 6 / unmeasurable 1
+  sweepmdecaym0          PASS     graded=t60_w_vs_pred,tail_level_tracking not_run=-
+  sweepmdecaym1_879465   PASS     graded=t60_w_vs_pred,tail_level_tracking not_run=-
+  sweepmdecaym3          PASS     graded=t60_w_vs_pred,tail_level_tracking not_run=-
+  sweepmdecaym4_5        PASS     graded=tail_level_tracking not_run=t60_w_vs_pred  # t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking
+  sweepmdecaym6          PASS     graded=tail_level_tracking not_run=t60_w_vs_pred  # t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking
+  sweepmdecaymm2         PASS     graded=tail_level_tracking not_run=t60_w_vs_pred  # t60 comparison NOT_RUN: nominal decay (2^decay) is shorter than the structure's own echo/loop delays; measured t60 is dominated by the composite geometry, not the feedback exponent (engine and model agree via tail_level_tracking)
+  sweepmdecaymm4         NOT_RUN  graded=- not_run=t60_w_vs_pred,tail_level_tracking  # t60 fit NOT_RUN: excitation-bounded (tail below the -100 dBFS measurement floor for this decay); model-vs-engine agreement is carried by tail_level_tracking
+
+The decay -4 case (sweepmdecaymm4) is excitation-bounded: its tail falls below the -100 dBFS measurement floor, so both agreement checks are NOT_RUN there. Before #456 that vacuity was invisible (all(...) over non-None values); the gate records it as an explicit per-case NOT_RUN and keeps coverage partial. The committed sweep verdict is not rewritten by this change.

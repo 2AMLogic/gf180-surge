@@ -20,8 +20,8 @@
   "leaf": "SXT-028d",
   "oracle_extraction": {
     "attempted": true,
-    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
-    "ok": false
+    "detail": "surgepy present (/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so); per-slot parameter extraction is algorithm-leaf scope, not exercised here",
+    "ok": true
   },
   "patch_level": {
     "fx_bypass": 0,
@@ -34,6 +34,30 @@
     "graphs_blob_sha1_verified": "9e796f283f2d4b2a69de6198878d57c34f6d86c3",
     "path": "resources/data/patches_3rdparty/Altenberg/Basses/Ancient FM.fxp",
     "stored_revision": 20
+  },
+  "render_eligibility": {
+    "determinism_gate": {
+      "drift_per_voicing_scene": {
+        "A": 0.092024997
+      },
+      "scene_active": 0,
+      "scene_mode_id": 0,
+      "status": "FAIL",
+      "voicing_scenes": [
+        "A"
+      ],
+      "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+    },
+    "drift_screen": "FAIL",
+    "engine": {
+      "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "provenance_mode": "manifest_prebuilt_artifact",
+      "sample_rate": 48000.0,
+      "surgepy_version": "1.4.HEAD.58914e59c"
+    },
+    "pinned_checkout_blob_sha1": "9e796f283f2d4b2a69de6198878d57c34f6d86c3",
+    "render_eligible": false,
+    "scope": "drift gate is the screening condition only: necessary, never sufficient, for render eligibility"
   },
   "routing_form": "rf-global2",
   "schema_version": 1

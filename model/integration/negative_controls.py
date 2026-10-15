@@ -52,6 +52,8 @@ from tools.compare_fx_reference import channel_metrics, PROPOSED  # noqa: E402
 FIXTURES = os.path.join(REPO, "reports", "sxt-025", "fixtures")
 ARTIFACTS = os.path.join(REPO, "reports", "sxt-025", "artifacts")
 NC_DIR = os.path.join(REPO, "reports", "sxt-025", "negative-controls")
+# transcript path; a constant so the live registry can redirect it to scratch
+TRANSCRIPT = os.path.join(REPO, "reports", "sxt-025", "negative-controls.txt")
 SEQ_DIR = os.path.join(REPO, "model", "integration", "sequences")
 
 
@@ -255,6 +257,8 @@ def main():
         ok = ok and r["detected"]
         print(f"{name}: {r['verdict']}")
 
+    # HISTORICAL input: the RTL mutant verdict is read from the committed
+    # rtl-exactness.json, not re-run here (RTL comparator execution is #416).
     rtl = json.load(open(os.path.join(REPO, "reports", "sxt-025",
                                       "rtl-exactness.json")))
     mut = next((c for c in rtl["cases"] if c["case"] == "mutant"), None)
@@ -264,9 +268,7 @@ def main():
         ok = ok and (mut["verdict"].startswith("CONTROL-OK"))
 
     transcript.append(f"ALL CONTROLS {'HEALTHY' if ok else 'BROKEN'}")
-    with open(os.path.join(REPO, "reports", "sxt-025",
-                           "negative-controls.txt"), "w",
-              encoding="utf-8") as f:
+    with open(TRANSCRIPT, "w", encoding="utf-8") as f:
         f.write("\n".join(transcript) + "\n")
     for line in transcript:
         print(line)

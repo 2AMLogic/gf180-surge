@@ -69,10 +69,11 @@ against.
 no preset-support claim; no musical-quality claim; no FPGA/gf180mcu synthesis,
 timing or area claim; no model-vs-pinned-engine reference-agreement number
 (the routing/scheduling metadata for the three named B4-scope carrier presets
-IS verified — see `fx_inputs/rf-rf-bins12-*.json` — but the pinned oracle
-build was unavailable in the environment that produced this record, so
-per-slot algorithm-parameter extraction and any wet-audio reference render are
-refused, not fabricated).
+IS verified — see `fx_inputs/rf-rf-bins12-*.json` — and since #424 each
+carrier record also carries a live native load + per-scene drift observation
+from the pinned prebuilt oracle (`reports/SXT-028h/EVIDENCE.md` §8); per-slot
+algorithm-parameter extraction and any wet-audio reference render remain
+NOT_RUN, never fabricated).
 
 ## Frozen word formats (this leaf)
 
@@ -166,8 +167,8 @@ detection and the series ring-out threading.
 - Any concrete Surge FX algorithm's own ring-out decision policy or tail
   generation — see "Form scope" above.
 - Per-slot algorithm parameter values and any wet-audio reference render —
-  requires the pinned oracle build (surgepy), unavailable in the environment
-  that produced this record; refused, not fabricated
+  NOT_RUN for this leaf (the live leg of #424 records only native load, shape
+  read-back and per-scene drift); not fabricated
   (`tools/extract_rf_bins12_inputs.py`,
   `reports/SXT-028h/artifacts/extract-refusals.txt`).
 
@@ -180,7 +181,7 @@ detection and the series ring-out threading.
 ## Reproduce
 
 ```sh
-python3 tools/extract_rf_bins12_inputs.py                 # carrier metadata (census+graphs, zero-drift asserted; oracle attempt honestly refused if unbuilt)
+"$ORACLE_PYTHON" tools/extract_rf_bins12_inputs.py       # carrier metadata (census-vs-graphs agreement asserted) + live drift leg; no oracle -> NOT_RUN, exit 2, records left unchanged
 python3 tools/compare_rtl_model_rf_bins12.py              # RTL-vs-model exactness (iverilog)
 python3 tools/rf_bins12_negative_controls.py              # 5 required negative controls (model + live RTL mutants)
 python3 -m pytest tests/test_sxt028h.py -q

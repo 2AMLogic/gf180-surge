@@ -1,0 +1,7 @@
+binary-major-99 0 []
+binary-minor-99 0 []
+binary-minor-0-vs-header-1 0 []
+header-format-major-99 0 []
+header-format-minor-99 0 []
+header-format-minor-0-vs-binary-1 0 []
+header-format-major-str 0 []

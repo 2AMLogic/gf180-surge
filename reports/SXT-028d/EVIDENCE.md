@@ -172,11 +172,50 @@ own `newly_enabled` accounting (`reports/sxt-028/leaves/SXT-028d/
 newly-enabled.json`, FX-scope-only, explicitly "NOT a support claim") is
 unaffected by this leaf landing.
 
+## 7. Same-shape drift-0 carrier screen (#425, part of #331)
+
+Live on the pinned oracle (`reports/SXT-028d/artifacts/carrier-drift-screen.json`,
+produced by `tools/screen_rf_global2_carriers.py` on the #423 helper;
+manifest-pinned prebuilt artifact `d2cc7029...f571`, Surge
+`58914e59c608ed4384ba6002e44c3465c58b2e71`, CPython 3.11.16, 48 kHz; engine
+provenance verified before any `loadPatch`). Nothing was rendered.
+
+Shape predicates (declared before screening; each original satisfies its own;
+FX class is NOT part of the shape): global1/global2 occupancy as below,
+`fx_bypass == All FX`, `fx_disable == 0`, Single scene mode, scene A active.
+
+| Original | Shape | Candidates enumerated / screened / refused | Drift PASS / FAIL | Original re-measured | Selected addition (rule in the record) |
+|---|---|---|---|---|---|
+| `Ancient FM.fxp` | g1 on, g2 on | 490 / 490 / 0 | 370 / 120 | A = 0.092024997 -> FAIL, non-render-eligible | `Altenberg/Pads/Dark Pulse.fxp` |
+| `Rounded.fxp` | g1 off, g2 on | 86 / 86 / 0 | 45 / 41 | A = 0.152826995 -> FAIL, non-render-eligible | `Cybersoda/Keys/Noisy.fxp` |
+
+Coverage (screened/denominator) is reported separately from the drift verdict;
+the per-shape `drift_gate_status` is FAIL because originals (and many
+candidates) fail, which is the finding, not an error. The reproduced original
+failures match the historical SXT-028l numbers but are fresh measurements.
+Selected candidates are labeled additions, ranked by rule (original's global
+slot FX types matched, then corpus path); the originals stay in the record as
+non-render-eligible. `Piercing.fxp` is unaffected (drift 0) and stays declared.
+The extractor (`tools/extract_rf_global2_inputs.py`) now runs the same per-scene
+drift gate live per declared carrier and records `render_eligibility` in
+`model/effects/fx_inputs/rf-rf-global2-*.json`; without the oracle it reports
+NOT_RUN and preserves a prior committed live record.
+
+What this does NOT establish: drift 0 is necessary, never sufficient (other
+engine RNG paths, #310, only an empirical repeated render catches); no wet
+fidelity, preset support, audio repeatability, RTL exactness, or musical
+usefulness follows; the selected additions have not been rendered (the render
+leg stays gated by #12 and its own gates). `oracle_extraction.ok: true` in the
+fx_inputs means only that surgepy was importable; per-slot parameter
+extraction remains algorithm-leaf scope and was not exercised.
+
 ## Reproduce
 
 ```sh
 python3 tools/extract_rf_global2_inputs.py
 python3 tools/compare_rtl_model_rf_global2.py --out reports/SXT-028d/rtl-exactness.json
 python3 tools/rf_global2_negative_controls.py
+# under the pinned oracle interpreter (oracle/README.md "Prebuilt oracle"):
+$ORACLE_PYTHON tools/screen_rf_global2_carriers.py
 python3 -m pytest tests/test_sxt028d.py -q
 ```
