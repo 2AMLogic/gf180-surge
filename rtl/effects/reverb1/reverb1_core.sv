@@ -128,6 +128,7 @@ module reverb1_core (
   // combinational external-memory request (zero-wait-state single cycle)
   integer dp_tmp;
   always @* begin
+    dp_tmp = 0;
     em_req = 1'b0;
     em_we  = 1'b0;
     em_addr  = 32'b0;
