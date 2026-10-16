@@ -131,6 +131,27 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    together with the file it declares, because a row, exemption, scope exclusion
    or index row present only in your working copy is published by no commit and
    answers nothing. The run reports which bookkeeping files diverged.
+   **New GPL-derived (or other third-party quoted) constants, tables or values
+   also go into the table-level register,
+   [`decision-records/gpl-boundary-register.md`](../decision-records/gpl-boundary-register.md),
+   in the same PR that adds them.** One row per table or constant: in-repo
+   file, symbol, upstream file, exact pinned revision, upstream licence,
+   decision record, and the provenance citation (a `quoted-constants` row of
+   `provenance.json`, or a declared, checkable exception). Keep MIT-sourced
+   constants (the `libs/airwindows` subtree, record 0015) in their own table:
+   the GPL-3.0-or-later Surge adapter around them does not change the licence
+   recorded for the constant. Formula-rederived and structural values get a
+   reviewed-exclusion row with the reason; anything whose upstream file or
+   revision cannot be established is listed as `provenance incomplete`, never
+   guessed. `python3 tools/check_provenance.py` fails a `quoted-constants`
+   manifest row with no register row, a register row with a missing field or no
+   resolvable citation, a licence that disagrees with its table or its manifest
+   row, a stale exception, and a decision record that declares quoted data the
+   register does not list (an exclusion that claims no opaque constants also accounts for it); `--negative-control` proves each
+   `register-*` rule still fires. The register is an inventory for a possible
+   clean-room reimplementation; it is not a distribution-licence determination.
+   When a pin is bumped, re-check every register row citing the old revision in
+   the same PR.
 6. Do not bring a substrate in **by reference** without the same record. A
    committed submodule (or a nested repository checkout) and a symlink whose
    target leaves this tree both put upstream content in the build tree while

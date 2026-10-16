@@ -659,6 +659,22 @@ RULES = {
     "exemption-bad-pattern": "exemption pattern too broad or malformed",
     "scope-exclusion-stale": "declared scope exclusion matching no file",
     "scan-underflow": "fewer files scanned than the manifest's declared floor",
+    # group 3b: GPL-boundary register cross-check (issue #370)
+    "register-missing": "GPL-boundary register absent, unreadable or without its tables",
+    "register-malformed-row": "register row with a missing/invalid field or wrong shape",
+    "register-missing-row": (
+        "quoted-constants provenance row with no GPL-boundary register row"
+    ),
+    "register-unmapped-row": (
+        "register row whose citation maps to no provenance row or exception"
+    ),
+    "register-licence-mismatch": (
+        "register licence disagrees with its table or its provenance row"
+    ),
+    "register-exception-stale": "register exception that is unused, unjustified or stale",
+    "register-record-unaccounted": (
+        "decision record declaring quoted data that the register neither lists nor excludes"
+    ),
     # group 4: undeclared-carrier tripwires
     "foreign-license-text": "foreign license/copyright text without a provenance row",
     "upstream-asset-extension": "upstream asset / opaque bundle without a provenance row",
@@ -4250,6 +4266,489 @@ def _committed_pass(root: Path, tree: Tree, already):
     return tagged, divergent
 
 
+# --- GPL-boundary register cross-check (issue #370, governance issue #25) -----
+#
+# `decision-records/gpl-boundary-register.md` is the TABLE-level inventory of
+# quoted third-party constants; `provenance.json` stays the FILE-level source.
+# Neither is assumed complete, so this check reconciles them in both directions
+# and against the decision records themselves:
+#
+#   * every `quoted-constants` manifest row has at least one register row;
+#   * every register row cites a manifest row (same path, same record, same
+#     pinned commit) or a declared, still-live exception, and carries every
+#     required field;
+#   * the register licence matches the table it sits in and the manifest row's
+#     licence, unless the row is explicitly `licence reconciled` (an MIT
+#     Airwindows constant must not be relabelled GPL because the Surge adapter
+#     around it is, nor the reverse);
+#   * every decision record that declares quoted data is listed or excluded
+#     there (the case no manifest row can reveal: a record that classifies
+#     material as quoted while the manifest names no such file).
+#
+# It does NOT read model source for literals: completeness against code is
+# bounded by the records' inventories (declared in the register itself).
+
+REGISTER_REL = "decision-records/gpl-boundary-register.md"
+
+REGISTER_GPL_SECTION = "GPL-derived register"
+REGISTER_MIT_SECTION = "MIT-sourced quoted constants"
+REGISTER_EXCEPTION_SECTION = "Provenance exceptions"
+REGISTER_EXCLUSION_SECTION = "Reviewed exclusions"
+
+REGISTER_ROW_COLUMNS = (
+    "ID",
+    "In-repo file",
+    "Symbol / table",
+    "Upstream file",
+    "Pinned revision",
+    "Upstream licence",
+    "Decision record",
+    "Provenance citation",
+    "Status",
+    "Notes",
+)
+REGISTER_EXCEPTION_COLUMNS = (
+    "ID",
+    "In-repo files",
+    "Decision record",
+    "Reason",
+    "Closing action",
+)
+REGISTER_EXCLUSION_COLUMNS = (
+    "ID",
+    "Decision record",
+    "In-repo file",
+    "Symbol / table",
+    "Classification",
+    "Reason",
+)
+REGISTER_TABLES = {
+    REGISTER_GPL_SECTION: REGISTER_ROW_COLUMNS,
+    REGISTER_MIT_SECTION: REGISTER_ROW_COLUMNS,
+    REGISTER_EXCEPTION_SECTION: REGISTER_EXCEPTION_COLUMNS,
+    REGISTER_EXCLUSION_SECTION: REGISTER_EXCLUSION_COLUMNS,
+}
+REGISTER_SECTION_LICENCE = {
+    REGISTER_GPL_SECTION: "GPL-3.0-or-later",
+    REGISTER_MIT_SECTION: "MIT",
+}
+REGISTER_STATUSES = ("registered", "provenance incomplete", "licence reconciled")
+REGISTER_EXCLUSION_CLASSES = (
+    "re-derived",
+    "structural",
+    "external-identity",
+    "no-opaque-constants-claimed",
+)
+REGISTER_INCOMPLETE_REVISION = "incomplete"
+REGISTER_REVISION_RE = re.compile(r"^[0-9a-f]{40}$")
+REGISTER_ID_RE = re.compile(r"^[A-Z]-[0-9]+$")
+# A decision record that declares data quoted into this repository must be
+# accounted for in the register (listed, or excluded with a reason).
+QUOTED_RECORD_RE = re.compile(
+    r"quoted[ -](?:as[ -])?(?:data|constants?)", re.IGNORECASE
+)
+
+
+def _licence_class(text):
+    lowered = str(text or "").strip().lower()
+    if lowered.startswith("gpl"):
+        return "GPL-3.0-or-later"
+    if lowered.startswith("mit"):
+        return "MIT"
+    return None
+
+
+def parse_register(text):
+    """({section: [(lineno, [cells])]}, findings) from the register markdown."""
+    findings = []
+    sections = {}
+    current = None
+    state = None  # None | 'header' | 'rows'
+    for lineno, line in enumerate(text.splitlines(), start=1):
+        heading = re.match(r"^##\s+(.+?)\s*$", line)
+        if heading:
+            current = heading.group(1)
+            state = None
+            if current in REGISTER_TABLES:
+                sections[current] = []
+            continue
+        if current not in REGISTER_TABLES or not line.lstrip().startswith("|"):
+            if current in REGISTER_TABLES and state == "rows" and line.strip():
+                state = None
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if state is None:
+            expected = list(REGISTER_TABLES[current])
+            if cells != expected:
+                findings.append(
+                    Finding(
+                        "register-malformed-row",
+                        REGISTER_REL,
+                        f"section {current!r}: header row (line {lineno}) is "
+                        f"{cells!r}, expected {expected!r}",
+                    )
+                )
+            state = "separator"
+            continue
+        if state == "separator":
+            state = "rows"
+            continue
+        sections[current].append((lineno, cells))
+    return sections, findings
+
+
+def _register_manifest_entries(manifest):
+    out = []
+    for entry in (manifest or {}).get("entries", []) or []:
+        if isinstance(entry, dict) and entry.get("class") == "quoted-constants":
+            out.append(entry)
+    return out
+
+
+def _entry_key(entry):
+    return str(entry.get("path") or entry.get("pattern") or "")
+
+
+def check_register(tree: Tree, manifest, records, index_rows, register_rel=REGISTER_REL):
+    """Reconcile the GPL-boundary register with the manifest and the records.
+
+    Returns (findings, stats). Every finding names `register_rel` (or the
+    manifest row it concerns) so a reviewer can open the file that must change.
+    """
+    findings = []
+    stats = {
+        "register_rows": 0,
+        "register_mit_rows": 0,
+        "register_exceptions": 0,
+        "register_exclusions": 0,
+        "register_provenance_incomplete": [],
+    }
+    text = tree.text(register_rel)
+    if text is None:
+        findings.append(
+            Finding(
+                "register-missing",
+                register_rel,
+                "the GPL-boundary register is absent or unreadable; the "
+                "quoted-constants inventory it holds cannot be cross-checked",
+            )
+        )
+        return findings, stats
+    sections, parse_findings = parse_register(text)
+    findings += parse_findings
+    for name in REGISTER_TABLES:
+        if name not in sections:
+            findings.append(
+                Finding(
+                    "register-missing",
+                    register_rel,
+                    f"required section '## {name}' is absent",
+                )
+            )
+    if any(f.rule == "register-missing" for f in findings):
+        return findings, stats
+
+    files = set(tree.files)
+    entries = _register_manifest_entries(manifest)
+    entry_by_key = {_entry_key(e): e for e in entries}
+    seen_ids = {}
+
+    def malformed(rid, detail):
+        findings.append(
+            Finding("register-malformed-row", register_rel, f"{rid}: {detail}")
+        )
+
+    def check_shape(section, lineno, cells):
+        columns = REGISTER_TABLES[section]
+        rid = cells[0] if cells else f"line {lineno}"
+        if len(cells) != len(columns):
+            malformed(
+                rid,
+                f"line {lineno} has {len(cells)} cells, expected {len(columns)}",
+            )
+            return None
+        for column, cell in zip(columns, cells):
+            if not cell:
+                malformed(rid, f"line {lineno}: field {column!r} is empty")
+                return None
+        if not REGISTER_ID_RE.match(cells[0]):
+            malformed(rid, f"line {lineno}: ID {cells[0]!r} is not LETTER-NUMBER")
+            return None
+        if cells[0] in seen_ids:
+            malformed(rid, f"line {lineno}: ID repeated (first on line {seen_ids[cells[0]]})")
+            return None
+        seen_ids[cells[0]] = lineno
+        return rid
+
+    def check_record(rid, number, allow_none=False):
+        if allow_none and number == "none":
+            return True
+        if number not in records:
+            malformed(rid, f"decision record {number!r} does not exist")
+            return False
+        if number not in index_rows:
+            malformed(rid, f"decision record {number!r} is not indexed")
+            return False
+        return True
+
+    # ---- exceptions ---------------------------------------------------------
+    exceptions = {}
+    for lineno, cells in sections[REGISTER_EXCEPTION_SECTION]:
+        rid = check_shape(REGISTER_EXCEPTION_SECTION, lineno, cells)
+        if rid is None:
+            continue
+        stats["register_exceptions"] += 1
+        _id, paths, number, _reason, _closing = cells
+        if not check_record(rid, number):
+            continue
+        listed = [p.strip() for p in paths.split(";") if p.strip()]
+        ok = True
+        for path in listed:
+            if path not in files:
+                findings.append(
+                    Finding(
+                        "register-exception-stale",
+                        register_rel,
+                        f"{rid}: listed file {path!r} does not exist",
+                    )
+                )
+                ok = False
+            for entry in entries:
+                _kind, _label, matches = _matcher(entry)
+                if matches(path):
+                    findings.append(
+                        Finding(
+                            "register-exception-stale",
+                            register_rel,
+                            f"{rid}: {path!r} is now covered by the "
+                            f"quoted-constants row {_entry_key(entry)!r}; remove "
+                            "the exception and cite the row",
+                        )
+                    )
+                    ok = False
+        if ok:
+            exceptions[rid] = {"files": set(listed), "record": number, "used": False}
+
+    # ---- register rows --------------------------------------------------------
+    cited_keys = set()
+    accounted_records = set()
+    for section in (REGISTER_GPL_SECTION, REGISTER_MIT_SECTION):
+        for lineno, cells in sections[section]:
+            rid = check_shape(section, lineno, cells)
+            if rid is None:
+                continue
+            (_id, path, _symbol, _upstream, revision, licence, number, citation,
+             status, notes) = cells
+            stats["register_rows" if section == REGISTER_GPL_SECTION else "register_mit_rows"] += 1
+            if status not in REGISTER_STATUSES:
+                malformed(rid, f"status {status!r} not in {list(REGISTER_STATUSES)}")
+                continue
+            if status == "provenance incomplete":
+                stats["register_provenance_incomplete"].append(rid)
+            if revision == REGISTER_INCOMPLETE_REVISION:
+                if status != "provenance incomplete":
+                    malformed(
+                        rid,
+                        "pinned revision 'incomplete' requires status "
+                        "'provenance incomplete'",
+                    )
+                    continue
+            elif not REGISTER_REVISION_RE.match(revision):
+                malformed(rid, f"pinned revision {revision!r} is not a 40-hex commit")
+                continue
+            if licence not in ("GPL-3.0-or-later", "MIT"):
+                malformed(rid, f"upstream licence {licence!r} is not GPL-3.0-or-later or MIT")
+                continue
+            if licence != REGISTER_SECTION_LICENCE[section]:
+                findings.append(
+                    Finding(
+                        "register-licence-mismatch",
+                        register_rel,
+                        f"{rid}: licence {licence!r} sits in the "
+                        f"'{section}' table ({REGISTER_SECTION_LICENCE[section]})",
+                    )
+                )
+                continue
+            if path not in files:
+                malformed(rid, f"in-repo file {path!r} does not exist")
+                continue
+            if not check_record(rid, number):
+                continue
+            accounted_records.add(number)
+            kind, _, target = citation.partition(":")
+            if kind == "manifest":
+                entry = entry_by_key.get(target)
+                if entry is None or target != path:
+                    findings.append(
+                        Finding(
+                            "register-unmapped-row",
+                            register_rel,
+                            f"{rid}: cites manifest row {target!r} but "
+                            + (
+                                "no quoted-constants row has that path"
+                                if entry is None
+                                else f"the row is for a different file than {path!r}"
+                            ),
+                        )
+                    )
+                    continue
+                cited_keys.add(target)
+                if str(entry.get("decision_record")) != number:
+                    findings.append(
+                        Finding(
+                            "register-unmapped-row",
+                            register_rel,
+                            f"{rid}: record {number} but the manifest row for "
+                            f"{target!r} cites record {entry.get('decision_record')}",
+                        )
+                    )
+                    continue
+                pinned = entry.get("pinned_commit")
+                if revision != REGISTER_INCOMPLETE_REVISION and pinned and pinned != revision:
+                    findings.append(
+                        Finding(
+                            "register-unmapped-row",
+                            register_rel,
+                            f"{rid}: pinned revision {revision} differs from the "
+                            f"manifest row's {pinned}",
+                        )
+                    )
+                    continue
+                manifest_class = _licence_class(entry.get("upstream_license"))
+                differs = manifest_class is not None and manifest_class != licence
+                cited = {m for m in re.findall(r"\b(\d{4})\b", notes) if m in records}
+                if differs and status == "registered":
+                    findings.append(
+                        Finding(
+                            "register-licence-mismatch",
+                            register_rel,
+                            f"{rid}: register licence {licence} but the manifest "
+                            f"row says {entry.get('upstream_license')!r}; mark the "
+                            "row 'licence reconciled' and cite the reconciling record",
+                        )
+                    )
+                    continue
+                if differs or status == "licence reconciled":
+                    if not differs:
+                        findings.append(
+                            Finding(
+                                "register-licence-mismatch",
+                                register_rel,
+                                f"{rid}: 'licence reconciled' but the manifest row "
+                                "already agrees; nothing is reconciled",
+                            )
+                        )
+                    elif not cited:
+                        findings.append(
+                            Finding(
+                                "register-licence-mismatch",
+                                register_rel,
+                                f"{rid}: a licence that differs from the manifest "
+                                "row must cite the reconciling decision record in Notes",
+                            )
+                        )
+            elif kind == "exception":
+                exc = exceptions.get(target)
+                if exc is None:
+                    findings.append(
+                        Finding(
+                            "register-unmapped-row",
+                            register_rel,
+                            f"{rid}: cites exception {target!r}, which is not a "
+                            "live, valid row of 'Provenance exceptions'",
+                        )
+                    )
+                    continue
+                exc["used"] = True
+                if path not in exc["files"] or exc["record"] != number:
+                    findings.append(
+                        Finding(
+                            "register-unmapped-row",
+                            register_rel,
+                            f"{rid}: exception {target} does not list {path!r} "
+                            f"under record {number}",
+                        )
+                    )
+                    continue
+                if status == "licence reconciled":
+                    malformed(rid, "'licence reconciled' needs a manifest citation")
+            else:
+                findings.append(
+                    Finding(
+                        "register-unmapped-row",
+                        register_rel,
+                        f"{rid}: citation {citation!r} is neither "
+                        "'manifest:<path>' nor 'exception:<ID>'",
+                    )
+                )
+
+    for rid, exc in sorted(exceptions.items()):
+        if not exc["used"]:
+            findings.append(
+                Finding(
+                    "register-exception-stale",
+                    register_rel,
+                    f"{rid}: no register row cites this exception",
+                )
+            )
+
+    # ---- exclusions -----------------------------------------------------------
+    excluded_records = set()
+    for lineno, cells in sections[REGISTER_EXCLUSION_SECTION]:
+        rid = check_shape(REGISTER_EXCLUSION_SECTION, lineno, cells)
+        if rid is None:
+            continue
+        stats["register_exclusions"] += 1
+        _id, number, path, _symbol, classification, _reason = cells
+        if classification not in REGISTER_EXCLUSION_CLASSES:
+            malformed(
+                rid,
+                f"classification {classification!r} not in "
+                f"{list(REGISTER_EXCLUSION_CLASSES)}",
+            )
+            continue
+        if path not in files:
+            malformed(rid, f"in-repo file {path!r} does not exist")
+            continue
+        # Only a "no opaque constants" classification accounts for a record
+        # that mentions quoted data: a re-derived or structural exclusion sits
+        # BESIDE quoted rows and must not stand in for them (dropping a record's
+        # quoted rows would otherwise be hidden by its own exclusions).
+        if check_record(rid, number, allow_none=True) and number != "none":
+            if classification == "no-opaque-constants-claimed":
+                excluded_records.add(number)
+
+    # ---- manifest -> register (the omission direction) ----------------------
+    for entry in entries:
+        key = _entry_key(entry)
+        if key not in cited_keys:
+            findings.append(
+                Finding(
+                    "register-missing-row",
+                    MANIFEST_REL,
+                    f"quoted-constants row {key!r} (record "
+                    f"{entry.get('decision_record')}) has no row in {register_rel}",
+                )
+            )
+
+    # ---- records -> register (what no manifest row can reveal) ---------------
+    for number, record in sorted(records.items()):
+        body = tree.text(record["path"]) or ""
+        if QUOTED_RECORD_RE.search(body) and number not in (
+            accounted_records | excluded_records
+        ):
+            findings.append(
+                Finding(
+                    "register-record-unaccounted",
+                    record["path"],
+                    f"record {number} declares quoted data but {register_rel} "
+                    "neither lists it nor records a reviewed exclusion for it",
+                )
+            )
+    return findings, stats
+
+
+
 def audit(root: Path, include_untracked=False):
     root = Path(root)
     manifest, findings = load_manifest(root)
@@ -4263,6 +4762,8 @@ def audit(root: Path, include_untracked=False):
     findings += check_citations(tree, records, rows)
     manifest_findings, coverage, exemptions = check_manifest(tree, manifest, records, rows)
     findings += manifest_findings
+    register_findings, register_stats = check_register(tree, manifest, records, rows)
+    findings += register_findings
     tripwire_findings, tripwire_counts = check_tripwires(tree, coverage, exemptions)
     findings += tripwire_findings
     committed_findings, divergent_bookkeeping = _committed_pass(
@@ -4278,6 +4779,9 @@ def audit(root: Path, include_untracked=False):
         "provenance_rows": len(manifest.get("entries", []) or []),
         "files_covered_by_rows": len(coverage),
         "exemptions": len(manifest.get("exemptions", []) or []),
+        # GPL-boundary register (issue #370): rows reconciled, and the rows
+        # listed but flagged `provenance incomplete` (disclosed, not failed).
+        "gpl_boundary_register": register_stats,
         # Disclosed, not silent: these files reached no content rule at all,
         # so a PASS says nothing about what is inside them (DECLARED LIMITS).
         # Counted over REGULAR files only: a by-reference entry has no bytes of
@@ -4397,6 +4901,14 @@ def report(findings, stats, root, as_json=False):
     )
     for prefix, count in stats["exclusions"].items():
         print(f"  excluded: {prefix} ({count} files)")
+    reg = stats["gpl_boundary_register"]
+    print(
+        f"  gpl-boundary register: {reg['register_rows']} GPL-derived rows, "
+        f"{reg['register_mit_rows']} MIT-sourced rows, "
+        f"{reg['register_exceptions']} provenance exception(s), "
+        f"{reg['register_exclusions']} reviewed exclusion(s); "
+        f"provenance incomplete: {', '.join(reg['register_provenance_incomplete']) or 'none'}"
+    )
     print(
         f"  not content-scanned (no text in the payload at all): "
         f"{stats['files_not_content_scanned']} files — extension tripwires only"
@@ -4849,8 +5361,45 @@ def _write(root: Path, rel, content):
         path.write_text(content, encoding="utf-8")
 
 
+def _register_table(columns, rows):
+    lines = [
+        "| " + " | ".join(columns) + " |",
+        "|" + "---|" * len(columns),
+    ]
+    lines += ["| " + " | ".join(row) + " |" for row in rows]
+    return "\n".join(lines) + "\n"
+
+
+SKELETON_REGISTER_ROW = [
+    "G-1",
+    "model/carrier.py",
+    "TABLE",
+    "synthetic/upstream.h",
+    "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "GPL-3.0-or-later",
+    "0001",
+    "manifest:model/carrier.py",
+    "registered",
+    "synthetic",
+]
+
+
+def skeleton_register(gpl_rows=(SKELETON_REGISTER_ROW,), exceptions=(), exclusions=()):
+    """The register that matches `build_skeleton`'s one quoted-constants row."""
+    text = "# GPL-boundary register (synthetic)\n\n"
+    for name, columns, rows in (
+        (REGISTER_GPL_SECTION, REGISTER_ROW_COLUMNS, gpl_rows),
+        (REGISTER_MIT_SECTION, REGISTER_ROW_COLUMNS, ()),
+        (REGISTER_EXCEPTION_SECTION, REGISTER_EXCEPTION_COLUMNS, exceptions),
+        (REGISTER_EXCLUSION_SECTION, REGISTER_EXCLUSION_COLUMNS, exclusions),
+    ):
+        text += f"## {name}\n\n" + _register_table(columns, rows) + "\n"
+    return text
+
+
 def build_skeleton(root: Path):
     """A minimal tree that must audit clean."""
+    _write(root, REGISTER_REL, skeleton_register())
     _write(root, f"{RECORD_DIR_REL}/0001-example.md", SKELETON_RECORD)
     _write(root, INDEX_REL, SKELETON_INDEX)
     _write(root, "model/carrier.py", SKELETON_CARRIER)
@@ -5533,8 +6082,33 @@ def _patch_manifest(root: Path, mutate, stage=True):
     data = json.loads(path.read_text(encoding="utf-8"))
     mutate(data)
     path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    # Keep the synthetic GPL-boundary register in step with the quoted-constants
+    # rows this fixture adds, so a control about some OTHER layer stays a control
+    # about that layer alone. (The register controls write the register directly.)
+    register = root / REGISTER_REL
+    if register.exists():
+        rows = []
+        for number, entry in enumerate(data.get("entries", []), start=1):
+            if entry.get("class") == "quoted-constants" and entry.get("path"):
+                rows.append(
+                    [
+                        f"G-{number}",
+                        entry["path"],
+                        "TABLE",
+                        "synthetic/upstream.h",
+                        entry.get("pinned_commit") or SKELETON_REGISTER_ROW[4],
+                        "GPL-3.0-or-later",
+                        str(entry["decision_record"]),
+                        f"manifest:{entry['path']}",
+                        "registered",
+                        "synthetic",
+                    ]
+                )
+        register.write_text(skeleton_register(gpl_rows=rows), encoding="utf-8")
     if stage and (root / ".git").exists():
         _git(root, "add", "-f", MANIFEST_REL)
+        if register.exists():
+            _git(root, "add", "-f", REGISTER_REL)
 
 
 # --- discovery-layer fixtures -------------------------------------------------
@@ -5914,6 +6488,101 @@ def _controls():
         "scan-underflow": (
             "a scan that saw fewer files than the declared floor",
             lambda root: _patch_manifest(root, lambda d: d.update(scan_floor=10_000)),
+        ),
+        "register-missing": (
+            "a deleted GPL-boundary register",
+            lambda root: (root / REGISTER_REL).unlink(),
+        ),
+        "register-malformed-row": (
+            "a register row with an empty required field",
+            lambda root: _write(
+                root,
+                REGISTER_REL,
+                skeleton_register(
+                    gpl_rows=[SKELETON_REGISTER_ROW[:-1] + [""]],
+                ),
+            ),
+        ),
+        "register-missing-row": (
+            "a quoted-constants manifest row whose register row was removed",
+            lambda root: _write(
+                root,
+                REGISTER_REL,
+                skeleton_register(
+                    gpl_rows=[],
+                    exclusions=[
+                        [
+                            "X-1",
+                            "0001",
+                            "model/carrier.py",
+                            "TABLE",
+                            "structural",
+                            "synthetic",
+                        ]
+                    ],
+                ),
+            ),
+        ),
+        "register-unmapped-row": (
+            "a register row citing a provenance row that does not exist",
+            lambda root: _write(
+                root,
+                REGISTER_REL,
+                skeleton_register(
+                    gpl_rows=[
+                        SKELETON_REGISTER_ROW[:7]
+                        + ["manifest:model/other.py"]
+                        + SKELETON_REGISTER_ROW[8:]
+                    ],
+                ),
+            ),
+        ),
+        "register-licence-mismatch": (
+            "an MIT-licensed row filed in the GPL-derived table",
+            lambda root: _write(
+                root,
+                REGISTER_REL,
+                skeleton_register(
+                    gpl_rows=[
+                        SKELETON_REGISTER_ROW[:5] + ["MIT"] + SKELETON_REGISTER_ROW[6:]
+                    ],
+                ),
+            ),
+        ),
+        "register-exception-stale": (
+            "a register exception for a file that a manifest row now covers",
+            lambda root: _write(
+                root,
+                REGISTER_REL,
+                skeleton_register(
+                    exceptions=[
+                        [
+                            "E-1",
+                            "model/carrier.py",
+                            "0001",
+                            "synthetic gap",
+                            "synthetic closing action",
+                        ]
+                    ],
+                ),
+            ),
+        ),
+        "register-record-unaccounted": (
+            "a record declaring quoted data that the register neither lists nor excludes",
+            lambda root: (
+                _write(
+                    root,
+                    f"{RECORD_DIR_REL}/0002-second.md",
+                    "# 0002: Second (synthetic)\n\n- **Status**: proposed\n"
+                    "- **Date**: 2026-01-02\n\nThe table is quoted as data.\n",
+                ),
+                _write(
+                    root,
+                    INDEX_REL,
+                    SKELETON_INDEX
+                    + "| [0002](0002-second.md) | Second (synthetic) | proposed | 2026-01-02 |\n",
+                ),
+            ),
         ),
     }
     return controls
