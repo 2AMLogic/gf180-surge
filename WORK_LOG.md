@@ -4,6 +4,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-09
 
+- **PR #406**: SXT-013: bind listening-cache audio to preset and render identities
 - **PR #399**: feat(#392): verify allocation offsets, overlap and slot ownership
 - **PR #398**: test: enumerate profile_budget and reverb2 reference controls (#387)
 - **PR #396**: SXT-023: Delay matches pinned-engine fixtures within budgets (d(t) probe + model revision)
@@ -16,6 +17,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 - **PR #385**: Reject stale trace outputs in shared RTL simulator runs (#360)
 - **PR #383**: SXT-028e-sse: FuzzTable<1> libc++ observation on alternate arm64 host - MISMATCH at default flags; pinned-host leg NOT_RUN (#135)
 - **PR #380**: docs(policy): option A for source-nonrepeatable carriers + census spec (#310)
+- **Issue #404** (closed): SXT-013: bind listening-cache audio to preset and render identities
 - **Issue #392** (closed): SXT-020: verify allocation intervals cannot alias per-instance effect state
 - **Issue #387** (closed): Extend the negative-control enumerator to cover profile_budget_controls.py and reverb2_reference_controls.py (outside the *_negative_controls.py glob)
 - **Issue #384** (closed): SXT-029: require preset-scoped complete-wet integration evidence before supported
@@ -24,6 +26,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 - **Issue #364** (closed): Enforce AGENTS.md/CLAUDE.md parity outside Loom marker blocks with a test
 - **Issue #361** (closed): Write current refusal verdicts for shared RTL comparison input errors
 - **Issue #360** (closed): Reject stale trace outputs in shared RTL simulator runs
+- **Issue #265** (closed): Remove duplicated sha256(path) helper: 5 copies in tools/ instead of one shared module
 - **Issue #261** (closed): Remove duplicated main()/revision_pin_ok() skeleton across rf_* RTL-model harnesses
 
 ### 2026-10-08

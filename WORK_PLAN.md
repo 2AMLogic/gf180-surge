@@ -9,6 +9,7 @@ Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementat
 
 - **#368**: LP24 full-engine observation tap, external host route (#307)
 - **#397**: SXT-020: reject contradictory/unsupported patch-image versions (#391)
+- **#403**: fix(#401): honest package.json test/check/lint scripts
 
 ## Operator Priority
 
@@ -26,13 +27,13 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-- **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host
+- **#405**: SXT-028f: reject unknown and empty standalone reference-control selections
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#407**: SXT-028f: reject unknown/empty reference-control selections (#405)
 
 ## Approved (Awaiting Merge)
 
@@ -40,6 +41,7 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#368**: LP24 full-engine observation tap, external host route (#307)
 - **#397**: SXT-020: reject contradictory/unsupported patch-image versions (#391)
+- **#403**: fix(#401): honest package.json test/check/lint scripts
 
 ## Proposed
 
@@ -65,9 +67,7 @@ Issues carrying `loom:curated`.
 
 ## Proposed (Architect / Hermit)
 
-- **#401**: package.json test/check:ci/check:all scripts exit 0 with no checks run (NOT_RUN reads as PASS) *(architect)*
 - **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
-- **#265**: Remove duplicated sha256(path) helper: 5 copies in tools/ instead of one shared module *(hermit)*
 - **#272**: Remove duplicated sha256_file(path) reimplementation: 7 copies already have a canonical oracle_common.sha256_file *(hermit)*
 - **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
 
@@ -81,13 +81,13 @@ Issues carrying `loom:curated`.
 
 | Tier | Count |
 |------|-------|
-| Operator merge-risk holds | 2 |
+| Operator merge-risk holds | 3 |
 | Operator priority | 1 |
 | Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 2 |
+| PRs awaiting review | 1 |
+| Approved PRs awaiting merge | 3 |
 | Curated | 17 |
-| Architect / Hermit proposals | 5 |
+| Architect / Hermit proposals | 3 |
 | Active epics | 3 |
 <!-- guide:plan-body:end -->
