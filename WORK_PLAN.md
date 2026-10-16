@@ -27,7 +27,6 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
@@ -97,7 +96,7 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 2 |
 | Very important | 0 |
 | Important | 2 |
-| Ready (`loom:issue`) | 3 |
+| Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 2 |
