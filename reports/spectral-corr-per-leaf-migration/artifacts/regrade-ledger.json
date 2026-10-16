@@ -1751,11 +1751,11 @@
     },
     {
       "artifact": "reports/SXT-034/artifacts/nc2-detune-zeroed.json",
-      "reason": "STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)"
+      "reason": "NOT-REPRODUCIBLE: NC-2 mutant input uni2-detune-zeroed.json is in no commit (git log --all --oneline -- '*uni2-detune-zeroed*' is empty), so this record cannot be re-rendered; it keeps its legacy log1p spectral_corr, carries no spectral_corr_definition, and is NOT a #110 result (see EVIDENCE.md)"
     },
     {
       "artifact": "reports/SXT-034/artifacts/nc2-diff-vs-true.json",
-      "reason": "STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)"
+      "reason": "NOT-REPRODUCIBLE: NC-2 mutant input uni2-detune-zeroed.json is in no commit (git log --all --oneline -- '*uni2-detune-zeroed*' is empty), so this record cannot be re-rendered; it keeps its legacy log1p spectral_corr, carries no spectral_corr_definition, and is NOT a #110 result (see EVIDENCE.md)"
     },
     {
       "artifact": "reports/SXT-034/artifacts/uni1-rep.json",

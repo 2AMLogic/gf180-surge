@@ -173,10 +173,15 @@ Each JSON has a reason in the ledger:
   **legacy** definition and must not be compared with the #110 values.
 - **STALE (cannot be re-graded here)**: `SXT-034/artifacts/uni2-poly.json`,
   `uni16-smoke.json` (their reference renders live on the pinned remote oracle
-  and are not committed). Also `SXT-034/artifacts/nc2-*.json`: #145
-  republished them on a host holding the NC-2 mutant inputs, which are not
-  committed, so they cannot be re-rendered here. Their spectral values are
-  legacy and STALE until re-run with those inputs.
+  and are not committed).
+- **NOT-REPRODUCIBLE**: `SXT-034/artifacts/nc2-detune-zeroed.json` and
+  `nc2-diff-vs-true.json`. Their NC-2 mutant input `uni2-detune-zeroed.json`
+  is in no commit on any ref (`git log --all --oneline --
+  '*uni2-detune-zeroed*'` is empty; #145 republished them on a host that held
+  it), so they cannot be re-rendered. They keep the legacy native-unit `log1p`
+  `spectral_corr`, carry no `spectral_corr_definition` (none was fabricated),
+  and are not #110 results. No spectral-leg or verdict change is claimed: both
+  also fail `max_abs_diff_lsb`. They stay in the count of 28 carried items.
 - **HISTORICAL** (not current verdicts): #145's
   `halfband-republication/artifacts/republication-record.json`, #146's
   `halfband-branch-order/artifacts/before-after-fixtures.json`, and #100's
