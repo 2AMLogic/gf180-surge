@@ -4,6 +4,9 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-16
 
+- **PR #487**: docs(evidence): record NC-2 artifacts as not reproducible (#484)
+- **PR #482**: Bump Repo Skills 0.19.5 -> 0.24.3
+- **Issue #484** (closed): SXT-034: record NC-2 spectral_corr artifacts as not reproducible (missing mutant input)
 - **PR #431**: Add GPL-boundary register and register cross-check (#370)
 - **PR #481**: fix(rtl): promote logical4 cfg/in_l/in_r to core ports
 - **Issue #370** (closed): GPL-boundary register: list every GPL-derived constant table with its source and provenance

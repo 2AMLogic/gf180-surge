@@ -9,7 +9,6 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 - **#414**: CI hardening: job timeouts, PR-only concurrency cancel, SHA-pinned actions
 - **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
-- **#482**: Bump Repo Skills 0.19.5 -> 0.24.3
 
 ## Very Important
 
@@ -28,9 +27,9 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
+- **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
-- **#484**: SXT-034: record NC-2 spectral_corr artifacts as not reproducible (missing mutant input)
 
 ## In Progress
 
@@ -50,7 +49,6 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#414**: CI hardening: job timeouts, PR-only concurrency cancel, SHA-pinned actions
 - **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
-- **#482**: Bump Repo Skills 0.19.5 -> 0.24.3
 
 ## Proposed
 
@@ -79,7 +77,6 @@ Issues carrying `loom:curated`.
 - **#434**: Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL *(curated)*
 - **#469**: RTL: reverb1_core infers a latch for dp_tmp (Verilator LATCH, reverb1_core.sv:130) *(curated)*
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
-- **#484**: SXT-034: record NC-2 spectral_corr artifacts as not reproducible (missing mutant input) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -97,14 +94,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 3 |
+| Operator merge-risk holds | 2 |
 | Very important | 0 |
 | Important | 2 |
 | Ready (`loom:issue`) | 3 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 3 |
-| Curated | 24 |
+| Approved PRs awaiting merge | 2 |
+| Curated | 23 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
