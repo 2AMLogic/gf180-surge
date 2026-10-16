@@ -1,0 +1,190 @@
+{
+ "carrier": "digibass",
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "sample_rate": 48000,
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "expected_gate_verdict": "PASS",
+ "fixture_revision": 2,
+ "gate": {
+  "declared": {
+   "estimator": "Hann window, 8x zero-pad rfft, parabolic interpolation on log magnitude, search 20-20000 Hz",
+   "peak_min": 0.001,
+   "pitch_tol_cents": 25.0,
+   "probe": {
+    "hold_s": 1.0,
+    "key": 60,
+    "settle_s": 0.25,
+    "tail_s": 0.25,
+    "velocity": 100
+   },
+   "purity_band_cents": 100.0,
+   "purity_min": 0.5,
+   "segment_from_note_on_s": [
+    0.3,
+    0.8
+   ],
+   "tuning": "standard 12-TET, A4 (key 69) = 440 Hz"
+  },
+  "dominant_hz": 130.8127972600968,
+  "expected_f0_hz": 130.8127826502993,
+  "fails": [],
+  "meaning": "valid reference: nonzero, pitched at the probe key",
+  "peak_abs": 0.29620057344436646,
+  "peak_abs_full_render": 0.3194166421890259,
+  "pitch_error_cents": 0.00019335249171555146,
+  "purity": 0.9999830022468106,
+  "segment_samples": [
+   14400,
+   38400
+  ],
+  "verdict": "PASS"
+ },
+ "issue": 329,
+ "leaf": "SXT-043",
+ "mode": "revised",
+ "outcome_matches_expectation": true,
+ "preset_blob_sha1": "843cf98463f9d8d7840993180739e63a114d7ed9",
+ "preset_path": "resources/data/patches_factory/Basses/Digibass.fxp",
+ "readback": {
+  "keytrack": true,
+  "octave": 0,
+  "osc_type": 1,
+  "pitch_param": 0.0,
+  "polymode": 4,
+  "portamento": -4.598213195800781,
+  "scene_octave": -1,
+  "shape": 0
+ },
+ "render_sha256": "b6cb9243a806b13104627712d9d72caa59b95b54353e2641dc3f664a99666ca9",
+ "routes": {
+  "fixture_revision": 2,
+  "inert": [
+   {
+    "depth": -20.057146072387695,
+    "dest": "FX A1 Param 1",
+    "norm_depth": 0.0,
+    "scene": null,
+    "scope": "global",
+    "src": "Modwheel",
+    "why": "every FX slot is forced Off"
+   },
+   {
+    "depth": 18.771427154541016,
+    "dest": "FX A1 Param 4",
+    "norm_depth": 0.0,
+    "scene": null,
+    "scope": "global",
+    "src": "Modwheel",
+    "why": "every FX slot is forced Off"
+   },
+   {
+    "depth": 31.724998474121094,
+    "dest": "A Filter 1 Cutoff",
+    "norm_depth": 0.2440384477376938,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "filter unit 1 forced Off"
+   },
+   {
+    "depth": 0.15267899632453918,
+    "dest": "A Filter 1 Resonance",
+    "norm_depth": 0.15267899632453918,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "filter unit 1 forced Off"
+   },
+   {
+    "depth": 15.942855834960938,
+    "dest": "A Filter 1 FEG Mod Amount",
+    "norm_depth": 0.08303570747375488,
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity",
+    "why": "filter unit 1 forced Off"
+   }
+  ],
+  "live": [],
+  "osc_p_route_clear": {
+   "cleared": [
+    {
+     "depth_original": 0.3669640123844147,
+     "dest": "A Osc 1 Morph",
+     "dest_original_name": "A Osc 1 Morph",
+     "dest_param_index": 0,
+     "dest_synth_side_id": 225,
+     "norm_depth_original": 0.3669640123844147,
+     "readback_depth01": 0.0,
+     "readback_raw_depth": null,
+     "scene": 0,
+     "scope": "voice",
+     "source_index": 0,
+     "source_scene": 0,
+     "src": "Velocity",
+     "why": "destination is osc slot 0 p[0] (A Osc 1 Morph), which the declared Sine type switch remaps; a surviving routing retargets the Sine integer Shape selector (#311), so its depth is zeroed BEFORE the switch (osc_p_route_clear, fixture revision 2)"
+    },
+    {
+     "depth_original": 0.22321400046348572,
+     "dest": "A Osc 1 Morph",
+     "dest_original_name": "A Osc 1 Morph",
+     "dest_param_index": 0,
+     "dest_synth_side_id": 225,
+     "norm_depth_original": 0.22321400046348572,
+     "readback_depth01": 0.0,
+     "readback_raw_depth": null,
+     "scene": 0,
+     "scope": "voice",
+     "source_index": 0,
+     "source_scene": 0,
+     "src": "Filter EG",
+     "why": "destination is osc slot 0 p[0] (A Osc 1 Morph), which the declared Sine type switch remaps; a surviving routing retargets the Sine integer Shape selector (#311), so its depth is zeroed BEFORE the switch (osc_p_route_clear, fixture revision 2)"
+    }
+   ],
+   "fixture_revision": 2,
+   "match": "engine synth-side parameter id of osc slot p[0..6]",
+   "order": "after loadPatch, before the oscillator type switch",
+   "slot": 0,
+   "targets": [
+    {
+     "original_name": "A Osc 1 Morph",
+     "param_index": 0,
+     "synth_side_id": 225
+    },
+    {
+     "original_name": "A Osc 1 Skew Vertical",
+     "param_index": 1,
+     "synth_side_id": 226
+    },
+    {
+     "original_name": "A Osc 1 Saturate",
+     "param_index": 2,
+     "synth_side_id": 227
+    },
+    {
+     "original_name": "A Osc 1 Formant",
+     "param_index": 3,
+     "synth_side_id": 228
+    },
+    {
+     "original_name": "A Osc 1 Skew Horizontal",
+     "param_index": 4,
+     "synth_side_id": 229
+    },
+    {
+     "original_name": "A Osc 1 Unison Detune",
+     "param_index": 5,
+     "synth_side_id": 230
+    },
+    {
+     "original_name": "A Osc 1 Unison Voices",
+     "param_index": 6,
+     "synth_side_id": 231
+    }
+   ]
+  },
+  "pinned": []
+ }
+}

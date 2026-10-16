@@ -236,9 +236,11 @@ item that depends on the budget check) demonstrably fires as required.
 
 Everything above this heading is the dated record from #77 and #311. It is
 kept verbatim, including the three Digibass **NOT A VALID COMPARISON** rows,
-and it describes **fixture revision 1**. Every file currently in
-`artifacts/` and `model/voice/playmode/inputs/` was produced under
-revision 1.
+and it describes **fixture revision 1**. Every file directly under
+`artifacts/` was produced under revision 1 and is kept as historical
+evidence. `model/voice/playmode/inputs/*.json` and everything under
+`artifacts/rev2/` (plus `artifacts/validity-digibass-*.json`) are revision 2
+(re-extracted 2026-10-16).
 
 **What changed.** `model/voice/playmode/fixture_config.py` now has
 `FIXTURE_REVISION = 2` and the new override `osc_p_route_clear`. Routings
@@ -259,31 +261,74 @@ reads 0 on the non-modulatable Sine Shape while the raw depth stays intact.
 The sidecar is left byte-unchanged as historical evidence and is
 **STALE** for revision 2.
 
+**Native legs run 2026-10-16** on loom-worker-5 against the manifest-pinned
+prebuilt oracle (`surge@58914e59c608ed4384ba6002e44c3465c58b2e71`, 48 kHz;
+`oracle/fetch-and-build.sh --prebuilt` sha256 check passed, engine
+`1.4.HEAD.58914e59c`), installed into a worktree-local root
+(`ORACLE_PREBUILT_ROOT`), not into the shared host cache. All revision-2
+outputs are under `artifacts/rev2/` and `artifacts/validity-digibass-*.json`;
+the revision-1 files in `artifacts/` are untouched historical evidence.
+
 | # | #329 acceptance item | Status | Evidence / reason |
 |---|---|---|---|
-| 1 | Native readback shows targeted osc-1 `p[]` route depths are 0 before the type switch; original and revised state plus revision retained | **Code + API-double PASS; native BLOCKED** | `tests/test_sxt043_fixture_rev2.py` (18 tests) runs on an API double that reproduces the #311 engine behaviors. It checks that zeroing comes before the switch, that source scene/index are preserved, that handles are re-fetched, that matching uses identity and not names, and that a failed readback refuses. A mutation that restores the old order makes 7 of the 18 tests fail. These tests verify ordering, not native sound. No native readback was recorded: the pinned oracle is not installed on this host (no `~/.cache/gf180-surge-oracle`, `ORACLE_PREBUILT_URL` not provisioned). |
-| 2 | Pinned SXT-010 runtime at 48 kHz gives a nonzero Digibass reference pitched at key/scene octave/tuning, on a held segment | **BLOCKED** (oracle unavailable) | The gate and its window/tolerance were declared before any measurement (`reference_validity.py`: segment 0.30 to 0.80 s after note-on, ±25 cents, purity ≥ 0.5 within ±100 cents, peak ≥ 1e-3; Digibass f0 = 130.81 Hz). The runner `tools/probe_pm_reference_validity.py --mode revised` has **not run**. Synthetic-signal checks show the gate accepts a 130.81 Hz sine and rejects silence, 1.46 kHz, noise, the wrong octave and a 40-cent offset. That says nothing about the engine. |
-| 3 | Re-extract inputs; re-render and compare the three carriers on `seq-notes-{coverage,repeated,holds}-v1` | **BLOCKED** (oracle unavailable) | Nothing was re-extracted or re-rendered. The budget table above is still the revision-1 measurement, and Digibass stays NOT A VALID COMPARISON. No new budget numbers exist yet. |
-| 4 | RTL-vs-revised-model exact; forced-Poly and refusal controls re-run | **Partial: RTL-vs-model re-run PASS on revision-1 inputs; revised-inputs leg BLOCKED; oracle controls NOT_RUN** | The model, the RTL and the comparator were not changed by this revision. Re-run on 2026-10-07 for Digibass × {`seq-notes-coverage-v1`, `seq-mono-fingered-v1`, `seq-mono-reclaim-v1`}: 0 mismatches, with checkpoint/field counts identical to the committed records (68,400/1,094,400; 61,200/979,200; 35,280/564,480). This used the revision-1 inputs, because re-extraction needs the oracle. The forced-Poly and extractor refusal controls need the oracle and were NOT_RUN. |
-| 5 | Live negative control in the old retained-routing order fails the valid-reference gate (silence), and a stale/non-pitched output also fails | **Runner + API-double done; native BLOCKED** | `tools/probe_pm_reference_validity.py --mode nc-retained-routes` and `--mode nc-stale-buffer` have **not run** on the pinned engine. On the double, the old order now refuses at the post-switch guard, and the revision-1 readback blind spot is reproduced and refused by the raw-depth check. The #311 native observations (peak 0.0 under the old order; ~1.46 kHz stale buffer) are the investigation input. They are not a re-measurement. |
-| 6 | Historical NOT A VALID COMPARISON preserved; revised result appended with provenance; no stale artifact shown as current PASS | **PASS (record discipline)** | The historical rows are untouched. This section marks every committed SXT-043 artifact as revision 1, and the Digibass inputs as STALE for revision 2. The renderer refuses revision-1 inputs. No revised result exists to append yet. |
+| 1 | Native readback shows targeted osc-1 `p[]` route depths are 0 before the type switch; original and revised state plus revision retained | **PASS** (native) | `inputs/digibass.json` `modulation_routes.osc_p_route_clear` (fixture revision 2) records the two routes, both synth-side id 225 (`A Osc 1 Morph`, p[0]): `Velocity` depth 0.36696 and `Filter EG` depth 0.22321, source scene/index 0/0, readback `depth01` 0.0 and raw depth `null` (route removed). `bass2` and `bass5` have no such routes. The API-double regression (`tests/test_sxt043_fixture_rev2.py`) still verifies ordering. |
+| 2 | Nonzero Digibass reference pitched at key/scene octave/tuning on a held segment | **PASS** (native, gate declared before measurement) | `artifacts/validity-digibass-revised.json`: held segment 0.30 to 0.80 s, dominant 130.813 Hz against expected 130.813 Hz (scene octave -1), peak 0.2962, no gate failures. The three revision-2 Digibass references have a nonzero peak (14,437 / 14,437 / 6,460 LSB) versus 1 LSB in revision 1. |
+| 3 | Re-extract; re-render and compare the three carriers on the three declared sequences | **DONE; budget verdict FAIL on all 9 (achieved numbers recorded, thresholds untouched)** | Table below. Coverage (all 9 rendered and compared) is reported separately from agreement (0 of 9 meet the proposed budgets). Bass 2 and Bass 5 references are byte-identical to revision 1 (same sha256), so their rows are unchanged. |
+| 4 | RTL-vs-revised-model exact; forced-Poly and refusal controls re-run | **PASS** | `artifacts/rev2/exactness-*.json`: 15 of 15 runs (3 carriers x 5 sequences) verdict PASS, 0 mismatches, on the re-extracted inputs. Forced-Poly control re-run (bass2, `seq-mono-fingered-v1`): max_abs_diff 43,492 LSB, rms -12.48 dBFS, spectral_corr 0.846, all three legs FAIL (`artifacts/rev2/neg-control-forced-poly-negative-control.json`), identical to revision 1. The four class-boundary refusal controls (attacky 0, distbass1 1, behemoth 2, plain 3) all REFUSE with exit 2 and write no sidecar. |
+| 5 | Retained-routing control fails the valid-reference gate; stale/non-pitched also fails | **PASS** (native) | `artifacts/validity-digibass-nc-retained-routes.json`: gate FAIL, peak 0.0, "silent: held-segment peak 0 < 0.001". `artifacts/validity-digibass-nc-stale-buffer.json`: gate FAIL, peak 3.95e-06, dominant 1462.2 Hz (4179 cents from 130.81 Hz), purity 0.000. Both modes exit 0, meaning the outcome matched the expected FAIL. |
+| 6 | Historical NOT A VALID COMPARISON preserved; revised result appended with provenance; no stale artifact shown as current PASS | **PASS (record discipline)** | The historical rows above are unchanged. The revision-1 `artifacts/*` stay as dated evidence. Current inputs are revision 2 (hashes below). |
 
-**To unblock** (on a host with the prebuilt oracle, #232):
+### Revision-2 model-vs-reference budgets (claim 2), recorded not tuned
 
-```sh
-for c in bass2 bass5 digibass; do
-  "$ORACLE_PYTHON" model/voice/playmode/extract_inputs.py --carrier $c \
-      --out model/voice/playmode/inputs/$c.json
-done
-for m in revised nc-retained-routes nc-stale-buffer; do       # one process each
-  "$ORACLE_PYTHON" tools/probe_pm_reference_validity.py --carrier digibass \
-      --mode $m --out reports/SXT-043/artifacts/validity-digibass-$m.json
-done
-# then the Reproduce block above for the 3 carriers x 3 declared sequences,
-# the forced-Poly control, the refusal controls, and RTL exactness on the
-# re-extracted inputs; record achieved numbers, do not tune thresholds.
-```
+Same comparator, same proposed PENDING-FREEZE thresholds
+(`max_abs_diff_lsb <= 3500`, `rms_diff_dbfs <= -46.0`,
+`spectral_corr >= 0.98`), dry path, no per-render normalization, no time
+warp.
 
-Stop conditions still apply. If the revised Digibass probe is silent or
-not pitched, or the old-order control does not fail, record a bounded
-finding and do not adjust the gate.
+| Carrier | Sequence | max_abs_diff (LSB) | rms_diff (dBFS) | spectral_corr | ref_peak (LSB) | Verdict |
+|---|---|---:|---:|---:|---:|---|
+| bass2 | coverage | 9,352 | -26.85 | 0.9960 | 16,329 | FAIL |
+| bass2 | repeated | 3,413 | -32.82 | 0.9983 | 16,329 | FAIL |
+| bass2 | holds | 2,671 | -32.95 | 0.9978 | 12,784 | FAIL |
+| bass5 | coverage | 50,783 | -16.97 | 0.9611 | 32,767 | FAIL |
+| bass5 | repeated | 15,270 | -22.38 | 0.9461 | 32,767 | FAIL |
+| bass5 | holds | 7,154 | -24.38 | 0.9930 | 32,767 | FAIL |
+| digibass | coverage | 8,258 | -30.01 | 0.9963 | 14,437 | FAIL |
+| digibass | repeated | 3,013 | -33.90 | 0.9982 | 14,437 | FAIL |
+| digibass | holds | 1,349 | -38.89 | 0.9974 | 6,460 | FAIL |
+
+Digibass is now a valid comparison (nonzero, pitched reference) and fails the
+proposed budgets on the `rms_diff_dbfs` leg in all three runs, plus
+`max_abs_diff_lsb` on coverage (repeated and holds clear it). The `spectral_corr` leg clears 0.98
+on all three. The cause is the declared model simplification already
+recorded for Bass 2 and Bass 5 (the model render does not reproduce the
+filter chain), not the fixture. This is a bounded finding, not a pass.
+
+### Provenance (sha256)
+
+| File | sha256 |
+|---|---|
+| `fixture_config.py` (revision 2, unchanged by this evidence update) | `00af35620c43f01c6a6ce29e6c84dec3daff3e938b635abe04dfb24c3bcc0a2a` |
+| `inputs/bass2.json` | `d3265c57cd9442630b302432a849aaf55e89f5c86d59f588e2bebeb48356cb8a` |
+| `inputs/bass5.json` | `8e6ffe43d4b5b1d721929629706c5276cb921ad847012f2319d6cd77b61a69c9` |
+| `inputs/digibass.json` | `7778f885edd3400e70062d3fb34678502653e373cff66dcac2622997fc660e6a` |
+| `artifacts/rev2/digibass__seq-notes-coverage-v1-ref.wav` | `275f30fab1e1e631cde4be16909c17095f2b9de115809de209b1e543b381dbfe` |
+| `artifacts/rev2/digibass__seq-notes-holds-v1-ref.wav` | `71566465ab152eb2577ecf5a543e4022b274132d0489301d806d0531a9525ab5` |
+| `artifacts/rev2/digibass__seq-notes-repeated-v1-ref.wav` | `6ef15e274d9ccfc4c5a6208c22c37737ec87039775c53479321dd7ac5b2bcf90` |
+
+### Checks run in this change
+
+`pytest tests/test_sxt043_playmode.py tests/test_sxt043_fixture_rev2.py
+tests/test_byte_frozen_sources.py` in a throwaway venv built from
+`requirements-ci.txt`: 70 passed. The byte-frozen audit passes; no
+byte-frozen source was edited. The full suite and the CI simulator tier were
+NOT_RUN here (CI is the gate).
+
+### What remains unproved
+
+Nothing here is a claim of musical quality, preset support or original-Surge
+fidelity for Digibass; the carrier is still a declared test configuration,
+never an adapted preset. Model-vs-reference agreement is FAIL against the
+proposed (not frozen) budgets on all nine carrier runs. The hazard inventory
+in the README (FX-slot type swaps in `tools/ablate_fx.py`) was not examined
+natively. No hardware, FPGA or gf180mcu claim is made.

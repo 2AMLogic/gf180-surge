@@ -13,6 +13,7 @@
   "carrier": "digibass",
   "character": 0,
   "declared_overrides": [
+    "osc_p_route_clear",
     "mute_o1",
     "mute_o2",
     "mute_o3",
@@ -49,6 +50,7 @@
   "extend_detune": false,
   "fb": 0.0,
   "fb_extend": false,
+  "fixture_revision": 2,
   "fmmode": 0,
   "graphs_sha": "843cf98463f9d8d7840993180739e63a114d7ed9",
   "highcut": 70.0,
@@ -59,6 +61,7 @@
   "lowcut": -60.0,
   "master_db": 0.0,
   "modulation_routes": {
+    "fixture_revision": 2,
     "inert": [
       {
         "depth": -20.057146072387695,
@@ -107,26 +110,84 @@
       }
     ],
     "live": [],
-    "pinned": [
-      {
-        "depth": 0.3669640123844147,
-        "dest": "A Osc 1 Shape",
-        "norm_depth": 0.0,
-        "scene": 0,
-        "scope": "voice",
-        "src": "Velocity",
-        "why": "destination is pinned by the declared fixture configuration; depth zeroed (modpin_zero)"
-      },
-      {
-        "depth": 0.22321400046348572,
-        "dest": "A Osc 1 Shape",
-        "norm_depth": 0.0,
-        "scene": 0,
-        "scope": "voice",
-        "src": "Filter EG",
-        "why": "destination is pinned by the declared fixture configuration; depth zeroed (modpin_zero)"
-      }
-    ]
+    "osc_p_route_clear": {
+      "cleared": [
+        {
+          "depth_original": 0.3669640123844147,
+          "dest": "A Osc 1 Morph",
+          "dest_original_name": "A Osc 1 Morph",
+          "dest_param_index": 0,
+          "dest_synth_side_id": 225,
+          "norm_depth_original": 0.3669640123844147,
+          "readback_depth01": 0.0,
+          "readback_raw_depth": null,
+          "scene": 0,
+          "scope": "voice",
+          "source_index": 0,
+          "source_scene": 0,
+          "src": "Velocity",
+          "why": "destination is osc slot 0 p[0] (A Osc 1 Morph), which the declared Sine type switch remaps; a surviving routing retargets the Sine integer Shape selector (#311), so its depth is zeroed BEFORE the switch (osc_p_route_clear, fixture revision 2)"
+        },
+        {
+          "depth_original": 0.22321400046348572,
+          "dest": "A Osc 1 Morph",
+          "dest_original_name": "A Osc 1 Morph",
+          "dest_param_index": 0,
+          "dest_synth_side_id": 225,
+          "norm_depth_original": 0.22321400046348572,
+          "readback_depth01": 0.0,
+          "readback_raw_depth": null,
+          "scene": 0,
+          "scope": "voice",
+          "source_index": 0,
+          "source_scene": 0,
+          "src": "Filter EG",
+          "why": "destination is osc slot 0 p[0] (A Osc 1 Morph), which the declared Sine type switch remaps; a surviving routing retargets the Sine integer Shape selector (#311), so its depth is zeroed BEFORE the switch (osc_p_route_clear, fixture revision 2)"
+        }
+      ],
+      "fixture_revision": 2,
+      "match": "engine synth-side parameter id of osc slot p[0..6]",
+      "order": "after loadPatch, before the oscillator type switch",
+      "slot": 0,
+      "targets": [
+        {
+          "original_name": "A Osc 1 Morph",
+          "param_index": 0,
+          "synth_side_id": 225
+        },
+        {
+          "original_name": "A Osc 1 Skew Vertical",
+          "param_index": 1,
+          "synth_side_id": 226
+        },
+        {
+          "original_name": "A Osc 1 Saturate",
+          "param_index": 2,
+          "synth_side_id": 227
+        },
+        {
+          "original_name": "A Osc 1 Formant",
+          "param_index": 3,
+          "synth_side_id": 228
+        },
+        {
+          "original_name": "A Osc 1 Skew Horizontal",
+          "param_index": 4,
+          "synth_side_id": 229
+        },
+        {
+          "original_name": "A Osc 1 Unison Detune",
+          "param_index": 5,
+          "synth_side_id": 230
+        },
+        {
+          "original_name": "A Osc 1 Unison Voices",
+          "param_index": 6,
+          "synth_side_id": 231
+        }
+      ]
+    },
+    "pinned": []
   },
   "mono_voice_envelope_mode": 1,
   "mono_voice_priority_mode": 0,
@@ -135,15 +196,15 @@
   "osc_cut_activation_probe": {
     "highcut_deactivated": true,
     "highcut_probe": {
-      "sha256_a": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
-      "sha256_b": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+      "sha256_a": "3119aa821b4e07b993d216ccd20f5ea8e7b69f4424250867e451495a757fc06b",
+      "sha256_b": "3119aa821b4e07b993d216ccd20f5ea8e7b69f4424250867e451495a757fc06b",
       "value_a": 70.0,
       "value_b": 0.0
     },
     "lowcut_deactivated": true,
     "lowcut_probe": {
-      "sha256_a": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
-      "sha256_b": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+      "sha256_a": "3119aa821b4e07b993d216ccd20f5ea8e7b69f4424250867e451495a757fc06b",
+      "sha256_b": "3119aa821b4e07b993d216ccd20f5ea8e7b69f4424250867e451495a757fc06b",
       "value_a": -60.0,
       "value_b": 20.0
     }
