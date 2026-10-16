@@ -13,6 +13,7 @@
   "carrier": "bass2",
   "character": 0,
   "declared_overrides": [
+    "osc_p_route_clear",
     "mute_o1",
     "mute_o2",
     "mute_o3",
@@ -49,6 +50,7 @@
   "extend_detune": false,
   "fb": 0.0,
   "fb_extend": false,
+  "fixture_revision": 2,
   "fmmode": 0,
   "graphs_sha": "e88ebe2d3b049c9937dd1fc65a886418dad132b4",
   "highcut": 70.0,
@@ -59,6 +61,7 @@
   "lowcut": -60.0,
   "master_db": 0.0,
   "modulation_routes": {
+    "fixture_revision": 2,
     "inert": [
       {
         "depth": 3.964287042617798,
@@ -98,6 +101,50 @@
       }
     ],
     "live": [],
+    "osc_p_route_clear": {
+      "cleared": [],
+      "fixture_revision": 2,
+      "match": "engine synth-side parameter id of osc slot p[0..6]",
+      "order": "after loadPatch, before the oscillator type switch",
+      "slot": 0,
+      "targets": [
+        {
+          "original_name": "A Osc 1 Shape",
+          "param_index": 0,
+          "synth_side_id": 225
+        },
+        {
+          "original_name": "A Osc 1 Width 1",
+          "param_index": 1,
+          "synth_side_id": 226
+        },
+        {
+          "original_name": "A Osc 1 Width 2",
+          "param_index": 2,
+          "synth_side_id": 227
+        },
+        {
+          "original_name": "A Osc 1 Sub Mix",
+          "param_index": 3,
+          "synth_side_id": 228
+        },
+        {
+          "original_name": "A Osc 1 Sync",
+          "param_index": 4,
+          "synth_side_id": 229
+        },
+        {
+          "original_name": "A Osc 1 Unison Detune",
+          "param_index": 5,
+          "synth_side_id": 230
+        },
+        {
+          "original_name": "A Osc 1 Unison Voices",
+          "param_index": 6,
+          "synth_side_id": 231
+        }
+      ]
+    },
     "pinned": []
   },
   "mono_voice_envelope_mode": 1,

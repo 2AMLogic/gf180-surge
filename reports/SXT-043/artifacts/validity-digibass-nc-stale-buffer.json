@@ -1,0 +1,96 @@
+{
+ "carrier": "digibass",
+ "engine": {
+  "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "sample_rate": 48000,
+  "surgepy": "1.4.HEAD.58914e59c"
+ },
+ "expected_gate_verdict": "FAIL",
+ "fixture_revision": 2,
+ "gate": {
+  "declared": {
+   "estimator": "Hann window, 8x zero-pad rfft, parabolic interpolation on log magnitude, search 20-20000 Hz",
+   "peak_min": 0.001,
+   "pitch_tol_cents": 25.0,
+   "probe": {
+    "hold_s": 1.0,
+    "key": 60,
+    "settle_s": 0.25,
+    "tail_s": 0.25,
+    "velocity": 100
+   },
+   "purity_band_cents": 100.0,
+   "purity_min": 0.5,
+   "segment_from_note_on_s": [
+    0.3,
+    0.8
+   ],
+   "tuning": "standard 12-TET, A4 (key 69) = 440 Hz"
+  },
+  "dominant_hz": 1462.211952359717,
+  "expected_f0_hz": 130.8127826502993,
+  "fails": [
+   "silent: held-segment peak 3.95e-06 < 0.001",
+   "dominant 1462.21 Hz is 4179.1 cents from expected 130.81 Hz (tol 25)",
+   "purity 0.000 < 0.50 within +-100 cents of f0"
+  ],
+  "meaning": "NOT A VALID COMPARISON",
+  "peak_abs": 3.952656697947532e-06,
+  "peak_abs_full_render": 0.057253703474998474,
+  "pitch_error_cents": 4179.092425087156,
+  "purity": 3.191688962429591e-08,
+  "segment_samples": [
+   14400,
+   38400
+  ],
+  "verdict": "FAIL"
+ },
+ "issue": 329,
+ "leaf": "SXT-043",
+ "mode": "nc-stale-buffer",
+ "outcome_matches_expectation": true,
+ "preset_blob_sha1": "843cf98463f9d8d7840993180739e63a114d7ed9",
+ "preset_path": "resources/data/patches_factory/Basses/Digibass.fxp",
+ "readback": {
+  "keytrack": true,
+  "octave": 0,
+  "osc_type": 1,
+  "pitch_param": 0.0,
+  "polymode": 4,
+  "portamento": -4.598213195800781,
+  "scene_octave": -1,
+  "shape": 0
+ },
+ "render_sha256": "62366cbf902a82980ef8e4460621f8f2cff9a8cd38038a294f67b41dcc5aad45",
+ "routes": {
+  "classify_and_pin_routes": "not run (it would REFUSE on the stale routes under fixture revision 2)",
+  "osc_p_routes_at_load": [
+   {
+    "depth": 0.3669640123844147,
+    "dest": "A Osc 1 Morph",
+    "src": "Velocity"
+   },
+   {
+    "depth": 0.22321400046348572,
+    "dest": "A Osc 1 Morph",
+    "src": "Filter EG"
+   }
+  ],
+  "stale_after_switch": [
+   {
+    "depth": 0.3669640123844147,
+    "dest": "A Osc 1 Shape",
+    "scene": 0,
+    "scope": "voice",
+    "src": "Velocity"
+   },
+   {
+    "depth": 0.22321400046348572,
+    "dest": "A Osc 1 Shape",
+    "scene": 0,
+    "scope": "voice",
+    "src": "Filter EG"
+   }
+  ]
+ }
+}

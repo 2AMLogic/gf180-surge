@@ -302,18 +302,18 @@ plus two negative controls that replay the pre-#329 order,
 (expected FAIL, not pitched). The controls get the retained-route order
 only through a private hook that no production entry point passes.
 
-Status at the time of this revision: the code change, the API-double
-ordering/readback regression (`tests/test_sxt043_fixture_rev2.py`) and the
-gate's synthetic-signal checks are done. **Every native leg is BLOCKED**:
-the pinned oracle was not installed on the host that made the change.
-That covers re-extraction, the revised Digibass reference and its pitch
-gate, the three-carrier budgets, both negative controls, and RTL-vs-model
-exactness on re-extracted inputs. Until those legs run, the committed
-`inputs/*.json` and every `reports/SXT-043/artifacts/` record are
-**fixture revision 1**, and the Digibass budget rows stay NOT A VALID
-COMPARISON. `tools/render_pm_reference.py` refuses revision-1 inputs, so a
-revision-1 sidecar cannot be paired with a revision-2 render. See
-`reports/SXT-043/EVIDENCE.md`.
+Status (updated 2026-10-16, pinned prebuilt oracle on loom-worker-5): the
+native legs ran. Inputs were re-extracted (revision 2); the Digibass
+reference passes the valid-reference gate (130.813 Hz against 130.813 Hz
+expected, peak 0.296); both negative controls fail the gate as required
+(`nc-retained-routes`: silent; `nc-stale-buffer`: 1462 Hz, not pitched);
+RTL-vs-model exactness is 0 mismatches on 15 of 15 runs; the forced-Poly
+control still fails every budget leg. The three-carrier budgets are
+recorded, not tuned, and all nine still FAIL the proposed budgets (Digibass
+is now a valid comparison, not a NOT A VALID COMPARISON row). Revised
+renders and records are in `reports/SXT-043/artifacts/rev2/`; the revision-1
+files directly under `artifacts/` are historical. `tools/render_pm_reference.py`
+still refuses revision-1 inputs. See `reports/SXT-043/EVIDENCE.md`.
 
 Hazard inventory (source inspection, 2026-10-07): this playmode fixture is
 the only render path in the repository that **forces** an oscillator type.

@@ -43,7 +43,7 @@ compares the SXT-028a records against the live `frozen_revision()`, and
 
 | | Live pin | Historical provenance |
 |---|---|---|
-| Mechanism | `model_revision()` / `frozen_revision()` self-hash, or a `fixtures/control/manifest.json` entry | `script_sha256` / `tool_sha256` stamped into the record the script produced |
+| Mechanism | `model_revision()` / `frozen_revision()` self-hash, a `fixtures/control/manifest.json` entry, or a plain sha256 row in a committed evidence table (SXT-043 `fixture_config.py`) | `script_sha256` / `tool_sha256` stamped into the record the script produced |
 | Re-derived at test time? | **Yes** — compared against the committed record | No — written once, at render time |
 | Superseded values in the tree? | No. A mismatch *is* a STALE record | Yes, legitimately — and every one of these scripts has already drifted |
 | Effect of editing the file | A committed `PASS` record silently becomes STALE | No record is invalidated; the record's provenance digest simply no longer resolves to any file in the tree |
@@ -52,7 +52,7 @@ compares the SXT-028a records against the live `frozen_revision()`, and
 
 ## Live pins
 
-14 pin sites covering 17 files. Digests, the full `recorded_in` record lists,
+15 pin sites covering 18 files. Digests, the full `recorded_in` record lists,
 and the per-leaf freshness test are in the JSON registry; this table is the
 human-readable index.
 
@@ -72,6 +72,7 @@ human-readable index.
 | `model/effects/type-phaser/phaser_model.py::model_revision()` | itself | SXT-028g | `tests/test_sxt028g.py` |
 | `model/effects/type-reverb 2/reverb2_model.py::model_revision()` | itself | SXT-028f | `tests/test_sxt028f.py` |
 | `fixtures/control/manifest.json::files[…]` | `fixtures/control/sequences/generate_control_sequences.py` | SXT-021 | `tests/test_sxt021_control.py` |
+| `reports/SXT-043/EVIDENCE.md` provenance table | `model/voice/playmode/fixture_config.py` (revision 2; plain sha256 of its bytes, no self-hash function) | SXT-043 | `tests/test_sxt043_fixture_rev2.py` |
 
 Two of the self-hash pins are also recorded in their RTL traces as a **revision
 word** — the low 32 bits, `int(revision[:8], 16)`: SXT-028a's

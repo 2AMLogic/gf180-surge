@@ -541,3 +541,17 @@ def test_gate_ignores_a_transient_outside_the_held_segment():
     x = _tone(F0_DIGIBASS)
     x[:int(0.2 * rv.SR)] += 0.5 * np.sign(np.sin(np.arange(int(0.2 * rv.SR))))
     assert rv.check(x, 0, F0_DIGIBASS)["verdict"] == "PASS"
+
+
+def test_fixture_config_digest_in_evidence_is_live():
+    """`fixture_config.py` is byte-frozen: EVIDENCE.md records its sha256.
+
+    Registered as a live pin in docs/byte-frozen-sources.json; any edit to the
+    file turns the revision-2 evidence STALE and must re-derive that record.
+    """
+    import hashlib
+    with open(fc.__file__, "rb") as f:
+        digest = hashlib.sha256(f.read()).hexdigest()
+    with open(os.path.join(REPO, "reports", "SXT-043", "EVIDENCE.md"),
+              encoding="utf-8") as f:
+        assert digest in f.read()
