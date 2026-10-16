@@ -47,9 +47,14 @@ module tb_logical4;
   logic start_block = 1'b0;
   logic block_done;
 
+  logic signed [95:0] cfg  [2][0:PLANE_WORDS-1];
+  logic signed [47:0] in_l [BLOCK];
+  logic signed [47:0] in_r [BLOCK];
+
   logical4_core core (
     .clk(clk), .state_reset(state_reset),
-    .start_block(start_block), .block_done(block_done)
+    .start_block(start_block), .block_done(block_done),
+    .cfg(cfg), .in_l(in_l), .in_r(in_r)
   );
 
   always #1 clk = ~clk;
@@ -103,8 +108,8 @@ module tb_logical4;
 
     $readmemh(cfg_path, cfgmem);
     for (i = 0; i < PLANE_WORDS; i++) begin
-      core.cfg[0][i] = $signed(cfgmem[1 + i]);
-      core.cfg[1][i] = $signed(cfgmem[1 + PLANE_WORDS + i]);
+      cfg[0][i] = $signed(cfgmem[1 + i]);
+      cfg[1][i] = $signed(cfgmem[1 + PLANE_WORDS + i]);
     end
     $fwrite(fd, "R %0d\n", cfgmem[0][31:0]);
 
@@ -123,8 +128,8 @@ module tb_logical4;
       end
       core.inst = hdr[94];
       for (i = 0; i < BLOCK; i++) begin
-        core.in_l[i] = $signed(sched[j + i]);
-        core.in_r[i] = $signed(sched[j + BLOCK + i]);
+        in_l[i] = $signed(sched[j + i]);
+        in_r[i] = $signed(sched[j + BLOCK + i]);
       end
       j = j + 2 * BLOCK;
       @(negedge clk); start_block = 1'b1;

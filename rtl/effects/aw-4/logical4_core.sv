@@ -64,14 +64,21 @@
   `define L4_STAGE int'(stage)
 `endif
 
-module logical4_core (
+module logical4_core #(
+    parameter int BLOCK       = 32,
+    parameter int PLANE_WORDS = 31
+) (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // config planes (one per instance) and the input block, driven by the
+    // caller through the port list
+    input  logic signed [95:0] cfg  [2][0:PLANE_WORDS-1],
+    input  logic signed [47:0] in_l [BLOCK],
+    input  logic signed [47:0] in_r [BLOCK]
 );
 
-  localparam int BLOCK   = 32;
   localparam int NSTAGE  = 3;
   localparam int NCH     = 2;
   localparam int RING    = 4;
@@ -94,9 +101,6 @@ module logical4_core (
                  P_LEAK = 20, P_HALFS = 21, P_ONES = 22, P_ONEC = 23,
                  P_ONET = 24, P_BRMAX = 25, P_CLIP = 26, P_SOFF = 27,
                  P_A48MAX = 28, P_RECIP = 29;
-  localparam int PLANE_WORDS = 31;
-
-  logic signed [95:0] cfg [2][0:PLANE_WORDS-1];
 
   // ---- frozen ROM tables (shared by both instances; read-only)
   logic signed [39:0] sin_rom [0:TBL_WORDS-1];
@@ -124,9 +128,7 @@ module logical4_core (
   logic signed [95:0] sag_ctrl [2][NSTAGE][NCH];
   logic signed [95:0] sag_line [2][NSTAGE][NCH][RING];
 
-  // ---- block I/O (harness-loaded)
-  logic signed [47:0] in_l  [BLOCK];
-  logic signed [47:0] in_r  [BLOCK];
+  // ---- block I/O (in_l/in_r arrive on ports)
   logic signed [47:0] out_l [BLOCK];
   logic signed [47:0] out_r [BLOCK];
   logic               inst = 1'b0;          // active instance for this block
