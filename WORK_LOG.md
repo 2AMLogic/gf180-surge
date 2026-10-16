@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-16
 
+- **PR #491**: test(SXT-043): record native fixture-revision-2 results for Digibass
+- **Issue #329** (closed): SXT-043 fixture: clear osc-1 p[] modulation routings before Sine override so Digibass reference is valid (follow-up to #311)
 - **PR #487**: docs(evidence): record NC-2 artifacts as not reproducible (#484)
 - **PR #482**: Bump Repo Skills 0.19.5 -> 0.24.3
 - **Issue #484** (closed): SXT-034: record NC-2 spectral_corr artifacts as not reproducible (missing mutant input)
