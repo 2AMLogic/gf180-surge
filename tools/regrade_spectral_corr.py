@@ -184,10 +184,12 @@ NOT_MIGRATED = [
     (r"^reports/SXT-034/artifacts/(uni2-poly|uni16-smoke)\.json",
      "STALE: reference render retained on the pinned remote oracle, not "
      "committed; cannot be re-graded on this host"),
-    (r"^reports/SXT-034/artifacts/nc2-", "STALE: NC-2 mutant inputs "
-     "(uni2-detune-zeroed.json) are not committed; #145 republished the "
-     "record on a host that had them, and it cannot be re-rendered here "
-     "(see EVIDENCE.md)"),
+    (r"^reports/SXT-034/artifacts/nc2-", "NOT-REPRODUCIBLE: NC-2 mutant "
+     "input uni2-detune-zeroed.json is in no commit (git log --all --oneline "
+     "-- '*uni2-detune-zeroed*' is empty), so this record cannot be "
+     "re-rendered; it keeps its legacy log1p spectral_corr, carries no "
+     "spectral_corr_definition, and is NOT a #110 result (see "
+     "EVIDENCE.md)"),
     (r"^reports/halfband-republication/", "HISTORICAL: #145 before/after "
      "republication record (legacy-metric spectral values quoted as the "
      "measurements #145 made; not a current verdict)"),

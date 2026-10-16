@@ -348,8 +348,8 @@ CARRY spectral_corr BUT NOT REGENERATED (28)
   reports/SXT-028e-sse/negative-controls/negative-controls.json -- NOT-MIGRATED: distortion-SSE negative controls keep their own log1p spectral_corr
   reports/SXT-028e/negative-controls/negative-controls.json -- NOT-MIGRATED: distortion_negative_controls.py keeps its own log1p spectral_corr (frame 1024, Q10.21 LSB)
   reports/SXT-028f/negative-controls/negative-controls.json -- NOT-MIGRATED: reverb2_negative_controls.py keeps its own log1p spectral_corr (integer LSB)
-  reports/SXT-034/artifacts/nc2-detune-zeroed.json -- STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)
-  reports/SXT-034/artifacts/nc2-diff-vs-true.json -- STALE: NC-2 mutant inputs (uni2-detune-zeroed.json) are not committed; #145 republished the record on a host that had them, and it cannot be re-rendered here (see EVIDENCE.md)
+  reports/SXT-034/artifacts/nc2-detune-zeroed.json -- NOT-REPRODUCIBLE: NC-2 mutant input uni2-detune-zeroed.json is in no commit (git log --all --oneline -- '*uni2-detune-zeroed*' is empty), so this record cannot be re-rendered; it keeps its legacy log1p spectral_corr, carries no spectral_corr_definition, and is NOT a #110 result (see EVIDENCE.md)
+  reports/SXT-034/artifacts/nc2-diff-vs-true.json -- NOT-REPRODUCIBLE: NC-2 mutant input uni2-detune-zeroed.json is in no commit (git log --all --oneline -- '*uni2-detune-zeroed*' is empty), so this record cannot be re-rendered; it keeps its legacy log1p spectral_corr, carries no spectral_corr_definition, and is NOT a #110 result (see EVIDENCE.md)
   reports/SXT-034/artifacts/uni16-smoke.json -- STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host
   reports/SXT-034/artifacts/uni2-poly.json -- STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host
   reports/SXT-039/artifacts/budget-chords.json -- NOT-MIGRATED: compare_lpmoog_model.py L2 leg (l2_spectral_corr_min 0.999, Q10.21 LSB), a different budget family
