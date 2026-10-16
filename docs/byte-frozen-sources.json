@@ -292,6 +292,19 @@
         "fixtures/control/manifest.json"
       ],
       "sha256": "71597ed06180e29c47c88bccc445346f4ae8ed06f00b6373fa14c8eccd466a28"
+    },
+    {
+      "covers": [
+        "model/voice/playmode/fixture_config.py"
+      ],
+      "freshness_test": "tests/test_sxt043_fixture_rev2.py",
+      "leaf": "SXT-043 playmode Digibass fixture revision 2",
+      "mechanism": "manifest_entry",
+      "pin": "reports/SXT-043/EVIDENCE.md::Provenance (sha256)[fixture_config.py]",
+      "recorded_in": [
+        "reports/SXT-043/EVIDENCE.md"
+      ],
+      "sha256": "00af35620c43f01c6a6ce29e6c84dec3daff3e938b635abe04dfb24c3bcc0a2a"
     }
   ],
   "live_pins_note": "A live pin is re-derived from the current bytes every time its freshness test runs, so any edit -- including whitespace or a comment -- turns a committed PASS record STALE. Editing a covered file requires re-running that leaf's comparator/control tooling and re-committing every record listed in recorded_in, in the same change.",
