@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-16
 
+- **PR #480**: fix(rtl): assign dp_tmp by default in reverb1_core request block
+- **Issue #469** (closed): RTL: reverb1_core infers a latch for dp_tmp (Verilator LATCH, reverb1_core.sv:130)
 - **PR #491**: test(SXT-043): record native fixture-revision-2 results for Digibass
 - **Issue #329** (closed): SXT-043 fixture: clear osc-1 p[] modulation routings before Sine override so Digibass reference is valid (follow-up to #311)
 - **PR #487**: docs(evidence): record NC-2 artifacts as not reproducible (#484)

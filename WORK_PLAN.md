@@ -34,7 +34,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-- **#469**: RTL: reverb1_core infers a latch for dp_tmp (Verilator LATCH, reverb1_core.sv:130)
+_None._
 
 ## PRs Awaiting Review
 
@@ -73,13 +73,13 @@ Issues carrying `loom:curated`.
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(curated)*
 - **#426**: SXT-028g: screen same-shape drift-zero Phaser carriers *(curated)*
 - **#434**: Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL *(curated)*
-- **#469**: RTL: reverb1_core infers a latch for dp_tmp (Verilator LATCH, reverb1_core.sv:130) *(curated)*
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
 - **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
+- **#493**: Consolidate duplicated census_blob / git_blob_sha1 helpers (19 + 13 private copies) into a shared module *(hermit)*
 
 ## Epics
 
@@ -96,10 +96,10 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 2 |
 | Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 2 |
-| Curated | 22 |
-| Architect / Hermit proposals | 2 |
+| Curated | 21 |
+| Architect / Hermit proposals | 3 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
