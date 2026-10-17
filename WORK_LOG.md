@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-17
+
+- **PR #414**: CI hardening: job timeouts, PR-only concurrency cancel, SHA-pinned actions
+- **Issue #410** (closed): CI hardening: job timeouts, PR-run concurrency cancel, and SHA-pinned actions
+
 ### 2026-10-16
 
 - **PR #480**: fix(rtl): assign dp_tmp by default in reverb1_core request block

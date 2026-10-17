@@ -7,7 +7,6 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#414**: CI hardening: job timeouts, PR-only concurrency cancel, SHA-pinned actions
 - **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
 
 ## Very Important
@@ -46,7 +45,6 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#414**: CI hardening: job timeouts, PR-only concurrency cancel, SHA-pinned actions
 - **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
 
 ## Proposed
@@ -80,6 +78,7 @@ Issues carrying `loom:curated`.
 - **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
 - **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
 - **#493**: Consolidate duplicated census_blob / git_blob_sha1 helpers (19 + 13 private copies) into a shared module *(hermit)*
+- **#495**: Consolidate duplicated fixture_config override/readback code (classic, sine) *(hermit)*
 
 ## Epics
 
@@ -92,14 +91,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 2 |
+| Operator merge-risk holds | 1 |
 | Very important | 0 |
 | Important | 2 |
 | Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 2 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 21 |
-| Architect / Hermit proposals | 3 |
+| Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
