@@ -8,6 +8,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
 - **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
+- **#499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
 
 ## Very Important
 
@@ -46,6 +47,7 @@ _None._
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
+- **#499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
 
 ## Proposed
 
@@ -72,6 +74,8 @@ Issues carrying `loom:curated`.
 - **#426**: SXT-028g: screen same-shape drift-zero Phaser carriers *(curated)*
 - **#434**: Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL *(curated)*
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
+- **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
+- **#498**: T1: commit a klt signoff block manifest and gate its verdict in CI *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -91,14 +95,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 2 |
 | Very important | 0 |
 | Important | 2 |
 | Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 21 |
+| Approved PRs awaiting merge | 2 |
+| Curated | 23 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
