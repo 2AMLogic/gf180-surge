@@ -230,6 +230,83 @@ jobs:
             rtl-sim-collected.txt
           if-no-files-found: warn
 
+  rtl-lint:
+    name: rtl-lint (pinned Verilator static lint gate, #434)
+    runs-on: ubuntu-24.04
+    env:
+      # Pinned tool: upstream tag v5.050 (annotated tag object
+      # 0a24d49771fa57c36ff667272bf7b5c6705e4df0) -> commit below, built from
+      # the GitHub source archive whose sha256 is checked before extraction.
+      # Bumping any of these is a deliberate edit that also changes
+      # PINNED_VERSION in tools/check_rtl_lint.py; the checker refuses any
+      # other version (NOT_RUN, zero groups run, nonzero exit).
+      VERILATOR_TAG: "v5.050"
+      VERILATOR_COMMIT: "848d926ebd4addacacd294dc84e35d9d4ae8078c"
+      VERILATOR_ARCHIVE_SHA256: "ec6723f30c1798b1fbbbed97364f09c431fb4875577c314f37240e99b60a4a04"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Restore pinned Verilator build
+        id: vcache
+        uses: actions/cache@v4
+        with:
+          path: ~/verilator-pinned
+          key: verilator-${{ env.VERILATOR_COMMIT }}-${{ env.VERILATOR_ARCHIVE_SHA256 }}-ubuntu-24.04
+      - name: Build pinned Verilator from checksummed source archive
+        if: steps.vcache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          # Build dependencies come from apt unpinned (build-time only); the
+          # tool itself is pinned by commit + archive checksum below. Source
+          # stays external to this repository (docs/REUSE-AUDIT.md).
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            git perl python3 make autoconf g++ flex bison help2man \
+            libfl2 libfl-dev zlib1g-dev
+          work="$(mktemp -d)"
+          curl -fsSL -o "$work/verilator.tar.gz" \
+            "https://github.com/verilator/verilator/archive/refs/tags/${VERILATOR_TAG}.tar.gz"
+          echo "${VERILATOR_ARCHIVE_SHA256}  $work/verilator.tar.gz" | sha256sum -c -
+          # Decompress to a file first: piping gunzip into get-tar-commit-id
+          # (which exits after the header) SIGPIPEs gunzip under pipefail.
+          gunzip -c "$work/verilator.tar.gz" > "$work/verilator.tar"
+          got="$(git get-tar-commit-id < "$work/verilator.tar")"
+          [ "$got" = "${VERILATOR_COMMIT}" ] || { echo "FAIL: archive commit $got != ${VERILATOR_COMMIT}" >&2; exit 1; }
+          mkdir "$work/src"
+          tar -xzf "$work/verilator.tar.gz" -C "$work/src" --strip-components=1
+          cd "$work/src"
+          autoconf
+          ./configure --prefix="$HOME/verilator-pinned"
+          make -j2
+          make install
+      - name: Show pinned tool
+        run: |
+          set -euo pipefail
+          "$HOME/verilator-pinned/bin/verilator" --version
+      # Failure controls run FIRST so the PASS below cannot be a vacuous gate.
+      # They operate on temporary copies and the real pinned tool.
+      - name: Negative controls (each must fail its targeted check)
+        run: >-
+          python3 tools/check_rtl_lint.py --negative-control
+          --verilator "$HOME/verilator-pinned/bin/verilator"
+      - name: Lint baseline (eleven product groups)
+        run: >-
+          python3 tools/check_rtl_lint.py
+          --manifest rtl/lint_manifest.json --waivers rtl/lint_waivers.json
+          --report rtl-lint-report.json --raw-dir rtl-lint-raw
+          --verilator "$HOME/verilator-pinned/bin/verilator"
+      - name: Upload raw diagnostics and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rtl-lint
+          path: |
+            rtl-lint-report.json
+            rtl-lint-raw/
+          if-no-files-found: warn
+
   dag-check:
     name: backlog DAG + board freshness
     timeout-minutes: 10
