@@ -2,6 +2,10 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-18
+
+- **PR #503**: SXT-028j: run oracle legs on prebuilt oracle, confirm declared contracts, record carriers REFUSED
+
 ### 2026-10-17
 
 - **PR #414**: CI hardening: job timeouts, PR-only concurrency cancel, SHA-pinned actions
