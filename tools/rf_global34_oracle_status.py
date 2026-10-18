@@ -21,12 +21,14 @@ Original to this repository (Apache-2.0).
 
 import json
 import os
-import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 ARTIFACTS = os.path.join(REPO, "reports", "SXT-028j", "artifacts")
 OUT = os.path.join(ARTIFACTS, "oracle-status.json")
+RECORD = os.path.join(REPO, "reports", "SXT-028j", "model-vs-reference.json")
+FX_INPUTS = os.path.join(REPO, "model", "effects", "fx_inputs")
 RENDER_REFUSALS = os.path.join(ARTIFACTS, "render-refusals.txt")
 
 ORACLE_LEGS = [
@@ -49,8 +51,12 @@ ORACLE_LEGS = [
 
 
 def probe():
+    """Measure, never assert: locate the pinned engine tree and load surgepy
+    through the harness's sanctioned loader (oracle_common.import_surgepy:
+    explicit native-extension load from the selected build, no sys.path
+    search). Run under the oracle's interpreter, e.g. the exports printed by
+    `oracle/fetch-and-build.sh --prebuilt`."""
     detail = {}
-    engine_dir = os.environ.get("ORACLE_SURGE_DIR")
     manifest = os.path.join(REPO, "oracle", "manifest.json")
     if os.path.exists(manifest):
         with open(manifest) as f:
@@ -58,16 +64,63 @@ def probe():
         detail["engine_pin"] = m["engine"]["commit"]
         detail["expected_checkout"] = \
             m["engine"]["expected_checkout"]["location_used_for_evidence"]
-        if engine_dir is None:
-            engine_dir = detail["expected_checkout"]
+    try:
+        import oracle_common as oc  # noqa: PLC0415
+    except Exception as e:  # pragma: no cover - environment-dependent
+        detail.update(engine_dir_probed=None, engine_dir_present=False,
+                      surgepy_importable=False,
+                      surgepy_probe_stderr=[f"oracle_common: {e}"])
+        return detail
+    engine_dir = oc.engine_dir()
     detail["engine_dir_probed"] = engine_dir
     detail["engine_dir_present"] = bool(engine_dir and os.path.isdir(engine_dir))
-
-    r = subprocess.run([sys.executable, "-c", "import surgepy"],
-                       capture_output=True, text=True)
-    detail["surgepy_importable"] = r.returncode == 0
-    detail["surgepy_probe_stderr"] = r.stderr.strip().splitlines()[-1:] or []
+    try:
+        mod = oc.import_surgepy()
+        detail["surgepy_importable"] = True
+        detail["surgepy_probe_stderr"] = []
+        detail["surgepy_version"] = mod.getVersion()
+    except Exception as e:
+        detail["surgepy_importable"] = False
+        detail["surgepy_probe_stderr"] = [f"{type(e).__name__}: {e}"][-1:]
     return detail
+
+
+def leg_ran_evidence():
+    """For an AVAILABLE oracle: which legs have a committed record proving
+    they actually ran (never inferred from availability alone). Returns
+    {leg: (ran, scope_note)}."""
+    carriers = []
+    if os.path.isdir(FX_INPUTS):
+        for fn in sorted(os.listdir(FX_INPUTS)):
+            if fn.startswith("rf-rf-global34-") and fn.endswith(".json"):
+                with open(os.path.join(FX_INPUTS, fn)) as f:
+                    carriers.append(json.load(f))
+    extract_ran = bool(carriers) and all(
+        c.get("oracle_extraction", {}).get("ok") and
+        (c["oracle_extraction"].get("live") or {}).get("ran")
+        for c in carriers)
+    rec = None
+    if os.path.exists(RECORD):
+        with open(RECORD) as f:
+            rec = json.load(f)
+    ran = rec is not None
+    gated = len((rec or {}).get("carrier_determinism_gate", []))
+    refused = sum(1 for g in (rec or {}).get("carrier_determinism_gate", [])
+                  if g["gate"] == "REFUSED")
+    diag = sum(1 for p in (rec or {}).get("pairs", []) if p.get("diagnostic"))
+    orig = sum(1 for p in (rec or {}).get("pairs", [])
+               if not p.get("diagnostic"))
+    scope = (f"carrier x sequence pairs gated: {gated}, REFUSED as "
+             f"source-nonrepeatable (policy #310): {refused}; original-"
+             f"carrier pairs rendered: {orig}; diagnostic (non-carrier) "
+             f"pairs rendered: {diag}")
+    return {
+        "extract-slot-params": (extract_ran, "live leg ran for every carrier "
+                                "record (model/effects/fx_inputs)"),
+        "render": (ran, scope),
+        "model-render": (ran, scope),
+        "reference-compare": (ran, scope),
+    }
 
 
 RENDER_REFUSAL_TEMPLATE = """\
@@ -98,18 +151,11 @@ RTL-vs-frozen-model exactness claim is unaffected and was run in full
 (reports/SXT-028j/rtl-exactness.json), as were all five negative controls
 (reports/SXT-028j/negative-controls/negative-controls.json)."""
 
-AVAILABLE_BODY = """\
-A pinned-engine checkout and an importable surgepy were found (measured:
-reports/SXT-028j/artifacts/oracle-status.json). The fixture renders
-themselves are still not produced by this tool -- run the render and
-reference-comparison legs and replace this transcript with their per-carrier
-rows."""
-
-
 def main():
     detail = probe()
     available = detail["surgepy_importable"] and detail["engine_dir_present"]
     status = "AVAILABLE" if available else "UNAVAILABLE"
+    evidence = leg_ran_evidence() if available else {}
     doc = {
         "schema_version": 1,
         "leaf": "SXT-028j",
@@ -124,6 +170,8 @@ def main():
                            "no pinned-engine checkout / surgepy in this "
                            "environment; the leg was not run and must never "
                            "be reported as a pass"),
+                **({"ran": evidence[name][0], "ran_scope": evidence[name][1]}
+                   if available else {}),
             } for name, tool, what in ORACLE_LEGS
         },
         "rule": "AGENTS.md: a test that did not run must never be reported as "
@@ -135,10 +183,13 @@ def main():
     with open(OUT, "w") as f:
         json.dump(doc, f, indent=2, sort_keys=True)
         f.write("\n")
-    with open(RENDER_REFUSALS, "w") as f:
-        f.write(RENDER_REFUSAL_TEMPLATE.format(
-            status="NOT_RUN" if not available else "RUNNABLE (not run here)",
-            body=UNAVAILABLE_BODY if not available else AVAILABLE_BODY))
+    if not available:
+        with open(RENDER_REFUSALS, "w") as f:
+            f.write(RENDER_REFUSAL_TEMPLATE.format(
+                status="NOT_RUN", body=UNAVAILABLE_BODY))
+    # AVAILABLE: render-refusals.txt belongs to
+    # tools/render_rf_global34_reference.py (per-carrier gate rows); this
+    # probe never overwrites a transcript written by the leg itself.
     print(json.dumps({"oracle_status": status,
                       "legs": {k: v["status"] for k, v in doc["legs"].items()}},
                      indent=2))

@@ -1,0 +1,257 @@
+{
+  "audio_policy": "stereo float32 (IEEE fmt 3), raw engine output, no clip, no normalization, no fades",
+  "buses": {
+    "byp_no_fx": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "bypass": 3,
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.5170149207115173,
+      "sha256_raw_float32": "4f18b9e19122d4d70ec335c319ca07d3f25eda1eff3c524e122f1b3227bcdd1f",
+      "wav_sha256": "e5f4e95a54233955880d1638af58f450a94f4b960b55bca3fca2898a9e900ce2"
+    },
+    "byp_no_sends": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "bypass": 1,
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.3407018482685089,
+      "sha256_raw_float32": "5f6a73b1949db74916680c718dfb1b4ad5c150c27fbb332e8878a49788d34342",
+      "wav_sha256": "8156ce142afb804d76b5822d9398b510ba163ac995b768a29cf37b712f9b72e7"
+    },
+    "byp_scene_fx_only": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "bypass": 2,
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.5170149207115173,
+      "sha256_raw_float32": "4f18b9e19122d4d70ec335c319ca07d3f25eda1eff3c524e122f1b3227bcdd1f",
+      "wav_sha256": "e5f4e95a54233955880d1638af58f450a94f4b960b55bca3fca2898a9e900ce2"
+    },
+    "dry": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.5170149207115173,
+      "sha256_raw_float32": "4f18b9e19122d4d70ec335c319ca07d3f25eda1eff3c524e122f1b3227bcdd1f",
+      "wav_sha256": "e5f4e95a54233955880d1638af58f450a94f4b960b55bca3fca2898a9e900ce2"
+    },
+    "g34off": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          14,
+          15
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.5170149207115173,
+      "sha256_raw_float32": "4f18b9e19122d4d70ec335c319ca07d3f25eda1eff3c524e122f1b3227bcdd1f",
+      "wav_sha256": "e5f4e95a54233955880d1638af58f450a94f4b960b55bca3fca2898a9e900ce2"
+    },
+    "g3off": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          14
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.45125049352645874,
+      "sha256_raw_float32": "1fbfff4462e125a09dabb8da9c0dd5e8ae006caf4b2ff43d3eceef444e63fc95",
+      "wav_sha256": "0032416cedcb54a2567fdf83dac747502ec8d8831201288e5254639167a7f1c9"
+    },
+    "g4off": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          15
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.3831932842731476,
+      "sha256_raw_float32": "8ce10e054c1e14ff6d9f72b5bc3f03386fd22f534aadbad4fbb1056d9ccc931d",
+      "wav_sha256": "d6aa3266ff361ba91026b75065d635c509637319ab1f52c0818fb0a0f03e6cd4"
+    },
+    "nonins_off": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          4,
+          5,
+          12,
+          13,
+          6,
+          7,
+          14,
+          15
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.5170149207115173,
+      "sha256_raw_float32": "4f18b9e19122d4d70ec335c319ca07d3f25eda1eff3c524e122f1b3227bcdd1f",
+      "wav_sha256": "e5f4e95a54233955880d1638af58f450a94f4b960b55bca3fca2898a9e900ce2"
+    },
+    "orig": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.3407018482685089,
+      "sha256_raw_float32": "5f6a73b1949db74916680c718dfb1b4ad5c150c27fbb332e8878a49788d34342",
+      "wav_sha256": "8156ce142afb804d76b5822d9398b510ba163ac995b768a29cf37b712f9b72e7"
+    },
+    "sends_g34_off": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          4,
+          5,
+          12,
+          13,
+          14,
+          15
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.5170149207115173,
+      "sha256_raw_float32": "4f18b9e19122d4d70ec335c319ca07d3f25eda1eff3c524e122f1b3227bcdd1f",
+      "wav_sha256": "e5f4e95a54233955880d1638af58f450a94f4b960b55bca3fca2898a9e900ce2"
+    },
+    "sends_off": {
+      "determinism_repeats_bit_identical": 3,
+      "mods": {
+        "off": [
+          4,
+          5,
+          12,
+          13
+        ],
+        "set": {
+          "14": "fxt_distortion",
+          "15": "fxt_delay"
+        }
+      },
+      "peak_abs_float": 0.3407018482685089,
+      "sha256_raw_float32": "5f6a73b1949db74916680c718dfb1b4ad5c150c27fbb332e8878a49788d34342",
+      "wav_sha256": "8156ce142afb804d76b5822d9398b510ba163ac995b768a29cf37b712f9b72e7"
+    }
+  },
+  "claim_scope": "reference-vs-reference buses of the pinned engine under the SXT-012 policies; no fidelity, support or quality claim",
+  "engine": {
+    "block_size_samples": 32,
+    "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "engine_version_string": "1.4.HEAD.58914e59c",
+    "sample_rate": 48000,
+    "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+    "tempo_bpm": 120
+  },
+  "fixture_id": "diag-sub-4__seq-poly-8-v1",
+  "issue": "SXT-028j / #150",
+  "preset": {
+    "carrier_source": "DIAGNOSTIC adaptation: repeatable factory voice with global3/global4 set by override; not an original carrier",
+    "census_blob_sha1": "47d1db8a36d4ff57fa260b927a31f7fb199f755f",
+    "diagnostic": true,
+    "path": "resources/data/patches_factory/Basses/Sub 4.fxp",
+    "slot_type_overrides": {
+      "14": "fxt_distortion",
+      "15": "fxt_delay"
+    }
+  },
+  "render": {
+    "block_size": 32,
+    "duration_s": 3.7,
+    "frames": 177600,
+    "policies_inherited": "fixtures/render_fixture.py + tools/render_fx_fixtures.py",
+    "sample_rate": 48000,
+    "settle_s": 0.25,
+    "tail_s": 2.5
+  },
+  "schema_version": 1,
+  "sequence": {
+    "id": "seq-poly-8-v1",
+    "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df"
+  },
+  "slot_roles": {
+    "ains1": 0,
+    "ains2": 1,
+    "ains3": 8,
+    "ains4": 9,
+    "bins1": 2,
+    "bins2": 3,
+    "bins3": 10,
+    "bins4": 11,
+    "global1": 6,
+    "global2": 7,
+    "global3": 14,
+    "global4": 15,
+    "send1": 4,
+    "send2": 5,
+    "send3": 12,
+    "send4": 13
+  },
+  "tool": {
+    "pinned_inputs_clean": true,
+    "repo_commit": "9fb081674dfbd0c1e4dfd9699f4820daf69fec63",
+    "script_sha256": "13c3c77299a11636d65b4f0e9cab794bf052c2ce5b3e6a52df71aaa46c7f712b"
+  },
+  "wav_scratch_note": "WAVs are regenerable (tens of MB); identity is the per-bus sha256_raw_float32 below",
+  "wavs_committed": false,
+  "wet": {
+    "bus": "orig",
+    "frames": 177600,
+    "tail_s": 2.5
+  }
+}

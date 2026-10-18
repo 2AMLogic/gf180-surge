@@ -692,6 +692,10 @@ def test_oracle_status_record_is_measured_not_asserted():
             assert legrec["reason"], name
         else:
             assert legrec["status"] in ("RUNNABLE", "NOT_RUN"), name
+            # availability alone never counts: an AVAILABLE oracle must also
+            # say whether the leg ACTUALLY RAN, with the scope it ran at
+            assert isinstance(legrec["ran"], bool), name
+            assert legrec["ran_scope"], name
     # the probe must record what it actually found, not a bare assertion
     assert "surgepy_importable" in d["probe"]
     assert "engine_dir_present" in d["probe"]
@@ -726,4 +730,124 @@ def test_evidence_keeps_the_claims_separate():
     low = text.lower()
     assert "preset-support claim" in low
     assert "musical-quality claim" in low
-    assert "not_run** (oracle unavailable" in low   # budgets NOT_RUN, not PASS
+    # budgets are NOT_RUN for original carriers (all REFUSED), not PASS
+    assert "remain **not_run** for original" in low
+    assert "refused" in low and "source-nonrepeatable" in low
+
+
+# --------------------------------------------------------------------------
+# #150: oracle legs (committed records; re-derived only on an oracle host)
+# --------------------------------------------------------------------------
+
+MVR = os.path.join(SXT, "model-vs-reference.json")
+
+
+def _mvr():
+    if not os.path.exists(MVR):
+        pytest.skip("model-vs-reference.json not committed (NOT_RUN)")
+    return json.load(open(MVR))
+
+
+def test_live_extraction_is_cross_checked_and_never_fabricated():
+    """Where the live leg ran it must carry the engine-side drift gate and a
+    parameter vector per occupied slot, each cross-checked against the
+    committed graph; where it did not run it must say so (ok False)."""
+    for slug in CARRIER_SLUGS:
+        d = json.load(open(os.path.join(FX_INPUTS,
+                                        f"rf-rf-global34-{slug}.json")))
+        ox = d["oracle_extraction"]
+        if not ox["ok"]:
+            assert ox["live"] is None
+            continue
+        live = ox["live"]
+        assert live["ran"] is True
+        assert live["determinism_gate"]["status"] in ("PASS", "FAIL")
+        assert live["fx_type_vector_matches_graphs"] is True
+        assert live["fx_bypass_fx_disable_match_graphs"] is True
+        for role in ("global3", "global4"):
+            slot = live["slots"][role]
+            assert slot["occupied"] == d[role]["occupied"]
+            if slot["occupied"]:
+                assert len(slot["params"]) == 12
+                assert all(p["value"] == p["graphs_value"] or
+                           abs(p["value"] - p["graphs_value"]) <= 5e-6
+                           for p in slot["params"])
+        assert "NOT a model-vs-pinned-engine" in live["claim_scope"] or \
+            "NOT an RTL claim" in live["claim_scope"]
+
+
+def test_every_carrier_is_gated_and_a_refused_one_is_never_graded():
+    rec = _mvr()
+    gates = rec["carrier_determinism_gate"]
+    assert len(gates) == len(CARRIER_SLUGS) * len(rec["sequences"])
+    for g in gates:
+        assert g["gate"] in ("PASS", "REFUSED")
+        for bus in g["buses"].values():
+            same = len(set(bus["sha256_per_repeat"])) == 1
+            assert bus["bit_identical"] is same
+            assert bus["distinct_buffers"] == len(set(bus["sha256_per_repeat"]))
+        diverging = [n for n, b in g["buses"].items()
+                     if not b["bit_identical"]]
+        assert (g["gate"] == "REFUSED") == bool(diverging)
+        if diverging:
+            # voice path (dry) before wet path (decision record 0019 inv. 6)
+            order = ("dry", "g34off", "orig")
+            assert g["first_diverging_bus"] == \
+                next(n for n in order if n in diverging)
+    refused = {g["carrier"] for g in gates if g["gate"] == "REFUSED"}
+    original_pairs = [p for p in rec["pairs"] if not p["diagnostic"]]
+    # a REFUSED carrier has no original-carrier pair, hence no agreement
+    for p in original_pairs:
+        assert not any(p["fixture_id"].startswith(
+            os.path.basename(c)[:-4].lower().replace(" ", "-") + "__")
+            for c in refused), p["fixture_id"]
+    if len(refused) == len({g["carrier"] for g in gates}):
+        assert rec["summary"]["original_carrier_agreement"] == "NOT_RUN"
+        assert rec["coverage"]["original_carrier_pairs_rendered"] == 0
+
+
+def test_diagnostic_pairs_never_count_toward_original_coverage():
+    rec = _mvr()
+    diag = [p for p in rec["pairs"] if p["diagnostic"]]
+    assert diag, "the routing probe must have run"
+    assert rec["coverage"]["diagnostic_pairs_rendered"] == len(diag)
+    assert "never count toward original-preset" in rec["coverage"]["note"]
+    for p in diag:
+        man = json.load(open(os.path.join(REPO, p["manifest"])))
+        assert man["preset"]["diagnostic"] is True
+        assert man["wavs_committed"] is False
+        for bus in man["buses"].values():
+            assert bus["determinism_repeats_bit_identical"] == 3
+
+
+def test_diagnostic_routing_agreement_and_live_controls():
+    rec = _mvr()
+    for p in (q for q in rec["pairs"] if q["diagnostic"]):
+        for name, a in p["model_vs_engine_routing_agreement"].items():
+            assert a["agree"] is True, (p["fixture_id"], name)
+            assert a["model_predicts_active"] == a["engine_observed_active"]
+        # the engine's own bypass partition, by exact bus equality
+        r = p["engine_routing_checks"]
+        assert r["bypass_no_fx_equals_dry"]
+        assert r["bypass_scene_fx_only_equals_inserts_only"]
+        assert r["bypass_no_sends_stage_active"]
+        # a control that agrees with the engine would be a broken control
+        for kind, c in p["live_negative_controls"].items():
+            assert c["discriminating"] and c["disagrees_with_engine"], kind
+        t = p["fx_off_drain_timing"]
+        assert t["drains_at_the_control_pass_preceding_block_k"] is True
+        assert t["first_block_departing_from_orig"] == t["queued_before_block"]
+
+
+def test_waveform_numbers_are_not_passed_off_as_agreement():
+    """The frozen model's occupant is synthetic: where an enabled occupant is
+    present the measured budget result must carry NO_VERDICT, never a PASS."""
+    rec = _mvr()
+    for p in rec["pairs"]:
+        occ = p["occupancy"]
+        wf = p["model_vs_engine_waveform"]
+        assert wf["proposed_budgets"]["max_abs_diff_lsb"] == 8192
+        if occ["global3_enabled"] or occ["global4_enabled"]:
+            assert wf["agreement_claim"] == "NO_VERDICT"
+            assert "occupant_not_modeled" in wf["agreement_claim_reason"]
+    assert "BLOCKED" in rec["summary"]["fx_disable_gate_engine_probe"]
