@@ -1,0 +1,961 @@
+{
+  "carrier_determinism_gate": [
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "dccaaa3100275b492c4b1ac95191128e919b1c6d20c7160b768c4f4fc1af15fb",
+            "30ee9c32185545ac453876fc84dcfdfb7bfc36a4cac4d71e8689d4ab6617dc65",
+            "82e134904665bc5e13e7288263d3d84e0598dcdb87c7910cf63120944923bf2e"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "3187e5635d0fc97074a737959c997e295b651a0e464fa95a9be43899302ee8ee",
+            "d027dbb15e6adde2206738ea6aa07e5b33b4795c1bc5afb6a74354f3b0f35de4",
+            "074f97bc971347594de73bf8239e68bbc85547d0be67c232cdc7de65397a5cc4"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "5237677a712e27f949513f4ea59673e3592444cb6005ed43e6ccf8a95bfae21a",
+            "492b1bd398f08b296dc9264bb2aff242ab860400f94933e321d071b02f4f014d",
+            "0ddae57451bed51c35a051517dd1cf80032c953ac79319cd56c39fa93d28c36e"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/John Valentine/Winds/Bassoon.fxp",
+      "carrier_source": "added by this leaf: both slots occupied AND both disabled by fx_disable bits 14|15",
+      "census_blob_sha1": "1b9c6dce3575e888348d6a60bb88582b457d68a3",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-notes-coverage-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "fe30a23f13d0503c7c927ef8e76dda65e9528adc4c47f3b0da9bac681cb3526a",
+            "3be63e1a9ad571830bfe233516e10041bc9808dfac8916f2096ad42288909e8f",
+            "e2fa59f92b8ddfe8739901a6c1e300d4c8212f948c69b6cb29effbe8b2c20770"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "3fdce2b0077193bcd3b62a95a5fc42a1aed6b336619c91edf509e37c5a485a47",
+            "ae8276575dea1a990f28ac19dd952d959e29b257eeef86dcac3196af99d7467e",
+            "5cc8ffd192a676ca866839aa679d5e4f63a85d1221e886da2cbf20915975b8f0"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "e412cf359b6dd0bca6ee6c42300345b48243f03439dea7f21208f38a29d5b647",
+            "f380bcd311f109e1945f773c08e7509fec66e673eff41096b9501152da34c074",
+            "b959184630d1fd4022c9b47655d4e236e2ea7701e7a53bef1e78f923941485b5"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/John Valentine/Winds/Bassoon.fxp",
+      "carrier_source": "added by this leaf: both slots occupied AND both disabled by fx_disable bits 14|15",
+      "census_blob_sha1": "1b9c6dce3575e888348d6a60bb88582b457d68a3",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-poly-8-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "834811d929fe5370db9f4f53e3ab0d73482ad0d227212db1f84717ba81072de1",
+            "44800823639bf268e4a6a73dfcf772a76b5b8025d789889b98a2bb936176aeba",
+            "0225d8fa97865cb4a8213d5f526716f5daf278fc25c0c8e1460a1435bebd12ba"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "4d22dea1ddbc05a9aeb63326d84929cedd26810af594380774b61722aba5b89c",
+            "52c6162ed5f3f092446e97036b13fd1c30ac912d39cf89c66f73e070f1c83b39",
+            "3047548e3c9f7fdd7a2a3c27f6a943d497f743a6b827bc58be9e5c048c110af3"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "b77a20bb738ea702c443ad67539c03fc59105d2342d6a870b781505b121f1a5a",
+            "e620173afc96b093ee0a45e0e4c9defc57e4677d9ac584a95fcbafbb51d1b35b",
+            "8b2d419bab4234ef6920567b80f3f6a22e73ef1b7f7361f2af44dd35e289dc66"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+      "carrier_source": "issue-named B4-scope carrier",
+      "census_blob_sha1": "676da8126b33e867fb2028701bf7be8ac63f2e72",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-notes-coverage-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "a4d5844c32fc3879ec667c90e5d046aaa4eaffe67c08ba9e8fd79f52163b3a81",
+            "575be7282e8b7af6e2ccf5cd8a4b184b22545094b7c612f7b81d1e2bf15cb3ec",
+            "28e652e0c586407415d81fd1a9dce7ee419598b79e47d92d7cdd69146384c915"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "a68c1ad3184bdd1218ec6cd7afa1a1dd7eb0e94e405efbf023b845112f052893",
+            "393a0c19e9276dd1f4c4d6251668d6cc25eadc94091ef22763c8f94712d2685a",
+            "b888ec4fa28ad9055ebbdb0aa1e19e6ea8535803c8ed2b76b2779f096112c9b0"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "c4e9d27b9f5aead4d01cb6cd8783b02ead317bb16031e60ade1d6d233262997e",
+            "a86b010d5b397d2427c36f6d65cb914d60be26d99af5721bd83f44abe4706b71",
+            "806898f909e588657ab504f5cbc127ffe66de24e18aafdbdee55a7e1fdc3c996"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/Exquis MPE/Basses/Jigsaw.fxp",
+      "carrier_source": "issue-named B4-scope carrier",
+      "census_blob_sha1": "676da8126b33e867fb2028701bf7be8ac63f2e72",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-poly-8-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "39354abe1300c18796537e4956a7697efcf2508d052fa35e1594e84d8d0355b8",
+            "05845b1cd9c53fe82b55bb46d48d851580ffd2f7a8237c043665764eb52253c3",
+            "0474328e4e68d7edda62225d84de3bf254b98bc806e64a3bfb90d6ca33118478"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "fa211820ec5683c3d6d59911ea343d8e9cdcc7341d344242788182927bf98355",
+            "70a920d5d632e822beaf42b9412b11a796d61152664c40b712c71b06d534621f",
+            "3af28dbf809ec36254d847338c589fc4a7f07114a600c78eadcb89b9c0884b2e"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "f0ebb1be5a27456f8ce133fee1929a37ebed445f35de92ca0f7585a6b6252ee5",
+            "3dfb4a54da8e498e77b668259ff9a87f701e3ed2424fa12ff84e4450a99fe40e",
+            "a70ef55a749ffdc0fbb92443a7850e1d0487e363e1cd45f0367535a570a57e67"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+      "carrier_source": "issue-named B4-scope carrier",
+      "census_blob_sha1": "321848282edf3b40d6f93ad950a8ae35660f3258",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-notes-coverage-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "8ab57909f1604276699bc36002705722447785f892a23e904da75358f8eb8805",
+            "5d050c455999706bb1eba9984caf758facf9daee198a2c5b2348785f03a83e98",
+            "bf8c231f385d5d807b2e0dc9b21915fff667a9c03a51c452d06ba874059683f4"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "608461d0861c31693b1e3c877e48f4b49886fd2295780ce9a7a23fffe139d819",
+            "59ce79de932ad80ada3b337d77e28746cbbe6cf4b2baecb2e2f43a12a450e350",
+            "582f335887480ad7ee1f744deab2e1ea42674771d2543651b9b77b772216c7eb"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "80d7c0900eb1110cd981607b47e55904f3b64ca20eacc20d98ca45112c287601",
+            "a3548074727131af21aa0d933713d14a7f6ef733551f3389603b5a004968faa0",
+            "ffd11bcd6c909b996a3f854a475df92255d56bbb77308ede274dd675ca88029e"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/Exquis MPE/Pads/Lazy.fxp",
+      "carrier_source": "issue-named B4-scope carrier",
+      "census_blob_sha1": "321848282edf3b40d6f93ad950a8ae35660f3258",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-poly-8-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "304484f350b12180b9f91f3831766c3bb07b7e85876fce6709db0e60f7991ee7",
+            "3a0ebe6d704b2d6c5e2403728cad61783843cc8d69ccba5380aacb95c84e80e0",
+            "ad4013d01a6cc5d4ff7b89aef466db00f9e8ff2328faa22c2617475ff05c3fa1"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "34fb8d6fa646250eea8a0c69ff0f7509efa3d1fdd9c2458b84bc8c52cd070b61",
+            "e2dabc02e5248c76cd64354580996f4c5a53f0a5eeebe2335d47a7199b74749d",
+            "7c52c2581d3f5bd266925e861826403f39e62d4b54746f124e283ef5bb536d58"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "f4fb86069d574ecefb4590800d4a08fc1735d0172aa83ff65d5b138cff2efc41",
+            "51fc5cb02ee49963b1117783fee5826c0637f73cdcf5e6f8e857508d8e65dbde",
+            "8e3e1b5ac0d646063858f99401716d92b0f2812395a40b1f32e2fd164463d372"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+      "carrier_source": "issue-named B4-scope carrier",
+      "census_blob_sha1": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-notes-coverage-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "9491b9ff9c1a4421cb5071b867dbc19d5ae3ad66ef9fdbf067e640ba7a8c6a03",
+            "4cce43644450e7dfcbf21b159b1581406574728390eed807f54d28e81b46b909",
+            "a915a8cd67ff752f15ff9d2fad0534947d4302b850389b5742e1876d379c690d"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "bab53e6ccbe914a7b3e6b9586e27c10927af4c977535c273e5caee0993bdb271",
+            "aa9bdd995cd859a24d550c37e375bc4877839a9062d0392d2a1ba7394c7ce962",
+            "b5f303234f3f51ab4d7f1942cb0f446e906e673e805c7b47314afb7f4b36e0f8"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "c99f42d9fc23cdb87a4148d7f421d68884ef763abacbc9106e762973f4064a15",
+            "ff21b5c257d9fad3568b14ec4df0e28fd9992a021965eacf33c783aaa072f1c7",
+            "ba2d6ed8d1765d37a9665eff8e3a5e4e908418be53f5abe155c9451c9d8bc2c5"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/Exquis MPE/Keys/Pixel.fxp",
+      "carrier_source": "issue-named B4-scope carrier",
+      "census_blob_sha1": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-poly-8-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "058202ec2d3d12ef3831c0fc5a00f253d660424f7c6fa94d21c24f345f155c9d",
+            "6c9df41067e2d447dabe443543b89c3742b2cac7fb7e1a02b203d454f49d2667",
+            "47298a3010770e6683c2088d53e9344361ee983ce735dcbf03193c0e351a2ee4"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "f7d8a50331d7a15c93859800ad9a1e67e898422e1bd89168f169cd8af15a6716",
+            "7b4b8e8559d36203596291502f8c8c7f0f9d76b236c95054eaeb9d7fcfa4b3cb",
+            "61df4a78174157865287d1ee002d0729ab836010e4fdf833e1789f01330d5de7"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "6ed5552afda4c7b941fe17a771a032112ad53fba00bcccfc151864b999dc8d7a",
+            "3dbb8da086bb4d561754ffeec3d8bbbc061be484ca47eccc8beaa2de5d518640",
+            "7e728199c8622b62714ff43f71e0e6eb7ba16618e065ed7a3dca8c48e96ca656"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/John Valentine/Strings/String Contrabass.fxp",
+      "carrier_source": "added by this leaf: concurrent dual-instance shape, SAME FX class in both global3 and global4",
+      "census_blob_sha1": "50ee25dfecf475023179eac4c788483ebf12d30d",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-notes-coverage-v1"
+    },
+    {
+      "buses": {
+        "dry": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "c0c88c28ca02ba112c55806e64af6690081cbaa90a937720f8390db0e420d223",
+            "cbfa83b92f203d07445b2399d8dbe92d4f8cb4668d19271891ba75a9328ddbc0",
+            "4c1bd0a9aff553deba0cc09d2ca3f285902de3ca4ccd98f70be35eb312ef0ef4"
+          ]
+        },
+        "g34off": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "8253e375f10ed7b73128e4a1f6420819a7b15f69ea34e32cd55b51a52ea63dfc",
+            "fbb263feec41dc219ec8c683921f48cc7145b679db8b5eef60b0a0dd7852550f",
+            "0beb496731f708a506ade7fdf672ecf9361fe187e4a66a8b43cdc28e3e414126"
+          ]
+        },
+        "orig": {
+          "bit_identical": false,
+          "distinct_buffers": 3,
+          "sha256_per_repeat": [
+            "b6678fe7be5659e5607e05eb776cea004f20fda8b96c87de2b51756aa78d1568",
+            "20ada7ce386e673643a1a9f6e3c73ae360bc7030f4ddebfddfd8763cd1eb4596",
+            "6ca136aa7e2545b48d6fb5e398cfb9d25bf4aa2ef15260fb86c1f6b798e7296d"
+          ]
+        }
+      },
+      "carrier": "resources/data/patches_3rdparty/John Valentine/Strings/String Contrabass.fxp",
+      "carrier_source": "added by this leaf: concurrent dual-instance shape, SAME FX class in both global3 and global4",
+      "census_blob_sha1": "50ee25dfecf475023179eac4c788483ebf12d30d",
+      "first_diverging_bus": "dry",
+      "gate": "REFUSED",
+      "native_drift_gate": "PASS",
+      "reading": "REFUSED = source-nonrepeatable original preset (decision record 0019); stays recorded as REFUSED, unsupported-pending, never silently substituted. Native drift 0 is eligibility, not repeatability.",
+      "repeats": 3,
+      "sequence": "seq-poly-8-v1"
+    }
+  ],
+  "claim_scope": "model-vs-pinned-engine (claim 2) for the routing form only. NOT an RTL claim, NOT a preset-support claim, NOT a listening record.",
+  "coverage": {
+    "carrier_sequence_pairs_gated": 10,
+    "carrier_sequence_pairs_refused_nonrepeatable": 10,
+    "diagnostic_pairs_rendered": 2,
+    "note": "coverage is reported separately from agreement; diagnostic pairs never count toward original-preset coverage",
+    "original_carrier_pairs_rendered": 0
+  },
+  "engine_pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+  "issue": "#150",
+  "leaf": "SXT-028j",
+  "model_revision": "47d44bce92de29502689f9324420d07621455e3410eb8bcd93378e5a0bbd23fc",
+  "pairs": [
+    {
+      "diagnostic": true,
+      "engine_routing_checks": {
+        "bypass_no_fx_equals_dry": true,
+        "bypass_no_sends_equals_sends_off_when_stage_inert": true,
+        "bypass_no_sends_stage_active": true,
+        "bypass_scene_fx_only_equals_inserts_only": true,
+        "slot3_bypass_changes_bus": true,
+        "slot4_bypass_changes_bus": true,
+        "stage_active_in_orig": true
+      },
+      "fixture_id": "diag-sub-4__seq-notes-coverage-v1",
+      "fx_off_drain_timing": {
+        "blocks_from_k_equal_slot_off_from_start": true,
+        "drains_at_the_control_pass_preceding_block_k": true,
+        "first_block_departing_from_orig": 600,
+        "queued_before_block": 600,
+        "slot": 15
+      },
+      "live_negative_controls": {
+        "ignore-bypass": {
+          "config": "byp_no_fx",
+          "disagrees_with_engine": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "wrong_model_predicts_active": true
+        },
+        "partition": {
+          "config": "byp_scene_fx_only",
+          "disagrees_with_engine": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "wrong_model_predicts_active": true
+        }
+      },
+      "manifest": "reports/SXT-028j/fixtures/diag-sub-4__seq-notes-coverage-v1.json",
+      "model_vs_engine_routing_agreement": {
+        "byp_no_fx": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "model_predicts_active": false
+        },
+        "byp_no_sends": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": true,
+          "model_predicts_active": true
+        },
+        "byp_scene_fx_only": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "model_predicts_active": false
+        },
+        "orig": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": true,
+          "model_predicts_active": true
+        }
+      },
+      "model_vs_engine_waveform": {
+        "agreement_claim": "NO_VERDICT",
+        "agreement_claim_reason": "occupant_not_modeled: the frozen model's per-slot occupant is a synthetic biquad; the engine's concrete algorithm (fxt_distortion/fxt_delay) belongs to its algorithm leaf. The numbers are measurements, not agreement.",
+        "budget_verdict": "FAIL",
+        "channels": {
+          "L": {
+            "best_shift": 32,
+            "frames": 273600,
+            "max_abs_diff_lsb": 941752.875,
+            "model_peak_lsb": 286754.0,
+            "ref_peak_lsb": 822820.0,
+            "rms_diff_at_best_shift_lsb": 132581.22219669528,
+            "rms_diff_at_shift0_lsb": 159433.18298317603,
+            "rms_diff_dbfs": -16.3604239335907,
+            "rms_diff_lsb": 159433.18298317603,
+            "spectral_corr": 0.5217138503166711
+          },
+          "R": {
+            "best_shift": 32,
+            "frames": 273600,
+            "max_abs_diff_lsb": 941752.875,
+            "model_peak_lsb": 286754.0,
+            "ref_peak_lsb": 822820.0,
+            "rms_diff_at_best_shift_lsb": 132581.22219669528,
+            "rms_diff_at_shift0_lsb": 159433.18298317603,
+            "rms_diff_dbfs": -16.3604239335907,
+            "rms_diff_lsb": 159433.18298317603,
+            "spectral_corr": 0.5217138503166711
+          },
+          "mono": {
+            "best_shift": 32,
+            "frames": 273600,
+            "max_abs_diff_lsb": 941752.875,
+            "model_peak_lsb": 286754.0,
+            "ref_peak_lsb": 822820.0,
+            "rms_diff_at_best_shift_lsb": 132581.22219669528,
+            "rms_diff_at_shift0_lsb": 159433.18298317603,
+            "rms_diff_dbfs": -16.3604239335907,
+            "rms_diff_lsb": 159433.18298317603,
+            "spectral_corr": 0.5217138503166711
+          }
+        },
+        "frames_compared": 273600,
+        "note": "budgets [PROPOSED, not frozen]; freeze gated on SXT-017 (#12)",
+        "proposed_budget_results": {
+          "max_abs_diff_lsb": false,
+          "rms_diff_dbfs": false,
+          "spectral_corr": false
+        },
+        "proposed_budgets": {
+          "max_abs_diff_lsb": 8192,
+          "rms_diff_dbfs": -46.0,
+          "spectral_corr_min": 0.98
+        },
+        "tail": {
+          "gate": "FAIL",
+          "reason": "mono: tail residual 0.54 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS); L: tail residual 0.54 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS); R: tail residual 0.54 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+          "tail_check": {
+            "model_tail_present": true,
+            "ok": false,
+            "reason": "tail residual 0.54 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+            "tail_budget": {
+              "decay_curve_floor_dbfs": -100.0,
+              "decay_curve_max_dev_db": 1.0,
+              "decay_curve_window_s": 0.05,
+              "tail_rms_rel_db": -20.0
+            },
+            "tail_decay_curve": {
+              "floor_dbfs": -100.0,
+              "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+              "graded_windows": 25,
+              "max_dev_budget_db": 1.0,
+              "max_dev_db": 273.7052602088503,
+              "ok": false,
+              "reason": "tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+              "ref_first_window_dbfs": -36.231428489576565,
+              "ref_last_graded_window_dbfs": -98.59091476453085,
+              "total_windows": 50,
+              "window_frames": 2400,
+              "windows_over_budget": 25,
+              "worst_window": {
+                "index": 4,
+                "model_dbfs": -300.0,
+                "ref_dbfs": -26.294739791149688,
+                "start_frame_in_tail": 9600
+              }
+            },
+            "tail_decay_curve_ok": false,
+            "tail_frames": 120000,
+            "tail_max_abs_diff_lsb": 301091.0234375,
+            "tail_model_rms_lsb": 8272.098858942934,
+            "tail_offset": 153600,
+            "tail_present": true,
+            "tail_ref_rms_lsb": 30967.338916994926,
+            "tail_region_covered": true,
+            "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-150/reports/SXT-028j/fixtures/diag-sub-4__seq-notes-coverage-v1.json",
+            "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+            "tail_rms_diff_lsb": 32949.26635094251,
+            "tail_rms_rel_db": 0.5388372365545013,
+            "tail_rms_rel_ok": false
+          },
+          "tail_check_lr": {
+            "L": {
+              "model_tail_present": true,
+              "ok": false,
+              "reason": "tail residual 0.54 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+              "tail_budget": {
+                "decay_curve_floor_dbfs": -100.0,
+                "decay_curve_max_dev_db": 1.0,
+                "decay_curve_window_s": 0.05,
+                "tail_rms_rel_db": -20.0
+              },
+              "tail_decay_curve": {
+                "floor_dbfs": -100.0,
+                "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+                "graded_windows": 25,
+                "max_dev_budget_db": 1.0,
+                "max_dev_db": 273.7052602088503,
+                "ok": false,
+                "reason": "tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+                "ref_first_window_dbfs": -36.231428489576565,
+                "ref_last_graded_window_dbfs": -98.59091476453085,
+                "total_windows": 50,
+                "window_frames": 2400,
+                "windows_over_budget": 25,
+                "worst_window": {
+                  "index": 4,
+                  "model_dbfs": -300.0,
+                  "ref_dbfs": -26.294739791149688,
+                  "start_frame_in_tail": 9600
+                }
+              },
+              "tail_decay_curve_ok": false,
+              "tail_frames": 120000,
+              "tail_max_abs_diff_lsb": 301091.0234375,
+              "tail_model_rms_lsb": 8272.098858942934,
+              "tail_offset": 153600,
+              "tail_present": true,
+              "tail_ref_rms_lsb": 30967.338916994926,
+              "tail_region_covered": true,
+              "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-150/reports/SXT-028j/fixtures/diag-sub-4__seq-notes-coverage-v1.json",
+              "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+              "tail_rms_diff_lsb": 32949.26635094251,
+              "tail_rms_rel_db": 0.5388372365545013,
+              "tail_rms_rel_ok": false
+            },
+            "R": {
+              "model_tail_present": true,
+              "ok": false,
+              "reason": "tail residual 0.54 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+              "tail_budget": {
+                "decay_curve_floor_dbfs": -100.0,
+                "decay_curve_max_dev_db": 1.0,
+                "decay_curve_window_s": 0.05,
+                "tail_rms_rel_db": -20.0
+              },
+              "tail_decay_curve": {
+                "floor_dbfs": -100.0,
+                "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+                "graded_windows": 25,
+                "max_dev_budget_db": 1.0,
+                "max_dev_db": 273.7052602088503,
+                "ok": false,
+                "reason": "tail decay curve deviates 273.71 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -26.3 dBFS, model -300.0 dBFS)",
+                "ref_first_window_dbfs": -36.231428489576565,
+                "ref_last_graded_window_dbfs": -98.59091476453085,
+                "total_windows": 50,
+                "window_frames": 2400,
+                "windows_over_budget": 25,
+                "worst_window": {
+                  "index": 4,
+                  "model_dbfs": -300.0,
+                  "ref_dbfs": -26.294739791149688,
+                  "start_frame_in_tail": 9600
+                }
+              },
+              "tail_decay_curve_ok": false,
+              "tail_frames": 120000,
+              "tail_max_abs_diff_lsb": 301091.0234375,
+              "tail_model_rms_lsb": 8272.098858942934,
+              "tail_offset": 153600,
+              "tail_present": true,
+              "tail_ref_rms_lsb": 30967.338916994926,
+              "tail_region_covered": true,
+              "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-150/reports/SXT-028j/fixtures/diag-sub-4__seq-notes-coverage-v1.json",
+              "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+              "tail_rms_diff_lsb": 32949.26635094251,
+              "tail_rms_rel_db": 0.5388372365545013,
+              "tail_rms_rel_ok": false
+            }
+          }
+        }
+      },
+      "occupancy": {
+        "fx_bypass": 0,
+        "fx_disable_mask": 0,
+        "global3": true,
+        "global3_enabled": true,
+        "global4": true,
+        "global4_enabled": true
+      }
+    },
+    {
+      "diagnostic": true,
+      "engine_routing_checks": {
+        "bypass_no_fx_equals_dry": true,
+        "bypass_no_sends_equals_sends_off_when_stage_inert": true,
+        "bypass_no_sends_stage_active": true,
+        "bypass_scene_fx_only_equals_inserts_only": true,
+        "slot3_bypass_changes_bus": true,
+        "slot4_bypass_changes_bus": true,
+        "stage_active_in_orig": true
+      },
+      "fixture_id": "diag-sub-4__seq-poly-8-v1",
+      "fx_off_drain_timing": {
+        "blocks_from_k_equal_slot_off_from_start": true,
+        "drains_at_the_control_pass_preceding_block_k": true,
+        "first_block_departing_from_orig": 600,
+        "queued_before_block": 600,
+        "slot": 15
+      },
+      "live_negative_controls": {
+        "ignore-bypass": {
+          "config": "byp_no_fx",
+          "disagrees_with_engine": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "wrong_model_predicts_active": true
+        },
+        "partition": {
+          "config": "byp_scene_fx_only",
+          "disagrees_with_engine": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "wrong_model_predicts_active": true
+        }
+      },
+      "manifest": "reports/SXT-028j/fixtures/diag-sub-4__seq-poly-8-v1.json",
+      "model_vs_engine_routing_agreement": {
+        "byp_no_fx": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "model_predicts_active": false
+        },
+        "byp_no_sends": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": true,
+          "model_predicts_active": true
+        },
+        "byp_scene_fx_only": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": false,
+          "model_predicts_active": false
+        },
+        "orig": {
+          "agree": true,
+          "discriminating": true,
+          "engine_observed_active": true,
+          "model_predicts_active": true
+        }
+      },
+      "model_vs_engine_waveform": {
+        "agreement_claim": "NO_VERDICT",
+        "agreement_claim_reason": "occupant_not_modeled: the frozen model's per-slot occupant is a synthetic biquad; the engine's concrete algorithm (fxt_distortion/fxt_delay) belongs to its algorithm leaf. The numbers are measurements, not agreement.",
+        "budget_verdict": "FAIL",
+        "channels": {
+          "L": {
+            "best_shift": 32,
+            "frames": 177600,
+            "max_abs_diff_lsb": 905022.0,
+            "model_peak_lsb": 271064.0,
+            "ref_peak_lsb": 714503.5625,
+            "rms_diff_at_best_shift_lsb": 168582.1348342596,
+            "rms_diff_at_shift0_lsb": 214994.77098772145,
+            "rms_diff_dbfs": -13.763440319261253,
+            "rms_diff_lsb": 214994.77098772145,
+            "spectral_corr": 0.6776862336333294
+          },
+          "R": {
+            "best_shift": 32,
+            "frames": 177600,
+            "max_abs_diff_lsb": 905022.0,
+            "model_peak_lsb": 271064.0,
+            "ref_peak_lsb": 714503.5625,
+            "rms_diff_at_best_shift_lsb": 168582.1348342596,
+            "rms_diff_at_shift0_lsb": 214994.77098772145,
+            "rms_diff_dbfs": -13.763440319261253,
+            "rms_diff_lsb": 214994.77098772145,
+            "spectral_corr": 0.6776862336333294
+          },
+          "mono": {
+            "best_shift": 32,
+            "frames": 177600,
+            "max_abs_diff_lsb": 905022.0,
+            "model_peak_lsb": 271064.0,
+            "ref_peak_lsb": 714503.5625,
+            "rms_diff_at_best_shift_lsb": 168582.1348342596,
+            "rms_diff_at_shift0_lsb": 214994.77098772145,
+            "rms_diff_dbfs": -13.763440319261253,
+            "rms_diff_lsb": 214994.77098772145,
+            "spectral_corr": 0.6776862336333294
+          }
+        },
+        "frames_compared": 177600,
+        "note": "budgets [PROPOSED, not frozen]; freeze gated on SXT-017 (#12)",
+        "proposed_budget_results": {
+          "max_abs_diff_lsb": false,
+          "rms_diff_dbfs": false,
+          "spectral_corr": false
+        },
+        "proposed_budgets": {
+          "max_abs_diff_lsb": 8192,
+          "rms_diff_dbfs": -46.0,
+          "spectral_corr_min": 0.98
+        },
+        "tail": {
+          "gate": "FAIL",
+          "reason": "mono: tail residual 0.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS); L: tail residual 0.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS); R: tail residual 0.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+          "tail_check": {
+            "model_tail_present": true,
+            "ok": false,
+            "reason": "tail residual 0.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+            "tail_budget": {
+              "decay_curve_floor_dbfs": -100.0,
+              "decay_curve_max_dev_db": 1.0,
+              "decay_curve_window_s": 0.05,
+              "tail_rms_rel_db": -20.0
+            },
+            "tail_decay_curve": {
+              "floor_dbfs": -100.0,
+              "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+              "graded_windows": 25,
+              "max_dev_budget_db": 1.0,
+              "max_dev_db": 279.38475184877865,
+              "ok": false,
+              "reason": "tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+              "ref_first_window_dbfs": -22.128261625505704,
+              "ref_last_graded_window_dbfs": -93.26650204860314,
+              "total_windows": 50,
+              "window_frames": 2400,
+              "windows_over_budget": 25,
+              "worst_window": {
+                "index": 4,
+                "model_dbfs": -300.0,
+                "ref_dbfs": -20.615248151221333,
+                "start_frame_in_tail": 9600
+              }
+            },
+            "tail_decay_curve_ok": false,
+            "tail_frames": 120000,
+            "tail_max_abs_diff_lsb": 420892.703125,
+            "tail_model_rms_lsb": 7370.675909350173,
+            "tail_offset": 57600,
+            "tail_present": true,
+            "tail_ref_rms_lsb": 61261.48766793692,
+            "tail_region_covered": true,
+            "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-150/reports/SXT-028j/fixtures/diag-sub-4__seq-poly-8-v1.json",
+            "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+            "tail_rms_diff_lsb": 62784.50319434072,
+            "tail_rms_rel_db": 0.21329846245536443,
+            "tail_rms_rel_ok": false
+          },
+          "tail_check_lr": {
+            "L": {
+              "model_tail_present": true,
+              "ok": false,
+              "reason": "tail residual 0.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+              "tail_budget": {
+                "decay_curve_floor_dbfs": -100.0,
+                "decay_curve_max_dev_db": 1.0,
+                "decay_curve_window_s": 0.05,
+                "tail_rms_rel_db": -20.0
+              },
+              "tail_decay_curve": {
+                "floor_dbfs": -100.0,
+                "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+                "graded_windows": 25,
+                "max_dev_budget_db": 1.0,
+                "max_dev_db": 279.38475184877865,
+                "ok": false,
+                "reason": "tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+                "ref_first_window_dbfs": -22.128261625505704,
+                "ref_last_graded_window_dbfs": -93.26650204860314,
+                "total_windows": 50,
+                "window_frames": 2400,
+                "windows_over_budget": 25,
+                "worst_window": {
+                  "index": 4,
+                  "model_dbfs": -300.0,
+                  "ref_dbfs": -20.615248151221333,
+                  "start_frame_in_tail": 9600
+                }
+              },
+              "tail_decay_curve_ok": false,
+              "tail_frames": 120000,
+              "tail_max_abs_diff_lsb": 420892.703125,
+              "tail_model_rms_lsb": 7370.675909350173,
+              "tail_offset": 57600,
+              "tail_present": true,
+              "tail_ref_rms_lsb": 61261.48766793692,
+              "tail_region_covered": true,
+              "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-150/reports/SXT-028j/fixtures/diag-sub-4__seq-poly-8-v1.json",
+              "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+              "tail_rms_diff_lsb": 62784.50319434072,
+              "tail_rms_rel_db": 0.21329846245536443,
+              "tail_rms_rel_ok": false
+            },
+            "R": {
+              "model_tail_present": true,
+              "ok": false,
+              "reason": "tail residual 0.21 dB exceeds the proposed -20.00 dB relative budget; tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+              "tail_budget": {
+                "decay_curve_floor_dbfs": -100.0,
+                "decay_curve_max_dev_db": 1.0,
+                "decay_curve_window_s": 0.05,
+                "tail_rms_rel_db": -20.0
+              },
+              "tail_decay_curve": {
+                "floor_dbfs": -100.0,
+                "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+                "graded_windows": 25,
+                "max_dev_budget_db": 1.0,
+                "max_dev_db": 279.38475184877865,
+                "ok": false,
+                "reason": "tail decay curve deviates 279.38 dB (> 1.00 dB budget) in 25 of 25 graded windows (worst window 4: reference -20.6 dBFS, model -300.0 dBFS)",
+                "ref_first_window_dbfs": -22.128261625505704,
+                "ref_last_graded_window_dbfs": -93.26650204860314,
+                "total_windows": 50,
+                "window_frames": 2400,
+                "windows_over_budget": 25,
+                "worst_window": {
+                  "index": 4,
+                  "model_dbfs": -300.0,
+                  "ref_dbfs": -20.615248151221333,
+                  "start_frame_in_tail": 9600
+                }
+              },
+              "tail_decay_curve_ok": false,
+              "tail_frames": 120000,
+              "tail_max_abs_diff_lsb": 420892.703125,
+              "tail_model_rms_lsb": 7370.675909350173,
+              "tail_offset": 57600,
+              "tail_present": true,
+              "tail_ref_rms_lsb": 61261.48766793692,
+              "tail_region_covered": true,
+              "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-150/reports/SXT-028j/fixtures/diag-sub-4__seq-poly-8-v1.json",
+              "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+              "tail_rms_diff_lsb": 62784.50319434072,
+              "tail_rms_rel_db": 0.21329846245536443,
+              "tail_rms_rel_ok": false
+            }
+          }
+        }
+      },
+      "occupancy": {
+        "fx_bypass": 0,
+        "fx_disable_mask": 0,
+        "global3": true,
+        "global3_enabled": true,
+        "global4": true,
+        "global4_enabled": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "sequences": [
+    "seq-notes-coverage-v1",
+    "seq-poly-8-v1"
+  ],
+  "summary": {
+    "diagnostic_live_negative_controls_fail_as_required": {
+      "ignore-bypass": true,
+      "partition": true
+    },
+    "diagnostic_model_vs_engine_routing_agreement_all_exact": true,
+    "fx_disable_gate_engine_probe": "BLOCKED: surgepy setParamVal cannot set the int fx_disable parameter (every value reads back -2147483648); the model's bits-14|15 gate stays a declared, source-read contract (EVIDENCE 0b)",
+    "original_carrier_agreement": "NOT_RUN",
+    "original_carrier_agreement_reason": "every named/added carrier is source-nonrepeatable on the pinned engine, so no original-preset reference fixture exists to compare against (policy #310, decision record 0019); blocked on a reproducibility-census carrier (#381)"
+  }
+}

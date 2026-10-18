@@ -63,8 +63,222 @@
   "leaf": "SXT-028j",
   "oracle_extraction": {
     "attempted": true,
-    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
-    "ok": false
+    "detail": "LIVE surgepy leg RAN against 1.4.HEAD.58914e59c: global3/global4 parameters cross-checked against graphs.jsonl; drift gate PASS",
+    "live": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "provenance_mode": "manifest_prebuilt_artifact",
+        "sample_rate": 48000.0,
+        "surgepy_module_sha256": "55c216e6411dbf152443718ef3cbd1a8304a890a97fb81f5448b7e636ccdf0b9",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_bypass_fx_disable_match_graphs": true,
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "1b9c6dce3575e888348d6a60bb88582b457d68a3",
+      "ran": true,
+      "slots": {
+        "global3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "62.5 ms",
+              "graphs_value": -4.0,
+              "name": "FX G3 Pre-Delay",
+              "value": -4.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX G3 Room Size",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "109.2 ms",
+              "graphs_value": -3.195014,
+              "name": "FX G3 Decay Time",
+              "value": -3.195014,
+              "value_type": "float"
+            },
+            {
+              "display": "67.41 %",
+              "graphs_value": 0.674108,
+              "name": "FX G3 Diffusion",
+              "value": 0.674108,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX G3 Buildup",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX G3 Modulation",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX G3 LF Damping",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "99.70 %",
+              "graphs_value": 0.997024,
+              "name": "FX G3 HF Damping",
+              "value": 0.997024,
+              "value_type": "float"
+            },
+            {
+              "display": "5.07 dB",
+              "graphs_value": 5.071434,
+              "name": "FX G3 Width",
+              "value": 5.071434,
+              "value_type": "float"
+            },
+            {
+              "display": "28.42 %",
+              "graphs_value": 0.284226,
+              "name": "FX G3 Mix",
+              "value": 0.284226,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 14,
+          "type_display": "Reverb 2",
+          "type_id": 11
+        },
+        "global4": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "Galactic",
+              "graphs_value": 49,
+              "name": "FX G4 FX",
+              "value": 49,
+              "value_type": "int"
+            },
+            {
+              "display": "52.76 %",
+              "graphs_value": 0.527614,
+              "name": "FX G4 Replace",
+              "value": 0.527614,
+              "value_type": "float"
+            },
+            {
+              "display": "99.83 %",
+              "graphs_value": 0.998347,
+              "name": "FX G4 Brightness",
+              "value": 0.998347,
+              "value_type": "float"
+            },
+            {
+              "display": "0.51 %",
+              "graphs_value": 0.005125,
+              "name": "FX G4 Modulation",
+              "value": 0.005125,
+              "value_type": "float"
+            },
+            {
+              "display": "15.34 %",
+              "graphs_value": 0.153382,
+              "name": "FX G4 Size",
+              "value": 0.153382,
+              "value_type": "float"
+            },
+            {
+              "display": "12.05 %",
+              "graphs_value": 0.120536,
+              "name": "FX G4 Mix",
+              "value": 0.120536,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G4 Param 5",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G4 Param 6",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G4 Param 7",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G4 Param 8",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G4 Param 9",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G4 Param 10",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 15,
+          "type_display": "Airwindows",
+          "type_id": 14
+        }
+      }
+    },
+    "ok": true
   },
   "patch_level": {
     "fx_bypass": 0,

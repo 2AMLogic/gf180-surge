@@ -1,10 +1,10 @@
-# SXT-028j evidence record — routing form: Global FX slots 3-4 (global3 → global4, extended rack half): frozen model, exact RTL, per-instance state + lifecycle, oracle-dependent legs BLOCKED (named compute gap)
+# SXT-028j evidence record — routing form: Global FX slots 3-4 (global3 → global4, extended rack half): frozen model, exact RTL, per-instance state + lifecycle, oracle legs run on the prebuilt oracle (original carriers REFUSED as source-nonrepeatable; agreement NOT_RUN)
 
 Branch: `feature/issue-62` · Issue: #62 (SXT-028j) · Parent: #21 (SXT-028) ·
 Epic: #3
 
-Engine (external, GPL-3.0-or-later, pinned but not exercised by this leaf
-beyond the census/graphs cross-check):
+Engine (external, GPL-3.0-or-later; pinned; exercised by the #150 oracle
+legs in §0a/§0b, read-only):
 `surge-synthesizer/surge@58914e59c608ed4384ba6002e44c3465c58b2e71`
 (`oracle/manifest.json`). Structure authority:
 `src/common/SurgeSynthesizer.cpp` `process()` "apply global effects" block
@@ -27,83 +27,115 @@ labels it ADAPTED.
 
 ## 0. Named gaps (recorded, not worked around)
 
-### 0a. Oracle-dependent legs — BLOCKED
+### 0a. Oracle-dependent legs — RAN on the prebuilt pinned oracle (issue #150); original-carrier agreement NOT_RUN
 
-The pinned Surge XT engine's `surgepy` Python binding requires a full
-C++/JUCE build (`oracle/fetch-and-build.sh`); that build was not available
-in the environment that produced this record (dispatch worker, no host-side
-oracle checkout; `oracle/manifest.json`'s pinned build path is a macOS
-path). The probe is **measured, not asserted** —
-`tools/rf_global34_oracle_status.py` actually attempts the checkout lookup
-and the `import surgepy`, and writes what it found to
-`artifacts/oracle-status.json` (`oracle_status: "UNAVAILABLE"`,
-`surgepy_importable: false`, `engine_dir_present: false`). Per builder.md's
-"Long compute has three sanctioned answers", this is recorded as a named,
-bounded gap rather than attempted as an unbounded local build or silently
-skipped:
+Re-run on 2026-10-18 on a linux-x86_64 dispatch worker with the pinned
+prebuilt oracle (`oracle/fetch-and-build.sh --prebuilt`, per-user install,
+provenance mode `manifest_prebuilt_artifact`, engine
+`1.4.HEAD.58914e59c`, pin `58914e59…`). `artifacts/oracle-status.json` now
+reads `oracle_status: "AVAILABLE"`, every leg `RUNNABLE` with `ran: true`
+(`tools/rf_global34_oracle_status.py`, which now loads surgepy through the
+harness's sanctioned loader instead of a bare `import`). What each leg
+actually produced:
 
-- **What IS verified without the oracle** (this record, in full): the frozen
-  model itself; RTL-vs-model exactness (18 cases, §2); all 5 required
-  negative controls, 15 legs, 0 NOT_RUN (§3); five corpus carriers'
-  routing/scheduling metadata — slot occupancy, FX type and Airwindows
-  sub-algorithm, `fx_bypass`, `fx_disable`, upstream chain context, stored
-  `return_level` — re-derived from the ALREADY-committed,
-  ALREADY-surgepy-derived `corpus/census-v0.1` and
-  `corpus/normalized/graphs.jsonl` (SXT-011 outputs), with **zero drift
-  asserted between those two independent artifacts** (§4); and a
-  corpus-wide occupancy scan for this routing form's shapes (§6, coverage
-  only).
-- **What is BLOCKED**: this leaf's Fixtures plan calls for **new** reference
-  fixtures (no SXT-014 ablation carrier exists for this routing form), so
-  per-slot algorithm-parameter extraction, the original / per-slot-bypass /
-  all-off-dry renders, the engine-side per-scene drift determinism gate, and
-  therefore any model-vs-pinned-engine reference-agreement number are all
-  **NOT_RUN**. Recorded per leg in `artifacts/oracle-status.json` and as a
-  refusal transcript in `artifacts/render-refusals.txt`;
-  `tools/extract_rf_global34_inputs.py`'s `oracle_extraction.ok` is `false`
-  for all five carriers, written verbatim into
-  `model/effects/fx_inputs/rf-rf-global34-*.json`, never fabricated.
-- **Reference budgets** [PROPOSED, not frozen] are therefore **NOT_RUN** for
-  this leaf — not PASS and not FAIL. Freeze in any case is gated on SXT-017
-  (#12) per the issue's own Acceptance section.
+- **extract-slot-params — RAN, 5/5 carriers.**
+  `tools/extract_rf_global34_inputs.py` read global3/global4 parameter
+  vectors from the native post-`loadPatch` state, cross-checked every value,
+  the fx-type vector, `fx_bypass`/`fx_disable` and `return_level` against
+  `corpus/normalized/graphs.jsonl` (0 disagreements), and ran the shared
+  engine-side per-scene drift gate (**PASS**, drift 0.0 in every voicing
+  scene, all 5). Records: `model/effects/fx_inputs/rf-rf-global34-*.json`
+  (`oracle_extraction.live`); every oracle-free field is byte-for-byte what it
+  was. This is an extraction/eligibility result, not agreement.
+- **render — RAN; every original carrier REFUSED.** All 5 carriers x both
+  sequences (`seq-notes-coverage-v1`, `seq-poly-8-v1`) = **10/10 pairs fail
+  the exact 3x bit-identity gate** (3 distinct buffers each). The **first
+  diverging bus is the ALL-OFF dry bus in all 10**, i.e. the voice path,
+  upstream of every effect slot — so this is not a global3/global4 property
+  and it is not the drift gate (which passed). Under
+  `decision-records/0019-source-nondeterministic-carrier-policy.md` (policy
+  #310) a source-nonrepeatable preset is **REFUSED as an original carrier**:
+  the gate is not softened, nothing is seeded/conditioned/tolerance-compared,
+  no carrier is silently substituted, and the five stay
+  *unsupported-pending*. Per-bus sha256s: `model-vs-reference.json`
+  `carrier_determinism_gate`; transcript: `artifacts/render-refusals.txt`.
+  Consequently **no original-carrier reference fixture was committed.**
+- **model-render / reference-compare — original carriers: NOT_RUN
+  (BLOCKED).** With no repeatable original carrier there is no wet reference
+  to compare the model against. The affected dependency is blocked on a
+  carrier drawn from the reproducibility census (#381); the budgets were not
+  widened and not frozen (freeze stays gated on SXT-017, #12).
+- **Diagnostic routing probe (NOT a carrier, no coverage).**
+  `tools/render_rf_global34_reference.py` also renders a *diagnostic
+  adaptation* — the repeatable factory voice `Basses/Sub 4.fxp` with
+  global3 = Distortion and global4 = Delay set by override — under the same
+  policies (fresh instance per bus, 3x bit-identical gate: **passes**), 12
+  buses per sequence (`reports/SXT-028j/fixtures/diag-sub-4__*.json`;
+  manifests with per-bus sha256 are committed, the WAVs are regenerable
+  scratch). Per decision-record invariant 4 this is diagnostic/adapted input
+  and never counts toward original-preset coverage. What it establishes
+  (engine routing semantics; exact float-buffer equality between engine
+  buses, both sequences):
+  - `fx_bypass = No FX` ≡ the all-slots-off dry bus; `Scene FX only` ≡ the
+    inserts-only bus (global stage and sends skipped); `No sends` runs the
+    global stage (≠ the stage-off bus) and skips the sends (≡ sends-off bus).
+  - The frozen model's stage-active prediction (driven by the engine's own
+    stage-input bus) **agrees with the engine in all 4 configs x 2
+    sequences**; two live negative controls (wrong bypass partition: Scene
+    FX only runs the stage; bypass ignored) **disagree with the engine, as
+    required** — a control that agreed would be broken.
+  - Model-vs-engine *waveform* (max/rms/corr, tail gate) was **measured**
+    against the [PROPOSED] budgets for completeness and **FAILS** them
+    (mono max |Δ| 9.4e5 / 9.1e5 LSB, rms −16.4 / −13.8 dBFS, spectral corr
+    0.52 / 0.68; tail gate FAIL). That is the expected consequence of the
+    declared scope — the model's occupant is a synthetic biquad, not
+    Distortion/Delay — so it is recorded with
+    `agreement_claim: NO_VERDICT, reason: occupant_not_modeled`, not as
+    fidelity evidence in either direction. Concrete-occupant agreement
+    belongs to the algorithm leaves.
+- **fx_disable gate (bits 14|15) — engine probe BLOCKED.** surgepy's
+  `setParamVal` on the int `fx_disable` parameter reads back `-2147483648`
+  for every value written, so the bits cannot be forced on the engine. The
+  only carrier with them set natively (`Bassoon.fxp`) is source-nonrepeatable.
+  The model's bits-14/15 gate therefore stays a declared contract here
+  (engine bit layout re-derived from the corpus, §0b).
+- **Reference budgets** [PROPOSED, not frozen] remain **NOT_RUN** for original
+  carriers — not PASS and not FAIL.
 
-### 0b. Two structural facts are declared contracts, not verified reads
+### 0b. Two structural facts: re-verified against the pinned source (#150 items 2–3)
 
-The same missing oracle checkout means the pinned `process()` source text
-could not be re-read while writing this leaf. Consequences, stated exactly:
+Source re-read at the pin
+(`surge-synthesizer/surge@58914e59…`, `src/common/SurgeSynthesizer.cpp`,
+fetched read-only for reading; nothing copied into this repository):
 
-- **Re-derived in-repo (verified here)**: the slot indices
-  `fxslot_global3 = 14`, `fxslot_global4 = 15` (and `global1/2 = 6/7`).
-  Every one of the **3,561** records in `corpus/normalized/graphs.jsonl`
-  carries the pinned engine's slot order by patch `fx[]` index, and
-  `tests/test_sxt028j.py::test_slot_indices_agree_with_the_committed_corpus_role_table`
-  checks **all** of them (not just the first), because this leaf owns the
-  highest two indices and a truncated `fx[]` list would otherwise go
-  unnoticed. The extractor re-checks the same table per carrier
-  (`slot_index_check`) and REFUSES on disagreement.
-- **Declared contract #1 (NOT re-read from the pinned source here)**: the
-  GLOBAL stage's bypass-mode set — it runs in `fxb_all_fx` and
-  `fxb_no_sends`, and is skipped in `fxb_scene_fx_only` and `fxb_no_fx`.
-  Taken from the landed sibling GLOBAL leaf
-  `model/effects/rf-rf-global2/rf_global2_model.py`, which pinned it while
-  citing the same `process()` block, and complementary to the INSERT set
-  pinned by `model/effects/rf-rf-bins12/rf_bins12_model.py`. Consistency
-  note: the whole corpus contains **0** presets with a non-`All FX`
-  `fx_bypass` and an occupied global3/global4
-  (`artifacts/corpus-occupancy.json`), so no committed corpus carrier
-  discriminates the partition either way.
-- **Declared contract #2**: the engine-side queue-drain timing of
-  `enqueueFXOff()`. This leaf's lifecycle applies slot-off at the
-  control-rate pass preceding a block. The model and the RTL match each
-  other exactly on that contract (claim 1 is unaffected); whether the
-  engine's own queue drains at the same boundary is unverified here.
-- **Re-verification item** (both contracts): re-read the `process()` global
-  block and the FX-off queue against the pin the first time an oracle
-  checkout is available, and correct the frozen model + RTL together if
-  either differs. Nothing else in this leaf depends on them (the bypass gate
-  is one comparison; the schedule, per-instance-state and tail claims are
-  independent of which modes enter the block and of the off-request
-  latency).
+- **Contract #1 — CONFIRMED against the pin.** `process()` runs
+  `processControl()` first, then the insert block (`fx_bypass != fxb_no_fx`),
+  then the send block (`fx_bypass == fxb_all_fx`), then the global block:
+  `if ((fx_bypass == fxb_all_fx) || (fx_bypass == fxb_no_sends))` iterates
+  `{fxslot_global1..4}`, skipping a slot that is null or has its
+  `fx_disable` bit set, chaining `process_ringout` in place. So the global
+  stage runs in exactly `{ALL_FX, NO_SENDS}` and not in `{SCENE_FX_ONLY,
+  NO_FX}`; the per-slot `fx_disable` gate is as modeled. This was inherited
+  from `rf-rf-global2`, never re-read there; it is now read, and the
+  diagnostic probe in §0a reproduces it on the running engine. The corpus
+  still cannot discriminate it (0 of 3,561 presets).
+- **Contract #2 — CONFIRMED against the pin.** `enqueueFXOff()` writes
+  `fxsync[which].type = fxt_off`, clears its user data and sets
+  `load_fx_needed`. `processControl()` (called at the top of `process()`,
+  before any FX stage) calls `loadFx()` when `load_fx_needed`, which does
+  `fx[s].reset()` for the slot. The queue therefore drains at the
+  control-rate pass **preceding the block**, which is the model's and RTL's
+  declared contract. Empirically, on the diagnostic probe: with the global4
+  type written to Off before block 600 (both sequences), the engine output
+  first departs from the unmodified render **at block 600** and from block
+  600 on is bit-identical to the slot-off-from-start render. (The binding's
+  type write and `enqueueFXOff()` both set `load_fx_needed` and drain at the
+  same `processControl()` site; the test exercised the binding's write, the
+  source read covers `enqueueFXOff()` itself.)
+- **No correction was needed**, so the frozen model, the RTL and
+  `rtl-exactness.json` are untouched (the model revision pin is unchanged;
+  `tools/compare_rtl_model_rf_global34.py --assert-model-revision <stale>`
+  still refuses, covered by the existing negative control).
 
 ### 0c. The issue's named carriers do not cover the dual-instance shape
 
@@ -121,7 +153,12 @@ so it cannot silently drift.
 | Claim | Status | Evidence |
 |---|---|---|
 | Frozen model ↔ RTL exact | **PASS** (18 cases, 7,680 output samples + 120 checkpoints, 0 mismatches) | `rtl-exactness.json` |
-| Model ↔ pinned engine vs [PROPOSED] budgets | **NOT_RUN** (oracle unavailable; §0a) | `artifacts/oracle-status.json` |
+| Model ↔ pinned engine vs [PROPOSED] budgets, original carriers | **NOT_RUN** (all 5 carriers REFUSED by the 3x gate; §0a) | `model-vs-reference.json` `carrier_determinism_gate` |
+| Model ↔ engine routing agreement (diagnostic host, not a carrier) | **PASS** (4 configs x 2 sequences exact; 2 live controls fail as required) | `model-vs-reference.json` |
+| Model ↔ engine waveform on the diagnostic host | **NO_VERDICT** (measured FAIL vs budgets; occupant not modeled, §0a) | `model-vs-reference.json` |
+| Oracle probe / live extraction | **AVAILABLE**, every leg RUNNABLE and run; extraction 5/5, drift gate PASS | `artifacts/oracle-status.json`, `fx_inputs/*.json` |
+| Declared contracts #1/#2 (§0b) | **CONFIRMED** against the pin (source read + diagnostic probe) | §0b |
+| `fx_disable` bits 14\|15 on the engine | **BLOCKED** (binding cannot set the parameter) | §0a |
 | Negative controls live | **5/5 CONTROL-OK** (15 legs, 0 NOT_RUN; 3 are live RTL mutants) | `negative-controls/negative-controls.json` |
 | Per-instance state (dual-slot) | **PASS** (model NC-D + live RTL shared-state mutant fails, incl. the same-FX-class case) | `negative-controls.json`, `rtl-exactness.json` |
 | Instance lifecycle (patch change mid-tail, slot off, panic/reset) | **PASS** (3 dedicated RTL cases + model tests) | `rtl-exactness.json` §2, `tests/test_sxt028j.py` |
@@ -129,7 +166,7 @@ so it cannot silently drift.
 | Dropped-tail render | **FAILS the tail check, as required** | `negative-controls.json` NC-B |
 | Seam with the landed global1→global2 segment | **PASS** (model-level 4-slot composition, 4 independent histories) | `tests/test_sxt028j.py::test_seam_composes_with_the_landed_global12_segment` |
 | Carrier routing/scheduling metadata | **PASS** (5/5, census+graphs cross-checked, drift 0) | `model/effects/fx_inputs/rf-rf-global34-*.json` |
-| Complete-wet preset renders / new reference fixtures | **NOT_RUN** (oracle unavailable) | §0a, `artifacts/render-refusals.txt` |
+| Complete-wet preset renders / new reference fixtures (original carriers) | **REFUSED** (10/10 carrier x sequence pairs source-nonrepeatable; none committed) | §0a, `artifacts/render-refusals.txt` |
 | External-memory traffic | **PASS** (this leaf's own contribution: 0 words/sample; aggregate `[PENDING-SXT-016]`) | `artifacts/state-cost.json` |
 | Newly-enabled presets | **0** (no support claim follows from this record) | §6 |
 | Musical quality / listening | **NOT_RUN** (no listening record; #9 remains BLOCKED-on-human) | — |
@@ -312,9 +349,11 @@ bits, and no others, set in one patch. Every carrier's stored per-slot
 path (`return_level_consumed_by_global_path: false`) — return/send-level
 semantics belong to the send-form (`rf-send*`) leaves.
 
-Per-slot algorithm parameter values are NOT extracted (§0a — oracle
-unavailable); each record carries `oracle_extraction.ok: false` with the
-reason.
+Per-slot algorithm parameter values were extracted live in the #150 re-run
+(§0a): each record's `oracle_extraction.live` carries the global3/global4
+parameter vectors (cross-checked against `graphs.jsonl`) and the engine-side
+drift gate. On a host without the oracle the same field records
+`ok: false` with the reason, and the oracle-free fields above are unchanged.
 
 ## 5. External-memory traffic
 
@@ -377,20 +416,25 @@ exactness claim in §2 and nothing else.
 The issue's stop condition ("if the effect cannot be bounded in state/cost
 under the shared instance schedule, record the finding and route to
 SXT-017") was **not** triggered: this form's state is bounded and small
-(§5), with no external-memory requirement of its own. Three items are routed
-onward rather than closed here: the oracle-dependent reference legs (§0a,
-blocked on an oracle build), the two declared-contract re-verification items
-(§0b, bypass partition and FX-off queue timing), and the observation that
-the issue's named carriers do not reach the dual-instance shape (§0c,
-resolved here by adding two verified corpus carriers rather than by
-weakening the acceptance item). The [PROPOSED] reference budgets remain
-unfrozen, gated on SXT-017 (#12).
+(§5), with no external-memory requirement of its own. The #150 re-run
+discharged the two declared-contract re-verification items (§0b, both
+confirmed against the pin; no correction) and ran the oracle legs (§0a). What
+remains routed onward: model-vs-engine agreement on an **original** carrier —
+blocked because all five carriers are source-nonrepeatable (policy #310,
+decision record 0019) and a replacement must come from the reproducibility
+census (#381); the engine-side `fx_disable` bit probe (the binding cannot set
+the parameter); and the observation that the issue's named carriers do not
+reach the dual-instance shape (§0c). The [PROPOSED] reference budgets remain
+unfrozen, gated on SXT-017 (#12); no budget was widened.
 
 ## Reproduce
 
 ```sh
-python3 tools/extract_rf_global34_inputs.py
-python3 tools/rf_global34_oracle_status.py
+# oracle legs (host with the pinned oracle; exports from
+# `oracle/fetch-and-build.sh --prebuilt`; run under $ORACLE_PYTHON)
+$ORACLE_PYTHON -I tools/extract_rf_global34_inputs.py
+$ORACLE_PYTHON -I tools/render_rf_global34_reference.py
+$ORACLE_PYTHON -I tools/rf_global34_oracle_status.py
 python3 tools/rf_global34_state_cost.py
 python3 tools/compare_rtl_model_rf_global34.py --out reports/SXT-028j/rtl-exactness.json
 python3 tools/rf_global34_negative_controls.py

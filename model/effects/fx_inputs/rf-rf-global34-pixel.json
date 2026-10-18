@@ -65,8 +65,137 @@
   "leaf": "SXT-028j",
   "oracle_extraction": {
     "attempted": true,
-    "detail": "surgepy unavailable (oracle not built in this environment): No module named 'surgepy'",
-    "ok": false
+    "detail": "LIVE surgepy leg RAN against 1.4.HEAD.58914e59c: global3/global4 parameters cross-checked against graphs.jsonl; drift gate PASS",
+    "live": {
+      "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT a model-vs-pinned-engine agreement number and NOT an RTL claim.",
+      "determinism_gate": {
+        "drift_per_voicing_scene": {
+          "A": 0.0
+        },
+        "scene_active": 0,
+        "scene_mode_id": 0,
+        "status": "PASS",
+        "voicing_scenes": [
+          "A"
+        ],
+        "what": "engine-side per-scene drift must be 0 in every voicing scene, or no render of this carrier is repeatable"
+      },
+      "engine": {
+        "pin": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "provenance_mode": "manifest_prebuilt_artifact",
+        "sample_rate": 48000.0,
+        "surgepy_module_sha256": "55c216e6411dbf152443718ef3cbd1a8304a890a97fb81f5448b7e636ccdf0b9",
+        "surgepy_version": "1.4.HEAD.58914e59c"
+      },
+      "fx_bypass_fx_disable_match_graphs": true,
+      "fx_type_vector_matches_graphs": true,
+      "preset_blob_sha1_on_disk": "3a9f5294f5c2e2c4e1111822ac910067adcbec3f",
+      "ran": true,
+      "slots": {
+        "global3": {
+          "occupied": true,
+          "params": [
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX G3 Bass",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX G3 Treble",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX G3 Width",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX G3 Balance",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-6.00 dB",
+              "graphs_value": -6.0,
+              "name": "FX G3 Threshold",
+              "value": -6.0,
+              "value_type": "float"
+            },
+            {
+              "display": "100.00 %",
+              "graphs_value": 1.0,
+              "name": "FX G3 Attack Rate",
+              "value": 1.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 %",
+              "graphs_value": 0.0,
+              "name": "FX G3 Release Rate",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "0.00 dB",
+              "graphs_value": 0.0,
+              "name": "FX G3 Gain",
+              "value": 0.0,
+              "value_type": "float"
+            },
+            {
+              "display": "13.75 Hz",
+              "graphs_value": -60.0,
+              "name": "FX G3 Side Low Cut",
+              "value": -60.0,
+              "value_type": "float"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G3 Param 10",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G3 Param 11",
+              "value": 0,
+              "value_type": "int"
+            },
+            {
+              "display": "-",
+              "graphs_value": 0,
+              "name": "FX G3 Param 12",
+              "value": 0,
+              "value_type": "int"
+            }
+          ],
+          "return_level": 1.0,
+          "slot": 14,
+          "type_display": "Conditioner",
+          "type_id": 8
+        },
+        "global4": {
+          "occupied": false,
+          "params": null,
+          "return_level": null,
+          "slot": 15,
+          "type_display": "Off",
+          "type_id": 0
+        }
+      }
+    },
+    "ok": true
   },
   "patch_level": {
     "fx_bypass": 0,

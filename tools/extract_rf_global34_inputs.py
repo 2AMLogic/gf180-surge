@@ -22,14 +22,14 @@ For each carrier preset this tool:
      blob sha1, stored revision, scene mode, fx_bypass, fx_disable, the
      non-off FX slot count and the non-off FX type set. Any disagreement is a
      REFUSAL, never a silently-preferred source;
-  5. attempts a LIVE surgepy extraction of the per-slot algorithm's own
-     parameter values and the engine-side determinism gate (per-scene drift
-     == 0) -- both needed only for an eventual concrete-occupant reference
-     render, which is out of THIS leaf's routing-form scope. If the pinned
-     oracle build (surgepy) is unavailable in the current environment, this
-     step REFUSES explicitly (never silently drops the preset, never
-     fabricates a value) and the routing-verification checks above still
-     proceed and are still written to the output record.
+  5. attempts the LIVE surgepy leg (#150): global3/global4 parameter vectors
+     read from the native post-loadPatch state and cross-checked against the
+     graph (any disagreement REFUSES), plus the engine-side per-scene drift
+     determinism gate (shared carrier_drift_screen gate; PASS is eligibility,
+     never proof of repeatability -- decision record 0019). If the pinned
+     oracle is unavailable this step records ok=false (never silently drops
+     the preset, never fabricates a value) and the routing-verification
+     checks above still proceed and are still written to the output record.
 
 CARRIER SET. The first three carriers are the B4-scope presets named by the
 issue (reports/sxt-028/leaves/SXT-028j.json `carriers.top_presets`). All
@@ -174,27 +174,123 @@ def role_index_check(graph):
                       "(SXT-011 output; no live oracle needed)"}
 
 
-def try_live_oracle_extraction(rel_path):
-    """Attempt a live surgepy extraction of the per-slot algorithm's own
-    parameters and the engine-side determinism gate (per-scene drift == 0).
-    Returns (ok, detail_or_reason). This is the ONLY step that needs the built
-    oracle; nothing above depends on it."""
+GRAPHS_VALUE_TOL = 5e-6   # graphs.jsonl stores float params rounded to 6 dp
+
+
+def _param_record(s, p, graphs_value):
+    """One live parameter row, cross-checked against the committed graph.
+    `graphs.jsonl` stores int/bool params as ints and floats rounded to 6 dp,
+    so the comparison is made in the graph's own representation. A
+    disagreement is a REFUSAL: the committed corpus artifact and the live
+    pinned engine must not be allowed to drift silently."""
+    vtype = s.getParamValType(p)
+    raw = float(s.getParamVal(p))
+    live = int(round(raw)) if vtype in ("int", "bool") else round(raw, 6)
+    if vtype in ("int", "bool"):
+        agrees = int(live) == int(graphs_value)
+    else:
+        agrees = abs(float(live) - float(graphs_value)) <= GRAPHS_VALUE_TOL
+    if not agrees:
+        raise Refuse(f"live surgepy value for {p.getName()} ({live}) "
+                     f"disagrees with corpus/normalized/graphs.jsonl "
+                     f"({graphs_value}); refusing rather than preferring one "
+                     f"artifact over the pinned engine")
+    return {"name": p.getName(), "value": live, "value_type": vtype,
+            "display": s.getParamDisplay(p), "graphs_value": graphs_value}
+
+
+def try_live_oracle_extraction(carrier, graph):
+    """LIVE surgepy leg (#150 item 1): per-slot algorithm parameter values for
+    global3/global4 read from the pinned engine's normalized (post-loadPatch)
+    state and cross-checked against graphs.jsonl, plus the engine-side
+    per-scene drift determinism gate (the shared carrier_drift_screen gate).
+
+    Returns (ok, detail, record_or_None). ok False = the pinned oracle is not
+    installed here (NOT_RUN; the oracle-free routing checks stand alone). A
+    contradiction between the live engine and the committed corpus artifacts
+    is a Refuse, never a downgrade to "oracle unavailable".
+
+    SCOPE: engine-side extraction + determinism gate only. Not a
+    model-vs-pinned-engine agreement number and not an RTL claim."""
     try:
-        import oracle_common as oc  # noqa: PLC0415
+        import carrier_drift_screen as cds  # noqa: PLC0415
     except Exception as e:  # pragma: no cover - environment-dependent
-        return False, f"oracle_common import failed: {e}"
+        return False, f"carrier_drift_screen import failed: {e}", None
+    loader = cds.PinnedSurgepyLoader()
     try:
-        surgepy = oc.import_surgepy()
-    except Exception as e:
-        return False, f"surgepy unavailable (oracle not built in this " \
-                      f"environment): {e}"
-    # surgepy present: per-slot parameter extraction + the per-scene drift
-    # determinism gate would run here (out of THIS leaf's routing-form scope;
-    # left for the algorithm leaf that eventually occupies each concrete
-    # slot). Recorded as available but not exercised by this routing-form leaf.
-    return True, f"surgepy present ({surgepy.__file__}); per-slot parameter " \
-                 f"extraction and the engine-side drift gate are " \
-                 f"algorithm-leaf scope, not exercised here"
+        info = loader.open()
+    except cds.OracleAbsent as e:
+        return False, f"surgepy unavailable (pinned oracle not installed " \
+                      f"in this environment): {e}", None
+    except Refuse as e:
+        return False, f"oracle provenance BLOCKED: {e}", None
+    try:
+        s, patch, on_disk = loader.load(carrier["path"],
+                                        carrier["declared_sha1"])
+    except cds.LoadRefusal as e:
+        raise Refuse(f"{e.code}: {e.detail}") from e
+
+    live_types = [int(round(s.getParamVal(patch["fx"][i]["type"])))
+                  for i in range(len(graph["g"]["fx"]))]
+    graph_types = [fx.get("t", 0) for fx in graph["g"]["fx"]]
+    if live_types != graph_types:
+        raise Refuse(f"live fx type vector disagrees with graphs.jsonl for "
+                     f"{carrier['path']}: engine={live_types} "
+                     f"graphs={graph_types}")
+    live_fxb = int(round(s.getParamVal(patch["fx_bypass"])))
+    live_fxd = int(round(s.getParamVal(patch["fx_disable"])))
+    if (live_fxb, live_fxd) != (graph["g"]["fxb"], graph["g"]["fxd"]):
+        raise Refuse(f"live fx_bypass/fx_disable {(live_fxb, live_fxd)} "
+                     f"disagree with graphs.jsonl "
+                     f"{(graph['g']['fxb'], graph['g']['fxd'])}")
+
+    slots = {}
+    for role, slot in (("global3", FXSLOT_GLOBAL3),
+                       ("global4", FXSLOT_GLOBAL4)):
+        gfx = slot_entry(graph, role)
+        fx = patch["fx"][slot]
+        rec = {"slot": slot, "occupied": bool(gfx.get("on", 0)),
+               "type_id": int(round(s.getParamVal(fx["type"]))),
+               "type_display": s.getParamDisplay(fx["type"])}
+        if not rec["occupied"]:
+            rec["params"] = None
+            rec["return_level"] = None
+        else:
+            gp = gfx.get("p")
+            if gp is None or len(gp) != len(fx["p"]):
+                raise Refuse(f"graphs.jsonl {role} parameter vector has "
+                             f"{None if gp is None else len(gp)} entries, "
+                             f"engine exposes {len(fx['p'])}")
+            rec["params"] = [_param_record(s, p, gp[j])
+                             for j, p in enumerate(fx["p"])]
+            rl = round(float(s.getParamVal(fx["return_level"])), 6)
+            if abs(rl - float(gfx["rl"])) > GRAPHS_VALUE_TOL:
+                raise Refuse(f"live {role} return_level {rl} disagrees with "
+                             f"graphs.jsonl {gfx['rl']}")
+            rec["return_level"] = rl
+        slots[role] = rec
+
+    record = {
+        "ran": True,
+        "engine": {"pin": info["pin"],
+                   "surgepy_version": info["surgepy_version"],
+                   "sample_rate": info["sample_rate"],
+                   "provenance_mode": info["provenance"]["mode"],
+                   "surgepy_module_sha256": info["binding"]["module_sha256"]},
+        "preset_blob_sha1_on_disk": on_disk,
+        "determinism_gate": cds.DRIFT_GATE(s, patch),
+        "fx_type_vector_matches_graphs": True,
+        "fx_bypass_fx_disable_match_graphs": True,
+        "slots": slots,
+        "claim_scope": "ENGINE-SIDE extraction + determinism gate only. NOT "
+                       "a model-vs-pinned-engine agreement number and NOT an "
+                       "RTL claim.",
+    }
+    summary = (f"LIVE surgepy leg RAN against {info['surgepy_version']}: "
+               f"global3/global4 parameters cross-checked against "
+               f"graphs.jsonl; drift gate "
+               f"{record['determinism_gate']['status']}")
+    return True, summary, record
 
 
 def extract_one(carrier):
@@ -222,7 +318,8 @@ def extract_one(carrier):
     fxb = graph["g"]["fxb"]
     fxd = graph["g"]["fxd"]
 
-    oracle_ok, oracle_detail = try_live_oracle_extraction(rel)
+    oracle_ok, oracle_detail, oracle_live = \
+        try_live_oracle_extraction(carrier, graph)
 
     def slot_doc(fx, bit):
         return {"occupied": bool(fx.get("on", 0)),
@@ -283,7 +380,7 @@ def extract_one(carrier):
                 "oracle_extraction below",
         },
         "oracle_extraction": {"attempted": True, "ok": oracle_ok,
-                              "detail": oracle_detail},
+                              "detail": oracle_detail, "live": oracle_live},
     }
     return doc
 
