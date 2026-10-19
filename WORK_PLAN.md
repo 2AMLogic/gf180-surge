@@ -21,6 +21,7 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#150**: SXT-028j follow-up (F-028j-1/2/3): oracle-host reference leg + re-verify the two declared contracts for the global3/global4 routing leaf
+- **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019
 - **#434**: Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL
 
 ## Ready
@@ -97,7 +98,7 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 2 |
 | Very important | 0 |
-| Important | 2 |
+| Important | 3 |
 | Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
