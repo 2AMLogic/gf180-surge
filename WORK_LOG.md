@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-20
+
+- **PR #508**: docs(sxt-023): Delay reference contract and substitute-build qualification report
+- **Issue #507** (closed): Define and qualify the canonical Delay reference contract (#16 / #12)
+
 ### 2026-10-18
 
 - **PR #503**: SXT-028j: run oracle legs on prebuilt oracle, confirm declared contracts, record carriers REFUSED
