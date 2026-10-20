@@ -28,7 +28,18 @@ module rf_global34_core (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // control-plane config bus (per-block stimulus)
+    input  logic [1:0]  cfg_fx_bypass,
+    input  logic [15:0] cfg_fx_disable,
+    input  logic        cfg_slot3_occupied, cfg_slot4_occupied,
+    input  logic        cfg_slot3_reload,   cfg_slot4_reload,
+    input  logic signed [31:0] cfg_slot3_c [5],  // b0 b1 b2 a1 a2 (Q3.29)
+    input  logic signed [31:0] cfg_slot4_c [5],
+    // block I/O
+    input  logic signed [31:0] in_l [32],
+    input  logic signed [31:0] in_r [32],
+    input  logic               glob_in    // ring flag as the global1->global2 segment left it
 );
 
   localparam int BLOCK  = 32;
@@ -38,12 +49,6 @@ module rf_global34_core (
   localparam logic [1:0] FXB_ALL_FX = 2'd0, FXB_NO_SENDS = 2'd1;
   localparam int FXSLOT_GLOBAL3 = 14, FXSLOT_GLOBAL4 = 15;
 
-  logic [1:0]  cfg_fx_bypass;
-  logic [15:0] cfg_fx_disable;
-  logic        cfg_slot3_occupied, cfg_slot4_occupied;
-  logic        cfg_slot3_reload,   cfg_slot4_reload;
-  logic signed [31:0] cfg_slot3_c [5];
-  logic signed [31:0] cfg_slot4_c [5];
 
   logic signed [79:0] s3_reg0 [2];
   logic signed [79:0] s3_reg1 [2];
@@ -52,11 +57,8 @@ module rf_global34_core (
   logic prev_occ3 = 1'b0;
   logic prev_occ4 = 1'b0;
 
-  logic signed [31:0] in_l  [BLOCK];
-  logic signed [31:0] in_r  [BLOCK];
   logic signed [31:0] out_l [BLOCK];
   logic signed [31:0] out_r [BLOCK];
-  logic                glob_in;
   logic                glob_out;
 
   localparam logic [2:0] S_IDLE=0, S_CTRL=1, S_GATE=2, S_S3=3, S_S4=4, S_DONE=5;
