@@ -1,8 +1,9 @@
 // SXT-028h Scene-B insert FX bus, slots 1-2 (routing form) iverilog harness.
 //
 // Instantiates rf_bins12_core, drives it from a per-block control-plane
-// stream (rf_bins12_core's config bus, poked hierarchically -- the
-// reverb1_core.sv `cfg_*` preload convention, applied per block here because
+// stream (rf_bins12_core's config bus and block input, driven through module
+// ports -- the reverb1_core.sv `cfg_*` preload convention, applied per block
+// here because
 // fx_bypass / fx_disable / occupancy / reload / coefficients are all
 // exercised as per-block stimulus by the acceptance cases and the negative
 // controls, not just as patch-level constants), and dumps per-block
@@ -45,9 +46,24 @@ module tb_rf_bins12;
   logic start_block = 1'b0;
   logic block_done;
 
+  logic [1:0]  cfg_fx_bypass;
+  logic [15:0] cfg_fx_disable;
+  logic        cfg_slot1_occupied, cfg_slot2_occupied;
+  logic        cfg_slot1_reload,   cfg_slot2_reload;
+  logic signed [31:0] cfg_slot1_c [5];
+  logic signed [31:0] cfg_slot2_c [5];
+  logic signed [31:0] in_l [BLOCK];
+  logic signed [31:0] in_r [BLOCK];
+  logic               sc_in;
+
   rf_bins12_core core (
     .clk(clk), .state_reset(state_reset),
-    .start_block(start_block), .block_done(block_done)
+    .start_block(start_block), .block_done(block_done),
+    .cfg_fx_bypass(cfg_fx_bypass), .cfg_fx_disable(cfg_fx_disable),
+    .cfg_slot1_occupied(cfg_slot1_occupied), .cfg_slot2_occupied(cfg_slot2_occupied),
+    .cfg_slot1_reload(cfg_slot1_reload), .cfg_slot2_reload(cfg_slot2_reload),
+    .cfg_slot1_c(cfg_slot1_c), .cfg_slot2_c(cfg_slot2_c),
+    .in_l(in_l), .in_r(in_r), .sc_in(sc_in)
   );
 
   always #1 clk = ~clk;
@@ -87,22 +103,22 @@ module tb_rf_bins12;
         @(negedge clk); state_reset = 1'b0;
       end
 
-      // config-bus poke (hierarchical; matches reverb1_core.sv precedent)
-      core.cfg_fx_bypass      = ctrl_mem[b*CTRL_WORDS + 0][1:0];
-      core.cfg_fx_disable     = ctrl_mem[b*CTRL_WORDS + 1][15:0];
-      core.cfg_slot1_occupied = ctrl_mem[b*CTRL_WORDS + 2][0];
-      core.cfg_slot1_reload   = ctrl_mem[b*CTRL_WORDS + 3][0];
-      core.cfg_slot2_occupied = ctrl_mem[b*CTRL_WORDS + 4][0];
-      core.cfg_slot2_reload   = ctrl_mem[b*CTRL_WORDS + 5][0];
-      core.sc_in              = ctrl_mem[b*CTRL_WORDS + 6][0];
+      // config-bus and block-input stimulus, driven onto the core's ports
+      cfg_fx_bypass      = ctrl_mem[b*CTRL_WORDS + 0][1:0];
+      cfg_fx_disable     = ctrl_mem[b*CTRL_WORDS + 1][15:0];
+      cfg_slot1_occupied = ctrl_mem[b*CTRL_WORDS + 2][0];
+      cfg_slot1_reload   = ctrl_mem[b*CTRL_WORDS + 3][0];
+      cfg_slot2_occupied = ctrl_mem[b*CTRL_WORDS + 4][0];
+      cfg_slot2_reload   = ctrl_mem[b*CTRL_WORDS + 5][0];
+      sc_in              = ctrl_mem[b*CTRL_WORDS + 6][0];
       for (i = 0; i < 5; i++) begin
-        core.cfg_slot1_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 7 + i]);
-        core.cfg_slot2_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 12 + i]);
+        cfg_slot1_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 7 + i]);
+        cfg_slot2_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 12 + i]);
       end
 
       for (i = 0; i < BLOCK; i++) begin
-        core.in_l[i] = $signed(in_mem[b*IN_WORDS + i]);
-        core.in_r[i] = $signed(in_mem[b*IN_WORDS + BLOCK + i]);
+        in_l[i] = $signed(in_mem[b*IN_WORDS + i]);
+        in_r[i] = $signed(in_mem[b*IN_WORDS + BLOCK + i]);
       end
 
       @(negedge clk); start_block = 1'b1;

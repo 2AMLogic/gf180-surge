@@ -28,7 +28,18 @@ module rf_bins12_core (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // control-plane config bus (driven per block by the testbench)
+    input  logic [1:0]  cfg_fx_bypass,
+    input  logic [15:0] cfg_fx_disable,
+    input  logic        cfg_slot1_occupied, cfg_slot2_occupied,
+    input  logic        cfg_slot1_reload,   cfg_slot2_reload,
+    input  logic signed [31:0] cfg_slot1_c [5],  // b0 b1 b2 a1 a2 (Q3.29)
+    input  logic signed [31:0] cfg_slot2_c [5],
+    // block input
+    input  logic signed [31:0] in_l [32],
+    input  logic signed [31:0] in_r [32],
+    input  logic        sc_in                    // scene-B live/ringing flag in
 );
 
   localparam int BLOCK  = 32;
@@ -38,12 +49,6 @@ module rf_bins12_core (
   localparam logic [1:0] FXB_NO_FX = 2'd3;
   localparam int FXSLOT_BINS1 = 2, FXSLOT_BINS2 = 3;
 
-  logic [1:0]  cfg_fx_bypass;
-  logic [15:0] cfg_fx_disable;
-  logic        cfg_slot1_occupied, cfg_slot2_occupied;
-  logic        cfg_slot1_reload,   cfg_slot2_reload;
-  logic signed [31:0] cfg_slot1_c [5];
-  logic signed [31:0] cfg_slot2_c [5];
 
   logic signed [79:0] s1_reg0 [2];
   logic signed [79:0] s1_reg1 [2];
@@ -52,11 +57,8 @@ module rf_bins12_core (
   logic prev_occ1 = 1'b0;
   logic prev_occ2 = 1'b0;
 
-  logic signed [31:0] in_l  [BLOCK];
-  logic signed [31:0] in_r  [BLOCK];
   logic signed [31:0] out_l [BLOCK];
   logic signed [31:0] out_r [BLOCK];
-  logic                sc_in;
   logic                sc_out;
 
   localparam logic [2:0] S_IDLE=0, S_CTRL=1, S_GATE=2, S_S1=3, S_S2=4, S_DONE=5;
