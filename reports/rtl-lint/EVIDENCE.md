@@ -103,6 +103,14 @@ Every UNDRIVEN signal name was text-checked to appear as a hierarchical
 proof of how it is driven). No existing RTL, frozen model, fixture or tool byte
 was edited to remove any warning.
 
+**Update (#479):** the 19 `rf_send34_core` UNDRIVEN waivers above were
+removed by promoting those signals to input ports of `rf_send34_core` (and the
+identical port list on `rf_send34_mutants.sv`); the baseline is now 771
+waivers, 77 of them severe. The 44 remaining `rf_send34_core` waivers were
+re-keyed only for line/column/fingerprint/source-hash drift (same rule and
+message, same count; no diagnostic added). The figures in this file otherwise
+describe the original #434 run. This is lint evidence only.
+
 **A green `rtl-lint` job does not mean these 96 severe waivers are
 accepted.** The checker returns PASS (exit 0) when the diagnostic multiset
 matches the baseline, whether or not the severe waivers' `review_decision`

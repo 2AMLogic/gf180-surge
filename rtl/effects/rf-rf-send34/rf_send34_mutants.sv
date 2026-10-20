@@ -37,7 +37,25 @@ module rf_send34_core (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // control-plane configuration (formerly module-level variables)
+    input  logic [1:0]  cfg_fx_bypass,
+    input  logic [15:0] cfg_fx_disable,
+    input  logic        cfg_scene_b_active,
+    input  logic        cfg_slot3_occupied, cfg_slot4_occupied,
+    input  logic        cfg_slot3_reload,   cfg_slot4_reload,
+    input  logic signed [31:0] cfg_slot3_c [5],  // b0 b1 b2 a1 a2 (Q3.29)
+    input  logic signed [31:0] cfg_slot4_c [5],
+    input  logic signed [31:0] cfg_bus3_g  [3],  // send_gain_a, send_gain_b, return (Q1.30)
+    input  logic signed [31:0] cfg_bus4_g  [3],
+    // block I/O (array extent is BLOCK = 32)
+    input  logic signed [31:0] sa_l   [32],   // scene A post-insert bus
+    input  logic signed [31:0] sa_r   [32],
+    input  logic signed [31:0] sb_l   [32],   // scene B post-insert bus
+    input  logic signed [31:0] sb_r   [32],
+    input  logic signed [31:0] main_l [32],   // main bus in (scene sum + send1/2)
+    input  logic signed [31:0] main_r [32],
+    input  logic               send_in3, send_in4   // per-bus `sendused[k]`
 );
 
   localparam int BLOCK  = 32;
@@ -48,15 +66,6 @@ module rf_send34_core (
   localparam logic [1:0] FXB_ALL_FX = 2'd0;
   localparam int FXSLOT_SEND3 = 12, FXSLOT_SEND4 = 13;
 
-  logic [1:0]  cfg_fx_bypass;
-  logic [15:0] cfg_fx_disable;
-  logic        cfg_scene_b_active;
-  logic        cfg_slot3_occupied, cfg_slot4_occupied;
-  logic        cfg_slot3_reload,   cfg_slot4_reload;
-  logic signed [31:0] cfg_slot3_c [5];
-  logic signed [31:0] cfg_slot4_c [5];
-  logic signed [31:0] cfg_bus3_g  [3];
-  logic signed [31:0] cfg_bus4_g  [3];
 
   logic signed [79:0] s3_reg0 [2];
   logic signed [79:0] s3_reg1 [2];
@@ -65,19 +74,12 @@ module rf_send34_core (
   logic prev_occ3 = 1'b0;
   logic prev_occ4 = 1'b0;
 
-  logic signed [31:0] sa_l   [BLOCK];
-  logic signed [31:0] sa_r   [BLOCK];
-  logic signed [31:0] sb_l   [BLOCK];
-  logic signed [31:0] sb_r   [BLOCK];
-  logic signed [31:0] main_l [BLOCK];
-  logic signed [31:0] main_r [BLOCK];
   logic signed [31:0] out_l  [BLOCK];
   logic signed [31:0] out_r  [BLOCK];
   logic signed [31:0] wet3_l [BLOCK];
   logic signed [31:0] wet3_r [BLOCK];
   logic signed [31:0] wet4_l [BLOCK];
   logic signed [31:0] wet4_r [BLOCK];
-  logic               send_in3, send_in4;
   logic               ring3, ring4;
 
   localparam logic [2:0] S_IDLE=0, S_CTRL=1, S_GATE=2, S_B3=3, S_B4=4,
