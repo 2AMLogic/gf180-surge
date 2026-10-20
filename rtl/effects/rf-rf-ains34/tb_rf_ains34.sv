@@ -47,9 +47,24 @@ module tb_rf_ains34;
   logic start_block = 1'b0;
   logic block_done;
 
+  logic [1:0]  cfg_fx_bypass;
+  logic [15:0] cfg_fx_disable;
+  logic        cfg_slot3_occupied, cfg_slot4_occupied;
+  logic        cfg_slot3_reload,   cfg_slot4_reload;
+  logic signed [31:0] cfg_slot3_c [5];
+  logic signed [31:0] cfg_slot4_c [5];
+  logic signed [31:0] in_l [BLOCK];
+  logic signed [31:0] in_r [BLOCK];
+  logic        sc_in;
+
   rf_ains34_core core (
     .clk(clk), .state_reset(state_reset),
-    .start_block(start_block), .block_done(block_done)
+    .start_block(start_block), .block_done(block_done),
+    .cfg_fx_bypass(cfg_fx_bypass), .cfg_fx_disable(cfg_fx_disable),
+    .cfg_slot3_occupied(cfg_slot3_occupied), .cfg_slot4_occupied(cfg_slot4_occupied),
+    .cfg_slot3_reload(cfg_slot3_reload), .cfg_slot4_reload(cfg_slot4_reload),
+    .cfg_slot3_c(cfg_slot3_c), .cfg_slot4_c(cfg_slot4_c),
+    .in_l(in_l), .in_r(in_r), .sc_in(sc_in)
   );
 
   always #1 clk = ~clk;
@@ -89,22 +104,22 @@ module tb_rf_ains34;
         @(negedge clk); state_reset = 1'b0;
       end
 
-      // config-bus poke (hierarchical; matches reverb1_core.sv precedent)
-      core.cfg_fx_bypass      = ctrl_mem[b*CTRL_WORDS + 0][1:0];
-      core.cfg_fx_disable     = ctrl_mem[b*CTRL_WORDS + 1][15:0];
-      core.cfg_slot3_occupied = ctrl_mem[b*CTRL_WORDS + 2][0];
-      core.cfg_slot3_reload   = ctrl_mem[b*CTRL_WORDS + 3][0];
-      core.cfg_slot4_occupied = ctrl_mem[b*CTRL_WORDS + 4][0];
-      core.cfg_slot4_reload   = ctrl_mem[b*CTRL_WORDS + 5][0];
-      core.sc_in              = ctrl_mem[b*CTRL_WORDS + 6][0];
+      // per-block config / block-I/O stimulus, driven on the core's ports
+      cfg_fx_bypass      = ctrl_mem[b*CTRL_WORDS + 0][1:0];
+      cfg_fx_disable     = ctrl_mem[b*CTRL_WORDS + 1][15:0];
+      cfg_slot3_occupied = ctrl_mem[b*CTRL_WORDS + 2][0];
+      cfg_slot3_reload   = ctrl_mem[b*CTRL_WORDS + 3][0];
+      cfg_slot4_occupied = ctrl_mem[b*CTRL_WORDS + 4][0];
+      cfg_slot4_reload   = ctrl_mem[b*CTRL_WORDS + 5][0];
+      sc_in              = ctrl_mem[b*CTRL_WORDS + 6][0];
       for (i = 0; i < 5; i++) begin
-        core.cfg_slot3_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 7 + i]);
-        core.cfg_slot4_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 12 + i]);
+        cfg_slot3_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 7 + i]);
+        cfg_slot4_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 12 + i]);
       end
 
       for (i = 0; i < BLOCK; i++) begin
-        core.in_l[i] = $signed(in_mem[b*IN_WORDS + i]);
-        core.in_r[i] = $signed(in_mem[b*IN_WORDS + BLOCK + i]);
+        in_l[i] = $signed(in_mem[b*IN_WORDS + i]);
+        in_r[i] = $signed(in_mem[b*IN_WORDS + BLOCK + i]);
       end
 
       @(negedge clk); start_block = 1'b1;
