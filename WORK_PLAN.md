@@ -20,6 +20,7 @@ _None._
 
 `loom:important`; taken before unlabelled work.
 
+- **#16**: SXT-023: Implement Delay and EQ
 - **#150**: SXT-028j follow-up (F-028j-1/2/3): oracle-host reference leg + re-verify the two declared contracts for the global3/global4 routing leaf
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
@@ -29,6 +30,7 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
+- **#16**: SXT-023: Implement Delay and EQ
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
@@ -99,8 +101,8 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 2 |
 | Very important | 0 |
-| Important | 4 |
-| Ready (`loom:issue`) | 2 |
+| Important | 5 |
+| Ready (`loom:issue`) | 3 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 2 |
