@@ -154,10 +154,10 @@ def _groups():
 
 def test_committed_waivers_validate_and_are_exact_entries():
     w = lint.validate_waivers(_load(WAIVERS), _groups())
-    assert len(w) == 779
+    assert len(w) == 774
     assert all(e["verilator_version"] == "5.050" for e in w.values())
     sev = [e for e in w.values() if e["rule"] in lint.SEVERE_RULES]
-    assert len(sev) == 85
+    assert len(sev) == 80
     assert all(e["review_decision"]["status"] in lint.REVIEW_STATUSES
                for e in sev)
 
@@ -280,6 +280,35 @@ def test_compare_new_stale_and_hash_drift():
     assert any(f.startswith("new SEVERE diagnostic") for f in fails)
     assert any(f.startswith("stale waiver") for f in fails)
     assert any(f.startswith("source hash drift") for f in fails)
+
+
+def test_latch_control_fails_without_any_latch_waiver():
+    # Baseline with no LATCH waiver (as after #480): the new-severe-latch
+    # control must still produce a new SEVERE LATCH failure, not abort.
+    og = _og("a", [("WIDTHTRUNC", 9, 1, "m", 1)])
+    og["source"] = "rtl/a.sv"
+    ws = [_w("a", "WIDTHTRUNC", 9, 1, "m", 1)[1]]
+    obs, ws2, how = lint.latch_control_case([og], ws)
+    assert "no LATCH waiver" in how
+    fails, _ = lint.compare(obs, {(w["group"], w["fingerprint"]): w
+                                  for w in ws2})
+    assert any(f.startswith("new SEVERE diagnostic") and " LATCH " in f
+               for f in fails)
+    # the unmodified baseline is clean, so the failure is the injection's
+    clean, _ = lint.compare([og], {(w["group"], w["fingerprint"]): w
+                                   for w in ws})
+    assert clean == []
+    assert len(og["diagnostics"]) == 1  # input not mutated
+
+
+def test_latch_control_drops_waiver_when_one_exists():
+    og = _og("a", [("LATCH", 5, 3, "l", 1)])
+    og["source"] = "rtl/a.sv"
+    key, w = _w("a", "LATCH", 5, 3, "l", 1)
+    obs, ws2, how = lint.latch_control_case([og], [w])
+    assert how == "waiver removed" and ws2 == []
+    fails, _ = lint.compare(obs, {})
+    assert any(f.startswith("new SEVERE diagnostic") for f in fails)
 
 
 def test_run_group_keeps_spaced_paths_as_single_argv(tmp_path):

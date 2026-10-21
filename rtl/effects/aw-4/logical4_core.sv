@@ -217,7 +217,7 @@ module logical4_core #(
   endtask
 
   initial begin
-    block_done = 1'b0;
+    // block_done: no initial drive; state_reset in always_ff sets it
     n_div = 0; n_clip = 0; n_tap3 = 0;
   end
 
