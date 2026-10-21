@@ -4144,7 +4144,7 @@
    "col": 23,
    "message": "Signal is not used: 'out_l'",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4159,7 +4159,7 @@
    "col": 23,
    "message": "Signal is not used: 'out_r'",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4174,7 +4174,7 @@
    "col": 18,
    "message": "Operator COND expects 64 bits on the Conditional True, but Conditional True's ARRAYSEL generates 40 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4189,7 +4189,7 @@
    "col": 18,
    "message": "Operator COND expects 64 bits on the Conditional False, but Conditional False's ARRAYSEL generates 40 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4204,7 +4204,7 @@
    "col": 18,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'which' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4219,7 +4219,7 @@
    "col": 18,
    "message": "Operator COND expects 64 bits on the Conditional False, but Conditional False's ARRAYSEL generates 40 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4234,7 +4234,7 @@
    "col": 18,
    "message": "Operator COND expects 64 bits on the Conditional True, but Conditional True's ARRAYSEL generates 40 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4249,7 +4249,7 @@
    "col": 18,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'which' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4264,7 +4264,7 @@
    "col": 20,
    "message": "Procedural assignment to declaration with initial value: 'st'",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: variable initialised at declaration inside a procedural scope (model-mirroring style); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4279,7 +4279,7 @@
    "col": 30,
    "message": "Signal is not driven, nor used: 'calc_in'",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4294,7 +4294,7 @@
    "col": 29,
    "message": "Bits of signal are not used: 'bnk_o'[95:48]",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4309,7 +4309,7 @@
    "col": 17,
    "message": "Bits of signal are not used: 'rold'[31:2]",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4324,7 +4324,7 @@
    "col": 28,
    "message": "Bits of signal are not used: 'tgt'[31:1]",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4339,7 +4339,7 @@
    "col": 33,
    "message": "Bits of signal are not used: 'other'[31:1]",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4354,7 +4354,7 @@
    "col": 48,
    "message": "Bits of signal are not used: 'ii'[31:1]",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4369,30 +4369,10 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
-  },
-  {
-   "group": "logical4_core",
-   "top": "logical4_core",
-   "source": "rtl/effects/aw-4/logical4_core.sv",
-   "rule": "MULTIDRIVEN",
-   "fingerprint": "9ec101b6e0cae6e0",
-   "line": 228,
-   "col": 7,
-   "message": "Variable written to in always_ff also written by other process (IEEE 1800-2023 9.2.2.4): 'block_done'",
-   "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
-   "explanation": "Severe existing debt (MULTIDRIVEN): 'block_done' is assigned in both an 'initial' block (reset value 1'b0, logical4_core.sv:220) and the clocked always_ff (line 228+). The initial assignment is a simulation initial value; the dual-process drive is not synthesis-clean. Tolerated as baseline debt only; not a correctness finding.",
-   "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
-   "verilator_version": "5.050",
-   "review_decision": {
-    "status": "proposed_pending_pr_review",
-    "reviewer": "UNASSIGNED (operator ruling 2026-10-13/15: product-RTL severe waivers are tracked, not blanket-accepted)",
-    "reference": "tracked: #470 (product-RTL defect issue); severe-waiver review table, PR #437 for issue #434; acceptance withheld pending the fix or an explicit ruling"
-   }
   },
   {
    "group": "logical4_core",
@@ -4404,7 +4384,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4419,7 +4399,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4434,7 +4414,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4449,7 +4429,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4464,7 +4444,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4479,7 +4459,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4494,7 +4474,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4509,7 +4489,7 @@
    "col": 22,
    "message": "Bit extraction of array[31:0] requires 5 bit index, not 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4524,7 +4504,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4539,7 +4519,7 @@
    "col": 22,
    "message": "Bit extraction of array[31:0] requires 5 bit index, not 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4554,7 +4534,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4569,7 +4549,7 @@
    "col": 22,
    "message": "Bit extraction of array[31:0] requires 5 bit index, not 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4584,7 +4564,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4599,7 +4579,7 @@
    "col": 22,
    "message": "Bit extraction of array[31:0] requires 5 bit index, not 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4614,7 +4594,7 @@
    "col": 20,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4629,7 +4609,7 @@
    "col": 37,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4644,7 +4624,7 @@
    "col": 54,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4659,7 +4639,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4674,7 +4654,7 @@
    "col": 44,
    "message": "Operator GTS expects 32 bits on the LHS, but LHS's ARRAYSEL generates 16 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4689,7 +4669,7 @@
    "col": 64,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4704,7 +4684,7 @@
    "col": 64,
    "message": "Operator ASSIGN expects 16 bits on the Assign RHS, but Assign RHS's VARREF 'GCMAX' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4719,7 +4699,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4734,7 +4714,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4749,7 +4729,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4764,7 +4744,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4779,7 +4759,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4794,7 +4774,7 @@
    "col": 21,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'ci' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4809,7 +4789,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4824,7 +4804,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4839,7 +4819,7 @@
    "col": 14,
    "message": "Operator ASSIGN expects 96 bits on the Assign RHS, but Assign RHS's SUB generates 192 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4854,7 +4834,7 @@
    "col": 33,
    "message": "Operator SUB expects 192 bits on the LHS, but LHS's ARRAYSEL generates 96 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4869,7 +4849,7 @@
    "col": 35,
    "message": "Operator FUNCREF 'mulr' expects 192 bits on the Function Argument, but Function Argument's ARRAYSEL generates 96 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4884,7 +4864,7 @@
    "col": 35,
    "message": "Operator FUNCREF 'mulr' expects 192 bits on the Function Argument, but Function Argument's VARREF 'ssum' generates 96 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4899,7 +4879,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4914,7 +4894,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4929,7 +4909,7 @@
    "col": 17,
    "message": "Operator ASSIGN expects 96 bits on the Assign RHS, but Assign RHS's FUNCREF 'mulr' generates 192 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4944,7 +4924,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'mulr' expects 192 bits on the Function Argument, but Function Argument's VARREF 'kk' generates 96 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4959,7 +4939,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4974,7 +4954,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -4989,7 +4969,7 @@
    "col": 52,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5004,7 +4984,7 @@
    "col": 38,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5019,7 +4999,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5034,7 +5014,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5049,7 +5029,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5064,7 +5044,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5079,7 +5059,7 @@
    "col": 28,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5094,7 +5074,7 @@
    "col": 20,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5109,7 +5089,7 @@
    "col": 20,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5124,7 +5104,7 @@
    "col": 49,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5139,7 +5119,7 @@
    "col": 32,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5154,7 +5134,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5169,7 +5149,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5184,7 +5164,7 @@
    "col": 15,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5199,7 +5179,7 @@
    "col": 15,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5214,7 +5194,7 @@
    "col": 15,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5229,7 +5209,7 @@
    "col": 19,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5244,7 +5224,7 @@
    "col": 19,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5259,7 +5239,7 @@
    "col": 19,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5274,7 +5254,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5289,7 +5269,7 @@
    "col": 33,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5304,7 +5284,7 @@
    "col": 46,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5319,7 +5299,7 @@
    "col": 33,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5334,7 +5314,7 @@
    "col": 46,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5349,7 +5329,7 @@
    "col": 57,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5364,7 +5344,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5379,7 +5359,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5394,7 +5374,7 @@
    "col": 21,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'ci' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5409,7 +5389,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5424,7 +5404,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5439,7 +5419,7 @@
    "col": 28,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5454,7 +5434,7 @@
    "col": 20,
    "message": "Operator LTS expects 96 bits on the LHS, but LHS's VARREF 'ipos' generates 64 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5469,7 +5449,7 @@
    "col": 46,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5484,7 +5464,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5499,7 +5479,7 @@
    "col": 20,
    "message": "Operator GTS expects 96 bits on the LHS, but LHS's VARREF 'opos' generates 64 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5514,7 +5494,7 @@
    "col": 44,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5529,7 +5509,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5544,7 +5524,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5559,7 +5539,7 @@
    "col": 18,
    "message": "Operator GTS expects 96 bits on the LHS, but LHS's VARREF 'dr' generates 64 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5574,7 +5554,7 @@
    "col": 40,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5589,7 +5569,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5604,7 +5584,7 @@
    "col": 15,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5619,7 +5599,7 @@
    "col": 30,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5634,7 +5614,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5649,7 +5629,7 @@
    "col": 27,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5664,7 +5644,7 @@
    "col": 43,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5679,7 +5659,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5694,7 +5674,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5709,7 +5689,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5724,7 +5704,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5739,7 +5719,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5754,7 +5734,7 @@
    "col": 20,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5769,7 +5749,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5784,7 +5764,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5799,7 +5779,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5814,7 +5794,7 @@
    "col": 21,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'ci' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5829,7 +5809,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5844,7 +5824,7 @@
    "col": 28,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5859,7 +5839,7 @@
    "col": 20,
    "message": "Operator LTS expects 96 bits on the LHS, but LHS's VARREF 'ipos' generates 64 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5874,7 +5854,7 @@
    "col": 46,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5889,7 +5869,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5904,7 +5884,7 @@
    "col": 20,
    "message": "Operator GTS expects 96 bits on the LHS, but LHS's VARREF 'oneg' generates 64 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5919,7 +5899,7 @@
    "col": 44,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5934,7 +5914,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5949,7 +5929,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5964,7 +5944,7 @@
    "col": 18,
    "message": "Operator GTS expects 96 bits on the LHS, but LHS's VARREF 'dr' generates 64 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5979,7 +5959,7 @@
    "col": 40,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -5994,7 +5974,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6009,7 +5989,7 @@
    "col": 29,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6024,7 +6004,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6039,7 +6019,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6054,7 +6034,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6069,7 +6049,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6084,7 +6064,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6099,7 +6079,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6114,7 +6094,7 @@
    "col": 20,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6129,7 +6109,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6144,7 +6124,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6159,7 +6139,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6174,7 +6154,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6189,7 +6169,7 @@
    "col": 22,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'ci' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6204,7 +6184,7 @@
    "col": 34,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6219,7 +6199,7 @@
    "col": 39,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6234,7 +6214,7 @@
    "col": 34,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6249,7 +6229,7 @@
    "col": 39,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6264,7 +6244,7 @@
    "col": 34,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6279,7 +6259,7 @@
    "col": 39,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6294,7 +6274,7 @@
    "col": 34,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6309,7 +6289,7 @@
    "col": 39,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6324,7 +6304,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6339,7 +6319,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6354,7 +6334,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6369,7 +6349,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6384,7 +6364,7 @@
    "col": 49,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6399,7 +6379,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6414,7 +6394,7 @@
    "col": 50,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6429,7 +6409,7 @@
    "col": 27,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6444,7 +6424,7 @@
    "col": 43,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6459,7 +6439,7 @@
    "col": 17,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6474,7 +6454,7 @@
    "col": 36,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6489,7 +6469,7 @@
    "col": 36,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6504,7 +6484,7 @@
    "col": 36,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6519,7 +6499,7 @@
    "col": 35,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6534,7 +6514,7 @@
    "col": 46,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6549,7 +6529,7 @@
    "col": 35,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6564,7 +6544,7 @@
    "col": 46,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6579,7 +6559,7 @@
    "col": 19,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6594,7 +6574,7 @@
    "col": 19,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6609,7 +6589,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6624,7 +6604,7 @@
    "col": 14,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6639,7 +6619,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6654,7 +6634,7 @@
    "col": 28,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'ci' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6669,7 +6649,7 @@
    "col": 47,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6684,7 +6664,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6699,7 +6679,7 @@
    "col": 47,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6714,7 +6694,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6729,7 +6709,7 @@
    "col": 47,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6744,7 +6724,7 @@
    "col": 16,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6759,7 +6739,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6774,7 +6754,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6789,7 +6769,7 @@
    "col": 35,
    "message": "Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'ci' generates 32 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6804,7 +6784,7 @@
    "col": 56,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6819,7 +6799,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6834,7 +6814,7 @@
    "col": 31,
    "message": "Bit extraction of array[31:0] requires 5 bit index, not 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6849,7 +6829,7 @@
    "col": 35,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6864,7 +6844,7 @@
    "col": 56,
    "message": "Bit extraction of array[31:0] requires 5 bit index, not 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6879,7 +6859,7 @@
    "col": 60,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6894,7 +6874,7 @@
    "col": 23,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6909,7 +6889,7 @@
    "col": 17,
    "message": "Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'k' generates 6 bits.",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6924,7 +6904,7 @@
    "col": 34,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6939,7 +6919,7 @@
    "col": 24,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6954,7 +6934,7 @@
    "col": 39,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6969,7 +6949,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6984,7 +6964,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
@@ -6999,7 +6979,7 @@
    "col": 21,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "db6d1132be7aef8593ecbb070665fc555dc14ced382a44436f3da483e53799ca",
+   "source_sha256": "bf77de2c5ea746a0508027a63c46ca884cbfa7082fab4d20c78c7dec61f7c617",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "2e50186c83694dec3c7dd42ead0520d3c1853e72",
    "verilator_version": "5.050"
