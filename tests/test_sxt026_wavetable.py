@@ -22,9 +22,10 @@ sys.path.insert(0, REPO)
 from compiler.assets import wavetable as wt  # noqa: E402
 from compiler.assets.wavetable import AssetIdentityError  # noqa: E402
 
-ORACLE_DATA = os.environ.get(
-    "ORACLE_SURGE_DATA",
-    "/Users/joseph/dev/surge-xt-oracle/surge/resources/data")
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+import oracle_common  # noqa: E402
+
+ORACLE_DATA = oracle_common.data_dir()
 TRIANGLE_REL = "wavetables/Basic/Triangle.wt"
 TRIANGLE_SHA = "f49a2381bc699b11136457f1f9f73150e73d612fa1290092d61bcdd6029b26a9"
 
@@ -32,7 +33,8 @@ PRESET = "resources/data/patches_3rdparty/Argitoth/Drums/Kick.fxp"
 ORACLE_PRESENT = os.path.isfile(os.path.join(ORACLE_DATA, TRIANGLE_REL))
 
 needs_oracle = pytest.mark.skipif(not ORACLE_PRESENT,
-                                  reason="external pinned oracle not present")
+                                  reason=f"external pinned oracle not present at {ORACLE_DATA}; "
+    "run oracle/fetch-and-build.sh or set ORACLE_SURGE_DIR/ORACLE_SURGE_DATA")
 
 
 def _triangle_bytes():

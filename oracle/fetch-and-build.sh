@@ -22,7 +22,7 @@
 #
 # Environment overrides (defaults record the environment used for SXT-010
 # evidence; see reports/sxt-010/EVIDENCE.md):
-#   ORACLE_SURGE_DIR   engine checkout        (default /Users/joseph/dev/surge-xt-oracle/surge)
+#   ORACLE_SURGE_DIR   engine checkout        (default <repo>/oracle/build/surge, git-ignored)
 #   ORACLE_MANIFEST    manifest to verify against (default <repo>/oracle/manifest.json)
 #   ORACLE_PYTHON      python for surgepy     (default /opt/homebrew/opt/python@3.11/bin/python3.11)
 #   ORACLE_BUILD_DIR   build dir              (default $ORACLE_SURGE_DIR/build-py311)
@@ -33,7 +33,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 MANIFEST="${ORACLE_MANIFEST:-${REPO_ROOT}/oracle/manifest.json}"
-ENGINE="${ORACLE_SURGE_DIR:-/Users/joseph/dev/surge-xt-oracle/surge}"
+ENGINE="${ORACLE_SURGE_DIR:-${REPO_ROOT}/oracle/build/surge}"
 PYTHON_BIN="${ORACLE_PYTHON:-/opt/homebrew/opt/python@3.11/bin/python3.11}"
 BUILD_DIR="${ORACLE_BUILD_DIR:-${ENGINE}/build-py311}"
 JOBS="${ORACLE_JOBS:-10}"
@@ -143,7 +143,7 @@ s.allNotesOff()
 fi
 
 # ---- Engine checkout identity ----------------------------------------------
-[ -d "$ENGINE" ] || die "engine checkout not found at $ENGINE (set ORACLE_SURGE_DIR)"
+[ -d "$ENGINE" ] || die "engine checkout not found at $ENGINE (set ORACLE_SURGE_DIR, or create it: git clone --recurse-submodules https://github.com/surge-synthesizer/surge $ENGINE && git -C $ENGINE checkout $ENGINE_COMMIT && git -C $ENGINE submodule update --init --recursive)"
 git -C "$ENGINE" rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "$ENGINE is not a git work tree"
 
 ACTUAL_COMMIT="$(git -C "$ENGINE" rev-parse HEAD)"
