@@ -37,10 +37,9 @@
 //
 // Control-plane boundary: cfg_fx_bypass, cfg_fx_disable,
 // cfg_slot{3,4}_occupied, cfg_slot{3,4}_reload, cfg_slot{3,4}_c[5] (Q3.29
-// biquad coefficients) are configuration-bus pokes (the reverb1_core.sv
-// `cfg_*` preload convention, applied per block because the lifecycle and
+// biquad coefficients) are input ports driven per block (the lifecycle and
 // gating controls are exercised as per-block stimulus); the per-block sc_in
-// bit and in_l/in_r[32] (Q10.21) are block I/O. `state_reset` is the
+// bit and in_l/in_r[32] (Q10.21) are block-I/O input ports. `state_reset` is the
 // panic/all-notes-off path (both instances cleared, ring memory dropped).
 //
 // Original to this repository (Apache-2.0). No Surge source, tables, or
@@ -51,7 +50,20 @@ module rf_ains34_core (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // control-plane config (per-block stimulus; Q3.29 coefficients b0 b1 b2 a1 a2)
+    input  logic [1:0]  cfg_fx_bypass,
+    input  logic [15:0] cfg_fx_disable,
+    input  logic        cfg_slot3_occupied,
+    input  logic        cfg_slot4_occupied,
+    input  logic        cfg_slot3_reload,
+    input  logic        cfg_slot4_reload,
+    input  logic signed [31:0] cfg_slot3_c [5],
+    input  logic signed [31:0] cfg_slot4_c [5],
+    // block I/O (Q10.21) and the scene-A ring flag out of ains1/2
+    input  logic signed [31:0] in_l [32],
+    input  logic signed [31:0] in_r [32],
+    input  logic        sc_in
 );
 
   localparam int BLOCK  = 32;
@@ -69,12 +81,6 @@ module rf_ains34_core (
   localparam int FXSLOT_AINS3 = 8, FXSLOT_AINS4 = 9;
 
   // ------------------------------------------------- control-plane config
-  logic [1:0]  cfg_fx_bypass;
-  logic [15:0] cfg_fx_disable;
-  logic        cfg_slot3_occupied, cfg_slot4_occupied;
-  logic        cfg_slot3_reload,   cfg_slot4_reload;
-  logic signed [31:0] cfg_slot3_c [5];  // b0 b1 b2 a1 a2 (Q3.29)
-  logic signed [31:0] cfg_slot4_c [5];
 
   // --------------------------------------------------------- on-chip state
   logic signed [79:0] s3_reg0 [2];   // L, R (accumulator scale 21+29)
@@ -90,11 +96,8 @@ module rf_ains34_core (
   logic prev_occ4 = 1'b0;
 
   // --------------------------------------------------------- block I/O
-  logic signed [31:0] in_l  [BLOCK];
-  logic signed [31:0] in_r  [BLOCK];
   logic signed [31:0] out_l [BLOCK];    // reused in place as the running bus
   logic signed [31:0] out_r [BLOCK];
-  logic                sc_in;           // scene-A ring flag out of ains1/2
   logic                sc_out;          // ... as threaded out of ains4
 
   // ------------------------------------------------------------ FSM state
