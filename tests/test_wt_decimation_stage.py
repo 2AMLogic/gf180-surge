@@ -67,13 +67,15 @@ ARTIFACT = os.path.join(REPO, "reports", "sxt-026", "artifacts",
 RUNNER = os.path.join(REPO, "model", "oscillators", "wavetable",
                       "run_model.py")
 
-ORACLE_DATA = os.environ.get(
-    "ORACLE_SURGE_DATA",
-    "/Users/joseph/dev/surge-xt-oracle/surge/resources/data")
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+import oracle_common  # noqa: E402
+
+ORACLE_DATA = oracle_common.data_dir()
 TRIANGLE_REL = "wavetables/Basic/Triangle.wt"
 ORACLE_PRESENT = os.path.isfile(os.path.join(ORACLE_DATA, TRIANGLE_REL))
 needs_oracle = pytest.mark.skipif(
-    not ORACLE_PRESENT, reason="external pinned oracle asset root not present")
+    not ORACLE_PRESENT, reason=f"external pinned oracle asset root not present at {ORACLE_DATA}; "
+    "run oracle/fetch-and-build.sh or set ORACLE_SURGE_DIR/ORACLE_SURGE_DATA")
 
 
 def read(path):
