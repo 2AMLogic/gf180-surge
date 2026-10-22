@@ -16,7 +16,9 @@ import sys
 import types
 import wave
 
-DEFAULT_ENGINE_DIR = "/Users/joseph/dev/surge-xt-oracle/surge"
+# Repo-local, git-ignored checkout of the pinned engine (oracle/fetch-and-build.sh).
+DEFAULT_ENGINE_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oracle", "build", "surge")
 DEFAULT_PYTHON_BUILD_DIR = "build-py311"
 CENSUS_DIR = os.path.join("corpus", "census-v0.1")
 
@@ -37,6 +39,11 @@ def reexec_under_pinned_python(repo_root):
 
 def engine_dir():
     return os.environ.get("ORACLE_SURGE_DIR", DEFAULT_ENGINE_DIR)
+
+
+def data_dir():
+    """Asset root (resources/data): ORACLE_SURGE_DATA, else under engine_dir()."""
+    return os.environ.get("ORACLE_SURGE_DATA") or os.path.join(engine_dir(), "resources", "data")
 
 
 def build_dir():

@@ -567,6 +567,30 @@ def _expect(name, rep, status, stage, needle):
         name, status, stage, needle)
 
 
+def latch_control_case(observed, waivers_list):
+    """Inputs for the new-severe-latch control: (observed, waivers, how).
+
+    With a LATCH waiver in the baseline the waiver is dropped (the observed
+    LATCH is then unwaived).  With none, a fresh LATCH diagnostic with no
+    waiver is injected into a copy of the observed set instead, so the
+    control stays live without depending on a particular baseline finding.
+    """
+    ws = json.loads(json.dumps(waivers_list))
+    for i, e in enumerate(ws):
+        if e["rule"] == "LATCH":
+            del ws[i]
+            return observed, ws, "waiver removed"
+    obs = json.loads(json.dumps(observed))
+    og = obs[0]
+    src = og.get("source", "nc_injected.sv")
+    msg = "Latch inferred for signal 'nc_inj_q' (negative control)"
+    og["diagnostics"].append({
+        "rule": "LATCH", "file": src, "line": 100000, "col": 1,
+        "message": msg, "count": 1,
+        "fingerprint": fingerprint("LATCH", src, 100000, 1, msg)})
+    return obs, ws, "LATCH injected, no LATCH waiver in baseline"
+
+
 def negative_controls(root, manifest_path, waivers_path, verilator):
     """Return (all_ok, lines).  Each control must FAIL its target stage."""
     lines, oks = [], []
@@ -620,12 +644,12 @@ def negative_controls(root, manifest_path, waivers_path, verilator):
 
         def mutate(name, fn, needle):
             doc = json.loads(json.dumps(waivers))
-            fn(doc["waivers"])
+            obs_used = fn(doc["waivers"]) or observed
             wp = os.path.join(tmp, name + ".json")
             with open(wp, "w") as fh:
                 json.dump(doc, fh)
             w = validate_waivers(load_json(wp, "waivers"), groups)
-            fails, _ = compare(observed, w)
+            fails, _ = compare(obs_used, w)
             hit = [f for f in fails if needle in f]
             ok = bool(hit)
             oks.append(ok)
@@ -650,11 +674,9 @@ def negative_controls(root, manifest_path, waivers_path, verilator):
             ws.append(e)
 
         def drop_latch(ws):
-            for i, e in enumerate(ws):
-                if e["rule"] == "LATCH":
-                    del ws[i]
-                    return
-            raise AssertionError("no LATCH waiver")
+            obs_l, ws_l, _ = latch_control_case(observed, ws)
+            ws[:] = ws_l
+            return obs_l
 
         mutate("new-warning (waiver removed)", drop_first_nonsevere,
                "new diagnostic (no waiver)")

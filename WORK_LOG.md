@@ -2,8 +2,31 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-22
+
+- **PR #512**: fix(rtl): drive rf_global34_core config and block inputs through ports
+- **Issue #478** (closed): RTL: rf_global34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+
+### 2026-10-21
+
+- **PR #525**: fix: default Surge oracle paths to repo-local oracle/build/surge
+- **PR #523**: fix(rtl): remove initial drive of logical4_core block_done and its MULTIDRIVEN waiver
+- **PR #522**: fix(rtl-lint): refresh waivers and keep latch control live without a LATCH waiver
+- **PR #521**: Bump Repo Skills 0.24.3 -> 0.24.7
+- **PR #513**: fix(rtl): make rf_global2_core config and block inputs real ports
+- **PR #511**: fix(rtl): promote galactic_core coefficient and block inputs to ports
+- **Issue #524** (closed): Remove hard-coded user-home paths: build or resolve the Surge XT oracle engine in-repo
+- **Issue #520** (closed): rtl-lint: negative controls report CONTROL-BROKEN (baseline did not PASS) on main since #437
+- **Issue #477** (closed): RTL: rf_global2_core has 9 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **Issue #474** (closed): RTL: galactic_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **Issue #470** (closed): RTL: logical4_core `block_done` driven from both an initial block and always_ff (Verilator MULTIDRIVEN, logical4_core.sv:226)
+
 ### 2026-10-20
 
+- **PR #499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
+- **Issue #498** (closed): T1: commit a klt signoff block manifest and gate its verdict in CI
+- **PR #437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
+- **Issue #434** (closed): Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL
 - **PR #508**: docs(sxt-023): Delay reference contract and substitute-build qualification report
 - **Issue #507** (closed): Define and qualify the canonical Delay reference contract (#16 / #12)
 
