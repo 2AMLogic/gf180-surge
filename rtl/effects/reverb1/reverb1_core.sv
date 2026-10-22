@@ -47,6 +47,26 @@ module reverb1_core (
     input  logic        state_reset,
     input  logic        start_block,
     output logic        block_done,
+    // coefficient plane (control-rate words, outside the exactness claim);
+    // array extents are literal: 16 = TAPS, 32 = BLOCK (declared below)
+    input  logic signed [31:0] cfg_dt       [16],  // delay_time, 256ths of a sample
+    input  logic signed [31:0] cfg_dfb      [16],  // delay_fb, c31
+    input  logic signed [31:0] cfg_pan_l    [16],  // c31
+    input  logic signed [31:0] cfg_pan_r    [16],  // c31
+    input  logic signed [31:0] cfg_damp,             // c31
+    input  logic signed [31:0] cfg_damp_m1,          // c31
+    input  logic signed [31:0] cfg_mix,              // c30
+    input  logic signed [31:0] cfg_mix_m1,           // c30
+    input  logic signed [31:0] cfg_width_s,          // c30
+    input  logic signed [31:0] cfg_bi_locut [5],     // c29: b0,b1,b2,a1,a2
+    input  logic signed [31:0] cfg_bi_band1 [5],     // c29
+    input  logic signed [31:0] cfg_bi_hicut [5],     // c29
+    input  logic               cfg_locut_active,
+    input  logic               cfg_hicut_active,
+    input  logic signed [31:0] cfg_pdtime,           // predelay read distance (samples)
+    // block input words (s24), held stable while a block runs
+    input  logic signed [31:0] in_l [32],
+    input  logic signed [31:0] in_r [32],
     // external memory port (single-cycle, zero-wait-state)
     output logic [31:0] em_addr,
     output logic        em_req,
@@ -65,21 +85,7 @@ module reverb1_core (
   localparam logic signed [127:0] REG_LIM = 128'sd1 <<< 79; // biquad |reg| < 2^79
 
   // ------------------------------------------------------ coefficient plane
-  logic signed [31:0] cfg_dt       [TAPS];  // delay_time, 256ths of a sample
-  logic signed [31:0] cfg_dfb      [TAPS];  // delay_fb, c31
-  logic signed [31:0] cfg_pan_l    [TAPS];  // c31
-  logic signed [31:0] cfg_pan_r    [TAPS];  // c31
-  logic signed [31:0] cfg_damp;             // c31
-  logic signed [31:0] cfg_damp_m1;          // c31
-  logic signed [31:0] cfg_mix;              // c30
-  logic signed [31:0] cfg_mix_m1;           // c30
-  logic signed [31:0] cfg_width_s;          // c30
-  logic signed [31:0] cfg_bi_locut [5];     // c29: b0,b1,b2,a1,a2
-  logic signed [31:0] cfg_bi_band1 [5];     // c29
-  logic signed [31:0] cfg_bi_hicut [5];     // c29
-  logic               cfg_locut_active;
-  logic               cfg_hicut_active;
-  logic signed [31:0] cfg_pdtime;           // predelay read distance (samples)
+  // (cfg_* are input ports of the module; see the port list)
 
   // --------------------------------------------------------- on-chip state
   logic [REV_BITS-1:0] delay_pos;
@@ -90,9 +96,7 @@ module reverb1_core (
   logic signed [79:0]  bregs [12];
 
   // --------------------------------------------------------- block I/O bufs
-  // (harness-loaded per block: s24 input words; s32i output words)
-  logic signed [31:0] in_l [BLOCK];
-  logic signed [31:0] in_r [BLOCK];
+  // (in_l/in_r are input ports; out_l/out_r are s32i output words)
   logic signed [31:0] out_l [BLOCK];
   logic signed [31:0] out_r [BLOCK];
 

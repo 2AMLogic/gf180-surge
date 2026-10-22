@@ -41,9 +41,25 @@ module tb_reverb1;
   // the external writable memory (flash is never a substitute: this is RAM)
   logic [31:0] ext_mem [0:MEM_WORDS-1];
 
+  // coefficient plane + block input words, driven by the stimulus below and
+  // connected to the core through its ordinary input ports
+  logic signed [31:0] cfg_dt [16], cfg_dfb [16], cfg_pan_l [16], cfg_pan_r [16];
+  logic signed [31:0] cfg_damp, cfg_damp_m1, cfg_mix, cfg_mix_m1, cfg_width_s;
+  logic signed [31:0] cfg_bi_locut [5], cfg_bi_band1 [5], cfg_bi_hicut [5];
+  logic               cfg_locut_active, cfg_hicut_active;
+  logic signed [31:0] cfg_pdtime;
+  logic signed [31:0] in_l [32], in_r [32];
+
   reverb1_core core (
     .clk(clk), .state_reset(state_reset), .start_block(start_block),
     .block_done(block_done),
+    .cfg_dt(cfg_dt), .cfg_dfb(cfg_dfb), .cfg_pan_l(cfg_pan_l),
+    .cfg_pan_r(cfg_pan_r), .cfg_damp(cfg_damp), .cfg_damp_m1(cfg_damp_m1),
+    .cfg_mix(cfg_mix), .cfg_mix_m1(cfg_mix_m1), .cfg_width_s(cfg_width_s),
+    .cfg_bi_locut(cfg_bi_locut), .cfg_bi_band1(cfg_bi_band1),
+    .cfg_bi_hicut(cfg_bi_hicut), .cfg_locut_active(cfg_locut_active),
+    .cfg_hicut_active(cfg_hicut_active), .cfg_pdtime(cfg_pdtime),
+    .in_l(in_l), .in_r(in_r),
     .em_addr(em_addr), .em_req(em_req), .em_we(em_we),
     .em_wdata(em_wdata), .em_rdata(em_rdata)
   );
@@ -82,24 +98,24 @@ module tb_reverb1;
 
     // coefficient preload (control-plane boundary; frozen quantized words)
     $readmemh("rtl/effects/reverb1/sim/cfg.hex", tb_cfg);
-    core.cfg_pdtime  = $signed(tb_cfg[0]);
-    core.cfg_damp    = $signed(tb_cfg[1]);
-    core.cfg_damp_m1 = $signed(tb_cfg[2]);
-    core.cfg_mix     = $signed(tb_cfg[3]);
-    core.cfg_mix_m1  = $signed(tb_cfg[4]);
-    core.cfg_width_s = $signed(tb_cfg[5]);
-    core.cfg_locut_active = tb_cfg[6][0];
-    core.cfg_hicut_active = tb_cfg[6][1];
+    cfg_pdtime  = $signed(tb_cfg[0]);
+    cfg_damp    = $signed(tb_cfg[1]);
+    cfg_damp_m1 = $signed(tb_cfg[2]);
+    cfg_mix     = $signed(tb_cfg[3]);
+    cfg_mix_m1  = $signed(tb_cfg[4]);
+    cfg_width_s = $signed(tb_cfg[5]);
+    cfg_locut_active = tb_cfg[6][0];
+    cfg_hicut_active = tb_cfg[6][1];
     for (i = 0; i < 16; i++) begin
-      core.cfg_dt[i]    = $signed(tb_cfg[7+i]);
-      core.cfg_dfb[i]   = $signed(tb_cfg[23+i]);
-      core.cfg_pan_l[i] = $signed(tb_cfg[39+i]);
-      core.cfg_pan_r[i] = $signed(tb_cfg[55+i]);
+      cfg_dt[i]    = $signed(tb_cfg[7+i]);
+      cfg_dfb[i]   = $signed(tb_cfg[23+i]);
+      cfg_pan_l[i] = $signed(tb_cfg[39+i]);
+      cfg_pan_r[i] = $signed(tb_cfg[55+i]);
     end
     for (i = 0; i < 5; i++) begin
-      core.cfg_bi_locut[i] = $signed(tb_cfg[71+i]);
-      core.cfg_bi_band1[i] = $signed(tb_cfg[76+i]);
-      core.cfg_bi_hicut[i] = $signed(tb_cfg[81+i]);
+      cfg_bi_locut[i] = $signed(tb_cfg[71+i]);
+      cfg_bi_band1[i] = $signed(tb_cfg[76+i]);
+      cfg_bi_hicut[i] = $signed(tb_cfg[81+i]);
     end
 
     // block schedule
@@ -117,8 +133,8 @@ module tb_reverb1;
         @(negedge clk); state_reset = 1'b0;
       end
       for (i = 0; i < BLOCK; i++) begin
-        core.in_l[i] = $signed(sched[2 + b*(2*BLOCK+1) + i]);
-        core.in_r[i] = $signed(sched[2 + b*(2*BLOCK+1) + BLOCK + i]);
+        in_l[i] = $signed(sched[2 + b*(2*BLOCK+1) + i]);
+        in_r[i] = $signed(sched[2 + b*(2*BLOCK+1) + BLOCK + i]);
       end
       @(negedge clk); start_block = 1'b1;
       @(negedge clk); start_block = 1'b0;
