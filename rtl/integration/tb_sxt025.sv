@@ -78,9 +78,25 @@ module tb_sxt025;
   logic signed [31:0] em_rdata;
   logic [31:0] ext_mem [0:MEM_WORDS-1];
 
+  // coefficient plane + block input words, driven by the stimulus below and
+  // connected to the core through its ordinary input ports
+  logic signed [31:0] cfg_dt [16], cfg_dfb [16], cfg_pan_l [16], cfg_pan_r [16];
+  logic signed [31:0] cfg_damp, cfg_damp_m1, cfg_mix, cfg_mix_m1, cfg_width_s;
+  logic signed [31:0] cfg_bi_locut [5], cfg_bi_band1 [5], cfg_bi_hicut [5];
+  logic               cfg_locut_active, cfg_hicut_active;
+  logic signed [31:0] cfg_pdtime;
+  logic signed [31:0] in_l [32], in_r [32];
+
   reverb1_core u_fx (
     .clk(clk), .state_reset(state_reset), .start_block(start_block),
     .block_done(block_done),
+    .cfg_dt(cfg_dt), .cfg_dfb(cfg_dfb), .cfg_pan_l(cfg_pan_l),
+    .cfg_pan_r(cfg_pan_r), .cfg_damp(cfg_damp), .cfg_damp_m1(cfg_damp_m1),
+    .cfg_mix(cfg_mix), .cfg_mix_m1(cfg_mix_m1), .cfg_width_s(cfg_width_s),
+    .cfg_bi_locut(cfg_bi_locut), .cfg_bi_band1(cfg_bi_band1),
+    .cfg_bi_hicut(cfg_bi_hicut), .cfg_locut_active(cfg_locut_active),
+    .cfg_hicut_active(cfg_hicut_active), .cfg_pdtime(cfg_pdtime),
+    .in_l(in_l), .in_r(in_r),
     .em_addr(em_addr), .em_req(em_req), .em_we(em_we),
     .em_wdata(em_wdata), .em_rdata(em_rdata)
   );
@@ -132,24 +148,24 @@ module tb_sxt025;
 
     // kernel coefficient preload (control-plane boundary, frozen words)
     $readmemh("rtl/integration/sim/cfg.hex", tb_cfg);
-    u_fx.cfg_pdtime  = $signed(tb_cfg[0]);
-    u_fx.cfg_damp    = $signed(tb_cfg[1]);
-    u_fx.cfg_damp_m1 = $signed(tb_cfg[2]);
-    u_fx.cfg_mix     = $signed(tb_cfg[3]);
-    u_fx.cfg_mix_m1  = $signed(tb_cfg[4]);
-    u_fx.cfg_width_s = $signed(tb_cfg[5]);
-    u_fx.cfg_locut_active = tb_cfg[6][0];
-    u_fx.cfg_hicut_active = tb_cfg[6][1];
+    cfg_pdtime  = $signed(tb_cfg[0]);
+    cfg_damp    = $signed(tb_cfg[1]);
+    cfg_damp_m1 = $signed(tb_cfg[2]);
+    cfg_mix     = $signed(tb_cfg[3]);
+    cfg_mix_m1  = $signed(tb_cfg[4]);
+    cfg_width_s = $signed(tb_cfg[5]);
+    cfg_locut_active = tb_cfg[6][0];
+    cfg_hicut_active = tb_cfg[6][1];
     for (i = 0; i < 16; i++) begin
-      u_fx.cfg_dt[i]    = $signed(tb_cfg[7+i]);
-      u_fx.cfg_dfb[i]   = $signed(tb_cfg[23+i]);
-      u_fx.cfg_pan_l[i] = $signed(tb_cfg[39+i]);
-      u_fx.cfg_pan_r[i] = $signed(tb_cfg[55+i]);
+      cfg_dt[i]    = $signed(tb_cfg[7+i]);
+      cfg_dfb[i]   = $signed(tb_cfg[23+i]);
+      cfg_pan_l[i] = $signed(tb_cfg[39+i]);
+      cfg_pan_r[i] = $signed(tb_cfg[55+i]);
     end
     for (i = 0; i < 5; i++) begin
-      u_fx.cfg_bi_locut[i] = $signed(tb_cfg[71+i]);
-      u_fx.cfg_bi_band1[i] = $signed(tb_cfg[76+i]);
-      u_fx.cfg_bi_hicut[i] = $signed(tb_cfg[81+i]);
+      cfg_bi_locut[i] = $signed(tb_cfg[71+i]);
+      cfg_bi_band1[i] = $signed(tb_cfg[76+i]);
+      cfg_bi_hicut[i] = $signed(tb_cfg[81+i]);
     end
 
     $readmemh("rtl/integration/sim/events.hex", evmem);
@@ -210,8 +226,8 @@ module tb_sxt025;
         if (i < nblocks) begin
           w = sched[1 + i*(2*BLOCK+1)];
           for (g = 0; g < BLOCK; g = g + 1) begin
-            u_fx.in_l[g] = $signed(sched[2 + i*(2*BLOCK+1) + g]);
-            u_fx.in_r[g] = $signed(sched[2 + i*(2*BLOCK+1) + BLOCK + g]);
+            in_l[g] = $signed(sched[2 + i*(2*BLOCK+1) + g]);
+            in_r[g] = $signed(sched[2 + i*(2*BLOCK+1) + BLOCK + g]);
           end
           @(negedge clk); start_block = 1'b1;
           @(negedge clk); start_block = 1'b0;
