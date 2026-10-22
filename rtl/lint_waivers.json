@@ -509,7 +509,7 @@
    "col": 16,
    "message": "Signal is not used: 'rst'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -524,7 +524,7 @@
    "col": 24,
    "message": "Signal is not used: 'ext_rd_valid'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -539,7 +539,7 @@
    "col": 31,
    "message": "Signal is not used: 'c_checkpoint'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -554,7 +554,7 @@
    "col": 20,
    "message": "Operator GTS expects 128 bits on the RHS, but RHS's CONST '127'sh7fffffff' generates 127 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -569,7 +569,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'qmul_sh' expects 128 bits on the Function Argument, but Function Argument's VARREF 'b' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -584,7 +584,7 @@
    "col": 36,
    "message": "Bits of function variable are not used: 'tidx'[31:7]",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -599,7 +599,7 @@
    "col": 37,
    "message": "Bits of function variable are not used: 'v'[31:4]",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -614,7 +614,7 @@
    "col": 60,
    "message": "Function variable is not used: 'ft'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -629,7 +629,7 @@
    "col": 20,
    "message": "Function variable is not driven, nor used: 'w0a'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -644,7 +644,7 @@
    "col": 25,
    "message": "Function variable is not driven, nor used: 'w1a'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -659,7 +659,7 @@
    "col": 45,
    "message": "Operator SHIFTRS expects 128 bits on the LHS, but LHS's ARRAYSEL generates 64 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -674,7 +674,7 @@
    "col": 18,
    "message": "Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 128 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -689,7 +689,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'qmul_wt' expects 128 bits on the Function Argument, but Function Argument's VARREF 'dt_q' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -704,7 +704,7 @@
    "col": 17,
    "message": "Logical operator IF expects 1 bit on the If, but If's VARREF 'dbg' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit width truncation in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -719,7 +719,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'dt_q' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -734,7 +734,7 @@
    "col": 36,
    "message": "Operator SHIFTL expects 128 bits on the LHS, but LHS's VARREF 'wt_inc' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -749,7 +749,7 @@
    "col": 43,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'HALF' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -764,7 +764,7 @@
    "col": 18,
    "message": "Operator FUNCREF 'qmul_sh' expects 128 bits on the Function Argument, but Function Argument's VARREF 'dt2' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -779,7 +779,7 @@
    "col": 26,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -794,7 +794,7 @@
    "col": 26,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'l_hskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -809,7 +809,7 @@
    "col": 30,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'FOUR' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -824,7 +824,7 @@
    "col": 30,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -839,7 +839,7 @@
    "col": 34,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'xt' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -854,7 +854,7 @@
    "col": 34,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -869,7 +869,7 @@
    "col": 42,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -884,7 +884,7 @@
    "col": 49,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'xt' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -899,7 +899,7 @@
    "col": 49,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -914,7 +914,7 @@
    "col": 46,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'taylor_w' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -929,7 +929,7 @@
    "col": 57,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -944,7 +944,7 @@
    "col": 18,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'block_pos' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -959,7 +959,7 @@
    "col": 18,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'formant_t' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -974,7 +974,7 @@
    "col": 18,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'formant_last' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -989,7 +989,7 @@
    "col": 26,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1004,7 +1004,7 @@
    "col": 26,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'block_pos' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1019,7 +1019,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'xt_w' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1034,7 +1034,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'formant_word' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1049,7 +1049,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'd' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1064,7 +1064,7 @@
    "col": 19,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'dt2' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1079,7 +1079,7 @@
    "col": 33,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'dt2' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1094,7 +1094,7 @@
    "col": 40,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'formant_word' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1109,7 +1109,7 @@
    "col": 40,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1124,7 +1124,7 @@
    "col": 17,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's ARRAYSEL generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1139,7 +1139,7 @@
    "col": 17,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'dt2' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1154,7 +1154,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'last_tableipol' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1169,7 +1169,7 @@
    "col": 33,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1184,7 +1184,7 @@
    "col": 33,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'bp' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1199,7 +1199,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'tableipol' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1214,7 +1214,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'bp' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1229,7 +1229,7 @@
    "col": 34,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'tblip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1244,7 +1244,7 @@
    "col": 43,
    "message": "Operator SHIFTL expects 128 bits on the LHS, but LHS's VARREF 'tid_i' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1259,7 +1259,7 @@
    "col": 56,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1274,7 +1274,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'last_tableipol' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1289,7 +1289,7 @@
    "col": 33,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1304,7 +1304,7 @@
    "col": 33,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'block_pos' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1319,7 +1319,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'block_pos' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1334,7 +1334,7 @@
    "col": 25,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'tableipol' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1349,7 +1349,7 @@
    "col": 24,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'tblip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1364,7 +1364,7 @@
    "col": 32,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1379,7 +1379,7 @@
    "col": 21,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'w0' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1394,7 +1394,7 @@
    "col": 33,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'proc' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1409,7 +1409,7 @@
    "col": 33,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1424,7 +1424,7 @@
    "col": 43,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'proc' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1439,7 +1439,7 @@
    "col": 43,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'w1' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1454,7 +1454,7 @@
    "col": 30,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1469,7 +1469,7 @@
    "col": 30,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'level' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1484,7 +1484,7 @@
    "col": 32,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1499,7 +1499,7 @@
    "col": 32,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'level' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1514,7 +1514,7 @@
    "col": 36,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'a_skew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1529,7 +1529,7 @@
    "col": 36,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'level' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1544,7 +1544,7 @@
    "col": 63,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'a_skew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1559,7 +1559,7 @@
    "col": 18,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1574,7 +1574,7 @@
    "col": 18,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'x1' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1589,7 +1589,7 @@
    "col": 22,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'x1' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1604,7 +1604,7 @@
    "col": 22,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1619,7 +1619,7 @@
    "col": 26,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'x1' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1634,7 +1634,7 @@
    "col": 26,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'l_clip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1649,7 +1649,7 @@
    "col": 38,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'x1' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1664,7 +1664,7 @@
    "col": 50,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'ONE' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1679,7 +1679,7 @@
    "col": 50,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'l_clip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1694,7 +1694,7 @@
    "col": 60,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1709,7 +1709,7 @@
    "col": 60,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'x3' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1724,7 +1724,7 @@
    "col": 32,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's ARRAYSEL generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1739,7 +1739,7 @@
    "col": 32,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'newlevel' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1754,7 +1754,7 @@
    "col": 17,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'out_att' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1769,7 +1769,7 @@
    "col": 17,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'g' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1784,7 +1784,7 @@
    "col": 27,
    "message": "Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's SEL generates 16 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1799,7 +1799,7 @@
    "col": 39,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's FUNCREF 'qmul_sh' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1814,7 +1814,7 @@
    "col": 39,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'main_tap' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1829,7 +1829,7 @@
    "col": 41,
    "message": "Operator FUNCREF 'qmul_sh' expects 128 bits on the Function Argument, but Function Argument's VARREF 'lipol_q' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1844,7 +1844,7 @@
    "col": 41,
    "message": "Operator FUNCREF 'qmul_sh' expects 128 bits on the Function Argument, but Function Argument's VARREF 'deriv_tap' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1859,7 +1859,7 @@
    "col": 55,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's ARRAYSEL generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1874,7 +1874,7 @@
    "col": 55,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1889,7 +1889,7 @@
    "col": 57,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'term' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1904,7 +1904,7 @@
    "col": 57,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'g' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1919,7 +1919,7 @@
    "col": 31,
    "message": "Operator ADD expects 64 bits on the RHS, but RHS's VARREF 't' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1934,7 +1934,7 @@
    "col": 53,
    "message": "Function variable is not used: 'hpf_start'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1949,7 +1949,7 @@
    "col": 37,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'l_vskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1964,7 +1964,7 @@
    "col": 37,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1979,7 +1979,7 @@
    "col": 39,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'lag_rate' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -1994,7 +1994,7 @@
    "col": 63,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'l_vskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2009,7 +2009,7 @@
    "col": 63,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'c_t_vskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2024,7 +2024,7 @@
    "col": 37,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'l_hskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2039,7 +2039,7 @@
    "col": 37,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2054,7 +2054,7 @@
    "col": 39,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'lag_rate' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2069,7 +2069,7 @@
    "col": 63,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'c_t_hskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2084,7 +2084,7 @@
    "col": 63,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'l_hskew' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2099,7 +2099,7 @@
    "col": 37,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2114,7 +2114,7 @@
    "col": 37,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'l_clip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2129,7 +2129,7 @@
    "col": 39,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'lag_rate' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2144,7 +2144,7 @@
    "col": 63,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'c_t_clip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2159,7 +2159,7 @@
    "col": 63,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'l_clip' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2174,7 +2174,7 @@
    "col": 41,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'l_shape' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2189,7 +2189,7 @@
    "col": 41,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2204,7 +2204,7 @@
    "col": 43,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'lag_rate' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2219,7 +2219,7 @@
    "col": 57,
    "message": "Operator SUB expects 128 bits on the RHS, but RHS's VARREF 'l_shape' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2234,7 +2234,7 @@
    "col": 57,
    "message": "Operator SUB expects 128 bits on the LHS, but LHS's VARREF 'c_t_shape' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2249,7 +2249,7 @@
    "col": 32,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'shape' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2264,7 +2264,7 @@
    "col": 32,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'morph_scale_w' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2279,7 +2279,7 @@
    "col": 37,
    "message": "Operator LTS expects 64 bits on the RHS, but RHS's VARREF 'c_a_cov' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2294,7 +2294,7 @@
    "col": 45,
    "message": "Operator SUB expects 64 bits on the RHS, but RHS's VARREF 'c_a_cov' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2309,7 +2309,7 @@
    "col": 49,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'k2' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2324,7 +2324,7 @@
    "col": 54,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's CONST '32'sh20' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2339,7 +2339,7 @@
    "col": 41,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'c_hpf_start' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2354,7 +2354,7 @@
    "col": 41,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'hpf_step' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2369,7 +2369,7 @@
    "col": 33,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'osc_out' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2384,7 +2384,7 @@
    "col": 33,
    "message": "Operator FUNCREF 'q21' expects 128 bits on the Function Argument, but Function Argument's VARREF 'hpf' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2399,7 +2399,7 @@
    "col": 51,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's FUNCREF 'q21' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2414,7 +2414,7 @@
    "col": 51,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's ARRAYSEL generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2429,7 +2429,7 @@
    "col": 42,
    "message": "Operator ADD expects 128 bits on the RHS, but RHS's VARREF 'c_hpf_d' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2444,7 +2444,7 @@
    "col": 42,
    "message": "Operator ADD expects 128 bits on the LHS, but LHS's VARREF 'c_hpf_start' generates 32 bits.",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: implicit operand width extension in the fixed-point arithmetic; tolerated in the initial baseline. Lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2459,7 +2459,7 @@
    "col": 24,
    "message": "Procedural assignment to declaration with initial value: 'init_latched'",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: variable initialised at declaration inside a procedural scope (model-mirroring style); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2474,7 +2474,7 @@
    "col": 21,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2489,7 +2489,7 @@
    "col": 21,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2504,7 +2504,7 @@
    "col": 21,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2519,7 +2519,7 @@
    "col": 21,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2534,7 +2534,7 @@
    "col": 20,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2549,7 +2549,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2564,7 +2564,7 @@
    "col": 27,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2579,7 +2579,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2594,7 +2594,7 @@
    "col": 18,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2609,7 +2609,7 @@
    "col": 23,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2624,7 +2624,7 @@
    "col": 26,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2639,7 +2639,7 @@
    "col": 23,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2654,7 +2654,7 @@
    "col": 21,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2669,7 +2669,7 @@
    "col": 28,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2684,7 +2684,7 @@
    "col": 26,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2699,7 +2699,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2714,7 +2714,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2729,7 +2729,7 @@
    "col": 45,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2744,7 +2744,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2759,7 +2759,7 @@
    "col": 45,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2774,7 +2774,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2789,7 +2789,7 @@
    "col": 45,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2804,7 +2804,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2819,7 +2819,7 @@
    "col": 45,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2834,7 +2834,7 @@
    "col": 22,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2849,7 +2849,7 @@
    "col": 45,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2864,7 +2864,7 @@
    "col": 23,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2879,7 +2879,7 @@
    "col": 47,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2894,7 +2894,7 @@
    "col": 23,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2909,7 +2909,7 @@
    "col": 47,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2924,7 +2924,7 @@
    "col": 23,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2939,7 +2939,7 @@
    "col": 47,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
@@ -2954,7 +2954,7 @@
    "col": 26,
    "message": "Blocking assignment '=' in sequential logic process",
    "count": 1,
-   "source_sha256": "9c67146b0a465942200668b965b428c8fb959f2aa912486cea107d5de05f65de",
+   "source_sha256": "4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571",
    "explanation": "Existing debt: blocking assignment inside a clocked block (the model-mirroring sequential style used by this candidate core); tolerated in the initial baseline, not a correctness finding.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
