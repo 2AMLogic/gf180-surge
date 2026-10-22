@@ -34,7 +34,20 @@ module galactic_core (
     output logic        em_req,
     output logic        em_we,
     output logic signed [31:0] em_wdata,
-    input  logic signed [31:0] em_rdata
+    input  logic signed [31:0] em_rdata,
+    // coefficient plane (control-plane inputs)
+    input  logic signed [31:0] cfg_regen,        // c31
+    input  logic signed [31:0] cfg_attenuate,    // c30
+    input  logic signed [31:0] cfg_lowpass,      // c31
+    input  logic signed [31:0] cfg_lowpass_m1,   // c31 (2^31 - lp)
+    input  logic signed [31:0] cfg_wet,          // c31
+    input  logic signed [31:0] cfg_wet_m1,       // c31
+    input  logic               cfg_wet_active,
+    input  logic signed [31:0] cfg_delay [12],
+    // block I/O + per-sample control stream (harness-driven)
+    input  logic signed [31:0] in_l [32],
+    input  logic signed [31:0] in_r [32],
+    input  logic signed [31:0] ctrl [4*32]       // baseL,fracqL,baseR,fracqR
 );
 
   localparam int BLOCK = 32;
@@ -79,15 +92,7 @@ module galactic_core (
     return 0;
   endfunction
 
-  // ------------------------------------------------------ coefficient plane
-  logic signed [31:0] cfg_regen;        // c31
-  logic signed [31:0] cfg_attenuate;    // c30
-  logic signed [31:0] cfg_lowpass;      // c31
-  logic signed [31:0] cfg_lowpass_m1;  // c31 (2^31 - lp)
-  logic signed [31:0] cfg_wet;          // c31
-  logic signed [31:0] cfg_wet_m1;       // c31
-  logic               cfg_wet_active;
-  logic signed [31:0] cfg_delay [12];
+  // coefficient plane: module ports (see port list)
 
   // on-chip state (mirrors the model's checkpoint)
   logic signed [31:0] counts [12];
@@ -96,12 +101,9 @@ module galactic_core (
   logic signed [31:0] fb_al, fb_bl, fb_cl, fb_dl;
   logic signed [31:0] fb_ar, fb_br, fb_cr, fb_dr;
 
-  // block I/O + per-sample control stream (harness-loaded)
-  logic signed [31:0] in_l [BLOCK];
-  logic signed [31:0] in_r [BLOCK];
+  // block output (read by the harness)
   logic signed [31:0] out_l [BLOCK];
   logic signed [31:0] out_r [BLOCK];
-  logic signed [31:0] ctrl [4*BLOCK];   // baseL,fracqL,baseR,fracqR
 
   // FSM
   localparam logic [4:0] S_IDLE=0, S_VIBWR=1, S_VIBRD=2, S_IIRA=3,

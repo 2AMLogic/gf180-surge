@@ -200,6 +200,26 @@ graph TD
 </details>
 <!-- DAG:END -->
 
+## T1 signoff evidence
+
+The T1 state of this block is graded by `klt signoff`, not hand-read. The
+verdict of record is
+[signoff/block-manifest.signoff.json](signoff/block-manifest.signoff.json),
+rendered from [signoff/block-manifest.json](signoff/block-manifest.json), which
+currently cites no evidence (every item `unmet`, `tier: null`). The
+`signoff` workflow re-renders it and fails on any byte difference. This is
+separate from the backlog DAG above, which tracks fidelity and coverage. The
+report establishes no T1 evidence, fidelity, synthesis or hardware claim.
+
+The `klayout-tools` pin lives only in
+[signoff/requirements.txt](signoff/requirements.txt). Regenerate (exit 0 and 3
+are both valid):
+
+```sh
+python3 -m venv /tmp/klt-venv && /tmp/klt-venv/bin/pip install -r signoff/requirements.txt
+/tmp/klt-venv/bin/klt signoff --manifest signoff/block-manifest.json --format json > signoff/block-manifest.signoff.json
+```
+
 ## License
 
 This repository is Apache-2.0 (`LICENSE`), following the 2AMLogic canary

@@ -18,10 +18,11 @@ is *not* part of this repository; only pins, harness scripts, and evidence are.
 
 ```sh
 # 1. Engine checkout (external, GPL — kept out of this repo)
+# (default location: oracle/build/surge, git-ignored; override with ORACLE_SURGE_DIR)
 git clone --recurse-submodules https://github.com/surge-synthesizer/surge \
-    /Users/joseph/dev/surge-xt-oracle/surge
-git -C /Users/joseph/dev/surge-xt-oracle/surge checkout 58914e59c608ed4384ba6002e44c3465c58b2e71
-git -C /Users/joseph/dev/surge-xt-oracle/surge submodule update --init --recursive
+    oracle/build/surge
+git -C oracle/build/surge checkout 58914e59c608ed4384ba6002e44c3465c58b2e71
+git -C oracle/build/surge submodule update --init --recursive
 
 # 2. Verify pins and build (any drift aborts with a clear error)
 oracle/fetch-and-build.sh            # add --verify-only to stop after verification
