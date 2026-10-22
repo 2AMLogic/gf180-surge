@@ -98,7 +98,13 @@ module wavetable_core (
     input wire signed [31:0] i_tempt_12,
     input wire signed [31:0] i_tempt_13,
     input wire signed [31:0] i_tempt_14,
-    input wire signed [31:0] i_tempt_15
+    input wire signed [31:0] i_tempt_15,
+
+    // sinc ROM load port (synchronous write; sel 0 = main taps, 1 = deriv)
+    input wire        ld_we,
+    input wire        ld_sel,
+    input wire [12:0] ld_addr,
+    input wire signed [31:0] ld_data
 );
 
     integer N_UNISON     = 1;
@@ -140,9 +146,16 @@ module wavetable_core (
     reg signed [31:0] tempt   [0:15];
     reg signed [31:0] out_att, lag_rate, morph_scale_w, taylor_w, dt_q;
 
-    // sinc ROM (on-chip; loaded by the testbench)
+    // sinc ROM (on-chip; loaded through the ld_* port)
     reg signed [31:0] sinc_main  [0:6143];
     reg signed [31:0] sinc_deriv [0:6143];
+
+    always @(posedge clk) begin
+        if (ld_we) begin
+            if (ld_sel) sinc_deriv[ld_addr] <= ld_data;
+            else        sinc_main[ld_addr]  <= ld_data;
+        end
+    end
 
     // traffic counters (read by the testbench; SXT-016 reconciliation)
     integer reads_words = 0;
