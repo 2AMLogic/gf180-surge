@@ -7,7 +7,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
+_None._
 
 ## Very Important
 
@@ -20,7 +20,6 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#16**: SXT-023: Implement Delay and EQ
-- **#150**: SXT-028j follow-up (F-028j-1/2/3): oracle-host reference leg + re-verify the two declared contracts for the global3/global4 routing leaf
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
@@ -29,40 +28,31 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#16**: SXT-023: Implement Delay and EQ
-- **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
-- **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
+- **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
+- **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#471**: RTL: wavetable_core has 2 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#472**: RTL: reverb1_core has 17 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#474**: RTL: galactic_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#476**: RTL: rf_bins12_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#477**: RTL: rf_global2_core has 9 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#478**: RTL: rf_global34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#479**: RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#498**: T1: commit a klt signoff block manifest and gate its verdict in CI
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#511**: fix(rtl): promote galactic_core coefficient and block inputs to ports
-- **#512**: fix(rtl): drive rf_global34_core config and block inputs through ports
-- **#513**: fix(rtl): make rf_global2_core config and block inputs real ports
-- **#514**: fix(rtl): promote rf_ains34_core config and block I/O to ports
-- **#515**: fix(rtl): promote rf_send34_core cfg and block inputs to ports
-- **#516**: refactor(rtl): make rf_bins12_core config and block inputs module ports
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
+_None._
 
 ## Proposed
 
@@ -87,18 +77,13 @@ Issues carrying `loom:curated`.
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(curated)*
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(curated)*
 - **#426**: SXT-028g: screen same-shape drift-zero Phaser carriers *(curated)*
-- **#470**: RTL: logical4_core `block_done` driven from both an initial block and always_ff (Verilator MULTIDRIVEN, logical4_core.sv:226) *(curated)*
 - **#471**: RTL: wavetable_core has 2 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#472**: RTL: reverb1_core has 17 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
-- **#474**: RTL: galactic_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#476**: RTL: rf_bins12_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
-- **#477**: RTL: rf_global2_core has 9 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
-- **#478**: RTL: rf_global34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#479**: RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
-- **#498**: T1: commit a klt signoff block manifest and gate its verdict in CI *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -118,14 +103,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 0 |
 | Very important | 0 |
-| Important | 4 |
-| Ready (`loom:issue`) | 4 |
-| In Progress (`loom:building`) | 9 |
-| PRs awaiting review | 6 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 31 |
+| Important | 3 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 7 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 26 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
