@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-20
 
+- **PR #437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
+- **Issue #434** (closed): Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL
 - **PR #508**: docs(sxt-023): Delay reference contract and substitute-build qualification report
 - **Issue #507** (closed): Define and qualify the canonical Delay reference contract (#16 / #12)
 
