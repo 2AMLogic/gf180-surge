@@ -1,0 +1,24 @@
+# NC-B RTL mip-threshold mutant re-check (issue #529)
+# Source tree: origin/main 0ce55cb + this branch (comment-only change to wavetable_core.sv)
+# Oracle data: ORACLE_SURGE_DATA=<pinned surge@58914e59 resources/data> (asset sha256 verified by run_model)
+# Stimulus per fixture:
+#   python3 model/oscillators/wavetable/run_model.py --inputs model/oscillators/wavetable/inputs/<in>.json \
+#       --sequence <seq> --out-dir <dir> --rtl
+# Compare per fixture (blocks = len(model_trace.json["blocks"])):
+#   python3 tools/compare_wt_rtl_model.py --run-dir <dir> --max-blocks <blocks> --out <v.json> [--mutant]
+# Single-unit local iverilog runs, one at a time. No batch/grid.
+
+fixture                                       build   verdict mismatches sim_fails  comparison-covered (mono48 samples)
+kick-wtfix-kt / seq-wt-pitch-extremes-hi-v1   clean   PASS    0          none       132000
+kick-wtfix-kt / seq-wt-pitch-extremes-hi-v1   mutant  FAIL    31         none       first divergence block 750 mono48[1] model=-2 rtl=-4
+kick-wtfix    / seq-wt-pitch-extremes-v1      clean   PASS    0          none       108000
+kick-wtfix    / seq-wt-pitch-extremes-v1      mutant  PASS    0          none       108000  (mutant NOT caught)
+kick-wtfix    / seq-wt-base-v1                clean   PASS    0          none       120000
+kick-wtfix    / seq-wt-base-v1                mutant  PASS    0          none       120000  (mutant NOT caught)
+
+Status: NC-B RTL control is LIVE on kick-wtfix-kt / seq-wt-pitch-extremes-hi-v1 (the
+fixture tools/run_sxt026_checks.py step 6 uses): clean PASS 0, mutant FAIL 31 on the
+comparison itself (no simulator failure, no traffic-only failure).
+NOT a live control on seq-wt-base-v1 or seq-wt-pitch-extremes-v1: the mutant is not caught.
+Not established: why those two fixtures do not separate the mutant (not investigated;
+the pinned control does not depend on it). The pre-#519 RTL was not re-run.

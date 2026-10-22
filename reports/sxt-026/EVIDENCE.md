@@ -92,7 +92,7 @@ the graph's hash at compile time (ABORT on mismatch).
 | 2 | Interpolation/morph/AA within declared budgets vs the pinned reference at pitch extremes | **PARTIAL — bounded budget finding recorded** | Workhorse + morph variants PASS the proposed bounds (section 3). Pitch extremes: low/mid (mip 0/2) track the reference; deep mips (5/6, notes 96/120) decorrelate immediately (corr −0.19/−0.01) — mechanism verified against pinned source as the engine's float32 phase pipeline (`WavetableOscillator.cpp:278–291,474`), NOT mip-table content (forced-mip0 control also decorrelates; model deep-vs-mip0 corr 0.995). Status vs proposed bounds: **MISS at deep-mip extremes**; escalation in section 4. |
 | 3 | Maximum supported unison validated; beyond-limit rejected explicitly | **PASS** | `kick-wtfix-uni16` (MAX_UNISON=16) renders through the model and the RTL with 16 sub-voices; RTL matches the model exactly over the full fixture (section 2). `unison=17` → `run_model` exits 1 with an explicit "explicitly rejected (no clamp)" message (`nc-c-unison-overflow.txt`); the engine clamps silently (SXT-015 flagged 58 presets) — this product contract rejects, per the frozen-model README. |
 | 4 | Sustained playback bandwidth measured with effects active; no underruns | **PASS (declared behavioral model)** | uni16 (worst case) full 2250 blocks with concurrent Reverb1 background bus traffic (SXT-016 pattern, 34 words/frame): `reverb_words=76500`, `underrun_blocks=0`, `max_frame_bus_cost` ≤ 32000 (`sustained-concurrent.txt`). Physical external traffic = frame fills + reverb ≈ 1.05 MB/s at the 48 MHz A-CLK candidate — within the SXT-016 E1 floor (8 MB/s). The logical 2-words/impulse demand is served by the on-chip frame cache, not the external bus. The bus/underrun model is DECLARED (behavioral costs), not cycle-accurate RTL — no timing claim. |
-| 5 | Negative control: hash mismatch aborts; substituted table fails the reference-budget check | **PASS** | NC-A (above); NC-B model-side: forced deep-mip (`SXT026_NC_B_FORCE_MIP6`) fails the proposed budget on the workhorse while the correct model passes (`nc-b-mip-mutant.txt`); NC-B RTL: the committed mip-threshold mutant (`-DWAVETABLE_MUTANT_MIP`) FAILS RTL-vs-model exactness on the pitch-extreme fixture while the clean RTL passes (`rtl-exactness.txt`). NC-D RTL (#180): the single-line scene-decimator mutant (`-DWT_SCENE_MUTANT_HB_ORDER`) FAILS the same comparison **on the 48 kHz leg** while the clean RTL passes all 132,000 48 kHz samples (`rtl-exactness.txt`, section 6). All controls are live — each demonstrably fails the check it targets. |
+| 5 | Negative control: hash mismatch aborts; substituted table fails the reference-budget check | **PASS** | NC-A (above); NC-B model-side: forced deep-mip (`SXT026_NC_B_FORCE_MIP6`) fails the proposed budget on the workhorse while the correct model passes (`nc-b-mip-mutant.txt`); NC-B RTL: the committed mip-threshold mutant (`-DWAVETABLE_MUTANT_MIP`) FAILS RTL-vs-model exactness on the `kick-wtfix-kt` / `seq-wt-pitch-extremes-hi-v1` fixture (31 mismatches, first at block 750) while the clean RTL passes with 0 (`nc-b-rtl-mutant-recheck-529.txt`, #529); it is NOT caught on `seq-wt-base-v1` or `seq-wt-pitch-extremes-v1`, so the control is only live on that one pinned fixture. NC-D RTL (#180): the single-line scene-decimator mutant (`-DWT_SCENE_MUTANT_HB_ORDER`) FAILS the same comparison **on the 48 kHz leg** while the clean RTL passes all 132,000 48 kHz samples (`rtl-exactness.txt`, section 6). Each control above is live on the input recorded for it (NC-B RTL: the `-hi-v1` fixture only, see above). |
 
 ## 2. RTL-vs-frozen-model exactness (integer equality)
 
@@ -179,8 +179,7 @@ output samples + **132000 48 kHz `mono_block` samples** + exact
 external-traffic reconciliation; uni16: 18736 checkpoint records + 74944
 oscillator output samples + **72000 48 kHz `mono_block` samples** under
 concurrent Reverb1 background traffic); the mip-threshold mutant **FAILS**
-the same comparison (first divergence at the mip-2 window's first
-checkpoint, block 768), and the scene-decimator mutant **FAILS** it on the
+the same comparison (first 48 kHz divergence at block 750 on the #529 re-measure), and the scene-decimator mutant **FAILS** it on the
 48 kHz leg from block 0 (section 6).
 
 **Stimulus-length status in the transcript (issue #203).** The comparator's
@@ -457,7 +456,7 @@ per-segment decomposition just below and the §4 discriminating experiments
 are pre-#123 numbers. RTL-vs-model exactness is unaffected by construction
 (the wavetable RTL boundary ends at the oscillator output, before the
 decimator — see §2 note) and was re-run: base PASS, 0 mismatches; the
-mip-threshold mutant FAILs with 68 mismatches (unchanged). Full record:
+mip-threshold mutant FAILs with 31 mismatches on the `-hi-v1` fixture (re-measured in #529; the earlier "68" is not reproduced and is STALE). Full record:
 `reports/halfband-republication/`.
 
 Per-segment decomposition of the pitch-extreme fixture (new kt sequence):
@@ -554,7 +553,7 @@ asserted; per-asset working sets are in the manifest (`mips`, `dims`).
 |---|---|---|---|
 | NC-A: substituted/flipped asset | `nc-a-hash-abort.txt` | `Triangle.wt` bytes flipped in a scratch root → compile `ABORT` (exit 2, no image emitted) and `verify` `HASH MISMATCH` ABORT (exit 2) | **PASS** (fails as designed) |
 | NC-B model: wrong mip under budget | `nc-b-mip-mutant.txt` | `SXT026_NC_B_FORCE_MIP6` vs correct model on identical inputs; correct PASSES proposed corr/rms bounds, forced-mip6 corr falls below | **PASS** (fails as designed) |
-| NC-B RTL: mip-threshold mutant | `rtl-exactness.txt` | `-DWAVETABLE_MUTANT_MIP` (mip-2 threshold halved) vs clean RTL on the pitch-extreme fixture (mip 2 window exercised) | **PASS** (mutant FAILS exactness; clean PASSes) |
+| NC-B RTL: mip-threshold mutant | `rtl-exactness.txt` | `-DWAVETABLE_MUTANT_MIP` (all six mip thresholds halved) vs clean RTL on `kick-wtfix-kt` / `seq-wt-pitch-extremes-hi-v1`; transcript `nc-b-rtl-mutant-recheck-529.txt` | **PASS** on that fixture (mutant FAILS exactness, 31 mismatches; clean PASSes). Not caught on `seq-wt-base-v1` / `seq-wt-pitch-extremes-v1` |
 | **NC-D RTL (#180): scene-decimator mutant** | `rtl-exactness.txt` | `-DWT_SCENE_MUTANT_HB_ORDER` — ONE line of the per-scene decimator's reconstruction swapped to the pre-#123 A-even/B-odd branch order (the same defect `rtl/voice/voice_halfband_order_mutant.sv` isolates on the voice leaf) vs clean RTL, same fixture and stimulus | **PASS** (mutant FAILS **on the 48 kHz leg**: first 48 kHz mismatches at block 0 `mono48[2] model=−4 rtl=−6`, `mono48[3] model=−15 rtl=35`, `mono48[4] model=548 rtl=911`; clean RTL PASSes all 132,000 48 kHz samples) |
 | NC-C: unison overflow | `nc-c-unison-overflow.txt` | `unison=17` → explicit rejection exit 1, never clamped | **PASS** (fails as designed) |
 
