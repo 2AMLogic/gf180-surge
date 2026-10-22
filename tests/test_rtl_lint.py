@@ -154,10 +154,10 @@ def _groups():
 
 def test_committed_waivers_validate_and_are_exact_entries():
     w = lint.validate_waivers(_load(WAIVERS), _groups())
-    assert len(w) == 754
+    assert len(w) == 737
     assert all(e["verilator_version"] == "5.050" for e in w.values())
     sev = [e for e in w.values() if e["rule"] in lint.SEVERE_RULES]
-    assert len(sev) == 60
+    assert len(sev) == 43
     assert all(e["review_decision"]["status"] in lint.REVIEW_STATUSES
                for e in sev)
 
