@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-22
 
+- **PR #518**: refactor(rtl): expose reverb1_core coefficient plane and block inputs as ports
+- **Issue #472** (closed): RTL: reverb1_core has 17 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **PR #512**: fix(rtl): drive rf_global34_core config and block inputs through ports
 - **Issue #478** (closed): RTL: rf_global34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 
