@@ -52,18 +52,42 @@ module tb_galactic;
   logic        req0, we0, req1, we1;
   logic signed [31:0] wd0, wd1;
 
+  // per-instance coefficient planes and the shared block stimulus, driven
+  // into the cores through ports
+  logic signed [31:0] cfg_regen0, cfg_attenuate0, cfg_lowpass0;
+  logic signed [31:0] cfg_lowpass_m10, cfg_wet0, cfg_wet_m10;
+  logic               cfg_wet_active0;
+  logic signed [31:0] cfg_delay0 [12];
+  logic signed [31:0] cfg_regen1, cfg_attenuate1, cfg_lowpass1;
+  logic signed [31:0] cfg_lowpass_m11, cfg_wet1, cfg_wet_m11;
+  logic               cfg_wet_active1;
+  logic signed [31:0] cfg_delay1 [12];
+  logic signed [31:0] in_l [BLOCK];
+  logic signed [31:0] in_r [BLOCK];
+  logic signed [31:0] ctrl [4*BLOCK];
+
   galactic_core core0 (
     .clk(clk), .state_reset(state_reset), .start_block(start0),
     .block_done(done0), .mem_base(32'd0),
     .em_addr(addr0), .em_req(req0), .em_we(we0),
-    .em_wdata(wd0), .em_rdata(em_rdata)
+    .em_wdata(wd0), .em_rdata(em_rdata),
+    .cfg_regen(cfg_regen0), .cfg_attenuate(cfg_attenuate0),
+    .cfg_lowpass(cfg_lowpass0), .cfg_lowpass_m1(cfg_lowpass_m10),
+    .cfg_wet(cfg_wet0), .cfg_wet_m1(cfg_wet_m10),
+    .cfg_wet_active(cfg_wet_active0), .cfg_delay(cfg_delay0),
+    .in_l(in_l), .in_r(in_r), .ctrl(ctrl)
   );
 
   galactic_core core1 (
     .clk(clk), .state_reset(state_reset), .start_block(start1),
     .block_done(done1), .mem_base(32'd126354),
     .em_addr(addr1), .em_req(req1), .em_we(we1),
-    .em_wdata(wd1), .em_rdata(em_rdata)
+    .em_wdata(wd1), .em_rdata(em_rdata),
+    .cfg_regen(cfg_regen1), .cfg_attenuate(cfg_attenuate1),
+    .cfg_lowpass(cfg_lowpass1), .cfg_lowpass_m1(cfg_lowpass_m11),
+    .cfg_wet(cfg_wet1), .cfg_wet_m1(cfg_wet_m11),
+    .cfg_wet_active(cfg_wet_active1), .cfg_delay(cfg_delay1),
+    .in_l(in_l), .in_r(in_r), .ctrl(ctrl)
   );
 
   // instance select: mux the active core onto the port (harness-set)
@@ -111,14 +135,14 @@ module tb_galactic;
     $readmemh("rtl/effects/aw-49/sim/cfg.hex", cfg);
     revword = cfg[0];
     $fwrite(fd_t, "R %0d\n", revword);
-    core0.cfg_regen = $signed(cfg[1]);
-    core0.cfg_attenuate = $signed(cfg[2]);
-    core0.cfg_lowpass = $signed(cfg[3]);
-    core0.cfg_lowpass_m1 = $signed(cfg[4]);
-    core0.cfg_wet = $signed(cfg[5]);
-    core0.cfg_wet_m1 = $signed(cfg[6]);
-    core0.cfg_wet_active = cfg[7][0];
-    for (i = 0; i < 12; i++) core0.cfg_delay[i] = $signed(cfg[8 + i]);
+    cfg_regen0 = $signed(cfg[1]);
+    cfg_attenuate0 = $signed(cfg[2]);
+    cfg_lowpass0 = $signed(cfg[3]);
+    cfg_lowpass_m10 = $signed(cfg[4]);
+    cfg_wet0 = $signed(cfg[5]);
+    cfg_wet_m10 = $signed(cfg[6]);
+    cfg_wet_active0 = cfg[7][0];
+    for (i = 0; i < 12; i++) cfg_delay0[i] = $signed(cfg[8 + i]);
     // an optional second coefficient plane (dual-instance cases) lives in
     // words 21..41; its presence is detected via word 41 being defined
     if (cfg[20] * 2 != MEM_WORDS)
@@ -127,23 +151,23 @@ module tb_galactic;
     // coefficient_words(ctrl1)[1:] = 20 words at indices 21..40; presence
     // detected via word 40 ($readmemh leaves unread entries x)
     if (cfg[40] !== 32'hx) begin
-      core1.cfg_regen = $signed(cfg[21]);
-      core1.cfg_attenuate = $signed(cfg[22]);
-      core1.cfg_lowpass = $signed(cfg[23]);
-      core1.cfg_lowpass_m1 = $signed(cfg[24]);
-      core1.cfg_wet = $signed(cfg[25]);
-      core1.cfg_wet_m1 = $signed(cfg[26]);
-      core1.cfg_wet_active = cfg[27][0];
-      for (i = 0; i < 12; i++) core1.cfg_delay[i] = $signed(cfg[28 + i]);
+      cfg_regen1 = $signed(cfg[21]);
+      cfg_attenuate1 = $signed(cfg[22]);
+      cfg_lowpass1 = $signed(cfg[23]);
+      cfg_lowpass_m11 = $signed(cfg[24]);
+      cfg_wet1 = $signed(cfg[25]);
+      cfg_wet_m11 = $signed(cfg[26]);
+      cfg_wet_active1 = cfg[27][0];
+      for (i = 0; i < 12; i++) cfg_delay1[i] = $signed(cfg[28 + i]);
     end else begin
-      core1.cfg_regen = core0.cfg_regen;
-      core1.cfg_attenuate = core0.cfg_attenuate;
-      core1.cfg_lowpass = core0.cfg_lowpass;
-      core1.cfg_lowpass_m1 = core0.cfg_lowpass_m1;
-      core1.cfg_wet = core0.cfg_wet;
-      core1.cfg_wet_m1 = core0.cfg_wet_m1;
-      core1.cfg_wet_active = core0.cfg_wet_active;
-      for (i = 0; i < 12; i++) core1.cfg_delay[i] = core0.cfg_delay[i];
+      cfg_regen1 = cfg_regen0;
+      cfg_attenuate1 = cfg_attenuate0;
+      cfg_lowpass1 = cfg_lowpass0;
+      cfg_lowpass_m11 = cfg_lowpass_m10;
+      cfg_wet1 = cfg_wet0;
+      cfg_wet_m11 = cfg_wet_m10;
+      cfg_wet_active1 = cfg_wet_active0;
+      for (i = 0; i < 12; i++) cfg_delay1[i] = cfg_delay0[i];
     end
 
     $readmemh("rtl/effects/aw-49/sim/blocks.hex", sched);
@@ -161,18 +185,12 @@ module tb_galactic;
       inst_sel = hdr[30];
       mem_base = hdr[30] ? 32'd126354 : 32'd0;
       for (i = 0; i < BLOCK; i++) begin
-        core0.in_l[i] = $signed(sched[j + 6*i + 0]);
-        core0.in_r[i] = $signed(sched[j + 6*i + 1]);
-        core0.ctrl[4*i + 0] = $signed(sched[j + 6*i + 2]);
-        core0.ctrl[4*i + 1] = $signed(sched[j + 6*i + 3]);
-        core0.ctrl[4*i + 2] = $signed(sched[j + 6*i + 4]);
-        core0.ctrl[4*i + 3] = $signed(sched[j + 6*i + 5]);
-        core1.in_l[i] = core0.in_l[i];
-        core1.in_r[i] = core0.in_r[i];
-        core1.ctrl[4*i + 0] = core0.ctrl[4*i + 0];
-        core1.ctrl[4*i + 1] = core0.ctrl[4*i + 1];
-        core1.ctrl[4*i + 2] = core0.ctrl[4*i + 2];
-        core1.ctrl[4*i + 3] = core0.ctrl[4*i + 3];
+        in_l[i] = $signed(sched[j + 6*i + 0]);
+        in_r[i] = $signed(sched[j + 6*i + 1]);
+        ctrl[4*i + 0] = $signed(sched[j + 6*i + 2]);
+        ctrl[4*i + 1] = $signed(sched[j + 6*i + 3]);
+        ctrl[4*i + 2] = $signed(sched[j + 6*i + 4]);
+        ctrl[4*i + 3] = $signed(sched[j + 6*i + 5]);
       end
       j = j + 6*BLOCK;
       @(negedge clk); start_block = 1'b1;

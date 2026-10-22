@@ -56,9 +56,10 @@ sys.path.insert(0, REPO)
 ART = os.path.join(REPO, "reports", "sxt-026", "artifacts")
 PY = sys.executable
 
-DEFAULT_ORACLE = os.environ.get(
-    "ORACLE_SURGE_DATA",
-    "/Users/joseph/dev/surge-xt-oracle/surge/resources/data")
+sys.path.insert(0, os.path.join(REPO, "oracle"))
+import oracle_common  # noqa: E402
+
+DEFAULT_ORACLE = oracle_common.data_dir()
 
 # SXT-026 [PROPOSED-TO-BE-FROZEN-AT-PILOT] budgets on the workhorse fixture
 # (kick-wtfix / seq-wt-base-v1): the pre-registered SXT-022 proposal

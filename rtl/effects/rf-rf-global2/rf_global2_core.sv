@@ -26,8 +26,10 @@
 //
 // Control-plane boundary: cfg_fx_bypass, cfg_fx_disable, cfg_slot{1,2}_c[5]
 // (Q3.29 biquad coefficients), cfg_slot{1,2}_occupied are configuration-bus
-// pokes (equivalent to the reverb1_core.sv `cfg_*` preload convention); the
-// per-block glob_in bit and in_l/in_r[32] (Q10.21) are block I/O.
+// input ports; the per-block glob_in bit and in_l/in_r[32] (Q10.21) are
+// block-I/O input ports. All are driven by the instantiating module and held
+// stable from start_block until block_done. out_l/out_r/glob_out stay
+// internal and are observed hierarchically by the testbench.
 //
 // Original to this repository (Apache-2.0). No Surge source, tables, or
 // assets are copied.
@@ -37,7 +39,18 @@ module rf_global2_core (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // control-plane configuration
+    input  logic [1:0]  cfg_fx_bypass,
+    input  logic [15:0] cfg_fx_disable,
+    input  logic        cfg_slot1_occupied,
+    input  logic        cfg_slot2_occupied,
+    input  logic signed [31:0] cfg_slot1_c [5],  // b0 b1 b2 a1 a2 (Q3.29)
+    input  logic signed [31:0] cfg_slot2_c [5],
+    // block I/O
+    input  logic signed [31:0] in_l [32],
+    input  logic signed [31:0] in_r [32],
+    input  logic        glob_in
 );
 
   localparam int BLOCK  = 32;
@@ -52,13 +65,6 @@ module rf_global2_core (
   // FXB_SCENE_FX_ONLY = 2'd2, FXB_NO_FX = 2'd3 (both skip this block)
   localparam int FXSLOT_GLOBAL1 = 6, FXSLOT_GLOBAL2 = 7;
 
-  // ------------------------------------------------- control-plane config
-  logic [1:0]  cfg_fx_bypass;
-  logic [15:0] cfg_fx_disable;
-  logic        cfg_slot1_occupied, cfg_slot2_occupied;
-  logic signed [31:0] cfg_slot1_c [5];  // b0 b1 b2 a1 a2 (Q3.29)
-  logic signed [31:0] cfg_slot2_c [5];
-
   // --------------------------------------------------------- on-chip state
   logic signed [79:0] s1_reg0 [2];   // L, R (accumulator scale 21+29)
   logic signed [79:0] s1_reg1 [2];
@@ -66,11 +72,8 @@ module rf_global2_core (
   logic signed [79:0] s2_reg1 [2];
 
   // --------------------------------------------------------- block I/O
-  logic signed [31:0] in_l  [BLOCK];
-  logic signed [31:0] in_r  [BLOCK];
   logic signed [31:0] out_l [BLOCK];    // reused in place as the running bus
   logic signed [31:0] out_r [BLOCK];
-  logic                glob_in;
   logic                glob_out;
 
   // ------------------------------------------------------------ FSM state
