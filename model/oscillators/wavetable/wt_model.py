@@ -635,8 +635,13 @@ class Inputs:
                        "wave_count": d["wt_wave_count"],
                        "words": d["wt_words"]}
         else:
-            root = os.environ.get("ORACLE_SURGE_DATA",
-                                  "/Users/joseph/dev/surge-xt-oracle/surge/resources/data")
+            # Same default as oracle/oracle_common.data_dir(); model/ must not import oracle/.
+            repo = os.path.dirname(os.path.dirname(os.path.dirname(
+                os.path.dirname(os.path.abspath(__file__)))))
+            root = os.environ.get("ORACLE_SURGE_DATA") or os.path.join(
+                os.environ.get("ORACLE_SURGE_DIR")
+                or os.path.join(repo, "oracle", "build", "surge"),
+                "resources", "data")
             wt_path = os.path.join(root, self.wt_relpath)
             self.wt = wavetable_from_file(wt_path)
             if self.wt["sha256"] != self.wt_sha256:

@@ -123,6 +123,18 @@ jobs:
           python3 tools/check_provenance.py \
             --commits "refs/remotes/origin/${BASE_REF}..${HEAD_SHA}"
 
+  artifact-manifests:
+    name: evidence manifests (#532)
+    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - name: Check evidence manifests (artifact URIs only, no committed stored bytes)
+        run: python3 tools/check_artifact_manifests.py
+
   python-compile:
     name: python compile (stdlib only)
     timeout-minutes: 10

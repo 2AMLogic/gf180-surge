@@ -65,6 +65,12 @@ module tb_wavetable;
     reg clk = 0;
     always #10.5 clk = ~clk;    // ~47.6 MHz placeholder (A-CLK candidate)
 
+    // sinc ROM load bus (shared by the four cores)
+    reg               ld_we = 1'b0;
+    reg               ld_sel = 1'b0;
+    reg        [12:0] ld_addr = 13'd0;
+    reg signed [31:0] ld_data = 32'sd0;
+
     reg [31:0] ext_addr_0, ext_addr_1, ext_addr_2, ext_addr_3;
     reg        ext_req_0, ext_req_1, ext_req_2, ext_req_3;
     reg  [31:0] bus_data;
@@ -148,7 +154,8 @@ module tb_wavetable;
         .i_tempt_6(iw[30]), .i_tempt_7(iw[31]), .i_tempt_8(iw[32]),
         .i_tempt_9(iw[33]), .i_tempt_10(iw[34]), .i_tempt_11(iw[35]),
         .i_tempt_12(iw[36]), .i_tempt_13(iw[37]), .i_tempt_14(iw[38]),
-        .i_tempt_15(iw[39])
+        .i_tempt_15(iw[39]),
+        .ld_we(ld_we), .ld_sel(ld_sel), .ld_addr(ld_addr), .ld_data(ld_data)
     );
     wavetable_core core1 (
         .clk(clk), .rst(1'b0),
@@ -175,7 +182,8 @@ module tb_wavetable;
         .i_tempt_6(iw[30]), .i_tempt_7(iw[31]), .i_tempt_8(iw[32]),
         .i_tempt_9(iw[33]), .i_tempt_10(iw[34]), .i_tempt_11(iw[35]),
         .i_tempt_12(iw[36]), .i_tempt_13(iw[37]), .i_tempt_14(iw[38]),
-        .i_tempt_15(iw[39])
+        .i_tempt_15(iw[39]),
+        .ld_we(ld_we), .ld_sel(ld_sel), .ld_addr(ld_addr), .ld_data(ld_data)
     );
     wavetable_core core2 (
         .clk(clk), .rst(1'b0),
@@ -202,7 +210,8 @@ module tb_wavetable;
         .i_tempt_6(iw[30]), .i_tempt_7(iw[31]), .i_tempt_8(iw[32]),
         .i_tempt_9(iw[33]), .i_tempt_10(iw[34]), .i_tempt_11(iw[35]),
         .i_tempt_12(iw[36]), .i_tempt_13(iw[37]), .i_tempt_14(iw[38]),
-        .i_tempt_15(iw[39])
+        .i_tempt_15(iw[39]),
+        .ld_we(ld_we), .ld_sel(ld_sel), .ld_addr(ld_addr), .ld_data(ld_data)
     );
     wavetable_core core3 (
         .clk(clk), .rst(1'b0),
@@ -229,7 +238,8 @@ module tb_wavetable;
         .i_tempt_6(iw[30]), .i_tempt_7(iw[31]), .i_tempt_8(iw[32]),
         .i_tempt_9(iw[33]), .i_tempt_10(iw[34]), .i_tempt_11(iw[35]),
         .i_tempt_12(iw[36]), .i_tempt_13(iw[37]), .i_tempt_14(iw[38]),
-        .i_tempt_15(iw[39])
+        .i_tempt_15(iw[39]),
+        .ld_we(ld_we), .ld_sel(ld_sel), .ld_addr(ld_addr), .ld_data(ld_data)
     );
 
     // ------------------------------------------------------- stimulus
@@ -438,19 +448,21 @@ module tb_wavetable;
         $readmemh(ctrl_f, ctrl_mem);
         $readmemh(wt_table_f, wt_mem);
         $readmemh(SINC_MAIN_F, sinc_tmp);
+        ld_sel <= 1'b0;
         for (w = 0; w < 6144; w = w + 1) begin
-            core0.sinc_main[w] = sinc_tmp[w];
-            core1.sinc_main[w] = sinc_tmp[w];
-            core2.sinc_main[w] = sinc_tmp[w];
-            core3.sinc_main[w] = sinc_tmp[w];
+            @(posedge clk);
+            ld_we <= 1'b1; ld_addr <= w; ld_data <= sinc_tmp[w];
         end
+        @(posedge clk);
+        ld_we <= 1'b0;
         $readmemh(SINC_DERIV_F, sinc_tmp);
+        ld_sel <= 1'b1;
         for (w = 0; w < 6144; w = w + 1) begin
-            core0.sinc_deriv[w] = sinc_tmp[w];
-            core1.sinc_deriv[w] = sinc_tmp[w];
-            core2.sinc_deriv[w] = sinc_tmp[w];
-            core3.sinc_deriv[w] = sinc_tmp[w];
+            @(posedge clk);
+            ld_we <= 1'b1; ld_addr <= w; ld_data <= sinc_tmp[w];
         end
+        @(posedge clk);
+        ld_we <= 1'b0;
 
         repeat (4) @(posedge clk);
         core0.N_UNISON = N_UNISON; core1.N_UNISON = N_UNISON;

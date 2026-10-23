@@ -4,8 +4,8 @@ GENERATED, DO NOT EDIT BY HAND:
   python3 tools/measure_halfband_limit_cycle.py --provenance \
       reports/halfband-limit-cycle/artifacts/rtl-splice-provenance.txt
 
-generated: 2026-09-29T17:29:19Z (UTC)
-base commit: 3bd6fcbc3572635546b53e428b563c155536fb02
+generated: 2026-10-20T17:32:26Z (UTC)
+base commit: aaebc095d2a5f40e2c76e62b0b8bcda3807a5587
 spliced .sv files vs that commit at generation time: clean (none of the 4 files is modified)
 iverilog on the generating host: Icarus Verilog version 13.0 (stable) (v13_0)
 
@@ -14,7 +14,7 @@ RTL COPIES COVERED: 4
   rtl/voice/tb_voice.sv                      dialect cfg32   sha256 4895bb87e294d1c3aeaef62b21104b1ebfa2fb20e2ae6c6c2f95f37a24b9d6d6
   rtl/oscillators/classic/tb_classic.sv      dialect cfg32   sha256 554d55b23045974fa5fa78e8e48d75d661fe88ef3e9833f56661a17f73e1fd6c
   rtl/oscillators/sine/tb_sine.sv            dialect cfg32   sha256 6f917d536e8443689bcb7fca74be80ef14d9bc08db5accca7e33c74be912b985
-  rtl/oscillators/wavetable/tb_wavetable.sv  dialect iw64    sha256 0b56f18f2e65f320b1d3da8b60d3eee085dd8a36f65cb3b1451f9f84a9dea18b
+  rtl/oscillators/wavetable/tb_wavetable.sv  dialect iw64    sha256 f920ab335791673f89a1fb8d732e71909b2fa812b2f7bf91d506b80ea9706bcf
 
   This list is RTL_COPIES in tools/measure_halfband_limit_cycle.py.
   tests/test_halfband_limit_cycle.py asserts it against a SCAN of
@@ -118,7 +118,7 @@ SOURCE            rtl/oscillators/sine/tb_sine.sv
 ==========================================================================
 SOURCE            rtl/oscillators/wavetable/tb_wavetable.sv
   dialect         iw64
-  source sha256   0b56f18f2e65f320b1d3da8b60d3eee085dd8a36f65cb3b1451f9f84a9dea18b
+  source sha256   f920ab335791673f89a1fb8d732e71909b2fa812b2f7bf91d506b80ea9706bcf
   coeff window    B = iw[43 + hi], A = iw[49 + hi]
   probe sha256    42612cab20532961b0416f80cfcd3af7eae6c564109b2e7ca37d4b3c1e784374
   functions spliced: q21, qround_s, clamp8_64

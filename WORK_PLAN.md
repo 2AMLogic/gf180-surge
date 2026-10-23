@@ -7,8 +7,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
-- **#499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
+_None._
 
 ## Very Important
 
@@ -21,24 +20,26 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#16**: SXT-023: Implement Delay and EQ
-- **#150**: SXT-028j follow-up (F-028j-1/2/3): oracle-host reference leg + re-verify the two declared contracts for the global3/global4 routing leaf
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
-- **#434**: Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#16**: SXT-023: Implement Delay and EQ
-- **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
-- **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
+- **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165
+- **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#498**: T1: commit a klt signoff block manifest and gate its verdict in CI
+- **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
+- **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
+- **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **#479**: RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **#532**: Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
 
 ## PRs Awaiting Review
 
@@ -50,8 +51,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#437**: Add static Verilator RTL lint gate and RTL classification manifest (#434)
-- **#499**: ci: gate committed klt signoff T1 verdict with byte-compare workflow
+- **#533**: feat: fail-closed evidence writer and manifest checker for the artifact store
 
 ## Proposed
 
@@ -76,10 +76,11 @@ Issues carrying `loom:curated`.
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(curated)*
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(curated)*
 - **#426**: SXT-028g: screen same-shape drift-zero Phaser carriers *(curated)*
-- **#434**: Add static RTL lint gate (Verilator) and classify product vs sim-only/mutant RTL *(curated)*
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
+- **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
+- **#479**: RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
-- **#498**: T1: commit a klt signoff block manifest and gate its verdict in CI *(curated)*
+- **#532**: Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -99,14 +100,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 2 |
+| Operator merge-risk holds | 0 |
 | Very important | 0 |
-| Important | 5 |
+| Important | 3 |
 | Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 5 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 2 |
-| Curated | 23 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 24 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->

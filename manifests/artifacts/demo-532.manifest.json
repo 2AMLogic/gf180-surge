@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "sha256": "8b80bedd00a1eb19b5b02053a483c89809aef02123acdb4b41ccd39798f7b42c",
+      "size": 110,
+      "kind": "evidence",
+      "producer": {
+        "tool": "klt",
+        "version": "0.7.1.dev2517+g6bb7cf233677",
+        "loom.repo": "2AMLogic/gf180-surge",
+        "commit": "1e649c77378f83ba7e8a1a144748529d68dae4c1"
+      },
+      "uri": "artifact:evidence/2AMLogic__gf180-surge/8b/8b80bedd00a1eb19b5b02053a483c89809aef02123acdb4b41ccd39798f7b42c",
+      "name": "demo.txt",
+      "media_type": "text/plain"
+    }
+  ]
+}
