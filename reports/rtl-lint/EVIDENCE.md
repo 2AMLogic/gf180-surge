@@ -105,8 +105,10 @@ was edited to remove any warning.
 
 **Update (#479):** the 19 `rf_send34_core` UNDRIVEN waivers above were
 removed by promoting those signals to input ports of `rf_send34_core` (and the
-identical port list on `rf_send34_mutants.sv`); the baseline is now 771
-waivers, 77 of them severe. The 44 remaining `rf_send34_core` waivers were
+identical port list on `rf_send34_mutants.sv`); the committed
+`rtl/lint_waivers.json` baseline went from 725 to 706 waivers, and its severe
+waivers from 30 to 11 (the counts asserted by `tests/test_rtl_lint.py`). The
+44 remaining `rf_send34_core` waivers were
 re-keyed only for line/column/fingerprint/source-hash drift (same rule and
 message, same count; no diagnostic added). The figures in this file otherwise
 describe the original #434 run. This is lint evidence only.
