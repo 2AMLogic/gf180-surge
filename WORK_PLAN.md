@@ -28,6 +28,7 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#16**: SXT-023: Implement Delay and EQ
+- **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 
 ## In Progress
@@ -38,6 +39,7 @@ Issues currently being built (`loom:building`).
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#479**: RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **#532**: Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
 
 ## PRs Awaiting Review
 
@@ -49,7 +51,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#533**: feat: fail-closed evidence writer and manifest checker for the artifact store
 
 ## Proposed
 
@@ -78,6 +80,7 @@ Issues carrying `loom:curated`.
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#479**: RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
+- **#532**: Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -100,11 +103,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 3 |
-| Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 4 |
+| Ready (`loom:issue`) | 3 |
+| In Progress (`loom:building`) | 5 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
-| Curated | 23 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 24 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
