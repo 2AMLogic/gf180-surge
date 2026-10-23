@@ -2,8 +2,8 @@
 // harness.
 //
 // Instantiates rf_send34_core, drives it from a per-block control-plane
-// stream (rf_send34_core's config bus, poked hierarchically -- the
-// reverb1_core.sv `cfg_*` preload convention, applied per block here because
+// stream (rf_send34_core's config bus, driven through its input ports
+// per block here because
 // fx_bypass / fx_disable / scene-B activity / occupancy / reload / biquad
 // coefficients / the send+return gain plane are all exercised as per-block
 // stimulus by the acceptance cases and the negative controls, not just as
@@ -53,9 +53,45 @@ module tb_rf_send34;
   logic start_block = 1'b0;
   logic block_done;
 
+  logic [1:0]  cfg_fx_bypass;
+  logic [15:0] cfg_fx_disable;
+  logic        cfg_scene_b_active;
+  logic        cfg_slot3_occupied, cfg_slot4_occupied;
+  logic        cfg_slot3_reload,   cfg_slot4_reload;
+  logic signed [31:0] cfg_slot3_c [5];
+  logic signed [31:0] cfg_slot4_c [5];
+  logic signed [31:0] cfg_bus3_g  [3];
+  logic signed [31:0] cfg_bus4_g  [3];
+  logic signed [31:0] sa_l   [BLOCK];
+  logic signed [31:0] sa_r   [BLOCK];
+  logic signed [31:0] sb_l   [BLOCK];
+  logic signed [31:0] sb_r   [BLOCK];
+  logic signed [31:0] main_l [BLOCK];
+  logic signed [31:0] main_r [BLOCK];
+  logic               send_in3, send_in4;
+
   rf_send34_core core (
     .clk(clk), .state_reset(state_reset),
-    .start_block(start_block), .block_done(block_done)
+    .start_block(start_block), .block_done(block_done),
+    .cfg_fx_bypass(cfg_fx_bypass),
+    .cfg_fx_disable(cfg_fx_disable),
+    .cfg_scene_b_active(cfg_scene_b_active),
+    .cfg_slot3_occupied(cfg_slot3_occupied),
+    .cfg_slot4_occupied(cfg_slot4_occupied),
+    .cfg_slot3_reload(cfg_slot3_reload),
+    .cfg_slot4_reload(cfg_slot4_reload),
+    .cfg_slot3_c(cfg_slot3_c),
+    .cfg_slot4_c(cfg_slot4_c),
+    .cfg_bus3_g(cfg_bus3_g),
+    .cfg_bus4_g(cfg_bus4_g),
+    .sa_l(sa_l),
+    .sa_r(sa_r),
+    .sb_l(sb_l),
+    .sb_r(sb_r),
+    .main_l(main_l),
+    .main_r(main_r),
+    .send_in3(send_in3),
+    .send_in4(send_in4)
   );
 
   always #1 clk = ~clk;
@@ -95,32 +131,32 @@ module tb_rf_send34;
         @(negedge clk); state_reset = 1'b0;
       end
 
-      // config-bus poke (hierarchical; matches reverb1_core.sv precedent)
-      core.cfg_fx_bypass      = ctrl_mem[b*CTRL_WORDS + 0][1:0];
-      core.cfg_fx_disable     = ctrl_mem[b*CTRL_WORDS + 1][15:0];
-      core.cfg_scene_b_active = ctrl_mem[b*CTRL_WORDS + 2][0];
-      core.cfg_slot3_occupied = ctrl_mem[b*CTRL_WORDS + 3][0];
-      core.cfg_slot3_reload   = ctrl_mem[b*CTRL_WORDS + 4][0];
-      core.cfg_slot4_occupied = ctrl_mem[b*CTRL_WORDS + 5][0];
-      core.cfg_slot4_reload   = ctrl_mem[b*CTRL_WORDS + 6][0];
-      core.send_in3           = ctrl_mem[b*CTRL_WORDS + 7][0];
-      core.send_in4           = ctrl_mem[b*CTRL_WORDS + 8][0];
+      // config-bus drive (core input ports)
+      cfg_fx_bypass      = ctrl_mem[b*CTRL_WORDS + 0][1:0];
+      cfg_fx_disable     = ctrl_mem[b*CTRL_WORDS + 1][15:0];
+      cfg_scene_b_active = ctrl_mem[b*CTRL_WORDS + 2][0];
+      cfg_slot3_occupied = ctrl_mem[b*CTRL_WORDS + 3][0];
+      cfg_slot3_reload   = ctrl_mem[b*CTRL_WORDS + 4][0];
+      cfg_slot4_occupied = ctrl_mem[b*CTRL_WORDS + 5][0];
+      cfg_slot4_reload   = ctrl_mem[b*CTRL_WORDS + 6][0];
+      send_in3           = ctrl_mem[b*CTRL_WORDS + 7][0];
+      send_in4           = ctrl_mem[b*CTRL_WORDS + 8][0];
       for (i = 0; i < 5; i++) begin
-        core.cfg_slot3_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 9 + i]);
-        core.cfg_slot4_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 14 + i]);
+        cfg_slot3_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 9 + i]);
+        cfg_slot4_c[i] = $signed(ctrl_mem[b*CTRL_WORDS + 14 + i]);
       end
       for (i = 0; i < 3; i++) begin
-        core.cfg_bus3_g[i] = $signed(ctrl_mem[b*CTRL_WORDS + 19 + i]);
-        core.cfg_bus4_g[i] = $signed(ctrl_mem[b*CTRL_WORDS + 22 + i]);
+        cfg_bus3_g[i] = $signed(ctrl_mem[b*CTRL_WORDS + 19 + i]);
+        cfg_bus4_g[i] = $signed(ctrl_mem[b*CTRL_WORDS + 22 + i]);
       end
 
       for (i = 0; i < BLOCK; i++) begin
-        core.sa_l[i]   = $signed(in_mem[b*IN_WORDS + 0*BLOCK + i]);
-        core.sa_r[i]   = $signed(in_mem[b*IN_WORDS + 1*BLOCK + i]);
-        core.sb_l[i]   = $signed(in_mem[b*IN_WORDS + 2*BLOCK + i]);
-        core.sb_r[i]   = $signed(in_mem[b*IN_WORDS + 3*BLOCK + i]);
-        core.main_l[i] = $signed(in_mem[b*IN_WORDS + 4*BLOCK + i]);
-        core.main_r[i] = $signed(in_mem[b*IN_WORDS + 5*BLOCK + i]);
+        sa_l[i]   = $signed(in_mem[b*IN_WORDS + 0*BLOCK + i]);
+        sa_r[i]   = $signed(in_mem[b*IN_WORDS + 1*BLOCK + i]);
+        sb_l[i]   = $signed(in_mem[b*IN_WORDS + 2*BLOCK + i]);
+        sb_r[i]   = $signed(in_mem[b*IN_WORDS + 3*BLOCK + i]);
+        main_l[i] = $signed(in_mem[b*IN_WORDS + 4*BLOCK + i]);
+        main_r[i] = $signed(in_mem[b*IN_WORDS + 5*BLOCK + i]);
       end
 
       @(negedge clk); start_block = 1'b1;
