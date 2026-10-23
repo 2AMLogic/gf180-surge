@@ -115,3 +115,7 @@ __pycache__/
 
 # Repo Skills machine-local install metadata (absolute source path + timestamp)
 .claude/skills/repo/.install-local.json
+
+# Raw evidence staged for tools/store_evidence.py (bytes go to the artifact
+# store; only manifests/artifacts/ is committed)
+.evidence-scratch/
