@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-23
+
+- **PR #533**: feat: fail-closed evidence writer and manifest checker for the artifact store
+- **Issue #532** (closed): Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
+
 ### 2026-10-22
 
 - **PR #530**: test: pin NC-B RTL mip-mutant control to the -hi-v1 fixture and correct its evidence
