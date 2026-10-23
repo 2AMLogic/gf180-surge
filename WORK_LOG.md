@@ -4,6 +4,12 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-22
 
+- **PR #530**: test: pin NC-B RTL mip-mutant control to the -hi-v1 fixture and correct its evidence
+- **Issue #529** (closed): wavetable RTL negative control --mutant (WAVETABLE_MUTANT_MIP) does not fail on seq-wt-base-v1 / seq-wt-pitch-extremes-v1
+- **PR #519**: fix(rtl): load wavetable_core sinc ROM through a write port
+- **Issue #471** (closed): RTL: wavetable_core has 2 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **PR #516**: refactor(rtl): make rf_bins12_core config and block inputs module ports
+- **Issue #476** (closed): RTL: rf_bins12_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **PR #518**: refactor(rtl): expose reverb1_core coefficient plane and block inputs as ports
 - **Issue #472** (closed): RTL: reverb1_core has 17 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **PR #512**: fix(rtl): drive rf_global34_core config and block inputs through ports
