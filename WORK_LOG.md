@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-23
 
+- **PR #515**: fix(rtl): promote rf_send34_core cfg and block inputs to ports
+- **Issue #479** (closed): RTL: rf_send34_core has 19 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **PR #533**: feat: fail-closed evidence writer and manifest checker for the artifact store
 - **Issue #532** (closed): Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
 
