@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 10,
+  "summary": "T1 item 10 (Repo hygiene): 9/9 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/hygiene-inventory.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 9,
+    "passed_count": 9,
+    "checks": [
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": ".github/workflows/ci.yml",
+        "passed": true,
+        "content_hash": "sha256:c28b4404ec95969cddcfc3a53b745126831060dcacaea11684a96b4765746f08"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": ".github/workflows/signoff.yml",
+        "passed": true,
+        "content_hash": "sha256:6cdd1740913b2edc8760d3cb5773fb1590640e14f84b85be3c56df6726732ab2"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": ".github/workflows/slow-controls.yml",
+        "passed": true,
+        "content_hash": "sha256:332e2848d08397ddb7c13158650040935ae16809cb406e6d99f52c066f0b7d94"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "LICENSE",
+        "passed": true,
+        "content_hash": "sha256:d47483eb3e7e0b8cdc6f5252d857935661943f6c10bcecf49ae4b8dfe8c26317"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "README.md",
+        "passed": true,
+        "content_hash": "sha256:df6b476f40abbc54ffc3e5a270c3d369170f1f8a57af1fa04ddbf7bbbfd44843"
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "census-consistency",
+        "argv": [
+          "python3",
+          "tools/check_census_consistency.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "provenance",
+        "argv": [
+          "python3",
+          "tools/check_provenance.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "artifact-manifests",
+        "argv": [
+          "python3",
+          "tools/check_artifact_manifests.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "backlog-dag-check",
+        "argv": [
+          "python3",
+          "tools/compile_backlog_dag.py",
+          "--check"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/hygiene-inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:d68f0b4e1a4d5453e56ef652949394906ba6b0d460ad148000e680ce6fb64b93"
+    }
+  }
+}

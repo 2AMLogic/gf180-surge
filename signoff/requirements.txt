@@ -1,1 +1,1 @@
-klayout-tools==0.7.0
+klayout-tools==0.8.0
