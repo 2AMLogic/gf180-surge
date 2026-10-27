@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 1,
+  "summary": "T1 item 1 (Design sources): 9/9 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/t1-item1/inventory.partial.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 9,
+    "passed_count": 9,
+    "checks": [
+      {
+        "check": "present",
+        "role": "source",
+        "path": "rtl/control/control_top.sv",
+        "passed": true,
+        "content_hash": "sha256:5f61030e3f127e9cb1d9809668f50b96aa9cb9fd476039fbb871ead7d5442a5b"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "rtl/instrumentation/ext_mem_instr.sv",
+        "passed": true,
+        "content_hash": "sha256:7b1c10168265c82e1a897ec4a799b49e54069aa0d1a52864ec97b474ac5c87b4"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "rtl/oscillators/wavetable/wavetable_core.sv",
+        "passed": true,
+        "content_hash": "sha256:4c7b29e19c857b540bc4ac35d2be690b5e2388b962fe1e7b093f3372ac06e571"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "signoff/t1-item1/control_top/control_top_synth.v",
+        "passed": true,
+        "content_hash": "sha256:6c5ffc1cf6610d50cab91c1e997faea4720f8346d195229f4624de8551b84cd5"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "signoff/t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+        "passed": true,
+        "content_hash": "sha256:784d758cc14dab48c21ad942b624c004afad0ac913c39bf4c65f5998cac92a54"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "signoff/t1-item1/wavetable_core/wavetable_core_synth.v",
+        "passed": true,
+        "content_hash": "sha256:dc68cabb088407f787b2e47696146b4bcffcc4c4caf0fa2f130802f9c5eb1daa"
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "signoff/t1-item1/control_top/control_top_synth.v",
+        "generator": "klt synthesize (Yosys)",
+        "argv": [
+          "klt",
+          "synthesize",
+          "signoff/t1-item1/control_top/request.json",
+          "--check",
+          "signoff/t1-item1/control_top/report.json",
+          "--pdk",
+          "gf180mcuD"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "signoff/t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+        "generator": "klt synthesize (Yosys)",
+        "argv": [
+          "klt",
+          "synthesize",
+          "signoff/t1-item1/ext_mem_instr/request.json",
+          "--check",
+          "signoff/t1-item1/ext_mem_instr/report.json",
+          "--pdk",
+          "gf180mcuD"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "signoff/t1-item1/wavetable_core/wavetable_core_synth.v",
+        "generator": "klt synthesize (Yosys)",
+        "argv": [
+          "klt",
+          "synthesize",
+          "signoff/t1-item1/wavetable_core/request.json",
+          "--check",
+          "signoff/t1-item1/wavetable_core/report.json",
+          "--pdk",
+          "gf180mcuD"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.1.dev55+g879d39bad82b",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/t1-item1/inventory.partial.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:bf9e4fc32aafada881eac85fd3a2c647d053d300bdda377b9080b4a7af32838c"
+    }
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "control_top",
+  "parameters": {},
+  "run_id": "out",
+  "status": "ok",
+  "instance_count": 7773,
+  "area_um2": 332388.4032,
+  "sequential_area_um2": 164613.6576,
+  "instance_counts_by_type": {
+    "gf180mcu_fd_sc_mcu9t5v0__and2_1": 116,
+    "gf180mcu_fd_sc_mcu9t5v0__and2_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_1": 52,
+    "gf180mcu_fd_sc_mcu9t5v0__and4_1": 11,
+    "gf180mcu_fd_sc_mcu9t5v0__and4_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_1": 72,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 170,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_2": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_1": 40,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi222_1": 5,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi222_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi22_1": 94,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi22_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_1": 280,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_12": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_2": 51,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_3": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_4": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_8": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_1": 108,
+    "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 353,
+    "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 2083,
+    "gf180mcu_fd_sc_mcu9t5v0__inv_1": 12,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 1829,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__mux4_1": 320,
+    "gf180mcu_fd_sc_mcu9t5v0__mux4_2": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 363,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_2": 8,
+    "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 85,
+    "gf180mcu_fd_sc_mcu9t5v0__nand3_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_1": 25,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 472,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_1": 90,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 37,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 41,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_1": 234,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_2": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__oai221_1": 13,
+    "gf180mcu_fd_sc_mcu9t5v0__oai222_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__oai22_1": 253,
+    "gf180mcu_fd_sc_mcu9t5v0__oai22_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_1": 30,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai32_1": 21,
+    "gf180mcu_fd_sc_mcu9t5v0__oai32_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai33_1": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_1": 49,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_1": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__or4_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__or4_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__tieh": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__tiel": 239,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_1": 110,
+    "gf180mcu_fd_sc_mcu9t5v0__xor2_1": 31
+  },
+  "leakage_power_nw": null,
+  "leakage_by_type_nw": null,
+  "timing": {
+    "source": "abc_stime",
+    "wire_load": null,
+    "critical_path_ps": 100006.58,
+    "delay_target_ps": null
+  },
+  "clock_targets": {
+    "clocks": [],
+    "delay_target_ps": null,
+    "delay_target_basis": "none",
+    "per_clock_enforced": false
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed (it is not shipped with the published klayout-tools package), so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`; from an installed package, `klt sta` with a `verilog` request gives a netlist-level timing estimate (needs OpenSTA)",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [],
+    "effective": [],
+    "validated": null,
+    "engine_supports_dont_use": null
+  },
+  "warnings": {
+    "total": 3,
+    "by_category": {
+      "latch_inferred": 3
+    },
+    "representatives": [
+      {
+        "category": "latch_inferred",
+        "count": 3,
+        "text": "Latch inferred for signal `\\control_top.\\i [2:0]' from process `\\control_top.$proc$rtl/control/control_top.sv:123$72': $auto$proc_dlatch.cc:543:proc_dlatch$5193"
+      }
+    ]
+  },
+  "memory_mapping": {
+    "status": "lowered_to_logic",
+    "reason": null,
+    "modules": [
+      {
+        "module": "control_top",
+        "status": "lowered_to_logic",
+        "elaborated_memories": 4,
+        "elaborated_memory_bits": 1352,
+        "pre_lowering_memories": 4,
+        "final_memories": 0
+      }
+    ],
+    "script_path": {
+      "path": "signoff/t1-item1/control_top/out/control_top_memory_evidence.ys",
+      "scope": "repo"
+    }
+  },
+  "blackbox_modules": [],
+  "netlist_path": {
+    "path": "signoff/t1-item1/control_top/out/control_top_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "6c5ffc1cf6610d50cab91c1e997faea4720f8346d195229f4624de8551b84cd5",
+  "script_path": {
+    "path": "signoff/t1-item1/control_top/out/synth_control_top.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "signoff/t1-item1/control_top/out/synth_control_top.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.8.1.dev55+g879d39bad82b",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "gf180mcuD",
+      "source": "search root: ~/.ciel",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80",
+      "content_hash": "sha256:c0b6946a2d48a4604c687a29d3c8b1e05b3da5a42866b21592eaacfeae6e9ca7",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:5f61030e3f127e9cb1d9809668f50b96aa9cb9fd476039fbb871ead7d5442a5b",
+      "role": "source"
+    },
+    "parameters": {}
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}

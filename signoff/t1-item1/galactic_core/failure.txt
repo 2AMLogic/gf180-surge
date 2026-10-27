@@ -1,0 +1,8 @@
+
+{
+  "schema_version": 1,
+  "error": {
+    "command": "synthesize",
+    "message": "yosys synthesis failed: rtl/effects/aw-49/galactic_core.sv:46: ERROR: syntax error, unexpected '[', expecting ')' or ',' or '='"
+  }
+}

@@ -1,0 +1,8 @@
+
+{
+  "schema_version": 1,
+  "error": {
+    "command": "synthesize",
+    "message": "yosys synthesis failed: rtl/effects/rf-rf-global2/rf_global2_core.sv:48: ERROR: syntax error, unexpected '[', expecting ')' or ',' or '='"
+  }
+}

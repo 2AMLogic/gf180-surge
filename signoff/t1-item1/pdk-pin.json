@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "doc": "External inputs pinned for T1 item 1 (#537) synthesizability evidence. Not copied into the repo; the PDK and cell library keep their own licenses. Host path is NOT the pin: identity is the revision and liberty content hash.",
+  "pdk": {
+    "name": "gf180mcuD",
+    "revision": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
+  },
+  "cell_library": "gf180mcu_fd_sc_mcu9t5v0",
+  "corner": "tt_025C_1v80",
+  "liberty": {
+    "name": "gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80",
+    "content_hash": "sha256:c0b6946a2d48a4604c687a29d3c8b1e05b3da5a42866b21592eaacfeae6e9ca7"
+  },
+  "tools": {
+    "yosys": "0.67+post",
+    "klt": "0.8.1.dev55+g879d39bad82b"
+  },
+  "claim": "synthesizability only: no P&R, timing, signoff, RTL-vs-netlist equivalence, or fidelity claim"
+}
