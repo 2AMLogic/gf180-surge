@@ -4,7 +4,8 @@
 # must never look like one that passed stays untouched.
 #
 # The only claim this gate makes: the committed report equals a fresh render
-# of the manifest by the pinned klayout-tools. It establishes no T1 evidence,
+# of the manifest by the pinned klayout-tools, and the committed T1 item 10
+# (repo hygiene) attestation envelope still reproduces and passes. It establishes no T1 evidence,
 # no fidelity, and no synthesis or hardware claim.
 #
 # The klayout-tools pin lives in signoff/requirements.txt only (one place).
@@ -57,3 +58,11 @@ jobs:
             exit 1
           fi
           echo "Committed signoff report matches a fresh klt signoff render."
+      - name: Re-attest T1 item 10 (repo hygiene) and compare with the committed envelope
+        run: |
+          set -uo pipefail
+          # --check re-runs the inventory's checks (local_only ones are skipped,
+          # carrying the committed outcome) and exits 0 only if the committed
+          # envelope still reproduces and passes; 3 = drifted or failing.
+          klt signoff --attest 10 --inventory signoff/hygiene-inventory.json \
+                      --check signoff/item-10.attestation.json

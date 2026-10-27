@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 10,
+  "description": "T1 item 10 (repo hygiene) inventory: README, LICENSE and the three CI workflows exist, and the four stdlib-only repository checks that ci.yml also runs exit 0. Toolchain-dependent CI jobs (Icarus, Verilator, pytest, slow controls) are NOT attested here and are not listed. Hygiene evidence only: no fidelity, synthesis or hardware claim, and the spec table stays not-frozen until #12.",
+  "hygiene": [
+    "README.md",
+    "LICENSE",
+    ".github/workflows/ci.yml",
+    ".github/workflows/signoff.yml",
+    ".github/workflows/slow-controls.yml"
+  ],
+  "checks": [
+    {
+      "name": "census-consistency",
+      "argv": [
+        "python3",
+        "tools/check_census_consistency.py"
+      ]
+    },
+    {
+      "name": "provenance",
+      "argv": [
+        "python3",
+        "tools/check_provenance.py"
+      ]
+    },
+    {
+      "name": "artifact-manifests",
+      "argv": [
+        "python3",
+        "tools/check_artifact_manifests.py"
+      ]
+    },
+    {
+      "name": "backlog-dag-check",
+      "argv": [
+        "python3",
+        "tools/compile_backlog_dag.py",
+        "--check"
+      ]
+    }
+  ]
+}

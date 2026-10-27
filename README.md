@@ -206,7 +206,8 @@ The T1 state of this block is graded by `klt signoff`, not hand-read. The
 verdict of record is
 [signoff/block-manifest.signoff.json](signoff/block-manifest.signoff.json),
 rendered from [signoff/block-manifest.json](signoff/block-manifest.json), which
-currently cites no evidence (every item `unmet`, `tier: null`). The
+currently cites one envelope: T1 item 10 (repo hygiene). Item 10 reads `met`;
+the other ten items are `unmet` (`tier: null`). The
 `signoff` workflow re-renders it and fails on any byte difference. This is
 separate from the backlog DAG above, which tracks fidelity and coverage. The
 report establishes no T1 evidence, fidelity, synthesis or hardware claim.
@@ -218,6 +219,22 @@ are both valid):
 ```sh
 python3 -m venv /tmp/klt-venv && /tmp/klt-venv/bin/pip install -r signoff/requirements.txt
 /tmp/klt-venv/bin/klt signoff --manifest signoff/block-manifest.json --format json > signoff/block-manifest.signoff.json
+```
+
+Item 10 is **hygiene evidence only**: it attests that the README, `LICENSE` and
+the three workflows listed in
+[signoff/hygiene-inventory.json](signoff/hygiene-inventory.json) exist and that
+the four stdlib-only repository checks it declares exit 0. It makes no
+fidelity, synthesis, hardware or preset-quality claim, and the toolchain-based
+CI jobs (Icarus, Verilator, pytest, slow controls) are not attested by it. The
+README spec table stays the not-yet-frozen profile until #12 freezes it, and
+item 10 is re-attested then. After changing any listed hygiene file or the
+inventory, re-attest, then re-render the report above (the manifest pins the
+inventory's sha256):
+
+```sh
+/tmp/klt-venv/bin/klt signoff --attest 10 --inventory signoff/hygiene-inventory.json -o signoff/item-10.attestation.json
+/tmp/klt-venv/bin/klt signoff --attest 10 --inventory signoff/hygiene-inventory.json --check signoff/item-10.attestation.json
 ```
 
 ## License
