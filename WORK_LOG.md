@@ -2,6 +2,12 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-27
+
+- **PR #541**: feat: attest T1 item 10 repo hygiene with klt signoff --attest and bump klt pin
+- **Issue #539** (closed): T1 item 10 (repo hygiene): hygiene inventory over README, license and CI, attested with klt signoff --attest 10
+- **PR #540**: feat: add partial gf180mcu synthesis record for T1 item 1
+
 ### 2026-10-23
 
 - **PR #515**: fix(rtl): promote rf_send34_core cfg and block inputs to ports

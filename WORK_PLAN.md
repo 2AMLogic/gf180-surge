@@ -37,20 +37,18 @@ Issues currently being built (`loom:building`).
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#537**: T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory
-- **#539**: T1 item 10 (repo hygiene): hygiene inventory over README, license and CI, attested with klt signoff --attest 10
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#541**: feat: attest T1 item 10 repo hygiene with klt signoff --attest and bump klt pin
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#540**: feat: add partial gf180mcu synthesis record for T1 item 1
+_None._
 
 ## Proposed
 
@@ -79,7 +77,6 @@ Issues carrying `loom:curated`.
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#537**: T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory *(curated)*
-- **#539**: T1 item 10 (repo hygiene): hygiene inventory over README, license and CI, attested with klt signoff --attest 10 *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -103,10 +100,10 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 3 |
 | Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 5 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 24 |
+| In Progress (`loom:building`) | 3 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 23 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
