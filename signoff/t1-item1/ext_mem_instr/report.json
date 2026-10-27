@@ -1,0 +1,164 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "ext_mem_instr",
+  "parameters": {},
+  "run_id": "out",
+  "status": "ok",
+  "instance_count": 8856,
+  "area_um2": 257391.5904,
+  "sequential_area_um2": 73653.3504,
+  "instance_counts_by_type": {
+    "gf180mcu_fd_sc_mcu9t5v0__and2_1": 331,
+    "gf180mcu_fd_sc_mcu9t5v0__and2_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_1": 81,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_2": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__and4_1": 91,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_1": 190,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_2": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 427,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_2": 7,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_1": 53,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi222_1": 94,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi22_1": 279,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_1": 214,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_2": 5,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_3": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_1": 107,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 703,
+    "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 932,
+    "gf180mcu_fd_sc_mcu9t5v0__inv_1": 11,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 129,
+    "gf180mcu_fd_sc_mcu9t5v0__mux4_1": 48,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 1237,
+    "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 160,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_1": 110,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 1067,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_1": 179,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 57,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 54,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_1": 706,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_2": 5,
+    "gf180mcu_fd_sc_mcu9t5v0__oai221_1": 21,
+    "gf180mcu_fd_sc_mcu9t5v0__oai222_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai22_1": 50,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_1": 21,
+    "gf180mcu_fd_sc_mcu9t5v0__oai32_1": 15,
+    "gf180mcu_fd_sc_mcu9t5v0__oai33_1": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_1": 128,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_1": 13,
+    "gf180mcu_fd_sc_mcu9t5v0__or4_1": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__tieh": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__tiel": 60,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_1": 652,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_2": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor3_1": 139,
+    "gf180mcu_fd_sc_mcu9t5v0__xor2_1": 397,
+    "gf180mcu_fd_sc_mcu9t5v0__xor2_2": 15,
+    "gf180mcu_fd_sc_mcu9t5v0__xor3_1": 33,
+    "gf180mcu_fd_sc_mcu9t5v0__xor3_2": 2
+  },
+  "leakage_power_nw": null,
+  "leakage_by_type_nw": null,
+  "timing": {
+    "source": "abc_stime",
+    "wire_load": null,
+    "critical_path_ps": 45462.59,
+    "delay_target_ps": null
+  },
+  "clock_targets": {
+    "clocks": [],
+    "delay_target_ps": null,
+    "delay_target_basis": "none",
+    "per_clock_enforced": false
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed (it is not shipped with the published klayout-tools package), so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`; from an installed package, `klt sta` with a `verilog` request gives a netlist-level timing estimate (needs OpenSTA)",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [],
+    "effective": [],
+    "validated": null,
+    "engine_supports_dont_use": null
+  },
+  "warnings": {
+    "total": 0,
+    "by_category": {},
+    "representatives": []
+  },
+  "memory_mapping": {
+    "status": "lowered_to_logic",
+    "reason": null,
+    "modules": [
+      {
+        "module": "ext_mem_instr",
+        "status": "lowered_to_logic",
+        "elaborated_memories": 2,
+        "elaborated_memory_bits": 192,
+        "pre_lowering_memories": 2,
+        "final_memories": 0
+      }
+    ],
+    "script_path": {
+      "path": "signoff/t1-item1/ext_mem_instr/out/ext_mem_instr_memory_evidence.ys",
+      "scope": "repo"
+    }
+  },
+  "blackbox_modules": [],
+  "netlist_path": {
+    "path": "signoff/t1-item1/ext_mem_instr/out/ext_mem_instr_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "784d758cc14dab48c21ad942b624c004afad0ac913c39bf4c65f5998cac92a54",
+  "script_path": {
+    "path": "signoff/t1-item1/ext_mem_instr/out/synth_ext_mem_instr.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "signoff/t1-item1/ext_mem_instr/out/synth_ext_mem_instr.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.8.1.dev55+g879d39bad82b",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "gf180mcuD",
+      "source": "search root: ~/.ciel",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80",
+      "content_hash": "sha256:c0b6946a2d48a4604c687a29d3c8b1e05b3da5a42866b21592eaacfeae6e9ca7",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:7b1c10168265c82e1a897ec4a799b49e54069aa0d1a52864ec97b474ac5c87b4",
+      "role": "source"
+    },
+    "parameters": {}
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}

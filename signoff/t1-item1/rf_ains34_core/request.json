@@ -1,0 +1,17 @@
+{
+  "schema": "klt.synthesize.request/1",
+  "engine": "yosys",
+  "sources": [
+    "../../../rtl/effects/rf-rf-ains34/rf_ains34_core.sv"
+  ],
+  "hdl_toplevel": "rf_ains34_core",
+  "pdk": {
+    "cell_library": "gf180mcu_fd_sc_mcu9t5v0"
+  },
+  "constraints": {
+    "clock_period_ns": null
+  },
+  "outputs": {
+    "dir": "out"
+  }
+}

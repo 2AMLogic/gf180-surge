@@ -1,0 +1,17 @@
+{
+  "schema": "klt.synthesize.request/1",
+  "engine": "yosys",
+  "sources": [
+    "../../../rtl/control/control_top.sv"
+  ],
+  "hdl_toplevel": "control_top",
+  "pdk": {
+    "cell_library": "gf180mcu_fd_sc_mcu9t5v0"
+  },
+  "constraints": {
+    "clock_period_ns": null
+  },
+  "outputs": {
+    "dir": "out"
+  }
+}

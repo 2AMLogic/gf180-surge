@@ -1,0 +1,8 @@
+
+{
+  "schema_version": 1,
+  "error": {
+    "command": "synthesize",
+    "message": "yosys synthesis failed: rtl/effects/reverb1/reverb1_core.sv:52: ERROR: syntax error, unexpected '[', expecting ')' or ',' or '='"
+  }
+}

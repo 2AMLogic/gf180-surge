@@ -1,0 +1,8 @@
+
+{
+  "schema_version": 1,
+  "error": {
+    "command": "synthesize",
+    "message": "yosys synthesis failed: rtl/effects/rf-rf-send34/rf_send34_core.sv:66: ERROR: syntax error, unexpected '[', expecting ')' or ',' or '='"
+  }
+}

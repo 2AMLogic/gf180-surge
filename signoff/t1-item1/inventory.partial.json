@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 1,
+  "description": "PARTIAL (3 of 11 product groups synthesize with native Yosys; 8 BLOCKED, see signoff/t1-item1/README.md). Not cited by signoff/block-manifest.json.",
+  "sources": [
+    "rtl/control/control_top.sv",
+    "rtl/instrumentation/ext_mem_instr.sv",
+    "rtl/oscillators/wavetable/wavetable_core.sv"
+  ],
+  "derived": [
+    {
+      "path": "signoff/t1-item1/control_top/control_top_synth.v",
+      "generator": "klt synthesize (Yosys)",
+      "check": {
+        "argv": [
+          "klt",
+          "synthesize",
+          "signoff/t1-item1/control_top/request.json",
+          "--check",
+          "signoff/t1-item1/control_top/report.json",
+          "--pdk",
+          "gf180mcuD"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "signoff/t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+      "generator": "klt synthesize (Yosys)",
+      "check": {
+        "argv": [
+          "klt",
+          "synthesize",
+          "signoff/t1-item1/ext_mem_instr/request.json",
+          "--check",
+          "signoff/t1-item1/ext_mem_instr/report.json",
+          "--pdk",
+          "gf180mcuD"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "signoff/t1-item1/wavetable_core/wavetable_core_synth.v",
+      "generator": "klt synthesize (Yosys)",
+      "check": {
+        "argv": [
+          "klt",
+          "synthesize",
+          "signoff/t1-item1/wavetable_core/request.json",
+          "--check",
+          "signoff/t1-item1/wavetable_core/report.json",
+          "--pdk",
+          "gf180mcuD"
+        ],
+        "local_only": true
+      }
+    }
+  ]
+}
