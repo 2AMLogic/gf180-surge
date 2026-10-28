@@ -28,6 +28,7 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#16**: SXT-023: Implement Delay and EQ
+- **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#473**: RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 
 ## In Progress
@@ -35,8 +36,8 @@ Human-approved issues ready for implementation (`loom:issue`).
 Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
-- **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **#544**: T1 items 2/3/4/11: gf180mcu physical flow (P&R, DRC, LVS, ERC) — split from #24, no FPGA dependency
 
 ## PRs Awaiting Review
 
@@ -77,6 +78,7 @@ Issues carrying `loom:curated`.
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#537**: T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory *(curated)*
+- **#544**: T1 items 2/3/4/11: gf180mcu physical flow (P&R, DRC, LVS, ERC) — split from #24, no FPGA dependency *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -99,11 +101,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 3 |
-| Ready (`loom:issue`) | 2 |
+| Ready (`loom:issue`) | 3 |
 | In Progress (`loom:building`) | 3 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 23 |
+| Curated | 24 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
