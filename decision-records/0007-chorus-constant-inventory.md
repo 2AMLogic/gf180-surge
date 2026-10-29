@@ -1,6 +1,6 @@
 # 0007: Chorus constant inventory — no opaque designed constants (SXT-028c)
 
-- **Status:** PROPOSED — pending owner ratification
+- **Status:** ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data)
 - **Date:** 2026-09-23
 - **Decided by:** Loom builder agent implementing leaf #55 (SXT-028c),
   under the governance authority of issue [#25](https://github.com/2AMLogic/gf180-surge/issues/25)

@@ -1,6 +1,6 @@
 # 0008: Sine wave_remap streaming-migration table (SXT-040)
 
-- **Status**: PROPOSED — pending owner ratification
+- **Status**: ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data)
 - **Date**: 2026-09-24
 - **Decided by**: Loom implementer agent correcting judge findings on PR
   #92 (SXT-040, issue #74), under the governance authority of issue
