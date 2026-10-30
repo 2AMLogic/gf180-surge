@@ -205,9 +205,9 @@ def control_a_status_differs(tmp: Path) -> list[str]:
     d = _copy_packets(tmp)
     p = d / "0003.md"
     t = p.read_text(encoding="utf-8")
-    assert "PROPOSED — pending owner ratification" in t
-    p.write_text(t.replace("PROPOSED — pending owner ratification",
-                           "PROPOSED — pending owner review", 1), encoding="utf-8")
+    assert "ratified 2026-10-29 by the operator" in t
+    p.write_text(t.replace("ratified 2026-10-29 by the operator",
+                           "ratified 2026-10-28 by the operator", 1), encoding="utf-8")
     return lint(d)
 
 
