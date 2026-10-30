@@ -1,0 +1,40 @@
+{
+  "schema": "klt.place-and-route.request/1",
+  "engine": "openroad",
+  "netlist": "../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+  "hdl_toplevel": "ext_mem_instr",
+  "pdk": {
+    "cell_library": "gf180mcu_fd_sc_mcu9t5v0",
+    "corner": "tt_025C_1v80"
+  },
+  "floorplan": {
+    "method": "explicit",
+    "die_area_um": [
+      0,
+      0,
+      1100,
+      1100
+    ],
+    "core_area_um": [
+      10,
+      10,
+      1090,
+      1090
+    ],
+    "site": "GF018hv5v_green_sc9"
+  },
+  "io": {
+    "layer_h": "Metal3",
+    "layer_v": "Metal2"
+  },
+  "power": {
+    "preset": "gf180mcu_9t_6M"
+  },
+  "constraints": {
+    "clock_port": "clk",
+    "clock_period_ns": 20.0
+  },
+  "seed": 1,
+  "target_stage": "route",
+  "portable_paths": true
+}

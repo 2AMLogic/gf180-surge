@@ -1,0 +1,29 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": {
+    "file": "control_top.gds",
+    "deck": "gf180mcu",
+    "top": "control_top",
+    "abstract_cells": [
+      "gf180mcu_fd_sc_mcu9t5v0__*"
+    ]
+  },
+  "reference": {
+    "netlist": "control_top.v",
+    "form": "gate-level-verilog",
+    "library": "gf180mcu_fd_sc_mcu9t5v0",
+    "top": "control_top"
+  },
+  "options": {
+    "power_connectivity": {
+      "expected_nets": {
+        "VDD": "VDD",
+        "VNW": "VDD",
+        "VPW": "VSS",
+        "VSS": "VSS"
+      }
+    }
+  },
+  "portable_paths": true
+}
