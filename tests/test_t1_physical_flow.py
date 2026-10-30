@@ -32,7 +32,8 @@ def product_groups():
 
 
 def physical_groups():
-    return sorted(p.parent.name for p in BASE.glob("*/exit_status.json"))
+    return sorted(p.parent.name for p in BASE.glob("*/exit_status.json")
+                  if p.parent.name != "negative-control")
 
 
 def read(group, name):
@@ -184,6 +185,27 @@ class T1PhysicalTriage(unittest.TestCase):
             self.assertEqual(
                 load(g, "exit_status.json")["drc"] == 0, drc["status"] == "clean", g)
             self.assertFalse(drc["coverage"]["nothing_checked"], g)
+
+    def test_drc_clean_after_flow_triage(self):
+        # Result of the triage config above: all three streams are DRC-clean
+        # under the curated gf180mcu deck (was 94045 / 107856 / 19850).
+        for g in physical_groups():
+            self.assertEqual(load(g, "drc.report.json")["status"], "clean", g)
+
+    def test_ext_mem_instr_lvs_mismatch_is_recorded_with_named_instances(self):
+        # Undiagnosed physical cause; the failing check stays recorded, not
+        # waived. Four instances (clkload1/2/3 and _10285_) and six net splits.
+        lvs = load("ext_mem_instr", "lvs.report.json")
+        self.assertEqual(lvs["status"], "mismatch")
+        errs = [m for m in lvs["mismatches"] if m["severity"] == "error"]
+        self.assertEqual(len(errs), lvs["error_count"])
+        self.assertEqual(lvs["category_error_counts"], {"net.split": 6, "topology": 8})
+        ref = {m["instance"]["reference"] for m in errs
+               if m["instance"] and m["instance"]["reference"]}
+        self.assertEqual(ref, {"CLKLOAD1", "CLKLOAD2", "CLKLOAD3", "_10285_"})
+        self.assertNotEqual(load("ext_mem_instr", "exit_status.json")["lvs"], 0)
+        for g in ("control_top", "wavetable_core"):
+            self.assertEqual(load(g, "lvs.report.json")["status"], "match", g)
 
     def test_erc_not_checked_reason_is_missing_antenna_pdk(self):
         # klt 0.8.0 `erc --pdk` has no gf180mcu antenna table: a tool gap,

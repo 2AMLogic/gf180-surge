@@ -28,7 +28,51 @@
     "layer_v": "Metal2"
   },
   "power": {
-    "preset": "gf180mcu_9t_6M"
+    "straps": [
+      {
+        "layer": "Metal1",
+        "width_um": 0.9,
+        "pitch_um": 5.04,
+        "offset_um": 0.0,
+        "followpins": true
+      },
+      {
+        "layer": "Metal4",
+        "width_um": 4.48,
+        "pitch_um": 44.8,
+        "offset_um": 22.4,
+        "spacing_um": 0.56
+      },
+      {
+        "layer": "Metal5",
+        "width_um": 4.48,
+        "pitch_um": 89.6,
+        "offset_um": 44.8
+      }
+    ],
+    "connects": [
+      {
+        "layers": [
+          "Metal1",
+          "Metal4"
+        ],
+        "max_columns": 5,
+        "ongrid": [
+          "Metal2",
+          "Metal3",
+          "Metal4"
+        ]
+      },
+      {
+        "layers": [
+          "Metal4",
+          "Metal5"
+        ]
+      }
+    ],
+    "tapcell": {
+      "distance_um": 30
+    }
   },
   "constraints": {
     "clock_port": "clk",
