@@ -1,0 +1,6 @@
+{
+  "base_netlist": "signoff/t1-physical/wavetable_core/wavetable_core.v",
+  "line": 624,
+  "from": " gf180mcu_fd_sc_mcu9t5v0__tieh _0513_ (.Z(_0000_));",
+  "to": " gf180mcu_fd_sc_mcu9t5v0__tiel _0513_ (.ZN(_0000_));"
+}

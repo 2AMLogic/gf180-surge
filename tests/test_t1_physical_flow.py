@@ -32,7 +32,8 @@ def product_groups():
 
 
 def physical_groups():
-    return sorted(p.parent.name for p in BASE.glob("*/exit_status.json"))
+    return sorted(p.parent.name for p in BASE.glob("*/exit_status.json")
+                  if p.parent.name != "negative-control")
 
 
 def read(group, name):
@@ -145,6 +146,111 @@ class T1Physical(unittest.TestCase):
         manifest = {"evidence": {"3": {"file": "x"}}}
         self.assertFalse(
             citation_ok(manifest, physical_groups(), product_groups()))
+
+
+NC = BASE / "negative-control"
+
+
+def nc_json(name):
+    f = NC / name
+    if f.exists():
+        return json.loads(f.read_bytes())
+    return json.loads(gzip.decompress((NC / (name + ".gz")).read_bytes()))
+
+
+def mutated_netlist():
+    m = json.loads((NC / "mutation.json").read_text())
+    lines = (ROOT / m["base_netlist"]).read_text().split("\n")
+    assert lines[m["line"] - 1] == m["from"], "base netlist drifted"
+    lines[m["line"] - 1] = m["to"]
+    return "\n".join(lines)
+
+
+class T1PhysicalTriage(unittest.TestCase):
+    """#544 Phase A2: triage pins. Recorded, not waived."""
+
+    def test_flow_config_matches_triage(self):
+        # DRC triage: tap pitch 30 um (rule cap 15 um) and no pdngen
+        # split_cuts (source of every ongrid / via width hit).
+        for g in physical_groups():
+            power = json.loads((BASE / g / "request.json").read_text())["power"]
+            self.assertEqual(power["tapcell"], {"distance_um": 30}, g)
+            for c in power["connects"]:
+                self.assertNotIn("split_cuts", c, g)
+
+    def test_drc_exit_matches_report(self):
+        for g in physical_groups():
+            drc = load(g, "drc.report.json")
+            self.assertEqual(drc["violation_count"], sum(drc["rule_counts"].values()), g)
+            self.assertEqual(
+                load(g, "exit_status.json")["drc"] == 0, drc["status"] == "clean", g)
+            self.assertFalse(drc["coverage"]["nothing_checked"], g)
+
+    def test_drc_clean_after_flow_triage(self):
+        # Result of the triage config above: all three streams are DRC-clean
+        # under the curated gf180mcu deck (was 94045 / 107856 / 19850).
+        for g in physical_groups():
+            self.assertEqual(load(g, "drc.report.json")["status"], "clean", g)
+
+    def test_ext_mem_instr_lvs_mismatch_is_recorded_with_named_instances(self):
+        # Undiagnosed physical cause; the failing check stays recorded, not
+        # waived. Four instances (clkload1/2/3 and _10285_) and six net splits.
+        lvs = load("ext_mem_instr", "lvs.report.json")
+        self.assertEqual(lvs["status"], "mismatch")
+        errs = [m for m in lvs["mismatches"] if m["severity"] == "error"]
+        self.assertEqual(len(errs), lvs["error_count"])
+        self.assertEqual(lvs["category_error_counts"], {"net.split": 6, "topology": 8})
+        ref = {m["instance"]["reference"] for m in errs
+               if m["instance"] and m["instance"]["reference"]}
+        self.assertEqual(ref, {"CLKLOAD1", "CLKLOAD2", "CLKLOAD3", "_10285_"})
+        self.assertNotEqual(load("ext_mem_instr", "exit_status.json")["lvs"], 0)
+        for g in ("control_top", "wavetable_core"):
+            self.assertEqual(load(g, "lvs.report.json")["status"], "match", g)
+
+    def test_erc_not_checked_reason_is_missing_antenna_pdk(self):
+        # klt 0.8.0 `erc --pdk` has no gf180mcu antenna table: a tool gap,
+        # not an input this repo can supply. Never reported as met.
+        for g in physical_groups():
+            erc = load(g, "erc.report.json")
+            self.assertEqual(erc["status"], "not_checked", g)
+            self.assertIsNone(erc["pdk"], g)
+            self.assertEqual(erc["coverage"]["checked"], [], g)
+            self.assertEqual(
+                {s["reason"] for s in erc["coverage"]["skipped"]},
+                {"missing_antenna_pdk"}, g)
+            self.assertNotEqual(load(g, "exit_status.json")["erc"], 0, g)
+
+
+class T1PhysicalNegativeControl(unittest.TestCase):
+    """The DRC and LVS checks must demonstrably fail on violated inputs."""
+
+    def test_drc_sliver_fails_named_rule(self):
+        drc = nc_json("drc.report.json")
+        self.assertEqual(drc["status"], "violations")
+        self.assertEqual(drc["rule_counts"], {"metal2.width.1": 1})
+        self.assertEqual(
+            drc["provenance"]["input"]["content_hash"],
+            "sha256:" + sha((NC / "drc-sliver.gds").read_bytes()))
+        self.assertEqual(nc_json("exit_status.json")["drc"], 3)
+
+    def test_lvs_mutation_fails_against_committed_stream(self):
+        lvs = nc_json("lvs.report.json")
+        self.assertEqual(lvs["status"], "mismatch")
+        self.assertGreater(lvs["error_count"], 0)
+        env = lvs["environment"]
+        self.assertEqual(
+            env["layout_sha256"], sha(read("wavetable_core", "wavetable_core.gds")))
+        self.assertEqual(env["reference_sha256"], sha(mutated_netlist().encode()))
+        self.assertNotEqual(
+            sha(mutated_netlist().encode()),
+            sha(read("wavetable_core", "wavetable_core.v")))
+        self.assertEqual(nc_json("exit_status.json")["lvs"], 3)
+
+    def test_clean_group_stays_clean_where_control_fails(self):
+        # The same checks pass on the unmutated wavetable_core, so the control
+        # failure is attributable to the injected defect.
+        self.assertEqual(load("wavetable_core", "lvs.report.json")["status"], "match")
+        self.assertEqual(load("wavetable_core", "drc.report.json")["status"], "clean")
 
 
 if __name__ == "__main__":

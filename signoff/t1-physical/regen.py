@@ -29,6 +29,33 @@ PIN = (ROOT / "signoff" / "requirements.txt").read_text().strip()
 # routable utilization. Block-level, pin-limited; not a floorplan proposal.
 DIE_UM = {"wavetable_core": 500, "control_top": 1000, "ext_mem_instr": 1100}
 LVS_POWER = {"VDD": "VDD", "VNW": "VDD", "VPW": "VSS", "VSS": "VSS"}
+# Power delivery: the ORFS `gf180mcu_9t_6M` strap geometry, written out so two
+# flow settings can differ from the preset (#544 triage; measured on
+# wavetable_core, DRC 19850 -> 0 with both changes, 19096 with the tapcell
+# change alone, 19096 with `split_cuts` alone):
+#  - `tapcell.distance_um` 30 (preset: 100). The curated deck's
+#    comp.tap_distance.{nwell,psub}.mv.1 rules cap tap distance at 15 um;
+#    a 100 um pitch cannot meet them.
+#  - no `split_cuts` on the Metal1-Metal4 connect (preset: Metal3 0.128).
+#    pdngen's 0.128 um cuts are what produce every metal2/3/4.ongrid.1,
+#    via2/3.ongrid.1 and via2/3.width.1 hit (VIA_via2_3_* cells). `ongrid`
+#    is kept as in the preset.
+POWER = {
+    "straps": [
+        {"layer": "Metal1", "width_um": 0.9, "pitch_um": 5.04,
+         "offset_um": 0.0, "followpins": True},
+        {"layer": "Metal4", "width_um": 4.48, "pitch_um": 44.8,
+         "offset_um": 22.4, "spacing_um": 0.56},
+        {"layer": "Metal5", "width_um": 4.48, "pitch_um": 89.6,
+         "offset_um": 44.8},
+    ],
+    "connects": [
+        {"layers": ["Metal1", "Metal4"], "max_columns": 5,
+         "ongrid": ["Metal2", "Metal3", "Metal4"]},
+        {"layers": ["Metal4", "Metal5"]},
+    ],
+    "tapcell": {"distance_um": 30},
+}
 
 
 def klt(*args):
@@ -71,7 +98,7 @@ def run_group(top):
                       "core_area_um": [10, 10, edge - 10, edge - 10],
                       "site": SITE},
         "io": {"layer_h": "Metal3", "layer_v": "Metal2"},
-        "power": {"preset": "gf180mcu_9t_6M"},
+        "power": POWER,
         "constraints": {"clock_port": "clk", "clock_period_ns": 20.0},
         "seed": 1,
         "target_stage": "route",
@@ -95,11 +122,22 @@ def run_group(top):
     shutil.copy(out / f"{top}.gds", d / f"{top}.gds")
     shutil.copy(out / f"{top}.v", d / f"{top}.v")
     shutil.rmtree(scratch, ignore_errors=True)
+    check_group(top, status)
 
+
+def check_group(top, status, reuse_drc=False):
+    """DRC, LVS and ERC on the routed stream already in the group directory."""
+    d = BASE / top
     gds = (d / f"{top}.gds").relative_to(ROOT)
-    p = klt("drc", gds, "--deck", "gf180mcu", "--pdk", PDK, "--format", "json")
-    status["drc"] = p.returncode
-    (d / "drc.report.json").write_text(p.stdout)
+    if reuse_drc:
+        # Resume after an interrupted run: the DRC report is already on disk;
+        # its exit code is 0 when clean, 3 (klt's "findings") otherwise.
+        rep = json.loads((d / "drc.report.json").read_text())
+        status["drc"] = 0 if rep["status"] == "clean" else 3
+    else:
+        p = klt("drc", gds, "--deck", "gf180mcu", "--pdk", PDK, "--format", "json")
+        status["drc"] = p.returncode
+        (d / "drc.report.json").write_text(p.stdout)
 
     write_json(d / "lvs.request.json", {
         "schema": "klt.lvs.request/1",
@@ -126,7 +164,17 @@ def run_group(top):
 
 
 if __name__ == "__main__":
-    only = set(sys.argv[1:])
+    # `--checks-only` resumes after place-and-route: reuses the unpacked
+    # `<g>.gds` and `pnr.report.json` left by an interrupted run;
+    # `--reuse-drc` also keeps the unpacked `drc.report.json`.
+    args = sys.argv[1:]
+    checks_only = "--checks-only" in args
+    only = {a for a in args if not a.startswith("--")}
     for top in DIE_UM:
-        if not only or top in only:
+        if only and top not in only:
+            continue
+        if checks_only:
+            check_group(top, {"place-and-route": 0},
+                        reuse_drc="--reuse-drc" in args)
+        else:
             run_group(top)
