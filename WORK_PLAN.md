@@ -57,7 +57,6 @@ Issues carrying `loom:curated`.
 
 - **#12**: SXT-017: Freeze profile v1 *(curated)*
 - **#16**: SXT-023: Implement Delay and EQ *(curated)*
-- **#25**: SXT-019: Reuse substrate adoption decision *(curated)*
 - **#70**: SXT-036: voice leaf — modulation behavior: velocity *(curated)*
 - **#72**: SXT-038: voice leaf — filter algorithm: LP 24 dB *(curated)*
 - **#94**: SXT-028c follow-up: pin the tap re-render hash pair for committed reference fixtures *(curated)*
@@ -105,7 +104,7 @@ Issues carrying `loom:curated`.
 | In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 24 |
+| Curated | 23 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
