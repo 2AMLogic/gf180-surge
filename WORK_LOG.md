@@ -2,6 +2,10 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-30
+
+- **PR #549**: feat: add T1 physical-flow evidence for 3 synthesized product groups
+
 ### 2026-10-27
 
 - **PR #541**: feat: attest T1 item 10 repo hygiene with klt signoff --attest and bump klt pin
