@@ -125,13 +125,19 @@ def run_group(top):
     check_group(top, status)
 
 
-def check_group(top, status):
+def check_group(top, status, reuse_drc=False):
     """DRC, LVS and ERC on the routed stream already in the group directory."""
     d = BASE / top
     gds = (d / f"{top}.gds").relative_to(ROOT)
-    p = klt("drc", gds, "--deck", "gf180mcu", "--pdk", PDK, "--format", "json")
-    status["drc"] = p.returncode
-    (d / "drc.report.json").write_text(p.stdout)
+    if reuse_drc:
+        # Resume after an interrupted run: the DRC report is already on disk;
+        # its exit code is 0 when clean, 3 (klt's "findings") otherwise.
+        rep = json.loads((d / "drc.report.json").read_text())
+        status["drc"] = 0 if rep["status"] == "clean" else 3
+    else:
+        p = klt("drc", gds, "--deck", "gf180mcu", "--pdk", PDK, "--format", "json")
+        status["drc"] = p.returncode
+        (d / "drc.report.json").write_text(p.stdout)
 
     write_json(d / "lvs.request.json", {
         "schema": "klt.lvs.request/1",
@@ -159,7 +165,8 @@ def check_group(top, status):
 
 if __name__ == "__main__":
     # `--checks-only` resumes after place-and-route: reuses the unpacked
-    # `<g>.gds` and `pnr.report.json` left by an interrupted run.
+    # `<g>.gds` and `pnr.report.json` left by an interrupted run;
+    # `--reuse-drc` also keeps the unpacked `drc.report.json`.
     args = sys.argv[1:]
     checks_only = "--checks-only" in args
     only = {a for a in args if not a.startswith("--")}
@@ -167,6 +174,7 @@ if __name__ == "__main__":
         if only and top not in only:
             continue
         if checks_only:
-            check_group(top, {"place-and-route": 0})
+            check_group(top, {"place-and-route": 0},
+                        reuse_drc="--reuse-drc" in args)
         else:
             run_group(top)
