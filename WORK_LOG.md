@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-10-31
+
+- **PR #553**: docs: record ext_mem_instr LVS root cause and klt --check reproducibility
+- **Issue #544** (closed): T1 items 2/3/4/11: gf180mcu physical flow (P&R, DRC, LVS, ERC) — split from #24, no FPGA dependency
+
 ### 2026-10-30
 
 - **PR #551**: fix: triage T1 physical-flow findings and clear DRC via power config
