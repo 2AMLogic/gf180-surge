@@ -53,13 +53,32 @@ The other two groups match. `ext_mem_instr` reports 14 errors (8 topology, 6
 - layout nets `VDD`, `VSS`, `$15509`, `$16017`, `$21170`, `$5283` reported as
   split (the reference net's role is divided across several layout nets).
 
-Reading: those four cells are not joined to the supply or clock nets that the
-reference connects them to (three are CTS dummy loads with an unconnected
-output). The cause was not established: DRC and P&R report no routing
-violations, other `clkload` cells of the same style match, and the cells sit
-in ordinary core rows. Root cause (a placement/route defect versus an
-extraction or abstract-pin artefact) is open. The mismatch stays recorded as a
-failing LVS check.
+Cause (measured, #544 Phase A3): the detailed router left the input pin of
+these four cells unconnected, so they are opens in the layout, not an
+extraction artefact. `klt extract` of the committed stream (same deck,
+`abstract_cells`) puts each cell's `I` pin on a net with no other pin:
+`clkinv_12_0` `$21170`, `clkinv_12_1` `$5283`, `clkinv_16_0` `$16017`,
+`inv_8_0` `$15509`. The reference connects `_10285_`'s `I` to `net331` (which
+fans out to many gates) and the three `CLKLOAD*` inputs to clock-tree nets.
+`clkinv_12_0` is the real logic inverter `_10285_` (its output `$18523` drives
+an `aoi22`, `buf_12`, `nor2` and `xnor2`), so the layout has a floating gate
+input there; the other three are CTS dummy loads whose output is also
+unconnected, which is why they match nothing. In the stream, the Metal1
+polygon over the `I` pin of all four has no Via1 touching it, while the
+sampled `clkinv_2` cells (which match) have one. The remaining `VDD`/`VSS`/
+`$N` `net.split` entries are the same defect seen from the nets. Two other
+checks are consistent with this: everything else in the design extracts and
+matches (9544 nets), and P&R reports 0 unrouted nets, but its
+`partially_routed_net_count` is `null` ("OpenROAD exposes no per-net
+connectivity check; only nets with no routed wire at all are counted"), so
+an open pin on an otherwise routed net is invisible to it.
+
+Not established: why the router skipped these four pins (all are the larger
+inverter masters; `clkinv_1`/`clkinv_2` are fine). No flow setting was
+identified from this evidence that fixes it, and a speculative ~40 minute
+re-run was not made, so `regen.py` is unchanged and the mismatch stays a
+recorded failing LVS check. The extraction and geometry probe were run ad hoc
+and are not committed.
 
 ### ERC: `not_checked` is a tool gap, not a missing input
 Every gate reports `antenna_verdict: unchecked` with reason
@@ -69,12 +88,21 @@ antenna table to load, so supplying the supply spec (which already declares
 is reported as not_checked, never as a pass.
 
 ### Reproducibility
-`klt drc --check <report> <stream> --rerun` on the committed `wavetable_core`
-stream re-ran the deck and agreed on every verdict-bearing field (status,
-violation count, rule counts, input hash). It still exited 3: the one drift
-reported is `provenance.pdk` (`fresh: null`, the rerun path did not resolve
-the PDK), a provenance field, not a result. Only one group and one report type
-were rerun.
+Cheap `--check` (re-hash stream, deck and reference against the recorded
+hashes, no engine re-run) exits 0 / `match` for `wavetable_core`
+`klt drc --check drc.report.json` and, run from the group directory (the
+reference path is recorded relative to it), `klt lvs --check lvs.report.json`;
+both need the stream gunzipped to the recorded path first.
+
+Full `--rerun` of the DRC re-ran the deck and agreed on every verdict-bearing
+field (status, violation count, rule counts, input hash) and still exits 3:
+the only drift is `provenance.pdk` (`fresh: null`). That is a klt 0.8.0 gap,
+not a layout difference: `--rerun` rebuilds the request from the report and
+ignores `--pdk`, `--pdk-root` and `$PDK`, so the PDK is never resolved
+(tried all three). LVS `--rerun` is unusable for these reports: klt does not
+record `reference.form`, so the gate-level Verilog is re-read as SPICE and
+fails to parse (klt's own message says to use cheap mode). Only
+`wavetable_core` was checked; report both upstream rather than waiving them.
 
 ### Negative control
 `negative-control/` holds a one-sliver layout that `klt drc` fails on
