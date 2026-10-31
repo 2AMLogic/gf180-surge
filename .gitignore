@@ -119,3 +119,6 @@ __pycache__/
 # Raw evidence staged for tools/store_evidence.py (bytes go to the artifact
 # store; only manifests/artifacts/ is committed)
 .evidence-scratch/
+
+# Repo Skills Codex-side machine-local install metadata (never committed)
+.agents/skills/repo/.install-local.json
