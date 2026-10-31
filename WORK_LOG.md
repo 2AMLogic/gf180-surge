@@ -4,6 +4,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-30
 
+- **PR #551**: fix: triage T1 physical-flow findings and clear DRC via power config
 - **PR #549**: feat: add T1 physical-flow evidence for 3 synthesized product groups
 
 ### 2026-10-27
