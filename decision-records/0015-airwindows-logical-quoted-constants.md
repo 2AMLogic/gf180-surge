@@ -1,6 +1,6 @@
 # 0015: Airwindows "Logical" (id 4) quoted constants, and the MIT licence of the vendored `libs/airwindows` subtree (SXT-028k)
 
-- **Status:** PROPOSED — pending owner ratification
+- **Status:** ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data) (MIT verified: `libs/airwindows/LICENSE` at pin `58914e59`)
 - **Date:** 2026-09-26
 - **Decided by:** Loom builder agent implementing leaf
   [#63](https://github.com/2AMLogic/gf180-surge/issues/63) (SXT-028k), under
