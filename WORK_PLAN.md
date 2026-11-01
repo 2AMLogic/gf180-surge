@@ -59,8 +59,10 @@ Issues carrying `loom:curated`.
 - **#70**: SXT-036: voice leaf — modulation behavior: velocity *(curated)*
 - **#72**: SXT-038: voice leaf — filter algorithm: LP 24 dB *(curated)*
 - **#94**: SXT-028c follow-up: pin the tap re-render hash pair for committed reference fixtures *(curated)*
+- **#107**: Champion: Merge-Risk Hold Digest *(curated)*
 - **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host *(curated)*
 - **#155**: SXT-028l follow-up (F-028l-1/2/3): oracle-host reference leg + re-verify the declared send-routing contracts for the send3/send4 leaf *(curated)*
+- **#162**: Champion: Merge-Risk Hold Digest *(curated)*
 - **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165 *(curated)*
 - **#305**: Oracle infra gap: no reachable source/build for sxt028c-tap sibling commit (narrower than #232) *(curated)*
 - **#307**: Oracle infra gap: no DR-0005-class tap patch/build exists for the LP 24 dB (SXT-038/#101) full-engine leg *(curated)*
@@ -102,7 +104,7 @@ Issues carrying `loom:curated`.
 | In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 22 |
+| Curated | 24 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
