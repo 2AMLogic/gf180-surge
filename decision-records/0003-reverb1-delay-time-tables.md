@@ -1,6 +1,6 @@
 # 0003: Reverb1 DELAY_TIME_TABLES constants (SXT-024)
 
-- **Status**: PROPOSED — pending owner ratification
+- **Status**: ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data)
 - **Date**: 2026-09-20
 - **Decided by**: Loom builder agent remediating PR #43 (SXT-024 Reverb1),
   under the governance authority of issue [#25](https://github.com/2AMLogic/gf180-surge/issues/25)

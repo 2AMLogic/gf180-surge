@@ -1,6 +1,6 @@
 # 0014: Distortion SSE quad-waveshaper constant inventory (SXT-028e-sse)
 
-- **Status:** PROPOSED — pending owner ratification
+- **Status:** ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (fleet:decide q129): the `FuzzTable<1>` row is classified **formula-generated**, not quoted data. The quoted part is its short functional constants: range `0.1`, seed `2112` and the `portable_minstd_rand` LCG parameters `48271` / `2147483647`. The committed ROM `ws_sse_q29.hex` is allowed as a byte-checked build product of our own generator in `sse_tables.py` (`test_ws_rom_matches_generator`). No upstream table data is copied. This supersedes the conservative class (a) re-classification in the clause 3 amendment for licensing purposes. The one-ulp FMA / pinned-host numerical-equivalence leg stays open on #135 as a correctness check, not a licensing one.
 - **Date:** 2026-09-26
 - **Decided by:** Loom builder agent implementing leaf
   [#121](https://github.com/2AMLogic/gf180-surge/issues/121) (SXT-028e-sse),
