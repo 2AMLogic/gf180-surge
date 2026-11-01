@@ -4,6 +4,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-10-31
 
+- **PR #556**: Bump Repo Skills 0.24.7 -> 0.25.1
 - **PR #553**: docs: record ext_mem_instr LVS root cause and klt --check reproducibility
 - **Issue #544** (closed): T1 items 2/3/4/11: gf180mcu physical flow (P&R, DRC, LVS, ERC) — split from #24, no FPGA dependency
 
