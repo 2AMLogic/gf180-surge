@@ -1,6 +1,6 @@
 # 0012: Distortion halfband coefficients (order 6) and waveshaper table provenance (SXT-028e)
 
-- **Status:** PROPOSED — pending owner ratification
+- **Status:** ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data)
 - **Date:** 2026-09-25
 - **Decided by:** Loom builder agent implementing leaf [#57](https://github.com/2AMLogic/gf180-surge/issues/57)
   (SXT-028e), under the governance authority of issue

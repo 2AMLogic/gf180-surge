@@ -1,6 +1,6 @@
 # 0006: Airwindows "Galactic" delay-length constants and oracle tap instrumentation (SXT-028a)
 
-- **Status:** PROPOSED — pending owner ratification
+- **Status:** ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data) (licence corrected: the Galactic constants come from the vendored `libs/airwindows` subtree, which is MIT per 0015, not GPL)
 - **Date:** 2026-09-22
 - **Decided by:** Loom builder agent implementing leaf #53 (SXT-028a),
   under the governance authority of issue [#25](https://github.com/2AMLogic/gf180-surge/issues/25)

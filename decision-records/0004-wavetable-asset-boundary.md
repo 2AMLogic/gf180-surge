@@ -1,6 +1,6 @@
 # 0004: Wavetable asset boundary + mip halfband constants (SXT-026)
 
-- **Status**: PROPOSED — pending owner ratification
+- **Status**: ratified 2026-10-29 by the operator under the #25 GPL-boundary principle (short functional constants quoted as cited data)
 - **Date**: 2026-09-21
 - **Decided by**: Loom builder agent implementing PR (SXT-026, issue #19),
   under the governance authority of issue [#25](https://github.com/2AMLogic/gf180-surge/issues/25)

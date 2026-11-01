@@ -307,6 +307,67 @@
         "`tb_classic.sv` carries a verbatim copy of it"
       ],
       "reason": "Self-copy, not third-party carriage (landed with #181). The named sentence says rtl/oscillators/classic/tb_classic.sv carries a verbatim copy of this repository's own model/voice/voice_model.py::HalfbandD2 - the project-authored D2 allpass arithmetic. The sst-filters coefficients that DR-0002 answers (on the voice_model.py row) are not literals in that testbench: they arrive as config words 68..79. The README cites the pinned Surge commit only as structure 'read and cited, never copied'. Scoped to that one occurrence: any other quotation marker added to this README, including a second 'verbatim copy', still fails."
+    },
+    {
+      "path": "docs/decision-record-review-packets/0003.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "short functional constants quoted as cited data"
+      ],
+      "reason": "Review packet for decision record 0003. It quotes the record's own ratified Status line verbatim (the packet lint requires the quote to match the live record), and that Status line uses the quotation vocabulary. The packet carries no third-party constants, tables or assets of its own; the licence disposition lives in decision-records/0003-*.md and its provenance rows. Scoped to that one phrase: any other quotation marker added to this packet still fails."
+    },
+    {
+      "path": "docs/decision-record-review-packets/0004.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "short functional constants quoted as cited data"
+      ],
+      "reason": "Review packet for decision record 0004. It quotes the record's own ratified Status line verbatim (the packet lint requires the quote to match the live record), and that Status line uses the quotation vocabulary. The packet carries no third-party constants, tables or assets of its own; the licence disposition lives in decision-records/0004-*.md and its provenance rows. Scoped to that one phrase: any other quotation marker added to this packet still fails."
+    },
+    {
+      "path": "docs/decision-record-review-packets/0006.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "short functional constants quoted as cited data",
+        "vendored `libs/airwindows` subtree"
+      ],
+      "reason": "Review packet for decision record 0006. It quotes the record's own ratified Status line verbatim (the packet lint requires the quote to match the live record), and that Status line uses the quotation vocabulary. The packet carries no third-party constants, tables or assets of its own; the licence disposition lives in decision-records/0006-*.md and its provenance rows. Scoped to those two phrases (the quoted Status's ratification wording and its licence-correction note that the Airwindows subtree is vendored): any other quotation marker added to this packet still fails."
+    },
+    {
+      "path": "docs/decision-record-review-packets/0008.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "short functional constants quoted as cited data"
+      ],
+      "reason": "Review packet for decision record 0008. It quotes the record's own ratified Status line verbatim (the packet lint requires the quote to match the live record), and that Status line uses the quotation vocabulary. The packet carries no third-party constants, tables or assets of its own; the licence disposition lives in decision-records/0008-*.md and its provenance rows. Scoped to that one phrase: any other quotation marker added to this packet still fails."
+    },
+    {
+      "path": "docs/decision-record-review-packets/0012.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "short functional constants quoted as cited data"
+      ],
+      "reason": "Review packet for decision record 0012. It quotes the record's own ratified Status line verbatim (the packet lint requires the quote to match the live record), and that Status line uses the quotation vocabulary. The packet carries no third-party constants, tables or assets of its own; the licence disposition lives in decision-records/0012-*.md and its provenance rows. Scoped to that one phrase: any other quotation marker added to this packet still fails."
+    },
+    {
+      "path": "docs/decision-record-review-packets/0015.md",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "occurrences": [
+        "short functional constants quoted as cited data"
+      ],
+      "reason": "Review packet for decision record 0015. It quotes the record's own ratified Status line verbatim (the packet lint requires the quote to match the live record), and that Status line uses the quotation vocabulary. The packet carries no third-party constants, tables or assets of its own; the licence disposition lives in decision-records/0015-*.md and its provenance rows. Scoped to that one phrase: any other quotation marker added to this packet still fails."
     }
   ]
 }
