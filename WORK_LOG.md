@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-01
+
+- **PR #559**: docs(decision-records): ratify eight GPL-boundary records under the #25 principle (operator, 2026-10-29)
+- **Issue #25** (closed): SXT-019: Reuse substrate adoption decision
+
 ### 2026-10-31
 
 - **PR #556**: Bump Repo Skills 0.24.7 -> 0.25.1
