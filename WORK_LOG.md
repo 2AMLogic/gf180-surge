@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-02
+
+- **PR #561**: docs(sxt-023): re-run delay/EQ negative controls and Verilator/EQ RTL legs on current comparator
+- **Issue #473** (closed): RTL: logical4_core has 3 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+
 ### 2026-11-01
 
 - **PR #559**: docs(decision-records): ratify eight GPL-boundary records under the #25 principle (operator, 2026-10-29)
