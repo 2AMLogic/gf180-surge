@@ -1,0 +1,18 @@
+{
+ "bypass": "empty chain, A=1.0 (volume 0 dB); out = clip8(A*x) must equal x bit-for-bit",
+ "slug": "fm_bass_1",
+ "settle_blocks": 375,
+ "blocks": 8925,
+ "samples": 571200,
+ "samples_note": "L+R over settle pre-roll + fixture content (padded to whole blocks)",
+ "mismatches": 0,
+ "bit_transparent": true,
+ "discrimination_check": {
+  "a_fixed": "A = 1.0 - 1 LSB (Q13.18)",
+  "mismatches": 74864,
+  "fires": true
+ },
+ "scope": "model-side only (run_fx_model.run_chain); no engine or RTL leg",
+ "supersedes_for_revised_tree": "nc-d-bypass.json (PR #44, pre-revision runner; kept unedited)",
+ "verdict": "PASS"
+}

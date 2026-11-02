@@ -1,0 +1,22 @@
+{
+  "slug": "metallic",
+  "tb": "tb_fx.sv",
+  "sim": "iverilog",
+  "blocks_requested": 500,
+  "blocks_window": 500,
+  "blocks_total": 8925,
+  "blocks_compared": 125,
+  "blocks_compared_semantics": "blocks_actually_compared",
+  "blocks_in_window_expected": 125,
+  "coverage": "partial",
+  "verdict": "PASS",
+  "checked": {
+    "blocks": 125,
+    "outputs": 8000,
+    "checkpoints": 6,
+    "fields": 192
+  },
+  "mismatches": 0,
+  "no_verdict_reason": null,
+  "first_failures": []
+}

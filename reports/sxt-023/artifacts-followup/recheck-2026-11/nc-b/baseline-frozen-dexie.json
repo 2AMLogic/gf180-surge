@@ -1,0 +1,205 @@
+{
+  "ref": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/sxt-023/artifacts/model__dexie__seq-notes-coverage-v1.f32.wav",
+  "preset": "dexie",
+  "path": "wet",
+  "fixture_sidecar": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 334267.375,
+      "model_peak_lsb": 334269.0,
+      "max_abs_diff_lsb": 30.2734375,
+      "rms_diff_lsb": 0.7169034811367332,
+      "rms_diff_dbfs": -123.3027844808651,
+      "rms_diff_at_shift0_lsb": 0.7169034811367332,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.7169034811367332,
+      "spectral_corr": 0.9999999822803629
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 346416.53125,
+      "model_peak_lsb": 346418.0,
+      "max_abs_diff_lsb": 41.7109375,
+      "rms_diff_lsb": 0.7334045799217495,
+      "rms_diff_dbfs": -123.10512591179912,
+      "rms_diff_at_shift0_lsb": 0.7334045799217495,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.7334045799217495,
+      "spectral_corr": 0.9999999771585247
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 264903.625,
+      "model_peak_lsb": 264903.5,
+      "max_abs_diff_lsb": 11.140625,
+      "rms_diff_lsb": 0.32077211168243464,
+      "rms_diff_dbfs": -130.28806620233485,
+      "rms_diff_at_shift0_lsb": 0.32077211168243464,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 0.32077211168243464,
+      "spectral_corr": 0.9999999970463026
+    }
+  },
+  "per_channel_budget_leg": true,
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true,
+    "L:max_abs_diff_lsb": true,
+    "L:rms_diff_dbfs": true,
+    "L:spectral_corr": true,
+    "R:max_abs_diff_lsb": true,
+    "R:rms_diff_dbfs": true,
+    "R:spectral_corr": true
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+    "tail_region_sidecar": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 5.474609375,
+    "tail_rms_diff_lsb": 0.2608565095811626,
+    "tail_rms_rel_db": -92.47266504265608,
+    "tail_ref_rms_lsb": 10965.663911611084,
+    "tail_model_rms_lsb": 10965.670701907327,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 30,
+      "ref_first_window_dbfs": -32.2204578618826,
+      "ref_last_graded_window_dbfs": -98.40109051317691,
+      "max_dev_db": 0.002520086851077963,
+      "worst_window": {
+        "index": 28,
+        "start_frame_in_tail": 67200,
+        "ref_dbfs": -96.19871256785898,
+        "model_dbfs": -96.1961924810079
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 17.89453125,
+      "tail_rms_diff_lsb": 0.47577921032966886,
+      "tail_rms_rel_db": -87.783367325791,
+      "tail_ref_rms_lsb": 11656.651900771303,
+      "tail_model_rms_lsb": 11656.67854829332,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 31,
+        "ref_first_window_dbfs": -31.669097506812133,
+        "ref_last_graded_window_dbfs": -99.43518099755572,
+        "max_dev_db": 0.0033951690885061225,
+        "worst_window": {
+          "index": 29,
+          "start_frame_in_tail": 69600,
+          "ref_dbfs": -97.58414516019899,
+          "model_dbfs": -97.58754032928749
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 19.2578125,
+      "tail_rms_diff_lsb": 0.4674982101683074,
+      "tail_rms_rel_db": -88.11627775084415,
+      "tail_ref_rms_lsb": 11901.284580122478,
+      "tail_model_rms_lsb": 11901.30609129379,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 31,
+        "ref_first_window_dbfs": -31.826034954505946,
+        "ref_last_graded_window_dbfs": -99.97401518518788,
+        "max_dev_db": 0.004195972091181943,
+        "worst_window": {
+          "index": 30,
+          "start_frame_in_tail": 72000,
+          "ref_dbfs": -99.97401518518788,
+          "model_dbfs": -99.9698192130967
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate are proposals, not frozen policy)"
+}

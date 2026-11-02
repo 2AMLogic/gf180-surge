@@ -1,0 +1,33 @@
+{
+ "schema_version": 1,
+ "interface": "rtl/effects/delay/ext_mem_if.md",
+ "preset": "dexie",
+ "source_trace": "reports/sxt-023/artifacts/model_trace_dexie.json.gz (revised tree, issue #16)",
+ "blocks_counted": 8925,
+ "blocks_note": "settle 375 + render 8550 blocks of 32 samples (render_frames 273600 padded)",
+ "basis": {
+  "per_sample_per_instance": {
+   "line_reads": 24,
+   "line_writes": 2
+  },
+  "per_block_per_instance": {
+   "line_reads": 768,
+   "line_writes": 64
+  }
+ },
+ "expected_counters": {
+  "ext_reads": 6854400,
+  "ext_writes": 571200
+ },
+ "measured_model_counters_at_last_checkpoint": [
+  {
+   "name": "a0",
+   "ext_reads": 6854400,
+   "ext_writes": 571200,
+   "matches_basis": true
+  }
+ ],
+ "supersedes_for_revised_tree": "ext_mem_traffic.json (PR #44, 8,790-block window; kept unedited, wording tracked by #367)",
+ "scope": "model-side counters only; no RTL, latency, or hardware measurement",
+ "verdict": "PASS"
+}
