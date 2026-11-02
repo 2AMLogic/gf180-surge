@@ -1,0 +1,33 @@
+{
+  "slug": "metallic",
+  "tb": "tb_fx_mutant.sv",
+  "sim": "iverilog",
+  "blocks_requested": 500,
+  "blocks_window": 500,
+  "blocks_total": 8925,
+  "blocks_compared": 2,
+  "blocks_compared_semantics": "blocks_actually_compared",
+  "blocks_in_window_expected": 125,
+  "coverage": "partial",
+  "verdict": "FAIL",
+  "checked": {
+    "blocks": 2,
+    "outputs": 128,
+    "checkpoints": 4,
+    "fields": 120
+  },
+  "mismatches": 26,
+  "no_verdict_reason": null,
+  "first_failures": [
+    "block 375 d0 hp0: model=-16530860432502 rtl=-16530860432797",
+    "block 375 d0 hp1: model=7795235258779 rtl=7795235258838",
+    "block 375 d0 lp2: model=3774342210847 rtl=3774342210857",
+    "block 375 d0 hp2: model=8280547178372 rtl=8280547178586",
+    "block 375 d0 hp3: model=-16561094356745 rtl=-16561094357046",
+    "block 375 d0 hp4: model=8280547178372 rtl=8280547178586",
+    "block 375 d1 lp0: model=-13498472805706 rtl=-13498472806061",
+    "block 375 d1 hp0: model=-16927000452180 rtl=-16927000452545",
+    "block 375 d1 lp1: model=5489287314041 rtl=5489287314099",
+    "block 375 d1 hp1: model=8155151977146 rtl=8155151977337"
+  ]
+}

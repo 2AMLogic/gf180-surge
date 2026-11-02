@@ -1,0 +1,22 @@
+{
+  "slug": "metallic",
+  "tb": "tb_fx.sv",
+  "sim": "verilator",
+  "blocks_requested": 0,
+  "blocks_window": 8925,
+  "blocks_total": 8925,
+  "blocks_compared": 8550,
+  "blocks_compared_semantics": "blocks_actually_compared",
+  "blocks_in_window_expected": 8550,
+  "coverage": "full",
+  "verdict": "PASS",
+  "checked": {
+    "blocks": 8550,
+    "outputs": 547200,
+    "checkpoints": 272,
+    "fields": 8704
+  },
+  "mismatches": 0,
+  "no_verdict_reason": null,
+  "first_failures": []
+}

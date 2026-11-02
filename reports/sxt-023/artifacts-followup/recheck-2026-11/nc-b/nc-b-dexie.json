@@ -1,0 +1,205 @@
+{
+  "ref": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1-wet.f32.wav",
+  "model": "reports/sxt-023/artifacts-followup/recheck-2026-11/nc-b/ncb__dexie__seq-notes-coverage-v1.f32.wav",
+  "preset": "dexie",
+  "path": "wet",
+  "fixture_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+  "channels": {
+    "L": {
+      "frames": 273600,
+      "ref_peak_lsb": 334267.375,
+      "model_peak_lsb": 333171.0,
+      "max_abs_diff_lsb": 14698.96875,
+      "rms_diff_lsb": 847.7940469599849,
+      "rms_diff_dbfs": -61.846191011311866,
+      "rms_diff_at_shift0_lsb": 847.7940469599849,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 847.7940469599849,
+      "spectral_corr": 0.9547640244867825
+    },
+    "R": {
+      "frames": 273600,
+      "ref_peak_lsb": 346416.53125,
+      "model_peak_lsb": 346979.0,
+      "max_abs_diff_lsb": 15504.625,
+      "rms_diff_lsb": 843.030787108443,
+      "rms_diff_dbfs": -61.895129562488805,
+      "rms_diff_at_shift0_lsb": 843.030787108443,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 843.030787108443,
+      "spectral_corr": 0.9540954398411808
+    },
+    "mono": {
+      "frames": 273600,
+      "ref_peak_lsb": 264903.625,
+      "model_peak_lsb": 264763.5,
+      "max_abs_diff_lsb": 5150.3046875,
+      "rms_diff_lsb": 281.6519869407684,
+      "rms_diff_dbfs": -71.4177418785132,
+      "rms_diff_at_shift0_lsb": 281.6519869407684,
+      "best_shift": 0,
+      "rms_diff_at_best_shift_lsb": 281.6519869407684,
+      "spectral_corr": 0.9892078891844528
+    }
+  },
+  "per_channel_budget_leg": true,
+  "proposed_budgets": {
+    "max_abs_diff_lsb": 8192,
+    "rms_diff_dbfs": -46.0,
+    "spectral_corr_min": 0.98
+  },
+  "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)",
+  "proposed_budget_results": {
+    "max_abs_diff_lsb": true,
+    "rms_diff_dbfs": true,
+    "spectral_corr": true,
+    "L:max_abs_diff_lsb": false,
+    "L:rms_diff_dbfs": true,
+    "L:spectral_corr": false,
+    "R:max_abs_diff_lsb": false,
+    "R:rms_diff_dbfs": true,
+    "R:spectral_corr": false
+  },
+  "proposed_tail_budget": {
+    "tail_rms_rel_db": -20.0,
+    "decay_curve_window_s": 0.05,
+    "decay_curve_floor_dbfs": -100.0,
+    "decay_curve_max_dev_db": 1.0
+  },
+  "tail_check": {
+    "tail_offset": 153600,
+    "tail_frames": 120000,
+    "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+    "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+    "tail_budget": {
+      "tail_rms_rel_db": -20.0,
+      "decay_curve_window_s": 0.05,
+      "decay_curve_floor_dbfs": -100.0,
+      "decay_curve_max_dev_db": 1.0
+    },
+    "tail_region_covered": true,
+    "tail_present": true,
+    "model_tail_present": true,
+    "tail_max_abs_diff_lsb": 2919.8734741210938,
+    "tail_rms_diff_lsb": 152.6210041992357,
+    "tail_rms_rel_db": -37.128412484769356,
+    "tail_ref_rms_lsb": 10965.663911611084,
+    "tail_model_rms_lsb": 10966.389527471636,
+    "tail_rms_rel_ok": true,
+    "tail_decay_curve": {
+      "window_frames": 2400,
+      "floor_dbfs": -100.0,
+      "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+      "max_dev_budget_db": 1.0,
+      "total_windows": 50,
+      "graded_windows": 30,
+      "ref_first_window_dbfs": -32.2204578618826,
+      "ref_last_graded_window_dbfs": -98.40109051317691,
+      "max_dev_db": 0.016829215762058425,
+      "worst_window": {
+        "index": 3,
+        "start_frame_in_tail": 7200,
+        "ref_dbfs": -39.71691244355677,
+        "model_dbfs": -39.700083227794714
+      },
+      "windows_over_budget": 0,
+      "ok": true,
+      "reason": ""
+    },
+    "tail_decay_curve_ok": true,
+    "ok": true,
+    "reason": ""
+  },
+  "tail_check_lr": {
+    "L": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 7851.787109375,
+      "tail_rms_diff_lsb": 452.8320712923993,
+      "tail_rms_rel_db": -28.212732995889873,
+      "tail_ref_rms_lsb": 11656.651900771303,
+      "tail_model_rms_lsb": 11651.719028260379,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 31,
+        "ref_first_window_dbfs": -31.669097506812133,
+        "ref_last_graded_window_dbfs": -99.43518099755572,
+        "max_dev_db": 0.03769698697980317,
+        "worst_window": {
+          "index": 8,
+          "start_frame_in_tail": 19200,
+          "ref_dbfs": -51.711887326059,
+          "model_dbfs": -51.674190339079196
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    },
+    "R": {
+      "tail_offset": 153600,
+      "tail_frames": 120000,
+      "tail_region_source": "declared frames - tail_s (sidecar bus 'wet' declares no last_event_sample)",
+      "tail_region_sidecar": "/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-16/reports/sxt-023/fixtures/dexie__seq-notes-coverage-v1.json",
+      "tail_budget": {
+        "tail_rms_rel_db": -20.0,
+        "decay_curve_window_s": 0.05,
+        "decay_curve_floor_dbfs": -100.0,
+        "decay_curve_max_dev_db": 1.0
+      },
+      "tail_region_covered": true,
+      "tail_present": true,
+      "model_tail_present": true,
+      "tail_max_abs_diff_lsb": 7543.40625,
+      "tail_rms_diff_lsb": 453.8129689800358,
+      "tail_rms_rel_db": -28.374338742660832,
+      "tail_ref_rms_lsb": 11901.284580122478,
+      "tail_model_rms_lsb": 11909.606550991375,
+      "tail_rms_rel_ok": true,
+      "tail_decay_curve": {
+        "window_frames": 2400,
+        "floor_dbfs": -100.0,
+        "floor_source": "declared budget PROPOSED_TAIL['decay_curve_floor_dbfs'] (never inferred from silence)",
+        "max_dev_budget_db": 1.0,
+        "total_windows": 50,
+        "graded_windows": 31,
+        "ref_first_window_dbfs": -31.826034954505946,
+        "ref_last_graded_window_dbfs": -99.97401518518788,
+        "max_dev_db": 0.04878727535510308,
+        "worst_window": {
+          "index": 3,
+          "start_frame_in_tail": 7200,
+          "ref_dbfs": -39.64249157447059,
+          "model_dbfs": -39.59370429911549
+        },
+        "windows_over_budget": 0,
+        "ok": true,
+        "reason": ""
+      },
+      "tail_decay_curve_ok": true,
+      "ok": true,
+      "reason": ""
+    }
+  },
+  "tail_gate_ok": true,
+  "verdict": "FAIL against proposed budgets (budget: L:max_abs_diff_lsb, L:spectral_corr, R:max_abs_diff_lsb, R:spectral_corr)"
+}
