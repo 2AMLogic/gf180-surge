@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-04
+
+- **PR #567**: SXT-028e-sse: republish negative controls under shared spectral_corr
+- **Issue #564** (closed): Re-grade SXT-028e-sse negative controls on a matching-digest glibc host (split from #270 item 2)
+
 ### 2026-11-02
 
 - **PR #561**: docs(sxt-023): re-run delay/EQ negative controls and Verilator/EQ RTL legs on current comparator
