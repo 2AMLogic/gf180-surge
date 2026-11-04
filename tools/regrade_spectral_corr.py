@@ -161,13 +161,6 @@ NOT_MIGRATED = [
      "docs/byte-frozen-sources.json pin), so re-emitting one would also "
      "republish a model-revision change that is NOT #165's. The leaf must be "
      "republished as one set on the oracle host: routed to #270"),
-    (r"^reports/SXT-028e-sse/",
-     "STALE-AFTER-#165: the SSE controls reuse "
-     "distortion_negative_controls.metrics, which now grades the SHARED "
-     "#110 definition, but this record's metric fields are exact only under "
-     "the glibc environment it declares (#243); regenerating it on a "
-     "different libm would republish 43 non-spectral max/rms fields, which "
-     "is not #165's change. glibc-host re-run routed to #270"),
     (r"^reports/SXT-028c/negative-controls/|^reports/sxt-028a/negative-",
      "BUDGET-ONLY: records the spectral_corr_min budget value, no measured "
      "spectral_corr"),
