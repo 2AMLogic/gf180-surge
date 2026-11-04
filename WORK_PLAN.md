@@ -35,6 +35,7 @@ Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **#564**: Re-grade SXT-028e-sse negative controls on a matching-digest glibc host (split from #270 item 2)
 
 ## PRs Awaiting Review
 
@@ -75,6 +76,8 @@ Issues carrying `loom:curated`.
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#537**: T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory *(curated)*
+- **#564**: Re-grade SXT-028e-sse negative controls on a matching-digest glibc host (split from #270 item 2) *(curated)*
+- **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -98,10 +101,10 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 3 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 3 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 23 |
+| Curated | 25 |
 | Architect / Hermit proposals | 4 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
