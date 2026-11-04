@@ -1,0 +1,255 @@
+diff --git a/reports/SXT-028e-sse/negative-controls/negative-controls.json b/reports/SXT-028e-sse/negative-controls/negative-controls.json
+index cb15d10..87c3381 100644
+--- a/reports/SXT-028e-sse/negative-controls/negative-controls.json
++++ b/reports/SXT-028e-sse/negative-controls/negative-controls.json
+@@ -4,11 +4,11 @@
+   "model_revision": "b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b",
+   "environment": {
+     "reproducibility": "metric fields are exact under THIS environment only; verdicts, budgets, statuses and control outcomes are NOT environment-dependent and were byte-identical across every environment measured in #243",
+-    "python": "3.14.7",
++    "python": "3.12.3",
+     "python_implementation": "CPython",
+-    "numpy": "2.5.3",
+-    "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.41",
+-    "machine": "aarch64",
++    "numpy": "1.26.4",
++    "platform": "Linux-7.0.0-1014-aws-x86_64-with-glibc2.39",
++    "machine": "x86_64",
+     "stimulus_digest": "ed759d673249a5bf1f6384026a40347781c17af31aab7327ce165f4a0189b306",
+     "stimulus_beds": [
+       {
+@@ -132,14 +132,16 @@
+             "max_abs_diff_lsb": 17.385320452274755,
+             "rms_diff_lsb": 6.660541417644578,
+             "rms_diff_dbfs": -103.94180760068961,
+-            "spectral_corr": 0.9999999990189072
++            "spectral_corr": 0.9999999829344133,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "sensitivity_floor": {
+             "frames": 6144,
+             "max_abs_diff_lsb": 6.011455703643151,
+             "rms_diff_lsb": 2.471869659792819,
+             "rms_diff_dbfs": -112.55148692694237,
+-            "spectral_corr": 0.9999999999915974
++            "spectral_corr": 0.9999999999948429,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "at_or_below_sensitivity_floor": false,
+           "status": "PASS"
+@@ -151,14 +153,16 @@
+             "max_abs_diff_lsb": 8674.738889200846,
+             "rms_diff_lsb": 240.59921778543475,
+             "rms_diff_dbfs": -72.78611404425425,
+-            "spectral_corr": 0.9999009280164387
++            "spectral_corr": 0.999969406099569,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "sensitivity_floor": {
+             "frames": 6144,
+             "max_abs_diff_lsb": 8678.739314626087,
+             "rms_diff_lsb": 240.71126320852827,
+             "rms_diff_dbfs": -72.78207002595234,
+-            "spectral_corr": 0.9999009626221016
++            "spectral_corr": 0.9999694391488559,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "at_or_below_sensitivity_floor": true,
+           "status": "AT-SENSITIVITY-FLOOR (budget NOT met; finding F-028e-sse-4)"
+@@ -170,14 +174,16 @@
+             "max_abs_diff_lsb": 17.885044363327324,
+             "rms_diff_lsb": 6.5874032984970485,
+             "rms_diff_dbfs": -104.03771320702444,
+-            "spectral_corr": 0.9999999990483833
++            "spectral_corr": 0.999999977269934,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "sensitivity_floor": {
+             "frames": 6144,
+             "max_abs_diff_lsb": 6.205398443387821,
+             "rms_diff_lsb": 2.5278965658685597,
+             "rms_diff_dbfs": -112.35681226730584,
+-            "spectral_corr": 0.9999999999840675
++            "spectral_corr": 0.9999999999861979,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "at_or_below_sensitivity_floor": false,
+           "status": "PASS"
+@@ -189,14 +195,16 @@
+             "max_abs_diff_lsb": 18.734989568358287,
+             "rms_diff_lsb": 5.458326526118861,
+             "rms_diff_dbfs": -105.67080801909108,
+-            "spectral_corr": 0.9999999888693604
++            "spectral_corr": 0.9999999798229837,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "sensitivity_floor": {
+             "frames": 6144,
+             "max_abs_diff_lsb": 6.558665037155151,
+             "rms_diff_lsb": 2.0504262431917377,
+             "rms_diff_dbfs": -114.17511523156129,
+-            "spectral_corr": 0.9999999999812031
++            "spectral_corr": 0.9999999999558219,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "at_or_below_sensitivity_floor": false,
+           "status": "PASS"
+@@ -208,14 +216,16 @@
+             "max_abs_diff_lsb": 138080.7808895787,
+             "rms_diff_lsb": 28868.72662547362,
+             "rms_diff_dbfs": -31.20344570659714,
+-            "spectral_corr": 0.9820829072300143
++            "spectral_corr": 0.9618326723078345,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "sensitivity_floor": {
+             "frames": 6144,
+             "max_abs_diff_lsb": 122757.37943597563,
+             "rms_diff_lsb": 27879.089175988636,
+             "rms_diff_dbfs": -31.506426644866238,
+-            "spectral_corr": 0.9818485241542926
++            "spectral_corr": 0.9591263118248265,
++            "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+           },
+           "at_or_below_sensitivity_floor": true,
+           "status": "AT-SENSITIVITY-FLOOR (budget NOT met; finding F-028e-sse-4)"
+@@ -239,7 +249,8 @@
+         "max_abs_diff_lsb": 1615575.291061972,
+         "rms_diff_lsb": 859839.6261314212,
+         "rms_diff_dbfs": -1.7236491472591255,
+-        "spectral_corr": 0.8413915000420593
++        "spectral_corr": 0.7600836382578675,
++        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+       },
+       "ok": true,
+       "label": "ADAPTED \u2014 refused from original-preset coverage"
+@@ -255,7 +266,8 @@
+         "max_abs_diff_lsb": 600995.6572333863,
+         "rms_diff_lsb": 292011.7316967465,
+         "rms_diff_dbfs": -11.103992270267135,
+-        "spectral_corr": 0.9852475486885572
++        "spectral_corr": 0.9516802695503688,
++        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+       },
+       "ok": true,
+       "label": "ADAPTED \u2014 'models 3..7 are just other waveshapes' is the shortcut this leaf exists to refuse; the frozen model REFUSES indices 0..2 and #57 REFUSES 3..7"
+@@ -271,7 +283,8 @@
+         "max_abs_diff_lsb": 357748.77069384325,
+         "rms_diff_lsb": 164760.5784430192,
+         "rms_diff_dbfs": -16.07493210534669,
+-        "spectral_corr": 0.9639549963773393
++        "spectral_corr": 0.9873140545068102,
++        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+       },
+       "ok": true
+     },
+@@ -286,7 +299,8 @@
+         "max_abs_diff_lsb": 80094.65138545819,
+         "rms_diff_lsb": 8811.250521781642,
+         "rms_diff_dbfs": -41.511247279715775,
+-        "spectral_corr": 0.9973674967863986
++        "spectral_corr": 0.9981915757810539,
++        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+       },
+       "ok": true,
+       "graded_on": "FX model 4 (wst_digital)",
+@@ -298,7 +312,8 @@
+           "max_abs_diff_lsb": 129277.0597446831,
+           "rms_diff_lsb": 30723.291563934374,
+           "rms_diff_dbfs": -30.66264341895308,
+-          "spectral_corr": 0.9865929556347495
++          "spectral_corr": 0.9561158122914388,
++          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+         },
+         "note": "for models 3/5/6/7 the 1/dNow pre-scale and the shaper's leading x*drive cancel, so dNow is NOT observable and the /128 variant is indistinguishable. Recorded as a REACHABILITY property of the defect, not as evidence that /128 is acceptable \u2014 the RTL exactness check rejects it unconditionally (rtl-exactness.json mutant_controls[mutant-drivestep128], graded on the digital bed)."
+       }
+@@ -314,7 +329,8 @@
+         "max_abs_diff_lsb": 2039414.5212885465,
+         "rms_diff_lsb": 1251024.1462149231,
+         "rms_diff_dbfs": 1.5333155776236085,
+-        "spectral_corr": 0.9141641145513281
++        "spectral_corr": 0.8810692001294326,
++        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+       },
+       "ok": true,
+       "graded_on": "FX model 4 (wst_digital)"
+@@ -330,7 +346,8 @@
+         "max_abs_diff_lsb": 346706.03812680487,
+         "rms_diff_lsb": 193674.58011750446,
+         "rms_diff_dbfs": -14.670545803626442,
+-        "spectral_corr": 0.9702230836819125
++        "spectral_corr": 0.9459419519439317,
++        "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+       },
+       "ok": true,
+       "graded_on": "FX model 4 (wst_digital)",
+@@ -341,7 +358,8 @@
+           "max_abs_diff_lsb": 167410.37558451178,
+           "rms_diff_lsb": 45277.910139432024,
+           "rms_diff_dbfs": -27.294270801218907,
+-          "spectral_corr": 0.9835726003549287
++          "spectral_corr": 0.9465545851889242,
++          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+         },
+         "note": "wst_fuzzsoft also has a non-zero zero-input offset (its fuzz table is non-zero at x = 0)"
+       }
+@@ -361,14 +379,16 @@
+           "max_abs_diff_lsb": 212525.0,
+           "rms_diff_lsb": 18702.930585103273,
+           "rms_diff_dbfs": -34.973805025535725,
+-          "spectral_corr": 0.9869484700248796
++          "spectral_corr": 0.9888125994137683,
++          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+         },
+         "b": {
+           "frames": 6144,
+           "max_abs_diff_lsb": 1437051.0,
+           "rms_diff_lsb": 915620.5521147893,
+           "rms_diff_dbfs": -1.1776876189659107,
+-          "spectral_corr": 0.8076575055167778
++          "spectral_corr": 0.8090617976827743,
++          "spectral_corr_definition": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+         }
+       }
+     },
+diff --git a/reports/SXT-028e-sse/negative-controls/negative-controls.txt b/reports/SXT-028e-sse/negative-controls/negative-controls.txt
+index 6b7485b..1617fdd 100644
+--- a/reports/SXT-028e-sse/negative-controls/negative-controls.txt
++++ b/reports/SXT-028e-sse/negative-controls/negative-controls.txt
+@@ -1,6 +1,6 @@
+ SXT-028e-sse negative controls — ALL-CONTROLS-OK
+ model revision b40132bed137cf0b6665e404e84d20df4e1dac8bc5323fbee33929a0bfc8c50b
+-environment: python 3.14.7 (CPython), numpy 2.5.3, Linux-7.0.12-linuxkit-aarch64-with-glibc2.41
++environment: python 3.12.3 (CPython), numpy 1.26.4, Linux-7.0.0-1014-aws-x86_64-with-glibc2.39
+ stimulus digest ed759d673249a5bf1f6384026a40347781c17af31aab7327ce165f4a0189b306
+   metric fields are exact under the environment above only (libm sin sets the input; numpy sets spectral_corr's last 1-2 bits). Verdicts, budgets and statuses are not environment-dependent.
+ budgets (PROPOSED, not frozen): {'max_abs_diff_lsb': 8192, 'rms_diff_dbfs': -46.0, 'spectral_corr_min': 0.98}
+@@ -12,22 +12,22 @@ NC-0b baseline-sanity-closed-loop  must=PASS for FX models 3/5/6; CHARACTERIZE (
+       independent float structural twin vs frozen fixed model through the whole chain, one leg per reachable FX model
+ NC-A  generic-substitute           must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       single-rate tanh clip (no oversampling / halfband / EQ / feedback / quad-waveshaper state)
+-      max 1615575.3 LSB  rms -1.72 dBFS  corr 0.841392
++      max 1615575.3 LSB  rms -1.72 dBFS  corr 0.760084
+ NC-A2 cross-leaf-substitute        must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       the SXT-028e (#57) lookup_waveshape table shaper (wst_soft) substituted for GetQuadWaveshaper, with the rest of the chain untouched
+-      max 600995.7 LSB  rms -11.10 dBFS  corr 0.985248
++      max 600995.7 LSB  rms -11.10 dBFS  corr 0.951680
+ NC-C  wrong-order                  must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       pre-EQ and post-EQ bands swapped around the shaper
+-      max 357748.8 LSB  rms -16.07 dBFS  corr 0.963955
++      max 357748.8 LSB  rms -16.07 dBFS  corr 0.987314
+ NC-F  drive-interpolation-step     must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       dD = (dE - dS)/128 instead of the pinned /(BLOCK_SIZE * dist_OS_bits) = /64
+-      max 80094.7 LSB  rms -41.51 dBFS  corr 0.997367
++      max 80094.7 LSB  rms -41.51 dBFS  corr 0.998192
+ NC-G  digital-drive-normalization  must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       `skipDriveNorm` removed: wst_digital receives the 1/dNow pre-scale as well, so the signal is divided by drive twice and the feedback loop gain becomes |fb|/drive
+-      max 2039414.5 LSB  rms 1.53 dBFS  corr 0.914164
++      max 2039414.5 LSB  rms 1.53 dBFS  corr 0.881069
+ NC-H  dc-offset-probe              must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       the zero-input DC-offset probe dropped (dcOffset forced 0)
+-      max 346706.0 LSB  rms -14.67 dBFS  corr 0.970223
++      max 346706.0 LSB  rms -14.67 dBFS  corr 0.945942
+ NC-D  shared-state                 must=FAIL                         verdict=FAIL     -> CONTROL-OK
+       two concurrent instances pooled onto ONE QuadWaveshaperState (chain state left per-instance, so the control isolates exactly the state this leaf adds)
+ NC-B  dropped-tail                 must=FAIL                         verdict=FAIL     -> CONTROL-OK
