@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-05
+
+- **PR #571**: evidence: regrade uni2-poly and uni16-smoke on the pinned oracle under #110
+- **Issue #485** (closed): SXT-034: re-grade uni2-poly and uni16-smoke spectral_corr on the pinned oracle under the #110 definition
+
 ### 2026-11-04
 
 - **PR #567**: SXT-028e-sse: republish negative controls under shared spectral_corr
