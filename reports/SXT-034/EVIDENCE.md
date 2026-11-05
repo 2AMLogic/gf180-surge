@@ -110,17 +110,17 @@ misses. That re-grade left the numeric metrics unchanged; only the grading
 moved — no fixture passes the rms proposal, and **no fixture passes all three
 proposals**. *Republication note (issue #145):* the uni1/uni2-cov/uni4 rows
 below are the numbers of the model re-rendered after the #123 halfband fix;
-the uni2-poly/uni16-smoke rows are the pre-#123 numbers and are **STALE**
-(their reference renders were never committed, so they cannot be re-measured
-on the #145 host — see the change note after this table):
+the uni2-poly/uni16-smoke rows were **STALE** (pre-#123) at #145 and were
+re-measured in issue #485 on the pinned prebuilt oracle (see the #485 note
+after the #145 change note):
 
 | fixture | max_abs LSB | rms dBFS | corr | best_shift | vs proposals |
 |---|---|---|---|---|---|
 | uni1-regress | 2,328 | −33.3 | 0.9921 | −4 | **FAIL rms** (max, corr PASS; −33.3 dBFS is louder than ≤ −46 dBFS; identical to the landed SXT-022 metrics and verdict) |
 | uni2-cov | 21,876 | −18.5 | 0.9644 | −26 | FAIL max, rms, corr |
-| uni2-poly (**STALE**, pre-#123) | 65,534 | −8.4 | 0.9548 | −1 | FAIL max, rms, corr |
+| uni2-poly (regraded #485) | 65,534 | −8.4 | 0.9445 | 0 | FAIL max, rms, corr |
 | uni4-rep | 27,455 | −15.1 | 0.9841 | −25 | FAIL max, rms |
-| uni16-smoke (**STALE**, pre-#123) | 36,240 | −9.7 | 0.8678 | −17 | FAIL max, rms, corr |
+| uni16-smoke (regraded #485) | 36,329 | −9.7 | 0.8541 | −17 | FAIL max, rms, corr |
 
 (`artifacts/uni1-rep.json`, `uni2-cov.json`, `uni2-poly.json`,
 `uni4-rep.json`, `uni16-smoke.json`.)
@@ -142,15 +142,23 @@ committed uni1/uni2/uni4 WAVs **byte-identically**. Record:
 | uni1-regress | 2,321 → 2,328 | −33.327 → −33.328 | 0.9874 → 0.9921 | FAIL → FAIL |
 | uni2-cov | 22,767 → 21,876 | −18.479 → −18.481 | 0.9624 → 0.9644 | FAIL → FAIL |
 | uni4-rep | 27,455 → 27,455 | −15.102 → −15.103 | 0.9822 → 0.9841 | FAIL → FAIL |
-| uni2-poly | **STALE / NOT_RUN** | | | reference `seq-poly-8-v1` uni2 render not committed (sidecar only) |
-| uni16-smoke | **STALE / NOT_RUN** | | | reference `sxt034-smoke-v1` uni16 render not committed (sidecar only) |
+| uni2-poly | 65,534 → 65,534 | −8.361 | 0.9548 → 0.9445 (#110) | FAIL → FAIL (regraded in #485 on the pinned oracle) |
+| uni16-smoke | 36,240 → 36,329 | −9.738 | 0.8678 → 0.8541 (#110) | FAIL → FAIL (regraded in #485 on the pinned oracle) |
 
 The uni2-cov/uni4 JSONs also carry the corrected RMS-leg polarity (PR #92 /
 #95: `rms_diff_dbfs` `true → false`) — the comparator correction this
 section's #97 note already graded in prose, not a #123 effect. No verdict
-moved. `uni2-poly.json` and `uni16-smoke.json` are left as committed and are
-STALE: re-measuring them needs the pinned oracle to re-render (or commit)
-those two references, which the #145 host cannot do.
+moved. (`uni2-poly.json` / `uni16-smoke.json` were left STALE by #145; see
+the #485 note below.)
+
+**Change note (issue #485, 2026-11-05): uni2-poly and uni16-smoke re-graded.**
+References re-rendered on the pinned prebuilt oracle (`render_sha256` equal to
+the committed sidecars), model re-rendered at HEAD (post-#123), graded with
+`tools/compare_audio_reference.py` under the #110 definition. Both artifacts
+carry `spectral_corr_definition`; the spectral leg MISSES before and after and
+the overall verdict stays FAIL (max_abs and rms also fail). Details and the
+ledger attribution: `reports/spectral-corr-fs-floor/EVIDENCE.md` §4. This is
+a model-vs-reference measurement only; it establishes no fidelity pass.
 
 **Bounded finding (recorded, escalation routed):** the SXT-022 [PROPOSED]
 budgets were derived from the unison-1 slice; the rms proposal already
@@ -381,10 +389,9 @@ attribution: `reports/spectral-corr-fs-floor/artifacts/regrade-ledger.{txt,json}
 | NC-1 unison-collapsed (`nc1-collapsed.json`) | 0.9626 | 0.9249 | control required to FAIL; still does | FAIL (required) |
 | `nc1-diff-vs-true.json` | 0.9678 | 0.9061 | n/a (differential record) | n/a |
 
-`uni2-poly.json` and `uni16-smoke.json` stay **STALE** for an unrelated,
-pre-existing reason (§4: their reference renders are retained only on the
-pinned remote oracle, never committed) and cannot be re-graded under #110
-either — their quoted legacy-metric numbers are STALE on both counts.
+`uni2-poly.json` and `uni16-smoke.json` were re-graded under #110 in issue
+#485 (corr 0.9548 -> 0.9445 and 0.8678 -> 0.8541; spectral leg MISS -> MISS,
+verdict FAIL -> FAIL).
 `nc2-detune-zeroed.json` / `nc2-diff-vs-true.json` are likewise STALE (§8:
 the NC-2 mutant input is not committed) and are not regraded here; their
 quoted corr values (0.9686 / 0.9676) remain the pre-#110, pre-#175 numbers.

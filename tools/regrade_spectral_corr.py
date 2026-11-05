@@ -120,7 +120,8 @@ RERENDER_ARTIFACTS = re.compile(
     r"^reports/(SXT-040/artifacts/nc-|SXT-033/artifacts/nc-|"
     r"sxt-032/artifacts/audio-nc-|sxt-035/artifacts/audio-nc-|"
     r"sxt-035/artifacts/negative-controls\.json|"
-    r"SXT-042/artifacts/audio-nc-|SXT-042/artifacts/negative-controls\.json)")
+    r"SXT-042/artifacts/audio-nc-|SXT-042/artifacts/negative-controls\.json|"
+    r"SXT-034/artifacts/(uni2-poly|uni16-smoke)\.json)")
 # pre-#100 sxt-023 records re-emitted by the #100-gated fx tool
 SCHEMA100_ARTIFACTS = re.compile(
     r"^reports/sxt-023/(artifacts/audio-|artifacts-followup/nc-b/nc-b-)")
@@ -174,9 +175,6 @@ NOT_MIGRATED = [
     (r"^reports/tooling-rms-polarity-audit/", "HISTORICAL: #95 audit report"),
     (r"^reports/coverage-v1/", "HISTORICAL: coverage leaf table (quotes "
      "no spectral verdict it grades itself)"),
-    (r"^reports/SXT-034/artifacts/(uni2-poly|uni16-smoke)\.json",
-     "STALE: reference render retained on the pinned remote oracle, not "
-     "committed; cannot be re-graded on this host"),
     (r"^reports/SXT-034/artifacts/nc2-", "NOT-REPRODUCIBLE: NC-2 mutant "
      "input uni2-detune-zeroed.json is in no commit (git log --all --oneline "
      "-- '*uni2-detune-zeroed*' is empty), so this record cannot be "
