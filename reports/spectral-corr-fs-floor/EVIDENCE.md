@@ -36,7 +36,7 @@ spectral leg and the other proposed budgets are met on that render pair.
 | Dry re-run parity: pre-#110 tool (`main`'s, at the base) vs this tool on every committed dry pair differ only in #110-owned fields | **PASS** (37/37; 0 unexplained) | `artifacts/dry-parity.{txt,json}` (leg 3) |
 | Re-rendered control artifacts: the non-spectral diffs come from the re-render, not the metric | **PASS** (21/21; every re-render reproduces `main`'s committed non-spectral metrics exactly; SXT-042 runner-added `windowed_rms_lsb` recomputed equal on the same render) | `artifacts/rerender-proof.{txt,json}` (leg 4) |
 | #93 and #100 tail-gate control legs under the new metric | **PASS** (#93 leg 2: 8/8 as required; #100 leg 2: 17/17 CONTROL-OK); every carried leg and header field of both summaries byte-identical to `main`'s record | `artifacts/tail-gate-controls.txt` (leg 5) |
-| Regrade ledger: every committed diff against `main` classified | **PASS** (102 artifacts regenerated; 0 UNEXPLAINED; 28 carrying `spectral_corr` not regenerated, each with a reason) | `artifacts/regrade-ledger.{txt,json}` (leg 6) |
+| Regrade ledger: every committed diff against `main` classified | **PASS** (104 artifacts regenerated; 0 UNEXPLAINED; 26 carrying `spectral_corr` not regenerated, each with a reason) | `artifacts/regrade-ledger.{txt,json}` (leg 6) |
 | Verdict / control-status flips against `main` | **2, named below**, both caused by #110 | `artifacts/regrade-ledger.txt` |
 | SXT-035 C2 `smoothing-bypass` spectral discrimination | **FINDING (no status change)**: the spectral leg does not discriminate this control under the new metric; since #163 (on `main`) C2 rests on the control-plane `mw-ramp` discriminator, so `control_ok` and `overall_ok` stay true | `artifacts/rerender-proof.txt`, `reports/sxt-035/artifacts/negative-controls.json` |
 | Any fidelity / support / quality claim | **none made** | this section |
@@ -162,7 +162,7 @@ comparators in the same working tree (section 6 names each producer for the
 Full per-artifact class counts and every changed value:
 `artifacts/regrade-ledger.{txt,json}`.
 
-## 4. Carrying `spectral_corr` but NOT regenerated (28), and other carried items
+## 4. Carrying `spectral_corr` but NOT regenerated (26), and other carried items
 
 Each JSON has a reason in the ledger:
 
@@ -171,9 +171,29 @@ Each JSON has a reason in the ledger:
   SXT-028e / SXT-028e-sse (distortion NCs), SXT-028f (reverb2 NCs), and
   the SXT-039 (x11) and sxt-037 (x1) L2 legs (0.999 family). These values are under the
   **legacy** definition and must not be compared with the #110 values.
-- **STALE (cannot be re-graded here)**: `SXT-034/artifacts/uni2-poly.json`,
-  `uni16-smoke.json` (their reference renders live on the pinned remote oracle
-  and are not committed).
+- **Formerly STALE, regraded under #110 (issue #485)**:
+  `SXT-034/artifacts/uni2-poly.json` and `uni16-smoke.json` were re-graded
+  on the pinned prebuilt oracle (surgepy `1.4.HEAD.58914e59c`, commit
+  `58914e59`, linux-x86_64). The reference renders were re-rendered with
+  `model/voice/render_uni_reference.py`; their `render_sha256` equals the
+  committed sidecars' (`reference-seq-poly-8-v1-uni2.json`,
+  `reference-sxt034-smoke-v1-uni16.json`), and the uni16 WAV sha256
+  also equals the sidecar's. The model was re-rendered at HEAD with
+  `model/voice/run_model.py` (post-#123), then graded with
+  `tools/compare_audio_reference.py`. Both artifacts now carry
+  `spectral_corr_definition`. `spectral_corr` moved 0.9548 -> 0.9445
+  (uni2-poly) and 0.8678 -> 0.8541 (uni16-smoke); the spectral leg is a
+  MISS before and after, and the overall verdict stays FAIL (max_abs fails
+  too). The non-spectral numbers also moved (e.g. uni16 `max_abs_diff_lsb`
+  36240 -> 36329, uni2 `best_shift` -1 -> 0) because the committed values
+  predate the #123 halfband fix; the ledger classes them RE-RENDER, and the
+  `rms_diff_dbfs` flag `true -> false` is the #95 polarity correction.
+  The committed ledger keeps its original #110 base; these two rows were moved
+  from the not-regenerated list to the regenerated list using the same
+  classifier at base `e8a51be` (0 UNEXPLAINED). The oracle on the worker
+  reports version string `1.4.HEAD.58914e59c`, whereas the committed
+  sidecars record `1.4.sxt037-tap.ff8b4dba4` (same engine commit); the
+  render hashes match.
 - **NOT-REPRODUCIBLE**: `SXT-034/artifacts/nc2-detune-zeroed.json` and
   `nc2-diff-vs-true.json`. Their NC-2 mutant input `uni2-detune-zeroed.json`
   is in no commit on any ref (`git log --all --oneline --
@@ -181,7 +201,7 @@ Each JSON has a reason in the ledger:
   it), so they cannot be re-rendered. They keep the legacy native-unit `log1p`
   `spectral_corr`, carry no `spectral_corr_definition` (none was fabricated),
   and are not #110 results. No spectral-leg or verdict change is claimed: both
-  also fail `max_abs_diff_lsb`. They stay in the count of 28 carried items.
+  also fail `max_abs_diff_lsb`. They stay among the carried items.
 - **HISTORICAL** (not current verdicts): #145's
   `halfband-republication/artifacts/republication-record.json`, #146's
   `halfband-branch-order/artifacts/before-after-fixtures.json`, and #100's

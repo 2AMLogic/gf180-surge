@@ -522,6 +522,72 @@
       ]
     },
     {
+      "artifact": "reports/SXT-034/artifacts/uni16-smoke.json",
+      "class_counts": {
+        "RE-RENDER": 6,
+        "RMS-FLAG-#95": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/max_abs_diff_lsb",
+          "class": "RE-RENDER",
+          "old": 36240.0,
+          "new": 36329.0
+        },
+        {
+          "key": "/model_peak_lsb",
+          "class": "RE-RENDER",
+          "old": 24652.0,
+          "new": 25023.0
+        },
+        {
+          "key": "/proposed_budget_results/rms_diff_dbfs",
+          "class": "RMS-FLAG-#95",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/rms_diff_at_best_shift_lsb",
+          "class": "RE-RENDER",
+          "old": 10614.073207151603,
+          "new": 10615.018066906245
+        },
+        {
+          "key": "/rms_diff_at_shift0_lsb",
+          "class": "RE-RENDER",
+          "old": 10677.464301277692,
+          "new": 10679.231412884566
+        },
+        {
+          "key": "/rms_diff_dbfs",
+          "class": "RE-RENDER",
+          "old": -9.739371060957943,
+          "new": -9.737933672268614
+        },
+        {
+          "key": "/rms_diff_lsb",
+          "class": "RE-RENDER",
+          "old": 10677.464301277692,
+          "new": 10679.231412884566
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.8677865829447718,
+          "new": 0.8540649068931293
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
       "artifact": "reports/SXT-034/artifacts/uni2-cov.json",
       "class_counts": {
         "SPECTRAL": 1,
@@ -534,6 +600,66 @@
           "class": "SPECTRAL",
           "old": 0.9643616545807963,
           "new": 0.9359768921775162
+        },
+        {
+          "key": "/spectral_corr_definition",
+          "class": "DEFINITION",
+          "old": "<absent>",
+          "new": "fs-log-floor-v2 (Hann 4096, |X|/(FS*sum(w)/2), floor -100 dBFS/bin, no gating; issue #110)"
+        }
+      ]
+    },
+    {
+      "artifact": "reports/SXT-034/artifacts/uni2-poly.json",
+      "class_counts": {
+        "RE-RENDER": 5,
+        "RMS-FLAG-#95": 1,
+        "SPECTRAL": 1,
+        "DEFINITION": 1
+      },
+      "verdict_flips": [],
+      "changes": [
+        {
+          "key": "/best_shift",
+          "class": "RE-RENDER",
+          "old": -1,
+          "new": 0
+        },
+        {
+          "key": "/proposed_budget_results/rms_diff_dbfs",
+          "class": "RMS-FLAG-#95",
+          "old": true,
+          "new": false
+        },
+        {
+          "key": "/rms_diff_at_best_shift_lsb",
+          "class": "RE-RENDER",
+          "old": 12513.167173231806,
+          "new": 12513.422024499388
+        },
+        {
+          "key": "/rms_diff_at_shift0_lsb",
+          "class": "RE-RENDER",
+          "old": 12514.080240078754,
+          "new": 12513.422024499388
+        },
+        {
+          "key": "/rms_diff_dbfs",
+          "class": "RE-RENDER",
+          "old": -8.360754916042431,
+          "new": -8.361211788471914
+        },
+        {
+          "key": "/rms_diff_lsb",
+          "class": "RE-RENDER",
+          "old": 12514.080240078754,
+          "new": 12513.422024499388
+        },
+        {
+          "key": "/spectral_corr",
+          "class": "SPECTRAL",
+          "old": 0.9548487916308088,
+          "new": 0.9445275376492769
         },
         {
           "key": "/spectral_corr_definition",
@@ -4774,14 +4900,6 @@
     {
       "artifact": "reports/SXT-034/artifacts/nc2-diff-vs-true.json",
       "reason": "NOT-REPRODUCIBLE: NC-2 mutant input uni2-detune-zeroed.json is in no commit (git log --all --oneline -- '*uni2-detune-zeroed*' is empty), so this record cannot be re-rendered; it keeps its legacy log1p spectral_corr, carries no spectral_corr_definition, and is NOT a #110 result (see EVIDENCE.md)"
-    },
-    {
-      "artifact": "reports/SXT-034/artifacts/uni16-smoke.json",
-      "reason": "STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host"
-    },
-    {
-      "artifact": "reports/SXT-034/artifacts/uni2-poly.json",
-      "reason": "STALE: reference render retained on the pinned remote oracle, not committed; cannot be re-graded on this host"
     },
     {
       "artifact": "reports/SXT-039/artifacts/budget-chords.json",
