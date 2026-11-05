@@ -3,6 +3,6 @@
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys did not complete within 300.0s (script '/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-537/signoff/t1-item1/galactic_core/out/synth_galactic_core.run.ys') -- process killed"
+    "message": "yosys did not complete within 300.0s (script 'signoff/t1-item1/galactic_core/out/synth_galactic_core.run.ys') -- process killed"
   }
 }
