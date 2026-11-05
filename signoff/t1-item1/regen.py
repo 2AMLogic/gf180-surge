@@ -16,6 +16,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 BASE = ROOT / "signoff" / "t1-item1"
 PDK = "gf180mcuD"
 CELL_LIBRARY = "gf180mcu_fd_sc_mcu9t5v0"
+# Groups the native Yosys front end cannot read (unpacked-array ports, $fatal)
+# go through klt's pinned sv2v route (operator ruling r6-q23, sv2v 0.0.13).
+# The three groups that pass natively keep the native route.
+NATIVE_GROUPS = {"control_top", "ext_mem_instr", "wavetable_core"}
 
 
 def main(only):
@@ -37,6 +41,8 @@ def main(only):
             "constraints": {"clock_period_ns": None},
             "outputs": {"dir": "out"},
         }
+        if g["id"] not in NATIVE_GROUPS:
+            req["sv_frontend"] = "sv2v"
         (d / "request.json").write_text(json.dumps(req, indent=2) + "\n")
         p = subprocess.run(
             ["klt", "synthesize", str(d / "request.json"), "--pdk", PDK,

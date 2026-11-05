@@ -13,5 +13,6 @@
   },
   "outputs": {
     "dir": "out"
-  }
+  },
+  "sv_frontend": "sv2v"
 }

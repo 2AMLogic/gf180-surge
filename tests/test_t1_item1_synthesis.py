@@ -72,6 +72,26 @@ class T1Item1(unittest.TestCase):
             self.assertEqual(rep["provenance"]["deck"]["content_hash"], pin["liberty"]["content_hash"])
             self.assertIn(pin["pdk"]["revision"], rep["provenance"]["pdk"]["version"])
 
+    def test_sv2v_route_is_recorded_per_request(self):
+        pin = json.loads((BASE / "pdk-pin.json").read_text())
+        route = pin["sv_frontend"]
+        self.assertEqual(pin["tools"]["sv2v"], "0.0.13")
+        self.assertEqual(sorted(route["native_groups"] + route["sv2v_groups"]),
+                         sorted(g["id"] for g in groups()))
+        for g in groups():
+            req = json.loads((BASE / g["id"] / "request.json").read_text())
+            if g["id"] in route["sv2v_groups"]:
+                self.assertEqual(req.get("sv_frontend"), "sv2v", g["id"])
+            else:
+                self.assertNotIn("sv_frontend", req, g["id"])
+                self.assertEqual(rc(g), "0", g["id"])
+
+    def test_negative_control_unrecorded_route_is_detected(self):
+        req = json.loads((BASE / "rf_send34_core" / "request.json").read_text())
+        stripped = {k: v for k, v in req.items() if k != "sv_frontend"}
+        self.assertEqual(req.get("sv_frontend"), "sv2v")
+        self.assertIsNone(stripped.get("sv_frontend"))
+
     def test_block_manifest_does_not_claim_item1_while_groups_blocked(self):
         blocked = [g["id"] for g in groups() if rc(g) != "0"]
         ev = json.loads((ROOT / "signoff" / "block-manifest.json").read_text())["evidence"]

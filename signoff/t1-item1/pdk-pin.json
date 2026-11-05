@@ -13,7 +13,27 @@
   },
   "tools": {
     "yosys": "0.67+post",
-    "klt": "0.8.1.dev55+g879d39bad82b"
+    "klt": "0.8.1.dev55+g879d39bad82b",
+    "sv2v": "0.0.13",
+    "klt_sv2v_attempts": "0.9.1.dev144+g1d4477d34534"
   },
-  "claim": "synthesizability only: no P&R, timing, signoff, RTL-vs-netlist equivalence, or fidelity claim"
+  "claim": "synthesizability only: no P&R, timing, signoff, RTL-vs-netlist equivalence, or fidelity claim",
+  "sv_frontend": {
+    "native_groups": [
+      "control_top",
+      "ext_mem_instr",
+      "wavetable_core"
+    ],
+    "sv2v_groups": [
+      "reverb1_core",
+      "logical4_core",
+      "galactic_core",
+      "rf_ains34_core",
+      "rf_bins12_core",
+      "rf_global2_core",
+      "rf_global34_core",
+      "rf_send34_core"
+    ],
+    "claim": "RTL as written, converted by pinned sv2v 0.0.13 (sv2v groups only); native groups are read directly by Yosys"
+  }
 }
