@@ -285,7 +285,7 @@
   },
   "reports/SXT-034/EVIDENCE.md": {
    "role": "evidence record for leaf voice:unison-stack",
-   "sha256": "32126f9a46d7c6e286299dc967d9ab83fb8b6e53d3c4cc682556923696552a56"
+   "sha256": "0b63e4e471a8a5811a1baf47808186ce7eba03a9acafe4e2a28968027c9fb214"
   },
   "reports/SXT-038/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 24 dB",
@@ -309,7 +309,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "d10615f556ee7d4affd0838b432acfa0284ab60f9dec9d133052f8f07211040b"
+   "sha256": "24657dcbdd9a5ce5c5720000591cd182896df32f712a36febdb9893099ed52e5"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
