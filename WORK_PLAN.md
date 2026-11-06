@@ -27,6 +27,7 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
+- **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
 ## In Progress
@@ -41,7 +42,7 @@ Issues currently being built (`loom:building`).
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#573**: feat(signoff): record sv2v-route synthesis outcomes for 8 blocked groups
 
 ## Approved (Awaiting Merge)
 
@@ -61,7 +62,6 @@ Issues carrying `loom:curated`.
 - **#107**: Champion: Merge-Risk Hold Digest *(curated)*
 - **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host *(curated)*
 - **#155**: SXT-028l follow-up (F-028l-1/2/3): oracle-host reference leg + re-verify the declared send-routing contracts for the send3/send4 leaf *(curated)*
-- **#162**: Champion: Merge-Risk Hold Digest *(curated)*
 - **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165 *(curated)*
 - **#305**: Oracle infra gap: no reachable source/build for sxt028c-tap sibling commit (narrower than #232) *(curated)*
 - **#307**: Oracle infra gap: no DR-0005-class tap patch/build exists for the LP 24 dB (SXT-038/#101) full-engine leg *(curated)*
@@ -75,8 +75,8 @@ Issues carrying `loom:curated`.
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#537**: T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory *(curated)*
-- **#572**: T1 item 1: 8 product groups unsynthesizable after sv2v (assertions, string ROM path, galactic timeout) *(curated)*
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)*
+- **#572**: T1 item 1: 8 product groups unsynthesizable after sv2v (assertions, string ROM path, galactic timeout) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -84,6 +84,7 @@ Issues carrying `loom:curated`.
 - **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
 - **#493**: Consolidate duplicated census_blob / git_blob_sha1 helpers (19 + 13 private copies) into a shared module *(hermit)*
 - **#495**: Consolidate duplicated fixture_config override/readback code (classic, sine) *(hermit)*
+- **#576**: Split check_provenance.py: move ~3,950 lines of negative controls into a sibling module *(hermit)*
 
 ## Epics
 
@@ -99,11 +100,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 3 |
-| Ready (`loom:issue`) | 1 |
+| Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 3 |
-| PRs awaiting review | 0 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 24 |
-| Architect / Hermit proposals | 4 |
+| Curated | 23 |
+| Architect / Hermit proposals | 5 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
