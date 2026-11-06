@@ -311,3 +311,7 @@ change adopts nothing new. Method follows DR-0009 / DR-0010.
   hardware-playback result.
 * That the *other* consumers' committed evidence is now correct — it is
   measurably stale (§7, F-123-3), and saying so is the point.
+
+## Deduplicated artifacts
+
+- `reports/halfband-branch-order/artifacts/exactness-seq-notes-repeated-v1.json`: identical to `reports/SXT-034/artifacts/exactness-uni1-regress.json`, sha256=efa929426c3df7f65a951aabd17ce2ee2b12babfb4a033ce3e44d1340ab9cf1b
