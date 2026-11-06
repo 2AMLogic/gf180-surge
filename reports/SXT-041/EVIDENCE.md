@@ -247,3 +247,11 @@ dispatch worker (`loom-worker-2`) on 2026-10-02 with the `--prebuilt` oracle;
 the oracle reference renders reproduce **bit-identically** (sha256-verified)
 across independent runs, and `tests/test_sxt041_slfo.py` is **22 passed**
 without oracle or simulator.
+
+## Deduplicated artifacts
+
+- `reports/SXT-041/artifacts/audio-seq-modwheel-v1.json`: identical to `reports/SXT-041/artifacts/audio-nc-baseline-seq-modwheel-v1.json`, sha256=fe91f58f4d8e91ce38451e603aa6f320e5ffb901a706024922424c58826c9ad5
+- `reports/SXT-041/artifacts/audio-seq-notes-repeated-v1.json`: identical to `reports/SXT-041/artifacts/audio-nc-baseline-seq-notes-repeated-v1.json`, sha256=3b738f32e4ea01d52499694bdb2ff43408e2d9623ede6297b6edd1877e92b214
+- `reports/SXT-041/artifacts/audio-nc-no-settle.json`: identical to `reports/SXT-041/artifacts/audio-nc-baseline-sxt041-slfo-overlap-v1.json`, sha256=3af2aaa82a20e59ff2d8add30fce7b263636732a0b5d3c1d03fed01b5f434104
+- `reports/SXT-041/artifacts/audio-sxt041-slfo-overlap-v1.json`: identical to `reports/SXT-041/artifacts/audio-nc-baseline-sxt041-slfo-overlap-v1.json`, sha256=3af2aaa82a20e59ff2d8add30fce7b263636732a0b5d3c1d03fed01b5f434104
+- `reports/SXT-041/artifacts/exactness-slfo-sxt041-slfo-overlap-v1.json`: identical to `reports/SXT-041/artifacts/exactness-slfo-fast-corner.json`, sha256=e1084e6727fc23aef68eaa9e79dbfe2686eb288ca506792f4a53d4cb1a3f8e4a

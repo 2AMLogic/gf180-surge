@@ -1176,3 +1176,8 @@ is a live guard on that. `oracle/fetch-waveshaper-headers.sh` refuses a
 destination inside the repository for the same reason. No
 distribution-license determination has been made for Surge-derived
 material.
+
+## Deduplicated artifacts
+
+- `reports/SXT-028e-sse/fixtures/syn-shared__seq-notes-coverage-v1-dry.f32.wav`: identical to `reports/SXT-028c/fixtures/fmcombo__seq-notes-coverage-v1-dry.f32.wav`, sha256=2f02477e8697e72c327609d4446be811fabfab4af9c8300a86569f5479a7d420, kept: referenced by `reports/SXT-028e-sse/fixtures/syn-m3__seq-notes-coverage-v1.json` (+4 more)
+- `reports/SXT-028e-sse/fixtures/syn-shared__seq-poly-8-v1-dry.f32.wav`: identical to `reports/SXT-028c/fixtures/fmcombo__seq-poly-8-v1-dry.f32.wav`, sha256=5405297df3f01786073cffc5f16f64d0fe19240d66ca028908a56743c2462a6b, kept: referenced by `reports/SXT-028e-sse/fixtures/syn-d0-m3__seq-poly-8-v1.json` (+8 more)
