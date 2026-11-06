@@ -33,6 +33,18 @@ def source_is_fresh(report, rtl_bytes):
     return report["provenance"]["input"]["content_hash"] == "sha256:" + sha(rtl_bytes)
 
 
+def check_route(gid, req, route, rc_value):
+    """Per-request sv2v route assertion; raises AssertionError on a violation."""
+    if gid in route["sv2v_groups"]:
+        if req.get("sv_frontend") != "sv2v":
+            raise AssertionError(f"{gid}: sv2v route not recorded in request.json")
+    else:
+        if "sv_frontend" in req:
+            raise AssertionError(f"{gid}: native group carries sv_frontend")
+        if rc_value != "0":
+            raise AssertionError(f"{gid}: native group has non-zero exit")
+
+
 class T1Item1(unittest.TestCase):
     def test_every_product_group_has_a_recorded_outcome(self):
         for g in groups():
@@ -71,6 +83,27 @@ class T1Item1(unittest.TestCase):
             rep = json.loads((BASE / g["id"] / "report.json").read_text())
             self.assertEqual(rep["provenance"]["deck"]["content_hash"], pin["liberty"]["content_hash"])
             self.assertIn(pin["pdk"]["revision"], rep["provenance"]["pdk"]["version"])
+
+    def test_sv2v_route_is_recorded_per_request(self):
+        pin = json.loads((BASE / "pdk-pin.json").read_text())
+        route = pin["sv_frontend"]
+        self.assertEqual(pin["tools"]["sv2v"], "0.0.13")
+        self.assertEqual(sorted(route["native_groups"] + route["sv2v_groups"]),
+                         sorted(g["id"] for g in groups()))
+        for g in groups():
+            req = json.loads((BASE / g["id"] / "request.json").read_text())
+            check_route(g["id"], req, route, rc(g))
+
+    def test_negative_control_unrecorded_route_is_detected(self):
+        req = json.loads((BASE / "rf_send34_core" / "request.json").read_text())
+        route = json.loads((BASE / "pdk-pin.json").read_text())["sv_frontend"]
+        self.assertIn("rf_send34_core", route["sv2v_groups"])
+        # The recorded request passes the route check ...
+        check_route("rf_send34_core", req, route, rc({"id": "rf_send34_core"}))
+        # ... and the same request with the route stripped must FAIL it.
+        stripped = {k: v for k, v in req.items() if k != "sv_frontend"}
+        with self.assertRaises(AssertionError):
+            check_route("rf_send34_core", stripped, route, rc({"id": "rf_send34_core"}))
 
     def test_block_manifest_does_not_claim_item1_while_groups_blocked(self):
         blocked = [g["id"] for g in groups() if rc(g) != "0"]

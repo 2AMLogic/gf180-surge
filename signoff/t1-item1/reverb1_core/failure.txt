@@ -3,6 +3,6 @@
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys synthesis failed: rtl/effects/reverb1/reverb1_core.sv:52: ERROR: syntax error, unexpected '[', expecting ')' or ',' or '='"
+    "message": "yosys synthesis failed: signoff/t1-item1/reverb1_core/out/reverb1_core_sv2v.v:178: ERROR: System task `$finish' outside initial block is unsupported."
   }
 }

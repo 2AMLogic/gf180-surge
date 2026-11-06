@@ -3,6 +3,6 @@
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys synthesis failed: rtl/effects/rf-rf-bins12/rf_bins12_core.sv:52: ERROR: syntax error, unexpected '[', expecting ')' or ',' or '='"
+    "message": "yosys synthesis failed: signoff/t1-item1/rf_bins12_core/out/rf_bins12_core_sv2v.v:137: ERROR: System task `$finish' outside initial block is unsupported."
   }
 }
