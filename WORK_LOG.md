@@ -4,6 +4,10 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-06
 
+- **PR #586**: feat(rtl): expose result words as output ports on six T1 cores
+- **PR #585**: fix(signoff): re-hash committed netlists in item-1 freshness checks and attest reverb1_core
+- **PR #582**: docs: record galactic_core NO_VERDICT and fixed klt Yosys budget
+- **Issue #537** (closed): T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory
 - **PR #581**: fix(rtl): guard sim-only $fatal and string ROM init under SYNTHESIS for T1 synthesis
 - **Issue #572** (closed): T1 item 1: 8 product groups unsynthesizable after sv2v (assertions, string ROM path, galactic timeout)
 - **PR #573**: feat(signoff): record sv2v-route synthesis outcomes for 8 blocked groups
