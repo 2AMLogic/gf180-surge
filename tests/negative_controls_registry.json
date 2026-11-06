@@ -26,6 +26,16 @@
    "verdict": "exit0",
    "guard": []
   },
+  "check_provenance_controls.py": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "",
+   "verdict": "exit0",
+   "guard": []
+  },
   "chorus_negative_controls.py": {
    "status": "LIVE",
    "redirect": [

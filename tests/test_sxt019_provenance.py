@@ -93,6 +93,7 @@ RECORD_DIR = REPO / "decision-records"
 sys.path.insert(0, str(REPO / "tools"))
 
 import check_provenance as cp  # noqa: E402  (path set above)
+import check_provenance_controls as cpc  # noqa: E402  (path set above)
 
 
 def run_tool(*args):
@@ -165,7 +166,7 @@ def test_negative_control_every_rule_fires():
 
 
 def test_every_rule_has_a_negative_control():
-    missing = sorted(set(cp.RULES) - set(cp._controls()))
+    missing = sorted(set(cp.RULES) - set(cpc._controls()))
     assert not missing, f"rules with no negative control: {missing}"
 
 
@@ -175,7 +176,7 @@ def test_every_rule_has_a_negative_control():
 def _skeleton(tmp_path):
     root = tmp_path / "tree"
     root.mkdir()
-    cp.build_skeleton(root)
+    cpc.build_skeleton(root)
     findings, _ = cp.audit(root)
     assert not findings, [f.detail for f in findings]
     return root
@@ -191,38 +192,38 @@ def test_unattributed_gpl_header_is_flagged(tmp_path):
     # The fixture text is built from fragments inside check_provenance.py on
     # purpose (see the note there): a contiguous license body in this file
     # would make the audit flag its own test suite.
-    cp._write(root, "model/pasted.py", cp.FIXTURE_GPL_BODY)
+    cpc._write(root, "model/pasted.py", cpc.FIXTURE_GPL_BODY)
     assert "foreign-license-text" in _rules_fired(root)
 
 
 def test_unattributed_upstream_asset_is_flagged(tmp_path):
     root = _skeleton(tmp_path)
-    cp._write(root, "assets/Bank Sine.wt", b"\x00\x01payload")
+    cpc._write(root, "assets/Bank Sine.wt", b"\x00\x01payload")
     assert "upstream-asset-extension" in _rules_fired(root)
 
 
 def test_unattributed_foreign_source_is_flagged(tmp_path):
     root = _skeleton(tmp_path)
-    cp._write(root, "src/copied_kernel.cpp", "float f(float x){return x;}\n")
+    cpc._write(root, "src/copied_kernel.cpp", "float f(float x){return x;}\n")
     assert "foreign-source-language" in _rules_fired(root)
 
 
 def test_self_declared_quotation_without_row_is_flagged(tmp_path):
     root = _skeleton(tmp_path)
-    cp._write(root, "model/table.py", cp.FIXTURE_TRANSCRIBED)
+    cpc._write(root, "model/table.py", cpc.FIXTURE_TRANSCRIBED)
     assert "self-declared-quotation" in _rules_fired(root)
 
 
 def test_row_pointing_at_the_wrong_file_is_flagged(tmp_path):
     """A provenance row must be corroborated by the file it claims to describe."""
     root = _skeleton(tmp_path)
-    cp._write(root, "model/carrier.py", "TABLE = [1, 2, 3]  # no provenance stated\n")
+    cpc._write(root, "model/carrier.py", "TABLE = [1, 2, 3]  # no provenance stated\n")
     assert "manifest-uncorroborated" in _rules_fired(root)
 
 
 def test_blanket_pattern_cannot_cover_future_files(tmp_path):
     root = _skeleton(tmp_path)
-    cp._patch_manifest(
+    cpc._patch_manifest(
         root,
         lambda d: d["entries"].append(
             {
@@ -240,7 +241,7 @@ def test_blanket_pattern_cannot_cover_future_files(tmp_path):
 
 def test_non_exemptible_rules_cannot_be_exempted(tmp_path):
     root = _skeleton(tmp_path)
-    cp._patch_manifest(
+    cpc._patch_manifest(
         root,
         lambda d: d["exemptions"].append(
             {
@@ -256,19 +257,19 @@ def test_non_exemptible_rules_cannot_be_exempted(tmp_path):
 def test_partial_scan_is_not_a_pass(tmp_path):
     """A scan below the declared floor fails instead of reporting a clean tree."""
     root = _skeleton(tmp_path)
-    cp._patch_manifest(root, lambda d: d.update(scan_floor=10_000))
+    cpc._patch_manifest(root, lambda d: d.update(scan_floor=10_000))
     assert "scan-underflow" in _rules_fired(root)
 
 
 def _set_record_status(root, record_status, index_status):
     record = root / "decision-records" / "0001-example.md"
     record.write_text(
-        cp.SKELETON_RECORD.replace("**Status**: ratified", f"**Status**: {record_status}"),
+        cpc.SKELETON_RECORD.replace("**Status**: ratified", f"**Status**: {record_status}"),
         encoding="utf-8",
     )
     index = root / "decision-records" / "README.md"
     index.write_text(
-        cp.SKELETON_INDEX.replace("| ratified |", f"| {index_status} |"), encoding="utf-8"
+        cpc.SKELETON_INDEX.replace("| ratified |", f"| {index_status} |"), encoding="utf-8"
     )
 
 
@@ -289,7 +290,7 @@ def test_attribution_statement_row_covers_nothing_implicitly(tmp_path):
     """An 'attribution-statement' row only answers the tripwires it lists in
     'covers'; a row without 'covers' must not launder a pasted license body."""
     root = _skeleton(tmp_path)
-    cp._write(root, "docs/attribution.md", cp.FIXTURE_GPL_BODY + "pin 58914e59\n")
+    cpc._write(root, "docs/attribution.md", cpc.FIXTURE_GPL_BODY + "pin 58914e59\n")
     row = {
         "path": "docs/attribution.md",
         "class": "attribution-statement",
@@ -299,11 +300,11 @@ def test_attribution_statement_row_covers_nothing_implicitly(tmp_path):
         "upstream_license": "MIT",
         "decision_record": "0001",
     }
-    cp._patch_manifest(root, lambda d: d["entries"].append(dict(row)))
+    cpc._patch_manifest(root, lambda d: d["entries"].append(dict(row)))
     fired = _rules_fired(root)
     assert "foreign-license-text" in fired
     assert "manifest-unknown-class" not in fired
-    cp._patch_manifest(root, lambda d: d["entries"][-1].update({"covers": ["foreign-license-text"]}))
+    cpc._patch_manifest(root, lambda d: d["entries"][-1].update({"covers": ["foreign-license-text"]}))
     assert "foreign-license-text" not in _rules_fired(root)
 
 
@@ -313,8 +314,8 @@ def test_attribution_statement_row_covers_nothing_implicitly(tmp_path):
 def _own_copy_tree(tmp_path, text, occurrences, path="docs/own_copy.md"):
     tmp_path.mkdir(parents=True, exist_ok=True)
     root = _skeleton(tmp_path)
-    cp._write(root, "docs/own_copy.md", text)
-    cp._scoped_exemption(root, occurrences, path=path)
+    cpc._write(root, "docs/own_copy.md", text)
+    cpc._scoped_exemption(root, occurrences, path=path)
     return root
 
 
@@ -324,12 +325,12 @@ def _fired_on(root, rel):
 
 
 def test_scoped_exemption_covers_only_the_named_occurrence(tmp_path):
-    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
-    clean = _own_copy_tree(tmp_path / "a", cp.FIXTURE_OWN_COPY_DOC, occ)
+    occ = [cpc.FIXTURE_OWN_COPY_OCCURRENCE]
+    clean = _own_copy_tree(tmp_path / "a", cpc.FIXTURE_OWN_COPY_DOC, occ)
     assert not cp.audit(clean)[0]
     # A real foreign copy in the SAME file, in the SAME marker wording, fails.
     foreign = _own_copy_tree(
-        tmp_path / "b", cp.FIXTURE_OWN_COPY_DOC + cp.FIXTURE_FOREIGN_COPY_LINE, occ
+        tmp_path / "b", cpc.FIXTURE_OWN_COPY_DOC + cpc.FIXTURE_FOREIGN_COPY_LINE, occ
     )
     assert "self-declared-quotation" in _fired_on(foreign, "docs/own_copy.md")
 
@@ -343,10 +344,10 @@ def test_duplicated_occurrence_is_ambiguous_and_fails(tmp_path):
     Wording cannot separate the two referents, so a duplicated occurrence is
     now a finding on the manifest, and the exemption is not applied at all.
     """
-    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    occ = [cpc.FIXTURE_OWN_COPY_OCCURRENCE]
     duplicated = _own_copy_tree(
         tmp_path / "dup",
-        cp.FIXTURE_OWN_COPY_DOC + cp.FIXTURE_DUPLICATE_OCCURRENCE_LINE,
+        cpc.FIXTURE_OWN_COPY_DOC + cpc.FIXTURE_DUPLICATE_OCCURRENCE_LINE,
         occ,
     )
     fired = _rules_fired(duplicated)
@@ -359,13 +360,13 @@ def test_duplicated_occurrence_is_ambiguous_and_fails(tmp_path):
     ]
     assert finding.path == cp.MANIFEST_REL
     assert "appears 2 times" in finding.detail
-    assert cp.FIXTURE_OWN_COPY_OCCURRENCE in finding.detail
+    assert cpc.FIXTURE_OWN_COPY_OCCURRENCE in finding.detail
     # Three copies are ambiguous too, and the exempted file is left unexempted.
     thrice = _own_copy_tree(
         tmp_path / "thrice",
-        cp.FIXTURE_OWN_COPY_DOC
-        + cp.FIXTURE_DUPLICATE_OCCURRENCE_LINE
-        + cp.FIXTURE_DUPLICATE_OCCURRENCE_LINE,
+        cpc.FIXTURE_OWN_COPY_DOC
+        + cpc.FIXTURE_DUPLICATE_OCCURRENCE_LINE
+        + cpc.FIXTURE_DUPLICATE_OCCURRENCE_LINE,
         occ,
     )
     assert "exemption-ambiguous" in _rules_fired(thrice)
@@ -394,11 +395,11 @@ def test_committed_scoped_occurrences_are_unique_in_their_file(tmp_path):
 
 def test_scoped_exemption_goes_stale_and_cannot_be_a_blanket(tmp_path):
     gone = _own_copy_tree(
-        tmp_path / "a", cp.FIXTURE_OWN_COPY_DOC, ["a sentence that is not there"]
+        tmp_path / "a", cpc.FIXTURE_OWN_COPY_DOC, ["a sentence that is not there"]
     )
     assert "exemption-stale" in _rules_fired(gone)
     glob = _own_copy_tree(
-        tmp_path / "b", cp.FIXTURE_OWN_COPY_DOC, [cp.FIXTURE_OWN_COPY_OCCURRENCE],
+        tmp_path / "b", cpc.FIXTURE_OWN_COPY_DOC, [cpc.FIXTURE_OWN_COPY_OCCURRENCE],
         path="docs/*.md",
     )
     assert "exemption-bad-pattern" in _rules_fired(glob)
@@ -419,15 +420,15 @@ def test_classic_readme_exemption_does_not_launder_a_foreign_copy(tmp_path):
     identical_wording = f"\nThe Surge oscillator: {occurrence}.\n"
     for label, text, expect_fail in (
         ("as-committed", readme, False),
-        ("with-foreign-copy", readme + cp.FIXTURE_FOREIGN_COPY_LINE, True),
+        ("with-foreign-copy", readme + cpc.FIXTURE_FOREIGN_COPY_LINE, True),
         ("with-identical-wording", readme + identical_wording, True),
     ):
         (tmp_path / label).mkdir()
         root = _skeleton(tmp_path / label)
-        cp._write(root, rel, text)
-        cp._patch_manifest(root, lambda d: d["exemptions"].append(dict(entry)))
+        cpc._write(root, rel, text)
+        cpc._patch_manifest(root, lambda d: d["exemptions"].append(dict(entry)))
         # the synthetic manifest now quotes the occurrence, as the real one does
-        cp._patch_manifest(
+        cpc._patch_manifest(
             root,
             lambda d: d["exemptions"].append(
                 {
@@ -448,7 +449,7 @@ def test_classic_readme_exemption_does_not_launder_a_foreign_copy(tmp_path):
 def _masked_tree(tmp_path, label, text):
     (tmp_path / label).mkdir(parents=True, exist_ok=True)
     root = _skeleton(tmp_path / label)
-    cp._write(root, cp.MASKED_REL, text)
+    cpc._write(root, cpc.MASKED_REL, text)
     return root
 
 
@@ -462,9 +463,9 @@ def test_foreign_copyright_below_our_own_header_is_flagged(tmp_path):
     root = _masked_tree(
         tmp_path,
         "under-own",
-        cp.FIXTURE_OWN_COPYRIGHT + cp.FIXTURE_FILLER + cp.FIXTURE_FOREIGN_COPYRIGHT_LINE,
+        cpc.FIXTURE_OWN_COPYRIGHT + cpc.FIXTURE_FILLER + cpc.FIXTURE_FOREIGN_COPYRIGHT_LINE,
     )
-    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+    assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL)
 
 
 def test_foreign_copyright_beside_a_project_mention_is_flagged(tmp_path):
@@ -476,30 +477,30 @@ def test_foreign_copyright_beside_a_project_mention_is_flagged(tmp_path):
     root = _masked_tree(
         tmp_path,
         "beside-mention",
-        cp.FIXTURE_OWN_PROJECT_LINE + cp.FIXTURE_FOREIGN_COPYRIGHT_LINE,
+        cpc.FIXTURE_OWN_PROJECT_LINE + cpc.FIXTURE_FOREIGN_COPYRIGHT_LINE,
     )
-    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+    assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL)
 
 
 def test_foreign_spdx_below_our_own_tag_is_flagged(tmp_path):
     root = _masked_tree(
         tmp_path,
         "spdx",
-        cp.FIXTURE_OWN_SPDX_TAG + cp.FIXTURE_FILLER + cp.FIXTURE_FOREIGN_SPDX_TAG,
+        cpc.FIXTURE_OWN_SPDX_TAG + cpc.FIXTURE_FILLER + cpc.FIXTURE_FOREIGN_SPDX_TAG,
     )
-    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+    assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL)
 
 
 def test_our_own_attribution_alone_still_audits_clean(tmp_path):
     """The positive half: a rule that flags our own header would be turned off."""
     for label, text in (
-        ("own-copyright", cp.FIXTURE_OWN_COPYRIGHT + cp.FIXTURE_FILLER),
-        ("own-spdx", cp.FIXTURE_OWN_SPDX_TAG + cp.FIXTURE_FILLER),
-        ("own-both", cp.FIXTURE_OWN_SPDX_TAG + cp.FIXTURE_OWN_COPYRIGHT + cp.FIXTURE_FILLER),
+        ("own-copyright", cpc.FIXTURE_OWN_COPYRIGHT + cpc.FIXTURE_FILLER),
+        ("own-spdx", cpc.FIXTURE_OWN_SPDX_TAG + cpc.FIXTURE_FILLER),
+        ("own-both", cpc.FIXTURE_OWN_SPDX_TAG + cpc.FIXTURE_OWN_COPYRIGHT + cpc.FIXTURE_FILLER),
     ):
         (tmp_path / label).mkdir(parents=True, exist_ok=True)
         root = _skeleton(tmp_path / label)
-        cp._write(root, cp.OWN_ONLY_REL, text)
+        cpc._write(root, cpc.OWN_ONLY_REL, text)
         findings, _ = cp.audit(root)
         assert not findings, (label, [f.detail for f in findings])
 
@@ -516,11 +517,11 @@ def test_foreign_holder_naming_this_project_is_still_flagged(tmp_path):
     vendored file gets annotated. Both audited clean on the non-exemptible rule.
     """
     for label, text in (
-        ("parenthetical", cp.FIXTURE_FOREIGN_COPYRIGHT_PARENTHETICAL),
-        ("after-dash", cp.FIXTURE_FOREIGN_COPYRIGHT_AFTER_DASH),
+        ("parenthetical", cpc.FIXTURE_FOREIGN_COPYRIGHT_PARENTHETICAL),
+        ("after-dash", cpc.FIXTURE_FOREIGN_COPYRIGHT_AFTER_DASH),
     ):
         root = _masked_tree(tmp_path, label, text)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), label
 
 
 def test_compound_spdx_expression_behind_our_own_operand_is_flagged(tmp_path):
@@ -529,8 +530,8 @@ def test_compound_spdx_expression_behind_our_own_operand_is_flagged(tmp_path):
     `Apache-2.0 OR <foreign>` is the standard dual-licence spelling, so this
     was not an exotic evasion — it read as "our own licence" and audited clean.
     """
-    root = _masked_tree(tmp_path, "compound-spdx", cp.FIXTURE_COMPOUND_SPDX_OWN_FIRST)
-    assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL)
+    root = _masked_tree(tmp_path, "compound-spdx", cpc.FIXTURE_COMPOUND_SPDX_OWN_FIRST)
+    assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL)
 
 
 def test_license_body_wrapped_across_a_comment_leader_is_flagged(tmp_path):
@@ -541,11 +542,11 @@ def test_license_body_wrapped_across_a_comment_leader_is_flagged(tmp_path):
     across lines carried no signal at all.
     """
     for label, text in (
-        ("wrapped-fsf", cp.FIXTURE_WRAPPED_FSF_BODY),
-        ("wrapped-gpl-title", cp.FIXTURE_WRAPPED_GPL_TITLE),
+        ("wrapped-fsf", cpc.FIXTURE_WRAPPED_FSF_BODY),
+        ("wrapped-gpl-title", cpc.FIXTURE_WRAPPED_GPL_TITLE),
     ):
         root = _masked_tree(tmp_path, label, text)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), label
 
 
 def test_own_attribution_variants_still_audit_clean(tmp_path):
@@ -557,14 +558,14 @@ def test_own_attribution_variants_still_audit_clean(tmp_path):
     on our own header gets switched off, and the protection goes with it.
     """
     for label, text in (
-        ("own-with-aside", cp.FIXTURE_OWN_COPYRIGHT_WITH_ASIDE),
-        ("own-authors", cp.FIXTURE_OWN_COPYRIGHT_AUTHORS),
-        ("own-after-dash", cp.FIXTURE_OWN_COPYRIGHT_AFTER_DASH),
-        ("own-spdx-in-prose", cp.FIXTURE_OWN_SPDX_IN_PROSE),
+        ("own-with-aside", cpc.FIXTURE_OWN_COPYRIGHT_WITH_ASIDE),
+        ("own-authors", cpc.FIXTURE_OWN_COPYRIGHT_AUTHORS),
+        ("own-after-dash", cpc.FIXTURE_OWN_COPYRIGHT_AFTER_DASH),
+        ("own-spdx-in-prose", cpc.FIXTURE_OWN_SPDX_IN_PROSE),
     ):
         (tmp_path / label).mkdir(parents=True, exist_ok=True)
         root = _skeleton(tmp_path / label)
-        cp._write(root, cp.OWN_ONLY_REL, text + cp.FIXTURE_FILLER)
+        cpc._write(root, cpc.OWN_ONLY_REL, text + cpc.FIXTURE_FILLER)
         findings, _ = cp.audit(root)
         assert not findings, (label, [f.detail for f in findings])
 
@@ -579,7 +580,7 @@ def test_leaderless_prose_wrap_is_a_declared_boundary(tmp_path):
     """
     (tmp_path / "prose").mkdir(parents=True, exist_ok=True)
     root = _skeleton(tmp_path / "prose")
-    cp._write(root, "docs/mentions.md", cp.FIXTURE_PROSE_WRAP_LICENSE_NAME)
+    cpc._write(root, "docs/mentions.md", cpc.FIXTURE_PROSE_WRAP_LICENSE_NAME)
     findings, _ = cp.audit(root)
     assert not findings, [f.detail for f in findings]
 
@@ -610,13 +611,13 @@ def test_foreign_holder_behind_a_project_mention_is_flagged(tmp_path):
     in all four, so all four audited clean on the non-exemptible rule.
     """
     for label, text in (
-        ("brackets", cp.FIXTURE_FOREIGN_HOLDER_BEHIND_BRACKETS),
-        ("parens", cp.FIXTURE_FOREIGN_HOLDER_BEHIND_PARENS),
-        ("semicolon", cp.FIXTURE_FOREIGN_HOLDER_AFTER_SEMICOLON),
-        ("em-dash", cp.FIXTURE_FOREIGN_HOLDER_AFTER_EM_DASH),
+        ("brackets", cpc.FIXTURE_FOREIGN_HOLDER_BEHIND_BRACKETS),
+        ("parens", cpc.FIXTURE_FOREIGN_HOLDER_BEHIND_PARENS),
+        ("semicolon", cpc.FIXTURE_FOREIGN_HOLDER_AFTER_SEMICOLON),
+        ("em-dash", cpc.FIXTURE_FOREIGN_HOLDER_AFTER_EM_DASH),
     ):
         root = _masked_tree(tmp_path, label, text)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), label
 
 
 def test_spdx_operand_past_the_parseable_expression_is_flagged(tmp_path):
@@ -626,11 +627,11 @@ def test_spdx_operand_past_the_parseable_expression_is_flagged(tmp_path):
     operand past the end of the parseable expression, where nothing looked.
     """
     for label, text in (
-        ("comma-list", cp.FIXTURE_SPDX_FOREIGN_AFTER_COMMA),
-        ("parenthetical", cp.FIXTURE_SPDX_FOREIGN_IN_PARENTHETICAL),
+        ("comma-list", cpc.FIXTURE_SPDX_FOREIGN_AFTER_COMMA),
+        ("parenthetical", cpc.FIXTURE_SPDX_FOREIGN_IN_PARENTHETICAL),
     ):
         root = _masked_tree(tmp_path, label, text)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), label
 
 
 def test_yearless_and_wrapped_notices_are_flagged(tmp_path):
@@ -640,11 +641,11 @@ def test_yearless_and_wrapped_notices_are_flagged(tmp_path):
     the next line put the second holder where no keyword stands to raise one.
     """
     for label, text in (
-        ("yearless", cp.FIXTURE_YEARLESS_FOREIGN_COPYRIGHT),
-        ("wrapped-holder-list", cp.FIXTURE_WRAPPED_HOLDER_LIST),
+        ("yearless", cpc.FIXTURE_YEARLESS_FOREIGN_COPYRIGHT),
+        ("wrapped-holder-list", cpc.FIXTURE_WRAPPED_HOLDER_LIST),
     ):
         root = _masked_tree(tmp_path, label, text)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), label
 
 
 def test_wrapped_holder_finding_locates_the_offending_holder(tmp_path):
@@ -660,7 +661,7 @@ def test_wrapped_holder_finding_locates_the_offending_holder(tmp_path):
     """
     # Unit level: the match offsets must index `text`, not the line slice.
     for pad_lines in (0, 1, 10, 40):
-        text = "x = 1\n" * pad_lines + cp.FIXTURE_WRAPPED_HOLDER_LIST
+        text = "x = 1\n" * pad_lines + cpc.FIXTURE_WRAPPED_HOLDER_LIST
         match = cp.foreign_copyright_match(text)
         assert match is not None, pad_lines
         assert text[match.start() : match.end()] == "Chris", pad_lines
@@ -668,13 +669,13 @@ def test_wrapped_holder_finding_locates_the_offending_holder(tmp_path):
 
     # End to end: the finding the audit actually reports quotes the holder.
     root = _masked_tree(
-        tmp_path, "wrapped-padded", cp.FIXTURE_FILLER + cp.FIXTURE_WRAPPED_HOLDER_LIST
+        tmp_path, "wrapped-padded", cpc.FIXTURE_FILLER + cpc.FIXTURE_WRAPPED_HOLDER_LIST
     )
     findings, _ = cp.audit(root)
     wrapped = [
         f
         for f in findings
-        if f.rule == "foreign-license-text" and f.path == cp.MASKED_REL
+        if f.rule == "foreign-license-text" and f.path == cpc.MASKED_REL
     ]
     assert wrapped, [f.detail for f in findings]
     assert any("Chris Johnson / Airwindows" in f.detail for f in wrapped), [
@@ -690,17 +691,17 @@ def test_own_attribution_and_copyright_prose_still_audit_clean(tmp_path):
     that became a finding could only be answered by switching the rule off.
     """
     for label, rel, text in (
-        ("own-rights-reserved", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_COPYRIGHT_RIGHTS_RESERVED),
-        ("own-cross-reference", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_COPYRIGHT_CROSS_REFERENCE),
-        ("own-dash-with-aside", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_DASH_HOLDER_WITH_ASIDE),
-        ("own-then-prose", cp.OWN_ONLY_REL, cp.FIXTURE_OWN_COPYRIGHT_THEN_PROSE),
-        ("own-quoted-in-prose", "docs/mentions.md", cp.FIXTURE_OWN_COPYRIGHT_QUOTED_IN_PROSE),
-        ("lettered-list-markers", "docs/legs.md", cp.FIXTURE_LETTERED_LIST_MARKERS),
-        ("copyright-prose", "docs/mentions.md", cp.FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE),
+        ("own-rights-reserved", cpc.OWN_ONLY_REL, cpc.FIXTURE_OWN_COPYRIGHT_RIGHTS_RESERVED),
+        ("own-cross-reference", cpc.OWN_ONLY_REL, cpc.FIXTURE_OWN_COPYRIGHT_CROSS_REFERENCE),
+        ("own-dash-with-aside", cpc.OWN_ONLY_REL, cpc.FIXTURE_OWN_DASH_HOLDER_WITH_ASIDE),
+        ("own-then-prose", cpc.OWN_ONLY_REL, cpc.FIXTURE_OWN_COPYRIGHT_THEN_PROSE),
+        ("own-quoted-in-prose", "docs/mentions.md", cpc.FIXTURE_OWN_COPYRIGHT_QUOTED_IN_PROSE),
+        ("lettered-list-markers", "docs/legs.md", cpc.FIXTURE_LETTERED_LIST_MARKERS),
+        ("copyright-prose", "docs/mentions.md", cpc.FIXTURE_COPYRIGHT_PROSE_NOT_A_NOTICE),
     ):
         (tmp_path / label).mkdir(parents=True, exist_ok=True)
         root = _skeleton(tmp_path / label)
-        cp._write(root, rel, text + cp.FIXTURE_FILLER)
+        cpc._write(root, rel, text + cpc.FIXTURE_FILLER)
         findings, _ = cp.audit(root)
         assert not findings, (label, [f.detail for f in findings])
 
@@ -750,19 +751,19 @@ def test_second_holder_on_an_own_notice_line_is_flagged(tmp_path):
     attributed.
     """
     for label, text in (
-        ("semicolon", cp.FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON),
-        ("parenthetical", cp.FIXTURE_SECOND_HOLDER_IN_PARENTHETICAL),
-        ("em-dash", cp.FIXTURE_SECOND_HOLDER_AFTER_EM_DASH),
-        ("spaced-hyphen", cp.FIXTURE_SECOND_HOLDER_AFTER_DASH),
+        ("semicolon", cpc.FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON),
+        ("parenthetical", cpc.FIXTURE_SECOND_HOLDER_IN_PARENTHETICAL),
+        ("em-dash", cpc.FIXTURE_SECOND_HOLDER_AFTER_EM_DASH),
+        ("spaced-hyphen", cpc.FIXTURE_SECOND_HOLDER_AFTER_DASH),
     ):
         root = _masked_tree(tmp_path, f"second-holder-{label}", text)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), label
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), label
 
 
 def test_second_holder_finding_locates_the_offending_holder(tmp_path):
     """`detail`'s snippet is the only locator, so it must reach the 2nd holder."""
     root = _masked_tree(
-        tmp_path, "second-holder-detail", cp.FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON
+        tmp_path, "second-holder-detail", cpc.FIXTURE_SECOND_HOLDER_AFTER_SEMICOLON
     )
     findings, _ = cp.audit(root)
     quoting = [
@@ -784,12 +785,12 @@ def test_second_holder_bounds_are_declared_boundaries(tmp_path):
     switching the rule off.
     """
     for label, text in (
-        ("single-name-aside", cp.FIXTURE_OWN_SINGLE_NAME_ASIDE),
-        ("sentence-break", cp.FIXTURE_OWN_NOTICE_THEN_SENTENCE),
+        ("single-name-aside", cpc.FIXTURE_OWN_SINGLE_NAME_ASIDE),
+        ("sentence-break", cpc.FIXTURE_OWN_NOTICE_THEN_SENTENCE),
     ):
         (tmp_path / label).mkdir(parents=True, exist_ok=True)
         root = _skeleton(tmp_path / label)
-        cp._write(root, cp.OWN_ONLY_REL, text + cp.FIXTURE_FILLER)
+        cpc._write(root, cpc.OWN_ONLY_REL, text + cpc.FIXTURE_FILLER)
         findings, _ = cp.audit(root)
         assert not findings, (label, [f.detail for f in findings])
 
@@ -821,10 +822,10 @@ def test_masking_controls_run_in_the_self_test(tmp_path):
     Without this, deleting the masking list from the runner would keep the
     tests above green while CI stopped exercising them.
     """
-    assert cp._masking_controls(), "the masking controls must not be empty"
+    assert cpc._masking_controls(), "the masking controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    for case in cp._masking_controls():
+    for case in cpc._masking_controls():
         label = case[0]
         assert label in proc.stdout, f"{label} not exercised by --negative-control"
 
@@ -843,13 +844,13 @@ def test_utf16_encoded_license_body_is_flagged(tmp_path):
     extension tripwire covered these files either: the carrier was invisible.
     """
     for label, payload in (
-        ("bom", cp.FIXTURE_UTF16_BOM_NOTICE),
-        ("le", cp.FIXTURE_UTF16LE_BOMLESS_NOTICE),
-        ("be", cp.FIXTURE_UTF16BE_BOMLESS_NOTICE),
-        ("nul", cp.FIXTURE_STRAY_NUL_NOTICE),
+        ("bom", cpc.FIXTURE_UTF16_BOM_NOTICE),
+        ("le", cpc.FIXTURE_UTF16LE_BOMLESS_NOTICE),
+        ("be", cpc.FIXTURE_UTF16BE_BOMLESS_NOTICE),
+        ("nul", cpc.FIXTURE_STRAY_NUL_NOTICE),
     ):
         root = _masked_tree(tmp_path, label, payload)
-        assert "foreign-license-text" in _fired_on(root, cp.MASKED_REL), (
+        assert "foreign-license-text" in _fired_on(root, cpc.MASKED_REL), (
             f"{label}: a foreign license body survived the decode layer"
         )
 
@@ -878,7 +879,7 @@ def test_unscanned_file_count_is_disclosed(tmp_path):
     payload with no ASCII run in it at all reaches no content rule, and says so.
     """
     root = _masked_tree(tmp_path, "disclose", "")
-    cp._write(root, "fixtures/render.wav", b"\x00" * 4096)
+    cpc._write(root, "fixtures/render.wav", b"\x00" * 4096)
     _, stats = cp.audit(root)
     assert stats["files_not_content_scanned"] == 1
     proc = run_tool("--root", str(root))
@@ -897,22 +898,22 @@ def test_unscanned_file_count_is_disclosed(tmp_path):
 def test_wrapped_license_body_is_flagged(tmp_path):
     """A wrapper is found by MAGIC, not by name — `.gz` is stripped, `.dat` lies."""
     for label, rel, payload in (
-        ("gzip", "model/pasted_helper.py.gz", cp.FIXTURE_GZIPPED_NOTICE),
-        ("xz", "model/pasted_helper.py.gz", cp.FIXTURE_XZ_NOTICE),
-        ("bzip2", "model/pasted_helper.py.gz", cp.FIXTURE_BZIP2_NOTICE),
-        ("zip", "compiler/golden/bundle.dat", cp.FIXTURE_ZIP_WITH_NOTICE),
-        ("tar.gz", "compiler/golden/bundle.dat", cp.FIXTURE_TAR_GZ_WITH_NOTICE),
-        ("npz", "reports/fixtures/taps.npz", cp.FIXTURE_NPZ_WITH_NOTICE),
-        ("zip-in-gzip", "compiler/golden/bundle.dat", cp.FIXTURE_GZIPPED_ZIP_WITH_NOTICE),
-        ("gzip-in-zip", "compiler/golden/bundle.dat", cp.FIXTURE_ZIP_WITH_GZIPPED_MEMBER),
+        ("gzip", "model/pasted_helper.py.gz", cpc.FIXTURE_GZIPPED_NOTICE),
+        ("xz", "model/pasted_helper.py.gz", cpc.FIXTURE_XZ_NOTICE),
+        ("bzip2", "model/pasted_helper.py.gz", cpc.FIXTURE_BZIP2_NOTICE),
+        ("zip", "compiler/golden/bundle.dat", cpc.FIXTURE_ZIP_WITH_NOTICE),
+        ("tar.gz", "compiler/golden/bundle.dat", cpc.FIXTURE_TAR_GZ_WITH_NOTICE),
+        ("npz", "reports/fixtures/taps.npz", cpc.FIXTURE_NPZ_WITH_NOTICE),
+        ("zip-in-gzip", "compiler/golden/bundle.dat", cpc.FIXTURE_GZIPPED_ZIP_WITH_NOTICE),
+        ("gzip-in-zip", "compiler/golden/bundle.dat", cpc.FIXTURE_ZIP_WITH_GZIPPED_MEMBER),
     ):
         root = _masked_tree(tmp_path, f"wrap-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         fired = [f for f in cp.audit(root)[0] if f.path == rel]
         assert any(f.rule == "foreign-license-text" for f in fired), (
             f"{label}: a GPL body survived the wrapper layer"
         )
-        assert any(cp.WIDE_NOTICE_LOCATOR in f.detail for f in fired), (
+        assert any(cpc.WIDE_NOTICE_LOCATOR in f.detail for f in fired), (
             f"{label}: the finding does not quote the offending notice: "
             + "; ".join(f.detail for f in fired)
         )
@@ -925,13 +926,13 @@ def test_notice_embedded_in_a_binary_payload_is_flagged(tmp_path):
     holder; a notice spliced into a float dump is the same shape by hand.
     """
     for label, rel, payload in (
-        ("wav-icop", "fixtures/audio/render.wav", cp.FIXTURE_WAV_WITH_COPYRIGHT_CHUNK),
-        ("float-dump", "reports/artifacts/ref.f32", cp.FIXTURE_FLOAT_DUMP_WITH_NOTICE),
-        ("opaque", "fixtures/audio/render.wav", cp.FIXTURE_NOTICE_IN_AN_OPAQUE_PAYLOAD),
-        ("sign", "fixtures/audio/render.wav", cp.FIXTURE_COPYRIGHT_SIGN_IN_A_PAYLOAD),
+        ("wav-icop", "fixtures/audio/render.wav", cpc.FIXTURE_WAV_WITH_COPYRIGHT_CHUNK),
+        ("float-dump", "reports/artifacts/ref.f32", cpc.FIXTURE_FLOAT_DUMP_WITH_NOTICE),
+        ("opaque", "fixtures/audio/render.wav", cpc.FIXTURE_NOTICE_IN_AN_OPAQUE_PAYLOAD),
+        ("sign", "fixtures/audio/render.wav", cpc.FIXTURE_COPYRIGHT_SIGN_IN_A_PAYLOAD),
     ):
         root = _masked_tree(tmp_path, f"embed-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         fired = [f.rule for f in cp.audit(root)[0] if f.path == rel]
         assert "foreign-license-text" in fired, (
             f"{label}: a notice inside a binary payload was not flagged"
@@ -945,20 +946,20 @@ def test_our_own_payload_shapes_still_audit_clean(tmp_path):
     could only be answered by switching the rule off, so these must stay clean.
     """
     for label, rel, payload in (
-        ("pcm", "fixtures/audio/render.wav", cp.FIXTURE_PLAIN_PCM_WAV),
+        ("pcm", "fixtures/audio/render.wav", cpc.FIXTURE_PLAIN_PCM_WAV),
         # A QUIET render is the hazard increment 10 had to be measured against:
         # every sample is a low byte beside a NUL high byte, which is exactly the
         # byte shape of a UTF-16-LE string.
-        ("quiet-pcm", "fixtures/audio/render.wav", cp.FIXTURE_QUIET_PCM_WAV),
-        ("f32", "reports/artifacts/ref.f32", cp.FIXTURE_PLAIN_FLOAT_DUMP),
-        ("npy", "reports/traces/click.npy", cp.FIXTURE_TENSOR_PAYLOAD),
-        ("trace.gz", "reports/artifacts/trace.json.gz", cp.FIXTURE_OWN_GZIPPED_TRACE),
+        ("quiet-pcm", "fixtures/audio/render.wav", cpc.FIXTURE_QUIET_PCM_WAV),
+        ("f32", "reports/artifacts/ref.f32", cpc.FIXTURE_PLAIN_FLOAT_DUMP),
+        ("npy", "reports/traces/click.npy", cpc.FIXTURE_TENSOR_PAYLOAD),
+        ("trace.gz", "reports/artifacts/trace.json.gz", cpc.FIXTURE_OWN_GZIPPED_TRACE),
         # The residual increment 10 declares rather than closes: a notice carried
         # in a TRANSFORMED encoding is not text at any stride.
-        ("base64", "fixtures/audio/render.wav", cp.FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD),
+        ("base64", "fixtures/audio/render.wav", cpc.FIXTURE_BASE64_NOTICE_IN_A_PAYLOAD),
     ):
         root = _masked_tree(tmp_path, f"clean-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         findings, _ = cp.audit(root)
         assert not findings, f"{label}: {[f.as_dict() for f in findings]}"
 
@@ -976,29 +977,29 @@ def test_our_own_payload_shapes_still_audit_clean(tmp_path):
 def test_wide_encoded_notice_in_a_payload_is_flagged(tmp_path):
     """Every stride, both byte orders, BOM or not, committed or inside a wrapper."""
     for label, rel, payload in (
-        ("utf-16-le", "fixtures/audio/render.wav", cp.FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD),
-        ("utf-16-be", "reports/artifacts/ref.f32", cp.FIXTURE_UTF16BE_NOTICE_IN_A_PAYLOAD),
-        ("utf-32-le", "fixtures/audio/render.wav", cp.FIXTURE_UTF32LE_NOTICE_IN_A_PAYLOAD),
-        ("utf-32-be", "fixtures/audio/render.wav", cp.FIXTURE_UTF32BE_NOTICE_IN_A_PAYLOAD),
-        ("bom-in-wav", "fixtures/audio/render.wav", cp.FIXTURE_WAV_WITH_WIDE_NOTICE),
+        ("utf-16-le", "fixtures/audio/render.wav", cpc.FIXTURE_WIDE_NOTICE_IN_A_PAYLOAD),
+        ("utf-16-be", "reports/artifacts/ref.f32", cpc.FIXTURE_UTF16BE_NOTICE_IN_A_PAYLOAD),
+        ("utf-32-le", "fixtures/audio/render.wav", cpc.FIXTURE_UTF32LE_NOTICE_IN_A_PAYLOAD),
+        ("utf-32-be", "fixtures/audio/render.wav", cpc.FIXTURE_UTF32BE_NOTICE_IN_A_PAYLOAD),
+        ("bom-in-wav", "fixtures/audio/render.wav", cpc.FIXTURE_WAV_WITH_WIDE_NOTICE),
         (
             "odd-offset",
             "fixtures/audio/render.wav",
-            cp.FIXTURE_WIDE_NOTICE_AT_AN_ODD_OFFSET,
+            cpc.FIXTURE_WIDE_NOTICE_AT_AN_ODD_OFFSET,
         ),
         (
             "wrapper-member",
             "compiler/golden/bundle.dat",
-            cp.FIXTURE_GZIPPED_WIDE_NOTICE_PAYLOAD,
+            cpc.FIXTURE_GZIPPED_WIDE_NOTICE_PAYLOAD,
         ),
     ):
         root = _masked_tree(tmp_path, f"wide-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         fired = [f for f in cp.audit(root)[0] if f.path == rel]
         assert any(f.rule == "foreign-license-text" for f in fired), (
             f"{label}: a wide-encoded notice inside a payload was not flagged"
         )
-        assert any(cp.WIDE_NOTICE_LOCATOR in f.detail for f in fired), (
+        assert any(cpc.WIDE_NOTICE_LOCATOR in f.detail for f in fired), (
             f"{label}: the finding does not quote the offending notice: "
             + "; ".join(f.detail for f in fired)
         )
@@ -1012,7 +1013,7 @@ def test_wide_run_harvest_reads_each_encoding_and_refuses_decimated_noise():
     beside a NUL high byte — decimates into printable noise and manufactures runs
     on a rule that cannot be exempted.
     """
-    notice = cp.FIXTURE_WIDE_NOTICE_TEXT
+    notice = cpc.FIXTURE_WIDE_NOTICE_TEXT
     # Every byte alignment, not just the even one: a notice spliced into a
     # payload starts at an odd offset as often as an even one, and reading the
     # data byte on the wrong side of its padding is how that was missed first.
@@ -1020,7 +1021,7 @@ def test_wide_run_harvest_reads_each_encoding_and_refuses_decimated_noise():
         for lead in range(4):
             raw = b"\x81\x7f\x93\xee"[:lead] + notice.encode(encoding) + b"\xfe\x81"
             runs = cp._wide_runs(raw)
-            assert any(cp.WIDE_NOTICE_LOCATOR in run for run in runs), (
+            assert any(cpc.WIDE_NOTICE_LOCATOR in run for run in runs), (
                 encoding,
                 lead,
                 runs,
@@ -1036,11 +1037,11 @@ def test_wide_run_harvest_reads_each_encoding_and_refuses_decimated_noise():
     assert narrow == [], narrow
     # A quiet render carries no run that names a holder, and the audit counts
     # whatever it did find rather than reporting nothing at all.
-    text, count = cp.harvest_payload(cp.FIXTURE_QUIET_PCM_WAV)
+    text, count = cp.harvest_payload(cpc.FIXTURE_QUIET_PCM_WAV)
     assert "Upstream" not in text, text[:200]
-    assert count == len(cp._wide_runs(cp.FIXTURE_QUIET_PCM_WAV))
+    assert count == len(cp._wide_runs(cpc.FIXTURE_QUIET_PCM_WAV))
     # The sign spelling is admitted inside a wide run and normalised to `(c)`.
-    sign_runs = cp._wide_runs(cp.FIXTURE_WIDE_COPYRIGHT_SIGN_IN_A_PAYLOAD)
+    sign_runs = cp._wide_runs(cpc.FIXTURE_WIDE_COPYRIGHT_SIGN_IN_A_PAYLOAD)
     assert any("(c" + ") 20" + "19" in run for run in sign_runs), sign_runs
     assert all(cp.COPYRIGHT_SIGN_CHAR not in run for run in sign_runs)
 
@@ -1075,23 +1076,23 @@ def test_harvest_keeps_notices_and_drops_payload_noise():
     assert harvested_sign.startswith("(c" + ") 20"), harvested_sign
     assert sign_notice[0] not in harvested_sign
     # 16-bit PCM yields runs with no word in them, which are dropped.
-    pcm = cp._wav_payload()
+    pcm = cpc._wav_payload()
     assert not cp.RUN_WORD_RE.search(b"\x37\x22\x37\x37\x37\x47")
     assert "Copy" + "right" not in cp.harvest_strings(pcm)
 
 
 def test_unwrap_payload_reads_wrappers_and_refuses_ordinary_payloads():
     """Unit-level pin: a wrapper yields (name, member), a render yields None."""
-    entries, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
+    entries, truncated = cp.unwrap_payload(cpc.FIXTURE_GZIPPED_NOTICE)
     assert entries and not truncated
-    assert cp.WIDE_NOTICE_LOCATOR.encode("ascii") in entries[0][1]
-    assert cp.unwrap_payload(cp.FIXTURE_PLAIN_PCM_WAV) == (None, False)
+    assert cpc.WIDE_NOTICE_LOCATOR.encode("ascii") in entries[0][1]
+    assert cp.unwrap_payload(cpc.FIXTURE_PLAIN_PCM_WAV) == (None, False)
     assert cp.unwrap_payload(b"") == (None, False)
     # Nested: a tar inside a gzip resolves to the tar's member, not the tar,
     # and the member keeps its own NAME (increment 9).
-    entries, _ = cp.unwrap_payload(cp.FIXTURE_TAR_GZ_WITH_NOTICE)
+    entries, _ = cp.unwrap_payload(cpc.FIXTURE_TAR_GZ_WITH_NOTICE)
     assert any(
-        b"filter" not in payload and cp.WIDE_NOTICE_LOCATOR.encode() in payload
+        b"filter" not in payload and cpc.WIDE_NOTICE_LOCATOR.encode() in payload
         for _, payload in entries
     )
     assert any("vendor/filter.cpp" in name for name, _ in entries), entries
@@ -1100,10 +1101,10 @@ def test_unwrap_payload_reads_wrappers_and_refuses_ordinary_payloads():
 def test_truncated_payload_scan_is_disclosed_not_silent(tmp_path, monkeypatch):
     """A scan that could not finish must never look like one that passed."""
     monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 32)
-    entries, truncated = cp.unwrap_payload(cp.FIXTURE_GZIPPED_NOTICE)
+    entries, truncated = cp.unwrap_payload(cpc.FIXTURE_GZIPPED_NOTICE)
     assert truncated and entries and len(entries[0][1]) == 32
     root = _masked_tree(tmp_path, "truncated", "")
-    cp._write(root, "reports/artifacts/trace.json.gz", cp.FIXTURE_GZIPPED_NOTICE)
+    cpc._write(root, "reports/artifacts/trace.json.gz", cpc.FIXTURE_GZIPPED_NOTICE)
     _, stats = cp.audit(root)
     assert stats["payload_scans_truncated"] == ["reports/artifacts/trace.json.gz"], stats
 
@@ -1119,7 +1120,7 @@ def test_inflation_budget_is_global_not_per_level(monkeypatch):
     budget = 1 << 20
     monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", budget)
     gzipped = gzip.compress(b"A" * (budget - 1), 9)
-    bomb = cp._zip_payload(tuple((f"m{i:02d}.gz", gzipped) for i in range(64)))
+    bomb = cpc._zip_payload(tuple((f"m{i:02d}.gz", gzipped) for i in range(64)))
     assert len(bomb) < 32 * 1024, "the hostile input must stay small"
     entries, truncated = cp.unwrap_payload(bomb)
     total = sum(len(payload) for _, payload in entries)
@@ -1147,22 +1148,22 @@ def test_citation_shaped_noise_run_needs_the_word_filter(tmp_path):
     carriage signals. The word filter is what keeps it out, so this control is
     checked in both directions here.
     """
-    run = cp.FIXTURE_CITATION_SHAPED_NOISE_RUN
+    run = cpc.FIXTURE_CITATION_SHAPED_NOISE_RUN
     assert cp.RECORD_CITATION_RE.search(run.decode("ascii")), run
     assert not cp.RUN_WORD_RE.search(run), "the run must carry no word"
     # With the filter (today): the run never reaches a rule, so the tree is clean.
     assert run.decode("ascii") not in cp.harvest_strings(
-        cp.FIXTURE_CITATION_SHAPED_NOISE
+        cpc.FIXTURE_CITATION_SHAPED_NOISE
     )
     root = _masked_tree(tmp_path, "citation-noise", "")
-    cp._write(root, "fixtures/audio/render.wav", cp.FIXTURE_CITATION_SHAPED_NOISE)
+    cpc._write(root, "fixtures/audio/render.wav", cpc.FIXTURE_CITATION_SHAPED_NOISE)
     findings, _ = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     # Without it: the same bytes become a dangling-citation finding. Reverting
     # the filter is the hunk this control exists to fail on.
     kept = [
         match.group()
-        for match in cp.PRINTABLE_RUN_RE.finditer(cp.FIXTURE_CITATION_SHAPED_NOISE)
+        for match in cp.PRINTABLE_RUN_RE.finditer(cpc.FIXTURE_CITATION_SHAPED_NOISE)
     ]
     unfiltered = "\n".join(part.decode("ascii", "replace") for part in kept)
     assert "0945" in set(cp.RECORD_CITATION_RE.findall(unfiltered)), unfiltered
@@ -1182,10 +1183,10 @@ def test_payload_scan_modes_are_reported_for_the_real_tree():
 
 def test_payload_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    assert cp._payload_controls(), "the payload controls must not be empty"
+    assert cpc._payload_controls(), "the payload controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    for case in cp._payload_controls():
+    for case in cpc._payload_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
 
 
@@ -1204,18 +1205,18 @@ def test_wrapper_member_name_is_judged_like_a_committed_path(tmp_path):
     """A marker-free member is answered by its NAME or by nothing at all."""
     for label, rel, payload, quoted in (
         ("zip-wt", "compiler/golden/bundle.dat",
-         cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME, "Bank Sine.wt"),
+         cpc.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME, "Bank Sine.wt"),
         ("tar-cpp", "compiler/golden/bundle.dat",
-         cp.FIXTURE_TAR_GZ_WITH_SOURCE_MEMBER_NAME, "Reverb1.cpp"),
+         cpc.FIXTURE_TAR_GZ_WITH_SOURCE_MEMBER_NAME, "Reverb1.cpp"),
         ("gzip-fname", "compiler/golden/bundle.dat",
-         cp.FIXTURE_GZIP_WITH_ASSET_FNAME, "Bank Sine.wt"),
+         cpc.FIXTURE_GZIP_WITH_ASSET_FNAME, "Bank Sine.wt"),
         ("gzipped-zip", "compiler/golden/bundle.dat",
-         cp.FIXTURE_GZIPPED_ZIP_WITH_ASSET_MEMBER, "Bank Sine.wt"),
+         cpc.FIXTURE_GZIPPED_ZIP_WITH_ASSET_MEMBER, "Bank Sine.wt"),
         ("wrapped-member", "compiler/golden/bundle.dat",
-         cp.FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER, "Bank Sine.wt"),
+         cpc.FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER, "Bank Sine.wt"),
     ):
         root = _masked_tree(tmp_path, f"member-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         fired = [f for f in cp.audit(root)[0] if f.path == rel]
         rules = [f.rule for f in fired]
         assert "wrapper-member-name" in rules, f"{label}: not flagged ({rules})"
@@ -1234,7 +1235,7 @@ def test_marker_free_asset_member_reaches_no_content_rule(tmp_path):
     """
     root = _masked_tree(tmp_path, "no-text", "")
     rel = "compiler/golden/bundle.dat"
-    cp._write(root, rel, cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME)
+    cpc._write(root, rel, cpc.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME)
     tree = cp.Tree(root, [])
     assert tree.text(rel) is None, repr(tree.text(rel))
     assert tree.carried_names(rel) == ("wavetables/Bank Sine.wt",)
@@ -1243,7 +1244,7 @@ def test_marker_free_asset_member_reaches_no_content_rule(tmp_path):
 
 def test_outer_member_name_is_not_masked_by_what_it_wraps():
     """Every `!`-joined component is judged, not just the innermost one."""
-    entries, _ = cp.unwrap_payload(cp.FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER)
+    entries, _ = cp.unwrap_payload(cpc.FIXTURE_ZIP_WITH_WRAPPED_ASSET_MEMBER)
     label = entries[0][0]
     assert label == "Bank Sine.wt" + cp.MEMBER_JOIN + "meta.json", label
     # Judged whole, the label reads as a '.json' and nothing fires.
@@ -1253,11 +1254,11 @@ def test_outer_member_name_is_not_masked_by_what_it_wraps():
 
 def test_gzip_header_name_is_parsed_and_absent_when_unset():
     """The FNAME field is the only name a single-stream wrapper carries."""
-    assert cp._gzip_header_name(cp.FIXTURE_GZIP_WITH_ASSET_FNAME) == "Bank Sine.wt"
+    assert cp._gzip_header_name(cpc.FIXTURE_GZIP_WITH_ASSET_FNAME) == "Bank Sine.wt"
     # `gzip.compress` writes no FNAME, so there is no name to judge — and the
     # absence must read as "no name", never as an empty-string member.
-    assert cp._gzip_header_name(cp.FIXTURE_OWN_GZIPPED_TRACE) is None
-    assert cp._gzip_header_name(cp.FIXTURE_PLAIN_PCM_WAV) is None
+    assert cp._gzip_header_name(cpc.FIXTURE_OWN_GZIPPED_TRACE) is None
+    assert cp._gzip_header_name(cpc.FIXTURE_PLAIN_PCM_WAV) is None
     assert cp._gzip_header_name(b"") is None
     assert cp._gzip_header_name(cp.GZIP_MAGIC + b"\x08" + b"\x00" * 7) is None
 
@@ -1271,11 +1272,11 @@ def test_our_own_wrapper_shapes_still_audit_clean(tmp_path):
     """
     for label, rel, payload in (
         ("trace-fname", "reports/artifacts/trace.json.gz",
-         cp.FIXTURE_OWN_GZIPPED_TRACE_WITH_FNAME),
-        ("npz", "reports/fixtures/taps.npz", cp.FIXTURE_OWN_NPZ_MEMBERS),
+         cpc.FIXTURE_OWN_GZIPPED_TRACE_WITH_FNAME),
+        ("npz", "reports/fixtures/taps.npz", cpc.FIXTURE_OWN_NPZ_MEMBERS),
     ):
         root = _masked_tree(tmp_path, f"own-wrapper-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         findings, _ = cp.audit(root)
         assert not findings, f"{label}: {[f.as_dict() for f in findings]}"
 
@@ -1296,10 +1297,10 @@ def test_real_tree_member_names_are_read_and_none_offend():
 def test_wrapper_member_name_cannot_be_exempted(tmp_path):
     """It is answered by a provenance row, never by an exemption."""
     root = _masked_tree(tmp_path, "member-exempt", "")
-    cp._write(
-        root, "compiler/golden/bundle.dat", cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME
+    cpc._write(
+        root, "compiler/golden/bundle.dat", cpc.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME
     )
-    cp._patch_manifest(
+    cpc._patch_manifest(
         root,
         lambda d: d["exemptions"].append(
             {
@@ -1327,8 +1328,8 @@ def test_wrapper_member_name_cannot_be_exempted(tmp_path):
 def test_every_member_of_a_concatenated_gzip_is_named():
     """Unit-level pin: both members' names AND both members' payloads."""
     for label, payload in (
-        ("second-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET),
-        ("first-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET),
+        ("second-offends", cpc.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET),
+        ("first-offends", cpc.FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET),
     ):
         entries, truncated = cp.unwrap_payload(payload)
         assert not truncated, label
@@ -1336,7 +1337,7 @@ def test_every_member_of_a_concatenated_gzip_is_named():
         assert sorted(names) == ["Bank Sine.wt", "notes.json"], f"{label}: {names}"
         # Content coverage is unchanged: every member is still inflated whole.
         assert sum(len(p) for _, p in entries) == 14 + len(
-            cp.FIXTURE_MARKER_FREE_ASSET_PAYLOAD
+            cpc.FIXTURE_MARKER_FREE_ASSET_PAYLOAD
         ), label
 
 
@@ -1344,11 +1345,11 @@ def test_concatenated_gzip_member_name_is_judged_in_either_order(tmp_path):
     """The defect, stated as the property it violated: order-independence."""
     rel = "compiler/golden/bundle.dat"
     for label, payload in (
-        ("second-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET),
-        ("first-offends", cp.FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET),
+        ("second-offends", cpc.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET),
+        ("first-offends", cpc.FIXTURE_MULTI_MEMBER_GZIP_FIRST_NAMES_AN_ASSET),
     ):
         root = _masked_tree(tmp_path, f"concat-{label}", "")
-        cp._write(root, rel, payload)
+        cpc._write(root, rel, payload)
         fired = [f for f in cp.audit(root)[0] if f.path == rel]
         rules = [f.rule for f in fired]
         assert "wrapper-member-name" in rules, f"{label}: not flagged ({rules})"
@@ -1365,7 +1366,7 @@ def test_concatenated_gzip_contributes_one_name_per_member(tmp_path):
     """
     root = _masked_tree(tmp_path, "concat-coverage", "")
     rel = "reports/artifacts/trace.json.gz"
-    cp._write(root, rel, cp.FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE)
+    cpc._write(root, rel, cpc.FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE)
     findings, stats = cp.audit(root)
     tree = cp.Tree(root, [])
     assert tree.carried_names(rel) == (
@@ -1389,13 +1390,13 @@ def test_concatenated_gzip_keeps_the_inflation_budget_accounting(
     """
     monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 20)
     entries, truncated = cp.unwrap_payload(
-        cp.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET
+        cpc.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET
     )
     assert truncated, entries
     assert sum(len(p) for _, p in entries) == 20, entries
     root = _masked_tree(tmp_path, "concat-truncated", "")
     rel = "reports/artifacts/trace.json.gz"
-    cp._write(root, rel, cp.FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE)
+    cpc._write(root, rel, cpc.FIXTURE_OWN_MULTI_MEMBER_GZIPPED_TRACE)
     _, stats = cp.audit(root)
     assert stats["payload_scans_truncated"] == [rel], stats
 
@@ -1406,7 +1407,7 @@ def test_a_corrupt_or_trailing_garbage_gzip_is_not_read_as_a_wrapper():
     Unparseable means "not a wrapper", so the payload falls through to the
     string harvest and stays disclosed — it must never mean "clean".
     """
-    good = cp.FIXTURE_GZIP_WITH_ASSET_FNAME
+    good = cpc.FIXTURE_GZIP_WITH_ASSET_FNAME
     assert cp.unwrap_payload(good + b"nonsense-tail") == (None, False)
     assert cp.unwrap_payload(good[:-4]) == (None, False)
     assert cp._gzip_members(b"", 1 << 20) == (None, False)
@@ -1438,10 +1439,10 @@ def test_real_tree_gzip_streams_are_all_single_member():
 
 def test_wrapper_name_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    assert cp._wrapper_name_controls(), "the wrapper controls must not be empty"
+    assert cpc._wrapper_name_controls(), "the wrapper controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    for case in cp._wrapper_name_controls():
+    for case in cpc._wrapper_name_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
 
 
@@ -1457,7 +1458,7 @@ def test_wrapper_name_controls_run_in_the_self_test():
 def _discovery_tree(tmp_path, label):
     root = tmp_path / f"tree-{label}"
     root.mkdir()
-    cp.build_skeleton(root)
+    cpc.build_skeleton(root)
     findings, _ = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     return root
@@ -1466,14 +1467,14 @@ def _discovery_tree(tmp_path, label):
 def test_committed_submodule_gitlink_is_flagged(tmp_path):
     """`AGENTS.md`/#25: no submodule by silent default — now mechanically so."""
     root = _discovery_tree(tmp_path, "gitlink")
-    cp._git_submodule_entry(root)
+    cpc._git_submodule_entry(root)
     findings, stats = cp.audit(root)
     fired = [f for f in findings if f.rule == "submodule-reference"]
     assert fired, [f.as_dict() for f in findings]
-    assert fired[0].path == cp.FIXTURE_SUBMODULE_REL
+    assert fired[0].path == cpc.FIXTURE_SUBMODULE_REL
     # The evidence must name the upstream and the pin, or the finding is not
     # answerable: a gitlink has no text a reviewer can read instead.
-    assert cp.FIXTURE_SUBMODULE_COMMIT[:12] in fired[0].detail
+    assert cpc.FIXTURE_SUBMODULE_COMMIT[:12] in fired[0].detail
     assert "surge-synthesizer/surge" in fired[0].detail
     assert stats["entries_by_reference"]["gitlink"] == 1
     # …and it is NOT reported as an undecodable payload (that mislabelling is
@@ -1484,24 +1485,24 @@ def test_committed_submodule_gitlink_is_flagged(tmp_path):
 def test_nested_repository_in_a_non_git_tree_is_flagged(tmp_path):
     """The unpacked-tarball shape: a vendored checkout with no gitlink mode."""
     root = _discovery_tree(tmp_path, "nested")
-    cp._nested_repo(root)
+    cpc._nested_repo(root)
     findings, _ = cp.audit(root)
     assert [f.path for f in findings if f.rule == "submodule-reference"] == [
-        cp.FIXTURE_NESTED_REPO_REL
+        cpc.FIXTURE_NESTED_REPO_REL
     ], [f.as_dict() for f in findings]
 
 
 def test_submodule_row_must_name_the_committed_commit(tmp_path):
     """A gitlink carries its own pin, so the row is checked against it exactly."""
     root = _discovery_tree(tmp_path, "gitlink-pin")
-    cp._git_submodule_entry(root)
-    cp._patch_manifest(root, lambda d: d["entries"].append(cp._submodule_row()))
+    cpc._git_submodule_entry(root)
+    cpc._patch_manifest(root, lambda d: d["entries"].append(cpc._submodule_row()))
     assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
 
     root = _discovery_tree(tmp_path, "gitlink-wrong-pin")
-    cp._git_submodule_entry(root)
-    cp._patch_manifest(
-        root, lambda d: d["entries"].append(cp._submodule_row(commit="0" * 40))
+    cpc._git_submodule_entry(root)
+    cpc._patch_manifest(
+        root, lambda d: d["entries"].append(cpc._submodule_row(commit="0" * 40))
     )
     assert "manifest-uncorroborated" in _rules_fired(root)
 
@@ -1509,16 +1510,16 @@ def test_submodule_row_must_name_the_committed_commit(tmp_path):
 def test_symlink_leaving_the_tree_is_flagged(tmp_path):
     """Every way a link's target can be out of the audit's reach."""
     cases = {
-        "absent": cp.FIXTURE_ESCAPING_LINK_TARGET,  # the CI shape: oracle not checked out
+        "absent": cpc.FIXTURE_ESCAPING_LINK_TARGET,  # the CI shape: oracle not checked out
         "absolute": "/opt/surge/include/sst/effects/Reverb1.h",
     }
     for label, target in cases.items():
         root = _discovery_tree(tmp_path, f"link-{label}")
-        cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, target)
+        cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, target)
         findings, stats = cp.audit(root)
         fired = [f for f in findings if f.rule == "external-symlink-target"]
         assert fired, f"{label}: {[f.as_dict() for f in findings]}"
-        assert fired[0].path == cp.FIXTURE_ESCAPING_LINK_REL
+        assert fired[0].path == cpc.FIXTURE_ESCAPING_LINK_REL
         assert stats["entries_by_reference"]["symlink"] == 1
         assert stats["files_not_content_scanned"] == 0
 
@@ -1526,14 +1527,14 @@ def test_symlink_leaving_the_tree_is_flagged(tmp_path):
 def test_symlink_into_a_declared_scope_exclusion_is_flagged(tmp_path):
     """A declared hole must not be re-imported at a product path."""
     root = _discovery_tree(tmp_path, "link-hole")
-    cp._write(root, ".loom/vendored_table.py", "TABLE = [7, 8, 9]\n")
-    cp._patch_manifest(
+    cpc._write(root, ".loom/vendored_table.py", "TABLE = [7, 8, 9]\n")
+    cpc._patch_manifest(
         root,
         lambda d: d["scope_exclusions"].append(
             {"prefix": ".loom/", "reason": "synthetic declared hole"}
         ),
     )
-    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, "../.loom/vendored_table.py")
+    cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, "../.loom/vendored_table.py")
     fired = [f for f in cp.audit(root)[0] if f.rule == "external-symlink-target"]
     assert fired and "scope exclusion" in fired[0].detail
 
@@ -1546,11 +1547,11 @@ def test_resolvable_escaping_symlink_is_still_content_scanned(tmp_path):
     dropped them silently.
     """
     root = _discovery_tree(tmp_path, "link-resolves")
-    cp._write(tmp_path / "external-oracle", "Reverb1.h", cp.FIXTURE_GPL_BODY)
-    cp._symlink(
-        root, cp.FIXTURE_ESCAPING_LINK_REL, "../../external-oracle/Reverb1.h"
+    cpc._write(tmp_path / "external-oracle", "Reverb1.h", cpc.FIXTURE_GPL_BODY)
+    cpc._symlink(
+        root, cpc.FIXTURE_ESCAPING_LINK_REL, "../../external-oracle/Reverb1.h"
     )
-    fired = _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
+    fired = _fired_on(root, cpc.FIXTURE_ESCAPING_LINK_REL)
     assert "foreign-license-text" in fired
     assert "external-symlink-target" in fired
 
@@ -1563,8 +1564,8 @@ def test_in_tree_symlinks_still_audit_clean(tmp_path):
     only be answered by switching the rule off.
     """
     root = _discovery_tree(tmp_path, "link-in-tree")
-    cp._symlink(root, "CLAUDE.md", "docs/plain.md")
-    cp._symlink(root, "docs/model", "../model")
+    cpc._symlink(root, "CLAUDE.md", "docs/plain.md")
+    cpc._symlink(root, "docs/model", "../model")
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     assert stats["entries_by_reference"]["symlink"] == 2
@@ -1573,16 +1574,16 @@ def test_in_tree_symlinks_still_audit_clean(tmp_path):
 def test_declared_by_reference_entries_audit_clean(tmp_path):
     """A row naming the exact path answers the structural rule in full."""
     root = _discovery_tree(tmp_path, "link-declared")
-    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
-    cp._patch_manifest(
+    cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, cpc.FIXTURE_ESCAPING_LINK_TARGET)
+    cpc._patch_manifest(
         root,
         lambda d: d["entries"].append(
             {
-                "path": cp.FIXTURE_ESCAPING_LINK_REL,
+                "path": cpc.FIXTURE_ESCAPING_LINK_REL,
                 "class": "external-reference",
                 "content": "synthetic: a link into the external oracle tree",
                 "upstream": "surge-synthesizer/surge",
-                "pinned_commit": cp.FIXTURE_SUBMODULE_COMMIT,
+                "pinned_commit": cpc.FIXTURE_SUBMODULE_COMMIT,
                 "upstream_license": "GPL-3.0-or-later",
                 "decision_record": "0001",
             }
@@ -1595,19 +1596,19 @@ def test_declared_by_reference_entries_audit_clean(tmp_path):
 def test_entry_kinds_are_read_from_the_git_index(tmp_path):
     """Unit pin on the discovery layer itself: modes, not guesses."""
     root = _discovery_tree(tmp_path, "modes")
-    cp._git_submodule_entry(root)
-    cp._symlink(root, "CLAUDE.md", "docs/plain.md")
-    cp._git(root, "add", "-f", "CLAUDE.md")
+    cpc._git_submodule_entry(root)
+    cpc._symlink(root, "CLAUDE.md", "docs/plain.md")
+    cpc._git(root, "add", "-f", "CLAUDE.md")
     kinds = dict((rel, kind) for rel, kind, _ in cp.list_entries(root))
-    assert kinds[cp.FIXTURE_SUBMODULE_REL] == "gitlink"
+    assert kinds[cpc.FIXTURE_SUBMODULE_REL] == "gitlink"
     assert kinds["CLAUDE.md"] == "symlink"
     assert kinds["model/carrier.py"] == "file"
     commits = {
         rel: blob for rel, kind, blob in cp.list_entries(root) if kind == "gitlink"
     }
-    assert commits[cp.FIXTURE_SUBMODULE_REL] == cp.FIXTURE_SUBMODULE_COMMIT
+    assert commits[cpc.FIXTURE_SUBMODULE_REL] == cpc.FIXTURE_SUBMODULE_COMMIT
     assert cp.parse_gitmodules(root) == {
-        cp.FIXTURE_SUBMODULE_REL: cp.FIXTURE_SUBMODULE_URL
+        cpc.FIXTURE_SUBMODULE_REL: cpc.FIXTURE_SUBMODULE_URL
     }
 
 
@@ -1636,14 +1637,14 @@ def _index_as_symlink(root, rel, target_text):
     This is what a `core.symlinks=false` checkout looks like: the index says
     symlink, the filesystem has a plain file whose content is the target path.
     """
-    cp._write(root, rel, target_text)
+    cpc._write(root, rel, target_text)
     blob = subprocess.run(
         ["git", "-C", str(root), "hash-object", "-w", "--", rel],
         capture_output=True,
         text=True,
         check=True,
     ).stdout.strip()
-    cp._git(root, "update-index", "--add", "--cacheinfo", f"120000,{blob},{rel}")
+    cpc._git(root, "update-index", "--add", "--cacheinfo", f"120000,{blob},{rel}")
 
 
 def test_symlink_entry_without_filesystem_symlink_support(tmp_path):
@@ -1653,20 +1654,20 @@ def test_symlink_entry_without_filesystem_symlink_support(tmp_path):
     escaping one must still fire — read from the recorded target either way.
     """
     root = _discovery_tree(tmp_path, "nosymlink-clean")
-    cp._git(root, "init", "-q")
-    cp._git(root, "add", "-A", "-f")
+    cpc._git(root, "init", "-q")
+    cpc._git(root, "add", "-A", "-f")
     _index_as_symlink(root, "CLAUDE.md", "docs/plain.md")
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     assert stats["entries_by_reference"]["symlink"] == 1
 
     root = _discovery_tree(tmp_path, "nosymlink-escaping")
-    cp._git(root, "init", "-q")
-    cp._git(root, "add", "-A", "-f")
+    cpc._git(root, "init", "-q")
+    cpc._git(root, "add", "-A", "-f")
     _index_as_symlink(
-        root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET
+        root, cpc.FIXTURE_ESCAPING_LINK_REL, cpc.FIXTURE_ESCAPING_LINK_TARGET
     )
-    assert "external-symlink-target" in _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
+    assert "external-symlink-target" in _fired_on(root, cpc.FIXTURE_ESCAPING_LINK_REL)
 
 
 # --- inside increment 7's own fix (increment 13) -------------------------------
@@ -1684,21 +1685,21 @@ def test_symlink_entry_without_filesystem_symlink_support(tmp_path):
 def test_by_reference_row_must_carry_a_pinned_commit(tmp_path):
     """R1: the field is optional only where the bytes can corroborate the row."""
     root = _discovery_tree(tmp_path, "pin-omitted")
-    cp._git_submodule_entry(root)
-    cp._patch_manifest(
-        root, lambda d: d["entries"].append(cp._submodule_row(commit=None))
+    cpc._git_submodule_entry(root)
+    cpc._patch_manifest(
+        root, lambda d: d["entries"].append(cpc._submodule_row(commit=None))
     )
     fired = [f for f in cp.audit(root)[0] if f.rule == "manifest-field-missing"]
     assert fired, [f.as_dict() for f in cp.audit(root)[0]]
     assert "pinned_commit" in fired[0].detail
-    assert cp.FIXTURE_SUBMODULE_REL in fired[0].detail
+    assert cpc.FIXTURE_SUBMODULE_REL in fired[0].detail
 
     # The same for a symlink row, which has no committed pin to fall back on.
     root = _discovery_tree(tmp_path, "pin-omitted-link")
-    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
-    row = cp._escaping_link_row()
+    cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, cpc.FIXTURE_ESCAPING_LINK_TARGET)
+    row = cpc._escaping_link_row()
     row.pop("pinned_commit")
-    cp._patch_manifest(root, lambda d: d["entries"].append(row))
+    cpc._patch_manifest(root, lambda d: d["entries"].append(row))
     assert "manifest-field-missing" in _rules_fired(root)
 
     # The false-positive direction: `pinned_commit` stays OPTIONAL for a row
@@ -1709,7 +1710,7 @@ def test_by_reference_row_must_carry_a_pinned_commit(tmp_path):
     def drop_pin(data):
         data["entries"][0].pop("pinned_commit")
 
-    cp._patch_manifest(root, drop_pin)
+    cpc._patch_manifest(root, drop_pin)
     assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
 
 
@@ -1727,24 +1728,24 @@ def test_declared_escaping_symlink_audits_the_same_wherever_it_is_run(tmp_path):
         ("absent", lambda root: None),
         (
             "checked-out",
-            lambda root: cp._write(
+            lambda root: cpc._write(
                 tmp_path / "oracle-present", "oracle_tables.py", "TABLE = [7, 8, 9]\n"
             ),
         ),
     ):
         root = _discovery_tree(tmp_path, f"env-{label}")
         materialise(root)
-        cp._symlink(
+        cpc._symlink(
             root,
-            cp.FIXTURE_ESCAPING_LINK_REL,
+            cpc.FIXTURE_ESCAPING_LINK_REL,
             "../../oracle-present/oracle_tables.py",
         )
         # Same committed tree, same link, same row — the only difference is
         # whether the external target resolves on this machine.
-        resolves = (root / cp.FIXTURE_ESCAPING_LINK_REL).exists()
+        resolves = (root / cpc.FIXTURE_ESCAPING_LINK_REL).exists()
         assert resolves == (label == "checked-out"), label
-        cp._patch_manifest(
-            root, lambda d: d["entries"].append(cp._escaping_link_row())
+        cpc._patch_manifest(
+            root, lambda d: d["entries"].append(cpc._escaping_link_row())
         )
         verdicts[label] = sorted(
             f"{f.rule}@{f.path}" for f in cp.audit(root)[0]
@@ -1754,38 +1755,38 @@ def test_declared_escaping_symlink_audits_the_same_wherever_it_is_run(tmp_path):
     # …and the structural rule is still what makes that row mandatory: the same
     # resolvable link with NO row must still fire, undeclared.
     root = _discovery_tree(tmp_path, "env-undeclared")
-    cp._write(tmp_path / "oracle-present", "oracle_tables.py", "TABLE = [7, 8, 9]\n")
-    cp._symlink(
-        root, cp.FIXTURE_ESCAPING_LINK_REL, "../../oracle-present/oracle_tables.py"
+    cpc._write(tmp_path / "oracle-present", "oracle_tables.py", "TABLE = [7, 8, 9]\n")
+    cpc._symlink(
+        root, cpc.FIXTURE_ESCAPING_LINK_REL, "../../oracle-present/oracle_tables.py"
     )
-    assert "external-symlink-target" in _fired_on(root, cp.FIXTURE_ESCAPING_LINK_REL)
+    assert "external-symlink-target" in _fired_on(root, cpc.FIXTURE_ESCAPING_LINK_REL)
 
 
 def test_gitlink_inside_a_declared_scope_exclusion_is_judged_and_answerable(tmp_path):
     """R3: an exclusion withholds content; a gitlink has none of its own."""
     root = _discovery_tree(tmp_path, "excluded-gitlink")
-    cp._declared_hole(root)
-    cp._git_submodule_entry(root, rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
+    cpc._declared_hole(root)
+    cpc._git_submodule_entry(root, rel=cpc.FIXTURE_EXCLUDED_SUBMODULE_REL)
     findings, stats = cp.audit(root)
     fired = [f for f in findings if f.rule == "submodule-reference"]
     assert fired, [f.as_dict() for f in findings]
-    assert fired[0].path == cp.FIXTURE_EXCLUDED_SUBMODULE_REL
+    assert fired[0].path == cpc.FIXTURE_EXCLUDED_SUBMODULE_REL
     # The locator a reviewer needs: it looks exempted and is not.
     assert "scope exclusion" in fired[0].detail
     # Disclosed as coverage, not only as a finding.
     assert stats["by_reference_entries_inside_declared_exclusions"] == [
-        cp.FIXTURE_EXCLUDED_SUBMODULE_REL
+        cpc.FIXTURE_EXCLUDED_SUBMODULE_REL
     ]
 
     # A finding that cannot be answered where it fires is a trap: before this
     # increment a row naming an excluded path was read as a STALE row.
     root = _discovery_tree(tmp_path, "excluded-gitlink-declared")
-    cp._declared_hole(root)
-    cp._git_submodule_entry(root, rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
-    cp._patch_manifest(
+    cpc._declared_hole(root)
+    cpc._git_submodule_entry(root, rel=cpc.FIXTURE_EXCLUDED_SUBMODULE_REL)
+    cpc._patch_manifest(
         root,
         lambda d: d["entries"].append(
-            cp._submodule_row(rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
+            cpc._submodule_row(rel=cpc.FIXTURE_EXCLUDED_SUBMODULE_REL)
         ),
     )
     assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
@@ -1793,11 +1794,11 @@ def test_gitlink_inside_a_declared_scope_exclusion_is_judged_and_answerable(tmp_
     # The exclusion itself is still LIVE when its only member is that gitlink:
     # it declares the hole, and declaring it must not read as stale.
     root = _discovery_tree(tmp_path, "excluded-gitlink-only")
-    cp._git_submodule_entry(root, rel=cp.FIXTURE_EXCLUDED_SUBMODULE_REL)
-    cp._patch_manifest(
+    cpc._git_submodule_entry(root, rel=cpc.FIXTURE_EXCLUDED_SUBMODULE_REL)
+    cpc._patch_manifest(
         root,
         lambda d: d["scope_exclusions"].append(
-            {"prefix": cp.FIXTURE_DECLARED_HOLE_PREFIX, "reason": "synthetic hole"}
+            {"prefix": cpc.FIXTURE_DECLARED_HOLE_PREFIX, "reason": "synthetic hole"}
         ),
     )
     assert "scope-exclusion-stale" not in _rules_fired(root)
@@ -1808,43 +1809,43 @@ def test_by_reference_rules_require_the_by_reference_class(tmp_path):
     assert cp.BY_REFERENCE_CLASS in cp.KNOWN_CLASSES
 
     root = _discovery_tree(tmp_path, "class-gitlink")
-    cp._git_submodule_entry(root)
-    cp._patch_manifest(
+    cpc._git_submodule_entry(root)
+    cpc._patch_manifest(
         root,
         lambda d: d["entries"].append(
-            cp._submodule_row(row_class="attribution-statement")
+            cpc._submodule_row(row_class="attribution-statement")
         ),
     )
     assert "submodule-reference" in _rules_fired(root)
 
     root = _discovery_tree(tmp_path, "class-symlink")
-    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
-    cp._patch_manifest(
+    cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, cpc.FIXTURE_ESCAPING_LINK_TARGET)
+    cpc._patch_manifest(
         root,
         lambda d: d["entries"].append(
-            cp._escaping_link_row(row_class="quoted-constants")
+            cpc._escaping_link_row(row_class="quoted-constants")
         ),
     )
     assert "external-symlink-target" in _rules_fired(root)
 
     # The right class still answers both rules in full (no 'covers' needed).
     root = _discovery_tree(tmp_path, "class-right")
-    cp._git_submodule_entry(root)
-    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
-    cp._git(root, "add", "-f", cp.FIXTURE_ESCAPING_LINK_REL)
-    cp._patch_manifest(
+    cpc._git_submodule_entry(root)
+    cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, cpc.FIXTURE_ESCAPING_LINK_TARGET)
+    cpc._git(root, "add", "-f", cpc.FIXTURE_ESCAPING_LINK_REL)
+    cpc._patch_manifest(
         root,
-        lambda d: d["entries"].extend([cp._submodule_row(), cp._escaping_link_row()]),
+        lambda d: d["entries"].extend([cpc._submodule_row(), cpc._escaping_link_row()]),
     )
     assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
 
 
 def test_discovery_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    assert cp._discovery_controls(), "the discovery controls must not be empty"
+    assert cpc._discovery_controls(), "the discovery controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    for case in cp._discovery_controls():
+    for case in cpc._discovery_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
 
 
@@ -1864,33 +1865,33 @@ def test_discovery_controls_run_in_the_self_test():
 def _staged_tree(tmp_path, label):
     """A skeleton committed to a real index, so `ls-files` is the discovery path."""
     root = _discovery_tree(tmp_path, label)
-    cp._git(root, "init", "-q")
-    cp._git(root, "add", "-A", "-f")
+    cpc._git(root, "init", "-q")
+    cpc._git(root, "add", "-A", "-f")
     return root
 
 
 def test_unstaged_carrier_is_disclosed_rather_than_silently_skipped(tmp_path):
     """The finding this increment exists for: silence, not a missed rule."""
     root = _staged_tree(tmp_path, "unstaged")
-    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, cpc.FIXTURE_UNTRACKED_REL, cpc.FIXTURE_GPL_BODY)
 
     findings, stats = cp.audit(root)
     # Default behaviour is deliberately "no finding" — so the assertion that
     # matters is what the run SAID about the entry it did not audit.
     assert not findings, [f.as_dict() for f in findings]
-    assert stats["entries_present_but_not_in_the_index"] == [cp.FIXTURE_UNTRACKED_REL]
+    assert stats["entries_present_but_not_in_the_index"] == [cpc.FIXTURE_UNTRACKED_REL]
     assert stats["untracked_entries_audited"] == 0
 
 
 def test_unstaged_carrier_is_audited_when_included(tmp_path):
     """`--include-untracked` crosses the boundary and the rule fires."""
     root = _staged_tree(tmp_path, "unstaged-included")
-    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, cpc.FIXTURE_UNTRACKED_REL, cpc.FIXTURE_GPL_BODY)
 
     findings, stats = cp.audit(root, include_untracked=True)
     assert stats["entries_present_but_not_in_the_index"] == []
     assert stats["untracked_entries_audited"] == 1
-    fired = {f.rule for f in findings if f.path == cp.FIXTURE_UNTRACKED_REL}
+    fired = {f.rule for f in findings if f.path == cpc.FIXTURE_UNTRACKED_REL}
     assert "foreign-license-text" in fired, [f.as_dict() for f in findings]
 
 
@@ -1909,12 +1910,12 @@ def test_index_boundary_count_is_printed_even_when_zero(tmp_path):
 def test_index_boundary_report_names_the_unaudited_paths(tmp_path):
     """A count alone is not answerable: the report names what it skipped."""
     root = _staged_tree(tmp_path, "unstaged-report")
-    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, cpc.FIXTURE_UNTRACKED_REL, cpc.FIXTURE_GPL_BODY)
 
     proc = run_tool("--root", str(root))
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "NOT in the git index: 1 entries" in proc.stdout
-    assert cp.FIXTURE_UNTRACKED_REL in proc.stdout
+    assert cpc.FIXTURE_UNTRACKED_REL in proc.stdout
 
     proc = run_tool("--root", str(root), "--include-untracked")
     assert proc.returncode == 1, proc.stdout + proc.stderr
@@ -1925,15 +1926,15 @@ def test_index_boundary_report_names_the_unaudited_paths(tmp_path):
 def test_ignored_paths_are_neither_counted_nor_audited(tmp_path):
     """A declared sub-boundary: `.gitignore` is this repo's own statement."""
     root = _discovery_tree(tmp_path, "ignored")
-    cp._write(root, ".gitignore", cp.FIXTURE_UNTRACKED_REL + "\n")
-    cp._git(root, "init", "-q")
-    cp._git(root, "add", "-A", "-f")
-    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, ".gitignore", cpc.FIXTURE_UNTRACKED_REL + "\n")
+    cpc._git(root, "init", "-q")
+    cpc._git(root, "add", "-A", "-f")
+    cpc._write(root, cpc.FIXTURE_UNTRACKED_REL, cpc.FIXTURE_GPL_BODY)
 
     for included in (False, True):
         findings, stats = cp.audit(root, include_untracked=included)
         assert stats["entries_present_but_not_in_the_index"] == []
-        assert not [f for f in findings if f.path == cp.FIXTURE_UNTRACKED_REL], (
+        assert not [f for f in findings if f.path == cpc.FIXTURE_UNTRACKED_REL], (
             "an ignored path was audited; the sub-boundary is declared, "
             f"include_untracked={included}"
         )
@@ -1942,17 +1943,17 @@ def test_ignored_paths_are_neither_counted_nor_audited(tmp_path):
 def test_unstaged_path_inside_a_declared_scope_exclusion_is_not_recounted(tmp_path):
     """An already-disclosed hole is not disclosed twice under a second name."""
     root = _discovery_tree(tmp_path, "unstaged-excluded")
-    cp._patch_manifest(
+    cpc._patch_manifest(
         root,
         lambda d: d["scope_exclusions"].append(
             {"prefix": ".loom/", "reason": "synthetic declared hole"}
         ),
     )
     # A tracked file inside the hole, so the exclusion is not itself stale.
-    cp._write(root, ".loom/notes.md", "declared, unaudited.\n")
-    cp._git(root, "init", "-q")
-    cp._git(root, "add", "-A", "-f")
-    cp._write(root, ".loom/pasted_unstaged.py", cp.FIXTURE_GPL_BODY)
+    cpc._write(root, ".loom/notes.md", "declared, unaudited.\n")
+    cpc._git(root, "init", "-q")
+    cpc._git(root, "add", "-A", "-f")
+    cpc._write(root, ".loom/pasted_unstaged.py", cpc.FIXTURE_GPL_BODY)
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
@@ -1968,12 +1969,12 @@ def test_non_git_tree_reports_zero_and_still_audits_every_file(tmp_path):
     un-audited while every rule had in fact run on it.
     """
     root = _discovery_tree(tmp_path, "non-git")
-    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, cpc.FIXTURE_UNTRACKED_REL, cpc.FIXTURE_GPL_BODY)
 
     assert cp.list_untracked(root) == []
     findings, stats = cp.audit(root)
     assert stats["entries_present_but_not_in_the_index"] == []
-    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_UNTRACKED_REL)
+    assert "foreign-license-text" in _fired_on(root, cpc.FIXTURE_UNTRACKED_REL)
 
 
 def test_real_tree_discloses_its_own_index_boundary():
@@ -1995,7 +1996,7 @@ def test_index_boundary_is_declared_in_limits():
 
 def test_coverage_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    cases = cp._coverage_controls() + cp._coverage_include_untracked_controls()
+    cases = cpc._coverage_controls() + cpc._coverage_include_untracked_controls()
     assert cases, "the index-boundary coverage controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -2016,11 +2017,11 @@ def test_coverage_controls_run_in_the_self_test():
 # is what a local pre-commit run is for.
 
 
-def _staged_carrier_tree(tmp_path, label, staged=None, working=cp.FIXTURE_INNOCUOUS,
-                         rel=cp.FIXTURE_STAGED_REL, assume_unchanged=False):
+def _staged_carrier_tree(tmp_path, label, staged=None, working=cpc.FIXTURE_INNOCUOUS,
+                         rel=cpc.FIXTURE_STAGED_REL, assume_unchanged=False):
     """A real git index holding `staged` at `rel`, with `working` on disk."""
     root = _discovery_tree(tmp_path, label)
-    cp._stage_then_replace(
+    cpc._stage_then_replace(
         root,
         rel=rel,
         staged=staged,
@@ -2035,18 +2036,18 @@ def test_staged_carrier_with_a_cleaned_working_copy_is_flagged(tmp_path):
     root = _staged_carrier_tree(tmp_path, "staged-cleaned")
 
     # The working-tree copy really is innocuous: the old tool read only this.
-    assert "PUBLIC LICENSE" not in (root / cp.FIXTURE_STAGED_REL).read_text()
+    assert "PUBLIC LICENSE" not in (root / cpc.FIXTURE_STAGED_REL).read_text()
     findings, stats = cp.audit(root)
     fired = [
         f
         for f in findings
-        if f.rule == "foreign-license-text" and f.path == cp.FIXTURE_STAGED_REL
+        if f.rule == "foreign-license-text" and f.path == cpc.FIXTURE_STAGED_REL
     ]
     assert fired, [f.as_dict() for f in findings]
     # The evidence must name WHICH bytes offended: the remedy differs.
     assert any("STAGED" in f.detail for f in fired), [f.as_dict() for f in fired]
     assert stats["entries_whose_staged_content_differs_from_the_working_tree"] == [
-        cp.FIXTURE_STAGED_REL
+        cpc.FIXTURE_STAGED_REL
     ]
     assert stats["staged_payloads_content_scanned"] == 1
 
@@ -2056,15 +2057,15 @@ def test_staged_carrier_deleted_from_the_working_tree_is_flagged(tmp_path):
     root = _staged_carrier_tree(tmp_path, "staged-deleted", working=None)
 
     findings, stats = cp.audit(root)
-    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_STAGED_REL)
+    assert "foreign-license-text" in _fired_on(root, cpc.FIXTURE_STAGED_REL)
     assert stats["staged_entries_absent_from_the_working_tree"] == [
-        cp.FIXTURE_STAGED_REL
+        cpc.FIXTURE_STAGED_REL
     ]
     # Its working-tree view still reaches no content rule — which is why the
     # staged view is the only read there is, and why that is disclosed.
     tree = cp.Tree(root, [])
-    assert tree.scan_mode(cp.FIXTURE_STAGED_REL) == "unreadable"
-    assert tree.scan_mode(cp.FIXTURE_STAGED_REL, cp.STAGED_VIEW) == "decoded"
+    assert tree.scan_mode(cpc.FIXTURE_STAGED_REL) == "unreadable"
+    assert tree.scan_mode(cpc.FIXTURE_STAGED_REL, cp.STAGED_VIEW) == "decoded"
     assert findings
 
 
@@ -2079,22 +2080,22 @@ def test_assume_unchanged_does_not_hide_the_staged_content(tmp_path):
         text=True,
         check=True,
     ).stdout.split()
-    assert cp.FIXTURE_STAGED_REL not in diff
+    assert cpc.FIXTURE_STAGED_REL not in diff
     # … so the divergence set must not be built from it alone.
-    assert cp.FIXTURE_STAGED_REL in cp.list_staged_divergent(root)
-    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_STAGED_REL)
+    assert cpc.FIXTURE_STAGED_REL in cp.list_staged_divergent(root)
+    assert "foreign-license-text" in _fired_on(root, cpc.FIXTURE_STAGED_REL)
 
 
 def test_skip_worktree_does_not_hide_the_staged_content(tmp_path):
     """The other index bit with the same effect on `diff-files`."""
     root = _discovery_tree(tmp_path, "staged-skip")
-    cp._write(root, cp.FIXTURE_STAGED_REL, cp.FIXTURE_GPL_BODY)
-    cp._stage_all(root)
-    cp._write(root, cp.FIXTURE_STAGED_REL, cp.FIXTURE_INNOCUOUS)
-    cp._git(root, "update-index", "--skip-worktree", cp.FIXTURE_STAGED_REL)
+    cpc._write(root, cpc.FIXTURE_STAGED_REL, cpc.FIXTURE_GPL_BODY)
+    cpc._stage_all(root)
+    cpc._write(root, cpc.FIXTURE_STAGED_REL, cpc.FIXTURE_INNOCUOUS)
+    cpc._git(root, "update-index", "--skip-worktree", cpc.FIXTURE_STAGED_REL)
 
-    assert cp.FIXTURE_STAGED_REL in cp.list_staged_divergent(root)
-    assert "foreign-license-text" in _fired_on(root, cp.FIXTURE_STAGED_REL)
+    assert cpc.FIXTURE_STAGED_REL in cp.list_staged_divergent(root)
+    assert "foreign-license-text" in _fired_on(root, cpc.FIXTURE_STAGED_REL)
 
 
 def test_unstaged_working_tree_carrier_still_fires(tmp_path):
@@ -2107,15 +2108,15 @@ def test_unstaged_working_tree_carrier_still_fires(tmp_path):
     root = _staged_carrier_tree(
         tmp_path,
         "staged-unstaged-paste",
-        staged=cp.FIXTURE_INNOCUOUS,
-        working=cp.FIXTURE_GPL_BODY,
+        staged=cpc.FIXTURE_INNOCUOUS,
+        working=cpc.FIXTURE_GPL_BODY,
     )
 
     findings, _ = cp.audit(root)
     fired = [
         f
         for f in findings
-        if f.rule == "foreign-license-text" and f.path == cp.FIXTURE_STAGED_REL
+        if f.rule == "foreign-license-text" and f.path == cpc.FIXTURE_STAGED_REL
     ]
     assert fired, [f.as_dict() for f in findings]
     assert not any("STAGED" in f.detail for f in fired), (
@@ -2128,14 +2129,14 @@ def test_innocuous_divergence_is_counted_and_read_but_not_flagged(tmp_path):
     root = _staged_carrier_tree(
         tmp_path,
         "staged-innocuous",
-        staged=cp.FIXTURE_INNOCUOUS,
-        working=cp.FIXTURE_INNOCUOUS + "# one more line, still nothing\n",
+        staged=cpc.FIXTURE_INNOCUOUS,
+        working=cpc.FIXTURE_INNOCUOUS + "# one more line, still nothing\n",
     )
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     assert stats["entries_whose_staged_content_differs_from_the_working_tree"] == [
-        cp.FIXTURE_STAGED_REL
+        cpc.FIXTURE_STAGED_REL
     ]
     assert stats["staged_payloads_content_scanned"] == 1
     assert stats["staged_entries_absent_from_the_working_tree"] == []
@@ -2146,12 +2147,12 @@ def test_staged_wrapper_member_name_is_judged(tmp_path):
     root = _staged_carrier_tree(
         tmp_path,
         "staged-wrapper",
-        rel=cp.FIXTURE_STAGED_BUNDLE_REL,
-        staged=cp.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME,
+        rel=cpc.FIXTURE_STAGED_BUNDLE_REL,
+        staged=cpc.FIXTURE_ZIP_WITH_ASSET_MEMBER_NAME,
         working=b"not an archive at all\n",
     )
 
-    fired = _fired_on(root, cp.FIXTURE_STAGED_BUNDLE_REL)
+    fired = _fired_on(root, cpc.FIXTURE_STAGED_BUNDLE_REL)
     assert "wrapper-member-name" in fired, fired
 
 
@@ -2160,12 +2161,12 @@ def test_staged_view_is_read_from_the_index_blob(tmp_path):
     root = _staged_carrier_tree(tmp_path, "staged-unit")
 
     blobs = {rel: blob for rel, kind, blob in cp.list_entries(root) if kind == "file"}
-    assert blobs[cp.FIXTURE_STAGED_REL], "no blob id carried for a regular file"
-    staged = cp.read_index_blob(root, blobs[cp.FIXTURE_STAGED_REL])
+    assert blobs[cpc.FIXTURE_STAGED_REL], "no blob id carried for a regular file"
+    staged = cp.read_index_blob(root, blobs[cpc.FIXTURE_STAGED_REL])
     assert b"PUBLIC LICENSE" in staged
     tree = cp.Tree(root, [])
-    assert "PUBLIC LICENSE" in tree.text(cp.FIXTURE_STAGED_REL, cp.STAGED_VIEW)
-    assert "PUBLIC LICENSE" not in tree.text(cp.FIXTURE_STAGED_REL)
+    assert "PUBLIC LICENSE" in tree.text(cpc.FIXTURE_STAGED_REL, cp.STAGED_VIEW)
+    assert "PUBLIC LICENSE" not in tree.text(cpc.FIXTURE_STAGED_REL)
     # A bad or absent id is "unread", never "clean".
     assert cp.read_index_blob(root, "") is None
     assert cp.read_index_blob(root, "not-an-object-id") is None
@@ -2174,26 +2175,26 @@ def test_staged_view_is_read_from_the_index_blob(tmp_path):
 def test_gitlink_is_not_read_as_a_staged_blob(tmp_path):
     """A gitlink's object is a commit elsewhere, not a blob here."""
     root = _discovery_tree(tmp_path, "staged-gitlink")
-    cp._git_submodule_entry(root)
+    cpc._git_submodule_entry(root)
 
     findings, stats = cp.audit(root)
     divergent = stats["entries_whose_staged_content_differs_from_the_working_tree"]
-    assert cp.FIXTURE_SUBMODULE_REL not in divergent
-    assert "submodule-reference" in _fired_on(root, cp.FIXTURE_SUBMODULE_REL)
+    assert cpc.FIXTURE_SUBMODULE_REL not in divergent
+    assert "submodule-reference" in _fired_on(root, cpc.FIXTURE_SUBMODULE_REL)
     assert findings
 
 
 def test_staged_divergence_inside_a_declared_scope_exclusion_is_not_counted(tmp_path):
     """An already-disclosed hole is not re-disclosed under a second name."""
     root = _discovery_tree(tmp_path, "staged-excluded")
-    cp._patch_manifest(
+    cpc._patch_manifest(
         root,
         lambda d: d["scope_exclusions"].append(
             {"prefix": ".loom/", "reason": "synthetic declared hole"}
         ),
     )
-    cp._write(root, ".loom/notes.md", "declared, unaudited.\n")
-    cp._stage_then_replace(root, rel=".loom/pasted_staged.py")
+    cpc._write(root, ".loom/notes.md", "declared, unaudited.\n")
+    cpc._stage_then_replace(root, rel=".loom/pasted_staged.py")
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
@@ -2207,20 +2208,20 @@ def test_scoped_exemption_does_not_carry_across_to_the_staged_view(tmp_path):
     foreign quotation present only in the STAGED content must still fail — reusing
     the working-tree spans would exempt whatever happened to sit at those offsets.
     """
-    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    occ = [cpc.FIXTURE_OWN_COPY_OCCURRENCE]
     root = tmp_path / "staged-scoped"
     root.mkdir(parents=True, exist_ok=True)
-    cp.build_skeleton(root)
-    cp._write(
+    cpc.build_skeleton(root)
+    cpc._write(
         root,
         "docs/own_copy.md",
-        cp.FIXTURE_OWN_COPY_DOC + cp.FIXTURE_FOREIGN_COPY_LINE,
+        cpc.FIXTURE_OWN_COPY_DOC + cpc.FIXTURE_FOREIGN_COPY_LINE,
     )
-    cp._scoped_exemption(root, occ)
-    cp._stage_all(root)
+    cpc._scoped_exemption(root, occ)
+    cpc._stage_all(root)
     # The working-tree copy keeps only the exempted occurrence; the staged blob
     # still carries the foreign quotation beside it.
-    cp._write(root, "docs/own_copy.md", cp.FIXTURE_OWN_COPY_DOC)
+    cpc._write(root, "docs/own_copy.md", cpc.FIXTURE_OWN_COPY_DOC)
 
     findings, stats = cp.audit(root)
     assert "docs/own_copy.md" in (
@@ -2242,14 +2243,14 @@ def test_scoped_exemption_still_covers_a_divergent_file_it_names(tmp_path):
     re-resolving the spans must clear it — an exemption that stopped applying to
     the committable bytes would make an ordinary edit unanswerable.
     """
-    occ = [cp.FIXTURE_OWN_COPY_OCCURRENCE]
+    occ = [cpc.FIXTURE_OWN_COPY_OCCURRENCE]
     root = tmp_path / "staged-scoped-clean"
     root.mkdir(parents=True, exist_ok=True)
-    cp.build_skeleton(root)
-    cp._write(root, "docs/own_copy.md", cp.FIXTURE_OWN_COPY_DOC)
-    cp._scoped_exemption(root, occ)
-    cp._stage_all(root)
-    cp._write(root, "docs/own_copy.md", "Leading sentence.\n\n" + cp.FIXTURE_OWN_COPY_DOC)
+    cpc.build_skeleton(root)
+    cpc._write(root, "docs/own_copy.md", cpc.FIXTURE_OWN_COPY_DOC)
+    cpc._scoped_exemption(root, occ)
+    cpc._stage_all(root)
+    cpc._write(root, "docs/own_copy.md", "Leading sentence.\n\n" + cpc.FIXTURE_OWN_COPY_DOC)
 
     findings, stats = cp.audit(root)
     assert "docs/own_copy.md" in (
@@ -2261,7 +2262,7 @@ def test_scoped_exemption_still_covers_a_divergent_file_it_names(tmp_path):
 def test_staged_divergence_count_is_printed_even_when_zero(tmp_path):
     """"Nothing diverges" and "the committable bytes were never read" differ."""
     root = _discovery_tree(tmp_path, "staged-zero-divergence")
-    cp._stage_all(root)
+    cpc._stage_all(root)
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
@@ -2279,7 +2280,7 @@ def test_staged_report_names_the_divergent_paths(tmp_path):
     proc = run_tool("--root", str(root))
     assert proc.returncode == 1, proc.stdout + proc.stderr
     assert "staged content not known to match the working tree: 1 entries" in proc.stdout
-    assert f"also audited (staged blob): {cp.FIXTURE_STAGED_REL}" in proc.stdout
+    assert f"also audited (staged blob): {cpc.FIXTURE_STAGED_REL}" in proc.stdout
     assert "not present in the working tree" in proc.stdout
     assert "STAGED" in proc.stdout
 
@@ -2313,7 +2314,7 @@ def test_staged_content_boundary_is_declared_in_limits():
 
 def test_staged_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    cases = cp._staged_controls()
+    cases = cpc._staged_controls()
     assert cases, "the staged-content controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -2330,7 +2331,7 @@ def test_bookkeeping_groups_fail_loudly_on_a_staged_only_record(tmp_path):
     pass that lets the bookkeeping drift.
     """
     root = _discovery_tree(tmp_path, "staged-only-record")
-    cp._stage_all(root)
+    cpc._stage_all(root)
     (root / "decision-records" / "0001-example.md").unlink()
 
     findings, _ = cp.audit(root)
@@ -2361,7 +2362,7 @@ def test_bookkeeping_groups_fail_loudly_on_a_staged_only_record(tmp_path):
 def _answer_tree(tmp_path, label):
     """A clean skeleton, fully staged: one answer set, published and on disk."""
     root = _discovery_tree(tmp_path, label)
-    cp._stage_all(root)
+    cpc._stage_all(root)
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     assert stats["divergent_bookkeeping_files"] == []
@@ -2370,7 +2371,7 @@ def _answer_tree(tmp_path, label):
 
 def _patch_disk_manifest(root, mutate):
     """Rewrite the manifest on disk ONLY — the whole mask in one helper."""
-    cp._patch_manifest(root, mutate, stage=False)
+    cpc._patch_manifest(root, mutate, stage=False)
 
 
 def _committable_findings(root, rule, rel):
@@ -2387,10 +2388,10 @@ def test_provenance_row_present_only_on_disk_does_not_answer_the_carrier(tmp_pat
     GPL-bodied file, which the pre-increment tool audited PASS.
     """
     root = _answer_tree(tmp_path, "answer-unstaged-row")
-    rel = cp.FIXTURE_COMMITTED_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_COMMITTED_CARRIER)
-    cp._stage_all(root)
-    _patch_disk_manifest(root, lambda d: d["entries"].append(cp._committed_row()))
+    rel = cpc.FIXTURE_COMMITTED_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_COMMITTED_CARRIER)
+    cpc._stage_all(root)
+    _patch_disk_manifest(root, lambda d: d["entries"].append(cpc._committed_row()))
 
     # The row really is there, on disk, and really is well-formed: a
     # working-tree read finds the carrier fully declared.
@@ -2410,9 +2411,9 @@ def test_the_same_row_staged_as_well_answers_the_carrier(tmp_path):
     increment would be a tool that cannot be used.
     """
     root = _answer_tree(tmp_path, "answer-staged-row")
-    cp._write(root, cp.FIXTURE_COMMITTED_CARRIER_REL, cp.FIXTURE_COMMITTED_CARRIER)
-    cp._patch_manifest(root, lambda d: d["entries"].append(cp._committed_row()))
-    cp._stage_all(root)
+    cpc._write(root, cpc.FIXTURE_COMMITTED_CARRIER_REL, cpc.FIXTURE_COMMITTED_CARRIER)
+    cpc._patch_manifest(root, lambda d: d["entries"].append(cpc._committed_row()))
+    cpc._stage_all(root)
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
@@ -2423,13 +2424,13 @@ def test_the_same_row_staged_as_well_answers_the_carrier(tmp_path):
 def test_a_row_removed_from_the_index_only_stops_answering(tmp_path):
     """The converse shape, indistinguishable from a declared file on disk."""
     root = _answer_tree(tmp_path, "answer-row-unstaged-removal")
-    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    rel = cpc.FIXTURE_SKELETON_CARRIER_REL
     full = json.loads((root / cp.MANIFEST_REL).read_text(encoding="utf-8"))
     stripped = dict(full)
     stripped["entries"] = [e for e in full["entries"] if e.get("path") != rel]
-    cp._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
-    cp._stage_all(root)
-    cp._write(root, cp.MANIFEST_REL, json.dumps(full, indent=2) + "\n")
+    cpc._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+    cpc._stage_all(root)
+    cpc._write(root, cp.MANIFEST_REL, json.dumps(full, indent=2) + "\n")
 
     fired, findings, _ = _committable_findings(root, "self-declared-quotation", rel)
     assert fired, [f.as_dict() for f in findings]
@@ -2438,13 +2439,13 @@ def test_a_row_removed_from_the_index_only_stops_answering(tmp_path):
 def test_an_exemption_present_only_on_disk_does_not_answer_the_rule(tmp_path):
     """The one exemptible rule cannot be exempted by an unpublished exemption."""
     root = _answer_tree(tmp_path, "answer-unstaged-exemption")
-    rel = cp.FIXTURE_SKELETON_CARRIER_REL
+    rel = cpc.FIXTURE_SKELETON_CARRIER_REL
     full = json.loads((root / cp.MANIFEST_REL).read_text(encoding="utf-8"))
     stripped = dict(full)
     stripped["entries"] = [e for e in full["entries"] if e.get("path") != rel]
-    cp._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
-    cp._stage_all(root)
-    cp._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+    cpc._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
+    cpc._stage_all(root)
+    cpc._write(root, cp.MANIFEST_REL, json.dumps(stripped, indent=2) + "\n")
     _patch_disk_manifest(
         root,
         lambda d: d["exemptions"].append(
@@ -2468,9 +2469,9 @@ def test_a_scope_exclusion_present_only_on_disk_hides_nothing(tmp_path):
     second pass to build its own `Tree`: the audited set itself differs.
     """
     root = _answer_tree(tmp_path, "answer-unstaged-exclusion")
-    rel = cp.FIXTURE_COMMITTED_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_COMMITTED_CARRIER)
-    cp._stage_all(root)
+    rel = cpc.FIXTURE_COMMITTED_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_COMMITTED_CARRIER)
+    cpc._stage_all(root)
     _patch_disk_manifest(
         root,
         lambda d: d["scope_exclusions"].append(
@@ -2490,14 +2491,14 @@ def test_an_index_row_present_only_on_disk_does_not_index_the_record(tmp_path):
     fails.
     """
     root = _answer_tree(tmp_path, "answer-unstaged-index-row")
-    cp._write(
+    cpc._write(
         root,
-        cp.FIXTURE_SECOND_RECORD_REL,
+        cpc.FIXTURE_SECOND_RECORD_REL,
         "# 0002 second\n\n- **Status**: PROPOSED\n- **Date**: 2026-10-01\n",
     )
-    cp._write(root, "docs/cites_0002.md", "This follows decision-records/0002-second.md.\n")
-    cp._stage_all(root)
-    cp._write(
+    cpc._write(root, "docs/cites_0002.md", "This follows decision-records/0002-second.md.\n")
+    cpc._stage_all(root)
+    cpc._write(
         root,
         cp.INDEX_REL,
         (root / cp.INDEX_REL).read_text(encoding="utf-8").rstrip("\n")
@@ -2519,10 +2520,10 @@ def test_a_committable_finding_names_the_answer_set_as_its_source(tmp_path):
     author looking for a row that is already written.
     """
     root = _answer_tree(tmp_path, "answer-finding-wording")
-    rel = cp.FIXTURE_COMMITTED_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_COMMITTED_CARRIER)
-    cp._stage_all(root)
-    _patch_disk_manifest(root, lambda d: d["entries"].append(cp._committed_row()))
+    rel = cpc.FIXTURE_COMMITTED_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_COMMITTED_CARRIER)
+    cpc._stage_all(root)
+    _patch_disk_manifest(root, lambda d: d["entries"].append(cpc._committed_row()))
 
     fired, findings, _ = _committable_findings(root, "foreign-license-text", rel)
     assert fired, [f.as_dict() for f in findings]
@@ -2538,15 +2539,15 @@ def test_an_ordinary_divergence_does_not_open_a_second_answer_set(tmp_path):
     work and its noise for no gain, since the answers themselves did not move.
     """
     root = _answer_tree(tmp_path, "answer-ordinary-divergence")
-    cp._stage_then_replace(
-        root, staged=cp.FIXTURE_INNOCUOUS, working=cp.FIXTURE_INNOCUOUS + "# edited\n"
+    cpc._stage_then_replace(
+        root, staged=cpc.FIXTURE_INNOCUOUS, working=cpc.FIXTURE_INNOCUOUS + "# edited\n"
     )
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     assert stats["divergent_bookkeeping_files"] == []
     # Increment 14's disclosure is unaffected: the entry IS divergent.
-    assert cp.FIXTURE_STAGED_REL in stats[
+    assert cpc.FIXTURE_STAGED_REL in stats[
         "entries_whose_staged_content_differs_from_the_working_tree"
     ]
 
@@ -2576,12 +2577,12 @@ def test_the_committed_pass_does_not_audit_untracked_files(tmp_path):
         root,
         lambda d: d["entries"][0].update({"content": "synthetic TABLE (reworded)"}),
     )
-    cp._write(root, cp.FIXTURE_UNTRACKED_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, cpc.FIXTURE_UNTRACKED_REL, cpc.FIXTURE_GPL_BODY)
 
     findings, stats = cp.audit(root)
     committable = [f for f in findings if "ANSWER SET" in f.detail]
     assert not committable, [f.as_dict() for f in committable]
-    assert cp.FIXTURE_UNTRACKED_REL in stats["entries_present_but_not_in_the_index"]
+    assert cpc.FIXTURE_UNTRACKED_REL in stats["entries_present_but_not_in_the_index"]
 
 
 def test_a_path_removed_from_the_index_is_not_read_from_disk(tmp_path):
@@ -2593,7 +2594,7 @@ def test_a_path_removed_from_the_index_is_not_read_from_disk(tmp_path):
     root = _answer_tree(tmp_path, "answer-rm-cached")
     tree = cp.Tree(root, [], default_view=cp.COMMITTED_VIEW)
     assert tree.view_for("docs/not-an-entry.md") == cp.STAGED_VIEW
-    assert tree.view_for(cp.FIXTURE_SKELETON_CARRIER_REL) == cp.WORKTREE_VIEW
+    assert tree.view_for(cpc.FIXTURE_SKELETON_CARRIER_REL) == cp.WORKTREE_VIEW
     assert tree.text("docs/not-an-entry.md") is None
 
 
@@ -2606,7 +2607,7 @@ def test_a_manifest_absent_from_the_index_answers_nothing(tmp_path):
     answer from the exact bytes it exists to stop answering from.
     """
     root = _answer_tree(tmp_path, "answer-manifest-rm-cached")
-    cp._git(root, "rm", "--cached", "-q", cp.MANIFEST_REL)
+    cpc._git(root, "rm", "--cached", "-q", cp.MANIFEST_REL)
 
     findings, stats = cp.audit(root)
     assert cp.MANIFEST_REL in stats["divergent_bookkeeping_files"], (
@@ -2618,7 +2619,7 @@ def test_a_manifest_absent_from_the_index_answers_nothing(tmp_path):
     ]
     # And the carrier it used to declare is no longer answered by anything.
     assert any(
-        f.rule == "self-declared-quotation" and f.path == cp.FIXTURE_SKELETON_CARRIER_REL
+        f.rule == "self-declared-quotation" and f.path == cpc.FIXTURE_SKELETON_CARRIER_REL
         for f in findings
     ), [f.as_dict() for f in findings]
 
@@ -2653,7 +2654,7 @@ def test_committed_answer_set_is_declared_in_limits():
 
 def test_committed_bookkeeping_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    cases = cp._committed_bookkeeping_controls()
+    cases = cpc._committed_bookkeeping_controls()
     assert cases, "the committed-answer-set controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -2670,8 +2671,8 @@ def test_fixture_manifest_patches_are_staged_by_default(tmp_path):
     exempting the controls — and pinned here so it cannot silently regress.
     """
     root = _discovery_tree(tmp_path, "fixture-staging")
-    cp._git_submodule_entry(root)
-    cp._patch_manifest(root, lambda d: d["entries"].append(cp._submodule_row()))
+    cpc._git_submodule_entry(root)
+    cpc._patch_manifest(root, lambda d: d["entries"].append(cpc._submodule_row()))
 
     findings, stats = cp.audit(root)
     assert stats["divergent_bookkeeping_files"] == [], (
@@ -2701,7 +2702,7 @@ def test_fixture_manifest_patches_are_staged_by_default(tmp_path):
 def _evidence_tree(tmp_path, label):
     """A clean skeleton, fully staged, with no bookkeeping divergence at all."""
     root = _discovery_tree(tmp_path, label)
-    cp._stage_all(root)
+    cpc._stage_all(root)
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
     assert stats["divergent_bookkeeping_files"] == []
@@ -2710,12 +2711,12 @@ def _evidence_tree(tmp_path, label):
 
 def _restage(root, rel, staged, working):
     """Put `staged` in the index and `working` (or nothing) on disk."""
-    cp._write(root, rel, staged)
-    cp._git(root, "add", "-f", rel)
+    cpc._write(root, rel, staged)
+    cpc._git(root, "add", "-f", rel)
     if working is None:
         (root / rel).unlink()
     else:
-        cp._write(root, rel, working)
+        cpc._write(root, rel, working)
 
 
 def test_a_row_corroborated_only_by_the_copy_on_disk_is_flagged(tmp_path):
@@ -2727,8 +2728,8 @@ def test_a_row_corroborated_only_by_the_copy_on_disk_is_flagged(tmp_path):
     file that states no provenance at all.
     """
     root = _evidence_tree(tmp_path, "evidence-row-on-disk-only")
-    rel = cp.FIXTURE_SKELETON_CARRIER_REL
-    _restage(root, rel, cp.FIXTURE_UNCITED_CARRIER, cp.SKELETON_CARRIER)
+    rel = cpc.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cpc.FIXTURE_UNCITED_CARRIER, cpc.SKELETON_CARRIER)
 
     findings, stats = cp.audit(root)
     fired = [f for f in findings if f.rule == "manifest-uncorroborated" and f.path == rel]
@@ -2749,8 +2750,8 @@ def test_a_row_whose_only_published_carrier_was_deleted_from_disk_is_flagged(tmp
     so the only bytes a commit publishes were read by no bookkeeping check.
     """
     root = _evidence_tree(tmp_path, "evidence-carrier-deleted")
-    rel = cp.FIXTURE_SKELETON_CARRIER_REL
-    _restage(root, rel, cp.FIXTURE_UNCITED_CARRIER, None)
+    rel = cpc.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cpc.FIXTURE_UNCITED_CARRIER, None)
 
     findings, stats = cp.audit(root)
     fired = [f for f in findings if f.rule == "manifest-uncorroborated" and f.path == rel]
@@ -2762,12 +2763,12 @@ def test_a_row_whose_only_published_carrier_was_deleted_from_disk_is_flagged(tmp
 def test_a_record_citation_only_in_the_staged_bytes_must_resolve(tmp_path):
     """A citation published by the index is still published."""
     root = _evidence_tree(tmp_path, "evidence-staged-citation")
-    rel = cp.FIXTURE_EVIDENCE_DOC_REL
+    rel = cpc.FIXTURE_EVIDENCE_DOC_REL
     _restage(
         root,
         rel,
-        cp.FIXTURE_DANGLING_CITATION,
-        cp.FIXTURE_EVIDENCE_INNOCUOUS_DOC,
+        cpc.FIXTURE_DANGLING_CITATION,
+        cpc.FIXTURE_EVIDENCE_INNOCUOUS_DOC,
     )
 
     findings, stats = cp.audit(root)
@@ -2788,10 +2789,10 @@ def test_the_working_tree_view_is_joined_not_replaced(tmp_path):
     still fire — and must not be mislabelled as staged content.
     """
     root = _evidence_tree(tmp_path, "evidence-worktree-still-fires")
-    doc = cp.FIXTURE_EVIDENCE_DOC_REL
-    carrier = cp.FIXTURE_SKELETON_CARRIER_REL
-    _restage(root, doc, cp.FIXTURE_EVIDENCE_INNOCUOUS_DOC, cp.FIXTURE_DANGLING_CITATION)
-    _restage(root, carrier, cp.SKELETON_CARRIER, cp.FIXTURE_UNCITED_CARRIER)
+    doc = cpc.FIXTURE_EVIDENCE_DOC_REL
+    carrier = cpc.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, doc, cpc.FIXTURE_EVIDENCE_INNOCUOUS_DOC, cpc.FIXTURE_DANGLING_CITATION)
+    _restage(root, carrier, cpc.SKELETON_CARRIER, cpc.FIXTURE_UNCITED_CARRIER)
 
     findings, _ = cp.audit(root)
     for rule, rel in (
@@ -2812,8 +2813,8 @@ def test_a_carrier_that_states_its_provenance_in_both_views_is_read_not_flagged(
     above and the audit would be unusable on any tree being edited.
     """
     root = _evidence_tree(tmp_path, "evidence-both-views-cite")
-    rel = cp.FIXTURE_SKELETON_CARRIER_REL
-    _restage(root, rel, cp.SKELETON_CARRIER, cp.SKELETON_CARRIER + "\nEXTRA = [7]\n")
+    rel = cpc.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cpc.SKELETON_CARRIER, cpc.SKELETON_CARRIER + "\nEXTRA = [7]\n")
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
@@ -2830,9 +2831,9 @@ def test_a_binary_payloads_row_is_corroborated_in_neither_view(tmp_path):
     every declared opaque asset becomes a finding the moment its bytes change.
     """
     root = _evidence_tree(tmp_path, "evidence-opaque-row")
-    rel = cp.FIXTURE_OPAQUE_ROW_REL
-    cp._write(root, rel, cp._float_dump(seed=11))
-    cp._patch_manifest(
+    rel = cpc.FIXTURE_OPAQUE_ROW_REL
+    cpc._write(root, rel, cpc._float_dump(seed=11))
+    cpc._patch_manifest(
         root,
         lambda d: d["entries"].append(
             {
@@ -2840,14 +2841,14 @@ def test_a_binary_payloads_row_is_corroborated_in_neither_view(tmp_path):
                 "class": "quoted-constants",
                 "content": "synthetic opaque dump",
                 "upstream": "synthetic upstream",
-                "pinned_commit": cp.FIXTURE_SUBMODULE_COMMIT,
+                "pinned_commit": cpc.FIXTURE_SUBMODULE_COMMIT,
                 "upstream_license": "GPL-3.0-or-later",
                 "decision_record": "0001",
             }
         ),
     )
-    cp._stage_all(root)
-    _restage(root, rel, cp._float_dump(seed=22), cp._float_dump(seed=33))
+    cpc._stage_all(root)
+    _restage(root, rel, cpc._float_dump(seed=22), cpc._float_dump(seed=33))
 
     findings, stats = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
@@ -2865,8 +2866,8 @@ def test_entry_views_is_the_single_definition_of_the_view_set(tmp_path):
     loop covers exactly what the two sequential loops did.
     """
     root = _evidence_tree(tmp_path, "evidence-one-enumeration")
-    rel = cp.FIXTURE_SKELETON_CARRIER_REL
-    _restage(root, rel, cp.SKELETON_CARRIER, cp.SKELETON_CARRIER + "\nEXTRA = [7]\n")
+    rel = cpc.FIXTURE_SKELETON_CARRIER_REL
+    _restage(root, rel, cpc.SKELETON_CARRIER, cpc.SKELETON_CARRIER + "\nEXTRA = [7]\n")
     tree = cp.Tree(root, [])
     assert set(tree.staged_views) <= set(tree.files)
     assert cp.entry_views(tree, rel) == [cp.WORKTREE_VIEW, cp.STAGED_VIEW]
@@ -2890,7 +2891,7 @@ def test_committable_evidence_boundary_is_declared_in_limits():
 
 def test_committable_evidence_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    cases = cp._committable_evidence_controls()
+    cases = cpc._committable_evidence_controls()
     assert cases, "the committable-evidence controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -2910,7 +2911,7 @@ def test_committable_evidence_controls_run_in_the_self_test():
 def _history_tree(tmp_path, label):
     """A clean skeleton that is a git checkout with one clean commit."""
     root = _discovery_tree(tmp_path, label)
-    cp._history_repo(root)
+    cpc._history_repo(root)
     return root
 
 
@@ -2921,17 +2922,17 @@ def _history_rules(findings):
 def test_a_carrier_published_then_deleted_is_invisible_to_the_tree_audit(tmp_path):
     """The premise of the whole increment, asserted rather than assumed."""
     root = _history_tree(tmp_path, "history-premise")
-    rel = cp.FIXTURE_HISTORY_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
-    cp._commit_all(root, "add an undeclared carrier")
+    rel = cpc.FIXTURE_HISTORY_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_GPL_BODY)
+    cpc._commit_all(root, "add an undeclared carrier")
     (root / rel).unlink()
-    cp._commit_all(root, "delete it again")
+    cpc._commit_all(root, "delete it again")
 
     findings, _ = cp.audit(root)
     assert not findings, [f.as_dict() for f in findings]
 
     # …and the bytes are still there, in the commit that published them.
-    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, stats = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     assert "foreign-license-text" in _history_rules(history), [
         f.as_dict() for f in history
     ]
@@ -2944,18 +2945,18 @@ def test_a_carrier_published_then_deleted_is_invisible_to_the_tree_audit(tmp_pat
 def test_history_answers_come_from_the_commit_that_published_the_bytes(tmp_path):
     """A row added by a later commit does not declare what an earlier one published."""
     root = _history_tree(tmp_path, "history-late-row")
-    rel = cp.FIXTURE_HISTORY_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
-    cp._commit_all(root, "add the carrier")
-    cp._write(root, rel, cp.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n")
-    cp._patch_manifest(
-        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    rel = cpc.FIXTURE_HISTORY_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_GPL_BODY)
+    cpc._commit_all(root, "add the carrier")
+    cpc._write(root, rel, cpc.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n")
+    cpc._patch_manifest(
+        root, lambda d: d["entries"].append(cpc._history_row(rel)), stage=False
     )
-    cp._commit_all(root, "declare it, one commit late")
+    cpc._commit_all(root, "declare it, one commit late")
 
     tree_findings, _ = cp.audit(root)
     assert not tree_findings, [f.as_dict() for f in tree_findings]
-    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, stats = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     assert "foreign-license-text" in _history_rules(history), [
         f.as_dict() for f in history
     ]
@@ -2967,14 +2968,14 @@ def test_history_answers_come_from_the_commit_that_published_the_bytes(tmp_path)
 def test_a_carrier_declared_in_its_own_commit_is_not_a_history_finding(tmp_path):
     """The positive control: the mode must not be a blanket alarm on history."""
     root = _history_tree(tmp_path, "history-declared")
-    rel = cp.FIXTURE_HISTORY_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
-    cp._patch_manifest(
-        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    rel = cpc.FIXTURE_HISTORY_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_GPL_BODY)
+    cpc._patch_manifest(
+        root, lambda d: d["entries"].append(cpc._history_row(rel)), stage=False
     )
-    cp._commit_all(root, "add a carrier and its row together")
+    cpc._commit_all(root, "add a carrier and its row together")
 
-    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, stats = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     assert not history, [f.as_dict() for f in history]
     assert stats["commits_judged"] == 2, stats
 
@@ -2989,16 +2990,16 @@ def test_a_commit_with_no_answer_set_is_disclosed_not_judged(tmp_path):
     """
     root = tmp_path / "history-pre-manifest"
     root.mkdir()
-    cp.build_skeleton(root)
+    cpc.build_skeleton(root)
     (root / cp.MANIFEST_REL).unlink()
-    cp._write(root, cp.FIXTURE_HISTORY_CARRIER_REL, cp.FIXTURE_GPL_BODY)
-    cp._git(root, "init", "-q")
-    cp._commit_all(root, "a tree from before the provenance manifest existed")
-    (root / cp.FIXTURE_HISTORY_CARRIER_REL).unlink()
-    cp.build_skeleton(root)
-    cp._commit_all(root, "introduce the provenance manifest")
+    cpc._write(root, cpc.FIXTURE_HISTORY_CARRIER_REL, cpc.FIXTURE_GPL_BODY)
+    cpc._git(root, "init", "-q")
+    cpc._commit_all(root, "a tree from before the provenance manifest existed")
+    (root / cpc.FIXTURE_HISTORY_CARRIER_REL).unlink()
+    cpc.build_skeleton(root)
+    cpc._commit_all(root, "introduce the provenance manifest")
 
-    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, stats = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     assert not history, [f.as_dict() for f in history]
     assert stats["commits_judged"] == 1, stats
     unjudged = stats["commits_not_judged_no_answer_set_yet"]
@@ -3009,11 +3010,11 @@ def test_a_commit_with_no_answer_set_is_disclosed_not_judged(tmp_path):
 def test_deleting_the_manifest_does_not_make_a_commit_unjudged(tmp_path):
     """The one way the NOT_RUN disclosure above could have become an escape hatch."""
     root = _history_tree(tmp_path, "history-dropped-manifest")
-    cp._write(root, cp.FIXTURE_HISTORY_CARRIER_REL, cp.FIXTURE_GPL_BODY)
+    cpc._write(root, cpc.FIXTURE_HISTORY_CARRIER_REL, cpc.FIXTURE_GPL_BODY)
     (root / cp.MANIFEST_REL).unlink()
-    cp._commit_all(root, "delete the answer set and add a carrier at once")
+    cpc._commit_all(root, "delete the answer set and add a carrier at once")
 
-    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, stats = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     assert "foreign-license-text" in _history_rules(history), [
         f.as_dict() for f in history
     ]
@@ -3030,17 +3031,17 @@ def test_history_reads_structural_signals_from_the_commits_own_entries(tmp_path)
     it never examined.
     """
     root = _history_tree(tmp_path, "history-structural")
-    asset = cp.FIXTURE_HISTORY_ASSET_REL
-    cp._write(root, asset, cp.FIXTURE_MARKER_FREE_ASSET_PAYLOAD)
-    cp._symlink(root, cp.FIXTURE_ESCAPING_LINK_REL, cp.FIXTURE_ESCAPING_LINK_TARGET)
-    cp._commit_all(root, "publish an upstream asset and an escaping link")
+    asset = cpc.FIXTURE_HISTORY_ASSET_REL
+    cpc._write(root, asset, cpc.FIXTURE_MARKER_FREE_ASSET_PAYLOAD)
+    cpc._symlink(root, cpc.FIXTURE_ESCAPING_LINK_REL, cpc.FIXTURE_ESCAPING_LINK_TARGET)
+    cpc._commit_all(root, "publish an upstream asset and an escaping link")
     (root / asset).unlink()
-    (root / cp.FIXTURE_ESCAPING_LINK_REL).unlink()
-    cp._commit_all(root, "delete both")
+    (root / cpc.FIXTURE_ESCAPING_LINK_REL).unlink()
+    cpc._commit_all(root, "delete both")
 
     tree_findings, _ = cp.audit(root)
     assert not tree_findings, [f.as_dict() for f in tree_findings]
-    history, _ = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, _ = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     rules = _history_rules(history)
     assert "upstream-asset-extension" in rules, [f.as_dict() for f in history]
     assert "external-symlink-target" in rules, [f.as_dict() for f in history]
@@ -3056,12 +3057,12 @@ def test_an_in_repo_symlink_in_history_is_not_a_signal(tmp_path):
     invent an `external-symlink-target` finding that no exemption can answer.
     """
     root = _history_tree(tmp_path, "history-in-repo-link")
-    cp._symlink(root, cp.FIXTURE_HISTORY_ALIAS_REL, "plain.md")
-    cp._commit_all(root, "add an in-repo alias")
-    (root / cp.FIXTURE_HISTORY_ALIAS_REL).unlink()
-    cp._commit_all(root, "delete the alias")
+    cpc._symlink(root, cpc.FIXTURE_HISTORY_ALIAS_REL, "plain.md")
+    cpc._commit_all(root, "add an in-repo alias")
+    (root / cpc.FIXTURE_HISTORY_ALIAS_REL).unlink()
+    cpc._commit_all(root, "delete the alias")
 
-    history, stats = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, stats = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     assert not history, [f.as_dict() for f in history]
     assert stats["commits_judged"] == 3, stats
 
@@ -3069,17 +3070,17 @@ def test_an_in_repo_symlink_in_history_is_not_a_signal(tmp_path):
 def test_the_signal_cache_is_keyed_by_path_and_blob(tmp_path):
     """Identical bytes at two paths carry different structural signals."""
     root = _history_tree(tmp_path, "history-cache-key")
-    first = cp.FIXTURE_HISTORY_CARRIER_REL
-    second = cp.FIXTURE_HISTORY_ASSET_REL
-    cp._write(root, first, cp.FIXTURE_GPL_BODY)
-    cp._commit_all(root, "publish the bytes at a .py path")
+    first = cpc.FIXTURE_HISTORY_CARRIER_REL
+    second = cpc.FIXTURE_HISTORY_ASSET_REL
+    cpc._write(root, first, cpc.FIXTURE_GPL_BODY)
+    cpc._commit_all(root, "publish the bytes at a .py path")
     (root / first).unlink()
-    cp._write(root, second, cp.FIXTURE_GPL_BODY)
-    cp._commit_all(root, "republish the same bytes at a .wt path")
+    cpc._write(root, second, cpc.FIXTURE_GPL_BODY)
+    cpc._commit_all(root, "republish the same bytes at a .wt path")
     (root / second).unlink()
-    cp._commit_all(root, "delete it")
+    cpc._commit_all(root, "delete it")
 
-    history, _ = cp.audit_history(root, cp.HISTORY_CONTROL_RANGE)
+    history, _ = cp.audit_history(root, cpc.HISTORY_CONTROL_RANGE)
     pairs = {(f.rule, f.path.split(" [commit ")[0]) for f in history}
     assert ("foreign-license-text", first) in pairs, pairs
     assert ("upstream-asset-extension", second) in pairs, pairs
@@ -3108,8 +3109,8 @@ def test_history_mode_is_reachable_from_the_cli_and_discloses_its_coverage(tmp_p
     is the part of the CLI surface this test exists to cover.
     """
     root = _history_tree(tmp_path, "history-cli")
-    cp._write(root, "docs/second.md", "A second commit with nothing of interest.\n")
-    cp._commit_all(root, "a second clean commit, so HEAD~1 resolves")
+    cpc._write(root, "docs/second.md", "A second commit with nothing of interest.\n")
+    cpc._commit_all(root, "a second clean commit, so HEAD~1 resolves")
     proc = run_tool("--root", str(root), "--commits", "HEAD~1..HEAD")
     assert proc.returncode in (0, 1), proc.stdout + proc.stderr
     for line in (
@@ -3137,7 +3138,7 @@ def test_history_boundaries_are_declared_in_limits():
 
 def test_history_controls_run_in_the_self_test():
     """Wired into `--negative-control`, not merely defined."""
-    cases = cp._history_controls()
+    cases = cpc._history_controls()
     assert cases, "the history controls must not be empty"
     proc = run_tool("--negative-control")
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -3225,14 +3226,14 @@ def test_the_reuse_audit_doc_and_the_workflow_agree_about_enforcement():
 def test_the_ci_gate_fails_a_carrier_declared_one_commit_late(tmp_path):
     """#300's failure control, through the exact CLI the workflow step runs."""
     root = _history_tree(tmp_path, "ci-gate-late")
-    rel = cp.FIXTURE_HISTORY_CARRIER_REL
-    cp._write(root, rel, cp.FIXTURE_GPL_BODY)
-    cp._commit_all(root, "add the carrier")
-    cp._write(root, rel, cp.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n")
-    cp._patch_manifest(
-        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    rel = cpc.FIXTURE_HISTORY_CARRIER_REL
+    cpc._write(root, rel, cpc.FIXTURE_GPL_BODY)
+    cpc._commit_all(root, "add the carrier")
+    cpc._write(root, rel, cpc.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n")
+    cpc._patch_manifest(
+        root, lambda d: d["entries"].append(cpc._history_row(rel)), stage=False
     )
-    cp._commit_all(root, "declare it, one commit late")
+    cpc._commit_all(root, "declare it, one commit late")
 
     # The merged tree is clean -- which is precisely why the tree audit cannot
     # be the gate for this shape.
@@ -3248,14 +3249,14 @@ def test_the_ci_gate_fails_a_carrier_declared_one_commit_late(tmp_path):
 def test_the_ci_gate_passes_a_carrier_declared_in_its_own_commit(tmp_path):
     """The positive control: the gate must not fail every branch that declares."""
     root = _history_tree(tmp_path, "ci-gate-same-commit")
-    rel = cp.FIXTURE_HISTORY_CARRIER_REL
-    cp._write(
-        root, rel, cp.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n"
+    rel = cpc.FIXTURE_HISTORY_CARRIER_REL
+    cpc._write(
+        root, rel, cpc.FIXTURE_GPL_BODY + "\n# Provenance: " + "DR-" + "0001.\n"
     )
-    cp._patch_manifest(
-        root, lambda d: d["entries"].append(cp._history_row(rel)), stage=False
+    cpc._patch_manifest(
+        root, lambda d: d["entries"].append(cpc._history_row(rel)), stage=False
     )
-    cp._commit_all(root, "add a carrier AND its row, together")
+    cpc._commit_all(root, "add a carrier AND its row, together")
 
     gate = run_tool("--root", str(root), "--commits", "HEAD~1..HEAD")
     assert gate.returncode == 0, gate.stdout + gate.stderr
@@ -3269,8 +3270,8 @@ def test_the_ci_gate_reports_an_unauditable_range_as_not_run(tmp_path):
     that resolves to nothing is exit 2 with a NOT_RUN disclosure, never exit 0.
     """
     root = _history_tree(tmp_path, "ci-gate-unauditable")
-    cp._write(root, "docs/second.md", "A second clean commit.\n")
-    cp._commit_all(root, "a second clean commit")
+    cpc._write(root, "docs/second.md", "A second clean commit.\n")
+    cpc._commit_all(root, "a second clean commit")
 
     empty = run_tool("--root", str(root), "--commits", "HEAD..HEAD")
     assert empty.returncode == 2, empty.stdout + empty.stderr
@@ -3327,7 +3328,7 @@ def _register_tree(tmp_path, register_text=None, mutate_manifest=None):
             stubs.add(cells[2])
     for rel in stubs:
         if rel != cp.MANIFEST_REL and not (root / rel).exists():
-            cp._write(root, rel, "stub\n")
+            cpc._write(root, rel, "stub\n")
     tree = cp.Tree(root, cp.scope_exclusion_prefixes(manifest), False)
     records, _ = cp.parse_records(tree)
     rows, _ = cp.parse_index(tree)
@@ -3385,7 +3386,7 @@ def test_removing_a_register_row_fails_for_its_manifest_row(tmp_path):
 
 def test_register_control_is_demonstrated_on_a_synthetic_tree(tmp_path):
     root = _skeleton(tmp_path)
-    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=[]))
+    cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(gpl_rows=[]))
     fired = _rules_fired(root)
     assert "register-missing-row" in fired, fired
 
@@ -3397,7 +3398,7 @@ def test_missing_register_file_fails(tmp_path):
 
 
 def test_malformed_register_rows_fail(tmp_path):
-    base = cp.SKELETON_REGISTER_ROW
+    base = cpc.SKELETON_REGISTER_ROW
     cases = {
         "empty field": base[:-1] + [""],
         "short row": base[:-2],
@@ -3415,21 +3416,21 @@ def test_malformed_register_rows_fail(tmp_path):
     for label, row in cases.items():
         root = tmp_path / label.replace(" ", "-")
         root.mkdir()
-        cp.build_skeleton(root)
+        cpc.build_skeleton(root)
         rows = [base, base] if row is None else [row]
-        cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=rows))
+        cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(gpl_rows=rows))
         assert "register-malformed-row" in _rules_fired(root), label
 
 
 def test_malformed_header_fails(tmp_path):
     root = _skeleton(tmp_path)
     text = (root / cp.REGISTER_REL).read_text(encoding="utf-8")
-    cp._write(root, cp.REGISTER_REL, text.replace("Pinned revision", "Revision", 1))
+    cpc._write(root, cp.REGISTER_REL, text.replace("Pinned revision", "Revision", 1))
     assert "register-malformed-row" in _rules_fired(root)
 
 
 def test_extra_or_unmapped_register_rows_fail(tmp_path):
-    base = cp.SKELETON_REGISTER_ROW
+    base = cpc.SKELETON_REGISTER_ROW
     # cites a provenance row that does not exist
     extra = ["G-2", "model/carrier.py"] + base[2:7] + ["manifest:model/other.py"] + base[8:]
     # right file, wrong record
@@ -3445,66 +3446,66 @@ def test_extra_or_unmapped_register_rows_fail(tmp_path):
     }.items():
         root = tmp_path / label.replace(" ", "-")
         root.mkdir()
-        cp.build_skeleton(root)
-        cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=rows))
+        cpc.build_skeleton(root)
+        cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(gpl_rows=rows))
         assert "register-unmapped-row" in _rules_fired(root), label
     assert wrong_record  # kept for readability of the case list above
 
 
 def test_row_whose_pin_or_record_differs_from_its_manifest_row_fails(tmp_path):
-    base = cp.SKELETON_REGISTER_ROW
+    base = cpc.SKELETON_REGISTER_ROW
     for label, row in {
         "pin": base[:4] + ["a" * 40] + base[5:],
     }.items():
         root = tmp_path / label
         root.mkdir()
-        cp.build_skeleton(root)
-        cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=[row]))
+        cpc.build_skeleton(root)
+        cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(gpl_rows=[row]))
         assert "register-unmapped-row" in _rules_fired(root), label
     # record: a second, indexed record exists, but the manifest row cites 0001
     root = tmp_path / "record"
     root.mkdir()
-    cp.build_skeleton(root)
-    cp._write(
+    cpc.build_skeleton(root)
+    cpc._write(
         root,
         f"{cp.RECORD_DIR_REL}/0002-second.md",
         "# 0002: Second (synthetic)\n\n- **Status**: proposed\n- **Date**: 2026-01-02\n",
     )
-    cp._write(
+    cpc._write(
         root,
         cp.INDEX_REL,
-        cp.SKELETON_INDEX
+        cpc.SKELETON_INDEX
         + "| [0002](0002-second.md) | Second (synthetic) | proposed | 2026-01-02 |\n",
     )
-    cp._write(
+    cpc._write(
         root,
         cp.REGISTER_REL,
-        cp.skeleton_register(gpl_rows=[base[:6] + ["0002"] + base[7:]]),
+        cpc.skeleton_register(gpl_rows=[base[:6] + ["0002"] + base[7:]]),
     )
     assert "register-unmapped-row" in _rules_fired(root)
 
 
 def test_unused_or_stale_exception_fails(tmp_path):
-    base = cp.SKELETON_REGISTER_ROW
+    base = cpc.SKELETON_REGISTER_ROW
     unused = [["E-1", "docs/plain.md", "0001", "reason", "closing action"]]
     root = tmp_path / "unused"
     root.mkdir()
-    cp.build_skeleton(root)
-    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(exceptions=unused))
+    cpc.build_skeleton(root)
+    cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(exceptions=unused))
     assert "register-exception-stale" in _rules_fired(root)
     # a listed file that does not exist
     root = tmp_path / "gone"
     root.mkdir()
-    cp.build_skeleton(root)
+    cpc.build_skeleton(root)
     gone = [["E-1", "model/gone.py", "0001", "reason", "closing action"]]
-    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(exceptions=gone))
+    cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(exceptions=gone))
     assert "register-exception-stale" in _rules_fired(root)
     # an exception with an empty justification is malformed, not accepted
     root = tmp_path / "unjustified"
     root.mkdir()
-    cp.build_skeleton(root)
+    cpc.build_skeleton(root)
     bare = [["E-1", "docs/plain.md", "0001", "", "closing action"]]
-    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(exceptions=bare))
+    cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(exceptions=bare))
     assert "register-malformed-row" in _rules_fired(root)
     assert base  # the skeleton row stays valid throughout
 
@@ -3609,32 +3610,32 @@ def test_mit_airwindows_constants_stay_distinct_from_gpl_adapter_code(tmp_path):
 
 
 def test_licence_disagreement_with_the_manifest_must_be_reconciled(tmp_path):
-    base = cp.SKELETON_REGISTER_ROW
+    base = cpc.SKELETON_REGISTER_ROW
     root = tmp_path / "unreconciled"
     root.mkdir()
-    cp.build_skeleton(root)
+    cpc.build_skeleton(root)
     # an MIT table row whose manifest row says GPL, status registered: mismatch
-    text = cp.skeleton_register(gpl_rows=[]).replace(
+    text = cpc.skeleton_register(gpl_rows=[]).replace(
         "## MIT-sourced quoted constants\n\n"
-        + cp._register_table(cp.REGISTER_ROW_COLUMNS, []),
+        + cpc._register_table(cp.REGISTER_ROW_COLUMNS, []),
         "## MIT-sourced quoted constants\n\n"
-        + cp._register_table(
+        + cpc._register_table(
             cp.REGISTER_ROW_COLUMNS, [base[:5] + ["MIT"] + base[6:]]
         ),
     )
-    cp._write(root, cp.REGISTER_REL, text)
+    cpc._write(root, cp.REGISTER_REL, text)
     assert "register-licence-mismatch" in _rules_fired(root)
     # the same row reconciled by a cited record is accepted
     reconciled = base[:5] + ["MIT"] + base[6:8] + ["licence reconciled", "licence per 0001"]
     text = text.replace(
-        cp._register_table(cp.REGISTER_ROW_COLUMNS, [base[:5] + ["MIT"] + base[6:]]),
-        cp._register_table(cp.REGISTER_ROW_COLUMNS, [reconciled]),
+        cpc._register_table(cp.REGISTER_ROW_COLUMNS, [base[:5] + ["MIT"] + base[6:]]),
+        cpc._register_table(cp.REGISTER_ROW_COLUMNS, [reconciled]),
     )
-    cp._write(root, cp.REGISTER_REL, text)
+    cpc._write(root, cp.REGISTER_REL, text)
     assert "register-licence-mismatch" not in _rules_fired(root)
     # 'licence reconciled' with nothing to reconcile is itself a mismatch
     nothing = base[:8] + ["licence reconciled", "licence per 0001"]
-    cp._write(root, cp.REGISTER_REL, cp.skeleton_register(gpl_rows=[nothing]))
+    cpc._write(root, cp.REGISTER_REL, cpc.skeleton_register(gpl_rows=[nothing]))
     assert "register-licence-mismatch" in _rules_fired(root)
 
 

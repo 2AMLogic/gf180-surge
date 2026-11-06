@@ -808,7 +808,7 @@
         "role": "testbench",
         "path": "tests/test_sxt019_provenance.py",
         "passed": true,
-        "content_hash": "sha256:e490101dca90d76ae23ab1c5927b2745e0a5a723a59d8bf2a377d42303630feb"
+        "content_hash": "sha256:feec725d65fcf3905a9f88c76cf2911e5fe762d7c2bdd4b4075af00822c5849d"
       },
       {
         "check": "present",
