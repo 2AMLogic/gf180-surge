@@ -60,6 +60,17 @@ OBSERVABLE_GROUPS = ("logical4_core", "rf_ains34_core", "rf_bins12_core",
                      "rf_global2_core", "rf_global34_core", "rf_send34_core")
 
 
+def check_netlist_arg(entry):
+    """The freshness argv must re-hash the committed netlist (--netlist <path>).
+
+    Without it `klt synthesize --check` looks for the removed `out/` scratch
+    netlist and reports `drifted`, so the attestation silently fails.
+    """
+    argv = entry["check"]["argv"]
+    if "--netlist" not in argv or argv[argv.index("--netlist") + 1] != entry["path"]:
+        raise AssertionError(f"{entry['path']}: freshness check lacks --netlist <committed netlist>")
+
+
 class T1Item1(unittest.TestCase):
     def test_every_product_group_has_a_recorded_outcome(self):
         for g in groups():
@@ -133,6 +144,22 @@ class T1Item1(unittest.TestCase):
         self.assertFalse(datapath_observable(pre_change))
         with_results = pre_change.replace("  output block_done;\n", "  output block_done;\n  output [1023:0] out_l;\n")
         self.assertTrue(datapath_observable(with_results))
+
+    def test_inventory_freshness_checks_hash_the_committed_netlist(self):
+        inv = json.loads((BASE / "inventory.partial.json").read_text())
+        self.assertGreater(len(inv["derived"]), 0)
+        for e in inv["derived"]:
+            check_netlist_arg(e)
+            self.assertTrue((ROOT / e["path"]).is_file(), e["path"])
+        # Every attested source is a lint-manifest product source.
+        srcs = {g["source"] for g in groups()}
+        self.assertTrue(set(inv["sources"]) <= srcs)
+        # Negative control: the pre-fix argv (no --netlist) must be rejected.
+        bad = json.loads(json.dumps(inv["derived"][0]))
+        i = bad["check"]["argv"].index("--netlist")
+        del bad["check"]["argv"][i:i + 2]
+        with self.assertRaises(AssertionError):
+            check_netlist_arg(bad)
 
     def test_block_manifest_does_not_claim_item1_while_groups_blocked(self):
         blocked = [g["id"] for g in groups() if rc(g) != "0"]

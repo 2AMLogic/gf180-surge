@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-06
 
+- **PR #581**: fix(rtl): guard sim-only $fatal and string ROM init under SYNTHESIS for T1 synthesis
+- **Issue #572** (closed): T1 item 1: 8 product groups unsynthesizable after sv2v (assertions, string ROM path, galactic timeout)
 - **PR #573**: feat(signoff): record sv2v-route synthesis outcomes for 8 blocked groups
 
 ### 2026-11-05

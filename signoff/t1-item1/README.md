@@ -58,10 +58,17 @@ not a request field, so a larger budget is a klt/tool change, not a repo
 change (follow-up #579). `failure.txt` stays a NO_VERDICT (timeout), never a pass.
 
 Pins: `pdk-pin.json`. Regenerate: `python3 signoff/t1-item1/regen.py [group...]`.
-`inventory.partial.json` + `item1.partial.envelope.json` (unchanged) attest only the 3
-natively synthesized groups (`klt signoff --attest 1`, pass; `--check` clean). The
-freshness check (`klt synthesize --check`) compares source and liberty hashes;
-the netlist-to-report hash is checked by the test. Report `netlist_path` fields
-name the removed `out/` scratch directory.
+`inventory.partial.json` + `item1.partial.envelope.json` attest 4 of 11 groups:
+the 3 native groups plus `reverb1_core` (sv2v, real datapath). Not attested: the 6
+skeleton-only groups (#580) and `galactic_core` (#579); attesting a netlist that
+omits the datapath would present sequencer-only output as item-1 evidence.
+`klt signoff --attest 1` passes 12/12 (run on this host, klt 0.9.2.dev33).
+Each freshness check is `klt synthesize --check ... --netlist <committed netlist>`:
+report `netlist_path` fields name the removed `out/` scratch directory, so without
+`--netlist` the check reports `netlist_sha256` as `drifted` (the earlier 3-group
+envelope fails live for that reason; this change fixes it). Re-attest with
+`klt signoff --attest 1 --inventory signoff/t1-item1/inventory.partial.json -o signoff/t1-item1/item1.partial.envelope.json`.
+`klt signoff --check` applies only to `--manifest`/`--fleet`, not to an attest
+envelope; the live re-derivation is the attest run itself.
 
 Not proved: P&R, timing, DRC/LVS, RTL-vs-netlist equivalence, fidelity.
