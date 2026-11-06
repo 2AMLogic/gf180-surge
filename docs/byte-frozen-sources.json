@@ -395,7 +395,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "25967029241e191bafb7e32eb6013d6af0d26396f8a84120ba619a8d34f2173a"
+      "sha256": "0077ca86804db297c761803cf5a5e15d80093012e784ddba54e192d80db671e8"
     },
     {
       "covers": [
@@ -447,7 +447,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "a5eda64ad5d1e0cd5b34bc9b5f38dcb144bf06b7937ab1c0323755c5d415f0d2"
+      "sha256": "c16270c7115dbbd15a4600ff9770b744ac4b835ba8f603d2b845e5efd9e58e0d"
     },
     {
       "covers": [

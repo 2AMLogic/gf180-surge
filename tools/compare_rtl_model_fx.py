@@ -259,15 +259,13 @@ def main():
     vvp_path = os.path.splitext(os.path.abspath(args.rtl_trace))[0] + ".vvp"
     rtl_trace_path = args.rtl_trace
     sinc_path = SINC
-    zeros_path = os.path.join(REPO, "rtl", "effects", "line_zeros.hex")
     plusargs = [f"+PCONFIG={PCONFIG[slug]}",
                 f"+NBLOCKS={n_blocks}",
                 f"+RENDER0={model_trace['settle_blocks']}",
                 f"+TRACE={rtl_trace_path}",
                 f"+INFILE={os.path.join(art, 'rtl', slug + '_in.hex')}",
                 f"+CTRLFILE={os.path.join(art, 'rtl', slug + '_ctrl.hex')}",
-                f"+SINC={sinc_path}",
-                f"+ZEROS={zeros_path}"]
+                f"+SINC={sinc_path}"]
     run_sim(args.sim, args.tb, vvp_path, "/tmp/sxt023_verilator", plusargs)
 
     rtl = parse_tb_trace(rtl_trace_path)

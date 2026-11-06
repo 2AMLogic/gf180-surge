@@ -21,7 +21,7 @@
 //   +NBLOCKS=n        blocks
 //   +RENDER0=b        first render block (outputs traced from here)
 //   +RESETAT=b        optional: bulk clear + core reset before block b
-//   +INFILE / +CTRLFILE / +INITFILE / +SINC / +ZEROS / +TRACE / +REV
+//   +INFILE / +CTRLFILE / +INITFILE / +SINC / +TRACE / +REV
 //
 // INITFILE: 3 x Q13.18 words per instance (the plain setvars(true)
 // init-time lipol targets: fb, mix, width) — consumed at block 0 and at
@@ -69,7 +69,7 @@ module tb_chorus;
     reg [31:0] line_mem0 [0:LINE_LEN-1];
     reg [31:0] line_mem1 [0:LINE_LEN-1];
     longint unsigned rd0, wr0, h0, rd1, wr1, h1;
-    reg [8*256:1] zeros_name;
+    integer zinit;
     integer last_read;
 
     task line_access(input integer inst, input integer we,
@@ -509,12 +509,13 @@ module tb_chorus;
         if (!$value$plusargs("CTRLFILE=%s", fct_name)) fct_name = "ctrl.hex";
         if (!$value$plusargs("INITFILE=%s", init_name)) init_name = "init.hex";
         if (!$value$plusargs("SINC=%s", sinc_name)) sinc_name = "sinc_q29.hex";
-        if (!$value$plusargs("ZEROS=%s", zeros_name)) zeros_name = "line_zeros.hex";
         if (!$value$plusargs("REV=%s", rev_name)) rev_name = "00000000";
 
         $readmemh(sinc_name, sinc);
-        $readmemh(zeros_name, line_mem0);
-        $readmemh(zeros_name, line_mem1);
+        for (zinit = 0; zinit < LINE_LEN; zinit = zinit + 1) begin
+            line_mem0[zinit] = 32'h0;
+            line_mem1[zinit] = 32'h0;
+        end
         $readmemh(init_name, initwords);
 
         fd = $fopen(trace_name, "w");
