@@ -2,6 +2,10 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-06
+
+- **PR #573**: feat(signoff): record sv2v-route synthesis outcomes for 8 blocked groups
+
 ### 2026-11-05
 
 - **PR #571**: evidence: regrade uni2-poly and uni16-smoke on the pinned oracle under #110
