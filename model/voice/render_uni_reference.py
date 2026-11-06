@@ -32,19 +32,12 @@ oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob  # noqa: E402
 
 SR = 48000
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.csv")
-
-
-def census_blob(rel):
-    import csv
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
 
 
 def load_sequence(ref):

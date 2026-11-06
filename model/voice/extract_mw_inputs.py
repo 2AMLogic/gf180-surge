@@ -26,7 +26,6 @@ interpreter (auto re-exec via oracle_common).
 """
 
 import argparse
-import csv
 import json
 import os
 import sys
@@ -37,6 +36,8 @@ sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -44,14 +45,6 @@ CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 MS_MODWHEEL = 6
-
-
-def census_blob(rel):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
 
 
 def graphs_modwheel_routes(rel):
@@ -62,14 +55,6 @@ def graphs_modwheel_routes(rel):
                 rows = [r for r in g["g"]["md"]["s"][0]["s"] if r[0] == MS_MODWHEEL]
                 return [(r[3], r[4], r[5]) for r in rows]
     raise Refuse("preset not in graphs.jsonl")
-
-
-def git_blob_sha1(path):
-    import hashlib
-
-    data = open(path, "rb").read()
-    hdr = b"blob %d\x00" % len(data)
-    return hashlib.sha1(hdr + data).hexdigest()
 
 
 def main():

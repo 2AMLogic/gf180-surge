@@ -23,7 +23,6 @@ Run under the pinned interpreter (auto re-exec via oracle_common).
 """
 
 import argparse
-import csv
 import json
 import os
 import sys
@@ -34,6 +33,8 @@ sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -45,14 +46,6 @@ GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 # (model input words, Q10.21-quantized once; engine rand_01() is
 # wall-clock seeded and not reproducible -- SXT-012 variation class).
 DECLARED_DRAWS = [0.10, 0.35, 0.60, 0.85, 0.20, 0.45, 0.70, 0.95]
-
-
-def census_blob(rel):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
 
 
 def graphs_entry(rel):

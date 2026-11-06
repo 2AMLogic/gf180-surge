@@ -25,8 +25,6 @@ Run under the pinned interpreter (auto re-exec via oracle_common).
 """
 
 import argparse
-import csv
-import hashlib
 import json
 import os
 import sys
@@ -39,6 +37,8 @@ sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
 import fixture_config as fc  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
@@ -59,14 +59,6 @@ PLAY_MODE_NAMES = {
 }
 
 
-def census_blob(rel):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
-
-
 def graphs_entry(rel):
     with open(GRAPHS, encoding="utf-8") as f:
         for line in f:
@@ -74,12 +66,6 @@ def graphs_entry(rel):
             if g.get("p") == rel:
                 return g
     raise Refuse(f"preset not in graphs.jsonl: {rel}")
-
-
-def git_blob_sha1(path):
-    with open(path, "rb") as f:
-        data = f.read()
-    return hashlib.sha1(b"blob %d\x00" % len(data) + data).hexdigest()
 
 
 def gate_graph(ge, rel):
