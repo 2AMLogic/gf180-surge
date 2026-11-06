@@ -305,6 +305,591 @@
         "reports/SXT-043/EVIDENCE.md"
       ],
       "sha256": "00af35620c43f01c6a6ce29e6c84dec3daff3e938b635abe04dfb24c3bcc0a2a"
+    },
+    {
+      "covers": [
+        "model/integration/negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[model/integration/negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "7287e3f45496f0139277dd7804a655cfc055846fc9d6888309dedd6b13443553"
+    },
+    {
+      "covers": [
+        "tools/aw49_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/aw49_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "f7bc9b355da979a75d0c59b2f53ccec57f1d4703ba9845a59b68711fe38c1724"
+    },
+    {
+      "covers": [
+        "tools/aw4_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/aw4_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "f2741a72ac52a6a17c24dd98b42ab60c1e1bb68348f40eaf56336fababcdd9a6"
+    },
+    {
+      "covers": [
+        "tools/chorus_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/chorus_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "d42199178766211cb67a83e75f9b3eb93e62d96e6e35f32e109f067cee13564f"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_aw4.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_aw4.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "230a32c81413bb45a8086db6fbd9d980c4a5db745f1207d3fc501c9684b6823b"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_aw49.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_aw49.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "3b706f4d4da93279d59e55dc8ddec8cfce8a4fdaa3cbf0636143cdfd71b586c6"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_chorus.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_chorus.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "25967029241e191bafb7e32eb6013d6af0d26396f8a84120ba619a8d34f2173a"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_conditioner.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_conditioner.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "9f981156897906ea710c14de1fffc371a0a51cf289b1f777e94616c7f440e289"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_distortion.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_distortion.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "aa5be82ec5e253910782cfb399bbaf6f99c291f8b679b42d5b83835a0ee49ec8"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_distortion_sse.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_distortion_sse.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "cf58dced6db8f1f2ba4b9340fba1e8b3dfabeb91cf05c6ed7f467b6e536eef2a"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_fx.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_fx.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "a5eda64ad5d1e0cd5b34bc9b5f38dcb144bf06b7937ab1c0323755c5d415f0d2"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_lp12.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_lp12.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "2bcdc8fa1bf70602a394277ceaff937ee1afed1ba1a495344d23bcdfa763b285"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_lp24.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_lp24.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "60152e3f79387facc09ba1ecff0697caf39e5af5602ac3d33a8aa0283fae6c12"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_lpmoog.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_lpmoog.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "97b6640688e166dc13b1a359157ea527fd1a37b6521587af88a2d2912fa54c99"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_phaser.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_phaser.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "65a98354ccf035fa9eae0cb2638dcb1b5f69e5012581ebf33fe9afd3d7386ccb"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_reverb2.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_reverb2.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "fff68094859563d6d372d9fc1632c0046ff0d621c98f4bec574a9fc82e7e3ae5"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_rf_ains34.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_rf_ains34.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "2a55c811b4f6f377e01e22dc1d9e54e0d0f74b8734975e39d54c582db65c89a7"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_rf_bins12.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_rf_bins12.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "65ee9183115fc21748593f134ca992fa2c5f563d6a7906bd00dce6a470816e09"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_rf_global2.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_rf_global2.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "74c6280eb98355d1506f7909d297fb601178e76c5404af6f67c5a77164b4bf1c"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_rf_global34.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_rf_global34.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "b88afbf8a5ec87abaeca5c8e42d7cd6239369a6efbb605227afa34720c325fb6"
+    },
+    {
+      "covers": [
+        "tools/compare_rtl_model_rf_send34.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/compare_rtl_model_rf_send34.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "3732b5a0b61cde2d98089f979b2062babb92babfcc3bff4c93f4b0f594cf55c7"
+    },
+    {
+      "covers": [
+        "tools/conditioner_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/conditioner_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "41142882711a5db1e70162fd4c37da879e794efa99f2d449e1fa5c8e2d7920f9"
+    },
+    {
+      "covers": [
+        "tools/control_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/control_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "e5d649bb6d52bcd8e7dcd6c23bbe1fd84b2f1283d5a53962236ced56bb664685"
+    },
+    {
+      "covers": [
+        "tools/coverage_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/coverage_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "f7d8de1a0686b78ea1a431da02fb9a79e5ee0979982824ca039cc9c9092a1832"
+    },
+    {
+      "covers": [
+        "tools/distortion_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/distortion_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "6c3099a4770c31e5b176efbec7b4bcd2b88078155890f98c28e63e65637f61f1"
+    },
+    {
+      "covers": [
+        "tools/distortion_sse_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/distortion_sse_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "0b8a12b94538db5506069b660497963a142bd0c84bc941d096d183d71549b568"
+    },
+    {
+      "covers": [
+        "tools/fx_rng_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/fx_rng_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "78c57dd8fb6af686bdc70ee091a5352896159552272fc6c2ef906e9e7ac63896"
+    },
+    {
+      "covers": [
+        "tools/kt_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/kt_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "ae3c928dec216bc63322d7d1895df3aa87df79453a6b06a6d9b6ab9ae3ecaf87"
+    },
+    {
+      "covers": [
+        "tools/lfo_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/lfo_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "eebe83d54c7e961014fd8c13c32e254993da2465096ac6d45b08ca026edce6aa"
+    },
+    {
+      "covers": [
+        "tools/lp12_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/lp12_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "6bd984d5a6b586e94f13cbaeecb931f461c30acbb1ff63af83b15ba859f6861e"
+    },
+    {
+      "covers": [
+        "tools/lp24_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/lp24_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "d7463c37f7bcf4ce13bff02584f9f8569860b01bebebe2e2f15baa58582543b0"
+    },
+    {
+      "covers": [
+        "tools/lpmoog_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/lpmoog_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "adfd2f645d95ecf3b99089b340211e69a67d620ab3ee5dbb4c5a51ad618fcfa4"
+    },
+    {
+      "covers": [
+        "tools/mw_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/mw_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "a82546a17046f4b475f5cb65b6ba64780dcf597ecc2181185ba4ee4087102f60"
+    },
+    {
+      "covers": [
+        "tools/phaser_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/phaser_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "48f15128f2c3cceb3e2cdf3e798cffd6875e3f413b9902445cbc7902d44c79b6"
+    },
+    {
+      "covers": [
+        "tools/profile_budget_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/profile_budget_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "9aad9cf0ab84fde7319ff5cd7b085ec386a2b8a9e34da2e5de25cd2f62b41115"
+    },
+    {
+      "covers": [
+        "tools/reverb2_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/reverb2_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "641a9d9430b694219193a1f2bff422edb78ea849a08322a9f34a61405deb236e"
+    },
+    {
+      "covers": [
+        "tools/reverb2_reference_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/reverb2_reference_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "0e2302697cf9b2cc34d8db7649df248aa2918404f36bf509d224a2b8b03620bc"
+    },
+    {
+      "covers": [
+        "tools/reverb_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/reverb_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "7d36df1d9922600320de1f51373df803cfcf14e021fcb1cbbf1089f65818ce2f"
+    },
+    {
+      "covers": [
+        "tools/rf_ains34_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/rf_ains34_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "4b835de9ef0f0cf1669b49e87a7165aaf4117c0a73c164b3017e2e27874439bf"
+    },
+    {
+      "covers": [
+        "tools/rf_bins12_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/rf_bins12_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "a1ce63a0fe3f732b26de96db4974f6ae9e4d390dde1533ccfcbbc3d2f8b38567"
+    },
+    {
+      "covers": [
+        "tools/rf_global2_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/rf_global2_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "7e969f759629e331b3540b2fd3bc3e1409b88c5d8ce5df84e1ee5c4163971c30"
+    },
+    {
+      "covers": [
+        "tools/rf_global34_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/rf_global34_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "5b8633e512cf6859d71dccb00039219b45cef41afa98b12f0550e4f48c79d03f"
+    },
+    {
+      "covers": [
+        "tools/rf_send34_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/rf_send34_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "e77b4a1e6f9eab740bced8e83c4df76cf987b2396e5dc38b055df869d860efa7"
+    },
+    {
+      "covers": [
+        "tools/slfo_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/slfo_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "dc7ade687711531c30dfe3a9d795b5d11d5a08c1f9a6689e7c0d3f0f35752b5f"
+    },
+    {
+      "covers": [
+        "tools/vel_negative_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/vel_negative_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "60c8afc24cd285f76b18e2f7ed60829cc1e32795ee124bc5a278371487bd583a"
     }
   ],
   "live_pins_note": "A live pin is re-derived from the current bytes every time its freshness test runs, so any edit -- including whitespace or a comment -- turns a committed PASS record STALE. Editing a covered file requires re-running that leaf's comparator/control tooling and re-committing every record listed in recorded_in, in the same change.",
