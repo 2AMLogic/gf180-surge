@@ -23,8 +23,6 @@ ORACLE_SURGE_DIR (the external pinned oracle).
 """
 
 import argparse
-import csv
-import hashlib
 import json
 import os
 import sys
@@ -38,6 +36,8 @@ sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "sine"))
 import oracle_common as oc  # noqa: E402
 import fixture_config as fc  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -58,14 +58,6 @@ VALUE_ZERO_SOURCES = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 29, 30, 35,
                       36, 37}
 
 
-def census_blob(rel):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
-
-
 def graphs_entry(rel):
     with open(GRAPHS, encoding="utf-8") as f:
         for line in f:
@@ -73,12 +65,6 @@ def graphs_entry(rel):
             if g.get("p") == rel:
                 return g
     raise Refuse(f"preset not in graphs.jsonl: {rel}")
-
-
-def git_blob_sha1(path):
-    data = open(path, "rb").read()
-    hdr = b"blob %d\x00" % len(data)
-    return hashlib.sha1(hdr + data).hexdigest()
 
 
 def scan_sequences():
