@@ -4,6 +4,15 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-06
 
+- **PR #594**: refactor: move SXT-019 negative-control scaffolding into its own module
+- **Issue #576** (closed): Split check_provenance.py: move ~3,950 lines of negative controls into a sibling module
+- **PR #595**: refactor: replace line_zeros.hex readmemh with zero-init loops
+- **Issue #369** (closed): Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop
+- **PR #593**: refactor: share Classic/Sine fixture override-readback core
+- **Issue #495** (closed): Consolidate duplicated fixture_config override/readback code (classic, sine)
+- **PR #591**: refactor: share census_blob and git_blob_sha1 across extractor leaves
+- **Issue #493** (closed): Consolidate duplicated census_blob / git_blob_sha1 helpers (19 + 13 private copies) into a shared module
+- **PR #592**: chore: remove 31 byte-identical report artifacts, keep canonical copies
 - **PR #589**: feat: attest T1 item 9 testbenches with klt --attest and re-check in signoff.yml
 - **Issue #538** (closed): T1 item 9 (testbenches shipped): testbench inventory over tests/, the RTL benches and the evidence harnesses, attested with klt signoff --attest 9
 - **PR #586**: feat(rtl): expose result words as output ports on six T1 cores
