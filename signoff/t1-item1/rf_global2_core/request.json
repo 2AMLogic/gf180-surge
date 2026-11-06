@@ -14,5 +14,8 @@
   "outputs": {
     "dir": "out"
   },
-  "sv_frontend": "sv2v"
+  "sv_frontend": "sv2v",
+  "defines": {
+    "SYNTHESIS": null
+  }
 }

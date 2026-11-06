@@ -1,0 +1,229 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "reverb1_core",
+  "parameters": {},
+  "defines": {
+    "SYNTHESIS": null
+  },
+  "run_id": "out",
+  "status": "ok",
+  "instance_count": 36290,
+  "area_um2": 869623.776,
+  "sequential_area_um2": 48917.8368,
+  "instance_counts_by_type": {
+    "gf180mcu_fd_sc_mcu9t5v0__and2_1": 867,
+    "gf180mcu_fd_sc_mcu9t5v0__and2_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_1": 301,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_2": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_4": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__and4_1": 21,
+    "gf180mcu_fd_sc_mcu9t5v0__and4_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_1": 119,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_2": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 2054,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_2": 22,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_4": 20,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_1": 420,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi222_1": 86,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi22_1": 1223,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi22_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_1": 1432,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_12": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_2": 17,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_3": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_4": 9,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_8": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_1": 210,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_16": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_3": 13,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_4": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_8": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 1864,
+    "gf180mcu_fd_sc_mcu9t5v0__clkinv_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 619,
+    "gf180mcu_fd_sc_mcu9t5v0__inv_1": 13,
+    "gf180mcu_fd_sc_mcu9t5v0__inv_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 60,
+    "gf180mcu_fd_sc_mcu9t5v0__mux4_1": 21,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 8493,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_2": 17,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_4": 10,
+    "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 684,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_1": 37,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 3346,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_2": 20,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_1": 169,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 64,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 59,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_2": 10,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_4": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_1": 3246,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_2": 14,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_4": 20,
+    "gf180mcu_fd_sc_mcu9t5v0__oai221_1": 13,
+    "gf180mcu_fd_sc_mcu9t5v0__oai221_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai222_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__oai22_1": 229,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_1": 90,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_2": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__oai31_4": 14,
+    "gf180mcu_fd_sc_mcu9t5v0__oai32_1": 51,
+    "gf180mcu_fd_sc_mcu9t5v0__oai32_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai33_1": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__oai33_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_1": 989,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_2": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_1": 314,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_2": 10,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__or4_1": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__tiel": 941,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_1": 4016,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_2": 24,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_4": 70,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor3_1": 586,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor3_2": 16,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor3_4": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__xor2_1": 2857,
+    "gf180mcu_fd_sc_mcu9t5v0__xor2_2": 77,
+    "gf180mcu_fd_sc_mcu9t5v0__xor2_4": 40,
+    "gf180mcu_fd_sc_mcu9t5v0__xor3_1": 262,
+    "gf180mcu_fd_sc_mcu9t5v0__xor3_2": 23,
+    "gf180mcu_fd_sc_mcu9t5v0__xor3_4": 2
+  },
+  "macros": [],
+  "macro_instance_counts_by_type": {},
+  "macro_instance_count": 0,
+  "cells_without_area": [],
+  "leakage_power_nw": null,
+  "leakage_by_type_nw": null,
+  "timing": {
+    "source": "abc_stime",
+    "wire_load": null,
+    "critical_path_ps": 135784.09,
+    "delay_target_ps": null,
+    "regions": [
+      {
+        "module": "reverb1_core",
+        "critical_path_ps": 135784.09
+      }
+    ]
+  },
+  "clock_targets": {
+    "clocks": [],
+    "delay_target_ps": null,
+    "delay_target_basis": "none",
+    "per_clock_enforced": false
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed (it is not shipped with the published klayout-tools package), so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`; from an installed package, `klt sta` with a `verilog` request gives a netlist-level timing estimate (needs OpenSTA)",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [],
+    "effective": [],
+    "validated": null,
+    "engine_supports_dont_use": null
+  },
+  "abc_constr": {
+    "source": "builtin",
+    "driving_cell": "gf180mcu_fd_sc_mcu9t5v0__buf_4",
+    "load_ff": 13.43
+  },
+  "warnings": {
+    "total": 2,
+    "by_category": {
+      "other": 2
+    },
+    "representatives": [
+      {
+        "category": "other",
+        "count": 2,
+        "text": "Replacing memory \\wet_r with list of registers. See signoff/t1-item1/reverb1_core/out/reverb1_core_sv2v.v:217, signoff/t1-item1/reverb1_core/out/reverb1_core_sv2v.v:180, signoff/t1-item1/reverb1_core/out/reverb1_core_sv2v.v:204"
+      }
+    ]
+  },
+  "memory_mapping": {
+    "status": "mixed",
+    "reason": null,
+    "modules": [
+      {
+        "module": "reverb1_core",
+        "status": "mixed",
+        "elaborated_memories": 4,
+        "elaborated_memory_bits": 3520,
+        "pre_lowering_memories": 1,
+        "final_memories": 0
+      }
+    ],
+    "script_path": {
+      "path": "signoff/t1-item1/reverb1_core/out/reverb1_core_memory_evidence.ys",
+      "scope": "repo"
+    }
+  },
+  "blackbox_modules": [],
+  "netlist_path": {
+    "path": "signoff/t1-item1/reverb1_core/out/reverb1_core_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "996d7b8b6c0a7f2116bef1f924cfd0acde4c34b0ee78fa0c0c6a273a91715503",
+  "script_path": {
+    "path": "signoff/t1-item1/reverb1_core/out/synth_reverb1_core.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "signoff/t1-item1/reverb1_core/out/synth_reverb1_core.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.9.2.dev28+gc31fc9ca6550",
+    "klt_git_commit": "c31fc9ca655078e5e4d4dcba7a25c3d8584e69fc",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@c31fc9ca655078e5e4d4dcba7a25c3d8584e69fc",
+    "klayout_version": "0.30.13",
+    "pdk": {
+      "name": "gf180mcuD",
+      "source": "search root: ~/.ciel",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80",
+      "content_hash": "sha256:c0b6946a2d48a4604c687a29d3c8b1e05b3da5a42866b21592eaacfeae6e9ca7",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:6070995160dd0493290d3365deb9dfb1a8b6f4d958d71d873ac40a0a2db9bc59",
+      "role": "source"
+    },
+    "parameters": {},
+    "defines": {
+      "SYNTHESIS": null
+    },
+    "sv_frontend": {
+      "route": "sv2v",
+      "sv2v_version": "sv2v v0.0.13"
+    }
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}

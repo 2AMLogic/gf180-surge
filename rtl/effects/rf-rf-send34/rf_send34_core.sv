@@ -313,8 +313,10 @@ module rf_send34_core (
       nr00 = (144'(xl) * c1) + (bus == 0 ? s3_reg1[0] : s4_reg1[0])
              - rndshift(144'(c3) * op0, C_FRAC);
       nr10 = (144'(xl) * c2) - rndshift(144'(c4) * op0, C_FRAC);
+`ifndef SYNTHESIS
       if (nr00 >= REG_LIM || nr00 < -REG_LIM || nr10 >= REG_LIM || nr10 < -REG_LIM)
         $fatal(1, "send bus biquad reg overflow (L) bus=%0d k=%0d", bus, kk);
+`endif
       if (bus == 0) begin s3_reg0[0] = sat80(nr00); s3_reg1[0] = sat80(nr10); end
       else          begin s4_reg0[0] = sat80(nr00); s4_reg1[0] = sat80(nr10); end
       // channel 1 = R
@@ -322,8 +324,10 @@ module rf_send34_core (
       nr01 = (144'(xr) * c1) + (bus == 0 ? s3_reg1[1] : s4_reg1[1])
              - rndshift(144'(c3) * op1, C_FRAC);
       nr11 = (144'(xr) * c2) - rndshift(144'(c4) * op1, C_FRAC);
+`ifndef SYNTHESIS
       if (nr01 >= REG_LIM || nr01 < -REG_LIM || nr11 >= REG_LIM || nr11 < -REG_LIM)
         $fatal(1, "send bus biquad reg overflow (R) bus=%0d k=%0d", bus, kk);
+`endif
       if (bus == 0) begin s3_reg0[1] = sat80(nr01); s3_reg1[1] = sat80(nr11); end
       else          begin s4_reg0[1] = sat80(nr01); s4_reg1[1] = sat80(nr11); end
 

@@ -217,8 +217,10 @@ module rf_global2_core (
     nr00 = (144'(out_l[kk]) * c1) + (slot == 0 ? s1_reg1[0] : s2_reg1[0])
            - rndshift(144'(c3) * op0, C_FRAC);
     nr10 = (144'(out_l[kk]) * c2) - rndshift(144'(c4) * op0, C_FRAC);
+`ifndef SYNTHESIS
     if (nr00 >= REG_LIM || nr00 < -REG_LIM || nr10 >= REG_LIM || nr10 < -REG_LIM)
       $fatal(1, "slot biquad reg overflow (L) slot=%0d k=%0d", slot, kk);
+`endif
     if (slot == 0) begin s1_reg0[0] = sat80(nr00); s1_reg1[0] = sat80(nr10); end
     else           begin s2_reg0[0] = sat80(nr00); s2_reg1[0] = sat80(nr10); end
     out_l[kk] = rndsat32(op0, C_FRAC);
@@ -228,8 +230,10 @@ module rf_global2_core (
     nr01 = (144'(out_r[kk]) * c1) + (slot == 0 ? s1_reg1[1] : s2_reg1[1])
            - rndshift(144'(c3) * op1, C_FRAC);
     nr11 = (144'(out_r[kk]) * c2) - rndshift(144'(c4) * op1, C_FRAC);
+`ifndef SYNTHESIS
     if (nr01 >= REG_LIM || nr01 < -REG_LIM || nr11 >= REG_LIM || nr11 < -REG_LIM)
       $fatal(1, "slot biquad reg overflow (R) slot=%0d k=%0d", slot, kk);
+`endif
     if (slot == 0) begin s1_reg0[1] = sat80(nr01); s1_reg1[1] = sat80(nr11); end
     else           begin s2_reg0[1] = sat80(nr01); s2_reg1[1] = sat80(nr11); end
     out_r[kk] = rndsat32(op1, C_FRAC);
