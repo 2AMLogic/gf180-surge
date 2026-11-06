@@ -30,8 +30,10 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
 
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.join(REPO, "model", "oscillators"))
 
-from refusal import Refuse  # noqa: E402
+from refusal import Refuse  # noqa: E402,F401
+import osc_fixture_core as _core  # noqa: E402
 
 CARRIERS = {
     # name: (preset path relative to resources/data/, modeled osc slot index)
@@ -59,8 +61,7 @@ def carrier_overrides(slot):
 
 
 def preset_abs(oc, carrier):
-    rel, _slot = CARRIERS[carrier]
-    return os.path.join(oc.engine_dir(), "resources", "data", rel)
+    return _core.preset_abs(oc, CARRIERS, carrier)
 
 
 def read_params(s, slot):
@@ -107,69 +108,11 @@ def read_params(s, slot):
 
 def apply_overrides(s, slot):
     """Apply the declared overrides and verify the readback (fail-closed)."""
-    sc = s.getPatch()["scene"][0]
-    applied = {}
-    for key, val in carrier_overrides(slot):
-        if key.startswith("mute_"):
-            s.setParamVal(sc[key], 1.0 if val else 0.0)
-            applied[key] = 1.0 if val else 0.0
-        elif key in ("fu0_off", "fu1_off"):
-            idx = 0 if key == "fu0_off" else 1
-            s.setParamVal(sc["filterunit"][idx]["type"], 0.0)
-            applied["fu%d_type" % idx] = 0
-        elif key == "fx_off":
-            import surgepy.constants as C
-
-            for i in range(16):
-                s.setParamVal(s.getPatch()["fx"][i]["type"], C.fxt_off)
-            # the loadFx swap happens at the next control pass (SXT-012
-            # dry-bypass): run one settle block before any readback
-            sbuf = s.createMultiBlock(1)
-            s.processMultiBlock(sbuf)
-            applied["fx_types"] = [0] * 16
-        elif key == "ws_off":
-            s.setParamVal(sc["wsunit"]["type"], 0.0)
-            applied["ws_type"] = 0
-        elif key == "lc_off":
-            s.setParamVal(sc["lowcut"], -72.0)
-            applied["lowcut"] = -72.0
-        elif key == "fbc_serial1":
-            s.setParamVal(sc["filterblock_configuration"], 0.0)
-            applied["filter_config"] = 0
-        elif key == "fm_off":
-            s.setParamVal(sc["fm_switch"], 0.0)
-            applied["fm_switch"] = 0
-        elif key == "scenemode_single":
-            s.setParamVal(s.getPatch()["scenemode"], 0.0)
-            applied["scenemode"] = 0
-        elif key == "retrigger_on":
-            s.setParamVal(sc["osc"][slot]["retrigger"], 1.0)
-            applied["retrigger"] = 1.0
-        elif key == "drift_zero":
-            s.setParamVal(sc["drift"], 0.0)
-            applied["drift"] = 0.0
-        else:
-            raise Refuse("unknown override %r" % key)
-    d = read_params(s, slot)
-    for k, v in applied.items():
-        got = d["mutes"][k[5:]] if k.startswith("mute_") else d[k]
-        if isinstance(v, list):
-            if got != v:
-                raise Refuse("override readback failed: %s = %r" % (k, got))
-        elif isinstance(v, float) and isinstance(got, bool):
-            if float(got) != v:
-                raise Refuse("override readback failed: %s = %r" % (k, got))
-        elif abs(float(got) - float(v)) > 1e-6:
-            raise Refuse("override readback failed: %s = %r (want %r)"
-                         % (k, got, v))
-    return d
+    return _core.apply_overrides(s, slot, carrier_overrides(slot), read_params,
+                                 "lowcut")
 
 
 def build_instance(surgepy, oc, carrier):
     """Fresh engine instance: loadPatch + overrides + readback. Returns s."""
-    s = surgepy.createSurge(48000.0)
-    _rel, slot = CARRIERS[carrier]
-    if not s.loadPatch(preset_abs(oc, carrier)):
-        raise Refuse("loadPatch failed: %s" % carrier)
-    apply_overrides(s, slot)
-    return s
+    return _core.build_instance(surgepy, oc, CARRIERS, carrier,
+                                apply_overrides)

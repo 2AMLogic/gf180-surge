@@ -36,7 +36,6 @@ Usage:
 """
 
 import argparse
-import csv
 import hashlib
 import json
 import os
@@ -47,6 +46,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, REPO)
 
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob  # noqa: E402
 
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results",
                           "per-preset.csv")
@@ -78,14 +79,6 @@ def sha256_file(path):
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
-
-
-def census_blob(rel):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
 
 
 def graphs_row(rel):

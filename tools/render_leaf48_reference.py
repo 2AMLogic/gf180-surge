@@ -32,21 +32,12 @@ oc.reexec_under_pinned_python(REPO)
 import render_fixture as rf  # noqa: E402
 import numpy as np  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob  # noqa: E402
 
 
 def sha_bytes(b):
     return hashlib.sha256(b).hexdigest()
-
-
-def census_blob(rel):
-    import csv
-
-    with open(os.path.join(REPO, "corpus", "census-v0.1", "results",
-                           "per-preset.csv"), newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
 
 
 def render_variant(surgepy, preset_abs, seq, variant):

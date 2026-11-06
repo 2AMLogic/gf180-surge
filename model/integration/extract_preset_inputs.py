@@ -33,6 +33,8 @@ sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -45,18 +47,6 @@ REVERB1_TYPE = 2
 REVERB1_PARAMS = 12
 PARAM_NAMES = ["predelay", "shape", "roomsize", "decaytime", "damping",
                "lowcut", "freq1", "gain1", "highcut", "mix", "width", "unused12"]
-
-
-def census_blob(rel_path):
-    import csv
-
-    csv_path = os.path.join(REPO, "corpus", "census-v0.1", "results",
-                            "per-preset.csv")
-    with open(csv_path, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel_path:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel_path}")
 
 
 def raw_xml_reverb_flags(rel_path, slot):

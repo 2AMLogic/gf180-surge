@@ -62,6 +62,8 @@ import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import git_blob_sha1  # noqa: E402
 TOOLS = os.path.join(REPO, "tools")
 EFFECTS = os.path.join(REPO, "model", "effects")
 for _p in (os.path.join(REPO, "oracle"), TOOLS, REPO):
@@ -280,19 +282,6 @@ def sha256_file(path):
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
-
-
-def git_blob_sha1(path):
-    """Git blob id of a SOURCE file, for provenance.
-
-    Deliberately not a sha256: a committed record carrying the sha256 of a
-    tracked .py's current bytes makes that file a recorded source in the
-    byte-frozen registry (tests/test_byte_frozen_sources.py). This audit pins
-    nothing; the blob id + source revision identify what ran.
-    """
-    with open(path, "rb") as f:
-        data = f.read()
-    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
 
 def sha256_buf(a):

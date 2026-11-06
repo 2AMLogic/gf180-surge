@@ -18,10 +18,9 @@ module fx_line_ext (
     reg [31:0] mem [0:(1<<18)+12-1];
     longint unsigned rd_q, wr_q, h_q;
 
-    reg [8*256:1] zeros_name;
+    integer zi;
     initial begin
-        if (!$value$plusargs("ZEROS=%s", zeros_name)) zeros_name = "line_zeros.hex";
-        $readmemh(zeros_name, mem);
+        for (zi = 0; zi < (1<<18)+12; zi = zi + 1) mem[zi] = 32'h0;
         rd_q = 0; wr_q = 0; h_q = 0;
     end
 

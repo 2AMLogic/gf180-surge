@@ -55,7 +55,6 @@ IV = os.environ.get("IVERILOG", "iverilog")
 VVP = os.environ.get("VVP", "vvp")
 TB = os.path.join(REPO, "rtl", "effects", "type-chorus", "tb_chorus.sv")
 SINC = os.path.join(REPO, "rtl", "effects", "sinc_q29.hex")
-ZEROS = os.path.join(REPO, "rtl", "effects", "line_zeros.hex")
 ART = os.path.join(REPO, "reports", "SXT-028c", "artifacts")
 
 SETTLE = 375   # int(0.25 s x 48 kHz) / 32 = 375 (the fixture harness settle)
@@ -327,7 +326,7 @@ def simulate_case(name, workdir, n_blocks, ninst, in_hex, ctrl_hex, init_hex,
     trace = os.path.join(wd, "tb_trace.txt")
     plus = [f"+NINST={ninst}", f"+NBLOCKS={n_blocks}", f"+RENDER0={settle}",
             f"+TRACE={trace}", f"+INFILE={in_hex}", f"+CTRLFILE={ctrl_hex}",
-            f"+INITFILE={init_hex}", f"+SINC={SINC}", f"+ZEROS={ZEROS}",
+            f"+INITFILE={init_hex}", f"+SINC={SINC}",
             f"+REV={rev8}"]
     if reset_at is not None:
         plus.append(f"+RESETAT={reset_at}")
@@ -473,7 +472,7 @@ def main():
         trace = os.path.join(wd, "tb_trace.txt")
         plus = ["+NINST=2", "+NBLOCKS=128", f"+RENDER0={SETTLE}",
                 f"+TRACE={trace}", f"+INFILE={in_d}", f"+CTRLFILE={ctrl_d}",
-                f"+INITFILE={init_d}", f"+SINC={SINC}", f"+ZEROS={ZEROS}",
+                f"+INITFILE={init_d}", f"+SINC={SINC}",
                 f"+REV={rev8}"]
         try:
             run_sim(mpath, plus, wd)

@@ -28,8 +28,6 @@ Run under the pinned interpreter (auto re-exec via oracle_common).
 """
 
 import argparse
-import csv
-import hashlib
 import json
 import os
 import sys
@@ -40,6 +38,8 @@ sys.path.insert(0, REPO)
 
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "tools"))
+from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -50,20 +50,6 @@ ROUTE_CUTOFF_F01 = 0.5
 ROUTE_RESO_F01 = 0.5
 FROZEN_SHAPES = (0, 1, 2, 3)          # sine, tri, square, ramp
 N_VOICE_LFOS = 6
-
-
-def census_blob(rel):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel:
-                return row["git_blob_sha1"]
-    raise Refuse(f"preset not in census: {rel}")
-
-
-def git_blob_sha1(path):
-    data = open(path, "rb").read()
-    hdr = b"blob %d\x00" % len(data)
-    return hashlib.sha1(hdr + data).hexdigest()
 
 
 def graphs_entry(rel):
