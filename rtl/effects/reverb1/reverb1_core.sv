@@ -315,10 +315,14 @@ module reverb1_core (
     nr0  = 128'(x) * b1 + bregs[6 + bi*2 + ch]
            - ((128'(a1) * op + (128'sd1 <<< 28)) >>> 29);
     nr1  = 128'(x) * b2 - ((128'(a2) * op + (128'sd1 <<< 28)) >>> 29);
+`ifndef SYNTHESIS
     if (nr0 >= REG_LIM - 1 || nr0 <= -(REG_LIM))
       $fatal(1, "biquad reg0 overflow bi=%0d ch=%0d", bi, ch);
+`endif
+`ifndef SYNTHESIS
     if (nr1 >= REG_LIM - 1 || nr1 <= -(REG_LIM))
       $fatal(1, "biquad reg1 overflow bi=%0d ch=%0d", bi, ch);
+`endif
     bregs[bi*2 + ch]     = nr0;
     bregs[6 + bi*2 + ch] = nr1;
     y = rndsat32(op, 29);

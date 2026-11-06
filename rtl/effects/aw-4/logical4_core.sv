@@ -105,6 +105,8 @@ module logical4_core #(
   // ---- frozen ROM tables (shared by both instances; read-only)
   logic signed [39:0] sin_rom [0:TBL_WORDS-1];
   logic signed [39:0] omc_rom [0:TBL_WORDS-1];
+`ifndef SYNTHESIS
+  // Simulation: default hex paths, overridable with +SINROM= / +OMCROM=.
   string sin_path = "rtl/effects/aw-4/sin_q31.hex";
   string omc_path = "rtl/effects/aw-4/omc_q31.hex";
   initial begin
@@ -113,6 +115,13 @@ module logical4_core #(
     $readmemh(sin_path, sin_rom);
     $readmemh(omc_path, omc_rom);
   end
+`else
+  // Synthesis: same default files as literals (no string variables).
+  initial begin
+    $readmemh("rtl/effects/aw-4/sin_q31.hex", sin_rom);
+    $readmemh("rtl/effects/aw-4/omc_q31.hex", omc_rom);
+  end
+`endif
 
   // ------------------------------------------------- per-instance state
   logic signed [15:0] gcount   [2];
@@ -369,7 +378,9 @@ module logical4_core #(
 
         S_DIVP: begin
           ii = int'(`L4_INST);
+`ifndef SYNTHESIS
           if (divop <= 0) $fatal(1, "target word non-positive (%0d)", divop);
+`endif
           w0 = 192'(cfg[ii][P_RECIP]);
           invq = 64'((w0 + 192'(divop >>> 1)) / 192'(divop));
           n_div = n_div + 1;
@@ -406,7 +417,9 @@ module logical4_core #(
 
         S_DIVN: begin
           ii = int'(`L4_INST);
+`ifndef SYNTHESIS
           if (divop <= 0) $fatal(1, "target word non-positive (%0d)", divop);
+`endif
           w0 = 192'(cfg[ii][P_RECIP]);
           invq = 64'((w0 + 192'(divop >>> 1)) / 192'(divop));
           n_div = n_div + 1;
