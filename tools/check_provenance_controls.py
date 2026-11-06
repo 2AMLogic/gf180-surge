@@ -20,12 +20,18 @@ import json
 import lzma
 import struct
 import subprocess
+import sys
 import tarfile
 import tempfile
 import zipfile
 from pathlib import Path
 
-from check_provenance import (
+# Sibling-script convention: make `tools/` importable when this module is
+# loaded on its own (the live negative-controls enumeration), not only when
+# `check_provenance.py` already put it on the path.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from check_provenance import (  # noqa: E402
     AuditError,
     BY_REFERENCE_CLASS,
     CAVEAT,
@@ -4232,3 +4238,11 @@ def run_negative_control(verbose=True):
             print("FAIL: the audit's own failure detection is not intact.")
         print(CAVEAT)
     return 0 if (ok and not missing) else 2
+
+
+def main():
+    """Entrypoint for the live negative-controls enumeration
+    (tests/test_negative_controls_live.py): the same `run_negative_control()`
+    that `check_provenance.py --negative-control` runs, exit 0 only if every
+    control fired."""
+    return run_negative_control()
