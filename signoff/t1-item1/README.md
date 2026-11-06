@@ -1,11 +1,10 @@
 # T1 item 1 (design sources) — synthesizability record (#537)
 
 Status: **PARTIAL — item 1 is NOT claimed `met`.** `klt synthesize` exits 0 for
-10 of 11 `product` groups; 1 is NO_VERDICT; and for 6 of the 10 the report covers
-only the control skeleton, not the datapath (see "Observability caveat").
-`signoff/block-manifest.json` deliberately cites nothing
-(`tests/test_t1_item1_synthesis.py` fails if it cites item 1 while any group is
-BLOCKED).
+5 of 11 `product` groups; 6 are NO_VERDICT (klt 300 s Yosys timeout; see
+"Result ports exposed (#580)"). `signoff/block-manifest.json` deliberately cites
+nothing (`tests/test_t1_item1_synthesis.py` fails if it cites item 1 while any
+group is BLOCKED).
 
 Route (operator ruling r6-q23, 2026-11-05): the 8 groups the native Yosys front
 end cannot read are requested with `sv_frontend: "sv2v"` (pinned sv2v 0.0.13;
@@ -31,18 +30,25 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | ext_mem_instr | native | PASS | |
 | wavetable_core | native | PASS | 33 `undriven_wire` warnings in report |
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
-| rf_ains34_core, rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core | sv2v | PASS, **datapath not exercised** | 84–96 instances: control skeleton only (see below) |
-| logical4_core | sv2v | PASS, **datapath not exercised** | 176 instances; same cause |
+| rf_ains34_core | sv2v | PASS | 7467 instances; `out_l`/`out_r` are outputs (#580) |
+| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | klt 300 s Yosys timeout once the datapath is observable (#580); see below |
 | galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys exceeded klt's fixed 300 s limit (no klt option to raise it) and was killed (not a proof of non-synthesizability); see `galactic_core/RECORD.md` (#579) |
 
-**Observability caveat.** In `logical4_core` and the five `rf_*` cores the only
-output port is `block_done`; the result buffers (`out_l`/`out_r`/`glob_out`...)
-are internal and read hierarchically by the testbench. Yosys therefore removes
-the biquad/arithmetic datapath as unobservable, and the 84–176-instance reports
-describe the sequencer only. These exit-0 results show the RTL is *accepted*
-by the flow; they are **not** evidence about datapath area, timing or
-synthesizability. Exposing the results needs an interface change (functional
-RTL/model scope), tracked in #580.
+**Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
+bins12,global2,global34,send34}_core`) previously had `block_done` as their only
+output, so Yosys pruned the datapath and the earlier 84–176-instance reports
+described the sequencer only. `out_l`/`out_r` (and `glob_out` where present) are
+now top-level output ports, same widths and semantics, no arithmetic change.
+Re-run: the six `compare_rtl_model_*` tools still PASS (integer-exact). Lint
+waivers were rebased over the line shifts (6 now-ports `UNUSEDSIGNAL` waivers
+removed; 700 remain, no new diagnostics). With the datapath real, `rf_ains34_core`
+synthesizes (7467 instances, area 248870.8 um2 as reported by klt — synthesis
+only) and the other five exceed klt's fixed 300 s Yosys limit like
+`galactic_core` below. Their old sequencer-only reports/netlists were removed
+(they must not be read as datapath evidence; see git history); `failure.txt`
+records the timeout as NO_VERDICT, not a pass. A larger budget is a klt change
+(#579). `tests/test_t1_item1_synthesis.py` has a negative control that fails on a
+netlist whose only output is `block_done`.
 
 **galactic_core cause (diagnosed, #572).** sv2v converts it (838 lines). Yosys
 `synth` expands the 32-sample block into ~272k generic cells; ~24 s in, the
@@ -52,10 +58,17 @@ not a request field, so a larger budget is a klt/tool change, not a repo
 change (follow-up #579). `failure.txt` stays a NO_VERDICT (timeout), never a pass.
 
 Pins: `pdk-pin.json`. Regenerate: `python3 signoff/t1-item1/regen.py [group...]`.
-`inventory.partial.json` + `item1.partial.envelope.json` (unchanged) attest only the 3
-natively synthesized groups (`klt signoff --attest 1`, pass; `--check` clean). The
-freshness check (`klt synthesize --check`) compares source and liberty hashes;
-the netlist-to-report hash is checked by the test. Report `netlist_path` fields
-name the removed `out/` scratch directory.
+`inventory.partial.json` + `item1.partial.envelope.json` attest 4 of 11 groups:
+the 3 native groups plus `reverb1_core` (sv2v, real datapath). Not attested: the 6
+skeleton-only groups (#580) and `galactic_core` (#579); attesting a netlist that
+omits the datapath would present sequencer-only output as item-1 evidence.
+`klt signoff --attest 1` passes 12/12 (run on this host, klt 0.9.2.dev33).
+Each freshness check is `klt synthesize --check ... --netlist <committed netlist>`:
+report `netlist_path` fields name the removed `out/` scratch directory, so without
+`--netlist` the check reports `netlist_sha256` as `drifted` (the earlier 3-group
+envelope fails live for that reason; this change fixes it). Re-attest with
+`klt signoff --attest 1 --inventory signoff/t1-item1/inventory.partial.json -o signoff/t1-item1/item1.partial.envelope.json`.
+`klt signoff --check` applies only to `--manifest`/`--fleet`, not to an attest
+envelope; the live re-derivation is the attest run itself.
 
 Not proved: P&R, timing, DRC/LVS, RTL-vs-netlist equivalence, fidelity.

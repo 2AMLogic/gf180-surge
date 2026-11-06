@@ -3,6 +3,6 @@
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys synthesis failed: signoff/t1-item1/logical4_core/out/logical4_core_sv2v.v:60: ERROR: syntax error, unexpected '=', expecting '(' or '['"
+    "message": "yosys did not complete within 300.0s (script '/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-580/signoff/t1-item1/logical4_core/out/synth_logical4_core.run.ys') -- process killed"
   }
 }

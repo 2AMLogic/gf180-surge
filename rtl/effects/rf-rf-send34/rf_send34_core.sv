@@ -57,6 +57,10 @@ module rf_send34_core (
     input  logic        state_reset,
     input  logic        start_block,
     output logic        block_done,
+    // result words (promoted from internal arrays, #580): keeps the datapath
+    // observable so synthesis cannot prune it as dead logic
+    output logic signed [31:0] out_l [32],
+    output logic signed [31:0] out_r [32],
     // control-plane configuration (formerly module-level variables)
     input  logic [1:0]  cfg_fx_bypass,
     input  logic [15:0] cfg_fx_disable,
@@ -109,8 +113,6 @@ module rf_send34_core (
   logic prev_occ4 = 1'b0;
 
   // --------------------------------------------------------- block I/O
-  logic signed [31:0] out_l  [BLOCK];   // main bus out
-  logic signed [31:0] out_r  [BLOCK];
   logic signed [31:0] wet3_l [BLOCK];   // per-bus wet taps (post-occupant,
   logic signed [31:0] wet3_r [BLOCK];   // PRE return gain) -- internal
   logic signed [31:0] wet4_l [BLOCK];   // observability, matching the

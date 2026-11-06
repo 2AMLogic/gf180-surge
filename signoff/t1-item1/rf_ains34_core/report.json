@@ -9,31 +9,38 @@
   },
   "run_id": "out",
   "status": "ok",
-  "instance_count": 92,
-  "area_um2": 2452.6656,
-  "sequential_area_um2": 790.272,
+  "instance_count": 7467,
+  "area_um2": 248870.7648,
+  "sequential_area_um2": 162637.9776,
   "instance_counts_by_type": {
-    "gf180mcu_fd_sc_mcu9t5v0__and2_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__and2_1": 2054,
+    "gf180mcu_fd_sc_mcu9t5v0__and2_2": 1,
     "gf180mcu_fd_sc_mcu9t5v0__and3_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__and4_1": 1,
     "gf180mcu_fd_sc_mcu9t5v0__aoi211_1": 3,
-    "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 4,
-    "gf180mcu_fd_sc_mcu9t5v0__aoi221_1": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__aoi221_2": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 4,
-    "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 10,
-    "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__mux2_2": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 8,
-    "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 2,
-    "gf180mcu_fd_sc_mcu9t5v0__nand4_4": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 7,
-    "gf180mcu_fd_sc_mcu9t5v0__nor3_4": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 6,
-    "gf180mcu_fd_sc_mcu9t5v0__oai21_1": 2,
-    "gf180mcu_fd_sc_mcu9t5v0__or2_4": 2,
-    "gf180mcu_fd_sc_mcu9t5v0__or3_4": 1,
-    "gf180mcu_fd_sc_mcu9t5v0__tiel": 34
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi22_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__buf_1": 193,
+    "gf180mcu_fd_sc_mcu9t5v0__clkbuf_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 7,
+    "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 2058,
+    "gf180mcu_fd_sc_mcu9t5v0__inv_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 32,
+    "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 12,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 18,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_2": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_1": 5,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai221_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai22_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__tiel": 3054,
+    "gf180mcu_fd_sc_mcu9t5v0__xnor2_1": 3
   },
   "macros": [],
   "macro_instance_counts_by_type": {},
@@ -44,12 +51,12 @@
   "timing": {
     "source": "abc_stime",
     "wire_load": null,
-    "critical_path_ps": 6554.04,
+    "critical_path_ps": 9493.86,
     "delay_target_ps": null,
     "regions": [
       {
         "module": "rf_ains34_core",
-        "critical_path_ps": 6554.04
+        "critical_path_ps": 9493.86
       }
     ]
   },
@@ -83,21 +90,21 @@
     "load_ff": 13.43
   },
   "warnings": {
-    "total": 8,
+    "total": 2381,
     "by_category": {
-      "other": 6,
-      "undriven_wire": 2
+      "other": 4,
+      "undriven_wire": 2377
     },
     "representatives": [
       {
         "category": "other",
-        "count": 6,
-        "text": "Replacing memory \\out_r with list of registers. See signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:133, signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:144, signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:209"
+        "count": 4,
+        "text": "Replacing memory \\s4_reg1 with list of registers. See signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:136, signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:132, signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:181"
       },
       {
         "category": "undriven_wire",
-        "count": 2,
-        "text": "Wire rf_ains34_core.\\cfg_fx_bypass [1] is used but has no driver."
+        "count": 2377,
+        "text": "Wire rf_ains34_core.\\cfg_slot3_reload is used but has no driver."
       }
     ]
   },
@@ -115,7 +122,7 @@
     "path": "signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_synth.v",
     "scope": "repo"
   },
-  "netlist_sha256": "662fbe9deda5d3fcad9e054070a8193ada3009c32c779b318709a0af0141d6a3",
+  "netlist_sha256": "b6bc8732833c94279eb3a66bf150dfa5fa24bb3c46c1cb2fee976f3c49bb96b6",
   "script_path": {
     "path": "signoff/t1-item1/rf_ains34_core/out/synth_rf_ains34_core.ys",
     "scope": "repo"
@@ -125,9 +132,9 @@
     "scope": "repo"
   },
   "provenance": {
-    "klt_version": "0.9.2.dev28+gc31fc9ca6550",
-    "klt_git_commit": "c31fc9ca655078e5e4d4dcba7a25c3d8584e69fc",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@c31fc9ca655078e5e4d4dcba7a25c3d8584e69fc",
+    "klt_version": "0.9.2.dev33+g684a7569e857",
+    "klt_git_commit": "684a7569e8570b41f451f12aadcc00dbdf909a58",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@684a7569e8570b41f451f12aadcc00dbdf909a58",
     "klayout_version": "0.30.13",
     "pdk": {
       "name": "gf180mcuD",
@@ -143,7 +150,7 @@
       "released": false
     },
     "input": {
-      "content_hash": "sha256:862301281e7bbc1a03e6e00aad91d49add35bea9bcb15202ad69e3f597ec3d72",
+      "content_hash": "sha256:c8a3b57187581707a817af75150cf95f0cd2e0c4ec3721facb778986eeb536c4",
       "role": "source"
     },
     "parameters": {},
