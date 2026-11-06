@@ -19,7 +19,7 @@ unchanged; no uniform-route claim is made). RTL is untouched.
 | wavetable_core | native | PASS | 33 `undriven_wire` warnings in report |
 | reverb1_core, rf_ains34_core, rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core | sv2v | BLOCKED | sv2v converts, then Yosys: ``System task `$finish' outside initial block is unsupported`` (sv2v lowers the RTL's runtime-overflow `$fatal` assertions inside functions/always blocks) |
 | logical4_core | sv2v | BLOCKED | sv2v converts, then Yosys syntax error: `string` variables with initializers (`sin_path`/`omc_path`) feeding `$readmemh` |
-| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys exceeded klt's 300 s limit and was killed (not a proof of non-synthesizability) |
+| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys exceeded klt's fixed 300 s limit (no klt option to raise it) and was killed (not a proof of non-synthesizability); see `galactic_core/RECORD.md` (#579) |
 
 Remaining blockers are RTL simulation-only constructs (assertions, string-path
 ROM init) and one runtime limit, not the front end. Fixing them needs an RTL
