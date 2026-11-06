@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-06
 
+- **PR #589**: feat: attest T1 item 9 testbenches with klt --attest and re-check in signoff.yml
+- **Issue #538** (closed): T1 item 9 (testbenches shipped): testbench inventory over tests/, the RTL benches and the evidence harnesses, attested with klt signoff --attest 9
 - **PR #586**: feat(rtl): expose result words as output ports on six T1 cores
 - **PR #585**: fix(signoff): re-hash committed netlists in item-1 freshness checks and attest reverb1_core
 - **PR #582**: docs: record galactic_core NO_VERDICT and fixed klt Yosys budget
