@@ -52,7 +52,7 @@ compares the SXT-028a records against the live `frozen_revision()`, and
 
 ## Live pins
 
-15 pin sites covering 18 files. Digests, the full `recorded_in` record lists,
+60 pin sites covering 63 files. Digests, the full `recorded_in` record lists,
 and the per-leaf freshness test are in the JSON registry; this table is the
 human-readable index.
 
@@ -73,6 +73,59 @@ human-readable index.
 | `model/effects/type-reverb 2/reverb2_model.py::model_revision()` | itself | SXT-028f | `tests/test_sxt028f.py` |
 | `fixtures/control/manifest.json::files[…]` | `fixtures/control/sequences/generate_control_sequences.py` | SXT-021 | `tests/test_sxt021_control.py` |
 | `reports/SXT-043/EVIDENCE.md` provenance table | `model/voice/playmode/fixture_config.py` (revision 2; plain sha256 of its bytes, no self-hash function) | SXT-043 | `tests/test_sxt043_fixture_rev2.py` |
+| `signoff/t1-item9-attestation.json` check for `model/integration/negative_controls.py` | `model/integration/negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/aw49_negative_controls.py` | `tools/aw49_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/aw4_negative_controls.py` | `tools/aw4_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/chorus_negative_controls.py` | `tools/chorus_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_aw4.py` | `tools/compare_rtl_model_aw4.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_aw49.py` | `tools/compare_rtl_model_aw49.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_chorus.py` | `tools/compare_rtl_model_chorus.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_conditioner.py` | `tools/compare_rtl_model_conditioner.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_distortion.py` | `tools/compare_rtl_model_distortion.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_distortion_sse.py` | `tools/compare_rtl_model_distortion_sse.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_fx.py` | `tools/compare_rtl_model_fx.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_lp12.py` | `tools/compare_rtl_model_lp12.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_lp24.py` | `tools/compare_rtl_model_lp24.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_lpmoog.py` | `tools/compare_rtl_model_lpmoog.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_phaser.py` | `tools/compare_rtl_model_phaser.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_reverb2.py` | `tools/compare_rtl_model_reverb2.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_rf_ains34.py` | `tools/compare_rtl_model_rf_ains34.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_rf_bins12.py` | `tools/compare_rtl_model_rf_bins12.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_rf_global2.py` | `tools/compare_rtl_model_rf_global2.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_rf_global34.py` | `tools/compare_rtl_model_rf_global34.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_rf_send34.py` | `tools/compare_rtl_model_rf_send34.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/conditioner_negative_controls.py` | `tools/conditioner_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/control_negative_controls.py` | `tools/control_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/coverage_negative_controls.py` | `tools/coverage_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/distortion_negative_controls.py` | `tools/distortion_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/distortion_sse_negative_controls.py` | `tools/distortion_sse_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/fx_rng_negative_controls.py` | `tools/fx_rng_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/kt_negative_controls.py` | `tools/kt_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/lfo_negative_controls.py` | `tools/lfo_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/lp12_negative_controls.py` | `tools/lp12_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/lp24_negative_controls.py` | `tools/lp24_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/lpmoog_negative_controls.py` | `tools/lpmoog_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/mw_negative_controls.py` | `tools/mw_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/phaser_negative_controls.py` | `tools/phaser_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/profile_budget_controls.py` | `tools/profile_budget_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/reverb2_negative_controls.py` | `tools/reverb2_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/reverb2_reference_controls.py` | `tools/reverb2_reference_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/reverb_negative_controls.py` | `tools/reverb_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/rf_ains34_negative_controls.py` | `tools/rf_ains34_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/rf_bins12_negative_controls.py` | `tools/rf_bins12_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/rf_global2_negative_controls.py` | `tools/rf_global2_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/rf_global34_negative_controls.py` | `tools/rf_global34_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/rf_send34_negative_controls.py` | `tools/rf_send34_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/slfo_negative_controls.py` | `tools/slfo_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/vel_negative_controls.py` | `tools/vel_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+
+The 45 `T1 item 9` rows are testbench and negative-control scripts whose bytes
+`signoff/t1-item9-attestation.json` (klt `--attest 9`, #538) records as `content_hash`
+values and `signoff.yml` re-checks live. They are live pins like any other row: any
+edit, including lint or whitespace, makes that attestation and the item 9 verdict
+in `signoff/block-manifest.signoff.json` STALE until both are re-derived in the same
+change. They are covered by the audit's live equality check in
+`tests/test_byte_frozen_sources.py`; they have no leaf-specific freshness test.
 
 Two of the self-hash pins are also recorded in their RTL traces as a **revision
 word** — the low 32 bits, `int(revision[:8], 16)`: SXT-028a's
