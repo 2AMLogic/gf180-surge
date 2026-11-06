@@ -49,6 +49,11 @@ module rf_global34_core (
     input  logic        state_reset,
     input  logic        start_block,
     output logic        block_done,
+    // result words (promoted from internal arrays, #580): keeps the datapath
+    // observable so synthesis cannot prune it as dead logic
+    output logic signed [31:0] out_l [32],
+    output logic signed [31:0] out_r [32],
+    output logic        glob_out,
     // control-plane config bus (per-block stimulus)
     input  logic [1:0]  cfg_fx_bypass,
     input  logic [15:0] cfg_fx_disable,
@@ -91,9 +96,6 @@ module rf_global34_core (
   logic prev_occ4 = 1'b0;
 
   // --------------------------------------------------------- block I/O
-  logic signed [31:0] out_l [BLOCK];    // reused in place as the running bus
-  logic signed [31:0] out_r [BLOCK];
-  logic                glob_out;  // ... as threaded out of global4
 
   // ------------------------------------------------------------ FSM state
   localparam logic [2:0] S_IDLE=0, S_CTRL=1, S_GATE=2, S_S3=3, S_S4=4, S_DONE=5;

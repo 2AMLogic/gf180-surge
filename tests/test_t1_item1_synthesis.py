@@ -45,6 +45,21 @@ def check_route(gid, req, route, rc_value):
             raise AssertionError(f"{gid}: native group has non-zero exit")
 
 
+def output_ports(netlist_text):
+    """Names of the top-level `output` ports declared in a synthesized netlist."""
+    import re
+    return re.findall(r"^\s*output\s+(?:\[[^\]]*\]\s*)?(\w+)\s*;", netlist_text, re.M)
+
+
+def datapath_observable(netlist_text):
+    """False when `block_done` is the only output (datapath pruned, #580)."""
+    return set(output_ports(netlist_text)) - {"block_done"} != set()
+
+
+OBSERVABLE_GROUPS = ("logical4_core", "rf_ains34_core", "rf_bins12_core",
+                     "rf_global2_core", "rf_global34_core", "rf_send34_core")
+
+
 class T1Item1(unittest.TestCase):
     def test_every_product_group_has_a_recorded_outcome(self):
         for g in groups():
@@ -104,6 +119,20 @@ class T1Item1(unittest.TestCase):
         stripped = {k: v for k, v in req.items() if k != "sv_frontend"}
         with self.assertRaises(AssertionError):
             check_route("rf_send34_core", stripped, route, rc({"id": "rf_send34_core"}))
+
+    def test_committed_netlists_expose_result_ports(self):
+        """#580: an exit-0 record of a core with result words must list them."""
+        for gid in OBSERVABLE_GROUPS:
+            d = BASE / gid
+            if (d / "exit_status.txt").read_text().strip() != "0":
+                continue  # NO_VERDICT groups carry no netlist
+            self.assertTrue(datapath_observable((d / f"{gid}_synth.v").read_text()), gid)
+
+    def test_negative_control_block_done_only_netlist_is_detected(self):
+        pre_change = "module rf_global2_core(clk, state_reset, start_block, block_done);\n  output block_done;\n  input clk;\nendmodule\n"
+        self.assertFalse(datapath_observable(pre_change))
+        with_results = pre_change.replace("  output block_done;\n", "  output block_done;\n  output [1023:0] out_l;\n")
+        self.assertTrue(datapath_observable(with_results))
 
     def test_block_manifest_does_not_claim_item1_while_groups_blocked(self):
         blocked = [g["id"] for g in groups() if rc(g) != "0"]
