@@ -56,7 +56,6 @@ module tb_fx;
     reg [31:0] line_mem2 [0:(1<<18)+12-1];
     reg [31:0] line_mem3 [0:(1<<18)+12-1];
     longint unsigned rd0, wr0, h0, rd1, wr1, h1, rd2, wr2, h2, rd3, wr3, h3;
-    reg [8*256:1] zeros_name;
     integer zinit;
     integer last_read;
 
@@ -681,11 +680,12 @@ module tb_fx;
         end
         e_gcur = ONE_G; e_gtgt = ONE_G; e_mcur = ONE_G; e_mtgt = ONE_G;
         e_bi = 0;
-        if (!$value$plusargs("ZEROS=%s", zeros_name)) zeros_name = "line_zeros.hex";
-        $readmemh(zeros_name, line_mem0);
-        $readmemh(zeros_name, line_mem1);
-        $readmemh(zeros_name, line_mem2);
-        $readmemh(zeros_name, line_mem3);
+        for (zinit = 0; zinit < (1<<18)+12; zinit = zinit + 1) begin
+            line_mem0[zinit] = 32'h0;
+            line_mem1[zinit] = 32'h0;
+            line_mem2[zinit] = 32'h0;
+            line_mem3[zinit] = 32'h0;
+        end
     end
 
     // ---------------- main ----------------

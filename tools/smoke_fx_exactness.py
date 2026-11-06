@@ -130,8 +130,7 @@ def main():
     plusargs = [f"+PCONFIG={PCONFIG[slug]}", f"+NBLOCKS={n_total}",
                 f"+RENDER0={args.settle_blocks}", f"+TRACE={trace_txt}",
                 f"+INFILE={in_path}", f"+CTRLFILE={ctrl_path}",
-                f"+SINC={os.path.join(REPO, 'rtl/effects/sinc_q29.hex')}",
-                f"+ZEROS={os.path.join(REPO, 'rtl/effects/line_zeros.hex')}"]
+                f"+SINC={os.path.join(REPO, 'rtl/effects/sinc_q29.hex')}"]
     t0 = time.time()
     if args.sim == "iverilog":
         subprocess.run(["/opt/homebrew/bin/iverilog", "-g2012", "-o", vvp,
