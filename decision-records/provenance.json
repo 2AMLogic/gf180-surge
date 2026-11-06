@@ -292,6 +292,13 @@
       "reason": "The audit implementation contains the vocabulary it detects plus the synthetic negative-control fixtures. Its license-body / copyright / citation fixtures are assembled from fragments at run time precisely so the NON-exemptible rules keep applying to this file too - no self-path special case exists in the tool."
     },
     {
+      "path": "tools/check_provenance_controls.py",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The negative-control scaffolding split out of tools/check_provenance.py (a behavior-preserving move): the synthetic fixtures and *_controls self-tests that exercise the vocabulary the audit detects. Same reason as tools/check_provenance.py - its license-body / copyright / citation fixtures are assembled from fragments at run time, so the NON-exemptible rules keep applying to this file too; no self-path special-case exists in the tool."
+    },
+    {
       "path": "tests/test_sxt019_provenance.py",
       "rules": [
         "self-declared-quotation"
