@@ -43,6 +43,9 @@ def main(only):
         }
         if g["id"] not in NATIVE_GROUPS:
             req["sv_frontend"] = "sv2v"
+            # sv2v does not define SYNTHESIS itself; the RTL guards its
+            # simulation-only $fatal/string ROM init with `ifndef SYNTHESIS (#572).
+            req["defines"] = {"SYNTHESIS": None}
         (d / "request.json").write_text(json.dumps(req, indent=2) + "\n")
         p = subprocess.run(
             ["klt", "synthesize", str(d / "request.json"), "--pdk", PDK,

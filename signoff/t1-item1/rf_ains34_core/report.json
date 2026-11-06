@@ -1,0 +1,162 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "rf_ains34_core",
+  "parameters": {},
+  "defines": {
+    "SYNTHESIS": null
+  },
+  "run_id": "out",
+  "status": "ok",
+  "instance_count": 92,
+  "area_um2": 2452.6656,
+  "sequential_area_um2": 790.272,
+  "instance_counts_by_type": {
+    "gf180mcu_fd_sc_mcu9t5v0__and2_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__and3_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi211_1": 3,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__aoi221_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 4,
+    "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 10,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__mux2_2": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 8,
+    "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__nand4_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 7,
+    "gf180mcu_fd_sc_mcu9t5v0__nor3_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 6,
+    "gf180mcu_fd_sc_mcu9t5v0__oai21_1": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__or2_4": 2,
+    "gf180mcu_fd_sc_mcu9t5v0__or3_4": 1,
+    "gf180mcu_fd_sc_mcu9t5v0__tiel": 34
+  },
+  "macros": [],
+  "macro_instance_counts_by_type": {},
+  "macro_instance_count": 0,
+  "cells_without_area": [],
+  "leakage_power_nw": null,
+  "leakage_by_type_nw": null,
+  "timing": {
+    "source": "abc_stime",
+    "wire_load": null,
+    "critical_path_ps": 6554.04,
+    "delay_target_ps": null,
+    "regions": [
+      {
+        "module": "rf_ains34_core",
+        "critical_path_ps": 6554.04
+      }
+    ]
+  },
+  "clock_targets": {
+    "clocks": [],
+    "delay_target_ps": null,
+    "delay_target_basis": "none",
+    "per_clock_enforced": false
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed (it is not shipped with the published klayout-tools package), so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`; from an installed package, `klt sta` with a `verilog` request gives a netlist-level timing estimate (needs OpenSTA)",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [],
+    "effective": [],
+    "validated": null,
+    "engine_supports_dont_use": null
+  },
+  "abc_constr": {
+    "source": "builtin",
+    "driving_cell": "gf180mcu_fd_sc_mcu9t5v0__buf_4",
+    "load_ff": 13.43
+  },
+  "warnings": {
+    "total": 8,
+    "by_category": {
+      "other": 6,
+      "undriven_wire": 2
+    },
+    "representatives": [
+      {
+        "category": "other",
+        "count": 6,
+        "text": "Replacing memory \\out_r with list of registers. See signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:133, signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:144, signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_sv2v.v:209"
+      },
+      {
+        "category": "undriven_wire",
+        "count": 2,
+        "text": "Wire rf_ains34_core.\\cfg_fx_bypass [1] is used but has no driver."
+      }
+    ]
+  },
+  "memory_mapping": {
+    "status": "none_detected",
+    "reason": null,
+    "modules": [],
+    "script_path": {
+      "path": "signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_memory_evidence.ys",
+      "scope": "repo"
+    }
+  },
+  "blackbox_modules": [],
+  "netlist_path": {
+    "path": "signoff/t1-item1/rf_ains34_core/out/rf_ains34_core_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "662fbe9deda5d3fcad9e054070a8193ada3009c32c779b318709a0af0141d6a3",
+  "script_path": {
+    "path": "signoff/t1-item1/rf_ains34_core/out/synth_rf_ains34_core.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "signoff/t1-item1/rf_ains34_core/out/synth_rf_ains34_core.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.9.2.dev28+gc31fc9ca6550",
+    "klt_git_commit": "c31fc9ca655078e5e4d4dcba7a25c3d8584e69fc",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@c31fc9ca655078e5e4d4dcba7a25c3d8584e69fc",
+    "klayout_version": "0.30.13",
+    "pdk": {
+      "name": "gf180mcuD",
+      "source": "search root: ~/.ciel",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80",
+      "content_hash": "sha256:c0b6946a2d48a4604c687a29d3c8b1e05b3da5a42866b21592eaacfeae6e9ca7",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:862301281e7bbc1a03e6e00aad91d49add35bea9bcb15202ad69e3f597ec3d72",
+      "role": "source"
+    },
+    "parameters": {},
+    "defines": {
+      "SYNTHESIS": null
+    },
+    "sv_frontend": {
+      "route": "sv2v",
+      "sv2v_version": "sv2v v0.0.13"
+    }
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}
