@@ -27,24 +27,21 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
+- **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#572**: T1 item 1: 8 product groups unsynthesizable after sv2v (assertions, string ROM path, galactic timeout)
-- **#579**: T1 item 1: galactic_core synthesis exceeds klt's 300 s Yosys limit (generic abc on ~272k cells)
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#581**: fix(rtl): guard sim-only $fatal and string ROM init under SYNTHESIS for T1 synthesis
-- **#582**: docs: record galactic_core NO_VERDICT and fixed klt Yosys budget
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -76,18 +73,13 @@ Issues carrying `loom:curated`.
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(curated)*
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
-- **#537**: T1 item 1 (design sources): Yosys gate-level netlists for the 11 product-class RTL modules on gf180mcu, with an attested source inventory *(curated)*
+- **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)*
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)*
-- **#572**: T1 item 1: 8 product groups unsynthesizable after sv2v (assertions, string ROM path, galactic timeout) *(curated)*
-- **#579**: T1 item 1: galactic_core synthesis exceeds klt's 300 s Yosys limit (generic abc on ~272k cells) *(curated)*
+- **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#172**: Deduplicate byte-identical evidence artifacts in reports/ (~61 MiB redundant) *(hermit)*
-- **#369**: Remove rtl/effects/line_zeros.hex: 2.3 MB of identical zero lines replaceable by an init loop *(hermit)*
-- **#493**: Consolidate duplicated census_blob / git_blob_sha1 helpers (19 + 13 private copies) into a shared module *(hermit)*
-- **#495**: Consolidate duplicated fixture_config override/readback code (classic, sine) *(hermit)*
-- **#576**: Split check_provenance.py: move ~3,950 lines of negative controls into a sibling module *(hermit)*
+_None._
 
 ## Epics
 
@@ -103,11 +95,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 3 |
-| Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 4 |
-| PRs awaiting review | 2 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 3 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 24 |
-| Architect / Hermit proposals | 5 |
+| Curated | 23 |
+| Architect / Hermit proposals | 0 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
