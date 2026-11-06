@@ -44,6 +44,10 @@ module rf_bins12_core (
     input  logic        state_reset,
     input  logic        start_block,
     output logic        block_done,
+    // result words (promoted from internal arrays, #580): keeps the datapath
+    // observable so synthesis cannot prune it as dead logic
+    output logic signed [31:0] out_l [32],
+    output logic signed [31:0] out_r [32],
     // control-plane config bus (driven per block by the testbench)
     input  logic [1:0]  cfg_fx_bypass,
     input  logic [15:0] cfg_fx_disable,
@@ -87,8 +91,6 @@ module rf_bins12_core (
   logic prev_occ2 = 1'b0;
 
   // --------------------------------------------------------- block I/O
-  logic signed [31:0] out_l [BLOCK];    // reused in place as the running bus
-  logic signed [31:0] out_r [BLOCK];
   logic                sc_out;          // ... as threaded out of bins2
 
   // ------------------------------------------------------------ FSM state

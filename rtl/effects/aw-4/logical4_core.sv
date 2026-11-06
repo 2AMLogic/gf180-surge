@@ -72,6 +72,10 @@ module logical4_core #(
     input  logic        state_reset,
     input  logic        start_block,
     output logic        block_done,
+    // result words (promoted from internal arrays, #580): keeps the datapath
+    // observable so synthesis cannot prune it as dead logic
+    output logic signed [47:0] out_l [BLOCK],
+    output logic signed [47:0] out_r [BLOCK],
     // config planes (one per instance) and the input block, driven by the
     // caller through the port list
     input  logic signed [95:0] cfg  [2][0:PLANE_WORDS-1],
@@ -138,8 +142,6 @@ module logical4_core #(
   logic signed [95:0] sag_line [2][NSTAGE][NCH][RING];
 
   // ---- block I/O (in_l/in_r arrive on ports)
-  logic signed [47:0] out_l [BLOCK];
-  logic signed [47:0] out_r [BLOCK];
   logic               inst = 1'b0;          // active instance for this block
 
   // ---- instrumentation (compared as a checkpoint field, not a claim)

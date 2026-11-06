@@ -3,6 +3,6 @@
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys synthesis failed: signoff/t1-item1/rf_global34_core/out/rf_global34_core_sv2v.v:135: ERROR: System task `$finish' outside initial block is unsupported."
+    "message": "yosys did not complete within 300.0s (script '/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-580/signoff/t1-item1/rf_global34_core/out/synth_rf_global34_core.run.ys') -- process killed"
   }
 }

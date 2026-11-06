@@ -40,6 +40,11 @@ module rf_global2_core (
     input  logic        state_reset,
     input  logic        start_block,
     output logic        block_done,
+    // result words (promoted from internal arrays, #580): keeps the datapath
+    // observable so synthesis cannot prune it as dead logic
+    output logic signed [31:0] out_l [32],
+    output logic signed [31:0] out_r [32],
+    output logic        glob_out,
     // control-plane configuration
     input  logic [1:0]  cfg_fx_bypass,
     input  logic [15:0] cfg_fx_disable,
@@ -72,9 +77,6 @@ module rf_global2_core (
   logic signed [79:0] s2_reg1 [2];
 
   // --------------------------------------------------------- block I/O
-  logic signed [31:0] out_l [BLOCK];    // reused in place as the running bus
-  logic signed [31:0] out_r [BLOCK];
-  logic                glob_out;
 
   // ------------------------------------------------------------ FSM state
   localparam logic [2:0] S_IDLE=0, S_GATE=1, S_S1=2, S_S2=3, S_DONE=4;

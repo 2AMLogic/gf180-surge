@@ -51,7 +51,11 @@ module rf_ains34_core (
     input  logic        clk,
     input  logic        state_reset,
     input  logic        start_block,
-    output logic        block_done
+    output logic        block_done,
+    // result words (promoted from internal arrays, #580): keeps the datapath
+    // observable so synthesis cannot prune it as dead logic
+    output logic signed [31:0] out_l [32],
+    output logic signed [31:0] out_r [32]
 );
 
   localparam int BLOCK  = 32;
@@ -92,8 +96,6 @@ module rf_ains34_core (
   // --------------------------------------------------------- block I/O
   logic signed [31:0] in_l  [BLOCK];
   logic signed [31:0] in_r  [BLOCK];
-  logic signed [31:0] out_l [BLOCK];    // reused in place as the running bus
-  logic signed [31:0] out_r [BLOCK];
   logic                sc_in;           // scene-A ring flag out of ains1/2
   logic                sc_out;          // ... as threaded out of ains4
 
