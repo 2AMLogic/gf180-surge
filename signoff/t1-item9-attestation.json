@@ -1,0 +1,1593 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 9,
+  "summary": "T1 item 9 (Testbenches shipped): 221/221 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/t1-item9-inventory.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 221,
+    "passed_count": 221,
+    "checks": [
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "model/integration/negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:7287e3f45496f0139277dd7804a655cfc055846fc9d6888309dedd6b13443553"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/control/control_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:a0a068bdbdc466f7736c4a4fd8534d9db0461d67bfdefadc24ab3aeeaae24905"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/control/tb_control.sv",
+        "passed": true,
+        "content_hash": "sha256:32669e153b16f08fa00066e3b8afe63e2aaeeaa19b2620d461cf72a1f127076f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/aw-4/logical4_mutants.sv",
+        "passed": true,
+        "content_hash": "sha256:f73289547b3c97099bc6a62036310d3739c784bec23bae9ba709d675bac92cb8"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/aw-4/tb_logical4.sv",
+        "passed": true,
+        "content_hash": "sha256:df7cc7a64dd106c3eb0f8abddeae8a67daf3e7e547ad34828cdbce0977868f01"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/aw-49/tb_galactic.sv",
+        "passed": true,
+        "content_hash": "sha256:af3d0254da3f4a945b906f77f1beaec9a690b919e95c8abbfd11c75aae023096"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/reverb1/reverb1_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:4704b45c8a6767258b98117e4944ca377959186d005e936124eb751380306c23"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/reverb1/tb_reverb1.sv",
+        "passed": true,
+        "content_hash": "sha256:fd8dedd65581405885fca1262a953b6b2ee92ac8e8bba3791b284d89435ed4b0"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-ains34/rf_ains34_mutants.sv",
+        "passed": true,
+        "content_hash": "sha256:dc5c02092d1a2b6dc52f018eb05ed7bb0b61e0de17d51e2a1e285e0334ac2b6a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-ains34/tb_rf_ains34.sv",
+        "passed": true,
+        "content_hash": "sha256:75a04e1dbbd91d08e97fd8a930304506de01aa33935531c309aae52269941edf"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-bins12/rf_bins12_mutants.sv",
+        "passed": true,
+        "content_hash": "sha256:b00da077442c99305e6efa4533118e613f6f314c6347f46813a88f76456e585f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-bins12/tb_rf_bins12.sv",
+        "passed": true,
+        "content_hash": "sha256:3a7d9645f2deab32dd9ac827b176a0a6846e1e62ff4b67d543f4920497fb558b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-global2/tb_rf_global2.sv",
+        "passed": true,
+        "content_hash": "sha256:b9ace8cb0adec1f285e70fddc36b47ada3f05673100d1131fd4abb58cc0fa833"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-global34/rf_global34_mutants.sv",
+        "passed": true,
+        "content_hash": "sha256:7a5f769ab2ca8b3d91b178b1398c27bdf013f4bcc12a9a41b79354aa417ac048"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-global34/tb_rf_global34.sv",
+        "passed": true,
+        "content_hash": "sha256:5a3ef2aa541dd3b6634996ff35fe721518ac074552ae512e061847efd73b1d98"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-send34/rf_send34_mutants.sv",
+        "passed": true,
+        "content_hash": "sha256:54031f1e09c36daff0136bd2db30eb910e0f780efa7fd014095631e268500ec5"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/rf-rf-send34/tb_rf_send34.sv",
+        "passed": true,
+        "content_hash": "sha256:a7e2e8a022eb59a2d0ab5ff0b996892755f446f72bd87904d07a056aa5049164"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/tb_fx.sv",
+        "passed": true,
+        "content_hash": "sha256:36439a190cdbf5d72156e9fdcd4970768e892b35ad3a82adcfe88651d21f7808"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/tb_fx_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:8ad29419ab8b5c5f42a382cb35e60256a84f97b5dda67a1654ee051778c8ec1b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/tb_fx_shared_line.sv",
+        "passed": true,
+        "content_hash": "sha256:e3dc867eddbb9776864635722b1ce1d7e3396643d0c491cae234faaee6127e68"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-chorus/tb_chorus.sv",
+        "passed": true,
+        "content_hash": "sha256:42acf5e343ef86e9e6f7b781237e3ddbb3f1f696fa49bc5c37eb375c1db4ffed"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-conditioner/tb_conditioner.sv",
+        "passed": true,
+        "content_hash": "sha256:8a09444f64c66a3c08c33edb7d3981880e00a3de56a9a2a036a1565d7b64cb41"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-conditioner/tb_conditioner_mutant_nolimiter.sv",
+        "passed": true,
+        "content_hash": "sha256:672ac2ba0d9a8d4c0cd419b06ccb4316611ec7f9d844c3bf95950e17fe3d756c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-conditioner/tb_conditioner_mutant_shared.sv",
+        "passed": true,
+        "content_hash": "sha256:23e904fe77f1565c5cea8e6ee907c42b2b5b24d286ab0dbb5f7016b596816963"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-distortion-sse/tb_distortion_sse.sv",
+        "passed": true,
+        "content_hash": "sha256:d5e7c4def57bf997bdc831cec5d4cdf803febad11c1c590f5794bf1043fa7fd2"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-distortion/tb_distortion.sv",
+        "passed": true,
+        "content_hash": "sha256:d3ff81556c504645d75d0d48d0ff183dc03d4857766b803a59f3629754cec86f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-phaser/tb_phaser.sv",
+        "passed": true,
+        "content_hash": "sha256:a1e694b12e7af02b8df4ce74c783e1dcb1e9a0372d0d01f4d6b29fd0de292883"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/effects/type-reverb 2/tb_reverb2.sv",
+        "passed": true,
+        "content_hash": "sha256:0dc07d4c4885d653fe7f601c99a96ca0ce87c0256be02f6113cff7de04c9d49e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/instrumentation/ext_mem_instr_silence_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:4a38f51de44d0f2f4f3a921f42181c33ea3fc56ec2efb995fdcae087af1d05e8"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/instrumentation/ext_mem_instr_silence_zero_counters_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:229e269ef1a076bded7edffd9452fdba017f954ec9ec80089f82ad1ecba5f257"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/instrumentation/ext_mem_instr_throttle_never_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:f9dbec8ee9a2b6254bd88f62a38189df520d92a657300ee33dcf4946597983b9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/instrumentation/ext_mem_instr_zero_counters_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:7d32575394e8c822d8ae7c28936e1d095c8b57cdf27855c5f41c60db36802546"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/instrumentation/tb_ext_mem_instr.sv",
+        "passed": true,
+        "content_hash": "sha256:41c9d65abc74d917f1a0d6b773b1a43308b25d0cbab9d368b632522dda81055e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/integration/tb_sxt025.sv",
+        "passed": true,
+        "content_hash": "sha256:5e0a5fc1b82de2d2911f22c0458528cc3ad3693dc9f3b879405b7e6997fce52d"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/oscillators/classic/classic_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:db84ec75bf5626059ae31b0b07c65723c404ddcb7301b7b7d1959edc330d27d0"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/oscillators/classic/tb_classic.sv",
+        "passed": true,
+        "content_hash": "sha256:554d55b23045974fa5fa78e8e48d75d661fe88ef3e9833f56661a17f73e1fd6c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/oscillators/sine/sine_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:b3d7f2257273faff68ddc753d8fea43a3446a792732ad2f3d931ec8583f54d12"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/oscillators/sine/tb_sine.sv",
+        "passed": true,
+        "content_hash": "sha256:6f917d536e8443689bcb7fca74be80ef14d9bc08db5accca7e33c74be912b985"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/oscillators/wavetable/tb_wavetable.sv",
+        "passed": true,
+        "content_hash": "sha256:f920ab335791673f89a1fb8d732e71909b2fa812b2f7bf91d506b80ea9706bcf"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/lfo_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:aab54ade46c52fc89651be85353245d47e4a754e8986b293dbe92a5eb8d7e563"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/lp12_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:c55dbb74d15d2812695d601aad0e60b53a678c3c58427c9eabaa1ff173eeaa3b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/lp24_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:0c12d4b99092b72cbc4121f180219250dded243582986f192a58e3b456716bdb"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/lpmoog_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:ae199cd23d2616e7656a98acca771dc434727e9acd816d9997ddc7f1a011e0d9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_kt.sv",
+        "passed": true,
+        "content_hash": "sha256:a2ef8363e40f2a0d360a6240e1370eca648c724d6a6a03f753778c6555bed9d6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_kt_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:fb94b0e6ec0e91a50f450520cf0a7fbbfa2301a6111d98b7e92b5327e2537330"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_kt_shared_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:57f417b80a4b934dcd99578d1dfd4a5befb74f7bcab29751d0538fff7e7c4120"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_lfo.sv",
+        "passed": true,
+        "content_hash": "sha256:d597c5d64e650e7f5f95f1accd3c830cf0589492acdb60856b07f201d0cc02ba"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_lp12.sv",
+        "passed": true,
+        "content_hash": "sha256:4af0e3702bc31f8f946a562b55d758be5dffc585bf5af26d304a85284b54f2b5"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_lp24.sv",
+        "passed": true,
+        "content_hash": "sha256:671c1a54dd2757fb091bf90aca5a02bfcc7694220efbf8a549f62eaa7a043bef"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_lpmoog.sv",
+        "passed": true,
+        "content_hash": "sha256:175d26af48f2dc150264785b5a4e983c6ab1ca7be211a76735a3ed8ddae9e588"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_mw.sv",
+        "passed": true,
+        "content_hash": "sha256:0bd2ca59d81f755e3068be3368cda0b786ff4688c4181a36272af0821276f8ce"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_mw_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:68a218e326fbf0b2e5fa3f82e278a8d0e67199f020b1e2b104cf37eba96dbb90"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_pm_mono_st_fp.sv",
+        "passed": true,
+        "content_hash": "sha256:9997feda54e66e23ee45c2fef014f76b3aa19bd230a97e2c35408c8d2f06e6b9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_slfo.sv",
+        "passed": true,
+        "content_hash": "sha256:4ecf4358cc9fa8b4ce22c02cd6e87d443bfb40233670e83736ffdf3770f34256"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_vel.sv",
+        "passed": true,
+        "content_hash": "sha256:12a81f9c1d62c6f47d8cf11aa3bde8ac79cd9c4a0b6023a03527e740f201559b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/tb_voice.sv",
+        "passed": true,
+        "content_hash": "sha256:4895bb87e294d1c3aeaef62b21104b1ebfa2fb20e2ae6c6c2f95f37a24b9d6d6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/voice_broken_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:2c133c812dac9b259ef3f32d81314eaadcb5f86e486c7d5843c9d15109fdee09"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/voice_halfband_order_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:18c907f3a42c74165c31e4457cf526270ac385389a435c7f49ed19da319d3dad"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/voice_uni_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:7b6b5a15ff609d2f4d066c1b2080fbff0fb8e015cdf73877d8af2a40d9e58ac0"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "rtl/voice/voice_wrongparam_mutant.sv",
+        "passed": true,
+        "content_hash": "sha256:c32b22357f4259fc2522e37a3cc37b21f947af9499042affbf2b10b7ab1ba2ae"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_ablation_delta.py",
+        "passed": true,
+        "content_hash": "sha256:4e6d8e83830143867b6d664844551ce674ce34be62f0a72f63bfa6d9fcbbb955"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_agent_instruction_parity.py",
+        "passed": true,
+        "content_hash": "sha256:672b69862aaac0aeb200a35558800aeadc033879323ac4dec6e1cad48e28782b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_byte_frozen_sources.py",
+        "passed": true,
+        "content_hash": "sha256:acf78392b00f932b6d81b3200b7720484fedc6c351c16cdf4515a32deb0b5dee"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_carrier_drift_screen.py",
+        "passed": true,
+        "content_hash": "sha256:6a518620b8d7374e287d75c4d5f3198e042b27a88b05de97950f3e9dc1c86ee1"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_census_identity_reconciliation.py",
+        "passed": true,
+        "content_hash": "sha256:eaf53e4f2a47da9baffbd702c2a49b7ce592aae774e02af08ce72db3b1360804"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_check_artifact_manifests.py",
+        "passed": true,
+        "content_hash": "sha256:d688c96c4498112f5f99eadfa04c3efdad9690c50c4830bc80241414464e79d2"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_checkpoint_width_validation.py",
+        "passed": true,
+        "content_hash": "sha256:aa0318b7ef70399ceafc84af458e17cb5eaad79788ecbdfb15a695a03c3e32d9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_ci_dependency_pins.py",
+        "passed": true,
+        "content_hash": "sha256:41e2a8bbf833722b9d7a8ed20e079cf21a0368261b1adcee35cd82de12462f8a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_compare_rtl_model_fx_window.py",
+        "passed": true,
+        "content_hash": "sha256:20e4ffa9e2174c05a26ba4740f8709edcfffb9c9defdae98410eb36ee9972a97"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_compare_rtl_model_live.py",
+        "passed": true,
+        "content_hash": "sha256:013a397eb390ebb6215de032c1b17b3c9ade60619173ddc30bcd7f475889d0aa"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_compile_backlog_dag_waivers.py",
+        "passed": true,
+        "content_hash": "sha256:851bafde2c4351746113a39285a9e66e1bd7cd71c17ef8ef0e6f2c6a3198e7f9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_decision_record_review_packets.py",
+        "passed": true,
+        "content_hash": "sha256:fb7af07ace869d8f8c222a73b10f2712d954fbe3bedf088da947143592cb2397"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_effect_settle_boundaries.py",
+        "passed": true,
+        "content_hash": "sha256:c7e71528b6edda15f7b55e9919d50e6da0507c5ba233677c6a999a63f9a0b342"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_extract_chorus_inputs.py",
+        "passed": true,
+        "content_hash": "sha256:3935bbd7803453cc31321b8a9018295290e1b6c7c6db3a63779f97fa50872fea"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_extract_phaser_inputs.py",
+        "passed": true,
+        "content_hash": "sha256:2eccead80287f31e66418e1946d23eca36d555e709be621de36f26b809c32c8a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_frozen_artifact_basis.py",
+        "passed": true,
+        "content_hash": "sha256:c564ab94cfa71b2bea2320c6bcd1ae26f7be793d41ab06484f45d27521e0688a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_halfband_d2_voice.py",
+        "passed": true,
+        "content_hash": "sha256:5c3b8ff6d1d0af61332bd8937f1e0fa676fb2206bd98b0d15f80bd06f3912e85"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_halfband_limit_cycle.py",
+        "passed": true,
+        "content_hash": "sha256:37ca6086d2943e01538063e47ec7e3bce5106bcc91a87209fb82188381bafc46"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_halfband_republication.py",
+        "passed": true,
+        "content_hash": "sha256:9045b65e9f4fbc1cea51e4004fffa41bcdf5771f3941fd06e37018b82ad67c06"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_lfo_checkpoint_key_ownership.py",
+        "passed": true,
+        "content_hash": "sha256:5f96e9e77da976cd240210736712b5e9a0cca22bbddac38db6ce1b02cc885620"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_lowpass_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:f51e4aadb7f5ac4e5c6e91b675b046f0351b0920568c78ea1af6b7e3f124f449"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_negative_controls_live.py",
+        "passed": true,
+        "content_hash": "sha256:4dd6b2ab19becbf89b97032482d107c686a7d86d279a2689c7ac6de87ddaf857"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_nonfinite_audio_refusal.py",
+        "passed": true,
+        "content_hash": "sha256:7b83e2ce945c36acde37eeda203258c8dc880db25ae49fd5623a3a4828bfdbdd"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_numpy_stamp_inventory.py",
+        "passed": true,
+        "content_hash": "sha256:da950fad682c4ab33ea2a44efc4b9870ea975fbca217aaa9b36ebdaba4872bbc"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_oracle_binding_metadata.py",
+        "passed": true,
+        "content_hash": "sha256:f21e9f736cd3c3d6d473a0b3290f1e0b31a0a6b761da65d631080dbf4ea7a332"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_oracle_binding_origin.py",
+        "passed": true,
+        "content_hash": "sha256:37c9146b7df5858151889da7152b143c572886dd8694fe83746ebd14085e636c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_oracle_default_paths.py",
+        "passed": true,
+        "content_hash": "sha256:363b8971da671aa082654781ac6d8260ee998ae0632d77bfd1b984af9e3af6f3"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_package_json_scripts.py",
+        "passed": true,
+        "content_hash": "sha256:43b9707f49e542cae190a3e274e3da5bf496b8992bea28ee43ebd491fdf3a457"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_pilot_freeze_tail_shape_floor.py",
+        "passed": true,
+        "content_hash": "sha256:a1b24c915311a4e2eedb6d580830b410c0566e716aea94885e8a27d6dea5ad39"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_render_lp24_tap_reference.py",
+        "passed": true,
+        "content_hash": "sha256:3cf7e15f60ee368dba2425c73a36b3984a2e6e6e439ae9a639b1e4dfadb972bb"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_report_status_tokens.py",
+        "passed": true,
+        "content_hash": "sha256:606306cbe9f648088924e36ba5acf18ea0ae04138a4f28cfb900f694a742cc62"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_rms_polarity_audit.py",
+        "passed": true,
+        "content_hash": "sha256:9555e1ddef2298c2f7df4534f42f7b54040faa637b564f2afb69d01da21c3ff1"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_rtl_ci_results.py",
+        "passed": true,
+        "content_hash": "sha256:e5841e01eaaeca8a5441aad21aee6ff8d7ffded481cc23d08d0eec53c70c5538"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_rtl_ci_step_errexit.py",
+        "passed": true,
+        "content_hash": "sha256:7d094a6f3b22a89e3a0cbe0c2684c6e0465356e4d2e971adb743f988102c6831"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_rtl_compile_common.py",
+        "passed": true,
+        "content_hash": "sha256:9029e50606e8bc1b93b8a3725165984b7d87d7cb31d395938ab85d05ea66a5c3"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_rtl_leaf_comparison.py",
+        "passed": true,
+        "content_hash": "sha256:8345218d05bae34635a7f5dc5a78ae95dd1f0978fd4ad2f7f979b022f4da0eaa"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_rtl_lint.py",
+        "passed": true,
+        "content_hash": "sha256:84237ac3fcd650333b556dd8316d11eeb63a478de2aba0c387f07bdb1a13ca3f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_shared_refuse.py",
+        "passed": true,
+        "content_hash": "sha256:9e3ac0a0fdd8bbf22634f9263f106dca739ac014832bee8c4a7725db1ba275f7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_slow_comparator_inventory.py",
+        "passed": true,
+        "content_hash": "sha256:8e9b56d2283500e5a35c75209efae3f16edbdc483892f8d42908ede462255ef5"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_slow_controls_gate.py",
+        "passed": true,
+        "content_hash": "sha256:dd2adae6e8d2ec8aa3bc60c30e727df12748881a3257b6446f0b8a01b14bcbad"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_spectral_corr_fs_floor.py",
+        "passed": true,
+        "content_hash": "sha256:bb70598b0e33b52ea3a9d2382e140343f0a599006d1abcbccf9c6ef3542b4c60"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_spectral_corr_single_definition.py",
+        "passed": true,
+        "content_hash": "sha256:cc6a0d8044b5718a8335bbce09dac0c98c63bcf2199031b79ab7607ff937652a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_stereo_tail_gate.py",
+        "passed": true,
+        "content_hash": "sha256:9036985fa332eb9deed2884a84001b93b39a3da24dfdb2d9d39c360c60758b25"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_store_evidence.py",
+        "passed": true,
+        "content_hash": "sha256:605f2853ca031b225737430c5eccec6c31ebc66b449020eb085921780c3bc8ed"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt013_apparatus.py",
+        "passed": true,
+        "content_hash": "sha256:d995d5ddeab074d4cf6db11f055667a099e46e7aa678e0c3d095b99d2255b2be"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt013_listening_cache.py",
+        "passed": true,
+        "content_hash": "sha256:840434889ac9644f31b71ed712416ebba0e65afe95de97708bf99f18b5883f1a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt015_currency.py",
+        "passed": true,
+        "content_hash": "sha256:c65be31eeae849e250069bd81498e2c97a723dc2422cf774b981e6e8c6c22639"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt015_fx_classes.py",
+        "passed": true,
+        "content_hash": "sha256:bfb183f0f443524c0a8b73a8dec1858903a11748d696e6f3960b75c9b2bd22d3"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt015_modroute_shape.py",
+        "passed": true,
+        "content_hash": "sha256:8eb69ded19f20d2af1f44a69fde0ec9f182b02a781341b99f5408a86d9276385"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt015_params_override.py",
+        "passed": true,
+        "content_hash": "sha256:374138a6a943f617cbc7f79c335011b9ba7987c0f5e782f57aac71d3191a9e38"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt016_probes.py",
+        "passed": true,
+        "content_hash": "sha256:63ce1e1c10e2a48e0c6f67f1f0993017467ef195dc1ab5218b5d9f7d53b86897"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt017_budget.py",
+        "passed": true,
+        "content_hash": "sha256:909e157f4c12afa9e58d86e84598181237e181886fc0215c50be909e3e3401ed"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt017_predict.py",
+        "passed": true,
+        "content_hash": "sha256:6371fd17f4d90d4eaab39bdfddbfa309e05cfd98953f4d83fbf43dab5b3abf86"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt019_provenance.py",
+        "passed": true,
+        "content_hash": "sha256:e490101dca90d76ae23ab1c5927b2745e0a5a723a59d8bf2a377d42303630feb"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt020_compile.py",
+        "passed": true,
+        "content_hash": "sha256:13d550a300db567bcc8a64b6677ef36fcc5872ba1d45bcb8cdfae8c0adc62607"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt021_control.py",
+        "passed": true,
+        "content_hash": "sha256:85f70d08f08762f467e02471d358201b59e40a3e5d72dc6f6155c0e582abe36f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt021_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:b69784c4f000f5f4ae07e98e3522cdddab4a78d9069660b72beaf0c7830d5e23"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt022_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:cd49b3743d8119d8734192bb64b144f7dd769e7ca46e18247ad1c420b6f171eb"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt022_voice.py",
+        "passed": true,
+        "content_hash": "sha256:67b4a71380b7d7ba0254ba6dc81b788add7789e58a850269e40747a6b80e9eeb"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt023_delay_traffic_basis.py",
+        "passed": true,
+        "content_hash": "sha256:4dbc6f165f3cadc8829ca64825682c60f53843af67bb5133347b403d0f63c321"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt024_reverb1.py",
+        "passed": true,
+        "content_hash": "sha256:7efa23868dfa48852ce7adcb399a6f06ff42cb6c0b73d5aa3b3bc36cbb3f3e0c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt024_sweep_coverage.py",
+        "passed": true,
+        "content_hash": "sha256:6420bcdcde567942542e1e163e8c486526ca15752214cc4ec17b7cbd3cf12c38"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt024_tail_window.py",
+        "passed": true,
+        "content_hash": "sha256:641c21144ca592901776e739541535346fe5be976cf84bab44852c245062cd31"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt025_integration.py",
+        "passed": true,
+        "content_hash": "sha256:f26986c49cab8d00e93d979063d6210bccf9de7ad313f7ec7b64fa68a9dd2e71"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt026_checks_transcript.py",
+        "passed": true,
+        "content_hash": "sha256:aa5c3f1df0574e5bfd90e4163ab1e54d183861149d08e38f03259fb8c21707c6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt026_nc_b_rtl_control.py",
+        "passed": true,
+        "content_hash": "sha256:d623f2e356ce5a0cb79063d8725541d021474a11a8e22527e2c4b37806062dce"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt026_wavetable.py",
+        "passed": true,
+        "content_hash": "sha256:0a4844e27ca5539b27a8d89c8b6c7e1892f1578ee2d61381850cf0c88b610494"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt026_wt_rtl_harness.py",
+        "passed": true,
+        "content_hash": "sha256:2276a9559e3d50affb02d479d0fae6df045b9fdb1241c3b98c13c5368862d6c0"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt026a_voice.py",
+        "passed": true,
+        "content_hash": "sha256:bb42fbc9d6226d386d68dc23e9bddd328a734a415fb95e9fa21e7914ba985e10"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt026a_wrongparam_control.py",
+        "passed": true,
+        "content_hash": "sha256:8cc7db7d9c795c7ef4df15efcaa02401c6014bcb49e8b14fc9dcc8e42eb7e14b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028_rng.py",
+        "passed": true,
+        "content_hash": "sha256:969fa04130565a4aaa0a6d5883b126a30dc6d4c1b1741c897ebe2d62351664b6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028a.py",
+        "passed": true,
+        "content_hash": "sha256:b0506b502dcf9cb0ccccfa61f38e7f06c4c3275e76a0e4e909c5569beedd0c5f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028b.py",
+        "passed": true,
+        "content_hash": "sha256:abc8396a1161b9b1d8cde403b8ce2371196762f5769f75fbdfb9ba42f8a1cb10"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028c.py",
+        "passed": true,
+        "content_hash": "sha256:0bbe693a5be96b3dea3e72c269d34702373b4d89491bac63cf1adc3cf94f8f58"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028d.py",
+        "passed": true,
+        "content_hash": "sha256:beea7c8f66728cce67060249194133868f07e101056d987e2d82f9fd12788d4b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028e.py",
+        "passed": true,
+        "content_hash": "sha256:324b52b7d4e869653b66280447c239905628dc3469687657ec13e072b67561a6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028e_sse.py",
+        "passed": true,
+        "content_hash": "sha256:6bdd395bbf1240279e65074baabee175e00c2b506ad45d588641109c520ce793"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028e_sse_slot_census.py",
+        "passed": true,
+        "content_hash": "sha256:66f842d7f2d1b15bbe8d453d6ecf131c978c6afd2d067428ae28b5e786916a75"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028f.py",
+        "passed": true,
+        "content_hash": "sha256:94cd41441fdb2032ad7bc18f58cbe4d663d2ffd635878b3a1f7472083cf83769"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028g.py",
+        "passed": true,
+        "content_hash": "sha256:f137a7aba875154891d3acac8509918534a5d1ae9d4d4ccebc9891269cb3c7c4"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028h.py",
+        "passed": true,
+        "content_hash": "sha256:a66bae50455c89037b776eeb28aa9a20ed06b08b3b0e70dc5347bba28b2e9296"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028i.py",
+        "passed": true,
+        "content_hash": "sha256:c9bc62af2759c74b13bfa9ce6949b981d80c3fe57a5b1f3b3facf81f9a4dfd39"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028j.py",
+        "passed": true,
+        "content_hash": "sha256:56450b233dddbe7b8e66761e27049f4b79e24f0afabccf1d5cf97858976e46e8"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028k.py",
+        "passed": true,
+        "content_hash": "sha256:b4163e29e3c00ef92e8db9e3e14dc93649c12869e2e4c9d636687c7a29b5d0c5"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt028l.py",
+        "passed": true,
+        "content_hash": "sha256:34cdaca02c429d98d664ffb3add3430a8f5c968ef36436bb6bfbb12c76ba3c1c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt029_control_guard.py",
+        "passed": true,
+        "content_hash": "sha256:b2f371f4f517e57887ff2168a159a4d79ff8c7ae691b93aa455821ae7cd4c412"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt029_publication.py",
+        "passed": true,
+        "content_hash": "sha256:f086ac4a3454fcadbe04c4f20e927eb68e2bb63527728a9ef8ffc052893a327e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt030_stall_instrumentation.py",
+        "passed": true,
+        "content_hash": "sha256:4c41c4d4b9e07fbff9943d1c44a7e98fac33cf5ffdc534d60bcc62dce910e4d6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt032_lfo.py",
+        "passed": true,
+        "content_hash": "sha256:8e960ff3bf23a15b9e7259b3daabd0e851f1f875ff8b156f0593a66cd634a8ca"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt033_classic.py",
+        "passed": true,
+        "content_hash": "sha256:b3c290b8c0c8aeece48be216fcb285fec056396b2514b38df969758f77b2fab9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt035_mw_ramp_control.py",
+        "passed": true,
+        "content_hash": "sha256:8f0f15c63a2aac1834768ba2d69cc31cdf87669c5670f843d5bc8cc75c49241c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt036_vel_corners.py",
+        "passed": true,
+        "content_hash": "sha256:94d5ddcda0f98d457843076c1f24c419b3557640dc02dc1956e727a29ecef97f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt036_vel_cost.py",
+        "passed": true,
+        "content_hash": "sha256:b88cdc577fd58bd9ec89c359205913bc913ae6d279fe79d8176eede517f16b37"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt036_vel_oracle_status.py",
+        "passed": true,
+        "content_hash": "sha256:fedbfbbc1a77384ecb37a7e80fd182d2a2f2598a67d381a8929648fe7d6a1a99"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt036_vel_state.py",
+        "passed": true,
+        "content_hash": "sha256:bd7b879576d6fba08f27f9dfabee96e9fd03bfea70f716806e3352d6ce175377"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt037_lp12.py",
+        "passed": true,
+        "content_hash": "sha256:b4387a2bb858398c02897a3552edf160641157559bee19c0c2e8221b9a508829"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt038_lp24.py",
+        "passed": true,
+        "content_hash": "sha256:410409752a2d20cac1d1c0caf5b679576d1c0553ef8fbc17bf8545773dccaa7e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt039_lpmoog.py",
+        "passed": true,
+        "content_hash": "sha256:900197178dd48893f7450c1da084df5150215c1cee419109393fca2c0482b8f7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt040_sine.py",
+        "passed": true,
+        "content_hash": "sha256:432c003b09333fda76bb2b9ffdc54632e009e4a056238e20065e0ff73389b769"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt041_slfo.py",
+        "passed": true,
+        "content_hash": "sha256:b5c2194bc38af6ab23815520c155fb3559166a8b1385c084c1add7b2cd200f34"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt042_keytrack.py",
+        "passed": true,
+        "content_hash": "sha256:ac3e1431628775a50670bf84fecc1efb185d7d005eaae8295c1dedb408c6410e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt043_fixture_rev2.py",
+        "passed": true,
+        "content_hash": "sha256:b4bce29c854baaa6996c6c26f8b06944343acb67561d4cbd10e970255ab27319"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt043_playmode.py",
+        "passed": true,
+        "content_hash": "sha256:495c1b0d10ca84610b399a5a9b286ff95764d5e5024075968c5fa92cf3f999d9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt310_fixture_policy.py",
+        "passed": true,
+        "content_hash": "sha256:469ede6cd289e4e2be2255d245d672c5397a470ef239a457b9da402627670415"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt_classic_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:faccc29bbae6c11541284ab6b88f898b12d06c10507882ea3076480b17de8f1d"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt_kt_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:d740103385485d0b3112ac6f8f097d4bd80b542d2926769887992cc87c37036b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt_lfo_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:94a1b9a9f49fca1ea8614542fd8b5bce885634e324152d1770901f67d0d3004d"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt_mw_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:3f99c7bbfd94d17f02312fef7329b1955479d779a955a263921eff57a6a09dcc"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt_sine_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:b26a8735a68f44397e20457a636911a45c9a9bc9b4800a6fad14ee4ada3d004d"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_t1_item1_synthesis.py",
+        "passed": true,
+        "content_hash": "sha256:afe07717321bd18fac6da294699fa84e7d2ebf973aeb58d63d25f7522841b117"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_t1_physical_flow.py",
+        "passed": true,
+        "content_hash": "sha256:5731f662b6920a639449debc53f2909264718a8d19cdc2aea23acd6b39d22451"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_tail_gate.py",
+        "passed": true,
+        "content_hash": "sha256:7f0eaac0b0bf8ff05e1f198f782f0d9f12c08e9af3d6e908b2c8fdcde6eee165"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_tail_shape_leg.py",
+        "passed": true,
+        "content_hash": "sha256:c9c8634b7d4229fb4608c7b4b3ce316e023d48cd69ac4923675b8c7e95afc58a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_wt_decimation_stage.py",
+        "passed": true,
+        "content_hash": "sha256:125433e83adc2c8390ad8e98bee845406d54c08726286a3cba93cd536d553c6b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/aw49_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:f7bc9b355da979a75d0c59b2f53ccec57f1d4703ba9845a59b68711fe38c1724"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/aw4_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:f2741a72ac52a6a17c24dd98b42ab60c1e1bb68348f40eaf56336fababcdd9a6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/chorus_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:d42199178766211cb67a83e75f9b3eb93e62d96e6e35f32e109f067cee13564f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_aw4.py",
+        "passed": true,
+        "content_hash": "sha256:230a32c81413bb45a8086db6fbd9d980c4a5db745f1207d3fc501c9684b6823b"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_aw49.py",
+        "passed": true,
+        "content_hash": "sha256:3b706f4d4da93279d59e55dc8ddec8cfce8a4fdaa3cbf0636143cdfd71b586c6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_chorus.py",
+        "passed": true,
+        "content_hash": "sha256:25967029241e191bafb7e32eb6013d6af0d26396f8a84120ba619a8d34f2173a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_conditioner.py",
+        "passed": true,
+        "content_hash": "sha256:9f981156897906ea710c14de1fffc371a0a51cf289b1f777e94616c7f440e289"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_distortion.py",
+        "passed": true,
+        "content_hash": "sha256:aa5be82ec5e253910782cfb399bbaf6f99c291f8b679b42d5b83835a0ee49ec8"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_distortion_sse.py",
+        "passed": true,
+        "content_hash": "sha256:cf58dced6db8f1f2ba4b9340fba1e8b3dfabeb91cf05c6ed7f467b6e536eef2a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_fx.py",
+        "passed": true,
+        "content_hash": "sha256:a5eda64ad5d1e0cd5b34bc9b5f38dcb144bf06b7937ab1c0323755c5d415f0d2"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_lp12.py",
+        "passed": true,
+        "content_hash": "sha256:2bcdc8fa1bf70602a394277ceaff937ee1afed1ba1a495344d23bcdfa763b285"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_lp24.py",
+        "passed": true,
+        "content_hash": "sha256:60152e3f79387facc09ba1ecff0697caf39e5af5602ac3d33a8aa0283fae6c12"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_lpmoog.py",
+        "passed": true,
+        "content_hash": "sha256:97b6640688e166dc13b1a359157ea527fd1a37b6521587af88a2d2912fa54c99"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_phaser.py",
+        "passed": true,
+        "content_hash": "sha256:65a98354ccf035fa9eae0cb2638dcb1b5f69e5012581ebf33fe9afd3d7386ccb"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_reverb2.py",
+        "passed": true,
+        "content_hash": "sha256:fff68094859563d6d372d9fc1632c0046ff0d621c98f4bec574a9fc82e7e3ae5"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_rf_ains34.py",
+        "passed": true,
+        "content_hash": "sha256:2a55c811b4f6f377e01e22dc1d9e54e0d0f74b8734975e39d54c582db65c89a7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_rf_bins12.py",
+        "passed": true,
+        "content_hash": "sha256:65ee9183115fc21748593f134ca992fa2c5f563d6a7906bd00dce6a470816e09"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_rf_global2.py",
+        "passed": true,
+        "content_hash": "sha256:74c6280eb98355d1506f7909d297fb601178e76c5404af6f67c5a77164b4bf1c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_rf_global34.py",
+        "passed": true,
+        "content_hash": "sha256:b88afbf8a5ec87abaeca5c8e42d7cd6239369a6efbb605227afa34720c325fb6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/compare_rtl_model_rf_send34.py",
+        "passed": true,
+        "content_hash": "sha256:3732b5a0b61cde2d98089f979b2062babb92babfcc3bff4c93f4b0f594cf55c7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/conditioner_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:41142882711a5db1e70162fd4c37da879e794efa99f2d449e1fa5c8e2d7920f9"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/control_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:e5d649bb6d52bcd8e7dcd6c23bbe1fd84b2f1283d5a53962236ced56bb664685"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/coverage_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:f7d8de1a0686b78ea1a431da02fb9a79e5ee0979982824ca039cc9c9092a1832"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/distortion_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:6c3099a4770c31e5b176efbec7b4bcd2b88078155890f98c28e63e65637f61f1"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/distortion_sse_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:0b8a12b94538db5506069b660497963a142bd0c84bc941d096d183d71549b568"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/fx_rng_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:78c57dd8fb6af686bdc70ee091a5352896159552272fc6c2ef906e9e7ac63896"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/kt_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:ae3c928dec216bc63322d7d1895df3aa87df79453a6b06a6d9b6ab9ae3ecaf87"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/lfo_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:eebe83d54c7e961014fd8c13c32e254993da2465096ac6d45b08ca026edce6aa"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/lp12_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:6bd984d5a6b586e94f13cbaeecb931f461c30acbb1ff63af83b15ba859f6861e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/lp24_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:d7463c37f7bcf4ce13bff02584f9f8569860b01bebebe2e2f15baa58582543b0"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/lpmoog_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:adfd2f645d95ecf3b99089b340211e69a67d620ab3ee5dbb4c5a51ad618fcfa4"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/mw_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:a82546a17046f4b475f5cb65b6ba64780dcf597ecc2181185ba4ee4087102f60"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/phaser_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:48f15128f2c3cceb3e2cdf3e798cffd6875e3f413b9902445cbc7902d44c79b6"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/profile_budget_controls.py",
+        "passed": true,
+        "content_hash": "sha256:9aad9cf0ab84fde7319ff5cd7b085ec386a2b8a9e34da2e5de25cd2f62b41115"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/reverb2_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:641a9d9430b694219193a1f2bff422edb78ea849a08322a9f34a61405deb236e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/reverb2_reference_controls.py",
+        "passed": true,
+        "content_hash": "sha256:0e2302697cf9b2cc34d8db7649df248aa2918404f36bf509d224a2b8b03620bc"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/reverb_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:7d36df1d9922600320de1f51373df803cfcf14e021fcb1cbbf1089f65818ce2f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/rf_ains34_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:4b835de9ef0f0cf1669b49e87a7165aaf4117c0a73c164b3017e2e27874439bf"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/rf_bins12_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:a1ce63a0fe3f732b26de96db4974f6ae9e4d390dde1533ccfcbbc3d2f8b38567"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/rf_global2_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:7e969f759629e331b3540b2fd3bc3e1409b88c5d8ce5df84e1ee5c4163971c30"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/rf_global34_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:5b8633e512cf6859d71dccb00039219b45cef41afa98b12f0550e4f48c79d03f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/rf_send34_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:e77b4a1e6f9eab740bced8e83c4df76cf987b2396e5dc38b055df869d860efa7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/slfo_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:dc7ade687711531c30dfe3a9d795b5d11d5a08c1f9a6689e7c0d3f0f35752b5f"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/vel_negative_controls.py",
+        "passed": true,
+        "content_hash": "sha256:60c8afc24cd285f76b18e2f7ed60829cc1e32795ee124bc5a278371487bd583a"
+      },
+      {
+        "check": "command",
+        "role": "cold_start",
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "tests"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "pin",
+        "role": "pdk",
+        "passed": true,
+        "value": {
+          "name": "gf180mcuD",
+          "revision": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
+        }
+      },
+      {
+        "check": "pin",
+        "role": "tools",
+        "passed": true,
+        "value": {
+          "iverilog": "12.0-2build2",
+          "numpy": "2.4.2",
+          "pytest": "9.1.1",
+          "python": "3.12 (CI setup-python)"
+        }
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/t1-item9-inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:490713ad723ed0464bab55dd79bcad8c469813555f732ba410735f25b4a35eb3"
+    }
+  }
+}

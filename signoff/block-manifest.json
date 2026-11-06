@@ -2,6 +2,10 @@
   "block": "gf180-surge",
   "kind": "digital",
   "evidence": {
+    "9": {
+      "file": "signoff/t1-item9-attestation.json",
+      "content_hash": "sha256:490713ad723ed0464bab55dd79bcad8c469813555f732ba410735f25b4a35eb3"
+    },
     "10": {
       "file": "signoff/item-10.attestation.json",
       "content_hash": "sha256:d68f0b4e1a4d5453e56ef652949394906ba6b0d460ad148000e680ce6fb64b93"
