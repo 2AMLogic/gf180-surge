@@ -32,7 +32,7 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
 | rf_ains34_core | sv2v | PASS | 7467 instances; `out_l`/`out_r` are outputs (#580) |
 | rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | klt 300 s Yosys timeout once the datapath is observable (#580); see below |
-| galactic_core | sv2v | NO_VERDICT | see below |
+| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys exceeded klt's fixed 300 s limit (no klt option to raise it) and was killed (not a proof of non-synthesizability); see `galactic_core/RECORD.md` (#579) |
 
 **Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
 bins12,global2,global34,send34}_core`) previously had `block_done` as their only
