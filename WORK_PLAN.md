@@ -7,7 +7,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-_None._
+- **#598**: Bump Repo Skills 0.25.1 -> 0.25.10
 
 ## Very Important
 
@@ -27,13 +27,13 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
+- **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 
@@ -47,7 +47,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#598**: Bump Repo Skills 0.25.1 -> 0.25.10
 
 ## Proposed
 
@@ -92,13 +92,13 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 0 |
+| Operator merge-risk holds | 1 |
 | Very important | 0 |
 | Important | 3 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 3 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 23 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 4 |
