@@ -54,11 +54,13 @@ sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "sine"))
 sys.path.insert(0, HERE)
 sys.path.insert(0, REPO)
+sys.path.append(os.path.join(REPO, "tools"))
 
 import voice_model as vm                                       # noqa: E402
 import sine_model as sm                                        # noqa: E402
 import pm_mono_st_fp as pm                                     # noqa: E402
 from refusal import Refuse                                     # noqa: E402
+from _stimulus_io import write_hex  # noqa: E402
 
 
 def _load_sibling(name):
@@ -130,13 +132,6 @@ class PmInputs(sm.Inputs):
                     "SXT-043 vocabulary {Velocity, Keytrack} -> A VCA Gain"
                     % (r["src"], r["dest"]))
             self.vca_gain_routes.append((r["src"], r["depth"]))
-
-
-def write_hex(path, values, bits=32):
-    mask = (1 << bits) - 1
-    with open(path, "w", encoding="utf-8") as f:
-        for v in values:
-            f.write(f"{int(v) & mask:08x}\n")
 
 
 def build_porta_config(inp, force_mode=None):

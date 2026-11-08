@@ -62,34 +62,17 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "wavetable"))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.append(os.path.join(REPO, "tools"))
 
 import wt_model as wm  # noqa: E402
 import voice_model as vm  # noqa: E402
+from _stimulus_io import write_hex  # noqa: E402
 
 FQ = vm.FQ
 BLOCK_SIZE = vm.BLOCK_SIZE
 BLOCK_SIZE_OS = vm.BLOCK_SIZE_OS
 CHECKPOINT_EVERY = 64
 N_SLOTS = 4
-
-
-def write_hex(path, values, bits=32):
-    """Write one 32-bit hex word per line; return the number of words written.
-
-    The return value is the model side's own declaration of how long each
-    stimulus file is, collected into `rtl/stimulus_index.json` (issue #194).
-    The testbench cannot supply it: its memories are declared generously
-    (`ctrl_mem[0:262143]`, `wt_mem[0:131071]`) and a healthy run never fills
-    them, so Icarus's `$readmemh(...): Not enough words` WARNING fires for
-    every memory on a PASSING run and says nothing about truncation.
-    """
-    mask = (1 << bits) - 1
-    n = 0
-    with open(path, "w", encoding="utf-8") as f:
-        for v in values:
-            f.write(f"{int(v) & mask:08x}\n")
-            n += 1
-    return n
 
 
 def main():

@@ -51,9 +51,11 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "classic"))
 sys.path.insert(0, REPO)
+sys.path.append(os.path.join(REPO, "tools"))
 
 import classic_model as cm  # noqa: E402
 from model.voice import voice_model as vm  # noqa: E402
+from _stimulus_io import write_hex  # noqa: E402
 
 FQ = vm.FQ
 BLOCK_SIZE = vm.BLOCK_SIZE
@@ -61,13 +63,6 @@ CHECKPOINT_EVERY = 64
 N_SLOTS = 8
 REC = 12
 REC_NEW = REC + 48
-
-
-def write_hex(path, values, bits=32):
-    mask = (1 << bits) - 1
-    with open(path, "w", encoding="utf-8") as f:
-        for v in values:
-            f.write(f"{int(v) & mask:08x}\n")
 
 
 def _pad16(xs):

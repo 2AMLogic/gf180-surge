@@ -35,9 +35,11 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.append(os.path.join(REPO, "tools"))
 
 import voice_model as vm  # noqa: E402
 import lfo_model as lm  # noqa: E402
+from _stimulus_io import write_hex  # noqa: E402
 
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 MW_INPUTS = os.path.join(REPO, "model", "voice", "attacky_mw_inputs.json")
@@ -51,13 +53,6 @@ DEST_CODE = {vm.DEST_FU1_CUTOFF: 0, vm.DEST_FU1_RESO: 1, vm.DEST_VCA_GAIN: 2}
 DEST_NAME = {vm.DEST_FU1_CUTOFF: "A Filter 1 Cutoff",
              vm.DEST_FU1_RESO: "A Filter 1 Resonance",
              vm.DEST_VCA_GAIN: "A VCA Gain"}
-
-
-def write_hex(path, values, bits=32):
-    mask = (1 << bits) - 1
-    with open(path, "w", encoding="utf-8") as f:
-        for v in values:
-            f.write(f"{int(v) & mask:08x}\n")
 
 
 class NoSmoothingModwheel(vm.Modwheel):
