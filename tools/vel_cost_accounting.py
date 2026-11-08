@@ -87,7 +87,6 @@ Usage:
 """
 import argparse
 import glob
-import hashlib
 import json
 import os
 import shutil
@@ -182,12 +181,9 @@ READING_ALU = ("every op a separate cycle, with the 64-bit rounding add and "
                "32-bit ALU (A-ALU-1 covers <=32-bit words only)")
 
 
-def sha256(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+if os.path.join(REPO, "oracle") not in sys.path:
+    sys.path.insert(0, os.path.join(REPO, "oracle"))
+from oracle_common import sha256_file as sha256  # noqa: E402
 
 
 # ------------------------------------------------------------ SXT-015 surface

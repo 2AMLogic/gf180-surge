@@ -70,7 +70,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -130,12 +129,9 @@ endmodule
 """
 
 
-def sha256(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+if os.path.join(REPO, "oracle") not in sys.path:
+    sys.path.insert(0, os.path.join(REPO, "oracle"))
+from oracle_common import sha256_file as sha256  # noqa: E402
 
 
 def vel_q(midi):

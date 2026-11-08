@@ -137,9 +137,9 @@ def build_id_of(dut_path):
         return int(hashlib.sha256(f.read()).hexdigest()[:8], 16)
 
 
-def sha256_file(path):
-    with open(path, "rb") as f:
-        return hashlib.sha256(f.read()).hexdigest()
+if os.path.join(REPO, "oracle") not in sys.path:
+    sys.path.insert(0, os.path.join(REPO, "oracle"))
+from oracle_common import sha256_file  # noqa: E402
 
 
 # ------------------------------------------------------------ cases
