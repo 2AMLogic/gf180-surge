@@ -28,7 +28,6 @@ Python 3 standard library only.
 """
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -109,12 +108,9 @@ def tracked_files(root):
     return [p for p in out.decode("utf-8").split("\0") if p]
 
 
-def _sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+if str(REPO_ROOT / "oracle") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "oracle"))
+from oracle_common import sha256_file as _sha256_file  # noqa: E402
 
 
 def duplicate_byte_problems(root, entries_by_manifest, tracked):

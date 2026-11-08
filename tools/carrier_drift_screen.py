@@ -131,12 +131,9 @@ class RunBlocked(Refuse):
     """Run-level refusal (BLOCKED): denominator or pin provenance wrong."""
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+if os.path.join(REPO, "oracle") not in sys.path:
+    sys.path.insert(0, os.path.join(REPO, "oracle"))
+from oracle_common import sha256_file  # noqa: E402
 
 
 def _canon_sha256(obj):

@@ -54,7 +54,6 @@ src/common/dsp/oscillators/*, src/common/FilterConfiguration.h,
 libs/sst/sst-filters, libs/sst/sst-waveshapers.
 """
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -421,12 +420,9 @@ NEG_CONTROL_PATTERN = (
 )
 
 
-def _sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+if str(REPO / "oracle") not in sys.path:
+    sys.path.insert(0, str(REPO / "oracle"))
+from oracle_common import sha256_file as _sha256_file  # noqa: E402
 
 
 def _require(cond, msg):

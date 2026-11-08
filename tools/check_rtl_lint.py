@@ -89,11 +89,9 @@ class Refusal(Exception):
 # helpers
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        h.update(fh.read())
-    return h.hexdigest()
+if os.path.join(REPO, "oracle") not in sys.path:
+    sys.path.insert(0, os.path.join(REPO, "oracle"))
+from oracle_common import sha256_file  # noqa: E402
 
 
 def load_json(path, what):

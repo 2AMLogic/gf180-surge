@@ -39,7 +39,6 @@ reads the committed SXT-011 graphs; no Surge code, tables, or payloads are
 copied or embedded.
 """
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -108,12 +107,9 @@ def _rel(path_str):
         return str(p)
 
 
-def _sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+if str(REPO / "oracle") not in sys.path:
+    sys.path.insert(0, str(REPO / "oracle"))
+from oracle_common import sha256_file as _sha256_file  # noqa: E402
 
 
 def _require(cond, msg):
