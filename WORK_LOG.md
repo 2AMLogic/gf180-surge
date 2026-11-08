@@ -2,6 +2,13 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-08
+
+- **PR #605**: refactor: fold 12 private sha256 hashers into oracle_common.sha256_file
+- **Issue #604** (closed): Consolidate 12 duplicated sha256_file helpers in tools/ onto oracle_common.sha256_file
+- **PR #603**: refactor: share one write_hex stimulus writer across model runners
+- **Issue #602** (closed): Remove duplicated write_hex helper: 10 copies across model run_model*.py scripts
+
 ### 2026-11-07
 
 - **PR #598**: Bump Repo Skills 0.25.1 -> 0.25.10
