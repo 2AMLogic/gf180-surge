@@ -58,8 +58,10 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.append(os.path.join(REPO, "tools"))
 
 import voice_model as vm  # noqa: E402
+from _stimulus_io import write_hex  # noqa: E402
 
 V2_INPUTS = os.path.join(REPO, "model", "voice", "bells_inputs.json")
 KT_INPUTS = os.path.join(REPO, "model", "voice", "bells_kt_inputs.json")
@@ -80,13 +82,6 @@ DEST_NAME = {308: "A Filter 1 Cutoff", 309: "A Filter 1 Resonance",
 OUT_OF_CLASS_DEST = 265                    # 'A Pan' (a real corpus keytrack
                                            # destination, outside this leaf)
 SYNTHETIC_ROUTES = [(vm.DEST_FU1_RESO, 0.125), (vm.DEST_FU1_FEGMOD, 8.0)]
-
-
-def write_hex(path, values, bits=32):
-    mask = (1 << bits) - 1
-    with open(path, "w", encoding="utf-8") as f:
-        for v in values:
-            f.write(f"{int(v) & mask:08x}\n")
 
 
 class KtVoice(vm.VoiceV2):

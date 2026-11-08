@@ -41,10 +41,12 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
+sys.path.append(os.path.join(REPO, "tools"))
 
 import voice_model as vm  # noqa: E402
 import lfo_model as lm  # noqa: E402
 import slfo_model as sm  # noqa: E402
+from _stimulus_io import write_hex  # noqa: E402
 
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 FQ = vm.FQ
@@ -55,13 +57,6 @@ CTRL_WORDS_PER_SLOT = 40     # v2 stimulus: 32 x v1 + draw_set_index/appendix
 N_SLFO = sm.N_SCENE_LFOS
 SEQ_DIRS = (os.path.join(REPO, "fixtures", "sequences"),
             os.path.join(REPO, "model", "voice", "sequences"))
-
-
-def write_hex(path, values, bits=32):
-    mask = (1 << bits) - 1
-    with open(path, "w", encoding="utf-8") as f:
-        for v in values:
-            f.write(f"{int(v) & mask:08x}\n")
 
 
 def resolve_sequence(ref):
