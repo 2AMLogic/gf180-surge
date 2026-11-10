@@ -36,6 +36,7 @@ Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
+- **#607**: Make tools/smoke_fx_exactness.py portable: iverilog from PATH, temp workdir
 
 ## PRs Awaiting Review
 
@@ -47,7 +48,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#611**: fix: make SXT-023 smoke driver portable (PATH iverilog, temp workdir)
 
 ## Proposed
 
@@ -76,6 +77,7 @@ Issues carrying `loom:curated`.
 - **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)*
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)*
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)*
+- **#607**: Make tools/smoke_fx_exactness.py portable: iverilog from PATH, temp workdir *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -96,10 +98,10 @@ _None._
 | Very important | 0 |
 | Important | 3 |
 | Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 3 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
-| Curated | 23 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 24 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
