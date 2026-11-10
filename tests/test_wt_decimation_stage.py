@@ -409,6 +409,7 @@ def test_leg_b_is_still_the_frozen_models_own_render():
     re-implementation of the retired placement and is deliberately NOT gated
     against the runner any more -- if it were, it would fail by construction.
     """
+    import hashlib
     art_dir = os.path.join(REPO, "reports", "sxt-026", "artifacts")
     a = artifact()
     for c in a["cases"]:
@@ -421,7 +422,12 @@ def test_leg_b_is_still_the_frozen_models_own_render():
              "--out-dir", out], cwd=REPO, capture_output=True, text=True)
         assert r.returncode == 0, r.stderr[-2000:]
 
-        sha = oracle_common.sha256_file
+        def sha(path):
+            h = hashlib.sha256()
+            with open(path, "rb") as f:
+                for chunk in iter(lambda: f.read(1 << 20), b""):
+                    h.update(chunk)
+            return h.hexdigest()
 
         got = sha(os.path.join(out, "model.wav"))
         assert got == c["leg_b_render_sha256"], (
