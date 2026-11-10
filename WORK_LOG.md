@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-10
 
+- **PR #611**: fix: make SXT-023 smoke driver portable (PATH iverilog, temp workdir)
+- **Issue #607** (closed): Make tools/smoke_fx_exactness.py portable: iverilog from PATH, temp workdir
 - **PR #609**: refactor: fold 7 more private sha256 file hashers into oracle_common.sha256_file
 - **Issue #608** (closed): Fold 7 remaining private sha256 hashers into oracle_common.sha256_file
 
