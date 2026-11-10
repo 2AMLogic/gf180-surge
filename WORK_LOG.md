@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-10
+
+- **PR #609**: refactor: fold 7 more private sha256 file hashers into oracle_common.sha256_file
+- **Issue #608** (closed): Fold 7 remaining private sha256 hashers into oracle_common.sha256_file
+
 ### 2026-11-08
 
 - **PR #605**: refactor: fold 12 private sha256 hashers into oracle_common.sha256_file
