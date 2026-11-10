@@ -9,10 +9,13 @@ Verilator), and compares with integer equality. Fast-iteration harness; the
 canonical evidence run remains the full-length iverilog run.
 """
 import argparse
+import contextlib
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,13 +39,29 @@ def main():
     ap.add_argument("--settle-blocks", type=int, default=SETTLE_BLOCKS)
     ap.add_argument("--tb", default=os.path.join(REPO, "rtl", "effects", "tb_fx.sv"))
     ap.add_argument("--sim", choices=["iverilog", "verilator"], default="iverilog")
-    ap.add_argument("--workdir", default="/tmp/sxt023_smoke")
+    ap.add_argument("--workdir", default=None,
+                    help="work directory (kept); default: a temporary directory removed on exit")
     ap.add_argument("--out")
     args = ap.parse_args()
 
+    iverilog = None
+    if args.sim == "iverilog":
+        iverilog = shutil.which("iverilog")
+        if iverilog is None:
+            sys.exit("error: iverilog not found on PATH (install it or use --sim verilator)")
+
+    with contextlib.ExitStack() as stack:
+        if args.workdir is None:
+            wd = stack.enter_context(
+                tempfile.TemporaryDirectory(prefix="sxt023_smoke_"))
+        else:
+            wd = args.workdir
+            os.makedirs(wd, exist_ok=True)
+        return _run(args, wd, iverilog)
+
+
+def _run(args, wd, iverilog):
     slug = args.slug
-    wd = args.workdir
-    os.makedirs(wd, exist_ok=True)
     n_total = args.settle_blocks + args.render_blocks
 
     cfg = json.load(open(os.path.join(REPO, "model/effects/fx_inputs", slug + ".json")))
@@ -133,7 +152,7 @@ def main():
                 f"+SINC={os.path.join(REPO, 'rtl/effects/sinc_q29.hex')}"]
     t0 = time.time()
     if args.sim == "iverilog":
-        subprocess.run(["/opt/homebrew/bin/iverilog", "-g2012", "-o", vvp,
+        subprocess.run([iverilog, "-g2012", "-o", vvp,
                         args.tb, os.path.join(REPO, "rtl/effects/fx_line_ext.sv")],
                        check=True)
         subprocess.run(["vvp", vvp] + plusargs,
