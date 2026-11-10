@@ -34,7 +34,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import math
 import os
@@ -224,11 +223,7 @@ class WtIndex:
 
     def sha256(self, path):
         if path not in self._hash_cache:
-            h = hashlib.sha256()
-            with open(path, "rb") as f:
-                for chunk in iter(lambda: f.read(1 << 20), b""):
-                    h.update(chunk)
-            self._hash_cache[path] = h.hexdigest()
+            self._hash_cache[path] = oc.sha256_file(path)
         return self._hash_cache[path]
 
 

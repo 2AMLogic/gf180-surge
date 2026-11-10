@@ -90,14 +90,6 @@ def sha256_buf(a):
     return hashlib.sha256(np.ascontiguousarray(a).tobytes()).hexdigest()
 
 
-def sha256_path(p):
-    h = hashlib.sha256()
-    with open(p, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 # ------------------------------------------------------------- engine side
 def render(surgepy, preset_abs, n_blocks, fx_over, send_level=None, repeats=3):
     """One probe render (3x determinism gate). fx_over: {slot: {pidx: val}}."""
@@ -470,7 +462,7 @@ def main():
             "pinned_commit": json.load(open(os.path.join(REPO, "oracle", "manifest.json")))
             ["engine"]["commit"],
             "surgepy_module": so,
-            "surgepy_module_sha256": [sha256_path(os.path.join(so_dir, f)) for f in so],
+            "surgepy_module_sha256": [oc.sha256_file(os.path.join(so_dir, f)) for f in so],
             "python": platform.python_version(),
             "platform": "%s-%s" % (platform.system().lower(), platform.machine()),
         },

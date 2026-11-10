@@ -81,6 +81,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion-sse"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
 import numpy as np  # noqa: E402
 
@@ -92,6 +93,7 @@ from distortion_sse_model import (  # noqa: E402
     DistortionSSEModel, DistortionSSEParams, table_branch_shaper,
     model_revision,
 )
+from oracle_common import sha256_file  # noqa: E402
 from render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
 from run_fx_model import read_wav_stereo_f32  # noqa: E402
 
@@ -256,14 +258,10 @@ def run(slug, seq, fixtures_dir, inputs_dir, out_dir, leg="original",
     dry_path = os.path.join(REPO, dry_decl["wav"])
     if not os.path.exists(dry_path):
         raise ModelRefused(f"no dry fixture bus at {dry_path}")
-    import hashlib
-    h = hashlib.sha256()
-    with open(dry_path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    if h.hexdigest() != dry_decl.get("sha256"):
+    dry_hex = sha256_file(dry_path)
+    if dry_hex != dry_decl.get("sha256"):
         raise ModelRefused(
-            f"dry bus {dry_path} hashes to {h.hexdigest()[:16]}… but the "
+            f"dry bus {dry_path} hashes to {dry_hex[:16]}… but the "
             f"sidecar declares {str(dry_decl.get('sha256'))[:16]}…: STALE")
     dry, sr = read_wav_stereo_f32(dry_path)
     if sr != 48000:

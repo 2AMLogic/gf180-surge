@@ -50,7 +50,6 @@ Usage:
 
 import argparse
 import csv
-import hashlib
 import json
 import os
 import sys
@@ -58,7 +57,9 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
+from oracle_common import sha256_file  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
@@ -79,14 +80,6 @@ SOURCES = {1: "ms_velocity", 30: "ms_releasevelocity"}
 # frozen SXT-036 destination class (scene A), see model/voice/README.md
 FROZEN_CLASS = {308: "A Filter 1 Cutoff", 309: "A Filter 1 Resonance",
                 310: "A Filter 1 FEG Mod Amount", 298: "A VCA Gain"}
-
-
-def sha256(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def census_blobs(paths):
@@ -150,7 +143,7 @@ def self_test_refusals(log):
     saved = GRAPHS_SHA256
     try:
         GRAPHS_SHA256 = "0" * 64
-        got = sha256(GRAPHS)
+        got = sha256_file(GRAPHS)
         try:
             if got != GRAPHS_SHA256:
                 raise Refuse("sha256 mismatch")
@@ -199,7 +192,7 @@ def main():
         lines.append(s)
         print(s)
 
-    got = sha256(GRAPHS)
+    got = sha256_file(GRAPHS)
     if got != GRAPHS_SHA256:
         raise Refuse(f"graphs.jsonl sha256 {got} != pinned {GRAPHS_SHA256}")
 

@@ -40,8 +40,10 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 
 import voice_model as vm  # noqa: E402
+from oracle_common import sha256_file  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
 BLOCK_OS = 64                 # BLOCK_SIZE_OS
@@ -149,15 +151,6 @@ def build_plan(case):
     return plan
 
 
-def _sha256(path):
-    import hashlib
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def load_stimulus(case):
     """Input signal as Q10.21 ints; every word's float32 image is exact."""
     spec = case["stimulus"]
@@ -168,7 +161,7 @@ def load_stimulus(case):
         path = os.path.join(REPO, spec["bundle"], "units.bin")
         if not os.path.exists(path):
             raise Refuse(f"stimulus bundle missing: {path}")
-        got = _sha256(path)
+        got = sha256_file(path)
         if got != spec["sha256"]:
             raise Refuse(f"stimulus {path}: sha256 {got} != declared {spec['sha256']}")
         size = struct.calcsize("<IIIff")

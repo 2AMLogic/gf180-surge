@@ -36,7 +36,6 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import sys
@@ -47,7 +46,9 @@ sys.path.insert(0, REPO)
 
 from refusal import Refuse  # noqa: E402
 sys.path.insert(0, os.path.join(REPO, "tools"))
+sys.path.insert(0, os.path.join(REPO, "oracle"))
 from _census_blob_common import census_blob  # noqa: E402
+from oracle_common import sha256_file  # noqa: E402
 
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results",
                           "per-preset.csv")
@@ -71,14 +72,6 @@ DEST_NAMES = {
 }
 KT_DEST_LIVE = (308, 309, 310)        # modeled (filter unit 1 is the live unit)
 KT_DEST_INERT = (314, 315, 318)       # accepted, inert (unit 2 Off in class)
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def graphs_row(rel):
