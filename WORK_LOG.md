@@ -2,6 +2,10 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-12
+
+- **PR #617**: Bump Repo Skills 0.25.10 -> 0.26.1
+
 ### 2026-11-10
 
 - **PR #611**: fix: make SXT-023 smoke driver portable (PATH iverilog, temp workdir)
