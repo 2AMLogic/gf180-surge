@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 226/226 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 222/222 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 226,
-    "passed_count": 226,
+    "check_count": 222,
+    "passed_count": 222,
     "checks": [
       {
         "check": "present",
@@ -1184,37 +1184,9 @@
       {
         "check": "present",
         "role": "testbench",
-        "path": "tests/test_sxt_classic_rtl_harness_reporting.py",
+        "path": "tests/test_sxt_voice_osc_rtl_harness_reporting.py",
         "passed": true,
-        "content_hash": "sha256:faccc29bbae6c11541284ab6b88f898b12d06c10507882ea3076480b17de8f1d"
-      },
-      {
-        "check": "present",
-        "role": "testbench",
-        "path": "tests/test_sxt_kt_rtl_harness_reporting.py",
-        "passed": true,
-        "content_hash": "sha256:d740103385485d0b3112ac6f8f097d4bd80b542d2926769887992cc87c37036b"
-      },
-      {
-        "check": "present",
-        "role": "testbench",
-        "path": "tests/test_sxt_lfo_rtl_harness_reporting.py",
-        "passed": true,
-        "content_hash": "sha256:94a1b9a9f49fca1ea8614542fd8b5bce885634e324152d1770901f67d0d3004d"
-      },
-      {
-        "check": "present",
-        "role": "testbench",
-        "path": "tests/test_sxt_mw_rtl_harness_reporting.py",
-        "passed": true,
-        "content_hash": "sha256:3f99c7bbfd94d17f02312fef7329b1955479d779a955a263921eff57a6a09dcc"
-      },
-      {
-        "check": "present",
-        "role": "testbench",
-        "path": "tests/test_sxt_sine_rtl_harness_reporting.py",
-        "passed": true,
-        "content_hash": "sha256:b26a8735a68f44397e20457a636911a45c9a9bc9b4800a6fad14ee4ada3d004d"
+        "content_hash": "sha256:74c7c76eb4f1ae59076cf8e9ea67534d13eae89e010fdf6d0ee5e1102624bbb7"
       },
       {
         "check": "present",
@@ -1622,7 +1594,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:a987a721747cd588629a2dc7fb2c27621fa3d38bf9089311f27b4a9eca1f357b"
+      "content_hash": "sha256:375cbd864b69056e90beece0531a6773879adb49024f158a16ce9dffdf1ed201"
     }
   }
 }
