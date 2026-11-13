@@ -30,20 +30,23 @@ tests/test_rtl_mutant_table.py until that fold happens; the same applies to
 tools/make_control_mutant.py and tools/make_sxt030_mutants.py, which keep
 their own tables.
 
-KNOWN DRIFT (bounded finding, #620): rtl/voice/voice_broken_mutant.sv and
-rtl/voice/voice_uni_mutant.sv carry, on top of their targeted mutation, three
-hunks that revert the SXT-036 constructor gain-anchor logic their base
-rtl/voice/tb_voice.sv now has. Those hunks are declared in `"stale"` so the
-drift is pinned and reported rather than hidden -- they are NOT the mutation
-each control targets, and these two files are not minimal mutants. They are
-deliberately not regenerated here: new bytes would require re-deriving the
-T1 item 9 attestation (signoff/t1-item9-attestation.json records each
-mutant's content hash) and re-running both controls against the current base.
-Nothing here claims either control currently fails for the right reason or
-the wrong one; no comparator was run to produce this table.
+No entry declares drift (#622). The `"stale"` mechanism below is retained --
+`--check` still reports any declared-drift entry by name, and the count in
+its summary line is the gate -- but rtl/voice/voice_broken_mutant.sv and
+rtl/voice/voice_uni_mutant.sv, the two entries that carried it, were
+regenerated in #622 so each is again base + its one targeted replacement.
+That regeneration re-derived the T1 item 9 attestation for the new bytes and
+re-ran both controls against the current base
+(reports/voice-mutant-regeneration/). A declared-drift entry is a bounded
+finding, never a resting state: it pins drift so it is reported rather than
+hidden, and the entry is expected to be regenerated away.
+
+Nothing here claims any control fails for the right reason or the wrong one;
+no comparator is run by this script. Those verdicts live in the evidence
+records named in each entry's `exercised_by` tool.
 
 Usage:
-    python3 tools/make_rtl_mutants.py            # regenerate (no-op today)
+    python3 tools/make_rtl_mutants.py            # regenerate
     python3 tools/make_rtl_mutants.py --check     # drift gate, exits non-zero
     python3 tools/make_rtl_mutants.py --list      # print the table
 
@@ -54,27 +57,6 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# The three stale hunks shared by the two drifted rtl/voice/tb_voice.sv
-# copies: each reverts SXT-036 constructor gain-anchor logic present in the
-# base. Declared, not fixed -- see KNOWN DRIFT above.
-SXT036_STALE = [
-    ('  //  0 flags(b0 active,b1 ckpt,b2 created,b3 released,\n'
-     '  //          b4 ctor gain anchor streamed in word 37 -- SXT-036)\n'
-     '  //  1 key  2 gate\n',
-     '  //  0 flags(b0 active,b1 ckpt,b2 created,b3 released)  1 key  2 gate\n'),
-    ('  //  32 fvel 33 kt_word  34..36 sine omega1..3 (Q3.28)\n'
-     '  //  37 ctor gain anchor (iff flags b4; SXT-036)  38..39 reserved\n',
-     '  //  32 fvel 33 kt_word  34..36 sine omega1..3 (Q3.28)  37..39 reserved\n'),
-    ('    // SXT-036: a per-voice modulation term on VCA Gain at construction\n'
-     '    // (velocity -> VCA Gain) makes the SetQFB(0,0) gain anchor per-voice;\n'
-     '    // the model streams it (declared control-plane word, slot word 37) and\n'
-     '    // flags it with flags bit 4. Legacy stimuli never set bit 4 and keep the\n'
-     '    // static cfg[19] anchor below (landed fixtures unchanged).\n'
-     "    if (cw[0][4]) prev_gain[s] = 32'(cw[37]);\n"
-     "    else          prev_gain[s] = qmul(32'(cfg[19]), aeg_out_r[s]);\n",
-     "    prev_gain[s] = qmul(32'(cfg[19]), aeg_out_r[s]);\n"),
-]
 
 CONDITIONER_BANNER = (
     '// GENERATED negative-control mutant of tb_conditioner.sv by\n'
@@ -266,18 +248,12 @@ MUTANTS = {
         "what": "qmul() round-half-up bias 2^20 -> 2^19",
         "exercised_by": "tools/compare_sine_rtl_model.py",
     },
-    # ---- the two KNOWN-DRIFT entries (see the module docstring) ----------
     "rtl/voice/voice_broken_mutant.sv": {
         "base": "rtl/voice/tb_voice.sv",
         "mutation": [
             ("    r = (p + (64'sd1 << 20)) >>> 21;\n",
              "    r = (p + (64'sd1 << 19)) >>> 21;\n"),
         ],
-        "stale": SXT036_STALE,
-        "drift": "three hunks revert the base's SXT-036 constructor "
-                 "gain-anchor logic; regenerating needs new bytes, a "
-                 "re-derived T1 item 9 attestation and a re-run of "
-                 "this control",
         "what": "qmul() round-half-up bias 2^20 -> 2^19",
         "exercised_by": "tools/compare_rtl_model.py --tb",
     },
@@ -289,11 +265,6 @@ MUTANTS = {
              '    // a_cov, accumulating into the SHARED impulse buffer\n'
              '    for (u = 0; u < 1; u++) begin\n'),
         ],
-        "stale": SXT036_STALE,
-        "drift": "three hunks revert the base's SXT-036 constructor "
-                 "gain-anchor logic; regenerating needs new bytes, a "
-                 "re-derived T1 item 9 attestation and a re-run of "
-                 "this control",
         "what": "unison fill loop runs one voice instead of uni_n",
         "exercised_by": "tools/compare_rtl_model.py --tb",
     },

@@ -1,0 +1,26 @@
+{
+  "tb": "voice_uni_mutant.sv",
+  "verdict": "FAIL",
+  "comparison": "FAIL",
+  "checked": {
+    "checkpoints": 1,
+    "fields": 41,
+    "oscout": 64,
+    "mono": 32
+  },
+  "mismatches": 105,
+  "first_failures": [
+    "block 0 sample 0: mono model=3 rtl=2",
+    "block 0 sample 1: mono model=-128 rtl=-65",
+    "block 0 sample 2: mono model=-1229 rtl=-613",
+    "block 0 sample 3: mono model=20763 rtl=10402",
+    "block 0 sample 4: mono model=205026 rtl=104238",
+    "block 0 sample 5: mono model=610450 rtl=327349",
+    "block 0 sample 6: mono model=777741 rtl=476150",
+    "block 0 sample 7: mono model=625335 rtl=441048",
+    "block 0 sample 8: mono model=710407 rtl=451715",
+    "block 0 sample 9: mono model=704797 rtl=469907"
+  ],
+  "sim_fails": [],
+  "sim_stdout_tail": ""
+}

@@ -409,7 +409,7 @@
         "role": "testbench",
         "path": "rtl/voice/voice_broken_mutant.sv",
         "passed": true,
-        "content_hash": "sha256:2c133c812dac9b259ef3f32d81314eaadcb5f86e486c7d5843c9d15109fdee09"
+        "content_hash": "sha256:bb82679e396e990cada07319b7f196d5750661d631541c45f610ad56b8879251"
       },
       {
         "check": "present",
@@ -423,7 +423,7 @@
         "role": "testbench",
         "path": "rtl/voice/voice_uni_mutant.sv",
         "passed": true,
-        "content_hash": "sha256:7b6b5a15ff609d2f4d066c1b2080fbff0fb8e015cdf73877d8af2a40d9e58ac0"
+        "content_hash": "sha256:6cca0988b173cc8d858368c3d992dffdb0263d90bed464928da93e8b9d4fbbf6"
       },
       {
         "check": "present",

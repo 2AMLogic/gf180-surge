@@ -1,0 +1,43 @@
+Issue #622 regeneration transcript -- the two drifted rtl/voice/tb_voice.sv
+negative controls, regenerated to base + one targeted replacement.
+
+Base commit: d5ac9f6 (origin/main). Host: loom-worker-3 (linux, x86_64).
+Icarus Verilog 13.0 (stable) (v13_0). CPython 3.12 venv with the committed CI
+pins (requirements-ci.txt; pytest 9.1.1) and the signoff pin
+(signoff/requirements.txt: klayout-tools 0.8.0). No tool in this chain
+imports NumPy, so no NumPy version is stamped here.
+
+==========================================================================
+1. The drift gate after regeneration
+==========================================================================
+
+$ python3 tools/make_rtl_mutants.py --check
+16/16 committed mutants reproduce from their base (0 declared known-drift)
+exit code: 0
+
+==========================================================================
+2. Each regenerated control is one line from its base
+==========================================================================
+
+$ diff rtl/voice/tb_voice.sv rtl/voice/voice_broken_mutant.sv
+96c96
+<     r = (p + (64'sd1 << 20)) >>> 21;
+---
+>     r = (p + (64'sd1 << 19)) >>> 21;
+
+$ diff rtl/voice/tb_voice.sv rtl/voice/voice_uni_mutant.sv
+602c602
+<     for (u = 0; u < uni_n; u++) begin
+---
+>     for (u = 0; u < 1; u++) begin
+
+Content hashes (sha256 over the exact bytes; the two that move in
+signoff/t1-item9-attestation.json):
+=== sha256 of the regenerated mutants and their base ===
+4895bb87e294d1c3aeaef62b21104b1ebfa2fb20e2ae6c6c2f95f37a24b9d6d6  rtl/voice/tb_voice.sv
+bb82679e396e990cada07319b7f196d5750661d631541c45f610ad56b8879251  rtl/voice/voice_broken_mutant.sv
+6cca0988b173cc8d858368c3d992dffdb0263d90bed464928da93e8b9d4fbbf6  rtl/voice/voice_uni_mutant.sv
+
+=== pre-change mutant bytes (origin/main d5ac9f6) ===
+2c133c812dac9b259ef3f32d81314eaadcb5f86e486c7d5843c9d15109fdee09  -
+7b6b5a15ff609d2f4d066c1b2080fbff0fb8e015cdf73877d8af2a40d9e58ac0  -
