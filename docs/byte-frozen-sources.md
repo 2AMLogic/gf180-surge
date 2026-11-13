@@ -52,7 +52,7 @@ compares the SXT-028a records against the live `frozen_revision()`, and
 
 ## Live pins
 
-60 pin sites covering 63 files. Digests, the full `recorded_in` record lists,
+61 pin sites covering 64 files. Digests, the full `recorded_in` record lists,
 and the per-leaf freshness test are in the JSON registry; this table is the
 human-readable index.
 
@@ -76,6 +76,7 @@ human-readable index.
 | `signoff/t1-item9-attestation.json` check for `model/integration/negative_controls.py` | `model/integration/negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/aw49_negative_controls.py` | `tools/aw49_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/aw4_negative_controls.py` | `tools/aw4_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/check_provenance_controls.py` | `tools/check_provenance_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/chorus_negative_controls.py` | `tools/chorus_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_aw4.py` | `tools/compare_rtl_model_aw4.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/compare_rtl_model_aw49.py` | `tools/compare_rtl_model_aw49.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
@@ -119,7 +120,7 @@ human-readable index.
 | `signoff/t1-item9-attestation.json` check for `tools/slfo_negative_controls.py` | `tools/slfo_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/vel_negative_controls.py` | `tools/vel_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 
-The 45 `T1 item 9` rows are testbench and negative-control scripts whose bytes
+The 46 `T1 item 9` rows are testbench and negative-control scripts whose bytes
 `signoff/t1-item9-attestation.json` (klt `--attest 9`, #538) records as `content_hash`
 values and `signoff.yml` re-checks live. They are live pins like any other row: any
 edit, including lint or whitespace, makes that attestation and the item 9 verdict
