@@ -90,8 +90,6 @@
    "32": 2
   },
   "add_total": 11,
-  "ext_read_words": 0,
-  "ext_write_words": 0,
   "lut_detail": [
    {
     "entries": 1024,

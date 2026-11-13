@@ -117,8 +117,6 @@
     "8": 32
    },
    "add_total": 87,
-   "ext_read_words": 0,
-   "ext_write_words": 0,
    "lut_detail": [],
    "lut_lookups": 0,
    "mul_by_width": {
@@ -136,8 +134,6 @@
     "32": 26
    },
    "add_total": 66,
-   "ext_read_words": 0,
-   "ext_write_words": 0,
    "lut_detail": [],
    "lut_lookups": 0,
    "mul_by_width": {
