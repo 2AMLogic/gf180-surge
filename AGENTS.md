@@ -73,7 +73,17 @@ host/controller/DAC/storage.
   be asserted live. Check it before acting on a lint finding in `model/`,
   `tools/` or `fixtures/`: the findings in a live-pinned file are kept on
   purpose, and removing one is only valid in the same change that re-derives
-  every record the registry lists.
+  every record the registry lists. The reach is wider than those three
+  directories and wider than the registry's own table: the two `klt signoff
+  --attest` envelopes content-hash **every** file in
+  `signoff/t1-item9-inventory.json` (all of `tests/`, the `rtl/` benches and
+  mutant controls, `tools/`, `model/integration/negative_controls.py`) and in
+  `signoff/hygiene-inventory.json` (`README.md`, `LICENSE`, the three
+  workflows), and `.github/workflows/signoff.yml` re-checks both on every PR,
+  exiting 3 on drift. Those inventory-only files are ordinary editable sources
+  -- not "do not edit" -- but editing one obliges you to re-attest the affected
+  envelope in the same change, and `tests/test_byte_frozen_sources.py` will not
+  warn you: `klt signoff --check` is their only freshness check.
 - Report verification statuses as PASS, FAIL, NOT_RUN, BLOCKED, NO_VERDICT,
   or STALE, and report coverage separately from agreement. A test that did
   not run must never be reported as a pass.
