@@ -1,0 +1,746 @@
+# Excerpt of the Yosys log klt wrote beside the executed script
+# (<repo>/signoff/t1-item1/<group>/out/synth_<top>.run.log, removed with
+# the scratch directory). Produced by signoff/t1-item1/regen.py's
+# distil_log(): Yosys pass headers plus every line that quantifies the
+# design or names a structural obstacle; absolute paths substituted
+# (<repo>, <home>) so the artifact is commit-safe and machine-neutral.
+# Progress evidence for a non-zero exit -- NOT a verdict.
+
+[stdout]
+[... 10 line(s) omitted ...]
+1. Executing Liberty frontend: <home>/.ciel/ciel/gf180mcu/versions/f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu9t5v0/lib/gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80.lib
+[... 2 line(s) omitted ...]
+2. Executing Verilog-2005 frontend: signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v
+[... 4 line(s) omitted ...]
+3. Executing HIERARCHY pass (managing design hierarchy).
+[... 1 line(s) omitted ...]
+3.1. Analyzing design hierarchy..
+[... 2 line(s) omitted ...]
+3.2. Analyzing design hierarchy..
+[... 3 line(s) omitted ...]
+4. Executing SYNTH pass.
+[... 1 line(s) omitted ...]
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+[... 1 line(s) omitted ...]
+4.1.1. Analyzing design hierarchy..
+[... 2 line(s) omitted ...]
+4.1.2. Analyzing design hierarchy..
+[... 3 line(s) omitted ...]
+4.2. Executing PROC pass (convert processes to netlists).
+[... 1 line(s) omitted ...]
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+[... 2 line(s) omitted ...]
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+[... 6 line(s) omitted ...]
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+[... 3 line(s) omitted ...]
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+[... 30 line(s) omitted ...]
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+[... 1 line(s) omitted ...]
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+[... 1 line(s) omitted ...]
+<suppressed ~115 debug messages>
+[... 1 line(s) omitted ...]
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+[... 1008 line(s) omitted ...]
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+[... 83 line(s) omitted ...]
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+[... 585 line(s) omitted ...]
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+[... 1 line(s) omitted ...]
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+[... 14 line(s) omitted ...]
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~88 debug messages>
+[... 1 line(s) omitted ...]
+4.3. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~70 debug messages>
+[... 1 line(s) omitted ...]
+4.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 2564 unused cells and 5462 unused wires.
+<suppressed ~2676 debug messages>
+[... 1 line(s) omitted ...]
+4.5. Executing CHECK pass (checking for obvious problems).
+[... 3 line(s) omitted ...]
+4.6. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.6.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1347 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 989 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 976 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 970 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~1131 debug messages>
+Removed a total of 377 cells.
+[... 1 line(s) omitted ...]
+4.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 284 line(s) omitted ...]
+<suppressed ~765 debug messages>
+[... 1 line(s) omitted ...]
+4.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 108 line(s) omitted ...]
+4.6.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 699 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 670 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 660 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 655 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 654 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 653 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 652 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 651 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 650 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 649 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 647 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 646 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 645 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 644 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~165 debug messages>
+Removed a total of 55 cells.
+[... 1 line(s) omitted ...]
+4.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 719 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.6.8. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~404 debug messages>
+[... 1 line(s) omitted ...]
+4.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 5 line(s) omitted ...]
+4.6.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 646 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.6.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.16. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.6.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~396 debug messages>
+[... 1 line(s) omitted ...]
+4.6.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.6.19. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 646 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.6.20. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.6.22. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.23. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.7. Executing FSM pass (extract and optimize FSM).
+[... 1 line(s) omitted ...]
+4.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+[... 3 line(s) omitted ...]
+4.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+[... 1 line(s) omitted ...]
+4.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+[... 1 line(s) omitted ...]
+4.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+[... 1 line(s) omitted ...]
+4.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+[... 1 line(s) omitted ...]
+4.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+[... 1 line(s) omitted ...]
+4.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+[... 1 line(s) omitted ...]
+4.8. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 646 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~396 debug messages>
+[... 1 line(s) omitted ...]
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 646 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 61 line(s) omitted ...]
+4.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 103 unused cells and 103 unused wires.
+<suppressed ~104 debug messages>
+[... 1 line(s) omitted ...]
+4.8.8. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~5 debug messages>
+[... 1 line(s) omitted ...]
+4.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~258 debug messages>
+[... 1 line(s) omitted ...]
+4.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 622 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 593 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~87 debug messages>
+Removed a total of 29 cells.
+[... 1 line(s) omitted ...]
+4.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 29 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.8.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~258 debug messages>
+[... 1 line(s) omitted ...]
+4.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.19. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 593 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.8.22. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.23. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.9. Executing WREDUCE pass (reducing word size of cells).
+[... 470 line(s) omitted ...]
+4.10. Executing PEEPOPT pass (run peephole optimizers).
+[... 1 line(s) omitted ...]
+4.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 22 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.12. Executing ALUMACC pass (create $alu and $macc cells).
+[... 438 line(s) omitted ...]
+4.13. Executing SHARE pass (SAT-based resource sharing).
+[... 140 line(s) omitted ...]
+4.14. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.14.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~43 debug messages>
+[... 1 line(s) omitted ...]
+4.14.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 824 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~261 debug messages>
+[... 1 line(s) omitted ...]
+4.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 10 line(s) omitted ...]
+4.14.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 824 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 75 unused cells and 171 unused wires.
+<suppressed ~78 debug messages>
+[... 1 line(s) omitted ...]
+4.14.8. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~261 debug messages>
+[... 1 line(s) omitted ...]
+4.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 6 line(s) omitted ...]
+4.14.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 748 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 745 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~13 debug messages>
+Removed a total of 3 cells.
+[... 1 line(s) omitted ...]
+4.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 1 unused cells and 8 unused wires.
+<suppressed ~2 debug messages>
+[... 1 line(s) omitted ...]
+4.14.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.16. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.14.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~261 debug messages>
+[... 1 line(s) omitted ...]
+4.14.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.14.19. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 744 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.20. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.14.22. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.23. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.15. Executing MEMORY pass.
+[... 1 line(s) omitted ...]
+4.15.1. Executing OPT_MEM pass (optimize memories).
+[... 120 line(s) omitted ...]
+4.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+[... 2 line(s) omitted ...]
+4.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+[... 19 line(s) omitted ...]
+4.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+[... 1 line(s) omitted ...]
+4.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+[... 17 line(s) omitted ...]
+4.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+[... 23 line(s) omitted ...]
+4.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+[... 2 line(s) omitted ...]
+4.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 6 unused cells and 6 unused wires.
+<suppressed ~7 debug messages>
+[... 1 line(s) omitted ...]
+4.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+[... 1 line(s) omitted ...]
+4.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.17. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.17.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~184 debug messages>
+[... 1 line(s) omitted ...]
+4.17.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1616 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1602 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1601 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~45 debug messages>
+Removed a total of 15 cells.
+[... 1 line(s) omitted ...]
+4.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 964 unused cells and 1125 unused wires.
+<suppressed ~965 debug messages>
+[... 1 line(s) omitted ...]
+4.17.5. Finished fast OPT passes.
+[... 1 line(s) omitted ...]
+4.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+[... 33 line(s) omitted ...]
+4.19. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.19.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+<suppressed ~74 debug messages>
+[... 1 line(s) omitted ...]
+4.19.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 795 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 793 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+[... 1 line(s) omitted ...]
+4.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 7 line(s) omitted ...]
+<suppressed ~364 debug messages>
+[... 1 line(s) omitted ...]
+4.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 191 line(s) omitted ...]
+4.19.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 793 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 769 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 760 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 757 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~108 debug messages>
+Removed a total of 36 cells.
+[... 1 line(s) omitted ...]
+4.19.6. Executing OPT_SHARE pass.
+[... 12 line(s) omitted ...]
+4.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 210 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.19.9. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+<suppressed ~10 debug messages>
+[... 1 line(s) omitted ...]
+4.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~335 debug messages>
+[... 1 line(s) omitted ...]
+4.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 29 line(s) omitted ...]
+4.19.13. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 751 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 750 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 749 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+[... 1 line(s) omitted ...]
+4.19.14. Executing OPT_SHARE pass.
+[... 4 line(s) omitted ...]
+4.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+[... 22 line(s) omitted ...]
+4.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 8 unused cells and 19 unused wires.
+<suppressed ~9 debug messages>
+[... 1 line(s) omitted ...]
+4.19.17. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+<suppressed ~26 debug messages>
+[... 1 line(s) omitted ...]
+4.19.18. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.19.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~199 debug messages>
+[... 1 line(s) omitted ...]
+4.19.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 8 line(s) omitted ...]
+4.19.21. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 740 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.22. Executing OPT_SHARE pass.
+[... 1 line(s) omitted ...]
+4.19.23. Executing OPT_DFF pass (perform DFF optimizations).
+[... 13 line(s) omitted ...]
+4.19.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 12 unused cells and 25 unused wires.
+<suppressed ~13 debug messages>
+[... 1 line(s) omitted ...]
+4.19.25. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+[... 1 line(s) omitted ...]
+4.19.26. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.19.27. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~175 debug messages>
+[... 1 line(s) omitted ...]
+4.19.28. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.19.29. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 728 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.30. Executing OPT_SHARE pass.
+[... 1 line(s) omitted ...]
+4.19.31. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.32. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.19.33. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+[... 1 line(s) omitted ...]
+4.19.34. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.20. Executing TECHMAP pass (map to technology primitives).
+[... 1 line(s) omitted ...]
+4.20.1. Executing Verilog-2005 frontend: <home>/.cache/yosys-0.67/bin/../share/yosys/techmap.v
+[... 28 line(s) omitted ...]
+4.20.2. Continuing TECHMAP pass.
+[... 239 line(s) omitted ...]
+<suppressed ~32308 debug messages>
+[... 1 line(s) omitted ...]
+4.21. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.21.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
+<suppressed ~319688 debug messages>
+[... 1 line(s) omitted ...]
+4.21.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 394184 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 380372 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 371585 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 365153 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 361854 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 357982 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 354347 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 344333 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 333642 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 322965 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 312858 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 301692 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288550 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 275803 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 275245 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 274691 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 274414 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 274134 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 273854 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 273714 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 273478 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 273242 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 273124 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 272892 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 272660 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 272544 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 272202 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 272090 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 272008 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 271970 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 271940 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 271928 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 271916 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 271912 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 271908 cells of `\galactic_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~366828 debug messages>
+Removed a total of 122276 cells.
+[... 1 line(s) omitted ...]
+4.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 153496 unused cells and 20968 unused wires.
+<suppressed ~153497 debug messages>
+[... 1 line(s) omitted ...]
+4.21.5. Finished fast OPT passes.
+[... 1 line(s) omitted ...]
+4.22. Executing ABC pass (technology mapping using ABC).
+[... 1 line(s) omitted ...]
+4.22.1. Extracting gate netlist of module `\galactic_core' to `<abc-temp-dir>/input.blif'..
+Replacing 4192 occurrences of constant undef bits with constant zero bits
+Breaking loop using new signal $abcloop$630595: \wcount [21] -> $auto$maccmap.cc:114:fulladd$20069.X [21]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630596: \wcount [6] -> $auto$maccmap.cc:114:fulladd$20069.t2 [6]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630597: \wcount [13] -> $auto$maccmap.cc:114:fulladd$20069.t2 [13]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630598: \wcount [1] -> $auto$maccmap.cc:114:fulladd$20069.Y [1]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630599: \wcount [11] -> $auto$maccmap.cc:114:fulladd$20069.t1 [11]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630600: \wcount [20] -> $auto$maccmap.cc:114:fulladd$20069.Y [20]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630601: \wcount [18] -> $auto$maccmap.cc:114:fulladd$20069.X [18]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630602: \wcount [3] -> $auto$maccmap.cc:114:fulladd$20069.t1 [3]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630603: \wcount [7] -> $auto$maccmap.cc:114:fulladd$20069.t1 [7]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630604: \wcount [2] -> $auto$maccmap.cc:114:fulladd$20069.t2 [2]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630605: \wcount [23] -> $auto$maccmap.cc:114:fulladd$20069.Y [23]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630606: \wcount [4] -> $auto$maccmap.cc:114:fulladd$20069.t2 [4]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630607: \wcount [28] -> $auto$maccmap.cc:114:fulladd$20069.X [28]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630608: \wcount [30] -> $auto$maccmap.cc:114:fulladd$20069.X [30]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630609: \wcount [0] -> $auto$maccmap.cc:114:fulladd$20069.X [0]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630610: \wcount [29] -> $auto$maccmap.cc:114:fulladd$20069.Y [29]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630611: \wcount [25] -> $auto$maccmap.cc:114:fulladd$20069.Y [25]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630612: \wcount [22] -> $auto$maccmap.cc:114:fulladd$20069.X [22]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630613: \wcount [27] -> $auto$maccmap.cc:114:fulladd$20069.Y [27]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630614: \wcount [10] -> $auto$maccmap.cc:114:fulladd$20069.t2 [10]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630615: \wcount [24] -> $auto$maccmap.cc:114:fulladd$20069.X [24]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630616: \wcount [15] -> $auto$maccmap.cc:114:fulladd$20069.t2 [15]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630617: \wcount [26] -> $auto$maccmap.cc:114:fulladd$20069.X [26]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630618: \wcount [5] -> $auto$maccmap.cc:114:fulladd$20069.X [5]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630619: \wcount [19] -> $auto$maccmap.cc:114:fulladd$20069.X [19]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630620: \wcount [8] -> $auto$maccmap.cc:114:fulladd$20069.t2 [8]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630621: \wcount [12] -> $auto$maccmap.cc:114:fulladd$20069.t2 [12]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630622: \wcount [9] -> $auto$maccmap.cc:114:fulladd$20069.t2 [9]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630623: \wcount [17] -> $auto$maccmap.cc:114:fulladd$20069.X [17]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630624: \wcount [16] -> $auto$maccmap.cc:114:fulladd$20069.t2 [16]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630625: \wcount [14] -> $auto$maccmap.cc:114:fulladd$20069.t2 [14]
+[... 1 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630626: \wcount [31] -> $auto$maccmap.cc:114:fulladd$20069.Y [31]
+Breaking loop using new signal $abcloop$630627: $auto$rtlil.cc:3399:Mux$12737 [2] -> $memory\counts$rdmux[0][0][0]$a$15017 [31]
+[... 63 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630628: $auto$rtlil.cc:3312:Or$12424 -> $0$memwr$\adv_idx$signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v:688$192_DATA[31:0]$1259 [31]
+[... 32 line(s) omitted ...]
+Breaking loop using new signal $abcloop$630629: $auto$rtlil.cc:3312:Or$12446 -> $0$memwr$\adv_idx$signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v:758$196_DATA[31:0]$1271 [31]
+[... 20 line(s) omitted ...]
+[stderr]

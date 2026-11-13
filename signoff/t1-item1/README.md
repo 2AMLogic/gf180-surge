@@ -32,7 +32,7 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
 | rf_ains34_core | sv2v | PASS | 7467 instances; `out_l`/`out_r` are outputs (#580) |
 | rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | klt 300 s Yosys timeout once the datapath is observable (#580); see below |
-| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys exceeded klt's fixed 300 s limit (no klt option to raise it) and was killed (not a proof of non-synthesizability); see `galactic_core/RECORD.md` (#579) |
+| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability. Restructure filed as #641; see `galactic_core/RECORD.md` (#579) |
 
 **Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
 bins12,global2,global34,send34}_core`) previously had `block_done` as their only
@@ -46,16 +46,30 @@ synthesizes (7467 instances, area 248870.8 um2 as reported by klt — synthesis
 only) and the other five exceed klt's fixed 300 s Yosys limit like
 `galactic_core` below. Their old sequencer-only reports/netlists were removed
 (they must not be read as datapath evidence; see git history); `failure.txt`
-records the timeout as NO_VERDICT, not a pass. A larger budget is a klt change
-(#579). `tests/test_t1_item1_synthesis.py` has a negative control that fails on a
+records the timeout as NO_VERDICT, not a pass. A larger budget is now a
+request field (`yosys_timeout_s`, klayout-tools#5412), but **no tagged klt
+release carries it** and these five groups have not been re-run with it — only
+`galactic_core` was (#579), and it timed out at 6x the budget anyway.
+`tests/test_t1_item1_synthesis.py` has a negative control that fails on a
 netlist whose only output is `block_done`.
 
-**galactic_core cause (diagnosed, #572).** sv2v converts it (838 lines). Yosys
-`synth` expands the 32-sample block into ~272k generic cells; ~24 s in, the
-generic `abc` pass starts and was still running after >14 min of CPU (killed by
-hand). klt's 300 s limit (`DEFAULT_YOSYS_TIMEOUT_S`) is an internal klt default,
-not a request field, so a larger budget is a klt/tool change, not a repo
-change (follow-up #579). `failure.txt` stays a NO_VERDICT (timeout), never a pass.
+**galactic_core cause (diagnosed #572, re-measured #579).** sv2v converts it
+(838 lines). Yosys `synth` expands the 32-sample block into ~272k generic cells
+and the generic `abc` pass does not finish. The 300 s limit was an internal klt
+default; it is now the request field `yosys_timeout_s` (klayout-tools#5412).
+
+#579 raised it to **1800 s** under a throwaway `uvx` klt pinned to
+`d9bc36811ddd` (unreleased; the latest klt tag `v0.9.1` does not carry the
+field, and `signoff/requirements.txt` still pins `klayout-tools==0.8.0`). It
+**still timed out** — so the verdict stays NO_VERDICT, and the obstacle is now
+known to be structural rather than a tight budget: the run died inside `synth`'s
+generic ABC pass at `4.22.1 Extracting gate netlist ... to input.blif`, with
+Yosys reporting `Couldn't topologically sort cells` 20 times and ABC still
+breaking combinational loops when the budget expired
+(`galactic_core/timeout-progress.txt`). Raising the budget again is not the next
+step (klt caps it at 3600 s, only 2x what failed); the sequential-sample-loop
+restructure is, filed as **#641**. `failure.txt` stays a NO_VERDICT (timeout),
+never a pass.
 
 Pins: `pdk-pin.json`. Regenerate: `python3 signoff/t1-item1/regen.py [group...]`.
 `inventory.partial.json` + `item1.partial.envelope.json` attest 4 of 11 groups:
