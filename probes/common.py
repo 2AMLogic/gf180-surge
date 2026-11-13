@@ -136,10 +136,7 @@ class OpCounter:
         self.lut_calls = []    # (table_name, entries) per lookup
         self.sram_read = 0
         self.sram_write = 0
-        self.ext_read_words = 0
-        self.ext_write_words = 0
         self.shift_count = 0
-        self.state_bits = {}   # name -> bits (per instance)
 
     def mul(self, width):
         self.mul_counts[width] = self.mul_counts.get(width, 0) + 1
@@ -165,15 +162,6 @@ class OpCounter:
     def sram_w(self, n=1):
         self.sram_write += n
 
-    def ext_r(self, words):
-        self.ext_read_words += words
-
-    def ext_w(self, words):
-        self.ext_write_words += words
-
-    def state(self, name, bits):
-        self.state_bits[name] = self.state_bits.get(name, 0) + bits
-
     # -- derived totals -----------------------------------------------------
     def ops_dict(self):
         d = {
@@ -187,18 +175,10 @@ class OpCounter:
             ],
             "sram_reads": self.sram_read,
             "sram_writes": self.sram_write,
-            "ext_read_words": self.ext_read_words,
-            "ext_write_words": self.ext_write_words,
         }
         d["mul_total"] = sum(self.mul_counts.values())
         d["add_total"] = sum(self.add_counts.values())
         return d
-
-    def state_bits_total(self):
-        return sum(self.state_bits.values())
-
-    def state_detail(self):
-        return dict(sorted(self.state_bits.items()))
 
 
 def mul_cycles(width_bits, multiplier):

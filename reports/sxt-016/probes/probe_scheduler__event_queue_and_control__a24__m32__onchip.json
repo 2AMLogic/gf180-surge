@@ -76,8 +76,14 @@
  "event_stats_source": "fixtures/sequences/ re-derived (tick->frames per tempo segment)",
  "ext_bytes_per_frame": 0,
  "fixture_files": [
+  "leaf48-smoke-bells-v1.json",
+  "leaf48-smoke-quickspit-v1.json",
+  "nc-wt-mip0-v1.json",
+  "seq-lp12-smoke-v1.json",
   "seq-macro-sweep-v1.json",
   "seq-modwheel-v1.json",
+  "seq-mono-fingered-v1.json",
+  "seq-mono-reclaim-v1.json",
   "seq-notes-coverage-v1.json",
   "seq-notes-holds-v1.json",
   "seq-notes-repeated-v1.json",
@@ -85,7 +91,11 @@
   "seq-poly-8-v1.json",
   "seq-pressure-v1.json",
   "seq-sustain-pedal-v1.json",
-  "seq-tempo-change-v1.json"
+  "seq-tempo-change-v1.json",
+  "seq-wt-base-v1.json",
+  "seq-wt-pitch-extremes-hi-v1.json",
+  "seq-wt-pitch-extremes-v1.json",
+  "seq-wt-unison16-v1.json"
  ],
  "has_phase_accumulator": false,
  "kernel": "event_queue_and_control",
@@ -107,8 +117,6 @@
     "8": 32
    },
    "add_total": 87,
-   "ext_read_words": 0,
-   "ext_write_words": 0,
    "lut_detail": [],
    "lut_lookups": 0,
    "mul_by_width": {
@@ -126,8 +134,6 @@
     "32": 26
    },
    "add_total": 66,
-   "ext_read_words": 0,
-   "ext_write_words": 0,
    "lut_detail": [],
    "lut_lookups": 0,
    "mul_by_width": {
@@ -162,7 +168,7 @@
   "sxt015_value": 40
  },
  "technology_note": "PDK-neutral relative estimates. 'Logic' is reported as normalized op counts (multiply/add/lut/shift) and cycles under a named sequential schedule; no gf180mcu synthesis, place-and-route, timing signoff, or layout has been run. State memory is reported in bits and kept separate from logic. gf180mcu cell/memory-macro feasibility at the candidate clocks is NOT verified.",
- "total_events_across_fixtures": 123,
+ "total_events_across_fixtures": 188,
  "transfer_cycles_per_frame": 8,
  "word_lengths": {
   "audio_bits": 24,
