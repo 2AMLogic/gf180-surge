@@ -104,6 +104,7 @@
     "tests/test_rtl_leaf_comparison.py",
     "tests/test_rtl_lint.py",
     "tests/test_rtl_mutant_table.py",
+    "tests/test_shared_event_dispatcher.py",
     "tests/test_shared_refuse.py",
     "tests/test_slow_comparator_inventory.py",
     "tests/test_slow_controls_gate.py",

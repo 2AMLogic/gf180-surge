@@ -1,0 +1,1474 @@
+{
+  "schema_version": 1,
+  "issue": 640,
+  "scope": "Static audit of the nine private oracle event dispatchers named by issue #640, against origin/main @ a18de1b. Read-only: no oracle render, no committed reference re-derived, no record re-graded.",
+  "claim_discipline": "Establishes a PROVENANCE relationship only -- which committed reference sidecars cite a sequence carrying an event type the renderer that produced them did not forward. It does NOT establish that any rendered sample differs, and makes no fidelity, coverage, RTL-exactness or musical-quality claim.",
+  "method": [
+    "Enumerate every sequence under fixtures/sequences/ and record its event types, its note_off velocities, and any note_on with no explicit velocity.",
+    "For each of the nine renderers, enumerate the committed JSON records under its leaf's reports/ directory and record which sequence each cites.",
+    "Cross the cited sequence's event types against the event types that renderer did not forward on origin/main @ a18de1b."
+  ],
+  "sequences": {
+    "leaf48-smoke-bells-v1": {
+      "path": "fixtures/sequences/leaf48-smoke-bells-v1.json",
+      "sha256": "b82ce9c5e1bc3ebde23a47b8b871a41cc50710bfc9dad42d2c390ef951828c3c",
+      "event_types": {
+        "note_on": 3,
+        "note_off": 3
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "leaf48-smoke-quickspit-v1": {
+      "path": "fixtures/sequences/leaf48-smoke-quickspit-v1.json",
+      "sha256": "36df5c0ee991c8a327f56faaf5a96fa8b10cea99843b6bbf8e5f811d79df1929",
+      "event_types": {
+        "note_on": 3,
+        "note_off": 3
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "nc-wt-mip0-v1": {
+      "path": "fixtures/sequences/nc-wt-mip0-v1.json",
+      "sha256": "603547216e20cb6da572530002c0b6ce0a9ff8444864aa441e4d28761eebba2b",
+      "event_types": {
+        "note_on": 1,
+        "note_off": 1
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-lp12-smoke-v1": {
+      "path": "fixtures/sequences/seq-lp12-smoke-v1.json",
+      "sha256": "871670f51f8b5da45bac4b7ed25b4b776f5f4e183f6815e79634c23264ef55bd",
+      "event_types": {
+        "note_on": 2,
+        "note_off": 2
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-macro-sweep-v1": {
+      "path": "fixtures/sequences/seq-macro-sweep-v1.json",
+      "sha256": "b0f6f5dc04139b375be37fe29fab4be7b3b40b24429806ba8656ba1776bc0a20",
+      "event_types": {
+        "note_on": 1,
+        "cc": 10,
+        "note_off": 1
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-modwheel-v1": {
+      "path": "fixtures/sequences/seq-modwheel-v1.json",
+      "sha256": "d0f507efff5e9d76f7086707e18a08875aaeab96eb4a01ea0c974f5631872347",
+      "event_types": {
+        "note_on": 1,
+        "cc": 5,
+        "note_off": 1
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-mono-fingered-v1": {
+      "path": "fixtures/sequences/seq-mono-fingered-v1.json",
+      "sha256": "bb47695e7458822794f267b5bf74fa540cbf09123d875d98cba041952d6ba4bd",
+      "event_types": {
+        "note_on": 9,
+        "note_off": 8
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-mono-reclaim-v1": {
+      "path": "fixtures/sequences/seq-mono-reclaim-v1.json",
+      "sha256": "8b2fd1a2b441c5f45c68968d17cc878806f639432c85d4478f4fa4049b665c82",
+      "event_types": {
+        "note_on": 5,
+        "note_off": 5
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-notes-coverage-v1": {
+      "path": "fixtures/sequences/seq-notes-coverage-v1.json",
+      "sha256": "f819f9ac30b59b6800d241d78c6575ab59ba07d53f311c76ad3618ac82c03016",
+      "event_types": {
+        "note_on": 9,
+        "note_off": 9
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-notes-holds-v1": {
+      "path": "fixtures/sequences/seq-notes-holds-v1.json",
+      "sha256": "a43affacb6103324451d573b0cc3c48d5dee363a91c0533a171ebe99152bb1f4",
+      "event_types": {
+        "note_on": 4,
+        "note_off": 4
+      },
+      "note_off_velocities": [
+        0,
+        100
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-notes-repeated-v1": {
+      "path": "fixtures/sequences/seq-notes-repeated-v1.json",
+      "sha256": "ec610cb2a507875422df348e289766f0b1c8e378251e5ed83706d0d0a8b7db84",
+      "event_types": {
+        "note_on": 8,
+        "note_off": 8
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-pitchbend-v1": {
+      "path": "fixtures/sequences/seq-pitchbend-v1.json",
+      "sha256": "ca0934316c168e689ae338289a220027da0cac901f46d364ec842187aad1ad69",
+      "event_types": {
+        "note_on": 1,
+        "pitch_bend": 3,
+        "note_off": 1
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-poly-8-v1": {
+      "path": "fixtures/sequences/seq-poly-8-v1.json",
+      "sha256": "e08327ba8a5042d295d53cfcfcf6469c1dd94f99e8e79755bcd1d4d1cde521df",
+      "event_types": {
+        "note_on": 8,
+        "note_off": 8
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-pressure-v1": {
+      "path": "fixtures/sequences/seq-pressure-v1.json",
+      "sha256": "f32ff1251128d62d3c3cc4ed4a99c2cfc1d5e1d2e682cca6b4f914cbe14e66e9",
+      "event_types": {
+        "note_on": 2,
+        "channel_pressure": 4,
+        "note_off": 2
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-sustain-pedal-v1": {
+      "path": "fixtures/sequences/seq-sustain-pedal-v1.json",
+      "sha256": "c937ad54f58a7da37e79ed2fba69cf0d390bdc1645eee39000d6987228dd4aa8",
+      "event_types": {
+        "note_on": 2,
+        "cc": 2,
+        "note_off": 2
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-tempo-change-v1": {
+      "path": "fixtures/sequences/seq-tempo-change-v1.json",
+      "sha256": "38c5811230ba0a4610d2e445ad741e66076b4caec980dc5d7869c68890fbe66a",
+      "event_types": {
+        "tempo": 3,
+        "note_on": 12,
+        "note_off": 12
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-wt-base-v1": {
+      "path": "fixtures/sequences/seq-wt-base-v1.json",
+      "sha256": "8694f7fa010293931003c3565e45fa8ada143423501988e34329d937e4f95897",
+      "event_types": {
+        "note_on": 1,
+        "note_off": 1
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-wt-pitch-extremes-hi-v1": {
+      "path": "fixtures/sequences/seq-wt-pitch-extremes-hi-v1.json",
+      "sha256": "e3aec025f5edb8ffa58f1d77561c92d4742a9d8d8f4964566d814539ee998235",
+      "event_types": {
+        "note_on": 4,
+        "note_off": 4
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-wt-pitch-extremes-v1": {
+      "path": "fixtures/sequences/seq-wt-pitch-extremes-v1.json",
+      "sha256": "41abab466872f5ff6bcf2c795bbf02c937834e74f60ac91c921b02de806a5b11",
+      "event_types": {
+        "note_on": 3,
+        "note_off": 3
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    },
+    "seq-wt-unison16-v1": {
+      "path": "fixtures/sequences/seq-wt-unison16-v1.json",
+      "sha256": "506d2fe0c195458302f384b0de7dc4c412d1ff057c44d42069921f005cdef8b7",
+      "event_types": {
+        "note_on": 2,
+        "note_off": 2
+      },
+      "note_off_velocities": [
+        0
+      ],
+      "note_on_without_explicit_velocity": []
+    }
+  },
+  "per_renderer": {
+    "fixtures/render_lfo_fixture.py": {
+      "dropped_on_main_a18de1b": [
+        "pitch_bend",
+        "channel_pressure",
+        "note_off velocity (hard-coded 0)"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/sxt-032/artifacts/reference-seq-modwheel-v1.json",
+          "sequence": "seq-modwheel-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "cc": 5,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/sxt-032/artifacts/reference-seq-notes-repeated-v1.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "fixtures/render_mw_fixture.py": {
+      "dropped_on_main_a18de1b": [
+        "pitch_bend",
+        "channel_pressure",
+        "note_off velocity (hard-coded 0)"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/sxt-035/artifacts/reference-seq-modwheel-v1.json",
+          "sequence": "seq-modwheel-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "cc": 5,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-035/artifacts/reference-seq-notes-coverage-v1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-035/artifacts/reference-seq-notes-repeated-v1.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "fixtures/render_slfo_fixture.py": {
+      "dropped_on_main_a18de1b": [
+        "pitch_bend",
+        "channel_pressure",
+        "note_off velocity (hard-coded 0)"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/SXT-041/artifacts/cost-accounting.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-041/artifacts/harness-failure-path.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-041/artifacts/negative-controls.json",
+          "sequence": "seq-modwheel-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "cc": 5,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-041/artifacts/reference-seq-modwheel-v1-slfo-fixture.json",
+          "sequence": "seq-modwheel-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "cc": 5,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-041/artifacts/reference-seq-notes-coverage-v1-slfo-fixture.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-041/artifacts/reference-seq-notes-repeated-v1-slfo-fixture.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "model/voice/render_uni_reference.py": {
+      "dropped_on_main_a18de1b": [
+        "pitch_bend",
+        "channel_pressure"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/SXT-034/artifacts/reference-seq-notes-coverage-v1-uni2.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni1.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni4.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-034/artifacts/reference-seq-poly-8-v1-uni2.json",
+          "sequence": "seq-poly-8-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "tools/render_lp12_reference.py": {
+      "dropped_on_main_a18de1b": [
+        "pitch_bend",
+        "channel_pressure"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/sxt-037/artifacts/bundle-attacky-neutrality/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-badnews-cut-hi/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-badnews-cut-lo/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-badnews-reso1/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-badnews-toggle/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-badnews/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-rainy/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-t9-substd/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-037/artifacts/bundle-t9/meta.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "tools/_render_reference_common.py": {
+      "dropped_on_main_a18de1b": [
+        "cc",
+        "pitch_bend",
+        "channel_pressure"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/SXT-033/artifacts/crush__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/crush__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/edges__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/edges__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/horn__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/horn__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/tentacles__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-033/artifacts/tentacles__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-040/artifacts/badnews__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-040/artifacts/badnews__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-040/artifacts/popcorn2k__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-040/artifacts/popcorn2k__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-040/artifacts/tentacles__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-040/artifacts/tentacles__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "tools/render_pm_reference.py": {
+      "dropped_on_main_a18de1b": [
+        "cc",
+        "pitch_bend",
+        "channel_pressure (refused, not dropped)"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/SXT-043/artifacts/bass2__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/bass2__seq-notes-holds-v1-ref.wav.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/bass2__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/bass5__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/bass5__seq-notes-holds-v1-ref.wav.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/bass5__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/digibass__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/digibass__seq-notes-holds-v1-ref.wav.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/digibass__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass2-seq-mono-fingered-v1.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass2-seq-mono-reclaim-v1.json",
+          "sequence": "seq-mono-reclaim-v1",
+          "sequence_event_types": {
+            "note_on": 5,
+            "note_off": 5
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass2-seq-notes-coverage-v1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass2-seq-notes-holds-v1.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass2-seq-notes-repeated-v1.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass5-seq-mono-fingered-v1.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass5-seq-mono-reclaim-v1.json",
+          "sequence": "seq-mono-reclaim-v1",
+          "sequence_event_types": {
+            "note_on": 5,
+            "note_off": 5
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass5-seq-notes-coverage-v1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass5-seq-notes-holds-v1.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-bass5-seq-notes-repeated-v1.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-digibass-seq-mono-fingered-v1.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-digibass-seq-mono-reclaim-v1.json",
+          "sequence": "seq-mono-reclaim-v1",
+          "sequence_event_types": {
+            "note_on": 5,
+            "note_off": 5
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-digibass-seq-notes-coverage-v1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-digibass-seq-notes-holds-v1.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/exactness-digibass-seq-notes-repeated-v1.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/neg-control-forced-poly-bass2__seq-mono-fingered-v1-forcedpoly.wav.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/neg-control-forced-poly-bass2__seq-mono-fingered-v1-ref.wav.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass2__seq-mono-fingered-v1-forcedpoly.wav.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass2__seq-mono-fingered-v1-ref.wav.json",
+          "sequence": "seq-mono-fingered-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass2__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass2__seq-notes-holds-v1-ref.wav.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass2__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass5__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass5__seq-notes-holds-v1-ref.wav.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/bass5__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/digibass__seq-notes-coverage-v1-ref.wav.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/digibass__seq-notes-holds-v1-ref.wav.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-043/artifacts/rev2/digibass__seq-notes-repeated-v1-ref.wav.json",
+          "sequence": "seq-notes-repeated-v1",
+          "sequence_event_types": {
+            "note_on": 8,
+            "note_off": 8
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "tools/render_wt_reference.py": {
+      "dropped_on_main_a18de1b": [
+        "cc",
+        "pitch_bend",
+        "channel_pressure"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/sxt-026/artifacts/budget-metrics.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/budget-metrics.json",
+          "sequence": "seq-wt-pitch-extremes-hi-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/budget-metrics.json",
+          "sequence": "seq-wt-pitch-extremes-v1",
+          "sequence_event_types": {
+            "note_on": 3,
+            "note_off": 3
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/budget-metrics.json",
+          "sequence": "seq-wt-unison16-v1",
+          "sequence_event_types": {
+            "note_on": 2,
+            "note_off": 2
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json",
+          "sequence": "seq-wt-pitch-extremes-hi-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json",
+          "sequence": "seq-wt-pitch-extremes-v1",
+          "sequence_event_types": {
+            "note_on": 3,
+            "note_off": 3
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/decimation-stage-per-slice-vs-per-scene.json",
+          "sequence": "seq-wt-unison16-v1",
+          "sequence_event_types": {
+            "note_on": 2,
+            "note_off": 2
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-original__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-wtfix-kt__seq-wt-pitch-extremes-hi-v1-ref.wav.json",
+          "sequence": "seq-wt-pitch-extremes-hi-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-wtfix-morph25__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-wtfix-morph75__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-wtfix-uni16__seq-wt-unison16-v1-ref.wav.json",
+          "sequence": "seq-wt-unison16-v1",
+          "sequence_event_types": {
+            "note_on": 2,
+            "note_off": 2
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/kick-wtfix__seq-wt-pitch-extremes-v1-ref.wav.json",
+          "sequence": "seq-wt-pitch-extremes-v1",
+          "sequence_event_types": {
+            "note_on": 3,
+            "note_off": 3
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/mf-wtfix-morph25__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/mf-wtfix-morph75__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/sxt-026/artifacts/mf-wtfix__seq-wt-base-v1-ref.wav.json",
+          "sequence": "seq-wt-base-v1",
+          "sequence_event_types": {
+            "note_on": 1,
+            "note_off": 1
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    },
+    "tools/render_lp24_tap_reference.py": {
+      "dropped_on_main_a18de1b": [
+        "cc",
+        "pitch_bend",
+        "channel_pressure (filtered away silently)"
+      ],
+      "committed_records_citing_a_sequence": [
+        {
+          "record": "reports/SXT-038/artifacts/bundle-brass/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-chords-clean/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-chords-std/meta.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-edges-cut-hi/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-edges-cut-lo/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-edges-reso1/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-edges-toggle/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-edges/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-major7mk2/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-phase1-substd/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/bundle-phase1/meta.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/brass.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/chords-clean.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/chords-std.json",
+          "sequence": "seq-notes-holds-v1",
+          "sequence_event_types": {
+            "note_on": 4,
+            "note_off": 4
+          },
+          "nonzero_note_off_velocity": [
+            100
+          ]
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/edges-cut-hi.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/edges-cut-lo.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/edges-reso1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/edges-toggle.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/edges.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/major7mk2.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/phase1-substd.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        },
+        {
+          "record": "reports/SXT-038/artifacts/cases/phase1.json",
+          "sequence": "seq-notes-coverage-v1",
+          "sequence_event_types": {
+            "note_on": 9,
+            "note_off": 9
+          },
+          "nonzero_note_off_velocity": []
+        }
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "F-640-1",
+      "status": "FINDING",
+      "severity": "provenance mismatch; audio effect NOT established",
+      "summary": "Two committed reference sidecars cite fixtures/sequences/seq-notes-holds-v1.json, whose event 7 declares note_off velocity 100, but the renderer that produced them sent release velocity 0.",
+      "records": [
+        {
+          "record": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json",
+          "leaf": "SXT-032",
+          "renderer": "fixtures/render_lfo_fixture.py",
+          "record_script_sha256": "a3f534a15c5847dbf82dfeae4d2a9cafa46719a17b30752754ba6f31cbf156f4",
+          "renderer_current_sha256_resolves_the_stamp": false,
+          "note": "NEW on this pass -- issue #640 listed the SXT-032 record as not audited. The stamp already did not resolve against the file's bytes on main before this change (docs/byte-frozen-sources.json records current_bytes_recorded: false)."
+        },
+        {
+          "record": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.json",
+          "leaf": "SXT-041",
+          "renderer": "fixtures/render_slfo_fixture.py",
+          "record_script_sha256": "0611c7f4f81cc0cb8efa65681b8ff1cf10887c4de54081c1b1e733001b5062d6",
+          "renderer_current_sha256_resolves_the_stamp": true,
+          "note": "The record issue #640 reported. Left unchanged by #640's stop condition: folding this renderer is only valid in a change that re-renders the six SXT-041 references under the pinned oracle."
+        }
+      ],
+      "not_established": "Whether release velocity reaches audio in either fixture configuration, and therefore whether either committed WAV differs from a correct render. Deciding that needs an oracle render both ways; the pinned oracle is not available on the host that produced this audit (NOT_RUN).",
+      "disposition": "for a human ruling; no record re-graded or relabelled by #640"
+    },
+    {
+      "id": "F-640-2",
+      "status": "MEASURED",
+      "summary": "No committed reference anywhere cites a sequence containing a pitch_bend or channel_pressure event, so no committed reference lost a bend or pressure event to a private copy.",
+      "detail": "The only non-note event type reaching a committed reference is cc, via fixtures/sequences/seq-modwheel-v1.json, rendered through render_lfo_fixture.py, render_mw_fixture.py and render_slfo_fixture.py -- all three of which forwarded cc. The four copies that dropped cc (tools/_render_reference_common.py, render_pm_reference.py, render_wt_reference.py, render_lp24_tap_reference.py) never produced a committed reference from a cc-bearing sequence."
+    },
+    {
+      "id": "F-640-3",
+      "status": "MEASURED",
+      "summary": "Every note_on in every committed sequence carries an explicit velocity, so the `e.get(\"velocity\", 100)` default in three of the copies was never exercised by a committed render.",
+      "detail": "Folding those three onto the shared dispatcher, which reads e[\"velocity\"], therefore changes no committed render and turns a future sequence with no declared attack velocity into a visible KeyError instead of a silent 100."
+    }
+  ],
+  "status_vocabulary_note": "Per-finding `status` uses docs/report-status-allowlist.json tokens: FINDING (an open finding; whether it is a pass/fail-class result is the owning leaf's call) and MEASURED (a measured audit fact, not a verdict). This record deliberately claims no PASS."
+}

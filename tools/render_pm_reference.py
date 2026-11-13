@@ -48,6 +48,9 @@ import fixture_config as fc  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
+sys.path.insert(0, os.path.join(REPO, "fixtures"))
+import render_fixture as rf  # noqa: E402  (shared event dispatcher)
+
 SR = 48000
 ISSUE_ID = "SXT-043"
 ISOLATION_NOTE = (
@@ -63,7 +66,26 @@ ISOLATION_NOTE = (
 )
 
 
+def refuse_non_note_events(seq):
+    """REQUIRED GATE: the SXT-043 fixture configuration declares every
+    non-note modulation source inert, so a non-note event would make that
+    declaration false.  Checked over the whole sequence before any audio is
+    produced -- the shared `render_fixture.dispatch` forwards cc/pitch_bend/
+    channel_pressure, so this renderer must reject them explicitly rather
+    than rely on a dispatcher that silently ignored them.
+    """
+    for e in seq["events"]:
+        if e["type"] not in ("note_on", "note_off"):
+            raise fc.Refuse(
+                "sequence %r carries a %r event; the SXT-043 "
+                "fixture configuration declares every non-note "
+                "modulation source inert, so a non-note event "
+                "would make that declaration false"
+                % (seq.get("id"), e["type"]))
+
+
 def render_bus(surgepy, seq, carrier, repeats, forcing):
+    refuse_non_note_events(seq)
     monos = []
     total_blocks = total_samples = 0
     readback = routes = None
@@ -96,22 +118,7 @@ def render_bus(surgepy, seq, carrier, repeats, forcing):
 
             i = b = 0
             while b < total_blocks:
-                while i < len(events) and quant(events[i]["t"]) <= b:
-                    e = events[i]
-                    if e["type"] == "note_on":
-                        s.playNote(e["channel"], e["note"],
-                                   e.get("velocity", 100), 0)
-                    elif e["type"] == "note_off":
-                        s.releaseNote(e["channel"], e["note"],
-                                      e.get("velocity", 0))
-                    else:
-                        raise fc.Refuse(
-                            "sequence %r carries a %r event; the SXT-043 "
-                            "fixture configuration declares every non-note "
-                            "modulation source inert, so a non-note event "
-                            "would make that declaration false"
-                            % (seq.get("id"), e["type"]))
-                    i += 1
+                i = rf.dispatch(s, events[i:], b, quant) + i
                 nxt = i
                 seg = total_blocks if nxt >= len(events) \
                     else max(quant(events[nxt]["t"]), b + 1)
