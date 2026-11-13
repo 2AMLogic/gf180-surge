@@ -4,6 +4,18 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-13
 
+- **PR #643**: refactor(probes): drop the never-driven ext/state half of OpCounter and its two constant-zero ops keys
+- **Issue #630** (closed): Remove never-driven ext/state accounting from probes OpCounter: ops.ext_read_words is a constant 0 in all 76 SXT-016 records
+- **PR #642**: evidence(t1-item1): re-run galactic_core at a 1800 s Yosys budget; NO_VERDICT stands
+- **Issue #579** (closed): T1 item 1: galactic_core synthesis exceeds klt's 300 s Yosys limit (generic abc on ~272k cells)
+- **PR #632**: fix(signoff): list the four unlisted item 9 benches and gate inventory completeness mechanically
+- **Issue #624** (closed): signoff/t1-item9-inventory.json is missing three tests/test_*.py files it claims to list
+- **PR #629**: docs: record that the two signoff attestations pin their whole inventories
+- **Issue #627** (closed): docs/byte-frozen-sources omits the tests/ and rtl/ files the signoff attestations also pin live
+- **PR #626**: ci: install slow-controls deps from requirements-ci.txt, not floating numpy/pytest
+- **Issue #621** (closed): Remove the unpinned numpy/pytest install in slow-controls.yml: route it through requirements-ci.txt like the other CI jobs
+- **PR #625**: feat(tools): declare the 16 copy-style RTL mutants in one generator table with a --check drift gate
+- **Issue #620** (closed): Consolidate hand-copied RTL negative-control mutants onto the existing generator + --check pattern (two have drifted)
 - **Issue #277** (closed): worktree.sh's pre-creation OPEN_PR guard blocks Doctor from creating a worktree for an existing issue-linked PR
 
 ### 2026-11-12

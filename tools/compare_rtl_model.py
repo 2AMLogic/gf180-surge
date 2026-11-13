@@ -33,7 +33,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import run_leaf_comparison  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 run_leaf_comparison)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_voice.sv")
@@ -59,9 +60,17 @@ U_FIELDS = ["u_oscstate", "u_state", "u_last_level",
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every T, U and O key must be unique (issues
+    #455/#639): a repeated checkpoint -- identical or contradictory, in
+    either order -- is refused with LeafInputError rather than resolved
+    last-row-wins.  A `U` row keys a per-unison record *inside* the
+    (block, slot) checkpoint, so its key is (block, slot, unison); `M` rows
+    are a per-block sample *sequence*, not a keyed checkpoint, so they keep
+    their append."""
     t = {}      # (block, slot) -> dict
     o = {}      # (block, slot) -> [64]
     m = {}      # block -> [32]
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -70,17 +79,21 @@ def parse_tb(path):
             if parts[0] == "T":
                 vals = [int(x) for x in parts[1:]]
                 d = dict(zip(T_FIELDS, vals))
-                t[(d["b"], d["slot"])] = d
+                keys.put(t, "T", (d["b"], d["slot"]), d)
             elif parts[0] == "U":
                 key = (int(parts[1]), int(parts[2]))
+                uni = int(parts[3])
                 uv = dict(zip(U_FIELDS, [int(x) for x in parts[4:]]))
+                keys.claim("U", key + (uni,))
                 rec = t.setdefault(key, {})
-                rec.setdefault("uni", {})[int(parts[3])] = uv
+                rec.setdefault("uni", {})[uni] = uv
             elif parts[0] == "O":
-                o[(int(parts[1]), int(parts[2]))] = [int(x) for x in parts[3:]]
+                keys.put(o, "O", (int(parts[1]), int(parts[2])),
+                         [int(x) for x in parts[3:]])
             elif parts[0] == "M":
                 b = int(parts[1])
                 m.setdefault(b, []).append(int(parts[2]))
+    keys.raise_if_duplicates(path)
     return t, o, m
 
 

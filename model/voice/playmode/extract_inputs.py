@@ -38,7 +38,8 @@ sys.path.insert(0, REPO)
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
 sys.path.insert(0, os.path.join(REPO, "tools"))
-from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
+from _census_blob_common import (census_blob, git_blob_sha1,  # noqa: E402
+                                 graphs_entry)
 import fixture_config as fc  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
@@ -57,15 +58,6 @@ PLAY_MODE_NAMES = {
     4: "Mono (Single Trigger & Fingered Portamento)",
     5: "Latch (Monophonic)",
 }
-
-
-def graphs_entry(rel):
-    with open(GRAPHS, encoding="utf-8") as f:
-        for line in f:
-            g = json.loads(line)
-            if g.get("p") == rel:
-                return g
-    raise Refuse(f"preset not in graphs.jsonl: {rel}")
 
 
 def gate_graph(ge, rel):
