@@ -1,5 +1,9 @@
 # CI Python test dependencies (issue #354). Exact pins; no ranges, no floats.
-# Used by both CI install sites (.github/workflows/ci.yml: `tests`, `rtl-sim`).
+# Used by all three CI install sites (#621): `tests` and `rtl-sim` in
+# .github/workflows/ci.yml, and `slow-controls` in
+# .github/workflows/slow-controls.yml. signoff.yml installs a different
+# manifest (signoff/requirements.txt, the klayout-tools pin) and is not
+# covered by this file.
 # Interpreter in CI: CPython 3.12 (actions/setup-python).
 # This file is NOT the oracle runtime pin (oracle/manifest.json: CPython
 # 3.11.16 / numpy 1.26.4 stays separate) and no report stamp constrains it
