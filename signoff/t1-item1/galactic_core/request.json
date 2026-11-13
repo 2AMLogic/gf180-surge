@@ -17,5 +17,6 @@
   "sv_frontend": "sv2v",
   "defines": {
     "SYNTHESIS": null
-  }
+  },
+  "yosys_timeout_s": 1800
 }
