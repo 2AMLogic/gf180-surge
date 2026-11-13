@@ -397,6 +397,15 @@ INVENTORY_NOTE_PATTERNS = {
     9: (r"The (?P<live_pins>\w+) item 9 rows in live_pins",),
     10: (),
 }
+# registry field -> the key `derive_inventory_counts` returns it under.
+INVENTORY_SCALAR_FIELDS = {
+    "content_hashed_checks": "hashed",
+    "total_checks": "total",
+    "also_listed_as_live_pins": "live_pins",
+}
+# For rebuilding a word-spelled count in a prose control, so no mutant
+# carries a literal of its own (#658 review).
+NUMBER_WORD = {i: w for w, i in NUMBER_WORDS.items()}
 
 
 def squash(text):
@@ -432,9 +441,22 @@ def class_matches(path, keys):
     return hits
 
 
-def audit_attested_inventories(reg, doc, files=None):
-    """Findings where `attested_inventories` disagrees with the inventories,
-    the envelopes, the registry's own live_pins rows, or the prose.
+def derive_inventory_counts(reg, entry, files=None):
+    """Re-derive one `attested_inventories` entry's numbers from the sources
+    of truth, with the structural findings that derivation turns up.
+
+    Returns `(derived, counted, findings)`: the scalars every count
+    statement is held to (`hashed`, `total`, `live_pins`, `remainder`, plus
+    the entry's prose class groups); the per-class tallies, keyed by the
+    entry's own `content_hashed_classes` keys; and findings for a duplicate
+    inventory path, an envelope stale against its inventory, a path no
+    declared class claims, or a live pin only half-listed.
+
+    Split out of `audit_attested_inventories` so a control can perturb a
+    value *relative to the derived one*. A control carrying today's absolute
+    counts stops exercising the audit the moment the baseline moves -- and
+    fails as though the audit itself had broken, which is exactly what the
+    rebase onto #650 produced (#658 review).
 
     `files` overrides the on-disk JSON for named paths, so a control can
     perturb an inventory or an envelope without touching the tree.
@@ -445,71 +467,88 @@ def audit_attested_inventories(reg, doc, files=None):
         return files[rel] if rel in files else load_json(rel)
 
     findings = []
+    item = entry["t1_item"]
+    paths = read(entry["inventory"])[entry["inventory_key"]]
+    attestation = read(entry["envelope"])["attestation"]
+    hashed_paths = [c["path"] for c in attestation["checks"]
+                    if "content_hash" in c]
+
+    if len(set(paths)) != len(paths):
+        findings.append(f"item {item}: {entry['inventory']} lists "
+                        f"{len(paths)} paths but only "
+                        f"{len(set(paths))} distinct ones")
+    if len(hashed_paths) != len(paths):
+        findings.append(
+            f"item {item}: {entry['envelope']} content-hashes "
+            f"{len(hashed_paths)} files, {entry['inventory']} lists "
+            f"{len(paths)} -- the envelope is stale against its inventory")
+
+    # content_hashed_classes: every path in exactly one declared class.
+    keys = sorted(entry["content_hashed_classes"])
+    counted = dict.fromkeys(keys, 0)
+    for path in paths:
+        hits = class_matches(path, keys)
+        if len(hits) != 1:
+            findings.append(
+                f"item {item}: {path} matches {len(hits)} of the "
+                f"content_hashed_classes keys ({hits or 'none'}); "
+                "every inventory path must match exactly one")
+            continue
+        counted[hits[0]] += 1
+
+    # also_listed_as_live_pins: rows wholly inside this inventory.
+    inside, pathset = 0, set(paths)
+    for row in live_pins(reg):
+        covered = [rel for rel in row["covers"] if rel in pathset]
+        if not covered:
+            continue
+        if len(covered) == len(row["covers"]):
+            inside += 1
+        else:
+            findings.append(
+                f"item {item}: live pin {row['pin']} straddles the "
+                f"inventory -- {covered} are listed, "
+                f"{sorted(set(row['covers']) - pathset)} are not")
+
+    derived = {"hashed": len(paths),
+               "total": attestation["check_count"],
+               "live_pins": inside}
+    derived["remainder"] = derived["hashed"] - derived["live_pins"]
+    for group, key in INVENTORY_CLASS_GROUPS[item].items():
+        derived[group] = counted[key]
+    return derived, counted, findings
+
+
+def item9_entry(reg):
+    """The `attested_inventories` entry the item 9 controls perturb."""
+    return next(e for e in reg["attested_inventories"] if e["t1_item"] == 9)
+
+
+def audit_attested_inventories(reg, doc, files=None):
+    """Findings where `attested_inventories` disagrees with the inventories,
+    the envelopes, the registry's own live_pins rows, or the prose.
+
+    `files` overrides the on-disk JSON for named paths, so a control can
+    perturb an inventory or an envelope without touching the tree.
+    """
+    findings = []
     for entry in reg["attested_inventories"]:
         item = entry["t1_item"]
-        paths = read(entry["inventory"])[entry["inventory_key"]]
-        attestation = read(entry["envelope"])["attestation"]
-        hashed_paths = [c["path"] for c in attestation["checks"]
-                        if "content_hash" in c]
+        derived, counted, structural = derive_inventory_counts(
+            reg, entry, files)
+        findings += structural
 
-        if len(set(paths)) != len(paths):
-            findings.append(f"item {item}: {entry['inventory']} lists "
-                            f"{len(paths)} paths but only "
-                            f"{len(set(paths))} distinct ones")
-        if len(hashed_paths) != len(paths):
-            findings.append(
-                f"item {item}: {entry['envelope']} content-hashes "
-                f"{len(hashed_paths)} files, {entry['inventory']} lists "
-                f"{len(paths)} -- the envelope is stale against its inventory")
-
-        # content_hashed_classes: every path in exactly one declared class.
-        keys = sorted(entry["content_hashed_classes"])
-        counted = dict.fromkeys(keys, 0)
-        for path in paths:
-            hits = class_matches(path, keys)
-            if len(hits) != 1:
-                findings.append(
-                    f"item {item}: {path} matches {len(hits)} of the "
-                    f"content_hashed_classes keys ({hits or 'none'}); "
-                    "every inventory path must match exactly one")
-                continue
-            counted[hits[0]] += 1
-
-        # also_listed_as_live_pins: rows wholly inside this inventory.
-        inside, pathset = 0, set(paths)
-        for row in live_pins(reg):
-            covered = [rel for rel in row["covers"] if rel in pathset]
-            if not covered:
-                continue
-            if len(covered) == len(row["covers"]):
-                inside += 1
-            else:
-                findings.append(
-                    f"item {item}: live pin {row['pin']} straddles the "
-                    f"inventory -- {covered} are listed, "
-                    f"{sorted(set(row['covers']) - pathset)} are not")
-
-        derived = {"hashed": len(paths),
-                   "total": attestation["check_count"],
-                   "live_pins": inside}
-        derived["remainder"] = derived["hashed"] - derived["live_pins"]
-
-        for field, want in (("content_hashed_checks", derived["hashed"]),
-                            ("total_checks", derived["total"]),
-                            ("also_listed_as_live_pins",
-                             derived["live_pins"])):
-            if entry[field] != want:
+        for field, key in INVENTORY_SCALAR_FIELDS.items():
+            if entry[field] != derived[key]:
                 findings.append(f"item {item}: {field} says {entry[field]}, "
-                                f"the inventories give {want}")
-        for key in keys:
+                                f"the inventories give {derived[key]}")
+        for key in sorted(counted):
             if entry["content_hashed_classes"][key] != counted[key]:
                 findings.append(
                     f"item {item}: content_hashed_classes[{key!r}] says "
                     f"{entry['content_hashed_classes'][key]}, the inventory "
                     f"gives {counted[key]}")
 
-        for group, key in INVENTORY_CLASS_GROUPS[item].items():
-            derived[group] = counted[key]
         for where, text, patterns in (
                 ("md", doc, INVENTORY_DOC_PATTERNS[item]),
                 ("attested_inventories_note", reg["attested_inventories_note"],
@@ -645,12 +684,14 @@ def test_the_prose_counts_and_dispositions_match_the_registry():
 def test_the_attested_inventory_counts_match_the_inventories():
     """#649: every `attested_inventories` number is re-derived here.
 
-    Before this gate the block claimed 218/221/45 and 114/59/44/1 for item 9
-    while the inventory held 223 files (118/59/45/1), the envelope 226
-    checks, and the registry 46 item 9 live_pins rows -- and the .md
-    contradicted itself, saying both "46" and "45" for the same row count.
-    Nothing asserted any of it, so it drifted by one on every PR that added
-    a test module.
+    Historical, measured at #649's base (290fe05), not a live claim: the
+    block there claimed 218/221/45 and 114/59/44/1 for item 9 while the
+    inventory held 223 files (118/59/45/1), the envelope 226 checks, and
+    the registry 46 item 9 live_pins rows -- and the .md contradicted
+    itself, saying both "46" and "45" for the same row count. Nothing
+    asserted any of it, so it drifted by one on every PR that added a test
+    module. The current numbers live in the registry and the prose only;
+    this test and its controls derive theirs.
     """
     assert audit_attested_inventories(registry(), read_doc()) == []
 
@@ -658,24 +699,37 @@ def test_the_attested_inventory_counts_match_the_inventories():
 @pytest.mark.parametrize("field", [
     "content_hashed_checks", "total_checks", "also_listed_as_live_pins"])
 def test_control_a_perturbed_inventory_count_is_a_finding(field):
-    """#649 control 1: +1 on any scalar fires, naming that field."""
+    """#649 control 1: a scalar one off the derived value fires, naming it.
+
+    Perturbed against the *derived* count, not against whatever the
+    committed registry happens to say, so the control still exercises the
+    audit when the baseline is itself stale (#658 review).
+    """
     reg = copy.deepcopy(registry())
-    entry = next(e for e in reg["attested_inventories"] if e["t1_item"] == 9)
-    entry[field] += 1
+    entry = item9_entry(reg)
+    derived = derive_inventory_counts(reg, entry)[0]
+    entry[field] = derived[INVENTORY_SCALAR_FIELDS[field]] + 1
     findings = audit_attested_inventories(reg, read_doc())
-    assert any(f"item 9: {field} says" in f for f in findings), findings
+    expected = (f"item 9: {field} says {entry[field]}, the inventories give "
+                f"{derived[INVENTORY_SCALAR_FIELDS[field]]}")
+    assert expected in findings, (expected, findings)
 
 
 @pytest.mark.parametrize("klass", ["tests/", "rtl/*.sv", "tools/*.py",
                                    "model/integration/negative_controls.py"])
 def test_control_a_perturbed_class_count_is_a_finding(klass):
-    """#649 control 1, class leg: each class breakdown is derived too."""
+    """#649 control 1, class leg: each class breakdown is derived too.
+
+    Perturbed against the derived tally, for the reason above.
+    """
     reg = copy.deepcopy(registry())
-    entry = next(e for e in reg["attested_inventories"] if e["t1_item"] == 9)
-    entry["content_hashed_classes"][klass] += 1
+    entry = item9_entry(reg)
+    counted = derive_inventory_counts(reg, entry)[1]
+    entry["content_hashed_classes"][klass] = counted[klass] + 1
     findings = audit_attested_inventories(reg, read_doc())
-    assert any(f"content_hashed_classes[{klass!r}] says" in f
-               for f in findings), findings
+    expected = (f"item 9: content_hashed_classes[{klass!r}] says "
+                f"{counted[klass] + 1}, the inventory gives {counted[klass]}")
+    assert expected in findings, (expected, findings)
 
 
 def _item9_with_scratch_entry():
@@ -689,8 +743,7 @@ def _item9_with_scratch_entry():
     registry's own `obligation` field requires), and leaves the counts
     behind.
     """
-    entry = next(e for e in registry()["attested_inventories"]
-                 if e["t1_item"] == 9)
+    entry = item9_entry(registry())
     inv = copy.deepcopy(load_json(entry["inventory"]))
     env = copy.deepcopy(load_json(entry["envelope"]))
     scratch = "tests/test_zz_scratch.py"
@@ -704,23 +757,41 @@ def _item9_with_scratch_entry():
 
 
 def test_control_a_new_inventory_entry_is_a_finding():
-    """#649 control 2: the drift this issue is about, end to end."""
+    """#649 control 2: the drift this issue is about, end to end.
+
+    Stated as a relation -- one more file under `tests/`, one more check in
+    the envelope, the registry left behind -- rather than as this week's
+    absolute counts, so a renumbering re-counts the registry and the prose
+    only, never a third copy here (#658 review).
+    """
     files = _item9_with_scratch_entry()
-    findings = audit_attested_inventories(registry(), read_doc(), files)
+    reg = registry()
+    entry = item9_entry(reg)
+    before, counted_before, _ = derive_inventory_counts(reg, entry)
+    after, counted_after, _ = derive_inventory_counts(reg, entry, files)
+    assert after["hashed"] == before["hashed"] + 1, (before, after)
+    assert after["total"] == before["total"] + 1, (before, after)
+    assert counted_after["tests/"] == counted_before["tests/"] + 1
+
+    findings = audit_attested_inventories(reg, read_doc(), files)
     for expected in (
-            "item 9: content_hashed_checks says 223, the inventories give 224",
-            "item 9: total_checks says 226, the inventories give 227",
-            "item 9: content_hashed_classes['tests/'] says 118, "
-            "the inventory gives 119"):
+            f"item 9: content_hashed_checks says "
+            f"{entry['content_hashed_checks']}, the inventories give "
+            f"{after['hashed']}",
+            f"item 9: total_checks says {entry['total_checks']}, "
+            f"the inventories give {after['total']}",
+            f"item 9: content_hashed_classes['tests/'] says "
+            f"{entry['content_hashed_classes']['tests/']}, "
+            f"the inventory gives {counted_after['tests/']}"):
         assert expected in findings, (expected, findings)
 
     # Updating the registry's own counts is not enough: the prose restates
     # them, so the .md and the note stay findings until they are updated too.
     reg = copy.deepcopy(registry())
-    entry = next(e for e in reg["attested_inventories"] if e["t1_item"] == 9)
-    entry["content_hashed_checks"] = 224
-    entry["total_checks"] = 227
-    entry["content_hashed_classes"]["tests/"] = 119
+    entry = item9_entry(reg)
+    entry["content_hashed_checks"] = after["hashed"]
+    entry["total_checks"] = after["total"]
+    entry["content_hashed_classes"]["tests/"] = counted_after["tests/"]
     remaining = audit_attested_inventories(reg, read_doc(), files)
     assert remaining, "the prose leg did not survive the registry fix"
     assert all(": md: " in f or ": attested_inventories_note: " in f
@@ -730,22 +801,31 @@ def test_control_a_new_inventory_entry_is_a_finding():
 @pytest.mark.parametrize("doctor", ["md_digit", "note_digit", "drop_md_row",
                                     "md_word"])
 def test_control_a_perturbed_prose_count_is_a_finding(doctor):
-    """#649 control 3: the restatements in the .md and the note are gated."""
+    """#649 control 3: the restatements in the .md and the note are gated.
+
+    Each mutant rebuilds its sentence from the derived counts, so a
+    renumbering cannot quietly turn a doctor into a no-op (#658 review).
+    """
     reg, doc = copy.deepcopy(registry()), read_doc()
+    rows = derive_inventory_counts(reg, item9_entry(reg))[0]["live_pins"]
+    item10 = next(e for e in reg["attested_inventories"]
+                  if e["t1_item"] == 10)
+    hygiene = derive_inventory_counts(reg, item10)[0]["hashed"]
     if doctor == "md_digit":
-        doc = doc.replace("The 46 item 9 rows sit in both camps",
-                          "The 45 item 9 rows sit in both camps")
+        doc = doc.replace(f"The {rows} item 9 rows sit in both camps",
+                          f"The {rows - 1} item 9 rows sit in both camps")
     elif doctor == "note_digit":
         reg["attested_inventories_note"] = \
             reg["attested_inventories_note"].replace(
-                "The 46 item 9 rows in live_pins",
-                "The 45 item 9 rows in live_pins")
+                f"The {rows} item 9 rows in live_pins",
+                f"The {rows - 1} item 9 rows in live_pins")
     elif doctor == "drop_md_row":
-        doc = doc.replace("The 46 item 9 rows sit in both camps", "")
+        doc = doc.replace(f"The {rows} item 9 rows sit in both camps", "")
     else:
         # The item 10 count is spelled as a word; both forms are resolved.
-        doc = doc.replace("the five item 10 hygiene files",
-                          "the four item 10 hygiene files")
+        doc = doc.replace(f"the {NUMBER_WORD[hygiene]} item 10 hygiene files",
+                          f"the {NUMBER_WORD[hygiene - 1]} item 10 "
+                          "hygiene files")
     assert doc != read_doc() or reg != registry(), "the mutant did not apply"
     findings = audit_attested_inventories(reg, doc)
     assert findings, f"the {doctor} leg did not fire"
@@ -753,8 +833,7 @@ def test_control_a_perturbed_prose_count_is_a_finding(doctor):
 
 def test_control_an_inventory_path_matching_no_class_is_a_finding():
     """#649 edge case: a path no declared class claims cannot pass."""
-    entry = next(e for e in registry()["attested_inventories"]
-                 if e["t1_item"] == 9)
+    entry = item9_entry(registry())
     inv = copy.deepcopy(load_json(entry["inventory"]))
     inv[entry["inventory_key"]].append("docs/not-a-testbench.md")
     findings = audit_attested_inventories(registry(), read_doc(),

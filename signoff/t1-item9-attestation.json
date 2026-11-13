@@ -451,7 +451,7 @@
         "role": "testbench",
         "path": "tests/test_byte_frozen_sources.py",
         "passed": true,
-        "content_hash": "sha256:1b0a6066496c124fba71232fcce8aa2f0b3920bbb4377856aed5bc83b00d0c20"
+        "content_hash": "sha256:3e50b792d54a30bfc24367ccd65eb57bbc2560027cf09d58374e072597411f51"
       },
       {
         "check": "present",
