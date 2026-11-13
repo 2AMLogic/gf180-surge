@@ -126,6 +126,10 @@ edit, including lint or whitespace, makes that attestation and the item 9 verdic
 in `signoff/block-manifest.signoff.json` STALE until both are re-derived in the same
 change. They are covered by the audit's live equality check in
 `tests/test_byte_frozen_sources.py`; they have no leaf-specific freshness test.
+They are 45 of the 218 files that attestation content-hashes — see
+[Whole-inventory attestation pins](#whole-inventory-attestation-pins-tests-rtl-benches-hygiene-files)
+for the other 173, for the item 10 hygiene files, and for exactly what a
+regeneration has to re-commit.
 
 Two of the self-hash pins are also recorded in their RTL traces as a **revision
 word** — the low 32 bits, `int(revision[:8], 16)`: SXT-028a's
@@ -138,6 +142,141 @@ form too.
 `class Refuse(Exception)` for the same reason — see `refusal.py` and
 `tests/test_shared_refuse.py`, whose allowlist is the same freeze seen from the
 `Refuse`-consolidation side (#258).
+
+## Whole-inventory attestation pins (`tests/`, `rtl/` benches, hygiene files)
+
+The per-file rows above are **not** the whole set of files whose bytes a
+committed record pins. Two `klt signoff --attest` envelopes content-hash *every*
+file in an inventory, and `.github/workflows/signoff.yml` re-checks both on every
+`pull_request` and on every push to `main`, exiting 3 on any drift:
+
+| Envelope | Inventory — the authoritative list | Content-hashed files | Rest of the envelope |
+|---|---|---|---|
+| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 218 of 221 checks: 114 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 44 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
+| `signoff/item-10.attestation.json` | `signoff/hygiene-inventory.json`, key `hygiene` | 5 of 9 checks: `README.md`, `LICENSE`, `.github/workflows/ci.yml`, `.github/workflows/signoff.yml`, `.github/workflows/slow-controls.yml` | four `command` audit checks |
+
+**Read the inventories; this registry does not transcribe them.** The 45
+`T1 item 9` rows in the [Live pins](#live-pins) table are only the `tools/` +
+`model/` subset the registry audit can discover on its own. The other 173 item 9
+files and the five item 10 hygiene files deliberately have no rows there:
+enumerating them would duplicate the inventories verbatim and rot on every new
+test or bench.
+
+### The obligation is "re-attest in the same change", not "do not edit"
+
+These two obligations are different, and only the first applies to a file that
+is in an inventory but has no [Live pins](#live-pins) row:
+
+- **Inventory-only files** (`tests/`, the `rtl/` benches and mutants,
+  `README.md`, `LICENSE`, the three workflows) are ordinary editable sources.
+  The envelope records that they exist and what their bytes were. Edit them for
+  any reason a normal change justifies — then **re-attest the affected envelope
+  in the same change**, or CI's `signoff` job goes red.
+- **Every file with a [Live pins](#live-pins) row** keeps the stronger rule
+  stated at the top of this file: do not edit, and a lint finding inside one is
+  permanently kept. Nothing here relaxes that. That covers the 13 `self_hash`
+  pins, the two other `manifest_entry` pins (`fixtures/control/manifest.json`
+  and the SXT-043 evidence table), and the 45 item 9 rows.
+
+The 45 item 9 rows sit in both camps — they are listed pins *and* they are item 9
+inventory entries — so the stronger rule wins for them.
+
+### The registry audit does not fire for inventory-only files
+
+`tests/test_byte_frozen_sources.py` cannot see them, by construction rather than
+by a missed regeneration: `discover_recorded_sources()` iterates
+`tracked_python()`, which is `*.py` **outside** `tests/` ("a test file is never
+pinned"). So `.sv`, `.yml`, `README.md`, `LICENSE` and everything under `tests/`
+are excluded by design. **`klt signoff --check` is their freshness check** — the
+registry audit is not, and will pass in silence while an envelope is drifted.
+
+### Measured outcomes
+
+Each row appends one comment line to one file, runs the check, and restores the
+file. Measured 2026-11-13 in a worktree at `d5ac9f6` with
+`uvx --from klayout-tools==0.8.0 klt` and `pytest 9.1.1`; `git status
+--porcelain` was empty after every probe.
+
+| File edited | Attested by | `klt signoff --attest N … --check` | `pytest tests/test_byte_frozen_sources.py` |
+|---|---|---|---|
+| (none — baseline) | — | item 9 `match`, exit 0; item 10 `match`, exit 0 | 28 passed |
+| `tests/test_ci_dependency_pins.py` | item 9 | `drifted`, exit 3 (`attestation.checks.67.content_hash`) | 28 passed — **silent** |
+| `rtl/control/tb_control.sv` | item 9 | `drifted`, exit 3 (`attestation.checks.2.content_hash`) | 28 passed — **silent** |
+| `.github/workflows/ci.yml` | item 10 | `drifted`, exit 3 (`attestation.checks.0.content_hash`) | 28 passed — **silent** |
+| `tools/vel_negative_controls.py` (a registry row, for contrast) | item 9 | `drifted`, exit 3 (`attestation.checks.217.content_hash`) | 2 failed, 26 passed |
+
+The `drifted` / exit 3 column is this section's failure control: if any of the
+three inventory-only classes had read `match`, the claim above would be wrong.
+The last row is the non-vacuity leg — it shows the registry audit is not simply
+always silent, it is silent *specifically* for files it has no row for.
+
+### Regenerating either envelope
+
+The `klayout-tools` pin lives only in
+[`signoff/requirements.txt`](../signoff/requirements.txt) (`klayout-tools==0.8.0`
+as of `d5ac9f6`), the same pin `signoff.yml` installs.
+
+```sh
+python3 -m venv /tmp/klt-venv
+/tmp/klt-venv/bin/pip install -r signoff/requirements.txt
+
+# item 10 (hygiene) — seconds; its four audit checks are stdlib-only scripts.
+/tmp/klt-venv/bin/klt signoff --attest 10 --inventory signoff/hygiene-inventory.json \
+    -o signoff/item-10.attestation.json
+/tmp/klt-venv/bin/klt signoff --attest 10 --inventory signoff/hygiene-inventory.json \
+    --check signoff/item-10.attestation.json
+
+# item 9 (testbenches) — runs the full pytest suite; see the caveat below.
+/tmp/klt-venv/bin/klt signoff --attest 9 --inventory signoff/t1-item9-inventory.json \
+    -o signoff/t1-item9-attestation.json
+/tmp/klt-venv/bin/klt signoff --attest 9 --inventory signoff/t1-item9-inventory.json \
+    --check signoff/t1-item9-attestation.json
+```
+
+**Item 9 regeneration runs the `cold_start` full suite; `--check` does not.**
+Measured: `--attest 9` refuses an inventory with no `cold_start` (exit 1, "item 9
+inventory must declare 'cold_start'"), and a regeneration run does execute the
+declared `python3 -m pytest -q -p no:cacheprovider tests` with `cwd: .`,
+resolving `python3` from `PATH`. A venv holding only `signoff/requirements.txt`
+is therefore **not** a sufficient regeneration environment — the suite's own
+pinned dependencies (`pytest 9.1.1`, `numpy 2.4.2`, python 3.12, and `iverilog
+12.0-2build2` for the RTL cases) must be the ones `python3 -m pytest` picks up,
+or `cold_start` fails and the envelope records a failing check. `--check` skips
+it and carries the committed outcome (`[SKIP] cold_start … local_only, not run;
+committed outcome: pass`), which is why the `signoff` job never pays that cost.
+The wall-clock cost of a successful `cold_start` is **not timed by this
+section** — treat it as "a full suite run", not as a known number.
+
+`--attest 10 … -o` was verified here to reproduce the committed
+`signoff/item-10.attestation.json` byte-for-byte (exit 0). The item 9
+regeneration command was exercised far enough to confirm it runs `cold_start`,
+not to completion.
+
+### Whether `signoff/block-manifest.signoff.json` also has to be re-rendered
+
+Usually not — and the reason is worth knowing before regenerating anything.
+[`signoff/block-manifest.json`](../signoff/block-manifest.json) declares, for
+each envelope, a `content_hash` that is the sha256 of the **inventory** the
+envelope was produced from, not of the envelope's own bytes
+(`sha256:490713ad…` is `signoff/t1-item9-inventory.json`'s own digest). The
+rendered report then echoes the envelope's `summary` and its
+`check_count` / `passed_count`. Measured both directions:
+
+- Changing the envelope's **bytes** without changing its content (a trailing
+  newline) left a fresh `klt signoff --manifest signoff/block-manifest.json
+  --format json` render byte-identical to the committed report. So regenerating
+  an envelope from an **unchanged** inventory leaves the report alone and there
+  is nothing extra to commit.
+- Changing the envelope's `summary` string changed exactly that field in a fresh
+  render. So anything that moves the envelope's summary or check counts — in
+  practice, a change to the **inventory** — does require re-rendering
+  `signoff/block-manifest.signoff.json` *and* updating the manifest's declared
+  `content_hash`, in the same change.
+
+This sharpens, rather than contradicts, the "until both are re-derived" sentence
+in the item 9 paragraph above: an edit to an attested file makes the committed
+envelope STALE unconditionally, but the report only has to be re-committed when
+the regeneration actually moves bytes the report echoes.
 
 ## Historical provenance (NOT byte-frozen)
 
