@@ -48,8 +48,8 @@
       "txn_lines_rtl": 884736,
       "txn_log_exact": true,
       "txn_log_sha256": {
-        "model": "d078987e8a372d09e36f02315cd3e949b790ae31b8652b016dbddfbd3f83486a",
-        "rtl": "d078987e8a372d09e36f02315cd3e949b790ae31b8652b016dbddfbd3f83486a"
+        "model": "cbe9b206177d7a64ebf8166b7008c6a245cf1e1cce945b3886b385f870481501",
+        "rtl": "cbe9b206177d7a64ebf8166b7008c6a245cf1e1cce945b3886b385f870481501"
       }
     },
     {
