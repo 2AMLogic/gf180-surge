@@ -39,7 +39,8 @@ sys.path.insert(0, REPO)
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
 sys.path.insert(0, os.path.join(REPO, "tools"))
-from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
+from _census_blob_common import (census_blob, git_blob_sha1,  # noqa: E402
+                                 graphs_entry)
 
 oc.reexec_under_pinned_python(REPO)
 
@@ -50,15 +51,6 @@ ROUTE_CUTOFF_F01 = 0.5
 ROUTE_RESO_F01 = 0.5
 FROZEN_SHAPES = (0, 1, 2, 3)          # sine, tri, square, ramp
 N_VOICE_LFOS = 6
-
-
-def graphs_entry(rel):
-    with open(GRAPHS, encoding="utf-8") as f:
-        for line in f:
-            g = json.loads(line)
-            if g.get("p") == rel:
-                return g
-    raise Refuse(f"preset not in graphs.jsonl: {rel}")
 
 
 def graphs_modwheel_routes(rel):
