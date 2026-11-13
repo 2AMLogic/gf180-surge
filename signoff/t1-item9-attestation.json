@@ -465,7 +465,7 @@
         "role": "testbench",
         "path": "tests/test_census_blob_common.py",
         "passed": true,
-        "content_hash": "sha256:1a55763fef4d62382740bff2da005f04f0a8b43aca5adb1377d6d6d1b601ff32"
+        "content_hash": "sha256:0d581fbbb10236e4ff83645e1ea1fa81a0608b0773f6e7fba722eab8e8dfb317"
       },
       {
         "check": "present",
