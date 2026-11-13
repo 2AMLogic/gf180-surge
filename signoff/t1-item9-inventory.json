@@ -161,6 +161,7 @@
     "tests/test_sxt036_vel_corners.py",
     "tests/test_sxt036_vel_cost.py",
     "tests/test_sxt036_vel_oracle_status.py",
+    "tests/test_sxt036_vel_rtl_harness_reporting.py",
     "tests/test_sxt036_vel_state.py",
     "tests/test_sxt037_lp12.py",
     "tests/test_sxt038_lp24.py",
