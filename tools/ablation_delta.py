@@ -309,12 +309,50 @@ def load_sidecars():
 
 
 def repeatability_bounds():
+    """Index reports/sxt-012/repeatability.json by fixture_id (fail-closed).
+
+    There is deliberately no empty-dict fallback (issue #628): a reference
+    that was never successfully read must not resolve to
+    `wet_repeat_relative_max_diff: null`, which is byte-for-byte what a
+    legitimately bit-identical fixture produces. Any unusable reference
+    refuses, naming the file, instead of emitting a plausible-looking value.
+    """
+    rel = os.path.relpath(REPEATABILITY, REPO)
     try:
         with open(REPEATABILITY, encoding="utf-8") as f:
             rep = json.load(f)
-        return {fx["fixture_id"]: fx for fx in rep["fixtures"]}
-    except Exception:
-        return {}
+    except OSError as e:
+        raise Refuse(f"repeatability reference missing/unreadable ({rel}): {e}")
+    except ValueError as e:
+        raise Refuse(f"repeatability reference unparseable ({rel}): {e}")
+    fixtures = rep.get("fixtures") if isinstance(rep, dict) else None
+    if not isinstance(fixtures, list) or not fixtures:
+        raise Refuse(f"repeatability reference {rel}: no non-empty 'fixtures' list to index")
+    bounds = {}
+    for fx in fixtures:
+        if not isinstance(fx, dict) or "fixture_id" not in fx:
+            raise Refuse(f"repeatability reference {rel}: fixture entry without a 'fixture_id'")
+        bounds[fx["fixture_id"]] = fx
+    return bounds
+
+
+def require_repeatability_fixtures(bounds, fixture_ids):
+    """Refuse for any offslot-ctrl pair the reference does not cover.
+
+    "absent from the reference" and "bit-identical repeat, no relative diff
+    recorded" must not share one output (issue #628): the second is a null on
+    purpose, the first is a broken input. Checked before the pair loop, so a
+    broken reference writes no pair record at all.
+    """
+    rel = os.path.relpath(REPEATABILITY, REPO)
+    for fid in fixture_ids:
+        fx = bounds.get(fid)
+        if fx is None:
+            raise Refuse(f"repeatability reference {rel} has no fixture '{fid}': an "
+                         f"offslot-ctrl pair cannot cite a reference it is not in")
+        if not isinstance(fx.get("wet"), dict):
+            raise Refuse(f"repeatability reference {rel}, fixture '{fid}': no 'wet' object "
+                         f"to read relative_max_diff from")
 
 
 def main():
@@ -325,6 +363,13 @@ def main():
     use_numpy = backend() == "numpy+stdlib"
 
     groups = load_sidecars()
+    # Load and validate the SXT-012 reference once, before any comparison, so
+    # that an unusable reference costs no pair record (issue #628).
+    offslot_fixture_ids = sorted(
+        f"{slug}__{sid}" for (slug, sid), entries in groups.items()
+        if any(sc["kind"] == "offslot-ctrl" for _path, sc in entries))
+    bounds = repeatability_bounds() if offslot_fixture_ids else {}
+    require_repeatability_fixtures(bounds, offslot_fixture_ids)
     os.makedirs(args.out, exist_ok=True)
     summary_rows = []
     per_pair_written = 0
@@ -362,12 +407,12 @@ def main():
             }
             repeatability_note = None
             if sc["kind"] == "offslot-ctrl":
-                fx = repeatability_bounds().get(f"{slug}__{sid}")
+                fx = bounds[f"{slug}__{sid}"]
                 repeatability_note = {
                     "class": sc.get("repeatability_class"),
                     "expect_bit_identity": sc.get("repeatability_class") == "bit-identical",
                     "reference": "reports/sxt-012/repeatability.json",
-                    "wet_repeat_relative_max_diff": (fx or {}).get("wet", {}).get("relative_max_diff"),
+                    "wet_repeat_relative_max_diff": fx["wet"].get("relative_max_diff"),
                 }
                 pair["repeatability_note"] = repeatability_note
             out_dir = os.path.join(args.out, slug)

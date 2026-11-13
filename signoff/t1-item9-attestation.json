@@ -437,7 +437,7 @@
         "role": "testbench",
         "path": "tests/test_ablation_delta.py",
         "passed": true,
-        "content_hash": "sha256:4e6d8e83830143867b6d664844551ce674ce34be62f0a72f63bfa6d9fcbbb955"
+        "content_hash": "sha256:9544b4e3768ce7cd88b56e51e4f15ef87b750a09a8e6dcc80d8721dec53465f6"
       },
       {
         "check": "present",
