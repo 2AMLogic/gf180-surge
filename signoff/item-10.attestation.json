@@ -31,7 +31,7 @@
         "role": "hygiene",
         "path": ".github/workflows/slow-controls.yml",
         "passed": true,
-        "content_hash": "sha256:332e2848d08397ddb7c13158650040935ae16809cb406e6d99f52c066f0b7d94"
+        "content_hash": "sha256:073da2d61efbb0d4ba70554c024d16681b363e2678a300edcf09dbd3eee88827"
       },
       {
         "check": "present",

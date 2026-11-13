@@ -486,7 +486,7 @@
         "role": "testbench",
         "path": "tests/test_ci_dependency_pins.py",
         "passed": true,
-        "content_hash": "sha256:41e2a8bbf833722b9d7a8ed20e079cf21a0368261b1adcee35cd82de12462f8a"
+        "content_hash": "sha256:de4a02196da8c04a0c99f14cc99d79225c77d2b393d5580de9b41b4ca4eca9e6"
       },
       {
         "check": "present",

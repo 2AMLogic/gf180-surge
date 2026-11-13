@@ -49,7 +49,11 @@ jobs:
           command -v vvp >/dev/null || { echo "FAIL: vvp not on PATH" >&2; exit 1; }
           iverilog -V | head -n 1
       - name: Install python dependencies
-        run: python3 -m pip install --quiet numpy pytest
+        # Same pinned manifest as both ci.yml install sites: this job runs the
+        # RTL-vs-model comparator reruns and mutation controls, so a floating
+        # numpy could change test numerics with no repo diff to bisect.
+        # Contract test: tests/test_ci_dependency_pins.py.
+        run: python3 -m pip install --quiet -r requirements-ci.txt
       - name: Run slow negative controls and gate on skips
         run: |
           set -uo pipefail
