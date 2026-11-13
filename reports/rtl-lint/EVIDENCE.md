@@ -113,6 +113,20 @@ re-keyed only for line/column/fingerprint/source-hash drift (same rule and
 message, same count; no diagnostic added). The figures in this file otherwise
 describe the original #434 run. This is lint evidence only.
 
+**Update (#641):** `galactic_core`'s arithmetic was narrowed from
+128-bit-everywhere to its integer-exact widths (no port, schedule or
+behaviour change). Its waivers were re-derived against the new bytes under
+the same pinned Verilator 5.050: **98 -> 101** entries for that group, so the
+committed baseline is **700 -> 703** waivers in total, severe waivers
+unchanged at 11. 99 of the 101 are the same rules and messages re-keyed for
+line/column/fingerprint/source-hash drift; the two genuinely new entries are
+`UNUSEDSIGNAL` on the upper bits of the two rounding accumulators
+(`rndsat32`'s `r[65:38]`, `rndmul`'s `p[63:38]`), which the narrowing makes
+provably redundant. Those two carry a distinct explanation: deliberate, not
+tolerated debt. No other group's waivers were touched, and no RTL, frozen
+model, fixture or tool byte was edited to remove a warning. This is lint
+evidence only.
+
 **A green `rtl-lint` job does not mean these 96 severe waivers are
 accepted.** The checker returns PASS (exit 0) when the diagnostic multiset
 matches the baseline, whether or not the severe waivers' `review_decision`

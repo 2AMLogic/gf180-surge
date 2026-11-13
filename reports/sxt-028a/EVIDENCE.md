@@ -28,7 +28,7 @@ proves the reference budgets reject one.
 
 | Claim | Status | Evidence |
 |---|---|---|
-| Frozen model ↔ RTL exact | **PASS** (4/4 cases; 2 mutants CONTROL-OK) | `rtl-exactness.json` |
+| Frozen model ↔ RTL exact | **PASS** (4/4 cases; 3 mutants CONTROL-OK) | `rtl-exactness.json` |
 | Model ↔ pinned engine, slot boundary | **6/6 PASS (PENDING-FREEZE budgets)** | `artifacts/compare-*.json` |
 | Negative controls live | **5/5 CONTROL-OK** | `negative-controls/negative-controls.json` |
 | Complete-wet preset renders | **REFUSED** (fail-closed; unlanded siblings) | `artifacts/extract-refusals.txt`, extraction applicability records |
@@ -156,6 +156,31 @@ image (54 words/frame × instances), and the frozen-revision pin.
 | prs-128b-reset48 | 128 | host bulk clear + core reset before block 48 | **EXACT** |
 | mutant-regen-halved | 256 | feedback regen halved in the RTL | **CONTROL-OK: FAILS** |
 | mutant-shared-memory-dual | 64 | `mem_base` dropped (both instances pool one region) | **CONTROL-OK: FAILS** |
+| mutant-narrow-product | 64 | the core's exact 32×32→64 signed product truncated to 32 bits (#641) | **CONTROL-OK: FAILS** |
+
+**Arithmetic widths narrowed (#641), result unchanged.** The RTL now
+carries every product, sum and saturation at the narrowest integer-exact
+width (32×32→64, 32×34→66, a 66-bit MAC accumulator, a 38-bit saturation
+domain) instead of 128 bits everywhere. The FSM schedule, the per-block
+cycle count and the `em_*` transaction order are untouched, and the table
+above was re-derived after the change: all four cases are still integer-exact
+and the `txn_log_sha256` of `prs-128b-smoke`, `dual-instance-64b` and
+`prs-128b-reset48` is byte-identical to the previously committed record.
+The third mutant is the failure control for the change itself: a deliberately
+too-narrow (32-bit) product must FAIL, and it does.
+
+**Finding — the previously committed `canonical-temple-512b` hash was
+stale.** Its `txn_log_sha256` moved from
+`cbe9b206…0481501` to `d078987e…f83486a` in this re-derivation, on **both**
+the model and the RTL side. This is not an effect of the RTL change: the
+model alone, run with no RTL in the loop, produces the new hash on the
+current fixture. The cause is in git history — the canonical fixture
+`fixtures/temple__seq-notes-coverage-v1-aw49-taps.npz` was replaced in
+`2021228` (13.8 MB → 6.2 MB), ~1.5 h *after* the record was written in
+`7fba24a`, and `rtl-exactness.json` was never re-run against the new bytes.
+The committed record now matches the in-tree fixture for the first time.
+`model/effects/aw-49/galactic_model.py` is unchanged (frozen revision
+`569bff13…`) and the exactness verdict is unaffected.
 
 Traffic measured from the RTL txn log: 28 R + 26 W = **54 words = 216
 B/frame/instance** (10.368 MB/s at 48 kHz), matching the model's

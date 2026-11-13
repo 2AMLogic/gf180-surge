@@ -57,6 +57,14 @@
   "claim_scope": "Machine-readable leaf/gate ledger consumed by tools/publish_coverage.py (SXT-029, issue #22). It records, per landed leaf, the verification verdicts of the committed evidence records (full sha256 pins; the tool re-hashes at run time and marks STALE on mismatch), and per unlanded leaf the filed issue (or backlog id) that must land first. Verification statuses use the PASS/FAIL/NOT_RUN/BLOCKED/NO_VERDICT/STALE vocabulary. Nothing here is a support, fidelity, quality, or hardware claim; essentiality is UNVERIFIED pending listening (#8/#9). A leaf is support-ready only when rtl_vs_model AND model_vs_reference are both PASS AND the fidelity_freeze gate is PASS (issue #12).",
   "evidence_pin_revisions": [
     {
+      "decision": "RE-PIN (issue #641, 2026-11-13; legitimately edited after the last coverage publication; the file is correct and was not restored). NO verification status in this table moves by this re-pin: this leaf's rtl_vs_model stays PASS and model_vs_reference stays PASS. The RTL leg was RE-RUN, not re-asserted -- tools/compare_rtl_model_aw49.py reports PASS on all four cases, integer-exact, against the unchanged frozen model (model/effects/aw-49/galactic_model.py, frozen revision 569bff13...c5c0cd, not edited), with three mutant controls CONTROL-OK. The model_vs_reference leg was not re-run and is unchanged by this edit. The record also now carries a finding the edit discovered: the previously committed canonical-temple-512b transaction-log hash was STALE against the in-tree fixture (the fixture npz was replaced in 2021228, after the record was written in 7fba24a), which is an artifact-freshness correction, not a verdict movement.",
+      "issue": 641,
+      "moved_by": "issue #641: narrowed galactic_core's 128-bit arithmetic to its integer-exact widths (no schedule, cycle-count or port change) and re-derived reports/sxt-028a/rtl-exactness.json; the EVIDENCE record gained the third mutant control (mutant-narrow-product), the narrowing note, and the stale-canonical-hash finding",
+      "path": "reports/sxt-028a/EVIDENCE.md",
+      "previous_sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f",
+      "sha256": "7e830c5f8cb6e04d6cd9936c5b9c94855b5b30bd2874e497240af453364d3f3a"
+    },
+    {
       "decision": "RE-PIN (issue #164, 2026-10-01; legitimately edited after the last coverage publication; the file is correct and was not restored). NO verification status in this table moves by this re-pin: every pre-#110 spectral_corr value and spectral-leg verdict this record quoted is superseded by a new dated 'Superseded by #110' section/note added in this commit, quoting the post-#110 values from reports/spectral-corr-fs-floor/artifacts/regrade-ledger.txt/.json (no verdict moves). Pin chain: ... -> 986207e49417240cae5f7f65dbc085b699732a74c65042e8d8d7649edfc0af2d -> this sha (#164). Prior re-pin decision, retained: RE-PIN (the record was legitimately edited after the last coverage publication; the file is correct and was not restored). No verification status in this table was changed: the record's own change note states the verdicts are unchanged - EQ fm_bass_1 stays PASS, Delay metallic/dexie stay FAIL, and the added wet-path tail-gate legs are recorded as further input to the open #16/#12 delay-budget finding, not as a new verdict.",
       "issue": 164,
       "moved_by": "issue #164: refreshed pinned EVIDENCE prose and leaf-verification.json notes that quoted pre-#110 spectral_corr values (PR #166, issue #110, merged 2026-09-30, landed the shared full-scale log-floor spectral_corr definition without rewriting this sha256-pinned prose; routed here per reports/spectral-corr-fs-floor/EVIDENCE.md section 5). Previously: 48062e8 (#113, issue #100): wet-path tail gate on the stereo effect-slice comparators; added the 'Change note (issue #100)' block to the record",
@@ -252,7 +260,7 @@
       "evidence": [
         {
           "path": "reports/sxt-028a/EVIDENCE.md",
-          "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+          "sha256": "7e830c5f8cb6e04d6cd9936c5b9c94855b5b30bd2874e497240af453364d3f3a"
         }
       ],
       "issue": 53,

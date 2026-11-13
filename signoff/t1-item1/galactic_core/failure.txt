@@ -1,8 +1,11 @@
 
+   Building klayout-tools @ git+https://github.com/2AMLogic/klayout-tools.git@d9bc36811ddd11fcf9c60d3a9275858296db8b44
+      Built klayout-tools @ git+https://github.com/2AMLogic/klayout-tools.git@d9bc36811ddd11fcf9c60d3a9275858296db8b44
+Installed 7 packages in 6ms
 {
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys did not complete within 1800.0s (script '/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-579/signoff/t1-item1/galactic_core/out/synth_galactic_core.run.ys') -- process killed"
+    "message": "yosys did not complete within 1800.0s (script '/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-641/signoff/t1-item1/galactic_core/out/synth_galactic_core.run.ys') -- process killed"
   }
 }
