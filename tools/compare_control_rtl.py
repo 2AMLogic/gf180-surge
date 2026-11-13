@@ -41,7 +41,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 compile_and_run)
 from model.control import render_sequence  # noqa: E402
 from model.control.engine_stub_counter import CounterStubEngine  # noqa: E402
 
@@ -71,11 +72,17 @@ def write_events_hex(seq, path):
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every T and M key must be unique (issues
+    #455/#639): a repeated snapshot or output sample -- identical or
+    contradictory, in either order -- is refused with LeafInputError rather
+    than resolved last-row-wins.  `E` (decisions), `X` (drops) and `U` are
+    per-block *sequences*, not keyed checkpoints, and keep their appends."""
     t = {}   # b -> [28 ints]
     e = {}   # b -> [(seq, type, p1, p2, slot, steal, status, flush)]
     x = {}   # b -> [(t, type, p1, p2)]
     m = {}   # (b, s) -> (l, r)
     u = []   # [(b, s)]
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -86,7 +93,7 @@ def parse_tb(path):
                 continue
             vals = [int(v) for v in parts[1:]]
             if tag == "T":
-                t[vals[0]] = vals[1:]
+                keys.put(t, "T", vals[0], vals[1:])
             elif tag == "E":
                 b, seq, typ, p1, p2, slot, steal, status, flush = vals
                 e.setdefault(b, []).append((seq, typ, p1, p2, slot, steal,
@@ -96,9 +103,10 @@ def parse_tb(path):
                 x.setdefault(b, []).append((tt, typ, p1, p2))
             elif tag == "M":
                 b, s, l, r = vals
-                m[(b, s)] = (l, r)
+                keys.put(m, "M", (b, s), (l, r))
             elif tag == "U":
                 u.append((vals[0], vals[1]))
+    keys.raise_if_duplicates(path)
     return {"t": t, "e": e, "x": x, "m": m, "u": u}
 
 

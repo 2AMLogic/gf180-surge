@@ -38,6 +38,7 @@ sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, os.path.join(REPO, "tools"))
 sys.path.insert(0, REPO)
 
+from _census_blob_common import graphs_entry  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
 FXSLOT_GLOBAL1, FXSLOT_GLOBAL2 = 6, 7
@@ -68,15 +69,6 @@ def census_row(rel_path):
             if row["path"] == rel_path:
                 return row
     raise Refuse(f"preset not in census: {rel_path}")
-
-
-def graphs_entry(rel_path):
-    with open(GRAPHS, encoding="utf-8") as f:
-        for line in f:
-            g = json.loads(line)
-            if g.get("p") == rel_path:
-                return g
-    raise Refuse(f"preset not in graphs.jsonl: {rel_path}")
 
 
 def slot_entry(graph, slot_role):

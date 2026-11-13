@@ -39,7 +39,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import run_leaf_comparison  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 run_leaf_comparison)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_mw.sv")
@@ -52,19 +53,24 @@ STIMULUS_RELPATHS = ("rtl/mw_init.hex", "rtl/mw_routes.hex",
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every S and M key must be unique (issues
+    #455/#639): a repeated checkpoint -- identical or contradictory, in
+    either order -- is refused with LeafInputError rather than resolved
+    last-row-wins."""
     s = {}   # (block, slot) -> [cut_sum, reso_sum, vca_sum]
     m = {}   # block -> value
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
             if not parts:
                 continue
             if parts[0] == "S":
-                s[(int(parts[1]), int(parts[2]))] = [int(parts[3]),
-                                                     int(parts[4]),
-                                                     int(parts[5])]
+                keys.put(s, "S", (int(parts[1]), int(parts[2])),
+                         [int(parts[3]), int(parts[4]), int(parts[5])])
             elif parts[0] == "M":
-                m[int(parts[1])] = int(parts[2])
+                keys.put(m, "M", int(parts[1]), int(parts[2]))
+    keys.raise_if_duplicates(path)
     return s, m
 
 
