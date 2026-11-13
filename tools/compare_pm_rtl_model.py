@@ -25,6 +25,9 @@ import os
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _rtl_compile_common import CheckpointKeys  # noqa: E402
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_pm_mono_st_fp.sv")
 
@@ -45,14 +48,21 @@ def _int(x):
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every T key must be unique (issues #455/#639):
+    a repeated voice checkpoint -- identical or contradictory, in either
+    order -- is refused with LeafInputError rather than resolved
+    last-row-wins."""
     t = {}   # (block, slot) -> [active, gate, uberrelease, key, ...] (16 words)
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             p = line.split()
             if not p or p[0] != "T":
                 continue
             b, slot = int(p[1]), int(p[2])
-            t[(b, slot)] = [_int(x) for x in p[3:3 + len(FIELD_NAMES)]]
+            keys.put(t, "T", (b, slot),
+                     [_int(x) for x in p[3:3 + len(FIELD_NAMES)]])
+    keys.raise_if_duplicates(path)
     return t
 
 
