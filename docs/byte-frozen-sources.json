@@ -387,6 +387,19 @@
     },
     {
       "covers": [
+        "tools/check_provenance_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/check_provenance_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "d01a8a1dd7dcebcbfac670bcfe1322da3ee9001ebdff45cbb706183c49f0429e"
+    },
+    {
+      "covers": [
         "tools/chorus_negative_controls.py"
       ],
       "freshness_test": "tests/test_byte_frozen_sources.py",
