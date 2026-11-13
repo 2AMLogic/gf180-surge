@@ -12,7 +12,9 @@ Compares every ablation variant against its preset+sequence ORIGINAL render
   - tail RMS delta (last 2.0 s) -- where delay/reverb differences concentrate.
 
 Outputs per-pair JSON under reports/sxt-014/deltas/, an aggregate
-reports/sxt-014/ablation-summary.json, and a printed summary table.
+reports/sxt-014/ablation-summary.json, and a printed summary table. Both
+output locations follow --out: a run pointed at a scratch directory writes
+its summary there too, and never touches the committed record (issue #654).
 
  CAVEAT (normative, issue #9): these numeric deltas are DIAGNOSTIC. They do
  NOT establish essential/optional/unresolved effect labels, preset support,
@@ -292,9 +294,14 @@ def compare(anchor_path, variant_path, anchor_sc, variant_sc, use_numpy):
     }
 
 
-def load_sidecars():
+def load_sidecars(ablations):
+    """Group the ablation sidecars under `ablations` by (preset, sequence).
+
+    The directory is a parameter, not the `ABLATIONS` module constant, so
+    that `--ablations <dir>` actually governs what is read (issue #654).
+    """
     groups = {}
-    for dirpath, _dirs, files in os.walk(ABLATIONS):
+    for dirpath, _dirs, files in os.walk(ablations):
         for fn in sorted(files):
             if not fn.endswith(".json") or fn.startswith("run-"):
                 continue
@@ -362,7 +369,17 @@ def main():
     args = ap.parse_args()
     use_numpy = backend() == "numpy+stdlib"
 
-    groups = load_sidecars()
+    # The aggregate summary follows --out (issue #654). A run told to write
+    # its per-pair records elsewhere must not rewrite the committed
+    # reports/sxt-014/ablation-summary.json in place -- least of all with
+    # scratch paths in its `delta_json` fields. Only a run that targets the
+    # committed deltas directory writes the committed summary. SUMMARY and
+    # DELTAS are read here, at call time, so a test that monkeypatches them
+    # (rather than argparse's import-time default) is honored.
+    summary_path = (SUMMARY if os.path.abspath(args.out) == os.path.abspath(DELTAS)
+                    else os.path.join(args.out, "ablation-summary.json"))
+
+    groups = load_sidecars(args.ablations)
     # Load and validate the SXT-012 reference once, before any comparison, so
     # that an unusable reference costs no pair record (issue #628).
     offslot_fixture_ids = sorted(
@@ -470,7 +487,7 @@ def main():
                    "measurable": sum(1 for r in summary_rows
                                      if not r["bit_identical"] and not r["near_zero_delta_candidate"])},
     }
-    with open(SUMMARY, "w", encoding="utf-8") as f:
+    with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(aggregate, f, indent=2, sort_keys=True)
         f.write("\n")
     print()
