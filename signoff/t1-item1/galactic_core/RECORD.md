@@ -35,20 +35,35 @@ was still emitting those when the budget expired. (The `$abcloop$` numbers are
 Yosys's global autoidx counter, not a loop count; the log is truncated
 mid-emission, so the number of loops broken is not established here.)
 
-That is a structural property of the 32-sample block unrolled combinationally,
-not a budget that was merely a little too small. Raising the budget again is
-therefore **not** the next step: klt's own cap is 3600 s, only 2x what already
-failed, and nothing in this log suggests the pass was close to finishing.
+**This run does not establish the cause.** Everything above is an observation
+from one timed-out log — the pass reached, the cell counts, the unsortable
+cells, ABC's loop breaking — and none of it isolates what makes the design
+expensive. In particular this record makes **no** claim that the cost comes
+from a combinational unroll of the 32-sample block: the RTL contains no such
+unroll. `rtl/effects/aw-49/galactic_core.sv` is already a sequential FSM that
+processes one sample per pass (`if (k == BLOCK-1) ... st <= S_DONE;`, line
+493); its only `for` loops are the two reset loops at lines 512 and 518.
+
+Raising the budget again is nonetheless **not** the next step. That judgment
+rests on the budget arithmetic alone, not on any mechanism: klt's own cap is
+3600 s, only 2x what already failed, and nothing in this log suggests the pass
+was close to finishing.
 
 ## Decision
 
 - Longer-budget re-run: **DONE, and it is exhausted as an approach.** The
   budget is now a request field (klayout-tools#5412), it was raised to 1800 s,
   and the run still timed out.
-- Next step is the **restructure** the 2026-11-13 decision named as the
-  evidence-gated fallback: a sequential sample loop instead of a combinational
-  32-sample unroll. Filed as **#641**. That is an RTL change to a `product`
-  file and is **not** made here.
+- Next step is the **restructure** branch of the 2026-11-13 decision, filed as
+  **#641** — but not the restructure that decision named. It assumed a
+  combinational 32-sample unroll the RTL does not contain, so #641 was
+  rescoped to **narrowing the 128-bit arithmetic**: the source writes products
+  as `128'(a) * b` (41 such casts), so Yosys builds full 128x128 arrays for
+  values that are 32-bit signed words. That cause is **suspected and
+  unverified** — no one has run TECHMAP on a narrowed variant, and the
+  unsortable-cell and ABC loop-breaking warnings are not traced to it at all.
+  #641 records both limits. That is an RTL change to a `product` file and is
+  **not** made here.
 - `rtl/effects/aw-49/galactic_core.sv` is **not** in the byte-frozen registry
   (`docs/byte-frozen-sources.{md,json}`; re-checked live for this record,
   sha256 `7b64384cb02d052fbd6499428375cdc21f3a4af7c6f982f4ef94e661cb18e4c4`).

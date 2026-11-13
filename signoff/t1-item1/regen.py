@@ -36,12 +36,18 @@ CELL_LIBRARY = "gf180mcu_fd_sc_mcu9t5v0"
 # The three groups that pass natively keep the native route.
 NATIVE_GROUPS = {"control_top", "ext_mem_instr", "wavetable_core"}
 # Per-group Yosys wall-clock budget (request `yosys_timeout_s`, klt cap 3600 s).
-# Omitted groups keep klt's fixed 300 s default. galactic_core needs more: its
-# 32-sample block unrolls to ~272k generic cells and the generic `abc` pass
-# alone runs well past 300 s (#579, decision of 2026-11-13).
+# Omitted groups keep klt's fixed 300 s default. galactic_core needs more:
+# `synth` reaches ~272k generic cells and its generic `abc` pass alone runs
+# well past 300 s (#579, decision of 2026-11-13). Why it is that expensive is
+# NOT established by any run here -- see #641 for the suspected, unverified
+# cause; do not restate one as fact in this file.
 YOSYS_TIMEOUT_S = {"galactic_core": 1800}
 # The klt to run; override for a pinned/throwaway environment (never install
-# over the host-wide klt).
+# over the host-wide klt). NOTE: a klt without `yosys_timeout_s` support
+# rejects a request that declares it, and this script then records that
+# rejection in failure.txt -- overwriting a real timeout record. Re-run a
+# group in YOSYS_TIMEOUT_S only under a klt that carries the field (the
+# reproduce line in that group's RECORD.md names it).
 KLT = shlex.split(os.environ.get("KLT", "klt"))
 
 
@@ -130,6 +136,10 @@ def main(only):
             top = g["top"]
             shutil.copy(out / f"{top}_synth.v", d / f"{top}_synth.v")
             shutil.copy(out / f"synth_{top}.ys", d / f"synth_{top}.ys")
+            # A success retires any excerpt an earlier timeout left here;
+            # leaving it would present stale progress evidence beside a
+            # verdict it does not belong to.
+            (d / "timeout-progress.txt").unlink(missing_ok=True)
         else:
             (d / "failure.txt").write_text(p.stdout + "\n" + p.stderr)
             # klt writes <script>.log beside the executed script even on a
