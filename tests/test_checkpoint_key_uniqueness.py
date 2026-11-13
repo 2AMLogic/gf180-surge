@@ -1,24 +1,18 @@
-"""Issue #639: every RTL-vs-model exactness harness refuses a repeated
-checkpoint key, through the one shared unique-insert primitive.
+"""Issues #639/#648: every RTL-vs-model exactness harness refuses a
+repeated checkpoint key, through the one shared unique-insert primitive.
 
 #455 decided the rule for the two LFO harnesses: in an exactness harness a
 contradictory row followed by a correct row for the same checkpoint must be
 refused, never resolved last-row-wins (last-row-wins turns a disagreement
 into a PASS).  The rule was written twice as private boilerplate and reached
-2 of the 13 private `parse_tb` parsers; this module is the live control that
-it now reaches every converted one through
-`_rtl_compile_common.CheckpointKeys`.
+2 of the 13 private `parse_tb` parsers; #639 converted ten more and #648 the
+three live-pinned lowpass harnesses.  This module is the live control that
+it now reaches all thirteen through `_rtl_compile_common.CheckpointKeys`.
 
 Synthetic traces only: no simulator, no oracle, no model.  These are parser
 controls.  They establish nothing about the RTL, the frozen model or any
 committed exactness record -- in particular, no committed trace is claimed
 here to contain (or to be free of) a repeated key.
-
-NOT_RUN for this rule: `tools/compare_rtl_model_lp12.py`,
-`tools/compare_rtl_model_lp24.py` and `tools/compare_rtl_model_lpmoog.py`.
-They are live-pinned in `docs/byte-frozen-sources.json`, were deliberately
-left unconverted, and still resolve a repeated key last-row-wins.  Their
-absence from `CASES` is not a pass for them.
 """
 import os
 import re
@@ -37,6 +31,9 @@ import tools.compare_lfo_rtl_model as lfo  # noqa: E402
 import tools.compare_mw_rtl_model as mw  # noqa: E402
 import tools.compare_pm_rtl_model as pm  # noqa: E402
 import tools.compare_rtl_model as voice  # noqa: E402
+import tools.compare_rtl_model_lp12 as lp12  # noqa: E402
+import tools.compare_rtl_model_lp24 as lp24  # noqa: E402
+import tools.compare_rtl_model_lpmoog as lpmoog  # noqa: E402
 import tools.compare_sine_rtl_model as sine  # noqa: E402
 import tools.compare_slfo_rtl_model as slfo  # noqa: E402
 import tools.compare_vel_rtl_model as vel  # noqa: E402
@@ -136,6 +133,33 @@ CASES = {
         dups={"T": _flat("T", (0,), 28, 99), "M": "M 0 0 9 9"},
         # E (decisions) and X (drops) are per-block sequences, U is a list
         appends=["E 0 1 1 2 3 4 5 6 7", "X 0 1 1 2 3", "U 0 0", "U 0 0"],
+    ),
+    # The three live-pinned lowpass harnesses (issue #648).  `Y` keys a
+    # single output sample by (block, index) and `T` keys the end-of-block
+    # checkpoint by block; neither is a sequence, so both are routed
+    # through the primitive.  T width after the block key is T_FIELDS: 12
+    # for lp12 (subtype, r0, r1, r_clip, c0..c7), 14 for lp24 and lpmoog
+    # (subtype, R[0..4], C[0..7]).
+    "lp12": dict(
+        mod=lp12,
+        good=[_row("Y", (0, 0), 1), _row("T", (0,), 12)],
+        dups={"Y": _flat("Y", (0, 0), 1, 99),
+              "T": _flat("T", (0,), 12, 99)},
+        appends=[],
+    ),
+    "lp24": dict(
+        mod=lp24,
+        good=[_row("Y", (0, 0), 1), _row("T", (0,), 14)],
+        dups={"Y": _flat("Y", (0, 0), 1, 99),
+              "T": _flat("T", (0,), 14, 99)},
+        appends=[],
+    ),
+    "lpmoog": dict(
+        mod=lpmoog,
+        good=[_row("Y", (0, 0), 1), _row("T", (0,), 14)],
+        dups={"Y": _flat("Y", (0, 0), 1, 99),
+              "T": _flat("T", (0,), 14, 99)},
+        appends=[],
     ),
 }
 
