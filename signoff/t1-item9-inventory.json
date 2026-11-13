@@ -71,6 +71,7 @@
     "tests/test_census_blob_common.py",
     "tests/test_census_identity_reconciliation.py",
     "tests/test_check_artifact_manifests.py",
+    "tests/test_checkpoint_key_uniqueness.py",
     "tests/test_checkpoint_width_validation.py",
     "tests/test_ci_dependency_pins.py",
     "tests/test_compare_rtl_model_fx_window.py",

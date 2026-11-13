@@ -27,6 +27,14 @@ own `parse_tb`/`compare` callables, which this module receives and calls but
 never inspects, and by the per-leaf `checked`/summary shapes it is handed
 rather than normalizing.
 
+`CheckpointKeys` (issue #639) is the third shared piece, and the smallest:
+the keyed-store step every leaf `parse_tb` performs when it records a trace
+row under its checkpoint key.  It is shared for one reason -- issue #455's
+rule that a repeated key is refused, not resolved last-row-wins -- which had
+been written twice as private boilerplate and reached 2 of the 13 leaf
+parsers.  The leaf keeps its own `parse_tb` and its own trace grammar; only
+the keyed insert and the refusal are shared.
+
 ISSUE #193 (the #188 blind spot, shared): by default (`report_sim_fails`
 unset), this function still runs both subprocess steps with `check=True` --
 a failing *compile*, or a `vvp` invocation that exits non-zero, raises
@@ -551,6 +559,73 @@ class LeafInputError(Exception):
         self.which = which
         self.path = path
         self.reason = reason
+
+
+class CheckpointKeys:
+    """Issue #639: the one keyed-store primitive every leaf `parse_tb` uses,
+    so the issue #455 duplicate-key rule has a single definition.
+
+    #455 established that last-row-wins is wrong for an exactness harness: a
+    contradictory checkpoint row followed by a correct row for the same key
+    yields a clean comparison and a PASS, because the first row is silently
+    discarded.  The rule was then written twice as private `dups`
+    bookkeeping inside the two LFO harnesses and reached none of the other
+    eleven copies.  This class is that bookkeeping, once.
+
+    Uniqueness is scoped to **tag + key**, not to the store, because several
+    leaves merge differently-tagged rows into one record on purpose
+    (`compare_sine_rtl_model` folds `T`, `S` and `G` into one `(block, slot)`
+    record; `compare_rtl_model` folds `U` rows into the `T` record).  It is
+    also not scoped to the store because one tag may key a nested store, as
+    `U` does.
+
+    Append-style rows -- per-block sample words, control's decision and drop
+    sequences -- are **not** keyed checkpoints and must not be routed here:
+    repeating a block id is how a sequence is written.
+
+    Collect first, refuse once: `raise_if_duplicates` names up to five
+    offending keys and the total, so a trace with a systematic repeat does
+    not report one key at a time.  The refusal is a `LeafInputError`, which
+    the adopted report path turns into `comparison: NOT_RUN` plus an
+    `input_error` block -- an input refusal, never a comparison FAIL.
+    """
+
+    def __init__(self):
+        self._seen = set()
+        self._dups = []
+
+    def claim(self, tag, key):
+        """Record one occurrence of `key` under `tag`; note a repeat.
+
+        For a row that merges into an existing record instead of replacing
+        it (so there is no `store[key] = value` to wrap).
+        """
+        if (tag, key) in self._seen:
+            self._dups.append("%s %r" % (tag, key))
+        else:
+            self._seen.add((tag, key))
+
+    def put(self, store, tag, key, value):
+        """`store[key] = value`, with the key claimed under `tag` first.
+
+        The assignment still happens on a repeat: the refusal is raised by
+        `raise_if_duplicates` after the whole trace is read, and a partly
+        populated store is never graded.
+        """
+        self.claim(tag, key)
+        store[key] = value
+
+    @property
+    def duplicates(self):
+        """The repeated `tag key` strings, in the order they were read."""
+        return list(self._dups)
+
+    def raise_if_duplicates(self, path):
+        """Refuse the trace if any key was recorded more than once."""
+        if self._dups:
+            raise LeafInputError(
+                "rtl_trace", path, "duplicate checkpoint key(s), %d: %s"
+                % (len(self._dups), "; ".join(self._dups[:5])))
 
 
 def _load_model_trace(path):

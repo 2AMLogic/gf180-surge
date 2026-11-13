@@ -51,7 +51,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import (LeafInputError, _publish_refusal,  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 LeafInputError, _publish_refusal,
                                  compile_and_run)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,11 +77,13 @@ SUMMARY_ORDER = ("tb", "verdict", "comparison", "scope", "checked",
 def parse_tb(path):
     """Parse the RTL trace.  Every L/S/O key must be unique (issue #455):
     a repeated key -- identical or contradictory, in either order -- is
-    refused with LeafInputError rather than resolved last-row-wins."""
+    refused with LeafInputError rather than resolved last-row-wins.  The
+    rule itself is `CheckpointKeys` (issue #639), shared with every other
+    leaf parser instead of re-stated here."""
     lines = {}   # (block, index) -> dict
     sums = {}    # block -> [cut_sum, reso_sum]
     latch = {}   # block -> [out0..out5]
-    dups = []
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -89,24 +92,14 @@ def parse_tb(path):
             if parts[0] == "L":
                 vals = [int(x) for x in parts[1:]]
                 d = dict(zip(L_FIELDS, vals))
-                k = (d["b"], d["index"])
-                if k in lines:
-                    dups.append("L %r" % (k,))
-                lines[k] = d
+                keys.put(lines, "L", (d["b"], d["index"]), d)
             elif parts[0] == "S":
-                k = int(parts[1])
-                if k in sums:
-                    dups.append("S %r" % (k,))
-                sums[k] = [int(parts[2]), int(parts[3])]
+                keys.put(sums, "S", int(parts[1]),
+                         [int(parts[2]), int(parts[3])])
             elif parts[0] == "O":
-                k = int(parts[1])
-                if k in latch:
-                    dups.append("O %r" % (k,))
-                latch[k] = [int(x) for x in parts[2:]]
-    if dups:
-        raise LeafInputError(
-            "rtl_trace", path, "duplicate checkpoint key(s), %d: %s"
-            % (len(dups), "; ".join(dups[:5])))
+                keys.put(latch, "O", int(parts[1]),
+                         [int(x) for x in parts[2:]])
+    keys.raise_if_duplicates(path)
     return lines, sums, latch
 
 
