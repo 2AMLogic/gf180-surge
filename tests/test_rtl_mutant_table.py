@@ -9,10 +9,13 @@ committed bytes with `--check`. This module asserts:
   2. Every declared anchor occurs in the base exactly as many times as the
      table says, and every replacement actually changes the text -- so a
      replacement that stopped anchoring is an error, never a silent no-op.
-  3. The two KNOWN-DRIFT entries are exactly the two named voice mutants,
-     each declaring the drift reason and the same three stale SXT-036 hunks.
-     This records the drift; it makes no claim about either control's
-     verdict, which only its comparator can establish.
+  3. No entry declares drift (#622 regenerated the two that did), `--check`
+     says so, and the two rtl/voice/tb_voice.sv copies that carried the
+     drift are each base + exactly their one targeted replacement -- with
+     the SXT-036 gain-anchor logic their stale bytes used to revert now
+     present in both. This records the file contents; it makes no claim
+     about either control's verdict, which only its comparator can
+     establish (reports/voice-mutant-regeneration/ holds those).
   4. The single-line-revert property that tests/test_halfband_d2_voice.py
      asserts line-wise for rtl/voice/voice_halfband_order_mutant.sv also
      holds byte-exactly through the table (that bespoke check is kept: its
@@ -45,7 +48,18 @@ sys.path.insert(0, REPO)
 from tools import make_rtl_mutants as mk  # noqa: E402
 
 SCRIPT = os.path.join(REPO, "tools", "make_rtl_mutants.py")
-DRIFTED = ("rtl/voice/voice_broken_mutant.sv", "rtl/voice/voice_uni_mutant.sv")
+VOICE_MUTANTS = ("rtl/voice/voice_broken_mutant.sv",
+                 "rtl/voice/voice_uni_mutant.sv")
+# The three hunks the two VOICE_MUTANTS used to revert (#620's declared
+# drift, removed by #622): the base's SXT-036 constructor gain-anchor
+# branch and the two control-word comments that describe it. Spelled out
+# here, not imported, so the table cannot re-declare the drift and still
+# satisfy this module.
+SXT036_TEXT = (
+    "  //          b4 ctor gain anchor streamed in word 37 -- SXT-036)\n",
+    "  //  37 ctor gain anchor (iff flags b4; SXT-036)  38..39 reserved\n",
+    "    if (cw[0][4]) prev_gain[s] = 32'(cw[37]);\n",
+)
 HALFBAND = "rtl/voice/voice_halfband_order_mutant.sv"
 CONDITIONER = (
     "rtl/effects/type-conditioner/tb_conditioner_mutant_shared.sv",
@@ -118,45 +132,60 @@ def test_committed_mutant_carries_its_targeted_mutation(path):
         assert rep[1] in mutant, (path, rep[1][:60])
 
 
-# ------------------------------------------------------- 3. known drift
-def test_known_drift_is_exactly_the_two_named_voice_mutants():
-    assert mk.DRIFTED == tuple(sorted(DRIFTED))
-    for path in DRIFTED:
-        spec = mk.MUTANTS[path]
-        assert spec["base"] == "rtl/voice/tb_voice.sv"
-        assert spec["stale"] == mk.SXT036_STALE
-        assert len(spec["stale"]) == 3
-        assert "SXT-036" in spec["drift"]
+# ------------------------------------------------- 3. the drift is gone
+def test_no_entry_declares_drift():
+    """#620 declared the two voice mutants' SXT-036 drift so it was reported
+    rather than hidden; #622 regenerated them. A declared-drift entry is a
+    bounded finding, not a resting state -- re-declaring one has to be a
+    visible change here, not a silent table edit."""
+    assert mk.DRIFTED == ()
     for path, spec in mk.MUTANTS.items():
-        if path not in DRIFTED:
-            assert not spec.get("stale"), path
-            assert "drift" not in spec, path
+        assert not spec.get("stale"), path
+        assert "drift" not in spec, path
 
 
-def test_check_mode_reports_the_known_drift_by_name():
+def test_check_mode_reports_zero_known_drift():
     r = subprocess.run([sys.executable, SCRIPT, "--check"],
                        capture_output=True, text=True, cwd=REPO)
-    for path in DRIFTED:
-        assert "KNOWN-DRIFT: %s" % path in r.stdout
-    assert "2 declared known-drift" in r.stdout
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "0 declared known-drift" in r.stdout
+    assert "KNOWN-DRIFT:" not in r.stdout
 
 
-def test_the_stale_hunks_are_reverts_of_logic_the_base_still_has():
-    """The bounded finding itself: the base carries the SXT-036 gain-anchor
-    logic that both drifted copies drop."""
+@pytest.mark.parametrize("path", VOICE_MUTANTS)
+def test_voice_mutant_is_its_one_targeted_replacement_of_tb_voice(path):
+    """Byte-exact minimality: each control differs from the testbench it
+    mutates by exactly its targeted line and nothing else, so a FAIL is
+    attributable to that line. This is the property the stale hunks broke."""
+    spec = mk.MUTANTS[path]
+    assert spec["base"] == "rtl/voice/tb_voice.sv"
+    assert not spec.get("stale")
+    assert "prefix" not in spec
+    assert len(spec["mutation"]) == 1
+    old, new = spec["mutation"][0]
     base = _read("rtl/voice/tb_voice.sv")
+    committed = _read(path)
+    assert committed == base.replace(old, new, 1)
     base_lines = base.splitlines(True)
-    for old, new in mk.SXT036_STALE:
-        assert old in base, "the base no longer carries this SXT-036 text"
-        # the reverted form is not a line of the base (it is a substring of
-        # the base's wider `else prev_gain[s] = ...` line, so compare lines)
-        for line in new.splitlines(True):
-            assert line not in base_lines, line
-    for path in DRIFTED:
-        mutant = _read(path)
-        for old, new in mk.SXT036_STALE:
-            assert new in mutant, path
-            assert old not in mutant, path
+    mutant_lines = committed.splitlines(True)
+    assert len(mutant_lines) == len(base_lines)
+    differing = [(a, b) for a, b in zip(base_lines, mutant_lines) if a != b]
+    assert differing == [(ol, nl) for ol, nl
+                         in zip(old.splitlines(True), new.splitlines(True))
+                         if ol != nl]
+    assert len(differing) == 1
+
+
+@pytest.mark.parametrize("path", VOICE_MUTANTS)
+def test_voice_mutant_carries_the_bases_sxt036_gain_anchor_logic(path):
+    """The specific regression #622 closed: both copies used to revert the
+    base's SXT-036 constructor gain-anchor branch. Keyed on the real text so
+    the drift cannot come back unnoticed."""
+    base = _read("rtl/voice/tb_voice.sv")
+    mutant = _read(path)
+    for text in SXT036_TEXT:
+        assert text in base, "the base no longer carries this SXT-036 text"
+        assert text in mutant, (path, text[:60])
 
 
 # ------------------------------- 4. the halfband single-line-revert property
