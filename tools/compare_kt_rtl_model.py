@@ -43,7 +43,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _rtl_compile_common import (  # noqa: E402
-    record_width_error, run_leaf_comparison)
+    CheckpointKeys, record_width_error, run_leaf_comparison)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_kt.sv")
@@ -59,13 +59,20 @@ FIELDS = ["kt_word", "kt_cut_sum", "kt_reso_sum", "kt_fegmod_sum",
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every V key must be unique (issues #455/#639):
+    a repeated voice checkpoint -- identical or contradictory, in either
+    order -- is refused with LeafInputError rather than resolved
+    last-row-wins."""
     rows = {}
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             p = line.split()
             if not p or p[0] != "V":
                 continue
-            rows[(int(p[1]), int(p[2]))] = [int(x) for x in p[3:]]  # full width; compare() checks it
+            keys.put(rows, "V", (int(p[1]), int(p[2])),
+                     [int(x) for x in p[3:]])  # full width; compare() checks it
+    keys.raise_if_duplicates(path)
     return rows
 
 
