@@ -398,7 +398,7 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                         compile_kwargs, default_checked,
                         extra_summary_fields=None, summary_key_order=None,
                         validate_model=None):
-    """The report-assembly skeleton shared by five RTL-vs-model leaves.
+    """The report-assembly skeleton shared by six RTL-vs-model leaves.
 
     Extracted by issue #303 from the byte-identical halves of
     `compare_rtl_model.py`, `compare_classic_rtl_model.py`,
@@ -556,10 +556,20 @@ class LeafInputError(Exception):
 def _load_model_trace(path):
     """Read and minimally structure-check the frozen model trace.
 
-    Structure required by all five adopted leaves: a JSON object whose
+    Structure required by all six adopted leaves: a JSON object whose
     `blocks` is a non-empty list of objects, each with an integer `b` and a
     `voices` list of objects carrying `slot`.  Anything deeper stays the
     leaf's `compare` contract; JSON syntax alone is not accepted as a model.
+
+    This per-block `voices` requirement is what currently keeps
+    `tools/compare_pm_rtl_model.py` off `run_leaf_comparison` (issue #631):
+    that leaf's model trace carries `blocks[].slots` (a list of per-slot
+    field lists) and no `voices` at all, and `validate_model` runs AFTER
+    this function, so a leaf can only add constraints here, never relax
+    them.  Adopting it therefore means widening this shared minimum for
+    every leaf that routes through it -- a change to a live refusal guard on
+    six claim-(1) harnesses, which needs its own analysis and controls
+    rather than riding along with a de-duplication.
     """
     try:
         with open(path) as f:

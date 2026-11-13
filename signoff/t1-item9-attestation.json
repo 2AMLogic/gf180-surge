@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 226/226 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 227/227 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 226,
-    "passed_count": 226,
+    "check_count": 227,
+    "passed_count": 227,
     "checks": [
       {
         "check": "present",
@@ -696,7 +696,7 @@
         "role": "testbench",
         "path": "tests/test_rtl_leaf_comparison.py",
         "passed": true,
-        "content_hash": "sha256:8345218d05bae34635a7f5dc5a78ae95dd1f0978fd4ad2f7f979b022f4da0eaa"
+        "content_hash": "sha256:d899e7db57a85593ab6352cb40b8058e6bf0934893b49707b42ccef068c95975"
       },
       {
         "check": "present",
@@ -1110,6 +1110,13 @@
         "path": "tests/test_sxt036_vel_oracle_status.py",
         "passed": true,
         "content_hash": "sha256:fedbfbbc1a77384ecb37a7e80fd182d2a2f2598a67d381a8929648fe7d6a1a99"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sxt036_vel_rtl_harness_reporting.py",
+        "passed": true,
+        "content_hash": "sha256:af765639184f09bfff504da324201110bc9887077b035375d7ad83f8820da1fb"
       },
       {
         "check": "present",
@@ -1622,7 +1629,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:a987a721747cd588629a2dc7fb2c27621fa3d38bf9089311f27b4a9eca1f357b"
+      "content_hash": "sha256:86010a3ab90fe72c0eaba2d7fbd7ff56c087443c3713cef3b0bd65fc4d12c0c2"
     }
   }
 }
