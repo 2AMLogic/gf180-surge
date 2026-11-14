@@ -71,11 +71,6 @@ SETTLE_BLOCKS = 375   # int(0.25 s x 48 kHz) / 32 = 375 (the fixture harness set
 HARDCLIP8 = 8 << FRAC[A_FMT]
 S24_MIN, S24_MAX = -(1 << 23), (1 << 23) - 1
 
-SEQUENCES = {
-    "seq-notes-coverage-v1": 1,
-    "seq-poly-8-v1": 2,
-}
-
 
 def amp_to_linear_fixed(f):
     return to_q(max(0.0, f) ** 3, G_FMT)
@@ -105,7 +100,6 @@ class Reverb1Adapter:
         }
         cp = rcp.build(p, deactivated=deact)
         self.m = Reverb1Fixed(cp)
-        self.st = self.m
         self.name = name
         self.initialized = True
 
@@ -118,9 +112,6 @@ class Reverb1Adapter:
         ol, orr = self.m.process_block(l24, r24)   # s32i out (Q4.28)
         return ([q428_to_q21(x) for x in ol],
                 [q428_to_q21(x) for x in orr])
-
-    def process_block_captured(self, in_l, in_r):
-        return self.process_block(in_l, in_r)
 
 
 def build_models(cfg):
