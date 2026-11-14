@@ -49,6 +49,9 @@ oc.reexec_under_pinned_python(REPO)
 import numpy as np  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
+sys.path.insert(0, os.path.join(REPO, "fixtures"))
+import render_fixture as rf  # noqa: E402  (shared event dispatcher)
+
 SR = 48000
 FX_SLOTS = 16
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.csv")
@@ -115,20 +118,6 @@ def load_seq(ref):
     return seq
 
 
-def dispatch(s, events, block, quant):
-    i = 0
-    while i < len(events) and quant(events[i]["t"]) <= block:
-        e = events[i]
-        if e["type"] == "note_on":
-            s.playNote(e["channel"], e["note"], e["velocity"], 0)
-        elif e["type"] == "note_off":
-            s.releaseNote(e["channel"], e["note"], e.get("velocity", 0))
-        elif e["type"] == "cc":
-            s.channelController(e["channel"], e["controller"], e["value"])
-        i += 1
-    return i
-
-
 def fresh_instance(surgepy, preset_abs, fx_off=True):
     s = surgepy.createSurge(float(SR))
     if not s.loadPatch(preset_abs):
@@ -170,7 +159,7 @@ def run_sequence(s, seq, total_blocks, base_sample=0):
     b = 0
     events = seq["events"]
     while b < total_blocks:
-        nxt = dispatch(s, events[disp:], b, quant) + disp
+        nxt = rf.dispatch(s, events[disp:], b, quant) + disp
         if nxt < len(events) and quant(events[nxt]["t"]) <= b:
             raise Refuse("scheduler failed to advance")
         seg = total_blocks if nxt >= len(events) else max(quant(events[nxt]["t"]), b + 1)

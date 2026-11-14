@@ -36,28 +36,26 @@ Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#579**: T1 item 1: galactic_core synthesis exceeds klt's 300 s Yosys limit (generic abc on ~272k cells)
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
 - **#623**: Fold the three remaining mutant generators onto the shared make_rtl_mutants table (two are byte-attested)
-- **#628**: ablation_delta: remove the blanket except in repeatability_bounds() that turns an unread reference into a cited null
-- **#630**: Remove never-driven ext/state accounting from probes OpCounter: ops.ext_read_words is a constant 0 in all 76 SXT-016 records
 - **#631**: Remove the private build_and_run/main copies in compare_vel_rtl_model.py and compare_pm_rtl_model.py: last two leaf harnesses off the shared run_leaf_comparison path
-- **#633**: Remove the 14 private graphs_entry copies from leaf extractors: one has already drifted from the other 13
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
-- **#639**: Fold the keyed-store step of the 13 private parse_tb trace parsers onto one unique-insert helper: the #455 duplicate-row refusal reached only 2 of them
 - **#640**: Remove the nine private copies of the oracle event dispatcher: they silently drop event types rf.dispatch forwards, and one rendered a committed SXT-041 reference
+- **#641**: galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget)
+- **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them
+- **#654**: ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#643**: refactor(probes): drop the never-driven ext/state half of OpCounter and its two constant-zero ops keys
+- **#661**: refactor(rtl): carry galactic_core's arithmetic at integer-exact widths, not 128 bits
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#642**: evidence(t1-item1): re-run galactic_core at a 1800 s Yosys budget; NO_VERDICT stands
+_None._
 
 ## Proposed
 
@@ -88,10 +86,14 @@ Issues carrying `loom:curated`.
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)*
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
 - **#623**: Fold the three remaining mutant generators onto the shared make_rtl_mutants table (two are byte-attested) *(curated)*
+- **#641**: galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget) *(curated)*
+- **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them *(curated)*
+- **#654**: ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(hermit)*
+- **#653**: Remove or finish the fake engine stability leg in compare_lp12_model.py: engine_state_peak_lsb is the model peak under another name *(hermit)*
 
 ## Epics
 
@@ -108,10 +110,10 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 3 |
 | Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 12 |
+| In Progress (`loom:building`) | 10 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 25 |
-| Architect / Hermit proposals | 1 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 28 |
+| Architect / Hermit proposals | 2 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->

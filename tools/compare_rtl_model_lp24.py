@@ -39,7 +39,9 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run, record_width_error  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 compile_and_run,
+                                 record_width_error)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lp24.sv")
@@ -55,17 +57,27 @@ STIMULUS_RELPATHS = ("rtl/init.hex", "rtl/ctrl.hex", "rtl/in.hex")
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every Y and T key must be unique (issues
+    #455/#639): a repeated output sample or block checkpoint -- identical
+    or contradictory, in either order -- is refused with LeafInputError
+    rather than resolved last-row-wins.  The rule itself is
+    `CheckpointKeys`, shared with every other leaf parser instead of
+    re-stated here."""
     y, t = {}, {}
+    keys = CheckpointKeys()
     with open(path, encoding="utf-8") as f:
         for line in f:
             parts = line.split()
             if not parts:
                 continue
             if parts[0] == "Y":
-                y[(int(parts[1]), int(parts[2]))] = int(parts[3])
+                keys.put(y, "Y", (int(parts[1]), int(parts[2])),
+                         int(parts[3]))
             elif parts[0] == "T":
                 vals = [int(v) for v in parts[1:]]
-                t[vals[0]] = vals[1:]   # subtype, R[0..4], C[0..7]
+                # subtype, R[0..4], C[0..7]
+                keys.put(t, "T", vals[0], vals[1:])
+    keys.raise_if_duplicates(path)
     return y, t
 
 

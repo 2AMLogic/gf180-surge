@@ -9,26 +9,35 @@ each one as
              `old` -> `new` replacements applied
 
 and `--check` exits non-zero if any committed mutant differs from what this
-script would write, so a control cannot silently drift from the testbench it
-mutates. That is the rule tools/make_sxt030_mutants.py already applies to the
-four rtl/instrumentation/ mutants; this table applies it to the sixteen
-mutants that were hand-maintained copies (or, for the two conditioner
-mutants, regenerated in place by their own comparator with no committed-byte
-check).
+script would write, so a control cannot silently drift from the base it
+mutates. That rule started in tools/make_sxt030_mutants.py, covering the four
+rtl/instrumentation/ mutants; #620 applied it to the sixteen mutants that
+were hand-maintained copies (or, for the two conditioner mutants,
+regenerated in place by their own comparator with no committed-byte check),
+and #623 folded the remaining five -- those four plus
+rtl/control/control_broken_mutant.sv, which had no committed-byte check at
+all -- onto this table, for twenty-one in total.
 
 Each `old` must occur the declared number of times in the base (once unless a
 count is given), so a replacement that no longer anchors is an error rather
 than a silent no-op. No mutant is weakened or removed here: this script
 reproduces the committed bytes of every file it lists.
 
-Not yet the single definition for every mutant it lists:
-tools/compare_rtl_model_conditioner.py still writes its two mutants from its
-own private replacement list, because that file's bytes are attested in
-signoff/t1-item9-attestation.json and editing it would make that record
-stale. The two definitions are held byte-identical by
-tests/test_rtl_mutant_table.py until that fold happens; the same applies to
-tools/make_control_mutant.py and tools/make_sxt030_mutants.py, which keep
-their own tables.
+This is the single definition for every mutant it lists (#623).
+tools/compare_rtl_model_conditioner.py, tools/make_control_mutant.py and
+tools/make_sxt030_mutants.py no longer carry mutation rules of their own:
+they call into this table, so exactly one file decides what each committed
+control contains instead of whichever generator ran last.
+
+Two composition shapes are declared:
+
+  plain     optional banner + the mutated base (sixteen entries)
+  strip     a banner ending in its own `timescale line + the mutated base
+            with that one timescale line removed (the five entries absorbed
+            in #623: the four rtl/instrumentation/ mutants and
+            rtl/control/control_broken_mutant.sv). This is how those files
+            were already composed by their own generators; the fold changes
+            no committed mutant byte.
 
 KNOWN DRIFT (bounded finding, #620): rtl/voice/voice_broken_mutant.sv and
 rtl/voice/voice_uni_mutant.sv carry, on top of their targeted mutation, three
@@ -80,9 +89,95 @@ CONDITIONER_BANNER = (
     '// GENERATED negative-control mutant of tb_conditioner.sv by\n'
     '// tools/compare_rtl_model_conditioner.py -- must FAIL exactness.\n')
 
+TIMESCALE = "`timescale 1ns/1ps\n"
+
+# ---- SXT-021 (#538): rtl/control/control_broken_mutant.sv ---------------
+# The banner is kept verbatim from tools/make_control_mutant.py, which wrote
+# this file before the fold (#623, Work step 2: keep the banner, gain the
+# --check gate). Retargeting the "Regenerate with" line would change an
+# attested mutant's bytes for no behavioural gain, so it is deliberately not
+# done here; tools/make_control_mutant.py stays as a shim over this entry.
+CONTROL_MUTANT = "rtl/control/control_broken_mutant.sv"
+CONTROL_BANNER = (
+    "// SXT-021 COMMITTED NEGATIVE CONTROL (do not fix in place).\n"
+    "//\n"
+    "// Deliberately mutated copy of rtl/control/control_top.sv: the event-queue\n"
+    "// depth constant is changed from 16 to 15 (one constant). The comparator\n"
+    "// (tools/compare_control_rtl.py --dut <this file>) MUST FAIL against the\n"
+    "// SXT-021 model: queue-overflow drop records and queue-count checkpoints\n"
+    "// diverge (e.g. the 30-event burst fixture drops 14 words in the mutant vs\n"
+    "// the model's 16-deep queue). If this file ever PASSES the comparator, the\n"
+    "// comparator's divergence detection is broken and must be repaired before\n"
+    "// any RTL-vs-model equality claim stands.\n"
+    "//\n"
+    "// Regenerate with: python3 tools/make_control_mutant.py\n"
+    "\n" + TIMESCALE)
+
+# ---- SXT-030 (#316): the four rtl/instrumentation/ mutants --------------
+# Mutation sites in the real design. Each must occur exactly once; the
+# entries below pin that, so a site that moved is an error, not a no-op.
+EXT_MEM_BASE = "rtl/instrumentation/ext_mem_instr.sv"
+EXT_MEM_DIR = "rtl/instrumentation"
+EXT_MEM_HOLD = "{out_l, out_r} <= miss ? {out_l, out_r} : {smp_l, smp_r};"
+EXT_MEM_SILENCE = "{out_l, out_r} <= miss ? 32'd0 : {smp_l, smp_r};"
+EXT_MEM_COUNT = "wire stall_count = miss;"
+EXT_MEM_NO_COUNT = "wire stall_count = 1'b0;"
+EXT_MEM_LATCH = "win_l <= svc_window;"
+EXT_MEM_NO_LATCH = "win_l <= SVC_WINDOW_NOMINAL;"
+EXT_MEM_RUNS = ("tools/sxt030_stall_bench.py "
+                "(tests/test_sxt030_stall_instrumentation.py)")
+
+
+def _sxt030_banner(spec):
+    """The SXT-030 banner, composed from the entry's own fields.
+
+    It quotes the entry's replacements, so a changed mutation rewrites the
+    banner too and `--check` reports the committed file as STALE rather than
+    letting its header describe a mutation it no longer carries. Reproduces
+    the bytes tools/make_sxt030_mutants.py wrote before #623.
+    """
+    lines = [
+        "// SXT-030 (#316) COMMITTED NEGATIVE CONTROL (do not fix in place).",
+        "//",
+        "// Deliberately mutated copy of %s:" % EXT_MEM_BASE,
+    ]
+    for old, new in spec["mutation"]:
+        lines.append("//   `%s`" % old)
+        lines.append("//     -> `%s`" % new)
+    lines += [
+        "// Effect: %s." % spec["what"],
+        "// Under tools/sxt030_stall_bench.py this build MUST %s."
+        % spec["must"],
+        "// If it ever grades PASS, the bench/gate is broken and must be",
+        "// repaired before any SXT-030 instrumentation claim stands.",
+        "//",
+        "// Regenerate with: python3 tools/make_sxt030_mutants.py",
+        "",
+    ]
+    return "\n".join(lines) + "\n" + TIMESCALE
+
+
+def _sxt030(mutation, what, must):
+    """One rtl/instrumentation/ entry in the `strip` composition shape."""
+    spec = {
+        "base": EXT_MEM_BASE,
+        "strip": [TIMESCALE],
+        "mutation": mutation,
+        "what": what,
+        "must": must,
+        "exercised_by": EXT_MEM_RUNS,
+    }
+    spec["prefix"] = _sxt030_banner(spec)
+    return spec
+
 # Entry fields:
 #   base        repo-relative source the mutant copies
 #   prefix      literal banner prepended ahead of the base text ("" if none)
+#   strip       composition shape, not a mutation: literal text removed
+#               once from the base because the banner already carries it
+#               (the `timescale line, for the five #623 entries). Applied
+#               before the mutation, and anchored the same way: text that
+#               is no longer there is an error, not a silent no-op.
 #   mutation    the replacements that ARE the targeted mutation; each is
 #               (old, new) for a single occurrence or (old, new, count)
 #   stale       declared drift: replacements present in the committed file
@@ -92,6 +187,9 @@ CONDITIONER_BANNER = (
 #               Presence here is a pointer, not a verdict: whether the
 #               control currently FAILS its target is that script's own
 #               result, not this table's.
+#   must        (strip-shape SXT-030 entries only) the verdict its bench
+#               must reach, quoted into the generated banner. Also a
+#               pointer, not a verdict.
 MUTANTS = {
     "rtl/voice/voice_halfband_order_mutant.sv": {
         "base": "rtl/voice/tb_voice.sv",
@@ -266,6 +364,46 @@ MUTANTS = {
         "what": "qmul() round-half-up bias 2^20 -> 2^19",
         "exercised_by": "tools/compare_sine_rtl_model.py",
     },
+    # ---- absorbed in #623: the `strip` composition shape -----------------
+    CONTROL_MUTANT: {
+        "base": "rtl/control/control_top.sv",
+        "prefix": CONTROL_BANNER,
+        "strip": [TIMESCALE],
+        "mutation": [
+            ("parameter int QUEUE_DEPTH = 16,\n",
+             "parameter int QUEUE_DEPTH = 15,\n"),
+        ],
+        "what": "event-queue depth constant 16 -> 15",
+        "exercised_by": "tools/control_negative_controls.py "
+                        "(tests/test_sxt021_control.py)",
+    },
+    EXT_MEM_DIR + "/ext_mem_instr_silence_mutant.sv": _sxt030(
+        [(EXT_MEM_HOLD, EXT_MEM_SILENCE)],
+        ("on a deadline miss the output is forced to SILENCE "
+         "instead of holding the previous frame's sample"),
+        ("FAIL the NC-1 gate (over-subscribed output is silent: "
+         "the held-sample policy is violated)")),
+    EXT_MEM_DIR + "/ext_mem_instr_zero_counters_mutant.sv": _sxt030(
+        [(EXT_MEM_COUNT, EXT_MEM_NO_COUNT)],
+        ("the stall instrumentation is stubbed to zero: "
+         "STALL_FRAMES, STALL_CYCLES_MAX, FIRST_STALL_FRAME, "
+         "OUTPUT_FAULT, stall_strobe and stall_led never fire, while "
+         "the output still degrades (held samples) on a miss"),
+        ("be REFUSED by the NC-1 gate as NO_VERDICT (degraded "
+         "output with STALL_FRAMES == 0), never graded PASS")),
+    EXT_MEM_DIR + "/ext_mem_instr_silence_zero_counters_mutant.sv": _sxt030(
+        [(EXT_MEM_HOLD, EXT_MEM_SILENCE), (EXT_MEM_COUNT, EXT_MEM_NO_COUNT)],
+        ("silence on a miss AND the stall instrumentation stubbed "
+         "to zero (silence-with-zero-counters)"),
+        ("be REFUSED by the NC-1 gate as NO_VERDICT; silence with "
+         "zero counters is never reportable as a pass or a stall")),
+    EXT_MEM_DIR + "/ext_mem_instr_throttle_never_mutant.sv": _sxt030(
+        [(EXT_MEM_LATCH, EXT_MEM_NO_LATCH)],
+        ("the M2 service-window throttle never engages: "
+         "SVC_WINDOW_LIMIT still reads back the commanded value but "
+         "every frame latches the nominal window"),
+        ("FAIL the NC-1 gate (the over-subscribed run shows no "
+         "witness firing: over-subscription was never achieved)")),
     # ---- the two KNOWN-DRIFT entries (see the module docstring) ----------
     "rtl/voice/voice_broken_mutant.sv": {
         "base": "rtl/voice/tb_voice.sv",
@@ -303,8 +441,15 @@ DRIFTED = tuple(sorted(p for p, s in MUTANTS.items() if s.get("stale")))
 
 
 def replacements(spec):
-    """The full ordered replacement list: targeted mutation, then drift."""
-    return list(spec["mutation"]) + list(spec.get("stale", []))
+    """The full ordered replacement list for an entry.
+
+    Composition strip first (text the banner already carries), then the
+    targeted mutation, then any declared drift. Every one of them is
+    anchor-checked by apply_replacements(), so a `strip` whose text moved
+    out of the base is reported like any other lost anchor.
+    """
+    return ([(text, "") for text in spec.get("strip", ())]
+            + list(spec["mutation"]) + list(spec.get("stale", [])))
 
 
 def apply_replacements(text, reps, where):

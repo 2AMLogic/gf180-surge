@@ -4,6 +4,12 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-13
 
+- **PR #651**: refactor(tools): share one graphs_entry instead of 14 private copies
+- **Issue #633** (closed): Remove the 14 private graphs_entry copies from leaf extractors: one has already drifted from the other 13
+- **PR #650**: refactor(tools): share one unique-insert primitive across the leaf trace parsers so the #455 duplicate-key refusal reaches 10 of 13
+- **Issue #639** (closed): Fold the keyed-store step of the 13 private parse_tb trace parsers onto one unique-insert helper: the #455 duplicate-row refusal reached only 2 of them
+- **PR #646**: fix(ablation_delta): refuse an unread SXT-012 repeatability reference instead of citing it with a null
+- **Issue #628** (closed): ablation_delta: remove the blanket except in repeatability_bounds() that turns an unread reference into a cited null
 - **PR #643**: refactor(probes): drop the never-driven ext/state half of OpCounter and its two constant-zero ops keys
 - **Issue #630** (closed): Remove never-driven ext/state accounting from probes OpCounter: ops.ext_read_words is a constant 0 in all 76 SXT-016 records
 - **PR #642**: evidence(t1-item1): re-run galactic_core at a 1800 s Yosys budget; NO_VERDICT stands

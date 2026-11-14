@@ -6,7 +6,9 @@ Policies inherited from the SXT-012 fixture harness (fixtures/
 render_fixture.py): fresh instance per render, controller reset, 0.25 s
 settle discarded, block-quantized event scheduling, tail = last event +
 tail_s, mono (L+R)/2 int16 PCM, no normalization / time warping / fades,
-clipped-sample counts recorded.
+clipped-sample counts recorded.  Events are dispatched by
+`render_fixture.dispatch` itself, so every event type that module forwards
+(including `cc`, `pitch_bend` and `channel_pressure`) is forwarded here.
 
 Both families call this module with an identical `fc.CARRIERS` /
 `fc.build_instance(surgepy, oc, carrier)` shape from their own family
@@ -24,6 +26,24 @@ import sys
 import numpy as np
 
 SR = 48000
+
+
+def shared_dispatch():
+    """`fixtures/render_fixture.py`'s `dispatch`, resolved on first use.
+
+    Imported lazily on purpose: both callers import THIS module before they
+    call `oc.reexec_under_pinned_python`, and `render_fixture` enforces the
+    pinned interpreter at its own import time.  By render time the caller is
+    already on that interpreter, so resolving it here keeps the callers'
+    import order (and their `--help` path) exactly as it was.
+    """
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for p in (os.path.join(repo, "fixtures"), repo, os.path.join(repo, "oracle")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    import render_fixture
+
+    return render_fixture.dispatch
 
 
 def sha256_file(oc, path):
@@ -56,18 +76,11 @@ def render_bus(surgepy, oc, fc, seq, carrier, repeats=1):
             total_blocks = -(-total_samples // bs)
             buf = s.createMultiBlock(total_blocks)
             quant = lambda t: -(-t // bs)  # noqa: E731
+            dispatch = shared_dispatch()
             i = 0
             b = 0
             while b < total_blocks:
-                while i < len(events) and quant(events[i]["t"]) <= b:
-                    e = events[i]
-                    if e["type"] == "note_on":
-                        s.playNote(e["channel"], e["note"],
-                                   e.get("velocity", 100), 0)
-                    elif e["type"] == "note_off":
-                        s.releaseNote(e["channel"], e["note"],
-                                      e.get("velocity", 0))
-                    i += 1
+                i = dispatch(s, events[i:], b, quant) + i
                 nxt = i
                 seg = total_blocks if nxt >= len(events) \
                     else max(quant(events[nxt]["t"]), b + 1)

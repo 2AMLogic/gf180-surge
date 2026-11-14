@@ -461,7 +461,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "9f981156897906ea710c14de1fffc371a0a51cf289b1f777e94616c7f440e289"
+      "sha256": "65a170af8508585c59074a75142401b82a363f09b09a6134b9a4078df42b77d8"
     },
     {
       "covers": [
@@ -513,7 +513,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "2bcdc8fa1bf70602a394277ceaff937ee1afed1ba1a495344d23bcdfa763b285"
+      "sha256": "bfe572c657a1840ca08af2173e8d44e43e232ecb9b7529b418e7fd3510b6edf9"
     },
     {
       "covers": [
@@ -526,7 +526,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "60152e3f79387facc09ba1ecff0697caf39e5af5602ac3d33a8aa0283fae6c12"
+      "sha256": "f7fddc81f431089b039fa9a0e274f9c5e3828b0f66712ce25dec8c26e5c5eb41"
     },
     {
       "covers": [
@@ -539,7 +539,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "97b6640688e166dc13b1a359157ea527fd1a37b6521587af88a2d2912fa54c99"
+      "sha256": "e88d85eeb94c8b88a9ecaffe059f237c1233eea900a14769257fff11a8888561"
     },
     {
       "covers": [
