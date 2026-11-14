@@ -4,6 +4,10 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-14
 
+- **PR #664**: fix(ablation_delta): route the summary and the sidecar walk through --out/--ablations
+- **Issue #654** (closed): ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json
+- **PR #675**: fix(tools): grade the LP12 stability legs from the engine tap peak and the model monitor verdict
+- **Issue #653** (closed): Remove or finish the fake engine stability leg in compare_lp12_model.py: engine_state_peak_lsb is the model peak under another name
 - **PR #665**: refactor(tools): route the three live-pinned lowpass trace parsers through CheckpointKeys, re-deriving their byte-frozen records
 - **Issue #648** (closed): Extend the #455 duplicate-key refusal to the three live-pinned lowpass harnesses, carrying the byte-frozen re-derivation
 - **PR #659**: refactor(oracle): route seven renderers through render_fixture.dispatch
