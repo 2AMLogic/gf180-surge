@@ -96,6 +96,7 @@
     "tests/test_osc_fixture_core_equivalence.py",
     "tests/test_package_json_scripts.py",
     "tests/test_pilot_freeze_tail_shape_floor.py",
+    "tests/test_readme_signoff_claims.py",
     "tests/test_render_lp24_tap_reference.py",
     "tests/test_report_status_tokens.py",
     "tests/test_rms_polarity_audit.py",

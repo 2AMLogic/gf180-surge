@@ -206,11 +206,24 @@ The T1 state of this block is graded by `klt signoff`, not hand-read. The
 verdict of record is
 [signoff/block-manifest.signoff.json](signoff/block-manifest.signoff.json),
 rendered from [signoff/block-manifest.json](signoff/block-manifest.json), which
-currently cites one envelope: T1 item 10 (repo hygiene). Item 10 reads `met`;
-the other ten items are `unmet` (`tier: null`). The
-`signoff` workflow re-renders it and fails on any byte difference. This is
-separate from the backlog DAG above, which tracks fidelity and coverage. The
-report establishes no T1 evidence, fidelity, synthesis or hardware claim.
+currently cites these envelopes:
+
+- T1 item 9 (testbenches shipped):
+  [signoff/t1-item9-attestation.json](signoff/t1-item9-attestation.json)
+- T1 item 10 (repo hygiene):
+  [signoff/item-10.attestation.json](signoff/item-10.attestation.json)
+
+2 of the 11 T1 items read `met` (items 9 and 10); the other nine read `unmet`.
+The report's own top-level `tier` field is `null`; the items are not
+`tier: null`, each T1 item record carries `"tier": "T1"`. The `signoff`
+workflow re-renders the report and fails on any byte difference, and re-checks
+both envelopes against their inventories. This is separate from the backlog DAG
+above, which tracks fidelity and coverage. The report establishes no T1
+evidence, fidelity, synthesis or hardware claim.
+
+[tests/test_readme_signoff_claims.py](tests/test_readme_signoff_claims.py)
+re-derives the three counted claims above from the manifest and the report, so
+this paragraph cannot drift from the verdict of record unnoticed.
 
 The `klayout-tools` pin lives only in
 [signoff/requirements.txt](signoff/requirements.txt). Regenerate (exit 0 and 3
@@ -220,6 +233,11 @@ are both valid):
 python3 -m venv /tmp/klt-venv && /tmp/klt-venv/bin/pip install -r signoff/requirements.txt
 /tmp/klt-venv/bin/klt signoff --manifest signoff/block-manifest.json --format json > signoff/block-manifest.signoff.json
 ```
+
+Re-attesting either envelope -- obligatory in the same change as any edit to a
+file that envelope lists, including every file under `tests/` -- is documented
+in [docs/byte-frozen-sources.md](docs/byte-frozen-sources.md) under
+"Regenerating either envelope".
 
 Item 10 is **hygiene evidence only**: it attests that the README, `LICENSE` and
 the three workflows listed in
