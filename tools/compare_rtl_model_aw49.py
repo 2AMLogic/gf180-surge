@@ -272,8 +272,7 @@ def main():
                "model_frozen_revision": gm.frozen_revision(),
                "cases": [], "mutant_controls": []}
     ok = True
-    base = tempfile.mkdtemp(prefix="aw49-rtl-",
-                            dir="/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode")
+    base = tempfile.mkdtemp(prefix="aw49-rtl-")
 
     def emit(case_name, ctrl, blocks, reset_before=(), want_mem=False,
              core_src="galactic_core.sv", note="", ctrl1=None):
