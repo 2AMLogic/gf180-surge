@@ -486,7 +486,7 @@
         "role": "testbench",
         "path": "tests/test_checkpoint_key_uniqueness.py",
         "passed": true,
-        "content_hash": "sha256:faaa010b01bfd261757731b942ed388537f5b4a52d0db67bbe8e965d56aeaf4d"
+        "content_hash": "sha256:955d0be9572b147c88bc15c21b34005f6e021c014f781fa45e70a1cde01f3822"
       },
       {
         "check": "present",
