@@ -1,10 +1,12 @@
 # T1 item 1 (design sources) — synthesizability record (#537)
 
 Status: **PARTIAL — item 1 is NOT claimed `met`.** `klt synthesize` exits 0 for
-5 of 11 `product` groups; 6 are NO_VERDICT (klt 300 s Yosys timeout; see
-"Result ports exposed (#580)"). `signoff/block-manifest.json` deliberately cites
-nothing (`tests/test_t1_item1_synthesis.py` fails if it cites item 1 while any
-group is BLOCKED).
+5 of 11 `product` groups, but only **4** of those exits are datapath evidence;
+6 are NO_VERDICT (Yosys timeout) and the fifth exit-0 group,
+`rf_ains34_core`, is a constant-folded shell because its own inputs are not
+ports (see "Result ports exposed (#580)"). `signoff/block-manifest.json`
+deliberately cites nothing (`tests/test_t1_item1_synthesis.py` fails if it
+cites item 1 while any group is BLOCKED).
 
 Route (operator ruling r6-q23, 2026-11-05): the 8 groups the native Yosys front
 end cannot read are requested with `sv_frontend: "sv2v"` (pinned sv2v 0.0.13;
@@ -30,8 +32,8 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | ext_mem_instr | native | PASS | |
 | wavetable_core | native | PASS | 33 `undriven_wire` warnings in report |
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
-| rf_ains34_core | sv2v | PASS | 7467 instances; `out_l`/`out_r` are outputs (#580) |
-| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | klt 300 s Yosys timeout once the datapath is observable (#580); see below |
+| rf_ains34_core | sv2v | exit 0, **NOT datapath evidence** | 7467 instances, but the core has **no input ports** (they are internal `logic`, poked hierarchically by its testbench), so Yosys constant-folds the datapath: 3054 tie-lows, 2058 flops, 2054 AND2, no adder or multiplier. Its `area_um2`/timing must not be cited (#580); see `RECORD.md` |
+| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | Yosys killed at a **1800 s** budget (`request.yosys_timeout_s`, klt **`0.9.2`** — a tagged release), all five inside `synth`'s generic ABC pass at the blif extraction; 0.25M–2.0M cells reach it. No unsortable-cells warnings (unlike `galactic_core`). Cause not established; see `RECORD.md` (#580) |
 | galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability, and this run does not establish the cause. Restructure filed as #641 (narrow the 128-bit arithmetic; suspected, unverified); see `galactic_core/RECORD.md` (#579) |
 
 **Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
@@ -41,17 +43,43 @@ described the sequencer only. `out_l`/`out_r` (and `glob_out` where present) are
 now top-level output ports, same widths and semantics, no arithmetic change.
 Re-run: the six `compare_rtl_model_*` tools still PASS (integer-exact). Lint
 waivers were rebased over the line shifts (6 now-ports `UNUSEDSIGNAL` waivers
-removed; 700 remain, no new diagnostics). With the datapath real, `rf_ains34_core`
-synthesizes (7467 instances, area 248870.8 um2 as reported by klt — synthesis
-only) and the other five exceed klt's fixed 300 s Yosys limit like
-`galactic_core` below. Their old sequencer-only reports/netlists were removed
-(they must not be read as datapath evidence; see git history); `failure.txt`
-records the timeout as NO_VERDICT, not a pass. A larger budget is now a
-request field (`yosys_timeout_s`, klayout-tools#5412), but **no tagged klt
-release carries it** and these five groups have not been re-run with it — only
-`galactic_core` was (#579), and it timed out at 6x the budget anyway.
+removed; 700 remain, no new diagnostics). Their old sequencer-only
+reports/netlists were removed (they must not be read as datapath evidence; see
+git history); `failure.txt` records a timeout as NO_VERDICT, not a pass.
+
+**That port change was necessary and is not sufficient. Measured 2026-11-14
+(`RECORD.md`), the whole set of six is still outside item 1:**
+
+- The five that timed out were re-run at `yosys_timeout_s: 1800` under klt
+  **`0.9.2`** — the first *tagged* release carrying klayout-tools#5412, which
+  also retires the "unreleased rev pin" caveat #579 had to accept. All five
+  were killed again, each inside `synth`'s generic ABC pass at the blif
+  extraction, with 0.25M (`rf_global2_core`) to 2.0M (`logical4_core`) cells
+  reaching it. Unlike `galactic_core`, none of their logs carries a single
+  `Couldn't topologically sort cells` warning, so this is a different obstacle
+  from #657's. The cause is **not** established, raising the budget again is
+  not the next step (klt caps it at 3600 s, 2x what failed), and #641 already
+  refuted the obvious width-narrowing hypothesis for `galactic_core`.
+- `rf_ains34_core`, the one exit-0 group of the six, is **not** datapath
+  evidence after all. Its module header declares only `clk`, `state_reset`,
+  `start_block`, `block_done` and the two result arrays; its control plane and
+  block inputs (`cfg_*`, `in_l`, `in_r`, `sc_in`) and its `sc_out` bit are
+  internal `logic` poked hierarchically by `tb_rf_ains34.sv` — the same defect
+  this issue was filed about, at the input end. Yosys therefore constant-folds
+  the arithmetic away and the committed netlist is 3054 tie-lows + 2058 flops +
+  2054 AND2 with no adder or multiplier. This predates #580 (#586 only added
+  the two output arrays). `compare_rtl_model_rf_ains34.py` is nonetheless PASS,
+  live-re-run on 2026-11-14 — it is a simulation harness that drives the core
+  hierarchically, which is exactly why an exactness PASS cannot be read as
+  evidence that the synthesized netlist contains the datapath.
+
 `tests/test_t1_item1_synthesis.py` has a negative control that fails on a
-netlist whose only output is `block_done`.
+netlist whose only output is `block_done`. It does **not** catch
+`rf_ains34_core`: that control asks only for an output other than `block_done`,
+and `out_l`/`out_r` satisfy it. Strengthening it to require the declared *input*
+ports is tracked separately, because `tests/` is content-hashed by
+`signoff/t1-item9-inventory.json` and editing it obliges re-attesting that
+envelope in the same change.
 
 **galactic_core obstacle (observed #572, re-measured #579; cause not
 established).** sv2v converts it (838 lines). Yosys `synth` reaches ~272k
@@ -60,8 +88,10 @@ an internal klt default; it is now the request field `yosys_timeout_s`
 (klayout-tools#5412).
 
 #579 raised it to **1800 s** under a throwaway `uvx` klt pinned to
-`d9bc36811ddd` (unreleased; the latest klt tag `v0.9.1` does not carry the
-field, and `signoff/requirements.txt` still pins `klayout-tools==0.8.0`). It
+`d9bc36811ddd` (unreleased at the time: the latest klt tag was then `v0.9.1`,
+which does not carry the field. `v0.9.2`, tagged 2026-11-14, does — the #580
+re-runs above used it — and `signoff/requirements.txt` still pins
+`klayout-tools==0.8.0`, which does not). It
 **still timed out** — so the verdict stays NO_VERDICT. What the run records is
 observation, not a cause: it died inside `synth`'s generic ABC pass at
 `4.22.1 Extracting gate netlist ... to input.blif`, with Yosys reporting
@@ -77,11 +107,22 @@ arithmetic, a cause that is suspected and unverified. `failure.txt` stays a
 NO_VERDICT (timeout), never a pass.
 
 Pins: `pdk-pin.json`. Regenerate: `python3 signoff/t1-item1/regen.py [group...]`.
+Any group in `regen.py`'s `YOSYS_TIMEOUT_S` table needs a klt that accepts
+`yosys_timeout_s`, supplied via `$KLT` — see `RECORD.md` § "Reproduce" and
+`galactic_core/RECORD.md`; the host-wide klt is never installed over.
 `inventory.partial.json` + `item1.partial.envelope.json` attest 4 of 11 groups:
-the 3 native groups plus `reverb1_core` (sv2v, real datapath). Not attested: the 6
-skeleton-only groups (#580) and `galactic_core` (#579); attesting a netlist that
-omits the datapath would present sequencer-only output as item-1 evidence.
-`klt signoff --attest 1` passes 12/12 (run on this host, klt 0.9.2.dev33).
+the 3 native groups plus `reverb1_core` (sv2v, real datapath). Not attested:
+the 6 groups of #580 (five have no netlist at all — NO_VERDICT at 1800 s — and
+`rf_ains34_core`'s netlist is the input-less shell described above) and
+`galactic_core` (#579). Attesting a netlist that omits the datapath would
+present constant-folded or sequencer-only output as item-1 evidence.
+`rf_ains34_core` exits 0 and is deliberately still **out** of this inventory
+for that reason; the inventory's own `description` field says so.
+`klt signoff --attest 1` passes 12/12 (re-run 2026-11-14 under a throwaway
+`uvx --from klayout-tools==0.9.2 klt`, a tagged release, after this change
+edited the inventory's `description`; the envelope's `summary` and check counts
+did not move, so `signoff/block-manifest.signoff.json` needed no re-render —
+and the manifest does not cite this envelope at all).
 Each freshness check is `klt synthesize --check ... --netlist <committed netlist>`:
 report `netlist_path` fields name the removed `out/` scratch directory, so without
 `--netlist` the check reports `netlist_sha256` as `drifted` (the earlier 3-group
