@@ -6,44 +6,40 @@ constant changed (QUEUE_DEPTH 16 -> 15). Running this script must be a
 no-op against the committed file (byte-identical); the comparator
 (tools/compare_control_rtl.py --dut rtl/control/control_broken_mutant.sv)
 must FAIL against the model — that failure IS the negative control.
+
+Since #623 this script declares no mutation rule of its own: the entry lives
+in tools/make_rtl_mutants.py's shared table (banner kept verbatim, so the
+committed bytes are unchanged), which also gates it with
+`python3 tools/make_rtl_mutants.py --check` -- the committed-byte check this
+script never had. This file stays as the regeneration entry point the
+mutant's own banner and reports/sxt-021/EVIDENCE.md name.
+
+Original to this repository (Apache-2.0).
 """
 
 import os
+import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(REPO, "rtl", "control", "control_top.sv")
-DST = os.path.join(REPO, "rtl", "control", "control_broken_mutant.sv")
+sys.path.insert(0, REPO)
 
-HEADER = """\
-// SXT-021 COMMITTED NEGATIVE CONTROL (do not fix in place).
-//
-// Deliberately mutated copy of rtl/control/control_top.sv: the event-queue
-// depth constant is changed from 16 to 15 (one constant). The comparator
-// (tools/compare_control_rtl.py --dut <this file>) MUST FAIL against the
-// SXT-021 model: queue-overflow drop records and queue-count checkpoints
-// diverge (e.g. the 30-event burst fixture drops 14 words in the mutant vs
-// the model's 16-deep queue). If this file ever PASSES the comparator, the
-// comparator's divergence detection is broken and must be repaired before
-// any RTL-vs-model equality claim stands.
-//
-// Regenerate with: python3 tools/make_control_mutant.py
+from tools import make_rtl_mutants as mk  # noqa: E402
 
-`timescale 1ns/1ps
-"""
+MUTANT = mk.CONTROL_MUTANT
+SRC = os.path.join(REPO, mk.MUTANTS[MUTANT]["base"])
+DST = os.path.join(REPO, MUTANT)
+HEADER = mk.MUTANTS[MUTANT]["prefix"]
 
 
 def main():
-    src = open(SRC).read()
-    mut = src.replace("parameter int QUEUE_DEPTH = 16,",
-                      "parameter int QUEUE_DEPTH = 15,")
-    if mut == src:
-        raise SystemExit("mutation anchor not found in control_top.sv")
-    body = mut.replace("`timescale 1ns/1ps\n", "", 1)
+    # A lost anchor raises ValueError out of the shared table rather than
+    # silently writing an un-mutated copy over the committed control.
+    want = mk.render(MUTANT)
     current = open(DST).read() if os.path.exists(DST) else None
-    if current == HEADER + body:
+    if current == want:
         print("control_broken_mutant.sv already up to date (byte-identical)")
     else:
-        open(DST, "w").write(HEADER + body)
+        mk.write(MUTANT)
         print("control_broken_mutant.sv regenerated (content changed)")
 
 
