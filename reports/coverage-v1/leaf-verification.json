@@ -151,6 +151,14 @@
       "path": "reports/sxt-026/EVIDENCE.md",
       "previous_sha256": "1b0a99eb0b10b9f8b6664918df87a8a785e23e087f3ef66fa09a9afdc0280c38",
       "sha256": "05ce508f615e91fa681899c539e88d463d3e74bf8610fb2c99e20cb5b86dd5ec"
+    },
+    {
+      "decision": "RE-PIN (issue #653, 2026-11-14; legitimately edited after the last coverage publication; the file is correct and was not restored). NO verification status in this table moves by this re-pin: filter_type:LP 12 dB stays rtl_vs_model PASS / model_vs_reference exactly as already recorded, and no committed verdict record under reports/sxt-037/artifacts/ was regenerated or hand-edited. The edit ADDS a dated section 4a that (a) records that `engine_state_peak_lsb` in all 19 committed compare-*.json instance records is the MODEL's per-block state peak under a second name (equal to model_state_peak_lsb by construction, 19/19), so the engine stability leg of section 4 rests on the bundle-*/meta.json engine render peaks as that bullet already states and never on the `engine_*` verdict field; (b) corrects section 4's wording that those records carry `stability_verdict`, which they do not (they carry a bare max(peaks) < 2**31 threshold); and (c) states that post-#653 the comparator grades the model leg from the frozen model's monitor verdict and the engine leg from the engine filter-output tap peak. The underlying section 4 claim is NOT withdrawn and no number in it moved: the largest recorded state peak is unchanged at 68,497,858 LSB (3.2% of the s32 range), far under the monitor's 1<<30 saturation floor. Refreshing the verdict records themselves is recorded in 4a as NOT_RUN and left to a separate, deliberate evidence regeneration. Hash bookkeeping only.",
+      "issue": 653,
+      "moved_by": "issue #653: finished the stability legs of tools/compare_lp12_model.py. model/voice/filter_lp12/run_filter_leg.py now emits `stability_verdict` (as the LP 24 dB and LP Moog runners already do); the comparator reads it for the model leg instead of recomputing a bare max(peaks) < 2**31 threshold, grades the engine leg on the ENGINE filter-output tap peak (l2a.engine_peak_lsb) against a declared ENGINE_TAP_PEAK_MAX_LSB = 1<<28 replacing the never-read STABILITY_FLOOR, reports stability as its own verdict rather than folding it into L2_audio, and REFUSES a trace carrying no monitor verdict or no engine tap samples. This re-pin covers the dated section 4a added to reports/sxt-037/EVIDENCE.md by that change. Pin chain: ... -> 11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff -> this sha (#653).",
+      "path": "reports/sxt-037/EVIDENCE.md",
+      "previous_sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff",
+      "sha256": "f172a34da0714c72bb0f2e8dd308368bcf32c2bcb9553f7a1aa5713f5517c7da"
     }
   ],
   "gates": {
@@ -186,7 +194,7 @@
       "evidence": [
         {
           "path": "reports/sxt-037/EVIDENCE.md",
-          "sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff"
+          "sha256": "f172a34da0714c72bb0f2e8dd308368bcf32c2bcb9553f7a1aa5713f5517c7da"
         }
       ],
       "fixture_verified_paths": [],

@@ -309,7 +309,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "24657dcbdd9a5ce5c5720000591cd182896df32f712a36febdb9893099ed52e5"
+   "sha256": "03636ec823ae0891ca1385965c3872af7a57e2cce43026f81a99a9c4baae6444"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -409,7 +409,7 @@
   },
   "reports/sxt-037/EVIDENCE.md": {
    "role": "evidence record for leaf filter_type:LP 12 dB",
-   "sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff"
+   "sha256": "f172a34da0714c72bb0f2e8dd308368bcf32c2bcb9553f7a1aa5713f5517c7da"
   }
  },
  "integration_gate": {
