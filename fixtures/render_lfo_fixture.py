@@ -15,6 +15,8 @@ Policies (fixtures/render_fixture.py conventions):
            extractor sidecar (normalized depths; read back and verified).
   SCHED    event times are integer samples at 48 kHz, ceil-quantized to
            32-sample block starts (identical to render_fixture.render_bus).
+           Events are handed to `render_fixture.dispatch` itself, so every
+           event type that module forwards is forwarded here too.
   TAIL     render span = last event + tail_s, whole blocks.
   AUDIO    mono (L+R)/2, int16 PCM, hard clip [-1, 1] (clipped count
            recorded). No normalization, no time warping, no fades.
@@ -41,6 +43,9 @@ oc.reexec_under_pinned_python(REPO)
 
 import numpy as np  # noqa: E402
 from refusal import Refuse  # noqa: E402
+
+sys.path.insert(0, os.path.join(REPO, "fixtures"))
+import render_fixture as rf  # noqa: E402  (shared event dispatcher)
 
 SR = 48000
 FX_SLOTS = 16
@@ -115,18 +120,7 @@ def render_bus(surgepy, preset_abs, seq, routes):
         dispatched = 0
         b = 0
         while b < total_blocks:
-            i = dispatched
-            while i < len(events) and quant(events[i]["t"]) <= b:
-                e = events[i]
-                if e["type"] == "note_on":
-                    s.playNote(e["channel"], e["note"], e["velocity"], 0)
-                elif e["type"] == "note_off":
-                    s.releaseNote(e["channel"], e["note"], 0)
-                elif e["type"] == "cc":
-                    s.channelController(e["channel"], e["controller"],
-                                        e["value"])
-                i += 1
-            nxt = i
+            nxt = rf.dispatch(s, events[dispatched:], b, quant) + dispatched
             if nxt < len(events) and quant(events[nxt]["t"]) <= b:
                 raise Refuse("scheduler failed to advance")
             seg = total_blocks if nxt >= len(events) \
