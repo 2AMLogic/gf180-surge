@@ -3,11 +3,11 @@
     {
       "also_listed_as_live_pins": 46,
       "checked_by": ".github/workflows/signoff.yml",
-      "content_hashed_checks": 224,
+      "content_hashed_checks": 225,
       "content_hashed_classes": {
         "model/integration/negative_controls.py": 1,
         "rtl/*.sv": 59,
-        "tests/": 119,
+        "tests/": 120,
         "tools/*.py": 45
       },
       "envelope": "signoff/t1-item9-attestation.json",
@@ -17,7 +17,7 @@
       "obligation": "re-attest the envelope in the same change as the edit",
       "regeneration_runs_cold_start": true,
       "t1_item": 9,
-      "total_checks": 227
+      "total_checks": 228
     },
     {
       "also_listed_as_live_pins": 0,
