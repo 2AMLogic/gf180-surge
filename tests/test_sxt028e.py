@@ -26,11 +26,13 @@ import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 
 import distortion_model as dm  # noqa: E402
 import ws_tables as wt  # noqa: E402
+from evidence_scan import scanned  # noqa: E402
 from distortion_model import (  # noqa: E402
     DistortionModel, DistortionParams, HalfbandD2, BLOCK, OS_BLOCK,
     DISTORTION_OS, RINGOUT_TIME, RINGOUT_END, SLOWRATE, HB_COEFFS_Q,
@@ -151,13 +153,14 @@ def test_unresolved_control_plane_inputs_refused():
 def test_committed_fx_inputs_are_blocked_on_oracle():
     """The graphs-derived records must SAY they are incomplete, and the model
     must refuse them — a NOT_RUN extraction is never a pass."""
-    found = 0
+    # SXT-028e-sse (#121) owns its own records: the sse- siblings are
+    # screened out below, and the three-record floor is declared here.
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
-    for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-") or \
-                name.startswith(SSE_SIBLING_PREFIX):
-            continue     # SXT-028e-sse (#121) owns its own records
-        found += 1
+    for name in scanned(
+            (n for n in sorted(os.listdir(d))
+             if n.startswith("type-distortion-")
+             and not n.startswith(SSE_SIBLING_PREFIX)),
+            what="SXT-028e fx_inputs records", where=d, exactly=3):
         rec = json.load(open(os.path.join(d, name)))
         assert rec["extraction_status"] == "INCOMPLETE-BLOCKED-ON-ORACLE"
         assert rec["extraction_mode"] == "graphs"
@@ -167,7 +170,6 @@ def test_committed_fx_inputs_are_blocked_on_oracle():
                 assert slot["params"][k] is None
             with pytest.raises(RuntimeError):
                 DistortionParams(slot["params"])
-    assert found == 3
 
 
 def test_landed_class_basis_is_derived_from_the_committed_table():
@@ -196,10 +198,11 @@ def test_landed_class_basis_is_derived_from_the_committed_table():
     assert "Airwindows" not in mod.landed_classes()
 
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
-    for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-") or \
-                name.startswith(SSE_SIBLING_PREFIX):
-            continue     # SXT-028e-sse (#121) owns its own records
+    for name in scanned(
+            (n for n in sorted(os.listdir(d))
+             if n.startswith("type-distortion-")
+             and not n.startswith(SSE_SIBLING_PREFIX)),
+            what="SXT-028e fx_inputs records", where=d, exactly=3):
         rec = json.load(open(os.path.join(d, name)))
         basis = rec["landed_classes_basis"]
         assert basis["landed_fx_classes"] == expect, \
@@ -216,10 +219,11 @@ def test_census_blob_shas_match_manifest():
                                       "corpus-manifest.json")))
     by_path = {e["path"]: e["git_blob_sha1"] for e in man["entries"]}
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
-    for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-") or \
-                name.startswith(SSE_SIBLING_PREFIX):
-            continue     # SXT-028e-sse (#121) owns its own records
+    for name in scanned(
+            (n for n in sorted(os.listdir(d))
+             if n.startswith("type-distortion-")
+             and not n.startswith(SSE_SIBLING_PREFIX)),
+            what="SXT-028e fx_inputs records", where=d, exactly=3):
         rec = json.load(open(os.path.join(d, name)))
         assert by_path[rec["preset_path"]] == rec["census_blob_sha1"]
 

@@ -33,6 +33,7 @@ import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion-sse"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-distortion"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
@@ -40,6 +41,7 @@ sys.path.insert(0, os.path.join(REPO, "model", "effects"))
 import quad_shapers as qs  # noqa: E402
 import sse_tables as st  # noqa: E402
 import distortion_model as dm  # noqa: E402
+from evidence_scan import scanned  # noqa: E402
 from distortion_sse_model import (  # noqa: E402
     DistortionSSEModel, DistortionSSEParams, BLOCK, OS_BLOCK, DISTORTION_OS,
     RINGOUT_TIME, RINGOUT_END, SLOWRATE, DRIVE_INTERP_DIVISOR,
@@ -438,12 +440,12 @@ def test_committed_fx_inputs_are_complete_from_the_pinned_loader():
     any render agreed with anything: a COMPLETE record permits a model run,
     it is not a fidelity result.
     """
-    found = 0
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
-    for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-sse-"):
-            continue
-        found += 1
+    for name in scanned(
+            (n for n in sorted(os.listdir(d))
+             if n.startswith("type-distortion-sse-")),
+            what="SXT-028e-sse fx_inputs records (one carrier each for "
+                 "FX models 3, 4 and 5)", where=d, exactly=3):
         rec = json.load(open(os.path.join(d, name)))
         assert rec["leaf"] == "SXT-028e-sse"
         assert rec["extraction_status"] == "COMPLETE"
@@ -464,7 +466,6 @@ def test_committed_fx_inputs_are_complete_from_the_pinned_loader():
                 blanked[k] = None
                 with pytest.raises(RuntimeError):
                     DistortionSSEParams(blanked)
-    assert found == 3, "one carrier each for FX models 3, 4 and 5"
 
 
 def test_census_blob_shas_match_manifest():
@@ -472,9 +473,10 @@ def test_census_blob_shas_match_manifest():
                                       "corpus-manifest.json")))
     by_path = {e["path"]: e["git_blob_sha1"] for e in man["entries"]}
     d = os.path.join(REPO, "model", "effects", "fx_inputs")
-    for name in sorted(os.listdir(d)):
-        if not name.startswith("type-distortion-sse-"):
-            continue
+    for name in scanned(
+            (n for n in sorted(os.listdir(d))
+             if n.startswith("type-distortion-sse-")),
+            what="SXT-028e-sse fx_inputs records", where=d, exactly=3):
         rec = json.load(open(os.path.join(d, name)))
         assert by_path[rec["preset_path"]] == rec["census_blob_sha1"]
 
