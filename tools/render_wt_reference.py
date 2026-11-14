@@ -14,94 +14,36 @@ Policies inherited from the SXT-012 fixture harness (fixtures/
 render_fixture.py): fresh instance per render, controller reset, 0.25 s
 settle discarded, block-quantized event scheduling, tail = last event +
 tail_s, mono (L+R)/2 int16 PCM, no normalization / time warping / fades,
-clipped-sample counts recorded.  Events are dispatched by
-`render_fixture.dispatch` itself, so every event type that module forwards
+clipped-sample counts recorded.  The render loop itself is the shared
+`tools/_render_reference_common.render_bus` (issue #663 dedup), reached with
+a wavetable-shaped instance factory; it dispatches every event through
+`render_fixture.dispatch`, so every event type that module forwards
 (including `cc`, `pitch_bend` and `channel_pressure`) is forwarded here.
+Only this renderer's `main()` -- its `--inputs` / `--original` arguments,
+blob gate and sidecar schema -- is wavetable-specific.
 
 Outputs under --out-dir: <inputs-name>__<seq>-ref.wav + a sidecar JSON with
 engine identity, override readback, sha256, determinism repeats.
 """
 
 import argparse
-import hashlib
 import json
 import os
 import sys
-
-import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "wavetable"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import oracle_common as oc  # noqa: E402
 import fixture_config as fc  # noqa: E402
+from _render_reference_common import render_bus  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
 
-sys.path.insert(0, os.path.join(REPO, "fixtures"))
-import render_fixture as rf  # noqa: E402  (shared event dispatcher)
-
 SR = 48000
-
-
-def sha256_file(path):
-    return oc.sha256_file(path)
-
-
-def render_bus(surgepy, oc, seq, overrides, repeats=1, preset_rel=fc.PRESET_REL):
-    """Render `repeats` fresh-instance buses; returns (list_of_mono, info)."""
-    monos = []
-    for r in range(repeats):
-        s = fc.build_instance(surgepy, oc, overrides, preset_rel)
-        try:
-            s.pitchBend(0, 0)
-            s.channelController(0, 64, 0)
-            s.channelController(0, 1, 0)
-            s.channelController(0, 11, 0)
-            s.channelAftertouch(0, 0)
-            s.allNotesOff()
-            bs = int(s.getBlockSize())
-            settle_blocks = int(float(seq.get("settle_s", 0.25)) * SR) // bs
-            sbuf = s.createMultiBlock(settle_blocks)
-            s.processMultiBlock(sbuf)
-
-            events = seq["events"]
-            notes = [e for e in events if e["type"] in ("note_on", "note_off")]
-            last_t = max(e["t"] for e in notes) if notes else 0
-            total_samples = last_t + int(float(seq.get("tail_s", 1.5)) * SR)
-            total_blocks = -(-total_samples // bs)
-            buf = s.createMultiBlock(total_blocks)
-            quant = lambda t: -(-t // bs)  # noqa: E731
-            i = 0
-            b = 0
-            while b < total_blocks:
-                i = rf.dispatch(s, events[i:], b, quant) + i
-                nxt = i
-                seg = total_blocks if nxt >= len(events) \
-                    else max(quant(events[nxt]["t"]), b + 1)
-                s.processMultiBlock(buf, b, seg - b)
-                b = seg
-            stereo = np.asarray(buf)
-            mono = 0.5 * (stereo[0] + stereo[1])
-            monos.append(mono)
-        finally:
-            del s
-    clipped = int(np.sum(np.abs(monos[0]) > 1.0))
-    info = {
-        "blocks": total_blocks,
-        "frames": total_samples,
-        "peak_abs_float": float(np.max(np.abs(monos[0]))) if total_samples else 0.0,
-        "clipped_samples": clipped,
-        "repeats": repeats,
-        "repeat_hashes": [hashlib.sha256(np.ascontiguousarray(m).tobytes()).hexdigest()
-                          for m in monos],
-        "bit_identical_repeats": len({h for h in
-                                      [hashlib.sha256(np.ascontiguousarray(m).tobytes()).hexdigest()
-                                       for m in monos]}) == 1,
-    }
-    return monos, info
 
 
 def main():
@@ -130,8 +72,11 @@ def main():
 
     overrides = [] if args.original else \
         [tuple(o) for o in inputs.get("declared_overrides", [])]
-    monos, info = render_bus(surgepy, oc, seq, overrides, args.repeats,
-                             inputs["preset_path"])
+    monos, info = render_bus(
+        seq,
+        lambda: fc.build_instance(surgepy, oc, overrides,
+                                  inputs["preset_path"]),
+        args.repeats)
 
     os.makedirs(args.out_dir, exist_ok=True)
     name = os.path.splitext(os.path.basename(args.inputs))[0]
@@ -160,7 +105,7 @@ def main():
                    "no bypass",
         "render": {"sample_rate": SR, **info},
         "wav": {"path": os.path.relpath(wav_path, REPO),
-                "sha256": sha256_file(wav_path)},
+                "sha256": oc.sha256_file(wav_path)},
         "engine": {"commit": inputs.get("engine_version"),
                    "surgepy": surgepy.getVersion()},
         "audio_policy": "mono (L+R)/2, int16 PCM, hard clip to [-1,1] "

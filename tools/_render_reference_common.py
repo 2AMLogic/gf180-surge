@@ -1,6 +1,6 @@
-"""Shared harness for the classic/sine fixture-family reference renderers
+"""Shared harness for the fixture-family reference renderers
 (`tools/render_classic_reference.py` SXT-033, `tools/render_sine_reference.py`
-SXT-040).
+SXT-040, and `render_bus` alone for `tools/render_wt_reference.py` SXT-026).
 
 Policies inherited from the SXT-012 fixture harness (fixtures/
 render_fixture.py): fresh instance per render, controller reset, 0.25 s
@@ -10,11 +10,20 @@ clipped-sample counts recorded.  Events are dispatched by
 `render_fixture.dispatch` itself, so every event type that module forwards
 (including `cc`, `pitch_bend` and `channel_pressure`) is forwarded here.
 
-Both families call this module with an identical `fc.CARRIERS` /
-`fc.build_instance(surgepy, oc, carrier)` shape from their own family
-`fixture_config.py` (issue #245 dedup) -- the render/argument-parsing/
-blob-gate/sidecar logic is extracted here verbatim; only the family
-directory, issue id, and isolation-note text are parameterized.
+The classic and sine families call `run_reference_renderer` with an
+identical `fc.CARRIERS` / `fc.build_instance(surgepy, oc, carrier)` shape
+from their own family `fixture_config.py` (issue #245 dedup) -- the
+render/argument-parsing/blob-gate/sidecar logic is extracted here verbatim;
+only the family directory, issue id, and isolation-note text are
+parameterized.
+
+`render_bus` itself takes a zero-argument instance factory rather than a
+`(surgepy, oc, fc, carrier)` tuple (issue #663), so a family whose
+`build_instance` has a different signature can share the loop without
+sharing `run_reference_renderer`.  The wavetable renderer (SXT-026) does
+exactly that: its `main()` keeps its own `--inputs` / `--original`
+arguments, blob gate and sidecar schema, and passes
+`lambda: fc.build_instance(surgepy, oc, overrides, preset_rel)`.
 """
 
 import argparse
@@ -50,13 +59,19 @@ def sha256_file(oc, path):
     return oc.sha256_file(path)
 
 
-def render_bus(surgepy, oc, fc, seq, carrier, repeats=1):
-    """Render `repeats` fresh-instance buses; returns (list_of_mono, info)."""
+def render_bus(seq, make_instance, repeats=1):
+    """Render `repeats` fresh-instance buses; returns (list_of_mono, info).
+
+    `make_instance` is a zero-argument factory returning a freshly loaded
+    engine instance -- one call per repeat, so the "fresh instance per
+    render" policy is the caller's `build_instance`, whatever its signature
+    (issue #663).
+    """
     monos = []
     total_blocks = 0
     total_samples = 0
     for _r in range(repeats):
-        s = fc.build_instance(surgepy, oc, carrier)
+        s = make_instance()
         try:
             s.pitchBend(0, 0)
             s.channelController(0, 64, 0)
@@ -143,7 +158,9 @@ def run_reference_renderer(oc, fc, repo, family_dir, issue_id,
     with open(inputs_rel, encoding="utf-8") as f:
         inputs = json.load(f)
 
-    monos, info = render_bus(surgepy, oc, fc, seq, args.carrier, args.repeats)
+    monos, info = render_bus(
+        seq, lambda: fc.build_instance(surgepy, oc, args.carrier),
+        args.repeats)
 
     os.makedirs(args.out_dir, exist_ok=True)
     wav_path = os.path.join(args.out_dir,
