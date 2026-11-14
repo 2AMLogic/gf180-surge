@@ -2,6 +2,15 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-14
+
+- **PR #665**: refactor(tools): route the three live-pinned lowpass trace parsers through CheckpointKeys, re-deriving their byte-frozen records
+- **Issue #648** (closed): Extend the #455 duplicate-key refusal to the three live-pinned lowpass harnesses, carrying the byte-frozen re-derivation
+- **PR #659**: refactor(oracle): route seven renderers through render_fixture.dispatch
+- **Issue #640** (closed): Remove the nine private copies of the oracle event dispatcher: they silently drop event types rf.dispatch forwards, and one rendered a committed SXT-041 reference
+- **PR #637**: feat(tools): fold the last three mutant generators onto the shared table
+- **Issue #623** (closed): Fold the three remaining mutant generators onto the shared make_rtl_mutants table (two are byte-attested)
+
 ### 2026-11-13
 
 - **PR #651**: refactor(tools): share one graphs_entry instead of 14 private copies
