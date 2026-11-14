@@ -1,0 +1,1034 @@
+{
+  "coverage": {
+    "leaves_compared": [
+      "sxt032",
+      "sxt041"
+    ],
+    "leaves_not_run": [],
+    "leaves_requested": [
+      "sxt032",
+      "sxt041"
+    ]
+  },
+  "environment": {
+    "engine": {
+      "pinned_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+      "surgepy_module": {
+        "build_dir": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311",
+        "module_path": "/home/ubuntu/.cache/gf180-surge-oracle/58914e59c608ed4384ba6002e44c3465c58b2e71/linux-x86_64/build-py311/src/surge-python/surgepy.cpython-311-x86_64-linux-gnu.so",
+        "module_sha256": "55c216e6411dbf152443718ef3cbd1a8304a890a97fb81f5448b7e636ccdf0b9"
+      },
+      "version_string": "1.4.HEAD.58914e59c"
+    },
+    "numpy": "1.26.4",
+    "probe": "tools/probe_release_velocity.py",
+    "probe_digest_note": "No sha256 of this probe's bytes is recorded here. See the module docstring's Provenance note: a self-stamp would make this probe a historical_provenance entry in docs/byte-frozen-sources.json, and the stamp is bookkeeping that no test re-derives. The probe is committed in the same change as this record and the measurement is re-derivable by re-running it.",
+    "probe_digest_recorded": false,
+    "python": "3.11.16",
+    "repo_commit_at_render_time": "7de0a780970a98d16543ae283835b7060363033c",
+    "sample_rate": 48000
+  },
+  "finding": "F-640-1",
+  "finding_artifact": "reports/tooling-oracle-dispatcher-fold/artifacts/dispatcher-drift-audit.json",
+  "finding_record": "reports/tooling-oracle-dispatcher-fold/EVIDENCE.md",
+  "issue": "#660",
+  "leaves": {
+    "sxt032": {
+      "baseline": {
+        "committed_wav_file": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1-lfo-fixture.wav",
+        "committed_wav_file_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5",
+        "rendered_wav_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5",
+        "reproduces": true,
+        "sidecar_engine": {
+          "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "version_string": "1.4.sxt037-tap.01b20d0b8"
+        },
+        "sidecar_engine_field_is_inherited_from_the_extractor_inputs": true,
+        "sidecar_matches_committed_file": true,
+        "sidecar_sequence_sha256": "a43affacb6103324451d573b0cc3c48d5dee363a91c0533a171ebe99152bb1f4",
+        "sidecar_wav_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5"
+      },
+      "committed_wav": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1-lfo-fixture.wav",
+      "comparisons": {
+        "failure_control__release_note_plus1_vs_zero": {
+          "differing_samples": 288000,
+          "first_differing_sample": 9600,
+          "first_differing_sample_seconds": 0.2,
+          "frames": 297600,
+          "identical": false,
+          "max_abs_difference": 0.7755680680274963,
+          "values_at_first_difference": [
+            -0.31418126821517944,
+            -0.3141859471797943
+          ]
+        },
+        "measurement__declared_vs_zero": {
+          "differing_samples": 0,
+          "first_differing_sample": null,
+          "frames": 297600,
+          "identical": true,
+          "max_abs_difference": 0.0
+        },
+        "observation__noteon_velocity_plus1_vs_zero": {
+          "differing_samples": 0,
+          "first_differing_sample": null,
+          "frames": 297600,
+          "identical": true,
+          "max_abs_difference": 0.0
+        },
+        "sweep__extreme127_vs_zero": {
+          "differing_samples": 0,
+          "first_differing_sample": null,
+          "frames": 297600,
+          "identical": true,
+          "max_abs_difference": 0.0
+        }
+      },
+      "failure_control": {
+        "expected": "different",
+        "note": "renders identically to the zero leg except that the note number handed to releaseNote is raised by 1, so the held note is never released. A difference here proves the proxy interception reaches the engine, the renderer renders what the proxy forwards, and the bit-comparator reports differences when they exist.",
+        "observed": "different",
+        "passed": true,
+        "targets": "the claim that this comparison can see a change in an argument of releaseNote at all; without it, an identical result for the velocity argument is indistinguishable from a blind apparatus",
+        "why_not_a_velocity_perturbation": "the fixture preset renders bit-identically for note_on velocities 1, 70, 71 and 127, so a velocity perturbation cannot distinguish a working apparatus from a blind one. The observation__noteon_velocity_plus1_vs_zero comparison records that insensitivity rather than relying on it."
+      },
+      "leaf": "SXT-032",
+      "legs": {
+        "control": {
+          "buffer_sha256": "4cd93a7add28911fbb3c8fcc2705ef23c9a447baaa55bc47b4f6ef5994afa808",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "4cd93a7add28911fbb3c8fcc2705ef23c9a447baaa55bc47b4f6ef5994afa808",
+              "4cd93a7add28911fbb3c8fcc2705ef23c9a447baaa55bc47b4f6ef5994afa808",
+              "4cd93a7add28911fbb3c8fcc2705ef23c9a447baaa55bc47b4f6ef5994afa808"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.7755666971206665,
+          "release_mode": "zero",
+          "release_note_number_delta": 1,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 100
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "declared": {
+          "buffer_sha256": "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.50419020652771,
+          "release_mode": "declared",
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 100,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 100
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "extreme": {
+          "buffer_sha256": "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.50419020652771,
+          "release_mode": 127,
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 100
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "noteon": {
+          "buffer_sha256": "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 1,
+          "peak_abs_float": 0.50419020652771,
+          "release_mode": "zero",
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 100
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "zero": {
+          "buffer_sha256": "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007",
+              "9ec95489d0d7c892621997cdab07ddbe70b5422e3ebf55753355467a4422c007"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.50419020652771,
+          "release_mode": "zero",
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 100
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        }
+      },
+      "renderer": "fixtures/render_lfo_fixture.py",
+      "sidecar": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json",
+      "status": "PASS",
+      "status_reason": "the declared release velocity and the 0 the renderer sent produce bit-identical raw float mono buffers under the pinned oracle, with the failure control showing the comparison is velocity-sensitive. The committed reference stands; the mismatch between the cited sequence and the velocity sent is provenance-only."
+    },
+    "sxt041": {
+      "baseline": {
+        "committed_wav_file": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.wav",
+        "committed_wav_file_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05",
+        "rendered_wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05",
+        "reproduces": true,
+        "sidecar_engine": {
+          "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+          "version_string": "1.4.HEAD.58914e59c"
+        },
+        "sidecar_engine_field_is_inherited_from_the_extractor_inputs": true,
+        "sidecar_matches_committed_file": true,
+        "sidecar_sequence_sha256": "a43affacb6103324451d573b0cc3c48d5dee363a91c0533a171ebe99152bb1f4",
+        "sidecar_wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05"
+      },
+      "committed_wav": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.wav",
+      "comparisons": {
+        "failure_control__release_note_plus1_vs_zero": {
+          "differing_samples": 288000,
+          "first_differing_sample": 9600,
+          "first_differing_sample_seconds": 0.2,
+          "frames": 297600,
+          "identical": false,
+          "max_abs_difference": 0.9603343605995178,
+          "values_at_first_difference": [
+            -0.2830289304256439,
+            -0.2830330729484558
+          ]
+        },
+        "measurement__declared_vs_zero": {
+          "differing_samples": 0,
+          "first_differing_sample": null,
+          "frames": 297600,
+          "identical": true,
+          "max_abs_difference": 0.0
+        },
+        "observation__noteon_velocity_plus1_vs_zero": {
+          "differing_samples": 0,
+          "first_differing_sample": null,
+          "frames": 297600,
+          "identical": true,
+          "max_abs_difference": 0.0
+        },
+        "sweep__extreme127_vs_zero": {
+          "differing_samples": 0,
+          "first_differing_sample": null,
+          "frames": 297600,
+          "identical": true,
+          "max_abs_difference": 0.0
+        }
+      },
+      "failure_control": {
+        "expected": "different",
+        "note": "renders identically to the zero leg except that the note number handed to releaseNote is raised by 1, so the held note is never released. A difference here proves the proxy interception reaches the engine, the renderer renders what the proxy forwards, and the bit-comparator reports differences when they exist.",
+        "observed": "different",
+        "passed": true,
+        "targets": "the claim that this comparison can see a change in an argument of releaseNote at all; without it, an identical result for the velocity argument is indistinguishable from a blind apparatus",
+        "why_not_a_velocity_perturbation": "the fixture preset renders bit-identically for note_on velocities 1, 70, 71 and 127, so a velocity perturbation cannot distinguish a working apparatus from a blind one. The observation__noteon_velocity_plus1_vs_zero comparison records that insensitivity rather than relying on it."
+      },
+      "leaf": "SXT-041",
+      "legs": {
+        "control": {
+          "buffer_sha256": "62f7413c27b4fc61108a15efc7f993bda966fd327d96cb23c00effe63c0324a3",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "62f7413c27b4fc61108a15efc7f993bda966fd327d96cb23c00effe63c0324a3",
+              "62f7413c27b4fc61108a15efc7f993bda966fd327d96cb23c00effe63c0324a3",
+              "62f7413c27b4fc61108a15efc7f993bda966fd327d96cb23c00effe63c0324a3"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.9603343605995178,
+          "release_mode": "zero",
+          "release_note_number_delta": 1,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 61,
+                "renderer_sent": 0
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "declared": {
+          "buffer_sha256": "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.5199868679046631,
+          "release_mode": "declared",
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 100,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "extreme": {
+          "buffer_sha256": "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.5199868679046631,
+          "release_mode": 127,
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 127,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "noteon": {
+          "buffer_sha256": "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 1,
+          "peak_abs_float": 0.5199868679046631,
+          "release_mode": "zero",
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 71,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        },
+        "zero": {
+          "buffer_sha256": "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+          "determinism": {
+            "bit_identical": true,
+            "repeats": 3,
+            "sha256": [
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410",
+              "84226347dcf73cd876dc890e88cd8a0188694b9c8d2a3aca539b564c1eac5410"
+            ]
+          },
+          "frames": 297600,
+          "note_on_velocity_delta": 0,
+          "peak_abs_float": 0.5199868679046631,
+          "release_mode": "zero",
+          "release_note_number_delta": 0,
+          "velocities_forwarded_to_engine": {
+            "note_off_events": [
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 0,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              },
+              {
+                "channel": 0,
+                "declared": 100,
+                "forwarded_to_engine": 0,
+                "note": 60,
+                "note_forwarded_to_engine": 60,
+                "renderer_sent": 0
+              }
+            ],
+            "note_on_events": [
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              },
+              {
+                "channel": 0,
+                "declared": 70,
+                "forwarded_to_engine": 70,
+                "note": 60,
+                "renderer_sent": 70
+              }
+            ],
+            "unconsumed_note_off": 0,
+            "unconsumed_note_on": 0
+          }
+        }
+      },
+      "renderer": "fixtures/render_slfo_fixture.py",
+      "sidecar": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.json",
+      "status": "PASS",
+      "status_reason": "the declared release velocity and the 0 the renderer sent produce bit-identical raw float mono buffers under the pinned oracle, with the failure control showing the comparison is velocity-sensitive. The committed reference stands; the mismatch between the cited sequence and the velocity sent is provenance-only."
+    }
+  },
+  "question": "does the release velocity the renderers dropped reach the rendered audio in these two fixture configurations?",
+  "schema_version": 1,
+  "sequence": {
+    "declared_release_velocities": [
+      0,
+      0,
+      0,
+      100
+    ],
+    "id": "seq-notes-holds-v1",
+    "path": "fixtures/sequences/seq-notes-holds-v1.json",
+    "sha256": "a43affacb6103324451d573b0cc3c48d5dee363a91c0533a171ebe99152bb1f4"
+  }
+}
