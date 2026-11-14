@@ -87,6 +87,25 @@ def load_case(name):
     return json.load(open(os.path.join(CASES_DIR, name + ".json"), encoding="utf-8"))
 
 
+NOTE_TYPES = ("note_on", "note_off")
+
+
+def non_note_event_types(seq):
+    """Event types in `seq` this leg does not dispatch, sorted (else []).
+
+    This leg drives note_on/note_off only.  Callers REFUSE on a non-empty
+    result instead of filtering those events away: a dropped cc/pitch_bend/
+    channel_pressure would leave a bundle whose meta.json cites a sequence the
+    engine was never actually driven with.  It is deliberately NOT folded onto
+    `fixtures/render_fixture.py`'s shared `dispatch`, because importing that
+    module enforces the manifest-pinned interpreter, and this tool's
+    interpreter must stay the one its EXTERNAL --engine-dir surgepy module was
+    built for (issue #640).
+    """
+    return sorted({e["type"] for e in seq["events"]
+                   if e["type"] not in NOTE_TYPES})
+
+
 # ---------------------------------------------------------------- worker ----
 
 def worker(args):
@@ -132,7 +151,13 @@ def worker(args):
     s.processMultiBlock(s.createMultiBlock(240))   # settle
 
     bs = int(s.getBlockSize())
-    events = [e for e in seq["events"] if e["type"] in ("note_on", "note_off")]
+    events = seq["events"]
+    non_note = non_note_event_types(seq)        # see the helper's docstring
+    if non_note:
+        print("REFUSING: sequence %s carries %s event(s); this leg dispatches "
+              "note_on/note_off only, so rendering it would misdescribe the "
+              "case" % (case["sequence"], ", ".join(non_note)), file=sys.stderr)
+        return 2
     last_t = max(e["t"] for e in events)
     total = -(-(last_t + int(seq.get("tail_s", 2.5) * SR)) // bs)
     toggle = ov.get("toggle_from_segment")
@@ -153,7 +178,7 @@ def worker(args):
             e = events[i]
             if e["type"] == "note_on":
                 s.playNote(e["channel"], e["note"], e["velocity"], 0)
-            else:
+            else:   # note_off -- the only other type the gate above admits
                 s.releaseNote(e["channel"], e["note"], e.get("velocity", 0))
             i += 1
         if toggle_block is not None and b == toggle_block:

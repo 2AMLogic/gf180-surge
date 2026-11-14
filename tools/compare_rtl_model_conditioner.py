@@ -62,6 +62,7 @@ from conditioner_model import (  # noqa: E402
     BLOCK, CTRL_WORDS, FLAG_CONTROL_ONLY,
 )
 from conditioner_corners import all_corners  # noqa: E402
+import make_rtl_mutants  # noqa: E402
 
 IV = os.environ.get("IVERILOG", "iverilog")
 VVP = os.environ.get("VVP", "vvp")
@@ -260,29 +261,30 @@ def judge(case, exps, trace, ninst, n_blocks, rev8, present=None):
     return res
 
 
-def make_mutant(fname, replacements):
-    with open(TB) as f:
-        text = f.read()
-    for old, new in replacements:
-        assert old in text, (fname, old)
-        text = text.replace(old, new)
-    path = os.path.join(RTL_DIR, fname)
-    with open(path, "w") as f:
-        f.write("// GENERATED negative-control mutant of tb_conditioner.sv by\n"
-                "// tools/compare_rtl_model_conditioner.py -- must FAIL exactness.\n"
-                + text)
-    return path
+# The two committed mutants, declared ONCE in tools/make_rtl_mutants.py
+# (#623). This module used to carry its own private replacement list and
+# rewrite both files on every run, so whichever generator ran last decided
+# what the committed control contained. Now the shared table is the single
+# declaration and gates the committed bytes with
+# `python3 tools/make_rtl_mutants.py --check`; the per-instance anchor counts
+# are pinned there, so a new look-ahead/envelope site in tb_conditioner.sv is
+# reported rather than silently pooled.
+MUTANT_PATHS = {
+    "mutant-shared":
+        "rtl/effects/type-conditioner/tb_conditioner_mutant_shared.sv",
+    "mutant-nolimiter":
+        "rtl/effects/type-conditioner/tb_conditioner_mutant_nolimiter.sv",
+}
 
 
 def mutants():
-    pooled = [(f"{arr}[inst]", f"{arr}[0]") for arr in
-              ("dly_l", "dly_r", "lamax", "bufpos", "flam", "flam2", "gain_r")]
-    return {
-        "mutant-shared": make_mutant("tb_conditioner_mutant_shared.sv", pooled),
-        "mutant-nolimiter": make_mutant(
-            "tb_conditioner_mutant_nolimiter.sv",
-            [("gain_r[inst] = recip_c(flam2[inst]);", "gain_r[inst] = ONE_C;")]),
-    }
+    """Regenerate both negative-control mutants; name -> absolute path.
+
+    make_rtl_mutants.write() only touches a file whose bytes differ, so a
+    comparator run no longer rewrites the committed controls.
+    """
+    return {name: make_rtl_mutants.write(rel)
+            for name, rel in MUTANT_PATHS.items()}
 
 
 def lifecycle_schedule():
