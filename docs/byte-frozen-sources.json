@@ -1,14 +1,14 @@
 {
   "attested_inventories": [
     {
-      "also_listed_as_live_pins": 45,
+      "also_listed_as_live_pins": 46,
       "checked_by": ".github/workflows/signoff.yml",
-      "content_hashed_checks": 218,
+      "content_hashed_checks": 225,
       "content_hashed_classes": {
         "model/integration/negative_controls.py": 1,
         "rtl/*.sv": 59,
-        "tests/": 114,
-        "tools/*.py": 44
+        "tests/": 120,
+        "tools/*.py": 45
       },
       "envelope": "signoff/t1-item9-attestation.json",
       "freshness_check": "klt signoff --attest 9 --inventory signoff/t1-item9-inventory.json --check signoff/t1-item9-attestation.json",
@@ -17,7 +17,7 @@
       "obligation": "re-attest the envelope in the same change as the edit",
       "regeneration_runs_cold_start": true,
       "t1_item": 9,
-      "total_checks": 221
+      "total_checks": 228
     },
     {
       "also_listed_as_live_pins": 0,
@@ -38,7 +38,7 @@
       "total_checks": 9
     }
   ],
-  "attested_inventories_note": "These two klt signoff --attest envelopes content-hash EVERY file their inventory lists, so the inventories -- not this registry's live_pins table -- are the authoritative lists; no per-file live_pins entry is added for them. An inventory-only file (tests/, the rtl/ benches and mutants, README.md, LICENSE, the three workflows) carries a weaker obligation than a live pin: it is an ordinary editable source, but the affected envelope must be re-attested in the same change. The audit in tests/test_byte_frozen_sources.py does NOT fire for them -- discover_recorded_sources() walks *.py outside tests/ only, so .sv, .yml, README.md, LICENSE and everything under tests/ are excluded by construction. Their freshness check is klt signoff --check, run by signoff.yml on every pull request and on every push to main, which exits 3 on drift. The 45 item 9 rows in live_pins are the subset the audit can discover, and they keep the stronger do-not-edit rule. Regenerating an envelope from an unchanged inventory leaves signoff/block-manifest.signoff.json byte-identical; changing an inventory also requires re-rendering that report and updating the content_hash signoff/block-manifest.json declares. Measured against d5ac9f6 under the klayout-tools pin in signoff/requirements.txt; see the doc for the probe table.",
+  "attested_inventories_note": "These two klt signoff --attest envelopes content-hash EVERY file their inventory lists, so the inventories -- not this registry's live_pins table -- are the authoritative lists; no per-file live_pins entry is added for them. An inventory-only file (tests/, the rtl/ benches and mutants, README.md, LICENSE, the three workflows) carries a weaker obligation than a live pin: it is an ordinary editable source, but the affected envelope must be re-attested in the same change. The audit in tests/test_byte_frozen_sources.py does NOT fire for them -- discover_recorded_sources() walks *.py outside tests/ only, so .sv, .yml, README.md, LICENSE and everything under tests/ are excluded by construction. Their freshness check is klt signoff --check, run by signoff.yml on every pull request and on every push to main, which exits 3 on drift. The 46 item 9 rows in live_pins are the subset the audit can discover, and they keep the stronger do-not-edit rule. Regenerating an envelope from an unchanged inventory leaves signoff/block-manifest.signoff.json byte-identical; changing an inventory also requires re-rendering that report and updating the content_hash signoff/block-manifest.json declares. Measured against d5ac9f6 under the klayout-tools pin in signoff/requirements.txt; see the doc for the probe table.",
   "audit": "tests/test_byte_frozen_sources.py",
   "claim": "Bookkeeping only: this registry says which source files have a sha256 of their bytes recorded in committed evidence, and which of those recordings are re-derived live. It establishes no RTL-exactness, model-vs-reference, or preset claim.",
   "doc": "docs/byte-frozen-sources.md",
