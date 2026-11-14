@@ -1130,7 +1130,7 @@
         "role": "testbench",
         "path": "tests/test_sxt037_lp12.py",
         "passed": true,
-        "content_hash": "sha256:b4387a2bb858398c02897a3552edf160641157559bee19c0c2e8221b9a508829"
+        "content_hash": "sha256:674f38b12df5ccb7fe0d54b241c45fe207d0e9f0a6e24de8d97c6cca78f5f9b4"
       },
       {
         "check": "present",

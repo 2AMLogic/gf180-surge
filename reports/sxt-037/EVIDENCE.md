@@ -339,6 +339,54 @@ and regenerating them needs the x86-64 SSE harness build
 - **Detected-not-silent control:** NC-D (below) proves the monitor flags
   the same drive without the clipgain contraction.
 
+### 4a. Amendment 2026-11-14 (#653): what the committed `compare-*.json` stability fields actually are
+
+Two corrections to how the committed verdict records back the two legs
+above. **The records themselves are NOT regenerated** — they remain the
+historical outputs of the pre-#653 comparator, and the bullets above
+describe them as they were produced.
+
+1. **`engine_state_peak_lsb` in every committed `compare-*.json` is the
+   MODEL's per-block state peak, not an engine measurement.** The pre-#653
+   `tools/compare_lp12_model.py` computed it and `model_state_peak_lsb` from
+   the same `instances[].stability_peaks` expression, so the two fields are
+   equal by construction in all 19 committed instance records (19/19 equal,
+   0 differences). The engine stability leg in bullet 1 above therefore
+   rests on the engine render peaks in each `bundle-*/meta.json`, as that
+   bullet states — **never** on the `engine_*` field in the verdict records.
+2. **`stability_model` in those records is a bare `max(peaks) < 2³¹`
+   threshold, not the frozen model's monitor.** The LP12 runner did not emit
+   `stability_verdict`, so bullet 2's wording "`stability_verdict = STABLE`
+   on every re-run case (`compare-*.json`)" overstates those files: they
+   contain no `stability_verdict` output. The underlying claim is not
+   withdrawn — the largest recorded state peak is 3.2% of the s32 range, far
+   under the monitor's `1 << 30` saturation floor — but it was not, in those
+   records, the monitor's verdict.
+
+**Post-#653 the comparator grades both legs from real, independent
+quantities**: the model leg reads `stability_verdict` as emitted by
+`model/voice/filter_lp12/run_filter_leg.py` (growth detection plus the
+`1 << 30` saturation floor, matching the LP 24 dB / LP Moog runners), and
+the engine leg bounds the ENGINE filter-output tap peak
+(`l2a.engine_peak_lsb`, quantized `fout` from the bundle's `units.bin`)
+against a declared `ENGINE_TAP_PEAK_MAX_LSB = 1 << 28`. Stability is now its
+own reported verdict per instance rather than folded into `L2_audio`, and a
+trace carrying no monitor verdict, or no engine tap samples, is REFUSED
+rather than graded.
+
+**Verification status of the record refresh: NOT_RUN.** A local re-run of
+the five bundles that still carry `units.bin`
+(`badnews`, `badnews-reso1`, `badnews-toggle`, `rainy`, `t9`) reproduced
+every committed `model_state_peak_lsb` exactly, returned
+`stability_verdict = STABLE` on all eight instances, and produced engine tap
+peaks distinct from the model state peaks in 8/8 instances (e.g.
+`badnews-reso1`: model state peak 68,497,858 LSB vs engine tap peak
+1,022,075 LSB). Those outputs were **not committed** — refreshing the
+verdict records is a separate, deliberate evidence regeneration. The three
+bundles without `units.bin` (`badnews-cut-hi`, `badnews-cut-lo`,
+`t9-substd`) cannot be re-run at all and stay NOT_RUN, as bullet 2 already
+records.
+
 ## 5. Costs vs SXT-016 probes (divergences recorded, not reconciled away)
 
 Measured schedule cost of the landed kernels: **11 MAC/sample** (Driven
