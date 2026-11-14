@@ -134,17 +134,71 @@ module galactic_core (
   logic signed [31:0] nel, nfl, ngl, nhl, ner, nfr, ngr, nhr;
   logic signed [31:0] core_l, core_r, ibl, ibr, mixl, mixr;
 
-  function automatic logic signed [31:0] sat32(input logic signed [127:0] v);
-    if      (v > 127'sd2147483647)  sat32 = 32'sd2147483647;
-    else if (v < -127'sd2147483648) sat32 = -32'sd2147483648;
-    else                            sat32 = v[31:0];
+  // ---------------------------------------------------------------------
+  // Arithmetic widths (#641). Every value in this datapath is a 32-bit
+  // signed word, so each product, sum and saturation below is carried at
+  // the narrowest width that is still integer-exact for ANY 32-bit inputs:
+  //
+  //   64  one 32x32 signed product:           |a*b| <= 2^62
+  //   66  one 32x34 product, or the sum of two 32x32 products, plus the
+  //       round-half-up constant:             |x|   <= 2^63 + 2^62 < 2^65
+  //   38  a value entering sat32: the Hadamard rows reach 2^33, and a
+  //       66-bit accumulator shifted right by f >= 30 reaches 2^35
+  //
+  // The result is identical to the previous 128-bit-everywhere spelling
+  // for every input, including the two places where the context width is
+  // load-bearing:
+  //   * s2_wval / s3_wval / S_CORE evaluate `o_i - (o_j + o_k + o_l)` in
+  //     the WIDE context, so it does not wrap at 32 - still true at 38;
+  //   * `core_l = (o_e + o_f + o_g + o_h) >>> 3` is assigned to a 32-bit
+  //     variable and so DOES wrap at 32 - deliberately left untouched.
+  // A size cast is applied only to a simple variable or a function-call
+  // result, never to a compound expression, so no cast silently changes
+  // the width an inner operator is evaluated at. The FSM schedule, the
+  // per-block cycle count and the em_* transaction order are unchanged.
+  // ---------------------------------------------------------------------
+
+  // exact 32x32 -> 64 signed product
+  function automatic logic signed [63:0] smul(input logic signed [31:0] a,
+                                              input logic signed [31:0] b);
+    smul = 64'(a) * 64'(b);
   endfunction
 
-  function automatic logic signed [31:0] rndsat32(input logic signed [127:0] x,
+  // exact 32x34 -> 66 signed product: the vibrato weight (2^31 - fracq)
+  // needs 34 bits (it reaches 2^31 at fracq = 0, 2^32 at fracq = -2^31)
+  function automatic logic signed [65:0] smul34(input logic signed [31:0] a,
+                                                input logic signed [33:0] b);
+    smul34 = 66'(a) * 66'(b);
+  endfunction
+
+  // (2^31 - fracq) in the 34-bit domain (the complement overflows signed-32)
+  function automatic logic signed [33:0] vib_w1(input logic signed [31:0] fq);
+    vib_w1 = 34'sd2147483648 - 34'(fq);
+  endfunction
+
+  function automatic logic signed [31:0] sat32(input logic signed [37:0] v);
+    if      (v > 38'sd2147483647)  sat32 = 32'sd2147483647;
+    else if (v < -38'sd2147483648) sat32 = -32'sd2147483648;
+    else                           sat32 = v[31:0];
+  endfunction
+
+  function automatic logic signed [31:0] rndsat32(input logic signed [65:0] x,
                                                   input int f);
-    logic signed [127:0] r;
-    r = (x + (128'sd1 <<< (f-1))) >>> f;
-    rndsat32 = sat32(r);
+    logic signed [65:0] r;
+    r = (x + (66'sd1 <<< (f-1))) >>> f;
+    // f >= 30 at every call site, so |r| <= 2^35 and the 38-bit narrowing
+    // is value-preserving.
+    rndsat32 = sat32(38'(r));
+  endfunction
+
+  // round-half-up of a 32x32 product at f fractional bits; NOT saturated
+  // (the caller saturates the sum, as the pinned schedule requires)
+  function automatic logic signed [37:0] rndmul(input logic signed [31:0] a,
+                                                input logic signed [31:0] b,
+                                                input int f);
+    logic signed [63:0] p;
+    p = (smul(a, b) + (64'sd1 <<< (f-1))) >>> f;
+    rndmul = 38'(p);
   endfunction
 
   // vibrato read index: the model advances countM BEFORE the reads, so the
@@ -177,7 +231,7 @@ module galactic_core (
     endcase
     // pinned: inputSample + feedback*regen -- the product rounds to Q6.25,
     // the sum only saturates (no second rounding)
-    return sat32(128'(x) + ((128'(fb) * cfg_regen + (128'sd1 <<< 30)) >>> 31));
+    return sat32(38'(x) + rndmul(fb, cfg_regen, 31));
   endfunction
 
   function automatic int unsigned s1_region(input logic [2:0] n);
@@ -210,17 +264,17 @@ module galactic_core (
   function automatic logic signed [31:0] s2_wval(input logic [2:0] n);
     if (n < 4) begin
       case (n)
-        0: return sat32(128'(o_i_l) - (o_j_l + o_k_l + o_l_l));
-        1: return sat32(128'(o_j_l) - (o_i_l + o_k_l + o_l_l));
-        2: return sat32(128'(o_k_l) - (o_i_l + o_j_l + o_l_l));
-        3: return sat32(128'(o_l_l) - (o_i_l + o_j_l + o_k_l));
+        0: return sat32(38'(o_i_l) - (o_j_l + o_k_l + o_l_l));
+        1: return sat32(38'(o_j_l) - (o_i_l + o_k_l + o_l_l));
+        2: return sat32(38'(o_k_l) - (o_i_l + o_j_l + o_l_l));
+        3: return sat32(38'(o_l_l) - (o_i_l + o_j_l + o_k_l));
       endcase
     end else begin
       case (n[1:0])
-        0: return sat32(128'(o_i_r) - (o_j_r + o_k_r + o_l_r));
-        1: return sat32(128'(o_j_r) - (o_i_r + o_k_r + o_l_r));
-        2: return sat32(128'(o_k_r) - (o_i_r + o_j_r + o_l_r));
-        3: return sat32(128'(o_l_r) - (o_i_r + o_j_r + o_k_r));
+        0: return sat32(38'(o_i_r) - (o_j_r + o_k_r + o_l_r));
+        1: return sat32(38'(o_j_r) - (o_i_r + o_k_r + o_l_r));
+        2: return sat32(38'(o_k_r) - (o_i_r + o_j_r + o_l_r));
+        3: return sat32(38'(o_l_r) - (o_i_r + o_j_r + o_k_r));
       endcase
     end
     return 0;
@@ -230,17 +284,17 @@ module galactic_core (
   function automatic logic signed [31:0] s3_wval(input logic [2:0] n);
     if (n < 4) begin
       case (n)
-        0: return sat32(128'(o_a_l) - (o_b_l + o_c_l + o_d_l));
-        1: return sat32(128'(o_b_l) - (o_a_l + o_c_l + o_d_l));
-        2: return sat32(128'(o_c_l) - (o_a_l + o_b_l + o_d_l));
-        3: return sat32(128'(o_d_l) - (o_a_l + o_b_l + o_c_l));
+        0: return sat32(38'(o_a_l) - (o_b_l + o_c_l + o_d_l));
+        1: return sat32(38'(o_b_l) - (o_a_l + o_c_l + o_d_l));
+        2: return sat32(38'(o_c_l) - (o_a_l + o_b_l + o_d_l));
+        3: return sat32(38'(o_d_l) - (o_a_l + o_b_l + o_c_l));
       endcase
     end else begin
       case (n[1:0])
-        0: return sat32(128'(o_a_r) - (o_b_r + o_c_r + o_d_r));
-        1: return sat32(128'(o_b_r) - (o_a_r + o_c_r + o_d_r));
-        2: return sat32(128'(o_c_r) - (o_a_r + o_b_r + o_d_r));
-        3: return sat32(128'(o_d_r) - (o_a_r + o_b_r + o_c_r));
+        0: return sat32(38'(o_a_r) - (o_b_r + o_c_r + o_d_r));
+        1: return sat32(38'(o_b_r) - (o_a_r + o_c_r + o_d_r));
+        2: return sat32(38'(o_c_r) - (o_a_r + o_b_r + o_d_r));
+        3: return sat32(38'(o_d_r) - (o_a_r + o_b_r + o_c_r));
       endcase
     end
     return 0;
@@ -270,8 +324,8 @@ module galactic_core (
           em_addr  = (ln == 0) ? mem_base + R_ML + countM
                                : mem_base + R_MR + countM;
           em_wdata = (ln == 0)
-            ? rndsat32(128'(cfg_attenuate) * in_l[k], 30)
-            : rndsat32(128'(cfg_attenuate) * in_r[k], 30);
+            ? rndsat32(smul(cfg_attenuate, in_l[k]), 30)
+            : rndsat32(smul(cfg_attenuate, in_r[k]), 30);
         end
         S_VIBRD: begin
           em_req = 1'b1;
@@ -340,14 +394,14 @@ module galactic_core (
           // one-rounding interpolation: rnd25(a0*w1 + a1*fracq)
           if (ln == 1) begin
             // one-rounding interp: rnd25(a0*(2^31 - fracq) + a1*fracq);
-            // the 2^31 complement is computed in the 128-bit domain (it
+            // the 2^31 complement is computed in the 34-bit domain (it
             // overflows signed-32 when fracq = 0)
-            v_l <= rndsat32(128'(vib_prev) * ((128'sd1 <<< 31) - 128'(ctrl[4*k + 1]))
-                            + 128'(em_rdata) * 128'(ctrl[4*k + 1]), 31);
+            v_l <= rndsat32(smul34(vib_prev, vib_w1(ctrl[4*k + 1]))
+                            + 66'(smul(em_rdata, ctrl[4*k + 1])), 31);
           end
           if (ln == 3) begin
-            v_r <= rndsat32(128'(vib_prev) * ((128'sd1 <<< 31) - 128'(ctrl[4*k + 3]))
-                            + 128'(em_rdata) * 128'(ctrl[4*k + 3]), 31);
+            v_r <= rndsat32(smul34(vib_prev, vib_w1(ctrl[4*k + 3]))
+                            + 66'(smul(em_rdata, ctrl[4*k + 3])), 31);
             ln <= 0; st <= S_IIRA;
           end else ln <= ln + 1;
           vib_prev <= em_rdata;
@@ -358,10 +412,10 @@ module galactic_core (
           // sample value (pinned: inputSample = iirAL after the filter)
           begin
             logic signed [31:0] tl, tr;
-            tl = rndsat32(128'(iir_a_l) * cfg_lowpass_m1
-                          + 128'(v_l) * cfg_lowpass, 31);
-            tr = rndsat32(128'(iir_a_r) * cfg_lowpass_m1
-                          + 128'(v_r) * cfg_lowpass, 31);
+            tl = rndsat32(66'(smul(iir_a_l, cfg_lowpass_m1))
+                          + 66'(smul(v_l, cfg_lowpass)), 31);
+            tr = rndsat32(66'(smul(iir_a_r, cfg_lowpass_m1))
+                          + 66'(smul(v_r, cfg_lowpass)), 31);
             iir_a_l <= tl; iir_a_r <= tr;
             v_l <= tl; v_r <= tr;
           end
@@ -462,27 +516,29 @@ module galactic_core (
 
         S_CORE: begin
           // feedback registers + core + iirB + mix for sample k
-          nel = sat32(128'(o_e_l) - (o_f_l + o_g_l + o_h_l));
-          nfl = sat32(128'(o_f_l) - (o_e_l + o_g_l + o_h_l));
-          ngl = sat32(128'(o_g_l) - (o_e_l + o_f_l + o_h_l));
-          nhl = sat32(128'(o_h_l) - (o_e_l + o_f_l + o_g_l));
-          ner = sat32(128'(o_e_r) - (o_f_r + o_g_r + o_h_r));
-          nfr = sat32(128'(o_f_r) - (o_e_r + o_g_r + o_h_r));
-          ngr = sat32(128'(o_g_r) - (o_e_r + o_f_r + o_h_r));
-          nhr = sat32(128'(o_h_r) - (o_e_r + o_f_r + o_g_r));
+          nel = sat32(38'(o_e_l) - (o_f_l + o_g_l + o_h_l));
+          nfl = sat32(38'(o_f_l) - (o_e_l + o_g_l + o_h_l));
+          ngl = sat32(38'(o_g_l) - (o_e_l + o_f_l + o_h_l));
+          nhl = sat32(38'(o_h_l) - (o_e_l + o_f_l + o_g_l));
+          ner = sat32(38'(o_e_r) - (o_f_r + o_g_r + o_h_r));
+          nfr = sat32(38'(o_f_r) - (o_e_r + o_g_r + o_h_r));
+          ngr = sat32(38'(o_g_r) - (o_e_r + o_f_r + o_h_r));
+          nhr = sat32(38'(o_h_r) - (o_e_r + o_f_r + o_g_r));
           fb_al <= nel; fb_bl <= nfl; fb_cl <= ngl; fb_dl <= nhl;
           fb_ar <= ner; fb_br <= nfr; fb_cr <= ngr; fb_dr <= nhr;
           core_l = (o_e_l + o_f_l + o_g_l + o_h_l) >>> 3;
           core_r = (o_e_r + o_f_r + o_g_r + o_h_r) >>> 3;
-          ibl = rndsat32(128'(iir_b_l) * cfg_lowpass_m1
-                         + 128'(core_l) * cfg_lowpass, 31);
-          ibr = rndsat32(128'(iir_b_r) * cfg_lowpass_m1
-                         + 128'(core_r) * cfg_lowpass, 31);
+          ibl = rndsat32(66'(smul(iir_b_l, cfg_lowpass_m1))
+                         + 66'(smul(core_l, cfg_lowpass)), 31);
+          ibr = rndsat32(66'(smul(iir_b_r, cfg_lowpass_m1))
+                         + 66'(smul(core_r, cfg_lowpass)), 31);
           iir_b_l <= ibl;
           iir_b_r <= ibr;
           if (cfg_wet_active) begin
-            mixl = rndsat32(128'(ibl) * cfg_wet + 128'(in_l[k]) * cfg_wet_m1, 31);
-            mixr = rndsat32(128'(ibr) * cfg_wet + 128'(in_r[k]) * cfg_wet_m1, 31);
+            mixl = rndsat32(66'(smul(ibl, cfg_wet))
+                            + 66'(smul(in_l[k], cfg_wet_m1)), 31);
+            mixr = rndsat32(66'(smul(ibr, cfg_wet))
+                            + 66'(smul(in_r[k], cfg_wet_m1)), 31);
           end else begin
             mixl = ibl; mixr = ibr;
           end
