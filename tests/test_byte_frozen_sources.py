@@ -270,14 +270,14 @@ NUMBER_WORDS = {w: i for i, w in enumerate((
 DOC_COUNT_PATTERNS = (
     (r"of the (?P<total>\w+) scripts below, \*\*(?P<false>\w+)\*\* have "
      r"current bytes"),
-    r"(?P<true>\w+) are exceptions:",
+    r"(?P<true>\w+) (?:are exceptions|is an exception):",
     r"The remaining (?P<false>\w+) stay `false`",
     (r"whole-registry counts at the top of\s+this section — (?P<total>\w+) "
-     r"entries, (?P<false>\w+) `false`, (?P<true>\w+) exceptions"),
+     r"entries, (?P<false>\w+) `false`, (?P<true>\w+) exceptions?"),
 )
 NOTE_COUNT_PATTERNS = (
     r"(?P<false>\w+) of these (?P<total>\w+) scripts have drifted",
-    r"; (?P<true>\w+) are exceptions\.",
+    r"; (?P<true>\w+) (?:are exceptions|is not)\.",
     r"For the (?P<false>\w+) entries that still read false",
 )
 # What every resolvable entry's disposition must say (the #126 shape).
@@ -459,23 +459,27 @@ def test_the_prose_counts_and_dispositions_match_the_registry():
 def test_control_the_prose_audit_fires_on_a_doctored_copy(doctor):
     """The #326 failure control, on in-memory copies only."""
     reg, doc = copy.deepcopy(registry()), read_doc()
-    slfo = next(e for e in reg["historical_provenance"]
-                if e["path"] == "fixtures/render_slfo_fixture.py")
+    # The resolvable-stamp entry: the disposition/caveat/flag controls below
+    # must bite on an entry whose stamp CURRENTLY resolves. #671 spent the
+    # slfo stamp, so that is fixtures/render_fixture.py now.
+    resolvable = next(e for e in reg["historical_provenance"]
+                      if e["path"] == "fixtures/render_fixture.py")
     if doctor == "md_count_word":
-        mutant = doc.replace("The remaining eight stay", "The remaining seven stay")
+        mutant = doc.replace("The remaining nine stay",
+                             "The remaining eight stay")
         assert mutant != doc, "the mutant did not apply"
         doc = mutant
     elif doctor == "note_count_word":
         note = reg["historical_provenance_note"]
         reg["historical_provenance_note"] = note.replace(
-            "eight of these ten", "seven of these ten")
+            "nine of these ten", "eight of these ten")
         assert reg["historical_provenance_note"] != note
     elif doctor == "drop_md_caveat":
-        row = doc_table_rows(doc)[slfo["path"]]
-        doc = doc.replace(row, "cleanable — no finding as of SXT-041 (#75)")
+        row = doc_table_rows(doc)[resolvable["path"]]
+        doc = doc.replace(row, "cleanable — no finding as of #269")
     elif doctor == "drop_json_caveat":
-        slfo["lint_finding_disposition"] = \
-            "cleanable; no lint finding as of SXT-041 (#75)"
+        resolvable["lint_finding_disposition"] = \
+            "cleanable; no lint finding as of #269"
     elif doctor == "drop_count_sentence":
         mutant = re.sub(r"The remaining \w+ stay `false`\.", "", doc)
         assert mutant != doc, "the mutant did not apply"
@@ -483,7 +487,7 @@ def test_control_the_prose_audit_fires_on_a_doctored_copy(doctor):
     else:
         # A flag flip moves the derived counts; the unchanged prose must
         # then disagree with them.
-        slfo["current_bytes_recorded"] = False
+        resolvable["current_bytes_recorded"] = False
     findings = audit_prose(reg, doc)
     assert findings, f"the {doctor} prose leg did not fire"
 
