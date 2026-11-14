@@ -843,7 +843,7 @@
         "role": "testbench",
         "path": "tests/test_sxt019_provenance.py",
         "passed": true,
-        "content_hash": "sha256:feec725d65fcf3905a9f88c76cf2911e5fe762d7c2bdd4b4075af00822c5849d"
+        "content_hash": "sha256:61af738d57b2a0e0c58f5d4c13fd6d022799ab5d9cb33b68be5a2429a1b6a079"
       },
       {
         "check": "present",
@@ -1627,7 +1627,7 @@
     ]
   },
   "provenance": {
-    "klt_version": "0.9.2.dev887+gec7400b7d8e5",
+    "klt_version": "0.8.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,

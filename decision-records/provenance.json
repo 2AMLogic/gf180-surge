@@ -299,6 +299,20 @@
       "reason": "The negative-control scaffolding split out of tools/check_provenance.py (a behavior-preserving move): the synthetic fixtures and *_controls self-tests that exercise the vocabulary the audit detects. Same reason as tools/check_provenance.py - its license-body / copyright / citation fixtures are assembled from fragments at run time, so the NON-exemptible rules keep applying to this file too; no self-path special-case exists in the tool."
     },
     {
+      "path": "tools/check_provenance_rules.py",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The audit's rule ids and known-class table, split out of tools/check_provenance.py (a behavior-preserving move; no rule or message changed): the class table names the very vocabulary the audit detects. Same reason as tools/check_provenance.py - no signal text is pasted here, so the NON-exemptible rules keep applying to this file too; no self-path special-case exists in the tool."
+    },
+    {
+      "path": "tools/check_provenance_signals.py",
+      "rules": [
+        "self-declared-quotation"
+      ],
+      "reason": "The content-signal layer, split out of tools/check_provenance.py (a behavior-preserving move; no rule or message changed): it defines the quotation-marker patterns themselves, so it necessarily contains the vocabulary the audit detects. Same reason as tools/check_provenance.py - its license-body / copyright / citation patterns are assembled from fragments at run time, so the NON-exemptible rules keep applying to this file too; no self-path special-case exists in the tool."
+    },
+    {
       "path": "tests/test_sxt019_provenance.py",
       "rules": [
         "self-declared-quotation"
