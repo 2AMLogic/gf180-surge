@@ -95,6 +95,13 @@ sys.path.insert(0, str(REPO / "tools"))
 import check_provenance as cp  # noqa: E402  (path set above)
 import check_provenance_controls as cpc  # noqa: E402  (path set above)
 
+# `check_provenance` is the CLI facade and re-exports the audit; the layers
+# themselves live in sibling modules. A test that REBINDS a module-level
+# constant has to rebind it where the code that reads it looks it up, so the
+# inflation-budget tests patch the payload layer directly rather than the
+# facade's re-exported copy of the same object.
+import check_provenance_payload as cpp  # noqa: E402  (path set above)
+
 
 def run_tool(*args):
     proc = subprocess.run(
@@ -1100,7 +1107,7 @@ def test_unwrap_payload_reads_wrappers_and_refuses_ordinary_payloads():
 
 def test_truncated_payload_scan_is_disclosed_not_silent(tmp_path, monkeypatch):
     """A scan that could not finish must never look like one that passed."""
-    monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 32)
+    monkeypatch.setattr(cpp, "MAX_UNWRAPPED_BYTES", 32)
     entries, truncated = cp.unwrap_payload(cpc.FIXTURE_GZIPPED_NOTICE)
     assert truncated and entries and len(entries[0][1]) == 32
     root = _masked_tree(tmp_path, "truncated", "")
@@ -1118,7 +1125,7 @@ def test_inflation_budget_is_global_not_per_level(monkeypatch):
     64x it — and `truncated` stayed False, so nothing disclosed the overrun.
     """
     budget = 1 << 20
-    monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", budget)
+    monkeypatch.setattr(cpp, "MAX_UNWRAPPED_BYTES", budget)
     gzipped = gzip.compress(b"A" * (budget - 1), 9)
     bomb = cpc._zip_payload(tuple((f"m{i:02d}.gz", gzipped) for i in range(64)))
     assert len(bomb) < 32 * 1024, "the hostile input must stay small"
@@ -1388,7 +1395,7 @@ def test_concatenated_gzip_keeps_the_inflation_budget_accounting(
     the per-stream total is still `MAX_UNWRAPPED_BYTES` and a scan stopped by it
     is still reported as TRUNCATED rather than as a pass.
     """
-    monkeypatch.setattr(cp, "MAX_UNWRAPPED_BYTES", 20)
+    monkeypatch.setattr(cpp, "MAX_UNWRAPPED_BYTES", 20)
     entries, truncated = cp.unwrap_payload(
         cpc.FIXTURE_MULTI_MEMBER_GZIP_SECOND_NAMES_AN_ASSET
     )
