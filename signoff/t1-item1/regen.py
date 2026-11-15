@@ -41,7 +41,27 @@ NATIVE_GROUPS = {"control_top", "ext_mem_instr", "wavetable_core"}
 # well past 300 s (#579, decision of 2026-11-13). Why it is that expensive is
 # NOT established by any run here -- see #641 for the suspected, unverified
 # cause; do not restate one as fact in this file.
-YOSYS_TIMEOUT_S = {"galactic_core": 1800}
+#
+# The five #580 groups below need more than 300 s because exposing the result
+# ports made their datapath observable. 1800 s is NOT known to be sufficient
+# for them: all five were measured at that budget and all five were still
+# killed inside the same Yosys step (see RECORD.md). The figure is kept at the
+# measured one so the committed failure records are reproducible, not because
+# it is a requirement. Raising it further is not the next step -- klt's cap is
+# 3600 s, only 2x what already failed; see RECORD.md and #579/#641/#657 for
+# why a budget argument is exhausted here.
+#
+# rf_ains34_core is deliberately NOT in this table: it keeps the 300 s default
+# because it exits 0 there -- but only because its own inputs are not ports,
+# so Yosys constant-folds its datapath away (RECORD.md "rf_ains34_core").
+YOSYS_TIMEOUT_S = {
+    "galactic_core": 1800,
+    "logical4_core": 1800,
+    "rf_bins12_core": 1800,
+    "rf_global2_core": 1800,
+    "rf_global34_core": 1800,
+    "rf_send34_core": 1800,
+}
 # The klt to run; override for a pinned/throwaway environment (never install
 # over the host-wide klt). NOTE: a klt without `yosys_timeout_s` support
 # rejects a request that declares it, and this script then records that
