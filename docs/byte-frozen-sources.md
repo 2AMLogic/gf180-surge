@@ -134,7 +134,7 @@ regeneration has to re-commit.
 
 Two of the self-hash pins are also recorded in their RTL traces as a **revision
 word** — the low 32 bits, `int(revision[:8], 16)`: SXT-028a's
-`cases[].revision_pin.expected == 1453063955` and SXT-028k's equivalent. The
+`cases[].revision_pin.expected == 2924061779` and SXT-028k's equivalent. The
 registry lists those records under `recorded_word_in`, and the audit checks that
 form too.
 

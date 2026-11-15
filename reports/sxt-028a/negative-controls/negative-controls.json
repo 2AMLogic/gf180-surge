@@ -1,7 +1,7 @@
 {
   "baseline_sanity": {
     "max_abs_diff": 1.4435499906539917e-07,
-    "rms_rel_db": -110.46925797142352
+    "rms_rel_db": -110.47465650654698
   },
   "claim": "negative controls; each must fail the check it targets",
   "controls": [
@@ -41,9 +41,9 @@
       "control": "NC-D stale stub (frozen-revision pin)",
       "metrics": {
         "comparator_exact": false,
-        "expected_revision": 1453063955,
+        "expected_revision": 2924061779,
         "revision_pin_ok": false,
-        "trace_revision": 1453007294
+        "trace_revision": 2924051198
       },
       "ok": true,
       "verdict": "CONTROL-OK (stale trace revision REFUSED - the comparator cannot report PASS)"
@@ -52,7 +52,7 @@
       "control": "NC-E conditioning sensitivity (no tapped vibM)",
       "metrics": {
         "max_abs_diff": 0.0722013246268034,
-        "rms_rel_db": 1.9441952287211042
+        "rms_rel_db": 1.944195228721104
       },
       "ok": true,
       "verdict": "CONTROL-OK (unconditioned model FAILS the budgets - the tapped control plane is load-bearing)"

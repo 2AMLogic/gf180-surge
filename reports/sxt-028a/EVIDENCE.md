@@ -169,26 +169,89 @@ committed record (re-derived under the CI-pinned numpy 2.4.2 -- see the note
 below). The third mutant is the failure control for the change itself: a
 deliberately too-narrow (32-bit) product must FAIL, and it does.
 
-**Note — the `canonical-temple-512b` transaction log is numpy-major-version
-sensitive; this record is pinned to numpy 2.4.2 (#668).** Re-derived under the
-CI-pinned numpy 2.4.2 (`signoff/t1-item9-inventory.json`), every hash in the
-table above is byte-identical to the previously committed record. Under numpy
-1.26.4 the `canonical-temple-512b` hash alone becomes `d078987e…f83486a`
-(`cbe9b206…0481501` under both 2.4.2 and 2.5.2); the other three cases and
-every mutant hash are version-invariant. **RTL-vs-frozen-model exactness is
-not affected**: in all three versions the run is `status=PASS`, 4/4
-`exact=True`, three mutants `CONTROL-OK` — the model and RTL legs agree with
-*each other* every time, and move together because the RTL is driven by
-model-generated stimulus. The difference is in the stimulus: the frozen
-model's input-boundary quantizer `f32_to_s32i` computes
+**Disposition — the input-boundary quantizer is numpy-version-invariant as of
+#668 (option (a): coerce in the helper).** The `canonical-temple-512b`
+transaction log was numpy-major-version sensitive: `f32_to_s32i` computed
 `x * float(1 << 25)` on the float32 fixture samples in float64 under numpy
-1.x (value-based casting) and in float32 under numpy 2.x (NEP 50), so the
-round-half-up result differs for some samples. Measured, not inferred: the
-stimulus-word digest over all 512×32×2 words is `8c14201f…` under 2.4.2
-and `32ba9ba8…` under 1.26.4. `model/effects/aw-49/galactic_model.py` is
-unchanged (frozen revision `569bff13…`); choosing between making the
-quantizer version-invariant and declaring the numpy pin is #668, since the
-first would move the frozen revision.
+1.x (value-based casting) and in float32 under numpy 2.x (NEP 50), moving
+**13 of the 32768 canonical stimulus words by exactly 1 LSB** — all at
+|x| < 2^-1, inside the region this helper's docstring already declares
+"<= 1 LSB error below", so the declared accuracy contract held under both
+versions and what broke was **bit-exact record reproducibility**, not
+accuracy. RTL-vs-frozen-model exactness was never affected (both legs moved
+together because the RTL is driven by model-generated stimulus). The
+recorded disposition is **option (a)**: `f32_to_s32i` now coerces its
+operand to a python float (`x = float(x)`) as its first statement, so the
+Q6.25 scaling is always computed in double — matching the sibling helpers
+(`qmath.to_q`, AW-4 `logical4.q`), every other array-to-quantizer feed in
+this repository (all coerce via `float(x)`), and the pre-NEP-50 arithmetic
+this record was originally written under. Option (b) (declare numpy part of
+the evidence environment) was rejected on the record: the repository
+deliberately carries two live numpy pins straddling NEP 50 (`oracle/
+manifest.json`: 1.26.4 for the surgepy evidence runtime; `requirements-ci.txt`:
+2.4.2), so a pinned record would quantize the same frozen model in float64
+on the oracle host and float32 in CI — two live records of one leaf,
+mutually irreproducible by construction (#668 correction 13).
+
+**Frozen-revision move and re-derivation (same change).** The coercion
+edits the byte-frozen frozen model: `frozen_revision()`
+`569bff13caa7dad8…` → `ae49a4536d7079fdc4ff9148555a52e6cfca8b90b6f6c3892e59c86544cf63c0`
+(revision word `1453063955` → `2924061779`; stimulus, not an RTL constant —
+no RTL edit). The canonical `txn_log_sha256` moves `cbe9b206…0481501` →
+`d078987e8a372d09…3f83486a` — **exactly the pre-fix numpy-1.26.4 value**,
+i.e. the double-precision arithmetic is restored, not changed; the other
+three cases and all three mutant hashes are byte-identical to the previous
+record. The re-derived record is **byte-identical under numpy 1.26.4 and
+2.4.2** (comparator run twice under `uv run --no-project --with
+numpy==<ver>`; only `iverilog` v13.0 and the new revision differ from the
+pre-fix record), `status=PASS`, 4/4 `exact=true`, three mutants
+`CONTROL-OK`. Re-derived in the same change:
+`reports/sxt-028a/rtl-exactness.json`,
+`reports/sxt-028a/negative-controls/negative-controls.{json,txt}` (all five
+controls `CONTROL-OK`, byte-identical across both numpy majors, NC-D pin at
+the new revision word), `docs/byte-frozen-sources.{json,md}` (live pin), and
+the T1 item 9 attestation envelope (`tests/test_sxt028a.py` and the new
+probe are inventory-listed). Historical ledger prose quoting `569bff13…`
+(`reports/spectral-corr-per-leaf-migration/*`) is left unchanged per the
+one-shot provenance rule; the six already-stale `artifacts/compare-*.json`
+stay owned by #270.
+
+**Live control (committed probe).** `tools/aw49_stimulus_invariance_controls.py`
+re-measures the invariant against the committed fixture: quantize every
+canonical stimulus word raw (the numpy element) and via its exact double
+value; exit 0 iff zero words differ. Its word serialization is **defined in
+the script** (little-endian int32, block-major, channel 0 then 1) because
+three probes of the same defect produced three distinct hash pairs before a
+serialization was pinned (#668 correction 5) — the hashes track the
+serialization, not the behavior; never compare literals across probes.
+Measured outputs of the committed script: pre-fix, numpy 2.4.2 → **FAIL**
+(13 differing, max 1 LSB, `float32` scaling, stimulus hash `8434d534…`);
+pre-fix, numpy 1.26.4 → PASS (0 differing, `float64`, `5fa8bb17…`);
+post-fix → **PASS under both majors with the identical stimulus hash
+`5fa8bb1784914576…`** (`tests/test_sxt028a.py::
+test_f32_to_s32i_is_numpy_version_invariant` carries the same invariant
+in-suite). Registry choice, recorded: the probe is keyed **LIVE / verdict
+exit0 in `tests/negative_controls_registry.json`** (not the comparator
+registry — that harness requires a `reports/<leaf>/rtl-exactness.json`-shaped
+record this probe does not produce), which lists it in the T1 item 9
+inventory; the issue-named `…_probe.py` filename became
+`…_controls.py` because the negative-controls registry's well-formedness
+test requires every key to end `_controls.py`
+(`tests/test_negative_controls_live.py::test_registry_is_well_formed`).
+
+**Cross-leaf survey (#668, bounded): empty.** Confirmed at the quantizer
+boundary, not by grep alone: every non-AW-49 array-to-quantizer feed already
+coerces (`tools/diagnose_delay_budget.py:206,208`,
+`tools/run_ncb_nn_model.py:77,79`, `tools/run_ncd_bypass.py:60,61`,
+`tools/smoke_fx_exactness.py:75,76`, all `to_q(float(x) …)`); the two
+scalar-index candidates are cleared (`tools/compare_rtl_model_chorus.py`:
+`mix_f` originates as python float literals; `tools/fx_rng_negative_controls.py`:
+`RandomState.uniform` scalar draws return python `float` under both majors,
+re-probed); AW-49's model-side quantizers coerce by construction
+(`build_control`, and `to_c31`'s other caller receives a `math.sin` float);
+and the AW-49 input boundary itself is now asserted raw-vs-double word-by-word
+by the committed probe under both pinned majors. No other landed leaf feeds a
+numpy scalar into a quantizer; no per-leaf issue is filed.
 
 Traffic measured from the RTL txn log: 28 R + 26 W = **54 words = 216
 B/frame/instance** (10.368 MB/s at 48 kHz), matching the model's
@@ -261,6 +324,10 @@ python3 tools/compare_rtl_model_aw49.py
 
 # anywhere (negative controls; uses the canonical fixture npz)
 python3 tools/aw49_negative_controls.py
+
+# anywhere (stimulus-quantization invariance control; run under both
+# pinned majors for the two-version evidence, #668)
+python3 tools/aw49_stimulus_invariance_controls.py
 
 # anywhere (unit/integrity tests)
 python3 -m pytest tests/test_sxt028a.py -q
