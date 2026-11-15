@@ -56,8 +56,14 @@ def datapath_observable(netlist_text):
     return set(output_ports(netlist_text)) - {"block_done"} != set()
 
 
-OBSERVABLE_GROUPS = ("logical4_core", "rf_ains34_core", "rf_bins12_core",
-                     "rf_global2_core", "rf_global34_core", "rf_send34_core")
+# Groups whose exit-0 record must show more than the sequencer. #641 adds
+# galactic_core: its result words leave through the external-memory port
+# (em_addr/em_req/em_we/em_wdata), so a netlist that kept only `block_done`
+# would have pruned the arithmetic this group exists for. A NO_VERDICT group
+# carries no netlist and is skipped, so the entry is inert until it passes.
+OBSERVABLE_GROUPS = ("galactic_core", "logical4_core", "rf_ains34_core",
+                     "rf_bins12_core", "rf_global2_core", "rf_global34_core",
+                     "rf_send34_core")
 
 
 def check_netlist_arg(entry):
