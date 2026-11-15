@@ -256,7 +256,7 @@ workflow's own comment describes ("cold_start is local_only: --check skips it
 and carries the committed outcome"). What this change *did* re-derive is every
 content hash in the envelope and its check count (227 -> 228, the new test;
 the envelope has since been re-derived again, to 229 checks under the pinned
-`klt 0.8.0` — see the provenance disclosure below).
+`klt 0.8.0` — see the provenance disclosure above).
 
 **The full suite was not run to completion here, and is not claimed as a pass.**
 Two attempts on this shared dispatch worker exceeded `klt`'s hard-coded
