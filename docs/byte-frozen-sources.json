@@ -374,6 +374,19 @@
     },
     {
       "covers": [
+        "tools/aw49_stimulus_invariance_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/aw49_stimulus_invariance_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "194c8a450d384d176c57dd192e9faf981de82c857a51f42afa211331a92ea0f3"
+    },
+    {
+      "covers": [
         "tools/aw4_negative_controls.py"
       ],
       "freshness_test": "tests/test_byte_frozen_sources.py",
