@@ -4,6 +4,16 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-15
 
+- **PR #661**: refactor(rtl): carry galactic_core's arithmetic at integer-exact widths, not 128 bits
+- **Issue #641** (closed): galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget)
+- **PR #685**: refactor(model): fold the duplicated FX-runner helpers onto run_fx_model and give checkpoint_set an explicit settle
+- **Issue #682** (closed): Remove duplicated amp_to_linear_fixed/checkpoint_set/qhex in the FX runners: three re-declare run_fx_model's, the fourth is dead
+- **PR #701**: tools: drop 15 dead function parameters in 4 publication/selection tools
+- **PR #692**: refactor(model): drop six unreferenced fragments from the FX runners and comparators
+- **Issue #684** (closed): Remove 6 provably unreferenced fragments outside the frozen/attested set: dead SEQUENCES dict, 3 never-called methods, 2 unused numpy imports
+- **PR #690**: docs(readme): state both cited envelopes and the real met count, pinned by a live audit
+- **Issue #678** (closed): README "T1 signoff evidence" says one item is met; the verdict of record says two (items 9 and 10)
+- **PR #676**: docs: roadmap as of 2026-11-13
 - **PR #700**: refactor(tools): consolidate census_row and slot_entry into _census_blob_common
 - **Issue #686** (closed): Remove the 10 private census_row / slot_entry copies from the five RF extractors: the siblings #493 and #633 left behind
 
