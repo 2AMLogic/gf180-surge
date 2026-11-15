@@ -342,6 +342,13 @@ def compare(a, b):
                 "differing_samples": 0, "first_differing_sample": None,
                 "max_abs_difference": 0.0}
     diff = ba != bb
+    if not diff.any():
+        return {"identical": False,
+                "reason": "byte streams differ but every sample compares "
+                          "equal (signed zero); numerically identical",
+                "frames": int(len(ba)),
+                "differing_samples": 0, "first_differing_sample": None,
+                "max_abs_difference": 0.0}
     idx = int(np.argmax(diff))
     return {
         "identical": False,
@@ -456,10 +463,15 @@ def run_leaf(name, seq, repeats, scratch_dir, surgepy):
         out["status"] = "PASS"
         out["status_reason"] = (
             "the declared release velocity and the 0 the renderer sent produce "
-            "bit-identical raw float mono buffers under the pinned oracle, "
-            "with the failure control showing the comparison is velocity-"
-            "sensitive. The committed reference stands; the mismatch between "
-            "the cited sequence and the velocity sent is provenance-only.")
+            "bit-identical raw float mono buffers under the pinned oracle. The "
+            "failure control perturbs the note number handed to releaseNote, "
+            "an argument of that call rather than a velocity, and the render "
+            "changes, so the comparison is not blind to releaseNote; no "
+            "velocity perturbation could serve as the control here, because "
+            "this preset renders bit-identically at every note-on velocity "
+            "tried (see observation__noteon_velocity_plus1_vs_zero). The "
+            "committed reference stands; the mismatch between the cited "
+            "sequence and the velocity sent is provenance-only.")
     else:
         out["status"] = "STALE"
         out["status_reason"] = (

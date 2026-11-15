@@ -25,7 +25,7 @@
     "probe_digest_note": "No sha256 of this probe's bytes is recorded here. See the module docstring's Provenance note: a self-stamp would make this probe a historical_provenance entry in docs/byte-frozen-sources.json, and the stamp is bookkeeping that no test re-derives. The probe is committed in the same change as this record and the measurement is re-derivable by re-running it.",
     "probe_digest_recorded": false,
     "python": "3.11.16",
-    "repo_commit_at_render_time": "7de0a780970a98d16543ae283835b7060363033c",
+    "repo_commit_at_render_time": "af0bb5297eaf7c22e6903492f18fba423090f583",
     "sample_rate": 48000
   },
   "finding": "F-640-1",
@@ -523,7 +523,7 @@
       "renderer": "fixtures/render_lfo_fixture.py",
       "sidecar": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json",
       "status": "PASS",
-      "status_reason": "the declared release velocity and the 0 the renderer sent produce bit-identical raw float mono buffers under the pinned oracle, with the failure control showing the comparison is velocity-sensitive. The committed reference stands; the mismatch between the cited sequence and the velocity sent is provenance-only."
+      "status_reason": "the declared release velocity and the 0 the renderer sent produce bit-identical raw float mono buffers under the pinned oracle. The failure control perturbs the note number handed to releaseNote, an argument of that call rather than a velocity, and the render changes, so the comparison is not blind to releaseNote; no velocity perturbation could serve as the control here, because this preset renders bit-identically at every note-on velocity tried (see observation__noteon_velocity_plus1_vs_zero). The committed reference stands; the mismatch between the cited sequence and the velocity sent is provenance-only."
     },
     "sxt041": {
       "baseline": {
@@ -1015,7 +1015,7 @@
       "renderer": "fixtures/render_slfo_fixture.py",
       "sidecar": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.json",
       "status": "PASS",
-      "status_reason": "the declared release velocity and the 0 the renderer sent produce bit-identical raw float mono buffers under the pinned oracle, with the failure control showing the comparison is velocity-sensitive. The committed reference stands; the mismatch between the cited sequence and the velocity sent is provenance-only."
+      "status_reason": "the declared release velocity and the 0 the renderer sent produce bit-identical raw float mono buffers under the pinned oracle. The failure control perturbs the note number handed to releaseNote, an argument of that call rather than a velocity, and the render changes, so the comparison is not blind to releaseNote; no velocity perturbation could serve as the control here, because this preset renders bit-identically at every note-on velocity tried (see observation__noteon_velocity_plus1_vs_zero). The committed reference stands; the mismatch between the cited sequence and the velocity sent is provenance-only."
     }
   },
   "question": "does the release velocity the renderers dropped reach the rendered audio in these two fixture configurations?",
