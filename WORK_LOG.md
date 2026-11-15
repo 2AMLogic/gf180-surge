@@ -2,8 +2,17 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-15
+
+- **PR #700**: refactor(tools): consolidate census_row and slot_entry into _census_blob_common
+- **Issue #686** (closed): Remove the 10 private census_row / slot_entry copies from the five RF extractors: the siblings #493 and #633 left behind
+
 ### 2026-11-14
 
+- **PR #673**: test(checkpoint keys): audit the CASES parser inventory live instead of asserting it
+- **Issue #667** (closed): Add a live completeness control so test_checkpoint_key_uniqueness.py's "all thirteen" claim cannot silently go stale
+- **PR #674**: refactor(tools): split the 5,391-line provenance audit into nine layer modules behind a re-export facade
+- **Issue #669** (closed): Split tools/check_provenance.py (5,391 lines) into nine sibling modules behind a re-export facade
 - **PR #664**: fix(ablation_delta): route the summary and the sidecar walk through --out/--ablations
 - **Issue #654** (closed): ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json
 - **PR #675**: fix(tools): grade the LP12 stability legs from the engine tap peak and the model monitor verdict
