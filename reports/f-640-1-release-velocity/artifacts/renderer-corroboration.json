@@ -1,0 +1,51 @@
+{
+  "finding": "F-640-1",
+  "issue": "#660",
+  "new_finding": {
+    "consequence": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json's engine.version_string does not attribute that WAV to a tap build; it only repeats what the extractor sidecar said. Any argument that reasons from a reference sidecar's engine identity to the build that rendered it is unsupported for these two renderers.",
+    "id": "F-660-1",
+    "scope": "Observed in the two renderers this issue exercises. Not audited across the other renderers; not re-graded, relabelled or fixed here. Filed as a follow-up.",
+    "status": "NO_VERDICT (established by the live runs below, but not adjudicated by issue #660; a follow-up is filed for the owning leaves)",
+    "summary": "Both fixture renderers copy engine.commit / engine.version_string into their reference sidecars from the EXTRACTOR INPUTS file (render_lfo_fixture.py:229-230 from model/voice/attacky_lfo_inputs.json; render_slfo_fixture.py:286-287 from model/voice/attacky_slfo_inputs.json), never from the engine that performed the render (surgepy.getVersion()). Demonstrated live here: these two runs were executed on the stock pinned oracle (1.4.HEAD.58914e59c) and the SXT-032 run still wrote '1.4.sxt037-tap.01b20d0b8' into its own sidecar."
+  },
+  "note_on_omitted_digests": "Neither renderer's CURRENT sha256 is recorded here. Writing one into a committed record would make this record a stamp of those bytes and change fixtures/render_lfo_fixture.py's historical_provenance disposition in docs/byte-frozen-sources.json, which is not this issue's scope.",
+  "runs": [
+    {
+      "command": "fixtures/render_slfo_fixture.py --sequence seq-notes-holds-v1 --out-dir <scratch> --repeats 3",
+      "committed_wav": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.wav",
+      "committed_wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05",
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3,
+      "engine_field_describes_the_rendering_engine": false,
+      "engine_field_is_inherited_from": "model/voice/attacky_slfo_inputs.json",
+      "engine_that_actually_rendered": "1.4.HEAD.58914e59c",
+      "engine_version_string_this_run_wrote_into_its_sidecar": "1.4.HEAD.58914e59c",
+      "leaf": "SXT-041",
+      "release_velocity_this_script_sends": "a literal 0 (fixtures/render_slfo_fixture.py:160)",
+      "rendered_wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05",
+      "reproduces_committed_wav": true,
+      "script": "fixtures/render_slfo_fixture.py",
+      "script_edited_by_this_change": false
+    },
+    {
+      "command": "fixtures/render_lfo_fixture.py --sequence seq-notes-holds-v1 --out-dir <scratch> --repeats 3",
+      "committed_wav": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1-lfo-fixture.wav",
+      "committed_wav_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5",
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3,
+      "engine_field_describes_the_rendering_engine": false,
+      "engine_field_is_inherited_from": "model/voice/attacky_lfo_inputs.json",
+      "engine_that_actually_rendered": "1.4.HEAD.58914e59c",
+      "engine_version_string_this_run_wrote_into_its_sidecar": "1.4.sxt037-tap.01b20d0b8",
+      "leaf": "SXT-032",
+      "release_velocity_this_script_sends": "the sequence's declared value (100 on the final note_off), via render_fixture.dispatch, after #640 folded this renderer",
+      "rendered_wav_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5",
+      "reproduces_committed_wav": true,
+      "script": "fixtures/render_lfo_fixture.py",
+      "script_edited_by_this_change": false
+    }
+  ],
+  "schema_version": 1,
+  "what_this_does_not_establish": "No fidelity, coverage, RTL-exactness or preset claim. It establishes only that these two committed reference WAVs are reproducible from the current tree under the stock pinned oracle. In particular it does NOT establish that the 'sxt037-tap' build and the stock build render identically -- see new_finding below, which is why that comparison cannot be read out of these records at all.",
+  "what_this_is": "A shim-free corroboration of reports/f-640-1-release-velocity/artifacts/comparison.json. Each committed fixture renderer was run unmodified, through its own CLI, against the same sequence under the same pinned oracle, and its WAV compared to the committed reference. No probe, proxy or velocity substitution is involved, so it is independent of the comparison artifact's apparatus. The SXT-032 run is the sharper of the two: that renderer now sends the declared 100, so reproducing a reference rendered with 0 is the measurement's result reached without the probe at all."
+}
