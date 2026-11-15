@@ -139,10 +139,6 @@ class Instance:
             self.return_q = to_q(max(0.0, self.return_f) ** 3, G_FMT)
 
 
-def amp_to_linear_fixed(f):
-    return to_q(max(0.0, f) ** 3, G_FMT)
-
-
 class IntegrationRun:
     """One deterministic end-to-end run over one sequence."""
 

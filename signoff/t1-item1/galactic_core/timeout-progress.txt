@@ -43,11 +43,11 @@
 <suppressed ~115 debug messages>
 [... 1 line(s) omitted ...]
 4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
-[... 1008 line(s) omitted ...]
+[... 1366 line(s) omitted ...]
 4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
 [... 83 line(s) omitted ...]
 4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
-[... 585 line(s) omitted ...]
+[... 833 line(s) omitted ...]
 4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
 [... 1 line(s) omitted ...]
 4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
@@ -62,8 +62,8 @@
 [... 1 line(s) omitted ...]
 4.4. Executing OPT_CLEAN pass (remove unused cells and wires).
 [... 1 line(s) omitted ...]
-Removed 2564 unused cells and 5462 unused wires.
-<suppressed ~2676 debug messages>
+Removed 3524 unused cells and 7357 unused wires.
+<suppressed ~3706 debug messages>
 [... 1 line(s) omitted ...]
 4.5. Executing CHECK pass (checking for obvious problems).
 [... 3 line(s) omitted ...]
@@ -127,7 +127,7 @@ Removed a total of 55 cells.
 [... 1 line(s) omitted ...]
 4.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 [... 1 line(s) omitted ...]
-Removed 0 unused cells and 719 unused wires.
+Removed 0 unused cells and 716 unused wires.
 <suppressed ~1 debug messages>
 [... 1 line(s) omitted ...]
 4.6.8. Executing OPT_EXPR pass (perform const folding).
@@ -274,7 +274,7 @@ Removed a total of 0 cells.
 4.8.23. Finished fast OPT passes. (There is nothing left to do.)
 [... 1 line(s) omitted ...]
 4.9. Executing WREDUCE pass (reducing word size of cells).
-[... 470 line(s) omitted ...]
+[... 466 line(s) omitted ...]
 4.10. Executing PEEPOPT pass (run peephole optimizers).
 [... 1 line(s) omitted ...]
 4.11. Executing OPT_CLEAN pass (remove unused cells and wires).
@@ -572,8 +572,8 @@ Couldn't topologically sort cells, optimizing module galactic_core may take a lo
 4.20.1. Executing Verilog-2005 frontend: <home>/.cache/yosys-0.67/bin/../share/yosys/techmap.v
 [... 28 line(s) omitted ...]
 4.20.2. Continuing TECHMAP pass.
-[... 239 line(s) omitted ...]
-<suppressed ~32308 debug messages>
+[... 234 line(s) omitted ...]
+<suppressed ~24651 debug messages>
 [... 1 line(s) omitted ...]
 4.21. Executing OPT pass (performing simple optimizations).
 [... 1 line(s) omitted ...]
@@ -584,89 +584,59 @@ Couldn't topologically sort cells, optimizing module galactic_core may take a lo
 Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
 Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
 Couldn't topologically sort cells, optimizing module galactic_core may take a longer time.
-<suppressed ~319688 debug messages>
+<suppressed ~299764 debug messages>
 [... 1 line(s) omitted ...]
 4.21.2. Executing OPT_MERGE pass (detect identical cells).
 [... 1 line(s) omitted ...]
-Computing hashes of 394184 cells of `\galactic_core'.
+Computing hashes of 369383 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 380372 cells of `\galactic_core'.
+Computing hashes of 359721 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 371585 cells of `\galactic_core'.
+Computing hashes of 353869 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 365153 cells of `\galactic_core'.
+Computing hashes of 349936 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 361854 cells of `\galactic_core'.
+Computing hashes of 347926 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 357982 cells of `\galactic_core'.
+Computing hashes of 345613 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 354347 cells of `\galactic_core'.
+Computing hashes of 343590 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 344333 cells of `\galactic_core'.
+Computing hashes of 334364 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 333642 cells of `\galactic_core'.
+Computing hashes of 324856 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 322965 cells of `\galactic_core'.
+Computing hashes of 315341 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 312858 cells of `\galactic_core'.
+Computing hashes of 305814 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 301692 cells of `\galactic_core'.
+Computing hashes of 295336 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 288550 cells of `\galactic_core'.
+Computing hashes of 282954 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 275803 cells of `\galactic_core'.
+Computing hashes of 270587 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 275245 cells of `\galactic_core'.
+Computing hashes of 270535 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 274691 cells of `\galactic_core'.
+Computing hashes of 270487 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 274414 cells of `\galactic_core'.
+Computing hashes of 270463 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 274134 cells of `\galactic_core'.
+Computing hashes of 270431 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 273854 cells of `\galactic_core'.
+Computing hashes of 270399 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 273714 cells of `\galactic_core'.
+Computing hashes of 270383 cells of `\galactic_core'.
 [... 1 line(s) omitted ...]
-Computing hashes of 273478 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 273242 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 273124 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 272892 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 272660 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 272544 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 272202 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 272090 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 272008 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 271970 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 271940 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 271928 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 271916 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 271912 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-Computing hashes of 271908 cells of `\galactic_core'.
-[... 1 line(s) omitted ...]
-<suppressed ~366828 debug messages>
-Removed a total of 122276 cells.
+<suppressed ~297000 debug messages>
+Removed a total of 99000 cells.
 [... 1 line(s) omitted ...]
 4.21.3. Executing OPT_DFF pass (perform DFF optimizations).
 [... 1 line(s) omitted ...]
 4.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
 [... 1 line(s) omitted ...]
-Removed 153496 unused cells and 20968 unused wires.
-<suppressed ~153497 debug messages>
+Removed 151342 unused cells and 15295 unused wires.
+<suppressed ~151343 debug messages>
 [... 1 line(s) omitted ...]
 4.21.5. Finished fast OPT passes.
 [... 1 line(s) omitted ...]
@@ -674,73 +644,73 @@ Removed 153496 unused cells and 20968 unused wires.
 [... 1 line(s) omitted ...]
 4.22.1. Extracting gate netlist of module `\galactic_core' to `<abc-temp-dir>/input.blif'..
 Replacing 4192 occurrences of constant undef bits with constant zero bits
-Breaking loop using new signal $abcloop$630595: \wcount [21] -> $auto$maccmap.cc:114:fulladd$20069.X [21]
+Breaking loop using new signal $abcloop$587375: \wcount [11] -> $auto$maccmap.cc:114:fulladd$23239.t2 [11]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630596: \wcount [6] -> $auto$maccmap.cc:114:fulladd$20069.t2 [6]
+Breaking loop using new signal $abcloop$587376: \wcount [23] -> $auto$maccmap.cc:114:fulladd$23239.Y [23]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630597: \wcount [13] -> $auto$maccmap.cc:114:fulladd$20069.t2 [13]
+Breaking loop using new signal $abcloop$587377: \wcount [8] -> $auto$maccmap.cc:114:fulladd$23239.t1 [8]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630598: \wcount [1] -> $auto$maccmap.cc:114:fulladd$20069.Y [1]
+Breaking loop using new signal $abcloop$587378: \wcount [13] -> $auto$maccmap.cc:114:fulladd$23239.t2 [13]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630599: \wcount [11] -> $auto$maccmap.cc:114:fulladd$20069.t1 [11]
+Breaking loop using new signal $abcloop$587379: \wcount [30] -> $auto$maccmap.cc:114:fulladd$23239.X [30]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630600: \wcount [20] -> $auto$maccmap.cc:114:fulladd$20069.Y [20]
+Breaking loop using new signal $abcloop$587380: \wcount [17] -> $auto$maccmap.cc:114:fulladd$23239.X [17]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630601: \wcount [18] -> $auto$maccmap.cc:114:fulladd$20069.X [18]
+Breaking loop using new signal $abcloop$587381: \wcount [21] -> $auto$maccmap.cc:114:fulladd$23239.X [21]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630602: \wcount [3] -> $auto$maccmap.cc:114:fulladd$20069.t1 [3]
+Breaking loop using new signal $abcloop$587382: \wcount [6] -> $auto$maccmap.cc:114:fulladd$23239.t1 [6]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630603: \wcount [7] -> $auto$maccmap.cc:114:fulladd$20069.t1 [7]
+Breaking loop using new signal $abcloop$587383: \wcount [0] -> $auto$maccmap.cc:114:fulladd$23239.X [0]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630604: \wcount [2] -> $auto$maccmap.cc:114:fulladd$20069.t2 [2]
+Breaking loop using new signal $abcloop$587384: \wcount [16] -> $auto$maccmap.cc:114:fulladd$23239.t1 [16]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630605: \wcount [23] -> $auto$maccmap.cc:114:fulladd$20069.Y [23]
+Breaking loop using new signal $abcloop$587385: \wcount [9] -> $auto$maccmap.cc:114:fulladd$23239.t2 [9]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630606: \wcount [4] -> $auto$maccmap.cc:114:fulladd$20069.t2 [4]
+Breaking loop using new signal $abcloop$587386: \wcount [3] -> $auto$maccmap.cc:114:fulladd$23239.t2 [3]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630607: \wcount [28] -> $auto$maccmap.cc:114:fulladd$20069.X [28]
+Breaking loop using new signal $abcloop$587387: \wcount [20] -> $auto$maccmap.cc:114:fulladd$23239.X [20]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630608: \wcount [30] -> $auto$maccmap.cc:114:fulladd$20069.X [30]
+Breaking loop using new signal $abcloop$587388: \wcount [18] -> $auto$maccmap.cc:114:fulladd$23239.X [18]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630609: \wcount [0] -> $auto$maccmap.cc:114:fulladd$20069.X [0]
+Breaking loop using new signal $abcloop$587389: \wcount [1] -> $auto$maccmap.cc:114:fulladd$23239.Y [1]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630610: \wcount [29] -> $auto$maccmap.cc:114:fulladd$20069.Y [29]
+Breaking loop using new signal $abcloop$587390: \wcount [25] -> $auto$maccmap.cc:114:fulladd$23239.Y [25]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630611: \wcount [25] -> $auto$maccmap.cc:114:fulladd$20069.Y [25]
+Breaking loop using new signal $abcloop$587391: \wcount [24] -> $auto$maccmap.cc:114:fulladd$23239.X [24]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630612: \wcount [22] -> $auto$maccmap.cc:114:fulladd$20069.X [22]
+Breaking loop using new signal $abcloop$587392: \wcount [15] -> $auto$maccmap.cc:114:fulladd$23239.t2 [15]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630613: \wcount [27] -> $auto$maccmap.cc:114:fulladd$20069.Y [27]
+Breaking loop using new signal $abcloop$587393: \wcount [27] -> $auto$maccmap.cc:114:fulladd$23239.Y [27]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630614: \wcount [10] -> $auto$maccmap.cc:114:fulladd$20069.t2 [10]
+Breaking loop using new signal $abcloop$587394: \wcount [22] -> $auto$maccmap.cc:114:fulladd$23239.X [22]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630615: \wcount [24] -> $auto$maccmap.cc:114:fulladd$20069.X [24]
+Breaking loop using new signal $abcloop$587395: \wcount [26] -> $auto$maccmap.cc:114:fulladd$23239.Y [26]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630616: \wcount [15] -> $auto$maccmap.cc:114:fulladd$20069.t2 [15]
+Breaking loop using new signal $abcloop$587396: \wcount [29] -> $auto$maccmap.cc:114:fulladd$23239.Y [29]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630617: \wcount [26] -> $auto$maccmap.cc:114:fulladd$20069.X [26]
+Breaking loop using new signal $abcloop$587397: \wcount [4] -> $auto$maccmap.cc:114:fulladd$23239.t1 [4]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630618: \wcount [5] -> $auto$maccmap.cc:114:fulladd$20069.X [5]
+Breaking loop using new signal $abcloop$587398: \wcount [7] -> $auto$maccmap.cc:114:fulladd$23239.t2 [7]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630619: \wcount [19] -> $auto$maccmap.cc:114:fulladd$20069.X [19]
+Breaking loop using new signal $abcloop$587399: \wcount [5] -> $auto$maccmap.cc:114:fulladd$23239.X [5]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630620: \wcount [8] -> $auto$maccmap.cc:114:fulladd$20069.t2 [8]
+Breaking loop using new signal $abcloop$587400: \wcount [2] -> $auto$maccmap.cc:114:fulladd$23239.t1 [2]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630621: \wcount [12] -> $auto$maccmap.cc:114:fulladd$20069.t2 [12]
+Breaking loop using new signal $abcloop$587401: \wcount [14] -> $auto$maccmap.cc:114:fulladd$23239.t1 [14]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630622: \wcount [9] -> $auto$maccmap.cc:114:fulladd$20069.t2 [9]
+Breaking loop using new signal $abcloop$587402: \wcount [10] -> $auto$maccmap.cc:114:fulladd$23239.t1 [10]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630623: \wcount [17] -> $auto$maccmap.cc:114:fulladd$20069.X [17]
+Breaking loop using new signal $abcloop$587403: \wcount [19] -> $auto$maccmap.cc:114:fulladd$23239.Y [19]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630624: \wcount [16] -> $auto$maccmap.cc:114:fulladd$20069.t2 [16]
+Breaking loop using new signal $abcloop$587404: \wcount [28] -> $auto$maccmap.cc:114:fulladd$23239.X [28]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630625: \wcount [14] -> $auto$maccmap.cc:114:fulladd$20069.t2 [14]
+Breaking loop using new signal $abcloop$587405: \wcount [12] -> $auto$maccmap.cc:114:fulladd$23239.t1 [12]
 [... 1 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630626: \wcount [31] -> $auto$maccmap.cc:114:fulladd$20069.Y [31]
-Breaking loop using new signal $abcloop$630627: $auto$rtlil.cc:3399:Mux$12737 [2] -> $memory\counts$rdmux[0][0][0]$a$15017 [31]
+Breaking loop using new signal $abcloop$587406: \wcount [31] -> $auto$maccmap.cc:114:fulladd$23239.Y [31]
+Breaking loop using new signal $abcloop$587407: $auto$rtlil.cc:3399:Mux$16586 [2] -> $memory\counts$rdmux[0][0][0]$a$18866 [31]
 [... 63 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630628: $auto$rtlil.cc:3312:Or$12424 -> $0$memwr$\adv_idx$signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v:688$192_DATA[31:0]$1259 [31]
+Breaking loop using new signal $abcloop$587408: $auto$rtlil.cc:3312:Or$16273 -> $0$memwr$\adv_idx$signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v:720$256_DATA[31:0]$1522 [31]
 [... 32 line(s) omitted ...]
-Breaking loop using new signal $abcloop$630629: $auto$rtlil.cc:3312:Or$12446 -> $0$memwr$\adv_idx$signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v:758$196_DATA[31:0]$1271 [31]
+Breaking loop using new signal $abcloop$587409: $auto$rtlil.cc:3312:Or$16295 -> $0$memwr$\adv_idx$signoff/t1-item1/galactic_core/out/galactic_core_sv2v.v:790$260_DATA[31:0]$1534 [31]
 [... 20 line(s) omitted ...]
 [stderr]

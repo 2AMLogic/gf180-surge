@@ -47,7 +47,6 @@ only, and only for the item-4 attempt.
 """
 
 import copy
-import csv
 import json
 import os
 import sys
@@ -57,7 +56,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
-from _census_blob_common import graphs_entry  # noqa: E402
+from _census_blob_common import census_row, graphs_entry, slot_entry  # noqa: E402
 import _census_graphs_common as cgc  # noqa: E402
 import carrier_drift_screen as cds  # noqa: E402
 import screen_rf_bins12_carriers as scr  # noqa: E402
@@ -113,21 +112,6 @@ GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
 OUT_DIR = os.path.join(REPO, "model", "effects", "fx_inputs")
 REFUSALS = os.path.join(REPO, "reports", "SXT-028h", "artifacts",
                         "extract-refusals.txt")
-
-
-def census_row(rel_path):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel_path:
-                return row
-    raise Refuse(f"preset not in census: {rel_path}")
-
-
-def slot_entry(graph, slot_role):
-    for fx in graph["g"]["fx"]:
-        if fx.get("r") == slot_role:
-            return fx
-    raise Refuse(f"no {slot_role} entry in graphs.jsonl fx list")
 
 
 # The census-vs-graphs zero-drift comparison lives in ONE place for all the

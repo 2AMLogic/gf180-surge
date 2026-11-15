@@ -204,6 +204,7 @@ def run_instance(key, audio, coef, use_engine_coeffs=False):
         "l1_dC_rms": _rms(l1_dc),
         "l2a": _audio_metrics(out_model, eng_ref),
         "stability_peaks": peaks,
+        "stability_verdict": fp.stability_verdict(peaks),
         "qmul_count": unit.qmul_count if unit else 0,
         "trace_blocks": trace_blocks,
     }
@@ -362,7 +363,8 @@ def main():
     print(json.dumps({
         "instances": [{k: v for k, v in r.items()
                        if k in ("key", "blocks", "subtypes", "l1_C_max", "l1_C_rms",
-                                "l2a", "l2_spectral_corr", "leg")}
+                                "l2a", "l2_spectral_corr", "stability_verdict",
+                                "leg")}
                       for r in results],
         "rtl_input_words": n_in,
     }, indent=2))

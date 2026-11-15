@@ -16,8 +16,18 @@ and the SXT-022 proposal class; not tuned against achieved numbers):
   L2 audio          max |y_model - y_engine|   <= 4096 LSB Q10.21 (~0.2 % FS)
                     rms                            <= 256 LSB
                     spectral correlation           >= 0.999
-  stability         monitor verdict STABLE over the whole case (both legs:
-                    model monitor and engine tap peaks bounded)
+  stability         both legs STABLE/bounded over the whole case:
+                    model leg  the frozen model's own per-block state-peak
+                               monitor verdict (filter_lp12_model.
+                               stability_verdict: growth detection plus the
+                               1<<30 saturation floor), read from the trace
+                               field `stability_verdict` emitted by
+                               run_filter_leg.py -- NOT a bare threshold
+                               recomputed here;
+                    engine leg the ENGINE filter-output tap peak
+                               (`l2a.engine_peak_lsb`, max |engine tap| in
+                               Q10.21 LSB over the case) bounded by
+                               ENGINE_TAP_PEAK_MAX_LSB below.
 
 Out-of-scope runs exit 2 (refused) and are never reported as PASS.
 """
@@ -34,19 +44,68 @@ PROPOSED = {
     "l2_rms_lsb": 256,
     "l2_spectral_corr_min": 0.999,
 }
-STABILITY_FLOOR = 1 << 28      # headroom floor for the corner peak bound
+# Declared boundedness bound for the ENGINE filter-output tap peak, in Q10.21
+# LSB (vm.ONE = 1 << 21, so this is 128x full scale) -- the bound the engine
+# stability leg is graded against.  It is a boundedness bound, not a fidelity
+# budget: a resonant LP12 tap may legitimately exceed full scale ahead of the
+# downstream voice amp, so the bound is deliberately generous, while staying 8x
+# below the s32 word limit so that an engine tap which actually ran away (and
+# therefore saturates at quantization) fails rather than clamping silently.
+# PROPOSED like the budgets above; not frozen policy.
+ENGINE_TAP_PEAK_MAX_LSB = 1 << 28
 
 
-def verdict_for(inst):
+def stability_legs(inst, case="?"):
+    """Grade both stability legs of one instance from real trace quantities.
+
+    Model leg: the frozen model's monitor verdict as emitted by the runner.
+    A trace without it cannot be graded on this leg, so it is REFUSED rather
+    than defaulted to STABLE -- the runner and this comparator ship together,
+    and a missing field is a version mismatch, never a pass.
+
+    Engine leg: the engine filter-output tap peak against
+    ENGINE_TAP_PEAK_MAX_LSB.  This is engine tap data (quantized `fout` from
+    the bundle's units.bin), independent of every model quantity.
+    """
+    name = f"{inst['key']['name']}.lane{inst['key']['lane']}"
+    if "stability_verdict" not in inst:
+        raise SystemExit(
+            f"{case}: instance {name} carries no 'stability_verdict': this "
+            "trace predates the monitor-verdict field and its model stability "
+            "leg cannot be graded; re-run "
+            "model/voice/filter_lp12/run_filter_leg.py on the bundle. Refusing")
+    model_verdict = inst["stability_verdict"]
+    if not inst["l2a"]["n"]:
+        # `engine_peak_lsb` is floored at 1 LSB by _audio_metrics (it doubles
+        # as an rms-dB divisor), so a silent or absent engine tap would grade
+        # BOUNDED on no engine samples at all.  Refuse instead.
+        raise SystemExit(
+            f"{case}: instance {name} has no engine tap samples (l2a.n == 0): "
+            "the engine stability leg has no engine measurement to bound. "
+            "Refusing")
+    engine_tap_peak = inst["l2a"]["engine_peak_lsb"]
+    return {
+        "stability_model": model_verdict,
+        "model_state_peak_lsb": max(inst["stability_peaks"] or [0]),
+        "engine_tap_peak_lsb": engine_tap_peak,
+        "engine_tap_peak_max_lsb": ENGINE_TAP_PEAK_MAX_LSB,
+        "stability_engine": ("BOUNDED" if engine_tap_peak < ENGINE_TAP_PEAK_MAX_LSB
+                             else "UNBOUNDED"),
+    }
+
+
+def verdict_for(inst, legs):
     l1 = (inst["l1_C_max"] <= PROPOSED["l1_C_max_lsb"]
           and inst["l1_C_rms"] <= PROPOSED["l1_C_rms_lsb"])
     l2 = (inst["l2a"]["max_abs_lsb"] <= PROPOSED["l2_max_abs_lsb"]
           and inst["l2a"]["rms_lsb"] <= PROPOSED["l2_rms_lsb"]
           and inst["l2_spectral_corr"] >= PROPOSED["l2_spectral_corr_min"])
-    peak_ok = inst.get("engine_peak_bounded", True)
+    stable = (legs["stability_model"] == "STABLE"
+              and legs["stability_engine"] == "BOUNDED")
     return {
         "L1_coefficients": "PASS" if l1 else "FAIL",
-        "L2_audio": "PASS" if (l2 and peak_ok) else "FAIL",
+        "L2_audio": "PASS" if l2 else "FAIL",
+        "stability": "PASS" if stable else "FAIL",
         "proposed": PROPOSED,
     }
 
@@ -69,15 +128,11 @@ def main():
         case_fail = False
         results = {}
         for inst in trace["instances"]:
-            engine_peak = max(inst["stability_peaks"] or [0])
-            inst["engine_peak_bounded"] = engine_peak < (1 << 31)
-            v = verdict_for(inst)
-            v["engine_state_peak_lsb"] = engine_peak
-            v["model_state_peak_lsb"] = max(inst["stability_peaks"] or [0])
-            v["stability_model"] = "STABLE" if v["model_state_peak_lsb"] < (1 << 31) \
-                else "UNSTABLE"
+            legs = stability_legs(inst, case)
+            v = verdict_for(inst, legs)
+            v.update(legs)
             results[f"{inst['key']['name']}.lane{inst['key']['lane']}"] = v
-            if "FAIL" in v["L1_coefficients"] or "FAIL" in v["L2_audio"]:
+            if "FAIL" in (v["L1_coefficients"], v["L2_audio"], v["stability"]):
                 case_fail = True
         out = {
             "schema_version": 1,

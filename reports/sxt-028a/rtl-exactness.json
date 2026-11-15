@@ -163,6 +163,33 @@
         "rtl": "09091ffb84b07e06bb95f1d079e88171e737d146093e7376439bcd8fe6e7715f"
       },
       "verdict": "CONTROL-OK (mutant FAILS the dual-instance comparison)"
+    },
+    {
+      "blocks": 64,
+      "case": "mutant-narrow-product",
+      "checkpoints_exact": false,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": false,
+      "ext_mem_exact": null,
+      "injected_defect": "smul() truncated to a 32-bit product: the datapath's narrowed intermediates are too narrow to be integer-exact",
+      "outputs_exact": false,
+      "revision_pin": {
+        "expected": 1453063955,
+        "ok": true,
+        "rtl_trace": 1453063955
+      },
+      "rtl_measured_traffic": {
+        "reads": 57344,
+        "words_per_frame": 1728,
+        "writes": 53248
+      },
+      "txn_lines_rtl": 110592,
+      "txn_log_exact": false,
+      "txn_log_sha256": {
+        "model": "94b3bbe1e818b6547590e87bda2f62bfbb16a4aae083b566a5b4fb2e1b7147fa",
+        "rtl": "8c0431a9d73ac55ad5737d12db2964a8cff62cda0a5ea06baf213cf8f8bb520f"
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the exactness comparison)"
     }
   ],
   "status": "PASS"

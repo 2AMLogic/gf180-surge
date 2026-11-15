@@ -65,20 +65,13 @@ from model.effects.reverb1 import coefficient_plane as rcp  # noqa: E402
 from model.effects.reverb1.reverb1_fixed import Reverb1Fixed  # noqa: E402
 from chorus_model import ChorusModel, ChorusParams  # noqa: E402
 from render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
-from run_fx_model import read_wav_stereo_f32  # noqa: E402 (model/effects on path)
+from run_fx_model import (  # noqa: E402 (model/effects on path)
+    read_wav_stereo_f32, amp_to_linear_fixed, checkpoint_set, qhex,
+)
 
 SETTLE_BLOCKS = 375   # int(0.25 s x 48 kHz) / 32 = 375 (the fixture harness settle)
 HARDCLIP8 = 8 << FRAC[A_FMT]
 S24_MIN, S24_MAX = -(1 << 23), (1 << 23) - 1
-
-SEQUENCES = {
-    "seq-notes-coverage-v1": 1,
-    "seq-poly-8-v1": 2,
-}
-
-
-def amp_to_linear_fixed(f):
-    return to_q(max(0.0, f) ** 3, G_FMT)
 
 
 def q21_to_s32i_in(x):
@@ -105,7 +98,6 @@ class Reverb1Adapter:
         }
         cp = rcp.build(p, deactivated=deact)
         self.m = Reverb1Fixed(cp)
-        self.st = self.m
         self.name = name
         self.initialized = True
 
@@ -118,9 +110,6 @@ class Reverb1Adapter:
         ol, orr = self.m.process_block(l24, r24)   # s32i out (Q4.28)
         return ([q428_to_q21(x) for x in ol],
                 [q428_to_q21(x) for x in orr])
-
-    def process_block_captured(self, in_l, in_r):
-        return self.process_block(in_l, in_r)
 
 
 def build_models(cfg):
@@ -176,23 +165,8 @@ def chorus_instances(ains, sends, globals_):
     return out
 
 
-def checkpoint_set(n_total):
-    cps = {SETTLE_BLOCKS - 1, SETTLE_BLOCKS, SETTLE_BLOCKS + 1, n_total - 1}
-    b = SETTLE_BLOCKS
-    while b < n_total:
-        cps.add(b)
-        b += 64
-    return cps
-
-
 TAP_CHECKPOINT_STRIDE = 16
 TAP_SAMPLES = 4
-
-
-def qhex(v, bits):
-    m = (1 << bits) - 1
-    x = v & m
-    return f"{x:0{bits // 4}x}"
 
 
 def chorus_ctrl_words(m):
@@ -280,7 +254,7 @@ def main():
 
         m.process_block = capturing_pb
 
-    cps = checkpoint_set(n_total)
+    cps = checkpoint_set(n_total, settle=SETTLE_BLOCKS)
     trace_blocks = []
     blocks_in = []           # per chorus instance: (32 L, 32 R) input words
     ctrl_words_per_block = []
