@@ -7,7 +7,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-_None._
+- **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
 
 ## Very Important
 
@@ -29,7 +29,9 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
+- **#666**: Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers
 - **#670**: Follow-on: Work identified in PR #659
+- **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
 
 ## In Progress
 
@@ -40,31 +42,27 @@ Issues currently being built (`loom:building`).
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
 - **#631**: Remove the private build_and_run/main copies in compare_vel_rtl_model.py and compare_pm_rtl_model.py: last two leaf harnesses off the shared run_leaf_comparison path
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
-- **#641**: galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget)
 - **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them
-- **#653**: Remove or finish the fake engine stability leg in compare_lp12_model.py: engine_state_peak_lsb is the model peak under another name
-- **#654**: ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json
 - **#660**: Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0
-- **#667**: Add a live completeness control so test_checkpoint_key_uniqueness.py's "all thirteen" claim cannot silently go stale
-- **#669**: Split tools/check_provenance.py (5,391 lines) into nine sibling modules behind a re-export facade
+- **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
+- **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
+- **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
+- **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
+- **#683**: Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
-- **#661**: refactor(rtl): carry galactic_core's arithmetic at integer-exact widths, not 128 bits
-- **#664**: fix(ablation_delta): route the summary and the sidecar walk through --out/--ablations
 - **#672**: evidence: measure F-640-1 under the pinned oracle — release velocity does not reach audio in either leaf
-- **#674**: refactor(tools): split the 5,391-line provenance audit into nine layer modules behind a re-export facade
-- **#675**: fix(tools): grade the LP12 stability legs from the engine tap peak and the model monitor verdict
-- **#676**: docs: roadmap as of 2026-11-13
+- **#696**: evidence(t1-item1): re-measure the five #580 groups at 1800 s and record rf_ains34_core's netlist as input-less
+- **#703**: fix: refuse silent engine taps and honor the exit-2 refusal contract
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#673**: test(checkpoint keys): audit the CASES parser inventory live instead of asserting it
+- **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
 
 ## Proposed
 
@@ -94,20 +92,21 @@ Issues carrying `loom:curated`.
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)*
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)*
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
-- **#641**: galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget) *(curated)*
 - **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them *(curated)*
-- **#654**: ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json *(curated)*
 - **#660**: Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0 *(curated)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
-- **#667**: Add a live completeness control so test_checkpoint_key_uniqueness.py's "all thirteen" claim cannot silently go stale *(curated)*
+- **#666**: Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers *(curated)*
 - **#670**: Follow-on: Work identified in PR #659 *(curated)*
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1) *(curated)*
 - **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory *(curated)*
+- **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch *(curated)*
+- **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2) *(curated)*
+- **#687**: run_negative_control's exit code and summary line do not detect a dropped control registration *(curated)*
+- **#695**: Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(hermit)*
-- **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(hermit)*
 
 ## Epics
 
@@ -120,14 +119,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 0 |
+| Operator merge-risk holds | 1 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 3 |
+| Ready (`loom:issue`) | 5 |
 | In Progress (`loom:building`) | 12 |
-| PRs awaiting review | 7 |
+| PRs awaiting review | 3 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 33 |
-| Architect / Hermit proposals | 2 |
+| Curated | 35 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
