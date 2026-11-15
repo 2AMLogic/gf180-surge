@@ -850,7 +850,7 @@
         "role": "testbench",
         "path": "tests/test_sxt019_provenance.py",
         "passed": true,
-        "content_hash": "sha256:61af738d57b2a0e0c58f5d4c13fd6d022799ab5d9cb33b68be5a2429a1b6a079"
+        "content_hash": "sha256:ed5bbe6e7e587ec8a1ccf1dbc80ff620e411ffa7a12ec339051a34aba54267cc"
       },
       {
         "check": "present",
@@ -1298,7 +1298,7 @@
         "role": "testbench",
         "path": "tools/check_provenance_controls.py",
         "passed": true,
-        "content_hash": "sha256:d01a8a1dd7dcebcbfac670bcfe1322da3ee9001ebdff45cbb706183c49f0429e"
+        "content_hash": "sha256:cf4dfa83a8b4220f037bdd243a34dc48cf71a4a9a2c4379590fb6500c88433c1"
       },
       {
         "check": "present",

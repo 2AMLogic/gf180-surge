@@ -81,6 +81,7 @@ Python 3 standard library only (pytest as runner).
 import gzip
 import io
 import json
+import pytest
 import subprocess
 import sys
 from pathlib import Path
@@ -175,6 +176,114 @@ def test_negative_control_every_rule_fires():
 def test_every_rule_has_a_negative_control():
     missing = sorted(set(cp.RULES) - set(cpc._controls()))
     assert not missing, f"rules with no negative control: {missing}"
+
+
+# --- the layer-registration guard (issue #687) --------------------------------
+#
+# run_negative_control()'s PASS summary used to re-call the registry
+# functions, so dropping a registration tuple left the exit code and the
+# summary reassuring while zero cases of that layer executed. These tests
+# mutate the harness from OUTSIDE the committed file (its byte-frozen pin
+# must not move just to run a test): the dropped-registration case exec's a
+# mutated copy of the module source, the did-not-execute case monkey-patches
+# a runner — the two mutation shapes the issue prescribes.
+
+
+def _drop_registration_cases():
+    """(mutator, tag) pairs, one per registration shape the summary claims:
+    the five tuple entries of the case runner (wrapper shown; the mechanism
+    is one shared loop), the coverage runner's tuple entries — where edge
+    case (a) lives, because `coverage` and `coverage-included` share one
+    label namespace and their counts used to print as a masked sum — and
+    the history layer, whose registration is a bare runner call, not a
+    tuple element."""
+
+    def drop_tuple(line):
+        return lambda source: source.replace(line, "")
+
+    def drop_history_block(source):
+        start = source.index("        history_cases = _history_controls()")
+        end = source.index("        # Every layer the summary names")
+        return source[:start] + source[end:]
+
+    return [
+        (
+            drop_tuple('            ("wrapper", _wrapper_name_controls()),\n'),
+            "wrapper registration dropped",
+        ),
+        (
+            drop_tuple('            ("coverage", _coverage_controls(), False),\n'),
+            "coverage registration dropped",
+        ),
+        (
+            drop_tuple(
+                "            (\"coverage-included\","
+                " _coverage_include_untracked_controls(), True),\n"
+            ),
+            "coverage-included registration dropped",
+        ),
+        (drop_history_block, "history registration dropped"),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("mutator", "tag"),
+    _drop_registration_cases(),
+    ids=[tag for _, tag in _drop_registration_cases()],
+)
+def test_negative_control_detects_dropped_layer_registration(mutator, tag):
+    """Deleting a registration tuple entry (or the bare history call) must
+    exit non-zero (issue #687) — individually per layer, so the coverage /
+    coverage-included sum cannot mask either of them."""
+    source = Path(cpc.__file__).read_text(encoding="utf-8")
+    mutated = mutator(source)
+    assert mutated != source, "mutation target moved; re-derive this test"
+    namespace = dict(vars(cpc))
+    exec(
+        compile(mutated, str(cpc.__file__) + f" [{tag}]", "exec"),
+        namespace,
+    )
+    assert namespace["run_negative_control"](verbose=False) != 0
+
+
+@pytest.mark.parametrize(
+    ("runner", "prefix", "registered"),
+    [
+        ("_run_case_controls", "wrapper", 10),
+        ("_run_coverage_controls", "coverage-included", 2),
+        ("_run_history_controls", "history", 10),
+    ],
+)
+def test_negative_control_detects_layer_whose_cases_did_not_execute(
+    monkeypatch, capsys, runner, prefix, registered
+):
+    """A runner returning no rows for a registered layer must fail the run
+    and NAME the layer — not print the old silent `all N ... behaved`."""
+    original = getattr(cpc, runner)
+
+    def drop_prefix(tmp_root, p, cases, **kwargs):
+        if p == prefix:
+            return []
+        return original(tmp_root, p, cases, **kwargs)
+
+    monkeypatch.setattr(cpc, runner, drop_prefix)
+    assert cpc.run_negative_control(verbose=True) != 0
+    out = capsys.readouterr().out
+    assert f"({prefix} registration)" in out, out
+    assert f"registered {registered} cases, its runner returned 0 rows" in out, out
+
+
+def test_negative_control_allows_a_legitimately_empty_layer_registry(
+    monkeypatch, capsys
+):
+    """Edge case (c): a registry legitimately returning [] is a layer with
+    zero registered cases, not a dropped registration — the run must still
+    pass and honestly say `all 0`. This one passes before AND after the
+    guard: it is the false-positive control, not the fail-first one."""
+    monkeypatch.setattr(cpc, "_wrapper_name_controls", list)
+    assert cpc.run_negative_control(verbose=True) == 0
+    out = capsys.readouterr().out
+    assert "all 0 wrapper-member-name controls behaved" in out, out
 
 
 # --- synthetic-tree controls (the AC's "deliberately unattributed file") ------
