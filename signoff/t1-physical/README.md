@@ -73,12 +73,27 @@ matches (9544 nets), and P&R reports 0 unrouted nets, but its
 connectivity check; only nets with no routed wire at all are counted"), so
 an open pin on an otherwise routed net is invisible to it.
 
-Not established: why the router skipped these four pins (all are the larger
-inverter masters; `clkinv_1`/`clkinv_2` are fine). No flow setting was
-identified from this evidence that fixes it, and a speculative ~40 minute
+Not established: why the router skipped these four pins. They are all from
+larger inverter masters, and they are 100 % of the `clkinv_12`, `clkinv_16`
+and `inv_8` instances in this block -- but "all are the larger inverter
+masters" is incomplete as a pattern: `inv_12` and `clkinv_8` are also larger
+inverter masters and are unaffected. The per-master instance counts are in
+the committed probe record below, as data, not as a cause. No flow setting
+was identified from this evidence that fixes it, and a speculative ~40 minute
 re-run was not made, so `regen.py` is unchanged and the mismatch stays a
-recorded failing LVS check. The extraction and geometry probe were run ad hoc
-and are not committed.
+recorded failing LVS check.
+
+The connectivity half of that measurement is committed and re-runnable (as of
+2026-11-14): `python3 signoff/t1-physical/open_pin_probe.py <group>` re-runs
+`klt extract` on the committed stream with the pinned `klayout-tools`
+(`signoff/requirements.txt`, via `uvx`; minutes per group, one group at a
+time, `$PDK_ROOT` set for pin directions) and rewrites the committed record
+`<group>/open_pin_probe.json`, present for `ext_mem_instr` and, as the
+negative control, `control_top`. The records carry the exact argv, the
+uncompressed stream hash, the tool version and the pinned liberty identity;
+the test in `tests/test_t1_physical_flow.py` re-binds them to the streams.
+The Metal1/Via1 geometry observation above remains ad hoc and is NOT
+committed by that probe; it needs its own measurement.
 
 ### ERC: `not_checked` is a tool gap, not a missing input
 Every gate reports `antenna_verdict: unchecked` with reason
