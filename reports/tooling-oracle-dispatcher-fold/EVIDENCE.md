@@ -188,14 +188,62 @@ returns 24 passed.
 | `tests/test_report_status_tokens.py` | PASS |
 | `tests/test_check_artifact_manifests.py` | PASS |
 | `klt signoff --attest 10 … --check` (hygiene envelope) | PASS (`match`, pinned `klt 0.8.0`) |
-| `klt signoff --attest 9 … --check` (item 9 envelope) | PASS (`match`, `fresh_status: pass`, pinned `klt 0.8.0`) after re-attestation in this change |
-| `klt signoff --manifest signoff/block-manifest.json` reproduces the committed verdict of record | PASS (byte-identical, exit 3 = items unmet, as before; item 9 cites 227/227) |
+| `klt signoff --attest 9 … --check` (item 9 envelope) | PASS (`match`, `fresh_status: pass`, `cold_start` carried, exit 0) under pinned `klt 0.8.0` — the pin **verified** the envelope; it did not produce it (see the provenance disclosure below) |
+| `klt signoff --manifest signoff/block-manifest.json` reproduces the committed verdict of record | PASS (byte-identical, exit 3 = items unmet, as before; item 9 cited 228/228 when this record was written, re-derived to 229/229 under pinned `klt 0.8.0` by PR #690 — see the provenance disclosure below) |
 | Full `pytest tests` run to completion by this change | **NOT_RUN** — see the note below |
 | `fixtures/render_fixture.py` bytes unchanged | PASS (sha256 `13c3c772…`, 30 records still resolve) |
 | `fixtures/render_slfo_fixture.py` bytes unchanged | PASS (sha256 `0611c7f4…`, 6 records still resolve) |
 | Any committed reference re-rendered | NOT_RUN (no pinned oracle on this host; none intended) |
 | Whether F-640-1 changed a rendered sample | NOT_RUN (needs an oracle render both ways) |
 | Model-vs-reference agreement, fidelity, coverage | NO_VERDICT (out of scope; nothing here establishes any) |
+
+### Provenance disclosure: what produced the item 9 envelope (corrected 2026-11-15)
+
+The original record above (2026-11-13) described the item 9 re-attestation as
+done under "pinned `klt 0.8.0`". That is corrected here: the envelope as
+re-attested in this change — as committed at `7de0a78` — was **produced** by
+an untagged dev build, and only *verified* under the pin. The two claims are
+kept apart on purpose: `--check` under the pin passes (`status: match`,
+`fresh_status: pass`, `cold_start` carried, exit 0; re-verified 2026-11-15 at
+main `0bbe944`) and establishes the envelope's content against the inventory;
+it does not establish who produced the envelope.
+
+| Field | Value |
+|---|---|
+| Producer version | `0.9.2.dev887+gec7400b7d8e5` — the `provenance.klt_version` recorded in the envelope at `7de0a78` |
+| Build | commit `ec7400b7d8e5899bbdd0fa2018409ccb7b6bf171` of `2AMLogic/klayout-tools` (2026-11-13, "fix(synthesize): move yosys_timeout_s into synthesize_timeout to satisfy ratchets"), a commit inside klayout-tools PR #5413 — the same PR whose merge `d9bc36811ddd` `signoff/t1-item1/galactic_core/RECORD.md` discloses for #641 |
+| Tagged release | **No.** The `.dev887` suffix counts 887 commits past the nearest tag at build time; the `v0.9.2` tag was cut 143 commits beyond the build on 2026-11-14, so this exact commit was never tagged. |
+| Distance from the pin | `signoff/requirements.txt` pins `klayout-tools==0.8.0`; the build sits 2439 commits past `v0.8.0`, beyond the later `v0.9.0`, `v0.9.1` and `v0.9.2` tags. |
+| Host-wide klt | The fleet-provisioned host klt on record carries a different version (`0.9.2.dev1019+g8907ca2d3a87`), so it did not produce this envelope; this correction ran only `uvx --from "klayout-tools==0.8.0"` throwaway environments and did not modify the host-wide klt. |
+
+**Why the dev build was required.** The pinned release cannot produce this
+envelope: `klt 0.8.0` has no `--skip-local-only` (measured against its full
+`klt signoff` option list), so its `--attest` must run the full `cold_start`
+suite inside the 1800 s budget the note below records as having timed out
+twice. The flag that made the re-attestation feasible does not exist in the
+pinned release, so the producer version was a deliberate deviation, not an
+accident of which binary was on `PATH`.
+
+**This disclosed envelope no longer exists on `main`.** The README-audit
+change (PR #690, merged 2026-11-15) re-attested the item 9 envelope under the
+pinned `klt 0.8.0`, with a **passing full-suite `cold_start` run**
+(228/228 -> 229/229, per its own record). The committed
+`signoff/t1-item9-attestation.json` now reads `provenance.klt_version:
+0.8.0` and cites 229/229, so the artifact's producer version is the
+repository pin. This section is a dated snapshot of the envelope this record
+produced; the manifest's item 9 `content_hash` tracks
+`signoff/t1-item9-inventory.json`, not the attestation, so neither this
+disclosure nor a re-attestation moves it.
+
+**Correction scope.** Re-introducing a wrong count in this record
+(`227/227`, or any figure) is not caught by any mechanical check:
+`tests/test_report_status_tokens.py`, `tests/test_check_artifact_manifests.py`
+and `tests/test_shared_event_dispatcher.py` all pass against the stale prose
+(demonstrated 2026-11-15, 67 passed), and CI's `klt signoff --check` steps
+gate the JSON envelopes, not this file. The counts above are review-gated
+only. Hand-editing the attestation instead is caught: PR #636's red `klt
+signoff verdict of record` job fails `--attest 9 … --check` at
+`attestation.checks.99.content_hash` (exit 3).
 
 ### Note on the item 9 envelope's `cold_start`
 
@@ -206,7 +254,9 @@ with `--skip-local-only`, which **carries the committed `cold_start` outcome**
 `.github/workflows/signoff.yml`'s `--check` does on every PR, and what that
 workflow's own comment describes ("cold_start is local_only: --check skips it
 and carries the committed outcome"). What this change *did* re-derive is every
-content hash in the envelope and its check count (226 -> 227, the new test).
+content hash in the envelope and its check count (227 -> 228, the new test;
+the envelope has since been re-derived again, to 229 checks under the pinned
+`klt 0.8.0` — see the provenance disclosure above).
 
 **The full suite was not run to completion here, and is not claimed as a pass.**
 Two attempts on this shared dispatch worker exceeded `klt`'s hard-coded
