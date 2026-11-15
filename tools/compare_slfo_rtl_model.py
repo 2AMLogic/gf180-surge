@@ -194,8 +194,8 @@ def main():
         except LeafInputError as exc:
             # Refuse before grading: ambiguous records are not evidence.
             return _publish_refusal(exc, os.path.relpath(args.tb, REPO),
-                                    checked, args.out, None, None,
-                                    SUMMARY_ORDER, model_trace, sim)
+                                    checked, args.out, None, SUMMARY_ORDER,
+                                    sim=sim)
         checked, cmp_fails = compare(model_trace, rtl_trace)
         fails += cmp_fails
         comparison = "FAIL" if cmp_fails else "PASS"
