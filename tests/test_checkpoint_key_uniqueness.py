@@ -1,4 +1,4 @@
-"""Issues #639/#648: every RTL-vs-model exactness harness refuses a
+"""Issues #639/#648/#666: every RTL-vs-model exactness harness refuses a
 repeated checkpoint key, through the one shared unique-insert primitive.
 
 #455 decided the rule for the two LFO harnesses: in an exactness harness a
@@ -6,8 +6,11 @@ contradictory row followed by a correct row for the same checkpoint must be
 refused, never resolved last-row-wins (last-row-wins turns a disagreement
 into a PASS).  The rule was written twice as private boilerplate and reached
 2 of the 13 private `parse_tb` parsers; #639 converted ten more and #648 the
-three live-pinned lowpass harnesses.  This module is the live control that
-it now reaches all thirteen through `_rtl_compile_common.CheckpointKeys`.
+three live-pinned lowpass harnesses; #666 converted the five effect-family
+harnesses, whose trace parser is `parse_tb_trace` rather than `parse_tb`.
+This module is the live control that it now reaches all eighteen harnesses
+-- thirteen `parse_tb` parsers and five `parse_tb_trace` parsers -- through
+`_rtl_compile_common.CheckpointKeys`.
 
 That reach claim is audited live (#667), not merely asserted: the cases
 below are parametrised over `CASES`, so on their own they could never
@@ -15,8 +18,7 @@ notice a parser missing from it.  `audit_case_inventory` re-derives the
 `tools/` parser population from the tree on every run and compares it with
 `CASES` in both directions; `ALLOWLIST` is the one place a deliberate
 exclusion is recorded, and an exclusion that has gone stale is itself a
-finding.  The five effect-family `parse_tb_trace` parsers are allowlisted
-pending #666.
+finding.  It is empty today: every parser the tree defines is in `CASES`.
 
 Synthetic traces only: no simulator, no oracle, no model.  These are parser
 controls, and the audit is an inventory control over the source tree.  They
@@ -42,9 +44,14 @@ import tools.compare_lfo_rtl_model as lfo  # noqa: E402
 import tools.compare_mw_rtl_model as mw  # noqa: E402
 import tools.compare_pm_rtl_model as pm  # noqa: E402
 import tools.compare_rtl_model as voice  # noqa: E402
+import tools.compare_rtl_model_chorus as chorus  # noqa: E402
+import tools.compare_rtl_model_distortion as distortion  # noqa: E402
+import tools.compare_rtl_model_distortion_sse as distortion_sse  # noqa: E402
+import tools.compare_rtl_model_fx as fx  # noqa: E402
 import tools.compare_rtl_model_lp12 as lp12  # noqa: E402
 import tools.compare_rtl_model_lp24 as lp24  # noqa: E402
 import tools.compare_rtl_model_lpmoog as lpmoog  # noqa: E402
+import tools.compare_rtl_model_phaser as phaser  # noqa: E402
 import tools.compare_sine_rtl_model as sine  # noqa: E402
 import tools.compare_slfo_rtl_model as slfo  # noqa: E402
 import tools.compare_vel_rtl_model as vel  # noqa: E402
@@ -172,6 +179,60 @@ CASES = {
               "T": _flat("T", (0,), 14, 99)},
         appends=[],
     ),
+    # The five live-pinned effect-family harnesses (issue #666).  Their
+    # trace parser is `parse_tb_trace`, so each case carries the `fn`
+    # entry-point selector; the thirteen `parse_tb` cases above keep the
+    # default.  `fx` keys `O` by block and `T` by (block, trace tag); the
+    # other four key `O`/`X`/`T` by (block, instance).  None is a
+    # sequence, so `appends` stays empty for all five.
+    "fx": dict(
+        mod=fx,
+        fn="parse_tb_trace",
+        good=[_row("O", (0,), 4), "T 0 A x 1 y 2"],
+        dups={"O": _flat("O", (0,), 4, 99),
+              "T": _flat("T", (0, "A"), 4, 99)},
+        appends=[],
+    ),
+    "chorus": dict(
+        mod=chorus,
+        fn="parse_tb_trace",
+        good=[_row("O", (0, 0), 4), _row("X", (0, 0), 4),
+              _row("T", (0, 0), 2)],
+        dups={"O": _flat("O", (0, 0), 4, 99),
+              "X": _flat("X", (0, 0), 4, 99),
+              "T": _flat("T", (0, 0), 2, 99)},
+        appends=[],
+    ),
+    "distortion": dict(
+        mod=distortion,
+        fn="parse_tb_trace",
+        good=[_row("O", (0, 0), 4), _row("X", (0, 0), 4),
+              _row("T", (0, 0), 2)],
+        dups={"O": _flat("O", (0, 0), 4, 99),
+              "X": _flat("X", (0, 0), 4, 99),
+              "T": _flat("T", (0, 0), 2, 99)},
+        appends=[],
+    ),
+    "distortion_sse": dict(
+        mod=distortion_sse,
+        fn="parse_tb_trace",
+        good=[_row("O", (0, 0), 4), _row("X", (0, 0), 4),
+              _row("T", (0, 0), 2)],
+        dups={"O": _flat("O", (0, 0), 4, 99),
+              "X": _flat("X", (0, 0), 4, 99),
+              "T": _flat("T", (0, 0), 2, 99)},
+        appends=[],
+    ),
+    "phaser": dict(
+        mod=phaser,
+        fn="parse_tb_trace",
+        good=[_row("O", (0, 0), 4), _row("X", (0, 0), 4),
+              _row("T", (0, 0), 2)],
+        dups={"O": _flat("O", (0, 0), 4, 99),
+              "X": _flat("X", (0, 0), 4, 99),
+              "T": _flat("T", (0, 0), 2, 99)},
+        appends=[],
+    ),
 }
 
 NAMES = sorted(CASES)
@@ -185,7 +246,9 @@ def _write(tmp_path, rows):
 
 
 def _parse(name, tmp_path, rows):
-    return CASES[name]["mod"].parse_tb(_write(tmp_path, rows))
+    case = CASES[name]
+    fn = getattr(case["mod"], case.get("fn", "parse_tb"))
+    return fn(_write(tmp_path, rows))
 
 
 # ------------------------------------------------- healthy traces still parse
@@ -323,16 +386,9 @@ PARSER_DEF = re.compile(r"^def parse_tb(?:_trace)?\(", re.M)
 # This dict is the one place an exclusion is recorded -- each entry names
 # the issue that retires it, and `audit_case_inventory` reports an entry
 # that has gone stale rather than letting it silently widen the audit.
-ALLOWLIST = {
-    # The five effect-family `parse_tb_trace` parsers.  #666 routes them
-    # through `CheckpointKeys` and adds them to `CASES`; delete the five
-    # entries in that same change -- leaving one here is a finding.
-    "tools/compare_rtl_model_chorus.py": "unconverted, #666",
-    "tools/compare_rtl_model_distortion.py": "unconverted, #666",
-    "tools/compare_rtl_model_distortion_sse.py": "unconverted, #666",
-    "tools/compare_rtl_model_fx.py": "unconverted, #666",
-    "tools/compare_rtl_model_phaser.py": "unconverted, #666",
-}
+# Empty since #666: the five effect-family `parse_tb_trace` parsers it had
+# parked are in `CASES` above.
+ALLOWLIST = {}
 
 
 def discover_parsers(root=None):
