@@ -79,6 +79,7 @@
     "tests/test_compile_backlog_dag_waivers.py",
     "tests/test_decision_record_review_packets.py",
     "tests/test_effect_settle_boundaries.py",
+    "tests/test_evidence_scan.py",
     "tests/test_extract_chorus_inputs.py",
     "tests/test_extract_phaser_inputs.py",
     "tests/test_frozen_artifact_basis.py",
