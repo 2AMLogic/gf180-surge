@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-16
 
+- **PR #717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
+- **Issue #714** (closed): regen.py commits a machine-local worktree path in failure.txt
 - **PR #713**: signoff(t1-item1): attribute the five #580 synthesis timeouts by a pre-ABC operator census
 - **Issue #695** (closed): Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
 
