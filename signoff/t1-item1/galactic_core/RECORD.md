@@ -192,8 +192,14 @@ Whole probe: 6.5 s. Results on the pre-#657 RTL (the #641 bytes):
   write→read ports and an FF's Q→D as plain graph edges. Graph artifacts of
   the sequential boundaries — but the `$mem`-threaded SCC is the smoke.
 - **After `MEMORY_MAP` + `opt -full`** (`scc -nofeedback`): **1 SCC of
-  purely combinational cells**, and `check` reports **8 "found logic loop"**
-  warnings — real netlist loops, not graph artifacts. The loop trace closes
+  purely combinational cells**, and `check` reports **97 "found logic loop"**
+  warnings (`check`'s own summary line: `Found and reported 97 problems`;
+  the 97 traces cluster into **6 distinct shapes** by normalized cell
+  sequence — 32× an `alumacc` `get_eq` chain, 31× a
+  `$memory\counts$rdmux → replace_alu` chain, 31× a
+  `replace_alu → replace_alu` chain, and three singletons, one of them the
+  `share.cc` activation-logic closure) — real netlist loops, not graph
+  artifacts. The loop trace closes
   through exactly the three sites the timed-out ABC logs name: the
   `counts` read mux (`$memory\counts$rdmux…`) output feeds the `advance`
   adder/comparison chain (`sv2v:631` ALU cells), whose carry feeds
