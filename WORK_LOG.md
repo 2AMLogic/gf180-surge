@@ -2,6 +2,11 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-16
+
+- **PR #713**: signoff(t1-item1): attribute the five #580 synthesis timeouts by a pre-ABC operator census
+- **Issue #695** (closed): Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
+
 ### 2026-11-15
 
 - **PR #710**: tools: drop dead extra_summary_fields/model_trace params from _publish_refusal
