@@ -1,0 +1,640 @@
+# Excerpt of the Yosys log klt wrote beside the executed script
+# (<repo>/signoff/t1-item1/<group>/out/synth_<top>.run.log, removed with
+# the scratch directory). Produced by signoff/t1-item1/regen.py's
+# distil_log(): Yosys pass headers plus every line that quantifies the
+# design or names a structural obstacle; absolute paths substituted
+# (<repo>, <home>) so the artifact is commit-safe and machine-neutral.
+# Progress evidence for a non-zero exit -- NOT a verdict.
+
+[stdout]
+[... 10 line(s) omitted ...]
+1. Executing Liberty frontend: <home>/.ciel/ciel/gf180mcu/versions/f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu9t5v0/lib/gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80.lib
+[... 2 line(s) omitted ...]
+2. Executing Verilog-2005 frontend: signoff/t1-item1/logical4_core/out/logical4_core_sv2v.v
+[... 19 line(s) omitted ...]
+3. Executing HIERARCHY pass (managing design hierarchy).
+[... 1 line(s) omitted ...]
+3.1. Analyzing design hierarchy..
+[... 2 line(s) omitted ...]
+3.2. Analyzing design hierarchy..
+[... 3 line(s) omitted ...]
+4. Executing SYNTH pass.
+[... 1 line(s) omitted ...]
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+[... 1 line(s) omitted ...]
+4.1.1. Analyzing design hierarchy..
+[... 2 line(s) omitted ...]
+4.1.2. Analyzing design hierarchy..
+[... 3 line(s) omitted ...]
+4.2. Executing PROC pass (convert processes to netlists).
+[... 1 line(s) omitted ...]
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+[... 4 line(s) omitted ...]
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+[... 4 line(s) omitted ...]
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+[... 3 line(s) omitted ...]
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+[... 7 line(s) omitted ...]
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+[... 1 line(s) omitted ...]
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+[... 1 line(s) omitted ...]
+<suppressed ~152 debug messages>
+[... 1 line(s) omitted ...]
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+[... 2966 line(s) omitted ...]
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+[... 3 line(s) omitted ...]
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+[... 1861 line(s) omitted ...]
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+[... 1 line(s) omitted ...]
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+[... 8 line(s) omitted ...]
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~735 debug messages>
+[... 1 line(s) omitted ...]
+4.3. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~187 debug messages>
+[... 1 line(s) omitted ...]
+4.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 6385 unused cells and 15534 unused wires.
+<suppressed ~6798 debug messages>
+[... 1 line(s) omitted ...]
+4.5. Executing CHECK pass (checking for obvious problems).
+[... 3 line(s) omitted ...]
+4.6. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.6.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 4516 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3727 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3206 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3194 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3184 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3175 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3173 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 3171 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~4035 debug messages>
+Removed a total of 1345 cells.
+[... 1 line(s) omitted ...]
+4.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 1472 line(s) omitted ...]
+<suppressed ~8364 debug messages>
+[... 1 line(s) omitted ...]
+4.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 4 line(s) omitted ...]
+4.6.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1716 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1703 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1693 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1653 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1647 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~207 debug messages>
+Removed a total of 69 cells.
+[... 1 line(s) omitted ...]
+4.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 4 unused cells and 2863 unused wires.
+<suppressed ~7 debug messages>
+[... 1 line(s) omitted ...]
+4.6.8. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~2691 debug messages>
+[... 1 line(s) omitted ...]
+4.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 5 line(s) omitted ...]
+4.6.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1644 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.6.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.16. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.6.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~2690 debug messages>
+[... 1 line(s) omitted ...]
+4.6.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.6.19. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1644 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.6.20. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.6.22. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.23. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.7. Executing FSM pass (extract and optimize FSM).
+[... 1 line(s) omitted ...]
+4.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+[... 3 line(s) omitted ...]
+4.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+[... 1 line(s) omitted ...]
+4.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+[... 1 line(s) omitted ...]
+4.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+[... 1 line(s) omitted ...]
+4.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+[... 1 line(s) omitted ...]
+4.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+[... 1 line(s) omitted ...]
+4.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+[... 1 line(s) omitted ...]
+4.8. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1644 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~2690 debug messages>
+[... 1 line(s) omitted ...]
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1644 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 270 line(s) omitted ...]
+4.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 241 unused cells and 241 unused wires.
+<suppressed ~242 debug messages>
+[... 1 line(s) omitted ...]
+4.8.8. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~85 debug messages>
+[... 1 line(s) omitted ...]
+4.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~2261 debug messages>
+[... 1 line(s) omitted ...]
+4.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 10 line(s) omitted ...]
+4.8.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1594 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1483 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 1481 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~339 debug messages>
+Removed a total of 113 cells.
+[... 1 line(s) omitted ...]
+4.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 113 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.8.15. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~2265 debug messages>
+[... 1 line(s) omitted ...]
+4.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.19. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1481 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.8.22. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.23. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.9. Executing WREDUCE pass (reducing word size of cells).
+[... 944 line(s) omitted ...]
+4.10. Executing PEEPOPT pass (run peephole optimizers).
+[... 1 line(s) omitted ...]
+4.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 202 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.12. Executing ALUMACC pass (create $alu and $macc cells).
+[... 444 line(s) omitted ...]
+4.13. Executing SHARE pass (SAT-based resource sharing).
+[... 197 line(s) omitted ...]
+4.14. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.14.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~165 debug messages>
+[... 1 line(s) omitted ...]
+4.14.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1519 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~2265 debug messages>
+[... 1 line(s) omitted ...]
+4.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.14.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1519 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 34 unused cells and 127 unused wires.
+<suppressed ~39 debug messages>
+[... 1 line(s) omitted ...]
+4.14.8. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 6 line(s) omitted ...]
+<suppressed ~2265 debug messages>
+[... 1 line(s) omitted ...]
+4.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.14.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1481 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.14.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.16. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.15. Executing MEMORY pass.
+[... 1 line(s) omitted ...]
+4.15.1. Executing OPT_MEM pass (optimize memories).
+[... 19 line(s) omitted ...]
+4.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+[... 2 line(s) omitted ...]
+4.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+[... 1 line(s) omitted ...]
+4.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+[... 1 line(s) omitted ...]
+4.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+[... 9 line(s) omitted ...]
+4.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+[... 3 line(s) omitted ...]
+4.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+[... 2 line(s) omitted ...]
+4.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+[... 1 line(s) omitted ...]
+4.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.17. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.17.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~625 debug messages>
+[... 1 line(s) omitted ...]
+4.17.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 941 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 925 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~48 debug messages>
+Removed a total of 16 cells.
+[... 1 line(s) omitted ...]
+4.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+[... 223 line(s) omitted ...]
+4.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 5 unused cells and 539 unused wires.
+<suppressed ~7 debug messages>
+[... 1 line(s) omitted ...]
+4.17.5. Rerunning OPT passes. (Removed registers in this run.)
+[... 1 line(s) omitted ...]
+4.17.6. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~48 debug messages>
+[... 1 line(s) omitted ...]
+4.17.7. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 916 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 895 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 874 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~126 debug messages>
+Removed a total of 42 cells.
+[... 1 line(s) omitted ...]
+4.17.8. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1553 line(s) omitted ...]
+4.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 69 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.17.10. Rerunning OPT passes. (Removed registers in this run.)
+[... 1 line(s) omitted ...]
+4.17.11. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.17.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 858 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.17.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.17.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.17.15. Finished fast OPT passes.
+[... 1 line(s) omitted ...]
+4.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+[... 9 line(s) omitted ...]
+4.19. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.19.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~1784 debug messages>
+[... 1 line(s) omitted ...]
+4.19.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 4096 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 113 line(s) omitted ...]
+<suppressed ~4340 debug messages>
+[... 1 line(s) omitted ...]
+4.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 12976 line(s) omitted ...]
+4.19.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 4096 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2490 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~4818 debug messages>
+Removed a total of 1606 cells.
+[... 1 line(s) omitted ...]
+4.19.6. Executing OPT_SHARE pass.
+[... 4 line(s) omitted ...]
+4.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 6 unused cells and 6587 unused wires.
+<suppressed ~31 debug messages>
+[... 1 line(s) omitted ...]
+4.19.9. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~23 debug messages>
+[... 1 line(s) omitted ...]
+4.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~4322 debug messages>
+[... 1 line(s) omitted ...]
+4.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 1774 line(s) omitted ...]
+4.19.13. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 2462 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.14. Executing OPT_SHARE pass.
+[... 1 line(s) omitted ...]
+4.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 27 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.19.17. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.19.18. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.19.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~3890 debug messages>
+[... 1 line(s) omitted ...]
+4.19.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.19.21. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 2462 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.22. Executing OPT_SHARE pass.
+[... 1 line(s) omitted ...]
+4.19.23. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.19.25. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.19.26. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.20. Executing TECHMAP pass (map to technology primitives).
+[... 1 line(s) omitted ...]
+4.20.1. Executing Verilog-2005 frontend: <home>/.cache/yosys-0.67/bin/../share/yosys/techmap.v
+[... 28 line(s) omitted ...]
+4.20.2. Continuing TECHMAP pass.
+[... 236 line(s) omitted ...]
+4.20.88. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 17 line(s) omitted ...]
+<suppressed ~2670 debug messages>
+[... 1 line(s) omitted ...]
+4.20.89. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~22 debug messages>
+Removed 0 unused cells and 17 unused wires.
+[... 1424 line(s) omitted ...]
+<suppressed ~724432 debug messages>
+[... 1 line(s) omitted ...]
+4.21. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.21.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~2226150 debug messages>
+[... 1 line(s) omitted ...]
+4.21.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 2964796 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2776779 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2647632 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2566237 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2521006 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2483286 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2452662 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2434747 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2416258 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2397366 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2384030 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2369787 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2358446 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2347760 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2339343 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2325797 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2316598 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2300336 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2283320 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2259257 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2239023 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2221417 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2212402 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2206589 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2203340 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2201352 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2200546 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2200028 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2199635 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2199474 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2199161 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2198849 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2198693 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2198237 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2198093 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197989 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197945 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197909 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197897 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197885 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197881 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 2197877 cells of `\logical4_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~2300757 debug messages>
+Removed a total of 766919 cells.
+[... 1 line(s) omitted ...]
+4.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 209991 unused cells and 430760 unused wires.
+<suppressed ~209992 debug messages>
+[... 1 line(s) omitted ...]
+4.21.5. Finished fast OPT passes.
+[... 1 line(s) omitted ...]
+4.22. Executing ABC pass (technology mapping using ABC).
+[... 1 line(s) omitted ...]
+4.22.1. Extracting gate netlist of module `\logical4_core' to `<abc-temp-dir>/input.blif'..
+[... 1 line(s) omitted ...]
+[stderr]

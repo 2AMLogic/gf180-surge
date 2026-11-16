@@ -28,7 +28,7 @@ proves the reference budgets reject one.
 
 | Claim | Status | Evidence |
 |---|---|---|
-| Frozen model ↔ RTL exact | **PASS** (4/4 cases; 2 mutants CONTROL-OK) | `rtl-exactness.json` |
+| Frozen model ↔ RTL exact | **PASS** (4/4 cases; 3 mutants CONTROL-OK) | `rtl-exactness.json` |
 | Model ↔ pinned engine, slot boundary | **6/6 PASS (PENDING-FREEZE budgets)** | `artifacts/compare-*.json` |
 | Negative controls live | **5/5 CONTROL-OK** | `negative-controls/negative-controls.json` |
 | Complete-wet preset renders | **REFUSED** (fail-closed; unlanded siblings) | `artifacts/extract-refusals.txt`, extraction applicability records |
@@ -156,6 +156,39 @@ image (54 words/frame × instances), and the frozen-revision pin.
 | prs-128b-reset48 | 128 | host bulk clear + core reset before block 48 | **EXACT** |
 | mutant-regen-halved | 256 | feedback regen halved in the RTL | **CONTROL-OK: FAILS** |
 | mutant-shared-memory-dual | 64 | `mem_base` dropped (both instances pool one region) | **CONTROL-OK: FAILS** |
+| mutant-narrow-product | 64 | the core's exact 32×32→64 signed product truncated to 32 bits (#641) | **CONTROL-OK: FAILS** |
+
+**Arithmetic widths narrowed (#641), result unchanged.** The RTL now
+carries every product, sum and saturation at the narrowest integer-exact
+width (32×32→64, 32×34→66, a 66-bit MAC accumulator, a 38-bit saturation
+domain) instead of 128 bits everywhere. The FSM schedule, the per-block
+cycle count and the `em_*` transaction order are untouched, and the table
+above was re-derived after the change: all four cases are still integer-exact
+and all four `txn_log_sha256` values are byte-identical to the previously
+committed record (re-derived under the CI-pinned numpy 2.4.2 -- see the note
+below). The third mutant is the failure control for the change itself: a
+deliberately too-narrow (32-bit) product must FAIL, and it does.
+
+**Note — the `canonical-temple-512b` transaction log is numpy-major-version
+sensitive; this record is pinned to numpy 2.4.2 (#668).** Re-derived under the
+CI-pinned numpy 2.4.2 (`signoff/t1-item9-inventory.json`), every hash in the
+table above is byte-identical to the previously committed record. Under numpy
+1.26.4 the `canonical-temple-512b` hash alone becomes `d078987e…f83486a`
+(`cbe9b206…0481501` under both 2.4.2 and 2.5.2); the other three cases and
+every mutant hash are version-invariant. **RTL-vs-frozen-model exactness is
+not affected**: in all three versions the run is `status=PASS`, 4/4
+`exact=True`, three mutants `CONTROL-OK` — the model and RTL legs agree with
+*each other* every time, and move together because the RTL is driven by
+model-generated stimulus. The difference is in the stimulus: the frozen
+model's input-boundary quantizer `f32_to_s32i` computes
+`x * float(1 << 25)` on the float32 fixture samples in float64 under numpy
+1.x (value-based casting) and in float32 under numpy 2.x (NEP 50), so the
+round-half-up result differs for some samples. Measured, not inferred: the
+stimulus-word digest over all 512×32×2 words is `8c14201f…` under 2.4.2
+and `32ba9ba8…` under 1.26.4. `model/effects/aw-49/galactic_model.py` is
+unchanged (frozen revision `569bff13…`); choosing between making the
+quantizer version-invariant and declaring the numpy pin is #668, since the
+first would move the frozen revision.
 
 Traffic measured from the RTL txn log: 28 R + 26 W = **54 words = 216
 B/frame/instance** (10.368 MB/s at 48 kHz), matching the model's

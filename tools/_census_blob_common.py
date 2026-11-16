@@ -2,7 +2,8 @@
 """Shared census-blob, graphs-entry and git-blob helpers for leaf extractors.
 
 Replaces the per-script private copies of `census_blob(rel)` and
-`git_blob_sha1(path)` (issue #493) and of `graphs_entry(rel)` (issue #633).
+`git_blob_sha1(path)` (issue #493), of `graphs_entry(rel)` (issue #633), and
+of `census_row(rel_path)` and `slot_entry(graph, slot_role)` (issue #686).
 Same drift hazard #154 addressed for the census-vs-graphs cross-check in
 `tools/_census_graphs_common.py`.
 
@@ -40,6 +41,14 @@ def census_blob(rel):
     raise Refuse(f"preset not in census: {rel}")
 
 
+def census_row(rel_path):
+    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row["path"] == rel_path:
+                return row
+    raise Refuse(f"preset not in census: {rel_path}")
+
+
 def graphs_entry(rel):
     with open(GRAPHS, encoding="utf-8") as f:
         for line in f:
@@ -47,6 +56,13 @@ def graphs_entry(rel):
             if g.get("p") == rel:
                 return g
     raise Refuse(f"preset not in graphs.jsonl: {rel}")
+
+
+def slot_entry(graph, slot_role):
+    for fx in graph["g"]["fx"]:
+        if fx.get("r") == slot_role:
+            return fx
+    raise Refuse(f"no {slot_role} entry in graphs.jsonl fx list")
 
 
 def git_blob_sha1(path):

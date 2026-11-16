@@ -2,6 +2,58 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-16
+
+- **PR #693**: fix(tools): run the Reverb1 and AW49 RTL runners in the platform temp dir
+- **Issue #677** (closed): Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
+- **PR #717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
+- **Issue #714** (closed): regen.py commits a machine-local worktree path in failure.txt
+- **PR #713**: signoff(t1-item1): attribute the five #580 synthesis timeouts by a pre-ABC operator census
+- **Issue #695** (closed): Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
+
+### 2026-11-15
+
+- **PR #710**: tools: drop dead extra_summary_fields/model_trace params from _publish_refusal
+- **Issue #691** (closed): Remove the 2 dead parameters on _publish_refusal: the RTL refusal path accepts extra_summary_fields and model_trace and reads neither
+- **PR #709**: fix(tools): count executed negative-control cases instead of re-calling registries
+- **Issue #687** (closed): run_negative_control's exit code and summary line do not detect a dropped control registration
+- **PR #705**: docs(evidence): disclose the item 9 envelope's producer klt, correct stale counts
+- **Issue #670** (closed): Follow-on: Work identified in PR #659
+- **PR #672**: evidence: measure F-640-1 under the pinned oracle — release velocity does not reach audio in either leaf
+- **Issue #660** (closed): Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0
+- **PR #706**: refactor(tools): route the five effect-family parse_tb_trace parsers through CheckpointKeys, re-deriving their byte-frozen records
+- **Issue #666** (closed): Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers
+- **PR #696**: evidence(t1-item1): re-measure the five #580 groups at 1800 s and record rf_ains34_core's netlist as input-less
+- **PR #661**: refactor(rtl): carry galactic_core's arithmetic at integer-exact widths, not 128 bits
+- **Issue #641** (closed): galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget)
+- **PR #685**: refactor(model): fold the duplicated FX-runner helpers onto run_fx_model and give checkpoint_set an explicit settle
+- **Issue #682** (closed): Remove duplicated amp_to_linear_fixed/checkpoint_set/qhex in the FX runners: three re-declare run_fx_model's, the fourth is dead
+- **PR #701**: tools: drop 15 dead function parameters in 4 publication/selection tools
+- **PR #692**: refactor(model): drop six unreferenced fragments from the FX runners and comparators
+- **Issue #684** (closed): Remove 6 provably unreferenced fragments outside the frozen/attested set: dead SEQUENCES dict, 3 never-called methods, 2 unused numpy imports
+- **PR #690**: docs(readme): state both cited envelopes and the real met count, pinned by a live audit
+- **Issue #678** (closed): README "T1 signoff evidence" says one item is met; the verdict of record says two (items 9 and 10)
+- **PR #676**: docs: roadmap as of 2026-11-13
+- **PR #700**: refactor(tools): consolidate census_row and slot_entry into _census_blob_common
+- **Issue #686** (closed): Remove the 10 private census_row / slot_entry copies from the five RF extractors: the siblings #493 and #633 left behind
+
+### 2026-11-14
+
+- **PR #673**: test(checkpoint keys): audit the CASES parser inventory live instead of asserting it
+- **Issue #667** (closed): Add a live completeness control so test_checkpoint_key_uniqueness.py's "all thirteen" claim cannot silently go stale
+- **PR #674**: refactor(tools): split the 5,391-line provenance audit into nine layer modules behind a re-export facade
+- **Issue #669** (closed): Split tools/check_provenance.py (5,391 lines) into nine sibling modules behind a re-export facade
+- **PR #664**: fix(ablation_delta): route the summary and the sidecar walk through --out/--ablations
+- **Issue #654** (closed): ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json
+- **PR #675**: fix(tools): grade the LP12 stability legs from the engine tap peak and the model monitor verdict
+- **Issue #653** (closed): Remove or finish the fake engine stability leg in compare_lp12_model.py: engine_state_peak_lsb is the model peak under another name
+- **PR #665**: refactor(tools): route the three live-pinned lowpass trace parsers through CheckpointKeys, re-deriving their byte-frozen records
+- **Issue #648** (closed): Extend the #455 duplicate-key refusal to the three live-pinned lowpass harnesses, carrying the byte-frozen re-derivation
+- **PR #659**: refactor(oracle): route seven renderers through render_fixture.dispatch
+- **Issue #640** (closed): Remove the nine private copies of the oracle event dispatcher: they silently drop event types rf.dispatch forwards, and one rendered a committed SXT-041 reference
+- **PR #637**: feat(tools): fold the last three mutant generators onto the shared table
+- **Issue #623** (closed): Fold the three remaining mutant generators onto the shared make_rtl_mutants table (two are byte-attested)
+
 ### 2026-11-13
 
 - **PR #651**: refactor(tools): share one graphs_entry instead of 14 private copies

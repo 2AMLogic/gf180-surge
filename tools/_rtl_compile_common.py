@@ -489,8 +489,7 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
             validate_model(model_trace)
     except LeafInputError as exc:
         return _publish_refusal(exc, tb_label, default_checked, out,
-                                publish_error, extra_summary_fields,
-                                summary_key_order)
+                                publish_error, summary_key_order)
 
     sim = compile_and_run(tb, run_dir, report_sim_fails=True, **compile_kwargs)
 
@@ -502,8 +501,7 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
             rtl_trace = _parse_rtl_trace(parse_tb, sim.trace)
         except LeafInputError as exc:
             return _publish_refusal(exc, tb_label, default_checked, out,
-                                    publish_error, extra_summary_fields,
-                                    summary_key_order, model_trace, sim)
+                                    publish_error, summary_key_order, sim=sim)
         checked, cmp_fails = compare(model_trace, rtl_trace)
         fails += cmp_fails
         comparison = "FAIL" if cmp_fails else "PASS"
@@ -681,8 +679,7 @@ def _parse_rtl_trace(parse_tb, trace):
 
 
 def _publish_refusal(exc, tb_label, default_checked, out, publish_error,
-                     extra_summary_fields, summary_key_order,
-                     model_trace=None, sim=None):
+                     summary_key_order, sim=None):
     """Current non-PASS report: comparison NOT_RUN, the leaf's zeroed
     coverage, and the offending input.  `sim_fails` stays empty -- the
     simulator did not fail, an input did."""

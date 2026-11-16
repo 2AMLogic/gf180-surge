@@ -4155,6 +4155,11 @@ def run_negative_control(verbose=True):
             )
             for label, expected, description, mutate in _scoped_exemption_controls()
         ]
+        # One source of truth for what executed: each runner call records the
+        # rows it returned per registration prefix, and the summary below
+        # counts from this dict instead of re-calling the registry functions
+        # (which stay reassuring however few cases actually ran).
+        executed = {}
         for prefix, cases in (
             ("scoped", scoped),
             ("masking", _masking_controls()),
@@ -4162,9 +4167,21 @@ def run_negative_control(verbose=True):
             ("payload", _payload_controls()),
             ("wrapper", _wrapper_name_controls()),
         ):
-            for label, passed, detail in _run_case_controls(Path(tmp), prefix, cases):
+            rows = _run_case_controls(Path(tmp), prefix, cases)
+            executed[prefix] = len(rows)
+            for label, passed, detail in rows:
                 ok = ok and passed
                 results.append((label, "PASS" if passed else "FAIL", detail))
+            if len(rows) != len(cases):
+                ok = False
+                results.append(
+                    (
+                        f"({prefix} registration)",
+                        "FAIL",
+                        f"registered {len(cases)} cases, its runner returned "
+                        f"{len(rows)} rows",
+                    )
+                )
 
         # Increment 11: coverage-asserting controls. These check what the run
         # SAID about an entry it did not audit, which no findings-based control
@@ -4188,21 +4205,77 @@ def run_negative_control(verbose=True):
             # and not flagged; a view with no text, not read at all).
             ("evidence", _committable_evidence_controls(), False),
         ):
-            for label, passed, detail in _run_coverage_controls(
+            rows = _run_coverage_controls(
                 Path(tmp), prefix, cases, include_untracked=included
-            ):
+            )
+            executed[prefix] = len(rows)
+            for label, passed, detail in rows:
                 ok = ok and passed
                 results.append((label, "PASS" if passed else "FAIL", detail))
+            if len(rows) != len(cases):
+                ok = False
+                results.append(
+                    (
+                        f"({prefix} registration)",
+                        "FAIL",
+                        f"registered {len(cases)} cases, its runner returned "
+                        f"{len(rows)} rows",
+                    )
+                )
 
         # Increment 17: the HISTORY layer. Its own runner, because every case
         # needs a real commit graph, and because each one asserts on BOTH audits
         # — the tree audit of the final checkout must be clean (otherwise the
         # case proves nothing about history) and the history audit must fire.
-        for label, passed, detail in _run_history_controls(
-            Path(tmp), "history", _history_controls()
-        ):
+        history_cases = _history_controls()
+        history_rows = _run_history_controls(Path(tmp), "history", history_cases)
+        executed["history"] = len(history_rows)
+        for label, passed, detail in history_rows:
             ok = ok and passed
             results.append((label, "PASS" if passed else "FAIL", detail))
+        if len(history_rows) != len(history_cases):
+            ok = False
+            results.append(
+                (
+                    "(history registration)",
+                    "FAIL",
+                    f"registered {len(history_cases)} cases, its runner returned "
+                    f"{len(history_rows)} rows",
+                )
+            )
+
+        # Every layer the summary names must have actually executed: a
+        # registration dropped from the loops above never reaches `executed`,
+        # which the registry re-calls this summary used to make could not see.
+        # A registry legitimately returning [] still lands here with 0 rows
+        # (consistent zero, not a drop); a dropped entry does not land at all.
+        missing_layers = sorted(
+            prefix
+            for prefix in (
+                "scoped",
+                "masking",
+                "discovery",
+                "payload",
+                "wrapper",
+                "coverage",
+                "coverage-included",
+                "staged",
+                "committed",
+                "evidence",
+                "history",
+            )
+            if prefix not in executed
+        )
+        if missing_layers:
+            ok = False
+            results.append(
+                (
+                    "(layer registrations)",
+                    "FAIL",
+                    "summary layers with no executed cases (a registration "
+                    "was dropped?): " + ", ".join(missing_layers),
+                )
+            )
 
     if verbose:
         print("negative control: one deliberate violation per rule\n")
@@ -4219,20 +4292,20 @@ def run_negative_control(verbose=True):
             print(
                 f"PASS: all {len(controls)} rules fired on their deliberate "
                 "violation, the clean control tree produced no findings, "
-                f"all {len(_scoped_exemption_controls())} occurrence-scoped "
-                f"exemption controls behaved, all {len(_masking_controls())} "
+                f"all {executed['scoped']} occurrence-scoped "
+                f"exemption controls behaved, all {executed['masking']} "
                 "own-attribution masking controls behaved, all "
-                f"{len(_discovery_controls())} discovery-layer controls behaved, "
-                f"all {len(_payload_controls())} payload-layer controls behaved, "
-                f"all {len(_wrapper_name_controls())} wrapper-member-name "
+                f"{executed['discovery']} discovery-layer controls behaved, "
+                f"all {executed['payload']} payload-layer controls behaved, "
+                f"all {executed['wrapper']} wrapper-member-name "
                 "controls behaved, and all "
-                f"{len(_coverage_controls()) + len(_coverage_include_untracked_controls())}"
+                f"{executed['coverage'] + executed['coverage-included']}"
                 " index-boundary coverage controls and all "
-                f"{len(_staged_controls())} staged-content controls and all "
-                f"{len(_committed_bookkeeping_controls())} committed-answer-set "
-                f"controls and all {len(_committable_evidence_controls())} "
+                f"{executed['staged']} staged-content controls and all "
+                f"{executed['committed']} committed-answer-set "
+                f"controls and all {executed['evidence']} "
                 "committable-evidence controls and all "
-                f"{len(_history_controls())} published-history controls behaved."
+                f"{executed['history']} published-history controls behaved."
             )
         else:
             print("FAIL: the audit's own failure detection is not intact.")
