@@ -136,7 +136,10 @@ waivers were re-derived against the new bytes under the same pinned Verilator
 5.050: still **101** entries for `galactic_core`, and the
 rule+message+count multiset is **identical** to the #641 baseline (verified
 programmatically before committing) — every entry is the same diagnostic
-re-keyed for line/column/fingerprint/source-hash drift only. The committed
+re-keyed for line/column/fingerprint/source-hash drift only, with the two
+`UNUSEDSIGNAL` explanations #641 added (the `'r'[65:38]` / `'p'[63:38]`
+rounding-accumulator entries) carried forward unchanged, still reading
+"Deliberate (#641): … Intended, not tolerated debt". The committed
 baseline stays **703** waivers in total, severe waivers unchanged at 11
 (both asserted by `tests/test_rtl_lint.py`). No diagnostic was added or
 removed, and no RTL, frozen model, fixture or tool byte was edited to remove

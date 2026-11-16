@@ -9190,7 +9190,7 @@
    "message": "Bits of function variable are not used: 'r'[65:38]",
    "count": 1,
    "source_sha256": "5d13390b684d3608054825891884f596857c4d9985326981e4ee59f89c26d877",
-   "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
+   "explanation": "Deliberate (#641): the upper bits of this rounding accumulator are provably redundant once the value is narrowed to the 38-bit saturation domain, so they are not read. Intended, not tolerated debt; lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
   },
@@ -9205,7 +9205,7 @@
    "message": "Bits of function variable are not used: 'p'[63:38]",
    "count": 1,
    "source_sha256": "5d13390b684d3608054825891884f596857c4d9985326981e4ee59f89c26d877",
-   "explanation": "Existing debt: signal or bits not read in this core; tolerated in the initial baseline, not a correctness finding.",
+   "explanation": "Deliberate (#641): the upper bits of this rounding accumulator are provably redundant once the value is narrowed to the 38-bit saturation domain, so they are not read. Intended, not tolerated debt; lint does not establish RTL-vs-model exactness.",
    "baseline_commit": "76da909a05b3ea94bad2eb7a8b6597964bf7d28e",
    "verilator_version": "5.050"
   },
