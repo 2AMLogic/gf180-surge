@@ -32,7 +32,6 @@ Human-approved issues ready for implementation (`loom:issue`).
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
-- **#683**: Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
 - **#718**: signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1
 - **#720**: SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived)
 
@@ -51,6 +50,7 @@ Issues currently being built (`loom:building`).
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
+- **#723**: tests/evidence_scan.py is load-bearing for 11 non-vacuity guards but is attested by nothing: weakening it restores every vacuous PASS with no record going STALE
 
 ## PRs Awaiting Review
 
@@ -103,6 +103,7 @@ Issues carrying `loom:curated`.
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2) *(curated)*
 - **#718**: signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1 *(curated)*
 - **#720**: SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived) *(curated)*
+- **#723**: tests/evidence_scan.py is load-bearing for 11 non-vacuity guards but is attested by nothing: weakening it restores every vacuous PASS with no record going STALE *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -122,11 +123,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 3 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 6 |
-| In Progress (`loom:building`) | 11 |
+| Ready (`loom:issue`) | 5 |
+| In Progress (`loom:building`) | 12 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 3 |
-| Curated | 33 |
+| Curated | 34 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
