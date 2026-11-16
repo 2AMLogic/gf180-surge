@@ -1242,7 +1242,7 @@
         "role": "testbench",
         "path": "tests/test_t1_item1_synthesis.py",
         "passed": true,
-        "content_hash": "sha256:2d75fe54a6558a42c8ff9aef253413dd602d5020dd753a8fcb090e922e7c28fd"
+        "content_hash": "sha256:be87a27636eb034b5a7d9c5f0de3f3eba0c6bd16e3a325359593f23dbc74d6a7"
       },
       {
         "check": "present",
