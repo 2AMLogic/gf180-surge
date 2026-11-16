@@ -12,6 +12,13 @@
 # provenance 37-62 s, other jobs ~25 s). Raise a limit deliberately if a job
 # legitimately grows.
 #
+# Checkout cap: the two long-budget jobs (tests, rtl-sim) also carry a
+# step-level timeout-minutes: 5 on their actions/checkout step, so a stalled
+# clone fails fast as a visibly-named setup failure instead of consuming the
+# job's test budget and red-flagging a passing suite (#728: one 28m33s
+# checkout stall, 2026-11-16; 30-run sample same day: median 8 s, p95 13 s,
+# one 569 s outlier).
+#
 # Concurrency: superseded pull_request runs are cancelled; push runs on main
 # are never cancelled, so a cancelled main run cannot hide a failure.
 
@@ -157,6 +164,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        # Fails fast as a setup failure if the clone stalls, instead of
+        # burning this job's 40-minute budget (see header, #728).
+        timeout-minutes: 5
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -186,6 +196,10 @@ jobs:
       IVERILOG_APT_VERSION: "12.0-2build2"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        # Fails fast as a setup failure if the clone stalls, instead of
+        # burning this job's 45-minute budget (see header, #728; this job
+        # also owns the 569 s checkout outlier in the 2026-11-16 sample).
+        timeout-minutes: 5
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
