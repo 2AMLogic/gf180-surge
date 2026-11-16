@@ -309,7 +309,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "03636ec823ae0891ca1385965c3872af7a57e2cce43026f81a99a9c4baae6444"
+   "sha256": "faffc26aa2f3c6e7920413e3e4d5fbc256e3af64377ad3cde8ac8e0d3a2ab66b"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -397,7 +397,7 @@
   },
   "reports/sxt-028a/EVIDENCE.md": {
    "role": "evidence record for leaf fx:AW-49-Galactic",
-   "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+   "sha256": "63f351b71b92e93dda0e22460e3cdbe8f9e17fc7a01dbaa0c360169201e7c563"
   },
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",

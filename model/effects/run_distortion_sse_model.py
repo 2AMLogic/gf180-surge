@@ -95,7 +95,9 @@ from distortion_sse_model import (  # noqa: E402
 )
 from oracle_common import sha256_file  # noqa: E402
 from render_fx_fixtures import write_wav_stereo_f32  # noqa: E402
-from run_fx_model import read_wav_stereo_f32  # noqa: E402
+from run_fx_model import (  # noqa: E402
+    read_wav_stereo_f32, amp_to_linear_fixed,
+)
 
 # The fixture's own synth settle, in blocks. It is NOT run through the
 # effect (see the module docstring); it is kept here only so the NC-C
@@ -107,11 +109,6 @@ LEAF = "SXT-028e-sse"
 
 class ModelRefused(RuntimeError):
     pass
-
-
-def amp_to_linear_fixed(f):
-    """Send/return level: the engine's `amp_to_linear` cube (setvars)."""
-    return to_q(max(0.0, f) ** 3, G_FMT)
 
 
 class GenericTanhSubstitute:

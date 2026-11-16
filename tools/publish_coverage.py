@@ -268,7 +268,7 @@ def build_leaf_state(repo: Path, lf: dict, owner: str) -> dict:
     }
 
 
-def section_leaf_state(repo: Path, table: dict, leaf_states: dict,
+def section_leaf_state(repo: Path, leaf_states: dict,
                        section: str, key: str, lf: dict) -> dict:
     """State for a routing/Airwindows section entry. A declared
     `canonical_leaf` names an evidence-bearing record in table["leaves"] and
@@ -757,7 +757,7 @@ def run(repo: Path, args) -> None:
     for section in ("routing_leaves", "airwindows_leaves"):
         for key, lf in table[section].items():
             section_states[(section, key)] = section_leaf_state(
-                repo, table, leaf_states, section, key, lf)
+                repo, leaf_states, section, key, lf)
 
     freeze_pass = gate_states["fidelity_freeze"]["status"] == "PASS" \
         and not gate_states["fidelity_freeze"]["stale"] \
@@ -1115,11 +1115,9 @@ def run(repo: Path, args) -> None:
             w.writerow(r)
 
     coverage = build_coverage(
-        repo, rows, table, scan, pred, slates, sel, ledgers,
-        leaf_states, gate_states, outcomes, by_path,
+        repo, rows, table, slates, ledgers, leaf_states, gate_states,
         input_pins=None if args.control_allow_input_drift else dict(STRUCTURAL_INPUTS),
         table_rel=table_rel,
-        drift_allowed=args.control_allow_input_drift,
         rng_affected=rng_affected, rng_doc=rng_doc,
         rng_gate_active=rng_gate_active, rng_rel=rng_rel,
         integ=integ, integ_rel=integ_rel, frozen_policy=frozen_policy,
@@ -1143,9 +1141,9 @@ def table_path_abs(repo: Path, table_rel: str) -> str:
     return str(p if p.is_absolute() else repo / p)
 
 
-def build_coverage(repo, rows, table, scan, pred, slates, sel, ledgers,
-                   leaf_states, gate_states, outcomes, by_path,
-                   input_pins, table_rel, drift_allowed,
+def build_coverage(repo, rows, table, slates, ledgers,
+                   leaf_states, gate_states,
+                   input_pins, table_rel,
                    rng_affected, rng_doc, rng_gate_active, rng_rel,
                    integ, integ_rel, frozen_policy):
     totals = Counter(r["headline_status"] for r in rows)

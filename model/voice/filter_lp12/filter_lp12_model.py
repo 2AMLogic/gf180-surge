@@ -321,10 +321,6 @@ class LP12Unit:
         self.subtype = subtype
         self.reset_state()
 
-    # -- per-sample kernels (Q10.21; frozen op order): see process_block ----
-    def _iir12b(self, x, c):
-        raise NotImplementedError("Clean kernel lives inline in process_block")
-
     # -- block processor ------------------------------------------------------
     def process_block(self, inp64, cm):
         """One 64-OS-sample block: per-sample C reload + kernel.
@@ -336,6 +332,11 @@ class LP12Unit:
         Driven reload order (pinned IIR12CFCquad): C[0,1,2,4,5,6] += dC
         BEFORE the sample, C[7] (clipgain) AFTER the state update.  Clean
         and Standard interleave their reloads exactly as pinned.
+
+        All three subtype kernels (Standard/SVFLP12Aquad,
+        Driven/IIR12CFCquad, Clean/IIR12Bquad) live inline in this loop at
+        Q10.21 with the frozen op order; there is no separate per-sample
+        kernel method.
         """
         c = list(cm.C)
         dc = list(cm.dC)
