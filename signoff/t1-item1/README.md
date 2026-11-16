@@ -33,7 +33,7 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | wavetable_core | native | PASS | 33 `undriven_wire` warnings in report |
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
 | rf_ains34_core | sv2v | exit 0, **NOT datapath evidence** | 7467 instances, but the core has **no input ports** (they are internal `logic`, poked hierarchically by its testbench), so Yosys constant-folds the datapath: 3054 tie-lows, 2058 flops, 2054 AND2, no adder or multiplier. Its `area_um2`/timing must not be cited (#580); see `RECORD.md` |
-| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | Yosys killed at a **1800 s** budget (`request.yosys_timeout_s`, klt **`0.9.2`** — a tagged release), all five inside `synth`'s generic ABC pass at the blif extraction; 0.25M–2.0M cells reach it. No unsortable-cells warnings (unlike `galactic_core`). Cause not established; see `RECORD.md` (#580) |
+| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | Yosys killed at a **1800 s** budget (`request.yosys_timeout_s`, klt **`0.9.2`** — a tagged release), all five inside `synth`'s generic ABC pass at the blif extraction; 0.25M–2.0M cells reach it. No unsortable-cells warnings (unlike `galactic_core`). Cause established 2026-11-16 by the pre-ABC operator census (#695): the cells are the multiply/accumulator arithmetic itself — 94–100 % of each design — with every `rf_*` product already reduced by Yosys to its integer-exact width (widening refuted) and `logical4_core` additionally carrying 10 unreduced 192-wide products and a 34 %-share 192-bit divider; see `RECORD.md` (#580, #695) and each group's `census.md` |
 | galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability. #641 narrowed the 128-bit arithmetic to its integer-exact widths (no schedule or port change; RTL-vs-model still exact) and re-ran at the same budget: **same outcome, same pass, same warnings**, so that suspected cause is now measured and refuted as the dominant cost. See `galactic_core/RECORD.md` (#641) |
 
 **Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
@@ -57,9 +57,21 @@ git history); `failure.txt` records a timeout as NO_VERDICT, not a pass.
   extraction, with 0.25M (`rf_global2_core`) to 2.0M (`logical4_core`) cells
   reaching it. Unlike `galactic_core`, none of their logs carries a single
   `Couldn't topologically sort cells` warning, so this is a different obstacle
-  from #657's. The cause is **not** established, raising the budget again is
-  not the next step (klt caps it at 3600 s, 2x what failed), and #641 already
-  refuted the obvious width-narrowing hypothesis for `galactic_core`.
+  from #657's. **The cause is now established (#695, 2026-11-16): a pre-ABC
+  operator census per group (`RECORD.md`, each group's `census.md`) shows the
+  cells are the multiply/accumulator arithmetic itself — 94–100 % of every
+  design — not decode or control overhead.** The `rf_*` products are already
+  reduced by Yosys's coarse passes to integer-exact widths (the widening
+  hypothesis is measured-refuted there, #641's finding transfers);
+  `logical4_core` keeps 10 unreduced 192-wide products (its declared-192-bit
+  `mulr`/`rndsh` ports) and a 192-bit divider worth 34 % of the design, but
+  narrowing cannot reach `exit 0`: the already-fully-narrow 20-product
+  `rf_*` cores still die at ~250k cells in the same `abc -fast` step. The
+  irreducible drivers (multiply-site count × call-site inlining, the
+  divisions, the async ROMs) are schedule/contract questions (SXT-017,
+  recorded for `#554`). Raising the budget again is not the next step (klt
+  caps it at 3600 s, 2x what failed), and #641 already refuted the obvious
+  width-narrowing hypothesis for `galactic_core`.
 - `rf_ains34_core`, the one exit-0 group of the six, is **not** datapath
   evidence after all. Its module header declares only `clk`, `state_reset`,
   `start_block`, `block_done` and the two result arrays; its control plane and
